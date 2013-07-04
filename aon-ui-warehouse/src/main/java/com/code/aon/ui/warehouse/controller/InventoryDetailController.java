@@ -6,15 +6,18 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.product.Brand;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.warehouse.Inventory;
@@ -25,14 +28,60 @@ public class InventoryDetailController extends LinesController implements IColle
 	private static final Logger LOGGER = LoggerFactory.getLogger(InventoryDetailController.class.getName());
 	private static final String INVENTORY_CONTROLLER_NAME = "inventory";
 	
-	private ProductCategory category;
+	private boolean showSearchPanel;
 	
+	/* search fields */
+	private ProductCategory category;
+	private Brand brand;
+	private String code;
+	private String description;
+	
+	public boolean isShowSearchPanel() {
+		return showSearchPanel;
+	}
+	
+	public void setShowSearchPanel(boolean showSearchPanel) {
+		this.showSearchPanel = showSearchPanel;
+	}
+
 	public ProductCategory getCategory() {
 		return category;
 	}
 
 	public void setCategory(ProductCategory category) {
 		this.category = category;
+	}
+	
+	public Brand getBrand() {
+		return brand;
+	}
+
+	public void setBrand(Brand brand) {
+		this.brand = brand;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	public void resetSearchPanel(){
+		setShowSearchPanel(false);
+		setCategory(null);
+		setBrand(null);
+		setCode(null);
+		setDescription(null);
 	}
 
 	public void onAcceptNext(ActionEvent event) {
@@ -58,6 +107,22 @@ public class InventoryDetailController extends LinesController implements IColle
 			String field = getFieldName(IEntityAlias.INVENTORY_DETAIL_ITEM_PRODUCT_CATEGORY_ID);
 			criteria.addEqualExpression(field, category.getId());
 		}
+		if ( getBrand() != null ) {
+//			String field = getFieldName(IEntityAlias.INVENTORY_DETAIL_ITEM_PRODUCT_CATEGORY_ID);
+			String field = "InventoryDetail.item.product.brand.id";
+			criteria.addEqualExpression(field, getBrand().getId());
+		}
+		if ( StringUtils.isNotBlank(getCode()) ) {
+//			String field = getFieldName(IEntityAlias.INVENTORY_DETAIL_ITEM_PRODUCT_CODE);
+			String field = "InventoryDetail.item.product.code";
+			criteria.addExpression( ExpressionUtilities.getLikeExpression(field, "%"+getCode()+"%") );
+		}
+		if ( StringUtils.isNotBlank(getDescription()) ) {
+//			String field = getFieldName(IEntityAlias.INVENTORY_DETAIL_ITEM_PRODUCT_NAME);
+			String field = "InventoryDetail.item.product.name";
+			criteria.addExpression( ExpressionUtilities.getLikeExpression(field, "%"+getDescription()+"%") );
+		}
+		
 		onSearch(event);
 	}
 	

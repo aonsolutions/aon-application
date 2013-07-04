@@ -16,7 +16,6 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.InventoryDetail;
@@ -36,7 +35,6 @@ public class InventoryController extends BasicController {
 	private Warehouse warehouse; 
 
 	private boolean initStock;
-	private static final String INVENTORY_DETAIL_CONTROLLER_NAME = "inventoryDetail";
 	
 	public boolean isInitStock() {
 		return initStock;
@@ -137,12 +135,6 @@ public class InventoryController extends BasicController {
 		}
 	}
 	
-	@Override
-	public void onSelect(ActionEvent event) {
-		InventoryDetailController idc = (InventoryDetailController)FormUtil.getController(INVENTORY_DETAIL_CONTROLLER_NAME);
-		idc.setCategory(null);
-		super.onSelect(event);
-	}
 }
 
 

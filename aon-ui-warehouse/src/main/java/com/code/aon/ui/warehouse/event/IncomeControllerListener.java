@@ -6,6 +6,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -21,7 +22,7 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(COMPANY_COLLECTIONS_CONTROLLER_NAME);
+		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		IncomeController controller = (IncomeController)event.getController();
 		try {
 			((Income)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
