@@ -6,19 +6,17 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
-	<aon:div styleClass="aon-text-center">
-		<c:if test="#{company.withLogo}">
-				<a4j:mediaOutput
-					mimeType="#{company.logoMimeType}" 
-					cacheable="false" element="img" 
-					value="#{company.logoFile.key}" 
-					style="#{company.bigLogo?'width:200px':''}"
-					createContent="#{company.createLogoContent}">
-				</a4j:mediaOutput>
-		</c:if>
-		<c:if test="#{!company.withLogo}">
-			<aon:outputText value="company." />
-		</c:if>
-	</aon:div>
+
+	<c:if test="#{company.withLogo}">	
+		<aon:div styleClass="aon-text-center aon-margin-bottom">
+			<a4j:mediaOutput
+				mimeType="#{company.logoMimeType}" 
+				cacheable="false" element="img" 
+				value="#{company.logoFile.key}" 
+				style="#{company.bigLogo?'width:200px':''}"
+				createContent="#{company.createLogoContent}">
+			</a4j:mediaOutput>
+		</aon:div>
+	</c:if>
 
 </ui:composition>

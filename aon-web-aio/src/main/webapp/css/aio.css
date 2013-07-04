@@ -38,7 +38,9 @@
 /************* CUADRO DERECHA  ****************/
 .aon-support{
 	border:#b2b2b2 1px solid;
-	margin:1em 0;
+	text-align:center;
+	color:#888888;
+	background-color:#eeeeee;	
 	}
 .aon-support-title{
 	background:transparent url(../images/aon-support-background.png) scroll right top no-repeat;

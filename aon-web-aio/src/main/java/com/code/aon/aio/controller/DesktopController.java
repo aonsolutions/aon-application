@@ -513,5 +513,13 @@ public class DesktopController {
 		setSupportEnabled(false);
 		AppParamUtil.removeParameter(AON_SUPPORT_ENABLED);
 	}
+
+	public boolean isFiscalEnabled() {
+		if ( AonUtil.getRoleManager().isFiscal() ) {
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			return ! adc.isDeniedModule(Module.FISCAL.getName());
+		}
+		return false;
+	}
 	
 }

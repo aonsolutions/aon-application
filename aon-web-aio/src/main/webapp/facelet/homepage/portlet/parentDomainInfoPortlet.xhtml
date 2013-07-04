@@ -24,7 +24,9 @@
 		</h:commandLink>
 		
 		<h:panelGrid styleClass="aon-padding-left aon-width-all">
-			<aon:outputText style="font-size: 1.2em;" styleClass="aon-bold" value="#{parentDomain.name}"/>
+			<h:commandLink action="start" actionListener="#{domains.onParentDomain}"
+				style="font-size: 1.2em;" styleClass="aon-bold" value="#{parentDomain.name}" 
+				disabled="#{!domainSwitcher.enabledGoToParent}" />
 			<aon:outputText value="#{parentDomain.phone}"/>						
 			<aon:commandLink title="#{webmailBundle.webmail_send_email}" 
 				ajaxSingle="true" reRender="showNewMessageWindow"

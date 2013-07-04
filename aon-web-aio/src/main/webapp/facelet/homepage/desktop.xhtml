@@ -22,12 +22,12 @@
 				columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
 
 				<aon:div id="desktopDiv1">
-					<c:if test="#{domainSwitcher.childDomain}">
+					<c:if test="#{domainSwitcher.childDomain and desktop.fiscalEnabled}">
 						<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml">
 							<ui:param name="columnNumber" value="1" />
 						</ui:include>
 					</c:if>
-					<c:if test="#{domainSwitcher.parentDomain}">
+					<c:if test="#{domainSwitcher.parentDomain or (domainSwitcher.childDomain and !desktop.fiscalEnabled)}">
 						<c:if test="#{desktop.taskHolderAvailable}">
 							<ui:include src="/facelet/homepage/portlet/taskPortlet.xhtml" />
 						</c:if>
@@ -39,17 +39,20 @@
 				<aon:div styleClass="aon-width-all">
 					<c:if test="#{domainSwitcher.childDomain}">
 						<ui:include src="/facelet/homepage/portlet/parentDomainInfoPortlet.xhtml" />
+						<c:if test="#{desktop.fiscalEnabled}">
+							<ui:include	src="/facelet/homepage/portlet/fiscalDashboardPortlet.xhtml" />
+						</c:if>
+						<c:if test="#{!desktop.fiscalEnabled}">
+							<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
+						</c:if>
 					</c:if>
-					<c:if test="#{!domainSwitcher.childDomain and domainSwitcher.domainCount > 0}">
-						<ui:include	src="/facelet/homepage/portlet/domainSwitchPortlet.xhtml" />
-					</c:if>
-					<c:if test="#{actionDenied.moduleEnabled['fiscal'] and aonRole.fiscal and domainSwitcher.childDomain}">
-						<ui:include	src="/facelet/homepage/portlet/fiscalDashboardPortlet.xhtml" />
-					</c:if>
-					<c:if test="#{!domainSwitcher.childDomain and !domainSwitcher.domainManagementAvailable}">
-						<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml">
-							<ui:param name="columnNumber" value="2" />
-						</ui:include>
+					<c:if test="#{!domainSwitcher.childDomain}">
+						<c:if test="#{domainSwitcher.domainCount > 0}">
+							<ui:include	src="/facelet/homepage/portlet/domainSwitchPortlet.xhtml" />
+						</c:if>
+						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+							<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
+						</c:if>
 					</c:if>
 				</aon:div>
 
