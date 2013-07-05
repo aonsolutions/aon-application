@@ -27,11 +27,14 @@ import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.bean.AonServer;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class EmailCommunicationController implements IMarketingConstants {
 	
@@ -58,9 +61,8 @@ public class EmailCommunicationController implements IMarketingConstants {
 		return Collections.emptyList();
 	}
 	
-	private boolean sendEmail( AonServer server, MessageController messageController, List<String> emails ) {
+	private boolean sendEmail( AonServer server, MessageController messageController, String recipients ) {
 		boolean result = true;
-		String recipients = StringUtils.join(emails, ",");
 		try {
 	    	LOGGER.debug( "Sending email to: {}", recipients );			
 			messageController.setRecipientsBcc(recipients);
@@ -106,9 +108,11 @@ public class EmailCommunicationController implements IMarketingConstants {
 		}
 		ActionTargetStatus status = ActionTargetStatus.INCORRECT;
 		if (! emails.isEmpty() ) {
-			if ( sendEmail(server, messageController, emails) ) {
+			String recipients = StringUtils.join(emails, ","); 
+			if ( sendEmail(server, messageController, recipients) ) {
 				status = ActionTargetStatus.SENT;
 			}			
+			logResult(list, recipients, status);
 		}
 		for( ActionTarget actionTarget : list ) {
 			if ( actionTarget.getStatus() != ActionTargetStatus.CANCEL ) {
@@ -121,28 +125,27 @@ public class EmailCommunicationController implements IMarketingConstants {
 	
 	private void logResult( List<ActionTarget> list, int offset, boolean sent) throws ManagerBeanException {
 		LogPanelController logger = LogPanelController.getInstance();
-		Target target = null;
-		String emails = null;
-		if ( list.size() == 1) {
-			target = ((ActionTarget)list.get(0)).getTarget();
-			emails = StringUtils.join( getEmails(target), ", ");
-		}
-		if ( sent ) {
-			if ( target != null ) {
-				log( TARGET_EMAIL_SENT, false, target, emails );				
-			} else {
+		if ( list.size() > 1) {
+			if ( sent ) {
 				String rawText = AonUtil.getMessage(BUNDLE_NAME, TARGET_BULK_EMAIL_SENT);
 				logger.info( MessageFormat.format(rawText, offset+1, (offset + list.size())) );
-			}
-		} else {
-			if ( target != null ) {
-				log( TARGET_SEND_EMAIL_ERROR, true, target, emails );				
 			} else {
 				String rawText = AonUtil.getMessage(BUNDLE_NAME, TARGET_SEND_BULK_EMAIL_ERROR);
 				logger.error( MessageFormat.format(rawText, offset+1, (offset + list.size())) );				
-			}			
+			}
 		}
 	}
+	
+	private void logResult( List<ActionTarget> list, String recipients, ActionTargetStatus status) {
+		if ( list.size() == 1 ) {
+			Target target = ((ActionTarget)list.get(0)).getTarget();
+			if ( status == ActionTargetStatus.SENT ) {
+				log( TARGET_EMAIL_SENT, false, target, recipients );				
+			} else {
+				log( TARGET_SEND_EMAIL_ERROR, true, target, recipients );				
+			}				
+		}
+	}	
 
 	private void updateMessageContent( MessageController messageController ) {
 		String content = messageController.getContent();
@@ -153,6 +156,15 @@ public class EmailCommunicationController implements IMarketingConstants {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private List<ActionTarget> getActionTargetList( IManagerBean bean, List<Integer> ids, int offset, int count ) throws ManagerBeanException {
+		List<Integer> subList = ids.subList(offset, Math.min(offset+count, ids.size()) );
+		Criteria criteria = new Criteria();
+		String id = bean.getFieldName(IEntityAlias.ACTION_TARGET_ID);
+		criteria.addInExpression(id, subList);
+		return (List) bean.getList(criteria);
+	}
+	
+	@SuppressWarnings("unchecked")
 	public void send(ActionEvent event) {
     	LogPanelController logger = LogPanelController.getInstance();
 		MessageController messageController = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
@@ -162,18 +174,21 @@ public class EmailCommunicationController implements IMarketingConstants {
     		AonServer server = new AonServer(messageController.getSenderMailAccount());
     		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
     		Criteria criteria = ccc.getPendingTargetsCriteria(bean);
-    		criteria.addOrder("ActionTarget.target.registry.name", false);
-    		int count = ccc.getNumberOfTargetsInEmail();
-    		int offset = ccc.getPendingTargets() - count;
-    		List<ActionTarget> list = null;
-    		do {
-    			list = (List) bean.getList(criteria, offset, count);
-    			if (! list.isEmpty() ) {
-    				logResult( list, offset, sendEmail(server, list) );
-    				count = Math.min(offset, count);
-    				offset -= count;
-    			}
-    		} while ( count > 0 );
+    		criteria.addOrder("ActionTarget.target.registry.name");
+    		String id = bean.getFieldName(IEntityAlias.ACTION_TARGET_ID);
+    		ProjectionList pl = new ProjectionList(Projection.property(id));
+    		List<Integer> ids = bean.getList(pl, criteria);
+    		if (! ids.isEmpty() ) {
+        		int count = ccc.getNumberOfTargetsInEmail();
+        		int offset = 0;
+        		do {
+        			List<ActionTarget> list = getActionTargetList(bean, ids, offset, count);
+        			if (! list.isEmpty() ) {
+        				logResult( list, offset, sendEmail(server, list) );
+        			}
+    				offset += count;        			
+        		} while ( offset < ids.size() );
+    		}
 		} catch (Throwable e) {
 			LOGGER.error("Error sending emails", e);
 			logger.error( e.getMessage() );
