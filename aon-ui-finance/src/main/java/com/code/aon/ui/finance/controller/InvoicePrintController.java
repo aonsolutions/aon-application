@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.io.BufferedInputStream;
@@ -34,7 +33,6 @@ import com.code.aon.facturae.FacturaeWriter;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
-import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
@@ -126,8 +124,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
     	File file = File.createTempFile( "invoices", "." + MimeType.MIME_ZIP.getExtension());
 		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
 		ZipOutputStream zipOut = new ZipOutputStream(fileOut);
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
-		FacturaeWriter fw = new FacturaeWriter(companyController.obtainCompany());
+		FacturaeWriter fw = new FacturaeWriter();
 		for( ITransferObject to : getManagerBean().getList(getCriteria()) ) {
 			Invoice invoice = (Invoice) to;
 			byte[] data = getData(fw, invoice);
