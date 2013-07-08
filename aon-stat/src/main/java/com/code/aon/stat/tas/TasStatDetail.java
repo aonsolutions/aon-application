@@ -13,6 +13,7 @@ public class TasStatDetail {
 	private Integer id;
 	private String series;
 	private Integer number;
+	private String referenceCode;
 	private Date date;
 	private String document;
 	private DocumentType documentType;
@@ -120,13 +121,19 @@ public class TasStatDetail {
 	}
 
 	public String getReferenceCode() {
-    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
-		if (!StringUtils.isEmpty(getSeries())) {
-			referenceCode = getSeries() + "/" + referenceCode;
+		if (StringUtils.isEmpty(referenceCode)) {
+			referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+			if (!StringUtils.isEmpty(getSeries())) {
+				referenceCode = getSeries() + "/" + referenceCode;
+			}
 		}
     	return referenceCode;
     }
 	
+	public void setReferenceCode(String referenceCode) {
+		this.referenceCode = referenceCode;
+	}
+
 	public String getFullDocument() {
 		return getDocumentType().toString() + "/" + 
 			getDocumentCountry().getValue() + " " +
