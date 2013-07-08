@@ -27,6 +27,7 @@ public class TasStatEngine {
 	private static String TYPE="type";
 	private static String SERIES="series";
 	private static String NUMBER="number";
+	private static String REFERENCE_CODE="referenceCode";
 	private static String DATE="date";
 	private static String DOCUMENT_TYPE="documentType";
 	private static String DOCUMENT_COUNTRY="documentCountry";
@@ -163,8 +164,7 @@ public class TasStatEngine {
 	private static String INCOME_STATEMENT = 
 			"SELECT i.id " + ID
 			+",null " + TYPE
-			+",i.series " + SERIES
-			+",i.number " + NUMBER
+			+",i.reference_code " + REFERENCE_CODE
 			+",i.issue_time " + DATE
 			+",r.document_type " + DOCUMENT_TYPE
 			+",r.document_country " + DOCUMENT_COUNTRY
@@ -486,7 +486,7 @@ public class TasStatEngine {
 			DomainManager.fillHostVariables(detailsPs, 2);
 			detailsRs = detailsPs.executeQuery();
 			while (detailsRs.next()) {
-				details.add(populateTasStatDetail(TasStatDetailType.INCOME, detailsRs ));
+				details.add(populateTasStatDetail(TasStatDetailType.INCOME, detailsRs, true ));
 			}
 			detailsRs.close();
 			return details;
@@ -501,10 +501,18 @@ public class TasStatEngine {
 	}
 
 	private TasStatDetail populateTasStatDetail(TasStatDetailType type, ResultSet rs) throws SQLException {
+		return populateTasStatDetail(type, rs, false);
+	}
+	
+	private TasStatDetail populateTasStatDetail(TasStatDetailType type, ResultSet rs, boolean isIncome) throws SQLException {
 		TasStatDetail detail = new TasStatDetail(type);
 		detail.setId(rs.getInt(ID));
-		detail.setSeries(rs.getString(SERIES));
-		detail.setNumber(rs.getInt(NUMBER));
+		if(isIncome){
+			detail.setReferenceCode(rs.getString(REFERENCE_CODE));
+		} else {
+			detail.setSeries(rs.getString(SERIES));
+			detail.setNumber(rs.getInt(NUMBER));
+		}
 		detail.setDate(rs.getDate(DATE));
 		detail.setDocumentType(DocumentType.values()[rs.getInt(DOCUMENT_TYPE)]);
 		detail.setDocumentCountry(Country.valueOf(rs.getString(DOCUMENT_COUNTRY)) );

@@ -1,5 +1,7 @@
 package com.code.aon.ui.finance.util.print;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +58,10 @@ public class FinancePrintUtil {
 		}
     	return null;
     }
+	
+	public static String monthDayToText(Date date){
+		return monthDayToText(CommonUtil.getDay(date));
+	}
 	
 	public static String monthDayToText(Integer dayNumber){
 		Number2Text numero = new Number2Text();
