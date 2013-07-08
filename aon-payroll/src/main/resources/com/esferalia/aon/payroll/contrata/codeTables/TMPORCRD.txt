@@ -1,3 +1,0 @@
-"01";"Por ERE"
-"02";"Por cuidado de hijos o familiares o víctima de violencia de género"
-"03";"Por ERE y por cuidado de hijos o familiares o víctima de violencia de género"

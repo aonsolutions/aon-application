@@ -1,9 +1,0 @@
-1			REDUCCION DE JORNADA_DE UN TRABAJO A TIEMPO COMPLETO                                                                                                                                            
-2			REDUCCION DE JORNADA EN UN TRABAJO A TIEMPO COMPLETO MANTENIENDO OTRO TRABAJO A TIEMPO PARCIAL                                                                                                  
-3			COLOCACION A TIEMPO PARCIAL                                                                                                                                                                     
-4			PERDIDA DE UN TRABAJO A TIEMPO COMPLETO MANTENIENDO OTRO TRABAJO A TIEMPO PARCIAL                                                                                                               
-5			CESE EN TRABAJO A TIEMPO PARCIAL                                                                                                                                                                
-6			PERDIDA DE UN TRABAJO A TIEMPO PARCIAL MANTENIENDO OTRO TRABAJO A TIEMPO PARCIAL                                                                                                                
-7			PERDIDA DEL TRABAJO A TIEMPO PARCIAL                                                                                                                                                            
-8			PRESTACION GENERADA POR CESE EN TRABAJO A TIEMPO PARCIAL Y COLOCACION POSTERIOR A TIEMPO PARCIAL                                                                                                
-	                                                                                                                                                                                                
