@@ -9,7 +9,7 @@ import java.util.Date;
  * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter.
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
- * *TELCOLBO	COLECTIVO BONIFICACIÓN						15-01-2013
+ * *TELCOLBO	COLECTIVO BONIFICACIÓN						17-04-2013
  *  ------------------------------------------------------------------------
  */ 
 public enum TELCOLBO {
@@ -181,9 +181,12 @@ public enum TELCOLBO {
 	TELCOLBO_165( "165", "TRANSFORMACIÓN INDEFINIDO, V. VIOLENCIA DE GÉNERO", "20120708", null ),
 	TELCOLBO_166( "166", "TRANSFORMACIÓN INDEFINIDO, V. VIOLENCIA DOMÉSTICA", "20120708", null ),
 	TELCOLBO_167( "167", "TRANSFORMACIÓN INDEFINIDO, VÍCTIMA TERRORISMO", "20120708", null ),
+	TELCOLBO_168( "168", "INCORPORACIÓN COMO SOCIO DESEMPLEADO MENOR 30 AÑOS", "20130224", null ),
+	TELCOLBO_169( "169", "CONVERSIÓN EVENTUAL PRIMER EMPLEO JOVEN – HOMBRE", "20130224", null ),
+	TELCOLBO_170( "170", "CONVERSIÓN EVENTUAL PRIMER EMPLEO JOVEN – MUJER", "20130224", null ),
 	;
 	public static final String TABLE_NAME = "TELCOLBO";
-	public static final String TABLE_DESCRIPTION = "*TELCOLBO	COLECTIVO BONIFICACIÓN						15-01-2013";
+	public static final String TABLE_DESCRIPTION = "*TELCOLBO	COLECTIVO BONIFICACIÓN						17-04-2013";
 	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 	private String code;
 	private String description;

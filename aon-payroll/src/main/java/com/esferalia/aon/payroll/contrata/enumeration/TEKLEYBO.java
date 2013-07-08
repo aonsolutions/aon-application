@@ -9,7 +9,7 @@ import java.util.Date;
  * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter.
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
- * *TEKLEYBO	LEY BONIFICACIÓN						11-09-2012	
+ * *TEKLEYBO	LEY BONIFICACIÓN						17-04-2013	
  *  ------------------------------------------------------------------------
  */ 
 public enum TEKLEYBO {
@@ -54,9 +54,10 @@ public enum TEKLEYBO {
 	TEKLEYBO_38( "38", "LEY 35 / 2010", "20100919", "20111231" ),
 	TEKLEYBO_39( "39", "REAL DECRETO LEY 3 / 2012", "20120212", "20120707" ),
 	TEKLEYBO_40( "40", "LEY 3 / 2012", "20120708", "0" ),
+	TEKLEYBO_41( "41", "REAL DECRETO-LEY 4 / 2013", "20130224", "0" ),
 	;
 	public static final String TABLE_NAME = "TEKLEYBO";
-	public static final String TABLE_DESCRIPTION = "*TEKLEYBO	LEY BONIFICACIÓN						11-09-2012	";
+	public static final String TABLE_DESCRIPTION = "*TEKLEYBO	LEY BONIFICACIÓN						17-04-2013	";
 	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 	private String code;
 	private String description;

@@ -1,16 +1,23 @@
 package com.esferalia.aon.payroll.sepe;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.StringTokenizer;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.util.Classpath;
@@ -23,8 +30,9 @@ public class ContrataCodeTablesWriter {
 	final static String ZIP_PROPERTIES_PATHNAME 			= "/AON-TRUNK/aon.parent/aon-payroll/src/main/resources/com/esferalia/aon/payroll/i18n/zip.properties";
 	final static String COLLECTIONS_CLASS_PATHNAME 			= "/AON-TRUNK/aon.parent/aon-ui-payroll/src/main/java/com/esferalia/aon/ui/payroll/controller/ContrataCollectionsController.java";
 	
-	final static String CODE_TXT_FILE_URL			= "com/esferalia/aon/payroll/contrata/codeTables/";
-	final static String ERROR_CODE_TXT_FILE_URL		= "com/esferalia/aon/payroll/contrata/errorCodeTables/";
+	final static String ZIP_CONTAINER_URL			= "com/esferalia/aon/payroll/sepe/contrata/";
+	final static String CODE_FILE_NAME				= "TABLASXML50";
+	final static String ERROR_CODE_FILE_NAME		= "TRespuestaXML50";
 	
 	final static String TOWNS_FILE_NAME 			= "TDPMUNIC";
 	final static String LEAME_FILE_NAME 			= "LEAME";
@@ -35,72 +43,96 @@ public class ContrataCodeTablesWriter {
 	final static String QUALIFICATIONS_FILE_NAME	= "THITIACA";
 	
 	private static int tablesCount;
+	private static String CODE_TXT_FILE_URL = "/tmp/contrata/codeTables/";
+	private static String ERROR_CODE_TXT_FILE_URL = "/tmp/contrata/errorCodeTables/";
+	
+	private static String leamePath;
 	
 	/**
 	 * @param args
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file ;
-		final String SUFFIX = ".txt";
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		URL[] codeTableUrls = Classpath.search(cl, CODE_TXT_FILE_URL, SUFFIX);
-		URL[] errorCodeTableUrls = Classpath.search(cl, ERROR_CODE_TXT_FILE_URL, SUFFIX);
-		tablesCount = codeTableUrls.length;
+		
+		URL[] codeTablesZip = Classpath.search(cl, ZIP_CONTAINER_URL, ".zip");
+		if(codeTablesZip.length==0){
+			throw new IOException("¡¡¡¡¡¡¡¡¡ Fichero de tablas de codigos no encontrado !!!!!!");
+		}
+		
 		int enumCount = 0;
 		int propertiesCount = 0;
-		for(URL url: codeTableUrls){
-			if(getFileNameWithoutExtension(url).equals(TOWNS_FILE_NAME)){
-				file = new File(TOWNS_PROPERTIES_PATHNAME);
-				System.out.print("#### towns.properties en proceso ...");
-				writeProperties(url, file);
-				System.out.println(" generado!");
-				propertiesCount++;
-				tablesCount++;
-			} else if(getFileNameWithoutExtension(url).equals(ZIP_FILE_NAME) ){
-				file = new File(ZIP_PROPERTIES_PATHNAME);
-				System.out.print("#### zip.properties en proceso ...");
-				writeProperties(url, file);
-				System.out.println(" generado!");
-				propertiesCount++;
-				tablesCount++;
-			} else if(getFileNameWithoutExtension(url).equals(QUALIFICATIONS_FILE_NAME) ){
-//				file = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(url)+".java");
-//				System.out.print("Enum "+getFileNameWithoutExtension(url)+" en proceso ...");
-//				writeQualificationsEnum(url, file);
-				file = new File(QUALIFICATIONS_PROPERTIES_PATHNAME);
-				System.out.print("#### qualifications.properties en proceso ...");
-				writeQualificationsProperties(url, file);
-				System.out.println(" generado!");
-				propertiesCount++;
-				tablesCount++;
-			} else if( getFileNameWithoutExtension(url).equals(LEAME_FILE_ENUM_NAME) ){
-				file = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(url)+".java");
-				System.out.print("Enum "+getFileNameWithoutExtension(url)+" en proceso ...");
-				writeTablesEnum(file);
-				System.out.println(" generado!");
-				enumCount++;
-				tablesCount++;
-			} else if(!getFileNameWithoutExtension(url).equals(LEAME_FILE_ENUM_NAME)
-					&& !getFileNameWithoutExtension(url).equals(CNO_1994_FILE_NAME) 
-					&& !getFileNameWithoutExtension(url).equals(ZIP_FILE_NAME) 
-					&& !getFileNameWithoutExtension(url).equals(QUALIFICATIONS_FILE_NAME)
-					){
-				file = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(url)+".java");
-				System.out.print("Enum "+getFileNameWithoutExtension(url)+" en proceso ...");
-				writeEnum(url, file);
-				System.out.println(" generado!");
-				enumCount++;
-				tablesCount++;
-			}
-		}
-		for(URL url: errorCodeTableUrls){
-			if(!getFileNameWithoutExtension(url).equals(LEAME_RESPUESTA_FILE_NAME)){
-				file = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(url)+".java");
-				System.out.print("Enum "+getFileNameWithoutExtension(url)+" en proceso ...");
-				writeEnum(url, file);
-				System.out.println(" generado!");
-				enumCount++;
+		
+		for(URL url: codeTablesZip){
+			if(getFileNameWithoutExtension(url).equals(CODE_FILE_NAME)){
+				uncompressZipData(url.openStream(), new File(CODE_TXT_FILE_URL));
+				File codeDir = new File(CODE_TXT_FILE_URL);
+				
+				leamePath = codeDir.getAbsolutePath() + "\\" + LEAME_FILE_NAME + ".txt";
+				
+				File[] filesList = codeDir.listFiles();
+				tablesCount = filesList.length;
+				
+				
+				for(File file: filesList){
+					if(getFileNameWithoutExtension(file).equals(TOWNS_FILE_NAME)){
+						File newFile = new File(TOWNS_PROPERTIES_PATHNAME);
+						System.out.print("#### towns.properties en proceso ...");
+						writeProperties(file, newFile);
+						System.out.println(" generado!");
+						propertiesCount++;
+						tablesCount++;
+					} else if(getFileNameWithoutExtension(file).equals(ZIP_FILE_NAME) ){
+						File newFile = new File(ZIP_PROPERTIES_PATHNAME);
+						System.out.print("#### zip.properties en proceso ...");
+						writeProperties(file, newFile);
+						System.out.println(" generado!");
+						propertiesCount++;
+						tablesCount++;
+					} else if(getFileNameWithoutExtension(file).equals(QUALIFICATIONS_FILE_NAME) ){
+//						file = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(url)+".java");
+//						System.out.print("Enum "+getFileNameWithoutExtension(url)+" en proceso ...");
+//						writeQualificationsEnum(url, file);
+						File newFile = new File(QUALIFICATIONS_PROPERTIES_PATHNAME);
+						System.out.print("#### qualifications.properties en proceso ...");
+						writeQualificationsProperties(file, newFile);
+						System.out.println(" generado!");
+						propertiesCount++;
+						tablesCount++;
+					} else if( getFileNameWithoutExtension(file).equals(LEAME_FILE_ENUM_NAME) ){
+						File newFile = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(file)+".java");
+						System.out.print("Enum "+getFileNameWithoutExtension(file)+" en proceso ...");
+						writeTablesEnum(file, newFile);
+						System.out.println(" generado!");
+						enumCount++;
+						tablesCount++;
+					} else if(!getFileNameWithoutExtension(file).equals(LEAME_FILE_ENUM_NAME)
+							&& !getFileNameWithoutExtension(file).equals(CNO_1994_FILE_NAME) 
+							&& !getFileNameWithoutExtension(file).equals(ZIP_FILE_NAME) 
+							&& !getFileNameWithoutExtension(file).equals(QUALIFICATIONS_FILE_NAME)
+							){
+						File newFile = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(file)+".java");
+						System.out.print("Enum "+getFileNameWithoutExtension(file)+" en proceso ...");
+						writeEnum(file, newFile);
+						System.out.println(" generado!");
+						enumCount++;
+						tablesCount++;
+					}
+				}
+			} else if(getFileNameWithoutExtension(url).equals(ERROR_CODE_FILE_NAME)){
+				uncompressZipData(url.openStream(), new File(ERROR_CODE_TXT_FILE_URL));
+				File errorCodeDir = new File(ERROR_CODE_TXT_FILE_URL);
+				File[] errorFilesList = errorCodeDir.listFiles();
+				tablesCount += errorFilesList.length;
+				for(File file: errorFilesList){
+					if(!getFileNameWithoutExtension(file).equals(LEAME_RESPUESTA_FILE_NAME)){
+						File newFile = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(file)+".java");
+						System.out.print("Enum "+getFileNameWithoutExtension(file)+" en proceso ...");
+						writeEnum(file, newFile);
+						System.out.println(" generado!");
+						enumCount++;
+					}
+				}
 			}
 		}
 		System.out.println("*** Enumeraciones generadas. ("+enumCount+")");
@@ -110,9 +142,32 @@ public class ContrataCodeTablesWriter {
 		System.out.println("Proceso finalizado !!!!!!!");
 	}
 	
+	public static void uncompressZipData(InputStream in, File destinationFolder) throws IOException {
+		ZipInputStream zis = new ZipInputStream(new BufferedInputStream(in));
+		ZipEntry entry = zis.getNextEntry();
+		byte[] buffer = new byte[1024];
+		while ( entry != null) {
+			String filename = entry.getName();
+			File newfile = new File(destinationFolder, filename);
+			if (entry.isDirectory()) {
+				newfile.mkdirs();
+			} else {
+				if (!newfile.getParentFile().exists()) {
+					newfile.getParentFile().mkdirs();
+				}
+				FileOutputStream fos = new FileOutputStream(newfile);
+				int len;
+	            while ((len = zis.read(buffer)) > 0) {
+	            	fos.write(buffer, 0, len);
+	            }
+	            fos.close();   
+			}
+			entry = zis.getNextEntry();
+		}
+	}
+	
 	private static String getFileNameWithoutExtension(URL url) {
 	    String path = url.getPath();
-
 	    if (StringUtils.isBlank(path)) {
 	        return null;
 	    }
@@ -120,8 +175,17 @@ public class ContrataCodeTablesWriter {
 	        //it is a directory ..
 	        return null;
 	    }
+		return getFileNameWithoutExtension(new File(url.getPath()));
+	}
+	
+	private static String getFileNameWithoutExtension(File file) {
+	    if (file==null || !file.canRead()) {
+	        return null;
+	    }
+	    if (file.isDirectory()) {
+	        return null;
+	    }
 
-	    File file = new File(url.getPath());
 	    String fileNameWithExt = file.getName();
 
 	    int sepPosition = fileNameWithExt.lastIndexOf(".");
@@ -148,7 +212,7 @@ public class ContrataCodeTablesWriter {
 	private static void writeQualificationsEnum( URL url, File file ) throws IOException {
 		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
 		
-		writeEnumHeader(out, url, obtainTableDescription(getFileNameWithoutExtension(url)));
+		writeEnumHeader(out, file, obtainTableDescription(file));
 		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 		String currentLine;
@@ -164,7 +228,7 @@ public class ContrataCodeTablesWriter {
 			out.newLine();
 		}
 		
-		writeEnumLastContent(out, url, obtainTableDescription(getFileNameWithoutExtension(url)));
+		writeEnumLastContent(out, file, obtainTableDescription(file));
 		
 		out.close();
 	}
@@ -176,12 +240,12 @@ public class ContrataCodeTablesWriter {
 	 * @param file
 	 * @throws IOException
 	 */
-	private static void writeEnum( URL url, File file ) throws IOException {
-		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
+	private static void writeEnum( File file, File newFile ) throws IOException {
+		BufferedWriter out = new BufferedWriter( new FileWriter(newFile) );
 		
-		writeEnumHeader(out, url, obtainTableDescription(getFileNameWithoutExtension(url)));
+		writeEnumHeader(out, file, obtainTableDescription(file));
 		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 		String currentLine;
 		while((currentLine = reader.readLine()) != null) {
 			currentLine = StringUtils.strip(currentLine);
@@ -189,7 +253,7 @@ public class ContrataCodeTablesWriter {
 			StringTokenizer token = new StringTokenizer(currentLine, "\"");
 			if(token.hasMoreTokens()){
 				String code = token.nextToken();
-				out.write( "\t"+getFileNameWithoutExtension(url)+"_"+code.replace("\"", "").toUpperCase()+"( \""+code+"\"" );
+				out.write( "\t"+getFileNameWithoutExtension(file)+"_"+code.replace("\"", "").toUpperCase()+"( \""+code+"\"" );
 				if(token.hasMoreTokens()){
 					token.nextToken();
 					if(token.hasMoreTokens()){
@@ -225,12 +289,12 @@ public class ContrataCodeTablesWriter {
 			out.newLine();
 		}
 		
-		writeEnumLastContent(out, url, obtainTableDescription(getFileNameWithoutExtension(url)));
+		writeEnumLastContent(out, file, obtainTableDescription(file));
 		
 		out.close();
 	}
 	
-	private static void writeEnumHeader( BufferedWriter out, URL url, String enumDescription ) throws IOException {
+	private static void writeEnumHeader( BufferedWriter out, File file, String enumDescription ) throws IOException {
 		out.write( "package com.esferalia.aon.payroll.contrata.enumeration;" );
 		out.newLine();
 		out.newLine();
@@ -246,7 +310,7 @@ public class ContrataCodeTablesWriter {
 		
 		out.write( "/** " );
 		out.newLine();
-		out.write( " * Enumeration for represent Contrata (S.E.P.E.) "+getFileNameWithoutExtension(url)+" table codes." );
+		out.write( " * Enumeration for represent Contrata (S.E.P.E.) "+getFileNameWithoutExtension(file)+" table codes." );
 		out.newLine();
 		out.write( " * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter." );
 		out.newLine();
@@ -260,15 +324,15 @@ public class ContrataCodeTablesWriter {
 		out.newLine();
 		out.write( " */ " );
 		out.newLine();
-		out.write( "public enum " + getFileNameWithoutExtension(url) + " {");
+		out.write( "public enum " + getFileNameWithoutExtension(file) + " {");
 		out.newLine();
 		out.newLine();
 	}
-	private static void writeEnumLastContent( BufferedWriter out, URL url, String enumDescription ) throws IOException {
+	private static void writeEnumLastContent( BufferedWriter out, File file, String enumDescription ) throws IOException {
 		
 		out.write( "\t;" );
 		out.newLine();
-		out.write( "\tpublic static final String TABLE_NAME = \"" + getFileNameWithoutExtension(url) + "\";" );
+		out.write( "\tpublic static final String TABLE_NAME = \"" + getFileNameWithoutExtension(file) + "\";" );
 		out.newLine();
 		out.write( "\tpublic static final String TABLE_DESCRIPTION = \"" + enumDescription + "\";" );
 		out.newLine();
@@ -284,7 +348,7 @@ public class ContrataCodeTablesWriter {
 		out.newLine();
 		out.newLine();
 		
-		out.write( "\t"+getFileNameWithoutExtension(url)+"( String code, String description, String startDate, String endDate ) {" );
+		out.write( "\t"+getFileNameWithoutExtension(file)+"( String code, String description, String startDate, String endDate ) {" );
 		out.newLine();
 		out.write( "\t\tthis.code = code;" );
 		out.newLine();
@@ -358,9 +422,9 @@ public class ContrataCodeTablesWriter {
 		out.newLine();
 		out.newLine();
 		
-		out.write("\tpublic static "+getFileNameWithoutExtension(url)+" getEnumByValue(String expression) {");
+		out.write("\tpublic static "+getFileNameWithoutExtension(file)+" getEnumByValue(String expression) {");
 		out.newLine();
-		out.write("\t\tfor( "+getFileNameWithoutExtension(url)+" o : "+getFileNameWithoutExtension(url)+".values() ) {");
+		out.write("\t\tfor( "+getFileNameWithoutExtension(file)+" o : "+getFileNameWithoutExtension(file)+".values() ) {");
 		out.newLine();
 		out.write("\t\t\tif ( o.getCode().equals(expression) ) {");
 		out.newLine();
@@ -387,12 +451,12 @@ public class ContrataCodeTablesWriter {
 	 * @param file
 	 * @throws IOException
 	 */
-	private static void writeProperties( URL url, File file ) throws IOException {
-		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
+	private static void writeProperties( File file, File newFile ) throws IOException {
+		BufferedWriter out = new BufferedWriter( new FileWriter(newFile) );
 		
 		out.write( " ################################### " );
 		out.newLine();
-		out.write( " # Values for represent Contrata (S.E.P.E.) "+getFileNameWithoutExtension(url)+" table codes." );
+		out.write( " # Values for represent Contrata (S.E.P.E.) "+getFileNameWithoutExtension(file)+" table codes." );
 		out.newLine();
 		out.write( " # Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter." );
 		out.newLine();
@@ -400,14 +464,14 @@ public class ContrataCodeTablesWriter {
 		out.newLine();
 		out.write( " #  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN." );
 		out.newLine();
-		out.write( " # " + obtainTableDescription(getFileNameWithoutExtension(url)) );
+		out.write( " # " + obtainTableDescription(file));
 		out.newLine();
 		out.write( " #  ------------------------------------------------------------------------" );
 		out.newLine();
 		out.write( " ################################### " );
 		out.newLine();
 		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 		String currentLine;
 		while((currentLine = reader.readLine()) != null) {
 			StringTokenizer token = new StringTokenizer(currentLine, ";");
@@ -426,12 +490,12 @@ public class ContrataCodeTablesWriter {
 	 * @param file
 	 * @throws IOException
 	 */
-	private static void writeQualificationsProperties( URL url, File file ) throws IOException {
-		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
+	private static void writeQualificationsProperties( File file, File newfile ) throws IOException {
+		BufferedWriter out = new BufferedWriter( new FileWriter(newfile) );
 		
 		out.write( " ################################### " );
 		out.newLine();
-		out.write( " # Values for represent Contrata (S.E.P.E.) "+getFileNameWithoutExtension(url)+" table codes." );
+		out.write( " # Values for represent Contrata (S.E.P.E.) "+getFileNameWithoutExtension(file)+" table codes." );
 		out.newLine();
 		out.write( " # Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter." );
 		out.newLine();
@@ -439,14 +503,14 @@ public class ContrataCodeTablesWriter {
 		out.newLine();
 		out.write( " #  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN." );
 		out.newLine();
-		out.write( " # " + obtainTableDescription(getFileNameWithoutExtension(url)) );
+		out.write( " # " + obtainTableDescription(file) );
 		out.newLine();
 		out.write( " #  ------------------------------------------------------------------------" );
 		out.newLine();
 		out.write( " ################################### " );
 		out.newLine();
 		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 		String currentLine;
 		while((currentLine = reader.readLine()) != null) {
 			currentLine = StringUtils.strip(currentLine);
@@ -512,7 +576,7 @@ public class ContrataCodeTablesWriter {
 				out.newLine();
 				out.write( "\t *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN." );
 				out.newLine();
-				out.write( "\t * " + obtainTableDescription(enumName) );
+				out.write( "\t * " + obtainTableDescription(enumFile) );
 				out.newLine();
 				out.write( "\t *  ------------------------------------------------------------------------" );
 				out.newLine();
@@ -553,14 +617,14 @@ public class ContrataCodeTablesWriter {
 		out.close();
 	}
 	
-	private static String obtainTableDescription(String tableName) {
+	private static String obtainTableDescription(File file) {
 		try {
-			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] codeUrls = Classpath.search(cl, CODE_TXT_FILE_URL, LEAME_FILE_NAME+".txt");
-			URL url = codeUrls[0];
+//			ClassLoader cl = Thread.currentThread().getContextClassLoader();
+//			URL[] codeUrls = Classpath.search(cl, CODE_TXT_FILE_URL, LEAME_FILE_NAME+".txt");
+//			URL url = codeUrls[0];
 		
 			final String HEADER = " TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN";
-			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(leamePath)));
 			String currentLine;
 			while((currentLine = reader.readLine()) != null) {
 				if(currentLine.contains(HEADER)){
@@ -569,12 +633,13 @@ public class ContrataCodeTablesWriter {
 			}
 			reader.readLine();
 			while((currentLine = reader.readLine()) != null) {
-				if( currentLine.contains(tableName) ){
+				if( currentLine.contains(getFileNameWithoutExtension(file)) ){
 					return currentLine;
 				}
 			}
 		} catch (IOException e) {
 			// nothing to do
+			System.out.print("");
 		}
 		return "No description found";
 	}
@@ -586,14 +651,14 @@ public class ContrataCodeTablesWriter {
 	 * @param file
 	 * @throws IOException
 	 */
-	private static void writeTablesEnum( File file ) throws IOException {
+	private static void writeTablesEnum( File file, File newFile ) throws IOException {
 		try {
-			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] codeUrls = Classpath.search(cl, CODE_TXT_FILE_URL, LEAME_FILE_NAME+".txt");
-			URL url = codeUrls[0];
+//			ClassLoader cl = Thread.currentThread().getContextClassLoader();
+//			URL[] codeUrls = Classpath.search(cl, CODE_TXT_FILE_URL, LEAME_FILE_NAME+".txt");
+//			URL url = codeUrls[0];
 		
 			final String HEADER = " TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN";
-			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			String currentLine;
 			while((currentLine = reader.readLine()) != null) {
 				if(currentLine.contains(HEADER)){
@@ -603,7 +668,7 @@ public class ContrataCodeTablesWriter {
 			reader.readLine();
 			
 			
-			BufferedWriter out = new BufferedWriter( new FileWriter(file) );
+			BufferedWriter out = new BufferedWriter( new FileWriter(newFile) );
 			
 			out.write( "package com.esferalia.aon.payroll.contrata.enumeration;" );
 			out.newLine();
@@ -625,7 +690,7 @@ public class ContrataCodeTablesWriter {
 			out.newLine();
 			out.write( " */ " );
 			out.newLine();
-			out.write( "public enum " + getFileNameWithoutExtension(url) + " {");
+			out.write( "public enum " + getFileNameWithoutExtension(file) + " {");
 			out.newLine();
 			out.newLine();
 			
@@ -685,7 +750,7 @@ public class ContrataCodeTablesWriter {
 			out.newLine();
 			out.newLine();
 			
-			out.write( "\t"+getFileNameWithoutExtension(url)+"( String code, String description, String lastUpdateDate) {" );
+			out.write( "\t"+getFileNameWithoutExtension(file)+"( String code, String description, String lastUpdateDate) {" );
 			out.newLine();
 			out.write( "\t\tthis.code = code;" );
 			out.newLine();
@@ -735,9 +800,9 @@ public class ContrataCodeTablesWriter {
 			out.newLine();
 			out.newLine();
 			
-			out.write("\tpublic static "+getFileNameWithoutExtension(url)+" getEnumByValue(String expression) {");
+			out.write("\tpublic static "+getFileNameWithoutExtension(file)+" getEnumByValue(String expression) {");
 			out.newLine();
-			out.write("\t\tfor( "+getFileNameWithoutExtension(url)+" o : "+getFileNameWithoutExtension(url)+".values() ) {");
+			out.write("\t\tfor( "+getFileNameWithoutExtension(file)+" o : "+getFileNameWithoutExtension(file)+".values() ) {");
 			out.newLine();
 			out.write("\t\t\tif ( o.getCode().equals(expression) ) {");
 			out.newLine();

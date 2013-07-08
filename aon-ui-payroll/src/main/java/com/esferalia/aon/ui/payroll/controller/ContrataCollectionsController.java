@@ -227,6 +227,27 @@ public class ContrataCollectionsController {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+	 * *TDTVINFO	VINCULACIÓN FORMATIVA						17-04-2013
+	 *  ------------------------------------------------------------------------
+	 */ 
+	private List<SelectItem> TDTVINFOCodeList;
+
+	public List<SelectItem> getTDTVINFOCodeList() {
+		if (TDTVINFOCodeList == null) {
+			TDTVINFOCodeList = new LinkedList<SelectItem>();
+			TDTVINFO[] el = TDTVINFO.values();
+			for (TDTVINFO obj : el) {
+				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+				SelectItem item = new SelectItem(obj, name);
+				TDTVINFOCodeList.add(item);
+			}
+		}
+		return TDTVINFOCodeList;
+	}
+
+	/** 
+	 *  ------------------------------------------------------------------------
+	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
 	 * *TEHTPCTO	CÓDIGOS DE CONTRATO						07-02-2013					
 	 *  ------------------------------------------------------------------------
 	 */ 
@@ -290,7 +311,7 @@ public class ContrataCollectionsController {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
-	 * *TEKLEYBO	LEY BONIFICACIÓN						11-09-2012	
+	 * *TEKLEYBO	LEY BONIFICACIÓN						17-04-2013	
 	 *  ------------------------------------------------------------------------
 	 */ 
 	private List<SelectItem> TEKLEYBOCodeList;
@@ -311,7 +332,7 @@ public class ContrataCollectionsController {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
-	 * *TELCOLBO	COLECTIVO BONIFICACIÓN						15-01-2013
+	 * *TELCOLBO	COLECTIVO BONIFICACIÓN						17-04-2013
 	 *  ------------------------------------------------------------------------
 	 */ 
 	private List<SelectItem> TELCOLBOCodeList;
@@ -647,7 +668,7 @@ public class ContrataCollectionsController {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
-	 * *TQNLEYRE	LEYES DE REDUCCIÓN						26-07-2012
+	 * *TQNLEYRE	LEYES DE REDUCCIÓN						17-04-2013
 	 *  ------------------------------------------------------------------------
 	 */ 
 	private List<SelectItem> TQNLEYRECodeList;
@@ -668,7 +689,7 @@ public class ContrataCollectionsController {
 	/** 
 	 *  ------------------------------------------------------------------------
 	 *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
-	 * *TQOCOLRE	COLECTIVOS DE REDUCCIÓN						14-06-2012 					 
+	 * *TQOCOLRE	COLECTIVOS DE REDUCCIÓN						17-04-2013 					 
 	 *  ------------------------------------------------------------------------
 	 */ 
 	private List<SelectItem> TQOCOLRECodeList;

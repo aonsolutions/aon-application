@@ -5,31 +5,27 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /** 
- * Enumeration for represent Contrata (S.E.P.E.) TQNLEYRE table codes.
+ * Enumeration for represent Contrata (S.E.P.E.) TDTVINFO table codes.
  * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter.
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
- * *TQNLEYRE	LEYES DE REDUCCIÓN						17-04-2013
+ * *TDTVINFO	VINCULACIÓN FORMATIVA						17-04-2013
  *  ------------------------------------------------------------------------
  */ 
-public enum TQNLEYRE {
+public enum TDTVINFO {
 
-	TQNLEYRE_01( "01", "REAL DECRETO LEY 1/2011", "20110213", "20120212" ),
-	TQNLEYRE_02( "02", "REAL DECRETO LEY 10/2011", "20110831", "20120211" ),
-	TQNLEYRE_03( "03", "REAL DECRETO LEY 3 / 2012", "20120212", "20120707" ),
-	TQNLEYRE_04( "04", "LEY 14 / 2011", "20120602", null ),
-	TQNLEYRE_05( "05", "LEY 3 / 2012", "20120708", null ),
-	TQNLEYRE_06( "06", "REAL DECRETO LEY 4 / 2013", "20130224", null ),
+	TDTVINFO_01( "01", "FORMACIÓN ACREDITABLE OFICIAL O PROMOVIDA POR SPE", "20130224", null ),
+	TDTVINFO_02( "02", "FORMACIÓN IDIOMAS O T.I.C.DURANTE 90 HORAS ANUALES", "20130224", null ),
 	;
-	public static final String TABLE_NAME = "TQNLEYRE";
-	public static final String TABLE_DESCRIPTION = "*TQNLEYRE	LEYES DE REDUCCIÓN						17-04-2013";
+	public static final String TABLE_NAME = "TDTVINFO";
+	public static final String TABLE_DESCRIPTION = "*TDTVINFO	VINCULACIÓN FORMATIVA						17-04-2013";
 	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 	private String code;
 	private String description;
 	private String startDate;
 	private String endDate;
 
-	TQNLEYRE( String code, String description, String startDate, String endDate ) {
+	TDTVINFO( String code, String description, String startDate, String endDate ) {
 		this.code = code;
 		this.description = description;
 		this.startDate = startDate;
@@ -66,8 +62,8 @@ public enum TQNLEYRE {
 	return null;
 	}
 
-	public static TQNLEYRE getEnumByValue(String expression) {
-		for( TQNLEYRE o : TQNLEYRE.values() ) {
+	public static TDTVINFO getEnumByValue(String expression) {
+		for( TDTVINFO o : TDTVINFO.values() ) {
 			if ( o.getCode().equals(expression) ) {
 				return o;
 			}
