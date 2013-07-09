@@ -164,7 +164,8 @@ public class Mod130Manager extends FiscalModelManager {
 			params.setFromDate(dateFrom);
 			params.setToDate(dateTo);
 			SummaryCollection sc = sp.getSummaryCollection(conn,params,false);
-			double c01 = sc.getCreditBalance( );
+//			double c01 = sc.getCreditBalance( );
+			double c01 = CommonUtil.round(sc.getOpeningCredit() + sc.getCredit() - sc.getOpeningDebit() - sc.getDebit());
 			mod130.ensureDetail(Mod130Key.C01).addAccumulatedAmount(c01);
 	//		 ------------------------------------------------------------------------
 			
@@ -190,7 +191,8 @@ public class Mod130Manager extends FiscalModelManager {
 			params.setFromDate(dateFrom);
 			params.setToDate(dateTo);
 			sc = sp.getSummaryCollection(conn,params,false);
-			double c02 = sc.getUnpaidBalance();
+			//double c02 = sc.getUnpaidBalance();
+			double c02 = CommonUtil.round(sc.getOpeningDebit() + sc.getDebit() - sc.getOpeningCredit() - sc.getCredit());
 	
 			
 			// Artículo 30. Determinación del rendimiento neto en el método de estimación 

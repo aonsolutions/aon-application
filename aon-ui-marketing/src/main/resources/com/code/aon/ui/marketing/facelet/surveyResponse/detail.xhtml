@@ -12,7 +12,7 @@
 		
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{commercialBundle.commercial_question}" />
+					<aon:outputText value="#{registryBundle.registry_question}" />
 				</f:facet>
 				<aon:outputText value="#{to.question.text}"/>
 			</aon:column>
@@ -26,9 +26,9 @@
 		
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{commercialBundle.commercial_response}" />
+					<aon:outputText value="#{registryBundle.registry_response}" />
 				</f:facet>
-				<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/outputValue.xhtml" >
+				<ui:include src="/com/code/aon/ui/registry/facelet/valueHolder/outputValue.xhtml" >
 					<ui:param name="valueHolder" value="#{to}" />
 				</ui:include>
 			</aon:column>
