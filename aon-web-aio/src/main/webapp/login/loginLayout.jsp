@@ -60,10 +60,12 @@ try {
 											<tbody>
 												<tr>
 													<td class="aon-logo-left">
-														<img
-															title="<%=companyDisplay.getCompanyLabel()%>"
-															style="<%=companyDisplay.getLogoStyle()%>"
-															src="aonDocuments/company.logo" />
+														<c:if test="${companyDisplay.withLogo}">
+															<img
+																title="<%=companyDisplay.getCompanyLabel()%>"
+																style="max-width: 200px;"
+																src="aonDocuments/company.logo" />
+														</c:if>
 													</td>
 												</tr>
 											</tbody>

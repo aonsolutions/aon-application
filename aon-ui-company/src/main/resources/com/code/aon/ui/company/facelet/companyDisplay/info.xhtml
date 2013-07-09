@@ -12,12 +12,9 @@
 		</c:if>
 		<h:panelGrid columnClasses="#{skipRightBorder?'aon-logo-only':'aon-logo-left'}"
 			styleClass="aon-width-all">	
-			<a4j:mediaOutput element="img"
-				rendered="#{companyDisplay.logoDefined}" 
-				value="#{companyDisplay.logoKey}"
+			<aon:graphicImage style="max-width:200px;"
 				title="#{companyDisplay.companyLabel}"
-				style="#{companyDisplay.bigLogo?'width:200px;':''}"
-				createContent="#{companyDisplay.createLogoContent}" />
+				value="aonDocuments/company.logo" />
 		</h:panelGrid>		
 		<aon:div styleClass="aon-company-label">
 			<aon:outputText value="#{companyDisplay.companyLabel}" />

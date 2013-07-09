@@ -23,18 +23,14 @@
 							value="#{bundle.aon_save}" reRender="aonHeader,aonContent"
 							action="home" actionListener="#{company.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}" >
-							<aon:actionListener method="#{companyDisplay.update}" />
-						</aon:commandButton>
+							accesskey="#{bundle.aon_key_save}" />
 					</c:if>
 					<c:if test="#{!company.new}" >
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}"
 							action="company_form" actionListener="#{company.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}" >
-							<aon:actionListener method="#{companyDisplay.update}" />
-						</aon:commandButton>
+							accesskey="#{bundle.aon_key_save}" />
 					</c:if>
 				</ui:define>				
 			</ui:decorate>

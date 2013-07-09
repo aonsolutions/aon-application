@@ -16,6 +16,7 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
@@ -25,7 +26,6 @@ import com.code.aon.common.BasicAttachment;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.dbutils.DatabaseUtil;
-import com.code.aon.ui.company.controller.CompanyDisplay;
 import com.code.aon.ui.util.DownloadUtil;
 
 public class CompanyDocumentServlet extends HttpServlet {
@@ -67,14 +67,42 @@ public class CompanyDocumentServlet extends HttpServlet {
 		return null;			
 	}
 	
-	public static BasicAttachment getAttachment( Connection connection, Integer id ) {
+	private BasicAttachment convert( Object[] values ) {
+		if (! ArrayUtils.isEmpty(values) ) {
+			BasicAttachment logo = new BasicAttachment();
+			logo.setId( (Integer) values[0] );
+			logo.setDescription( (String) values[1] );
+			if ( values[2] != null ) {
+				logo.setMimeType( MimeType.values()[(Integer) values[2]] );	
+			}
+			logo.setData( (byte[]) values[3] );
+			return logo;
+		}
+		return null;
+	}
+	
+	private BasicAttachment getLogo( Connection connection, Integer domainId, Integer companyId ) {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<Object[]> h = new ArrayHandler();
+			Object[] values = run.query( connection, 
+				    "SELECT id, description, mimeType, data FROM rattach WHERE domain = ? and registry =? and type=0 and data is not null LIMIT 1",
+				    h, domainId, companyId);
+			return convert(values);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return null;			
+	}			
+	
+	private BasicAttachment getAttachment( Connection connection, Integer id ) {
 		QueryRunner run = new QueryRunner();
 		try {
 			ResultSetHandler<Object[]> h = new ArrayHandler();
 			Object[] values = run.query( connection, 
 				    "SELECT id, description, mimeType, data FROM rattach WHERE id = ? and data is not null LIMIT 1",
 				    h, id);
-			return CompanyDisplay.convert(values);
+			return convert(values);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
@@ -103,7 +131,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 					if ( companyLogo ) {
 						Integer domainId = DatabaseUtil.getDomain(connection, req.getServerName());
 						Integer companyId = getCompanyId(connection, domainId);
-						attachment = CompanyDisplay.getLogo(connection, domainId, companyId);
+						attachment = getLogo(connection, domainId, companyId);
 					} else {
 						attachment = getAttachment(connection, attachmentId);
 					}

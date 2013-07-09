@@ -19,18 +19,14 @@
 							value="#{bundle.aon_save}" reRender="aonHeader,aonContent"
 							action="home" actionListener="#{enterprise.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}" >
-							<aon:actionListener method="#{companyDisplay.update}" />
-						</aon:commandButton>
+							accesskey="#{bundle.aon_key_save}" />
 					</c:if>
 					<c:if test="#{!enterprise.new}" >
 						<aon:commandButton id="enterprise-save"
 							value="#{bundle.aon_save}"
 							action="company_form" actionListener="#{enterprise.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}" >
-							<aon:actionListener method="#{companyDisplay.update}" />
-						</aon:commandButton>
+							accesskey="#{bundle.aon_key_save}" />
 						<aon:commandButton id="enterprise-back"
 							title="#{bundle.aon_key_cancel_accelerator}"
 							value="#{bundle.aon_back}" 
