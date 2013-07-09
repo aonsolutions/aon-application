@@ -185,7 +185,7 @@ public class LinesController extends BasicController {
 	 */
 	public void deleteOrphans() throws ManagerBeanException {
 		if (this.cascadeDelete) {
-			if (this.masterController == null) {
+			if (getMasterController() == null) {
 				throw new AbortProcessingException("Unable to locate Master Controller!");
 			}
 			ITransferObject masterTo = this.masterController.getTo(); 
@@ -245,7 +245,7 @@ public class LinesController extends BasicController {
 	 */
 	@Override
 	public void accept(ActionEvent event) {
-		if (this.masterController == null) {
+		if (getMasterController() == null) {
 			throw new AbortProcessingException("Unable to locate Master Controller!");
 		}
 		try {
