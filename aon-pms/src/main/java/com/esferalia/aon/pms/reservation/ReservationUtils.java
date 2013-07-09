@@ -110,6 +110,7 @@ public class ReservationUtils implements IReservationConstants {
 		reservation.getProject().setDate(reservation.getStartDate());
 		reservation.getProject().setRegistry(obtainProjectReservationRegistry(reservation));
 		reservation.getProject().setName(obtainProjectReservationName(reservation));
+		reservation.getProject().setAlias(reservation.getCrsCode());
 		reservation.getProject().setReservation(true);
 		reservation.getProject().setActive(reservation.getStatus() == ReservationStatus.ACTIVE);
 	}
@@ -718,7 +719,15 @@ public class ReservationUtils implements IReservationConstants {
 	}
 
 	public Tariff obtainRoomTariff(ProjectReservation reservation, RatePlanType ratePlan) throws ManagerBeanException, ReservationException {
-		Tariff tariff = obtainTariff(ratePlan.getRatePlanCode());
+		Tariff tariff = obtainRoomTariff(reservation, ratePlan.getRatePlanCode());
+		if (tariff != null) {
+			return tariff;
+		}
+		throw new ReservationException("Invalid Rate Code: " + ratePlan.getRatePlanCode(), 249);
+	}
+
+	public Tariff obtainRoomTariff(ProjectReservation reservation, String tariffCode) throws ManagerBeanException, ReservationException {
+		Tariff tariff = obtainTariff(tariffCode);
 		if (tariff != null) {
 			return tariff;
 		} else {
@@ -728,14 +737,14 @@ public class ReservationUtils implements IReservationConstants {
 			for (ITransferObject ito : appParamBean.getList(criteria)) {
 				tariff = obtainTariff(((ApplicationParameter)ito).getValue());
 				if (tariff != null) {
-					reservation.setRemarks("TARIFA DESCONOCIDA [" + ratePlan.getRatePlanCode() + "]\n" + reservation.getRemarks());
+					reservation.setRemarks("TARIFA DESCONOCIDA [" + tariffCode + "]\n" + reservation.getRemarks());
 					reservation.setStatus(ReservationStatus.BLOCKED);
 
 					return tariff;
 				}
 			}
 		}
-		throw new ReservationException("Invalid Rate Code: " + ratePlan.getRatePlanCode(), 249);
+		return null;
 	}
 
 	private Tariff obtainTariff(String tariffCode) throws ManagerBeanException {
@@ -825,6 +834,30 @@ public class ReservationUtils implements IReservationConstants {
 	public String getRequestMessageId(ProjectReservation reservation) {
 		String messageId = PLS + "0" + StringUtils.leftPad(""+reservation.getId(), 8, "0") + StringUtils.leftPad(""+(int)Math.floor(Math.random()*100), 2, "0");
 		return messageId;
+	}
+
+	public Seller obtainCrsSeller() throws ManagerBeanException {
+		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), CRS_REGISTRY_ID);
+		for (ITransferObject ito : appParamBean.getList(criteria)) {
+			String crsId = ((ApplicationParameter)ito).getValue();
+			if (StringUtils.isNotEmpty(crsId)) {
+				return (Seller)BeanManager.getManagerBean(Seller.class).get(Integer.parseInt(crsId));
+			}
+		}
+		return null;
+	}
+
+	public String obtainCrsAttachDescription(String actionType) {
+		if (actionType.equals(ADD_RESERVATION)) {
+			return CRS_ATTACH_ADD;
+		} else if (actionType.equals(MODIFY_RESERVATION)) {
+			return CRS_ATTACH_MODIFY;
+		} else if (actionType.equals(CANCEL_RESERVATION)) {
+			return CRS_ATTACH_CANCEL;
+		}
+		return null;
 	}
 
 }

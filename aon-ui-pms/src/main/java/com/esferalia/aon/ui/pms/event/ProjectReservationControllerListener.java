@@ -18,6 +18,7 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
+import com.esferalia.aon.pms.enumeration.ReservationSource;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.ui.pms.controller.ProjectReservationController;
 
@@ -29,7 +30,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		ProjectReservation reservation = (ProjectReservation)controller.getTo();
 		reservation.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
 		reservation.setEndDate(DateUtils.addDays(reservation.getStartDate(), 1));
-		reservation.setCrs(false);
+		reservation.setSource(ReservationSource.MANUAL);
 		reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 		reservation.setStatus(ReservationStatus.ACTIVE);
 

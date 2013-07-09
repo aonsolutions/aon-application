@@ -35,11 +35,14 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
+import com.code.aon.project.ProjectAttachment;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
@@ -50,12 +53,14 @@ import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
+import com.esferalia.aon.pms.enumeration.ReservationSource;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class ReservationManager implements IReservationConstants {
 
 	private ReservationUtils reservationUtils;
 	private IPriceStrategy priceStrategy;
+	private String xmlData;
 	private boolean calculateTaxData;
 	private Map<String, List<Integer>> roomServicesMap;
 	private Map<String, Integer> successMap;
@@ -75,6 +80,7 @@ public class ReservationManager implements IReservationConstants {
 	}
 
 	public String processReservation(String reservationXml) {
+		xmlData = reservationXml;
 		successMap = new HashMap<String, Integer>();
 		try {
 			OTAHotelResNotifRQDocument document = OTAHotelResNotifRQDocument.Factory.parse(reservationXml.replaceAll("&", "&amp;"));
@@ -99,35 +105,47 @@ public class ReservationManager implements IReservationConstants {
 
 	private ProjectReservation processReservation(HotelReservationType reservationType, POSType posType) throws ManagerBeanException, ReservationException {
 		String actionType = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), ACTION, TYPE);
-		if (actionType.equals(ADD_RESERVATION)) {
-			return addReservation(reservationType, posType);
-		} else if (actionType.equals(MODIFY_RESERVATION)) {
-			return modifyReservation(reservationType, posType);
-		} else if (actionType.equals(CANCEL_RESERVATION)) {
-			return cancelReservation(reservationType, posType);
-		}
-		return null;
-	}
-
-	private ProjectReservation addReservation(HotelReservationType reservationType, POSType posType) throws ManagerBeanException, ReservationException {
 		ProjectReservation reservation = obtainReservation(reservationType);
-		if (reservation == null) {
-			reservation = new ProjectReservation();
-			createReservation(reservationType, posType, reservation);
+		boolean attachSaved = createReservationAttach(reservation, actionType);
+
+		if (actionType.equals(ADD_RESERVATION)) {
+			reservation = addReservation(reservationType, posType, reservation);
+		} else if (actionType.equals(MODIFY_RESERVATION)) {
+			reservation = modifyReservation(reservationType, posType, reservation);
+		} else if (actionType.equals(CANCEL_RESERVATION)) {
+			reservation = cancelReservation(reservationType, posType, reservation);
 		}
+
+		if (!attachSaved) {
+			createReservationAttach(reservation, actionType);
+		}
+
 		return reservation;
 	}
 
-	private ProjectReservation modifyReservation(HotelReservationType reservationType, POSType posType) throws ManagerBeanException, ReservationException {
-		ProjectReservation reservation = obtainReservation(reservationType);
+	private ProjectReservation addReservation(HotelReservationType reservationType, POSType posType, ProjectReservation reservation) throws ReservationException {
+		if (reservation == null) {
+			reservation = new ProjectReservation();
+			createReservation(reservationType, posType, reservation);
+			return reservation;
+		} else {
+			return modifyReservation(reservationType, posType, reservation);
+		}
+	}
+
+	private ProjectReservation modifyReservation(HotelReservationType reservationType, POSType posType, ProjectReservation reservation) throws ReservationException {
 		if (reservation != null) {
 			if (reservation.isActive() || reservation.isBlocked() || reservation.isCancelled()) {
-				if (isReservationRoomAssigned(reservation)) {
-					removeReservationRoomDetail(reservation, true);
+				try {
+					if (isReservationRoomAssigned(reservation)) {
+						removeReservationRoomDetail(reservation, true);
+					}
+					removeReservationService(reservation);
+					removeReservationRoom(reservation);
+					removeReservationGuest(reservation);
+				} catch (ManagerBeanException ex) {
+					throw new ReservationException("Unknown error: " + ex.getMessage(), reservation.getCrsCode(), 1);
 				}
-				removeReservationService(reservation);
-				removeReservationRoom(reservation);
-				removeReservationGuest(reservation);
 
 				createReservation(reservationType, posType, reservation);
 				return reservation;
@@ -135,20 +153,23 @@ public class ReservationManager implements IReservationConstants {
 				throw new ReservationException("Reservation already invoiced, can not be modified", reservation.getCrsCode(), 255);
 			}
 		} else {
-			return addReservation(reservationType, posType);
+			return addReservation(reservationType, posType, reservation);
 		}
 	}
 
-	private ProjectReservation cancelReservation(HotelReservationType reservationType, POSType posType) throws ManagerBeanException, ReservationException {
-		ProjectReservation reservation = obtainReservation(reservationType);
+	private ProjectReservation cancelReservation(HotelReservationType reservationType, POSType posType, ProjectReservation reservation) throws ReservationException {
 		if (reservation == null) {
-			reservation = addReservation(reservationType, posType);
+			reservation = addReservation(reservationType, posType, reservation);
 		}
 
 		if (reservation != null) {
 			if (reservation.isActive() || reservation.isBlocked()) {
-				removeReservationRoomDetail(reservation, false);
-				cancelReservation(reservation);
+				try {
+					removeReservationRoomDetail(reservation, false);
+					cancelReservation(reservation);
+				} catch (ManagerBeanException ex) {
+					throw new ReservationException("Unknown error: " + ex.getMessage(), reservation.getCrsCode(), 1);
+				}
 				return reservation;
 			} else if (reservation.isCancelled()) {
 				return reservation;
@@ -215,7 +236,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setOtherTaxQuota(otherTaxQuota);
 			reservation.setTotal(total);
 			reservation.setRemarks(remarks);
-			reservation.setCrs(true);
+			reservation.setSource(ReservationSource.CRS);
 			reservation.setCrsCode(reservationCrsCode);
 			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 			reservation.setStatus(ReservationStatus.ACTIVE);
@@ -247,6 +268,7 @@ public class ReservationManager implements IReservationConstants {
 			String actionType = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), ACTION, TYPE);
 			if (actionType.equals(ADD_RESERVATION)) {
 				try {
+					removeReservationAttach(reservation);
 					removeReservationService(reservation);
 					removeReservationRoom(reservation);
 					removeReservationGuest(reservation);
@@ -263,6 +285,23 @@ public class ReservationManager implements IReservationConstants {
 				throw new ReservationException("Unknown error: " + ex.getMessage(), reservationCrsCode, 1);
 			}
 		}
+	}
+
+	private boolean createReservationAttach(ProjectReservation reservation, String actionType) throws ManagerBeanException {
+		if (reservation != null) {
+			ProjectAttachment projectAttach = new ProjectAttachment();
+			projectAttach.setDomain(getReservationUtils().getDomain());
+			projectAttach.setProject(reservation.getProject());
+			projectAttach.setMimeType(MimeType.MIME_XML);
+			projectAttach.setDescription(getReservationUtils().obtainCrsAttachDescription(actionType));
+			projectAttach.setData(xmlData.getBytes());
+			projectAttach.setSecurityLevel(SecurityLevel.CONFIDENTIAL);
+			projectAttach.setAttachDate(new Date());
+
+			BeanManager.getManagerBean(ProjectAttachment.class).insert(projectAttach);
+			return true;
+		}
+		return false;
 	}
 
 	private void createReservationGuest(HotelReservationType reservationType, ProjectReservation reservation) throws ManagerBeanException {
@@ -309,8 +348,7 @@ public class ReservationManager implements IReservationConstants {
 				reservationGuestBean.insert(reservationGuest);
 				if (reservationGuest.getGuestIndex() == 1) {
 					getReservationUtils().fillProject(reservation);
-					IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
-					reservation = (ProjectReservation)reservationBean.update(reservation);
+					reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 				}
 			}
 		}
@@ -369,9 +407,8 @@ public class ReservationManager implements IReservationConstants {
 			}
 		}
 
-		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 		reservation.setRemarks(reservation.getRemarks() + "NUMERO TOTAL DE PERSONAS: " + totalPax + "\n");
-		reservation = (ProjectReservation)reservationBean.update(reservation);
+		reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 	}
 
 	private void createReservationService(HotelReservationType reservationType, ProjectReservation reservation) throws ManagerBeanException, ReservationException {
@@ -417,8 +454,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setTaxableBase(totalTaxableBase);
 			reservation.setVatQuota(CommonUtil.round(reservation.getTotal() - reservation.getTaxableBase() - reservation.getOtherTaxQuota()));
 		}
-		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
-		reservation = (ProjectReservation)reservationBean.update(reservation);
+		reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 
 		if (reservation.getTaxableBase() != totalTaxableBase) {
 			throw new ReservationException("Reservation Taxable Base does not match the sum of Services Taxable Bases", reservation.getCrsCode(), 197);
@@ -445,8 +481,7 @@ public class ReservationManager implements IReservationConstants {
 			}
 		}
 
-		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
-		return (ProjectReservationService)reservationServiceBean.insert(reservationService);
+		return (ProjectReservationService)BeanManager.getManagerBean(ProjectReservationService.class).insert(reservationService);
 	}
 
 	private ProjectReservationServiceDetail insertReservationServiceDetail(ProjectReservationService reservationService, Date date, double quantity, double price)
@@ -471,8 +506,7 @@ public class ReservationManager implements IReservationConstants {
 		reservationServiceDetail.setPrice(price);
 		reservationServiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(reservationServiceDetail));
 
-		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
-		return (ProjectReservationServiceDetail)reservationServiceDetailBean.insert(reservationServiceDetail);
+		return (ProjectReservationServiceDetail)BeanManager.getManagerBean(ProjectReservationServiceDetail.class).insert(reservationServiceDetail);
 	}
 
 	private ProjectReservation obtainReservation(HotelReservationType reservationType) throws ManagerBeanException {
@@ -480,10 +514,8 @@ public class ReservationManager implements IReservationConstants {
 		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS_CODE), reservationCrsCode);
-		if (reservationBean.getCount(criteria) > 0) {
-			return (ProjectReservation)reservationBean.getList(criteria).get(0);
-		}
-		return null;
+		List<ITransferObject> reservationList = reservationBean.getList(criteria);
+		return (reservationList.size() > 0) ? (ProjectReservation)reservationList.get(0) : null;
 	}
 
 	private boolean isReservationRoomAssigned(ProjectReservation reservation) throws ManagerBeanException {
@@ -492,6 +524,16 @@ public class ReservationManager implements IReservationConstants {
 		String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID);
 		criteria.addEqualExpression(alias, reservation.getId());
 		return (reservationRoomDetailBean.getCount(criteria) > 0);
+	}
+
+	private void removeReservationAttach(ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean projectAttachBean = BeanManager.getManagerBean(ProjectAttachment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(projectAttachBean.getFieldName(IEntityAlias.PROJECT_ATTACHMENT_PROJECT_ID), reservation.getId());
+		for (ITransferObject ito : projectAttachBean.getList(criteria)) {
+			ProjectAttachment projectAttachment = (ProjectAttachment)ito;
+			projectAttachBean.remove(projectAttachment);
+		}
 	}
 
 	private void removeReservationService(ProjectReservation reservation) throws ManagerBeanException {
@@ -528,11 +570,8 @@ public class ReservationManager implements IReservationConstants {
 
 	private void removeReservation(ProjectReservation reservation) throws ManagerBeanException {
 		if (reservation.getId() != null) {
-			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
-			reservationBean.remove(reservation);
-			
-			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
-			projectBean.remove(reservation.getProject());
+			BeanManager.getManagerBean(ProjectReservation.class).remove(reservation);
+			BeanManager.getManagerBean(Project.class).remove(reservation.getProject());
 		}
 	}
 
@@ -558,10 +597,9 @@ public class ReservationManager implements IReservationConstants {
 	}
 
 	private void cancelReservation(ProjectReservation reservation) throws ManagerBeanException {
-		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 		reservation.setStatus(ReservationStatus.CANCELLED);
 		reservation.setModificationDate(new Date());
-		reservationBean.update(reservation);
+		BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 	}
 
 	private String findReservationId(ResGlobalInfoType resGlobalInfoType, String source) {
