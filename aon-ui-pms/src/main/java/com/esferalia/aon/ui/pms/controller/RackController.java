@@ -90,9 +90,9 @@ public class RackController extends BasicController implements IPmsConstants {
 			whereClause += " AND AssetActivity.asset IN (" + roomClause + ") AND AssetActivity.date BETWEEN :start AND :end";
 			
 			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-			String sqlSelect = "SELECT AssetActivity.asset, AssetActivity.date, AssetActivity.status roomStatus, AssetActivity.why, " +
+			String sqlSelect = "SELECT AssetActivity.asset, AssetActivity.date, AssetActivity.status as roomStatus, AssetActivity.why, " +
 								"ProjectReservation.project, ProjectReservation.code, ProjectReservation.start_date, ProjectReservation.end_date, " +
-								"ProjectReservation.status reservationStatus, ProjectReservationGuest.name, ProjectReservationGuest.surname " +
+								"ProjectReservation.status as reservationStatus, ProjectReservationGuest.name, ProjectReservationGuest.surname " +
 								"FROM asset_activity as AssetActivity " +
 								"LEFT JOIN project_reservation_room_detail as ProjectReservationRoomDetail " +
 									"ON ProjectReservationRoomDetail.asset_activity = AssetActivity.id " +
