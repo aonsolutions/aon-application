@@ -144,7 +144,8 @@ public class Mod131Manager extends FiscalModelManager {
 				params.setFromDate(dateFrom);
 				params.setToDate(dateTo);
 				SummaryCollection sc = sp.getSummaryCollection(conn,params,false);
-				c03 = sc.getCreditBalance();
+				//c03 = sc.getCreditBalance();
+				c03 = CommonUtil.round(sc.getOpeningCredit() + sc.getCredit() - sc.getOpeningDebit() - sc.getDebit());
 				mod131.ensureDetail(Mod131Key.C03).addAccumulatedAmount(c03);
 			}
 			
