@@ -1,5 +1,9 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,15 +19,14 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
@@ -75,40 +78,49 @@ public class RackController extends BasicController implements IPmsConstants {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void afterSearch(List<ITransferObject> rackList) throws ManagerBeanException {
 		if (rackList.size() > 0) {
-			String roomClause = "";
-			for (ITransferObject ito : rackList) {
-				Room room = (Room)ito;
-				if (!roomClause.equals("")) {
-					roomClause += ", ";
+			Connection conn = null;
+			PreparedStatement stmt = null;
+			ResultSet rs = null;
+			try {
+				conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+
+				String roomClause = "";
+				for (ITransferObject ito : rackList) {
+					Room room = (Room)ito;
+					if (!roomClause.equals("")) {
+						roomClause += ", ";
+					}
+					roomClause += room.getAsset().getId();
 				}
-				roomClause += room.getAsset().getId();
+				String sqlSelect = "SELECT asset_activity.asset, asset_activity.date, asset_activity.status, asset_activity.why, " +
+					"project_reservation.project, project_reservation.code, project_reservation.start_date, project_reservation.end_date, " +
+					"project_reservation.status, project_reservation_guest.name, project_reservation_guest.surname " +
+					"FROM asset_activity " +
+					"LEFT JOIN project_reservation_room_detail ON project_reservation_room_detail.asset_activity = asset_activity.id " +
+					"LEFT JOIN project_reservation_room ON project_reservation_room.id = project_reservation_room_detail.project_reservation_room " +
+					"LEFT JOIN project_reservation ON project_reservation.project = project_reservation_room.project_reservation " +
+					"LEFT JOIN project_reservation_guest ON project_reservation_guest.project_reservation = project_reservation.project " +
+						"AND project_reservation_guest.guest_index = 1 " +
+					"WHERE" + DomainManager.getSQLWhereClause("asset_activity.domain") +
+					"AND asset_activity.asset IN (" + roomClause + ") " +
+					"AND asset_activity.date BETWEEN ? AND ? " +
+					"ORDER BY asset_activity.asset, asset_activity.date";
+				stmt = conn.prepareStatement(sqlSelect, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+				stmt.setDate(1, new java.sql.Date(getFilterParams().getViewerStartDate().getTime()));
+				stmt.setDate(2, new java.sql.Date(getFilterParams().getViewerEndDate().getTime()));
+				rs = stmt.executeQuery();
+				buildRackActivityMap(rs);
+			} catch (SQLException ex) {
+				throw new ManagerBeanException(ex.getMessage(), ex);
+			} catch (AonConnectionException ex) {
+				throw new ManagerBeanException(ex.getMessage(), ex);
+			} finally {
+				DatabaseUtil.closeQuietly(rs);
+				DatabaseUtil.closeQuietly(stmt);
+				DatabaseUtil.closeQuietly(conn);
 			}
-			String whereClause = "WHERE " + DomainManager.getSQLWhereClause("AssetActivity.domain");
-			whereClause += " AND AssetActivity.asset IN (" + roomClause + ") AND AssetActivity.date BETWEEN :start AND :end";
-			
-			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-			String sqlSelect = "SELECT AssetActivity.asset, AssetActivity.date, AssetActivity.status, AssetActivity.why, " +
-								"ProjectReservation.project, ProjectReservation.code, ProjectReservation.start_date, ProjectReservation.end_date, " +
-								"ProjectReservation.status, ProjectReservationGuest.name, ProjectReservationGuest.surname " +
-								"FROM asset_activity as AssetActivity " +
-								"LEFT JOIN project_reservation_room_detail as ProjectReservationRoomDetail " +
-									"ON ProjectReservationRoomDetail.asset_activity = AssetActivity.id " +
-								"LEFT JOIN project_reservation_room ProjectReservationRoom " +
-									"ON ProjectReservationRoom.id = ProjectReservationRoomDetail.project_reservation_room " +
-								"LEFT JOIN project_reservation as ProjectReservation " +
-									"ON ProjectReservation.project = ProjectReservationRoom.project_reservation " +
-								"LEFT JOIN project_reservation_guest as ProjectReservationGuest " +
-									"ON ProjectReservationGuest.project_reservation = ProjectReservationRoom.project_reservation " +
-									"AND ProjectReservationGuest.guest_index = 1 " +
-								whereClause +
-								" ORDER BY AssetActivity.asset, AssetActivity.date";
-			Query sqlQuery = session.createSQLQuery(sqlSelect);
-			sqlQuery.setDate("start", getFilterParams().getViewerStartDate());
-			sqlQuery.setDate("end", getFilterParams().getViewerEndDate());
-			buildRackActivityMap(sqlQuery.list());
 		}
 	}
 
@@ -133,32 +145,32 @@ public class RackController extends BasicController implements IPmsConstants {
 		return rackDays;
 	}
 
-	public void buildRackActivityMap(List<Object[]> assetReservationList) throws ManagerBeanException {
+	public void buildRackActivityMap(ResultSet rs) throws SQLException {
 		rackActivityMap = new HashMap<Integer, List<RackTo>>();
 		List<Date> rackDayList = getRackDayList();
 		List<RackTo> rackActivityList = new LinkedList<RackTo>();
 
 		Integer lastRoomId = null;
-		for (Object[] assetReservationObj : assetReservationList) {
-			Integer roomId = (Integer)assetReservationObj[0];
+		while (rs.next()) {
+			Integer roomId = rs.getInt(1);
 			if (lastRoomId == null || lastRoomId.intValue() != roomId.intValue()) {
 				rackActivityList = initializeRackActivityList(rackDayList.size());
 				lastRoomId = roomId;
 			}
-			
+
 			RackTo rackTo = new RackTo();
 			rackTo.setRoomId(roomId);
-			rackTo.setRoomDate((Date)assetReservationObj[1]);
-			rackTo.setRoomStatus(ActivityStatus.values()[(Byte)assetReservationObj[2]]);
-			rackTo.setRoomComments((String)assetReservationObj[3]);
-			if (assetReservationObj[4] != null) {
-				rackTo.setReservationId((Integer)assetReservationObj[4]);
-				rackTo.setReservationCode((String)assetReservationObj[5]);
-				rackTo.setReservationStart((Date)assetReservationObj[6]);
-				rackTo.setReservationEnd((Date)assetReservationObj[7]);
-				rackTo.setReservationStatus(ReservationStatus.values()[(Byte)assetReservationObj[8]]);
-				String guest = StringUtils.isEmpty((String)assetReservationObj[9]) ? "" : (String)assetReservationObj[9] + " ";
-				guest += StringUtils.isEmpty((String)assetReservationObj[10]) ? "" : (String)assetReservationObj[10];
+			rackTo.setRoomDate(rs.getDate(2));
+			rackTo.setRoomStatus(ActivityStatus.values()[rs.getByte(3)]);
+			rackTo.setRoomComments(rs.getString(4));
+			if (rs.getObject(5) != null) {
+				rackTo.setReservationId(rs.getInt(5));
+				rackTo.setReservationCode(rs.getString(6));
+				rackTo.setReservationStart(rs.getDate(7));
+				rackTo.setReservationEnd(rs.getDate(8));
+				rackTo.setReservationStatus(ReservationStatus.values()[rs.getByte(9)]);
+				String guest = StringUtils.isEmpty(rs.getString(10)) ? "" : rs.getString(10) + " ";
+				guest += StringUtils.isEmpty(rs.getString(11)) ? "" : rs.getString(11);
 				rackTo.setReservationGuest(guest);
 			}
 
