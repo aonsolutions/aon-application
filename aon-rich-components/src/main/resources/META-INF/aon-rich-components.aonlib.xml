@@ -81,12 +81,14 @@
 	<component localName="commandButton">
     	<attribute name="styleClass" value="aon-commandButton" />
     	<attribute name="reRender" value="aonContent" />			
+    	<attribute name="eventsQueue" value="aonCommandQueue" />
 	</component>
 
 	<component localName="commandLink">
     	<attribute name="styleClass" value="aon-commandLink" />
     	<attribute name="disabledStyleClass" value="aon-commandLink-disabled" />			
     	<attribute name="reRender" value="aonContent" />
+    	<attribute name="eventsQueue" value="aonCommandQueue" />
 	</component>
 	
 	<component localName="panelTabSet">

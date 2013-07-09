@@ -41,7 +41,7 @@ public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 	
 	private static final String ON_SUBMIT_VALUE = "if (isRowSelectorDisabled()){return true}";
 	
-	private static final String ROW_SELECTOR_QUEUE = "rowSelectorQueue";
+	private static final String ROW_SELECTOR_QUEUE = "aonRowSelectorQueue";
 	
 	private ComponentConfig config;
 	
