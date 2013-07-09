@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.20.1
+# Version: 7.21.0
 # Created by: girazu
-# Creation Date: 26/06/2013 11:30
+# Creation Date: 05/07/2013 11:45
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -5769,6 +5769,7 @@ CREATE TABLE `project_attach` (
   `mimeType` tinyint(2) DEFAULT '0' COMMENT 'Mime Type del Archivo Adjunto',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del Archivo Adjunto',
   `data` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `security_level` tinyint(2) DEFAULT '0' COMMENT 'Nivel de seguridad del Archivo Adjunto',
   `attach_date` date DEFAULT NULL COMMENT 'Fecha del Archivo Adjunto',
   PRIMARY KEY (`id`),
   KEY `IDX_PROJECT_ATTACH_DOMAIN` (`domain`),
@@ -5806,7 +5807,7 @@ CREATE TABLE `project_reservation` (
   `total` double(15,2) DEFAULT '0.00' COMMENT 'Importe Total',
   `comments` text COLLATE latin1_spanish_ci COMMENT 'Comentarios',
   `remarks` text COLLATE latin1_spanish_ci COMMENT 'Observaciones',
-  `crs` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si el origen de la Reserva es un CRS',
+  `source` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Origen de la Reserva',
   `crs_code` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo de la Reserva en el CRS',
   `advance` double(15,2) NOT NULL DEFAULT '0.00' COMMENT 'Anticipo',
   `advance_invoiced` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si el anticipo esta Facturado',
@@ -7163,7 +7164,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.20.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.21.0');
 
 COMMIT;
 
