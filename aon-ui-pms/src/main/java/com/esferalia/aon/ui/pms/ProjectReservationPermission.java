@@ -206,7 +206,7 @@ public class ProjectReservationPermission {
 
 	public boolean isReservationCodeEditable() throws ManagerBeanException {
 		Date now = new Date();
-		boolean roleAllowed = isRoleAdmin() || (isRoleCommercial() && !isAfterCheckOut(now));
+		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleFinance() && isAfterCheckOut(now));
 		return roleAllowed && reservation.isActive();
 	}
 
