@@ -378,7 +378,7 @@ public class PmsReportManager {
 	
 	public String getRoomBookingCheckInSQL(Hotel hotel, Customer agency, Item item) throws ManagerBeanException{
 		String select = " " +
-				"(SELECT W.description As Nombre, PR.start_date  As Fecha, Count(PRR.id) As Cantidad," +
+				"(SELECT W.description As Nombre, PR.start_date  As Fecha, Count(distinct PRR.id) As Cantidad," +
 				" sum(PRR.adults)+sum(PRR.children) As Pax, PR.project" +
 				" FROM project_reservation_room as PRR" +
 				" LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id" +
@@ -411,13 +411,12 @@ public class PmsReportManager {
 				" AND AA.date between :start AND :end" +
 				" AND R.Hotel NOT IN (SELECT distinct R2.hotel " +
 				"               FROM room AS R2, asset_activity AS AA2, project_reservation_room_detail AS PRRD2 " +
-				"				,project_reservation_room AS PRR2, project_reservation AS PR2 " +
-				"               WHERE PR2.project=PR.project " +
-				"				AND PRR2.project_reservation=PRR.project_reservation " +
+				"				,project_reservation_room AS PRR2 " +
+				"               WHERE PRR2.project_reservation=PR.project " +
 				"               AND PRRD2.project_reservation_room=PRRD.project_reservation_room " +
 				"				AND PRRD2.asset_activity=AA2.id " +
 				"               AND AA2.date = date(AA.date + INTERVAL -1 DAY) " + 
-				"               AND AA2.asset=R.asset ) " +
+				"               AND AA2.asset=R2.asset ) " +
 				" GROUP BY 1,AA.date)" +
 				" ORDER BY 1,2"
 				;
@@ -459,13 +458,12 @@ public class PmsReportManager {
 				" AND AA.date between (date(:start) + INTERVAL -1 DAY) AND (date(:end) + INTERVAL -1 DAY)" +
 				" AND R.Hotel NOT IN (SELECT R2.hotel" +
 				"               FROM room AS R2, asset_activity AS AA2, project_reservation_room_detail AS PRRD2" +
-				"				,project_reservation_room AS PRR2, project_reservation AS PR2 " +
-				"               WHERE PR2.project=PR.project " +
-				"				AND PRR2.project_reservation=PRR.project_reservation " +
+				"				,project_reservation_room AS PRR2 " +
+				"               WHERE PRR2.project_reservation=PR.project " +
 				"               AND PRRD2.project_reservation_room=PRRD.project_reservation_room " +
 				"				AND PRRD2.asset_activity=AA2.id " +
 				"               AND AA2.date = date(AA.date + INTERVAL 1 DAY)" +   
-				"               AND AA2.asset=R.asset )" +
+				"               AND AA2.asset=R2.asset )" +
 				" GROUP BY 1,AA.date)" +
 				" ORDER BY 1,2"
 				;
