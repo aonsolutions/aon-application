@@ -74,6 +74,14 @@
 									value="#{true}" />
 							</aon:menuItem>
 						</c:if>
+						<aon:menuItem id="purchaseShipment"
+							value="#{carrierBundle.carrier_shipment}"
+							rendered="#{!purchase.new and purchase.pending}"
+							iconClass="aon-icon-rename"
+							reRender="showShipmentWindow">
+							<f:setPropertyActionListener target="#{purchase.showShipmentWindow}"
+								value="#{true}" />
+						</aon:menuItem>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -378,7 +386,7 @@
 				</aon:div>
 				
 				<c:if test="#{!purchase.new}">
-					<aon:panelTabSet>
+					<aon:panelTabSet id="purchasePanelTab">
 						<aon:panelTab label="#{purchaseBundle.purchase_detail}">
 							<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formDetail.xhtml">
 								<c:if test="#{!aonConfiguration.bean.purchase.showTasData}">
@@ -389,9 +397,12 @@
 								</c:if>
 							</ui:include>
 						</aon:panelTab>
-						<aon:panelTab label="#{carrierBundle.carrier_shipment}">
-							<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formShipment.xhtml" />
-						</aon:panelTab>
+						<c:if test="#{purchase.shippingDataDefined}">
+							<aon:panelTab id="purchaseShipmentTab" 
+								label="#{carrierBundle.carrier_shipment}">
+								<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formShipment.xhtml" />
+							</aon:panelTab>
+						</c:if>
 					</aon:panelTabSet>
 				</c:if>
 				
@@ -404,6 +415,7 @@
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalIncome.xhtml" />
 		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalInvoice.xhtml" />
+		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalShipment.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" >
 			<ui:param name="messageSuffix" value="-Purchase" />
 			<ui:param name="sendButtonReRender" value="showNewMessageWindow#{messageSuffix},purchaseStatusDiv" />

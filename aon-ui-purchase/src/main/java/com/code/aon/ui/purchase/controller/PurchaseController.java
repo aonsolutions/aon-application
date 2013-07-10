@@ -81,8 +81,10 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	private boolean showInvoiceWindow;
 	private String invoiceRefCode;
 	private Date invoiceDate;
+	private Double purchasesTotalAmount;
 	private PurchaseEmailUtil emailUtil;
 	private boolean shippingAlternativeAddress;
+	private boolean showShipmentWindow;
 	
 	private List<String> moreRecipients;
 	
@@ -96,6 +98,14 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		this.shippingAlternativeAddress = shippingAlternativeAddress;
 	}
 	
+	public boolean isShowShipmentWindow() {
+		return showShipmentWindow;
+	}
+
+	public void setShowShipmentWindow(boolean showShipmentWindow) {
+		this.showShipmentWindow = showShipmentWindow;
+	}
+
 	public List<IEmailControllerListener> getEmailControllerListenerClasses() {
 		return emailControllerListenerClasses;
 	}
@@ -226,15 +236,29 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		this.invoiceDate = invoiceDate;
 	}
 	
-	public Double getPurchasesTotalAmount() throws ManagerBeanException {
-		double purchasesTotalAmount = 0.0; 
-		for(ITransferObject to: this.getWrappedList()){
-			Purchase p = (Purchase) to;
-			purchasesTotalAmount += getPurchaseTotalPrice(p);
-		}
+	public Double getPurchasesTotalAmount() {
 		return purchasesTotalAmount;
 	}
 
+	public void setPurchasesTotalAmount(Double purchasesTotalAmount) {
+		this.purchasesTotalAmount = purchasesTotalAmount;
+	}
+	
+	public void getSelectionTotalAmount(ActionEvent event) {
+		try {	
+			IManagerBean purchaseBean = BeanManager.getManagerBean(Purchase.class);
+			List<ITransferObject> list = purchaseBean.getList(getCriteria());
+			purchasesTotalAmount = 0.0;
+			for(ITransferObject to: list){
+				purchasesTotalAmount += getPurchaseTotalPrice((Purchase) to);
+			}
+		} catch (ManagerBeanException e) {
+			String message = "Imposible obtener el total";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		}		
+	}
+	
 	public boolean isInIncome() throws ManagerBeanException {
 		Purchase purchase = (Purchase)this.getTo();
 		return isInIncome(purchase);
@@ -562,6 +586,18 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(PURCHASE_INVOICE_CONTROLLER_NAME);
 			invoiceController.onLoad(event, invoice.getId(), PURCHASE_FORM_NAME, PURCHASE_CONTROLLER_NAME + ".refresh");
 		}
+	}
+	
+	public boolean isShippingDataDefined() {
+		Purchase purchase = (Purchase) this.getTo();
+		if(purchase!=null){
+			if( StringUtils.isNotBlank(purchase.getShippingContact())
+					|| purchase.getShippingPeriod()!=null
+					|| isShippingAlternativeAddressDefined() ){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public boolean isShippingAlternativeAddressDefined() {

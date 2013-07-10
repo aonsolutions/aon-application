@@ -24,6 +24,12 @@ import com.esferalia.aon.carrier.Carrier;
 public class PurchaseControllerListener extends ControllerAdapter implements IPurchaseConstants {
 
 	@Override
+	public void afterModelInitialized(ControllerEvent event)throws ControllerListenerException {
+		PurchaseController controller = (PurchaseController) event.getController();
+		controller.setPurchasesTotalAmount(null);
+	}
+	
+	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		CompanyCollectionsController companyColls = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		PurchaseController controller = (PurchaseController)event.getController();

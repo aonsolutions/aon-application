@@ -28,16 +28,79 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.carrier.Carrier;
+import com.esferalia.aon.carrier.enumeration.ShipmentPeriod;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseUtils {
 	
 	private Supplier companySupplier;
 
-	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace, Department department, PurchaseDocumentType documentType, String comments) throws ManagerBeanException {
-		return createPurchase(supplier, workPlace, department, documentType, comments, null); 
+	/**
+	 * Creates a purchase with basic data
+	 * @param supplier
+	 * @param workPlace
+	 * @param department
+	 * @param documentType
+	 * @param comments
+	 * @return
+	 * @throws ManagerBeanException
+	 */
+	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace,
+			Department department, PurchaseDocumentType documentType,
+			String comments) throws ManagerBeanException {
+		return createPurchase(supplier, workPlace, department, documentType,
+				comments, null);
 	}
-	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace, Department department, PurchaseDocumentType documentType, String comments, String remarks) throws ManagerBeanException {
+	
+	/**
+	 * Creates a purchase with basic data and remarks
+	 * @param supplier
+	 * @param workPlace
+	 * @param department
+	 * @param documentType
+	 * @param comments
+	 * @param remarks
+	 * @return
+	 * @throws ManagerBeanException
+	 */
+	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace,
+			Department department, PurchaseDocumentType documentType,
+			String comments, String remarks) throws ManagerBeanException {
+		return createPurchase(supplier, workPlace, department, documentType,
+				comments, remarks, null, null, null, null, null, null, null, null,
+				null);
+	}
+
+	/**
+	 * Creates a purchase with all possible data (basic data, remarks and shipping data)
+	 * @param supplier
+	 * @param workPlace
+	 * @param department
+	 * @param documentType
+	 * @param comments
+	 * @param remarks
+	 * @param carrier
+	 * @param shippingAlternativeAddress
+	 * @param shippingAlternativeAddress2
+	 * @param shippingAlternativeZip
+	 * @param shippingAlternativeCity
+	 * @param shippingAlternativePhone
+	 * @param shippingAlternativeRecipient
+	 * @param shippingContact
+	 * @param shippingPeriod
+	 * @return
+	 * @throws ManagerBeanException
+	 */
+	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace,
+			Department department, PurchaseDocumentType documentType,
+			String comments, String remarks, Carrier carrier,
+			String shippingAlternativeAddress,
+			String shippingAlternativeAddress2, String shippingAlternativeZip,
+			String shippingAlternativeCity, String shippingAlternativePhone,
+			String shippingAlternativeRecipient, String shippingContact,
+			ShipmentPeriod shippingPeriod) throws ManagerBeanException {
+
 		IManagerBean bean = BeanManager.getManagerBean(Purchase.class);
 		Purchase pur = new Purchase();
 		pur.setNumberOfPayments(1);
@@ -57,6 +120,18 @@ public class PurchaseUtils {
 		pur.setScope(supplier.getScope());
 	    pur.setComments(comments);
 		pur.setRemarks(remarks);
+		
+		// shipment data
+		pur.setCarrier(carrier);
+		pur.setShippingAlternativeAddress(shippingAlternativeAddress);
+		pur.setShippingAlternativeAddress2(shippingAlternativeAddress2);
+		pur.setShippingAlternativeZip(shippingAlternativeZip);
+		pur.setShippingAlternativeCity(shippingAlternativeCity);
+		pur.setShippingAlternativePhone(shippingAlternativePhone);
+		pur.setShippingAlternativeRecipient(shippingAlternativeRecipient);
+		pur.setShippingContact(shippingContact);
+		pur.setShippingPeriod(shippingPeriod);
+		
 		return (Purchase) bean.insert(pur);
 	}
 	public void insertPurchaseDetail(Purchase pur, ProposalDetail proposalDetail) throws ManagerBeanException {
@@ -93,7 +168,8 @@ public class PurchaseUtils {
 	private int obtainSeriesMaxNumber(String seriesId) throws ManagerBeanException {
 		return SeriesNumberUtil.obtainNumber(seriesId, "Purchase", null);
 	}
-	private	Integer calculateNextLine(Purchase purchase) throws ManagerBeanException {
+	
+	public Integer calculateNextLine(Purchase purchase) throws ManagerBeanException {
 		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());

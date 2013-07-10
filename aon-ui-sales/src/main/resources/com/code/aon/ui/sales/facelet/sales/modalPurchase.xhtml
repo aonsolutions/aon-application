@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showPurchaseWindow">
+		<c:if test="#{sales.showPurchaseWindow}">
+			<rich:modalPanel id="purchaseModalPanel" minHeight="500"
+				minWidth="850" rendered="#{sales.showPurchaseWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{salesBundle.sales_purchase_window_title}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showPurchaseWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{sales.showPurchaseWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="purchaseGeneratorForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+								
+								
+									<h:panelGrid columns="2" cellspacing="0" cellpadding="0"
+										columnClasses="aon-finding-subtitle, aon-finding-toolbar">
+							
+										<aon:div styleClass="aon-finding-subtitle-internal">
+											<aon:outputText value="#{!sales.purchaseGenerator.generated?bundle.aon_reset:salesBundle.sales_to_purchase}" />			
+										</aon:div>
+										
+										<aon:div styleClass="aon-finding-toolbar-item-group">
+											<aon:commandButton id="purchase-accept"
+												rendered="#{!sales.purchaseGenerator.generated}"			
+												value="#{salesBundle.sales_purchase_generate}"
+												actionListener="#{sales.purchaseGenerator.onExecute}"
+												styleClass="aon-finding-toolbar-item aon-icon-accept">
+										
+											</aon:commandButton>
+											<aon:commandButton id="purchase-cancel"
+												rendered="#{!sales.purchaseGenerator.generated}"			
+												value="#{bundle.aon_cancel}"
+												reRender="showPurchaseWindow"
+												immediate="true"
+												styleClass="aon-finding-toolbar-item aon-icon-cancel">
+												<f:setPropertyActionListener
+													target="#{sales.showPurchaseWindow}"
+													value="#{false}" />
+											</aon:commandButton>
+										</aon:div>
+									</h:panelGrid>
+								
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area">
+
+									<c:if test="#{!sales.purchaseGenerator.generated}">
+									<aon:panel>
+										<aon:selectBooleanCheckbox id="Purchase_customer_address"
+											value="#{sales.purchaseGenerator.customerShippingAddress}" />
+										<aon:outputLabel for="Purchase_customer_address"
+											styleClass="aon-italic aon-margin-right aon-bold"
+											value="#{salesBundle.sales_purchase_send_to_customer}" />
+									</aon:panel>
+									
+										<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+											<ui:param name="dataTableId" value="salesDetails" />
+											<ui:param name="controller" value="#{sales.purchaseGenerator}" />
+											<ui:param name="rows" value="0" />
+											<ui:param name="showNote" value="false" />
+											<ui:param name="showDataScroller" value="false" />
+											<ui:param name="skipResetButton" value="#{true}" />
+											<ui:param name="skipRemoveButton" value="#{true}" />
+										
+											<ui:define name="beginFormListContent">
+												<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
+													styleClass="aon-icon-exception"
+													rendered="#{to.supplier.id==null and formList}" />
+											</ui:define>
+											
+											<ui:define name="columns">
+										
+												<aon:column styleClass="aon-editDataTable-numberColumn aon-width-40">
+													<f:facet name="header">
+														<aon:outputLabel value="#{salesBundle.sales_detail_line}" />
+													</f:facet>
+													<aon:outputText value="#{to.detail.line}" />
+												</aon:column>
+										
+												<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+													<f:facet name="header">
+														<aon:outputLabel value="#{productBundle.product_item}" />
+													</f:facet>
+													<aon:outputText value="#{to.detail.description}">
+														<aon:abbreviateConverter maxWidth="64" />
+													</aon:outputText>
+												</aon:column>
+										
+												<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+													<f:facet name="header">
+														<aon:outputLabel for="Supplier_id" value="#{supplierBundle.supplier_supplier}" />
+													</f:facet>
+	
+													<aon:outputText value="#{to.supplier.registry.name}" rendered="#{formList}" />
+													
+													<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+														<ui:param name="lookupTo" value="#{controller.to.supplier}" />
+														<ui:param name="lookupInputSuggestValue" value="#{lookupTo.registry.name}" />
+														<ui:param name="skipLabel" value="#{true}" />
+														<ui:param name="idRequired" value="#{true}" />						
+														<ui:param name="lookupInputTextWidth" value="100" />						
+														<ui:param name="lookupRendered" value="#{formEdit}" />						
+													</ui:include>
+												</aon:column>
+									
+											</ui:define>
+										</ui:decorate>
+									</c:if>
+									
+									<c:if test="#{sales.purchaseGenerator.generated}">
+										<aon:dataTable id="purchasesList" value="#{sales.purchaseGenerator.model}" var="to">
+
+											<aon:rowSelector id="purchasesList-select" toggleOnClick="#{false}" />
+										
+											<aon:column styleClass="aon-editDataTable-textColumn">
+												<f:facet name="header">
+													<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+												</f:facet>
+												<aon:outputText value="#{to.referenceCode}" />
+											</aon:column>
+											
+											<aon:column styleClass="aon-editDataTable-textColumn">
+												<f:facet name="header">
+													<h:outputText value="#{supplierBundle.supplier_supplier}" />
+												</f:facet>
+												<aon:outputText value="#{to.supplier.registry.fullName}">
+													<aon:abbreviateConverter maxWidth="50" />
+												</aon:outputText>
+											</aon:column>
+										
+											<aon:column styleClass="aon-editDataTable-textColumn">
+												<f:facet name="header">
+													<h:outputText value="#{bundle.aon_company_document}" />
+												</f:facet>
+												<aon:outputText value="#{to.supplier.registry.document}" />
+											</aon:column>
+
+											<aon:column styleClass="aon-editDataTable-iconColumn">
+												<f:facet name="header">
+													<h:outputText value="&#160;" />
+												</f:facet>
+												<aon:outputText value="&#160;" />
+												
+												<aon:commandLink id="purchaseDetailProposalLink" immediate="true"
+													styleClass="aon-button-goto"
+													style="padding-right: 20px;" 
+													value="&#160;" title="#{bundle.aon_go}"
+													actionListener="#{sales.purchaseGenerator.onLoadPurchase}"
+													action="purchase_form"
+													reRender="aonContent" />
+												
+											</aon:column>
+										</aon:dataTable>
+																				
+									</c:if>
+									
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+				<aon:lookupButtonPopup lookup="#{supplierLookup}" />
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

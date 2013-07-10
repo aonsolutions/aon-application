@@ -8,13 +8,11 @@ import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.ProposalDetailStatus;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.purchase.controller.PurchaseDetailController;
-import com.esferalia.aon.entity.IEntityAlias;
+import com.code.aon.ui.purchase.util.PurchaseUtils;
 
 public class PurchaseDetailControllerListener extends ControllerAdapter {
 
@@ -40,8 +38,9 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 
 		controller.setLongDescription(false);
 		try {
+			PurchaseUtils utils = new PurchaseUtils();
 			purchaseDetail.setProject((purchase.getProject() != null && purchase.getProject().getId() != null) ? purchase.getProject() : null);
-			purchaseDetail.setLine(calculateNextLine((Purchase)controller.getMasterController().getTo()));
+			purchaseDetail.setLine(utils.calculateNextLine((Purchase)controller.getMasterController().getTo()));
 			purchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -59,15 +58,6 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 		PurchaseDetail purchaseDetail = (PurchaseDetail)controller.getTo();
 
 		controller.setLongDescription((purchaseDetail.getDescription().length() > 64) ? true : false);
-	}
-
-	private	Integer calculateNextLine(Purchase purchase) throws ManagerBeanException {
-		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
-		Projection projection = Projection.max(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_LINE));
-		Object value = purchaseDetailBean.getUniqueResult(projection, criteria);
-		return (value != null) ? ((Integer)value) + 1 : 1;
 	}
 	
 	private void updateProposalDetail(ProposalDetail proposalDetail) throws ManagerBeanException {

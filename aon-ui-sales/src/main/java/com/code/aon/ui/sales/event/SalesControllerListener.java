@@ -24,6 +24,12 @@ import com.esferalia.aon.carrier.Carrier;
 public class SalesControllerListener extends ControllerAdapter implements ISalesConstants {
 
 	@Override
+	public void afterModelInitialized(ControllerEvent event)throws ControllerListenerException {
+		SalesController controller = (SalesController) event.getController();
+		controller.setSalesTotalAmount(null);
+	}
+	
+	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		SalesController controller = (SalesController)event.getController();
@@ -67,6 +73,9 @@ public class SalesControllerListener extends ControllerAdapter implements ISales
 				((Sales)controller.getTo()).setCarrier((Carrier) BeanManager.getManagerBean(Carrier.class).createNewTo());
 			}
 			controller.setShippingAlternativeAddress(controller.isShippingAlternativeAddressDefined());
+			
+			controller.setShowPurchaseWindow(false);
+			controller.setPurchaseGenerator(null);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}

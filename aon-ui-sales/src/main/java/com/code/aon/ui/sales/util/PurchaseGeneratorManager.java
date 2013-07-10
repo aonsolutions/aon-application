@@ -1,0 +1,373 @@
+package com.code.aon.ui.sales.util;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.finance.Finance;
+import com.code.aon.product.ItemSupplier;
+import com.code.aon.purchase.Purchase;
+import com.code.aon.purchase.PurchaseDetail;
+import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
+import com.code.aon.purchase.enumeration.PurchaseDocumentType;
+import com.code.aon.purchase.enumeration.PurchaseStatus;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.registry.RegistryAddress;
+import com.code.aon.sales.Sales;
+import com.code.aon.sales.SalesDetail;
+import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
+
+/**
+ * This creates the necessary purchase orders resulting from sales order
+ * 
+ * @author Esferalia
+ *
+ */
+public class PurchaseGeneratorManager {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseGeneratorManager.class.getName());
+	
+	private boolean customerShippingAddress;
+	private List<TempPurchaseDetail> tempPurchaseDetail;
+	private DataModel model;
+	private boolean generated;
+	private TempPurchaseDetail to;
+	
+	public boolean isNew() {
+		return false;
+	}
+	
+	public boolean isGenerated() {
+		return generated;
+	}
+
+	public void setGenerated(boolean generated) {
+		this.generated = generated;
+	}
+
+	public TempPurchaseDetail getTo() {
+		return to;
+	}
+	public void setTo(TempPurchaseDetail to) {
+		this.to = to;
+	}
+
+	public void onSelect(ActionEvent event) {
+		if ( this.model.isRowAvailable() ) {
+			setTo((TempPurchaseDetail) this.model.getRowData());
+		}
+	}
+	
+	public void onAccept(ActionEvent event) {
+		this.to = null;
+	}
+
+	public void onCancel(ActionEvent event) {
+		this.to.setSupplier(obtainPreferedSupplier(this.to.getDetail()));
+		this.to = null;
+	}
+
+	public PurchaseGeneratorManager(Sales sales) {
+		try {
+			buildTempList(obtainSalesDetail(sales));
+			setModel(new ListDataModel(getTempPurchaseDetail()));
+			setGenerated(false);
+		} catch (ManagerBeanException e) {
+			String msg = "No se ha podido obtener el detalle del pedido.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+	}
+
+	public boolean isCustomerShippingAddress() {
+		return customerShippingAddress;
+	}
+
+	public void setCustomerShippingAddress(boolean customerShippingAddress) {
+		this.customerShippingAddress = customerShippingAddress;
+	}
+	
+	private List<ITransferObject> obtainSalesDetail(Sales sales) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(SalesDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
+		return bean.getList(criteria);
+	}
+	
+	public DataModel getModel() {
+		return model;
+	}
+
+	public void setModel(DataModel model) {
+		this.model = model;
+	}
+
+	public List<TempPurchaseDetail> getTempPurchaseDetail() {
+		return tempPurchaseDetail;
+	}
+
+	public void setTempPurchaseDetail(List<TempPurchaseDetail> tempPurchaseDetail) {
+		this.tempPurchaseDetail = tempPurchaseDetail;
+	}
+
+	/**
+	 * Build the list, searching the corresponding supplier defined in item_supplier for each sales detail line
+	 * 
+	 * @param salesDetailList
+	 */
+	private void buildTempList(List<ITransferObject> salesDetailList) {
+		setTempPurchaseDetail(new LinkedList<PurchaseGeneratorManager.TempPurchaseDetail>());
+		for(ITransferObject to: salesDetailList){
+			SalesDetail detail = (SalesDetail) to;
+			Supplier supplier = obtainPreferedSupplier(detail);
+			TempPurchaseDetail temp = new TempPurchaseDetail();
+			temp.setDetail(detail);
+			temp.setSupplier(supplier);
+			getTempPurchaseDetail().add(temp);
+		}
+	}
+
+	private Supplier obtainPreferedSupplier(SalesDetail detail) {
+		Supplier supplier = null;
+		try {
+			supplier = (Supplier) BeanManager.getManagerBean(Supplier.class).createNewTo();
+			IManagerBean bean = BeanManager.getManagerBean(ItemSupplier.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), detail.getItem().getId());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
+			
+			for (ITransferObject ito : bean.getList(criteria)) {
+				ItemSupplier is = (ItemSupplier) ito;
+				if(is.getWorkPlace()==null || is.getWorkPlace().getId().equals(detail.getSales().getWorkPlace().getId())){
+					supplier = is.getSupplier();
+				}
+			}
+			return supplier!=null?supplier:(Supplier) BeanManager.getManagerBean(Supplier.class).createNewTo();
+		} catch (ManagerBeanException e) {
+			String msg = "No se ha podido obtener el proveedor definido para el producto " + detail.getDescription() + " (linea " + detail.getLine() +")";
+			AonUtil.addErrorMessage(msg);
+		}
+		return null;
+	}
+	
+	public void onLoadPurchase(ActionEvent event) throws ManagerBeanException {
+		Purchase purchase = (Purchase)this.getModel().getRowData();
+		BasicController controller = (BasicController)AonUtil.getRegisteredBean("purchase");
+		controller.onLoad(event, purchase.getId(), "sales_form", null);
+	}
+	
+	public void onExecute(ActionEvent event){
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName(Finance.class.getName());
+		
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
+
+			beforePurchasesCreate();
+			
+			List<Purchase> purchaseList = new LinkedList<Purchase>();
+			Purchase purchase = null;
+			for(TempPurchaseDetail temp: getTempPurchaseDetail()){
+				if(purchase==null || !purchase.getSupplier().equals(temp.getSupplier())){
+					purchase = createPurchase(temp.getDetail().getSales(), temp.getSupplier());
+					purchaseList.add(purchase);
+				}
+				createPurchaseDetails(purchase, temp.getDetail());
+			}
+			
+			HibernateUtil.commitTransaction(sessionName);
+			setGenerated(true);
+			setModel(new ListDataModel(purchaseList));
+		} catch (Exception e) {
+			String msg = "Error al crear los pedidos de compra. ";
+			AonUtil.addErrorMessage(msg  + e.getMessage());
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+	
+	private void beforePurchasesCreate() {
+		for(TempPurchaseDetail temp: getTempPurchaseDetail()){
+			if(temp.getSupplier()==null || temp.getSupplier().getId()==null){
+				throw new AbortProcessingException("El proveedor es obligatorio.");
+			}
+		}
+		Collections.sort(getTempPurchaseDetail(), new TempPurchaseDetailComparator());
+	}
+
+	private Purchase createPurchase(Sales sales, Supplier supplier) throws ManagerBeanException {
+			
+		Purchase purchase = new Purchase();
+		
+		purchase.setRegistryAddress(supplier.getRegistry().getDefaultAddress());
+		purchase.setScope(sales.getScope());
+		purchase.setProject(sales.getProject());
+		purchase.setSupplier(supplier);
+		purchase.setWorkPlace(sales.getWorkPlace());
+		purchase.setSeries(sales.getSeries());
+		purchase.setNumber(obtainSeriesMaxNumber(sales.getSeries()));
+		purchase.setDiscountExpression(sales.getDiscountExpression());
+		purchase.setIssueDate(new Date());
+		purchase.setDocumentType(PurchaseDocumentType.NORMAL);
+		purchase.setSecurityLevel(sales.getSecurityLevel());
+		purchase.setStatus(PurchaseStatus.PENDING);
+		purchase.setComments(null);
+		purchase.setRemarks(null);
+		purchase.setEmailCommunication(false);
+		purchase.setConfidential(sales.isConfidential());
+		
+		purchase.setBank(null);
+		purchase.setPayMethod(null);
+		purchase.setNumberOfPayments(1);
+		purchase.setDaysToFirstPayment(0);
+		purchase.setDaysBetweenPayments(0);
+		purchase.setPaymentDays("");
+		purchase.setBankAccount(null);
+
+		if(isCustomerShippingAddress()){
+			if(isShippingDataDefined(sales)){
+				purchase.setCarrier(sales.getCarrier());
+				purchase.setShippingAlternativeAddress(sales.getShippingAlternativeAddress());
+				purchase.setShippingAlternativeAddress2(sales.getShippingAlternativeAddress2());
+				purchase.setShippingAlternativeZip(sales.getShippingAlternativeZip());
+				purchase.setShippingAlternativeCity(sales.getShippingAlternativeCity());
+				purchase.setShippingAlternativePhone(sales.getShippingAlternativePhone());
+				purchase.setShippingAlternativeRecipient(sales.getShippingAlternativeRecipient());
+				purchase.setShippingContact(sales.getShippingContact());
+				purchase.setShippingPeriod(sales.getShippingPeriod());
+			} else {
+				RegistryAddress ra = sales.getCustomer().getRegistry().getDefaultAddress();
+				purchase.setCarrier(null);
+				purchase.setShippingAlternativeAddress(ra.getAddress());
+				purchase.setShippingAlternativeAddress2((StringUtils.isEmpty(ra.getAddress2())?"":ra.getAddress2()) + (StringUtils.isEmpty(ra.getAddress3())?"":" (" + ra.getAddress3() + ")"));
+				purchase.setShippingAlternativeZip(ra.getZip());
+				purchase.setShippingAlternativeCity(ra.getCity());
+				String phone = sales.getCustomer().getRegistry().getPhone()==null?"":sales.getCustomer().getRegistry().getPhone().getValue();
+				String cellular = sales.getCustomer().getRegistry().getCellular()==null?"":sales.getCustomer().getRegistry().getCellular().getValue();
+				purchase.setShippingAlternativePhone((StringUtils.isEmpty(phone)?"":phone+" ") + (StringUtils.isEmpty(cellular)?"":cellular));
+				purchase.setShippingAlternativeRecipient(sales.getCustomer().getRegistry().getFullName());
+				purchase.setShippingContact(null);
+				purchase.setShippingPeriod(null);
+			}
+		}
+		
+		IManagerBean purchaseBean = BeanManager.getManagerBean(Purchase.class);
+		return (Purchase) purchaseBean.insert(purchase);
+	}
+	
+	private void createPurchaseDetails(Purchase purchase, SalesDetail salesDetail) throws ManagerBeanException {
+		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+		PurchaseDetail detail = new PurchaseDetail();
+		detail.setItem(salesDetail.getItem());
+		detail.setPurchase(purchase);
+		detail.setProject(null); 
+		detail.setProposalDetail(null);
+		detail.setLine(calculateNextLine(purchase));
+		detail.setDescription(salesDetail.getDescription());
+		detail.setQuantity(salesDetail.getQuantity());
+		detail.setPrice(salesDetail.getPrice());
+		detail.setDiscountExpression(salesDetail.getDiscountExpression());
+		detail.setTaxes(salesDetail.getTaxes());
+		detail.setStatus(PurchaseDetailStatus.PENDING);
+		detail.setDelivered(0);
+		purchaseDetailBean.insert(detail);
+	}
+	
+	public boolean isShippingDataDefined(Sales sales) {
+		if(sales!=null){
+			if( StringUtils.isNotBlank(sales.getShippingContact())
+					|| sales.getShippingPeriod()!=null
+					|| isShippingAlternativeAddressDefined(sales) ){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isShippingAlternativeAddressDefined(Sales sales) {
+		if(sales!=null){
+			if( StringUtils.isNotBlank(sales.getShippingAlternativeAddress())
+				|| StringUtils.isNotBlank(sales.getShippingAlternativeAddress2())
+				|| StringUtils.isNotBlank(sales.getShippingAlternativeZip())
+				|| StringUtils.isNotBlank(sales.getShippingAlternativeCity())
+				|| StringUtils.isNotBlank(sales.getShippingAlternativePhone())
+				|| StringUtils.isNotBlank(sales.getShippingAlternativeRecipient()) ){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private int obtainSeriesMaxNumber(String seriesId) throws ManagerBeanException {
+		return SeriesNumberUtil.obtainNumber(seriesId, "Purchase", null);
+	}
+	
+	public Integer calculateNextLine(Purchase purchase) throws ManagerBeanException {
+		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+		Projection projection = Projection.max(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_LINE));
+		Object value = purchaseDetailBean.getUniqueResult(projection, criteria);
+		return (value != null) ? ((Integer)value) + 1 : 1;
+	}
+
+	public class TempPurchaseDetail {
+		private SalesDetail detail;
+		private Supplier supplier;
+		public SalesDetail getDetail() {
+			return detail;
+		}
+		public void setDetail(SalesDetail detail) {
+			this.detail = detail;
+		}
+		public Supplier getSupplier() {
+			return supplier;
+		}
+		public void setSupplier(Supplier supplier) {
+			this.supplier = supplier;
+		}
+	}
+	
+	class TempPurchaseDetailComparator implements Comparator<TempPurchaseDetail> {
+
+		@Override
+		public int compare(TempPurchaseDetail o1, TempPurchaseDetail o2) {
+			return o1.getSupplier().getId().compareTo(o2.getSupplier().getId());
+		}
+		
+	}
+	
+}

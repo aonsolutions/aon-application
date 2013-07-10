@@ -81,8 +81,16 @@
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 			<f:facet name="footer">
-				<aon:div style="float:right">
-					<aon:outputText style="text-align:right" value="#{controller.purchasesTotalAmount}" >
+				<aon:div id="totalAmountContainer" style="float:right">
+					<aon:commandLink immediate="true" 
+						reRender="totalAmountContainer"
+						value="#{purchaseBundle.purchase_show_total_amount}"
+						styleClass="aon-dataTable-link aon-nowrap"
+						onclick="this.disabled=true"
+						rendered="#{controller.purchasesTotalAmount == null}"
+						actionListener="#{controller.getSelectionTotalAmount}"/>									
+					<aon:outputText	rendered="#{controller.purchasesTotalAmount != null}"
+						style="text-align:right" value="#{controller.purchasesTotalAmount}" >
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
 				</aon:div>

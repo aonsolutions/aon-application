@@ -51,6 +51,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
+import com.code.aon.ui.sales.util.PurchaseGeneratorManager;
 import com.code.aon.ui.sales.util.SalesEmailUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
@@ -68,7 +69,9 @@ public class SalesController extends BasicController implements ISalesConstants 
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
 	private RegistryValidationManager vm;
+	private PurchaseGeneratorManager purchaseGenerator;
 	private boolean showDeliveryWindow;
+	private boolean showPurchaseWindow;
 	private String deliverySeries;
 	private int deliveryNumber;
 	private Date deliveryDate;
@@ -77,9 +80,11 @@ public class SalesController extends BasicController implements ISalesConstants 
 	private String invoiceSeries;
 	private int invoiceNumber;
 	private Date invoiceDate;
+	private Double salesTotalAmount;
 	private SalesEmailUtil emailUtil;
 	private String selectedTab;
 	private boolean shippingAlternativeAddress;
+	private boolean showShipmentWindow;
 	
     public SalesController() {
     	this.emailUtil = new SalesEmailUtil();
@@ -91,6 +96,14 @@ public class SalesController extends BasicController implements ISalesConstants 
 
 	public void setShippingAlternativeAddress(boolean shippingAlternativeAddress) {
 		this.shippingAlternativeAddress = shippingAlternativeAddress;
+	}
+
+	public boolean isShowShipmentWindow() {
+		return showShipmentWindow;
+	}
+
+	public void setShowShipmentWindow(boolean showShipmentWindow) {
+		this.showShipmentWindow = showShipmentWindow;
 	}
 
 	public String getSelectedTab() {
@@ -142,6 +155,14 @@ public class SalesController extends BasicController implements ISalesConstants 
 		return vm;
 	}
 	
+	public PurchaseGeneratorManager getPurchaseGenerator() {
+		return purchaseGenerator;
+	}
+
+	public void setPurchaseGenerator(PurchaseGeneratorManager purchaseGenerator) {
+		this.purchaseGenerator = purchaseGenerator;
+	}
+
 	public boolean isShowDeliveryWindow() {
 		return showDeliveryWindow;
 	}
@@ -150,6 +171,14 @@ public class SalesController extends BasicController implements ISalesConstants 
 		this.showDeliveryWindow = value;
 	}
 	
+	public boolean isShowPurchaseWindow() {
+		return showPurchaseWindow;
+	}
+
+	public void setShowPurchaseWindow(boolean showPurchaseWindow) {
+		this.showPurchaseWindow = showPurchaseWindow;
+	}
+
 	public String getDeliverySeries() {
 		return deliverySeries;
 	}
@@ -214,13 +243,27 @@ public class SalesController extends BasicController implements ISalesConstants 
 		this.invoiceDate = invoiceDate;
 	}
 	
-	public Double getSalesTotalAmount() throws ManagerBeanException {
-		double salesTotalAmount = 0.0; 
-		for(ITransferObject to: this.getWrappedList()){
-			Sales s = (Sales) to;
-			salesTotalAmount += getSalesTotalPrice(s);
-		}
+	public Double getSalesTotalAmount() {
 		return salesTotalAmount;
+	}
+
+	public void setSalesTotalAmount(Double salesTotalAmount) {
+		this.salesTotalAmount = salesTotalAmount;
+	}
+	
+	public void getSelectionTotalAmount(ActionEvent event) {
+		try {	
+			IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
+			List<ITransferObject> list = salesBean.getList(getCriteria());
+			salesTotalAmount = 0.0;
+			for(ITransferObject to: list){
+				salesTotalAmount += getSalesTotalPrice((Sales) to);
+			}
+		} catch (ManagerBeanException e) {
+			String message = "Imposible obtener el total";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		}		
 	}
 
 	public boolean isCustomerReadOnly() throws ManagerBeanException {
@@ -576,6 +619,22 @@ public class SalesController extends BasicController implements ISalesConstants 
 			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 			invoiceController.onLoad(event, invoice.getId(), SALES_FORM_NAME, SALES_CONTROLLER_NAME + ".refresh");
 		}
+	}
+	
+	public void onPurchaseGenerationShow(ActionEvent event) throws ManagerBeanException {
+		setPurchaseGenerator(new PurchaseGeneratorManager((Sales) this.getTo()));
+	}
+	
+	public boolean isShippingDataDefined() {
+		Sales sales = (Sales) this.getTo();
+		if(sales!=null){
+			if( StringUtils.isNotBlank(sales.getShippingContact())
+					|| sales.getShippingPeriod()!=null
+					|| isShippingAlternativeAddressDefined() ){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public boolean isShippingAlternativeAddressDefined() {

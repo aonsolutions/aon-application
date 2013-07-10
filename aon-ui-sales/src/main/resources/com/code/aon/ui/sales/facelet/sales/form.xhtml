@@ -20,29 +20,8 @@
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{!sales.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!sales.pending or sales.inDelivery}" />
+					<ui:param name="showMoreMenu" value="#{true}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<c:if test="#{aonRole.warehouseOperator}">
-							<aon:commandButton id="delivery"
-								value="#{salesBundle.sales_to_delivery}"
-								immediate="#{true}" rendered="#{sales.pending and salesDetail.model.rowCount > 0}"
-								styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
-								actionListener="#{sales.onDeliveryShow}"
-								reRender="showDeliveryWindow">
-								<f:setPropertyActionListener target="#{sales.showDeliveryWindow}"
-									value="#{true}" />
-							</aon:commandButton>
-						</c:if>
-						<c:if test="#{aonRole.financeOperator}">
-							<aon:commandButton id="invoice"
-								value="#{salesBundle.sales_to_invoice}"
-								immediate="#{true}" rendered="#{sales.pending and !sales.inDelivery and salesDetail.model.rowCount > 0}"
-								styleClass="aon-finding-toolbar-item aon-icon-favorite"
-								actionListener="#{sales.onInvoiceShow}"
-								reRender="showInvoiceWindow">
-								<f:setPropertyActionListener target="#{sales.showInvoiceWindow}"
-									value="#{true}" />
-							</aon:commandButton>
-						</c:if>
 						<aon:commandButton value="&#160;" id="email"
 							title="#{webmailBundle.webmail_send_email}"
 							actionListener="#{sales.onSendByEmail}"
@@ -58,6 +37,48 @@
 							<f:param name="reportKey" value="sales" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
+					</ui:define>
+					<ui:define name="moreMenuContent">
+						<c:if test="#{aonRole.warehouseOperator}">
+							<aon:menuItem id="delivery"
+								value="#{salesBundle.sales_to_delivery}"
+								immediate="#{true}" rendered="#{sales.pending and salesDetail.model.rowCount > 0}"
+								iconClass="aon-icon-open-popup" 
+								actionListener="#{sales.onDeliveryShow}"
+								reRender="showDeliveryWindow">
+								<f:setPropertyActionListener target="#{sales.showDeliveryWindow}"
+									value="#{true}" />
+							</aon:menuItem>
+						</c:if>
+						<aon:menuItem id="purchaseGeneration"
+							value="#{salesBundle.sales_to_purchase}"
+							title="#{salesBundle.sales_to_purchase_generation}"
+							immediate="#{true}" rendered="#{sales.pending and !sales.inDelivery and salesDetail.model.rowCount > 0}"
+							iconClass="aon-icon-open-popup"
+							actionListener="#{sales.onPurchaseGenerationShow}"
+							reRender="showPurchaseWindow">
+							<f:setPropertyActionListener target="#{sales.showPurchaseWindow}"
+								value="#{true}" />
+						</aon:menuItem>
+						<c:if test="#{aonRole.financeOperator}">
+							<aon:menuItem id="invoice"
+								value="#{salesBundle.sales_to_invoice}"
+								immediate="#{true}" rendered="#{sales.pending and !sales.inDelivery and salesDetail.model.rowCount > 0}"
+								iconClass="aon-icon-favorite"
+								actionListener="#{sales.onInvoiceShow}"
+								reRender="showInvoiceWindow">
+								<f:setPropertyActionListener target="#{sales.showInvoiceWindow}"
+									value="#{true}" />
+							</aon:menuItem>
+						</c:if>
+						<aon:menuItem id="salesShipment"
+							value="#{carrierBundle.carrier_shipment}"
+							rendered="#{!sales.new and sales.pending}"
+							iconClass="aon-icon-rename"
+							reRender="showShipmentWindow">
+							<f:setPropertyActionListener target="#{sales.showShipmentWindow}"
+								value="#{true}" />
+						</aon:menuItem>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -157,7 +178,7 @@
 							styleClass="aon-margin-left aon-italic"
 							value="#{salesBundle.sales_purchase_reference}: " />
 						<aon:inputText id="Sales_purchaseReference"
-							value="#{sales.to.purchaseReference}" size="15" />
+							value="#{sales.to.purchaseReference}" size="30" />
  					</aon:div>
 
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
@@ -380,15 +401,17 @@
 				</aon:div>
 
 				<c:if test="#{!sales.new}">
-					<aon:panelTabSet selectedTab="#{sales.selectedTab}">
-						<aon:panelTab id="salesDetail" 
+					<aon:panelTabSet id="salesPanelTab" selectedTab="#{sales.selectedTab}">
+						<aon:panelTab id="salesDetailTab" 
 							label="#{salesBundle.sales_detail}">
 							<ui:include src="/com/code/aon/ui/sales/facelet/sales/formDetail.xhtml" />
 						</aon:panelTab>
-						<aon:panelTab id="salesShipment" 
-							label="#{carrierBundle.carrier_shipment}">
-							<ui:include src="/com/code/aon/ui/sales/facelet/sales/formShipment.xhtml" />
-						</aon:panelTab>
+						<c:if test="#{sales.shippingDataDefined}">
+							<aon:panelTab id="salesShipmentTab" 
+								label="#{carrierBundle.carrier_shipment}">
+								<ui:include src="/com/code/aon/ui/sales/facelet/sales/formShipment.xhtml" />
+							</aon:panelTab>
+						</c:if>
 					</aon:panelTabSet>
 				</c:if>
 				
@@ -399,7 +422,9 @@
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalDelivery.xhtml" />
+		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalPurchase.xhtml" />
 		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalInvoice.xhtml" />
+		<ui:include src="/com/code/aon/ui/sales/facelet/sales/modalShipment.xhtml" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 	</ui:define>
