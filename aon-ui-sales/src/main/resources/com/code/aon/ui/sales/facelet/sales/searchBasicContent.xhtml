@@ -34,6 +34,13 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 							
+	<aon:outputLabel for="Sales_purchaseReference"
+		value="#{salesBundle.sales_purchase_reference}" />
+	<aon:inputText id="Sales_purchaseReference"
+		valueChangeListener="#{controller.addExpression}"
+		size="30">
+	</aon:inputText>
+	
 	<aon:outputLabel for="Sales_documentType"
 		value="#{bundle.aon_type}" />
 	<aon:selectOneMenu id="Sales_documentType"
