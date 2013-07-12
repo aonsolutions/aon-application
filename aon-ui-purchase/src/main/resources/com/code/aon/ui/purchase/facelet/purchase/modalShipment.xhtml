@@ -60,7 +60,9 @@
 								</aon:div>
 
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-									<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formShipment.xhtml" />
+									<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formShipment.xhtml" >
+										<ui:param name="displayVertically" value="#{true}" />
+									</ui:include>
 								</aon:div>
 								
 							</aon:div>

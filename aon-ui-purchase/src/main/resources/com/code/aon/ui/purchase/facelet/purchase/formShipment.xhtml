@@ -8,7 +8,9 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:panelGrid columns="2" 
+	<aon:valueParam name="displayVertically" default="#{false}" />
+	
+	<aon:panelGrid columns="#{displayVertically?1:2}" 
 		columnClasses="aon-noborder aon-vertical-align-top, aon-noborder aon-padding-left aon-vertical-align-top">
 	
 		<aon:panelGrid columns="2" style="width:600px;">
