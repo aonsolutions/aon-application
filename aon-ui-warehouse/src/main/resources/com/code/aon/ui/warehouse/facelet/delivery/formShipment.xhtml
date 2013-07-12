@@ -8,7 +8,9 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:div id="deliveryShipmentDiv" >
+	<aon:panelGrid columns="2" 
+		columnClasses="aon-noborder aon-vertical-align-top, aon-noborder aon-padding-left aon-vertical-align-top">
+	
 		<aon:panelGrid columns="4" style="width:600px;">
 				
 			<c:if test="#{carrierCollections.carriersCount>0}">
@@ -114,8 +116,6 @@
 			
 		</aon:panelGrid>
 		
-		<br />
-		
 		<aon:panel id="alternativeShippingAddressPanel" style="width:600px;">
 			<f:facet name="header">
 				<aon:div style="display:inline;">
@@ -167,7 +167,6 @@
 			
 		</aon:panel>
 		
-	</aon:div>
+	</aon:panelGrid>
 	
-
 </ui:composition>

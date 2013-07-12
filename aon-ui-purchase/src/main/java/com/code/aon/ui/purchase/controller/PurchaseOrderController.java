@@ -303,7 +303,7 @@ public class PurchaseOrderController {
 				for(PurchaseGroup pg: purchaseGroupList){
 					if(pg.hasCheckedDetail()){
 						comments = companyBundle.getString("company_department") +": "+ pg.getDepartment().getName()+". ";
-						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(), pg.getDepartment(), 
+						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(),  
 								pg.isItemReturn()?PurchaseDocumentType.ITEM_RETURN:null, comments + pg.getComments(), remarks);
 						purchaseIds.add(purchase.getId());
 						for(GroupDetail gd: pg.getDetailList()){
@@ -350,7 +350,6 @@ public class PurchaseOrderController {
 			String alias = purchsePrint.getFieldName(IEntityAlias.PURCHASE_ID);
 			purchsePrint.getCriteria().addInExpression(alias, purchaseIds);
 			if(getParams().isItemReturn()){
-//				purchsePrint.getCriteria().addEqualExpression(purchsePrint.getFieldName(IEntityAlias.PURCHASE_DOCUMENT_TYPE), PurchaseDocumentType.ITEM_RETURN);
 				PurchaseSearchListener purchaseSearch = (PurchaseSearchListener) AonUtil.getRegisteredBean("purchasePrintSearch");
 				purchaseSearch.setPurchaseDocumentTypes(null);
 			}

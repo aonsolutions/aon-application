@@ -23,6 +23,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Finance;
+import com.code.aon.product.Item;
 import com.code.aon.product.ItemSupplier;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
@@ -298,14 +299,19 @@ public class PurchaseGeneratorManager {
 		detail.setLine(calculateNextLine(purchase));
 		detail.setDescription(salesDetail.getDescription());
 		detail.setQuantity(salesDetail.getQuantity());
-		detail.setPrice(salesDetail.getPrice());
-		detail.setDiscountExpression(salesDetail.getDiscountExpression());
+		detail.setPrice(obtainItemPrice(purchase.getSupplier(), salesDetail.getItem()));
+		detail.setDiscountExpression(null);
 		detail.setTaxes(salesDetail.getTaxes());
 		detail.setStatus(PurchaseDetailStatus.PENDING);
 		detail.setDelivered(0);
 		purchaseDetailBean.insert(detail);
 	}
 	
+	private double obtainItemPrice(Supplier supplier, Item item) {
+		// TODO: search the price that the supplier provide for this item
+		return item.getPrice();
+	}
+
 	public boolean isShippingDataDefined(Sales sales) {
 		if(sales!=null){
 			if( StringUtils.isNotBlank(sales.getShippingContact())

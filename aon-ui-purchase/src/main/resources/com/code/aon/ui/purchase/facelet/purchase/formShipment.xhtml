@@ -8,9 +8,10 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:div id="purchaseShipmentDiv" >
+	<aon:panelGrid columns="2" 
+		columnClasses="aon-noborder aon-vertical-align-top, aon-noborder aon-padding-left aon-vertical-align-top">
+	
 		<aon:panelGrid columns="2" style="width:600px;">
-				
 			<c:if test="#{carrierCollections.carriersCount>0}">
 				<aon:outputLabel for="Purchase_carrier"
 					value="#{carrierBundle.carrier_carrier}" />
@@ -37,10 +38,7 @@
 				<f:selectItem itemLabel=" - " itemValue="#{null}" />
 				<f:selectItems value="#{carrierCollections.shipmentPeriods}" />
 			</aon:selectOneMenu>
-
 		</aon:panelGrid>
-		
-		<br />
 		
 		<aon:panel id="alternativeShippingAddressPanel" style="width:600px;">
 			<f:facet name="header">
@@ -57,7 +55,6 @@
 					<aon:outputLabel for="shippingAlternativeAddressSelect" value="#{carrierBundle.carrier_shipment_alternativeAddress}" />
 				</aon:div>
 			</f:facet>
-		
 			<aon:panelGrid columns="2" rendered="#{purchase.shippingAlternativeAddress}"  
 				styleClass="aon-width-all">
 					
@@ -88,12 +85,9 @@
 					value="#{registryBundle.registry_phone}" />
 				<aon:inputText id="Purchase_shippingAlternativePhone"
 					value="#{purchase.to.shippingAlternativePhone}" />
-			
 			</aon:panelGrid>
-			
 		</aon:panel>
 		
-	</aon:div>
-	
+	</aon:panelGrid>
 
 </ui:composition>

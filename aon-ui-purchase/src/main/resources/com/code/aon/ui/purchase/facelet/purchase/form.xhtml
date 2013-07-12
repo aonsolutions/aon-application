@@ -74,6 +74,13 @@
 									value="#{true}" />
 							</aon:menuItem>
 						</c:if>
+						<aon:menuItem id="purchaseReturnRequest"
+							value="#{purchaseBundle.purchase_return_request}"
+							rendered="#{!purchase.new and !purchase.to.itemReturn}"
+							iconClass="aon-icon-alternative"
+							action="purchase_form"
+							actionListener="#{purchase.onReturnRequest}" 
+							onclick="if (!confirm('#{bundle.aon_confirm_title}')) { return false;}" />
 						<aon:menuItem id="purchaseShipment"
 							value="#{carrierBundle.carrier_shipment}"
 							rendered="#{!purchase.new and purchase.pending}"
@@ -126,19 +133,17 @@
 										rendered="#{!purchase.pending and purchase.to.confidential}" />
 								</c:if>
 								
-								<aon:outputText value="(" 
-									rendered="#{proposal.to.itemReturn}" styleClass="aon-margin-left" />
-								<aon:outputText value="#{purchaseBundle.purchase_proposal_item_return}" 
-									rendered="#{proposal.to.itemReturn}" styleClass="aon-bold" />
-								<aon:outputText value=")" 
-									rendered="#{proposal.to.itemReturn}" styleClass="aon-margin-right" />
+								<aon:outputText id="purchase-itemReturn"
+									rendered="#{purchase.to.itemReturn}"
+									title="#{purchaseBundle.purchase_proposal_item_return}"
+									value="&#160;"
+									styleClass="aon-icon-alternative aon-margin-left aon-padding-left aon-padding-right" />
 								
 								<aon:outputText id="purchase-emailCommunication"
 									rendered="#{purchase.to.emailCommunication}"
 									title="#{purchaseBundle.purchase_emailCommunication}"
 									value="&#160;"
 									styleClass="aon-icon-mailForward aon-margin-left aon-padding-left aon-padding-right" />
-									
 									
 								<aon:outputText styleClass="aon-margin-left aon-margin-right"
 									value="#{purchase.to.status}" />
@@ -185,12 +190,23 @@
 
 					<aon:outputLabel for="Purchase_issueDate" 
 						value="#{bundle.aon_date}" />
-					<aon:selectInputDate id="Purchase_issueDate"
-						value="#{purchase.to.issueDate}" 
-						required="true" disabled="#{!purchase.pending}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
-
+					<aon:div>
+						<aon:selectInputDate id="Purchase_issueDate"
+							value="#{purchase.to.issueDate}" 
+							required="true" disabled="#{!purchase.pending}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+						<aon:outputLabel for="Purchase_documentType"
+							styleClass="aon-margin-left aon-italic"
+							rendered="#{purchase.new}"
+							value="#{bundle.aon_type}: " />
+						<aon:selectOneMenu id="Purchase_documentType"
+							rendered="#{purchase.new}"
+							value="#{purchase.to.documentType}">
+							<f:selectItems value="#{purchaseCollections.documentTypes}" />
+						</aon:selectOneMenu>
+					</aon:div>
+						
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{purchase.to.supplier}" />
 						<ui:param name="lookupDisabled" value="#{!purchase.pending}" />

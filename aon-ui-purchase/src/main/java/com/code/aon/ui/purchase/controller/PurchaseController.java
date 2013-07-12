@@ -24,6 +24,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.SingleCollectionProvider;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Bank;
@@ -31,6 +33,7 @@ import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.PurchaseInvoicingManager;
@@ -42,6 +45,8 @@ import com.code.aon.project.Project;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.bridge.IncomeManager;
+import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
+import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.purchase.util.IEmailControllerListener;
 import com.code.aon.purchase.util.IEmailable;
@@ -54,6 +59,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.purchase.util.PurchaseEmailUtil;
+import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
@@ -85,6 +91,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	private PurchaseEmailUtil emailUtil;
 	private boolean shippingAlternativeAddress;
 	private boolean showShipmentWindow;
+	private Purchase returnSourcePurchase;
 	
 	private List<String> moreRecipients;
 	
@@ -588,6 +595,72 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		}
 	}
 	
+	public void onReturnRequest(ActionEvent event) throws ManagerBeanException {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName(Finance.class.getName());
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
+			
+			returnSourcePurchase = (Purchase) this.getTo();
+			String comments = AonUtil.getMessage(PURCHASE_BUNDLE_NAME, PURCHASE_RETURN_OVER_MSG, returnSourcePurchase.getReferenceCode());
+			comments += StringUtils.isBlank(returnSourcePurchase.getComments())?"":returnSourcePurchase.getComments();
+			PurchaseUtils utils = new PurchaseUtils();
+			Purchase purchase = utils.createPurchase(returnSourcePurchase.getSeries(),
+					returnSourcePurchase.getSupplier(), returnSourcePurchase.getWorkPlace(),
+							PurchaseDocumentType.ITEM_RETURN,
+							comments, returnSourcePurchase.getRemarks(),
+							returnSourcePurchase.getCarrier(),
+							returnSourcePurchase.getShippingAlternativeAddress(),
+							returnSourcePurchase.getShippingAlternativeAddress2(),
+							returnSourcePurchase.getShippingAlternativeZip(),
+							returnSourcePurchase.getShippingAlternativeCity(),
+							returnSourcePurchase.getShippingAlternativePhone(),
+							returnSourcePurchase.getShippingAlternativeRecipient(),
+							returnSourcePurchase.getShippingContact(),
+							returnSourcePurchase.getShippingPeriod());
+			markSourcePurchaseAsReturned(purchase.getReferenceCode());
+			PurchaseDetailController detailController = (PurchaseDetailController) AonUtil.getRegisteredBean(PURCHASE_DETAIL_CONTROLLER_NAME);
+			for(ITransferObject to: detailController.getWrappedList()){
+				PurchaseDetail detail = (PurchaseDetail) to;
+				utils.createPurchaseDetail(purchase, detail.getItem(), detail.getProject(), detail.getProposalDetail(),
+						detail.getLine(), detail.getDescription(), (-1)*detail.getQuantity(), detail.getPrice(), detail.getDiscountExpression(),
+						detail.getTaxes(), PurchaseDetailStatus.PENDING, 0);
+			}
+			
+			HibernateUtil.commitTransaction(sessionName);
+			this.onLoad(event, purchase.getId(), PURCHASE_FORM_NAME, PURCHASE_CONTROLLER_NAME+".restoreSourcePurchase");
+		} catch (Exception e) {
+			String msg = "Error al crear la solicitud de devolucion.";
+			AonUtil.addErrorMessage(msg  + e.getMessage());
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+
+	private void markSourcePurchaseAsReturned(String referenceCode) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Purchase.class);
+		String comments = AonUtil.getMessage(PURCHASE_BUNDLE_NAME, PURCHASE_RETURNED_IN_MSG, referenceCode);
+		comments += StringUtils.isBlank(returnSourcePurchase.getComments())?"":returnSourcePurchase.getComments();
+		returnSourcePurchase.setComments(comments);
+		bean.restoreNullSubPOJOs(returnSourcePurchase);
+		bean.update(returnSourcePurchase);
+	}
+	
+	public void restoreSourcePurchase( ActionEvent event ) throws ManagerBeanException {
+		this.select(event, returnSourcePurchase);
+	}
+
 	public boolean isShippingDataDefined() {
 		Purchase purchase = (Purchase) this.getTo();
 		if(purchase!=null){

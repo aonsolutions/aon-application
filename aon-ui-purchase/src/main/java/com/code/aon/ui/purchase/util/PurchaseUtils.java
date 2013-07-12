@@ -9,11 +9,12 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
-import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.project.Project;
 import com.code.aon.purchase.ProposalDetail;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
@@ -47,14 +48,15 @@ public class PurchaseUtils {
 	 * @throws ManagerBeanException
 	 */
 	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace,
-			Department department, PurchaseDocumentType documentType,
-			String comments) throws ManagerBeanException {
-		return createPurchase(supplier, workPlace, department, documentType,
+			PurchaseDocumentType documentType, String comments)
+			throws ManagerBeanException {
+		return createPurchase(null, supplier, workPlace, documentType,
 				comments, null);
 	}
 	
 	/**
 	 * Creates a purchase with basic data and remarks
+	 * @param series
 	 * @param supplier
 	 * @param workPlace
 	 * @param department
@@ -65,15 +67,24 @@ public class PurchaseUtils {
 	 * @throws ManagerBeanException
 	 */
 	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace,
-			Department department, PurchaseDocumentType documentType,
+			PurchaseDocumentType documentType, String comments, String remarks)
+			throws ManagerBeanException {
+		return createPurchase(null, supplier, workPlace, documentType,
+				comments, remarks, null, null, null, null, null, null, null,
+				null, null);
+	}
+	
+	public Purchase createPurchase(String series, Supplier supplier,
+			WorkPlace workPlace, PurchaseDocumentType documentType,
 			String comments, String remarks) throws ManagerBeanException {
-		return createPurchase(supplier, workPlace, department, documentType,
-				comments, remarks, null, null, null, null, null, null, null, null,
-				null);
+		return createPurchase(series, supplier, workPlace, documentType,
+				comments, remarks, null, null, null, null, null, null, null,
+				null, null);
 	}
 
 	/**
 	 * Creates a purchase with all possible data (basic data, remarks and shipping data)
+	 * @param series
 	 * @param supplier
 	 * @param workPlace
 	 * @param department
@@ -92,8 +103,8 @@ public class PurchaseUtils {
 	 * @return
 	 * @throws ManagerBeanException
 	 */
-	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace,
-			Department department, PurchaseDocumentType documentType,
+	public Purchase createPurchase(String series, Supplier supplier,
+			WorkPlace workPlace, PurchaseDocumentType documentType,
 			String comments, String remarks, Carrier carrier,
 			String shippingAlternativeAddress,
 			String shippingAlternativeAddress2, String shippingAlternativeZip,
@@ -114,9 +125,11 @@ public class PurchaseUtils {
 		pur.setDocumentType(documentType);
 		pur.setRegistryAddress(supplier.getRegistry().getDefaultAddress());
 		pur.setSecurityLevel(SecurityLevel.OFFICIAL);
-		String serie = obtainWorkPlaceSerie(workPlace);
-		pur.setSeries(serie);
-		pur.setNumber(obtainSeriesMaxNumber(serie));
+		if(series == null){
+			series = obtainWorkPlaceSerie(workPlace);
+		}
+		pur.setSeries(series);
+		pur.setNumber(obtainSeriesMaxNumber(series));
 		pur.setScope(supplier.getScope());
 	    pur.setComments(comments);
 		pur.setRemarks(remarks);
@@ -132,27 +145,49 @@ public class PurchaseUtils {
 		pur.setShippingContact(shippingContact);
 		pur.setShippingPeriod(shippingPeriod);
 		
+		bean.restoreNullSubPOJOs(pur);
 		return (Purchase) bean.insert(pur);
 	}
-	public void insertPurchaseDetail(Purchase pur, ProposalDetail proposalDetail) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(PurchaseDetail.class);
-		PurchaseDetail purDet = new PurchaseDetail();
-		purDet.setProject((pur.getProject() != null && pur.getProject().getId() != null) ? pur.getProject() : null);
-		purDet.setProposalDetail(proposalDetail);
-		purDet.setLine(calculateNextLine(pur));
-		purDet.setStatus(PurchaseDetailStatus.PENDING);
-		purDet.setPurchase(pur);
-		purDet.setItem(proposalDetail.getItem());
-		purDet.setDescription(proposalDetail.getItem().getProduct().getName());
-		purDet.setPrice(proposalDetail.getPrice());
-		purDet.setQuantity((proposalDetail.getProposal().isItemReturn()?-1:1)*proposalDetail.getQuantity());
-		purDet.setPrice(proposalDetail.getItem().getPrice());
-		purDet.setStatus(PurchaseDetailStatus.PENDING);
+	
+	public void insertPurchaseDetail(Purchase purchase, ProposalDetail proposalDetail) throws ManagerBeanException {
+		Project project = (purchase.getProject() != null && purchase.getProject().getId() != null) ? purchase.getProject() : null;
+		double quantity = (proposalDetail.getProposal().isItemReturn()?-1:1)*proposalDetail.getQuantity();
+		DiscountExpression discountExpression = null;
 		if(proposalDetail.getDiscountExpr()!=null){
-			purDet.setDiscountExpression(new DiscountExpression(proposalDetail.getDiscountExpr()));
+			discountExpression = new DiscountExpression(proposalDetail.getDiscountExpr());
 		}
-		bean.insert(purDet);
+		createPurchaseDetail(purchase, proposalDetail.getItem(), project,
+				proposalDetail, calculateNextLine(purchase), proposalDetail
+						.getItem().getProduct().getName(), quantity,
+				proposalDetail.getItem().getPrice(), discountExpression, 0,
+				PurchaseDetailStatus.PENDING, 0);
 	}
+	
+	public void createPurchaseDetail(Purchase purchase, Item item,
+			Project project, ProposalDetail proposalDetail, Integer line,
+			String description, double quantity, double price,
+			DiscountExpression discountExpression, double taxes,
+			PurchaseDetailStatus status, double delivered)
+			throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(PurchaseDetail.class);
+		PurchaseDetail detail = new PurchaseDetail();
+
+		detail.setItem(item);
+		detail.setPurchase(purchase);
+		detail.setProject(project);
+		detail.setProposalDetail(proposalDetail);
+		detail.setLine(calculateNextLine(purchase));
+		detail.setDescription(description);
+		detail.setQuantity(quantity);
+		detail.setPrice(price);
+		detail.setDiscountExpression(discountExpression);
+		detail.setTaxes(taxes);
+		detail.setStatus(PurchaseDetailStatus.PENDING);
+		detail.setDelivered(delivered);
+
+		bean.insert(detail);
+	}
+	
 	public void updateProposalDetailStatus(Integer proposalDetailId) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ProposalDetail.class);
 		ProposalDetail pd = (ProposalDetail) bean.get(proposalDetailId);
@@ -188,6 +223,10 @@ public class PurchaseUtils {
 		return seriesBean.getList(criteria);
 	}
 	
+	/**
+	 * Se recupera el supplier cuyo id coincide con el de company
+	 * @return
+	 */
 	public Supplier getCompanySupplier() {
 		if(companySupplier == null) {
 			Company company = (Company) ((CompanyController)FormUtil.getController(ICompanyConstants.COMPANY_CONTROLLER_NAME)).getTo();
