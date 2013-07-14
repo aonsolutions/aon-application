@@ -5,12 +5,12 @@
 	
 	<aon:set var="#{customer.showAlumnData}" value="#{true}" />
 	
-	<ui:include src="/com/code/aon/ui/customer/facelet/customer/formEx.xhtml" >
+	<ui:decorate template="/com/code/aon/ui/customer/facelet/customer/formEx.xhtml" >
 		<aon:methodParam name="saveAction" value="alumn_form" />			
 		<aon:methodParam name="cancelAction" value="alumn_list" />
 		<aon:methodParam name="removeAction" value="alumn_list" />			
 		<aon:methodParam name="searchAction" value="alumn_search" />
 		<aon:methodParam name="resetAction" value="alumn_form" />			
-	</ui:include>
+	</ui:decorate>
 	
 </ui:composition>
