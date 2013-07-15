@@ -42,7 +42,6 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.salary.expression.Variables.NotFoundVariableError;
 
 public class ContractSalaryCalculator implements ISalaryCalculator{
 
@@ -114,13 +113,13 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		Double totalDeduction = fillDeductions(contractSalaryCalculatorContext);
 		
 		expressionContext.addVariable(TOTAL_LIQUID, totalPayment - totalDeduction, start,end);
-		Double totalEmbargos = fillEmbargos(contractSalaryCalculatorContext);
+		Double totalEmbargos = 0.00; //fillEmbargos(contractSalaryCalculatorContext);
 		
 		salaryBuilder.setTotalDeduction( totalDeduction + totalEmbargos);
 		
-		Double totalCost = fillCosts(contractSalaryCalculatorContext);
+		Double totalCost = 0.00; //fillCosts(contractSalaryCalculatorContext);
 		expressionContext.addVariable(ENTERPRISE_QUOTA, totalCost, start, end);
-		Double totalBonus = fillBonus(contractSalaryCalculatorContext);
+		Double totalBonus = 0.00; //fillBonus(contractSalaryCalculatorContext);
 		
 		Double totalEnterprise = totalCost - totalBonus;
 		salaryBuilder.setTotalEnterprise(totalEnterprise);
@@ -187,8 +186,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				
 				try {
 
-					List<ITimedResult<Double>> results = 
-						expressionContext.addExpression(contractPayment, paymentStart, paymentEnd, Double.class ) ;
+					List<ITimedResult<Double>> results = expressionContext.addExpression(contractPayment, paymentStart, paymentEnd, Double.class ) ;
 					
 					double total = 0.00;
 					
@@ -209,9 +207,10 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 						
 						if ( payment != 0.00 ){
 							try  {
-								description = expressionContext.evalTemplate(contractPayment.getDescription(), amountStart, amountEnd);
+								//description = expressionContext.evalTemplate(contractPayment.getDescription(), amountStart, amountEnd);
 								// TODO ¿ concatenar el periodo en la descripcion ?
-								description = getDescriptionPeriod(description, paymentStart, paymentEnd, amountStart, amountEnd );
+								//description = getDescriptionPeriod(description, paymentStart, paymentEnd, amountStart, amountEnd );
+								description = contractPayment.getDescription();
 							} catch (Exception e ) {
 								//TODO : Log ???
 							}

@@ -11,7 +11,7 @@
 	</ui:style>
 
 
-	<g:SplitLayoutPanel>
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
 
 
 		<g:center>

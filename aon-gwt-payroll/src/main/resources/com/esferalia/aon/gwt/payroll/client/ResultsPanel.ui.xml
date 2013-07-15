@@ -44,9 +44,9 @@
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
-			<g:ScrollPanel alwaysShowScrollBars="true" >
-				<g:HTML ui:field="htmlPanel">
-				</g:HTML>
+			<g:ScrollPanel ui:field="scrollPanel" alwaysShowScrollBars="true" >
+				<g:HTMLPanel ui:field="htmlPanel">
+				</g:HTMLPanel>
 			</g:ScrollPanel>
 		</g:center>
 	</g:DockLayoutPanel>

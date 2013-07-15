@@ -12,11 +12,15 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -43,10 +47,17 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 	Button calcButton;
 
 	@UiField
+	MinimizePanel footPanel;
+
+	@UiField
 	ResultsPanel resultsPanel;
 
 	@UiField
 	MonthListBox monthListBox;
+
+	@UiField
+	SplitLayoutPanel splitLayoutPanel;
+
 
 	@UiField
 	SelectDataGrid<Enterprise> enterpriseDataGrid;
@@ -116,7 +127,10 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 	@UiHandler("calcButton")
 	void onCalcButtonClicked(ClickEvent click) {
+		resultsPanel.clear();
 		calculate();
+		if ( !isResultsPanelVisible() ) 
+			showResultsPanel();
 	}
 
 	// -------------------------------------------------------------------------
@@ -136,19 +150,25 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 			for (Enterprise enterprise : enterpriseDataGrid.getSelectedItems())
 				requestDataBuffer.append("&" + ENPERPRISES + "="
 						+ enterprise.getId());
-
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open("POST", CALC_URL);
 		xhr.setRequestHeader("Content-type",
 				"application/x-www-form-urlencoded");
 
 		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+
+			private int loaded = 0;
+
 			@Override
 			public void onReadyStateChange(XMLHttpRequest xhr) {
 				int state = xhr.getReadyState();
 				if (state == XMLHttpRequest.LOADING
 						|| state == XMLHttpRequest.DONE) {
-					resultsPanel.setHTML(xhr.getResponseText());
+
+					String text = xhr.getResponseText();
+					String html = text.substring(loaded);
+					resultsPanel.addHTML(html);
+					loaded = text.length();
 				}
 			}
 		});
@@ -156,5 +176,15 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		xhr.send(requestDataBuffer.toString());
 
 	}
+	
+	private void showResultsPanel() {
+		splitLayoutPanel.setWidgetSize(
+				footPanel, Window.getClientHeight() / 4);
+	}
+	
+	private boolean isResultsPanelVisible() {
+		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
+	}
+	
 
 }
