@@ -72,18 +72,22 @@
 <aon:outputText value="#{to.order}" styleClass="aon-italic"/>
 <aon:outputText value="#{to.mergeOrder}" styleClass="aon-italic"/>
  -->
-									<aon:outputText styleClass="aon-icon-up" value="&#160;" 
-										style="padding-left: 16px; cursor:pointer;" rendered="#{to.order != 1}">
-										<a4j:support event="onclick"
-											actionListener="#{accountingBook.onMoveUp}"
-											reRender="bookDiv" />
-									</aon:outputText>
-									<aon:outputText styleClass="aon-icon-down" value="&#160;" 
-										style="padding-left: 16px; cursor:pointer;" rendered="#{!accountingBook.maxOrder}">
-										<a4j:support event="onclick"
-											actionListener="#{accountingBook.onMoveDown}"
-											reRender="bookDiv" />
-									</aon:outputText>
+									<aon:commandButton
+										id="moveUp"
+										value="&#160;" 
+										title="&#160;"
+										actionListener="#{accountingBook.onMoveUp}"
+										rendered="#{to.order != 1}" 
+										reRender="bookDiv"
+										styleClass="aon-editDataTable-button aon-icon-up"/>
+									<aon:commandButton
+										id="moveDown"
+										value="&#160;" 
+										title="&#160;"
+										actionListener="#{accountingBook.onMoveDown}"
+										rendered="#{!accountingBook.maxOrder}" 
+										reRender="bookDiv"
+										styleClass="aon-editDataTable-button aon-icon-down"/>
 								</aon:div>
 									
 								<f:facet name="footer">
@@ -120,18 +124,22 @@
 									<aon:outputLabel for="Book_mergeOrder" value="PDF"/>
 								</f:facet>
 								<aon:div styleClass="aon-nowrap" rendered="#{to.mergeable}">
-									<aon:outputText styleClass="aon-icon-up" value="&#160;" 
-										style="padding-left: 16px; cursor:pointer;" rendered="#{to.mergeOrder != 1}">
-										<a4j:support event="onclick"
-											actionListener="#{accountingBook.onPDFMoveUp}"
-											reRender="bookDiv" />
-									</aon:outputText>
-									<aon:outputText styleClass="aon-icon-down" value="&#160;" 
-										style="padding-left: 16px; cursor:pointer;" rendered="#{!accountingBook.maxMergeOrder}">
-										<a4j:support event="onclick"
-											actionListener="#{accountingBook.onPDFMoveDown}"
-											reRender="bookDiv" />
-									</aon:outputText>
+									<aon:commandButton
+										id="pdfMoveUp"
+										value="&#160;" 
+										title="&#160;"
+										actionListener="#{accountingBook.onPDFMoveUp}"
+										rendered="#{to.mergeOrder != 1}" 
+										reRender="bookDiv"
+										styleClass="aon-editDataTable-button aon-icon-up"/>
+									<aon:commandButton
+										id="pdfMoveDown"
+										value="&#160;" 
+										title="&#160;"
+										actionListener="#{accountingBook.onPDFMoveDown}"
+										rendered="#{!accountingBook.maxMergeOrder}" 
+										reRender="bookDiv"
+										styleClass="aon-editDataTable-button aon-icon-down"/>
 								</aon:div>
 							</aon:column>
 
