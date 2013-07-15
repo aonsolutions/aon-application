@@ -11,26 +11,37 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.Events.Event;
 import com.esferalia.aon.gwt.payroll.shared.Period;
+import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.WhiteSpace;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.i18n.client.CurrencyData;
+import com.google.gwt.i18n.client.CurrencyList;
+import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.i18n.client.constants.NumberConstants;
 import com.google.gwt.safecss.shared.SafeStyles;
+import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class EventsDraftObject {
@@ -68,6 +79,7 @@ public class EventsDraftObject {
 	static class EventMetaData {
 
 		private String name;
+		private String label;
 		private String description;
 
 		private Cell<Event> editCell;
@@ -78,13 +90,19 @@ public class EventsDraftObject {
 		}
 
 		public EventMetaData(String name, String description) {
-			this(name, description, new EventTextCell(),
+			this(name, name, description, new EventTextCell(),
 					new EventInputTextCell());
 		}
 
-		protected EventMetaData(String name, String description,
+		public EventMetaData(String name,  String label, String description) {
+			this(name, label, description, new EventTextCell(),
+					new EventInputTextCell());
+		}
+
+		protected EventMetaData(String name, String label, String description,
 				Cell<Event> displayCell, Cell<Event> editCell) {
 			this.name = name;
+			this.label = label;
 			this.description = description;
 			this.displayCell = displayCell;
 			this.editCell = editCell;
@@ -92,6 +110,10 @@ public class EventsDraftObject {
 
 		public String getName() {
 			return name;
+		}
+		
+		public String getLabel() {
+			return label;
 		}
 
 		public String getDescription() {
@@ -110,18 +132,59 @@ public class EventsDraftObject {
 
 	static class EnumEventMetaData extends EventMetaData {
 
-		public EnumEventMetaData(String name, String description,
+		public EnumEventMetaData(String name, String label, String description,
 				String nullOption, String... options) {
-			this(name, description, Arrays.asList(options), nullOption);
+			this(name, label, description, Arrays.asList(options), nullOption);
 		}
 
-		public EnumEventMetaData(String name, String description,
+		public EnumEventMetaData(String name, String label, String description,
 				List<String> options, String nullOption) {
-			super(name, description, new EventTextCell(),
+			super(name, label, description, new EventTextCell(),
 					new EventSelectionCell(options, nullOption));
 		}
 
 	}
+
+	static class DecimalEventMetaData extends EventMetaData {
+
+		private static final NumberConstants NUMBER_CONSTANTS = LocaleInfo
+				.getCurrentLocale().getNumberConstants();
+
+		public DecimalEventMetaData(String name) {
+			this(name, null);
+		}
+
+		public DecimalEventMetaData(String name, String description) {
+			this(name, name, description );
+		}
+
+		public DecimalEventMetaData(String name, String label, String description) {
+			super(name, label, description, new EventNumberCell(NUMBER_CONSTANTS),
+					new EventInputNumberCell(NUMBER_CONSTANTS));
+		}
+
+	}
+
+	static class BooleanEventMetaData extends EventMetaData {
+
+		private static final NumberConstants NUMBER_CONSTANTS = LocaleInfo
+				.getCurrentLocale().getNumberConstants();
+
+		public BooleanEventMetaData(String name) {
+			this(name, null);
+		}
+
+		public BooleanEventMetaData(String name, String description) {
+			this(name, name, description );
+		}
+
+		public BooleanEventMetaData(String name, String label, String description) {
+			super(name, label, description, new EventBooleanCell(),
+					new EventInputCheckCell());
+		}
+
+	}
+	
 
 	/**
 	 * A custom {@link Cell} used to render the value of a event {@link Event}
@@ -135,7 +198,23 @@ public class EventsDraftObject {
 			SafeHtml cell(SafeStyles styles, SafeHtml value);
 		}
 
-		private static Templates templates = GWT.create(Templates.class);
+		private static final int DEFAULT_SIZE = 6;
+
+		private static final SafeStyles DEFAULT_STYLES = SafeStylesUtils
+				.forWhiteSpace(WhiteSpace.NOWRAP);
+
+		private static final Templates templates = GWT.create(Templates.class);
+
+		private int size;
+		private SafeStyles styles;
+
+		public EventTextCell() {
+			this(DEFAULT_STYLES, DEFAULT_SIZE);
+		}
+
+		public EventTextCell(SafeStyles styles, int size) {
+			this.styles = styles;
+		}
 
 		@Override
 		public void render(Context context, Event event, SafeHtmlBuilder sb) {
@@ -147,20 +226,71 @@ public class EventsDraftObject {
 
 		}
 
-		private void render(Context context, String value, SafeHtmlBuilder sb) {
+		protected void render(Context context, String value, SafeHtmlBuilder sb) {
 			if (value == null) {
 				return;
 			}
 
+			String display = value.substring(0, Math.max(size, value.length()));
+
 			// If the value comes from the user, we escape it to avoid XSS
 			// attacks.
-			SafeHtml safeValue = SafeHtmlUtils.fromString(value);
+			SafeHtml safeValue = SafeHtmlUtils.fromString(display);
 
-			// Use the template to create the Cell's html.
-			SafeStyles styles = SafeStylesUtils
-					.forWhiteSpace(WhiteSpace.NOWRAP);
 			SafeHtml rendered = templates.cell(styles, safeValue);
 			sb.append(rendered);
+		}
+
+	}
+
+	static class EventNumberCell extends EventTextCell {
+
+		private NumberFormat format;
+		private NumberConstants numberConstants;
+
+		public EventNumberCell(NumberConstants numberConstants) {
+			this.numberConstants = numberConstants;
+			this.format = NumberFormat.getFormat(numberConstants
+					.decimalPattern());
+		}
+
+		@Override
+		protected void render(Context context, String value, SafeHtmlBuilder sb) {
+			try {
+				super.render(context, format.format(Double.parseDouble(value)), sb);
+			} catch (NumberFormatException e) {
+				super.render(context, numberConstants.notANumber(), sb);
+			}
+		}
+	}
+
+
+	static class EventBooleanCell extends AbstractCell<Event> {
+
+		interface Templates extends SafeHtmlTemplates {
+			@SafeHtmlTemplates.Template("<div class=\"aon-check\" />")
+			SafeHtml checked();
+		}
+
+
+		private static final Templates templates = GWT.create(Templates.class);
+
+
+		@Override
+		public void render(Context context, Event event, SafeHtmlBuilder sb) {
+			if (event == null) {
+				return;
+			}
+
+			render(context, event.getValue(), sb);
+
+		}
+
+		protected void render(Context context, String value, SafeHtmlBuilder sb) {
+			if (value == null || !Boolean.valueOf(value) ) {
+				return;
+			}
+			sb.append( templates.checked() );
 		}
 
 	}
@@ -171,11 +301,71 @@ public class EventsDraftObject {
 	static class EventInputTextCell extends AbstractCell<Event> {
 
 		interface Templates extends SafeHtmlTemplates {
-			@SafeHtmlTemplates.Template("<input class=\"aon-inputText\" type=\"text\" value=\"{0}\" />")
-			SafeHtml input(String value);
+			@SafeHtmlTemplates.Template("<input class=\"aon-inputText\" style=\"{0}\" type=\"text\" size=\"{1}\" />")
+			SafeHtml empty(SafeStyles styles, int size);
+
+			@SafeHtmlTemplates.Template("<input class=\"aon-inputText\" style=\"{0} \"type=\"text\" size=\"{1}\" value=\"{2}\" />")
+			SafeHtml input(SafeStyles styles, int size, String value);
+
 		}
 
-		private static Templates templates = GWT.create(Templates.class);
+		private static final int DEFAULT_SIZE = 5;
+
+		private static final SafeStyles DEFAULT_STYLES = SafeStylesUtils
+				.forWhiteSpace(WhiteSpace.NOWRAP);
+
+		private static final Templates templates = GWT.create(Templates.class);
+
+		private int size;
+		private SafeStyles styles;
+
+		public EventInputTextCell() {
+			this(DEFAULT_STYLES, DEFAULT_SIZE);
+		}
+
+		public EventInputTextCell(String... consumedEvents) {
+			this(DEFAULT_STYLES, DEFAULT_SIZE, consumedEvents);
+		}
+
+		public EventInputTextCell(SafeStyles styles, int size) {
+			this(styles, size, BrowserEvents.CHANGE);
+		}
+
+		public EventInputTextCell(SafeStyles styles, int size,
+				String... consumedEvents) {
+			super(consumedEvents);
+			this.styles = styles;
+			this.size = size;
+		}
+
+		@Override
+		public boolean isEditing(
+				com.google.gwt.cell.client.Cell.Context context,
+				Element parent, Event value) {
+			return true;
+		}
+
+		@Override
+		public void onBrowserEvent(Context context, Element parent,
+				Event value, NativeEvent event, ValueUpdater<Event> valueUpdater) {
+
+			super.onBrowserEvent(context, parent, value, event, valueUpdater);
+			String type = event.getType();
+
+			if (BrowserEvents.CHANGE.equals(type)) {
+				InputElement input = getInputElement(parent);
+				value.setValue(input.getValue());
+				valueUpdater.update(value);
+			}
+		}
+
+		@Override
+		public boolean resetFocus(
+				com.google.gwt.cell.client.Cell.Context context,
+				Element parent, Event value) {
+			getInputElement(parent).focus();
+			return true;
+		}
 
 		@Override
 		public void render(Context context, Event event, SafeHtmlBuilder sb) {
@@ -184,16 +374,173 @@ public class EventsDraftObject {
 		}
 
 		private void render(Context context, String value, SafeHtmlBuilder sb) {
-
-			if (value != null) {
-				sb.append(templates.input(value));
+			if (value == null) {
+				sb.append(templates.empty(styles, size));
 			} else {
-				sb.appendHtmlConstant("<input type=\"text\" tabindex=\"-1\"></input>");
+				sb.append(templates.input(styles, size, value));
 			}
 
 		}
 
+		protected InputElement getInputElement(Element parent) {
+			return parent.getFirstChild().cast();
+		}
+
 	}
+
+	static class EventInputNumberCell extends EventInputTextCell {
+
+		private NumberConstants numberConstants;
+
+		public EventInputNumberCell(NumberConstants numberConstants) {
+			super(BrowserEvents.CHANGE, BrowserEvents.KEYPRESS);
+			this.numberConstants = numberConstants;
+
+		}
+
+		@Override
+		public void onBrowserEvent(Context context, Element parent,
+				Event value, NativeEvent event, ValueUpdater<Event> valueUpdater) {
+
+			if (BrowserEvents.KEYPRESS.equals(event.getType())) {
+				int keyCode = event.getKeyCode();
+				if (keyCode == KeyCodes.KEY_BACKSPACE
+						|| keyCode == KeyCodes.KEY_DELETE
+						|| keyCode == KeyCodes.KEY_LEFT
+						|| keyCode == KeyCodes.KEY_RIGHT
+						|| keyCode == KeyCodes.KEY_TAB) {
+					super.onBrowserEvent(context, parent, value, event,
+							valueUpdater);
+					return;
+				}
+
+				int charCode = event.getCharCode();
+				if (isDigit(charCode) || isDecimalSep(charCode)
+						|| isMinus(charCode) || isPlus(charCode)) {
+					super.onBrowserEvent(context, parent, value, event,
+							valueUpdater);
+					return;
+				}
+
+				event.preventDefault();
+
+			}
+			super.onBrowserEvent(context, parent, value, event, valueUpdater);
+
+		}
+
+		private boolean isDigit(int charCode) {
+			return (charCode >= 48 && charCode <= 57);
+		}
+
+		private boolean isPlus(int charCode) {
+			return isAt(charCode, numberConstants.plusSign());
+		}
+
+		private boolean isMinus(int charCode) {
+			return isAt(charCode, numberConstants.minusSign());
+		}
+
+		private boolean isDecimalSep(int charCode) {
+			return charCode == Character.codePointAt(".", 0);
+		}
+
+		private static boolean isAt(int charCode, String str) {
+			for (int i = 0; i < str.length(); i++)
+				if (charCode == Character.codePointAt(str, i))
+					return true;
+			return false;
+		}
+	}
+
+	/**
+	 * 
+	 */
+	static class EventInputCheckCell extends AbstractCell<Event> {
+
+		interface Templates extends SafeHtmlTemplates {
+			@SafeHtmlTemplates.Template("<input style=\"{0} \"type=\"checkbox\" checked />")
+			SafeHtml checked(SafeStyles styles);
+			@SafeHtmlTemplates.Template("<input style=\"{0} \"type=\"checkbox\" />")
+			SafeHtml unchecked(SafeStyles styles);
+
+		}
+
+
+		private static final SafeStyles DEFAULT_STYLES = SafeStylesUtils
+				.forWhiteSpace(WhiteSpace.NOWRAP);
+
+		private static final Templates templates = GWT.create(Templates.class);
+
+		private SafeStyles styles;
+
+		public EventInputCheckCell() {
+			this(DEFAULT_STYLES);
+		}
+
+		public EventInputCheckCell(String... consumedEvents) {
+			this(DEFAULT_STYLES, consumedEvents);
+		}
+
+		public EventInputCheckCell(SafeStyles styles) {
+			this(styles, BrowserEvents.CHANGE);
+		}
+
+		public EventInputCheckCell(SafeStyles styles,  String... consumedEvents) {
+			super(consumedEvents);
+			this.styles = styles;
+		}
+
+		@Override
+		public boolean isEditing(
+				com.google.gwt.cell.client.Cell.Context context,
+				Element parent, Event value) {
+			return true;
+		}
+
+		@Override
+		public void onBrowserEvent(Context context, Element parent,
+				Event value, NativeEvent event, ValueUpdater<Event> valueUpdater) {
+
+			super.onBrowserEvent(context, parent, value, event, valueUpdater);
+			String type = event.getType();
+
+			if (BrowserEvents.CHANGE.equals(type)) {
+				InputElement input = getInputElement(parent);
+				value.setValue(Boolean.toString(input.isChecked()));
+				valueUpdater.update(value);
+			}
+		}
+
+		@Override
+		public boolean resetFocus(
+				com.google.gwt.cell.client.Cell.Context context,
+				Element parent, Event value) {
+			getInputElement(parent).focus();
+			return true;
+		}
+
+		@Override
+		public void render(Context context, Event event, SafeHtmlBuilder sb) {
+			render(context, event != null ? event.getValue() : null, sb);
+
+		}
+
+		private void render(Context context, String value, SafeHtmlBuilder sb) {
+			if ( value != null && Boolean.valueOf(value) )
+				sb.append(templates.checked(styles));
+			else 
+				sb.append(templates.unchecked(styles));
+				
+
+		}
+
+		protected InputElement getInputElement(Element parent) {
+			return parent.getFirstChild().cast();
+		}
+
+	}
+
 
 	/**
 	 * 
@@ -234,11 +581,8 @@ public class EventsDraftObject {
 		public boolean resetFocus(
 				com.google.gwt.cell.client.Cell.Context context,
 				Element parent, Event value) {
-			if (isEditing(context, parent, value)) {
-				getSelectElement(parent).focus();
-				return true;
-			}
-			return false;
+			getSelectElement(parent).focus();
+			return true;
 		}
 
 		@Override
@@ -347,8 +691,9 @@ public class EventsDraftObject {
 					.get(ALL_EMPLOYE_ID);
 			for (Entry<String, List<Event>> entry : allEventsMap.entrySet()) {
 				List<Event> events = employeeEventsMap.get(entry.getKey());
-				if ( events == null ) {
-					employeeEventsMap.put(entry.getKey(), events = new LinkedList<Event>());
+				if (events == null) {
+					employeeEventsMap.put(entry.getKey(),
+							events = new LinkedList<Event>());
 				}
 				events.addAll(0, entry.getValue());
 			}
@@ -425,6 +770,39 @@ public class EventsDraftObject {
 			return eventsList;
 		}
 
+		public Event getEvent(int id, String name, Date start, Date end) {
+			Map<String, List<Event>> employeeEventMap = eventsMap.get(id);
+			if (employeeEventMap == null || employeeEventMap.isEmpty())
+				return null;
+
+			List<Event> eventsList = employeeEventMap.get(name);
+			if (eventsList == null || eventsList.isEmpty())
+				return null;
+
+			for (Event event : eventsList) {
+
+				if (event.isAt(start)) {
+
+					if (event.isAt(end))
+						return event;
+
+					Event nextEvent = getEvent(id, name,
+							DateUtils.getNextDay(event.getEndDate()), end);
+
+					if (nextEvent == null)
+						return null;
+
+					if (StringUtils.equals(event.getValue(),
+							nextEvent.getValue()))
+						return Event.clone(event, event.getStartDate(),
+								nextEvent.getEndDate());
+					else
+						return null;
+				}
+			}
+
+			return null;
+		}
 	}
 
 	private Date endDate;
@@ -528,7 +906,7 @@ public class EventsDraftObject {
 
 					@Override
 					public void onSuccess(Events result) {
-						
+
 						Date currentStart = CalendarUtil.copyDate(startDate);
 						Date currentEnd = CalendarUtil.copyDate(endDate);
 
@@ -597,7 +975,11 @@ public class EventsDraftObject {
 		return eventsMetaDataMap.get(name).getDisplayCell();
 	}
 
-	public String getEventDescription(String name) {
+	public String getEventLabel(String name) {
+		return eventsMetaDataMap.get(name).getLabel();
+	}
+
+	public String getEventDescriptin(String name) {
 		return eventsMetaDataMap.get(name).getDescription();
 	}
 
@@ -610,6 +992,14 @@ public class EventsDraftObject {
 		if (event != null)
 			return event;
 		return events.getEvent(employee.getId(), name, day);
+	}
+
+	public Event getEvent(Employee employee, String name, Date start, Date end) {
+		Event event = null;
+		event = draftEvents.getEvent(employee.getId(), name, start, end);
+		if (event != null)
+			return event;
+		return events.getEvent(employee.getId(), name, start, end);
 	}
 
 	// -------------------------------------------------------------------------
@@ -637,7 +1027,7 @@ public class EventsDraftObject {
 			oneEvents.setEvents(employeId, eventsMap);
 		}
 
-		List<Event> all = draftEvents.getFinalEvents(-1, name, startDate,
+		List<Event> all = draftEvents.getFinalEvents(ALL_EMPLOYE_ID, name, startDate,
 				endDate);
 		if (!all.isEmpty()) {
 			Map<String, List<Event>> eventsMap = new HashMap<String, List<Event>>();

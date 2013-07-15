@@ -139,6 +139,12 @@ public class SQLExtraSalaryCalculatorContext implements
 	//-------------------------------------------
 	// Delegate methods
 	//-------------------------------------------
+	
+	@Override
+	public int getId() {
+		return ctx.getId();
+	}
+	
 	@Override
 	public Date getIrpfDate() {
 		return ctx.getIrpfDate();
@@ -243,8 +249,28 @@ public class SQLExtraSalaryCalculatorContext implements
 			throws AonException {
 		return ctx.getContractDeductions();
 	}
+
+	public ExpressionContext getSystemExpressionContext() {
+		return ctx.getSystemExpressionContext();
+	}
+
+	public ExpressionContext getImplicitExpressionContext() {
+		return ctx.getImplicitExpressionContext();
+	}
+
+	public ExpressionContext getAgreementExpressionContext() {
+		return ctx.getAgreementExpressionContext();
+	}
 	
+	@Override
+	public Integer getInt(String table, String column) {
+		return ctx.getInt(table, column);
+	}
 	
+	@Override
+	public Date getDate(String table, String column) {
+		return ctx.getDate(table, column);
+	}
 	
 	
 	

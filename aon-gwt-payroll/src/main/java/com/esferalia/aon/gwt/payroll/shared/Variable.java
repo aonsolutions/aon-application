@@ -5,7 +5,7 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 
-public abstract class Variable implements HasStartAndEndDate, Serializable{
+public abstract class Variable implements HasStartAndEndDate, Serializable {
 
 	String name;
 	Date startDate;
@@ -14,10 +14,12 @@ public abstract class Variable implements HasStartAndEndDate, Serializable{
 	Scope scope;
 	String expression;
 
+	boolean[] defined;
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -25,7 +27,7 @@ public abstract class Variable implements HasStartAndEndDate, Serializable{
 	public Date getStartDate() {
 		return startDate;
 	}
-	
+
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
@@ -33,7 +35,7 @@ public abstract class Variable implements HasStartAndEndDate, Serializable{
 	public Date getEndDate() {
 		return endDate;
 	}
-	
+
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
@@ -41,7 +43,7 @@ public abstract class Variable implements HasStartAndEndDate, Serializable{
 	public boolean isImpicit() {
 		return implicit;
 	}
-	
+
 	public void setImplicit(boolean implicit) {
 		this.implicit = implicit;
 	}
@@ -49,7 +51,7 @@ public abstract class Variable implements HasStartAndEndDate, Serializable{
 	public Scope getScope() {
 		return scope;
 	}
-	
+
 	public void setScope(Scope scope) {
 		this.scope = scope;
 	}
@@ -57,9 +59,17 @@ public abstract class Variable implements HasStartAndEndDate, Serializable{
 	public String getExpression() {
 		return expression;
 	}
-	
+
 	public void setExpression(String expression) {
 		this.expression = expression;
+	}
+
+	public boolean isDefinedAt(Scope scope) {
+		return defined != null ? defined[scope.ordinal()] : false;
+	}
+
+	public void setDefined(boolean defined[]) {
+		this.defined = defined;
 	}
 
 	public abstract Object getValue();
@@ -73,9 +83,7 @@ public abstract class Variable implements HasStartAndEndDate, Serializable{
 		if (!(obj instanceof Variable))
 			return false;
 		Variable var = (Variable) obj;
-		return ((name == var.name) || ((name != null) && name
-				.equals(var.name)));
+		return ((name == var.name) || ((name != null) && name.equals(var.name)));
 	}
-	
 
 }

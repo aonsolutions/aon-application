@@ -9,7 +9,11 @@ public class SalaryDraft extends SalaryPreview {
 
 	
 	public static enum Scope {
-		SYSTEM, APPLICATION, AGREEMENT, CONTRACT, SALARY
+		
+		SYSTEM, APPLICATION, AGREEMENT, CONTRACT, SALARY;
+		
+		public static final int NUM_VALUES= Scope.values().length;
+		
 	}
 	
 	
@@ -112,7 +116,7 @@ public class SalaryDraft extends SalaryPreview {
 	private List<Variable> draftContext;
 	private List<Payment> draftPayments;
 	private List<Deduction> draftDeductions;
-
+	
 	public SalaryDraft() {
 		context = new LinkedList<Variable>();
 		events = new LinkedList<Event>();
@@ -209,17 +213,17 @@ public class SalaryDraft extends SalaryPreview {
 			var = new StringVariable();
 			((StringVariable) var).value = value.toString();
 		}
-		var.name = name;
-		var.startDate = startDate;
-		var.endDate = endDate;
-		var.scope = Scope.SYSTEM;
-		var.implicit = true;
+		var.setName( name );
+		var.setStartDate (startDate);
+		var.setEndDate(endDate);
+		var.setScope(Scope.SYSTEM);
+		var.setImplicit(true);
 		if (!context.contains(var))
 			context.add(var);
 	}
 
 	public void addVariable(String name, Object value, Date startDate,
-			Date endDate, Scope scope, String expression) {
+			Date endDate, Scope scope, String expression, boolean defined []) {
 		Variable var;
 		if (value instanceof Number) {
 			var = new NumberVariable();
@@ -228,11 +232,12 @@ public class SalaryDraft extends SalaryPreview {
 			var = new StringVariable();
 			((StringVariable) var).value = value.toString();
 		}
-		var.name = name;
-		var.startDate = startDate;
-		var.endDate = endDate;
-		var.scope = scope;
-		var.implicit = false;
+		var.setName( name );
+		var.setStartDate (startDate);
+		var.setEndDate(endDate);
+		var.setScope(scope);
+		var.setImplicit(false);
+		var.setDefined(defined);
 		var.expression = expression;
 		if (!context.contains(var))
 			context.add(var);

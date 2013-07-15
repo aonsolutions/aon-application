@@ -121,6 +121,18 @@ public class DelegateContractSalaryCalculatorContext<T extends IContractSalaryCa
 			throws AonException {
 		return ctx.getContractDeductions();
 	}
+
+	public ExpressionContext getSystemExpressionContext() {
+		return ctx.getSystemExpressionContext();
+	}
+
+	public ExpressionContext getImplicitExpressionContext() {
+		return ctx.getImplicitExpressionContext();
+	}
+
+	public ExpressionContext getAgreementExpressionContext() {
+		return ctx.getAgreementExpressionContext();
+	}
 	
 
 }

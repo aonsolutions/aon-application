@@ -7,6 +7,7 @@ import com.code.aon.common.AonException;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 
 public interface IContractSalaryCalculatorContext extends ISalaryCalculatorContext {
 
@@ -36,6 +37,12 @@ public interface IContractSalaryCalculatorContext extends ISalaryCalculatorConte
 	public Integer getRegistration();
 	
 	public Date getSeniorityDate();
+	
+	public ExpressionContext getSystemExpressionContext();
+
+	public ExpressionContext getImplicitExpressionContext();
+
+	public ExpressionContext getAgreementExpressionContext();
 
 	public Collection<IContractPayment> getContractPayments() throws AonException;
 

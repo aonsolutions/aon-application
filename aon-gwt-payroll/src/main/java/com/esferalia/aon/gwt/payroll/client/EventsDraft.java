@@ -9,6 +9,7 @@ import java.util.Set;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.CopyCallback;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.GetCallback;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.SaveCallback;
+import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Events.Event;
 import com.esferalia.aon.gwt.payroll.shared.Period;
@@ -30,6 +31,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safecss.shared.SafeStyles;
+import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -48,6 +50,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -58,10 +61,15 @@ import com.google.gwt.view.client.MultiSelectionModel;
 
 public class EventsDraft extends ResizeComposite {
 
+	public static final String YEAR = "YEAR";
+
 	private static final String SELECTED = "selected";
 
 	private static final int COL_OFFSET = 2;
 	private static final int ROW_OFFSET = 2;
+
+	private static final int PAGE_SIZE = 50;
+	private static final int VERTICAL_SPACE = 20;
 
 	interface Template extends SafeHtmlTemplates {
 		@SafeHtmlTemplates.Template("<div>{0}</div>")
@@ -74,6 +82,9 @@ public class EventsDraft extends ResizeComposite {
 
 	interface Binder extends UiBinder<Widget, EventsDraft> {
 	}
+
+	private static final Binder binder = GWT.create(Binder.class);
+	private static final Template template = GWT.create(Template.class);
 
 	static class Td {
 		int row;
@@ -99,19 +110,204 @@ public class EventsDraft extends ResizeComposite {
 		}
 	}
 
-	private static final int PAGE_SIZE = 50;
-	private static final int VERTICAL_SPACE = 20;
+	interface DateRange {
 
-	private static final DateTimeFormat WEEK_DATE_FORMAT = DateTimeFormat
-			.getFormat("EEE dd/M");
+		Date getStart(Date date);
 
-	private static final DateTimeFormat START_DATE_FORMAT = DateTimeFormat
-			.getFormat("dd");
-	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
-			.getFormat("dd 'de' MMMM 'de' yyyy");
+		Date getNext(Date date);
 
-	private static final Binder binder = GWT.create(Binder.class);
-	private static final Template template = GWT.create(Template.class);
+		Date getPrevious(Date date);
+
+		Date[] getSplits(Date start, Date end);
+
+		Date parseSplit(String str);
+
+		String formatSplit(Date start);
+
+		String format(Date start, Date end);
+
+	}
+
+	static class WeekDateRange implements DateRange {
+
+		private static final int WEEK_DAYS = 7;
+		private static final DateTimeFormat SPLIT_DATE_FORMAT = DateTimeFormat
+				.getFormat("EEE dd/M");
+
+		private static final DateTimeFormat START_DATE_FORMAT = DateTimeFormat
+				.getFormat("dd");
+		private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
+				.getFormat("dd 'de' MMMM 'de' yyyy");
+
+		@Override
+		public Date getStart(Date date) {
+			return DateUtils.getFirstDayOfWorkWeek(date);
+		}
+
+		@Override
+		public Date getNext(Date date) {
+			Date next = CalendarUtil.copyDate(date);
+			CalendarUtil.addDaysToDate(next, WEEK_DAYS);
+			return next;
+		}
+
+		@Override
+		public Date getPrevious(Date date) {
+			Date next = CalendarUtil.copyDate(date);
+			CalendarUtil.addDaysToDate(next, -1 * WEEK_DAYS);
+			return next;
+		}
+
+		@Override
+		public Date[] getSplits(Date start, Date end) {
+			Date days[] = new Date[WEEK_DAYS];
+			for (int i = 0; i < WEEK_DAYS; i++) {
+				days[i] = CalendarUtil.copyDate(start);
+				CalendarUtil.addDaysToDate(days[i], i);
+			}
+			return days;
+		}
+
+		@Override
+		public Date parseSplit(String str) {
+			return SPLIT_DATE_FORMAT.parse(str);
+		}
+
+		@Override
+		public String formatSplit(Date start) {
+			return SPLIT_DATE_FORMAT.format(start);
+		}
+
+		@Override
+		public String format(Date start, Date end) {
+			return START_DATE_FORMAT.format(start) + " - "
+					+ END_DATE_FORMAT.format(end);
+		}
+
+	}
+
+	static class MonthDateRange implements DateRange {
+
+		private static final DateTimeFormat SPLIT_DATE_FORMAT = DateTimeFormat
+				.getFormat("dd/M");
+
+		private static final DateTimeFormat START_DATE_FORMAT = DateTimeFormat
+				.getFormat("dd");
+		private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
+				.getFormat("dd 'de' MMMM 'de' yyyy");
+
+		@Override
+		public Date getStart(Date date) {
+			return DateUtils.getFirstDayOfMonth(date);
+		}
+
+		@Override
+		public Date getNext(Date date) {
+			Date next = CalendarUtil.copyDate(date);
+			CalendarUtil.addMonthsToDate(next, 1);
+			return next;
+		}
+
+		@Override
+		public Date getPrevious(Date date) {
+			Date prev = CalendarUtil.copyDate(date);
+			CalendarUtil.addMonthsToDate(prev, -1);
+			return prev;
+		}
+
+		@Override
+		public Date[] getSplits(Date start, Date end) {
+			int count = CalendarUtil.getDaysBetween(start, end) + 1;
+			Date days[] = new Date[count];
+			for (int i = 0; i < count; i++) {
+				days[i] = CalendarUtil.copyDate(start);
+				CalendarUtil.addDaysToDate(days[i], i);
+			}
+			return days;
+		}
+
+		@Override
+		public Date parseSplit(String str) {
+			return SPLIT_DATE_FORMAT.parse(str);
+		}
+
+		@Override
+		public String formatSplit(Date start) {
+			return SPLIT_DATE_FORMAT.format(start);
+		}
+
+		@Override
+		public String format(Date start, Date end) {
+			return START_DATE_FORMAT.format(start) + " - "
+					+ END_DATE_FORMAT.format(end);
+		}
+
+	}
+
+	static class YearDateRange implements DateRange {
+
+		private static final int YEAR_MONTHS = 12;
+
+		private static final DateTimeFormat SPLIT_DATE_FORMAT = DateTimeFormat
+				.getFormat("MMMM");
+
+		private static final DateTimeFormat START_DATE_FORMAT = DateTimeFormat
+				.getFormat("dd 'de' MMMM");
+		private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
+				.getFormat("dd 'de' MMMM 'de' yyyy");
+
+		@Override
+		public Date getStart(Date date) {
+			return DateUtils.getFirstDayOfYear(date);
+		}
+
+		@Override
+		public Date getNext(Date date) {
+			Date next = CalendarUtil.copyDate(date);
+			CalendarUtil.addMonthsToDate(next, YEAR_MONTHS);
+			return next;
+		}
+
+		@Override
+		public Date getPrevious(Date date) {
+			Date next = CalendarUtil.copyDate(date);
+			CalendarUtil.addMonthsToDate(next, -1 * YEAR_MONTHS);
+			return next;
+		}
+
+		@Override
+		public Date[] getSplits(Date start, Date end) {
+			Date months[] = new Date[YEAR_MONTHS];
+			for (int i = 0; i < YEAR_MONTHS; i++) {
+				months[i] = CalendarUtil.copyDate(start);
+				CalendarUtil.addMonthsToDate(months[i], i);
+			}
+			return months;
+		}
+
+		@Override
+		public Date parseSplit(String str) {
+			return SPLIT_DATE_FORMAT.parse(str);
+		}
+
+		@Override
+		public String formatSplit(Date start) {
+			return SPLIT_DATE_FORMAT.format(start);
+		}
+
+		@Override
+		public String format(Date start, Date end) {
+			return START_DATE_FORMAT.format(start) + " - "
+					+ END_DATE_FORMAT.format(end);
+		}
+	}
+
+	private static final DateRange[] DATE_RANGES = { new WeekDateRange(),
+			new MonthDateRange(), new YearDateRange() };
+
+	public static final int WEEK_DATE_RANGE = 0;
+	public static final int MONTH_DATE_RANGE = 1;
+	public static final int YEAR_DATE_RANGE = 2;
 
 	private class EvenstTable extends FlexTable {
 
@@ -228,9 +424,6 @@ public class EventsDraft extends ResizeComposite {
 			return consumedEvents != null && consumedEvents.contains(eventType);
 		}
 
-		private void preventEvent(com.google.gwt.user.client.Event event) {
-			event.preventDefault();
-		}
 
 	}
 
@@ -243,11 +436,16 @@ public class EventsDraft extends ResizeComposite {
 	@UiField
 	ScrollPanel eventsTableScrollPane;
 	private Element headEl;
+	private Element leftColEl;
+	private Element rigthColEl;
 	private Element upperLeftEl;
+	private Element upperRightEl;
 
 	@UiField
 	InlineLabel dateRangeLabel;
 
+	@UiField
+	Label eventLabel;
 	@UiField
 	ListBox eventListBox;
 	@UiField
@@ -266,13 +464,11 @@ public class EventsDraft extends ResizeComposite {
 	private boolean waitingForEvents;
 
 	private EventsDraftObject draftObject;
-	private DateTimeFormat dateTimeFormat;
 
 	private Td editingTd;
 	private MultiSelectionModel<Td> selectionModel;
 
 	public EventsDraft() {
-		dateTimeFormat = WEEK_DATE_FORMAT;
 		eventsTable = new EvenstTable();
 		initWidget(binder.createAndBindUi(this));
 		this.waitingForEvents = false;
@@ -285,7 +481,10 @@ public class EventsDraft extends ResizeComposite {
 	// ------------------------------------------
 
 	public void setEventsDraftObject(EventsDraftObject draftObject) {
+
 		this.draftObject = draftObject;
+
+		syncWithDateRange();
 
 		fillDateRange();
 		fillEventList();
@@ -325,13 +524,24 @@ public class EventsDraft extends ResizeComposite {
 
 	@UiHandler("nextDateRangeButton")
 	void onNextDateRangeButton(ClickEvent event) {
-		addDaysToDateRange(getDateRangeDays());
+		DateRange dateRange = getDateRange();
+		Date startDate = dateRange.getNext(draftObject.getStartDate());
+		draftObject.setStartDate(startDate);
+		Date endDate = dateRange.getNext(startDate);
+		CalendarUtil.addDaysToDate(endDate, -1);
+		draftObject.setEndDate(endDate);
 		reload();
 	}
 
 	@UiHandler("previousDateRangeButton")
 	void onPreviousDateRangeButton(ClickEvent event) {
-		addDaysToDateRange(-1 * getDateRangeDays());
+		DateRange dateRange = getDateRange();
+
+		Date endDate = draftObject.getStartDate();
+		CalendarUtil.addDaysToDate(endDate, -1);
+		Date startDate = dateRange.getPrevious(draftObject.getStartDate());
+		draftObject.setStartDate(startDate);
+		draftObject.setEndDate(endDate);
 		reload();
 	}
 
@@ -362,10 +572,11 @@ public class EventsDraft extends ResizeComposite {
 	void onCopyDateRangeListBoxChanged(ChangeEvent event) {
 		int index = copyDateRangeListBox.getSelectedIndex();
 		String value = copyDateRangeListBox.getValue(index);
+		DateRange dateRange = getDateRange();
+		Date startDate = dateRange.parseSplit(value);
+		Date endDate = dateRange.getNext(startDate);
+		CalendarUtil.addDaysToDate(endDate, -1);
 
-		Date startDate = WEEK_DATE_FORMAT.parse(value);
-		Date endDate = CalendarUtil.copyDate(startDate);
-		CalendarUtil.addDaysToDate(endDate, getDateRangeDays() - 1);
 		String name = getSelectedEvent();
 
 		draftObject.copyEvents(name, startDate, endDate, new CopyCallback() {
@@ -383,33 +594,41 @@ public class EventsDraft extends ResizeComposite {
 		});
 	}
 
+	@UiHandler("eventListBox")
+	void onEventListBoxChanged(ChangeEvent event) {
+		updateEventLabel();
+		initAndfillEventsTable();
+		fillCopyDateRange();
+	}
+
+	@UiHandler("dateRangeListBox")
+	void ondateRangeListBoxChanged(ChangeEvent event) {
+		syncWithDateRange();
+		fillDateRange();
+		initAndfillEventsTable();
+		fillCopyDateRange();
+	}
+
+	@UiHandler("eventsTableScrollPane")
+	void onSalaryTableScroll(ScrollEvent event) {
+		moveFroozenElements();
+	}
+
 	// -------------------------------------------------------------------------
 	//
 	// -------------------------------------------------------------------------
 
 	private void reload() {
 		clearEventsTable();
-
 		fillDateRange();
-		fillEventList();
 		initAndfillEventsTable();
-
 		fillCopyDateRange();
 	}
 
-	private int getDateRangeDays() {
+	private DateRange getDateRange() {
 		int i = dateRangeListBox.getSelectedIndex();
 		String value = dateRangeListBox.getValue(i);
-		return Integer.parseInt(value);
-	}
-
-	private void addDaysToDateRange(int days) {
-		Date startDate = draftObject.getStartDate();
-		CalendarUtil.addDaysToDate(startDate, days);
-		draftObject.setStartDate(startDate);
-		Date endDate = draftObject.getEndDate();
-		CalendarUtil.addDaysToDate(endDate, days);
-		draftObject.setEndDate(endDate);
+		return DATE_RANGES[Integer.parseInt(value)];
 	}
 
 	private void clearEventsTable() {
@@ -437,10 +656,12 @@ public class EventsDraft extends ResizeComposite {
 
 		int col = 2;
 
-		for (Date day = CalendarUtil.copyDate(draftObject.getStartDate()); day
-				.compareTo(draftObject.getEndDate()) <= 0; CalendarUtil
-				.addDaysToDate(day, 1)) {
-			eventsTable.setText(0, col, dateTimeFormat.format(day));
+		DateRange dateRange = getDateRange();
+
+		Date splits[] = dateRange.getSplits(draftObject.getStartDate(),
+				draftObject.getEndDate());
+		for (Date date : splits) {
+			eventsTable.setText(0, col, dateRange.formatSplit(date));
 			cellFormatter.addStyleName(0, col, AON.AON_NOWRAP);
 			cellFormatter.addStyleName(0, col, AON.AON_BOLD);
 			cellFormatter.addStyleName(0, col, AON.AON_TEXT_CENTER);
@@ -456,7 +677,11 @@ public class EventsDraft extends ResizeComposite {
 		eventsTable.setHTML(1, 1, "&nbsp;");
 
 		Cell<Event> cell = getEditCell();
-		SafeStyles styles = SafeStylesUtils.forTextAlign(TextAlign.CENTER);
+		SafeStyles styles = new SafeStylesBuilder().textAlign(TextAlign.CENTER)
+				.paddingTop(1, Unit.PX).paddingBottom(1, Unit.PX)
+				.paddingLeft(0.5, Unit.EM).paddingRight(0.5, Unit.EM)
+				.toSafeStyles();
+
 		for (int i = 2; i < cols; i++) {
 			SafeHtmlBuilder sb = new SafeHtmlBuilder();
 			cell.render(null, null, sb);
@@ -472,9 +697,6 @@ public class EventsDraft extends ResizeComposite {
 		eventsTable.sinkEvents(eventBitsToAdd);
 	}
 
-	private void _fillEventsTable() {
-		fillEventsTable(draftObject.getEmployees());
-	}
 
 	private void fillEventsTable(List<Employee> employees) {
 
@@ -486,20 +708,31 @@ public class EventsDraft extends ResizeComposite {
 
 		int row = eventsTable.getRowCount();
 
+		DateRange dateRange = getDateRange();
+
+		Date splits[] = dateRange.getSplits(draftObject.getStartDate(),
+				draftObject.getEndDate());
+
 		for (Employee employee : employees) {
 
 			eventsTable.setText(row, 0, employee.getDocument());
 			cellFormatter.addStyleName(row, 0, AON.AON_NOWRAP);
 			cellFormatter.addStyleName(row, 0, AON.AON_TEXT_CENTER);
-			eventsTable.setText(row, 1, employee.getFullname());
+			eventsTable.setHTML(row, 1, "&nbsp;&nbsp;" + employee.getFullname());
 			cellFormatter.addStyleName(row, 1, AON.AON_NOWRAP);
 
-			// for (int col = 2; col < cols; col++) {
 			int col = 2;
-			for (Date day : getAvailableDays()) {
+			// for (Date start : splits ) {
+			for (int i = 0; i < splits.length; i++) {
+
+				Date start = splits[i];
+				Date end = DateUtils
+						.getPrevDay(i + 1 < splits.length ? splits[i + 1]
+								: dateRange.getNext(draftObject.getStartDate()));
 
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				Event event = getEvent(employee, eventName, day);
+
+				Event event = getEvent(employee, eventName, start, end);
 				displayCell.render(null, event, sb);
 				// Build the contents.
 				SafeHtml contents = template.div(sb.toSafeHtml());
@@ -508,10 +741,10 @@ public class EventsDraft extends ResizeComposite {
 				col++;
 
 			}
-
+			SafeStyles styles = SafeStylesUtils.forTextAlign(TextAlign.CENTER);
 			SafeHtmlBuilder sb = new SafeHtmlBuilder();
 			editCell.render(null, null, sb);
-			SafeHtml contents = template.div(sb.toSafeHtml());
+			SafeHtml contents = template.div(styles, sb.toSafeHtml());
 			eventsTable.setHTML(row, col++, contents);
 
 			row++;
@@ -520,14 +753,23 @@ public class EventsDraft extends ResizeComposite {
 		// TODO: Update froozen elements.
 		removeFromParent(headEl);
 		removeFromParent(upperLeftEl);
+		removeFromParent(upperRightEl);
+		removeFromParent(leftColEl);
+		removeFromParent(rigthColEl);
 
 		Element scrollEl = eventsTableScrollPane.getElement();
 
 		headEl = cloneHead(eventsTable, 2, 2);
 		upperLeftEl = cloneUpperLeftEl(eventsTable, 2, 2);
+		upperRightEl = cloneUpperRightEl(eventsTable, 1, 2);
+		leftColEl = cloneLeftColEl(eventsTable, 2, 2);
+		rigthColEl = cloneRightColEl(eventsTable, 1, 2);
 
 		DOM.appendChild(scrollEl, headEl);
 		DOM.appendChild(scrollEl, upperLeftEl);
+		DOM.appendChild(scrollEl, upperRightEl);
+		DOM.appendChild(scrollEl, leftColEl);
+		DOM.appendChild(scrollEl, rigthColEl);
 
 		// Already attached
 		DOM.sinkEvents(headEl, eventsTable.sunkEvents);
@@ -552,6 +794,50 @@ public class EventsDraft extends ResizeComposite {
 						+ COL_OFFSET);
 			}
 		});
+		DOM.sinkEvents(upperRightEl, eventsTable.sunkEvents);
+		DOM.setEventListener(upperRightEl, new EventListener() {
+
+			@Override
+			public void onBrowserEvent(com.google.gwt.user.client.Event event) {
+				Element td = getEventTargetCell(event, upperRightEl);
+
+				if (td == null) {
+					return;
+				}
+
+				TableCellElement targetTableCell = TableCellElement.as(td);
+				TableRowElement targetTableRow = TableRowElement.as(td
+						.getParentElement());
+
+				int row = targetTableRow.getSectionRowIndex();
+				
+				int col = eventsTable.getCellCount(row) -1 ;
+
+				eventsTable.onBrowserEvent(event, targetTableCell, row, col );
+			}
+		});
+		DOM.sinkEvents(rigthColEl, eventsTable.sunkEvents);
+		DOM.setEventListener(rigthColEl, new EventListener() {
+
+			@Override
+			public void onBrowserEvent(com.google.gwt.user.client.Event event) {
+				Element td = getEventTargetCell(event, rigthColEl);
+
+				if (td == null) {
+					return;
+				}
+
+				TableCellElement targetTableCell = TableCellElement.as(td);
+				TableRowElement targetTableRow = TableRowElement.as(td
+						.getParentElement());
+
+				int row = targetTableRow.getSectionRowIndex();
+				
+				int col = eventsTable.getCellCount(row) -1 ;
+
+				eventsTable.onBrowserEvent(event, targetTableCell, row + 2, col );
+			}
+		});
 
 		resizeEventsTable();
 
@@ -568,15 +854,29 @@ public class EventsDraft extends ResizeComposite {
 	private void fillEventList() {
 		eventListBox.clear();
 		for (String name : draftObject.getEventsNames())
-			eventListBox.addItem(draftObject.getEventDescription(name), name);
+			eventListBox.addItem(draftObject.getEventLabel(name), name);
+		updateEventLabel();
+
 	}
 
 	private void fillDateRange() {
-		dateRangeLabel.setText(START_DATE_FORMAT.format(draftObject
-				.getStartDate())
-				+ " - "
-				+ END_DATE_FORMAT.format(draftObject.getEndDate()));
+		dateRangeLabel.setText(getDateRange().format(
+				draftObject.getStartDate(), draftObject.getEndDate()));
 
+	}
+
+	private void syncWithDateRange() {
+		DateRange dateRange = getDateRange();
+		Date startDate = dateRange.getStart(draftObject.getStartDate());
+		Date endDate = dateRange.getNext(startDate);
+		CalendarUtil.addDaysToDate(endDate, -1);
+
+		draftObject.setStartDate(startDate);
+		draftObject.setEndDate(endDate);
+	}
+	
+	private void updateEventLabel () {
+		eventLabel.setText(draftObject.getEventDescriptin(getSelectedEvent()));
 	}
 
 	private void fillCopyDateRange() {
@@ -599,7 +899,7 @@ public class EventsDraft extends ResizeComposite {
 				Date date = result.getStart();
 				Date current = draftObject.getStartDate();
 
-				int days = getDateRangeDays();
+				DateRange dateRange = getDateRange();
 
 				if (current.before(first)) {
 					copyDateRangeListBox.addItem("-", "");
@@ -614,21 +914,20 @@ public class EventsDraft extends ResizeComposite {
 						copyDateRangeListBox
 								.setSelectedIndex(copyDateRangeListBox
 										.getItemCount() - 1);
-						CalendarUtil.addDaysToDate(date, days);
+						date = dateRange.getNext(date);
 						continue;
 					}
 
-					String value = WEEK_DATE_FORMAT.format(date);
+					Date next = dateRange.getNext(date);
+					Date end = CalendarUtil.copyDate(next);
+					CalendarUtil.addDaysToDate(end, -1);
 
-					StringBuffer buff = new StringBuffer();
-					buff.append(WEEK_DATE_FORMAT.format(date));
-					buff.append("...");
-					CalendarUtil.addDaysToDate(date, days - 1);
-					buff.append(WEEK_DATE_FORMAT.format(date));
+					String item = dateRange.format(date, end);
+					String value = dateRange.formatSplit(date);
 
-					copyDateRangeListBox.addItem(buff.toString(), value);
-					CalendarUtil.addDaysToDate(date, 1);
+					copyDateRangeListBox.addItem(item, value);
 
+					date = next;
 				}
 
 				if (current.after(last)) {
@@ -671,16 +970,47 @@ public class EventsDraft extends ResizeComposite {
 	}
 
 	private void moveFroozenElements() {
-		if (headEl == null || upperLeftEl == null)
+		if (headEl == null || upperLeftEl == null || upperRightEl == null
+				|| leftColEl == null || rigthColEl == null)
 			return;
+
 		int top = eventsTableScrollPane.getAbsoluteTop();
 		int left = eventsTableScrollPane.getAbsoluteLeft();
 		int width = eventsTableScrollPane.getElement().getClientWidth();
 		int height = eventsTableScrollPane.getElement().getClientHeight();
+		int scrollTop = eventsTableScrollPane.getVerticalScrollPosition();
+		int scrollLeft = eventsTableScrollPane.getHorizontalScrollPosition();
 
+		// 'upperLeftEl' fixed at upper left corner of 'eventsTableScrollPane'
 		moveEl(upperLeftEl, top, left, width, height);
-		moveEl(headEl, top, left + upperLeftEl.getOffsetWidth() - 1, width,
+
+		// 'upperRighEl' fixed at upper right corner of 'eventsTableScrollPane'
+		moveEl(upperRightEl, top, left + width - upperRightEl.getClientWidth(),
+				width, height);
+
+		// 'headEl' fixed at top of 'eventsTableScrollPane', but also scrolls
+		// horizontally.
+		int headLeft = left + upperLeftEl.getOffsetWidth() - 1 - scrollLeft;
+		moveEl(headEl, top, headLeft, 0, scrollLeft, width - (headLeft - left),
 				height);
+		headEl.getStyle().setWidth(
+				eventsTable.getElement().getClientWidth()
+						- upperLeftEl.getOffsetWidth() + 2, Unit.PX); // +2 ????
+
+		// 'leftColEl' fixed at left of 'eventsTableScrollPane', but also
+		// scrolls vertically.
+		int leftColTop = top + upperLeftEl.getOffsetHeight() - scrollTop
+				- (scrollTop == 0 ? 1 : 0);
+		moveEl(leftColEl, leftColTop, left, scrollTop, 0, width, height
+				- (leftColTop - top));
+
+		// 'leftColEl' fixed at left of 'eventsTableScrollPane', but also
+		// scrolls vertically.
+		int rigthColTop = top + upperLeftEl.getOffsetHeight() - scrollTop
+				- (scrollTop == 0 ? 1 : 0);
+		moveEl(rigthColEl, rigthColTop,
+				left + width - rigthColEl.getClientWidth(), scrollTop, 0,
+				width, height - (rigthColTop - top));
 	}
 
 	private void getMoreEvents() {
@@ -747,23 +1077,6 @@ public class EventsDraft extends ResizeComposite {
 		return draftObject.getEmployees().get(row - ROW_OFFSET);
 	}
 
-	private Date[] getAvailableDays() {
-
-		Date firstDay = draftObject.getStartDate();
-		Date lastDay = draftObject.getEndDate();
-		int count = CalendarUtil.getDaysBetween(firstDay, lastDay);
-
-		Date days[] = new Date[count + 1];
-
-		for (int i = 0; i <= count; i++) {
-			Date day = CalendarUtil.copyDate(firstDay);
-			CalendarUtil.addDaysToDate(day, i);
-			days[i] = day;
-		}
-
-		return days;
-
-	}
 
 	private Event getEvent(int row, int col) {
 
@@ -777,8 +1090,9 @@ public class EventsDraft extends ResizeComposite {
 		return draftObject.getEvent(employee, name, day);
 	}
 
-	private Event getEvent(Employee employee, String name, Date day) {
-		return draftObject.getEvent(employee, name, day);
+
+	private Event getEvent(Employee employee, String name, Date start, Date end) {
+		return draftObject.getEvent(employee, name, start, end);
 	}
 
 	/**
@@ -814,27 +1128,12 @@ public class EventsDraft extends ResizeComposite {
 		editingTd = null;
 	}
 
-	private void selectRow(int row) {
-	}
-
-	private void selectCol(int col) {
-	}
-
-	private void selectCell(int row, int col) {
-		selectionModel.setSelected(new Td(row, col), true);
-		eventsTable.getCellFormatter().addStyleName(row, col, SELECTED);
-	}
 
 	private void deSelectAll() {
 		for (Td td : selectionModel.getSelectedSet())
 			eventsTable.getCellFormatter().removeStyleName(td.row, td.col,
 					SELECTED);
 		selectionModel.clear();
-	}
-
-	private void deSelectCell(int row, int col) {
-		selectionModel.setSelected(new Td(row, col), false);
-		eventsTable.getCellFormatter().removeStyleName(row, col, SELECTED);
 	}
 
 	/**
@@ -960,9 +1259,7 @@ public class EventsDraft extends ResizeComposite {
 		return (col == (eventsTable.getCellCount(0) - 1));
 	}
 
-	// -------------------------------------------------------------------------
-	//
-	// -------------------------------------------------------------------------
+	// --------------------------------------------------------- Private methods
 
 	private void initAndfillEventsTable() {
 		clearEventsTable();
@@ -1030,6 +1327,7 @@ public class EventsDraft extends ResizeComposite {
 
 	}
 
+
 	private static void removeFromParent(Element el) {
 		if (el != null && el.hasParentElement())
 			el.removeFromParent();
@@ -1048,6 +1346,33 @@ public class EventsDraft extends ResizeComposite {
 			// remove all columns except 'cols' at right.
 			for (int i = rt.getChildCount(); i > cols; i--)
 				rt.getChild(i - 1).removeFromParent();
+
+			DOM.appendChild(tbody, rt);
+
+		}
+
+		Style style = table.getStyle();
+		style.setPosition(Position.FIXED);
+		style.setBackgroundColor("white");
+		style.setProperty("width", "auto"); /* override width: 100% */
+
+		table.setClassName(flexTable.getElement().getClassName());
+
+		return table;
+	}
+
+	private static Element cloneUpperRightEl(FlexTable flexTable, int cols,
+			int rows) {
+
+		Element table = DOM.createTable();
+		Element tbody = DOM.createTBody();
+		DOM.appendChild(table, tbody);
+
+		for (int row = 0; row < rows; row++) {
+			Element rt = cloneTR(flexTable.getRowFormatter().getElement(row));
+			// remove all columns except 'cols' at left.
+			for (int i = rt.getChildCount() - 1 - cols; i >= 0; i--)
+				rt.getChild(i).removeFromParent();
 
 			DOM.appendChild(tbody, rt);
 
@@ -1090,6 +1415,62 @@ public class EventsDraft extends ResizeComposite {
 		return table;
 	}
 
+	private static Element cloneLeftColEl(FlexTable flexTable, int cols,
+			int start) {
+
+		Element table = DOM.createTable();
+		Element tbody = DOM.createTBody();
+		DOM.appendChild(table, tbody);
+
+		int rows = flexTable.getRowCount();
+
+		for (int row = start; row < rows; row++) {
+			Element rt = cloneTR(flexTable.getRowFormatter().getElement(row));
+			// remove all columns except 'cols' at right.
+			for (int i = rt.getChildCount(); i > cols; i--)
+				rt.getChild(i - 1).removeFromParent();
+
+			DOM.appendChild(tbody, rt);
+		}
+
+		Style style = table.getStyle();
+		style.setPosition(Position.FIXED);
+		style.setBackgroundColor("white");
+		style.setProperty("width", "auto"); /* override width: 100% */
+
+		table.setClassName(flexTable.getElement().getClassName());
+
+		return table;
+	}
+
+	private static Element cloneRightColEl(FlexTable flexTable, int cols,
+			int start) {
+
+		Element table = DOM.createTable();
+		Element tbody = DOM.createTBody();
+		DOM.appendChild(table, tbody);
+
+		int rows = flexTable.getRowCount();
+
+		for (int row = start; row < rows; row++) {
+			Element rt = cloneTR(flexTable.getRowFormatter().getElement(row));
+			// remove all columns except 'cols' at left.
+			for (int i = rt.getChildCount() - 1 - cols; i >= 0; i--)
+				rt.getChild(i).removeFromParent();
+
+			DOM.appendChild(tbody, rt);
+		}
+
+		Style style = table.getStyle();
+		style.setPosition(Position.FIXED);
+		style.setBackgroundColor("white");
+		style.setProperty("width", "auto"); /* override width: 100% */
+
+		table.setClassName(flexTable.getElement().getClassName());
+
+		return table;
+	}
+
 	private static void moveEl(Element el, int top, int left, int width,
 			int height) {
 
@@ -1098,6 +1479,16 @@ public class EventsDraft extends ResizeComposite {
 		style.setLeft(left, Unit.PX);
 
 		setClip(style, 0, width, height, 0);
+	}
+
+	private static void moveEl(Element el, int top, int left, int clipTop,
+			int clipLeft, int clipRight, int clipBottom) {
+
+		Style style = el.getStyle();
+		style.setTop(top, Unit.PX);
+		style.setLeft(left, Unit.PX);
+
+		setClip(style, clipTop, clipRight, clipBottom, clipLeft);
 	}
 
 	private static void setClip(Style style, int top, int right, int bottom,

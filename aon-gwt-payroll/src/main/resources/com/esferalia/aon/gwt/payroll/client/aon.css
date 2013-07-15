@@ -28,6 +28,10 @@
 	gwt-image: "salaries" ; 
 }
 
+@sprite .aon-icon-agreement {
+	gwt-image: "agreement" ; 
+}
+
 .aon-dataTable .selected {
     border: 1px solid #D3C061;
     background: none repeat scroll 0 0 #FFFADC;

@@ -274,18 +274,22 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 			calculator.setSalaryBuilder(salaryBuilder);
 			calculator.setListener(listener);
-
+			
+			long total_calc = 0; 
 			while (sqlContractSalaryCalculatorContext.next()) {
 				try {
+					long start_calc = System.currentTimeMillis();
 					ISalary salary = calculator
 							.calculate(sqlContractSalaryCalculatorContext);
-					int employeeId = sqlContractSalaryCalculatorContext.getId();
-					listener.onDebug(String
+					long end_calc = System.currentTimeMillis();
+					total_calc += end_calc - start_calc;
+//					employeeId = sqlContractSalaryCalculatorContext.getId();
+/*					listener.onDebug(String
 							.format("Calculada n&oacute;mina de <a class='aon-icon-employee aon-iCon aon-link aon-input-required' onclick='showEmployee(%d)' >&nbsp;%s</a>."
 									+ " L&iacute;quido total a percibir <a class='aon-icon-draft aon-iCon aon-link aon-input-required' onclick='showSalaryDraft(%d,\"%s\",\"%s\")' >&nbsp;%s</a>",
 									employeeId, salary.getEmployeeName(), 
 									employeeId, DATE_FORMAT.format(startDate), DATE_FORMAT.format(endDate), CURRENCY_FORMAT.format(salary.getTotalLiquid())));
-
+*/
 					salaries++;
 				} catch (Exception e) {
 					listener.onError(e.getMessage());
@@ -295,6 +299,8 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			if (save) {
 				((SQLSalaryBuilder) salaryBuilder).commit();
 			}
+			
+			System.out.printf("Calculate Time : %d ms \r\n", total_calc );
 
 		} catch (SQLException exception) {
 			exception.printStackTrace();

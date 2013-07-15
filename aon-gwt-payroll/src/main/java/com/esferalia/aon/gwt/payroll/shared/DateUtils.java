@@ -70,6 +70,18 @@ public class DateUtils {
 		return b;
 	}
 
+	public static Date getPrevDay(Date date) {
+		Date nextDay = CalendarUtil.copyDate(date);
+		CalendarUtil.addDaysToDate(nextDay, -1);
+		return nextDay;
+	}
+
+	public static Date getNextDay(Date date) {
+		Date nextDay = CalendarUtil.copyDate(date);
+		CalendarUtil.addDaysToDate(nextDay, 1);
+		return nextDay;
+	}
+
 	public static Date getFirstDayOfWorkWeek(Date date) {
 		Date firstDayOfWeek = resetTime(date);
 		int dayOfWeek = firstDayOfWeek.getDay();
@@ -92,6 +104,12 @@ public class DateUtils {
 		return lastDayOfWeek;
 	}
 
+	public static Date getFirstDayOfYear(Date date) {
+		Date firstDayOfYear = CalendarUtil.copyDate(date);
+		CalendarUtil.addMonthsToDate(firstDayOfYear, -1 * date.getMonth());
+		CalendarUtil.setToFirstDayOfMonth(firstDayOfYear);
+		return firstDayOfYear;
+	}
 
 	public static Date getFirstDayOfMonth(Date date) {
 		Date firstDayOfMonth = CalendarUtil.copyDate(date);
@@ -134,8 +152,9 @@ public class DateUtils {
 	}
 
 	public static int compare(Date date0, Date date1) {
-		return ((date0.getYear() - date1.getYear()) * 372) + 
-				((date0.getMonth() - date1.getMonth()) * 31) + // max = 11 * 31
+		return ((date0.getYear() - date1.getYear()) * 372)
+				+ ((date0.getMonth() - date1.getMonth()) * 31) + // max = 11 *
+																	// 31
 				(date0.getDate() - date1.getDate()); // max = 30
 
 	}

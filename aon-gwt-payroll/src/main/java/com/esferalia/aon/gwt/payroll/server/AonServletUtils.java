@@ -43,6 +43,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.person.Person;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
@@ -70,6 +71,7 @@ public class AonServletUtils {
 		MimeType mimeType;
 
 	}
+	
 
 	protected static class SalaryProvider implements ICollectionProvider {
 

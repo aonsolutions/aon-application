@@ -23,13 +23,13 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractPayment;
-import com.esferalia.aon.payroll.calculator.CompositeCollection;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.DelegateContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -38,8 +38,8 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
-public class SalaryDraftCalculatorContext extends
-		DelegateContractSalaryCalculatorContext {
+public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorContext>
+		extends DelegateContractSalaryCalculatorContext<T> {
 
 	static class DraftPayment extends ContractPayment {
 
@@ -106,44 +106,40 @@ public class SalaryDraftCalculatorContext extends
 		}
 
 	}
-	
+
 	static class DraftHierarchyDeductions extends HierarchyDeductions {
-		
+
 		private Set<Integer> ids = new HashSet<Integer>();
-		
 
 		public DraftHierarchyDeductions(Iterator<IContractDeduction>... childs) {
 			super(childs);
 		}
-		
+
 		@Override
 		protected IContractDeduction next(IContractDeduction e) {
 			Integer id = e.getId();
 			// Not it's not tricky. Remember we use Set, and Set's
-			// add methos return true if this Set not already contain 
-			// the specified element ( id ) 
-			if ( ids.add(id))
+			// add methos return true if this Set not already contain
+			// the specified element ( id )
+			if (ids.add(id))
 				return super.next(e);
 			else
-				return  null;
+				return null;
 		}
 	}
-	
-	
 
 
 	private SalaryDraft draft;
 
-	public SalaryDraftCalculatorContext(SalaryDraft draft,
-			IContractSalaryCalculatorContext ctx) throws ExpressionException {
+	public SalaryDraftCalculatorContext(SalaryDraft draft, T ctx)
+			throws ExpressionException {
 		super(ctx);
 		this.draft = draft;
-		loadDraftContext();
+		loadDraftContext(getExpressionContext());
 	}
 
-	private void loadDraftContext() throws ExpressionException {
-
-		ExpressionContext exprCtx = getExpressionContext();
+	protected void loadDraftContext(ExpressionContext exprCtx)
+			throws ExpressionException {
 
 		List<Variable> draftData = draft.getDraftContext();
 		for (Variable variable : draftData) {
@@ -160,8 +156,8 @@ public class SalaryDraftCalculatorContext extends
 	@Override
 	public Collection<IContractDeduction> getContractDeductions()
 			throws AonException {
-		return new DraftHierarchyDeductions(getDraftDeductions().iterator(), super
-				.getContractDeductions().iterator());
+		return new DraftHierarchyDeductions(getDraftDeductions().iterator(),
+				super.getContractDeductions().iterator());
 	}
 
 	@Override
@@ -169,6 +165,14 @@ public class SalaryDraftCalculatorContext extends
 			throws AonException {
 		return new DraftCompositePayments(getDraftPayments(),
 				super.getContractPayments());
+	}
+
+	protected SalaryDraft getDraft() {
+		return draft;
+	}
+	
+	protected IIrpfCalculatorContext getIrpfCalculatorContext(){
+		return null;
 	}
 
 	private Collection<IContractPayment> getDraftPayments() {

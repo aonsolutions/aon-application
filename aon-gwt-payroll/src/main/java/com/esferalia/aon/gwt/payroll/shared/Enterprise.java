@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Enterprise implements Serializable{
+public class Enterprise implements Serializable, HasId<Integer>, HasName<String> {
 	
 	
 	/**
@@ -22,7 +22,7 @@ public class Enterprise implements Serializable{
 		workplaces = new LinkedList<Workplace>();
 	}
 	
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 	

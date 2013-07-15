@@ -306,6 +306,23 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		return new PeriodMap(new Period(start, end));
 	}
 
+	public ITimedVariable<?> getVariable(String name, Period p) {
+		List<ITimedVariable<?>> values = get(name);
+		if (values == null) {
+			return null;
+		}
+
+		ITimedVariable<?> ret = null;
+
+		for (ITimedVariable<?> var : values) {
+			if (var.getPeriod().intersects(p)) {
+				ret = var;
+			}
+		}
+
+		return ret;
+
+	}
 	protected Variables getSnapshot(Set<String> variables) {
 
 		Variables snapshot = new Variables();
@@ -329,23 +346,6 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 	}
 
 	// ------------------------------------------
-	private ITimedVariable<?> getVariable(String name, Period p) {
-		List<ITimedVariable<?>> values = get(name);
-		if (values == null) {
-			return null;
-		}
-
-		ITimedVariable<?> ret = null;
-
-		for (ITimedVariable<?> var : values) {
-			if (var.getPeriod().intersects(p)) {
-				ret = var;
-			}
-		}
-
-		return ret;
-
-	}
 
 	private List<ITimedVariable<?>> get(String var) {
 		List<ITimedVariable<?>> values = vars.get(var);

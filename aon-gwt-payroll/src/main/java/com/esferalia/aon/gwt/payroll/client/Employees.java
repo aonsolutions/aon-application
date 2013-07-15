@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.BooleanEventMetaData;
+import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DecimalEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EnumEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EventMetaData;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
@@ -231,13 +233,24 @@ public class Employees extends ResizeComposite implements
 				// --------------------------------------------------------------
 				//
 
-				EventMetaData metaData = new EnumEventMetaData("FTE",
-						"Desempe\u00F1o (FTE)", "", "4", "8", "10", "12", "L",
-						"LT", "LR", "F", "FT", "FR", "V", "B", "P", "AI", "M");
+				EventMetaData fteMetaData = new EnumEventMetaData("FTE",
+						"DESEMPE\u00D1O", "Desempe\u00F1o por Trabajador y Jornada", "", "4", "8", "10", "12", "L", "LT",
+						"LR", "F", "FT", "FR", "V", "B", "P", "AI", "M");
 
 				EventsDraftObject eventsDraftObject = new EventsDraftObject(
-						workplace.getId(), employeesService, metaData);
+						workplace.getId(), employeesService,
+						new DecimalEventMetaData("INCENTIVOS"),
+						new DecimalEventMetaData("ATRASOS"),
+						new DecimalEventMetaData("ANTICIPOS"),
+						new DecimalEventMetaData("EMBARGOS"),
+						new DecimalEventMetaData("LTA", "D\u00EDas Libres Trabajados canjeados por Alojamiento"),
+						new DecimalEventMetaData("CLT", "Coste d\u00EDa Libre Trabajado"),
+						new DecimalEventMetaData("CD" , "Coste Diario del trabajador (jornada 8 horas)"),
+						new DecimalEventMetaData("CFT", "Coste d\u00EDa Festivo Trabajado ( = CD * 1.75 \u20A0)"), new BooleanEventMetaData(
+								"LTNR", "D\u00EDas Libres Trabajados No Recuperables"), new DecimalEventMetaData("HFD", "Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"),
+						fteMetaData);
 				Date date = new Date();
+
 				eventsDraftObject.setEndDate(DateUtils
 						.getLastDayOfWorkWeek(date));
 				eventsDraftObject.setStartDate(DateUtils

@@ -21,6 +21,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -38,8 +39,12 @@ import com.google.gwt.user.server.rpc.SerializationPolicyLoader;
 public class AonRemoteServiceServlet extends RemoteServiceServlet {
 
 	
+	Integer getUserID() {
+		HttpServletRequest request = getThreadLocalRequest();
+		return ((AuthPrincipal)request.getUserPrincipal()).getUserId();
+	}
+
 	Integer getPersonID() {
-		HttpSession session = getSession();
 		return null;
 	}
 

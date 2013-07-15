@@ -141,6 +141,10 @@ public class SQLAgreementContextFactory
 			throw new RuntimeException(e);
 		}
 	};
+	
+	public ExpressionContext getSystemExpressionContext() {
+		return systemExpressionContext;
+	}
 
 	// ------------------------------------------
 	// La ropa interior 

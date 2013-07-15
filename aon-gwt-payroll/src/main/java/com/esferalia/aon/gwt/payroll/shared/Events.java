@@ -18,6 +18,8 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 
 public class Events implements Serializable {
 
+	private static final int ALL_EMPLOYE_ID = -1;
+	
 	public static class Event implements Serializable {
 
 		private String name;
@@ -137,7 +139,7 @@ public class Events implements Serializable {
 			return compare(date1, date2) >= 0 ? date1 : date2;
 		}
 
-		private static Event clone(Event event, Date startdate, Date endDate) {
+		public static Event clone(Event event, Date startdate, Date endDate) {
 			Event clone = new Event();
 			clone.name = event.name;
 			clone.value = event.value;
@@ -241,6 +243,17 @@ public class Events implements Serializable {
 		eventsMap.put(employee.getId(), new HashMap<String, List<Event>>());
 	}
 
+	public void addEvent(Event event) {
+		Map<String, List<Event>> eventMap = eventsMap.get(ALL_EMPLOYE_ID);
+		List<Event> eventsList = eventMap.get(event.getName());
+		if (eventsList == null) {
+			eventsList = new LinkedList<Event>();
+			eventMap.put(event.getName(), eventsList);
+		}
+		eventsList.add(0, event);
+	}
+
+
 	public void addEvent(int id, Event event) {
 		Map<String, List<Event>> eventMap = eventsMap.get(id);
 		List<Event> eventsList = eventMap.get(event.getName());
@@ -263,6 +276,39 @@ public class Events implements Serializable {
 		for (Event event : eventsList) {
 			if (event.isAt(day)) {
 				return event;
+			}
+		}
+
+		return null;
+	}
+
+	public Event getEvent(int id, String name, Date start, Date end) {
+		Map<String, List<Event>> eventMap = eventsMap.get(id);
+		if (eventMap == null || eventMap.isEmpty())
+			return null;
+
+		List<Event> eventsList = eventMap.get(name);
+		if (eventsList == null || eventsList.isEmpty())
+			return null;
+
+		for (Event event : eventsList) {
+			if (event.isAt(start)) {
+
+				if (event.isAt(end))
+					return event;
+
+				Event nextEvent = getEvent(id, name,
+						DateUtils.getNextDay(event.getEndDate()), end);
+
+				if (nextEvent == null)
+					return null;
+
+				if (StringUtils.equals(event.getValue(),
+						nextEvent.getValue()))
+					return Event.clone(event, event.getStartDate(),
+							nextEvent.getEndDate());
+				else
+					return null;
 			}
 		}
 

@@ -8,8 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DeductionComparator;
@@ -27,7 +27,6 @@ import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.VariableComparator;
-import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
@@ -53,9 +52,15 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		ContractSalaryCalculator.IListener {
 
 	private SalaryDraft salaryDraft;
+	
+	private Map<String, boolean [] > defined; 
 
 	public SalaryDraftBuilder(SalaryDraft salaryDraft) {
 		this.salaryDraft = salaryDraft;
+	}
+	
+	public void setDefined(Map<String, boolean [] > defined) {
+		this.defined = defined;
 	}
 
 	public void setDbSalary(ISalary dbSalary) throws SalaryException {
@@ -578,11 +583,13 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 				IExpressionVariable<?> exprVar = (IExpressionVariable<?>) var;
 				IExpression expr = exprVar.getExpression();
 				Scope scope = getScope(expr.getScope());
+				String name = entry.getKey();
 				salaryDraft.addVariable(entry.getKey(), var.getValue(var
 						.getPeriod()), var.getPeriod().getStart(), var
-						.getPeriod().getEnd(), scope, expr.getExpression());
+						.getPeriod().getEnd(), scope, expr.getExpression(), defined.get(name));
 
 			} else {
+				String name = entry.getKey();
 				salaryDraft.addVariable(entry.getKey(), var.getValue(var
 						.getPeriod()), var.getPeriod().getStart(), var
 						.getPeriod().getEnd());
@@ -625,6 +632,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 		return payment;
 	}
+	
 
 	private Short getMonth(Month month) {
 		return month == null ? null : (short) month.getValue();

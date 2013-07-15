@@ -27,6 +27,7 @@ import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
@@ -139,7 +140,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 		class IrpfContractPayment extends DelegateContractPayment {
 
-			public IrpfContractPayment (IContractPayment contractPayment) {
+			public IrpfContractPayment(IContractPayment contractPayment) {
 				super(contractPayment);
 			}
 
@@ -170,7 +171,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 			@Override
 			public IContractPayment next() {
-				return new IrpfContractPayment (super.next());
+				return new IrpfContractPayment(super.next());
 			}
 
 		}
@@ -197,13 +198,12 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	static class IrpfContractSalaryCalculatorContext
 			extends
-			DelegateContractSalaryCalculatorContext<SQLContractSalaryCalculatorContext> {
+			DelegateContractSalaryCalculatorContext<ISQLContractSalaryCalculatorContext> {
 
-		public IrpfContractSalaryCalculatorContext(Connection connection,
-				Date startDate, Date endDate, Date issueDate, Criteria criteria)
+		public IrpfContractSalaryCalculatorContext(
+				ISQLContractSalaryCalculatorContext ctx)
 				throws ExpressionException, SQLException {
-			super(new SQLContractSalaryCalculatorContext(connection, startDate,
-					endDate, issueDate, criteria));
+			super(ctx);
 		}
 
 		public int getId() {
@@ -395,8 +395,14 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	public SQLIrpfCalculatorContext(Connection conn, Date startDate,
 			Date endDate, Criteria criteria) throws ExpressionException,
 			SQLException {
-		salaryCalculatorContext = new IrpfContractSalaryCalculatorContext(conn,
-				startDate, endDate, endDate, criteria);
+		this(conn, startDate, endDate, new SQLContractSalaryCalculatorContext(
+				conn, startDate, endDate, endDate, criteria));
+	}
+
+	public SQLIrpfCalculatorContext(Connection conn, Date startDate,
+			Date endDate, ISQLContractSalaryCalculatorContext ctx)
+			throws ExpressionException, SQLException {
+		salaryCalculatorContext = new IrpfContractSalaryCalculatorContext(ctx);
 
 		salaryStmt = conn.prepareStatement(SALARY_SQL);
 		Calendar start = Calendar.getInstance();
@@ -428,30 +434,31 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	public boolean next() {
 		// TODO Auto-generated method stub
 		try {
-//			long start = System.currentTimeMillis();
+			// long start = System.currentTimeMillis();
 
 			boolean next = salaryCalculatorContext.next();
-//			long stop = System.currentTimeMillis();
-//			System.out.printf("\tsalaryCalculatorContext.next() : %d ms\r\n",
-//					stop - start);
+			// long stop = System.currentTimeMillis();
+			// System.out.printf("\tsalaryCalculatorContext.next() : %d ms\r\n",
+			// stop - start);
 
 			int contractId = salaryCalculatorContext.getId();
 			nextSalaryRs(contractId);
-//			stop = System.currentTimeMillis();
-//			System.out.printf("\tnextSalaryRs(%s) : %d ms\r\n", contractId,
-//					stop - start);
+			// stop = System.currentTimeMillis();
+			// System.out.printf("\tnextSalaryRs(%s) : %d ms\r\n", contractId,
+			// stop - start);
 			nextIrpfDataRs(contractId);
-//			stop = System.currentTimeMillis();
-//			System.out.printf("\tnextIrpfDataRs(%s) : %d ms\r\n", contractId,
-//					stop - start);
+			// stop = System.currentTimeMillis();
+			// System.out.printf("\tnextIrpfDataRs(%s) : %d ms\r\n", contractId,
+			// stop - start);
 			nextIrpfRegRs(contractId);
-//			stop = System.currentTimeMillis();
-//			System.out.printf("\tnextIrpfRegRs(%s) : %d ms\r\n", contractId,
-//					stop - start);
+			// stop = System.currentTimeMillis();
+			// System.out.printf("\tnextIrpfRegRs(%s) : %d ms\r\n", contractId,
+			// stop - start);
 			nextSalary();
-//			stop = System.currentTimeMillis();
-//			System.out.printf("\tnextSalary(%s) : %d ms\r\n", contractId, stop
-//					- start);
+			// stop = System.currentTimeMillis();
+			// System.out.printf("\tnextSalary(%s) : %d ms\r\n", contractId,
+			// stop
+			// - start);
 
 			return next;
 		} catch (SQLException e) {
@@ -825,7 +832,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	@Override
 	public CausaRegularizacion getCausaRegularizacion() {
 		if (irpfRegularizationRs == null) {
-			return irpfBase > 0.00 ?   CausaRegularizacion.ONCE: null;
+			return irpfBase > 0.00 ? CausaRegularizacion.ONCE : null;
 		}
 		try {
 			return getByOrdinal(

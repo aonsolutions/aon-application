@@ -3,7 +3,16 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseWheelEvent;
+import com.google.gwt.event.dom.client.MouseWheelHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class MonthListBox extends ListBox {
@@ -15,6 +24,28 @@ public class MonthListBox extends ListBox {
 	private DateTimeFormat dateTimeFormat;
 	
 	public MonthListBox() {
+		
+		// Standard base time known as "the epoch", namely January 1, 1970,
+		// 00:00:00 GMT.
+		firstMonth = new Date(0);
+		
+		
+		addMouseMoveHandler(new MouseMoveHandler() {
+			@Override
+			public void onMouseMove(MouseMoveEvent event) {
+			}
+		});
+		addKeyPressHandler(new KeyPressHandler() {
+			@Override
+			public void onKeyPress(KeyPressEvent event) {
+			}
+		});
+		addMouseWheelHandler(new MouseWheelHandler() {
+			
+			@Override
+			public void onMouseWheel(MouseWheelEvent event) {
+			}
+		});
 	}
 
 	public void setLastMonth(Date lastMonth) {
@@ -59,4 +90,6 @@ public class MonthListBox extends ListBox {
 	private void addItem(Date date) {
 		addItem(dateTimeFormat.format(date));
 	}
+	
+	
 }

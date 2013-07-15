@@ -31,7 +31,6 @@ import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasOneWidget;
-import com.google.gwt.user.client.ui.HeaderPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -81,29 +80,6 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 
 	}
 
-	static class MyDataGrid<T> extends DataGrid<T> {
-
-		private static Resources DEFAULT_RESOURCES = GWT
-				.create(MyResources.class);
-
-		static interface MyResources extends Resources {
-
-			@Override
-			@Source("com/esferalia/aon/gwt/payroll/client/DataGrid.css")
-			public Style dataGridStyle();
-
-		}
-
-		public MyDataGrid(int pageSize, ProvidesKey<T> keyProvider) {
-			super(pageSize, DEFAULT_RESOURCES, keyProvider);
-		}
-
-		public ScrollPanel getScrollPanel() {
-			HeaderPanel header = (HeaderPanel) getWidget();
-			return (ScrollPanel) header.getContentWidget();
-		}
-	}
-
 	static class HasIdKeyProvider<T extends HasId<?>> implements ProvidesKey<T> {
 
 		@Override
@@ -145,7 +121,7 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 		/**
 		 * Construct a new {@link ShowMorePager}.
 		 */
-		public ShowMorePager(MyDataGrid<?> dataGrid) {
+		public ShowMorePager(CustomDataGrid<?> dataGrid) {
 			setDisplay(dataGrid);
 
 			this.scrollPanel = (ScrollPanel) dataGrid.getScrollPanel();
@@ -280,7 +256,7 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 		 * Set a key provider that provides a unique key for each item.
 		 */
 		ProvidesKey<T> keyProvider = HasIdKeyProvider.<T> getKeyProvider();
-		selectDataGrid = new MyDataGrid<T>(PAGE_SIZE, keyProvider);
+		selectDataGrid = new CustomDataGrid<T>(PAGE_SIZE, keyProvider);
 
 		/*
 		 * Do not refresh the headers every time the dataGrid is updated. The
@@ -318,7 +294,7 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 		
 		setWidget(binder.createAndBindUi(this));
 
-		showMorePager = new ShowMorePager((MyDataGrid<T>) selectDataGrid);
+		showMorePager = new ShowMorePager((CustomDataGrid<T>) selectDataGrid);
 
 		selectionModel
 				.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {

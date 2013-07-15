@@ -44,6 +44,13 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== Main Calculator  ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_main_calculator</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/calculator.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 			
 </faces-config>
 		

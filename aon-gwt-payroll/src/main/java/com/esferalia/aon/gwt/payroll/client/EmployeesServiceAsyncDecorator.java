@@ -26,26 +26,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 
-	private static class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
-
-		private AsyncCallback<T> asyncCallback;
-
-		private AsyncCallbackWrapper(AsyncCallback<T> asyncCallback) {
-			this.asyncCallback = asyncCallback;
-		}
-
-		@Override
-		public void onSuccess(T result) {
-			asyncCallback.onSuccess(result);
-			AON.stop();
-		}
-
-		@Override
-		public void onFailure(Throwable caught) {
-			asyncCallback.onFailure(caught);
-			AON.fail();
-		}
-	}
 
 	private EmployeesServiceAsync employeesServiceAsync;
 

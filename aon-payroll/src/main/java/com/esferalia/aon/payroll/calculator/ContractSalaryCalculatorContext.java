@@ -229,6 +229,18 @@ public class ContractSalaryCalculatorContext
 		return ctx.getContractBonus();
 	}
 	
+	public ExpressionContext getSystemExpressionContext() {
+		return ctx.getSystemExpressionContext();
+	}
+
+	public ExpressionContext getImplicitExpressionContext() {
+		return ctx.getImplicitExpressionContext();
+	}
+
+	public ExpressionContext getAgreementExpressionContext() {
+		return ctx.getAgreementExpressionContext();
+	}
+
 	private static  class ContextBuilder 
 		implements SalaryTypeVisitor<ISQLContractSalaryCalculatorContext>
 	{

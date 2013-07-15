@@ -18,26 +18,13 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.gps.ReportConstants;
-import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.CssResource.NotStrict;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safecss.shared.SafeStyles;
-import com.google.gwt.safecss.shared.SafeStylesUtils;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -61,121 +48,10 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
  */
 public class EmployeeTree implements EntryPoint, Employees.Listener {
 
-	interface GWTResources extends ClientBundle {
-		@NotStrict
-		@Source("gwt.css")
-		CssResource css();
-
-		@Source("warn.png")
-		ImageResource warn();
-
-		@Source("aon-menuBar.png")
-		ImageResource menuBar();
-
-		@Source("aon-tabBar.png")
-		ImageResource tabBar();
-
-		@Source("checkyes.png")
-		ImageResource checkYes();
-
-		@Source("button.png")
-		ImageResource button();
-
-		@Source("public.png")
-		ImageResource publiC();
-
-		@Source("private.png")
-		ImageResource privatE();
-
-		@Source("protected.png")
-		ImageResource protecteD();
-
-	}
-
-	interface AonResources extends ClientBundle {
-		@NotStrict
-		@Source("aon.css")
-		CssResource css();
-
-		@Source("draft.png")
-		ImageResource draft();
-
-		@Source("salaries.png")
-		ImageResource salaries();
-
-		@Source("ine.png")
-		ImageResource ine();
-
-		@Source("workplace.png")
-		ImageResource workplace();
-
-		@Source("employee.png")
-		ImageResource employee();
-	}
-
 	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
 
 	static DateTimeFormat DATE_FORMAT = DateTimeFormat
 			.getFormat(CalculateService.DATE_FORMAT_PATTERN);
-
-	/**
-	 * A custom {@link Cell} used to render a string that contains the name of a
-	 * fullname.
-	 */
-
-	static class MyTextCell extends AbstractCell<String> {
-
-		/**
-		 * The HTML templates used to render the cell.
-		 */
-		interface Templates extends SafeHtmlTemplates {
-			/**
-			 * The template for this Cell, which includes styles and a value.
-			 * 
-			 * @param styles
-			 *            the styles to include in the style attribute of the
-			 *            div
-			 * @param value
-			 *            the safe value. Since the value type is
-			 *            {@link SafeHtml}, it will not be escaped before
-			 *            including it in the template. Alternatively, you could
-			 *            make the value type String, in which case the value
-			 *            would be escaped.
-			 * @return a {@link SafeHtml} instance
-			 */
-			@SafeHtmlTemplates.Template("<span style=\"{0}\">{1}</span>")
-			SafeHtml cell(SafeStyles styles, SafeHtml value);
-		}
-
-		/**
-		 * Create a singleton instance of the templates used to render the cell.
-		 */
-		private static Templates templates = GWT.create(Templates.class);
-
-		@Override
-		public void render(Context context, String value, SafeHtmlBuilder sb) {
-			/*
-			 * Always do a null check on the value. Cell widgets can pass null
-			 * to cells if the underlying data contains a null, or if the data
-			 * arrives out of order.
-			 */
-			if (value == null) {
-				return;
-			}
-
-			// If the value comes from the user, we escape it to avoid XSS
-			// attacks.
-			SafeHtml safeValue = SafeHtmlUtils.fromString(value);
-
-			// Use the template to create the Cell's html.
-			SafeStyles styles = SafeStylesUtils
-					.forWhiteSpace(WhiteSpace.NOWRAP);
-
-			SafeHtml rendered = templates.cell(styles, safeValue);
-			sb.append(rendered);
-		}
-
-	}
 
 	static class EmployeeCalcDialog extends CalcDialog<Employee> {
 
@@ -183,7 +59,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 
 			// Full name.
 			Column<Employee, String> fullNameColumn = new Column<Employee, String>(
-					new MyTextCell()) {
+					new TextCell()) {
 				@Override
 				public String getValue(Employee employee) {
 					return employee.getFullname();
@@ -201,7 +77,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 
 			// Full name.
 			Column<Workplace, String> descriptionColumn = new Column<Workplace, String>(
-					new MyTextCell()) {
+					new TextCell()) {
 				@Override
 				public String getValue(Workplace workplace) {
 					return workplace.getDescription();
@@ -219,7 +95,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 
 			// Full name.
 			Column<Workplace, String> descriptionColumn = new Column<Workplace, String>(
-					new MyTextCell()) {
+					new TextCell()) {
 				@Override
 				public String getValue(Workplace workplace) {
 					return workplace.getDescription();
@@ -785,8 +661,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		// Window.alert("This method constructs the application user interface by instantiating controls and hooking up event handler.");
 
 		// Inject rich styles.
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
+		GWT.<MainEntryPoint.GWTResources> create(MainEntryPoint.GWTResources.class).css().ensureInjected();
+		GWT.<MainEntryPoint.AonResources> create(MainEntryPoint.AonResources.class).css().ensureInjected();
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);

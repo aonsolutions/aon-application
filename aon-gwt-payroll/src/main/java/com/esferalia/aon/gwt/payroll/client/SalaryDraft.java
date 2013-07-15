@@ -587,11 +587,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
-	class VariableCleanHandler implements ClickHandler {
+	abstract class AbstractVarHandler implements ClickHandler {
 
 		private Variable variable;
 
-		public VariableCleanHandler(Variable variable) {
+		public AbstractVarHandler(Variable variable) {
 			this.variable = variable;
 		}
 
@@ -603,14 +603,16 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			var.setName(variable.getName());
 			var.setEndDate(variable.getEndDate());
 			var.setStartDate(variable.getStartDate());
-			var.setExpression("SELF.parent('"+variable.getName()+ "')");
-
+			var.setExpression( getExpression(var));
 			salaryDraftObject.addDraftVariable(var);
 
 			salaryDraftObject.calculate(SalaryDraft.this);
 		}
+		
+		abstract String getExpression(Variable var);
 
 	}
+
 
 	class VariableRemoveHandler implements ClickHandler {
 
@@ -1086,9 +1088,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			if (step.compareTo(scope) < 0) {
 				break;
 			}
+			/*
 			if (context.get(added).getScope().compareTo(step) < 0) {
 				continue;
-			}
+			}*/
 			List<Variable> subContext = context.subList(added, context.size());
 			boolean show = scope.compareTo(Scope.CONTRACT) >= 0;
 			added += dumpContext(subContext, step, show);
@@ -1786,7 +1789,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				itemButton.setValue(show, true);
 			}
 			
-			valuePanel.add(getCleanButton(variable));
+			if ( variable.getScope().compareTo(Scope.AGREEMENT) > 0  &&
+					variable.isDefinedAt(Scope.AGREEMENT ) )
+				valuePanel.add(getAgreementVarButton(variable));
+			if ( variable.getScope().compareTo(Scope.APPLICATION ) > 0 
+					&& (variable.isDefinedAt(Scope.SYSTEM ) || variable.isDefinedAt(Scope.APPLICATION )))
+				valuePanel.add(getSystemVarButton(variable));
 
 			htmlPanel.add(valuePanel);
 
@@ -1957,17 +1965,35 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		return label;
 	}
 
-	private Button getCleanButton(Variable variable) {
-		Button cleanButton = new Button();
-		cleanButton.setStyleName(AON.AON_ICON_CLEAN);
-		cleanButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		cleanButton.addClickHandler(new VariableCleanHandler(variable));
-		return cleanButton;
+	private Button getSystemVarButton(Variable variable) {
+		Button sysButton = new Button();
+		sysButton.setStyleName(AON.AON_ICON_CONFIG);
+		sysButton.setStyleName(AON.AON_NO_MARGIN, true);
+		sysButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		sysButton.addClickHandler(new AbstractVarHandler(variable) {
+			@Override
+			String getExpression(Variable var) { return "SISTEMA('"+var.getName()+"')"; }
+		});
+		return sysButton;
 	}
+
+	private Button getAgreementVarButton(Variable variable) {
+		Button agreementButton = new Button();
+		agreementButton.setStyleName(AON.AON_ICON_AGREEMENT);
+		agreementButton.setStyleName(AON.AON_NO_MARGIN, true);
+		agreementButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		agreementButton.addClickHandler(new AbstractVarHandler(variable) {
+			@Override
+			String getExpression(Variable var) { return "CONVENIO('"+var.getName()+"')"; }
+		});
+		return agreementButton;
+	}
+
 
 	private Button getDeleteButton(Variable variable) {
 		Button deleteButton = new Button();
 		deleteButton.setStyleName(AON.AON_ICON_DELETE);
+		deleteButton.setStyleName(AON.AON_NO_MARGIN, true);
 		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		deleteButton.addClickHandler(new VariableRemoveHandler(variable));
 		return deleteButton;

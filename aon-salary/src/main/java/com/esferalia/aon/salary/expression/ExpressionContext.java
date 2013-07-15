@@ -187,6 +187,10 @@ public class ExpressionContext {
 		return variables.containsKey(name.toString(), new Period(start, end));
 	}
 
+	public ITimedVariable<?> getVariable(Object name, Date start, Date end) {
+		return variables.getVariable(name.toString(), new Period(start, end));
+	}
+
 	public <T> T getVariable(Object name, Date start, Date end, Class<T> toType) {
 		return (T) variables.get(name.toString(), new Period(start, end));
 	}
@@ -268,6 +272,10 @@ public class ExpressionContext {
 	}
 
 	public Set<String> variablesSet() {
+		return variables.varsSet();
+	}
+
+	public Set<String> declaredVariablesSet() {
 		return variables.varsSet();
 	}
 

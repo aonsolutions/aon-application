@@ -73,6 +73,9 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
 		@Source("employee.png")
 		ImageResource employee();
+
+		@Source("agreement.png")
+		ImageResource agreement();
 	}
 
 	interface Binder extends UiBinder<Widget, EnterpriseSite> {

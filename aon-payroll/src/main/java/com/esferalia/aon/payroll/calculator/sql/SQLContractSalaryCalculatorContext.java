@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ASSIMILATED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_AGE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_DAYS;
@@ -37,6 +38,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SENIORITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SETTLE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SHORT_CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SYSTEM;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_BENEFITS_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
@@ -60,10 +62,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -400,6 +398,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private Date startDate;
 	private Date endDate;
 	private ResultSet resultSet;
+	private ResultSet paymentResultSet;
 	private PreparedStatement ceventStmt;
 	private PreparedStatement cleaveStmt;
 	private PreparedStatement paymentStmt;
@@ -592,6 +591,27 @@ public class SQLContractSalaryCalculatorContext implements
 	@Override
 	public ExpressionContext getExpressionContext() {
 		return contractExpressionContext;
+	}
+
+	@Override
+	public ExpressionContext getSystemExpressionContext() {
+		return agreementContextFactory.getSystemExpressionContext();
+	}
+
+	@Override
+	public ExpressionContext getImplicitExpressionContext() {
+		return this.implicitExpressionContext;
+	}
+
+	@Override
+	public ExpressionContext getAgreementExpressionContext() {
+		try {
+			return getAgreementContext();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} catch (ExpressionException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
@@ -976,15 +996,15 @@ public class SQLContractSalaryCalculatorContext implements
 		return new java.sql.Date(date.getTime());
 	}
 
+	public Connection getConnection() {
+		return connection;
+	}
+
 	// ------------------------------------------------------- Protected methods
 
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-	}
-
-	protected Connection getConnection() {
-		return connection;
 	}
 
 	protected Integer getAgreement() {
@@ -1088,17 +1108,57 @@ public class SQLContractSalaryCalculatorContext implements
 													// null, perfecto.
 	}
 
-	public Object parent(String name) throws ExpressionException, SQLException {
-		Object value = implicitExpressionContext.getVariable(name, startDate,
-				endDate, Object.class);
-		if (value != null) {
-			return value;
-		}
+	public Object agreement(String name) throws ExpressionException,
+			SQLException {
 		ExpressionContext agreementCtx = getAgreementContext();
 		return agreementCtx.getVariable(name, startDate, endDate, Object.class);
 	}
 
-	private double getIrpf() throws ExpressionException, SQLException {
+	public Object system(String name) throws ExpressionException, SQLException {
+		ExpressionContext systemCtx = agreementContextFactory
+				.getSystemExpressionContext();
+		Object value = systemCtx.getVariable(name, startDate, endDate,
+				Object.class);
+		if (value != null)
+			return value;
+		return implicitExpressionContext.getVariable(name, startDate, endDate,
+				Object.class);
+	}
+
+	protected IIrpfCalculatorContext getIrpfCalculatorContext(Connection conn,
+			Date startDate, Date endDate, Criteria criteria) {
+		try {
+			return new SQLIrpfCalculatorContext(connection, startDate, endDate,
+					criteria) {
+				@Override
+				public String getNif() {
+					return "87449445H";
+				}
+
+				@Override
+				public String getApellidosNombre() {
+					return "TORVALDS BENEDICT LINUS";
+				}
+
+				@Override
+				public String getRetenedorNif() {
+					return "Z7896423E";
+				}
+
+				@Override
+				public String getRetenedorApellidosNombre() {
+					return "LINUX FOUNDATION";
+				}
+			};
+		} catch (SQLException e) {
+			throw new ExpressionExceptionWrapper(new ExpressionException(e));
+		} catch (ExpressionException e) {
+			throw new ExpressionExceptionWrapper(e);
+		}
+
+	}
+
+	protected double getIrpf() {
 		Calendar endCalendar = Calendar.getInstance();
 		endCalendar.setTime(startDate);
 		endCalendar.set(Calendar.DAY_OF_YEAR,
@@ -1110,62 +1170,12 @@ public class SQLContractSalaryCalculatorContext implements
 		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
 				+ ContractColumns.ID, getId());
 
-		IIrpfCalculatorContext irpfCalculatorContext = new SQLIrpfCalculatorContext(
-				connection, startDate, endYear, contractCriteria) {
-			@Override
-			public String getNif() {
-				return "87449445H";
-			}
+		IIrpfCalculatorContext irpfCalculatorContext = getIrpfCalculatorContext(
+				connection, startDate, endYear, contractCriteria);
 
-			@Override
-			public String getApellidosNombre() {
-				return "TORVALDS BENEDICT LINUS";
-			}
-
-			@Override
-			public String getRetenedorNif() {
-				return "Z7896423E";
-			}
-
-			@Override
-			public String getRetenedorApellidosNombre() {
-				return "LINUX FOUNDATION";
-			}
-		};
-
-		irpfCalculatorContext.next();
-		try {
-
-			AEATRetencionesEntrada2013 aeatRetencionesEntrada2013 = AEATRetencionesEntradaFactory
-					.create(irpfCalculatorContext);
-			AEATRetencionesSalida2013 aeatRetencionesSalida2013 = IrpfCalculator
-					.calculate(aeatRetencionesEntrada2013);
-			List<TipoRetenedorSalida2013> retenedores = aeatRetencionesSalida2013
-					.getRetenedor();
-			TipoRetenedorSalida2013 retenedorSalida2013 = retenedores.get(0);
-			List<TipoRetenidoSalida2013> retenidos = retenedorSalida2013
-					.getRetenido();
-			TipoRetenidoSalida2013 retenidoSalida2013 = retenidos.get(0);
-			BigDecimal tipoRetencion = retenidoSalida2013.getTipoRetencion();
-			return tipoRetencion != null ? tipoRetencion.doubleValue() : 0.00;
-		} catch (IrpfCalculateException e) {
-
-			AEATRetencionesError2013 error = e.getAEATRetencionesError2013();
-			List<TipoRetenedorError2013> retenedores = error.getRetenedor();
-			String message = null;
-			TipoRetenedorError2013 retenedor = retenedores.get(0);
-			List<TipoRetenidoError2013> retenidos = retenedor.getRetenido();
-			if (retenidos.size() > 0) {
-				TipoRetenidoError2013 retenido = retenidos.get(0);
-				List<TipoError> tipoErrores = retenido.getError();
-				TipoError tipoError = tipoErrores.get(0);
-				message = tipoError.getDescripcion();
-			}
-			ExpressionException expressionException = new CheckException(
-					message);
-			throw new ExpressionExceptionWrapper(expressionException);
-		}
+		return IrpfCalculator.calculate(irpfCalculatorContext);
 	}
+
 
 	private long getAvailableDays(Date start, Date end) {
 		long workedDays = CommonUtil.getDaysBetweenDates(start, end);
@@ -1420,13 +1430,7 @@ public class SQLContractSalaryCalculatorContext implements
 		LazyTimedVariable<Double> irpf = new LazyTimedVariable<Double>() {
 			@Override
 			public Double create() {
-				try {
-					return getIrpf();
-				} catch (SQLException e) {
-					return 0.00;
-				} catch (ExpressionException e) {
-					return 0.00;
-				}
+				return getIrpf();
 			}
 		};
 
@@ -1647,6 +1651,11 @@ public class SQLContractSalaryCalculatorContext implements
 		loadContractData(this.contractExpressionContext);
 		loadPersonData(this.contractExpressionContext);
 
+		loadExpression(this.contractExpressionContext, SYSTEM,
+				"def(x){ SELF.system(x)};", this.startDate, this.endDate);
+		loadExpression(this.contractExpressionContext, AGREEMENT,
+				"def(x){ SELF.agreement(x)};", this.startDate, this.endDate);
+
 		if (!containsVariable(ACTUAL_DAYS)) {
 			// Los 'DIAS_EFECTIVOS' son pesados de calcular ( necesitan de
 			// querys adicionales...)
@@ -1713,6 +1722,20 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 	}
 
+	private void loadExpression(ExpressionContext ctx, String name,
+			String script, Date start, Date end) throws SQLException {
+		ExpressionImpl expr = new ExpressionImpl();
+		expr.setName(name);
+		expr.setExpression(script);
+		expr.setScope(ExpressionScope.CONTRACT);
+		try {
+			ctx.addExpression(expr, start, end);
+		} catch (Exception ignore) {
+			ignore.printStackTrace();
+			// TODO: ¿ Que hacemos con esta excepcion ?
+		}
+	}
+
 	/*
 	 * Carga, ejecuta los datos del contrato 'contract_data' para este periodo.
 	 * Ejecuta porque al valor de una variable no tiene porque ser un literal,
@@ -1743,7 +1766,7 @@ public class SQLContractSalaryCalculatorContext implements
 					failed.add(new TimedObject<IExpression>(expr, new Period(
 							start, end)));
 				} catch (CheckException e) {
-					
+
 				} catch (Exception e) {
 					// TODO: ¿ Que hacemos con esta excepcion ?
 				}
