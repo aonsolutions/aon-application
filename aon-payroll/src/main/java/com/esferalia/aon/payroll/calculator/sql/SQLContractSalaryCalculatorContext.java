@@ -770,7 +770,10 @@ public class SQLContractSalaryCalculatorContext implements
 	@Override
 	public Collection<IContractDeduction> getContractDeductions()
 			throws AonException {
+		return this.systemDeductions;
+		/*
 		try {
+			
 			this.sqlContractDeduction.close();
 			int id = getId();
 			deductionStmt.setInt(1, id);
@@ -781,7 +784,7 @@ public class SQLContractSalaryCalculatorContext implements
 			return hierarchyDeductions;
 		} catch (SQLException e) {
 			throw new AonException(e);
-		}
+		}*/
 	}
 
 	@Override
