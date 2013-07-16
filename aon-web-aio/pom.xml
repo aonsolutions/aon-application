@@ -928,6 +928,7 @@
 															<exclude>**/mchange-commons-java*.jar</exclude>
 															<exclude>**/commons-lang*.jar</exclude>
 															<exclude>**/commons-dbutils*.jar</exclude>
+															<exclude>**/jzebra*.jar</exclude>
 														</excludes>
 													</source>
 												</sources>
@@ -1011,6 +1012,23 @@
 													<softlinkSource>
 														<location>/usr/share/java/mysql-connector-java.jar</location>
 														<destination>mysql-connector-java.jar</destination>
+													</softlinkSource>
+												</sources>
+											</mapping>
+											<mapping>
+												<directory>/usr/share/java/</directory>
+												<filemode>755</filemode>
+												<username>root</username>
+												<groupname>root</groupname>
+												<dependency>
+													<includes>
+														<include>com.google.code.jzebra:jzebra:1.4.9.1</include>
+													</includes>
+												</dependency>
+												<sources>
+													<softlinkSource>
+														<location>/usr/share/java/jzebra-1.4.9.1.jar</location>
+														<destination>jzebra.jar</destination>
 													</softlinkSource>
 												</sources>
 											</mapping>
