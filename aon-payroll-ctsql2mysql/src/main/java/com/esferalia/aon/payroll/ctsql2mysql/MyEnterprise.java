@@ -693,6 +693,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 						enterprise.id, 
 						description, 
 						raddress, 
+						null,
 						enterprise.scopeId,
 						MysqlDB.enum2short(enterprise.economicAgreement),
 						true);

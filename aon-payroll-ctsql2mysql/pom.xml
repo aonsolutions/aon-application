@@ -222,8 +222,7 @@
 							<copyright>2010, esferalia Networks S.A</copyright>
 							<requires>
 								<!--  require>slf4j</require-->
-								<require>aon.python</require>
-								<require>inotify-java</require>
+								<!-- require>inotify-java</require -->
 								<require>aon-dbutils</require>
 								<require>aon-master</require>
 								<require>jakarta-commons-lang</require>
