@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Formula;
 
 import com.code.aon.common.IAttachment;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.esferalia.aon.entity.master.ProjectAttachmentDB;
 
 @Entity
@@ -19,6 +20,7 @@ public class ProjectAttachment extends ProjectAttachmentDB implements IAttachmen
 	private Integer size;
 
 	public ProjectAttachment() {
+		setSecurityLevel(SecurityLevel.OFFICIAL);
 		setAttachDate(new Date());
 	}
 
