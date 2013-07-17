@@ -310,7 +310,7 @@ public class PurchaseOrderController {
 							if(gd.isChecked()){
 								utils.insertPurchaseDetail(purchase, gd.getProposalDetail());
 								utils.updateProposalDetailStatus(gd.getProposalDetail().getId());
-								if(isReturnedProduct(gd.getProposalDetail())){
+								if(gd.getProposalDetail().getProposal().getTransferProposal()!=null){
 									remarks = remarks==null?(purchaseBundle.getString("purchase_source") +": "):(remarks);
 									remarks += gd.getProposalDetail().getProposal().getTransferProposal().getWorkPlace().getDescription();
 									if( !(pg.getDepartment().getId().equals(gd.getProposalDetail().getProposal().getTransferProposal().getDepartment())) ){
@@ -391,9 +391,13 @@ public class PurchaseOrderController {
 				criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
 				for (ITransferObject ito : bean.getList(criteria)) {
 					ItemSupplier is = (ItemSupplier) ito;
-					if(is.getWorkPlace()==null || is.getWorkPlace().getId().equals(proposalDetail.getProposal().getWorkPlace().getId())){
+					if(is.getWorkPlace()==null){
 						SelectItem i = new SelectItem(is.getSupplier(), is.getSupplier().getRegistry().getFullName());
 						list.add(i);
+					}
+					if(is.getWorkPlace()!=null && is.getWorkPlace().getId().equals(proposalDetail.getProposal().getWorkPlace().getId())){
+						SelectItem i = new SelectItem(is.getSupplier(), is.getSupplier().getRegistry().getFullName());
+						list.add(0, i);
 					}
 				}
 			} catch (ManagerBeanException e) {
@@ -410,10 +414,7 @@ public class PurchaseOrderController {
 	}
 	
 	public boolean isReturnedProduct(ProposalDetail proposalDetail){
-		if( proposalDetail.getSupplier().getId().equals(getUtils().getCompanySupplier().getId()) ){
-			return true;
-		}
-		return false;
+		return proposalDetail.getProposal().isItemReturn();
 	}
 
 	public List<SelectItem> getAvailableDepartments() throws ManagerBeanException{

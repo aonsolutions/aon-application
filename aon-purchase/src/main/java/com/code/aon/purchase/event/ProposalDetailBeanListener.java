@@ -1,7 +1,5 @@
 package com.code.aon.purchase.event;
 
-import java.util.List;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -20,11 +18,25 @@ public class ProposalDetailBeanListener extends ManagerBeanListenerAdapter {
 
 	@Override
 	public void beanUpdated(ManagerBeanEvent event) throws ManagerBeanException {
-		manageProposalStatus((ProposalDetail)event.getTo());
+		ProposalDetail detail = (ProposalDetail)event.getTo();
+		if(!detail.isSkipProposalUpdating()){
+			manageProposalStatus(detail);
+		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void manageProposalStatus(ProposalDetail detail) throws ManagerBeanException{
+		Integer detailPendingCount = getProposalDetailPendingCount(detail);
+		Integer detailTotalCount = getProposalDetailTotalCount(detail.getProposal());
+		if(detailPendingCount == 0){
+			updateProposal(detail.getProposal(), ProposalStatus.PROCESSED);
+		} else if(detailPendingCount > 0 && detailPendingCount < detailTotalCount){
+			updateProposal(detail.getProposal(), ProposalStatus.PARTIAL_PROCESSED);
+		} else if(detailPendingCount==detailTotalCount){
+			updateProposal(detail.getProposal(), ProposalStatus.PENDING);
+		}
+	}
+	
+	private Integer getProposalDetailPendingCount(ProposalDetail detail) {
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		String select = "SELECT ProposalDetail" 
 				+ " FROM ProposalDetail as ProposalDetail" 
@@ -33,20 +45,10 @@ public class ProposalDetailBeanListener extends ManagerBeanListenerAdapter {
 		Query query = session.createQuery(select);
 		query.setInteger("proposalId", detail.getProposal().getId());
 		query.setInteger("pendingDetail", ProposalDetailStatus.PENDING.ordinal());
-		List<ProposalDetail> list = query.list();
-		IManagerBean bean = BeanManager.getManagerBean(Proposal.class);
-		Proposal proposal = (Proposal) bean.get(detail.getProposal().getId());
-		if(list.isEmpty()){
-			proposal.setStatus(ProposalStatus.PROCESSED);
-		} else if(list.size()>0 && list.size()<getProposalDetailCount(detail.getProposal())){
-			proposal.setStatus(ProposalStatus.PARTIAL_PROCESSED);
-		} else if(list.size()==getProposalDetailCount(detail.getProposal())){
-			proposal.setStatus(ProposalStatus.PENDING);
-		}
-		bean.update(proposal);
+		return query.list().size();
 	}
-	
-	private Integer getProposalDetailCount(Proposal proposal){
+
+	private Integer getProposalDetailTotalCount(Proposal proposal){
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		String select = "SELECT ProposalDetail" 
 				+ " FROM ProposalDetail as ProposalDetail" 
@@ -54,6 +56,12 @@ public class ProposalDetailBeanListener extends ManagerBeanListenerAdapter {
 		Query query = session.createQuery(select);
 		query.setInteger("proposalId", proposal.getId());
 		return query.list().size();
+	}
+	
+	private void updateProposal(Proposal proposal, ProposalStatus status) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(Proposal.class);
+		proposal.setStatus(status);
+		bean.update(proposal);
 	}
 
 }

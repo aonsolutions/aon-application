@@ -19,11 +19,22 @@ public class ProposalDetail extends ProposalDetailDB {
 	
 	private PurchaseDetail purchaseDetail;
 	
+	private boolean skipProposalUpdating;
+	
+	@Transient
+	public boolean isSkipProposalUpdating() {
+		return skipProposalUpdating;
+	}
+
+	public void setSkipProposalUpdating(boolean skipProposalUpdating) {
+		this.skipProposalUpdating = skipProposalUpdating;
+	}
+
 	@Transient
 	public boolean isPending(){
 		return getStatus()==ProposalDetailStatus.PENDING;
 	}
-	
+
 	@Transient
 	public PurchaseDetail getPurchaseDetail() {
 		if(purchaseDetail==null){
