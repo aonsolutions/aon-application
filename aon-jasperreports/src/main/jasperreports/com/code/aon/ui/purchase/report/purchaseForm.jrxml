@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase" pageWidth="595" pageHeight="842" columnWidth="537" leftMargin="29" rightMargin="29" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="0.75"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -129,20 +129,6 @@
 			<line>
 				<reportElement key="line-9" x="553" y="539" width="4" height="1"/>
 			</line>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="-2" y="-408" width="45" height="23" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{purchase_phone}+ ":"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="-2" y="-385" width="45" height="23" isRemoveLineWhenBlank="true"/>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="8" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_cellular}+ ":"]]></textFieldExpression>
-			</textField>
 		</band>
 	</background>
 	<title>
@@ -323,7 +309,7 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="386" splitType="Stretch">
+		<band height="693" splitType="Stretch">
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-112" x="-2" y="15" width="45" height="23"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
@@ -381,6 +367,20 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{workPlace}.getDescription()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-118" x="-2" y="84" width="45" height="23" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{purchase_phone}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-118" x="-2" y="107" width="45" height="23" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{aon_cellular}+ ":"]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-1" positionType="Float" x="2" y="222" width="536" height="36"/>
