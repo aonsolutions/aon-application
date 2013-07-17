@@ -30,7 +30,7 @@ public class RegistryAddress extends RegistryAddressDB implements IAddress {
     	StringBuffer buf = new StringBuffer();
     	buf.append((getStreetType()!=null) ? getStreetType() : "");
     	buf.append((getStreetType()!=null) ? ". " : "");
-    	buf.append(getAddress());
+    	buf.append(StringUtils.isEmpty(getAddress())? "":getAddress());
     	buf.append(StringUtils.isEmpty(getNumber())?"":" ");
     	buf.append(StringUtils.isEmpty(getNumber())?"":getNumber());
     	buf.append(StringUtils.isEmpty(getAddress2())?"":", ");
