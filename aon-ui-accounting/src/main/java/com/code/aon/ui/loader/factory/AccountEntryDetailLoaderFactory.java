@@ -30,13 +30,13 @@ public class AccountEntryDetailLoaderFactory implements ILoaderFactory<ILoadedPo
 		,new Column(APU,"asiento"					,0,6	,true	,null)
 		,new Column(APU,"fechaAsiento"				,3,10	,true	,null)
 		,new Column(APU,"cuenta"					,2,9	,true	,null)
-		,new Column(APU,"descripcionCuenta"			,2,256	,false	,null)
-		,new Column(APU,"concepto"					,2,256	,true	,null)
-		,new Column(APU,"documento"					,2,256	,false	,null)
+		,new Column(APU,"descripcionCuenta"			,2,128	,false	,null)
+		,new Column(APU,"concepto"					,2,32	,true	,null)
+		,new Column(APU,"documento"					,2,32	,false	,null)
 		,new Column(APU,"debe"						,1,16	,true	,null)
 		,new Column(APU,"haber"						,1,16	,true	,null)
 		,new Column(APU,"contrapartida"				,2,9	,false	,null)
-		,new Column(APU,"descripcionContrapartida"	,2,256	,false	,null)
+		,new Column(APU,"descripcionContrapartida"	,2,128	,false	,null)
 	};
 	
 	private LoaderUtils loaderUtils;
