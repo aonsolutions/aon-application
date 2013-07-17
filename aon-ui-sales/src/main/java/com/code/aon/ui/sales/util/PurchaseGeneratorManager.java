@@ -307,9 +307,17 @@ public class PurchaseGeneratorManager {
 		purchaseDetailBean.insert(detail);
 	}
 	
-	private double obtainItemPrice(Supplier supplier, Item item) {
-		// TODO: search the price that the supplier provide for this item
-		return item.getPrice();
+	private double obtainItemPrice(Supplier supplier, Item item) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ItemSupplier.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), item.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ID), supplier.getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY), true);
+		List<ITransferObject> list = bean.getList(criteria);
+		if(!list.isEmpty()){
+			return ((ItemSupplier)list.get(0)).getPrice();
+		}
+		return item.getPurchasePrice();
 	}
 
 	public boolean isShippingDataDefined(Sales sales) {
