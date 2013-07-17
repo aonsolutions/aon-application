@@ -32,6 +32,7 @@ import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingEngine;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -89,6 +90,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 	public void onInitialize(ActionEvent event) throws ManagerBeanException {
 		InvoicingParameters params = new InvoicingParameters();
 		params.initializeParams();
+		params.setScopes(UserUtils.getInstance().getCurrentUserScopes());
 		params.setInvoiceNumber(obtainMaxNumber(null));
 		params.setInvoiceDate(new Date());
 		params.setInvoiceRecordable(AonUtil.getRoleManager().isAccountingOperator());

@@ -19,6 +19,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.finance.CustomerFee;
@@ -92,6 +93,18 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		}
 		if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlace().getId());
+		}
+		if (params.getScopes() != null && params.getScopes().size() > 0) {
+			Expression scopeExpression = null;
+			for(Scope scope : params.getScopes()) {
+				if (scopeExpression == null) {
+					scopeExpression = ExpressionUtilities.getEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_SCOPE_ID), scope.getId());				
+				} else {
+					Expression expression = ExpressionUtilities.getEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_SCOPE_ID), scope.getId());
+					scopeExpression = ExpressionUtilities.getOrExpression(scopeExpression, expression);
+				}
+			}
+			criteria.addExpression(scopeExpression);
 		}
 		return criteria;
 	}

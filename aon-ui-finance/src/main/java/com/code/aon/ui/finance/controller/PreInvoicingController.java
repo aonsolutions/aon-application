@@ -18,6 +18,7 @@ import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingEngine;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeePreInvoicingDAO;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.ui.config.util.UserUtils;
 
 public class PreInvoicingController implements ICollectionProvider {
 
@@ -40,6 +41,7 @@ public class PreInvoicingController implements ICollectionProvider {
 	public void onInitialize(ActionEvent event) throws ManagerBeanException {
 		this.invoicingParams = new InvoicingParameters();
 		invoicingParams.initializeParams();
+		invoicingParams.setScopes(UserUtils.getInstance().getCurrentUserScopes());
 	}
 
 	public void onReport(ActionEvent event) throws InvoicingException, ManagerBeanException {

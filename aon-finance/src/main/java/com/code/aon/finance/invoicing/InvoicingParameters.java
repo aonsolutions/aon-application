@@ -2,11 +2,13 @@ package com.code.aon.finance.invoicing;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
@@ -28,6 +30,7 @@ public class InvoicingParameters {
 	private Date toDate;
 	private boolean confidential;
 	private WorkPlace workPlace;
+	private List<Scope> scopes;
 
 	private Series invoiceSeries;
 	private int invoiceNumber;
@@ -137,6 +140,14 @@ public class InvoicingParameters {
 
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
+	}
+
+	public List<Scope> getScopes() {
+		return scopes;
+	}
+
+	public void setScopes(List<Scope> scopes) {
+		this.scopes = scopes;
 	}
 
 	public Series getInvoiceSeries() {
