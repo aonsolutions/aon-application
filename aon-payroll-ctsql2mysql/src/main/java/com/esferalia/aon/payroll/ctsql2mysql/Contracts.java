@@ -14,17 +14,20 @@ public class Contracts implements IContracts {
 	private Connection  mysqlConnection;
 	private Connection  ctsqlConnection;
 	
+	private boolean 	checkFVisionado;
+	
 	private PreparedStatement emprperStmt;
 	private PreparedStatement contractStmt;
 	
 	public Contracts(Connection mysqlConnection, Connection  ctsqlConnection) 
 		throws SQLException {
-		this(mysqlConnection, ctsqlConnection, null);
+		this(mysqlConnection, ctsqlConnection, null, false);
 	}
 
-	public Contracts(Connection mysqlConnection, Connection  ctsqlConnection, Date fromDate) 
+	public Contracts(Connection mysqlConnection, Connection  ctsqlConnection, Date fromDate, boolean 	checkFVisionado ) 
 		throws SQLException {
 		this.fromDate = fromDate;
+		this.checkFVisionado = checkFVisionado;
 		this.mysqlConnection = mysqlConnection;
 		this.ctsqlConnection = ctsqlConnection;
 		
@@ -46,6 +49,11 @@ public class Contracts implements IContracts {
 			" AND person.document = ?"+
 			" AND enterprise.document = ?"+
 			" AND contract.start_date = ? ");
+	}
+	
+	@Override
+	public boolean checkFVisionado() {
+		return checkFVisionado;
 	}
 	
 	@Override

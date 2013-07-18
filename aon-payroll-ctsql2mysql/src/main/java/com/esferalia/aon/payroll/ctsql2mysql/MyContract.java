@@ -168,6 +168,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 	private String			nivel;
 	
 	private Date 			fromDate;
+	private boolean 		checkFVisonado;
 	
 	private IPersons 		persons;
 	private IConcepts 		concepts;
@@ -202,10 +203,10 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 
 	public MyContract(DefaultMysqlDB mysqlDB, IEnterprises enterprises, IPersons persons, IConcepts concepts, IAgreements agreements, ICalendars calendars , String passwdHash) 
 	{
-		this ( mysqlDB, enterprises, persons, concepts, agreements, calendars, passwdHash, null );
+		this ( mysqlDB, enterprises, persons, concepts, agreements, calendars, passwdHash, null, false );
 	}
 
-	public MyContract(DefaultMysqlDB mysqlDB, IEnterprises enterprises, IPersons persons,  IConcepts concepts, IAgreements agreements, ICalendars calendars, String passwdHash, Date fromDate) 
+	public MyContract(DefaultMysqlDB mysqlDB, IEnterprises enterprises, IPersons persons,  IConcepts concepts, IAgreements agreements, ICalendars calendars, String passwdHash, Date fromDate, boolean checkFVisonado) 
 	 {
 		this.mysqlDB = mysqlDB;
 		this.passwdHash = passwdHash;
@@ -215,6 +216,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		this.agreements = agreements;
 		this.enterprises = enterprises;
 		this.calendars = calendars;
+		this.checkFVisonado = checkFVisonado;
 		this.contractPorCots = new LinkedList<ContractPorCot>();
 		this.quotePercents = new HashMap<String, List<Percents>>();
 		this.embargos = new HashMap<String, FullEmbargo>();
@@ -230,6 +232,11 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 	@Override
 	public Integer getContractId(Integer oldCdg) {
 		return this.contractId;
+	}
+	
+	@Override
+	public boolean checkFVisionado() {
+		return checkFVisonado;
 	}
 	
 	@Override

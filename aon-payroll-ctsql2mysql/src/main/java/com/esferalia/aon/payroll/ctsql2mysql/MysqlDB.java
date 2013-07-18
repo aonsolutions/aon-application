@@ -41,7 +41,8 @@ public class MysqlDB extends DefaultMysqlDB{
 	private List<String>	cifs = null;
 	private Date			fromDate = null;		
 	private File			imagesDir = null;
-
+	private boolean			disabled = false;
+	private boolean			checkFVisionado = false;
 	// --------------------------------------------------------------
 	
 	public MysqlDB(Connection mysqlConnection) throws SQLException {
@@ -52,6 +53,13 @@ public class MysqlDB extends DefaultMysqlDB{
 		this.cifs = cifs;
 	}
 	
+	public void setCheckFVisionado(boolean checkFVisionado) {
+		this.checkFVisionado = checkFVisionado;
+	}
+	
+	public void setDisable(boolean disabled) {
+		this.disabled = disabled;
+	}
 
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
@@ -69,6 +77,7 @@ public class MysqlDB extends DefaultMysqlDB{
 	public void setDomainName(String domainName) {
 		this.domainName = domainName;
 	}
+	
 	
 	public void write(CtsqlDB ctsqlReader) throws SQLException {
 		if ( cifs != null && !cifs.isEmpty() ) 
@@ -99,7 +108,8 @@ public class MysqlDB extends DefaultMysqlDB{
 					myCalendar,
 					imagesDir,
 					passwdHash,
-					domainName);
+					domainName,
+					disabled);
 		MyContract myContract= 
 			new MyContract(this, 
 					myEnterprise, 
@@ -108,7 +118,8 @@ public class MysqlDB extends DefaultMysqlDB{
 					myAgreement,
 					myCalendar,
 					passwdHash,
-					fromDate);
+					fromDate,
+					checkFVisionado);
 		MyFsProfRetention myFsProfRetention = 
 			new MyFsProfRetention(this, 
 					myEnterprise, 
@@ -162,6 +173,7 @@ public class MysqlDB extends DefaultMysqlDB{
 					passwdHash,
 					domainName,
 					fromDate,
+					checkFVisionado,
 					cifs);
 		
 		MyFsProfRetention myFsProfRetention = 

@@ -44,6 +44,8 @@ public interface IContracts {
 		}
 	}
 
+	public boolean checkFVisionado ( );
+
 	public boolean outOfDate ( Date date );
 	
 	public Integer getContractId(Integer oldCdg) 

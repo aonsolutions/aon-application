@@ -71,9 +71,11 @@ public class Ctsql2Mysql
 	private String mysqlUser;
 	private String mysqlPasswd;
 	private boolean dryRun;
+	private boolean disabled;
 	private String domainName;
 	private String domainUser;
 	private String domainPasswd;
+	private boolean checkFVisionado;
 	
 	private String passwdHash;
 	private Date fromDate;
@@ -104,6 +106,16 @@ public class Ctsql2Mysql
     	OptionBuilder.withDescription("No inserta nada en la base de datos. Para chequear que las modificaciones, las operaciones sql (por pantalla) funcionan como se esparaba.");
     	Option dryRunOption = OptionBuilder.create( "dryrun" );
     	
+    	OptionBuilder.isRequired(false);
+    	OptionBuilder.hasArg(false);
+    	OptionBuilder.withDescription("Traspasar los clientes inactivos.");
+    	Option disabledOption = OptionBuilder.create( "inactivo" );
+
+    	OptionBuilder.isRequired(false);
+    	OptionBuilder.hasArg(false);
+    	OptionBuilder.withDescription("Chequear fechas de visionado.");
+    	Option checkFVisionadoOption = OptionBuilder.create( "visionado" );
+
     	OptionBuilder.isRequired(true);
     	OptionBuilder.hasArg(true);
     	OptionBuilder.withArgName( "URL" );
@@ -198,6 +210,7 @@ public class Ctsql2Mysql
 
     	options.addOption(helpOption);
     	options.addOption(dryRunOption);
+    	options.addOption(disabledOption);
     	options.addOption(ctsqlURLOption);
     	options.addOption(mysqlURLOption);
     	options.addOption(ctsqlUserOption);
@@ -235,6 +248,9 @@ public class Ctsql2Mysql
             mysqlPasswd = line.getOptionValue(mysqlPasswdOption.getOpt(),"serubd2000");
             
             dryRun=  line.hasOption(dryRunOption.getOpt());
+            
+            disabled=  line.hasOption(disabledOption.getOpt());
+            checkFVisionado=  line.hasOption(checkFVisionadoOption.getOpt());
 			
             domainName = line.getOptionValue(domainOption.getOpt());
             domainUser = line.getOptionValue(domainUserOption.getOpt(),"toledo");
@@ -339,10 +355,12 @@ public class Ctsql2Mysql
 	        MysqlDB mysqlWriter = new MysqlDB(mysqlConnection);
 	        
 	        mysqlWriter.setCifs(cifs);
+	        mysqlWriter.setDisable(disabled);
 	        mysqlWriter.setFromDate(fromDate);
 	        mysqlWriter.setImagesDir(imagesDir);
 	        mysqlWriter.setPasswdHash(passwdHash);
 	        mysqlWriter.setDomainName(domainName);
+	        mysqlWriter.setCheckFVisionado(checkFVisionado);
 	        
 	        Integer domain = newDomain(mysqlWriter);
 	        mysqlWriter.setDefaultDomain(domain);

@@ -49,6 +49,7 @@ public class LazyMyEnterprise extends MyEnterprise {
 						String passwdHash,
 						String domainSuffix,
 						Date fromDate,
+						boolean checkFVsionado,
 						EmprnifFilter emprnifFilter) {
 		
 		super(mysqlDB, 
@@ -56,7 +57,8 @@ public class LazyMyEnterprise extends MyEnterprise {
 				calendars, 
 				logosAndSignaturesDir,
 				passwdHash,
-				domainSuffix);
+				domainSuffix,
+				false);
 		this.emprnifFilter = emprnifFilter;
 		
 		this.myContract = 
@@ -67,7 +69,8 @@ public class LazyMyEnterprise extends MyEnterprise {
 						agreements,
 						calendars,
 						passwdHash,
-						fromDate );
+						fromDate,
+						checkFVsionado);
 	}
 
 	public LazyMyEnterprise(DefaultMysqlDB mysqlDB, 
@@ -79,6 +82,7 @@ public class LazyMyEnterprise extends MyEnterprise {
 			String passwdHash,
 			String domainSuffix,
 			Date fromDate,
+			boolean checkFVsionado,
 			List<String> cifs) {
 		this(mysqlDB, 
 				persons, 
@@ -89,7 +93,8 @@ public class LazyMyEnterprise extends MyEnterprise {
 				passwdHash,
 				domainSuffix,
 				fromDate , 
-				new CifEmprnifFilter(cifs) );
+				checkFVsionado,
+				new CifEmprnifFilter(cifs));
 	}
 	
 	@Override
