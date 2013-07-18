@@ -224,6 +224,7 @@ public class Ctsql2Mysql
     	options.addOption(enterprisesOption);
     	options.addOption(domainUserOption);
     	options.addOption(domainPasswdOption);
+    	options.addOption(checkFVisionadoOption);
 
     	
     	CommandLineParser parser = new PosixParser();   
