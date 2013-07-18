@@ -3,9 +3,11 @@ package com.code.aon.ui.finance.event;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
@@ -42,11 +44,18 @@ public class CustomerFeeControllerListener extends ControllerAdapter {
 		try {
 			customerFee.setLine(calculateNextLine(customer));
 
-			String companyCollections = ICompanyConstants.COLLECTIONS_CONTROLLER_NAME;
-			CompanyCollectionsController compCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(companyCollections);
-			if (compCollections.getCurrentUserWorkPlacesCount() == 1) {
-				WorkPlace workPlace = (WorkPlace)compCollections.getCurrentUserWorkPlaces().get(0).getValue();
-				customerFee.setWorkPlace(workPlace);
+			CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+			List<ITransferObject> currentUserWorkPlaces = companyCollections.getCurrentUserWorkPlaceList();
+			if (currentUserWorkPlaces.size() == 1) {
+				customerFee.setWorkPlace((WorkPlace)currentUserWorkPlaces.get(0));
+			} else {
+				for (ITransferObject ito : currentUserWorkPlaces) {
+					WorkPlace workplace = (WorkPlace)ito;
+					if (workplace.getScope().equals(customer.getScope())) {
+						customerFee.setWorkPlace(workplace);
+						break;
+					}
+				}
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

@@ -81,9 +81,27 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		criteria.addExpression(createFromToExpression(params.getMonth(), params.getYear()));
 		if (params.getInvoicingGroup() != null && params.getInvoicingGroup().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_INVOICING_GROUP_ID), params.getInvoicingGroup().getId());
+		} else {
+			Expression scopeExpression = ExpressionUtilities.getNullExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_INVOICING_GROUP));
+			if (params.getScopes() != null && params.getScopes().size() > 0) {
+				String scopeAlias = feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_INVOICING_GROUP_CUSTOMER_SCOPE_ID);
+				for (Scope scope : params.getScopes()) {
+					scopeExpression = ExpressionUtilities.getOrExpression(scopeExpression, ExpressionUtilities.getEqualExpression(scopeAlias, scope.getId()));
+				}
+			}
+			criteria.addExpression(scopeExpression);
 		}
 		if (params.getCustomer() != null && params.getCustomer().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_ID), params.getCustomer().getId());
+		} else {
+			Expression scopeExpression = ExpressionUtilities.getNullExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_SCOPE));
+			if (params.getScopes() != null && params.getScopes().size() > 0) {
+				String scopeAlias = feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_SCOPE_ID);
+				for(Scope scope : params.getScopes()) {
+					scopeExpression = ExpressionUtilities.getOrExpression(scopeExpression, ExpressionUtilities.getEqualExpression(scopeAlias, scope.getId()));
+				}
+			}
+			criteria.addExpression(scopeExpression);
 		}
 		if (params.getItem() != null && params.getItem().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_ITEM_ID), params.getItem().getId());
@@ -93,18 +111,6 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		}
 		if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlace().getId());
-		}
-		if (params.getScopes() != null && params.getScopes().size() > 0) {
-			Expression scopeExpression = null;
-			for(Scope scope : params.getScopes()) {
-				if (scopeExpression == null) {
-					scopeExpression = ExpressionUtilities.getEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_SCOPE_ID), scope.getId());				
-				} else {
-					Expression expression = ExpressionUtilities.getEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_SCOPE_ID), scope.getId());
-					scopeExpression = ExpressionUtilities.getOrExpression(scopeExpression, expression);
-				}
-			}
-			criteria.addExpression(scopeExpression);
 		}
 		return criteria;
 	}

@@ -137,9 +137,15 @@
 		</aon:div>
 	</aon:div>
 
-	<ui:include src="/com/code/aon/ui/customer/facelet/invoicingGroup/lookup.xhtml">
-		<ui:param name="lookupTo" value="#{controller.to.invoicingGroup}" />
-	</ui:include>
+	<c:if test="#{controller.to.invoicingGroup.id == null or controller.invoicingGroupInMyScopes}">
+		<ui:include src="/com/code/aon/ui/customer/facelet/invoicingGroup/lookup.xhtml">
+			<ui:param name="lookupTo" value="#{controller.to.invoicingGroup}" />
+		</ui:include>
+	</c:if>
+	<c:if test="#{controller.to.invoicingGroup.id != null and !controller.invoicingGroupInMyScopes}">
+		<aon:outputText	value="#{customerBundle.customer_invoicingGroup}" />
+		<aon:outputText	value="#{controller.to.invoicingGroup.customer.registry.fullName}" />
+	</c:if>
 
 	<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
 		<ui:param name="lookupTo" value="#{controller.to.seller}" />

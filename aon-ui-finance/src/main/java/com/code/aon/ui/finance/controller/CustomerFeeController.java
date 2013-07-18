@@ -9,7 +9,6 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
@@ -26,6 +25,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.config.Scope;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
@@ -35,8 +35,8 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CustomerFeeController extends LinesController {
@@ -147,35 +147,26 @@ public class CustomerFeeController extends LinesController {
 		return projects;
 	}
 
+	public boolean isInvoicingGroupInMyScopes() {
+		CustomerFee fee = (CustomerFee)getTo();
+		return isScopeInMyScopes(fee.getInvoicingGroup().getCustomer().getScope());
+	}
+
+	public boolean isModelInvoicingGroupInMyScopes() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			CustomerFee fee = (CustomerFee)getModel().getRowData();
+			return isScopeInMyScopes(fee.getInvoicingGroup().getCustomer().getScope());
+		}
+		return false;
+	}
+
+	private boolean isScopeInMyScopes(Scope scope) {
+		return UserUtils.getInstance().getCurrentUserScopes().contains(scope);
+	}
+
 	public void removeProject(ActionEvent event) throws ManagerBeanException {
 		CustomerFee customerFee = (CustomerFee)getTo();
 		customerFee.setProject(null);
-	}
-
-	public String getFeeExtraInfo() {
-		String extraInfo = "";
-		try {
-			if (getModel().isRowAvailable()) {
-				CustomerFee customerFee = (CustomerFee)getModel().getRowData();
-				if (customerFee.getProject() != null && customerFee.getProject().getId() != null) {
-					extraInfo += "Expediente: " + customerFee.getProject().getName() + "\n";
-				}
-				if (customerFee.getInvoicingGroup() != null && customerFee.getInvoicingGroup().getId() != null) {
-					extraInfo += "Grupo Facturación: " + customerFee.getInvoicingGroup().getCustomer().getRegistry().getFullName() + "\n";
-				}
-				if (customerFee.getSeller() != null && customerFee.getSeller().getId() != null) {
-					extraInfo += "Comercial: " + customerFee.getSeller().getRegistry().getFullName() + "\n";
-				}
-				if (customerFee.getWorkPlace() != null && customerFee.getWorkPlace().getId() != null) {
-					extraInfo += "Centro de Trabajo: " + customerFee.getWorkPlace().getDescription() + "\n";
-				}
-			}
-		} catch (ManagerBeanException ex) {
-			String msg = "Error obtainign Fee Model.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-		return extraInfo;
 	}
 
 	public String getReportTitle(){
@@ -199,4 +190,5 @@ public class CustomerFeeController extends LinesController {
 		Query query = session.createQuery(select);
 		noFeeCustomersList = query.list();
 	}
+
 }

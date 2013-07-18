@@ -17,15 +17,16 @@
 		<ui:param name="skipRemoveButton" value="#{true}" />
 		<ui:define name="beginFormListContent">
 			<aon:commandButton
-				id="customerFee-edit" 
+				id="customerFee-edit"
 				styleClass="aon-editDataTable-button aon-table-row-link"
 				title="#{bundle.aon_edit}"
+				rendered="#{to.invoicingGroup.id == null or controller.modelInvoicingGroupInMyScopes}" 
 				actionListener="#{controller.onSelect}"
 				reRender="showNewFeeWindow"
 				focus="Item_id">
 				<f:setPropertyActionListener target="#{customer.showNewFeeWindow}" 
 					value="#{true}" />
-			</aon:commandButton>							
+			</aon:commandButton>
 		</ui:define>
 		<ui:define name="beginFooterContent">
 			<aon:commandButton

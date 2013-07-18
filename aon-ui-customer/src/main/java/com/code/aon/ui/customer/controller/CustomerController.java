@@ -13,6 +13,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
 import com.code.aon.ui.util.AonUtil;
@@ -98,7 +99,12 @@ public class CustomerController extends CustomerListController implements ICusto
 			throw new AbortProcessingException(msg, ex);
 		}
 	}
-	
+
+	public boolean isInvoicingGroupInMyScopes() {
+		Customer customer = (Customer)getTo();
+		return UserUtils.getInstance().getCurrentUserScopes().contains(customer.getInvoicingGroup().getCustomer().getScope());
+	}
+
 	@Override
 	public void accept(ActionEvent event) {
 		setUpdateCourseAlumn(false);
