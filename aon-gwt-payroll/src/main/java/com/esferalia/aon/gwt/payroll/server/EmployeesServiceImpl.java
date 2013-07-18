@@ -1184,6 +1184,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			sql += " ORDER BY " + PersonColumns.FIRST_SURNAME + " ,"
 					+ PersonColumns.SECOND_SURNAME + " ,"
+					+ PersonColumns.NAME + " ,"
 					+ ContractColumns.START_DATE + " DESC " + " LIMIT ?, ? ";
 
 			stmt = connection.prepareStatement(sql);
@@ -1398,7 +1399,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					+ "." + AgreementColumns.ID + " )" + " WHERE " + REGISTRY
 					+ "." + RegistryColumns.ID + " = ?" + " AND " + REGISTRY
 					+ "." + RegistryColumns.ID + " = " + ENTERPRISE + "."
-					+ EnterpriseColumns.REGISTRY;
+					+ EnterpriseColumns.REGISTRY 
+					+ " ORDER BY " + " UPPER("+ WORKPLACE + "." +  WorkplaceColumns.DESCRIPTION + " )";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, userID);
