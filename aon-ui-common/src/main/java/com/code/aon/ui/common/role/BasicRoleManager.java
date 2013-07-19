@@ -210,6 +210,13 @@ public abstract class BasicRoleManager {
 	}
 	
 	/**
+	 * @return TRUE if user has IAonRole.ACCOUNTING_MANAGER role, false otherwise.
+	 */
+	public boolean isAccountingManager() {
+		return this.admin || isUserInRole(IAonRole.ACCOUNTING_MANAGER);
+	}
+	
+	/**
 	 * Rendered command.
 	 * 
 	 * @param component the component

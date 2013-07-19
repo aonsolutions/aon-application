@@ -116,7 +116,12 @@ public enum IAonRole {
 	/**
 	 * Role de acceso a los informes de nominas.
 	 */
-	FISCAL( "Fiscal", "aon_role_fiscal" );
+	FISCAL( "Fiscal", "aon_role_fiscal" ),
+
+	/**
+	 * Role de Gestor de Contabilidad.
+	 */
+	ACCOUNTING_MANAGER( "AccountingManager", "aon_role_accounting_manager" );
 
 	private String name;
 	

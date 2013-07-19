@@ -44,6 +44,8 @@
 								reRender="undeductibleInvoiceForm" 
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+						</c:if>
+						<c:if test="#{aonRole.accountingManager}">
 							<aon:menuItem id="unrecord"
 								value="#{financeBundle.finance_unrecord}"
 								actionListener="#{undeductibleInvoice.onUnrecordInvoice}"

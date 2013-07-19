@@ -47,6 +47,8 @@
 							<f:setPropertyActionListener target="#{fbatch.showFbatchRecordWindow}"
 								value="#{true}" />
 						</aon:commandButton>								
+					</c:if>
+					<c:if test="#{aonRole.accountingManager}">
 						<aon:commandButton id="unrecord" value="#{financeBundle.finance_unrecord}"
 							rendered="#{fbatch.recorded and !fbatch.inStatement}"
 							styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
