@@ -3678,6 +3678,7 @@ INSERT INTO `role` VALUES
   (19,'DocumentManager'),
   (20,'Payroll'),
   (21,'Fiscal'),
+  (22,'AccountingManager'),
   (101,'Administrador'),
   (102,'Invitado'),
   (103,'Manager'),
@@ -3978,7 +3979,7 @@ INSERT INTO `application_role` VALUES
 /* aon-webmail Guest, Admin */
   (215,27,2),
   (216,27,3),
-/* aon-aio Guest, Admin, Config, Auditor, Confidentiality, Product, Commercial Sale, Purchase, Warehouse, Accounting, Finance, Statistics, TaskMonitoring, eSignature, DocumentManager, Payroll, Fiscal */
+/* aon-aio Guest, Admin, Config, Auditor, Confidentiality, Product, Commercial Sale, Purchase, Warehouse, Accounting, Finance, Statistics, TaskMonitoring, eSignature, DocumentManager, Payroll, Fiscal, AccountingManager */
   (218,28,2),        
   (219,28,3),
   (220,28,4),        
@@ -3996,7 +3997,8 @@ INSERT INTO `application_role` VALUES
   (232,28,16),  
   (233,28,19),
   (234,28,20),
-  (235,28,21);
+  (235,28,21),
+  (236,28,22);
 
   /*  
  Con esta deberíamos hacer igual que la anterior pero prefiero esperar hasta

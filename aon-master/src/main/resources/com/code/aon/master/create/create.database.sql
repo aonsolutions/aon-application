@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.21.0
+# Version: 7.21.1
 # Created by: girazu
-# Creation Date: 05/07/2013 11:45
+# Creation Date: 19/07/2013 15:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3430,6 +3430,7 @@ CREATE TABLE `sales` (
   `pymnt_days` varchar(8) COLLATE latin1_spanish_ci DEFAULT '0' COMMENT 'Dias de pago',
   `bank` int(4) DEFAULT NULL COMMENT 'Identificador de la Entidad Bancaria',
   `bank_account` varchar(30) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
+  `purchase_generated` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si se han generado los Pedidos de Compra derivados',
   `carrier` int(4) DEFAULT NULL COMMENT 'Identificador de la Agencia de Transporte',
   `shipping_alternative_address` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Primera parte de la Direccion de entrega',
   `shipping_alternative_address2` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Segunda parte de la Direccion de entrega',
@@ -5949,6 +5950,7 @@ CREATE TABLE `project_reservation_service` (
   `service_code` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del Servicio en origen',
   `item` int(4) NOT NULL COMMENT 'Identificador del Servicio',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
+  `meal_plan` tinyint(2) DEFAULT '0' COMMENT 'Regimen',
   `project_reservation_room` int(4) DEFAULT NULL COMMENT 'Identificador de la Habitacion de la Reserva',
   `extra` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si se trata de un Servicio extra',
   PRIMARY KEY (`id`),
@@ -7164,7 +7166,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.21.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.21.1');
 
 COMMIT;
 
