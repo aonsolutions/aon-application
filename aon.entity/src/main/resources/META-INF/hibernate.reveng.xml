@@ -1176,6 +1176,7 @@
 	
 	<table name="project_reservation_service">
 		<column name="service_index" type="int"/>
+		<column name="meal_plan" type="int"/>
 	</table>
 	
 	<table name="project_tas">
