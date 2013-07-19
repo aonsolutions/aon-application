@@ -6,6 +6,7 @@ import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_DOMAIN;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_LOGO;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_SELLER_NAME;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_TRADENAME;
+import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_WIDTH;
 import static com.code.aon.ui.finance.controller.IFinanceConstants.BUNDLE_NAME;
 import static com.code.aon.ui.finance.controller.IFinanceConstants.FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX;
 
@@ -15,6 +16,7 @@ import java.util.Map;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +96,20 @@ public class PosInvoiceParamsController {
 		param.setValue(String.valueOf(footerText));
 		params.put(POS_INVOICE_FOOTER_TEXT, param );
 	}
+
+	public Integer getWidth() {
+		String value = params.get(POS_INVOICE_WIDTH).getValue();
+		if ( NumberUtils.isDigits(value) ) {
+			return NumberUtils.toInt(value);
+		}
+		return null;
+	}
+
+	public void setWidth(Integer width) throws ManagerBeanException {
+		ApplicationParameter param = obtainApplicationParameter(POS_INVOICE_WIDTH);
+		param.setValue(String.valueOf(width));
+		params.put(POS_INVOICE_WIDTH, param );
+	}
 	
 	public void load() {
 		params = new HashMap<AppParam, ApplicationParameter>();
@@ -103,6 +119,7 @@ public class PosInvoiceParamsController {
 			params.put(POS_INVOICE_PRINT_DIR_STAFF, obtainApplicationParameter(POS_INVOICE_PRINT_DIR_STAFF) );
 			params.put(POS_INVOICE_PRINT_SELLER_NAME, obtainApplicationParameter(POS_INVOICE_PRINT_SELLER_NAME) );
 			params.put(POS_INVOICE_PRINT_DOMAIN, obtainApplicationParameter(POS_INVOICE_PRINT_DOMAIN) );
+			params.put(POS_INVOICE_WIDTH, obtainApplicationParameter(POS_INVOICE_WIDTH) );
 			ApplicationParameter footerText = obtainApplicationParameter(POS_INVOICE_FOOTER_TEXT);
 			if ( footerText.getId() == null ) {
 				footerText.setValue(AonUtil.getMessage(BUNDLE_NAME, FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX));

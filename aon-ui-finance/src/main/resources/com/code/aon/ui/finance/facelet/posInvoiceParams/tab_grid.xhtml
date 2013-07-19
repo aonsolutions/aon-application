@@ -28,6 +28,11 @@
 		<aon:panelGrid  columns="2" style="width:100%"
 			columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
 			
+			<aon:outputLabel for="posInvoice_width"
+				value="#{financeBundle.finance_posInvoice_width}" />
+			<aon:inputText id="posInvoice_width" size="5"
+				value="#{posInvoiceParams.width}"/>
+			
 			<aon:outputLabel for="posInvoice_printLogo"
 				value="#{companyBundle.company_print_logo}" />
 			<aon:selectBooleanCheckbox id="posInvoice_printLogo"
@@ -59,7 +64,7 @@
 				
 			<aon:outputLabel for="posInvoice_footer_text"
 				value="#{companyBundle.company_invoice_footer_text}" />
-			<aon:inputTextarea id="posInvoice_footer_text" cols="50" rows="3"
+			<aon:inputText id="posInvoice_footer_text" size="80"
 				value="#{posInvoiceParams.footerText}"/>
 				
 		</aon:panelGrid>

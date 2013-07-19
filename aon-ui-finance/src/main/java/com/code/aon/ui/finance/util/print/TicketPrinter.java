@@ -90,7 +90,9 @@ public class TicketPrinter {
 	
 	private static String LINE_FEED = "\n";
 	
-	private int width = 48;
+	private static int DEFAULT_TICKET_WIDTH = 48;
+	
+	private int width;
 	
 	private static char[] INVALID_CHARS = new char[] {
 		'\u0160', '\u0160', '\u00D0', '\u017D', '\u017E', '\u00C0', '\u00C1', '\u00C2', '\u00C3', '\u00C4',
@@ -111,7 +113,7 @@ public class TicketPrinter {
 		"i", "o", "n", "o", "o", "o", "o", "o", "o", "u",
 		"u", "u", "y", "b", "y", "i", "I", "s", "S", "u",
 		"U", "g", "G" };
-	
+
 	private String getInitializePrinter() {
 		return INITIALIZE_PRINTER;
 	}
@@ -225,11 +227,9 @@ public class TicketPrinter {
 	}	
 	
 	private String getNumberDate( Invoice invoice ) {
-		StringBuffer sb = new StringBuffer();
-		sb.append( "Num: ").append( invoice.getReferenceCode() );
-		sb.append( "    Fecha: ");
-		sb.append( DATE_FORMAT.format(new Date()) );
-		return sb.toString();
+		String part1 = "Num: " + invoice.getReferenceCode();
+		String part2 = "Fecha: " + DATE_FORMAT.format(new Date()); 
+		return part1 + StringUtils.leftPad(part2, this.width - part1.length());
 	}
 	
 	private String getTradeName( Enterprise enterprise ) {
@@ -261,14 +261,24 @@ public class TicketPrinter {
 		sb.append( "(").append(address.getGeozone().getName()).append(")");
 		return sb.toString();		
 	}
+	
+	private boolean isEmpty( RegistryMedia rm ) {
+		return (rm == null) || (rm.getId() == null) || StringUtils.isEmpty(rm.getValue());
+	}
 
 	private String getContact( Enterprise enterprise ) throws ManagerBeanException {
 		StringBuffer sb = new StringBuffer();
-		sb.append( AonUtil.getMessage(ICommonConstants.PHONE) ).append( ": ");
-		sb.append( enterprise.getRegistry().getPhone().getValue() );
+		RegistryMedia phone = enterprise.getRegistry().getPhone();
+		if (! isEmpty(phone) ) {
+			sb.append( AonUtil.getMessage(ICommonConstants.PHONE) ).append( ": ");
+			sb.append( phone.getValue() );			
+		}
 		RegistryMedia fax = enterprise.getRegistry().getFax();
-		if ( (fax != null) && (fax.getId() != null) ) {
-			sb.append(" - ").append( AonUtil.getMessage(ICommonConstants.FAX) );
+		if (! isEmpty(fax) ) {
+			if ( sb.length() > 0 ) {
+				sb.append(" - ");
+			}
+			sb.append( AonUtil.getMessage(ICommonConstants.FAX) );
 			sb.append( ": ").append( fax.getValue() );			
 		}
 		return sb.toString();		
@@ -396,6 +406,10 @@ public class TicketPrinter {
 	private String getTicket( Invoice invoice, boolean gift ) throws ManagerBeanException {
 		PosInvoiceParamsController pipc = (PosInvoiceParamsController) AonUtil.getRegisteredBean(POS_INVOICE_PARAMS_CONTROLLER_NAME);
 		pipc.onInit(null);
+		
+		Integer ticketWidth = pipc.getWidth();
+		this.width = (ticketWidth != null) ? ticketWidth : DEFAULT_TICKET_WIDTH;
+		
 		SaleInvoiceController sic = (SaleInvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 		IPriceStrategy priceStrategy = sic.getPriceStrategy();
 		
@@ -421,7 +435,10 @@ public class TicketPrinter {
 		if ( pipc.getPrintDirStaff() == ReportPrintOption.HEADER ) {
 			sb.append( getLine(getCompanyDocument(company)) );
 			sb.append( getLine(getAddress(enterprise.obtainAddress())) );
-			sb.append( getLine(getContact(enterprise)) );
+			String contact = getContact(enterprise);
+			if (! StringUtils.isEmpty(contact) ) {
+				sb.append( getLine(contact) );	
+			}
 			append( sb, getFeedLines(1) );
 		}
 

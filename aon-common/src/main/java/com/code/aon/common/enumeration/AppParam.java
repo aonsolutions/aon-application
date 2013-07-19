@@ -78,7 +78,9 @@ public enum AppParam {
 	
 	POS_INVOICE_PRINT_DOMAIN,
 	
-	POS_INVOICE_FOOTER_TEXT;
+	POS_INVOICE_FOOTER_TEXT,
+	
+	POS_INVOICE_WIDTH;
 
 	public String getValue() {
 		return toString();
