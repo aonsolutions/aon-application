@@ -1,7 +1,6 @@
 package com.code.aon.ui.config.util;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -115,7 +114,6 @@ public class UserUtils {
 		}
 	}	
 
-	
 	public Expression getNullableScopeExpression( String resolvedAlias ) throws ManagerBeanException {
 		User user = UserUtils.getInstance().getLoggedUser();
 		String nullAlias = StringUtils.substringBeforeLast(resolvedAlias, ".");

@@ -91,6 +91,18 @@
 										<aon:inputTextarea id="Invoice_rectificationCause" cols="70" rows="4"
 											value="#{invoiceController.rectificationCause}" />
 
+										<c:if test="#{financeController.onePending}">
+											<aon:outputLabel for="Invoice_rectificationSettleFinance"
+												value="#{financeBundle.finance_charges}" />
+											<aon:div>
+												<aon:outputText styleClass="aon-italic aon-margin-right"
+													value="#{financeBundle.finance_invoice_settle_pending_finances}" />
+												<aon:selectBooleanCheckbox id="Invoice_rectificationSettleFinance"
+													value="#{invoiceController.rectificationSettleFinance}" />
+											</aon:div>
+
+										</c:if>
+
 									</aon:panelGrid>
 								</aon:div>
 							</aon:div>

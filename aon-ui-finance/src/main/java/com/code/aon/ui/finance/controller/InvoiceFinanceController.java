@@ -80,6 +80,17 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
+	public boolean isOnePending() throws ManagerBeanException{
+		for (ITransferObject ito : (List<ITransferObject>)getModel().getWrappedData()) {
+			Finance finance = (Finance)ito;
+			if (FinanceStatus.PENDING == finance.getFinanceStatus()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void onPayMethodChanged(ValueChangeEvent event) {
 		PayMethod oldPayMethod = (PayMethod) event.getOldValue();
 		PayMethod newPayMethod = (PayMethod) event.getNewValue();

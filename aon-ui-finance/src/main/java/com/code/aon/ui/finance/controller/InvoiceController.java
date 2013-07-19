@@ -104,6 +104,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private int rectificationNumber;
 	private Date rectificationDate;
 	private String rectificationCause;
+	private boolean rectificationSettleFinance;
 	private boolean showDiscountsWindow;
 	private String discountExpression;
 	private Double totalInvoiceAmount;
@@ -467,11 +468,20 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		this.rectificationCause = rectificationCause;
 	}
 
+	public boolean getRectificationSettleFinance() {
+		return rectificationSettleFinance;
+	}
+
+	public void setRectificationSettleFinance(boolean rectificationSettleFinance) {
+		this.rectificationSettleFinance = rectificationSettleFinance;
+	}
+
 	public void onRectificationShow(ActionEvent event) throws ManagerBeanException {
 		setRectificationSeries(SeriesUtil.ensureRectificationSeries(getInvoice().getSeries()));
 		setRectificationNumber(obtainMaxInvoiceNumber(getRectificationSeries()));
 		setRectificationDate(new Date());
 		setRectificationCause(null);
+		setRectificationSettleFinance(true);
 	}
 
 	public void onRectificationSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -486,7 +496,8 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public void onRectify(ActionEvent event) throws ManagerBeanException {
 		RectificationInvoicingManager rectificationManager = new RectificationInvoicingManager();
-		Invoice rectifier = rectificationManager.rectifyInvoice(getInvoice(), getRectificationSeries(), getRectificationNumber(), getRectificationDate(), getRectificationCause());
+		Invoice rectifier = rectificationManager.rectifyInvoice(getInvoice(), getRectificationSeries(), getRectificationNumber(), getRectificationDate(), 
+																	getRectificationCause(), getRectificationSettleFinance());
 
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), rectifier.getId());

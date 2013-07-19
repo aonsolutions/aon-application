@@ -16,10 +16,12 @@ import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.enumeration.FinanceStatus;
+import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
+import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.util.DiscountExpression;
@@ -47,11 +49,11 @@ public class RectificationInvoicingManager {
 		return rectifier;
 	}
 	
-	public Invoice rectifyInvoice(Invoice invoice, String series, int number, Date issueDate, String cause) throws ManagerBeanException {
+	public Invoice rectifyInvoice(Invoice invoice, String series, int number, Date issueDate, String cause, boolean settleFinance) throws ManagerBeanException {
 		Invoice rectifier = createRectifierInvoice(invoice, series, number, issueDate, cause, RectificationType.NORMAL_RECTIFIER);
 		createInvoiceAddress(rectifier, invoice);
 		createRectifierInvoiceDetails(rectifier, invoice, 0.0);
-		createRectifierInvoiceFinances(rectifier, invoice);
+		createRectifierInvoiceFinances(rectifier, invoice, settleFinance);
 		updateRectifiedInvoice(rectifier, invoice);
 		return rectifier;
 	}
@@ -149,7 +151,7 @@ public class RectificationInvoicingManager {
 		}
 	}
 
-	private void createRectifierInvoiceFinances(Invoice rectifier, Invoice invoice) throws ManagerBeanException {
+	private void createRectifierInvoiceFinances(Invoice rectifier, Invoice invoice, boolean settleFinance) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
@@ -175,6 +177,16 @@ public class RectificationInvoicingManager {
 			rectifierFinance.setSecurityLevel(finance.getSecurityLevel());
 			rectifierFinance.setScope(finance.getScope());
 			financeBean.insert(rectifierFinance);
+
+			if (settleFinance && finance.getFinanceStatus() == FinanceStatus.PENDING) {
+				finance.setFinanceStatus(FinanceStatus.SETTLED);
+				finance = (Finance)financeBean.update(finance);
+				FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.SETTLED, "Saldado");
+				
+				rectifierFinance.setFinanceStatus(FinanceStatus.SETTLED);
+				rectifierFinance = (Finance)financeBean.update(rectifierFinance);
+				FinanceTrackingWriter.addFinanceTracking(rectifierFinance, new Date(), FinanceTrackingType.SETTLED, "Saldado");
+			}
 		}
 	}
 
