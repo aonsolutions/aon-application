@@ -434,6 +434,39 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 
 	}
 
+	static class A3ReportEnterpriseCommand extends GPSReportEnterpriseCommand
+			implements ReportConstants {
+
+		public A3ReportEnterpriseCommand(String caption) {
+			super(caption);
+		}
+
+		// --------------------------------------
+		// AcceptHandler
+		// --------------------------------------
+		@Override
+		public void onAccept(WorkPlaceReportDialog.AcceptEvent event) {
+			DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MM-dd");
+			String fileName = "Informe A3(" + format.format(getStartDate())
+					+ ".." + format.format(getStartDate()) + ").csv";
+
+			Map<String, String> params = new HashMap<String, String>();
+			DateTimeFormat paramFormat = DateTimeFormat
+					.getFormat(DATE_FORMAT_PATTERN);
+			params.put(START_DATE_PARAM, paramFormat.format(getStartDate()));
+			params.put(END_DATE_PARAM, paramFormat.format(getEndDate()));
+
+			for (Workplace workplace : getSelected()) {
+				params.put(WORKPLACE_PARAM, workplace.getId().toString());
+			}
+
+			params.put(REPORT_A3_PARAM, Boolean.toString(true));
+
+			submit(fileName, params);
+		}
+
+	}
+
 	static class CTRLReportEnterpriseCommand extends GPSReportEnterpriseCommand
 			implements ReportConstants {
 
@@ -505,6 +538,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 	class EnterpriseContextMenu extends ContextMenu {
 
 		CalcEnterpriseCommand calcCmd;
+		A3ReportEnterpriseCommand a3ReportCmd;
 		FTEReportEnterpriseCommand fteReportCmd;
 		CTRLReportEnterpriseCommand ctrlReportCmd;
 
@@ -544,6 +578,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 					ctrlReportCmd = new CTRLReportEnterpriseCommand(
 							"Informe Control Festivos, Libres y Vacaciones..."),
 					AON.AON_ICON_EXCEL, AON.AON_ICON_CMD_BUTTON);
+			addItem("Informe A3",
+					a3ReportCmd = new A3ReportEnterpriseCommand(
+							"Informe A3..."), AON.AON_ICON_EXCEL,
+					AON.AON_ICON_CMD_BUTTON);
 		}
 
 		void setEnterprise(Enterprise enterprise) {
@@ -647,10 +685,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 	private AgreementDraft agreementDraft;
 
 	private ResultsPanel resultsPanel;
-
+	
 	private EmployeeContextMenu employeeContextMenu;
 	private WorkplaceContextMenu workplaceContextMenu;
 	private EnterpriseContextMenu enterpriseContextMenu;
+
+	private Enterprise enterprise;
+
 
 	/**
 	 * This method constructs the application user interface by instantiating
@@ -661,8 +702,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		// Window.alert("This method constructs the application user interface by instantiating controls and hooking up event handler.");
 
 		// Inject rich styles.
-		GWT.<MainEntryPoint.GWTResources> create(MainEntryPoint.GWTResources.class).css().ensureInjected();
-		GWT.<MainEntryPoint.AonResources> create(MainEntryPoint.AonResources.class).css().ensureInjected();
+		GWT.<MainEntryPoint.GWTResources> create(
+				MainEntryPoint.GWTResources.class).css().ensureInjected();
+		GWT.<MainEntryPoint.AonResources> create(
+				MainEntryPoint.AonResources.class).css().ensureInjected();
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
@@ -705,6 +748,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 	public void onEnterpriseSelected(Enterprise enterprise) {
 		employeeDetail.setWidget(jsf);
 		jsf.enterpriseSelected(enterprise.getId());
+		this.enterprise = enterprise;
 	}
 
 	@Override
@@ -870,7 +914,25 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		return singlenton;
 	}
 
+	private static void a3Report() {
+		singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
+		singlenton.enterpriseContextMenu.a3ReportCmd.execute();
+	}
+
+	private static void fteReport() {
+		singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
+		singlenton.enterpriseContextMenu.fteReportCmd.execute();
+	}
+
+	private static void ctrlReport() {
+		singlenton.enterpriseContextMenu.setEnterprise(singlenton.enterprise);
+		singlenton.enterpriseContextMenu.ctrlReportCmd.execute();
+	}
+
 	private static native void export2JS() /*-{
+											$wnd.a3Report = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::a3Report());
+											$wnd.fteReport = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::fteReport());
+											$wnd.ctrlReport = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::ctrlReport());
 											$wnd.showEmployee = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::showEmployee(I));
 											$wnd.showSalaryDraft = $entry(@com.esferalia.aon.gwt.payroll.client.EmployeeTree::showSalaryDraft(ILjava/lang/String;Ljava/lang/String;));
 											}-*/;

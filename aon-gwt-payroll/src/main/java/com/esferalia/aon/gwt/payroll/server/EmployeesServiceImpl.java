@@ -1189,6 +1189,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, workplaceId);
+			
 			stmt.setDate(2, new java.sql.Date(endDate.getTime()));
 
 			stmt.setInt(3, offset);

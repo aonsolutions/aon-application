@@ -37,9 +37,46 @@
 	                        limitToList="true" >
 	                </aon:commandButton>
 	
+
 				</ui:define>
 	
 			</ui:decorate>
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarID" value="reportsToolbar" />
+				<ui:param name="toolbarTitle"
+					value="Playasol" />
+				<ui:param name="toolbarDescription" value="Informes" />
+	
+	
+				<ui:define name="toolbarContent">
+	
+	                <aon:commandButton id="Fte-report" ajaxSingle="true"
+	                		reRender="enterpriseMainGrid"
+	                        value="Informe FTE"
+	                        styleClass="aon-finding-toolbar-item aon-icon-excel" 
+	                        onclick="fteReport();">
+	                </aon:commandButton>
+
+	                <aon:commandButton id="Free-report" ajaxSingle="true"
+	                		reRender="enterpriseMainGrid"
+	                        title="Informe Control Festivos, Libres y Vacaciones"
+	                        value="Informe Festivos..."
+	                        styleClass="aon-finding-toolbar-item aon-icon-excel" 
+	                        onclick="ctrlReport();" >
+	                </aon:commandButton>
+
+	                <aon:commandButton id="A3-report" ajaxSingle="true"
+	                		reRender="enterpriseMainGrid"
+	                        value="Informe A3"
+	                        styleClass="aon-finding-toolbar-item aon-icon-excel" 
+	                        onclick="a3Report();">
+	                </aon:commandButton>
+
+				</ui:define>
+	
+			</ui:decorate>
+
 		</c:if>
 		<c:if test="#{!edit}">
 			<ui:decorate
@@ -50,7 +87,7 @@
 		</c:if>
 
 
-		<aon:div style="overflow: auto; position: absolute; left: 0px; top: 2em; right: 0px; bottom: 0px;" >
+		<aon:div style="overflow: auto; position: absolute; left: 0px; top: 4em; right: 0px; bottom: 0px;" >
 
 			<aon:div style="position: relative" >
 

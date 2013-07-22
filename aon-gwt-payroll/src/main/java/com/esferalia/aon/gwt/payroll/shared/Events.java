@@ -166,6 +166,7 @@ public class Events implements Serializable {
 	public Events() {
 		employeesList = new LinkedList<Employee>();
 		eventsMap = new HashMap<Integer, Map<String, List<Event>>>();
+		eventsMap.put(ALL_EMPLOYE_ID, new HashMap<String, List<Event>>());
 	}
 
 	public void clear() {

@@ -36963,6 +36963,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String pymnt_days; 
 		protected Integer bank; 
 		protected String bank_account; 
+		protected Boolean purchase_generated; 
 		protected Integer carrier; 
 		protected String shipping_alternative_address; 
 		protected String shipping_alternative_address2; 
@@ -36982,7 +36983,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( salesStmt != null ) {
 				salesStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -36991,7 +36992,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			salesStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO sales (id,domain,project,customer,series,number,purchase_reference,shipping_address,seller,discount_expr,issue_date,pay_method,document_type,security_level,status,comments,remarks,workplace,scope,number_of_pymnts,days_to_first_pymnt,days_between_pymnts,pymnt_days,bank,bank_account,carrier,shipping_alternative_address,shipping_alternative_address2,shipping_alternative_zip,shipping_alternative_city,shipping_alternative_phone,shipping_alternative_recipient,shipping_contact,shipping_period)"  
+				"INSERT INTO sales (id,domain,project,customer,series,number,purchase_reference,shipping_address,seller,discount_expr,issue_date,pay_method,document_type,security_level,status,comments,remarks,workplace,scope,number_of_pymnts,days_to_first_pymnt,days_between_pymnts,pymnt_days,bank,bank_account,purchase_generated,carrier,shipping_alternative_address,shipping_alternative_address2,shipping_alternative_zip,shipping_alternative_city,shipping_alternative_phone,shipping_alternative_recipient,shipping_contact,shipping_period)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			salesStmtSize = size;
@@ -37100,6 +37101,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salesStmt.setNull(offset++, 12);
 			else
 				salesStmt.setString(offset++, sales.bank_account);
+			if ( sales.purchase_generated == null )
+				salesStmt.setNull(offset++, -7);
+			else
+				salesStmt.setBoolean(offset++, sales.purchase_generated);
 			if ( sales.carrier == null )
 				salesStmt.setNull(offset++, 4);
 			else
@@ -37217,6 +37222,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param pymnt_days Dias de pago
 	 * @param bank Identificador de la Entidad Bancaria
 	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @param purchase_generated Indica si se han generado los Pedidos de Compra derivados
 	 * @param carrier Identificador de la Agencia de Transporte
 	 * @param shipping_alternative_address Primera parte de la Direccion de entrega
 	 * @param shipping_alternative_address2 Segunda parte de la Direccion de entrega
@@ -37228,7 +37234,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param shipping_period Tipo de periodo de entrega
 	 * @throws SQLException
 	*/
-	protected void insertSales(Integer id, Integer domain, Integer project, Integer customer, String series, Integer number, String purchase_reference, Integer shipping_address, Integer seller, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Integer carrier, String shipping_alternative_address, String shipping_alternative_address2, String shipping_alternative_zip, String shipping_alternative_city, String shipping_alternative_phone, String shipping_alternative_recipient, String shipping_contact, Short shipping_period)
+	protected void insertSales(Integer id, Integer domain, Integer project, Integer customer, String series, Integer number, String purchase_reference, Integer shipping_address, Integer seller, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Boolean purchase_generated, Integer carrier, String shipping_alternative_address, String shipping_alternative_address2, String shipping_alternative_zip, String shipping_alternative_city, String shipping_alternative_phone, String shipping_alternative_recipient, String shipping_contact, Short shipping_period)
 	throws SQLException {
 
 		Sales sales_ = new Sales();
@@ -37257,6 +37263,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		sales_.pymnt_days = pymnt_days;
 		sales_.bank = bank;
 		sales_.bank_account = bank_account;
+		sales_.purchase_generated = purchase_generated;
 		sales_.carrier = carrier;
 		sales_.shipping_alternative_address = shipping_alternative_address;
 		sales_.shipping_alternative_address2 = shipping_alternative_address2;
@@ -37303,6 +37310,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param pymnt_days Dias de pago
 	 * @param bank Identificador de la Entidad Bancaria
 	 * @param bank_account Numero de cuenta en la Entidad Bancaria
+	 * @param purchase_generated Indica si se han generado los Pedidos de Compra derivados
 	 * @param carrier Identificador de la Agencia de Transporte
 	 * @param shipping_alternative_address Primera parte de la Direccion de entrega
 	 * @param shipping_alternative_address2 Segunda parte de la Direccion de entrega
@@ -37315,7 +37323,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertSales(Integer domain, Integer project, Integer customer, String series, Integer number, String purchase_reference, Integer shipping_address, Integer seller, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Integer carrier, String shipping_alternative_address, String shipping_alternative_address2, String shipping_alternative_zip, String shipping_alternative_city, String shipping_alternative_phone, String shipping_alternative_recipient, String shipping_contact, Short shipping_period)
+	public int insertSales(Integer domain, Integer project, Integer customer, String series, Integer number, String purchase_reference, Integer shipping_address, Integer seller, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, String comments, String remarks, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Boolean purchase_generated, Integer carrier, String shipping_alternative_address, String shipping_alternative_address2, String shipping_alternative_zip, String shipping_alternative_city, String shipping_alternative_phone, String shipping_alternative_recipient, String shipping_contact, Short shipping_period)
 	throws SQLException {
 		int id = nextSalesId();
 
@@ -37345,6 +37353,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		sales_.pymnt_days = pymnt_days;
 		sales_.bank = bank;
 		sales_.bank_account = bank_account;
+		sales_.purchase_generated = purchase_generated;
 		sales_.carrier = carrier;
 		sales_.shipping_alternative_address = shipping_alternative_address;
 		sales_.shipping_alternative_address2 = shipping_alternative_address2;
@@ -59493,6 +59502,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String service_code; 
 		protected Integer item; 
 		protected String description; 
+		protected Short meal_plan; 
 		protected Integer project_reservation_room; 
 		protected Boolean extra; 
 	}
@@ -59505,7 +59515,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( project_reservation_serviceStmt != null ) {
 				project_reservation_serviceStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -59514,7 +59524,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			project_reservation_serviceStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO project_reservation_service (id,domain,project_reservation,service_index,service_code,item,description,project_reservation_room,extra)"  
+				"INSERT INTO project_reservation_service (id,domain,project_reservation,service_index,service_code,item,description,meal_plan,project_reservation_room,extra)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			project_reservation_serviceStmtSize = size;
@@ -59551,6 +59561,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				project_reservation_serviceStmt.setNull(offset++, 12);
 			else
 				project_reservation_serviceStmt.setString(offset++, project_reservation_service.description);
+			if ( project_reservation_service.meal_plan == null )
+				project_reservation_serviceStmt.setNull(offset++, -6);
+			else
+				project_reservation_serviceStmt.setShort(offset++, project_reservation_service.meal_plan);
 			if ( project_reservation_service.project_reservation_room == null )
 				project_reservation_serviceStmt.setNull(offset++, 4);
 			else
@@ -59622,11 +59636,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param service_code Codigo del Servicio en origen
 	 * @param item Identificador del Servicio
 	 * @param description Descripcion
+	 * @param meal_plan Regimen
 	 * @param project_reservation_room Identificador de la Habitacion de la Reserva
 	 * @param extra Indica si se trata de un Servicio extra
 	 * @throws SQLException
 	*/
-	protected void insertProject_reservation_service(Integer id, Integer domain, Integer project_reservation, Short service_index, String service_code, Integer item, String description, Integer project_reservation_room, Boolean extra)
+	protected void insertProject_reservation_service(Integer id, Integer domain, Integer project_reservation, Short service_index, String service_code, Integer item, String description, Short meal_plan, Integer project_reservation_room, Boolean extra)
 	throws SQLException {
 
 		Project_reservation_service project_reservation_service_ = new Project_reservation_service();
@@ -59637,6 +59652,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		project_reservation_service_.service_code = service_code;
 		project_reservation_service_.item = item;
 		project_reservation_service_.description = description;
+		project_reservation_service_.meal_plan = meal_plan;
 		project_reservation_service_.project_reservation_room = project_reservation_room;
 		project_reservation_service_.extra = extra;
 
@@ -59644,7 +59660,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int project_reservation_serviceCount = project_reservation_services.size();
 		
-		if ( 133 * project_reservation_serviceCount >=  this.maxAllowedPacket ){
+		if ( 136 * project_reservation_serviceCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_service(project_reservation_services);
 		} 
 	}
@@ -59658,12 +59674,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param service_code Codigo del Servicio en origen
 	 * @param item Identificador del Servicio
 	 * @param description Descripcion
+	 * @param meal_plan Regimen
 	 * @param project_reservation_room Identificador de la Habitacion de la Reserva
 	 * @param extra Indica si se trata de un Servicio extra
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertProject_reservation_service(Integer domain, Integer project_reservation, Short service_index, String service_code, Integer item, String description, Integer project_reservation_room, Boolean extra)
+	public int insertProject_reservation_service(Integer domain, Integer project_reservation, Short service_index, String service_code, Integer item, String description, Short meal_plan, Integer project_reservation_room, Boolean extra)
 	throws SQLException {
 		int id = nextProject_reservation_serviceId();
 
@@ -59675,6 +59692,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		project_reservation_service_.service_code = service_code;
 		project_reservation_service_.item = item;
 		project_reservation_service_.description = description;
+		project_reservation_service_.meal_plan = meal_plan;
 		project_reservation_service_.project_reservation_room = project_reservation_room;
 		project_reservation_service_.extra = extra;
 
@@ -59682,7 +59700,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int project_reservation_serviceCount = project_reservation_services.size();
 		
-		if ( 133 * project_reservation_serviceCount >=  this.maxAllowedPacket ){
+		if ( 136 * project_reservation_serviceCount >=  this.maxAllowedPacket ){
 			insertProject_reservation_service(project_reservation_services);
 			project_reservation_services.clear();
 		} 

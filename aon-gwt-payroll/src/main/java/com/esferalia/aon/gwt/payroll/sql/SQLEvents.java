@@ -6,9 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
@@ -20,6 +22,12 @@ import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
+import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
+import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 
 public class SQLEvents {
 
@@ -99,6 +107,56 @@ public class SQLEvents {
 			if (employeesIds.size() == 0)
 				return events; // Empty events.
 
+			// Try to load System events ( 'data' )
+			sql = "SELECT * FROM " + SQLConstants.SYSTEM_DATA + " WHERE "
+					+ SystemDataColumns.START_DATE + " <=  ? " + " AND ( "
+					+ SystemDataColumns.END_DATE + " IS NULL  " + " OR "
+					+ SystemDataColumns.END_DATE + " >= ? ) ";
+			stmt = connection.prepareStatement(sql);
+			stmt.setDate(1, sqlEndDate);
+			stmt.setDate(2, sqlStartDate);
+			rs = stmt.executeQuery();
+
+			ExpressionContext systemExpressionContext = new ExpressionContext();
+			List<Event> systemEvents = new LinkedList<Event>();
+
+			while (rs.next()) {
+				String name = rs.getString(SystemDataColumns.NAME);
+				Date end = rs.getDate(SystemDataColumns.END_DATE);
+				Date start = rs.getDate(SystemDataColumns.START_DATE);
+				String script = rs.getString(SystemDataColumns.EXPRESSION);
+
+				try {
+
+					ExpressionImpl expression = new ExpressionImpl();
+					expression.setName(name);
+					expression.setExpression(script);
+
+					List<ITimedResult<Object>> results = systemExpressionContext
+							.addExpression(expression, start, end);
+
+					for (ITimedResult<Object> result : results) {
+						Event event = new Event();
+						event.setName(name);
+						event.setValue(result.getValue() != null ? result
+								.getValue().toString() : null);
+						event.setEndDate(result.getPeriod().getEnd());
+						event.setStartDate(result.getPeriod().getStart());
+						events.addEvent(event);
+					}
+				} catch (ExpressionException e) {
+					Event event = new Event();
+					event.setName(name);
+					event.setValue(script);
+					event.setStartDate(start);
+					event.setEndDate(end);
+					systemEvents.add(event);
+				}
+			}
+
+			rs.close();
+			stmt.close();
+
 			sql = "SELECT * FROM " + SQLConstants.CONTRACT_DATA + " WHERE "
 					+ ContractDataColumns.START_DATE + " <=  ? " + " AND ( "
 					+ ContractDataColumns.END_DATE + " IS NULL  " + " OR "
@@ -117,15 +175,53 @@ public class SQLEvents {
 
 			rs = stmt.executeQuery();
 
-			while (rs.next()) {
-				Event event = new Event();
-				event.setName(rs.getString(ContractDataColumns.NAME));
-				event.setValue(rs.getString(ContractDataColumns.EXPRESSION));
-				event.setEndDate(rs.getDate(ContractDataColumns.END_DATE));
-				event.setStartDate(rs.getDate(ContractDataColumns.START_DATE));
+			int lastEmployeeId = Integer.MIN_VALUE;
 
+			ExpressionContext employeeExpressionContext = null;
+
+			while (rs.next()) {
 				int employeeId = rs.getInt(ContractDataColumns.CONTRACT);
-				events.addEvent(employeeId, event);
+				if (lastEmployeeId != employeeId) {
+					employeeExpressionContext = new ExpressionContext(
+							systemExpressionContext);
+					if (lastEmployeeId != Integer.MIN_VALUE) {
+						loadSystemEvents(systemEvents, employeeExpressionContext, events, lastEmployeeId);
+					}
+				}
+				Event event = null;
+				String name = rs.getString(SystemDataColumns.NAME);
+				Date end = rs.getDate(SystemDataColumns.END_DATE);
+				Date start = rs.getDate(SystemDataColumns.START_DATE);
+				String script = rs.getString(SystemDataColumns.EXPRESSION);
+
+				try {
+					ExpressionImpl expression = new ExpressionImpl();
+					expression.setName(name);
+					expression.setExpression(script);
+					List<ITimedResult<Object>> results = employeeExpressionContext
+							.addExpression(expression, start, end);
+
+					for (ITimedResult<Object> result : results) {
+						event = new Event();
+						event.setName(name);
+						event.setValue(result.getValue() != null ? result
+								.getValue().toString() : null);
+						event.setEndDate(result.getPeriod().getEnd());
+						event.setStartDate(result.getPeriod().getStart());
+						events.addEvent(employeeId, event);
+					}
+				} catch (ExpressionException e) {
+					event = new Event();
+					event.setName(name);
+					event.setValue(script);
+					event.setEndDate(start);
+					event.setStartDate(end);
+					events.addEvent(employeeId, event);
+				}
+				lastEmployeeId = employeeId;
+			}
+			if (lastEmployeeId != Integer.MIN_VALUE) {
+				loadSystemEvents(systemEvents, employeeExpressionContext, events, lastEmployeeId);
 			}
 
 			return events;
@@ -254,12 +350,12 @@ public class SQLEvents {
 	}
 
 	public static Period getAvailPeriod(Connection conn, Integer workplaceId,
-			String name) throws SQLException{
+			String name) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			String sql = "SELECT " + "MIN( " + SQLConstants.CONTRACT_DATA
-					+ "." + ContractDataColumns.START_DATE + ")"
+			String sql = "SELECT " + "MIN( " + SQLConstants.CONTRACT_DATA + "."
+					+ ContractDataColumns.START_DATE + ")"
 					+ ", MAX( IF( ISNULL(" + SQLConstants.CONTRACT_DATA + "."
 					+ ContractDataColumns.END_DATE + "), ?, "
 					+ SQLConstants.CONTRACT_DATA + "."
@@ -282,8 +378,8 @@ public class SQLEvents {
 
 			Date startDate = rs.getDate(1);
 			Date endDate = rs.getDate(2);
-			
-			if ( startDate == null )
+
+			if (startDate == null)
 				return null;
 
 			return new Period(startDate, endDate.equals(MAX_DATE) ? null
@@ -301,5 +397,37 @@ public class SQLEvents {
 	// -------------------------------------------------------------------------
 	//
 	// -------------------------------------------------------------------------
+	
+	private static void loadSystemEvents(List<Event> systemEvents, ExpressionContext expressionContext, Events events, int employeeId){
+		for (Event systemEvent : systemEvents) {
+			try {
+
+				ExpressionImpl expression = new ExpressionImpl();
+				expression.setName(systemEvent.getName());
+				expression
+						.setExpression(systemEvent.getValue());
+
+				List<ITimedResult<Object>> results = expressionContext
+						.addExpression(expression,
+								systemEvent.getStartDate(),
+								systemEvent.getEndDate());
+
+				for (ITimedResult<Object> result : results) {
+					Event event = new Event();
+					event.setName(systemEvent.getName());
+					event.setValue(result.getValue() != null ? result
+							.getValue().toString() : null);
+					event.setEndDate(result.getPeriod()
+							.getEnd());
+					event.setStartDate(result.getPeriod()
+							.getStart());
+					events.addEvent(employeeId, event);
+				}
+			} catch (ExpressionException ignoreOrLog) {
+			}
+
+		}
+		
+	}
 
 }

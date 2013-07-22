@@ -159,4 +159,9 @@ public class DateUtils {
 
 	}
 
+	public static Date toUTC(Date date) {
+		return new Date ( Date.UTC(date.getYear(), date.getMonth(), date.getDate(),
+				0, 0, 0));
+	}
+
 }
