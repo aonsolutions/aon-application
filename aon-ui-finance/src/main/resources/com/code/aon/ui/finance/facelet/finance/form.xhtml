@@ -449,7 +449,6 @@
 										<aon:confirmButton id="undo"
 											title="#{financeBundle.finance_tracking_undo}"
 											immediate="true" rendered="#{financeTracking.undoable}"
-											rendered="#{aonRole.accountingManager or !to.recorded}" 
 											confirmTitle="#{bundle.aon_confirm_title}"
 											confirmMessage="#{bundle.aon_remove_confirm}"
 											confirmActionListener="#{financeTracking.undoTracking}"

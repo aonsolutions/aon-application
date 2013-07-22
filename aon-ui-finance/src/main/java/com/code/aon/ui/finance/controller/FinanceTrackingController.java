@@ -84,7 +84,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 			if (FinanceTrackingWriter.isLastTracking(tracking)) {
 				if (tracking.getType() == FinanceTrackingType.SETTLED || !tracking.isRecorded()) {
 					return true;
-				} else if (tracking.isRecorded() && AonUtil.getRoleManager().isAccountingOperator()) {
+				} else if (tracking.isRecorded() && AonUtil.getRoleManager().isAccountingManager()) {
 					IManagerBean entryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(entryFinanceTrackingBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
