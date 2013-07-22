@@ -446,16 +446,15 @@
 												onclick="Richfaces.showModalPanel('waitProccess')" 
 									     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 										</c:if>
-										<c:if test="#{aonRole.accountingManager or !to.recorded}">
-											<aon:confirmButton id="undo"
-												title="#{financeBundle.finance_tracking_undo}"
-												immediate="true" rendered="#{financeTracking.undoable}" 
-												confirmTitle="#{bundle.aon_confirm_title}"
-												confirmMessage="#{bundle.aon_remove_confirm}"
-												confirmActionListener="#{financeTracking.undoTracking}"
-												styleClass="aon-editDataTable-button aon-icon-delete aon-nowrap"
-												accesskey="#{bundle.aon_key_remove_line}" />
-										</c:if>										
+										<aon:confirmButton id="undo"
+											title="#{financeBundle.finance_tracking_undo}"
+											immediate="true" rendered="#{financeTracking.undoable}"
+											rendered="#{aonRole.accountingManager or !to.recorded}" 
+											confirmTitle="#{bundle.aon_confirm_title}"
+											confirmMessage="#{bundle.aon_remove_confirm}"
+											confirmActionListener="#{financeTracking.undoTracking}"
+											styleClass="aon-editDataTable-button aon-icon-delete aon-nowrap"
+											accesskey="#{bundle.aon_key_remove_line}" />
 										<aon:commandLink id="financeBatch_link" immediate="true"
 											styleClass="aon-button-goto aon-nowrap" style="padding-right: 20px;"
 											value="&#160;" title="#{financeBundle.finance_batch}"
