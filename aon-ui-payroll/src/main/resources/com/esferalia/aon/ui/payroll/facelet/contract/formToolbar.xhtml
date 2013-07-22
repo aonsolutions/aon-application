@@ -91,7 +91,8 @@
 			<aon:menuItem id="document-extension" 
 				value="Prorroga"
 				disabled="true"
-				iconClass="aon-icon-attach-file" />
+				iconClass="aon-icon-attach-file" >
+			</aon:menuItem>
 			-->
 			
 			<rich:menuGroup 
@@ -162,7 +163,7 @@
 				-->
 			</rich:menuGroup>
 
-			<rich:menuGroup value="Contrat@" iconClass="aon-icon-contrata">
+			<rich:menuGroup value="Contrat@" iconClass="aon-icon-sepe-contrata">
 				<aon:menuItem id="contrata-sepe-comunication2"
 					value="Comunicar datos de contrato"
 					disabled="#{!contractContrata.communicationAvailable or contractContrata.communicationResponseReceived}"

@@ -247,22 +247,24 @@ public class ModelPE230 extends AbstractAnnexModel {
 			getPdfFieldsMap().get(PE230_EMPLOYEE_NIF).setValue(contract.getPerson().getRegistry().getDocument());
 			
 			// CONTRACT FIELDS
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_1).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_2).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_3).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_4).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_5).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_6).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_7).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_8).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_9).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_10).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_11).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_12).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_13).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_14).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_15).setValue("");
-			getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_16).setValue("");
+//			if(contrataParams!=null && contrataParams.getContractSepeCode()!=null){
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_1).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_2).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_3).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_4).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_5).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_6).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_7).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_8).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_9).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_10).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_11).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_12).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_13).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_14).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_15).setValue("");
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_16).setValue("");
+//			}
 			
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			if(contract.getStartDate()!=null){

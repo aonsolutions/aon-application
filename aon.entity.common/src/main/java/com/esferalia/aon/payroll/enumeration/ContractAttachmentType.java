@@ -29,7 +29,9 @@ public enum ContractAttachmentType implements IResourceable {
 
 	CONTRACT_EXTENSION_DRAFT,
 
-	CONTRACT_EXTENSION
+	CONTRACT_EXTENSION,
+	
+	CONTRACT_CLAUSES
 	
 	;
 	

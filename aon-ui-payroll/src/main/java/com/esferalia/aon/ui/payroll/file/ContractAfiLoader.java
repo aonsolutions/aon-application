@@ -50,7 +50,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
-import com.esferalia.aon.ui.payroll.utils.FileUtils;
+import com.esferalia.aon.ui.payroll.utils.SEPEFileUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContractAfiLoader implements IContractLoader{
@@ -87,7 +87,7 @@ public class ContractAfiLoader implements IContractLoader{
 			raiseException(0, "La entrada está vacia!");
 		}
 		try {
-			InputStreamReader inputReader = new InputStreamReader(input, FileUtils.CONTRATA_XML_FILE_ENCODING);
+			InputStreamReader inputReader = new InputStreamReader(input, SEPEFileUtils.XML_FILE_ENCODING);
 			LineNumberReader reader = new LineNumberReader(inputReader);
 			int i = 0;
 			if (reader.ready()) {
@@ -149,7 +149,7 @@ public class ContractAfiLoader implements IContractLoader{
 			logInfo(" Comienza la carga de datos!");
 			
 			AFIReader afiReader = new AFIReader();
-			ETI eti = afiReader.readFile( input, FileUtils.CONTRATA_XML_FILE_ENCODING );
+			ETI eti = afiReader.readFile( input, SEPEFileUtils.XML_FILE_ENCODING );
 			
 			if(eti.getEmpresas().isEmpty()){
 				String msg = "El fichero no contiene datos de ninguna empresa.";

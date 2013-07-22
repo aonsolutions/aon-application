@@ -113,6 +113,7 @@ public interface IPayrollConstants {
 	String DEFAULT_SALARY_DRAFT_TEMPLATE = "salaryDraft";
 	String COST_REPORT = "salaryExpenseReport";
 	String TRAINING_DIRECT_DEBIT_REPORT_KEY = "trainingDirectDebit";
+	String ADDITIONAL_CLAUSES_REPORT_KEY = "additionalClauses";
 
 	// ************************************************************
 	// NAVIGATION KEYS

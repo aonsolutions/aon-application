@@ -253,6 +253,30 @@ public class PayrollUtils {
 		return map;
 	}
 	
+	public Map<String, ContractData> getContractDataMap(Contract contract, Date startDate, Date endDate) {
+		Map<String, ContractData> map = new HashMap<String, ContractData>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			if(startDate!=null){
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), startDate);
+			}
+			if(endDate!=null){
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), endDate);
+			}
+			for(ITransferObject to: bean.getList(criteria)){
+				ContractData data = (ContractData) to;
+				if(data.getExpression()!=null){
+					map.put(data.getName(), data);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, que siga generando el fichero
+		}
+		return map;
+	}
+	
 	// //////////////////////////////////
 	// DOMAIN METHODS
 	// //////////////////////////////////

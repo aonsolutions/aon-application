@@ -1,288 +1,332 @@
 package com.esferalia.aon.ui.payroll.file;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.faces.event.AbortProcessingException;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.Classpath;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
-import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.file.payroll.certificate.Certificate;
-import com.esferalia.aon.file.payroll.certificate.data.Cotizacion;
-import com.esferalia.aon.file.payroll.certificate.data.CuentaCotizacion;
-import com.esferalia.aon.file.payroll.certificate.data.DistribucionJornada;
-import com.esferalia.aon.file.payroll.certificate.data.Empresa;
-import com.esferalia.aon.file.payroll.certificate.data.Periodo;
-import com.esferalia.aon.file.payroll.certificate.data.Representante;
-import com.esferalia.aon.file.payroll.certificate.data.Trabajador;
-import com.esferalia.aon.file.payroll.certificate.data.Vacaciones;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchData;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.COTIZACIONREATYPE;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.COTIZACIONTYPE;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.CUENTACOTIZACIONTYPE;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.CertificadoEmpresa;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.DISTRIBUCIONJORNADASTYPE;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.EMPRESATYPE;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.PERIODODISTRIBUCIONJORNADASTYPE;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.REPRESENTANTETYPE;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.TRABAJADORTYPE;
+import com.esferalia.aon.ui.payroll.utils.SEPEFileUtils;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class CertificateWriter {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CertificateWriter.class.getName());
-	private static final String DATE_FORMAT = "yyyyMMdd";
-	private static final String FINAL_END_DATE = "99991231";
-	private static final String SHARE_HOLDER = "Socio";
-	private static final String REPRESENTATIVE = "Administrativo";
-	private static final String REPRESENTATIVE_LABOR = "Representante Laboral";
-	private static final String DIRECTOR = "Apoderado";
-	private static final String IRREGULAR_VALUE = "2";
-	private static final String REGULAR_VALUE = "1";
 	
-	private Certificate certificate;
+	private final String CERTIFICA2_MODEL_PATH = "com.esferalia.aon.sepe.api.certificados.certificadoEmpresa";
 	
-	public Certificate getCertificate() {
-		return certificate;
+	private String fileName;
+	
+	
+	public CertificateWriter() {
 	}
 	
-	public void setCertificate(Certificate certificate) {
-		this.certificate = certificate;
+	public String getFileName() {
+		return fileName; 
 	}
-	
-	public FileOutput createCertificate(Certifica2Batch batch, List<Certifica2BatchDetail> batchDetail) throws ManagerBeanException {
-		final String INDENT_AMOUNT_VALUE = "4";
-		final String INDENT_AMOUNT_PROPERTY = "{http://xml.apache.org/xslt}indent-amount";
-		try {
-			setCertificate(new Certificate(batch.getEnterprise().getRegistry().getDocument(), batch.getDate()));
-			List<CuentaCotizacion> list = new ArrayList<CuentaCotizacion>();
-			for(String ccc: getCccList(batchDetail)) {
-				list.add(createCuentaCotizacionRecord(ccc, batch, batchDetail));
-			}
-			getCertificate().setCuentaCotizacion(list);
-			FileOutput output = new FileOutput();
-			File file = File.createTempFile("aon-temp", ".XML");
-			FileOutputStream out = new FileOutputStream(file);
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document xmldoc = builder.newDocument();
-			Element root = certificate.getElement(xmldoc);
-			xmldoc.appendChild(root);
-			certificate.fillElement(xmldoc, root);
-			DOMSource domSource = new DOMSource(xmldoc);
-			StreamResult streamResult = new StreamResult(out);
-			TransformerFactory tf = TransformerFactory.newInstance();
-			Transformer serializer = tf.newTransformer();
-			serializer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
-			serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-			serializer.setOutputProperty(INDENT_AMOUNT_PROPERTY, INDENT_AMOUNT_VALUE);
-			serializer.transform(domSource, streamResult);
-			output.setErrors(certificate.getExceptions());
-			output.setFile(file);
-			if (output.getErrors().size() > 0) {
-				// No se lanza excepción, que vaya a la última página.
-				AonUtil.addErrorMessage("Fichero generado con errores.");
-				for(Integer error: certificate.getErrors()){
-					AonUtil.addErrorMessage(certificate.getErrorMessage(error));
-				}
-			} else {
-				validateXmlPattern(file);
-			}
-			return output;
-		} catch (IOException e) {
-			throw new ManagerBeanException(e);
-		} catch (ParserConfigurationException e) {
-			throw new ManagerBeanException(e);
-		} catch (TransformerConfigurationException e) {
-			throw new ManagerBeanException(e);
-		} catch (TransformerException e) {
-			throw new ManagerBeanException(e);
-		} 
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
-	
-	public Element getError(Document xmldoc, Certificate certificate){
-		if(certificate.getErrors()!=null){
-			final String ERRORS = "Errores";
-			final String ERROR = "Error";
-			Element errores = xmldoc.createElement(ERRORS);
-			for (Integer i : certificate.getErrors()) {
-				String errorMsg = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.messages").getString("aon_payroll_certificate_error_" + i);
-				Element error = xmldoc.createElement(ERROR);
-				error.appendChild(xmldoc.createTextNode(errorMsg));
-				errores.appendChild(error);
-			}
-			return errores;
-		} else {
-			return null;
-		}
-	}
-	
-	private List<String> getCccList(List<Certifica2BatchDetail> batchDetail) {
-		List<String> list = new ArrayList<String>();
-		String ccc;
-		for(Certifica2BatchDetail detail: batchDetail){
-			ccc = detail.getContract().getEnterpriseCCC().getCcc();
-			if(!list.contains(ccc)){
-				list.add(ccc);
-			}
-		}
-		return list;
-	}
+
+	public File createFile(Certifica2Batch batch, List<ITransferObject> batchDetailList) throws ManagerBeanException, IOException{
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+		String date = formatter.format(new Date());
+		formatter = new SimpleDateFormat("HHmm");
+		String hour = formatter.format(new Date());
+		fileName = batch.getEnterprise().getRegistry().getDocument();
+		fileName += String.valueOf(Integer.parseInt(date)) + String.valueOf(Integer.parseInt(hour));
 		
-	private void validateXmlPattern(File xml) {
-		final String SCHEMA = "enterpriseCertificate.xsd";
+		CertificadoEmpresa certificado = createCertificadoEmpresaType(batch, batchDetailList);
+		
 		try {
-			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] urls = Classpath.search(cl, "META-INF/schema/", SCHEMA);
-			Validator validator = sf.newSchema(urls[0]).newValidator();
-			StreamSource source = new StreamSource(xml);
-			validator.validate(source);
-		} catch (Exception e) {
-			String msg = "Error de formato al generar el XML";
+			JAXBContext jaxbContext = JAXBContext.newInstance(CERTIFICA2_MODEL_PATH);
+			Marshaller marshaller = jaxbContext.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marshaller.setProperty(Marshaller.JAXB_ENCODING, SEPEFileUtils.XML_FILE_ENCODING);
+			File file = File.createTempFile("aon-temp", ".XML"); 
+			marshaller.marshal( certificado, file );
+			return file;
+		} catch (JAXBException e) {
+			String msg = "Error al generar el documento xml del certificado." ;
 			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(e.getMessage());
+			AonUtil.addErrorMessage("[" + e + "]");
 			throw new AbortProcessingException(msg, e);
 		}
 	}
 	
-	private CuentaCotizacion createCuentaCotizacionRecord(String ccc, Certifica2Batch batch, List<Certifica2BatchDetail> listaDetalle) {
-		CuentaCotizacion cuentaCotizacion = new CuentaCotizacion();
-		Representante representante = new Representante();
-		RegistryDirStaff rds = null;
-		rds = getRegistryDirStaff(batch.getEnterprise());
-		if(rds!=null){
-			String name[] = StringUtils.split(rds.getName(),' ');
+	
+	
+	public CertificadoEmpresa createCertificadoEmpresaType(Certifica2Batch batch, List<ITransferObject> batchDetailList) throws ManagerBeanException {
+		CertificadoEmpresa certificado = new CertificadoEmpresa();
+		for(EnterpriseCCC ccc: getCccList(batchDetailList)){
+			certificado.getCuentaCotizacion().add(createCuentaCotizacionType(ccc, batch, batchDetailList));
+		}
+		return certificado;
+	}
+	
+	/**
+	 * 	<xsd:complexType name="CUENTA_COTIZACION_TYPE">
+			<xsd:sequence>
+				<xsd:element name="Datos_Representante" type="REPRESENTANTE_TYPE"/>
+				<xsd:element name="Datos_Empresa" type="EMPRESA_TYPE"/>
+				<xsd:element name="Datos_Trabajador" type="TRABAJADOR_TYPE" maxOccurs="unbounded"/>
+				<xsd:any namespace="##any" processContents="strict" minOccurs="0" maxOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	 * @param ccc
+	 * @param batch
+	 * @param listaDetalle
+	 * @return
+	 */
+	private CUENTACOTIZACIONTYPE createCuentaCotizacionType(EnterpriseCCC ccc, Certifica2Batch batch, List<ITransferObject> batchDetailList) {
+		CUENTACOTIZACIONTYPE o = new CUENTACOTIZACIONTYPE();
+		o.setDatosRepresentante(createRepresentanteType(batch.getEnterprise()));
+		o.setDatosEmpresa(createEmpresaType(ccc));
+		for(ITransferObject to: batchDetailList){
+			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
+			o.getDatosTrabajador().add(createTrabajadorType(detail));
+		}
+		return o;
+		
+	}
+
+	/**
+	 * <xsd:complexType name="REPRESENTANTE_TYPE">
+		<xsd:sequence>
+			<xsd:element name="CIF_NIF" type="CIF_NIF_SIMPLETYPE"/>
+			<xsd:element name="Nombre" type="NOMBRE_SIMPLETYPE"/>
+			<xsd:element name="Apellido1" type="APELLIDO_SIMPLETYPE"/>
+			<xsd:element name="Apellido2" type="APELLIDO_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="Cargo" type="CARGO_SIMPLETYPE" minOccurs="0"/>
+			<xsd:any namespace="##any" processContents="strict" minOccurs="0" maxOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	 * @return
+	 */
+	private REPRESENTANTETYPE createRepresentanteType(Enterprise enterprise) {
+		REPRESENTANTETYPE o = new REPRESENTANTETYPE();
+		RegistryDirStaff dirStaff = getRegistryDirStaff(enterprise);
+		if(dirStaff!=null){
+			String name[] = StringUtils.split(dirStaff.getName(),' ');
 			String nombre = name.length>=1?name[0]:"";
 			String ap1 = name.length>=2?name[1]:"";
 			String ap2 = name.length>=3?name[2]:"";
-			representante.setCifNif(rds.getDocument());
-			representante.setNombre(parseMaxLength(nombre, 15));
-			representante.setApellido1(parseMaxLength(ap1, 20));
-			representante.setApellido2(parseMaxLength(ap2, 20));
-			if (rds.isShareHolder()){
-				representante.setCargo(parseMaxLength(SHARE_HOLDER, 40));
-			} else if (rds.isRepresentative()){
-				representante.setCargo(parseMaxLength(REPRESENTATIVE, 40));
-			} else if (rds.isRepresentativeLabor()){
-				representante.setCargo(parseMaxLength(REPRESENTATIVE_LABOR, 40));
-			} else if (rds.isDirector()){
-				representante.setCargo(parseMaxLength(DIRECTOR, 40));
+			String cargo = null;
+			if (dirStaff.isShareHolder()){
+				cargo = "Socio";
+			} else if (dirStaff.isRepresentative()){
+				cargo = "Administrativo";
+			} else if (dirStaff.isRepresentativeLabor()){
+				cargo = "Representante Laboral";
+			} else if (dirStaff.isDirector()){
+				cargo = "Apoderado";
 			}
+			o.setCIFNIF(dirStaff.getDocument());
+			o.setNombre(nombre);
+			o.setApellido1(ap1);
+			o.setApellido2(ap2);
+			o.setCargo(cargo);
 		}
-		cuentaCotizacion.setRepresentante(representante);
-		Empresa empresa = new Empresa();
-		empresa.setCcc(parseToLength(ccc, 15));
-		empresa.setCifNif(batch.getEnterprise().getRegistry().getDocument());
-		cuentaCotizacion.setEmpresa(empresa);
-		List<Trabajador> listaTrabajadores = new ArrayList<Trabajador>();
-		for(Certifica2BatchDetail detalle: listaDetalle) {
-			if(detalle.getContract().getEnterpriseCCC().getCcc().equals(ccc)){
-				listaTrabajadores.add(createTrabajadorRecord(detalle));
-			}
-		}
-		cuentaCotizacion.setListaTrabajadores(listaTrabajadores);
-		return cuentaCotizacion;
+		return o;
+	}
+
+	/**
+	 * <xsd:complexType name="EMPRESA_TYPE">
+		<xsd:sequence>
+			<xsd:element name="CIF_NIF" type="CIF_NIF_SIMPLETYPE"/>
+			<xsd:element name="CCC" type="CODIGO_CUENTA_COTIZACION_SIMPLETYPE"/>
+			<xsd:any namespace="##any" processContents="strict" minOccurs="0" maxOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	 * @return
+	 */
+	private EMPRESATYPE createEmpresaType(EnterpriseCCC ccc) {
+		EMPRESATYPE o = new EMPRESATYPE();
+		o.setCIFNIF(ccc.getActivity().getEnterprise().getRegistry().getDocument());
+		o.setCCC(ccc.getCcc());
+		return o;
 	}
 	
-	private Trabajador createTrabajadorRecord(Certifica2BatchDetail detail) {
-		Trabajador trabajador = new Trabajador();
-		trabajador.setDniNie(detail.getDocument());
-		trabajador.setNombre(parseMaxLength(detail.getName(), 15));
-		trabajador.setApellido1(parseMaxLength(detail.getFirstSurname(), 20));
-		if(!StringUtils.isBlank(detail.getSecondSurname())) {
-			trabajador.setApellido2(parseMaxLength(detail.getSecondSurname(), 20));
+	/**
+	 * <xsd:complexType name="TRABAJADOR_TYPE">
+		<xsd:sequence>
+			<xsd:element name="DNI_NIE" type="NIF_NIE_SIMPLETYPE"/>
+			<xsd:element name="Nombre" type="NOMBRE_SIMPLETYPE"/>
+			<xsd:element name="Apellido1" type="APELLIDO_SIMPLETYPE"/>
+			<xsd:element name="Apellido2" type="APELLIDO_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="NumSS" type="NUMERO_SEGURIDAD_SOCIAL_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="GrupoCotizacion" type="N2_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="TipoContrato" type="N3_BASICTYPE"/>
+			<xsd:element name="DuracionContrato" type="N5_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="IndicadorDuracionContrato" type="IND_DUR_CONTRATO_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="CodProfesion" type="N7_BASICTYPE"/>
+			<xsd:element name="CargoPublicoSindical" type="N2_BASICTYPE" minOccurs="0"/>
+			<xsd:choice minOccurs="0">
+				<xsd:element name="PorcentualDedicacion" type="N4_BASICTYPE" minOccurs="0"/>
+				<xsd:element name="DedicacionCompleta" type="DEDICACION_COMPLETA_SIMPLETYPE" minOccurs="0"/>
+			</xsd:choice>
+			<xsd:element name="FechaAltaEmpresa" type="FECHA_SIMPLETYPE"/>
+			<xsd:element name="CodCausaSuspension" type="N2_BASICTYPE"/>
+			<xsd:element name="FechaSuspensionExtincion" type="FECHA_SIMPLETYPE"/>
+			<xsd:element name="FechaFinSuspension" type="FECHA_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="ERE" type="ERE_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="PorcentualReduccionERE" type="N4_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="PorcentualReduccionOTROS" type="N4_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="CodCausaPorcentReduccion" type="N2_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="FechaDesdePeriodoSalarios" type="FECHA_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="FechaHastaPeriodoSalarios" type="FECHA_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="DiasSalarioTramitacion" type="N5_BASICTYPE"/>
+			<xsd:element name="DistribucionJornadas" type="DISTRIBUCION_JORNADAS_TYPE" minOccurs="0"/>
+			<xsd:choice>
+				<xsd:sequence>
+					<xsd:element name="Datos_Cotizacion" type="COTIZACION_TYPE" maxOccurs="unbounded"/>
+				</xsd:sequence>
+				<xsd:sequence>
+					<xsd:element name="Datos_Cotizacion_REA" type="COTIZACION_REA_TYPE" maxOccurs="unbounded"/>
+				</xsd:sequence>
+			</xsd:choice>
+			<xsd:choice minOccurs="0">
+				<xsd:element name="Datos_VacacionesCotizadas" minOccurs="0">
+				</xsd:element>
+				<xsd:element name="Datos_VacacionesCotizadas_REA" minOccurs="0">
+				</xsd:element>
+			</xsd:choice>
+			<xsd:any namespace="##any" processContents="strict" minOccurs="0" maxOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	 * @param detail
+	 * @return
+	 */
+	private TRABAJADORTYPE createTrabajadorType(Certifica2BatchDetail batchDetail) {
+		TRABAJADORTYPE o = new TRABAJADORTYPE();
+		
+		o.setDNINIE(batchDetail.getDocument());
+		o.setNombre(batchDetail.getName());
+		o.setApellido1(batchDetail.getFirstSurname());
+		o.setApellido2(StringUtils.isBlank(batchDetail.getSecondSurname())?null:batchDetail.getSecondSurname());
+		o.setNumSS(batchDetail.getSsNumber());
+		o.setGrupoCotizacion(batchDetail.getQuoteGroup());
+		o.setTipoContrato(batchDetail.getContractType());
+		o.setDuracionContrato(batchDetail.getContractDuration());
+		o.setIndicadorDuracionContrato(null);
+		o.setCodProfesion(batchDetail.getOccupationCode());
+		o.setCargoPublicoSindical(null);
+		
+//		<xsd:choice minOccurs="0">
+			o.setPorcentualDedicacion(null);
+			o.setDedicacionCompleta(null);
+//		</xsd:choice>
+			
+		o.setFechaAltaEmpresa(createFechaSimpleType(batchDetail.getEnterpriseStartDate()));
+		o.setCodCausaSuspension(batchDetail.getSuspensionCause().getValue());
+		o.setFechaSuspensionExtincion(createFechaSimpleType(batchDetail.getExpireDate()));
+		o.setFechaFinSuspension(null);
+		o.setERE(null);
+		o.setPorcentualReduccionERE(null);
+		o.setPorcentualReduccionOTROS(null);
+		o.setCodCausaPorcentReduccion(null);
+		o.setFechaDesdePeriodoSalarios(null);
+		o.setFechaHastaPeriodoSalarios(null);
+		o.setDiasSalarioTramitacion("00000");
+		
+		if(!isFulltimeContract(batchDetail)){
+			o.setDistribucionJornadas(createDistribucionJornadasType(batchDetail));
 		}
-		trabajador.setNumSs(detail.getSsNumber());
-		trabajador.setGrupoCotizacion(detail.getQuoteGroup());
-		trabajador.setTipoContrato(parseToLength(detail.getContractType(), 3));
-		if(detail.getContract().getEndDate() != null && detail.getContract().getStartDate() != null) {
-			trabajador.setDuracionContrato(parseToLength(detail.getContractDuration(), 5));
+		
+		
+//		List<Cotizacion> cotizacionList = null;
+//		cotizacionList = new ArrayList<Cotizacion>();
+		for(ITransferObject to: obtainBatchData(batchDetail)){
+			Certifica2BatchData batchData = (Certifica2BatchData) to;
+			o.getDatosCotizacion().add(createCotizacionType(batchData));
 		}
-		// trabajador.setIndicadorDuracionContrato();
-		trabajador.setCodProfesion(parseToLength(detail.getOccupationCode(), 7, false));
-		// trabajador.setCargoPublicoSindical();
-		// trabajador.setPorcentualDedicacion();
-		trabajador.setFechaAltaEmpresa(parseFecha(detail.getEnterpriseStartDate()));
-		trabajador.setCodCausaSuspension(parseToLength(detail.getSuspensionCause().getValue(), 2));
-		trabajador.setFechaSuspensionExtincion(parseFecha(detail.getExpireDate()));
-		// trabajador.setFechaFinSuspension();
-		// trabajador.setEre();
-		// trabajador.setPorcentualReduccionERE();
-		// trabajador.setPorcentualReduccionOTROS();
-		// trabajador.setCodCausaPorcentReduccion();
-		// trabajador.setFechaDesdePeriodoSalarios();
-		// trabajador.setFechaHastaPeriodoSalarios();
-		trabajador.setDiasSalarioTramitacion("00000");
-		/*
-		 * NODOS
-		 */
-		if(!isFulltimeContract(detail)){
-			trabajador.setDistribucionJornada(createDistribucionJornadaRecord(detail));
-		}
-		List<Cotizacion> listaDatosCotizacion = new ArrayList<Cotizacion>();
-		listaDatosCotizacion.addAll(createDatosCotizacionRecord(detail));
-		trabajador.setDatosCotizacion(listaDatosCotizacion);
-		trabajador.setDatosVacacionesCotizadas(createDatosVacacionesCotizadasRecord(detail.getContract()));
-		return trabajador;
+		
+		o.getDatosCotizacionREA().add(null);
+
+		o.setDatosVacacionesCotizadas(createVacacionesCotizadasType(batchDetail.getContract()));
+		o.setDatosVacacionesCotizadasREA(null);
+		return o;
 	}
 	
-	private DistribucionJornada createDistribucionJornadaRecord(Certifica2BatchDetail detail) {
-		DistribucionJornada jornada = null;
-		Periodo periodo = null;
-		List<Periodo> listaPeriodos = new ArrayList<Periodo>();
-		List<Period> existingPeriods = getPeriodList(detail.getContract());
+	/**
+	<!-- NIVEL 3.1 -->
+	<xsd:complexType name="DISTRIBUCION_JORNADAS_TYPE">
+		<xsd:sequence>
+			<xsd:element name="Periodo" type="PERIODO_DISTRIBUCION_JORNADAS_TYPE" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	 * @param batchDetail 
+	 * 
+	 * @return
+	 */
+	private DISTRIBUCIONJORNADASTYPE createDistribucionJornadasType(Certifica2BatchDetail batchDetail){
+		final String IRREGULAR_VALUE = "2";
+		final String REGULAR_VALUE = "1";
+		PayrollUtils utils = new PayrollUtils();
+		
+		DISTRIBUCIONJORNADASTYPE o = new DISTRIBUCIONJORNADASTYPE();
+		PERIODODISTRIBUCIONJORNADASTYPE periodo = null;
+		List<PERIODODISTRIBUCIONJORNADASTYPE> listaPeriodos = new ArrayList<PERIODODISTRIBUCIONJORNADASTYPE>();
+		List<Period> existingPeriods = getPeriodList(batchDetail.getContract());
+		
 		if(existingPeriods!=null){
-			for (Period p : getPeriodList(detail.getContract())) {
-				String diasTp = getContractDataExpression(detail.getContract(), p, ContextVariable.CONTRACT_DAYS);
-				String diasSemanaTp = getContractDataExpression(detail.getContract(), p, ContextVariable.WEEK_DAYS);
+			for (Period p : getPeriodList(batchDetail.getContract())) {
+				
+				Map<String, ContractData> map = utils.getContractDataMap(batchDetail.getContract(), p.getStart(), p.getEnd());
+				
+				String diasTp = map.get(ContextVariable.CONTRACT_DAYS.getName()).getExpression();
+				String diasSemanaTp = map.get(ContextVariable.WEEK_DAYS.getName()).getExpression();
+				
+//				String diasTp = getContractDataExpression(batchDetail.getContract(), p, ContextVariable.CONTRACT_DAYS);
+//				String diasSemanaTp = getContractDataExpression(batchDetail.getContract(), p, ContextVariable.WEEK_DAYS);
 				if(diasTp!=null || diasSemanaTp!=null){
-					if(isIrregular(detail.getContract(), p)){
+					if(isIrregular(batchDetail.getContract(), p)){
 						addPeriod(IRREGULAR_VALUE, p, diasTp, listaPeriodos, periodo);
 					} else {
 						addPeriod(REGULAR_VALUE, p, diasSemanaTp, listaPeriodos, periodo);
@@ -290,72 +334,18 @@ public class CertificateWriter {
 				}
 			}
 		}
+
 		if(!listaPeriodos.isEmpty()){
-			jornada = new DistribucionJornada();
-			jornada.setListaPeriodos(listaPeriodos);
+			o.getPeriodo().clear();
+			o.getPeriodo().addAll(listaPeriodos);
 		}
-		return jornada;
-	}
-	
-	private void addPeriod(String tipoTp, Period p, String diasTp, List<Periodo> listaPeriodos, Periodo periodo) {
-		DateFormat dateYYYYMMDD = new SimpleDateFormat(DATE_FORMAT);
-		Date startDate = p.getStart();
-		Date endDate = p.getEnd();
-		if(listaPeriodos.isEmpty()){
-			periodo = new Periodo();
-			periodo.setFechaInicioPeriodo(parseFecha(startDate));
-			periodo.setFechaFinPeriodo(parseFecha(endDate));
-			periodo.setTipoDistribucion(tipoTp);
-			periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(diasTp, 5));
-			listaPeriodos.add(periodo);
-		} else {
-			Periodo tmp = listaPeriodos.get(listaPeriodos.size()-1);
-			try {
-				if(tmp.getTipoDistribucion().equals(tipoTp) 
-						&& tmp.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(parseToLength(diasTp, 5))
-						&& differenceBetweenDates(dateYYYYMMDD.parse(tmp.getFechaFinPeriodo()),startDate).equals(2)){
-					tmp.setFechaFinPeriodo(parseFecha(endDate));
-				} else {
-					periodo = new Periodo();
-					periodo.setFechaInicioPeriodo(parseFecha(startDate));
-					periodo.setFechaFinPeriodo(parseFecha(endDate));
-					periodo.setTipoDistribucion(tipoTp);
-					periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(diasTp, 5));
-					listaPeriodos.add(periodo);
-				}
-			} catch (ParseException e) {
-				String msg = "Error al obtener la fecha de inicio del periodo ("+e.getMessage()+")";
-				LOGGER.warn(msg);
-			}
-		}
-	}
-
-	private String getContractDataExpression(Contract contract, Period p,
-			ContextVariable workedDays) {
-		ContractData cd = getContractDataMap(contract, p).get(workedDays.getName());
-		return (cd==null)?null:cd.getExpression();
-	}
-
-	private boolean isIrregular(Contract contract, Period p) {
-		ContractData cd = getContractDataMap(contract, p).get(ContextVariable.IRREGULAR.getName());
-		return (cd!=null && new Boolean(cd.getExpression()));
-	}
-
-	private String getContractDataExpression(ContractData cd, ContextVariable cv) {
-		List<ContractData> list = getContractDataList(cd.getContract());
-		for (ContractData c : list) {
-			if(c.getName()==cv.getName()
-					&& (c.getStartDate().after(cd.getStartDate()) || c.getStartDate().equals(cd.getStartDate()))
-					&& (c.getEndDate().before(cd.getEndDate()) || c.getEndDate().equals(cd.getEndDate()))){
-				return c.getExpression();
-			}
-		}
-		return null;
+		return o;
 	}
 	
 	private List<Period> getPeriodList(Contract contract) {
+		PayrollUtils utils = new PayrollUtils();
 		List<Period> list = null;
-		for(ContractData cd: getContractDataList(contract)){
+		for(ContractData cd: utils.getContractDataMap(contract, null, null).values()){
 			if(cd.getName().equals(ContextVariable.WEEK_DAYS.getName()) || cd.getName().equals(ContextVariable.CONTRACT_DAYS.getName())){
 				Period period = new Period(cd.getStartDate(), cd.getEndDate());
 				if(list==null){
@@ -371,64 +361,628 @@ public class CertificateWriter {
 		}
 		return list;
 	}
-
-	private List<Cotizacion> createDatosCotizacionRecord(Certifica2BatchDetail detail) {
-		List<Cotizacion> cotizacionList = null;
-		cotizacionList = new ArrayList<Cotizacion>();
-		for(ITransferObject to: getBatchData(detail)){
-			Certifica2BatchData data = (Certifica2BatchData) to;
-			Cotizacion cotizacion = new Cotizacion();
-			cotizacion.setAno(data.getYear().toString());
-			cotizacion.setMes(parseToLength(data.getMonth().toString(), 2));
-			cotizacion.setNumDiasCotizados(parseToLength(data.getContributionDays(), 3));
-			cotizacion.setBaseCotizacionContingenciasComunes(parseToLength(data.getCgcContributionBase(), 9));
-			cotizacion.setBaseCotizacionDesempleo(parseToLength(data.getUnemploymentContributionBase(), 9));
-			cotizacion.setObservaciones(data.getComments());
-			cotizacionList.add(cotizacion);
+	
+	private void addPeriod(String tipoTp, Period p, String diasTp, List<PERIODODISTRIBUCIONJORNADASTYPE> listaPeriodos, PERIODODISTRIBUCIONJORNADASTYPE periodo) {
+		DateFormat dateYYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+		Date startDate = p.getStart();
+		Date endDate = p.getEnd();
+		if(listaPeriodos.isEmpty()){
+			periodo = createPeriodoDistribucionJornadasType(tipoTp,startDate,endDate,diasTp);
+			listaPeriodos.add(periodo);
+		} else {
+			PERIODODISTRIBUCIONJORNADASTYPE tempPeriodo = listaPeriodos.get(listaPeriodos.size()-1);
+			try {
+				if(tempPeriodo.getTipoDistribucion().equals(tipoTp) 
+						&& tempPeriodo.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(parseToLength(diasTp, 5))
+						&& differenceBetweenDates(dateYYYYMMDD.parse(tempPeriodo.getFechaFinPeriodo()),startDate).equals(2)){
+					tempPeriodo.setFechaFinPeriodo(createFechaSimpleType(endDate));
+				} else {
+					periodo = createPeriodoDistribucionJornadasType(tipoTp,startDate,endDate,diasTp);
+					listaPeriodos.add(periodo);
+				}
+			} catch (ParseException e) {
+				String msg = "Error al obtener la fecha de inicio del periodo ("+e.getMessage()+")";
+				LOGGER.warn(msg);
+			}
 		}
-		return cotizacionList;
+	}
+		
+	/**
+	<!-- NIVEL 3.1 -->
+	<xsd:complexType name="PERIODO_DISTRIBUCION_JORNADAS_TYPE">
+		<xsd:sequence>
+			<xsd:element name="TipoDistribucion" type="N1_BASICTYPE"/>
+			<xsd:element name="FechaInicioPeriodo" type="FECHA_SIMPLETYPE"/>
+			<xsd:element name="FechaFinPeriodo" type="FECHA_SIMPLETYPE"/>
+			<xsd:element name="NumeroDiasTrabajadosPorSemanaOPeriodo" type="N5_BASICTYPE_MAYOR"/>
+			<xsd:any namespace="##any" processContents="strict" minOccurs="0" maxOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	 * 
+	 * @return
+	 */
+	private PERIODODISTRIBUCIONJORNADASTYPE createPeriodoDistribucionJornadasType(String tipoDistribucion, Date inicio, Date fin, String numDiasSemanaPeriodo){
+		PERIODODISTRIBUCIONJORNADASTYPE o = new PERIODODISTRIBUCIONJORNADASTYPE();
+		o.setTipoDistribucion(tipoDistribucion);
+		o.setFechaInicioPeriodo(createFechaSimpleType(inicio));
+		o.setFechaFinPeriodo(createFechaSimpleType(fin));
+		o.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(numDiasSemanaPeriodo, 5));
+		return o;
 	}
 	
-	private Vacaciones createDatosVacacionesCotizadasRecord(Contract contract) {
+	/**
+	<!-- NIVEL 3.2 -->
+	<xsd:complexType name="COTIZACION_TYPE">
+		<xsd:sequence>
+			<xsd:element name="Ano" type="ANO_SIMPLETYPE"/>
+			<xsd:element name="Mes" type="MES_SIMPLETYPE"/>
+			<xsd:element name="NumDiasCotizados" type="DIAS_SIMPLETYPE"/>
+			<xsd:element name="BaseCotizacionContingenciasComunes" type="N9_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="BaseCotizacionDesempleo" type="N9_BASICTYPE"/>
+			<xsd:element name="Observaciones" type="BIG_STRING_BASICTYPE" minOccurs="0"/>
+			<xsd:any namespace="##any" processContents="strict" minOccurs="0" maxOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	 * 
+	 * @return
+	 */
+	private COTIZACIONTYPE createCotizacionType(Certifica2BatchData batchData){
+		COTIZACIONTYPE o = new COTIZACIONTYPE();
+		Certifica2BatchData data = batchData;
+		o.setAno(data.getYear().toString());
+		o.setMes(parseToLength(data.getMonth().toString(), 2));
+		o.setNumDiasCotizados(parseToLength(data.getContributionDays(), 3));
+		o.setBaseCotizacionContingenciasComunes(parseToLength(data.getCgcContributionBase(), 9));
+		o.setBaseCotizacionDesempleo(parseToLength(data.getUnemploymentContributionBase(), 9));
+		o.setObservaciones(data.getComments());
+		return o;
+	}
+	
+	/**
+	<xsd:complexType name="COTIZACION_REA_TYPE">
+		<xsd:sequence>
+			<xsd:element name="Ano" type="ANO_SIMPLETYPE"/>
+			<xsd:element name="Mes" type="MES_SIMPLETYPE"/>
+			<xsd:element name="GrupoCotizacion" type="N2_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="NumDiasCotizados" type="DIAS_COTIZ_REA_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="NumJornadasCotizadas" type="JORN_COTIZ_REA_SIMPLETYPE" minOccurs="0"/>
+			<xsd:element name="BaseCotizacionDesempleo" type="N9_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="Observaciones" type="BIG_STRING_BASICTYPE" minOccurs="0"/>
+			<xsd:any namespace="##any" processContents="strict" minOccurs="0" maxOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	 * 
+	 * @return
+	 */
+	private COTIZACIONREATYPE createCotizacionReaType(){
+		COTIZACIONREATYPE o = new COTIZACIONREATYPE();
+		o.setAno(createAnioSimpleType());
+		o.setMes(createMesSimpleType());
+		o.setGrupoCotizacion(createN2BasicType());
+		o.setNumDiasCotizados(createDiasCotizReaSimpleType());
+		o.setNumJornadasCotizadas(createJornCotizReaSimpleType());
+		o.setBaseCotizacionDesempleo(createN9BasicType());
+		o.setObservaciones(createBigStringBasicType());
+		return o;
+	}
+	
+	/**
+	<xsd:complexType name="VACACIONES_COTIZADAS_TYPE"/>
+	
+	<xsd:extension base="VACACIONES_COTIZADAS_TYPE">
+		<xsd:sequence>
+			<xsd:element name="NumDiasCotizados" type="N3_BASICTYPE"/>
+			<xsd:element name="BaseCotizacionContingenciasComunes" type="N9_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="BaseCotizacionDesempleo" type="N9_BASICTYPE"/>
+			<xsd:element name="Observaciones" type="BIG_STRING_BASICTYPE" minOccurs="0"/>
+			<xsd:any namespace="##any" processContents="strict" minOccurs="0" maxOccurs="0"/>
+		</xsd:sequence>
+	</xsd:extension>
+	 * 
+	 * @return
+	 */
+	private TRABAJADORTYPE.DatosVacacionesCotizadas createVacacionesCotizadasType(Contract contract){
+		TRABAJADORTYPE.DatosVacacionesCotizadas o = new TRABAJADORTYPE.DatosVacacionesCotizadas();
+		PayrollUtils utils = new PayrollUtils();
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SETTLE);
-			// un contracto solo puede tener un finiquito, se asume el primero de la lista
-			List<ITransferObject> list = bean.getList(criteria);
-			ContractData cd = getContractDataMap(contract).get(ContextVariable.NO_HOLIDAYS.getName());
-			String noHolidays = null;
-			if(cd != null){
-				noHolidays = cd.getExpression();
-			}
-			if(!list.isEmpty() && noHolidays!=null && noHolidays!="0"){
-				Vacaciones vacaciones = new Vacaciones();
-				Salary salary = (Salary) list.get(0);
-				Double baseContingenciaGenerales = salary.getCommonBase();
-				Double baseAccidentesTrabajo = salary.getProfessionalBase();
+			Salary settle = obtainSettle(contract);;
+			String noHolidays = utils.getContractDataMap(contract).get(ContextVariable.NO_HOLIDAYS.getName());
+			if(settle!=null && noHolidays!=null && noHolidays!="0"){
+				Double baseContingenciaGenerales = settle.getCommonBase();
+				Double baseAccidentesTrabajo = settle.getProfessionalBase();
 // TODO contemplar el caso de que exista atraso de finiquito 
 //				IFiniquitoDiferencia finiquitodf = getNominaDAO().getFiniquitoDiferencia(empleado);
 //				if(finiquitodf != null && finiquitodf.getDiasVacaciones() != 0 && finiquitodf.getImporteVacaciones() != 0) {
 //					baseAccidentesTrabajo += finiquitodf.getBaseAccidentesTrabajo();
 //					baseContingenciaGenerales += finiquitodf.getBaseContingenciasGenerales();
 //				}
-				vacaciones.setNumDiasCotizados(parseToLength(noHolidays, 3));
-				vacaciones.setBaseCotizacionContingenciasComunes(parseToLength(baseContingenciaGenerales, 9));
-				vacaciones.setBaseCotizacionDesempleo(parseToLength(baseAccidentesTrabajo, 9));
-				vacaciones.setObservaciones(null);
-				return vacaciones;
+				o.setNumDiasCotizados(noHolidays);
+				o.setBaseCotizacionContingenciasComunes(parseToLength(baseContingenciaGenerales, 9));
+				o.setBaseCotizacionDesempleo(parseToLength(baseAccidentesTrabajo, 9));
+				o.setObservaciones(null);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener el finiquito de "+contract.getPerson().getFullName();
 			AonUtil.addErrorMessage(msg);
 		}
+		return o;
+	}
+	
+	/**
+	<xsd:complexType name="VACACIONES_COTIZADAS_REA_TYPE"/>
+	
+	<xsd:extension base="VACACIONES_COTIZADAS_REA_TYPE">
+		<xsd:sequence>
+			<xsd:element name="GrupoCotizacion" type="N2_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="NumDiasCotizados" type="N2_BASICTYPE"/>
+			<xsd:element name="NumJornadasCotizadas" type="VACAC_JORN_COTIZ_REA_SIMPLETYPE"/>
+			<xsd:element name="BaseCotizacionDesempleo" type="N9_BASICTYPE" minOccurs="0"/>
+			<xsd:element name="Observaciones" type="BIG_STRING_BASICTYPE" minOccurs="0"/>
+			<xsd:any namespace="##any" processContents="strict" minOccurs="0" maxOccurs="0"/>
+		</xsd:sequence>
+	</xsd:extension>
+	 * 
+	 * @return
+	 */
+	private TRABAJADORTYPE.DatosVacacionesCotizadasREA createVacacionesCotizadasReaType(){
+		TRABAJADORTYPE.DatosVacacionesCotizadasREA o = new TRABAJADORTYPE.DatosVacacionesCotizadasREA();
+		o.setGrupoCotizacion(createN2BasicType());
+		o.setNumDiasCotizados(createN2BasicType());
+		o.setNumJornadasCotizadas(createVacacJornCotizReaSimpleType());
+		o.setBaseCotizacionDesempleo(createN9BasicType());
+		o.setObservaciones(createBigStringBasicType());
+		return o;
+	}
+	
+	// ***********************************************
+	// TIPOS SIMPLES
+	// ***********************************************
+	
+	/**
+	<xsd:simpleType name="CIF_NIF_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="([A-Z][0-9]{7}[A-Z0-9])|([0-9]{8}[A-Z])|([XYZ][0-9]{7}[A-Z])"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createCifNifSimpleType(){
 		return null;
 	}
 	
-	/*
-	 * AUXILIARES
+	/**
+	<xsd:simpleType name="NIF_NIE_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="([0-9XYZ][0-9]{7}[A-Z]){1,1}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
 	 */
+	private String createNifNieSimpleType(){
+		return null;
+	}
+	
+	
+	/**
+	<xsd:simpleType name="NOMBRE_SIMPLETYPE">
+		<xsd:annotation>
+			<xsd:documentation> 
+				Debe comenzar por letra. A continuación, se permiten blancos, puntos, comas, guiones y apostrofos.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[\w][\w\s.,-`'´]{1,14}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createNombreSimpleType(){
+		return null;
+	}
+	
+	/**
+	<xsd:simpleType name="APELLIDO_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[\w][\w\s.,-`'´]{1,19}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createApellidoSimpleType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="CARGO_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createCargoSimpleType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="CODIGO_CUENTA_COTIZACION_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d{15}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createCodigoCuentaCotizacionSimpleType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="FECHA_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createFechaSimpleType(Date date){
+		String pattern = "yyyyMMdd";
+		return DateFormatUtils.format(date, pattern);
+	}
+
+	/**
+	<xsd:simpleType name="ERE_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{5}(19|20)[0-9]{2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createEreSimpleType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="NUMERO_SEGURIDAD_SOCIAL_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{12}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createNumeroSSSimpleType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="IND_DUR_CONTRATO_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[DMA]"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createIndDurContratoSimpleType(){
+		return null;
+	}
+	
+	/**
+	<xsd:simpleType name="DEDICACION_COMPLETA_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createDedicacionCompletaSimpleType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="ANO_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(19|20)[0-9]{2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createAnioSimpleType(){
+		return null;
+	}
+	
+	/**
+	<xsd:simpleType name="MES_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(01|02|03|04|05|06|07|08|09|10|11|12)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createMesSimpleType(){
+		return null;
+	}
+	
+	/**
+	<xsd:simpleType name="DIAS_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(00[1-9]|0[12][0-9]|03[01])"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createDiasSimpleType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="DIAS_COTIZ_REA_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(0[0-9]|[12][0-9]|3[01])"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createDiasCotizReaSimpleType(){
+		return null;
+	}
+	
+	/**
+	<xsd:simpleType name="JORN_COTIZ_REA_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(0[0-9]|[12][0-9]|3[01])"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createJornCotizReaSimpleType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="VACAC_JORN_COTIZ_REA_SIMPLETYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="00"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createVacacJornCotizReaSimpleType(){
+		return null;
+	}
+	
+	// *************************************** 
+	// TIPOS BASICOS 
+	// *************************************** 
+	/**
+	<xsd:simpleType name="N1_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{1}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createN1BasicType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="N2_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createN2BasicType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="N3_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{3}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createN3BasicType(){
+		return null;
+	}
+	
+	/**
+	<xsd:simpleType name="N4_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{4}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createN4BasicType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="N5_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{5}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createN5BasicType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="N5_BASICTYPE_MAYOR">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="([1-9][0-9]{4}|[0-9][1-9][0-9]{3}|[0-9]{2}[1-9][0-9]{2}|[0-9]{3}[1-9][0-9]|[0-9]{4}[1-9])"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createN5BasicTypeMayor(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="N6_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{6}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createN6BasicType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="N7_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{7}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createN7BasicType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="N8_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{8}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createN8BasicType(){
+		return null;
+	}
+
+	/**
+	<xsd:simpleType name="N9_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{9}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createN9BasicType(){
+		return null;
+	}
+	
+	/**
+	<xsd:simpleType name="N10_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{10}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createN10BasicType(){
+		return null;
+	}
+	
+	/**
+	<xsd:simpleType name="SMALL_STRING_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createSmallStringBasicType(){
+		return null;
+	}
+	
+	/**
+	<xsd:simpleType name="BIG_STRING_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createBigStringBasicType(){
+		return null;
+	}
+	
+	/**
+	<xsd:simpleType name="CHAR_STRING_BASICTYPE">
+		<xsd:restriction base="xsd:string">
+			<xsd:length value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	 * 
+	 * @return
+	 */
+	private String createCharStringBasicType(){
+		return null;
+	}
+	
+	// ****************************************************
+	// ****************************************************
+	// AUXILIARES
+	// ****************************************************
+	// ****************************************************
+	
+//	private List<ITransferObject> obtainBatchDetailList(Certifica2Batch batch) {
+//		try {
+//			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DETAIL_CERTIFICA2BATCH_ID), batch.getId());
+//			return bean.getList(criteria);
+//		} catch (ManagerBeanException e) {
+//			// NADA, que siga con la generacion del fichero
+//		}
+//		return null;
+//	}
+
+	private List<EnterpriseCCC> getCccList(List<ITransferObject> batchDetailList) {
+		List<EnterpriseCCC> list = new ArrayList<EnterpriseCCC>();
+		for(ITransferObject to: batchDetailList){
+			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
+			EnterpriseCCC ccc = detail.getContract().getEnterpriseCCC();
+			if(!list.contains(ccc)){
+				list.add(ccc);
+			}
+		}
+		return list;
+	}
+	
 	private RegistryDirStaff getRegistryDirStaff(Enterprise enterprise) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
@@ -448,7 +1002,36 @@ public class CertificateWriter {
 		return null;
 	}
 	
-	private List<ITransferObject> getBatchData(Certifica2BatchDetail detail) {
+	private boolean isFulltimeContract(Certifica2BatchDetail detail) {
+		PayrollUtils utils = new PayrollUtils();
+		String fullTime = utils.getContractDataMap(detail.getContract()).get(ContextVariable.FULL_TIME.getName());
+		if(fullTime==null || new Boolean(fullTime)){
+			if(detail.getContractType().startsWith("1") || detail.getContractType().startsWith("4")){ 
+				return true;
+			} 
+		}
+		return false;
+	}
+	
+	private boolean isIrregular(Contract contract, Period p) {
+		PayrollUtils utils = new PayrollUtils();
+		ContractData cd = utils.getContractDataMap(contract, p.getStart(), p.getEnd()).get(ContextVariable.IRREGULAR.getName());
+		return (cd!=null && new Boolean(cd.getExpression()));
+	}
+	
+	private Salary obtainSettle(Contract contract) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SETTLE);
+		List<ITransferObject> list = bean.getList(criteria);
+		if(!list.isEmpty()){
+			return (Salary) list.get(0);
+		}
+		return null;
+	}
+	
+	private List<ITransferObject> obtainBatchData(Certifica2BatchDetail detail) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchData.class);
 			Criteria criteria = new Criteria();
@@ -460,111 +1043,6 @@ public class CertificateWriter {
 			// NADA, que siga con la generacion del fichero
 		}
 		return null;
-	}
-	
-	private ContractWorkingDay getContractWorkingTime(String tc2) {
-		if(tc2.startsWith("1") || tc2.startsWith("4")){ // completa
-			return ContractWorkingDay.FULL_TIME;
-		} else if(tc2.startsWith("2") || tc2.startsWith("5")){ // parcial
-			return ContractWorkingDay.PART_TIME;
-		} else if(tc2.startsWith("3")){ // discontinua
-			return null;
-		} else if(tc2.startsWith("9")){ // otros
-			return null;
-		}
-		return null;
-	}
-	
-	private boolean isFulltimeContract(Certifica2BatchDetail detalle) {
-		ContractData fullTime = getContractDataMap(detalle.getContract()).get(ContextVariable.FULL_TIME.getName());
-		if(fullTime==null || new Boolean(fullTime.getName())){
-			if(detalle.getContractType().startsWith("1") || detalle.getContractType().startsWith("4")){ 
-				return true;
-			} 
-		}
-		return false;
-	}
-	
-	protected Map<String, ContractData> getContractDataMap(Contract contract) {
-		Map<String, ContractData> map = new HashMap<String, ContractData>();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			for(ITransferObject to: bean.getList(criteria)){
-				ContractData data = (ContractData) to;
-				if(data.getExpression()!=null){
-					map.put(data.getName(), data);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			// NADA, que siga generando el fichero
-		}
-		return map;
-	}
-	
-	protected Map<String, ContractData> getContractDataMap(Contract contract, Period period) {
-		Map<String, ContractData> map = new HashMap<String, ContractData>();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), period.getStart());
-			if(period.getEnd()!=null){
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), period.getEnd());
-			}
-			for(ITransferObject to: bean.getList(criteria)){
-				ContractData data = (ContractData) to;
-				if(data.getExpression()!=null){
-					map.put(data.getName(), data);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			// NADA, que siga generando el fichero
-		}
-		return map;
-	}
-	
-	protected List<ContractData> getContractDataList(Contract contract) {
-		List<ContractData> list = new LinkedList<ContractData>();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE));
-			for(ITransferObject to: bean.getList(criteria)){
-				ContractData data = (ContractData) to;
-				if(data.getExpression()!=null){
-					list.add(data);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			// NADA, que siga generando el fichero
-		}
-		return list;
-	}
-	
-	/*
-	 * CONVERSIONES
-	 */
-	private Integer differenceBetweenDates(Date from, Date to) {
-		Integer diffDays = new Integer(0);
-		final Double MS_PER_DAY = new Double(1000 * 60 * 60 * 24);
-		if(from.before(to)) {
-			diffDays = (int)((Math.floor((to.getTime() - from.getTime()) / MS_PER_DAY + 0.5d) + 1));
-		}
-		return diffDays;
-	}
-	
-	private String parseMaxLength(String var, Integer lon) {
-		if(var != null) {
-			lon = Math.abs(lon);
-			
-			if(var.length() > lon) {
-				var = var.substring(0, lon);
-			}
-		}
-		return var;
 	}
 	
 	private String parseToLength(String var, Integer lon, Boolean dir) {
@@ -605,17 +1083,13 @@ public class CertificateWriter {
 		return parseToLength(var, lon, true);
 	}
 	
-	private String parseFecha(Date date) {
-		StringBuffer parse = null;
-		if(date != null) {
-			Calendar cal = new GregorianCalendar();
-			cal.setTime(date);
-			parse = new StringBuffer(String.valueOf(cal.get(Calendar.YEAR)));
-			parse.append(parseToLength(cal.get(Calendar.MONTH) + 1, 2));
-			parse.append(parseToLength(cal.get(Calendar.DAY_OF_MONTH), 2));
+	private Integer differenceBetweenDates(Date from, Date to) {
+		Integer diffDays = new Integer(0);
+		final Double MS_PER_DAY = new Double(1000 * 60 * 60 * 24);
+		if(from.before(to)) {
+			diffDays = (int)((Math.floor((to.getTime() - from.getTime()) / MS_PER_DAY + 0.5d) + 1));
 		}
-		return parse.toString();
+		return diffDays;
 	}
 	
-		
 }

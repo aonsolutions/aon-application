@@ -20,6 +20,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
@@ -29,9 +30,9 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 
 
 
-public class FileUtils {
+public class SEPEFileUtils {
 	
-	public final static String CONTRATA_XML_FILE_ENCODING = "ISO-8859-1";
+	public final static String XML_FILE_ENCODING = "ISO-8859-1";
 	
 	public final static String CONTRATOS_SCHEMA_FILE_NAME = "EsquemaContratos50.xsd";
 	
@@ -125,11 +126,11 @@ public class FileUtils {
 		map.put("CONTRATO_970", contractCode.equals(ContractCode.C970.getValue()));
 		map.put("CONTRATO_980", contractCode.equals(ContractCode.C980.getValue()));
 		map.put("CONTRATO_990", contractCode.equals(ContractCode.C990.getValue()));
+		File tempFile = new File("tmpEsquemaContratos50.xsd");
 		try {
-			File tempFile = new File("tmpEsquemaContratos50.xsd");
 			
-			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), CONTRATA_XML_FILE_ENCODING));
-			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(tempFile), CONTRATA_XML_FILE_ENCODING);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), XML_FILE_ENCODING));
+			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(tempFile), XML_FILE_ENCODING);
 
 			String currentLine;
 
@@ -178,6 +179,8 @@ public class FileUtils {
 		} catch (IOException e) {
 			String msg = "Error al obtener el esquema de validacion";
 			AonUtil.addErrorMessage(msg);
+		} finally {
+			FileUtils.deleteQuietly(tempFile);
 		}
 		return null;
 	}	
@@ -199,8 +202,8 @@ public class FileUtils {
 		try {
 			tempFile = new File("tmpEsquemaTransformaciones50.xsd");
 			
-			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), CONTRATA_XML_FILE_ENCODING));
-			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(tempFile), CONTRATA_XML_FILE_ENCODING);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), XML_FILE_ENCODING));
+			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(tempFile), XML_FILE_ENCODING);
 			
 			String currentLine;
 			

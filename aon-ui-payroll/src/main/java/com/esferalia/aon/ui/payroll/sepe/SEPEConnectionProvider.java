@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.payroll.sepe;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -157,9 +158,11 @@ public final class SEPEConnectionProvider {
 	 * @param isTestEnv
 	 * @return
 	 */
-	private static String processCertificadosCommunication(boolean isTestEnv, String _Xml, String _UsuarioConectado, String _UsuarioPrincipal, String _Password, String _Idioma, String _Comunidad){
+	private static String processCertificadosCommunication(boolean isTestEnv, String _Xml, String _UsuarioConectado, String _UsuarioPrincipal, String _Password){
 		try {
-			ServicioWebEntradaService service = new ServicioWebEntradaService(new URL(isTestEnv ? CERTIFICADOS_COMMUNICATION_TEST_ENVIRONMENT : CERTIFICADOS_COMMUNICATION_PRODUCTION_ENVIRONMENT));  
+			URL url = new URL(isTestEnv ? CERTIFICADOS_COMMUNICATION_TEST_ENVIRONMENT : CERTIFICADOS_COMMUNICATION_PRODUCTION_ENVIRONMENT);  
+//			ServicioWebEntradaService service = new ServicioWebEntradaService(url);  
+			ServicioWebEntradaService service = new ServicioWebEntradaService();  
 			ServicioWebEntrada datos = service.getServicioWebEntrada();
 			String result = datos.ejecuta(_UsuarioConectado, _UsuarioPrincipal, _Password, _Xml, IDIOMA, COMUNIDAD);
 			return result;
@@ -170,7 +173,7 @@ public final class SEPEConnectionProvider {
 	}
 
 	public static String processCertificadosCommunication(boolean isTestEnv, byte[] _Xml, String _UsuarioConectado, String _UsuarioPrincipal, String _Password){
-		return processCertificadosCommunication(isTestEnv, new String(_Xml), _UsuarioConectado, _UsuarioPrincipal, _Password, IDIOMA, COMUNIDAD);
+		return processCertificadosCommunication(isTestEnv, new String(_Xml), _UsuarioConectado, _UsuarioPrincipal, _Password);
 	}
 	
 	/**
@@ -221,30 +224,81 @@ public final class SEPEConnectionProvider {
 		return processCertificadosQuery(isTestEnv, _UsuarioConectado, _UsuarioPrincipal, _Password, _idComunicacion, IDIOMA, COMUNIDAD);
 	}
 	
-	public static boolean validateLogin(boolean b, String string, String contrataUser, String mainUser, String contrataPassword) {
+	public static boolean validateContrataLogin(boolean b, String string, String contrataUser, String mainUser, String contrataPassword) {
 		String result = processContrataComunication(true, "<?xml>", contrataUser, mainUser, contrataPassword);
 		result = result.replaceAll("\n", "");
-		result = StringUtils.removeStart(result, "<?xml version='1.0' encoding='ISO-8859-1'?>");
-		result = StringUtils.removeStart(result, "<COMUNICACION>");
-		result = StringUtils.removeStart(result, "<NUM_ENVIO>");
-		result = StringUtils.removeEnd(result, "</COMUNICACION>");
-		result = StringUtils.removeEnd(result, "</NUM_ENVIO>");
-		result = StringUtils.replace(result, "<ERROR>", "");
-		result = StringUtils.replace(result, "</ERROR>", "");
+		result = StringUtils.substringBetween(result, "<ERROR>", "</ERROR>");
+		return TERRORES.getEnumByValue(result)!=null;
+	}
+	
+	public static boolean validateCertifica2Login(boolean b, String string, String certifica2User, String mainUser, String certifica2Password) {
+		
+//		try {
+//			URL url = Class.forName("es.fnmt.ceres.sample").getResource("certStore");
+//			String path = url.getPath();
+//			System.setProperty("javax.net.ssl.trustStore",path); 
+//		} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+//		System.setProperty("javax.net.ssl.trustStore","cacerts");
+//		System.setProperty("javax.net.ssl.trustStorePassword","changeit");
+		
+
+//		System.setProperty("javax.net.ssl.trustStore","C:\\java\\openjdk-se-7-ri\\jre\\lib\\security\\cacerts");
+//		System.setProperty("javax.net.ssl.trustStorePassword","changeit");
+//		
+//		Properties properties = System.getProperties();
+//		for(Object key: properties.keySet()){
+//			System.out.println("=========");
+//			System.out.println(key);
+//			System.out.println(properties.get(key));
+//		}
+		
+		String result = processCertificadosCommunication(true, "<?xml>", certifica2User, mainUser, certifica2Password);
+		result = result.replaceAll("\n", "");
+		
+//		<?xml version='1.0' encoding='ISO-8859-1'?>
+//		<COMUNICACION>
+//		<NUM_ENVIO>
+//		</NUM_ENVIO>
+//		<COD_ERROR>DEX0023</COD_ERROR>
+//		<DESC_ERROR></DESC_ERROR>
+//		</COMUNICACION>
+		
+		result = StringUtils.substringBetween(result, "<ERROR>", "</ERROR>");
+		
+//		result = StringUtils.removeStart(result, "<?xml version='1.0' encoding='ISO-8859-1'?>");
+//		result = StringUtils.removeStart(result, "<COMUNICACION>");
+//		result = StringUtils.removeStart(result, "<NUM_ENVIO>");
+//		result = StringUtils.removeEnd(result, "</COMUNICACION>");
+//		result = StringUtils.removeEnd(result, "</NUM_ENVIO>");
+//		result = StringUtils.replace(result, "<ERROR>", "");
+//		result = StringUtils.replace(result, "</ERROR>", "");
 		return TERRORES.getEnumByValue(result)!=null;
 	}
 	
 	
 	
 	public static void main(String[] args) throws Exception {
+//		String DOCUMENTO = "";
+//		String USUARIO_CONECTADO = "A01306190";
+//		String USUARIO_PRINCIPAL = "A01306190";
+//		String PASSWORD = "945121010";
+//		String result = processContrataComunication(true, DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
+//		
+////		String DOCUMENTO = "C7534747";
+////		String result = processDataQuery(DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
+//		
+//		System.out.println("RESULTADO=  " );
+//		System.out.println(result);
+
 		String DOCUMENTO = "";
 		String USUARIO_CONECTADO = "A01306190";
 		String USUARIO_PRINCIPAL = "A01306190";
 		String PASSWORD = "945121010";
-		String result = processContrataComunication(true, DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
-		
-//		String DOCUMENTO = "C7534747";
-//		String result = processDataQuery(DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
+		String result = processCertificadosCommunication(true, DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
 		
 		System.out.println("RESULTADO=  " );
 		System.out.println(result);

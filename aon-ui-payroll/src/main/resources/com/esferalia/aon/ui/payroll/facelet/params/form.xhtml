@@ -113,7 +113,7 @@
 				</aon:div>
 				<aon:div styleClass="aon-group">
 					<aon:div styleClass="aon-group-title">
-						<aon:outputText value="#{payrollBundle.payroll_contract_contrataData}"/>
+						<aon:outputText value="#{payrollBundle.payroll_contract_contrataLoginData}"/>
 					</aon:div>
 					<aon:div styleClass="aon-group-body"> 
 						<aon:div styleClass="aon-group-body-internal">
@@ -165,6 +165,69 @@
 											styleClass="aon-icon-wrong " />
 										<aon:outputText value="Acceso rechazado"
 											rendered="#{!payrollAppParams.validContrataLogin}"
+											style="color:red;"
+											styleClass="aon-bold" />
+									</aon:div>
+								</aon:div>
+									
+							</aon:panelGrid>	
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				<aon:div styleClass="aon-group">
+					<aon:div styleClass="aon-group-title">
+						<aon:outputText value="#{payrollBundle.payroll_contract_certifica2LoginData}"/>
+					</aon:div>
+					<aon:div styleClass="aon-group-body"> 
+						<aon:div styleClass="aon-group-body-internal">
+						
+							<aon:panel style="width: 300px;">
+								<aon:selectBooleanCheckbox id="test_enviroment-certifica2"
+									value="#{payrollAppParams.certifica2TestEnviroment}" />
+								<aon:outputLabel for="test_enviroment-certifica2"
+									style="#{(payrollAppParams.certifica2TestEnviroment)?('color: red; font-weight:bold;'):('text-decoration: line-through;')}"
+									value="ENTORNO TEST ACTIVADO" />
+							</aon:panel>
+							
+							<aon:panelGrid columns="2" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
+
+								<aon:panelGrid columns="2" style="width: 300px;">
+									<aon:outputLabel for="certifica2_user" 
+										value="#{bundle.aon_login_user}" />
+									<aon:inputText id="certifica2_user" style="width: 100%;"
+										value="#{payrollAppParams.certifica2User}" />
+	
+									<aon:outputLabel for="certifica2_passwd"  
+										value="#{bundle.aon_login_passwd}" />
+									<aon:inputSecret id="certifica2_passwd" redisplay="#{true}" style="width: 100%;"
+										value="#{payrollAppParams.certifica2Password}" />
+	
+								</aon:panelGrid>
+						
+								<aon:div id="login-confirm-result-certifica2" style="width: 300px; text-align: center;">
+									<c:if test="#{not empty payrollAppParams.certifica2User and not empty payrollAppParams.certifica2Password}" >
+										<aon:outputLabel for="certifica2_login_confirm" value="&#160;" />
+										<aon:commandButton id="certifica2_login_confirm"
+											value="Validar el acceso al entorno de S.E.P.E."
+											reRender="login-confirm-result"
+											actionListener="#{payrollAppParams.validateCertifica2Login}"
+											styleClass="aon-commandButton aon-icon-sincronize aon-margin-bottom" />
+									</c:if>
+									<aon:div styleClass="aon-margin-top"
+										rendered="#{payrollAppParams.certifica2LoginChecked}">
+										<aon:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;"
+											rendered="#{payrollAppParams.validCertifica2Login}"
+											styleClass="aon-icon-predetermine" />
+										<aon:outputText value="Acceso autorizado"
+											rendered="#{payrollAppParams.validCertifica2Login}"
+											style="color:blue;"
+											styleClass="aon-bold" />
+										
+										<aon:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;"
+											rendered="#{!payrollAppParams.validCertifica2Login}"
+											styleClass="aon-icon-wrong " />
+										<aon:outputText value="Acceso rechazado"
+											rendered="#{!payrollAppParams.validCertifica2Login}"
 											style="color:red;"
 											styleClass="aon-bold" />
 									</aon:div>

@@ -74,7 +74,15 @@
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
+							
+								<c:if test="#{contractContrata.contrataTestEnv}">
+									<aon:div style="color: red; font-weight:bold; width: 100%; text-align: center; margin-bottom: -1em;">
+										<aon:outputText value="ENTORNO TEST ACTIVADO" />
+									</aon:div>
+								</c:if>
+								
 								<aon:div style="margin-top: 2em;">
+								
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
 										
 										<aon:panelGroup>

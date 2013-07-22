@@ -29,7 +29,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.ui.payroll.file.ContractAfiLoader;
 import com.esferalia.aon.ui.payroll.file.ContractContrataLoader;
 import com.esferalia.aon.ui.payroll.file.IContractLoader;
-import com.esferalia.aon.ui.payroll.utils.FileUtils;
+import com.esferalia.aon.ui.payroll.utils.SEPEFileUtils;
 
 public class ContractLoaderController {
 	
@@ -187,7 +187,7 @@ public class ContractLoaderController {
 		LineNumberReader reader = null;
 		try {
 			input = new ByteArrayInputStream(getAonFile().getData());
-			inputReader = new InputStreamReader(input, FileUtils.CONTRATA_XML_FILE_ENCODING);
+			inputReader = new InputStreamReader(input, SEPEFileUtils.XML_FILE_ENCODING);
 			reader = new LineNumberReader(inputReader);
 			loader = new ContractContrataLoader();
 			if(loader.isValidFile(reader, input)){

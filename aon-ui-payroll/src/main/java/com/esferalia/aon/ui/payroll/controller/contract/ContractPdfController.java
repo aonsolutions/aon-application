@@ -13,6 +13,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
+import com.esferalia.aon.file.payroll.contract.pdf.clauses.Clauses;
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
 import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
@@ -329,17 +331,33 @@ public class ContractPdfController {
 			} else {
 				getContractPdfWriter().loadExistingPdf(Extension.EXTENSION_NAME, getContractPdfDraft());
 			}
+		} else if(getDocumentType()==ContractAttachmentType.CONTRACT_CLAUSES){
+			if(forceRefresh || getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
+				getContractPdfWriter().loadNewPdf(Clauses.CLAUSES_NAME, getContract(), getContrataParams());
+				completeNewPdfFields(ContractAttachmentType.CONTRACT_CLAUSES);
+			} else {
+				getContractPdfWriter().loadExistingPdf(Clauses.CLAUSES_NAME, getContractPdfDraft());
+			}
 		}
 	}
 	
 	private void completeNewPdfFields(ContractAttachmentType attachType) {
 		ContractController controller = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
 		if(attachType==ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT){
+			if(StringUtils.isNotBlank(controller.getParams().getAdditionalClauses())){
+				if(controller.getParams().getAdditionalClauses().length()>50){
+					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("clausadici").setValue("Segun anexo adjunto");
+				} else {
+					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("clausadici").setValue(controller.getParams().getAdditionalClauses());
+				}
+			}
 			if(controller.getParams().getContractCode()==ContractCode.C421){
 				getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("jornhoraefec").setValue(controller.getParams().getWorkSchedule());
 			}
 		} else if(attachType==ContractAttachmentType.TRAINING_ANNEX_II) {
 			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("horario").setValue(controller.getParams().getTrainingSchedule());
+		} else if(attachType==ContractAttachmentType.CONTRACT_CLAUSES) {
+			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("clausulas").setValue(controller.getParams().getAdditionalClauses());
 		}
 	}
 	

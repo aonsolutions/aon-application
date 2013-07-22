@@ -3,7 +3,6 @@ package com.esferalia.aon.ui.payroll.file;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.faces.event.AbortProcessingException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -21,7 +20,6 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.sepe.api.contrata.contratos.ENVIO100TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.ENVIO130TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.ENVIO150TYPE;
@@ -70,7 +68,7 @@ public class ContrataResponseReader {
 		this.ficheroContratos = ficheroContratos;
 	}
 
-	public void readFile(InputStream input) throws ManagerBeanException, IOException{
+	public void readFile(InputStream input) throws ManagerBeanException, IOException, JAXBException, SAXException, ParserConfigurationException{
 		
 		try {
 			input.reset();
@@ -90,21 +88,6 @@ public class ContrataResponseReader {
 			
 			setFicheroContratos(ficheroContratos);
 				
-		} catch (JAXBException e) {
-			String msg = "Error al obtener los datos del documento xml de contrata";
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(e.toString());
-			throw new AbortProcessingException(msg, e);
-		} catch (SAXException e) {
-			String msg = "Error al obtener los datos del documento xml de contrata";
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(e.toString());
-			throw new AbortProcessingException(msg, e);
-		} catch (ParserConfigurationException e) {
-			String msg = "Error al obtener los datos del documento xml de contrata";
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(e.toString());
-			throw new AbortProcessingException(msg, e);
 		} finally {
 			input.close();
 		}

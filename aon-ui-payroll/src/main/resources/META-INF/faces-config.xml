@@ -1256,14 +1256,6 @@
 					<value>[NULL]</value>
 				</map-entry>
 				<map-entry>
-					<key>PAY_contrata_user_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
-					<key>PAY_contrata_passwd_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
 					<key>PAY_default_contractCode_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
@@ -1272,7 +1264,27 @@
 					<value>[NULL]</value>
 				</map-entry>
 				<map-entry>
+					<key>PAY_contrata_user_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
+					<key>PAY_contrata_passwd_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
 					<key>PAY_contrata_test_env_active_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
+					<key>PAY_certifica2_user_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
+					<key>PAY_certifica2_passwd_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
+					<key>PAY_certifica2_test_env_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
 			</map-entries>

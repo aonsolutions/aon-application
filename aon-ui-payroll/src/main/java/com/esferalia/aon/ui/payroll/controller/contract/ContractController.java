@@ -548,30 +548,26 @@ public class ContractController extends BasicController {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 		
+		generateDirectDebitDocument();
 		
+		setSelectedTab("attachData");
+	}
+	
+	public void generateDirectDebitDocument(){
 		try {
 			if( isTrainingCourseDefined() ){
 				ContractAttachment attach = obtainDirectDebitReport();
-				attach.setDescription( AonUtil.getMessage(IPayrollConstants.BUNDLE_NAME, "payroll_trainingCenter_directDebit"));
-				try {
-					BeanManager.getManagerBean(ContractAttachment.class).insertOrUpdate(attach);
-					ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
-					attachController.initializeModel();
-				} catch (ManagerBeanException e) {
-					LOGGER.error(e.getMessage(), e);
-					AonUtil.addErrorMessage("No se ha podido generar el documento de la domiciliacion bancaria");
-					AonUtil.addErrorMessage(e.getMessage());
-				}
+				BeanManager.getManagerBean(ContractAttachment.class).insertOrUpdate(attach);
+				ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
+				attachController.initializeModel();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("No se ha podido generar el documento de la domiciliacion bancaria");
 			AonUtil.addErrorMessage(e.getMessage());
 		}
-		
-		setSelectedTab("attachData");
-		
 	}
-	
+
 	private ContractAttachment obtainDirectDebitReport() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 		Criteria criteria = new Criteria();
@@ -589,9 +585,34 @@ public class ContractController extends BasicController {
 		attach.setMimeType(MimeType.MIME_PDF);
 		attach.setAttachmentType(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT);
 		attach.setAttachDate(new Date());
+		attach.setDescription( AonUtil.getMessage(IPayrollConstants.BUNDLE_NAME, "payroll_trainingCenter_directDebit"));
 		return attach;
 	}
+
+	public void onGenerateAdditionalClause(ActionEvent event){
+		generateAdditionalClauseDocument();
+	}
 	
+	public void generateAdditionalClauseDocument(){
+		ContractPdfController pdfDocument = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
+		try {
+			pdfDocument.setDocumentType(ContractAttachmentType.CONTRACT_CLAUSES);
+			pdfDocument.loadDocument(true);
+			pdfDocument.saveDocument();
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
+			AonUtil.addErrorMessage(e.getMessage());
+		} catch (UnsupportedContractDocumentException e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
+			AonUtil.addErrorMessage(e.getMessage());
+		} catch (Exception e){
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+	}
 	
 	@SuppressWarnings("unchecked")
 	private byte[] getReport( String report ) {
@@ -764,6 +785,7 @@ public class ContractController extends BasicController {
 		private ContractDuration contractDuration;
 		private ContractWorkingDay contractWorkingDay;
 		private CNO cno;
+		private String additionalClauses;
 		
 		private boolean agreementSalaryCheck;
 		private boolean agreementSalary;
@@ -903,6 +925,12 @@ public class ContractController extends BasicController {
 		}
 		public void setCno(CNO cno) {
 			this.cno = cno;
+		}
+		public String getAdditionalClauses() {
+			return additionalClauses;
+		}
+		public void setAdditionalClauses(String additionalClauses) {
+			this.additionalClauses = additionalClauses;
 		}
 		
 		public boolean isTrainingContract(){

@@ -48,6 +48,12 @@
 							</c:if>
 						</aon:panelTab>
 
+						<aon:panelTab id="additionalClausesData" label="#{payrollBundle.payroll_contract_additional_clauses}">
+							<c:if test="#{not empty contract.to.model}">
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/form_additionalClauses.xhtml" />
+							</c:if>
+						</aon:panelTab>
+
 						<aon:panelTab id="attachData"  
 							label="#{payrollBundle.payroll_documents}">
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/grid.xhtml" />

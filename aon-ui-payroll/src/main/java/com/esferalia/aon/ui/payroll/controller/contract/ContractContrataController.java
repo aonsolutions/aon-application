@@ -15,11 +15,14 @@ import java.util.TreeSet;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -39,6 +42,7 @@ import com.esferalia.aon.payroll.contrata.enumeration.TERRORES;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.sepe.api.contrata.contratos.FICHEROCONTRATOS;
 import com.esferalia.aon.sepe.api.contrata.contratos.RESPUESTACONTRATOTYPE;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -423,6 +427,7 @@ public class ContractContrataController {
 			setShowContrataLoginWindow(false);
 			xmlResult = "Consulta realizada al S.E.P.E.";
 			afterCommunicationFinished();
+			afterContrataDataQuery();
 		}
 	}
 
@@ -448,16 +453,21 @@ public class ContractContrataController {
 	private String obtainCommunicationStatus() {
 		String status = "";
 		ContractAttachment attach = obtainContrataStatusAttach();
+		status += "<br /> ";
+		status += attach.getAttachDate() + " - Resultado obtenido del SEPE";
+		status += "<br /> <hr /> ";
 		if(attach!=null && attach.getId()!=null){
 			try {
-				ContrataResponseReader reader = new ContrataResponseReader();
-				reader.readFile(new ByteArrayInputStream(attach.getData()));
-				FICHEROCONTRATOS contratos = reader.getFicheroContratos();
+//				ContrataResponseReader reader = new ContrataResponseReader();
+//				reader.readFile(new ByteArrayInputStream(attach.getData()));
+//				FICHEROCONTRATOS contratos = reader.getFicheroContratos();
+				FICHEROCONTRATOS contratos = obtainFicheroContratos(attach);
 				status += "ESTADO FICHERO:    " + contratos.getESTADOFICHERO();
 				status += "<br /> ";
 				
 				contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150();
-				RESPUESTACONTRATOTYPE respuestaContratos = reader.getRepuestaContrato(contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150().get(0));
+//				RESPUESTACONTRATOTYPE respuestaContratos = reader.getRepuestaContrato(contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150().get(0));
+				RESPUESTACONTRATOTYPE respuestaContratos = obtainRespuestaContrato(contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150().get(0));
 				status += "FECHA ALTA:         " + respuestaContratos.getFECHAALTA();
 				status += "<br /> ";
 				status += "FECHA COMUNICACION: " + respuestaContratos.getFECHACOMUNICACION();
@@ -495,8 +505,9 @@ public class ContractContrataController {
 				
 				List<String> errores = respuestaContratos.getERRORES().getERROR();
 				if(!errores.isEmpty()){
+					status += "<br />";
 					status += "ERRORES";
-					status += "<br /> ";
+					status += "<br /> <hr /> ";
 					for(String error: respuestaContratos.getERRORES().getERROR()){
 						status += "ERROR: " + error + " - " + TERRORES.getEnumByValue(error).getDescription();
 						status += "<br /> ";
@@ -505,25 +516,40 @@ public class ContractContrataController {
 				}
 			} catch (ManagerBeanException e) {
 				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
-				LOGGER.error(msg, e);
-				AonUtil.addErrorMessage(msg);
-				AonUtil.addErrorMessage(e.getMessage());
-				throw new AbortProcessingException(msg, e);
+				status += msg;
+				status += "<br /> ";
 			} catch (IOException e) {
 				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
-				LOGGER.error(msg, e);
-				AonUtil.addErrorMessage(msg);
-				AonUtil.addErrorMessage(e.getMessage());
-				throw new AbortProcessingException(msg, e);
+				status += msg;
+				status += "<br /> ";
+			} catch (Throwable th) {
+				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
+				status += msg;
+				status += "<br /> ";
 			}
 		}
 		return status;
 	}
 
+	private FICHEROCONTRATOS obtainFicheroContratos(ContractAttachment attach) throws ManagerBeanException, IOException, JAXBException, SAXException, ParserConfigurationException {
+		ContrataResponseReader reader = new ContrataResponseReader();
+		reader.readFile(new ByteArrayInputStream(attach.getData()));
+		return reader.getFicheroContratos();
+	}
+
+	private RESPUESTACONTRATOTYPE obtainRespuestaContrato(Object object) {
+		ContrataResponseReader reader = new ContrataResponseReader();
+		return reader.getRepuestaContrato(object);
+	}
+	
 	public void onContrataLogShow(ActionEvent event){
 		communicationLogContent = "<div>";
 		String communicationNumber = obtainContrataCommunicationNumber();
 		if(StringUtils.isNotEmpty(communicationNumber)){
+			
+			communicationLogContent += obtainContrataResponseAttach().getAttachDate() + " - Contrato comunicado al SEPE";
+			communicationLogContent += "<br /> <hr /> ";
+			
 			communicationLogContent += "NUM ENVIO:         " + communicationNumber;
 			communicationLogContent += "<br /> ";
 		}
@@ -574,6 +600,22 @@ public class ContractContrataController {
 		} 
 	}
 	
+	private void afterContrataDataQuery() {
+		if(getParams().getContract().getModel()==ContractModel.PE226){
+			ContractAttachment attach = obtainContrataStatusAttach();
+			if(attach!=null && attach.getId()!=null){
+				try {
+					FICHEROCONTRATOS contratos = obtainFicheroContratos(attach);
+					contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150();
+					RESPUESTACONTRATOTYPE respuestaContratos = obtainRespuestaContrato(contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150().get(0));
+					respuestaContratos.getIDCONTRATO();
+				} catch (ManagerBeanException e) {
+				} catch (IOException e) {
+				} catch (Throwable th) {
+				}
+			}
+		}
+	}
 
 
 	private String document;

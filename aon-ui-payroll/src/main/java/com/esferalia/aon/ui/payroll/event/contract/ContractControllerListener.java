@@ -26,6 +26,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
+import com.esferalia.aon.file.payroll.contract.pdf.clauses.Clauses;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE226;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.CNO;
@@ -637,6 +638,22 @@ public class ContractControllerListener extends ControllerAdapter{
 			} catch (UnsupportedContractDocumentException e) {
 				LOGGER.error("Documento no compantible con el tipo de contrato");
 			}
+		}
+		
+		ContractPdfController pdfDocController = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
+		try {
+//			if( !controller.getExistClausesDocument() ){
+				pdfDocController.setDocumentType(ContractAttachmentType.CONTRACT_CLAUSES);
+				pdfDocController.loadDocument(false);
+				if(!pdfDocController.isNew()){
+					Clauses pdfDocument = (Clauses) pdfDocController.getContractPdfWriter().getPdfDocument();
+					params.setAdditionalClauses(pdfDocument.getPdfFieldsMap().get("clausulas").getValue());
+				}
+//			}
+		} catch (IOException e) {
+			LOGGER.error("Error de lectura del documento del contrato");
+		} catch (UnsupportedContractDocumentException e) {
+			LOGGER.error("Documento no compantible con el tipo de contrato");
 		}
 		
 	}

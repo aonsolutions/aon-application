@@ -103,7 +103,7 @@ import com.esferalia.aon.sepe.api.contrata.contratos.DATOSREDUCCIONRDL12011TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSTRABAJADORTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.DATOSUSOLIBREEMPRESATYPE;
 import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACIONES;
-import com.esferalia.aon.ui.payroll.utils.FileUtils;
+import com.esferalia.aon.ui.payroll.utils.SEPEFileUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 
@@ -161,7 +161,7 @@ public class ContrataReader {
 			} else if( isTransformacionFile ) {
 				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRATA_TRANSFORMACIONES_MODEL_PATH);
 				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-				unmarshaller.setProperty(Marshaller.JAXB_ENCODING, FileUtils.CONTRATA_XML_FILE_ENCODING);
+				unmarshaller.setProperty(Marshaller.JAXB_ENCODING, SEPEFileUtils.XML_FILE_ENCODING);
 				unmarshaller.setEventHandler(new ContractValidationEventHandler());
 				transformaciones = (TRANSFORMACIONES) unmarshaller.unmarshal(input);
 				ITransformacionType transformacionType = (ITransformacionType) transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().get(0);
@@ -185,7 +185,7 @@ public class ContrataReader {
 		isProrrogaFile = false;
 	
 		try {
-			InputStreamReader inputReader = new InputStreamReader(input,FileUtils.CONTRATA_XML_FILE_ENCODING);
+			InputStreamReader inputReader = new InputStreamReader(input,SEPEFileUtils.XML_FILE_ENCODING);
 			LineNumberReader reader = new LineNumberReader(inputReader);
 			if (reader.ready()) {
 				String line = reader.readLine();

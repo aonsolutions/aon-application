@@ -8,9 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +21,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
@@ -37,7 +34,6 @@ import com.esferalia.aon.payroll.Certifica2BatchAttachment;
 import com.esferalia.aon.payroll.Certifica2BatchData;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
@@ -99,7 +95,6 @@ public class Certifica2BatchController extends BasicController {
 		PayrollUtils utils = new PayrollUtils(); 
 		
 		for(Certifica2ListController.RemesableContract remesable: listController.getRemesableContracts().values()){
-//			Map<String, String> contractData = getContractDataMap(remesable.getContract());
 			Map<String, String> contractData = utils.getContractDataMap(remesable.getContract());
 			
 			Certifica2BatchDetail certifica2BatchDetail = new Certifica2BatchDetail();
@@ -124,7 +119,7 @@ public class Certifica2BatchController extends BasicController {
 				AonUtil.addErrorMessage(msg);
 			}
 			certifica2BatchDetail.setContractDuration(differenceBetweenDates(remesable.getContract().getStartDate(), remesable.getContract().getEndDate()).toString());
-//			detalle.setContractDurationIndicator;
+			certifica2BatchDetail.setContractDurationIndicator(null);
 			String occupation = contractData.get(ContextVariable.CNO.getName());
 			if(occupation!=null){
 				certifica2BatchDetail.setOccupationCode(occupation);
@@ -132,17 +127,17 @@ public class Certifica2BatchController extends BasicController {
 				String msg = "El contrato de "+remesable.getContract().getPerson().getFullName()+" no dispone de datos vigentes para el CNO";
 				AonUtil.addErrorMessage(msg);
 			}
-//			detalle.setPublicAssociationCharge;
-//			detalle.setDedicationPercent;
+			certifica2BatchDetail.setPublicAssociationCharge(null);
+			certifica2BatchDetail.setDedicationPercent(null);
 			certifica2BatchDetail.setEnterpriseStartDate(remesable.getContract().getStartDate());
 			certifica2BatchDetail.setExpireDate(remesable.getContract().getEndDate());
-//			detalle.setExpireEndDate;
-//			detalle.setEre;
-//			detalle.setEreReductionPercent;
-//			detalle.setOtherReductionPercent;
-//			detalle.setReductionCauseCode;
-//			detalle.setSalaryPeriodStartDate;
-//			detalle.setSalaryPeriodEndDate;
+			certifica2BatchDetail.setExpireEndDate(null);
+			certifica2BatchDetail.setEre(null);
+			certifica2BatchDetail.setEreReductionPercent(null);
+			certifica2BatchDetail.setOtherReductionPercent(null);
+			certifica2BatchDetail.setReductionCauseCode(null);
+			certifica2BatchDetail.setSalaryPeriodStartDate(null);
+			certifica2BatchDetail.setSalaryPeriodEndDate(null);
 			certifica2BatchDetail.setSalaryProcessingDays("00000");
 			certifica2BatchDetailBean.insert(certifica2BatchDetail);
 
@@ -155,34 +150,6 @@ public class Certifica2BatchController extends BasicController {
         loadDetails();
         onSearchContracts(event);
 	}
-
-
-//	protected Map<String, String> getContractDataMap(Contract contract) {
-//		Map<String, String> map = new HashMap<String, String>();
-//		try {
-//			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-//			criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
-//			
-//			PayrollUtils utils = new PayrollUtils();
-//			if(DomainManager.isDomainManagementAvailable()){
-//				getCriteria().setSkipDomainFilter( true );
-//				getCriteria().addInExpression(getFieldName(IEntityAlias.CONTRACT_DOMAIN), utils.getCurrentChildDomainIds());
-//			}
-//			
-//			for(ITransferObject to: bean.getList(criteria)){
-//				ContractData data = (ContractData) to;
-//				if(data.getExpression()!=null){
-//					map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
-//				}
-//			}
-//		} catch (ManagerBeanException e) {
-//			// NADA, que siga generando el fichero
-//			AonUtil.addErrorMessage("Imposible obtener los datos de contrato");
-//		}
-//		return map;
-//	}
 	
 	protected Integer differenceBetweenDates(Date from, Date to) {
 		Integer diffDays = new Integer(0);
@@ -247,15 +214,23 @@ public class Certifica2BatchController extends BasicController {
 
 	public void onCreateDisk(ActionEvent event) {
 		try {
-			for (Certifica2BatchDetail d : getCertifica2DetailList()) {
-				for (Certifica2BatchData data : getDetailDataList(d)) {
-					data.setCertifica2BatchDetail(d);
+			
+			Certifica2Batch batch = (Certifica2Batch)getTo();
+			
+			List<ITransferObject> detailList = getCertifica2DetailList((Certifica2Batch) this.getTo());
+			
+			for (ITransferObject to: detailList) {
+				Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
+				for (Certifica2BatchData data : getDetailDataList(detail)) {
+					data.setCertifica2BatchDetail(detail);
 					IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchData.class);
 					Certifica2BatchData cbd = (Certifica2BatchData) data;
 					bean.insertOrUpdate(cbd);
 				}
 			}
-			File file = getCertificateWriter().createCertificate((Certifica2Batch)getTo(), getCertifica2DetailList()).getFile();
+			
+			File file = getCertificateWriter().createFile(batch, detailList);
+			
 			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
 			if (file != null) {
 				FileInputStream in = new FileInputStream(file);
@@ -264,7 +239,7 @@ public class Certifica2BatchController extends BasicController {
 				attach = new Certifica2BatchAttachment();
 				attach.setCertifica2Batch((Certifica2Batch) getTo());
 				attach.setMimeType(MimeType.MIME_XML);
-				attach.setDescription(getCertificateWriter().getCertificate().getFile());
+				attach.setDescription(getCertificateWriter().getFileName());
 				attach.setSize(null);
 				attach.setAttachmentType(PayrollBatchAttachmentType.GENERATED_DOCUMENT);
 				attach.setScope(null);
@@ -302,7 +277,6 @@ public class Certifica2BatchController extends BasicController {
 			eDate.setTime(new Date(calFin.getTimeInMillis()));
 			sDate.set(Calendar.DAY_OF_MONTH, 1);
 			eDate.set(Calendar.DAY_OF_MONTH, sDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-//			nomina = getCurrentSalary(detail.getContract(), SalaryType.SALARY, sDate.getTime(), eDate.getTime());
 			nomina = getUtils().getSalary(detail.getContract(),  sDate.getTime(), eDate.getTime());
 			calFin.add(Calendar.DATE, -calFin.get(Calendar.DAY_OF_MONTH));
 			if(nomina != null) {
@@ -311,7 +285,7 @@ public class Certifica2BatchController extends BasicController {
 				//TODO obtener la base por desempleo
 //				Double baseDesempleo = nomina.getBasePerdes(); 
 				Double baseDesempleo = nomina.getIrpfBase();
-				// TODO obtener las nomina diferencia
+				// TODO obtener las nominas diferencia
 //				List<INominaDiferencia> nominasDiferencia = getNominaDAO().getNominasDiferencia(params);
 //				for(INominaDiferencia nomDf:nominasDiferencia) {
 //					baseCg += nomDf.getBaseCgPts();
@@ -338,25 +312,6 @@ public class Certifica2BatchController extends BasicController {
 		return cotizacionList;
 	}
 	
-//	private Salary getCurrentSalary(Contract contract, SalaryType type, Date startDate, Date endDate){
-//		try {
-//			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), type);
-//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), startDate);
-//			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endDate);
-//			
-//			List<ITransferObject> salaryList = bean.getList(criteria);
-//			if(!salaryList.isEmpty()){
-//				return (Salary) salaryList.get(0);
-//			} 
-//		} catch (ManagerBeanException e) {
-//			// NADA, que siga generando el fichero
-//		} 
-//		return null;
-//	}
-	
 	public void changeBatchStatus(FileStatus status) {
 		Certifica2Batch b = (Certifica2Batch) getTo();
 		if(b != null){
@@ -373,15 +328,17 @@ public class Certifica2BatchController extends BasicController {
 			setRecorded(false);
 		}
 	}
-
-	private List<Certifica2BatchDetail> getCertifica2DetailList() {
-		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
-		List<Certifica2BatchDetail> list = new LinkedList<Certifica2BatchDetail>();
-		for(ITransferObject to: controller.getWrappedList()){
-			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
-			list.add(detail);
+	
+	private List<ITransferObject> getCertifica2DetailList(Certifica2Batch batch) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DETAIL_CERTIFICA2BATCH_ID), batch.getId());
+			return bean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			// NADA, que siga con la generacion del fichero
 		}
-		return list;
+		return null;
 	}
 
 }

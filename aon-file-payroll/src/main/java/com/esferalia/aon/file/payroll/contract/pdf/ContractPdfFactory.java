@@ -3,6 +3,7 @@ package com.esferalia.aon.file.payroll.contract.pdf;
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE229;
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
+import com.esferalia.aon.file.payroll.contract.pdf.clauses.Clauses;
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE151;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE170;
@@ -46,9 +47,13 @@ public class ContractPdfFactory {
 		} else if (document.equals(ModelPE230.MODEL_NAME)) {
 				return new ModelPE230();
 		}
-		// BASIC COPY DOCUMENT
+		// EXTENSION DOCUMENT
 		if (document.equals(Extension.EXTENSION_NAME)) {
 			return new Extension();
+		} 
+		// CLAUSES DOCUMENT
+		if (document.equals(Clauses.CLAUSES_NAME)) {
+			return new Clauses();
 		} 
 		return null;
 	}

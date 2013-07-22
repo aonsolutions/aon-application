@@ -85,7 +85,7 @@ import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO970TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO980TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO990TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
-import com.esferalia.aon.ui.payroll.utils.FileUtils;
+import com.esferalia.aon.ui.payroll.utils.SEPEFileUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContractContrataLoader implements IContractLoader{
@@ -123,7 +123,7 @@ public class ContractContrataLoader implements IContractLoader{
 			raiseException(0, "La entrada está vacia!");
 		}
 		try {
-			InputStreamReader inputReader = new InputStreamReader(input, FileUtils.CONTRATA_XML_FILE_ENCODING);
+			InputStreamReader inputReader = new InputStreamReader(input, SEPEFileUtils.XML_FILE_ENCODING);
 			LineNumberReader reader = new LineNumberReader(inputReader);
 			int i = 0;
 			if (reader.ready()) {
@@ -186,7 +186,7 @@ public class ContractContrataLoader implements IContractLoader{
 		
 		try {
 			input.reset();
-			FileUtils.validateContrataXmlPattern(input, FileUtils.CONTRATOS_SCHEMA_FILE_NAME, "");
+			SEPEFileUtils.validateContrataXmlPattern(input, SEPEFileUtils.CONTRATOS_SCHEMA_FILE_NAME, "");
 		} catch (IOException ioe) {
 			raiseException(0, ioe.getMessage());
 		} catch (SAXException saxe) {

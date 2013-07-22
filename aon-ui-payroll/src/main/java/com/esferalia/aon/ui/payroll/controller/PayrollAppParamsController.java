@@ -38,6 +38,10 @@ public class PayrollAppParamsController{
 	public final static String CONTRATA_PASSWORD = "PAY_contrata_passwd_PAY";
 	public final static String CONTRATA_TEST_ENVIRONMENT_ACTIVE = "PAY_contrata_test_env_active_PAY";
 
+	public final static String CERTIFICA2_USER = "PAY_certifica2_user_PAY";
+	public final static String CERTIFICA2_PASSWORD = "PAY_certifica2_passwd_PAY";
+	public final static String CERTIFICA2_TEST_ENVIRONMENT_ACTIVE = "PAY_certifica2_test_env_PAY";
+
 	public final static String DEFAULT_CONTRACT_CODE = "PAY_default_contractCode_PAY";
 	public final static String DEFAULT_TRAINING_CENTER = "PAY_default_trainingCenter_PAY";
 
@@ -50,8 +54,12 @@ public class PayrollAppParamsController{
 	private String contrataUser;
 	private String contrataPassword;
 	private Boolean validContrataLogin;
-
 	private Boolean contrataTestEnviroment;
+
+	private String certifica2User;
+	private String certifica2Password;
+	private Boolean validCertifica2Login;
+	private Boolean certifica2TestEnviroment;
 	
 	private TrainingCenter defaultTrainingCenter;
 	
@@ -188,6 +196,87 @@ public class PayrollAppParamsController{
 				setContrataTestEnviroment(new Boolean(getParameter(CONTRATA_TEST_ENVIRONMENT_ACTIVE).getValue()));
 			} else {
 				setContrataTestEnviroment(true);
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+	
+	public Boolean getValidCertifica2Login() {
+		return validCertifica2Login;
+	}
+	
+	public void setValidCertifica2Login(Boolean validCertifica2Login) {
+		this.validCertifica2Login = validCertifica2Login;
+	}
+	
+	public boolean isCertifica2LoginChecked() {
+		return validCertifica2Login != null;
+	}
+	
+	public String getCertifica2User() {
+		if(certifica2User==null){
+			initCertifica2User();
+		}
+		return certifica2User;
+	}
+	
+	public void setCertifica2User(String certifica2User) {
+		this.certifica2User = certifica2User;
+	}
+	
+	private void initCertifica2User() {
+		try {
+			if(getParameter(CERTIFICA2_USER).getValue()!=null){
+				setCertifica2User(getParameter(CERTIFICA2_USER).getValue());
+			} else {
+				setCertifica2User("");
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+	
+	public String getCertifica2Password() {
+		if(certifica2Password==null){
+			initCertifica2Password();
+		}
+		return certifica2Password;
+	}
+	
+	public void setCertifica2Password(String certifica2Password) {
+		this.certifica2Password = certifica2Password;
+	}
+	
+	private void initCertifica2Password() {
+		try {
+			if(getParameter(CERTIFICA2_PASSWORD).getValue()!=null){
+				setCertifica2Password(getParameter(CERTIFICA2_PASSWORD).getValue());
+			} else {
+				setCertifica2Password("");
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+	
+	public Boolean getCertifica2TestEnviroment() {
+		if(certifica2TestEnviroment==null){
+			initCertifica2TestEnviroment();
+		}
+		return certifica2TestEnviroment;
+	}
+	
+	public void setCertifica2TestEnviroment(Boolean certifica2TestEnviroment) {
+		this.certifica2TestEnviroment = certifica2TestEnviroment;
+	}
+	
+	private void initCertifica2TestEnviroment() {
+		try {
+			if(getParameter(CERTIFICA2_TEST_ENVIRONMENT_ACTIVE).getValue()!=null){
+				setCertifica2TestEnviroment(new Boolean(getParameter(CERTIFICA2_TEST_ENVIRONMENT_ACTIVE).getValue()));
+			} else {
+				setCertifica2TestEnviroment(true);
 			}
 		} catch (ManagerBeanException e) {
 			// NADA
@@ -351,11 +440,18 @@ public class PayrollAppParamsController{
 		setSettleVacationConcept(null);
 		setSettleNoticeDayConcept(null);
 		setSettleCompensationConcept(null);
+
 		setContrataUser(null);
 		setContrataPassword(null);
 		setValidContrataLogin(null);
-		setDefaultTrainingCenter(null);
 		setContrataTestEnviroment(null);
+		
+		setCertifica2User(null);
+		setCertifica2Password(null);
+		setValidCertifica2Login(null);
+		setCertifica2TestEnviroment(null);
+		
+		setDefaultTrainingCenter(null);
 		
 		parameters = new TreeMap<String, ApplicationParameter>();
 		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
@@ -405,6 +501,11 @@ public class PayrollAppParamsController{
 		getParameter(CONTRATA_USER).setValue(getContrataUser());
 		getParameter(CONTRATA_PASSWORD).setValue(getContrataPassword());
 		getParameter(CONTRATA_TEST_ENVIRONMENT_ACTIVE).setValue(getContrataTestEnviroment().toString());
+		
+		// CERTIFICA2 PARAMS
+		getParameter(CERTIFICA2_USER).setValue(getCertifica2User());
+		getParameter(CERTIFICA2_PASSWORD).setValue(getCertifica2Password());
+		getParameter(CERTIFICA2_TEST_ENVIRONMENT_ACTIVE).setValue(getCertifica2TestEnviroment().toString());
 
 		// CONTRACT PARAMS
 		if(getDefaultTrainingCenter()!=null && getDefaultTrainingCenter().getId()!=null){
@@ -422,7 +523,11 @@ public class PayrollAppParamsController{
 	}
 	
 	public void validateContrataLogin(ActionEvent event){
-		setValidContrataLogin( SEPEConnectionProvider.validateLogin(true, "<?xml>", getContrataUser(), getContrataUser(), getContrataPassword()) );
+		setValidContrataLogin( SEPEConnectionProvider.validateContrataLogin(true, "<?xml>", getContrataUser(), getContrataUser(), getContrataPassword()) );
+	}
+	
+	public void validateCertifica2Login(ActionEvent event){
+		setValidCertifica2Login( SEPEConnectionProvider.validateCertifica2Login(true, "<?xml>", getCertifica2User(), getCertifica2User(), getCertifica2Password()) );
 	}
 	
 }
