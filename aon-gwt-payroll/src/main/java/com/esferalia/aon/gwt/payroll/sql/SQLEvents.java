@@ -204,8 +204,14 @@ public class SQLEvents {
 					for (ITimedResult<Object> result : results) {
 						event = new Event();
 						event.setName(name);
-						event.setValue(result.getValue() != null ? result
-								.getValue().toString() : null);
+						
+						if ( result.getValue() == null )
+							event.setValue(null);
+						else if ( result.getValue() instanceof String )
+							event.setValue(String.format("\"%s\"", result.getValue()  ));
+						else 
+							event.setValue(result.getValue().toString());
+						
 						event.setEndDate(result.getPeriod().getEnd());
 						event.setStartDate(result.getPeriod().getStart());
 						events.addEvent(employeeId, event);
