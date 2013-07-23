@@ -307,10 +307,10 @@ public class FacturaeWriter {
 		return registrationData;
 	}
 	
-	private LegalEntityType getLegalEntity( Registry registry, String name, IAddress address ) throws ManagerBeanException {
+	private LegalEntityType getLegalEntity( Registry registry, String name, String tradeName, IAddress address ) throws ManagerBeanException {
 		LegalEntityType legalEntityType = new LegalEntityType();
 		legalEntityType.setCorporateName(name);
-		legalEntityType.setTradeName(registry.getAlias());
+		legalEntityType.setTradeName(tradeName);
 		RecordData recordData = getRecordData(registry);
 		if ( recordData != null ) {
 			legalEntityType.setRegistrationData( getRegistrationData(recordData) );
@@ -327,7 +327,7 @@ public class FacturaeWriter {
 		return legalEntityType;
 	}
 	
-	private BusinessType getBusinessType( Registry registry, String name, String document, IAddress address ) throws ManagerBeanException {
+	private BusinessType getBusinessType( Registry registry, String name, String tradeName, String document, IAddress address ) throws ManagerBeanException {
 		BusinessType party = new BusinessType();
 		TaxIdentificationType taxIdentification = new TaxIdentificationType();
 		PersonTypeCodeType personType = getPersonTypeCode(registry);
@@ -339,7 +339,7 @@ public class FacturaeWriter {
 		if ( personType == PersonTypeCodeType.F ) {
 			party.setIndividual( getIndividual(registry, name, address) );
 		} else {
-			party.setLegalEntity( getLegalEntity(registry, name, address) );
+			party.setLegalEntity( getLegalEntity(registry, name, tradeName, address) );
 		}
 		return party;
 	}
@@ -371,7 +371,8 @@ public class FacturaeWriter {
 		String name = registry.getName();
 		String document = registry.getDocument();
 		IAddress address = registry.getDefaultAddress();
-		BusinessType party = getBusinessType(registry, name, document, address);
+		String tradeName = StringUtils.defaultIfEmpty(registry.getAlias(), workPlace.getDescription() );
+		BusinessType party = getBusinessType(registry, name, tradeName, document, address);
 		AdministrativeCentresType centres = new AdministrativeCentresType();
 		centres.getAdministrativeCentre().add( getAdministrativeCentre(workPlace) );
 		party.setAdministrativeCentres(centres);
@@ -386,7 +387,8 @@ public class FacturaeWriter {
 		if ( address == null ) {
 			address = registry.getDefaultAddress();
 		}
-		return getBusinessType(registry, name, document, address);
+		String tradeName = registry.getAlias();
+		return getBusinessType(registry, name, tradeName, document, address);
 	}
 	
 	private PartiesType getParties() throws ManagerBeanException {
@@ -601,8 +603,11 @@ public class FacturaeWriter {
 		InstallmentType installment = new InstallmentType();
 		installment.setInstallmentDueDate( Util.toXMLCalendar(finance.getDueDate()) );
 		installment.setInstallmentAmount( finance.getAmount() );
-		PaymentMeans paymentMeans = getPaymentMeans( finance.getPayMethod() );
-		installment.setPaymentMeans( paymentMeans.getValue() );
+		PaymentMeans paymentMeans = null;
+		if ( finance.getPayMethod() != null ) {
+			paymentMeans = getPaymentMeans( finance.getPayMethod() );
+			installment.setPaymentMeans( paymentMeans.getValue() );			
+		}
 		if ( finance.getBankAccount() != null ) {
 			AccountType account = new AccountType();
 			account.setIBAN( finance.getBankAccount().toString() );
@@ -691,5 +696,5 @@ public class FacturaeWriter {
 			}
 		}
 	}
-    
+	
 }
