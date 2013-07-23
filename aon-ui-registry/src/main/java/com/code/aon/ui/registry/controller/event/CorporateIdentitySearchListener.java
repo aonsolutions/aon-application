@@ -164,8 +164,7 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 			addEnumToCriteria(criteria, "RegistryAttachment.tags.tag.id", getTagsIds().toArray());	
 		}
 		if ( getScopesSize() > 0 ) {
-			String alias = getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_SCOPE_ID);
-			addEnumToCriteria(criteria, alias, getScopesIds().toArray());	
+			addEnumToCriteria(criteria, "RegistryAttachment.scope<id", getScopesIds().toArray());	
 		}				
 	}
 	
