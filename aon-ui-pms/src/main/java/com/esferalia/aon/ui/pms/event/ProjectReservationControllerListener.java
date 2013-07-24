@@ -9,6 +9,7 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -65,6 +66,17 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
 		ProjectReservation reservation = (ProjectReservation)controller.getTo();
+		int currentYear = CommonUtil.getYear(new Date());
+		if (CommonUtil.getYear(reservation.getStartDate()) > (currentYear + 1) || CommonUtil.getYear(reservation.getStartDate()) < (currentYear - 1)) {
+			throw new ControllerListenerException("Fecha de Entrada de la Reserva incorrecta.");
+		}
+		if (!reservation.getStartDate().before(reservation.getEndDate())) {
+			throw new ControllerListenerException("Fecha de Salida de la Reserva incorrecta.");
+		}
+		if (CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()) > 90) {
+			throw new ControllerListenerException("La Estancia no puede ser superior a 90 días.");
+		}
+
 		reservation.setCreationDate(new Date());
 		reservation.setStartTime(obtainDateTime(reservation.getStartDate(), controller.getStartTime()));
 		reservation.setEndTime(obtainDateTime(reservation.getEndDate(), controller.getEndTime()));
