@@ -338,13 +338,28 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getId());
-		for (ITransferObject ito : financeBean.getList(criteria)) {
+		List<ITransferObject> financeList = financeBean.getList(criteria);
+		for (ITransferObject ito : financeList) {
 			Finance finance = (Finance)ito;
 			if (FinanceStatus.PAID != finance.getFinanceStatus() && FinanceStatus.SETTLED != finance.getFinanceStatus()) {
 				return FinanceStatus.PENDING;
 			}
 		}
-		return (financeBean.getCount(criteria) == 0) ? null : FinanceStatus.PAID;
+		return (financeList.size() == 0) ? null : FinanceStatus.PAID;
+	}
+
+	@Transient
+	public boolean isAllFinancePending() throws ManagerBeanException{
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getId());
+		for (ITransferObject ito : financeBean.getList(criteria)) {
+			Finance finance = (Finance)ito;
+			if (FinanceStatus.PENDING != finance.getFinanceStatus()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Transient

@@ -1,6 +1,7 @@
 package com.code.aon.finance.bridge.invoicing;
 
 import java.util.Date;
+import java.util.List;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -111,7 +112,8 @@ public class RectificationInvoicingManager {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE));
-		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+		List<ITransferObject> invoiceDetailList = invoiceDetailBean.getList(criteria);
+		for (ITransferObject ito : invoiceDetailList) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 			InvoiceDetail rectifierDetail = new InvoiceDetail();
 			rectifierDetail.setInvoice(rectifier);
@@ -147,6 +149,11 @@ public class RectificationInvoicingManager {
 				rectifierDetail.setRetentionPercent(invoiceRetentionTax.getPercentage());
 				rectifierDetail.setRetentionQuota(CommonUtil.round(invoiceRetentionTax.getQuota() * (-1)));
 			}
+
+			boolean lastDetail = invoiceDetailList.indexOf(invoiceDetail) == (invoiceDetailList.size() - 1);
+			rectifierDetail.setSkipServiceProcess(true);
+			rectifierDetail.setUpdateEnabled(lastDetail);
+			rectifierDetail.getInvoice().setUpdateEnabled(lastDetail);
 			invoiceDetailBean.insert(rectifierDetail);
 		}
 	}

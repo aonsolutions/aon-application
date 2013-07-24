@@ -77,7 +77,9 @@ public class ProjectReservationController extends BasicController implements IPm
 	private boolean showInvoiceWindow;
 	private ReservationInvoiceTo reservationInvoiceTo;
 	private boolean showRectificationWindow;
-	private Invoice invoiceToRectificate;
+	private Invoice invoiceToRectify;
+	private boolean showModificationWindow;
+	private Invoice invoiceToModify;
 	private DataModel invoiceModel;
 
 	public ReservationUtils getReservationUtils() {
@@ -231,12 +233,28 @@ public class ProjectReservationController extends BasicController implements IPm
 		this.showRectificationWindow = showRectificationWindow;
 	}
 
-	public Invoice getInvoiceToRectificate() {
-		return invoiceToRectificate;
+	public Invoice getInvoiceToRectify() {
+		return invoiceToRectify;
 	}
 
-	public void setInvoiceToRectificate(Invoice invoiceToRectificate) {
-		this.invoiceToRectificate = invoiceToRectificate;
+	public void setInvoiceToRectify(Invoice invoiceToRectify) {
+		this.invoiceToRectify = invoiceToRectify;
+	}
+
+	public boolean isShowModificationWindow() {
+		return showModificationWindow;
+	}
+
+	public void setShowModificationWindow(boolean showModificationWindow) {
+		this.showModificationWindow = showModificationWindow;
+	}
+
+	public Invoice getInvoiceToModify() {
+		return invoiceToModify;
+	}
+
+	public void setInvoiceToModify(Invoice invoiceToModify) {
+		this.invoiceToModify = invoiceToModify;
 	}
 
 	public DataModel getInvoiceModel() {
@@ -621,7 +639,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	private Scope obtainRectifiedInvoiceScope() throws ManagerBeanException {
-		for (ITransferObject ito : getInvoiceToRectificate().getDetailList()) {
+		for (ITransferObject ito : getInvoiceToRectify().getDetailList()) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 			IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 			Criteria criteria = new Criteria();
@@ -631,7 +649,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			}
 			return invoiceDetail.getWorkPlace().getScope();
 		}
-		return getInvoiceToRectificate().getScope();
+		return getInvoiceToRectify().getScope();
 	}
 
 	public List<SelectItem> getGuests() throws ManagerBeanException {
@@ -786,7 +804,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-		setInvoiceToRectificate(invoice);
+		setInvoiceToRectify(invoice);
 		setReservationInvoiceTo(new ReservationInvoiceTo(false));
 		getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
 	}
@@ -799,7 +817,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 
 			ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-			reservationInvoicing.rectify(getInvoiceToRectificate(), getReservationInvoiceTo());
+			reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo());
 
 			if (!reservation.isCancelled()) {
 				ProjectReservation savedReservation = (ProjectReservation)getManagerBean().get(reservation.getId());
@@ -812,7 +830,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				}
 			}
 
-			if (getInvoiceToRectificate().isService()) {
+			if (getInvoiceToRectify().isService()) {
 				IController reservationServiceController = (IController)AonUtil.getRegisteredBean(RESERVATION_SERVICE_CONTROLLER_NAME);
 				reservationServiceController.onSearch(null);
 			}
@@ -820,6 +838,99 @@ public class ProjectReservationController extends BasicController implements IPm
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
+	}
+
+	public void onModifyInvoiceShow(ActionEvent event) {
+		try {
+			if (!getInvoiceModel().isRowAvailable()) {
+				setShowModificationWindow(false);
+				String msg = "No se puede Modificar. Factura no disponible.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+
+			ProjectReservation reservation = (ProjectReservation)this.getTo();
+			Invoice invoice = (Invoice)getInvoiceModel().getRowData();
+			if ((reservation.isGuestHolder() || invoice.isService()) && !PosUtils.isUserPosShiftOpened()) {
+				setShowModificationWindow(false);
+				String msg = "No se puede Modificar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			setInvoiceToModify(invoice);
+			setReservationInvoiceTo(new ReservationInvoiceTo(false));
+			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
+			fillInvoiceModificationData(invoice);
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+	}
+
+	private void fillInvoiceModificationData(Invoice invoice) throws ManagerBeanException {
+		getReservationInvoiceTo().setDirectCustomer(true);
+		getReservationInvoiceTo().setRegistry(invoice.getRegistry());
+		getReservationInvoiceTo().getRegistry().setName(invoice.getRegistryName());
+		getReservationInvoiceTo().getRegistry().setDocumentType(invoice.getRegistryDocumentType());
+		getReservationInvoiceTo().getRegistry().setDocumentCountry(invoice.getRegistryDocumentCountry());
+		getReservationInvoiceTo().getRegistry().setDocument(invoice.getRegistryDocument());
+
+		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IEntityAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
+		for (ITransferObject ito : invoiceAddressBean.getList(criteria)) {
+			getReservationInvoiceTo().setAddress((InvoiceAddress)ito);
+		}
+
+		getReservationInvoiceTo().setFinances(new LinkedList<Finance>());
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
+		for (ITransferObject ito : financeBean.getList(criteria)) {
+			getReservationInvoiceTo().getFinances().add((Finance)ito);
+		}
+	}
+
+	public void onModifyInvoice(ActionEvent event) {
+		setInvoiceModel(null);
+		try {
+			if (validateInvoice()) {
+				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
+				if (!DateUtils.isSameDay(getInvoiceToModify().getIssueDate(), new Date()) || isFinancesModified()) {
+					setInvoiceToRectify(getInvoiceToModify());
+					getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
+					getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+					getReservationInvoiceTo().setEarlyCheckOut(true); //Para que no borre los servicios asociados, en caso de Factura de Servicios.
+					reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo());
+
+					getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
+					getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+					reservationInvoicing.duplicate(getInvoiceToModify(), reservationInvoiceTo);
+				} else {
+					reservationInvoicing.modify(getInvoiceToModify(), getReservationInvoiceTo());
+				}
+			}
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+	}
+
+	private boolean isFinancesModified() throws ManagerBeanException {
+		if (!getInvoiceToModify().getPosShift().equals(getReservationInvoiceTo().getPosShift())) {
+			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getInvoiceToModify().getId());
+			for (ITransferObject ito : financeBean.getList(criteria)) {
+				Finance invoiceFinance = (Finance)ito;
+				for (Finance modifyFinance : getReservationInvoiceTo().getFinances()) {
+					if ((invoiceFinance.getAmount() != modifyFinance.getAmount()) || !invoiceFinance.getPayMethod().equals(modifyFinance.getPayMethod())) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	public void onEarlyCheckOutShow(ActionEvent event) {

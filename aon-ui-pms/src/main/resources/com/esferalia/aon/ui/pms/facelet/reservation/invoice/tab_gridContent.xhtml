@@ -117,18 +117,27 @@
 		</aon:outputText>
 	</aon:column>
 
-	<aon:column	styleClass="aon-editDataTable-textColumn aon-width-60 aon-vertical-align-top">
+	<aon:column	styleClass="aon-editDataTable-textColumn aon-width-70 aon-vertical-align-top">
 		<f:facet name="header">
 			<aon:outputText value="&#160;" />
 		</f:facet>
 		<c:if test="#{!skipRectifyButton}">
 			<aon:commandButton id="reservationInvoice-rectify"
-				value="&#160;" title="#{pmsBundle.pms_to_return}"
+				styleClass="aon-icon-removed aon-noborder"
+				value="&#160;" title="#{pmsBundle.pms_to_return_label}"
 				rendered="#{to.noRectification and (!to.advance or !reservation.to.invoiced) and (aonRole.financeOperator or (to.service and to.allCommercialProducts))}"
 				actionListener="#{controller.onRectifyInvoiceShow}"
-				reRender="showRectificationWindow"
-				styleClass="aon-finding-toolbar-item aon-icon-removed">
+				reRender="showRectificationWindow">
 				<f:setPropertyActionListener target="#{controller.showRectificationWindow}"
+					value="#{true}" />
+			</aon:commandButton>
+			<aon:commandButton id="reservationInvoice-modify"
+				styleClass="aon-icon-edit aon-noborder"
+				value="&#160;" title="#{pmsBundle.pms_to_modify_invoice_label}"
+				rendered="#{to.noRectification and reservation.to.guestHolder and to.allFinancePending}"
+				actionListener="#{controller.onModifyInvoiceShow}"
+				reRender="showModificationWindow">
+				<f:setPropertyActionListener target="#{controller.showModificationWindow}"
 					value="#{true}" />
 			</aon:commandButton>
 		</c:if>
@@ -136,8 +145,8 @@
 			styleClass="aon-icon-pdf"
 			value="&#160;&#160;&#160;&#160;&#160;&#160;" 
 			title="#{bundle.aon_report}"
-			action="#{saleInvoiceSigner.onReport}"
-			actionListener="#{controller.onPrintInvoice}">
+			actionListener="#{controller.onPrintInvoice}"
+			action="#{saleInvoiceSigner.onReport}">
 			<f:param name="reportKey" value="#{company.saleInvoiceTemplateValue}" />
 			<f:setPropertyActionListener target="#{saleInvoiceSigner.reportKey}"
 				value="#{company.saleInvoiceTemplateValue}" />

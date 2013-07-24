@@ -20,10 +20,12 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.bridge.invoicing.RectificationInvoicingManager;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
@@ -83,7 +85,7 @@ public class ReservationInvoicing implements IReservationConstants {
 				LOGGER.error(msg,daoe);
 			}
 			LOGGER.error(e.getMessage());
-			throw new ManagerBeanException(e.getMessage(),e);
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
@@ -127,7 +129,90 @@ public class ReservationInvoicing implements IReservationConstants {
 				LOGGER.error(msg,daoe);
 			}
 			LOGGER.error(e.getMessage());
-			throw new ManagerBeanException(e.getMessage(),e);
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+
+	public Invoice modify(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo) throws ManagerBeanException {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+
+			HibernateUtil.beginTransaction(sessionName);
+			
+			invoice.setRegistryDocument(reservationInvoiceTo.getRegistry().getDocument());
+			invoice.setRegistryDocumentType(reservationInvoiceTo.getRegistry().getDocumentType());
+			invoice.setRegistryDocumentCountry(reservationInvoiceTo.getRegistry().getDocumentCountry());
+			invoice.setRegistryName(reservationInvoiceTo.getRegistry().getName());
+			invoice.setUpdateEnabled(false);
+			invoice = (Invoice)BeanManager.getManagerBean(Invoice.class).update(invoice);
+
+			if (reservationInvoiceTo.getAddress() != null) {
+				removeInvoiceAddress(invoice);
+				createInvoiceAddress(invoice, reservationInvoiceTo.getAddress());
+			}
+			removeInvoiceFinances(invoice);
+			createInvoiceFinances(invoice, reservationInvoiceTo);
+
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
+
+			return invoice;
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg,daoe);
+			}
+			LOGGER.error(e.getMessage());
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+
+	public Invoice duplicate(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo) throws ManagerBeanException {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+
+			HibernateUtil.beginTransaction(sessionName);
+			
+			Integer sourceId = invoice.getId();
+			Invoice duplicate = duplicateInvoice(invoice, reservationInvoiceTo);
+			duplicateInvoiceDetails(duplicate, sourceId);
+			if (reservationInvoiceTo.getAddress() != null) {
+				createInvoiceAddress(duplicate, reservationInvoiceTo.getAddress());
+			}
+			createInvoiceFinances(duplicate, reservationInvoiceTo);
+			recordInvoice(duplicate);
+
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
+
+			return duplicate;
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg,daoe);
+			}
+			LOGGER.error(e.getMessage());
+			throw new ManagerBeanException(e.getMessage(), e);
 		} finally {
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
@@ -342,6 +427,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			invoiceAddress.setNumber(address.getNumber()); 
 			invoiceAddress.setZip(address.getZip()); 
 			invoiceAddress.setCity(address.getCity()); 
+			invoiceAddress.setProvince(address.getProvince()); 
 			invoiceAddress.setGeozone(address.getGeozone()); 
 		}
 		invoiceAddress.setInvoice(invoice);
@@ -455,6 +541,97 @@ public class ReservationInvoicing implements IReservationConstants {
 		for (ProjectReservationService reservationService : servicesToRemove) {
 			reservationServiceBean.remove(reservationService);
 		}
+	}
+
+	private void removeInvoiceAddress(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IEntityAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
+		for (ITransferObject ito : invoiceAddressBean.getList(criteria)) {
+			invoiceAddressBean.remove(ito);
+		}
+	}
+
+	private void removeInvoiceFinances(Invoice invoice) throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
+		for (ITransferObject ito : financeBean.getList(criteria)) {
+			financeBean.remove(ito);
+		}
+	}
+
+	private Invoice duplicateInvoice(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo) throws ManagerBeanException {
+		Invoice duplicate = invoice;
+		duplicate.setId(null);
+		duplicate.setSeries(reservationInvoiceTo.getSeries());
+		duplicate.setNumber(reservationInvoiceTo.getNumber());
+		duplicate.setRegistryDocument(reservationInvoiceTo.getRegistry().getDocument());
+		duplicate.setRegistryDocumentType(reservationInvoiceTo.getRegistry().getDocumentType());
+		duplicate.setRegistryDocumentCountry(reservationInvoiceTo.getRegistry().getDocumentCountry());
+		duplicate.setRegistryName(reservationInvoiceTo.getRegistry().getName());
+		duplicate.setIssueDate(reservationInvoiceTo.getIssueDate());
+		duplicate.setStatus(InvoiceStatus.PENDING);
+		duplicate.setSigned(false);
+		duplicate.setRectificationType(RectificationType.NONE);
+		duplicate.setRectificationInvoice(null);
+		duplicate.setPosShift(reservationInvoiceTo.getPosShift());
+		duplicate.setCreationUser(null);
+		duplicate.setCreationDate(null);
+		duplicate.setModificationUser(null);
+		duplicate.setModificationDate(null);
+		duplicate.setLines(null);
+		duplicate.setFinances(null);
+		duplicate.setAddresses(null);
+		duplicate.setAttachments(null);
+		duplicate.setUpdateEnabled(false);
+
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		return (Invoice)invoiceBean.insert(duplicate);
+	}
+
+	private void duplicateInvoiceDetails(Invoice duplicate, Integer sourceId) throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), sourceId);
+		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE));
+		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+			InvoiceTax invoiceVatTax = obtainInvoiceTax(invoiceDetail, TaxType.VAT);
+			InvoiceTax invoiceRetentionTax = obtainInvoiceTax(invoiceDetail, TaxType.RETENTION);
+
+			InvoiceDetail duplicateDetail = invoiceDetail;
+			duplicateDetail.setId(null);
+			duplicateDetail.setInvoice(duplicate);
+			duplicateDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+			duplicateDetail.setSourceId(null);
+			duplicateDetail.setSkipServiceProcess(true);
+			duplicateDetail.setUpdateEnabled(false);
+			duplicateDetail.getInvoice().setUpdateEnabled(false);
+			duplicateDetail.setTaxDataInDetail(true);
+			if (invoiceVatTax != null) {
+				duplicateDetail.setVatPercent(invoiceVatTax.getPercentage());
+				duplicateDetail.setVatQuota(invoiceVatTax.getQuota());
+			}
+			if (invoiceRetentionTax != null) {
+				duplicateDetail.setRetentionPercent(invoiceRetentionTax.getPercentage());
+				duplicateDetail.setRetentionQuota(invoiceRetentionTax.getQuota());
+			}
+
+			HibernateUtil.getSession(HibernateUtil.getSessionFactoryName()).evict(duplicateDetail);
+			invoiceDetailBean.insert(duplicateDetail);
+		}
+	}
+
+	private InvoiceTax obtainInvoiceTax(InvoiceDetail invoiceDetail, TaxType taxType) throws ManagerBeanException {
+		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
+		criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_TAX_TYPE), taxType);
+		for (ITransferObject ito : invoiceTaxBean.getList(criteria)) {
+			return (InvoiceTax)ito;
+		}
+		return null;
 	}
 
 }

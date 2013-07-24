@@ -62,7 +62,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 
 	private ReservationInvoiceTo reservationInvoiceTo;
 	private boolean showRectificationWindow;
-	private Invoice invoiceToRectificate;
+	private Invoice invoiceToRectify;
 	private ProjectReservation projectReservation;
 	
 	private IControllerListener currentReservationFilter;
@@ -91,12 +91,12 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		this.showRectificationWindow = showRectificationWindow;
 	}
 
-	public Invoice getInvoiceToRectificate() {
-		return invoiceToRectificate;
+	public Invoice getInvoiceToRectify() {
+		return invoiceToRectify;
 	}
 
-	public void setInvoiceToRectificate(Invoice invoiceToRectificate) {
-		this.invoiceToRectificate = invoiceToRectificate;
+	public void setInvoiceToRectify(Invoice invoiceToRectify) {
+		this.invoiceToRectify = invoiceToRectify;
 	}
 	
 	public IControllerListener getCurrentReservationFilter() {
@@ -515,7 +515,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-			setInvoiceToRectificate((Invoice)getModel().getRowData());
+			setInvoiceToRectify((Invoice)getModel().getRowData());
 			setReservationInvoiceTo(new ReservationInvoiceTo(true));
 			getReservationInvoiceTo().setHotel(obtainRectificationHotel());
 			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
@@ -526,7 +526,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	}
 
 	private Hotel obtainRectificationHotel() throws ManagerBeanException {
-		for (ITransferObject ito : getInvoiceToRectificate().getDetailList()) {
+		for (ITransferObject ito : getInvoiceToRectify().getDetailList()) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 			IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 			Criteria criteria = new Criteria();
@@ -544,7 +544,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 
 			ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-			Invoice rectifier = reservationInvoicing.rectify(getInvoiceToRectificate(), getReservationInvoiceTo());
+			Invoice rectifier = reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo());
 
 			onEditSearch(event);
 			getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), rectifier.getId());

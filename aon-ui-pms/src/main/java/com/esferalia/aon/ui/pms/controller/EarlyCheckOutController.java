@@ -417,20 +417,20 @@ public class EarlyCheckOutController implements IPmsConstants {
 			    	if (isChargeCheckOut() && getReservationFinances().size() > 0) {
 						ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 						for (ITransferObject ito : obtainReservationInvoiceList(getReservation())) {
-				    		Invoice invoiceToRectificate = (Invoice)ito;
-					    	if (invoiceToRectificate != null) {
-								getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries(invoiceToRectificate));
+				    		Invoice invoiceToRectify = (Invoice)ito;
+					    	if (invoiceToRectify != null) {
+								getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries(invoiceToRectify));
 								getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 								getReservationInvoiceTo().setIssueDate(new Date());
 
-								getReservationInvoiceTo().setRegistry(invoiceToRectificate.getRegistry());
-								getReservationInvoiceTo().getRegistry().setName(invoiceToRectificate.getRegistryName());
-								getReservationInvoiceTo().getRegistry().setDocumentType(invoiceToRectificate.getRegistryDocumentType());
-								getReservationInvoiceTo().getRegistry().setDocumentCountry(invoiceToRectificate.getRegistryDocumentCountry());
-								getReservationInvoiceTo().getRegistry().setDocument(invoiceToRectificate.getRegistryDocument());
-								getReservationInvoiceTo().setAddress(obtainInvoiceAddress(invoiceToRectificate));
+								getReservationInvoiceTo().setRegistry(invoiceToRectify.getRegistry());
+								getReservationInvoiceTo().getRegistry().setName(invoiceToRectify.getRegistryName());
+								getReservationInvoiceTo().getRegistry().setDocumentType(invoiceToRectify.getRegistryDocumentType());
+								getReservationInvoiceTo().getRegistry().setDocumentCountry(invoiceToRectify.getRegistryDocumentCountry());
+								getReservationInvoiceTo().getRegistry().setDocument(invoiceToRectify.getRegistryDocument());
+								getReservationInvoiceTo().setAddress(obtainInvoiceAddress(invoiceToRectify));
 	
-								reservationInvoicing.rectify(invoiceToRectificate, getReservationInvoiceTo());
+								reservationInvoicing.rectify(invoiceToRectify, getReservationInvoiceTo());
 					    	}
 			    		}
 
@@ -536,13 +536,13 @@ public class EarlyCheckOutController implements IPmsConstants {
 		return getHotelSeries(getReservation().getHotelReservation().getScope(), false);
 	}
 
-	private String obtainHotelRectificationSeries(Invoice invoiceToRectificate) throws ManagerBeanException {
-		List<SelectItem> seriesList = getHotelRectificationSeries(invoiceToRectificate);
+	private String obtainHotelRectificationSeries(Invoice invoiceToRectify) throws ManagerBeanException {
+		List<SelectItem> seriesList = getHotelRectificationSeries(invoiceToRectify);
 		return (seriesList.size() > 0) ? (String)seriesList.get(0).getValue() : "";
 	}
 
-	public List<SelectItem> getHotelRectificationSeries(Invoice invoiceToRectificate) throws ManagerBeanException {
-		return getHotelSeries(obtainRectifiedInvoiceScope(invoiceToRectificate), true);
+	public List<SelectItem> getHotelRectificationSeries(Invoice invoiceToRectify) throws ManagerBeanException {
+		return getHotelSeries(obtainRectifiedInvoiceScope(invoiceToRectify), true);
 	}
 
 	public List<SelectItem> getHotelSeries(Scope scope, boolean rectification) throws ManagerBeanException {
