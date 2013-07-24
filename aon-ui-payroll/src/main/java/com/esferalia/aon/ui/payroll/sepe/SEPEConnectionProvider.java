@@ -228,33 +228,11 @@ public final class SEPEConnectionProvider {
 		String result = processContrataComunication(true, "<?xml>", contrataUser, mainUser, contrataPassword);
 		result = result.replaceAll("\n", "");
 		result = StringUtils.substringBetween(result, "<ERROR>", "</ERROR>");
+		System.out.println("INFO SEPE (Contrat@): " + result);
 		return TERRORES.getEnumByValue(result)!=null;
 	}
 	
 	public static boolean validateCertifica2Login(boolean b, String string, String certifica2User, String mainUser, String certifica2Password) {
-		
-//		try {
-//			URL url = Class.forName("es.fnmt.ceres.sample").getResource("certStore");
-//			String path = url.getPath();
-//			System.setProperty("javax.net.ssl.trustStore",path); 
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-//		System.setProperty("javax.net.ssl.trustStore","cacerts");
-//		System.setProperty("javax.net.ssl.trustStorePassword","changeit");
-		
-
-//		System.setProperty("javax.net.ssl.trustStore","C:\\java\\openjdk-se-7-ri\\jre\\lib\\security\\cacerts");
-//		System.setProperty("javax.net.ssl.trustStorePassword","changeit");
-//		
-//		Properties properties = System.getProperties();
-//		for(Object key: properties.keySet()){
-//			System.out.println("=========");
-//			System.out.println(key);
-//			System.out.println(properties.get(key));
-//		}
 		
 		String result = processCertificadosCommunication(true, "<?xml>", certifica2User, mainUser, certifica2Password);
 		result = result.replaceAll("\n", "");
@@ -276,31 +254,25 @@ public final class SEPEConnectionProvider {
 //		result = StringUtils.removeEnd(result, "</NUM_ENVIO>");
 //		result = StringUtils.replace(result, "<ERROR>", "");
 //		result = StringUtils.replace(result, "</ERROR>", "");
+		System.out.println("INFO SEPE (Certific@2): " + result);
 		return TERRORES.getEnumByValue(result)!=null;
 	}
 	
 	
 	
 	public static void main(String[] args) throws Exception {
-//		String DOCUMENTO = "";
-//		String USUARIO_CONECTADO = "A01306190";
-//		String USUARIO_PRINCIPAL = "A01306190";
-//		String PASSWORD = "945121010";
-//		String result = processContrataComunication(true, DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
-//		
-////		String DOCUMENTO = "C7534747";
-////		String result = processDataQuery(DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
-//		
-//		System.out.println("RESULTADO=  " );
-//		System.out.println(result);
-
 		String DOCUMENTO = "";
 		String USUARIO_CONECTADO = "A01306190";
 		String USUARIO_PRINCIPAL = "A01306190";
 		String PASSWORD = "945121010";
+//		String result = processContrataComunication(true, DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
+//		
+//		String DOCUMENTO = "C7534747";
+//		String result = processDataQuery(DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
+
 		String result = processCertificadosCommunication(true, DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
 		
-		System.out.println("RESULTADO=  " );
+		System.out.println("RESULTADO = " );
 		System.out.println(result);
 	}
 	
