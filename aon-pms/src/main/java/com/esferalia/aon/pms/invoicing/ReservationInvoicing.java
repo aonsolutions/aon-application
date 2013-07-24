@@ -107,7 +107,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			String comments = reservationInvoiceTo.getComments();
 
 			RectificationInvoicingManager rectificationManager = new RectificationInvoicingManager();
-			Invoice rectifier = rectificationManager.rectifyInvoice(invoice, series, number, date, comments, true);
+			Invoice rectifier = rectificationManager.rectifyInvoice(invoice, series, number, date, comments, false);
 			rectifier.setPosShift(reservationInvoiceTo.getPosShift());
 			recordInvoice(rectifier);
 
