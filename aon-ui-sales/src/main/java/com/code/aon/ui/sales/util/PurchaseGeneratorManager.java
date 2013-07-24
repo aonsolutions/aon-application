@@ -53,7 +53,7 @@ public class PurchaseGeneratorManager {
 	private boolean customerShippingAddress;
 	private List<TempPurchaseDetail> tempPurchaseDetail;
 	private DataModel model;
-	private boolean generated;
+	private Sales sales;
 	private TempPurchaseDetail to;
 	
 	public boolean isNew() {
@@ -61,13 +61,9 @@ public class PurchaseGeneratorManager {
 	}
 	
 	public boolean isGenerated() {
-		return generated;
+		return sales.isPurchaseGenerated();
 	}
-
-	public void setGenerated(boolean generated) {
-		this.generated = generated;
-	}
-
+	
 	public TempPurchaseDetail getTo() {
 		return to;
 	}
@@ -91,10 +87,10 @@ public class PurchaseGeneratorManager {
 	}
 
 	public PurchaseGeneratorManager(Sales sales) {
+		this.sales = sales;
 		try {
 			buildTempList(obtainSalesDetail(sales));
 			setModel(new ListDataModel(getTempPurchaseDetail()));
-			setGenerated(false);
 		} catch (ManagerBeanException e) {
 			String msg = "No se ha podido obtener el detalle del pedido.";
 			AonUtil.addErrorMessage(msg);
@@ -200,9 +196,10 @@ public class PurchaseGeneratorManager {
 				}
 				createPurchaseDetails(purchase, temp.getDetail());
 			}
+
+			afterPurchasesCreate();
 			
 			HibernateUtil.commitTransaction(sessionName);
-			setGenerated(true);
 			setModel(new ListDataModel(purchaseList));
 		} catch (Exception e) {
 			String msg = "Error al crear los pedidos de compra. ";
@@ -227,6 +224,19 @@ public class PurchaseGeneratorManager {
 			}
 		}
 		Collections.sort(getTempPurchaseDetail(), new TempPurchaseDetailComparator());
+	}
+	
+	private void afterPurchasesCreate() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Sales.class);
+			sales.setPurchaseGenerated(true);
+			bean.restoreNullSubPOJOs(sales);
+			bean.update(sales);
+		} catch (ManagerBeanException e) {
+			String msg = "No se ha podido actualizar el estado de la compra.";
+			LOGGER.error(msg);
+		}
+		
 	}
 
 	private Purchase createPurchase(Sales sales, Supplier supplier) throws ManagerBeanException {
@@ -272,10 +282,24 @@ public class PurchaseGeneratorManager {
 			} else {
 				RegistryAddress ra = sales.getCustomer().getRegistry().getDefaultAddress();
 				purchase.setCarrier(null);
-				purchase.setShippingAlternativeAddress(ra.getAddress());
-				purchase.setShippingAlternativeAddress2((StringUtils.isEmpty(ra.getAddress2())?"":ra.getAddress2()) + (StringUtils.isEmpty(ra.getAddress3())?"":" (" + ra.getAddress3() + ")"));
+				
+				StringBuffer buf = new StringBuffer();
+		    	buf.append((ra.getStreetType()!=null) ? ra.getStreetType() : "");
+		    	buf.append((ra.getStreetType()!=null) ? ". " : "");
+		    	buf.append(StringUtils.isEmpty(ra.getAddress())? "":ra.getAddress());
+		    	buf.append(StringUtils.isEmpty(ra.getNumber())?"":" ");
+		    	buf.append(StringUtils.isEmpty(ra.getNumber())?"":ra.getNumber());
+		    	purchase.setShippingAlternativeAddress(buf.toString());
+
+		    	buf = new StringBuffer();
+		    	buf.append(StringUtils.isEmpty(ra.getAddress2())?"":ra.getAddress2());
+		    	buf.append(StringUtils.isEmpty(ra.getAddress3())?"":" (");
+		    	buf.append(StringUtils.isEmpty(ra.getAddress3())?"":ra.getAddress3());
+		    	buf.append(StringUtils.isEmpty(ra.getAddress3())?"":")");
+		    	purchase.setShippingAlternativeAddress2(buf.toString());
+				
 				purchase.setShippingAlternativeZip(ra.getZip());
-				purchase.setShippingAlternativeCity(ra.getCity());
+				purchase.setShippingAlternativeCity(ra.getLocation());
 				String phone = sales.getCustomer().getRegistry().getPhone()==null?"":sales.getCustomer().getRegistry().getPhone().getValue();
 				String cellular = sales.getCustomer().getRegistry().getCellular()==null?"":sales.getCustomer().getRegistry().getCellular().getValue();
 				purchase.setShippingAlternativePhone((StringUtils.isEmpty(phone)?"":phone+" ") + (StringUtils.isEmpty(cellular)?"":cellular));

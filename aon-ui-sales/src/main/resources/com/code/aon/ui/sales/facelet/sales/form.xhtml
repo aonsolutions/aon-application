@@ -53,8 +53,9 @@
 						<aon:menuItem id="purchaseGeneration"
 							value="#{salesBundle.sales_to_purchase}"
 							title="#{salesBundle.sales_to_purchase_generation}"
-							immediate="#{true}" rendered="#{sales.pending and !sales.inDelivery and salesDetail.model.rowCount > 0}"
-							iconClass="aon-icon-open-popup"
+							immediate="#{true}" 
+							rendered="#{sales.pending and !sales.inDelivery and !sales.to.purchaseGenerated and salesDetail.model.rowCount > 0}"
+							iconClass="aon-icon-transfer"
 							actionListener="#{sales.onPurchaseGenerationShow}"
 							reRender="showPurchaseWindow">
 							<f:setPropertyActionListener target="#{sales.showPurchaseWindow}"
@@ -123,6 +124,12 @@
 										rendered="#{!sales.pending and sales.to.confidential}" />
 								</c:if>
 
+								<aon:outputText id="sales-purchaseGenerated"
+									rendered="#{sales.to.purchaseGenerated}"
+									title="#{salesBundle.sales_purchase_generation_done}"
+									value="&#160;"
+									styleClass="aon-icon-transfer aon-margin-left aon-padding-left aon-padding-right" />
+								
 								<aon:outputText styleClass="aon-margin-left aon-margin-right"
 									value="#{sales.to.status}" />
 								<aon:outputText styleClass="aon-italic aon-margin-left"
