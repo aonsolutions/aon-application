@@ -97,29 +97,37 @@
 		</aon:outputText>
 	</aon:column>
 
-	<aon:column	styleClass="aon-editDataTable-textColumn aon-width-20 aon-vertical-align-top">
+	<aon:column	styleClass="aon-editDataTable-textColumn aon-width-40 aon-vertical-align-top">
 		<f:facet name="header">
 			<aon:outputText value="&#160;" />
 		</f:facet>
-		<aon:commandLink id="invoiceLink" immediate="true"
-			styleClass="aon-button-goto" style="padding-right: 20px;" 
-			value="&#160;" title="#{bundle.aon_go}"
-			rendered="#{aonRole.financeOperator}" 
-			action="saleInvoice_form"
-			actionListener="#{controller.onLoadInvoice}"
-			reRender="aonContent">
-		</aon:commandLink>
-		<aon:htmlCommandLink id="invoiceReport" target="_blank"
-			styleClass="aon-icon-pdf"
-			value="&#160;&#160;&#160;&#160;&#160;&#160;" 
-			title="#{bundle.aon_report}"
-			rendered="#{!aonRole.financeOperator}" 
-			action="#{saleInvoiceSigner.onReport}"
-			actionListener="#{controller.onPrintInvoice}">
-			<f:param name="reportKey" value="#{company.saleInvoiceTemplateValue}" />
-			<f:setPropertyActionListener target="#{saleInvoiceSigner.reportKey}"
-				value="#{company.saleInvoiceTemplateValue}" />
-		</aon:htmlCommandLink>
+		<c:if test="#{aonRole.financeOperator}">
+			<aon:commandLink id="invoiceLink" immediate="true"
+				styleClass="aon-button-goto" style="padding-right: 15px;" 
+				value="&#160;" title="#{bundle.aon_go}"
+				action="saleInvoice_form"
+				actionListener="#{controller.onLoadInvoice}"
+				reRender="aonContent">
+			</aon:commandLink>
+			<aon:confirmButton id="invoiceUnbind" immediate="true" 
+				styleClass="aon-editDataTable-button aon-icon-delete aon-noborder"
+				title="#{financeBundle.finance_pos_shift_unbind_invoice}"
+				confirmTitle="#{bundle.aon_confirm_title}"
+				confirmMessage="#{financeBundle.finance_pos_shift_unbind_invoice_confirm}"
+				confirmActionListener="#{controller.onUnbindInvoice}" />
+		</c:if>
+		<c:if test="#{!aonRole.financeOperator}">
+			<aon:htmlCommandLink id="invoiceReport" target="_blank"
+				styleClass="aon-icon-pdf"
+				value="&#160;&#160;&#160;&#160;&#160;&#160;" 
+				title="#{bundle.aon_report}"
+				action="#{saleInvoiceSigner.onReport}"
+				actionListener="#{controller.onPrintInvoice}">
+				<f:param name="reportKey" value="#{company.saleInvoiceTemplateValue}" />
+				<f:setPropertyActionListener target="#{saleInvoiceSigner.reportKey}"
+					value="#{company.saleInvoiceTemplateValue}" />
+			</aon:htmlCommandLink>
+		</c:if>
 	</aon:column>
 
 </ui:composition>

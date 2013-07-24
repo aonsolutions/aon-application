@@ -21,9 +21,12 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.Pos;
 import com.code.aon.finance.PosShift;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -36,6 +39,8 @@ public class PosShiftController extends BasicController implements IFinanceConst
 	private CashCalculator calculator;
 	private DataModel totalShiftCountModel;
 	private DataModel financeModel;
+	private boolean showBindInvoiceWindow;
+	private String invoiceReferenceCode;
 
 	public WorkPlace getWorkPlace() {
 		return workPlace;
@@ -84,6 +89,22 @@ public class PosShiftController extends BasicController implements IFinanceConst
 
 	public void setFinanceModel(DataModel financeModel) {
 		this.financeModel = financeModel;
+	}
+
+	public boolean isShowBindInvoiceWindow() {
+		return showBindInvoiceWindow;
+	}
+
+	public void setShowBindInvoiceWindow(boolean showBindInvoiceWindow) {
+		this.showBindInvoiceWindow = showBindInvoiceWindow;
+	}
+
+	public String getInvoiceReferenceCode() {
+		return invoiceReferenceCode;
+	}
+
+	public void setInvoiceReferenceCode(String invoiceReferenceCode) {
+		this.invoiceReferenceCode = invoiceReferenceCode;
 	}
 
 	public void resetTotalShiftCount() {
@@ -262,6 +283,55 @@ public class PosShiftController extends BasicController implements IFinanceConst
 	public void onBackPosShift(ActionEvent event) throws ManagerBeanException {
 		resetTotalShiftCount();
 		setFinanceModel(null);
+	}
+
+	public void onBindInvoiceShow(ActionEvent event) throws ManagerBeanException {
+		setInvoiceReferenceCode(null);
+	}
+
+	public void onBindInvoice(ActionEvent event) throws ManagerBeanException {
+		try {
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_REFERENCE_CODE), getInvoiceReferenceCode());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
+			UserUtils.getInstance().addScopeFilterToCriteria(criteria, invoiceBean.getFieldName(IEntityAlias.INVOICE_SCOPE_ID));
+			List<ITransferObject> invoiceList = invoiceBean.getList(criteria);
+			if (invoiceList.size() == 0) {
+				String msg = "No se ha encontrado ninguna Factura con esos datos.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} else if (invoiceList.size() > 1) {
+				String msg = "Se han encontrado varias Facturas con esos datos. Revisar posibles errores.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} else {
+				Invoice invoice = (Invoice)invoiceList.get(0);
+				if (invoice.getPosShift() != null && invoice.getPosShift().getId() != null) {
+					String msg = "La Factura ya esta vinculada a un Turno de Caja.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				} else {
+					invoice.setPosShift(((PosShift)getTo()));
+					invoice.setUpdateEnabled(false);
+					BeanManager.getManagerBean(Invoice.class).update(invoice);
+				}
+			} 
+		} catch (ManagerBeanException ex) {
+			AonUtil.addErrorMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		}
+		onBackPosShift(event);
+	}
+
+	public void onUnbindInvoice(ActionEvent event) throws ManagerBeanException {
+		if (getFinanceModel().isRowAvailable()) {
+			Finance finance = (Finance)getFinanceModel().getRowData();
+			finance.getInvoice().setPosShift(null);
+			finance.getInvoice().setUpdateEnabled(false);
+			BeanManager.getManagerBean(Invoice.class).update(finance.getInvoice());
+		}
+		onBackPosShift(event);
 	}
 
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {

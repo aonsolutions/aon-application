@@ -220,23 +220,24 @@
 
 				</aon:panelGrid>
 
-				<c:if test="#{posShift.financeModel.rowCount > 0}">
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputLabel value="#{financeBundle.finance_invoice_module}" />
-						</f:facet>
-						<ui:include src="/com/code/aon/ui/finance/facelet/posShift/finance/tab_grid.xhtml" />
-					</aon:panel>
-				</c:if>
+				<aon:panel>
+					<f:facet name="header">
+						<aon:outputLabel value="#{financeBundle.finance_invoice_module}" />
+					</f:facet>
+					<ui:include src="/com/code/aon/ui/finance/facelet/posShift/finance/tab_grid.xhtml" />
+				</aon:panel>
 			</aon:div>
 
 		</aon:form>
-		
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/posShift/calculator/calculatorModal.xhtml">
 			<ui:param name="controller" value="#{posShift}" />
 			<ui:param name="cashCalculator" value="#{posShift.calculator}" />
 			<ui:param name="modalReRender" value="posShiftForm" />
 			<ui:param name="calculatorReport" value="posShiftCashCount" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/posShift/finance/modalBindInvoice.xhtml">
+			<ui:param name="controller" value="#{posShift}" />
 		</ui:include>
 		
 	</ui:define>
