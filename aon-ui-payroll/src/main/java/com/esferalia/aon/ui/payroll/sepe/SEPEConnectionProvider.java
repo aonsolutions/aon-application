@@ -43,19 +43,19 @@ public final class SEPEConnectionProvider {
 	 * CERTIFIC@2 COMMUNICATION ADDRESS LOCATION
 	 */
 //	FIXME: secure http ?? 
-//	private final static String CERTIFICADOS_COMMUNICATION_PRODUCTION_ENVIRONMENT = 	"https://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta";
-//	private final static String CERTIFICADOS_COMMUNICATION_TEST_ENVIRONMENT =			"https://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta"/>
-	private final static String CERTIFICADOS_COMMUNICATION_PRODUCTION_ENVIRONMENT = 	"http://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta";
-	private final static String CERTIFICADOS_COMMUNICATION_TEST_ENVIRONMENT =			"http://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta";
+	private final static String CERTIFICADOS_COMMUNICATION_PRODUCTION_ENVIRONMENT = 	"https://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta";
+	private final static String CERTIFICADOS_COMMUNICATION_TEST_ENVIRONMENT =			"https://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta";
+//	private final static String CERTIFICADOS_COMMUNICATION_PRODUCTION_ENVIRONMENT = 	"http://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta";
+//	private final static String CERTIFICADOS_COMMUNICATION_TEST_ENVIRONMENT =			"http://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta";
 	
 	/**
 	 * CERTIFIC@2 QUERY ADDRESS LOCATION
 	 */
 //	FIXME: secure http ?? 
-//	private final static String CERTIFICADOS_QUERY_PRODUCTION_ENVIRONMENT = 			"https://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
-//	private final static String CERTIFICADOS_QUERY_TEST_ENVIRONMENT =					"https://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
-	private final static String CERTIFICADOS_QUERY_PRODUCTION_ENVIRONMENT = 			"http://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
-	private final static String CERTIFICADOS_QUERY_TEST_ENVIRONMENT =					"http://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
+	private final static String CERTIFICADOS_QUERY_PRODUCTION_ENVIRONMENT = 			"https://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
+	private final static String CERTIFICADOS_QUERY_TEST_ENVIRONMENT =					"https://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
+//	private final static String CERTIFICADOS_QUERY_PRODUCTION_ENVIRONMENT = 			"http://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
+//	private final static String CERTIFICADOS_QUERY_TEST_ENVIRONMENT =					"http://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
 	
 	/**
 	 * CONTRAT@: COMMUNICATION
@@ -160,9 +160,7 @@ public final class SEPEConnectionProvider {
 	 */
 	private static String processCertificadosCommunication(boolean isTestEnv, String _Xml, String _UsuarioConectado, String _UsuarioPrincipal, String _Password){
 		try {
-			URL url = new URL(isTestEnv ? CERTIFICADOS_COMMUNICATION_TEST_ENVIRONMENT : CERTIFICADOS_COMMUNICATION_PRODUCTION_ENVIRONMENT);  
-//			ServicioWebEntradaService service = new ServicioWebEntradaService(url);  
-			ServicioWebEntradaService service = new ServicioWebEntradaService();  
+			ServicioWebEntradaService service = new ServicioWebEntradaService(new URL(isTestEnv ? CERTIFICADOS_COMMUNICATION_TEST_ENVIRONMENT : CERTIFICADOS_COMMUNICATION_PRODUCTION_ENVIRONMENT)); 
 			ServicioWebEntrada datos = service.getServicioWebEntrada();
 			String result = datos.ejecuta(_UsuarioConectado, _UsuarioPrincipal, _Password, _Xml, IDIOMA, COMUNIDAD);
 			return result;
@@ -226,15 +224,15 @@ public final class SEPEConnectionProvider {
 	
 	public static boolean validateContrataLogin(boolean b, String string, String contrataUser, String mainUser, String contrataPassword) {
 		String result = processContrataComunication(true, "<?xml>", contrataUser, mainUser, contrataPassword);
+		System.out.println("INFO SEPE (Contrat@): " + result);
 		result = result.replaceAll("\n", "");
 		result = StringUtils.substringBetween(result, "<ERROR>", "</ERROR>");
-		System.out.println("INFO SEPE (Contrat@): " + result);
 		return TERRORES.getEnumByValue(result)!=null;
 	}
 	
 	public static boolean validateCertifica2Login(boolean b, String string, String certifica2User, String mainUser, String certifica2Password) {
-		
 		String result = processCertificadosCommunication(true, "<?xml>", certifica2User, mainUser, certifica2Password);
+		System.out.println("INFO SEPE (Certific@2): " + result);
 		result = result.replaceAll("\n", "");
 		
 //		<?xml version='1.0' encoding='ISO-8859-1'?>
@@ -245,16 +243,7 @@ public final class SEPEConnectionProvider {
 //		<DESC_ERROR></DESC_ERROR>
 //		</COMUNICACION>
 		
-		result = StringUtils.substringBetween(result, "<ERROR>", "</ERROR>");
-		
-//		result = StringUtils.removeStart(result, "<?xml version='1.0' encoding='ISO-8859-1'?>");
-//		result = StringUtils.removeStart(result, "<COMUNICACION>");
-//		result = StringUtils.removeStart(result, "<NUM_ENVIO>");
-//		result = StringUtils.removeEnd(result, "</COMUNICACION>");
-//		result = StringUtils.removeEnd(result, "</NUM_ENVIO>");
-//		result = StringUtils.replace(result, "<ERROR>", "");
-//		result = StringUtils.replace(result, "</ERROR>", "");
-		System.out.println("INFO SEPE (Certific@2): " + result);
+		result = StringUtils.substringBetween(result, "<COD_ERROR>", "</COD_ERROR>");
 		return TERRORES.getEnumByValue(result)!=null;
 	}
 	
