@@ -123,7 +123,6 @@ public class PmsUtil {
 		fillExtensions(document);
 		OutputFormat format = OutputFormat.createPrettyPrint();
 		format.setNewLineAfterDeclaration(false);
-		format.setEncoding("ISO-8859-1");
 		XmlWriter writer = new XmlWriter( new FileWriter(file), format );
 		writer.write( document );		
 		writer.close();
