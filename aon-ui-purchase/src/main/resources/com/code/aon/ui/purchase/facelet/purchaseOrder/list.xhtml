@@ -118,7 +118,7 @@
 									<f:facet name="header">
 										<aon:outputLabel value="#{bundle.aon_price}" />
 									</f:facet>
-									<aon:outputText value="#{detail.proposalDetail.item.price}" 
+									<aon:outputText value="#{detail.proposalDetail.price}" 
 										rendered="#{to.groupIndex == detail.groupIndex}" >
 										<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 									</aon:outputText>
@@ -128,7 +128,7 @@
 									<f:facet name="header">
 										<aon:outputLabel value="#{bundle.aon_total}" />
 									</f:facet>
-									<aon:outputText value="#{detail.proposalDetail.quantity * detail.proposalDetail.item.price}" 
+									<aon:outputText value="#{detail.proposalDetail.quantity * detail.proposalDetail.price}" 
 										rendered="#{to.groupIndex == detail.groupIndex}" >
 										<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 									</aon:outputText>

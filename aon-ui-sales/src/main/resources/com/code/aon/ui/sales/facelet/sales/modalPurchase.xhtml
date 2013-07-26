@@ -110,7 +110,7 @@
 														<aon:abbreviateConverter maxWidth="64" />
 													</aon:outputText>
 												</aon:column>
-										
+												
 												<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 													<f:facet name="header">
 														<aon:outputLabel for="Supplier_id" value="#{supplierBundle.supplier_supplier}" />
@@ -128,6 +128,20 @@
 													</ui:include>
 												</aon:column>
 									
+												<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+													<f:facet name="header">
+														<aon:outputLabel for="PurchaseDetail_discount" value="#{bundle.aon_discount}" />
+													</f:facet>
+													<aon:outputText value="#{to.detail.discountExpression.discountExpr}"
+														rendered="#{formList}">
+														<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+													</aon:outputText>
+													<aon:inputText id="PurchaseDetail_discount" 
+														value="#{controller.to.detail.discountExpression.discountExpr}" rendered="#{formEdit}"
+														reRender="SalesDetail_amount" 
+														size="5" />
+												</aon:column>
+												
 											</ui:define>
 										</ui:decorate>
 									</c:if>

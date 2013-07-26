@@ -263,7 +263,7 @@ public class PurchaseOrderController {
 				wp = pd.getProposal().getWorkPlace();
 				groupIndex++;
 				purchaseGroup = new PurchaseGroup();
-				purchaseGroup.setSupplier(supplier);
+				purchaseGroup.setItemSupplier((ItemSupplier) getItemSuppliers(pd.getItem(), supplier).get(0));
 				purchaseGroup.setWorkPlace(wp);
 				purchaseGroup.setDepartment(dep);
 				purchaseGroup.setComments(pd.getProposal().getRemarks());
@@ -272,13 +272,14 @@ public class PurchaseOrderController {
 				purchaseGroup.setTotalAmount(0.0);
 				purchaseGroupList.add(purchaseGroup);
 			}
+			pd.setPrice(purchaseGroup.getItemSupplier().getPrice());
 			GroupDetail gd = new GroupDetail();
 			gd.setProposalDetail(pd);
 			gd.setChecked(true);
 			gd.setGroupIndex(groupIndex);
 			purchaseGroup.getDetailList().add(gd);
 			purchaseGroup.setItemReturn(getParams().isItemReturn());
-			purchaseGroup.setTotalAmount(purchaseGroup.getTotalAmount()+(gd.getProposalDetail().getItem().getPrice()*gd.getProposalDetail().getQuantity()));
+			purchaseGroup.setTotalAmount(purchaseGroup.getTotalAmount()+(gd.getProposalDetail().getPrice()*gd.getProposalDetail().getQuantity()));
 		}
 	}
 	
@@ -385,11 +386,7 @@ public class PurchaseOrderController {
 		} else {
 			ProposalDetail proposalDetail = (ProposalDetail)getDetailModel().getRowData();
 			try {
-				IManagerBean bean = BeanManager.getManagerBean(ItemSupplier.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), proposalDetail.getItem().getId());
-				criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
-				for (ITransferObject ito : bean.getList(criteria)) {
+				for (ITransferObject ito : getItemSuppliers(proposalDetail.getItem(), null)) {
 					ItemSupplier is = (ItemSupplier) ito;
 					if(is.getWorkPlace()==null){
 						SelectItem i = new SelectItem(is.getSupplier(), is.getSupplier().getRegistry().getFullName());
@@ -407,6 +404,17 @@ public class PurchaseOrderController {
 			}
 		}
 		return list;
+	}
+	
+	private List<ITransferObject> getItemSuppliers(Item item, Supplier supplier) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(ItemSupplier.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), item.getId());
+		if(supplier!=null && supplier.getId()!=null){
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_SUPPLIER_ID), supplier.getId());
+		}
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
+		return bean.getList(criteria);
 	}
 	
 	public boolean isReturnedProduct(){
@@ -473,7 +481,7 @@ public class PurchaseOrderController {
 	}
 	
 	public class PurchaseGroup{
-		private Supplier supplier;
+		private ItemSupplier itemSupplier;
 		private WorkPlace workPlace;
 		private Department department;
 		private int groupIndex;
@@ -495,10 +503,13 @@ public class PurchaseOrderController {
 			this.comments = comments;
 		}
 		public Supplier getSupplier() {
-			return supplier;
+			return itemSupplier.getSupplier();
 		}
-		public void setSupplier(Supplier supplier) {
-			this.supplier = supplier;
+		public ItemSupplier getItemSupplier() {
+			return itemSupplier;
+		}
+		public void setItemSupplier(ItemSupplier itemSupplier) {
+			this.itemSupplier = itemSupplier;
 		}
 		public WorkPlace getWorkPlace() {
 			return workPlace;

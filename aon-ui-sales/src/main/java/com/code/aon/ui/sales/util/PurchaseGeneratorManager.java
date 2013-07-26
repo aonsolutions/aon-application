@@ -25,6 +25,7 @@ import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemSupplier;
+import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
@@ -140,6 +141,7 @@ public class PurchaseGeneratorManager {
 			SalesDetail detail = (SalesDetail) to;
 			Supplier supplier = obtainPreferedSupplier(detail);
 			TempPurchaseDetail temp = new TempPurchaseDetail();
+			detail.setDiscountExpression(new DiscountExpression("0"));
 			temp.setDetail(detail);
 			temp.setSupplier(supplier);
 			getTempPurchaseDetail().add(temp);
@@ -324,7 +326,7 @@ public class PurchaseGeneratorManager {
 		detail.setDescription(salesDetail.getDescription());
 		detail.setQuantity(salesDetail.getQuantity());
 		detail.setPrice(obtainItemPrice(purchase.getSupplier(), salesDetail.getItem()));
-		detail.setDiscountExpression(null);
+		detail.setDiscountExpression(salesDetail.getDiscountExpression());
 		detail.setTaxes(salesDetail.getTaxes());
 		detail.setStatus(PurchaseDetailStatus.PENDING);
 		detail.setDelivered(0);

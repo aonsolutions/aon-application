@@ -159,7 +159,7 @@ public class PurchaseUtils {
 		createPurchaseDetail(purchase, proposalDetail.getItem(), project,
 				proposalDetail, calculateNextLine(purchase), proposalDetail
 						.getItem().getProduct().getName(), quantity,
-				proposalDetail.getItem().getPrice(), discountExpression, 0,
+				proposalDetail.getPrice(), discountExpression, 0,
 				PurchaseDetailStatus.PENDING, 0);
 	}
 	
