@@ -851,9 +851,15 @@ public class ProjectReservationController extends BasicController implements IPm
 
 			ProjectReservation reservation = (ProjectReservation)this.getTo();
 			Invoice invoice = (Invoice)getInvoiceModel().getRowData();
-			if ((reservation.isGuestHolder() || invoice.isService()) && (!PosUtils.isUserPosShiftOpened() && !AonUtil.getRoleManager().isFinanceOperator()) ) {
+			if ((reservation.isGuestHolder() || invoice.isService()) && !PosUtils.isUserPosShiftOpened()) {
 				setShowModificationWindow(false);
 				String msg = "No se puede Modificar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			if (!invoice.getPosShift().getId().equals(PosUtils.getUserPosShift().getId()) || !AonUtil.getRoleManager().isFinanceOperator() ) {
+				setShowModificationWindow(false);
+				String msg = "No se puede Modificar. La factura pertenece a otro turno.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
