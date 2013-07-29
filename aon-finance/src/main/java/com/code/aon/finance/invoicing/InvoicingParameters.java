@@ -2,6 +2,7 @@ package com.code.aon.finance.invoicing;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.code.aon.common.BeanManager;
@@ -200,6 +201,14 @@ public class InvoicingParameters {
 		setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
 		setYear(calendar.get(Calendar.YEAR));
 		setConfidential(false);
+	}
+
+	public List<Integer> getScopeIds() {
+		List<Integer> scopeIds = new LinkedList<Integer>();
+		for (Scope scope : getScopes()) {
+			scopeIds.add(scope.getId());
+		}
+		return scopeIds;
 	}
 
 }

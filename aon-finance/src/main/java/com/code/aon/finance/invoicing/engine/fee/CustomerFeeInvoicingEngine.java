@@ -19,7 +19,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.finance.CustomerFee;
@@ -81,27 +80,11 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		criteria.addExpression(createFromToExpression(params.getMonth(), params.getYear()));
 		if (params.getInvoicingGroup() != null && params.getInvoicingGroup().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_INVOICING_GROUP_ID), params.getInvoicingGroup().getId());
-		/*} else {
-			Expression scopeExpression = ExpressionUtilities.getNullExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_INVOICING_GROUP));
-			if (params.getScopes() != null && params.getScopes().size() > 0) {
-				String scopeAlias = feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_INVOICING_GROUP_CUSTOMER_SCOPE_ID);
-				for (Scope scope : params.getScopes()) {
-					scopeExpression = ExpressionUtilities.getOrExpression(scopeExpression, ExpressionUtilities.getEqualExpression(scopeAlias, scope.getId()));
-				}
-			}
-			criteria.addExpression(scopeExpression);*/
 		}
 		if (params.getCustomer() != null && params.getCustomer().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_ID), params.getCustomer().getId());
 		} else {
-			Expression scopeExpression = ExpressionUtilities.getNullExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_SCOPE));
-			if (params.getScopes() != null && params.getScopes().size() > 0) {
-				String scopeAlias = feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_SCOPE_ID);
-				for(Scope scope : params.getScopes()) {
-					scopeExpression = ExpressionUtilities.getOrExpression(scopeExpression, ExpressionUtilities.getEqualExpression(scopeAlias, scope.getId()));
-				}
-			}
-			criteria.addExpression(scopeExpression);
+			criteria.addInExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_SCOPE_ID), params.getScopeIds());
 		}
 		if (params.getItem() != null && params.getItem().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_ITEM_ID), params.getItem().getId());
