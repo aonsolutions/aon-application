@@ -81,7 +81,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		criteria.addExpression(createFromToExpression(params.getMonth(), params.getYear()));
 		if (params.getInvoicingGroup() != null && params.getInvoicingGroup().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_INVOICING_GROUP_ID), params.getInvoicingGroup().getId());
-		} else {
+		/*} else {
 			Expression scopeExpression = ExpressionUtilities.getNullExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_INVOICING_GROUP));
 			if (params.getScopes() != null && params.getScopes().size() > 0) {
 				String scopeAlias = feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_INVOICING_GROUP_CUSTOMER_SCOPE_ID);
@@ -89,7 +89,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 					scopeExpression = ExpressionUtilities.getOrExpression(scopeExpression, ExpressionUtilities.getEqualExpression(scopeAlias, scope.getId()));
 				}
 			}
-			criteria.addExpression(scopeExpression);
+			criteria.addExpression(scopeExpression);*/
 		}
 		if (params.getCustomer() != null && params.getCustomer().getId() != null) {
 			criteria.addEqualExpression(feeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_ID), params.getCustomer().getId());
