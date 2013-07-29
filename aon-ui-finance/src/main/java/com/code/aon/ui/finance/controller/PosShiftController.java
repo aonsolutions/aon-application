@@ -307,15 +307,9 @@ public class PosShiftController extends BasicController implements IFinanceConst
 				throw new AbortProcessingException(msg);
 			} else {
 				Invoice invoice = (Invoice)invoiceList.get(0);
-				if (invoice.getPosShift() != null && invoice.getPosShift().getId() != null) {
-					String msg = "La Factura ya esta vinculada a un Turno de Caja.";
-					AonUtil.addErrorMessage(msg);
-					throw new AbortProcessingException(msg);
-				} else {
-					invoice.setPosShift(((PosShift)getTo()));
-					invoice.setUpdateEnabled(false);
-					BeanManager.getManagerBean(Invoice.class).update(invoice);
-				}
+				invoice.setPosShift(((PosShift)getTo()));
+				invoice.setUpdateEnabled(false);
+				BeanManager.getManagerBean(Invoice.class).update(invoice);
 			} 
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
