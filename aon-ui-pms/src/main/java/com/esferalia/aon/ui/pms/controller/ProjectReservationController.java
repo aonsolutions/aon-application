@@ -857,7 +857,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-			if (!invoice.getPosShift().getId().equals(PosUtils.getUserPosShift().getId()) || !AonUtil.getRoleManager().isFinanceOperator() ) {
+			if (!invoice.getPosShift().getId().equals(PosUtils.getUserPosShift().getId()) && !AonUtil.getRoleManager().isFinanceOperator() ) {
 				setShowModificationWindow(false);
 				String msg = "No se puede Modificar. La factura pertenece a otro turno.";
 				AonUtil.addErrorMessage(msg);

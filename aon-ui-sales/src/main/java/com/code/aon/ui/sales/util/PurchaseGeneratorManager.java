@@ -38,6 +38,7 @@ import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.sales.ISalesMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -258,7 +259,10 @@ public class PurchaseGeneratorManager {
 		purchase.setSecurityLevel(sales.getSecurityLevel());
 		purchase.setStatus(PurchaseStatus.PENDING);
 		purchase.setComments(null);
-		purchase.setRemarks(null);
+		if(StringUtils.isNotBlank(sales.getPurchaseReference())){
+			String message = AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_PURCHASE_REFERENCE);
+			purchase.setRemarks(message + ": " +  sales.getPurchaseReference());
+		}
 		purchase.setEmailCommunication(false);
 		purchase.setConfidential(sales.isConfidential());
 		
