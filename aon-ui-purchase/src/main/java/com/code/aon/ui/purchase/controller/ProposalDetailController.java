@@ -3,7 +3,9 @@ package com.code.aon.ui.purchase.controller;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.product.Item;
 import com.code.aon.purchase.ProposalDetail;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
@@ -20,6 +22,14 @@ public class ProposalDetailController extends LinesController implements IPurcha
 		ProposalController proposalController = (ProposalController) AonUtil.getRegisteredBean(PROPOSAL_CONTROLLER_NAME);
 		proposalController.refresh(event);
 		onSearch(event);
+	}
+	
+	public void onItemChanged(LookupChangeEvent event) throws ManagerBeanException {
+		ProposalDetail proposalDetail = (ProposalDetail) getTo();
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			Item item = (Item)event.getNewValue();
+			proposalDetail.setPrice(item.getPrice());
+		}
 	}
 	
 }

@@ -263,7 +263,7 @@ public class PurchaseOrderController {
 				wp = pd.getProposal().getWorkPlace();
 				groupIndex++;
 				purchaseGroup = new PurchaseGroup();
-				purchaseGroup.setItemSupplier((ItemSupplier) getItemSuppliers(pd.getItem(), supplier).get(0));
+				purchaseGroup.setSupplier(supplier);
 				purchaseGroup.setWorkPlace(wp);
 				purchaseGroup.setDepartment(dep);
 				purchaseGroup.setComments(pd.getProposal().getRemarks());
@@ -272,7 +272,6 @@ public class PurchaseOrderController {
 				purchaseGroup.setTotalAmount(0.0);
 				purchaseGroupList.add(purchaseGroup);
 			}
-			pd.setPrice(purchaseGroup.getItemSupplier().getPrice());
 			GroupDetail gd = new GroupDetail();
 			gd.setProposalDetail(pd);
 			gd.setChecked(true);
@@ -364,6 +363,8 @@ public class PurchaseOrderController {
 	public void onAcceptDetail(ActionEvent event) throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(ProposalDetail.class);
 		ProposalDetail pd = (ProposalDetail) getDetailModel().getRowData();
+		pd.setSkipProposalUpdating(true);
+		pd.setPrice( ((ItemSupplier)getItemSuppliers(pd.getItem(), pd.getSupplier()).get(0)).getPrice() );
 		bean.update(pd);
 		setDetailIndex(-1);
 	}
@@ -481,7 +482,7 @@ public class PurchaseOrderController {
 	}
 	
 	public class PurchaseGroup{
-		private ItemSupplier itemSupplier;
+		private Supplier supplier;
 		private WorkPlace workPlace;
 		private Department department;
 		private int groupIndex;
@@ -503,13 +504,10 @@ public class PurchaseOrderController {
 			this.comments = comments;
 		}
 		public Supplier getSupplier() {
-			return itemSupplier.getSupplier();
+			return supplier;
 		}
-		public ItemSupplier getItemSupplier() {
-			return itemSupplier;
-		}
-		public void setItemSupplier(ItemSupplier itemSupplier) {
-			this.itemSupplier = itemSupplier;
+		public void setSupplier(Supplier supplier) {
+			this.supplier = supplier;
 		}
 		public WorkPlace getWorkPlace() {
 			return workPlace;

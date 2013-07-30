@@ -42,6 +42,8 @@
 					<ui:param name="lookupInputOnFocus" value="ProposalDetail_quantity" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<ui:param name="lookupControllerListener" value="#{proposal.departmentItemFilter}" />
+					<aon:methodParam name="lookupChangeListener"
+						value="#{proposalDetail.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>		
 				<f:facet name="footer">
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
@@ -55,6 +57,8 @@
 						<ui:param name="lookupInputOnFocus" value="ProposalDetail_quantity-New" />
 						<ui:param name="lookupRendered" value="#{formNew}" />
 						<ui:param name="lookupControllerListener" value="#{proposal.departmentItemFilter}" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{proposalDetail.onItemChanged}" type="lookupChangeListener" />
 					</ui:include>		
 				</f:facet>
 			</aon:column>
@@ -83,7 +87,7 @@
 					<f:facet name="header">
 						<aon:outputLabel value="#{bundle.aon_price}" />
 					</f:facet>
-					<aon:outputText value="#{to.item.price}" rendered="#{formList}">
+					<aon:outputText value="#{to.price}" rendered="#{formList}">
 						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 					</aon:outputText>
 					<f:facet name="footer">
@@ -94,7 +98,7 @@
 					<f:facet name="header">
 						<aon:outputLabel value="#{bundle.aon_total}" />
 					</f:facet>
-					<aon:outputText value="#{to.quantity * to.item.price}" rendered="#{formList}">
+					<aon:outputText value="#{to.quantity * to.price}" rendered="#{formList}">
 						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 					</aon:outputText>
 					<f:facet name="footer">
