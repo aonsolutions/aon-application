@@ -134,7 +134,7 @@
 			<aon:commandButton id="reservationInvoice-modify"
 				styleClass="aon-icon-edit aon-noborder"
 				value="&#160;" title="#{pmsBundle.pms_to_modify_invoice_label}"
-				rendered="#{to.noRectification and reservation.to.guestHolder and to.allFinancePending}"
+				rendered="#{to.noRectification and (to.service or reservation.to.guestHolder) and to.allFinancePending}"
 				actionListener="#{controller.onModifyInvoiceShow}"
 				reRender="showModificationWindow">
 				<f:setPropertyActionListener target="#{controller.showModificationWindow}"
