@@ -156,7 +156,7 @@ public class ProjectReservationPermission {
 
 	public boolean isCancelAllowed() throws ManagerBeanException {
 		Date now = new Date();
-		boolean roleAllowed = isRoleAdmin() || (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleFinance() && (isAfterCheckOut(now) || isInHouse(now)));
+		boolean roleAllowed = (isRoleCommercial() && isBeforeCheckIn(now)) || (isRoleFinance() && !isBeforeCheckIn(now));
 		return roleAllowed && (reservation.isActive() || reservation.isBlocked()) && (reservation.isNoCheck() || reservation.isNoShow());
 	}
 
