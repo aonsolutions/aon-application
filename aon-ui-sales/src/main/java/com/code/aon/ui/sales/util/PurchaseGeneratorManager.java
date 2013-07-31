@@ -36,6 +36,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
+import com.code.aon.seller.Seller;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.sales.ISalesMessages;
@@ -179,17 +180,16 @@ public class PurchaseGeneratorManager {
 	}
 	
 	public void onExecute(ActionEvent event){
+		beforePurchasesCreate();
+
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Finance.class.getName());
-		
 		try {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
-
-			beforePurchasesCreate();
-			
+			// begin process 
 			List<Purchase> purchaseList = new LinkedList<Purchase>();
 			Purchase purchase = null;
 			for(TempPurchaseDetail temp: getTempPurchaseDetail()){
@@ -199,9 +199,7 @@ public class PurchaseGeneratorManager {
 				}
 				createPurchaseDetails(purchase, temp.getDetail());
 			}
-
-			afterPurchasesCreate();
-			
+			// end process 
 			HibernateUtil.commitTransaction(sessionName);
 			setModel(new ListDataModel(purchaseList));
 		} catch (Exception e) {
@@ -218,6 +216,8 @@ public class PurchaseGeneratorManager {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
+
+		afterPurchasesCreate();
 	}
 	
 	private void beforePurchasesCreate() {
@@ -234,12 +234,15 @@ public class PurchaseGeneratorManager {
 			IManagerBean bean = BeanManager.getManagerBean(Sales.class);
 			sales.setPurchaseGenerated(true);
 			bean.restoreNullSubPOJOs(sales);
-			bean.update(sales);
+			sales = (Sales) bean.update(sales);
+			// initialize lookups
+			if(sales.getSeller()==null){
+				sales.setSeller((Seller) BeanManager.getManagerBean(Seller.class).createNewTo());
+			}
 		} catch (ManagerBeanException e) {
 			String msg = "No se ha podido actualizar el estado de la compra.";
 			LOGGER.error(msg);
 		}
-		
 	}
 
 	private Purchase createPurchase(Sales sales, Supplier supplier) throws ManagerBeanException {
