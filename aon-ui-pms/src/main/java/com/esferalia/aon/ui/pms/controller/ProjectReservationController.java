@@ -921,6 +921,10 @@ public class ProjectReservationController extends BasicController implements IPm
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 	}
+	
+	public boolean isInvoiceFinancesModifyAllowed() {
+		return getInvoiceToModify().getPosShift().getId().equals(PosUtils.getUserPosShift().getId());
+	}
 
 	private boolean isFinancesModified() throws ManagerBeanException {
 		if (!getInvoiceToModify().getPosShift().equals(getReservationInvoiceTo().getPosShift())) {

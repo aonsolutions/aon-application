@@ -30,6 +30,7 @@
 						</aon:div>
 						<aon:selectOneMenu id="ProjectReservation_financePayMethod"
 							value="#{hotelInvoiceFinance.payMethod}"
+							disabled="#{!controller.invoiceFinancesModifyAllowed}"
 							rendered="#{controller.reservationInvoiceTo.directCustomer}"
 							ajaxSingle="true">
 							<f:selectItem itemLabel="-" value="#{null}" />
@@ -51,12 +52,14 @@
 							<aon:inputText id="ProjectReservation_financeAmount"
 								value="#{hotelInvoiceFinance.amount}"
 								required="true" size="5"
+								disabled="#{!controller.invoiceFinancesModifyAllowed}"
 								reRender="invoiceFinancesDiv" ajaxSingle="true" />
 							<aon:commandButton
 								id="Finance-removeButton" title="#{bundle.aon_remove}"
 								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-minus"
 								rendered="#{hotelInvoiceFinance != controller.reservationInvoiceTo.firstFinance}"
 								actionListener="#{controller.onRemoveFinance}"
+								disabled="#{!controller.invoiceFinancesModifyAllowed}"
 								reRender="invoiceFinancesDiv">
 								<f:param name="hotelInvoiceFinanceIndex" value="#{hotelInvoiceFinanceKey}"/>
 							</aon:commandButton>
@@ -65,6 +68,7 @@
 								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-add"
 								rendered="#{hotelInvoiceFinance == controller.reservationInvoiceTo.lastFinance}"
 								actionListener="#{controller.onNewFinance}"
+								disabled="#{!controller.invoiceFinancesModifyAllowed}"
 								reRender="invoiceFinancesDiv" />
 						</aon:div>
 					</aon:column>
