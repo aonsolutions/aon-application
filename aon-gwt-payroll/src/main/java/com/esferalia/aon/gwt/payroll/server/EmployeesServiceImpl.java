@@ -41,6 +41,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.faces.context.FacesContext;
+
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
 import org.apache.commons.lang.StringUtils;
@@ -88,6 +91,8 @@ import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.IrpfOutcome;
+import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
@@ -96,6 +101,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorConte
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
+import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
@@ -501,6 +507,25 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	public String getIrpfDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
+			throws IllegalArgumentException {
+
+		Map<Object, Object> parameters = new HashMap<Object, Object>(
+				JR_HTML_EXPORTER_PARAMS);
+		parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /*
+																		 * not
+																		 * roud
+																		 * to
+																		 * int
+																		 */);
+
+		parameters.put(JRParameter.REPORT_LOCALE, new Locale("es", "ES"));
+		String html = getIrpfDraftReceiptHTML(salaryDraft, parameters);
+
+		return html;
+
+	}
+
 	@Override
 	public Double eval(String expression, SalaryDraft salaryDraft)
 			throws IllegalArgumentException, EvalException {
@@ -667,6 +692,69 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	public String getIrpfDraftReceipt(final SalaryDraft draft, String mime)
+			throws IllegalArgumentException {
+
+		try {
+
+			initFacesContext();
+
+			ReportManager reportManager = new ReportManager();
+			reportManager.setOutputFormat(OutputFormat.PDF);
+
+			ICollectionProvider provider = new ICollectionProvider() {
+
+				@Override
+				public Collection getCollection() {
+					try {
+						return getCollection(true);
+					} catch (ManagerBeanException e) {
+						// TODO Auto-generated catch block
+						return null;
+					}
+				}
+
+				@Override
+				public Collection getCollection(boolean arg0)
+						throws ManagerBeanException {
+					return Collections.singletonList(getIrpfOutcome(draft));
+				}
+
+			};
+
+			reportManager.setCollectionProvider(provider);
+
+			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
+			reportManager.execute(reportOut, "irpf2013");
+
+			byte reportByteArray[] = reportOut.toByteArray();
+
+			ByteArrayInputStream reportInput = new ByteArrayInputStream(
+					reportByteArray);
+
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent(mime, reportInput, stringWriter);
+
+			reportOut.close();
+			reportInput.close();
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+
+		} catch (ReportException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+
+	}
+
 	public String getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview,
 			int zoom) throws IllegalArgumentException {
 		Map<Object, Object> parameters = new HashMap<Object, Object>(
@@ -782,6 +870,58 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			String salaryReport = getSalaryReport();
 			reportManager.execute(out, salaryReport, parameters);
+
+			return out.toString();
+
+		} catch (ReportException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+
+	}
+
+	public String getIrpfDraftReceiptHTML(final SalaryDraft draft,
+			Map<Object, Object> parameters) throws IllegalArgumentException {
+
+		try {
+
+			initFacesContext();
+			
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			ctx.getViewRoot().setLocale(new Locale("es", "ES"));
+			
+
+			ReportManager reportManager = new ReportManager();
+			reportManager.setOutputFormat(OutputFormat.HTML);
+
+			ICollectionProvider provider = new ICollectionProvider() {
+
+				@Override
+				public Collection getCollection() {
+					try {
+						return getCollection(true);
+					} catch (ManagerBeanException e) {
+						// TODO Auto-generated catch block
+						return null;
+					}
+				}
+
+				@Override
+				public Collection getCollection(boolean arg0)
+						throws ManagerBeanException {
+					return Collections.singletonList(getIrpfOutcome(draft));
+				}
+
+			};
+
+			reportManager.setCollectionProvider(provider);
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+			String irpfReport = "irpf2013";
+			reportManager.execute(out, irpfReport, parameters);
 
 			return out.toString();
 
@@ -1183,13 +1323,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 
 			sql += " ORDER BY " + PersonColumns.FIRST_SURNAME + " ,"
-					+ PersonColumns.SECOND_SURNAME + " ,"
-					+ PersonColumns.NAME + " ,"
-					+ ContractColumns.START_DATE + " DESC " + " LIMIT ?, ? ";
+					+ PersonColumns.SECOND_SURNAME + " ," + PersonColumns.NAME
+					+ " ," + ContractColumns.START_DATE + " DESC "
+					+ " LIMIT ?, ? ";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, workplaceId);
-			
+
 			stmt.setDate(2, new java.sql.Date(endDate.getTime()));
 
 			stmt.setInt(3, offset);
@@ -1388,8 +1528,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			String sql = "SELECT * " + " FROM " + REGISTRY + ", " + ENTERPRISE
 					+ " LEFT JOIN " + WORKPLACE + " ON ( " + ENTERPRISE + "."
 					+ EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "."
-					+ WorkplaceColumns.ENTERPRISE + " AND "
-					+ WORKPLACE + "." + WorkplaceColumns.SCOPE + " IN ( SELECT "
+					+ WorkplaceColumns.ENTERPRISE + " AND " + WORKPLACE + "."
+					+ WorkplaceColumns.SCOPE + " IN ( SELECT "
 					+ UserScopeColumns.SCOPE + " FROM " + USER_SCOPE
 					+ " WHERE " + UserScopeColumns.USER_ID + " = ? " + ") )"
 					+ " LEFT JOIN " + PAYROLL_WORKPLACE + " ON ( " + WORKPLACE
@@ -1400,8 +1540,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					+ "." + AgreementColumns.ID + " )" + " WHERE " + REGISTRY
 					+ "." + RegistryColumns.ID + " = ?" + " AND " + REGISTRY
 					+ "." + RegistryColumns.ID + " = " + ENTERPRISE + "."
-					+ EnterpriseColumns.REGISTRY 
-					+ " ORDER BY " + " UPPER("+ WORKPLACE + "." +  WorkplaceColumns.DESCRIPTION + " )";
+					+ EnterpriseColumns.REGISTRY + " ORDER BY " + " UPPER("
+					+ WORKPLACE + "." + WorkplaceColumns.DESCRIPTION + " )";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, userID);
@@ -1638,7 +1778,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		IContractSalaryCalculatorContext ctx;
 		try {
 			conn = getConnection();
-			ctx = getSalaryCalculatorContext(conn, draft);
+			ctx = getSalaryCalculatorContext(conn, draft, draftBuilder);
 			draftBuilder.setDefined(getDefinedMap(ctx));
 			calculator.calculate(ctx);
 		} catch (ExpressionException e) {
@@ -1721,7 +1861,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			conn = getConnection();
 			ISalaryCalculatorContext ctx = getSalaryCalculatorContext(conn,
-					draft);
+					draft, null);
 			return ctx.getExpressionContext().eval(expression,
 					ctx.getStartDate(), ctx.getEndDate(), toType);
 		} catch (SQLException e) {
@@ -1757,7 +1897,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			conn = getConnection();
 
 			ISalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(
-					conn, draft);
+					conn, draft, null);
 			ExpressionContext expressionContext = calculatorCtx
 					.getExpressionContext();
 
@@ -1843,7 +1983,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		ISalaryCalculatorContext ctx;
 		try {
 			conn = getConnection();
-			ctx = getSalaryCalculatorContext(conn, draft);
+			ctx = getSalaryCalculatorContext(conn, draft, null);
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator
 					.calculate(ctx);
 
@@ -1875,8 +2015,93 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	private static IrpfOutcome getIrpfOutcome(SalaryDraft draft) {
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			Calendar endCalendar = Calendar.getInstance();
+			endCalendar.setTime(draft.getStartDate());
+			endCalendar.set(Calendar.DAY_OF_YEAR,
+					endCalendar.getActualMaximum(Calendar.DAY_OF_YEAR));
+			Date endYear = endCalendar.getTime();
+
+			Criteria contractCriteria = new Criteria();
+			contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
+					+ ContractColumns.ID, draft.getEmployee().getId());
+
+			IIrpfCalculatorContext irpfCalculatorContext = getIrpfCalculatorContext(
+					draft, conn, draft.getStartDate(), endYear,
+					contractCriteria);
+
+			return IrpfCalculator.calculateIrpf(irpfCalculatorContext);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+
+	}
+
+	private static IIrpfCalculatorContext getIrpfCalculatorContext(
+			SalaryDraft draft, Connection conn, Date startDate, Date endDate,
+			Criteria criteria) {
+		try {
+			SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
+					conn, startDate, endDate, endDate, criteria) {
+
+				@Override
+				protected double getIrpf() {
+					return 0.00;
+				}
+
+			};
+
+			SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
+					draft, sqlContractSalaryCalculatorCtx);
+
+			return new SQLIrpfCalculatorContext(conn, startDate, endDate,
+					sqlDraftSalaryCalculatorCtx) {
+				@Override
+				public String getNif() {
+					String nif = super.getNif();
+					return IrpfCalculator.isValidNif(nif) ? nif
+							: IrpfCalculator.DEFAULT_NIF;
+				}
+
+				@Override
+				public String getApellidosNombre() {
+					return "TORVALDS BENEDICT LINUS";
+				}
+
+				@Override
+				public String getRetenedorNif() {
+					String nif = super.getRetenedorNif();
+					return IrpfCalculator.isValidNif(nif) ? nif
+							: IrpfCalculator.DEFAULT_CIF;
+				}
+
+				@Override
+				public String getRetenedorApellidosNombre() {
+					return "LINUX FOUNDATION";
+				}
+			};
+		} catch (SQLException e) {
+			throw new ExpressionExceptionWrapper(new ExpressionException(e));
+		} catch (ExpressionException e) {
+			throw new ExpressionExceptionWrapper(e);
+		}
+
+	}
+
 	private static IContractSalaryCalculatorContext getSalaryCalculatorContext(
-			final Connection conn, final SalaryDraft draft)
+			final Connection conn, final SalaryDraft draft,
+			IContractSalaryCalculatorContext.IListener listener)
 			throws ExpressionException, SQLException {
 
 		Criteria criteria = new Criteria();
@@ -1902,9 +2127,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					};
 
 					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
-							draft, sqlContractSalaryCalculatorCtx) {
-
-					};
+							draft, sqlContractSalaryCalculatorCtx);
 
 					return new SQLIrpfCalculatorContext(conn, startDate,
 							endDate, sqlDraftSalaryCalculatorCtx) {
@@ -1937,10 +2160,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		};
 
+		ctx.setListener(listener);
 		ctx.next();
 
 		SalaryDraftCalculatorContext<IContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<IContractSalaryCalculatorContext>(
 				draft, ctx);
+		draftCtx.setListener(listener);
 		return draftCtx;
 	}
 

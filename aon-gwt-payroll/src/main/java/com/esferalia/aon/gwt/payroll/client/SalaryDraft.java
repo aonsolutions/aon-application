@@ -26,6 +26,7 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.payroll.IrpfResult;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -57,7 +58,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -531,18 +531,26 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			Payment draftPayment = new Payment();
 
 			draftPayment.setExpression(expression);
-			draftPayment.setName(payment.getName());
-			draftPayment.setType(payment.getType());
-			draftPayment.setDescription(payment.getDescription());
-			draftPayment.setIrpfExpression(payment.getIrpfExpression());
-			draftPayment.setQuoteExpression(payment.getQuoteExpression());
+			if ( payment != null  ) {
+				draftPayment.setName(payment.getName());
+				draftPayment.setType(payment.getType());
+				draftPayment.setConceptId(payment.getId());
+				draftPayment.setDescription(payment.getDescription());
+				draftPayment.setIrpfExpression(payment.getIrpfExpression());
+				draftPayment.setQuoteExpression(payment.getQuoteExpression());
+			} else {
+				draftPayment.setIrpfExpression("_P");
+				draftPayment.setQuoteExpression("_P");
+				draftPayment.setType(Payment.Type.SALARY_SUPPLEMENTS);
+				draftPayment.setDescription(descriptionBox.getText());
+			}
+
 
 			draftPayment.setScope(Scope.SALARY);
 			draftPayment.setEndDate(salaryDraftObject.getEndDate());
 			draftPayment.setStartDate(salaryDraftObject.getStartDate());
 			draftPayment.setSalaryType(salaryDraftObject.getType());
 			// draftPayment.setMonth(deduction.getMonth());
-			draftPayment.setConceptId(payment.getId());
 
 			salaryDraftObject.addDraftPayment(draftPayment);
 
@@ -744,6 +752,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	Panel draftPanel;
 	@UiField
 	HTML printPreviewHTML;
+	@UiField
+	HTML irpfPreviewHTML;
 
 	@UiField
 	ListBox zoomListBox;
@@ -852,9 +862,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	CheckBox dbSalaryCheck;
 
 	@UiField
-	Button printPreviewButton;
-	@UiField
 	Button closePreviewButton;
+	@UiField
+	Button printPreviewButton;
 
 	@UiField
 	MyStyle style;
@@ -919,6 +929,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		Window.alert(throwable.getMessage());
 	}
 
+	
+	@UiHandler("irpfPreviewButton")
+	void onIrpfPreviewClick(ClickEvent event) {
+		irpfPreview();
+	}
+	
+	
 	private void setDbVisible(boolean visible) {
 		dbCgcBaseLabel.setVisible(visible);
 		dbCgpBaseLabel.setVisible(visible);
@@ -961,6 +978,24 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		datesListBox.setVisible(false);
 		dbSalaryCheck.setVisible(false);
 		printPreviewButton.setVisible(false);
+	}
+
+	private void showIrpfPreview() {
+		showWidget(irpfPreviewHTML);
+
+		zoomListBox.setVisible(true);
+		closePreviewButton.setVisible(true);
+
+		fxButton.setVisible(false);
+		salarySelect.setVisible(false);
+		datesListBox.setVisible(false);
+		dbSalaryCheck.setVisible(false);
+		printPreviewButton.setVisible(false);
+		
+	}
+
+	boolean isIrpfPreviewVisible() {
+		return isWidgetVisible(irpfPreviewHTML);
 	}
 
 	boolean isPreviewVisible() {
@@ -1306,7 +1341,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	@UiHandler("printButton")
 	void onPrintButtonClick(ClickEvent event) {
-		print();
+		if ( isIrpfPreviewVisible() )
+			irpfPrint();
+		else 
+			print();
 	}
 
 	private void initPrintPreview() {
@@ -1787,7 +1825,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 				valuePanel.add(itemButton);
 				itemButton.setValue(show, true);
-			}
+			} 
 			
 			if ( variable.getScope().compareTo(Scope.AGREEMENT) > 0  &&
 					variable.isDefinedAt(Scope.AGREEMENT ) )
@@ -1901,6 +1939,30 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				});
 	}
 
+	private void irpfPrint() {
+
+		salaryDraftObject.downloadIrpf("application/pdf",
+				new AsyncCallback<String>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onSuccess(String dataURI) {
+						// TODO Auto-generated method stub
+						Window.open(dataURI, "Vista Preliminar", null);
+					}
+
+				});
+	}
+
+	private void irpfPreview() {
+		showIrpfPreview();
+		getIrpfPreview();
+	}
+
 	private void printPreview() {
 		showPreview();
 		getPrintPreview();
@@ -1918,6 +1980,22 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			public void onFailure(Throwable caught) {
 				// TODO
 				printPreviewHTML.setHTML(caught.getMessage());
+			}
+		});
+	}
+
+	private void getIrpfPreview() {
+		salaryDraftObject.getIrpfAsHTML(zoom, new AsyncCallback<String>() {
+
+			@Override
+			public void onSuccess(String result) {
+				irpfPreviewHTML.setHTML(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO
+				irpfPreviewHTML.setHTML(caught.getMessage());
 			}
 		});
 	}

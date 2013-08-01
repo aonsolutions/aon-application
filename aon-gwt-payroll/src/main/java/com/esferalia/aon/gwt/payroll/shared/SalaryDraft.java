@@ -147,6 +147,7 @@ public class SalaryDraft extends SalaryPreview {
 		draftDeductions.clear();
 	}
 	
+	
 	public boolean hasDrafts(){
 		return  (draftContext.size() > 0) ||
 				(draftPayments.size() > 0) ||

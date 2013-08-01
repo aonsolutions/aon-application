@@ -96,23 +96,6 @@ public class AEATIrpfCalculatorTest {
 			aeatRetencionesError2013File.deleteOnExit();
 			*/
 
-			try {
-				long start_calculate = System.currentTimeMillis();
-				AEATRetencionesSalida2013 aeatRetencionesSalida2013 = IrpfCalculator
-						.calculate(aeatRetencionesEntrada2013);
-				
-				long stop = System.currentTimeMillis();
-				System.out.printf ("%s total: %d ms, next: %d ms, calculate %d ms\r\n", irpfCalculatorContext.getApellidosNombre(), stop -start, stop_next - start, stop -start_calculate );
-				//marshaller.marshal(aeatRetencionesEntrada2013, System.out);
-				//marshaller.marshal(aeatRetencionesSalida2013, System.out);
-			} catch (IrpfCalculateException e) {
-				long stop = System.currentTimeMillis();
-				System.out.printf ("%s %d ms\r\n", irpfCalculatorContext.getApellidosNombre(),stop -start );
-				AEATRetencionesError2013 aeatRetencionesError2013 = e
-						.getAEATRetencionesError2013();
-				marshaller.marshal(aeatRetencionesEntrada2013, System.out);
-				marshaller.marshal(aeatRetencionesError2013, System.out);
-			}
 			
 			
 

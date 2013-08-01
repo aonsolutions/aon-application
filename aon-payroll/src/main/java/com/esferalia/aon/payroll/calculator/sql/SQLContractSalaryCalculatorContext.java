@@ -84,6 +84,7 @@ import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.LRUCache;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.IListener;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -108,6 +109,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
+import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -431,6 +433,8 @@ public class SQLContractSalaryCalculatorContext implements
 	private Criteria paymentsCriteria;
 	private OrderByList order;
 
+	private IListener listener;
+
 	/*
 	 * public SQLContractSalaryCalculatorContext(Connection connection, Date
 	 * startDate, Date endDate) throws SQLException, ExpressionException {
@@ -517,11 +521,11 @@ public class SQLContractSalaryCalculatorContext implements
 		initResultSet();
 		initPaymentStmt();
 		initDeductionStmt();
-		//initBonusStmt();
-		//initEmbargoStmt();
+		// initBonusStmt();
+		// initEmbargoStmt();
 		initCeventStmt();
-		//initLeaveStmt();
-		//initSystemCosts();
+		// initLeaveStmt();
+		// initSystemCosts();
 		initSystemDeductions();
 		initSystemPayments();
 
@@ -772,19 +776,17 @@ public class SQLContractSalaryCalculatorContext implements
 			throws AonException {
 		return this.systemDeductions;
 		/*
-		try {
-			
-			this.sqlContractDeduction.close();
-			int id = getId();
-			deductionStmt.setInt(1, id);
-			ResultSet rs = deductionStmt.executeQuery();
-			this.sqlContractDeduction.setResultSet(rs);
-			HierarchyDeductions hierarchyDeductions = new HierarchyDeductions(
-					this.sqlContractDeduction, this.systemDeductions.iterator());
-			return hierarchyDeductions;
-		} catch (SQLException e) {
-			throw new AonException(e);
-		}*/
+		 * try {
+		 * 
+		 * this.sqlContractDeduction.close(); int id = getId();
+		 * deductionStmt.setInt(1, id); ResultSet rs =
+		 * deductionStmt.executeQuery();
+		 * this.sqlContractDeduction.setResultSet(rs); HierarchyDeductions
+		 * hierarchyDeductions = new HierarchyDeductions(
+		 * this.sqlContractDeduction, this.systemDeductions.iterator()); return
+		 * hierarchyDeductions; } catch (SQLException e) { throw new
+		 * AonException(e); }
+		 */
 	}
 
 	@Override
@@ -857,6 +859,18 @@ public class SQLContractSalaryCalculatorContext implements
 
 		return values;
 	}
+
+	
+	@Override
+	public IListener getListener() {
+		return listener;
+	}
+	
+	public void setListener(IListener listener) {
+		this.listener = listener;
+	}
+	
+	
 
 	public OrderByList getOrder() {
 		return order;
@@ -1178,7 +1192,6 @@ public class SQLContractSalaryCalculatorContext implements
 
 		return IrpfCalculator.calculate(irpfCalculatorContext);
 	}
-
 
 	private long getAvailableDays(Date start, Date end) {
 		long workedDays = CommonUtil.getDaysBetweenDates(start, end);
@@ -1650,7 +1663,7 @@ public class SQLContractSalaryCalculatorContext implements
 		this.contractExpressionContext.addVariable(SELF, this, startDate,
 				endDate);
 
-		//loadContractLeave(this.contractExpressionContext);
+		// loadContractLeave(this.contractExpressionContext);
 		loadContractData(this.contractExpressionContext);
 		loadPersonData(this.contractExpressionContext);
 
@@ -1781,7 +1794,9 @@ public class SQLContractSalaryCalculatorContext implements
 					IExpression expr = timedExpr.getValue();
 					ctx.addExpression(expr, period.getStart(), period.getEnd());
 				} catch (UndefinedVariablesException e) {
-
+					onUndefinedData(timedExpr.getValue(), e.getMessage(),
+							timedExpr.getPeriod().getStart(), timedExpr
+									.getPeriod().getEnd(), e.getVariableNames());
 				} catch (Exception e) {
 				}
 			}
@@ -1791,6 +1806,15 @@ public class SQLContractSalaryCalculatorContext implements
 				rs.close();
 			}
 		}
+	}
+
+	protected void onUndefinedData(IExpression expression, String message,
+			Date start, Date end, String... variables) {
+		if (listener != null)
+			for (String variable : variables)
+				listener.onUndefinedData(expression, variable, message, start,
+						end);
+
 	}
 
 	private void loadPersonData(ExpressionContext ctx) throws SQLException {

@@ -162,6 +162,7 @@ public enum ContextVariable implements IResourceable{
 	
 	;
 	
+	public static final String ALL = "_P";
 	public static final String SELF = "SELF";
 	public static final String REMOVE = "REMOVE";
 	public static final String CONTEXT = "CONTEXT";

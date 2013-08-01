@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<aon:panelGrid columns="2" 
+		rendered="#{formEdit or formNew}" 
+		columnClasses="aon-noborder, aon-noborder">
+		
+		<aon:div rendered="#{formEdit}" style="display: inline;" >
+			<aon:commandButton id="#{inputTextId}_variableExpressionEditor#{editorSuffix}"
+				title="#{(controller.handler.data.enableExpressionEditor)?(payrollBundle.payroll_variable_manual_edit_cancel):(payrollBundle.payroll_variable_manual_edit)}" 
+				value="&#160;" ajaxSingle="true"
+				rendered="#{ baseVariableType!=null and baseVariableType!='UNKNOWN' and baseVariableType!='EXPRESSION' and baseVariableType!='STRING' }"
+				reRender="variableHelperModalContainer#{helperSuffix}, #{container}"
+				actionListener="#{controller.handler.onSelectExpressionEditor}"
+				styleClass="aon-icon-commandButton #{(controller.handler.data.enableExpressionEditor)?('aon-icon-cancel'):('aon-icon-edit')}"/>
+		</aon:div>
+			
+		<aon:inputText id="#{inputTextId}_DOUBLE#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='DOUBLE'}" 
+			value="#{controller.handler.expression}" maxlength="128" size="16">
+			<f:validateDoubleRange />
+		</aon:inputText>
+	
+		<rich:inputNumberSpinner id="#{inputTextId}_INTEGER#{editorSuffix}"
+			rendered="#{variableType=='INTEGER'}" 
+			value="#{controller.handler.expression}" inputSize="4" >
+		</rich:inputNumberSpinner>
+	
+		<h:selectBooleanCheckbox id="#{inputTextId}_BOOLEAN#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='BOOLEAN'}"
+			value="#{controller.handler.expression}" >
+		</h:selectBooleanCheckbox>
+	
+		<aon:inputText id="#{inputTextId}_STRING#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='STRING'}" 
+			value="#{controller.handler.expression}" maxlength="128" size="32" >
+			<f:validateLength maximum="128"/>		
+		</aon:inputText>
+
+		<aon:selectInputDate id="#{inputTextId}_DATE#{editorSuffix}" required="#{required}" 
+			rendered="#{variableType=='DATE'}" 
+			inputSize="10" renderAsPopup="true" enableManualInput="true"
+			value="#{controller.handler.expression}" 
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	
+		<aon:inputText id="#{inputTextId}_EXPRESSION#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='EXPRESSION'}" 
+			value="#{controller.handler.expression}" maxlength="128" size="32">
+		</aon:inputText>
+	
+		<aon:inputText id="#{inputTextId}_TABLE#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='TABLE'}" 
+			value="#{controller.handler.expression}" maxlength="128" size="32">
+		</aon:inputText>
+	
+		<aon:selectOneMenu id="#{inputTextId}_DROP#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='DROP'}" style="width: 95%;"
+			value="#{controller.handler.expression}">
+			<f:selectItems value="#{controller.handler.variablesCollection}" />
+		</aon:selectOneMenu>
+	
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{cno}" />
+			<ui:param name="skipLabel" value="#{true}" />
+			<ui:param name="lookupSuffix" value="#{inputTextId}_CNO_LOOKUP#{editorSuffix}" />
+			<ui:param name="lookupRendered" value="#{variableType=='CNO_LOOKUP'}" />
+			<ui:param name="idRequired" value="#{required}" />
+		</ui:include>
+	
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{trainingCenter}" />
+			<ui:param name="skipLabel" value="#{true}" />
+			<ui:param name="lookupSuffix" value="#{inputTextId}_TRAINING_CENTER_LOOKUP#{editorSuffix}" />
+			<ui:param name="lookupRendered" value="#{variableType=='TRAINING_CENTER_LOOKUP'}" />
+			<ui:param name="idRequired" value="#{required}" />
+		</ui:include>
+	
+		<aon:selectOneMenu id="#{inputTextId}_TC2_DROP#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='TC2_DROP'}" style="width: 95%;"
+			value="#{contractCode}">
+			<f:selectItems value="#{controller.handler.variablesCollection}" />
+		</aon:selectOneMenu>
+	
+		<aon:selectOneMenu id="#{inputTextId}_QUOTE_GROUP_DROP#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='QUOTE_GROUP_DROP'}" style="width: 95%;"
+			value="#{quoteGroup}">
+			<f:selectItems value="#{controller.handler.variablesCollection}" />
+		</aon:selectOneMenu>
+	
+		<aon:selectOneMenu id="#{inputTextId}_OCCUPATION_DROP#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='OCCUPATION_DROP'}" style="width: 95%;"
+			value="#{occupationType}">
+			<f:selectItems value="#{controller.handler.variablesCollection}" />
+		</aon:selectOneMenu>
+	
+		<aon:inputText id="#{inputTextId}#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='UNKNOWN' or variableType==null}" 
+			value="#{controller.handler.expression}" size="32" maxlength="128" >
+			<f:validateLength maximum="128"/>
+		</aon:inputText>
+	
+	</aon:panelGrid>
+	
+	<aon:div rendered="#{formList}" >
+		<aon:outputText rendered="#{variableType=='DOUBLE'}" value="#{data.doubleExpression}" >
+			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+		</aon:outputText>
+	
+		<aon:outputText rendered="#{variableType=='INTEGER'}" value="#{data.expression}" />
+	
+		<aon:outputText rendered="#{variableType=='BOOLEAN'}" value="&#160;"  
+			styleClass="#{(data.expression)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+			style="padding-bottom: 5px;" />
+	
+		<aon:outputText rendered="#{variableType=='STRING'}" styleClass="aon-italic" value="#{data.expression}" />
+
+		<aon:outputText rendered="#{variableType=='DATE'}"  value="#{data.expression}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>		
+		
+		<aon:outputText rendered="#{variableType=='EXPRESSION'}" value="#{data.expression}" />
+	
+		<aon:outputText rendered="#{variableType=='TABLE'}" value="#{data.expression}" />
+	
+		<aon:outputText rendered="#{variableType=='DROP'}" value="#{data.expression}" />
+	
+		<aon:outputText rendered="#{variableType=='CNO_LOOKUP'}" value="#{data.variableLookup}" />
+	
+		<aon:outputText rendered="#{variableType=='TRAINING_CENTER_LOOKUP'}" value="#{data.variableLookup}" />
+		
+		<aon:div>
+			<aon:outputText rendered="#{variableType=='TC2_DROP'}" value="#{data.variableEnum.value}" />
+			<aon:outputText rendered="#{variableType=='TC2_DROP'}" value=" - " />
+			<aon:outputText rendered="#{variableType=='TC2_DROP'}" value="#{data.variableEnum}" />
+		</aon:div>
+	
+		<aon:outputText rendered="#{variableType=='QUOTE_GROUP_DROP'}" value="#{data.variableEnum}" />
+	
+		<aon:outputText rendered="#{variableType=='OCCUPATION_DROP'}" value="#{data.variableEnum}" />
+	
+		<aon:outputText rendered="#{variableType=='UNKNOWN' or variableType==null}" value="#{data.expression}">
+<!--  
+				<f:converter converterId="variableDoubleConverter" />
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				<f:convertNumber pattern="00" />
+-->
+		</aon:outputText>
+	
+	</aon:div>
+
+</ui:composition>

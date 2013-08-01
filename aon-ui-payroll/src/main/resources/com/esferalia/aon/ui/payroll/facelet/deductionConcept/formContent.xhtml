@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:panelGrid id="dataTable" columns="2" >
+		
+		<aon:outputLabel for="DeductionConcept_code"
+			value="#{bundle.aon_id}" />
+		<aon:inputText id="DeductionConcept_code" size="15" maxlength="15"
+			value="#{controller.to.code}" />
+
+		<aon:outputLabel for="DeductionConcept_type"
+			value="#{bundle.aon_type}" />
+		<aon:selectOneMenu id="DeductionConcept_type" 
+			value="#{controller.to.type}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{payrollCollections.deductionTypes}" />
+		</aon:selectOneMenu>	
+
+		<aon:outputLabel for="DeductionConcept_description"
+			value="#{bundle.aon_description}" />
+		<aon:inputText id="DeductionConcept_description" size="64" maxlength="64"
+			value="#{controller.to.description}" />
+
+		<aon:outputText value="&#160;"/>
+		<aon:panelGroup>
+			<aon:selectBooleanCheckbox id="DeductionConcept_decorateDescription" value="#{controller.to.descriptionDecorable}" />
+			<aon:outputLabel for="DeductionConcept_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
+		</aon:panelGroup>
+
+		<aon:outputLabel for="DeductionConcept_expression"
+			value="#{payrollBundle.payroll_salary_expression}" />
+		
+		<ui:include
+			src="/com/esferalia/aon/ui/payroll/facelet/expression/formExpression.xhtml">
+			<ui:param name="expression" value="expression" />
+			<ui:param name="expressionValid" value="expressionValid" />
+			<ui:param name="expressionErrorMessage"
+				value="expressionErrorMessage" />
+		</ui:include>
+
+		<!--  aon:inputTextarea id="DeductionConcept_expression" cols="60" rows="3" maxlength="128"
+			value="#{controller.to.expression}">
+			<f:validateLength maximum="128"/>
+			<a4j:region>
+				<rich:suggestionbox id="DeductionConcept_expression_suggestion"
+					for="DeductionConcept_expression"
+					onselect="suggestionBoxActive=false;"
+					suggestionAction="#{controller.expressionContext}" var="exp"
+					similarityGroupingId=""
+					tokens=" +-/*%(){}[]"
+					fetchValue="#{exp}"
+					immediate="true" limitToList="true" ajaxSingle="true"
+					eventsQueue="deductionConcept_expressionSug" ignoreDupResponses="true"
+					requestDelay="100" width="500" height="100"
+					nothingLabel="#{bundle.aon_search_no_results}">
+					<aon:column>
+						<aon:outputText value="#{exp}" styleClass="aon-bold"/>
+					</aon:column>
+				</rich:suggestionbox>
+			</a4j:region>
+		</aon:inputTextarea-->
+		
+	</aon:panelGrid>
+
+</ui:composition>

@@ -100,6 +100,13 @@
 			vertical-align: middle;
 		}
 		
+		@sprite .irpfPreviewButton {
+			width: auto; 
+			height: auto;
+			gwt-image: 'aet';
+			background-position: left center;
+		}
+
 		@sprite .collapseAllButton {
 			float: right;
 			gwt-image: 'collapseall';
@@ -134,6 +141,7 @@
 	</ui:style>
 
 	<ui:image field='fx' src='fx.png' />
+	<ui:image field='aet' src='aet.png' />
 	<ui:image field='redo' src='redo.png' />
 	<ui:image field='undo' src='undo.png' />
 	<ui:image field='warn' src='warn.png' />
@@ -173,6 +181,9 @@
 								<g:Button ui:field='printPreviewButton'
 									styleName='aon-finding-toolbar-item {style.pdfPreviewButton}'
 									text="Vista Preliminar" />
+								<g:Button ui:field='irpfPreviewButton'
+									styleName='aon-finding-toolbar-item {style.irpfPreviewButton}'
+									text="IRPF" />
 								<employee:SalarySelect ui:field="salarySelect" />
 								<g:ListBox ui:field="zoomListBox" />
 								<g:Button ui:field='closePreviewButton'
@@ -525,6 +536,8 @@
 							</g:HorizontalPanel>
 						</g:VerticalPanel>
 						<g:HTML styleName="reset" ui:field='printPreviewHTML'
+							wordWrap='true' />
+						<g:HTML styleName="reset" ui:field='irpfPreviewHTML'
 							wordWrap='true' />
 
 					</g:DeckPanel>

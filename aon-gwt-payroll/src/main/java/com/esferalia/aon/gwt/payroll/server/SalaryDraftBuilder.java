@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -26,11 +25,13 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
+import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.VariableComparator;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -49,7 +50,7 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
 
 public class SalaryDraftBuilder implements ISalaryBuilder,
-		ContractSalaryCalculator.IListener {
+		ContractSalaryCalculator.IListener, IContractSalaryCalculatorContext.IListener {
 
 	private SalaryDraft salaryDraft;
 	
@@ -57,6 +58,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	public SalaryDraftBuilder(SalaryDraft salaryDraft) {
 		this.salaryDraft = salaryDraft;
+		clearSalaryDraft();
 	}
 	
 	public void setDefined(Map<String, boolean [] > defined) {
@@ -173,11 +175,6 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	@Override
 	public void createNewSalary() {
-		salaryDraft.clearDb();
-		salaryDraft.clearContext();
-		salaryDraft.clearEvents();
-		salaryDraft.clearPayments();
-		salaryDraft.clearDeductions();
 	}
 
 	@Override
@@ -568,6 +565,34 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		// TODO Auto-generated method stub
 
 	}
+	
+	
+	// -------------------------------------------------------------------------
+	
+	@Override
+	public void onUndefinedData(IExpression expression, String variableName,
+			String message, Date start, Date end) {
+		UndefinedVariable undefVar = new UndefinedVariable();
+
+		undefVar.setName(variableName);
+		undefVar.setImplicit(false);
+		undefVar.setEndDate(start);
+		undefVar.setStartDate(end);
+		undefVar.setScope(getScope(expression.getScope()));
+		
+		salaryDraft.addUndefinedVariable(undefVar);
+		
+	}
+	
+	// -------------------------------------------------------------------------
+	
+	private void clearSalaryDraft(){
+		salaryDraft.clearDb();
+		salaryDraft.clearContext();
+		salaryDraft.clearEvents();
+		salaryDraft.clearPayments();
+		salaryDraft.clearDeductions();
+	}
 
 	private void addContext(Map<String, ITimedVariable<?>> context) {
 		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {
@@ -587,7 +612,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 				salaryDraft.addVariable(entry.getKey(), var.getValue(var
 						.getPeriod()), var.getPeriod().getStart(), var
 						.getPeriod().getEnd(), scope, expr.getExpression(), defined.get(name));
-
+				addContext(exprVar.getContext());
 			} else {
 				String name = entry.getKey();
 				salaryDraft.addVariable(entry.getKey(), var.getValue(var

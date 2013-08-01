@@ -247,9 +247,19 @@ public class SalaryDraftObject implements IContextProvider{
 				callback);
 	}
 
+	public void getIrpfAsHTML(int zoom, AsyncCallback<String> callback) {
+		employeesServiceAsync.getIrpfDraftReceiptHTML(salaryDraft, zoom,
+				callback);
+	}
+
 	public void download(String mime, AsyncCallback<String> callback) {
 		employeesServiceAsync
 				.getSalaryDraftReceipt(salaryDraft, mime, callback);
+	}
+
+	public void downloadIrpf(String mime, AsyncCallback<String> callback) {
+		employeesServiceAsync
+				.getIrpfDraftReceipt(salaryDraft, mime, callback);
 	}
 
 	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {

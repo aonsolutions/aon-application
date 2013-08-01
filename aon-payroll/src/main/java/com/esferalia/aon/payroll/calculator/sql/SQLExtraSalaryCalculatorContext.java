@@ -1,14 +1,18 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT_EXTRA;
+import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT_LEVEL;
+import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.AGREEMENT;
+import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.END_DATE;
+import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.ISSUE_DATE;
+import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.START_DATE;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
@@ -19,19 +23,11 @@ import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
-
-import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT_LEVEL;
-import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT_EXTRA;
-import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.*;
 
 public class SQLExtraSalaryCalculatorContext implements
 		ISQLContractSalaryCalculatorContext {
@@ -272,6 +268,14 @@ public class SQLExtraSalaryCalculatorContext implements
 		return ctx.getDate(table, column);
 	}
 	
+	@Override
+	public IListener getListener() {
+		return ctx.getListener();
+	}
 	
+	@Override
+	public void setListener(IListener listener) {
+		ctx.setListener(listener);
+	}
 	
 }

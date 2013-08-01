@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="#{expression}Panel">
+
+		<aon:inputTextarea id="#{expression}Input" cols="128" rows="1"
+			maxlength="128" value="#{controller.to[expression]}">
+			<f:validateLength maximum="128" />
+			<a4j:support event="onkeyup"
+				actionListener="#{controller.onChangeExpression}"
+				reRender="#{expression}Icon, #{expression}Message" ajaxSingle="true" requestDelay="1500"
+			/>
+		</aon:inputTextarea>
+		<c:choose>
+			<c:when test="#{controller[expressionValid]}">
+				<aon:outputText id="#{expression}Icon"
+					styleClass="aon-icon-predetermine aon-vertical-align-top"
+					style="padding-left: 15px;" value="&#160;" />
+				<aon:div id="#{expression}Message">
+				</aon:div>
+			</c:when>
+			<c:otherwise>
+				<aon:outputText id="#{expression}Icon"
+					styleClass="aon-icon-exception aon-vertical-align-top"
+					style="padding-left: 15px;" value="&#160;" />
+				<aon:div id="#{expression}Message"
+					style="background-color: #F2F2F2; border: 1px solid #CCCCCC; margin: 0.5em 0 ; padding: 0.5em;">
+					<aon:outputText styleClass="aon-message-error"
+						style="padding-left: 15px; border: none"
+						value="#{controller[expressionErrorMessage]}" />
+				</aon:div>
+			</c:otherwise>
+		</c:choose>
+
+	</aon:panelGroup>
+
+</ui:composition>

@@ -8,9 +8,19 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.IExpression;
 
 public interface IContractSalaryCalculatorContext extends ISalaryCalculatorContext {
 
+	public static interface IListener {
+
+		public void onUndefinedData(IExpression expression,
+				String variableName, String message, Date start, Date end);
+
+	}
+
+	public IListener getListener();
+	public void setListener(IListener listener);
 	
 	public SalaryType getSalaryType();
 	

@@ -88,6 +88,40 @@ public class ExpressionContext {
 
 	}
 
+	public static class UndefinedExpressionVariable<T> extends
+			ExpressionVariable<T> implements ITimedResult<T> {
+
+		private String name;
+
+		public UndefinedExpressionVariable(String name, Date start, Date end,
+				IExpression expression) {
+			this(name, new Period(start, end), expression);
+		}
+
+		public UndefinedExpressionVariable(String name, Period p,
+				IExpression expression) {
+			super(null, p, expression);
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public T getValue() {
+			UndefinedVariablesException undefined = 
+					new UndefinedVariablesException(name);
+			throw new ExpressionExceptionWrapper( undefined );
+		}
+
+		@Override
+		public Map<String, ITimedVariable<?>> getContext() {
+			return Collections.emptyMap();
+		}
+
+	}
+
 	public static Set<String> getVariables(String script) {
 		Set<String> names = new HashSet<String>();
 		Matcher matcher = VARIABLE_PATTERN.matcher(script);
@@ -98,6 +132,10 @@ public class ExpressionContext {
 			}
 		}
 		return names;
+	}
+	
+	public static Object eval(String script) {
+		return MVEL.eval(script);
 	}
 
 	public static class ExpressionExceptionWrapper extends RuntimeException {
@@ -121,20 +159,28 @@ public class ExpressionContext {
 		}
 	}
 
-	private static String getProperty(PropertyAccessException e) {
+	private static String getUndefinedProperty(PropertyAccessException e, PeriodMap bindings) {
+		String property = null;
+
 		char expr[] = e.getExpr();
 		int end = e.getCursor();
-		int start = end - 1;
-		while (start >= 0) {
-			if (!Character.isJavaIdentifierPart(expr[start]))
-				break;
-			else
-				start--;
-		}
-		;
-		int offset = start + 1;
-		int len = end - offset;
-		return new String(expr, offset, len);
+		do {
+			while (end-- >= 0)
+				if (Character.isJavaIdentifierPart(expr[end]))
+					break;
+			int start = end;
+			while (start >= 0) {
+				if (!Character.isJavaIdentifierPart(expr[start]))
+					break;
+				else
+					start--;
+			}
+			int offset = start + 1;
+			int len = end - offset + 1;
+			property =  new String(expr, offset, len);
+		} while ( bindings.containsKey(property) );
+		
+		return property;
 	}
 
 	private Variables variables;
@@ -208,9 +254,10 @@ public class ExpressionContext {
 			List<ITimedResult<T>> values = this
 					.eval(script, start, end, toType);
 			if (name != null) {
-				for (ITimedObject<T> obj : values) {
+				for (ITimedResult<T> obj : values) {
 					IExpressionVariable<T> var = new ExpressionVariable<T>(
-							obj.getValue(), obj.getPeriod(), expression);
+							obj.getValue(), obj.getPeriod(), expression,
+							obj.getContext());
 					this.addVariable(name, var);
 				}
 			}
@@ -246,7 +293,7 @@ public class ExpressionContext {
 						bindings.getRead()));
 			} catch (PropertyAccessException e) {
 				throwExpressionException(e);
-				throw new UndefinedVariablesException(getProperty(e));
+				throw new UndefinedVariablesException(getUndefinedProperty(e, bindings));
 			} /*
 			 * catch (RemoveVariableError e) { throw new
 			 * UndefinedVariablesException(e.getName()); }
@@ -327,37 +374,33 @@ public class ExpressionContext {
 	public static Set<String> getVariableSet(String script) {
 		ParserContext ctx = new ParserContext();
 		MVEL.analysisCompile(script, ctx);
-		
-		Set<String>  variables = new HashSet<String>();
-		
+
+		Set<String> variables = new HashSet<String>();
+
 		for (String input : ctx.getInputs().keySet()) {
-			if ( isJavaIdentifier(input) ) 
+			if (isJavaIdentifier(input))
 				variables.add(input);
 		}
-		
-		
-		return variables ;
-		
+
+		return variables;
+
 	}
 
-	public static Set<String> getVariableSet(String ...scripts) {
-		StringBuffer buffer =  new StringBuffer();
+	public static Set<String> getVariableSet(String... scripts) {
+		StringBuffer buffer = new StringBuffer();
 		for (String script : scripts) {
-			buffer.append(script + ";" );
+			buffer.append(script + ";");
 		}
 		return getVariableSet(buffer.toString());
 	}
-	
-	private static boolean isJavaIdentifier(String string){
-		if ( ! Character.isJavaIdentifierStart(string.charAt(0)))
+
+	private static boolean isJavaIdentifier(String string) {
+		if (!Character.isJavaIdentifierStart(string.charAt(0)))
 			return false;
-		for ( int i = 1; i < string.length(); i++)
-			if ( !Character.isJavaIdentifierPart(string.charAt(i)) ) 
+		for (int i = 1; i < string.length(); i++)
+			if (!Character.isJavaIdentifierPart(string.charAt(i)))
 				return false;
 		return true;
 	}
-	
-	
-	
 
 }

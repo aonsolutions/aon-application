@@ -77,6 +77,12 @@ public interface EmployeesServiceAsync {
 	void getSalaryDraftReceiptHTML(SalaryDraft salaryPreview, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
+	void getIrpfDraftReceipt(SalaryDraft salaryDraft, String mime,
+			AsyncCallback<String> callback) throws IllegalArgumentException;
+
+	void getIrpfDraftReceiptHTML(SalaryDraft salaryPreview, int zoom,
+			AsyncCallback<String> callback) throws IllegalArgumentException;
+
 	void getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 

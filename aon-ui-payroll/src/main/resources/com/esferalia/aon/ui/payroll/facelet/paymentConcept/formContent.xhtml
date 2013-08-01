@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:panelGrid id="dataTable" columns="2">
+
+		<aon:outputLabel for="PaymentConcept_code" value="#{bundle.aon_id}" />
+		<aon:inputText id="PaymentConcept_code" size="15" maxlength="15"
+			value="#{controller.to.code}" />
+
+		<aon:outputLabel for="PaymentConcept_type" value="#{bundle.aon_type}" />
+		<aon:selectOneMenu id="PaymentConcept_type"
+			value="#{controller.to.type}" converter="aon.EnumConverter">
+			<f:selectItems value="#{payrollCollections.paymentTypes}" />
+		</aon:selectOneMenu>
+
+		<aon:outputLabel for="PaymentConcept_description"
+			value="#{bundle.aon_description}" />
+		<aon:inputText id="PaymentConcept_description" size="64"
+			maxlength="64" value="#{controller.to.description}" />
+
+		<aon:outputText value="&#160;" />
+		<aon:panelGroup>
+			<aon:selectBooleanCheckbox id="PaymentConcept_decorateDescription"
+				value="#{controller.to.descriptionDecorable}" />
+			<aon:outputLabel for="PaymentConcept_decorateDescription"
+				value="#{payrollBundle.payroll_salary_show_expression}" />
+		</aon:panelGroup>
+
+		<aon:outputLabel for="PaymentConcept_expression"
+			value="#{payrollBundle.payroll_salary_expression}" />
+		<ui:include
+			src="/com/esferalia/aon/ui/payroll/facelet/expression/formExpression.xhtml">
+			<ui:param name="expression" value="expression" />
+			<ui:param name="expressionValid" value="expressionValid" />
+			<ui:param name="expressionErrorMessage"
+				value="expressionErrorMessage" />
+		</ui:include>
+
+		<!--  aon:inputTextarea id="PaymentConcept_expression" cols="60" rows="5" maxlength="128"
+			value="#{controller.to.expression}">
+			<f:validateLength maximum="128"/>
+			<a4j:region>
+				<rich:suggestionbox id="PaymentConcept_expression_suggestion"
+					for="PaymentConcept_expression"
+					onselect="suggestionBoxActive=false;"
+					suggestionAction="#{controller.expressionContext}" var="exp"
+					similarityGroupingId=""
+					tokens=" +-/*%(){}[]"
+					fetchValue="#{exp}"
+					immediate="true" limitToList="true" ajaxSingle="true"
+					eventsQueue="PaymentConcept_expressionSug" ignoreDupResponses="true"
+					requestDelay="100" width="500" height="100"
+					nothingLabel="#{bundle.aon_search_no_results}">
+					<aon:column>
+						<aon:outputText value="#{exp}" styleClass="aon-bold"/>
+					</aon:column>
+				</rich:suggestionbox>
+			</a4j:region>
+		</aon:inputTextarea-->
+
+		<aon:outputLabel for="PaymentConcept_irpf_expression"
+			value="#{payrollBundle.payroll_salary_irpf_expression}" />
+		<aon:div id="PaymentConcept_taxation">
+			<aon:selectOneMenu id="PaymentConcept_irpf_taxation"
+				value="#{controller.to.taxation}">
+				<f:selectItems value="#{payrollCollections.taxationTypes}" />
+				<a4j:support event="onchange" reRender="PaymentConcept_taxation"
+					ajaxSingle="true" />
+			</aon:selectOneMenu>
+			<br />
+			<c:if test="#{controller.to.taxation=='MANUAL'}">
+				<ui:include
+					src="/com/esferalia/aon/ui/payroll/facelet/expression/formExpression.xhtml">
+					<ui:param name="expression" value="irpfExpression" />
+					<ui:param name="expressionValid" value="irpfExpressionValid" />
+					<ui:param name="expressionErrorMessage"
+						value="irpfExpressionErrorMessage" />
+				</ui:include>
+			</c:if>
+
+			<!--  aon:inputTextarea id="PaymentConcept_irpf_expression" cols="60"
+				rows="5" maxlength="128"
+				rendered="#{controller.to.taxation=='MANUAL'}"
+				value="#{controller.to.irpfExpression}">
+				<f:validateLength maximum="128" />
+				<a4j:region>
+					<rich:suggestionbox id="PaymentConcept_irpf_expression_suggestion"
+						for="PaymentConcept_irpf_expression"
+						onselect="suggestionBoxActive=false;"
+						suggestionAction="#{controller.expressionContext}" var="exp"
+						similarityGroupingId="" tokens=" +-/*%(){}[]" fetchValue="#{exp}"
+						immediate="true" limitToList="true" ajaxSingle="true"
+						eventsQueue="PaymentConcept_irpf_expressionSug"
+						ignoreDupResponses="true" requestDelay="100" width="500"
+						height="100" nothingLabel="#{bundle.aon_search_no_results}">
+						<aon:column>
+							<aon:outputText value="#{exp}" styleClass="aon-bold" />
+						</aon:column>
+					</rich:suggestionbox>
+				</a4j:region>
+			</aon:inputTextarea-->
+		</aon:div>
+
+		<aon:outputLabel for="PaymentConcept_quote_expression"
+			value="#{payrollBundle.payroll_salary_quote_expression}" />
+		<aon:div id="PaymentConcept_quote">
+			<aon:selectOneMenu id="PaymentConcept_quote_quote"
+				value="#{controller.to.quote}">
+				<f:selectItems value="#{payrollCollections.quoteTypes}" />
+				<a4j:support event="onchange" reRender="PaymentConcept_quote"
+					ajaxSingle="true" />
+			</aon:selectOneMenu>
+			<br />
+			<c:if test="#{controller.to.quote=='MANUAL'}">
+				<ui:include
+					src="/com/esferalia/aon/ui/payroll/facelet/expression/formExpression.xhtml">
+					<ui:param name="expression" value="quoteExpression" />
+					<ui:param name="expressionValid" value="quoteExpressionValid" />
+					<ui:param name="expressionErrorMessage"
+						value="quoteExpressionErrorMessage" />
+				</ui:include>
+			</c:if>
+
+			<!--   aon:inputTextarea id="PaymentConcept_quote_expression" cols="60"
+				rows="5" maxlength="128" rendered="#{controller.to.quote=='MANUAL'}"
+				value="#{controller.to.quoteExpression}">
+				<f:validateLength maximum="128" />
+				<a4j:region>
+					<rich:suggestionbox id="PaymentConcept_quote_expression_suggestion"
+						for="PaymentConcept_quote_expression"
+						onselect="suggestionBoxActive=false;"
+						suggestionAction="#{controller.expressionContext}" var="exp"
+						similarityGroupingId="" tokens=" +-/*%(){}[]" fetchValue="#{exp}"
+						immediate="true" limitToList="true" ajaxSingle="true"
+						eventsQueue="PaymentConcept_quote_expressionSug"
+						ignoreDupResponses="true" requestDelay="100" width="500"
+						height="100" nothingLabel="#{bundle.aon_search_no_results}">
+						<aon:column>
+							<aon:outputText value="#{exp}" styleClass="aon-bold" />
+						</aon:column>
+					</rich:suggestionbox>
+				</a4j:region>
+			</aon:inputTextarea-->
+		</aon:div>
+	</aon:panelGrid>
+
+</ui:composition>

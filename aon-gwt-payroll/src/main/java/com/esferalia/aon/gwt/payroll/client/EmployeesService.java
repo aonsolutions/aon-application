@@ -71,6 +71,12 @@ public interface EmployeesService extends RemoteService {
 	String getSalaryDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
 			throws IllegalArgumentException;
 
+	String getIrpfDraftReceipt(SalaryDraft salaryDraft, String mime)
+			throws IllegalArgumentException;
+
+	String getIrpfDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
+			throws IllegalArgumentException;
+
 	String getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview, int zoom)
 			throws IllegalArgumentException;
 

@@ -1790,6 +1790,111 @@
 		</managed-property>
 	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>expressionValidator</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.ExpressionValidator</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ SYSTEM DATA  ************** -->
+	<managed-bean>
+		<managed-bean-name>systemData</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.SystemDataController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.SystemData</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>systemData</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ PAYMENT CONCEPT ************** -->
+	<managed-bean>
+		<managed-bean-name>paymentConcept</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.PaymentConceptController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.PaymentConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>paymentConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{paymentConceptControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>paymentConceptControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.contract.PaymentConceptControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ DeductionConcept ************** -->
+	<managed-bean>
+		<managed-bean-name>deductionConcept</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.DeductionConceptController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.DeductionConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>deductionConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{deductionConceptControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>deductionConceptControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.contract.DeductionConceptControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	<!-- ************ BonusConcept ************** -->
+	<managed-bean>
+		<managed-bean-name>bonusConcept</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.BonusConceptController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.BonusConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>bonusConcept</value>
+		</managed-property>
+	</managed-bean>
+
 	<!--
 		============================================= 
 		============== NAVIGATION ==================
@@ -2000,6 +2105,59 @@
 		<navigation-case>
 			<from-outcome>sepeCodes_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/sepeTables/code_list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- =================== SYSTEM DATA  ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>systemData_grid</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemData/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== PAYMENT CONCEPT ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>paymentConcept_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/paymentConcept/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>paymentConcept_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/paymentConcept/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>paymentConcept_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/paymentConcept/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- =================== DEDUCTION CONCEPT ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>deductionConcept_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/deductionConcept/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>deductionConcept_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/deductionConcept/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>deductionConcept_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/deductionConcept/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- =================== BONUS CONCEPT ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>bonusConcept_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/bonusConcept/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bonusConcept_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/bonusConcept/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bonusConcept_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/bonusConcept/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

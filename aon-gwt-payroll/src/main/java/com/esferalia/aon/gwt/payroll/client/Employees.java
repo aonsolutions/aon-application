@@ -146,7 +146,7 @@ public class Employees extends ResizeComposite implements
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
 		tree.addDomHandler(this, ContextMenuEvent.getType());
-
+		
 		collapseAllButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

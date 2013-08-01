@@ -33,10 +33,17 @@ import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.DeferredExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
+import com.esferalia.aon.salary.expression.ExpressionContext.UndefinedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
 public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorContext>
 		extends DelegateContractSalaryCalculatorContext<T> {
@@ -128,8 +135,37 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 		}
 	}
 
+	class DraftDeferredExpressionVariable extends DeferredExpressionVariable {
+
+		public DraftDeferredExpressionVariable(ExpressionContext ctx,
+				IExpression expression, Date start, Date end) {
+			super(ctx, expression, start, end);
+		}
+
+		@Override
+		public Object getValue(Period period) {
+			try {
+				return super.getValue(period);
+			} catch (ExpressionExceptionWrapper wrapper) {
+				try {
+					throw wrapper.getExpressionException();
+				} catch (UndefinedVariablesException e) {
+					onUndefinedData(getExpression(), e.getMessage(),
+							getPeriod().getStart(), getPeriod().getEnd(),
+							e.getVariableNames());
+					throw new ExpressionExceptionWrapper(
+							new UndefinedVariablesException(getExpression()
+									.getName()));
+				} catch (ExpressionException e) {
+					throw wrapper;
+				}
+			}
+		}
+	}
 
 	private SalaryDraft draft;
+
+	private IListener listener;
 
 	public SalaryDraftCalculatorContext(SalaryDraft draft, T ctx)
 			throws ExpressionException {
@@ -143,12 +179,19 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 
 		List<Variable> draftData = draft.getDraftContext();
 		for (Variable variable : draftData) {
+			String name = variable.getName();
 			ExpressionImpl expr = new ExpressionImpl();
-			expr.setName(variable.getName());
+			expr.setName(name);
 			expr.setScope(ExpressionScope.SALARY);
 			expr.setExpression(variable.getExpression());
-			exprCtx.addExpression(expr, resetTime(variable.getStartDate()),
-					resetTime(variable.getEndDate()));
+			Date startDate = resetTime(variable.getStartDate());
+			Date endDate = resetTime(variable.getEndDate());
+			try {
+				exprCtx.addExpression(expr, startDate, endDate);
+			} catch (UndefinedVariablesException e) {
+				exprCtx.addVariable(name, new DraftDeferredExpressionVariable(
+						exprCtx, expr, startDate, endDate));
+			}
 		}
 
 	}
@@ -170,9 +213,18 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 	protected SalaryDraft getDraft() {
 		return draft;
 	}
-	
-	protected IIrpfCalculatorContext getIrpfCalculatorContext(){
+
+	protected IIrpfCalculatorContext getIrpfCalculatorContext() {
 		return null;
+	}
+
+	protected void onUndefinedData(IExpression expression, String message,
+			Date start, Date end, String... variables) {
+		if (ctx.getListener() != null)
+			for (String variable : variables)
+				ctx.getListener().onUndefinedData(expression, variable,
+						message, start, end);
+
 	}
 
 	private Collection<IContractPayment> getDraftPayments() {

@@ -134,5 +134,13 @@ public class DelegateContractSalaryCalculatorContext<T extends IContractSalaryCa
 		return ctx.getAgreementExpressionContext();
 	}
 	
-
+	@Override
+	public IListener getListener() {
+		return ctx.getListener();
+	}
+	
+	@Override
+	public void setListener(IListener listener) {
+		ctx.setListener(listener);
+	}
 }

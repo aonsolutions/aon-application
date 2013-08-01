@@ -2,6 +2,7 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
 	<!-- GIFs needed for ie6 work arounds. Can't use <ui:image>, it makes PNGs -->
+	<ui:data field='configgroupIe6Data' src='configgroup_ie6.gif' />
 	<ui:data field='employeesgroupIe6Data' src='employeesgroup_ie6.gif' />
 
 	<ui:style>
@@ -14,6 +15,13 @@
 	 @if user.agent ie6 {
 	   @url employeesgroupIe6 employeesgroupIe6Data;
 
+	   .configIcon {
+	     background-image: configgroupIe6;
+	     width: 31px;
+	     height: 22px;
+	     float: left;
+	   }
+
 	   .employeesIcon {
 	     background-image: employeesgroupIe6;
 	     width: 31px;
@@ -23,6 +31,11 @@
 
 	 } @else {
 	
+
+	@sprite .configIcon {
+	     gwt-image: 'configgroup';
+	     float: left;
+	   }
 
 	@sprite .employeesIcon {
 	     gwt-image: 'employeesgroup';
@@ -34,6 +47,7 @@
 	 
 	</ui:style>
 
+	<ui:image field='configgroup' src='configgroup.png' />
 	<ui:image field='employeesgroup' src='employeesgroup.png' />
 	<ui:image field='gradient' src='gradient_bg_dark.png'
 		repeatStyle='Horizontal' />
@@ -52,6 +66,15 @@
 						</div>
 					</g:header>
 					<aon:Employees ui:field='employees' extended="true" formers="false"/>
+				</g:stack>
+				<g:stack ui:field="configStack">
+					<g:header size='3'>									
+						<div class='{style.stackHeader}'>
+							<div class='{style.configIcon}' />
+							CONFIGURACION
+						</div>
+					</g:header>
+					<aon:MetaData />
 				</g:stack>
 
 			</g:StackLayoutPanel>
