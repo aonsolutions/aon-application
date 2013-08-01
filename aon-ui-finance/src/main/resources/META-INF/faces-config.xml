@@ -3999,6 +3999,27 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************* INVOICE EXPORTER ***************** -->
+	<managed-bean>
+		<managed-bean-name>invoiceExporter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.InvoiceExporterController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Invoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>invoiceExporter</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Invoice_issueDate desc,Invoice_referenceCode desc</value>
+		</managed-property>									
+	</managed-bean>
+
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUP =========================== -->
 	<!-- ========================================================== -->
@@ -4503,5 +4524,17 @@
     		<to-view-id>/com/code/aon/ui/finance/facelet/rectifierInvoice/list.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
+
+	<!-- =================== Invoice Exporter ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>invoiceExporter_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/invoiceExporter/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>invoiceExporter_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/invoiceExporter/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>   
 
 </faces-config>

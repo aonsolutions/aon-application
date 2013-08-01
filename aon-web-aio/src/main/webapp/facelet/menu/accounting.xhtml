@@ -274,6 +274,23 @@
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>						
+						
+						<aon:panelGrid id="group_accounting_contrata" styleClass="aon-width-all"
+							columnClasses="aon-padding"
+							headerClass="aon-icon-accounting aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_module_contrata}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="invoiceExporter"
+										action="invoiceExporter_search"
+										actionListener="#{invoiceExporter.onEditSearch}"
+										value="#{financeBundle.finance_invoiceExport_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>						
+						
 					</aon:panelGroup>
 					
 					<aon:panelGroup>

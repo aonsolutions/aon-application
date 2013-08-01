@@ -2,6 +2,7 @@ package com.code.aon.product.strategy;
 
 import com.code.aon.account.Account;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.config.enumeration.VatDeductionType;
 
 /**
  * Contains info of a tax, the type and the breakdown.
@@ -20,6 +21,7 @@ public class TaxBreakDown {
 	private double base;
 	private Account account;
 	private Account balancingAccount;
+	private VatDeductionType vatDeductionType; 
 
 	public TaxType getTaxType() {
 		return taxType;
@@ -85,4 +87,12 @@ public class TaxBreakDown {
 		return (getTaxType() == TaxType.RETENTION);
 	}
 
+	public VatDeductionType getVatDeductionType() {
+		return vatDeductionType;
+	}
+
+	public void setVatDeductionType(VatDeductionType vatDeductionType) {
+		this.vatDeductionType = vatDeductionType;
+	}
+	
 }
