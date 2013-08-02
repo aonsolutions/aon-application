@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,36 +39,26 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.RegistryDocument;
+import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.enumeration.StreetType;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class A3Writer extends BasicExporter {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(A3Writer.class.getName());
 	
-	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+	private StreetType[] VALID_STREET_TYPES = new StreetType[]{
+			StreetType.AD, StreetType.AL, StreetType.AP, StreetType.AV, StreetType.BL, StreetType.BO,
+			StreetType.CH, StreetType.CL, StreetType.CM, StreetType.CO, StreetType.CT, StreetType.CS,
+			StreetType.CU, StreetType.ED, StreetType.GL, StreetType.GR, StreetType.LG, StreetType.MC,
+			StreetType.MN, StreetType.MZ, StreetType.PB, StreetType.PG, StreetType.PJ, StreetType.PQ,
+			StreetType.PZ, StreetType.PN, StreetType.PS, StreetType.RB, StreetType.RD, StreetType.TR,
+			StreetType.UR};
 
 	private static final int REGISTRY_SIZE = 256;
-	
-	private byte[] line;
-	
-	private void setString( String value, int offset, int maxLength ) {
-		if (! StringUtils.isEmpty(value) ) {
-			String _value = StringUtils.substring(value, 0, maxLength);
-			for( int i = 0; i < _value.length(); i++ ) {
-				this.line[offset+i] = (byte) _value.charAt(i);
-			}			
-		}
-	}
-
-	private void setStringLeftPad( String value, int offset, int maxLength ) {
-		String _value = StringUtils.leftPad(value, maxLength);
-		setString(_value, offset, maxLength);
-	}
-
-	private void setStringRightPad( String value, int offset, int maxLength ) {
-		String _value = StringUtils.rightPad(value, maxLength);
-		setString(_value, offset, maxLength);
-	}
 
 	private void setNumber( double value, int offset, int maxLength ) {
 		double _value = CommonUtil.round(value);
@@ -90,10 +80,6 @@ public class A3Writer extends BasicExporter {
 		String string = df.format(value);
 		setString(string, offset, maxLength);
 	}
-		
-	private void setDate( Date date, int offset ) {
-		setString( DATE_FORMAT.format(date), offset, 8);
-	}
 
 	private void setAccount( Account account, int offset ) {
 		// Cuenta
@@ -108,8 +94,8 @@ public class A3Writer extends BasicExporter {
 	}
 	
 	private void initLine() {
-		this.line = new byte[REGISTRY_SIZE];
-		Arrays.fill(this.line, (byte) ' ');
+		setLine( new byte[REGISTRY_SIZE] );
+		Arrays.fill(getLine(), (byte) ' ');
 		// Tipo de Formato
 		setInteger( 3, 0, 1);
 		// Codigo de Empresa
@@ -156,7 +142,7 @@ public class A3Writer extends BasicExporter {
 			setInteger(1, 57, 1);
 		}
 		// Numero de Factura o Documento
-		setStringLeftPad( getInvoice().getId().toString(), 58, 10);
+		setStringRightPad( getInvoice().getId().toString(), 58, 10);
 		// Linea de apunte (I)
 		setString( "I", 68, 1);
 		// Descripcion del apunte
@@ -276,7 +262,7 @@ public class A3Writer extends BasicExporter {
 	}
 	
 	private void resetTaxInfo() {
-		Arrays.fill(this.line, 115, 172, (byte) ' ');
+		Arrays.fill(getLine(), 115, 172, (byte) ' ');
 	}
 	
 	private void writeDetailWithTaxes( AccountEntryDetail aed, List<TaxBreakDown> taxList, boolean last ) throws IOException {
@@ -300,11 +286,11 @@ public class A3Writer extends BasicExporter {
 			setString( getSubtipoDeFactura(tbd.getVatDeductionType()), 99, 2);					
 			// Base imponible
 			setNumber( tbd.getBase(), 101, 14);			
-			write(line);
+			writeLine();
 			lineWritten = true;
 		}
 		if (! lineWritten ) {
-			write(line);
+			writeLine();
 		}
 	}
 	
@@ -339,23 +325,22 @@ public class A3Writer extends BasicExporter {
 	
 	private String getTipo( Finance finance ) {
 		String tipo = "ME";
-		switch ( finance.getPayMethod().getType() ) {
-			case CASH_BASIS:
-				tipo = "ME";
-				break;				
-			case BANK_TRANSFER:
-				tipo = "TR";
-				break;
-			case CHEQUE:
-				tipo = "CH";
-				break;
-			case NEGOTIABLE_DOCUMENT:
-				tipo = "DO";
-				break;
-			case CREDIT_CARD:
-			case DEBIT_CARD:
-				tipo = "GI";
-				break;
+		if ( finance.getPayMethod() != null ) {
+			switch ( finance.getPayMethod().getType() ) {
+				case BANK_TRANSFER:
+					tipo = "TR";
+					break;
+				case CHEQUE:
+					tipo = "CH";
+					break;
+				case NEGOTIABLE_DOCUMENT:
+					tipo = "DO";
+					break;
+				case CREDIT_CARD:
+				case DEBIT_CARD:
+					tipo = "GI";
+					break;
+			}			
 		}
 		return tipo;
 	}
@@ -416,7 +401,7 @@ public class A3Writer extends BasicExporter {
 		// Tipo de Vencimiento (C o P)
 		setString( finance.isPayment() ? "P" : "C", 57, 1);
 		// Numero de Factura o Documento
-		setStringLeftPad( getInvoice().getId().toString(), 58, 10);
+		setStringRightPad( getInvoice().getId().toString(), 58, 10);
 		// Descripcion del vencimiento
 		setStringRightPad(finance.getRemarks(), 69, 30);
 		// Importe del vencimiento
@@ -428,7 +413,7 @@ public class A3Writer extends BasicExporter {
 		if ( account != null ) {
 			setAccount(account, 121);
 		}
-		write(line);
+		writeLine();
 		
 		initLine();
 		// Fecha del Vencimiento
@@ -450,9 +435,169 @@ public class A3Writer extends BasicExporter {
 		if ( finance.getBank() != null ) {
 			setStringRightPad(finance.getBankAccount().getValue(), 93, 20);
 		}
-		write(line);
+		writeLine();
 	}
 	
+	private RegistryDocument getRegistryDocument() {
+		RegistryDocument rd = null;
+		if (! StringUtils.isBlank(getInvoice().getRegistryDocument()) ) {
+			rd = new RegistryDocument();
+			rd.setDocument(getInvoice().getRegistryDocument());
+			rd.setType(getInvoice().getRegistryDocumentType());
+			rd.setCountry(getInvoice().getRegistryDocumentCountry());
+		} else if (! StringUtils.isBlank(getInvoice().getRegistry().getDocument()) ) {
+			rd = getInvoice().getRegistry().getRegistryDocument(); 
+		}
+		return rd; 
+	}
+	
+	private String getNIF( RegistryDocument rd ) {
+		String nif = StringUtils.trim(rd.getDocument());
+		if ( rd.getCountry() != null ) {
+			switch (rd.getCountry() ) {
+				case DK:
+				case IE:
+				case LU:
+				case FI:
+					nif = rd.getCountry().getValue() + StringUtils.substring(nif, 0, 8);
+					break;
+				case DE:
+				case BE:					
+				case PT:
+				case AT:
+					nif = rd.getCountry().getValue() + StringUtils.substring(nif, 0, 9);
+					break;
+				case FR:
+				case IT:
+					nif = rd.getCountry().getValue() + StringUtils.substring(nif, 0, 11);
+					break;
+				case GB:
+				case NL:
+				case SE:
+					nif = rd.getCountry().getValue() + StringUtils.substring(nif, 0, 12);
+					break;
+				case GR:
+					nif = "EL" + StringUtils.substring(nif, 0, 8);
+					break;
+			}
+		}
+		return nif;
+	}
+	
+	private String getSiglasViaPublica( StreetType type ) {
+		String value = "CL";
+		if ( type != null ) {
+			if ( ArrayUtils.contains(VALID_STREET_TYPES, type) ) {
+				if ( type == StreetType.CT ) {
+					value = "CR";
+				} else if ( type == StreetType.CU ) {
+					value = "CT";
+				} else if ( type == StreetType.PZ ) {
+					value = "PA";
+				} else if ( type == StreetType.PN ) {
+					value = "PR";
+				} else {
+					value = type.getValue();
+				}
+			}
+		}
+		return value;
+	}
+	
+	private void fillAddress( RegistryAddress address ) {
+		// Siglas Via Publica
+		setString( getSiglasViaPublica(address.getStreetType()), 91, 2);
+		// Via Publica		
+		setStringRightPad( address.getAddress(), 93, 30);
+		// Numero		
+		setStringLeftPad( address.getNumber(), 123, 5);
+		// Municipio		
+		setStringRightPad( address.getCity(), 134, 20);
+		// Codigo Postal		
+		setStringLeftPad( address.getZip(), 154, 5);
+		// Provincia		
+		setStringRightPad( address.getGeozone().getName(), 159, 15);
+	}
+	
+	private void writeRegistry() throws IOException, ManagerBeanException {
+		initLine();
+		// Fecha de Alta
+		setDate(getInvoice().getDate(), 6);
+		// Tipo de Registro
+		setString( "C", 14, 1);		
+		// Cuenta - Descripción de la cuenta 
+		setAccountAndDescription(getRegistryDetail().getAccount());		
+		// Actualizar Saldo Inicial
+		setString( "N", 57, 1);		
+		// Saldo Inicial
+		setNumber( 0, 58, 14);
+		// NIF
+		RegistryDocument rd = getRegistryDocument();
+		if ( rd != null ) {
+			setStringRightPad( getNIF(rd), 77, 14);
+		}
+		
+		RegistryAddress address = getInvoice().getRegistry().getDefaultAddress();
+		if ( address != null ) {
+			fillAddress( address );
+		}
+		// Telefono
+		RegistryMedia phone = getInvoice().getRegistry().getPhone();
+		if ( phone == null ) {
+			phone = getInvoice().getRegistry().getCellular();
+		}
+		if ( phone != null ) {
+			setStringRightPad( phone.getValue(), 177, 12);
+		}
+		// Fax
+		RegistryMedia fax = getInvoice().getRegistry().getFax();
+		if ( fax != null ) {
+			setStringRightPad( phone.getValue(), 193, 12);
+		}
+		// E-mail
+		RegistryMedia email = getInvoice().getRegistry().getEmail();
+		if ( email != null ) {
+			setStringRightPad( email.getValue(), 205, 30);
+		}
+		writeLine();
+		
+		RegistryBank rbank = getRegistryBank();
+		if ( rbank != null ) {
+			writeRegistryBank( rbank, rd );
+		}		
+	}
+	
+	private RegistryBank getRegistryBank() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), getInvoice().getRegistry().getId());
+		List<ITransferObject> list = bean.getList(criteria);
+		if ( !list.isEmpty() ) {
+			return (RegistryBank) list.get(0); 
+		}
+		return null;		
+	}
+	
+	private void writeRegistryBank( RegistryBank rbank, RegistryDocument rd ) throws IOException, ManagerBeanException {
+		initLine();
+		// Tipo de Registro
+		setString( "C", 14, 1);		
+		// Ampliacion
+		setString( "B", 72, 1);		
+		// NIF
+		if ( rd != null ) {
+			setStringRightPad( getNIF(rd), 73, 14);
+		}
+		// Nombre / Razon Social
+		setStringRightPad( getInvoice().getRegistry().getName(), 87, 30);
+		// C.C.C. (Cuenta Bancaria)
+		setStringRightPad(rbank.getBankAccount().getValue(), 117, 20);
+		// Cuenta por Omision
+		setString( "S", 182, 1);		
+
+		writeLine();
+	}
+
 	@Override
 	public String getFileName() {
 		return "suenlac3.txt";
@@ -461,7 +606,7 @@ public class A3Writer extends BasicExporter {
 	@Override
 	public void write() throws IOException, ManagerBeanException {
 		fillHeader(getRegistryDetail());
-		write(this.line);
+		writeLine();
 		while (! getDetails().isEmpty() ) {
 			AccountEntryDetail aed = getDetails().get(0);
 			getDetails().remove(0);
@@ -470,6 +615,7 @@ public class A3Writer extends BasicExporter {
 		for( Finance finance : getInvoice().getFinances() ) {
 			writeFinance(finance);
 		}
+		writeRegistry();
 	}
 	
 	public void serialize( Invoice invoice, OutputStream out ) throws AonException {

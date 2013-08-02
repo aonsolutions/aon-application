@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,32 +31,9 @@ import com.code.aon.product.strategy.TaxBreakDown;
 public class GeyceWriter extends BasicExporter {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeyceWriter.class.getName());
-	
-	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 
 	private static final int REGISTRY_SIZE = 252;
 	
-	private byte[] line;
-	
-	private void setString( String value, int offset, int maxLength ) {
-		if (! StringUtils.isEmpty(value) ) {
-			String _value = StringUtils.substring(value, 0, maxLength);
-			for( int i = 0; i < _value.length(); i++ ) {
-				this.line[offset+i] = (byte) _value.charAt(i);
-			}			
-		}
-	}
-
-	private void setStringLeftPad( String value, int offset, int maxLength ) {
-		String _value = StringUtils.leftPad(value, maxLength);
-		setString(_value, offset, maxLength);
-	}
-
-	private void setStringRightPad( String value, int offset, int maxLength ) {
-		String _value = StringUtils.rightPad(value, maxLength);
-		setString(_value, offset, maxLength);
-	}
-
 	private void setNumber( double value, int offset, int maxLength ) {
 		double _value = CommonUtil.round(value);
 		String pattern = StringUtils.leftPad("0.00", maxLength, "0");
@@ -67,23 +42,19 @@ public class GeyceWriter extends BasicExporter {
 		setString(string, offset, maxLength);
 	}
 	
-	private void setDate( int offset, Date date ) {
-		setString( DATE_FORMAT.format(date), offset, 8);
-	}
-	
 	private void resetTaxInfo() {
-		Arrays.fill(this.line, 152, 207, (byte) '0');
-		Arrays.fill(this.line, 216, 226, (byte) '0');
+		Arrays.fill(getLine(), 152, 207, (byte) '0');
+		Arrays.fill(getLine(), 216, 226, (byte) '0');
 	}
 	
 	private void initLine() {
-		this.line = new byte[REGISTRY_SIZE];
-		Arrays.fill(this.line, (byte) ' ');
+		setLine( new byte[REGISTRY_SIZE] );
+		Arrays.fill(getLine(), (byte) ' ');
 		Enterprise enterprise = getEnterprise();
 		// Codigo de Empresa
 		setStringLeftPad( enterprise.getId().toString(), 0, 6);
 		// Fecha asiento
-		setDate(6, getAccountEntry().getEntryDate());
+		setDate(getAccountEntry().getEntryDate(), 6);
 		// Numero de Factura
 		setStringRightPad( getInvoice().getId().toString(), 26, 7);
 		// Descripcion de la Factura
@@ -101,7 +72,7 @@ public class GeyceWriter extends BasicExporter {
 			setString("S", 93, 1);
 		}
 		// Fecha documento IVA
-		setDate(95, getInvoice().getTaxDate());
+		setDate(getInvoice().getTaxDate(), 95);
 		// Descripcion
 		setStringRightPad( getInvoice().getRegistryName(), 107, 30);
 		// NIF/CIF
@@ -173,11 +144,11 @@ public class GeyceWriter extends BasicExporter {
 			if ( tbd2 != null ) {
 				fillLine(tbd2);
 			}
-			write(line);
+			writeLine();
 			lineWritten = true;
 		}
 		if (! lineWritten ) {
-			write(line);
+			writeLine();
 		}
 	}	
 	
@@ -200,7 +171,7 @@ public class GeyceWriter extends BasicExporter {
 	public void write() throws IOException, ManagerBeanException {
 		initLine();
 		fillLine(getRegistryDetail());
-		write(this.line);
+		writeLine();
 		while (! getDetails().isEmpty() ) {
 			AccountEntryDetail aed = getDetails().get(0);
 			getDetails().remove(0);

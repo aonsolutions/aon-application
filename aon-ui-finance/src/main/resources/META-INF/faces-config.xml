@@ -4017,7 +4017,16 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Invoice_issueDate desc,Invoice_referenceCode desc</value>
-		</managed-property>									
+		</managed-property>				
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Invoice_status</key>
+                    <value>1</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>							
 	</managed-bean>
 
 	<!-- ========================================================== -->

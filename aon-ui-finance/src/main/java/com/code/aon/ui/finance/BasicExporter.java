@@ -2,8 +2,10 @@ package com.code.aon.ui.finance;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,8 +35,12 @@ import com.esferalia.aon.entity.IEntityAlias;
 public abstract class BasicExporter {
 	
 	private String[] SKIP_ACCOUNTS = new String[] { "477", "472", "473", "4751" };
+	
+	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 
 	private OutputStream out;
+	
+	private byte[] line;
 	
 	private Invoice invoice;
 	
@@ -199,27 +205,58 @@ public abstract class BasicExporter {
 		return detail;
 	}
 	
-	public void write( byte[] data ) throws IOException {
-		out.write(data);
+	protected void setString( String value, int offset, int maxLength ) {
+		if (! StringUtils.isEmpty(value) ) {
+			String _value = StringUtils.substring(value, 0, maxLength);
+			for( int i = 0; i < _value.length(); i++ ) {
+				this.line[offset+i] = (byte) _value.charAt(i);
+			}			
+		}
+	}
+
+	protected void setStringLeftPad( String value, int offset, int maxLength ) {
+		String _value = StringUtils.leftPad(value, maxLength);
+		setString(_value, offset, maxLength);
+	}
+
+	protected void setStringRightPad( String value, int offset, int maxLength ) {
+		String _value = StringUtils.rightPad(value, maxLength);
+		setString(_value, offset, maxLength);
+	}	
+	
+	protected void setDate( Date date, int offset ) {
+		setString( DATE_FORMAT.format(date), offset, 8);
+	}	
+
+	public byte[] getLine() {
+		return line;
+	}
+
+	protected void setLine(byte[] line) {
+		this.line = line;
 	}
 	
-	public Invoice getInvoice() {
+	protected void writeLine() throws IOException {
+		out.write(this.line);
+	}
+	
+	protected Invoice getInvoice() {
 		return invoice;
 	}
 
-	public AccountEntry getAccountEntry() {
+	protected AccountEntry getAccountEntry() {
 		return accountEntry;
 	}
 
-	public List<TaxBreakDown> getTaxBreakDowns() {
+	protected List<TaxBreakDown> getTaxBreakDowns() {
 		return taxBreakDowns;
 	}
 
-	public List<AccountEntryDetail> getDetails() {
+	protected List<AccountEntryDetail> getDetails() {
 		return details;
 	}
 
-	public AccountEntryDetail getRegistryDetail() {
+	protected AccountEntryDetail getRegistryDetail() {
 		return registryDetail;
 	}
 
