@@ -652,7 +652,7 @@ public class DomainController extends BasicController {
 		mailAccount.setIncomingHost("imap.aonsolutions.es");
 		mailAccount.setOutgoingSecurity(ConnectionSecurity.TLS);
 		mailAccount.setOutgoingHost("smtp.aonsolutions.es");
-		mailAccount.setDisplayName("ESFERALIA Networks S.A.");
+		mailAccount.setDisplayName("aonSolutions");
 		Address from = new InternetAddress( mailAccount.getEmail(), mailAccount.getDisplayName() );
 		return new EmailSender( from, mailAccount );							
 	}
