@@ -16,6 +16,8 @@
 	 
 	<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_service.xhtml" />
 
-	<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_finance.xhtml" />
+	<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_finance.xhtml" >
+		<ui:param name="financesEditable" value="#{controller.reservationInvoiceTo.directCustomer}" />
+	</ui:include>
 
 </ui:composition>

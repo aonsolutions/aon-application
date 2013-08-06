@@ -817,7 +817,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 
 			ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-			reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo());
+			reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo(), false);
 
 			if (!reservation.isCancelled()) {
 				ProjectReservation savedReservation = (ProjectReservation)getManagerBean().get(reservation.getId());
@@ -857,9 +857,9 @@ public class ProjectReservationController extends BasicController implements IPm
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-			if (!invoice.getPosShift().getId().equals(PosUtils.getUserPosShift().getId()) && !AonUtil.getRoleManager().isFinanceOperator() ) {
+			if (!AonUtil.getRoleManager().isFinanceOperator() && !invoice.getPosShift().equals(PosUtils.getUserPosShift())) {
 				setShowModificationWindow(false);
-				String msg = "No se puede Modificar. La factura pertenece a otro turno.";
+				String msg = "No se puede Modificar. La Factura pertenece a otro Turno.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
@@ -907,11 +907,13 @@ public class ProjectReservationController extends BasicController implements IPm
 					getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
 					getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 					getReservationInvoiceTo().setEarlyCheckOut(true); //Para que no borre los servicios asociados, en caso de Factura de Servicios.
-					reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo());
+					Invoice rectifierInvoice = reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo(), false);
 
 					getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 					getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
-					reservationInvoicing.duplicate(getInvoiceToModify(), reservationInvoiceTo);
+					Invoice newInvoice = reservationInvoicing.duplicate(getInvoiceToModify(), reservationInvoiceTo);
+
+					reservationInvoicing.settle(rectifierInvoice, newInvoice);
 				} else {
 					reservationInvoicing.modify(getInvoiceToModify(), getReservationInvoiceTo());
 				}
@@ -922,8 +924,9 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 	
-	public boolean isInvoiceFinancesModifyAllowed() {
-		return getInvoiceToModify().getPosShift().getId().equals(PosUtils.getUserPosShift().getId());
+	public boolean isFinancesModifyAllowed() {
+		Invoice invoice = getInvoiceToModify();
+		return (invoice.getPosShift() != null && invoice.getPosShift().getId() != null && invoice.getPosShift().equals(PosUtils.getUserPosShift()));
 	}
 
 	private boolean isFinancesModified() throws ManagerBeanException {

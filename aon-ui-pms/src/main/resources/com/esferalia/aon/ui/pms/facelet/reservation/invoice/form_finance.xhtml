@@ -22,7 +22,7 @@
 					</aon:column>
 
 					<aon:column styleClass="aon-panelGrid-even aon-width-180 aon-editDataTable-textColumn">
-						<aon:div rendered="#{!controller.reservationInvoiceTo.directCustomer}">
+						<aon:div rendered="#{!financesEditable}">
 							<aon:outputText value="#{hotelInvoiceFinance.payMethod.name}" styleClass="aon-bold"
 								rendered="#{hotelInvoiceFinance.payMethod != null}" />
 							<aon:outputText value="#{bundle.aon_undefined}" styleClass="aon-bold aon-label-error"
@@ -30,8 +30,7 @@
 						</aon:div>
 						<aon:selectOneMenu id="ProjectReservation_financePayMethod"
 							value="#{hotelInvoiceFinance.payMethod}"
-							disabled="#{financeListDisabled}"
-							rendered="#{controller.reservationInvoiceTo.directCustomer}"
+							rendered="#{financesEditable}"
 							ajaxSingle="true">
 							<f:selectItem itemLabel="-" value="#{null}" />
 							<f:selectItems value="#{pmsCollections.directPayMethods}" />
@@ -45,21 +44,19 @@
 
 					<aon:column styleClass="aon-panelGrid-even aon-width-auto aon-editDataTable-textColumn">
 						<aon:outputText value="#{hotelInvoiceFinance.amount}" styleClass="aon-bold"
-							rendered="#{!controller.reservationInvoiceTo.directCustomer}">
+							rendered="#{!financesEditable}">
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
-						<aon:div rendered="#{controller.reservationInvoiceTo.directCustomer}">
+						<aon:div rendered="#{financesEditable}">
 							<aon:inputText id="ProjectReservation_financeAmount"
 								value="#{hotelInvoiceFinance.amount}"
 								required="true" size="5"
-								disabled="#{financeListDisabled}"
 								reRender="invoiceFinancesDiv" ajaxSingle="true" />
 							<aon:commandButton
 								id="Finance-removeButton" title="#{bundle.aon_remove}"
 								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-minus"
 								rendered="#{hotelInvoiceFinance != controller.reservationInvoiceTo.firstFinance}"
 								actionListener="#{controller.onRemoveFinance}"
-								disabled="#{financeListDisabled}"
 								reRender="invoiceFinancesDiv">
 								<f:param name="hotelInvoiceFinanceIndex" value="#{hotelInvoiceFinanceKey}"/>
 							</aon:commandButton>
@@ -68,7 +65,6 @@
 								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-add"
 								rendered="#{hotelInvoiceFinance == controller.reservationInvoiceTo.lastFinance}"
 								actionListener="#{controller.onNewFinance}"
-								disabled="#{financeListDisabled}"
 								reRender="invoiceFinancesDiv" />
 						</aon:div>
 					</aon:column>

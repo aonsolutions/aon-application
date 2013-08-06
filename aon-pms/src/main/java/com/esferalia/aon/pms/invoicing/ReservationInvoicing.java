@@ -28,11 +28,13 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.bridge.invoicing.RectificationInvoicingManager;
 import com.code.aon.finance.enumeration.FinanceStatus;
+import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
+import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.product.Item;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -93,7 +95,7 @@ public class ReservationInvoicing implements IReservationConstants {
 		}
 	}
 
-	public Invoice rectify(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo) throws ManagerBeanException {
+	public Invoice rectify(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo, boolean settleFinance) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -109,7 +111,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			String comments = reservationInvoiceTo.getComments();
 
 			RectificationInvoicingManager rectificationManager = new RectificationInvoicingManager();
-			Invoice rectifier = rectificationManager.rectifyInvoice(invoice, series, number, date, comments, false);
+			Invoice rectifier = rectificationManager.rectifyInvoice(invoice, series, number, date, comments, settleFinance);
 			rectifier.setPosShift(reservationInvoiceTo.getPosShift());
 			recordInvoice(rectifier);
 
@@ -218,6 +220,35 @@ public class ReservationInvoicing implements IReservationConstants {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
+	}
+
+	public boolean settle(ProjectReservation reservation) throws ManagerBeanException {
+		return true;
+	}
+
+	public void settle(Invoice invoice1, Invoice invoice2) throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice1.getId());
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
+		for (ITransferObject ito1 : financeBean.getList(criteria)) {
+			Finance finance1 = (Finance)ito1;
+			criteria = new Criteria();
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice2.getId());
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_AMOUNT), CommonUtil.round(0 - finance1.getAmount()));
+			if (finance1.getPayMethod() != null && finance1.getPayMethod().getId() != null) {
+				criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_ID), finance1.getPayMethod().getId());
+			} else {
+				criteria.addNullExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD));
+			}
+			for (ITransferObject ito2 : financeBean.getList(criteria)) {
+				Finance finance2 = (Finance)ito2;
+				settleFinances(finance1, finance2);
+				break;
+			}
+		}
+
 	}
 
 	private Invoice createInvoice(ReservationInvoiceTo reservationInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
@@ -632,6 +663,18 @@ public class ReservationInvoicing implements IReservationConstants {
 			return (InvoiceTax)ito;
 		}
 		return null;
+	}
+
+	private void settleFinances(Finance finance1, Finance finance2) throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+
+		finance1.setFinanceStatus(FinanceStatus.SETTLED);
+		finance1 = (Finance)financeBean.update(finance1);
+		FinanceTrackingWriter.addFinanceTracking(finance1, new Date(), FinanceTrackingType.SETTLED, "Saldado");
+
+		finance2.setFinanceStatus(FinanceStatus.SETTLED);
+		finance2 = (Finance)financeBean.update(finance2);
+		FinanceTrackingWriter.addFinanceTracking(finance2, new Date(), FinanceTrackingType.SETTLED, "Saldado");
 	}
 
 }

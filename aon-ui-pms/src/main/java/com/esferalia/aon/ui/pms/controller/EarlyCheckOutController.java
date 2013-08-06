@@ -430,7 +430,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 								getReservationInvoiceTo().getRegistry().setDocument(invoiceToRectify.getRegistryDocument());
 								getReservationInvoiceTo().setAddress(obtainInvoiceAddress(invoiceToRectify));
 	
-								reservationInvoicing.rectify(invoiceToRectify, getReservationInvoiceTo());
+								reservationInvoicing.rectify(invoiceToRectify, getReservationInvoiceTo(), false);
 					    	}
 			    		}
 

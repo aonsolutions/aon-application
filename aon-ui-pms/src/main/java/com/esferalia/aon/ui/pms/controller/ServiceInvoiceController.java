@@ -544,7 +544,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 
 			ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-			Invoice rectifier = reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo());
+			Invoice rectifier = reservationInvoicing.rectify(getInvoiceToRectify(), getReservationInvoiceTo(), false);
 
 			onEditSearch(event);
 			getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), rectifier.getId());

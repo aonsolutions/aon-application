@@ -115,7 +115,9 @@
 									<c:if test="#{controller.chargeCheckOut and !empty controller.reservationFinances}">
 										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/earlyCheckOut/form_return.xhtml" />
 	
-										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_finance.xhtml" />
+										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_finance.xhtml" >
+											<ui:param name="financesEditable" value="#{controller.reservationInvoiceTo.directCustomer}" />
+										</ui:include>
 
 										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/earlyCheckOut/form_totals.xhtml" />
 									</c:if>
