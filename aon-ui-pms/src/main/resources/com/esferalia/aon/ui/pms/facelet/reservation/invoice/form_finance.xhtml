@@ -22,7 +22,7 @@
 					</aon:column>
 
 					<aon:column styleClass="aon-panelGrid-even aon-width-180 aon-editDataTable-textColumn">
-						<aon:div rendered="#{!financesEditable}">
+						<aon:div rendered="#{!payMethodEditable}">
 							<aon:outputText value="#{hotelInvoiceFinance.payMethod.name}" styleClass="aon-bold"
 								rendered="#{hotelInvoiceFinance.payMethod != null}" />
 							<aon:outputText value="#{bundle.aon_undefined}" styleClass="aon-bold aon-label-error"
@@ -30,7 +30,7 @@
 						</aon:div>
 						<aon:selectOneMenu id="ProjectReservation_financePayMethod"
 							value="#{hotelInvoiceFinance.payMethod}"
-							rendered="#{financesEditable}"
+							rendered="#{payMethodEditable}"
 							ajaxSingle="true">
 							<f:selectItem itemLabel="-" value="#{null}" />
 							<f:selectItems value="#{pmsCollections.directPayMethods}" />
@@ -44,10 +44,10 @@
 
 					<aon:column styleClass="aon-panelGrid-even aon-width-auto aon-editDataTable-textColumn">
 						<aon:outputText value="#{hotelInvoiceFinance.amount}" styleClass="aon-bold"
-							rendered="#{!financesEditable}">
+							rendered="#{!amountEditable}">
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
-						<aon:div rendered="#{financesEditable}">
+						<aon:div rendered="#{amountEditable}">
 							<aon:inputText id="ProjectReservation_financeAmount"
 								value="#{hotelInvoiceFinance.amount}"
 								required="true" size="5"

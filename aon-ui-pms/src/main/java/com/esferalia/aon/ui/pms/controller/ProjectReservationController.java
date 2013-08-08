@@ -857,12 +857,6 @@ public class ProjectReservationController extends BasicController implements IPm
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-			if (!AonUtil.getRoleManager().isFinanceOperator() && !invoice.getPosShift().equals(PosUtils.getUserPosShift())) {
-				setShowModificationWindow(false);
-				String msg = "No se puede Modificar. La Factura pertenece a otro Turno.";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
-			}
 			setInvoiceToModify(invoice);
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));
 			getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());
@@ -897,12 +891,28 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
+	private boolean isInvoiceInUserPosShift(Invoice invoice) {
+		return (invoice.getPosShift() != null && invoice.getPosShift().equals(PosUtils.getUserPosShift()));
+	}
+
+	public boolean isFinancesPayMethodModifyAllowed() throws ManagerBeanException {
+		Invoice invoice = getInvoiceToModify();
+		return (!invoice.isAdvance() && isInvoiceInUserPosShift(invoice) && invoice.isAllFinancePending());
+	}
+
+	public boolean isFinancesAmountModifyAllowed() throws ManagerBeanException {
+		Invoice invoice = getInvoiceToModify();
+		return (!invoice.isService() && !invoice.isAdvance() && isInvoiceInUserPosShift(invoice) && invoice.isAllFinancePending());
+	}
+
 	public void onModifyInvoice(ActionEvent event) {
 		setInvoiceModel(null);
 		try {
-			if (validateInvoice()) {
+			if (validateModificationInvoice(getInvoiceToModify())) {
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-				if (!DateUtils.isSameDay(getInvoiceToModify().getIssueDate(), new Date()) || isFinancesModified()) {
+				if (DateUtils.isSameDay(getInvoiceToModify().getIssueDate(), new Date()) && isInvoiceInUserPosShift(getInvoiceToModify())) {
+					reservationInvoicing.modify(getInvoiceToModify(), getReservationInvoiceTo());
+				} else {
 					setInvoiceToRectify(getInvoiceToModify());
 					getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
 					getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
@@ -913,9 +923,9 @@ public class ProjectReservationController extends BasicController implements IPm
 					getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 					Invoice newInvoice = reservationInvoicing.duplicate(getInvoiceToModify(), reservationInvoiceTo);
 
-					reservationInvoicing.settle(rectifierInvoice, newInvoice);
-				} else {
-					reservationInvoicing.modify(getInvoiceToModify(), getReservationInvoiceTo());
+					if (!isFinancesModified()) {
+						reservationInvoicing.settle(rectifierInvoice, newInvoice);
+					}
 				}
 			}
 		} catch (ManagerBeanException ex) {
@@ -923,24 +933,30 @@ public class ProjectReservationController extends BasicController implements IPm
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 	}
-	
-	public boolean isFinancesModifyAllowed() {
-		Invoice invoice = getInvoiceToModify();
-		return (invoice.getPosShift() != null && invoice.getPosShift().getId() != null && invoice.getPosShift().equals(PosUtils.getUserPosShift()));
+
+	private boolean validateModificationInvoice(Invoice invoice) throws ManagerBeanException {
+		if (!invoice.isAdvance() && !invoice.isService()) {
+			return validateInvoice();
+		} else if (invoice.isService()) {
+			return isPayMethodOk();
+		}
+		return true;
 	}
 
 	private boolean isFinancesModified() throws ManagerBeanException {
-		if (!getInvoiceToModify().getPosShift().equals(getReservationInvoiceTo().getPosShift())) {
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getInvoiceToModify().getId());
-			for (ITransferObject ito : financeBean.getList(criteria)) {
-				Finance invoiceFinance = (Finance)ito;
-				for (Finance modifyFinance : getReservationInvoiceTo().getFinances()) {
-					if ((invoiceFinance.getAmount() != modifyFinance.getAmount()) || !invoiceFinance.getPayMethod().equals(modifyFinance.getPayMethod())) {
-						return true;
-					}
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getInvoiceToModify().getId());
+		for (ITransferObject ito : financeBean.getList(criteria)) {
+			Finance invoiceFinance = (Finance)ito;
+			boolean found = false;
+			for (Finance modifyFinance : getReservationInvoiceTo().getFinances()) {
+				if (invoiceFinance.getAmount() == modifyFinance.getAmount() && invoiceFinance.getPayMethod().equals(modifyFinance.getPayMethod())) {
+					found = true;
 				}
+			}
+			if (!found) {
+				return true;
 			}
 		}
 		return false;

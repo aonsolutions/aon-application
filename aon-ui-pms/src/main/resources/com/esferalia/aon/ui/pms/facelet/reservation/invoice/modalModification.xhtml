@@ -64,7 +64,8 @@
 									</aon:panelGrid>
 
 									<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_finance.xhtml" >
-										<ui:param name="financesEditable" value="#{controller.financesModifyAllowed}" />
+										<ui:param name="payMethodEditable" value="#{controller.financesPayMethodModifyAllowed}" />
+										<ui:param name="amountEditable" value="#{controller.financesAmountModifyAllowed}" />
 									</ui:include>
 								</aon:div>
 							</aon:div>
