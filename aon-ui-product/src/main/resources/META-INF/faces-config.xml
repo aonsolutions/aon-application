@@ -231,7 +231,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Item_product_category_name,Item_product_name,Item_product_code</value>
+			<value>Item_detail</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

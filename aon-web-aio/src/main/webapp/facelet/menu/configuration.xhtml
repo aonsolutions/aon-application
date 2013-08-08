@@ -150,10 +150,10 @@
 									</c:if>
 									<c:if test="#{aonRole.productOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="item-configuration" 
-												action="item_search"
-												actionListener="#{item.onEditSearch}"
-												value="#{productBundle.product_module}" />
+											<aon:commandLink id="product-configuration" 
+												action="product_search-configuration"
+												actionListener="#{product.onEditSearch}"
+												value="#{productBundle.product_module}" />												
 										</aon:div>
 									</c:if>
 									<c:if test="#{aonRole.productOperator or aonRole.purchaseOperator}">

@@ -287,10 +287,10 @@
 									</aon:div>
 									<c:if test="#{aonRole.productOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="item-management" 
-												action="item_search-management"
-												actionListener="#{item.onEditSearch}"
-												value="#{productBundle.product_module}" />												
+											<aon:commandLink id="product-management" 
+												action="product_search-management"
+												actionListener="#{product.onEditSearch}"
+												value="#{productBundle.product_module}" />
 										</aon:div>
 									</c:if>									
 								</aon:div>
