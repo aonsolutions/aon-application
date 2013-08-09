@@ -384,6 +384,19 @@
 								<ui:param name="skipLabel" value="#{true}" />
 								<ui:param name="skipGoToButton" value="#{true}" />
 							</ui:include>
+							<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+								<aon:outputLabel styleClass="aon-italic"
+									value="#{projectBundle.project_no_project_linked}"
+									rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.project.id == null and purchaseInvoice.projectCount > 0}" />
+							</c:if>
+							<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+								<aon:outputLabel styleClass="aon-italic"
+									value="#{tasBundle.tas_no_projectTas_linked}"
+									rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.project.id == null and purchaseInvoice.projectCount > 0}" />
+							</c:if>
+							<aon:outputText styleClass="aon-bold"
+								value="#{purchaseInvoice.to.project.name}" 
+								rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.project.id != null}" />
 						</aon:div>
 
 					</aon:panelGrid>

@@ -390,12 +390,12 @@
 								value="#{tasBundle.tas_projectTas}" />
 						</c:if>
 						<aon:div>
-							<aon:selectOneMenu id="Invoice_project_id"
-								rendered="#{!saleInvoice.readOnly and saleInvoice.to.project.id == null and saleInvoice.projectCount > 0}"
-								value="#{saleInvoice.to.project}">
-								<f:selectItem itemLabel="-" value="#{null}" />
-								<f:selectItems value="#{saleInvoice.projects}" />
-							</aon:selectOneMenu>
+							<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{saleInvoice.to.project}" />
+								<ui:param name="lookupRendered" value="#{!saleInvoice.readOnly}" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipGoToButton" value="#{true}" />
+							</ui:include>
 							<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
 								<aon:outputLabel styleClass="aon-italic"
 									value="#{projectBundle.project_no_project_linked}"
@@ -408,25 +408,7 @@
 							</c:if>
 							<aon:outputText styleClass="aon-bold"
 								value="#{saleInvoice.to.project.name}" 
-								rendered="#{saleInvoice.to.project.id != null}" />
-							<aon:div layout="inline" styleClass="aon-margin-left">
-								<aon:commandButton id="newInvoiceProject"
-									value="&#160;" title="#{bundle.aon_reset}"
-									styleClass="aon-icon-commandButton aon-icon-reset"
-									rendered="#{saleInvoice.readOnly and saleInvoice.to.project.id == null and saleInvoice.projectCount > 0}"
-									reRender="showProjectWindow">
-									<f:setPropertyActionListener target="#{saleInvoice.showProjectWindow}"
-										value="#{true}" />								
-									<f:setPropertyActionListener target="#{saleInvoice.showDetailProjectWindow}"
-										value="#{false}" />								
-								</aon:commandButton>
-								<aon:commandButton id="removeInvoiceProject" 
-									value="&#160;" title="#{bundle.aon_remove}" 
-									styleClass="aon-icon-commandButton aon-icon-delete"
-									rendered="#{saleInvoice.to.project.id != null}"
-									actionListener="#{saleInvoice.removeInvoiceProject}" 
-									reRender="saleInvoiceForm" />
-							</aon:div>
+								rendered="#{saleInvoice.readOnly and saleInvoice.to.project.id != null}" />
 						</aon:div>
 
 					</aon:panelGrid>
@@ -526,6 +508,7 @@
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAddress.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
