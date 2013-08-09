@@ -311,7 +311,7 @@
 						<aon:commandLink id="reservationLink"
 							styleClass="aon-button-goto" style="padding-right: 20px;" 
 							value="&#160;" immediate="true"
-							rendered="#{!empty reservationData.crsCode}" 
+							rendered="#{!empty reservationData.crsCode and !reservationRequest.agencyUser}" 
 							actionListener="#{controller.onLoadRoomReservation}"
 							action="#{controller.getReservationPage}"
 							reRender="aonContent">

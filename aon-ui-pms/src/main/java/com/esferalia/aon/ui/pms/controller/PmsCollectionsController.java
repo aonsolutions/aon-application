@@ -30,6 +30,7 @@ import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.reservation.IReservationConstants;
+import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class PmsCollectionsController {
 
@@ -128,6 +129,9 @@ public class PmsCollectionsController {
 			criteria.addEqualExpression("Customer.registry.segments.segment.name", IReservationConstants.COMPANY);
 		}
 		criteria.addEqualExpression("Customer.registry.addInfos.attribute", IReservationConstants.SOLRES.toUpperCase());
+		if (PmsUtils.isAgencyUser()) {
+			criteria.addInExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_ID), PmsUtils.getUserAgencies());
+		}
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, customerBean.getFieldName(IEntityAlias.CUSTOMER_SCOPE_ID));
 		criteria.addOrder(customerBean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_NAME));
 		for (ITransferObject ito : customerBean.getList(criteria)) {

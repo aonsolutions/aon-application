@@ -13,6 +13,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
+import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ReservationRequestSearchListener extends ControllerSearchListener {
 
@@ -71,6 +72,8 @@ public class ReservationRequestSearchListener extends ControllerSearchListener {
 		}
 		if (getAgency() != null && getAgency().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.RESERVATION_REQUEST_AGENCY_ID), getAgency().getId());			
+		} else if (PmsUtils.isAgencyUser()) {
+			criteria.addInExpression(getFieldName(IEntityAlias.RESERVATION_REQUEST_AGENCY_ID), PmsUtils.getUserAgencies());
 		}
 		if (getCompany() != null && getCompany().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.RESERVATION_REQUEST_COMPANY_ID), getCompany().getId());			

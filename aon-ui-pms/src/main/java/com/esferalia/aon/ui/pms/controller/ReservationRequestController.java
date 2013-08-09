@@ -24,6 +24,7 @@ import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.ReservationRequestGuest;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ReservationRequestController extends BasicController implements IPmsConstants {
 	
@@ -33,6 +34,7 @@ public class ReservationRequestController extends BasicController implements IPm
 	private boolean skipResetAvailabilityMap;
 	private boolean showConfirmWindow;
 	private boolean showAuditInfoWindow;
+	private Boolean agencyUser;
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -80,6 +82,19 @@ public class ReservationRequestController extends BasicController implements IPm
 	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
 		this.showAuditInfoWindow = showAuditInfoWindow;
 	}	
+
+	public boolean isAgencyUser() {
+		if (agencyUser == null) {
+			try {
+				agencyUser = PmsUtils.isAgencyUser();
+			} catch (ManagerBeanException ex) {
+				String msg = "Se produjo un error al buscar el Usuario de Agencia. [" + ex.getMessage() + "]";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg, ex);
+			}
+		}
+		return agencyUser;
+	}
 
 	public void onStartDateChanged(ActionEvent event) {
 		ReservationRequest request = (ReservationRequest)getTo();

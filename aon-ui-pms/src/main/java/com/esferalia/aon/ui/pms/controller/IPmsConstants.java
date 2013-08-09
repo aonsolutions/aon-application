@@ -44,5 +44,6 @@ public interface IPmsConstants {
 	String AVAILABLE_SERVICE_ROOM = "availableServiceRoom";
 	String RACK_RESERVATION = "rackReservation";
 	String INVOICE = "invoice";
+	String REQUEST_USER = "request_user";
 
 }
