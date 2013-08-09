@@ -42,6 +42,8 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IAddress;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
@@ -302,46 +304,54 @@ public class ReservationInvoicing implements IReservationConstants {
 		if (!reservationInvoiceTo.isEarlyCheckOut()) {
 			alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
 			criteria.addEqualExpression(alias, false);
-		} else if (reservation.isAgencyHolder()) {
-			alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
-			criteria.addEqualExpression(alias, true);
+		} else {
+			if (reservation.isAgencyHolder()) {
+				alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
+				criteria.addEqualExpression(alias, true);
+				alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_TYPE);
+				criteria.addEqualExpression(alias, ProductType.SERVICE);
+			} else {
+				alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
+				Expression noDepositOrDamageExpr = ExpressionUtilities.getEqualExpression(alias, false);
+				alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_TYPE);
+				noDepositOrDamageExpr = ExpressionUtilities.getOrExpression(noDepositOrDamageExpr, ExpressionUtilities.getEqualExpression(alias, ProductType.SERVICE));
+				criteria.addExpression(noDepositOrDamageExpr);
+			}
 		}
 		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
 		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL_ID));
 		List<ITransferObject> reservationServiceDetailList = reservationServiceDetailBean.getList(criteria);
 		for (ITransferObject ito : reservationServiceDetailList) {
 			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
-			if (!reservationInvoiceTo.isEarlyCheckOut() || !isDepositOrDamage(reservationServiceDetail.getProjectReservationService())) {
-				InvoiceDetail invoiceDetail = new InvoiceDetail();
-				invoiceDetail.setInvoice(invoice);
-				invoiceDetail.setProject(reservation.getProject());
-				invoiceDetail.setLine(++line);
-				invoiceDetail.setItem(reservationServiceDetail.getProjectReservationService().getItem());
-				invoiceDetail.setDescription(obtainDetailDescription(reservationServiceDetail));
-				invoiceDetail.setQuantity(reservationServiceDetail.getQuantity());
-				invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
-				invoiceDetail.setPrice(reservationServiceDetail.getPrice());
-				invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-				invoiceDetail.setTaxableBase(reservationServiceDetail.getTaxableBase());
-				invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
-				if (isVatGap) {
-					invoiceDetail.setTaxDataInDetail(true);
-					if (reservation.getVatQuota() != 0) {
-						invoiceDetail.setVatPercent(reservationUtils.getTaxPercentage(invoiceDetail.getItem().getProduct().getVat(), invoice.getIssueDate()));
-						double vatQuota = CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceDetail.getVatPercent() / 100);
-						if (isVatGap && line == reservationServiceDetailList.size()) {
-							vatQuota = vatGap;
-						}
-						invoiceDetail.setVatQuota(vatQuota);
-						vatGap = vatGap - vatQuota;
-					} else {
-						invoiceDetail.setVatPercent(0);
-						invoiceDetail.setVatQuota(0);
+			InvoiceDetail invoiceDetail = new InvoiceDetail();
+			invoiceDetail.setInvoice(invoice);
+			invoiceDetail.setProject(reservation.getProject());
+			invoiceDetail.setLine(++line);
+			invoiceDetail.setItem(reservationServiceDetail.getProjectReservationService().getItem());
+			invoiceDetail.setDescription(obtainDetailDescription(reservationServiceDetail));
+			invoiceDetail.setQuantity(reservationServiceDetail.getQuantity());
+			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
+			invoiceDetail.setPrice(reservationServiceDetail.getPrice());
+			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+			invoiceDetail.setTaxableBase(reservationServiceDetail.getTaxableBase());
+			invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
+			if (isVatGap) {
+				invoiceDetail.setTaxDataInDetail(true);
+				if (reservation.getVatQuota() != 0) {
+					invoiceDetail.setVatPercent(reservationUtils.getTaxPercentage(invoiceDetail.getItem().getProduct().getVat(), invoice.getIssueDate()));
+					double vatQuota = CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceDetail.getVatPercent() / 100);
+					if (isVatGap && line == reservationServiceDetailList.size()) {
+						vatQuota = vatGap;
 					}
+					invoiceDetail.setVatQuota(vatQuota);
+					vatGap = vatGap - vatQuota;
+				} else {
+					invoiceDetail.setVatPercent(0);
+					invoiceDetail.setVatQuota(0);
 				}
-				invoiceDetail.getInvoice().setUpdateEnabled(line == reservationServiceDetailList.size());
-				invoiceDetailBean.insert(invoiceDetail);
 			}
+			invoiceDetail.getInvoice().setUpdateEnabled(line == reservationServiceDetailList.size());
+			invoiceDetailBean.insert(invoiceDetail);
 		}
 
 		if (reservation.isAdvanceInvoiced() && !reservationInvoiceTo.isEarlyCheckOut()) {
@@ -495,10 +505,6 @@ public class ReservationInvoicing implements IReservationConstants {
 	private void recordInvoice(Invoice invoice) throws ManagerBeanException {
 		AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
 		entryWriter.recordAndUpdateInvoice(invoice);
-	}
-
-	private boolean isDepositOrDamage(ProjectReservationService reservationService) {
-		return (reservationService.isExtra() && reservationService.getItem().getProduct().getType() != ProductType.SERVICE);
 	}
 
 	private String obtainDetailDescription(ProjectReservationServiceDetail reservationServiceDetail) throws ManagerBeanException {
