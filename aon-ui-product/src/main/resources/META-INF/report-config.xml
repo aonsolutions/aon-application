@@ -5,6 +5,18 @@
 	"http://co-de.com/aon/report-config.dtd">
 
 <report-config>
+	<!--  ********* Product list ********* -->
+	<report id="productList" description="Product's List">
+		<template path="/com/code/aon/ui/product/report/productList.jasper"/>
+		<bean key="com.code.aon.product.Product" />
+		<criteria provider="#{product}"/>
+		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
 
 	<!--  *********  Listado de Catalogos ********* -->
 	<report id="catalogueItemList" description="Catalogue items List">
