@@ -377,7 +377,7 @@
 
 				<aon:div id="InvoiceProject">
 					<aon:panelGrid columns="2" style="width: 100%;"
-						rendered="#{saleInvoice.to.project.id != null or saleInvoice.projectCount > 0}"
+						rendered="#{saleInvoice.to.project.id != null or saleInvoice.to.registry.id != null}"
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto">
 
