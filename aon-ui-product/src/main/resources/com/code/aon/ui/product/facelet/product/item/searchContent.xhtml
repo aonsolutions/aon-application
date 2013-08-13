@@ -40,6 +40,14 @@
 	<aon:inputText id="Product_items_description" size="50"
 		valueChangeListener="#{controller.addExpression}" />
 		
+	<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
+		<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+			<ui:param name="lookupTo" value="#{searchController.supplier}" />
+			<ui:param name="skipNewButton" value="#{true}" />
+			<ui:param name="lookupSuffix" value="-Item" />
+		</ui:include>	
+	</c:if>
+		
 	<c:if test="#{aonConfiguration.bean.product.showEcommerceData}">
 		<aon:outputLabel for="Product_items_internet"
 			value="#{productBundle.product_ecommerce}" />

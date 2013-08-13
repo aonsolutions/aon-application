@@ -27,5 +27,8 @@
 		<c:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
 			<aon:lookupButtonPopup lookup="#{accountLookup}" />
 		</c:if>		
+		<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
+			<aon:lookupButtonPopup lookup="#{supplierLookup}" />
+		</c:if>
 	</ui:define>
 </ui:composition>

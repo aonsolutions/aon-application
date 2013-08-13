@@ -21,6 +21,7 @@ import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -43,6 +44,16 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	private Account salesAccount;
 	
 	private Tag[] tags;
+	
+	private Supplier supplier;
+	
+	public Supplier getSupplier() {
+		return supplier;
+	}
+
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
+	}
 	
 	public ProductStatus[] getStatuses() {
 		return statuses;
@@ -137,6 +148,8 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		setSalesAccount( (Account) accountBean.createNewTo() );
 		setItemStatuses( new ProductStatus[0] );
 		setTags( new Tag[]{EMPTY_TAG} );
+		IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
+		setSupplier((Supplier)supplierBean.createNewTo());
 	}
 	
 	@Override
@@ -170,7 +183,10 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		}	
 		if ( getTagsSize() > 0 ) {
 			addEnumToCriteria(criteria, "Product.tags.tag.id", getTagsIds().toArray());	
-		}		
+		}
+		if (getSupplier() != null && getSupplier().getId() != null) {
+			criteria.addEqualExpression(getController().resolveAlias("Product_items_suppliers_supplier_id"), getSupplier().getId());
+		}
 	}
 	
 	public void onAddTag(ActionEvent event) {
