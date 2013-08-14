@@ -407,7 +407,7 @@ public class PmsReportManager {
 				" AND PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4" +
 				" AND R.hotel IN ( " + getHotelIds(hotel) + " )" +
 				((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):("")) +
-				((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):("")) +
+				((item!=null && item.getId()!=null)?(" AND R.item = " + item.getId()):("")) +
 				" AND AA.date between :start AND :end" +
 				" AND R.Hotel NOT IN (SELECT distinct R2.hotel " +
 				"               FROM room AS R2, asset_activity AS AA2, project_reservation_room_detail AS PRRD2 " +
@@ -454,7 +454,7 @@ public class PmsReportManager {
 				" AND PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4" +
 				" AND R.hotel IN ( " + getHotelIds(hotel) + " )" +
 				((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):("")) +
-				((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):("")) +
+				((item!=null && item.getId()!=null)?(" AND R.item = " + item.getId()):("")) +
 				" AND AA.date between (date(:start) + INTERVAL -1 DAY) AND (date(:end) + INTERVAL -1 DAY)" +
 				" AND R.Hotel NOT IN (SELECT R2.hotel" +
 				"               FROM room AS R2, asset_activity AS AA2, project_reservation_room_detail AS PRRD2" +
@@ -483,7 +483,7 @@ public class PmsReportManager {
 				" AND AA.status = 0" +
 				" AND H.id in ( " + getHotelIds(hotel) + " )" +
 				((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):("")) +
-				((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):("")) +
+				((item!=null && item.getId()!=null)?(" AND R.item = " + item.getId()):("")) +
 				" AND AA.date BETWEEN :start AND :end" +
 				" GROUP BY 1, AA.date" +
 				" ORDER BY 1,2"
