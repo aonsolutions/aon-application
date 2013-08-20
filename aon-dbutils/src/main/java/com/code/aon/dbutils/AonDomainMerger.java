@@ -299,7 +299,7 @@ public class AonDomainMerger {
 				}
 			}
 			if (INTERNAL_REFERENCES_TABLES.containsKey(table)) {
-				for (String referencedTable : INTERNAL_REFERENCES_TABLES.get(table).getFkTables() ) {
+				for (String referencedTable : INTERNAL_REFERENCES_TABLES.get(table).getFkTableNames() ) {
 					if (isMergeableTable(referencedTable)) {
 						addTable(referencedTable);	
 					}
@@ -388,16 +388,16 @@ public class AonDomainMerger {
 					} else {
 						if (INTERNAL_REFERENCES_TABLES.containsKey(t.getName())) {
 							AonInternalReference air = INTERNAL_REFERENCES_TABLES.get(t.getName());
-							if (air.getColumn().equals(column)) {
-								Object discriminator = rs.getObject(air.getDiscriminatorColumn());
-								String fkTable = getReferencedTable(t.getName() , discriminator, air );
+							if (air.getColumnName().equals(column)) {
+								Object discriminator = rs.getObject(air.getDiscriminatorColumnName());
+								TableInfo fkTable = air.getReferencedTable(discriminator);
 								if (fkTable != null) {
 									if ("ACC_DEFAULT_INVOICE_SERIES".equals(discriminator)) {
 										value = ensureAccountSeries( value );
 									}
 									System.out.println(" looking for " + t.getName()+ "." + column + " =" + value + "('"+discriminator+"') on " + fkTable);
 									Integer valueInteger = getInteger(value);
-									value = getReferenceValue(t, valueInteger, column, fkTable, false);
+									value = getReferenceValue(t, valueInteger, column, fkTable.getName(), false);
 									if (value == null) {
 										value = -1;	
 									}
@@ -483,14 +483,6 @@ public class AonDomainMerger {
 			}
 		}
 		return valueInteger;
-	}
-
-	private String getReferencedTable(String table, Object discriminator, AonInternalReference air) {
-		int z = ArrayUtils.indexOf(air.getDiscriminators(), discriminator);
-		if (z != -1) {
-			return air.getFkTables()[z];	
-		}
-		return null; 
 	}
 
 	private Integer getReferenceValue(Table t, Integer value, String column, String fkTable, boolean required ) throws SQLException {

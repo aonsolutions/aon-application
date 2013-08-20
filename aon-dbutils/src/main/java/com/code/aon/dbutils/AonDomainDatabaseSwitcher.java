@@ -44,6 +44,7 @@ public class AonDomainDatabaseSwitcher {
 			"bank_statement_link", "source", "source_id"
 			, new Integer[] {2,3}
 			, new String[] {"bank_concept","account"});
+	
 	private static final AonInternalReference APP_PARAM_REFERENCES = new AonInternalReference( 
 			"app_param", "name", "value"
 			, new String[] {
@@ -93,6 +94,7 @@ public class AonDomainDatabaseSwitcher {
 			"invoice_detail", "source", "source_id"
 			, new Integer[] {1,2,3,4,8}
 			, new String[] {"purchase_detail","sales_detail","delivery_detail","income_detail","offer_detail"});
+	
 	private static final AonInternalReference ALARM_REFERENCES = new AonInternalReference(
 			"alarm", "source", "source_id"
 			, new Integer[] {0,1,3,4}
@@ -106,8 +108,6 @@ public class AonDomainDatabaseSwitcher {
 		INTERNAL_REFERENCES_TABLES.put("alarm",ALARM_REFERENCES);
 		INTERNAL_REFERENCES_TABLES.put("app_param",APP_PARAM_REFERENCES);
 	}
-	
-
 	
 	private Map<String,Map<Integer,Integer>> keys;
 	private Connection source;
@@ -365,7 +365,7 @@ public class AonDomainDatabaseSwitcher {
 				}
 			}
 			if (INTERNAL_REFERENCES_TABLES.containsKey(table)) {
-				for (String referencedTable : INTERNAL_REFERENCES_TABLES.get(table).getFkTables() ) {
+				for (String referencedTable : INTERNAL_REFERENCES_TABLES.get(table).getFkTableNames() ) {
 					if (isMergeableTable(referencedTable)) {
 						addTable(referencedTable);	
 					}
@@ -463,16 +463,16 @@ public class AonDomainDatabaseSwitcher {
 					} else {
 						if (INTERNAL_REFERENCES_TABLES.containsKey(t.getName())) {
 							AonInternalReference air = INTERNAL_REFERENCES_TABLES.get(t.getName());
-							if (air.getColumn().equals(column)) {
-								Object discriminator = rs.getObject(air.getDiscriminatorColumn());
-								String fkTable = getReferencedTable(t.getName() , discriminator, air );
+							if (air.getColumnName().equals(column)) {
+								Object discriminator = rs.getObject(air.getDiscriminatorColumnName());
+								TableInfo fkTable = air.getReferencedTable( discriminator );
 								if (fkTable != null) {
 									if ("ACC_DEFAULT_INVOICE_SERIES".equals(discriminator)) {
 										value = ensureAccountSeries( value );
 									}
 									System.out.println(" looking for " + t.getName()+ "." + column + " =" + value + "('"+discriminator+"') on " + fkTable);
 									Integer valueInteger = getInteger(value);
-									value = getReferenceValue(t, valueInteger, column, fkTable, false);
+									value = getReferenceValue(t, valueInteger, column, fkTable.getName(), false);
 									if (value == null) {
 										value = -1;	
 									}
@@ -558,14 +558,6 @@ public class AonDomainDatabaseSwitcher {
 			}
 		}
 		return valueInteger;
-	}
-
-	private String getReferencedTable(String table, Object discriminator, AonInternalReference air) {
-		int z = ArrayUtils.indexOf(air.getDiscriminators(), discriminator);
-		if (z != -1) {
-			return air.getFkTables()[z];	
-		}
-		return null; 
 	}
 
 	private Integer getReferenceValue(Table t, Integer value, String column, String fkTable, boolean required ) throws SQLException {

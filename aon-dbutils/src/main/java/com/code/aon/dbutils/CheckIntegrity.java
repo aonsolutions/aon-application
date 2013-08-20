@@ -86,7 +86,7 @@ public class CheckIntegrity implements Constants {
 		return di;
 	}
 	
-	private String getSelect(TableInfo table, String tableName, Integer value, boolean domainColumn) {
+	private String getSelect(TableInfo table, Integer value, boolean domainColumn) {
 		StringBuffer sb = new StringBuffer();
 		sb.append( "SELECT ");
 		String pk = "id";
@@ -97,21 +97,21 @@ public class CheckIntegrity implements Constants {
 		if ( domainColumn ) {
 			sb.append( ", domain");
 		}
-		sb.append(" FROM ").append(tableName).append(" WHERE ");
+		sb.append(" FROM ").append(table.getName()).append(" WHERE ");
 		sb.append( pk ).append(" = ").append(value).append(";");
 		return sb.toString();
 	}
 	
-	private void throwInvalidDomain(DomainInfo di, TableInfo ti, String tableName, Integer value, Integer domain) {
-		String message = "TABLE " + tableName + " row " + value + " in domain " + domain +
+	private void throwInvalidDomain(DomainInfo di, TableInfo ti, Integer value, Integer domain) {
+		String message = "TABLE " + ti.getName() + " row " + value + " in domain " + domain +
 				". Valid domains " + ArrayUtils.toString(di.getDomainIds(ti));
 		throw new RuntimeException( message );						
 	}
 	
-	private boolean exist(DomainInfo di, TableInfo ti, String tableName, Integer value) {
-		Map<Integer,Integer> idMap = this.ids.get(tableName);
+	private boolean exist(DomainInfo di, TableInfo ti, Integer value) {
+		Map<Integer,Integer> idMap = this.ids.get(ti.getName());
 		if ( idMap == null ) {
-			this.ids.put(tableName, new HashMap<Integer, Integer>());
+			this.ids.put(ti.getName(), new HashMap<Integer, Integer>());
 		} else if (idMap.containsKey(value)) {
 			Integer domain = idMap.get(value);
 			if ( domain == null ) {
@@ -120,13 +120,13 @@ public class CheckIntegrity implements Constants {
 			if ( di.isValidDomain(domain, ti) ) {
 				return true;
 			} else {
-				throwInvalidDomain(di, ti, tableName, value, domain);
+				throwInvalidDomain(di, ti, value, domain);
 			}
 		}
 		return false;
 	}
 	
-	private void add(DomainInfo di, TableInfo ti, String tableName, ResultSet rs, boolean domainColumn) throws SQLException {
+	private void add(DomainInfo di, TableInfo ti, ResultSet rs, boolean domainColumn) throws SQLException {
 		Integer id = rs.getInt(1);
 		Integer domain = null;
 		if ( domainColumn ) {
@@ -134,31 +134,30 @@ public class CheckIntegrity implements Constants {
 			if ( rs.wasNull() ) {
 				domain = null;
 			} else if (! di.isValidDomain(domain, ti) ) {
-				throwInvalidDomain(di, ti, tableName, id, domain);
+				throwInvalidDomain(di, ti, id, domain);
 			}			
 		}
-		Map<Integer,Integer> idMap = this.ids.get(tableName);
+		Map<Integer,Integer> idMap = this.ids.get(ti.getName());
 		idMap.put(id, domain);
 	}	
 	
-	private boolean checkId(String tableName, Integer value, Integer domainId) throws SQLException {
-		TableInfo table = this.tables.get(tableName);
+	private boolean checkId(TableInfo table, Integer value, Integer domainId) throws SQLException {
 		DomainInfo di = getDomainInfo(domainId);
-		if ( exist(di, table, tableName, value) ) {
+		if ( exist(di, table, value) ) {
 			return true;
 		}				
 		boolean domainColumn = (table != null) && !table.isDomainTable();
-		String sentence = getSelect(table, tableName, value, domainColumn); 
+		String sentence = getSelect(table, value, domainColumn); 
 		Statement s = null;
 		ResultSet rs = null;
 		try {
 			s = connection.createStatement();
 			rs = s.executeQuery(sentence);
 			if ( rs.next() ) {
-				add( di, table, tableName, rs, domainColumn);
+				add( di, table, rs, domainColumn);
 				return true;
 			} else {
-				String message = "TABLE " + tableName + " row " + value + " not found";
+				String message = "TABLE " + table.getName() + " row " + value + " not found";
 				LOGGER.error( message );
 				throw new RuntimeException( message );
 			}
@@ -192,16 +191,16 @@ public class CheckIntegrity implements Constants {
 			if (value != null) {
 				if ( ci.isFkColummn() ) {
 					Integer fkId = (Integer) value;
-					checkId( ci.getFkTableName(), fkId, domainId );
+					checkId( ci.getFtTable(), fkId, domainId );
 				} else {
 					if ( TableUtil.isInternalReference(t) ) {
 						AonInternalReference air = TableUtil.getInternalReference(t);
-						if (air.getColumn().equals(ci.getName())) {
-							Object discriminator = rs.getObject( air.getDiscriminatorColumn() );
-							String fkTableName = air.getReferencedTable(discriminator);
-							if (fkTableName != null) {
+						if (air.getColumnName().equals(ci.getName())) {
+							Object discriminator = rs.getObject( air.getDiscriminatorColumnName() );
+							TableInfo fkTable = air.getReferencedTable(discriminator);
+							if (fkTable != null) {
 								Integer fkId = getInteger(value);
-								checkId( fkTableName, fkId, domainId );
+								checkId( fkTable, fkId, domainId );
 							}
 						}
 					}

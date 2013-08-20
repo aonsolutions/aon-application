@@ -61,7 +61,6 @@ public class TableUtil implements Constants {
 				,"ACC_DEFAULT_SALES_ACC"
 				,"ACC_DEFAULT_SOCIAL_INSURANCE_ACC"
 				,"ACC_SALARY_CHARGED_RET_ACC"
-				,"ACC_DEFAULT_INVOICE_SERIES"
 				,"ACC_DEFAULT_PERIOD"
 				,"ACC_DEFAULT_RETENTION_PERCENT"
 				,"ACC_DEFAULT_VAT_PERCENT"}
@@ -82,7 +81,6 @@ public class TableUtil implements Constants {
 				,ACCOUNT_TABLE_NAME
 				,ACCOUNT_TABLE_NAME
 				,ACCOUNT_TABLE_NAME
-				,SERIES_TABLE_NAME
 				,ACCOUNT_PERIOD_TABLE_NAME
 				,TAX_TABLE_NAME
 				,TAX_TABLE_NAME});
@@ -147,7 +145,7 @@ public class TableUtil implements Constants {
 					}
 				}
 				if (INTERNAL_REFERENCES_TABLES.containsKey(table)) {
-					for (String referencedTable : INTERNAL_REFERENCES_TABLES.get(table).getFkTables() ) {
+					for (String referencedTable : INTERNAL_REFERENCES_TABLES.get(table).getFkTableNames() ) {
 						if (isMergeableTable(metaData, referencedTable)) {
 							addTable(metaData, referencedTable, stack);	
 						}
@@ -198,6 +196,17 @@ public class TableUtil implements Constants {
 					ci.setFtTable( tables.get(ci.getFkTableName()) );
 				}
 			}
+		}
+		for( AonInternalReference air : INTERNAL_REFERENCES_TABLES.values() ) {
+			TableInfo table = tables.get(air.getTableName());
+			air.setTable(table);
+			air.setColumn(table.getColumn(air.getColumnName()));
+			air.setDiscriminatorColumn(table.getColumn(air.getDiscriminatorColumnName()));
+			TableInfo[] fkTables = new TableInfo[air.getFkTableNames().length];
+			for( int i = 0; i < air.getFkTableNames().length; i++ ) {
+				fkTables[i] = tables.get(air.getFkTableNames()[i]);
+			}
+			air.setFkTables(fkTables);
 		}
 	}
 	

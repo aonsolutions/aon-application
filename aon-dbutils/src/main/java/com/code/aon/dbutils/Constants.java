@@ -24,6 +24,8 @@ public interface Constants {
 	String COMMERCIAL_TRACKING_TABLE_NAME = "commercial_tracking";
 	String DOMAIN_TABLE_NAME = "domain";
 	String DELIVERY_DETAIL_TABLE_NAME = "delivery_detail";
+	String FBATCH_TABLE_NAME = "fbatch";
+	String FINANCE_TRACKING_TABLE_NAME = "finance_tracking";
 	String GEOZONE_IRPF_HANDICAP_TABLE_NAME = "geozone_irpf_handicap";
 	String GEOZONE_IRPF_DESCENDANT_TABLE_NAME = "geozone_irpf_descendant";
 	String GEOZONE_IRPF_TABLE_NAME = "geozone_irpf";

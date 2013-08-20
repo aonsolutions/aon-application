@@ -103,7 +103,7 @@
 						<c:if test="#{!adminNewDomain.enableHeredity}">
 							<aon:div styleClass="aon-margin-top">
 								<aon:selectOneMenu id="Domain_loadDefaults"
-									required="true" reRender="valuesDiv,NewDomain_owner,NewDomain_expirationDate"
+									required="true" reRender="valuesDiv,NewDomain_expirationDate"
 									value="#{adminNewDomain.loadDefaultValuesEnabled}">
 									<f:selectItem itemValue="#{true}" itemLabel="#{adminBundle.admin_new_domain_defaults_1}" />
 									<f:selectItem itemValue="#{false}" itemLabel="#{adminBundle.admin_new_domain_defaults_2}" />

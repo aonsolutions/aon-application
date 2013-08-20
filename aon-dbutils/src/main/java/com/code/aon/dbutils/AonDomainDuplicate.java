@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +103,7 @@ public class AonDomainDuplicate implements Constants {
 	}
 
 	private void updateBankStatementLink() throws SQLException {
-		TableInfo t = this.tables.get(BANK_STATEMENT_LINK_TABLE_NAME); 
+		TableInfo t = tables.get(BANK_STATEMENT_LINK_TABLE_NAME); 
         String updateStatement = "UPDATE bank_statement_link SET source_id=? where id = ?";
 		String selectStatement = "SELECT id,source,source_id from bank_statement_link WHERE source IN (0,1) AND source_id IS NOT NULL AND domain = " + newDomain;
         PreparedStatement update = null; 
@@ -117,7 +116,7 @@ public class AonDomainDuplicate implements Constants {
 			while (rs.next()) {
 				Integer id = rs.getInt(1);
 				Integer source = rs.getInt(2);
-				String fkTable = (source==0)?"finance_tracking":"fbatch";	
+				String fkTable = (source==0)?FINANCE_TRACKING_TABLE_NAME:FBATCH_TABLE_NAME;	
 				Integer sourceId = rs.getInt(3);
 				sourceId = getReferenceValue(t, sourceId, SOURCE_ID_COLUMN_NAME, fkTable);
 				if (sourceId == null) {
@@ -253,12 +252,13 @@ public class AonDomainDuplicate implements Constants {
 						value = getReferenceValue(t, valueInteger, ci.getName(), ci.getFkTableName());
 					} else if ( TableUtil.isInternalReference(t) ) {
 						AonInternalReference air = TableUtil.getInternalReference(t);
-						if (air.getColumn().equals(ci.getName())) {
-							Object discriminator = rs.getObject( air.getDiscriminatorColumn() );
-							String fkTable = getReferencedTable( air, discriminator );
+						if ( air.getColumn().equals(ci) ) {
+							ColumnInfo column = air.getDiscriminatorColumn();
+							Object discriminator = rs.getObject( column.getName() );
+							TableInfo fkTable = air.getReferencedTable( discriminator );
 							if (fkTable != null) {
 								Integer valueInteger = getInteger(value);
-								value = getReferenceValue(t, valueInteger, ci.getName(), fkTable);
+								value = getReferenceValue(t, valueInteger, ci.getName(), fkTable.getName());
 								if (value == null) {
 									value = -1;	
 								}								
@@ -296,15 +296,7 @@ public class AonDomainDuplicate implements Constants {
 		}
 		return valueInteger;
 	}
-
-	private String getReferencedTable(AonInternalReference air, Object discriminator) {
-		int z = ArrayUtils.indexOf(air.getDiscriminators(), discriminator);
-		if (z != -1) {
-			return air.getFkTables()[z];	
-		}
-		return null; 
-	}
-
+	
 	private Integer ensureValueId(String fkTable, String pk, Integer value) throws SQLException {
 		String sentence = "SELECT " + pk + " FROM " + fkTable + " WHERE " + pk + " = " + value; 
 		Statement s = null;
@@ -348,12 +340,12 @@ public class AonDomainDuplicate implements Constants {
 	public static void main(String[] args) {
 		DbUtils.loadDriver("org.gjt.mm.mysql.Driver");
 		
-		Integer sourceDomain = 8;
-		String domainName = "pulsar.aonsolutions.dev";
+		Integer sourceDomain = 791;
+		String domainName = "prueba-confialia.aonsolutions.net";
 		String domainDescription = "PRUEBA de PLANTILLA";
+		String owner = "jgarcia@esferalia.com";
 		
-		// String url = "jdbc:mysql://volga:3306/pro-aonsolutions-net";
-		String url = "jdbc:mysql://volga:3306/aimar-esferalia-com";
+		String url = "jdbc:mysql://volga:3306/pro-aonsolutions-net";
 		String user = "dbuser";
 		String password = "serubd2000";
 		
@@ -362,6 +354,7 @@ public class AonDomainDuplicate implements Constants {
 			connection = DriverManager.getConnection(url, user, password);
 			AonDomainDuplicate dup = new AonDomainDuplicate(connection);
 			dup.setDescription(domainDescription);
+			dup.setOwner(owner);
 			dup.execute(sourceDomain, domainName);
 		} catch (Throwable e) {
 			LOGGER.error( e.getMessage(), e );
