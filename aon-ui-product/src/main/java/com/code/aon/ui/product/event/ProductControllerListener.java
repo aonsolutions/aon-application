@@ -50,7 +50,6 @@ public class ProductControllerListener extends ControllerAdapter implements IIte
 		try {
 			Product product = (Product) controller.getTo();
 			controller.getItem().setStatus(product.getStatus());
-			controller.getItem().setBarcode(null);
 			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 			itemBean.insert(controller.getItem());
 			updateItems(product);

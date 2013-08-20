@@ -18,7 +18,7 @@
 	<aon:outputLabel for="Product_category" value="#{productBundle.product_category}" />
 	<aon:div>
 		<aon:selectOneMenu id="Product_category" 
-			reRender="#{categoryChangeReRender}"
+			reRender="#{categoryChangeReRender}" ajaxSingle="false"
 			value="#{controller.to.category}">
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{productCollections.categories}" />
