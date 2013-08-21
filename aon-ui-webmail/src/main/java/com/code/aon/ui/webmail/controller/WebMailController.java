@@ -103,8 +103,6 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 	
 	public void init(IMailAccount mailAccount) throws MessagingException {
 		initBasic(mailAccount);
-		SpamController spamController = (SpamController) AonUtil.getRegisteredBean(BEAN_SPAM);
-		spamController.updateSpamEnabled(mailAccount);
     	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(BEAN_TREE);
     	treeBean.initTree( getServer() );
 	}

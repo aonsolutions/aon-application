@@ -160,18 +160,6 @@
 									styleClass="aon-icon-commandButton aon-icon-agenda aon-margin-left">
 									<rich:componentControl for="addContactModalPanel" operation="show" event="onclick"/>
 								</aon:commandButton>
-								<aon:commandButton id="add_white_list"
-									value="&#160;" reRender="aonStatus"
-									rendered="#{spam.whiteListEmail}"
-									title="#{webmailBundle.webmail_add_white_list}" 
-									styleClass="aon-icon-commandButton aon-icon-white-list aon-margin-left"
-									actionListener="#{spam.onAddWhiteMessageFrom}" />
-								<aon:commandButton id="add_black_list"
-									value="&#160;" reRender="aonStatus"
-									rendered="#{spam.blackListEmail}"
-									title="#{webmailBundle.webmail_add_black_list}" 
-									styleClass="aon-icon-commandButton aon-icon-black-list aon-margin-left"
-									actionListener="#{spam.onAddBlackMessageFrom}" />
 							</aon:div>
 						
 							<!-- To -->
