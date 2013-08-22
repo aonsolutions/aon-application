@@ -1,46 +1,46 @@
-<ui:UiBinder
-  xmlns:ui='urn:ui:com.google.gwt.uibinder'
-  xmlns:g='urn:import:com.google.gwt.user.client.ui'
-  xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'>
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
-	
+
 	<ui:style>
-	
 		@sprite .viewButton {
 			float: right;
 			gwt-image: 'view';
 		}
-
+		
 		@sprite .collpaseAllButton {
 			float: right;
 			gwt-image: 'collapseall';
 		}
-	
 	</ui:style>
-	
-	
+
+
 	<ui:image field='view' src='view.png' />
 	<ui:image field='collapseall' src='collapseall.png' />
 	
-	
+	<ui:with type="com.esferalia.aon.gwt.payroll.client.MetaData.Resources" field="res"/>
 	
 	<g:DockLayoutPanel unit='PX'>
-	  <g:north size='26'>
-	  	<g:FlowPanel styleName="gwt-MenuBar-horizontal" ui:field="buttonBar" >
-	  		<g:Button styleName="gwt-MenuItem {style.viewButton}" ui:field="viewButton" ></g:Button>
-	  		<g:Button styleName="gwt-MenuItem {style.collpaseAllButton}" ui:field="collapseAllButton" ></g:Button>
-	  	</g:FlowPanel>
-	  </g:north>
-	
-	  <g:center>
-	    <g:ScrollPanel ui:field="scrollPanel" >
-	      <g:Tree ui:field="tree">
-	      	<g:TreeItem text="DEVENGOS" />
-	      	<g:TreeItem text="DEDUCCIONES"/>
-	      	<g:TreeItem text="BONIFICACIONES"/>
-	      </g:Tree>
-	    </g:ScrollPanel>
-	  </g:center>
+		<g:north size='26'>
+			<g:FlowPanel styleName="gwt-MenuBar-horizontal" ui:field="buttonBar">
+				<g:Button styleName="gwt-MenuItem {style.viewButton}"
+					ui:field="viewButton"></g:Button>
+				<g:Button styleName="gwt-MenuItem {style.collpaseAllButton}"
+					ui:field="collapseAllButton"></g:Button>
+			</g:FlowPanel>
+		</g:north>
+
+		<g:center>
+			<g:ScrollPanel ui:field="scrollPanel">
+				<g:Tree ui:field="tree">
+					<g:TreeItem HTML="{res.concept} CONCEPTOS">
+						<g:TreeItem HTML="{res.payment} DEVENGOS" ui:field="paymentConceptsTreeItem"/>
+						<g:TreeItem HTML="{res.deduction} DEDUCCIONES" ui:field="deductionConceptsTreeItem" />
+						<g:TreeItem HTML="{res.segsocial} BONIFICACIONES" ui:field="bonusConceptsTreeItem" />
+					</g:TreeItem>
+				</g:Tree>
+			</g:ScrollPanel>
+		</g:center>
 	</g:DockLayoutPanel>
-	
+
 </ui:UiBinder>

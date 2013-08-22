@@ -5,76 +5,73 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 
-	<aon:form >
+	<aon:form id="enterpriseForm" style="#{ !edit ? 'display:none': ''}">
 		<c:if test="#{edit}">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{companyBundle.company_enterprise_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-	
-	
+
+
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="Enterprise-Save" value="#{bundle.aon_accept}"
-						reRender="enterpriseMainGrid"
+					<aon:commandButton id="Enterprise-Save"
+						value="#{bundle.aon_accept}" reRender="enterpriseMainGrid"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						limitToList="true"  >
+						limitToList="true">
 						<aon:actionListener method="#{enterprise.accept}" />
 					</aon:commandButton>
-	
-	                <aon:commandButton id="Workplace-reset" ajaxSingle="true"
-	                        title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
-	                        value="#{gwtPayrollBundle.enterprise_activity_new}"
-	                        reRender="#{contract.beanName}ModalContainer"
-	                        styleClass="aon-finding-toolbar-item aon-icon-reset" >
-	                </aon:commandButton>
-	
-	                <aon:commandButton id="Activity-reset" ajaxSingle="true"
-	                        title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
-	                        value="#{gwtPayrollBundle.workplace_new}"
-	                        reRender="#{contract.beanName}ModalContainer"
-	                        styleClass="aon-finding-toolbar-item aon-icon-reset"
-	                        limitToList="true" >
-	                </aon:commandButton>
-	
+
+					<aon:commandButton id="Workplace-reset" ajaxSingle="true"
+						title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+						value="#{gwtPayrollBundle.enterprise_activity_new}"
+						reRender="#{contract.beanName}ModalContainer"
+						styleClass="aon-finding-toolbar-item aon-icon-reset">
+					</aon:commandButton>
+
+					<aon:commandButton id="Activity-reset" ajaxSingle="true"
+						title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+						value="#{gwtPayrollBundle.workplace_new}"
+						reRender="#{contract.beanName}ModalContainer"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						limitToList="true">
+					</aon:commandButton>
+
 
 				</ui:define>
-	
+
 			</ui:decorate>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="reportsToolbar" />
-				<ui:param name="toolbarTitle"
-					value="Playasol" />
+				<ui:param name="toolbarTitle" value="Playasol" />
 				<ui:param name="toolbarDescription" value="Informes" />
-	
-	
+
+
 				<ui:define name="toolbarContent">
-	
-	                <aon:commandButton id="Fte-report" ajaxSingle="true"
-	                		reRender="enterpriseMainGrid"
-	                        value="Informe FTE"
-	                        styleClass="aon-finding-toolbar-item aon-icon-excel" 
-	                        onclick="fteReport();">
-	                </aon:commandButton>
 
-	                <aon:commandButton id="Free-report" ajaxSingle="true"
-	                		reRender="enterpriseMainGrid"
-	                        title="Informe Control Festivos, Libres y Vacaciones"
-	                        value="Informe Festivos..."
-	                        styleClass="aon-finding-toolbar-item aon-icon-excel" 
-	                        onclick="ctrlReport();" >
-	                </aon:commandButton>
+					<aon:commandButton id="Fte-report" ajaxSingle="true"
+						reRender="enterpriseMainGrid" value="Informe FTE"
+						styleClass="aon-finding-toolbar-item aon-icon-excel"
+						onclick="fteReport();">
+					</aon:commandButton>
 
-	                <aon:commandButton id="A3-report" ajaxSingle="true"
-	                		reRender="enterpriseMainGrid"
-	                        value="Informe A3"
-	                        styleClass="aon-finding-toolbar-item aon-icon-excel" 
-	                        onclick="a3Report();">
-	                </aon:commandButton>
+					<aon:commandButton id="Free-report" ajaxSingle="true"
+						reRender="enterpriseMainGrid"
+						title="Informe Control Festivos, Libres y Vacaciones"
+						value="Informe Festivos..."
+						styleClass="aon-finding-toolbar-item aon-icon-excel"
+						onclick="ctrlReport();">
+					</aon:commandButton>
+
+					<aon:commandButton id="A3-report" ajaxSingle="true"
+						reRender="enterpriseMainGrid" value="Informe A3"
+						styleClass="aon-finding-toolbar-item aon-icon-excel"
+						onclick="a3Report();">
+					</aon:commandButton>
 
 				</ui:define>
-	
+
 			</ui:decorate>
 
 		</c:if>
@@ -87,14 +84,14 @@
 		</c:if>
 
 
-		<aon:div style="overflow: auto; position: absolute; left: 0px; top: 4em; right: 0px; bottom: 0px;" >
+		<aon:div
+			style="overflow: auto; position: absolute; left: 0px; top: 4em; right: 0px; bottom: 0px;">
 
-			<aon:div style="position: relative" >
+			<aon:div style="position: relative">
 
 				<aon:panelGrid id="enterpriseMainGrid" columns="1" cellspacing="10"
-					styleClass="aon-panelGrid-formatting"
-					columnClasses="aon-width-all" >
-	
+					styleClass="aon-panelGrid-formatting" columnClasses="aon-width-all">
+
 					<ui:include
 						src="/com/code/aon/ui/company/facelet/enterprise/formContent.xhtml">
 						<ui:param name="controller" value="#{enterprise}" />
@@ -112,7 +109,13 @@
 
 	<ui:include
 		src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
-		
+
+	<c:if test="#{!edit}">
+		<ui:include src="readonly.xhtml">
+			<ui:param name="form" value="enterpriseForm" />
+		</ui:include>
+	</c:if>
+
 	<!-- img style="display:none;"  
 	src="#{aonResource.resolve['/com/esferalia/aon/gwt/payroll/client/blank.png']}"   
 	onload="onLoadJSF(this.parentNode);" 

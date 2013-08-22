@@ -16,7 +16,7 @@ import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 public class EmployeeTree {
 
 	private static enum Selection {
-		EMPLOYEE, ACTIVITY, WORKPLACE, ENTERPRISE
+		EMPLOYEE, ACTIVITY, WORKPLACE, ENTERPRISE, PAYMENT_CONCEPTS, DEDUCTION_CONCEPTS, BONUS_CONCEPTS
 	}
 
 	private Selection selection;
@@ -25,12 +25,11 @@ public class EmployeeTree {
 	private Integer workplaceId;
 	private Integer employeeId;
 	private Integer activityId;
-	
-	
+
 	public Integer getEnterpriseId() {
 		return enterpriseId;
 	}
-	
+
 	public void setEnterpriseId(Integer enterpriseId) {
 		this.enterpriseId = enterpriseId;
 	}
@@ -91,6 +90,30 @@ public class EmployeeTree {
 		selection = activitySelected ? Selection.ACTIVITY : null;
 	}
 
+	public boolean isBonusConceptsSelected() {
+		return selection == Selection.BONUS_CONCEPTS;
+	}
+
+	public void setBonusConceptsSelected(boolean bonusConceptsSelected) {
+		selection = bonusConceptsSelected ? Selection.BONUS_CONCEPTS: null;
+	}
+
+	public boolean isPaymentConceptsSelected() {
+		return selection == Selection.PAYMENT_CONCEPTS;
+	}
+
+	public void setPaymentConceptsSelected(boolean paymentConceptsSelected) {
+		selection = paymentConceptsSelected ? Selection.PAYMENT_CONCEPTS : null;
+	}
+
+	public boolean isDeductionConceptsSelected() {
+		return selection == Selection.DEDUCTION_CONCEPTS;
+	}
+
+	public void setDeductionConceptsSelected(boolean deductionConceptsSelected) {
+		selection = deductionConceptsSelected ? Selection.DEDUCTION_CONCEPTS: null;
+	}
+
 	public void onEmployeeSelected(ActionEvent event)
 			throws ManagerBeanException {
 
@@ -148,4 +171,21 @@ public class EmployeeTree {
 
 	}
 
+	public void onPaymentConceptsSelected(ActionEvent event)
+			throws ManagerBeanException {
+
+		this.selection = Selection.PAYMENT_CONCEPTS;
+	}
+
+	public void onDeductionConceptsSelected(ActionEvent event)
+			throws ManagerBeanException {
+
+		this.selection = Selection.DEDUCTION_CONCEPTS;
+	}
+
+	public void onBonusConceptsSelected(ActionEvent event)
+			throws ManagerBeanException {
+
+		this.selection = Selection.BONUS_CONCEPTS;
+	}
 }

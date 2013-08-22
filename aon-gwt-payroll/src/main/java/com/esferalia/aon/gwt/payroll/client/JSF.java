@@ -6,22 +6,22 @@ import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.user.client.ui.HTML;
 
-class JSF extends HTML implements Handler{
-	
+class JSF extends HTML implements Handler {
+
 	public JSF() {
 		super(getJsfElement());
 		addAttachHandler(this);
 	}
-	
+
 	@Override
 	public void onAttachOrDetach(AttachEvent event) {
-		if ( event.isAttached() ) {
+		if (event.isAttached()) {
 			display();
 		} else {
 			hide();
 		}
 	}
-	
+
 	private void hide() {
 		getElement().getStyle().setDisplay(Display.NONE);
 	}
@@ -29,7 +29,7 @@ class JSF extends HTML implements Handler{
 	private void display() {
 		getElement().getStyle().clearDisplay();
 	}
-	
+
 	public final native void enterpriseSelected(Integer id) /*-{
 		$wnd.enterpriseSelected(id);
 	}-*/;
@@ -37,7 +37,7 @@ class JSF extends HTML implements Handler{
 	public final native void workplaceSelected(Integer id) /*-{
 		$wnd.workplaceSelected(id);
 	}-*/;
-	
+
 	public final native void activitySelected(Integer id) /*-{
 		$wnd.activitySelected(id);
 	}-*/;
@@ -46,9 +46,20 @@ class JSF extends HTML implements Handler{
 		$wnd.employeeSelected(id);
 	}-*/;
 
+	public final native void bonusConceptsSelected() /*-{
+		$wnd.bonusConceptsSelected();
+	}-*/;
+
+	public final native void deductionConceptsSelected() /*-{
+		$wnd.deductionConceptsSelected();
+	}-*/;
+
+	public final native void paymentConceptsSelected() /*-{
+		$wnd.paymentConceptsSelected();
+	}-*/;
+
 	private static final native Element getJsfElement() /*-{
 		return $wnd.jsf;
 	}-*/;
-
 
 }

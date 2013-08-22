@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.mvel2.CompileException;
+import org.mvel2.ErrorDetail;
 import org.mvel2.MVEL;
 import org.mvel2.ParserConfiguration;
 import org.mvel2.ParserContext;
@@ -110,9 +112,9 @@ public class ExpressionContext {
 
 		@Override
 		public T getValue() {
-			UndefinedVariablesException undefined = 
-					new UndefinedVariablesException(name);
-			throw new ExpressionExceptionWrapper( undefined );
+			UndefinedVariablesException undefined = new UndefinedVariablesException(
+					name);
+			throw new ExpressionExceptionWrapper(undefined);
 		}
 
 		@Override
@@ -133,9 +135,25 @@ public class ExpressionContext {
 		}
 		return names;
 	}
-	
+
 	public static Object eval(String script) {
 		return MVEL.eval(script);
+	}
+
+	public static void analyze(String script) {
+		ParserContext ctx = new ParserContext();
+		MVEL.analysisCompile(script, ctx);
+
+		if (ctx.getErrorList() != null)
+			throw new CompileException("Failed to compile: "
+					+ ctx.getErrorList().size() + " compilation error(s): ",
+					ctx.getErrorList());
+
+		Map<String, Object> vars = new HashMap<String, Object>();
+		for (String input : ctx.getInputs().keySet())
+			vars.put(input, false);
+
+		MVEL.eval(script, vars);
 	}
 
 	public static class ExpressionExceptionWrapper extends RuntimeException {
@@ -159,7 +177,8 @@ public class ExpressionContext {
 		}
 	}
 
-	private static String getUndefinedProperty(PropertyAccessException e, PeriodMap bindings) {
+	private static String getUndefinedProperty(PropertyAccessException e,
+			PeriodMap bindings) {
 		String property = null;
 
 		char expr[] = e.getExpr();
@@ -177,9 +196,9 @@ public class ExpressionContext {
 			}
 			int offset = start + 1;
 			int len = end - offset + 1;
-			property =  new String(expr, offset, len);
-		} while ( bindings.containsKey(property) );
-		
+			property = new String(expr, offset, len);
+		} while (bindings.containsKey(property));
+
 		return property;
 	}
 
@@ -293,7 +312,8 @@ public class ExpressionContext {
 						bindings.getRead()));
 			} catch (PropertyAccessException e) {
 				throwExpressionException(e);
-				throw new UndefinedVariablesException(getUndefinedProperty(e, bindings));
+				throw new UndefinedVariablesException(getUndefinedProperty(e,
+						bindings));
 			} /*
 			 * catch (RemoveVariableError e) { throw new
 			 * UndefinedVariablesException(e.getName()); }
@@ -401,6 +421,48 @@ public class ExpressionContext {
 			if (!Character.isJavaIdentifierPart(string.charAt(i)))
 				return false;
 		return true;
+	}
+
+	public static void main(String[] args) throws Exception {
+		String expression = "X = 'HOLA' ? 10 / J : 100.00  ";
+		ParserContext ctx = new ParserContext();
+		try {
+			MVEL.analysisCompile(expression, ctx);
+			for (Map.Entry<String, Class> var : ctx.getVariables().entrySet())
+				System.out.println(var.getKey() + " = " + var.getValue());
+			if (ctx.getErrorList() != null)
+				for (ErrorDetail err : ctx.getErrorList())
+					System.out.println(err.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		for (String var : ctx.getIndexedVariables())
+			System.out.println("Indexed Variable : " + var);
+		for (String var : ctx.getIndexedVarNames())
+			System.out.println("Indexed Variable : " + var);
+		for (Map.Entry<String, Class> var : ctx.getVariables().entrySet())
+			System.out.println("Variable : " + var.getKey() + " = "
+					+ var.getValue());
+		for (Map.Entry<String, Class> var : ctx.getInputs().entrySet())
+			System.out.println("Input : " + var.getKey() + " = "
+					+ var.getValue());
+		if (ctx.getErrorList() != null)
+			for (ErrorDetail err : ctx.getErrorList())
+				System.out.println(err.getMessage());
+		System.out.println("LineCount : " + ctx.getLineCount());
+		System.out.println("LineOffset : " + ctx.getLineOffset());
+		System.out.println("LastLineLabel : " + ctx.getLastLineLabel());
+
+		try {
+			Map<String, Object> vars = new HashMap<String, Object>();
+			for (Map.Entry<String, Class> var : ctx.getInputs().entrySet())
+				vars.put(var.getKey(), false);
+			System.out.println(MVEL.eval(expression, vars));
+		} catch (Exception e) {
+			System.out.println(e.getClass().getName());
+			e.printStackTrace();
+		}
+
 	}
 
 }

@@ -41,7 +41,7 @@ public class DeductionConceptController extends AbstractConceptController {
 
 	private void analyze(String expression) {
 		try {
-			ExpressionContext.eval(expression);
+			ExpressionContext.analyze(expression);
 		} catch ( PropertyAccessException e ){
 			
 		} catch ( UnresolveablePropertyException e ){

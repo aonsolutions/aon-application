@@ -10,12 +10,50 @@
 
 	<aon:div id="jsf" style="display:none;">
 
-		<aon:form style="display:none" >
-			<aon:inputText id="jsfEnterpriseText" value="#{employeeTree.enterpriseId}"/>
-			<aon:commandButton id="jsfEnterpriseButton"
-				reRender="xhtmlPanel" 
+		<aon:form style="display:none">
+			<aon:commandButton id="jsfBonusConceptsButton" reRender="xhtmlPanel"
+				actionListener="#{employeeTree.onBonusConceptsSelected}" />
+			<script type="text/javascript">
+            	<![CDATA[
+					bonusConceptsSelected = function(id){
+						#{rich:element('jsfBonusConceptsButton')}.click();	
+					}
+            	]]>
+			</script>
+		</aon:form>
+
+		<aon:form style="display:none">
+			<aon:commandButton id="jsfPaymentConceptsButton"
+				reRender="xhtmlPanel"
+				actionListener="#{employeeTree.onPaymentConceptsSelected}" />
+			<script type="text/javascript">
+            	<![CDATA[
+					paymentConceptsSelected = function(id){
+						#{rich:element('jsfPaymentConceptsButton')}.click();	
+					}
+            	]]>
+			</script>
+		</aon:form>
+
+		<aon:form style="display:none">
+			<aon:commandButton id="jsfDeductionConceptsButton"
+				reRender="xhtmlPanel"
+				actionListener="#{employeeTree.onDeductionConceptsSelected}" />
+			<script type="text/javascript">
+            	<![CDATA[
+					deductionConceptsSelected = function(id){
+						#{rich:element('jsfDeductionConceptsButton')}.click();	
+					}
+            	]]>
+			</script>
+		</aon:form>
+
+		<aon:form style="display:none">
+			<aon:inputText id="jsfEnterpriseText"
+				value="#{employeeTree.enterpriseId}" />
+			<aon:commandButton id="jsfEnterpriseButton" reRender="xhtmlPanel"
 				actionListener="#{employeeTree.onEnterpriseSelected}" />
-			<script type="text/javascript" >
+			<script type="text/javascript">
             	<![CDATA[
 					enterpriseSelected = function(id){
 						#{rich:element('jsfEnterpriseText')}.value = id;
@@ -26,11 +64,11 @@
 		</aon:form>
 
 		<aon:form style="display:none">
-			<aon:inputText id="jsfWorkplaceText" value="#{employeeTree.workplaceId}"/>
-			<aon:commandButton  id="jsfWorkplaceButton"
-				reRender="xhtmlPanel" 
+			<aon:inputText id="jsfWorkplaceText"
+				value="#{employeeTree.workplaceId}" />
+			<aon:commandButton id="jsfWorkplaceButton" reRender="xhtmlPanel"
 				actionListener="#{employeeTree.onWorkplaceSelected}" />
-			<script type="text/javascript" >
+			<script type="text/javascript">
             	<![CDATA[
 					workplaceSelected = function(id){
 						#{rich:element('jsfWorkplaceText')}.value = id;
@@ -40,12 +78,12 @@
 			</script>
 		</aon:form>
 
-		<aon:form style="display:none" >
-			<aon:inputText id="jsfEmployeeText" value="#{employeeTree.employeeId}"/>
-			<aon:commandButton  id="jsfEmployeeButton"
-				reRender="xhtmlPanel" 
+		<aon:form style="display:none">
+			<aon:inputText id="jsfEmployeeText"
+				value="#{employeeTree.employeeId}" />
+			<aon:commandButton id="jsfEmployeeButton" reRender="xhtmlPanel"
 				actionListener="#{employeeTree.onEmployeeSelected}" />
-			<script type="text/javascript" >
+			<script type="text/javascript">
             	<![CDATA[
 					employeeSelected = function(id){
 						#{rich:element('jsfEmployeeText')}.value = id;
@@ -55,12 +93,12 @@
 			</script>
 		</aon:form>
 
-		<aon:form style="display:none" >
-			<aon:inputText id="jsfActivityText" value="#{employeeTree.activityId}"/>
-			<aon:commandButton  id="jsfActivityButton"
-				reRender="xhtmlPanel" 
+		<aon:form style="display:none">
+			<aon:inputText id="jsfActivityText"
+				value="#{employeeTree.activityId}" />
+			<aon:commandButton id="jsfActivityButton" reRender="xhtmlPanel"
 				actionListener="#{employeeTree.onActivitySelected}" />
-			<script type="text/javascript" >
+			<script type="text/javascript">
             	<![CDATA[
 					activitySelected = function(id){
 						#{rich:element('jsfActivityText')}.value = id;
@@ -70,23 +108,39 @@
 			</script>
 		</aon:form>
 
-		<aon:div id="xhtmlPanel" >
-			<c:if test="#{employeeTree.employeeSelected}" >
-				<ui:include src="/com/esferalia/aon/gwt/payroll/facelet/employee/contract.xhtml" />
+		<aon:div id="xhtmlPanel">
+			<c:if test="#{employeeTree.employeeSelected}">
+				<ui:include
+					src="/com/esferalia/aon/gwt/payroll/facelet/employee/contract.xhtml" />
 			</c:if>
-			<c:if test="#{employeeTree.activitySelected}" >
-				<ui:include src="/com/esferalia/aon/gwt/payroll/facelet/employee/activity.xhtml" />
+			<c:if test="#{employeeTree.activitySelected}">
+				<ui:include
+					src="/com/esferalia/aon/gwt/payroll/facelet/employee/activity.xhtml" />
 			</c:if>
-			<c:if test="#{employeeTree.workplaceSelected}" >
-				<ui:include src="/com/esferalia/aon/gwt/payroll/facelet/employee/workplace.xhtml" />
+			<c:if test="#{employeeTree.workplaceSelected}">
+				<ui:include
+					src="/com/esferalia/aon/gwt/payroll/facelet/employee/workplace.xhtml" />
 			</c:if>
-			<c:if test="#{employeeTree.enterpriseSelected}" >
-				<ui:include src="/com/esferalia/aon/gwt/payroll/facelet/employee/enterprise.xhtml" >
+			<c:if test="#{employeeTree.enterpriseSelected}">
+				<ui:include
+					src="/com/esferalia/aon/gwt/payroll/facelet/employee/enterprise.xhtml">
 					<ui:param name="edit" value="#{edit}" />
 				</ui:include>
 			</c:if>
+			<c:if test="#{employeeTree.bonusConceptsSelected}">
+				<ui:include
+					src="/com/esferalia/aon/gwt/payroll/facelet/employee/bonus_concept.xhtml"/>
+			</c:if>
+			<c:if test="#{employeeTree.paymentConceptsSelected}">
+				<ui:include
+					src="/com/esferalia/aon/gwt/payroll/facelet/employee/payment_concept.xhtml"/>
+			</c:if>
+			<c:if test="#{employeeTree.deductionConceptsSelected}">
+				<ui:include
+					src="/com/esferalia/aon/gwt/payroll/facelet/employee/deduction_concept.xhtml"/>
+			</c:if>
 		</aon:div>
-		<script type="text/javascript" >
+		<script type="text/javascript">
            	<![CDATA[
 				jsf = #{rich:element('jsf')};
            	]]>

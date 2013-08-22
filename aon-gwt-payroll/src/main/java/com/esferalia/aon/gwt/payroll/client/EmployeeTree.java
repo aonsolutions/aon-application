@@ -46,7 +46,7 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class EmployeeTree implements EntryPoint, Employees.Listener {
+public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Listener {
 
 	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
 
@@ -666,6 +666,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 	@UiField
 	Employees employees;
 	@UiField
+	MetaData metaData;
+	@UiField
 	DetailPanel employeeDetail;
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
@@ -733,6 +735,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		resultsPanel = new ResultsPanel();
 
 		employees.addListener(this);
+		metaData.addListener(this);
 
 		employeeContextMenu = new EmployeeContextMenu();
 		enterpriseContextMenu = new EnterpriseContextMenu();
@@ -743,6 +746,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		export2JS();
 
 	}
+
+	// ---------------------------------------------- Employees.Listener methods
 
 	@Override
 	public void onEnterpriseSelected(Enterprise enterprise) {
@@ -843,10 +848,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 		eventsDraft.setEventsDraftObject(eventsDraftObject);
 
 	}
+	// ---------------------------------------------- MetaData.Listener methods
+	
+	@Override
+	public void onBonusConceptsSelected() {
+		jsf.bonusConceptsSelected();;
+	}
+	
+	@Override
+	public void onDeductionConceptsSelected() {
+		jsf.deductionConceptsSelected();;
+	}
+	
+	@Override
+	public void onPaymentConceptsSelected() {
+		jsf.paymentConceptsSelected();;
+	}
 
-	// ------------------------------------------
-	//
-	// ------------------------------------------
+	// ------------------------------------------------------- UiHandler methods
 
 	@UiHandler("footPanel")
 	void onFootMinimize(MinimizeEvent event) {
@@ -858,9 +877,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener {
 
 	}
 
-	// ------------------------------------------
-	//
-	// ------------------------------------------
+	// --------------------------------------------------------- Private methods
 
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 0);

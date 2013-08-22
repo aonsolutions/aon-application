@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<script type="text/javascript">
+            	<![CDATA[
+					var form = #{rich:element(form)};
+					for ( var i = 0; i < form.length; i++ ){
+						var element = form.elements[i];
+						
+						element.disabled = true;
+						element.style.color = 'inherit';
+						element.style.borderColor = 'transparent';
+						element.style.backgroundColor = 'transparent';
+						
+						if ( element.type == 'button')
+							element.style.display = 'none';
+						if ( element.type == 'submit')
+							element.style.display = 'none';
+						if ( element.type == 'file')
+							element.style.display = 'none';
+						
+						if ( element.tagName == 'SELECT') {
+							try {
+								var value = element.options[element.selectedIndex].text;
+								var input = document.createElement("INPUT");
+								input.value =  value;
+								input.disabled = true;
+								input.style.color = 'inherit';
+								input.style.borderColor = 'transparent';
+								input.style.backgroundColor = 'transparent';
+								
+								element.parentNode.replaceChild(input, element);
+							} catch ( e ) {
+								element.style.display = 'none';
+							}
+						}
+					}
+					
+					var imgs = form.getElementsByTagName('img');
+					for ( var i = 0; i < imgs.length; i++ ) {
+						if ( imgs[i].className.contains('rich-calendar-button') )
+							imgs[i].style.display = 'none';
+					}
+					
+					var tables = form.getElementsByTagName('table');
+					for ( var i = 0; i < tables.length; i++ ) {
+						if ( tables[i].className.contains('rich-fileupload-toolbar-decor') )
+							tables[i].style.display = 'none';
+					}
+						
+					
+					form.style.display='';
+            	]]>
+	</script>
+
+</ui:composition>
