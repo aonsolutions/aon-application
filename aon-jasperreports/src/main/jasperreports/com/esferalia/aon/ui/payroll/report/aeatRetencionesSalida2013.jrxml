@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="aeatRetencionesSalida2013" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="15" bottomMargin="15" uuid="3ad438c7-48de-4be0-8a0c-cf0a0a37f82e">
+	<property name="ireport.zoom" value="1.1269722013523664"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="199"/>
+	<style name="label" isDefault="true" vAlign="Middle" fontName="Nimbus Sans L" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="title" style="label" fontSize="9" isBold="true"/>
+	<style name="VALUE" style="label" fontSize="8"/>
+	<style name="label_box" style="label">
+		<box leftPadding="0">
+			<pen lineWidth="0.3" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="label_fill" style="label">
+		<box leftPadding="0">
+			<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
+		</box>
+	</style>
+	<style name="title_box" style="title">
+		<box leftPadding="0">
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="title_fill" style="label">
+		<box leftPadding="0">
+			<bottomPen lineWidth="0.75" lineStyle="Dotted"/>
+		</box>
+	</style>
+	<style name="value_box" style="label" hAlign="Right" isBlankWhenNull="true">
+		<box leftPadding="0" rightPadding="2">
+			<pen lineWidth="0.3" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="amount_box" style="value_box" pattern="#,##0.00;-#,##0.00"/>
+	<field name="nif" class="java.lang.String"/>
+	<field name="birthYear" class="java.lang.Integer"/>
+	<field name="irpfData" class="com.esferalia.aon.payroll.IrpfData"/>
+	<field name="irpfResult" class="com.esferalia.aon.payroll.IrpfResult"/>
+	<field name="irpfRegularization" class="com.esferalia.aon.payroll.IrpfRegularization"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="812" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="bbb9a82d-12a9-4aaa-a232-f9882f16aaf1" style="title" x="27" y="0" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Agencia Tributaria]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="988326b8-6ea0-4c2f-9005-f2ea6166005a" style="title_box" x="127" y="0" width="300" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[CÁLCULO DE RETENCIONES - IRPF 2013]]></text>
+			</staticText>
+			<textField pattern="dd &apos;de&apos; MMMM &apos;de&apos; YYYY" isBlankWhenNull="true">
+				<reportElement uuid="fa7a0f80-2770-40ba-8892-17bfa6fa2861" style="label_box" x="450" y="2" width="105" height="16"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{irpfResult}.getEffectiveDate()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="aae70423-cfc8-4635-b4be-bb35fe30ca10" style="title" x="0" y="20" width="555" height="32"/>
+				<textElement/>
+				<text><![CDATA[La Agencia tributaria le comunica que, en relación con el perceptor que más abajo se indica y de acuerdo con los datos que asimismo se relacionan, los resultados del cálculo efectuado son los siguientes:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7c9e93c7-b418-4410-afde-f775a8e94341" style="label" x="0" y="54" width="440" height="15"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[BASE PARA CALCULAR EL TIPO DE RETENCIÓN ...........................................................................................................]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="7b1ad0c3-615c-43ad-b696-b281511f0c23" style="amount_box" x="440" y="54" width="115" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{irpfResult}.getBaseIrpf()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="3a2f9002-de84-468f-9f72-5c6f3c4e8f8f" style="label" x="0" y="69" width="440" height="15"/>
+				<textElement/>
+				<text><![CDATA[MÍNIMO PERSONAL Y FAMILIAR PARA CALCULAR EL TIPO DE RETENCIÓN ..............................................................]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="b6bdc4af-cc61-452b-a4da-142b4be38920" style="amount_box" x="440" y="69" width="115" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{irpfResult}.getMinimunPersonalFamily()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="92e667c5-7223-493d-ba49-6ad902c5865f" style="label" x="0" y="84" width="440" height="15"/>
+				<textElement/>
+				<text><![CDATA[DEDUCCIÓN ART. 80 BIS LIRPF .........................................................................................................................................]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="9762b3c1-51b3-484b-92de-b93de7db9be2" style="amount_box" x="440" y="84" width="115" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{irpfResult}.getDeduct80Bis()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="9397691d-2f64-4dd2-bd31-101809e9e4fc" style="label" x="0" y="99" width="440" height="15"/>
+				<textElement/>
+				<text><![CDATA[MINORACIÓN POR PAGOS DE PRÉSTAMOS PARA VIVIENDA HABITUAL ....................................................................]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="ba697175-a07b-420b-ad8d-94373261306e" style="amount_box" x="440" y="99" width="115" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{irpfResult}.getDeductHomeLoanAmount()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="83d68583-147d-400d-8a91-a2400622e0ee" style="title" x="0" y="114" width="440" height="15"/>
+				<textElement/>
+				<text><![CDATA[TIPO DE RETENCIÓN APLICABLE ................................................................................................................]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="4994784c-f4cc-4884-9042-a0566fbc2b11" style="amount_box" x="440" y="114" width="115" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{irpfResult}.getIrpf()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2fc7d53c-534e-4b84-9786-8e48dd02d73e" style="title" x="0" y="129" width="440" height="15"/>
+				<textElement/>
+				<text><![CDATA[IMPORTE ANUAL DE LAS RETENCIONES E INGRESOS A CUENTA ........................................................]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="c9879613-8f6a-4442-aa08-dd15ef0c2d6b" style="amount_box" x="440" y="129" width="115" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{irpfResult}.getAnnualIrpf()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="0bfc8888-73b7-4ed9-b78a-8c42c01d5038" style="label_box" x="0" y="148" width="555" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[DATOS PERSONALES DEL PERCEPTOR]]></text>
+			</staticText>
+			<frame>
+				<reportElement uuid="c2c69898-00ed-4c73-a458-d8467d48d2df" style="label_box" x="0" y="163" width="555" height="80"/>
+				<staticText>
+					<reportElement uuid="44ca21c3-7929-45de-9bff-50469ccd22c1" style="label" x="5" y="10" width="200" height="15"/>
+					<textElement/>
+					<text><![CDATA[Año de nacimiento .......................................................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="1d7c605b-1cfb-4858-8964-a04d29420345" style="value_box" x="205" y="10" width="55" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{birthYear}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="77780b3a-b045-43ee-9af6-5a154512e34c" style="label" x="5" y="27" width="200" height="15"/>
+					<textElement/>
+					<text><![CDATA[Situación Familiar ........................................................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="efde40dd-3b36-4c59-bac6-09970206ce2a" style="value_box" x="205" y="27" width="55" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfData}.getFamilySituation().getValue()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="9986619a-f12f-47a9-9411-22a70b76f8de" style="label" x="5" y="44" width="89" height="15"/>
+					<textElement/>
+					<text><![CDATA[Discapacidad ..............]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="7e6648b2-434b-492e-878e-dac5967aa319" style="value_box" x="94" y="44" width="166" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfData}.getDisabilityLevel() == null ? "NO" : $F{irpfData}.getDisabilityLevel().getName($P{REPORT_LOCALE})]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="ce6c2bb4-f156-4ea1-8edb-295d11656e9c" style="label" x="5" y="61" width="172" height="15"/>
+					<textElement/>
+					<text><![CDATA[Situación Laboral ..............................................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="376346c5-0c39-4baf-a71f-8f24f8058c54" style="value_box" x="177" y="61" width="83" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["ACTIVO"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="a261ed6f-1a80-469b-9845-4b5ea5811b98" style="label" x="295" y="10" width="145" height="15"/>
+					<textElement/>
+					<text><![CDATA[Tipo de contrato o relación ...................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="3b2af048-cddc-4b38-8884-c1820bfbd0db" style="value_box" x="440" y="10" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["GENERAL"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="d6107150-991b-464b-bf13-616c4189456a" style="label" x="295" y="27" width="200" height="15"/>
+					<textElement/>
+					<text><![CDATA[Movilidad geografica ....................................................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="503abcde-deb0-40cd-9607-f4a29c4e43db" style="value_box" x="495" y="27" width="55" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfData}.getMovingDate() != null ? "SI" : "NO"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="7de5996e-099a-4ee0-a1a6-8330b6302ef1" style="label" x="295" y="44" width="200" height="15"/>
+					<textElement/>
+					<text><![CDATA[Prolongación actividad laboral .....................................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="55277d85-ef04-44eb-9c19-e5c484217187" style="value_box" x="495" y="44" width="55" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfData}.isLabourProlongation() ? "SI" : "NO"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="b6f09f5a-4f60-4894-a11f-82e5ba9cbdb3" style="label" x="295" y="61" width="200" height="15"/>
+					<textElement/>
+					<text><![CDATA[Residente en Ceuta o Melilla .......................................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="eb65687a-511f-46c2-a05d-b25690ea7a1f" style="value_box" x="495" y="61" width="55" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["NO"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement uuid="7633f042-89d8-4542-98c1-2b2abb3dc546" style="label_box" x="0" y="253" width="555" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[DATOS ECÓNOMICOS]]></text>
+			</staticText>
+			<frame>
+				<reportElement uuid="b1a99791-d315-44a6-b7d4-e56493f66d67" style="label_box" x="0" y="268" width="555" height="80"/>
+				<textField>
+					<reportElement uuid="f92c5f92-1009-4a7f-8c50-1051224bb5ea" style="amount_box" x="150" y="62" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDeducciblesExpenses()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="af39a8d5-406c-4f45-96e3-4ef1fab8402d" style="label" x="5" y="60" width="145" height="15"/>
+					<textElement/>
+					<text><![CDATA[Gastos deduccibles .............................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="7df87ee0-a302-40b0-839a-f5bbb9906343" style="amount_box" x="150" y="45" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getIrregular18_3Reduction()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="eb0abf00-20e0-44b2-8be6-47e51b6be625" style="amount_box" x="150" y="11" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getAnnualRemuneration()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="a7462faf-19f7-4619-a374-cc66173bec60" style="amount_box" x="150" y="28" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getIrregular18_2Reduction()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="332e174c-e08f-4976-8d92-c38aab116d7a" style="label" x="5" y="43" width="145" height="15"/>
+					<textElement/>
+					<text><![CDATA[Reducciones (Art. 18.3 Disposiciones) .......]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="982cf1bf-fb82-43de-b4c3-d0b9db851bd5" style="label" x="5" y="26" width="145" height="15"/>
+					<textElement/>
+					<text><![CDATA[Reducciones (Art. 18.2 LIRPF) ............]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="6df47feb-1476-4e60-a84a-938542647d6b" style="label" x="5" y="9" width="145" height="15"/>
+					<textElement/>
+					<text><![CDATA[Retribuciones totaes anuales ...............]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="932f0c66-aa68-498f-a03d-f899bf7f3f1c" style="label" x="295" y="9" width="200" height="15"/>
+					<textElement/>
+					<text><![CDATA[Rendimientos obtenidos en Ceuta o Melilla ................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="c46cb4c7-8e6a-450d-a6d8-f4ad797548f7" style="value_box" x="495" y="9" width="55" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA["NO"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="5d6bad78-09c3-457d-b705-cb081df8fc9f" style="label" mode="Opaque" x="295" y="26" width="172" height="15"/>
+					<textElement/>
+					<text><![CDATA[Pensión compensatoria al cónyuge ..................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="367d4072-26c7-44d4-a1f9-e0367c4f69dc" style="label" x="295" y="60" width="200" height="15"/>
+					<textElement/>
+					<text><![CDATA[Pagos por prestamos de vivienda habitual .................]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="9a28dd12-bbdf-4a5a-b5ad-1938b71a7b82" style="label" mode="Opaque" x="295" y="43" width="172" height="15"/>
+					<textElement/>
+					<text><![CDATA[Anulaidades por alimentos a los hijos ..............]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="58f6fb76-a7e2-493e-b835-d28086c1f443" style="amount_box" x="467" y="26" width="83" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getSpousalSupport()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="ba5cc3ef-4170-4b98-b0c8-c721fd64990d" style="amount_box" x="467" y="43" width="83" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getFoodAnnuity()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="a594fcb8-91ec-457f-ac0c-20e4e75e9cd9" style="value_box" x="495" y="60" width="55" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfData}.getDeductHomeLoan() == null ? "NO" : "SI"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement uuid="56d26ee8-4197-46dc-b6a2-6da9123168e6" style="label_box" x="0" y="358" width="270" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[DESCENDIENTES COMPUTADOS]]></text>
+			</staticText>
+			<frame>
+				<reportElement uuid="0efbab51-20a0-4773-b43a-24e65ffbfc2b" style="label_box" x="0" y="373" width="270" height="207"/>
+				<staticText>
+					<reportElement uuid="64076810-549a-49e4-8425-7a1b4bce599a" style="label" x="5" y="10" width="90" height="15"/>
+					<textElement/>
+					<text><![CDATA[Menores de 3 años:(*)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="da14f672-c2f2-4295-84bb-0f0fa78e69ce" style="label" x="95" y="10" width="42" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="291ab0ba-caf9-45cc-ab3a-0a6a5e73ce19" style="value_box" x="137" y="10" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendentsMinor3Total()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="260db24c-b7ce-4a94-8523-b5af80ce45d1" style="label" x="180" y="10" width="46" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Por entero]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="ee97f0c7-3c51-4cb7-a6c6-ca93a3964bc6" style="value_box" x="226" y="10" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendentsMinor3Entirely()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="72bdd095-8993-4bfa-9509-4dd535b211b0" style="label" x="95" y="27" width="42" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="53df4497-cfaf-49a8-a0ed-472b1052ccc7" style="value_box" x="137" y="27" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendentsRemainderTotal()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="8559d5a3-ef83-487f-a98a-c13d58eae8cf" style="value_box" x="226" y="27" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendentsRemainderEntirely()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="c15eb289-ae94-4429-a9f3-26cd860e3919" style="label" x="5" y="27" width="90" height="15"/>
+					<textElement/>
+					<text><![CDATA[Resto:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="3776f0e0-0648-4bd7-8e27-47dfec152ce2" style="label" x="180" y="27" width="46" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Por entero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="7b85980b-2fe7-4c87-b865-4ed75aa9c20d" style="label" x="5" y="46" width="261" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[DETALLE DEL CÓMPUTO DE CADA DESCENDIENTE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="9e6917f0-3c61-4d1e-a88c-ae651e849d0a" style="label" x="95" y="65" width="42" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Hijo 2º.:]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="93d13bb7-5054-43c4-93a0-c229c8b7ee57" style="value_box" x="226" y="82" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendentsFourthSubsequentEntirely()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="361651fb-d7b7-49e9-a0b6-7aa4deed3be2" style="label" x="95" y="82" width="42" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Nº Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="16aa7bc4-7af8-4c64-af86-387da22c91f9" style="label" x="5" y="82" width="90" height="15"/>
+					<textElement/>
+					<text><![CDATA[4º. y sucesivos:]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="c9a9643c-58de-43f7-aa57-b7c1dfbdb0a0" style="value_box" x="137" y="82" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendentsFourthSubsequentTotal()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="f7580b89-a1be-4bc9-8295-27b93fe269f0" style="value_box" x="137" y="65" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendentsSecond()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="9a22abec-eba4-47be-8494-27e0bc5f64bc" style="value_box" x="226" y="65" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendentsThird()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="18a28b14-8042-489d-8712-9f2074b09238" style="label" x="180" y="82" width="46" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Por entero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="3d15c8d7-4eec-4032-8d18-6f65c976d2ef" style="label" x="180" y="65" width="46" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Hijo 3º.:]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="ab079f41-d4ab-41fd-882f-d07044bb68e9" style="value_box" x="47" y="65" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendentsFirst()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="5bef2454-bd5b-43bb-86be-90555dcb4d71" style="label" x="5" y="65" width="42" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Hijo 1º.:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="29bcd768-36c7-4f11-9a0d-6298b0ee9ac7" style="label" x="5" y="101" width="261" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[DESCENDIENTES CON DISCAPACIDAD]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="dc948aba-46d8-4a11-b947-da9940ff687a" style="label" x="95" y="120" width="42" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="27c76232-9e1d-47d4-a030-59c0417e1fa6" style="value_box" x="226" y="137" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendentsMovingEntirely()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="8ebed7ad-6d83-4882-95f4-c1d45e5b5e5e" style="label" x="95" y="137" width="42" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ca81544f-2ce1-4a1b-9cd3-57398a8b0c15" style="label" x="5" y="137" width="90" height="15"/>
+					<textElement/>
+					<text><![CDATA[Movilidad reducida:
+]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="7ce675b5-00d6-4f9d-9285-f92f3edb61a0" style="value_box" x="137" y="137" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendentsMovingTotal()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="319e03d0-df1a-4957-961d-5f1eb543cc44" style="value_box" x="137" y="120" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendents33_65Total()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="b70fbd89-081f-4b1c-b7b2-07ee76ad33d8" style="value_box" x="226" y="120" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendents33_65Entirely()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="0a26438b-5beb-4b97-a65e-f1b966c6eefd" style="label" x="180" y="137" width="46" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Por entero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="79c6d543-2b24-4159-b9dc-92d90877e512" style="label" x="5" y="120" width="90" height="15"/>
+					<textElement/>
+					<text><![CDATA[>=33% y <65%:
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="5cd91be7-5331-43b2-9945-d7da21360c26" style="label" x="180" y="120" width="46" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Por entero]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="1e185207-270a-43e7-88f0-4196b999a001" style="value_box" x="137" y="154" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendents65Total()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="59e0ff41-3074-47d7-879d-13ba720ea2b2" style="value_box" x="226" y="154" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getDescendents65Entirely()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="58a38177-9a23-441e-b367-c0d6ed8b5d04" style="label" x="180" y="154" width="46" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Por entero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="cf4fd56a-46b2-4776-94ed-9cc4344540b8" style="label" x="5" y="154" width="90" height="15"/>
+					<textElement/>
+					<text><![CDATA[>=65%:
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="73294cdd-d478-454a-ab3b-5f1c32f07838" style="label" x="95" y="154" width="42" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d99e4785-4c9e-46c2-8e9b-6258813531c5" style="label" x="5" y="171" width="261" height="15"/>
+					<textElement textAlignment="Left"/>
+					<text><![CDATA[(*) Se incluyen los adoptados o acogidos hace menos de 3 años]]></text>
+				</staticText>
+			</frame>
+			<staticText>
+				<reportElement uuid="c6e4c148-0020-416f-9726-ef58cb5fa2c5" style="label_box" x="285" y="358" width="270" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[ASCENDIENTES COMPUTADOS]]></text>
+			</staticText>
+			<frame>
+				<reportElement uuid="78a3a4c7-fe22-42c5-8342-fc478f8e5bc6" style="label_box" x="285" y="373" width="270" height="207"/>
+				<staticText>
+					<reportElement uuid="8cdfd248-f782-44f7-8738-923d0e670696" style="label" x="95" y="10" width="42" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="8bed818f-0d95-467a-9376-51b8b0adf19d" style="label" x="95" y="27" width="42" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="b95f76d6-b16d-48c9-ba95-85974fb4866b" style="value_box" x="226" y="10" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getAscendentsMinor75Entirely()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="68d7ddb0-a0d3-4814-a37e-462925d78fb2" style="label" x="5" y="10" width="90" height="15"/>
+					<textElement/>
+					<text><![CDATA[Menores de 75 años:
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="e9e1712e-b0f8-47b3-ae63-fdb66a2169dc" style="label" x="5" y="27" width="90" height="15"/>
+					<textElement/>
+					<text><![CDATA[Mayores de 75 años:
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="8f05ee7b-d117-4539-9623-1ec689a5e246" style="label" x="5" y="46" width="261" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[ASCENDIENTES CON DISCAPACIDAD]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="ea8f16f9-8789-42b7-bd12-36d46acdfd46" style="value_box" x="226" y="27" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getAscendentsMayor75Entirely()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="207f037b-64c3-48ed-8e0d-9553ef090a9c" style="value_box" x="137" y="27" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getAscendentsMayor75Total()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="cc6ba668-ec01-48e4-85ea-278163fdf04f" style="value_box" x="137" y="10" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getAscendentsMinor75Total()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="a9c79bb1-f469-40f0-9a7b-ba8a8fc71456" style="label" x="180" y="27" width="46" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Por entero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="3844a98c-450c-4cf6-a937-bb5e77f80934" style="label" x="180" y="10" width="46" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Por entero]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="b22b248d-db3a-4c87-9731-9c2f70ffe183" style="value_box" x="226" y="65" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getAscendents33_65Entirely()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="1efb494d-3816-49f8-ab4d-5b5a15e6309d" style="value_box" x="226" y="82" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getAscendentsMovingEntirely()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="305e7f4b-5165-49d6-a56b-10f42908dc8d" style="label" x="180" y="65" width="46" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Por entero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="2ed4d856-5fb5-462f-bb93-53581b0e421f" style="label" x="180" y="82" width="46" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Por entero]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="574935f1-d9be-4f02-b01d-1ebc83cd8c66" style="label" x="180" y="99" width="46" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Por entero]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="552165aa-52e1-46dc-babd-f9ab4c3c75fa" style="value_box" x="137" y="65" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getAscendents33_65Total()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="f9cad4e7-67c6-4cbe-8f30-07de7f520bfb" style="label" x="5" y="65" width="90" height="15"/>
+					<textElement/>
+					<text><![CDATA[>=33% y <65%:
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="74c86b87-25e9-42ab-b129-e4d09d81665b" style="label" x="5" y="82" width="90" height="15"/>
+					<textElement/>
+					<text><![CDATA[Movilidad reducida:
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="4a8f6960-d3d5-404c-85d6-dd0ee22d4619" style="label" x="95" y="82" width="42" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="7bb5a80e-2c2a-404e-9f5d-e7916054ab68" style="label" x="95" y="65" width="42" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="99913716-95ce-4c5f-ae50-aaedc482ee14" style="value_box" x="137" y="99" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getAscendents65Total()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="f49fa5fa-3bf5-451e-967e-1f7bd29cf732" style="value_box" x="137" y="82" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getAscendentsMovingTotal()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="662f6c82-fde7-4232-a3a1-692c70c65028" style="value_box" x="226" y="99" width="40" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{irpfResult}.getAscendents65Entirely()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="13e89c9d-92b4-456f-880b-cff860cb3918" style="label" x="5" y="99" width="90" height="15"/>
+					<textElement/>
+					<text><![CDATA[>=65%:
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="7af7f893-621a-425c-9fa1-de41f81bc6b1" style="label" x="95" y="99" width="42" height="15"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+			</frame>
+			<staticText>
+				<reportElement uuid="c4ba72d9-41c6-4967-a5ca-8f1caebde8dd" style="label_box" x="0" y="590" width="555" height="15"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[REGULARIZACIÓN]]></text>
+			</staticText>
+			<frame>
+				<reportElement uuid="87be14ec-2a43-4228-860e-02c3eefa538d" style="label_box" x="0" y="605" width="555" height="207"/>
+				<staticText>
+					<reportElement uuid="26229f1f-012d-42fa-9be3-fefd3482cd10" style="label" x="5" y="11" width="435" height="15"/>
+					<textElement/>
+					<text><![CDATA[Causa/s de regularización ...................................................................................................................................................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="be4f51ce-6aae-40b0-a09c-f5789845f447" style="value_box" x="440" y="11" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getReason().getCausa() )]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="ce677537-cdab-45af-844d-fcc25d02953f" style="label" x="5" y="28" width="435" height="15"/>
+					<textElement/>
+					<text><![CDATA[Retribuciones ya satisfechas con anterioridad a la regularización ......................................................................................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="b8511098-bffc-4109-a1e5-b544b3eee1de" style="value_box" x="440" y="28" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPaidRemuneration() )]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="cb1f8ece-6c0e-439d-94f6-37b23538f899" style="label" x="5" y="45" width="435" height="15"/>
+					<textElement/>
+					<text><![CDATA[Retenciones e ingresos a cuenta ya practicados con anterioridad a la regularización .......................................................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="c4d56b34-e68a-4321-af4c-a1b027ddf174" style="value_box" x="440" y="45" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPaidIrpf() )]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="eaf193d9-c03b-43e0-8aa3-4a0111b80a32" style="label" x="5" y="62" width="435" height="15"/>
+					<textElement/>
+					<text><![CDATA[Retribuciones anuales consideradas con anterioridad a la regularización .........................................................................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="10cf3a42-e997-4193-a063-dc1afd8905ea" style="value_box" x="440" y="62" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPriorAnnualRemuneration() )]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="05d69614-de29-4a34-9f36-bdd738cd2e5b" style="label" x="5" y="79" width="435" height="15"/>
+					<textElement/>
+					<text><![CDATA[Importe anual de las retenciones e ingresos a cuenta determinado antes de la regularización .........................................
+]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="394ec352-5e24-48cf-8f7a-31be98a22a3a" style="value_box" x="440" y="79" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPriorAnnualIrpf() )]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="6a085ae1-fe63-4639-9f64-2f951de8781a" style="label" x="5" y="96" width="435" height="15"/>
+					<textElement/>
+					<text><![CDATA[Los rendimientos anteriores a la regularización fueron obtenidos en Ceuta o Melilla ........................................................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="318302be-f718-48e2-928a-329ceb1ad1e8" style="value_box" x="440" y="96" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : "NO" ) ]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="f76955ff-e8fc-4f12-8da9-64de78ea531d" style="label" x="5" y="113" width="435" height="15"/>
+					<textElement/>
+					<text><![CDATA[Base para calcular el tipo de retención determinada antes de la regularización ................................................................
+]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="f3d8f202-8f3a-4127-8840-e9396b4c0513" style="value_box" x="440" y="113" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPriorBaseIrpf() )]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="a004cdb5-77d2-49c2-859e-dac8e12c8af9" style="label" x="5" y="130" width="435" height="15"/>
+					<textElement/>
+					<text><![CDATA[Mínimo personal y familiar determinado antes de la regularización ...................................................................................
+ ]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="866659cd-77b2-4e4e-acbf-498c6f310c6b" style="value_box" x="440" y="130" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPriorMinimunPersonalFamily() )]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="cc2be475-1ee2-41d2-ae33-1c018722624d" style="label" x="5" y="147" width="435" height="15"/>
+					<textElement/>
+					<text><![CDATA[Tipo de retención aplicado antes de la regularización.........................................................................................................
+ ]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="1a2a2140-22af-4c09-b90b-c0d875259447" style="value_box" x="440" y="147" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPriorIrpf() )]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="65169f40-b069-4ec1-88e4-d8c0fa8d55cb" style="label" x="5" y="164" width="435" height="15"/>
+					<textElement/>
+					<text><![CDATA[En algún momento antes de la regularización se aplicó minoración por pagos de préstamos para vivienda ....................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="e6d47004-5592-4a4c-9f97-48f98011fb60" style="value_box" x="440" y="164" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : (($F{irpfRegularization}.getPriorDeductHomeLoanAmount() != null && $F{irpfRegularization}.getPriorDeductHomeLoanAmount() > 0.00 ) ? "SI" : "NO" ) )]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="f42424f9-6747-473d-aced-fbf8f14b13f9" style="label" x="5" y="181" width="435" height="15"/>
+					<textElement/>
+					<text><![CDATA[Importe de la minoración por pagos de préstamos para vivienda determinado antes de la regularización ........................]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="8e854f39-1cd3-4a00-8d24-ebd28e775cad" style="value_box" x="440" y="181" width="110" height="13"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPriorDeductHomeLoanAmount() )]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>
