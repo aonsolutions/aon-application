@@ -1895,6 +1895,13 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- ************ SALARY EXPENSE ************** -->
+	<managed-bean>
+		<managed-bean-name>salaryExpense</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!--
 		============================================= 
 		============== NAVIGATION ==================

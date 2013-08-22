@@ -77,8 +77,10 @@ public class StringUtils {
 	public static boolean equalsIgnoreCase(String s1, String s2) {
 		if ( s1 == s2 )
 			return true;
-		if ( s1 != null )
-			return s1.equals(s2);
+		if ( s1 == null )
+			return false;
+		if ( s2 == null )
+			return false;
 		return s2.equalsIgnoreCase(s1);
 	}
 	

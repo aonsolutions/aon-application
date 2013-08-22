@@ -799,7 +799,7 @@ public class Employees extends ResizeComposite implements
 
 					protected void onAccept() {
 						try {
-
+							
 							String newNamePattern = getName();
 							if (newNamePattern != null) {
 								newNamePattern = newNamePattern.trim();
@@ -807,8 +807,10 @@ public class Employees extends ResizeComposite implements
 									newNamePattern = null;
 								}
 							}
-
-							Date newFromDate = DateUtils.toUTC(getDateFrom());
+						
+							Date newFromDate = getDateFrom() ;
+							if ( newFromDate != null)
+								newFromDate  = DateUtils.toUTC(getDateFrom());
 
 							boolean nameChanged = !StringUtils
 									.equalsIgnoreCase(namePattern,
