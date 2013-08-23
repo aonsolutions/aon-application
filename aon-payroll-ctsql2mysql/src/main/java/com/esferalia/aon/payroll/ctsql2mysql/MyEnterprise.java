@@ -127,6 +127,17 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			}
 		};
 	}
+	final static Map<String, AddressType> ADDRESSES_MAP = new HashMap<String, AddressType>() {
+		{
+			put("A", AddressType.MAIN);
+			put("S", AddressType.MAIN);
+			put("T", AddressType.DELEGATION);
+			put("C", AddressType.DELEGATION);
+			put("F", AddressType.DELEGATION);
+			put("U", AddressType.DELEGATION);
+			put(null, AddressType.DELEGATION);
+		}
+	};
 
 	// --------------------------------------------------------------
 	// constants
@@ -493,6 +504,11 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 									.enum2short(EnterpriseActivityType.PRINCIPAL),
 							cnae2009);
 		}
+		
+		if ( "R".equalsIgnoreCase(empract.getTiponomina()) ) {
+			mysqlDB.insertApp_param("PAY_REPORT_salary_PAY", "nominasta_ldh");
+		} 
+		
 		DefaultMysqlDB.save(cnae_activity, enterprise.id, cnae, activityId);
 
 		Activity activity = new Activity();
@@ -570,16 +586,20 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 					emprdom.getCdg(), emprdom.getCodemp());
 			return;
 		}
-
+		String tipoDom = emprdom.getTipdom();
+		
+		
 		Integer raddress = DefaultMysqlDB.get(raddresses, enterprise.id,
 				domicilio.getCdg());
 		if (raddress == null) {
 
 			Integer geozone = null;
 			geozone = mysqlDB.getGeoZone(domicilio.getProvincia());
-
+			
+			AddressType addressType = ADDRESSES_MAP.get(tipoDom);
+			
 			raddress = mysqlDB.insertRaddress(enterprise.id,
-					DefaultMysqlDB.enum2short(AddressType.DELEGATION), null,
+					DefaultMysqlDB.enum2short(addressType), null,
 					domicilio.getTipovia(), domicilio.getNomvia(),
 					domicilio.getNumero(), domicilio.getOtrdir(), null,
 					domicilio.getCodpos(), domicilio.getLocalidad(), geozone,
@@ -616,7 +636,6 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 					raddress);
 		}
 
-		String tipoDom = emprdom.getTipdom();
 		if (tipoDom != null && "T".equalsIgnoreCase(tipoDom.trim())) {
 
 			Integer workplace = DefaultMysqlDB.get(workplaces,

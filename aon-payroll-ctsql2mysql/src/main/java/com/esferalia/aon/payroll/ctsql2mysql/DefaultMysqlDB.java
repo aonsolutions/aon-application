@@ -472,6 +472,7 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 	}
 
 
+
 	protected DocumentType getDocumentType(String oldCdg) {
 		return docTypes.get(oldCdg);
 	}

@@ -910,7 +910,6 @@ public class Employees extends ResizeComposite implements
 			boolean opened = workplaceItem.getState();
 			workplaceItem.setState(false); // close workplace
 			removeEmployeeItems(workplaceItem);
-			removeEmployeeItems(workplaceItem);
 			if (inViewport & opened) {
 				workplaceItem.setState(true);
 			}
@@ -937,7 +936,7 @@ public class Employees extends ResizeComposite implements
 	}
 
 	private int getEmployeesOffset() {
-		return 3;
+		return extended ? 3 : 1;
 	}
 
 	private void showEndDate(boolean endDate) {
