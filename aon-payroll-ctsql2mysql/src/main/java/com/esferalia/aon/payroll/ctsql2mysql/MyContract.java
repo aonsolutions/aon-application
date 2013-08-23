@@ -726,7 +726,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 					}
 				}
 			}
-
+			/*
 			int userId = 
 					mysqlDB.insertUser(name, 
 						numDoc, 
@@ -761,7 +761,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 			mysqlDB.insertApplication_user_profile(
 					domainId,
 					applicationUserId, 
-					profileId);
+					profileId); */
 		}
 		contractPorCots.clear();
 

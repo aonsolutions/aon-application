@@ -401,7 +401,7 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		super.insertCustomer(registry, domain, null, false, false, null,
 				status,
 				// null,
-				scope, false, null,  true, true, true, null);
+				scope, false, null, true, true, true, null);
 
 		super.insertTarget(domain, registry, null, (short) 0, false, false,
 				(short) 0, status, scope);
@@ -470,8 +470,6 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		Statement stmt = mysqlConnection.createStatement();
 		return stmt.execute(sql);
 	}
-
-
 
 	protected DocumentType getDocumentType(String oldCdg) {
 		return docTypes.get(oldCdg);
@@ -564,12 +562,13 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		return getGeoZone(getDefaultDomain(), provincia);
 	}
 
-	public Integer getGeoZone(Integer domain, String provincia) throws SQLException {
+	public Integer getGeoZone(Integer domain, String provincia)
+			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-		
+
 		flushGeozone();
-		
+
 		try {
 			stmt = mysqlConnection
 					.prepareStatement("SELECT id FROM geozone WHERE code = ? AND domain= ?");
@@ -589,12 +588,13 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		}
 	}
 
-	public Integer getDeductionConceptId(Integer domain, String code) throws SQLException {
+	public Integer getDeductionConceptId(Integer domain, String code)
+			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-		
+
 		flushDeduction_concept();
-		
+
 		try {
 			stmt = mysqlConnection
 					.prepareStatement("SELECT id FROM deduction_concept WHERE code = ? AND domain= ?");
@@ -614,12 +614,13 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		}
 	}
 
-	public Integer getPaymentConceptId(Integer domain, String code) throws SQLException {
+	public Integer getPaymentConceptId(Integer domain, String code)
+			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-		
+
 		flushPayment_concept();
-		
+
 		try {
 			stmt = mysqlConnection
 					.prepareStatement("SELECT id FROM payment_concept WHERE code = ? AND domain= ?");
@@ -642,9 +643,9 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 	public Integer getBankId(Integer domain, String code) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-		
+
 		flushBank();
-		
+
 		try {
 			stmt = mysqlConnection
 					.prepareStatement("SELECT id FROM bank WHERE code = ? AND domain=?");
@@ -664,16 +665,12 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		}
 	}
 
-
-	public Integer getApplicationId(String application)
-			throws SQLException {
+	public Integer getApplicationId(String application) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-			stmt = mysqlConnection
-					.prepareStatement("SELECT id "
-							+ " FROM application"
-							+ " WHERE name=? ");
+			stmt = mysqlConnection.prepareStatement("SELECT id "
+					+ " FROM application" + " WHERE name=? ");
 			stmt.setString(1, application);
 			rs = stmt.executeQuery();
 			if (rs.next()) {
@@ -689,19 +686,18 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		}
 	}
 
-	public Integer getDomainApplicationId(Integer domain , Integer application)
+	public Integer getDomainApplicationId(Integer domain, Integer application)
 			throws SQLException {
-		
+
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-		
+
 		flushDomain_application();
-		
+
 		try {
-			stmt = mysqlConnection
-					.prepareStatement("SELECT id "
-							+ " FROM domain_application"
-							+ " WHERE application = ? AND domain = ? ");
+			stmt = mysqlConnection.prepareStatement("SELECT id "
+					+ " FROM domain_application"
+					+ " WHERE application = ? AND domain = ? ");
 			stmt.setInt(1, application);
 			stmt.setInt(2, domain);
 			rs = stmt.executeQuery();
@@ -718,20 +714,17 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		}
 	}
 
-	public Integer getProfileId(Integer domain, Integer application, String profile)
-			throws SQLException {
+	public Integer getProfileId(Integer domain, Integer application,
+			String profile) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
-		
+
 		flushProfile();
 
 		try {
-			stmt = mysqlConnection
-					.prepareStatement("SELECT id "
-							+ " FROM profile"
-							+ " WHERE domain IS NULL"  
-							+ " AND application = ?"
-							+ " AND name=?");
+			stmt = mysqlConnection.prepareStatement("SELECT id "
+					+ " FROM profile" + " WHERE domain IS NULL"
+					+ " AND application = ?" + " AND name=?");
 			stmt.setInt(1, application);
 			stmt.setString(2, profile);
 			rs = stmt.executeQuery();
@@ -747,26 +740,51 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 				stmt.close();
 		}
 	}
-	
-	static final String APPS [] = {"aon-aio"};
-	
-	static final Module MODULES [] = {
-			//"marketing"
-			//,"commercial"
-			//,"management"
-			//,"treasury"
-			//,"warehouse"
-			//,"groupware"
-			//,"accounting"
-			//,"fiscal"
-			Module.PAYROLL 
-			,Module.DOCUMENT
-			//,"garage"
-			};
 
-	static final String PROFILES [] = {"Administrador"};
+	public Integer getApplicationRole(String role) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
 
-	public Integer newEnterpriseDomain(String name, Integer parent )
+		flushProfile();
+
+		try {
+			stmt = mysqlConnection.prepareStatement("SELECT id "
+					+ " FROM application_role"
+					+ " WHERE role = (SELECT id FROM role WHERE name = ?) ");
+			stmt.setString(1, role);
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				return rs.getInt("id");
+			} else {
+				return null;
+			}
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	static final String APPS[] = { "aon-aio" };
+
+	static final Module MODULES[] = {
+	// "marketing"
+	// ,"commercial"
+	// ,"management"
+	// ,"treasury"
+	// ,"warehouse"
+	// ,"groupware"
+	// ,"accounting"
+	// ,"fiscal"
+	Module.PAYROLL
+	// ,Module.DOCUMENT
+	// ,"garage"
+	};
+
+	static final String PROFILES[] = { "Administrador" };
+
+	public Integer newEnterpriseDomain(String name, Integer parent)
 			throws IOException, InterruptedException, SQLException {
 
 		DomainType type = DomainType.ENTERPRISE;
@@ -780,49 +798,33 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		Integer maxTotalDocumentSize = 0;
 		Integer maxDefinedUsers = 0;
 		boolean active = true;
-		
-		Integer domain =  insertDomain(
-				name, 
-				description, 
-				parent, 
-				enum2short(type), 
-				subDomainSuffix, 
-				userManagement, 
-				domainManagement, 
-				disableDomainManagement, 
-				maxDocumentSize, 
-				maxTotalDocumentSize, 
-				maxDefinedUsers, 
-				active, 
-				owner,
-				owner,
-				new Timestamp(System.currentTimeMillis()),
-				null,
-				null,
-				null);
-		
-		
-		
+
+		Integer domain = insertDomain(name, description, parent,
+				enum2short(type), subDomainSuffix, userManagement,
+				domainManagement, disableDomainManagement, maxDocumentSize,
+				maxTotalDocumentSize, maxDefinedUsers, active, owner, owner,
+				new Timestamp(System.currentTimeMillis()), null, null, null);
+
 		AuditLevel audit_level = AuditLevel.NONE;
 
 		for (String app : APPS) {
 			Integer application = getApplicationId(app);
-			Integer domain_application = insertDomain_application(domain, 
-					application, 
-					active, 
-					enum2short(audit_level));
+			Integer domain_application = insertDomain_application(domain,
+					application, active, enum2short(audit_level));
 			for (Module module : MODULES) {
-				insertDomain_application_module(domain, domain_application, enum2short(module));
+				insertDomain_application_module(domain, domain_application,
+						enum2short(module));
 			}
-			
+
 		}
 
 		return domain;
 	}
-	
+
 	public Integer newConsultancyDomain(String name, String user, String passwd)
-			throws IOException, InterruptedException, SQLException, AonSQLException {
-		
+			throws IOException, InterruptedException, SQLException,
+			AonSQLException {
+
 		Integer parent = null;
 		DomainType type = DomainType.CONSULTANCY;
 		String description = name;
@@ -835,98 +837,74 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		Integer maxTotalDocumentSize = 0;
 		Integer maxDefinedUsers = 0;
 		boolean active = true;
-		
-		Integer domain =  insertDomain(
-				name, 
-				description, 
-				parent, 
-				enum2short(type), 
-				subDomainSuffix, 
-				userManagement, 
-				domainManagement, 
-				disableDomainManagement, 
-				maxDocumentSize, 
-				maxTotalDocumentSize, 
-				maxDefinedUsers, 
-				active, 
-				owner,
-				owner,
-				new Timestamp(System.currentTimeMillis()),
-				null,
-				null,
-				null);
-		
-		
+
+		Integer domain = insertDomain(name, description, parent,
+				enum2short(type), subDomainSuffix, userManagement,
+				domainManagement, disableDomainManagement, maxDocumentSize,
+				maxTotalDocumentSize, maxDefinedUsers, active, owner, owner,
+				new Timestamp(System.currentTimeMillis()), null, null, null);
+
 		String login = user;
 		Integer enterprise = null;
 		Integer registry = null;
 		Toolbar toolbar = Toolbar.GOOGLE;
 		String password = digestPasswd(passwd);
 		Date passwordExpiration = null;
-		
-		Integer user_id = insertUser(domain, 
-				user.toUpperCase(), 
-				login, 
-				enterprise, 
-				registry, 
-				active, 
-				password, 
-				passwordExpiration, 
-				enum2short(toolbar),
-				null,
-				null,
-				null,
-				null);
-		
-		
+
+		Integer user_id = insertUser(domain, user.toUpperCase(), login,
+				enterprise, registry, active, password, passwordExpiration,
+				enum2short(toolbar), null, null, null, null);
+
 		AuditLevel audit_level = AuditLevel.NONE;
 
 		for (String app : APPS) {
 			Integer application = getApplicationId(app);
-			Integer domain_application = insertDomain_application(domain, 
-					application, 
-					active, 
-					enum2short(audit_level));
+			Integer domain_application = insertDomain_application(domain,
+					application, active, enum2short(audit_level));
 			for (Module module : MODULES) {
-				
-				insertDomain_application_module(domain, domain_application, enum2short(module));
+
+				insertDomain_application_module(domain, domain_application,
+						enum2short(module));
 			}
-			
-			Integer application_user = 
-					insertApplication_user(domain, user_id, domain_application, active);
+
+			Integer application_user = insertApplication_user(domain, user_id,
+					domain_application, active);
 			for (String prof : PROFILES) {
 				Integer profile = getProfileId(null, application, prof);
-				insertApplication_user_profile(domain, application_user, profile);
+				insertApplication_user_profile(domain, application_user,
+						profile);
 			}
 		}
-		
+
 		// loads domain's default values.
 		VersionManager versionManager = new VersionManager();
-		URL  sqlUrl = versionManager.getInsertScript("aon.domain");
-		AonSQLFile sqlFile =  new AonSQLFile(sqlUrl.openStream(), CharEncoding.ISO_8859_1);
+		URL sqlUrl = versionManager.getInsertScript("aon.domain");
+		AonSQLFile sqlFile = new AonSQLFile(sqlUrl.openStream(),
+				CharEncoding.ISO_8859_1);
 
-		mysqlConnection.createStatement().execute(String.format("SET @Domain=%d", domain));
+		mysqlConnection.createStatement().execute(
+				String.format("SET @Domain=%d", domain));
 
 		while (sqlFile.ready()) {
 			String stmt = sqlFile.getStatement();
-			if ( stmt == null )
+			if (stmt == null)
 				continue;
-			if ( stmt.matches("^\\s*COMMIT.*")) 
+			if (stmt.matches("^\\s*COMMIT.*"))
 				continue;
-			if ( stmt.matches("^\\s*BEGIN.*")) 
+			if (stmt.matches("^\\s*BEGIN.*"))
 				continue;
-			if ( stmt.matches("^\\s*SET\\s+FOREIGN_KEY_CHECKS\\s*=\\s*1.*")) 
+			if (stmt.matches("^\\s*SET\\s+FOREIGN_KEY_CHECKS\\s*=\\s*1.*"))
 				continue;
-			
+
 			info(stmt);
 			Statement s = mysqlConnection.createStatement();
 			int result = s.executeUpdate(stmt);
 
-			debug(result + "row(s) updated/inserted.");	
+			debug(result + "row(s) updated/inserted.");
 		}
-		
+
 		syncIds();
-		
+
 		return domain;
 	}
 
@@ -949,18 +927,18 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		byte raw[] = digest.digest();
 		return new String(Base64.encodeBase64(raw), "UTF-8"); // step 5
 	}
-	
-	public static String digestPasswd(String passwd ) {
+
+	public static String digestPasswd(String passwd) {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-1");
 			digest.update(passwd.getBytes("UTF-8"));
-			byte raw [] = digest.digest();
-			return new String ( Base64.encodeBase64(raw), "UTF-8"); //step 5
+			byte raw[] = digest.digest();
+			return new String(Base64.encodeBase64(raw), "UTF-8"); // step 5
 		} catch (NoSuchAlgorithmException e) {
 			return null;
 		} catch (UnsupportedEncodingException e) {
 			return null;
-		} 
+		}
 	}
 
 	private static class OutputStreamThread extends Thread {
@@ -985,5 +963,5 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 			}
 		}
 	}
-	
+
 }

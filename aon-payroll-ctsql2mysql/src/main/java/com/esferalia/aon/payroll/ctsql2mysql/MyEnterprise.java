@@ -411,14 +411,23 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 
 		Integer domainApplicationId = mysqlDB.getDomainApplicationId(domain,
 				applicationId);
-		Integer profileId = mysqlDB.getProfileId(null, applicationId,
-				"Administrador");
+
+		Integer guestId = mysqlDB.getProfileId(null, applicationId,
+				"Invitado");
+		Integer payrollId = mysqlDB.getProfileId(null, applicationId,
+				"Laboral");
+		if ( payrollId == null ) {
+			payrollId = mysqlDB.insertProfile("Laboral", applicationId, null);
+			mysqlDB.insertProfile_role(payrollId, mysqlDB.getApplicationRole("Payroll"));
+		}
 
 		int applicationUserId = mysqlDB.insertApplication_user(domain, userId,
 				domainApplicationId, true // active
 				);
 		mysqlDB.insertApplication_user_profile(domain, applicationUserId,
-				profileId);
+				guestId);
+		mysqlDB.insertApplication_user_profile(domain, applicationUserId,
+				payrollId);
 
 		mysqlDB.insertUser_scope(domain, userId, this.scopeId);
 
