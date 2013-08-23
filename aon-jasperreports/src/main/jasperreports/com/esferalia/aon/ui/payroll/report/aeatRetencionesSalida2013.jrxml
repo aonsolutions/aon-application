@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="aeatRetencionesSalida2013" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="15" bottomMargin="15" uuid="3ad438c7-48de-4be0-8a0c-cf0a0a37f82e">
 	<property name="ireport.zoom" value="1.1269722013523664"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="199"/>
+	<property name="ireport.y" value="80"/>
 	<style name="label" isDefault="true" vAlign="Middle" fontName="Nimbus Sans L" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 	<style name="title" style="label" fontSize="9" isBold="true"/>
 	<style name="VALUE" style="label" fontSize="8"/>
@@ -664,7 +664,7 @@
 				<textField>
 					<reportElement uuid="be4f51ce-6aae-40b0-a09c-f5789845f447" style="value_box" x="440" y="11" width="110" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getReason().getCausa() )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} == null  ? null : $F{irpfRegularization}.getReason().getCausa() )]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="ce677537-cdab-45af-844d-fcc25d02953f" style="label" x="5" y="28" width="435" height="15"/>
@@ -674,7 +674,7 @@
 				<textField>
 					<reportElement uuid="b8511098-bffc-4109-a1e5-b544b3eee1de" style="value_box" x="440" y="28" width="110" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPaidRemuneration() )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} == null  ? null : $F{irpfRegularization}.getPaidRemuneration() )]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="cb1f8ece-6c0e-439d-94f6-37b23538f899" style="label" x="5" y="45" width="435" height="15"/>
@@ -684,7 +684,7 @@
 				<textField>
 					<reportElement uuid="c4d56b34-e68a-4321-af4c-a1b027ddf174" style="value_box" x="440" y="45" width="110" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPaidIrpf() )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} == null  ? null : $F{irpfRegularization}.getPaidIrpf() )]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="eaf193d9-c03b-43e0-8aa3-4a0111b80a32" style="label" x="5" y="62" width="435" height="15"/>
@@ -694,7 +694,7 @@
 				<textField>
 					<reportElement uuid="10cf3a42-e997-4193-a063-dc1afd8905ea" style="value_box" x="440" y="62" width="110" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPriorAnnualRemuneration() )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} == null  ? null : $F{irpfRegularization}.getPriorAnnualRemuneration() )]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="05d69614-de29-4a34-9f36-bdd738cd2e5b" style="label" x="5" y="79" width="435" height="15"/>
@@ -705,7 +705,7 @@
 				<textField>
 					<reportElement uuid="394ec352-5e24-48cf-8f7a-31be98a22a3a" style="value_box" x="440" y="79" width="110" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPriorAnnualIrpf() )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} == null  ? null : $F{irpfRegularization}.getPriorAnnualIrpf() )]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="6a085ae1-fe63-4639-9f64-2f951de8781a" style="label" x="5" y="96" width="435" height="15"/>
@@ -715,7 +715,7 @@
 				<textField>
 					<reportElement uuid="318302be-f718-48e2-928a-329ceb1ad1e8" style="value_box" x="440" y="96" width="110" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : "NO" ) ]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} == null  ? null : "NO" )]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="f76955ff-e8fc-4f12-8da9-64de78ea531d" style="label" x="5" y="113" width="435" height="15"/>
@@ -726,7 +726,7 @@
 				<textField>
 					<reportElement uuid="f3d8f202-8f3a-4127-8840-e9396b4c0513" style="value_box" x="440" y="113" width="110" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPriorBaseIrpf() )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} == null  ? null : $F{irpfRegularization}.getPriorBaseIrpf() )]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="a004cdb5-77d2-49c2-859e-dac8e12c8af9" style="label" x="5" y="130" width="435" height="15"/>
@@ -737,7 +737,7 @@
 				<textField>
 					<reportElement uuid="866659cd-77b2-4e4e-acbf-498c6f310c6b" style="value_box" x="440" y="130" width="110" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPriorMinimunPersonalFamily() )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} == null  ? null : $F{irpfRegularization}.getPriorMinimunPersonalFamily() )]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="cc2be475-1ee2-41d2-ae33-1c018722624d" style="label" x="5" y="147" width="435" height="15"/>
@@ -748,7 +748,7 @@
 				<textField>
 					<reportElement uuid="1a2a2140-22af-4c09-b90b-c0d875259447" style="value_box" x="440" y="147" width="110" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPriorIrpf() )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} == null  ? null : $F{irpfRegularization}.getPriorIrpf() )]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="65169f40-b069-4ec1-88e4-d8c0fa8d55cb" style="label" x="5" y="164" width="435" height="15"/>
@@ -758,7 +758,7 @@
 				<textField>
 					<reportElement uuid="e6d47004-5592-4a4c-9f97-48f98011fb60" style="value_box" x="440" y="164" width="110" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : (($F{irpfRegularization}.getPriorDeductHomeLoanAmount() != null && $F{irpfRegularization}.getPriorDeductHomeLoanAmount() > 0.00 ) ? "SI" : "NO" ) )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} == null  ? null : (($F{irpfRegularization}.getPriorDeductHomeLoanAmount() != null && $F{irpfRegularization}.getPriorDeductHomeLoanAmount() > 0.00 ) ? "SI" : "NO" ) )]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="f42424f9-6747-473d-aced-fbf8f14b13f9" style="label" x="5" y="181" width="435" height="15"/>
@@ -768,7 +768,7 @@
 				<textField>
 					<reportElement uuid="8e854f39-1cd3-4a00-8d24-ebd28e775cad" style="value_box" x="440" y="181" width="110" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[( $F{irpfRegularization} != null  ? null : $F{irpfRegularization}.getPriorDeductHomeLoanAmount() )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( $F{irpfRegularization} == null  ? null : $F{irpfRegularization}.getPriorDeductHomeLoanAmount() )]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
