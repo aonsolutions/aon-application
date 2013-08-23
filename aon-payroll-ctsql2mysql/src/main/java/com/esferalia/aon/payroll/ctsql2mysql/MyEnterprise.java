@@ -576,11 +576,26 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 
 	@Override
 	public void visitDomicilio(Domicilio domicilio) throws SQLException {
-		domicilio.visitEmprdom_domicilio(this);
+		domicilio.visitEmprdom_domicilio(new DefaultCtsqlDBVisitor(){
+			@Override
+			public void visitEmprdom_domicilio(Emprdom emprdom, Domicilio domicilio)
+					throws SQLException {
+				if ( ADDRESSES_MAP.get(emprdom.getTipdom()) == AddressType.MAIN)
+						visitEmprdom_domicilioImpl(emprdom, domicilio);
+			}
+		});
+		domicilio.visitEmprdom_domicilio(new DefaultCtsqlDBVisitor(){
+			@Override
+			public void visitEmprdom_domicilio(Emprdom emprdom, Domicilio domicilio)
+					throws SQLException {
+				if ( ADDRESSES_MAP.get(emprdom.getTipdom()) != AddressType.MAIN)
+					visitEmprdom_domicilioImpl(emprdom, domicilio);
+			}
+		});
 	}
 
-	@Override
-	public void visitEmprdom_domicilio(Emprdom emprdom, Domicilio domicilio)
+	
+	private void visitEmprdom_domicilioImpl(Emprdom emprdom, Domicilio domicilio)
 			throws SQLException {
 
 		Enterprise enterprise = enterprises.get(emprdom.getCodemp());
