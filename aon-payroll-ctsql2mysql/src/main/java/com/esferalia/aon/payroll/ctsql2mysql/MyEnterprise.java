@@ -135,6 +135,10 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			put("C", AddressType.DELEGATION);
 			put("F", AddressType.DELEGATION);
 			put("U", AddressType.DELEGATION);
+			put("E", AddressType.DELEGATION);
+			put("R", AddressType.DELEGATION);
+			put("N", AddressType.DELEGATION);
+			put("O", AddressType.DELEGATION);
 			put(null, AddressType.DELEGATION);
 		}
 	};
@@ -597,6 +601,11 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			geozone = mysqlDB.getGeoZone(domicilio.getProvincia());
 			
 			AddressType addressType = ADDRESSES_MAP.get(tipoDom);
+			if ( addressType == null ) {
+				addressType = AddressType.DELEGATION;
+				MysqlDB.error("emprdom[{}] : Invalid tipdom {}",
+						emprdom.getCdg(), emprdom.getTipdom());
+			}
 			
 			raddress = mysqlDB.insertRaddress(enterprise.id,
 					DefaultMysqlDB.enum2short(addressType), null,
