@@ -265,7 +265,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		return false;
 	}
 	
-	private boolean isAdminDomain() {
+	public boolean isAdminDomain() {
 		DomainType type = getDomainType(AonUtil.getAuthPrincipal().getDomainId());
 		return type == DomainType.ADMIN;
 	}
