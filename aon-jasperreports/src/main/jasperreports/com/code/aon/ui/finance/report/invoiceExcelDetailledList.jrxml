@@ -101,7 +101,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_tax_type}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_type}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="1054" y="2" width="57" height="15" forecolor="#333333" backcolor="#FFFFFF"/>
@@ -166,7 +166,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_tax_type}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_type}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="1282" y="2" width="60" height="15" forecolor="#333333" backcolor="#FFFFFF"/>
@@ -257,7 +257,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_tax_type}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_type}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>

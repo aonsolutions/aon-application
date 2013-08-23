@@ -121,7 +121,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{warehouse_delivery_series}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_number}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-74" x="90" y="0" width="92" height="13"/>
@@ -141,7 +141,7 @@
 				<textElement verticalAlignment="Bottom">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{warehouse_delivery_cif}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_company_document}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-4" mode="Opaque" x="467" y="13" width="71" height="12" forecolor="#000000" backcolor="#FFFFFF"/>

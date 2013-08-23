@@ -57,7 +57,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_print} + " " + $R{asset_statistic_module}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_print_of} + " " + $R{asset_statistic_module}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-2" x="88" y="25" width="447" height="12"/>

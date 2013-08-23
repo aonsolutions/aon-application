@@ -169,7 +169,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{sales_sale_series} + ":"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 					<reportElement key="textField-77" x="455" y="50" width="82" height="13" isRemoveLineWhenBlank="true"/>

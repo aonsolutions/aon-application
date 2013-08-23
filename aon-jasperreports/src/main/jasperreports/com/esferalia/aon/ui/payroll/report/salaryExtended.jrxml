@@ -145,7 +145,7 @@ $F{salary}.getPayments().getOtherNonWages().getValues().size())>10]]></variableE
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_salary_enterprise}+" :"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_enterprise}+" :"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="5" y="50" width="214" height="11"/>

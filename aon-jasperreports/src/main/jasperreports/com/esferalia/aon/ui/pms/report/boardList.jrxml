@@ -74,7 +74,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{report_total} + ": " + $V{paxCount}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{aon_total} + ": " + $V{paxCount}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>

@@ -198,7 +198,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{finance_tax_type}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{finance_type}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="0" y="16" width="280" height="13" forecolor="#333333" backcolor="#FFFFFF"/>
@@ -391,7 +391,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{finance_invoice_total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{invoice_total}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

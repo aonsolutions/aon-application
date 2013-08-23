@@ -1,5 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.finance.controller.IFinanceConstants.BUNDLE_NAME;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -37,11 +39,11 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CustomerFeeController extends LinesController {
 
-   private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.report";
    private static final String MSG_KEY_PREFIX = "aon_no_fee_customer_report";
 
 	private boolean longDescription;
@@ -170,9 +172,7 @@ public class CustomerFeeController extends LinesController {
 	}
 
 	public String getReportTitle(){
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
-		return bundle.getString(MSG_KEY_PREFIX);
+		return AonUtil.getMessage(BUNDLE_NAME, MSG_KEY_PREFIX);
 	}
 
 	@SuppressWarnings("unchecked")

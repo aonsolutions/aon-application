@@ -157,7 +157,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{warehouse_delivery_series}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_number}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-74" x="59" y="0" width="70" height="13"/>

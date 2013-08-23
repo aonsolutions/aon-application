@@ -311,7 +311,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_employee_name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_salary_employee}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="170" y="0" width="40" height="15" forecolor="#FFFFFF" backcolor="#000000"/>

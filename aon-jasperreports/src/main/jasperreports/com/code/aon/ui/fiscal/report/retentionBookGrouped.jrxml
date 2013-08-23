@@ -246,7 +246,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{invoice_vat_quota}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_quota}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>

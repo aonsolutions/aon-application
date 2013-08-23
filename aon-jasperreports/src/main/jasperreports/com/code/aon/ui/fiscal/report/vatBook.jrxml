@@ -541,7 +541,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{invoice_vat_quota}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_quota}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-60" mode="Opaque" x="214" y="0" width="48" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -554,7 +554,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{invoice_date}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-16" mode="Opaque" x="72" y="0" width="68" height="15" forecolor="#000000" backcolor="#FFFFFF"/>

@@ -213,7 +213,7 @@ public class InvoiceReportController {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			DynaElements dyn = new DynaElements();
 			DynaReport report = new DynaReport();
-			ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.ui.fiscal.i18n.report",locale);
+			ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.ui.fiscal.i18n.messages",locale);
 			report.getReport().setReportLocale(locale);
 			report
 				.addColumn(dyn.getIntegerColumn("id","ID"))

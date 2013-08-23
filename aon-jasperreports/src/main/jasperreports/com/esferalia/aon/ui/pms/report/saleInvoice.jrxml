@@ -561,7 +561,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_code} +": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_reservation_code} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-52" positionType="Float" x="207" y="92" width="40" height="13" isRemoveLineWhenBlank="true">
@@ -576,7 +576,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_input} +": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_checkin} +": "]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-51" positionType="Float" x="247" y="92" width="106" height="13" isRemoveLineWhenBlank="true">
@@ -606,7 +606,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_output} +": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_checkout} +": "]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-51" positionType="Float" x="247" y="105" width="106" height="13" isRemoveLineWhenBlank="true">
@@ -681,7 +681,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_room_count} +": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_rooms} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-52" positionType="Float" x="353" y="105" width="60" height="13" isRemoveLineWhenBlank="true">
@@ -733,7 +733,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 									<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$R{report_date}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{aon_date}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
@@ -3013,7 +3013,7 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$R{finance_tax_type}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report_type}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">

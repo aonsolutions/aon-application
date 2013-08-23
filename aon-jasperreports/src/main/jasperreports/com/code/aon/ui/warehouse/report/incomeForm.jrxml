@@ -136,7 +136,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{warehouse_delivery_series} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-74" x="388" y="18" width="59" height="13"/>
@@ -338,7 +338,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{warehouse_delivery_cif}+ ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_company_document}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" x="435" y="3" width="102" height="23"/>
@@ -394,7 +394,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{warehouse_delivery_warehouse}+ ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{warehouse_warehouse}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-134" x="85" y="92" width="343" height="25"/>

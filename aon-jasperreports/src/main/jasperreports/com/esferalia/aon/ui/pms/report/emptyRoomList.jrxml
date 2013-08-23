@@ -74,7 +74,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_date}+": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date}+": "]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-1" x="160" y="34" width="70" height="17"/>
@@ -120,7 +120,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_status}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_status}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-59" mode="Opaque" x="115" y="0" width="62" height="15" forecolor="#FFFFFF" backcolor="#999999"/>

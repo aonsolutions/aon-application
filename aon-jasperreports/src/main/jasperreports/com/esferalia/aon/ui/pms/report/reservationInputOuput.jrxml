@@ -177,7 +177,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_input}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_checkin}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-59" mode="Opaque" x="336" y="0" width="89" height="22" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -261,7 +261,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_guests_total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-59" mode="Opaque" x="672" y="0" width="110" height="22" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -303,7 +303,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_output}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_checkout}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-57" mode="Opaque" x="64" y="0" width="64" height="22" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -331,7 +331,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_status}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_status}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>

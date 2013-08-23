@@ -391,7 +391,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_invoice_total}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{invoice_total}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-44" positionType="Float" x="460" y="187" width="62" height="14"/>

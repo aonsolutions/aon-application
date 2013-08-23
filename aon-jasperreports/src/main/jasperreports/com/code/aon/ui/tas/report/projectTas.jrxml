@@ -91,7 +91,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_phone} + ": " + $P{phone}.getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-25" x="275" y="32" width="250" height="14">
@@ -155,7 +155,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{tas_projectTas}.toUpperCase() + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{tas_project_tas}.toUpperCase() + ":"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-23" x="157" y="3" width="103" height="15"/>
@@ -380,7 +380,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{tas_projectTas_detail} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{tas_project_tas_detail} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-50" x="275" y="73" width="40" height="13"/>
@@ -393,7 +393,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_phone} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_telephone} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-50" x="275" y="21" width="40" height="13"/>

@@ -674,7 +674,7 @@ $F{registryAddress}.getCity() + " (" + $F{registryAddress}.getGeozone().getName(
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{purchase_phone}+ ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_phone}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-113" x="45" y="15" width="225" height="23"/>

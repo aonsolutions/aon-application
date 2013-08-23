@@ -99,7 +99,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{commercial_tracking_date}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-11" positionType="Float" mode="Opaque" x="170" y="0" width="210" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -141,7 +141,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{commercial_tracking_status}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{registry_status}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-12" positionType="Float" mode="Opaque" x="60" y="0" width="110" height="15" forecolor="#000000" backcolor="#FFFFFF"/>

@@ -35,7 +35,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{accounting_balance_detail_desc}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{account_description}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement key="textField-17" mode="Opaque" x="676" y="36" width="65" height="15" forecolor="#000000" backcolor="#FFFFFF"/>

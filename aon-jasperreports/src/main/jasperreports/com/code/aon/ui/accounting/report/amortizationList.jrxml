@@ -132,7 +132,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{accounting_amortization_description}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{account_description}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-5" mode="Opaque" x="232" y="0" width="51" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -145,7 +145,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{accounting_amortization_fromDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{account_date_from}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-6" mode="Opaque" x="283" y="0" width="51" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -158,7 +158,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{accounting_amortization_toDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{account_date_to}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-7" mode="Opaque" x="334" y="0" width="224" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
