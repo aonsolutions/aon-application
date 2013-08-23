@@ -19,23 +19,21 @@
 		<aon:div styleClass="aon-scroll-area">
 
 			<aon:panelGrid columns="3" styleClass="aon-panelGrid-formatting"
-				columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
+				columnClasses="#{(domainSwitcher.childDomain and desktop.fiscalEnabled)?'':'aon-portlets-column1,'}
+					aon-portlets-column2,aon-portlets-column3">
 
-				<aon:div id="desktopDiv1">
-					<c:if test="#{domainSwitcher.childDomain and desktop.fiscalEnabled}">
-						<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml">
-							<ui:param name="columnNumber" value="1" />
-						</ui:include>
-					</c:if>
-					<c:if test="#{domainSwitcher.parentDomain or (domainSwitcher.childDomain and !desktop.fiscalEnabled)}">
-						<c:if test="#{desktop.taskHolderAvailable}">
-							<ui:include src="/facelet/homepage/portlet/taskPortlet.xhtml" />
+				<c:if test="#{!(domainSwitcher.childDomain and desktop.fiscalEnabled)}">
+					<aon:div id="desktopDiv1">
+						<c:if test="#{domainSwitcher.parentDomain or (domainSwitcher.childDomain and !desktop.fiscalEnabled)}">
+							<c:if test="#{desktop.taskHolderAvailable}">
+								<ui:include src="/facelet/homepage/portlet/taskPortlet.xhtml" />
+							</c:if>
+							<ui:include src="/facelet/homepage/portlet/noticePortlet.xhtml" />
+							<ui:include src="/facelet/homepage/portlet/notePortlet.xhtml" />
+							<ui:include src="/facelet/homepage/portlet/favoritePortlet.xhtml" />
 						</c:if>
-						<ui:include src="/facelet/homepage/portlet/noticePortlet.xhtml" />
-						<ui:include src="/facelet/homepage/portlet/notePortlet.xhtml" />
-						<ui:include src="/facelet/homepage/portlet/favoritePortlet.xhtml" />
-					</c:if>
-				</aon:div>
+					</aon:div>
+				</c:if>
 				<aon:div styleClass="aon-width-all">
 					<c:if test="#{domainSwitcher.childDomain}">
 						<ui:include src="/facelet/homepage/portlet/parentDomainInfoPortlet.xhtml" />
