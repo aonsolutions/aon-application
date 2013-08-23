@@ -8,7 +8,7 @@
 
 	<script type="text/javascript">
             	<![CDATA[
-					var form = #{rich:element(form)};
+            	    var form = #{rich:element(form)};
 					for ( var i = 0; i < form.length; i++ ){
 						var element = form.elements[i];
 						
@@ -43,16 +43,15 @@
 					
 					var imgs = form.getElementsByTagName('img');
 					for ( var i = 0; i < imgs.length; i++ ) {
-						if ( imgs[i].className.contains('rich-calendar-button') )
+						if ( imgs[i].className.indexOf('rich-calendar-button') >= 0 )
 							imgs[i].style.display = 'none';
 					}
 					
 					var tables = form.getElementsByTagName('table');
 					for ( var i = 0; i < tables.length; i++ ) {
-						if ( tables[i].className.contains('rich-fileupload-toolbar-decor') )
+						if ( tables[i].className.indexOf('rich-fileupload-toolbar-decor')>=0 )
 							tables[i].style.display = 'none';
 					}
-						
 					
 					form.style.display='';
             	]]>
