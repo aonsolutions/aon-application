@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.parent</artifactId>
-	<version>7.21</version>
+	<version>7.21-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>POM padre de los proyectos AON</description>
 	<name>AON PARENT</name>
@@ -158,8 +158,8 @@
 	</modules>
 
 	<scm>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.21.x</connection>
-		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.21.x</url>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk</connection>
+		<url>http://dev.esferalia.com/websvn/wsvn</url>
 	</scm>
 
 	<organization>
