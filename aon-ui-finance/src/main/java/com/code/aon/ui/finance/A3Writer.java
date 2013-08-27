@@ -552,7 +552,7 @@ public class A3Writer extends BasicExporter {
 		// Fax
 		RegistryMedia fax = getInvoice().getRegistry().getFax();
 		if ( fax != null ) {
-			setStringRightPad( phone.getValue(), 193, 12);
+			setStringRightPad( fax.getValue(), 193, 12);
 		}
 		// E-mail
 		RegistryMedia email = getInvoice().getRegistry().getEmail();
