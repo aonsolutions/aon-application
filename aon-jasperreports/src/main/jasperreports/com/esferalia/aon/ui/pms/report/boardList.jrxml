@@ -138,7 +138,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_date}+": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date}+": "]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-1" x="160" y="38" width="70" height="17"/>

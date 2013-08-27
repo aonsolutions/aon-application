@@ -221,7 +221,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{accounting_description}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_description}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

@@ -359,7 +359,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{accounting_description}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_description}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="150abef0-97d0-47ed-b486-c0b2c341e4ec" key="textField-6" mode="Opaque" x="14" y="16" width="22" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
