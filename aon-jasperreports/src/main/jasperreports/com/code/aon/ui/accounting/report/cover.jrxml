@@ -115,7 +115,7 @@
 					<textElement verticalAlignment="Top">
 						<font size="14"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{account_document} + ":"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{invoice_document} + ":"]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
 					<reportElement key="textField-17" x="140" y="101" width="335" height="18"/>
@@ -142,7 +142,7 @@
 						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{account_period_start_date} + ":"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{aon_period_start_date} + ":"]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="false">
 					<reportElement key="textField-17" mode="Transparent" x="0" y="272" width="220" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -156,7 +156,7 @@
 						<font fontName="SansSerif" size="14" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{account_period_end_date} + ":"]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{aon_period_end_date} + ":"]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 					<reportElement key="textField-17" mode="Transparent" x="220" y="254" width="255" height="18" forecolor="#000000" backcolor="#FFFFFF"/>

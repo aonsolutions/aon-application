@@ -299,7 +299,7 @@ $F{salary}.getPayments().getOtherNonWages().getValues().size())>10]]></variableE
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_salary_period}+" "+$R{payroll_salary_period_from}+" "+
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_salary_period}+" "+$R{report_from}+" "+
 $V{formatter}.format($F{salary}.getStartDate())+" "+
 $R{payroll_salary_period_to}+" "+
 $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>

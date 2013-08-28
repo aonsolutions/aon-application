@@ -83,7 +83,7 @@ public class CustomerReportTest extends AbsReportPrintTest{
 		parameters.put("printHeader",getCompanyController().isPrintHeader());
 		parameters.put("title", "Listado de clientes");
 		Locale locale = new Locale("es_ES");
-		ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.ui.registry.i18n.report", locale);		
+		ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.ui.common.i18n.report", locale);		
 		parameters.put("REPORT_RESOURCE_BUNDLE",bundle);
 		return parameters;
 	}

@@ -11,7 +11,7 @@
 		<template path="/com/code/aon/ui/accounting/report/cover.jasper"/>
 		<collection provider="#{accountingBook}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="period" value="#{accountingBook.getPeriod}" />
 			<param id="title" value="#{accountingBook.getCoverTitle}" />
@@ -28,7 +28,7 @@
 		<template path="/com/code/aon/ui/accounting/report/profitAndLoss.jasper"/>
 		<collection provider="#{profitAndLossReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="params" value="#{profitAndLossReport.getParameters}" />
 			<param id="reportTitle" value="#{profitAndLossReport.getReportTitle}" />
@@ -40,7 +40,7 @@
 		<template path="/com/code/aon/ui/accounting/report/profitAndLossGraph.jasper"/>
 		<collection provider="#{profitAndLossReport.sortedTotalExpenses}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="params" value="#{profitAndLossReport.getParameters}" />	
 			<param id="title" value="#{profitAndLossReport.getGraphName}" />
@@ -53,7 +53,7 @@
 		<template path="/com/code/aon/ui/accounting/report/profitAndLossGraphGrossMargin.jasper"/>
 		<collection provider="#{profitAndLossReport.salesList}" forceRefresh="true"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="params" value="#{profitAndLossReport.getParameters}" />
 			<param id="title" value="#{profitAndLossReport.getGraphName}" />
@@ -81,7 +81,7 @@
 		<template path="/com/code/aon/ui/accounting/report/profitAndLossGraph.jasper"/>
 		<collection provider="#{profitAndLossReport.netExpenses}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="params" value="#{profitAndLossReport.getParameters}" />
 			<param id="title" value="#{profitAndLossReport.getGraphName}" />
@@ -94,7 +94,7 @@
 		<template path="/com/code/aon/ui/accounting/report/profitAndLossMonthly.jasper"/>
 		<collection provider="#{profitAndLossMonthly}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="params" value="#{profitAndLossReport.getParameters}" />
 		</params>
@@ -105,7 +105,7 @@
 		<template path="/com/code/aon/ui/accounting/report/profitAndLossMonthlyGraph.jasper"/>
 		<collection provider="#{profitAndLossMonthly}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="params" value="#{profitAndLossReport.getParameters}" />
 		</params>
@@ -117,7 +117,7 @@
 		<template path="/com/code/aon/ui/accounting/report/statement.jasper"/>
 		<collection provider="#{statement}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="previousBalance" value="#{statement.getPreviousBalance}" />
 			<param id="periodBalance" value="#{statement.getPeriodBalance}" />
@@ -130,7 +130,7 @@
 		<template path="/com/code/aon/ui/accounting/report/trialBalance.jasper"/>
 		<collection provider="#{trialBalance}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="summaryCollection" value="#{trialBalance.getSummaryCollection}" />
 			<param id="params" value="#{trialBalance.getParameters}" />
@@ -142,7 +142,7 @@
 		<template path="/com/code/aon/ui/accounting/report/officialTrialBalance.jasper"/>
 		<collection provider="#{officialTrialBalance}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="summaryCollection" value="#{officialTrialBalance.getSummaryCollection}" />
 			<param id="params" value="#{officialTrialBalance.getParameters}" />
@@ -156,7 +156,7 @@
 		<criteria provider="#{journalReport}"/>
 		<fetch-mode paginated="true" page-count="5000" virtualizer-max-size="1000" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="fromDate" value="#{journalReport.getFromDate}" />
 			<param id="toDate" value="#{journalReport.getToDate}" />
@@ -174,7 +174,7 @@
 		<criteria provider="#{journalReport}"/>
 		<fetch-mode paginated="true" page-count="5000" virtualizer-max-size="1000" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="fromDate" value="#{journalReport.getFromDate}" />
 			<param id="toDate" value="#{journalReport.getToDate}" />
@@ -191,7 +191,7 @@
 		<criteria provider="#{ledgerReport}"/>
 		<fetch-mode paginated="true" page-count="5000" virtualizer-max-size="1000" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="fromDate" value="#{ledgerReport.getFromDate}" />
 			<param id="toDate" value="#{ledgerReport.getToDate}" />
@@ -209,7 +209,7 @@
 		<template path="/com/code/aon/ui/accounting/report/officialBalanceSheet.jasper" />
 	  	<collection provider="#{balanceSheet}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="balance" value="#{balanceSheet.getBalance}" />
 			<param id="params" value="#{balanceSheet.getParameters}" />
@@ -224,7 +224,7 @@
 		<bean key="com.code.aon.accounting.BalanceDetail" />
 		<criteria provider="#{balanceDetail}"/>	
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -235,7 +235,7 @@
 		<bean key="com.code.aon.accounting.Amortization" />
 		<criteria provider="#{amortization}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -245,7 +245,7 @@
 		<template path="/com/code/aon/ui/accounting/report/amortizationForm.jasper" />
 		<collection provider="#{amortizationDetail.amortizationSummaryList}" />  
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>	  
@@ -255,7 +255,7 @@
 		<template path="/com/code/aon/ui/accounting/report/amortizationForm.jasper" />
 		<collection provider="#{amortizationDetail.amortizationList}" />  
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>	  
@@ -265,7 +265,7 @@
 		<template path="/com/code/aon/ui/accounting/report/amortizationForm.jasper" />
 		<collection provider="#{amortizationDetail.amortizationListComplete}" />  
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>	  
@@ -275,7 +275,7 @@
 		<template path="/com/code/aon/ui/accounting/report/amortizationPeriod.jasper"/>
 		<collection provider="#{periodAmortization.amortizationList}" />  
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="period" value="#{periodAmortization.getPeriod}" />
 			<param id="controller" value="#{periodAmortization.getController}" />
@@ -285,7 +285,7 @@
 		<template path="/com/code/aon/ui/accounting/report/amortizationPeriodXLS.jasper"/>
 		<collection provider="#{periodAmortization.amortizationList}" />  
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="period" value="#{periodAmortization.getPeriod}" />
 		</params>

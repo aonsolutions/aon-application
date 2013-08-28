@@ -11,7 +11,7 @@
 		<template path="/com/code/aon/ui/fiscal/report/vatBook.jasper"/>
 		<collection provider="#{vatReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="fromDate" value="#{vatReport.getFromDate}" />
 			<param id="toDate" value="#{vatReport.getToDate}" />
@@ -29,7 +29,7 @@
 		<template path="/com/code/aon/ui/fiscal/report/retentionBook.jasper"/>
 		<collection provider="#{retentionReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="params" value="#{retentionReport.getParams}" />
 			<param id="title" value="#{retentionReport.getTitle}" />
@@ -39,7 +39,7 @@
 		<template path="/com/code/aon/ui/fiscal/report/retentionBookGrouped.jasper"/>
 		<collection provider="#{retentionReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="params" value="#{retentionReport.getParams}" />
 			<param id="title" value="#{retentionReport.getTitle}" />
@@ -52,7 +52,7 @@
 		<bean key="com.code.aon.fiscal.Mod347Detail" />
 		<criteria provider="#{mod347Detail}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="year" value="#{mod347.getYear}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -64,7 +64,7 @@
 		<bean key="com.code.aon.fiscal.Mod349Detail" />
 		<criteria provider="#{mod349Detail}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="year" value="#{mod349.getYear}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -75,7 +75,7 @@
 		<template path="/com/code/aon/ui/fiscal/report/vatTax.jasper"/>
 		<collection provider="#{vatTax.summary}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="declarations" value="#{vatTax.getDeclarations}" />
 		</params>
@@ -90,7 +90,7 @@
 		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
 		<collection provider="#{mod111.declaration.details}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="declaration" value="#{mod111.getDeclaration}" />
 		</params>
@@ -100,7 +100,7 @@
 		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
 		<collection provider="#{mod115.declaration.details}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="declaration" value="#{mod115.getDeclaration}" />
 		</params>
@@ -110,7 +110,7 @@
 		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
 		<collection provider="#{mod123.declaration.details}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="declaration" value="#{mod123.getDeclaration}" />
 		</params>
@@ -120,7 +120,7 @@
 		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
 		<collection provider="#{mod130.declaration.details}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="declaration" value="#{mod130.getDeclaration}" />
 		</params>
@@ -130,7 +130,7 @@
 		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
 		<collection provider="#{mod131.declaration.details}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="declaration" value="#{mod131.getDeclaration}" />
 		</params>
@@ -140,7 +140,7 @@
 		<template path="/com/code/aon/ui/fiscal/report/fiscalModel.jasper"/>
 		<collection provider="#{mod310.declaration.details}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="declaration" value="#{mod310.getDeclaration}" />
 		</params>

@@ -341,7 +341,7 @@
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{sales_sale_workplace}+ ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{purchase_workplace}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" x="156" y="163" width="121" height="23"/>
@@ -390,7 +390,7 @@
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{sales_sale_text_financial2}+ ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_type}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" positionType="Float" x="71" y="332" width="148" height="23" forecolor="#000000"/>
@@ -411,7 +411,7 @@
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{sales_sale_text_financial3}+ ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{purchase_text_financial3}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" positionType="Float" x="306" y="332" width="200" height="23"/>
@@ -432,14 +432,14 @@
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{sales_sale_bank}+ ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_bank}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-118" positionType="Float" x="224" y="355" width="82" height="23"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{sales_sale_bank_account}+ ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{purchase_bank_account}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" positionType="Float" x="306" y="355" width="200" height="23"/>
@@ -522,7 +522,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_comments}.toUpperCase() + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_comment}.toUpperCase() + ":"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" mode="Transparent" x="70" y="201" width="466" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
@@ -624,7 +624,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[(new String($R{sales_sale_shipping_address})).toUpperCase()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[(new String($R{purchase_shipping_address})).toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-118" positionType="Float" x="-2" y="61" width="45" height="23"/>
@@ -670,7 +670,7 @@
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{shippingContact} + ($F{shippingPeriod}==null?"":
-    ", " + $R{sales_sale_shipping_schedule} + ":" + $F{shippingPeriod}.getName( $P{REPORT_LOCALE} ))]]></textFieldExpression>
+    ", " + $R{purchase_shipping_schedule} + ":" + $F{shippingPeriod}.getName( $P{REPORT_LOCALE} ))]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" positionType="Float" x="43" y="61" width="225" height="23"/>
@@ -692,7 +692,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{sales_sale_client}+ ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_customer}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-118" positionType="Float" x="268" y="62" width="52" height="23" isRemoveLineWhenBlank="true"/>
@@ -712,7 +712,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{sales_sale_shipping_recipient}+":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{purchase_shipping_recipient}+":"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-119" positionType="Float" x="320" y="16" width="215" height="23" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
@@ -752,7 +752,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{sales_sale_shipping_contact}+":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{purchase_shipping_contact}+":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-114" positionType="Float" x="268" y="39" width="52" height="23" isRemoveLineWhenBlank="true"/>
@@ -762,7 +762,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{sales_sale_address}+ ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_address}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-118" positionType="Float" x="268" y="108" width="52" height="23" isRemoveLineWhenBlank="true">
@@ -786,7 +786,7 @@
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{sales_sale_shipping_carrier}+":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{purchase_shipping_carrier}+":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" x="70" y="140" width="467" height="23" isRemoveLineWhenBlank="true">
@@ -867,7 +867,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

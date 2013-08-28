@@ -117,7 +117,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{commercial_tracking_agent}.toUpperCase()+":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{sales_sale_agent}.toUpperCase()+":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-10" positionType="Float" mode="Opaque" x="40" y="0" width="513" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -169,7 +169,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{offer_customer}+":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_customer}+":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Opaque" x="0" y="1" width="45" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -183,7 +183,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{commercial_tracking_activity}+":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{stat_activity}+":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Opaque" x="0" y="45" width="45" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -239,7 +239,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{commercial_tracking_observation}+":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_note}+":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="EEEEE dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Opaque" x="215" y="1" width="75" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -374,7 +374,7 @@ $F{target}.getRegistry().getDefaultAddress().getGeozone().getName()+")"]]></text
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

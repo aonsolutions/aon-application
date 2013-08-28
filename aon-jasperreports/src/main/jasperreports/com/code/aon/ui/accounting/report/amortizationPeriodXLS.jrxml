@@ -65,7 +65,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account_date_from}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date_from}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="eff890a7-2d1e-49cd-a80a-ac92b3814511" key="textField-6" mode="Opaque" x="1151" y="0" width="50" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -78,7 +78,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account_date_to}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date_to}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="ad35c4d7-73eb-4204-af69-1cea8377fdb7" key="textField-6" mode="Opaque" x="1201" y="0" width="31" height="15" forecolor="#000000" backcolor="#FFFFFF"/>

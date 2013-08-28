@@ -160,7 +160,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{fiscal_model_347_type}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_type}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="27" y="1" width="34" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -173,7 +173,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{fiscal_model_347_cdg}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_id}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="61" y="1" width="55" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -199,7 +199,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{fiscal_model_347_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_company_name}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="416" y="1" width="65" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -225,7 +225,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{fiscal_model_347_pais}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_country}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="522" y="1" width="56" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -458,7 +458,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="false">
 				<reportElement key="textField-15" x="728" y="0" width="74" height="20"/>

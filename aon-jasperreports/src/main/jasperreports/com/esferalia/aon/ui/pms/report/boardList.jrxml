@@ -125,7 +125,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{hotel}!=null?$R{report_hotel}+": "+$P{hotel}.getWorkPlace().getDescription():""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{hotel}!=null?$R{aon_module_hotel}+": "+$P{hotel}.getWorkPlace().getDescription():""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-1" x="125" y="38" width="35" height="17"/>
@@ -254,7 +254,7 @@
 					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_remarks}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_note}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -373,7 +373,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="false">
 				<reportElement key="textField-15" x="520" y="0" width="15" height="14"/>

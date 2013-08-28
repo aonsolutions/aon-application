@@ -86,7 +86,7 @@
 					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{calendar_workplace}+": "+$F{workPlace}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_workplace}+": "+$F{workPlace}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" positionType="Float" mode="Opaque" x="0" y="36" width="240" height="14" forecolor="#000000" backcolor="#FFFFFF">
@@ -102,7 +102,7 @@
 					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{calendar_person}+": "+$F{person}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_salary_employee}+": "+$F{person}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -1065,7 +1065,7 @@
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{calendar_description}+": "+$F{calendar}.getDescription()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_description}+": "+$F{calendar}.getDescription()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" positionType="Float" mode="Opaque" x="6" y="12" width="70" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -1079,7 +1079,7 @@
 					<font fontName="SansSerif" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{calendar_observation}+": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_note}+": "]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

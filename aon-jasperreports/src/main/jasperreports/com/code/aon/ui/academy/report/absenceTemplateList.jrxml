@@ -69,7 +69,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{course_course}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_workgroup}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement key="staticText-32" x="102" y="10" width="125" height="17"/>

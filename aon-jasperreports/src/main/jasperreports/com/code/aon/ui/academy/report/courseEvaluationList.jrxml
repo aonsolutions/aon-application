@@ -74,7 +74,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{course_course}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_workgroup}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-8" x="98" y="35" width="62" height="14"/>
@@ -145,7 +145,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{course_observations}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_note}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

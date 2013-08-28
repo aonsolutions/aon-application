@@ -151,7 +151,7 @@
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_quota}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_fee}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-10" mode="Opaque" x="440" y="3" width="28" height="12" forecolor="#000000" backcolor="#FFFFFF"/>

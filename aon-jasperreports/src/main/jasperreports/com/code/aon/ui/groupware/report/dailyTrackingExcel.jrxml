@@ -43,7 +43,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_user}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_login_user}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-5" mode="Opaque" x="388" y="0" width="60" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -155,7 +155,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_comments}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_comment}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-19" mode="Opaque" x="1017" y="0" width="50" height="15" forecolor="#000000" backcolor="#FFFFFF"/>

@@ -15,7 +15,7 @@
 		<bean key="com.code.aon.warehouse.Inventory" />
 		<criteria provider="#{inventory}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -25,7 +25,7 @@
 		<template path="/com/code/aon/ui/warehouse/report/inventoryCount.jasper" />
 		<collection provider="#{inventoryDetail}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -35,7 +35,7 @@
 		<template path="/com/code/aon/ui/warehouse/report/inventoryValued.jasper" />
 		<collection provider="#{inventoryDetail}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />			
 		</params>
 	</report>
@@ -48,7 +48,7 @@
 		<bean key="com.code.aon.warehouse.Stock" />
 		<criteria provider="#{stock}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>	  
@@ -58,7 +58,7 @@
 		<bean key="com.code.aon.warehouse.Stock" />
 		<collection provider="#{stockReport}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>	  
@@ -68,7 +68,7 @@
 		<bean key="com.code.aon.warehouse.Stock" />
 		<collection provider="#{stockReport}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -78,7 +78,7 @@
 		<bean key="com.code.aon.warehouse.Stock" />
 		<collection provider="#{stockReport}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="priceType" value="#{stockReport.getPriceType}" />
 			<param id="manager" value="#{stockReport.getManager}" />
@@ -90,7 +90,7 @@
 		<bean key="com.code.aon.warehouse.Stock" />
 		<collection provider="#{stockReport}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="priceType" value="#{stockReport.getPriceType}" />
 			<param id="manager" value="#{stockReport.getManager}" />
@@ -103,7 +103,7 @@
 		<template path="/com/code/aon/ui/warehouse/report/delivery.jasper" />
 		<collection provider="#{delivery}" forceRefresh="true"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
@@ -136,7 +136,7 @@
 		<template path="/com/code/aon/ui/warehouse/report/deliveryGta.jasper" />
 		<collection provider="#{delivery}" forceRefresh="true"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
@@ -165,7 +165,7 @@
 		<bean key="com.code.aon.warehouse.Delivery" />
 		<criteria provider="#{delivery}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
@@ -187,7 +187,7 @@
 		<bean key="com.code.aon.warehouse.Delivery" />
 		<criteria provider="#{delivery}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
@@ -219,7 +219,7 @@
 		<bean key="com.code.aon.warehouse.Income" />
 		<criteria provider="#{income}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
@@ -240,7 +240,7 @@
 		<bean key="com.code.aon.warehouse.Income" />
 		<criteria provider="#{income}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
@@ -268,7 +268,7 @@
 		<template path="/com/code/aon/ui/warehouse/report/incomeForm.jasper" />
 		<collection provider="#{income}" forceRefresh="true"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
@@ -290,7 +290,7 @@
 		<template path="/com/code/aon/ui/warehouse/report/orderProposal.jasper" />
 		<collection provider="#{orderProposal}" forceRefresh="false"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />			
 		</params>

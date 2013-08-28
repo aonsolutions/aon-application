@@ -11,7 +11,7 @@
 		<template path="/com/code/aon/ui/tas/report/projectTas.jasper"/>
 		<collection provider="#{projectTas}" forceRefresh="true"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.tas.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="phone" value="#{company.obtainPhone}" />

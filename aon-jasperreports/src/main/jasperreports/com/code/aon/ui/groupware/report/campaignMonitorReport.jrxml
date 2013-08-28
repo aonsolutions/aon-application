@@ -278,7 +278,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_user}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_login_user}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>

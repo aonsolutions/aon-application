@@ -12,7 +12,7 @@
 		<bean key="com.code.aon.academy.Course" />
 		<criteria provider="#{course}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -23,7 +23,7 @@
 		<template path="/com/code/aon/ui/academy/report/courseDetailList.jasper" />
 		<collection provider="#{courseDetailPrinter}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -34,7 +34,7 @@
 		<template path="/com/code/aon/ui/academy/report/alumnList.jasper" />
 		<collection provider="#{alumnPrinter}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -45,7 +45,7 @@
 		<template path="/com/code/aon/ui/academy/report/alumnMarkList.jasper" />
 		<collection provider="#{markPrinter}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="evaluation" value="#{courseAlumnObservation.getEvaluation}" />
@@ -61,7 +61,7 @@
 		<template path="/com/code/aon/ui/academy/report/markTemplateList.jasper" />
 		<collection provider="#{markTemplatePrinter}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -72,7 +72,7 @@
 		<template path="/com/code/aon/ui/academy/report/absenceTemplateList.jasper" />
 		<collection provider="#{absenceTemplatePrinter}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -85,7 +85,7 @@
 		<template path="/com/code/aon/ui/academy/report/absenceTemplateList.jasper" />
 		<collection provider="#{courseAbsenceTemplatePrinter}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -102,7 +102,7 @@
 		<template path="/com/code/aon/ui/academy/report/alumnObservationList.jasper" />
 		<collection provider="#{alumnObservationPrinter}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -114,7 +114,7 @@
 		<bean key="com.code.aon.academy.AlumnLoan" />
 		<criteria provider="#{alumnLoan}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -125,7 +125,7 @@
 		<template path="/com/code/aon/ui/academy/report/alumnLoanList.jasper" />
 		<collection provider="#{pendingAlumnLoanPrinter}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -136,7 +136,7 @@
 		<template path="/com/code/aon/ui/academy/report/courseEvaluationList.jasper" />
 		<collection provider="#{courseEvaluationPrinter}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -159,7 +159,7 @@
 		<bean key="com.code.aon.academy.Mark" />
 		<criteria provider="#{mark}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -171,7 +171,7 @@
 		<bean key="com.code.aon.academy.Observation" />
 		<criteria provider="#{observation}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>

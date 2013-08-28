@@ -11,7 +11,7 @@
 		<bean key="com.code.aon.customer.Customer" />
 		<collection provider="#{customer}" forceRefresh="false"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="title" value="#{customer.getReportTitle}" />
@@ -22,7 +22,7 @@
 		<bean key="com.code.aon.finance.Creditor" />
 		<collection provider="#{creditor}" forceRefresh="false"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="title" value="#{creditor.getReportTitle}" />
@@ -34,7 +34,7 @@
 		<bean key="com.code.aon.supplier.Supplier" />
 		<collection provider="#{supplier}" forceRefresh="false"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="title" value="#{supplier.getReportTitle}" />
@@ -45,7 +45,7 @@
 		<bean key="com.code.aon.seller.Seller" />
 		<collection provider="#{seller}" forceRefresh="false"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="title" value="#{seller.getReportTitle}" />
@@ -56,7 +56,7 @@
 		<template path="/com/code/aon/ui/registry/report/corporateIdentity_fax.jasper" />
 		<collection provider="#{corporateIdentity}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{corporateIdentity.getAttachAsInputStream}" />
 		</params>
 	</report>
@@ -66,7 +66,7 @@
 		<template path="/com/code/aon/ui/registry/report/corporateIdentity_letter.jasper" />
 		<collection provider="#{corporateIdentity}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{corporateIdentity.getAttachAsInputStream}" />
 			<param id="company" value="#{corporateIdentity.getCompany}" />
 			<param id="recordData" value="#{corporateIdentity.getRecordData}" />
@@ -78,7 +78,7 @@
 		<template path="/com/code/aon/ui/registry/report/corporateIdentity_label.jasper" />
 		<collection provider="#{corporateIdentity}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{corporateIdentity.getAttachAsInputStream}" />
 		</params>
 	</report>
@@ -88,7 +88,7 @@
 		<template path="/com/code/aon/ui/registry/report/corporateIdentity_receipt.jasper" />
 		<collection provider="#{corporateIdentity}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="logoImageFile" value="#{corporateIdentity.getAttachAsInputStream}" />
 		</params>
 	</report>

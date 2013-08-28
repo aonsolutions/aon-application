@@ -517,7 +517,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{tas_finalDate} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_end_date} + ":"]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="15" y="360" width="510" height="180"/>
@@ -557,7 +557,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{tas_operation}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_operation}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-50" x="445" y="216" width="75" height="13"/>
@@ -635,7 +635,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{tas_description}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_description}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-50" x="445" y="361" width="75" height="13"/>
@@ -648,7 +648,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{tas_quantity}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_quantity}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

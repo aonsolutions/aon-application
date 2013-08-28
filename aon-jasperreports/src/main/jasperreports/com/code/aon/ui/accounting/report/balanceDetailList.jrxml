@@ -35,7 +35,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{account_description}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{aon_description}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement key="textField-17" mode="Opaque" x="676" y="36" width="65" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -102,7 +102,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{accounting_balance_cdg}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{aon_id}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement key="textField-48" mode="Opaque" x="227" y="36" width="274" height="15" forecolor="#000000" backcolor="#FFFFFF"/>

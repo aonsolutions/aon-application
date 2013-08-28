@@ -328,7 +328,7 @@
 					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account_date} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement uuid="1e4c050f-be5a-466f-b1b7-30a7a080dda2" key="textField" positionType="Float" mode="Transparent" x="14" y="3" width="430" height="23" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -385,7 +385,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account_date_from}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date_from}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="6fe25105-5b9f-49b3-88be-feb9b0b39151" key="textField-6" mode="Opaque" x="374" y="16" width="45" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -398,7 +398,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account_date_to}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date_to}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="29453197-27fe-43d0-83b6-e5769997b754" key="textField-6" mode="Opaque" x="419" y="16" width="25" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -541,7 +541,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{accounting_amortization_amount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_amount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="9fd7bb51-0b20-42fe-acb4-084255cba255" key="textField-6" mode="Opaque" x="229" y="16" width="45" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -554,7 +554,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account_date_from}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date_from}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -773,7 +773,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account_page} + " " + $V{PAGE_NUMBER} + " " + $R{account_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="784ee102-b78d-4d1c-9fb2-b5f97c12f288" key="textField-17" x="14" y="0" width="334" height="20"/>

@@ -94,7 +94,7 @@
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_code}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_id}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>

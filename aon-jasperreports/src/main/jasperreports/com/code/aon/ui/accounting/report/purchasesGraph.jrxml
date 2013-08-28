@@ -33,7 +33,7 @@
 					<chart>
 						<reportElement key="element-2" x="29" y="0" width="381" height="195"/>
 						<chartTitle color="#000000">
-							<titleExpression><![CDATA[$R{accounting_profit_and_loss_module_gross_graph_sales}]]></titleExpression>
+							<titleExpression><![CDATA[$R{aon_purchases}]]></titleExpression>
 						</chartTitle>
 						<chartSubtitle/>
 						<chartLegend textColor="#000000" backgroundColor="#FFFFFF"/>

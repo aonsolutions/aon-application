@@ -45,7 +45,7 @@ where finance.`invoice` = $P{invoiceId}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_pay_method}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{finance_payMethod}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-17" mode="Opaque" x="105" y="0" width="134" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -84,7 +84,7 @@ where finance.`invoice` = $P{invoiceId}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{finance_due_date}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_due_date_abrv}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-20" mode="Opaque" x="478" y="0" width="65" height="15" forecolor="#FFFFFF" backcolor="#000000"/>

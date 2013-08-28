@@ -83,7 +83,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{course_code}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_id}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="93" y="0" width="349" height="15" forecolor="#FFFFFF" backcolor="#000000"/>

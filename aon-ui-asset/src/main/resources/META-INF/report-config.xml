@@ -15,7 +15,7 @@
 		-->
 		<collection provider="#{assetStat.stats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.asset.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="year" value="#{assetStat.getYear}" />
 			<param id="monthName" value="#{assetStat.getMonthName}" />
 			<param id="name" value="#{assetStat.getName}" />

@@ -93,7 +93,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{registry_code}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_id}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-11" positionType="Float" mode="Opaque" x="88" y="0" width="278" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -107,7 +107,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{registry_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_name}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-12" positionType="Float" mode="Opaque" x="366" y="0" width="93" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -121,7 +121,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{registry_alias}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_alias}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-13" positionType="Float" mode="Opaque" x="459" y="0" width="49" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -149,7 +149,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{registry_status}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_status}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-12" positionType="Float" mode="Opaque" x="35" y="0" width="53" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -285,7 +285,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

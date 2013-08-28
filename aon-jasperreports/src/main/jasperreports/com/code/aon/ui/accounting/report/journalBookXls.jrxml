@@ -65,7 +65,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_description}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_description}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-11" mode="Opaque" x="424" y="0" width="138" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -78,7 +78,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_concept}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_concept}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-12" mode="Opaque" x="562" y="0" width="64" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -117,7 +117,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_date}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-15" mode="Opaque" x="0" y="0" width="75" height="15" forecolor="#000000" backcolor="#FFFFFF"/>

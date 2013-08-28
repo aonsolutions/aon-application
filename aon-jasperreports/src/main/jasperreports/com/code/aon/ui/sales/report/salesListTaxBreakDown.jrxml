@@ -124,7 +124,7 @@
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_quota}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_fee}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
 				<reportElement key="textField-4" x="309" y="3" width="48" height="12">

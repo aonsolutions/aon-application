@@ -500,7 +500,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{invoice_company}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_holder}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-51" mode="Opaque" x="631" y="0" width="30" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -513,7 +513,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{invoice_surcharge}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_surcharge}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-52" mode="Opaque" x="491" y="0" width="53" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -541,7 +541,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_quota}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_fee}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-60" mode="Opaque" x="214" y="0" width="48" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -843,7 +843,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="false">
 				<reportElement key="textField-16" x="718" y="0" width="62" height="14"/>

@@ -13,7 +13,7 @@
 		<template path="/com/esferalia/aon/ui/calendar/report/calendar.jasper" />
 		<collection provider="#{calendarPrint}" forceRefresh="true"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.calendar.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>

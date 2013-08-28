@@ -13,7 +13,7 @@
 		<bean key="com.code.aon.purchase.Purchase" />
 		<criteria provider="#{purchase}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.purchase.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
@@ -34,7 +34,7 @@
 		<bean key="com.code.aon.purchase.Purchase" />
 		<criteria provider="#{purchase}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.purchase.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
@@ -57,7 +57,7 @@
 		<template path="/com/code/aon/ui/purchase/report/purchaseForm.jasper" />
 		<collection provider="#{purchase}" forceRefresh="true"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.purchase.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
@@ -95,7 +95,7 @@
 		<bean key="com.code.aon.purchase.Purchase" />
 		<criteria provider="#{purchasePrint}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.purchase.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
@@ -119,7 +119,7 @@
 		<template path="/com/code/aon/ui/purchase/report/purchaseProposal.jasper" />
 		<collection provider="#{proposal}" forceRefresh="true"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.purchase.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />

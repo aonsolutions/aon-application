@@ -165,7 +165,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{course_course} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_workgroup} + ":"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -688,7 +688,7 @@
 									<textElement verticalAlignment="Middle">
 										<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$R{course_observations} + " "
+									<textFieldExpression><![CDATA[$R{aon_note} + " "
 + $F{evaluation} + "º " + $R{mark_evaluation}]]></textFieldExpression>
 								</textField>
 							</jr:cell>

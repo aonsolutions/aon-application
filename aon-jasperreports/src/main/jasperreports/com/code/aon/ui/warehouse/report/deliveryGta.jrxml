@@ -439,7 +439,7 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_comments} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_comment} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="66" y="111" width="469" height="15" isRemoveLineWhenBlank="true">
@@ -480,7 +480,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Top">
 					<font fontName="SansSerif" size="6"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{gta_footer_text_1} + " " + $P{company}.getName() + " " + $R{gta_footer_text_2} + "\n" + $R{gta_legal_text_1} + " " + $P{company}.getName() + " " + $R{gta_legal_text_2} + " " + $P{company}.getName() + ", " + $P{address}.getFullAddress() + " - " + $P{address}.getZip() + " " + $P{address}.getCity() + " (" + $P{address}.getGeozone().getName() + ") " + $R{gta_legal_text_3}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{gta_footer_text_1} + " " + $P{company}.getName() + " " + $R{gta_footer_text_2} + "\n" + $R{tas_legal_text_1} + " " + $P{company}.getName() + " " + $R{tas_legal_text_2} + " " + $P{company}.getName() + ", " + $P{address}.getFullAddress() + " - " + $P{address}.getZip() + " " + $P{address}.getCity() + " (" + $P{address}.getGeozone().getName() + ") " + $R{tas_legal_text_3}]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>
