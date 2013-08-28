@@ -66,7 +66,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{finance_type}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_type}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-20" mode="Opaque" x="180" y="0" width="65" height="14" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -79,7 +79,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{finance_rate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_fee}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>

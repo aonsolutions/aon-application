@@ -461,7 +461,7 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_comments} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_comment} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="66" y="126" width="469" height="15" isRemoveLineWhenBlank="true">
@@ -533,7 +533,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{gta_company_signature}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{tas_company_signature}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" x="5" y="18" width="395" height="80" isRemoveLineWhenBlank="true"/>
@@ -546,7 +546,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Top">
 					<font fontName="SansSerif" size="6"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{gta_footer_text_1} + " " + $P{company}.getName() + " " + $R{gta_footer_text_2} + "\n" + $R{gta_legal_text_1} + " " + $P{company}.getName() + " " + $R{gta_legal_text_2} + " " + $P{company}.getName() + ", " + $P{address}.getFullAddress() + " - " + $P{address}.getZip() + " " + $P{address}.getCity() + " (" + $P{address}.getGeozone().getName() + ") " + $R{gta_legal_text_3}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{gta_footer_text_1} + " " + $P{company}.getName() + " " + $R{gta_footer_text_2} + "\n" + $R{tas_legal_text_1} + " " + $P{company}.getName() + " " + $R{tas_legal_text_2} + " " + $P{company}.getName() + ", " + $P{address}.getFullAddress() + " - " + $P{address}.getZip() + " " + $P{address}.getCity() + " (" + $P{address}.getGeozone().getName() + ") " + $R{tas_legal_text_3}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-9" positionType="Float" x="2" y="15" width="530" height="1"/>
@@ -559,7 +559,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{gta_agreed} + "\n" + $R{gta_customer_signature}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{tas_agreed} + "\n" + $R{tas_customer_signature}]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

@@ -432,7 +432,7 @@
 				<textElement verticalAlignment="Top">
 					<font size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_comments} + ":"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_comment} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-56" x="5" y="70" width="246" height="15">

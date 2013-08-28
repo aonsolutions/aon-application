@@ -367,7 +367,7 @@
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_comments} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_comment} + ":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 				<reportElement key="textField-49" x="69" y="74" width="88" height="15"/>
@@ -653,7 +653,7 @@
 								<textElement verticalAlignment="Middle">
 									<font size="10" isBold="false" pdfFontName="Helvetica"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$R{finance_bank_account}+":"]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{aon_bank_account}+":"]]></textFieldExpression>
 							</textField>
 							<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 								<reportElement key="textField-4" x="90" y="2" width="398" height="14"/>

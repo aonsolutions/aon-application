@@ -116,7 +116,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{finance_type}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_type}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-5" mode="Opaque" x="164" y="0" width="300" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -182,7 +182,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{payment}?$R{finance_bank_statement_payment}:$R{finance_bank_statement_charge}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{payment}?$R{aon_contact_category}:$R{finance_bank_statement_charge}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-8" x="64" y="0" width="100" height="12"/>
@@ -207,7 +207,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7" isItalic="true" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_comments} + ": " + $F{comments}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_comment} + ": " + $F{comments}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -235,7 +235,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-17" x="0" y="0" width="332" height="20"/>
