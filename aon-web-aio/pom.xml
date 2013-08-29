@@ -346,6 +346,14 @@
 		<!-- EXTERNAL LIBRARIES -->
 
 		<dependency>
+			<groupId>org.openid4java</groupId>
+			<artifactId>openid4java</artifactId>
+			<version>0.9.7</version>
+			<scope>compile</scope>
+		</dependency>
+
+
+		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>coyote</artifactId>
 			<version>6.0.13</version>
