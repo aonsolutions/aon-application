@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.code.aon</groupId>
@@ -349,7 +350,7 @@
 			<artifactId>coyote</artifactId>
 			<version>6.0.13</version>
 			<scope>provided</scope>
-		</dependency>		
+		</dependency>
 
 		<dependency>
 			<groupId>org.xhtmlrenderer</groupId>
@@ -493,7 +494,7 @@
 			<artifactId>commons-javaflow</artifactId>
 			<version>20060411</version>
 			<scope>runtime</scope>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>com.sun</groupId>
 			<artifactId>jimi</artifactId>
@@ -561,27 +562,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-<!-- 		
-		<dependency>
-			<groupId>ar.com.fdvs</groupId>
-			<artifactId>DynamicJasper</artifactId>
-			<version>4.0.0_beta3</version>
-			<exclusions>
-				<exclusion>
-					<groupId>net.sf.jasperreports</groupId>
-					<artifactId>jasperreports</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-collections</groupId>
-					<artifactId>commons-collections</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-beanutils</groupId>
-					<artifactId>commons-beanutils</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
- -->
+		<!-- <dependency> <groupId>ar.com.fdvs</groupId> <artifactId>DynamicJasper</artifactId> 
+			<version>4.0.0_beta3</version> <exclusions> <exclusion> <groupId>net.sf.jasperreports</groupId> 
+			<artifactId>jasperreports</artifactId> </exclusion> <exclusion> <groupId>commons-collections</groupId> 
+			<artifactId>commons-collections</artifactId> </exclusion> <exclusion> <groupId>commons-beanutils</groupId> 
+			<artifactId>commons-beanutils</artifactId> </exclusion> </exclusions> </dependency> -->
 		<dependency>
 			<groupId>eu.medsea.mimeutil</groupId>
 			<artifactId>mime-util</artifactId>
@@ -833,6 +818,8 @@
 			<version>1.4.9.1</version>
 			<scope>runtime</scope>
 		</dependency>
+
+
 	</dependencies>
 
 	<profiles>
@@ -963,7 +950,7 @@
 													</source>
 												</sources>
 											</mapping>
-											
+
 											<mapping>
 												<directory>/etc/aon-aio/</directory>
 												<configuration>noreplace</configuration>

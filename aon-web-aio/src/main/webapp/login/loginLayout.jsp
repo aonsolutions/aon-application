@@ -142,6 +142,19 @@ try {
 													onclick="document.getElementById('errorDiv').style.display = 'none';" />
 										</td>
 									</tr>
+									<tr>
+										<td class="aon-login-box-left">
+											<label for="google-signin" class="aon-login-label">
+												<%=securityBundle.getString("aon_login_with")%>
+											</label>
+										</td>
+										<td class="aon-login-box-right">
+											<c:url value="/openid_auth" var="google_signin_url">
+											  <c:param name="endpoint" value="https://www.google.com/accounts/o8/id" />
+											</c:url>
+											<a id="google-signin" href="${google_signin_url}" target="_blank" ><img src="aonResource/com/code/aon/ui/resources/facelet/login/css/images/icons/google.png"/></a>
+										</td>
+									</tr>
 								</table>
 								<div class="aon-login-info">
 									<div class="aon-login-info-title">
