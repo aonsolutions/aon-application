@@ -7,8 +7,6 @@ public interface IPurchaseConstants {
 	// ************************************************************
 	String PURCHASE_BUNDLE_NAME = "purchaseBundle";
 	
-	String PURCHASE_BUNDLE_RESOURCE = "com.code.aon.ui.purchase.i18n.messages";
-	
 	String PURCHASE_SOURCE_MSG = "purchase_source";
 
 	String PURCHASE_RETURN_OVER_MSG = "purchase_return_over";

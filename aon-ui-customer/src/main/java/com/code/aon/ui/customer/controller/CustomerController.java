@@ -1,9 +1,7 @@
 package com.code.aon.ui.customer.controller;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.CUSTOMER_REPORT;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -15,13 +13,11 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 
 public class CustomerController extends CustomerListController implements ICustomerConstants {
-
-	private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.messages";
-    private static final String MSG_KEY_PREFIX = "aon_customer_report";
 
     private boolean showAlumnData;
     private boolean showAlumnUpdateConfirmWindow;
@@ -134,10 +130,8 @@ public class CustomerController extends CustomerListController implements ICusto
 		return super.listAction();
 	}
 
-	public String getReportTitle(){
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
-		return bundle.getString(MSG_KEY_PREFIX);
+    public String getReportTitle(){
+    	return AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME, CUSTOMER_REPORT);
 	}
 
 	public void onCustomerHistory(ActionEvent e){

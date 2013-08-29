@@ -30,4 +30,16 @@ public interface IAcademyConstants {
 	
 	String COURSE_ALUMN_EXISTS = "academy_course_alumn_exists";
 	
+	String MARK_AVERAGE = "mark_average";
+	
+	String MARK_AVERAGE_ABRV = "mark_average_abrv";
+	
+	String MARK_QUALITATIVE = "academy_mark_qualitative";
+	
+	String MARK_QUANTITATIVE = "academy_mark_quantitative";
+	
+	String MARK_QUANTITATIVE_AVERAGE = "academy_mark_quantitative_average";
+	
+	String MARK_QUANTITATIVE_AVERAGE_FINAL = "academy_mark_quantitative_average_final";
+	
 }

@@ -1,9 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.CREDITOR_REPORT;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -12,14 +10,12 @@ import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Creditor;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
 public class CreditorController extends RegistryController {
 
-	private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.messages";
-    private static final String MSG_KEY_PREFIX = "aon_creditor_report";
-	
 	public boolean isAccountSynchronizable() {
 		return isAccountSynchronizable((Creditor)getTo());
 	}
@@ -61,9 +57,7 @@ public class CreditorController extends RegistryController {
 	}
 
     public String getReportTitle(){
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
-		return bundle.getString(MSG_KEY_PREFIX);
+    	return AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME, CREDITOR_REPORT);
 	}
 
 }

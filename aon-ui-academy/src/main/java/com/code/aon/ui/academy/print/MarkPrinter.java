@@ -1,5 +1,14 @@
 package com.code.aon.ui.academy.print;
 
+import static com.code.aon.ui.academy.controller.IAcademyConstants.BUNDLE_NAME;
+import static com.code.aon.ui.academy.controller.IAcademyConstants.COURSE_CONTROLLER_NAME;
+import static com.code.aon.ui.academy.controller.IAcademyConstants.MARK_AVERAGE;
+import static com.code.aon.ui.academy.controller.IAcademyConstants.MARK_AVERAGE_ABRV;
+import static com.code.aon.ui.academy.controller.IAcademyConstants.MARK_QUALITATIVE;
+import static com.code.aon.ui.academy.controller.IAcademyConstants.MARK_QUANTITATIVE;
+import static com.code.aon.ui.academy.controller.IAcademyConstants.MARK_QUANTITATIVE_AVERAGE;
+import static com.code.aon.ui.academy.controller.IAcademyConstants.MARK_QUANTITATIVE_AVERAGE_FINAL;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,8 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,8 +50,6 @@ public class MarkPrinter implements ICollectionProvider{
 
 	private static final Logger LOGGER = Logger.getLogger(MarkPrinter.class.getName());
 
-	private static final String COURSE_CONTROLLER_NAME = "course";
-
 	private Integer printOption;
 
 	public Integer getPrintOption() {
@@ -57,10 +62,10 @@ public class MarkPrinter implements ICollectionProvider{
 
 	public List<SelectItem> getPrintOptions() throws ManagerBeanException {
     	List<SelectItem> printTypes = new LinkedList<SelectItem>();
-        printTypes.add(new SelectItem(1, getMessageBundle("academy_mark_qualitative")));
-        printTypes.add(new SelectItem(2, getMessageBundle("academy_mark_quantitative")));
-        printTypes.add(new SelectItem(3, getMessageBundle("academy_mark_quantitative_average")));
-        printTypes.add(new SelectItem(4, getMessageBundle("academy_mark_quantitative_average_final")));
+        printTypes.add(new SelectItem(1, AonUtil.getMessage(BUNDLE_NAME, MARK_QUALITATIVE)));
+        printTypes.add(new SelectItem(2, AonUtil.getMessage(BUNDLE_NAME, MARK_QUANTITATIVE)));
+        printTypes.add(new SelectItem(3, AonUtil.getMessage(BUNDLE_NAME, MARK_QUANTITATIVE_AVERAGE)));
+        printTypes.add(new SelectItem(4, AonUtil.getMessage(BUNDLE_NAME, MARK_QUANTITATIVE_AVERAGE_FINAL)));
         return printTypes;
     }
 
@@ -76,16 +81,8 @@ public class MarkPrinter implements ICollectionProvider{
 		return (printOption > 3);
 	}
 
-	private String getMessageBundle(String key) {
-		try {
-			ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.ui.academy.i18n.messages", AonUtil.getCurrentLocale());
-			return bundle.getString(key);
-		} catch (MissingResourceException e) {
-			return null;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
+	@Override
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection() {
 		List<ReportMark> reportMarkList = new LinkedList<ReportMark>();
 		try{
@@ -118,12 +115,11 @@ public class MarkPrinter implements ICollectionProvider{
 		return reportMarkList;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Integer obtainMaxEvaluation(List<ReportMarkTo> marks) {
 		int maxEval = 0; 
-		Iterator iter = marks.iterator();
+		Iterator<ReportMarkTo> iter = marks.iterator();
 		while(iter.hasNext()){
-			ReportMarkTo markTo = (ReportMarkTo) iter.next();
+			ReportMarkTo markTo = iter.next();
 			if(markTo.getMark().getEvaluation() > maxEval){
 				maxEval = markTo.getMark().getEvaluation();
 			}
@@ -131,12 +127,12 @@ public class MarkPrinter implements ICollectionProvider{
 		return new Integer(maxEval);
 	}
 
-	@SuppressWarnings("unchecked")
+	@Override
+	@SuppressWarnings("rawtypes")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 	
-	@SuppressWarnings("unchecked")
 	private List<ReportMarkTo> obtainMarks(CourseAlumn courseAlumn, Map<Integer, ReportMarkTo> averageMarksMap){
 		try {
 			List<ReportMarkTo> marksLst = new ArrayList<ReportMarkTo>();
@@ -149,7 +145,7 @@ public class MarkPrinter implements ICollectionProvider{
 			criteria.addEqualExpression(markBean.getFieldName(IEntityAlias.MARK_ALUMN_ID), courseAlumn.getId());
 			criteria.addOrder(markBean.getFieldName(IEntityAlias.MARK_EVALUATION));
 			criteria.addOrder(markBean.getFieldName(IEntityAlias.MARK_SUBJECT_ID));
-			Iterator iter = markBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = markBean.getList(criteria).iterator();
 			while (iter.hasNext()){
 				Mark mark = (Mark)iter.next();
 				if (withAverageMark() && previousEval >= 0 && previousEval != mark.getEvaluation()) {
@@ -208,8 +204,8 @@ public class MarkPrinter implements ICollectionProvider{
 
 	private CourseAcademicSkill getAverageSubject(CourseAlumn alumn) {
 		AcademicSkill academicSkill = new AcademicSkill();
-		academicSkill.setDescription(getMessageBundle("mark_average"));
-		academicSkill.setCode(getMessageBundle("mark_average_abrv"));
+		academicSkill.setDescription(AonUtil.getMessage(BUNDLE_NAME, MARK_AVERAGE));
+		academicSkill.setCode(AonUtil.getMessage(BUNDLE_NAME, MARK_AVERAGE_ABRV));
 
 		CourseAcademicSkill subject = new CourseAcademicSkill();
 		subject.setAcademicSkill(academicSkill);
@@ -217,12 +213,11 @@ public class MarkPrinter implements ICollectionProvider{
 		return subject;
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<ReportMarkTo> encodeMarks(List<ReportMarkTo> marksLst) {
-		Iterator iter = marksLst.iterator();
+		Iterator<ReportMarkTo> iter = marksLst.iterator();
 		List<ReportMarkTo> returnList = new ArrayList<ReportMarkTo>();
 		while(iter.hasNext()){
-			ReportMarkTo to = (ReportMarkTo)iter.next();
+			ReportMarkTo to = iter.next();
 			Qualification qualification = obtainQualification(to.getMark().getMark());
 			if(qualification != null){
 				to.setCode(qualification.getCode());
@@ -257,7 +252,6 @@ public class MarkPrinter implements ICollectionProvider{
 		return finalMark;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Qualification obtainQualification(Double mark) {
 		if (mark != null) {
 			try {
@@ -265,7 +259,7 @@ public class MarkPrinter implements ICollectionProvider{
 				Criteria criteria = new Criteria();
 				criteria.addLessThanOrEqualExpression(qualificationBean.getFieldName(IEntityAlias.QUALIFICATION_MIN_VALUE), mark);
 				criteria.addGreaterThanOrEqualExpression(qualificationBean.getFieldName(IEntityAlias.QUALIFICATION_MAX_VALUE), mark);
-				Iterator iter = qualificationBean.getList(criteria).iterator();
+				Iterator<ITransferObject> iter = qualificationBean.getList(criteria).iterator();
 				if(iter.hasNext()){
 					return ((Qualification)iter.next());
 				}
@@ -276,7 +270,6 @@ public class MarkPrinter implements ICollectionProvider{
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<Absence> obtainAbsences(CourseAlumn courseAlumn, Integer evaluation){
 		try {
 			IManagerBean absenceBean = BeanManager.getManagerBean(Absence.class);
@@ -288,7 +281,7 @@ public class MarkPrinter implements ICollectionProvider{
 				Expression evalExp = ExpressionUtilities.getEqualExpression(absenceBean.getFieldName(IEntityAlias.ABSENCE_EVALUATION), new Integer(i));
 				criteria.addExpression(ExpressionUtilities.getAndExpression(courseAlumnExp, evalExp));
 				criteria.addOrder(absenceBean.getFieldName(IEntityAlias.ABSENCE_ABSENCE_DATE));
-				Iterator iter = absenceBean.getList(criteria).iterator();
+				Iterator<ITransferObject> iter = absenceBean.getList(criteria).iterator();
 				
 				if(absenceBean.getCount(criteria)==0){
 					Absence emptyAbsence = new Absence();
@@ -310,7 +303,6 @@ public class MarkPrinter implements ICollectionProvider{
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private List<EvaluationObservation> obtainObservations(CourseAlumn courseAlumn, Integer evaluation){
 		try {
 			IManagerBean observationBean = BeanManager.getManagerBean(EvaluationObservation.class);
@@ -320,7 +312,7 @@ public class MarkPrinter implements ICollectionProvider{
 				Criteria criteria = new Criteria();
 				Expression evalExp = ExpressionUtilities.getEqualExpression(observationBean.getFieldName(IEntityAlias.EVALUATION_OBSERVATION_EVALUATION), new Integer(i));
 				criteria.addExpression(ExpressionUtilities.getAndExpression(courseAlumnExp, evalExp));
-				Iterator iter = observationBean.getList(criteria).iterator();
+				Iterator<ITransferObject> iter = observationBean.getList(criteria).iterator();
 
 				if(observationBean.getCount(criteria)==0){
 					EvaluationObservation emptyObservation = new EvaluationObservation();
@@ -341,7 +333,6 @@ public class MarkPrinter implements ICollectionProvider{
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private String obtainCourseSchedule(CourseAlumn courseAlumn){
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		try {
@@ -349,7 +340,7 @@ public class MarkPrinter implements ICollectionProvider{
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(courseScheduleBean.getFieldName(IEntityAlias.COURSE_SCHEDULE_COURSE_ID), courseAlumn.getCourse().getId());
 			String courseScheduleStr = new String();
-			Iterator iter = courseScheduleBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = courseScheduleBean.getList(criteria).iterator();
 			double hours = 0;
 			CourseSchedule courseSchedule;
 			while (iter.hasNext()){
@@ -365,11 +356,10 @@ public class MarkPrinter implements ICollectionProvider{
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getQualificationLegend() throws ManagerBeanException{
 		String qualificationLegend = "";
 		IManagerBean qualificationBean = BeanManager.getManagerBean(Qualification.class);
-		Iterator iter = qualificationBean.getList(null).iterator();
+		Iterator<ITransferObject> iter = qualificationBean.getList(null).iterator();
 		while (iter.hasNext()) {
 			Qualification qualification = (Qualification)iter.next();
 			qualificationLegend += qualification.getCode() + "-" + qualification.getDescription() + "; ";
@@ -379,6 +369,8 @@ public class MarkPrinter implements ICollectionProvider{
 	
 	public class ReportMark implements ITransferObject {
 
+		private static final long serialVersionUID = 1L;
+		
 		private CourseAlumn courseAlumn;
 		private List<ReportMarkTo> marks;
 		private List<ReportMarkTo> averageMarks;

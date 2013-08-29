@@ -10,8 +10,15 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.enumeration.CourseStatus;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.CourseDB;
 
 /**
@@ -44,15 +51,18 @@ public class Course extends CourseDB {
 	}
 	
 	@Transient
-	public Integer getAlumnCount(){
-		int count = 0;
-		for(CourseAlumn alumn: getAlumns()){
-			if(alumn.getStatus()==CourseAlumnStatus.ACTIVE){
-				count++;
-			}
-		}
-		return count;
+	public Integer getAlumnCount() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(CourseAlumn.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_ID), getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
+		return bean.getCount(criteria);
 	}
-    
+	
+    @Transient
+    public String getFullDescription() {
+    	return getCode() + ( StringUtils.isEmpty(getDescription()) ? "" : " " + getDescription() );
+    }
+	
 
 }

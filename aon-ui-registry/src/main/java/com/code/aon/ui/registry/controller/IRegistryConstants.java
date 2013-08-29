@@ -37,6 +37,14 @@ public interface IRegistryConstants {
 	
 	String RESPONSE = "registry_response";
 	
+    String CREDITOR_REPORT = "aon_creditor_report";
+    
+    String SUPPLIER_REPORT = "aon_supplier_report";
+    
+    String SELLER_REPORT = "aon_seller_report";
+    
+    String CUSTOMER_REPORT = "aon_customer_report";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

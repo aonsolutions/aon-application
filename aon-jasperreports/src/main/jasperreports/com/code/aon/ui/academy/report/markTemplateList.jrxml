@@ -58,7 +58,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{course}.getCode()+" "+$F{course}.getDescription()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{course}.getFullDescription()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-6" x="102" y="32" width="62" height="14"/>

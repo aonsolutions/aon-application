@@ -1,9 +1,7 @@
 package com.code.aon.ui.supplier.controller;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.SUPPLIER_REPORT;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -12,14 +10,12 @@ import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
 public class SupplierController extends RegistryController {
 
-    private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.messages";
-    private static final String MSG_KEY_PREFIX = "aon_supplier_report";
-	
 	public boolean isAccountSynchronizable() {
 		return isAccountSynchronizable((Supplier)getTo());
 	}
@@ -60,10 +56,8 @@ public class SupplierController extends RegistryController {
 		}
 	}
 
-	public String getReportTitle(){
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
-		return bundle.getString(MSG_KEY_PREFIX);
-	}
+	   public String getReportTitle(){
+	    	return AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME, SUPPLIER_REPORT);
+		}
 
 }
