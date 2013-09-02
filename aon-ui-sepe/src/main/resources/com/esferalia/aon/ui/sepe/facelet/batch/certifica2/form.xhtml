@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/form.xhtml">
+		<ui:param name="toolbarTitle" value="#{sepeBundle.sepe_certifica2Batch_module}" />
+		<ui:param name="controller" value="#{certifica2Batch}" />
+		<ui:param name="controllerDetail" value="#{certifica2BatchDetail}" />
+		<ui:param name="controllerAttach" value="#{certifica2BatchAttach}" />
+		
+		<ui:define name="moreToolbarContent" >
+			<aon:commandButton id="certificados-batch-communication"
+				value="Certific@2"
+				rendered="#{true}" ajaxSingle="true"
+				reRender="showCertificadosWindow"
+				styleClass="aon-finding-toolbar-item aon-icon-sepe-certificados" >
+				<f:setPropertyActionListener
+					target="#{contractCertificados.showCommunicationWindow}" value="#{true}" />
+			</aon:commandButton>
+		</ui:define>
+		
+		<ui:define name="batchContent" >
+			<aon:panelGrid id="dataTable" columns="2" style="width: 30%;"
+				columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
+
+				<aon:outputLabel value="#{bundle.aon_id}" />
+				<aon:outputText value="#{certifica2Batch.to.id}" />
+				
+				<aon:outputLabel for="certifica2Batch_date" value="#{bundle.aon_date}" />
+				<aon:div>
+					<aon:selectInputDate id="certifica2Batch_date" rendered="#{!certifica2Batch.recorded}"
+						value="#{certifica2Batch.to.date}" required="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					<aon:outputText value="#{certifica2Batch.to.date}" rendered="#{certifica2Batch.recorded}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:div>	
+				
+				<aon:outputLabel value="#{bundle.aon_status}" />
+				<aon:outputText value="#{certifica2Batch.to.status}" />
+				
+			</aon:panelGrid>
+		</ui:define>
+		
+		<ui:define name="batchedTabContent" >
+			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/formDetail.xhtml" />
+		</ui:define>
+		
+		<ui:define name="noBatchedTabContent" >
+			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/formNoBatched.xhtml" />
+		</ui:define>
+		
+		<ui:define name="documentTabContent" >
+			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/formDocument.xhtml" >
+				<ui:param name="controllerAttach" value="#{certifica2BatchAttach}" />
+			</ui:include>
+		</ui:define>
+		
+		<ui:define name="afterFormContent" >
+			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/modalSearch.xhtml">
+				<ui:param name="controller" value="#{certifica2List}" />
+				<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
+			</ui:include>
+			
+			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalLogin.xhtml" >
+				<ui:param name="controller" value="#{contractCertificados}" />
+			</ui:include>
+			
+			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalCommunication.xhtml" >
+				<ui:param name="controller" value="#{contractCertificados}" />
+				<ui:param name="skipBatchButton" value="#{true}" />
+				<ui:param name="skipDownloadButton" value="#{true}" />
+			</ui:include>
+			
+		</ui:define>
+	
+	</ui:decorate>
+
+</ui:composition>

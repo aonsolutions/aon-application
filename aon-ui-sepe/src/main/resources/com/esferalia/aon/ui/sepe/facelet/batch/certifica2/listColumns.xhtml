@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+	
+	<c:if test="#{showEnterpriseColumn}">
+		<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
+			styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
+			</f:facet>
+			<aon:outputText value="#{to.workPlace.enterprise.registry.fullName}" />
+		</aon:column>
+	</c:if>
+	
+	<aon:column alias="Contract.enterpriseCCC.ccc"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_activity_ccc}" />
+		</f:facet>
+		<aon:outputText value="#{to.enterpriseCCC.ccc}" />
+	</aon:column>
+
+	<aon:column alias="Contract.person.registry.document"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_document}" />
+		</f:facet>
+		<aon:outputText value="#{to.person.registry.document}" />
+	</aon:column>
+
+	<aon:column alias="Contract.person.registry.surname, Contract.person.registry.name"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_employee_name}" />
+		</f:facet>
+		<aon:outputText value="#{to.person.registry.fullName}" />		
+	</aon:column>
+	
+	<aon:column alias="Contract.endDate"
+		styleClass="aon-editDataTable-dateColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_end_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.endDate}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+	</aon:column>
+	
+	<aon:column alias="Contract.sepeStatus"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_status}" />
+		</f:facet>
+		<aon:outputText value="#{to.sepeStatus}" />		
+	</aon:column>
+	
+	<aon:column styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.certifica2Batch_suspension_cause}" />
+		</f:facet>
+	    <aon:outputText rendered="#{!controllerList.checkHandler.rowChecked}" value="&#160;" />
+		<rich:inplaceSelect rendered="#{controllerList.checkHandler.rowChecked}" 
+		 	id="suspensionCause" 
+		 	value="#{controllerList.rowSuspensionCause}"
+		 	listHeight="300px" listWidth="300px"
+		 	viewClass="aon-highlight" 
+		 	viewHoverClass="aon-underline"
+		 	style="width:150px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
+	        defaultLabel="#{payrollBundle.payroll_causes}" >
+			<f:selectItems value="#{sepeCollections.suspensionCauses}" />
+		</rich:inplaceSelect>
+	</aon:column>
+	
+</ui:composition>
