@@ -17,7 +17,7 @@ try {
 	customize.initResources();
 	customize.initApplicationVersion(application.getResourceAsStream("META-INF/MANIFEST.MF"));
 	customize.init(request.getServerName());
-	ResourceBundle securityBundle = ResourceBundle.getBundle("com.code.aon.bridge.i18n.messages", request.getLocale());
+	ResourceBundle commonBundle = ResourceBundle.getBundle("com.code.aon.ui.common.i18n.messages", request.getLocale());
 	ResourceBundle companyBundle = ResourceBundle.getBundle("com.code.aon.ui.company.i18n.messages", request.getLocale());
 %>
 <head>
@@ -100,7 +100,7 @@ try {
 							</div>
 
 							<div class="aon-login-box">
-								<span class="aon-login-help"><%=securityBundle.getString("aon_login_label")%></span>
+								<span class="aon-login-help"><%=commonBundle.getString("aon_login_label")%></span>
 
 								<c:if test="${failedLogin.showError}">
 									<div id="errorDiv" class="aon-errors" >
@@ -114,7 +114,7 @@ try {
 									<tr>
 										<td class="aon-login-box-left">
 											<label for="username" class="aon-login-label">
-												<%=securityBundle.getString("aon_login_user")%>
+												<%=commonBundle.getString("aon_login_user")%>
 											</label>
 										</td>
 										<td class="aon-login-box-right">
@@ -124,7 +124,7 @@ try {
 									<tr>
 										<td class="aon-login-box-left">
 											<label for="j_password" class="aon-login-label">
-												<%=securityBundle.getString("aon_login_passwd")%>
+												<%=commonBundle.getString("aon_login_passwd")%>
 											</label>
 										</td>
 										<td class="aon-login-box-right">
@@ -137,7 +137,7 @@ try {
 										</td>
 										<td class="aon-login-box-right">
 											<input id="login_btn" name="login_btn" type="submit" 
-													value="<%=securityBundle.getString("aon_login_validate")%>" 
+													value="<%=commonBundle.getString("aon_login_validate")%>" 
 													class="aon-login-button"
 													onclick="document.getElementById('errorDiv').style.display = 'none';" />
 										</td>
@@ -145,7 +145,7 @@ try {
 									<tr>
 										<td class="aon-login-box-left">
 											<label for="google-signin" class="aon-login-label">
-												<%=securityBundle.getString("aon_login_with")%>
+												<%=commonBundle.getString("aon_login_with")%>
 											</label>
 										</td>
 										<td class="aon-login-box-right">

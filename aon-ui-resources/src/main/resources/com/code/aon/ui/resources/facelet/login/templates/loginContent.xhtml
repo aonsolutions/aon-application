@@ -24,21 +24,21 @@
 						timing="onJScall" query="hide()" />		
 					
 					<aon:div styleClass="aon-login-box">
-						<aon:outputText value="#{securityBundle.aon_login_label}" styleClass="aon-login-help"/>
+						<aon:outputText value="#{bundle.aon_login_label}" styleClass="aon-login-help"/>
 						<ui:insert name="error"/>
 						
 						<aon:panelGrid styleClass="aon-width-all" columns="2" columnClasses="aon-login-box-left,aon-login-box-right">
 					
-							<aon:outputLabel for="j_username" value="#{securityBundle.aon_login_user}:" styleClass="aon-login-label" />
+							<aon:outputLabel for="j_username" value="#{bundle.aon_login_user}:" styleClass="aon-login-label" />
 							<aon:inputText id="j_username" styleClass="aon-login-input"
 								size="20" maxlength="64" />
 						
-							<aon:outputLabel for="j_password" value="#{securityBundle.aon_login_passwd}:"  styleClass="aon-login-label"/>
+							<aon:outputLabel for="j_password" value="#{bundle.aon_login_passwd}:"  styleClass="aon-login-label"/>
 							<aon:inputSecret id="j_password" styleClass="aon-login-input"
 								size="20" maxlength="16" />
 							
 							<aon:outputText value="&#160;" />
-							<input id="login_btn" name="login_btn" type="submit" value="#{securityBundle.aon_login_validate}" 
+							<input id="login_btn" name="login_btn" type="submit" value="#{bundle.aon_login_validate}" 
 									onclick="hideErrorDiv();" class="aon-login-button"/>
 										
 						</aon:panelGrid>

@@ -90,6 +90,12 @@ public interface ICommonConstants {
 	
 	String PERCENT_PATTERN = "aon_percent_pattern";
 	
+	String USER_PASSWORD_INVALID = "aon_login_err_0";
+
+	String PASSWORD_ERROR = "aon_security_passwd_error";
+	
+	String NEW_PASSWORD_ERROR = "aon_security_new_passwd_error";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

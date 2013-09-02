@@ -19,7 +19,7 @@
 			
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 					<ui:param name="toolbarTitle" value="#{adminBundle.admin_advanced_mode}" />
-					<ui:param name="toolbarDescription" value="#{securityBundle.aon_login_validate}" />
+					<ui:param name="toolbarDescription" value="#{bundle.aon_login_validate}" />
 					<ui:define name="toolbarContent">
 						<aon:commandButton id="accept"
 							value="#{bundle.aon_accept}"
@@ -38,12 +38,12 @@
 				
 						<aon:panelGrid columns="2">
 						
-							<aon:outputLabel value="#{securityBundle.aon_security_user}" 
+							<aon:outputLabel value="#{bundle.aon_login_user}" 
 								for="user"/>
 							<aon:inputText id="user" 
 								value="#{adminMain.user}" size="30" maxlength="20" />
 	
-							<aon:outputLabel value="#{securityBundle.aon_security_user_password}" 
+							<aon:outputLabel value="#{bundle.aon_login_passwd}" 
 								for="passwd"/>
 							<aon:inputSecret id="passwd" 
 								value="#{adminMain.passwd}" size="30" maxlength="20" />

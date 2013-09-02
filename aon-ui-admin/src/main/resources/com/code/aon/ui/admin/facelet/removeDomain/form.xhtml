@@ -55,7 +55,7 @@
 						<ui:param name="lookupControllerListener" value="#{adminRemoveDomain.domainFilter}" />
 					</ui:include>
 				
-					<aon:outputLabel value="#{securityBundle.aon_security_user_password}" for="passwd"/>
+					<aon:outputLabel value="#{bundle.aon_login_passwd}" for="passwd"/>
 					<aon:inputSecret id="passwd" required="true" styleClass="aon-inputText"
 						value="#{adminRemoveDomain.password}" size="20" maxlength="20" />
 
