@@ -47,30 +47,30 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-renameFolder aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{payrollBundle.batch_menu_group}"/>
+								<aon:outputText value="#{sepeBundle.batch_menu_group}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="contrataBatch-contrata"
 										action="contrataBatch_search-contrata"
-										value="#{payrollBundle.payroll_contrataBatchWizard_module}" >
+										value="#{sepeBundle.sepe_contrataBatch_module}" >
 										<aon:actionListener method="#{contrataBatch.onEditSearch}" />
 									</aon:commandLink>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="certifica2Batch-contrata"
-										action="certifica2Batch_search-contrata"
-										actionListener="#{certifica2Batch.onEditSearch}"
-										value="#{payrollBundle.payroll_certifica2BatchWizard_module}" />
-								</aon:div>
+								<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="certifica2Batch-contrata"
+											action="certifica2Batch_search-contrata"
+											actionListener="#{certifica2Batch.onEditSearch}"
+											value="#{sepeBundle.sepe_certifica2Batch_module}" />
+									</aon:div>
+								</c:if>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
 					
 					<aon:panelGroup>
 						
-						<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
-						</c:if>
 						<c:if test="#{aonRole.config}">												
 							<aon:panelGrid id="group_contrata_parameters"
 								styleClass="aon-width-all" columnClasses="aon-padding"
@@ -84,7 +84,6 @@
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="enterprise-contrata"
 												action="#{enterprise.initialAction}"
-												actionListener="#{enterprise.onBasicViewSelect}"
 												value="#{companyBundle.company_data_module}">
 												<aon:actionListener method="#{enterprise.onEditSearch}" />
 											</aon:commandLink>
@@ -92,12 +91,10 @@
 									</c:if>
 								
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="payrollParams-contrata" 
-											action="payrollDefaultParams-contrata"
-											actionListener="#{payrollAppParams.onLoad}"
-											value="#{payrollBundle.payroll_default_params_module}" >
-											<f:setPropertyActionListener target="#{payrollAppParams.skipPayrollData}" value="#{true}" />
-										</aon:commandLink>
+										<aon:commandLink id="sepeAppParams-contrata" 
+											action="sepeAppParams_form-contrata"
+											actionListener="#{sepeAppParams.onLoad}"
+											value="#{payrollBundle.payroll_default_params_module}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
@@ -159,7 +156,7 @@
 									<aon:commandLink id="sepeTables-contrata"
 										action="sepeTables_list-contrata"
 										actionListener="#{sepeTables.onInit}"  
-										value="#{payrollBundle.payroll_sepeTables_module}" />
+										value="#{sepeBundle.sepe_sepeTables_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
