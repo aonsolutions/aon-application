@@ -126,6 +126,7 @@
 		<module>aon-ui-warehouse</module>
 		<module>aon-ui-tas</module>
 		<module>aon-ui-pms</module>
+		<module>aon-ui-sepe</module>
 
 		<!-- GWT MODULES -->
 		<module>aon-gwt-payroll</module>
