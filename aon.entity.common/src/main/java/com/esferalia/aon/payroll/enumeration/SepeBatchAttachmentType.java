@@ -5,22 +5,18 @@ import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
 
-public enum BatchType implements IResourceable {
+public enum SepeBatchAttachmentType implements IResourceable {
 	
-	FDI,
-
-	FAN,
+	GENERATED_FILE,
 	
-	AFI,
+	COMMUNICATION_ID,
 	
-	CERTIFICA2,
-	
-	CONTRATA
+	RESPONSE_FILE,
 	
 	;
 	
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
-    private static final String MSG_KEY_PREFIX = "aon_enum_batch_type_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_sepe_batch_attachment_type_";
 
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 

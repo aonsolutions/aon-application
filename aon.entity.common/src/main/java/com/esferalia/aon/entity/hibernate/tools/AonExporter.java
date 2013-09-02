@@ -386,7 +386,6 @@ public class AonExporter extends GenericExporter{
 		map.put("AgreementPayment","com.esferalia.aon.payroll.AgreementPayment");
 		map.put("BonusConcept","com.esferalia.aon.payroll.BonusConcept");
 		map.put("Certifica2Batch","com.esferalia.aon.payroll.Certifica2Batch");
-		map.put("Certifica2BatchData","com.esferalia.aon.payroll.Certifica2BatchData");
 		map.put("Certifica2BatchDetail","com.esferalia.aon.payroll.Certifica2BatchDetail");
 		map.put("CNO","com.esferalia.aon.payroll.CNO");
 		map.put("Contract","com.esferalia.aon.payroll.Contract");
@@ -428,6 +427,7 @@ public class AonExporter extends GenericExporter{
 		map.put("SalaryDeduction","com.esferalia.aon.payroll.SalaryDeduction");
 		map.put("SalaryEmbargo","com.esferalia.aon.payroll.SalaryEmbargo");
 		map.put("SalaryPayment","com.esferalia.aon.payroll.SalaryPayment");
+		map.put("SepeBatchAttachment","com.esferalia.aon.payroll.SepeBatchAttachment");
 		map.put("SystemCost","com.esferalia.aon.payroll.SystemCost");
 		map.put("SystemData","com.esferalia.aon.payroll.SystemData");
 		map.put("SystemDeduction","com.esferalia.aon.payroll.SystemDeduction");

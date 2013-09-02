@@ -241,15 +241,7 @@
 	<table name="certifica2_batch">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
-
-	<table name="certifica2_batch_data">
-		<column name="year" type="java.lang.Integer"/>
-		<column name="month" type="java.lang.Integer"/>
-		<column name="contribution_days" type="java.lang.Integer"/>
-		<column name="cgc_contribution_base" type="java.lang.Double"/>
-		<column name="unemployment_contribution_base" type="java.lang.Double"/>
-	</table>
-
+	
 	<table name="certifica2_batch_detail">
 		<column name="suspension_cause_code" property="suspensionCause" type="com.esferalia.aon.payroll.enumeration.SuspensionCause"/>
 	</table>
@@ -321,7 +313,8 @@
 	</table>
 
 	<table name="contract">
-		<column name="status" type="com.esferalia.aon.payroll.enumeration.ContractStatus"/>
+		<column name="sepe_status" type="com.esferalia.aon.payroll.enumeration.ContractStatus"/>
+		<column name="ss_status" type="com.esferalia.aon.payroll.enumeration.ContractStatus"/>
 		<column name="ss_regime" property="regimeType" type="com.esferalia.aon.payroll.enumeration.SSRegimeType"/>
 		<column name="model" type="com.esferalia.aon.payroll.enumeration.ContractModel"/>
 		<foreign-key constraint-name="FK_CONTRACT_ENTERPRISE_CCC">
@@ -376,6 +369,7 @@
 	</table>
 	
 	<table name="contrata_batch">
+		<column name="type" type="com.esferalia.aon.payroll.enumeration.ContrataFileType"/>
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
 
@@ -1002,7 +996,7 @@
 	<table name="payroll_batch_attach" class="com.esferalia.aon.entity.master.PayrollBatchAttachment">
 		<column name="type" property="attachmentType" type="com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType"/>
 		<column name="source_batch" type="java.lang.Integer"/>
-		<column name="source_type" type="com.esferalia.aon.payroll.enumeration.BatchType" exclude="true"/>
+		<column name="source_type" type="com.esferalia.aon.payroll.enumeration.PayrollBatchType" exclude="true"/>
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 	</table>
 	
@@ -1423,6 +1417,13 @@
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="status" type="com.code.aon.sales.enumeration.SalesDetailStatus" />
 		<column name="line" type="java.lang.Integer" />
+	</table>
+	
+	<table name="sepe_batch_attach" class="com.esferalia.aon.entity.master.SepeBatchAttachment">
+		<column name="type" property="attachmentType" type="com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType"/>
+		<column name="source_batch" type="java.lang.Integer"/>
+		<column name="source_type" type="com.esferalia.aon.payroll.enumeration.SepeBatchType" exclude="true"/>
+		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 	</table>
 	
 	<table name="signature">
