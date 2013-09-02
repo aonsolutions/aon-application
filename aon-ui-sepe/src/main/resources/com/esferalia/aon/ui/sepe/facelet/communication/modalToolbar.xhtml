@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+		
+		<ui:param name="innerToolbar" value="true" />
+		<ui:param name="showTitle" value="false" />
+		<ui:param name="showDescription" value="false" />
+		
+		<ui:define name="toolbarContent">
+
+			<c:if test="#{!skipBatchButton}">
+				<aon:commandButton id="batch-file"
+					value="#{sepeBundle.sepe_contrata_batch}"
+					rendered="#{!controller.communicationIdReceived}"
+					styleClass="aon-finding-toolbar-item aon-icon-newFolder" >
+					<f:setPropertyActionListener
+						target="#{controller.showBatchWindow}" value="#{true}" />
+				</aon:commandButton>
+			</c:if>
+				
+			<aon:commandButton id="sepe-communication"
+				value="#{sepeBundle.sepe_communicate}"
+				reRender="showLoginWindow,contrataResponseContainer,contrataData,contractForm"
+				actionListener="#{controller.onSendSepeFile}"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+ 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
+				styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
+			
+			<aon:commandButton id="sepe-dataQuery"
+				value="#{sepeBundle.sepe_status_check}"
+				disabled="#{!controller.communicationIdReceived}"
+				reRender="showLoginWindow,contrataResponseContainer,contrataData,contractForm"
+				actionListener="#{controller.onSepeDataQuery}"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+ 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
+				styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
+				
+			<aon:commandButton id="refresh-result"
+				value="#{sepeBundle.sepe_reload}"
+				reRender="showCommunicationWindow"
+				styleClass="aon-finding-toolbar-item aon-icon-refresh" />
+				
+			<c:if test="#{!skipDownloadButton}">
+				<aon:htmlCommandLink id="sepeXmldownload" target="_blank"
+					value="XML"
+					actionListener="#{controller.onDownloadSepeXml}"
+					styleClass="aon-finding-toolbar-item aon-icon-mail-save"
+	     			style="line-height:16px;margin-right:0;" />
+			</c:if>
+			
+		</ui:define>
+		
+	</ui:decorate>	
+								
+</ui:composition>

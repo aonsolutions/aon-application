@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showCertificadosWindow">
+		<c:if test="#{contractCertificados.showCommunicationWindow}">
+			<rich:modalPanel id="communicationLogModalPanel" minHeight="500"
+				minWidth="800" rendered="#{contractCertificados.showCommunicationWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="Certific@2: ESTADO DE LAS COMUNICACIONES" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showCertificadosWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{contractCertificados.showCommunicationWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="communicationForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+
+								<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalToolbar.xhtml" />
+								
+								<aon:div style="width:99%">
+									
+									<aon:div rendered="#{controller.communicationIdReceived}">
+										<aon:outputText escape="#{false}" 
+											value="#{controller.communicationLogContent}" />
+									</aon:div>
+									
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+				
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

@@ -1,0 +1,182 @@
+package com.esferalia.aon.ui.sepe.file;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Map;
+
+import javax.faces.event.AbortProcessingException;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
+import com.esferalia.aon.file.payroll.contrata.ContrataFactory;
+import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
+import com.esferalia.aon.file.payroll.contrata.IContrataParams;
+import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.sepe.api.contract.model.IContratoType;
+import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.PRORROGAS;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.PRORROGATIPOTYPE;
+import com.esferalia.aon.sepe.api.contrata.transformaciones.TRANSFORMACIONES;
+import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
+import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
+
+public class ContrataWriter implements IContrataWriter{
+
+	private Contract contract;
+	private String fileName;
+	private boolean contratoFile;
+	private boolean transformacionFile;
+	private boolean prorrogaFile;
+	
+	public ContrataWriter(Contract contract) {
+		this.contract = contract;
+	}
+	public boolean isContratoFile() {
+		return contratoFile;
+	}
+	public void setContratoFile(boolean contratoFile) {
+		this.contratoFile = contratoFile;
+	}
+	public boolean isTransformacionFile() {
+		return transformacionFile;
+	}
+	public void setTransformacionFile(boolean transformacionFile) {
+		this.transformacionFile = transformacionFile;
+	}
+	public boolean isProrrogaFile() {
+		return prorrogaFile;
+	}
+	public void setProrrogaFile(boolean prorrogaFile) {
+		this.prorrogaFile = prorrogaFile;
+	}
+	public String getFileName() {
+		return fileName; 
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	
+	public Contract getContract(){
+		return contract;
+	}
+
+	@Override
+	public File createFile(IContrataParams params) throws ManagerBeanException, IOException{
+		if(getContract()==null){
+			String msg = "El contrato no se ha cargado correctamente.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
+		SEPEUtils utils = new SEPEUtils();
+		Map<String, String> map = utils.getContractDataMap(contract);
+		
+		String code = map.get(ContextVariable.TC2.getName());
+
+		if( StringUtils.isBlank(code) ) {
+			String msg = "Contrato no reconocido";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} 
+
+		setFileName(getFormatedDate(new Date()));
+		
+		CONTRATOS contratos = null;
+		TRANSFORMACIONES transformaciones = null;
+		PRORROGAS prorrogas = null;
+		String modelPath = null;
+		ContrataFactory factory = new ContrataFactory();
+		if( isContratoFile() ){
+			ContrataContratosWriter writer = new ContrataContratosWriter(contract);
+			IContratoType contratoType = writer.createFile(factory.createContratoModel(code), (ContrataContratoParams) params);
+			contratos = writer.getFactory().createCONTRATOS();
+			contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().add(contratoType);
+			modelPath = writer.CONTRATA_CONTRATOS_MODEL_PATH;
+		} else if( isTransformacionFile() ) {
+			ContrataTransformacionesWriter writer = new ContrataTransformacionesWriter(contract); 
+			ITransformacionType transformacionType = writer.createFile(factory.createTransformacionesType(code), (ContrataContratoParams) params);
+			transformaciones = writer.getFactory().createTRANSFORMACIONES();
+			transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().add(transformacionType);
+			modelPath = writer.CONTRATA_TRANSFORMACIONES_MODEL_PATH;
+		} else if( isProrrogaFile() ) {
+			ContrataProrrogasWriter writer = new ContrataProrrogasWriter(contract); 
+			PRORROGATIPOTYPE prorrogaType = writer.createProrroga(factory.createProrrogasType(code), (ContrataProrrogaParams) params);
+			prorrogas = writer.getFactory().createPRORROGAS();
+			prorrogas.getPRORROGATIPO().add(prorrogaType);
+			modelPath = writer.CONTRATA_PRORROGAS_MODEL_PATH;
+		} else {
+			String msg = "No se pueden procesar los datos, no se ha especificado el tipo de documento" ;
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);	
+		}
+		
+		
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(modelPath);
+			Marshaller marshaller = jaxbContext.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marshaller.setProperty(Marshaller.JAXB_ENCODING, SEPEFileUtils.XML_FILE_ENCODING);
+			File file = File.createTempFile("aon-temp", ".XML"); 
+			if( contratoFile ){
+				marshaller.marshal( contratos, file );
+				// TODO
+//				FileUtils.validateContrataXmlPattern(file, FileUtils.CONTRATOS_SCHEMA_FILE_NAME, map.get(ContextVariable.TC2.getName()));
+			} else if( transformacionFile ) {
+				marshaller.marshal( transformaciones, file );
+				// TODO
+//				FileUtils.validateContrataXmlPattern(file, FileUtils.TRANSFORMACIONES_SCHEMA_FILE_NAME, map.get(ContextVariable.TC2.getName()));
+			} 
+			else if( prorrogaFile ) {
+				marshaller.marshal( prorrogas, file );
+				// TODO
+//				FileUtils.validateContrataXmlPattern(file, FileUtils.PRORROGAS_SCHEMA_FILE_NAME, map.get(ContextVariable.TC2.getName()));
+			}
+			return file;
+		} catch (JAXBException e) {
+			String msg = "Error al generar el documento xml de contrata." ;
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage("[" + e + "]");
+			throw new AbortProcessingException(msg, e);
+		}
+	}
+	
+	/* ***************************************
+	 * ***************************************
+	 * AUXILIARES
+	 * ***************************************
+	 * ***************************************
+	 */
+	private Map<String, String> contractDataMap;
+	
+	protected Map<String, String> getContractDataMap(Contract contract) {
+		if(contractDataMap==null){
+			SEPEUtils utils = new SEPEUtils();
+			contractDataMap = utils.getContractDataMap(contract);
+		}
+		return contractDataMap;
+	}
+	protected Map<String, String> getContractDataMap() {
+		return contractDataMap;
+	}
+	
+	private String getFormatedDate(Date date){
+		String pattern = "yyyyMMdd";
+		if(date!=null){
+			return DateFormatUtils.format(date, pattern);
+		}
+		return null;
+	}
+	
+	
+}
+

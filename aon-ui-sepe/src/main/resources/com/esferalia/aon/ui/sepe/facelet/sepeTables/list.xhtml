@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="sepeTablesList">
+
+			<aon:div ajaxRendered="true" layout="none">
+				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{sepeBundle.sepe_sepeTables_module}" />
+					<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
+				</ui:include>			
+
+				<!--  aon-region-body -->
+				<aon:div styleClass="aon-scroll-area">
+				
+					<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
+						<aon:div styleClass="aon-panelGrid-search-info">
+							<aon:outputText value="#{bundle.aon_filter}" styleClass="aon-panelGrid-search-info-internal"/>
+						</aon:div>
+						<aon:panelGrid columns="1">
+							<aon:inputText id="sepeTablesFilter" size="150" value="#{sepeTables.filter}">
+								<a4j:support 
+									event="onkeyup"
+									actionListener="#{sepeTables.onInitModels}"
+									reRender="sepeTablesTab"
+									eventsQueue="sepeTablesFilterKeyUp"
+									requestDelay="500"
+									ajaxSingle="true"
+									ignoreDupResponses="true"
+									limitToList="true"/>
+							</aon:inputText>
+						</aon:panelGrid>	
+					</aon:div>
+				
+					<aon:panelTabSet id="sepeTablesTab" selectedTab="#{sepeTables.selectedTab}">
+						
+						<aon:panelTab id="contrata" label="Contrat@">
+							<aon:dataTable id="contrataCodelList" value="#{sepeTables.contrataTablesModel}" var="to">
+			
+								<aon:rowSelector id="contrataCodelList-select" 
+									action="sepeCodes_list"
+									actionListener="#{sepeTables.onSelectContrata}" />
+								
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+									<f:facet name="header">
+										<aon:outputLabel value="#{bundle.aon_name}" />
+									</f:facet>
+									<aon:outputText value="#{to.code}"  />
+								</aon:column>
+			
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+									<f:facet name="header">
+										<aon:outputLabel 
+											value="#{bundle.aon_description}" />
+									</f:facet>
+									<aon:outputText value="#{to.description}"/>
+								</aon:column>
+								
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+									<f:facet name="header">
+										<aon:outputLabel 
+											value="#{sepeBundle.sepe_sepeTables_lastUpdate_date}" />
+									</f:facet>
+									<aon:outputText value="#{to.lastUpdateDate}" >
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</aon:outputText>
+								</aon:column>
+								
+							</aon:dataTable>
+						</aon:panelTab>
+
+						<aon:panelTab id="certificados" label="Certific@2">
+							
+							<aon:dataTable id="certificadosCodelList" value="#{sepeTables.certificadosTablesModel}" var="to">
+			
+								<aon:rowSelector id="certificadosCodelList-select" 
+									action="sepeCodes_list"
+									actionListener="#{sepeTables.onSelectCertificados}" />
+								
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+									<f:facet name="header">
+										<aon:outputLabel value="#{bundle.aon_name}" />
+									</f:facet>
+									<aon:outputText value="#{to.code}"  />
+								</aon:column>
+			
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+									<f:facet name="header">
+										<aon:outputLabel 
+											value="#{bundle.aon_description}" />
+									</f:facet>
+									<aon:outputText value="#{to.description}"/>
+								</aon:column>
+								
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+									<f:facet name="header">
+										<aon:outputLabel 
+											value="#{sepeBundle.sepe_sepeTables_lastUpdate_date}" />
+									</f:facet>
+									<aon:outputText value="#{to.lastUpdateDate}" >
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</aon:outputText>
+								</aon:column>
+								
+							</aon:dataTable>
+							
+						</aon:panelTab>
+						
+					</aon:panelTabSet>
+					
+
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
