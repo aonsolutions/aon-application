@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.21.1
+# Version: 7.22.0
 # Created by: girazu
-# Creation Date: 19/07/2013 15:50
+# Creation Date: 02/09/2013 17:10
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -305,6 +305,7 @@ CREATE TABLE `raddress` (
   `city` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Localidad',
   `geozone` int(4) DEFAULT NULL COMMENT 'Identificador de la Zona Geografica',
   `alias` varchar(15) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Alias',
+  `municipality_code` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del municipio',
   PRIMARY KEY (`id`),
   KEY `IDX_RADDRESS_REGISTRY` (`registry`),
   KEY `IDX_RADDRESS_GEOZONE` (`geozone`),
@@ -2228,9 +2229,8 @@ CREATE TABLE `contract` (
   `start_date` date NOT NULL COMMENT 'Fecha de inicio del Contrato',
   `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion del Contrato',
   `calendar` int(4) DEFAULT NULL COMMENT 'Calendario',
-  `document` mediumblob COMMENT 'Impreso (.pdf) del contrato.',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
-  `status` tinyint(2) DEFAULT '0' COMMENT 'Estado de notificacion del contrato',
+  `sepe_status` tinyint(2) DEFAULT '0' COMMENT 'Estado de notificacion del contrato al SEPE',
   `registration` int(4) DEFAULT NULL COMMENT 'Número libro de matricula',
   `seniority_date` date DEFAULT NULL COMMENT 'Fecha de antiguedad',
   `enterprise_activity` int(4) DEFAULT NULL COMMENT 'Actividad',
@@ -2238,6 +2238,7 @@ CREATE TABLE `contract` (
   `agreement_level_category` int(4) DEFAULT NULL COMMENT 'Identificador unico de la Categoria Profesional',
   `model` tinyint(2) DEFAULT NULL COMMENT 'Indica el modelo de documento del contrato',
   `category_description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Categoria o grupo profesional',
+  `ss_status` tinyint(2) DEFAULT '0' COMMENT 'Estado de notificacion del contrato a la Seguridad Social',
   PRIMARY KEY (`id`),
   KEY `IDX_CONTRACT_PERSON` (`person`),
   KEY `IDX_CONTRACT_WORKPLACE` (`workplace`),
@@ -2264,31 +2265,7 @@ CREATE TABLE `certifica2_batch_detail` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `certifica2_batch` int(4) NOT NULL COMMENT 'Identificador unico del certificado de empresa',
   `contract` int(4) NOT NULL COMMENT 'Identificador unico del contrato de empleado',
-  `enterprise_nif` varchar(9) COLLATE latin1_spanish_ci NOT NULL COMMENT 'NIF de la empresa',
-  `ccc` varchar(15) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Codigo cuenta cotizacion',
-  `document` varchar(9) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Documento de identidad',
-  `name` varchar(15) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del trabajador',
-  `first_surname` varchar(20) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Primer apellido',
-  `second_surname` varchar(20) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Segundo apellido',
-  `ss_number` varchar(20) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Numero seguridad social',
-  `quote_group` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Grupo de CotizaciÃ³n',
-  `contract_type` varchar(3) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Tipo de contrato',
-  `contract_duration` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Duracion contrato',
-  `contract_duration_indicator` varchar(1) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Indicador duracion contrato',
-  `occupation_code` varchar(7) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Codidgo de profesion',
-  `public_association_charge` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Cargo publico sindical',
-  `dedication_percent` varchar(4) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Porcentual dedicacion',
-  `enterprise_start_date` date NOT NULL COMMENT 'Fecha alta empresa',
   `suspension_cause_code` varchar(2) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Codigo causa suspension',
-  `expire_date` date NOT NULL COMMENT 'Fecha suspension extincion',
-  `expire_end_date` date DEFAULT NULL COMMENT 'Fecha suspension extincion',
-  `ere` varchar(27) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'ERE',
-  `ere_reduction_percent` varchar(4) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Porcentual reduccion ERE',
-  `other_reduction_percent` varchar(4) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Porcentual reduccion otros',
-  `reduction_cause_code` varchar(2) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo causa porcentaje reduccion',
-  `salary_period_start_date` date DEFAULT NULL COMMENT 'Fecha desde periodo salarios',
-  `salary_period_end_date` date DEFAULT NULL COMMENT 'Fecha hasta periodo salarios',
-  `salary_processing_days` varchar(5) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Dias salario tramitacion',
   PRIMARY KEY (`id`),
   KEY `IDX_CERTIFICA2_BATCH_DETAIL_CERTIFICA2_BATCH` (`certifica2_batch`),
   KEY `IDX_CERTIFICA2_BATCH_DETAIL_CONTRACT` (`contract`),
@@ -2297,27 +2274,6 @@ CREATE TABLE `certifica2_batch_detail` (
   CONSTRAINT `FK_CERTIFICA2_BATCH_DETAIL_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CERTIFICA2_BATCH_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de certificados de empresa';
-
-#
-# Structure for the `certifica2_batch_data` table : 
-#
-
-CREATE TABLE `certifica2_batch_data` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico de los datos de cotizacion del certificado',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `certifica2_batch_detail` int(4) NOT NULL COMMENT 'Identificador unico del certificado de empresa de la remesa',
-  `year` int(4) NOT NULL COMMENT 'Anio',
-  `month` int(2) NOT NULL COMMENT 'Mes',
-  `contribution_days` int(2) NOT NULL COMMENT 'Numero de dias cotizados',
-  `cgc_contribution_base` double(15,3) DEFAULT '0.000' COMMENT 'Base de cotizacion de contingencias comunes',
-  `unemployment_contribution_base` double(15,3) NOT NULL DEFAULT '0.000' COMMENT 'Base de cotizacion por desempleo',
-  `comments` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Observaciones',
-  PRIMARY KEY (`id`),
-  KEY `IDX_CERTIFICA2_BATCH_DATA_CERTIFICA2_BATCH_DETAIL` (`certifica2_batch_detail`),
-  KEY `IDX_CERTIFICA2_BATCH_DATA_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CERTIFICA2_BATCH_DATA_CERTIFICA2_BATCH_DETAIL` FOREIGN KEY (`certifica2_batch_detail`) REFERENCES `certifica2_batch_detail` (`id`),
-  CONSTRAINT `FK_CERTIFICA2_BATCH_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos cotizacion de empleados de certificados de empresa';
 
 #
 # Structure for the `cnae2009_rate` table : 
@@ -2988,6 +2944,7 @@ CREATE TABLE `contrata_batch` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `date` datetime DEFAULT NULL COMMENT 'Fecha de la Remesa',
   `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Indica el estado de la Remesa',
+  `type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de remesa a comunicar al SEPE',
   PRIMARY KEY (`id`),
   KEY `IDX_CONTRATA_BATCH_DOMAIN` (`domain`),
   CONSTRAINT `FK_CONTRATA_BATCH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -6690,6 +6647,28 @@ CREATE TABLE `salary_payment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones salariales';
 
 #
+# Structure for the `sepe_batch_attach` table : 
+#
+
+CREATE TABLE `sepe_batch_attach` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del Archivo Adjunto',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `source_batch` int(4) NOT NULL DEFAULT '0' COMMENT 'Identificador de la remesa',
+  `source_type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de la remesa',
+  `mimeType` tinyint(2) DEFAULT '0' COMMENT 'Mime Type del Archivo Adjunto',
+  `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion del Archivo Adjunto',
+  `data` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo de Archivo Adjunto',
+  `scope` int(4) DEFAULT NULL COMMENT 'Ambito del Archivo Adjunto',
+  `attach_date` date DEFAULT NULL COMMENT 'Fecha del Archivo Adjunto',
+  PRIMARY KEY (`id`),
+  KEY `IDX_SEPE_BATCH_ATTACH_SCOPE` (`scope`),
+  KEY `IDX_SEPE_BATCH_ATTACH_DOMAIN` (`domain`),
+  CONSTRAINT `FK_SEPE_BATCH_ATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_SEPE_BATCH_ATTACH_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de remesas de SEPE';
+
+#
 # Structure for the `series` table : 
 #
 
@@ -7166,7 +7145,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.21.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.22.0');
 
 COMMIT;
 
