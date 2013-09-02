@@ -17,7 +17,8 @@
 					<aon:panelGrid columns="2" style="width:100%">
 						<ui:include
 							src="/com/code/aon/ui/company/facelet/company/formNewContent.xhtml" >
-							<ui:param name="controller" value="#{company}" />									
+							<ui:param name="controller" value="#{company}" />
+							<ui:param name="showMunicipality" value="#{true}" />									
 						</ui:include>		
 						
 						<aon:outputLabel for="Enterprise_scope_id"

@@ -1,5 +1,12 @@
 package com.code.aon.ui.registry.controller.event;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.TreeSet;
+
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
@@ -20,6 +27,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 
 public class RegistryFormListener extends ControllerAdapter {
 	
@@ -189,6 +197,25 @@ public class RegistryFormListener extends ControllerAdapter {
 	
 	private boolean isEmpty(RegistryMedia media) {
 		return StringUtils.isEmpty(media.getValue());
+	}
+	
+	public List<SelectItem> getMunicipalities(){
+		ResourceBundle bundle = ResourceBundle.getBundle(IRegistryConstants.MUNICIPALITIES_BUNDLE_NAME);
+		List<SelectItem> municipalities = new LinkedList<SelectItem>();
+		if(this.getMainAddress()!=null){
+			RegistryAddress address = (RegistryAddress) this.getMainAddress();
+			if(address!=null && address.getGeozone()!=null && address.getGeozone().getCode()!=null) {
+				TreeSet<String> tree = new TreeSet<String>(bundle.keySet());
+				for(String key: tree){
+					if(key.startsWith(address.getGeozone().getCode())){
+						String name = bundle.getString(key);
+						SelectItem item = new SelectItem(key, name);
+						municipalities.add(item);
+					}
+				}
+			}
+		}
+		return municipalities;
 	}
 	
 }

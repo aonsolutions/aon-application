@@ -28,17 +28,11 @@ import com.esferalia.aon.ui.calendar.controller.CalendarController;
 
 public class EnterpriseController extends RegistryController implements ICompanyConstants {
 	
-	private static final String TREE_SUFFIX = "Tree";
-	
 	private RegistryInfo info = new RegistryInfo();
 
-	private boolean showActivityNode;
 	private WorkPlace workplace;
+	
 	private RegistryDirStaff dirStaff;
-	
-	private String treeTemplateSuffix;
-	
-	private String formAction;
 	
 	private boolean skipResetButton;
 	
@@ -60,26 +54,6 @@ public class EnterpriseController extends RegistryController implements ICompany
 		this.skipRemoveButton = skipRemoveButton;
 	}
 
-	public boolean isTreeView() {
-		return (treeTemplateSuffix != null);
-	}
-
-	public void setTreeView(boolean treeView) {
-		setTreeTemplateSuffix( treeView ? TREE_SUFFIX : null );
-	}
-	
-	public String getTreeTemplateSuffix() {
-		return treeTemplateSuffix;
-	}
-
-	public void setTreeTemplateSuffix(String treeTemplateSuffix) {
-		this.treeTemplateSuffix = treeTemplateSuffix;
-	}
-
-	public boolean isShowActivityNode() {
-		return showActivityNode;
-	}
-	
 	public RegistryAddress getMainAddress() {
 		return info.getAddress();
 	}
@@ -138,7 +112,6 @@ public class EnterpriseController extends RegistryController implements ICompany
     }	
     
 	public void reset() {
-    	this.showActivityNode = false;
     	setWorkplace(null);
     	setDirStaff(null);
     	this.info.reset();
@@ -188,12 +161,20 @@ public class EnterpriseController extends RegistryController implements ICompany
     	setDirStaff(dirStaff);
     }
     
+    /**
+     * this method is no longer necessary
+     * @param event
+     */
+    @Deprecated
     public void onTreeViewSelect(ActionEvent event){
-    	setTreeView(true);
     }
     
+    /**
+     * this method is no longer necessary
+     * @param event
+     */
+    @Deprecated
     public void onBasicViewSelect(ActionEvent event){
-    	setTreeView(false);
     }
     
     public boolean isRegistryTypeLegal(){
@@ -209,23 +190,6 @@ public class EnterpriseController extends RegistryController implements ICompany
 		controller.setCalendarId(e.getCalendar().getId());
 		controller.onInitialize(event);
 	}	
-	
-	public void setFormAction(String formAction) {
-		this.formAction = formAction;
-	}
-	
-	@Override
-	public String formAction() {
-		if ( isTreeView() ) {
-			return (formAction != null) ? formAction : super.formAction() + treeTemplateSuffix;	
-		}
-		return super.formAction();
-	}
-
-	@Override
-	public String searchAction() {
-		return isTreeView() ? super.searchAction() + treeTemplateSuffix : super.searchAction();
-	}
 	
 	public void onActivate(ActionEvent event) {
 		Enterprise enterprise = (Enterprise) getTo();

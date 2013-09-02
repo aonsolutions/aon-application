@@ -4,6 +4,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:outputLabel for="Company_name" value="#{bundle.aon_name}" />
@@ -71,7 +72,19 @@
 		styleClass="aon-form-selectOneMenu-field"
 		valueChangeListener="#{controller.addressChanged}">
 		<f:selectItems value="#{geozoneCollections.geoTrees}" />
+		<a4j:support event="onchange" reRender="Company_address_municipality" ajaxSingle="true" />
 	</aon:selectOneMenu>
+	
+	<c:if test="#{showMunicipality}" >
+		<aon:outputLabel for="Company_address_municipality" 
+			value="#{registryBundle.registry_municipality}" />
+		<aon:selectOneMenu id="Company_address_municipality"
+			value="#{controller.mainAddress.municipalityCode}"
+			valueChangeListener="#{controller.addressChanged}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{controller.municipalities}" />
+		</aon:selectOneMenu>
+	</c:if>
 
 	<aon:outputLabel for="Company_telephone"
 		value="#{registryBundle.registry_phone}" />

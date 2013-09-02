@@ -3,6 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:valueParam name="pojoName" default="#{controller.pojoShortName}"/>
@@ -47,6 +49,17 @@
 		value="#{registryAddress.geozone}">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{geozoneCollections.geoTrees}" />
+		<a4j:support event="onchange" reRender="#{pojoName}_address_municipality" ajaxSingle="true" />
 	</aon:selectOneMenu>
+	
+	<c:if test="#{showMunicipality}" >
+		<aon:outputLabel for="#{pojoName}_address_municipality" 
+			value="#{registryBundle.registry_municipality}" />
+		<aon:selectOneMenu id="#{pojoName}_address_municipality"
+			value="#{registryAddress.municipalityCode}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{controller.municipalities}" />
+		</aon:selectOneMenu>
+	</c:if>
 			
 </ui:composition>

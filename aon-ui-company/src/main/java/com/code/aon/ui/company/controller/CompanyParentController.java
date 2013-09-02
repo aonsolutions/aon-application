@@ -20,10 +20,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.TreeSet;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +55,7 @@ import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -306,6 +310,25 @@ public class CompanyParentController extends BasicController implements ICompany
 	 */
 	public void setMainAddress(RegistryAddress mainAddress) {
 		this.mainAddress = mainAddress;
+	}
+	
+	public List<SelectItem> getMunicipalities(){
+		ResourceBundle bundle = ResourceBundle.getBundle(IRegistryConstants.MUNICIPALITIES_BUNDLE_NAME);
+		List<SelectItem> municipalities = new LinkedList<SelectItem>();
+		if(this.getTo()!=null){
+			RegistryAddress address = getMainAddress();
+			if(address!=null && address.getGeozone()!=null && address.getGeozone().getCode()!=null) {
+				TreeSet<String> tree = new TreeSet<String>(bundle.keySet());
+				for(String key: tree){
+					if(key.startsWith(address.getGeozone().getCode())){
+						String name = bundle.getString(key);
+						SelectItem item = new SelectItem(key, name);
+						municipalities.add(item);
+					}
+				}
+			}
+		}
+		return municipalities;
 	}
 
 	/**

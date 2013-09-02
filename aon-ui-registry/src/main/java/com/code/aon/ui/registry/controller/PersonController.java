@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -47,6 +48,11 @@ public class PersonController extends RegistryController {
 			// NADA, no se autocompleta la provincia
 		}
 		return null;
+	}
+	
+	public List<SelectItem> getMunicipalities(){
+		PersonFormListener personForm = (PersonFormListener) AonUtil.getRegisteredBean(IRegistryConstants.PERSON_FORM_CONTROLLER_NAME);
+		return personForm.getMunicipalities();
 	}
 	
 	public Domain getCurrentDomain(){

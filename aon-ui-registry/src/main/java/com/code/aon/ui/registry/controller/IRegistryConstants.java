@@ -9,6 +9,8 @@ public interface IRegistryConstants {
 	/** ResourceBundle name. */
 	String BUNDLE_NAME = "registryBundle";
 	
+	String MUNICIPALITIES_BUNDLE_NAME = "com.code.aon.ui.registry.i18n.municipalities";
+	
 	String REGISTRY_DOCUMENT_MAX_SIZE_ERROR = "registry_document_max_size_error";
 	
 	String REGISTRY_ADDRESS_MODULE = "registry_address_module";

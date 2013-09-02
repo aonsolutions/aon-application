@@ -27,14 +27,16 @@
 							action="company_form" actionListener="#{enterprise.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />
-						<aon:commandButton id="enterprise-back"
-							title="#{bundle.aon_key_cancel_accelerator}"
-							value="#{bundle.aon_back}" 
-							rendered="#{!enterprise.new and enterprise.treeView}" immediate="true"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							actionListener="#{enterprise.onBackActionListener}"
-							action="#{enterprise.backAction}"
-							accesskey="#{bundle.aon_key_cancel}" />
+						<c:if test="#{domainSwitcher.domainManagementAvailable}">
+							<aon:commandButton id="enterprise-back"
+								title="#{bundle.aon_key_cancel_accelerator}"
+								value="#{bundle.aon_back}" 
+								immediate="true"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel"
+								actionListener="#{enterprise.onBackActionListener}"
+								action="#{enterprise.backAction}"
+								accesskey="#{bundle.aon_key_cancel}" />
+						</c:if>
 					</c:if>
 				</ui:define>				
 			</ui:decorate>
@@ -54,6 +56,7 @@
 						<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 							<ui:param name="skipTypeColumn" value="true" />
 							<ui:param name="controller" value="#{companyAddress}" />
+							<ui:param name="showMunicipality" value="#{true}" />
 						</ui:include>
 					</aon:panelTab>
 					
@@ -135,7 +138,15 @@
 								<ui:param name="controller" value="#{enterpriseRAttach}" />
 							</ui:include>								
 						</aon:panelTab>
-					</c:if>						
+					</c:if>	
+								
+					<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+						<aon:panelTab id="contractClauses" label="#{payrollBundle.payroll_contract_clauses}">
+							<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
+								<ui:param name="controller" value="#{enterpriseClauses}" />
+							</ui:include>
+						</aon:panelTab>
+					</c:if>		
 					
 				</aon:panelTabSet>
 				
