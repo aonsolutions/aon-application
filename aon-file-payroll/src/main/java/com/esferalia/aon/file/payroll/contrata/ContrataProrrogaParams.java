@@ -2,11 +2,7 @@ package com.esferalia.aon.file.payroll.contrata;
 
 import java.util.Date;
 
-import com.esferalia.aon.payroll.Contract;
-
-public class ContractExtensionParams {
-	
-	private Contract contract;
+public class ContrataProrrogaParams implements IContrataParams{
 	
 	/**
 	 * DATOS_GENERALESPRORROGATYPE
@@ -30,14 +26,6 @@ public class ContractExtensionParams {
 	 */
 	private String usoLibreEmpresa;
 
-
-	public Contract getContract() {
-		return contract;
-	}
-
-	public void setContract(Contract contract) {
-		this.contract = contract;
-	}
 
 	public Date getFechaInicio() {
 		return fechaInicio;

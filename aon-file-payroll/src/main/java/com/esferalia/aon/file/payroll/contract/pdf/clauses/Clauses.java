@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
-import com.esferalia.aon.file.payroll.contrata.ContrataParams;
+import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.lowagie.text.pdf.PdfReader;
@@ -19,8 +19,7 @@ public class Clauses extends AbstractContractClauses {
 		super.documentName = CLAUSES_NAME;
 	}
 	
-	@Override
-	public void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
 		
 		try {

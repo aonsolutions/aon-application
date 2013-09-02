@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /** 
- * Enumeration for represent Certificados (S.E.P.E.) DGRCOTTC table codes.
- * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter.
+ * Enumeration for represent Certific@2 (S.E.P.E.) DGRCOTTC table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  * No description found
@@ -15,6 +15,28 @@ import java.util.Date;
 public enum DGRCOTTC {
 
 	DGRCOTTC_01( "01", "DIRECTORES, INGENIEROS", null, null ),
+
+	DGRCOTTC_02( "02", "PERITOS Y AYUDANTES", null, null ),
+
+	DGRCOTTC_03( "03", "JEFES ADMINISTRATIVOS", null, null ),
+
+	DGRCOTTC_04( "04", "AYUDANTES NO TITULADOS", null, null ),
+
+	DGRCOTTC_05( "05", "OFICIALES ADMINISTRATIVOS", null, null ),
+
+	DGRCOTTC_06( "06", "SUBALTERNOS", null, null ),
+
+	DGRCOTTC_07( "07", "AUXILIARES ADMINISTRATIVOS", null, null ),
+
+	DGRCOTTC_08( "08", "OFICIALES DE PRIMERA", null, null ),
+
+	DGRCOTTC_09( "09", "OFICIALES DE TERCERA", null, null ),
+
+	DGRCOTTC_10( "10", "PEONES", null, null ),
+
+	DGRCOTTC_11( "11", "APRENDICES 17 AÑOS", null, null ),
+
+	DGRCOTTC_12( "12", "APRENDICES < 17 AÑOS", null, null ),
 	;
 	public static final String TABLE_NAME = "DGRCOTTC";
 	public static final String TABLE_DESCRIPTION = "No description found";

@@ -13,21 +13,21 @@ import org.hibernate.annotations.Formula;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.config.IScopable;
-import com.esferalia.aon.entity.master.PayrollBatchAttachmentDB;
-import com.esferalia.aon.payroll.enumeration.PayrollBatchType;
+import com.esferalia.aon.entity.master.SepeBatchAttachmentDB;
+import com.esferalia.aon.payroll.enumeration.SepeBatchType;
 
 
 
 @Entity
-@Table(name="payroll_batch_attach")
+@Table(name="sepe_batch_attach")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="source_type")
 @DiscriminatorValue(value="true")
-public class PayrollBatchAttachment extends PayrollBatchAttachmentDB implements IAttachment, IScopable {
+public class SepeBatchAttachment extends SepeBatchAttachmentDB implements IAttachment, IScopable {
 
 	private static final long serialVersionUID = 1L;
 
-	private PayrollBatchType sourceType;
+	private SepeBatchType sourceType;
 	
 	private Integer size;
 	
@@ -46,10 +46,10 @@ public class PayrollBatchAttachment extends PayrollBatchAttachmentDB implements 
 	}
 	
 	@Column(name="source_type", insertable=false, updatable=false)
-	public PayrollBatchType getSourceType() {
+	public SepeBatchType getSourceType() {
 		return sourceType;
 	}
-	public void setSourceType(PayrollBatchType sourceType) {
+	public void setSourceType(SepeBatchType sourceType) {
 		this.sourceType = sourceType;
 	}
 

@@ -2,11 +2,11 @@ package com.esferalia.aon.file.payroll.contrata;
 
 
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
-import com.esferalia.aon.sepe.api.contract.model.IProrrogaType;
 import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
+import com.esferalia.aon.sepe.api.contrata.prorrogas.PRORROGATIPOTYPE;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 
-public class ContractContrataFactory {
+public class ContrataFactory {
 	
 	
 	public IContratoType createContratoModel(String code) {
@@ -106,9 +106,9 @@ public class ContractContrataFactory {
 	}
 	
 
-	public IProrrogaType createProrrogasType(String code) {
-		// TODO
-		return null;
+	public PRORROGATIPOTYPE createProrrogasType(String code) {
+		com.esferalia.aon.sepe.api.contrata.prorrogas.ObjectFactory factory = new com.esferalia.aon.sepe.api.contrata.prorrogas.ObjectFactory();
+		return factory.createPRORROGATIPOTYPE();
 	}
 	
 	

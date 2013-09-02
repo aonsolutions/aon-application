@@ -11,22 +11,55 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.util.Classpath;
 
 public class CertificadosCodeTablesWriter {
 	
-	final static String ENUMERATIONS_FOLDER_PATHNAME 	= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/certificados/enumeration/";
-	final static String COLLECTIONS_CLASS_PATHNAME 		= "/AON-TRUNK/aon.parent/aon-ui-payroll/src/main/java/com/esferalia/aon/ui/payroll/controller/CertificadosCollectionsController.java";
+	final static String ENUMERATIONS_FOLDER_PATH 		= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/certificados/enumeration/";
+	final static String COLLECTIONS_CLASS_PATH			= "/AON-TRUNK/aon.parent/aon-ui-sepe/src/main/java/com/esferalia/aon/ui/sepe/controller/";
+	final static String COLLECTIONS_CLASS_NAME			= "CertificadosCollectionsController";
+	final static String COLLECTIONS_CLASS_PACKAGE_NAME	= "com.esferalia.aon.ui.sepe.controller";
+	
+	public final static String ENUMERATION_CLASS_PACKAGE_NAME = "com.esferalia.aon.payroll.certificados.enumeration";
+
+	final static String JAVA_FILE_EXTENSION = ".java";
 	
 	final static String ZIP_CONTAINER_URL			= "com/esferalia/aon/payroll/sepe/certificados/";
 	final static String CODE_FILE_NAME				= "TABLAS_CODIGOS";
 	final static String ERROR_CODE_FILE_NAME		= "TABLA_CODIGOS_RESPUESTA";
+	
+	final static String TABLES_ENUM_NAME = "CertificadosCodeTables";
+	
+	
+	final static String DCODEDTC_TABLE_DESCRIPTION = "";
+	final static String DCSPCPTC_TABLE_DESCRIPTION = "";
+	final static String DGRCOTTC_TABLE_DESCRIPTION = "Grupo de cotización";
+	final static String DSTEMCTC_TABLE_DESCRIPTION = "";
+	final static String SACECOTC_TABLE_DESCRIPTION = "";
+	final static String TAICLAOC_TABLE_DESCRIPTION = "Códigos de ocupación, profesiones";
+	final static String TCGPROVI_TABLE_DESCRIPTION = "";
+	final static String TCHRGCOT_TABLE_DESCRIPTION = "";
+	final static String Terrores_TABLE_DESCRIPTION = "Códigos de errores";
+	final static String TKCSITEM_TABLE_DESCRIPTION = "";
+	final static String TKDIASAC_TABLE_DESCRIPTION = "";
+	final static String TKEINDUC_TABLE_DESCRIPTION = "Indicador duración del contrato";
+	final static String TKFCOEFI_TABLE_DESCRIPTION = "";
+	final static String TKZCARPS_TABLE_DESCRIPTION = "Cargos públicos o sindicales";
+	final static String TLDCAUSS_TABLE_DESCRIPTION = "Códigos de causas de suspensión o extinción";
+	final static String TMJMINSS_TABLE_DESCRIPTION = "Códigos de la mineria del carbón";
+	final static String TMPORCRD_TABLE_DESCRIPTION = "Causas de porcentaje de reducción de jornada";
+	final static String TMQTDIST_TABLE_DESCRIPTION = "Distribución de jornadas (regular o irregular) para los contratos a tiempo parcial";
+	final static String TNWTPCOM_TABLE_DESCRIPTION = "";
 
 	
 	private static int tablesCount;
@@ -39,8 +72,8 @@ public class CertificadosCodeTablesWriter {
 
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		
-		String CODE_TXT_FILE_URL = "/tmp/certificados/codeTables/";
-		String ERROR_CODE_TXT_FILE_URL = "/tmp/certificados/errorCodeTables/";
+		String CODE_TXT_FILE_PATH = "/tmp/certificados/codeTables/";
+		String ERROR_CODE_TXT_FILE_PATH = "/tmp/certificados/errorCodeTables/";
 		
 		URL[] codeTablesZip = Classpath.search(cl, ZIP_CONTAINER_URL, ".zip");
 		if(codeTablesZip.length==0){
@@ -51,33 +84,46 @@ public class CertificadosCodeTablesWriter {
 		int enumCount = 0;
 		int propertiesCount = 0;
 		
+		System.out.println("*****************************************");
+		System.out.println("*** SEPE - TABLAS DE CODIGOS DE CERTIFICADOS ");
+		System.out.println("*****************************************");
+		System.out.println("*** Iniciando proceso. " + new Date());
 		for(URL url: codeTablesZip){
 			if(getFileNameWithoutExtension(url).equals(CODE_FILE_NAME)){
-				uncompressZipData(url.openStream(), new File(CODE_TXT_FILE_URL));
-				File codeDir = new File(CODE_TXT_FILE_URL);
+				uncompressZipData(url.openStream(), new File(CODE_TXT_FILE_PATH));
+				File codeDir = new File(CODE_TXT_FILE_PATH);
 				File[] filesList = codeDir.listFiles();
 				for(File file: filesList){
-					File newFile = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(file)+".java");
+					File newFile = new File(ENUMERATIONS_FOLDER_PATH + getFileNameWithoutExtension(file) + JAVA_FILE_EXTENSION);
 					System.out.print("Enum "+getFileNameWithoutExtension(file)+" en proceso ...");
 					writeEnum(file, newFile);
 					System.out.println(" generado!");
 					enumCount++;
 					tablesCount++;
 				}
+				FileUtils.deleteQuietly(codeDir);
 			} else if(getFileNameWithoutExtension(url).equals(ERROR_CODE_FILE_NAME)){
-				uncompressZipData(url.openStream(), new File(ERROR_CODE_TXT_FILE_URL));
-				File errorCodeDir = new File(ERROR_CODE_TXT_FILE_URL);
+				uncompressZipData(url.openStream(), new File(ERROR_CODE_TXT_FILE_PATH));
+				File errorCodeDir = new File(ERROR_CODE_TXT_FILE_PATH);
 				File[] errorFilesList = errorCodeDir.listFiles();
 				for(File file: errorFilesList){
-					File newFile = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(file)+".java");
+					File newFile = new File(ENUMERATIONS_FOLDER_PATH + getFileNameWithoutExtension(file) + JAVA_FILE_EXTENSION);
 					System.out.print("Enum "+getFileNameWithoutExtension(file)+" en proceso ...");
 					writeEnum(file, newFile);
 					System.out.println(" generado!");
 					enumCount++;
 					tablesCount++;
 				}
+				FileUtils.deleteQuietly(errorCodeDir);
 			}
 		}
+		
+		File newFile = new File(ENUMERATIONS_FOLDER_PATH + TABLES_ENUM_NAME + JAVA_FILE_EXTENSION);
+		System.out.print("Enum " + TABLES_ENUM_NAME + " en proceso ...");
+		writeTablesEnum(newFile);
+		System.out.println(" generado!");
+		enumCount++;
+		tablesCount++;
 		
 		System.out.println("*** Enumeraciones generadas. ("+enumCount+")");
 		System.out.println("*** Ficheros de propiedades generados. ("+propertiesCount+")");
@@ -144,101 +190,105 @@ public class CertificadosCodeTablesWriter {
 	}
 
 	/**
-	 * Write data to qualifications enum class.
-	 * 
-	 * @param url
-	 * @param file
-	 * @throws IOException
-	 */
-//	private static void writeQualificationsEnum( URL url, File file ) throws IOException {
-//		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
-//		
-//		writeEnumHeader(out, url, obtainTableDescription(getFileNameWithoutExtension(url)));
-//		
-//		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-//		String currentLine;
-//		while((currentLine = reader.readLine()) != null) {
-//			currentLine = StringUtils.strip(currentLine);
-//			String code = currentLine.substring(0, 12);
-//			String value = currentLine.substring(13, currentLine.length());
-//			
-//			out.write( "\t"+getFileNameWithoutExtension(url)+"_"+code.replace("\"", "").toUpperCase()+"( \""+code+"\"" );
-//			out.write(", \""+value+"\"");
-//			out.write( ", null, null )," );
-//			
-//			out.newLine();
-//		}
-//		
-//		writeEnumLastContent(out, url, obtainTableDescription(getFileNameWithoutExtension(url)));
-//		
-//		out.close();
-//	}
-		
-	/**
 	 * Write data to enum class.
 	 * 
 	 * @param url
 	 * @param file
 	 * @throws IOException
 	 */
-//	private static void writeEnum( URL url, File newfile ) throws IOException {
 	private static void writeEnum( File file, File newfile ) throws IOException {
+		
 		BufferedWriter out = new BufferedWriter( new FileWriter(newfile) );
 		
 		writeEnumHeader(out, file, obtainTableDescription(getFileNameWithoutExtension(file)));
 		
-//		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-		String currentLine;
-		while((currentLine = reader.readLine()) != null && currentLine.contains(";") && !getFileNameWithoutExtension(file).equals("TMJMINSS")) {
-			currentLine = StringUtils.strip(currentLine);
-			currentLine = currentLine.substring(0, currentLine.lastIndexOf("\""));
-			StringTokenizer token = new StringTokenizer(currentLine, "\"");
-			if(token.hasMoreTokens()){
-				String code = token.nextToken();
-				out.write( "\t"+getFileNameWithoutExtension(file)+"_"+code.replace("\"", "").toUpperCase()+"( \""+code+"\"" );
-				if(token.hasMoreTokens()){
-					token.nextToken();
-					if(token.hasMoreTokens()){
-						String label = StringUtils.strip(token.nextToken());
-						out.write(", \""+(label)+"\"");
+		if( !getFileNameWithoutExtension(file).equals("TMJMINSS") && !getFileNameWithoutExtension(file).equals("TAICLAOC") ){
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			String readerCurrentLine;
+			while( (readerCurrentLine = reader.readLine()) != null ) {
+				readerCurrentLine = StringUtils.strip(readerCurrentLine);
+				
+				// *********** 
+				// This code is for error code file, the formatting of this file is especially a disaster
+				List<String> splitedLines = new LinkedList<String>();
+				if(StringUtils.countMatches(readerCurrentLine, "DH")>1){
+					for(String line: StringUtils.split(readerCurrentLine, "DH")){
+						if(StringUtils.isNotBlank(line)){
+							splitedLines.add("DH"+line);
+						}
+					}
+				}
+				if(StringUtils.countMatches(readerCurrentLine, "DW")>1){
+					for(String line: StringUtils.split(readerCurrentLine, "DW")){
+						if(StringUtils.isNotBlank(line) && line.length()>1){
+							splitedLines.add("DW"+line);
+						}
+					}
+				}
+				// ***********
+				if(splitedLines.isEmpty()){
+					splitedLines.add(readerCurrentLine);
+				}
+				
+				for(String currentLine: splitedLines){
+					StringTokenizer token = null;
+					if(currentLine.contains(";") ){
+						currentLine = currentLine.substring(0, currentLine.lastIndexOf("\""));
+						token = new StringTokenizer(currentLine, "\"");
+					} else if(currentLine.contains("\t") ){
+						token = new StringTokenizer(currentLine, "\t");
+					} else if(currentLine.contains(",") ){
+						currentLine = currentLine.replace("\"","");
+						token = new StringTokenizer(currentLine, ",");
+					}
+					if(token!=null && token.hasMoreTokens()){
+						String code = token.nextToken();
+						out.write( "\t"+getFileNameWithoutExtension(file)+"_"+code.replace("\"", "").toUpperCase()+"( \""+code+"\"" );
 						if(token.hasMoreTokens()){
 							token.nextToken();
 							if(token.hasMoreTokens()){
-								out.write(", \""+token.nextToken()+"\"");
+								String label = StringUtils.strip(token.nextToken());
+								out.write(", \""+(label)+"\"");
 								if(token.hasMoreTokens()){
 									token.nextToken();
 									if(token.hasMoreTokens()){
-										out.write(", \""+token.nextToken()+"\" ),");
+										out.write(", \""+token.nextToken()+"\"");
+										if(token.hasMoreTokens()){
+											token.nextToken();
+											if(token.hasMoreTokens()){
+												out.write(", \""+token.nextToken()+"\" ),");
+											} else {
+												out.write( ", null )," );
+											}
+										} else {
+											out.write( ", null )," );
+										}
 									} else {
-										out.write( ", null )," );
+										out.write( ", null, null )," );
 									}
 								} else {
-									out.write( ", null )," );
+									out.write( ", null, null )," );
 								}
 							} else {
-								out.write( ", null, null )," );
+								out.write( ", null, null, null )," );
 							}
 						} else {
-							out.write( ", null, null )," );
+							out.write( ", null, null, null )," );
 						}
-					} else {
-						out.write( ", null, null, null )," );
 					}
-				} else {
-					out.write( ", null, null, null )," );
+					out.newLine();
 				}
 			}
-			out.newLine();
 		}
 		
 		writeEnumLastContent(out, file, obtainTableDescription(getFileNameWithoutExtension(file)));
 		
 		out.close();
+	
 	}
 	
 	private static void writeEnumHeader( BufferedWriter out, File file, String enumDescription ) throws IOException {
-		out.write( "package com.esferalia.aon.payroll.certificados.enumeration;" );
+		out.write( "package " + ENUMERATION_CLASS_PACKAGE_NAME + ";" );
 		out.newLine();
 		out.newLine();
 		
@@ -253,9 +303,9 @@ public class CertificadosCodeTablesWriter {
 		
 		out.write( "/** " );
 		out.newLine();
-		out.write( " * Enumeration for represent Certificados (S.E.P.E.) "+getFileNameWithoutExtension(file)+" table codes." );
+		out.write( " * Enumeration for represent Certific@2 (S.E.P.E.) " + getFileNameWithoutExtension(file) + " table codes." );
 		out.newLine();
-		out.write( " * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter." );
+		out.write( " * Generation main class: " + CertificadosCodeTablesWriter.class.getCanonicalName() );
 		out.newLine();
 		out.write( " *  ------------------------------------------------------------------------" );
 		out.newLine();
@@ -388,94 +438,15 @@ public class CertificadosCodeTablesWriter {
 	}
 	
 	/**
-	 * Write data to properties file.
-	 * 
-	 * @param url
-	 * @param file
-	 * @throws IOException
-	 */
-	private static void writeProperties( File file, File newfile ) throws IOException {
-		BufferedWriter out = new BufferedWriter( new FileWriter(newfile) );
-		
-		out.write( " ################################### " );
-		out.newLine();
-		out.write( " # Values for represent Contrata (S.E.P.E.) "+getFileNameWithoutExtension(file)+" table codes." );
-		out.newLine();
-		out.write( " # Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter." );
-		out.newLine();
-		out.write( " #  ------------------------------------------------------------------------" );
-		out.newLine();
-		out.write( " #  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN." );
-		out.newLine();
-		out.write( " # " + obtainTableDescription(getFileNameWithoutExtension(file)) );
-		out.newLine();
-		out.write( " #  ------------------------------------------------------------------------" );
-		out.newLine();
-		out.write( " ################################### " );
-		out.newLine();
-		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-		String currentLine;
-		while((currentLine = reader.readLine()) != null) {
-			StringTokenizer token = new StringTokenizer(currentLine, ";");
-			String code = token.nextToken();
-			String label = token.hasMoreTokens()?token.nextToken():code;
-			out.write( code.replace("\"", "")+"="+label.replace("\"", "") );
-			out.newLine();
-		}
-		out.close();
-	}
-	
-	/**
-	 * Write data to qualifications properties file.
-	 * 
-	 * @param url
-	 * @param file
-	 * @throws IOException
-	 */
-	private static void writeQualificationsProperties( File file, File newfile ) throws IOException {
-		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
-		
-		out.write( " ################################### " );
-		out.newLine();
-		out.write( " # Values for represent Contrata (S.E.P.E.) "+getFileNameWithoutExtension(file)+" table codes." );
-		out.newLine();
-		out.write( " # Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter." );
-		out.newLine();
-		out.write( " #  ------------------------------------------------------------------------" );
-		out.newLine();
-		out.write( " #  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN." );
-		out.newLine();
-		out.write( " # " + obtainTableDescription(getFileNameWithoutExtension(file)) );
-		out.newLine();
-		out.write( " #  ------------------------------------------------------------------------" );
-		out.newLine();
-		out.write( " ################################### " );
-		out.newLine();
-		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-		String currentLine;
-		while((currentLine = reader.readLine()) != null) {
-			currentLine = StringUtils.strip(currentLine);
-			String code = currentLine.substring(0, 12);
-			String label = currentLine.substring(13, currentLine.length());
-			out.write( code.replace("\"", "")+"="+label.replace("\"", "") );
-			out.newLine();
-		}
-		out.close();
-	}
-	
-	
-	/**
 	 * Write data to collections file.
 	 * 
 	 * @throws IOException
 	 */
 	private static void writeCollections( ) throws IOException {
-		File file = new File(COLLECTIONS_CLASS_PATHNAME);
+		File file = new File(COLLECTIONS_CLASS_PATH + COLLECTIONS_CLASS_NAME + JAVA_FILE_EXTENSION);
 		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
 		
-		out.write( "package com.esferalia.aon.ui.payroll.controller;" );
+		out.write( "package " + COLLECTIONS_CLASS_PACKAGE_NAME + ";" );
 		out.newLine();
 		out.newLine();
 
@@ -485,33 +456,33 @@ public class CertificadosCodeTablesWriter {
 		out.newLine();
 		out.write( "import javax.faces.model.SelectItem;" );
 		out.newLine();
-		out.write( "import com.esferalia.aon.payroll.certificados.enumeration.*;" );
+		out.write( "import " + ENUMERATION_CLASS_PACKAGE_NAME + ".*;" );
 		out.newLine();
 		out.newLine();
 
 		out.write( "/** " );
 		out.newLine();
-		out.write( "* Autogenerated class" );
+		out.write( " * Autogenerated class" );
 		out.newLine();
-		out.write( "* " );
+		out.write( " * " );
 		out.newLine();
-		out.write( "* Certificados code tables Collections." );
+		out.write( " * Certific@2 code tables Collections." );
 		out.newLine();
-		out.write( " * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter." );
+		out.write( " * Generation main class: " + CertificadosCodeTablesWriter.class.getCanonicalName() );
 		out.newLine();
 		out.write( "*/ " );
 		out.newLine();
 		out.newLine();
 		
-		out.write( "public class CertificadosCollectionsController {");
+		out.write( "public class " + COLLECTIONS_CLASS_NAME + " {");
 		out.newLine();
 		out.newLine();
 		
-		File folder = new File(ENUMERATIONS_FOLDER_PATHNAME);
+		File folder = new File(ENUMERATIONS_FOLDER_PATH);
 		File[] listOfFiles = folder.listFiles();
 		for (File enumFile : listOfFiles) {
-		    if (enumFile.isFile() && enumFile.getName().endsWith(".java")) {
-		    	String enumName = enumFile.getName().replaceAll(".java", "");
+		    if (enumFile.isFile() && enumFile.getName().endsWith(JAVA_FILE_EXTENSION)) {
+		    	String enumName = enumFile.getName().replaceAll(JAVA_FILE_EXTENSION, "");
 				
 		    	out.write( "\t/** " );
 				out.newLine();
@@ -561,211 +532,192 @@ public class CertificadosCodeTablesWriter {
 	}
 	
 	private static String obtainTableDescription(String tableName) {
-//		try {
-//			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-//			URL[] codeUrls = Classpath.search(cl, CODE_TXT_FILE_URL, LEAME_FILE_NAME+".txt");
-//			URL url = codeUrls[0];
-//		
-//			final String HEADER = " TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN";
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-//			String currentLine;
-//			while((currentLine = reader.readLine()) != null) {
-//				if(currentLine.contains(HEADER)){
-//					break;
-//				}
-//			}
-//			reader.readLine();
-//			while((currentLine = reader.readLine()) != null) {
-//				if( currentLine.contains(tableName) ){
-//					return currentLine;
-//				}
-//			}
-//		} catch (IOException e) {
-//			// nothing to do
-//		}
 		return "No description found";
 	}
 	
-//	/**
-//	 * Write table codes to enum class.
-//	 * 
-//	 * @param url
-//	 * @param file
-//	 * @throws IOException
-//	 */
-//	private static void writeTablesEnum( File file ) throws IOException {
-//		try {
-//			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-//			URL[] codeUrls = Classpath.search(cl, CODE_TXT_FILE_URL, LEAME_FILE_NAME+".txt");
-//			URL url = codeUrls[0];
-//		
-//			final String HEADER = " TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN";
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-//			String currentLine;
-//			while((currentLine = reader.readLine()) != null) {
-//				if(currentLine.contains(HEADER)){
-//					break;
-//				}
-//			}
-//			reader.readLine();
-//			
-//			
-//			BufferedWriter out = new BufferedWriter( new FileWriter(file) );
-//			
-//			out.write( "package com.esferalia.aon.payroll.contrata.enumeration;" );
-//			out.newLine();
-//			out.newLine();
-//			
-//			out.write( "import java.text.ParseException;" );
-//			out.newLine();
-//			out.write( "import java.text.SimpleDateFormat;" );
-//			out.newLine();
-//			out.write( "import java.util.Date;" );
-//			out.newLine();
-//			out.newLine();
-//			
-//			out.write( "/** " );
-//			out.newLine();
-//			out.write( " * Enumeration for represent Contrata (S.E.P.E.) table codes." );
-//			out.newLine();
-//			out.write( " * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter." );
-//			out.newLine();
-//			out.write( " */ " );
-//			out.newLine();
-//			out.write( "public enum " + getFileNameWithoutExtension(url) + " {");
-//			out.newLine();
-//			out.newLine();
-//			
-//			int i = 0;
-//			while((currentLine = reader.readLine()) != null && i < tablesCount) {
-//				i++;
-//				currentLine = StringUtils.strip(currentLine);
-//				
-//				String lastUpdateDate = "";
-//				if(currentLine.length()>10){
-//					lastUpdateDate = currentLine.substring(currentLine.length()-10, currentLine.length());
-//					SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-//					sdf.setLenient(false);
-//					try {
-//						sdf.parse(lastUpdateDate);
-//						currentLine = currentLine.substring(0, currentLine.length()-10);
-//					} catch (ParseException e) {
-//						lastUpdateDate = "";
-//					}
-//				}
-//				
-//				
-//				if(currentLine.contains("TAICLAOC1994") || currentLine.contains("TAICLAOC2011")){
-//					String code = currentLine.substring(0, 12);
-//					out.write( "\t"+"T_"+code.replace("*", "").toUpperCase()+"( \""+code+"\"" );
-//					
-//					String label = StringUtils.strip(currentLine.substring(12, currentLine.length()));
-//					
-//					
-//					out.write(", \""+(label)+"\"");						
-//					out.write(", \""+lastUpdateDate+"\" ),");
-//					out.newLine();
-//					continue;
-//				} 
-//				
-//				StringTokenizer token = new StringTokenizer(currentLine, "\t");
-//				if(token.hasMoreTokens()){
-//					String code = token.nextToken();
-//					out.write( "\t"+"T_"+code.replace("*", "").toUpperCase()+"( \""+code.trim()+"\"" );
-//					if(token.hasMoreTokens()){
-//						String label = StringUtils.strip(token.nextToken());
-//						out.write(", \""+(label)+"\"");
-//						}
-//						out.write(", \""+lastUpdateDate+"\" ),");
-//				}
-//				out.newLine();
-//			}
-//			out.write( "\t;" );
-//			out.newLine();
-//			out.write( "\tprivate final SimpleDateFormat sdf = new SimpleDateFormat(\"dd-MM-yyyy\");" );
-//			out.newLine();
-//			out.write( "\tprivate String code;" );
-//			out.newLine();
-//			out.write( "\tprivate String description;" );
-//			out.newLine();
-//			out.write( "\tprivate String lastUpdateDate;" );
-//			out.newLine();
-//			out.newLine();
-//			
-//			out.write( "\t"+getFileNameWithoutExtension(url)+"( String code, String description, String lastUpdateDate) {" );
-//			out.newLine();
-//			out.write( "\t\tthis.code = code;" );
-//			out.newLine();
-//			out.write( "\t\tthis.description = description;" );
-//			out.newLine();
-//			out.write( "\t\tthis.lastUpdateDate = lastUpdateDate;" );
-//			out.newLine();
-//			out.write( "\t}" );
-//			out.newLine();
-//			out.newLine();
-//			
-//			out.write("\tpublic String getCode() {");
-//			out.newLine();
-//			out.write("\t\treturn code;");
-//			out.newLine();
-//			out.write("\t}");
-//			out.newLine();
-//			out.newLine();
-//			
-//			out.write("\tpublic String getDescription() {");
-//			out.newLine();
-//			out.write("\t\treturn description;");
-//			out.newLine();
-//			out.write("\t}");
-//			out.newLine();
-//			out.newLine();
-//			
-//			out.write("\tpublic Date getLastUpdateDate(){");
-//			out.newLine();
-//			out.write("\t\ttry {");
-//			out.newLine();
-//			out.write("\t\t\tif(lastUpdateDate!=null){");
-//			out.newLine();
-//			out.write("\t\t\t\treturn sdf.parse(lastUpdateDate);");
-//			out.newLine();
-//			out.write("\t\t\t}");
-//			out.newLine();
-//			out.write("\t\t} catch (ParseException e) {");
-//			out.newLine();
-//			out.write("\t\t\t// nothing to do");
-//			out.newLine();
-//			out.write("\t\t}");
-//			out.newLine();
-//			out.write("\treturn null;");
-//			out.newLine();
-//			out.write("\t}");
-//			out.newLine();
-//			out.newLine();
-//			
-//			out.write("\tpublic static "+getFileNameWithoutExtension(url)+" getEnumByValue(String expression) {");
-//			out.newLine();
-//			out.write("\t\tfor( "+getFileNameWithoutExtension(url)+" o : "+getFileNameWithoutExtension(url)+".values() ) {");
-//			out.newLine();
-//			out.write("\t\t\tif ( o.getCode().equals(expression) ) {");
-//			out.newLine();
-//			out.write("\t\t\t\treturn o;");
-//			out.newLine();
-//			out.write("\t\t\t}");
-//			out.newLine();
-//			out.write("\t\t}");
-//			out.newLine();
-//			out.write("\t\treturn null;");
-//			out.newLine();
-//			out.write("\t}");
-//			out.newLine();
-//			out.newLine();
-//			
-//			out.write( "}" );
-//			
-//			out.close();
-//		} catch (IOException e) {
-//			// nothing to do
-//		}
-//	}
+	/**
+	 * Write table codes to enum class.
+	 * 
+	 * @param url
+	 * @param file
+	 * @throws IOException
+	 */
+	private static void writeTablesEnum( File file ) throws IOException {
+		
+		try {
+			File folder = new File(ENUMERATIONS_FOLDER_PATH);
+			File[] listOfFiles = folder.listFiles();
+			
+			
+			BufferedWriter out = new BufferedWriter( new FileWriter(file) );
+			
+			out.write( "package " + ENUMERATION_CLASS_PACKAGE_NAME + ";" );
+			out.newLine();
+			out.newLine();
+			
+			out.write( "import java.text.ParseException;" );
+			out.newLine();
+			out.write( "import java.text.SimpleDateFormat;" );
+			out.newLine();
+			out.write( "import java.util.Date;" );
+			out.newLine();
+			out.newLine();
+			
+			out.write( "/** " );
+			out.newLine();
+			out.write( " * Enumeration for represent Certific@2 (S.E.P.E.) table codes." );
+			out.newLine();
+			out.write( " * Generation main class: " + CertificadosCodeTablesWriter.class.getCanonicalName() );
+			out.newLine();
+			out.write( " */ " );
+			out.newLine();
+			out.write( "public enum " + getFileNameWithoutExtension(file) + " {");
+			out.newLine();
+			out.newLine();
+			
+			
+			for (File enumFile : listOfFiles) {
+			    if (enumFile.isFile() && enumFile.getName().endsWith(JAVA_FILE_EXTENSION)) {
+			    	String enumName = enumFile.getName().replaceAll(JAVA_FILE_EXTENSION, "");
+			    	String enumDescription = null;
+			    	
+			    	if( !enumName.equals(TABLES_ENUM_NAME) ){
+			    		if(getFileNameWithoutExtension(enumFile).equals("DCODEDTC")){
+			    			enumDescription = DCODEDTC_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("DCSPCPTC")){
+			    			enumDescription = DCSPCPTC_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("DGRCOTTC")){
+			    			enumDescription = DGRCOTTC_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("DSTEMCTC")){
+			    			enumDescription = DSTEMCTC_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("SACECOTC")){
+			    			enumDescription = SACECOTC_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("TAICLAOC")){
+			    			enumDescription = TAICLAOC_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("TCGPROVI")){
+			    			enumDescription = TCGPROVI_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("TCHRGCOT")){
+			    			enumDescription = TCHRGCOT_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("Terrores")){
+			    			enumDescription = Terrores_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("TKCSITEM")){
+			    			enumDescription = TKCSITEM_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("TKDIASAC")){
+			    			enumDescription = TKDIASAC_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("TKEINDUC")){
+			    			enumDescription = TKEINDUC_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("TKFCOEFI")){
+			    			enumDescription = TKFCOEFI_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("TKZCARPS")){
+			    			enumDescription = TKZCARPS_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("TLDCAUSS")){
+			    			enumDescription = TLDCAUSS_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("TMJMINSS")){
+			    			enumDescription = TMJMINSS_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("TMPORCRD")){
+			    			enumDescription = TMPORCRD_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("TMQTDIST")){
+			    			enumDescription = TMQTDIST_TABLE_DESCRIPTION;
+			    		} else if(getFileNameWithoutExtension(enumFile).equals("TNWTPCOM")){
+			    			enumDescription = TNWTPCOM_TABLE_DESCRIPTION;
+			    		}
+			    		out.write( "\t"+"T_"+enumName+"( \""+enumName+"\", \"" + enumDescription + "\",null)," );
+
+//			    		out.write( "\t"+"T_"+enumName+"( \""+enumName+"\", " );
+//			    		out.write( "\t"+"T_"+enumName+"( \""+enumName+"\", \"\",null)," );
+//			    		out.write( ",null)," );
+			    		
+			    		out.newLine();
+			    	}
+			    }
+			}
+			
+			out.write( "\t;" );
+			out.newLine();
+			out.write( "\tprivate final SimpleDateFormat sdf = new SimpleDateFormat(\"dd-MM-yyyy\");" );
+			out.newLine();
+			out.write( "\tprivate String code;" );
+			out.newLine();
+			out.write( "\tprivate String description;" );
+			out.newLine();
+			out.write( "\tprivate String lastUpdateDate;" );
+			out.newLine();
+			out.newLine();
+			
+			out.write( "\t"+getFileNameWithoutExtension(file)+"( String code, String description, String lastUpdateDate) {" );
+			out.newLine();
+			out.write( "\t\tthis.code = code;" );
+			out.newLine();
+			out.write( "\t\tthis.description = description;" );
+			out.newLine();
+			out.write( "\t\tthis.lastUpdateDate = lastUpdateDate;" );
+			out.newLine();
+			out.write( "\t}" );
+			out.newLine();
+			out.newLine();
+			
+			out.write("\tpublic String getCode() {");
+			out.newLine();
+			out.write("\t\treturn code;");
+			out.newLine();
+			out.write("\t}");
+			out.newLine();
+			out.newLine();
+			
+			out.write("\tpublic String getDescription() {");
+			out.newLine();
+			out.write("\t\treturn description;");
+			out.newLine();
+			out.write("\t}");
+			out.newLine();
+			out.newLine();
+			
+			out.write("\tpublic Date getLastUpdateDate(){");
+			out.newLine();
+			out.write("\t\ttry {");
+			out.newLine();
+			out.write("\t\t\tif(lastUpdateDate!=null){");
+			out.newLine();
+			out.write("\t\t\t\treturn sdf.parse(lastUpdateDate);");
+			out.newLine();
+			out.write("\t\t\t}");
+			out.newLine();
+			out.write("\t\t} catch (ParseException e) {");
+			out.newLine();
+			out.write("\t\t\t// nothing to do");
+			out.newLine();
+			out.write("\t\t}");
+			out.newLine();
+			out.write("\treturn null;");
+			out.newLine();
+			out.write("\t}");
+			out.newLine();
+			out.newLine();
+			
+			out.write("\tpublic static "+getFileNameWithoutExtension(file)+" getEnumByValue(String expression) {");
+			out.newLine();
+			out.write("\t\tfor( "+getFileNameWithoutExtension(file)+" o : "+getFileNameWithoutExtension(file)+".values() ) {");
+			out.newLine();
+			out.write("\t\t\tif ( o.getCode().equals(expression) ) {");
+			out.newLine();
+			out.write("\t\t\t\treturn o;");
+			out.newLine();
+			out.write("\t\t\t}");
+			out.newLine();
+			out.write("\t\t}");
+			out.newLine();
+			out.write("\t\treturn null;");
+			out.newLine();
+			out.write("\t}");
+			out.newLine();
+			out.newLine();
+			
+			out.write( "}" );
+			
+			out.close();
+		} catch (IOException e) {
+			// nothing to do
+		}
+	}
 	
 }

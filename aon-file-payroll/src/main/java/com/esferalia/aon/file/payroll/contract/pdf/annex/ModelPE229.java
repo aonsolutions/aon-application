@@ -11,10 +11,9 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
-import com.esferalia.aon.file.payroll.contrata.ContrataParams;
+import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.lowagie.text.pdf.PdfReader;
 
@@ -29,8 +28,7 @@ public class ModelPE229 extends AbstractAnnexModel {
 		super.documentName = MODEL_NAME;
 	}
 	
-	@Override
-	public void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
 		try {
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
@@ -46,11 +44,6 @@ public class ModelPE229 extends AbstractAnnexModel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	private Boolean isQuoteBonus(Contract contract) {
-		String subsidized = getContractDataMap(contract).get(ContextVariable.SUBSIDIZED.getName());
-		return Boolean.parseBoolean(subsidized);
 	}
 	
 	public Map<String, String> getContractDataMap(Contract contract) {

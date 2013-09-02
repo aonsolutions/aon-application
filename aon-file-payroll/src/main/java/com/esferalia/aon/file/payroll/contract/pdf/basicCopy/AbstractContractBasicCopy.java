@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -19,15 +20,13 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
-import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
-import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
-import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.AcroFields;
 import com.lowagie.text.pdf.PdfDictionary;
@@ -46,11 +45,11 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 	final String ENTERPRISE_CIF = "cif";
 	final String ENTERPRISE_NAME = "razsoc";
 	final String ENTERPRISE_ADDRESS = "domsocialem";
-	final String ENTERPRISE_TOWN_CODE1 = "codmuniem1";
-	final String ENTERPRISE_TOWN_CODE2 = "codmuniem2";
-	final String ENTERPRISE_TOWN_CODE3 = "codmuniem3";
-	final String ENTERPRISE_TOWN_CODE4 = "codmuniem4";
-	final String ENTERPRISE_TOWN_CODE5 = "codmuniem5";
+	final String ENTERPRISE_MUNICIPALITY_CODE1 = "codmuniem1";
+	final String ENTERPRISE_MUNICIPALITY_CODE2 = "codmuniem2";
+	final String ENTERPRISE_MUNICIPALITY_CODE3 = "codmuniem3";
+	final String ENTERPRISE_MUNICIPALITY_CODE4 = "codmuniem4";
+	final String ENTERPRISE_MUNICIPALITY_CODE5 = "codmuniem5";
 	final String ENTERPRISE_DIR_STAFF_NAME = "nomrepr";
 	
 	/*
@@ -185,8 +184,6 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 		return null;
 	}
 
-	public abstract void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException;
-
 	public void loadPdfFields(ContractAttachment contractPdfDraft) {
 		try {
 			PdfReader reader = new PdfReader(contractPdfDraft.getData());
@@ -296,12 +293,23 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 			// do nothing
 		}
 		setPdfFieldValue(ENTERPRISE_NAME,contract.getWorkPlace().getEnterprise().getRegistry().getFullName());
-		setPdfFieldValue(ENTERPRISE_ADDRESS,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getFullAddress());
-		setPdfFieldValue(ENTERPRISE_TOWN_CODE1,null);
-		setPdfFieldValue(ENTERPRISE_TOWN_CODE2,null);
-		setPdfFieldValue(ENTERPRISE_TOWN_CODE3,null);
-		setPdfFieldValue(ENTERPRISE_TOWN_CODE4,null);
-		setPdfFieldValue(ENTERPRISE_TOWN_CODE5,null);
+		
+		RegistryAddress address = contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress();
+		setPdfFieldValue(ENTERPRISE_ADDRESS,address.getFullAddress());
+		try {
+			// TODO: Enterprise municipality name in the contract basic copy?
+//			ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
+//			setPdfFieldValue(ENTERPRISE_MUNICIPALITY_NAME,bundle.getString(address.getMunicipalityCode()));
+			setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE1,address.getMunicipalityCode().substring(0, 1));
+			setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE2,address.getMunicipalityCode().substring(1, 2));
+			setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE3,address.getMunicipalityCode().substring(2, 3));
+			setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE4,address.getMunicipalityCode().substring(3, 4));
+			setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE5,address.getMunicipalityCode().substring(4, 5));
+		} catch (StringIndexOutOfBoundsException aie) {
+			// do nothing
+		} catch (NullPointerException npe) {
+			// do nothing
+		}
 		/*
 		 * Employee fields
 		 */

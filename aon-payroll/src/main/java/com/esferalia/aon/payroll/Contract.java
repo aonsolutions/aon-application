@@ -47,17 +47,17 @@ public class Contract extends ContractDB {
 	
 	@Transient
 	public boolean isBlocked() {
-		return getStatus() == ContractStatus.BLOCKED;
+		return getSsStatus() == ContractStatus.BLOCKED;
 	}
 	
 	@Transient
 	public boolean isPending() {
-		return getStatus() == ContractStatus.PENDING;
+		return getSsStatus() == ContractStatus.PENDING;
 	}
 	
 	@Transient
 	public boolean isProcessed() {
-		return getStatus() == ContractStatus.PROCESSED;
+		return getSsStatus() == ContractStatus.PROCESSED;
 	}
 
 	@Transient

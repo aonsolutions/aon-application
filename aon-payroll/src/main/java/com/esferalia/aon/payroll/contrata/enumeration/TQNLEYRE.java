@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /** 
- * Enumeration for represent Contrata (S.E.P.E.) TQNLEYRE table codes.
- * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter.
+ * Enumeration for represent Contrat@ (S.E.P.E.) TQNLEYRE table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  * *TQNLEYRE	LEYES DE REDUCCIÓN						17-04-2013

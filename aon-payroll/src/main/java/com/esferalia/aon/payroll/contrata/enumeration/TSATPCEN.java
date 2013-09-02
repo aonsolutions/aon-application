@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /** 
- * Enumeration for represent Contrata (S.E.P.E.) TSATPCEN table codes.
- * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter.
+ * Enumeration for represent Contrat@ (S.E.P.E.) TSATPCEN table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  * *TSATPCEN	TIPOS DE CENTRO							22-03-2012

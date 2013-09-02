@@ -13,28 +13,36 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.util.Classpath;
 
 public class ContrataCodeTablesWriter {
 	
-	final static String ENUMERATIONS_FOLDER_PATHNAME 		= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/contrata/enumeration/";
-	final static String TOWNS_PROPERTIES_PATHNAME 			= "/AON-TRUNK/aon.parent/aon-payroll/src/main/resources/com/esferalia/aon/payroll/i18n/towns.properties";
+	final static String ENUMERATIONS_FOLDER_PATH 		= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/contrata/enumeration/";
+	final static String COLLECTIONS_CLASS_PATH			= "/AON-TRUNK/aon.parent/aon-ui-sepe/src/main/java/com/esferalia/aon/ui/sepe/controller/";
+	final static String COLLECTIONS_CLASS_NAME			= "ContrataCollectionsController";
+	final static String COLLECTIONS_CLASS_PACKAGE_NAME	= "com.esferalia.aon.ui.sepe.controller";
+
+	public final static String ENUMERATION_CLASS_PACKAGE_NAME = "com.esferalia.aon.payroll.contrata.enumeration";
+	
+	final static String JAVA_FILE_EXTENSION = ".java";
+	
+	final static String MUNICIPALITIES_PROPERTIES_PATHNAME 	= "/AON-TRUNK/aon.parent/aon-payroll/src/main/resources/com/esferalia/aon/payroll/i18n/municipalities.properties";
 	final static String QUALIFICATIONS_PROPERTIES_PATHNAME 	= "/AON-TRUNK/aon.parent/aon-payroll/src/main/resources/com/esferalia/aon/payroll/i18n/qualifications.properties";
 	final static String ZIP_PROPERTIES_PATHNAME 			= "/AON-TRUNK/aon.parent/aon-payroll/src/main/resources/com/esferalia/aon/payroll/i18n/zip.properties";
-	final static String COLLECTIONS_CLASS_PATHNAME 			= "/AON-TRUNK/aon.parent/aon-ui-payroll/src/main/java/com/esferalia/aon/ui/payroll/controller/ContrataCollectionsController.java";
 	
 	final static String ZIP_CONTAINER_URL			= "com/esferalia/aon/payroll/sepe/contrata/";
 	final static String CODE_FILE_NAME				= "TABLASXML50";
 	final static String ERROR_CODE_FILE_NAME		= "TRespuestaXML50";
 	
-	final static String TOWNS_FILE_NAME 			= "TDPMUNIC";
+	final static String ERROR_FILE_NAME 			= "TERRORES";
+	final static String MUNICIPALITIES_FILE_NAME 	= "TDPMUNIC";
 	final static String LEAME_FILE_NAME 			= "LEAME";
 	final static String LEAME_FILE_ENUM_NAME 		= "ContrataCodeTables";
 	final static String LEAME_RESPUESTA_FILE_NAME 	= "LEAME_RESPUESTA";
@@ -43,10 +51,10 @@ public class ContrataCodeTablesWriter {
 	final static String QUALIFICATIONS_FILE_NAME	= "THITIACA";
 	
 	private static int tablesCount;
-	private static String CODE_TXT_FILE_URL = "/tmp/contrata/codeTables/";
-	private static String ERROR_CODE_TXT_FILE_URL = "/tmp/contrata/errorCodeTables/";
+	private static String CODE_TXT_FILE_PATH 		= "/tmp/contrata/codeTables/";
+	private static String ERROR_CODE_TXT_FILE_PATH 	= "/tmp/contrata/errorCodeTables/";
 	
-	private static String leamePath;
+	private static String leameFilePath;
 	
 	/**
 	 * @param args
@@ -65,19 +73,22 @@ public class ContrataCodeTablesWriter {
 		
 		for(URL url: codeTablesZip){
 			if(getFileNameWithoutExtension(url).equals(CODE_FILE_NAME)){
-				uncompressZipData(url.openStream(), new File(CODE_TXT_FILE_URL));
-				File codeDir = new File(CODE_TXT_FILE_URL);
+				uncompressZipData(url.openStream(), new File(CODE_TXT_FILE_PATH));
+				File codeDir = new File(CODE_TXT_FILE_PATH);
 				
-				leamePath = codeDir.getAbsolutePath() + "\\" + LEAME_FILE_NAME + ".txt";
+				leameFilePath = codeDir.getAbsolutePath() + "\\" + LEAME_FILE_NAME + ".txt";
 				
 				File[] filesList = codeDir.listFiles();
 				tablesCount = filesList.length;
 				
-				
+				System.out.println("*****************************************");
+				System.out.println("*** SEPE - TABLAS DE CODIGOS DE CONTRATA ");
+				System.out.println("*****************************************");
+				System.out.println("*** Iniciando proceso. " + new Date());
 				for(File file: filesList){
-					if(getFileNameWithoutExtension(file).equals(TOWNS_FILE_NAME)){
-						File newFile = new File(TOWNS_PROPERTIES_PATHNAME);
-						System.out.print("#### towns.properties en proceso ...");
+					if(getFileNameWithoutExtension(file).equals(MUNICIPALITIES_FILE_NAME)){
+						File newFile = new File(MUNICIPALITIES_PROPERTIES_PATHNAME);
+						System.out.print("#### municipalities.properties en proceso ...");
 						writeProperties(file, newFile);
 						System.out.println(" generado!");
 						propertiesCount++;
@@ -90,7 +101,7 @@ public class ContrataCodeTablesWriter {
 						propertiesCount++;
 						tablesCount++;
 					} else if(getFileNameWithoutExtension(file).equals(QUALIFICATIONS_FILE_NAME) ){
-//						file = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(url)+".java");
+//						file = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(url) + JAVA_FILE_EXTENSION);
 //						System.out.print("Enum "+getFileNameWithoutExtension(url)+" en proceso ...");
 //						writeQualificationsEnum(url, file);
 						File newFile = new File(QUALIFICATIONS_PROPERTIES_PATHNAME);
@@ -100,7 +111,7 @@ public class ContrataCodeTablesWriter {
 						propertiesCount++;
 						tablesCount++;
 					} else if( getFileNameWithoutExtension(file).equals(LEAME_FILE_ENUM_NAME) ){
-						File newFile = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(file)+".java");
+						File newFile = new File(ENUMERATIONS_FOLDER_PATH + getFileNameWithoutExtension(file) + JAVA_FILE_EXTENSION);
 						System.out.print("Enum "+getFileNameWithoutExtension(file)+" en proceso ...");
 						writeTablesEnum(file, newFile);
 						System.out.println(" generado!");
@@ -111,7 +122,7 @@ public class ContrataCodeTablesWriter {
 							&& !getFileNameWithoutExtension(file).equals(ZIP_FILE_NAME) 
 							&& !getFileNameWithoutExtension(file).equals(QUALIFICATIONS_FILE_NAME)
 							){
-						File newFile = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(file)+".java");
+						File newFile = new File(ENUMERATIONS_FOLDER_PATH + getFileNameWithoutExtension(file) + JAVA_FILE_EXTENSION);
 						System.out.print("Enum "+getFileNameWithoutExtension(file)+" en proceso ...");
 						writeEnum(file, newFile);
 						System.out.println(" generado!");
@@ -120,13 +131,13 @@ public class ContrataCodeTablesWriter {
 					}
 				}
 			} else if(getFileNameWithoutExtension(url).equals(ERROR_CODE_FILE_NAME)){
-				uncompressZipData(url.openStream(), new File(ERROR_CODE_TXT_FILE_URL));
-				File errorCodeDir = new File(ERROR_CODE_TXT_FILE_URL);
+				uncompressZipData(url.openStream(), new File(ERROR_CODE_TXT_FILE_PATH));
+				File errorCodeDir = new File(ERROR_CODE_TXT_FILE_PATH);
 				File[] errorFilesList = errorCodeDir.listFiles();
 				tablesCount += errorFilesList.length;
 				for(File file: errorFilesList){
 					if(!getFileNameWithoutExtension(file).equals(LEAME_RESPUESTA_FILE_NAME)){
-						File newFile = new File(ENUMERATIONS_FOLDER_PATHNAME+getFileNameWithoutExtension(file)+".java");
+						File newFile = new File(ENUMERATIONS_FOLDER_PATH + getFileNameWithoutExtension(file) + JAVA_FILE_EXTENSION);
 						System.out.print("Enum "+getFileNameWithoutExtension(file)+" en proceso ...");
 						writeEnum(file, newFile);
 						System.out.println(" generado!");
@@ -295,7 +306,7 @@ public class ContrataCodeTablesWriter {
 	}
 	
 	private static void writeEnumHeader( BufferedWriter out, File file, String enumDescription ) throws IOException {
-		out.write( "package com.esferalia.aon.payroll.contrata.enumeration;" );
+		out.write( "package " + ENUMERATION_CLASS_PACKAGE_NAME + ";" );
 		out.newLine();
 		out.newLine();
 		
@@ -310,9 +321,9 @@ public class ContrataCodeTablesWriter {
 		
 		out.write( "/** " );
 		out.newLine();
-		out.write( " * Enumeration for represent Contrata (S.E.P.E.) "+getFileNameWithoutExtension(file)+" table codes." );
+		out.write( " * Enumeration for represent Contrat@ (S.E.P.E.) "+getFileNameWithoutExtension(file)+" table codes." );
 		out.newLine();
-		out.write( " * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter." );
+		out.write( " * Generation main class: " + ContrataCodeTablesWriter.class.getCanonicalName() );
 		out.newLine();
 		out.write( " *  ------------------------------------------------------------------------" );
 		out.newLine();
@@ -456,9 +467,9 @@ public class ContrataCodeTablesWriter {
 		
 		out.write( " ################################### " );
 		out.newLine();
-		out.write( " # Values for represent Contrata (S.E.P.E.) "+getFileNameWithoutExtension(file)+" table codes." );
+		out.write( " # Values for represent Contrat@ (S.E.P.E.) "+getFileNameWithoutExtension(file)+" table codes." );
 		out.newLine();
-		out.write( " # Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter." );
+		out.write( " # Generation main class: " + ContrataCodeTablesWriter.class.getCanonicalName() );
 		out.newLine();
 		out.write( " #  ------------------------------------------------------------------------" );
 		out.newLine();
@@ -495,9 +506,9 @@ public class ContrataCodeTablesWriter {
 		
 		out.write( " ################################### " );
 		out.newLine();
-		out.write( " # Values for represent Contrata (S.E.P.E.) "+getFileNameWithoutExtension(file)+" table codes." );
+		out.write( " # Values for represent Contrat@ (S.E.P.E.) "+getFileNameWithoutExtension(file)+" table codes." );
 		out.newLine();
-		out.write( " # Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter." );
+		out.write( " # Generation main class: " + ContrataCodeTablesWriter.class.getCanonicalName() );
 		out.newLine();
 		out.write( " #  ------------------------------------------------------------------------" );
 		out.newLine();
@@ -529,10 +540,10 @@ public class ContrataCodeTablesWriter {
 	 * @throws IOException
 	 */
 	private static void writeCollections( ) throws IOException {
-		File file = new File(COLLECTIONS_CLASS_PATHNAME);
+		File file = new File(COLLECTIONS_CLASS_PATH + COLLECTIONS_CLASS_NAME + JAVA_FILE_EXTENSION);
 		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
 		
-		out.write( "package com.esferalia.aon.ui.payroll.controller;" );
+		out.write( "package " + COLLECTIONS_CLASS_PACKAGE_NAME + ";" );
 		out.newLine();
 		out.newLine();
 
@@ -542,33 +553,33 @@ public class ContrataCodeTablesWriter {
 		out.newLine();
 		out.write( "import javax.faces.model.SelectItem;" );
 		out.newLine();
-		out.write( "import com.esferalia.aon.payroll.contrata.enumeration.*;" );
+		out.write( "import " + ENUMERATION_CLASS_PACKAGE_NAME + ".*;" );
 		out.newLine();
 		out.newLine();
 
 		out.write( "/** " );
 		out.newLine();
-		out.write( "* Autogenerated class" );
+		out.write( " * Autogenerated class" );
 		out.newLine();
-		out.write( "* " );
+		out.write( " * " );
 		out.newLine();
-		out.write( "* Contrata code tables Collections." );
+		out.write( " * Contrat@ code tables Collections." );
 		out.newLine();
-		out.write( " * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter." );
+		out.write( " * Generation main class: " + ContrataCodeTablesWriter.class.getCanonicalName() );
 		out.newLine();
 		out.write( "*/ " );
 		out.newLine();
 		out.newLine();
 		
-		out.write( "public class ContrataCollectionsController {");
+		out.write( "public class " + COLLECTIONS_CLASS_NAME + " {");
 		out.newLine();
 		out.newLine();
 		
-		File folder = new File(ENUMERATIONS_FOLDER_PATHNAME);
+		File folder = new File(ENUMERATIONS_FOLDER_PATH);
 		File[] listOfFiles = folder.listFiles();
 		for (File enumFile : listOfFiles) {
-		    if (enumFile.isFile() && enumFile.getName().endsWith(".java")) {
-		    	String enumName = enumFile.getName().replaceAll(".java", "");
+		    if (enumFile.isFile() && enumFile.getName().endsWith(JAVA_FILE_EXTENSION)) {
+		    	String enumName = enumFile.getName().replaceAll(JAVA_FILE_EXTENSION, "");
 				
 		    	out.write( "\t/** " );
 				out.newLine();
@@ -624,7 +635,7 @@ public class ContrataCodeTablesWriter {
 //			URL url = codeUrls[0];
 		
 			final String HEADER = " TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN";
-			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(leamePath)));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(leameFilePath)));
 			String currentLine;
 			while((currentLine = reader.readLine()) != null) {
 				if(currentLine.contains(HEADER)){
@@ -670,7 +681,7 @@ public class ContrataCodeTablesWriter {
 			
 			BufferedWriter out = new BufferedWriter( new FileWriter(newFile) );
 			
-			out.write( "package com.esferalia.aon.payroll.contrata.enumeration;" );
+			out.write( "package " + ENUMERATION_CLASS_PACKAGE_NAME + ";" );
 			out.newLine();
 			out.newLine();
 			
@@ -684,9 +695,9 @@ public class ContrataCodeTablesWriter {
 			
 			out.write( "/** " );
 			out.newLine();
-			out.write( " * Enumeration for represent Contrata (S.E.P.E.) table codes." );
+			out.write( " * Enumeration for represent Contrat@ (S.E.P.E.) table codes." );
 			out.newLine();
-			out.write( " * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter." );
+			out.write( " * Generation main class: " + ContrataCodeTablesWriter.class.getCanonicalName() );
 			out.newLine();
 			out.write( " */ " );
 			out.newLine();
@@ -733,11 +744,15 @@ public class ContrataCodeTablesWriter {
 					if(token.hasMoreTokens()){
 						String label = StringUtils.strip(token.nextToken());
 						out.write(", \""+(label)+"\"");
-						}
-						out.write(", \""+lastUpdateDate+"\" ),");
+					}
+					out.write(", \""+lastUpdateDate+"\" ),");
 				}
 				out.newLine();
 			}
+			
+			out.write( "\t"+"T_"+ERROR_CODE_FILE_NAME+"( \""+ERROR_FILE_NAME+"\", \"Errores de la comunicacion\",null)" );
+			out.newLine();
+			
 			out.write( "\t;" );
 			out.newLine();
 			out.write( "\tprivate final SimpleDateFormat sdf = new SimpleDateFormat(\"dd-MM-yyyy\");" );

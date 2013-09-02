@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -21,16 +22,15 @@ import com.code.aon.common.util.Classpath;
 import com.code.aon.geozone.GeoTree;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryDirStaff;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
-import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
-import com.esferalia.aon.file.payroll.contrata.ContractExtensionParams;
-import com.esferalia.aon.file.payroll.contrata.ContrataParams;
+import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
+import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
-import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.AcroFields;
 import com.lowagie.text.pdf.PdfDictionary;
@@ -56,12 +56,12 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 	final String ENTERPRISE_COUNTRY_CODE1 = "codpaisem1";
 	final String ENTERPRISE_COUNTRY_CODE2 = "codpaisem2";
 	final String ENTERPRISE_COUNTRY_CODE3 = "codpaisem3";
-	final String ENTERPRISE_TOWN = "Texto2mun1";
-	final String ENTERPRISE_TOWN_CODE1 = "codmuniem1";
-	final String ENTERPRISE_TOWN_CODE2 = "codmuniem2";
-	final String ENTERPRISE_TOWN_CODE3 = "codmuniem3";
-	final String ENTERPRISE_TOWN_CODE4 = "codmuniem4";
-	final String ENTERPRISE_TOWN_CODE5 = "codmuniem5";
+	final String ENTERPRISE_MUNICIPALITY = "Texto2muni1";
+	final String ENTERPRISE_MUNICIPALITY_CODE1 = "codmuniem1";
+	final String ENTERPRISE_MUNICIPALITY_CODE2 = "codmuniem2";
+	final String ENTERPRISE_MUNICIPALITY_CODE3 = "codmuniem3";
+	final String ENTERPRISE_MUNICIPALITY_CODE4 = "codmuniem4";
+	final String ENTERPRISE_MUNICIPALITY_CODE5 = "codmuniem5";
 	final String ENTERPRISE_ZIP1 = "codpostem1";
 	final String ENTERPRISE_ZIP2 = "codpostem2";
 	final String ENTERPRISE_ZIP3 = "codpostem3";
@@ -91,12 +91,12 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 	final String WORKPLACE_COUNTRY_CODE1 = "codpaisct1";
 	final String WORKPLACE_COUNTRY_CODE2 = "codpaisct2";
 	final String WORKPLACE_COUNTRY_CODE3 = "codpaisct3";
-	final String WORKPLACE_TOWN = "Texto4muni3";
-	final String WORKPLACE_TOWN_CODE1 = "codmunict1";
-	final String WORKPLACE_TOWN_CODE2 = "codmunict2";
-	final String WORKPLACE_TOWN_CODE3 = "codmunict3";
-	final String WORKPLACE_TOWN_CODE4 = "codmunict4";
-	final String WORKPLACE_TOWN_CODE5 = "codmunict5";
+	final String WORKPLACE_MUNICIPALITY = "Texto4muni3";
+	final String WORKPLACE_MUNICIPALITY_CODE1 = "codmunict1";
+	final String WORKPLACE_MUNICIPALITY_CODE2 = "codmunict2";
+	final String WORKPLACE_MUNICIPALITY_CODE3 = "codmunict3";
+	final String WORKPLACE_MUNICIPALITY_CODE4 = "codmunict4";
+	final String WORKPLACE_MUNICIPALITY_CODE5 = "codmunict5";
 	
 	/*
 	 * Contract employee fields
@@ -112,12 +112,12 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 	final String EMPLOYEE_COUNTRY_CODE1 = "codnactra1";
 	final String EMPLOYEE_COUNTRY_CODE2 = "codnactra2";
 	final String EMPLOYEE_COUNTRY_CODE3 = "codnactra3";
-	final String EMPLOYEE_ADDRESS_TOWN = "Texto6domi20";
-	final String EMPLOYEE_ADDRESS_TOWN_CODE1 = "codmunitra1";
-	final String EMPLOYEE_ADDRESS_TOWN_CODE2 = "codmunitra2";
-	final String EMPLOYEE_ADDRESS_TOWN_CODE3 = "codmunitra3";
-	final String EMPLOYEE_ADDRESS_TOWN_CODE4 = "codmunitra4";
-	final String EMPLOYEE_ADDRESS_TOWN_CODE5 = "codmunitra5";
+	final String EMPLOYEE_ADDRESS_MUNICIPALITY = "Texto6domi20";
+	final String EMPLOYEE_ADDRESS_MUNICIPALITY_CODE1 = "codmunitra1";
+	final String EMPLOYEE_ADDRESS_MUNICIPALITY_CODE2 = "codmunitra2";
+	final String EMPLOYEE_ADDRESS_MUNICIPALITY_CODE3 = "codmunitra3";
+	final String EMPLOYEE_ADDRESS_MUNICIPALITY_CODE4 = "codmunitra4";
+	final String EMPLOYEE_ADDRESS_MUNICIPALITY_CODE5 = "codmunitra5";
 	final String EMPLOYEE_ADDRESS_COUNTRY = "Texto7domi21";
 	final String EMPLOYEE_ADDRESS_COUNTRY_CODE1 = "codpaisdomtr1";
 	final String EMPLOYEE_ADDRESS_COUNTRY_CODE2 = "codpaisdomtr2";
@@ -230,8 +230,6 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 		return null;
 	}
 
-	public abstract void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException;
-
 	public void loadPdfFields(ContractAttachment contractPdfDraft) {
 		try {
 			PdfReader reader = new PdfReader(contractPdfDraft.getData());
@@ -279,7 +277,7 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 		return urls[0];
 	}
 	
-	protected void readPdfFields(PdfReader reader) throws IOException{
+	protected void readPdfFields(PdfReader reader) throws IOException {
 		setDocumentWidth((double)reader.getPageSize(1).getWidth());
 		setDocumentHeight((double)reader.getPageSize(1).getHeight());
 		setNumberOfDocumentPages(reader.getNumberOfPages());
@@ -328,7 +326,10 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 		}
 	}
 	
-	public void loadPdfCommonFields(Contract contract, ContrataParams contrataParams) throws ManagerBeanException{
+	public void loadPdfCommonFields(Contract contract, IContrataParams contrataParams) throws ManagerBeanException{
+		
+		ContrataContratoParams params = (ContrataContratoParams) contrataParams;
+		
 		/* 
 		 * Contract enterprise fields
 		 */
@@ -363,12 +364,22 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 		} catch (NullPointerException npe) {
 			// do nothing
 		}
-		setPdfFieldValue(ENTERPRISE_TOWN,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getCity());
-		setPdfFieldValue(ENTERPRISE_TOWN_CODE1,null);
-		setPdfFieldValue(ENTERPRISE_TOWN_CODE2,null);
-		setPdfFieldValue(ENTERPRISE_TOWN_CODE3,null);
-		setPdfFieldValue(ENTERPRISE_TOWN_CODE4,null);
-		setPdfFieldValue(ENTERPRISE_TOWN_CODE5,null);
+		
+		try {
+			RegistryAddress address = contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress();
+			ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
+			setPdfFieldValue(ENTERPRISE_MUNICIPALITY,bundle.getString(address.getMunicipalityCode()));
+			setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE1,address.getMunicipalityCode().substring(0, 1));
+			setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE2,address.getMunicipalityCode().substring(1, 2));
+			setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE3,address.getMunicipalityCode().substring(2, 3));
+			setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE4,address.getMunicipalityCode().substring(3, 4));
+			setPdfFieldValue(ENTERPRISE_MUNICIPALITY_CODE5,address.getMunicipalityCode().substring(4, 5));
+		} catch (StringIndexOutOfBoundsException aie) {
+			// do nothing
+		} catch (NullPointerException npe) {
+			// do nothing
+		}
+		
 		try {	
 			setPdfFieldValue(ENTERPRISE_ZIP1,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(0, 1));
 			setPdfFieldValue(ENTERPRISE_ZIP2,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(1, 2));
@@ -410,12 +421,21 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 			setPdfFieldValue(WORKPLACE_COUNTRY_CODE1,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(0,1));
 			setPdfFieldValue(WORKPLACE_COUNTRY_CODE2,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(1,2));
 			setPdfFieldValue(WORKPLACE_COUNTRY_CODE3,String.valueOf(obtainCountryByValue(country).getIsoNum()).substring(2,3));
-			setPdfFieldValue(WORKPLACE_TOWN,contract.getWorkPlace().getAddress().getCity());
-			setPdfFieldValue(WORKPLACE_TOWN_CODE1,null);
-			setPdfFieldValue(WORKPLACE_TOWN_CODE2,null);
-			setPdfFieldValue(WORKPLACE_TOWN_CODE3,null);
-			setPdfFieldValue(WORKPLACE_TOWN_CODE4,null);
-			setPdfFieldValue(WORKPLACE_TOWN_CODE5,null);
+		} catch (StringIndexOutOfBoundsException aie) {
+			// do nothing
+		} catch (NullPointerException npe) {
+			// do nothing
+		}
+			
+		try {
+			RegistryAddress address = contract.getWorkPlace().getAddress();
+			ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
+			setPdfFieldValue(WORKPLACE_MUNICIPALITY,bundle.getString(address.getMunicipalityCode()));
+			setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE1,address.getMunicipalityCode().substring(0, 1));
+			setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE2,address.getMunicipalityCode().substring(1, 2));
+			setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE3,address.getMunicipalityCode().substring(2, 3));
+			setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE4,address.getMunicipalityCode().substring(3, 4));
+			setPdfFieldValue(WORKPLACE_MUNICIPALITY_CODE5,address.getMunicipalityCode().substring(4, 5));
 		} catch (StringIndexOutOfBoundsException aie) {
 			// do nothing
 		} catch (NullPointerException npe) {
@@ -431,10 +451,10 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 			setPdfFieldValue(EMPLOYEE_BIRTH_DATE,formatter.format(contract.getPerson().getBirthDate()));
 		}
 		setPdfFieldValue(EMPLOYEE_NSS,contract.getPerson().getSocialSecurityNumber());
-		if(contrataParams!=null){
-			setPdfFieldValue(EMPLOYEE_FORMATION_LEVEL,contrataParams.getNivelFormativo().getDescription());
-			setPdfFieldValue(EMPLOYEE_FORMATION_CODE1,contrataParams.getNivelFormativo().getCode().substring(0, 1));
-			setPdfFieldValue(EMPLOYEE_FORMATION_CODE2,contrataParams.getNivelFormativo().getCode().substring(1, 2));
+		if(params!=null && params.getNivelFormativo()!=null){
+			setPdfFieldValue(EMPLOYEE_FORMATION_LEVEL,params.getNivelFormativo().getDescription());
+			setPdfFieldValue(EMPLOYEE_FORMATION_CODE1,params.getNivelFormativo().getCode().substring(0, 1));
+			setPdfFieldValue(EMPLOYEE_FORMATION_CODE2,params.getNivelFormativo().getCode().substring(1, 2));
 		}
 		try {
 			setPdfFieldValue(EMPLOYEE_COUNTRY,String.valueOf(contract.getPerson().getRegistry().getNationality().getName(getLocale())));
@@ -446,13 +466,15 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 		} catch (NullPointerException npe) {
 			// do nothing
 		}
-		setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN,contract.getPerson().getRegistry().getDefaultAddress()!=null?contract.getPerson().getRegistry().getDefaultAddress().getCity():null);
 		try {
-			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE1,null);
-			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE2,null);
-			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE3,null);
-			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE4,null);
-			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE5,null);
+			RegistryAddress address = contract.getPerson().getRegistry().getDefaultAddress();
+			ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
+			setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY,bundle.getString(address.getMunicipalityCode()));
+			setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE1,address.getMunicipalityCode().substring(0, 1));
+			setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE2,address.getMunicipalityCode().substring(1, 2));
+			setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE3,address.getMunicipalityCode().substring(2, 3));
+			setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE4,address.getMunicipalityCode().substring(3, 4));
+			setPdfFieldValue(EMPLOYEE_ADDRESS_MUNICIPALITY_CODE5,address.getMunicipalityCode().substring(4, 5));
 		} catch (StringIndexOutOfBoundsException aie) {
 			// do nothing
 		} catch (NullPointerException npe) {

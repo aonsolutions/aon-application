@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -18,9 +19,11 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAddress;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
-import com.esferalia.aon.file.payroll.contrata.ContrataParams;
+import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
+import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
@@ -86,10 +89,10 @@ public class ModelPE226 extends AbstractContractModel {
 	 * fileds with different labels
 	 */
 	final String ENTERPRISE_COUNTRY1 = "Texto1pais1";
-	final String ENTERPRISE_TOWN1 = "Texto2muni1";
+	final String ENTERPRISE_MUNICIPALITY1 = "Texto2muni1";
 	final String WORKPLACE_COUNTRY1 = "Texto3pais2";
-	final String WORKPLACE_TOWN1 = "Texto4muni2";
-	final String EMPLOYEE_ADDRESS_TOWN1 = "Texto6muni3";
+	final String WORKPLACE_MUNICIPALITY1 = "Texto4muni2";
+	final String EMPLOYEE_ADDRESS_MUNICIPALITY1 = "Texto6muni3";
 	final String EMPLOYEE_ADDRESS_COUNTRY1 = "Texto7pais3";
 	
 	public final static String MODEL_NAME = "PE226";
@@ -99,8 +102,11 @@ public class ModelPE226 extends AbstractContractModel {
 	}
 	
 	@Override
-	public void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
+
+		ContrataContratoParams params = (ContrataContratoParams) contrataParams;
+		
 		try {
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
 			
@@ -132,7 +138,15 @@ public class ModelPE226 extends AbstractContractModel {
 			} catch (NullPointerException npe) {
 				// do nothing
 			}
-			getPdfFieldsMap().get(ENTERPRISE_TOWN1).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getCity());
+			
+			try {
+				RegistryAddress address = contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress();
+				ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
+				getPdfFieldsMap().get(ENTERPRISE_MUNICIPALITY1).setValue(bundle.getString(address.getMunicipalityCode()));
+			} catch (NullPointerException npe) {
+				// do nothing
+			}
+			
 			try {
 				GeoZone country = obtainCountry(contract.getWorkPlace().getAddress().getGeozone());
 				getPdfFieldsMap().get(WORKPLACE_COUNTRY1).setValue(country.getName());
@@ -141,7 +155,20 @@ public class ModelPE226 extends AbstractContractModel {
 			} catch (NullPointerException npe) {
 				// do nothing
 			}
-			getPdfFieldsMap().get(EMPLOYEE_ADDRESS_TOWN1).setValue(contract.getPerson().getRegistry().getDefaultAddress()!=null?contract.getPerson().getRegistry().getDefaultAddress().getCity():null);
+			try {
+				RegistryAddress address = contract.getWorkPlace().getAddress();
+				ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
+				getPdfFieldsMap().get(WORKPLACE_MUNICIPALITY1).setValue(bundle.getString(address.getMunicipalityCode()));
+			} catch (NullPointerException npe) {
+				// do nothing
+			}
+			try {
+				RegistryAddress address = contract.getPerson().getRegistry().getDefaultAddress();
+				ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
+				getPdfFieldsMap().get(EMPLOYEE_ADDRESS_MUNICIPALITY1).setValue(bundle.getString(address.getMunicipalityCode()));
+			} catch (NullPointerException npe) {
+				// do nothing
+			}
 			try {
 				GeoZone country = obtainCountry(contract.getPerson().getRegistry().getDefaultAddress().getGeozone());
 				getPdfFieldsMap().get(EMPLOYEE_ADDRESS_COUNTRY1).setValue(country.getName());
@@ -192,12 +219,12 @@ public class ModelPE226 extends AbstractContractModel {
 			 */
 			if(contrataParams!=null){
 				SimpleDateFormat dateFormatter = new SimpleDateFormat();
-				if(contrataParams.getHorasJornada()!=null){
-					getPdfFieldsMap().get(PE226_YEAR_1_JOURNAL).setValue(String.valueOf(Integer.parseInt(contrataParams.getHorasJornada())));
+				if(params.getHorasJornada()!=null){
+					getPdfFieldsMap().get(PE226_YEAR_1_JOURNAL).setValue(String.valueOf(Integer.parseInt(params.getHorasJornada())));
 					getPdfFieldsMap().get(PE226_YEAR_2_3_JOURNAL).setValue(""); 
-					if(contrataParams.getHorasFormacion()!=null){
-						Integer horasJornada = Integer.parseInt(contrataParams.getHorasJornada());
-						Integer horasFormacion = Integer.parseInt(contrataParams.getHorasFormacion());
+					if(params.getHorasFormacion()!=null){
+						Integer horasJornada = Integer.parseInt(params.getHorasJornada());
+						Integer horasFormacion = Integer.parseInt(params.getHorasFormacion());
 						getPdfFieldsMap().get(PE226_TOTAL_HOURS).setValue(String.valueOf(horasJornada - horasFormacion));
 						if(horasJornada!=null && horasJornada!=0){
 							getPdfFieldsMap().get(PE226_JOURNAL_PERCENT).setValue(String.valueOf(100-(horasFormacion*100/horasJornada)));
@@ -209,7 +236,7 @@ public class ModelPE226 extends AbstractContractModel {
 				if(pw!=null && pw.getAgreement()!=null){
 					getPdfFieldsMap().get(PE226_COLLECTIVE_AGREEMENT).setValue(pw.getAgreement().getDescription());
 				}				
-				getPdfFieldsMap().get(PE226_JOURNAL_HORUS).setValue("");
+				getPdfFieldsMap().get(PE226_JOURNAL_HORUS).setValue(map.get(ContextVariable.WORK_SCHEDULE.getName()));
 				Integer durationInMonths = getMonthsBetweenDates(contract.getStartDate(), contract.getEndDate());
 				getPdfFieldsMap().get(PE226_CONTRACT_DURATION).setValue(durationInMonths!=null?durationInMonths+" meses":"");
 				dateFormatter.applyPattern("dd/MM/yyyy");
@@ -221,10 +248,10 @@ public class ModelPE226 extends AbstractContractModel {
 				getPdfFieldsMap().get(PE226_SALARY).setValue("Según convenio");
 				getPdfFieldsMap().get(PE226_SALARY_PERIOD).setValue("mensuales");
 				getPdfFieldsMap().get(PE226_VACATIONS).setValue("Según convenio");
-				if( contrataParams.getPorcentajeReduccion()!=null){
-					if( contrataParams.getPorcentajeReduccion().equals("75") ){
+				if( params.getPorcentajeReduccion()!=null){
+					if( params.getPorcentajeReduccion().equals("75") ){
 						getPdfFieldsMap().get(PE226_REDUCCTION_75).setValue("true");
-					} else if( contrataParams.getPorcentajeReduccion().equals("100") ){
+					} else if( params.getPorcentajeReduccion().equals("100") ){
 						getPdfFieldsMap().get(PE226_REDUCTION_100).setValue("true");
 					}
 				}
@@ -236,13 +263,6 @@ public class ModelPE226 extends AbstractContractModel {
 
 				getPdfFieldsMap().get(PE226_SEPE_TOWN1).setValue(contract.getWorkPlace().getAddress().getCity());
 				getPdfFieldsMap().get(PE226_SEPE_TOWN2).setValue(contract.getWorkPlace().getAddress().getCity());
-				getPdfFieldsMap().get(PE226_SIGN_TOWN).setValue(contract.getWorkPlace().getAddress().getCity());
-				dateFormatter.applyPattern("dd");
-				getPdfFieldsMap().get(PE226_SIGN_DAY).setValue(dateFormatter.format(contract.getStartDate()));
-				dateFormatter.applyPattern("MMMM");
-				getPdfFieldsMap().get(PE226_SIGN_MONTH).setValue(dateFormatter.format(contract.getStartDate()));
-				dateFormatter.applyPattern("yy");
-				getPdfFieldsMap().get(PE226_SIGN_YEAR).setValue(dateFormatter.format(contract.getStartDate()));
 			}
 			
 		} catch (IOException e) {

@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /** 
- * Enumeration for represent Certificados (S.E.P.E.) TKFCOEFI table codes.
- * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter.
+ * Enumeration for represent Certific@2 (S.E.P.E.) TKFCOEFI table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  * No description found

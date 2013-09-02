@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /** 
- * Enumeration for represent Contrata (S.E.P.E.) TEYTRELE table codes.
- * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter.
+ * Enumeration for represent Contrat@ (S.E.P.E.) TEYTRELE table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  *  TEYTRELE	TIPO DE TRABAJADOR DE RELEVO			

@@ -3,18 +3,22 @@ package com.esferalia.aon.file.payroll.contract.pdf.extension;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
-import com.esferalia.aon.file.payroll.contrata.ContractExtensionParams;
-import com.esferalia.aon.file.payroll.contrata.ContrataParams;
+import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.lowagie.text.pdf.PdfReader;
@@ -56,12 +60,13 @@ public class Extension extends AbstractContractExtension {
 	}
 	
 	@Override
-	public void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
 		
 		try {
 			PdfReader reader = new PdfReader(getContractExtensionUrl(documentName+".pdf"));
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();
+			Map<String, String>  map = getContractDataMap(contract);
 			
 			readPdfFields(reader);
 			
@@ -89,7 +94,8 @@ public class Extension extends AbstractContractExtension {
 			
 			getPdfFieldsMap().get(PE191_SEPE_TOWN).setValue(contract.getWorkPlace().getAddress().getCity());
 			getPdfFieldsMap().get(PE191_CONTRACT_REGULATION_DATE).setValue(null);
-			getPdfFieldsMap().get(PE191_CONTRACT_SEPE_ID).setValue(null);
+			
+			getPdfFieldsMap().get(PE191_CONTRACT_SEPE_ID).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()));
 			
 //			Integer totalDurationInMonths = contractDurationInMonths + extensionDurationInMonths;
 //			getPdfFieldsMap().get(PE191_TOTAL_DURATION1).setValue(totalDurationInMonths!=null?totalDurationInMonths.toString():null);
@@ -114,11 +120,34 @@ public class Extension extends AbstractContractExtension {
 		}
 	}
 	
+	public Map<String, String> getContractDataMap(Contract contract) {
+		Map<String, String> map = new HashMap<String, String>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
+			if(contract.getEndDate()!=null){
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
+			} else {
+				criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+			}
+			for(ITransferObject to: bean.getList(criteria)){
+				ContractData data = (ContractData) to;
+				map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, se devuelve un mapa vacio
+			return map;
+		}
+		return map;
+	}
+	
 	private int getContractExtensionCount(Contract contract) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.CONTRACT_EXTENSION);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.EXTENSION_DOC);
 		return bean.getCount(criteria)+1;
 	}
 

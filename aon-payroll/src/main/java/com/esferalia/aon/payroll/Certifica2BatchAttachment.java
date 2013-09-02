@@ -9,8 +9,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 
 @Entity
-@DiscriminatorValue(value="3")
-public class Certifica2BatchAttachment extends PayrollBatchAttachment {
+@DiscriminatorValue(value="0")
+public class Certifica2BatchAttachment extends SepeBatchAttachment {
 
 	private static final long serialVersionUID = 1L;
 	

@@ -4,7 +4,8 @@ import java.io.IOException;
 
 import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
-import com.esferalia.aon.file.payroll.contrata.ContrataParams;
+import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
+import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -20,9 +21,11 @@ public class BasicCopy extends AbstractContractBasicCopy {
 		super.documentName = BASIC_COPY_NAME;
 	}
 	
-	@Override
-	public void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
+	
+		
+		ContrataContratoParams params = (ContrataContratoParams) contrataParams;
 		
 		try {
 			PdfReader reader = new PdfReader(getContractBasicCopyUrl(documentName+".pdf"));
@@ -32,18 +35,18 @@ public class BasicCopy extends AbstractContractBasicCopy {
 			super.loadPdfCommonFields(contract);
 			
 			if(contrataParams!=null){
-				String horasJornada = contrataParams.getHorasJornada();
+				String horasJornada = params.getHorasJornada();
 				if(horasJornada!=null){
 					getPdfFieldsMap().get(CONTRACT_JOURNAL_HOURS_1).setValue(String.valueOf(Integer.parseInt(horasJornada)));				
 //					getPdfFieldsMap().get(CONTRACT_JOURNAL_HOURS_2).setValue(String.valueOf(minutosJornada));;
 					
-					if(contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_A){
+					if(params.getTipoJornada()==TEQPTIEM.TEQPTIEM_A){
 						getPdfFieldsMap().get(CONTRACT_JOURNAL).setValue("HORAS ANUALES");;
-					} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_D){
+					} else if (params.getTipoJornada()==TEQPTIEM.TEQPTIEM_D){
 						getPdfFieldsMap().get(CONTRACT_JOURNAL).setValue("HORAS DIARIAS");;
-					} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_M){
+					} else if (params.getTipoJornada()==TEQPTIEM.TEQPTIEM_M){
 						getPdfFieldsMap().get(CONTRACT_JOURNAL).setValue("HORAS MENSUALES");;
-					} else if (contrataParams.getTipoJornada()==TEQPTIEM.TEQPTIEM_S){
+					} else if (params.getTipoJornada()==TEQPTIEM.TEQPTIEM_S){
 						getPdfFieldsMap().get(CONTRACT_JOURNAL).setValue("HORAS SEMANALES");;
 					}
 				}

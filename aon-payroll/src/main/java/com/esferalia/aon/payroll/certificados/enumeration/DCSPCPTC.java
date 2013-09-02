@@ -5,14 +5,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /** 
- * Enumeration for represent Certificados (S.E.P.E.) DCSPCPTC table codes.
- * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter.
+ * Enumeration for represent Certific@2 (S.E.P.E.) DCSPCPTC table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  * No description found
  *  ------------------------------------------------------------------------
  */ 
 public enum DCSPCPTC {
+
+	DCSPCPTC_1( "1", null, null, null ),
+	DCSPCPTC_2( "2", null, null, null ),
+	DCSPCPTC_3( "3", null, null, null ),
+	DCSPCPTC_4( "4", null, null, null ),
+	DCSPCPTC_5( "5", null, null, null ),
+	DCSPCPTC_6( "6", null, null, null ),
+	DCSPCPTC_7( "7", null, null, null ),
+	DCSPCPTC_8( "8", null, null, null ),
 
 	;
 	public static final String TABLE_NAME = "DCSPCPTC";

@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /** 
- * Enumeration for represent Contrata (S.E.P.E.) TABCCNAE table codes.
- * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter.
+ * Enumeration for represent Contrat@ (S.E.P.E.) TABCCNAE table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  *  TABCCNAE	ACTIVIDAD ECONÓMICA						15-03-2009	

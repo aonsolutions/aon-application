@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.code.aon.person.Person;
 import com.esferalia.aon.payroll.CNO;
-import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.contrata.enumeration.TBONVFOR;
 import com.esferalia.aon.payroll.contrata.enumeration.TEIINTER;
 import com.esferalia.aon.payroll.contrata.enumeration.TEJINDIS;
@@ -20,9 +19,7 @@ import com.esferalia.aon.payroll.contrata.enumeration.THPCOLFO;
 import com.esferalia.aon.payroll.contrata.enumeration.THYDISLE;
 import com.esferalia.aon.payroll.contrata.enumeration.TQOCOLRE;
 
-public class ContrataParams {
-	
-	private Contract contract;
+public class ContrataContratoParams implements IContrataParams{
 	
 	/* 
 	 * generales de contrato 
@@ -35,28 +32,21 @@ public class ContrataParams {
 	private TETPGMEM codigoProgramaEmpleo;
 	private String signaturePlace;
 	private Date signatureDate;
-	private String townCode;
 	/* 
 	 * datos de contrata 
 	 */
-//	private TimeType timeType;
 	private String usoLibreEmpresa;
 	private String timeType;
 	private boolean theoryTraining;
-//	private AgeGroup ageGroup;
 	private String ageGroup;
 	private Double partialRetirement;
 	private boolean nonDateActivity;
 	private boolean periodicalDiscontinuous;
 	
-//	private EmployerType employerType;
 	private String employerType;
-//	private InvestigationJobType investigationJobType;
 	private String investigationJobType;
 	private boolean investigationJobRD;
-//	private LocalCorporation localCorporation;
 	private String localCorporation;
-//	private Actuation actuation;
 	private String actuation;
 	private Double financialYear;
 
@@ -208,12 +198,6 @@ public class ContrataParams {
 	}
 	public void setShowReductionData(boolean showReductionData) {
 		this.showReductionData = showReductionData;
-	}
-	public Contract getContract() {
-		return contract;
-	}
-	public void setContract(Contract contract) {
-		this.contract = contract;
 	}
 	public boolean isEmploymentProgramData() {
 		return employmentProgramData;
@@ -378,12 +362,6 @@ public class ContrataParams {
 	}
 	public void setSignatureDate(Date signatureDate) {
 		this.signatureDate = signatureDate;
-	}
-	public String getTownCode() {
-		return townCode;
-	}
-	public void setTownCode(String townCode) {
-		this.townCode = townCode;
 	}
 	public TEYTRELE getTipoTrabajadorRelevo() {
 		return tipoTrabajadorRelevo;

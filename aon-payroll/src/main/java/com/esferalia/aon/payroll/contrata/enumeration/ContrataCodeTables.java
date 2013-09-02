@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /** 
- * Enumeration for represent Contrata (S.E.P.E.) table codes.
- * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter.
+ * Enumeration for represent Contrat@ (S.E.P.E.) table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter
  */ 
 public enum ContrataCodeTables {
 
@@ -51,6 +51,7 @@ public enum ContrataCodeTables {
 	T_TRWCOLDF( "*TRWCOLDF", "COLECTIVO DE DEDUCCION FISCAL", "29-02-2012" ),
 	T_TSATPCEN( "*TSATPCEN", "TIPOS DE CENTRO", "22-03-2012" ),
 
+	T_TRespuestaXML50( "TERRORES", "Errores de la comunicacion",null)
 	;
 	private final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 	private String code;

@@ -5,14 +5,27 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /** 
- * Enumeration for represent Certificados (S.E.P.E.) DSTEMCTC table codes.
- * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter.
+ * Enumeration for represent Certific@2 (S.E.P.E.) DSTEMCTC table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  * No description found
  *  ------------------------------------------------------------------------
  */ 
 public enum DSTEMCTC {
+
+	DSTEMCTC_01( "01", null, null, null ),
+	DSTEMCTC_02( "02", null, null, null ),
+	DSTEMCTC_03( "03", null, null, null ),
+	DSTEMCTC_04( "04", null, null, null ),
+	DSTEMCTC_05( "05", null, null, null ),
+	DSTEMCTC_06( "06", null, null, null ),
+	DSTEMCTC_07( "07", null, null, null ),
+	DSTEMCTC_08( "08", null, null, null ),
+	DSTEMCTC_09( "09", null, null, null ),
+	DSTEMCTC_10( "10", null, null, null ),
+	DSTEMCTC_11( "11", null, null, null ),
+	DSTEMCTC_12( "12", null, null, null ),
 
 	;
 	public static final String TABLE_NAME = "DSTEMCTC";

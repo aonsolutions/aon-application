@@ -5,14 +5,68 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /** 
- * Enumeration for represent Certificados (S.E.P.E.) TCGPROVI table codes.
- * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter.
+ * Enumeration for represent Certific@2 (S.E.P.E.) TCGPROVI table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  * No description found
  *  ------------------------------------------------------------------------
  */ 
 public enum TCGPROVI {
+
+	TCGPROVI_01( "01", null, null, null ),
+	TCGPROVI_02( "02", null, null, null ),
+	TCGPROVI_03( "03", null, null, null ),
+	TCGPROVI_04( "04", null, null, null ),
+	TCGPROVI_05( "05", null, null, null ),
+	TCGPROVI_06( "06", null, null, null ),
+	TCGPROVI_07( "07", null, null, null ),
+	TCGPROVI_08( "08", null, null, null ),
+	TCGPROVI_09( "09", null, null, null ),
+	TCGPROVI_10( "10", null, null, null ),
+	TCGPROVI_11( "11", null, null, null ),
+	TCGPROVI_12( "12", null, null, null ),
+	TCGPROVI_13( "13", null, null, null ),
+	TCGPROVI_14( "14", null, null, null ),
+	TCGPROVI_15( "15", null, null, null ),
+	TCGPROVI_16( "16", null, null, null ),
+	TCGPROVI_17( "17", null, null, null ),
+	TCGPROVI_18( "18", null, null, null ),
+	TCGPROVI_19( "19", null, null, null ),
+	TCGPROVI_20( "20", null, null, null ),
+	TCGPROVI_21( "21", null, null, null ),
+	TCGPROVI_22( "22", null, null, null ),
+	TCGPROVI_23( "23", null, null, null ),
+	TCGPROVI_24( "24", null, null, null ),
+	TCGPROVI_25( "25", null, null, null ),
+	TCGPROVI_26( "26", null, null, null ),
+	TCGPROVI_27( "27", null, null, null ),
+	TCGPROVI_28( "28", null, null, null ),
+	TCGPROVI_29( "29", null, null, null ),
+	TCGPROVI_30( "30", null, null, null ),
+	TCGPROVI_31( "31", null, null, null ),
+	TCGPROVI_32( "32", null, null, null ),
+	TCGPROVI_33( "33", null, null, null ),
+	TCGPROVI_34( "34", null, null, null ),
+	TCGPROVI_35( "35", null, null, null ),
+	TCGPROVI_36( "36", null, null, null ),
+	TCGPROVI_37( "37", null, null, null ),
+	TCGPROVI_38( "38", null, null, null ),
+	TCGPROVI_39( "39", null, null, null ),
+	TCGPROVI_40( "40", null, null, null ),
+	TCGPROVI_41( "41", null, null, null ),
+	TCGPROVI_42( "42", null, null, null ),
+	TCGPROVI_43( "43", null, null, null ),
+	TCGPROVI_44( "44", null, null, null ),
+	TCGPROVI_45( "45", null, null, null ),
+	TCGPROVI_46( "46", null, null, null ),
+	TCGPROVI_47( "47", null, null, null ),
+	TCGPROVI_48( "48", null, null, null ),
+	TCGPROVI_49( "49", null, null, null ),
+	TCGPROVI_50( "50", null, null, null ),
+	TCGPROVI_51( "51", null, null, null ),
+	TCGPROVI_52( "52", null, null, null ),
+	TCGPROVI_60( "60", null, null, null ),
 
 	;
 	public static final String TABLE_NAME = "TCGPROVI";

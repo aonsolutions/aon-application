@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /** 
- * Enumeration for represent Certificados (S.E.P.E.) TKCSITEM table codes.
- * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter.
+ * Enumeration for represent Certific@2 (S.E.P.E.) TKCSITEM table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter
  *  ------------------------------------------------------------------------
  *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
  * No description found
@@ -19,6 +19,7 @@ public enum TKCSITEM {
 	TKCSITEM_03( "03", "PERIODOS DE ACTIVIDAD DE TRABAJADOR FIJO DISCONTINUO DURANTE LA CAMPAÑA", null, null ),
 	TKCSITEM_04( "04", "PERIODOS DE ACTIVIDAD DE TRABAJADOR FIJO DISCONTINUO POR INICIO DE CAMPAÑA", null, null ),
 	TKCSITEM_05( "05", "FINALIZACIàN DE CAMPA¥A ANUAL", null, null ),
+
 	;
 	public static final String TABLE_NAME = "TKCSITEM";
 	public static final String TABLE_DESCRIPTION = "No description found";

@@ -3,7 +3,6 @@ package com.esferalia.aon.file.payroll.contract.pdf.clauses;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,11 +13,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.Classpath;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
-import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
-import com.esferalia.aon.file.payroll.contrata.ContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
-import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.AcroFields;
 import com.lowagie.text.pdf.PdfDictionary;
@@ -34,7 +30,7 @@ public abstract class AbstractContractClauses implements IContractPdfDocument {
 	/* 
 	 * Enterprise fields
 	 */
-	final String CLAUSES = "clausulas";
+	public final static String CLAUSES = "clausulas";
 	
 	
 	public final static String CONTRACT_CLAUSES_PATH = "com/esferalia/aon/file/payroll/contract/clausesPdf/";
@@ -143,8 +139,6 @@ public abstract class AbstractContractClauses implements IContractPdfDocument {
 		}
 		return null;
 	}
-
-	public abstract void loadPdfFields(ContractCode code, Contract contract, ContrataParams contrataParams) throws UnsupportedContractDocumentException;
 
 	public void loadPdfFields(ContractAttachment contractPdfDraft) {
 		try {
