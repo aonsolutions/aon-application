@@ -29,7 +29,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.ui.payroll.file.ContractAfiLoader;
 import com.esferalia.aon.ui.payroll.file.ContractContrataLoader;
 import com.esferalia.aon.ui.payroll.file.IContractLoader;
-import com.esferalia.aon.ui.payroll.utils.SEPEFileUtils;
+import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 
 public class ContractLoaderController {
 	

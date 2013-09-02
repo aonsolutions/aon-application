@@ -8,7 +8,8 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<c:if test="#{!skipNameColumn}">
-		<aon:column alias="Contract.person.firstSurname,Contract.person.registry.name" styleClass="aon-editDataTable-textColumn aon-width-auto">
+		<aon:column alias="Contract.person.firstSurname,Contract.person.registry.name" 
+			styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
 				<aon:outputText value="#{registryBundle.registry_person}" />
 			</f:facet>
@@ -18,8 +19,19 @@
 		</aon:column>
 	</c:if>
 
+	<c:if test="#{!skipContractCodeColumn}">
+		<aon:column 
+			styleClass="aon-editDataTable-textColumn aon-width-auto">
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_contract_contract_code}" />
+			</f:facet>
+			<aon:outputText value="#{contract.contractCode}"/>
+		</aon:column>
+	</c:if>
+
 	<c:if test="#{!skipNssColumn}">
-		<aon:column alias="Contract.person.socialSecurityNumber" styleClass="aon-editDataTable-textColumn aon-width-150">
+		<aon:column alias="Contract.person.socialSecurityNumber" 
+			styleClass="aon-editDataTable-textColumn aon-width-100">
 			<f:facet name="header">
 				<aon:outputText value="#{registryBundle.registry_person_nss}" />
 			</f:facet>
@@ -29,7 +41,8 @@
 		</aon:column>
 	</c:if>
 
-	<aon:column alias="Contract.startDate" styleClass="aon-editDataTable-dateColumn aon-width-150">
+	<aon:column alias="Contract.startDate" 
+		styleClass="aon-editDataTable-dateColumn aon-width-80">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_start_date}" />
 		</f:facet>
@@ -39,7 +52,8 @@
 		</aon:outputText>		
 	</aon:column>
 
-	<aon:column alias="Contract.endDate" styleClass="aon-editDataTable-dateColumn aon-width-150">
+	<aon:column alias="Contract.endDate" 
+		styleClass="aon-editDataTable-dateColumn aon-width-80">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_end_date}" />
 		</f:facet>
@@ -50,7 +64,8 @@
 	</aon:column>
 
 	<c:if test="#{!skipWorkPlaceColumn}">
-		<aon:column alias="Contract.workPlace.description" styleClass="aon-editDataTable-textColumn aon-width-250">
+		<aon:column alias="Contract.workPlace.description" 
+			styleClass="aon-editDataTable-textColumn aon-width-250">
 			<f:facet name="header">
 				<aon:outputText value="#{companyBundle.company_workplace}" />
 			</f:facet>
@@ -61,7 +76,8 @@
 	</c:if>
 
 	<c:if test="#{!skipEnterpriseColumn}">		
-		<aon:column alias="Contract.workPlace.enterprise.registry.name"	styleClass="aon-editDataTable-textColumn aon-width-250">
+		<aon:column alias="Contract.workPlace.enterprise.registry.name"	
+			styleClass="aon-editDataTable-textColumn aon-width-250">
 			<f:facet name="header">
 				<aon:outputText value="#{companyBundle.company_enterprise}" />
 			</f:facet>
@@ -70,5 +86,13 @@
 			</aon:div>
 		</aon:column>
 	</c:if>
+	
+	<aon:column 
+		styleClass="aon-editDataTable-textColumn aon-width-70">
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_contract_sepe_status}" />
+		</f:facet>
+		<aon:outputText value="#{to.sepeStatus}"/>
+	</aon:column>
 
 </ui:composition>

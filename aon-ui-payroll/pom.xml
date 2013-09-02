@@ -65,6 +65,12 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.ui.sepe</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
 		
 		<dependency>
 			<groupId>junit</groupId>

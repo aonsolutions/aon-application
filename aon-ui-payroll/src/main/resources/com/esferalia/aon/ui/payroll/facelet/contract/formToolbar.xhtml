@@ -10,7 +10,7 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
 		<ui:param name="controller" value="#{contract}" />
-		<ui:param name="skipRemoveButton" value="#{contract.to.status!='PENDING'}" />
+		<ui:param name="skipRemoveButton" value="#{contract.to.sepeStatus!='PENDING'}" />
 		<ui:param name="showMoreMenu" value="#{!contract.new}" />
 		
 		<ui:define name="beforeSpinToolbarContent">
@@ -86,14 +86,6 @@
 				iconClass="aon-icon-new-page"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
  				oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-
-			<!--  
-			<aon:menuItem id="document-extension" 
-				value="Prorroga"
-				disabled="true"
-				iconClass="aon-icon-attach-file" >
-			</aon:menuItem>
-			-->
 			
 			<rich:menuGroup 
 				value="Editar documentos"
@@ -148,10 +140,9 @@
 						target="#{contractPdf.backAction}" value="contract_form" />
 					<aon:actionListener method="#{contractPdf.onContractDocumentShow}" />
 				</aon:menuItem>                
-				<!--  
 				<aon:menuItem id="extensionDraft-edition"
 					action="contractPdfEdition_form" ajaxSingle="true"
-					rendered="#{true}" 
+					rendered="#{contract.extensibleContract}"
 					value="Prorroga"
 					iconClass="aon-icon-page" >
 					<f:setPropertyActionListener
@@ -160,49 +151,56 @@
 						target="#{contractPdf.backAction}" value="contract_form" />
 					<aon:actionListener method="#{contractPdf.onContractDocumentShow}" />
 				</aon:menuItem>                
-				-->
 			</rich:menuGroup>
+			
+			 <rich:menuSeparator id="documentsSeparator" />
 
-			<rich:menuGroup value="Contrat@" iconClass="aon-icon-sepe-contrata">
-				<aon:menuItem id="contrata-sepe-comunication2"
-					value="Comunicar datos de contrato"
-					disabled="#{!contractContrata.communicationAvailable or contractContrata.communicationResponseReceived}"
-					reRender="showContrataLoginWindow,contrataResponseContainer,contrataData,contractForm"
-					actionListener="#{contractContrata.onSendContrataFile}"
-					onclick="Richfaces.showModalPanel('waitProccess')" 
-	 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
-					iconClass="aon-icon-sincronize" />
-				<aon:menuItem id="contrata-sepe-dataQuery2"
-					value="Consultar estado del contrato"
-					disabled="#{!contractContrata.communicationResponseReceived}"
-					reRender="showContrataLoginWindow,contrataResponseContainer,contrataData,contractForm"
-					actionListener="#{contractContrata.onContrataDataQuery}"
-					onclick="Richfaces.showModalPanel('waitProccess')" 
-	 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
-					iconClass="aon-icon-sincronize" />
-				<aon:menuItem id="contrata-sepe-showLog"
-					value="Historial de comunicaciones"
-					disabled="#{!contractContrata.communicationResponseReceived}"
-					reRender="showCommunicationLogWindow"
-					actionListener="#{contractContrata.onContrataLogShow}"
-					iconClass="aon-icon-info" >
+			<aon:menuItem id="document-extension" 
+				value="Prorroga"
+				rendered="#{contract.extensibleContract}"
+				disabled="#{empty contract.to.endDate}"
+				reRender="showExtensionContrataWindow"
+				actionListener="#{contract.onContrataExtensionShow}"
+				iconClass="aon-icon-attach-file" >
+				<f:setPropertyActionListener
+					target="#{extensionContrata.showExtensionContrataWindow}" value="#{true}" />
+			</aon:menuItem>
+
+			<aon:menuItem id="document-transform" 
+				value="Transformacion"
+				rendered="#{contract.transformableContract}"
+				reRender="showExtensionContrataWindow"
+				actionListener="#{contract.onContrataExtensionShow}"
+				iconClass="aon-icon-copy" >
+				<f:setPropertyActionListener
+					target="#{extensionContrata.showExtensionContrataWindow}" value="#{true}" />
+			</aon:menuItem>
+			
+			<rich:menuSeparator id="actionsSeparator" />
+			
+			<aon:menuItem id="contrata-communication-log"
+				value="#{sepeBundle.sepe_contrata}"
+				disabled="#{!contractContrata.communicationAvailable}"
+				rendered="#{true}" ajaxSingle="true"
+				reRender="showCommunicationWindow"
+				iconClass="aon-icon-sepe-contrata" >
+				<f:setPropertyActionListener
+					target="#{contractContrata.showCommunicationWindow}" value="#{true}" />
+			</aon:menuItem>                
+
+			<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+				<aon:menuItem id="certificados-communication-log"
+					value="#{sepeBundle.sepe_certificados}"
+					disabled="#{empty contract.to.endDate}"
+					rendered="#{true}" ajaxSingle="true"
+					reRender="showCertificadosWindow"
+					iconClass="aon-icon-sepe-certificados" >
 					<f:setPropertyActionListener
-						target="#{contractContrata.showCommunicationLogWindow}" value="#{true}" />
+						target="#{contractCertificados.showCommunicationWindow}" value="#{true}" />
 				</aon:menuItem>
-				
-				<!--  
-				<aon:menuItem id="contrata-contractXml-download" 
-					value="XML contrato"
-					iconClass="aon-icon-mail-save" >
-					<aon:htmlCommandLink id="contractXmldownload" target="_blank"
-						actionListener="#{contractContrata.onDownloadContrataXml}"
-		     			style="line-height:16px;margin-right:0;">
-					</aon:htmlCommandLink>	
-				</aon:menuItem>
-				-->
-				
-			</rich:menuGroup>
-
+			</c:if>
+			
+			
 		</ui:define>
 
 	</ui:decorate>

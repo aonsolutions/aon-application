@@ -81,7 +81,7 @@ public class FanListController extends BasicController {
 		BatchDetailController controller = (BatchDetailController) FormUtil.getController(IPayrollConstants.FAN_BATCH_DETAIL_CONTROLLER_NAME);
 		List<ITransferObject> list = controller.getWrappedList();
 		try {
-			PayrollUtils utils = new PayrollUtils();
+			PayrollUtils utils = PayrollUtils.getInstance();
 			
 			clearCriteria();
 			if(DomainManager.isDomainManagementAvailable()){

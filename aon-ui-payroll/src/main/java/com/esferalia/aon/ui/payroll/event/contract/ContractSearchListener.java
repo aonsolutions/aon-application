@@ -68,7 +68,7 @@ public class ContractSearchListener extends ControllerSearchListener {
 	}
 	
 	public List<SelectItem> getWorkPlaces() throws ManagerBeanException {
-		PayrollUtils utils = new PayrollUtils();
+		PayrollUtils utils = PayrollUtils.getInstance();
 		List<SelectItem> workPlaces = new LinkedList<SelectItem>();
 		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
 		Criteria criteria = new Criteria();

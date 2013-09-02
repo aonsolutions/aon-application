@@ -17,6 +17,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +37,7 @@ import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
-import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -60,17 +57,19 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractDuration;
+import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
-import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
-import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
+import com.esferalia.aon.ui.payroll.utils.ContractUtils;
+import com.esferalia.aon.ui.sepe.controller.ContrataController;
+import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 
 public class ContractController extends BasicController {
 
@@ -152,9 +151,100 @@ public class ContractController extends BasicController {
 	public void setActivities(List<SelectItem> activities) {
 		this.activities = activities;
 	}
+	
+	public boolean isEndDateRequired(){
+		String contractCode = null;
+		if(this.isNew() && this.getParams()!=null && this.getParams().getContractCode()!=null){
+			contractCode = this.getParams().getContractCode().getValue();
+		} else {
+			contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
+		}
+		String[] codes = {"402", "420", "421", "430", "441", "452", "502", "520", "530", "541", "552", "970"};
+		return ArrayUtils.contains(codes, contractCode) ;
+	}
+	
+	public boolean isEndDateOptional(){
+		String contractCode = null;
+		if(this.isNew() && this.getParams()!=null && this.getParams().getContractCode()!=null){
+			contractCode = this.getParams().getContractCode().getValue();
+		} else {
+			contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
+		}
+		String[] codes = {"401", "403", "410", "501", "503", "510", "540", "980", "990"};
+		return ArrayUtils.contains(codes, contractCode) ;
+	}
+	
+	public boolean isExtensibleContract(){
+		// TODO: what contracts are extensible?
+		String contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
+		String[] codes = {"421"};
+		return ArrayUtils.contains(codes, contractCode) ;
+	}
+
+	public boolean isTransformableContract(){
+		// TODO: what contracts are transformable?
+		String contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
+		String[] codes = {};
+		return ArrayUtils.contains(codes, contractCode) ;
+	}
+	
+	public List<SelectItem> getContractModel() {
+		ContractModel[] availableModels = {ContractModel.PE151, ContractModel.PE170, 
+				ContractModel.PE176, ContractModel.PE177, ContractModel.PE179, 
+				ContractModel.PE183, ContractModel.PE187, ContractModel.PE226};
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		if(getParams().getContractCode()!=null){
+			for( ContractType type : ContractType.values() ) {
+				if( ArrayUtils.contains(availableModels, type.getModel()) ){
+					for( ContractCode code : type.getCodes() ) {
+						if ( code ==  getParams().getContractCode()) {
+							SelectItem item = new SelectItem(type.getModel(), type.getName(locale));
+							list.add(item);
+						}
+					}
+				}
+			}
+		}
+		return list;
+	}
+	
+	public String getSepeCommunicationId(){
+		if(this.getTo()!=null){
+			ContractUtils utils = ContractUtils.getInstance();
+			return utils.getContractDataMap((Contract) getTo()).get(ContextVariable.SEPE_CONTRACT_ID.getName());
+		}
+		return null;
+	}
+
+	public String getContractCode(){
+		try {
+			if(this.getModel().isRowAvailable()){
+				ContractUtils utils = ContractUtils.getInstance();
+				String code = utils.getContractDataMap((Contract) getModel().getRowData()).get(ContextVariable.TC2.getName());
+				return code + " - " + ContractCode.getContractCodeByValue(code).getName(FacesContext.getCurrentInstance().getViewRoot().getLocale());
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> getContractCode exception: ",e);
+			AonUtil.addErrorMessage("Se ha producido un error al obtener el código de contrato. ");
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		return null;
+	}
 		
 	public void onShowNewContractModal(ActionEvent event) {
 		setShowNewContractModal(true);
+	}
+	
+	public void onPersonBack(ActionEvent event){
+		try {
+			this.refresh(event);
+			this.getManagerBean().restoreNullSubPOJOs(getTo());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onPersonBack exception: ",e);
+			AonUtil.addErrorMessage("Se ha producido un error al recargar los datos de persona. ");
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
 	
 	public void onEnterpriseChanged( LookupChangeEvent event ) {
@@ -289,6 +379,7 @@ public class ContractController extends BasicController {
 		}
 	}
 	
+	@Deprecated
 	public List<SelectItem> getAgreementLevelCategories(){
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		try {
@@ -310,6 +401,7 @@ public class ContractController extends BasicController {
 		return list;
 	}
 	
+	@Deprecated
 	public void onChangeAgreement(LookupChangeEvent event){
 		if (event.getNewValue() == null || event.getNewValue().equals("")) {
 			Contract contract = (Contract) getTo();
@@ -317,8 +409,9 @@ public class ContractController extends BasicController {
 		}
 	}
 	
+	@Deprecated
 	public void onChangeAgreementLevelCategory(ActionEvent event){
-		// TODO if contract.isNew then pedir salario bruto, y si es asi como obtenerlo del convenio?
+		// TODO if is new contract then ask for the salary. how obtain the salary from de agreement?
 		Contract contract = (Contract) getTo();
 		try {
 			if(contract.getAgreementLevelCategory()!=null){
@@ -349,19 +442,18 @@ public class ContractController extends BasicController {
 	}
 	
 	public boolean isTrainingContract(){
-		PayrollUtils utils = new PayrollUtils();
-		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
-		return map.get(ContextVariable.TC2.getName())!=null && ContractCode.getContractCodeByValue(map.get(ContextVariable.TC2.getName()))==ContractCode.C421;
+		ContractUtils utils = ContractUtils.getInstance();
+		return utils.isTrainingContract((Contract) this.getTo());
 	}
 
 	public boolean isTrainingCenterDefined(){
-		PayrollUtils utils = new PayrollUtils();
+		ContractUtils utils = ContractUtils.getInstance();
 		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
 		return map.get(ContextVariable.TRAINING_CENTER.getName())!=null;
 	}
 
 	public boolean isTrainingCourseDefined(){
-		PayrollUtils utils = new PayrollUtils();
+		ContractUtils utils = ContractUtils.getInstance();
 		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
 		return map.get(ContextVariable.TRAINING_COURSE.getName())!=null;
 	}
@@ -491,7 +583,7 @@ public class ContractController extends BasicController {
 		ContractPdfController pdfDocument = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
 		// Documento del contrato
 		try {
-			pdfDocument.setDocumentType(ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT);
+			pdfDocument.setDocumentType(ContractAttachmentType.CONTRACT_DOC_DRAFT);
 			pdfDocument.loadDocument(true);
 			pdfDocument.saveDocument();
 		} catch (IOException e) {
@@ -588,31 +680,6 @@ public class ContractController extends BasicController {
 		attach.setDescription( AonUtil.getMessage(IPayrollConstants.BUNDLE_NAME, "payroll_trainingCenter_directDebit"));
 		return attach;
 	}
-
-	public void onGenerateAdditionalClause(ActionEvent event){
-		generateAdditionalClauseDocument();
-	}
-	
-	public void generateAdditionalClauseDocument(){
-		ContractPdfController pdfDocument = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
-		try {
-			pdfDocument.setDocumentType(ContractAttachmentType.CONTRACT_CLAUSES);
-			pdfDocument.loadDocument(true);
-			pdfDocument.saveDocument();
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (UnsupportedContractDocumentException e) {
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (Exception e){
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
-			AonUtil.addErrorMessage(e.getMessage());
-		}
-	}
 	
 	@SuppressWarnings("unchecked")
 	private byte[] getReport( String report ) {
@@ -629,6 +696,12 @@ public class ContractController extends BasicController {
 		}			
 	}	
 	
+	public void onContrataExtensionShow(ActionEvent event){
+		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
+		contrataController.initialize((Contract) this.getTo());
+		contrataController.onContrataDataShow(event);
+	}
+	
 
 //	 * ************************************
 //	 * 			DOWNLOAD & UPLOAD METHODS		
@@ -637,7 +710,7 @@ public class ContractController extends BasicController {
 	public void onDownloadContract( ActionEvent event ) {
 		try {
 			Contract c = (Contract)this.getModel().getRowData();
-			download(c, ContractAttachmentType.CONTRACT_DOCUMENT);
+			download(c, ContractAttachmentType.CONTRACT_DOC);
 		} catch (IOException e) {
 			String msg = "Imposible descargar el Contrato. (" +e.getMessage() + ")"; 
 			LOGGER.error(msg, e);
@@ -688,7 +761,7 @@ public class ContractController extends BasicController {
 		try {
 			if(this.getModel().isRowAvailable()){
 				Contract c = (Contract)this.getModel().getRowData();
-				return obtainContractAttachDocument(c, ContractAttachmentType.CONTRACT_DOCUMENT) != null;
+				return obtainContractAttachDocument(c, ContractAttachmentType.CONTRACT_DOC) != null;
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "No se ha podido obtener el documento del contrato. (" +e.getMessage() + ")"; 
@@ -714,7 +787,7 @@ public class ContractController extends BasicController {
 	public String onTrainingCenterDirectDebitReport() throws ManagerBeanException{
 		TrainingCenterController tcController = (TrainingCenterController) AonUtil.getRegisteredBean(IPayrollConstants.TRAINING_CENTER_CONTROLLER_NAME);
 		try {
-			PayrollUtils utils = new PayrollUtils();
+			ContractUtils utils = ContractUtils.getInstance();
 			Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
 			if(map.get(ContextVariable.TRAINING_COURSE.getName())!=null){
 				String courseId = map.get(ContextVariable.TRAINING_COURSE.getName());
@@ -730,54 +803,16 @@ public class ContractController extends BasicController {
 			tcController.initializeModel();
 		}
 	}
-	 
-//	 * ************************************
-//	 * 			TREE METHODS		
-//	 * ************************************
 	
 	
-	public void onLoadCalendar( ActionEvent event ) {
-		// TODO implementar la busqueda del calendario. si la entidad no tiene calendario, 
-		// buscar el calendario en sus entidades superiores: contract -> workplace -> enterprise -> agreement
-		Contract c = (Contract) getTo();
-		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICompanyConstants.CALENDAR_CONTROLLER_NAME);
-		controller.setEnterpriseName(c.getWorkPlace().getEnterprise().getRegistry().getFullName());
-		controller.setWorkPlaceName(c.getWorkPlace().getDescription());
-		controller.setContractName(c.getPerson().getFullName());
-		controller.setCalendarId(c.getCalendar().getId());
-		controller.onInitialize(event);
-	}	
-	
-	
-	public void onEditPerson( ActionEvent event ) {
-		try {
-			BasicController controller = (BasicController) FormUtil.getController(IRegistryConstants.PERSON_CONTROLLER_NAME);
-			controller.onLoad(event, ((Contract)this.getTo()).getPerson().getId(), "contract_formTree", "contract.onPersonBack");
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onEditPerson exception: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}				
-	}
-	
-	public void onPersonBack(ActionEvent event){
-		try {
-			this.refresh(event);
-			this.getManagerBean().restoreNullSubPOJOs(getTo());
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onPersonBack exception: ",e);
-			AonUtil.addErrorMessage("Se ha producido un error al recargar los datos de persona. ");
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
-	}
-
-
-
+// ************************************
+// ************************************
 	public class ContractParams {
 		private ContractOption contractOption;
 		private ContractType contractType;
 		private ContractModelCode contractModelCode;
 		private ContractCode contractCode;
+		private ContractCode contractTransformCode;
 		private QuoteGroup quoteGroup;
 		private OccupationType occupationType;
 		private Double irpf;
@@ -785,7 +820,6 @@ public class ContractController extends BasicController {
 		private ContractDuration contractDuration;
 		private ContractWorkingDay contractWorkingDay;
 		private CNO cno;
-		private String additionalClauses;
 		
 		private boolean agreementSalaryCheck;
 		private boolean agreementSalary;
@@ -890,6 +924,12 @@ public class ContractController extends BasicController {
 		public void setContractCode(ContractCode contractCode) {
 			this.contractCode = contractCode;
 		}
+		public ContractCode getContractTransformCode() {
+			return contractTransformCode;
+		}
+		public void setContractTransformCode(ContractCode contractTransformCode) {
+			this.contractTransformCode = contractTransformCode;
+		}
 		public QuoteGroup getQuoteGroup() {
 			return quoteGroup;
 		}
@@ -925,16 +965,6 @@ public class ContractController extends BasicController {
 		}
 		public void setCno(CNO cno) {
 			this.cno = cno;
-		}
-		public String getAdditionalClauses() {
-			return additionalClauses;
-		}
-		public void setAdditionalClauses(String additionalClauses) {
-			this.additionalClauses = additionalClauses;
-		}
-		
-		public boolean isTrainingContract(){
-			return getContractModelCode()!=null && getContractModelCode().getCode()==ContractCode.C421;
 		}
 		
 	}

@@ -1,11 +1,9 @@
 package com.esferalia.aon.ui.payroll.event.contract;
 
 
-import java.io.IOException;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +11,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
@@ -24,32 +21,23 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
-import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
-import com.esferalia.aon.file.payroll.contract.pdf.clauses.Clauses;
-import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE226;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
-import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.PayrollWorkPlace;
-import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.TrainingCourse;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
-import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
-import com.esferalia.aon.payroll.enumeration.OccupationType;
-import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractClausesController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
-import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractParams;
-import com.esferalia.aon.ui.payroll.controller.contract.ContractPdfController;
+import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
+import com.esferalia.aon.ui.sepe.controller.CertificadosController;
+import com.esferalia.aon.ui.sepe.controller.ContrataController;
+import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 
 public class ContractControllerListener extends ControllerAdapter{
 	
@@ -59,11 +47,9 @@ public class ContractControllerListener extends ControllerAdapter{
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
 		Contract contract = (Contract) controller.getTo();
-		contract.setStatus(ContractStatus.PENDING);
+		contract.setSepeStatus(ContractStatus.PENDING);
+		contract.setSsStatus(ContractStatus.PENDING);
 		contract.setRegimeType(contract.getEnterpriseCCC()!=null?contract.getEnterpriseCCC().getActivity().getType():null);
-		if(controller.getParams().getContractModelCode()!=null){
-			contract.setModel(controller.getParams().getContractModelCode().getModel());
-		}
 	}
 	
 	@Override
@@ -72,15 +58,15 @@ public class ContractControllerListener extends ControllerAdapter{
 		ContractController controller = (ContractController) this.getController();
 		Contract contract = (Contract) controller.getTo();
 		contract.setRegimeType(contract.getEnterpriseCCC()!=null?contract.getEnterpriseCCC().getActivity().getType():null);
-		if(controller.getParams().getContractModelCode()!=null){
-			contract.setModel(controller.getParams().getContractModelCode().getModel());
-		}
 	}
-	
+
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		removeChildData(event);
+		ContractController controller = (ContractController) this.getController();
+		ContractUtils utils = ContractUtils.getInstance();
+		utils.removeContractData((Contract) controller.getTo());
+		
 		removeContrataAttach(event);
 	}
 	
@@ -94,13 +80,22 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setActivities(null);
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
+		
+		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		contrataController.initialize((Contract) controller.getTo());
+
+		CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
+		certificadosController.initialize((Contract) controller.getTo());
+		
 		try {
-			loadContractData();
+			ContractUtils utils = ContractUtils.getInstance();
+			utils.loadContractData((Contract) controller.getTo(), controller.getParams());
+//			utils.searchAgreement();
 		} catch (ManagerBeanException e) {
 			String msg = "Error loading contract data";
 			LOGGER.error(msg);
 		}
-//		searchAgreement();
+		
 	}
 
 	@Override
@@ -108,7 +103,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		PayrollAppParamsController params = (PayrollAppParamsController) AonUtil.getRegisteredBean(IPayrollConstants.PAYROLL_APP_PARAMS_CONTROLLER_NAME);
 		ContractController controller = (ContractController) this.getController();
 		Contract contract = (Contract) controller.getTo();
-		PayrollUtils utils = new PayrollUtils();
+		PayrollUtils utils = PayrollUtils.getInstance();
 		controller.setEnterprise(utils.getCurrentDomainEnterprise());
 		controller.setWorkPlaces(null);
 		controller.setActivities(null);
@@ -134,19 +129,20 @@ public class ContractControllerListener extends ControllerAdapter{
 	
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		insertContractData();
-//		ContractController controller = (ContractController) this.getController();
-//		controller.getHandler().initializeVariables(null);
-//		if(controller.isShowNewContractModal()){
-//			controller.setShowNewContractModal(false);
-//			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_TREE_CONTROLLER);
-//			tree.loadTree();
-//		}
+		ContractController controller = (ContractController) this.getController();
+		ContractUtils utils = ContractUtils.getInstance();
+		utils.insertContractData((Contract) controller.getTo(), controller.getParams());
+		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		contrataController.initialize((Contract) controller.getTo());
 	}
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		updateContractData();
+		ContractController controller = (ContractController) this.getController();
+		ContractUtils utils = ContractUtils.getInstance();
+		utils.updateContractData((Contract) controller.getTo(), controller.getParams());
+		updateContrataData();
+		updateAdditionalClauses();
 	}
 	
 	@Override
@@ -156,357 +152,15 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setShowNewContractModal(false);
 	}
 	
-	private void insertContractData() throws ControllerListenerException {
-		ContractController controller = (ContractController) this.getController();
-		Contract contract = (Contract) controller.getTo();
-		IManagerBean bean;
-		ContractData data;
-		try {
-			bean = BeanManager.getManagerBean(ContractData.class);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-			throw new ControllerListenerException(msg,e);
-		}
-		try {
-			if(controller.getParams().getIrpf()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.IRPF_PERCENT.getName() );
-				data.setExpression(controller.getParams().getIrpf().toString());
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el porcentaje IRPF. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			if(controller.getParams().getQuoteGroup()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.QUOTE_GROUP.getName() );
-				data.setExpression("\"" + controller.getParams().getQuoteGroup().getValue() + "\"");
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el grupo de cotizacion. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			if(controller.getParams().getOccupationType()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.OCCUPATION.getName() );
-				data.setExpression("\"" + controller.getParams().getOccupationType().getValue() + "\"");
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar la ocupacion. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			if(controller.getParams().getCno()!=null && controller.getParams().getCno().getId()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.CNO.getName() );
-				data.setExpression("\"" + controller.getParams().getCno().getCode() + "\"");
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el codigo nacional de ocupaciones. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			if(!controller.getParams().isAgreementSalaryCheck() && controller.getParams().getGrossSalary()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( "SALARIO_BRUTO"  );
-				data.setExpression( String.valueOf(CommonUtil.round(controller.getParams().getGrossSalary())) );
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el salario bruto. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-//		try {
-//			if(controller.getParams().getTc2Code()!=null){
-//				data = new ContractData();
-//				data.setContract(contract);
-//				data.setStartDate(contract.getStartDate());
-//				data.setEndDate(contract.getEndDate());
-//				data.setName( ContextVariable.TC2.getName() );
-//				data.setExpression("\"" + controller.getParams().getTc2Code().getValue() + "\"");
-//				bean.insert(data);
-//			}
-//		} catch (ManagerBeanException e) {
-//			String msg = "Error al grabar el codigo TC2. (" +e.getMessage() + ")";
-//			LOGGER.error(msg);
-//		}
-		try {
-			if(controller.getParams().getContractModelCode()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.TC2.getName() );
-				data.setExpression("\"" + controller.getParams().getContractModelCode().getCode().getValue() + "\"");
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el codigo TC2. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			if(controller.getParams().getSubsidized()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.SUBSIDIZED.getName() );
-				data.setExpression(controller.getParams().getSubsidized()?"true":"false");
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar si el contrato se acoge a la reduccion de cuotas a la S.S. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			if(controller.getParams().getTrainingCenter()!=null && controller.getParams().getTrainingCenter().getId()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.TRAINING_CENTER.getName() );
-				data.setExpression("\"" + controller.getParams().getTrainingCenter().getId() + "\"");
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el centro de formacion. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			if(controller.getParams().getTrainingCourse()!=null && controller.getParams().getTrainingCourse().getId()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(controller.getParams().getTrainingStartDate());
-				data.setEndDate(controller.getParams().getTrainingEndDate());
-				data.setName( ContextVariable.TRAINING_COURSE.getName() );
-				data.setExpression("\"" + controller.getParams().getTrainingCourse().getId() + "\"");
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el curso de formacion. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-	}
-	private void updateContractData() throws ControllerListenerException {
-		ContractController controller = (ContractController) this.getController();
-		Contract contract = (Contract) controller.getTo();
-		IManagerBean bean;
-		ContractData data;
-		try {
-			bean = BeanManager.getManagerBean(ContractData.class);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible actualizar los datos de contrato. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-			throw new ControllerListenerException(msg,e);
-		}
-		try {
-			ContractData irpfData = obtainContractData(ContextVariable.IRPF_PERCENT.getName());
-			if(controller.getParams().getIrpf()!=null){
-				data = irpfData!=null?irpfData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.IRPF_PERCENT.getName() );
-				data.setExpression(controller.getParams().getIrpf().toString());
-				bean.insertOrUpdate(data);
-			} else {
-				if(irpfData != null){
-					bean.remove(irpfData);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el porcentaje IRPF. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			ContractData quoteGroupData = obtainContractData(ContextVariable.QUOTE_GROUP.getName());
-			if(controller.getParams().getQuoteGroup()!=null){
-				data = quoteGroupData!=null?quoteGroupData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.QUOTE_GROUP.getName() );
-				data.setExpression("\"" + controller.getParams().getQuoteGroup().getValue() + "\"");
-				bean.insertOrUpdate(data);
-			} else {
-				if(quoteGroupData != null){
-					bean.remove(quoteGroupData);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el grupo de cotizacion. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			ContractData occupationData = obtainContractData(ContextVariable.OCCUPATION.getName());
-			if(controller.getParams().getOccupationType()!=null){
-				data = occupationData!=null?occupationData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.OCCUPATION.getName() );
-				data.setExpression("\"" + controller.getParams().getOccupationType().getValue() + "\"");
-				bean.insertOrUpdate(data);
-			} else {
-				if(occupationData != null){
-					bean.remove(occupationData);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar la ocupacion. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			ContractData cnoData = obtainContractData(ContextVariable.CNO.getName());
-			if(controller.getParams().getCno()!=null && controller.getParams().getCno().getId()!=null){
-				data = cnoData!=null?cnoData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.CNO.getName() );
-				data.setExpression("\"" + controller.getParams().getCno().getCode() + "\"");
-				bean.insertOrUpdate(data);
-			} else {
-				if(cnoData != null){
-					bean.remove(cnoData);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el codigo nacional de ocupaciones. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			ContractData tc2Data = obtainContractData(ContextVariable.TC2.getName());
-			if(controller.getParams().getContractModelCode()!=null){
-				data = tc2Data!=null?tc2Data:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.TC2.getName() );
-				data.setExpression("\"" + controller.getParams().getContractModelCode().getCode().getValue() + "\"");
-				bean.insertOrUpdate(data);
-			} else {
-				if(tc2Data != null){
-					bean.remove(tc2Data);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el codigo TC2. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			ContractData subsidizedData = obtainContractData(ContextVariable.SUBSIDIZED.getName());
-			if(controller.getParams().getSubsidized()!=null){
-				data = subsidizedData!=null?subsidizedData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.SUBSIDIZED.getName() );
-				data.setExpression(controller.getParams().getSubsidized()?"true":"false");
-				bean.insertOrUpdate(data);
-			} else {
-				if(subsidizedData != null){
-					bean.remove(subsidizedData);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar si el contrato se acoge a la reduccion de cuotas a la S.S. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			ContractData trainingCenterData = obtainContractData(ContextVariable.TRAINING_CENTER.getName());
-			if(controller.getParams().getTrainingCenter()!=null && controller.getParams().getTrainingCenter().getId()!=null){
-				data = trainingCenterData!=null?trainingCenterData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.TRAINING_CENTER.getName() );
-				data.setExpression("\"" + controller.getParams().getTrainingCenter().getId() + "\"");
-				bean.insertOrUpdate(data);
-			} else {
-				if(trainingCenterData != null){
-					bean.remove(trainingCenterData);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el centro de formacion. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-		try {
-			ContractData trainingCourseData = obtainContractData(ContextVariable.TRAINING_COURSE.getName());
-			if(controller.getParams().getTrainingCourse()!=null && controller.getParams().getTrainingCourse().getId()!=null){
-				data = trainingCourseData!=null?trainingCourseData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(controller.getParams().getTrainingStartDate());
-				data.setEndDate(controller.getParams().getTrainingEndDate());
-				data.setName( ContextVariable.TRAINING_COURSE.getName() );
-				data.setExpression("\"" + controller.getParams().getTrainingCourse().getId() + "\"");
-				bean.insertOrUpdate(data);
-			} else {
-				if(trainingCourseData != null){
-					bean.remove(trainingCourseData);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el curso de formacion. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
+	private void updateContrataData() {
+		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		contrataController.onContrataAccept(null);
 	}
 	
-	private ContractData obtainContractData(String name) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), ((Contract)this.getController().getTo()).getId() );
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), name );
-			List<ITransferObject> list = bean.getList(criteria);
-			if( !list.isEmpty() ){
-				return (ContractData) list.get(0);
-			}
-		} catch (ManagerBeanException e) {
-			// do nothing ...
-		}
-		return null;
-	}
-
-	private void removeChildData(ControllerEvent event) throws ControllerListenerException {
-		ContractController controller = (ContractController) event.getController();
-		Contract contract = (Contract) controller.getTo();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			for(ITransferObject to: bean.getList(criteria)){
-				ContractData data = (ContractData) to;
-				bean.remove(data);
-				
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible eliminar los datos de contrato. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-			throw new ControllerListenerException(msg,e);
+	private void updateAdditionalClauses() {
+		ContractClausesController controller = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
+		if( StringUtils.isNotBlank(controller.getAdditionalClauses()) ){
+			controller.generateAdditionalClauseDocument();
 		}
 	}
 	
@@ -517,8 +171,8 @@ public class ContractControllerListener extends ControllerAdapter{
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
-			Expression exp1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_RESPONSE);
-			Expression exp2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA_STATUS);
+			Expression exp1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID);
+			Expression exp2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_CONTRACT_RESPONSE);
 			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractAttachment attach = (ContractAttachment) to;
@@ -532,188 +186,5 @@ public class ContractControllerListener extends ControllerAdapter{
 		}
 	}
 	
-	private void searchAgreement() {
-		try {
-			ContractController controller = (ContractController) this.getController();
-			Contract contract = (Contract) controller.getTo();
-			if(contract.getAgreementLevelCategory()!=null 
-					&& contract.getAgreementLevelCategory().getLevel()!=null 
-					&& contract.getAgreementLevelCategory().getLevel().getAgreement()!=null 
-					&& contract.getAgreementLevelCategory().getLevel().getAgreement().getId()!=null){
-				controller.setAgreement(contract.getAgreementLevelCategory().getLevel().getAgreement());
-			} else {
-				IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
-				List<ITransferObject> list = bean.getList(criteria);
-				Agreement agreement = null;
-				if(!list.isEmpty()){
-					agreement = (list.get(0)==null)?null:((PayrollWorkPlace)list.get(0)).getAgreement();
-				}
-				if(agreement!=null){
-					controller.setAgreement(agreement);
-				} else {
-					IManagerBean aBean = BeanManager.getManagerBean(Agreement.class);
-					controller.setAgreement((Agreement) aBean.createNewTo());
-				}
-			}
-		} catch (ManagerBeanException e) {
-			// NADA, no se define ningun convenio
-			String msg = "Error al buscar el convenio. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-		}
-	}
-	
-	private void loadContractData() throws ManagerBeanException {
-		ContractController controller = (ContractController) this.getController();
-		ContractParams params = controller.getParams();
-		PayrollUtils utils = new PayrollUtils();
-		Map<String, String> map = utils.getContractDataMap((Contract) this.getController().getTo());
-		
-		
-		
-		if(map.get(ContextVariable.IRPF_PERCENT.getName())!=null){
-			params.setIrpf(Double.parseDouble(map.get(ContextVariable.IRPF_PERCENT.getName())));
-		}
-		if(map.get(ContextVariable.QUOTE_GROUP.getName())!=null){
-			params.setQuoteGroup(QuoteGroup.getQuoteGroupByValue(map.get(ContextVariable.QUOTE_GROUP.getName())));
-		}
-		if(map.get(ContextVariable.OCCUPATION.getName())!=null){
-			params.setOccupationType(OccupationType.getOccupationTypeByValue(map.get(ContextVariable.OCCUPATION.getName())));
-		}
-		if(map.get(ContextVariable.CNO.getName())!=null){
-			params.setCno(obtainCno(map.get(ContextVariable.CNO.getName())));
-		} else {
-			params.setCno((CNO) BeanManager.getManagerBean(CNO.class).createNewTo());
-		}
-		if(map.get(ContextVariable.TC2.getName())!=null){
-			Contract contract = (Contract) this.getController().getTo();
-			params.setContractModelCode( obtainContractModelCode(map.get(ContextVariable.TC2.getName()), contract.getModel()) );
-		}
-		if(map.get(ContextVariable.SUBSIDIZED.getName())!=null){
-			params.setSubsidized(new Boolean(map.get(ContextVariable.SUBSIDIZED.getName())));
-		}
-		if(params.isTrainingContract()){
-			if(map.get(ContextVariable.TRAINING_CENTER.getName())!=null){
-				params.setTrainingCenter(obtainTrainingCenter(map.get(ContextVariable.TRAINING_CENTER.getName())));
-			} else {
-				params.setTrainingCenter((TrainingCenter) BeanManager.getManagerBean(TrainingCenter.class).createNewTo());
-			}
-			if(map.get(ContextVariable.TRAINING_COURSE.getName())!=null){
-				params.setTrainingCourse(obtainTrainingCourse(map.get(ContextVariable.TRAINING_COURSE.getName())));
-				ContractData data = obtainContractData(ContextVariable.TRAINING_COURSE.getName());
-				params.setTrainingStartDate(data.getStartDate());
-				params.setTrainingEndDate(data.getEndDate());
-			} else {
-				params.setTrainingCourse((TrainingCourse) BeanManager.getManagerBean(TrainingCourse.class).createNewTo());
-			}
-
-			ContractPdfController pdfDocController = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
-			try {
-				if( !controller.getExistSignedContractDocument() ){
-					pdfDocController.setDocumentType(ContractAttachmentType.CONTRACT_DOCUMENT_DRAFT);
-					pdfDocController.loadDocument(false);
-					if(!pdfDocController.isNew()){
-						ModelPE226 pdfDocument = (ModelPE226) pdfDocController.getContractPdfWriter().getPdfDocument();
-						params.setWorkSchedule(pdfDocument.getPdfFieldsMap().get("jornhoraefec").getValue());
-					}
-				}
-			} catch (IOException e) {
-				LOGGER.error("Error de lectura del documento del contrato");
-			} catch (UnsupportedContractDocumentException e) {
-				LOGGER.error("Documento no compantible con el tipo de contrato");
-			}
-			
-			try {
-				if( controller.isTrainingContract() && controller.isTrainingCourseDefined() ){
-					pdfDocController.setDocumentType(ContractAttachmentType.TRAINING_ANNEX_II);
-					pdfDocController.loadDocument(false);
-					if(!pdfDocController.isNew()){
-						ModelPE230 pdfDocument = (ModelPE230) pdfDocController.getContractPdfWriter().getPdfDocument();
-						params.setTrainingSchedule(pdfDocument.getPdfFieldsMap().get("horario").getValue());
-					}
-				}
-			} catch (IOException e) {
-				LOGGER.error("Error de lectura del Anexo");
-			} catch (UnsupportedContractDocumentException e) {
-				LOGGER.error("Documento no compantible con el tipo de contrato");
-			}
-		}
-		
-		ContractPdfController pdfDocController = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
-		try {
-//			if( !controller.getExistClausesDocument() ){
-				pdfDocController.setDocumentType(ContractAttachmentType.CONTRACT_CLAUSES);
-				pdfDocController.loadDocument(false);
-				if(!pdfDocController.isNew()){
-					Clauses pdfDocument = (Clauses) pdfDocController.getContractPdfWriter().getPdfDocument();
-					params.setAdditionalClauses(pdfDocument.getPdfFieldsMap().get("clausulas").getValue());
-				}
-//			}
-		} catch (IOException e) {
-			LOGGER.error("Error de lectura del documento del contrato");
-		} catch (UnsupportedContractDocumentException e) {
-			LOGGER.error("Documento no compantible con el tipo de contrato");
-		}
-		
-	}
-	
-	private CNO obtainCno(String expression) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(CNO.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CNO_CODE), expression);
-			List<ITransferObject> list = bean.getList(criteria);
-			if( !list.isEmpty() ){
-				return (CNO) list.get(0);
-			} else {
-				return (CNO) bean.createNewTo();
-			}
-		} catch (ManagerBeanException e) {
-			// do nothing ...
-		}
-		return null;
-	}
-	public ContractModelCode obtainContractModelCode(String contractCode, ContractModel contractModel) {
-		ContractCode code = ContractCode.getContractCodeByValue(contractCode);
-		for( ContractModelCode o : ContractModelCode.values() ) {
-			if ( (contractModel==null || o.getModel() == contractModel) && o.getCode() == code ) {
-				return o;
-			}
-		}
-		return null;
-	}
-	private TrainingCenter obtainTrainingCenter(String expression) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(TrainingCenter.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_CENTER_ID), Integer.parseInt(expression) );
-			List<ITransferObject> list = bean.getList(criteria);
-			if( !list.isEmpty() ){
-				return (TrainingCenter) list.get(0);
-			} else {
-				return (TrainingCenter) bean.createNewTo();
-			}
-		} catch (ManagerBeanException e) {
-			// do nothing ...
-		}
-		return null;
-	}
-	private TrainingCourse obtainTrainingCourse(String expression) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(TrainingCourse.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_COURSE_ID), Integer.parseInt(expression) );
-			List<ITransferObject> list = bean.getList(criteria);
-			if( !list.isEmpty() ){
-				return (TrainingCourse) list.get(0);
-			} else {
-				return (TrainingCourse) bean.createNewTo();
-			}
-		} catch (ManagerBeanException e) {
-			// do nothing ...
-		}
-		return null;
-	}
 	
 }

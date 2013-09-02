@@ -217,7 +217,7 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 			Salary salary = (Salary) to;
 			employeeList.remove(salary.getContract());
 		}
-		PayrollUtils utils = new PayrollUtils();
+		PayrollUtils utils = PayrollUtils.getInstance();
 		for(ITransferObject to: employeeList){
 			Contract contract = (Contract) to;
 			Salary salary = (Salary) utils.calculateSalary(contract, getStartDate(), getEndDate());

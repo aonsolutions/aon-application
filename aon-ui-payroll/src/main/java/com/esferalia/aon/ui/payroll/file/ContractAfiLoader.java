@@ -50,8 +50,8 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
-import com.esferalia.aon.ui.payroll.utils.SEPEFileUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
+import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 
 public class ContractAfiLoader implements IContractLoader{
 	
@@ -352,7 +352,8 @@ public class ContractAfiLoader implements IContractLoader{
 								contract.setRegistration(null);
 								contract.setRegimeType(ccc.getActivity().getType());
 								
-								contract.setStatus(ContractStatus.PENDING);
+								contract.setSepeStatus(ContractStatus.PENDING);
+								contract.setSsStatus(ContractStatus.PENDING);
 								contract.setDomain(enterprise.getDomain());
 								contract = (Contract) contractBean.insert(contract);
 								++i;
@@ -492,7 +493,7 @@ public class ContractAfiLoader implements IContractLoader{
 
 	private void completeDomainCriteria(String beanName, Criteria criteria) {
 		if(DomainManager.isDomainManagementAvailable()){
-			PayrollUtils utils = new PayrollUtils();
+			PayrollUtils utils = PayrollUtils.getInstance();
 			utils.getCurrentChildDomainIds();
 			List<Integer> idList = utils.getCurrentChildDomainIds();
 			idList.add(DomainManager.getCurrentDomain());

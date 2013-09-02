@@ -34,8 +34,8 @@
 				styleClass="aon-finding-toolbar-item aon-icon-refresh" />
 
 			<aon:htmlCommandLink id="document-download" 
-				value="&#160;" target="_blank" 
-				title="Descargar documento"
+				value="#{payrollBundle.payroll_draft}" target="_blank" 
+				title="#{payrollBundle.payroll_draft_download}"
 				rendered="#{!contractPdf.new}"
 				actionListener="#{contractPdf.onDownloadPdf}"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" />

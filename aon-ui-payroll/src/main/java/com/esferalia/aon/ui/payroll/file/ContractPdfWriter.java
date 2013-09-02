@@ -12,13 +12,13 @@ import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfFactory;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
-import com.esferalia.aon.file.payroll.contrata.ContrataParams;
+import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
-import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
+import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 
 
 public class ContractPdfWriter {
@@ -76,10 +76,10 @@ public class ContractPdfWriter {
 		return pdfDocument.buildPdf();
 	}
 	
-	public void loadNewPdf(ContractModel model, Contract contract, ContrataParams contrataParams) throws IOException, UnsupportedContractDocumentException {
+	public void loadNewPdf(ContractModel model, Contract contract, IContrataParams contrataParams) throws IOException, UnsupportedContractDocumentException {
 		loadNewPdf(model.toString(), contract, contrataParams);
 	}
-	public void loadNewPdf(String document, Contract contract, ContrataParams contrataParams) throws IOException, UnsupportedContractDocumentException {
+	public void loadNewPdf(String document, Contract contract, IContrataParams contrataParams) throws IOException, UnsupportedContractDocumentException {
 		ContractPdfFactory factory = new ContractPdfFactory();
 		pdfDocument = factory.createContractDocument(document);
 		if(pdfDocument == null) {
@@ -87,11 +87,9 @@ public class ContractPdfWriter {
 			AonUtil.addErrorMessage(msg);
 			throw new UnsupportedContractDocumentException(msg);
 		}
-		PayrollUtils utils = new PayrollUtils();
+		ContractUtils utils = ContractUtils.getInstance();
 		String tc2 = utils.getContractDataMap(contract).get(ContextVariable.TC2.getName());
 		pdfDocument.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
-		// TODO: load pdf document with contrata data
-//		pdfDocument.setContrataData(obtainContrataData());
 		pdfDocument.loadPdfFields(ContractCode.getContractCodeByValue(tc2), contract, contrataParams);
 	}
 
@@ -110,15 +108,4 @@ public class ContractPdfWriter {
 		pdfDocument.loadPdfFields(contractPdfDraft);
 	}
 	
-	private ContrataParams obtainContrataData() {
-		try {
-			// TODO: obtain contrata data to load pdf document
-//			ContractContrataController controller = (ContractContrataController) AonUtil.getRegisteredBean("contractContrata");
-//			controller.onContrataDataShow(null);
-//			return controller.getParams();
-		} catch (Exception e){
-			// no se carga ningun dato relacionado con contrata
-		}
-		return null;
-	}
 }

@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	
+	<aon:div style="width:850px;">
+		
+		<aon:panel rendered="#{contractClauses.existEnterpriseClauses}">
+			<aon:selectBooleanCheckbox id="Enterprise_contractClauses"
+				value="#{contractClauses.useEnterpriseClauses}" >
+				<a4j:support event="onchange" reRender="clausesContent" />
+			</aon:selectBooleanCheckbox>
+			<aon:outputLabel for="Enterprise_contractClauses" 
+				value="Anexar las clausulas establecidas por la empresa -i18n-" />
+			<aon:selectOneMenu value="#{contractClauses.selectedClause}" >
+				<f:selectItems value="#{contractClauses.clausesList}" />
+			</aon:selectOneMenu>
+		</aon:panel>
+		 
+		<aon:div id="clausesContent">
+			<aon:inputTextarea 
+				rendered="#{!contractClauses.useEnterpriseClauses}" 
+				value="#{contractClauses.additionalClauses}"
+				cols="138" rows="30"/>
+		</aon:div>
+		
+	</aon:div>
+	
+</ui:composition>

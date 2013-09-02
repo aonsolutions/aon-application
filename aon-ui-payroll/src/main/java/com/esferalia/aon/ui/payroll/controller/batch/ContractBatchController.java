@@ -71,7 +71,7 @@ public class ContractBatchController extends BasicController {
         Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
         while (iterator.hasNext()) {
 			Contract contract = (Contract) iterator.next();
-            contract.setStatus(ContractStatus.PROCESSED);
+            contract.setSsStatus(ContractStatus.PROCESSED);
             contractBean.update(contract);
             ContractBatchDetail contractBatchDetail = new ContractBatchDetail();
 			contractBatchDetail.setContract(contract);
@@ -90,7 +90,7 @@ public class ContractBatchController extends BasicController {
 		Iterator<Object> iterator = contractBatchDetailController.getCheckHandler().getCheckedList().iterator();
         while(iterator.hasNext()){
         	ContractBatchDetail contractBatchDetail = (ContractBatchDetail) iterator.next();
-        	contractBatchDetail.getContract().setStatus(ContractStatus.PENDING);
+        	contractBatchDetail.getContract().setSsStatus(ContractStatus.PENDING);
         	contractBean.update(contractBatchDetail.getContract());
         	contractBatchDetailBean.remove(contractBatchDetail);
         }

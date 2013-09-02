@@ -49,14 +49,14 @@ public class ContractAttachControllerListener extends AttachmentControllerListen
 	public void afterEditSearch(ControllerEvent event)
 			throws ControllerListenerException {
 		super.afterEditSearch(event);
-		ContractAttachController controller = (ContractAttachController) event.getController();
-		Contract contract = (Contract) controller.getMasterController().getTo();
-		try {		
-			String label = controller.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID);
-			controller.getCriteria().addEqualExpression(label, contract.getId());
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException("Error after edit search",e);
-		}
+//		ContractAttachController controller = (ContractAttachController) event.getController();
+//		Contract contract = (Contract) controller.getMasterController().getTo();
+//		try {		
+//			String label = controller.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID);
+//			controller.getCriteria().addEqualExpression(label, contract.getId());
+//		} catch (ManagerBeanException e) {
+//			throw new ControllerListenerException("Error after edit search",e);
+//		}
 	}
 	
 }

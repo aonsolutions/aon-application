@@ -76,7 +76,7 @@ public class ContractListController extends BasicController {
 	public void onSearch(ActionEvent event) {
 		getCheckHandler().clearCheckedList();
 		try {
-			PayrollUtils utils = new PayrollUtils();
+			PayrollUtils utils = PayrollUtils.getInstance();
 			
 			clearCriteria();
 			if(DomainManager.isDomainManagementAvailable()){

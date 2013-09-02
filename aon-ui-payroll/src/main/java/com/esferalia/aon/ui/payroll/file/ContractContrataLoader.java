@@ -85,8 +85,9 @@ import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO970TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO980TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO990TYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
-import com.esferalia.aon.ui.payroll.utils.SEPEFileUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
+import com.esferalia.aon.ui.sepe.file.ContrataReader;
+import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 
 public class ContractContrataLoader implements IContractLoader{
 	
@@ -361,7 +362,8 @@ public class ContractContrataLoader implements IContractLoader{
 					} else {
 						logError("No se ha podido obtener en modelo de contrato del trabajador " + person.getFullName());
 					}
-					contract.setStatus(ContractStatus.PENDING);
+					contract.setSepeStatus(ContractStatus.PENDING);
+					contract.setSsStatus(ContractStatus.PENDING);
 					contract.setDomain(enterprise.getDomain());
 					contract = (Contract) contractBean.insert(contract);
 					++i;
@@ -398,7 +400,7 @@ public class ContractContrataLoader implements IContractLoader{
 					ContractAttachment attach = new ContractAttachment();
 					attach.setContract(contract);
 					attach.setData(IOUtils.toByteArray(input));
-					attach.setAttachmentType(ContractAttachmentType.SPEE_CONTRATA_FILE);
+					attach.setAttachmentType(ContractAttachmentType.SEPE_CONTRACT_FILE);
 					attach.setMimeType(MimeType.MIME_XML);
 					attach.setDescription("Fichero contrat@");
 					attach.setDomain(enterprise.getDomain());
@@ -587,7 +589,7 @@ public class ContractContrataLoader implements IContractLoader{
 	
 	private void completeDomainCriteria(String beanName, Criteria criteria) {
 		if(DomainManager.isDomainManagementAvailable()){
-			PayrollUtils utils = new PayrollUtils();
+			PayrollUtils utils = PayrollUtils.getInstance();
 			utils.getCurrentChildDomainIds();
 			List<Integer> idList = utils.getCurrentChildDomainIds();
 			idList.add(DomainManager.getCurrentDomain());

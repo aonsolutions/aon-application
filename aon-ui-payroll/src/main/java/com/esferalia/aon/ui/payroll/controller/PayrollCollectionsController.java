@@ -12,6 +12,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -48,20 +49,20 @@ import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.payroll.enumeration.TrainingModality;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 
 public class PayrollCollectionsController {
 	
 	private final int NAME_LENGHT_80 = 80;	
 	private final int NAME_LENGHT_100 = 100;	
 
-	private List<SelectItem> contractDurations;
+		private List<SelectItem> contractDurations;
 	private List<SelectItem> contractWorkingDays;
 	private List<SelectItem> contractCalendarEventTypes;
 	private List<SelectItem> paymentTypes;
@@ -70,6 +71,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> salaryTypes;
 	
 	private List<SelectItem> contractCodes;
+	private List<SelectItem> contractTransformCodes;
 	private Map<ContractType,List<SelectItem>> contractCodesMap;
 	private List<SelectItem> contractModels;
 	private List<SelectItem> contractOptions;
@@ -83,7 +85,6 @@ public class PayrollCollectionsController {
 	private List<SelectItem> leaveReportTypes;
 	private List<SelectItem> leaveTypes;
 	private List<SelectItem> dischargeCauses;
-	private List<SelectItem> suspensionCauses;
 	private List<SelectItem> fileStatus;
 	private List<SelectItem> cnoList;
 	
@@ -102,6 +103,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> quoteTypes;
 	private List<SelectItem> reportTypes;
 	private List<SelectItem> payrollBatchAttachTypes;
+	
 	
 	private List<SelectItem> liquidationTypes;
 	
@@ -222,28 +224,44 @@ public class PayrollCollectionsController {
 	
 	public List<SelectItem> getContractCodes() {
 		if (contractCodes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
-					.getLocale();
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			contractCodes = new LinkedList<SelectItem>();
 			ContractCode[] codes = ContractCode.values();
-			for (ContractCode cc : codes) {
-				String name = cc.getValue() + cc.getName(locale);
-				SelectItem item = new SelectItem(cc, name);
-				contractCodes.add(item);
+			for (ContractCode code : codes) {
+				if( ArrayUtils.contains(ISepeConstants.AVAILABLE_CONTRACT_CODE_COMMUNICATION, code.getValue()) ){
+					String name = code.getValue() +" - "+ code.getName(locale);
+					SelectItem item = new SelectItem(code, name);
+					contractCodes.add(item);
+				}
 			}
 		}
 		return contractCodes;
 	}
+
+	public List<SelectItem> getContractTransformCodes() {
+		if (contractTransformCodes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			contractTransformCodes = new LinkedList<SelectItem>();
+			ContractCode[] codes = ContractCode.values();
+			for (ContractCode code : codes) {
+				if( ArrayUtils.contains(ISepeConstants.AVAILABLE_TRANSFORM_CODE_COMMUNICATION, code.getValue()) ){
+					String name = code.getValue() +" - "+ code.getName(locale);
+					SelectItem item = new SelectItem(code, name);
+					contractTransformCodes.add(item);
+				}
+			}
+		}
+		return contractTransformCodes;
+	}
 	
 	public List<SelectItem> getContractModels() {
 		if (contractModels == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
-			.getLocale();
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			contractModels = new LinkedList<SelectItem>();
 			ContractModel[] models = ContractModel.values();
-			for (ContractModel cm : models) {
-				String name = cm.name() + " - " + cm.getName(locale);
-				SelectItem item = new SelectItem(cm, name);
+			for (ContractModel model : models) {
+				String name = model.name() + " - " + model.getName(locale);
+				SelectItem item = new SelectItem(model, name);
 				contractModels.add(item);
 			}
 		}
@@ -410,20 +428,6 @@ public class PayrollCollectionsController {
 			}
 		}
 		return dischargeCauses;
-	}
-	
-	public List<SelectItem> getSuspensionCauses() {
-		if (suspensionCauses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			suspensionCauses = new LinkedList<SelectItem>();
-			SuspensionCause[] causes = SuspensionCause.values();
-			for (SuspensionCause c : causes) {
-				String name = c.getFullName(locale);
-				SelectItem item = new SelectItem(c, name);
-				suspensionCauses.add(item);
-			}
-		}
-		return suspensionCauses;
 	}
 	
 	public List<SelectItem> getFileStatus() {
@@ -694,7 +698,7 @@ public class PayrollCollectionsController {
 		return reportTypes;
 	}
 	
-	public List<SelectItem> getBatchAttachTypes() {
+	public List<SelectItem> getPayrollBatchAttachTypes() {
 		if (payrollBatchAttachTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			payrollBatchAttachTypes = new LinkedList<SelectItem>();

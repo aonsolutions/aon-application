@@ -33,7 +33,7 @@ public class PayrollWorkPlaceControllerListener extends ControllerAdapter {
 			if(this.getController().getRowCount()==0){
 				IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
 				Criteria criteria = new Criteria();
-				PayrollUtils utils = new PayrollUtils();
+				PayrollUtils utils = PayrollUtils.getInstance();
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID), utils.getCurrentDomainEnterprise().getId());
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), true);
 				IManagerBean pwBean = BeanManager.getManagerBean(PayrollWorkPlace.class);

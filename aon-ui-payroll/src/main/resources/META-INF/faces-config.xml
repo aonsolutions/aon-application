@@ -16,13 +16,6 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.PayrollCollectionsController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-
-	<!-- ************** CONTRATA COLLECTIONS ****************** -->
-	<managed-bean>
-		<managed-bean-name>contrataCollections</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.ContrataCollectionsController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
 	
 	<!--  **** ENTERPRISE PAYROLL **** -->
 	<managed-bean>
@@ -339,11 +332,11 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractPdfController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-
-	<!-- ************ CONTRACT CONTRATA XML EDITION ************** -->
+	
+	<!-- ************ CONTRACT ADDITIOONAL CLAUSES ************** -->
 	<managed-bean>
-		<managed-bean-name>contractContrata</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractContrataController</managed-bean-class>
+		<managed-bean-name>contractClauses</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractClausesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
@@ -844,339 +837,6 @@
 		</managed-property>				
 	</managed-bean>
 
-	<!-- ************ Remesa Certificado Empresa Wizard **************** -->
-	<managed-bean>
-		<managed-bean-name>certifica2Batch</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.Certifica2BatchController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.Certifica2Batch</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>certifica2Batch</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Certifica2Batch_date desc</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{certifica2BatchControllerListener}</value>
-				<value>#{certifica2BatchDetailChildListener}</value>
-				<value>#{certifica2BatchAttachChildListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>certifica2BatchControllerListener</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.event.Certifica2BatchControllerListener</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>certifica2BatchDetailChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>certifica2BatchDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>Certifica2BatchDetail_certifica2Batch_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>certifica2BatchDetail</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.BatchDetailController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.Certifica2BatchDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>certifica2BatchDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Certifica2BatchDetail_id</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>certifica2Batch</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>certifica2Batch.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>certifica2BatchAttachChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>certifica2BatchAttach</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>Certifica2BatchAttachment_sourceBatch</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<!-- **** CERTIFICA2 BATCH DOCUMENTS **** -->
-	<managed-bean>
-		<managed-bean-name>certifica2BatchAttach</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.Certifica2BatchAttachController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.Certifica2BatchAttachment</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>certifica2BatchAttach</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Certifica2BatchAttachment_attachDate desc</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>certifica2Batch</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>certifica2Batch.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<!-- ************* CERTIFICA2 BATCH LIST ***************** -->
-	<managed-bean>
-		<managed-bean-name>certifica2List</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.Certifica2ListController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.Contract</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>certifica2List</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Contract_person_registry_name</value>
-		</managed-property>				
-	</managed-bean>
-	
-	<!-- ************ Remesa Datos Contrata - SEPE **************** -->
-	<managed-bean>
-		<managed-bean-name>contrataBatch</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.ContrataBatchController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.ContrataBatch</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>contrataBatch</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ContrataBatch_date desc</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{contrataBatchDetailChildListener}</value>
-				<value>#{contrataBatchAttachChildListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>contrataBatchDetailChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>contrataBatchDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>ContrataBatchDetail_contrataBatch_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>contrataBatchDetail</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.BatchDetailController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.ContrataBatchDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>contrataBatchDetail</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ContrataBatchDetail_id</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>contrataBatch</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>contrataBatch.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>contrataBatchAttachChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>contrataBatchAttach</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>ContrataBatchAttachment_sourceBatch</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<!-- **** CONTRATA BATCH DOCUMENTS **** -->
-	<managed-bean>
-		<managed-bean-name>contrataBatchAttach</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.ContrataBatchAttachController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.ContrataBatchAttachment</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>contrataBatchAttach</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>CcontrataBatchAttachment_attachDate desc</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>contrataBatch</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>contrataBatch.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<!-- ************* CONTRACT LIST ***************** -->
-	<managed-bean>
-		<managed-bean-name>contrataList</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.ContrataListController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.Contract</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>contrataList</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Contract_person_firstSurname</value>
-		</managed-property>				
-	</managed-bean>
 
 	<!-- ************ AGREEMENT ************** -->
 	<managed-bean>
@@ -1261,30 +921,6 @@
 				</map-entry>
 				<map-entry>
 					<key>PAY_default_trainingCenter_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
-					<key>PAY_contrata_user_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
-					<key>PAY_contrata_passwd_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
-					<key>PAY_contrata_test_env_active_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
-					<key>PAY_certifica2_user_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
-					<key>PAY_certifica2_passwd_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
-					<key>PAY_certifica2_test_env_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
 			</map-entries>
@@ -1555,13 +1191,6 @@
 	<managed-bean>
 		<managed-bean-name>contractLoader</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.ContractLoaderController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-	<!--  **** SEPE TABLES VIEWER **** -->
-	<managed-bean>
-		<managed-bean-name>sepeTables</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.SepeTablesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
@@ -1979,7 +1608,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!-- =================== Disks Batch ========================== -->
+	<!-- =================== FDI Batch ========================== -->
 	<navigation-rule id="leaveBatch">
 		<navigation-case>
 			<from-outcome>leaveBatch_search</from-outcome>
@@ -1994,35 +1623,7 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/fdi/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<navigation-rule id="certifica2Batch">
-		<navigation-case>
-			<from-outcome>certifica2Batch_search</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/certifica2/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>certifica2Batch_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/certifica2/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>certifica2Batch_form</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/certifica2/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<navigation-rule id="contrataBatch">
-		<navigation-case>
-			<from-outcome>contrataBatch_search</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/contrata/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>contrataBatch_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/contrata/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>contrataBatch_form</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/contrata/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<!-- =================== Contract Batch ========================== -->
+	<!-- =================== AFI Batch ========================== -->
 	<navigation-rule id="contractBatch">
 		<navigation-case>
 			<from-outcome>contractBatch_search</from-outcome>
@@ -2101,17 +1702,6 @@
 		<navigation-case>
 			<from-outcome>contractLoader_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractLoader/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<!--  **** SEPE TABLES VIEWER **** -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>sepeTables_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/sepeTables/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>sepeCodes_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/sepeTables/code_list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- =================== SYSTEM DATA  ========================== -->

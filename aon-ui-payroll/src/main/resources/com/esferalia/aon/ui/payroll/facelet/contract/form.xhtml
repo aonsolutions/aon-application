@@ -20,14 +20,18 @@
 			
 				<c:if test="#{!contract.new}" >
 				
-					<aon:panel style="width: 850px;">
-						<f:facet name="header">
-							<aon:outputText value="#{payrollBundle.payroll_person_data}" />
-						</f:facet>
-						<aon:panelGrid columns="4" styleClass="aon-width-all" >
-							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formPersonContent.xhtml" />
-						</aon:panelGrid>
-					</aon:panel>
+					<aon:panelGrid columns="4" styleClass="aon-width-all" >
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formPersonContent.xhtml" />
+						
+						<aon:outputLabel value="#{payrollBundle.payroll_contract_sepe_communicationId}" />
+						<aon:outputText disabled="#{true}"
+							value="#{contract.sepeCommunicationId}" />
+													
+						<aon:outputLabel value="#{payrollBundle.payroll_contract_sepe_status}" />
+						<aon:outputText disabled="#{true}"
+							value="#{contract.to.sepeStatus}" />
+							
+					</aon:panelGrid>
 				
 					<aon:panelTabSet id="contract-panelTab" selectedTab="#{contract.selectedTab}" 
 						switchType="ajax" immediate="true">
@@ -36,11 +40,13 @@
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
 						</aon:panelTab>
 
-						<aon:panelTab id="contrataData" label="#{payrollBundle.payroll_contract_specific_data}" 
+						<aon:panelTab id="contrataData" label="#{sepeBundle.sepe_contrata_contract_specific_data}" 
 							actionListener="#{contractContrata.onContrataDataShow}">
 							<c:if test="#{contractContrata.enabledContrataEdition}">
-								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_toolbar.xhtml" />
-								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form_content.xhtml" />
+								<aon:div style="width:850px;">
+									<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" />
+									<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_specificData.xhtml" />
+								</aon:div>		
 							</c:if>
 							<c:if test="#{!contractContrata.enabledContrataEdition}">
 								<aon:outputText style="color:red;padding-left:18px;" styleClass="aon-icon-wrong"
@@ -48,9 +54,10 @@
 							</c:if>
 						</aon:panelTab>
 
-						<aon:panelTab id="additionalClausesData" label="#{payrollBundle.payroll_contract_additional_clauses}">
+						<aon:panelTab id="additionalClausesData" label="#{payrollBundle.payroll_contract_additional_clauses}"
+							actionListener="#{contractClauses.onAdditionalClausesShow}">
 							<c:if test="#{not empty contract.to.model}">
-								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/form_additionalClauses.xhtml" />
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/additionalClauses/form.xhtml" />
 							</c:if>
 						</aon:panelTab>
 
@@ -75,12 +82,33 @@
 		<aon:lookupButtonPopup lookup="#{trainingCourseLookup}" />
 		
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
-		
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/modalLogin.xhtml" />
-
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/modalStatus.xhtml" />
-		
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/extension/modalExtension.xhtml" />
+
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalLogin.xhtml" >
+			<ui:param name="controller" value="#{contractContrata}" />
+		</ui:include>
+		
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >
+			<ui:param name="controller" value="#{contractContrata}" />
+		</ui:include>
+		
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalBatch.xhtml" >
+			<ui:param name="controller" value="#{contractContrata}" />
+		</ui:include>
+		
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalCommunication.xhtml" >
+			<ui:param name="controller" value="#{contractCertificados}" />
+		</ui:include>
+
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalGeneration.xhtml" >
+			<ui:param name="controller" value="#{contractCertificados}" />
+		</ui:include>
+
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalBatch.xhtml" >
+			<ui:param name="controller" value="#{contractCertificados}" />
+		</ui:include>
 		
 	</ui:define>
 </ui:composition>

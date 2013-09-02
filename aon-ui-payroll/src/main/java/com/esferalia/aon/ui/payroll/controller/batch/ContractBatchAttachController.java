@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.ui.form.FormUtil;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
-import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class ContractBatchAttachController extends BatchAttachController {
