@@ -1,5 +1,7 @@
 package com.code.aon.ui.groupware.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.SEARCH_NO_RESULTS;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -396,7 +398,7 @@ public class GanttController {
 		plot.setNoDataMessage(
 				list.size() > 500 ?
 					"Se han solicitado " + list.size() + " tareas. No se pudo inicializar el diagrama de Gantt, acote los parámetros de consulta.":			
-					AonUtil.getMessage("bundle","aon_search_no_results"));
+					AonUtil.getMessage(SEARCH_NO_RESULTS));
 		int width =1024;
 		int height = i * 14;
 		height += 100; 

@@ -1,5 +1,28 @@
 package com.code.aon.ui.common.role;
 
+import static com.code.aon.ui.common.ICommonMessages.CONFIDENTIAL;
+import static com.code.aon.ui.common.ICommonMessages.MODULE_ACCOUNTING;
+import static com.code.aon.ui.common.ICommonMessages.MODULE_COMMERCIAL;
+import static com.code.aon.ui.common.ICommonMessages.MODULE_DOCUMENT;
+import static com.code.aon.ui.common.ICommonMessages.MODULE_FINANCE;
+import static com.code.aon.ui.common.ICommonMessages.MODULE_WAREHOUSE;
+import static com.code.aon.ui.common.ICommonMessages.PURCHASES;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_ACCOUNTING_MANAGER;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_ADMIN;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_AUDITOR;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_CONFIGURATION;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_DOCUMENT_MANAGER;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_ESIGNATURE;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_FISCAL;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_GUEST;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_PAYROLL;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_PRODUCT;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_STATISTICS;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_SYS_ADMIN;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_TASK_MONITORING;
+import static com.code.aon.ui.common.ICommonMessages.ROLE_TGC;
+import static com.code.aon.ui.common.ICommonMessages.SALES;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,112 +39,112 @@ public enum IAonRole {
 	/**
 	 * Role de Invitado
 	 */
-	GUEST( "Guest", "aon_role_guest" ),
+	GUEST( "Guest", ROLE_GUEST ),
 
 	/**
 	 * Role de Administrador
 	 */
-	ADMIN( "Admin", "aon_role_admin" ),
+	ADMIN( "Admin", ROLE_ADMIN ),
 
 	/**
 	 * Role de Configuración
 	 */
-	CONFIG( "Config", "aon_configuration" ),
+	CONFIG( "Config", ROLE_CONFIGURATION ),
 	
 	/**
 	 * Role de Auditor
 	 */
-	AUDITOR( "Auditor", "aon_role_auditor" ),
+	AUDITOR( "Auditor", ROLE_AUDITOR ),
 
 	/**
 	 * Role de Acceso a la función de confidencialidad.
 	 */
-	CONFIDENTIALITY( "Confidentiality", "aon_confidential" ),
+	CONFIDENTIALITY( "Confidentiality", CONFIDENTIAL ),
 
 	/**
 	 * Role de Acceso a Productos
 	 */
-	PRODUCT( "Product", "aon_role_product" ),
+	PRODUCT( "Product", ROLE_PRODUCT ),
 	
 	/**
 	 * Role de Acceso a Comercial
 	 */
-	COMMERCIAL( "Commercial", "aon_module_commercial" ),
+	COMMERCIAL( "Commercial", MODULE_COMMERCIAL ),
 
 	/**
 	 * Role de Acceso a Ventas
 	 */
-	SALE( "Sale", "aon_sales" ),
+	SALE( "Sale", SALES ),
 
 	/**
 	 * Role de Acceso a Compras
 	 */
-	PURCHASE( "Purchase", "aon_purchases" ),
+	PURCHASE( "Purchase", PURCHASES ),
 	
 	/**
 	 * Role de Acceso a Almacén
 	 */
-	WAREHOUSE( "Warehouse", "aon_module_warehouse" ),
+	WAREHOUSE( "Warehouse", MODULE_WAREHOUSE ),
 	
 	/**
 	 * Role de Acceso a Contabilidad
 	 */
-	ACCOUNTING( "Accounting", "aon_module_accounting" ),
+	ACCOUNTING( "Accounting", MODULE_ACCOUNTING ),
 
 	/**
 	 * Role de Acceso a Facturación y Tesoreria
 	 */
-	FINANCE( "Finance", "aon_module_finance" ),
+	FINANCE( "Finance", MODULE_FINANCE ),
 
 	/**
 	 * Role de Acceso a Estadísticas
 	 */
-	STATISTICS( "Statistics", "aon_role_statistics" ),
+	STATISTICS( "Statistics", ROLE_STATISTICS ),
 	
 	/**
 	 * Role de Monitor de Tareas.
 	 */
-	TASK_MONITORING( "TaskMonitoring", "aon_role_task_monitoring" ),
+	TASK_MONITORING( "TaskMonitoring", ROLE_TASK_MONITORING ),
 
 	/**
 	 * Role para dar capacidad de firmar documentos electrónicos.
 	 */
-	E_SIGNATURE( "eSignature", "aon_role_eSignature" ),
+	E_SIGNATURE( "eSignature", ROLE_ESIGNATURE ),
 	
 	/**
 	 * Role para dar capacidad de modificar las expresiones de las percepciones y deducciones.
 	 */
-	SYS_ADMIN( "SisAdmin", "aon_role_sys_admin" ),
+	SYS_ADMIN( "SisAdmin", ROLE_SYS_ADMIN ),
 	
 	/**
 	 * Role de acceso a los informes de nominas.
 	 */
-	TGC( "Tgc", "aon_role_tgc" ),
+	TGC( "Tgc", ROLE_TGC ),
 
 	/**
 	 * Role de acceso a los documentos.
 	 */
-	DOCUMENT( "Document", "aon_module_document" ),
+	DOCUMENT( "Document", MODULE_DOCUMENT ),
 	
 	/**
 	 * Role de Adminitrador Documental.
 	 */
-	DOCUMENT_MANAGER( "DocumentManager", "aon_role_document_manager" ),
+	DOCUMENT_MANAGER( "DocumentManager", ROLE_DOCUMENT_MANAGER ),
 	
 	/**
 	 * Role para dar capacidad de modificar las expresiones de las percepciones y deducciones.
 	 */
-	PAYROLL( "Payroll", "aon_role_payroll" ),
+	PAYROLL( "Payroll", ROLE_PAYROLL ),
 	
 	/**
 	 * Role de acceso a los informes de nominas.
 	 */
-	FISCAL( "Fiscal", "aon_role_fiscal" ),
+	FISCAL( "Fiscal", ROLE_FISCAL ),
 
 	/**
 	 * Role de Gestor de Contabilidad.
 	 */
-	ACCOUNTING_MANAGER( "AccountingManager", "aon_role_accounting_manager" );
+	ACCOUNTING_MANAGER( "AccountingManager", ROLE_ACCOUNTING_MANAGER  );
 
 	private String name;
 	

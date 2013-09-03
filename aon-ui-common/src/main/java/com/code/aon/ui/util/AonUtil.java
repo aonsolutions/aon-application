@@ -3,6 +3,7 @@ package com.code.aon.ui.util;
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.common.ICommonConstants.AON_ROLE_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.CONFIGURATION_CONTROLLER_NAME;
+import static com.code.aon.ui.common.ICommonMessages.AON_ERROR;
 
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -34,7 +35,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
-import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.common.role.BasicRoleManager;
 
@@ -48,9 +49,6 @@ public class AonUtil {
 
 	/** Default bundle for messages (<code>javax.faces.Messages</code>) */
 	private static final String DEFAULT_BUNDLE = "javax.faces.Messages";
-
-	/** Key to identify an aon error. (value is ""aon_error"") */
-	public static final String AON_ERROR = "aon_error";
 
 	/** Obtains a suitable Logger. */
 	private final static Logger LOGGER = LoggerFactory.getLogger(AonUtil.class);
@@ -330,9 +328,9 @@ public class AonUtil {
 	 */
 	public static void addMessage(String[] message, FacesMessage.Severity severity) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		FacesMessage msg = getMessage(ctx, AonUtil.AON_ERROR, message);
+		FacesMessage msg = getMessage(ctx, AON_ERROR, message);
 		msg.setSeverity(severity);
-		ctx.addMessage(AonUtil.AON_ERROR, msg);
+		ctx.addMessage(AON_ERROR, msg);
 	}
 
 	/**
@@ -470,7 +468,7 @@ public class AonUtil {
      * @return String
      */
     public static String getMessage(String messageKey) {
-    	return AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, messageKey);
+    	return AonUtil.getMessage(ICommonMessages.BUNDLE_NAME, messageKey);
     }
 	
     /**

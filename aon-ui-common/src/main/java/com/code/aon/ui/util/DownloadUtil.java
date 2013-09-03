@@ -25,12 +25,11 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
-import com.code.aon.ui.common.ICommonConstants;
 
 /**
  * The Class DownloadUtil.
  */
-public class DownloadUtil implements ICommonConstants {
+public class DownloadUtil {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DownloadUtil.class);
 

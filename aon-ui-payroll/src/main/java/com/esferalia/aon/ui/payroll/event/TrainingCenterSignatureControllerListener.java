@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.payroll.event;
 
+import static com.code.aon.ui.common.ICommonMessages.FILE_UPLOAD_ELEMENT;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +32,7 @@ public class TrainingCenterSignatureControllerListener extends ControllerAdapter
 	
 	private void checkAonFile( AonFile aonFile ) throws ControllerListenerException {
 		if ( ArrayUtils.isEmpty(aonFile.getData()) ) {
-			throw new ControllerListenerException( AonUtil.getMessage("aon_fileupload_element") );									
+			throw new ControllerListenerException( AonUtil.getMessage(FILE_UPLOAD_ELEMENT) );									
 		} else if (aonFile.getSize() > ICompanyConstants.LOGO_MAX_SIZE) {
 			String message = AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_LOGO_MAX_SIZE_ERROR, ICompanyConstants.LOGO_MAX_SIZE);
 			throw new ControllerListenerException(message);										

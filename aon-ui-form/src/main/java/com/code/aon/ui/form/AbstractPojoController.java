@@ -23,9 +23,6 @@ public class AbstractPojoController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPojoController.class);
 
-	/** Clave para identificar el mensaje de error. (El valor es ""aon_error"") */
-	public static final String AON_ERROR = "aon_error";
-
 	private IManagerBean managerBean;
 
 	private String beanName;

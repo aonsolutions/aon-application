@@ -29,6 +29,7 @@ public interface IPayrollConstants {
 	String PAYROLL_SETTLE_COMPENSATION = "payroll_settle_compensation";
 	String PAYROLL_IRPF = "payroll_irpf";
 	String PAYROLL_IRPF_DRAFT = "payroll_irpf_draft";
+	String PAYROLL_TRAINING_CENTER_DIRECT_DEBIT = "payroll_trainingCenter_directDebit";
 	
 	
 	// ************************************************************

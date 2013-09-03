@@ -1,5 +1,7 @@
 package com.code.aon.ui.product.event;
 
+import static com.code.aon.ui.common.ICommonMessages.FILE_UPLOAD_ELEMENT;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
 
@@ -81,7 +83,7 @@ public class ItemAttachControllerListener extends ControllerAdapter implements I
 			ok = (attach.getData() != null) && (! ArrayUtils.isEmpty(attach.getData()));
 		}
 		if (! ok ) {
-			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage("aon_fileupload_element") );
+			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage(FILE_UPLOAD_ELEMENT) );
 			throw new ControllerListenerException( message.getSummary() );			
 		} else if ( ciaController.isUploaded() && ciaController.isMaximumSizeExceeded() ) {
 	        String message = AonUtil.getMessage(BUNDLE_NAME, PRODUCT_DOCUMENT_MAX_SIZE_ERROR, ciaController.getMaximumSize());

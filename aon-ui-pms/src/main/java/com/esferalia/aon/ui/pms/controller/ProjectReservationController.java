@@ -1,5 +1,8 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.TIMESTAMP_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.TIME_2_PATTERN;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -38,7 +41,7 @@ import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryPayMethod;
-import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
@@ -286,7 +289,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	public List<SelectItem> getReservationTimes() {
-		DateFormat formatter = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_time2_pattern"));
+		DateFormat formatter = new SimpleDateFormat(AonUtil.getMessage(TIME_2_PATTERN));
 		Date fromDate = DateUtils.truncate(((ProjectReservation)getTo()).getStartDate(), Calendar.DATE);
 		Date toDate = DateUtils.addDays(fromDate, 1);
 
@@ -505,7 +508,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				ReservationRequestManager requestManager = new ReservationRequestManager();
 				cancelOk = requestManager.processBookingCancelRequest(reservation);
 	
-				DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_timestamp_pattern"));
+				DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(TIMESTAMP_PATTERN));
 				reservation.setRemarks((cancelOk ? "OK" : "ERROR") + " CANCEL CRS: " + dateFormat.format(new Date()) + "\n" + reservation.getRemarks());
 			}
 		}

@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.PRICE_PATTERN;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,6 +41,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.FinanceListController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
@@ -339,7 +342,7 @@ public class PaymentCardSettleController {
 		List<SelectItem> fBatchList = new LinkedList<SelectItem>();
 		for (ITransferObject ito : fBatchBean.getList(criteria)) {
 			FinanceBatch fBatch = (FinanceBatch)ito;
-			String amount = new DecimalFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_price_pattern")).format(fBatch.getFinanceBatchTotalAmount());
+			String amount = new DecimalFormat(AonUtil.getMessage(PRICE_PATTERN)).format(fBatch.getFinanceBatchTotalAmount());
 			
 			SelectItem item = new SelectItem(fBatch, fBatch.getId() + " - " + fBatch.getDescription() + StringUtils.leftPad(amount, 50 - fBatch.getDescription().length()-amount.length(), "·") + "EUR.");
 			fBatchList.add(item);

@@ -6,13 +6,13 @@ import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_EMA
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_PHONE;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_TITLE;
 import static com.code.aon.common.enumeration.AppParam.AON_HIDE_TRADEMARK;
-import static com.code.aon.ui.common.ICommonConstants.APPLICATION_TITLE;
-import static com.code.aon.ui.common.ICommonConstants.DEFAULT_BUNDLE_RESOURCE;
+import static com.code.aon.ui.common.ICommonMessages.APPLICATION_TITLE;
+import static com.code.aon.ui.common.ICommonMessages.BUNDLE_RESOURCE;
 import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME;
 import static com.code.aon.ui.common.ICommonConstants.LOGIN_LOGO_NAME;
-import static com.code.aon.ui.common.ICommonConstants.SUPPORT_SEND_EMAIL;
-import static com.code.aon.ui.common.ICommonConstants.SUPPORT_TELEPHONE_NUMBER;
-import static com.code.aon.ui.common.ICommonConstants.SUPPORT_TELEPHONE_NUMBER2;
+import static com.code.aon.ui.common.ICommonMessages.SUPPORT_SEND_EMAIL;
+import static com.code.aon.ui.common.ICommonMessages.SUPPORT_TELEPHONE_NUMBER;
+import static com.code.aon.ui.common.ICommonMessages.SUPPORT_TELEPHONE_NUMBER2;
 
 import java.io.InputStream;
 import java.sql.Connection;
@@ -96,7 +96,7 @@ public class CustomizeBean {
 	}
 
 	public void initMessages( Locale locale ) {
-		bundle = ResourceBundle.getBundle(DEFAULT_BUNDLE_RESOURCE, locale);
+		bundle = ResourceBundle.getBundle(BUNDLE_RESOURCE, locale);
 		ResourceBundle appBundle = ResourceBundle.getBundle("com.code.aon.web.aio.i18n.messages", locale);
 		this.applicationTitle = appBundle.getString( APPLICATION_TITLE );
 		this.supportTelephone = bundle.getString(SUPPORT_TELEPHONE_NUMBER) + " · " + bundle.getString(SUPPORT_TELEPHONE_NUMBER2);

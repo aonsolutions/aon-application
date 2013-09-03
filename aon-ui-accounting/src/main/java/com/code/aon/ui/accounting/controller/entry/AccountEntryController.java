@@ -1,12 +1,12 @@
 package com.code.aon.ui.accounting.controller.entry;
 
+import static com.code.aon.ui.common.ICommonMessages.SEARCH_NO_RESULTS;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
@@ -37,8 +37,6 @@ import com.code.aon.ql.ProjectionList;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.accounting.IAccountingConstants;
-import com.code.aon.ui.accounting.controller.book.AccountingBook;
-import com.code.aon.ui.accounting.controller.book.AccountingBookController;
 import com.code.aon.ui.accounting.controller.book.AonReportType;
 import com.code.aon.ui.accounting.controller.report.JournalReportController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
@@ -230,7 +228,7 @@ public class AccountEntryController extends BasicController {
             model.setRowIndex(0);
             super.onSelect(null);
         } else {
-			AonUtil.addInfoMessage( AonUtil.getMessage("aon_search_no_results") );
+			AonUtil.addInfoMessage( AonUtil.getMessage(SEARCH_NO_RESULTS) );
 			onEditSearch(event);
         }
     }

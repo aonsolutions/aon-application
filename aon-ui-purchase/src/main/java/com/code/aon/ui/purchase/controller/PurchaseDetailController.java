@@ -1,6 +1,6 @@
 package com.code.aon.ui.purchase.controller;
 
-import static com.code.aon.ui.common.ICommonConstants.QUANTITY_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.QUANTITY_PATTERN;
 import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_DETAIL_LINE;
 import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_DETAIL_UNITS;
 import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_TO_INCOME;

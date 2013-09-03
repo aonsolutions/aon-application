@@ -677,7 +677,7 @@ public class ContractController extends BasicController {
 		attach.setMimeType(MimeType.MIME_PDF);
 		attach.setAttachmentType(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT);
 		attach.setAttachDate(new Date());
-		attach.setDescription( AonUtil.getMessage(IPayrollConstants.BUNDLE_NAME, "payroll_trainingCenter_directDebit"));
+		attach.setDescription( AonUtil.getMessage(IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_TRAINING_CENTER_DIRECT_DEBIT));
 		return attach;
 	}
 	

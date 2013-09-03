@@ -1,10 +1,10 @@
 package com.code.aon.ui.marketing.print;
 
-import static com.code.aon.ui.common.ICommonConstants.COMMENT;
-import static com.code.aon.ui.common.ICommonConstants.COMPANY_DOCUMENT;
-import static com.code.aon.ui.common.ICommonConstants.ID;
-import static com.code.aon.ui.common.ICommonConstants.LOGIN_USER;
-import static com.code.aon.ui.common.ICommonConstants.STATUS;
+import static com.code.aon.ui.common.ICommonMessages.COMMENT;
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_DOCUMENT;
+import static com.code.aon.ui.common.ICommonMessages.ID;
+import static com.code.aon.ui.common.ICommonMessages.LOGIN_USER;
+import static com.code.aon.ui.common.ICommonMessages.STATUS;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.ACTION_EXPORT;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.BUNDLE_NAME;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME;

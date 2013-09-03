@@ -3,7 +3,8 @@
  */
 package com.code.aon.ui.common.controller;
 
-import static com.code.aon.ui.common.ICommonConstants.DEFAULT_BUNDLE_RESOURCE;
+import static com.code.aon.ui.common.ICommonMessages.BUNDLE_RESOURCE;
+import static com.code.aon.ui.common.ICommonMessages.LOGIN_ERROR_DEFAULT;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -35,8 +37,6 @@ public class FailedLogin {
 	private final static String GET_LASTLOGIN_EXCEPTION = "getLastLoginException";
 	
 	private static final String LOGIN_ERROR_PREFFIX = "aon_login_error_";
-	
-	private static final String LOGIN_ERROR_DEFAULT = "aon_login_error_default";
 
 	private String message;
 	
@@ -72,7 +72,7 @@ public class FailedLogin {
 			errorId = LOGIN_ERROR_DEFAULT;
 		}
 		if ( message == null ) {
-			ResourceBundle bundle = ResourceBundle.getBundle(DEFAULT_BUNDLE_RESOURCE, locale);
+			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_RESOURCE, locale);
 			message = bundle.getString(errorId);
 		}
 		return message;	

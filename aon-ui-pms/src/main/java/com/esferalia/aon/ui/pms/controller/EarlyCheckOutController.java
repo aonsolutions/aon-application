@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.PRICE_PATTERN;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
@@ -37,7 +39,6 @@ import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
-import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.role.BasicRoleManager;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -257,7 +258,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 	}
 
 	public List<SelectItem> getCheckOutPenaltyDays() throws ManagerBeanException {
-		NumberFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_price_pattern"));
+		NumberFormat formatter = new DecimalFormat(AonUtil.getMessage(PRICE_PATTERN));
 		List<SelectItem> penaltyDays = new LinkedList<SelectItem>();
 		penaltyDays.add(new SelectItem("0", "0 - 0,00 EUR."));
 		if (DateUtils.addDays(getReservationInvoiceTo().getEarlyCheckOutDate(), 1).compareTo(getReservation().getEndDate()) <= 0) {

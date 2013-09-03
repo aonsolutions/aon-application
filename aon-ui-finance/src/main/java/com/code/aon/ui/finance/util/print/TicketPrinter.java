@@ -1,12 +1,12 @@
 package com.code.aon.ui.finance.util.print;
 
-import static com.code.aon.ui.common.ICommonConstants.DECIMAL_2_PATTERN;
-import static com.code.aon.ui.common.ICommonConstants.PERCENT_PATTERN;
-import static com.code.aon.ui.common.ICommonConstants.QUANTITY_PATTERN;
-import static com.code.aon.ui.common.ICommonConstants.TIMESTAMP_2_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.DECIMAL_2_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.PERCENT_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.QUANTITY_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.TIMESTAMP_2_PATTERN;
+import static com.code.aon.ui.finance.IFinanceMessages.BUNDLE_KEY;
 import static com.code.aon.ui.finance.IFinanceMessages.POS_GIFT_RECEIPT;
 import static com.code.aon.ui.finance.IFinanceMessages.POS_RECEIPT;
-import static com.code.aon.ui.finance.IFinanceMessages.BUNDLE_KEY;
 import static com.code.aon.ui.finance.controller.IFinanceConstants.POS_INVOICE_PARAMS_CONTROLLER_NAME;
 import static com.code.aon.ui.finance.controller.IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME;
 
@@ -37,7 +37,7 @@ import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.report.ReportException;
-import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.PosInvoiceParamsController;
@@ -242,7 +242,7 @@ public class TicketPrinter {
 	
 	private String getCompanyDocument( Company company ) {
 		StringBuffer sb = new StringBuffer();
-		sb.append( AonUtil.getMessage(ICommonConstants.COMPANY_DOCUMENT) ).append( ": ");
+		sb.append( AonUtil.getMessage(ICommonMessages.COMPANY_DOCUMENT) ).append( ": ");
 		sb.append( company.getDocumentType().getName(AonUtil.getCurrentLocale()) ).append( ": ");
 		sb.append( company.getDocumentCountry() ).append( "-");
 		sb.append( company.getDocument() );
@@ -270,7 +270,7 @@ public class TicketPrinter {
 		StringBuffer sb = new StringBuffer();
 		RegistryMedia phone = enterprise.getRegistry().getPhone();
 		if (! isEmpty(phone) ) {
-			sb.append( AonUtil.getMessage(ICommonConstants.PHONE) ).append( ": ");
+			sb.append( AonUtil.getMessage(ICommonMessages.PHONE) ).append( ": ");
 			sb.append( phone.getValue() );			
 		}
 		RegistryMedia fax = enterprise.getRegistry().getFax();
@@ -278,7 +278,7 @@ public class TicketPrinter {
 			if ( sb.length() > 0 ) {
 				sb.append(" - ");
 			}
-			sb.append( AonUtil.getMessage(ICommonConstants.FAX) );
+			sb.append( AonUtil.getMessage(ICommonMessages.FAX) );
 			sb.append( ": ").append( fax.getValue() );			
 		}
 		return sb.toString();		

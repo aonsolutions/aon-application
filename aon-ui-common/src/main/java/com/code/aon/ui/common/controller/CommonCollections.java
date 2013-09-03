@@ -1,5 +1,8 @@
 package com.code.aon.ui.common.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.NO;
+import static com.code.aon.ui.common.ICommonMessages.YES;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -137,9 +140,9 @@ public class CommonCollections {
 	public List<SelectItem> getConfidentialValues() {
     	if ( confidentialValues == null ) {
 			confidentialValues = new LinkedList<SelectItem>();
-			SelectItem item = new SelectItem(SecurityLevel.CONFIDENTIAL, AonUtil.getMessage("aon_yes"));
+			SelectItem item = new SelectItem(SecurityLevel.CONFIDENTIAL, AonUtil.getMessage(YES));
 			confidentialValues.add(item);
-			item = new SelectItem(SecurityLevel.OFFICIAL, AonUtil.getMessage("aon_no"));
+			item = new SelectItem(SecurityLevel.OFFICIAL, AonUtil.getMessage(NO));
 			confidentialValues.add(item);		
         }
         return confidentialValues;

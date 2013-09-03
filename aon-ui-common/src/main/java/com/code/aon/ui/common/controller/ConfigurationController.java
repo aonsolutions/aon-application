@@ -1,5 +1,9 @@
 package com.code.aon.ui.common.controller;
 
+import static com.code.aon.ui.common.ICommonConstants.ON_LOGOUT;
+import static com.code.aon.ui.common.ICommonMessages.BUNDLE_NAME;
+import static com.code.aon.ui.common.ICommonMessages.CONFIGURATION_ERROR;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -42,7 +46,6 @@ import org.xml.sax.SAXParseException;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.common.util.PrincipalUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.LocaleElement;
 import com.code.aon.ui.util.AonUtil;
 import com.sun.org.apache.xerces.internal.jaxp.JAXPConstants;
@@ -51,7 +54,7 @@ import com.sun.org.apache.xerces.internal.jaxp.JAXPConstants;
  * The Class ConfigurationController is used to set some default configurable
  * parameters of the application.
  */
-public class ConfigurationController implements Serializable, ICommonConstants, JAXPConstants {
+public class ConfigurationController implements Serializable, JAXPConstants {
 	
 	private static final long serialVersionUID = -1159615075844874762L;
 	
@@ -299,11 +302,11 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 			builder.setErrorHandler( errorHandler );
 			document = builder.parse(config.toString());
 		} catch (Throwable th) {
-			AonUtil.addErrorMessageFromBundle( DEFAULT_BUNDLE, CONFIGURATION_ERROR, AON_CONFIG_XML, th.getMessage() );
+			AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, CONFIGURATION_ERROR, AON_CONFIG_XML, th.getMessage() );
 			LOGGER.error(th.getMessage(), th);
 		} finally {
 			if ( errorHandler.isValidationError() ) {
-				AonUtil.addErrorMessageFromBundle( DEFAULT_BUNDLE, CONFIGURATION_ERROR, AON_CONFIG_XML, errorHandler.getException().getMessage() );
+				AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, CONFIGURATION_ERROR, AON_CONFIG_XML, errorHandler.getException().getMessage() );
 				document = null;
 			}
 		}

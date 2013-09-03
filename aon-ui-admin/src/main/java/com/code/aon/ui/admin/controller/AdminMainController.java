@@ -1,7 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.ui.common.ICommonConstants.DEFAULT_BUNDLE;
-import static com.code.aon.ui.common.ICommonConstants.USER_PASSWORD_INVALID;
+import static com.code.aon.ui.common.ICommonMessages.USER_PASSWORD_INVALID;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_CONTACT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
@@ -102,7 +101,7 @@ public class AdminMainController implements IAdminConstants {
 		if (amUser.equals(_user) && amPassword.equals(crypted)) {
 			initSysAdmin(event);
 		} else {
-			String message = AonUtil.getMessage(DEFAULT_BUNDLE, USER_PASSWORD_INVALID, _user);
+			String message = AonUtil.getMessage(BUNDLE_NAME, USER_PASSWORD_INVALID, _user);
 			AonUtil.addErrorMessage(message);
 		}
 		_user = null;

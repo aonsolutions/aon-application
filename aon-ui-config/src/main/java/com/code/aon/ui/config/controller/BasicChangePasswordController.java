@@ -1,8 +1,8 @@
 package com.code.aon.ui.config.controller;
 
-import static com.code.aon.ui.common.ICommonConstants.DEFAULT_BUNDLE;
-import static com.code.aon.ui.common.ICommonConstants.NEW_PASSWORD_ERROR;
-import static com.code.aon.ui.common.ICommonConstants.PASSWORD_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.BUNDLE_NAME;
+import static com.code.aon.ui.common.ICommonMessages.NEW_PASSWORD_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.PASSWORD_ERROR;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -50,11 +50,11 @@ public abstract class BasicChangePasswordController {
 	
 	public void acceptPassword(ActionEvent event) {
 		if (! isCorrectPassword() ) {
-			String message = AonUtil.addErrorMessageFromBundle( DEFAULT_BUNDLE, PASSWORD_ERROR);
+			String message = AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, PASSWORD_ERROR);
 			throw new AbortProcessingException( message );			
 		}
 		if (! StringUtils.equals(newPassword, confirmPassword) ) {
-			String message = AonUtil.addErrorMessageFromBundle( DEFAULT_BUNDLE, NEW_PASSWORD_ERROR);
+			String message = AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, NEW_PASSWORD_ERROR);
 			throw new AbortProcessingException( message );
 		}
 		updatePassword( newPassword );			

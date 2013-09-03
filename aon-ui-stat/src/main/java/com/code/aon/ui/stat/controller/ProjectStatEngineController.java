@@ -1,5 +1,7 @@
 package com.code.aon.ui.stat.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.SEARCH_NO_RESULTS;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -314,8 +316,7 @@ public class ProjectStatEngineController {
 		CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		plot.setRangeGridlinePaint(new Color(150, 150, 150));
 		plot.setBackgroundPaint(Color.WHITE);
-		plot.setNoDataMessage(AonUtil.getMessage("bundle",
-				"aon_search_no_results"));
+		plot.setNoDataMessage(AonUtil.getMessage(SEARCH_NO_RESULTS));
 		int width = 1024;
 		int height = i * 15;
 		height = height < 125 ? 125 : height;

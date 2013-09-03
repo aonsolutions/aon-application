@@ -21,7 +21,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
-import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
@@ -169,7 +168,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 
 	public String getLineStatusInfo() throws ManagerBeanException {
 		StringBuffer info = new StringBuffer(64);
-		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.BUNDLE_NAME, ICommonConstants.QUANTITY_PATTERN));
+		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.BUNDLE_NAME, ICommonMessages.QUANTITY_PATTERN));
 
 		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);

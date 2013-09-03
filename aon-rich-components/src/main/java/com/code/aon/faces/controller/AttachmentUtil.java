@@ -16,12 +16,12 @@ import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.util.AonFile;
-import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.sun.faces.util.MessageFactory;
 
-public class AttachmentUtil implements ICommonConstants {
+public class AttachmentUtil implements ICommonMessages {
 
 	/**
 	 * Checks if is uploaded.
@@ -55,7 +55,7 @@ public class AttachmentUtil implements ICommonConstants {
 			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage(FILE_UPLOAD_ELEMENT) );
 			throw new ControllerListenerException( message.getSummary() );			
 		} else if ( isUploaded(controller) && isMaximumSizeExceeded(controller) ) {
-	        String message = AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, DOCUMENT_MAX_SIZE_ERROR);
+	        String message = AonUtil.getMessage(BUNDLE_NAME, DOCUMENT_MAX_SIZE_ERROR);
 			throw new ControllerListenerException(message);			
 		}
 	}

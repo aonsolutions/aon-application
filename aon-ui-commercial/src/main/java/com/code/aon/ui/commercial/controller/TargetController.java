@@ -2,6 +2,15 @@ package com.code.aon.ui.commercial.controller;
 
 
 import static com.code.aon.ui.commercial.ICommercialMessages.COMMERCIAL_TARGET_ADVERTISING;
+import static com.code.aon.ui.common.ICommonMessages.ACTIVE;
+import static com.code.aon.ui.common.ICommonMessages.ALIAS;
+import static com.code.aon.ui.common.ICommonMessages.BLOCKED;
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_NAME;
+import static com.code.aon.ui.common.ICommonMessages.DOCUMENT;
+import static com.code.aon.ui.common.ICommonMessages.ENTITY;
+import static com.code.aon.ui.common.ICommonMessages.ID;
+import static com.code.aon.ui.common.ICommonMessages.INACTIVE;
+import static com.code.aon.ui.common.ICommonMessages.STATUS;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_ADDRESS;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_CELLULAR;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_CITY;
@@ -169,12 +178,12 @@ public class TargetController extends RegistryController implements ICommercialC
 			String masterTable = table.name();
 			FacesContext faces = FacesContext.getCurrentInstance();
 			String select = "SELECT" 
-			+" r.id `" + AonUtil.getMessage("aon_id") + "`"
+			+" r.id `" + AonUtil.getMessage(ID) + "`"
 			+",ELT(c.status+1"
-			+",'"+AonUtil.getMessage("aon_active")+"'"
-			+",'"+AonUtil.getMessage("aon_inactive")+"'"
-			+",'"+AonUtil.getMessage("aon_blocked")+"'"
-				+") `" + AonUtil.getMessage("aon_status") + "`"
+			+",'"+AonUtil.getMessage(ACTIVE)+"'"
+			+",'"+AonUtil.getMessage(INACTIVE)+"'"
+			+",'"+AonUtil.getMessage(BLOCKED)+"'"
+				+") `" + AonUtil.getMessage(STATUS) + "`"
 				+",ELT(c.advertising+1"
 				+",'"+Advertising.ALLOWED.getName(AonUtil.getCurrentLocale())+"'"
 				+",'"+Advertising.AUTO_EXCLUSION.getName(AonUtil.getCurrentLocale())+"'"
@@ -184,7 +193,7 @@ public class TargetController extends RegistryController implements ICommercialC
 			+",ELT(r.type+1" 
 				+",'"+RegistryType.LEGAL.getName(AonUtil.getCurrentLocale())+"'"
 				+",'"+RegistryType.NATURAL.getName(AonUtil.getCurrentLocale())+"'"
-			 	+") `" + AonUtil.getMessage("aon_entity") + "`"
+			 	+") `" + AonUtil.getMessage(ENTITY) + "`"
 			+",CAST( CONCAT_WS('/',"
 			+"ELT(r.document_type+1" 
 				+",'"+DocumentType.NIF.getName(AonUtil.getCurrentLocale())+"'"
@@ -195,9 +204,9 @@ public class TargetController extends RegistryController implements ICommercialC
 				+",'"+DocumentType.COMMUNITY_CARD.getName(AonUtil.getCurrentLocale())+"'"
 				+",'"+DocumentType.OTHER.getName(AonUtil.getCurrentLocale())+"'"
 			 	+")" 
-			+",r.document_country,r.document) AS CHAR) `" + AonUtil.getMessage("aon_document") + "`"
-		 	+",r.name `" + AonUtil.getMessage("aon_company_name") + "`"
-			+",r.alias `" + AonUtil.getMessage("aon_alias") + "`"
+			+",r.document_country,r.document) AS CHAR) `" + AonUtil.getMessage(DOCUMENT) + "`"
+		 	+",r.name `" + AonUtil.getMessage(COMPANY_NAME) + "`"
+			+",r.alias `" + AonUtil.getMessage(ALIAS) + "`"
 			+",r.nationality `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_NATIONALITY) + "`"
 			+",CAST( CONCAT_WS(' ',ra.street_type,ra.address,ra.number,ra.address2,ra.address3) AS CHAR) `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_ADDRESS) + "`"
 			+",ra.city `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_CITY) + "`"
@@ -277,9 +286,9 @@ public class TargetController extends RegistryController implements ICommercialC
 			select = select + " " + where;
 			int i = StringUtils.indexOfIgnoreCase(select, " order by ");
 			if (i == -1) {
-				select = select + " GROUP BY `" + AonUtil.getMessage("aon_id") + "`";	
+				select = select + " GROUP BY `" + AonUtil.getMessage(ID) + "`";	
 			} else {
-				select = select.substring(0,i) + " GROUP BY `" + AonUtil.getMessage("aon_id") + "` " + select.substring(i+1);
+				select = select.substring(0,i) + " GROUP BY `" + AonUtil.getMessage(ID) + "` " + select.substring(i+1);
 			}
 
 			System.out.println( " ----------------------" );
