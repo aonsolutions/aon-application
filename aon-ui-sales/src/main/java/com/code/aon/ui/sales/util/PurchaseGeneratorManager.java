@@ -180,6 +180,8 @@ public class PurchaseGeneratorManager {
 	}
 	
 	public void onExecute(ActionEvent event){
+		List<Purchase> purchaseList = null;
+		
 		beforePurchasesCreate();
 
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
@@ -190,7 +192,7 @@ public class PurchaseGeneratorManager {
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 			// begin process 
-			List<Purchase> purchaseList = new LinkedList<Purchase>();
+			purchaseList = new LinkedList<Purchase>();
 			Purchase purchase = null;
 			for(TempPurchaseDetail temp: getTempPurchaseDetail()){
 				if(purchase==null || !purchase.getSupplier().equals(temp.getSupplier())){
@@ -217,7 +219,7 @@ public class PurchaseGeneratorManager {
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
 
-		afterPurchasesCreate();
+		afterPurchasesCreate(purchaseList);
 	}
 	
 	private void beforePurchasesCreate() {
@@ -229,10 +231,17 @@ public class PurchaseGeneratorManager {
 		Collections.sort(getTempPurchaseDetail(), new TempPurchaseDetailComparator());
 	}
 	
-	private void afterPurchasesCreate() {
+	private void afterPurchasesCreate(List<Purchase> purchaseList) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Sales.class);
 			sales.setPurchaseGenerated(true);
+			StringBuffer buf = new StringBuffer();
+	    	for(Purchase purchase: purchaseList){
+	    		buf.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_TO_PURCHASE) + " ");
+	    		buf.append(purchase.getReferenceCode());
+	    		buf.append("\n");
+	    	}
+	    	sales.setRemarks(buf.toString());
 			bean.restoreNullSubPOJOs(sales);
 			sales = (Sales) bean.update(sales);
 			// initialize lookups
@@ -289,12 +298,12 @@ public class PurchaseGeneratorManager {
 				purchase.setShippingContact(sales.getShippingContact());
 				purchase.setShippingPeriod(sales.getShippingPeriod());
 			} else {
-				RegistryAddress ra = sales.getCustomer().getRegistry().getDefaultAddress();
+				RegistryAddress ra = sales.getShippingAddress();
 				purchase.setCarrier(null);
 				
 				StringBuffer buf = new StringBuffer();
-		    	buf.append((ra.getStreetType()!=null) ? ra.getStreetType() : "");
-		    	buf.append((ra.getStreetType()!=null) ? ". " : "");
+		    	buf.append((ra.getStreetType()!=null) ? ra.getStreetType().getName(AonUtil.getCurrentLocale()) : "");
+		    	buf.append((ra.getStreetType()!=null) ? " " : "");
 		    	buf.append(StringUtils.isEmpty(ra.getAddress())? "":ra.getAddress());
 		    	buf.append(StringUtils.isEmpty(ra.getNumber())?"":" ");
 		    	buf.append(StringUtils.isEmpty(ra.getNumber())?"":ra.getNumber());
