@@ -1,5 +1,8 @@
 package com.code.aon.ui.warehouse.controller;
 
+import static com.code.aon.ui.warehouse.IWarehouseMessages.WAREHOUSE_DELIVERY_DETAIL_LINE;
+import static com.code.aon.ui.warehouse.IWarehouseMessages.WAREHOUSE_DELIVERY_SOURCE;
+
 import java.util.Date;
 import java.util.Iterator;
 
@@ -17,10 +20,12 @@ import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.IWarehouseMessages;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Stock;
@@ -184,13 +189,13 @@ public class DeliveryDetailController extends LinesController implements IWareho
 
 		DeliveryDetail deliveryDetail = (DeliveryDetail)this.getModel().getRowData();
 		if (deliveryDetail.getSalesDetail() != null && deliveryDetail.getSalesDetail().getId() != null) {
-			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_delivery_source"));
+			info.append(AonUtil.getMessage(IWarehouseMessages.BUNDLE_KEY, WAREHOUSE_DELIVERY_SOURCE));
 			info.append(" ");
-			info.append(AonUtil.getMessage("salesBundle", "sales_sales"));
+			info.append(AonUtil.getMessage(ICommonMessages.SALES_BUNDLE, ICommonMessages.SALES_SALES));
 			info.append(" ");
 			info.append(deliveryDetail.getSalesDetail().getSales().getReferenceCode());
 			info.append(" - ");
-			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_delivery_detail_line"));
+			info.append(AonUtil.getMessage(IWarehouseMessages.BUNDLE_KEY, WAREHOUSE_DELIVERY_DETAIL_LINE));
 			info.append(" ");
 			info.append(deliveryDetail.getSalesDetail().getLine());
 		}

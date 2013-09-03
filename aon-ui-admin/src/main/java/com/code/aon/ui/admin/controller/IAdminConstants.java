@@ -79,5 +79,15 @@ public interface IAdminConstants {
 	String BACKUP_START = "admin_backup_start";
 	
 	String SYSTEM = "admin_system";
+	
+	String ADMIN_BACKUP_ERROR = "admin_backup_error";
+
+	String ADMIN_BACKUP_TABLE_FINISH = "admin_backup_table_finish";
+
+	String ADMIN_BACKUP_TABLE_PROGRESS = "admin_backup_table_progress";
+
+	String ADMIN_BACKUP_TABLE_START = "admin_backup_table_start";
+
+	String ADMIN_BACKUP_INFO = "admin_backup_info";
 		
 }

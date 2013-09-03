@@ -39,4 +39,13 @@ public class ConfigConstants {
 	public static final String FTP_ERROR_CREATE_DIRECTORY = "config_ftp_error_create_directory";
 	public static final String FTP_ERROR_CREATE_FILE = "config_ftp_error_create_file";
 	
+	public static final String CONFIG_INVALID_BANK_ACCOUNT = "config_invalid_bank_account";
+	public static final String CONFIG_INVALID_START_DATE = "config_invalid_startDate";
+	public static final String CONFIG_INVALID_END_DATE = "config_invalid_endDate";
+	public static final String CONFIG_DATE_OVERLAP = "config_date_overlap";
+	
+	public static final String CONFIG_PAY_METHOD = "config_pay_method";
+	public static final String CONFIG_BANK = "config_bank";
+	public static final String CONFIG_BANK_ACCOUNT = "config_bank_account";
+	
 }

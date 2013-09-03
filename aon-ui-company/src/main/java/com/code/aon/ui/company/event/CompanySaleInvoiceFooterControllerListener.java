@@ -1,5 +1,7 @@
 package com.code.aon.ui.company.event;
 
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_SALE_INVOICE_FOOTER_TEXT;
+
 import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
@@ -26,8 +28,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class CompanySaleInvoiceFooterControllerListener extends ControllerAdapter {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanySaleInvoiceFooterControllerListener.class.getName());
-	
-	private static final String FOOTER_TEXT_MSG_KEY_PREFIX = "company_saleInvoice_footer_text";
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
@@ -80,7 +80,7 @@ public class CompanySaleInvoiceFooterControllerListener extends ControllerAdapte
 		RegistryAttachment attach = (RegistryAttachment)controller.getTo(); 
 		attach.setData(controller.getText().getBytes());
 		attach.setRegistryAttachmentType(RegistryAttachmentType.INVOICE_FOOTER_TEXT);
-		attach.setDescription(AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, FOOTER_TEXT_MSG_KEY_PREFIX));
+		attach.setDescription(AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, COMPANY_SALE_INVOICE_FOOTER_TEXT));
 		attach.setAttachDate(new Date());
 		attach.setMimeType(MimeType.MIME_TXT);
 	}

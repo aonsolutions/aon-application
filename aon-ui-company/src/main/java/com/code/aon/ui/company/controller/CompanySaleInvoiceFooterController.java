@@ -1,5 +1,7 @@
 package com.code.aon.ui.company.controller;
 
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_SALE_INVOICE_FOOTER_LOPD;
+
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -14,8 +16,6 @@ import com.code.aon.ui.util.AonUtil;
 public class CompanySaleInvoiceFooterController extends LinesController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanySaleInvoiceFooterController.class.getName());
-	
-	private static final String LOPD_MSG_KEY_PREFIX = "company_saleInvoice_footer_LOPD";
 	
 	private String text;
 
@@ -40,7 +40,7 @@ public class CompanySaleInvoiceFooterController extends LinesController {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		}
-		setText(AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, LOPD_MSG_KEY_PREFIX, companyName, companyFullAddress));
+		setText(AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, COMPANY_SALE_INVOICE_FOOTER_LOPD, companyName, companyFullAddress));
 	}
 	
 }

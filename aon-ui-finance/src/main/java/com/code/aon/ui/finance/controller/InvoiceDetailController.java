@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.finance.IFinanceMessages.FINANCE_INVOICE_DETAIL_LINE;
+import static com.code.aon.ui.finance.IFinanceMessages.FINANCE_SOURCE;
+
 import java.util.Date;
 import java.util.Iterator;
 
@@ -261,13 +264,13 @@ public class InvoiceDetailController extends LinesController implements IFinance
 				line = incomeDetail.getLine().intValue();
 			}
 
-			info.append(AonUtil.getMessage("financeBundle", "finance_source"));
+			info.append(AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, FINANCE_SOURCE));
 			info.append(" ");
 			info.append(message);
 			info.append(" ");
 			info.append(refCode);
 			info.append(" - ");
-			info.append(AonUtil.getMessage("financeBundle", "finance_invoice_detail_line"));
+			info.append(AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, FINANCE_INVOICE_DETAIL_LINE));
 			info.append(" ");
 			info.append(line);
 		}

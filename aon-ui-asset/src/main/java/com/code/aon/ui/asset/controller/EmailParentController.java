@@ -1,5 +1,8 @@
 package com.code.aon.ui.asset.controller;
 
+import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_FAX;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_PHONE;
+
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 
@@ -16,6 +19,7 @@ import com.code.aon.company.Company;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.webmail.EmailSender;
@@ -104,13 +108,13 @@ public class EmailParentController {
 		body.append( getCompany().getName() ).append( "<br/>" );
 		RegistryMedia phone = companyController.getPhone();
 		if ( phone != null ) {
-			String phoneLabel = AonUtil.getMessage("registryBundle", "registry_phone");
+			String phoneLabel = AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME, REGISTRY_PHONE);
 			body.append( StringEscapeUtils.escapeHtml(phoneLabel));
 			body.append( ": " ).append( phone.getValue()).append( "<br/>" );
 		}
 		RegistryMedia fax = companyController.getFax();
 		if ( fax != null ) {
-			String faxLabel = AonUtil.getMessage("registryBundle", "registry_fax");
+			String faxLabel = AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME, REGISTRY_FAX);
 			body.append(faxLabel).append( ": " ).append( fax.getValue() ).append( "<br/>" );
 		}
 		RegistryMedia web = companyController.getWeb();

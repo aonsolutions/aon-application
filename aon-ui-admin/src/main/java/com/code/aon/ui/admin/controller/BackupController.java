@@ -1,5 +1,10 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_BACKUP_ERROR;
+import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_BACKUP_INFO;
+import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_BACKUP_TABLE_FINISH;
+import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_BACKUP_TABLE_PROGRESS;
+import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_BACKUP_TABLE_START;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BACKUP_START;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
 
@@ -52,11 +57,11 @@ public class BackupController implements IDumpListener {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BackupController.class);
 	
-	private final static String BACKUP_INFO = AonUtil.getMessage(BUNDLE_NAME, "admin_backup_info");
-	private final static String BACKUP_TABLE_START = AonUtil.getMessage(BUNDLE_NAME, "admin_backup_table_start");
-	private final static String BACKUP_TABLE_PROGRESS = AonUtil.getMessage(BUNDLE_NAME, "admin_backup_table_progress");
-	private final static String BACKUP_TABLE_FINISH = AonUtil.getMessage(BUNDLE_NAME, "admin_backup_table_finish");
-	private final static String BACKUP_ERROR = AonUtil.getMessage(BUNDLE_NAME, "admin_backup_error");
+	private final static String BACKUP_INFO = AonUtil.getMessage(BUNDLE_NAME, ADMIN_BACKUP_INFO);
+	private final static String BACKUP_TABLE_START = AonUtil.getMessage(BUNDLE_NAME, ADMIN_BACKUP_TABLE_START);
+	private final static String BACKUP_TABLE_PROGRESS = AonUtil.getMessage(BUNDLE_NAME, ADMIN_BACKUP_TABLE_PROGRESS);
+	private final static String BACKUP_TABLE_FINISH = AonUtil.getMessage(BUNDLE_NAME, ADMIN_BACKUP_TABLE_FINISH);
+	private final static String BACKUP_ERROR = AonUtil.getMessage(BUNDLE_NAME, ADMIN_BACKUP_ERROR);
 	
 	private Domain domain;
 	private boolean includeChildDomains;

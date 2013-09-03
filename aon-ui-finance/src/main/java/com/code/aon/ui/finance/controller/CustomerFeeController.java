@@ -1,16 +1,14 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.finance.controller.IFinanceConstants.BUNDLE_NAME;
+import static com.code.aon.ui.finance.IFinanceMessages.NO_FEE_CUSTOMER_REPORT;
+import static com.code.aon.ui.finance.IFinanceMessages.BUNDLE_KEY;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
@@ -43,8 +41,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CustomerFeeController extends LinesController {
-
-   private static final String MSG_KEY_PREFIX = "aon_no_fee_customer_report";
 
 	private boolean longDescription;
 	private IPriceStrategy priceStrategy;
@@ -172,7 +168,7 @@ public class CustomerFeeController extends LinesController {
 	}
 
 	public String getReportTitle(){
-		return AonUtil.getMessage(BUNDLE_NAME, MSG_KEY_PREFIX);
+		return AonUtil.getMessage(BUNDLE_KEY, NO_FEE_CUSTOMER_REPORT);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -136,7 +136,7 @@ public interface ICommonConstants {
 	String LOGIN_LOGO_NAME = "aon-login-logo";
 
 	String HEADER_LOGO_NAME = "aon-header-logo";
-
+	
 	String TOOLBAR_LOGO_NAME = "aon-toolbar-logo";
 	
 	String STATUS_START_NAME = "aon-status-start";

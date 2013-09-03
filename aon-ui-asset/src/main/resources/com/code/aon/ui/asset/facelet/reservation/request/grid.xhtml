@@ -16,14 +16,14 @@
 		<aon:outputLabel for="ActivityDialog_startDate"
 			value="#{assetBundle.asset_startDate}" />
 		<aon:selectInputDate renderAsPopup="true" id="ActivityDialog_startDate"
-			popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+			popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 			value="#{activityDialog.fromDate}" enableManualInput="true" 
 			disabled="#{!activityDialog.new}"/>
 
 		<aon:outputLabel for="ActivityDialog_endDate"
 			value="#{assetBundle.asset_endDate}" />
 		<aon:selectInputDate renderAsPopup="true" id="ActivityDialog_endDate"
-			popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+			popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 			value="#{activityDialog.toDate}" enableManualInput="true" 
 			disabled="#{!activityDialog.new}"/>
 

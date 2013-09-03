@@ -27,15 +27,15 @@
 						</f:facet>
 						<aon:outputText value="#{to.date}" rendered="#{to!=activityBasic.to}"
 						 	size="8" >
-						 	<f:convertDateTime pattern="#{assetBundle.aon_date_pattern}" 
+						 	<f:convertDateTime pattern="#{bundle.aon_date2_pattern}" 
 								timeZone="#{timeZoneController.timeZoneId}"  />
 						</aon:outputText>
 						<aon:selectInputDate renderAsPopup="true" rendered="#{to==activityBasic.to}"
-							popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+							popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 							value="#{activityBasic.to.date}" enableManualInput="true" />
 						<f:facet name="footer">
 							<aon:selectInputDate renderAsPopup="true" rendered="#{activityBasic.new}" 
-								popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+								popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 								value="#{activityBasic.to.date}" enableManualInput="true" />
 						</f:facet>
 					</aon:column>
@@ -46,7 +46,7 @@
 						</f:facet>
 						<aon:outputText value="#{to.fromTime}" rendered="#{to!=activityBasic.to}"
 							size="5" >
-							<f:convertDateTime pattern="#{assetBundle.aon_time_pattern}" 
+							<f:convertDateTime pattern="#{bundle.aon_time2_pattern}" 
 								timeZone="#{timeZoneController.timeZoneId}" type="time" />
 						</aon:outputText>
 						<aon:div id="ActivityDialog_fromTime" rendered="#{to==activityBasic.to}">
@@ -71,7 +71,7 @@
 						</f:facet>
 						<aon:outputText value="#{to.toTime}" rendered="#{to!=activityBasic.to}"
 							size="5" >
-							<f:convertDateTime pattern="#{assetBundle.aon_time_pattern}" 
+							<f:convertDateTime pattern="#{bundle.aon_time2_pattern}" 
 								timeZone="#{timeZoneController.timeZoneId}" type="time" />
 						</aon:outputText>
 						<aon:div id="ActivityDialog_toTime" rendered="#{to==activityBasic.to}">

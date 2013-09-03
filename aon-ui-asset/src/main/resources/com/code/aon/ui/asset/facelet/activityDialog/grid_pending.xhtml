@@ -95,7 +95,7 @@
 					</f:facet>
 					<aon:outputText value="#{to.day}" 
 					 	size="8" >
-					 	<f:convertDateTime pattern="#{assetBundle.aon_date_pattern}" 
+					 	<f:convertDateTime pattern="#{bundle.aon_date2_pattern}" 
 							timeZone="#{timeZoneController.timeZoneId}"  />
 					</aon:outputText>
 				</aon:column>
@@ -106,7 +106,7 @@
 					</f:facet>
 					<aon:outputText value="#{to.fromTime}" 
 						size="5" >
-						<f:convertDateTime pattern="#{assetBundle.aon_time_pattern}" 
+						<f:convertDateTime pattern="#{bundle.aon_time2_pattern}" 
 							timeZone="#{timeZoneController.timeZoneId}" type="time" />
 					</aon:outputText>
 				</aon:column>
@@ -117,7 +117,7 @@
 					</f:facet>
 					<aon:outputText value="#{to.toTime}" 
 						size="5" >
-						<f:convertDateTime pattern="#{assetBundle.aon_time_pattern}" 
+						<f:convertDateTime pattern="#{bundle.aon_time2_pattern}" 
 							timeZone="#{timeZoneController.timeZoneId}" type="time" />
 					</aon:outputText>
 				</aon:column>

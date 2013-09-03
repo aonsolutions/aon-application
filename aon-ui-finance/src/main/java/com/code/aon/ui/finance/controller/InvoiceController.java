@@ -566,7 +566,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 				criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_TYPE), invoice.getType());
 				if (getManagerBean().getCount(criteria) > 0) {
 					String msg = (getInvoice().isPurchase()) ? FINANCE_DUPLICATE_PURCHASE_INVOICE_WARNING : FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING;
-					msg = AonUtil.getMessage(BUNDLE_NAME, msg); 
+					msg = AonUtil.getMessage(BUNDLE_KEY, msg); 
 					AonUtil.addWarningMessage(msg + " [" + getInvoice().getReferenceCode() + "]");
 					return false;
 				}

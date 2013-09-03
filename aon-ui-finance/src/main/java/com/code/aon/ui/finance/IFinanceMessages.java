@@ -48,6 +48,19 @@ public interface IFinanceMessages {
 	String FINANCE_INVOICE_DELIVERY = "finance_invoice_delivery";
 	String FINANCE_POS_OPENED = "finance_pos_opened";
 	String FINANCE_POS_CATALOGUE_ERROR = "finance_pos_catalogue_error";
+	String FINANCE_INACCURACY_MSG = "finance_unable_record_inaccuracy_error";
+	String FINANCE_NO_AMORTIZATION_MSG = "finance_unable_record_no_amortization_error";
+	String FACTURAE_ERROR = "finance_facturae_error";	
+	String POS_ERROR_PRINT_TICKET = "finance_pos_error_print_ticket";
+	String POS_RECEIPT = "finance_pos_receipt";
+	String POS_GIFT_RECEIPT = "finance_pos_gift_receipt";
+	String FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX = "finance_posInvoice_footerText_default";
+	String FINANCE_INVESTMENT_VAT_REPORT = "finance_investment_vat_report";
+	String FINANCE_INPUT_VAT_REPORT = "finance_input_vat_report";
+	String FINANCE_OUTPUT_VAT_REPORT = "finance_output_vat_report";
+	String NO_FEE_CUSTOMER_REPORT = "aon_no_fee_customer_report";
+	String FINANCE_SOURCE = "finance_source";
+	String FINANCE_INVOICE_DETAIL_LINE = "finance_invoice_detail_line";	
 
 }
 

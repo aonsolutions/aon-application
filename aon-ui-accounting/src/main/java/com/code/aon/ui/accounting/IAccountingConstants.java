@@ -38,6 +38,7 @@ public interface IAccountingConstants {
 	String VAT_REPORT_CONTROLLER = "vatReport";
 	String BALANCE_SHEET_CONTROLLER = "balanceSheet";
 	String FISCAL_PARAMETERS_CONTROLLER = "fiscalParams";
+	String PROFIT_AND_LOSS_CONTROLLER_NAME = "profitAndLossReport";
 	
 	// NAVIGATION KEYS
 	String ACCOUNT_ENTRY_FORM_NAVKEY = "accountEntry_form";
@@ -58,6 +59,13 @@ public interface IAccountingConstants {
 	
 	// BUNDLE MESSAGES
 	String FINANCE_TRACKING_RECORDED = "accounting_finance_tracking_recorded";
+	String ACCOUNTING_TOTAL_RESULT_NULL = "accounting_total_result_null";
+	String ACCOUNTING_TOTAL_RESULT_LOSS = "accounting_total_result_loss";
+	String ACCOUNTING_TOTAL_RESULT_PROFIT = "accounting_total_result_profit";
+	String ACCOUNTING_TOTAL_RESULT = "accounting_total_result";
+	String ACCOUNTING_TOTAL_EXPENSES = "accounting_total_expenses";
+	String ACCOUNTING_GROSS_MARGIN = "accounting_gross_margin";
+	String ACCOUNTING_PROFIT_AND_LOSS_MODULE = "accounting_profit_and_loss_module";	
 
 	// OTHERS
 	String ACCUMULATED_ACCOUNT_PREFIX = "Amortización Acumulada ";

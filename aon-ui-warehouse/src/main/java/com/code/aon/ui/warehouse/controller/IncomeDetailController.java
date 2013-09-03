@@ -1,5 +1,8 @@
 package com.code.aon.ui.warehouse.controller;
 
+import static com.code.aon.ui.warehouse.IWarehouseMessages.WAREHOUSE_INCOME_DETAIL_LINE;
+import static com.code.aon.ui.warehouse.IWarehouseMessages.WAREHOUSE_INCOME_SOURCE;
+
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,10 +12,12 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.IWarehouseMessages;
 import com.code.aon.warehouse.IncomeDetail;
 
 public class IncomeDetailController extends LinesController implements IWarehouseConstants {
@@ -121,13 +126,13 @@ public class IncomeDetailController extends LinesController implements IWarehous
 
 		IncomeDetail incomeDetail = (IncomeDetail)this.getModel().getRowData();
 		if (incomeDetail.getPurchaseDetail() != null && incomeDetail.getPurchaseDetail().getId() != null) {
-			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_income_source"));
+			info.append(AonUtil.getMessage(IWarehouseMessages.BUNDLE_KEY, WAREHOUSE_INCOME_SOURCE));
 			info.append(" ");
-			info.append(AonUtil.getMessage("purchaseBundle", "purchase_purchase"));
+			info.append(AonUtil.getMessage(ICommonMessages.PURCHASE_BUNDLE, ICommonMessages.PURCHASE_PURCHASE));
 			info.append(" ");
 			info.append(incomeDetail.getPurchaseDetail().getPurchase().getReferenceCode());
 			info.append(" - ");
-			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_income_detail_line"));
+			info.append(AonUtil.getMessage(IWarehouseMessages.BUNDLE_KEY, WAREHOUSE_INCOME_DETAIL_LINE));
 			info.append(" ");
 			info.append(incomeDetail.getPurchaseDetail().getLine());
 		}

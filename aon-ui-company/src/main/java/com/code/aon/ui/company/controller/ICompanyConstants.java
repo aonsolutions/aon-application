@@ -36,6 +36,12 @@ public interface ICompanyConstants {
 	
 	String COMPANY_WORKPLACE = "company_workplace";
 	
+	String COMPANY_DEPARTMENT = "company_department";
+	
+	String COMPANY_SALE_INVOICE_FOOTER_TEXT = "company_saleInvoice_footer_text";
+	
+	String COMPANY_SALE_INVOICE_FOOTER_LOPD = "company_saleInvoice_footer_LOPD";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************
