@@ -1,5 +1,8 @@
 package com.code.aon.ui.config.event;
 
+import static com.code.aon.ui.config.controller.ConfigConstants.BUNDLE_NAME;
+import static com.code.aon.ui.config.controller.ConfigConstants.CONFIG_INVALID_START_DATE;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -22,9 +25,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class TaxControllerListener extends ControllerAdapter {
-
-	private static final String CONFIG_BUNDLE = "configBundle";
-	private static final String START_DATE_ERROR_MESSAGE = "config_invalid_startDate";
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -71,7 +71,7 @@ public class TaxControllerListener extends ControllerAdapter {
 		if (!tax.getStartDate().equals(oldTax.getStartDate())) {
 			if (hasOverlap(tax)) {
 				tax.setStartDate(oldTax.getStartDate());
-				throw new ControllerListenerException(AonUtil.getMessage(CONFIG_BUNDLE, START_DATE_ERROR_MESSAGE));
+				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, CONFIG_INVALID_START_DATE));
 			}
 
 			if (tax.getStartDate().after(oldTax.getStartDate())) {

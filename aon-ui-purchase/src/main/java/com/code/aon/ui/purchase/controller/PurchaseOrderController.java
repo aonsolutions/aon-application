@@ -1,5 +1,7 @@
 package com.code.aon.ui.purchase.controller;
 
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_DEPARTMENT;
+import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_SOURCE;
 import static com.code.aon.ui.purchase.controller.IPurchaseConstants.PURCHASE_PRINT_CONTROLLER_NAME;
 
 import java.util.Calendar;
@@ -45,6 +47,7 @@ import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.purchase.IPurchaseMessages;
 import com.code.aon.ui.purchase.event.PurchaseSearchListener;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -288,9 +291,8 @@ public class PurchaseOrderController {
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
 		List<Integer> purchaseIds = new LinkedList<Integer>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		ResourceBundle companyBundle = ResourceBundle.getBundle("com.code.aon.ui.company.i18n.messages", locale); 
-		ResourceBundle purchaseBundle = ResourceBundle.getBundle("com.code.aon.ui.purchase.i18n.messages", locale); 
+		ResourceBundle companyBundle = AonUtil.getResourceBundle(ICompanyConstants.BUNDLE_NAME); 
+		ResourceBundle purchaseBundle = AonUtil.getResourceBundle(IPurchaseMessages.BUNDLE_KEY); 
 		String comments = null;
 		String remarks = null;
 		try {
@@ -302,7 +304,7 @@ public class PurchaseOrderController {
 				PurchaseUtils utils = new PurchaseUtils();
 				for(PurchaseGroup pg: purchaseGroupList){
 					if(pg.hasCheckedDetail()){
-						comments = companyBundle.getString("company_department") +": "+ pg.getDepartment().getName()+". ";
+						comments = companyBundle.getString(COMPANY_DEPARTMENT) +": "+ pg.getDepartment().getName()+". ";
 						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(),  
 								pg.isItemReturn()?PurchaseDocumentType.ITEM_RETURN:null, comments + pg.getComments(), remarks);
 						purchaseIds.add(purchase.getId());
@@ -311,7 +313,7 @@ public class PurchaseOrderController {
 								utils.insertPurchaseDetail(purchase, gd.getProposalDetail());
 								utils.updateProposalDetailStatus(gd.getProposalDetail().getId());
 								if(gd.getProposalDetail().getProposal().getTransferProposal()!=null){
-									remarks = remarks==null?(purchaseBundle.getString("purchase_source") +": "):(remarks);
+									remarks = remarks==null?(purchaseBundle.getString(PURCHASE_SOURCE) +": "):(remarks);
 									remarks += gd.getProposalDetail().getProposal().getTransferProposal().getWorkPlace().getDescription();
 									if( !(pg.getDepartment().getId().equals(gd.getProposalDetail().getProposal().getTransferProposal().getDepartment())) ){
 										remarks += "("+gd.getProposalDetail().getProposal().getTransferProposal().getDepartment().getName()+"). ";

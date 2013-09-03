@@ -1,5 +1,11 @@
 package com.code.aon.ui.purchase.controller;
 
+import static com.code.aon.ui.common.ICommonConstants.QUANTITY_PATTERN;
+import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_DETAIL_LINE;
+import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_DETAIL_UNITS;
+import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_TO_INCOME;
+import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_TRANSFERED_TO;
+
 import java.text.DecimalFormat;
 import java.util.Iterator;
 
@@ -17,9 +23,11 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.purchase.IPurchaseMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.IncomeDetail;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -128,7 +136,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 
 	public String getLineStatusInfo() throws ManagerBeanException {
 		StringBuffer info = new StringBuffer(64);
-		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage("bundle", "aon_quantity_pattern"));
+		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.BUNDLE_NAME, QUANTITY_PATTERN));
 
 		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
@@ -138,20 +146,20 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		while (iterator.hasNext()) {
 			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
 			info.append("<aon:div>");
-			info.append(AonUtil.getMessage("purchaseBundle", "purchase_transfered_to"));
+			info.append(AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_TRANSFERED_TO));
 			info.append(" ");
-			info.append(AonUtil.getMessage("purchaseBundle", "purchase_to_income"));
+			info.append(AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_TO_INCOME));
 			info.append(" ");
 			info.append(incomeDetail.getIncome().getReferenceCode());
 			info.append(" - ");
-			info.append(AonUtil.getMessage("purchaseBundle", "purchase_detail_line"));
+			info.append(AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_DETAIL_LINE));
 			info.append(" ");
 			info.append(incomeDetail.getLine());
 			if (purchaseDetail.getQuantity() > incomeDetail.getQuantity()) {
 				info.append(" (");
 				info.append(formatter.format(incomeDetail.getQuantity()));
 				info.append(" ");
-				info.append(AonUtil.getMessage("purchaseBundle", "purchase_detail_units"));
+				info.append(AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_DETAIL_UNITS));
 				info.append(")");
 			}
 			info.append("</aon:div>");

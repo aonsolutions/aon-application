@@ -1,6 +1,18 @@
 package com.code.aon.ui.commercial.controller;
 
 
+import static com.code.aon.ui.commercial.ICommercialMessages.COMMERCIAL_TARGET_ADVERTISING;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_ADDRESS;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_CELLULAR;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_CITY;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_EMAIL;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_FAX;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_GEOZONE;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_NATIONALITY;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_PHONE;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_WEB;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_ZIP;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -53,6 +65,7 @@ import com.code.aon.sales.bridge.util.SalesBridgeUtil;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.commercial.ICommercialMessages;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.report.export.ReportExporter;
 import com.code.aon.ui.util.AonUtil;
@@ -155,8 +168,6 @@ public class TargetController extends RegistryController implements ICommercialC
 			Table table = Target.class.getAnnotation(Table.class);
 			String masterTable = table.name();
 			FacesContext faces = FacesContext.getCurrentInstance();
-			String REGISTRY_BUNDLE = "registryBundle";
-			String COMMERCIAL_BUNDLE = "commercialBundle";
 			String select = "SELECT" 
 			+" r.id `" + AonUtil.getMessage("aon_id") + "`"
 			+",ELT(c.status+1"
@@ -169,7 +180,7 @@ public class TargetController extends RegistryController implements ICommercialC
 				+",'"+Advertising.AUTO_EXCLUSION.getName(AonUtil.getCurrentLocale())+"'"
 				+",'"+Advertising.DENIED.getName(AonUtil.getCurrentLocale())+"'"
 				+",'"+Advertising.ROBINSON.getName(AonUtil.getCurrentLocale())+"'"
-					+") `" + AonUtil.getMessage(COMMERCIAL_BUNDLE,"commercial_target_advertising") + "`"
+					+") `" + AonUtil.getMessage(ICommercialMessages.BUNDLE_KEY,COMMERCIAL_TARGET_ADVERTISING) + "`"
 			+",ELT(r.type+1" 
 				+",'"+RegistryType.LEGAL.getName(AonUtil.getCurrentLocale())+"'"
 				+",'"+RegistryType.NATURAL.getName(AonUtil.getCurrentLocale())+"'"
@@ -187,17 +198,17 @@ public class TargetController extends RegistryController implements ICommercialC
 			+",r.document_country,r.document) AS CHAR) `" + AonUtil.getMessage("aon_document") + "`"
 		 	+",r.name `" + AonUtil.getMessage("aon_company_name") + "`"
 			+",r.alias `" + AonUtil.getMessage("aon_alias") + "`"
-			+",r.nationality `" + AonUtil.getMessage(REGISTRY_BUNDLE,"registry_nationality") + "`"
-			+",CAST( CONCAT_WS(' ',ra.street_type,ra.address,ra.number,ra.address2,ra.address3) AS CHAR) `" + AonUtil.getMessage(REGISTRY_BUNDLE,"registry_address") + "`"
-			+",ra.city `" + AonUtil.getMessage(REGISTRY_BUNDLE,"registry_city") + "`"
-			+",ra.zip `" + AonUtil.getMessage(REGISTRY_BUNDLE,"registry_zip") + "`"
-			+",gz.code `Id " + AonUtil.getMessage(REGISTRY_BUNDLE,"registry_geozone") + "`"
-			+",gz.name `" + AonUtil.getMessage(REGISTRY_BUNDLE,"registry_geozone") + "`"
-			+",(SELECT rm1.value FROM rmedia rm1 WHERE r.id = rm1.registry  AND rm1.media = 1 LIMIT 1) `" + AonUtil.getMessage(REGISTRY_BUNDLE,"registry_phone") + "`"
-			+",(SELECT rm2.value FROM rmedia rm2 WHERE r.id = rm2.registry  AND rm2.media = 2 LIMIT 1) `" + AonUtil.getMessage(REGISTRY_BUNDLE,"registry_cellular") + "`"
-			+",(SELECT rm3.value FROM rmedia rm3 WHERE r.id = rm3.registry  AND rm3.media = 3 LIMIT 1) `" + AonUtil.getMessage(REGISTRY_BUNDLE,"registry_fax") + "`"
-			+",(SELECT rm4.value FROM rmedia rm4 WHERE r.id = rm4.registry  AND rm4.media = 4 LIMIT 1) `" + AonUtil.getMessage(REGISTRY_BUNDLE,"registry_email") + "`"
-			+",(SELECT rm5.value FROM rmedia rm5 WHERE r.id = rm5.registry  AND rm5.media = 5 LIMIT 1) `" + AonUtil.getMessage(REGISTRY_BUNDLE,"registry_web") + "`"
+			+",r.nationality `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_NATIONALITY) + "`"
+			+",CAST( CONCAT_WS(' ',ra.street_type,ra.address,ra.number,ra.address2,ra.address3) AS CHAR) `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_ADDRESS) + "`"
+			+",ra.city `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_CITY) + "`"
+			+",ra.zip `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_ZIP) + "`"
+			+",gz.code `Id " + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_GEOZONE) + "`"
+			+",gz.name `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_GEOZONE) + "`"
+			+",(SELECT rm1.value FROM rmedia rm1 WHERE r.id = rm1.registry  AND rm1.media = 1 LIMIT 1) `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_PHONE) + "`"
+			+",(SELECT rm2.value FROM rmedia rm2 WHERE r.id = rm2.registry  AND rm2.media = 2 LIMIT 1) `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_CELLULAR) + "`"
+			+",(SELECT rm3.value FROM rmedia rm3 WHERE r.id = rm3.registry  AND rm3.media = 3 LIMIT 1) `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_FAX) + "`"
+			+",(SELECT rm4.value FROM rmedia rm4 WHERE r.id = rm4.registry  AND rm4.media = 4 LIMIT 1) `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_EMAIL) + "`"
+			+",(SELECT rm5.value FROM rmedia rm5 WHERE r.id = rm5.registry  AND rm5.media = 5 LIMIT 1) `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_WEB) + "`"
 			+" FROM " + masterTable +" c"
 			+" INNER JOIN registry r ON r.id = c.registry"
 			+" INNER JOIN scope scp ON c.scope = scp.id"

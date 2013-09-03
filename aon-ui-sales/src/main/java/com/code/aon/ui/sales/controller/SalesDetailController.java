@@ -21,9 +21,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
+import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.sales.ISalesMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -151,13 +154,13 @@ public class SalesDetailController extends LinesController implements ISalesCons
 
 		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
 		if (salesDetail.getOfferDetail() != null && salesDetail.getOfferDetail().getId() != null) {
-			info.append(AonUtil.getMessage("salesBundle", "sales_source"));
+			info.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_SOURCE));
 			info.append(" ");
-			info.append(AonUtil.getMessage("commercialBundle", "commercial_offer"));
+			info.append(AonUtil.getMessage(ICommonMessages.COMMERCIAL_BUNDLE, ICommonMessages.COMMERCIAL_OFFER));
 			info.append(" ");
 			info.append(salesDetail.getOfferDetail().getOffer().getReferenceCode());
 			info.append(" - ");
-			info.append(AonUtil.getMessage("salesBundle", "sales_detail_line"));
+			info.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_DETAIL_LINE));
 			info.append(" ");
 			info.append(salesDetail.getOfferDetail().getLine());
 		}
@@ -166,7 +169,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 
 	public String getLineStatusInfo() throws ManagerBeanException {
 		StringBuffer info = new StringBuffer(64);
-		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage("bundle", "aon_quantity_pattern"));
+		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.BUNDLE_NAME, ICommonConstants.QUANTITY_PATTERN));
 
 		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
@@ -176,20 +179,20 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		while (iterator.hasNext()) {
 			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
 			//info.append("<p>");
-			info.append(AonUtil.getMessage("salesBundle", "sales_transfered_to"));
+			info.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_TRANSFERED_TO));
 			info.append(" ");
-			info.append(AonUtil.getMessage("salesBundle", "sales_to_delivery"));
+			info.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_TO_DELIVERY));
 			info.append(" ");
 			info.append(deliveryDetail.getDelivery().getReferenceCode());
 			info.append(" - ");
-			info.append(AonUtil.getMessage("salesBundle", "sales_detail_line"));
+			info.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_DETAIL_LINE));
 			info.append(" ");
 			info.append(deliveryDetail.getLine());
 			if (salesDetail.getQuantity() > deliveryDetail.getQuantity()) {
 				info.append(" (");
 				info.append(formatter.format(deliveryDetail.getQuantity()));
 				info.append(" ");
-				info.append(AonUtil.getMessage("salesBundle", "sales_detail_units"));
+				info.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_DETAIL_UNITS));
 				info.append(")");
 			}
 			//info.append("</p>");

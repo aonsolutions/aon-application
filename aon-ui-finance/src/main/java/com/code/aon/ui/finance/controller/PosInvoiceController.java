@@ -710,7 +710,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 			TicketPrinter tp = new TicketPrinter();
 			return tp.execute( getInvoice(), giftTicket );			
 		} catch (ReportException ex) {
-			String msg = AonUtil.getMessage(BUNDLE_NAME, POS_ERROR_PRINT_TICKET);
+			String msg = AonUtil.getMessage(BUNDLE_KEY, POS_ERROR_PRINT_TICKET);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}

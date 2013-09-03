@@ -3,12 +3,13 @@ package com.code.aon.ui.stat.controller;
 import java.util.Locale;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.code.aon.ui.stat.IStatMessages;
 import com.code.aon.ui.util.AonUtil;
 
 public enum TasStatType implements IResourceable {
 
-	OWNER_STAT("stat_menu_tas_owner"),
-	TAS_ITEM_STAT("stat_menu_tas_tasItem");
+	OWNER_STAT(IStatMessages.STAT_MENU_TAS_OWNER),
+	TAS_ITEM_STAT(IStatMessages.STAT_MENU_TAS_TASITEM);
 
 	private String title;
 	
@@ -17,7 +18,7 @@ public enum TasStatType implements IResourceable {
 	}
 
     public String getName(Locale locale) {
-		return AonUtil.getMessage(IStatConstants.STAT_BUNDLE , title);
+		return AonUtil.getMessage(IStatMessages.BUNDLE_NAME , title);
     }
 	
 }

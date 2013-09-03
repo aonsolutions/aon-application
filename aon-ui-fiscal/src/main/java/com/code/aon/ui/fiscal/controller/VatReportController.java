@@ -317,11 +317,11 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		Locale locale = AonUtil.getCurrentLocale();
 		StringBuilder buf = new StringBuilder(); 
 		if (params.getVatType() == VatType.OUTPUT) {
-			buf.append(AonUtil.getMessage(BUNDLE_KEY,"finance_output_vat_report"));
+			buf.append(AonUtil.getMessage(BUNDLE_KEY, FINANCE_OUTPUT_VAT_REPORT));
 		} else if (params.getVatType() == VatType.INPUT) {
-			buf.append(AonUtil.getMessage(BUNDLE_KEY,"finance_input_vat_report"));	
+			buf.append(AonUtil.getMessage(BUNDLE_KEY, FINANCE_INPUT_VAT_REPORT));	
 		} else if (params.getVatType() == VatType.INVESTMENT) {
-			buf.append(AonUtil.getMessage(BUNDLE_KEY,"finance_investment_vat_report"));
+			buf.append(AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVESTMENT_VAT_REPORT));
 		}
 		if (params.getVatReportType() != null) {
 			Double percent = params.getVatPercent(); 

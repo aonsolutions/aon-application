@@ -1,5 +1,24 @@
 package com.code.aon.ui.fiscal.controller;
 
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_COMPANY;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_DATE;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_DEDUCTIBLE_QUOTA;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_DED_TYPE;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_DOCUMENT;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_DOCUMENT_NUMBER;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_NATURE;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_NUMBER;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_PERCENTAGE;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_QUOTA;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_RECTIFICATION_TYPE;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_RECTIFIED_ID;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_RET_TYPE;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_TAXABLE_BASE;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_TAXDATE;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_TAX_TYPE;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_TRANSACTION;
+import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_TYPE;
+
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +29,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -210,32 +228,32 @@ public class InvoiceReportController {
 	
 	public String onExcelReport() {
 		try {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			DynaElements dyn = new DynaElements();
 			DynaReport report = new DynaReport();
-			ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.ui.fiscal.i18n.messages",locale);
+			ResourceBundle bundle = AonUtil.getResourceBundle(IFiscalMessages.BUNDLE_NAME);
 			report.getReport().setReportLocale(locale);
 			report
 				.addColumn(dyn.getIntegerColumn("id","ID"))
-				.addColumn(dyn.getStringColumn("abbreviatedInvoiceType",bundle.getString("invoice_type"),27))
-				.addColumn(dyn.getStringColumn("invoiceTypeDesc",bundle.getString("invoice_type"),47))
-				.addColumn(dyn.getStringColumn("transactionDesc",bundle.getString("invoice_transaction"),60)) 
-				.addColumn(dyn.getStringColumn("conceptNature",bundle.getString("invoice_nature"),64))
-				.addColumn(dyn.getStringColumn("rectificationTypeDesc",bundle.getString("invoice_rectificationType"),64))
-				.addColumn(dyn.getIntegerColumn("rectifiedInvoice",bundle.getString("invoice_rectified_id")))
-				.addColumn(dyn.getDateColumn("issueDate",bundle.getString("invoice_date")))
-				.addColumn(dyn.getDateColumn("taxDate",bundle.getString("invoice_taxdate")))
-				.addColumn(dyn.getStringColumn("referenceCode",bundle.getString("invoice_number"),100))
-				.addColumn(dyn.getStringColumn("documentNumber",bundle.getString("invoice_document_number"),100))
-				.addColumn(dyn.getStringColumn("registryDocument",bundle.getString("invoice_document"),64))
-				.addColumn(dyn.getStringColumn("registryName",bundle.getString("invoice_company"),308))
-				.addColumn(dyn.getStringColumn("taxTypeDesc",bundle.getString("invoice_tax_type"),47))
-				.addColumn(dyn.getStringColumn("vatDeductionTypeDesc",bundle.getString("invoice_ded_type"),114))
-				.addColumn(dyn.getStringColumn("withholdingTypeDesc",bundle.getString("invoice_ret_type"),66))
-				.addColumn(dyn.getNumberColumn("taxableBase",bundle.getString("invoice_taxable_base")))
-				.addColumn(dyn.getNumberColumn("percentage",bundle.getString("invoice_percentage")))
-				.addColumn(dyn.getNumberColumn("quota",bundle.getString("invoice_quota")))
-				.addColumn(dyn.getNumberColumn("deductibleQuota",bundle.getString("invoice_deductible_quota")))
+				.addColumn(dyn.getStringColumn("abbreviatedInvoiceType",bundle.getString(INVOICE_TYPE),27))
+				.addColumn(dyn.getStringColumn("invoiceTypeDesc",bundle.getString(INVOICE_TYPE),47))
+				.addColumn(dyn.getStringColumn("transactionDesc",bundle.getString(INVOICE_TRANSACTION),60)) 
+				.addColumn(dyn.getStringColumn("conceptNature",bundle.getString(INVOICE_NATURE),64))
+				.addColumn(dyn.getStringColumn("rectificationTypeDesc",bundle.getString(INVOICE_RECTIFICATION_TYPE),64))
+				.addColumn(dyn.getIntegerColumn("rectifiedInvoice",bundle.getString(INVOICE_RECTIFIED_ID)))
+				.addColumn(dyn.getDateColumn("issueDate",bundle.getString(INVOICE_DATE)))
+				.addColumn(dyn.getDateColumn("taxDate",bundle.getString(INVOICE_TAXDATE)))
+				.addColumn(dyn.getStringColumn("referenceCode",bundle.getString(INVOICE_NUMBER),100))
+				.addColumn(dyn.getStringColumn("documentNumber",bundle.getString(INVOICE_DOCUMENT_NUMBER),100))
+				.addColumn(dyn.getStringColumn("registryDocument",bundle.getString(INVOICE_DOCUMENT),64))
+				.addColumn(dyn.getStringColumn("registryName",bundle.getString(INVOICE_COMPANY),308))
+				.addColumn(dyn.getStringColumn("taxTypeDesc",bundle.getString(INVOICE_TAX_TYPE),47))
+				.addColumn(dyn.getStringColumn("vatDeductionTypeDesc",bundle.getString(INVOICE_DED_TYPE),114))
+				.addColumn(dyn.getStringColumn("withholdingTypeDesc",bundle.getString(INVOICE_RET_TYPE),66))
+				.addColumn(dyn.getNumberColumn("taxableBase",bundle.getString(INVOICE_TAXABLE_BASE)))
+				.addColumn(dyn.getNumberColumn("percentage",bundle.getString(INVOICE_PERCENTAGE)))
+				.addColumn(dyn.getNumberColumn("quota",bundle.getString(INVOICE_QUOTA)))
+				.addColumn(dyn.getNumberColumn("deductibleQuota",bundle.getString(INVOICE_DEDUCTIBLE_QUOTA)))
 				;
 			DynaReportManager drm = new DynaReportManager();
 			drm.toExcel(report,"Facturas",getInvoices() );

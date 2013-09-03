@@ -7,8 +7,8 @@ import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_LOGO;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_SELLER_NAME;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_PRINT_TRADENAME;
 import static com.code.aon.common.enumeration.AppParam.POS_INVOICE_WIDTH;
-import static com.code.aon.ui.finance.controller.IFinanceConstants.BUNDLE_NAME;
-import static com.code.aon.ui.finance.controller.IFinanceConstants.FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX;
+import static com.code.aon.ui.finance.IFinanceMessages.FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX;
+import static com.code.aon.ui.finance.IFinanceMessages.BUNDLE_KEY;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -122,7 +122,7 @@ public class PosInvoiceParamsController {
 			params.put(POS_INVOICE_WIDTH, obtainApplicationParameter(POS_INVOICE_WIDTH) );
 			ApplicationParameter footerText = obtainApplicationParameter(POS_INVOICE_FOOTER_TEXT);
 			if ( footerText.getId() == null ) {
-				footerText.setValue(AonUtil.getMessage(BUNDLE_NAME, FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX));
+				footerText.setValue(AonUtil.getMessage(BUNDLE_KEY, FOOTER_TEXT_CONTENT_MSG_KEY_PREFIX));
 			}
 			params.put(POS_INVOICE_FOOTER_TEXT, footerText );
 		} catch (ManagerBeanException e) {

@@ -4,8 +4,6 @@ public interface IStatConstants {
 
 	String EMPTY_STRING = "";
 	String FORM_SUFFIX = "_form";
-	String STAT_BUNDLE = "statBundle";
-
 	
 	// ************************************************************
 	// BEAN

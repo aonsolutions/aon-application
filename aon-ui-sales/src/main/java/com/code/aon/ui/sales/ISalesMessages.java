@@ -12,5 +12,11 @@ public interface ISalesMessages {
 
 	String SALES_TO_PURCHASE = "sales_to_purchase";
 	
+	String SALES_SOURCE = "sales_source";
+	String SALES_TRANSFERED_TO = "sales_transfered_to";
+	String SALES_TO_DELIVERY = "sales_to_delivery";
+	String SALES_DETAIL_LINE = "sales_detail_line";
+	String SALES_DETAIL_UNITS = "sales_detail_units";
+	
 }
 

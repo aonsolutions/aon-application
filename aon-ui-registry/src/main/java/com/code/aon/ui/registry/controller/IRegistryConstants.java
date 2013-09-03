@@ -46,6 +46,31 @@ public interface IRegistryConstants {
     String SELLER_REPORT = "aon_seller_report";
     
     String CUSTOMER_REPORT = "aon_customer_report";
+    
+	String REGISTRY_ADDRESS = "registry_address";
+
+	String REGISTRY_CELLULAR = "registry_cellular";
+
+	String REGISTRY_EMAIL = "registry_email";
+
+	String REGISTRY_WEB = "registry_web";
+
+	String REGISTRY_NATIONALITY = "registry_nationality";
+
+	String REGISTRY_GEOZONE = "registry_geozone";
+
+	String REGISTRY_NUMBER_OF_PAYMENTS = "registry_number_of_payments";
+
+	String REGISTRY_DAYS_TO_FIRST_PAYMENT = "registry_days_to_first_payment";
+
+	String REGISTRY_DAYS_BETWEEN_PAYMENTS = "registry_days_between_payments";
+
+	String REGISTRY_PAYMENT_DAYS = "registry_payment_days";
+
+	String REGISTRY_CITY = "registry_city";
+
+	String REGISTRY_ZIP = "registry_zip";
+    
 	
 	// ************************************************************
 	// BEAN

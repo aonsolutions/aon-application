@@ -1,6 +1,8 @@
 package com.code.aon.ui.purchase.controller;
 
 
+import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_RETURNED_IN_MSG;
+import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_RETURN_OVER_MSG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.io.ByteArrayOutputStream;
@@ -58,6 +60,7 @@ import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.purchase.IPurchaseMessages;
 import com.code.aon.ui.purchase.util.PurchaseEmailUtil;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
@@ -605,7 +608,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 			HibernateUtil.beginTransaction(sessionName);
 			
 			returnSourcePurchase = (Purchase) this.getTo();
-			String comments = AonUtil.getMessage(PURCHASE_BUNDLE_NAME, PURCHASE_RETURN_OVER_MSG, returnSourcePurchase.getReferenceCode());
+			String comments = AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_RETURN_OVER_MSG, returnSourcePurchase.getReferenceCode());
 			comments += StringUtils.isBlank(returnSourcePurchase.getComments())?"":returnSourcePurchase.getComments();
 			PurchaseUtils utils = new PurchaseUtils();
 			Purchase purchase = utils.createPurchase(returnSourcePurchase.getSeries(),
@@ -650,7 +653,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 
 	private void markSourcePurchaseAsReturned(String referenceCode) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Purchase.class);
-		String comments = AonUtil.getMessage(PURCHASE_BUNDLE_NAME, PURCHASE_RETURNED_IN_MSG, referenceCode);
+		String comments = AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_RETURNED_IN_MSG, referenceCode);
 		comments += StringUtils.isBlank(returnSourcePurchase.getComments())?"":returnSourcePurchase.getComments();
 		returnSourcePurchase.setComments(comments);
 		bean.restoreNullSubPOJOs(returnSourcePurchase);

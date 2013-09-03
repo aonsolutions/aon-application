@@ -45,12 +45,12 @@
 					
 					<aon:outputLabel for="AssetActivity_startDate" value="#{assetBundle.asset_date}" />
 					<aon:selectInputDate renderAsPopup="true" id="AssetActivity_startDate"
-						popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+						popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 						value="#{activityBasicSearchListener.fromDate}" enableManualInput="true"/>
 						
 					<aon:outputLabel for="AssetActivity_endDate" value="#{assetBundle.asset_endDate}" />
 					<aon:selectInputDate renderAsPopup="true" id="AssetActivity_endDate"
-						popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
+						popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 						value="#{activityBasicSearchListener.toDate}" enableManualInput="true"/>
 				
 					<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{aonRole.userInRole['Administrador']}">

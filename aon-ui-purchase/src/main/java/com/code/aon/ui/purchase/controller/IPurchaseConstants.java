@@ -3,17 +3,6 @@ package com.code.aon.ui.purchase.controller;
 public interface IPurchaseConstants {
 	
 	// ************************************************************
-	// MESSAGES
-	// ************************************************************
-	String PURCHASE_BUNDLE_NAME = "purchaseBundle";
-	
-	String PURCHASE_SOURCE_MSG = "purchase_source";
-
-	String PURCHASE_RETURN_OVER_MSG = "purchase_return_over";
-
-	String PURCHASE_RETURNED_IN_MSG = "purchase_returned_in";
-	
-	// ************************************************************
 	// BEAN
 	// ************************************************************
 	String COLLECTIONS_CONTROLLER_NAME = "purchaseCollections";
@@ -36,7 +25,6 @@ public interface IPurchaseConstants {
 	// NAVIGATION
 	// ************************************************************
 	String PURCHASE_FORM_NAME = "purchase_form";
-
 
 	
 }

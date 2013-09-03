@@ -1,5 +1,30 @@
 package com.code.aon.ui.stat.controller;
 
+import static com.code.aon.ui.stat.IStatMessages.BUNDLE_NAME;
+import static com.code.aon.ui.stat.IStatMessages.STAT_ABC_CREDITOR;
+import static com.code.aon.ui.stat.IStatMessages.STAT_ABC_EXPENSE;
+import static com.code.aon.ui.stat.IStatMessages.STAT_ABC_SUPPLIER;
+import static com.code.aon.ui.stat.IStatMessages.STAT_CATEGORY;
+import static com.code.aon.ui.stat.IStatMessages.STAT_CREDITOR;
+import static com.code.aon.ui.stat.IStatMessages.STAT_CUSTOMER;
+import static com.code.aon.ui.stat.IStatMessages.STAT_DAY;
+import static com.code.aon.ui.stat.IStatMessages.STAT_EXPENSE;
+import static com.code.aon.ui.stat.IStatMessages.STAT_MENU_ACUMULADO;
+import static com.code.aon.ui.stat.IStatMessages.STAT_MENU_ACUMULADO2;
+import static com.code.aon.ui.stat.IStatMessages.STAT_MENU_ACUMULADO_CREDITOR;
+import static com.code.aon.ui.stat.IStatMessages.STAT_MENU_CUSTOMERS;
+import static com.code.aon.ui.stat.IStatMessages.STAT_MENU_EXPENSE;
+import static com.code.aon.ui.stat.IStatMessages.STAT_MENU_SUPPLIERS;
+import static com.code.aon.ui.stat.IStatMessages.STAT_MONTH;
+import static com.code.aon.ui.stat.IStatMessages.STAT_PRODUCT;
+import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_ABC_CATEGORY;
+import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_ABC_CUSTOMER;
+import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_ABC_PRODUCT;
+import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_CATEGORY;
+import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_SUMMARY;
+import static com.code.aon.ui.stat.IStatMessages.STAT_SUPPLIER;
+import static com.code.aon.ui.stat.IStatMessages.STAT_YEAR;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.Calendar;
@@ -73,7 +98,6 @@ public class StatEngineController {
 	private StatParams params;
 	private String reportName;
 	private String itemTitle;
-	private static final String bundle = "statBundle";
 	private List<Invoice> invoices;
 	private IPriceStrategy priceStrategy;
 	private String backAction;
@@ -497,16 +521,16 @@ public class StatEngineController {
 			setYearStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_YEAR));
 			}
 			if (invoiceType == 0) {
-				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado2"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO2));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_YEAR));
 			}
 			if (invoiceType == 2) {
-				setReportName(AonUtil.getMessage(bundle, "stat_menu_expense"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_EXPENSE));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_YEAR));
 			}
 			yearStatModel = null;
 			setBackAction("customer_stat_list_year");
@@ -547,44 +571,20 @@ public class StatEngineController {
 			setMonthStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_MONTH));
 			}
 			if (invoiceType == 0) {
-				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado2"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO2));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_MONTH));
 			}
 			if (invoiceType == 2) {
-				setReportName(AonUtil.getMessage(bundle, "stat_menu_expense"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_EXPENSE));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_MONTH));
 			}
 	
 			monthStatModel = null;
 		}
-		/*
-		 * if (init.get(Calendar.YEAR) != currentYear.intValue() &&
-		 * fin.get(Calendar.YEAR) ==currentYear.intValue()) { Calendar fecini =
-		 * new GregorianCalendar(currentYear, 0, 1);
-		 * params.setFromDate(fecini.getTime());
-		 * params.setInvoiceType(invoiceType); List<Stat> list = new
-		 * LinkedList<Stat>(); System.out.println(params.getFromDate());
-		 * System.out.println(params.getToDate());
-		 * list.addAll(se.getMonthsStats(params)); setMonthStats(list);
-		 * calculateTotals(list); setReportName(AonUtil.getMessage(bundle,
-		 * "stat_menu_acumulado")); setItemTitle(AonUtil.getMessage(bundle,
-		 * "stat_month")); monthStatModel = null; }
-		 * 
-		 * if (init.get(Calendar.YEAR) == currentYear.intValue() &&
-		 * fin.get(Calendar.YEAR) != currentYear.intValue()) { Calendar fecfin =
-		 * new GregorianCalendar(currentYear, 11, 31);
-		 * params.setToDate(fecfin.getTime()); List<Stat> list = new
-		 * LinkedList<Stat>(); System.out.println(params.getFromDate());
-		 * System.out.println(params.getToDate());
-		 * list.addAll(se.getMonthsStats(params)); setMonthStats(list);
-		 * calculateTotals(list); setReportName(AonUtil.getMessage(bundle,
-		 * "stat_menu_acumulado")); setItemTitle(AonUtil.getMessage(bundle,
-		 * "stat_month")); monthStatModel = null; }
-		 */
 		if (init.get(Calendar.YEAR) != currentYear.intValue()
 				&& fin.get(Calendar.YEAR) != currentYear.intValue()) {
 			Calendar fec = new GregorianCalendar(currentYear, 0, 1);
@@ -597,12 +597,12 @@ public class StatEngineController {
 			setMonthStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_MONTH));
 			} else {
 				setReportName(AonUtil
-						.getMessage(bundle, "stat_menu_acumulado2"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
+						.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO2));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_MONTH));
 			}
 			monthStatModel = null;
 		}
@@ -637,16 +637,16 @@ public class StatEngineController {
 			setDayStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_day"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_DAY));
 			}
 			if (invoiceType == 0) {
-				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado2"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_day"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO2));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_DAY));
 			}
 			if (invoiceType == 2) {
-				setReportName(AonUtil.getMessage(bundle, "stat_menu_expense"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_day"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_EXPENSE));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_DAY));
 			}
 			dayStatModel = null;
 			setDaysYear(currentYear);
@@ -685,16 +685,16 @@ public class StatEngineController {
 			setCustomerStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(bundle, "stat_menu_customers"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_customer"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_CUSTOMERS));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_CUSTOMER));
 			}
 			if (invoiceType == 0) {
-				setReportName(AonUtil.getMessage(bundle, "stat_menu_suppliers"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_supplier"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_SUPPLIERS));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_SUPPLIER));
 			}
 			if (invoiceType == 2) {
-				setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado_creditor"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_creditor"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO_CREDITOR));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_CREDITOR));
 			}			
 			customerStatModel = null;
 		} catch (ManagerBeanException e) {
@@ -885,8 +885,8 @@ public class StatEngineController {
 			list.addAll(getStatEngine().getCategoryStats(params));
 			setYearStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_category"));
+			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_CATEGORY));
 			yearStatModel = null;
 			
 		} catch (ManagerBeanException e) {
@@ -922,8 +922,8 @@ public class StatEngineController {
 			list.addAll(getStatEngine().getCategoryCustomerStats(this.params));
 			setCustomerStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_customer"));
+			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_CUSTOMER));
 			customerStatModel = null;
 			setBackAction("category_stats_year");
 			setCheckLevel(0);
@@ -948,8 +948,8 @@ public class StatEngineController {
 			list.addAll(getStatEngine().getProductRegistryStats(this.params));
 			setCustomerStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_customer"));
+			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_CUSTOMER));
 			customerStatModel = null;
 			setBackAction("category_product_stats");
 			setCheckLevel(1);
@@ -982,8 +982,8 @@ public class StatEngineController {
 			list.addAll(getStatEngine().getSummaryStats(params));
 			setMonthStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_report_summary"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_month"));
+			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_SUMMARY));
+			setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_MONTH));
 			monthStatModel = null;
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -1000,16 +1000,16 @@ public class StatEngineController {
 			setAbcStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(bundle, "stat_report_abcCustomer"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_customer"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_ABC_CUSTOMER));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_CUSTOMER));
 			}
 			if (invoiceType == 0) {
-				setReportName(AonUtil.getMessage(bundle, "stat_abc_supplier"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_supplier"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_ABC_SUPPLIER));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_SUPPLIER));
 			}
 			if (invoiceType == 2) {
-				setReportName(AonUtil.getMessage(bundle, "stat_abc_creditor"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_creditor"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_ABC_CREDITOR));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_CREDITOR));
 			}	
 			abcStatModel = null;
 		} catch (ManagerBeanException e) {
@@ -1027,16 +1027,16 @@ public class StatEngineController {
 			setAbcStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(bundle, "stat_report_abcProduct"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_ABC_PRODUCT));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_PRODUCT));
 			}
 			if (invoiceType == 0) {
-				setReportName(AonUtil.getMessage(bundle, "stat_report_abcProduct"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_ABC_PRODUCT));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_PRODUCT));
 			}
 			if (invoiceType == 2) {
-				setReportName(AonUtil.getMessage(bundle, "stat_abc_expense"));
-				setItemTitle(AonUtil.getMessage(bundle, "stat_expense"));
+				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_ABC_EXPENSE));
+				setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_EXPENSE));
 			}	
 			
 			abcStatModel = null;
@@ -1055,8 +1055,8 @@ public class StatEngineController {
 			list.addAll(getStatEngine().getABCStatsByCategory(params));
 			setAbcStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_report_abcCategory"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_category"));
+			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_ABC_CATEGORY));
+			setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_CATEGORY));
 			abcStatModel = null;
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -1118,8 +1118,8 @@ public class StatEngineController {
 		list.addAll(getStatEngine().getRegistryProductStats(params));
 		setProductStats(list);
 		calculateTotals(list);
-		setReportName(AonUtil.getMessage(bundle, "stat_report_abcProduct"));
-		setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
+		setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_ABC_PRODUCT));
+		setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_PRODUCT));
 		productModel = null;
 	}
 
@@ -1131,8 +1131,8 @@ public class StatEngineController {
 		list.addAll(getStatEngine().getAbcCustomerStats(params));
 		setAbcStats(list);
 		calculateTotals(list);
-		setReportName(AonUtil.getMessage(bundle, "stat_report_abcCategory"));
-		setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
+		setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_ABC_CATEGORY));
+		setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_PRODUCT));
 		abcStatModel = null;
 	}
 
@@ -1144,16 +1144,16 @@ public class StatEngineController {
 		setMonthStats(list);
 		calculateTotals(list);
 		if (invoiceType == 1) {
-			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
+			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_PRODUCT));
 		}
 		if (invoiceType == 0) {
-			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_product"));
+			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_PRODUCT));
 		}
 		if (invoiceType == 2) {
-			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_expense"));
+			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_EXPENSE));
 		}	
 		
 		monthStatModel = null;
@@ -1251,8 +1251,8 @@ public class StatEngineController {
 			list.addAll(getStatEngine().getCategoryStats(params));
 			setYearStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
-			setItemTitle(AonUtil.getMessage(bundle, "stat_category"));
+			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_CATEGORY));
 			yearStatModel = null;
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los datos. " + e.getMessage();
@@ -1267,8 +1267,8 @@ public class StatEngineController {
 		List<Stat> list = new LinkedList<Stat>();
 		list.addAll(getStatEngine().getYearStats(params));
 		calculateTotals(list);
-		setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
-		setItemTitle(AonUtil.getMessage(bundle, "stat_year"));
+		setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO));
+		setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_YEAR));
 		yearStatModel = null;
 		setBackAction("customer_stat_list_year");
 		setCurrentMonth(null);

@@ -1,5 +1,15 @@
 package com.code.aon.ui.accounting.controller.report;
 
+import static com.code.aon.ui.accounting.IAccountingConstants.ACCOUNTING_GROSS_MARGIN;
+import static com.code.aon.ui.accounting.IAccountingConstants.ACCOUNTING_PROFIT_AND_LOSS_MODULE;
+import static com.code.aon.ui.accounting.IAccountingConstants.ACCOUNTING_TOTAL_EXPENSES;
+import static com.code.aon.ui.accounting.IAccountingConstants.ACCOUNTING_TOTAL_RESULT;
+import static com.code.aon.ui.accounting.IAccountingConstants.ACCOUNTING_TOTAL_RESULT_LOSS;
+import static com.code.aon.ui.accounting.IAccountingConstants.ACCOUNTING_TOTAL_RESULT_NULL;
+import static com.code.aon.ui.accounting.IAccountingConstants.ACCOUNTING_TOTAL_RESULT_PROFIT;
+import static com.code.aon.ui.accounting.IAccountingConstants.BUNDLE_KEY;
+import static com.code.aon.ui.accounting.IAccountingConstants.TRIAL_BALANCE_CONTROLLER_NAME;
+
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,16 +40,14 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.account.controller.AccountCollectionsController;
+import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class ProfitAndLossReportController implements ICollectionProvider {
-
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ProfitAndLossReportController.class);
 	
-	private static final String TRIAL_BALANCE_CONTROLLER_NAME = "trialBalance";
-	private static final String ACCOUNTING_BUNDLE = "accountingBundle";
 	private String accountStatement;	
 	private SummaryCollection grossMargin;
 	private SummaryCollection totalExpenses;
@@ -262,28 +270,28 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		Collection<Summary> list = new LinkedList<Summary>();
 		list.addAll(getGrossMargin().getSummaryList());
 		Summary gmTotal = new Summary();
-		gmTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_gross_margin"));
+		gmTotal.setDescription(AonUtil.getMessage(BUNDLE_KEY, ACCOUNTING_GROSS_MARGIN));
 		gmTotal.setCredit(getGrossMargin().getCredit());
 		gmTotal.setDebit(getGrossMargin().getDebit());
 		list.add(gmTotal);
 
 		list.addAll(getTotalExpenses().getSummaryList());
 		Summary teTotal = new Summary();
-		teTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_expenses"));
+		teTotal.setDescription(AonUtil.getMessage(BUNDLE_KEY, ACCOUNTING_TOTAL_EXPENSES));
 		teTotal.setCredit(getTotalExpenses().getCredit());
 		teTotal.setDebit(getTotalExpenses().getDebit());
 		list.add(teTotal);
 
 		Summary result = new Summary();
 		StringBuilder r = new StringBuilder();
-		r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_result"));
+		r.append(AonUtil.getMessage(BUNDLE_KEY, ACCOUNTING_TOTAL_RESULT));
 		r.append(" (");
 		if (getTotalResult() > 0) {
-			r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_result_profit"));
+			r.append(AonUtil.getMessage(BUNDLE_KEY, ACCOUNTING_TOTAL_RESULT_PROFIT));
 		} else if (getTotalResult() < 0) {
-			r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_result_loss"));
+			r.append(AonUtil.getMessage(BUNDLE_KEY, ACCOUNTING_TOTAL_RESULT_LOSS));
 		} else {
-			r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_result_null"));
+			r.append(AonUtil.getMessage(BUNDLE_KEY, ACCOUNTING_TOTAL_RESULT_NULL));
 		}
 		r.append(")");
 		result.setDescription(r.toString());
@@ -313,7 +321,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	}
 
 	public String getReportTitle() {
-		return AonUtil.getMessage(ACCOUNTING_BUNDLE,"accounting_profit_and_loss_module");
+		return AonUtil.getMessage(BUNDLE_KEY, ACCOUNTING_PROFIT_AND_LOSS_MODULE);
 	}
 	
 	public String getGraphName() {

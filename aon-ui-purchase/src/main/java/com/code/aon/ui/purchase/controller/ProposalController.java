@@ -1,5 +1,9 @@
 package com.code.aon.ui.purchase.controller;
 
+import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_PROPOSAL_ITEM_RETURN;
+import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_PROPOSAL_ORDER;
+import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_PROPOSAL_TRANSFERENCE;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,6 +37,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.purchase.IPurchaseMessages;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -275,11 +280,11 @@ public class ProposalController extends BasicController {
 	public List<SelectItem> getProposalTypes(){
 		if (proposalTypes == null) {
 			proposalTypes = new LinkedList<SelectItem>();
-			SelectItem item = new SelectItem(ProposalType.ORDER, AonUtil.getMessage(IPurchaseConstants.PURCHASE_BUNDLE_NAME, "purchase_proposal_order"));
+			SelectItem item = new SelectItem(ProposalType.ORDER, AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_PROPOSAL_ORDER));
 			proposalTypes.add(item);
-			item = new SelectItem(ProposalType.ITEM_RETURN, AonUtil.getMessage(IPurchaseConstants.PURCHASE_BUNDLE_NAME, "purchase_proposal_item_return"));
+			item = new SelectItem(ProposalType.ITEM_RETURN, AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_PROPOSAL_ITEM_RETURN));
 			proposalTypes.add(item);
-			item = new SelectItem(ProposalType.TRANSFER, AonUtil.getMessage(IPurchaseConstants.PURCHASE_BUNDLE_NAME, "purchase_proposal_transference"));
+			item = new SelectItem(ProposalType.TRANSFER, AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_PROPOSAL_TRANSFERENCE));
 			proposalTypes.add(item);
 		}
 		return proposalTypes;

@@ -1,5 +1,11 @@
 package com.code.aon.ui.warehouse.controller;
 
+import static com.code.aon.ui.warehouse.IWarehouseMessages.BUNDLE_KEY;
+import static com.code.aon.ui.warehouse.IWarehouseMessages.STOCK_BY_ITEM_KEY;
+import static com.code.aon.ui.warehouse.IWarehouseMessages.STOCK_BY_ITEM_VALUED_KEY;
+import static com.code.aon.ui.warehouse.IWarehouseMessages.STOCK_BY_WAREHOUSE_KEY;
+import static com.code.aon.ui.warehouse.IWarehouseMessages.STOCK_BY_WAREHOUSE_VALUED_KEY;
+
 import java.util.Collection;
 
 import javax.faces.event.AbortProcessingException;
@@ -30,13 +36,6 @@ public class StockReport implements ICollectionProvider{
 	private static final String BY_ITEM_VALUED_REPORT_KEY = "stockItemValuedList";
 	private static final String BY_WAREHOUSE_VALUED_REPORT_KEY = "stockWarehouseValuedList";
 
-	// Messages
-	private static final String WAREHOUSE_BUNDLE = "warehouseBundle";
-	private static final String STOCK_BY_WAREHOUSE_KEY = "warehouse_stock_by_warehouse_module";
-	private static final String STOCK_BY_ITEM_KEY = "warehouse_stock_by_item_module";
-	private static final String STOCK_BY_WAREHOUSE_VALUED_KEY = "warehouse_stock_by_warehouse_valued_module";
-	private static final String STOCK_BY_ITEM_VALUED_KEY = "warehouse_stock_by_item_valued_module";
-	
 	private Warehouse warehouse;
 	private Item item;
 	private String quantity;
@@ -94,12 +93,12 @@ public class StockReport implements ICollectionProvider{
 	public String getTitle() {
 		if (isValued()) {
 			return isByItem()?
-					AonUtil.getMessage(WAREHOUSE_BUNDLE, STOCK_BY_ITEM_VALUED_KEY):
-					AonUtil.getMessage(WAREHOUSE_BUNDLE, STOCK_BY_WAREHOUSE_VALUED_KEY);
+					AonUtil.getMessage(BUNDLE_KEY, STOCK_BY_ITEM_VALUED_KEY):
+					AonUtil.getMessage(BUNDLE_KEY, STOCK_BY_WAREHOUSE_VALUED_KEY);
 		}
 		return isByItem()?
-			AonUtil.getMessage(WAREHOUSE_BUNDLE, STOCK_BY_ITEM_KEY):
-			AonUtil.getMessage(WAREHOUSE_BUNDLE, STOCK_BY_WAREHOUSE_KEY);
+			AonUtil.getMessage(BUNDLE_KEY, STOCK_BY_ITEM_KEY):
+			AonUtil.getMessage(BUNDLE_KEY, STOCK_BY_WAREHOUSE_KEY);
 	}
 	
 	public void onReportByWarehouse(ActionEvent event) {

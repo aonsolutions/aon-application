@@ -46,7 +46,7 @@ public class PosCatalogueControllerListener extends ControllerAdapter implements
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_CATALOGUE_POS_ID), posCatalogue.getPos().getId());
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_CATALOGUE_CATALOGUE_ID), posCatalogue.getCatalogue().getId());
 			if (bean.getCount(criteria) > 0) {
-				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, FINANCE_POS_CATALOGUE_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_KEY, FINANCE_POS_CATALOGUE_ERROR));
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

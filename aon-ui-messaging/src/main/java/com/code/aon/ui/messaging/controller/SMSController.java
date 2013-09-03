@@ -1,5 +1,8 @@
 package com.code.aon.ui.messaging.controller;
 
+import static com.code.aon.ui.messaging.controller.IMessagingConstants.BUNDLE_NAME;
+import static com.code.aon.ui.messaging.controller.IMessagingConstants.SMS_EMPTY_RECIPIENT_ERROR;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.MessageFormat;
@@ -8,7 +11,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -46,16 +48,12 @@ public class SMSController implements Serializable {
 	
 	private static final String SMS_CONTACT_MANAGED_BEAN = "smsContact";
 	
-	private static final String SMS_BUNDLE = "smsBundle";
-	
     private static final String USER_MESSAGES = "SELECT count(*) FROM Message as msg " +
     	"WHERE msg.username = :username AND msg.sentDate BETWEEN :fromDate AND :toDate";
     
     private static final String COMPANY_MESSAGES = "SELECT count(*) FROM Message as msg " +
     	"WHERE msg.sentDate BETWEEN :fromDate AND :toDate";
 
-    private ResourceBundle bundle;
-    
 	private boolean showWindow;
 	private boolean allowSending;
 
@@ -85,7 +83,6 @@ public class SMSController implements Serializable {
 	public SMSController() {
 		this.allowUpdateRecipients = true;
 		this.showToolbar = true;
-		this.bundle = AonUtil.getResourceBundle(SMS_BUNDLE);
 		loadPriceTariff();
 		try {
 			this.message = new Message();
@@ -222,16 +219,16 @@ public class SMSController implements Serializable {
 	public String getCharacterCountMessage() {
 		int count = getCharacterCount();
 		if ( count == 1 ) {
-			return bundle.getString("sms_message_size_one");
+			return AonUtil.getMessage(BUNDLE_NAME, IMessagingConstants.SMS_MESSAGE_SIZE_ONE);
 		} else {
-			String pattern = bundle.getString("sms_message_size_many"); 
+			String pattern = AonUtil.getMessage(BUNDLE_NAME, IMessagingConstants.SMS_MESSAGE_SIZE_MANY);
 			return MessageFormat.format(pattern, count);
 		}
 	}
 
 	public void checkMessageLength() {
 		if ( getCharacterCount() > 160 ) {
-			String message = bundle.getString("sms_message_size_limit");
+			String message = AonUtil.getMessage(BUNDLE_NAME, IMessagingConstants.SMS_MESSAGE_SIZE_LIMIT);
 			AonUtil.addErrorMessage( message );
 			throw new AbortProcessingException( message );							
 		}
@@ -270,7 +267,7 @@ public class SMSController implements Serializable {
 				throw new AbortProcessingException(e.getMessage(), e);				
 			}
 		} else {
-			String message = bundle.getString("sms_empty_recipient_error");
+			String message = AonUtil.getMessage(BUNDLE_NAME, SMS_EMPTY_RECIPIENT_ERROR);
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException( message );
 		}

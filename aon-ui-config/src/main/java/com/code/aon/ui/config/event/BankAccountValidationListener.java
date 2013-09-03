@@ -1,19 +1,20 @@
 package com.code.aon.ui.config.event;
 
+import static com.code.aon.ui.config.controller.ConfigConstants.BUNDLE_NAME;
+import static com.code.aon.ui.config.controller.ConfigConstants.CONFIG_INVALID_BANK_ACCOUNT;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.Bank;
 import com.code.aon.config.IBankAccountContainer;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 
 public class BankAccountValidationListener extends ControllerAdapter {
-
-	private static final String CONFIG_BUNDLE = "configBundle";
-	private static final String ERROR_MESSAGE = "config_invalid_bank_account";
 
 	private boolean nullable;
 
@@ -42,11 +43,11 @@ public class BankAccountValidationListener extends ControllerAdapter {
 		BankAccount bankAccount = bac.getBankAccount();
 		if (!nullable) {
 			if (bank == null) {
-				String msg = AonUtil.getMessage(CONFIG_BUNDLE, ERROR_MESSAGE);
+				String msg = AonUtil.getMessage(BUNDLE_NAME, CONFIG_INVALID_BANK_ACCOUNT);
 				throw new ControllerListenerException(msg);
 			}
 			if (bankAccount == null) {
-				String msg = AonUtil.getMessage(CONFIG_BUNDLE, ERROR_MESSAGE);
+				String msg = AonUtil.getMessage(BUNDLE_NAME, CONFIG_INVALID_BANK_ACCOUNT);
 				throw new ControllerListenerException(msg);
 			}
 		}
@@ -55,7 +56,7 @@ public class BankAccountValidationListener extends ControllerAdapter {
 			bankAccount.setEntity(bank.getCode());	
 		}
 		if (bankAccount != null && !StringUtils.isEmpty(bankAccount.getEntity()) && !bankAccount.isValid()) {
-			String msg = AonUtil.getMessage(CONFIG_BUNDLE, ERROR_MESSAGE);
+			String msg = AonUtil.getMessage(BUNDLE_NAME, CONFIG_INVALID_BANK_ACCOUNT);
 			throw new ControllerListenerException(msg);
 		}
 	}

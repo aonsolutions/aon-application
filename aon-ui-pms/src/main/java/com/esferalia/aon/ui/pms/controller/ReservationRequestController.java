@@ -1,5 +1,8 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.BUNDLE_NAME;
+import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,7 +18,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -155,7 +157,7 @@ public class ReservationRequestController extends BasicController implements IPm
 
 	private boolean validateRequest(ReservationRequest request) {
 		Date yesterday = DateUtils.truncate(DateUtils.addDays(new Date(), -1), Calendar.DATE);
-		String yesterdayStr = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_date_pattern")).format(yesterday);
+		String yesterdayStr = new SimpleDateFormat(AonUtil.getMessage(BUNDLE_NAME, DATE_PATTERN)).format(yesterday);
 		if (request.getStartDate().before(yesterday)) {
 			String msg = "La Fecha de Entrada no puede ser anterior a " + yesterdayStr + ".";
 			AonUtil.addErrorMessage(msg);
