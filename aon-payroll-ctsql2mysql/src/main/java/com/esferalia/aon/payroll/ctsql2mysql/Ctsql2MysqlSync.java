@@ -41,25 +41,8 @@ public class Ctsql2MysqlSync {
 	 * @throws SQLException 
 	 */
 	public static void main(String[] args) throws SQLException {
-		
-		Class<?> returnType = null;
-		
-		;
-		
-		
-		Method methdos [] = Object.class.getMethods() ;
-		for (Method method : methdos) {
-			System.out.println(method.getName() + " = " + ( method.getReturnType() == void.class ));
-		}
-		
-		
-		return;
-		
-		
-		
-		//Ctsql2Mysql ctsql2Mysql = new Ctsql2Mysql(args);
-		//Ctsql2MysqlSync.sync(ctsql2Mysql);
-		
+		Ctsql2Mysql ctsql2Mysql = new Ctsql2Mysql(args);
+		Ctsql2MysqlSync.sync(ctsql2Mysql);
 		
 	}
 
