@@ -33,7 +33,7 @@
 	<!--  *********************************** -->
 	<table-filter match-name="db_version" exclude="true" />
 	<!--  PAYROLL -->
-	<table-filter match-name="salary_data" exclude="true" />
+	<!--table-filter match-name="salary_data" exclude="true" /-->
 	
 	
 	<!--  ***************** -->
@@ -802,8 +802,30 @@
 		<column name="ascendents_moving_entirely" type="java.lang.Integer"/>
 		<column name="ascendents_65_total" type="java.lang.Integer"/>
 		<column name="ascendents_65_entirely" type="java.lang.Integer"/>
-		<column name="irregular_18_2_reduction" property="irregular18_2Reduction"/>
-		<column name="irregular_18_3_reduction" property="irregular18_3Reduction"/>
+		<column name="irregular_18_2_reduction" property="irregular18_2Reduction" type="java.lang.Double" />
+		<column name="irregular_18_3_reduction" property="irregular18_3Reduction" type="java.lang.Double" />
+
+		<column name="base_irpf" type="java.lang.Double"/>
+		<column name="minimun_personal_family" type="java.lang.Double"/>
+		<column name="deduct_home_loan_amount" type="java.lang.Double"/>
+		<column name="deduct_80_bis" type="java.lang.Double"/>
+		<column name="irpf" type="java.lang.Double"/>
+		<column name="annual_irpf" type="java.lang.Double"/>
+		<column name="annual_remuneration" type="java.lang.Double"/>
+		<column name="deduccibles_expenses" type="java.lang.Double"/>
+		<column name="work_remuneration_reduction" type="java.lang.Double"/>
+		<column name="work_prolongation_reduction" type="java.lang.Double"/>
+		<column name="work_moving_reduction" type="java.lang.Double"/>
+		<column name="work_disability_reduction" type="java.lang.Double"/>
+		<column name="social_security_pensioner" type="java.lang.Double"/>
+		<column name="two_or_more_descendents_min" type="java.lang.Double"/>
+		<column name="spousal_support" type="java.lang.Double"/>
+		<column name="food_annuity" type="java.lang.Double"/>
+		<column name="minimun_personal" type="java.lang.Double"/>
+		<column name="minimun_ascendents" type="java.lang.Double"/>
+		<column name="minimun_descendents" type="java.lang.Double"/>
+		<column name="minimun_disability" type="java.lang.Double"/>
+
 	</table>
 
 	<table name="item">
@@ -1383,6 +1405,7 @@
 		<column name="pro_ext_base" type="java.lang.Double" property="extraPayProration" />
 	</table>
 	
+
 	<table name="salary_cost">
 		<column name="type" type="com.esferalia.aon.salary.enumeration.DeductionType"/>
 	</table>

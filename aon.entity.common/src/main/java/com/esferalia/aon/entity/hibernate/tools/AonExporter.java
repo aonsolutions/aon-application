@@ -422,7 +422,7 @@ public class AonExporter extends GenericExporter{
 		map.put("PayrollWorkPlace","com.esferalia.aon.payroll.PayrollWorkPlace");
 		map.put("Salary","com.esferalia.aon.payroll.Salary");
 		map.put("SalaryBonus","com.esferalia.aon.payroll.SalaryBonus");
-		//map.put("SalaryData","com.esferalia.aon.payroll.SalaryData");
+		map.put("SalaryData","com.esferalia.aon.payroll.SalaryData");
 		map.put("SalaryCost","com.esferalia.aon.payroll.SalaryCost");
 		map.put("SalaryDeduction","com.esferalia.aon.payroll.SalaryDeduction");
 		map.put("SalaryEmbargo","com.esferalia.aon.payroll.SalaryEmbargo");
