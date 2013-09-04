@@ -8,7 +8,7 @@
 	<import value="com.code.aon.registry.enumeration.AddressType"/>
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
 	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
-	<style name="label" vAlign="Middle" fontSize="8"/>
+	<style name="label" vAlign="Middle" isBlankWhenNull="true"  fontSize="8"/>
 	<style name="title" style="label" hAlign="Center" isBold="true"/>
 	<style name="head" style="title" hAlign="Left" fontSize="9"/>
 	<style name="amount" style="label" hAlign="Right"/>
