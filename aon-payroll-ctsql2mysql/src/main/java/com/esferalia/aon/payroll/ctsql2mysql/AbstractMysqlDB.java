@@ -18878,31 +18878,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer domain; 
 		protected Integer certifica2_batch; 
 		protected Integer contract; 
-		protected String enterprise_nif; 
-		protected String ccc; 
-		protected String document; 
-		protected String name; 
-		protected String first_surname; 
-		protected String second_surname; 
-		protected String ss_number; 
-		protected String quote_group; 
-		protected String contract_type; 
-		protected String contract_duration; 
-		protected String contract_duration_indicator; 
-		protected String occupation_code; 
-		protected String public_association_charge; 
-		protected String dedication_percent; 
-		protected Date enterprise_start_date; 
 		protected String suspension_cause_code; 
-		protected Date expire_date; 
-		protected Date expire_end_date; 
-		protected String ere; 
-		protected String ere_reduction_percent; 
-		protected String other_reduction_percent; 
-		protected String reduction_cause_code; 
-		protected Date salary_period_start_date; 
-		protected Date salary_period_end_date; 
-		protected String salary_processing_days; 
 	}
 	
 	protected void insertCertifica2_batch_detail( List<Certifica2_batch_detail> certifica2_batch_details )
@@ -18913,7 +18889,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( certifica2_batch_detailStmt != null ) {
 				certifica2_batch_detailStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -18922,7 +18898,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			certifica2_batch_detailStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO certifica2_batch_detail (id,domain,certifica2_batch,contract,enterprise_nif,ccc,document,name,first_surname,second_surname,ss_number,quote_group,contract_type,contract_duration,contract_duration_indicator,occupation_code,public_association_charge,dedication_percent,enterprise_start_date,suspension_cause_code,expire_date,expire_end_date,ere,ere_reduction_percent,other_reduction_percent,reduction_cause_code,salary_period_start_date,salary_period_end_date,salary_processing_days)"  
+				"INSERT INTO certifica2_batch_detail (id,domain,certifica2_batch,contract,suspension_cause_code)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			certifica2_batch_detailStmtSize = size;
@@ -18947,106 +18923,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				certifica2_batch_detailStmt.setNull(offset++, 4);
 			else
 				certifica2_batch_detailStmt.setInt(offset++, certifica2_batch_detail.contract);
-			if ( certifica2_batch_detail.enterprise_nif == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.enterprise_nif);
-			if ( certifica2_batch_detail.ccc == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.ccc);
-			if ( certifica2_batch_detail.document == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.document);
-			if ( certifica2_batch_detail.name == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.name);
-			if ( certifica2_batch_detail.first_surname == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.first_surname);
-			if ( certifica2_batch_detail.second_surname == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.second_surname);
-			if ( certifica2_batch_detail.ss_number == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.ss_number);
-			if ( certifica2_batch_detail.quote_group == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.quote_group);
-			if ( certifica2_batch_detail.contract_type == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.contract_type);
-			if ( certifica2_batch_detail.contract_duration == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.contract_duration);
-			if ( certifica2_batch_detail.contract_duration_indicator == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.contract_duration_indicator);
-			if ( certifica2_batch_detail.occupation_code == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.occupation_code);
-			if ( certifica2_batch_detail.public_association_charge == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.public_association_charge);
-			if ( certifica2_batch_detail.dedication_percent == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.dedication_percent);
-			if ( certifica2_batch_detail.enterprise_start_date == null )
-				certifica2_batch_detailStmt.setNull(offset++, 91);
-			else
-				certifica2_batch_detailStmt.setDate(offset++, certifica2_batch_detail.enterprise_start_date);
 			if ( certifica2_batch_detail.suspension_cause_code == null )
 				certifica2_batch_detailStmt.setNull(offset++, 12);
 			else
 				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.suspension_cause_code);
-			if ( certifica2_batch_detail.expire_date == null )
-				certifica2_batch_detailStmt.setNull(offset++, 91);
-			else
-				certifica2_batch_detailStmt.setDate(offset++, certifica2_batch_detail.expire_date);
-			if ( certifica2_batch_detail.expire_end_date == null )
-				certifica2_batch_detailStmt.setNull(offset++, 91);
-			else
-				certifica2_batch_detailStmt.setDate(offset++, certifica2_batch_detail.expire_end_date);
-			if ( certifica2_batch_detail.ere == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.ere);
-			if ( certifica2_batch_detail.ere_reduction_percent == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.ere_reduction_percent);
-			if ( certifica2_batch_detail.other_reduction_percent == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.other_reduction_percent);
-			if ( certifica2_batch_detail.reduction_cause_code == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.reduction_cause_code);
-			if ( certifica2_batch_detail.salary_period_start_date == null )
-				certifica2_batch_detailStmt.setNull(offset++, 91);
-			else
-				certifica2_batch_detailStmt.setDate(offset++, certifica2_batch_detail.salary_period_start_date);
-			if ( certifica2_batch_detail.salary_period_end_date == null )
-				certifica2_batch_detailStmt.setNull(offset++, 91);
-			else
-				certifica2_batch_detailStmt.setDate(offset++, certifica2_batch_detail.salary_period_end_date);
-			if ( certifica2_batch_detail.salary_processing_days == null )
-				certifica2_batch_detailStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.salary_processing_days);
 		}
 		certifica2_batch_detailStmt.executeUpdate();
 		certifica2_batch_details.clear();
@@ -19107,34 +18987,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param certifica2_batch Identificador unico del certificado de empresa
 	 * @param contract Identificador unico del contrato de empleado
-	 * @param enterprise_nif NIF de la empresa
-	 * @param ccc Codigo cuenta cotizacion
-	 * @param document Documento de identidad
-	 * @param name Nombre del trabajador
-	 * @param first_surname Primer apellido
-	 * @param second_surname Segundo apellido
-	 * @param ss_number Numero seguridad social
-	 * @param quote_group Grupo de CotizaciÃ³n
-	 * @param contract_type Tipo de contrato
-	 * @param contract_duration Duracion contrato
-	 * @param contract_duration_indicator Indicador duracion contrato
-	 * @param occupation_code Codidgo de profesion
-	 * @param public_association_charge Cargo publico sindical
-	 * @param dedication_percent Porcentual dedicacion
-	 * @param enterprise_start_date Fecha alta empresa
 	 * @param suspension_cause_code Codigo causa suspension
-	 * @param expire_date Fecha suspension extincion
-	 * @param expire_end_date Fecha suspension extincion
-	 * @param ere ERE
-	 * @param ere_reduction_percent Porcentual reduccion ERE
-	 * @param other_reduction_percent Porcentual reduccion otros
-	 * @param reduction_cause_code Codigo causa porcentaje reduccion
-	 * @param salary_period_start_date Fecha desde periodo salarios
-	 * @param salary_period_end_date Fecha hasta periodo salarios
-	 * @param salary_processing_days Dias salario tramitacion
 	 * @throws SQLException
 	*/
-	protected void insertCertifica2_batch_detail(Integer id, Integer domain, Integer certifica2_batch, Integer contract, String enterprise_nif, String ccc, String document, String name, String first_surname, String second_surname, String ss_number, String quote_group, String contract_type, String contract_duration, String contract_duration_indicator, String occupation_code, String public_association_charge, String dedication_percent, Date enterprise_start_date, String suspension_cause_code, Date expire_date, Date expire_end_date, String ere, String ere_reduction_percent, String other_reduction_percent, String reduction_cause_code, Date salary_period_start_date, Date salary_period_end_date, String salary_processing_days)
+	protected void insertCertifica2_batch_detail(Integer id, Integer domain, Integer certifica2_batch, Integer contract, String suspension_cause_code)
 	throws SQLException {
 
 		Certifica2_batch_detail certifica2_batch_detail_ = new Certifica2_batch_detail();
@@ -19142,37 +18998,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		certifica2_batch_detail_.domain = domain;
 		certifica2_batch_detail_.certifica2_batch = certifica2_batch;
 		certifica2_batch_detail_.contract = contract;
-		certifica2_batch_detail_.enterprise_nif = enterprise_nif;
-		certifica2_batch_detail_.ccc = ccc;
-		certifica2_batch_detail_.document = document;
-		certifica2_batch_detail_.name = name;
-		certifica2_batch_detail_.first_surname = first_surname;
-		certifica2_batch_detail_.second_surname = second_surname;
-		certifica2_batch_detail_.ss_number = ss_number;
-		certifica2_batch_detail_.quote_group = quote_group;
-		certifica2_batch_detail_.contract_type = contract_type;
-		certifica2_batch_detail_.contract_duration = contract_duration;
-		certifica2_batch_detail_.contract_duration_indicator = contract_duration_indicator;
-		certifica2_batch_detail_.occupation_code = occupation_code;
-		certifica2_batch_detail_.public_association_charge = public_association_charge;
-		certifica2_batch_detail_.dedication_percent = dedication_percent;
-		certifica2_batch_detail_.enterprise_start_date = enterprise_start_date;
 		certifica2_batch_detail_.suspension_cause_code = suspension_cause_code;
-		certifica2_batch_detail_.expire_date = expire_date;
-		certifica2_batch_detail_.expire_end_date = expire_end_date;
-		certifica2_batch_detail_.ere = ere;
-		certifica2_batch_detail_.ere_reduction_percent = ere_reduction_percent;
-		certifica2_batch_detail_.other_reduction_percent = other_reduction_percent;
-		certifica2_batch_detail_.reduction_cause_code = reduction_cause_code;
-		certifica2_batch_detail_.salary_period_start_date = salary_period_start_date;
-		certifica2_batch_detail_.salary_period_end_date = salary_period_end_date;
-		certifica2_batch_detail_.salary_processing_days = salary_processing_days;
 
 		certifica2_batch_details.add(certifica2_batch_detail_);
 		
 		int certifica2_batch_detailCount = certifica2_batch_details.size();
 		
-		if ( 266 * certifica2_batch_detailCount >=  this.maxAllowedPacket ){
+		if ( 42 * certifica2_batch_detailCount >=  this.maxAllowedPacket ){
 			insertCertifica2_batch_detail(certifica2_batch_details);
 		} 
 	}
@@ -19183,35 +19015,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param certifica2_batch Identificador unico del certificado de empresa
 	 * @param contract Identificador unico del contrato de empleado
-	 * @param enterprise_nif NIF de la empresa
-	 * @param ccc Codigo cuenta cotizacion
-	 * @param document Documento de identidad
-	 * @param name Nombre del trabajador
-	 * @param first_surname Primer apellido
-	 * @param second_surname Segundo apellido
-	 * @param ss_number Numero seguridad social
-	 * @param quote_group Grupo de CotizaciÃ³n
-	 * @param contract_type Tipo de contrato
-	 * @param contract_duration Duracion contrato
-	 * @param contract_duration_indicator Indicador duracion contrato
-	 * @param occupation_code Codidgo de profesion
-	 * @param public_association_charge Cargo publico sindical
-	 * @param dedication_percent Porcentual dedicacion
-	 * @param enterprise_start_date Fecha alta empresa
 	 * @param suspension_cause_code Codigo causa suspension
-	 * @param expire_date Fecha suspension extincion
-	 * @param expire_end_date Fecha suspension extincion
-	 * @param ere ERE
-	 * @param ere_reduction_percent Porcentual reduccion ERE
-	 * @param other_reduction_percent Porcentual reduccion otros
-	 * @param reduction_cause_code Codigo causa porcentaje reduccion
-	 * @param salary_period_start_date Fecha desde periodo salarios
-	 * @param salary_period_end_date Fecha hasta periodo salarios
-	 * @param salary_processing_days Dias salario tramitacion
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCertifica2_batch_detail(Integer domain, Integer certifica2_batch, Integer contract, String enterprise_nif, String ccc, String document, String name, String first_surname, String second_surname, String ss_number, String quote_group, String contract_type, String contract_duration, String contract_duration_indicator, String occupation_code, String public_association_charge, String dedication_percent, Date enterprise_start_date, String suspension_cause_code, Date expire_date, Date expire_end_date, String ere, String ere_reduction_percent, String other_reduction_percent, String reduction_cause_code, Date salary_period_start_date, Date salary_period_end_date, String salary_processing_days)
+	public int insertCertifica2_batch_detail(Integer domain, Integer certifica2_batch, Integer contract, String suspension_cause_code)
 	throws SQLException {
 		int id = nextCertifica2_batch_detailId();
 
@@ -19220,37 +19028,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		certifica2_batch_detail_.domain = domain;
 		certifica2_batch_detail_.certifica2_batch = certifica2_batch;
 		certifica2_batch_detail_.contract = contract;
-		certifica2_batch_detail_.enterprise_nif = enterprise_nif;
-		certifica2_batch_detail_.ccc = ccc;
-		certifica2_batch_detail_.document = document;
-		certifica2_batch_detail_.name = name;
-		certifica2_batch_detail_.first_surname = first_surname;
-		certifica2_batch_detail_.second_surname = second_surname;
-		certifica2_batch_detail_.ss_number = ss_number;
-		certifica2_batch_detail_.quote_group = quote_group;
-		certifica2_batch_detail_.contract_type = contract_type;
-		certifica2_batch_detail_.contract_duration = contract_duration;
-		certifica2_batch_detail_.contract_duration_indicator = contract_duration_indicator;
-		certifica2_batch_detail_.occupation_code = occupation_code;
-		certifica2_batch_detail_.public_association_charge = public_association_charge;
-		certifica2_batch_detail_.dedication_percent = dedication_percent;
-		certifica2_batch_detail_.enterprise_start_date = enterprise_start_date;
 		certifica2_batch_detail_.suspension_cause_code = suspension_cause_code;
-		certifica2_batch_detail_.expire_date = expire_date;
-		certifica2_batch_detail_.expire_end_date = expire_end_date;
-		certifica2_batch_detail_.ere = ere;
-		certifica2_batch_detail_.ere_reduction_percent = ere_reduction_percent;
-		certifica2_batch_detail_.other_reduction_percent = other_reduction_percent;
-		certifica2_batch_detail_.reduction_cause_code = reduction_cause_code;
-		certifica2_batch_detail_.salary_period_start_date = salary_period_start_date;
-		certifica2_batch_detail_.salary_period_end_date = salary_period_end_date;
-		certifica2_batch_detail_.salary_processing_days = salary_processing_days;
 
 		certifica2_batch_details.add(certifica2_batch_detail_);
 		
 		int certifica2_batch_detailCount = certifica2_batch_details.size();
 		
-		if ( 266 * certifica2_batch_detailCount >=  this.maxAllowedPacket ){
+		if ( 42 * certifica2_batch_detailCount >=  this.maxAllowedPacket ){
 			insertCertifica2_batch_detail(certifica2_batch_details);
 			certifica2_batch_details.clear();
 		} 
@@ -37988,220 +37772,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int certifica2_batch_dataStmtSize = 0;
-
-	private int certifica2_batch_dataInserted = 0;
-
-	private List<Certifica2_batch_data> certifica2_batch_datas = 
-		new LinkedList<Certifica2_batch_data>();
-
-	private PreparedStatement certifica2_batch_dataStmt = null;
-
-	public static class Certifica2_batch_data {
-		protected Integer id; 
-		protected Integer domain; 
-		protected Integer certifica2_batch_detail; 
-		protected Integer year; 
-		protected Integer month; 
-		protected Integer contribution_days; 
-		protected Double cgc_contribution_base; 
-		protected Double unemployment_contribution_base; 
-		protected String comments; 
-	}
-	
-	protected void insertCertifica2_batch_data( List<Certifica2_batch_data> certifica2_batch_datas )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = certifica2_batch_datas.size();
-		if ( certifica2_batch_dataStmtSize != size ) {
-			if ( certifica2_batch_dataStmt != null ) {
-				certifica2_batch_dataStmt.close();
-			}
-			String values = "(?,?,?,?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			certifica2_batch_dataStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO certifica2_batch_data (id,domain,certifica2_batch_detail,year,month,contribution_days,cgc_contribution_base,unemployment_contribution_base,comments)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			certifica2_batch_dataStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Certifica2_batch_data certifica2_batch_data : certifica2_batch_datas) {
-			if ( certifica2_batch_data.id == null )
-				certifica2_batch_dataStmt.setNull(offset++, 4);
-			else
-				certifica2_batch_dataStmt.setInt(offset++, certifica2_batch_data.id);
-			if ( certifica2_batch_data.domain == null )
-				certifica2_batch_dataStmt.setNull(offset++, 4);
-			else
-				certifica2_batch_dataStmt.setInt(offset++, certifica2_batch_data.domain);
-			if ( certifica2_batch_data.certifica2_batch_detail == null )
-				certifica2_batch_dataStmt.setNull(offset++, 4);
-			else
-				certifica2_batch_dataStmt.setInt(offset++, certifica2_batch_data.certifica2_batch_detail);
-			if ( certifica2_batch_data.year == null )
-				certifica2_batch_dataStmt.setNull(offset++, 4);
-			else
-				certifica2_batch_dataStmt.setInt(offset++, certifica2_batch_data.year);
-			if ( certifica2_batch_data.month == null )
-				certifica2_batch_dataStmt.setNull(offset++, 4);
-			else
-				certifica2_batch_dataStmt.setInt(offset++, certifica2_batch_data.month);
-			if ( certifica2_batch_data.contribution_days == null )
-				certifica2_batch_dataStmt.setNull(offset++, 4);
-			else
-				certifica2_batch_dataStmt.setInt(offset++, certifica2_batch_data.contribution_days);
-			if ( certifica2_batch_data.cgc_contribution_base == null )
-				certifica2_batch_dataStmt.setNull(offset++, 8);
-			else
-				certifica2_batch_dataStmt.setDouble(offset++, certifica2_batch_data.cgc_contribution_base);
-			if ( certifica2_batch_data.unemployment_contribution_base == null )
-				certifica2_batch_dataStmt.setNull(offset++, 8);
-			else
-				certifica2_batch_dataStmt.setDouble(offset++, certifica2_batch_data.unemployment_contribution_base);
-			if ( certifica2_batch_data.comments == null )
-				certifica2_batch_dataStmt.setNull(offset++, 12);
-			else
-				certifica2_batch_dataStmt.setString(offset++, certifica2_batch_data.comments);
-		}
-		certifica2_batch_dataStmt.executeUpdate();
-		certifica2_batch_datas.clear();
-		certifica2_batch_dataInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Certifica2_batch_datas in {} milliseconds.", size, certifica2_batch_dataInserted, elapsed );		
-	}
-		
-		private int certifica2_batch_dataId = -1;
-		
-		private void initCertifica2_batch_dataId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `certifica2_batch_data`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.certifica2_batch_dataId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCertifica2_batch_dataId() {
-			return ++this.certifica2_batch_dataId;
-		} 
-
-		public void setCertifica2_batch_dataId(Integer certifica2_batch_dataId) {
-			this.certifica2_batch_dataId = certifica2_batch_dataId;
-		} 
-	
-	protected void flushCertifica2_batch_data( )
-	throws SQLException {
-		flushCertifica2_batch_data(false);
-	}	
-
-	private void flushCertifica2_batch_data( boolean close )
-	throws SQLException {
-		if ( ! certifica2_batch_datas.isEmpty() )
-			insertCertifica2_batch_data(certifica2_batch_datas);
-		if ( close && certifica2_batch_dataStmt != null )
-			certifica2_batch_dataStmt.close();
-	}	
-
-	/**
-	 * Certifica2_batch_data
-	 * @param id Identificador unico de los datos de cotizacion del certificado
-	 * @param domain Identificador del Dominio
-	 * @param certifica2_batch_detail Identificador unico del certificado de empresa de la remesa
-	 * @param year Anio
-	 * @param month Mes
-	 * @param contribution_days Numero de dias cotizados
-	 * @param cgc_contribution_base Base de cotizacion de contingencias comunes
-	 * @param unemployment_contribution_base Base de cotizacion por desempleo
-	 * @param comments Observaciones
-	 * @throws SQLException
-	*/
-	protected void insertCertifica2_batch_data(Integer id, Integer domain, Integer certifica2_batch_detail, Integer year, Integer month, Integer contribution_days, Double cgc_contribution_base, Double unemployment_contribution_base, String comments)
-	throws SQLException {
-
-		Certifica2_batch_data certifica2_batch_data_ = new Certifica2_batch_data();
-		certifica2_batch_data_.id = id;
-		certifica2_batch_data_.domain = domain;
-		certifica2_batch_data_.certifica2_batch_detail = certifica2_batch_detail;
-		certifica2_batch_data_.year = year;
-		certifica2_batch_data_.month = month;
-		certifica2_batch_data_.contribution_days = contribution_days;
-		certifica2_batch_data_.cgc_contribution_base = cgc_contribution_base;
-		certifica2_batch_data_.unemployment_contribution_base = unemployment_contribution_base;
-		certifica2_batch_data_.comments = comments;
-
-		certifica2_batch_datas.add(certifica2_batch_data_);
-		
-		int certifica2_batch_dataCount = certifica2_batch_datas.size();
-		
-		if ( 140 * certifica2_batch_dataCount >=  this.maxAllowedPacket ){
-			insertCertifica2_batch_data(certifica2_batch_datas);
-		} 
-	}
-
-
-	/**
-	 * Certifica2_batch_data
-	 * @param domain Identificador del Dominio
-	 * @param certifica2_batch_detail Identificador unico del certificado de empresa de la remesa
-	 * @param year Anio
-	 * @param month Mes
-	 * @param contribution_days Numero de dias cotizados
-	 * @param cgc_contribution_base Base de cotizacion de contingencias comunes
-	 * @param unemployment_contribution_base Base de cotizacion por desempleo
-	 * @param comments Observaciones
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCertifica2_batch_data(Integer domain, Integer certifica2_batch_detail, Integer year, Integer month, Integer contribution_days, Double cgc_contribution_base, Double unemployment_contribution_base, String comments)
-	throws SQLException {
-		int id = nextCertifica2_batch_dataId();
-
-		Certifica2_batch_data certifica2_batch_data_ = new Certifica2_batch_data();
-		certifica2_batch_data_.id = id;
-		certifica2_batch_data_.domain = domain;
-		certifica2_batch_data_.certifica2_batch_detail = certifica2_batch_detail;
-		certifica2_batch_data_.year = year;
-		certifica2_batch_data_.month = month;
-		certifica2_batch_data_.contribution_days = contribution_days;
-		certifica2_batch_data_.cgc_contribution_base = cgc_contribution_base;
-		certifica2_batch_data_.unemployment_contribution_base = unemployment_contribution_base;
-		certifica2_batch_data_.comments = comments;
-
-		certifica2_batch_datas.add(certifica2_batch_data_);
-		
-		int certifica2_batch_dataCount = certifica2_batch_datas.size();
-		
-		if ( 140 * certifica2_batch_dataCount >=  this.maxAllowedPacket ){
-			insertCertifica2_batch_data(certifica2_batch_datas);
-			certifica2_batch_datas.clear();
-		} 
-		return id;
-	}
-
-
 	private int fs_model_detailStmtSize = 0;
 
 	private int fs_model_detailInserted = 0;
@@ -50592,6 +50162,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer domain; 
 		protected Timestamp date; 
 		protected Short status; 
+		protected Short type; 
 	}
 	
 	protected void insertContrata_batch( List<Contrata_batch> contrata_batchs )
@@ -50602,7 +50173,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( contrata_batchStmt != null ) {
 				contrata_batchStmt.close();
 			}
-			String values = "(?,?,?,?)";
+			String values = "(?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -50611,7 +50182,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			contrata_batchStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO contrata_batch (id,domain,date,status)"  
+				"INSERT INTO contrata_batch (id,domain,date,status,type)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			contrata_batchStmtSize = size;
@@ -50636,6 +50207,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contrata_batchStmt.setNull(offset++, -6);
 			else
 				contrata_batchStmt.setShort(offset++, contrata_batch.status);
+			if ( contrata_batch.type == null )
+				contrata_batchStmt.setNull(offset++, -6);
+			else
+				contrata_batchStmt.setShort(offset++, contrata_batch.type);
 		}
 		contrata_batchStmt.executeUpdate();
 		contrata_batchs.clear();
@@ -50696,9 +50271,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param date Fecha de la Remesa
 	 * @param status Indica el estado de la Remesa
+	 * @param type Tipo de remesa a comunicar al SEPE
 	 * @throws SQLException
 	*/
-	protected void insertContrata_batch(Integer id, Integer domain, Timestamp date, Short status)
+	protected void insertContrata_batch(Integer id, Integer domain, Timestamp date, Short status, Short type)
 	throws SQLException {
 
 		Contrata_batch contrata_batch_ = new Contrata_batch();
@@ -50706,12 +50282,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		contrata_batch_.domain = domain;
 		contrata_batch_.date = date;
 		contrata_batch_.status = status;
+		contrata_batch_.type = type;
 
 		contrata_batchs.add(contrata_batch_);
 		
 		int contrata_batchCount = contrata_batchs.size();
 		
-		if ( 42 * contrata_batchCount >=  this.maxAllowedPacket ){
+		if ( 45 * contrata_batchCount >=  this.maxAllowedPacket ){
 			insertContrata_batch(contrata_batchs);
 		} 
 	}
@@ -50722,10 +50299,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param date Fecha de la Remesa
 	 * @param status Indica el estado de la Remesa
+	 * @param type Tipo de remesa a comunicar al SEPE
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertContrata_batch(Integer domain, Timestamp date, Short status)
+	public int insertContrata_batch(Integer domain, Timestamp date, Short status, Short type)
 	throws SQLException {
 		int id = nextContrata_batchId();
 
@@ -50734,12 +50312,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		contrata_batch_.domain = domain;
 		contrata_batch_.date = date;
 		contrata_batch_.status = status;
+		contrata_batch_.type = type;
 
 		contrata_batchs.add(contrata_batch_);
 		
 		int contrata_batchCount = contrata_batchs.size();
 		
-		if ( 42 * contrata_batchCount >=  this.maxAllowedPacket ){
+		if ( 45 * contrata_batchCount >=  this.maxAllowedPacket ){
 			insertContrata_batch(contrata_batchs);
 			contrata_batchs.clear();
 		} 
@@ -54276,6 +53855,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String city; 
 		protected Integer geozone; 
 		protected String alias; 
+		protected String municipality_code; 
 	}
 	
 	protected void insertRaddress( List<Raddress> raddresss )
@@ -54286,7 +53866,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( raddressStmt != null ) {
 				raddressStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -54295,7 +53875,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			raddressStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO raddress (id,domain,registry,type,recipient,street_type,address,number,address2,address3,zip,city,geozone,alias)"  
+				"INSERT INTO raddress (id,domain,registry,type,recipient,street_type,address,number,address2,address3,zip,city,geozone,alias,municipality_code)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			raddressStmtSize = size;
@@ -54360,6 +53940,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				raddressStmt.setNull(offset++, 12);
 			else
 				raddressStmt.setString(offset++, raddress.alias);
+			if ( raddress.municipality_code == null )
+				raddressStmt.setNull(offset++, 12);
+			else
+				raddressStmt.setString(offset++, raddress.municipality_code);
 		}
 		raddressStmt.executeUpdate();
 		raddresss.clear();
@@ -54430,9 +54014,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param city Localidad
 	 * @param geozone Identificador de la Zona Geografica
 	 * @param alias Alias
+	 * @param municipality_code Codigo del municipio
 	 * @throws SQLException
 	*/
-	protected void insertRaddress(Integer id, Integer domain, Integer registry, Short type, String recipient, String street_type, String address, String number, String address2, String address3, String zip, String city, Integer geozone, String alias)
+	protected void insertRaddress(Integer id, Integer domain, Integer registry, Short type, String recipient, String street_type, String address, String number, String address2, String address3, String zip, String city, Integer geozone, String alias, String municipality_code)
 	throws SQLException {
 
 		Raddress raddress_ = new Raddress();
@@ -54450,12 +54035,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		raddress_.city = city;
 		raddress_.geozone = geozone;
 		raddress_.alias = alias;
+		raddress_.municipality_code = municipality_code;
 
 		raddresss.add(raddress_);
 		
 		int raddressCount = raddresss.size();
 		
-		if ( 664 * raddressCount >=  this.maxAllowedPacket ){
+		if ( 669 * raddressCount >=  this.maxAllowedPacket ){
 			insertRaddress(raddresss);
 		} 
 	}
@@ -54476,10 +54062,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param city Localidad
 	 * @param geozone Identificador de la Zona Geografica
 	 * @param alias Alias
+	 * @param municipality_code Codigo del municipio
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertRaddress(Integer domain, Integer registry, Short type, String recipient, String street_type, String address, String number, String address2, String address3, String zip, String city, Integer geozone, String alias)
+	public int insertRaddress(Integer domain, Integer registry, Short type, String recipient, String street_type, String address, String number, String address2, String address3, String zip, String city, Integer geozone, String alias, String municipality_code)
 	throws SQLException {
 		int id = nextRaddressId();
 
@@ -54498,12 +54085,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		raddress_.city = city;
 		raddress_.geozone = geozone;
 		raddress_.alias = alias;
+		raddress_.municipality_code = municipality_code;
 
 		raddresss.add(raddress_);
 		
 		int raddressCount = raddresss.size();
 		
-		if ( 664 * raddressCount >=  this.maxAllowedPacket ){
+		if ( 669 * raddressCount >=  this.maxAllowedPacket ){
 			insertRaddress(raddresss);
 			raddresss.clear();
 		} 
@@ -56221,9 +55809,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Date start_date; 
 		protected Date end_date; 
 		protected Integer calendar; 
-		protected Blob document; 
 		protected String description; 
-		protected Short status; 
+		protected Short sepe_status; 
 		protected Integer registration; 
 		protected Date seniority_date; 
 		protected Integer enterprise_activity; 
@@ -56231,6 +55818,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer agreement_level_category; 
 		protected Short model; 
 		protected String category_description; 
+		protected Short ss_status; 
 	}
 	
 	protected void insertContract( List<Contract> contracts )
@@ -56250,7 +55838,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			contractStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO contract (id,domain,person,workplace,enterprise_ccc,start_date,end_date,calendar,document,description,status,registration,seniority_date,enterprise_activity,ss_regime,agreement_level_category,model,category_description)"  
+				"INSERT INTO contract (id,domain,person,workplace,enterprise_ccc,start_date,end_date,calendar,description,sepe_status,registration,seniority_date,enterprise_activity,ss_regime,agreement_level_category,model,category_description,ss_status)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			contractStmtSize = size;
@@ -56291,18 +55879,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contractStmt.setNull(offset++, 4);
 			else
 				contractStmt.setInt(offset++, contract.calendar);
-			if ( contract.document == null )
-				contractStmt.setNull(offset++, -4);
-			else
-				contractStmt.setBlob(offset++, contract.document);
 			if ( contract.description == null )
 				contractStmt.setNull(offset++, 12);
 			else
 				contractStmt.setString(offset++, contract.description);
-			if ( contract.status == null )
+			if ( contract.sepe_status == null )
 				contractStmt.setNull(offset++, -6);
 			else
-				contractStmt.setShort(offset++, contract.status);
+				contractStmt.setShort(offset++, contract.sepe_status);
 			if ( contract.registration == null )
 				contractStmt.setNull(offset++, 4);
 			else
@@ -56331,6 +55915,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contractStmt.setNull(offset++, 12);
 			else
 				contractStmt.setString(offset++, contract.category_description);
+			if ( contract.ss_status == null )
+				contractStmt.setNull(offset++, -6);
+			else
+				contractStmt.setShort(offset++, contract.ss_status);
 		}
 		contractStmt.executeUpdate();
 		contracts.clear();
@@ -56395,9 +55983,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param start_date Fecha de inicio del Contrato
 	 * @param end_date Fecha de finalizacion del Contrato
 	 * @param calendar Calendario
-	 * @param document Impreso (.pdf) del contrato.
 	 * @param description Descripcion
-	 * @param status Estado de notificacion del contrato
+	 * @param sepe_status Estado de notificacion del contrato al SEPE
 	 * @param registration Número libro de matricula
 	 * @param seniority_date Fecha de antiguedad
 	 * @param enterprise_activity Actividad
@@ -56405,9 +55992,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param agreement_level_category Identificador unico de la Categoria Profesional
 	 * @param model Indica el modelo de documento del contrato
 	 * @param category_description Categoria o grupo profesional
+	 * @param ss_status Estado de notificacion del contrato a la Seguridad Social
 	 * @throws SQLException
 	*/
-	protected void insertContract(Integer id, Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category, Short model, String category_description)
+	protected void insertContract(Integer id, Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, String description, Short sepe_status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category, Short model, String category_description, Short ss_status)
 	throws SQLException {
 
 		Contract contract_ = new Contract();
@@ -56419,9 +56007,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		contract_.start_date = start_date;
 		contract_.end_date = end_date;
 		contract_.calendar = calendar;
-		contract_.document = document;
 		contract_.description = description;
-		contract_.status = status;
+		contract_.sepe_status = sepe_status;
 		contract_.registration = registration;
 		contract_.seniority_date = seniority_date;
 		contract_.enterprise_activity = enterprise_activity;
@@ -56429,12 +56016,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		contract_.agreement_level_category = agreement_level_category;
 		contract_.model = model;
 		contract_.category_description = category_description;
+		contract_.ss_status = ss_status;
 
 		contracts.add(contract_);
 		
 		int contractCount = contracts.size();
 		
-		if ( 257 * contractCount >=  this.maxAllowedPacket ){
+		if ( 260 * contractCount >=  this.maxAllowedPacket ){
 			insertContract(contracts);
 		} 
 	}
@@ -56449,9 +56037,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param start_date Fecha de inicio del Contrato
 	 * @param end_date Fecha de finalizacion del Contrato
 	 * @param calendar Calendario
-	 * @param document Impreso (.pdf) del contrato.
 	 * @param description Descripcion
-	 * @param status Estado de notificacion del contrato
+	 * @param sepe_status Estado de notificacion del contrato al SEPE
 	 * @param registration Número libro de matricula
 	 * @param seniority_date Fecha de antiguedad
 	 * @param enterprise_activity Actividad
@@ -56459,10 +56046,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param agreement_level_category Identificador unico de la Categoria Profesional
 	 * @param model Indica el modelo de documento del contrato
 	 * @param category_description Categoria o grupo profesional
+	 * @param ss_status Estado de notificacion del contrato a la Seguridad Social
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertContract(Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category, Short model, String category_description)
+	public int insertContract(Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, String description, Short sepe_status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category, Short model, String category_description, Short ss_status)
 	throws SQLException {
 		int id = nextContractId();
 
@@ -56475,9 +56063,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		contract_.start_date = start_date;
 		contract_.end_date = end_date;
 		contract_.calendar = calendar;
-		contract_.document = document;
 		contract_.description = description;
-		contract_.status = status;
+		contract_.sepe_status = sepe_status;
 		contract_.registration = registration;
 		contract_.seniority_date = seniority_date;
 		contract_.enterprise_activity = enterprise_activity;
@@ -56485,12 +56072,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		contract_.agreement_level_category = agreement_level_category;
 		contract_.model = model;
 		contract_.category_description = category_description;
+		contract_.ss_status = ss_status;
 
 		contracts.add(contract_);
 		
 		int contractCount = contracts.size();
 		
-		if ( 257 * contractCount >=  this.maxAllowedPacket ){
+		if ( 260 * contractCount >=  this.maxAllowedPacket ){
 			insertContract(contracts);
 			contracts.clear();
 		} 
@@ -60647,6 +60235,229 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 52 * auto_conceptCount >=  this.maxAllowedPacket ){
 			insertAuto_concept(auto_concepts);
 			auto_concepts.clear();
+		} 
+		return id;
+	}
+
+
+	private int sepe_batch_attachStmtSize = 0;
+
+	private int sepe_batch_attachInserted = 0;
+
+	private List<Sepe_batch_attach> sepe_batch_attachs = 
+		new LinkedList<Sepe_batch_attach>();
+
+	private PreparedStatement sepe_batch_attachStmt = null;
+
+	public static class Sepe_batch_attach {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer source_batch; 
+		protected Short source_type; 
+		protected Short mimeType; 
+		protected String description; 
+		protected Blob data; 
+		protected Short type; 
+		protected Integer scope; 
+		protected Date attach_date; 
+	}
+	
+	protected void insertSepe_batch_attach( List<Sepe_batch_attach> sepe_batch_attachs )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = sepe_batch_attachs.size();
+		if ( sepe_batch_attachStmtSize != size ) {
+			if ( sepe_batch_attachStmt != null ) {
+				sepe_batch_attachStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			sepe_batch_attachStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO sepe_batch_attach (id,domain,source_batch,source_type,mimeType,description,data,type,scope,attach_date)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			sepe_batch_attachStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Sepe_batch_attach sepe_batch_attach : sepe_batch_attachs) {
+			if ( sepe_batch_attach.id == null )
+				sepe_batch_attachStmt.setNull(offset++, 4);
+			else
+				sepe_batch_attachStmt.setInt(offset++, sepe_batch_attach.id);
+			if ( sepe_batch_attach.domain == null )
+				sepe_batch_attachStmt.setNull(offset++, 4);
+			else
+				sepe_batch_attachStmt.setInt(offset++, sepe_batch_attach.domain);
+			if ( sepe_batch_attach.source_batch == null )
+				sepe_batch_attachStmt.setNull(offset++, 4);
+			else
+				sepe_batch_attachStmt.setInt(offset++, sepe_batch_attach.source_batch);
+			if ( sepe_batch_attach.source_type == null )
+				sepe_batch_attachStmt.setNull(offset++, -6);
+			else
+				sepe_batch_attachStmt.setShort(offset++, sepe_batch_attach.source_type);
+			if ( sepe_batch_attach.mimeType == null )
+				sepe_batch_attachStmt.setNull(offset++, -6);
+			else
+				sepe_batch_attachStmt.setShort(offset++, sepe_batch_attach.mimeType);
+			if ( sepe_batch_attach.description == null )
+				sepe_batch_attachStmt.setNull(offset++, 12);
+			else
+				sepe_batch_attachStmt.setString(offset++, sepe_batch_attach.description);
+			if ( sepe_batch_attach.data == null )
+				sepe_batch_attachStmt.setNull(offset++, -4);
+			else
+				sepe_batch_attachStmt.setBlob(offset++, sepe_batch_attach.data);
+			if ( sepe_batch_attach.type == null )
+				sepe_batch_attachStmt.setNull(offset++, -6);
+			else
+				sepe_batch_attachStmt.setShort(offset++, sepe_batch_attach.type);
+			if ( sepe_batch_attach.scope == null )
+				sepe_batch_attachStmt.setNull(offset++, 4);
+			else
+				sepe_batch_attachStmt.setInt(offset++, sepe_batch_attach.scope);
+			if ( sepe_batch_attach.attach_date == null )
+				sepe_batch_attachStmt.setNull(offset++, 91);
+			else
+				sepe_batch_attachStmt.setDate(offset++, sepe_batch_attach.attach_date);
+		}
+		sepe_batch_attachStmt.executeUpdate();
+		sepe_batch_attachs.clear();
+		sepe_batch_attachInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Sepe_batch_attachs in {} milliseconds.", size, sepe_batch_attachInserted, elapsed );		
+	}
+		
+		private int sepe_batch_attachId = -1;
+		
+		private void initSepe_batch_attachId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `sepe_batch_attach`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.sepe_batch_attachId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextSepe_batch_attachId() {
+			return ++this.sepe_batch_attachId;
+		} 
+
+		public void setSepe_batch_attachId(Integer sepe_batch_attachId) {
+			this.sepe_batch_attachId = sepe_batch_attachId;
+		} 
+	
+	protected void flushSepe_batch_attach( )
+	throws SQLException {
+		flushSepe_batch_attach(false);
+	}	
+
+	private void flushSepe_batch_attach( boolean close )
+	throws SQLException {
+		if ( ! sepe_batch_attachs.isEmpty() )
+			insertSepe_batch_attach(sepe_batch_attachs);
+		if ( close && sepe_batch_attachStmt != null )
+			sepe_batch_attachStmt.close();
+	}	
+
+	/**
+	 * Sepe_batch_attach
+	 * @param id Identificador unico del Archivo Adjunto
+	 * @param domain Identificador del Dominio
+	 * @param source_batch Identificador de la remesa
+	 * @param source_type Tipo de la remesa
+	 * @param mimeType Mime Type del Archivo Adjunto
+	 * @param description Descripcion del Archivo Adjunto
+	 * @param data Archivo Adjunto en binario
+	 * @param type Tipo de Archivo Adjunto
+	 * @param scope Ambito del Archivo Adjunto
+	 * @param attach_date Fecha del Archivo Adjunto
+	 * @throws SQLException
+	*/
+	protected void insertSepe_batch_attach(Integer id, Integer domain, Integer source_batch, Short source_type, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
+	throws SQLException {
+
+		Sepe_batch_attach sepe_batch_attach_ = new Sepe_batch_attach();
+		sepe_batch_attach_.id = id;
+		sepe_batch_attach_.domain = domain;
+		sepe_batch_attach_.source_batch = source_batch;
+		sepe_batch_attach_.source_type = source_type;
+		sepe_batch_attach_.mimeType = mimeType;
+		sepe_batch_attach_.description = description;
+		sepe_batch_attach_.data = data;
+		sepe_batch_attach_.type = type;
+		sepe_batch_attach_.scope = scope;
+		sepe_batch_attach_.attach_date = attach_date;
+
+		sepe_batch_attachs.add(sepe_batch_attach_);
+		
+		int sepe_batch_attachCount = sepe_batch_attachs.size();
+		
+		if ( 123 * sepe_batch_attachCount >=  this.maxAllowedPacket ){
+			insertSepe_batch_attach(sepe_batch_attachs);
+		} 
+	}
+
+
+	/**
+	 * Sepe_batch_attach
+	 * @param domain Identificador del Dominio
+	 * @param source_batch Identificador de la remesa
+	 * @param source_type Tipo de la remesa
+	 * @param mimeType Mime Type del Archivo Adjunto
+	 * @param description Descripcion del Archivo Adjunto
+	 * @param data Archivo Adjunto en binario
+	 * @param type Tipo de Archivo Adjunto
+	 * @param scope Ambito del Archivo Adjunto
+	 * @param attach_date Fecha del Archivo Adjunto
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertSepe_batch_attach(Integer domain, Integer source_batch, Short source_type, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
+	throws SQLException {
+		int id = nextSepe_batch_attachId();
+
+		Sepe_batch_attach sepe_batch_attach_ = new Sepe_batch_attach();
+		sepe_batch_attach_.id = id;
+		sepe_batch_attach_.domain = domain;
+		sepe_batch_attach_.source_batch = source_batch;
+		sepe_batch_attach_.source_type = source_type;
+		sepe_batch_attach_.mimeType = mimeType;
+		sepe_batch_attach_.description = description;
+		sepe_batch_attach_.data = data;
+		sepe_batch_attach_.type = type;
+		sepe_batch_attach_.scope = scope;
+		sepe_batch_attach_.attach_date = attach_date;
+
+		sepe_batch_attachs.add(sepe_batch_attach_);
+		
+		int sepe_batch_attachCount = sepe_batch_attachs.size();
+		
+		if ( 123 * sepe_batch_attachCount >=  this.maxAllowedPacket ){
+			insertSepe_batch_attach(sepe_batch_attachs);
+			sepe_batch_attachs.clear();
 		} 
 		return id;
 	}
@@ -67389,7 +67200,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushIncome(true);
 		flushCarrier(true);
 		flushEnterprise_activity(true);
-		flushCertifica2_batch_data(true);
 		flushFs_model_detail(true);
 		flushWeb_info_page_resource(true);
 		flushCnae2009_rate(true);
@@ -67497,6 +67307,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushRattach_tag(true);
 		flushFinance_pos(true);
 		flushAuto_concept(true);
+		flushSepe_batch_attach(true);
 		flushWeb_info_page_detail(true);
 		flushPos_shift_count(true);
 		flushJob_type(true);
@@ -67938,8 +67749,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initEnterprise_activityId();
 		initMaxAllowedPacket();
-		initCertifica2_batch_dataId();
-		initMaxAllowedPacket();
 		initFs_model_detailId();
 		initMaxAllowedPacket();
 		initWeb_info_page_resourceId();
@@ -68149,6 +67958,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initFinance_posId();
 		initMaxAllowedPacket();
 		initAuto_conceptId();
+		initMaxAllowedPacket();
+		initSepe_batch_attachId();
 		initMaxAllowedPacket();
 		initWeb_info_page_detailId();
 		initMaxAllowedPacket();
@@ -68557,8 +68368,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initIncomeId();
 		flushEnterprise_activity();
 		initEnterprise_activityId();
-		flushCertifica2_batch_data();
-		initCertifica2_batch_dataId();
 		flushFs_model_detail();
 		initFs_model_detailId();
 		flushWeb_info_page_resource();
@@ -68765,6 +68574,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initFinance_posId();
 		flushAuto_concept();
 		initAuto_conceptId();
+		flushSepe_batch_attach();
+		initSepe_batch_attachId();
 		flushWeb_info_page_detail();
 		initWeb_info_page_detailId();
 		flushPos_shift_count();
