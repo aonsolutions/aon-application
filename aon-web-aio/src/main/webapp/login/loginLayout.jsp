@@ -6,6 +6,7 @@
 <%@page import="java.util.Locale"%>
 <%@page import="java.util.ResourceBundle"%>
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <jsp:useBean id="failedLogin" class="com.code.aon.ui.common.controller.FailedLogin" scope="request"/>
 <jsp:useBean id="customize" class="com.code.aon.ui.resources.bean.CustomizeBean" scope="request"/>
@@ -20,6 +21,9 @@ try {
 	ResourceBundle commonBundle = ResourceBundle.getBundle("com.code.aon.ui.common.i18n.messages", request.getLocale());
 	ResourceBundle companyBundle = ResourceBundle.getBundle("com.code.aon.ui.company.i18n.messages", request.getLocale());
 %>
+
+
+
 <head>
 	<title><%=customize.getApplicationTitle()%></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8"/>
@@ -29,6 +33,7 @@ try {
 	<meta http-equiv="Cache-Control" content="no-store" />
 	<link rel="stylesheet" href="aonResource/com/code/aon/ui/resources/facelet/login/css/login-aon.css" />
 	<link rel="shortcut icon" type="image/x-icon" href="<%=customize.getFavicon()%>" />
+	
 </head>
 <%
 	companyDisplay.init(request.getServerName());
@@ -152,10 +157,14 @@ try {
 											<c:url value="/openid_auth" var="google_signin_url">
 											  <c:param name="endpoint" value="https://www.google.com/accounts/o8/id" />
 											</c:url>
-											<a id="google-signin" href="${google_signin_url}" target="_blank" ><img src="aonResource/com/code/aon/ui/resources/facelet/login/css/images/icons/google.png"/></a>
+											<a id="google-signin" href="${google_signin_url}" target="_blank" onClick="self.name='padre';window.open(this.href, this.target, 'width=600,height=800'); return false;" >
+												<img src="aonResource/com/code/aon/ui/resources/facelet/login/css/images/icons/google.png"/>
+											</a>
+										
 										</td>
 									</tr>
 								</table>
+
 								<div class="aon-login-info">
 									<div class="aon-login-info-title">
 										<%=customize.getBundle().getString("aon_support_title")%>
@@ -210,7 +219,8 @@ try {
 							    		</div>
 								</div>
 							</div>
-						</form>
+						</form> 
+									
 					</div>
 				</td>
 			</tr>

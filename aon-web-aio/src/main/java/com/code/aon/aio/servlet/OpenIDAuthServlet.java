@@ -3,6 +3,7 @@ package com.code.aon.aio.servlet;
 import java.io.IOException;
 import java.util.List;
 
+import javax.security.auth.login.FailedLoginException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,17 +23,70 @@ import org.openid4java.message.ax.FetchRequest;
 import org.openid4java.message.ax.FetchResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.openid4java.message.*;
+
+import HybridOauth.HybridOauthMessage;
+
+import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 
 public class OpenIDAuthServlet extends HttpServlet {
+	
+	public static class PasswordGenerator {
+		 
+		public static final String NUMEROS = "0123456789";
+	 
+		public static final String MAYUSCULAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	 
+		public static final String MINUSCULAS = "abcdefghijklmnopqrstuvwxyz";
+	 
+		public static final String ESPECIALES = "Ò—";
+	 
+		//
+		public static String getPinNumber() {
+			return getPassword(NUMEROS, 4);
+		}
+	 
+		public static String getPassword() {
+			return getPassword(8);
+		}
+	 
+		public static String getPassword(int length) {
+			return getPassword(NUMEROS + MAYUSCULAS + MINUSCULAS, length);
+		}
+	 
+		public static String getPassword(String key, int length) {
+			String pswd = "";
+	 
+			for (int i = 0; i < length; i++) {
+				pswd+=(key.charAt((int)(Math.random() * key.length())));
+			}
+	 
+			return pswd;
+		}
+	}
+	
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(OpenIDAuthServlet.class.getName());
 
 	// instantiate a ConsumerManager object
 	private static final ConsumerManager MANAGER = new ConsumerManager();
 
+	private static final String OPENID_EXT2_SCOPE = "openid.ext2.scope";
 	private static final String VERIFY = "verify";
 	private static final String ENDPOINT = "endpoint";
-
+	private static final String SCOPE = "&openid.ns.oauth=http://specs.openid.net/extensions/oauth/1.0&openid.oauth.consumer=www.example.com&openid.oauth.scope=https://www.googleapis.com/auth/calendar+https://www.googleapis.com/auth/drive+https://www.googleapis.com/auth/tasks";
+	
+	private static String email;
+	private static String pass;
+	
+	public static String getUsername(){	
+		return "OpenID_Email="+email;
+	}
+	
+	public static String getPassword(){
+		return pass;
+	}
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -41,11 +95,28 @@ public class OpenIDAuthServlet extends HttpServlet {
 		if (req.getParameterMap().containsKey(VERIFY)) {
 			try {
 				Identifier identifier = verifyResponse(req);
+				if (identifier != null){
+					pass= PasswordGenerator.getPassword(
+							PasswordGenerator.MINUSCULAS+
+							PasswordGenerator.MAYUSCULAS+
+							PasswordGenerator.ESPECIALES,10);
+					
+					RequestDispatcher dispatcher = getServletContext()
+							.getRequestDispatcher("/login/popupclose.jsp");
+					req.setAttribute("username", getUsername());
+					req.setAttribute("password", getPassword() );
+					dispatcher.forward(req, resp);
+				}
+				else{
+				RequestDispatcher dispatcher = getServletContext()
+						.getRequestDispatcher("/login/popupclosecancel.jsp");
+				dispatcher.forward(req, resp);}
 			} catch (OpenIDException exception) {
 				throw new ServletException(exception);
 			}
 		} else {
 			String identifier = req.getParameter(ENDPOINT);
+			
 			try {
 				authRequest(identifier, req, resp);
 			} catch (OpenIDException exception) {
@@ -82,16 +153,32 @@ public class OpenIDAuthServlet extends HttpServlet {
 
 		// obtain a AuthRequest message to be sent to the OpenID provider
 		AuthRequest authReq = MANAGER.authenticate(discovered, returnToUrl);
-
+		/* 		SCOPE
+        //--- OAuth parameters for getting access tokens for other third party google services ---.  
+        HybridOauthMessage hybridMsg = new HybridOauthMessage();  
+        ParameterList paramsList = new ParameterList();  
+        //ParameterList paramsList = new ParameterList();  
+        Parameter param3 = new Parameter("scope", "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/tasks");  
+        Parameter param2 = new Parameter("consumer", "http://demo.aonsolutions.net:8080/aon-aio/"); 
+       // Parameter param1 = new Parameter("ext2", "http://specs.openid.net/extensions/oauth/1.0"); 
+       // paramsList.set(param1);  
+        paramsList.set(param2);
+        paramsList.set(param3);
+        hybridMsg.setParameters(paramsList);
+        Message message = authReq.createMessage(paramsList);  
+        
+       */
+     
 		// Attribute Exchange example: fetching the 'email' attribute
 		FetchRequest fetch = FetchRequest.createFetchRequest();
+		
 		fetch.addAttribute("email", // attribute alias
 				"http://schema.openid.net/contact/email", // type URI
 				true); // required
-
 		// attach the extension to the authentication request
 		authReq.addExtension(fetch);
-
+		
+		//authReq.addExtension(hybridMsg); 
 		if (!discovered.isVersion2()) {
 			// Option 1: GET HTTP-redirect to the OpenID Provider endpoint
 			// The only method supported in OpenID 1.x
@@ -101,7 +188,6 @@ public class OpenIDAuthServlet extends HttpServlet {
 			// Option 2: HTML FORM Redirection (Allows payloads >2048 bytes)
 			RequestDispatcher dispatcher = getServletContext()
 					.getRequestDispatcher("/login/formredirection.jsp");
-
 			httpReq.setAttribute("parameterMap", authReq.getParameterMap());
 			httpReq.setAttribute("destinationUrl",
 					authReq.getDestinationUrl(false));
@@ -137,13 +223,15 @@ public class OpenIDAuthServlet extends HttpServlet {
 					.getAuthResponse();
 
 			if (authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {
+			
 				FetchResponse fetchResp = (FetchResponse) authSuccess
 						.getExtension(AxMessage.OPENID_NS_AX);
-
 				List emails = fetchResp.getAttributeValues("email");
 				String email = (String) emails.get(0);
 				
-				System.out.println(email);
+				this.email = email;
+				
+				
 			}
 
 			return verified; // success
