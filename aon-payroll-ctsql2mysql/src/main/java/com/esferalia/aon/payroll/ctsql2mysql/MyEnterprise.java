@@ -519,7 +519,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 									.enum2short(EnterpriseActivityType.PRINCIPAL),
 							cnae2009);
 		}
-		Date startDate = new Date(Long.MIN_VALUE);
+		Date startDate = new Date(0);
 		
 		if ( "G".equalsIgnoreCase(empract.getTiponomina()) ) {
 			mysqlDB.insertEnterprise_data(enterprise.id, "PAY_REPORT_salary_PAY", "nominasta", startDate , null);
