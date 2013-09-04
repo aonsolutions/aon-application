@@ -2,29 +2,29 @@
 <faces-config version="1.2" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
-	
+
 	<application>
 		<resource-bundle>
 			<base-name>com.esferalia.aon.ui.payroll.i18n.messages</base-name>
 			<var>payrollBundle</var>
 		</resource-bundle>
 	</application>
-	
+
 	<!-- ************** PAYROLL COLLECTIONS ****************** -->
 	<managed-bean>
 		<managed-bean-name>payrollCollections</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.PayrollCollectionsController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
-	<!--  **** ENTERPRISE PAYROLL **** -->
+
+	<!-- **** ENTERPRISE PAYROLL **** -->
 	<managed-bean>
 		<managed-bean-name>enterprisePayroll</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.enterprise.EnterprisePayrollController</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
-	<!-- **** ENTERPRISE PARAMS **** --> 
+
+	<!-- **** ENTERPRISE PARAMS **** -->
 	<managed-bean>
 		<managed-bean-name>enterpriseParams</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.EnterpriseParamsController</managed-bean-class>
@@ -53,8 +53,8 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
-	<!--  **** ENTERPRISE ACTIVITY **** -->
+
+	<!-- **** ENTERPRISE ACTIVITY **** -->
 	<managed-bean>
 		<managed-bean-name>enterpriseActivity</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
@@ -83,19 +83,19 @@
 					<value>enterprise.id</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>		
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{enterpriseCCCChildListener}</value>
 			</list-entries>
-		</managed-property>		
+		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>enterpriseCCCChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -112,7 +112,7 @@
 		</managed-property>
 	</managed-bean>
 
-	<!--  **** ENTERPRISE CCC **** -->
+	<!-- **** ENTERPRISE CCC **** -->
 	<managed-bean>
 		<managed-bean-name>enterpriseCCC</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.enterprise.EnterpriseCCCController</managed-bean-class>
@@ -141,10 +141,10 @@
 					<value>activity.id</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>		
+		</managed-property>
 	</managed-bean>
-	
-	<!--  **** PAYROLL WORKPLACE **** -->
+
+	<!-- **** PAYROLL WORKPLACE **** -->
 	<managed-bean>
 		<managed-bean-name>payrollWorkPlace</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.PayrollWorkPlaceController</managed-bean-class>
@@ -173,7 +173,7 @@
 					<value>workPlace.enterprise.id</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>		
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -194,14 +194,14 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractModelController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
+
 	<!-- ************ CONTRACT CODE ************** -->
 	<managed-bean>
 		<managed-bean-name>contractCode</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractCodeController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
+
 	<!-- ************ CONTRACT ************** -->
 	<managed-bean>
 		<managed-bean-name>contract</managed-bean-name>
@@ -233,7 +233,7 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>contractAttachChildListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
@@ -252,7 +252,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-		
+
 	<managed-bean>
 		<managed-bean-name>contractSearch</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.contract.ContractSearchListener</managed-bean-class>
@@ -277,7 +277,7 @@
 			<value>ContractAttachment_scope_id</value>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- **** CONTRACT DOCUMENTS **** -->
 	<managed-bean>
 		<managed-bean-name>contractAttach</managed-bean-name>
@@ -325,7 +325,7 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************ CONTRACT PDF EDITION ************** -->
 	<managed-bean>
 		<managed-bean-name>contractPdf</managed-bean-name>
@@ -339,7 +339,7 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractClausesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
+
 	<!-- ************ Proceso de creacion del fichero AFI **************** -->
 	<managed-bean>
 		<managed-bean-name>contractBatch</managed-bean-name>
@@ -484,7 +484,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************* CONTRACT LIST ***************** -->
 	<managed-bean>
 		<managed-bean-name>contractList</managed-bean-name>
@@ -497,13 +497,13 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>contractList</value>
-		</managed-property>		
+		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Contract_person_firstSurname</value>
-		</managed-property>				
+		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************ LEAVE BATCH **************** -->
 	<managed-bean>
 		<managed-bean-name>leaveBatch</managed-bean-name>
@@ -570,7 +570,8 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>LeaveBatchDetail_contractLeaveDetail_contractLeave_contract_person_firstSurname, LeaveBatchDetail_contractLeaveDetail_date desc</value>
+			<value>LeaveBatchDetail_contractLeaveDetail_contractLeave_contract_person_firstSurname,
+				LeaveBatchDetail_contractLeaveDetail_date desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -608,7 +609,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- **** CONTRACT LEAVE DOCUMENTS **** -->
 	<managed-bean>
 		<managed-bean-name>leaveBatchAttach</managed-bean-name>
@@ -661,11 +662,12 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>leaveList</value>
-		</managed-property>		
+		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ContractLeaveDetail_contractLeave_contract_person_firstSurname, ContractLeaveDetail_date desc</value>
-		</managed-property>				
+			<value>ContractLeaveDetail_contractLeave_contract_person_firstSurname,
+				ContractLeaveDetail_date desc</value>
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************ FAN BATCH **************** -->
@@ -777,7 +779,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- **** FAN DOCUMENTS **** -->
 	<managed-bean>
 		<managed-bean-name>fanBatchAttach</managed-bean-name>
@@ -817,7 +819,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************* FAN LIST ***************** -->
 	<managed-bean>
 		<managed-bean-name>fanList</managed-bean-name>
@@ -834,7 +836,7 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>EnterpriseCCC_activity_enterprise_registry_name</value>
-		</managed-property>				
+		</managed-property>
 	</managed-bean>
 
 
@@ -882,10 +884,10 @@
 			<property-name>suggestAlias</property-name>
 			<value>CNO_title</value>
 		</managed-property>
-	</managed-bean>	
-	
-	<!--  *************** PAYROLL APP PARAMS ***************** -->
-	<!--  name max length is 32 -->
+	</managed-bean>
+
+	<!-- *************** PAYROLL APP PARAMS ***************** -->
+	<!-- name max length is 32 -->
 	<managed-bean>
 		<managed-bean-name>payrollAppParams</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController</managed-bean-class>
@@ -960,40 +962,38 @@
 				<value>#{trainingCenterLogoControllerListener}</value>
 				<value>#{trainingCenterSignatureControllerListener}</value>
 			</list-entries>
-		</managed-property>		
+		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>trainingCenterSearchListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistrySearchListener</managed-bean-class>		
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistrySearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>trainingCenterControllerListener</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.event.TrainingCenterControllerListener</managed-bean-class>		
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.TrainingCenterControllerListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>trainingCenterLogoControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.event.TrainingCenterLogoControllerListener
-		</managed-bean-class>
+			com.esferalia.aon.ui.payroll.event.TrainingCenterLogoControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>trainingCenterSignatureControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.event.TrainingCenterSignatureControllerListener
-		</managed-bean-class>
+			com.esferalia.aon.ui.payroll.event.TrainingCenterSignatureControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>trainingCourseChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -1009,7 +1009,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>trainingCenterAddressListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
@@ -1028,10 +1028,10 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>trainingCenterDirStaffListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -1047,8 +1047,8 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
-	<!--  **** TRAINING COURSE **** -->
+
+	<!-- **** TRAINING COURSE **** -->
 	<managed-bean>
 		<managed-bean-name>trainingCourse</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
@@ -1081,7 +1081,7 @@
 					<value>trainingCenter.id</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>		
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -1090,14 +1090,15 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>trainingCourseControllerListener</managed-bean-name>
-		<managed-bean-class> com.esferalia.aon.ui.payroll.event.TrainingCourseControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.event.TrainingCourseControllerListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
-	<!--  **** TRAINING CENTER ADDRESS **** -->
+
+	<!-- **** TRAINING CENTER ADDRESS **** -->
 	<managed-bean>
 		<managed-bean-name>trainingCenterAddress</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
@@ -1126,7 +1127,7 @@
 					<value>registry.id</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>		
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -1135,14 +1136,15 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>trainingCenterAddressControllerListener</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.registry.controller.event.RegistryAddressControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.event.RegistryAddressControllerListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
-	<!--  **** TRAINING COURSE DIR STAFF **** -->
+
+	<!-- **** TRAINING COURSE DIR STAFF **** -->
 	<managed-bean>
 		<managed-bean-name>trainingCenterDirStaff</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryDirStaffLinesController</managed-bean-class>
@@ -1185,9 +1187,9 @@
 		<managed-bean-name>trainingCenterDirStaffControllerListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryDirStaffControllerListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-	
-	<!--  **** CONTRACT LOADER **** -->
+	</managed-bean>
+
+	<!-- **** CONTRACT LOADER **** -->
 	<managed-bean>
 		<managed-bean-name>contractLoader</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.ContractLoaderController</managed-bean-class>
@@ -1201,7 +1203,7 @@
 	-->
 	<managed-bean>
 		<managed-bean-name>enterpriseActivityChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -1217,10 +1219,10 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>payrollWorkPlaceChildListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -1236,13 +1238,13 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>companyWorkPlaceControllerListener</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.event.CompanyWorkPlaceControllerListener</managed-bean-class>		
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.CompanyWorkPlaceControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>enterpriseParamsControllerListener</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.EnterpriseParamsControllerListener</managed-bean-class>
@@ -1250,12 +1252,9 @@
 	</managed-bean>
 
 
-	<!--
-		==========================================================
-		======================= LOOKUPS ==========================
-		==========================================================
-		************ CNO LOOKUP **************
-	-->
+	<!-- ========================================================== ======================= 
+		LOOKUPS ========================== ========================================================== 
+		************ CNO LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>cnoLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
@@ -1319,9 +1318,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{contractSearch}</value>
-<!--  
-				<value>#{contractLookupList}</value>
--->
+				<!-- <value>#{contractLookupList}</value> -->
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1356,7 +1353,7 @@
 			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/agreement/search.xhtml</value>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************ TRAINING CENTER LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>trainingCenterLookup</managed-bean-name>
@@ -1387,7 +1384,7 @@
 			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/trainingCenter/search.xhtml</value>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************ TRAINING COURSE LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>trainingCourseLookup</managed-bean-name>
@@ -1418,14 +1415,56 @@
 			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/trainingCourse/search.xhtml</value>
 		</managed-property>
 	</managed-bean>
-	
+
+	<!-- ************ PaymentConcept LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>paymentConceptLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>paymentConceptLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.esferalia.aon.payroll.PaymentConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>PaymentConcept_code</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>PaymentConcept_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/paymentConcept/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/paymentConcept/search.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>newPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/paymentConcept/form.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{paymentConceptControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
 	<managed-bean>
 		<managed-bean-name>expressionValidator</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.ExpressionValidator</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************ SYSTEM DATA  ************** -->
+	<!-- ************ SYSTEM DATA ************** -->
 	<managed-bean>
 		<managed-bean-name>systemData</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.SystemDataController</managed-bean-class>
@@ -1441,6 +1480,43 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>systemData</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ SYSTEM DEDUCTION ************** -->
+	<managed-bean>
+		<managed-bean-name>systemDeduction</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.SystemDeduction</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>systemDeduction</value>
+		</managed-property>
+	</managed-bean>
+	<!-- ************ SYSTEM PAYMENT ************** -->
+	<managed-bean>
+		<managed-bean-name>systemPayment</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.SystemPaymentController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.SystemPayment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>systemPayment</value>
 		</managed-property>
 	</managed-bean>
 
@@ -1531,12 +1607,16 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!--
-		============================================= 
-		============== NAVIGATION ==================
-		============================================= 
-	-->
-	
+	<managed-bean>
+		<managed-bean-name>bullShit</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.utils.BullShitBean</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ============================================= ============== NAVIGATION 
+		================== ============================================= -->
+
 	<!-- =================== Agreement ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -1556,7 +1636,7 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/agreement/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- =================== Contract ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -1584,7 +1664,7 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/pdfEdition/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-		
+
 	<!-- =================== Contract Type ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -1592,9 +1672,7 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractType/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!--
-		=================== Auxiliar Tables - Viewer ==========================
-	-->
+	<!-- =================== Auxiliar Tables - Viewer ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>contractOption_list</from-outcome>
@@ -1607,7 +1685,6 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractCode/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-
 	<!-- =================== FDI Batch ========================== -->
 	<navigation-rule id="leaveBatch">
 		<navigation-case>
@@ -1671,7 +1748,7 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/params/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-		<!-- =================== Enterprise Activity ========================== -->
+	<!-- =================== Enterprise Activity ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>enterpriseActivity_form</from-outcome>
@@ -1681,7 +1758,7 @@
 			<from-outcome>enterpriseActivity_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/enterpriseActivity/list.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>	
+	</navigation-rule>
 	<!-- =================== TRAINING CENTER ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -1697,18 +1774,49 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/trainingCenter/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!--  **** CONTRACT LOADER **** -->
+	<!-- **** CONTRACT LOADER **** -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>contractLoader_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractLoader/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!-- =================== SYSTEM DATA  ========================== -->
+	<!-- =================== SYSTEM DATA ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>systemData_grid</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemData/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== System Deduction ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>systemDeduction_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemDeduction/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>systemDeduction_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemDeduction/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>systemDeduction_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemDeduction/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- =================== System Payment ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>systemPayment_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemPayment/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>systemPayment_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemPayment/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>systemPayment_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemPayment/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -1757,5 +1865,5 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/bonusConcept/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 </faces-config>
