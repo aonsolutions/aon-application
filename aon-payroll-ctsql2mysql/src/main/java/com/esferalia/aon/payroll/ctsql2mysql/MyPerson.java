@@ -152,6 +152,7 @@ public class MyPerson extends DefaultCtsqlDBVisitor implements IPersons{
 				persona.getCodpos(), 
 				persona.getLocalidad(), 
 				geozone,
+				null,
 				null);
 			
 		try {

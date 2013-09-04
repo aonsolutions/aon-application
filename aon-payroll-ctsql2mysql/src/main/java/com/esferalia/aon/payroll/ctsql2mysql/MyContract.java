@@ -61,7 +61,6 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Salary_embargo;
 import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Bonus;
 import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Concept;
 import com.esferalia.aon.payroll.ctsql2mysql.MyAgreement.PercepPercnivComparator;
-import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -635,6 +634,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 					emprper.getCdg(), emprper.getCodper(), this.contractId, this.codCon, this.nivel);
 			
 		}
+		
 
 		this.contractId = 
 			mysqlDB.insertContract(person, 
@@ -645,14 +645,16 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 					calendar,
 					null,
 					null,
-					enum2short(ContractStatus.PROCESSED),
+					//enum2short(ContractStatus.PROCESSED),
 					registration,
 					seniorityDate,
 					activityId,
 					enum2short(ssRegimeType),
 					this.agreementCategoryId,
 					null,
-					null);
+					null,
+					enum2short(ContractStatus.PROCESSED)
+					);
 		
 		mysqlDB.insertContract_data(com.esferalia.aon.payroll.ContractData.COD_INT, 
 				this.contractId, 

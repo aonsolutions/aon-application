@@ -244,7 +244,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 				delegacion.getTipovia(), delegacion.getNomvia(),
 				delegacion.getNumero(), delegacion.getOtrdir(), null,
 				delegacion.getCodpos(), delegacion.getLocalidad(), geozone,
-				null);
+				null, null);
 
 		try {
 			mysqlDB.insertTelephone(COMPANY_REGISTRY, raddress,
@@ -648,7 +648,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 					domicilio.getTipovia(), domicilio.getNomvia(),
 					domicilio.getNumero(), domicilio.getOtrdir(), null,
 					domicilio.getCodpos(), domicilio.getLocalidad(), geozone,
-					null);
+					null, null);
 
 			try {
 				mysqlDB.insertTelephone(enterprise.id, raddress,
