@@ -38,6 +38,7 @@
 						<aon:commandLink styleClass="aon-menu-icon aon-icon-email"
 							title="#{webmailBundle.webmail_send_email}" 
 							ajaxSingle="true" reRender="showNewMessageWindow"
+							rendered="#{mailConfig.mailAccountCount &gt; 0}"
 							value="&#160;" actionListener="#{webmailMessage.onSendEmail}" >
 						</aon:commandLink>								
 						<ui:insert name="beforeRightMenuContent"/>					
