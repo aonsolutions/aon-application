@@ -9,7 +9,7 @@
 
 	<aon:panelGroup id="#{expression}Panel">
 
-		<aon:inputTextarea id="#{expression}Input" cols="96" rows="2"
+		<aon:inputTextarea id="#{controller.beanName}#{expression}Input" cols="96" rows="2"
 			maxlength="128" value="#{controller.to[expression]}">
 			<f:validateLength maximum="128" />
 			<a4j:support event="onkeyup"
@@ -19,17 +19,17 @@
 		</aon:inputTextarea>
 		<c:choose>
 			<c:when test="#{controller[expressionValid]}">
-				<aon:outputText id="#{expression}Icon"
+				<aon:outputText id="#{controller.beanName}#{expression}Icon"
 					styleClass="aon-icon-predetermine aon-vertical-align-top"
 					style="padding-left: 15px;" value="&#160;" />
 				<aon:div id="#{expression}Message">
 				</aon:div>
 			</c:when>
 			<c:otherwise>
-				<aon:outputText id="#{expression}Icon"
+				<aon:outputText id="#{controller.beanName}#{expression}Icon"
 					styleClass="aon-icon-exception aon-vertical-align-top"
 					style="padding-left: 15px;" value="&#160;" />
-				<aon:div id="#{expression}Message"
+				<aon:div id="#{controller.beanName}#{expression}Message"
 					style="background-color: #F2F2F2; border: 1px solid #CCCCCC; margin: 0.5em 0 ; padding: 0.5em;">
 					<aon:outputText styleClass="aon-message-error"
 						style="padding-left: 15px; border: none"

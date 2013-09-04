@@ -1,6 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:s="urn:import:com.google.gwt.dom.builder.shared">
 
 	<ui:style type='com.esferalia.aon.gwt.payroll.client.SalaryDraft.MyStyle'>
@@ -23,6 +23,12 @@
 			margin-bottom: 15px;
 		}
 		
+		.value-changed {
+			color: #897820;
+			font-weight: bold;
+			text-shadow: 0.1em 0.1em 0.2em #9E945E;
+		}
+
 		.edit-rows .edit-cells {
 		}
 		
@@ -137,7 +143,7 @@
 			gwt-image: 'undo';
 			background-position: left center;
 		}
-
+		
 	</ui:style>
 
 	<ui:image field='fx' src='fx.png' />
@@ -148,7 +154,7 @@
 	<ui:image field='expandall' src='expandall.png' />
 	<ui:image field='collapseall' src='collapseall.png' />
 	<ui:image field='pdfPreview' src='pdfPreview.png' />
-	
+
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.SalaryDraft.*" />
 
 	<g:DockLayoutPanel unit="PX">
@@ -165,7 +171,7 @@
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
 							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-								<g:Label styleName="aon-outputText" ></g:Label>
+								<g:Label styleName="aon-outputText"></g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
@@ -174,8 +180,7 @@
 									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
 									enabled="false" />
 								<g:Button ui:field='salaryButton'
-									styleName='aon-finding-toolbar-item aon-icon-accept' text="EMITIR NOMINA"
-									/>
+									styleName='aon-finding-toolbar-item aon-icon-accept' text="EMITIR NOMINA" />
 								<g:Button ui:field='printButton'
 									styleName='aon-finding-toolbar-item aon-icon-pdf' text="IMPRIMIR" />
 								<g:Button ui:field='printPreviewButton'
@@ -184,7 +189,7 @@
 								<g:Button ui:field='irpfPreviewButton'
 									styleName='aon-finding-toolbar-item {style.irpfPreviewButton}'
 									text="IRPF" />
-								<employee:SalarySelect ui:field="salarySelect" />
+								<e:SalarySelect ui:field="salarySelect" />
 								<g:ListBox ui:field="zoomListBox" />
 								<g:Button ui:field='closePreviewButton'
 									styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
@@ -192,7 +197,7 @@
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
-				
+
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
@@ -202,7 +207,7 @@
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
 							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-								<g:Label styleName="aon-outputText" ></g:Label>
+								<g:Label styleName="aon-outputText"></g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
@@ -213,9 +218,9 @@
 									styleName='aon-finding-toolbar-item {style.undoButton}' />
 								<g:Button ui:field='redoButton'
 									styleName="aon-finding-toolbar-item {style.redoButton}" />
-								<g:ListBox ui:field='datesListBox' >
-									<g:item value="{ONLY_THIS_MONTH}" >S&oacute;lo este mes</g:item>
-									<g:item value="{FROM_THIS_MONTH}" >A partir de este mes</g:item>
+								<g:ListBox ui:field='datesListBox'>
+									<g:item value="{ONLY_THIS_MONTH}">S&oacute;lo este mes</g:item>
+									<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
 									<g:item value="{CUSTOM}">GridPersonalizado...</g:item>
 								</g:ListBox>
 								<g:CheckBox ui:field='dbSalaryCheck'
@@ -232,22 +237,20 @@
 		<g:center>
 			<g:ScrollPanel styleName="{style.editor}">
 				<g:VerticalPanel styleName="{style.document}">
-					<g:DeckPanel ui:field="deckPanel" >
-						<g:VerticalPanel ui:field="draftPanel" width="auto" >
+					<g:DeckPanel ui:field="deckPanel">
+						<g:VerticalPanel ui:field="draftPanel" width="auto">
 							<g:Grid styleName="aon-dataTable">
 								<g:row styleName="aon-dataTable-row-odd">
 									<g:customCell style="width:50%">
 										<g:HTMLPanel>
 											<g:Label styleName="{style.cell-label}">EMPRESA</g:Label>
-											<g:Label ui:field="enterpriseNameLabel" styleName="aon-text-center">&nbsp;
-											</g:Label>
+											<g:Label ui:field="enterpriseNameLabel" styleName="aon-text-center">&nbsp; </g:Label>
 										</g:HTMLPanel>
 									</g:customCell>
 									<g:customCell>
 										<g:HTMLPanel>
 											<g:Label styleName="{style.cell-label}">TRABAJADOR/A</g:Label>
-											<g:Label ui:field="employeeNameLabel" styleName="aon-text-center">&nbsp;
-											</g:Label>
+											<g:Label ui:field="employeeNameLabel" styleName="aon-text-center">&nbsp; </g:Label>
 										</g:HTMLPanel>
 									</g:customCell>
 								</g:row>
@@ -255,8 +258,7 @@
 									<g:customCell>
 										<g:HTMLPanel>
 											<g:Label styleName="{style.cell-label}">DOMICILIO</g:Label>
-											<g:Label ui:field="enterpriseAddressLabel" styleName="aon-text-center">&nbsp;
-											</g:Label>
+											<g:Label ui:field="enterpriseAddressLabel" styleName="aon-text-center">&nbsp; </g:Label>
 										</g:HTMLPanel>
 									</g:customCell>
 									<g:customCell styleName="{style.span-cell}">
@@ -267,24 +269,21 @@
 														<g:Label styleName="{style.cell-label}">CATEGORÍA
 															PROFESIONAL</g:Label>
 														<g:Label ui:field="employeeAgreementCategoryLabel"
-															styleName="aon-text-center">&nbsp;
-														</g:Label>
+															styleName="aon-text-center">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell}">
 													<g:HTMLPanel>
 														<g:Label styleName="{style.cell-label}">PUESTO DE
 															TRABAJO</g:Label>
-														<g:Label ui:field="employeeJobLabel" styleName="aon-text-center">&nbsp;
-														</g:Label>
+														<g:Label ui:field="employeeJobLabel" styleName="aon-text-center">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell-last}">
 													<g:HTMLPanel>
 														<g:Label styleName="{style.cell-label}">ANTIGUEDAD</g:Label>
 														<g:Label ui:field="employeeSeniorityLabel"
-															styleName="aon-text-center">&nbsp;
-														</g:Label>
+															styleName="aon-text-center">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 											</g:row>
@@ -298,16 +297,14 @@
 												<g:customCell styleName="{style.span-cell-cell}">
 													<g:HTMLPanel>
 														<g:Label styleName="{style.cell-label}">POBLACION</g:Label>
-														<g:Label ui:field="enterpriseCityLabel" styleName="aon-text-center">&nbsp;
-														</g:Label>
+														<g:Label ui:field="enterpriseCityLabel" styleName="aon-text-center">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell-last}">
 													<g:HTMLPanel>
 														<g:Label styleName="{style.cell-label}">N. INSCRIPCION
 															SS</g:Label>
-														<g:Label ui:field="enterpriseCCCLabel" styleName="aon-text-center">&nbsp;
-														</g:Label>
+														<g:Label ui:field="enterpriseCCCLabel" styleName="aon-text-center">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 											</g:row>
@@ -320,16 +317,14 @@
 													<g:HTMLPanel>
 														<g:Label styleName="{style.cell-label}">N. AFILIACION
 															SS</g:Label>
-														<g:Label ui:field="employeeSSLabel" styleName="aon-text-center">&nbsp;
-														</g:Label>
+														<g:Label ui:field="employeeSSLabel" styleName="aon-text-center">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell-last}">
 													<g:HTMLPanel>
 														<g:Label styleName="{style.cell-label}">DNI</g:Label>
 														<g:Label ui:field="employeeDocumentLabel"
-															styleName="aon-text-center">&nbsp;
-														</g:Label>
+															styleName="aon-text-center">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 											</g:row>
@@ -344,15 +339,13 @@
 													<g:HTMLPanel>
 														<g:Label styleName="{style.cell-label}">PERIODO DE
 															LIQUIDACION</g:Label>
-														<g:Label ui:field="periodLabel" styleName="aon-text-center">&nbsp;
-														</g:Label>
+														<g:Label ui:field="periodLabel" styleName="aon-text-center">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 												<g:customCell styleName="{style.span-cell-cell-last}">
 													<g:HTMLPanel>
 														<g:Label styleName="{style.cell-label}">TOTAL DIAS</g:Label>
-														<g:Label ui:field="daysLabel" styleName="aon-text-center">&nbsp;
-														</g:Label>
+														<g:Label ui:field="daysLabel" styleName="aon-text-center">&nbsp; </g:Label>
 													</g:HTMLPanel>
 												</g:customCell>
 											</g:row>
@@ -364,8 +357,8 @@
 											<g:Label styleName="{style.cell-label}">IMPORTE TOTAL
 												DEVENGOS</g:Label>
 											<g:HTMLPanel tag="div" styleName="aon-text-center">
-												<g:InlineHTML ui:field="totalPaymentsLabel">&nbsp;
-												</g:InlineHTML>
+												<e:ValueInlineHTML changeDisplayStyleName="{style.value-changed}"
+													ui:field="totalPaymentsLabel">&nbsp; </e:ValueInlineHTML>
 												<g:InlineHTML ui:field="dbTotalPaymentsLabel"
 													visible="false" />
 											</g:HTMLPanel>
@@ -397,8 +390,8 @@
 												<g:Label styleName="{style.cell-label}">RENUMERACION
 													TOTAL</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<g:InlineHTML ui:field="remunerationLabel">&nbsp;
-													</g:InlineHTML>
+													<e:ValueInlineHTML
+														changeDisplayStyleName="{style.value-changed}" ui:field="remunerationLabel">&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbRemunerationLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -408,8 +401,8 @@
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">PRORRATA PAGAS</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<g:InlineHTML ui:field="prorationBaseLabel">&nbsp;
-													</g:InlineHTML>
+													<e:ValueInlineHTML
+														changeDisplayStyleName="{style.value-changed}" ui:field="prorationBaseLabel">&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbProrationBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -420,8 +413,8 @@
 												<g:Label styleName="{style.cell-label}">BASE TOTAL
 													COTIZ.</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<g:InlineHTML ui:field="cgcBaseLabel">&nbsp;
-													</g:InlineHTML>
+													<e:ValueInlineHTML
+														changeDisplayStyleName="{style.value-changed}" ui:field="cgcBaseLabel">&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbCgcBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -439,8 +432,8 @@
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">BASE H.E.</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<g:InlineHTML ui:field="hExtraBaseLabel">&nbsp;
-													</g:InlineHTML>
+													<e:ValueInlineHTML
+														changeDisplayStyleName="{style.value-changed}" ui:field="hExtraBaseLabel">&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbHExtraBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -450,8 +443,8 @@
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">BASE AT Y EP.</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<g:InlineHTML ui:field="cgpBaseLabel">&nbsp;
-													</g:InlineHTML>
+													<e:ValueInlineHTML
+														changeDisplayStyleName="{style.value-changed}" ui:field="cgpBaseLabel">&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbCgpBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -463,8 +456,8 @@
 											<g:HTMLPanel>
 												<g:Label styleName="{style.cell-label}">BASE IRPF</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<g:InlineHTML ui:field="irpfBaseLabel">&nbsp;
-													</g:InlineHTML>
+													<e:ValueInlineHTML
+														changeDisplayStyleName="{style.value-changed}" ui:field="irpfBaseLabel">&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbIrpfBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -475,8 +468,8 @@
 												<g:Label styleName="{style.cell-label}">BASE H.E. NO
 													AUTORIZ.</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<g:InlineHTML ui:field="nonHExtraBaseLabel">&nbsp;
-													</g:InlineHTML>
+													<e:ValueInlineHTML
+														changeDisplayStyleName="{style.value-changed}" ui:field="nonHExtraBaseLabel">&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbNonHExtraBaseLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -500,8 +493,8 @@
 												<g:Label styleName="{style.cell-label}">A. TOTAL
 													DEVENGO</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<g:InlineHTML ui:field="totalPaymentLabel">&nbsp;
-													</g:InlineHTML>
+													<e:ValueInlineHTML
+														changeDisplayStyleName="{style.value-changed}" ui:field="totalPaymentLabel">&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbTotalPaymentLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -512,8 +505,8 @@
 												<g:Label styleName="{style.cell-label}">B. TOTAL
 													DEDUCIR</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<g:InlineHTML ui:field="totalDeductionLabel">&nbsp;
-													</g:InlineHTML>
+													<e:ValueInlineHTML
+														changeDisplayStyleName="{style.value-changed}" ui:field="totalDeductionLabel">&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbTotalDeductionLabel"
 														visible="false" />
 												</g:HTMLPanel>
@@ -524,8 +517,8 @@
 												<g:Label styleName="{style.cell-label}">LIQUIDO A
 													PERCIBIR (A-B)</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<g:InlineHTML ui:field="totalLiquidLabel">&nbsp;
-													</g:InlineHTML>
+													<e:ValueInlineHTML
+														changeDisplayStyleName="{style.value-changed}" ui:field="totalLiquidLabel">&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbTotalLiquidLabel"
 														visible="false" />
 												</g:HTMLPanel>

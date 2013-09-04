@@ -60,6 +60,22 @@
 		</params>
 	</report>
 
+	<report id="nominasta_codint" description="Internal Code Nominasta salary report ">
+		<template path="/com/esferalia/aon/ui/payroll/report/nominasta.jasper" />
+		<collection provider="#{salary}" forceRefresh="true" />
+		<params>
+			<param id="CODINTERNO" value="#{bullShit.getTrue}" />
+		</params>
+	</report>
+
+	<report id="nominasta_condias" description="With Days Nominasta salary report ">
+		<template path="/com/esferalia/aon/ui/payroll/report/nominasta.jasper" />
+		<collection provider="#{salary}" forceRefresh="true" />
+		<params>
+			<param id="CONDIAS" value="#{bullShit.getTrue}" />
+		</params>
+	</report>
+
 	<report id="nominasta_ldh" description="Lopez de Hoyos Delegation's Nominasta salary report ">
 		<template path="/com/esferalia/aon/ui/payroll/report/nominasta_ldh.jasper" />
 		<collection provider="#{salary}" forceRefresh="true" />

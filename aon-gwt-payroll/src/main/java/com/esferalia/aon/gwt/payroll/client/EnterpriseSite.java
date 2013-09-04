@@ -158,6 +158,11 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		detailPanel.setWidget(documents);
 		documents.setDocuments(docs);
 	}
+	
+	@Override
+	public void onIrpfsSelected(IrpfDocuments docs) {
+		// TODO Auto-generated method stub
+	}
 
 	@Override
 	public void onActivitySelected(Activity activity) {

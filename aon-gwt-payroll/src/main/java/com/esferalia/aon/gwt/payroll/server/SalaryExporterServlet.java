@@ -6,10 +6,12 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -48,6 +50,8 @@ public class SalaryExporterServlet extends HttpServlet {
 		try {
 			ServletContext ctx = getServletContext();
 			AonServletUtils.initFacesContext(ctx, req, resp);
+			FacesContext fCtx = FacesContext.getCurrentInstance();
+			fCtx.getViewRoot().setLocale(new Locale("es", "ES"));
 			
 			Criteria criteria =  getCriteria(salaryRequestStr);
 			

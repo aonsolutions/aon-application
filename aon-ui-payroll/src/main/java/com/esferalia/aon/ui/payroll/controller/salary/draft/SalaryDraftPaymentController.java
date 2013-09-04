@@ -169,30 +169,6 @@ public class SalaryDraftPaymentController extends ContractDetailVariableControll
 	}
 
 	@Override
-	public boolean isQuoteExpressionEdition() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isIrpfExpressionEdition() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isEnableExpressionEdition() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void onSelectExpressionEdition(ActionEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public TaxationType getTaxation() {
 		// TODO Auto-generated method stub
 		return null;
@@ -215,6 +191,7 @@ public class SalaryDraftPaymentController extends ContractDetailVariableControll
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 	
 		
 }

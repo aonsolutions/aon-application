@@ -21,15 +21,7 @@ public interface IPaymentHandler {
 	public void setQuoteExpression(String expression);
 	
 	public void setIrpfExpression(String expression);
-	
-	public boolean isQuoteExpressionEdition();
-	
-	public boolean isIrpfExpressionEdition();
-	
-	public boolean isEnableExpressionEdition();
-	
-	public void onSelectExpressionEdition(ActionEvent event);
-	
+
 	public TaxationType getTaxation();
 	
 	public QuoteType getQuote();
@@ -38,6 +30,7 @@ public interface IPaymentHandler {
 	public Month getMonth();
 	
 	public Integer getYear();
+	
 	
 
 }

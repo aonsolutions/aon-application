@@ -72,7 +72,8 @@ public class PaymentConceptController extends AbstractConceptController {
 
 	public void onChangeExpression(ActionEvent event) {
 	}
-
+	
+	
 	// --------------------------------------------------------- Private Methods
 
 	private void analyze(String expression) {

@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+
+	<aon:outputLabel for="Payment_startDate"
+		value="#{bundle.aon_start_date}" />
+	<aon:selectInputDate id="Payment_startDate"
+		value="#{controller.to.startDate}" required="true"
+		timeZone="#{timeZoneController.timeZone}"
+		popupDateFormat="#{bundle.aon_date_pattern}" />
+
+	<aon:outputLabel for="Payment_endDate" value="#{bundle.aon_end_date}" />
+	<aon:selectInputDate id="Payment_endDate"
+		value="#{controller.to.endDate}"
+		timeZone="#{timeZoneController.timeZone}"
+		popupDateFormat="#{bundle.aon_date_pattern}" />
+
+	<aon:outputLabel for="Payment_month"
+		value="#{payrollBundle.payroll_salary_payment_month}" />
+
+	<aon:selectOneMenu id="Payment_month" value="#{controller.to.month}">
+		<f:selectItem itemLabel=" - " itemValue="#{null}" />
+		<c:if test="#{!skipCurrentMonth}">
+			<f:selectItem value="#{controller.currentMonth}" />
+		</c:if>
+		<c:if test="#{skipCurrentMonth}">
+			<f:selectItems value="#{commonCollections.months}" />
+		</c:if>
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="Payment_salaryType"
+		value="#{payrollBundle.payroll_salary_type}" />
+	<aon:selectOneMenu id="Payment_salaryType"
+		value="#{controller.to.salaryType}">
+		<f:selectItems value="#{payrollCollections.salaryTypes}" />
+		<a4j:support event="onchange"
+			reRender="#{controller.beanName}ModalForm" />
+	</aon:selectOneMenu>
+
+	<ui:include
+		src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{controller.to.paymentConcept}" />
+		<ui:param name="idRequired"
+			value="#{!aonRole.config and !aonRole.admin}" />
+		<ui:param name="skipNewButton" value="#{!aonRole.admin}" />
+		<ui:param name="lookupReRender" value="#{controller.beanName}MenuGrid" />
+	</ui:include>
+
+
+	<aon:outputLabel for="#{controller.beanName}Type"
+		value="#{bundle.aon_type}" />
+
+	<aon:methodParam name="inheritActionListener"
+		value="#{controller.onEnableTypeOverride}" type="actionListener" />
+	<aon:methodParam name="overrideActionListener"
+		value="#{controller.onDisableTypeOverride}" type="actionListener" />
+
+	<ui:decorate template="conceptContent.xhtml">
+		<ui:param name="conceptContentID" value="#{controller.beanName}Type" />
+		<ui:param name="editEnabled" value="#{aonRole.admin}" />
+		<ui:param name="overrideEnabled"
+			value="#{controller.typeOverrideEnabled}" />
+		<ui:param name="reRender" value="#{controller.beanName}ModalForm" />
+		<ui:param name="inheritValue" value="#{controller.conceptTypeName}" />
+		<ui:param name="inheritEnabled"
+			value="#{controller.to.paymentConcept != null}" />
+
+		<ui:define name="editor">
+			<aon:selectOneMenu id="#{controller.beanName}TypeSelect"
+				value="#{controller.to.paymentType}">
+				<f:selectItem itemValue="#{null}" itemLabel=" - " />
+				<f:selectItems value="#{payrollCollections.paymentTypes}" />
+			</aon:selectOneMenu>
+		</ui:define>
+	</ui:decorate>
+
+
+	<aon:outputLabel for="#{controller.beanName}Description"
+		value="#{bundle.aon_description}" />
+	<aon:methodParam name="inheritActionListener"
+		value="#{controller.onEnableDescripotionOverride}"
+		type="actionListener" />
+	<aon:methodParam name="overrideActionListener"
+		value="#{controller.onDisableDescriptionOverride}"
+		type="actionListener" />
+	<ui:decorate template="conceptContent.xhtml">
+		<ui:param name="conceptContentID"
+			value="#{controller.beanName}Description" />
+		<ui:param name="editEnabled" value="#{aonRole.admin}" />
+		<ui:param name="overrideEnabled"
+			value="#{controller.descriptionOverrideEnabled}" />
+		<ui:param name="reRender" value="#{controller.beanName}ModalForm" />
+		<ui:param name="inheritValue"
+			value="#{controller.to.paymentConcept.description}" />
+		<ui:param name="inheritEnabled"
+			value="#{controller.to.paymentConcept != null}" />
+
+		<ui:define name="editor">
+			<aon:inputText id="#{controller.beanName}DescriptionInput" size="64"
+				maxlength="64" value="#{controller.to.description}" />
+		</ui:define>
+	</ui:decorate>
+
+
+	<aon:outputLabel for="#{controller.beanName}Expression"
+		value="#{payrollBundle.payroll_salary_expression}" />
+	<aon:methodParam name="inheritActionListener"
+		value="#{controller.onEnableExpressionOverride}" type="actionListener" />
+	<aon:methodParam name="overrideActionListener"
+		value="#{controller.onDisableExpressionOverride}"
+		type="actionListener" />
+	<ui:decorate template="conceptContent.xhtml">
+		<ui:param name="conceptContentID"
+			value="#{controller.beanName}Expression" />
+		<ui:param name="editEnabled" value="#{aonRole.admin}" />
+		<ui:param name="overrideEnabled"
+			value="#{controller.expressionOverrideEnabled}" />
+		<ui:param name="reRender" value="#{controller.beanName}ModalForm" />
+		<ui:param name="inheritValue"
+			value="#{controller.to.paymentConcept.expression}" />
+		<ui:param name="inheritEnabled"
+			value="#{controller.to.paymentConcept != null}" />
+
+		<ui:define name="editor">
+			<ui:include
+				src="/com/esferalia/aon/ui/payroll/facelet/expression/formExpression.xhtml">
+				<ui:param name="expression" value="expression" />
+				<ui:param name="expressionValid" value="expressionValid" />
+				<ui:param name="expressionErrorMessage"
+					value="expressionErrorMessage" />
+			</ui:include>
+		</ui:define>
+	</ui:decorate>
+
+	<aon:outputLabel for="#{controller.beanName}IrpfExpression"
+		value="#{payrollBundle.payroll_salary_irpf_expression}" />
+	<aon:methodParam name="inheritActionListener"
+		value="#{controller.onEnableIrpfExpressionOverride}"
+		type="actionListener" />
+	<aon:methodParam name="overrideActionListener"
+		value="#{controller.onDisableIrpfExpressionOverride}"
+		type="actionListener" />
+	<ui:decorate template="conceptContent.xhtml">
+		<ui:param name="conceptContentID"
+			value="#{controller.beanName}IrpfExpression" />
+		<ui:param name="editEnabled" value="#{aonRole.admin}" />
+		<ui:param name="overrideEnabled"
+			value="#{controller.irpfExpressionOverrideEnabled}" />
+		<ui:param name="reRender" value="#{controller.beanName}ModalForm" />
+		<ui:param name="inheritValue"
+			value="#{controller.to.paymentConcept.irpfExpression}" />
+		<ui:param name="inheritEnabled"
+			value="#{controller.to.paymentConcept != null}" />
+
+		<ui:define name="editor">
+			<aon:inputText id="#{controller.beanName}IrpfExpressionInput"
+				size="64" maxlength="64" value="#{controller.to.irpfExpression}" />
+
+			<aon:div id="{controller.beanName}IrpfExpressionPanel">
+				<aon:selectOneMenu id="{controller.beanName}IrpfExpressionSelect"
+					value="#{controller.to.taxation}">
+					<f:selectItems value="#{payrollCollections.taxationTypes}" />
+					<a4j:support event="onchange" reRender="PaymentConcept_taxation"
+						ajaxSingle="true" />
+				</aon:selectOneMenu>
+				<br />
+				<c:if test="#{controller.to.taxation=='MANUAL'}">
+					<ui:include
+						src="/com/esferalia/aon/ui/payroll/facelet/expression/formExpression.xhtml">
+						<ui:param name="expression" value="irpfExpression" />
+						<ui:param name="expressionValid" value="irpfExpressionValid" />
+						<ui:param name="expressionErrorMessage"
+							value="irpfExpressionErrorMessage" />
+					</ui:include>
+				</c:if>
+			</aon:div>
+
+		</ui:define>
+	</ui:decorate>
+
+
+
+	<aon:outputLabel for="#{controller.beanName}QuoteExpression"
+		value="#{payrollBundle.payroll_salary_quote_expression}" />
+	<aon:methodParam name="inheritActionListener"
+		value="#{controller.onEnableQuoteExpressionOverride}"
+		type="actionListener" />
+	<aon:methodParam name="overrideActionListener"
+		value="#{controller.onDisableQuoteExpressionOverride}"
+		type="actionListener" />
+	<ui:decorate template="conceptContent.xhtml">
+		<ui:param name="conceptContentID"
+			value="#{controller.beanName}QuoteExpression" />
+		<ui:param name="editEnabled" value="#{aonRole.admin}" />
+		<ui:param name="overrideEnabled"
+			value="#{controller.quoteExpressionOverrideEnabled}" />
+		<ui:param name="reRender" value="#{controller.beanName}ModalForm" />
+		<ui:param name="inheritValue"
+			value="#{controller.to.paymentConcept.quoteExpression}" />
+		<ui:param name="inheritEnabled"
+			value="#{controller.to.paymentConcept != null}" />
+
+		<ui:define name="editor">
+			<aon:inputText id="#{controller.beanName}QuoteExpressionInput"
+				size="64" maxlength="64" value="#{controller.to.quoteExpression}" />
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

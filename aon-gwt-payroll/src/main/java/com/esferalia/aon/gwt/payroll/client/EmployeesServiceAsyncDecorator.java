@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Events;
+import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -71,13 +72,31 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getEnterpriseCosts(enterpriseId,
 				new AsyncCallbackWrapper<List<Cost>>(callback));
 	}
-
+		
 	public void getSalaries(Employee employee,
 			AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getSalaries(employee,
 				new AsyncCallbackWrapper<List<Salary>>(callback));
+	}
+	
+	@Override
+	public void getIrpfs(Employee employee,
+			AsyncCallback<List<Irpf>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getIrpfs(employee,
+				new AsyncCallbackWrapper<List<Irpf>>(callback));
+	}
+	
+	
+	@Override
+	public void getIrpfReceiptHTML(Irpf irpf, int zoom,
+			AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getIrpfReceiptHTML(irpf, zoom,
+				new AsyncCallbackWrapper<String>(callback));
 	}
 
 	public void getCostReceiptHTML(Cost cost, int zoom,

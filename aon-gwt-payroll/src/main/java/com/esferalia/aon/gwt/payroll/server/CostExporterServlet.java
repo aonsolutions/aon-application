@@ -8,8 +8,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -65,6 +67,9 @@ public class CostExporterServlet extends HttpServlet {
 		try {
 			ServletContext ctx = getServletContext();
 			AonServletUtils.initFacesContext(ctx, req, resp);
+			
+			FacesContext fCtx = FacesContext.getCurrentInstance();
+			fCtx.getViewRoot().setLocale(new Locale("es", "ES"));
 			
 			IManagerBean beanManager = BeanManager
 					.getManagerBean(com.esferalia.aon.payroll.Salary.class);

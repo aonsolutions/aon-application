@@ -8,6 +8,8 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
+	<meta name="gwt:property" content="locale=es_ES"/>
+	
 	<aon:valueParam name="edit" default="#{true}" />
 	<aon:valueParam name="entryPoint" default="EmployeeTree" />
 	
@@ -20,7 +22,7 @@
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
 	
 	<ui:include src="/facelet/homepage/menu.xhtml" />
-	
+		
 	<ui:include src="/com/esferalia/aon/gwt/payroll/facelet/employee/jsf.xhtml" >
 		<ui:param name="edit" value="#{edit}" />
 	</ui:include>

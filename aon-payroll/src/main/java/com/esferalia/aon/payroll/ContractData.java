@@ -13,6 +13,8 @@ import com.esferalia.aon.salary.expression.IExpression;
 public class ContractData extends ContractDataDB implements IExpression {
 	
 	private static final long serialVersionUID = 1L;
+	
+	public static final String COD_INT = "COD_INT";
 
 	@Override
 	@Transient

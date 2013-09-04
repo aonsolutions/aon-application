@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,7 +13,12 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ContractDB;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
@@ -99,6 +105,22 @@ public class Contract extends ContractDB {
 		if ( getEndDate().before(start) )
 			return false;
 		return true;
+	}
+	
+	@Transient 
+	public String getCodInt() throws ManagerBeanException{
+		IManagerBean bean = BeanManager
+				.getManagerBean(ContractData.class);
+		Criteria c = new Criteria();
+		c.addEqualExpression(
+				bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID),
+				this.getId());
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContractData.COD_INT);
+		// TODO : Dates ????
+		List<?> list = bean.getList(c);
+		if ( list == null || list.size() == 0)
+			return null;
+		return ((ContractData) list.get(0)).getExpression();
 	}
 
 }

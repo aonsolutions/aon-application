@@ -17,8 +17,7 @@
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="Enterprise-Save"
 						value="#{bundle.aon_accept}" reRender="enterpriseMainGrid"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						limitToList="true">
+						styleClass="aon-finding-toolbar-item aon-icon-accept">
 						<aon:actionListener method="#{enterprise.accept}" />
 					</aon:commandButton>
 
@@ -116,10 +115,10 @@
 		</ui:include>
 	</c:if>
 
-	<!-- img style="display:none;"  
+	<img style="display:none;"  
 	src="#{aonResource.resolve['/com/esferalia/aon/gwt/payroll/client/blank.png']}"   
 	onload="onLoadJSF(this.parentNode);" 
-	 /-->
+	 />
 
 </ui:composition>
 

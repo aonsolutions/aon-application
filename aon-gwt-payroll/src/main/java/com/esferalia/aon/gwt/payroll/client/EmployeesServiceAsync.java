@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Events;
+import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -40,8 +41,14 @@ public interface EmployeesServiceAsync {
 	void getSalaries(Employee employee, AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException;
 
+	void getIrpfs(Employee employee, AsyncCallback<List<Irpf>> callback)
+			throws IllegalArgumentException;
+
 	void getCostReceiptHTML(Cost cost, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
+
+	void getIrpfReceiptHTML(Irpf irpf, int zoom,
+			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getSalaryReceiptHTML(Cost cost, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;

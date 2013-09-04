@@ -9,6 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.SystemPaymentDB;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.enumeration.TaxationType;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
@@ -47,11 +49,25 @@ public class SystemPayment extends SystemPaymentDB implements IContractPayment {
 				getPaymentConcept().getCode()+ " - " + (StringUtils.isEmpty(getDescription())?getPaymentConcept().getDescription():
 					getDescription());
 	}
+	@Transient
+	public PaymentType getResolvedType() {
+		PaymentType type = getPaymentType();
+		if (type != null)
+			return type;
+		PaymentConcept concept = getPaymentConcept();
+		if (concept == null)
+			return null;
+		return concept.getType();
+
+	}
+	
 	@Override
 	@Transient
 	public boolean isReadOnly() {
 		return false;
 	}
+	
+	
 	
 	// TODO 
 	private PaymentType paymentType;

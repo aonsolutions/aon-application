@@ -680,6 +680,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private JSF jsf;
 	private Documents documents;
 	private Cost cost;
+	private Irpf irpf;
 	private Salary salary;
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
@@ -725,6 +726,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		jsf = new JSF();
 		cost = new Cost();
+		irpf = new Irpf();
 		salary = new Salary();
 		documents = new Documents();
 		eventsDraft = new EventsDraft();
@@ -779,7 +781,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(salary);
 		salary.setSalaryDocuments(docs);
 	}
-
+	
+	@Override
+	public void onIrpfsSelected(IrpfDocuments docs) {
+		employeeDetail.setWidget(irpf);
+		irpf.setIrpfDocuments(docs);
+	}
+	
 	@Override
 	public void onCostsSelected(CostDocuments docs) {
 		employeeDetail.setWidget(cost);
@@ -852,17 +860,20 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	
 	@Override
 	public void onBonusConceptsSelected() {
-		jsf.bonusConceptsSelected();;
+		employeeDetail.setWidget(jsf);
+		jsf.bonusConceptsSelected();
 	}
 	
 	@Override
 	public void onDeductionConceptsSelected() {
-		jsf.deductionConceptsSelected();;
+		employeeDetail.setWidget(jsf);
+		jsf.deductionConceptsSelected();
 	}
 	
 	@Override
 	public void onPaymentConceptsSelected() {
-		jsf.paymentConceptsSelected();;
+		employeeDetail.setWidget(jsf);
+		jsf.paymentConceptsSelected();
 	}
 
 	// ------------------------------------------------------- UiHandler methods

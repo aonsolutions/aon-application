@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
@@ -67,6 +68,8 @@ public class Employees extends ResizeComposite implements
 
 		void onCostsSelected(CostDocuments docs);
 
+		void onIrpfsSelected(IrpfDocuments docs);
+
 		void onSalariesSelected(SalaryDocuments docs);
 
 		void onDocumentsSelected(ISpinnable<IDocument> docs);
@@ -96,6 +99,7 @@ public class Employees extends ResizeComposite implements
 	private static final int ENTERPRISE_COSTS_INDEX = 0;
 	private static final int WORKPLACE_COSTS_INDEX = 0;
 	private static final int EMPLOYEE_SALARIES_INDEX = 0;
+	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 3; // TODO : It's not statci ???
 
 	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.DATE_SHORT);
@@ -552,7 +556,30 @@ public class Employees extends ResizeComposite implements
 						salariesItem.setUserObject(documents);
 					}
 				});
-	}
+
+		final TreeItem irpfOutcomesItem = employeeItem
+				.getChild(EMPLOYEE_IRPFOUTCOMES_INDEX);
+		if (irpfOutcomesItem.getUserObject() != null) {
+			return;
+		} // end-if: Salaries of this employee have been already loaded.
+
+		employeesService.getIrpfs(employee,
+				new AsyncCallback<List<Irpf>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						Window.alert(caught.getLocalizedMessage());
+
+					}
+
+					@Override
+					public void onSuccess(List<Irpf> irpfOutcomes) {
+						IrpfDocuments documents = new IrpfDocuments(
+								irpfOutcomes, employeesService);
+						irpfOutcomesItem.setUserObject(documents);
+					}
+				});
+}
 
 	private void onEnterpriseSelected(Enterprise enterprise) {
 		for (Listener listener : listeners) {
@@ -581,6 +608,12 @@ public class Employees extends ResizeComposite implements
 	private void onSalariesSelected(SalaryDocuments docs) {
 		for (Listener listener : listeners) {
 			listener.onSalariesSelected(docs);
+		}
+	}
+
+	private void onIrpfsSelected(IrpfDocuments docs) {
+		for (Listener listener : listeners) {
+			listener.onIrpfsSelected(docs);
 		}
 	}
 
@@ -704,7 +737,8 @@ public class Employees extends ResizeComposite implements
 
 				// Agencia Tributaria
 				TreeItem aetItem = addImageItem(employeeItem,
-						"Agencia Tributaria", images.aet());
+						"Regularizaciones", images.aet());
+				/*
 				TreeItem aetPersonalDataItem = addImageItem(aetItem,
 						"Datos personales", images.person());
 				TreeItem aetFamilyDataItem = addImageItem(aetItem,
@@ -715,6 +749,7 @@ public class Employees extends ResizeComposite implements
 						"Datos regularizaci\u00f3n", images.calendar());
 				TreeItem aetResultsItem = addImageItem(aetItem, "Resultados",
 						images.calc());
+				*/
 			}
 
 			added++;

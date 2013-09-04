@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Events;
+import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -38,7 +39,12 @@ public interface EmployeesService extends RemoteService {
 
 	List<Salary> getSalaries(Employee employee) throws IllegalArgumentException;
 
+	List<Irpf> getIrpfs(Employee employee) throws IllegalArgumentException;
+
 	String getCostReceiptHTML(Cost cost, int zoom)
+			throws IllegalArgumentException;
+
+	String getIrpfReceiptHTML(Irpf irpf, int zoom)
 			throws IllegalArgumentException;
 
 	String getSalaryReceiptHTML(Cost cost, int zoom)
