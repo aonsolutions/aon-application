@@ -114,7 +114,7 @@ public class MysqlSync extends DefaultMysqlDB {
 				RegistryAttachmentType type, String preffix)
 				throws SQLException {
 
-			if (imagesDir == null || !imagesDir.exists()) {
+			if (enterprise == null || imagesDir == null || !imagesDir.exists()) {
 				return;
 			}
 
