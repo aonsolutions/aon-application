@@ -9482,10 +9482,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	
 	/**
 	 * Salary_data
+	 * @param salary Recibo del pago de salarios
 	 * @returns domain's ID
 	*/
-	protected Integer getDomainForSalary_data(){
+	protected Integer getDomainForSalary_data( Integer salary){
 		Integer domain = null;
+			if ( ( domain = getDomainForSalaryPk( salary ) ) != null )
+				return domain;
 		return domain;
 	}
 
@@ -9496,13 +9499,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param expression Importe
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
+	 * @param salary Recibo del pago de salarios
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertSalary_data(Short name, String expression, Date start_date, Date end_date)
+	public int insertSalary_data(String name, String expression, Date start_date, Date end_date, Integer salary)
 	throws SQLException {
-		Integer domain = getDomainForSalary_data();
-		Integer id =  super.insertSalary_data( domain != null ? domain : getDefaultDomain(), name, expression, start_date, end_date );
+		Integer domain = getDomainForSalary_data( salary);
+		Integer id =  super.insertSalary_data( domain != null ? domain : getDefaultDomain(), name, expression, start_date, end_date, salary );
 		if ( domain != null ) { 
 			salary_dataDomains.put(id, domain);
 		}
@@ -9517,12 +9521,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param expression Importe
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
+	 * @param salary Recibo del pago de salarios
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertSalary_data(Integer domain, Short name, String expression, Date start_date, Date end_date)
+	public int insertSalary_data(Integer domain, String name, String expression, Date start_date, Date end_date, Integer salary)
 	throws SQLException {
-		Integer id =  super.insertSalary_data(domain, name, expression, start_date, end_date);
+		Integer id =  super.insertSalary_data(domain, name, expression, start_date, end_date, salary);
 		salary_dataDomains.put(id, domain );
 		return id;
 	}

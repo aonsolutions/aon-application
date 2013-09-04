@@ -279,9 +279,19 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		String function = mysqlDB.getFunction(importe, impuni, unidades);
 
-		mysqlDB.insertSalary_payment(this.salaryId, enum2short(type),
-				paymentConcept, description, function,
+		Integer salaryPayment = mysqlDB.insertSalary_payment(this.salaryId,
+				enum2short(type), paymentConcept, description, function,
 				importe != null ? importe.doubleValue() : 0.00);
+		if (unidades != null && unidades.doubleValue() > 0 && impuni != null
+				&& impuni.doubleValue() > 0) {
+			mysqlDB.insertSalary_data(String.format("%d_UNITS", salaryPayment),
+					String.format("%.3f", unidades), nomina.getFecini(),
+					nomina.getFecfin(), this.salaryId);
+			mysqlDB.insertSalary_data(
+					String.format("%d_UNIT_AMOUNT", salaryPayment),
+					String.format("%.3f", impuni), nomina.getFecini(),
+					nomina.getFecfin(), this.salaryId);
+		}
 
 	}
 

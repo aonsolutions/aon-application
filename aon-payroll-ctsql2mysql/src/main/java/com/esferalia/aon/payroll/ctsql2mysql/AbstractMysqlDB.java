@@ -32245,10 +32245,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	public static class Salary_data {
 		protected Integer id; 
 		protected Integer domain; 
-		protected Short name; 
+		protected String name; 
 		protected String expression; 
 		protected Date start_date; 
 		protected Date end_date; 
+		protected Integer salary; 
 	}
 	
 	protected void insertSalary_data( List<Salary_data> salary_datas )
@@ -32259,7 +32260,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( salary_dataStmt != null ) {
 				salary_dataStmt.close();
 			}
-			String values = "(?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -32268,7 +32269,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			salary_dataStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO salary_data (id,domain,name,expression,start_date,end_date)"  
+				"INSERT INTO salary_data (id,domain,name,expression,start_date,end_date,salary)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			salary_dataStmtSize = size;
@@ -32286,9 +32287,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			else
 				salary_dataStmt.setInt(offset++, salary_data.domain);
 			if ( salary_data.name == null )
-				salary_dataStmt.setNull(offset++, -6);
+				salary_dataStmt.setNull(offset++, 12);
 			else
-				salary_dataStmt.setShort(offset++, salary_data.name);
+				salary_dataStmt.setString(offset++, salary_data.name);
 			if ( salary_data.expression == null )
 				salary_dataStmt.setNull(offset++, 12);
 			else
@@ -32301,6 +32302,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				salary_dataStmt.setNull(offset++, 91);
 			else
 				salary_dataStmt.setDate(offset++, salary_data.end_date);
+			if ( salary_data.salary == null )
+				salary_dataStmt.setNull(offset++, 4);
+			else
+				salary_dataStmt.setInt(offset++, salary_data.salary);
 		}
 		salary_dataStmt.executeUpdate();
 		salary_datas.clear();
@@ -32363,9 +32368,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param expression Importe
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
+	 * @param salary Recibo del pago de salarios
 	 * @throws SQLException
 	*/
-	protected void insertSalary_data(Integer id, Integer domain, Short name, String expression, Date start_date, Date end_date)
+	protected void insertSalary_data(Integer id, Integer domain, String name, String expression, Date start_date, Date end_date, Integer salary)
 	throws SQLException {
 
 		Salary_data salary_data_ = new Salary_data();
@@ -32375,12 +32381,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		salary_data_.expression = expression;
 		salary_data_.start_date = start_date;
 		salary_data_.end_date = end_date;
+		salary_data_.salary = salary;
 
 		salary_datas.add(salary_data_);
 		
 		int salary_dataCount = salary_datas.size();
 		
-		if ( 171 * salary_dataCount >=  this.maxAllowedPacket ){
+		if ( 210 * salary_dataCount >=  this.maxAllowedPacket ){
 			insertSalary_data(salary_datas);
 		} 
 	}
@@ -32393,10 +32400,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param expression Importe
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
+	 * @param salary Recibo del pago de salarios
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertSalary_data(Integer domain, Short name, String expression, Date start_date, Date end_date)
+	public int insertSalary_data(Integer domain, String name, String expression, Date start_date, Date end_date, Integer salary)
 	throws SQLException {
 		int id = nextSalary_dataId();
 
@@ -32407,12 +32415,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		salary_data_.expression = expression;
 		salary_data_.start_date = start_date;
 		salary_data_.end_date = end_date;
+		salary_data_.salary = salary;
 
 		salary_datas.add(salary_data_);
 		
 		int salary_dataCount = salary_datas.size();
 		
-		if ( 171 * salary_dataCount >=  this.maxAllowedPacket ){
+		if ( 210 * salary_dataCount >=  this.maxAllowedPacket ){
 			insertSalary_data(salary_datas);
 			salary_datas.clear();
 		} 
