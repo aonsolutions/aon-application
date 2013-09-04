@@ -11,6 +11,10 @@ public enum SalaryTemplate implements IResourceable {
 	
 	,NOMINASTA("nominasta")
 
+	,NOMINASTA_CODINT("nominasta_codint")
+
+	,NOMINASTA_CONDDIAS("nominasta_condias")
+
 	,NOMINASTA_LDH("nominasta_ldh")
 	
 	,IDAZKIAK_ES("idazkiak_es")
