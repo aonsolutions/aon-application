@@ -387,11 +387,11 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 
 	protected int insertEnterprise(Integer domain, String document,
 			Country docCountry, String name, Country country, String alias,
-			Integer scope, Short status) throws SQLException {
+			Integer scope, Short status, DocumentType docType ) throws SQLException {
 
 		Short type = enum2short(RegistryType.LEGAL);
 		Integer registry = super.insertRegistry(domain, document,
-				enum2short(DocumentType.CIF),
+				enum2short(docType),
 				docCountry != null ? docCountry.getValue() : null, name, alias,
 				type, country != null ? country.getValue() : null,
 				enum2short(SecurityLevel.OFFICIAL));

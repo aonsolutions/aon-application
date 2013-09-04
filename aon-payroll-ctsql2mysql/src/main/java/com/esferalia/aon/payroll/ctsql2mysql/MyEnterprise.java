@@ -356,9 +356,11 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		} catch (InterruptedException e1) {
 			throw new RuntimeException(e1);
 		}
-
+		
+		DocumentType docType = mysqlDB.getDocumentType(emprnif.getInddoc());
+		
 		registry = mysqlDB.insertEnterprise(domain, doc, docCountry, name,
-				Country.ES, emprnif.getAlias(), scopeId, status);
+				Country.ES, emprnif.getAlias(), scopeId, status, docType);
 
 		// TODO: Company ... related entries, like 'logo'
 		mysqlDB.insertCompany(registry, domain, true, true, true, true);
@@ -517,9 +519,19 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 									.enum2short(EnterpriseActivityType.PRINCIPAL),
 							cnae2009);
 		}
+		Date startDate = new Date(Long.MIN_VALUE);
 		
-		if ( "R".equalsIgnoreCase(empract.getTiponomina()) ) {
-			mysqlDB.insertApp_param("PAY_REPORT_salary_PAY", "nominasta_ldh");
+		if ( "G".equalsIgnoreCase(empract.getTiponomina()) ) {
+			mysqlDB.insertEnterprise_data(enterprise.id, "PAY_REPORT_salary_PAY", "nominasta", startDate , null);
+		} 
+		else if ( "R".equalsIgnoreCase(empract.getTiponomina()) ) {
+			mysqlDB.insertEnterprise_data(enterprise.id, "PAY_REPORT_salary_PAY", "nominasta_ldh", startDate , null);
+		} 
+		else if ( "C".equalsIgnoreCase(empract.getTiponomina()) ) {
+			mysqlDB.insertEnterprise_data(enterprise.id, "PAY_REPORT_salary_PAY", "nominasta_codint", startDate , null);
+		} 
+		else if ( "D".equalsIgnoreCase(empract.getTiponomina()) ) {
+			mysqlDB.insertEnterprise_data(enterprise.id, "PAY_REPORT_salary_PAY", "nominasta_condias", startDate , null);
 		} 
 		
 		DefaultMysqlDB.save(cnae_activity, enterprise.id, cnae, activityId);

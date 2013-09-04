@@ -654,6 +654,12 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 					null,
 					null);
 		
+		mysqlDB.insertContract_data(com.esferalia.aon.payroll.ContractData.COD_INT, 
+				this.contractId, 
+				emprper.getCodnsz(), 
+				emprper.getFecalt(), 
+				emprper.getFecbaj());
+
 		String ingEspEmp = 
 			enterprises.getIngEspEmp(emprper.getCodact());
 		if ( "S".equalsIgnoreCase(ingEspEmp ) ){
