@@ -43,17 +43,14 @@ public class OpenIDLoginModule extends LoginModule {
 		if (StringUtils.contains(name, OPENID_EMAIL )) {
 			String email = StringUtils.substringAfter(name,
 					OPENID_EMAIL );
-			name = getUserName(email, domain);
-			if (name!="anonymous"){
-				if ( name == null ) {
-					throw new AuthenticationLoginException( "aon_login_err_6", StringUtils.substringAfter(name,
-							OPENID_EMAIL ));
-				}
+			name = getUserName(email, domain);	
+			if ( name == null ) {
+				throw new AuthenticationLoginException( "aon_login_err_6", email);
 			}
-			
 		}
 		
 
+		
 		return super.createIdentity(name);
 	}
 

@@ -14,6 +14,7 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 
 import com.code.aon.jaas.auth.IConstants;
+import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.auth.util.Util;
 
 
@@ -163,6 +164,8 @@ public abstract class UsernamePasswordLoginModule extends AbstractServerLoginMod
          try
          {
             identity = createIdentity(username);
+         }catch ( AuthenticationLoginException e ) {
+        	 
          }
          catch(Exception e)
          {
