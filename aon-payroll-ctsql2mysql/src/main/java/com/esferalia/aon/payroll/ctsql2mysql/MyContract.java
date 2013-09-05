@@ -1093,8 +1093,30 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 
 	
 	
+	private Boolean isUnitsPercep(Percep percep) 
+	throws SQLException {
+
+		String calculo =  percep.getCalculo();
+		if (!"0".equals(calculo))
+			return false;
+		
+		BigDecimal importe = percep.getImporte();
+		if ( importe == null )
+			return false;
+		BigDecimal impuni = percep.getImpuni();
+		if ( impuni == null )
+			return false;
+		BigDecimal unidades = percep.getUnidades();
+		if ( unidades == null )
+			return false;
+		
+		return importe.doubleValue() == impuni.doubleValue() * unidades.doubleValue();
+		
+		
+	}
 	
 	
+
 	private String getInlineExpression(Percep percep) 
 	throws SQLException {
 
@@ -1461,6 +1483,21 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 							String.format(grtzdo, variable), 
 							startDate, //percep.getFecini(), 
 							endDate);
+			}else if ( isUnitsPercep(percep) ){
+				String impuni = String.format("%s_IMPORTE", concept.code);
+				String unidades = String.format("%s_UNIDADES", concept.code);
+				script = String.format("%s * %s ", unidades, impuni );
+				overrideContract_variable(impuni, 
+						this.contractId, 
+						String.format("%.3f", percep.getImpuni()), 
+						startDate, 
+						endDate);
+				overrideContract_variable(unidades, 
+						this.contractId, 
+						String.format("%.3f", percep.getUnidades()), 
+						startDate, 
+						endDate);
+				MysqlDB.info("percep{}{}: Units expression {} {} {}", percep.getNumero(), percep.getCdg(), script, unidades, impuni  );
 			}
 			else {
 					script = getInlineExpression(percep);
