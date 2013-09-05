@@ -1,7 +1,7 @@
 # Database: aon_master
-# Version: Actualizacion de la version 7.21.1 a la version 7.22.0.
-# Created by: girazu
-# Creation Date: 02/09/2013 16:00
+# Version: Actualizacion de la version 7.22.0 a la version 7.22.1.
+# Created by: rtrepiana
+# Creation Date: 04/09/2013 17:00
 # Comentarios: esta actualización no contiene cambios invalidantes de base de datos.
 
 BEGIN;

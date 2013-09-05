@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.22.0
+# Version: 7.22.1
 # Created by: girazu
-# Creation Date: 02/09/2013 17:10
+# Creation Date: 05/09/2013 11:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -6577,13 +6577,16 @@ CREATE TABLE `salary_cost` (
 CREATE TABLE `salary_data` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` tinyint(2) NOT NULL COMMENT 'Nombre',
+  `name` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre',
   `expression` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion',
+  `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
   PRIMARY KEY (`id`),
   KEY `IDX_SALARY_DATA_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SALARY_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  KEY `IDX_SALARY_DATA_SALARY` (`salary`),
+  CONSTRAINT `FK_SALARY_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_SALARY_DATA_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos de la nomina';
 
 #
@@ -7145,7 +7148,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.22.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.22.1');
 
 COMMIT;
 
