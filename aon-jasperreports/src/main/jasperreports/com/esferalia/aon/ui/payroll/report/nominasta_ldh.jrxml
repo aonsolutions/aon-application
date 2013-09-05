@@ -144,7 +144,7 @@
 					<textElement verticalAlignment="Bottom">
 						<font size="17" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["RECIBO DE NÓMINA"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["RECIBO DE " + $F{salary}.getType().getName($P{REPORT_LOCALE}).toUpperCase()]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement x="11" y="156" width="239" height="1" backcolor="#000000"/>

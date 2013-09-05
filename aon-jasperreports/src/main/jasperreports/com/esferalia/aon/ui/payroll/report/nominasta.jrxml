@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="151b439e-a229-4f6e-84b0-9d72972045ec">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="336"/>
-	<property name="ireport.y" value="166"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.esferalia.aon.salary.enumeration.PaymentType"/>
 	<import value="com.code.aon.registry.enumeration.AddressType"/>
@@ -150,12 +150,12 @@
 		<band height="212">
 			<frame>
 				<reportElement uuid="66e0eeda-58dc-4e4c-b07b-620ce3556dd1" style="box" x="0" y="0" width="555" height="212"/>
-				<textField>
-					<reportElement uuid="81ef307f-b59c-4770-9513-cd91d000e046" style="label" x="266" y="1" width="272" height="23"/>
+				<textField pattern="">
+					<reportElement uuid="e4592311-f573-4186-a43c-f462df2bd0ac" style="label" x="266" y="1" width="272" height="23" isRemoveLineWhenBlank="true"/>
 					<textElement verticalAlignment="Bottom">
 						<font size="17" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["RECIBO DE NÓMINA"]]></textFieldExpression>
+					<textFieldExpression><![CDATA["RECIBO DE " + $F{salary}.getType().getName($P{REPORT_LOCALE}).toUpperCase()]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement uuid="98e0f00f-b53a-41f4-ba43-339582381b9a" x="11" y="156" width="239" height="1" backcolor="#000000"/>
@@ -553,7 +553,7 @@
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="12">
-								<textField>
+								<textField pattern="#,##0.00">
 									<reportElement uuid="c37056d6-a757-4eaf-8e57-5202a018b2e1" style="amount_TD" x="2" y="0" width="39" height="12">
 										<printWhenExpression><![CDATA[$P{CONDIAS}]]></printWhenExpression>
 									</reportElement>
@@ -577,7 +577,7 @@
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="12">
-								<textField>
+								<textField pattern="#,##0.00">
 									<reportElement uuid="068baf26-4de1-48d6-b682-7e7b65652e9e" style="amount_TD" x="2" y="0" width="60" height="12">
 										<printWhenExpression><![CDATA[$P{CONDIAS}]]></printWhenExpression>
 									</reportElement>
