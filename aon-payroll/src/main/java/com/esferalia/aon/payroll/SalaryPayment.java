@@ -99,7 +99,7 @@ public class SalaryPayment extends SalaryPaymentDB implements IPayment,
 		List<?> list = bean.getList(c);
 		if (list == null || list.size() == 0)
 			return null;
-		return ((ContractData) list.get(0)).getExpression();
+		return ((SalaryData) list.get(0)).getExpression();
 	}
 
 }
