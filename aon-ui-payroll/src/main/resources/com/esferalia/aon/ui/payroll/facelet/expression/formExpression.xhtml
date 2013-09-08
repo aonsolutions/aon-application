@@ -7,14 +7,14 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="#{expression}Panel">
+	<aon:panelGroup id="#{controller.beanName}#{expression}Panel">
 
 		<aon:inputTextarea id="#{controller.beanName}#{expression}Input" cols="96" rows="2"
 			maxlength="128" value="#{controller.to[expression]}">
 			<f:validateLength maximum="128" />
 			<a4j:support event="onkeyup"
 				actionListener="#{controller.onChangeExpression}"
-				reRender="#{expression}Icon, #{expression}Message" ajaxSingle="true" requestDelay="1500"
+				reRender="#{controller.beanName}#{expression}Icon, #{controller.beanName}#{expression}Message" ajaxSingle="true" requestDelay="1500"
 			/>
 		</aon:inputTextarea>
 		<c:choose>
@@ -22,7 +22,7 @@
 				<aon:outputText id="#{controller.beanName}#{expression}Icon"
 					styleClass="aon-icon-predetermine aon-vertical-align-top"
 					style="padding-left: 15px;" value="&#160;" />
-				<aon:div id="#{expression}Message">
+				<aon:div id="#{controller.beanName}#{expression}Message">
 				</aon:div>
 			</c:when>
 			<c:otherwise>

@@ -1241,7 +1241,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 						salaryDraftObject.setDraftPeriod(getStartDate(),
 								getEndDate());
 					}
-					salaryDraftObject.calculate(SalaryDraft.this);
 					syncDatesListBox();
 				}
 			};
@@ -1270,6 +1269,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				}
 
 				acceptButton.setEnabled(salaryDraftObject.hasDrafts());
+
+				salaryDraftObject.calculate(SalaryDraft.this);
 			}
 		});
 	}
