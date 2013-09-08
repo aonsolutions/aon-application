@@ -37,6 +37,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasAllFocusHandlers;
@@ -168,6 +170,30 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		public VariableChangeHandler(Variable variable) {
 			this.variable = variable;
+		}
+
+		public void setLabel(Label label) {
+			label.addDoubleClickHandler(new DoubleClickHandler() {
+
+				@Override
+				public void onDoubleClick(DoubleClickEvent event) {
+					InputDialog inputDialog = new InputDialog("Renombrar...",
+							"Nuevo Nombre"){
+						@Override
+						public void onAccept() {
+							String newName = getInputValue();
+							if ( variable.getName().equals(newName) )
+								return;
+							salaryDraftObject.renameVariable(variable, newName);
+							salaryDraftObject.calculate(SalaryDraft.this);
+							
+						}
+					};
+					inputDialog.setInputValue(variable.getName());
+					inputDialog.center();
+					inputDialog.show();
+				}
+			});
 		}
 
 		public void setUiObject(T uiObject) {
@@ -471,7 +497,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 						@Override
 						public void execute() {
 							expressionBox.setFocus(true);
-							
+
 						}
 					});
 
@@ -918,10 +944,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	@Override
 	public void onCalculateSucces(SalaryDraftObject salaryDraftObject) {
-		boolean draftObjectChanged = this.salaryDraftObject != salaryDraftObject ;
-		if ( draftObjectChanged )
+		boolean draftObjectChanged = this.salaryDraftObject != salaryDraftObject;
+		if (draftObjectChanged)
 			this.salaryDraftObject = salaryDraftObject;
-			
 
 		salarySelect.setSalaryPreview(salaryDraftObject.asSalaryPreview());
 
@@ -1056,51 +1081,59 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		daysLabel.setText(Integer.toString(CalendarUtil.getDaysBetween(
 				startDate, endDate) + 1));
 
-		totalPaymentsLabel.setText(format(salaryDraftObject.getTotalPayment()), displayChanges);
+		totalPaymentsLabel.setText(format(salaryDraftObject.getTotalPayment()),
+				displayChanges);
 		dbTotalPaymentsLabel.setText(format(salaryDraftObject
 				.getDbTotalPayment()));
 		setDbStyleName(dbTotalPaymentsLabel, totalPaymentsLabel);
 
-		cgcBaseLabel.setText(format(salaryDraftObject.getCgcBase()), displayChanges);
+		cgcBaseLabel.setText(format(salaryDraftObject.getCgcBase()),
+				displayChanges);
 		dbCgcBaseLabel.setText(format(salaryDraftObject.getDbCgcBase()));
 		setDbStyleName(dbCgcBaseLabel, cgcBaseLabel);
-		cgpBaseLabel.setText(format(salaryDraftObject.getCgpBase()), displayChanges);
+		cgpBaseLabel.setText(format(salaryDraftObject.getCgpBase()),
+				displayChanges);
 		dbCgpBaseLabel.setText(format(salaryDraftObject.getDbCgpBase()));
 		setDbStyleName(dbCgpBaseLabel, cgpBaseLabel);
-		irpfBaseLabel.setText(format(salaryDraftObject.getIrpfBase()), displayChanges);
+		irpfBaseLabel.setText(format(salaryDraftObject.getIrpfBase()),
+				displayChanges);
 		dbIrpfBaseLabel.setText(format(salaryDraftObject.getDbIrpfBase()));
 		setDbStyleName(dbIrpfBaseLabel, irpfBaseLabel);
-		hExtraBaseLabel.setText(format(salaryDraftObject.gethExtraBase()), displayChanges);
+		hExtraBaseLabel.setText(format(salaryDraftObject.gethExtraBase()),
+				displayChanges);
 		dbHExtraBaseLabel.setText(format(salaryDraftObject.getDbHExtraBase()));
 		setDbStyleName(dbHExtraBaseLabel, hExtraBaseLabel);
-		nonHExtraBaseLabel
-				.setText(format(salaryDraftObject.getNonHExtraBase()), displayChanges);
+		nonHExtraBaseLabel.setText(
+				format(salaryDraftObject.getNonHExtraBase()), displayChanges);
 		dbNonHExtraBaseLabel.setText(format(salaryDraftObject
 				.getDbNonHExtraBase()));
 		setDbStyleName(dbNonHExtraBaseLabel, nonHExtraBaseLabel);
-		prorationBaseLabel
-				.setText(format(salaryDraftObject.getProrationBase()), displayChanges);
+		prorationBaseLabel.setText(
+				format(salaryDraftObject.getProrationBase()), displayChanges);
 		dbProrationBaseLabel.setText(format(salaryDraftObject
 				.getDbProrationBase()));
 		setDbStyleName(dbProrationBaseLabel, prorationBaseLabel);
 
-		remunerationLabel.setText(format(salaryDraftObject.getRemuneration()), displayChanges);
+		remunerationLabel.setText(format(salaryDraftObject.getRemuneration()),
+				displayChanges);
 		dbRemunerationLabel.setText(format(salaryDraftObject
 				.getDbRemuneration()));
 		setDbStyleName(dbRemunerationLabel, remunerationLabel);
 
-		totalPaymentLabel.setText(format(salaryDraftObject.getTotalPayment()), displayChanges);
+		totalPaymentLabel.setText(format(salaryDraftObject.getTotalPayment()),
+				displayChanges);
 		dbTotalPaymentLabel.setText(format(salaryDraftObject
 				.getDbTotalPayment()));
 		setDbStyleName(dbTotalPaymentLabel, totalPaymentLabel);
 
-		totalDeductionLabel.setText(format(salaryDraftObject
-				.getTotalDeduction()), displayChanges);
+		totalDeductionLabel.setText(
+				format(salaryDraftObject.getTotalDeduction()), displayChanges);
 		dbTotalDeductionLabel.setText(format(salaryDraftObject
 				.getDbTotalDeduction()));
 		setDbStyleName(dbTotalDeductionLabel, totalDeductionLabel);
 
-		totalLiquidLabel.setText(format(salaryDraftObject.getTotalLiquid()), displayChanges);
+		totalLiquidLabel.setText(format(salaryDraftObject.getTotalLiquid()),
+				displayChanges);
 		dbTotalLiquidLabel
 				.setText(format(salaryDraftObject.getDbTotalLiquid()));
 		setDbStyleName(dbTotalLiquidLabel, totalLiquidLabel);
@@ -1361,7 +1394,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	// -------------------------------------------------------------------------
-
 
 	private void initPrintPreview() {
 		printPreviewButton.addClickHandler(new ClickHandler() {
@@ -1809,14 +1841,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 			HTMLPanel htmlPanel = new HTMLPanel("");
 
-			htmlPanel.add(getLabel(variable));
+			VariableChangeHandler<TextBox> variableChangeHandler = new VariableChangeHandler<TextBox>(
+					variable);
+
+			Label label = getLabel(variable);
+			htmlPanel.add(label);
+			variableChangeHandler.setLabel(label);
 
 			Panel valuePanel = new HorizontalPanel();
 			valuePanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 
 			TextBox variableTextBox = new TextBox();
-			VariableChangeHandler<TextBox> variableChangeHandler = new VariableChangeHandler<TextBox>(
-					variable);
 			variableChangeHandler.setUiObject(variableTextBox);
 			valuePanel.add(variableTextBox);
 
@@ -2042,7 +2077,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		return date == null ? null : DATE_FORMAT.format(date);
 	}
 
-	private Widget getLabel(Variable variable) {
+	private Label getLabel(Variable variable) {
 		String text = variable.getName();
 
 		if (variable.getScope() == Scope.SALARY) {

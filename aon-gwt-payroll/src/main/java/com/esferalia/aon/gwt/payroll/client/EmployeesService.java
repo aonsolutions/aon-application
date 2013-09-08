@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -96,4 +98,8 @@ public interface EmployeesService extends RemoteService {
 			int offset, int limit, String names []) throws IllegalArgumentException;
 	
 	Period getAvailPeriod(Integer workplaceId, String name)throws IllegalArgumentException ;
+	
+	Map<String, String> getEventsVariables(Integer workplaceId, Integer agreementId,
+			Date startDate, Date endDate) throws IllegalArgumentException;	
+	
 }

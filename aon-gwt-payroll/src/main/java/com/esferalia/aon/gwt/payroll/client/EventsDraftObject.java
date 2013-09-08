@@ -37,12 +37,21 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class EventsDraftObject {
 
 	private static final int ALL_EMPLOYE_ID = -1;
+
+	static interface Callback {
+
+		void onSucces();
+
+		void onFailure(Throwable throwable);
+
+	}
 
 	static interface SaveCallback {
 
@@ -241,7 +250,7 @@ public class EventsDraftObject {
 			render(context, event.getValue(), sb);
 
 		}
-		
+
 		@Override
 		public Set<String> getConsumedEvents() {
 			return Collections.emptySet();
@@ -375,8 +384,8 @@ public class EventsDraftObject {
 				InputElement input = getInputElement(parent);
 				value.setValue(input.getValue());
 				valueUpdater.update(value);
-			} else if (BrowserEvents.DBLCLICK.equals(type)){
-				InputDialog inputDialog = new InputDialog("","") ;
+			} else if (BrowserEvents.DBLCLICK.equals(type)) {
+				InputDialog inputDialog = new InputDialog("", "");
 				inputDialog.center();
 				inputDialog.show();
 			}
@@ -828,7 +837,8 @@ public class EventsDraftObject {
 
 	private Date endDate;
 	private Date startDate;
-	private int workplaceId;
+	private Integer workplaceId;
+	private Integer agreementId;
 
 	private Events events;
 	private DraftEvents draftEvents;
@@ -838,17 +848,20 @@ public class EventsDraftObject {
 	private EmployeesServiceAsync employeesServiceAsync;
 	private Map<String, EventMetaData> eventsMetaDataMap;
 
-	public EventsDraftObject(int workplaceId,
+	private Map<String, EventMetaData> userEventsMetaDataMap;
+
+	public EventsDraftObject(Integer workplaceId, Integer agreeementId,
 			EmployeesServiceAsync employeesServiceAsync,
 			EventMetaData... eventsMetaData) {
 		this.events = new Events();
 		this.draftEvents = new DraftEvents();
 		this.workplaceId = workplaceId;
+		this.agreementId = agreeementId;
 		this.employeesServiceAsync = employeesServiceAsync;
 
-		this.eventsMetaDataMap = new HashMap<String, EventMetaData>();
+		this.userEventsMetaDataMap = new HashMap<String, EventMetaData>();
 		for (EventMetaData eventMetaData : eventsMetaData)
-			this.eventsMetaDataMap.put(eventMetaData.name, eventMetaData);
+			this.userEventsMetaDataMap.put(eventMetaData.name, eventMetaData);
 	}
 
 	public Date getStartDate() {
@@ -858,15 +871,13 @@ public class EventsDraftObject {
 	public Date getEndDate() {
 		return endDate;
 	}
-
-	public void setStartDate(Date startDate) {
+	
+	public void setPeriod(Date startDate, Date endDate, Callback cb){
 		this.events.clear();
+		this.eventsMetaDataMap = null;
 		this.startDate = startDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.events.clear();
 		this.endDate = endDate;
+		fillEventsMetaData(cb);
 	}
 
 	public void addListener(Listener listener) {
@@ -895,23 +906,9 @@ public class EventsDraftObject {
 				});
 	}
 
-	public void getEvents(int offset, int limit, final GetCallback getCallback) {
-		String names[] = eventsMetaDataMap.keySet().toArray(
-				new String[eventsMetaDataMap.size()]);
-		employeesServiceAsync.getEvents(workplaceId, startDate, endDate,
-				offset, limit, names, new AsyncCallback<Events>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						getCallback.onEventsFailure(caught);
-					}
-
-					@Override
-					public void onSuccess(Events result) {
-						events.addAll(result);
-						draftEvents.addAll(result.getEmployees());
-						getCallback.onEventsSucces(result.getEmployees());
-					}
-				});
+	public void getEvents(final int offset, final int limit,
+			final GetCallback getCallback) {
+		getEventsImpl(offset, limit, getCallback);
 	}
 
 	public void getAvailPeriod(String name, AsyncCallback<Period> callback) {
@@ -1037,6 +1034,37 @@ public class EventsDraftObject {
 	// -------------------------------------------------------------------------
 	//
 	// -------------------------------------------------------------------------
+	private void fillEventsMetaData(final Callback cb) {
+		if (eventsMetaDataMap != null)
+			return;
+
+		employeesServiceAsync.getEventsVariables(workplaceId, agreementId,
+				startDate, endDate, new AsyncCallback<Map<String, String>>() {
+
+					@Override
+					public void onSuccess(Map<String, String> result) {
+						eventsMetaDataMap = new HashMap<String, EventMetaData>();
+						eventsMetaDataMap.putAll(userEventsMetaDataMap);
+						for (String var : result.keySet())
+							eventsMetaDataMap.put(
+									var,
+									new DecimalEventMetaData(var, result
+											.get(var)));
+						cb.onSucces();
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						eventsMetaDataMap = new HashMap<String, EventMetaData>();
+						eventsMetaDataMap.putAll(userEventsMetaDataMap);
+						
+						cb.onFailure(caught);
+						
+					}
+				});
+
+	}
 
 	private Events getEvents(String name) {
 		Events oneEvents = new Events();
@@ -1073,4 +1101,27 @@ public class EventsDraftObject {
 		for (Listener listener : listeners)
 			listener.onEventAdded(event);
 	}
+
+	private void getEventsImpl(int offset, int limit,
+			final GetCallback getCallback) {
+
+		String names[] = eventsMetaDataMap.keySet().toArray(
+				new String[eventsMetaDataMap.size()]);
+
+		employeesServiceAsync.getEvents(workplaceId, startDate, endDate,
+				offset, limit, names, new AsyncCallback<Events>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						getCallback.onEventsFailure(caught);
+					}
+
+					@Override
+					public void onSuccess(Events result) {
+						events.addAll(result);
+						draftEvents.addAll(result.getEmployees());
+						getCallback.onEventsSucces(result.getEmployees());
+					}
+				});
+	}
+
 }

@@ -5,6 +5,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -26,7 +27,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * 
  */
 public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
-
 
 	private EmployeesServiceAsync employeesServiceAsync;
 
@@ -72,7 +72,7 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getEnterpriseCosts(enterpriseId,
 				new AsyncCallbackWrapper<List<Cost>>(callback));
 	}
-		
+
 	public void getSalaries(Employee employee,
 			AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException {
@@ -80,17 +80,15 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getSalaries(employee,
 				new AsyncCallbackWrapper<List<Salary>>(callback));
 	}
-	
+
 	@Override
-	public void getIrpfs(Employee employee,
-			AsyncCallback<List<Irpf>> callback)
+	public void getIrpfs(Employee employee, AsyncCallback<List<Irpf>> callback)
 			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getIrpfs(employee,
 				new AsyncCallbackWrapper<List<Irpf>>(callback));
 	}
-	
-	
+
 	@Override
 	public void getIrpfReceiptHTML(Irpf irpf, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
@@ -207,20 +205,20 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getSalaryDraftReceipt(salaryDraft, mime,
 				new AsyncCallbackWrapper<String>(callback));
 	}
-	
+
 	@Override
 	public void getIrpfDraftReceipt(SalaryDraft salaryDraft, String mime,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getIrpfDraftReceipt(salaryDraft, mime,
 				new AsyncCallbackWrapper<String>(callback));
-		
+
 	}
-	
+
 	@Override
 	public void getIrpfDraftReceiptHTML(SalaryDraft salaryPreview, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
-		
+
 		AON.start();
 		employeesServiceAsync.getIrpfDraftReceiptHTML(salaryPreview, zoom,
 				new AsyncCallbackWrapper<String>(callback));
@@ -246,10 +244,21 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 
 	@Override
 	public void getAvailPeriod(Integer workplaceId, String name,
-			AsyncCallback<Period> callback) throws IllegalArgumentException
-			{
+			AsyncCallback<Period> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getAvailPeriod(workplaceId, name,
 				new AsyncCallbackWrapper<Period>(callback));
+	}
+
+	@Override
+	public void getEventsVariables(Integer workplaceId, Integer agreementId,
+			Date startDate, Date endDate,
+			AsyncCallback<Map<String, String>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getEventsVariables(workplaceId, agreementId,
+				startDate, endDate,
+				new AsyncCallbackWrapper<Map<String, String>>(callback));
+
 	}
 }

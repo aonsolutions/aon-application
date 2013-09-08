@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -99,7 +100,8 @@ public class Employees extends ResizeComposite implements
 	private static final int ENTERPRISE_COSTS_INDEX = 0;
 	private static final int WORKPLACE_COSTS_INDEX = 0;
 	private static final int EMPLOYEE_SALARIES_INDEX = 0;
-	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 3; // TODO : It's not statci ???
+	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 3; // TODO : It's not
+																// statci ???
 
 	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.DATE_SHORT);
@@ -150,7 +152,7 @@ public class Employees extends ResizeComposite implements
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
 		tree.addDomHandler(this, ContextMenuEvent.getType());
-		
+
 		collapseAllButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -232,7 +234,7 @@ public class Employees extends ResizeComposite implements
 			addImageItem(workplaceItem, "Costos", images.costs());
 
 			if (extended) {
-				TreeItem eventsItem = addImageItem(workplaceItem,
+				final TreeItem eventsItem = addImageItem(workplaceItem,
 						"Incidencias", images.data());
 
 				// --------------------------------------------------------------
@@ -244,36 +246,55 @@ public class Employees extends ResizeComposite implements
 						"8", "10", "12", "L", "LT", "LR", "F", "FT", "FR", "V",
 						"B", "P", "AI", "M");
 
-				EventsDraftObject eventsDraftObject = new EventsDraftObject(
+				// EventsDraftObject eventsDraftObject = new EventsDraftObject(
+				// workplace.getId(),
+				// employeesService,
+				// new DecimalEventMetaData("INCENTIVOS"),
+				// new DecimalEventMetaData("ATRASOS"),
+				// new DecimalEventMetaData("ANTICIPOS"),
+				// new DecimalEventMetaData("EMBARGOS"),
+				// new DecimalEventMetaData("LTA",
+				// "D\u00EDas Libres Trabajados canjeados por Alojamiento"),
+				// new DecimalEventMetaData("CLT",
+				// "Coste d\u00EDa Libre Trabajado"),
+				// new DecimalEventMetaData("CD",
+				// "Coste Diario del trabajador (jornada 8 horas)"),
+				// new ConstantEventMetaData("CFT",
+				// "Coste d\u00EDa Festivo Trabajado ( = CD * 1.75 \u20A0)"),
+				// new BooleanEventMetaData("LTNR",
+				// "D\u00EDas Libres Trabajados No Recuperables"),
+				// new DecimalEventMetaData("HFD",
+				// "Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"),
+				// fteMetaData, new EventMetaData("OBSERVACIONES"),
+				// new ConstantEventMetaData("PLUS_TURNICIDAD",
+				// "Plus de Turnicidad = (\u2211LT - \u2211LR - LTA) * CLT"));
+
+				Agreement agreement = workplace.getAgreement();
+				final EventsDraftObject eventsDraftObject = new EventsDraftObject(
 						workplace.getId(),
-						employeesService,
-						new DecimalEventMetaData("INCENTIVOS"),
-						new DecimalEventMetaData("ATRASOS"),
-						new DecimalEventMetaData("ANTICIPOS"),
-						new DecimalEventMetaData("EMBARGOS"),
-						new DecimalEventMetaData("LTA",
-								"D\u00EDas Libres Trabajados canjeados por Alojamiento"),
-						new DecimalEventMetaData("CLT",
-								"Coste d\u00EDa Libre Trabajado"),
-						new DecimalEventMetaData("CD",
-								"Coste Diario del trabajador (jornada 8 horas)"),
-						new ConstantEventMetaData("CFT",
-								"Coste d\u00EDa Festivo Trabajado ( = CD * 1.75 \u20A0)"),
-						new BooleanEventMetaData("LTNR",
-								"D\u00EDas Libres Trabajados No Recuperables"),
-						new DecimalEventMetaData("HFD",
-								"Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"),
-						fteMetaData, new EventMetaData("OBSERVACIONES"),
-						new ConstantEventMetaData("PLUS_TURNICIDAD",
-								"Plus de Turnicidad = (\u2211LT - \u2211LR - LTA) * CLT"));
+						agreement != null ? agreement.getId() : null,
+						employeesService, new BooleanEventMetaData(
+								"DIAS_EFECTIVOS"), new BooleanEventMetaData(
+								"HUELGA"), new EventMetaData("OBSERVACIONES"));
+
 				Date date = new Date();
 
-				eventsDraftObject.setEndDate(DateUtils
-						.getLastDayOfWorkWeek(date));
-				eventsDraftObject.setStartDate(DateUtils
-						.getFirstDayOfWorkWeek(date));
+				eventsDraftObject.setPeriod(
+						DateUtils.getFirstDayOfWorkWeek(date),
+						DateUtils.getLastDayOfWorkWeek(date),
+						new EventsDraftObject.Callback() {
 
-				eventsItem.setUserObject(eventsDraftObject);
+							@Override
+							public void onSucces() {
+								eventsItem.setUserObject(eventsDraftObject);
+							}
+
+							@Override
+							public void onFailure(Throwable throwable) {
+								eventsItem.setUserObject(eventsDraftObject);
+							}
+
+						});
 
 			}
 
@@ -563,23 +584,22 @@ public class Employees extends ResizeComposite implements
 			return;
 		} // end-if: Salaries of this employee have been already loaded.
 
-		employeesService.getIrpfs(employee,
-				new AsyncCallback<List<Irpf>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-						Window.alert(caught.getLocalizedMessage());
+		employeesService.getIrpfs(employee, new AsyncCallback<List<Irpf>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				Window.alert(caught.getLocalizedMessage());
 
-					}
+			}
 
-					@Override
-					public void onSuccess(List<Irpf> irpfOutcomes) {
-						IrpfDocuments documents = new IrpfDocuments(
-								irpfOutcomes, employeesService);
-						irpfOutcomesItem.setUserObject(documents);
-					}
-				});
-}
+			@Override
+			public void onSuccess(List<Irpf> irpfOutcomes) {
+				IrpfDocuments documents = new IrpfDocuments(irpfOutcomes,
+						employeesService);
+				irpfOutcomesItem.setUserObject(documents);
+			}
+		});
+	}
 
 	private void onEnterpriseSelected(Enterprise enterprise) {
 		for (Listener listener : listeners) {
@@ -739,17 +759,17 @@ public class Employees extends ResizeComposite implements
 				TreeItem aetItem = addImageItem(employeeItem,
 						"Regularizaciones", images.aet());
 				/*
-				TreeItem aetPersonalDataItem = addImageItem(aetItem,
-						"Datos personales", images.person());
-				TreeItem aetFamilyDataItem = addImageItem(aetItem,
-						"Ascendientes y descendientes", images.family());
-				TreeItem aetEconomicDataItem = addImageItem(aetItem,
-						"Datos econ\u00f3micos", images.euro());
-				TreeItem aetReglarizationDataItem = addImageItem(aetItem,
-						"Datos regularizaci\u00f3n", images.calendar());
-				TreeItem aetResultsItem = addImageItem(aetItem, "Resultados",
-						images.calc());
-				*/
+				 * TreeItem aetPersonalDataItem = addImageItem(aetItem,
+				 * "Datos personales", images.person()); TreeItem
+				 * aetFamilyDataItem = addImageItem(aetItem,
+				 * "Ascendientes y descendientes", images.family()); TreeItem
+				 * aetEconomicDataItem = addImageItem(aetItem,
+				 * "Datos econ\u00f3micos", images.euro()); TreeItem
+				 * aetReglarizationDataItem = addImageItem(aetItem,
+				 * "Datos regularizaci\u00f3n", images.calendar()); TreeItem
+				 * aetResultsItem = addImageItem(aetItem, "Resultados",
+				 * images.calc());
+				 */
 			}
 
 			added++;
@@ -834,7 +854,7 @@ public class Employees extends ResizeComposite implements
 
 					protected void onAccept() {
 						try {
-							
+
 							String newNamePattern = getName();
 							if (newNamePattern != null) {
 								newNamePattern = newNamePattern.trim();
@@ -842,10 +862,10 @@ public class Employees extends ResizeComposite implements
 									newNamePattern = null;
 								}
 							}
-						
-							Date newFromDate = getDateFrom() ;
-							if ( newFromDate != null)
-								newFromDate  = DateUtils.toUTC(getDateFrom());
+
+							Date newFromDate = getDateFrom();
+							if (newFromDate != null)
+								newFromDate = DateUtils.toUTC(getDateFrom());
 
 							boolean nameChanged = !StringUtils
 									.equalsIgnoreCase(namePattern,

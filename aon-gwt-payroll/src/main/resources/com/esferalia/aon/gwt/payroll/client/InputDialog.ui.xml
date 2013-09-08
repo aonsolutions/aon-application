@@ -45,7 +45,7 @@
 
 		<g:Grid width="100%" >
 			<g:row>
-				<g:customCell styleName="{style.field}"><g:TextArea width="100%" ui:field="inputTextArea"/></g:customCell>
+				<g:customCell styleName="{style.field}"><g:TextArea visibleLines="1" width="100%" ui:field="inputTextArea"/></g:customCell>
 			</g:row>
 		</g:Grid>
 		

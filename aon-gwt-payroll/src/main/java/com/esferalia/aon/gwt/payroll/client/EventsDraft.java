@@ -424,7 +424,6 @@ public class EventsDraft extends ResizeComposite {
 			return consumedEvents != null && consumedEvents.contains(eventType);
 		}
 
-
 	}
 
 	@UiField
@@ -484,14 +483,29 @@ public class EventsDraft extends ResizeComposite {
 
 		this.draftObject = draftObject;
 
-		syncWithDateRange();
+		syncWithDateRange(new EventsDraftObject.Callback() {
 
-		fillDateRange();
-		fillEventList();
+			@Override
+			public void onSucces() {
+				fillDateRange();
+				fillEventList();
 
-		initAndfillEventsTable();
+				initAndfillEventsTable();
 
-		fillCopyDateRange();
+				fillCopyDateRange();
+			}
+
+			@Override
+			public void onFailure(Throwable throwable) {
+				fillDateRange();
+				fillEventList();
+
+				initAndfillEventsTable();
+
+				fillCopyDateRange();
+			}
+
+		});
 
 	}
 
@@ -526,11 +540,22 @@ public class EventsDraft extends ResizeComposite {
 	void onNextDateRangeButton(ClickEvent event) {
 		DateRange dateRange = getDateRange();
 		Date startDate = dateRange.getNext(draftObject.getStartDate());
-		draftObject.setStartDate(startDate);
 		Date endDate = dateRange.getNext(startDate);
 		CalendarUtil.addDaysToDate(endDate, -1);
-		draftObject.setEndDate(endDate);
-		reload();
+		draftObject.setPeriod(startDate, endDate,
+				new EventsDraftObject.Callback() {
+
+					@Override
+					public void onSucces() {
+						reload();
+					}
+
+					@Override
+					public void onFailure(Throwable throwable) {
+						reload();
+					}
+
+				});
 	}
 
 	@UiHandler("previousDateRangeButton")
@@ -540,9 +565,20 @@ public class EventsDraft extends ResizeComposite {
 		Date endDate = draftObject.getStartDate();
 		CalendarUtil.addDaysToDate(endDate, -1);
 		Date startDate = dateRange.getPrevious(draftObject.getStartDate());
-		draftObject.setStartDate(startDate);
-		draftObject.setEndDate(endDate);
-		reload();
+		draftObject.setPeriod(startDate, endDate,
+				new EventsDraftObject.Callback() {
+
+					@Override
+					public void onSucces() {
+						reload();
+					}
+
+					@Override
+					public void onFailure(Throwable throwable) {
+						reload();
+					}
+
+				});
 	}
 
 	@UiHandler("eventsTableScrollPane")
@@ -603,10 +639,23 @@ public class EventsDraft extends ResizeComposite {
 
 	@UiHandler("dateRangeListBox")
 	void ondateRangeListBoxChanged(ChangeEvent event) {
-		syncWithDateRange();
-		fillDateRange();
-		initAndfillEventsTable();
-		fillCopyDateRange();
+		syncWithDateRange(new EventsDraftObject.Callback() {
+
+			@Override
+			public void onSucces() {
+				fillDateRange();
+				initAndfillEventsTable();
+				fillCopyDateRange();
+			}
+
+			@Override
+			public void onFailure(Throwable throwable) {
+				fillDateRange();
+				initAndfillEventsTable();
+				fillCopyDateRange();
+			}
+
+		});
 	}
 
 	@UiHandler("eventsTableScrollPane")
@@ -697,7 +746,6 @@ public class EventsDraft extends ResizeComposite {
 		eventsTable.sinkEvents(eventBitsToAdd);
 	}
 
-
 	private void fillEventsTable(List<Employee> employees) {
 
 		Cell<Event> editCell = getEditCell();
@@ -718,7 +766,8 @@ public class EventsDraft extends ResizeComposite {
 			eventsTable.setText(row, 0, employee.getDocument());
 			cellFormatter.addStyleName(row, 0, AON.AON_NOWRAP);
 			cellFormatter.addStyleName(row, 0, AON.AON_TEXT_CENTER);
-			eventsTable.setHTML(row, 1, "&nbsp;&nbsp;" + employee.getFullname());
+			eventsTable
+					.setHTML(row, 1, "&nbsp;&nbsp;" + employee.getFullname());
 			cellFormatter.addStyleName(row, 1, AON.AON_NOWRAP);
 
 			int col = 2;
@@ -810,10 +859,10 @@ public class EventsDraft extends ResizeComposite {
 						.getParentElement());
 
 				int row = targetTableRow.getSectionRowIndex();
-				
-				int col = eventsTable.getCellCount(row) -1 ;
 
-				eventsTable.onBrowserEvent(event, targetTableCell, row, col );
+				int col = eventsTable.getCellCount(row) - 1;
+
+				eventsTable.onBrowserEvent(event, targetTableCell, row, col);
 			}
 		});
 		DOM.sinkEvents(rigthColEl, eventsTable.sunkEvents);
@@ -832,10 +881,11 @@ public class EventsDraft extends ResizeComposite {
 						.getParentElement());
 
 				int row = targetTableRow.getSectionRowIndex();
-				
-				int col = eventsTable.getCellCount(row) -1 ;
 
-				eventsTable.onBrowserEvent(event, targetTableCell, row + 2, col );
+				int col = eventsTable.getCellCount(row) - 1;
+
+				eventsTable
+						.onBrowserEvent(event, targetTableCell, row + 2, col);
 			}
 		});
 
@@ -865,22 +915,21 @@ public class EventsDraft extends ResizeComposite {
 
 	}
 
-	private void syncWithDateRange() {
+	private void syncWithDateRange(EventsDraftObject.Callback cb) {
 		DateRange dateRange = getDateRange();
 		Date startDate = dateRange.getStart(draftObject.getStartDate());
 		Date endDate = dateRange.getNext(startDate);
 		CalendarUtil.addDaysToDate(endDate, -1);
 
-		draftObject.setStartDate(startDate);
-		draftObject.setEndDate(endDate);
+		draftObject.setPeriod(startDate, endDate, cb);
 	}
-	
-	private void updateEventLabel () {
+
+	private void updateEventLabel() {
 		eventLabel.setText(draftObject.getEventDescriptin(getSelectedEvent()));
 	}
 
 	private void fillCopyDateRange() {
-
+		
 		copyDateRangeListBox.clear();
 
 		String name = getSelectedEvent();
@@ -905,8 +954,9 @@ public class EventsDraft extends ResizeComposite {
 					copyDateRangeListBox.addItem("-", "");
 					copyDateRangeListBox.setSelectedIndex(0);
 				}
-
-				while (date.before(last)) {
+				
+				
+				while (date.before(current)) {
 
 					// Compare with actual day ( keep out time ).
 					if (CalendarUtil.isSameDate(date, current)) {
@@ -935,7 +985,7 @@ public class EventsDraft extends ResizeComposite {
 					copyDateRangeListBox.setSelectedIndex(copyDateRangeListBox
 							.getItemCount() - 1);
 				}
-
+				
 			}
 
 			@Override
@@ -1077,7 +1127,6 @@ public class EventsDraft extends ResizeComposite {
 		return draftObject.getEmployees().get(row - ROW_OFFSET);
 	}
 
-
 	private Event getEvent(int row, int col) {
 
 		if (isLastCol(col) || isFirstRow(row))
@@ -1089,7 +1138,6 @@ public class EventsDraft extends ResizeComposite {
 
 		return draftObject.getEvent(employee, name, day);
 	}
-
 
 	private Event getEvent(Employee employee, String name, Date start, Date end) {
 		return draftObject.getEvent(employee, name, start, end);
@@ -1127,7 +1175,6 @@ public class EventsDraft extends ResizeComposite {
 		cancelCell(editingTd.row, editingTd.col);
 		editingTd = null;
 	}
-
 
 	private void deSelectAll() {
 		for (Td td : selectionModel.getSelectedSet())
@@ -1326,7 +1373,6 @@ public class EventsDraft extends ResizeComposite {
 		return rt;
 
 	}
-
 
 	private static void removeFromParent(Element el) {
 		if (el != null && el.hasParentElement())

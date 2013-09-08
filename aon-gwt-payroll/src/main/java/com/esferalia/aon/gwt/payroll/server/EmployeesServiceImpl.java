@@ -9,6 +9,9 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_DATA;
+import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_REGULARIZATION;
+import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_RESULT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.PAYMENT_CONCEPT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.PERSON;
@@ -16,9 +19,6 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.USER_SCOPE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
-import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_DATA;
-import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_RESULT;
-import static com.esferalia.aon.payroll.sql.SQLConstants.IRPF_REGULARIZATION;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -342,7 +343,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			Map<Object, Object> parameters = new HashMap<Object, Object>(
 					JR_HTML_EXPORTER_PARAMS);
-			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /*
+			parameters
+					.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /*
 																			 * not
 																			 * roud
 																			 * to
@@ -650,6 +652,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			calculate(salaryDraft);
 			return salaryDraft;
+		} finally {
+			releaseFacesContext();
+		}
+
+	}
+
+	public Map<String, String> getEventsVariables(Integer workplaceId,
+			Integer agreementId, Date startDate, Date endDate)
+			throws IllegalArgumentException {
+		if (agreementId == null)
+			return Collections.emptyMap();
+
+		try {
+			initFacesContext();
+			return getWorkplaceEventsVariables(workplaceId, agreementId,
+					startDate, endDate);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
 		} finally {
 			releaseFacesContext();
 		}
@@ -1154,7 +1174,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-
 	private static List<Payment> getPaymentConcepts(Connection connection,
 			Integer domainId, Integer parentDomainId) throws SQLException {
 
@@ -1397,16 +1416,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		try {
 
-			String sql = "SELECT *" + " FROM " +  IRPF_DATA + ", "
-					+ IRPF_RESULT + " LEFT JOIN " + IRPF_REGULARIZATION
-					+ " USING ( " + IrpfResultColumns.CONTRACT + ", "
+			String sql = "SELECT *" + " FROM " + IRPF_DATA + ", " + IRPF_RESULT
+					+ " LEFT JOIN " + IRPF_REGULARIZATION + " USING ( "
+					+ IrpfResultColumns.CONTRACT + ", "
 					+ IrpfResultColumns.EFFECTIVE_DATE + " ) " + " WHERE "
-					+ IRPF_DATA + "." + IrpfDataColumns.CONTRACT + " =  ? " + " AND "
-					+ IRPF_DATA + "." + IrpfDataColumns.CONTRACT + " = "
-					+ IRPF_RESULT + "." + IrpfResultColumns.CONTRACT + " AND ( "
-					+ IRPF_DATA + "." + IrpfDataColumns.END_DATE + " IS NULL" + " OR "
-					+ IRPF_DATA + "." + IrpfDataColumns.END_DATE + " >= "
-					+ IRPF_RESULT + "." + IrpfResultColumns.EFFECTIVE_DATE + " )";
+					+ IRPF_DATA + "." + IrpfDataColumns.CONTRACT + " =  ? "
+					+ " AND " + IRPF_DATA + "." + IrpfDataColumns.CONTRACT
+					+ " = " + IRPF_RESULT + "." + IrpfResultColumns.CONTRACT
+					+ " AND ( " + IRPF_DATA + "." + IrpfDataColumns.END_DATE
+					+ " IS NULL" + " OR " + IRPF_DATA + "."
+					+ IrpfDataColumns.END_DATE + " >= " + IRPF_RESULT + "."
+					+ IrpfResultColumns.EFFECTIVE_DATE + " )";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, contractId);
@@ -1429,23 +1449,25 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				// Be care that irpf regularization may not exist .
 				Object irpfRegularizationId = rs.getObject(IRPF_REGULARIZATION
 						+ "." + IrpfRegularizationColumns.ID);
-				if ( irpfRegularizationId != null ) {
+				if (irpfRegularizationId != null) {
 					IrpfRegularization irpfRegularization = new IrpfRegularization();
-					irpfRegularization.setId((Integer)irpfRegularizationId);
+					irpfRegularization.setId((Integer) irpfRegularizationId);
 					outcome.setIrpfRegularization(irpfRegularization);
 				}
 
-
 				outcomes.add(outcome);
 			}
-			//SELECT * FROM , irpf_data, irpf_result LEFT JOIN irpf_regularization USING ( contract, effective_date )  WHERE contract =  ?  AND contract = contract AND ( end_date IS NULL OR end_date >= effective_date )
+			// SELECT * FROM , irpf_data, irpf_result LEFT JOIN
+			// irpf_regularization USING ( contract, effective_date ) WHERE
+			// contract = ? AND contract = contract AND ( end_date IS NULL OR
+			// end_date >= effective_date )
 			return outcomes;
 
-		} catch ( SQLException e ){
+		} catch (SQLException e) {
 			e.printStackTrace();
 			throw e;
 		}
-		
+
 		finally {
 			if (rs != null) {
 				rs.close();
@@ -1823,6 +1845,75 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (ManagerBeanException e) {
 		}
 
+	}
+
+	private static Map<String, String> getWorkplaceEventsVariables(
+			Integer workplaceId, Integer agreementId, Date startDate,
+			Date endDate) throws SQLException {
+		Connection connection = null;
+		try {
+			connection = getConnection();
+
+			Set<Payment> payments = SQLEvents.getPayments(connection,
+					workplaceId, startDate, endDate);
+
+			if (agreementId != null){
+				payments.addAll(SQLAgreementDraft.getPayments(connection,
+						agreementId, startDate, endDate));
+			}
+
+			Map<String, String> variables = new HashMap<String, String>();
+
+			for (Payment payment : payments) {
+
+				if (StringUtils.equals("REMOVE()", payment.getExpression()))
+					continue;
+
+				Set<String> paymentVars = ExpressionContext
+						.getVariableSet(payment.getExpression());
+
+				for (String var : paymentVars) {
+					if (var.endsWith("_ACTUAL"))
+						continue; // This is awfull ... very awful
+					variables.put(var, String.format("%s",
+							payment.getDescription(), payment.getExpression()));
+				}
+
+				variables.remove(payment.getName());
+			}
+			// Filter ContextVariable
+			List<String> contextVariables = new LinkedList<String>();
+			for (ContextVariable ctxVar : ContextVariable.values())
+				variables.remove(ctxVar.getName());
+
+			// Clean system variables.
+			Set<String> systemVars = getSystemVariables(connection, startDate,
+					endDate);
+			for (String var : systemVars)
+				variables.remove(var);
+
+			Set<Level> levels = SQLAgreementDraft.getLevels(connection,
+					agreementId);
+
+			SalaryTable salaryTable = SQLAgreementDraft.getSalaryTable(
+					connection, agreementId, startDate, endDate);
+
+			Set<String> names = variables.keySet();
+			for (Level level : levels) {
+				Iterator<String> namesIt = names.iterator();
+				while (namesIt.hasNext()) {
+					String name = namesIt.next();
+					if (salaryTable.get(level.getId(), name) != null)
+						namesIt.remove();
+				}
+			}
+
+			return variables;
+
+		} finally {
+			if (connection != null)
+				connection.close();
+		}
 	}
 
 	private static void calculate(AgreementDraft draft) throws SQLException {
@@ -2211,12 +2302,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			IrpfOutcome irpfOutcome = new IrpfOutcome();
 
-
 			IManagerBean irpfResultManagerBean = BeanManager
 					.getManagerBean(com.esferalia.aon.payroll.IrpfResult.class);
 			Criteria irpfResultCriteria = new Criteria();
-			irpfResultCriteria.addEqualExpression(irpfResultManagerBean.getFieldName(IEntityAlias.IRPF_RESULT_ID),
-					irpf.getIrpfResult().getId());
+			irpfResultCriteria.addEqualExpression(irpfResultManagerBean
+					.getFieldName(IEntityAlias.IRPF_RESULT_ID), irpf
+					.getIrpfResult().getId());
 			List<ITransferObject> irpfResults = irpfResultManagerBean
 					.getList(irpfResultCriteria);
 			irpfOutcome
@@ -2225,10 +2316,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			IManagerBean irpfDataManagerBean = BeanManager
 					.getManagerBean(com.esferalia.aon.payroll.IrpfData.class);
-			
+
 			Criteria irpfDataCriteria = new Criteria();
-			irpfDataCriteria.addEqualExpression(irpfDataManagerBean.getFieldName(IEntityAlias.IRPF_DATA_ID), irpf
-					.getIrpfData().getId());
+			irpfDataCriteria
+					.addEqualExpression(irpfDataManagerBean
+							.getFieldName(IEntityAlias.IRPF_DATA_ID), irpf
+							.getIrpfData().getId());
 			List<ITransferObject> irpfDatas = irpfDataManagerBean
 					.getList(irpfDataCriteria);
 			com.esferalia.aon.payroll.IrpfData irpfData = (com.esferalia.aon.payroll.IrpfData) irpfDatas
@@ -2245,7 +2338,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				irpfOutcome.setBirthYear(birthDate.getYear());
 			}
 
-
 			if (irpf.getIrpfRegularization() == null)
 				return irpfOutcome;
 
@@ -2253,8 +2345,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					.getManagerBean(com.esferalia.aon.payroll.IrpfRegularization.class);
 			Criteria irpfRegularizationCriteria = new Criteria();
 			irpfRegularizationCriteria.addEqualExpression(
-					irpfRegularizationManagerBean.getFieldName(IEntityAlias.IRPF_REGULARIZATION_ID), irpf
-							.getIrpfRegularization().getId());
+					irpfRegularizationManagerBean
+							.getFieldName(IEntityAlias.IRPF_REGULARIZATION_ID),
+					irpf.getIrpfRegularization().getId());
 			List<ITransferObject> irpfRegularizations = irpfRegularizationManagerBean
 					.getList(irpfRegularizationCriteria);
 			irpfOutcome

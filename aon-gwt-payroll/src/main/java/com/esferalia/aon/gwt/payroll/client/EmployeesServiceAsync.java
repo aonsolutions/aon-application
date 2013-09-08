@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
@@ -106,5 +107,8 @@ public interface EmployeesServiceAsync {
 
 	void getAvailPeriod(Integer workplaceId, String name,
 			AsyncCallback<Period> callback) throws IllegalArgumentException;
+	
+	void getEventsVariables(Integer workplaceId, Integer agreementId,
+			Date startDate, Date endDate, AsyncCallback<Map<String, String>> callback ) throws IllegalArgumentException;	
 
 }

@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
@@ -10,9 +11,12 @@ import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
@@ -270,6 +274,7 @@ public class SalaryDraftObject implements IContextProvider{
 	public SalaryDraft asSalaryPreview() {
 		return salaryDraft;
 	}
+	
 
 	// -------------------------------------------
 	// SalaryDraft Delegated
@@ -491,6 +496,59 @@ public class SalaryDraftObject implements IContextProvider{
 		return oldVar;
 	}
 
+	public void renameVariable(Variable oldVar, String newName ) {
+		
+		String oldName = oldVar.getName(); 
+
+		addDraftVariable( clone(oldVar, newName));
+		
+		List<Payment> payments = salaryDraft.getPayments();
+		for (Payment payment : payments) {
+			String expression = payment.getExpression();
+			if ( expression == null  ) 
+				continue;
+			if ( expression.indexOf(oldName) == - 1)
+				continue;
+
+			String newExpression = expression.replaceAll(oldName, newName);
+			
+			addDraftPayment(clonePayment(payment, newExpression));
+		}
+		
+	}
+	// ------------------------------------------
+	//
+
+	private Variable clone(Variable var, String newName){
+		StringVariable newVar = new StringVariable();
+		newVar.setImplicit(var.isImpicit());
+		newVar.setScope(Scope.SALARY); // DRAFT
+		newVar.setName(newName);
+		newVar.setEndDate(getEndDate());
+		newVar.setStartDate(getStartDate());
+		newVar.setExpression(var.getExpression());
+		return newVar;
+	}
+	
+	private Payment clonePayment(Payment oldPayment, String newExpression){
+		Payment newPayment = new Payment();
+		
+		newPayment.setName(oldPayment.getName());
+		newPayment.setType(oldPayment.getType());
+		newPayment.setConceptId(oldPayment.getId());
+		newPayment.setDescription(oldPayment.getDescription());
+		newPayment.setExpression(newExpression);
+		newPayment.setIrpfExpression(oldPayment.getIrpfExpression());
+		newPayment.setQuoteExpression(oldPayment.getQuoteExpression());
+
+		newPayment.setScope(Scope.SALARY);
+		newPayment.setEndDate(getEndDate());
+		newPayment.setStartDate(getStartDate());
+		newPayment.setSalaryType(getType());
+
+		
+		return newPayment;
+	}
 	// ------------------------------------------
 	//
 

@@ -39,6 +39,7 @@ public class InputDialog extends CustomDialog {
 			@Override
 			public void onClick(ClickEvent event) {
 				hide();
+				onAccept();
 			}
 		});
 		
@@ -62,8 +63,13 @@ public class InputDialog extends CustomDialog {
 		return inputTextArea.getText();
 	}
 	
+	public void setInputValue(String value){
+		inputTextArea.setText(value);
+	}
 	
-	
+	public void onAccept() {
+		
+	}
 	
 	
 }
