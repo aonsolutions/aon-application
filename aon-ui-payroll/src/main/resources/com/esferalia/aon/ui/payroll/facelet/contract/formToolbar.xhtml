@@ -182,7 +182,7 @@
 				value="#{sepeBundle.sepe_contrata}"
 				disabled="#{!contractContrata.communicationAvailable}"
 				rendered="#{true}" ajaxSingle="true"
-				reRender="showCommunicationWindow"
+				reRender="showContrataCommunicationWindow"
 				iconClass="aon-icon-sepe-contrata" >
 				<f:setPropertyActionListener
 					target="#{contractContrata.showCommunicationWindow}" value="#{true}" />
@@ -193,7 +193,7 @@
 					value="#{sepeBundle.sepe_certificados}"
 					disabled="#{empty contract.to.endDate}"
 					rendered="#{true}" ajaxSingle="true"
-					reRender="showCertificadosWindow"
+					reRender="showCertificadosCommunicationWindow"
 					iconClass="aon-icon-sepe-certificados" >
 					<f:setPropertyActionListener
 						target="#{contractCertificados.showCommunicationWindow}" value="#{true}" />

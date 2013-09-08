@@ -8,9 +8,9 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="showCommunicationWindow">
+	<aon:panelGroup id="showContrataCommunicationWindow">
 		<c:if test="#{controller.showCommunicationWindow}">
-			<rich:modalPanel id="communicationModalPanel" minHeight="500"
+			<rich:modalPanel id="contrataCommunicationModalPanel" minHeight="500"
 				minWidth="800" rendered="#{controller.showCommunicationWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
@@ -22,7 +22,7 @@
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							reRender="showCommunicationWindow" immediate="true">
+							reRender="showContrataCommunicationWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
 								target="#{controller.showCommunicationWindow}"
@@ -30,7 +30,7 @@
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="sepeCommunicationForm">
+				<aon:form id="sepeContrataCommunicationForm">
 					<aon:div styleClass="aon-popupWindow-content">
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
@@ -39,7 +39,7 @@
 								
 								<aon:div style="width:99%">
 									
-									<aon:div rendered="#{controller.communicationIdReceived}">
+									<aon:div rendered="#{controller.communicationIdReceived or controller.communicationResponseReceived}">
 										<aon:outputText escape="#{false}" 
 											value="#{controller.communicationLogContent}" />
 									</aon:div>

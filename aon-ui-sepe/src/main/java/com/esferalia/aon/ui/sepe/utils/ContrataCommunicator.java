@@ -145,20 +145,24 @@ public class ContrataCommunicator implements ISepeCommunicator {
 	
 	@Override
 	public String obtainCommunicationNumber(byte[] data) {
-		String id = new String(data); 
-		if( StringUtils.isNotBlank(id) ){
-			id = id.replaceAll("\n", "");
-			id = StringUtils.removeStart(id, "<?xml version='1.0' encoding='ISO-8859-1'?>");
-			id = StringUtils.removeStart(id, "<COMUNICACION>");
-			id = StringUtils.removeEnd(id, "</COMUNICACION>");
-			if(id.contains("<NUM_ENVIO>")){
-				id = StringUtils.removeStart(id, "<NUM_ENVIO>");
-				id = StringUtils.removeEnd(id, "</NUM_ENVIO>");
+		String status = "";
+		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Datos comunicados al SEPE</b></div>";
+		if( data!=null ){
+			String value = new String(data); 
+			value = value.replaceAll("\n", "");
+			value = StringUtils.removeStart(value, "<?xml version='1.0' encoding='ISO-8859-1'?>");
+			value = StringUtils.removeStart(value, "<COMUNICACION>");
+			value = StringUtils.removeEnd(value, "</COMUNICACION>");
+			if(value.contains("<NUM_ENVIO>") && !value.contains("<ERROR>")){
+				status += "NUM ENVIO:         " + value;
+				value = StringUtils.substringBetween(value, "<NUM_ENVIO>", "</NUM_ENVIO>");
 			} else {
-				id = StringUtils.removeStart(id, "<ERROR>");
-				id = StringUtils.removeEnd(id, "</ERROR>");
+				status += "ERROR:             " + value;
+				value = StringUtils.substringBetween(value, "<ERROR>", "</ERROR>");
 			}
-			return id;
+			status += "<br /> ";
+			
+			return status;
 		}
 		return null;
 	}
@@ -169,7 +173,7 @@ public class ContrataCommunicator implements ISepeCommunicator {
 		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
 		if(data!=null){
 			String errorMsg = new String(data);
-			// fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
+//			fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
 			if(errorMsg.contains("<COMUNICACION>") && errorMsg.contains("<ERROR>")){
 				errorMsg = StringUtils.removeStart(errorMsg, "<?xml version='1.0' encoding='ISO-8859-1'?>");
 				errorMsg = StringUtils.removeStart(errorMsg, "<COMUNICACION>");
@@ -178,7 +182,7 @@ public class ContrataCommunicator implements ISepeCommunicator {
 				errorMsg = StringUtils.removeEnd(errorMsg, "</ERROR>");
 				return status + errorMsg;
 			}
-			// fichero si procesado: si se obtiene el fichero con los datos procesados
+//			fichero si procesado: si se obtiene el fichero con los datos procesados
 			try {
 				FICHEROCONTRATOS contratos = obtainFicheroContratos(data);
 				status += "ESTADO FICHERO:      " + contratos.getESTADOFICHERO();
@@ -294,17 +298,21 @@ public class ContrataCommunicator implements ISepeCommunicator {
 		SepeAppParamsController appParams = (SepeAppParamsController) AonUtil.getRegisteredBean(ISepeConstants.SEPE_APP_PARAMS_CONTROLLER_NAME);
 		try {
 			appParams.loadParameters();
+			user = appParams.getContrataUser();
+			passwd = appParams.getContrataPassword();
 		} catch (ManagerBeanException e) {
-			// no se cargan los datos de login, se piden por pantalla
+			String msg = "No se han podido obtener los datos identificativos.";
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
 		}
-		user = appParams.getContrataUser();
-		passwd = appParams.getContrataPassword();
 	}
 
 	private void searchTestEnvironment() {
 		SepeAppParamsController appParams = (SepeAppParamsController) AonUtil.getRegisteredBean(ISepeConstants.SEPE_APP_PARAMS_CONTROLLER_NAME);
 		try {
 			appParams.loadParameters();
+			testEnv = appParams.getContrataTestEnviroment();
 		} catch (ManagerBeanException e) {
 			String msg = "No se ha podido verificar el entorno de trabajo. Se activa el entorno de pruebas (TEST).";
 			LOGGER.error(msg, e);
@@ -312,7 +320,6 @@ public class ContrataCommunicator implements ISepeCommunicator {
 			AonUtil.addErrorMessage(e.getMessage());
 			testEnv = true;
 		}
-		testEnv = appParams.getContrataTestEnviroment();
 	}
 	
 	private String sendContrataFile(){
@@ -345,18 +352,5 @@ public class ContrataCommunicator implements ISepeCommunicator {
 			}
 		} 
 	}
-	
-	
-//	private class DataCommunicationThread extends Thread {
-//	    public void run() {
-//			if(comunicationProcess){
-//				sendContrataFile();
-//			} else if(dataQueryProcess){
-//				contrataDataQuery();
-//			}
-//	    }
-//	}
-	
-	
 	
 }

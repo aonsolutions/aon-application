@@ -48,13 +48,11 @@ public class Certifica2BatchControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		Certifica2BatchController controller = (Certifica2BatchController) this.getController();
 		controller.onInit(null);
-		
-		Certifica2Batch batch =  (Certifica2Batch) controller.getTo();
+		Certifica2Batch batch = (Certifica2Batch) controller.getTo();
 		if(batch.getStatus() == FileStatus.GENERATED){
 			CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
 			certificadosController.initialize(batch);
 		}
-		
 	}
 	
 }

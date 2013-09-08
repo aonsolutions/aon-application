@@ -67,6 +67,23 @@
 								</c:if>
 							</aon:div>
 						</aon:panelGrid>
+						
+						<aon:panelGrid id="group_contrata_utilities"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-config">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_utilities}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contractLoader"
+										action="contractLoader_form"
+										actionListener="#{contractLoader.onStart}"
+										value="#{payrollBundle.payroll_contractLoader_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+						
 					</aon:panelGroup>
 					
 					<aon:panelGroup>
@@ -132,27 +149,6 @@
 										value="#{payrollBundle.payroll_contract_mode_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="contractCode-contrata"
-										action="contractCode_list-contrata"
-										actionListener="#{contractCode.onReset}"
-										value="#{payrollBundle.payroll_contract_code_module}"/>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="cnae-contrata"
-										action="cnae_list-contrata" 
-										value="#{configBundle.config_cnae_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="cnae2009-contrata"
-										action="cnae2009_list-contrata" 
-										value="#{configBundle.config_cnae2009_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="cno-contrata"
-										action="cno_list-contrata"  
-										value="#{payrollBundle.payroll_cno_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="sepeTables-contrata"
 										action="sepeTables_list-contrata"
 										actionListener="#{sepeTables.onInit}"  
@@ -161,21 +157,6 @@
 							</aon:div>
 						</aon:panelGrid>
 						
-						<aon:panelGrid id="group_contrata_utilities"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-config">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_utilities}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="contractLoader"
-										action="contractLoader_form"
-										actionListener="#{contractLoader.onStart}"
-										value="#{payrollBundle.payroll_contractLoader_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
 					</aon:panelGroup>													
 					
 				</h:panelGrid>

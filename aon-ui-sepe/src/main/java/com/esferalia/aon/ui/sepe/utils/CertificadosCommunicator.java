@@ -2,7 +2,6 @@ package com.esferalia.aon.ui.sepe.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.List;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -10,16 +9,19 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.contrata.enumeration.TERRORES;
-import com.esferalia.aon.sepe.api.contrata.contratos.FICHEROCONTRATOS;
-import com.esferalia.aon.sepe.api.contrata.contratos.RESPUESTACONTRATOTYPE;
+import com.esferalia.aon.payroll.certificados.enumeration.Terrores;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RESPUESTACERTIFICADOEMPRESATYPE.CuentaCotizacion;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RESPUESTACERTIFICADOEMPRESATYPE.CuentaCotizacion.DatosTrabajador;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RespuestaCertificadoEmpresa;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RespuestaCertificadoEmpresa.Resultado;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.SepeAppParamsController;
-import com.esferalia.aon.ui.sepe.file.ContrataResponseReader;
+import com.esferalia.aon.ui.sepe.file.CertificadosResponseReader;
 
 
 public class CertificadosCommunicator implements ISepeCommunicator {
@@ -144,20 +146,24 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 	
 	@Override
 	public String obtainCommunicationNumber(byte[] data) {
-		String id = new String(data); 
-		if( StringUtils.isNotBlank(id) ){
-			id = id.replaceAll("\n", "");
-			id = StringUtils.removeStart(id, "<?xml version='1.0' encoding='ISO-8859-1'?>");
-			id = StringUtils.removeStart(id, "<COMUNICACION>");
-			id = StringUtils.removeEnd(id, "</COMUNICACION>");
-			if(id.contains("<NUM_ENVIO>")){
-				id = StringUtils.removeStart(id, "<NUM_ENVIO>");
-				id = StringUtils.removeEnd(id, "</NUM_ENVIO>");
+		String status = "";
+		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Datos comunicados al SEPE</b></div>";
+		if( data!=null ){
+			String value = new String(data); 
+			value = value.replaceAll("\n", "");
+			value = StringUtils.removeStart(value, "<?xml version='1.0' encoding='ISO-8859-1'?>");
+			value = StringUtils.removeStart(value, "<COMUNICACION>");
+			value = StringUtils.removeEnd(value, "</COMUNICACION>");
+			if(value.contains("NUM_ENVIO") && !value.contains("ERROR")){
+				status += "NUM ENVIO:         " + value;
+				value = StringUtils.substringBetween(value, "<NUM_ENVIO>", "</NUM_ENVIO>");
 			} else {
-				id = StringUtils.removeStart(id, "<ERROR>");
-				id = StringUtils.removeEnd(id, "</ERROR>");
+				status += "ERROR:             " + value;
+				value = StringUtils.substringBetween(value, "<COD_ERROR>", "</COD_ERROR>");
 			}
-			return id;
+			status += "<br /> ";
+			
+			return status;
 		}
 		return null;
 	}
@@ -165,11 +171,10 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 	public String obtainCommunicationStatus(byte[] data) {
 		String status = "";
 		status += "<br /> ";
-//		status += attach.getAttachDate() + " - Resultado obtenido del SEPE";
 		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Resultado obtenido del SEPE</b></div>";
-//		status += "<hr /> ";
 		if(data!=null){
 			String errorMsg = new String(data);
+//			fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
 			if(errorMsg.contains("<COMUNICACION>") && errorMsg.contains("<ERROR>")){
 				errorMsg = StringUtils.removeStart(errorMsg, "<?xml version='1.0' encoding='ISO-8859-1'?>");
 				errorMsg = StringUtils.removeStart(errorMsg, "<COMUNICACION>");
@@ -178,89 +183,106 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 				errorMsg = StringUtils.removeEnd(errorMsg, "</ERROR>");
 				return status + errorMsg;
 			}
-//			try {
-//				FICHEROCONTRATOS contratos = obtainFicheroContratos(data);
-//				status += "ESTADO FICHERO:    " + contratos.getESTADOFICHERO();
-//				status += "<br /> ";
-//
-//				for(Object o: contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150()){
-//					
-//					RESPUESTACONTRATOTYPE respuestaContratos = obtainRespuestaContrato(o);
-//					
-//					status += "FECHA ALTA:         " + respuestaContratos.getFECHAALTA();
-//					status += "<br /> ";
-//					status += "FECHA COMUNICACION: " + respuestaContratos.getFECHACOMUNICACION();
-//					status += "<br /> ";
-//					status += "ID CONTRATO:        " + respuestaContratos.getIDCONTRATO();
-//					status += "<br /> ";
-//					status += "LEY BONIF:          " + respuestaContratos.getLEYBONIF();
-//					status += "<br /> ";
-//					status += "LEY DEDUCCION:      " + respuestaContratos.getLEYDEDUCCION();
-//					status += "<br /> ";
-//					status += "LEY FOMENTO:        " + respuestaContratos.getLEYFOMENTO();
-//					status += "<br /> ";
-//					status += "LEY REDUCCION:      " + respuestaContratos.getLEYREDUCCION();
-//					status += "<br /> ";
-//					status += "OBLIG B:            " + respuestaContratos.getOBLIGCB();
-//					status += "<br /> ";
-//					status += "RESULTADO:          " + respuestaContratos.getRESULTADO();
-//					status += "<br /> ";
-//					status += "USUARIO:            " + respuestaContratos.getUSUARIO();
-//					status += "<br /> ";
-//					
-////			System.out.println("ESTADO FICHERO:    " + contratos.getESTADOFICHERO());
-////			System.out.println("NUMERO PROCESADOS: " + contratos.getNUMEROPROCESADOS());
-////			System.out.println("VERSION:           " + contratos.getVersion());
-////			System.out.println("FECHA ALTA:         " + respuestaContratos.getFECHAALTA());
-////			System.out.println("FECHA COMUNICACION: " + respuestaContratos.getFECHACOMUNICACION());
-////			System.out.println("ID CONTRATO:        " + respuestaContratos.getIDCONTRATO());
-////			System.out.println("LEY BONIF:          " + respuestaContratos.getLEYBONIF());
-////			System.out.println("LEY DEDUCCION:      " + respuestaContratos.getLEYDEDUCCION());
-////			System.out.println("LEY FOMENTO:        " + respuestaContratos.getLEYFOMENTO());
-////			System.out.println("LEY REDUCCION:      " + respuestaContratos.getLEYREDUCCION());
-////			System.out.println("OBLIG B:            " + respuestaContratos.getOBLIGCB());
-////			System.out.println("RESULTADO:          " + respuestaContratos.getRESULTADO());
-////			System.out.println("USUARIO:            " + respuestaContratos.getUSUARIO());
-//					
-//					List<String> errores = respuestaContratos.getERRORES().getERROR();
-//					if(!errores.isEmpty()){
-//						status += "<br />";
-//						status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>ERRORES</b></div>";
-//						for(String error: respuestaContratos.getERRORES().getERROR()){
-//							status += "ERROR: " + error + " - " + TERRORES.getEnumByValue(error).getDescription();
-//							status += "<br /> ";
-////					System.out.println("ERROR: " + error + " - " + TERRORES.getEnumByValue(error).getDescription());
-//						}
-//					}
-//				}
-//			} catch (IOException e) {
-//				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
-//				status += msg;
-//				status += "<br /> ";
-//			} catch (Throwable th) {
-//				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
-//				status += msg;
-//				status += "<br /> ";
-//			}
+//			fichero si procesado: si se obtiene el fichero con los datos procesados
+			try {
+				RespuestaCertificadoEmpresa certificado = obtainFicheroCertificado(data);
+			
+				for(CuentaCotizacion cuentaCotizacion: certificado.getResultado().getCuentaCotizacion()){
+					
+					String bgColor = null;
+					
+					if(StringUtils.equals(cuentaCotizacion.getDescripcionResultado(),"PROCESADO")){
+						bgColor = "#E0F8E0";
+					} else if(StringUtils.equals(cuentaCotizacion.getDescripcionResultado(),"PROCESADO PARCIALMENTE")){
+						bgColor = "#F6E3CE";
+					} else if(StringUtils.equals(cuentaCotizacion.getDescripcionResultado(),"RECHAZADO")){
+						bgColor = "#F8E0E0";
+					} else {
+						bgColor = "#E4E4E4";
+					}
+					
+					status += "<br /> ";
+					status += "<div style='border-bottom:1px solid black;background-color:"+bgColor+"; width:100%; padding:5px;'><b>";
+					String ccc = ((Element) cuentaCotizacion.getCCC()).getFirstChild().getNodeValue();
+					status += "CCC:                 " + ccc;
+					status += "</b></div>";
+					
+					status += "RESULTADO:           " + cuentaCotizacion.getDescripcionResultado();
+					status += "<br /> ";
+					status += "TRAB: PROCESADOS:    " + cuentaCotizacion.getNumTrabajadoresProcesados();
+					status += "<br /> ";
+					status += "TOTAL TRABAJADORES:  " + cuentaCotizacion.getNumTrabajadoresTotal();
+					status += "<br /> ";
+					
+//					System.out.println("CCC:                 " + cuentaCotizacion.getCCC());
+//					System.out.println("RESULTADO:           " + cuentaCotizacion.getDescripcionResultado());
+//					System.out.println("TRAB: PROCESADOS:    " + cuentaCotizacion.getNumTrabajadoresProcesados());
+//					System.out.println("TOTAL TRABAJADORES:  " + cuentaCotizacion.getNumTrabajadoresTotal());
+//					System.out.println("ERRORES GENERALES:   ");
+
+					status += "<div style='border-bottom:1px solid black; width:100%; padding:3px;'><b>ERRORES GENERALES</b></div>";
+					for(String error: cuentaCotizacion.getErroresGeneral().getError()){
+						status += "ERROR: " + error + " - " + Terrores.getEnumByValue(error).getDescription();
+//						System.out.println("ERROR: " + error + " - " + Terrores.getEnumByValue(error).getDescription());
+						status += "<br /> ";
+					}
+					for(DatosTrabajador trabajador: cuentaCotizacion.getDatosTrabajador()){
+//						System.out.println("TRABAJADOR:         " + trabajador.getDNINIE());
+						status += "<br /> ";
+						status += "<div style='background-color:#E4E4E4; width:100%; padding:1px;'><b>"+"TRABAJADOR: "+trabajador.getDNINIE()+"</b></div>";
+						status += "<div style='border-bottom:1px solid black; width:100%; padding:3px;'><b>ERRORES</b></div>";
+						for(Object e: trabajador.getError()){
+							String error = ((Element) e).getFirstChild().getNodeValue();
+							status += "ERROR: " + error + " - " + Terrores.getEnumByValue(error).getDescription();
+//							System.out.println("ERROR:    " +  error + " - " + Terrores.getEnumByValue(error).getDescription());
+							status += "<br /> ";
+						}
+					}
+				}
+				
+			} catch (IOException e) {
+				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
+				status += msg;
+				status += "<br /> ";
+			} catch (Throwable th) {
+				String msg = "No se ha podido obtener los datos del estado de las comunicaciones.";
+				status += msg;
+				status += "<br /> ";
+			}
 		}
 		return status;
+	}
+	
+	public RespuestaCertificadoEmpresa obtainFicheroCertificado(byte[] data) throws IOException, JAXBException, SAXException, ParserConfigurationException {
+		CertificadosResponseReader reader = new CertificadosResponseReader();
+		reader.readFile(new ByteArrayInputStream(data));
+		return reader.getFicheroCertificado();
+	}
+
+	public Resultado obtainRespuestaContrato(Object object) {
+		CertificadosResponseReader reader = new CertificadosResponseReader();
+		return reader.getRepuestaCertificado(object);
 	}
 	
 	private void searchCertificadosLogin() {
 		SepeAppParamsController appParams = (SepeAppParamsController) AonUtil.getRegisteredBean(ISepeConstants.SEPE_APP_PARAMS_CONTROLLER_NAME);
 		try {
 			appParams.loadParameters();
+			user = appParams.getCertifica2User();
+			passwd = appParams.getCertifica2Password();
 		} catch (ManagerBeanException e) {
-			// no se cargan los datos de login, se piden por pantalla
+			String msg = "No se han podido obtener los datos identificativos.";
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
 		}
-		user = appParams.getCertifica2User();
-		passwd = appParams.getCertifica2Password();
 	}
 
 	private void searchTestEnvironment() {
 		SepeAppParamsController appParams = (SepeAppParamsController) AonUtil.getRegisteredBean(ISepeConstants.SEPE_APP_PARAMS_CONTROLLER_NAME);
 		try {
 			appParams.loadParameters();
+			testEnv = appParams.getCertifica2TestEnviroment();
 		} catch (ManagerBeanException e) {
 			String msg = "No se ha podido verificar el entorno de trabajo. Se activa el entorno de pruebas (TEST).";
 			LOGGER.error(msg, e);
@@ -268,7 +290,6 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 			AonUtil.addErrorMessage(e.getMessage());
 			testEnv = true;
 		}
-		testEnv = appParams.getCertifica2TestEnviroment();
 	}
 	
 	private String sendCertificadosFile(){

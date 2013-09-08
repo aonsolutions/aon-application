@@ -17,7 +17,8 @@
 			<aon:commandButton id="certificados-batch-communication"
 				value="Certific@2"
 				rendered="#{true}" ajaxSingle="true"
-				reRender="showCertificadosWindow"
+				reRender="showCertificadosCommunicationWindow"
+				actionListener="#{certifica2Batch.onInitCertificados}"
 				styleClass="aon-finding-toolbar-item aon-icon-sepe-certificados" >
 				<f:setPropertyActionListener
 					target="#{contractCertificados.showCommunicationWindow}" value="#{true}" />
@@ -69,7 +70,7 @@
 				<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
 			</ui:include>
 			
-			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalLogin.xhtml" >
+			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalLogin.xhtml" >
 				<ui:param name="controller" value="#{contractCertificados}" />
 			</ui:include>
 			

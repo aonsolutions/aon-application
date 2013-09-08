@@ -267,6 +267,11 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	public boolean isCommunicationIdReceived(){
 		return getCommunicationIdFile()!=null && getCommunicationIdFile().getId()!=null;
 	}
+
+	@Override
+	public boolean isCommunicationResponseReceived(){
+		return getResponseFile()!=null && getResponseFile().getId()!=null;
+	}
 	
 	@Override
 	public void loadContrataData(IAttachment attach) throws ManagerBeanException, IOException{
@@ -455,16 +460,20 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	
 	private IAttachment obtainContrataAttach(ContractAttachmentType type){
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getContract().getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), type);
-			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				return (ContractAttachment) list.get(0);
+			if(getContract()!=null && getContract().getId()!=null){
+				IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getContract().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), type);
+				List<ITransferObject> list = bean.getList(criteria);
+				if(!list.isEmpty()){
+					return (ContractAttachment) list.get(0);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			// NOTHING TO DO
+			String msg = "No se ha podido obtener el fichero " + type.getName(AonUtil.getCurrentLocale());
+			AonUtil.addErrorMessage(msg);
 			LOGGER.error("Error obtaining contrat@ contract attach");
 		}
 		return null;
@@ -472,16 +481,20 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	
 	private IAttachment obtainContrataAttach(SepeBatchAttachmentType type){
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(SepeBatchAttachment.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), getBatch().getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), type);
-			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				return (IAttachment) list.get(0);
+			if(batch!=null && batch.getId()!=null){
+				IManagerBean bean = BeanManager.getManagerBean(SepeBatchAttachment.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), getBatch().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), type);
+				List<ITransferObject> list = bean.getList(criteria);
+				if(!list.isEmpty()){
+					return (IAttachment) list.get(0);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			// NOTHING TO DO
+			String msg = "No se ha podido obtener el fichero " + type.getName(AonUtil.getCurrentLocale());
+			AonUtil.addErrorMessage(msg);
 			LOGGER.error("Error obtaining contrat@ batch attach");
 		}
 		return null;
@@ -619,18 +632,13 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	@Override
 	public String getCommunicationLogContent() {
 		String communicationLogContent = "<div>";
-		String communicationNumber = getCommunicator().obtainCommunicationNumber(getCommunicationIdFile().getData());
-		if(StringUtils.isNotEmpty(communicationNumber)){
-			
-//			communicationLogContent += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>" + getCommunicationIdFile().getAttachDate() + " - Contrato comunicado al SEPE</b></div>";
-			communicationLogContent += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Contrato comunicado al SEPE</b></div>";
-			communicationLogContent += "NUM ENVIO:         " + communicationNumber;
-			communicationLogContent += "<br /> ";
+		if( isCommunicationIdReceived() ){
+			communicationLogContent += getCommunicator().obtainCommunicationNumber(getCommunicationIdFile().getData());
 		}
 		if(getResponseFile()!=null && getResponseFile().getId()!=null){
 			String status = getCommunicator().obtainCommunicationStatus(getResponseFile().getData());
 			if(StringUtils.isNotEmpty(status)){
-				communicationLogContent += status ;
+				communicationLogContent += status;
 			}
 		}
 		communicationLogContent += "</div>";

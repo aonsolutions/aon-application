@@ -39,7 +39,7 @@
 			<c:if test="#{not empty controller.generatedFile}">
 				<aon:commandButton id="sepe-communication"
 					value="#{sepeBundle.sepe_communicate}"
-					reRender="showLoginWindow,contractForm"
+					reRender="showCertificadosLoginWindow,contrataResponseContainer,contrataData,contractForm"
 					actionListener="#{controller.onSendSepeFile}"
 					onclick="Richfaces.showModalPanel('waitProccess')" 
 	 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
@@ -48,7 +48,7 @@
 				<aon:commandButton id="sepe-dataQuery"
 					value="#{sepeBundle.sepe_status_check}"
 					disabled="#{!controller.communicationIdReceived}"
-					reRender="showLoginWindow,contractForm"
+					reRender="showCertificadosLoginWindow,contractForm"
 					actionListener="#{controller.onSepeDataQuery}"
 					onclick="Richfaces.showModalPanel('waitProccess')" 
 	 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
@@ -56,7 +56,7 @@
 					
 				<aon:commandButton id="refresh-result"
 					value="#{sepeBundle.sepe_reload}"
-					reRender="showCommunicationWindow"
+					reRender="showCertificadosCommunicationWindow"
 					styleClass="aon-finding-toolbar-item aon-icon-refresh" />
 					
 				<c:if test="#{!skipDownloadButton}">

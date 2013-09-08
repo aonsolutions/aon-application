@@ -255,12 +255,25 @@
 			<map-entries>
 				<map-entry>
 					<key>id</key>
-					<value>certifica2Batch.id</value>
+					<value>sourceBatch</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{certificadosBatchAttachControllerListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
-
+	
+	<managed-bean>
+		<managed-bean-name>certificadosBatchAttachControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.event.AttachmentControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************* CERTIFICA2 BATCH LIST ***************** -->
 	<managed-bean>
 		<managed-bean-name>certifica2List</managed-bean-name>
@@ -425,10 +438,23 @@
 			<map-entries>
 				<map-entry>
 					<key>id</key>
-					<value>contrataBatch.id</value>
+					<value>sourceBatch</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
+	<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contrataBatchAttachControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>contrataBatchAttachControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.event.AttachmentControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ************* CONTRACT LIST ***************** -->

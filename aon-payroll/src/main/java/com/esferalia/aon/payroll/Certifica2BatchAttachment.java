@@ -23,14 +23,13 @@ public class Certifica2BatchAttachment extends SepeBatchAttachment {
 	}
 
 	private Certifica2Batch obtainCertifica2Batch(Integer sourceBatch) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Certifica2Batch.class);
-			return (Certifica2Batch) bean.get(sourceBatch);
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(sourceBatch!=null){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(Certifica2Batch.class);
+				return (Certifica2Batch) bean.get(sourceBatch);
+			} catch (ManagerBeanException e) {
+			}
 		}
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

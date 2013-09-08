@@ -38,12 +38,12 @@
 
 					</aon:panelGrid>
 			
-					<aon:div id="login-confirm-result" style="width: 300px; text-align: center;">
+					<aon:div id="contrata-login-confirm-result" style="width: 300px; text-align: center;">
 						<c:if test="#{not empty sepeAppParams.contrataUser and not empty sepeAppParams.contrataPassword}" >
 							<aon:outputLabel for="contrata_login_confirm" value="&#160;" />
 							<aon:commandButton id="contrata_login_confirm"
 								value="Validar el acceso al entorno de S.E.P.E."
-								reRender="login-confirm-result"
+								reRender="contrata-login-confirm-result"
 								actionListener="#{sepeAppParams.validateContrataLogin}"
 								styleClass="aon-commandButton aon-icon-sincronize aon-margin-bottom" />
 						</c:if>
@@ -102,12 +102,12 @@
 
 					</aon:panelGrid>
 			
-					<aon:div id="login-confirm-result-certifica2" style="width: 300px; text-align: center;">
+					<aon:div id="certificados-login-confirm-result" style="width: 300px; text-align: center;">
 						<c:if test="#{not empty sepeAppParams.certifica2User and not empty sepeAppParams.certifica2Password}" >
 							<aon:outputLabel for="certifica2_login_confirm" value="&#160;" />
 							<aon:commandButton id="certifica2_login_confirm"
 								value="Validar el acceso al entorno de S.E.P.E."
-								reRender="login-confirm-result"
+								reRender="certificados-login-confirm-result"
 								actionListener="#{sepeAppParams.validateCertifica2Login}"
 								styleClass="aon-commandButton aon-icon-sincronize aon-margin-bottom" />
 						</c:if>

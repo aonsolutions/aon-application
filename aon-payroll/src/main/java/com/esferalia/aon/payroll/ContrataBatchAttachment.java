@@ -23,14 +23,13 @@ public class ContrataBatchAttachment extends SepeBatchAttachment {
 	}
 
 	private ContrataBatch obtainContrataBatch(Integer sourceBatch) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContrataBatch.class);
-			return (ContrataBatch) bean.get(sourceBatch);
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(sourceBatch!=null){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContrataBatch.class);
+				return (ContrataBatch) bean.get(sourceBatch);
+			} catch (ManagerBeanException e) {
+			}
 		}
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

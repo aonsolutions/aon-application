@@ -38,44 +38,6 @@ public class ContrataBatchController extends BasicController {
 	private FileOutput fileOutput;
 	private boolean recorded;
 	
-	// SEPE COMMUNICATION
-//	private boolean showLoginWindow;
-//	private boolean showCommunicationWindow;
-//	private ISepeCommunicator communicator;	
-	
-	
-//	public boolean isCommunicationResponseReceived(){
-//		return obtainContrataResponseAttach()!=null;
-//	}
-	
-//	@Override
-//	public boolean isShowLoginWindow() {
-//		return showLoginWindow;
-//	}
-//
-//	public void setShowLoginWindow(boolean showLoginWindow) {
-//		this.showLoginWindow = showLoginWindow;
-//	}
-
-//	public boolean isShowCommunicationWindow() {
-//		return showCommunicationWindow;
-//	}
-//
-//	public void setShowCommunicationWindow(boolean showCommunicationWindow) {
-//		this.showCommunicationWindow = showCommunicationWindow;
-//	}
-
-//	public ISepeCommunicator getCommunicator() {
-//		if(communicator==null){
-//			communicator = new ContrataCommunicator();
-//		}
-//		return communicator;
-//	}
-//
-//	public void setCommunicator(ISepeCommunicator communicator) {
-//		this.communicator = communicator;
-//	}
-
 	public FileOutput getFileOutput() {
 		return fileOutput;
 	}
@@ -118,25 +80,6 @@ public class ContrataBatchController extends BasicController {
 			setRecorded(true);
 		} else {
 			setRecorded(false);
-		}
-	}
-	
-	@Override
-	public void select(ActionEvent event) {
-		super.select(event);
-		onInit(event);
-	}
-	
-	@Override
-	public void onReset(ActionEvent event) {
-		setRecorded(false);
-		super.onReset(event);
-		ContrataBatch batch = (ContrataBatch) getTo();
-		batch.setDate(new Date());
-		batch.setStatus(FileStatus.PENDING);
-		if(!isRecorded()){
-			ContrataListController list = (ContrataListController) FormUtil.getController(ISepeConstants.CONTRATA_LIST_CONTROLLER_NAME);
-			list.onSearch(event);
 		}
 	}
 	
@@ -259,83 +202,6 @@ public class ContrataBatchController extends BasicController {
 		}
 		return null;
 	}
-	
-	
-	// -----------------------
-	// SEPE COMMUNICATION
-	// -----------------------
-	
-//	@Override
-//	public void onSendSepeFile(ActionEvent event){
-//		ContrataBatchAttachment attach = obtainContrataFileAttach();
-//		if(!isShowLoginWindow()){
-//			getCommunicator().initialize();
-//		}
-//		if( getCommunicator().isLoginRequired() ){
-//			setShowLoginWindow(true);
-//		} else {
-//			getCommunicator().setDataCommunication(true);
-//			getCommunicator().setDocument(new String(attach.getData()));
-//			String result = getCommunicator().communicate();
-//			saveResponseFile(result);
-//			setShowLoginWindow(false);
-//		}
-//	}
-//	
-//	@Override
-//	public void onSepeDataQuery(ActionEvent event){
-//		ContrataBatchAttachment attach = obtainContrataResponseAttach();
-//		String document = getCommunicator().obtainCommunicationNumber(attach.getData());
-//		if( StringUtils.isBlank(document) ){
-//			String msg = "No se puede obtener el número del envío de la comunicación.";
-//			AonUtil.addErrorMessage(msg);
-//			throw new AbortProcessingException(msg);
-//		}
-//		if(!isShowLoginWindow()){
-//			getCommunicator().initialize();
-//		}
-//		if( getCommunicator().isLoginRequired() ){
-//			setShowLoginWindow(true);
-//		} else {
-//			getCommunicator().setDataQuery(true);
-//			getCommunicator().setDocument(document);
-//			String result = getCommunicator().communicate();
-//			saveResponseFile(result);
-//			setShowLoginWindow(false);
-//		}
-//	}
-	
-//	private ContrataBatchAttachment obtainContrataFileAttach(){
-//		return obtainContrataAttach(PayrollBatchAttachmentType.GENERATED_DOCUMENT);
-//	}
-//	
-//	private ContrataBatchAttachment obtainContrataResponseAttach(){
-//		return obtainContrataAttach(PayrollBatchAttachmentType.RETURN_DOCUMENT);
-//	}
-//
-//	private ContrataBatchAttachment obtainContrataStatusAttach(){
-//		return obtainContrataAttach(null);
-//	}
-//	
-//	private ContrataBatchAttachment obtainContrataAttach(PayrollBatchAttachmentType type){
-////		try {
-////			if(getParams()!=null && getContract()!=null && getContract().getId()!=null){
-////				IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-////				Criteria criteria = new Criteria();
-////				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getContract().getId());
-////				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), type);
-////				List<ITransferObject> list = bean.getList(criteria);
-////				if(!list.isEmpty()){
-////					return (ContractAttachment) list.get(0);
-////				}
-////			}
-////		} catch (ManagerBeanException e) {
-////			// NOTHING TO DO
-////		}
-//		return null;
-//	}
-	
-	
 	
 
 }

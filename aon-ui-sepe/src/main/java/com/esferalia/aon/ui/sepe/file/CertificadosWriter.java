@@ -36,13 +36,14 @@ import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Certifica2Batch;
-//import com.esferalia.aon.payroll.Certifica2BatchData;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.contrata.enumeration.TCHRGCOT;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.Period;
@@ -55,7 +56,6 @@ import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.EMPRESATYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.PERIODODISTRIBUCIONJORNADASTYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.REPRESENTANTETYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.TRABAJADORTYPE;
-import com.esferalia.aon.ui.sepe.controller.batch.Certifica2ListController;
 import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
@@ -154,9 +154,10 @@ public class CertificadosWriter {
 	 * @return
 	 */
 	private REPRESENTANTETYPE createRepresentanteType(Enterprise enterprise) {
-		REPRESENTANTETYPE o = new REPRESENTANTETYPE();
+		REPRESENTANTETYPE o = null;
 		RegistryDirStaff dirStaff = getRegistryDirStaff(enterprise);
 		if(dirStaff!=null){
+			o = new REPRESENTANTETYPE();
 			String name[] = StringUtils.split(dirStaff.getName(),' ');
 			String nombre = name.length>=1?name[0]:"";
 			String ap1 = name.length>=2?name[1]:"";
@@ -193,7 +194,29 @@ public class CertificadosWriter {
 	private EMPRESATYPE createEmpresaType(EnterpriseCCC ccc) {
 		EMPRESATYPE o = new EMPRESATYPE();
 		o.setCIFNIF(ccc.getActivity().getEnterprise().getRegistry().getDocument());
-		o.setCCC(ccc.getCcc());
+
+		// TODO: research about ccc quote regime
+		String quoteRegime = "0000";
+		if(ccc.getActivity().getType()==SSRegimeType.GENERAL){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0111.getCode();
+		} else if(ccc.getActivity().getType()==SSRegimeType.AGRICULTURAL){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0613.getCode();
+		} else if(ccc.getActivity().getType()==SSRegimeType.ARTIST){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0112.getCode();
+		} else if(ccc.getActivity().getType()==SSRegimeType.COAL_MINING){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0911.getCode();
+		} else if(ccc.getActivity().getType()==SSRegimeType.DOMESTIC_EMPLOYEES){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0138.getCode();
+		} else if(ccc.getActivity().getType()==SSRegimeType.SEA_WORKERS){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0800.getCode();
+		} else if(ccc.getActivity().getType()==SSRegimeType.SELF_EMPLOYED){
+			quoteRegime = TCHRGCOT.TCHRGCOT_0721.getCode();
+		} else if(ccc.getActivity().getType()==SSRegimeType.STUDENT_INSURANCE){
+			quoteRegime = TCHRGCOT.TCHRGCOT_1911.getCode();
+		}
+		if(ccc!=null){
+			o.setCCC(quoteRegime+ccc.getCcc());
+		}
 		return o;
 	}
 	
@@ -263,11 +286,11 @@ public class CertificadosWriter {
 		o.setGrupoCotizacion(quoteGroup!=null?quoteGroup:null);
 		String tc2 = utils.getContractDataMap(batchDetail.getContract()).get(ContextVariable.TC2.getName());
 		o.setTipoContrato(tc2);
-		o.setDuracionContrato(differenceBetweenDates(batchDetail.getContract().getStartDate(), batchDetail.getContract().getEndDate()).toString());
+		o.setDuracionContrato(parseToLength(differenceBetweenDates(batchDetail.getContract().getStartDate(), batchDetail.getContract().getEndDate()).toString(),5));
 		o.setIndicadorDuracionContrato(null);
 
 		String occupation = utils.getContractDataMap(batchDetail.getContract()).get(ContextVariable.CNO.getName());
-		o.setCodProfesion(occupation);
+		o.setCodProfesion(parseToLength(occupation,7,false));
 		o.setCargoPublicoSindical(null);
 		
 //		<xsd:choice minOccurs="0">
@@ -587,12 +610,13 @@ public class CertificadosWriter {
 	 * @return
 	 */
 	private TRABAJADORTYPE.DatosVacacionesCotizadas createVacacionesCotizadasType(Contract contract){
-		TRABAJADORTYPE.DatosVacacionesCotizadas o = new TRABAJADORTYPE.DatosVacacionesCotizadas();
+		TRABAJADORTYPE.DatosVacacionesCotizadas o = null;
 		SEPEUtils utils = new SEPEUtils();
 		try {
 			Salary settle = obtainSettle(contract);;
 			String noHolidays = utils.getContractDataMap(contract).get(ContextVariable.NO_HOLIDAYS.getName());
 			if(settle!=null && noHolidays!=null && noHolidays!="0"){
+				o = new TRABAJADORTYPE.DatosVacacionesCotizadas();
 				Double baseContingenciaGenerales = settle.getCommonBase();
 				Double baseAccidentesTrabajo = settle.getProfessionalBase();
 // TODO contemplar el caso de que exista atraso de finiquito 
@@ -601,7 +625,7 @@ public class CertificadosWriter {
 //					baseAccidentesTrabajo += finiquitodf.getBaseAccidentesTrabajo();
 //					baseContingenciaGenerales += finiquitodf.getBaseContingenciasGenerales();
 //				}
-				o.setNumDiasCotizados(noHolidays);
+				o.setNumDiasCotizados(parseToLength(noHolidays,3));
 				o.setBaseCotizacionContingenciasComunes(parseToLength(baseContingenciaGenerales, 9));
 				o.setBaseCotizacionDesempleo(parseToLength(baseAccidentesTrabajo, 9));
 				o.setObservaciones(null);

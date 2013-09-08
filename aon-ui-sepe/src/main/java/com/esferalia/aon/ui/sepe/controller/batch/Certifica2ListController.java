@@ -148,7 +148,6 @@ public class Certifica2ListController extends BasicController {
 			}
 			
 			getCriteria().addNotNullExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE));
-//			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_STATUS), ContractStatus.BATCHED);
 			getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_SEPE_STATUS), ContractStatus.PROCESSED);
 			if(getEnterprise()!=null && getEnterprise().getId()!=null){
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());

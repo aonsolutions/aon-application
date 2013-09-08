@@ -310,11 +310,11 @@ public class SepeAppParamsController{
 	}
 	
 	public void validateContrataLogin(ActionEvent event){
-		setValidContrataLogin( SEPEConnectionProvider.validateContrataLogin(true, "<?xml>", getContrataUser(), getContrataUser(), getContrataPassword()) );
+		setValidContrataLogin( SEPEConnectionProvider.validateContrataLogin(getContrataTestEnviroment(), getContrataUser(), getContrataUser(), getContrataPassword()) );
 	}
 	
 	public void validateCertifica2Login(ActionEvent event){
-		setValidCertifica2Login( SEPEConnectionProvider.validateCertifica2Login(true, "<?xml>", getCertifica2User(), getCertifica2User(), getCertifica2Password()) );
+		setValidCertifica2Login( SEPEConnectionProvider.validateCertifica2Login(getCertifica2TestEnviroment(), getCertifica2User(), getCertifica2User(), getCertifica2Password()) );
 	}
 	
 }

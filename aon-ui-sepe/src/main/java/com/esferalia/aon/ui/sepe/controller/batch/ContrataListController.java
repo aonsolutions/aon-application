@@ -13,9 +13,13 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.ContrataBatch;
+import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.ContrataFileType;
+import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
@@ -95,10 +99,11 @@ public class ContrataListController extends BasicController {
 				getCriteria().addInExpression(getFieldName(IEntityAlias.CONTRACT_DOMAIN), utils.getCurrentChildDomainIds());
 			}
 			
-//			ContractBatchController controller = (ContractBatchController) FormUtil.getController(IPayrollConstants.CONTRACT_BATCH_CONTROLLER_NAME);
-//			ContractBatch batch = (ContractBatch) controller.getTo();
-//			getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_DATE), batch.getDate());
-//			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_STATUS),ContractStatus.PROCESSED);
+			ContrataBatchController controller = (ContrataBatchController) FormUtil.getController(ISepeConstants.CONTRATA_BATCH_CONTROLLER_NAME);
+			ContrataBatch batch = (ContrataBatch) controller.getTo();
+			getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_START_DATE), batch.getDate());
+			getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_SEPE_STATUS),ContractStatus.PENDING);
+			
 			if ((getPerson() != null) && (getPerson().getId() != null)) {
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_PERSON_ID), getPerson().getId());			
 			}

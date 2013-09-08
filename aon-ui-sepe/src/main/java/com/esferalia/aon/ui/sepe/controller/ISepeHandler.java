@@ -30,12 +30,14 @@ public interface ISepeHandler {
 	boolean isShowBatchWindow();
 	boolean isShowCommunicationWindow();
 	boolean isCommunicationIdReceived();
+	boolean isCommunicationResponseReceived();
 
 	void onSendSepeFile(ActionEvent event);
 	void onSepeDataQuery(ActionEvent event);
 	void onResetBatch(ActionEvent event);
 	void onBatchAccept(ActionEvent event);
 	void onDownloadSepeXml(ActionEvent event);
+
 	
 	
 }

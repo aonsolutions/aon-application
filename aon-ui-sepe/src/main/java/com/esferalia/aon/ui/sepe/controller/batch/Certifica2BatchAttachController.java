@@ -18,7 +18,6 @@ public class Certifica2BatchAttachController extends SEPEBatchAttachController {
 	
 	@Override
 	public void onRemove(ActionEvent event) {
-		BatchDetailController detailController = (BatchDetailController) FormUtil.getController(ISepeConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
 		Certifica2BatchAttachment attach = (Certifica2BatchAttachment)this.getTo();
 		if(attach.getAttachmentType() == SepeBatchAttachmentType.GENERATED_FILE){
 			Certifica2BatchController batchController = (Certifica2BatchController) FormUtil.getController(ISepeConstants.CERTIFICA2_BATCH_CONTROLLER_NAME);

@@ -25,7 +25,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -34,14 +33,13 @@ import com.esferalia.aon.payroll.Certifica2BatchAttachment;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.SepeBatchAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
-import com.esferalia.aon.ui.sepe.controller.batch.Certifica2BatchController;
 import com.esferalia.aon.ui.sepe.file.CertificadosWriter;
 import com.esferalia.aon.ui.sepe.utils.CertificadosCommunicator;
-import com.esferalia.aon.ui.sepe.utils.ISepeCommunicator;
 
 
 public class CertificadosController implements ISepeHandler{
@@ -55,7 +53,7 @@ public class CertificadosController implements ISepeHandler{
 	
 	private boolean newBatch;
 	
-	private ISepeCommunicator communicator;
+	private CertificadosCommunicator communicator;
 	
 	private Certifica2Batch batch;
 
@@ -99,14 +97,14 @@ public class CertificadosController implements ISepeHandler{
 	}
 	
 	@Override
-	public ISepeCommunicator getCommunicator() {
+	public CertificadosCommunicator getCommunicator() {
 		if(communicator==null){
 			communicator = new CertificadosCommunicator();
 		}
 		return communicator;
 	}
 	
-	public void setCommunicator(ISepeCommunicator communicator) {
+	public void setCommunicator(CertificadosCommunicator communicator) {
 		this.communicator = communicator;
 	}
 	
@@ -199,6 +197,10 @@ public class CertificadosController implements ISepeHandler{
 	@Override
 	public boolean isCommunicationIdReceived(){
 		return getCommunicationIdFile()!=null && getCommunicationIdFile().getId()!=null;
+	}
+	@Override
+	public boolean isCommunicationResponseReceived(){
+		return getResponseFile()!=null && getResponseFile().getId()!=null;
 	}
 	
 	private void reset(){
@@ -320,26 +322,30 @@ public class CertificadosController implements ISepeHandler{
 			}
 		} catch (ManagerBeanException e) {
 			// NOTHING TO DO
+			String msg = "No se ha podido obtener el fichero " + type.getName(AonUtil.getCurrentLocale());
+			AonUtil.addErrorMessage(msg);
+			LOGGER.error("Error obtaining certific@2 contract attach");
 		}
 		return null;
 	}
 	
 	private IAttachment obtainCertificadosAttach(SepeBatchAttachmentType type){
-		Certifica2BatchController controller = (Certifica2BatchController) FormUtil.getController(ISepeConstants.CERTIFICA2_BATCH_CONTROLLER_NAME);
-		Certifica2Batch batch = (Certifica2Batch) controller.getTo(); 
 		try {
 			if(batch!=null && batch.getId()!=null){
-				IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
+				IManagerBean bean = BeanManager.getManagerBean(SepeBatchAttachment.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), batch.getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), getBatch().getId());
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), type);
 				List<ITransferObject> list = bean.getList(criteria);
 				if(!list.isEmpty()){
-					return (ContractAttachment) list.get(0);
+					return (IAttachment) list.get(0);
 				}
 			}
 		} catch (ManagerBeanException e) {
 			// NOTHING TO DO
+			String msg = "No se ha podido obtener el fichero " + type.getName(AonUtil.getCurrentLocale());
+			AonUtil.addErrorMessage(msg);
+			LOGGER.error("Error obtaining certific@2 batch attach");
 		}
 		return null;
 	}
@@ -358,7 +364,6 @@ public class CertificadosController implements ISepeHandler{
 			FileInputStream fis = new FileInputStream(file);
 			byte fileContent[] = new byte[(int)file.length()];
 			fis.read(fileContent);
-//			ContractAttachment attach = (ContractAttachment) getGeneratedFile();
 			ContractAttachment attach = new ContractAttachment();
 			attach.setContract(contract);
 			attach.setData(fileContent);
@@ -388,7 +393,15 @@ public class CertificadosController implements ISepeHandler{
 			getCommunicator().setDataCommunication(true);
 			getCommunicator().setDocument(new String(getGeneratedFile().getData()));
 			String result = getCommunicator().communicate();
-			saveSepeResponseFile(ContractAttachmentType.SEPE_CERTIFICADOS_COMMUNICATION_ID, result);
+			if(isBatchView()){
+				saveSepeResponseFile(SepeBatchAttachmentType.COMMUNICATION_ID, result);
+			} else if(!isBatchView()){
+				saveSepeResponseFile(ContractAttachmentType.SEPE_CERTIFICADOS_COMMUNICATION_ID, result);
+			} else {
+				String msg = "No se ha podido guardar la respuesta obtenida del SEPE";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
 			setShowLoginWindow(false);
 		}
 	}
@@ -468,20 +481,15 @@ public class CertificadosController implements ISepeHandler{
 	@Override
 	public String getCommunicationLogContent() {
 		String communicationLogContent = "<div>";
-//		String communicationNumber = getCommunicator().obtainCommunicationNumber(obtainContrataResponseAttach().getData());
-//		if(StringUtils.isNotEmpty(communicationNumber)){
-//			
-//			communicationLogContent += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>" + obtainContrataResponseAttach().getAttachDate() + " - Contrato comunicado al SEPE</b></div>";
-//			communicationLogContent += "NUM ENVIO:         " + communicationNumber;
-//			communicationLogContent += "<br /> ";
-//		}
-//		ContractAttachment attach = obtainContrataStatusAttach();
-//		if(attach!=null && attach.getId()!=null){
-//			String status = getCommunicator().obtainCommunicationStatus(attach.getData());
-//			if(StringUtils.isNotEmpty(status)){
-//				communicationLogContent += status ;
-//			}
-//		}
+		if( isCommunicationIdReceived() ){
+			communicationLogContent += getCommunicator().obtainCommunicationNumber(getCommunicationIdFile().getData());
+		}
+		if( isCommunicationResponseReceived() ){
+			String status = getCommunicator().obtainCommunicationStatus(getResponseFile().getData());
+			if(StringUtils.isNotEmpty(status)){
+				communicationLogContent += status;
+			}
+		}
 		communicationLogContent += "</div>";
 		return communicationLogContent;
 	}

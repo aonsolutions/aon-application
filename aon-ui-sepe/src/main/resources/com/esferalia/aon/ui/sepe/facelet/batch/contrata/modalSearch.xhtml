@@ -14,8 +14,8 @@
 
 			<aon:outputLabel for="Contrata_fileType" value="Tipo de comunicacion" />
 			<aon:selectOneMenu id="Contrata_fileType" required="true" 
-				value="#{contrataList.fileType}">
-				<f:selectItems value="#{contrataBatch.batchFileTypes}"  />
+				value="#{controller.fileType}">
+				<f:selectItems value="#{sepeCollections.contrataFileTypeList}" />
 			</aon:selectOneMenu>
 
 			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >

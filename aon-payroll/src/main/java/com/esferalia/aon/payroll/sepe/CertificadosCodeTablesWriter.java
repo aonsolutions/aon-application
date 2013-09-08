@@ -202,7 +202,9 @@ public class CertificadosCodeTablesWriter {
 		
 		writeEnumHeader(out, file, obtainTableDescription(getFileNameWithoutExtension(file)));
 		
-		if( !getFileNameWithoutExtension(file).equals("TMJMINSS") && !getFileNameWithoutExtension(file).equals("TAICLAOC") ){
+		if(getFileNameWithoutExtension(file).equals("Terrores")){
+			writeErrorEnum( file, newfile, out );
+		} else if( !getFileNameWithoutExtension(file).equals("TMJMINSS") && !getFileNameWithoutExtension(file).equals("TAICLAOC") ){
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 			String readerCurrentLine;
 			while( (readerCurrentLine = reader.readLine()) != null ) {
@@ -211,20 +213,20 @@ public class CertificadosCodeTablesWriter {
 				// *********** 
 				// This code is for error code file, the formatting of this file is especially a disaster
 				List<String> splitedLines = new LinkedList<String>();
-				if(StringUtils.countMatches(readerCurrentLine, "DH")>1){
-					for(String line: StringUtils.split(readerCurrentLine, "DH")){
-						if(StringUtils.isNotBlank(line)){
-							splitedLines.add("DH"+line);
-						}
-					}
-				}
-				if(StringUtils.countMatches(readerCurrentLine, "DW")>1){
-					for(String line: StringUtils.split(readerCurrentLine, "DW")){
-						if(StringUtils.isNotBlank(line) && line.length()>1){
-							splitedLines.add("DW"+line);
-						}
-					}
-				}
+//				if(StringUtils.countMatches(readerCurrentLine, "DH")>1){
+//					for(String line: StringUtils.split(readerCurrentLine, "DH")){
+//						if(StringUtils.isNotBlank(line)){
+//							splitedLines.add("DH"+line);
+//						}
+//					}
+//				}
+//				if(StringUtils.countMatches(readerCurrentLine, "DW")>1){
+//					for(String line: StringUtils.split(readerCurrentLine, "DW")){
+//						if(StringUtils.isNotBlank(line) && line.length()>1){
+//							splitedLines.add("DW"+line);
+//						}
+//					}
+//				}
 				// ***********
 				if(splitedLines.isEmpty()){
 					splitedLines.add(readerCurrentLine);
@@ -285,6 +287,98 @@ public class CertificadosCodeTablesWriter {
 		
 		out.close();
 	
+	}
+	
+	private static void writeErrorEnum( File file, File newfile, BufferedWriter out ) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+		String readerCurrentLine;
+		while( (readerCurrentLine = reader.readLine()) != null ) {
+			readerCurrentLine = StringUtils.strip(readerCurrentLine);
+			
+			// *********** 
+			// This code is for error code file, the formatting of this file is especially a disaster
+			List<String> splitedLines = new LinkedList<String>();
+			if(StringUtils.countMatches(readerCurrentLine, "DH")>1){
+				for(String line: StringUtils.split(readerCurrentLine, "DH")){
+					if(StringUtils.isNotBlank(line)){
+						splitedLines.add("DH"+line);
+					}
+				}
+			}
+			if(StringUtils.countMatches(readerCurrentLine, "DW")>1){
+				for(String line: StringUtils.split(readerCurrentLine, "DW")){
+					if(StringUtils.isNotBlank(line) && line.length()>1){
+						splitedLines.add("DW"+line);
+					}
+				}
+			}
+			// ***********
+			if(splitedLines.isEmpty()){
+				splitedLines.add(readerCurrentLine);
+			}
+			
+			for(String currentLine: splitedLines){
+				
+				if(StringUtils.containsIgnoreCase(currentLine, "Vigente") || StringUtils.containsIgnoreCase(currentLine, "OBSOLETO")) { 
+					currentLine = StringUtils.replace(currentLine, ",\"Vigente", ";\"Vigente");
+					currentLine = StringUtils.replace(currentLine, ",\"vigente", ";\"vigente");
+					currentLine = StringUtils.replace(currentLine, ",\"OBSOLETO", ";\"OBSOLETO");
+					currentLine = StringUtils.replace(currentLine, ",\"Obsoleto", ";\"Obsoleto");
+					currentLine = StringUtils.replace(currentLine, ",\"obsoleto", ";\"obsoleto");
+				} else if(StringUtils.isNotBlank(currentLine)){
+					currentLine += ";\"\"";
+				}
+				
+				
+				StringTokenizer token = null;
+				if(currentLine.contains(";") ){
+					currentLine = currentLine.substring(0, currentLine.lastIndexOf("\""));
+					token = new StringTokenizer(currentLine, "\"");
+				} else if(currentLine.contains("\t") ){
+					token = new StringTokenizer(currentLine, "\t");
+				} else if(currentLine.contains(",") ){
+					currentLine = currentLine.replace("\"","");
+					token = new StringTokenizer(currentLine, ",");
+				}
+				if(token!=null && token.hasMoreTokens()){
+					String code = token.nextToken();
+					out.write( "\t"+getFileNameWithoutExtension(file)+"_"+code.replace("\"", "").toUpperCase()+"( \""+code+"\"" );
+					if(token.hasMoreTokens()){
+						token.nextToken();
+						if(token.hasMoreTokens()){
+							String label = StringUtils.strip(token.nextToken());
+							out.write(", \""+(label)+"\"");
+							if(token.hasMoreTokens()){
+								token.nextToken();
+								if(token.hasMoreTokens()){
+									out.write(", \""+token.nextToken()+"\"");
+									if(token.hasMoreTokens()){
+										token.nextToken();
+										if(token.hasMoreTokens()){
+											out.write(", \""+token.nextToken()+"\" ),");
+										} else {
+											out.write( ", null )," );
+										}
+									} else {
+										out.write( ", null )," );
+									}
+								} else {
+									out.write( ", null, null )," );
+								}
+							} else {
+								out.write( ", null, null )," );
+							}
+						} else {
+							out.write( ", null, null, null )," );
+						}
+					} else {
+						out.write( ", null, null, null )," );
+					}
+				}
+				out.newLine();
+			}
+		}
+		
 	}
 	
 	private static void writeEnumHeader( BufferedWriter out, File file, String enumDescription ) throws IOException {

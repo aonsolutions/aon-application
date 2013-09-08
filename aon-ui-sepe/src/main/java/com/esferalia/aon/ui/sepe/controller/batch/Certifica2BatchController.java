@@ -33,6 +33,7 @@ import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
+import com.esferalia.aon.ui.sepe.controller.CertificadosController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.batch.Certifica2ListController.RemesableContract;
 import com.esferalia.aon.ui.sepe.file.CertificadosWriter;
@@ -214,6 +215,15 @@ public class Certifica2BatchController extends BasicController {
 			// NADA, que siga con la generacion del fichero
 		}
 		return null;
+	}
+	
+	
+	public void onInitCertificados(ActionEvent event){
+		Certifica2Batch batch =  (Certifica2Batch) this.getTo();
+		if(batch.getStatus() == FileStatus.GENERATED){
+			CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
+			certificadosController.initialize(batch);
+		}
 	}
 	
 }
