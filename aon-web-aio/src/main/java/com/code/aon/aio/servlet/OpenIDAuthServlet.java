@@ -1,7 +1,9 @@
 package com.code.aon.aio.servlet;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.servlet.RequestDispatcher;
@@ -17,6 +19,9 @@ import org.openid4java.discovery.DiscoveryInformation;
 import org.openid4java.discovery.Identifier;
 import org.openid4java.message.AuthRequest;
 import org.openid4java.message.AuthSuccess;
+import org.openid4java.message.MessageException;
+import org.openid4java.message.MessageExtension;
+import org.openid4java.message.Parameter;
 import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchRequest;
@@ -86,6 +91,69 @@ public class OpenIDAuthServlet extends HttpServlet {
 		return pass;
 	}
 	
+	private static class UIMessageExtension implements MessageExtension {
+
+		/**
+		 * The Attribute Exchange Type URI.
+		 */
+		public static final String OPENID_NS_UI = "http://specs.openid.net/extensions/ui/1.0";
+
+		/**
+		 * The Attribute Exchange extension-specific parameters.
+		 * <p>
+		 * The openid.<extension_alias> prefix is not part of the parameter
+		 * names
+		 */
+		protected ParameterList parameters;
+
+		public UIMessageExtension() {
+			parameters = new ParameterList();
+		}
+
+		@Override
+		public String getTypeUri() {
+			return OPENID_NS_UI;
+		}
+
+		@Override
+		public ParameterList getParameters() {
+			return parameters;
+		}
+
+		@Override
+		public void setParameters(ParameterList params) {
+			parameters.addParams(params);
+		}
+
+		/**
+		 * Attribute exchange doesn't implement authentication services.
+		 * 
+		 * @return false
+		 */
+		@Override
+		public boolean providesIdentifier() {
+			return false;
+		}
+
+		/**
+		 * Attribute exchange parameters are required to be signed.
+		 * 
+		 * @return true
+		 */
+		@Override
+		public boolean signRequired() {
+			return true;
+		}
+
+	    public void addParameter(String key, String value)
+	        throws MessageException
+	    {
+	    	Map<String, String> map = new HashMap<String, String>();
+	    	map.put(key, value);
+	    	parameters.addParams(new ParameterList(map));
+	    }
+	}
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -177,7 +245,10 @@ public class OpenIDAuthServlet extends HttpServlet {
 		// attach the extension to the authentication request
 		authReq.addExtension(fetch);
 		
-		//authReq.addExtension(hybridMsg); 
+		UIMessageExtension uiExtension = new UIMessageExtension();
+		uiExtension.addParameter("mode", "popup");
+		authReq.addExtension(uiExtension);
+		
 		if (!discovered.isVersion2()) {
 			// Option 1: GET HTTP-redirect to the OpenID Provider endpoint
 			// The only method supported in OpenID 1.x
@@ -195,7 +266,8 @@ public class OpenIDAuthServlet extends HttpServlet {
 	}
 
 	// --- processing the authentication response ---
-	public Identifier verifyResponse(HttpServletRequest httpReq) throws OpenIDException {
+	public Identifier verifyResponse(HttpServletRequest httpReq)
+			throws OpenIDException {
 		// extract the parameters from the authentication response
 		// (which comes in as a HTTP request from the OpenID provider)
 		ParameterList response = new ParameterList(httpReq.getParameterMap());
@@ -227,7 +299,7 @@ public class OpenIDAuthServlet extends HttpServlet {
 						.getExtension(AxMessage.OPENID_NS_AX);
 				List emails = fetchResp.getAttributeValues("email");
 				String email = (String) emails.get(0);
-				
+
 				this.email = email;
 				
 				
