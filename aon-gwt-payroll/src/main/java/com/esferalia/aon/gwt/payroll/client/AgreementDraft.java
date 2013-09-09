@@ -325,6 +325,7 @@ public class AgreementDraft extends ResizeComposite implements
 								return;
 
 							payment.setType(concept.getType());
+							payment.setName(concept.getName());
 							payment.setConceptId(concept.getId());
 							payment.setDescription(concept.getDescription());
 							payment.setIrpfExpression(concept
