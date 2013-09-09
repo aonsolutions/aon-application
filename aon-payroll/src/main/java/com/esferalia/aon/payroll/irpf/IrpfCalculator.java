@@ -25,6 +25,7 @@ import es.aeat.pret.rw13.jaxb.AEATRetencionesError2013;
 import es.aeat.pret.rw13.jaxb.AEATRetencionesSalida2013;
 import es.aeat.pret.rw13.jaxb.TipoComputo;
 import es.aeat.pret.rw13.jaxb.TipoError;
+import es.aeat.pret.rw13.jaxb.TipoErrorGeneral;
 import es.aeat.pret.rw13.jaxb.TipoRetenedorError2013;
 import es.aeat.pret.rw13.jaxb.TipoRetenedorSalida2013;
 import es.aeat.pret.rw13.jaxb.TipoRetenidoEntrada2013.Regularizacion;
@@ -301,8 +302,17 @@ public class IrpfCalculator {
 			if (retenidos.size() > 0) {
 				TipoRetenidoError2013 retenido = retenidos.get(0);
 				List<TipoError> tipoErrores = retenido.getError();
-				TipoError tipoError = tipoErrores.get(0);
-				message = tipoError.getDescripcion();
+				if ( tipoErrores.size() > 0  ){
+					TipoError tipoError = tipoErrores.get(0);
+					message = tipoError.getDescripcion();
+				} 
+			} 
+			if ( message == null ) {
+				List<TipoErrorGeneral> errores = error.getErrorGeneral();
+				if ( errores.size() > 0 ){
+					message = errores.get(0).getDescripcion();
+				}
+				
 			}
 			ExpressionException expressionException = new CheckException(
 					message);
