@@ -146,7 +146,7 @@
 		function drawCharts(){
 			var whatever = Array.prototype.reduce;
 			try {
-				Array.prototype.reduce = undefined;
+				Array.prototype.reduce=function(fun){var len=this.length&#62;&#62;&#62;0;if(typeof fun!="function")throw new TypeError;if(len==0&#38;&#38;arguments.length==1)throw new TypeError;var i=0;if(arguments.length&#62;=2)var rv=arguments[1];else{do{if(i in this){var rv=this[i++];break}if(++i&#62;=len)throw new TypeError;}while(true)}for(;i&#60;len;i++)if(i in this)rv=fun.call(undefined,rv,this[i],i,this);return rv};
 				var data = google.visualization.arrayToDataTable([
 					['', ''],
 					['#{statBundle.stat_income_amount}'		 , #{projectStat.totalSales}],

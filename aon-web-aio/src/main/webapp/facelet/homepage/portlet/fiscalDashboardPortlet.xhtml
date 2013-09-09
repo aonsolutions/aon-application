@@ -133,7 +133,7 @@
 					<aon:div id="accountingGraphContainer" 
 					style="width: 98%; height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;;padding-top: 5px;">
 						<aon:div styleClass="aon-bold">
-							<aon:outputText value="Apuntes por Meses del Ejercicio "/>
+							<aon:outputText value="Apuntes por Meses del Ejercicio"/>
 							<aon:selectOneMenu id="Dashboard_accountPeriod"
 								style="border: none;"
 								value="#{dashboard.accountingPeriod}">
@@ -147,13 +147,12 @@
 						</aon:div>
 						<aon:div id="bar_chart_div" style="width: 100%; height: 180px;"/>
 						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-						<script type="text/javascript">
-							google.load("visualization", "1", {callback : drawCharts ,packages:["corechart"]});
+						<script type="text/javascript"> 
+							google.load("visualization", "1", {'callback' : 'drawCharts' ,'packages':["corechart"], 'language': 'en'});
 							function drawCharts(){
-								var whatever = Array.prototype.reduce;
+								 var whatever = Array.prototype.reduce;
 								try {
-									Array.prototype.reduce = undefined;
-									
+									Array.prototype.reduce=function(fun){var len=this.length&#62;&#62;&#62;0;if(typeof fun!="function")throw new TypeError;if(len==0&#38;&#38;arguments.length==1)throw new TypeError;var i=0;if(arguments.length&#62;=2)var rv=arguments[1];else{do{if(i in this){var rv=this[i++];break}if(++i&#62;=len)throw new TypeError;}while(true)}for(;i&#60;len;i++)if(i in this)rv=fun.call(undefined,rv,this[i],i,this);return rv};
 									//---------------------------------
 									var data = new google.visualization.DataTable();
 									data.addColumn('string', 'Mes');
