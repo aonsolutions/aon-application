@@ -222,7 +222,8 @@ public class ContractController extends BasicController {
 			if(this.getModel().isRowAvailable()){
 				ContractUtils utils = ContractUtils.getInstance();
 				String code = utils.getContractDataMap((Contract) getModel().getRowData()).get(ContextVariable.TC2.getName());
-				return code + " - " + ContractCode.getContractCodeByValue(code).getName(FacesContext.getCurrentInstance().getViewRoot().getLocale());
+				ContractCode contractCode = ContractCode.getContractCodeByValue(code);
+				return contractCode!=null?code + " - " + contractCode.getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()):"";
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> getContractCode exception: ",e);

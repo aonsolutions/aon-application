@@ -671,7 +671,9 @@ public class ContractUtils {
 			}
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
-				map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
+				if( StringUtils.isNotEmpty(data.getName()) && StringUtils.isNotEmpty(data.getExpression()) ){
+					map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
+				}
 			}
 		} catch (ManagerBeanException e) {
 			// NADA, se devuelve un mapa vacio

@@ -244,6 +244,7 @@ public final class SEPEConnectionProvider {
 	}
 	
 	public static boolean validateCertifica2Login(boolean b, String certifica2User, String mainUser, String certifica2Password) {
+		System.out.println("######################"+System.getProperty("java.io.tmpdir"));
 		String result = processCertificadosCommunication(b, "<?xml>", certifica2User, mainUser, certifica2Password);
 		System.out.println("INFO SEPE (Certific@2): " + result);
 		result = result.replaceAll("\n", "");
@@ -268,13 +269,13 @@ public final class SEPEConnectionProvider {
 	private static String trustStorePassword = null;
 
 //	private static final String KEY_STORE 			= "C:\\tmp\\cacerts";
-	private static final String KEY_STORE 			= System.getProperty("java.home")+"\\lib\\security\\cacerts";
-//	private static final String KEY_STORE 			= "C:\\java\\openjdk-se-7-ri\\jre\\lib\\security\\cacerts";
+//	private static final String KEY_STORE 			= System.getProperty("java.home")+"\\lib\\security\\cacerts";
 //	private static final String KEY_STORE 			= "C:\\java\\jdk1.6.0_05\\jre\\lib\\security\\cacerts";
+	private static final String KEY_STORE 			= "/tmp/cacerts";
 	private static final String KEY_STORE_PASSWD 	= "changeit";
-	private static final String TRUST_STORE 		= System.getProperty("java.home")+"\\lib\\security\\cacerts";
-//	private static final String TRUST_STORE 		= "C:\\java\\openjdk-se-7-ri\\jre\\lib\\security\\cacerts";
+//	private static final String TRUST_STORE 		= System.getProperty("java.home")+"\\lib\\security\\cacerts";
 //	private static final String TRUST_STORE 		= "C:\\java\\jdk1.6.0_05\\jre\\lib\\security\\cacerts";
+	private static final String TRUST_STORE 		= "/tmp/cacerts";
 	private static final String TRUST_STORE_PASSWD 	= "changeit";
 	
 	private static void assignSslSystemProperies() {
