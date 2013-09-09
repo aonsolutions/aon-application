@@ -268,13 +268,13 @@ public final class SEPEConnectionProvider {
 	private static String trustStorePassword = null;
 
 //	private static final String KEY_STORE 			= "C:\\tmp\\cacerts";
-//	private static final String KEY_STORE 			= System.getProperty("java.home")+"\\lib\\security\\cacerts";
+	private static final String KEY_STORE 			= System.getProperty("java.home")+"\\lib\\security\\cacerts";
 //	private static final String KEY_STORE 			= "C:\\java\\openjdk-se-7-ri\\jre\\lib\\security\\cacerts";
-	private static final String KEY_STORE 			= "C:\\java\\jdk1.6.0_05\\jre\\lib\\security\\cacerts";
+//	private static final String KEY_STORE 			= "C:\\java\\jdk1.6.0_05\\jre\\lib\\security\\cacerts";
 	private static final String KEY_STORE_PASSWD 	= "changeit";
-//	private static final String TRUST_STORE 		= System.getProperty("java.home")+"\\lib\\security\\cacerts";
+	private static final String TRUST_STORE 		= System.getProperty("java.home")+"\\lib\\security\\cacerts";
 //	private static final String TRUST_STORE 		= "C:\\java\\openjdk-se-7-ri\\jre\\lib\\security\\cacerts";
-	private static final String TRUST_STORE 		= "C:\\java\\jdk1.6.0_05\\jre\\lib\\security\\cacerts";
+//	private static final String TRUST_STORE 		= "C:\\java\\jdk1.6.0_05\\jre\\lib\\security\\cacerts";
 	private static final String TRUST_STORE_PASSWD 	= "changeit";
 	
 	private static void assignSslSystemProperies() {
