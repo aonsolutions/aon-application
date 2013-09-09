@@ -502,7 +502,20 @@ public class SalaryDraftObject implements IContextProvider{
 
 		addDraftVariable( clone(oldVar, newName));
 		
-		List<Payment> payments = salaryDraft.getPayments();
+		List<Payment> payments = salaryDraft.getDraftPayments();
+		for (Payment payment : payments) {
+			String expression = payment.getExpression();
+			if ( expression == null  ) 
+				continue;
+			if ( expression.indexOf(oldName) == - 1)
+				continue;
+
+			String newExpression = expression.replaceAll(oldName, newName);
+			
+			addDraftPayment(clonePayment(payment, newExpression));
+		}
+
+		payments = salaryDraft.getPayments();
 		for (Payment payment : payments) {
 			String expression = payment.getExpression();
 			if ( expression == null  ) 
@@ -533,6 +546,7 @@ public class SalaryDraftObject implements IContextProvider{
 	private Payment clonePayment(Payment oldPayment, String newExpression){
 		Payment newPayment = new Payment();
 		
+		newPayment.setId(oldPayment.getId());
 		newPayment.setName(oldPayment.getName());
 		newPayment.setType(oldPayment.getType());
 		newPayment.setConceptId(oldPayment.getId());

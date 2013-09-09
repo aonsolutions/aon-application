@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -26,7 +27,6 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.payroll.IrpfResult;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -50,7 +50,6 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.HasDirection.Direction;
@@ -141,6 +140,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private Scope SCOPE_STEPS[] = { Scope.CONTRACT, Scope.AGREEMENT,
 			Scope.SYSTEM };
+	
+	private static String [] SKIP_VARIABLES = {"CONVENIO", "SISTEMA" };
+	
+	private static boolean skipVariable(Variable variable) {
+		String name = variable.getName();
+		for (String skip : SKIP_VARIABLES) {
+			if ( skip.equals(name))
+				return true;
+		}
+		return false;
+	}
 
 	static class VisibilityImpl implements HasVisibility {
 
@@ -1839,7 +1849,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			if (scope.compareTo(to) < 0) {
 				break;
 			}
-
+			
+			if ( skipVariable(variable)) {
+				continue;
+			}
+			
 			HTMLPanel htmlPanel = new HTMLPanel("");
 
 			VariableChangeHandler<TextBox> variableChangeHandler = new VariableChangeHandler<TextBox>(
