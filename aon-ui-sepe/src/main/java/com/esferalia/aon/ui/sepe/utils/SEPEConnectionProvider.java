@@ -244,7 +244,6 @@ public final class SEPEConnectionProvider {
 	}
 	
 	public static boolean validateCertifica2Login(boolean b, String certifica2User, String mainUser, String certifica2Password) {
-		System.out.println("######################"+System.getProperty("java.io.tmpdir"));
 		String result = processCertificadosCommunication(b, "<?xml>", certifica2User, mainUser, certifica2Password);
 		System.out.println("INFO SEPE (Certific@2): " + result);
 		result = result.replaceAll("\n", "");

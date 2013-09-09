@@ -18,6 +18,7 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -438,7 +439,11 @@ public class ContractController extends BasicController {
 	public void onChangeCno(LookupChangeEvent event){
 		Contract contract = (Contract) this.getTo();
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			contract.setCategoryDescription(((CNO)event.getNewValue()).getTitle());
+			String desc = ((CNO)event.getNewValue()).getTitle();
+			if(StringUtils.isNotBlank(desc) && desc.length()>64){
+				desc = desc.substring(0, 63);
+			}
+			contract.setCategoryDescription(desc);
 		}
 	}
 	

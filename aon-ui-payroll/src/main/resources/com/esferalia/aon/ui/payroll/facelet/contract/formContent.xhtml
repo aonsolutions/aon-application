@@ -182,6 +182,14 @@
 		
 		<aon:outputLabel for="Contract_endDate" value="#{bundle.aon_end_date}" />
 		<aon:selectInputDate id="Contract_endDate" 
+			required="#{contract.endDateRequired}"
+			value="#{contract.to.endDate}"
+			inputSize="10" renderAsPopup="true" enableManualInput="true"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}">
+		</aon:selectInputDate>
+<!--  
+		<aon:selectInputDate id="Contract_endDate" 
 			disabled="#{!contract.endDateOptional and !contract.new}"
 			required="#{contract.endDateRequired}"
 			value="#{contract.to.endDate}"
@@ -189,6 +197,7 @@
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}">
 		</aon:selectInputDate>
+-->
 		
 
 <!--  
