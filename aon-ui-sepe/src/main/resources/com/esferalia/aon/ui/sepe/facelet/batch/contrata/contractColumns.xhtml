@@ -19,13 +19,13 @@
 		</aon:column>
 	</c:if>
 	
-	<aon:column alias="Contract.person.registry.surname,Contract.person.registry.name"
+	<aon:column alias="Contract.person.firstSurname, Contract.person.secondSurname, Contract.person.name"
 		styleClass="aon-editDataTable-textColumn aon-width-width">
 		<f:facet name="header">
 			<aon:outputText value="#{registryBundle.registry_person}" />
 		</f:facet>
 		<aon:div styleClass="aon-nowrap">
-			<aon:outputText value="#{to.contract.person.registry.fullName}"/>
+			<aon:outputText value="#{to.contract.person.fullName}"/>
 		</aon:div>
 	</aon:column>
 			

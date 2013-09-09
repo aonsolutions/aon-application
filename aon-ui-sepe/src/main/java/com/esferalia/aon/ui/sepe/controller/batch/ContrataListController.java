@@ -110,6 +110,11 @@ public class ContrataListController extends BasicController {
 			if(getEnterprise()!=null && getEnterprise().getId()!=null){
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
 			}
+			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_REGISTRY_NAME));
+			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_PERSON_FIRST_SURNAME));
+			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_PERSON_SECOND_SURNAME));
+			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_PERSON_REGISTRY_NAME));
+			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_END_DATE), false);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());

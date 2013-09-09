@@ -43,7 +43,7 @@
 										<ui:param name="showDescription" value="false" />
 										<ui:define name="toolbarContent">
 											<aon:commandButton id="batch-accept"
-												value="#{bundle.aon_accept}"
+												value="#{controller.newBatch?bundle.aon_accept:bundle.aon.save}"
 												actionListener="#{controller.onBatchAccept}"
 												reRender="showCertificadosBatchWindow"
 												styleClass="aon-finding-toolbar-item aon-icon-accept" >
@@ -52,7 +52,7 @@
 													value="#{false}" />
 											</aon:commandButton>
 											<aon:commandButton id="batch-new"
-												value="#{bundle.aon_reset}"
+												value="#{bundle.aon_reset}" immediate="#{true}"
 												rendered="#{!controller.newBatch}"
 												actionListener="#{controller.onResetBatch}"
 												reRender="showCertificadosBatchWindow"

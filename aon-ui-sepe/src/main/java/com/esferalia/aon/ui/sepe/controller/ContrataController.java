@@ -378,21 +378,22 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	
 	public void onContrataAccept( ActionEvent event ) {
 		try {
-			if(getGeneratedFile()!=null){
-				generateContractContrataFile(getContract());
-				ContractAttachment attach = new ContractAttachment();
-				attach = (ContractAttachment) getGeneratedFile();
-				IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-				attach.setAttachDate(new Date());
-				if(isContratoFile()){
-					attach.setAttachmentType(ContractAttachmentType.SEPE_CONTRACT_FILE);
-				} else if(isProrrogaFile()){
-					attach.setAttachmentType(ContractAttachmentType.SEPE_EXTENSION_FILE);
-				} else if(isTransformacionFile()){
-					
-				}
-				bean.insertOrUpdate(attach);
+			if(getGeneratedFile()==null){
+				setGeneratedFile(new ContractAttachment());
 			}			
+			generateContractContrataFile(getContract());
+			ContractAttachment attach = new ContractAttachment();
+			attach = (ContractAttachment) getGeneratedFile();
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			attach.setAttachDate(new Date());
+			if(isContratoFile()){
+				attach.setAttachmentType(ContractAttachmentType.SEPE_CONTRACT_FILE);
+			} else if(isProrrogaFile()){
+				attach.setAttachmentType(ContractAttachmentType.SEPE_EXTENSION_FILE);
+			} else if(isTransformacionFile()){
+				
+			}
+			bean.insertOrUpdate(attach);
 		} catch (ManagerBeanException e) {
 			String msg = "No se han podido guardar los datos de Contrat@";
 			LOGGER.error(msg, e);

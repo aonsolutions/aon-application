@@ -43,7 +43,7 @@
 										<ui:param name="showDescription" value="false" />
 										<ui:define name="toolbarContent">
 											<aon:commandButton id="batch-accept"
-												value="#{bundle.aon_accept}"
+												value="#{controller.newBatch?bundle.aon_accept:bundle.aon.save}"
 												actionListener="#{controller.onBatchAccept}"
 												reRender="showContrataBatchWindow"
 												styleClass="aon-finding-toolbar-item aon-icon-accept" >

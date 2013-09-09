@@ -9,7 +9,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 	
 	<c:if test="#{showEnterpriseColumn}">
-		<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
+		<aon:column alias="Contract.workPlace.enterprise.registry.name"
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
 				<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
@@ -34,12 +34,12 @@
 		<aon:outputText value="#{to.person.registry.document}" />
 	</aon:column>
 
-	<aon:column alias="Contract.person.registry.surname, Contract.person.registry.name"
+	<aon:column alias="Contract.person.firstSurname, Contract.person.secondSurname, Contract.person.name"
 		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{payrollBundle.payroll_employee_name}" />
 		</f:facet>
-		<aon:outputText value="#{to.person.registry.fullName}" />		
+		<aon:outputText value="#{to.person.fullName}" />		
 	</aon:column>
 	
 	<aon:column alias="Contract.endDate"
