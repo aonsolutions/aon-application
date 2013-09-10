@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.payroll.controller.salary;
 
+import static com.code.aon.ui.common.ICommonMessages.PHONE;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -46,21 +48,18 @@ import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.esferalia.aon.payroll.Pair;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryEmbargo;
 import com.esferalia.aon.payroll.SalaryPayment;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -350,7 +349,7 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		body.append( enterprise.getRegistry().getFullName() ).append( "<br/>" );
 		RegistryMedia phone = getRegistryMedia(enterprise, MediaType.FIXED_PHONE);
 		if ( phone != null ) {
-			String phoneLabel = AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_PHONE);
+			String phoneLabel = AonUtil.getMessage(PHONE);
 			body.append( StringEscapeUtils.escapeHtml(phoneLabel));
 			body.append( ": " ).append( phone.getValue()).append( "<br/>" );			
 		}

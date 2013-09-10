@@ -18,7 +18,6 @@ public interface IFinanceMessages {
 	String FINANCE_TRACKING_PAYMENT_PRINT = "finance_tracking_payment_print";
 	String FINANCE_TRACKING_SETTLED = "finance_tracking_settled";
 	String FINANCE_TRACKING_BATCHED = "finance_tracking_batched";
-	String FINANCE_TRACKING_RECORDED = "finance_tracking_recorded";
 	String FINANCE_BATCH_DATE_ERROR = "finance_batch_date_error";
 	String FINANCE_BATCH_DISK_ERROR = "finance_batch_disk_error";
 	String FINANCE_BATCH_UNRECORD_ERROR = "finance_batch_unrecord_error";
@@ -31,7 +30,6 @@ public interface IFinanceMessages {
 	String FINANCE_INVOICE_SEND_EMAIL_ERROR = "finance_invoice_send_email_error";
 	String FINANCE_INVOICE_SEND_EMAIL_FNINISH = "finance_invoice_send_email_finish";
 	String FINANCE_CASH = "finance_cash";
-	String FINANCE_PENDING = "finance_pending";
 	String FINANCE_INVOICE_CHECKING_MODULE_NO_FINANCE = "finance_invoice_checking_module_no_finance";	
 	String FINANCE_INVOICE_CHECKING_MODULE_WRONG_FINANCE = "finance_invoice_checking_module_wrong_finance";
 	String FINANCE_INVOICE_INTEGRITY_NO_RESULT = "finance_integrity_no_result";
@@ -43,9 +41,6 @@ public interface IFinanceMessages {
 	String FINANCE_CUSTOMER_REQUIRED_ERROR = "finance_customer_required_error";
 	String FINANCE_DUPLICATE_PURCHASE_INVOICE_WARNING = "finance_duplicate_purchase_invoice_warning";
 	String FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING = "finance_duplicate_expense_invoice_warning";
-	String FINANCE_INVOICE_OFFER = "finance_invoice_offer";
-	String FINANCE_INVOICE_SALES = "finance_invoice_sales";
-	String FINANCE_INVOICE_DELIVERY = "finance_invoice_delivery";
 	String FINANCE_POS_OPENED = "finance_pos_opened";
 	String FINANCE_POS_CATALOGUE_ERROR = "finance_pos_catalogue_error";
 	String FINANCE_INACCURACY_MSG = "finance_unable_record_inaccuracy_error";
@@ -59,8 +54,6 @@ public interface IFinanceMessages {
 	String FINANCE_INPUT_VAT_REPORT = "finance_input_vat_report";
 	String FINANCE_OUTPUT_VAT_REPORT = "finance_output_vat_report";
 	String NO_FEE_CUSTOMER_REPORT = "aon_no_fee_customer_report";
-	String FINANCE_SOURCE = "finance_source";
-	String FINANCE_INVOICE_DETAIL_LINE = "finance_invoice_detail_line";	
 
 }
 

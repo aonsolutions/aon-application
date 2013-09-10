@@ -32,8 +32,6 @@ public interface ICompanyConstants {
 	
 	String COMPANY_EMAIL_BODY_FOOTER = "company_email_body_footer";
 	
-	String COMPANY_ACTIVITY_MODULE = "company_activity_module";
-	
 	String COMPANY_WORKPLACE = "company_workplace";
 	
 	String COMPANY_DEPARTMENT = "company_department";

@@ -16,7 +16,6 @@ public interface IPayrollConstants {
 	String SALARY_EMAIL_BODY_HEADER = "payroll_email_subject_header";
 	String SALARY_EMAIL_BODY_LINE = "payroll_email_subject_line";
 	String SALARY_EMAIL_BODY_FOOTER = "payroll_email_subject_footer";
-	String PAYROLL_DOCUMENTS = "payroll_documents";
 	String PAYROLL_ECONOMIC_DATA = "payroll_economic_data";
 	String PAYROLL_SALARY_PAYMENTS = "payroll_salary_payments_tab";
 	String PAYROLL_SALARY_DEDUCTIONS = "payroll_salary_deductions_tab";

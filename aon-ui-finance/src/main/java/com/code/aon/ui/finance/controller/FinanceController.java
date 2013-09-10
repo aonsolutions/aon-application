@@ -38,6 +38,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -539,10 +540,10 @@ public class FinanceController extends FinanceListController {
 		String message = null;
 		if (isPaymentRecordable()) {
 			entry = getWriter().recordFinance(finance, getPaymentRegistryBank(), getPaymentPayMethodTypeDetail(), getPaymentDate());
-			message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
+			message = AonUtil.getMessage(ICommonMessages.TRACKING_RECORDED) + " " + entry.getId();
 		}
 
-		message = (message!=null) ? message : AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_PENDING);
+		message = (message!=null) ? message : AonUtil.getMessage(ICommonMessages.PENDING);
 		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, getPaymentDate(), FinanceTrackingType.PAID, message, 
 				getPaymentRegistryBank(), getPaymentPayMethodTypeDetail(), finance.getTotalAmount(), isPaymentRecordable());
 
@@ -568,10 +569,10 @@ public class FinanceController extends FinanceListController {
 		String message = null;
 		if (isReturnRecordable()) {
 			entry = getWriter().returnFinance(finance, getReturnRegistryBank(), getReturnPayMethodTypeDetail(), getReturnDate());
-			message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_RECORDED) + " " + entry.getId();
+			message = AonUtil.getMessage(ICommonMessages.TRACKING_RECORDED) + " " + entry.getId();
 		}
 
-		message = (message!=null) ? message : AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_PENDING);
+		message = (message!=null) ? message : AonUtil.getMessage(ICommonMessages.PENDING);
 		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, getReturnDate(), FinanceTrackingType.RETURNED, message,
 				getReturnRegistryBank(), getReturnPayMethodTypeDetail(), finance.getTotalAmount(), isReturnRecordable());
 

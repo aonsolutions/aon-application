@@ -154,7 +154,7 @@ public class DBManager {
 		HibernateDataManager hdm = new HibernateDataManager();
 		hdm.setExportData(true);
 		try {
-			File xmlFile = File.createTempFile("aon_master", ".xml");
+			File xmlFile = File.createTempFile("aon-master", ".xml");
 			hdm.setFile( xmlFile );
 			String factoryName = HibernateUtil.getSessionFactoryName();
 			SessionFactory factory = HibernateUtil.getSessionFactory(factoryName);

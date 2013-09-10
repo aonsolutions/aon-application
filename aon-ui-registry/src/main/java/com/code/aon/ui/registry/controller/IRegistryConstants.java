@@ -15,21 +15,13 @@ public interface IRegistryConstants {
 	
 	String REGISTRY_ADDRESS_MODULE = "registry_address_module";
 	
-	String REGISTRY_MEDIA_MODULE = "registry_media_module";
-	
 	String REGISTRY_FINANCE_DATA_MODULE = "registry_finance_data_module";
 	
 	String REGISTRY_DIR_STAFF = "registry_dir_staff";
 	
-	String REGISTRY_ADD_INFO = "registry_addInfo";
-	
-	String REGISTRY_PHONE = "registry_phone";
-	
 	String REGISTRY_FAX = "registry_fax";
 	
 	String REGISTRY_DOCUMENT_ERROR = "registry_document_error";
-	
-	String REGISTRY_CATEGORY = "registry_category";
 	
 	String INVALID_EMAIL = "registry_invalid_email";
 	
@@ -47,17 +39,9 @@ public interface IRegistryConstants {
     
     String CUSTOMER_REPORT = "aon_customer_report";
     
-	String REGISTRY_ADDRESS = "registry_address";
-
-	String REGISTRY_CELLULAR = "registry_cellular";
-
 	String REGISTRY_EMAIL = "registry_email";
 
-	String REGISTRY_WEB = "registry_web";
-
 	String REGISTRY_NATIONALITY = "registry_nationality";
-
-	String REGISTRY_GEOZONE = "registry_geozone";
 
 	String REGISTRY_NUMBER_OF_PAYMENTS = "registry_number_of_payments";
 
@@ -67,10 +51,7 @@ public interface IRegistryConstants {
 
 	String REGISTRY_PAYMENT_DAYS = "registry_payment_days";
 
-	String REGISTRY_CITY = "registry_city";
-
-	String REGISTRY_ZIP = "registry_zip";
-    
+	String REGISTRY_CITY = "registry_city";	
 	
 	// ************************************************************
 	// BEAN

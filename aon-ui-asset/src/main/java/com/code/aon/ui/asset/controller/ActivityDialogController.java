@@ -1,21 +1,20 @@
 package com.code.aon.ui.asset.controller;
 
+import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ACTIVITY_DAYS;
+import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ASSET;
 import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_BUNDLE;
+import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_END_DATE;
+import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ERROR_DATE_RANGE;
+import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ERROR_HOVERLAP;
+import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ERROR_TIME_RANGE;
+import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_FROM_TIME;
+import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_START_DATE;
+import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_TO_TIME;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonMessages.BUNDLE_NAME;
 import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.REMARK;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ERROR_TIME_RANGE;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ERROR_DATE_RANGE;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ACTIVITY_WHY;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ACTIVITY_WHO;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ASSET;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_START_DATE;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_END_DATE;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ACTIVITY_DAYS;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_TO_TIME;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_FROM_TIME;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ERROR_HOVERLAP;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -46,6 +45,7 @@ import com.code.aon.common.enumeration.WeekDay;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.registry.RegistryMedia;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.FormUtil;
@@ -402,9 +402,9 @@ public class ActivityDialogController extends EmailParentController{
 			}
 		}
 		content.append(SystemUtils.LINE_SEPARATOR);
-		content.append( AonUtil.getMessage(ASSET_BUNDLE, ASSET_ACTIVITY_WHO) ).append( ": ");
+		content.append( AonUtil.getMessage(ICommonMessages.HOLDER) ).append( ": ");
 		content.append( getWho() ).append(SystemUtils.LINE_SEPARATOR);
-		content.append( AonUtil.getMessage(ASSET_BUNDLE, ASSET_ACTIVITY_WHY) ).append( ": ");
+		content.append( AonUtil.getMessage(REMARK) ).append( ": ");
 		content.append( getWhy() ).append(SystemUtils.LINE_SEPARATOR);	
 		
 		super.email(subject, from, to, content.toString());

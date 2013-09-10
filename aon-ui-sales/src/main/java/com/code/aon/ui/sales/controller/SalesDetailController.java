@@ -25,7 +25,6 @@ import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.sales.ISalesMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -153,13 +152,13 @@ public class SalesDetailController extends LinesController implements ISalesCons
 
 		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
 		if (salesDetail.getOfferDetail() != null && salesDetail.getOfferDetail().getId() != null) {
-			info.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_SOURCE));
+			info.append(AonUtil.getMessage(ICommonMessages.SOURCE));
 			info.append(" ");
-			info.append(AonUtil.getMessage(ICommonMessages.COMMERCIAL_BUNDLE, ICommonMessages.COMMERCIAL_OFFER));
+			info.append(AonUtil.getMessage(ICommonMessages.INVOICE_OFFER));
 			info.append(" ");
 			info.append(salesDetail.getOfferDetail().getOffer().getReferenceCode());
 			info.append(" - ");
-			info.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_DETAIL_LINE));
+			info.append(AonUtil.getMessage(ICommonMessages.LINE));
 			info.append(" ");
 			info.append(salesDetail.getOfferDetail().getLine());
 		}
@@ -178,20 +177,20 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		while (iterator.hasNext()) {
 			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
 			//info.append("<p>");
-			info.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_TRANSFERED_TO));
+			info.append(AonUtil.getMessage(ICommonMessages.TRANSFERED_TO));
 			info.append(" ");
-			info.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_TO_DELIVERY));
+			info.append(AonUtil.getMessage(ICommonMessages.INVOICE_DELIVERY));
 			info.append(" ");
 			info.append(deliveryDetail.getDelivery().getReferenceCode());
 			info.append(" - ");
-			info.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_DETAIL_LINE));
+			info.append(AonUtil.getMessage(ICommonMessages.LINE));
 			info.append(" ");
 			info.append(deliveryDetail.getLine());
 			if (salesDetail.getQuantity() > deliveryDetail.getQuantity()) {
 				info.append(" (");
 				info.append(formatter.format(deliveryDetail.getQuantity()));
 				info.append(" ");
-				info.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_DETAIL_UNITS));
+				info.append(AonUtil.getMessage(ICommonMessages.UNITS));
 				info.append(")");
 			}
 			//info.append("</p>");

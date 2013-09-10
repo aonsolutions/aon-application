@@ -1,7 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.finance.IFinanceMessages.FINANCE_INVOICE_DETAIL_LINE;
-import static com.code.aon.ui.finance.IFinanceMessages.FINANCE_SOURCE;
+import static com.code.aon.ui.common.ICommonMessages.LINE;
+import static com.code.aon.ui.common.ICommonMessages.SOURCE;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -31,7 +31,7 @@ import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
-import com.code.aon.ui.finance.IFinanceMessages;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
@@ -235,42 +235,42 @@ public class InvoiceDetailController extends LinesController implements IFinance
 			if (invoiceDetail.getSource() == InvoiceSource.OFFER) {
 				IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 				OfferDetail offerDetail = (OfferDetail)offerDetailBean.get(invoiceDetail.getSourceId());
-				message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_INVOICE_OFFER);
+				message = AonUtil.getMessage(ICommonMessages.INVOICE_OFFER);
 				refCode = offerDetail.getOffer().getReferenceCode();
 				line = offerDetail.getLine().intValue();
 			} else if (invoiceDetail.getSource() == InvoiceSource.SALES) {
 				IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 				SalesDetail salesDetail = (SalesDetail)salesDetailBean.get(invoiceDetail.getSourceId());
-				message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_INVOICE_SALES);
+				message = AonUtil.getMessage(ICommonMessages.INVOICE_SALES);
 				refCode = salesDetail.getSales().getReferenceCode();
 				line = salesDetail.getLine().intValue();
 			} else if (invoiceDetail.getSource() == InvoiceSource.PURCHASE) {
 				IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 				PurchaseDetail purchaseDetail = (PurchaseDetail)purchaseDetailBean.get(invoiceDetail.getSourceId());
-				message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_INVOICE_SALES);
+				message = AonUtil.getMessage(ICommonMessages.INVOICE_SALES);
 				refCode = purchaseDetail.getPurchase().getReferenceCode();
 				line = purchaseDetail.getLine().intValue();
 			} else if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
 				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
-				message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_INVOICE_DELIVERY);
+				message = AonUtil.getMessage(ICommonMessages.INVOICE_DELIVERY);
 				refCode = deliveryDetail.getDelivery().getReferenceCode();
 				line = deliveryDetail.getLine().intValue();
 			} else if (invoiceDetail.getSource() == InvoiceSource.INCOME) {
 				IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 				IncomeDetail incomeDetail = (IncomeDetail)incomeDetailBean.get(invoiceDetail.getSourceId());
-				message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_INVOICE_DELIVERY);
+				message = AonUtil.getMessage(ICommonMessages.INVOICE_DELIVERY);
 				refCode = incomeDetail.getIncome().getReferenceCode();
 				line = incomeDetail.getLine().intValue();
 			}
 
-			info.append(AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, FINANCE_SOURCE));
+			info.append(AonUtil.getMessage(SOURCE));
 			info.append(" ");
 			info.append(message);
 			info.append(" ");
 			info.append(refCode);
 			info.append(" - ");
-			info.append(AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, FINANCE_INVOICE_DETAIL_LINE));
+			info.append(AonUtil.getMessage(LINE));
 			info.append(" ");
 			info.append(line);
 		}

@@ -1,10 +1,6 @@
 package com.code.aon.ui.purchase.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.QUANTITY_PATTERN;
-import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_DETAIL_LINE;
-import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_DETAIL_UNITS;
-import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_TO_INCOME;
-import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_TRANSFERED_TO;
 
 import java.text.DecimalFormat;
 import java.util.Iterator;
@@ -27,7 +23,6 @@ import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.purchase.IPurchaseMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.IncomeDetail;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -146,20 +141,20 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		while (iterator.hasNext()) {
 			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
 			info.append("<aon:div>");
-			info.append(AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_TRANSFERED_TO));
+			info.append(AonUtil.getMessage(ICommonMessages.TRANSFERED_TO));
 			info.append(" ");
-			info.append(AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_TO_INCOME));
+			info.append(AonUtil.getMessage(ICommonMessages.INVOICE_DELIVERY));
 			info.append(" ");
 			info.append(incomeDetail.getIncome().getReferenceCode());
 			info.append(" - ");
-			info.append(AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_DETAIL_LINE));
+			info.append(AonUtil.getMessage(ICommonMessages.LINE));
 			info.append(" ");
 			info.append(incomeDetail.getLine());
 			if (purchaseDetail.getQuantity() > incomeDetail.getQuantity()) {
 				info.append(" (");
 				info.append(formatter.format(incomeDetail.getQuantity()));
 				info.append(" ");
-				info.append(AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_DETAIL_UNITS));
+				info.append(AonUtil.getMessage(ICommonMessages.UNITS));
 				info.append(")");
 			}
 			info.append("</aon:div>");

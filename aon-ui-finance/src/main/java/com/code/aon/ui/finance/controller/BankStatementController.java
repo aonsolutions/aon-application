@@ -61,6 +61,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.report.dynamic.DynaElements;
 import com.code.aon.report.dynamic.DynaReport;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
@@ -1630,7 +1631,7 @@ public class BankStatementController extends BasicController implements IFinance
 						FinanceTracking tracking = accEntryTracking.getFinanceTracking();
 						getWriter().removeAccountEntryFinanceTracking(tracking, false);
 
-						tracking.setDescription(AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_PENDING));
+						tracking.setDescription(AonUtil.getMessage(ICommonMessages.PENDING));
 						tracking.setRecorded(false);
 				        trackingBean.update(tracking);
 					}

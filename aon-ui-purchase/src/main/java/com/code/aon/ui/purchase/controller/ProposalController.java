@@ -1,8 +1,6 @@
 package com.code.aon.ui.purchase.controller;
 
-import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_PROPOSAL_ITEM_RETURN;
 import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_PROPOSAL_ORDER;
-import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_PROPOSAL_TRANSFERENCE;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +28,7 @@ import com.code.aon.purchase.ProposalDetail;
 import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.code.aon.purchase.enumeration.ProposalTransferStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -282,9 +281,9 @@ public class ProposalController extends BasicController {
 			proposalTypes = new LinkedList<SelectItem>();
 			SelectItem item = new SelectItem(ProposalType.ORDER, AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_PROPOSAL_ORDER));
 			proposalTypes.add(item);
-			item = new SelectItem(ProposalType.ITEM_RETURN, AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_PROPOSAL_ITEM_RETURN));
+			item = new SelectItem(ProposalType.ITEM_RETURN, AonUtil.getMessage(ICommonMessages.RETURN));
 			proposalTypes.add(item);
-			item = new SelectItem(ProposalType.TRANSFER, AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_PROPOSAL_TRANSFERENCE));
+			item = new SelectItem(ProposalType.TRANSFER, AonUtil.getMessage(ICommonMessages.LINK_TRANSFER));
 			proposalTypes.add(item);
 		}
 		return proposalTypes;

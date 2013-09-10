@@ -1,7 +1,7 @@
 package com.code.aon.ui.company.util;
 
+import static com.code.aon.ui.common.ICommonMessages.PHONE;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_FAX;
-import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_PHONE;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.io.BufferedOutputStream;
@@ -37,12 +37,12 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.report.ReportException;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.EmailSender;
@@ -73,7 +73,7 @@ public class CompanyEmailUtil implements ICompanyConstants {
 				changeMailAccount(mailAccount);
 			} else {
 				AuthPrincipal user = AonUtil.getAuthPrincipal();
-				String text = AonUtil.getMessage(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNT); 
+				String text = AonUtil.getMessage(ICommonMessages.NOT_MAIL_ACCOUNT); 
 				String message = MessageFormat.format(text, user.getShortName() );
 				throw new AbortProcessingException( message );
 			}
@@ -166,7 +166,7 @@ public class CompanyEmailUtil implements ICompanyConstants {
 		body.append( getCompany().getName() ).append( "<br/>" );
 		RegistryMedia phone = companyController.getPhone();
 		if ( phone != null ) {
-			String phoneLabel = AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME, REGISTRY_PHONE);
+			String phoneLabel = AonUtil.getMessage(PHONE);
 			body.append( StringEscapeUtils.escapeHtml(phoneLabel));
 			body.append( ": " ).append( phone.getValue()).append( "<br/>" );
 		}

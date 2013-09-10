@@ -191,7 +191,7 @@ public class DeliveryDetailController extends LinesController implements IWareho
 		if (deliveryDetail.getSalesDetail() != null && deliveryDetail.getSalesDetail().getId() != null) {
 			info.append(AonUtil.getMessage(IWarehouseMessages.BUNDLE_KEY, WAREHOUSE_DELIVERY_SOURCE));
 			info.append(" ");
-			info.append(AonUtil.getMessage(ICommonMessages.SALES_BUNDLE, ICommonMessages.SALES_SALES));
+			info.append(AonUtil.getMessage(ICommonMessages.INVOICE_SALES));
 			info.append(" ");
 			info.append(deliveryDetail.getSalesDetail().getSales().getReferenceCode());
 			info.append(" - ");

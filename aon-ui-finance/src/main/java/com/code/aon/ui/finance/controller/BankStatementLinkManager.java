@@ -37,6 +37,7 @@ import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -350,7 +351,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		finance.setFinanceStatus((statement.getCommonConcept() != StatementConcept.RETURNED) ? FinanceStatus.PAID : FinanceStatus.RETURNED);
 		financeBean.update(finance);
 
-		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_PENDING);
+		String message = AonUtil.getMessage(ICommonMessages.PENDING);
 		FinanceTrackingType type = (finance.getFinanceStatus() == FinanceStatus.PAID) ? FinanceTrackingType.PAID : FinanceTrackingType.RETURNED;
 		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, statement.getOperationDate(), type, message, 
 									statement.getRegistryBank(), null, finance.getTotalAmount(), false, statementLink);

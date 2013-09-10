@@ -67,7 +67,6 @@ public interface IWebMailConstants {
 	String CONTACT_DUPLICATED = "webmail_contact_duplicated";
 	String CONTACT_USED = "webmail_contact_used";
 	String NOT_SERVER_CONNECTED = "webmail_not_server_conected";
-	String NOT_MAIL_ACCOUNT = "webmail_not_mail_account";
 	String NOT_MAIL_ACCOUNTS = "webmail_not_mail_accounts";
 	String SIGNATURE_DUPLICATED = "webmail_signature_duplicated";
 	String SIGNATURE_USED = "webmail_signature_used";	

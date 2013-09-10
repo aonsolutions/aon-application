@@ -6,9 +6,9 @@ import static com.code.aon.ui.accounting.IAccountingConstants.ACCOUNTING_TOTAL_E
 import static com.code.aon.ui.accounting.IAccountingConstants.ACCOUNTING_TOTAL_RESULT;
 import static com.code.aon.ui.accounting.IAccountingConstants.ACCOUNTING_TOTAL_RESULT_LOSS;
 import static com.code.aon.ui.accounting.IAccountingConstants.ACCOUNTING_TOTAL_RESULT_NULL;
-import static com.code.aon.ui.accounting.IAccountingConstants.ACCOUNTING_TOTAL_RESULT_PROFIT;
 import static com.code.aon.ui.accounting.IAccountingConstants.BUNDLE_KEY;
 import static com.code.aon.ui.accounting.IAccountingConstants.TRIAL_BALANCE_CONTROLLER_NAME;
+import static com.code.aon.ui.common.ICommonMessages.PROFIT;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
@@ -40,7 +40,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.account.controller.AccountCollectionsController;
-import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -287,7 +286,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		r.append(AonUtil.getMessage(BUNDLE_KEY, ACCOUNTING_TOTAL_RESULT));
 		r.append(" (");
 		if (getTotalResult() > 0) {
-			r.append(AonUtil.getMessage(BUNDLE_KEY, ACCOUNTING_TOTAL_RESULT_PROFIT));
+			r.append(AonUtil.getMessage(PROFIT));
 		} else if (getTotalResult() < 0) {
 			r.append(AonUtil.getMessage(BUNDLE_KEY, ACCOUNTING_TOTAL_RESULT_LOSS));
 		} else {

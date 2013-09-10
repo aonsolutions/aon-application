@@ -3,7 +3,7 @@ package com.code.aon.ui.util;
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.common.ICommonConstants.AON_ROLE_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.CONFIGURATION_CONTROLLER_NAME;
-import static com.code.aon.ui.common.ICommonMessages.AON_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.ERROR;
 
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -328,9 +328,9 @@ public class AonUtil {
 	 */
 	public static void addMessage(String[] message, FacesMessage.Severity severity) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		FacesMessage msg = getMessage(ctx, AON_ERROR, message);
+		FacesMessage msg = getMessage(ctx, ERROR, message);
 		msg.setSeverity(severity);
-		ctx.addMessage(AON_ERROR, msg);
+		ctx.addMessage(ERROR, msg);
 	}
 
 	/**

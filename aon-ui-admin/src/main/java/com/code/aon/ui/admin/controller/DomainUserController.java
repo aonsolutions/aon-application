@@ -4,9 +4,9 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.ACTIVE_USERS;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.MAXIMUM_NUMBER_USERS;
-import static com.code.aon.ui.admin.controller.IAdminConstants.NEW_PASSWORD_ERROR;
 import static com.code.aon.ui.admin.controller.IAdminConstants.USER_DUPLICATED;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
+import static com.code.aon.ui.common.ICommonMessages.NEW_PASSWORD_ERROR;
 import static com.esferalia.aon.entity.IEntityAlias.APPLICATION_USER_PROFILE_APPLICATION_USER_ID;
 
 import java.util.Date;
@@ -110,7 +110,7 @@ public class DomainUserController extends BasicController {
 	
 	public void onChangePassword( ActionEvent event ) {
 		if (! StringUtils.equals(newPassword, confirmPassword)) {
-			String message = AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, NEW_PASSWORD_ERROR );
+			String message = AonUtil.addErrorMessageFromBundle(NEW_PASSWORD_ERROR);
 			throw new AbortProcessingException( message );
 		}		
 		User user = getDomainUser();

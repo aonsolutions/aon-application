@@ -1,15 +1,15 @@
 package com.code.aon.ui.fiscal.controller;
 
-import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_COMPANY;
-import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_DATE;
+import static com.code.aon.ui.common.ICommonMessages.DATE;
+import static com.code.aon.ui.common.ICommonMessages.FEE;
+import static com.code.aon.ui.common.ICommonMessages.HOLDER;
+import static com.code.aon.ui.common.ICommonMessages.INVOICE_NUMBER;
 import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_DEDUCTIBLE_QUOTA;
 import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_DED_TYPE;
 import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_DOCUMENT;
 import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_DOCUMENT_NUMBER;
 import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_NATURE;
-import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_NUMBER;
 import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_PERCENTAGE;
-import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_QUOTA;
 import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_RECTIFICATION_TYPE;
 import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_RECTIFIED_ID;
 import static com.code.aon.ui.fiscal.controller.IFiscalMessages.INVOICE_RET_TYPE;
@@ -241,18 +241,18 @@ public class InvoiceReportController {
 				.addColumn(dyn.getStringColumn("conceptNature",bundle.getString(INVOICE_NATURE),64))
 				.addColumn(dyn.getStringColumn("rectificationTypeDesc",bundle.getString(INVOICE_RECTIFICATION_TYPE),64))
 				.addColumn(dyn.getIntegerColumn("rectifiedInvoice",bundle.getString(INVOICE_RECTIFIED_ID)))
-				.addColumn(dyn.getDateColumn("issueDate",bundle.getString(INVOICE_DATE)))
+				.addColumn(dyn.getDateColumn("issueDate",AonUtil.getMessage(DATE)))
 				.addColumn(dyn.getDateColumn("taxDate",bundle.getString(INVOICE_TAXDATE)))
-				.addColumn(dyn.getStringColumn("referenceCode",bundle.getString(INVOICE_NUMBER),100))
+				.addColumn(dyn.getStringColumn("referenceCode",AonUtil.getMessage(INVOICE_NUMBER),100))
 				.addColumn(dyn.getStringColumn("documentNumber",bundle.getString(INVOICE_DOCUMENT_NUMBER),100))
 				.addColumn(dyn.getStringColumn("registryDocument",bundle.getString(INVOICE_DOCUMENT),64))
-				.addColumn(dyn.getStringColumn("registryName",bundle.getString(INVOICE_COMPANY),308))
+				.addColumn(dyn.getStringColumn("registryName",AonUtil.getMessage(HOLDER),308))
 				.addColumn(dyn.getStringColumn("taxTypeDesc",bundle.getString(INVOICE_TAX_TYPE),47))
 				.addColumn(dyn.getStringColumn("vatDeductionTypeDesc",bundle.getString(INVOICE_DED_TYPE),114))
 				.addColumn(dyn.getStringColumn("withholdingTypeDesc",bundle.getString(INVOICE_RET_TYPE),66))
 				.addColumn(dyn.getNumberColumn("taxableBase",bundle.getString(INVOICE_TAXABLE_BASE)))
 				.addColumn(dyn.getNumberColumn("percentage",bundle.getString(INVOICE_PERCENTAGE)))
-				.addColumn(dyn.getNumberColumn("quota",bundle.getString(INVOICE_QUOTA)))
+				.addColumn(dyn.getNumberColumn("quota",AonUtil.getMessage(FEE)))
 				.addColumn(dyn.getNumberColumn("deductibleQuota",bundle.getString(INVOICE_DEDUCTIBLE_QUOTA)))
 				;
 			DynaReportManager drm = new DynaReportManager();

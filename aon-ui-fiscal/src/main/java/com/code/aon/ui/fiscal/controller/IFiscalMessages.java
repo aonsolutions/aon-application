@@ -6,17 +6,11 @@ public interface IFiscalMessages {
 
 	String INVOICE_TAX_TYPE = "invoice_tax_type";
 	
-	String INVOICE_COMPANY = "invoice_company";
-	
 	String INVOICE_DOCUMENT = "invoice_document";
 	
 	String INVOICE_DOCUMENT_NUMBER = "invoice_document_number";
 	
-	String INVOICE_NUMBER = "invoice_number";
-	
 	String INVOICE_TAXDATE = "invoice_taxdate";
-	
-	String INVOICE_DATE = "invoice_date";
 	
 	String INVOICE_RECTIFIED_ID = "invoice_rectified_id";
 	
@@ -35,8 +29,6 @@ public interface IFiscalMessages {
 	String INVOICE_TAXABLE_BASE = "invoice_taxable_base";
 	
 	String INVOICE_PERCENTAGE = "invoice_percentage";
-	
-	String INVOICE_QUOTA = "invoice_quota";
 	
 	String INVOICE_DEDUCTIBLE_QUOTA = "invoice_deductible_quota";
 	

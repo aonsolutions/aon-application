@@ -1,17 +1,15 @@
 package com.code.aon.ui.purchase.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.SOURCE;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_DEPARTMENT;
-import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_SOURCE;
 import static com.code.aon.ui.purchase.controller.IPurchaseConstants.PURCHASE_PRINT_CONTROLLER_NAME;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -47,7 +45,6 @@ import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.purchase.IPurchaseMessages;
 import com.code.aon.ui.purchase.event.PurchaseSearchListener;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -292,7 +289,6 @@ public class PurchaseOrderController {
 		String sessionName = HibernateUtil.getSessionFactoryName();
 		List<Integer> purchaseIds = new LinkedList<Integer>();
 		ResourceBundle companyBundle = AonUtil.getResourceBundle(ICompanyConstants.BUNDLE_NAME); 
-		ResourceBundle purchaseBundle = AonUtil.getResourceBundle(IPurchaseMessages.BUNDLE_KEY); 
 		String comments = null;
 		String remarks = null;
 		try {
@@ -313,7 +309,7 @@ public class PurchaseOrderController {
 								utils.insertPurchaseDetail(purchase, gd.getProposalDetail());
 								utils.updateProposalDetailStatus(gd.getProposalDetail().getId());
 								if(gd.getProposalDetail().getProposal().getTransferProposal()!=null){
-									remarks = remarks==null?(purchaseBundle.getString(PURCHASE_SOURCE) +": "):(remarks);
+									remarks = remarks==null?(AonUtil.getMessage(SOURCE) +": "):(remarks);
 									remarks += gd.getProposalDetail().getProposal().getTransferProposal().getWorkPlace().getDescription();
 									if( !(pg.getDepartment().getId().equals(gd.getProposalDetail().getProposal().getTransferProposal().getDepartment())) ){
 										remarks += "("+gd.getProposalDetail().getProposal().getTransferProposal().getDepartment().getName()+"). ";

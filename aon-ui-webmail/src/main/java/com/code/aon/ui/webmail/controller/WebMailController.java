@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
@@ -91,7 +92,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		if (mailAccount!=null) {
 			init(mailAccount);
 		}else{
-			this.initErrorMessage = AonUtil.getMessage(BUNDLE_NAME, NOT_MAIL_ACCOUNT, user.getShortName());
+			this.initErrorMessage = AonUtil.getMessage(ICommonMessages.NOT_MAIL_ACCOUNT, user.getShortName());
 		}
 	}
 

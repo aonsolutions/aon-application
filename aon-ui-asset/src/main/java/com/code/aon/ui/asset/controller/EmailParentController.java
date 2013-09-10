@@ -1,7 +1,7 @@
 package com.code.aon.ui.asset.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.PHONE;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_FAX;
-import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_PHONE;
 
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
@@ -17,11 +17,11 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.registry.RegistryMedia;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.db.MailAccount;
@@ -54,7 +54,7 @@ public class EmailParentController {
 				Address from = new InternetAddress(username, username);
 				this.sender = new EmailSender( from, mailAccount );							
 			} else {
-				String text = AonUtil.getMessage(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNT); 
+				String text = AonUtil.getMessage(ICommonMessages.NOT_MAIL_ACCOUNT); 
 				String message = MessageFormat.format(text, login );
 				throw new AbortProcessingException( message );
 			}
@@ -108,7 +108,7 @@ public class EmailParentController {
 		body.append( getCompany().getName() ).append( "<br/>" );
 		RegistryMedia phone = companyController.getPhone();
 		if ( phone != null ) {
-			String phoneLabel = AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME, REGISTRY_PHONE);
+			String phoneLabel = AonUtil.getMessage(PHONE);
 			body.append( StringEscapeUtils.escapeHtml(phoneLabel));
 			body.append( ": " ).append( phone.getValue()).append( "<br/>" );
 		}
