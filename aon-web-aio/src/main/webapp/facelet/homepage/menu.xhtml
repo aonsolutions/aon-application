@@ -137,6 +137,10 @@
 	</ui:define>
 	
 	<ui:define name="beforeWebMapMenuContent">
+		<aon:menuItem id="favorites" action="actionFavorite"
+			iconClass="aon-icon-favorite"
+			actionListener="#{actionFavorite.onInit}"
+			value="#{groupwareBundle.aon_favorites_management}" />
 		<c:if test="#{!aonRole.sysAdmin}">
 			<aon:menuItem id="advancedMode" action="advancedMode"
 				value="#{adminBundle.admin_advanced_mode}" />
