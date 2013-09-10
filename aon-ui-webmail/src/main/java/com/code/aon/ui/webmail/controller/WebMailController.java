@@ -47,10 +47,10 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 
 	private void startWebmail() {
 		try {
+    		initConfig();
 			AuthPrincipal mailUser = AonUtil.getAuthPrincipal();
 			if (mailUser != null) {
 	    		initDefault(mailUser);
-	    		initConfig(mailUser);
 	    	}
 		} catch (Throwable e) {
 			LOGGER.error( "Error connecting to the Server", e);
@@ -153,7 +153,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		return resolver.getResolveLocal().get(filePath );
 	}
 	
-	private void initConfig(AuthPrincipal principal) {
+	private void initConfig() {
 		this.maxAttachmentSize = -1;
 		this.rejectedExtensions = Collections.emptyList();
 		setEnableDragAndDrop(!AonUtil.isChrome());
