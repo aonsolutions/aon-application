@@ -18,7 +18,7 @@ import es.mityc.facturae32.AmountType;
 
 public class Util {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(FacturaeWriter.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(Util.class.getName());
 
 	public static String getBatchIdentifier( Invoice invoice, Enterprise enterprise ) {
 		StringBuffer id = new StringBuffer( enterprise.getRegistry().getDocument() );

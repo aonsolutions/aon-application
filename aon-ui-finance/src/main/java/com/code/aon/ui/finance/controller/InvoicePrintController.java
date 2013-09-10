@@ -124,7 +124,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
     	File file = File.createTempFile( "invoices", "." + MimeType.MIME_ZIP.getExtension());
 		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
 		ZipOutputStream zipOut = new ZipOutputStream(fileOut);
-		FacturaeWriter fw = new FacturaeWriter();
+		FacturaeWriter fw = new FacturaeWriter(AonUtil.getCurrentLocale());
 		for( ITransferObject to : getManagerBean().getList(getCriteria()) ) {
 			Invoice invoice = (Invoice) to;
 			byte[] data = getData(fw, invoice);

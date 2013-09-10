@@ -106,6 +106,12 @@ public class FacturaeWriter {
 	
 	private PmsUtil pmsUtil;
 	
+	private Locale locale;
+	
+	public FacturaeWriter( Locale locale ) {
+		this.locale = locale;
+	}
+
 	private BatchType getBatchType() {
 		BatchType batchType = new BatchType();
 		batchType.setBatchIdentifier( Util.getBatchIdentifier(invoice, enterprise) );
@@ -202,27 +208,33 @@ public class FacturaeWriter {
 		return null;		
 	}
 	
-	private CountryType getCountry( GeoZone gz ) throws ManagerBeanException {
-		GeoZone geozone = getGeoZoneCountry(gz);
-		if ( geozone != null ) {
-			Locale countryLocale =null;
-			String name = geozone.getName();
-			for( Locale locale : Locale.getAvailableLocales() ) {
-				if ( StringUtils.equalsIgnoreCase(name, locale.getDisplayCountry()) ) {
-					countryLocale = locale;
-					break;
-				}
-			}
-			if ( countryLocale != null ) {
-				String code = countryLocale.getISO3Country();
-				for( CountryType country : CountryType.values() ) {
-					if ( StringUtils.equalsIgnoreCase(code, country.value()) ) {
-						return country;
-					}
-				}
+	private CountryType getCountryType( String code ) {
+		for( CountryType country : CountryType.values() ) {
+			if ( StringUtils.equalsIgnoreCase(code, country.value()) ) {
+				return country;
 			}
 		}
-		return CountryType.ESP;
+		return null;
+	}
+	
+	private CountryType getCountry( GeoZone gz ) throws ManagerBeanException {
+		CountryType country = null;
+		GeoZone geozone = getGeoZoneCountry(gz);
+		if ( geozone != null ) {
+			String name = geozone.getName();
+			if (! StringUtils.isEmpty(geozone.getCode()) ) {
+				country = getCountryType(geozone.getCode());
+			}
+			if ( country == null ) {
+				for( Locale aLocale : Locale.getAvailableLocales() ) {
+					if ( StringUtils.equalsIgnoreCase(name, aLocale.getDisplayCountry(this.locale)) ) {
+						country = getCountryType(aLocale.getISO3Country());
+						break;
+					}
+				}				
+			}
+		}
+		return (country != null) ? country : CountryType.ESP;
 	}
 	
 	private RegistryMedia getRegistryMedia(Registry registry, MediaType type) throws ManagerBeanException{
