@@ -49,7 +49,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Bankua / " + $R{finance_bank}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Bankua / " + $R{aon_bank}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-8" mode="Opaque" x="340" y="0" width="120" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -62,7 +62,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Banku kontua / " + $R{finance_bank_account}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Banku kontua / " + $R{aon_bank_account}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-9" mode="Opaque" x="0" y="0" width="60" height="15" forecolor="#FFFFFF" backcolor="#999999"/>

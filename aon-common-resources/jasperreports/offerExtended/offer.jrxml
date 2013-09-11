@@ -603,7 +603,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_comments}+":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_comment}+":"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-113" positionType="Float" x="64" y="281" width="471" height="15" isRemoveLineWhenBlank="true">
@@ -1170,7 +1170,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$R{aon_tax_type}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{aon_type}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
@@ -1204,7 +1204,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$R{aon_tax_quota}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{aon_fee}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
@@ -1981,8 +1981,8 @@
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$R{offer_approval} + " "
-+ $R{offer_agent} + " "
-+ $R{offer_comercial}]]></textFieldExpression>
++ $R{sales_sale_agent} + " "
++ $R{aon_module_commercial}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
 					<reportElement key="textField-111" positionType="FixRelativeToBottom" x="133" y="85" width="32" height="27"/>
@@ -2090,7 +2090,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
