@@ -52,7 +52,6 @@
 						</c:if>
 						<aon:menuItem id="purchaseGeneration"
 							value="#{salesBundle.sales_to_purchase}"
-							title="#{salesBundle.sales_to_purchase_generation}"
 							immediate="#{true}" 
 							rendered="#{sales.pending and !sales.inDelivery and !sales.to.purchaseGenerated and salesDetail.model.rowCount > 0}"
 							iconClass="aon-icon-transfer"
