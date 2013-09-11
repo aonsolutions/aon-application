@@ -10,32 +10,6 @@
 		**********************************************************
 	-->
 
-	<!--  IMPRESION DE CONTRATO -->
-	<report id="contractReport" description="Impresion del contrato de trabajo">
-		<template path="/com/esferalia/aon/ui/payroll/report/contract.jasper" />
-		<collection provider="#{contractGenerationWizard}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
-		</params>
-		<nested-report report="contractEnterpriseDetail" />
-	</report>
-	<report id="contractEnterpriseDetail"
-		description="Impresion de los datos de empresa del contrato de trabajo">
-		<template
-			path="/com/esferalia/aon/ui/payroll/report/contractEnterprise.jasper" />
-	</report>
-
-	<!--  IMPRESION DE COPIA BASICA -->
-	<report id="contractBasicCopyReport"
-		description="Impresion de la copia basica del contrato de trabajo">
-		<template
-			path="/com/esferalia/aon/ui/payroll/report/contractBasicCopy.jasper" />
-		<collection provider="#{contractGenerationWizard}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
-		</params>
-	</report>
-
 	<!--  
 		TEMPLATES DE IMPRESION DE LA NOMINA 
 	-->
