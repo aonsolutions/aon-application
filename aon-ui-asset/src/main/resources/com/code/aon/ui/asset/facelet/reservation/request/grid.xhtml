@@ -14,14 +14,14 @@
 		</ui:include>
 
 		<aon:outputLabel for="ActivityDialog_startDate"
-			value="#{assetBundle.asset_startDate}" />
+			value="#{bundle.aon_start_date}" />
 		<aon:selectInputDate renderAsPopup="true" id="ActivityDialog_startDate"
 			popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 			value="#{activityDialog.fromDate}" enableManualInput="true" 
 			disabled="#{!activityDialog.new}"/>
 
 		<aon:outputLabel for="ActivityDialog_endDate"
-			value="#{assetBundle.asset_endDate}" />
+			value="#{bundle.aon_end_date}" />
 		<aon:selectInputDate renderAsPopup="true" id="ActivityDialog_endDate"
 			popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 			value="#{activityDialog.toDate}" enableManualInput="true" 
@@ -65,31 +65,31 @@
 			value="#{assetBundle.asset_activity_days}" />
 		<aon:div>
 			<aon:outputLabel for="ActivityDialog_weekDays_monday"
-				value="#{assetBundle.asset_activity_monday}" />
+				value="#{bundle.aon_monday}" />
 			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_monday"
 				value="#{activityDialog.monday}" style="margin-right: 10px;"/>
 			<aon:outputLabel for="ActivityDialog_weekDays_tuesday"
-				value="#{assetBundle.asset_activity_tuesday}" />
+				value="#{bundle.aon_tuesday}" />
 			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_tuesday"
 				value="#{activityDialog.tuesday}" style="margin-right: 10px;"/>
 			<aon:outputLabel for="ActivityDialog_weekDays_wednesday"
-				value="#{assetBundle.asset_activity_wednesday}" />
+				value="#{bundle.aon_wednesday}" />
 			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_wednesday"
 				value="#{activityDialog.wednesday}" style="margin-right: 10px;"/>
 			<aon:outputLabel for="ActivityDialog_weekDays_thursday"
-				value="#{assetBundle.asset_activity_thursday}" />
+				value="#{bundle.aon_thursday}" />
 			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_thursday"
 				value="#{activityDialog.thursday}" style="margin-right: 10px;"/>
 			<aon:outputLabel for="ActivityDialog_weekDays_friday"
-				value="#{assetBundle.asset_activity_friday}" />
+				value="#{bundle.aon_friday}" />
 			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_friday"
 				value="#{activityDialog.friday}" style="margin-right: 10px;"/>
 			<aon:outputLabel for="ActivityDialog_weekDays_saturday"
-				value="#{assetBundle.asset_activity_saturday}" />
+				value="#{bundle.aon_saturday}" />
 			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_saturday"
 				value="#{activityDialog.saturday}" style="margin-right: 10px;"/>
 			<aon:outputLabel for="ActivityDialog_weekDays_sunday"
-				value="#{assetBundle.asset_activity_sunday}" />
+				value="#{bundle.aon_sunday}" />
 			<h:selectBooleanCheckbox id="ActivityDialog_weekDays_sunday"
 				value="#{activityDialog.sunday}" style="margin-right: 10px;"/>
 		</aon:div>

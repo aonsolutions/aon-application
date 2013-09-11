@@ -43,12 +43,12 @@
 						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>
 					
-					<aon:outputLabel for="AssetActivity_startDate" value="#{assetBundle.asset_date}" />
+					<aon:outputLabel for="AssetActivity_startDate" value="#{bundle.aon_date}" />
 					<aon:selectInputDate renderAsPopup="true" id="AssetActivity_startDate"
 						popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 						value="#{activityBasicSearchListener.fromDate}" enableManualInput="true"/>
 						
-					<aon:outputLabel for="AssetActivity_endDate" value="#{assetBundle.asset_endDate}" />
+					<aon:outputLabel for="AssetActivity_endDate" value="#{bundle.aon_end_date}" />
 					<aon:selectInputDate renderAsPopup="true" id="AssetActivity_endDate"
 						popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 						value="#{activityBasicSearchListener.toDate}" enableManualInput="true"/>
