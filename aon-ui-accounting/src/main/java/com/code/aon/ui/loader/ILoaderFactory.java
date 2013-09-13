@@ -21,6 +21,9 @@ public interface ILoaderFactory<E extends ILoadedPojo> {
 	String APU = "APU";	// Apuntes - AccountEntryDetail
 	
 	String ITEM = "ITEM";	// Item - Artículos
+
+	String PGC = "PGC";	// Cuentas Contables
+	
 	
 	public boolean accept( String key);
 	public boolean accept(Class<? extends ILoadedPojo> clazz);
