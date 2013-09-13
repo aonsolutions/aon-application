@@ -61,6 +61,7 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 			,new Column(CLI,"diasAlPrimerVto"				,0,6	,false	,null)
 			,new Column(CLI,"diasEntreVtos"					,0,6	,false	,null)
 			,new Column(CLI,"diasPago"						,2,8	,false	,null)
+			,new Column(CLI,"segmento"						,2,32	,false	,null)
 	};
 
 	private Map<String, Column[]> columns;
@@ -152,6 +153,9 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 		}
 		if (StringUtils.isNotBlank(loaded.getWeb())) {
 			insertRegistryMedia(customer.getRegistry(),MediaType.WEB,loaded.getWeb());
+		}
+		if (StringUtils.isNotBlank(loaded.getSegmento())) {
+			insertRegistrySegment(customer.getRegistry(),loaded.getSegmento());
 		}
 		RegistryBank rbank = null;
 		if (StringUtils.isNotBlank(loaded.getCuentaBanco())) {

@@ -11,6 +11,7 @@ public class LoadedCustomer extends LoadedRegistry{
 	public Integer transaccion;
 	public Integer retencion;
 	public Integer facturarAlbaranesAgrupados;
+	public String segmento;
 	
 	public String getCuenta() {
 		return cuenta;
@@ -57,6 +58,12 @@ public class LoadedCustomer extends LoadedRegistry{
 	}
 	public boolean isWithholding() {
 		return (getRetencion()==null?false:(getRetencion() == 1));
+	}
+	public String getSegmento() {
+		return segmento;
+	}
+	public void setSegmento(String segmento) {
+		this.segmento = segmento;
 	}
 	
 }
