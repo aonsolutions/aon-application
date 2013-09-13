@@ -82,9 +82,19 @@ public class VatTaxDetail extends VatTaxDetailDB {
 	@Transient
 	public void calculate() {
 		setTaxableBaseResult(CommonUtil.round(getTaxableBaseAccumulated() - getTaxableBaseDeclared()));
-		setTaxableBase(CommonUtil.round(getTaxableBaseResult() + getTaxableBaseAdjust()));
 		setQuotaResult(CommonUtil.round(getQuotaAccumulated() - getQuotaDeclared()));
+
+		setTaxableBase(CommonUtil.round(getTaxableBaseResult() + getTaxableBaseAdjust()));
 		setQuota(CommonUtil.round(getQuotaResult() + getQuotaAdjust()));
+	}
+
+	@Transient
+	public void reverseCalculate() {
+		setTaxableBaseResult(CommonUtil.round(getTaxableBaseAccumulated() - getTaxableBaseDeclared()));
+		setQuotaResult(CommonUtil.round(getQuotaAccumulated() - getQuotaDeclared()));
+
+		setTaxableBaseAdjust(CommonUtil.round(getTaxableBase() - getTaxableBaseResult()));
+		setQuotaAdjust(CommonUtil.round(getQuota() - getQuotaResult()));
 	}
 
 	public void add(TaxColumn column, VatTaxAmount amount) {

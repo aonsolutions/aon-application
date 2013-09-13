@@ -86,7 +86,8 @@ public class FiscalParametersController implements IFiscalConstants{
 						,FS_CONCTACT_PERSON
 						,FS_CONCTACT_PHONE
 						,FS_CONCTACT_CELLULAR
-						,FS_CONCTACT_MAIL};
+						,FS_CONCTACT_MAIL
+						,FS_MOD303_BY_DIFFERENCE_DISABLED};
 		
 		for (String key : keys) {
 			if (!parameters.containsKey(key)) {
@@ -132,6 +133,14 @@ public class FiscalParametersController implements IFiscalConstants{
 		getParameters().get(FS_TAX_REFUND_REGISTRY).setValue(taxRefundRegistry?"1":"0");
 	}
 	
+	public boolean isMod303AvailableByDifferenceDisabled() {
+		String value = getParameters().get(FS_MOD303_BY_DIFFERENCE_DISABLED).getValue();
+		return (value!=null && "1".equals(value)); 
+	}
+	public void setMod303AvailableByDifferenceDisabled(boolean mod303ByDifferenceDisabled) {
+		getParameters().get(FS_MOD303_BY_DIFFERENCE_DISABLED).setValue(mod303ByDifferenceDisabled?"1":"0");
+	}
+
 	public boolean isPermanentAddressChanges() {
 		String value = getParameters().get(FS_PERM_ADDRESS_CHANGES).getValue();
 		return (value!=null && "1".equals(value)); 

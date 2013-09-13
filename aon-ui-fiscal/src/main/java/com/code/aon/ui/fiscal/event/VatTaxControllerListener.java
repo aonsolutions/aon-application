@@ -33,6 +33,7 @@ public class VatTaxControllerListener extends ControllerAdapter {
 			VatTaxController c = (VatTaxController) event.getController();
 			c.initializeVatTax( true );
 			c.refreshPreviousAdjustFlag();
+			c.setDetailNew(false);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -47,6 +48,7 @@ public class VatTaxControllerListener extends ControllerAdapter {
 			c.setSelectedTab(vatTax.isFinished()?VatTaxController.PAY_TAB:VatTaxController.DETAIL_TAB);
 			c.refreshPreviousAdjustFlag();
 			c.setDeclaredPanelVisible(false);
+			c.setDetailNew(false);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -60,8 +62,21 @@ public class VatTaxControllerListener extends ControllerAdapter {
 			if (!vatTax.isFinished()) {
 				c.saveVatTax();	
 			}
+			c.setDetailNew(false);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
+		VatTaxController c = (VatTaxController) event.getController();
+		c.setDetailNew(false);
+	}
+	
+	@Override
+	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		VatTaxController c = (VatTaxController) event.getController();
+		c.setDetailNew(false);
 	}
 }

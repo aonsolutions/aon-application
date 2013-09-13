@@ -17,31 +17,59 @@
 					<aon:column styleClass="aon-dataTable-header" colspan="2">
 						<aon:outputText value="&#160;"/>
 					</aon:column>
-					<aon:column styleClass="aon-dataTable-header" colspan="2">
+					<aon:column styleClass="aon-dataTable-header" colspan="2" 
+						rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 						<aon:outputText value="#{fiscalBundle.fiscal_vatTax_accumulated}" />
 					</aon:column>
-					<aon:column styleClass="aon-dataTable-header" colspan="2">
+					<aon:column styleClass="aon-dataTable-header" colspan="2" 
+						rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 						<aon:outputText value="#{fiscalBundle.fiscal_vatTax_declared}" />
 					</aon:column>
-					<aon:column styleClass="aon-dataTable-header" colspan="2">
+					<aon:column styleClass="aon-dataTable-header" colspan="2" 
+						rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 						<aon:outputText value="#{fiscalBundle.fiscal_vatTax_result}" />
 					</aon:column>
-					<aon:column styleClass="aon-dataTable-header" colspan="2">
+					<aon:column styleClass="aon-dataTable-header" colspan="2" 
+						rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 						<aon:outputText value="#{fiscalBundle.fiscal_vatTax_adjusts}" />
 					</aon:column>
 					<aon:column styleClass="aon-dataTable-header" colspan="2">
 						<aon:outputText value="#{fiscalBundle.fiscal_vatTax_to_declare}" />
 					</aon:column>
+					<aon:column styleClass="aon-dataTable-header" rendered="#{!vatTax.to.finished}">
+						<aon:outputText value="&#160;"/>
+					</aon:column>
 				</rich:columnGroup>
 			</f:facet>
 			
-         		<aon:column styleClass="aon-editDataTable-textColumn aon-width-300" style="font-size: 0.9em;">
+   		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="font-size: 0.9em;">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_type}" />
 			</f:facet>
-			<aon:outputText value="#{to.key.value}" style="margin-right: 5px;font-size: 0.8em;"/>
+			
+			<aon:outputText value="#{to.key.value}" style="margin-right: 5px;font-size: 0.6em;"/>
 			<aon:outputText value="#{to.key}" rendered="#{!to.descriptionDisabled}"
 				style="#{to.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{to.key.total?'font-size: 1.1em;':''}"/>
+			<f:facet name="footer">
+				<aon:div>
+					<aon:commandButton
+						id="vatTaxList-reset" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+						actionListener="#{vatTax.onNewDetail}"
+						rendered="#{!vatTax.detailNew and !vatTax.to.finished}"
+						styleClass="aon-editDataTable-button aon-icon-reset"
+						accesskey="#{bundle.aon_key_new_line}" 
+						focus="VatTaxDetail_key"/>
+
+					<aon:selectOneMenu id="VatTaxDetail_key" value="#{vatTax.newDetail.key}" 
+						reRender="percentDiv,quotaDiv,taxableBaseDiv"
+						rendered="#{vatTax.detailNew}"
+						required="true">
+						<f:selectItem itemValue="#{null}" itemLabel="-"/>
+						<f:selectItems value="#{vatTax.availableKeys}" />
+					</aon:selectOneMenu>
+					
+				</aon:div>
+			</f:facet>
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-40" style="font-size: 0.9em;">
@@ -52,11 +80,21 @@
 				<aon:outputText value="#{to.percent}" >
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
+				
 				<aon:outputText value="%" />
 			</aon:div>
+			<f:facet name="footer">
+				<aon:div id="percentDiv">
+					<aon:inputText id="newPercent" value="#{vatTax.newDetail.percent}"
+						rendered="#{vatTax.detailNew and vatTax.newDetail.key != null and vatTax.newDetail.key.percentVisible}" 
+						required="true" size="4">
+					</aon:inputText>
+				</aon:div>
+			</f:facet>
 		</aon:column>
 		
-		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="background-color:#f6f5e3;font-size: 0.9em;">
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="background-color:#f6f5e3;font-size: 0.9em;"
+			rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 			<f:facet name="header">
 				<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
 			</f:facet>
@@ -70,10 +108,10 @@
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
    			</aon:htmlCommandLink>
-   			
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="background-color:#f6f5e3;font-size: 0.9em;">
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="background-color:#f6f5e3;font-size: 0.9em;"
+			rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_fee}" />
 			</f:facet>
@@ -91,7 +129,8 @@
    			</aon:htmlCommandLink>
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;"
+			rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 			<f:facet name="header">
 				<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
 			</f:facet>
@@ -106,7 +145,8 @@
    			</aon:commandLink>
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;"
+			rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_fee}" />
 			</f:facet>
@@ -122,7 +162,8 @@
    			</aon:commandLink>
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="background-color:#f6f5e3;font-size: 0.9em;">
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="background-color:#f6f5e3;font-size: 0.9em;"
+			rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 			<f:facet name="header">
 				<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
 			</f:facet>
@@ -131,7 +172,8 @@
 			</aon:outputText>
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="background-color:#f6f5e3;font-size: 0.9em;">
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="background-color:#f6f5e3;font-size: 0.9em;"
+			rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_fee}" />
 			</f:facet>
@@ -141,61 +183,133 @@
 			</aon:outputText>
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;"
+			rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 			<f:facet name="header">
 				<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
 			</f:facet>
-			<aon:outputText value="#{to.taxableBaseAdjust}" rendered="#{to.key.taxableBaseVisible and (to.key.total or to.key.subtotal or vatTax.to.finished)}">
+			<aon:outputText id="taxableBaseAdjust" value="#{to.taxableBaseAdjust}" rendered="#{to.key.taxableBaseVisible}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
-			<aon:inputText id="taxableBaseAdjust" value="#{to.taxableBaseAdjust}" 
-			rendered="#{to.key.taxableBaseVisible and !to.key.total and !to.key.subtotal and !vatTax.to.finished}" 
-				required="true" size="8">
-				<a4j:support event="onchange"
-					ajaxSingle="true" limitToList="true"
-					actionListener="#{vatTax.onChangeTaxableBaseAdjust}"
-					focus="quotaAdjust"
-					reRender="quotaAdjust"/>
-			</aon:inputText>
 		</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;"
+			rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_fee}" />
 			</f:facet>
-			<aon:outputText id="ajusteQuota" value="#{to.quotaAdjust}"
-				rendered="#{to.key.quotaVisible and (to.key.total or to.key.subtotal or vatTax.to.finished)}"   
+			<aon:outputText id="quotaAdjust" value="#{to.quotaAdjust}"
+				rendered="#{to.key.quotaVisible}"   
 				style="#{to.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{to.key.total?'font-size: 1.1em;':''}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
-			<aon:inputText id="quotaAdjust" value="#{to.quotaAdjust}" 
-				rendered="#{to.key.quotaVisible and !to.key.total and !to.key.subtotal and !vatTax.to.finished}" 
-				required="true" size="8">
-				<a4j:support event="onchange"	
-					rendered="#{to.key.taxableBaseVisible}"
-					ajaxSingle="true" limitToList="true"
-					actionListener="#{vatTax.onChangeQuotaAdjust}"
-					reRender="taxableBaseAdjust"/>
-			</aon:inputText>
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="background-color:#f6f5e3;font-size: 0.9em;">
 			<f:facet name="header">
 				<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
 			</f:facet>
-			<aon:outputText value="#{to.taxableBase}" rendered="#{to.key.taxableBaseVisible}">
+			<aon:outputText value="#{to.taxableBase}" 
+				rendered="#{to.key.quotaVisible and (to.key.total or to.key.subtotal or vatTax.to.finished)}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
+			<aon:inputText id="taxableBase" value="#{to.taxableBase}" 
+				disabled="#{vatTax.detailNew}"
+				rendered="#{to.key.taxableBaseVisible and !to.key.total and !to.key.subtotal and !vatTax.to.finished}" 
+				required="true" size="8">
+				<a4j:support event="onchange"
+					ajaxSingle="true" limitToList="true"
+					actionListener="#{vatTax.onChangeTaxableBaseAdjust}"
+					focus="quota"
+					reRender="vatTaxList"/>
+			</aon:inputText>
+			<f:facet name="footer">
+				<aon:div id="taxableBaseDiv">
+					<aon:inputText id="newTaxableBase" value="#{vatTax.newDetail.taxableBase}"
+						rendered="#{vatTax.detailNew and vatTax.newDetail.key != null}" 
+						required="true" size="8">
+					<a4j:support event="onchange"
+						limitToList="true"
+						actionListener="#{vatTax.onChangeNewTaxableBase}"
+						focus="newQuota"
+						reRender="newQuota"/>
+					</aon:inputText>
+				</aon:div>
+			</f:facet>
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="background-color:#f6f5e3;font-size: 0.9em;"> 
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_fee}" />
 			</f:facet>
-			<aon:outputText value="#{to.quota}" rendered="#{to.key.quotaVisible}"   
+			<aon:outputText value="#{to.quota}" 
+				rendered="#{to.key.quotaVisible and (to.key.total or to.key.subtotal or vatTax.to.finished)}"   
 				style="#{to.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{to.key.total?'font-size: 1.1em;':''}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
+			<aon:inputText id="quota" value="#{to.quota}" 
+				disabled="#{vatTax.detailNew}"
+				rendered="#{to.key.quotaVisible and !to.key.total and !to.key.subtotal and !vatTax.to.finished}" 
+				required="true" size="8">
+				<a4j:support event="onchange"	
+					ajaxSingle="true" limitToList="true"
+					actionListener="#{vatTax.onChangeQuotaAdjust}"
+					reRender="vatTaxList"/>
+			</aon:inputText>
+			<f:facet name="footer">
+				<aon:div id="quotaDiv">
+					<aon:inputText id="newQuota" value="#{vatTax.newDetail.quota}"
+						rendered="#{vatTax.detailNew and vatTax.newDetail.key != null and vatTax.newDetail.key.quotaVisible}" 
+						required="true" size="8">
+						<a4j:support event="onchange"	
+							rendered="#{vatTax.newDetail.key.taxableBaseVisible}"
+							limitToList="true"
+							actionListener="#{vatTax.onChangeNewQuota}"
+							reRender="newTaxableBase"/>
+					</aon:inputText>
+				</aon:div>
+			</f:facet>
+		</aon:column>
+		
+		<aon:column rendered="#{!vatTax.to.finished}"
+			 styleClass="aon-dataTable-iconColumn">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			
+			<aon:confirmButton
+				id="dataTableList-remove" title="#{bundle.aon_remove} (#{bundle.aon_key_remove_line_accelerator})"
+				immediate="true"
+				reRender="vatTaxContainer"
+				rendered="#{(to.key.taxableBaseVisible or to.key.quotaVisible) and !to.key.total and !to.key.subtotal and !vatTax.to.finished and !vatTax.detailNew}"
+				confirmTitle="#{bundle.aon_confirm_title}"
+				confirmMessage="#{bundle.aon_remove_confirm}"
+				confirmActionListener="#{vatTax.onRemoveDetail}"
+				styleClass="aon-editDataTable-button aon-icon-delete"
+				accesskey="#{bundle.aon_key_remove_line}" />
+	
+			<f:facet name="footer">
+				<aon:div styleClass="aon-nowrap">
+					<aon:commandButton
+						id="dataTableList-save" title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
+						actionListener="#{vatTax.onSaveNewDetail}"
+						reRender="vatTaxContainer"
+						rendered="#{vatTax.detailNew}"
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						accesskey="#{bundle.aon_key_save_line}" />
+					<aon:confirmButton
+						id="dataTableList-new-cancel" title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
+						reRender="vatTaxContainer"
+						rendered="#{vatTax.detailNew}"
+						immediate="true"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{bundle.aon_cancel_confirm}"
+						confirmActionListener="#{vatTax.onCancelNewDetail}"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel_line}" />
+				</aon:div>
+					
+			</f:facet>
 		</aon:column>
 	</aon:dataTable>
 	

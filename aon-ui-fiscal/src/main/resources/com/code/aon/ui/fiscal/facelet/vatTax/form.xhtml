@@ -12,7 +12,6 @@
 	<ui:define name="content">
 
 		<aon:form id="vatTaxForm">
-
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_vat_tax_module}" />
 				<ui:param name="controller" value="#{vatTax}" />
@@ -50,7 +49,7 @@
 				</ui:define>
 			</ui:decorate>
 
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div id="vatTaxContainer" styleClass="aon-scroll-area">
 
 				<aon:panelGrid id="menuGrid" columns="10" dir="true" width="100%"
 					columnClasses="aon-panelGrid-odd aon-width-80
@@ -66,12 +65,12 @@
 
 					<aon:outputLabel for="VatTax_year" value="#{bundle.aon_year}" />
 					<aon:inputText id="VatTax_year" size="5" value="#{vatTax.to.year}"
-						required="true" disabled="#{vatTax.to.finished}"/>
+						required="true" disabled="#{vatTax.to.finished or vatTax.detailNew}"/>
 
 					<aon:outputLabel for="VatTax_period"
 						value="#{financeBundle.finance_vat_period}" />
 					<aon:selectOneMenu id="VatTax_period" value="#{vatTax.to.period}"
-						required="true" disabled="#{vatTax.to.finished}">
+						required="true" disabled="#{vatTax.to.finished or vatTax.detailNew}">
 						<f:selectItems value="#{fiscalCollections.periods}" />
 						<a4j:support event="onchange" 
 							rendered="#{vatTax.new}"
@@ -82,7 +81,7 @@
 
 					<aon:outputLabel for="VatTax_prorata" value="#{fiscalBundle.fiscal_prorata_percent}" />
 					<aon:inputText id="VatTax_prorata" size="5" value="#{vatTax.to.prorata}"
-						required="true" disabled="#{vatTax.to.finished}"/>
+						required="true" disabled="#{vatTax.to.finished or vatTax.detailNew}"/>
 
 					<aon:outputText value="#{bundle.aon_status}" />
 					<aon:div styleClass="#{vatTax.to.finished?'aon-icon-lock':'aon-icon-unlock'}"
@@ -93,7 +92,7 @@
 
 					<aon:div>
 						<c:if test="#{aonRole.confidentiality}">
-							<aon:selectBooleanCheckbox id="VatTax_securityLevel"
+							<aon:selectBooleanCheckbox id="VatTax_securityLevel" disabled="#{vatTax.detailNew}"
 								value="#{vatTax.to.confidential}" rendered="#{!vatTax.to.finished}"/>
 							<aon:outputLabel for="VatTax_securityLevel" styleClass="aon-italic"
 								value="#{bundle.aon_confidential}" rendered="#{!vatTax.to.finished}"/>
@@ -104,6 +103,7 @@
 					</aon:div>
 
 					<aon:div id="adjustContainer" styleClass="aon-text-center">
+						<aon:div rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 							<aon:div>
 								<aon:outputText
 									value="#{fiscalBundle.fiscal_tax_provious_adjust}"
@@ -122,6 +122,7 @@
 									<aon:outputText value="#{vatTax.previousPeriod}"/>
 								</aon:commandLink>
 							</aon:div>
+						</aon:div>
 					</aon:div>
 				</aon:panelGrid>
 				
@@ -131,12 +132,13 @@
 								,aon-panelGrid-even aon-width-auto">
 					
 					<aon:outputLabel for="VatTax_comments" value="#{bundle.aon_comment}" />
-					<aon:inputTextarea id="VatTax_comments" cols="80" rows="2" value="#{vatTax.to.comments}"/>
+					<aon:inputTextarea id="VatTax_comments" cols="80" rows="2" value="#{vatTax.to.comments}"
+						disabled="#{vatTax.detailNew}"/>
 
 					<aon:div>
 						<aon:div>
 							<aon:selectBooleanCheckbox id="VatTax_replacement"
-								disabled="#{vatTax.to.finished}"
+								disabled="#{vatTax.to.finished or vatTax.detailNew}"
 								value="#{vatTax.to.replacement}"/>
 							<aon:outputLabel for="VatTax_replacement" styleClass="aon-italic"
 								value="#{fiscalBundle.fiscal_replacement}" />
@@ -149,7 +151,7 @@
 
 						<aon:div>
 							<aon:selectBooleanCheckbox id="VatTax_tax_refund_registry"
-								disabled="#{vatTax.to.finished}"
+								disabled="#{vatTax.to.finished or vatTax.detailNew}"
 								value="#{vatTax.to.taxRefundRegistry}"/>
 							<aon:outputLabel for="VatTax_tax_refund_registry" styleClass="aon-italic"
 								value="#{fiscalBundle.fiscal_tax_refund_registry}" />

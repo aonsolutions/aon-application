@@ -3,11 +3,14 @@ package com.code.aon.ui.fiscal.controller;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
@@ -50,6 +53,9 @@ public class VatTaxController extends BasicController {
 	private DataModel vatTaxModel;
 	private DataModel declaredModel;
 	
+	private VatTaxDetail newDetail;
+	private boolean detailNew;
+
 	private List<VatTaxDetail> summary;
 	private VatTaxParameters params;
 	private VatTaxManager provider;
@@ -93,7 +99,25 @@ public class VatTaxController extends BasicController {
 		this.declaredModel = declaredModel;
 	}
 
+	public VatTaxDetail getNewDetail() {
+		return newDetail;
+	}
+	public void setNewDetail(VatTaxDetail newDetail) {
+		this.newDetail = newDetail;
+	}
+
+	public boolean isDetailNew() {
+		return detailNew;
+	}
+	public void setDetailNew(boolean detailNew) {
+		this.detailNew = detailNew;
+	}
+
 	public VatTaxParameters getParams() {
+		if (params == null) {
+			setParams(new VatTaxParameters(AonUtil.getDomainName()));
+		}
+		params.setMod303AvailableByDifferenceDisabled( getFiscalParams().isMod303AvailableByDifferenceDisabled());
 		return params;
 	}
 	public void setParams(VatTaxParameters params) {
@@ -148,7 +172,6 @@ public class VatTaxController extends BasicController {
 	public void initializeVatTax(boolean isNew) throws ManagerBeanException {
 		setAnyPreviousAdjust(false);
 		VatTax vatTax = (VatTax) getTo();
-		setParams(new VatTaxParameters(AonUtil.getDomainName())); 
 		getParams().setVatTax( vatTax );
 		getParams().setYear( vatTax.getYear() );
 		getParams().setPeriod( vatTax.getPeriod() );
@@ -187,7 +210,7 @@ public class VatTaxController extends BasicController {
 		for (VatTaxDetail detail:getSummary()) {
 			detail.calculate();
 		}
-	}
+	} 
 	
 	public void onRecalculate(ActionEvent event ) {
 		recalculate();
@@ -425,17 +448,35 @@ public class VatTaxController extends BasicController {
 
 	public void onChangeTaxableBaseAdjust(ActionEvent event) {
 		VatTaxDetail detail = (VatTaxDetail) getVatTaxModel().getRowData();
-		if ( detail.getQuotaAdjust() == 0 ) {
-			detail.setQuotaAdjust(CommonUtil.round(detail.getTaxableBaseAdjust() * detail.getPercent() / 100)); 
-		}
-	}
-	public void onChangeQuotaAdjust(ActionEvent event) {
-		VatTaxDetail detail = (VatTaxDetail) getVatTaxModel().getRowData();
-		if (detail.getKey().isTaxableBaseVisible() && detail.getTaxableBaseAdjust() == 0 && detail.getPercent() != 0) {
-			detail.setTaxableBaseAdjust(CommonUtil.round(detail.getQuotaAdjust() *  100 / detail.getPercent()));
-		}
+		detail.setQuota(CommonUtil.round(detail.getTaxableBase() * detail.getPercent() / 100));
+		detail.setTaxableBaseAdjust( CommonUtil.round(detail.getTaxableBase() - detail.getTaxableBaseResult()));
+		detail.setQuotaAdjust(CommonUtil.round(detail.getQuota() - detail.getQuotaResult()));
+		recalculate();
 	}
 	
+	public void onChangeQuotaAdjust(ActionEvent event) {
+		VatTaxDetail detail = (VatTaxDetail) getVatTaxModel().getRowData();
+		detail.setQuotaAdjust(CommonUtil.round(detail.getQuota() - detail.getQuotaResult()));
+		if (detail.getKey().isTaxableBaseVisible() && detail.getTaxableBase() == 0 && detail.getPercent() != 0) {
+			detail.setTaxableBase(CommonUtil.round(detail.getQuota() *  100 / detail.getPercent()));
+			detail.setTaxableBaseAdjust( CommonUtil.round(detail.getTaxableBase() - detail.getTaxableBaseResult()));
+		}
+		recalculate();
+	}
+	
+	public void onChangeNewTaxableBase(ActionEvent event) {
+		VatTaxDetail detail = getNewDetail();
+		if ( detail.getQuota() == 0 ) {
+			detail.setQuota(CommonUtil.round(detail.getTaxableBase() * detail.getPercent() / 100)); 
+		}
+	}
+	public void onChangeNewQuota(ActionEvent event) {
+		VatTaxDetail detail = getNewDetail();
+		if (detail.getKey().isTaxableBaseVisible() && detail.getTaxableBase() == 0 && detail.getPercent() != 0) {
+			detail.setTaxableBase(CommonUtil.round(detail.getQuota() *  100 / detail.getPercent()));
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<VatTaxDeclaration> getDeclarations() {
 		VatTax vatTax = (VatTax) getTo();
@@ -573,4 +614,78 @@ public class VatTaxController extends BasicController {
 		}
 		return params;
 	}
+	
+	public void onRemoveDetail(ActionEvent event) {
+		try {
+			VatTaxDetail detail = (VatTaxDetail) vatTaxModel.getRowData();
+			IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
+			bean.remove(detail);
+			initializeVatTax(false);
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void onNewDetail(ActionEvent event) {
+		VatTaxDetail detail = new VatTaxDetail();
+		setNewDetail(detail);
+		setDetailNew(true);
+	}
+	public void onCancelNewDetail(ActionEvent event) {
+		setNewDetail(null);
+		setDetailNew(false);
+	}
+	public void onSaveNewDetail(ActionEvent event) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
+			VatTax tax = (VatTax) getTo();
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_ID), tax.getId());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_KEY), getNewDetail().getKey());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_PERCENT), getNewDetail().getPercent());	
+			List<ITransferObject> list = bean.getList(c);
+			if (list != null && list.size() > 0) {
+				String msg = "Ya existe una línea en la declaración para el tipo y porcentaje indicados.";
+				LOGGER.error(msg);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			getNewDetail().setVatTax(tax);
+			getNewDetail().reverseCalculate();
+			bean.insert(getNewDetail());
+			initializeVatTax(false);
+			setDetailNew(false);
+			setNewDetail(null);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo generar grabar la línea. " + e.getMessage();
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		
+	}
+	
+	public List<SelectItem> getAvailableKeys() {
+		List<SelectItem> keys = new LinkedList<SelectItem>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		for (VatTaxKey key:VatTaxKey.values()) {
+			@SuppressWarnings("unchecked")
+			List<VatTaxDetail> declaredList = (List<VatTaxDetail>) getVatTaxModel().getWrappedData();
+			boolean found = false;
+			for (VatTaxDetail declared:declaredList) {
+				if (declared.getKey() == key && !key.isPercentVisible()) {
+					found = true;
+				}
+			}
+			if (!found) {
+				if ((key.isQuotaVisible() ||  key.isTaxableBaseVisible()) && !key.isSubtotal() && !key.isTotal() ) {
+					String name = key.getName(locale);
+					SelectItem item = new SelectItem(key, name);
+					keys.add(item);
+				}
+			}
+		}
+		return keys;
+	}
+	
 }

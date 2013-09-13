@@ -53,19 +53,58 @@ public class VatTaxManager {
 		c.set(Calendar.MONTH, 0);
 		Date dateFrom = c.getTime();
 		Date dateTo = params.getPeriod().getDueDate(params.getYear());
-		List<VatTaxDetail> list = getVatTax(dateFrom, dateTo, params.getVatTax(), params.getInvoiceStatus());		
-		VatTaxDetailComparator comparator = new VatTaxDetailComparator();
-		Collections.sort(list, comparator);
-		calculate(list);
-		fillDeclared(params,list);		
-		list = decorate(list);
+		List<VatTaxDetail> list = new LinkedList<VatTaxDetail>();
+		if (params.isMod303AvailableByDifferenceDisabled() ) {
+			initializeListForOnlyDeclaration(list);
+		} else {
+			initializeList(list);
+			getVatTax(list, dateFrom, dateTo, params.getVatTax(), params.getInvoiceStatus());
+			VatTaxDetailComparator comparator = new VatTaxDetailComparator();
+			Collections.sort(list, comparator);
+			calculate(list);
+			fillDeclared(params,list);		
+		}
+		Collections.sort(list, new VatTaxDetailComparator());
+		list = decorate(params,list);		
 		return list;
 	}
+
+	private void initializeListForOnlyDeclaration(List<VatTaxDetail> list) {
+		initializeList(list);
+		VatTaxKey[] keys = new VatTaxKey[] {VatTaxKey.A1,VatTaxKey.A3,VatTaxKey.A4,VatTaxKey.CP,VatTaxKey.GT,VatTaxKey.BI};
+		double[] percents = new double[] {4,8,21};
+		VatTaxDetail detail;
+		for (VatTaxKey key : keys) {
+			for (double percent : percents) {
+				detail = new VatTaxDetail();
+				detail.setKey(key);
+				detail.setPercent(percent);
+				list.add(detail);
+			}
+		}
+		
+		detail = new VatTaxDetail();
+		detail.setKey(VatTaxKey.A2);
+		detail.setPercent(0.5);
+		list.add(detail);
+		detail = new VatTaxDetail();
+		detail.setKey(VatTaxKey.A2);
+		detail.setPercent(1.4);
+		list.add(detail);
+		detail = new VatTaxDetail();
+		detail.setKey(VatTaxKey.A2);
+		detail.setPercent(5.2);
+		list.add(detail);
+	}
+	
 	public List<VatTaxDetail> getVatTax(Date dateFrom,Date dateTo) throws ManagerBeanException {
-		return getVatTax(dateFrom, dateTo, null, null); 
+		List<VatTaxDetail> list = new LinkedList<VatTaxDetail>();
+		initializeList(list);
+		return getVatTax(list,dateFrom, dateTo, null, null); 
 	}
 		
 	public List<VatTaxDetail> getVatTax(
+			List<VatTaxDetail> list,
 			Date dateFrom,
 			Date dateTo,
 			VatTax vatTax,
@@ -104,8 +143,6 @@ public class VatTaxManager {
 			ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
 			ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
 			rs = ps.executeQuery();
-			List<VatTaxDetail> list = new LinkedList<VatTaxDetail>();
-			initializeList(list);
 			while (rs.next()) {
 				double surchargePercent = rs.getDouble(5);
 				double taxableBase = rs.getDouble(9);
@@ -160,10 +197,10 @@ public class VatTaxManager {
 		}
 	}
 
-	private List<VatTaxDetail> decorate(List<VatTaxDetail> list) {
+	private List<VatTaxDetail> decorate(VatTaxParameters params, List<VatTaxDetail> list) {
 		List<VatTaxDetail> newList = new LinkedList<VatTaxDetail>();
 		for (VatTaxDetail detail : list) {
-			if (detail.getKey().isPercentVisible()
+			if (detail.getKey().isPercentVisible() && detail.getPercent() == 0.0
 				&& detail.getTaxableBaseAccumulated() == 0.0 && detail.getQuotaAccumulated() == 0.0
 				&& detail.getDeductibleQuotaAccumulated() == 0.0 && detail.getTaxableBaseDeclared() == 0.0
 				&& detail.getQuotaDeclared() == 0.0 && detail.getDeductibleQuotaDeclared() == 0.0
@@ -172,7 +209,7 @@ public class VatTaxManager {
 				&& detail.getQuotaAdjust() == 0.0 && detail.getDeductibleQuotaAdjust() == 0.0
 				&& detail.getTaxableBase() == 0.0 && detail.getQuota() == 0.0
 				&& detail.getDeductibleQuota() == 0.0) {
-					// nothing
+				// Nothing 
 			} else {
 				newList.add(detail);	
 			}
@@ -358,6 +395,7 @@ public class VatTaxManager {
 			VatTaxDetail detail = (VatTaxDetail) to;
 			if (!detail.getVatTax().isReplaced()) {
 				VatTaxKey key = detail.getKey();
+				
 				double percent = detail.getPercent();
 				boolean found = false;
 				for (VatTaxDetail model: summary) {
@@ -371,7 +409,22 @@ public class VatTaxManager {
 				}
 				if (!found) {
 					// Si hay algo declarado y no hay línea en esta declaracion. Ej:
-					//	Una venta al 5% de IVA en el periodo anterior
+					// Una venta al 5% de IVA en el periodo anterior
+					// Si no hay acumulado, es por que se borro la factura despues de declarar.
+					
+					detail.setTaxableBaseAccumulated(0);
+					detail.setQuotaAccumulated(0);
+					detail.setDeductibleQuotaAccumulated(0);
+					
+					detail.setTaxableBaseAdjust(0);
+					detail.setQuotaAdjust(0);
+					detail.setDeductibleQuotaAdjust(0);
+
+					detail.setTaxableBaseDeclared(detail.getTaxableBase());
+					detail.setQuotaDeclared(detail.getQuota());
+					detail.setDeductibleQuotaDeclared(detail.getDeductibleQuota());
+					
+					detail.calculate();
 					summary.add(detail);
 				}
 			}
@@ -387,7 +440,7 @@ public class VatTaxManager {
 		List<?> list = bean.getList(criteria);
 		List<VatTaxDetail> details = (List<VatTaxDetail>) list;
 		Collections.sort(details, comparator);
-		decorate(details);
+		decorate(params,details);
 		return details;
 	}
 

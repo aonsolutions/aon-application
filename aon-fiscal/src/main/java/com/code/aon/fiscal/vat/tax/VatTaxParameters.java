@@ -17,6 +17,9 @@ public class VatTaxParameters {
 	private VatTax	vatTax;
 	private SecurityLevel securityLevel;
 	private InvoiceStatus invoiceStatus;
+	
+	// No hay que realizar calculos, ni de facturas, ni de lo declarado anteriormente.
+	private boolean mod303AvailableByDifferenceDisabled;
 
 	private String domainName;
 	
@@ -92,4 +95,14 @@ public class VatTaxParameters {
 	public void setInvoiceStatus(InvoiceStatus invoiceStatus) {
 		this.invoiceStatus = invoiceStatus;
 	}
+
+	public boolean isMod303AvailableByDifferenceDisabled() {
+		return mod303AvailableByDifferenceDisabled;
+	}
+
+	public void setMod303AvailableByDifferenceDisabled(
+			boolean mod303AvailableByDifferenceDisabled) {
+		this.mod303AvailableByDifferenceDisabled = mod303AvailableByDifferenceDisabled;
+	}
+
 }

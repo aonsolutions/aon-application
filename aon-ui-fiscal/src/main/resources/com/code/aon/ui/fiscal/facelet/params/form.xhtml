@@ -93,6 +93,15 @@
 
 					<aon:outputText value="&#160;" />
 					<aon:div>
+						<aon:selectBooleanCheckbox id="default_mod303_available_by_difference"
+							value="#{fiscalParams.mod303AvailableByDifferenceDisabled}">
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="default_mod303_available_by_difference"
+							value="#{fiscalBundle.fiscal_default_mod303_available_by_difference}" />
+					</aon:div>
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
 						<aon:selectBooleanCheckbox id="default_perm_addr_changes"
 							value="#{fiscalParams.permanentAddressChanges}">
 						</aon:selectBooleanCheckbox>
