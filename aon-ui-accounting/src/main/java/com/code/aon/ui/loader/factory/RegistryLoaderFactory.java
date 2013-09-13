@@ -109,7 +109,7 @@ public class RegistryLoaderFactory {
 		rbank.setRegistry(registry);
 		BankAccount bankAccount = new BankAccount();
 		String[] ccc = StringUtils.split(loaded.getCuentaBanco(),".");
-		if (ccc.length == 4) {
+		if (ccc.length != 4) {
 			throw new ManagerBeanException("El CCC del cliente "+ loaded.getRazonSocial() +" no es correcto ("+loaded.getCuentaBanco()+")");
 		}
 		bankAccount.setEntity(ccc[0]);
