@@ -30,7 +30,7 @@
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
 								<f:facet name="header">
 									<aon:outputLabel for="CommercialTerm_general"
-										value="#{commercialBundle.commercial_offer_general}" />
+										value="#{bundle.aon_general}" />
 								</f:facet>
 								<aon:outputText rendered="#{formList}" value="&#160;"
 									styleClass="#{(to.general)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" />
@@ -49,7 +49,7 @@
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 								<f:facet name="header">
 									<aon:outputLabel for="CommercialTerm_line" 
-										value="#{commercialBundle.commercial_offer_detail_line}" />
+										value="#{bundle.aon_line}" />
 								</f:facet>
 								<aon:outputText value="#{to.line}"
 									rendered="#{formList}" />

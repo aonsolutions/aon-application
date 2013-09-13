@@ -20,8 +20,6 @@ public interface IPurchaseMessages {
 	String PURCHASE_SEND_EMAIL_NUMBER = "purchase_send_email_number";
 	String PURCHASE_SEND_EMAIL_SENDED_COUNT = "purchase_send_email_sendedCount"; 
 	String PURCHASE_SEND_EMAIL_ERROR_COUNT = "purchase_send_email_errorCount";
-
-	String PURCHASE_PROPOSAL_ORDER = "purchase_proposal_order";
 	
 }
 

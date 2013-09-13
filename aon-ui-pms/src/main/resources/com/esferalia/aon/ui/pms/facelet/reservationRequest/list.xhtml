@@ -25,7 +25,7 @@
 							<aon:commandLink id="#{dataTableId}-selectButton" 
 								styleClass="#{(to.active) ? ('aon-icon-point-red') : ('aon-icon-point-green')}" 
 								value="&#160;&#160;&#160;&#160;"
-								title="#{(to.active) ? (pmsBundle.pms_reservation_request_pending) : (pmsBundle.pms_reservation_request_processed)}" 
+								title="#{(to.active) ? (bundle.aon_pending) : (pmsBundle.pms_reservation_request_processed)}" 
 								immediate="true" ajaxSingle="true" requestDelay="100"
 								action="#{rowSelectorAction}"
 								actionListener="#{rowSelectorActionListener}"
@@ -45,7 +45,7 @@
 						<aon:column alias="ReservationRequest.hotel.workPlace.description"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_hotel}" />
+								<aon:outputText value="#{bundle.aon_module_hotel}" />
 							</f:facet>
 							<aon:outputText value="#{to.hotel.workPlace.description}" />
 						</aon:column>
@@ -98,7 +98,7 @@
 						<c:if test="#{aonRole.commercialOperator}">
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{pmsBundle.pms_agency} / #{pmsBundle.pms_company}" />
+									<aon:outputText value="#{pmsBundle.pms_agency} / #{bundle.aon_company}" />
 								</f:facet>
 								<aon:outputText value="#{(to.agencyHolder) ? (to.agency.registry.fullName) : (to.company.registry.fullName)}" />
 							</aon:column>
@@ -109,7 +109,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
-							<aon:outputText value="#{(to.active) ? (pmsBundle.pms_reservation_request_pending) : (pmsBundle.pms_reservation_request_processed)}" />
+							<aon:outputText value="#{(to.active) ? (bundle.aon_pending) : (pmsBundle.pms_reservation_request_processed)}" />
 
 						</aon:column>
 

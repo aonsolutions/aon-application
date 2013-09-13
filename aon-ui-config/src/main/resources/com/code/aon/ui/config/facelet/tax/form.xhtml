@@ -84,13 +84,13 @@
 						,aon-panelGrid-even aon-width-auto">
 
 					<c:if test="#{aonRole.accountingOperator}">
-						<aon:outputLabel for="Account_id-Sales" value="#{configBundle.config_tax_sales_account}" />
+						<aon:outputLabel for="Account_id-Sales" value="#{bundle.aon_sales_account}" />
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 							<ui:param name="lookupTo" value="#{tax.to.salesAccount}" />
 							<ui:param name="lookupSuffix" value="-Sales" />
 						</ui:include>
 
-						<aon:outputLabel for="Account_id-Purchase" value="#{configBundle.config_tax_purchase_account}" />
+						<aon:outputLabel for="Account_id-Purchase" value="#{bundle.aon_purchase_account}" />
 						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 							<ui:param name="lookupTo" value="#{tax.to.purchaseAccount}" />
 							<ui:param name="lookupSuffix" value="-Purchase" />

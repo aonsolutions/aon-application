@@ -65,7 +65,7 @@
 					
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{assetBundle.asset_activity_who}" />
+							<aon:outputText value="#{bundle.aon_holder}" />
 						</f:facet>
 						<aon:outputText value="#{to.who}" rendered="#{to!=activityBasic.to}"
 							size="15" />
@@ -74,7 +74,7 @@
  					
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{assetBundle.asset_activity_why}" />
+							<aon:outputText value="#{bundle.aon_remark}" />
 						</f:facet>
 						<aon:outputText value="#{to.why}" rendered="#{to!=activityBasic.to}"
 							size="25" />
@@ -83,7 +83,7 @@
 				
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{assetBundle.asset_activity_status}" />
+							<aon:outputText value="#{bundle.aon_status}" />
 						</f:facet>
 						<aon:outputText value="#{to.status}" rendered="#{to!=activityBasic.to}"
 							size="25" />

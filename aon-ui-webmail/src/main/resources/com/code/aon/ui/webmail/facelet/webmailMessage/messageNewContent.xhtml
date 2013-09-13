@@ -63,7 +63,7 @@
 
 					<aon:div rendered="#{mailConfig.mailAccountCount &gt; 1}">
 						<aon:outputLabel for="NewMail_From#{messageSuffix}" 
-							value="#{webmailBundle.webmail_from}" />
+							value="#{bundle.aon_of}" />
 					</aon:div>							
 					<aon:selectOneMenu id="NewMail_From#{messageSuffix}"
 						reRender="messageContent#{messageSuffix},NewMail_optionsGrid#{messageSuffix}"
@@ -147,7 +147,7 @@
 					
 					<aon:div>
 						<aon:outputLabel for="NewMail_Subject#{messageSuffix}" 
-						value="#{webmailBundle.webmail_subject}" />
+						value="#{bundle.aon_subject}" />
 					</aon:div>										
 					<aon:inputText id="NewMail_Subject#{messageSuffix}"
 						size="#{inputTextSize}"

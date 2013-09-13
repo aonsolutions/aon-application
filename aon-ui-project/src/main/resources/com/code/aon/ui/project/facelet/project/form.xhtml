@@ -12,7 +12,7 @@
 		<aon:form id="projectForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{projectBundle.project_projects}" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_module_groupware}" />
 				<ui:param name="controller" value="#{project}" />
 
 				<ui:param name="skipRemoveButton" value="#{project.to != null and project.to.extended}" />
@@ -46,7 +46,7 @@
 
 				<c:if test="#{!project.new}">
 					<aon:panelTabSet id="projectTabSet" selectedTab="#{project.selectedTab}">
-						<aon:panelTab id="project_activities" label="#{projectBundle.project_activities}">
+						<aon:panelTab id="project_activities" label="#{bundle.aon_activities}">
 							<c:if test="#{project.selectedTab == 'project_activities' or project.selectedTab == null}">
 								<ui:include src="/com/code/aon/ui/project/facelet/project/projectActivity.xhtml" />
 							</c:if>

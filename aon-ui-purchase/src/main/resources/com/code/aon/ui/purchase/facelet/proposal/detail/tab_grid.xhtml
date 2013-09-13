@@ -29,7 +29,7 @@
 			
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel for="ProposalDetail_item" value="#{productBundle.product_item}" />
+					<aon:outputLabel for="ProposalDetail_item" value="#{bundle.aon_product}" />
 				</f:facet>
 				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
@@ -129,7 +129,7 @@
 					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250" >
 						<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
 							<f:facet name="header">
-								<aon:outputText value="#{purchaseBundle.purchase_purchase}" />
+								<aon:outputText value="#{bundle.aon_invoice_sales}" />
 							</f:facet>
 							<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number} " />
 							<aon:outputText value="#{to.purchaseDetail.purchase.referenceCode}" />

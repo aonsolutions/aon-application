@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{salesBundle.sales_to_delivery}" />
+						<aon:outputText value="#{bundle.aon_invoice_delivery}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -37,7 +37,7 @@
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="delivery-accept"
-										value="#{salesBundle.sales_to_delivery}"
+										value="#{bundle.aon_invoice_delivery}"
 										actionListener="#{sales.onDelivery}"
 										action="delivery_form"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
@@ -87,7 +87,7 @@
 											verticalOffset="-60" />
 
 										<aon:outputLabel for="Sales_deliveryWarehouse" 
-											value="#{warehouseBundle.warehouse_warehouse}" />
+											value="#{bundle.aon_module_warehouse}" />
 										<aon:selectOneMenu id="Sales_deliveryWarehouse" 
 											value="#{sales.deliveryWarehouse}">
 											<f:selectItems value="#{warehouseCollections.warehouses}" />

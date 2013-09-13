@@ -24,12 +24,12 @@
 						styleClass="aon-finding-toolbar-item aon-icon-rubber"
 						immediate="true"
 						actionListener="#{vatRegenerator.onEditSearch}" />
-					<aon:commandButton id="validate" value="#{accountingBundle.accounting_validate}"
+					<aon:commandButton id="validate" value="#{bundle.aon_login_validate}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')"
 						actionListener="#{vatRegenerator.validate}" />
-					<aon:commandButton id="execute" value="#{accountingBundle.accounting_execute}"
+					<aon:commandButton id="execute" value="#{bundle.aon_execute}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						rendered="#{vatRegenerator.params.valid}"
 						onclick="Richfaces.showModalPanel('waitProccess')"
@@ -58,7 +58,7 @@
 
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_accountPeriod"
-						value="#{accountingBundle.accounting_period}" />
+						value="#{bundle.aon_financial_year}" />
 					<aon:selectOneMenu
 						disabled="#{vatRegenerator.validated}"
 						id="AccountEntryDetail_accountEntry_accountPeriod"

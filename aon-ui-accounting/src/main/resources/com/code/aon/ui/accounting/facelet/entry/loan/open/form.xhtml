@@ -37,7 +37,7 @@
 				<aon:panelGrid id="dataTable" columns="2">
 
 					<aon:outputLabel for="AccountEntry_accountPeriod"
-						value="#{accountingBundle.accounting_period}" />
+						value="#{bundle.aon_financial_year}" />
 					<aon:div>
 						<aon:selectOneMenu id="AccountEntry_accountPeriod"
 							value="#{loanEntry.period}">
@@ -113,7 +113,7 @@
 					</aon:inputText>
 
 					<aon:outputLabel for="Account_expenses"
-						value="#{accountingBundle.accounting_expenses}" />
+						value="#{bundle.aon_expenses}" />
 					<aon:inputText id="Account_expenses" required="true"
 						value="#{loanEntry.loan.expenses}" size="15">
 						<f:validateDoubleRange />

@@ -115,12 +115,12 @@
 
 					<aon:outputLabel for="Task_priority"
 						rendered="#{task.monitor or task.new}"
-						value="#{groupwareBundle.alarm_priority}" />
+						value="#{bundle.aon_priority}" />
 					<aon:selectOneMenu id="Task_priority" value="#{task.to.priority}"
 						rendered="#{task.monitor or task.new}">
 						<f:selectItems value="#{groupWareCollections.priorities}" />
 					</aon:selectOneMenu>
-					<aon:outputText value="#{groupwareBundle.alarm_priority}"
+					<aon:outputText value="#{bundle.aon_priority}"
 						rendered="#{!task.monitor and !task.new}" />
 					<aon:inputText value="#{task.to.priority}" size="10"
 						disabled="true" rendered="#{!task.monitor and !task.new}" />
@@ -139,7 +139,7 @@
 						disabled="true" rendered="#{!task.new}" />
 
 					<aon:outputLabel for="Task_workgroup"
-						 value="#{groupwareBundle.groupware_group}" />
+						 value="#{bundle.aon_group}" />
 					<aon:div id="workgroup">						
 						<aon:selectOneMenu id="Task_workgroup"
 							disabled="#{!task.monitor and !task.new}"
@@ -160,7 +160,7 @@
 					</aon:div>
 
 					<aon:outputText  
-						value="#{groupwareBundle.groupware_user}" />
+						value="#{bundle.aon_login_user}" />
 					<aon:div id="user">
 						<aon:selectOneMenu
 							disabled="#{task.allMembers or (!task.monitor and !task.new)}" 
@@ -214,7 +214,7 @@
 					</aon:panelGrid>
 
 					<aon:outputLabel for="Task_sender"
-						value="#{groupwareBundle.groupware_task_sender}"
+						value="#{bundle.aon_sender}"
 						rendered="#{task.to.sourceAssigned or task.monitor}" />
 					<aon:inputText id="Task_sender" size="60"
 						value="#{task.to.sender.registry.fullName}"

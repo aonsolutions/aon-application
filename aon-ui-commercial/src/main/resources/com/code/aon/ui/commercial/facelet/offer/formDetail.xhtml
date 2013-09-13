@@ -43,7 +43,7 @@
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 				<f:facet name="header">
-					<aon:outputLabel for="OfferDetail_line" value="#{commercialBundle.commercial_offer_detail_line}" />
+					<aon:outputLabel for="OfferDetail_line" value="#{bundle.aon_line}" />
 				</f:facet>
 				<aon:outputText value="#{to.line}"
 					rendered="#{formList}" />
@@ -59,7 +59,7 @@
 	
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
+					<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}" 
 					rendered="#{formList}"

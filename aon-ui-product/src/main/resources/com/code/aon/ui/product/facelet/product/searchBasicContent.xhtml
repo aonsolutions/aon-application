@@ -22,7 +22,7 @@
 		valueChangeListener="#{controller.addExpression}" />
 
 	<aon:outputLabel for="Product_category_id"
-		value="#{productBundle.product_category}" />
+		value="#{bundle.aon_category}" />
 	<aon:selectOneMenu id="Product_category_id"
 		value="#{productCollections.category}"
 		valueChangeListener="#{controller.addIdEqualExpression}">
@@ -79,7 +79,7 @@
 	
 	<c:if test="#{aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
 		<aon:outputLabel for="Account_id-Sales"
-			value="#{productBundle.product_sales_account}" />
+			value="#{bundle.aon_sales_account}" />
 		<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{searchController.salesAccount}" />
 			<ui:param name="lookupSuffix" value="-Sales" />
@@ -87,7 +87,7 @@
 		</ui:include>
 		
 		<aon:outputLabel for="Account_id-Purchase"
-			value="#{productBundle.product_purchase_account}" />
+			value="#{bundle.aon_purchase_account}" />
 		<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{searchController.purchaseAccount}" />
 			<ui:param name="lookupSuffix" value="-Purchase" />

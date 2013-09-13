@@ -15,7 +15,7 @@
 
 				<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
 					<aon:outputLabel for="Room_hotel_id"
-						value="#{pmsBundle.pms_hotel}" />
+						value="#{bundle.aon_module_hotel}" />
 					<aon:selectOneMenu id="Room_hotel_id"
 						value="#{searchController.hotel}"
 						valueChangeListener="#{controller.onHotelChanged}"

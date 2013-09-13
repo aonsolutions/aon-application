@@ -31,7 +31,7 @@
 					</aon:selectInputDate>
 					
 					<aon:outputLabel for="Notice_workGroup_id"
-						value="#{groupwareBundle.notice_work_group}" />
+						value="#{bundle.aon_group}" />
 					<aon:selectOneMenu id="Notice_workGroup_id" focus="Notice_recipient_id"
 						validator="#{notice.workGroupCheck}"
 						value="#{notice.to.workGroup.id}" reRender="Notice_workGroup_id,Notice_recipient_id, Notice_sendEmail"
@@ -61,13 +61,13 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Notice_source"
-						value="#{groupwareBundle.notice_source}" />
+						value="#{bundle.aon_of}" />
 					<aon:inputText id="Notice_source"
 						maxlength="64" size="100"
 						value="#{notice.to.source}" />
 
 					<aon:outputLabel for="Notice_company"
-						value="#{groupwareBundle.notice_company}" />
+						value="#{bundle.aon_company}" />
 					<aon:inputText id="Notice_company"
 						maxlength="64" size="100"
 						value="#{notice.to.company}" />
@@ -93,14 +93,14 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Notice_priority" 
-						value="#{groupwareBundle.notice_priority}" />
+						value="#{bundle.aon_priority}" />
 					<aon:selectOneMenu id="Notice_priority"
 						value="#{notice.to.priority}">
 						<f:selectItems value="#{groupWareCollections.priorities}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Notice_subject"
-						value="#{groupwareBundle.notice_subject}" />
+						value="#{bundle.aon_subject}" />
 					<aon:inputTextarea id="Notice_subject"
 						value="#{notice.to.subject}" cols="100" rows="7" />	
 

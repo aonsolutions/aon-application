@@ -53,7 +53,7 @@
 								</ui:include>	
 							
 								<aon:outputLabel for="TrainingCenter_address"
-									value="#{registryBundle.registry_address}" />
+									value="#{bundle.aon_address}" />
 								<aon:div>
 									<aon:selectOneMenu id="TrainingCenter_streetType" required="true"
 										label="#{registryBundle.registry_street_type}"
@@ -87,13 +87,13 @@
 									valueChangeListener="#{trainingCenter.addressChanged}" size="30" />
 							
 								<aon:outputLabel for="TrainingCenter_address_zip"
-									value="#{registryBundle.registry_zip}" />
+									value="#{bundle.aon_postal_code}" />
 								<aon:inputText id="TrainingCenter_address_zip"
 									value="#{trainingCenter.mainAddress.zip}" maxlength="16"
 									valueChangeListener="#{trainingCenter.addressChanged}" size="16" />
 							
 								<aon:outputLabel for="TrainingCenter_address_geozone"
-									value="#{registryBundle.registry_geozone}" />
+									value="#{bundle.aon_state}" />
 								<aon:selectOneMenu id="TrainingCenter_address_geozone"
 									value="#{trainingCenter.mainAddress.geozone}"
 									styleClass="aon-form-selectOneMenu-field"
@@ -102,12 +102,12 @@
 								</aon:selectOneMenu>
 							
 								<aon:outputLabel for="TrainingCenter_telephone"
-									value="#{registryBundle.registry_phone}" />
+									value="#{bundle.aon_phone}" />
 								<aon:inputText id="TrainingCenter_telephone" value="#{trainingCenter.phone.value}"
 									valueChangeListener="#{trainingCenter.phoneChanged}" maxlength="64" size="15" />
 							
 								<aon:outputLabel for="TrainingCenter_fax"
-									value="#{registryBundle.registry_fax}" />
+									value="#{bundle.aon_fax}" />
 								<aon:inputText id="TrainingCenter_fax" value="#{trainingCenter.fax.value}"
 									valueChangeListener="#{trainingCenter.faxChanged}" maxlength="64" size="15" />
 							
@@ -118,7 +118,7 @@
 									valueChangeListener="#{trainingCenter.emailChanged}" size="45" />
 							
 								<aon:outputLabel for="TrainingCenter_web"
-									value="#{registryBundle.registry_web}" />
+									value="#{bundle.aon_web}" />
 								<aon:inputText id="TrainingCenter_web" value="#{trainingCenter.web.value}"
 									onblur="toLowerCase(this);" maxlength="64"
 									valueChangeListener="#{trainingCenter.webChanged}" size="45" />
@@ -155,7 +155,7 @@
 										</h:panelGrid>
 									</a4j:region>
 									<aon:outputLabel for="signatureAttach_file"
-										value="#{companyBundle.company_signature}" />
+										value="#{bundle.aon_signature}" />
 									<a4j:region>
 										<h:panelGrid id="signatureAttachGrid" columns="2">
 											<a4j:mediaOutput element="img" cacheable="false"

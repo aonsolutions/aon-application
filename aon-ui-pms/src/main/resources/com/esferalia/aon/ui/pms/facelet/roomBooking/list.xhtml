@@ -41,7 +41,7 @@
 			<aon:div styleClass="aon-scroll-area">
 			
 				<aon:panel>
-					<aon:outputText value="#{pmsBundle.pms_hotel}:" styleClass="aon-bold" />
+					<aon:outputText value="#{bundle.aon_module_hotel}:" styleClass="aon-bold" />
 					<aon:outputText styleClass="aon-margin-left "
 						value="#{(roomBooking.hotel!=null)?(roomBooking.hotel.workPlace.description):('-')}"/>
 
@@ -84,7 +84,7 @@
 						
 						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-auto">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_hotel}" />
+								<aon:outputText value="#{bundle.aon_module_hotel}" />
 							</f:facet>
 							<aon:outputText value="#{to.hotel}" />
 						</aon:column>	
@@ -157,7 +157,7 @@
 									
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_hotel}" />
+								<aon:outputText value="#{bundle.aon_module_hotel}" />
 							</f:facet>
 							<aon:outputText value="#{to.guestTotal}" />
 						</aon:column>				

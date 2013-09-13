@@ -24,14 +24,14 @@
 
 		<aon:column>
 			<f:facet name="header">
-				<aon:outputText value="#{sellerBundle.seller_seller}" />
+				<aon:outputText value="#{bundle.aon_module_commercial}" />
 			</f:facet>
 			<aon:outputText value="#{to.seller.registry.fullName}" />
 		</aon:column>
 
 		<aon:column>
 			<f:facet name="header">
-				<aon:outputText value="#{commercialBundle.commercial_target}" />
+				<aon:outputText value="#{bundle.aon_target}" />
 			</f:facet>
 			<aon:outputText value="#{to.project.target.registry.fullName}" />
 		</aon:column>
@@ -39,7 +39,7 @@
 		<aon:column>
 			<f:facet name="header">
 				<aon:outputText
-					value="#{commercialBundle.commercial_tracking_activity}" />
+					value="#{bundle.aon_activity}" />
 			</f:facet>
 			<aon:outputText value="#{to.activity.name}" />
 		</aon:column>

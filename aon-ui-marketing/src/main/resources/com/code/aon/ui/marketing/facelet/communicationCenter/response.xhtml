@@ -17,7 +17,7 @@
 				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_communication_center_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="next" value="#{marketingBundle.marketing_next}"
+					<aon:commandButton id="next" value="#{bundle.aon_next}"
 						action="#{communicationCenter.nextQuestionAction}" actionListener="#{communicationCenter.onNextQuestion}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}"/>
@@ -27,7 +27,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 						accesskey="#{bundle.aon_key_cancel}"/>
 					<c:if test="#{communicationCenter.actionSelected}">
-						<aon:commandButton id="finish" value="#{marketingBundle.marketing_finish}"
+						<aon:commandButton id="finish" value="#{bundle.aon_finalice}"
 							reRender="aonStatus" immediate="true"
 							styleClass="aon-finding-toolbar-item aon-icon-exit" >
 							<rich:componentControl for="surveyFinishModalPanel"
@@ -35,7 +35,7 @@
 						</aon:commandButton>
 					</c:if>
 					<c:if test="#{!communicationCenter.actionSelected}">
-						<aon:commandButton id="finish" value="#{marketingBundle.marketing_finish}"
+						<aon:commandButton id="finish" value="#{bundle.aon_finalice}"
 							action="#{communicationCenter.finishedAction}" immediate="true"					
 							styleClass="aon-finding-toolbar-item aon-icon-exit" >
 						</aon:commandButton>

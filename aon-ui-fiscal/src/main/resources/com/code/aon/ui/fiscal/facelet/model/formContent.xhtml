@@ -18,7 +18,7 @@
 			<ui:define name="beforeSpinToolbarContent">
 			
 				<aon:commandButton id="#{toolbarID}-finish"
-					value="#{fiscalBundle.fiscal_finish}"
+					value="#{bundle.aon_finalice}"
 					actionListener="#{controller.onShowFinalizePanel}"
 					reRender="DeclarationForm,finalizeContainer"
 					rendered="#{!controller.new and controller.to.pending}"
@@ -91,7 +91,7 @@
 							  ,aon-panelGrid-even aon-width-80
 							  ,aon-panelGrid-even aon-width-100">
 
-				<aon:outputLabel for="controller_year" value="#{bundle.aon_year} / #{fiscalBundle.fiscal_period}" />
+				<aon:outputLabel for="controller_year" value="#{bundle.aon_year} / #{bundle.aon_period}" />
 				<aon:div>
 					<aon:inputText id="controller_year" size="5" value="#{controller.declaration.header.year}"
 						required="true" disabled="#{!controller.new}"/>
@@ -108,7 +108,7 @@
 				</aon:div>
 
 				<aon:outputLabel for="controller_administration"
-					value="#{fiscalBundle.fiscal_administration}" />
+					value="#{bundle.aon_administration}" />
 				<aon:div id="administrationContainer">
 					<aon:selectOneMenu id="controller_administration" value="#{controller.declaration.header.administration}"
 						reRender="panelIdentification" ajaxSingle="true"

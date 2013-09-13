@@ -20,11 +20,11 @@
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="#{toolbarID}-finish"
-						value="#{fiscalBundle.fiscal_finish}"
+						value="#{bundle.aon_finalice}"
 						actionListener="#{vatTax.onFinish}"
 						rendered="#{!vatTax.new and !vatTax.to.finished}"
 						styleClass="aon-finding-toolbar-item aon-icon-lock"
-						onclick="if (!confirm('#{fiscalBundle.fiscal_finish}?')) return false;"/>
+						onclick="if (!confirm('#{bundle.aon_finalice}?')) return false;"/>
 					<aon:commandButton id="#{toolbarID}-reopen"
 						value="#{fiscalBundle.fiscal_reopen}"
 						actionListener="#{vatTax.onReopen}"

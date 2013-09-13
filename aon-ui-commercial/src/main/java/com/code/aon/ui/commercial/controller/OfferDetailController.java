@@ -1,8 +1,5 @@
 package com.code.aon.ui.commercial.controller;
 
-import static com.code.aon.ui.commercial.ICommercialMessages.BUNDLE_KEY;
-import static com.code.aon.ui.commercial.ICommercialMessages.COMMERCIAL_OFFER_DETAIL_LINE;
-
 import java.util.Date;
 import java.util.Iterator;
 
@@ -137,7 +134,7 @@ public class OfferDetailController extends LinesController implements ICommercia
 			info.append(" ");
 			info.append(salesDetail.getSales().getReferenceCode());
 			info.append(" - ");
-			info.append(AonUtil.getMessage(BUNDLE_KEY, COMMERCIAL_OFFER_DETAIL_LINE));
+			info.append(AonUtil.getMessage(ICommonMessages.LINE));
 			info.append(" ");
 			info.append(salesDetail.getLine());
 		}

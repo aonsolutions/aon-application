@@ -34,7 +34,7 @@
 				styleClass="aon-finding-toolbar-item aon-icon-refresh" />
 
 			<aon:htmlCommandLink id="document-download" 
-				value="#{payrollBundle.payroll_draft}" target="_blank" 
+				value="#{bundle.aon_draft}" target="_blank" 
 				title="#{payrollBundle.payroll_draft_download}"
 				rendered="#{!contractPdf.new}"
 				actionListener="#{contractPdf.onDownloadPdf}"
@@ -67,7 +67,7 @@
 					</aon:div>
 				</aon:div>
 	
-				<aon:outputText styleClass="aon-margin-left" value="#{payrollBundle.payroll_size}:" />
+				<aon:outputText styleClass="aon-margin-left" value="#{bundle.aon_size}:" />
 				<aon:div styleClass="aon-spin-control" 
 					style="display:inline-block; border:#000 1px solid;">
 					<rich:inputNumberSlider maxValue="4" step="1"

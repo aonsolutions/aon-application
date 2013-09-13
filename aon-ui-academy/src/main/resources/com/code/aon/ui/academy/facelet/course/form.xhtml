@@ -100,7 +100,7 @@
 
 				<c:if test="#{!course.new}">
 					<aon:panelTabSet selectedTab="#{course.selectedTab}">
-						<aon:panelTab id="schedule" label="#{academyBundle.academy_schedule_schedule}">
+						<aon:panelTab id="schedule" label="#{bundle.aon_calendar_schedule}">
 							<ui:include	src="/com/code/aon/ui/academy/facelet/courseSchedule/tab_grid.xhtml">
 								<ui:param name="controller" value="#{courseSchedule}" />
 							</ui:include>
@@ -133,7 +133,7 @@
 								<ui:param name="controller" value="#{courseMark}" />
 							</ui:include>
 						</aon:panelTab>
-						<aon:panelTab id="observation" label="#{academyBundle.academy_observation}">
+						<aon:panelTab id="observation" label="#{bundle.aon_remark}">
 							<ui:include	src="/com/code/aon/ui/academy/facelet/courseAlumnObservation/tab_grid.xhtml">
 								<ui:param name="controller" value="#{courseAlumnObservation}" />
 							</ui:include>

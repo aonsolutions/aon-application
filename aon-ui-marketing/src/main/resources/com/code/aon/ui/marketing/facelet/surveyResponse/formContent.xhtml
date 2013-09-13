@@ -20,13 +20,13 @@
 
 			<c:if test="#{surveyResponse.to.action.id != null}" >
 				<aon:outputLabel for="SurveyResponse_action_id" 
-					value="#{marketingBundle.marketing_campaign_action}" />
+					value="#{bundle.aon_action}" />
 				<aon:outputText id="SurveyResponse_action_id"
 					value="#{surveyResponse.to.action.id} (#{surveyResponse.to.action.campaign.description})" />
 			</c:if>
 				
 			<aon:outputLabel for="SurveyResponse_target_id"
-				value="#{target.bundle.commercial_target}" />
+				value="#{bundle.aon_target}" />
 			<aon:outputText id="SurveyResponse_target_id"
 				value="#{surveyResponse.to.target.registry.fullName}" />						
 

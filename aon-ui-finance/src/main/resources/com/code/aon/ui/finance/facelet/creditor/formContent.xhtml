@@ -16,7 +16,7 @@
 	</aon:selectOneRadio>
 
 	<c:if test="#{aonConfiguration.bean.creditor.showTaxInfoData}">
-		<aon:outputLabel for="Creditor_transaction" value="#{financeBundle.creditor_transaction_type}" />
+		<aon:outputLabel for="Creditor_transaction" value="#{bundle.aon_transaction_type}" />
 		<aon:selectOneMenu id="Creditor_transaction" value="#{controller.to.transaction}">
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
 		</aon:selectOneMenu>

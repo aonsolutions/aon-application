@@ -75,13 +75,13 @@
 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 						<f:facet name="header">
 							<c:if test="#{stat.invoiceType==1}">
-								<aon:outputText value="#{statBundle.stat_customer}" />
+								<aon:outputText value="#{bundle.aon_customer}" />
 							</c:if>
 							<c:if test="#{stat.invoiceType==0}">
-								<aon:outputText value="#{statBundle.stat_supplier}" />
+								<aon:outputText value="#{bundle.aon_supplier}" />
 							</c:if>
 							<c:if test="#{stat.invoiceType==2}">
-								<aon:outputText value="#{statBundle.stat_creditor}" />
+								<aon:outputText value="#{bundle.aon_creditor}" />
 							</c:if>
 						</f:facet>
 						<aon:outputText value="#{to.registryName}">

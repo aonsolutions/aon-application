@@ -11,7 +11,7 @@
 		<aon:form id="supplierForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{supplierBundle.supplier_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_suppliers}" />
 				<ui:param name="controller" value="#{supplier}" />
 				<ui:param name="showMoreMenu" value="#{!supplier.new}" />
 				<ui:define name="moreMenuContent">
@@ -50,7 +50,7 @@
 						columns="2" style="width: 100%;"
 						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
 						
-						<aon:outputText value="#{supplierBundle.supplier_purchases}" />
+						<aon:outputText value="#{bundle.aon_invoice_sales2}" />
 						<aon:div>
 							<aon:selectBooleanCheckbox id="Supplier_purchaseValuated" styleClass="aon-margin-left"
 								value="#{supplier.to.purchaseValuated}" />
@@ -96,7 +96,7 @@
 							</ui:include>
 						</aon:panelTab>
 
-						<aon:panelTab id="media" label="#{registryBundle.registry_media_module}">
+						<aon:panelTab id="media" label="#{bundle.aon_contacts}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
 								<ui:param name="controller" value="#{supplierMedia}" />
 							</ui:include>
@@ -138,7 +138,7 @@
 
 						<c:if test="#{aonConfiguration.bean.supplier.showAddInfo and supplierAddInfo.model.rowCount > 0}">
 							<aon:panelTab id="addInfo"
-								label="#{registryBundle.registry_addInfo}">
+								label="#{bundle.aon_addInfo}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
 									<ui:param name="controller" value="#{supplierAddInfo}" />
 									<ui:param name="removeButtonReRender" value="supplierTab" />

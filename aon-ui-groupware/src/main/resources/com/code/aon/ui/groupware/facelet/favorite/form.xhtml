@@ -11,7 +11,7 @@
 		<aon:form id="favoriteForm">
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_favorite}" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_favorites}" />
 				<ui:param name="controller" value="#{favorite}" />
 			</ui:include>
 
@@ -32,7 +32,7 @@
 						value="#{favorite.to.url}" />
 
 					<aon:outputLabel for="Favorite_favoriteCategory_id"
-						value="#{groupwareBundle.favorite_favorite_category}" />
+						value="#{bundle.aon_category}" />
 					<aon:selectOneMenu id="Favorite_favoriteCategory_id"
 						value="#{favorite.to.favoriteCategory}" required="#{true}">
 						<f:selectItems value="#{groupWareCollections.favoriteCategories}" />

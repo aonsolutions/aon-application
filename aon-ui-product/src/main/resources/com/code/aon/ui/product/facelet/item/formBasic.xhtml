@@ -24,13 +24,13 @@
 	<aon:inputText id="Item_product_name" 
 		value="#{controller.to.product.name}" required="true" size="70" maxlength="64" />
 
-	<aon:outputLabel for="Item_product_detail" value="#{productBundle.product_detail}" />
+	<aon:outputLabel for="Item_product_detail" value="#{bundle.aon_detail}" />
  	<aon:div style="margin-bottom: 0.5em;">
 		<aon:inputTextarea id="Item_product_detail"
 			value="#{controller.to.description}" cols="72" rows="4" />
  	</aon:div>
 
-	<aon:outputLabel for="Item_product_category" value="#{productBundle.product_category}" />
+	<aon:outputLabel for="Item_product_category" value="#{bundle.aon_category}" />
 	<aon:div>
 		<aon:selectOneMenu id="Item_product_category" value="#{controller.to.product.category}">
 			<f:selectItems value="#{productCollections.categories}" />

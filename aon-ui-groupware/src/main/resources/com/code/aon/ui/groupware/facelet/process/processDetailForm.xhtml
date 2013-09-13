@@ -29,7 +29,7 @@
 			</aon:div>
 			
 			<aon:outputLabel for="processDetail_position"
-						value="#{groupwareBundle.groupware_position}" />
+						value="#{bundle.aon_position}" />
 			<aon:inputText id="processDetail_position" required="true" 
 				value="#{processDetail.to.position}"
 				maxlength="5" size="8" />
@@ -42,7 +42,7 @@
 			</aon:inputText>
 
 			<aon:outputLabel for="processDetail_workgroup"
-				value="#{groupwareBundle.groupware_group}" />
+				value="#{bundle.aon_group}" />
 			<aon:selectOneMenu id="processDetail_workgroup" value="#{processDetail.to.workgroup}">
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{configCollections.workgroups}" />
@@ -50,7 +50,7 @@
 
 
 			<aon:outputLabel for="processDetail_days"
-				value="#{groupwareBundle.groupware_days}"/>
+				value="#{bundle.aon_days}"/>
 			<aon:div>
 				<aon:inputText id="processDetail_days" required="true" 
 					value="#{processDetail.to.days}"				
@@ -69,7 +69,7 @@
 				value="#{processDetail.to.alertDays}"
 				maxlength="5" size="8" />
 
-			<aon:outputLabel for="processDetail_priority" value="#{groupwareBundle.alarm_priority}" />
+			<aon:outputLabel for="processDetail_priority" value="#{bundle.aon_priority}" />
 			<aon:selectOneMenu id="processDetail_priority" 
 				value="#{processDetail.to.priority}">
 				<f:selectItems value="#{groupWareCollections.priorities}" />

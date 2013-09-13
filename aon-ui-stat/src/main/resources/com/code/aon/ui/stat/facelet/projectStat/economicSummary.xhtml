@@ -44,7 +44,7 @@
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
 	
-				<aon:outputText value="#{statBundle.stat_result}" />
+				<aon:outputText value="#{bundle.aon_result}" />
 				<aon:outputText value="#{projectStat.totalResult}"
 					styleClass="aon-bold"
 					style="#{projectStat.totalResult lt -0?'color:red;':'color:blue;'}">
@@ -166,7 +166,7 @@
 				   	'#{statBundle.stat_income_amount}',
 				   	'#{statBundle.stat_invoice_cost_amount}',
 				   	'#{statBundle.stat_labour_amount}',
-				   	'#{statBundle.stat_result}'],
+				   	'#{bundle.aon_result}'],
 				  ['',    
 				  	#{projectStat.totalOffered},
 				  	#{projectStat.totalSales},

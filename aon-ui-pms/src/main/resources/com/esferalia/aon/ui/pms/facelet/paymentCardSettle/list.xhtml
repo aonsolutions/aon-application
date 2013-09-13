@@ -39,7 +39,7 @@
 
 					<aon:outputText styleClass="aon-margin-left aon-bold"
 						rendered="#{paymentCardSettle.hotel!=null}"
-						value="#{pmsBundle.pms_hotel}:" />
+						value="#{bundle.aon_module_hotel}:" />
 					<aon:outputText styleClass="aon-margin-left "
 						rendered="#{paymentCardSettle.hotel!=null}"
 						value="#{paymentCardSettle.hotel.workPlace.description}"/>
@@ -58,7 +58,7 @@
 
 					<aon:outputText styleClass="aon-margin-left aon-bold" 
 						rendered="#{not empty paymentCardSettle.reservationId}"
-						value="#{pmsBundle.pms_reservation}:" />
+						value="#{bundle.aon_reservation}:" />
 					<aon:outputText styleClass="aon-margin-left "
 						rendered="#{not empty paymentCardSettle.reservationId}"
 						value="#{paymentCardSettle.reservationId}"/>

@@ -9,7 +9,7 @@
 
 	<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
 		<aon:outputLabel for="ProjectReservation_hotel_id"
-			value="#{pmsBundle.pms_hotel}" />
+			value="#{bundle.aon_module_hotel}" />
 		<aon:selectOneMenu id="ProjectReservation_hotel_id"
 			value="#{searchController.hotel}">
 			<f:selectItem itemLabel="-" value="#{null}" />		

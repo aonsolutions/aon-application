@@ -55,7 +55,7 @@
 			<aon:div id="paramsGrid">
 				<aon:panelGrid  columns="2" style="width:90%; margin:10px;" rendered="#{entryLoader.aonFile.size > 0}">
 			
-					<aon:outputLabel for="entryLoader_period" value="#{accountingBundle.accounting_period}" />
+					<aon:outputLabel for="entryLoader_period" value="#{bundle.aon_financial_year}" />
 					<aon:selectOneMenu id="entryLoader_period" value="#{entryLoader.period}" required="true">
 						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />
 					</aon:selectOneMenu>

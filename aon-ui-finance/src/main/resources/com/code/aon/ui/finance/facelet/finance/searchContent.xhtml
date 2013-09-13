@@ -20,7 +20,7 @@
 			label="#{(!controller.payment) ? financeBundle.finance_invoice_customer_data : financeBundle.finance_invoice_supplier_creditor_data}">
 			<aon:panel style="text-align:left;">
 				<f:facet name="header">
-					<aon:outputLabel value="#{(!controller.payment) ? customerBundle.customer_customer : financeBundle.finance_supplier_creditor}" />
+					<aon:outputLabel value="#{(!controller.payment) ? bundle.aon_customer : financeBundle.finance_supplier_creditor}" />
 				</f:facet>
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 
@@ -68,7 +68,7 @@
 			</aon:panel>
 			<aon:panel style="text-align:left;">
 				<f:facet name="header">
-					<aon:outputLabel value="#{registryBundle.registry_media_module}" />
+					<aon:outputLabel value="#{bundle.aon_contacts}" />
 				</f:facet>
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 					<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml" />

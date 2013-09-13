@@ -31,7 +31,7 @@
 									action="communicationCenter" actionListener="#{communicationCenter.onUpdateActionTarget}"
 									styleClass="aon-finding-toolbar-item aon-icon-save"
 									accesskey="#{bundle.aon_key_save}" />
-								<aon:commandButton id="next" value="#{marketingBundle.marketing_next}"
+								<aon:commandButton id="next" value="#{bundle.aon_next}"
 									action="communicationCenter" actionListener="#{communicationCenter.onNextActionTarget}"
 									styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 									accesskey="#{bundle.aon_key_cancel}"/>
@@ -124,7 +124,7 @@
 	
 						<c:if test="#{communicationCenter.targetSelected}" >
 							<aon:outputLabel for="Target_id"
-								value="#{target.bundle.commercial_target}" />
+								value="#{bundle.aon_target}" />
 							<aon:div id="CommunicationCenter_target">
 								<ui:decorate template="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
 									<ui:param name="lookupTo" value="#{communicationCenter.target}" />

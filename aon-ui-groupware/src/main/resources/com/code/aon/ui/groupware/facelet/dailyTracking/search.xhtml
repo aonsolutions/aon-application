@@ -49,7 +49,7 @@
 					</aon:div>
 
 					<aon:outputLabel for="DailyTracking_taskHolder" rendered="#{controller.monitor}" 
-						value="#{groupwareBundle.groupware_user}" />
+						value="#{bundle.aon_login_user}" />
 					<aon:selectOneMenu id="DailyTracking_taskHolder" rendered="#{controller.monitor}"
 						value="#{dailyTrackingSearchControllerListener.taskHolder}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
@@ -65,7 +65,7 @@
 							<aon:div styleClass="aon-margin-right" layout="inline">
 								<aon:selectOneMenu value="#{dailyTrackingSearchControllerListener.registryType}">
 									<f:selectItem itemValue="#{0}" itemLabel="#{customerBundle.customer_module}"/>
-									<f:selectItem itemValue="#{1}" itemLabel="#{companyBundle.company_menu_group}"/>
+									<f:selectItem itemValue="#{1}" itemLabel="#{bundle.aon_company}"/>
 									<f:selectItem itemValue="#{2}" itemLabel="#{bundle.aon_general}"/>
 									<a4j:support event="onchange"
 										actionListener="#{dailyTrackingSearchControllerListener.onRegistryTypeChanged}"
@@ -118,7 +118,7 @@
 						<f:selectItems value="#{groupWareCollections.jobTypes}" />
 					</aon:selectOneMenu>
 					
-					<aon:outputLabel for="DailyTracking_trackingDuration" value="#{groupwareBundle.groupware_duration}" />
+					<aon:outputLabel for="DailyTracking_trackingDuration" value="#{bundle.aon_duration}" />
 					<aon:inputText id="DailyTracking_trackingDuration" size="5"
 						valueChangeListener="#{controller.addExpression}" />
 					

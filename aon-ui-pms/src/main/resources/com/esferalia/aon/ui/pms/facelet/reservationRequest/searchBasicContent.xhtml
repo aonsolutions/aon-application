@@ -9,7 +9,7 @@
 
 	<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
 		<aon:outputLabel for="ReservationRequest_hotel_id"
-			value="#{pmsBundle.pms_hotel}" />
+			value="#{bundle.aon_module_hotel}" />
 		<aon:selectOneMenu id="ReservationRequest_hotel_id"
 			value="#{searchController.hotel}">
 			<f:selectItem itemLabel="-" value="#{null}" />		
@@ -93,7 +93,7 @@
 	<aon:outputLabel for="ReservationRequest_active" value="#{bundle.aon_status}" />
 	<aon:selectOneRadio id="ReservationRequest_active"
 		valueChangeListener="#{controller.addExpression}">
-		<f:selectItem itemLabel="#{pmsBundle.pms_reservation_request_pending}" itemValue="true" />
+		<f:selectItem itemLabel="#{bundle.aon_pending}" itemValue="true" />
 		<f:selectItem itemLabel="#{pmsBundle.pms_reservation_request_processed}" itemValue="false" />
 	</aon:selectOneRadio>				
 

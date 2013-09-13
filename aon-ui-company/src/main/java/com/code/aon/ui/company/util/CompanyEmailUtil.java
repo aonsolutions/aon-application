@@ -1,7 +1,6 @@
 package com.code.aon.ui.company.util;
 
 import static com.code.aon.ui.common.ICommonMessages.PHONE;
-import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_FAX;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.io.BufferedOutputStream;
@@ -40,7 +39,6 @@ import com.code.aon.report.ReportException;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MailConfigController;
@@ -172,7 +170,7 @@ public class CompanyEmailUtil implements ICompanyConstants {
 		}
 		RegistryMedia fax = companyController.getFax();
 		if ( fax != null ) {
-			String faxLabel = AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME, REGISTRY_FAX);
+			String faxLabel = AonUtil.getMessage(ICommonMessages.FAX);
 			body.append(faxLabel).append( ": " ).append( fax.getValue() ).append( "<br/>" );
 		}
 		RegistryMedia web = companyController.getWeb();

@@ -63,7 +63,7 @@
 			<aon:outputText value="#{contract.to.status}" style="padding-left: 20px;" styleClass="aon-icon-point-yellow" rendered="#{contract.to.blocked}"/>
 		</aon:div>
 
-		<aon:outputText value="#{companyBundle.company_enterprise}" />
+		<aon:outputText value="#{bundle.aon_company}" />
 		<aon:div>
 			<aon:outputText value="#{contract.to.workPlace.enterprise.registry.document}" />
 			<aon:outputText value=" - " />	
@@ -75,7 +75,7 @@
 		<aon:outputText value="#{contract.to.workPlace.description}" style="margin-left: 50px;"/>
 		<aon:outputText value="&#160;" />
 
-		<aon:outputText value="#{companyBundle.company_activity}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{bundle.aon_activity}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:div>
 			<aon:outputText value="#{contract.to.activity.description}"  style="margin-left: 50px;"/>
 			<aon:outputText value=" - ("/>
@@ -89,7 +89,7 @@
 		<aon:outputText value="#{contract.to.enterpriseCCC.ccc}"  style="margin-left: 50px;"/>
 		<aon:outputText value="&#160;" />
 		
-		<aon:outputText value="#{payrollBundle.payroll_contract_period}" />
+		<aon:outputText value="#{bundle.aon_period}" />
 		<aon:div>
 			<aon:outputText value="#{bundle.aon_start_date}:" styleClass="aon-italic aon-margin-right"/>
 			<aon:outputText value="#{contract.to.startDate}" styleClass="aon-bold">

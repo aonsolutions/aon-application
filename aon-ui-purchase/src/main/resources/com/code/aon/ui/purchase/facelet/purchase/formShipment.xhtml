@@ -34,7 +34,7 @@
 				value="#{purchase.to.shippingContact}" />
 			
 			<aon:outputLabel for="Purchase_shippingPeriod"
-				value="#{carrierBundle.carrier_shipment_schedule}" />
+				value="#{bundle.aon_calendar_schedule}" />
 			<aon:selectOneMenu id="Purchase_shippingPeriod" 
 				value="#{purchase.to.shippingPeriod}">
 				<f:selectItem itemLabel=" - " itemValue="#{null}" />
@@ -65,7 +65,7 @@
 				<aon:inputText id="Purchase_shippingAlternativeRecipient" 
 					value="#{purchase.to.shippingAlternativeRecipient}" size="64" maxlength="64"/>
 		
-				<aon:outputLabel for="Purchase_shippingAlternativeAddress" value="#{registryBundle.registry_address}" />
+				<aon:outputLabel for="Purchase_shippingAlternativeAddress" value="#{bundle.aon_address}" />
 				<aon:inputText id="Purchase_shippingAlternativeAddress" maxlength="128" size="80"
 					value="#{purchase.to.shippingAlternativeAddress}" />
 				
@@ -74,7 +74,7 @@
 					value="#{purchase.to.shippingAlternativeAddress2}" />
 				
 				<aon:outputLabel for="Purchase_shippingAlternativeZip" 
-					value="#{registryBundle.registry_zip}" />
+					value="#{bundle.aon_postal_code}" />
 				<aon:inputText id="Purchase_shippingAlternativeZip" 
 					value="#{purchase.to.shippingAlternativeZip}" size="16" maxlength="16"/>
 					
@@ -84,7 +84,7 @@
 					value="#{purchase.to.shippingAlternativeCity}" size="64" maxlength="64"/>
 					
 				<aon:outputLabel for="Purchase_shippingAlternativePhone" 
-					value="#{registryBundle.registry_phone}" />
+					value="#{bundle.aon_phone}" />
 				<aon:inputText id="Purchase_shippingAlternativePhone"
 					value="#{purchase.to.shippingAlternativePhone}" />
 			</aon:panelGrid>

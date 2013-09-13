@@ -107,7 +107,7 @@
 
 										<aon:column styleClass="#{income.purchaseTransferManager.selectedPurchaseId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
-												<h:outputText value="#{supplierBundle.supplier_supplier}" />
+												<h:outputText value="#{bundle.aon_supplier}" />
 											</f:facet>
 											<aon:outputText value="#{to.supplier.registry.fullName}">
 												<aon:abbreviateConverter maxWidth="50" />
@@ -181,7 +181,7 @@
 											
 											<aon:column>
 												<f:facet name="header">
-													<h:outputText value="#{productBundle.product_item}" />
+													<h:outputText value="#{bundle.aon_product}" />
 												</f:facet>
 												<aon:outputText value="#{to.description}">
 													<aon:abbreviateConverter maxWidth="50" />
@@ -208,7 +208,7 @@
 	
 											<aon:column>
 												<f:facet name="header">
-													<h:outputText value="#{warehouseBundle.warehouse_income_ordered}" />
+													<h:outputText value="#{bundle.aon_invoice_sales}" />
 												</f:facet>
 												<aon:outputText value="#{(to.quantity)}">
 													<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
@@ -217,7 +217,7 @@
 	
 											<aon:column>
 												<f:facet name="header">
-													<h:outputText value="#{warehouseBundle.warehouse_income_quantity_pending}" />
+													<h:outputText value="#{bundle.aon_pending}" />
 												</f:facet>
 												<aon:outputText value="#{(to.pendingQuantity)}">
 													<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
@@ -226,7 +226,7 @@
 	
 											<aon:column>
 												<f:facet name="header">
-													<h:outputText value="#{warehouseBundle.warehouse_income_quantity_transfer}" />
+													<h:outputText value="#{bundle.aon_transfer}" />
 												</f:facet>
 												<aon:inputText id="transfered"
 													value="#{to.transfered}" size="4" >	

@@ -79,7 +79,7 @@
 							<aon:column alias="Invoice.registryName"
 								styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{customerBundle.customer_customer}" />
+									<aon:outputText value="#{bundle.aon_customer}" />
 								</f:facet>
 								<aon:outputText value="#{to.registryName}" />
 							</aon:column>
@@ -106,7 +106,7 @@
 							<aon:column alias="Invoice.signed"
 								styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{signBundle.sign_signature}" />
+									<aon:outputText value="#{bundle.aon_signature}" />
 								</f:facet>
 								<aon:outputText value="&#160;" rendered="#{to.signed}"
 									title="#{signBundle.sign_signed}"

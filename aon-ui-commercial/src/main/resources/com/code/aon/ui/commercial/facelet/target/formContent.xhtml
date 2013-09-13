@@ -16,7 +16,7 @@
 	</aon:selectOneRadio>
 
 	<c:if test="#{aonConfiguration.bean.target.showTaxInfoData}">
-		<aon:outputLabel for="Target_transaction" value="#{commercialBundle.commercial_target_transaction_type}" />
+		<aon:outputLabel for="Target_transaction" value="#{bundle.aon_transaction_type}" />
 		<aon:selectOneMenu id="Target_transaction" value="#{controller.to.transaction}">
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
 		</aon:selectOneMenu>
@@ -46,7 +46,7 @@
 
 	<c:if test="#{!controller.new and aonConfiguration.bean.target.showSearchOnlyCustomers}">
 		<aon:outputLabel for="Target_customer"
-			value="#{commercialBundle.commercial_target_customer}" />
+			value="#{bundle.aon_customer}" />
 		<aon:div id="TargetCustomerDiv">
 			<aon:outputText id="Target_customer" 
 				value="#{controller.to.customer ? bundle.aon_yes : bundle.aon_no}" />

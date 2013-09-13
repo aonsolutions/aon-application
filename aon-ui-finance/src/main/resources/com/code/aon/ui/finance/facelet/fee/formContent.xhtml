@@ -8,7 +8,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:outputLabel for="CustomerFee_line" value="#{financeBundle.finance_invoice_detail_line}" />
+	<aon:outputLabel for="CustomerFee_line" value="#{bundle.aon_line}" />
 	<aon:panelGrid columns="2" columnClasses="aon-width-150,aon-width-auto aon-italic">
 		<aon:inputText id="CustomerFee_line" 
 			value="#{controller.to.line}" 
@@ -23,7 +23,7 @@
 		</c:if>
 	</aon:panelGrid>
 
-	<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
+	<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
 	<aon:div styleClass="aon-nowrap">
 		<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{controller.to.item}" />
@@ -72,7 +72,7 @@
 			value="#{controller.to.price}" 
 			required="true" size="4" />
 
-		<aon:outputLabel for="CustomerFee_discount" value="#{financeBundle.finance_fee_discount}"
+		<aon:outputLabel for="CustomerFee_discount" value="#{bundle.aon_discount_abrv}"
 			styleClass="aon-margin-right" />
 
 		<aon:inputText id="CustomerFee_discount"

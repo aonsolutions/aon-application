@@ -16,7 +16,7 @@
 
 	<aon:outputLabel
 		for="AccountEntryDetail_accountEntry_accountPeriod"
-		value="#{accountingBundle.accounting_period}" />
+		value="#{bundle.aon_financial_year}" />
 	<aon:selectOneMenu id="AccountEntryDetail_accountEntry_accountPeriod"
 		value="#{controller.parameters.period}">
 		<a4j:support event="onchange"
@@ -33,12 +33,12 @@
 			<aon:div id="links">
 				<aon:inputText id="Account_id" value="#{controller.parameters.accountExpression}" size="14" />
 				<aon:commandLink id="treasury-search" 
-					value="#{accountingBundle.accounting_treasury}" reRender="Account_id" tabindex="1000"
+					value="#{bundle.aon_module_finance}" reRender="Account_id" tabindex="1000"
 					styleClass="aon-margin-left aon-dataTable-link-simple aon-italic">
 					<a4j:actionparam value="57*" assignTo="#{controller.parameters.accountExpression}"/>
 				</aon:commandLink>
 				<aon:commandLink id="banks-search" 
-					value="#{accountingBundle.accounting_banks}" reRender="Account_id" tabindex="1001"  
+					value="#{bundle.aon_banks}" reRender="Account_id" tabindex="1001"  
 					styleClass="aon-dataTable-link-simple aon-italic" >
 					<a4j:actionparam value="572*" assignTo="#{controller.parameters.accountExpression}"/>
 				</aon:commandLink>
@@ -58,7 +58,7 @@
 					<a4j:actionparam value="430*" assignTo="#{controller.parameters.accountExpression}"/>
 				</aon:commandLink>
 				<aon:commandLink id="supplier-search" 
-					value="#{accountingBundle.accounting_supplier}" reRender="Account_id" tabindex="1005"  
+					value="#{bundle.aon_suppliers}" reRender="Account_id" tabindex="1005"  
 					styleClass="aon-dataTable-link-simple aon-italic">
 					<a4j:actionparam value="400*" assignTo="#{controller.parameters.accountExpression}"/>
 				</aon:commandLink>

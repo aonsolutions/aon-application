@@ -168,7 +168,7 @@
 						aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel for="Invoice_number"
-						value="#{financeBundle.finance_invoice_number}" />
+						value="#{bundle.aon_invoice_number}" />
 					<aon:div>
 						<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
 							<aon:div id="InvoiceReferenceCodeDiv">
@@ -330,7 +330,7 @@
 						value="#{saleInvoice.to.documentNumber}" />
 
 					<aon:outputLabel for="Invoice_registryAddress_id"
-						value="#{registryBundle.registry_address}" />
+						value="#{bundle.aon_address}" />
 					<aon:div id="InvoiceAddress">
 						<aon:selectOneMenu id="Invoice_registryAddress_id"
 							rendered="#{!saleInvoice.readOnly and saleInvoiceAddress.to.id == null and saleInvoice.addressCount > 0}"
@@ -428,7 +428,7 @@
 							value="#{saleInvoice.onSellerChanged}" type="lookupChangeListener" />
 					</ui:include>
 
-					<aon:outputLabel value="#{financeBundle.finance_pos}" />
+					<aon:outputLabel value="#{bundle.aon_module_pos}" />
 					<aon:div styleClass="aon-bold">
 						<aon:outputText value="#{saleInvoice.to.posShift.pos.name}" />
 						<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">

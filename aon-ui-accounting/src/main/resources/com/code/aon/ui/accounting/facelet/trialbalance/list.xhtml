@@ -20,8 +20,8 @@
 				</ui:define>
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="update" value="#{accountingBundle.accounting_refresh}"
-						accesskey="Q" title="#{accountingBundle.accounting_refresh}"
+					<aon:commandButton id="update" value="#{bundle.aon_refresh}"
+						accesskey="Q" title="#{bundle.aon_refresh}"
 						actionListener="#{trialBalance.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						immediate="true" />
@@ -56,7 +56,7 @@
 				<aon:div style="background-color:#f6f5e3; padding:5px; margin-bottom:5px;">
 					<aon:outputText value="#{accountingBundle.accounting_params}:" styleClass="aon-bold"/>
 					
-					<aon:outputText value="#{accountingBundle.accounting_period}:" rendered="#{trialBalance.parameters.periodNotNull}" styleClass="aon-italic aon-margin-left" style="font-size: 0.9em;"/>
+					<aon:outputText value="#{bundle.aon_financial_year}:" rendered="#{trialBalance.parameters.periodNotNull}" styleClass="aon-italic aon-margin-left" style="font-size: 0.9em;"/>
 					<aon:outputText value="#{trialBalance.parameters.period.name}" rendered="#{trialBalance.parameters.periodNotNull}" styleClass="aon-margin-left"/>
 
 					<aon:outputText value="#{bundle.aon_date_from}:" rendered="#{trialBalance.parameters.fromDate != null}" styleClass="aon-italic aon-margin-left" style="font-size: 0.9em;"/>

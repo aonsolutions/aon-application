@@ -41,14 +41,14 @@
 									columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
 	
 									<aon:outputLabel for="Account_id-Sales"
-										value="#{productBundle.product_sales_account}" />
+										value="#{bundle.aon_sales_account}" />
 									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 										<ui:param name="lookupTo" value="#{controller.to.salesAccount}" />
 										<ui:param name="lookupSuffix" value="-Sales" />
 									</ui:include>
 
 									<aon:outputLabel for="Account_id-Purchase"
-										value="#{productBundle.product_purchase_account}" />
+										value="#{bundle.aon_purchase_account}" />
 									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 										<ui:param name="lookupTo" value="#{controller.to.purchaseAccount}" />
 										<ui:param name="lookupSuffix" value="-Purchase" />
@@ -66,7 +66,7 @@
 		<aon:panelGroup>
 			<aon:div styleClass="aon-group">
 				<aon:div styleClass="aon-group-title">
-					<aon:outputText value="#{productBundle.product_detail}"/>
+					<aon:outputText value="#{bundle.aon_detail}"/>
 				</aon:div>
 				<aon:div styleClass="aon-group-body"> 
 					<aon:div styleClass="aon-group-body-internal">

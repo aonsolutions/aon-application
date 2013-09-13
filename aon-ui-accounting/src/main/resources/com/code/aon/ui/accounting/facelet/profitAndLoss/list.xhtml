@@ -68,7 +68,7 @@
 					
 					<aon:htmlCommandLink id="profitAndLossTotalExpenses-report"
 						styleClass="aon-finding-toolbar-item aon-icon-index" target="_blank"
-						value="#{accountingBundle.accounting_profit_and_loss_module_expense}"
+						value="#{bundle.aon_expenses}"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="profitAndLossTotalExpenses" />
 						<f:param name="outputFormat" value="PDF" />
@@ -114,7 +114,7 @@
 						,aon-panelGrid-even aon-width-100
 						,aon-panelGrid-even aon-width-auto">
 					
-						<aon:outputLabel value="#{accountingBundle.accounting_period}" />
+						<aon:outputLabel value="#{bundle.aon_financial_year}" />
 						<aon:outputText styleClass="aon-bold"
 							value="#{profitAndLossReport.parameters.period.name}" />
 							
@@ -262,7 +262,7 @@
 						<aon:column breakBefore="true" colspan="2" styleClass="aon-text-right">
 							<aon:outputText value="#{accountingBundle.accounting_total_result}" />
 							<aon:outputText
-								value=" ( #{accountingBundle.accounting_total_result_profit} )"
+								value=" ( #{bundle.aon_profit} )"
 								rendered="#{profitAndLossReport.totalResult gt 0}" />
 							<aon:outputText
 								value=" ( #{accountingBundle.accounting_total_result_loss} )"

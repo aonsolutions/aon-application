@@ -21,8 +21,8 @@
 					 (searchController.purchase) ? financeBundle.finance_invoice_supplier_data : financeBundle.finance_invoice_creditor_data}">
 			<aon:panel style="text-align:left;">
 				<f:facet name="header">
-					<aon:outputLabel value="#{(searchController.sales) ? customerBundle.customer_customer : 
-					 						  (searchController.purchase) ? supplierBundle.supplier_supplier : financeBundle.finance_creditor}" />
+					<aon:outputLabel value="#{(searchController.sales) ? bundle.aon_customer : 
+					 						  (searchController.purchase) ? bundle.aon_supplier : bundle.aon_creditor}" />
 				</f:facet>
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">		
 					<aon:outputLabel for="#{searchController.preffix}alias"
@@ -69,7 +69,7 @@
 			</aon:panel>
 			<aon:panel style="text-align:left;">
 				<f:facet name="header">
-					<aon:outputLabel value="#{registryBundle.registry_media_module}" />
+					<aon:outputLabel value="#{bundle.aon_contacts}" />
 				</f:facet>
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">		
 					<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml" />

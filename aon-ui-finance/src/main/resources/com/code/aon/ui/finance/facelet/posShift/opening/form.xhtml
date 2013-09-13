@@ -38,7 +38,7 @@
 						value="#{posOpening.posShift.pos.workPlace.description}"
 						rendered="#{posOpening.posShift.id != null}" />
 
-					<aon:outputLabel for="PosShift_pos" value="#{financeBundle.finance_pos}" />
+					<aon:outputLabel for="PosShift_pos" value="#{bundle.aon_module_pos}" />
 					<aon:selectOneMenu id="PosShift_pos"
 						value="#{posOpening.posShift.pos}" required="true" 
 						rendered="#{posOpening.posShift.id == null}">

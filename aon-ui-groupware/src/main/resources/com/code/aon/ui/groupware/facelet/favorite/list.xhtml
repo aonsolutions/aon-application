@@ -11,11 +11,11 @@
 		<aon:form id="favoriteList">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_favorite}" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_favorites}" />
 				<ui:param name="controller" value="#{favorite}" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="favorite_category" value="#{groupwareBundle.aon_favorite_category}"
+					<aon:commandButton id="favorite_category" value="#{bundle.aon_categories}"
 						immediate="true" action="favorite_category"
 						styleClass="aon-finding-toolbar-item aon-icon-category"/>
 				</ui:define>				
@@ -30,7 +30,7 @@
 			
 						<aon:column styleClass="aon-editDataTable-textColumn" alias="Favorite.favoriteCategory.description">
 							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.favorite_favorite_category}" />
+								<aon:outputText value="#{bundle.aon_category}" />
 							</f:facet>
 							<aon:outputText value="#{to.favoriteCategory.description}"/>
 						</aon:column>

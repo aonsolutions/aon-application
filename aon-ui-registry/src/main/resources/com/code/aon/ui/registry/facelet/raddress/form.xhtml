@@ -10,7 +10,7 @@
 	<aon:valueParam name="pojoName" default="#{controller.pojoShortName}"/>
 	<aon:valueParam name="registryAddress" default="#{controller.mainAddress}"/>
 	
-	<aon:outputLabel for="#{pojoName}_address" value="#{registryBundle.registry_address}" />
+	<aon:outputLabel for="#{pojoName}_address" value="#{bundle.aon_address}" />
 	<aon:div>
 		<aon:selectOneMenu id="#{pojoName}_streetType" required="#{addressRequired}"
 			label="#{registryBundle.registry_street_type}"
@@ -34,7 +34,7 @@
 	</aon:div>
 
 	<aon:outputLabel for="#{pojoName}_address_zip" 
-		value="#{registryBundle.registry_zip}" />
+		value="#{bundle.aon_postal_code}" />
 	<aon:inputText id="#{pojoName}_address_zip" 
 		value="#{registryAddress.zip}" size="32" maxlength="16"/>
 		
@@ -44,7 +44,7 @@
 		value="#{registryAddress.city}" size="64" maxlength="64"/>
 		
 	<aon:outputLabel for="#{pojoName}_address_geozone" 
-		value="#{registryBundle.registry_geozone}" />
+		value="#{bundle.aon_state}" />
 	<aon:selectOneMenu id="#{pojoName}_address_geozone"
 		value="#{registryAddress.geozone}">
 		<f:selectItem itemLabel="-" value="#{null}" />

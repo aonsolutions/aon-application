@@ -70,12 +70,12 @@
 							<f:selectItems value="#{configCollections.currentUserScopes}" />
 						</aon:selectOneMenu>
 		
-						<aon:outputLabel for="aonLoader_product_category" value="#{productBundle.product_category}" />
+						<aon:outputLabel for="aonLoader_product_category" value="#{bundle.aon_category}" />
 						<aon:selectOneMenu id="aonLoader_product_category" value="#{aonLoader.params.category}" >
 							<f:selectItems value="#{productCollections.categories}" />
 						</aon:selectOneMenu>
 	
-						<aon:outputLabel for="aonLoader_accountPeriod" value="#{accountingBundle.accounting_period}" />
+						<aon:outputLabel for="aonLoader_accountPeriod" value="#{bundle.aon_financial_year}" />
 						<aon:selectOneMenu id="aonLoader_accountPeriod" 
 							value="#{aonLoader.params.accountPeriod}">
 							<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />

@@ -11,7 +11,7 @@
 		<aon:form id="targetForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{target.bundle.commercial_target_module}" />
+				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_target_module}" />
 				<ui:param name="controller" value="#{target}" />
 				<ui:param name="showMoreMenu" value="#{!target.new}" />
 				<ui:define name="moreMenuContent">
@@ -68,7 +68,7 @@
 							</ui:include>
 						</aon:panelTab>
 						
-						<aon:panelTab id="targetMedia" label="#{registryBundle.registry_media_module}">
+						<aon:panelTab id="targetMedia" label="#{bundle.aon_contacts}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
 								<ui:param name="controller" value="#{targetMedia}" />
 							</ui:include>
@@ -99,7 +99,7 @@
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.target.showNote and targetNote.model.rowCount > 0}">
-							<aon:panelTab id="targetNote" label="#{registryBundle.registry_note}">
+							<aon:panelTab id="targetNote" label="#{bundle.aon_notes}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rnote/grid.xhtml">
 									<ui:param name="controller" value="#{targetNote}" />
 									<ui:param name="removeButtonReRender" value="targetTab" />
@@ -117,7 +117,7 @@
 						</c:if>
  
 						<c:if test="#{aonConfiguration.bean.target.showAddInfo and targetAddInfo.model.rowCount > 0}">
-							<aon:panelTab id="addInfo" label="#{registryBundle.registry_addInfo}">
+							<aon:panelTab id="addInfo" label="#{bundle.aon_addInfo}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
 									<ui:param name="controller" value="#{targetAddInfo}" />
 									<ui:param name="removeButtonReRender" value="targetTab" />
@@ -126,7 +126,7 @@
 						</c:if>
 						
 						<c:if test="#{aonConfiguration.bean.target.showProduct and targetItem.model.rowCount > 0}">
-							<aon:panelTab id="targetItem" label="#{productBundle.product_module}">
+							<aon:panelTab id="targetItem" label="#{bundle.aon_role_product}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/ritem/tab_grid.xhtml" >
 									<ui:param name="controller" value="#{targetItem}" />
 									<ui:param name="removeButtonReRender" value="targetTab" />
@@ -135,7 +135,7 @@
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.target.showSeller and targetSeller.model.rowCount > 0}">
-							<aon:panelTab id="targetSeller" label="#{sellerBundle.seller_seller}">
+							<aon:panelTab id="targetSeller" label="#{bundle.aon_module_commercial}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/rseller/tab_grid.xhtml" >
 									<ui:param name="controller" value="#{targetSeller}" />
 									<ui:param name="removeButtonReRender" value="targetTab" />

@@ -49,7 +49,7 @@
 				<aon:panelGrid columns="2" style="width: 100%;" rendered="#{empty endPeriodEntries.outputMessages}"
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 					
-					<aon:outputLabel for="Period" value="#{accountingBundle.accounting_period}" />
+					<aon:outputLabel for="Period" value="#{bundle.aon_financial_year}" />
 					<aon:selectOneMenu id="Period" value="#{endPeriodEntries.params.period}" required="true">
 						<f:selectItem itemLabel="-" itemValue="#{null}" />
 						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />

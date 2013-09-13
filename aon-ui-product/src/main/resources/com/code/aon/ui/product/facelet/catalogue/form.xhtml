@@ -40,13 +40,13 @@
 				<c:if test="#{!catalogue.new}">
 					<aon:panelTabSet id="catalogueTab">
 
-						<aon:panelTab id="catalogue_items" label="#{productBundle.product_module}">
+						<aon:panelTab id="catalogue_items" label="#{bundle.aon_role_product}">
 							<ui:include src="/com/code/aon/ui/product/facelet/catalogue/formItem.xhtml">
 								<ui:param name="dataTableId" value="catalogueItemDataList" />
 							</ui:include>
 						</aon:panelTab>
 
-						<aon:panelTab id="catalogue_categories" label="#{productBundle.product_category_module}">
+						<aon:panelTab id="catalogue_categories" label="#{bundle.aon_categories}">
 							<ui:include src="/com/code/aon/ui/product/facelet/catalogue/formCategory.xhtml">
 								<ui:param name="dataTableId" value="catalogueCategoryDataList" />
 							</ui:include>

@@ -37,7 +37,7 @@
 
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
 			<f:facet name="header">
-				<aon:outputText value="#{groupwareBundle.groupware_user}" />
+				<aon:outputText value="#{bundle.aon_login_user}" />
 			</f:facet>
 			<aon:outputText value="#{to.taskHolderName}" />
 		</aon:column>
@@ -60,7 +60,7 @@
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 			<f:facet name="header">
 				<aon:outputText
-					value="#{groupwareBundle.groupware_duration}" />
+					value="#{bundle.aon_duration}" />
 			</f:facet>
 			<aon:outputText value="#{to.trackingDuration}">
 				<f:convertNumber pattern="#,##0.00" />

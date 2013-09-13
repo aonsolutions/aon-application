@@ -134,7 +134,7 @@
 
 		<aon:column styleClass="aon-editDataTable-numberColumn">
 			<f:facet name="header">
-				<aon:outputText value="#{accountingBundle.accounting_pending}" />
+				<aon:outputText value="#{bundle.aon_pending}" />
 			</f:facet>
 			<aon:outputText value="#{to.pending}">
 				<f:convertNumber pattern="#,##0.00" />
@@ -172,7 +172,7 @@
 
 		<aon:column styleClass="aon-editDataTable-numberColumn">
 			<f:facet name="header">
-				<aon:outputText value="#{accountingBundle.accounting_pending}" />
+				<aon:outputText value="#{bundle.aon_pending}" />
 			</f:facet>
 			<aon:outputText value="#{to.fiscalPending}">
 				<f:convertNumber pattern="#,##0.00" />
@@ -197,9 +197,9 @@
 			<aon:selectOneMenu
 				rendered="#{amortizationDetail.to == to and !to.scored}"
 				value="#{to.status}">
-				<f:selectItem itemLabel="#{accountingBundle.accounting_pending}"
+				<f:selectItem itemLabel="#{bundle.aon_pending}"
 					itemValue="#{amortizationDetail.pendingStatus}" />
-				<f:selectItem itemLabel="#{accountingBundle.accounting_blocked}"
+				<f:selectItem itemLabel="#{bundle.aon_blocked}"
 					itemValue="#{amortizationDetail.blockedStatus}" />
 			</aon:selectOneMenu>
 

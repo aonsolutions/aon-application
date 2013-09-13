@@ -16,7 +16,7 @@
 	</aon:selectOneRadio>
 
 	<c:if test="#{aonConfiguration.bean.supplier.showTaxInfoData}">
-		<aon:outputLabel for="Supplier_transaction" value="#{supplierBundle.supplier_transaction_type}" />
+		<aon:outputLabel for="Supplier_transaction" value="#{bundle.aon_transaction_type}" />
 		<aon:selectOneMenu id="Supplier_transaction" value="#{controller.to.transaction}">
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
 		</aon:selectOneMenu>

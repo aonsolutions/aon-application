@@ -46,7 +46,7 @@
 			        </aon:div>
 		           
 					<aon:outputLabel for="SearchMail_from" 
-						value="#{webmailBundle.webmail_from}: " />
+						value="#{bundle.aon_of}: " />
 					<aon:inputText id="SearchMail_from"
 						size="80"
 						value="#{webmailSearch.address_from}"/>
@@ -58,13 +58,13 @@
 						value="#{webmailSearch.address_cc}"/>
 	
 					<aon:outputLabel for="SearchMail_subject" 
-						value="#{webmailBundle.webmail_subject}: " />
+						value="#{bundle.aon_subject}: " />
 					<aon:inputText id="SearchMail_subject"
 						size="80"
 						value="#{webmailSearch.subject}"/>
 	
 					<aon:outputLabel for="SearchMail_bodyText" 
-						value="#{webmailBundle.webmail_content}: " />
+						value="#{bundle.aon_content}: " />
 					<aon:inputText id="SearchMail_bodyText"
 						size="80"
 						value="#{webmailSearch.bodyText}"/>						
@@ -91,7 +91,7 @@
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-250"
 								sortBy="#{to.sender}" sortOrder="#{webmailSearch.sortOrders[0]}">
 								<f:facet name="header">
-									<aon:outputText value="#{webmailBundle.webmail_from}"/>
+									<aon:outputText value="#{bundle.aon_of}"/>
 								</f:facet>
 								<aon:outputText title="#{to.senderEmail}"
 									value="#{to.senderSummary}" />
@@ -100,7 +100,7 @@
 							<aon:column styleClass="aon-editDataTable-textColumn"
 								sortBy="#{to.subject}" sortOrder="#{webmailSearch.sortOrders[1]}">
 								<f:facet name="header">
-									<aon:outputText value="#{webmailBundle.webmail_subject}"/>
+									<aon:outputText value="#{bundle.aon_subject}"/>
 								</f:facet>
 								<aon:outputText value="#{to.subject}" />
 							</aon:column>
@@ -108,7 +108,7 @@
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
 								sortBy="#{to.sentDate}" sortOrder="#{webmailSearch.sortOrders[2]}">
 								<f:facet name="header">
-									<aon:outputText value="#{webmailBundle.webmail_date}"/>
+									<aon:outputText value="#{bundle.aon_date}"/>
 								</f:facet>
 								<aon:outputText value="#{to.sentDateString}"
 									title="#{to.sentDateFullString}" />								

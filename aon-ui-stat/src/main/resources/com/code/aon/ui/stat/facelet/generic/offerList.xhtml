@@ -34,17 +34,17 @@
 
 					</c:if>
 					<c:if test="#{commercialStat.controlType==1}">
-						<aon:outputText value="#{statBundle.stat_target}" />
+						<aon:outputText value="#{bundle.aon_target}" />
 						<aon:outputText value="#{commercialStat.targetName}"></aon:outputText>
 
 					</c:if>
 					<c:if test="#{commercialStat.controlType==2}">
-						<aon:outputText value="#{statBundle.stat_product}" />
+						<aon:outputText value="#{bundle.aon_product}" />
 						<aon:outputText value="#{commercialStat.productName}"></aon:outputText>
 
 					</c:if>
 					<c:if test="#{commercialStat.controlType==3}">
-						<aon:outputText value="#{statBundle.stat_category}" />
+						<aon:outputText value="#{bundle.aon_category}" />
 						<aon:outputText value="#{commercialStat.categoryName}"></aon:outputText>
 
 					</c:if>
@@ -53,7 +53,7 @@
 						<aon:outputText value="#{commercialStat.zoneName}"></aon:outputText>
 					</c:if>
 
-					<aon:outputText value="#{statBundle.stat_period}" />
+					<aon:outputText value="#{bundle.aon_period}" />
 					<aon:div style="text-align:center;font-weight:bold ">
 						<aon:outputText value="#{commercialStat.params.fromDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -92,7 +92,7 @@
 
 					<aon:column styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
-							<h:outputText value="#{commercialBundle.commercial_target}" />
+							<h:outputText value="#{bundle.aon_target}" />
 						</f:facet>
 						<aon:outputText value="#{to.target.registry.fullName}">
 							<aon:abbreviateConverter maxWidth="50" />

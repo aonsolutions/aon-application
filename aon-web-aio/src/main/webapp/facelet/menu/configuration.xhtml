@@ -42,7 +42,7 @@
 									<aon:commandLink id="contact"
 										action="contact_list"
 										actionListener="#{mailConfig.onInitContact}"
-										value="#{webmailBundle.webmail_email}" />
+										value="#{bundle.aon_contacts}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
@@ -138,7 +138,7 @@
 												<aon:commandLink id="supplier-configuration" 
 													action="supplier_search-configuration"
 													actionListener="#{supplier.onEditSearch}"
-													value="#{supplierBundle.supplier_module}" />
+													value="#{bundle.aon_suppliers}" />
 											</aon:div>
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="creditor-configuration" 
@@ -153,14 +153,14 @@
 											<aon:commandLink id="product-configuration" 
 												action="product_search-configuration"
 												actionListener="#{product.onEditSearch}"
-												value="#{productBundle.product_module}" />												
+												value="#{bundle.aon_role_product}" />												
 										</aon:div>
 									</c:if>
 									<c:if test="#{aonRole.productOperator or aonRole.purchaseOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="expenseItem-configuration" 
 												action="expenseItem-configuration" 
-												value="#{productBundle.product_expense_module}" />
+												value="#{bundle.aon_expenses}" />
 										</aon:div>
 									</c:if>
 									<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
@@ -278,7 +278,7 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="bank-configuration"
 											action="bank-configuration"
-											value="#{configBundle.config_bank_module}" />
+											value="#{bundle.aon_banks}" />
 									</aon:div>
 									<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
 										<aon:div styleClass="aon-direct-access-list-element">
@@ -334,7 +334,7 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="productCategory-configuration" 
 											action="productCategory-configuration"
-											value="#{productBundle.product_category_module}" />
+											value="#{bundle.aon_categories}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="brand-configuration"

@@ -24,16 +24,16 @@
 		<aon:methodParam  name="customerFacelet" value="invoice_list" />				
 		<ui:param name="lastColumnName" value="#{statBundle.stat_show_invoices}" />
 		<c:if test="#{stat.invoiceType==1}">
-			<ui:param name="categoryLabel" value="#{statBundle.stat_customer}" />
+			<ui:param name="categoryLabel" value="#{bundle.aon_customer}" />
 			<ui:param name="windowTitle" value="#{statBundle.stat_abc_customer}" />
 		</c:if>
 		<c:if test="#{stat.invoiceType==0}">
-			<ui:param name="categoryLabel" value="#{statBundle.stat_supplier}" />
+			<ui:param name="categoryLabel" value="#{bundle.aon_supplier}" />
 			<ui:param name="windowTitle" value="#{statBundle.stat_abc_supplier}" />
 		</c:if>
 		<c:if test="#{stat.invoiceType==2}">
 			<ui:param name="windowTitle" value="#{statBundle.stat_abc_creditor}" />
-			<ui:param name="categoryLabel" value="#{statBundle.stat_creditor}" />
+			<ui:param name="categoryLabel" value="#{bundle.aon_creditor}" />
 		</c:if>
 	</ui:include>
 

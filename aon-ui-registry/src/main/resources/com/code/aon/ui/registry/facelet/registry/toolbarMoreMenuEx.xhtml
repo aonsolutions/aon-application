@@ -27,7 +27,7 @@
 	</c:if>
 	<c:if test="#{showNotesButton}">
 		<aon:menuItem id="rnotes-button"
-			value="#{(noteButtonLabel!=null)?(noteButtonLabel):(registryBundle.registry_note)}"
+			value="#{(noteButtonLabel!=null)?(noteButtonLabel):(bundle.aon_notes)}"
 			reRender="showNewNoteWindow"
 			iconClass="aon-icon-notes"
 			actionListener="#{notesController.onReset}">
@@ -63,7 +63,7 @@
 	</c:if>
 	<c:if test="#{showAddInfoButton}">
 		<aon:menuItem id="addInfo-button"
-			value="#{(addInfoButtonLabel!=null)?(addInfoButtonLabel):(registryBundle.registry_addInfo)}"
+			value="#{(addInfoButtonLabel!=null)?(addInfoButtonLabel):(bundle.aon_addInfo)}"
 			reRender="showNewAddInfoWindow"
 			iconClass="aon-icon-addinfo"
 			actionListener="#{addInfoController.onReset}">
@@ -81,7 +81,7 @@
 	</c:if>
 	<c:if test="#{showProductButton}">
 		<aon:menuItem id="product-button"
-			value="#{(productButtonLabel!=null)?(productButtonLabel):(productBundle.product_module)}"
+			value="#{(productButtonLabel!=null)?(productButtonLabel):(bundle.aon_role_product)}"
 			iconClass="aon-icon-product"
 			reRender="showNewRegistryItemWindow"
 			actionListener="#{registryItemController.onReset}">
@@ -99,7 +99,7 @@
 	</c:if>
 	<c:if test="#{showRegistrySellerButton}">
 		<aon:menuItem id="registrySeller-button"
-			value="#{(sellerButtonLabel!=null)?(sellerButtonLabel):(sellerBundle.seller_seller)}"
+			value="#{(sellerButtonLabel!=null)?(sellerButtonLabel):(bundle.aon_module_commercial)}"
 			iconClass="aon-icon-commercial"
 			reRender="showNewRegistrySellerWindow"
 			actionListener="#{registrySellerController.onReset}">

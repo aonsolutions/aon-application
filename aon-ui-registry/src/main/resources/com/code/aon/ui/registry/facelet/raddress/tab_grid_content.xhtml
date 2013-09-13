@@ -21,7 +21,7 @@
 				value="#{controller.to.alias}" size="18" maxlength="15" />
 
 
-			<aon:outputLabel for="RegistryAddress_address" value="#{registryBundle.registry_address}" styleClass="aon-italic"/>
+			<aon:outputLabel for="RegistryAddress_address" value="#{bundle.aon_address}" styleClass="aon-italic"/>
 			<aon:div>
 				<aon:selectOneMenu id="RegistryAddress_streetType#{sufix}" styleClass="aon-margin-left aon-form-input-text"
 					value="#{controller.to.streetType}">
@@ -42,7 +42,7 @@
 					value="#{controller.to.address3}" size="30" maxlength="128" />
 			</aon:div>
 
-			<aon:outputLabel for="RegistryAddress_zip" value="#{registryBundle.registry_zip}" styleClass="aon-italic"/>
+			<aon:outputLabel for="RegistryAddress_zip" value="#{bundle.aon_postal_code}" styleClass="aon-italic"/>
 			<aon:div>
 				<aon:inputText id="RegistryAddress_zip#{sufix}"	required="true" styleClass="aon-margin-left aon-form-input-text"
 					value="#{controller.to.zip}" size="8" maxlength="16" />
@@ -52,7 +52,7 @@
 					value="#{controller.to.city}" size="20" maxlength="64" />
 			</aon:div>
 			
-			<aon:outputLabel for="RegistryAddress_geozone" value="#{registryBundle.registry_geozone}" styleClass="aon-italic"/>
+			<aon:outputLabel for="RegistryAddress_geozone" value="#{bundle.aon_state}" styleClass="aon-italic"/>
 			<aon:div>
 				<aon:selectOneMenu id="RegistryAddress_geozone#{sufix}"	styleClass="aon-margin-left aon-form-input-text"
 					value="#{controller.to.geozone}">

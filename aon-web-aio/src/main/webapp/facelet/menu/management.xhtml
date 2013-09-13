@@ -283,14 +283,14 @@
 										<aon:commandLink id="supplier-management" 
 											action="supplier_search-management"
 											actionListener="#{supplier.onEditSearch}"
-											value="#{supplierBundle.supplier_module}" />
+											value="#{bundle.aon_suppliers}" />
 									</aon:div>
 									<c:if test="#{aonRole.productOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="product-management" 
 												action="product_search-management"
 												actionListener="#{product.onEditSearch}"
-												value="#{productBundle.product_module}" />
+												value="#{bundle.aon_role_product}" />
 										</aon:div>
 									</c:if>									
 								</aon:div>
@@ -370,7 +370,7 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-expenses aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="#{productBundle.product_expense_module}" />
+									<aon:outputText value="#{bundle.aon_expenses}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -395,7 +395,7 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseItem-management" 
 											action="expenseItem-management" 
-											value="#{productBundle.product_expense_module}" />
+											value="#{bundle.aon_expenses}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>

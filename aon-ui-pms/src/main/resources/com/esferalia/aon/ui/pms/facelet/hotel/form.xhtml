@@ -33,7 +33,7 @@
 						size="40" maxlength="64" />
 
 					<aon:outputLabel for="Hotel_workPlace_enterprise" 
-						value="#{companyBundle.company_enterprise}"
+						value="#{bundle.aon_company}"
 						rendered="#{companyCollections.currentUserEnterprisesCount > 1}" />
 					<aon:selectOneMenu id="Hotel_workPlace_enterprise"
 						value="#{hotel.to.workPlace.enterprise}" required="true"
@@ -42,7 +42,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Hotel_scope" 
-						value="#{configBundle.config_scope}" />
+						value="#{bundle.aon_scope}" />
 					<aon:selectOneMenu id="Hotel_scope"
 						value="#{hotel.to.scope}" required="true">
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
@@ -83,13 +83,13 @@
 						size="30" maxlength="64" />
 
 					<aon:outputLabel for="Hotel_workPlace_zip"
-						value="#{registryBundle.registry_zip}" />
+						value="#{bundle.aon_postal_code}" />
 					<aon:inputText id="Hotel_workPlace_zip"
 						value="#{hotel.to.workPlace.address.zip}" required="true"
 						size="16" maxlength="16" />
 
 					<aon:outputLabel for="Hotel_workPlace_geozone"
-						value="#{registryBundle.registry_geozone}" />
+						value="#{bundle.aon_state}" />
 					<aon:selectOneMenu id="Hotel_workPlace_geozone"
 						value="#{hotel.to.workPlace.address.geozone}"
 						styleClass="aon-form-selectOneMenu-field">

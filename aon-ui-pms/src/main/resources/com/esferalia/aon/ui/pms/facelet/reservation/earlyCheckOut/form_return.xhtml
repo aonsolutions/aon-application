@@ -17,7 +17,7 @@
 				<aon:panelGrid columns="5" styleClass="aon-margin-bottom aon-noborder"
 					columnClasses="aon-width-120,aon-width-120,aon-width-70,aon-width-120,aon-width-auto">
 					<aon:outputText value="&#160;" />
-					<aon:outputText value="#{pmsBundle.pms_reservation}:" styleClass="aon-bold" />
+					<aon:outputText value="#{bundle.aon_reservation}:" styleClass="aon-bold" />
 					<aon:div>
 						<aon:outputText value="#{controller.reservationReturnAmount}" styleClass="aon-bold">
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
@@ -55,7 +55,7 @@
 						<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-info" />
 						<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="bottom-left">
 							<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-80,aon-noborder aon-bold aon-text-right">
-								<aon:outputLabel value="#{pmsBundle.pms_reservation}:"
+								<aon:outputLabel value="#{bundle.aon_reservation}:"
 									rendered="#{paymentReturn.reservationReturnAmount != 0}" />
 								<aon:outputText	value="#{paymentReturn.reservationReturnAmount}"
 									rendered="#{paymentReturn.reservationReturnAmount != 0}">

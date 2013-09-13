@@ -14,7 +14,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 
-				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_salary_entry_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_salaries}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 
 				<ui:define name="toolbarContent">
@@ -41,7 +41,7 @@
 				<aon:panelGrid columns="2">
 
 					<aon:outputLabel for="AccountEntry_accountPeriod"
-						value="#{accountingBundle.accounting_period}" />
+						value="#{bundle.aon_financial_year}" />
 					<aon:div>
 						<aon:selectOneMenu id="AccountEntry_accountPeriod"
 							value="#{salaryEntry.entry.period}">

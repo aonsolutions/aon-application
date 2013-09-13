@@ -8,7 +8,7 @@
 
 	<c:if test="#{!skipReservation}">
 		<aon:outputLabel for="Divert_projectReservation"
-			value="#{pmsBundle.pms_reservation}" />
+			value="#{bundle.aon_reservation}" />
 		<aon:div
 			rendered="#{divert.to.projectReservation.id!=null}" >
 			<aon:outputText value="#{divert.to.projectReservation.id}" />

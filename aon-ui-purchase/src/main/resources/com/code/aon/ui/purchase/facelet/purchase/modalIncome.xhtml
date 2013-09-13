@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{purchaseBundle.purchase_to_income}" />
+						<aon:outputText value="#{bundle.aon_invoice_delivery}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -37,7 +37,7 @@
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="income-accept"
-										value="#{purchaseBundle.purchase_to_income}"
+										value="#{bundle.aon_invoice_delivery}"
 										actionListener="#{purchase.onIncome}"
 										action="income_form"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
@@ -77,7 +77,7 @@
 											verticalOffset="-60" />
 
 										<aon:outputLabel for="Purchase_incomeWarehouse" 
-											value="#{warehouseBundle.warehouse_warehouse}" />
+											value="#{bundle.aon_module_warehouse}" />
 										<aon:selectOneMenu id="Purchase_incomeWarehouse" 
 											value="#{purchase.incomeWarehouse}">
 											<f:selectItems value="#{warehouseCollections.warehouses}" />

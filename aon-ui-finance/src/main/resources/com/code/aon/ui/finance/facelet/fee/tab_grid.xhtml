@@ -45,14 +45,14 @@
 		<ui:define name="columns">
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-40">
 				<f:facet name="header">
-					<aon:outputLabel value="#{financeBundle.finance_invoice_detail_line}" />
+					<aon:outputLabel value="#{bundle.aon_line}" />
 				</f:facet>
 				<aon:outputText value="#{to.line}" />
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel value="#{productBundle.product_item}" />
+					<aon:outputLabel value="#{bundle.aon_product}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}">
 					<aon:abbreviateConverter maxWidth="64" />
@@ -79,7 +79,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-40">
 				<f:facet name="header">
-					<aon:outputLabel value="#{financeBundle.finance_fee_discount}" />
+					<aon:outputLabel value="#{bundle.aon_discount_abrv}" />
 				</f:facet>
 				<aon:outputText value="#{to.discountExpression.discountExpr}">
 					<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
@@ -159,7 +159,7 @@
 					<aon:outputText value="&#160;" styleClass="aon-icon-commercial"
 						style="padding-left:12px" />
 					<rich:toolTip>
-						<aon:outputText styleClass="aon-italic" value="#{sellerBundle.seller_seller}:" />
+						<aon:outputText styleClass="aon-italic" value="#{bundle.aon_module_commercial}:" />
 						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{to.seller.registry.fullName}" />
 					</rich:toolTip>
 				</aon:div>

@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{commercialBundle.commercial_offer_to_sales}" />
+						<aon:outputText value="#{bundle.aon_invoice_sales}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -37,7 +37,7 @@
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="sales-accept"
-										value="#{commercialBundle.commercial_offer_to_sales}"
+										value="#{bundle.aon_invoice_sales}"
 										actionListener="#{offer.onSales}"
 										action="sales_form"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">

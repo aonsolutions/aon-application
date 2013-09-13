@@ -65,7 +65,7 @@
 									<aon:panelGrid id="menuGrid" columns="2" dir="true">
 
 										<aon:outputLabel for="InvoiceAddress_address"
-											value="#{registryBundle.registry_address}" />
+											value="#{bundle.aon_address}" />
 										<aon:div styleClass="aon-nowrap">
 											<aon:selectOneMenu id="InvoiceAddress_streetType" required="true"
 												value="#{invoiceAddress.to.streetType}">
@@ -85,7 +85,7 @@
 											value="#{invoiceAddress.to.address2}" size="50" maxlength="45" />
 
 										<aon:outputLabel for="InvoiceAddress_zip"
-											value="#{registryBundle.registry_zip}" />
+											value="#{bundle.aon_postal_code}" />
 										<aon:inputText id="InvoiceAddress_zip"
 											value="#{invoiceAddress.to.zip}" size="12" maxlength="16" />
 
@@ -95,7 +95,7 @@
 											value="#{invoiceAddress.to.city}" size="50" maxlength="45" />
 
 										<aon:outputLabel for="InvoiceAddress_province"
-											value="#{registryBundle.registry_geozone}" />
+											value="#{bundle.aon_state}" />
 										<aon:div>
 											<aon:selectOneMenu id="InvoiceAddress_geozone_id" required="true"
 												value="#{invoiceAddress.to.geozone}"

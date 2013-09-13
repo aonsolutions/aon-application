@@ -29,7 +29,7 @@
 					<aon:panelGrid styleClass="aon-margin-top aon-margin-bottom"
 	 					columns="2" columnClasses="aon-noborder"
 						rendered="#{commercialTracking.to.project.id != null}" >
-						<aon:outputText value="#{commercialBundle.commercial_target}"	
+						<aon:outputText value="#{bundle.aon_target}"	
 							styleClass="aon-margin-right aon-italic aon-bold" />
 						<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{commercialTracking.to.project.target}" />
@@ -81,7 +81,7 @@
 		</aon:div>
 		
 		<aon:outputLabel for="CommercialTracking_activity_id"
-			value="#{commercialBundle.commercial_tracking_activity}" />
+			value="#{bundle.aon_activity}" />
 		<h:panelGrid columns="3" >						
 			<aon:selectOneMenu id="CommercialTracking_activity_id"
 				required="true" value="#{commercialTracking.to.activity}">
@@ -95,7 +95,7 @@
 					value="#{commercialTracking.offerChecked}">
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="CommercialTracking_offer_check"
-					value="#{commercialBundle.commercial_offer}" />
+					value="#{bundle.aon_invoice_offer}" />
 			</aon:div>							
 			<aon:div id="CommercialTracking_activity_offer"
 				styleClass="aon-lookup aon-margin-left">
@@ -167,7 +167,7 @@
 						</aon:selectInputDate>
 
 						<aon:outputLabel for="CommercialTracking_next_activity_id"
-							value="#{commercialBundle.commercial_tracking_activity}" />
+							value="#{bundle.aon_activity}" />
 						<aon:selectOneMenu id="CommercialTracking_next_activity_id"
 							required="true" value="#{commercialTracking.next.activity}">
 							<f:selectItem itemLabel="-" value="#{null}"/>

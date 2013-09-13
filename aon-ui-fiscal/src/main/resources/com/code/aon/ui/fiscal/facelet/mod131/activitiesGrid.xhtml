@@ -21,7 +21,7 @@
 			<aon:outputText value="#{fiscalBundle.fiscal_epigraph}" styleClass="aon-italic aon-bold"/>
 			<aon:outputText value="#{fiscalBundle.fiscal_base_abbrv}" styleClass="aon-italic aon-bold"/>
 			<aon:outputText value="#{bundle.aon_percentage}" styleClass="aon-italic aon-bold"/>
-			<aon:outputText value="#{fiscalBundle.fiscal_result_abbrv}" styleClass="aon-italic aon-bold"/>
+			<aon:outputText value="#{bundle.aon_result}" styleClass="aon-italic aon-bold"/>
 			
 			<c:forEach items="#{controller.declaration.activityKeys}" var="key">
 				<c:if test="#{key.ac01 or key.ac02}">

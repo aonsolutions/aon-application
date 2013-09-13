@@ -13,7 +13,7 @@
 		valueChangeListener="#{controller.addExpression}" />
 		
 	<aon:outputLabel for="#{controller.pojoShortName}_documents_category_id"
-		value="#{registryBundle.registry_category}" />
+		value="#{bundle.aon_category}" />
 	<aon:selectOneMenu id="#{controller.pojoShortName}_documents_category_id"
 		value="#{registryCollections.category}"
 		valueChangeListener="#{controller.addIdEqualExpression}">

@@ -32,7 +32,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{companyBundle.company_workplace_address}" />
+					<aon:outputText value="#{bundle.aon_address}" />
 				</f:facet>
 				<aon:outputText value="#{to.workPlace.address.shortAddress}" />
 			</aon:column>			
@@ -55,7 +55,7 @@
 			
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{calendarBundle.aon_calendar_calendar}" />
+					<aon:outputText value="#{bundle.aon_calendar}" />
 				</f:facet>
 				<aon:outputText value="#{to.calendar.description}" />
 			</aon:column>
@@ -69,7 +69,7 @@
 			
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_activity}" />
+					<aon:outputText value="#{bundle.aon_activity}" />
 				</f:facet>
 				<!--  
 				<aon:outputText value="#{to.enterpriseActivity.cnae2009.code} - #{to.enterpriseActivity.description}" />

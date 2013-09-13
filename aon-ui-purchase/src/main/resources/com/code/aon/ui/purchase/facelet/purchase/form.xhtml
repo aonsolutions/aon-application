@@ -29,7 +29,7 @@
 							rendered="#{purchaseDetail.model.rowCount > 0 and purchaseDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 						</aon:commandButton>									
-						<aon:htmlCommandLink id="purchaseForm-report" value="#{purchaseBundle.purchase_purchase}"
+						<aon:htmlCommandLink id="purchaseForm-report" value="#{bundle.aon_invoice_sales}"
 							target="_new" rendered="#{!purchase.new and purchaseDetail.model.rowCount > 0}"
 							action="#{purchaseReport.onExecute}"
 							disabled="#{purchaseDetail.to != null}"
@@ -54,7 +54,7 @@
 					<ui:define name="moreMenuContent">
 						<c:if test="#{aonRole.warehouseOperator}">
 							<aon:menuItem id="income"
-								value="#{purchaseBundle.purchase_to_income}"
+								value="#{bundle.aon_invoice_delivery}"
 								immediate="#{true}" rendered="#{purchase.pending and purchaseDetail.model.rowCount > 0}"
 								iconClass="aon-icon-open-popup" 
 								actionListener="#{purchase.onIncomeShow}"
@@ -65,7 +65,7 @@
 						</c:if>
 						<c:if test="#{aonRole.financeOperator}">
 							<aon:menuItem id="invoice"
-								value="#{purchaseBundle.purchase_to_invoice}"
+								value="#{bundle.aon_key_invoice_description}"
 								immediate="#{true}" rendered="#{purchase.pending and !purchase.inIncome and purchaseDetail.model.rowCount > 0}"
 								iconClass="aon-icon-favorite"
 								actionListener="#{purchase.onInvoiceShow}"
@@ -135,7 +135,7 @@
 								
 								<aon:outputText id="purchase-itemReturn"
 									rendered="#{purchase.to.itemReturn}"
-									title="#{purchaseBundle.purchase_proposal_item_return}"
+									title="#{bundle.aon_return}"
 									value="&#160;"
 									styleClass="aon-icon-alternative aon-margin-left aon-padding-left aon-padding-right" />
 								
@@ -225,7 +225,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Purchase_address"
-						value="#{registryBundle.registry_address}" />
+						value="#{bundle.aon_address}" />
 					<aon:div id="PurchaseAddress">
 						<aon:selectOneMenu id="Purchase_address" 
 							value="#{purchase.to.registryAddress}" rendered="#{purchase.addressCount > 0}"
@@ -253,8 +253,8 @@
 						value="#{purchase.defaultPayMethod}"
 						disabled="#{!purchase.pending}"
 						reRender="payMethodDiv">
-						<f:selectItem itemLabel="#{purchaseBundle.purchase_habitual}" itemValue="#{true}" />
-						<f:selectItem itemLabel="#{purchaseBundle.purchase_to_specify}" itemValue="#{false}" />
+						<f:selectItem itemLabel="#{bundle.aon_habitual}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{bundle.aon_to_specify}" itemValue="#{false}" />
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Purchase_total" 

@@ -32,14 +32,14 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" rendered="#{formList}">
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryAddress_address" value="#{registryBundle.registry_address}" />
+					<aon:outputLabel for="RegistryAddress_address" value="#{bundle.aon_address}" />
 				</f:facet>
 				<aon:outputText value="#{to.fullAddress}" />					
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-40 aon-nowrap" rendered="#{formList}">
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryAddress_zip" value="#{registryBundle.registry_zip}" />
+					<aon:outputLabel for="RegistryAddress_zip" value="#{bundle.aon_postal_code}" />
 				</f:facet>
 				<aon:outputText value="#{to.zip}"/>
 			</aon:column>
@@ -53,7 +53,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap" rendered="#{formList}">
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryAddress_geozone" value="#{registryBundle.registry_geozone}" />
+					<aon:outputLabel for="RegistryAddress_geozone" value="#{bundle.aon_state}" />
 				</f:facet>
 				<aon:outputText value="#{to.geozone.name}"/>
 			</aon:column>

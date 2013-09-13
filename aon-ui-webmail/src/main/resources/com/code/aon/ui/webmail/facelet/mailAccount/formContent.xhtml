@@ -48,7 +48,7 @@
 					size="60" value="#{controller.to.replyToMail}" />
 
 				<aon:outputLabel for="MailAccount_signature"
-					value="#{webmailBundle.webmail_signature_signature}" />
+					value="#{bundle.aon_signature}" />
 				<aon:selectOneMenu id="MailAccount_signature"
 					converter="#{mailConfig.signatureConverter}" 
 					value="#{controller.to.signature}">
@@ -140,7 +140,7 @@
 				</aon:selectOneMenu>						
 
 				<aon:outputLabel for="MailAccount_mailUsername"
-					value="#{webmailBundle.webmail_mailAccount_mailUsername}" />
+					value="#{bundle.aon_login_user}" />
 				<aon:inputText id="MailAccount_mailUsername"
 					size="60" maxlength="256"
 					disabled="#{!mailConfig.mailAccountEditable}"

@@ -12,7 +12,7 @@
 		<aon:form id="itemForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{productBundle.product_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_role_product}" />
 				<ui:param name="controller" value="#{item}" />
 				<ui:param name="showMoreMenu" value="#{!item.new}" />
 				<ui:define name="moreMenuContent">
@@ -44,7 +44,7 @@
 					</c:if>
 					<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
 						<aon:menuItem id="supplier-button"
-							value="#{productBundle.product_item_supplier_module}"
+							value="#{bundle.aon_suppliers}"
 							reRender="showNewSupplierWindow"
 							iconClass="aon-icon-supplier"
 							actionListener="#{itemSupplier.onReset}">
@@ -62,7 +62,7 @@
 					</c:if>
 					<c:if test="#{aonConfiguration.bean.product.showAddInfo}">
 						<aon:menuItem id="addInfo-button"
-							value="#{productBundle.product_addInfo}"
+							value="#{bundle.aon_addInfo}"
 							reRender="showNewAddInfoWindow"
 							iconClass="aon-icon-addinfo"
 							actionListener="#{itemAddInfo.onReset}">
@@ -142,7 +142,7 @@
 
 							<c:if test="#{aonConfiguration.bean.product.showSuppliers and itemSupplier.model.rowCount > 0}">
 								<aon:panelTab id="itemSupplierPanelTab"
-									label="#{productBundle.product_item_supplier_module}">
+									label="#{bundle.aon_suppliers}">
 									<ui:include	src="/com/code/aon/ui/product/facelet/item/supplier/tab_grid.xhtml">
 										<ui:param name="controller" value="#{itemSupplier}" />
 										<ui:param name="removeButtonReRender" value="itemDiv" />
@@ -162,7 +162,7 @@
 
 							<c:if test="#{aonConfiguration.bean.product.showAddInfo and itemAddInfo.model.rowCount > 0}">
 								<aon:panelTab id="addInfoPanelTab"
-									label="#{productBundle.product_addInfo}">
+									label="#{bundle.aon_addInfo}">
 									<ui:include	src="/com/code/aon/ui/product/facelet/item/addinfo/tab_grid.xhtml">
 										<ui:param name="controller" value="#{itemAddInfo}" />
 										<ui:param name="removeButtonReRender" value="itemDiv" />

@@ -26,7 +26,7 @@
 						<c:if test="#{aonConfiguration.bean.fiscal.enterpriseEnabled}">
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 								<f:facet name="header">
-									<aon:outputText value="#{companyBundle.company_enterprise}" />
+									<aon:outputText value="#{bundle.aon_company}" />
 								</f:facet>
 								<aon:outputText value="#{to.enterprise}" />		
 							</aon:column>					
@@ -42,7 +42,7 @@
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100}">
 							<f:facet name="header">
-								<aon:outputText value="#{fiscalBundle.fiscal_withholding_amount}" />
+								<aon:outputText value="#{bundle.aon_amount}" />
 							</f:facet>
 							<aon:outputText value="#{to.taxableBase}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

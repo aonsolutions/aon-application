@@ -22,8 +22,8 @@
 				</ui:define>
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="update" value="#{accountingBundle.accounting_refresh}"
-						accesskey="Q" title="#{accountingBundle.accounting_refresh}"
+					<aon:commandButton id="update" value="#{bundle.aon_refresh}"
+						accesskey="Q" title="#{bundle.aon_refresh}"
 						actionListener="#{journalReport.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						immediate="true" />
@@ -72,7 +72,7 @@
 					</aon:outputText>
 					
 					<aon:outputLabel 
-						value="#{accountingBundle.accounting_period}" />
+						value="#{bundle.aon_financial_year}" />
 					<aon:outputText styleClass="aon-bold"
 						value="#{journalReport.period.name}" />
 					

@@ -37,7 +37,7 @@
 							value="#{true}" />
 					</aon:menuItem>
 					<aon:menuItem id="reservation-Invoice"
-						value="#{pmsBundle.pms_to_invoice}"	immediate="#{true}" 
+						value="#{bundle.aon_key_invoice_description}"	immediate="#{true}" 
 						rendered="#{reservation.reservationPermission.invoiceAllowed}"
 						iconClass="aon-icon-favorite"
 						actionListener="#{reservation.onInvoiceShow}">
@@ -114,7 +114,7 @@
 						</aon:panelTab>
 
 						<c:if test="#{reservation.invoiceModel.rowCount > 0}">
-							<aon:panelTab id="invoice" label="#{financeBundle.finance_invoice_module}">
+							<aon:panelTab id="invoice" label="#{bundle.aon_invoices}">
 								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/tab_grid.xhtml" />
 							</aon:panelTab>
 						</c:if>

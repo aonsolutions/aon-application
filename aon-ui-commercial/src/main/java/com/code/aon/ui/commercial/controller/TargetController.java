@@ -10,6 +10,7 @@ import static com.code.aon.ui.common.ICommonMessages.CELLULAR;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_NAME;
 import static com.code.aon.ui.common.ICommonMessages.DOCUMENT;
 import static com.code.aon.ui.common.ICommonMessages.ENTITY;
+import static com.code.aon.ui.common.ICommonMessages.FAX;
 import static com.code.aon.ui.common.ICommonMessages.ID;
 import static com.code.aon.ui.common.ICommonMessages.INACTIVE;
 import static com.code.aon.ui.common.ICommonMessages.PHONE;
@@ -19,7 +20,6 @@ import static com.code.aon.ui.common.ICommonMessages.STATUS;
 import static com.code.aon.ui.common.ICommonMessages.WEB;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_CITY;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_EMAIL;
-import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_FAX;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_NATIONALITY;
 
 import java.io.IOException;
@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import javax.faces.context.FacesContext;
@@ -82,21 +81,7 @@ import com.code.aon.ui.util.AonUtil;
 public class TargetController extends RegistryController implements ICommercialConstants {
 
 	private Set<Integer> checks = new HashSet<Integer>();
-	
-	private ResourceBundle bundle;
-
-	public TargetController() {
-		setBundleName(ICommercialMessages.BUNDLE_KEY);
-	}
-	
-	public ResourceBundle getBundle() {
-		return bundle;
-	}
-
-	public void setBundleName(String bundleName) {
-		this.bundle = AonUtil.getResourceBundle(bundleName);
-	}	
-		
+			
 	public String getAliasPreffix() {
 		return getPojoShortName();
 	}
@@ -215,7 +200,7 @@ public class TargetController extends RegistryController implements ICommercialC
 			+",gz.name `" + AonUtil.getMessage(STATE) + "`"
 			+",(SELECT rm1.value FROM rmedia rm1 WHERE r.id = rm1.registry  AND rm1.media = 1 LIMIT 1) `" + AonUtil.getMessage(PHONE) + "`"
 			+",(SELECT rm2.value FROM rmedia rm2 WHERE r.id = rm2.registry  AND rm2.media = 2 LIMIT 1) `" + AonUtil.getMessage(CELLULAR) + "`"
-			+",(SELECT rm3.value FROM rmedia rm3 WHERE r.id = rm3.registry  AND rm3.media = 3 LIMIT 1) `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_FAX) + "`"
+			+",(SELECT rm3.value FROM rmedia rm3 WHERE r.id = rm3.registry  AND rm3.media = 3 LIMIT 1) `" + AonUtil.getMessage(FAX) + "`"
 			+",(SELECT rm4.value FROM rmedia rm4 WHERE r.id = rm4.registry  AND rm4.media = 4 LIMIT 1) `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_EMAIL) + "`"
 			+",(SELECT rm5.value FROM rmedia rm5 WHERE r.id = rm5.registry  AND rm5.media = 5 LIMIT 1) `" + AonUtil.getMessage(WEB) + "`"
 			+" FROM " + masterTable +" c"

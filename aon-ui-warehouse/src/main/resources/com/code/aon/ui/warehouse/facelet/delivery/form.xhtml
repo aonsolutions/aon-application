@@ -22,7 +22,7 @@
 					<ui:param name="skipRemoveButton" value="#{!delivery.pending}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:commandButton id="salesTransfer"
-							value="#{warehouseBundle.warehouse_delivery_sales}"
+							value="#{bundle.aon_invoice_sales2}"
 							immediate="#{true}" rendered="#{!delivery.new and delivery.pending}"
 							styleClass="aon-finding-toolbar-item aon-icon-sincronize"
 							actionListener="#{delivery.onSalesTransferShow}"
@@ -32,7 +32,7 @@
 						</aon:commandButton>
 						<c:if test="#{aonRole.financeOperator}">
 							<aon:commandButton id="invoice"
-								value="#{warehouseBundle.warehouse_delivery_to_invoice}"
+								value="#{bundle.aon_key_invoice_description}"
 								immediate="#{true}" rendered="#{delivery.pending and deliveryDetail.model.rowCount > 0}"
 								styleClass="aon-finding-toolbar-item aon-icon-favorite"
 								actionListener="#{delivery.onInvoiceShow}"
@@ -47,7 +47,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 							<aon:actionListener method="#{delivery.onSendByEmail}" />
 						</aon:commandButton>															
-						<aon:htmlCommandLink id="delivery-report" value="#{warehouseBundle.warehouse_delivery}"
+						<aon:htmlCommandLink id="delivery-report" value="#{bundle.aon_invoice_delivery}"
 							target="_new" rendered="#{!delivery.new and deliveryDetail.model.rowCount > 0}"
 							action="#{report.onExecute}" 
 							disabled="#{deliveryDetail.to != null}"
@@ -145,7 +145,7 @@
 						disabled="true" size="10" />
 
 					<aon:outputLabel for="Delivery_address"
-						value="#{registryBundle.registry_address}" />
+						value="#{bundle.aon_address}" />
 					<aon:div id="DeliveryAddress">
 						<aon:selectOneMenu id="Delivery_address" 
 							value="#{delivery.to.registryAddress}" rendered="#{delivery.addressCount > 0}"
@@ -176,7 +176,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Delivery_warehouse" 
-						value="#{warehouseBundle.warehouse_warehouse}" />
+						value="#{bundle.aon_module_warehouse}" />
 					<aon:selectOneMenu id="Delivery_warehouse" 
 						value="#{delivery.warehouse}"
 						disabled="#{deliveryDetail.model.rowCount>0}">
@@ -189,8 +189,8 @@
 						value="#{delivery.defaultPayMethod}"
 						disabled="#{!delivery.pending}"
 						reRender="payMethodDiv">
-						<f:selectItem itemLabel="#{warehouseBundle.warehouse_delivery_habitual}" itemValue="#{true}" />
-						<f:selectItem itemLabel="#{warehouseBundle.warehouse_delivery_to_specify}" itemValue="#{false}" />
+						<f:selectItem itemLabel="#{bundle.aon_habitual}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{bundle.aon_to_specify}" itemValue="#{false}" />
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Delivery_total" 

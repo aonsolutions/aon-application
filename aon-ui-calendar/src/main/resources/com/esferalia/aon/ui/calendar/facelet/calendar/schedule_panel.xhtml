@@ -9,24 +9,24 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panel id="schedulePanel"   
-		header="#{calendarBundle.aon_calendar_schedule}">
+		header="#{bundle.aon_calendar_schedule}">
 	
 		<aon:panelGrid columns="2" style="height:80px; width:100%;">
-			<aon:outputLabel value="#{calendarBundle.aon_calendar_monday}" />
+			<aon:outputLabel value="#{bundle.aon_monday}" />
 			<aon:div >
 				<aon:inputText size="2" maxlength="6" styleClass="aon-inputText aon-margin-right"
 					value="#{calendar.to.mondayHours}" />
-				<aon:outputText value="#{calendarBundle.aon_calendar_day_type}:" styleClass="aon-italic aon-margin-right" />
+				<aon:outputText value="#{bundle.aon_type}:" styleClass="aon-italic aon-margin-right" />
 				<aon:selectOneMenu value="#{calendar.to.monday}">
 					<f:selectItems value="#{calendarCollections.dayTypes}" />
 				</aon:selectOneMenu>
 			</aon:div>
 			
-			<aon:outputLabel value="#{calendarBundle.aon_calendar_tuesday}" />
+			<aon:outputLabel value="#{bundle.aon_tuesday}" />
 			<aon:div >
 				<aon:inputText size="2" maxlength="6" styleClass="aon-inputText aon-margin-right"
 					value="#{calendar.to.tuesdayHours}" />
-				<aon:outputText value="#{calendarBundle.aon_calendar_day_type}:" styleClass="aon-italic aon-margin-right" />
+				<aon:outputText value="#{bundle.aon_type}:" styleClass="aon-italic aon-margin-right" />
 				<aon:selectOneMenu value="#{calendar.to.tuesday}">
 					<f:selectItems value="#{calendarCollections.dayTypes}" />
 				</aon:selectOneMenu>
@@ -36,47 +36,47 @@
 			<aon:div >
 				<aon:inputText size="2" maxlength="6" styleClass="aon-inputText aon-margin-right"
 					value="#{calendar.to.wednesdayHours}" />
-				<aon:outputText value="#{calendarBundle.aon_calendar_day_type}:" styleClass="aon-italic aon-margin-right" />
+				<aon:outputText value="#{bundle.aon_type}:" styleClass="aon-italic aon-margin-right" />
 				<aon:selectOneMenu value="#{calendar.to.wednesday}">
 					<f:selectItems value="#{calendarCollections.dayTypes}" />
 				</aon:selectOneMenu>
 			</aon:div>
 			
-			<aon:outputLabel value="#{calendarBundle.aon_calendar_thursday}" />
+			<aon:outputLabel value="#{bundle.aon_thursday}" />
 			<aon:div >
 				<aon:inputText size="2" maxlength="6" styleClass="aon-inputText aon-margin-right"
 					value="#{calendar.to.thursdayHours}" />
-				<aon:outputText value="#{calendarBundle.aon_calendar_day_type}:" styleClass="aon-italic aon-margin-right" />
+				<aon:outputText value="#{bundle.aon_type}:" styleClass="aon-italic aon-margin-right" />
 				<aon:selectOneMenu value="#{calendar.to.thursday}">
 					<f:selectItems value="#{calendarCollections.dayTypes}" />
 				</aon:selectOneMenu>
 			</aon:div>
 			
-			<aon:outputLabel value="#{calendarBundle.aon_calendar_friday}" />
+			<aon:outputLabel value="#{bundle.aon_friday}" />
 			<aon:div >
 				<aon:inputText size="2" maxlength="6" styleClass="aon-inputText aon-margin-right"
 					value="#{calendar.to.fridayHours}" />
-				<aon:outputText value="#{calendarBundle.aon_calendar_day_type}:" styleClass="aon-italic aon-margin-right" />
+				<aon:outputText value="#{bundle.aon_type}:" styleClass="aon-italic aon-margin-right" />
 				<aon:selectOneMenu value="#{calendar.to.friday}">
 					<f:selectItems value="#{calendarCollections.dayTypes}" />
 				</aon:selectOneMenu>
 			</aon:div>
 			
-			<aon:outputLabel value="#{calendarBundle.aon_calendar_saturday}" />
+			<aon:outputLabel value="#{bundle.aon_saturday}" />
 			<aon:div >
 				<aon:inputText size="2" maxlength="6" styleClass="aon-inputText aon-margin-right"
 					value="#{calendar.to.saturdayHours}" />
-				<aon:outputText value="#{calendarBundle.aon_calendar_day_type}:" styleClass="aon-italic aon-margin-right" />
+				<aon:outputText value="#{bundle.aon_type}:" styleClass="aon-italic aon-margin-right" />
 				<aon:selectOneMenu value="#{calendar.to.saturday}">
 					<f:selectItems value="#{calendarCollections.dayTypes}" />
 				</aon:selectOneMenu>
 			</aon:div>
 			
-			<aon:outputLabel value="#{calendarBundle.aon_calendar_sunday}" />
+			<aon:outputLabel value="#{bundle.aon_sunday}" />
 			<aon:div >
 				<aon:inputText size="2" maxlength="6" styleClass="aon-inputText aon-margin-right"
 					value="#{calendar.to.sundayHours}" />
-				<aon:outputText value="#{calendarBundle.aon_calendar_day_type}:" styleClass="aon-italic aon-margin-right" />
+				<aon:outputText value="#{bundle.aon_type}:" styleClass="aon-italic aon-margin-right" />
 				<aon:selectOneMenu value="#{calendar.to.sunday}">
 					<f:selectItems value="#{calendarCollections.dayTypes}" />
 				</aon:selectOneMenu>

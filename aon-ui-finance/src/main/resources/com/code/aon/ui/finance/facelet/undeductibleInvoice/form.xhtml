@@ -128,7 +128,7 @@
 						aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel for="Invoice_referenceCode"
-						value="#{financeBundle.finance_invoice_number}" />
+						value="#{bundle.aon_invoice_number}" />
 					<aon:div>
 						<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
 							<aon:div id="InvoiceReferenceCodeDiv">
@@ -283,7 +283,7 @@
 						value="#{undeductibleInvoice.to.documentNumber}" />
 
 					<aon:outputLabel for="Invoice_registryAddress_id"
-						value="#{registryBundle.registry_address}" />
+						value="#{bundle.aon_address}" />
 					<aon:div id="InvoiceAddress">
 						<aon:selectOneMenu id="Invoice_registryAddress_id"
 							rendered="#{!undeductibleInvoice.readOnly and undeductibleInvoiceAddress.to.id == null and undeductibleInvoice.addressCount > 0}"

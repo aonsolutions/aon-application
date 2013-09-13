@@ -84,11 +84,11 @@
 				
 				<c:if test="#{!calendar.new}">
 					<aon:panelTabSet id="tabPanel">
-						<aon:panelTab label="#{calendarBundle.aon_calendar_days}">
+						<aon:panelTab label="#{bundle.aon_days}">
 							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/holiday_panel.xhtml" />
 							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/inheritHolidays.xhtml" />
 							<aon:panel 
-								header="#{calendarBundle.aon_calendar_days}">
+								header="#{bundle.aon_days}">
 									<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendarHoliday/tab_grid.xhtml" />
 							</aon:panel>
 						</aon:panelTab>

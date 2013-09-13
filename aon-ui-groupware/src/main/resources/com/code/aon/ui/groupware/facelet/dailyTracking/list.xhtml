@@ -72,7 +72,7 @@
 					<aon:column styleClass="aon-editDataTable-text" alias="DailyTracking.taskHolder.registry.name"
 						rendered="#{dailyTracking.monitor}">
 						<f:facet name="header">
-							<aon:outputText value="#{groupwareBundle.groupware_user}" />
+							<aon:outputText value="#{bundle.aon_login_user}" />
 						</f:facet>
 						<aon:outputText value="#{to.taskHolder.registry.fullName}" />
 					</aon:column>
@@ -109,7 +109,7 @@
 
 					<aon:column styleClass="aon-editDataTable-number" alias="DailyTracking.trackingDuration">
 						<f:facet name="header">
-							<aon:outputText value="#{groupwareBundle.groupware_duration}" />
+							<aon:outputText value="#{bundle.aon_duration}" />
 						</f:facet>
 						<aon:outputText value="#{to.trackingDuration}">
 							<f:convertNumber pattern="#,##0.00" />

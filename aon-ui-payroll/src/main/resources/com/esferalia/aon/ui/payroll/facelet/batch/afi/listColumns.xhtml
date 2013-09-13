@@ -11,7 +11,7 @@
 		<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
-				<aon:outputText value="#{companyBundle.company_enterprise}" />
+				<aon:outputText value="#{bundle.aon_company}" />
 			</f:facet>
 			<aon:div styleClass="aon-nowrap">
 				<aon:outputText value="#{to.workPlace.enterprise.registry.fullName}"/>
@@ -32,7 +32,7 @@
 	<aon:column alias="Contract.ccc.activity.description"
 		styleClass="aon-editDataTable-textColumn aon-width-100">
 		<f:facet name="header">
-			<aon:outputText value="#{companyBundle.company_activity}" />
+			<aon:outputText value="#{bundle.aon_activity}" />
 		</f:facet>
 		<aon:div styleClass="aon-nowrap">
 			<aon:outputText value="#{to.enterpriseCCC.activity.description}"/>

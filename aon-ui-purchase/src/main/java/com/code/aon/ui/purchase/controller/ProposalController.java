@@ -1,7 +1,5 @@
 package com.code.aon.ui.purchase.controller;
 
-import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_PROPOSAL_ORDER;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,7 +34,6 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
-import com.code.aon.ui.purchase.IPurchaseMessages;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -279,7 +276,7 @@ public class ProposalController extends BasicController {
 	public List<SelectItem> getProposalTypes(){
 		if (proposalTypes == null) {
 			proposalTypes = new LinkedList<SelectItem>();
-			SelectItem item = new SelectItem(ProposalType.ORDER, AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, PURCHASE_PROPOSAL_ORDER));
+			SelectItem item = new SelectItem(ProposalType.ORDER, AonUtil.getMessage(ICommonMessages.INVOICE_SALES));
 			proposalTypes.add(item);
 			item = new SelectItem(ProposalType.ITEM_RETURN, AonUtil.getMessage(ICommonMessages.RETURN));
 			proposalTypes.add(item);

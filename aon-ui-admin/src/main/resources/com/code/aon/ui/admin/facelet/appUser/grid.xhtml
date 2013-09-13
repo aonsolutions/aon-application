@@ -7,7 +7,7 @@
 
 	<aon:div id="#{controller.beanName}Div" >
 		<ui:param name="innerToolbar" value="#{true}" />	
-		<ui:param name="resetLabel" value="#{adminBundle.admin_assign}" />
+		<ui:param name="resetLabel" value="#{bundle.aon_assign}" />
 		<c:if test="#{controller.to == null}">
 			<ui:include src="/com/code/aon/ui/admin/facelet/appUser/list.xhtml" />
 		</c:if>

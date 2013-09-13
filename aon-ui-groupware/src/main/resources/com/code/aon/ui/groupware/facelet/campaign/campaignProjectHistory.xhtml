@@ -107,7 +107,7 @@
 									</f:facet>
 									<aon:div id="task_status">
 										<aon:outputText value="&#160;" rendered="#{to.task.pending}"
-											alt="#{groupwareBundle.groupware_pending}" title="#{groupwareBundle.groupware_pending}"/>
+											alt="#{bundle.aon_pending}" title="#{bundle.aon_pending}"/>
 										<aon:outputText value="&#160;" rendered="#{to.task.inProgress}"
 											alt="#{groupwareBundle.groupware_in_progress}" title="#{groupwareBundle.groupware_in_progress}"
 											style="padding-left:15px;" styleClass="aon-icon-point-green" />
@@ -122,14 +122,14 @@
 	
 								<aon:column styleClass="aon-width-200">
 									<f:facet name="header">
-										<aon:outputText value="#{groupwareBundle.groupware_group}" />
+										<aon:outputText value="#{bundle.aon_group}" />
 									</f:facet>
 									<aon:outputText value="#{to.task.workGroup.description}" />
 								</aon:column>
 	
 								<aon:column styleClass="aon-width-auto">
 									<f:facet name="header">
-										<aon:outputText value="#{groupwareBundle.groupware_user}" />
+										<aon:outputText value="#{bundle.aon_login_user}" />
 									</f:facet>
 									<aon:outputText value="#{to.task.taskHolder.registry.fullName}" />
 								</aon:column>

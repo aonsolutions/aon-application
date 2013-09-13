@@ -25,17 +25,17 @@
 
 					<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="prev" immediate="true"
-							value="#{groupwareBundle.groupware_process_wizard_previous}"
+							value="#{bundle.aon_previous}"
 							action="#{processWizard.previous}"
 							styleClass="aon-finding-toolbar-item aon-icon-previous"
 							rendered="#{processWizard.previousAvailable}" />
 						<aon:commandButton id="next"
-							value="#{groupwareBundle.groupware_process_wizard_next}"
+							value="#{bundle.aon_next}"
 							action="#{processWizard.next}"
 							rendered="#{processWizard.nextAvailable}"
 							styleClass="aon-finding-toolbar-item aon-icon-next" />
 						<aon:commandButton id="end"
-							value="#{groupwareBundle.groupware_process_wizard_finalice}"
+							value="#{bundle.aon_finalice}"
 							action="#{processWizard.finalice}"
 							disabled="#{processWizard.projectsModel.rowCount == 0}"
 							rendered="#{processWizard.finaliceAvailable}"

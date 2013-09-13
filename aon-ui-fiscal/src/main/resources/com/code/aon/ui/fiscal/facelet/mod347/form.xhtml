@@ -17,11 +17,11 @@
 
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="#{toolbarID}-finish"
-						value="#{fiscalBundle.fiscal_finish}"
+						value="#{bundle.aon_finalice}"
 						actionListener="#{mod347.onFinish}"
 						rendered="#{!mod347.new and !mod347.to.finished}"
 						styleClass="aon-finding-toolbar-item aon-icon-lock"
-						onclick="if (!confirm('#{fiscalBundle.fiscal_finish}?')) return false;"/>
+						onclick="if (!confirm('#{bundle.aon_finalice}?')) return false;"/>
 					<aon:commandButton id="#{toolbarID}-reopen"
 						value="#{fiscalBundle.fiscal_reopen}"
 						actionListener="#{mod347.onReopen}"
@@ -75,7 +75,7 @@
 					</aon:div>
 
 					<aon:outputLabel for="mod347_administration"
-						value="#{fiscalBundle.fiscal_administration}" />
+						value="#{bundle.aon_administration}" />
 					<aon:selectOneMenu id="mod347_administration" value="#{mod347.to.administration}"
 						required="true" disabled="#{mod347.to.finished}">
 						<f:selectItems value="#{configCollections.administrations}" />

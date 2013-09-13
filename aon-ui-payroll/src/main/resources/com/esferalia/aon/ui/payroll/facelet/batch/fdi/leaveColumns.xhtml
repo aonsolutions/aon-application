@@ -23,7 +23,7 @@
 	<c:if test="#{showEnterpriseColumn}"> 
 		<aon:column style="font-size: 0.8em;" styleClass="aon-editDataTable-textColumn aon-width-auto, aon-nowrap">
 			<f:facet name="header">
-				<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
+				<aon:outputText value="#{bundle.aon_company}" />
 			</f:facet>
 			<aon:outputText value="#{to.contractLeaveDetail.contractLeave.contract.workPlace.enterprise.registry.fullName}">
 				<aon:abbreviateConverter maxWidth="50" />

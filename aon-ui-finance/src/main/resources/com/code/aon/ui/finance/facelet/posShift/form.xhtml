@@ -56,7 +56,7 @@
 								value="#{posShift.to.pos.workPlace.description}"
 								rendered="#{!posShift.new}" />
 
-							<aon:outputLabel for="PosShift_pos" value="#{financeBundle.finance_pos}" />
+							<aon:outputLabel for="PosShift_pos" value="#{bundle.aon_module_pos}" />
 							<aon:selectOneMenu id="PosShift_pos"
 								value="#{posShift.to.pos}" required="true"
 								rendered="#{posShift.new}"> 
@@ -222,7 +222,7 @@
 
 				<aon:panel>
 					<f:facet name="header">
-						<aon:outputLabel value="#{financeBundle.finance_invoice_module}" />
+						<aon:outputLabel value="#{bundle.aon_invoices}" />
 					</f:facet>
 					<ui:include src="/com/code/aon/ui/finance/facelet/posShift/finance/tab_grid.xhtml" />
 				</aon:panel>

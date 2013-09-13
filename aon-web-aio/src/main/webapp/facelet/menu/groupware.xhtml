@@ -22,14 +22,14 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-direct-access-panel aon-icon-statistics">
 							<f:facet name="header">
-								<aon:outputText value="#{projectBundle.project_projects}" />
+								<aon:outputText value="#{bundle.aon_module_groupware}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="project"
 										action="project_search"
 										actionListener="#{project.onEditSearch}"
-										value="#{projectBundle.project_projects}" />
+										value="#{bundle.aon_module_groupware}" />
 								</aon:div>
 								<c:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -52,7 +52,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-direct-access-panel aon-icon-task">
 							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.groupware_task_management}" />
+								<aon:outputText value="#{bundle.aon_tasks}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -110,7 +110,7 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-tree-root">
 								<f:facet name="header">
-									<aon:outputText value="#{groupwareBundle.groupware_process_management}" />
+									<aon:outputText value="#{bundle.aon_processes}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<c:if test="#{aonRole.config}">
@@ -118,7 +118,7 @@
 											<aon:commandLink id="groupware_process"
 												action="process_list"
 												actionListener="#{process.onSearch}"
-												value="#{groupwareBundle.groupware_process_module}" />
+												value="#{bundle.aon_processes}" />
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="groupware_processTransitionType"

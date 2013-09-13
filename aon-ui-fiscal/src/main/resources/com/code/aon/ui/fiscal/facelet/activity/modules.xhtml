@@ -22,7 +22,7 @@
 		
 		<aon:column  styleClass="aon-editDataTable-numberColumn aon-width-100">
 			<f:facet name="header">
-				<aon:outputText  value="#{fiscalBundle.fiscal_units}" />		
+				<aon:outputText  value="#{bundle.aon_units}" />		
 			</f:facet>
 			<aon:inputText id="#{prefix}Key_unit" 
 				value="#{module.doubleValue}" size="8"
@@ -49,7 +49,7 @@
 		
 		<aon:column  styleClass="aon-editDataTable-textColumn aon-width-200">
 			<f:facet name="header">
-				<aon:outputText  value="#{fiscalBundle.fiscal_units}" />		
+				<aon:outputText  value="#{bundle.aon_units}" />		
 			</f:facet>
 			<aon:outputText  value="#{module.unit}" />
 		</aon:column>

@@ -29,7 +29,7 @@
 		</aon:div>		
 		
 		<aon:outputLabel for="Alarm_priority"
-			value="#{groupwareBundle.alarm_priority}" />
+			value="#{bundle.aon_priority}" />
 		<aon:selectOneMenu id="Alarm_priority"
 			value="#{alarm.to.priority}" required="true">
 			<f:selectItem itemLabel="-" value="#{null}"/>
@@ -43,7 +43,7 @@
 			value="#{alarm.to.description}" />
 		
 		<c:if test="#{!alarm.new}" >
-			<aon:outputLabel value="#{groupwareBundle.alarm_source}" />
+			<aon:outputLabel value="#{bundle.aon_source}" />
 			<aon:div>
 				<aon:outputText value="#{alarm.to.source}"/>
 				<c:if test="#{alarm.to.sourceId != null}" >
@@ -63,7 +63,7 @@
 			</aon:div>
 	
 			<c:if test="#{alarm.sender != null}" >	
-				<aon:outputLabel value="#{groupwareBundle.groupware_sender}" />
+				<aon:outputLabel value="#{bundle.aon_sender}" />
 				<aon:outputText value="#{alarm.sender}" />
 			</c:if>
 		</c:if>

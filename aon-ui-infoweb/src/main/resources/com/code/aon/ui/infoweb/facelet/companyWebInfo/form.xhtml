@@ -13,7 +13,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{infowebBundle.infoweb_data}" />
+					value="#{bundle.aon_addInfo}" />
 				<ui:param name="controller" value="#{companyWebInfo}" />
 				<ui:param name="skipCancelButton" value="true" />
 				<ui:param name="skipRemoveButton" value="true" />
@@ -29,7 +29,7 @@
 					<aon:inputText id="WebInfo_slogan" 
 						size="64" maxlength="64" value="#{companyWebInfo.to.slogan}" />
 			
-					<aon:outputLabel for="WebInfo_schedule" value="#{infowebBundle.infoweb_data_schedule}" />
+					<aon:outputLabel for="WebInfo_schedule" value="#{bundle.aon_calendar_schedule}" />
 					<aon:inputTextarea id="WebInfo_schedule" styleClass="aon-inputText"
 						cols="90" rows="3" value="#{companyWebInfo.to.schedule}" />
 			

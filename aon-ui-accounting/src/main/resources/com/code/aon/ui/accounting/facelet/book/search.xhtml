@@ -24,7 +24,7 @@
 				<ui:define name="searchContent">
 					<ui:param name="skipSearchButton" value="true" />
 
-					<aon:outputLabel for="accountPeriod" value="#{accountingBundle.accounting_period}" />
+					<aon:outputLabel for="accountPeriod" value="#{bundle.aon_financial_year}" />
 					<aon:selectOneMenu id="accountPeriod" value="#{accountingBook.period}" reRender="journal" ajaxSingle="true">
 						<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 					</aon:selectOneMenu>
@@ -224,7 +224,7 @@
 					<aon:div id="buttonContainer" styleClass="aon-margin-top">
 						<aon:commandButton id="book-validate"
 							styleClass="aon-search-lookup-button"
-							value="#{accountingBundle.accounting_validate}" 
+							value="#{bundle.aon_login_validate}" 
 							actionListener="#{accountingBook.onValidate}"
 							reRender="buttonContainer"
 							disabled="#{accountingBook.valid}">
@@ -233,7 +233,7 @@
 						<aon:htmlCommandLink id="book-report"
 							styleClass="aon-search-lookup-button"
 							style="border-right: 1px solid black;" 
-							value="#{accountingBundle.accounting_generate}" 
+							value="#{bundle.aon_generate}" 
 							target="_blank" actionListener="#{accountingBook.onCreate}"
 							rendered="#{accountingBook.valid}">
 						</aon:htmlCommandLink>

@@ -19,7 +19,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_entry_invoice_module}" />
+					value="#{bundle.aon_invoices}" />
 				<ui:param name="toolbarDescription"
 					value="#{invoiceEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
@@ -127,7 +127,7 @@
 							value="#{bundle.aon_series}/#{bundle.aon_number}" />
 						<aon:outputLabel for="Account_invoice_referenceCode"
 							rendered="#{!invoiceEntry.sales}"
-							value="#{financeBundle.finance_invoice_number}" />
+							value="#{bundle.aon_invoice_number}" />
 						<aon:div>
 							<aon:selectOneMenu id="Account_invoice_series"
 								rendered="#{invoiceEntry.sales}"
@@ -156,7 +156,7 @@
 						</aon:div>
 
 						<aon:outputLabel for="AccountEntry_accountPeriod"
-							value="#{accountingBundle.accounting_period}" />
+							value="#{bundle.aon_financial_year}" />
 						<h:panelGrid columns="2">
 							<aon:selectOneMenu id="AccountEntry_accountPeriod"
 								disabled="#{invoiceEntry.newDetail}"
@@ -213,11 +213,11 @@
 						</aon:div>
 
 						<aon:div>
-							<aon:outputText value="#{customerBundle.customer_customer}"
+							<aon:outputText value="#{bundle.aon_customer}"
 								rendered="#{invoiceEntry.sales}" />
-							<aon:outputText value="#{supplierBundle.supplier_supplier}"
+							<aon:outputText value="#{bundle.aon_supplier}"
 								rendered="#{invoiceEntry.purchase}" />
-							<aon:outputText value="#{financeBundle.finance_creditor}"
+							<aon:outputText value="#{bundle.aon_creditor}"
 								rendered="#{invoiceEntry.expense}" />
 						</aon:div>
 

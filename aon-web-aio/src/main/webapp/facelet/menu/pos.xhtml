@@ -22,7 +22,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-pos aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_pos}"/>
+								<aon:outputText value="#{bundle.aon_module_pos}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -56,7 +56,7 @@
 										<aon:commandLink id="product" 
 											action="product_search"
 											actionListener="#{product.onEditSearch}"
-											value="#{productBundle.product_module}" />
+											value="#{bundle.aon_role_product}" />
 									</aon:div>
 								</c:if>								
 							</aon:div>							
@@ -80,7 +80,7 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="productCategory-pos" 
 										action="productCategory-pos"
-										value="#{productBundle.product_category_module}" />
+										value="#{bundle.aon_categories}" />
 								</aon:div>								
 								<c:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">

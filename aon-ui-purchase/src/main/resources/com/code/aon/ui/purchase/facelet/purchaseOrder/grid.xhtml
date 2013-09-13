@@ -58,7 +58,7 @@
 							
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 								<f:facet name="header">
-									<aon:outputText value="#{productBundle.product_item}" />
+									<aon:outputText value="#{bundle.aon_product}" />
 								</f:facet>
 								<aon:outputText value="#{to.item.product.name}" 
 									styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
@@ -121,7 +121,7 @@
 							<aon:outputText value="&#160;" />
 							<aon:div>
 								<aon:selectBooleanCheckbox id="itemReturn" value="#{purchaseOrder.params.itemReturn}" />
-								<aon:outputLabel for="itemReturn" value="#{purchaseBundle.purchase_proposal_item_return}" />
+								<aon:outputLabel for="itemReturn" value="#{bundle.aon_return}" />
 							</aon:div>
 							
 							<aon:outputText value="&#160;" />

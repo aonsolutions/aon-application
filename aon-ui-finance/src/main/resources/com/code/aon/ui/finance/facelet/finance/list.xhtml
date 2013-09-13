@@ -115,7 +115,7 @@
 						<aon:column alias="Finance.registryName"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText	value="#{(finance.payment) ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
+								<aon:outputText	value="#{(finance.payment) ? (bundle.aon_creditor) : (financeBundle.finance_debtor)}" />
 							</f:facet>
 							<aon:outputText value="#{to.registryName}" />
 						</aon:column>

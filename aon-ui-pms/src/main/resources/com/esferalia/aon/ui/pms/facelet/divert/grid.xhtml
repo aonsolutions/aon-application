@@ -34,7 +34,7 @@
 							styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
 								<aon:outputLabel 
-									value="#{pmsBundle.pms_reservation}" />
+									value="#{bundle.aon_reservation}" />
 							</f:facet>
 							<aon:div rendered="#{formList}" >
 								<aon:outputText value="#{pmsBundle.pms_reservation_id}:" styleClass="aon-italic" />
@@ -83,7 +83,7 @@
 						<aon:column alias="ProjectReservationDivert.requestHotel.workPlace.description"
 							styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
-								<aon:outputLabel value="#{pmsBundle.pms_source}" />
+								<aon:outputLabel value="#{bundle.aon_source}" />
 							</f:facet>
 							<aon:outputText value="#{to.requestHotel.workPlace.description}" />
 						</aon:column>

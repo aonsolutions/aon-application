@@ -35,10 +35,10 @@
 							accesskey="#{bundle.aon_key_print}">
 						</aon:htmlCommandLink>
 						<aon:htmlCommandLink id="validate-report-html"
-							value="#{accountingBundle.accounting_validate}" target="_blank" 
+							value="#{bundle.aon_login_validate}" target="_blank" 
 							actionListener="#{reportsLauncher.onValidate}"
 							rendered="#{reportsLauncher.aonFile.size > 0 and reportsLauncher.pdfEnabled}"
-							title="#{accountingBundle.accounting_validate}"
+							title="#{bundle.aon_login_validate}"
 							styleClass="aon-finding-toolbar-item aon-icon-version-chekin"
 							accesskey="#{bundle.aon_key_print}">
 						</aon:htmlCommandLink>
@@ -52,7 +52,7 @@
 					<ui:param name="skipSearchButton" value="true" />
 
 					<aon:outputLabel for="reportsLauncher_accountPeriod"
-						value="#{accountingBundle.accounting_period}" />
+						value="#{bundle.aon_financial_year}" />
 					<aon:selectOneMenu required="true" id="reportsLauncher_accountPeriod"
 						value="#{reportsLauncher.params.period}">
 						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />

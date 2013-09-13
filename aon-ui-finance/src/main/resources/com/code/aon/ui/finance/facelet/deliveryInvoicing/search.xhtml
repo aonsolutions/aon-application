@@ -23,7 +23,7 @@
 						type="reset" ajaxSingle="true"
 						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 					<aon:commandButton id="deliveryInvoicing"
-						value="#{financeBundle.finance_invoicing}"
+						value="#{bundle.aon_key_invoice_description}"
 						actionListener="#{deliveryInvoicing.onShowPanel}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept" />
 				</ui:define>
@@ -158,7 +158,7 @@
 			<ui:param name="progressBarBean" value="#{deliveryInvoicing}" />
 			<ui:param name="panelVisible" value="#{deliveryInvoicing.progressionPanelVisible}"/>
 			<ui:param name="initialMessage" value="#{financeBundle.finance_invoicing_initial}"/>
-			<ui:param name="startMessage" value="#{financeBundle.finance_invoicing_start}"/>
+			<ui:param name="startMessage" value="#{bundle.aon_confirm}"/>
 			<ui:param name="completeMessage" value="#{financeBundle.finance_invoicing_complete}"/>
 			<aon:methodParam name="startActionListener" default="#{deliveryInvoicing.onInvoice}" type="actionListener" />
 			<aon:methodParam name="closeActionListener" default="#{deliveryInvoicing.onClosePanel}" type="actionListener" />

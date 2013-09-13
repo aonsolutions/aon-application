@@ -57,17 +57,17 @@
 
 					</c:if>
 					<c:if test="#{commercialStat.controlType==1}">
-						<aon:outputText value="#{statBundle.stat_target}" />
+						<aon:outputText value="#{bundle.aon_target}" />
 						<aon:outputText value="#{commercialStat.target.registry.fullName}"></aon:outputText>
 
 					</c:if>
 					<c:if test="#{commercialStat.controlType==2}">
-						<aon:outputText value="#{statBundle.stat_product}" />
+						<aon:outputText value="#{bundle.aon_product}" />
 						<aon:outputText value="#{commercialStat.product.name}"></aon:outputText>
 
 					</c:if>
 
-					<aon:outputText value="#{statBundle.stat_period}" />
+					<aon:outputText value="#{bundle.aon_period}" />
 					<aon:div style="text-align:center;font-weight:bold ">
 						<aon:outputText value="#{commercialStat.params.fromDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -113,7 +113,7 @@
 						<c:if test="#{commercialStat.controlType==1}">
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{sellerBundle.seller_seller}" />
+									<aon:outputText value="#{bundle.aon_module_commercial}" />
 								</f:facet>
 								<aon:outputText value="#{to.seller.registry.fullName}" />
 							</aon:column>
@@ -121,7 +121,7 @@
 						<c:if test="#{commercialStat.controlType==0}">
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{commercialBundle.commercial_target}" />
+									<aon:outputText value="#{bundle.aon_target}" />
 								</f:facet>
 								<aon:outputText value="#{to.project.target.registry.fullName}" />
 							</aon:column>
@@ -130,7 +130,7 @@
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText
-									value="#{commercialBundle.commercial_tracking_activity}" />
+									value="#{bundle.aon_activity}" />
 							</f:facet>
 							<aon:outputText value="#{to.activity.name}" />
 						</aon:column>

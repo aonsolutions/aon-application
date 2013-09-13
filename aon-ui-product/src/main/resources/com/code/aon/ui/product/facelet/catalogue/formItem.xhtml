@@ -37,7 +37,7 @@
 				<aon:column alias="CatalogueItem.item.product.code" 
 					styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
-						<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
+						<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
 					</f:facet>
 					<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >

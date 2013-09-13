@@ -91,7 +91,7 @@
 					</aon:div>
 
 					<aon:outputLabel for="workgroup" rendered="#{task.monitor}" 
-						value="#{groupwareBundle.groupware_group}" />
+						value="#{bundle.aon_group}" />
 					<aon:selectOneMenu id="workgroup" rendered="#{task.monitor}"
 						disabled="#{taskSearchControllerListener.taskHolder != null}"
 						reRender="workgroup,user"
@@ -102,7 +102,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputText rendered="#{task.monitor}" 
-						value="#{groupwareBundle.groupware_user}" />
+						value="#{bundle.aon_login_user}" />
 					<aon:div id="user" rendered="#{task.monitor}">
 						<aon:selectOneMenu rendered="#{taskSearchControllerListener.workGroup == null}"
 							value="#{taskSearchControllerListener.taskHolder}">
@@ -165,7 +165,7 @@
 					<aon:outputText value="#{bundle.aon_status}"/>
 					<aon:div>
 						<aon:selectBooleanCheckbox id="st0" value="#{taskSearchControllerListener.statusPending}" />
-						<aon:outputLabel for="st0" value="#{groupwareBundle.groupware_pending}" />
+						<aon:outputLabel for="st0" value="#{bundle.aon_pending}" />
 						
 						<aon:selectBooleanCheckbox id="st1" value="#{taskSearchControllerListener.statusInProgress}" />
 						<aon:outputLabel for="st1" value="#{groupwareBundle.groupware_in_progress}" />
@@ -177,7 +177,7 @@
 						<aon:outputLabel for="st3" value="#{groupwareBundle.groupware_deleted}" />
 					</aon:div>
 					
-					<aon:outputText value="#{groupwareBundle.alarm_priority}"/>
+					<aon:outputText value="#{bundle.aon_priority}"/>
 					<aon:div>
 						<aon:selectBooleanCheckbox id="pr0" value="#{taskSearchControllerListener.highPriority}" />
 						<aon:outputLabel for="pr0" value="#{groupwareBundle.groupware_high}" />

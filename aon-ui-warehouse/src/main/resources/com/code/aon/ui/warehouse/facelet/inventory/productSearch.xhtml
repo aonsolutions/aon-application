@@ -22,12 +22,12 @@
 					value="#{inventoryDetail.code}" />
 				
 				<aon:outputLabel for="Inventory_productDescription"
-					value="#{productBundle.product_item}" />
+					value="#{bundle.aon_product}" />
 				<aon:inputText id="Inventory_productDescription" size="80"
 					value="#{inventoryDetail.description}" />
 			
 				<aon:outputLabel for="Inventory_category"
-			  		value="#{productBundle.product_category}"  />
+			  		value="#{bundle.aon_category}"  />
 				<aon:selectOneMenu id="Inventory_category" 
 					value="#{inventoryDetail.category}">
 					<f:selectItem itemLabel="-" value="#{null}"/>

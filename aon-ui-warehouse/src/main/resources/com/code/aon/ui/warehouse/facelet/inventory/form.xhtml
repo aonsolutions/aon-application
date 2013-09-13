@@ -71,7 +71,7 @@
 								type="both" timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
 						
-						<aon:outputText value="#{warehouseBundle.warehouse_warehouse}" />
+						<aon:outputText value="#{bundle.aon_module_warehouse}" />
 						<aon:outputText value="#{inventory.to.warehouse.name}"/>
 
 						<aon:outputText value="#{bundle.aon_description}" />
@@ -103,7 +103,7 @@
 							<aon:column alias="InventoryDetail.item.product.name"
 								styleClass="aon-editDataTable-textColumn aon-width-auto">
 								<f:facet name="header">
-									<aon:outputText value="#{productBundle.product_item}" />
+									<aon:outputText value="#{bundle.aon_product}" />
 								</f:facet>
 								<aon:div>
 									<aon:outputText value="#{to.item.product.name} #{to.item.detail}" />

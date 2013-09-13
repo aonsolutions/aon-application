@@ -9,7 +9,7 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookupAudit.xhtml" >
 		<ui:param name="lookupBean" value="#{htmlTemplateLookup}" />
 		<ui:param name="controller" value="#{htmlTemplate}" />
-		<aon:valueParam name="lookupLabel" default="#{marketingBundle.marketing_template}"/>
+		<aon:valueParam name="lookupLabel" default="#{bundle.aon_template}"/>
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}"/>
 		<ui:param name="lookupInputSuggestExpression" value="#{lto.description} (#{lto.id})"/>		
 		<ui:param name="searchButtonTitle" value="#{marketingBundle.marketing_template_selection}" />

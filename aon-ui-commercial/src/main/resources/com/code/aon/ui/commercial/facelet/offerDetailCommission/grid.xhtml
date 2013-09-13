@@ -34,7 +34,7 @@
 
 							<aon:column style="aon-width-100 aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{sellerBundle.seller_seller}" />
+									<aon:outputText value="#{bundle.aon_module_commercial}" />
 								</f:facet>
 								<aon:outputText value="#{to.offer.seller.registry.fullName}">
 									<aon:abbreviateConverter maxWidth="50" />
@@ -45,7 +45,7 @@
 
 							<aon:column style="aon-width-200 aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{commercialBundle.commercial_offer}" />
+									<aon:outputText value="#{bundle.aon_invoice_offer}" />
 								</f:facet>
 								<aon:div style="vertical-align: bottom;">
 									<aon:outputText value="#{to.offer.referenceCode}"
@@ -73,7 +73,7 @@
 
 							<aon:column style="aon-width-200 aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{productBundle.product_item}" />
+									<aon:outputText value="#{bundle.aon_product}" />
 								</f:facet>
 								<aon:div>
 									<aon:outputText value="#{to.offerDetail.description}">

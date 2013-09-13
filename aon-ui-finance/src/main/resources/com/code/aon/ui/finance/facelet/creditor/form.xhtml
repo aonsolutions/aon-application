@@ -88,7 +88,7 @@
 							</ui:include>
 						</aon:panelTab>
 	
-						<aon:panelTab id="media" label="#{registryBundle.registry_media_module}">
+						<aon:panelTab id="media" label="#{bundle.aon_contacts}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
 								<ui:param name="controller" value="#{creditorMedia}" />
 							</ui:include>
@@ -130,7 +130,7 @@
 
 						<c:if test="#{aonConfiguration.bean.creditor.showAddInfo and creditorAddInfo.model.rowCount > 0}">
 							<aon:panelTab id="addInfo"
-								label="#{registryBundle.registry_addInfo}">
+								label="#{bundle.aon_addInfo}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
 									<ui:param name="controller" value="#{creditorAddInfo}" />
 									<ui:param name="removeButtonReRender" value="creditorTab" />

@@ -31,7 +31,7 @@
 						
 						<c:if test="#{pmsCollections.currentUserHotelsCount > 0}">
 							<aon:outputLabel for="ProjectReservation_hotel_id"
-								value="#{pmsBundle.pms_hotel}" />
+								value="#{bundle.aon_module_hotel}" />
 							<aon:selectOneMenu id="ProjectReservation_hotel_id" ajaxSingle="true"
 								value="#{reservationIO.hotel}" >
 								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
@@ -94,7 +94,7 @@
 						
 						<aon:outputText value="#{pmsBundle.pms_order_by}"/>
 						<aon:selectOneRadio value="#{reservationIO.shortOption}" layout="pageDirection">
-							<f:selectItem itemLabel="#{pmsBundle.pms_reservation}" itemValue="0" />
+							<f:selectItem itemLabel="#{bundle.aon_reservation}" itemValue="0" />
 							<f:selectItem itemLabel="#{pmsBundle.pms_guest}" itemValue="1" />
 							<f:selectItem itemLabel="#{pmsBundle.pms_agency} + #{pmsBundle.pms_guest}" itemValue="2" />
 							<f:selectItem itemLabel="#{pmsBundle.pms_agency}" itemValue="3" />

@@ -18,7 +18,7 @@
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-130">
 		<f:facet name="header">
-			<aon:outputText value="#{financeBundle.finance_invoice_number}" />
+			<aon:outputText value="#{bundle.aon_invoice_number}" />
 		</f:facet>
 		<aon:outputText value="#{to.referenceCode}" />
 	</aon:column>
@@ -34,7 +34,7 @@
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 		<f:facet name="header">
-			<aon:outputText value="#{customerBundle.customer_customer}" />
+			<aon:outputText value="#{bundle.aon_customer}" />
 		</f:facet>
 		<aon:outputText value="#{to.registryName}" />
 	</aon:column>
@@ -48,9 +48,9 @@
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 		<f:facet name="header">
-			<aon:outputText value="#{pmsBundle.pms_source}" />
+			<aon:outputText value="#{bundle.aon_source}" />
 		</f:facet>
-		<aon:outputText value="#{pmsBundle.pms_reservation}" rendered="#{!to.service and !to.advance}" />
+		<aon:outputText value="#{bundle.aon_reservation}" rendered="#{!to.service and !to.advance}" />
 		<aon:outputText value="#{pmsBundle.pms_service}" rendered="#{to.service}" />
 		<aon:outputText value="#{pmsBundle.pms_advance}" rendered="#{to.advance}" />
 		<c:if test="#{showGoToReservation}">

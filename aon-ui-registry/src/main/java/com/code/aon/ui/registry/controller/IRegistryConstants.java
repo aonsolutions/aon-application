@@ -19,8 +19,6 @@ public interface IRegistryConstants {
 	
 	String REGISTRY_DIR_STAFF = "registry_dir_staff";
 	
-	String REGISTRY_FAX = "registry_fax";
-	
 	String REGISTRY_DOCUMENT_ERROR = "registry_document_error";
 	
 	String INVALID_EMAIL = "registry_invalid_email";

@@ -28,7 +28,7 @@
 							rendered="#{salesDetail.model.rowCount > 0 and salesDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 						</aon:commandButton>									
-						<aon:htmlCommandLink id="sales-report" value="#{salesBundle.sales_sales}"
+						<aon:htmlCommandLink id="sales-report" value="#{bundle.aon_invoice_sales}"
 							target="_new" rendered="#{!sales.new and salesDetail.model.rowCount > 0}"
 							action="#{report.onExecute}"
 							disabled="#{salesDetail.to != null}"
@@ -41,7 +41,7 @@
 					<ui:define name="moreMenuContent">
 						<c:if test="#{aonRole.warehouseOperator}">
 							<aon:menuItem id="delivery"
-								value="#{salesBundle.sales_to_delivery}"
+								value="#{bundle.aon_invoice_delivery}"
 								immediate="#{true}" rendered="#{sales.pending and salesDetail.model.rowCount > 0}"
 								iconClass="aon-icon-open-popup" 
 								actionListener="#{sales.onDeliveryShow}"
@@ -62,7 +62,7 @@
 						</aon:menuItem>
 						<c:if test="#{aonRole.financeOperator}">
 							<aon:menuItem id="invoice"
-								value="#{salesBundle.sales_to_invoice}"
+								value="#{bundle.aon_key_invoice_description}"
 								immediate="#{true}" rendered="#{sales.pending and !sales.inDelivery and salesDetail.model.rowCount > 0}"
 								iconClass="aon-icon-favorite"
 								actionListener="#{sales.onInvoiceShow}"
@@ -204,7 +204,7 @@
 						disabled="true" size="10" />
 
 					<aon:outputLabel for="Sales_address"
-						value="#{registryBundle.registry_address}" />
+						value="#{bundle.aon_address}" />
 					<aon:div id="SalesAddress">
 						<aon:selectOneMenu id="Sales_address" 
 							value="#{sales.to.shippingAddress}" rendered="#{sales.addressCount > 0}"
@@ -247,8 +247,8 @@
 						value="#{sales.defaultPayMethod}"
 						disabled="#{!sales.pending}"
 						reRender="payMethodDiv">
-						<f:selectItem itemLabel="#{salesBundle.sales_habitual}" itemValue="#{true}" />
-						<f:selectItem itemLabel="#{salesBundle.sales_to_specify}" itemValue="#{false}" />
+						<f:selectItem itemLabel="#{bundle.aon_habitual}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{bundle.aon_to_specify}" itemValue="#{false}" />
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="Sales_total" 

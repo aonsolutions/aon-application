@@ -54,14 +54,14 @@
 							</ui:include>
 						</aon:panelTab>
 
-						<aon:panelTab id="sellerMedia" label="#{registryBundle.registry_media_module}">
+						<aon:panelTab id="sellerMedia" label="#{bundle.aon_contacts}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
 								<ui:param name="controller" value="#{sellerMedia}" />
 							</ui:include>
 						</aon:panelTab>
 
 						<c:if test="#{aonConfiguration.bean.target.showAddInfo and sellerAddInfo.model.rowCount > 0}">
-							<aon:panelTab id="addInfo" label="#{registryBundle.registry_addInfo}">
+							<aon:panelTab id="addInfo" label="#{bundle.aon_addInfo}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
 									<ui:param name="controller" value="#{sellerAddInfo}" />
 									<ui:param name="removeButtonReRender" value="sellerTab" />

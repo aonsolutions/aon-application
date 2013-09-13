@@ -26,7 +26,7 @@
 	</ui:include>	
 
 	<aon:outputLabel for="Company_address"
-		value="#{registryBundle.registry_address}" />
+		value="#{bundle.aon_address}" />
 	<aon:div>
 		<aon:selectOneMenu id="Company_streetType" required="true"
 			label="#{registryBundle.registry_street_type}"
@@ -60,13 +60,13 @@
 		valueChangeListener="#{controller.addressChanged}" size="30" />
 
 	<aon:outputLabel for="Company_address_zip"
-		value="#{registryBundle.registry_zip}" />
+		value="#{bundle.aon_postal_code}" />
 	<aon:inputText id="Company_address_zip"
 		value="#{controller.mainAddress.zip}" maxlength="16"
 		valueChangeListener="#{controller.addressChanged}" size="16" />
 
 	<aon:outputLabel for="Company_address_geozone"
-		value="#{registryBundle.registry_geozone}" />
+		value="#{bundle.aon_state}" />
 	<aon:selectOneMenu id="Company_address_geozone"
 		value="#{controller.mainAddress.geozone}"
 		styleClass="aon-form-selectOneMenu-field"
@@ -87,12 +87,12 @@
 	</c:if>
 
 	<aon:outputLabel for="Company_telephone"
-		value="#{registryBundle.registry_phone}" />
+		value="#{bundle.aon_phone}" />
 	<aon:inputText id="Company_telephone" value="#{controller.phone.value}"
 		valueChangeListener="#{controller.phoneChanged}" maxlength="64" size="15" />
 
 	<aon:outputLabel for="Company_fax"
-		value="#{registryBundle.registry_fax}" />
+		value="#{bundle.aon_fax}" />
 	<aon:inputText id="Company_fax" value="#{controller.fax.value}"
 		valueChangeListener="#{controller.faxChanged}" maxlength="64" size="15" />
 
@@ -103,7 +103,7 @@
 		valueChangeListener="#{controller.emailChanged}" size="45" />
 
 	<aon:outputLabel for="Company_web"
-		value="#{registryBundle.registry_web}" />
+		value="#{bundle.aon_web}" />
 	<aon:inputText id="Company_web" value="#{controller.web.value}"
 		onblur="toLowerCase(this);" maxlength="64"
 		valueChangeListener="#{controller.webChanged}" size="45" />

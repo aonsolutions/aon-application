@@ -52,13 +52,13 @@
 						disabled="#{!fiscalBatch.new}"
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 					
-					<aon:outputLabel for="FiscalBatch_type" value="#{fiscalBundle.fiscal_model}" />
+					<aon:outputLabel for="FiscalBatch_type" value="#{bundle.aon_model}" />
 					<aon:selectOneMenu id="FiscalBatch_type" value="#{fiscalBatch.to.type}" 
 						required="true" disabled="#{!fiscalBatch.new}">
 						<f:selectItems value="#{fiscalCollections.fiscalBatchTypes}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="FiscalBatch_administration" value="#{fiscalBundle.fiscal_administration}" />
+					<aon:outputLabel for="FiscalBatch_administration" value="#{bundle.aon_administration}" />
 					<aon:selectOneMenu id="FiscalBatch_administration" value="#{fiscalBatch.to.administration}" 
 						required="true" disabled="#{!fiscalBatch.new}">
 						<f:selectItems value="#{configCollections.administrations}" />

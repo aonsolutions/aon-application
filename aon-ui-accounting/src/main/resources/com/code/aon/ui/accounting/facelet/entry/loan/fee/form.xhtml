@@ -46,7 +46,7 @@
 				<aon:panelGrid columns="2" style="width: 70%;">
 
 					<aon:outputLabel for="AccountEntry_accountPeriod"
-						value="#{accountingBundle.accounting_period}" />
+						value="#{bundle.aon_financial_year}" />
 					<aon:selectOneMenu id="AccountEntry_accountPeriod"
 						value="#{loanFeeEntry.entry.feePeriod}">
 						<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
@@ -100,7 +100,7 @@
 					</aon:div>
 
 					<aon:outputLabel for="Account_expenses"
-						value="#{accountingBundle.accounting_expenses}"/>
+						value="#{bundle.aon_expenses}"/>
 					<aon:div>
 						<aon:inputText id="Account_expenses" required="true"
 							focus="save" reRender="Account_fee,loanFeeAmount"
@@ -181,7 +181,7 @@
 									<f:convertNumber pattern="#,##0.00" />
 								</aon:outputText>
 	
-								<aon:outputText value="#{accountingBundle.accounting_expenses}" />
+								<aon:outputText value="#{bundle.aon_expenses}" />
 								<aon:outputText value="#{loanFeeEntry.entry.loan.expenses}">
 									<f:convertNumber pattern="#,##0.00" />
 								</aon:outputText>

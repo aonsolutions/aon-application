@@ -504,21 +504,21 @@
 											<f:facet name="header">
 												<aon:outputText value="#{bundle.aon_type}" />
 											</f:facet>
-											<aon:outputText value="#{financeBundle.finance_bank_statement_payment}"
+											<aon:outputText value="#{bundle.aon_contact_category}"
 												rendered="#{to.payment and (formList or controller.to.recorded)}" />
 											<aon:outputText value="#{financeBundle.finance_bank_statement_charge}"
 												rendered="#{!to.payment and (formList or controller.to.recorded)}" />
 											<aon:selectOneMenu id="BankStatement_payment"
 												value="#{controller.to.payment}"
 												rendered="#{formEdit and !controller.to.recorded}">
-												<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_payment}" itemValue="#{true}" />
+												<f:selectItem itemLabel="#{bundle.aon_contact_category}" itemValue="#{true}" />
 												<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_charge}" itemValue="#{false}" />
 											</aon:selectOneMenu>
 											<f:facet name="footer">
 												<aon:selectOneMenu id="BankStatement_payment-New"
 													value="#{controller.to.payment}"
 													rendered="#{formNew}">
-													<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_payment}" itemValue="#{true}" />
+													<f:selectItem itemLabel="#{bundle.aon_contact_category}" itemValue="#{true}" />
 													<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_charge}" itemValue="#{false}" />
 												</aon:selectOneMenu>
 											</f:facet>
@@ -622,7 +622,7 @@
 
 											<aon:column colspan="3"	
 												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
-												<aon:outputText value="-- #{financeBundle.finance_link_transfer} --"
+												<aon:outputText value="-- #{bundle.aon_link_transfer} --"
 													rendered="#{statementLink.linkedBankStatementLink != null}" />
 												<aon:outputText value="&#160;" />
 											</aon:column>

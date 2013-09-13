@@ -12,7 +12,7 @@
 		<ui:param name="lookupInputOnSubmit" value="toUpperCase(this);"/>		
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.fullName}"/>
 		<ui:param name="lookupInputSuggestExpression" value="#{lto.fullName}#{(empty lto.barcode)?'':' ('}#{lto.barcode}#{(empty lto.barcode)?'':')'}"/>
-		<ui:param name="lookupLabel" value="#{productBundle.product_item}" />
+		<ui:param name="lookupLabel" value="#{bundle.aon_product}" />
 		<ui:param name="controller" value="#{item}" />
 		<ui:param name="searchButtonTitle" value="#{productBundle.product_itemDetail_selection}" />
 		<ui:param name="newButtonTitle" value="#{productBundle.product_item_new}" />

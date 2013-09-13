@@ -35,7 +35,7 @@
 
 						<aon:commandButton id="invoiceRegistryData" immediate="true"
 							styleClass="aon-finding-toolbar-item aon-icon-edit-add-user"
-							value="#{customerBundle.customer_customer}"
+							value="#{bundle.aon_customer}"
 							ajaxSingle="true">
 							<f:setPropertyActionListener target="#{posInvoice.showRegistryDataWindow}"
 								value="#{true}" />
@@ -70,7 +70,7 @@
 
 							<c:if test="#{!posInvoice.new}">
 								<aon:outputText value="&#160;" />
-								<aon:outputLabel value="#{financeBundle.finance_invoice_number}:" />
+								<aon:outputLabel value="#{bundle.aon_invoice_number}:" />
 								<aon:panelGrid styleClass="aon-width-all" columns="2"
 									columnClasses="aon-width-200,aon-width-auto">
 									<aon:outputText value="#{posInvoice.to.referenceCode}" />
@@ -84,7 +84,7 @@
 
 								<c:if test="#{posInvoice.to.registryName != posInvoice.defaultCustomer.registry.name}">
 									<aon:outputText value="&#160;" />
-									<aon:outputLabel value="#{customerBundle.customer_customer}:" />
+									<aon:outputLabel value="#{bundle.aon_customer}:" />
 									<aon:div>
 										<aon:outputText value="#{posInvoice.to.registryName}">
 											<aon:abbreviateConverter maxWidth="30" />
@@ -290,7 +290,7 @@
 								accesskey="8" />
 							<aon:confirmButton id="returnTicket" immediate="true"
 								styleClass="aon-big-commandButton aon-width-110"
-								value="9 #{financeBundle.finance_return}"
+								value="9 #{bundle.aon_return}"
 								title="Alt+{Mayús}+9"
 								disabled="#{posInvoiceDetail.checkedCount == 0}"
 								confirmTitle="#{bundle.aon_confirm_title}"

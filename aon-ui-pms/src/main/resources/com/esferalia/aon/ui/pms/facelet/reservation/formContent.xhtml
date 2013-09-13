@@ -8,7 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:outputLabel for="ProjectReservation_hotel_id" value="#{pmsBundle.pms_hotel}" />
+	<aon:outputLabel for="ProjectReservation_hotel_id" value="#{bundle.aon_module_hotel}" />
 	<aon:div rendered="#{!reservation.new}">
 		<aon:outputText	value="#{reservation.to.hotel.workPlace.description}" styleClass="aon-bold" />
 		<aon:outputText value="#{pmsBundle.pms_reservation_divert_requested}" 
@@ -18,7 +18,7 @@
 			<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-info" />
 			<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="auto">
 				<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
-					<aon:outputText	value="#{pmsBundle.pms_source}:" styleClass="aon-margin-left" />
+					<aon:outputText	value="#{bundle.aon_source}:" styleClass="aon-margin-left" />
 					<aon:outputText	value="#{reservation.to.hotelReservation.workPlace.description}" />
 				</aon:panelGrid>
 			</rich:toolTip>
@@ -209,7 +209,7 @@
 	<aon:div id="BookingHolderLabelDiv">
 		<aon:outputLabel for="ProjectReservation_agency" value="#{pmsBundle.pms_agency}"
 			 rendered="#{reservation.reservationPermission.agencyVisible}" />
-		<aon:outputLabel for="ProjectReservation_company" value="#{pmsBundle.pms_company}"
+		<aon:outputLabel for="ProjectReservation_company" value="#{bundle.aon_company}"
 			rendered="#{reservation.reservationPermission.companyVisible}" />
 	</aon:div>
 
@@ -315,11 +315,11 @@
 		<f:selectItems value="#{pmsCollections.tariffs}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel for="ProjectReservation_comments" value="#{bundle.aon_remark} #{pmsBundle.pms_hotel}" />
+	<aon:outputLabel for="ProjectReservation_comments" value="#{bundle.aon_remark} #{bundle.aon_module_hotel}" />
 	<aon:inputTextarea id="ProjectReservation_comments" value="#{reservation.to.comments}"
 		cols="80" rows="5" disabled="#{!reservation.new and !reservation.reservationPermission.commentsEditable}" />
 
-	<aon:outputLabel for="ProjectReservation_remarks" value="#{bundle.aon_remark} #{pmsBundle.pms_reservation}"
+	<aon:outputLabel for="ProjectReservation_remarks" value="#{bundle.aon_remark} #{bundle.aon_reservation}"
 		rendered="#{!reservation.new}" />
 	<aon:inputTextarea id="ProjectReservation_remarks" value="#{reservation.to.remarks}"
 		cols="80" rows="5" disabled="#{!reservation.reservationPermission.remarksEditable}"

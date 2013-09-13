@@ -15,7 +15,7 @@
 		<f:selectItems value="#{registryCollections.streetTypes}" />
 	</aon:selectOneMenu>		
 	<aon:outputLabel for="#{searchController.preffix}addresses_address"
-		value="#{registryBundle.registry_address}" />
+		value="#{bundle.aon_address}" />
 	<aon:inputText id="#{searchController.preffix}addresses_address" size="60"
 		valueChangeListener="#{controller.addExpression}" />
 	<aon:outputLabel for="#{searchController.preffix}addresses_number"
@@ -23,7 +23,7 @@
 	<aon:inputText id="#{searchController.preffix}addresses_number" size="12"
 		valueChangeListener="#{controller.addExpression}" />
 	<aon:outputLabel for="#{searchController.preffix}addresses_zip"
-		value="#{registryBundle.registry_zip}" />
+		value="#{bundle.aon_postal_code}" />
 	<aon:inputText id="#{searchController.preffix}addresses_zip" size="12"
 		valueChangeListener="#{controller.addExpression}" />
 	<aon:outputLabel for="#{searchController.preffix}addresses_city"
@@ -31,7 +31,7 @@
 	<aon:inputText id="#{searchController.preffix}addresses_city" size="60"
 		valueChangeListener="#{controller.addExpression}" />
 	<aon:outputLabel for="#{searchController.preffix}addresses_geozone_id"
-		value="#{registryBundle.registry_geozone}" />
+		value="#{bundle.aon_state}" />
 	<aon:div id="geoZoneDiv">
 		<a4j:region>
 			<a4j:repeat value="#{searchController.geoZones}" rowKeyVar="index" var="geoZone">

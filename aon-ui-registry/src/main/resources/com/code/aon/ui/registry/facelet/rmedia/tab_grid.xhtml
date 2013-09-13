@@ -53,7 +53,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryMedia_address" value="#{registryBundle.registry_address}" />
+					<aon:outputLabel for="RegistryMedia_address" value="#{bundle.aon_address}" />
 				</f:facet>
 				<aon:outputText value="#{to.address.shortAddress}" rendered="#{formList}" />
 				<aon:selectOneMenu id="RegistryMedia_address" value="#{controller.to.address}" rendered="#{formEdit}">
@@ -99,7 +99,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryMedia_commercial" value="#{registryBundle.registry_commercial}" />
+					<aon:outputLabel for="RegistryMedia_commercial" value="#{bundle.aon_module_commercial}" />
 				</f:facet>
 				<aon:div rendered="#{formList}" styleClass="#{to.commercial?'aon-icon-checked':'aon-icon-check'}">
 					<aon:outputText value="&#160;" />

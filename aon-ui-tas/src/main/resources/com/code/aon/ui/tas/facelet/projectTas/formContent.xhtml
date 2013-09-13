@@ -89,13 +89,13 @@
 								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{bundle.aon_undefined}"
 									rendered="#{controller.to.target.registry.document == null or controller.to.target.registry.document == ''}" />
 								
-								<aon:outputText styleClass="aon-margin-left" value="#{registryBundle.registry_phone}:" />
+								<aon:outputText styleClass="aon-margin-left" value="#{bundle.aon_phone}:" />
 								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{controller.to.target.registry.phone.value}"
 									rendered="#{controller.to.target.registry.phone.value != null}" />
 								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{bundle.aon_undefined}"
 									rendered="#{controller.to.target.registry.phone.value == null}" />
 								
-								<aon:outputText styleClass="aon-margin-left" value="#{registryBundle.registry_cellular}:" />
+								<aon:outputText styleClass="aon-margin-left" value="#{bundle.aon_cellular}:" />
 								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{controller.to.target.registry.cellular.value}"
 									rendered="#{controller.to.target.registry.cellular.value != null}" />
 								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{bundle.aon_undefined}"

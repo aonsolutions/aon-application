@@ -48,7 +48,7 @@
 					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" 
 						value="#{posFinanceSearch.workPlace.description}" />
 					<c:if test="#{posFinanceSearch.pos.id != null}">
-						<aon:outputText value="#{financeBundle.finance_pos}:" />
+						<aon:outputText value="#{bundle.aon_module_pos}:" />
 						<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" 
 							value="#{posFinanceSearch.pos.name}" />
 					</c:if>
@@ -99,7 +99,7 @@
 							<aon:column alias="Finance.invoice&lt;posShift.pos.name" 
 								styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{financeBundle.finance_pos}" />
+									<aon:outputText value="#{bundle.aon_module_pos}" />
 								</f:facet>
 								<aon:outputText value="#{to.invoice.posShift.pos.name}"/>
 							</aon:column>
@@ -118,7 +118,7 @@
 						<aon:column alias="Finance.invoice&lt;referenceCode"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_invoice_number}" />
+								<aon:outputText value="#{bundle.aon_invoice_number}" />
 							</f:facet>
 							<aon:outputText styleClass="aon-nowrap" 
 								value="#{to.invoice.referenceCode}" />
@@ -126,7 +126,7 @@
 
 						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{customerBundle.customer_customer}" />
+								<aon:outputText value="#{bundle.aon_customer}" />
 							</f:facet>
 							<aon:outputText value="#{to.invoice.registryName}" />
 						</aon:column>
@@ -134,11 +134,11 @@
 						<c:if test="#{domainSwitcher.type == 'HOTEL'}">
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{financeBundle.finance_source}" />
+									<aon:outputText value="#{bundle.aon_source}" />
 								</f:facet>
 								<aon:outputText value="#{financeBundle.finance_direct}" 
 									rendered="#{to.invoice.project.id == null and !to.invoice.service and !to.invoice.advance}" />
-								<aon:outputText value="#{financeBundle.finance_reservation}" 
+								<aon:outputText value="#{bundle.aon_reservation}" 
 									rendered="#{to.invoice.project.id != null and !to.invoice.service and !to.invoice.advance}" />
 								<aon:outputText value="#{financeBundle.finance_service}" 
 									rendered="#{to.invoice.service}" />

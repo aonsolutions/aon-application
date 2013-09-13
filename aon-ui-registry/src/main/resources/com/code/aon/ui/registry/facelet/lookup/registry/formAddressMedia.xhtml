@@ -18,7 +18,7 @@
 	</ui:include>
 	
 	<c:if test="#{!skipPhone}">
-		<aon:outputLabel for="#{pojoName}_telephone" value="#{registryBundle.registry_phone}" />
+		<aon:outputLabel for="#{pojoName}_telephone" value="#{bundle.aon_phone}" />
 		<aon:div>
 			<aon:inputText id="#{pojoName}_telephone" 
 				value="#{controllerLookupListener.phone.value}" size="12" maxlength="64"/>
@@ -29,7 +29,7 @@
 	</c:if>
 		
 	<c:if test="#{!skipCellular}">
-		<aon:outputLabel for="#{pojoName}_cellular" value="#{registryBundle.registry_cellular}" />
+		<aon:outputLabel for="#{pojoName}_cellular" value="#{bundle.aon_cellular}" />
 		<aon:div>
 			<aon:inputText id="#{pojoName}_cellular" 
 				value="#{controllerLookupListener.cellular.value}" size="12" maxlength="64"/>
@@ -40,7 +40,7 @@
 	</c:if>
 		
 	<c:if test="#{!skipFax}">
-		<aon:outputLabel for="#{pojoName}_fax" value="#{registryBundle.registry_fax}" />
+		<aon:outputLabel for="#{pojoName}_fax" value="#{bundle.aon_fax}" />
 		<aon:div>
 			<aon:inputText id="#{pojoName}_fax"
 				value="#{controllerLookupListener.fax.value}" size="12" maxlength="64"/>
@@ -57,7 +57,7 @@
 	</c:if>
 
 	<c:if test="#{!skipWeb}">
-		<aon:outputLabel for="#{pojoName}_web" value="#{registryBundle.registry_web}" />
+		<aon:outputLabel for="#{pojoName}_web" value="#{bundle.aon_web}" />
 		<aon:inputText id="#{pojoName}_web"
 			value="#{controllerLookupListener.web.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
 	</c:if>

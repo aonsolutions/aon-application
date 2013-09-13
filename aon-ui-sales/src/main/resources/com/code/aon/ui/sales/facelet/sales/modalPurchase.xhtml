@@ -48,7 +48,7 @@
 										<aon:div styleClass="aon-finding-toolbar-item-group">
 											<aon:commandButton id="purchase-accept"
 												rendered="#{!sales.purchaseGenerator.generated}"			
-												value="#{salesBundle.sales_purchase_generate}"
+												value="#{bundle.aon_generate}"
 												actionListener="#{sales.purchaseGenerator.onExecute}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept">
 										
@@ -97,14 +97,14 @@
 										
 												<aon:column styleClass="aon-editDataTable-numberColumn aon-width-40">
 													<f:facet name="header">
-														<aon:outputLabel value="#{salesBundle.sales_detail_line}" />
+														<aon:outputLabel value="#{bundle.aon_line}" />
 													</f:facet>
 													<aon:outputText value="#{to.detail.line}" />
 												</aon:column>
 										
 												<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 													<f:facet name="header">
-														<aon:outputLabel value="#{productBundle.product_item}" />
+														<aon:outputLabel value="#{bundle.aon_product}" />
 													</f:facet>
 													<aon:outputText value="#{to.detail.description}">
 														<aon:abbreviateConverter maxWidth="64" />
@@ -113,7 +113,7 @@
 												
 												<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 													<f:facet name="header">
-														<aon:outputLabel for="Supplier_id" value="#{supplierBundle.supplier_supplier}" />
+														<aon:outputLabel for="Supplier_id" value="#{bundle.aon_supplier}" />
 													</f:facet>
 	
 													<aon:outputText value="#{to.supplier.registry.name}" rendered="#{formList}" />
@@ -160,7 +160,7 @@
 											
 											<aon:column styleClass="aon-editDataTable-textColumn">
 												<f:facet name="header">
-													<h:outputText value="#{supplierBundle.supplier_supplier}" />
+													<h:outputText value="#{bundle.aon_supplier}" />
 												</f:facet>
 												<aon:outputText value="#{to.supplier.registry.fullName}">
 													<aon:abbreviateConverter maxWidth="50" />

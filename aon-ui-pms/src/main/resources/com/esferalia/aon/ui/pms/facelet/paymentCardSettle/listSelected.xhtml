@@ -103,7 +103,7 @@
 			<aon:column alias="Finance.invoice.project.id"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{pmsBundle.pms_reservation}" />
+					<aon:outputText value="#{bundle.aon_reservation}" />
 				</f:facet>
 				<aon:commandLink id="reservationLink" immediate="true"
 					styleClass="aon-button-goto"
@@ -160,7 +160,7 @@
 			<aon:column 
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{pmsBundle.pms_hotel}" />
+					<aon:outputText value="#{bundle.aon_module_hotel}" />
 				</f:facet>
 				<aon:outputText rendered="#{!to.finance.invoice.service}"
 					value="#{paymentCardSettle.financeProjectReservation.hotelReservation.workPlace.description}" 

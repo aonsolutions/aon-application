@@ -68,7 +68,7 @@
 								</c:if>
 
 								<aon:outputText	styleClass="aon-margin-left aon-bold"
-									value="#{projectBundle.project_projects}:" />
+									value="#{bundle.aon_module_groupware}:" />
 								<aon:selectBooleanCheckbox id="Customer_projectGrouped" styleClass="aon-margin-left"
 									value="#{customer.to.projectGrouped}" />
 								<aon:outputLabel for="Customer_projectGrouped" styleClass="aon-italic"
@@ -143,7 +143,7 @@
 							</ui:include>
 						</aon:panelTab>
 
-						<aon:panelTab id="media" label="#{registryBundle.registry_media_module}">
+						<aon:panelTab id="media" label="#{bundle.aon_contacts}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
 								<ui:param name="controller" value="#{customerMedia}" />
 							</ui:include>
@@ -181,7 +181,7 @@
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.customer.showProjectData and customerProject.model.rowCount > 0}">
-							<aon:panelTab id="projects" label="#{projectBundle.project_projects}">
+							<aon:panelTab id="projects" label="#{bundle.aon_module_groupware}">
 								<ui:include src="/com/code/aon/ui/project/facelet/project/tab_grid.xhtml">
 									<ui:param name="controller" value="#{customerProject}" />
 									<ui:param name="skipAssignedColumn" value="#{true}" />
@@ -191,7 +191,7 @@
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.customer.showNote and customerNote.model.rowCount > 0}">
-							<aon:panelTab id="rnotes" label="#{registryBundle.registry_note}">
+							<aon:panelTab id="rnotes" label="#{bundle.aon_notes}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rnote/grid.xhtml">
 									<ui:param name="controller" value="#{customerNote}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
@@ -227,7 +227,7 @@
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.customer.showAddInfo and customerAddInfo.model.rowCount > 0}">
-							<aon:panelTab id="addInfo" label="#{registryBundle.registry_addInfo}">
+							<aon:panelTab id="addInfo" label="#{bundle.aon_addInfo}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
 									<ui:param name="controller" value="#{customerAddInfo}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
@@ -254,7 +254,7 @@
 						</c:if>
 						
 						<c:if test="#{aonConfiguration.bean.customer.showProduct and customerItem.model.rowCount > 0}">
-							<aon:panelTab id="customerItem" label="#{productBundle.product_module}">
+							<aon:panelTab id="customerItem" label="#{bundle.aon_role_product}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/ritem/tab_grid.xhtml" >
 									<ui:param name="controller" value="#{customerItem}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
@@ -263,7 +263,7 @@
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.customer.showSeller and customerSeller.model.rowCount > 0}">
-							<aon:panelTab id="customerSeller" label="#{sellerBundle.seller_seller}">
+							<aon:panelTab id="customerSeller" label="#{bundle.aon_module_commercial}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/rseller/tab_grid.xhtml" >
 									<ui:param name="controller" value="#{customerSeller}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
@@ -309,7 +309,7 @@
 							</c:if>
 	
 							<c:if test="#{aonConfiguration.bean.customer.showCourse and customerCourse.showTab}">
-								<aon:panelTab id="course" label="#{academyBundle.academy_course}">
+								<aon:panelTab id="course" label="#{bundle.aon_group}">
 									<ui:include	src="/com/code/aon/ui/academy/facelet/customerCourse/tab_grid.xhtml">
 										<ui:param name="controller" value="#{customerCourse}" />
 										<ui:param name="removeButtonReRender" value="customerTab" />

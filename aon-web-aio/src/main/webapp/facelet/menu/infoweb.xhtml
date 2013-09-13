@@ -38,7 +38,7 @@
 										<aon:commandLink id="companyWebInfo" 
 											action="companyWebInfo" 
 											actionListener="#{companyWebInfo.onInit}"
-											value="#{infowebBundle.infoweb_data}" >
+											value="#{bundle.aon_addInfo}" >
 											<aon:actionListener method="#{companyWebInfo.onLoadWebInfo}" />
 										</aon:commandLink>
 									</aon:div>
@@ -54,7 +54,7 @@
 										<aon:commandLink id="webPageStyle" 
 											action="webPageStyle" 
 											actionListener="#{companyWebInfo.onInit}"
-											value="#{infowebBundle.infoweb_template}" >
+											value="#{bundle.aon_template}" >
 											<aon:actionListener method="#{webPageStyle.onLoad}" />
 										</aon:commandLink>
 									</aon:div>

@@ -24,8 +24,8 @@
 						onclick="if (!confirm('#{bundle.aon_accept}?')) { return false;} else {Richfaces.showModalPanel('waitProccess');}"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')" 							
 						actionListener="#{invoiceIntegrity.onUpdatePreview}"/>
-					<aon:commandButton id="update" value="#{accountingBundle.accounting_refresh}"
-						accesskey="Q" title="#{accountingBundle.accounting_refresh}"
+					<aon:commandButton id="update" value="#{bundle.aon_refresh}"
+						accesskey="Q" title="#{bundle.aon_refresh}"
 						actionListener="#{invoiceIntegrity.onPreview}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						immediate="true" />

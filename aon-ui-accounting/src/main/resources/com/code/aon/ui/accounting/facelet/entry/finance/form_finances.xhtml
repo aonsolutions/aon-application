@@ -75,7 +75,7 @@
 			<aon:column sortBy="#{to.registryName}"
 				sortOrder="#{financeEntry.order['Finance_registryName']}">
 				<f:facet name="header">
-					<aon:outputText value="#{(finance.payment) ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
+					<aon:outputText value="#{(finance.payment) ? (bundle.aon_creditor) : (financeBundle.finance_debtor)}" />
 				</f:facet>
 				<aon:outputText value="#{to.registryName}" />
 			</aon:column>

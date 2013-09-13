@@ -37,8 +37,8 @@
 				
 				<aon:panelGrid id="dataTable" columns="2">
  
-					<aon:outputLabel for="DailyTracking_user" rendered="#{dailyTracking.monitor}" value="#{groupwareBundle.groupware_user}" />
-					<aon:outputText rendered="#{!dailyTracking.monitor}" value="#{groupwareBundle.groupware_user}" />
+					<aon:outputLabel for="DailyTracking_user" rendered="#{dailyTracking.monitor}" value="#{bundle.aon_login_user}" />
+					<aon:outputText rendered="#{!dailyTracking.monitor}" value="#{bundle.aon_login_user}" />
 
 					<aon:panelGroup>
 						<aon:outputText rendered="#{!dailyTracking.monitor}" value="#{dailyTracking.to.taskHolder.registry.fullName}"/>
@@ -74,7 +74,7 @@
 							<aon:div styleClass="aon-margin-right" layout="inline">
 								<aon:selectOneMenu value="#{dailyTracking.registryType}">
 									<f:selectItem itemValue="#{0}" itemLabel="#{customerBundle.customer_module}"/>
-									<f:selectItem itemValue="#{1}" itemLabel="#{companyBundle.company_menu_group}"/>
+									<f:selectItem itemValue="#{1}" itemLabel="#{bundle.aon_company}"/>
 									<f:selectItem itemValue="#{2}" itemLabel="#{bundle.aon_general}"/>
 									<a4j:support event="onchange"
 										actionListener="#{dailyTracking.onRegistryTypeChanged}"
@@ -129,7 +129,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="DailyTracking_trackingDuration"
-						value="#{groupwareBundle.groupware_duration}"/>
+						value="#{bundle.aon_duration}"/>
 					<aon:div id="DailyTracking_trackingDuration_Container">
 						<aon:inputText id="DailyTracking_trackingDuration"
 							rendered="#{!dailyTracking.minuteModeEnabled}"

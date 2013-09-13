@@ -15,14 +15,14 @@
 		<ui:define name="columns">
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel value="#{customerBundle.customer_customer}" />
+					<aon:outputLabel value="#{bundle.aon_customer}" />
 				</f:facet>
 				<aon:outputText value="#{to.customer.registry.fullName}" />
 			</aon:column>								
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel value="#{productBundle.product_item}" />
+					<aon:outputLabel value="#{bundle.aon_product}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}" />
 			</aon:column>								
@@ -47,7 +47,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-40">
 				<f:facet name="header">
-					<aon:outputLabel value="#{financeBundle.finance_fee_discount}" />
+					<aon:outputLabel value="#{bundle.aon_discount_abrv}" />
 				</f:facet>
 				<aon:outputText value="#{to.discountExpression.discountExpr}">
 					<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />

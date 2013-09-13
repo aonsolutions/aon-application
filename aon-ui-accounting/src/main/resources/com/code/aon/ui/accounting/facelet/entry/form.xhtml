@@ -169,7 +169,7 @@
 							</aon:div>
 						</aon:div>
 
-						<aon:outputText value="#{accountingBundle.accounting_period}: " />
+						<aon:outputText value="#{bundle.aon_financial_year}: " />
 						<aon:div>
 							<aon:selectOneMenu id="AccountEntry_accountPeriod"
 								styleClass="aon-form-selectOneMenu-field"
@@ -350,7 +350,7 @@
 										<aon:div styleClass="aon-scroll-area aon-margin-top">
 											<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
 											
-												<aon:outputLabel for="AccountEntry_period" value="#{accountingBundle.accounting_period}" />
+												<aon:outputLabel for="AccountEntry_period" value="#{bundle.aon_financial_year}" />
 												<aon:selectOneMenu id="AccountEntry_period" required="true"
 													styleClass="aon-form-selectOneMenu-field"
 													value="#{accountEntry.duplicatePeriod}">

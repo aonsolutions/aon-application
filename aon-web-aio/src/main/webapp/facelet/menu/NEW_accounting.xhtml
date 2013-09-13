@@ -45,7 +45,7 @@
 									<aon:commandLink id="invoiceEntry"
 										action="invoiceEntry_form"
 										actionListener="#{invoiceEntry.onReset}"
-										value="#{accountingBundle.accounting_entry_invoice_module}" />
+										value="#{bundle.aon_invoices}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="financeEntry"
@@ -65,7 +65,7 @@
 									<aon:commandLink id="salaryEntry"
 										action="salaryEntry_form"
 										actionListener="#{salaryEntry.onReset}"
-										value="#{accountingBundle.accounting_salary_entry_module}" />
+										value="#{bundle.aon_salaries}" />
 								</aon:div>
 
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -306,7 +306,7 @@ En CUARENTENA HASTA QUE SE CORRIJAN LOS CAMBIOS DE ACCOUNT-BRIDGE
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="accountManager"
 										action="accountManager_list"
-										value="#{accountBridgeBundle.account_relationships_module}" />
+										value="#{accountingBundle.accounting_relationships_module}" />
 								</aon:div>
  -->
 								<c:if test="#{aonRole.config}">

@@ -68,22 +68,22 @@
 
 					</c:if>
 					<c:if test="#{commercialStat.controlType==1}">
-						<aon:outputText value="#{statBundle.stat_target}" />
+						<aon:outputText value="#{bundle.aon_target}" />
 						<aon:outputText value="#{commercialStat.target.registry.fullName}"></aon:outputText>
 
 					</c:if>
 					<c:if test="#{commercialStat.controlType==2}">
-						<aon:outputText value="#{statBundle.stat_product}" />
+						<aon:outputText value="#{bundle.aon_product}" />
 						<aon:outputText value="#{commercialStat.product.name}"></aon:outputText>
 
 					</c:if>
 					<c:if test="#{commercialStat.controlType==3}">
-						<aon:outputText value="#{statBundle.stat_category}" />
+						<aon:outputText value="#{bundle.aon_category}" />
 						<aon:outputText value="#{commercialStat.productCategory.name}"></aon:outputText>
 
 					</c:if>
 
-					<aon:outputText value="#{statBundle.stat_period}" />
+					<aon:outputText value="#{bundle.aon_period}" />
 					<aon:div style="text-align:center;font-weight:bold ">
 						<aon:outputText value="#{commercialStat.params.fromDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -117,7 +117,7 @@
 						</aon:div>
 						<aon:div>
 							<aon:panel style="height:100px;width:250px;"
-								header="#{statBundle.seller_stat_control_pre}">
+								header="#{bundle.aon_invoice_offers}">
 								<aon:panelGrid columns="2">
 									<aon:outputLabel value="#{statBundle.seller_stat_control_done}" />
 									<aon:outputText value="#{commercialStat.numOffers}" size="30"

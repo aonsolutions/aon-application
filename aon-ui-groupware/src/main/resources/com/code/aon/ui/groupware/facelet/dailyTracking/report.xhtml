@@ -46,7 +46,7 @@
 
 					<aon:outputLabel for="workgroup"
 						rendered="#{dailyTrackingReport.monitor}" 
-						value="#{groupwareBundle.groupware_group}" />
+						value="#{bundle.aon_group}" />
 					<aon:selectOneMenu id="workgroup"
 						rendered="#{dailyTrackingReport.monitor}"
 						disabled="#{dailyTrackingReport.params.taskHolder != null}"
@@ -59,7 +59,7 @@
 
 					<aon:outputText
 						rendered="#{dailyTrackingReport.monitor}" 
-						value="#{groupwareBundle.groupware_user}" />
+						value="#{bundle.aon_login_user}" />
 					<aon:div id="user" rendered="#{dailyTrackingReport.monitor}">
 						<aon:selectOneMenu 
 							rendered="#{dailyTrackingReport.params.workGroup == null}"

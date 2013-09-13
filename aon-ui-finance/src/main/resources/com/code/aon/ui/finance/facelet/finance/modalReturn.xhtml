@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{financeBundle.finance_return}" />
+						<aon:outputText value="#{bundle.aon_return}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -71,7 +71,7 @@
 											verticalOffset="-110" />
 
 										<aon:outputLabel for="Finance_returnExpenses"
-											value="#{financeBundle.finance_expenses}" />
+											value="#{bundle.aon_expenses}" />
 										<aon:inputText id="Finance_returnExpenses"
 											value="#{finance.returnExpenses}"
 											required="true" size="10" />
@@ -97,7 +97,7 @@
 											<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 										</aon:selectOneMenu>
 										<aon:outputLabel for="Finance_returnPayMethodTypeDetail"
-											value="#{financeBundle.finance_details}"
+											value="#{bundle.aon_detail}"
 											rendered="#{finance.returnDeposit > 0 and finance.payMethodTypeDetailsSize > 1}" />
 										<aon:selectOneMenu id="Finance_returnPayMethodTypeDetail"
 											value="#{finance.returnPayMethodTypeDetail}"

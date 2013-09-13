@@ -36,7 +36,7 @@
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:panel style="background-color:#f6f5e3;">
-					<aon:outputText value="#{customerBundle.customer_customer}" />
+					<aon:outputText value="#{bundle.aon_customer}" />
 					<aon:outputText value=":&#160;" />
 					<aon:div style="display:inline;font-size: 1.1em;font-weight: bold;">
 						<aon:outputText value="#{rectifierInvoice.customer.id}" />
@@ -57,7 +57,7 @@
 
 					<aon:column styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_invoice_number}" />
+							<aon:outputText value="#{bundle.aon_invoice_number}" />
 						</f:facet>
 						<aon:outputText value="#{to.invoice.documentNumber}" />
 					</aon:column>
@@ -110,7 +110,7 @@
 
 					<aon:column styleClass="aon-editDataTable-numberColumn">
 						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_pending}" />
+							<aon:outputText value="#{bundle.aon_pending}" />
 						</f:facet>
 						<aon:inputText id ="pending" value="#{to.pending}" size="8">
 						</aon:inputText>

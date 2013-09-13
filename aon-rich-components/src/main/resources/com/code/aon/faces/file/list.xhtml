@@ -58,7 +58,7 @@
 						<rich:componentControl for="createZipModalPanel" operation="show" event="onclick"/>
 					</aon:commandButton>
 					<aon:commandButton id="refresh"
-						value="#{richBundle.aon_refresh}"
+						value="#{bundle.aon_refresh}"
 						actionListener="#{fileManager.onRefresh}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh">		
 					</aon:commandButton>						
@@ -158,7 +158,7 @@
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
-								<aon:outputText value="#{richBundle.aon_size}" />
+								<aon:outputText value="#{bundle.aon_size}" />
 							</f:facet>
 							<aon:outputText value="#{to.length}" />
 						</aon:column>

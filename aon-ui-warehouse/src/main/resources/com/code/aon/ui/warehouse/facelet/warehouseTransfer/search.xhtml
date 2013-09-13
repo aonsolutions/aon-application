@@ -38,7 +38,7 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 
-					<aon:outputLabel for="WarehouseTransfer_sourceWarehouse_id" value="#{warehouseBundle.warehouse_stock_source}" />
+					<aon:outputLabel for="WarehouseTransfer_sourceWarehouse_id" value="#{bundle.aon_source}" />
 					<aon:selectOneMenu id="WarehouseTransfer_sourceWarehouse_id"
 						value="#{warehouseTransferSearch.sourceWarehouse}">
 						<f:selectItem itemLabel="-" value="#{null}"/>

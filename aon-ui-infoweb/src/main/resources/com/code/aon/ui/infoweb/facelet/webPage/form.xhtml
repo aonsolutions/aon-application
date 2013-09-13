@@ -71,17 +71,17 @@
 
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{infowebBundle.infoweb_page_active}" />
+								<aon:outputText value="#{bundle.aon_active}" />
 							</f:facet>
 							<aon:div onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
 								onmouseout="enableRowSelector();">				
 								<aon:commandButton id="activatePage"
-									title="#{infowebBundle.infoweb_page_activate}"								
+									title="#{bundle.aon_activate}"								
 									actionListener="#{webPage.onActivate}"
 									rendered="#{!to.active}" ajaxSingle="true"
 									styleClass="aon-editDataTable-button aon-icon-accept" />
 								<aon:commandButton id="deactivatePage"
-									title="#{infowebBundle.infoweb_page_deactivate}"								
+									title="#{bundle.aon_deactivate}"								
 									actionListener="#{webPage.onDeactivate}"
 									rendered="#{to.active}" ajaxSingle="true"
 									styleClass="aon-editDataTable-button aon-icon-removed" />

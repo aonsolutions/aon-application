@@ -15,7 +15,7 @@
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
 					<ui:param name="toolbarTitle"
-						value="#{productBundle.product_expense_module}" />
+						value="#{bundle.aon_expenses}" />
 					<ui:param name="controller" value="#{expenseItem}" />
 				</ui:decorate>
 
@@ -65,7 +65,7 @@
 	
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputLabel for="ExpenseItem_product_category" value="#{productBundle.product_category}" />
+									<aon:outputLabel for="ExpenseItem_product_category" value="#{bundle.aon_category}" />
 								</f:facet>
 								<aon:outputText value="#{to.product.category.name}"
 									rendered="#{formList}" />

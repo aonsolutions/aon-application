@@ -116,14 +116,14 @@
 							actionListener="#{webmailMessage.save}"
 							styleClass="aon-icon aon-icon-mail-save aon-finding-toolbar-item"
 							style="line-height:16px;">
-							<aon:outputText value="#{webmailBundle.webmail_save}" />
+							<aon:outputText value="#{bundle.aon_save}" />
 						</a4j:htmlCommandLink> 					
 	
 						<a4j:htmlCommandLink id="print" target="_blank"
 							actionListener="#{webmailMessage.print}"
 							styleClass="aon-icon aon-icon-printer aon-finding-toolbar-item"
 							style="line-height:16px;">
-							<aon:outputText value="#{webmailBundle.webmail_print}" />
+							<aon:outputText value="#{bundle.aon_report}" />
 						</a4j:htmlCommandLink> 					
 							
 						<!-- Move button  -->
@@ -151,7 +151,7 @@
 						
 							<!-- from -->
 							<aon:outputText styleClass="aon-text-bold"											
-								value="#{webmailBundle.webmail_from}: " />
+								value="#{bundle.aon_of}: " />
 							<aon:div>
 								<aon:outputText escape="false" converter="longString" value="#{webmailMessage.message.sender}" />
 								<aon:commandButton
@@ -221,14 +221,14 @@
 									value="..." />
 							</aon:panelGroup>
 	
-							<aon:outputText value="#{webmailBundle.webmail_subject}: " />
+							<aon:outputText value="#{bundle.aon_subject}: " />
 							<aon:outputText escape="true" converter="longString"
 								value="#{webmailMessage.message.subject}" />
 							
 							<!-- Date -->
 							<aon:outputText 
 								styleClass="aon-form-input-text-label"
-								value="#{webmailBundle.webmail_date}: " />
+								value="#{bundle.aon_date}: " />
 							<aon:outputText value="#{webmailMessage.message.sentDateFullString}" />
 							
 							<aon:outputText rendered="#{webmailAttach.attachment}" 

@@ -43,7 +43,7 @@
 			<aon:outputText value="&#160;" />
 			
 			<aon:outputLabel for="Delivery_driverDocument"
-				value="#{warehouseBundle.warehouse_delivery_shipment_driverDocument}" />
+				value="#{bundle.aon_document}" />
 			<aon:inputText id="Delivery_driverDocument" 
 				value="#{delivery.to.driverDocument}" />
 				
@@ -75,7 +75,7 @@
 			</aon:selectOneMenu>
 			
 			<aon:outputLabel for="Delivery_shippingPeriod"
-				value="#{carrierBundle.carrier_shipment_schedule}" />
+				value="#{bundle.aon_calendar_schedule}" />
 			<aon:selectOneMenu id="Delivery_shippingPeriod" 
 				value="#{delivery.to.shippingPeriod}">
 				<f:selectItem itemLabel=" - " itemValue="#{null}" />
@@ -140,7 +140,7 @@
 				<aon:inputText id="Delivery_shippingAlternativeRecipient" 
 					value="#{delivery.to.shippingAlternativeRecipient}" size="64" maxlength="64"/>
 		
-				<aon:outputLabel for="Delivery_shippingAlternativeAddress" value="#{registryBundle.registry_address}" />
+				<aon:outputLabel for="Delivery_shippingAlternativeAddress" value="#{bundle.aon_address}" />
 				<aon:inputText id="shippingAlternativeAddress" maxlength="128" size="80"
 					value="#{delivery.to.shippingAlternativeAddress}" />
 				
@@ -149,7 +149,7 @@
 					value="#{delivery.to.shippingAlternativeAddress2}" />
 				
 				<aon:outputLabel for="Delivery_shippingAlternativeZip" 
-					value="#{registryBundle.registry_zip}" />
+					value="#{bundle.aon_postal_code}" />
 				<aon:inputText id="Delivery_shippingAlternativeZip" 
 					value="#{delivery.to.shippingAlternativeZip}" size="16" maxlength="16"/>
 					
@@ -159,7 +159,7 @@
 					value="#{delivery.to.shippingAlternativeCity}" size="64" maxlength="64"/>
 					
 				<aon:outputLabel for="Delivery_shippingAlternativePhone" 
-					value="#{registryBundle.registry_phone}" />
+					value="#{bundle.aon_phone}" />
 				<aon:inputText id="Delivery_shippingAlternativePhone"
 					value="#{delivery.to.shippingAlternativePhone}" />
 			

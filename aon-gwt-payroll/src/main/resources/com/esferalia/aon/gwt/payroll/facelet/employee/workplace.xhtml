@@ -68,7 +68,7 @@
 										required="true" size="40" maxlength="64" />
 
 									<aon:outputLabel for="WorkPlace_address_id"
-										value="#{companyBundle.company_workplace_address}" />
+										value="#{bundle.aon_address}" />
 									<aon:selectOneMenu id="WorkPlace_address_id"
 										value="#{payrollWorkPlace.to.workPlace.address}"
 										required="true">
@@ -128,7 +128,7 @@
 									</ui:include>
 
 									<aon:outputLabel for="PayrollWorkPlace_enterpriseActivity"
-										value="#{payrollBundle.payroll_activity}" />
+										value="#{bundle.aon_activity}" />
 									<aon:selectOneMenu id="PayrollWorkPlace_enterpriseActivity"
 										value="#{payrollWorkPlace.to.enterpriseActivity}">
 										<f:selectItem itemLabel="-" value="#{null}" />

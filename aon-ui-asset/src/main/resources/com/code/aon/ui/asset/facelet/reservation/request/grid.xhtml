@@ -95,7 +95,7 @@
 		</aon:div>
 
 		<aon:outputLabel for="ActivityDialog_who"
-			value="#{assetBundle.asset_activity_who}" />
+			value="#{bundle.aon_holder}" />
 		<aon:div>
 			<aon:inputText id="ActivityDialog_who" value="#{activityDialog.login}"
 				required="#{true}" size="20" disabled="#{(!activityDialog.new) or activityDialog.request}">
@@ -106,7 +106,7 @@
 		</aon:div>
 		
 		<aon:outputLabel for="ActivityDialog_why"
-			value="#{assetBundle.asset_activity_why}" />
+			value="#{bundle.aon_remark}" />
 		<aon:inputTextarea id="ActivityDialog_why" value="#{activityDialog.why}"
 			required="#{true}" cols="50" rows="4" disabled="#{!activityDialog.new}">
 			<f:validateLength maximum="128" />

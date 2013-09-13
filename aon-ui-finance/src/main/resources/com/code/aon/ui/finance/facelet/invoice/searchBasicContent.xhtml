@@ -11,7 +11,7 @@
 	</c:if>
 
 	<aon:outputLabel for="Invoice_referenceCode"
-		value="#{financeBundle.finance_invoice_number}"
+		value="#{bundle.aon_invoice_number}"
 		rendered="#{!searchController.sales}" />
 	<aon:inputText id="Invoice_referenceCode"
 		valueChangeListener="#{controller.addExpression}"

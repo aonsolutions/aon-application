@@ -23,14 +23,14 @@
 				<ui:param name="skipSearchButton" value="#{true}" />
 
 				<ui:define name="searchContent">
-					<aon:outputLabel for="warehouse_id" value="#{warehouseBundle.warehouse_warehouse}" />
+					<aon:outputLabel for="warehouse_id" value="#{bundle.aon_module_warehouse}" />
 					<aon:selectOneMenu id="warehouse_id"
 						value="#{orderProposal.warehouse}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{warehouseCollections.warehouses}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="category_id" value="#{productBundle.product_category}" />
+					<aon:outputLabel for="category_id" value="#{bundle.aon_category}" />
 					<aon:selectOneMenu id="category_id"
 						value="#{orderProposal.category}">
 						<f:selectItem itemLabel="-" value="#{null}"/>

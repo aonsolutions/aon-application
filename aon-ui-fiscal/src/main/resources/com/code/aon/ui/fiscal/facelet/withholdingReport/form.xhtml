@@ -28,7 +28,7 @@
 			<aon:div styleClass="aon-scroll-area">
 			
 				<aon:div style="background-color:#f6f5e3; padding:5px; margin-bottom:5px;">
-					<aon:outputText value="#{companyBundle.company_enterprise}:" styleClass="aon-italic aon-margin-left" style="font-size: 0.9em;"/>
+					<aon:outputText value="#{bundle.aon_company}:" styleClass="aon-italic aon-margin-left" style="font-size: 0.9em;"/>
 					<aon:commandLink immediate="#{true}" styleClass="aon-dataTable-link" actionListener="#{withholdingReport.onDetail}">
 						<aon:outputText value="#{withholdingReport.model111.enterprise.id}" styleClass="aon-bold aon-margin-left"/>
 						<aon:outputText value="-" styleClass="aon-margin-left"/>
@@ -42,7 +42,7 @@
 						styleClass="aon-bold aon-margin-left"
 						rendered="#{withholdingReport.model111.year != null}"	/>
 
-					<aon:outputText value="#{fiscalBundle.fiscal_period}:"
+					<aon:outputText value="#{bundle.aon_period}:"
 						rendered="#{withholdingReport.model111.period != null}" 
 						styleClass="aon-italic aon-margin-left" style="font-size: 0.9em;"/>
 					<aon:outputText value="#{withholdingReport.model111.period}"
@@ -67,7 +67,7 @@
 						<aon:outputText value="#{fiscalBundle.fiscal_withholding_perceptors}"/>
 					</aon:div>
 					<aon:div styleClass="aon-italic" style="font-size: 0.9em;">
-						<aon:outputText value="#{fiscalBundle.fiscal_withholding_amount}"/>
+						<aon:outputText value="#{bundle.aon_amount}"/>
 					</aon:div>
 					<aon:div styleClass="aon-italic" style="font-size: 0.9em;">
 						<aon:outputText value="#{fiscalBundle.fiscal_withholding_retention}"/>					
@@ -112,7 +112,7 @@
 						<aon:outputText value="#{fiscalBundle.fiscal_withholding_perceptors}"/>
 					</aon:div>
 					<aon:div styleClass="aon-italic" style="font-size: 0.9em;">
-						<aon:outputText value="#{fiscalBundle.fiscal_withholding_amount}"/>
+						<aon:outputText value="#{bundle.aon_amount}"/>
 					</aon:div>
 					<aon:div styleClass="aon-italic" style="font-size: 0.9em;">
 						<aon:outputText value="#{fiscalBundle.fiscal_withholding_retention}"/>					
@@ -158,7 +158,7 @@
 						<aon:outputText value="#{fiscalBundle.fiscal_withholding_perceptors}"/>
 					</aon:div>
 					<aon:div styleClass="aon-italic" style="font-size: 0.9em;">
-						<aon:outputText value="#{fiscalBundle.fiscal_withholding_amount}"/>
+						<aon:outputText value="#{bundle.aon_amount}"/>
 					</aon:div>
 					<aon:div styleClass="aon-italic" style="font-size: 0.9em;">
 						<aon:outputText value="#{fiscalBundle.fiscal_withholding_retention}"/>					
@@ -204,7 +204,7 @@
 						<aon:outputText value="#{fiscalBundle.fiscal_withholding_perceptors}"/>
 					</aon:div>
 					<aon:div styleClass="aon-italic" style="font-size: 0.9em;">
-						<aon:outputText value="#{fiscalBundle.fiscal_withholding_amount}"/>
+						<aon:outputText value="#{bundle.aon_amount}"/>
 					</aon:div>
 					<aon:div styleClass="aon-italic" style="font-size: 0.9em;">
 						<aon:outputText value="#{fiscalBundle.fiscal_withholding_retention}"/>					
@@ -250,7 +250,7 @@
 						<aon:outputText value="#{fiscalBundle.fiscal_withholding_perceptors}"/>
 					</aon:div>
 					<aon:div styleClass="aon-italic" style="font-size: 0.9em;">
-						<aon:outputText value="#{fiscalBundle.fiscal_withholding_amount}"/>
+						<aon:outputText value="#{bundle.aon_amount}"/>
 					</aon:div>
 					<aon:div styleClass="aon-italic" style="font-size: 0.9em;">
 						<aon:outputText value="#{fiscalBundle.fiscal_withholding_retention}"/>					

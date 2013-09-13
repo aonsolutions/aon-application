@@ -22,12 +22,10 @@ public interface IPayrollConstants {
 	String PAYROLL_SALARY_BONUS = "payroll_salary_bonus_tab";
 	String PAYROLL_SALARY_EMBARGOS = "payroll_salary_embargos_tab";
 	String PAYROLL_SALARY = "payroll_salary";
-	String PAYROLL_SALARY_DRAFT = "payroll_salary_draft";
 	String PAYROLL_SETTLE_NOTICE_DAY_AMOUNT = "payroll_settle_noticeDayAmount";
 	String PAYROLL_SETTLE_VACATION_AMOUNT = "payroll_settle_vacationAmount";
 	String PAYROLL_SETTLE_COMPENSATION = "payroll_settle_compensation";
 	String PAYROLL_IRPF = "payroll_irpf";
-	String PAYROLL_IRPF_DRAFT = "payroll_irpf_draft";
 	String PAYROLL_TRAINING_CENTER_DIRECT_DEBIT = "payroll_trainingCenter_directDebit";
 	
 	

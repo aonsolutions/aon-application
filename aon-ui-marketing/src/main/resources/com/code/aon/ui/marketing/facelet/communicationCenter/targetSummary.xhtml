@@ -15,7 +15,7 @@
 	<aon:outputText value="#{communicationCenter.target.registry.document}" />
 		
 	<c:if test="#{communicationCenter.mainAddress != null}">
-		<aon:outputText value="#{registryBundle.registry_address}" />
+		<aon:outputText value="#{bundle.aon_address}" />
 		<aon:outputText value="#{communicationCenter.fullAddress}" /> 
 		
 		<aon:outputText value="#{registryBundle.registry_city}" 
@@ -23,28 +23,28 @@
 		<aon:outputText value="#{communicationCenter.mainAddress.city}"
 			rendered="#{communicationCenter.mainAddress.city != null}" />
 			
-		<aon:outputText value="#{registryBundle.registry_zip}"
+		<aon:outputText value="#{bundle.aon_postal_code}"
 			rendered="#{communicationCenter.mainAddress.zip != null}" />
 		<aon:outputText value="#{communicationCenter.mainAddress.zip}"
 			rendered="#{communicationCenter.mainAddress.zip != null}" />
 			
-		<aon:outputText value="#{registryBundle.registry_geozone}"
+		<aon:outputText value="#{bundle.aon_state}"
 			rendered="#{communicationCenter.mainAddress.geozone != null}" />
 		<aon:outputText value="#{communicationCenter.mainAddress.geozone.name}"
 			rendered="#{communicationCenter.mainAddress.geozone != null}" />
 	</c:if>
 
-	<aon:outputText value="#{registryBundle.registry_phone}"
+	<aon:outputText value="#{bundle.aon_phone}"
 		rendered="#{communicationCenter.phone != null}" />								
 	<aon:outputText value="#{communicationCenter.phone.value}"
 		rendered="#{communicationCenter.phone != null}" />
 
-	<aon:outputText value="#{registryBundle.registry_cellular}"
+	<aon:outputText value="#{bundle.aon_cellular}"
 		rendered="#{communicationCenter.cellular != null}" />								
 	<aon:outputText value="#{communicationCenter.cellular.value}"
 		rendered="#{communicationCenter.cellular != null}" />
 
-	<aon:outputText value="#{registryBundle.registry_fax}"
+	<aon:outputText value="#{bundle.aon_fax}"
 		rendered="#{communicationCenter.fax != null}" />								
 	<aon:outputText value="#{communicationCenter.fax.value}"
 		rendered="#{communicationCenter.fax != null}" />
@@ -54,7 +54,7 @@
 	<aon:outputText value="#{communicationCenter.email.value}"
 		rendered="#{communicationCenter.email != null}" />
 
-	<aon:outputText value="#{registryBundle.registry_web}"
+	<aon:outputText value="#{bundle.aon_web}"
 		rendered="#{communicationCenter.web != null}" />								
 	<aon:outputText value="#{communicationCenter.web.value}"
 		rendered="#{communicationCenter.web != null}" />	

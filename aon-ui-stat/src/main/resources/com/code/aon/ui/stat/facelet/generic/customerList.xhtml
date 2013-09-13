@@ -14,15 +14,15 @@
 	<aon:methodParam name="goMethod"  value="#{stat.onInvoiceList}" type="actionListener" />
 	<c:if test="#{stat.invoiceType==1}">
 		<ui:param name="windowTitle" value="#{statBundle.stat_menu_customers}" />
-		<ui:param name="categoryLabel" value="#{statBundle.stat_customer}" />
+		<ui:param name="categoryLabel" value="#{bundle.aon_customer}" />
 	</c:if>
 	<c:if test="#{stat.invoiceType==0}">
 		<ui:param name="windowTitle" value="#{statBundle.stat_menu_suppliers}" />
-		<ui:param name="categoryLabel" value="#{statBundle.stat_supplier}" />
+		<ui:param name="categoryLabel" value="#{bundle.aon_supplier}" />
 	</c:if>
 	<c:if test="#{stat.invoiceType==2}">
 		<ui:param name="windowTitle" value="#{statBundle.stat_menu_creditors}" />
-		<ui:param name="categoryLabel" value="#{statBundle.stat_creditor}" />
+		<ui:param name="categoryLabel" value="#{bundle.aon_creditor}" />
 	</c:if>
 	<ui:decorate template="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">				
 		<ui:param name="statController" value="#{stat}" />

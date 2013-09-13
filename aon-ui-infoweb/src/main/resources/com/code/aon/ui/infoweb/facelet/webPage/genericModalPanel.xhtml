@@ -56,12 +56,12 @@
 							<aon:panelGrid columns="2" dir="true">
 
 								<aon:outputLabel for="Generic_title"
-									value="#{infowebBundle.infoweb_page_title}" />
+									value="#{bundle.aon_title}" />
 								<aon:inputText id="Generic_title" size="80" maxlength="255"
 									value="#{webPage.detail.title}" />
 
 								<aon:outputLabel for="Generic_layout"
-									value="#{infowebBundle.infoweb_page_layout}" />
+									value="#{bundle.aon_template}" />
 								<aon:selectOneMenu id="Generic_layout"
 									value="#{webPage.detail.layout}">
 									<f:selectItems value="#{webinfoCollections.layoutTypes}" />
@@ -76,7 +76,7 @@
 								</aon:selectBooleanCheckbox>
 
 								<aon:outputLabel for="Generic_content"
-									value="#{infowebBundle.infoweb_page_content}" />
+									value="#{bundle.aon_content}" />
 								<aon:inputTextarea id="Generic_content"
 									rendered="#{!webPage.richTextEnabled}"
 									value="#{webPage.detail.content}" cols="100" rows="12" />

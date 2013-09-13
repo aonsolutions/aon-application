@@ -11,7 +11,7 @@
 			<aon:column alias="ActionTarget.target.registry.name"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="Target_id" value="#{target.bundle.commercial_target}" />
+					<aon:outputLabel for="Target_id" value="#{bundle.aon_target}" />
 				</f:facet>
 				<aon:outputText value="#{to.target.registry.fullName}"
 					rendered="#{formList}" />
@@ -41,7 +41,7 @@
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-250">
 				<f:facet name="header">
 					<aon:outputLabel for="ActionTarget_comments"
-						value="#{marketingBundle.marketing_comments}" />
+						value="#{bundle.aon_comment}" />
 				</f:facet>				
 				<aon:outputText value="#{to.comments}" rendered="#{formList}" >
 					<aon:abbreviateConverter maxWidth="40" />

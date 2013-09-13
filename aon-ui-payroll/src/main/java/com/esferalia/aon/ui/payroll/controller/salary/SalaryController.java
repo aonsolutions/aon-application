@@ -45,10 +45,10 @@ import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
@@ -355,7 +355,7 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		}
 		RegistryMedia fax = getRegistryMedia(enterprise, MediaType.FAX);
 		if ( fax != null ) {
-			String faxLabel = AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME, IRegistryConstants.REGISTRY_FAX);
+			String faxLabel = AonUtil.getMessage(ICommonMessages.FAX);
 			body.append(faxLabel).append( ": " ).append( fax.getValue() ).append( "<br/>" );
 		}
 		RegistryMedia web = getRegistryMedia(enterprise, MediaType.WEB);

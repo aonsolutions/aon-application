@@ -68,7 +68,7 @@
 						</aon:selectInputDate>
 					</aon:div>
 
-					<aon:outputText value="#{groupwareBundle.groupware_user}" />
+					<aon:outputText value="#{bundle.aon_login_user}" />
 					<aon:div>
 						<aon:selectOneMenu rendered="#{gantt.monitor}"
 							value="#{gantt.taskHolder}">
@@ -111,7 +111,7 @@
 					<aon:outputText value="#{bundle.aon_status}"/>
 					<aon:div>
 						<aon:selectBooleanCheckbox id="st0" value="#{gantt.statusPending}" />
-						<aon:outputLabel for="st0" value="#{groupwareBundle.groupware_pending}" />
+						<aon:outputLabel for="st0" value="#{bundle.aon_pending}" />
 						
 						<aon:selectBooleanCheckbox id="st1" value="#{gantt.statusInProgress}" />
 						<aon:outputLabel for="st1" value="#{groupwareBundle.groupware_in_progress}" />

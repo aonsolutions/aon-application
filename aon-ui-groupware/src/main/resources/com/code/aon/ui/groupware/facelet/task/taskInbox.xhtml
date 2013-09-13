@@ -30,7 +30,7 @@
 					<f:param name="reportKey" value="taskInbox" />
 					<f:param name="outputFormat" value="PDF" />
 				</aon:htmlCommandLink>
-				<aon:commandButton id="refresh" value="#{groupwareBundle.groupware_refresh}"
+				<aon:commandButton id="refresh" value="#{bundle.aon_refresh}"
 					actionListener="#{task.onSearch}"
 					styleClass="aon-finding-toolbar-item aon-icon-refresh"/>
 
@@ -217,7 +217,7 @@
 						</f:facet>
 						<aon:div id="task_status">
 							<aon:outputText value="&#160;" rendered="#{to.pending}"
-								alt="#{groupwareBundle.groupware_pending}" title="#{groupwareBundle.groupware_pending}"/>
+								alt="#{bundle.aon_pending}" title="#{bundle.aon_pending}"/>
 							<aon:outputText value="&#160;" rendered="#{to.inProgress}"
 								alt="#{groupwareBundle.groupware_in_progress}" title="#{groupwareBundle.groupware_in_progress}"
 								style="padding-left:15px;" styleClass="aon-icon-point-green" />
@@ -281,7 +281,7 @@
 
 					<aon:column alias="Task.workgroup" rendered="#{task.monitor}" styleClass="aon-editDataTable-text aon-width-100">
 						<f:facet name="header">
-							<aon:outputText value="#{groupwareBundle.groupware_group}" />
+							<aon:outputText value="#{bundle.aon_group}" />
 						</f:facet>
 						<aon:outputText value="#{to.workGroup.description}"
 							style="font-size: 0.8em;#{to.expired?'color:red;':''}" />
@@ -289,7 +289,7 @@
 
 					<aon:column alias="Task.taskHolder" rendered="#{task.monitor}" styleClass="aon-editDataTable-text aon-width-100">
 						<f:facet name="header">
-							<aon:outputText value="#{groupwareBundle.groupware_user}" />
+							<aon:outputText value="#{bundle.aon_login_user}" />
 						</f:facet>
 						<aon:outputText value="#{to.taskHolder.registry.fullName}"
 							style="font-size: 0.8em;#{to.expired?'color:red;':''}" />

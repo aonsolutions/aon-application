@@ -133,7 +133,7 @@
 										</ui:include>
 
 										<aon:outputLabel for="ProjectReservationService_quantity" 
-											value="#{pmsBundle.pms_units}" />
+											value="#{bundle.aon_units}" />
 										<aon:outputText	value="#{controller.serviceQuantity}" styleClass="aon-bold"
 											rendered="#{!reservation.reservationPermission.reservationServicesEditable}">
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />

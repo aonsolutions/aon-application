@@ -41,14 +41,14 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_sales_account"
-						value="#{accountingBundle.accounting_def_sales_acc}" />
+						value="#{bundle.aon_sales_account}" />
 					<aon:selectOneMenu id="ACC_default_sales_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_SALES_ACC'].value}">
 						<f:selectItems value="#{accountCollections.salesAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_purchase_account"
-						value="#{accountingBundle.accounting_def_purchase_acc}" />
+						value="#{bundle.aon_purchase_account}" />
 					<aon:selectOneMenu id="ACC_default_purchase_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PURCHASE_ACC'].value}">
 						<f:selectItems value="#{accountCollections.purchaseAccountsIds}" />

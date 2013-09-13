@@ -8,8 +8,6 @@ public interface ICommercialMessages {
 	String COMMERCIAL_OFFER_EMAIL_SUBJECT = "commercial_offer_email_subject";
 	String COMMERCIAL_OFFER_EMAIL_BODY = "commercial_offer_email_body";
 	
-	String COMMERCIAL_OFFER_DETAIL_LINE = "commercial_offer_detail_line";
-	
 	String COMMERCIAL_TARGET_ADVERTISING = "commercial_target_advertising";
 	String COMMERCIAL_COMMISSION_DATES_ERROR = "commercial_commission_dates_error";
 	

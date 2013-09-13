@@ -8,7 +8,7 @@
 
 	<aon:outputText value="" />
 	<aon:div style="width:550px;">
-		<aon:panelCollapsible expanded="true" label="#{customerBundle.customer_customer}">
+		<aon:panelCollapsible expanded="true" label="#{bundle.aon_customer}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 				<ui:include src="/com/code/aon/ui/customer/facelet/customer/searchBasicContent.xhtml" />
 			</aon:panelGrid>
@@ -22,7 +22,7 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 
-		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_media_module}" >
+		<aon:panelCollapsible expanded="false" label="#{bundle.aon_contacts}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 				<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml">
 					<ui:param name="searchController" value="#{customerSearch}" />
@@ -51,7 +51,7 @@
 		</c:if>
 		
 		<c:if test="#{aonConfiguration.bean.customer.showProduct}">						
-			<aon:panelCollapsible expanded="false" label="#{productBundle.product_module}" >					
+			<aon:panelCollapsible expanded="false" label="#{bundle.aon_role_product}" >					
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 					<ui:include src="/com/code/aon/ui/registry/facelet/ritem/searchContent.xhtml" />					
 				</aon:panelGrid>
@@ -59,7 +59,7 @@
 		</c:if>
 						
 		<c:if test="#{aonConfiguration.bean.customer.showSeller}">						
-			<aon:panelCollapsible expanded="false" label="#{sellerBundle.seller_seller}">
+			<aon:panelCollapsible expanded="false" label="#{bundle.aon_module_commercial}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
 					<ui:include src="/com/code/aon/ui/registry/facelet/rseller/searchContent.xhtml" />					
 				</aon:panelGrid>

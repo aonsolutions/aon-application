@@ -32,7 +32,7 @@
 	
 						<aon:column styleClass="aon-width-130 aon-nowrap" alias="Notice.workGroup&lt;description">
 							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.notice_work_group}" />
+								<aon:outputText value="#{bundle.aon_group}" />
 							</f:facet>
 							<aon:outputText rendered="#{to.workGroup != null}" value="#{to.workGroup.description}" />
 							<aon:outputText rendered="#{to.workGroup == null}" value="#{groupwareBundle.groupware_all}" />
@@ -40,7 +40,7 @@
 						
 						<aon:column styleClass="aon-width-130" alias="Notice.source">
 							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.notice_source}" />
+								<aon:outputText value="#{bundle.aon_of}" />
 							</f:facet>
 							<aon:outputText value="#{to.source}" >
 								<aon:abbreviateConverter maxWidth="40" />
@@ -49,14 +49,14 @@
 	
 						<aon:column alias="Notice.company">
 							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.notice_company}" />
+								<aon:outputText value="#{bundle.aon_company}" />
 							</f:facet>
 							<aon:outputText value="#{to.company}" />
 						</aon:column>
 						
 						<aon:column alias="Notice.subject">
 							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.notice_subject}" />
+								<aon:outputText value="#{bundle.aon_subject}" />
 							</f:facet>
 							<aon:outputText value="#{to.subject}">
 								<aon:abbreviateConverter maxWidth="40" />

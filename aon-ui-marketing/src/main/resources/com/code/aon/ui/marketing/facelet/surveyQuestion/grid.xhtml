@@ -13,7 +13,7 @@
 			<ui:define name="columns">
 				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 					<f:facet name="header">
-						<aon:outputLabel for="SurveyQuestion_position" value="#{marketingBundle.marketing_survey_question_position}" />
+						<aon:outputLabel for="SurveyQuestion_position" value="#{bundle.aon_position}" />
 					</f:facet>
 					<aon:outputText value="#{to.position}"
 						rendered="#{formList}" />
@@ -55,7 +55,7 @@
 								
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 					<f:facet name="header">
-						<aon:outputText value="#{marketingBundle.marketing_survey_workflow}" />
+						<aon:outputText value="#{bundle.aon_sequence}" />
 					</f:facet>
 					<aon:commandButton style="border:0;" styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 						actionListener="#{surveyQuestion.onShowSurveyWorflow}"

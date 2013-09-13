@@ -34,7 +34,7 @@
 					<aon:inputText id="Withholding_year" size="5" required="true"
 						value="#{withholdingReport.params.year}" />
 
-					<aon:outputLabel for="Withholding_period" value="#{fiscalBundle.fiscal_period}" />
+					<aon:outputLabel for="Withholding_period" value="#{bundle.aon_period}" />
 					<aon:selectOneMenu id="Withholding_period" value="#{withholdingReport.params.period}" required="true">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{fiscalCollections.periods}" />

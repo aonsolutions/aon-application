@@ -56,7 +56,7 @@
 									</ui:decorate>
 									
 									<aon:outputLabel for="Finance_hotel" 
-										value="#{pmsBundle.pms_hotel}" />
+										value="#{bundle.aon_module_hotel}" />
 									<aon:selectOneMenu id="Finance_hotel" 
 										value="#{paymentCardSettle.hotel}" >
 										<f:selectItem itemLabel=" - " itemValue="#{null}" />
@@ -105,7 +105,7 @@
 								</aon:panelGrid>
 							</aon:panelCollapsible>
 							
-							<aon:panelCollapsible expanded="true" label="#{pmsBundle.pms_reservation}">
+							<aon:panelCollapsible expanded="true" label="#{bundle.aon_reservation}">
 								<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 									
 									<aon:outputLabel for="ProjectReservation_project_id" 

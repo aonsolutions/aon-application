@@ -23,8 +23,8 @@
 				</ui:define>
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="update" value="#{accountingBundle.accounting_refresh}"
-						accesskey="Q" title="#{accountingBundle.accounting_refresh}"
+					<aon:commandButton id="update" value="#{bundle.aon_refresh}"
+						accesskey="Q" title="#{bundle.aon_refresh}"
 						actionListener="#{ledgerReport.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						immediate="true" />
@@ -72,7 +72,7 @@
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"/>
 					</aon:outputText>
 					
-					<aon:outputText value="#{accountingBundle.accounting_period}" />
+					<aon:outputText value="#{bundle.aon_financial_year}" />
 					<aon:outputText styleClass="aon-bold"
 						value="#{ledgerReport.period.name}" />
 					

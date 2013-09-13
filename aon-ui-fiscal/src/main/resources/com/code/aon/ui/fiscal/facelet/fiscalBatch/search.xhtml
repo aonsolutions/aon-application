@@ -21,7 +21,7 @@
 				<ui:define name="searchContent">
 				
 					<aon:outputLabel for="FiscalBatch_administration"
-						value="#{fiscalBundle.fiscal_administration}" />
+						value="#{bundle.aon_administration}" />
 					<aon:selectOneMenu id="FiscalBatch_administration"
 						valueChangeListener="#{controller.addEqualExpression}"
 						converter="aon.EnumConverter">
@@ -30,7 +30,7 @@
 					</aon:selectOneMenu>
 					
 					<aon:outputLabel for="FiscalBatch_type"
-						value="#{fiscalBundle.fiscal_model}" />
+						value="#{bundle.aon_model}" />
 					<aon:selectOneMenu id="FiscalBatch_type"
 						valueChangeListener="#{controller.addEqualExpression}"
 						converter="aon.EnumConverter">
@@ -43,7 +43,7 @@
 					<aon:inputText id="FiscalBatch_year" size="5" valueChangeListener="#{controller.addExpression}" />
 
 					<aon:outputLabel for="FiscalBatch_period"
-						value="#{fiscalBundle.fiscal_period}" />
+						value="#{bundle.aon_period}" />
 					<aon:selectOneMenu id="FiscalBatch_period"
 						valueChangeListener="#{controller.addEqualExpression}"
 						converter="aon.EnumConverter">
