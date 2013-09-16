@@ -143,7 +143,7 @@
 				<textElement textAlignment="Center">
 					<font size="24" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account_period} + " " +  $P{params}.getPeriod().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_financial_year} + " " +  $P{params}.getPeriod().getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="e319e051-729e-4e29-9409-6bd312c71768" key="textField-17" x="75" y="10" width="435" height="43"/>
@@ -374,7 +374,7 @@
 				<textElement textAlignment="Right">
 					<font size="8" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account_period} + " " + $P{params}.getPeriod().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_financial_year} + " " + $P{params}.getPeriod().getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="74ad3b60-15cf-42c9-a317-098dfd6070bc" key="textField-47" x="468" y="19" width="42" height="13"/>
@@ -777,7 +777,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of2} + " "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="false">
 				<reportElement uuid="1af83a49-0fae-4e3e-b47b-684821a798f9" key="textField-16" x="474" y="0" width="62" height="14"/>

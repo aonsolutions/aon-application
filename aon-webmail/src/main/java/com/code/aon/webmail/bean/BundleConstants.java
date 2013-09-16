@@ -5,10 +5,10 @@ public interface BundleConstants {
 	// ************************************************************
 	// BUNDLE
 	// ************************************************************
-	String RESOURCE_BUNDLE = "com.code.aon.ui.webmail.i18n.messages";
+	String RESOURCE_BUNDLE = "com.code.aon.common.i18n.messages";
 	
-	String SUBJECT_MESSAGE = "webmail_subject";
-	String DATE_MESSAGE = "webmail_date";
+	String SUBJECT_MESSAGE = "aon_subject";
+	String DATE_MESSAGE = "aon_date";
 	String CC_MESSAGE = "webmail_cc";
 	String TO_MESSAGE = "webmail_to";
 	String FROM_MESSAGE = "webmail_from";

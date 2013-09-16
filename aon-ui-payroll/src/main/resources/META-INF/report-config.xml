@@ -62,7 +62,7 @@
 		<bean key="com.esferalia.aon.payroll.Salary" />
 		<criteria provider="#{salary}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{salary.getAttachAsInputStream}" />
@@ -85,7 +85,7 @@
 		<template path="/com/esferalia/aon/ui/payroll/report/salaryExtended.jasper" />
 		<collection provider="#{salaryDraft}" forceRefresh="true" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
@@ -101,7 +101,7 @@
 		<template path="/com/esferalia/aon/ui/payroll/report/salary.jasper" />
 		<collection provider="#{salaryDraft}" forceRefresh="true" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
@@ -114,7 +114,7 @@
 			path="/com/esferalia/aon/ui/payroll/report/salaryTemplate1.jasper" />
 		<collection provider="#{salaryDraft}" forceRefresh="true" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
@@ -127,7 +127,7 @@
 		<template path="/com/esferalia/aon/ui/payroll/report/salaryExpense.jasper" />
 		<collection provider="#{salaryExpense}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="year" value="#{salaryExpense.getYear}" />
@@ -140,7 +140,7 @@
 		<template path="/com/esferalia/aon/ui/payroll/report/salaryExpense.jasper" />
 		<collection provider="#{salaryExpense}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="year" value="#{salaryExpense.getYear}" />
@@ -153,7 +153,7 @@
 		<template path="/com/esferalia/aon/ui/payroll/report/mod145.jasper" />
 		<collection provider="#{irpfData}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="descendants" value="#{irpfData.getDescentant}" />
@@ -165,7 +165,7 @@
 		<template path="/com/esferalia/aon/ui/payroll/report/trainingDirectDebit.jasper" />
 		<collection provider="#{contract}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="signatureImageFile" value="#{company.getSignatureAttachAsInputStream}" />

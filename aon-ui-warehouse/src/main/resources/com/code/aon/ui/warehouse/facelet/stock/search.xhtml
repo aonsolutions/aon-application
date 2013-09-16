@@ -21,7 +21,7 @@
 				<ui:param name="controller" value="#{stock}" />
 
 				<ui:define name="searchContent">
-					<aon:outputLabel for="Stock_warehouse_id" value="#{warehouseBundle.warehouse_warehouse}" />
+					<aon:outputLabel for="Stock_warehouse_id" value="#{bundle.aon_module_warehouse}" />
 					<aon:selectOneMenu id="Stock_warehouse_id"
 						value="#{warehouseCollections.warehouse}"
 						valueChangeListener="#{stock.addIdEqualExpression}">

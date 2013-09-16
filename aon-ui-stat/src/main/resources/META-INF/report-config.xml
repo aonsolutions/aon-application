@@ -11,7 +11,7 @@
 		<template path="/com/code/aon/ui/stat/report/statTemplate.jasper" />
 		<collection provider="#{stat.yearStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{stat.getReportName}" />
 			<param id="itemTitle" value="#{stat.getItemTitle}" />
@@ -23,7 +23,7 @@
 		<template path="/com/code/aon/ui/stat/report/statTemplate.jasper" />
 		<collection provider="#{stat.monthStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{stat.getReportName}" />
 			<param id="itemTitle" value="#{stat.getItemTitle}" />
@@ -35,7 +35,7 @@
 		<template path="/com/code/aon/ui/stat/report/statTemplate.jasper" />
 		<collection provider="#{stat.dayStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{stat.getReportName}" />
 			<param id="itemTitle" value="#{stat.getItemTitle}" />
@@ -49,7 +49,7 @@
 		<template path="/com/code/aon/ui/stat/report/statTemplate.jasper" />
 		<collection provider="#{stat.customerStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{stat.getReportName}" />
 			<param id="itemTitle" value="#{stat.getItemTitle}" />
@@ -62,7 +62,7 @@
 		<template path="/com/code/aon/ui/stat/report/yearStatGraph.jasper" />
 		<collection provider="#{stat.customerStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{stat.getReportName}" />
 			<param id="itemTitle" value="#{stat.getItemTitle}" />
@@ -76,7 +76,7 @@
 		<template path="/com/code/aon/ui/stat/report/yearStatGraph.jasper" />
 		<collection provider="#{stat.yearStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{stat.getReportName}" />
 			<param id="itemTitle" value="#{stat.getItemTitle}" />
@@ -90,7 +90,7 @@
 		<template path="/com/code/aon/ui/stat/report/monthStatGraph.jasper" />
 		<collection provider="#{stat.monthStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{stat.getReportName}" />
 			<param id="itemTitle" value="#{stat.getItemTitle}" />
@@ -104,7 +104,7 @@
 		<template path="/com/code/aon/ui/stat/report/dayStatGraph.jasper" />
 		<collection provider="#{stat.dayStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{stat.getReportName}" />
 			<param id="itemTitle" value="#{stat.getItemTitle}" />
@@ -117,7 +117,7 @@
 		<template path="/com/code/aon/ui/stat/report/statTemplate.jasper" />
 		<collection provider="#{stat.abcStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{stat.getReportName}" />
 			<param id="itemTitle" value="#{stat.getItemTitle}" />
@@ -130,7 +130,7 @@
 		<template path="/com/code/aon/ui/stat/report/monthStatGraph.jasper" />
 		<collection provider="#{stat.abcStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{stat.getReportName}" />
 			<param id="itemTitle" value="#{stat.getItemTitle}" />
@@ -144,7 +144,7 @@
 		<template path="/com/code/aon/ui/stat/report/yearStatGraph.jasper" />
 		<collection provider="#{stat.monthStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{stat.getReportName}" />
 			<param id="itemTitle" value="#{stat.getItemTitle}" />
@@ -158,7 +158,7 @@
 		<template path="/com/code/aon/ui/stat/report/invoiceList.jasper" />
 		<collection provider="#{stat.invoices}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{stat.getReportName}" />
@@ -171,7 +171,7 @@
 		<template path="/com/code/aon/ui/stat/report/commercialTemplate.jasper" />
 		<collection provider="#{commercialStat.yearStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
@@ -184,7 +184,7 @@
 		<template path="/com/code/aon/ui/stat/report/sellerStats.jasper" />
 		<collection provider="#{commercialStat.summary}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
@@ -202,7 +202,7 @@
 		<template path="/com/code/aon/ui/stat/report/productControl.jasper" />
 		<collection provider="#{commercialStat.summary}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
@@ -220,7 +220,7 @@
 		<template path="/com/code/aon/ui/stat/report/sellerStatsGraph.jasper" />
 		<collection provider="#{commercialStat.summaryGraph}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
@@ -239,7 +239,7 @@
 		<template path="/com/code/aon/ui/stat/report/commercialGraphTemplate.jasper" />
 		<collection provider="#{commercialStat.yearStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
@@ -253,7 +253,7 @@
 		<template path="/com/code/aon/ui/stat/report/commercialTemplate.jasper" />
 		<collection provider="#{commercialStat.productStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
@@ -266,7 +266,7 @@
 		<template path="/com/code/aon/ui/stat/report/commercialGraphTemplate.jasper" />
 		<collection provider="#{commercialStat.productStats}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
@@ -280,7 +280,7 @@
 		<template path="/com/code/aon/ui/stat/report/activityView.jasper" />
 		<collection provider="#{commercialStat.activitySummary}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />
@@ -297,7 +297,7 @@
 		<template path="/com/code/aon/ui/stat/report/activityList.jasper" />
 		<collection provider="#{commercialStat.activitiesList}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="reportName" value="#{commercialStat.getReportName}" />
 			<param id="itemTitle" value="#{commercialStat.getItemTitle}" />

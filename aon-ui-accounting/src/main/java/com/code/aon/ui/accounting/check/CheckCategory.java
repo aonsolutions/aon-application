@@ -14,11 +14,12 @@ public enum CheckCategory implements IResourceable {
 	ACCOUNTING,
 	AMORTIZATION;
 	
-    private static final String BASE_NAME = "com.code.aon.ui.accounting.i18n.messages";
+	private static final String BASE_NAME = "com.code.aon.common.i18n.enum";
     private static final String MSG_KEY_PREFIX = "aon_enum_check_category_";
 	
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+    
 }

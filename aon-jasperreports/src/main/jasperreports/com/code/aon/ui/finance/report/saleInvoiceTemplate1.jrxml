@@ -370,7 +370,7 @@ $P{company}.getWeb().getValue() + " - " + $P{company}.getEmail().getValue()
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{invoice_number}.toUpperCase()+" "+
+				<textFieldExpression><![CDATA[$R{aon_invoice_number}.toUpperCase()+" "+
 ($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">

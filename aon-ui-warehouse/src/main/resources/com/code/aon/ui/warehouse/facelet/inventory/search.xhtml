@@ -24,7 +24,7 @@
 						<aon:outputLabel for="Inventory_id" value="#{bundle.aon_id}" />
 						<aon:inputText id="Inventory_id" size="14" valueChangeListener="#{inventory.addExpression}" />
 	
-						<aon:outputLabel for="Inventory_warehouse_id" value="#{warehouseBundle.warehouse_warehouse}" />
+						<aon:outputLabel for="Inventory_warehouse_id" value="#{bundle.aon_module_warehouse}" />
 						<aon:selectOneMenu id="Inventory_warehouse_id"
 							value="#{warehouseCollections.warehouse}"
 							valueChangeListener="#{inventory.addIdEqualExpression}">

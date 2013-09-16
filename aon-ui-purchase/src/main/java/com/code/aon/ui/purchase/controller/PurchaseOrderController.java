@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
@@ -288,7 +287,6 @@ public class PurchaseOrderController {
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
 		List<Integer> purchaseIds = new LinkedList<Integer>();
-		ResourceBundle companyBundle = AonUtil.getResourceBundle(ICompanyConstants.BUNDLE_NAME); 
 		String comments = null;
 		String remarks = null;
 		try {
@@ -300,7 +298,7 @@ public class PurchaseOrderController {
 				PurchaseUtils utils = new PurchaseUtils();
 				for(PurchaseGroup pg: purchaseGroupList){
 					if(pg.hasCheckedDetail()){
-						comments = companyBundle.getString(COMPANY_DEPARTMENT) +": "+ pg.getDepartment().getName()+". ";
+						comments = AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME,COMPANY_DEPARTMENT) +": "+ pg.getDepartment().getName()+". ";
 						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(),  
 								pg.isItemReturn()?PurchaseDocumentType.ITEM_RETURN:null, comments + pg.getComments(), remarks);
 						purchaseIds.add(purchase.getId());

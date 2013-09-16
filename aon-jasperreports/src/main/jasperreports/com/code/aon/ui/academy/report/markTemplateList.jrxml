@@ -71,7 +71,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_workgroup}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_group}]]></textFieldExpression>
 			</textField>
 			<crosstab>
 				<reportElement key="crosstab-1" stretchType="RelativeToBandHeight" x="5" y="79" width="773" height="45">

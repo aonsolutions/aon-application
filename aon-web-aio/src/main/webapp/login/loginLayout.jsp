@@ -18,11 +18,8 @@ try {
 	customize.initResources();
 	customize.initApplicationVersion(application.getResourceAsStream("META-INF/MANIFEST.MF"));
 	customize.init(request.getServerName());
-	ResourceBundle commonBundle = ResourceBundle.getBundle("com.code.aon.ui.common.i18n.messages", request.getLocale());
-	ResourceBundle companyBundle = ResourceBundle.getBundle("com.code.aon.ui.company.i18n.messages", request.getLocale());
+	ResourceBundle commonBundle = ResourceBundle.getBundle("com.code.aon.common.i18n.messages", request.getLocale());
 %>
-
-
 
 <head>
 	<title><%=customize.getApplicationTitle()%></title>
@@ -55,7 +52,7 @@ try {
 								<tr>
 									<td>
 										<span class="aon-outputText">
-											<%=companyBundle.getString("company_connected_to")%>
+											<%=commonBundle.getString("aon_connected_to")%>
 										</span>
 									</td>
 								</tr>

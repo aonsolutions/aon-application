@@ -198,7 +198,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_delivery}.toUpperCase()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_invoice_delivery}.toUpperCase()]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

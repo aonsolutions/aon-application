@@ -68,7 +68,7 @@
 				<textElement textAlignment="Center">
 					<font size="24" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account_period} + " " + $P{period}.getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_financial_year} + " " + $P{period}.getName()]]></textFieldExpression>
 			</textField>
 			<frame>
 				<reportElement x="22" y="154" width="475" height="332"/>

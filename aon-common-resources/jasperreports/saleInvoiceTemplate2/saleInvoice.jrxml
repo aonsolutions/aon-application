@@ -292,7 +292,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{invoice_number}.toUpperCase()+" "+
+				<textFieldExpression><![CDATA[$R{aon_invoice_number}.toUpperCase()+" "+
 ($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
@@ -648,7 +648,7 @@ $R{aon_over}+" "+$F{base}]]></textFieldExpression>
 				</textElement>
 				<textFieldExpression><![CDATA[(($P{phone}!=null)?($R{aon_telephone} + ": " + $P{phone}.getValue()):(""))+
 (($P{fax}!=null)?(", " + $R{aon_fax} + ": " + $P{fax}.getValue()):(""))+
-(($P{email}!=null)?(", " + $R{aon_email} + ": " + $P{email}.getValue()):(""))]]></textFieldExpression>
+(($P{email}!=null)?(", " + $R{aon_email_abrv} + ": " + $P{email}.getValue()):(""))]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-25" mode="Transparent" x="21" y="21" width="489" height="10" forecolor="#000000" backcolor="#FFFFFF">

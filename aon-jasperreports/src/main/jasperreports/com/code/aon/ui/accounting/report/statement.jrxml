@@ -444,7 +444,7 @@
 				<textElement textAlignment="Right">
 					<font size="8" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account_period} + " " + $P{params}.getPeriod().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_financial_year} + " " + $P{params}.getPeriod().getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="4c15faa5-2731-49a7-b54f-3c553575f319" key="textField-45" x="433" y="15" width="42" height="13"/>
@@ -625,7 +625,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of2} + " "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement uuid="cb2e7330-d38b-46a9-bb54-c93a81c715de" key="textField-17" x="6" y="0" width="262" height="14"/>

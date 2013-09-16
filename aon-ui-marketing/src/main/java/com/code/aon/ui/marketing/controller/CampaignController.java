@@ -2,7 +2,6 @@ package com.code.aon.ui.marketing.controller;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.faces.model.SelectItem;
 
@@ -27,13 +26,7 @@ public class CampaignController extends BasicController implements IMarketingCon
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(CampaignController.class);
 
-	private ResourceBundle bundle;
-	
 	private IControllerListener newsFilter;
-	
-	public CampaignController() {
-		setBundleName(BUNDLE_NAME);
-	}
 
 	/**
 	 * Gets the action media types.
@@ -54,14 +47,6 @@ public class CampaignController extends BasicController implements IMarketingCon
 		}
 		return list;
 	}
-
-	public ResourceBundle getBundle() {
-		return bundle;
-	}
-
-	public void setBundleName(String bundleName) {
-		this.bundle = AonUtil.getResourceBundle(bundleName);
-	}	
 
 	public IControllerListener getNewsFilter() {
 		if ( this.newsFilter == null ) {

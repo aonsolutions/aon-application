@@ -54,7 +54,7 @@
 				<textElement textAlignment="Center">
 					<font size="24" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account_period} + " " +  $P{params}.getPeriod().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_financial_year} + " " +  $P{params}.getPeriod().getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-17" x="75" y="10" width="435" height="43"/>
@@ -553,7 +553,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of2} + " "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="false">
 				<reportElement key="textField-16" x="473" y="0" width="60" height="14"/>

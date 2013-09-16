@@ -13,7 +13,7 @@
 		<criteria provider="#{reservation}"/>
 		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
@@ -25,7 +25,7 @@
 		<template path="/com/esferalia/aon/ui/pms/report/reservationInputOuput.jasper" />
 		<collection provider="#{reservationIO}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
@@ -41,7 +41,7 @@
 		<template path="/com/esferalia/aon/ui/pms/report/workPlanning.jasper" />
 		<collection provider="#{workPlanning}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
@@ -55,7 +55,7 @@
 		<template path="/com/esferalia/aon/ui/pms/report/boardList.jasper" />
 		<collection provider="#{boardList}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
@@ -71,7 +71,7 @@
 		<template path="/com/esferalia/aon/ui/pms/report/boardBooking.jasper" />
 		<collection provider="#{boardBooking}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
@@ -87,7 +87,7 @@
 		<template path="/com/esferalia/aon/ui/pms/report/roomBooking.jasper" />
 		<collection provider="#{roomBooking}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
@@ -104,7 +104,7 @@
 		<template path="/com/esferalia/aon/ui/pms/report/emptyRoomList.jasper" />
 		<collection provider="#{emptyRoom}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
@@ -118,7 +118,7 @@
 		<template path="/com/esferalia/aon/ui/pms/report/hotelGuest.jasper" />
 		<collection provider="#{hotelGuest}" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
@@ -132,7 +132,7 @@
 		<template path="/com/esferalia/aon/ui/pms/report/saleInvoice.jasper" />
 		<collection provider="#{saleInvoice}" forceRefresh="true" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
@@ -147,7 +147,7 @@
 		<bean key="com.code.aon.finance.Invoice" />
 		<criteria provider="#{invoicePrint}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />

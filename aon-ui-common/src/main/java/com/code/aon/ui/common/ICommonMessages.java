@@ -3,7 +3,7 @@ package com.code.aon.ui.common;
 public interface ICommonMessages {
 	
 	String BUNDLE_NAME = "bundle";
-	String BUNDLE_RESOURCE = "com.code.aon.ui.common.i18n.messages";
+	String BUNDLE_RESOURCE = "com.code.aon.common.i18n.messages";
 	
 	String APPLICATION_BUNDLE = "appBundle";
 	String ACCOUNT_BUNDLE = "accountBundle";

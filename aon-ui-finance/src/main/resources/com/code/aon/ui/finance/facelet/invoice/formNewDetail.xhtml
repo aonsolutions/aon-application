@@ -10,7 +10,7 @@
 		default="/com/code/aon/ui/product/facelet/item/lookupDetail.xhtml"/>
 
 	<c:if test="#{invoiceController.to.sales or invoiceController.to.purchase}">
-		<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
+		<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
 	</c:if>
 	<c:if test="#{invoiceController.to.expense or invoiceController.to.undeductibleExpense}">
 		<aon:outputLabel for="Item_id" value="#{bundle.aon_concept}" />

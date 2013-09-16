@@ -85,7 +85,7 @@
 		<criteria provider="#{feeInvoicing}"/>
 		<fetch-mode paginated="true" page-count="100" virtualizer-max-size="50"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />

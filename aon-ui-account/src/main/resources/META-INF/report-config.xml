@@ -16,7 +16,7 @@
 		<bean key="com.code.aon.account.Account" />
 		<criteria provider="#{account}"/>		
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			</params>
 	</report>

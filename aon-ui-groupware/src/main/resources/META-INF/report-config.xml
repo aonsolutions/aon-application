@@ -15,7 +15,7 @@
 		<template path="/com/code/aon/ui/groupware/report/dailyTrackingExcel.jasper" />
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 		</params>
 	</report>
 
@@ -23,7 +23,7 @@
 		<template path="/com/code/aon/ui/groupware/report/dailyTrackingByCustomer.jasper" />
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>	  
@@ -32,7 +32,7 @@
 		<template path="/com/code/aon/ui/groupware/report/dailyTrackingJobsByCustomer.jasper" />
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
@@ -42,7 +42,7 @@
 		<template path="/com/code/aon/ui/groupware/report/dailyTrackingByUser.jasper" />
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -51,7 +51,7 @@
 		<template path="/com/code/aon/ui/groupware/report/dailyTrackingByProject.jasper" />
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -60,7 +60,7 @@
 		<template path="/com/code/aon/ui/groupware/report/dailyTrackingByProjectType.jasper" />
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -69,7 +69,7 @@
 		<template path="/com/code/aon/ui/groupware/report/dailyTrackingByJobType.jasper" />
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -78,7 +78,7 @@
 		<template path="/com/code/aon/ui/groupware/report/dailyTrackingByDate.jasper" />
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -87,7 +87,7 @@
 		<template path="/com/code/aon/ui/groupware/report/dailyTrackingGraphicByUser.jasper" />
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -96,7 +96,7 @@
 		<template path="/com/code/aon/ui/groupware/report/dailyTrackingGraphicByCustomer.jasper" />
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -105,7 +105,7 @@
 		<template path="/com/code/aon/ui/groupware/report/dailyTrackingGraphicByProject.jasper" />
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -114,7 +114,7 @@
 		<template path="/com/code/aon/ui/groupware/report/dailyTrackingGraphicByJobType.jasper" />
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -123,7 +123,7 @@
 		<template path="/com/code/aon/ui/groupware/report/dailyTrackingGraphic.jasper" />
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -136,7 +136,7 @@
 		<bean key="com.code.aon.groupware.Task" />
 		<criteria provider="#{task}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -148,7 +148,7 @@
 		<template path="/com/code/aon/ui/groupware/report/campaignMonitorReport.jasper" />
 		<collection provider="#{campaignProject}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="campaign" value="#{campaignProject.getCampaign}" />
 		</params>

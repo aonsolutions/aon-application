@@ -33,7 +33,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_delivery} + ": " + $F{sourceTo}.getReferenceCode()]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_invoice_delivery} + ": " + $F{sourceTo}.getReferenceCode()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 					<reportElement key="textField-1" positionType="Float" x="100" y="0" width="76" height="14">
@@ -104,7 +104,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_discount}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_discount_abrv}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-9" mode="Opaque" x="320" y="0" width="54" height="15" forecolor="#FFFFFF" backcolor="#999999"/>

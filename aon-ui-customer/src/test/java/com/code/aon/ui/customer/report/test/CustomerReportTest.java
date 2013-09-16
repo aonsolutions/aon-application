@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.company.Company;
 import com.code.aon.customer.Customer;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.customer.controller.CustomerController;
 
@@ -83,7 +84,7 @@ public class CustomerReportTest extends AbsReportPrintTest{
 		parameters.put("printHeader",getCompanyController().isPrintHeader());
 		parameters.put("title", "Listado de clientes");
 		Locale locale = new Locale("es_ES");
-		ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.ui.common.i18n.report", locale);		
+		ResourceBundle bundle = ResourceBundle.getBundle(ICommonMessages.BUNDLE_RESOURCE, locale);		
 		parameters.put("REPORT_RESOURCE_BUNDLE",bundle);
 		return parameters;
 	}

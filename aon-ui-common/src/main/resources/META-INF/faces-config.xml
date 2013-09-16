@@ -5,7 +5,7 @@
 
 	<application>
 		<resource-bundle>
-			<base-name>com.code.aon.ui.common.i18n.messages</base-name>
+			<base-name>com.code.aon.common.i18n.messages</base-name>
 			<var>bundle</var>
 		</resource-bundle>
 	</application>

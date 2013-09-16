@@ -207,7 +207,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[($P{payment}.booleanValue()==true?$R{finance_creditor}:$R{finance_debtor})]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($P{payment}.booleanValue()==true?$R{aon_creditor}:$R{finance_debtor})]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement key="textField-22" mode="Opaque" x="0" y="82" width="64" height="15" forecolor="#FFFFFF" backcolor="#000000"/>

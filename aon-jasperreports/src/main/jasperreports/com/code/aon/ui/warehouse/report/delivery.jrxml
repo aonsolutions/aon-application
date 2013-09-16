@@ -788,7 +788,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{purchase_shipping_schedule}+":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_calendar_schedule}+":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" positionType="Float" x="457" y="159" width="80" height="23" isRemoveLineWhenBlank="true">
@@ -837,7 +837,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of2} + " "]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-10" x="0" y="4" width="537" height="1"/>

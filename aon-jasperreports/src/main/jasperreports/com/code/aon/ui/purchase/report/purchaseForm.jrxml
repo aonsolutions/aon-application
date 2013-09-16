@@ -301,7 +301,7 @@
 					<font size="14" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{purchase_module}.toUpperCase()
-+ ($F{itemReturn}?(" ("+$R{purchase_proposal_item_return}+")"):"")]]></textFieldExpression>
++ ($F{itemReturn}?(" ("+$R{aon_return}+")"):"")]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -594,7 +594,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{invoice_supplier}+ ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_supplier}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-114" positionType="Float" x="270" y="38" width="52" height="66" isRemoveLineWhenBlank="true"/>
@@ -760,7 +760,7 @@ $F{registryAddress}.getCity() + " (" + $F{registryAddress}.getGeozone().getName(
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{shippingContact} + ($F{shippingPeriod}==null?"":
-    ", " + $R{purchase_shipping_schedule} + ":" + $F{shippingPeriod}.getName( $P{REPORT_LOCALE} ))]]></textFieldExpression>
+    ", " + $R{aon_calendar_schedule} + ":" + $F{shippingPeriod}.getName( $P{REPORT_LOCALE} ))]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -793,7 +793,7 @@ $F{registryAddress}.getCity() + " (" + $F{registryAddress}.getGeozone().getName(
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of2} + " "]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

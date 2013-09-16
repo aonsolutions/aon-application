@@ -11,7 +11,7 @@
 		styleClass="aon-width-all" style="background-color:#f6f5e3; border:#d8d37a 1px solid;"
 		columnClasses="aon-padding-left aon-width-60,aon-width-auto,aon-padding-top aon-text-center aon-width-70">
 
-		<aon:outputLabel for="Item_id" value="#{productBundle.product_item}:" />
+		<aon:outputLabel for="Item_id" value="#{bundle.aon_product}:" />
 		<ui:include src="/com/code/aon/ui/product/facelet/item/lookupDetail.xhtml">
 			<ui:param name="lookupTo" value="#{detailController.to.item}" />
 			<ui:param name="idRequired" value="#{true}" />

@@ -89,7 +89,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{invoice_supplier} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_supplier} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-50" x="389" y="17" width="55" height="13"/>

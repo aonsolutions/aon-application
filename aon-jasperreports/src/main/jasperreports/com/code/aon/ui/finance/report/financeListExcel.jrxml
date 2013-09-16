@@ -82,7 +82,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{payment}.booleanValue()==true?$R{finance_creditor}:$R{finance_debtor})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{payment}.booleanValue()==true?$R{aon_creditor}:$R{finance_debtor})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-5" mode="Opaque" x="0" y="0" width="68" height="15" forecolor="#000000" backcolor="#FFFFFF"/>

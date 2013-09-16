@@ -259,7 +259,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement verticalAlignment="Middle" markup="none">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{payroll_enterprise}+": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_company}+": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="6e492b63-3c68-4b22-a368-ee64348bbebd" x="54" y="0" width="281" height="15"/>
@@ -287,7 +287,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement verticalAlignment="Middle" markup="none">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{payroll_period}+": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_period}+": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="60622be3-8be0-434b-a382-21a976e5a812" x="54" y="15" width="281" height="15"/>
@@ -678,7 +678,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<reportElement uuid="6b7372e2-f600-4f09-9917-1f4f326e7153" x="0" y="0" width="786" height="14"/>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
-				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of2} + " "]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="c745dd33-3ecb-4887-afdf-879ffeccc82b" x="786" y="0" width="16" height="14"/>

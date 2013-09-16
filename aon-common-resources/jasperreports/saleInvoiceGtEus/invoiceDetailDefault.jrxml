@@ -190,7 +190,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Dtua/" + $R{aon_discount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Dtua/" + $R{aon_discount_abrv}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-9" mode="Opaque" x="372" y="0" width="54" height="15" forecolor="#FFFFFF" backcolor="#999999"/>

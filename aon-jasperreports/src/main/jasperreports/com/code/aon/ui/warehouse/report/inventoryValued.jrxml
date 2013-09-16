@@ -153,7 +153,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{product_item}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_product}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-28" mode="Opaque" x="433" y="0" width="61" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -205,7 +205,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{product_category}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_category}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -292,7 +292,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of2} + " "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="false">
 				<reportElement key="textField-15" x="525" y="0" width="30" height="15"/>

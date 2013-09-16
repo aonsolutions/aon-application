@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 	
 	<application>
-		<message-bundle>com.code.aon.ui.common.i18n.messages</message-bundle>
+		<message-bundle>com.code.aon.common.i18n.messages</message-bundle>
 		<locale-config>
 			<default-locale>es</default-locale>
 			<supported-locale>en</supported-locale>

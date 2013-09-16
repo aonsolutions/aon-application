@@ -84,7 +84,7 @@
 						<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{invoice_number}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{aon_invoice_number}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-5" x="113" y="89" width="90" height="15" isRemoveLineWhenBlank="true">

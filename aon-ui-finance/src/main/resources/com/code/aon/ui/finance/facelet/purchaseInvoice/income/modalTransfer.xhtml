@@ -118,7 +118,7 @@
 
 										<aon:column styleClass="#{purchaseInvoice.incomeTransferManager.selectedIncomeId==to.id?'aon-highlight':''}">
 											<f:facet name="header">
-												<aon:outputText value="#{supplierBundle.supplier_supplier}" />
+												<aon:outputText value="#{bundle.aon_supplier}" />
 											</f:facet>
 											<aon:outputText value="#{to.supplier.registry.fullName}">
 												<aon:abbreviateConverter maxWidth="50" />
@@ -158,7 +158,7 @@
 	
 											<aon:column>
 												<f:facet name="header">
-													<aon:outputText value="#{productBundle.product_item}" />
+													<aon:outputText value="#{bundle.aon_product}" />
 												</f:facet>
 												<aon:outputText value="#{to.description}">
 													<aon:abbreviateConverter maxWidth="50" />

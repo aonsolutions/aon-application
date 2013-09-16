@@ -126,7 +126,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account_period}+": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_financial_year}+": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-64" x="97" y="51" width="74" height="14">
@@ -141,7 +141,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8" isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{statType}.equals("ASSET")?($R{report_reservation}):(
+				<textFieldExpression><![CDATA[$P{statType}.equals("ASSET")?($R{aon_reservation}):(
 $P{statType}.equals("USER")?($R{aon_login_user}):("")
 )]]></textFieldExpression>
 			</textField>
@@ -309,7 +309,7 @@ $P{dateRange}.equals("YEAR")?($R{aon_name}):("")
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of2} + " "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-14" x="6" y="0" width="262" height="14"/>

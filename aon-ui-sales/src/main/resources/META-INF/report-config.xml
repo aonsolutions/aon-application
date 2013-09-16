@@ -13,7 +13,7 @@
 		<template path="/com/code/aon/ui/sales/report/sales.jasper" />
 		<collection provider="#{sales}" forceRefresh="true"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
@@ -48,7 +48,7 @@
 		<bean key="com.code.aon.sales.Sales" />
 		<criteria provider="#{sales}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
@@ -68,7 +68,7 @@
 		<bean key="com.code.aon.sales.Sales" />
 		<criteria provider="#{sales}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
@@ -99,7 +99,7 @@
 		 <bean key="com.code.aon.sales.SalesDetail" />
 		<criteria provider="#{salesDetail}"/>
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.common.i18n.report" />
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}"/>

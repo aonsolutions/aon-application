@@ -46,7 +46,7 @@
 					<aon:div styleClass="aon-toolbar">
 						<aon:commandButton id="selectEmail#{messageSuffix}"
 							actionListener="#{webmailMessage.onAcceptAllEmailItems}"
-							value="#{webmailBundle.webmail_accept}"
+							value="#{bundle.aon_key_accept_description}"
 							reRender="showEmailWindow#{messageSuffix},newMessageHeader#{messageSuffix}"
 							styleClass="aon-icon-commandButton aon-icon-accept">
 							<f:setPropertyActionListener target="#{webmailMessage.showEmailsWindow}"

@@ -226,7 +226,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{seller_stat_control_pre}.toUpperCase()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_invoice_offers}.toUpperCase()]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -317,7 +317,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of2} + " "]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
