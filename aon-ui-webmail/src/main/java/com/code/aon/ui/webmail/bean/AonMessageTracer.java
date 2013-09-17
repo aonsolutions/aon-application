@@ -1,5 +1,11 @@
 package com.code.aon.ui.webmail.bean;
 
+import static com.code.aon.ui.common.ICommonMessages.CC_MESSAGE;
+import static com.code.aon.ui.common.ICommonMessages.DATE;
+import static com.code.aon.ui.common.ICommonMessages.FROM_MESSAGE;
+import static com.code.aon.ui.common.ICommonMessages.SUBJECT;
+import static com.code.aon.ui.common.ICommonMessages.TO_MESSAGE;
+
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,11 +18,13 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.IMimeType;
@@ -165,7 +173,7 @@ public class AonMessageTracer implements IMimeType {
 
 	private String traceMessage( Message message ) throws IOException, MessagingException {
 		String content = AonMessageUtils.extractBodyInnerHTML(traceContent(message));
-		return AonMessage.getMessageEnvelope(message, content, null, AonUtil.getCurrentLocale());
+		return getMessageEnvelope(message, content, null);
 	}
 		
 	private String traceContent( Message message ) throws IOException, MessagingException {
@@ -214,5 +222,46 @@ public class AonMessageTracer implements IMimeType {
 		}
 		return content;
     }
+    
+	public static String getMessageEnvelope( Message message, String content, String headerId ) {
+		try {			
+			return getMessageEnvelope(new AonMessage(message), content, headerId);
+		} catch (WebmailException e) {
+			LOGGER.error("Error getting message envelope", e);
+		}	
+		return null;
+	}
+
+	public static String getMessageEnvelope( AonMessage message, String content, String headerId ) throws WebmailException {
+		StringBuffer sb = new StringBuffer();
+		sb.append( "<br/>" );
+		if ( headerId != null ) {
+			sb.append( "<BLOCKQUOTE style='PADDING-RIGHT: 0px; PADDING-LEFT: 10px; MARGIN-LEFT: 5px; BORDER-LEFT: #000000 2px solid; MARGIN-RIGHT: 0px'>" );
+		}
+		sb.append("<font face='arial' size='2' >");
+		if ( headerId != null ) {
+			sb.append("----------").append( AonUtil.getMessage(headerId) ).append("----------");
+		}
+		sb.append( "<DIV style='BACKGROUND: #e4e4e4'>" );
+		String from = message.getSender();
+		sb.append( "<b>" ).append(AonUtil.getMessage(FROM_MESSAGE)).append(":</b> ").append(from).append( "</DIV>" );
+		if ( headerId == null ) {
+			String to = message.getRecipientsTo();
+			sb.append( "<b>" ).append(AonUtil.getMessage(TO_MESSAGE)).append(":</b> ").append(to).append( "</DIV>" );
+		}
+		sb.append( "<b>" ).append(AonUtil.getMessage(DATE)).append(":</b> ").append( message.getSentDate() );
+		String cc = message.getRecipientsCc();
+		if (! StringUtils.isEmpty(cc) ) {
+			sb.append( "<br/><b>" ).append(AonUtil.getMessage(CC_MESSAGE)).append(":</b> ").append( cc );
+		}
+		String subject = message.getDisplaySubject();
+		sb.append( "<br/><b>" ).append(AonUtil.getMessage(SUBJECT)).append(":</b> ").append( subject );
+   		sb.append( "</font><br/><br/>" );
+   		sb.append( content );
+		if ( headerId != null ) {
+			sb.append( "</BLOCKQUOTE><br/>" );
+		}
+		return sb.toString();
+	}
     
 }

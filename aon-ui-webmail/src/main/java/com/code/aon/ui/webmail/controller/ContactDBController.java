@@ -1,7 +1,7 @@
 package com.code.aon.ui.webmail.controller;
 
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONTACT_DUPLICATED;
+import static com.code.aon.ui.common.ICommonMessages.CONTACT_DUPLICATED;
+import static com.code.aon.ui.common.ICommonMessages.WEBMAIL_BUNDLE;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -60,7 +60,7 @@ public class ContactDBController extends MailDBController implements IContactCon
 	
 	@Override
 	protected String getDuplicatedMessage( String name ) {
-		return AonUtil.getMessage(BUNDLE_NAME, CONTACT_DUPLICATED, name);
+		return AonUtil.getMessage(WEBMAIL_BUNDLE, CONTACT_DUPLICATED, name);
 	}
 	
 	@Override

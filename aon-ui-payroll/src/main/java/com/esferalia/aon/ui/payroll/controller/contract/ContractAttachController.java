@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
+import static com.code.aon.ui.common.ICommonMessages.NOT_MAIL_ACCOUNTS;
+import static com.code.aon.ui.common.ICommonMessages.WEBMAIL_BUNDLE;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
@@ -20,7 +22,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.faces.controller.AttachmentController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.SecurityInfo;
@@ -133,7 +134,7 @@ public class ContractAttachController extends AttachmentController {
 			messageController.setShowNewMessageWindow(true);
 			messageController.setSecurityInfo(securyInfo);
 		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
+			AonUtil.addErrorMessageFromBundle(WEBMAIL_BUNDLE, NOT_MAIL_ACCOUNTS);
 		}
 	}
 	

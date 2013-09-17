@@ -1,6 +1,15 @@
 package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
+import static com.code.aon.ui.common.ICommonMessages.CC_MESSAGE;
+import static com.code.aon.ui.common.ICommonMessages.DATE;
+import static com.code.aon.ui.common.ICommonMessages.FORWARDED_MESSAGE;
+import static com.code.aon.ui.common.ICommonMessages.FROM_MESSAGE;
+import static com.code.aon.ui.common.ICommonMessages.NOT_MAIL_ACCOUNTS;
+import static com.code.aon.ui.common.ICommonMessages.REPLIED_MESSAGE;
+import static com.code.aon.ui.common.ICommonMessages.SUBJECT;
+import static com.code.aon.ui.common.ICommonMessages.TO_MESSAGE;
+import static com.code.aon.ui.common.ICommonMessages.WEBMAIL_BUNDLE;
 import static com.code.aon.webmail.bean.IMailConstants.IMAP;
 
 import java.io.BufferedOutputStream;
@@ -20,9 +29,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -78,14 +85,13 @@ import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.AonServer;
-import com.code.aon.webmail.bean.BundleConstants;
 import com.code.aon.webmail.dao.IWebMailAlias;
 import com.code.aon.webmail.db.Contact;
 import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.util.LineOutputStream;
 
-public class MessageController implements IWebMailConstants, BundleConstants {
+public class MessageController implements IWebMailConstants {
 
 	private static final String MESSAGE_WINDOW_INCLUDED = "com.code.aon.ui.webmail.MessageWindow";
 
@@ -226,12 +232,9 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		try {
 			recipientsTo = getReplyToRecipients(message, true); 
 	       	subject = "Reply: "+message.getSubject();
-	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), getMessageContent(), REPLIED_MESSAGE, AonUtil.getCurrentLocale());
+	       	messageBody = AonMessageTracer.getMessageEnvelope(message, getMessageContent(), REPLIED_MESSAGE);
 	       	content += messageBody;
 		} catch (WebmailException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);
-		} catch (MessagingException e) {
     		AonUtil.addErrorMessage(e.getMessage());
     		throw new AbortProcessingException(e);
 		}
@@ -277,14 +280,11 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		try{
 			recipientsTo = getReplyToRecipients(message, false);
 	       	subject = "ReplyALL: "+message.getSubject();
-	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), getMessageContent(), REPLIED_MESSAGE, AonUtil.getCurrentLocale());
+	       	messageBody = AonMessageTracer.getMessageEnvelope(message, getMessageContent(), REPLIED_MESSAGE);
 	       	content += messageBody;
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
-		} catch (MessagingException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);			
 		}
     }
 	
@@ -346,14 +346,11 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		try {
 			copyAttachmentsToFileList( message );
 	       	subject = "Fwd: "+message.getSubject();
-	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), getMessageContent(), FORWARDED_MESSAGE, AonUtil.getCurrentLocale());
+	       	messageBody = AonMessageTracer.getMessageEnvelope(message, getMessageContent(), FORWARDED_MESSAGE);
 	       	content += messageBody;
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
-		} catch (MessagingException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);			
 		}
     }
 
@@ -1069,20 +1066,18 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			th.putInContext("username", loggedUser.getLoggedUserName());
 			SimpleDateFormat df = new SimpleDateFormat("EEE, dd/MM/yy-HH:mm");
 			th.putInContext("nowDate", df.format(new Date()));
-			Locale locale = AonUtil.getCurrentLocale();
-			ResourceBundle bundle = ResourceBundle.getBundle(BundleConstants.RESOURCE_BUNDLE, locale);	
-			th.putInContext("fromLiteral", bundle.getString(FROM_MESSAGE));
+			th.putInContext("fromLiteral", AonUtil.getMessage(FROM_MESSAGE));
 			th.putInContext("sender", message.getSender());
-			th.putInContext("toLiteral", bundle.getString(TO_MESSAGE));
+			th.putInContext("toLiteral", AonUtil.getMessage(TO_MESSAGE));
 			th.putInContext("recipientsTo", message.getRecipientsTo());
 			String cc = message.getRecipientsCc();
 			if (! StringUtils.isEmpty(cc) ) {
-				th.putInContext("ccLiteral", bundle.getString(CC_MESSAGE));
+				th.putInContext("ccLiteral", AonUtil.getMessage(CC_MESSAGE));
 				th.putInContext("recipientsCc", cc );				
 			}
-			th.putInContext("dateLiteral", bundle.getString(DATE_MESSAGE));
+			th.putInContext("dateLiteral", AonUtil.getMessage(DATE));
 			th.putInContext("sentDateString", message.getSentDateString());
-			th.putInContext("subjectLiteral", bundle.getString(SUBJECT_MESSAGE));
+			th.putInContext("subjectLiteral", AonUtil.getMessage(SUBJECT));
 			th.putInContext("subject", message.getSubject());
 			th.putInContext("messageContent", getMessageContent());
 			th.processTemplate(PRINT_TEMPLATE, out);
@@ -1192,7 +1187,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			}
 			setShowNewMessageWindow(true);
 		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
+			AonUtil.addErrorMessageFromBundle(WEBMAIL_BUNDLE, NOT_MAIL_ACCOUNTS);
 		}
 	}
 
@@ -1202,7 +1197,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		if (mailConfig.getMailAccountCount() > 0) {
 			setShowNewMessageWindow(true);
 		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
+			AonUtil.addErrorMessageFromBundle(WEBMAIL_BUNDLE, NOT_MAIL_ACCOUNTS);
 		}
 	}
 	

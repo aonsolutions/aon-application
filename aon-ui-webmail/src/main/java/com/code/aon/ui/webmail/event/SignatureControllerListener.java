@@ -1,7 +1,7 @@
 package com.code.aon.ui.webmail.event;
 
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.SIGNATURE_USED;
+import static com.code.aon.ui.common.ICommonMessages.SIGNATURE_USED;
+import static com.code.aon.ui.common.ICommonMessages.WEBMAIL_BUNDLE;
 
 import javax.faces.event.AbortProcessingException;
 
@@ -42,7 +42,7 @@ public class SignatureControllerListener extends ControllerAdapter {
 		ISignatureController controller = (ISignatureController) event.getController();
 		ISignature signature = (ISignature) controller.getTo();
 		if (! controller.isRemovable(signature) ) {
-			String message = AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, SIGNATURE_USED, signature.getName() );
+			String message = AonUtil.addErrorMessageFromBundle(WEBMAIL_BUNDLE, SIGNATURE_USED, signature.getName() );
 			throw new AbortProcessingException( message );			
 		}
 	}

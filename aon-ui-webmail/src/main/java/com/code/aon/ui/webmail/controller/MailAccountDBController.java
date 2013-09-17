@@ -1,8 +1,8 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.MAIL_ACCOUNT_DUPLICATED;
+import static com.code.aon.ui.common.ICommonMessages.WEBMAIL_BUNDLE;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.MAIL_ACCOUNT_DUPLICATED;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.SHOW_DOMAIN_MAIL_ACCOUNTS_PROPERTY;
 
 import java.util.LinkedList;
@@ -35,7 +35,7 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 	
 	@Override
 	protected String getDuplicatedMessage( String name ) {
-		return AonUtil.getMessage(BUNDLE_NAME, MAIL_ACCOUNT_DUPLICATED, name);
+		return AonUtil.getMessage(WEBMAIL_BUNDLE, MAIL_ACCOUNT_DUPLICATED, name);
 	}		
 	
 	@Override

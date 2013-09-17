@@ -1,6 +1,7 @@
 package com.code.aon.ui.marketing.controller;
 
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.SEND_EMAIL_FINISH;
+import static com.code.aon.ui.common.ICommonMessages.SEND_EMAIL_FINISH;
+import static com.code.aon.ui.common.ICommonMessages.WEBMAIL_BUNDLE;
 
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -195,7 +196,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
 			messageController.finishMessage();
-			logger.info( AonUtil.getMessage(IWebMailConstants.BUNDLE_NAME, SEND_EMAIL_FINISH) );			
+			logger.info( AonUtil.getMessage(WEBMAIL_BUNDLE, SEND_EMAIL_FINISH) );			
 		}
 		getCommunicationController().onInit(event);
     }

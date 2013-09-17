@@ -1,14 +1,14 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.MAIL_ACCOUNT_TITLE;
+import static com.code.aon.ui.common.ICommonMessages.SIGNATURE_TITLE;
+import static com.code.aon.ui.common.ICommonMessages.WEBMAIL_BUNDLE;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_CONTACT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_PROPERTY;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.MAIL_ACCOUNT_TITLE;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.SIGNATURE_TITLE;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -436,7 +436,7 @@ public class MailConfigController {
 
 	public String getMailAccountTitle() {
 		if ( mailAccountTitle == null ) {
-			return AonUtil.getMessage(BUNDLE_NAME, MAIL_ACCOUNT_TITLE);
+			return AonUtil.getMessage(WEBMAIL_BUNDLE, MAIL_ACCOUNT_TITLE);
 		}
 		return mailAccountTitle;
 	}
@@ -447,7 +447,7 @@ public class MailConfigController {
 
 	public String getSignatureTitle() {
 		if ( signatureTitle == null ) {
-			return AonUtil.getMessage(BUNDLE_NAME, SIGNATURE_TITLE);
+			return AonUtil.getMessage(WEBMAIL_BUNDLE, SIGNATURE_TITLE);
 		}
 		return signatureTitle;
 	}

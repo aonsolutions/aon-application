@@ -7,6 +7,7 @@ public interface ICommonMessages {
 	
 	String APPLICATION_BUNDLE = "appBundle";
 	String ACCOUNT_BUNDLE = "accountBundle";
+	String WEBMAIL_BUNDLE = "webmailBundle";		
 	
 	String ACTIVE = "aon_active";
 	String ACTIVITY = "aon_activity";
@@ -93,6 +94,7 @@ public interface ICommonMessages {
 	String SOURCE = "aon_source";
 	String STATE = "aon_state";
 	String STATUS = "aon_status";
+	String SUBJECT = "aon_subject";
 	String SUPPLIER = "aon_supplier";
 	String SUPPORT_SEND_EMAIL = "aon_support_send_email";
 	String SUPPORT_TELEPHONE_NUMBER = "aon_support_telephone_number";
@@ -114,4 +116,19 @@ public interface ICommonMessages {
 	String ACCOUNT_SYSTEM_ERROR = "account_system_error";
 	String ACCOUNT_APP_PARAM_ERROR = "account_app_param_error";
 
+	String CC_MESSAGE = "webmail_cc";
+	String TO_MESSAGE = "webmail_to";
+	String FROM_MESSAGE = "webmail_from";
+	String REPLIED_MESSAGE = "webmail_replied_message";
+	String FORWARDED_MESSAGE = "webmail_forwarded_message";	
+	String MAIL_ACCOUNT_TITLE = "webmail_mailAccount_full";
+	String SIGNATURE_TITLE = "webmail_signature_full";
+	String CONTACT_DUPLICATED = "webmail_contact_duplicated";
+	String CONTACT_USED = "webmail_contact_used";
+	String NOT_MAIL_ACCOUNTS = "webmail_not_mail_accounts";
+	String SIGNATURE_DUPLICATED = "webmail_signature_duplicated";
+	String SIGNATURE_USED = "webmail_signature_used";	
+	String MAIL_ACCOUNT_DUPLICATED = "webmail_mailAccount_duplicated";
+	String SEND_EMAIL_FINISH = "webmail_send_email_finish";
+	
 }

@@ -9,8 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.mail.Address;
 import javax.mail.BodyPart;
@@ -40,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.WebmailUtil;
 
-public class AonMessage implements IMimeType, BundleConstants {
+public class AonMessage implements IMimeType {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonMessage.class);
 
@@ -54,7 +52,7 @@ public class AonMessage implements IMimeType, BundleConstants {
 	
 	private AonFolder parent;
 	
-	protected MimeMessage message;
+	protected Message message;
 
 	private Flags previousMessageFlag;
 
@@ -68,14 +66,13 @@ public class AonMessage implements IMimeType, BundleConstants {
 	
 	private Boolean attachment;
 
-	public AonMessage( MimeMessage message ) throws WebmailException {
+	public AonMessage( Message message ) {
 		this.message = message;
 		try {
 			previousMessageFlag = message.getFlags();
 			currentMessageFlag = message.getFlags();
 		} catch (MessagingException e) {
-			LOGGER.error("Error getting message fags", e);
-			throw new WebmailException(e);
+			LOGGER.error("Error getting message flags", e);
 		}		
 	}
 	
@@ -84,7 +81,7 @@ public class AonMessage implements IMimeType, BundleConstants {
 	 * 
 	 * @return a mime message.
 	 */
-	public MimeMessage getMessage() {
+	public Message getMessage() {
 		return message;
 	}
 
@@ -269,8 +266,17 @@ public class AonMessage implements IMimeType, BundleConstants {
 			throw new WebmailException(e);
 		}
 	}
+	
+	public String getDisplaySubject() throws WebmailException {
+		try {
+			return getDisplaySubject(message);
+		} catch (MessagingException e) {
+			LOGGER.error("Error getting display subject", e);
+			throw new WebmailException(e);
+		}		
+	}
 
-	private static String getDisplaySubject( Message message ) throws MessagingException {
+	public static String getDisplaySubject( Message message ) throws MessagingException {
 		String subject = message.getSubject();
 		return StringUtils.defaultString(StringEscapeUtils.escapeHtml(subject));
 	}
@@ -417,7 +423,7 @@ public class AonMessage implements IMimeType, BundleConstants {
 	 */
 	public String getRecipientsTo() throws WebmailException {
 		try {
-			return getRecipient(message, MimeMessage.RecipientType.TO);
+			return getRecipientsTo(message);
 		} catch (MessagingException e) {
 			LOGGER.error("Error getting message recepients ", e);
 			throw new WebmailException(e);
@@ -899,39 +905,6 @@ public class AonMessage implements IMimeType, BundleConstants {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
-	}
-	
-	public static String getMessageEnvelope( Message message, String content, String headerId, Locale locale ) throws MessagingException {
-		StringBuffer sb = new StringBuffer();
-		ResourceBundle bundle = ResourceBundle.getBundle(BundleConstants.RESOURCE_BUNDLE, locale);	
-		sb.append( "<br/>" );
-		if ( headerId != null ) {
-			sb.append( "<BLOCKQUOTE style='PADDING-RIGHT: 0px; PADDING-LEFT: 10px; MARGIN-LEFT: 5px; BORDER-LEFT: #000000 2px solid; MARGIN-RIGHT: 0px'>" );
-		}
-		sb.append("<font face='arial' size='2' >");
-		if ( headerId != null ) {
-			sb.append("----------").append( bundle.getString(headerId) ).append("----------");
-		}
-		sb.append( "<DIV style='BACKGROUND: #e4e4e4'>" );
-		String from = getSender(message);
-		sb.append( "<b>" ).append(bundle.getString(FROM_MESSAGE)).append(":</b> ").append(from).append( "</DIV>" );
-		if ( headerId == null ) {
-			String to = getRecipientsTo(message);
-			sb.append( "<b>" ).append(bundle.getString(TO_MESSAGE)).append(":</b> ").append(to).append( "</DIV>" );
-		}
-		sb.append( "<b>" ).append(bundle.getString(DATE_MESSAGE)).append(":</b> ").append( message.getSentDate() );
-		String cc = getRecipientsCc(message);
-		if (! StringUtils.isEmpty(cc) ) {
-			sb.append( "<br/><b>" ).append(bundle.getString(CC_MESSAGE)).append(":</b> ").append( cc );
-		}
-		String subject = getDisplaySubject(message);
-		sb.append( "<br/><b>" ).append(bundle.getString(SUBJECT_MESSAGE)).append(":</b> ").append( subject );
-   		sb.append( "</font><br/><br/>" );
-   		sb.append( content );
-		if ( headerId != null ) {
-			sb.append( "</BLOCKQUOTE><br/>" );
-		}
-		return sb.toString();
 	}
 		
 	public String getDisplaySize() throws WebmailException {

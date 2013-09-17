@@ -23,9 +23,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.bean.AonServer;
-import com.code.aon.webmail.bean.BundleConstants;
 
-public class WebMailController implements IWebMailConstants, BundleConstants {
+public class WebMailController implements IWebMailConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(WebMailController.class);
 	
