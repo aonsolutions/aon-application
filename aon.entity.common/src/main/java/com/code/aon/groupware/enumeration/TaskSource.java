@@ -11,7 +11,6 @@ public enum TaskSource implements IResourceable {
 	ASSIGNED,
 	PROCESS;
 	
-	private static final String BASE_NAME = "com.code.aon.groupware.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_task_source_";
 
     public String getName(Locale locale) {

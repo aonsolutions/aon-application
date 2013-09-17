@@ -29,11 +29,6 @@ public enum CreditorStatus implements IResourceable {
     BLOCKED;
     
     /**
-     * Message file base path.
-     */
-    private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";
-
-    /**
      * Message key prefix. 
      */
     private static final String MSG_KEY_PREFIX = "aon_enum_creditor_status_";

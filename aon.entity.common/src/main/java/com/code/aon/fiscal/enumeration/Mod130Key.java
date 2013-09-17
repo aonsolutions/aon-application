@@ -37,7 +37,6 @@ public enum Mod130Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	SEP("130-SP" ,true ,false,0,null),
 	C19("130-19" ,false,true ,0,null);
 
-    private static final String BASE_NAME = "com.code.aon.fiscal.i18n.keys";
     private static final String MSG_KEY_PREFIX = "aon_enum_mod";
 
     public static Mod130Key getKeyWithValue( String value ) {

@@ -21,9 +21,6 @@ public enum ContractLeaveStatus implements IResourceable {
 	
 	;
 
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
-    
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_contract_leave_status_";
 

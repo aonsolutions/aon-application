@@ -11,7 +11,6 @@ public enum AlarmStatus implements IResourceable {
 	FINISHED,
 	READ;
 
-	private static final String BASE_NAME = "com.code.aon.groupware.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_alarm_status_";
 	
     public String getName(Locale locale) {

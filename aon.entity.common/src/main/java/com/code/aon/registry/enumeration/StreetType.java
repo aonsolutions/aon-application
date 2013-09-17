@@ -103,7 +103,6 @@ public enum StreetType implements IResourceable, IStringEnum  {
 		this.value = value;
 	}
 
-	private static final String BASE_NAME = "com.code.aon.registry.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_streettype_";
 
     public String getName(Locale locale) {

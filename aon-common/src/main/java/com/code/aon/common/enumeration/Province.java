@@ -61,7 +61,6 @@ public enum Province implements IResourceable {
 	MELILLA,
 	NO_RESIDENTE;
 
-    private static final String BASE_NAME = "com.code.aon.common.i18n.enum";
     private static final String MSG_KEY_PREFIX = "aon_enum_province_";
     
     public String getName(Locale locale) {

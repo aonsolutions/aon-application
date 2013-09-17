@@ -316,7 +316,6 @@ public enum BalanceKey implements IResourceable{
 	private String code;
 	private String expression;
 	
-    private static final String BASE_NAME = "com.code.aon.accounting.i18n.balance_keys";
     private static final String MSG_KEY_PREFIX = "aon_enum_balance_key_";
 
 	private BalanceKey(int id, String code, String expression) {

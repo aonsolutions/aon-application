@@ -40,7 +40,6 @@ public enum Mod115Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	// Total Deuda Tributaria.
 	C11("115-11" ,false,0,false,true ,new Administration[]{Administration.ALAVA});
 
-    private static final String BASE_NAME = "com.code.aon.fiscal.i18n.keys";
     private static final String MSG_KEY_PREFIX = "aon_enum_mod";
 
     public static Mod115Key getKeyWithValue( String value ) {

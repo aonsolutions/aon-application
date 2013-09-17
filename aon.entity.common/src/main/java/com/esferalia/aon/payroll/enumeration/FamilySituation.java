@@ -12,9 +12,7 @@ public enum FamilySituation implements IResourceable {
 	OTHER(3)
 	;
 	
-	
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
-    private static final String MSG_KEY_PREFIX = "aon_enum_family_situation_";
+	private static final String MSG_KEY_PREFIX = "aon_enum_family_situation_";
 
 	private int value;
 	

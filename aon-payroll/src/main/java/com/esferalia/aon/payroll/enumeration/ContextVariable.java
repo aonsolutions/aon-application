@@ -232,9 +232,6 @@ public enum ContextVariable implements IResourceable{
     	ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
     	return bundle.getString(EXT_MSG_KEY_PREFIX + super.toString());
     }
-
-    /** Message file base path. */
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_context_variable_";

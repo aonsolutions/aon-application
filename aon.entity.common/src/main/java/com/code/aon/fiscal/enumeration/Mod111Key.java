@@ -189,7 +189,6 @@ public enum Mod111Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	GP_C24 ("111-GP-24"  ,false,2,false,true ,new Administration[]{Administration.GIPUZKOA}),
 	GP_C25 ("111-GP-25"  ,false,1,true ,false,new Administration[]{Administration.GIPUZKOA});
 
-    private static final String BASE_NAME = "com.code.aon.fiscal.i18n.keys";
     private static final String MSG_KEY_PREFIX = "aon_enum_mod";
 
     public static Mod111Key getKeyWithValue( String value ) {

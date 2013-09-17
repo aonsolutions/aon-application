@@ -17,8 +17,6 @@ public enum AmortizationPeriod implements IResourceable {
         FOUR_MONTHLY(3),
         HALF_YEARLY(2);
        
-    private static final String BASE_NAME = "com.code.aon.accounting.i18n.messages";
-
     private static final String MSG_KEY_PREFIX = "aon_enum_amortization_period_";
 
     private int yearFraction;

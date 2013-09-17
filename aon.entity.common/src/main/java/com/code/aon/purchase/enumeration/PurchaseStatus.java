@@ -25,9 +25,6 @@ public enum PurchaseStatus implements IResourceable {
     /** INVOICED. */
     INVOICED;
 	
-    /** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.purchase.i18n.messages";
-
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_purchase_status_";
     

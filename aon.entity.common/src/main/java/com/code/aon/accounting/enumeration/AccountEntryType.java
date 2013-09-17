@@ -33,7 +33,6 @@ public enum AccountEntryType implements IResourceable {
 	RETURNED_COLLECTION,
 	SOCIAL_INSURANCE_ADJUST;
 	
-    private static final String BASE_NAME = "com.code.aon.accounting.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_account_type_";
 
     @Override

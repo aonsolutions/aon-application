@@ -13,9 +13,6 @@ public enum Administration implements IResourceable {
 	NAVARRA,
 	COMMON_TERRITORY;
 	
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.config.i18n.messages";
-    
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_administration_";
 

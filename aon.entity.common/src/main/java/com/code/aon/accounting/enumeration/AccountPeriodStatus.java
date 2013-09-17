@@ -16,7 +16,6 @@ public enum AccountPeriodStatus implements IResourceable {
     OPERATING,
     CLOSED;
 
-    private static final String BASE_NAME = "com.code.aon.accounting.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_account_period_status_";
 	
     @Override

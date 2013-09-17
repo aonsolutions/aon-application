@@ -1,7 +1,6 @@
 package com.esferalia.aon.payroll.enumeration;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
 

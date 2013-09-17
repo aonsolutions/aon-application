@@ -51,7 +51,6 @@ public enum ContrataFileType implements IResourceable {
 	
 	;
 	
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_contrata_file_type_";
 
     public String getName(Locale locale) {

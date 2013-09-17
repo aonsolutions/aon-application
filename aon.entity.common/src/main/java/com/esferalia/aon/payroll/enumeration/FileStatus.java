@@ -13,7 +13,6 @@ public enum FileStatus implements IResourceable {
 	PARTIALLY,
 	DENIED;
 	
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_file_status_";
 
     public String getName(Locale locale) {

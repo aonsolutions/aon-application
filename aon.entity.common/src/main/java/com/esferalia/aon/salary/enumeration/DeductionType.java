@@ -106,9 +106,6 @@ public enum DeductionType implements IResourceable {
 
 	public abstract void accept( DeductionTypeVisitor visitor );
 	
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.esferalia.aon.salary.i18n.messages";
-    
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_deduction_type_";
     

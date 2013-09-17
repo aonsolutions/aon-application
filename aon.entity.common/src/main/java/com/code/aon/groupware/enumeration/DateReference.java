@@ -11,8 +11,6 @@ public enum DateReference implements IResourceable {
 	BEFORE_END_DATE,
 	FROM_CREATION_DATE;
 	
-	private static final String BASE_NAME = "com.code.aon.groupware.i18n.messages";
-
     private static final String MSG_KEY_PREFIX = "aon_enum_date_reference_";
 	
     public String getName(Locale locale) {

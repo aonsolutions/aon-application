@@ -320,7 +320,6 @@ public enum BalanceSheet implements IResourceable{
 	private String template;
 	private BalanceKey[] keys;
 	
-    private static final String BASE_NAME = "com.code.aon.accounting.i18n.balance_keys";
     private static final String MSG_KEY_PREFIX = "aon_enum_balance_sheet_";
 
 	private BalanceSheet(int id, BalanceType type, String module,String moduleId, String mainTemplate, String template,BalanceKey[] keys) {

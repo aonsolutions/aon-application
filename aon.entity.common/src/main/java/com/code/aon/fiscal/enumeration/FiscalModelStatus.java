@@ -12,7 +12,6 @@ public enum FiscalModelStatus implements IResourceable {
 	BATCHED, 
 	BLOCKED;
 
-	private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";
 	private static final String MSG_KEY_PREFIX = "aon_enum_fiscal_model_status_";
 
 	public String getName(Locale locale) {

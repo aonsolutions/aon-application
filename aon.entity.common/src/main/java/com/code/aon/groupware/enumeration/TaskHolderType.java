@@ -10,7 +10,6 @@ public enum TaskHolderType implements IResourceable {
 	INTERNAL,
 	EXTERNAL;
 	
-	private static final String BASE_NAME = "com.code.aon.groupware.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_task_holder_type_";
 	
     public String getName(Locale locale) {

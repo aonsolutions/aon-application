@@ -12,7 +12,6 @@ public enum DisabilityLevel implements IResourceable {
 	GT_EQ_65
 	;
 	
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_disability_level_";
 
     public String getName(Locale locale) {

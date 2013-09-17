@@ -15,8 +15,6 @@ public enum DocumentType implements IResourceable {
 	COMMUNITY_CARD,
 	OTHER;
 
-    private static final String BASE_NAME = "com.code.aon.registry.i18n.messages";
-
     private static final String MSG_KEY_PREFIX = "aon_enum_document_type_";
 
     public String getName(Locale locale) {

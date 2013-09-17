@@ -26,9 +26,6 @@ public enum TargetStatus implements IResourceable {
      */
 	INACTIVE;
     
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.commercial.i18n.messages";
-
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_target_status_";
  

@@ -28,7 +28,6 @@ public enum TaskPeriod implements IResourceable {
 		this.value = value;
 	}
 	
-	private static final String BASE_NAME = "com.code.aon.groupware.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_task_period_";
 	
     public String getName(Locale locale) {

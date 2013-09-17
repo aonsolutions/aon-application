@@ -18,9 +18,6 @@ public enum OfferDetailCommissionStatus implements IResourceable {
 	BLOCKED,
 	PAID;
 
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.commercial.i18n.messages";
-    
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_offer_detail_commission_status_";
 	

@@ -13,7 +13,6 @@ public enum TrainingModality implements IResourceable {
 	PHONE
 	;      
 	
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_training_modality_";
 
     public String getName(Locale locale) {

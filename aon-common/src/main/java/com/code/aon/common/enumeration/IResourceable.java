@@ -10,6 +10,11 @@ import java.util.Locale;
  */
 public interface IResourceable {
 
+    /**
+     * Messages file base path.
+     */
+	String BASE_NAME = "com.code.aon.common.i18n.enum";
+	
 	/**
 	 * Return the message <code>String</code> bound to <code>Locale</code>
 	 * passed by parameter.

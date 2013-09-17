@@ -13,9 +13,6 @@ public enum ProposalTransferStatus implements IResourceable {
 	
     TRANSFER_PROCESSED;
 	
-    /** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.purchase.i18n.messages";
-
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_proposal_transfer_status_";
     

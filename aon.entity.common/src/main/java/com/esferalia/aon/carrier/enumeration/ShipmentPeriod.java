@@ -27,9 +27,6 @@ public enum ShipmentPeriod implements IResourceable{
 	AFTER_19 
 	;
 		
-    /** Message file base path. */
-    private static final String BASE_NAME = "com.esferalia.aon.carrier.i18n.messages";
-
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_carrier_shipment_period_";
     

@@ -26,9 +26,6 @@ public enum WithholdingType implements IResourceable {
 	/** TRANSPORTISTAS Y ASIMILADOS */
 	TRANSPORT_OPERATOR;
 
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.config.i18n.messages";
-    
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_withholding_type_";
 

@@ -12,11 +12,6 @@ public enum PriceType implements IResourceable {
 	AVERAGE_PURCHASE_PRICE;
     
     /**
-     * Message file base path.
-     */
-    private static final String BASE_NAME = "com.code.aon.warehouse.i18n.messages";
-
-    /**
      * Message key prefix. 
      */
     private static final String MSG_KEY_PREFIX = "aon_enum_price_type_";

@@ -57,7 +57,6 @@ public enum Mod131Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 
 	public static final String ACTIVITIES_PREFIX = "131-AC";
 	
-    private static final String BASE_NAME = "com.code.aon.fiscal.i18n.keys";
     private static final String MSG_KEY_PREFIX = "aon_enum_mod";
 
     public static Mod131Key getKeyWithValue( String value ) {

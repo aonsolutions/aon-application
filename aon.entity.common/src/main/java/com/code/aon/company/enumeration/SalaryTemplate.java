@@ -21,7 +21,6 @@ public enum SalaryTemplate implements IResourceable {
 	
 	;      
 	
-    private static final String BASE_NAME = "com.code.aon.company.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_salary_template_";
 
     public String getName(Locale locale) {

@@ -12,7 +12,6 @@ public enum ItemTariffType implements IResourceable {
 	PRICE,
 	SALES_PRICE;
    
-    private static final String BASE_NAME = "com.code.aon.product.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_item_tariff_type_";
 
     public String getName(Locale locale) {

@@ -16,9 +16,6 @@ public enum WorkGroupStatus implements IResourceable {
 	/** INACTIVE. */
 	INACTIVE;
 
-	/** Ruta base del fichero de mensajes. */
-    private static final String BASE_NAME = "com.code.aon.config.i18n.messages";
-
     /** Prefijo de la clave de mensajes. */
     private static final String MSG_KEY_PREFIX = "aon_enum_workGroup_status_";
 

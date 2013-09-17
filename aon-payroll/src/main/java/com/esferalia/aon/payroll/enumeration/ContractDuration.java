@@ -17,9 +17,6 @@ public enum ContractDuration implements IResourceable {
 
 	UNSPECIFIED;
         
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
-    
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_contract_duration_";
 

@@ -11,7 +11,6 @@ public enum DeductHomeLoan implements IResourceable {
 	BEFORE_01_01_2001
 	;
 	
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_deduct_home_loan_";
 
     @Override

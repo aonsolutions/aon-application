@@ -14,7 +14,6 @@ public enum CheckCategory implements IResourceable {
 	ACCOUNTING,
 	AMORTIZATION;
 	
-	private static final String BASE_NAME = "com.code.aon.common.i18n.enum";
     private static final String MSG_KEY_PREFIX = "aon_enum_check_category_";
 	
     public String getName(Locale locale) {

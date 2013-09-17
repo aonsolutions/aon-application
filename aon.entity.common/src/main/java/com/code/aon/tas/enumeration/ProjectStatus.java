@@ -10,9 +10,6 @@ public enum ProjectStatus implements IResourceable {
 	PENDING,
 	CLOSED;
     
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.tas.i18n.messages";
-
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_project_status_";
     

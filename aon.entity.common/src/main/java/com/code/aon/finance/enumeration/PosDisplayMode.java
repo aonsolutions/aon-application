@@ -11,11 +11,6 @@ public enum PosDisplayMode implements IResourceable {
     BAR_RESTAURANT;
     
     /**
-     * Message file base path.
-     */
-    private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";
-
-    /**
      * Message key prefix. 
      */
     private static final String MSG_KEY_PREFIX = "aon_enum_pos_display_mode_";

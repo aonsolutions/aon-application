@@ -32,7 +32,6 @@ public enum Mod123Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	C12("123-12",false,0,false,false,new Administration[]{Administration.ALAVA}),
 	C13("123-13",false,0,true ,false,null);
 	
-    private static final String BASE_NAME = "com.code.aon.fiscal.i18n.keys";
     private static final String MSG_KEY_PREFIX = "aon_enum_mod";
 
     public static Mod123Key getKeyWithValue( String value ) {

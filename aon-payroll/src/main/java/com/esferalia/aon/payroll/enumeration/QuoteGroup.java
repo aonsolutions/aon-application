@@ -22,9 +22,6 @@ public enum QuoteGroup implements IResourceable, IStringEnum {
 	
 	;
 
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
-    
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_quote_group_";
 

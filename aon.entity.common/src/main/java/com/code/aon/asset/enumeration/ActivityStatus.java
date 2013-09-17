@@ -17,9 +17,6 @@ public enum ActivityStatus implements IResourceable, IStringEnum {
 	OUT_OF_ORDER("2"),
 	BLOCKED("3");
     
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.asset.i18n.messages";
-    
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_activity_status_";
 

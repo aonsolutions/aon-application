@@ -38,7 +38,6 @@ public enum SuspensionCause implements IResourceable, IStringEnum  {
 	C28("28"),      
 	C29("29");      
 	
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_suspension_cause_";
 
     public String getName(Locale locale) {

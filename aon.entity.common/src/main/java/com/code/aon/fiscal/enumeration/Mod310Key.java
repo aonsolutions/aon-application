@@ -44,7 +44,6 @@ public enum Mod310Key implements IFiscalModelKey, IResourceable, IStringEnum  {
 	C10("310-10"   ,false,false,false ,0,null),
 ;
 
-    private static final String BASE_NAME = "com.code.aon.fiscal.i18n.keys";
     private static final String MSG_KEY_PREFIX = "aon_enum_mod";
 
     public static Mod310Key getKeyWithValue( String value ) {

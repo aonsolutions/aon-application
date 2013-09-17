@@ -45,9 +45,6 @@ public enum Month implements IResourceable {
 	/** DECEMBER. */
 	DECEMBER(11);
     
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.common.i18n.enum";
-
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_month_";
     

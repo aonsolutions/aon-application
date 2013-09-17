@@ -25,9 +25,6 @@ public enum Quarter implements IResourceable {
 		this.startMonth= startMonth;
 		this.dueMonth= dueMonth;
 	}
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.accounting.i18n.messages";
-    
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_quarter_";
 

@@ -19,7 +19,6 @@ public enum FiscalBatchType implements IResourceable {
 //	,MOD349( true )
 	;
 
-    private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_fiscal_batch_type_";
 
     private boolean annual;

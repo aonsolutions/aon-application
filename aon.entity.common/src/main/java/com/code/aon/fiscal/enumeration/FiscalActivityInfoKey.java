@@ -255,7 +255,6 @@ public enum FiscalActivityInfoKey implements IResourceable, IStringEnum {
 		this.values = values;
 	}
 
-    private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_activityAddInfo_";
 
     public String getName(Locale locale) {

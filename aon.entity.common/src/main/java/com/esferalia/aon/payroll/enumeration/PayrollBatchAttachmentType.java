@@ -13,7 +13,6 @@ public enum PayrollBatchAttachmentType implements IResourceable {
 	
 	;
 	
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_payroll_batch_attachment_type_";
 
     public String getName(Locale locale) {

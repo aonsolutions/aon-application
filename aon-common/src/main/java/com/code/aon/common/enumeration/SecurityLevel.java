@@ -24,11 +24,6 @@ public enum SecurityLevel implements IResourceable {
 	CONFIDENTIAL;
 
     /**
-     * Messages file base path.
-     */
-    private static final String BASE_NAME = "com.code.aon.common.i18n.enum";
-
-    /**
      * Messages key prefix. 
      */
     private static final String MSG_KEY_PREFIX = "aon_enum_securitylevel_";

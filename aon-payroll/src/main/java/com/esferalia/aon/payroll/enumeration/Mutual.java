@@ -33,7 +33,6 @@ public enum Mutual implements IResourceable, IStringEnum {
 	M888("888")
 	;
 	
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_mutual_";
 
     @Override

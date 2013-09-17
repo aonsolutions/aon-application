@@ -12,9 +12,6 @@ public enum LeaveReportType implements IResourceable {
 	DISCHARGE
 	;
 
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
-    
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_leave_report_type_";
 

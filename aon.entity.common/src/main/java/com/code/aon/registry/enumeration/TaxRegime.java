@@ -12,7 +12,6 @@ public enum TaxRegime implements IResourceable {
     MODULES,			// Módulos
     BUSINESS_SOCIETY; 	// Sociedad Mercantil.
 
-    private static final String BASE_NAME = "com.code.aon.registry.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_tax_regime_";
 
     public String getName(Locale locale) {

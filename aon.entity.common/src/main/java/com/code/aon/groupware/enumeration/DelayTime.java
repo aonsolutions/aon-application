@@ -24,7 +24,6 @@ public enum DelayTime implements IResourceable {
 	ONE_WEEK(10080),
 	TWO_WEEKS(20160);
 
-	private static final String BASE_NAME = "com.code.aon.groupware.i18n.messages";
 	private static final String MSG_KEY_PREFIX = "aon_enum_delay_time_";
     
     private int value;

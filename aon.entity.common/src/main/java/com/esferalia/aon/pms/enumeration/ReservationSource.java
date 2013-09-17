@@ -11,9 +11,6 @@ public enum ReservationSource implements IResourceable {
 	CRS,
 	REQUEST;
     
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.esferalia.aon.pms.i18n.messages";
-
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_reservation_source_";
     

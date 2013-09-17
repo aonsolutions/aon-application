@@ -22,9 +22,6 @@ public enum WebInfoVariableType implements IResourceable {
 	
 	BORDER;
 	
-	/** Message file base path. */
-	private static final String BASE_NAME = "com.code.aon.infoweb.i18n.messages";
-
 	/** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_infoweb_style_type_";
     private static final String MSG_VALUE_PREFIX = "aon_enum_infoweb_style_type_value_";

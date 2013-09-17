@@ -21,7 +21,6 @@ public enum DailyTrackingReportType implements IResourceable {
 	GRAPHIC_BY_JOB_TYPE ("dailyTrackingGraphicByJobType"),
 	REPORT ("dailyTrackingExcel");
 	
-	private static final String BASE_NAME = "com.code.aon.groupware.i18n.messages";
     private static final String MSG_KEY_PREFIX = "daily_tracking_report_";
     private String reportKey;
     

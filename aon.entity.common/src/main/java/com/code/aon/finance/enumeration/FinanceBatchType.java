@@ -35,9 +35,6 @@ public enum FinanceBatchType implements IResourceable {
     /** AEB_34. */ 
     AEB_34(true);
 
-    /** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";
-
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_financebatchtype_";
     

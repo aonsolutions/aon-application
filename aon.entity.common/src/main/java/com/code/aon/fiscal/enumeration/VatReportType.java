@@ -19,9 +19,7 @@ public enum VatReportType implements IResourceable {
 	CAN_CEU_MEL ( InvoiceTransactionType.CAN_CEU_MEL),
 	OTHER_ISP ( InvoiceTransactionType.OTHER_ISP);
 
-	
-    private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";
-    private static final String MSG_KEY_PREFIX = "aon_enum_vat_report_type_";
+	private static final String MSG_KEY_PREFIX = "aon_enum_vat_report_type_";
     private InvoiceTransactionType transaction; 
     
     private VatReportType(InvoiceTransactionType transaction) {

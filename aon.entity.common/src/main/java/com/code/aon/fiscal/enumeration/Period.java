@@ -38,7 +38,6 @@ public enum Period implements IResourceable {
 		this.name = name;
 	}
 
-    private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";
     private static final String MSG_KEY_PREFIX = "aon_enum_period_";
 
     public String getName(Locale locale) {

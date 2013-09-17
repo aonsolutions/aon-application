@@ -24,12 +24,6 @@ public enum DeliveryStatus implements IResourceable {
      */
     INVOICED;
     
-    
-    /**
-     * Message file base path.
-     */
-    private static final String BASE_NAME = "com.code.aon.warehouse.i18n.messages";
-
     /**
      * Message key prefix. 
      */
