@@ -439,9 +439,9 @@ public class VatTaxController extends BasicController {
 		VatTaxDetail detail = (VatTaxDetail) getVatTaxModel().getRowData();
 		InvoiceReportController irc = (InvoiceReportController) AonUtil.getRegisteredBean("invoiceReport");
 		InvoiceReportParams params = getInvoiceReportParams(detail);
-		params.setTaxType( TaxType.VAT );
 		params.setFromInvoiceDate(null);
 		params.setToInvoiceDate(null);
+		params.setTaxType( TaxType.VAT );
 		irc.setParams(params);
 		return irc.onExcelReport();
 	}
@@ -504,113 +504,290 @@ public class VatTaxController extends BasicController {
 		
 		VatTaxKey key = detail.getKey();
 		if (key == VatTaxKey.A1 ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.NATIONAL});
-			params.setType(new InvoiceType[]{InvoiceType.SALES});
-			params.setRectificationTypeSpecial(false);
-	    	params.setPercent(detail.getPercent());	
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.NATIONAL);
+			pd.setType(InvoiceType.SALES);
+			pd.setRectificationTypeSpecial(false);
+			pd.setPercent(detail.getPercent());
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.A2 ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.NATIONAL});
-			params.setType(new InvoiceType[]{InvoiceType.SALES});
-			params.setRectificationTypeSpecial(false);
-	    	params.setPercent(detail.getPercent());
-	    	params.setSurcharge(true);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.NATIONAL);
+			pd.setType(InvoiceType.SALES);
+			pd.setRectificationTypeSpecial(false);
+			pd.setPercent(detail.getPercent());
+			pd.setSurcharge(true);
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.A3 ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.INTRACOMMUNITY});
-			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
-	    	params.setPercent(detail.getPercent());
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.INTRACOMMUNITY);
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setPercent(detail.getPercent());
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.A4 ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.INTRACOMMUNITY,InvoiceTransactionType.EXTRACOMMUNITY});
-			params.setType(new InvoiceType[]{InvoiceType.EXPENSES});
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
+			pd.setType(InvoiceType.EXPENSES);
+			params.addDetail(pd);
+
+			pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.OTHER_ISP);
+			pd.setType(InvoiceType.EXPENSES);
+			params.addDetail(pd);
+
+			pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
+			pd.setType(InvoiceType.EXPENSES);
+			params.addDetail(pd);
+
+			pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.INTRACOMMUNITY);
+			pd.setType(InvoiceType.EXPENSES);
+			params.addDetail(pd);
+
+			pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.OTHER_ISP);
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setPercent(detail.getPercent());
+			params.addDetail(pd);			
 		}
+		
 		if (key == VatTaxKey.A5 ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.NATIONAL});
-			params.setType(new InvoiceType[]{InvoiceType.SALES});
-			params.setRectificationTypeSpecial(true);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.NATIONAL);
+			pd.setType(InvoiceType.SALES);
+			pd.setRectificationTypeSpecial(true);
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.B1 ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.NATIONAL});
-			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
-			params.setInvestment(false);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.NATIONAL);
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setInvestment(false);
+			params.addDetail(pd);
+			
+			pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.OTHER_ISP);
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setInvestment(false);
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.B2 ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.NATIONAL});
-			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
-			params.setInvestment(true);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.NATIONAL);
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setInvestment(true);
+			params.addDetail(pd);
+			
+			pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.OTHER_ISP);
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setInvestment(true);
+			params.addDetail(pd);
+
+			pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.NATIONAL);
+			pd.setType(InvoiceType.EXPENSES);
+			pd.setInvestment(true);
+			params.addDetail(pd);
+
+			pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
+			pd.setType(InvoiceType.EXPENSES);
+			pd.setInvestment(true);
+			params.addDetail(pd);
+
+			pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.OTHER_ISP);
+			pd.setType(InvoiceType.EXPENSES);
+			pd.setInvestment(true);
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.B3 ) {
-			params.setType(new InvoiceType[]{InvoiceType.EXPENSES});
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.EXPENSES);
+			pd.setInvestment(false);
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.C1 ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.EXTRACOMMUNITY});
-			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
-			params.setInvestment(false);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setInvestment(false);
+			params.addDetail(pd);
+			
+			pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setInvestment(false);
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.C2 ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.EXTRACOMMUNITY});
-			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
-			params.setInvestment(true);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setInvestment(true);
+			params.addDetail(pd);
+			
+			pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setInvestment(true);
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.D1 ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.INTRACOMMUNITY});
-			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
-			params.setInvestment(false);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.INTRACOMMUNITY);
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setInvestment(false);
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.D2 ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.INTRACOMMUNITY});
-			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
-			params.setInvestment(true);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.INTRACOMMUNITY);
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setInvestment(true);
+			params.addDetail(pd);
 		}
-//		D3	("D3"	,false	,false	,true	,false	,false	,false	,null,null),
-//		ET	("ET"	,false	,false	,true	,false	,false	,false	,null,null),
-//		RI	("RI"	,false	,false	,true	,false	,false	,false	,null,null),
+		
 		if (key == VatTaxKey.CP ) {
-			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
-			params.setInvestment(false);
-			params.setPercent(detail.getPercent());
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setInvestment(false);
+			pd.setPercent(detail.getPercent());
+			params.addDetail(pd);
 		}
 		if (key == VatTaxKey.GT ) {
-			params.setType(new InvoiceType[]{InvoiceType.EXPENSES,InvoiceType.UNDEDUCTIBLE});
-			params.setPercent(detail.getPercent());
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.EXPENSES);
+			pd.setTransaction(InvoiceTransactionType.NATIONAL);
+			pd.setInvestment(false);
+			pd.setPercent(detail.getPercent());
+			params.addDetail(pd);
+			
+			pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.EXPENSES);
+			pd.setTransaction(InvoiceTransactionType.INTRACOMMUNITY);
+			pd.setInvestment(false);
+			pd.setPercent(detail.getPercent());
+			params.addDetail(pd);
+			
+			pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.EXPENSES);
+			pd.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
+			pd.setInvestment(false);
+			pd.setPercent(detail.getPercent());
+			params.addDetail(pd);
+			
+			pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.EXPENSES);
+			pd.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
+			pd.setInvestment(false);
+			pd.setPercent(detail.getPercent());
+			params.addDetail(pd);
+			
+			pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.EXPENSES);
+			pd.setTransaction(InvoiceTransactionType.OTHER_ISP);
+			pd.setInvestment(false);
+			pd.setPercent(detail.getPercent());
+			params.addDetail(pd);
 		}
 		if (key == VatTaxKey.BI ) {
-			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
-			params.setInvestment(true);
-			params.setPercent(detail.getPercent());
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.PURCHASE);
+			pd.setInvestment(true);
+			params.addDetail(pd);
+			
+			pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.EXPENSES);
+			pd.setInvestment(true);
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.EI ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.INTRACOMMUNITY});
-			params.setType(new InvoiceType[]{InvoiceType.SALES});
-			params.setService(false);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.INTRACOMMUNITY);
+			pd.setType(InvoiceType.SALES);
+			pd.setService(false);
+			params.addDetail(pd);
 		}
 		if (key == VatTaxKey.EX1 ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.EXTRACOMMUNITY});
-			params.setType(new InvoiceType[]{InvoiceType.SALES});
-			params.setService(false);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
+			pd.setType(InvoiceType.SALES);
+			pd.setService(false);
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.EX2 ) {
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.CAN_CEU_MEL});
-			params.setType(new InvoiceType[]{InvoiceType.SALES});
-			params.setService(false);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
+			pd.setType(InvoiceType.SALES);
+			pd.setService(false);
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.OO ) {
-			params.setType(new InvoiceType[]{InvoiceType.SALES});
-			params.setService(true);
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.EXTRACOMMUNITY});
-			params.setVatDeductionTypeWithoutRight(false);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.SALES);
+			pd.setService(true);
+			pd.setVatDeductionTypeWithoutRight(false);
+			pd.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
+			params.addDetail(pd);
+			
+			pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.SALES);
+			pd.setService(true);
+			pd.setVatDeductionTypeWithoutRight(false);
+			pd.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
+			params.addDetail(pd);			
 		}
+		
 		if (key == VatTaxKey.OS ) {
-			params.setType(new InvoiceType[]{InvoiceType.SALES});
-			params.setService(true);
-			params.setVatDeductionTypeWithoutRight(true);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.SALES);
+			pd.setService(true);
+			pd.setVatDeductionTypeWithoutRight(true);
+			params.addDetail(pd);
 		}
+		
 		if (key == VatTaxKey.OI ) {
-			params.setType(new InvoiceType[]{InvoiceType.SALES});
-			params.setService(true);
-			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.INTRACOMMUNITY,InvoiceTransactionType.CAN_CEU_MEL});
-			params.setVatDeductionTypeWithoutRight(false);
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd.setTransaction(InvoiceTransactionType.OTHER_ISP);
+			pd.setType(InvoiceType.SALES);
+			pd.setService(false);
+			params.addDetail(pd);
+			
+			pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.SALES);
+			pd.setService(true);
+			pd.setVatDeductionTypeWithoutRight(false);
+			pd.setTransaction(InvoiceTransactionType.OTHER_ISP);
+			params.addDetail(pd);			
+		}
+		
+		if (key == VatTaxKey.PS ) {
+			InvoiceReportParamsDetail pd = new InvoiceReportParamsDetail();
+			pd = new InvoiceReportParamsDetail();
+			pd.setType(InvoiceType.SALES);
+			pd.setService(true);
+			pd.setVatDeductionTypeWithoutRight(false);
+			pd.setTransaction(InvoiceTransactionType.INTRACOMMUNITY);
+			params.addDetail(pd);			
 		}
 		return params;
 	}

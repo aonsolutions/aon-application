@@ -2,15 +2,15 @@ package com.code.aon.ui.fiscal.controller;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -23,16 +23,10 @@ public class InvoiceReportParams {
 	private Date fromInvoiceDate;
 	private Date toInvoiceDate;
 	private SecurityLevel securityLevel;
-	
-    private InvoiceTransactionType[] transaction;
-    private Boolean investment;
-    private InvoiceType[] type;
-    private Boolean surcharge;
-    private Boolean service;
     private TaxType taxType;
-    private Boolean vatDeductionTypeWithoutRight;
-    private Boolean rectificationTypeSpecial;
-    private Double percent;
+
+	
+	private List<InvoiceReportParamsDetail> details;
 	
 	public Date getDate() {
 		return date;
@@ -78,69 +72,6 @@ public class InvoiceReportParams {
 		this.securityLevel = securityLevel;
 	}
 
-	public InvoiceTransactionType[] getTransaction() {
-		return transaction;
-	}
-	public void setTransaction(InvoiceTransactionType[] transaction) {
-		this.transaction = transaction;
-	}
-
-	public Boolean getInvestment() {
-		return investment;
-	}
-	public void setInvestment(Boolean investment) {
-		this.investment = investment;
-	}
-	
-	public InvoiceType[] getType() {
-		return type;
-	}
-	public void setType(InvoiceType[] type) {
-		this.type = type;
-	}
-	
-	public Boolean getSurcharge() {
-		return surcharge;
-	}
-	public void setSurcharge(Boolean surcharge) {
-		this.surcharge = surcharge;
-	}
-	
-	public Boolean getService() {
-		return service;
-	}
-	public void setService(Boolean service) {
-		this.service = service;
-	}
-	
-	public TaxType getTaxType() {
-		return taxType;
-	}
-	public void setTaxType(TaxType taxType) {
-		this.taxType = taxType;
-	}
-	
-	public Boolean getVatDeductionTypeWithoutRight() {
-		return vatDeductionTypeWithoutRight;
-	}
-	public void setVatDeductionTypeWithoutRight(Boolean vatDeductionTypeWithoutRight) {
-		this.vatDeductionTypeWithoutRight = vatDeductionTypeWithoutRight;
-	}
-	
-	public Boolean getRectificationTypeSpecial() {
-		return rectificationTypeSpecial;
-	}
-	public void setRectificationTypeSpecial(Boolean rectificationTypeSpecial) {
-		this.rectificationTypeSpecial = rectificationTypeSpecial;
-	}
-	
-	public Double getPercent() {
-		return percent;
-	}
-	public void setPercent(Double percent) {
-		this.percent = percent;
-	}
-	
 	public void reset() {
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
@@ -154,16 +85,7 @@ public class InvoiceReportParams {
 		setToTaxDate(c.getTime());
 		setToInvoiceDate(c.getTime());
 		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
-		
-	    setTransaction(null);
-	    setInvestment(null);
-	    setType(null);
-	    setSurcharge(null);
-	    setService(null);
 	    setTaxType(null);
-	    setVatDeductionTypeWithoutRight(null);
-	    setRectificationTypeSpecial(null);
-	    setPercent(null);
 	}
 	
 	public Criteria getCriteria() throws ManagerBeanException {
@@ -186,4 +108,26 @@ public class InvoiceReportParams {
 		}
 		return criteria;
 	}
+	
+	public List<InvoiceReportParamsDetail> getDetails() {
+		if (details == null) {
+			setDetails( new LinkedList<InvoiceReportParamsDetail>());
+		}
+		return details;
+	}
+	public void setDetails(List<InvoiceReportParamsDetail> details) {
+		this.details = details;
+	}
+	
+	public void addDetail(InvoiceReportParamsDetail detail ) {
+		getDetails().add(detail);
+	}
+	
+	public TaxType getTaxType() {
+		return taxType;
+	}
+	public void setTaxType(TaxType taxType) {
+		this.taxType = taxType;
+	}
+	
 }

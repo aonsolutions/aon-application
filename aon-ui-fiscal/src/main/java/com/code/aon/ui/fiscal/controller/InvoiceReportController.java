@@ -109,54 +109,55 @@ public class InvoiceReportController {
 			if (params.getSecurityLevel() != null) {
 				stmt.append(" AND i.security_level = " + params.getSecurityLevel().ordinal());
 			}
-			
-			if (params.getTransaction() != null) {
-				stmt.append(" AND (");
-				for (int i =0; i < params.getTransaction().length;i++) {
-					if (i > 0) {
-						stmt.append(" OR ");
-					}
-					stmt.append(" i.transaction = " + params.getTransaction()[i].ordinal());	
-				}
-				stmt.append(" ) ");
-				
-			}
-			if (params.getInvestment() != null) {
-				stmt.append(" AND i.investment = " + (params.getInvestment().booleanValue()?"1":"0"));
-			}
-			if (params.getType() != null) {
-				stmt.append(" AND (");
-				for (int i =0; i < params.getType().length;i++) {
-					if (i > 0) {
-						stmt.append(" OR ");
-					}
-					stmt.append(" i.type = " + params.getType()[i].ordinal());	
-				}
-				stmt.append(" ) ");
-				
-			}
-			if (params.getSurcharge() != null) {
-				stmt.append(" AND it.surcharge = " + (params.getSurcharge().booleanValue()?"1":"0"));
-			}
-			if (params.getService() != null) {
-				stmt.append(" AND i.service = " + (params.getService().booleanValue()?"1":"0"));
-			}
 			if (params.getTaxType() != null) {
 				stmt.append(" AND it.tax_type = " + params.getTaxType().ordinal());
 			}
-			if (params.getVatDeductionTypeWithoutRight() != null) {
-				stmt.append(" AND it.vat_deduction_type " + (params.getVatDeductionTypeWithoutRight().booleanValue()?"= 1":"!= 1"));
+			if (params.getDetails().size() > 0) {
+				stmt.append(" AND (");
+				int detailNum = 0;
+				for (InvoiceReportParamsDetail detail : params.getDetails()) {
+					if (detailNum > 0) {
+						stmt.append(" OR ");	
+					}
+					stmt.append(" (1=1 ");
+					if (detail.getTransaction() != null) {
+						stmt.append(" AND i.transaction = " + detail.getTransaction().ordinal());	
+					}
+					if (detail.getInvestment() != null) {
+						stmt.append(" AND i.investment = " + (detail.getInvestment().booleanValue()?"1":"0"));
+					}
+					if (detail.getType() != null) {
+						stmt.append(" AND i.type = " + detail.getType().ordinal());
+					}
+					if (detail.getSurcharge() != null) {
+						stmt.append(" AND it.surcharge = " + (detail.getSurcharge().booleanValue()?"1":"0"));
+					}
+					if (detail.getService() != null) {
+						stmt.append(" AND i.service = " + (detail.getService().booleanValue()?"1":"0"));
+					}
+					if (detail.getVatDeductionTypeWithoutRight() != null) {
+						stmt.append(" AND it.vat_deduction_type " + (detail.getVatDeductionTypeWithoutRight().booleanValue()?"= 1":"!= 1"));
+					}
+					if (detail.getPercent() != null) {
+						stmt.append(" AND it.percentage = " + detail.getPercent());
+					}
+					if (detail.getRectificationTypeSpecial() != null) {
+						stmt.append(" AND i.rectification_type " + (detail.getRectificationTypeSpecial().booleanValue()?"= 2":"!= 2"));
+					}
+					stmt.append(" )");
+					detailNum++;
+				}
+				stmt.append(" )");
 			}
-			if (params.getPercent() != null) {
-				stmt.append(" AND it.percentage = " + params.getPercent());
-			}
-			if (params.getRectificationTypeSpecial() != null) {
-				stmt.append(" AND i.rectification_type " + (params.getRectificationTypeSpecial().booleanValue()?"= 2":"!= 2"));
-			}
+			
 			stmt.append(" GROUP BY i.id,i.type,i.transaction,i.investment,i.tax_date,i.issue_date,i.reference_code,i.rdocument,i.rname ");
 			stmt.append(" ,i.service,i.rectification_type,i.rectification_invoice,it.tax_type,it.percentage,it.surcharge");
 			stmt.append(" ,it.vat_deduction_type,it.withholding_type,it.deductible_quota ");
 			ps = conn.prepareStatement(stmt.toString(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			
+			System.out.println( "***********************" );
+			System.out.println(  stmt.toString()); 
+			System.out.println( "***********************" );
 			int i = 0;
 			if (params.getFromTaxDate() != null) {
 				ps.setDate(++i, new java.sql.Date( params.getFromTaxDate().getTime()));
