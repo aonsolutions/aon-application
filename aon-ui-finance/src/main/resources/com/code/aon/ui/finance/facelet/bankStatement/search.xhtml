@@ -41,7 +41,7 @@
 				<!-- TODAS LAS BUSQUEDAS QUE SE HAGAN PARA ESTE CONTROLLER TIENEN QUE IR IMPLEMENTADAS EN EL SEARCHLISTENER, EXCEPTO ESTE CAMPO
 						ESTO ES ASI PARA PODER CAMBIAR DE BANCO EN EL FORM EN CUALQUIER MOMENTO Y TE MANTENGA LOS CRITERIOS DE BUSQUEDA  -->
 					<aon:outputLabel for="BankStatement_registryBank_id"
-						value="#{configBundle.config_bank}" />
+						value="#{bundle.aon_bank}" />
 					<aon:selectOneMenu id="BankStatement_registryBank_id"
 						value="#{controller.registryBank}"
 						valueChangeListener="#{controller.addIdEqualExpression}">
@@ -73,7 +73,7 @@
 					<aon:selectOneRadio id="BankStatement_payment"
 						value="#{bankStatementSearch.payment}">
 						<f:selectItem itemLabel="#{bundle.aon_contact_category}" itemValue="true" />
-						<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_charge}" itemValue="false" />
+						<f:selectItem itemLabel="#{bundle.finance_bank_statement_charge}" itemValue="false" />
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="BankStatement_amount"

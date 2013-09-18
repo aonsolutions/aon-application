@@ -73,7 +73,7 @@
 				<aon:column
 					styleClass="aon-editDataTable-textColumn aon-width-auto aon-nowrap">
 					<f:facet name="header">
-						<aon:outputLabel for="Account_id" value="#{accountBundle.account_account}" />
+						<aon:outputLabel for="Account_id" value="#{bundle.account_account}" />
 					</f:facet>
 
 					<aon:div style="width: 90%;"
@@ -161,7 +161,7 @@
 
 				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 					<f:facet name="header">
-						<aon:outputLabel for="AccountEntryDetail_debit" value="#{accountingBundle.accounting_debit}" />
+						<aon:outputLabel for="AccountEntryDetail_debit" value="#{bundle.account_debit}" />
 					</f:facet>
 					<aon:outputText value="#{to.debit}"
 						rendered="#{to!=accountEntryDetail.to or !accountEntryDetail.updatable}">
@@ -203,7 +203,7 @@
 
 				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 					<f:facet name="header">
-						<aon:outputLabel for="AccountEntryDetail_credit" value="#{accountingBundle.accounting_credit}" />
+						<aon:outputLabel for="AccountEntryDetail_credit" value="#{bundle.account_credit}" />
 					</f:facet>
 					<aon:outputText value="#{to.credit}"
 						rendered="#{to!=accountEntryDetail.to or !accountEntryDetail.updatable}">
@@ -287,7 +287,7 @@
 					styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-100">
 					<f:facet name="header">
 						<aon:outputLabel for="AccountEntryDetail_documentNumber"
-							 value="#{accountingBundle.accounting_document_number}" />
+							 value="#{bundle.account_document_number}" />
 					</f:facet>
 					<aon:outputText value="#{to.documentNumber}" styleClass="aon-nowrap"
 						rendered="#{to!=accountEntryDetail.to or !accountEntryDetail.updatable}" />

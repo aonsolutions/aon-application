@@ -97,14 +97,14 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-room">
 								<f:facet name="header">
-									<aon:outputText value="#{pmsBundle.pms_room_module}" />
+									<aon:outputText value="#{bundle.report_rooms}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="room"
 											action="room_search"
 											actionListener="#{room.onEditSearch}"
-											value="#{pmsBundle.pms_room_module}" />
+											value="#{bundle.report_rooms}" />
 									</aon:div>
 									<c:if test="#{aonRole.admin}">
 										<aon:div styleClass="aon-direct-access-list-element">
@@ -184,7 +184,7 @@
 									<aon:commandLink id="posShift" 
 										action="posShift_search"
 										actionListener="#{posShift.onEditSearch}"
-										value="#{financeBundle.finance_posShift_module}" />
+										value="#{bundle.report_posShift_list}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="pos_opening" 
@@ -243,14 +243,14 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-book aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_occupation_group}"/>
+								<aon:outputText value="#{bundle.report_occupation}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="roomBooking" 
 										action="roomBooking_search"
 										actionListener="#{roomBooking.onInit}"
-										value="#{pmsBundle.pms_roomBooking_module}" />
+										value="#{bundle.report_booking_list}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="emptyRoomList"

@@ -11,7 +11,7 @@
 		<aon:form id="posShiftList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_posShift_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.report_posShift_list}" />
 				<ui:param name="controller" value="#{posShift}" />
 				<ui:param name="skipResetButton" value="#{!aonRole.auditor}" />
 
@@ -34,7 +34,7 @@
 						<aon:column alias="PosShift.pos.workPlace.description" 
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{companyBundle.company_workplace}" />
+								<aon:outputText value="#{bundle.purchase_workplace}" />
 							</f:facet>
 							<aon:outputText value="#{to.pos.workPlace.description}" />
 						</aon:column>
@@ -43,7 +43,7 @@
 							<aon:column alias="PosShift.pos.department.name" 
 								styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{companyBundle.company_department}" />
+									<aon:outputText value="#{bundle.purchase_department}" />
 								</f:facet>
 								<aon:outputText value="#{to.pos.department.name}" />
 							</aon:column>
@@ -60,7 +60,7 @@
 						<aon:column alias="PosShift.shift"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_pos_shift}" />
+								<aon:outputText value="#{bundle.report_shift}" />
 							</f:facet>
 							<aon:outputText value="#{to.shift}" />
 						</aon:column>
@@ -68,7 +68,7 @@
 						<aon:column alias="PosShift.startTime"
 							styleClass="aon-editDataTable-dateColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_pos_opening}" />
+								<aon:outputText value="#{bundle.report_opening}" />
 							</f:facet>
 							<aon:outputText value="#{to.startTime}">
 								<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
@@ -79,7 +79,7 @@
 						<aon:column alias="PosShift.endTime"
 							styleClass="aon-editDataTable-dateColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_pos_closing}" />
+								<aon:outputText value="#{bundle.report_closing}" />
 							</f:facet>
 							<aon:outputText value="#{to.endTime}">
 								<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"

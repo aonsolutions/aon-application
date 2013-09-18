@@ -91,7 +91,7 @@
 								<aon:outputText styleClass="aon-margin-left"
 									value="#{income.to.status}" />
 								<aon:outputText styleClass="aon-italic aon-margin-left"
-									value="(#{financeBundle.finance_invoice}: "
+									value="(#{bundle.finance_invoice}: "
 									rendered="#{income.invoiced}" />
 								<aon:outputText styleClass="aon-bold"
 									value="#{income.invoiceCode}"
@@ -154,7 +154,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Income_workPlace" 
-						value="#{companyBundle.company_workplace}" />
+						value="#{bundle.purchase_workplace}" />
 					<aon:selectOneMenu id="Income_workPlace" 
 						value="#{income.to.workPlace}"
 						disabled="#{incomeDetail.model.rowCount>0 and income.warehouse.workPlace.id!=null}"
@@ -172,7 +172,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Income_defaultPayMethod" 
-						value="#{configBundle.config_pay_method}" />
+						value="#{bundle.finance_payMethod}" />
 					<aon:selectOneRadio id="Income_defaultPayMethod" 
 						value="#{income.defaultPayMethod}"
 						disabled="#{!income.pending}"
@@ -202,11 +202,11 @@
 
 						<c:if test="#{!aonConfiguration.bean.income.showTasData}">
 							<aon:outputLabel for="Project_id"
-								value="#{projectBundle.project_project}" />
+								value="#{bundle.aon_project}" />
 						</c:if>
 						<c:if test="#{aonConfiguration.bean.income.showTasData}">
 							<aon:outputLabel for="Project_id"
-								value="#{tasBundle.tas_projectTas}" />
+								value="#{bundle.tas_project_tas}" />
 						</c:if>
 						<aon:div>
 							<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
@@ -255,7 +255,7 @@
 				<aon:div id="payMethodDiv" styleClass="aon-padding-top">
 					<aon:panel rendered="#{income.defaultPayMethod != null and !income.defaultPayMethod}">
 						<f:facet name="header">
-							<aon:outputText value="#{configBundle.config_pay_method}" />
+							<aon:outputText value="#{bundle.finance_payMethod}" />
 						</f:facet>
 						<aon:panelGrid columns="7" style="width:100%; font-size:0.9em;"
 							rowClasses="aon-panelGrid-odd aon-dataTable-header,aon-panelGrid-even"
@@ -272,8 +272,8 @@
 							<aon:outputText value="#{registryBundle.registry_days_to_first_payment}" />
 							<aon:outputText value="#{registryBundle.registry_days_between_payments}" />
 							<aon:outputText value="#{registryBundle.registry_payment_days}" />
-							<aon:outputText value="#{configBundle.config_bank}" />
-							<aon:outputText value="#{configBundle.config_bank_account}" />
+							<aon:outputText value="#{bundle.aon_bank}" />
+							<aon:outputText value="#{bundle.aon_bank_account}" />
 
 							<aon:selectOneMenu id="Income_payMethod" 
 								value="#{income.to.payMethod}"
@@ -332,10 +332,10 @@
 						</f:facet>
 						<ui:include src="/com/code/aon/ui/warehouse/facelet/income/formDetail.xhtml">
 							<c:if test="#{!aonConfiguration.bean.income.showTasData}">
-								<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+								<ui:param name="projectLabel" value="#{bundle.aon_project}" />
 							</c:if>
 							<c:if test="#{aonConfiguration.bean.income.showTasData}">
-								<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+								<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
 							</c:if>
 						</ui:include>
 					</aon:panel>
@@ -358,10 +358,10 @@
 			<ui:param name="detailValue" value="#{incomeDetail.incomeDetail.project}" />
 			<ui:param name="showProjectLookup" value="#{true}" />
 			<c:if test="#{!aonConfiguration.bean.income.showTasData}">
-				<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+				<ui:param name="projectLabel" value="#{bundle.aon_project}" />
 			</c:if>
 			<c:if test="#{aonConfiguration.bean.income.showTasData}">
-				<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+				<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
 			</c:if>
 		</ui:include>
  	</ui:define>

@@ -11,7 +11,7 @@
 		<aon:form id="posShiftSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_posShift_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.report_posShift_list}" />
 				<ui:param name="controller" value="#{posShift}" />
 				<ui:param name="skipResetButton" value="#{!aonRole.auditor}" />
 			</ui:include>
@@ -21,7 +21,7 @@
 				<ui:param name="controller" value="#{posShift}" />
 				<ui:define name="searchContent">
 
-					<aon:outputLabel value="#{companyBundle.company_workplace}" />
+					<aon:outputLabel value="#{bundle.purchase_workplace}" />
 					<aon:selectOneMenu 
 						value="#{posShiftSearch.workPlace}">
 						<f:selectItem itemLabel=" - " itemValue="#{null}" />
@@ -31,7 +31,7 @@
 					</aon:selectOneMenu>
 
 					<c:if test="#{companyCollections.departmentsCount > 0}">
-						<aon:outputLabel value="#{companyBundle.company_department}" />
+						<aon:outputLabel value="#{bundle.purchase_department}" />
 						<aon:selectOneMenu 
 							value="#{posShiftSearch.department}">
 							<f:selectItem itemLabel=" - " itemValue="null" />
@@ -48,7 +48,7 @@
 						<f:selectItems value="#{posShiftSearch.workPlacePos}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel value="#{financeBundle.finance_pos_shift}" />
+					<aon:outputLabel value="#{bundle.report_shift}" />
 					<aon:selectOneMenu id="PosShift_shift"
 						converter="aon.EnumConverter"
 						valueChangeListener="#{posShift.addExpression}" >
@@ -56,7 +56,7 @@
 						<f:selectItems value="#{financeCollections.shifts}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel value="#{financeBundle.finance_pos_opening}" />
+					<aon:outputLabel value="#{bundle.report_opening}" />
 					<aon:div>
 						<aon:outputLabel for="PosShift_startTime-From"
 							styleClass="aon-italic aon-margin-left aon-margin-right" 
@@ -74,7 +74,7 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 					
-					<aon:outputLabel value="#{financeBundle.finance_pos_closing}" />
+					<aon:outputLabel value="#{bundle.report_closing}" />
 					<aon:div>
 						<aon:outputLabel for="PosShift_endTime-From"
 							styleClass="aon-italic aon-margin-left aon-margin-right"

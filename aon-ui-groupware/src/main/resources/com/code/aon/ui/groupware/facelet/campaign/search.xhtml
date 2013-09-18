@@ -34,7 +34,7 @@
 						<f:selectItems value="#{groupWareCollections.campaignTypes}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Campaign_process_id" value="#{groupwareBundle.groupware_process}" />
+					<aon:outputLabel for="Campaign_process_id" value="#{bundle.aon_process}" />
 					<aon:selectOneMenu id="Campaign_process_id"
 						value="#{campaignSearchListener.process}"
 						valueChangeListener="#{controller.addIdEqualExpression}">

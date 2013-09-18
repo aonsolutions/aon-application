@@ -145,7 +145,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_note}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_remark}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

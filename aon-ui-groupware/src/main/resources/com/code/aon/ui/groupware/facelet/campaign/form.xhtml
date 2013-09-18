@@ -72,7 +72,7 @@
 						<f:selectItems value="#{groupWareCollections.campaignStatuses}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Campaign_process" value="#{groupwareBundle.groupware_process}" />
+					<aon:outputLabel for="Campaign_process" value="#{bundle.aon_process}" />
 					<aon:selectOneMenu id="Campaign_process" value="#{campaign.to.process}"
 						disabled="#{!campaign.to.pending}">
 						<f:selectItem itemLabel="-" value="#{null}" />
@@ -80,7 +80,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Campaign_startDate"
-						value="#{groupwareBundle.groupware_initial_date}" />
+						value="#{bundle.aon_start_date}" />
 					<aon:selectInputDate id="Campaign_startDate"
 						value="#{campaign.to.startDate}" required="#{true}"
 						disabled="#{!campaign.to.pending}" renderAsPopup="true"
@@ -88,7 +88,7 @@
 					</aon:selectInputDate>
 
 					<aon:outputLabel for="Campaign_workGroup"
-						value="#{groupwareBundle.groupware_campaign_supervisor}" />
+						value="#{bundle.aon_supervisor}" />
 					<aon:selectOneMenu id="Campaign_workGroup"
 						value="#{campaign.to.workGroup}"
 						disabled="#{!campaign.to.pending and !campaign.to.inProgress}">
@@ -97,7 +97,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Campaign_endDate"
-						value="#{groupwareBundle.groupware_final_date}" />
+						value="#{bundle.aon_end_date}" />
 					<aon:selectInputDate id="Campaign_endDate"
 						value="#{campaign.to.endDate}" required="#{true}"
 						disabled="#{!campaign.to.pending and !campaign.to.inProgress}"
@@ -155,7 +155,7 @@
 	
 						<aon:column alias="CampaignProject.project.registry.name" styleClass="aon-width-auto">
 							<f:facet name="header">
-								<aon:outputText value="#{projectBundle.project_project}" />
+								<aon:outputText value="#{bundle.aon_project}" />
 							</f:facet>
 							<aon:outputText value="#{to.project}">
 								<aon:abbreviateConverter maxWidth="50" />
@@ -222,7 +222,7 @@
  	
 						<aon:column styleClass="aon-editDataTable-text aon-width-80">
 							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.groupware_initial_date}" />
+								<aon:outputText value="#{bundle.aon_start_date}" />
 							</f:facet>
 							<aon:outputText value="#{to.task.startDate}"
 								style="#{to.task.expired?'color:red;':''}">

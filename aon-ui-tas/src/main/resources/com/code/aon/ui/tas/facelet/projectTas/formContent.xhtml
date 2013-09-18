@@ -56,7 +56,7 @@
 						<aon:outputText value="#{tasBundle.tas_projectTas_tasItemData}"/>
 						<aon:panelGroup id="TasItemDiv" style="font-size: 0.9em;" styleClass="aon-italic aon-margin-left">
 							<aon:panelGroup rendered="#{controller.to.tasItem.id != null}">
-								<aon:outputLabel value="#{tasBundle.tas_privateCode}:" />
+								<aon:outputLabel value="#{bundle.tas_privateCode}:" />
 								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{controller.to.tasItem.privateCode}"
 									rendered="#{controller.to.tasItem.privateCode != null and controller.to.tasItem.privateCode != ''}" />
 								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{bundle.aon_undefined}"
@@ -117,7 +117,7 @@
 						</aon:selectOneMenu>					
 
 						<aon:outputLabel for="ProjectTas_workPlace" 
-							value="#{companyBundle.company_workplace}" />
+							value="#{bundle.purchase_workplace}" />
 						<aon:selectOneMenu id="ProjectTas_workPlace" 
 							value="#{controller.to.workPlace}"
 							disabled="#{controller.finished}">

@@ -63,7 +63,7 @@
 				<aon:panelGrid columns="4">
 
 					<c:if test="#{commercialStat.controlType==0}">
-						<aon:outputText value="#{statBundle.stat_seller}" />
+						<aon:outputText value="#{bundle.seller_stat_name}" />
 						<aon:outputText value="#{commercialStat.seller.registry.fullName}"></aon:outputText>
 
 					</c:if>
@@ -103,13 +103,13 @@
 						<aon:div>
 							<aon:panel rendered="#{commercialStat.showCommercialActivities}"
 								style="height:100px;width:250px;"
-								header="#{statBundle.seller_stat_control_vis}">
+								header="#{bundle.seller_stat_control_vis}">
 								<aon:panelGrid columns="2">
-									<aon:outputLabel value="#{statBundle.seller_stat_control_done}" />
+									<aon:outputLabel value="#{bundle.seller_stat_control_done}" />
 									<aon:outputText value="#{commercialStat.numVisits}" size="30"
 										disabled="true" />
 									<aon:outputLabel
-										value="#{statBundle.seller_stat_control_pending}" />
+										value="#{bundle.seller_stat_control_pending}" />
 									<aon:outputText value="#{commercialStat.numPendingVisits}"
 										size="30" disabled="true" />
 								</aon:panelGrid>
@@ -119,18 +119,18 @@
 							<aon:panel style="height:100px;width:250px;"
 								header="#{bundle.aon_invoice_offers}">
 								<aon:panelGrid columns="2">
-									<aon:outputLabel value="#{statBundle.seller_stat_control_done}" />
+									<aon:outputLabel value="#{bundle.seller_stat_control_done}" />
 									<aon:outputText value="#{commercialStat.numOffers}" size="30"
 										disabled="true" />
 									<aon:outputLabel
-										value="#{statBundle.seller_stat_control_pending}" />
+										value="#{bundle.seller_stat_control_pending}" />
 									<aon:outputText value="#{commercialStat.numPendingOffers}"
 										size="30" disabled="true" />
 									<aon:outputLabel
-										value="#{statBundle.seller_stat_control_closed}" />
+										value="#{bundle.seller_stat_control_closed}" />
 									<aon:outputText value="#{commercialStat.numAprovedOffers}"
 										size="30" disabled="true" />
-									<aon:outputLabel value="#{statBundle.seller_stat_control_lost}" />
+									<aon:outputLabel value="#{bundle.seller_stat_control_lost}" />
 									<aon:outputText value="#{commercialStat.numLostOffers}"
 										size="30" disabled="true" />
 
@@ -143,13 +143,13 @@
 				<aon:panelTabSet switchType="client">
 					<aon:panelTab id="tab1"
 						rendered="#{commercialStat.showCommercialActivities}"
-						label="#{statBundle.seller_stat_control_vis} #{statBundle.seller_stat_control_donef}">
+						label="#{bundle.seller_stat_control_vis} #{bundle.seller_stat_control_donef}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/visitsList.xhtml" />
 					</aon:panelTab>
 					<aon:panelTab id="tab2"
 						rendered="#{commercialStat.showCommercialActivities}"
-						label="#{statBundle.seller_stat_control_vis}  #{statBundle.seller_stat_control_pending}">
+						label="#{bundle.seller_stat_control_vis}  #{bundle.seller_stat_control_pending}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/commercialSellerControl/pendingVisitsList.xhtml" />
 					</aon:panelTab>

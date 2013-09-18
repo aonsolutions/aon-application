@@ -10,7 +10,7 @@
 		<aon:panelGrid columns="2" columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
 	
 			<aon:outputLabel for="RegistryPayMethod_payment" 
-				value="#{configBundle.config_pay_method}" />
+				value="#{bundle.finance_payMethod}" />
 			<aon:selectOneMenu id="RegistryPayMethod_payment"
 				valueChangeListener="#{controllerLookupListener.onPayMethodChanged}"
 				reRender="Registry-PayMethodDiv,Registry-PayMethodDiv2"
@@ -21,7 +21,7 @@
 			</aon:selectOneMenu>				
 			
 			<c:if test="#{controllerLookupListener.registryPayMethod.payment.type != null}">
-				<aon:outputLabel for="Bank_id" value="#{configBundle.config_bank}" />
+				<aon:outputLabel for="Bank_id" value="#{bundle.aon_bank}" />
 				<c:if test="#{controllerLookupListener.showCompanyBanks}">
 					<aon:selectOneMenu id="Bank_id"
 						value="#{controllerLookupListener.registryBank}">
@@ -45,7 +45,7 @@
 								required="true" size="1" maxlength="2">
 								<f:validateLength minimum="2" maximum="2" />
 							</aon:inputText>
-							<aon:inputText label="#{configBundle.config_bank_account}"
+							<aon:inputText label="#{bundle.aon_bank_account}"
 								value="#{controllerLookupListener.registryBank.bankAccount.account}"
 								required="true" size="10" maxlength="10">
 								<f:validateLength minimum="10" maximum="10" />

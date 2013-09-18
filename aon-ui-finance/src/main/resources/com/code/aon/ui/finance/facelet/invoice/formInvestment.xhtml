@@ -13,7 +13,7 @@
 			<aon:selectBooleanCheckbox id="Invoice_investment"
 				value="#{invoiceController.to.investment}" ajaxSingle="true" />
 			<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
-				value="#{financeBundle.finance_invoice_investment}"/>
+				value="#{bundle.invoice_investment}"/>
 		</c:if>
 		
 		<c:if test="#{!invoiceController.new}">
@@ -24,20 +24,20 @@
 						value="#{invoiceController.to.investment}"/>
 					<c:if test="#{!invoiceController.to.investment}">
 						<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
-							value="#{financeBundle.finance_invoice_investment}"/>
+							value="#{bundle.invoice_investment}"/>
 					</c:if>
 				</c:if>
 			</c:if>
 			
 			<c:if test="#{!aonRole.accountingOperator and invoiceController.to.investment}">
 				<aon:outputText styleClass="aon-italic aon-margin-right aon-margin-left"
-					value="#{financeBundle.finance_invoice_investment}"/>
+					value="#{bundle.invoice_investment}"/>
 			</c:if>
 			
 			<c:if test="#{aonRole.accountingOperator}">
 				<c:if test="#{invoiceController.to.investment}">
 					<aon:commandLink id="linkAmortization" 
-						value="#{financeBundle.finance_invoice_investment}" 
+						value="#{bundle.invoice_investment}" 
 					 	title="#{financeBundle.finance_create_amortization}" 
 					 	alt="#{financeBundle.finance_create_amortization}"
 						rendered="#{!invoiceController.amortizationForm}"
@@ -48,7 +48,7 @@
 					</aon:commandLink>
 					
 					<aon:commandLink id="viewAmortization"
-					 	value="#{financeBundle.finance_invoice_investment}"
+					 	value="#{bundle.invoice_investment}"
 					 	title="#{financeBundle.finance_show_amortization}" 
 					 	alt="#{financeBundle.finance_show_amortization}"
 						rendered="#{invoiceController.amortizationForm}"

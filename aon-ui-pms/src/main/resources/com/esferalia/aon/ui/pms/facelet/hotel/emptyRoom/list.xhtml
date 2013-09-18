@@ -66,7 +66,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
-							<aon:outputText value="#{(to.free)?(pmsBundle.pms_free):(pmsBundle.pms_blocked)}" />
+							<aon:outputText value="#{(to.free)?(bundle.report_free):(pmsBundle.pms_blocked)}" />
 						</aon:column>
 				</aon:dataTable>
 				<aon:dataScroller2 for="emptyRoomData" showNote="true" />

@@ -67,8 +67,8 @@
 							value="#{financeTrackingEntry.payment}"
 							disabled="#{financeTrackingEntry.payment != null}">
 							<f:selectItem itemLabel="" value="#{null}" />
-							<f:selectItem itemLabel="#{accountingBundle.accounting_collection}" itemValue="#{false}" />
-							<f:selectItem itemLabel="#{accountingBundle.accounting_payment}" itemValue="#{true}" />
+							<f:selectItem itemLabel="#{bundle.finance_charge}" itemValue="#{false}" />
+							<f:selectItem itemLabel="#{bundle.finance_payment}" itemValue="#{true}" />
 						</aon:selectOneMenu>
 
 						<c:if test="#{aonRole.confidentiality}">

@@ -1,7 +1,6 @@
 package com.code.aon.ui.purchase.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.COMPANY_BUNDLE;
-import static com.code.aon.ui.common.ICommonMessages.COMPANY_DEPARTMENT;
+import static com.code.aon.ui.common.ICommonMessages.PURCHASE_DEPARTMENT;
 import static com.code.aon.ui.common.ICommonMessages.SOURCE;
 import static com.code.aon.ui.purchase.controller.IPurchaseConstants.PURCHASE_PRINT_CONTROLLER_NAME;
 
@@ -299,7 +298,7 @@ public class PurchaseOrderController {
 				PurchaseUtils utils = new PurchaseUtils();
 				for(PurchaseGroup pg: purchaseGroupList){
 					if(pg.hasCheckedDetail()){
-						comments = AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_DEPARTMENT) +": "+ pg.getDepartment().getName()+". ";
+						comments = AonUtil.getMessage(PURCHASE_DEPARTMENT) +": "+ pg.getDepartment().getName()+". ";
 						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(),  
 								pg.isItemReturn()?PurchaseDocumentType.ITEM_RETURN:null, comments + pg.getComments(), remarks);
 						purchaseIds.add(purchase.getId());

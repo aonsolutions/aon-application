@@ -13,7 +13,7 @@
 
 		<aon:form id="vatTaxForm">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_vat_tax_module}" />
+				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_vat_tax_module2}" />
 				<ui:param name="controller" value="#{vatTax}" />
 				<ui:param name="skipRemoveButton" value="#{vatTax.to.finished}" />
 				
@@ -79,7 +79,7 @@
 						/>
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="VatTax_prorata" value="#{fiscalBundle.fiscal_prorata_percent}" />
+					<aon:outputLabel for="VatTax_prorata" value="#{bundle.aon_prorata_percent}" />
 					<aon:inputText id="VatTax_prorata" size="5" value="#{vatTax.to.prorata}"
 						required="true" disabled="#{vatTax.to.finished or vatTax.detailNew}"/>
 
@@ -141,7 +141,7 @@
 								disabled="#{vatTax.to.finished or vatTax.detailNew}"
 								value="#{vatTax.to.replacement}"/>
 							<aon:outputLabel for="VatTax_replacement" styleClass="aon-italic"
-								value="#{fiscalBundle.fiscal_replacement}" />
+								value="#{bundle.aon_replacement}" />
 							<aon:panelGroup rendered="#{!vatTax.new and vatTax.to.replacement}" styleClass="aon-italic aon-margin-left">		
 								<aon:outputText styleClass="aon-margin-left" value="#{bundle.aon_number}" />
 								<aon:outputText value=":" />

@@ -59,7 +59,7 @@
 			<aon:column sortBy="#{to.referenceCode}"
 				sortOrder="#{financeEntry.order['Finance_invoice_referenceCode']}">
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_invoice}" />
+					<aon:outputText value="#{bundle.finance_invoice}" />
 				</f:facet>
 				<aon:outputText value="#{to.referenceCode}" />
 			</aon:column>
@@ -67,7 +67,7 @@
 			<aon:column sortBy="#{to.concept}"
 				sortOrder="#{financeEntry.order['Finance_concept']}">
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
+					<aon:outputText value="#{bundle.aon_document_number}" />
 				</f:facet>
 				<h:outputText value="#{to.concept}" />
 			</aon:column>
@@ -75,7 +75,7 @@
 			<aon:column sortBy="#{to.registryName}"
 				sortOrder="#{financeEntry.order['Finance_registryName']}">
 				<f:facet name="header">
-					<aon:outputText value="#{(finance.payment) ? (bundle.aon_creditor) : (financeBundle.finance_debtor)}" />
+					<aon:outputText value="#{(finance.payment) ? (bundle.aon_creditor) : (bundle.finance_debtor)}" />
 				</f:facet>
 				<aon:outputText value="#{to.registryName}" />
 			</aon:column>
@@ -91,7 +91,7 @@
 			<aon:column sortBy="#{to.payMethod.name}"
 				sortOrder="#{financeEntry.order['Finance_payMethod_name']}">
 				<f:facet name="header">
-					<aon:outputText value="#{configBundle.config_pay_method}" />
+					<aon:outputText value="#{bundle.finance_payMethod}" />
 				</f:facet>
 				<aon:outputText value="#{to.payMethod.name}" />
 			</aon:column>
@@ -99,7 +99,7 @@
 			<aon:column sortBy="#{to.bankAccount}"
 				sortOrder="#{financeEntry.order['Finance_bankAccount']}">
 				<f:facet name="header">
-					<aon:outputText value="#{configBundle.config_bank_account}" />
+					<aon:outputText value="#{bundle.aon_bank_account}" />
 				</f:facet>
 				<aon:outputText value="#{to.bankAccount}"/>
 			</aon:column>

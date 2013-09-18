@@ -116,7 +116,7 @@
 		</aon:selectOneMenu>
 	</aon:panelGrid>
 
-	<aon:outputLabel for="CustomerFee_project_id" value="#{projectBundle.project_project}" />
+	<aon:outputLabel for="CustomerFee_project_id" value="#{bundle.aon_project}" />
 	<aon:div id="CustomerFeeProjectDiv">
 		<aon:selectOneMenu id="CustomerFee_project_id"
 			rendered="#{controller.to.project.id == null}"
@@ -152,7 +152,7 @@
 	</ui:include>
 
 	<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
-		<aon:outputLabel for="CustomerFee_workPlace" value="#{companyBundle.company_workplace}" />
+		<aon:outputLabel for="CustomerFee_workPlace" value="#{bundle.purchase_workplace}" />
 		<aon:selectOneMenu id="CustomerFee_workPlace" 
 			value="#{controller.to.workPlace}" >
 			<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />

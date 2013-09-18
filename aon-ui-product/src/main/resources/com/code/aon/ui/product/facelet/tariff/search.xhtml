@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="tariffSearch">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{productBundle.product_tariff_module}" />
+				<ui:param name="toolbarTitle" value="#{productBundle.product_tariff_module2}" />
 				<ui:param name="controller" value="#{tariff}" />
 			</ui:include>
 
@@ -24,7 +24,7 @@
 						valueChangeListener="#{controller.addExpression}" />
 
 					<aon:outputLabel for="Tariff_name"
-						value="#{productBundle.product_tariff}" />
+						value="#{bundle.report_tariff}" />
 					<aon:inputText id="Tariff_name" size="32"
 						valueChangeListener="#{controller.addExpression}" />
 					

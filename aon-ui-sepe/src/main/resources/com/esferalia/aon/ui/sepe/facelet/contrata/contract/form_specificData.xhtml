@@ -67,7 +67,7 @@
 						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="discapacidad" rendered="#{contractContrata.handler.showDiscapacidadPanel}"
-					value="#{sepeBundle.sepe_contrata_contract_discapacidad_data}" />
+					value="#{bundle.payroll_mod145_perceptor18}" />
 					
 				<aon:selectBooleanCheckbox id="mayores52" rendered="#{contractContrata.handler.showMayor52Panel}"
 					value="#{contractContrata.params.olderThan52Data}"> 
@@ -204,7 +204,7 @@
 					<aon:inputText id="reliefName"
 						required="#{contractContrata.params.reliefData}"
 						value="#{contractContrata.params.reliefPerson.name}" />
-					<aon:outputLabel for="reliefFirstSurname" value="#{registryBundle.registry_person_firstSurname}" />
+					<aon:outputLabel for="reliefFirstSurname" value="#{bundle.payroll_mod145_perceptor10}" />
 					<aon:inputText id="reliefFirstSurname"
 						required="#{contractContrata.params.reliefData}"
 						value="#{contractContrata.params.reliefPerson.firstSurname}" />
@@ -250,7 +250,7 @@
 		<aon:div id="discapacidadPanel" rendered="#{contractContrata.params.disabilityData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_discapacidad_data}" />
+					<aon:outputText value="#{bundle.payroll_mod145_perceptor18}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="disability_code"

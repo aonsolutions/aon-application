@@ -25,7 +25,7 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 	
-	<aon:outputLabel value="#{companyBundle.company_workplace}" />
+	<aon:outputLabel value="#{bundle.purchase_workplace}" />
 	<aon:selectOneMenu id="Proposal_workPlce" 
 		value="#{searchController.workPlace}">
 		<f:selectItem itemLabel=" - " itemValue="null" />
@@ -34,7 +34,7 @@
 		<a4j:support event="oninputchanged" reRender="Proposal_department" ignoreDupResponses="true" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel value="#{companyBundle.company_department}" />
+	<aon:outputLabel value="#{bundle.purchase_department}" />
 	<aon:selectOneMenu id="Proposal_department" 
 		value="#{searchController.department}">
 		<f:selectItem itemLabel=" - " itemValue="null" />

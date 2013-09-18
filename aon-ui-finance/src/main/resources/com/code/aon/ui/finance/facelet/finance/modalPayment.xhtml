@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{(finance.payment) ? (financeBundle.finance_payment) : (financeBundle.finance_charge)}" />
+						<aon:outputText value="#{(finance.payment) ? (bundle.finance_payment) : (bundle.finance_charge)}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -77,7 +77,7 @@
 											required="true" size="10" />
 
 										<aon:outputLabel for="Finance_paymentRegistryBank"
-											value="#{configBundle.config_bank}"
+											value="#{bundle.aon_bank}"
 											rendered="#{finance.paymentRegistryBank != null}" />
 										<aon:selectOneMenu id="Finance_paymentRegistryBank"
 											value="#{finance.paymentRegistryBank}"
@@ -94,7 +94,7 @@
 										</aon:selectOneMenu>
 
 										<aon:outputLabel for="Finance_paymentPayMethod"
-											value="#{configBundle.config_pay_method}"
+											value="#{bundle.finance_payMethod}"
 											rendered="#{finance.to.payMethod != null and finance.to.payMethod.id != null}" />
 										<aon:outputText id="Finance_paymentPayMethod"
 										 	styleClass="aon-bold"

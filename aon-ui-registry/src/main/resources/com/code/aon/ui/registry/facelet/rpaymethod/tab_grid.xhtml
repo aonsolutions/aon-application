@@ -21,7 +21,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryPayMethod_payment" value="#{configBundle.config_pay_method}" />
+					<aon:outputLabel for="RegistryPayMethod_payment" value="#{bundle.finance_payMethod}" />
 				</f:facet>
 				<aon:outputText value="#{to.payment.name}"
 					rendered="#{formList}" />
@@ -43,7 +43,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryPayMethod_bank" value="#{configBundle.config_bank}" />
+					<aon:outputLabel for="RegistryPayMethod_bank" value="#{bundle.aon_bank}" />
 				</f:facet>
 				<aon:outputText value="#{to.registryBank.fullName}"
 					rendered="#{formList}" />

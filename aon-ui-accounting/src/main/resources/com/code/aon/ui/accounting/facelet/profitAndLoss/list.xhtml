@@ -146,16 +146,16 @@
 						<f:facet name="header">
 							<rich:columnGroup>
 								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{accountBundle.account_account}" />
+									<aon:outputText value="#{bundle.account_account}" />
 								</aon:column>
 								<aon:column styleClass="aon-dataTable-header">
 									<aon:outputText value="#{bundle.aon_description}" />
 								</aon:column>
 								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{accountingBundle.accounting_debit_balance}" />
+									<aon:outputText value="#{bundle.account_debit_balance}" />
 								</aon:column>
 								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{accountingBundle.accounting_credit_balance}" />
+									<aon:outputText value="#{bundle.account_credit_balance}" />
 								</aon:column>
 							</rich:columnGroup>
 						</f:facet>
@@ -260,7 +260,7 @@
 						</aon:column>
 	
 						<aon:column breakBefore="true" colspan="2" styleClass="aon-text-right">
-							<aon:outputText value="#{accountingBundle.accounting_total_result}" />
+							<aon:outputText value="#{bundle.fiscal_result}" />
 							<aon:outputText
 								value=" ( #{bundle.aon_profit} )"
 								rendered="#{profitAndLossReport.totalResult gt 0}" />

@@ -4,6 +4,7 @@ import static com.code.aon.ui.common.ICommonMessages.ACTIVITY;
 import static com.code.aon.ui.common.ICommonMessages.CATEGORY;
 import static com.code.aon.ui.common.ICommonMessages.PRODUCT;
 import static com.code.aon.ui.common.ICommonMessages.REPORT_ACTIVITIES_VIEW;
+import static com.code.aon.ui.common.ICommonMessages.SELLER;
 import static com.code.aon.ui.common.ICommonMessages.SELLER_STAT_CONTROL_CATEGORY;
 import static com.code.aon.ui.common.ICommonMessages.SELLER_STAT_CONTROL_PRODUCT;
 import static com.code.aon.ui.common.ICommonMessages.SELLER_STAT_CONTROL_SELLER;
@@ -15,7 +16,6 @@ import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_COMMERCIAL_GEOZ
 import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_COMMERCIAL_PRODUCT;
 import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_COMMERCIAL_SELLER;
 import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_COMMERCIAL_TARGET;
-import static com.code.aon.ui.common.ICommonMessages.STAT_SELLER;
 import static com.code.aon.ui.stat.controller.IStatConstants.COMMERCIAL_TRACKING_CONTROLLER_NAME;
 import static com.code.aon.ui.stat.controller.IStatConstants.OFFER_CONTROLLER_NAME;
 
@@ -1003,7 +1003,7 @@ public class CommercialStatEngineController {
 		}
 		count = 0;
 		setReportName(AonUtil.getMessage(STAT_BUNDLE, SELLER_STAT_CONTROL_SELLER));
-		setItemTitle(AonUtil.getMessage(STAT_BUNDLE, STAT_SELLER));
+		setItemTitle(AonUtil.getMessage(SELLER));
 	}
 
 	public void onTargetSummary(ActionEvent e) throws ManagerBeanException {
@@ -1819,7 +1819,7 @@ public class CommercialStatEngineController {
 			setYearStats(list);
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_COMMERCIAL_SELLER));
-			setItemTitle(AonUtil.getMessage(STAT_BUNDLE, STAT_SELLER));
+			setItemTitle(AonUtil.getMessage(SELLER));
 			yearStatModel = null;
 
 		} catch (ManagerBeanException e) {

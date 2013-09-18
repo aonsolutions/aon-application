@@ -37,14 +37,14 @@
 						aon-panelGrid-odd aon-width-120,aon-panelGrid-even">
 
 					<aon:outputLabel for="AcademicSkill_id"
-						value="#{academyBundle.academy_academic_skill}" />
+						value="#{bundle.mark_subject}" />
 					<aon:selectOneMenu id="AcademicSkill_id"
 						value="#{academicSkillToGroup.academicSkill}">
 						<f:selectItems value="#{academyCollections.academicSkills}" />
 					</aon:selectOneMenu>					
 
 					<h:outputLabel for="AcademicSkill_weight"
-						value="#{academyBundle.academy_weight}" />
+						value="#{bundle.warehouse_delivery_shipment_totalWeight}" />
 					<aon:inputText id="AcademicSkill_weight"
 						value="#{academicSkillToGroup.weight}" size="5" />
 				</aon:panelGrid>

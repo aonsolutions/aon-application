@@ -83,13 +83,13 @@
 											value="#{finance.returnDeposit}"
 											valueChangeListener="#{finance.onDepositChanged}"
 											reRender="menuGrid">
-											<f:selectItem itemLabel="#{configBundle.config_bank}" itemValue="0" />
-											<f:selectItem itemLabel="#{financeBundle.finance_cash}" itemValue="1" />
+											<f:selectItem itemLabel="#{bundle.aon_bank}" itemValue="0" />
+											<f:selectItem itemLabel="#{bundle.report_pos}" itemValue="1" />
 											<f:selectItem itemLabel="#{bundle.aon_other}" itemValue="2" />
 										</aon:selectOneRadio>
 
 										<aon:outputLabel for="Finance_returnRegistryBank"
-											value="#{configBundle.config_bank}"
+											value="#{bundle.aon_bank}"
 											rendered="#{finance.returnDeposit == 0}" />
 										<aon:selectOneMenu id="Finance_returnRegistryBank"
 											value="#{finance.returnRegistryBank}"

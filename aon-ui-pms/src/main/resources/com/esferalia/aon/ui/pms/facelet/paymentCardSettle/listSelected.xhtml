@@ -56,7 +56,7 @@
 			<aon:column alias="Finance.invoice&lt;referenceCode"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_invoice}" />
+					<aon:outputText value="#{bundle.finance_invoice}" />
 				</f:facet>
 				<aon:commandLink id="invoiceLink" immediate="true"
 					styleClass="aon-button-goto"
@@ -71,7 +71,7 @@
 			<aon:column alias="Finance.payMethod.name"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{configBundle.config_pay_method}" />
+					<aon:outputText value="#{bundle.finance_payMethod}" />
 				</f:facet>
 				<aon:outputText value="#{to.finance.payMethod.name}" />
 			</aon:column>
@@ -80,12 +80,12 @@
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_type}" />
 				</f:facet>
-				<aon:outputText value="#{financeBundle.finance_invoice}"
+				<aon:outputText value="#{bundle.finance_invoice}"
 					rendered="#{!to.finance.invoice.rectifier and !to.finance.invoice.rectified}" />
 				<aon:div rendered="#{to.finance.invoice.rectifier}">
 					<aon:outputText value="#{to.finance.invoice.rectificationType}" />
 					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
-						<aon:outputFormat value="#{financeBundle.finance_invoice_rectifier_message}" styleClass="aon-bold aon-label-error">
+						<aon:outputFormat value="#{financeBundle.finance_invoice_rectifier_message2}" styleClass="aon-bold aon-label-error">
 							<f:param value="#{to.finance.invoice.rectificationInvoice.referenceCode}" />
 						</aon:outputFormat>
 					</rich:toolTip>
@@ -93,7 +93,7 @@
 				<aon:div rendered="#{to.finance.invoice.rectified}">
 					<aon:outputText value="#{to.finance.invoice.rectificationType}" />
 					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
-						<aon:outputFormat value="#{financeBundle.finance_invoice_rectified_message}" styleClass="aon-bold">
+						<aon:outputFormat value="#{financeBundle.finance_invoice_rectified_message2}" styleClass="aon-bold">
 							<f:param value="#{to.finance.invoice.rectificationInvoicesString}" />
 						</aon:outputFormat>
 					</rich:toolTip>
@@ -118,16 +118,16 @@
 						value="#{to.finance.invoice.project.id}" />
 					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
 						<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic,aon-noborder aon-bold">
-							<aon:outputText value="#{pmsBundle.pms_guest}" />
+							<aon:outputText value="#{bundle.report_guest}" />
 							<aon:outputText value="#{paymentCardSettle.financeProjectReservation.guestFullName}" />
 							
-							<aon:outputText value="#{pmsBundle.pms_checkIn}" />
+							<aon:outputText value="#{bundle.report_checkin}" />
 							<aon:outputText value="#{paymentCardSettle.financeProjectReservation.startDate}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 			
-							<aon:outputText value="#{pmsBundle.pms_checkOut}" />
+							<aon:outputText value="#{bundle.report_checkout}" />
 							<aon:outputText value="#{paymentCardSettle.financeProjectReservation.endDate}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
@@ -140,7 +140,7 @@
 			<aon:column 
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{pmsBundle.pms_reservation_code}" />
+					<aon:outputText value="#{bundle.report_reservation_code}" />
 				</f:facet>
 				<aon:outputText rendered="#{!to.finance.invoice.service}"
 					value="#{paymentCardSettle.financeProjectReservation.code}" />
@@ -149,7 +149,7 @@
 			<aon:column 
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{pmsBundle.pms_agency}" />
+					<aon:outputText value="#{bundle.report_agency}" />
 				</f:facet>
 				<aon:outputText value="#{to.finance.registry.name}"
 					title="#{to.finance.registry.name}" >
@@ -168,7 +168,7 @@
 					<aon:abbreviateConverter maxWidth="20" />
 				</aon:outputText>
 				<f:facet name="footer">
-					<aon:outputText value="#{financeBundle.finance_total_amount}" />
+					<aon:outputText value="#{bundle.stat_total}" />
 				</f:facet>
 			</aon:column>
 	
@@ -176,7 +176,7 @@
 			<aon:column 
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{pmsBundle.pms_guest}" />
+					<aon:outputText value="#{bundle.report_guest}" />
 				</f:facet>
 				<aon:outputText rendered="#{!to.finance.invoice.service}"
 					value="#{paymentCardSettle.financeProjectReservation.guestFullName}" />
@@ -185,7 +185,7 @@
 			<aon:column 
 				styleClass="aon-editDataTable-dateColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{pmsBundle.pms_checkIn}" />
+					<aon:outputText value="#{bundle.report_checkin}" />
 				</f:facet>
 				<aon:outputText rendered="#{!to.finance.invoice.service}"
 					value="#{paymentCardSettle.financeProjectReservation.startDate}" >
@@ -197,7 +197,7 @@
 			<aon:column 
 				styleClass="aon-editDataTable-dateColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{pmsBundle.pms_checkOut}" />
+					<aon:outputText value="#{bundle.report_checkout}" />
 				</f:facet>
 				<aon:outputText rendered="#{!to.finance.invoice.service}"
 					value="#{paymentCardSettle.financeProjectReservation.endDate}" >
@@ -205,7 +205,7 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 				<f:facet name="footer">
-					<aon:outputText value="#{financeBundle.finance_total_amount}" />
+					<aon:outputText value="#{bundle.stat_total}" />
 				</f:facet>
 			</aon:column>
 -->
@@ -228,7 +228,7 @@
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_amount} #{pmsBundle.pms_agency}" />
+					<aon:outputText value="#{bundle.aon_amount} #{bundle.report_agency}" />
 				</f:facet>
 				<aon:inputText value="#{to.amount}" size="10" >
 					<a4j:support event="onblur" reRender="paymentCardSettleToolBarDiv, agency_total_amount, difference_total_amount, difference_amount" />

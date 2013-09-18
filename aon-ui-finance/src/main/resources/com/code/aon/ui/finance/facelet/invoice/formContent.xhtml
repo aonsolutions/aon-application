@@ -81,7 +81,7 @@
 					rendered="#{!invoiceController.new}" />
 				<c:if test="#{aonRole.accountingOperator and invoiceController.recorded}">
 					<aon:outputText styleClass="aon-italic aon-margin-left"
-						value="(#{financeBundle.finance_account_entry}: " />
+						value="(#{bundle.account_account_entry}: " />
 					<aon:outputText styleClass="aon-bold"
 						value="#{invoiceController.accountEntryId}" />
 					<aon:outputText styleClass="aon-italic" value=")" />
@@ -201,7 +201,7 @@
 	</aon:panelGroup>
 
 	<c:if test="#{!invoiceController.new}">
-		<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
+		<aon:outputLabel value="#{bundle.aon_document_number}" />
 		<aon:outputText styleClass="aon-bold"
 			value="#{invoiceController.to.documentNumber}" />
 	</c:if>

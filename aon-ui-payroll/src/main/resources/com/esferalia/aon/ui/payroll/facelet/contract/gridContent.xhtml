@@ -55,7 +55,7 @@
 -->			
 		</aon:div>
 
-		<aon:outputText value="#{payrollBundle.payroll_salary_ss_number}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{payrollBundle.payroll_salary_ss_number2}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:outputText value="#{contract.to.person.socialSecurityNumber}"  style="margin-left: 50px;"/>
 		<aon:div>
 			<aon:outputText value="#{contract.to.status}" style="padding-left: 20px;" styleClass="aon-icon-point-orange" rendered="#{contract.to.pending}"/>	
@@ -71,7 +71,7 @@
 		</aon:div>
 		<aon:outputText value="&#160;" />
 
-		<aon:outputText value="#{companyBundle.company_workplace}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{bundle.purchase_workplace}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:outputText value="#{contract.to.workPlace.description}" style="margin-left: 50px;"/>
 		<aon:outputText value="&#160;" />
 
@@ -104,7 +104,7 @@
 		</aon:div>
 		<aon:outputText value="&#160;" />
 
-		<aon:outputText value="#{payrollBundle.payroll_salary_seniority_date}" />
+		<aon:outputText value="#{payrollBundle.payroll_salary_seniority_date2}" />
 		<aon:outputText value="#{contract.to.seniorityDate}" >
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 				timeZone="#{timeZoneController.timeZoneId}" />

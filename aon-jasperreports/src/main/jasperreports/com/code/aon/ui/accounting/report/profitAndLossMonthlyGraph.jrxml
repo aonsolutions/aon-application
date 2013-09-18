@@ -334,7 +334,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_month11}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_december}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -944,7 +944,7 @@
 					</categorySeries>
 					<categorySeries>
 						<seriesExpression><![CDATA[$F{code} + ""]]></seriesExpression>
-						<categoryExpression><![CDATA[$R{account_month11}]]></categoryExpression>
+						<categoryExpression><![CDATA[$R{aon_december}]]></categoryExpression>
 						<valueExpression><![CDATA[$F{months}[11]]]></valueExpression>
 						<itemHyperlink>
 							<hyperlinkTooltipExpression><![CDATA[$F{description} + " (" + $F{months}[11] + ")"]]></hyperlinkTooltipExpression>

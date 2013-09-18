@@ -177,14 +177,14 @@
 									<aon:commandLink id="trialBalance-report"
 										action="trialBalance_search-Report"
 										actionListener="#{trialBalance.onReset}"
-										value="#{accountingBundle.accounting_trial_balance_module}" />
+										value="#{bundle.account_trial_balance_report}" />
 								</aon:div>
 
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="journal-Report"
 										action="journal_search-Report"
 										actionListener="#{journalReport.onEditSearch}"
-										value="#{accountingBundle.accounting_journal_module}" />
+										value="#{bundle.account_journal_report}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
@@ -200,7 +200,7 @@
 									<aon:commandLink id="journal-Balance"
 										action="journal_search-Balance"
 										actionListener="#{journalReport.onEditSearch}"
-										value="#{accountingBundle.accounting_journal_module}" />
+										value="#{bundle.account_journal_report}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="ledger"
@@ -212,7 +212,7 @@
 									<aon:commandLink id="official-trialBalance-Balance"
 										action="officialTrialBalance_search"
 										actionListener="#{officialTrialBalance.onReset}"
-										value="#{accountingBundle.accounting_trial_balance_module}" />
+										value="#{bundle.account_trial_balance_report}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="operatingBalanceSheetResolver_search"
@@ -299,7 +299,7 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="account"
 										action="account_list"
-										value="#{accountBundle.account_module}" />
+										value="#{bundle.account_module}" />
 								</aon:div>
 <!-- 
 En CUARENTENA HASTA QUE SE CORRIJAN LOS CAMBIOS DE ACCOUNT-BRIDGE
@@ -323,7 +323,7 @@ En CUARENTENA HASTA QUE SE CORRIJAN LOS CAMBIOS DE ACCOUNT-BRIDGE
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="accounting_balance-accounting" 
 											action="balance_list-accounting"
-											value="[Ant.] #{accountingBundle.accounting_balance_menu}" />
+											value="[Ant.] #{accountingBundle.accounting_balance_menu2}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="accPeriod-accounting" 

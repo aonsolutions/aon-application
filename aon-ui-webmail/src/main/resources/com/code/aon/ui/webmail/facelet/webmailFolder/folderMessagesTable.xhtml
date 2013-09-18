@@ -85,10 +85,10 @@
 							</aon:div>
 						</aon:column>
 						<aon:column id="mailColumn" width="180px" sortable="true" 
-							label="#{webmailFolder.sentItemColumn?(webmailBundle.webmail_to):(bundle.aon_of)}"
+							label="#{webmailFolder.sentItemColumn?(bundle.webmail_to):(bundle.aon_of)}"
 							sortBy="#{webmailFolder.sentItemColumn?(to.recipientsToEmail):(to.senderEmail)}">
 							<f:facet name="header">
-								<aon:outputText value="#{webmailFolder.sentItemColumn?(webmailBundle.webmail_to):(bundle.aon_of)}" />
+								<aon:outputText value="#{webmailFolder.sentItemColumn?(bundle.webmail_to):(bundle.aon_of)}" />
 							</f:facet>
 							<aon:outputText escape="true" title="#{to.senderEmail}"
 								value="#{to.senderSummary}"

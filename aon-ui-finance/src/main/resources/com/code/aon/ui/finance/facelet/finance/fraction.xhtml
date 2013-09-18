@@ -42,7 +42,7 @@
 						,aon-panelGrid-odd aon-width-140
 						,aon-panelGrid-even aon-width-auto">
 
-					<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
+					<aon:outputLabel value="#{bundle.aon_document_number}" />
 					<aon:div> 
 						<aon:panelGrid columns="2" columnClasses="aon-width-250,aon-width-auto">
 							<aon:div>
@@ -62,7 +62,7 @@
 						</aon:panelGrid>
 					</aon:div>
 
-					<aon:outputLabel value="#{financeBundle.finance_invoice}" />
+					<aon:outputLabel value="#{bundle.finance_invoice}" />
 					<aon:div>
 						<aon:outputText styleClass="aon-bold"
 							value="#{financeFraction.targetFinance.referenceCode}" />
@@ -81,7 +81,7 @@
 					</aon:div> 
 
 					<aon:outputLabel 
-						value="#{financeFraction.targetFinance.payment ? (bundle.aon_creditor) : (financeBundle.finance_debtor)}" />
+						value="#{financeFraction.targetFinance.payment ? (bundle.aon_creditor) : (bundle.finance_debtor)}" />
 					<aon:outputText styleClass="aon-bold"
 						value="#{financeFraction.targetFinance.registryName}" />	
 

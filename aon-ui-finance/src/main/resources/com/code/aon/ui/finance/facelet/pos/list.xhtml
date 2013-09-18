@@ -23,7 +23,7 @@
  
 						<aon:column alias="Pos.workPlace.description">
 							<f:facet name="header">
-								<aon:outputText value="#{companyBundle.company_workplace}" />
+								<aon:outputText value="#{bundle.purchase_workplace}" />
 							</f:facet>
 							<aon:outputText value="#{to.workPlace.description}" />
 						</aon:column>
@@ -31,7 +31,7 @@
 						<c:if test="#{companyCollections.departmentsCount > 0}">
 							<aon:column alias="Pos.department.name">
 								<f:facet name="header">
-									<aon:outputText value="#{companyBundle.company_department}" />
+									<aon:outputText value="#{bundle.purchase_department}" />
 								</f:facet>
 								<aon:outputText value="#{to.department.name}" />
 							</aon:column>

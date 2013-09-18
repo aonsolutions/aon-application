@@ -87,7 +87,7 @@
 										</c:if>
 
 										<aon:outputLabel for="AdvanceInvoice_payMethod"
-											value="#{configBundle.config_pay_method}" />
+											value="#{bundle.finance_payMethod}" />
 										<c:if test="#{searchListener.guestReservationSearch}">
 											<aon:selectOneMenu id="AdvanceInvoice_payMethod"
 												value="#{controller.advancePayMethod}" required="true" 
@@ -105,7 +105,7 @@
 
 										<aon:outputLabel for="AdvanceInvoice_bank"
 											rendered="#{controller.bankRequired}"
-											value="#{configBundle.config_bank}" />
+											value="#{bundle.aon_bank}" />
 										<aon:selectOneMenu id="AdvanceInvoice_bank"
 											rendered="#{controller.bankRequired}"
 											value="#{controller.advanceBank}" required="true"

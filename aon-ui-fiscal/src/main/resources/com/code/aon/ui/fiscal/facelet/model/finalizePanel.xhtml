@@ -58,7 +58,7 @@
 								</aon:outputText>									
 													
 								<aon:outputLabel for="Finance_payMethod_id"
-									value="#{configBundle.config_pay_method}" />
+									value="#{bundle.finance_payMethod}" />
 								<aon:selectOneMenu id="Finance_payMethod_id" required="true"
 									reRender="finalizeGrid" ajaxSingle="true"
 									value="#{controller.to.finance.payMethod}">
@@ -68,7 +68,7 @@
 								
 								<aon:outputLabel for="Bank_idFinance"
 									rendered="#{controller.bankAccountVisible}"
-									value="#{configBundle.config_bank}" />
+									value="#{bundle.aon_bank}" />
 								<aon:selectOneMenu id="Bank_idFinance"
 									rendered="#{controller.bankAccountVisible}"
 									value="#{controller.registryBank}">

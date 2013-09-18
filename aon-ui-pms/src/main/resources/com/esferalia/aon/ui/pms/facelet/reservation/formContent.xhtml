@@ -59,7 +59,7 @@
 		</aon:div>
 	</aon:panelGrid>
 
-	<aon:outputLabel for="ProjectReservation_guest" value="#{pmsBundle.pms_guest}" />
+	<aon:outputLabel for="ProjectReservation_guest" value="#{bundle.report_guest}" />
 	<aon:outputText	id="ProjectReservation_guest" value="#{reservation.to.guestFullName}" 
 		styleClass="aon-bold" rendered="#{!reservation.new}" />
 	<aon:div rendered="#{reservation.new}">
@@ -92,7 +92,7 @@
 		</aon:div>
 	</aon:panelGrid>
 
-	<aon:outputLabel for="ProjectReservation_project_id" value="#{pmsBundle.pms_reservation_id}"
+	<aon:outputLabel for="ProjectReservation_project_id" value="#{bundle.report_id}"
 		rendered="#{!reservation.new}" />
 	<aon:panelGrid columns="2" columnClasses="aon-width-130,aon-width-auto" rendered="#{!reservation.new}">
 		<aon:outputText	id="ProjectReservation_project_id" value="#{reservation.to.id}" 
@@ -107,14 +107,14 @@
 		</aon:div>
 	</aon:panelGrid>
 
-	<aon:outputLabel for="ProjectReservation_code" value="#{pmsBundle.pms_reservation_code}" />
+	<aon:outputLabel for="ProjectReservation_code" value="#{bundle.report_reservation_code}" />
 	<aon:outputText	value="#{reservation.to.code}" styleClass="aon-bold"
 		rendered="#{!reservation.new and !reservation.reservationPermission.reservationCodeEditable}" />
 	<aon:inputText id="ProjectReservation_code" value="#{reservation.to.code}"
 		size="30" maxlength="32" required="true"
 		rendered="#{reservation.new or reservation.reservationPermission.reservationCodeEditable}" />
 
-	<aon:outputLabel for="ProjectReservation_startDate" value="#{pmsBundle.pms_checkIn}" />
+	<aon:outputLabel for="ProjectReservation_startDate" value="#{bundle.report_checkin}" />
 	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto">
 		<aon:outputText	value="#{reservation.to.startDate}" styleClass="aon-bold"
 			rendered="#{!reservation.new and !reservation.reservationPermission.reservationDatesEditable}">
@@ -157,7 +157,7 @@
 		<f:selectItems value="#{reservation.reservationTimes}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel for="ProjectReservation_endDate" value="#{pmsBundle.pms_checkOut}" />
+	<aon:outputLabel for="ProjectReservation_endDate" value="#{bundle.report_checkout}" />
 	<aon:outputText	value="#{reservation.to.endDate}" styleClass="aon-bold"
 		rendered="#{!reservation.new and !reservation.reservationPermission.reservationDatesEditable}">
 		<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -207,7 +207,7 @@
 	</aon:panelGrid>
 
 	<aon:div id="BookingHolderLabelDiv">
-		<aon:outputLabel for="ProjectReservation_agency" value="#{pmsBundle.pms_agency}"
+		<aon:outputLabel for="ProjectReservation_agency" value="#{bundle.report_agency}"
 			 rendered="#{reservation.reservationPermission.agencyVisible}" />
 		<aon:outputLabel for="ProjectReservation_company" value="#{bundle.aon_company}"
 			rendered="#{reservation.reservationPermission.companyVisible}" />
@@ -307,7 +307,7 @@
 		<f:selectItems value="#{reservation.hotelRoomItems}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel for="ProjectReservation_roomTariff" value="#{productBundle.product_tariff}" 
+	<aon:outputLabel for="ProjectReservation_roomTariff" value="#{bundle.report_tariff}" 
 		rendered="#{reservation.new}" />
 	<aon:selectOneMenu id="ProjectReservation_roomTariff" value="#{reservation.roomTariff}" 
 		rendered="#{reservation.new}" required="true">

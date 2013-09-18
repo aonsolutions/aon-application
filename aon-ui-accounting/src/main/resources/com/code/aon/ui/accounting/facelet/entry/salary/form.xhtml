@@ -65,7 +65,7 @@
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 
 					<aon:outputLabel for="Account_registryBank"
-						value="#{configBundle.config_bank}" />
+						value="#{bundle.aon_bank}" />
 					<aon:selectOneMenu id="Account_registryBank"
 						value="#{salaryEntry.entry.registryBank}">
 						<f:selectItem itemLabel="#{accountingBundle.accounting_pending_salary}" value="#{null}" />
@@ -106,7 +106,7 @@
 						focus="Account_retention" />
 
 					<aon:outputLabel for="Account_accrued_total"
-						value="#{accountingBundle.accounting_accrued_total}" />
+						value="#{bundle.payroll_total_payment}" />
 					<aon:inputText id="Account_accrued_total" disabled="true" styleClass="aon-bold"
 						value="#{salaryEntry.entry.accruedTotal}" size="15"/>
 

@@ -28,7 +28,7 @@
 			<aon:div styleClass="aon-scroll-area">
 			
 				<aon:panel>
-					<aon:outputText value="#{pmsBundle.pms_agency}:" styleClass="aon-bold"/>
+					<aon:outputText value="#{bundle.report_agency}:" styleClass="aon-bold"/>
 					<a4j:repeat value="#{paymentCardSettle.agencies}" rowKeyVar="index" var="agency">
 						<aon:outputText styleClass="aon-margin-left"
 							value="#{agency.registry.fullName}"/>
@@ -46,7 +46,7 @@
 					
 					<aon:outputText styleClass="aon-margin-left aon-bold"
 						rendered="#{paymentCardSettle.payMethodsSize > 0 and not empty paymentCardSettle.payMethods[0].name}"
-						value="#{configBundle.config_pay_method}:" />
+						value="#{bundle.finance_payMethod}:" />
 					<a4j:repeat value="#{paymentCardSettle.payMethods}" rowKeyVar="index" var="payMth">
 						<aon:outputText styleClass="aon-margin-left "
 							rendered="#{paymentCardSettle.payMethodsSize > 0}"
@@ -65,14 +65,14 @@
 
 					<aon:outputText styleClass="aon-margin-left aon-bold" 
 						rendered="#{not empty paymentCardSettle.reservationCode}"
-						value="#{pmsBundle.pms_reservation_code}:" />
+						value="#{bundle.report_reservation_code}:" />
 					<aon:outputText styleClass="aon-margin-left "
 						rendered="#{not empty paymentCardSettle.reservationCode}"
 						value="#{paymentCardSettle.reservationCode}"/>
 
 					<aon:outputText styleClass="aon-margin-left aon-bold" 
 						rendered="#{not empty paymentCardSettle.guestName or not empty paymentCardSettle.guestSurname}"
-						value="#{pmsBundle.pms_guest}:" />
+						value="#{bundle.report_guest}:" />
 					<aon:div style="display:inline;">
 						<aon:outputText styleClass="aon-margin-left "
 							rendered="#{not empty paymentCardSettle.guestName}"

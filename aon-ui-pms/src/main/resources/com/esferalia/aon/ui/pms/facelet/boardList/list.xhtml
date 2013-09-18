@@ -129,14 +129,14 @@
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_guest}" />
+								<aon:outputText value="#{bundle.report_guest}" />
 							</f:facet>
 							<aon:outputText value="#{to.guest}" />
 						</aon:column>
 						
 						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_checkIn}" />
+								<aon:outputText value="#{bundle.report_checkin}" />
 							</f:facet>
 							<aon:outputText value="#{to.startDate}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -146,7 +146,7 @@
 						
 						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_checkOut}" />
+								<aon:outputText value="#{bundle.report_checkout}" />
 							</f:facet>
 							<aon:outputText value="#{to.endDate}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"

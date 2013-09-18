@@ -37,7 +37,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel for="PosShiftCount_payMethod" value="#{configBundle.config_pay_method}" />
+					<aon:outputLabel for="PosShiftCount_payMethod" value="#{bundle.finance_payMethod}" />
 				</f:facet>
 				<aon:outputText value="#{to.payMethod.name}"
 					rendered="#{formList}" />
@@ -63,7 +63,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-200">
 				<f:facet name="header">
-					<aon:outputLabel for="PosShiftCount_amount" value="#{financeBundle.finance_cash}" />
+					<aon:outputLabel for="PosShiftCount_amount" value="#{bundle.report_pos}" />
 				</f:facet>
 				<aon:outputText value="#{to.amount}"
 					rendered="#{formList}">
@@ -90,7 +90,7 @@
 						<f:setPropertyActionListener target="#{shiftController.calculator.headerLabel}"
 							value="#{financeBundle.finance_pos_cash_count}" />
 						<f:setPropertyActionListener target="#{shiftController.calculator.footerLabel}"
-							value="#{financeBundle.finance_pos_bank_income}" />
+							value="#{bundle.report_bank_income}" />
 					</aon:commandButton>
 				</aon:div>
 				<f:facet name="footer">
@@ -115,7 +115,7 @@
 							<f:setPropertyActionListener target="#{shiftController.calculator.headerLabel}"
 								value="#{financeBundle.finance_pos_cash_count}" />
 							<f:setPropertyActionListener target="#{shiftController.calculator.footerLabel}"
-								value="#{financeBundle.finance_pos_bank_income}" />
+								value="#{bundle.report_bank_income}" />
 						</aon:commandButton>
 					</aon:div>
 				</f:facet>

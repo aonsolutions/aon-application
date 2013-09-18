@@ -16,7 +16,7 @@
 
 		<c:if test="#{aonConfiguration.bean.customer.showTariff}">
 			<aon:outputLabel for="Customer_tariff_id"
-				value="#{productBundle.product_tariff}" />
+				value="#{bundle.report_tariff}" />
 			<aon:selectOneMenu id="Customer_tariff_id"
 				value="#{controller.to.tariff}">
 				<f:selectItem itemLabel="-" value="#{null}" />

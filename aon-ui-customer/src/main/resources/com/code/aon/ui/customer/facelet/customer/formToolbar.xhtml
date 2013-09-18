@@ -9,7 +9,7 @@
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-		<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(academyBundle.academy_alumns):(customerBundle.customer_module)}" />
+		<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(bundle.aon_alumns):(bundle.customer_finance_checking)}" />
 		<ui:param name="controller" value="#{customer}" />
 		<ui:param name="showMoreMenu" value="#{!customer.new}" />
 		<ui:define name="moreMenuContent">
@@ -24,7 +24,7 @@
 			<c:if test="#{customer.showAlumnData}">
 				<c:if test="#{aonConfiguration.bean.customer.showCourse}">
 					<aon:menuItem id="course-button"
-						value="#{academyBundle.academy_courses}"
+						value="#{bundle.course_courses}"
 						iconClass="aon-icon-data"
 						reRender="showNewCourseWindow"
 						actionListener="#{customerCourse.onReset}">
@@ -33,7 +33,7 @@
 				</c:if>
 				<c:if test="#{aonConfiguration.bean.customer.showAbsence}">
 					<aon:menuItem id="absence-button"
-						value="#{academyBundle.academy_absences}"
+						value="#{bundle.absence_absences}"
 						iconClass="aon-icon-data"
 						reRender="showNewAbsenceWindow"
 						actionListener="#{customerAbsence.onReset}">

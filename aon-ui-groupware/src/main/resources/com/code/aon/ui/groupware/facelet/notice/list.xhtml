@@ -24,7 +24,7 @@
 			
 						<aon:column styleClass="aon-width-130" alias="Notice.recipient&lt;name">
 							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.notice_recipient}" />
+								<aon:outputText value="#{bundle.purchase_shipping_recipient}" />
 							</f:facet>
 							<aon:outputText rendered="#{to.recipient != null}" value="#{to.recipient.name}" />
 							<aon:outputText rendered="#{to.recipient == null}" value="#{groupwareBundle.groupware_all}" />

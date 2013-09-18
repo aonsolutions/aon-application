@@ -92,7 +92,7 @@
 							value="#{fbatch.to.financeBatchStatus}" />
 						<c:if test="#{aonRole.accountingOperator and fbatch.recorded}">
 							<aon:outputText styleClass="aon-italic aon-margin-left"
-								value="(#{financeBundle.finance_account_entry}:" />
+								value="(#{bundle.account_account_entry}:" />
 							<aon:outputText styleClass="aon-bold"
 								value="#{fbatch.accountEntryId}" />
 							<aon:outputText styleClass="aon-italic" value=")" />
@@ -114,7 +114,7 @@
 						disabled="#{fbatch.readOnly}" size="40" maxlength="32" />
 
 					<aon:outputLabel for="FinanceBatch_financeBatchType"
-						value="#{financeBundle.finance_disk_type}" />
+						value="#{bundle.finance_disk_type}" />
 					<aon:selectOneMenu id="FinanceBatch_financeBatchType"
 						value="#{fbatch.to.financeBatchType}"
 						disabled="#{!fbatch.new}">
@@ -122,7 +122,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="RegistryBank_Lookup_id"
-						value="#{configBundle.config_bank}" />
+						value="#{bundle.aon_bank}" />
 					<aon:div>
 						<aon:selectOneMenu id="RegistryBank_Lookup_id"
 							value="#{fbatch.to.registryBank}"
@@ -137,14 +137,14 @@
 						</aon:selectOneMenu>
 						<aon:commandLink id="bankStatement_link" immediate="true"
 							styleClass="aon-icon-commandButton aon-button-goto aon-bold aon-italic" style="padding-right: 20px;"
-							value="#{financeBundle.finance_bank_statement}" title="#{financeBundle.finance_bank_statement}"
+							value="#{bundle.finance_bank_statement_report}" title="#{bundle.finance_bank_statement_report}"
 							rendered="#{fbatch.inStatement}"
 							actionListener="#{fbatch.onLoadBankStatement}"
 							action="bankStatement_list" />
 					</aon:div>
 
 					<aon:outputLabel for="FinanceBatch_totalAmount"
-						value="#{financeBundle.finance_total_amount}" />
+						value="#{bundle.stat_total}" />
 					<aon:outputText id="FinanceBatch_totalAmount"
 					 	styleClass="aon-bold"
 						value="#{fbatch.to.financeBatchTotalAmount}"

@@ -82,7 +82,7 @@
 						value="#{loan.to.review}" size="60" />
 
 					<aon:outputLabel for="RegistryBank_Lookup_id"
-						value="#{configBundle.config_bank}" />
+						value="#{bundle.aon_bank}" />
 					<aon:selectOneMenu id="RegistryBank_Lookup_id" required="true"
 						value="#{loan.to.registryBank}">
 						<f:selectItem value="#{null}" itemLabel="-" />
@@ -122,7 +122,7 @@
 						<f:selectItems value="#{accountingCollections.loanStatuses}" />
 					</aon:selectOneRadio>
 					
-					<aon:outputLabel for="Account_id" value="#{accountBundle.account_account}" />
+					<aon:outputLabel for="Account_id" value="#{bundle.account_account}" />
 					
 					<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{loan.to.account}" />
@@ -135,7 +135,7 @@
 					rendered="#{!loan.new and loan.relatedAccount != null}"
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 				
-					<aon:outputText value="#{accountBundle.account_account}" />
+					<aon:outputText value="#{bundle.account_account}" />
 					<aon:commandLink id="onAccountStatement-search" 
 						immediate="#{true}" 
 						styleClass="aon-dataTable-link"

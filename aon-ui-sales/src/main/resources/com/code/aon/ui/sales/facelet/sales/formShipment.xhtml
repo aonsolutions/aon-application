@@ -16,7 +16,7 @@
 		<aon:panelGrid columns="2" style="width:600px;">
 			<c:if test="#{carrierCollections.carriersCount>0}">
 				<aon:outputLabel for="Sales_carrier"
-					value="#{carrierBundle.carrier_carrier}" />
+					value="#{bundle.warehouse_delivery_carrier}" />
 				<aon:selectOneMenu id="Sales_carrier" 
 					value="#{sales.to.carrier}">
 					<f:selectItem itemLabel=" - " itemValue="#{null}" />
@@ -28,7 +28,7 @@
 			</c:if>
 				
 			<aon:outputLabel for="Sales_shippingContact"
-				value="#{carrierBundle.carrier_shipment_to}" />
+				value="#{bundle.purchase_shipping_contact}" />
 			<aon:inputText id="Sales_shippingContact"  
 				size="64" maxlength="128"
 				value="#{sales.to.shippingContact}" />
@@ -62,7 +62,7 @@
 				styleClass="aon-width-all">
 					
 				<aon:outputLabel for="Sales_shippingAlternativeRecipient" 
-					value="#{carrierBundle.carrier_shipment_recipient}" />
+					value="#{bundle.purchase_shipping_recipient}" />
 				<aon:inputText id="Sales_shippingAlternativeRecipient" 
 					value="#{sales.to.shippingAlternativeRecipient}" size="64" maxlength="64"/>
 		

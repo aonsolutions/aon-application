@@ -106,7 +106,7 @@
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 							<aon:commandLink id="BankStatement-seePending"
-								value="#{financeBundle.finance_list_pending}"
+								value="#{bundle.seller_stat_control_pending}"
 								style="margin-left:5px; text-decoration:underline;"
 								actionListener="#{bankStatement.onSeePending}"
 								reRender="#{dataTableId}"
@@ -165,7 +165,7 @@
 						<aon:div>
 							<aon:outputText value="#{bundle.aon_check}:" styleClass="aon-bold" />
 							<aon:commandLink id="BankStatement-selectPending"
-								value="#{financeBundle.finance_list_pending}"
+								value="#{bundle.seller_stat_control_pending}"
 								style="margin-left:5px; text-decoration:underline;"
 								actionListener="#{bankStatement.onSelectPending}"
 								reRender="#{dataTableId}"
@@ -295,7 +295,7 @@
 						<aon:panelGrid id="registryBankTable" columns="2" style="width:100%;"
 							columnClasses="aon-panelGrid-odd aon-width-140
 								,aon-panelGrid-even aon-width-auto">
-							<aon:outputText value="#{configBundle.config_bank}" />
+							<aon:outputText value="#{bundle.aon_bank}" />
 							<aon:selectOneMenu id="BankStatement_registryBank"
 								value="#{bankStatement.registryBank}"
 								valueChangeListener="#{bankStatement.onChangeBank}"
@@ -506,20 +506,20 @@
 											</f:facet>
 											<aon:outputText value="#{bundle.aon_contact_category}"
 												rendered="#{to.payment and (formList or controller.to.recorded)}" />
-											<aon:outputText value="#{financeBundle.finance_bank_statement_charge}"
+											<aon:outputText value="#{bundle.finance_bank_statement_charge}"
 												rendered="#{!to.payment and (formList or controller.to.recorded)}" />
 											<aon:selectOneMenu id="BankStatement_payment"
 												value="#{controller.to.payment}"
 												rendered="#{formEdit and !controller.to.recorded}">
 												<f:selectItem itemLabel="#{bundle.aon_contact_category}" itemValue="#{true}" />
-												<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_charge}" itemValue="#{false}" />
+												<f:selectItem itemLabel="#{bundle.finance_bank_statement_charge}" itemValue="#{false}" />
 											</aon:selectOneMenu>
 											<f:facet name="footer">
 												<aon:selectOneMenu id="BankStatement_payment-New"
 													value="#{controller.to.payment}"
 													rendered="#{formNew}">
 													<f:selectItem itemLabel="#{bundle.aon_contact_category}" itemValue="#{true}" />
-													<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_charge}" itemValue="#{false}" />
+													<f:selectItem itemLabel="#{bundle.finance_bank_statement_charge}" itemValue="#{false}" />
 												</aon:selectOneMenu>
 											</f:facet>
 										</aon:column>
@@ -662,9 +662,9 @@
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<aon:outputText value="#{financeBundle.finance_return_abbrv}" 
 													rendered="#{to.returned}" /> 
-												<aon:outputText value="#{financeBundle.finance_payment}" 
+												<aon:outputText value="#{bundle.finance_payment}" 
 													rendered="#{statementLink.payment}" /> 
-												<aon:outputText value="#{financeBundle.finance_charge}"
+												<aon:outputText value="#{bundle.finance_charge}"
 													rendered="#{!statementLink.payment}" />
 											</aon:column>
 
@@ -700,7 +700,7 @@
 												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<f:facet name="header">
 													<aon:div>
-														<aon:outputText value="#{financeBundle.finance_account_entry}: " />
+														<aon:outputText value="#{bundle.account_account_entry}: " />
 														<aon:outputText value="#{controller.accountEntry.id}" />
 													</aon:div>
 												</f:facet>
@@ -744,7 +744,7 @@
 
 											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-column">
 												<f:facet name="header">
-													<aon:outputText value="#{financeBundle.finance_debit}" />
+													<aon:outputText value="#{bundle.account_debit}" />
 												</f:facet>
 												<aon:outputText value="#{entryDetail.debit}">
 													<f:convertNumber pattern="#,##0.00" />
@@ -753,7 +753,7 @@
 
 											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-column">
 												<f:facet name="header">
-													<aon:outputText value="#{financeBundle.finance_credit}" />
+													<aon:outputText value="#{bundle.account_credit}" />
 												</f:facet>
 												<aon:outputText value="#{entryDetail.credit}">
 													<f:convertNumber pattern="#,##0.00" />

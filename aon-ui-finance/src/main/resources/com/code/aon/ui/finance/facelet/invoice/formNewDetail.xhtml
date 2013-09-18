@@ -131,7 +131,7 @@
 	</c:if>
 
 	<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
-		<aon:outputLabel for="InvoiceDetail_workPlace" value="#{companyBundle.company_workplace}" />
+		<aon:outputLabel for="InvoiceDetail_workPlace" value="#{bundle.purchase_workplace}" />
 		<aon:selectOneMenu id="InvoiceDetail_workPlace"
 			value="#{detailController.to.workPlace}" ajaxSingle="true">
 			<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />

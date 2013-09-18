@@ -27,10 +27,10 @@
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:panelGrid id="dataTable" columns="2" style="width: 90%;">
-					<aon:outputText value="#{groupwareBundle.groupware_campaign}" />
+					<aon:outputText value="#{bundle.aon_campaign}" />
 					<aon:outputText value="#{campaign.to.description}"/>
 
-					<aon:outputText value="#{projectBundle.project_project}" />
+					<aon:outputText value="#{bundle.aon_project}" />
 					<aon:div>
 						<aon:outputText value="#{processTask.campaignProjectExtended.campaignProject.project.name}"/>
 						<aon:outputText value=" - "/>
@@ -73,7 +73,7 @@
 	
 								<aon:column alias="ProcessTask.task.startDate" styleClass="aon-width-80"> 
 									<f:facet name="header">
-										<aon:outputText value="#{groupwareBundle.groupware_initial_date}" />
+										<aon:outputText value="#{bundle.aon_start_date}" />
 									</f:facet>
 									<aon:outputText value="#{to.task.startDate}">
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -83,7 +83,7 @@
 	
 								<aon:column alias="ProcessTask.task.endDate" styleClass="aon-width-80">
 									<f:facet name="header">
-										<aon:outputText value="#{groupwareBundle.groupware_final_date}" />
+										<aon:outputText value="#{bundle.aon_end_date}" />
 									</f:facet>
 									<aon:outputText value="#{to.task.endDate}">
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"

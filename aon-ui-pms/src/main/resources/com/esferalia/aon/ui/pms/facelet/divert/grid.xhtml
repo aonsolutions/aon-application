@@ -37,11 +37,11 @@
 									value="#{bundle.aon_reservation}" />
 							</f:facet>
 							<aon:div rendered="#{formList}" >
-								<aon:outputText value="#{pmsBundle.pms_reservation_id}:" styleClass="aon-italic" />
+								<aon:outputText value="#{bundle.report_id}:" styleClass="aon-italic" />
 								<aon:outputText value="#{to.projectReservation.id}"  />
-								<aon:outputText value="#{pmsBundle.pms_reservation_code}:" styleClass="aon-italic aon-margin-left" />
+								<aon:outputText value="#{bundle.report_reservation_code}:" styleClass="aon-italic aon-margin-left" />
 								<aon:outputText value="#{to.projectReservation.code}" />
-								<aon:outputText value="#{pmsBundle.pms_guest}:" styleClass="aon-italic aon-margin-left" />
+								<aon:outputText value="#{bundle.report_guest}:" styleClass="aon-italic aon-margin-left" />
 								<aon:outputText value="#{to.projectReservation.guestFullName}" />
 								<aon:outputText value=" ( " />
 								<aon:outputText value="#{to.projectReservation.startDate}" >

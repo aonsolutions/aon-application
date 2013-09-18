@@ -38,7 +38,7 @@
 
 				<aon:column  styleClass="aon-editDataTable-numberColumn aon-width-200">
 					<f:facet name="header">
-						<aon:outputText value="#{fiscalBundle.fiscal_total_tax_debt}" />
+						<aon:outputText value="#{bundle.fiscal_total_tax_debt}" />
 					</f:facet>
 					<aon:outputText value="#{to.totalTaxDebt}" >
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -46,14 +46,14 @@
 				</aon:column>
 
 				<aon:column  styleClass="aon-editDataTable-textColumn aon-width-70 aon-nowrap">
-					<aon:outputText value="#{fiscalBundle.fiscal_compensate}" rendered="#{to.compensateEnabled}"/>
-					<aon:outputText value="#{fiscalBundle.fiscal_pay_back}" rendered="#{to.payBackEnabled}"/>
-					<aon:outputText value="#{fiscalBundle.fiscal_deposit}" rendered="#{to.depositEnabled}"/>
+					<aon:outputText value="#{bundle.fiscal_compensate}" rendered="#{to.compensateEnabled}"/>
+					<aon:outputText value="#{bundle.fiscal_pay_back}" rendered="#{to.payBackEnabled}"/>
+					<aon:outputText value="#{bundle.fiscal_deposit}" rendered="#{to.depositEnabled}"/>
 				</aon:column>
 
 				<aon:column  styleClass="aon-editDataTable-textColumn aon-width-auto">
 					<f:facet name="header">
-						<aon:outputText value="#{configBundle.config_bank_account}" />
+						<aon:outputText value="#{bundle.aon_bank_account}" />
 					</f:facet>
 					<aon:outputText value="#{to.registryBank.fullName}">
 <!-- 

@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_CASH;
+import static com.code.aon.ui.common.ICommonMessages.POS;
 
 import java.util.Iterator;
 
@@ -61,7 +60,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 		} else if (tracking.getPayMethodTypeDetail() != null) {
 			return tracking.getPayMethodTypeDetail().getDescription();
 		} else {
-			return AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_CASH);
+			return AonUtil.getMessage(POS);
 		}
 	}
 

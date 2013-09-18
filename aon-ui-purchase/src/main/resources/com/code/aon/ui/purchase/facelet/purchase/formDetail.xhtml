@@ -261,7 +261,7 @@
 					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250" >
 						<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-120, aon-noborder aon-bold aon-text-left">
 							<f:facet name="header">
-								<aon:outputText value="#{purchaseBundle.purchase_purchaseProposal}" />
+								<aon:outputText value="#{bundle.offer_order_request_title}" />
 							</f:facet>
 							
 							<aon:outputText value="#{purchaseBundle.purchase_issueDate}" />
@@ -277,10 +277,10 @@
 								</aon:div>
 							</aon:div>
 		
-							<aon:outputText value="#{companyBundle.company_workplace}" />
+							<aon:outputText value="#{bundle.purchase_workplace}" />
 							<aon:outputText	value="#{to.proposalDetail.proposal.workPlace.description}"  />
 							
-							<aon:outputText value="#{companyBundle.company_department}" />
+							<aon:outputText value="#{bundle.purchase_department}" />
 							<aon:outputText	value="#{to.proposalDetail.proposal.department.name}" />
 						
 							<aon:outputText value="#{bundle.aon_comment}" />

@@ -158,7 +158,7 @@
 					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 						<f:facet name="header">
 							<aon:outputText
-								value="#{accountingBundle.accounting_coefficient}" />
+								value="#{bundle.accounting_amortization_coef}" />
 						</f:facet>
 						<aon:outputText value="#{to.amortization.percentage}">
 							<f:convertNumber pattern="#,##0.00" />
@@ -199,7 +199,7 @@
 
 					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 						<f:facet name="header">
-							<aon:outputText value="#{accountingBundle.accounting_allocation}" />
+							<aon:outputText value="#{bundle.accounting_amortization_dotacion}" />
 						</f:facet>
 						<aon:outputText value="#{to.allocation}">
 							<f:convertNumber pattern="#,##0.00" />
@@ -209,7 +209,7 @@
 					<aon:column styleClass="aon-editDataTable-numberColumn aon-width-70">
 						<f:facet name="header">
 							<aon:outputText
-								value="#{accountingBundle.accounting_accumulated}" />
+								value="#{bundle.account_accumulated}" />
 						</f:facet>
 						<aon:outputText value="#{to.accumulated}">
 							<f:convertNumber pattern="#,##0.00" />

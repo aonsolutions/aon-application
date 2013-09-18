@@ -21,12 +21,12 @@
 
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{markSearch.customer}" />
-						<ui:param name="lookupLabel" value="#{academyBundle.academy_alumn}"/>						
+						<ui:param name="lookupLabel" value="#{bundle.aon_alumn}"/>						
 						<ui:param name="skipNewButton" value="#{true}" />						
 					</ui:include>
 	
 					<aon:outputLabel for="Mark_alumn_course_academicYear_id"
-						value="#{academyBundle.academy_academic_year}" />
+						value="#{bundle.course_academic_year}" />
 					<aon:selectOneMenu id="Mark_alumn_course_academicYear_id"
 						value="#{academyCollections.academicYear}"
 						valueChangeListener="#{controller.addIdEqualExpression}">
@@ -53,12 +53,12 @@
 					</aon:selectOneMenu>					
 	
 					<aon:outputLabel for="Mark_evaluation"
-						value="#{academyBundle.academy_mark_evaluation}" />
+						value="#{bundle.mark_evaluation}" />
 					<aon:inputText id="Mark_evaluation" size="10"
 						valueChangeListener="#{controller.addExpression}" />
 
 					<aon:outputLabel for="Mark_subject_academicSkill_id"
-						value="#{academyBundle.academy_academic_skill}" />
+						value="#{bundle.mark_subject}" />
 					<aon:selectOneMenu id="Mark_subject_academicSkill_id"
 						value="#{academyCollections.academicSkill}"
 						valueChangeListener="#{controller.addIdEqualExpression}">
@@ -67,7 +67,7 @@
 					</aon:selectOneMenu>					
 	
 					<aon:outputLabel for="Mark_mark"
-						value="#{academyBundle.academy_mark_mark}" />
+						value="#{bundle.mark_mark}" />
 					<aon:inputText id="Mark_mark" size="10"
 						valueChangeListener="#{controller.addExpression}" />
 

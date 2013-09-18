@@ -27,7 +27,7 @@
 									,aon-panelGrid-even aon-width-300">
 					
 					
-					<aon:outputText value="#{projectBundle.project_project}" />
+					<aon:outputText value="#{bundle.aon_project}" />
 					<aon:outputText value="#{projectStat.project.name}" />
 
 					<aon:outputText value="#{bundle.aon_alias}" />
@@ -67,7 +67,7 @@
 							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/economicSummary.xhtml" />
 						</c:if>
 					</aon:panelTab>
-					<aon:panelTab id="approvedOffersTab" label="#{statBundle.stat_offer_amount}">
+					<aon:panelTab id="approvedOffersTab" label="#{statBundle.stat_offer_amount2}">
 						<c:if test="#{projectStat.selectedTab == 'approvedOffersTab'}">
 							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/approvedOfferList.xhtml" />
 						</c:if>
@@ -82,7 +82,7 @@
 							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/costInvoiceList.xhtml" />
 						</c:if>
 					</aon:panelTab>
-					<aon:panelTab id="dailyTrackingTab" label="#{statBundle.stat_labour_amount}">
+					<aon:panelTab id="dailyTrackingTab" label="#{bundle.tas_labour}">
 						<c:if test="#{projectStat.selectedTab == 'dailyTrackingTab'}">
 							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/dailyTrackingList.xhtml" />
 						</c:if>

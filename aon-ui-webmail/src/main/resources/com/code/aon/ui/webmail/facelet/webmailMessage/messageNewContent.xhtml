@@ -94,7 +94,7 @@
 									reRender="showEmailWindow#{messageSuffix}" disabled="#{disableContacts}"
 									actionListener="#{webmailMessage.openEmailsToPanelPopup}"
 									styleClass="new-mail-button"
-									value="#{webmailBundle.webmail_to}"/>							
+									value="#{bundle.webmail_to}"/>							
 							</aon:div>
 							<aon:div>
 								<aon:inputText id="NewMail_to#{messageSuffix}"
@@ -113,7 +113,7 @@
 								reRender="showEmailWindow#{messageSuffix}" disabled="#{disableContacts}"
 								actionListener="#{webmailMessage.openEmailsCcPanelPopup}"
 								styleClass="new-mail-button"
-								value="#{webmailBundle.webmail_cc}" />							
+								value="#{bundle.webmail_cc}" />							
 						</aon:div>
 						<aon:div>
 							<aon:inputText id="NewMail_cc#{messageSuffix}"

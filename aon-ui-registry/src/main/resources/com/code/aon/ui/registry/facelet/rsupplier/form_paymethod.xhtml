@@ -8,7 +8,7 @@
 
 		<aon:panel>
 			<f:facet name="header">
-				<aon:outputText value="#{configBundle.config_pay_method}" />
+				<aon:outputText value="#{bundle.finance_payMethod}" />
 			</f:facet>
 			<aon:panelGrid columns="7" style="width:100%; font-size:0.9em;" 
 				rowClasses="aon-panelGrid-odd aon-dataTable-header,aon-panelGrid-even"
@@ -31,9 +31,9 @@
 				<aon:outputLabel for="RegistrySupplier_paymentDays"
 					value="#{registryBundle.registry_payment_days}" />
 				<aon:outputLabel for="Bank_id"
-					value="#{configBundle.config_bank}" />
+					value="#{bundle.aon_bank}" />
 				<aon:outputLabel for="RegistrySupplier_bank_office"
-					value="#{configBundle.config_bank_account}" />
+					value="#{bundle.aon_bank_account}" />
 
 				<aon:selectOneMenu id="RegistrySupplier_payMethod" 
 					value="#{controller.to.payMethod}">

@@ -23,7 +23,7 @@
 				<ui:define name="searchContent">
 					
 					<aon:outputLabel for="ItemCatalogueReport_workPlace"
-						value="#{companyBundle.company_workplace}" />
+						value="#{bundle.purchase_workplace}" />
 					<aon:selectOneMenu id="ItemCatalogueReport_workPlace"
 						value="#{itemCatalogueReport.workPlace}">
 						<f:selectItem itemLabel="-" value="#{null}" />		
@@ -32,7 +32,7 @@
 					</aon:selectOneMenu>
 					
 					<aon:outputLabel for="ItemCatalogueReport_department"
-						value="#{companyBundle.company_department}" />
+						value="#{bundle.purchase_department}" />
 					<aon:selectOneMenu id="ItemCatalogueReport_department"
 						disabled="#{itemCatalogueReport.workPlace.id==null}"
 						value="#{itemCatalogueReport.department}">

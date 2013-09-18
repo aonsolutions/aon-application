@@ -65,7 +65,7 @@
 			
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
+					<aon:outputText value="#{bundle.aon_document_number}" />
 				</f:facet>
 				<aon:outputText styleClass="aon-nowrap" 
 					value="#{to.finance.documentNumber}" />
@@ -73,21 +73,21 @@
 			
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_debtor}" />
+					<aon:outputText value="#{bundle.finance_debtor}" />
 				</f:facet>
 				<aon:outputText value="#{to.finance.registryName}" />
 			</aon:column>
 	
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{configBundle.config_pay_method}" />
+					<aon:outputText value="#{bundle.finance_payMethod}" />
 				</f:facet>
 				<aon:outputText value="#{to.finance.payMethod.name}"/>
 			</aon:column>
 	
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{configBundle.config_bank_account}" />
+					<aon:outputText value="#{bundle.aon_bank_account}" />
 				</f:facet>
 				<aon:outputText value="#{to.finance.bankAccount}"/>
 			</aon:column>

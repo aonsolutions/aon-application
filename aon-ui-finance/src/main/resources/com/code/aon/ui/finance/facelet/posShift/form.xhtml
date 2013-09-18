@@ -16,7 +16,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_posShift_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.report_posShift_list}" />
 				<ui:param name="controller" value="#{posShift}" />
 				<ui:param name="skipSaveButton" value="#{readOnly}" />
 				<ui:param name="skipRemoveButton" value="#{readOnly or posShift.financeModel.rowCount > 0}" />
@@ -43,7 +43,7 @@
 						</f:facet>
 						<aon:panelGrid columns="2" styleClass="aon-width-all">
 
-							<aon:outputLabel for="PosShit_pos_workPlace" value="#{companyBundle.company_workplace}" />
+							<aon:outputLabel for="PosShit_pos_workPlace" value="#{bundle.purchase_workplace}" />
 							<aon:selectOneMenu id="PosShit_pos_workPlace"
 								value="#{posShift.workPlace}"
 								rendered="#{posShift.new}">
@@ -67,7 +67,7 @@
 								value="#{posShift.to.pos.name}"
 								rendered="#{!posShift.new}" />
 
-							<aon:outputLabel for="PosShift_shift" value="#{financeBundle.finance_pos_shift}" />
+							<aon:outputLabel for="PosShift_shift" value="#{bundle.report_shift}" />
 							<aon:selectOneMenu id="PosShift_shift"
 								value="#{posShift.to.shift}" required="true"
 								rendered="#{!readOnly}">
@@ -83,7 +83,7 @@
 									styleClass="aon-bold" />
 							</c:if>
 
-							<aon:outputLabel for="PosShift_startTime" value="#{financeBundle.finance_pos_opening}" />
+							<aon:outputLabel for="PosShift_startTime" value="#{bundle.report_opening}" />
 							<aon:panelGrid columns="2" columnClasses="aon-width-150, aon-width-auto">
 								<aon:selectInputDate id="PosShift_startTime"
 									value="#{posShift.to.startTime}" required="true" 
@@ -127,7 +127,7 @@
 										<f:setPropertyActionListener target="#{posShift.calculator.headerLabel}"
 											value="#{financeBundle.finance_initial_amount}" />
 										<f:setPropertyActionListener target="#{posShift.calculator.footerLabel}"
-											value="#{financeBundle.finance_difference}" />
+											value="#{bundle.report_amount_difference}" />
 									</aon:commandButton>
 									<aon:outputText styleClass="aon-bold"
 										value="#{posShift.to.initialAmount}"
@@ -137,7 +137,7 @@
 								</aon:div>
 							</aon:panelGrid>
 
-							<aon:outputLabel for="PosShift_endTime" value="#{financeBundle.finance_pos_closing}" />
+							<aon:outputLabel for="PosShift_endTime" value="#{bundle.report_closing}" />
 							<aon:selectInputDate id="PosShift_endTime"
 								value="#{posShift.to.endTime}"
 								rendered="#{!readOnly}" 
@@ -181,7 +181,7 @@
 	
 									<aon:div>
 										<aon:outputLabel styleClass="aon-margin-right aon-italic"
-											value="#{bundle.aon_total} #{financeBundle.finance_cash_payMethod}:" />
+											value="#{bundle.aon_total} #{bundle.report_cash_name}:" />
 										<aon:outputText styleClass="aon-bold"
 											value="#{posShift.to.totalCountCashAmount + posShift.to.initialAmount}">
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
@@ -190,7 +190,7 @@
 	
 									<aon:div>
 										<aon:outputLabel styleClass="aon-margin-right aon-italic"
-											value="#{financeBundle.finance_pos_bank_income}:" />
+											value="#{bundle.report_bank_income}:" />
 										<aon:outputText styleClass="aon-bold"
 											value="#{posShift.to.totalCountCashAmount > 0 ? posShift.to.totalCountCashAmount : 0}">
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />

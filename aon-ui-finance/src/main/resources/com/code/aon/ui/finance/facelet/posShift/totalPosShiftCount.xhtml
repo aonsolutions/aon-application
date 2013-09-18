@@ -12,14 +12,14 @@
 
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
-				<aon:outputLabel value="#{configBundle.config_pay_method}" />
+				<aon:outputLabel value="#{bundle.finance_payMethod}" />
 			</f:facet>
 			<aon:outputText value="#{to.payMethod.name}" />
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 			<f:facet name="header">
-				<aon:outputLabel value="#{financeBundle.finance_cash}" />
+				<aon:outputLabel value="#{bundle.report_pos}" />
 			</f:facet>
 			<aon:outputText value="#{to.countAmount}">
 				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
@@ -37,7 +37,7 @@
 
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 			<f:facet name="header">
-				<aon:outputLabel value="#{financeBundle.finance_difference}" />
+				<aon:outputLabel value="#{bundle.report_amount_difference}" />
 			</f:facet>
 			<aon:outputText value="#{to.countAmount - to.financeAmount}">
 				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />

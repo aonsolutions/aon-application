@@ -69,7 +69,7 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-invoice aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="#{fiscalBundle.fiscal_vat_tax_module}"/>
+									<aon:outputText value="#{fiscalBundle.fiscal_vat_tax_module2}"/>
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -164,7 +164,7 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="account-fiscal"
 											action="account_list-fiscal"
-											value="#{accountBundle.account_module}" />
+											value="#{bundle.account_module}" />
 									</aon:div>
 									<c:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
@@ -175,7 +175,7 @@
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="accounting_balance-fiscal" 
 												action="balance_list-fiscal"
-												value="#{accountingBundle.accounting_balance_menu}" />
+												value="#{accountingBundle.accounting_balance_menu2}" />
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="amortizationType-fiscal"

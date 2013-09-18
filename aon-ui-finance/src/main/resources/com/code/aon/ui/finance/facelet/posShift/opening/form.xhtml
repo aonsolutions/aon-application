@@ -25,7 +25,7 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" styleClass="aon-width-400">
 
-					<aon:outputLabel for="PosShit_pos_workPlace" value="#{companyBundle.company_workplace}" />
+					<aon:outputLabel for="PosShit_pos_workPlace" value="#{bundle.purchase_workplace}" />
 					<aon:selectOneMenu id="PosShit_pos_workPlace"
 						value="#{posOpening.workPlace}"
 						rendered="#{posOpening.posShift.id == null}">
@@ -51,7 +51,7 @@
 						value="#{posOpening.posShift.pos.name}"
 						rendered="#{posOpening.posShift.id != null}" />
 
-					<aon:outputLabel for="PosShift_shift" value="#{financeBundle.finance_pos_shift}" />
+					<aon:outputLabel for="PosShift_shift" value="#{bundle.report_shift}" />
 					<aon:selectOneMenu id="PosShift_shift"
 						value="#{posOpening.posShift.shift}" required="true" 
 						rendered="#{posOpening.posShift.id == null}">
@@ -85,12 +85,12 @@
 							<f:setPropertyActionListener target="#{posOpening.calculator.headerLabel}"
 								value="#{financeBundle.finance_initial_amount}" />
 							<f:setPropertyActionListener target="#{posOpening.calculator.footerLabel}"
-								value="#{financeBundle.finance_difference}" />
+								value="#{bundle.report_amount_difference}" />
 						</aon:commandButton>
 					</aon:div>
 
 					<c:if test="#{posOpening.posShift.id != null}">
-						<aon:outputLabel for="PosShift_starTime" value="#{financeBundle.finance_pos_opening}" />
+						<aon:outputLabel for="PosShift_starTime" value="#{bundle.report_opening}" />
 						<aon:outputText id="PosShift_starTime"
 							styleClass="aon-bold"
 							value="#{posOpening.posShift.startTime}">

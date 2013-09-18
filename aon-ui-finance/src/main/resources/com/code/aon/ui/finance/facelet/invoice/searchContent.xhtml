@@ -10,7 +10,7 @@
 	<aon:outputText value="" />
 	<aon:div style="width:600px;">
 	
-		<aon:panelCollapsible expanded="true" label="#{financeBundle.finance_invoice}">
+		<aon:panelCollapsible expanded="true" label="#{bundle.finance_invoice}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 				<ui:include src="/com/code/aon/ui/finance/facelet/invoice/searchBasicContent.xhtml" />
 			</aon:panelGrid>
@@ -108,7 +108,7 @@
 					valueChangeListener="#{controller.addExpression}" size="40" />
 					
 				<aon:outputLabel for="Invoice_lines_workPlace_id"
-					value="#{companyBundle.company_workplace}" />
+					value="#{bundle.purchase_workplace}" />
 				<aon:selectOneMenu id="Invoice_lines_workPlace_id"
 					value="#{companyCollections.workPlace}"
 					valueChangeListener="#{controller.addIdEqualExpression}">
@@ -118,7 +118,7 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 
-		<aon:panelCollapsible expanded="false" label="#{financeBundle.finance_finances}" >
+		<aon:panelCollapsible expanded="false" label="#{bundle.finance_checking}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 				<aon:outputLabel 
 					value="#{financeBundle.finance_finance_date_abbrv}" />
@@ -139,7 +139,7 @@
 				</aon:div>
 				
 				<aon:outputLabel for="Bank_id"
-					value="#{configBundle.config_bank}" />
+					value="#{bundle.aon_bank}" />
 				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
 					<ui:param name="lookupTo" value="#{searchController.bank}" />
 					<ui:param name="skipNewButton" value="#{true}" />
@@ -152,7 +152,7 @@
 					size="10" />
 				
 				<aon:outputLabel for="Invoice_finances_payMethod_id"
-					value="#{configBundle.config_pay_method}" />
+					value="#{bundle.finance_payMethod}" />
 				<aon:div id="payMethodDiv">
 					<a4j:repeat value="#{searchController.payMethods}" rowKeyVar="index" var="payMth">
 						<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">

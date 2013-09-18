@@ -142,7 +142,7 @@
 							<rich:column
 								rendered="#{commercialStat.showCommercialActivities}"
 								colspan="2">
-								<aon:outputText value="#{statBundle.seller_stat_control_vis}" />
+								<aon:outputText value="#{bundle.seller_stat_control_vis}" />
 							</rich:column>
 							<rich:column colspan="4">
 								<aon:outputText value="#{bundle.aon_invoice_offers}" />
@@ -158,7 +158,7 @@
 					<aon:column>
 						<f:facet name="header">
 							<c:if test="#{commercialStat.controlType==0}">
-								<aon:outputText value="#{statBundle.stat_seller}" />
+								<aon:outputText value="#{bundle.seller_stat_name}" />
 							</c:if>
 							<c:if test="#{commercialStat.controlType==1}">
 								<aon:outputText value="#{bundle.aon_target}" />
@@ -172,13 +172,13 @@
 						</f:facet>
 						<aon:outputText value="#{to.name}" />
 						<f:facet name="footer">
-							<aon:outputText value="#{statBundle.report_totals}">
+							<aon:outputText value="#{bundle.report_totals}">
 							</aon:outputText>
 						</f:facet>
 					</aon:column>
 					<aon:column rendered="#{commercialStat.showCommercialActivities}">
 						<f:facet name="header">
-							<aon:outputText value="#{statBundle.seller_stat_control_donef}" />
+							<aon:outputText value="#{bundle.seller_stat_control_donef}" />
 						</f:facet>
 
 						<c:if test="#{commercialStat.controlType==0}">
@@ -201,7 +201,7 @@
 					</aon:column>
 					<aon:column rendered="#{commercialStat.showCommercialActivities}">
 						<f:facet name="header">
-							<aon:outputText value="#{statBundle.seller_stat_control_pending}" />
+							<aon:outputText value="#{bundle.seller_stat_control_pending}" />
 						</f:facet>
 						<c:if test="#{commercialStat.controlType==0}">
 							<aon:commandLink styleClass="aon-dataTable-link"
@@ -223,7 +223,7 @@
 					</aon:column>
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{statBundle.seller_stat_control_done}" />
+							<aon:outputText value="#{bundle.seller_stat_control_done}" />
 						</f:facet>
 						<aon:outputText value="#{to.numOffers}" />
 						<f:facet name="footer">
@@ -233,7 +233,7 @@
 					</aon:column>
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{statBundle.seller_stat_control_pending}" />
+							<aon:outputText value="#{bundle.seller_stat_control_pending}" />
 						</f:facet>
 						<aon:outputText value="#{to.numPendingOffers}" />
 						<f:facet name="footer">
@@ -243,7 +243,7 @@
 					</aon:column>
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{statBundle.seller_stat_control_closed}" />
+							<aon:outputText value="#{bundle.seller_stat_control_closed}" />
 						</f:facet>
 						<aon:outputText value="#{to.numAprovedOffers}" />
 						<f:facet name="footer">
@@ -253,7 +253,7 @@
 					</aon:column>
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{statBundle.seller_stat_control_lost}" />
+							<aon:outputText value="#{bundle.seller_stat_control_lost}" />
 						</f:facet>
 						<aon:outputText value="#{to.numLostOffers}" />
 						<f:facet name="footer">

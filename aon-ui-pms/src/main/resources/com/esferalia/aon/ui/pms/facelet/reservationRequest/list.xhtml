@@ -61,7 +61,7 @@
 						<aon:column alias="ReservationRequest.code"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_reservation_code}" />
+								<aon:outputText value="#{bundle.report_reservation_code}" />
 							</f:facet>
 							<aon:outputText value="#{to.code}" />
 						</aon:column>
@@ -69,7 +69,7 @@
 						<aon:column alias="ReservationRequest.startDate"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_checkIn}" />
+								<aon:outputText value="#{bundle.report_checkin}" />
 							</f:facet>
 							<aon:outputText value="#{to.startDate}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -80,7 +80,7 @@
 						<aon:column alias="ReservationRequest.endDate"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_checkOut}" />
+								<aon:outputText value="#{bundle.report_checkout}" />
 							</f:facet>
 							<aon:outputText value="#{to.endDate}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -90,7 +90,7 @@
 
 						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_guest}" />
+								<aon:outputText value="#{bundle.report_guest}" />
 							</f:facet>
 							<aon:outputText value="#{to.guestFullName}" />
 						</aon:column>
@@ -98,7 +98,7 @@
 						<c:if test="#{aonRole.commercialOperator}">
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{pmsBundle.pms_agency} / #{bundle.aon_company}" />
+									<aon:outputText value="#{bundle.report_agency} / #{bundle.aon_company}" />
 								</f:facet>
 								<aon:outputText value="#{(to.agencyHolder) ? (to.agency.registry.fullName) : (to.company.registry.fullName)}" />
 							</aon:column>

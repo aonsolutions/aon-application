@@ -166,7 +166,7 @@
 								<aon:outputText styleClass="aon-margin-right"
 									value="#{offer.to.status}" />
 								<aon:outputText styleClass="aon-italic"
-									value="(#{financeBundle.finance_invoice}: "
+									value="(#{bundle.finance_invoice}: "
 									rendered="#{offer.invoiced}" />
 								<aon:outputText styleClass="aon-bold"
 									value="#{offer.invoiceCode}"
@@ -298,7 +298,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Offer_tariff" 
-						value="#{productBundle.product_tariff}" />
+						value="#{bundle.report_tariff}" />
 					<aon:selectOneMenu id="Offer_tariff" 
 						value="#{offer.to.tariff}"
 						disabled="#{offer.readOnly}">
@@ -307,7 +307,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Offer_workPlace" 
-						value="#{companyBundle.company_workplace}" />
+						value="#{bundle.purchase_workplace}" />
 					<aon:selectOneMenu id="Offer_workPlace" 
 						value="#{offer.to.workPlace}"
 						disabled="#{offer.readOnly}"
@@ -317,7 +317,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Offer_defaultPayMethod" 
-						value="#{configBundle.config_pay_method}" />
+						value="#{bundle.finance_payMethod}" />
 					<aon:selectOneRadio id="Offer_defaultPayMethod" 
 						value="#{offer.defaultPayMethod}"
 						disabled="#{offer.readOnly}"
@@ -347,11 +347,11 @@
 
 						<c:if test="#{!aonConfiguration.bean.offer.showTasData}">
 							<aon:outputLabel for="Offer_project"
-								value="#{projectBundle.project_project}" />
+								value="#{bundle.aon_project}" />
 						</c:if>
 						<c:if test="#{aonConfiguration.bean.offer.showTasData}">
 							<aon:outputLabel for="Offer_project"
-								value="#{tasBundle.tas_projectTas}" />
+								value="#{bundle.tas_project_tas}" />
 						</c:if>
 						<aon:div>
 							<aon:selectOneMenu id="Offer_project"
@@ -411,7 +411,7 @@
 				<aon:div id="payMethodDiv" styleClass="aon-padding-top">
 					<aon:panel rendered="#{offer.defaultPayMethod != null and !offer.defaultPayMethod}">
 						<f:facet name="header">
-							<aon:outputText value="#{configBundle.config_pay_method}" />
+							<aon:outputText value="#{bundle.finance_payMethod}" />
 						</f:facet>
 						<aon:panelGrid columns="7" style="width:100%; font-size:0.9em;"
 							rowClasses="aon-panelGrid-odd aon-dataTable-header,aon-panelGrid-even"
@@ -428,8 +428,8 @@
 							<aon:outputText value="#{registryBundle.registry_days_to_first_payment}" />
 							<aon:outputText value="#{registryBundle.registry_days_between_payments}" />
 							<aon:outputText value="#{registryBundle.registry_payment_days}" />
-							<aon:outputText value="#{configBundle.config_bank}" />
-							<aon:outputText value="#{configBundle.config_bank_account}" />
+							<aon:outputText value="#{bundle.aon_bank}" />
+							<aon:outputText value="#{bundle.aon_bank_account}" />
 
 							<aon:selectOneMenu id="Offer_payMethod" 
 								value="#{offer.to.payMethod}"

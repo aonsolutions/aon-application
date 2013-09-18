@@ -13,7 +13,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{academyBundle.academy_courses}" />
+				<ui:param name="toolbarTitle" value="#{bundle.course_courses}" />
 				<ui:param name="controller" value="#{course}" />
 			</ui:decorate>
 
@@ -32,7 +32,7 @@
 					</aon:inputText>
 
 					<aon:outputLabel for="Course_workPlace"
-						value="#{companyBundle.company_workplace}" />
+						value="#{bundle.purchase_workplace}" />
 					<aon:selectOneMenu id="Course_workPlace"
 						required="true" value="#{course.to.workPlace}" >
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
@@ -46,7 +46,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Course_academicYear"
-						value="#{academyBundle.academy_academic_year}" />
+						value="#{bundle.course_academic_year}" />
 					<aon:selectOneMenu id="Course_academicYear"
 						required="true" value="#{course.to.academicYear}">
 						<f:selectItems value="#{academyCollections.academicYears}" />
@@ -110,17 +110,17 @@
 								<ui:param name="controller" value="#{courseInstructor}" />
 							</ui:include>
 						</aon:panelTab>
-						<aon:panelTab id="alumns" label="#{academyBundle.academy_alumns}">
+						<aon:panelTab id="alumns" label="#{bundle.aon_alumns}">
 							<ui:include	src="/com/code/aon/ui/academy/facelet/courseAlumn/tab_grid.xhtml">
 								<ui:param name="controller" value="#{courseAlumn}" />
 							</ui:include>
 						</aon:panelTab>
-						<aon:panelTab id="absences" label="#{academyBundle.academy_absences}">
+						<aon:panelTab id="absences" label="#{bundle.absence_absences}">
 							<ui:include	src="/com/code/aon/ui/academy/facelet/courseAlumnAbsence/tab_grid.xhtml">
 								<ui:param name="controller" value="#{courseAlumnAbsence}" />
 							</ui:include>
 						</aon:panelTab>
-						<aon:panelTab id="academicSkills" label="#{academyBundle.academy_academic_skills}">
+						<aon:panelTab id="academicSkills" label="#{bundle.academicSkill_academicSkills}">
 							<ui:include	src="/com/code/aon/ui/academy/facelet/courseAcademicSkill/tab_grid.xhtml">
 								<ui:param name="controller" value="#{courseAcademicSkill}" />
 							</ui:include>

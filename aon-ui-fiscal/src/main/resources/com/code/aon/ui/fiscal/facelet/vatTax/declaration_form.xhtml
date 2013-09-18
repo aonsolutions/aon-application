@@ -66,7 +66,7 @@
 			</aon:outputText>
 			<aon:outputText value="&#160;" rendered="#{vatTax.to.anual}"/>
 
-			<aon:outputLabel for="VatTaxDeclaration_percent" value="#{fiscalBundle.fiscal_administration_percent}" />
+			<aon:outputLabel for="VatTaxDeclaration_percent" value="#{bundle.fiscal_administration_percent}" />
 			<aon:inputText id="VatTaxDeclaration_percent" size="8" value="#{vatTaxDeclaration.to.percent}"
 				required="true">
 				<a4j:support event="onchange" reRender="VatTaxDeclarationGrid" limitToList="true"
@@ -74,13 +74,13 @@
 			</aon:inputText>
 			<aon:outputText value="&#160;" />
 
-			<aon:outputText value="#{fiscalBundle.fiscal_administration_quota}" />
+			<aon:outputText value="#{bundle.fiscal_administration_quota}" />
 			<aon:outputText value="#{vatTaxDeclaration.to.quota}" styleClass="aon-bold">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 			<aon:outputText value="&#160;" />
 
-			<aon:outputLabel for="VatTaxDeclaration_previousYearCompesateQuota" value="#{fiscalBundle.fiscal_prev_year_compesate_quota}" />
+			<aon:outputLabel for="VatTaxDeclaration_previousYearCompesateQuota" value="#{fiscalBundle.fiscal_prev_year_compesate_quota2}" />
 			<aon:inputText id="VatTaxDeclaration_previousYearCompesateQuota" size="8" value="#{vatTaxDeclaration.to.previousYearCompensateQuota}"
 				required="true">
 				<a4j:support event="onchange" reRender="VatTaxDeclarationGrid" limitToList="true"
@@ -111,15 +111,15 @@
 			</aon:inputText>
 			<aon:outputText value="&#160;" rendered="#{vatTax.to.anual}"/>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_result}" />
+			<aon:outputText value="#{bundle.fiscal_result}" />
 			<aon:outputText value="#{vatTaxDeclaration.to.result}" styleClass="aon-bold">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 			<aon:outputText value="&#160;" />
 			
 			<aon:div rendered="#{vatTaxDeclaration.to.compensateEnabled}">
-				<aon:outputText value="#{fiscalBundle.fiscal_compensate}"/>
-				<aon:commandLink value="(#{fiscalBundle.fiscal_pay_back})" styleClass="aon-italic aon-normal"
+				<aon:outputText value="#{bundle.fiscal_compensate}"/>
+				<aon:commandLink value="(#{bundle.fiscal_pay_back})" styleClass="aon-italic aon-normal"
 					style="text-decoration: underline; cursor: pointer; margin-left: 20px;"
 					reRender="VatTaxDeclarationGrid" limitToList="true" actionListener="#{vatTaxDeclaration.changeCompensate}"/>
 			</aon:div>
@@ -130,8 +130,8 @@
 			<aon:outputText value="&#160;" rendered="#{vatTaxDeclaration.to.compensateEnabled}"/>
 
 			<aon:div rendered="#{vatTaxDeclaration.to.payBackEnabled}">
-				<aon:outputText value="#{fiscalBundle.fiscal_pay_back}"/>
-				<aon:commandLink value="(#{fiscalBundle.fiscal_compensate})" styleClass="aon-italic aon-normal"
+				<aon:outputText value="#{bundle.fiscal_pay_back}"/>
+				<aon:commandLink value="(#{bundle.fiscal_compensate})" styleClass="aon-italic aon-normal"
 					style="text-decoration: underline; cursor: pointer; margin-left: 20px;"
 					event="onclick" reRender="VatTaxDeclarationGrid" limitToList="true" actionListener="#{vatTaxDeclaration.changeCompensate}" />
 			</aon:div>
@@ -141,7 +141,7 @@
 			</aon:outputText>
 			<aon:outputText value="&#160;" rendered="#{vatTaxDeclaration.to.payBackEnabled}"/>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_deposit}" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
+			<aon:outputText value="#{bundle.fiscal_deposit}" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
 			<aon:outputText value="#{vatTaxDeclaration.to.deposit}" rendered="#{vatTaxDeclaration.to.depositEnabled}"
 				styleClass="aon-bold">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -164,7 +164,7 @@
 			</aon:inputText>
 			<aon:outputText value="&#160;" rendered="#{vatTax.to.extraDeclaration}"/>
 
-			<aon:outputLabel for="VatTaxDeclaration_extraCharge" value="#{fiscalBundle.fiscal_extra_charge}" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
+			<aon:outputLabel for="VatTaxDeclaration_extraCharge" value="#{bundle.fiscal_extra_charge}" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
 			<aon:inputText id="VatTaxDeclaration_extraCharge" size="8" value="#{vatTaxDeclaration.to.extraCharge}"
 				required="true" rendered="#{vatTaxDeclaration.to.depositEnabled}">
 				<a4j:support event="onchange" reRender="VatTaxDeclarationGrid" limitToList="true"
@@ -172,7 +172,7 @@
 			</aon:inputText>
 			<aon:outputText value="&#160;" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
 			
-			<aon:outputLabel for="VatTaxDeclaration_delayInterest" value="#{fiscalBundle.fiscal_delay_interest}" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
+			<aon:outputLabel for="VatTaxDeclaration_delayInterest" value="#{bundle.fiscal_delay_interest}" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
 			<aon:inputText id="VatTaxDeclaration_delayInterest" size="8" value="#{vatTaxDeclaration.to.delayInterest}"
 				required="true" rendered="#{vatTaxDeclaration.to.depositEnabled}">
 				<a4j:support event="onchange" reRender="VatTaxDeclarationGrid" limitToList="true"
@@ -180,7 +180,7 @@
 			</aon:inputText>
 			<aon:outputText value="&#160;" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_total_tax_debt}" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
+			<aon:outputText value="#{bundle.fiscal_total_tax_debt}" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
 			<aon:outputText value="#{vatTaxDeclaration.to.totalTaxDebt}"
 				styleClass="aon-bold" rendered="#{vatTaxDeclaration.to.depositEnabled}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -192,7 +192,7 @@
 			columnClasses="aon-panelGrid-odd aon-width-300
 			              ,aon-panelGrid-even aon-width-auto">
 			              
-			<aon:outputLabel for="VatTaxDeclaration_registryBank_id" value="#{configBundle.config_bank_account}" />
+			<aon:outputLabel for="VatTaxDeclaration_registryBank_id" value="#{bundle.aon_bank_account}" />
 			<aon:selectOneMenu id="VatTaxDeclaration_registryBank_id"
 				value="#{vatTaxDeclaration.to.registryBank}">
 				<f:selectItem itemLabel="-" value="#{null}" />

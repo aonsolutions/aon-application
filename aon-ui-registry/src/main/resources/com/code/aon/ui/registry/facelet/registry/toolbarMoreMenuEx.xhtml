@@ -18,7 +18,7 @@
 	</c:if>
 	<c:if test="#{showProjectButton}">
 		<aon:menuItem id="project-button"
-			value="#{(projectButtonLabel!=null)?(projectButtonLabel):(projectBundle.project_project)}"
+			value="#{(projectButtonLabel!=null)?(projectButtonLabel):(bundle.aon_project)}"
 			iconClass="aon-icon-statistics"
 			reRender="showNewProjectWindow"
 			actionListener="#{projectResetActionListener}">

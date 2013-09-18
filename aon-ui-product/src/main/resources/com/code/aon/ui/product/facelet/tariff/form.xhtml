@@ -12,7 +12,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="skipSearchButton" value="true" />
-				<ui:param name="toolbarTitle" value="#{productBundle.product_tariff_module}" />
+				<ui:param name="toolbarTitle" value="#{productBundle.product_tariff_module2}" />
 				<ui:param name="controller" value="#{tariff}" />
 			</ui:include>
 
@@ -22,7 +22,7 @@
 					<aon:inputText id="Tariff_code" value="#{tariff.to.code}"
 						required="#{true}" size="5" maxlength="8" />
 
-					<aon:outputLabel for="Tariff_name" value="#{productBundle.product_tariff}" />
+					<aon:outputLabel for="Tariff_name" value="#{bundle.report_tariff}" />
 					<aon:inputText id="Tariff_name" value="#{tariff.to.name}"
 						required="#{true}" size="40" maxlength="32" />
 				</aon:panelGrid>
@@ -42,7 +42,7 @@
 										<aon:column alias="TariffCatalogue.catalogue.name" 
 											styleClass="aon-editDataTable-textColumn aon-width-150">
 											<f:facet name="header">
-												<aon:outputLabel for="TariffCatalogue_catalogue" value="#{productBundle.product_catalogue}" />
+												<aon:outputLabel for="TariffCatalogue_catalogue" value="#{bundle.product_catalogueItem_catalogue}" />
 											</f:facet>
 											<aon:outputText value="#{to.catalogue.name}"
 												rendered="#{formList}" />

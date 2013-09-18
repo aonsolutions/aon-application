@@ -13,7 +13,7 @@
 		<aon:form id="roomBookingSearch">
 			
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_roomBooking_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.report_booking_list}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_search}" />
 			</ui:decorate>
 			
@@ -47,7 +47,7 @@
 							
 							<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 								<ui:param name="lookupTo" value="#{roomBooking.agency}" />
-								<ui:param name="lookupLabel" value="#{pmsBundle.pms_agency}" />
+								<ui:param name="lookupLabel" value="#{bundle.report_agency}" />
 								<ui:param name="skipNewButton" value="#{true}" />
 							</ui:include>
 						

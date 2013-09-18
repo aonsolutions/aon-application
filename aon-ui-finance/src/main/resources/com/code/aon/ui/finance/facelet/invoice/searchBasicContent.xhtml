@@ -63,7 +63,7 @@
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 	</aon:div>
 
-	<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
+	<aon:outputLabel value="#{bundle.aon_document_number}" />
 	<aon:div>
 		<aon:outputLabel for="Invoice_series-Document" rendered="#{searchController.sales}"
 			styleClass="aon-form-date-label aon-margin-right" value="E-" />
@@ -90,7 +90,7 @@
 			size="6" />
 	</aon:div>
 
-	<aon:outputLabel value="#{financeBundle.finance_total_amount}" />
+	<aon:outputLabel value="#{bundle.stat_total}" />
 	<aon:inputText id="Invoice_total"
 		valueChangeListener="#{controller.addExpression}"
 		size="10" />

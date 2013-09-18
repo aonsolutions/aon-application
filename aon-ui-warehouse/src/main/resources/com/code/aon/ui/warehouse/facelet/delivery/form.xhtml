@@ -103,7 +103,7 @@
 								<aon:outputText styleClass="aon-margin-left"
 									value="#{delivery.to.status}" />
 								<aon:outputText styleClass="aon-italic aon-margin-left"
-									value="(#{financeBundle.finance_invoice}: "
+									value="(#{bundle.finance_invoice}: "
 									rendered="#{delivery.invoiced}" />
 								<aon:outputText styleClass="aon-bold"
 									value="#{delivery.invoiceCode}"
@@ -166,7 +166,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Delivery_workPlace" 
-						value="#{companyBundle.company_workplace}" />
+						value="#{bundle.purchase_workplace}" />
 					<aon:selectOneMenu id="Delivery_workPlace" 
 						value="#{delivery.to.workPlace}"
 						disabled="#{deliveryDetail.model.rowCount>0 and delivery.warehouse.workPlace.id!=null}"
@@ -184,7 +184,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Delivery_defaultPayMethod" 
-						value="#{configBundle.config_pay_method}" />
+						value="#{bundle.finance_payMethod}" />
 					<aon:selectOneRadio id="Delivery_defaultPayMethod" 
 						value="#{delivery.defaultPayMethod}"
 						disabled="#{!delivery.pending}"
@@ -214,11 +214,11 @@
 
 						<c:if test="#{!aonConfiguration.bean.delivery.showTasData}">
 							<aon:outputLabel for="Delivery_project"
-								value="#{projectBundle.project_project}" />
+								value="#{bundle.aon_project}" />
 						</c:if>
 						<c:if test="#{aonConfiguration.bean.delivery.showTasData}">
 							<aon:outputLabel for="Delivery_project"
-								value="#{tasBundle.tas_projectTas}" />
+								value="#{bundle.tas_project_tas}" />
 						</c:if>
 						<aon:div>
 							<aon:selectOneMenu id="Delivery_project"
@@ -278,7 +278,7 @@
 				<aon:div id="payMethodDiv" styleClass="aon-padding-top">
 					<aon:panel rendered="#{delivery.defaultPayMethod != null and !delivery.defaultPayMethod}">
 						<f:facet name="header">
-							<aon:outputText value="#{configBundle.config_pay_method}" />
+							<aon:outputText value="#{bundle.finance_payMethod}" />
 						</f:facet>
 						<aon:panelGrid columns="7" style="width:100%; font-size:0.9em;"
 							rowClasses="aon-panelGrid-odd aon-dataTable-header,aon-panelGrid-even"
@@ -295,8 +295,8 @@
 							<aon:outputText value="#{registryBundle.registry_days_to_first_payment}" />
 							<aon:outputText value="#{registryBundle.registry_days_between_payments}" />
 							<aon:outputText value="#{registryBundle.registry_payment_days}" />
-							<aon:outputText value="#{configBundle.config_bank}" />
-							<aon:outputText value="#{configBundle.config_bank_account}" />
+							<aon:outputText value="#{bundle.aon_bank}" />
+							<aon:outputText value="#{bundle.aon_bank_account}" />
 
 							<aon:selectOneMenu id="Delivery_payMethod" 
 								value="#{delivery.to.payMethod}"

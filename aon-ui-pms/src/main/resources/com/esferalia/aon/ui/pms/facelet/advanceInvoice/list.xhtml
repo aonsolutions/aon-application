@@ -70,7 +70,7 @@
 						<aon:column alias="ProjectReservation.project.id"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_reservation_id}" />
+								<aon:outputText value="#{bundle.report_id}" />
 							</f:facet>
 							<aon:outputText value="#{to.id}" />
 						</aon:column>
@@ -78,7 +78,7 @@
 						<aon:column alias="ProjectReservation.code"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_reservation_code}" />
+								<aon:outputText value="#{bundle.report_reservation_code}" />
 							</f:facet>
 							<aon:outputText value="#{to.code}" />
 						</aon:column>
@@ -86,7 +86,7 @@
 						<aon:column alias="ProjectReservation.startDate"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_checkIn}" />
+								<aon:outputText value="#{bundle.report_checkin}" />
 							</f:facet>
 							<aon:outputText value="#{to.startDate}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -97,7 +97,7 @@
 						<aon:column alias="ProjectReservation.endDate"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_checkOut}" />
+								<aon:outputText value="#{bundle.report_checkout}" />
 							</f:facet>
 							<aon:outputText value="#{to.endDate}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -107,7 +107,7 @@
 
 						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_guest}" />
+								<aon:outputText value="#{bundle.report_guest}" />
 							</f:facet>
 							<aon:outputText value="#{to.guestFullName}" />
 						</aon:column>
@@ -115,7 +115,7 @@
 						<aon:column alias="ProjectReservation.agency.registry.name"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_agency}" />
+								<aon:outputText value="#{bundle.report_agency}" />
 							</f:facet>
 							<aon:outputText value="#{to.agency.registry.fullName}" />
 						</aon:column>

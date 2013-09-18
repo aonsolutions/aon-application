@@ -19,25 +19,25 @@
 						,aon-panelGrid-odd aon-width-100
 						,aon-panelGrid-even aon-width-auto">
 						
-			<aon:outputText value="#{groupwareBundle.groupware_process}" />
+			<aon:outputText value="#{bundle.aon_process}" />
 			<aon:outputText value="#{processWizard.process.description}" />
 
 			<aon:outputText value="#{bundle.aon_description}" />
 			<aon:outputText value="#{processWizard.description}" />
 
-			<aon:outputText value="#{groupwareBundle.groupware_initial_date}" />
+			<aon:outputText value="#{bundle.aon_start_date}" />
 			<aon:outputText value="#{processWizard.startDate}">
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>
 
-			<aon:outputText value="#{groupwareBundle.groupware_final_date}" />
+			<aon:outputText value="#{bundle.aon_end_date}" />
 			<aon:outputText value="#{processWizard.endDate}">
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>
 
-			<aon:outputText value="#{groupwareBundle.groupware_campaign_supervisor}" />
+			<aon:outputText value="#{bundle.aon_supervisor}" />
 			<aon:outputText value="#{processWizard.workGroup.description}" />
 
 			<aon:outputText value="#{groupwareBundle.groupware_campaign_type}" />
@@ -50,7 +50,7 @@
 				<aon:div id="existingContainer">
 					<aon:panelGrid columns="2" dir="true" style="margin: 5px;width: 95%;">
 	
-						<aon:outputText value="#{projectBundle.project_project}"/>
+						<aon:outputText value="#{bundle.aon_project}"/>
 						<aon:panelGrid columns="2" style="width: 95%;"
 							columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
 							
@@ -88,7 +88,7 @@
 							<f:selectItems value="#{processWizard.availableActivityTypes}" />
 						</aon:selectOneMenu>
 
-						<aon:outputLabel for="processWizard_projectName" value="#{projectBundle.project_project}" />
+						<aon:outputLabel for="processWizard_projectName" value="#{bundle.aon_project}" />
 						<aon:div>
 							<aon:inputText id="processWizard_projectName" size="40"
 								value="#{processWizard.projectName}" maxlength="64" />
@@ -123,7 +123,7 @@
 							<f:selectItems value="#{projectCollections.projectTypes}" />
 						</aon:selectOneMenu>
 	
-						<aon:outputLabel for="processWizard_projectName-New" value="#{projectBundle.project_project}" />
+						<aon:outputLabel for="processWizard_projectName-New" value="#{bundle.aon_project}" />
 						<aon:inputText id="processWizard_projectName-New" size="40"
 							value="#{processWizard.projectName}" maxlength="64" />
 							
@@ -162,7 +162,7 @@
 
 				<aon:column styleClass="aon-width-200">
 					<f:facet name="header">
-						<aon:outputText value="#{projectBundle.project_project}" />
+						<aon:outputText value="#{bundle.aon_project}" />
 					</f:facet>
 					<aon:outputText value="#{to.project.name}" />
 				</aon:column>

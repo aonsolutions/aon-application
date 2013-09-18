@@ -38,7 +38,7 @@
 				
 				<aon:panelGrid columns="2" dir="true" style="width: 100%;margin-top: 5px;">
 				
-					<aon:outputLabel for="DailyTracking_project" value="#{projectBundle.project_project}"/>
+					<aon:outputLabel for="DailyTracking_project" value="#{bundle.aon_project}"/>
 					<aon:panelGrid columns="2"
 						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
 					
@@ -77,7 +77,7 @@
 						<f:selectItems value="#{projectCollections.activityTypes}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="addCampaignProject_projectName" value="#{projectBundle.project_project}" />
+					<aon:outputLabel for="addCampaignProject_projectName" value="#{bundle.aon_project}" />
 					<aon:div>
 						<aon:inputText id="addCampaignProject_projectName" size="25"
 							reRender="addCampaignProject_projectName"
@@ -101,7 +101,7 @@
 	
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{projectBundle.project_project}" />
+									<aon:outputText value="#{bundle.aon_project}" />
 								</f:facet>
 								<aon:outputText value="#{to.project.name}" />
 							</aon:column>

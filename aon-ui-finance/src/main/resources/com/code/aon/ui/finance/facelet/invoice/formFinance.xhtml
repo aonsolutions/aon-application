@@ -11,7 +11,7 @@
 		<c:if test="#{detailController.model.rowCount > 0 or financeController.model.rowCount > 0}">
 			<aon:panel>
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_finances}" />
+					<aon:outputText value="#{bundle.finance_checking}" />
 				</f:facet>
 
 				<aon:div styleClass="aon-bold aon-margin-bottom"
@@ -79,7 +79,7 @@
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
-								<aon:outputLabel for="Finance_PayMethod" value="#{configBundle.config_pay_method}" />
+								<aon:outputLabel for="Finance_PayMethod" value="#{bundle.finance_payMethod}" />
 							</f:facet>
 							<aon:outputText value="#{to.payMethod.name}"
 								rendered="#{formList}" />
@@ -104,8 +104,8 @@
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
 								<aon:div>
-									<aon:outputLabel for="Bank_id" value="#{configBundle.config_bank}" />
-									<aon:outputText value=" - #{configBundle.config_bank_account}" />
+									<aon:outputLabel for="Bank_id" value="#{bundle.aon_bank}" />
+									<aon:outputText value=" - #{bundle.aon_bank_account}" />
 								</aon:div>
 							</f:facet>
 							<aon:outputText value=" #{to.bankDescription}" rendered="#{formList}" />

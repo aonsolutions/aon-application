@@ -65,7 +65,7 @@
 						<rich:menuSeparator id="actionMenuSeparator" />
 						
 						<aon:menuItem id="newProject-button"
-							value="#{(projectButtonLabel!=null)?(projectButtonLabel):(projectBundle.project_project)}"
+							value="#{(projectButtonLabel!=null)?(projectButtonLabel):(bundle.aon_project)}"
 							iconClass="aon-icon-statistics"
 							reRender="showNewProjectWindow"
 							actionListener="#{project.onReset}">
@@ -147,7 +147,7 @@
 									value="#{undeductibleInvoice.to.investment}" 
 									rendered="#{!undeductibleInvoice.readOnly}" />
 								<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
-									value="#{financeBundle.finance_invoice_investment}"
+									value="#{bundle.invoice_investment}"
 									rendered="#{!undeductibleInvoice.readOnly or undeductibleInvoice.to.investment}" />
 
 								<c:if test="#{aonRole.confidentiality}">
@@ -172,7 +172,7 @@
 								<aon:outputText value="#{undeductibleInvoice.to.status}" />
 								<c:if test="#{aonRole.accountingOperator and undeductibleInvoice.recorded}">
 									<aon:outputText styleClass="aon-italic aon-margin-left"
-										value="(#{financeBundle.finance_account_entry}: " />
+										value="(#{bundle.account_account_entry}: " />
 									<aon:outputText styleClass="aon-bold"
 										value="#{undeductibleInvoice.accountEntryId}" />
 									<aon:outputText styleClass="aon-italic" value=")" />
@@ -278,7 +278,7 @@
 						</aon:panelGroup>
  					</aon:panelGroup>
 
-					<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
+					<aon:outputLabel value="#{bundle.aon_document_number}" />
 					<aon:outputText styleClass="aon-bold"
 						value="#{undeductibleInvoice.to.documentNumber}" />
 
@@ -337,11 +337,11 @@
 
 						<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
 							<aon:outputLabel for="Invoice_project_id"
-								value="#{projectBundle.project_project}" />
+								value="#{bundle.aon_project}" />
 						</c:if>
 						<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
 							<aon:outputLabel for="Invoice_project_id"
-								value="#{tasBundle.tas_projectTas}" />
+								value="#{bundle.tas_project_tas}" />
 						</c:if>
 						<aon:div>
 							<aon:selectOneMenu id="Invoice_project_id"
@@ -422,10 +422,10 @@
 					<ui:param name="invoiceController" value="#{undeductibleInvoice}" />
 					<ui:param name="detailController" value="#{undeductibleInvoiceDetail}" />
 					<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
-						<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+						<ui:param name="projectLabel" value="#{bundle.aon_project}" />
 					</c:if>
 					<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
-						<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+						<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
 					</c:if>
 				</ui:include>
 
@@ -455,10 +455,10 @@
 			<aon:methodParam name="detailActionListener" value="#{undeductibleInvoiceDetail.addInvoiceDetailProject}" type="actionListener" />
 			<ui:param name="detailValue" value="#{undeductibleInvoiceDetail.invoiceDetail.project}" />
 			<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
-				<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+				<ui:param name="projectLabel" value="#{bundle.aon_project}" />
 			</c:if>
 			<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
-				<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+				<ui:param name="projectLabel" value="#{bundle.tas_project_tas}" />
 			</c:if>
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalDocuments.xhtml">

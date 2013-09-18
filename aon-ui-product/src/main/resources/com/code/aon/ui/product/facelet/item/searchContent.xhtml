@@ -45,7 +45,7 @@
 	
 	<c:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
 		<aon:outputLabel for="Item_product_brand_id"
-			value="#{productBundle.product_brand}" />
+			value="#{bundle.tas_make}" />
 		<aon:selectOneMenu id="Item_product_brand_id"
 			value="#{productCollections.brand}"
 			valueChangeListener="#{controller.addIdEqualExpression}">

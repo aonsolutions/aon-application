@@ -70,12 +70,12 @@
 						style="display:inline;" ajaxSingle="true"
 						value="#{expenseEntry.entry.deposit}"
 						reRender="entryContainer">
-						<f:selectItem itemLabel="#{configBundle.config_bank}" itemValue="0" />
-						<f:selectItem itemLabel="#{accountingBundle.accounting_cash}" itemValue="1" />
+						<f:selectItem itemLabel="#{bundle.aon_bank}" itemValue="0" />
+						<f:selectItem itemLabel="#{bundle.report_pos}" itemValue="1" />
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="AccountEntry_registryBank"
-						value="#{configBundle.config_bank}"
+						value="#{bundle.aon_bank}"
 						rendered="#{expenseEntry.entry.deposit == 0}" />
 					<aon:selectOneMenu id="AccountEntry_registryBank"
 						value="#{expenseEntry.entry.registryBank}"
@@ -84,7 +84,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="AccountEntry_payMethodTypeDetail"
-						value="#{financeBundle.finance_cash}"
+						value="#{bundle.report_pos}"
 						rendered="#{expenseEntry.entry.deposit == 1 and expenseEntry.payMethodTypeDetailsSize > 0}" />
 					<aon:selectOneMenu id="AccountEntry_payMethodTypeDetail"
 						value="#{expenseEntry.entry.payMethodTypeDetail}"
@@ -105,7 +105,7 @@
 						buttonStyle="display:none;"/>
 					
 					<aon:outputLabel for="AccountEntry_account"
-						value="#{accountBundle.account_account}" />
+						value="#{bundle.account_account}" />
 					<aon:selectOneMenu id="AccountEntry_account" required="true"
 						value="#{expenseEntry.entry.account}">
 						<f:selectItem itemLabel="-" value="#{null}" />

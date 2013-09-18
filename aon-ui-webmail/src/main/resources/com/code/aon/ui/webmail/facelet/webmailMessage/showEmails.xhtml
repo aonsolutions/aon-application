@@ -20,10 +20,10 @@
 						<aon:div styleClass="aon-popupWindow-title">
 							<aon:outputText
 								rendered="#{webmailMessage.selectedDestinyContainer=='To'}"
-								value="#{webmailBundle.webmail_to}" />
+								value="#{bundle.webmail_to}" />
 							<aon:outputText
 								rendered="#{webmailMessage.selectedDestinyContainer=='Cc'}"
-								value="#{webmailBundle.webmail_cc}" />
+								value="#{bundle.webmail_cc}" />
 							<aon:outputText
 								rendered="#{webmailMessage.selectedDestinyContainer=='Bcc'}"
 								value="#{webmailBundle.webmail_bcc}" />
@@ -96,7 +96,7 @@
 							</aon:column>
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{webmailBundle.webmail_email_email}" />
+									<aon:outputText value="#{bundle.aon_email_abrv}" />
 								</f:facet>
 								<aon:outputText value="#{to.email.emails}" />
 							</aon:column>

@@ -335,7 +335,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_month11}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_december}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>

@@ -19,21 +19,21 @@
 					
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{assetBundle.asset_stat_hours}" />
+							<aon:outputText value="#{bundle.calendar_total_hour}" />
 						</f:facet>
 						<aon:outputText value="#{to.hours}" style="#{to.hours==0.0?('color:#999999;'):('none')}"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{assetBundle.asset_stat_request}" />
+							<aon:outputText value="#{bundle.asset_stat_request}" />
 						</f:facet>
 						<aon:outputText value="#{to.request}" style="#{to.hours==0.0?('color:#999999;'):('none')}"/>
 					</aon:column>
 					
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{assetBundle.asset_stat_request_hours}" />
+							<aon:outputText value="#{bundle.asset_stat_request_hours}" />
 						</f:facet>
 						<aon:outputText value="#{to.average}" style="#{to.hours==0.0?('color:#999999;'):('none')}">
 							<f:convertNumber maxFractionDigits="2" />

@@ -29,7 +29,7 @@
 		<a4j:support event="onchanged" ajaxSingle="true" />
 	</aon:selectInputDate>
 
-	<aon:outputLabel for="Finance_payMethod" value="#{configBundle.config_pay_method}"
+	<aon:outputLabel for="Finance_payMethod" value="#{bundle.finance_payMethod}"
 		rendered="#{invoiceController.financeGenerationMode == 1}" />
 	<aon:selectOneMenu id="Finance_payMethod"
 		value="#{financeController.to.payMethod}" required="true"
@@ -40,8 +40,8 @@
 	</aon:selectOneMenu>
 
 	<aon:div rendered="#{invoiceController.financeGenerationMode == 1}">
-		<aon:outputLabel for="Bank_id-Invoice" value="#{configBundle.config_bank}" />
-		<aon:outputText value=" - #{configBundle.config_bank_account}" />
+		<aon:outputLabel for="Bank_id-Invoice" value="#{bundle.aon_bank}" />
+		<aon:outputText value=" - #{bundle.aon_bank_account}" />
 	</aon:div>
 	<aon:div id="InvoiceFinance_bankAccount_div" styleClass="aon-nowrap" rendered="#{invoiceController.financeGenerationMode == 1}">
 		<aon:panelGroup id="InvoiceFinance_bankAccount" rendered="#{financeController.showBankManualInput}">

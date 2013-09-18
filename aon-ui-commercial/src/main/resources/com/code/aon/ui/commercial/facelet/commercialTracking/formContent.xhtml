@@ -133,7 +133,7 @@
 			value="#{commercialTracking.to.location}" size="80" maxlength="255" />											
 
 		<aon:outputLabel for="CommercialTracking_next_id"
-			value="#{commercialBundle.commercial_tracking_next_action}" />
+			value="#{commercialBundle.commercial_tracking_next_action2}" />
 		<aon:selectBooleanCheckbox id="CommercialTracking_next_id"
 			reRender="next_action" process="CommercialTracking_location"
 			actionListener="#{commercialTracking.onNextChanged}"
@@ -145,7 +145,7 @@
 	<aon:div id="next_action" styleClass="aon-margin-top">
 		<aon:div styleClass="aon-group" rendered="#{commercialTracking.nextAction}">
 			<aon:div styleClass="aon-group-title">
-				<aon:outputText value="#{commercialBundle.commercial_tracking_next_action}"/>
+				<aon:outputText value="#{commercialBundle.commercial_tracking_next_action2}"/>
 			</aon:div>
 			<aon:div styleClass="aon-group-body"> 
 				<aon:div styleClass="aon-group-body-internal">

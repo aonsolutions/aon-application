@@ -67,7 +67,7 @@
 				</aon:outputText>
 				
 				<c:if test="#{stat.params.workPlace!=null and stat.params.workPlace.id!=null}">
-					<aon:outputText value="#{companyBundle.company_workplace}: " styleClass="aon-bold aon-margin-left" />
+					<aon:outputText value="#{bundle.purchase_workplace}: " styleClass="aon-bold aon-margin-left" />
 					<aon:outputText value="#{stat.params.workPlace.description}" styleClass="aon-margin-left" />
 				</c:if>
 			</aon:panel>
@@ -97,7 +97,7 @@
 					</c:if>
 
 					<f:facet name="footer">
-						<aon:outputText value="#{statBundle.report_totals}">
+						<aon:outputText value="#{bundle.report_totals}">
 						</aon:outputText>
 					</f:facet>
 				</aon:column>
@@ -127,7 +127,7 @@
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{statBundle.stat_invoices}" />
+						<aon:outputText value="#{bundle.stat_invoices}" />
 					</f:facet>
 					<aon:outputText value="#{to.numInvoice}">
 						<f:convertNumber maxFractionDigits="0" />
@@ -158,7 +158,7 @@
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{statBundle.stat_average}" />
+						<aon:outputText value="#{bundle.stat_average}" />
 					</f:facet>
 					<aon:outputText value="#{to.averageAmount}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

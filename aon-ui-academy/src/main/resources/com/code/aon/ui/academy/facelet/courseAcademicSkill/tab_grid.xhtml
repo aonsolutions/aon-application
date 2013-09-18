@@ -15,7 +15,7 @@
 				styleClass="aon-editDataTable-textColumn" >
 				<f:facet name="header">
 					<aon:outputLabel for="CourseAcademicSkill_academicSkill"
-						value="#{academyBundle.academy_academic_skill}" />
+						value="#{bundle.mark_subject}" />
 				</f:facet>
 				<aon:outputText value="#{to.academicSkill.description}" rendered="#{formList}" />
 				<aon:selectOneMenu id="CourseAcademicSkill_academicSkill" rendered="#{formEdit}"
@@ -38,7 +38,7 @@
 				styleClass="aon-editDataTable-numberColumn aon-width-120">
 				<f:facet name="header">
 					<aon:outputLabel for="CourseAcademicSkill_weight"
-						value="#{academyBundle.academy_weight}" />
+						value="#{bundle.warehouse_delivery_shipment_totalWeight}" />
 				</f:facet>
 				<aon:outputText value="#{to.weight}" rendered="#{formList}" />
 				<aon:inputText id="CourseAcademicSkill_weight"

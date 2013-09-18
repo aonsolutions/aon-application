@@ -131,7 +131,7 @@
 					</ui:include>
 
 					<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
-						<aon:outputLabel for="CustomerFee_workPlace" value="#{companyBundle.company_workplace}" />
+						<aon:outputLabel for="CustomerFee_workPlace" value="#{bundle.purchase_workplace}" />
 						<aon:selectOneMenu id="CustomerFee_workPlace" 
 							value="#{feeAssignment.fee.workPlace}" >
 							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />

@@ -50,9 +50,9 @@
 						
 						<aon:div>
 							<aon:outputText rendered="#{reservationIO.checkin}" 
-								value="#{pmsBundle.pms_checkIn}:" styleClass="aon-bold" />
+								value="#{bundle.report_checkin}:" styleClass="aon-bold" />
 							<aon:outputText rendered="#{!reservationIO.checkin}" 
-								value="#{pmsBundle.pms_checkOut}:" styleClass="aon-bold" />
+								value="#{bundle.report_checkout}:" styleClass="aon-bold" />
 						</aon:div>
 						<aon:div>
 							<aon:outputText value="#{bundle.aon_date_from}" styleClass="aon-italic" />
@@ -100,10 +100,10 @@
 							value="#{to.item.product.code} - #{to.item.product.name}" />
 					</aon:column>
 
-					<aon:column id="guestNameColumn" label="#{pmsBundle.pms_guest}" 
+					<aon:column id="guestNameColumn" label="#{bundle.report_guest}" 
 						styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
-							<aon:outputText value="#{pmsBundle.pms_guest}" />
+							<aon:outputText value="#{bundle.report_guest}" />
 						</f:facet>
 						<aon:outputText value="#{to.projectReservation.guestFullName}" />
 					</aon:column>
@@ -130,10 +130,10 @@
 						</aon:outputText>
 					</aon:column>
 					
-					<aon:column id="agencyNameColumn" label="#{pmsBundle.pms_agency}" 
+					<aon:column id="agencyNameColumn" label="#{bundle.report_agency}" 
 						styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
-							<aon:outputText value="#{pmsBundle.pms_agency}" />
+							<aon:outputText value="#{bundle.report_agency}" />
 						</f:facet>
 						<aon:outputText rendered="#{to.projectReservation.agency!=null}" 
 							value="#{to.projectReservation.agency.registry.fullName}" />
@@ -143,18 +143,18 @@
 							value="Directo" />
 					</aon:column>
 					
-					<aon:column id="reservationIdColumn" label="#{pmsBundle.pms_reservation_id}"
+					<aon:column id="reservationIdColumn" label="#{bundle.report_id}"
 						styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
-							<aon:outputLabel value="#{pmsBundle.pms_reservation_id}" />
+							<aon:outputLabel value="#{bundle.report_id}" />
 						</f:facet>
 						<aon:outputText value="#{to.projectReservation.id}" />
 					</aon:column>
 
-					<aon:column id="reservationCodeColumn" label="#{pmsBundle.pms_reservation_code}"
+					<aon:column id="reservationCodeColumn" label="#{bundle.report_reservation_code}"
 						styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
-							<aon:outputLabel value="#{pmsBundle.pms_reservation_code}" />
+							<aon:outputLabel value="#{bundle.report_reservation_code}" />
 						</f:facet>
 						<aon:outputText value="#{to.projectReservation.code}" />
 					</aon:column>

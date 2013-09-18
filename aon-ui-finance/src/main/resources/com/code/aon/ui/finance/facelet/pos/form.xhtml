@@ -22,7 +22,7 @@
 
 				<aon:panelGrid columns="2" styleClass="aon-width-half">
 
-					<aon:outputLabel for="Pos_workPlace" value="#{companyBundle.company_workplace}" />
+					<aon:outputLabel for="Pos_workPlace" value="#{bundle.purchase_workplace}" />
 					<aon:selectOneMenu id="Pos_workPlace"
 						value="#{pos.to.workPlace}" required="true"
 						valueChangeListener="#{pos.onWorkPlaceChanged}"
@@ -31,7 +31,7 @@
 					</aon:selectOneMenu>
 
 					<c:if test="#{companyCollections.departmentsCount > 0}">
-						<aon:outputLabel for="Pos_department" value="#{companyBundle.company_department}" />
+						<aon:outputLabel for="Pos_department" value="#{bundle.purchase_department}" />
 						<aon:selectOneMenu id="Pos_department"
 							value="#{pos.to.department}">
 							<f:selectItem itemLabel=" - " itemValue="null" />
@@ -118,7 +118,7 @@
 										<aon:column alias="PosCatalogue.catalogue.name" 
 											styleClass="aon-editDataTable-textColumn aon-width-150">
 											<f:facet name="header">
-												<aon:outputLabel for="PosCatalogue_catalogue" value="#{productBundle.product_catalogue}" />
+												<aon:outputLabel for="PosCatalogue_catalogue" value="#{bundle.product_catalogueItem_catalogue}" />
 											</f:facet>
 											<aon:outputText value="#{to.catalogue.name}"
 												rendered="#{formList}" />

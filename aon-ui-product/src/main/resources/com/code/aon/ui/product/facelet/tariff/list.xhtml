@@ -11,7 +11,7 @@
 		<aon:form id="tariffList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{productBundle.product_tariff_module}" />
+				<ui:param name="toolbarTitle" value="#{productBundle.product_tariff_module2}" />
 				<ui:param name="controller" value="#{tariff}" />
 				
 				<ui:define name="additionalToolbarContent">
@@ -49,7 +49,7 @@
 						<aon:column alias="Tariff.name"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{productBundle.product_tariff}" />
+								<aon:outputText value="#{bundle.report_tariff}" />
 							</f:facet>
 							<aon:outputText value="#{to.name}" />
 						</aon:column>

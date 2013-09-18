@@ -136,25 +136,25 @@
 										<aon:outputText value="#{pmsBundle.pms_room_number}:" />
 										<aon:outputText value="#{to.asset.name}" />
 
-										<aon:outputText value="#{pmsBundle.pms_reservation_id}:" />
+										<aon:outputText value="#{bundle.report_id}:" />
 										<aon:outputText value="#{rackTo.reservationId}" />
 
-										<aon:outputText value="#{pmsBundle.pms_reservation_code}:" />
+										<aon:outputText value="#{bundle.report_reservation_code}:" />
 										<aon:outputText value="#{rackTo.reservationCode}" />
 
-										<aon:outputText value="#{pmsBundle.pms_checkIn}:" />
+										<aon:outputText value="#{bundle.report_checkin}:" />
 										<aon:outputText value="#{rackTo.reservationStart}">
 											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 												timeZone="#{timeZoneController.timeZoneId}" />
 										</aon:outputText>
 
-										<aon:outputText value="#{pmsBundle.pms_checkOut}:" />
+										<aon:outputText value="#{bundle.report_checkout}:" />
 										<aon:outputText value="#{rackTo.reservationEnd}">
 											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 												timeZone="#{timeZoneController.timeZoneId}" />
 										</aon:outputText>
 
-										<aon:outputText value="#{pmsBundle.pms_guest}:" />
+										<aon:outputText value="#{bundle.report_guest}:" />
 										<aon:outputText value="#{rackTo.reservationGuest}" />
 									</aon:panelGrid>
 								</rich:toolTip>

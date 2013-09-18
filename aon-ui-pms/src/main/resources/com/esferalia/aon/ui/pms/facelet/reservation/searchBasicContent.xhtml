@@ -18,7 +18,7 @@
 	</c:if>
 
 	<aon:outputLabel for="ProjectReservation_project_id" 
-		value="#{pmsBundle.pms_reservation_id}" />
+		value="#{bundle.report_id}" />
 	<aon:inputText id="ProjectReservation_project_id"
 		valueChangeListener="#{controller.addExpression}"
 		size="20" />
@@ -30,7 +30,7 @@
 		size="20" />
 
 	<aon:outputLabel for="ProjectReservation_code" 
-		value="#{pmsBundle.pms_reservation_code}" />
+		value="#{bundle.report_reservation_code}" />
 	<aon:inputText id="ProjectReservation_code"
 		valueChangeListener="#{controller.addExpression}"
 		size="20" />
@@ -51,7 +51,7 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 
-	<aon:outputLabel value="#{pmsBundle.pms_checkIn}" />
+	<aon:outputLabel value="#{bundle.report_checkin}" />
 	<aon:div>
 		<aon:outputLabel for="ProjectReservation_startDate-From"
 			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
@@ -67,7 +67,7 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 
-	<aon:outputLabel value="#{pmsBundle.pms_checkOut}" />
+	<aon:outputLabel value="#{bundle.report_checkout}" />
 	<aon:div>
 		<aon:outputLabel for="ProjectReservation_endDate-From"
 			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
@@ -97,7 +97,7 @@
 		size="64" />
 
 	<aon:outputLabel for="ProjectReservation_agency" 
-		value="#{pmsBundle.pms_agency}" />
+		value="#{bundle.report_agency}" />
 	<aon:selectOneMenu id="ProjectReservation_agency" 
 		value="#{searchController.agency}"
 		styleClass="aon-width-350">
@@ -114,7 +114,7 @@
 		<f:selectItems value="#{pmsCollections.sellers}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel value="#{pmsBundle.pms_guest}" />
+	<aon:outputLabel value="#{bundle.report_guest}" />
 	<aon:div>
 		<aon:outputLabel for="ProjectReservation_guestName"
 			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_name}" />

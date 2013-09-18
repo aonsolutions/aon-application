@@ -33,7 +33,7 @@
 						value="#{accountingBundle.accounting_fiscal_amortization}" />
 				</aon:column>
 				<aon:column styleClass="aon-dataTable-header">
-					<aon:outputText value="#{accountingBundle.accounting_tax_adjust}" />
+					<aon:outputText value="#{bundle.accounting_tax_adjust}" />
 				</aon:column>
 				<aon:column styleClass="aon-dataTable-header">
 					<aon:outputText value="&#160;" />
@@ -82,7 +82,7 @@
 
 		<aon:column styleClass="aon-editDataTable-numberColumn">
 			<f:facet name="header">
-				<aon:outputText value="#{accountingBundle.accounting_allocation}" />
+				<aon:outputText value="#{bundle.accounting_amortization_dotacion}" />
 			</f:facet>
 			<aon:outputText value="#{to.allocation}">
 				<f:convertNumber pattern="#,##0.00" />
@@ -91,7 +91,7 @@
 
 		<aon:column styleClass="aon-editDataTable-numberColumn">
 			<f:facet name="header">
-				<aon:outputText value="#{accountingBundle.accounting_accumulated}" />
+				<aon:outputText value="#{bundle.account_accumulated}" />
 			</f:facet>
 			<aon:outputText value="#{to.accumulated}">
 				<f:convertNumber pattern="#,##0.00" />
@@ -109,7 +109,7 @@
 
 		<aon:column styleClass="aon-editDataTable-numberColumn">
 			<f:facet name="header">
-				<aon:outputText value="#{accountingBundle.accounting_allocation}" />
+				<aon:outputText value="#{bundle.accounting_amortization_dotacion}" />
 			</f:facet>
 			<aon:inputText rendered="#{amortizationDetail.annualSummary == to}"
 				required="true" value="#{to.fiscalAllocation}" size="8">
@@ -122,7 +122,7 @@
 
 		<aon:column styleClass="aon-editDataTable-numberColumn">
 			<f:facet name="header">
-				<aon:outputText value="#{accountingBundle.accounting_accumulated}" />
+				<aon:outputText value="#{bundle.account_accumulated}" />
 			</f:facet>
 			<aon:outputText value="#{to.fiscalAccumulated}">
 				<f:convertNumber pattern="#,##0.00" />

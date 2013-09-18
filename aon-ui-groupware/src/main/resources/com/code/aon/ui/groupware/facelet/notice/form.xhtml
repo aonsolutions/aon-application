@@ -46,7 +46,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Notice_recipient_id" 
-						value="#{groupwareBundle.notice_recipient}" />
+						value="#{bundle.purchase_shipping_recipient}" />
 					<aon:selectOneMenu id="Notice_recipient_id"
 						disabled="#{!notice.recipientSelectable}" focus="Notice_source"
 						value="#{notice.to.recipient}" reRender="Notice_recipient_id,Notice_sendEmail"

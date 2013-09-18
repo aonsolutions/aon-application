@@ -34,7 +34,7 @@
 					<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservationRequest/formContent.xhtml" />
 
 					<aon:panelTabSet id="reservationRequestTab" selectedTab="#{reservationRequest.selectedTab}">
-						<aon:panelTab id="room" label="#{pmsBundle.pms_rooms}">
+						<aon:panelTab id="room" label="#{bundle.report_rooms}">
 							<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservationRequest/room/tab_grid.xhtml">
 								<ui:param name="controller" value="#{reservationRequestRoom}" />
 							</ui:include>

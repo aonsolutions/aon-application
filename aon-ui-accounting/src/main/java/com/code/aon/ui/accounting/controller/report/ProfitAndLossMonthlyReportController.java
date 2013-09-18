@@ -4,9 +4,9 @@ import static com.code.aon.ui.accounting.IAccountingConstants.PROFIT_AND_LOSS_CO
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_GROSS_MARGIN;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_TOTAL_EXPENSES;
-import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_TOTAL_RESULT;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_TOTAL_RESULT_LOSS;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_TOTAL_RESULT_NULL;
+import static com.code.aon.ui.common.ICommonMessages.FISCAL_RESULT;
 import static com.code.aon.ui.common.ICommonMessages.PROFIT;
 
 import java.util.Collection;
@@ -80,7 +80,7 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 			result.setMonths(months2);
 
 			StringBuilder r = new StringBuilder();
-			r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, ACCOUNTING_TOTAL_RESULT));
+			r.append(AonUtil.getMessage(FISCAL_RESULT));
 			r.append(" (");
 			double total = result.getTotal();
 			if (total > 0) {

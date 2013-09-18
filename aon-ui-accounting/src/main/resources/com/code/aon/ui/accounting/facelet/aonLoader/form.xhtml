@@ -60,7 +60,7 @@
 				<c:if test="#{aonLoader.aonFile.size > 0}">
 					<aon:panelGrid  columns="2" style="width:90%; margin:10px;">
 				
-						<aon:outputLabel for="aonLoader_workPlace" value="#{companyBundle.company_workplace}" />
+						<aon:outputLabel for="aonLoader_workPlace" value="#{bundle.purchase_workplace}" />
 						<aon:selectOneMenu id="aonLoader_workPlace" value="#{aonLoader.params.workPlace}">
 							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 						</aon:selectOneMenu>

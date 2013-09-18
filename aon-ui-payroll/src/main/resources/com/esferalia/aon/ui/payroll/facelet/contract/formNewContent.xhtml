@@ -12,7 +12,7 @@
 		<aon:panelGrid columns="2" style="width: 80%;" >
 			
 			<aon:outputLabel for="workPlace" 
-				value="#{companyBundle.company_workplace}" />
+				value="#{bundle.purchase_workplace}" />
 			<aon:selectOneMenu id="workPlace" required="true"
 				disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
 				value="#{contract.to.workPlace}" >
@@ -143,7 +143,7 @@
 				</aon:selectInputDate>
 			</aon:div>
 			
-			<aon:outputLabel value="#{payrollBundle.payroll_salary_seniority_date}"
+			<aon:outputLabel value="#{payrollBundle.payroll_salary_seniority_date2}"
 				style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 			<aon:panelGroup id="seniorityDateContainer">
 				<aon:selectInputDate id="seniorityDate"
@@ -160,7 +160,7 @@
 					rendered="#{contract.to.seniorityDateDifferent}" />
 			</aon:panelGroup>
 			
-			<aon:outputLabel value="#{payrollBundle.payroll_contract_occupation}"
+			<aon:outputLabel value="#{bundle.report_occupation}"
 				for="occupationType"/>
 			<aon:selectOneMenu id="occupationType" 
 				value="#{contract.params.occupationType}">

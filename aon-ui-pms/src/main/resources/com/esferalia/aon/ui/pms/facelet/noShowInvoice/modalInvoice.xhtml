@@ -87,7 +87,7 @@
 										</aon:selectOneMenu>
 
 										<aon:outputLabel for="NoShowInvoice_payMethod"
-											value="#{configBundle.config_pay_method}" />
+											value="#{bundle.finance_payMethod}" />
 										<c:if test="#{searchListener.guestReservationSearch}">
 											<aon:selectOneMenu id="NoShowInvoice_payMethod"
 												value="#{controller.noShowPayMethod}" required="true" 
@@ -105,7 +105,7 @@
 
 										<aon:outputLabel for="NoShowInvoice_bank"
 											rendered="#{controller.bankRequired}"
-											value="#{configBundle.config_bank}" />
+											value="#{bundle.aon_bank}" />
 										<aon:selectOneMenu id="NoShowInvoice_bank"
 											rendered="#{controller.bankRequired}"
 											value="#{controller.noShowBank}" required="true"

@@ -101,14 +101,14 @@
 					</c:if>
 
 					<f:facet name="footer">
-					 	<aon:outputText value="#{statBundle.report_totals}"> 
+					 	<aon:outputText value="#{bundle.report_totals}"> 
 						</aon:outputText>
 					</f:facet>
 				</aon:column>
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{statBundle.stat_offer_amount}" />
+						<aon:outputText value="#{statBundle.stat_offer_amount2}" />
 					</f:facet>
 					<aon:outputText value="#{to.amount}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -123,7 +123,7 @@
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{statBundle.stat_offers}" />
+						<aon:outputText value="#{bundle.stat_offers}" />
 					</f:facet>
 					<aon:outputText value="#{to.numInvoice}">
 						<f:convertNumber maxFractionDigits="0" />
@@ -138,7 +138,7 @@
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{statBundle.stat_average}" />
+						<aon:outputText value="#{bundle.stat_average}" />
 					</f:facet>
 					<aon:outputText value="#{to.averageAmount}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

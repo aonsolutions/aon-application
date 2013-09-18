@@ -79,7 +79,7 @@
 											</aon:selectOneMenu>
 											
 											<aon:outputLabel for="Finance_invoice_referenceCode" 
-												value="#{financeBundle.finance_invoice}" />
+												value="#{bundle.finance_invoice}" />
 											<aon:inputText id="Finance_invoice_referenceCode"
 												onblur="toUpperCase(this);"
 												valueChangeListener="#{controller.addExpression}"
@@ -111,7 +111,7 @@
 											</aon:inputText>
 											
 											<aon:outputLabel for="Finance_payMethod_id"
-												value="#{configBundle.config_pay_method}" />
+												value="#{bundle.finance_payMethod}" />
 											<aon:div id="payMethodDiv">
 												<a4j:repeat value="#{paymentCardSettle.payMethods}" rowKeyVar="index" var="payMth">
 													<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
@@ -143,18 +143,18 @@
 										<aon:panelGrid columns="2" >
 											
 											<aon:outputLabel for="ProjectReservation_project_id" 
-												value="#{pmsBundle.pms_reservation_id}" />
+												value="#{bundle.report_id}" />
 											<aon:inputText id="ProjectReservation_project_id"
 												value="#{paymentCardSettle.reservationId}"
 												size="20" />
 										
 											<aon:outputLabel for="ProjectReservation_code" 
-												value="#{pmsBundle.pms_reservation_code}" />
+												value="#{bundle.report_reservation_code}" />
 											<aon:inputText id="ProjectReservation_code"
 												value="#{paymentCardSettle.reservationCode}"
 												size="20" />
 												
-											<aon:outputLabel value="#{pmsBundle.pms_guest}" />
+											<aon:outputLabel value="#{bundle.report_guest}" />
 											<aon:div>
 												<aon:outputLabel for="ProjectReservation_guestName"
 													styleClass="aon-italic aon-margin-right" value="#{bundle.aon_name}" />

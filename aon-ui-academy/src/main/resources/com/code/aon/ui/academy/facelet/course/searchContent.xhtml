@@ -14,7 +14,7 @@
 		size="16" maxlength="15" />
 
 	<aon:outputLabel for="Course_academicYear_id"
-		value="#{academyBundle.academy_academic_year}" />
+		value="#{bundle.course_academic_year}" />
 	<aon:selectOneMenu id="Course_academicYear_id"
 		value="#{academyCollections.academicYear}"
 		valueChangeListener="#{controller.addIdEqualExpression}">
@@ -81,7 +81,7 @@
 	</aon:selectOneMenu>					
 	
 	<aon:outputLabel for="Course_workPlace_id"
-		value="#{companyBundle.company_workplace}" />
+		value="#{bundle.purchase_workplace}" />
 	<aon:selectOneMenu id="Course_workPlace_id"
 		value="#{companyCollections.workPlace}"
 		valueChangeListener="#{controller.addIdEqualExpression}">

@@ -3,18 +3,18 @@ package com.code.aon.ui.seller.controller;
 import static com.code.aon.ui.common.ICommonMessages.ACTIVE;
 import static com.code.aon.ui.common.ICommonMessages.ADDRESS;
 import static com.code.aon.ui.common.ICommonMessages.ALIAS;
+import static com.code.aon.ui.common.ICommonMessages.BANK;
+import static com.code.aon.ui.common.ICommonMessages.BANK_ACCOUNT;
 import static com.code.aon.ui.common.ICommonMessages.BLOCKED;
 import static com.code.aon.ui.common.ICommonMessages.CELLULAR;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_NAME;
-import static com.code.aon.ui.common.ICommonMessages.CONFIG_BANK;
-import static com.code.aon.ui.common.ICommonMessages.CONFIG_BANK_ACCOUNT;
 import static com.code.aon.ui.common.ICommonMessages.CONFIG_BUNDLE;
-import static com.code.aon.ui.common.ICommonMessages.CONFIG_PAY_METHOD;
 import static com.code.aon.ui.common.ICommonMessages.DOCUMENT;
 import static com.code.aon.ui.common.ICommonMessages.ENTITY;
 import static com.code.aon.ui.common.ICommonMessages.FAX;
 import static com.code.aon.ui.common.ICommonMessages.ID;
 import static com.code.aon.ui.common.ICommonMessages.INACTIVE;
+import static com.code.aon.ui.common.ICommonMessages.PAY_METHOD;
 import static com.code.aon.ui.common.ICommonMessages.PHONE;
 import static com.code.aon.ui.common.ICommonMessages.POSTAL_CODE;
 import static com.code.aon.ui.common.ICommonMessages.REGISTRY_BUNDLE;
@@ -129,9 +129,9 @@ public class SellerController extends RegistryController {
 			+",(SELECT rm3.value FROM rmedia rm3 WHERE r.id = rm3.registry  AND rm3.media = 3 LIMIT 1) `" + AonUtil.getMessage(FAX) + "`"
 			+",(SELECT rm4.value FROM rmedia rm4 WHERE r.id = rm4.registry  AND rm4.media = 4 LIMIT 1) `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_EMAIL) + "`"
 			+",(SELECT rm5.value FROM rmedia rm5 WHERE r.id = rm5.registry  AND rm5.media = 5 LIMIT 1) `" + AonUtil.getMessage(WEB) + "`"
-			+",pm.name `" + AonUtil.getMessage(CONFIG_BUNDLE, CONFIG_PAY_METHOD) + "`"
-			+",b.name `" + AonUtil.getMessage(CONFIG_BUNDLE, CONFIG_BANK) + "`"
-			+",rb.bank_account `" + AonUtil.getMessage(CONFIG_BUNDLE, CONFIG_BANK_ACCOUNT) + "`"
+			+",pm.name `" + AonUtil.getMessage(PAY_METHOD) + "`"
+			+",b.name `" + AonUtil.getMessage(BANK) + "`"
+			+",rb.bank_account `" + AonUtil.getMessage(BANK_ACCOUNT) + "`"
 			+",rpm.number_of_pymnts `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_NUMBER_OF_PAYMENTS) + "`"
 			+",rpm.days_to_first_pymnt `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_DAYS_TO_FIRST_PAYMENT) + "`"
 			+",rpm.days_between_pymnts `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_DAYS_BETWEEN_PAYMENTS) + "`"

@@ -96,7 +96,7 @@
 					<!-- busqueda por lineas -->
 					
 					<aon:outputLabel for="AccountEntry_detail_account_code"
-						value="#{accountBundle.account_account}" />
+						value="#{bundle.account_account}" />
 					<aon:inputText id="AccountEntry_detail_account_code" size="10"
 						valueChangeListener="#{accountEntry.addExpression}" />
 
@@ -111,12 +111,12 @@
 						valueChangeListener="#{accountEntry.addExpression}" />
 
 					<aon:outputLabel for="AccountEntry_detail_debit"
-						value="#{accountingBundle.accounting_debit}" />
+						value="#{bundle.account_debit}" />
 					<aon:inputText id="AccountEntry_detail_debit" size="10"
 						valueChangeListener="#{accountEntry.addExpression}" />
 					
 					<aon:outputLabel for="AccountEntry_detail_credit"
-						value="#{accountingBundle.accounting_credit}" />
+						value="#{bundle.account_credit}" />
 					<aon:inputText id="AccountEntry_detail_credit" size="10"
 						valueChangeListener="#{accountEntry.addExpression}" />
 					
@@ -126,7 +126,7 @@
 						valueChangeListener="#{accountEntry.addExpression}" />
 					
 					<aon:outputLabel for="AccountEntry_detail_documentNumber"
-						value="#{accountingBundle.accounting_document_number}" />
+						value="#{bundle.account_document_number}" />
 					<aon:inputText id="AccountEntry_detail_documentNumber" size="30"
 						valueChangeListener="#{accountEntry.addExpression}" />
 				</ui:define>

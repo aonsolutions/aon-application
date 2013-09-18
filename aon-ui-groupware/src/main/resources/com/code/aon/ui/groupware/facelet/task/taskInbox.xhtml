@@ -105,7 +105,7 @@
 		
 								<aon:outputLabel for="Task_process"
 									styleClass="aon-italic aon-margin-right aon-margin-left" 
-									value="#{groupwareBundle.groupware_process}"/>
+									value="#{bundle.aon_process}"/>
 								<aon:selectOneMenu id="Task_process"
 									disabled="#{taskSearchControllerListener.processDetail != null}"
 									value="#{taskSearchControllerListener.process}">
@@ -323,7 +323,7 @@
 
 					<aon:column alias="Task.project" styleClass="aon-editDataTable-text aon-width-150 aon-nowrap">
 						<f:facet name="header">
-							<aon:outputText value="#{projectBundle.project_project}" />
+							<aon:outputText value="#{bundle.aon_project}" />
 						</f:facet>
 						<aon:outputText value="#{to.project.name}" 
 							style="font-size: 0.8em;#{to.expired?'color:red;':''}"/>
@@ -350,7 +350,7 @@
 
 					<aon:column alias="Task.startDate" styleClass="aon-editDataTable-text aon-width-80">
 						<f:facet name="header">
-							<aon:outputText value="#{groupwareBundle.groupware_initial_date}" />
+							<aon:outputText value="#{bundle.aon_start_date}" />
 						</f:facet>
 						<aon:outputText value="#{to.startDate}"
 							style="#{to.expired?'color:red;':''}">

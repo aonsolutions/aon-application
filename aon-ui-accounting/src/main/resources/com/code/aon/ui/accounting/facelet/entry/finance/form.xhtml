@@ -81,8 +81,8 @@
 							value="#{financeEntry.payment}"
 							disabled="#{financeEntry.payment != null}">
 							<f:selectItem itemLabel="" value="#{null}" />
-							<f:selectItem itemLabel="#{accountingBundle.accounting_collection}" itemValue="#{false}" />
-							<f:selectItem itemLabel="#{accountingBundle.accounting_payment}" itemValue="#{true}" />
+							<f:selectItem itemLabel="#{bundle.finance_charge}" itemValue="#{false}" />
+							<f:selectItem itemLabel="#{bundle.finance_payment}" itemValue="#{true}" />
 						</aon:selectOneMenu>
 
 						<c:if test="#{aonRole.confidentiality}">
@@ -125,13 +125,13 @@
 						value="#{accountingBundle.accounting_deposit}" />
 					<aon:selectOneRadio id="AccountEntry_balancingDeposit"
 						style="display:inline;" value="#{financeEntry.deposit}">
-						<f:selectItem itemLabel="#{configBundle.config_bank}" itemValue="0" />
-						<f:selectItem itemLabel="#{accountingBundle.accounting_cash}" itemValue="1" />
+						<f:selectItem itemLabel="#{bundle.aon_bank}" itemValue="0" />
+						<f:selectItem itemLabel="#{bundle.report_pos}" itemValue="1" />
 						<a4j:support event="onclick" reRender="financeTablesData" ajaxSingle="true"/>
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="AccountEntry_balancingRegistryBank"
-						value="#{configBundle.config_bank}"
+						value="#{bundle.aon_bank}"
 						rendered="#{financeEntry.deposit == 0}" />
 					<aon:selectOneMenu id="AccountEntry_balancingRegistryBank"
 						value="#{financeEntry.registryBank}"
@@ -139,14 +139,14 @@
 						<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
 					</aon:selectOneMenu>
 					<aon:outputLabel for="AccountEntry_balancingPayMethodTypeDetail"
-						value="#{financeBundle.finance_cash}"
+						value="#{bundle.report_pos}"
 						rendered="#{financeEntry.deposit == 1}" />
 					<aon:selectOneMenu id="AccountEntry_balancingPayMethodTypeDetail"
 						value="#{financeEntry.payMethodTypeDetail}"
 						rendered="#{financeEntry.deposit == 1 and financeEntry.payMethodTypeDetailsSize > 0}">
 						<f:selectItems value="#{configCollections.payMethodTypeDetails}" />
 					</aon:selectOneMenu>
-					<aon:outputText value="#{financeBundle.finance_cash}"
+					<aon:outputText value="#{bundle.report_pos}"
 						rendered="#{financeEntry.deposit == 1 and financeEntry.payMethodTypeDetailsSize == 0}" />
 
 					<aon:outputLabel for="AccountEntry_balancingConcept"

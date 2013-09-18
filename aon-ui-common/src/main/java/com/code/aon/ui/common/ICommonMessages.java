@@ -41,6 +41,8 @@ public interface ICommonMessages {
 	String ALIAS = "aon_alias";
 	String AON_DESCRIPTION = "aon_description";
 	String APPLICATION_TITLE = "aon_application_title";
+	String BANK = "aon_bank";
+	String BANK_ACCOUNT = "aon_bank_account";		
 	String BLOCKED = "aon_blocked";
 	String CATEGORY = "aon_category";
 	String CELLULAR = "aon_cellular";
@@ -88,9 +90,11 @@ public interface ICommonMessages {
 	String NO = "aon_no";
 	String NOT_MAIL_ACCOUNT = "aon_not_mail_account";
 	String PASSWORD_ERROR = "aon_security_passwd_error";
+	String PAY_METHOD = "finance_payMethod";	
 	String PENDING = "aon_pending";
 	String PHONE = "aon_phone";	
 	String PERCENT_PATTERN = "aon_percent_pattern";
+	String POS = "report_pos";	
 	String POSTAL_CODE = "aon_postal_code";
 	String PRICE_PATTERN = "aon_price_pattern";
 	String PRODUCT = "aon_product";
@@ -115,6 +119,7 @@ public interface ICommonMessages {
 	String ROLE_TGC = "aon_role_tgc";
 	String SALES = "aon_sales";
 	String SEARCH_NO_RESULTS = "aon_search_no_results";
+	String SELLER = "seller_stat_name";
 	String SOURCE = "aon_source";
 	String STATE = "aon_state";
 	String STATUS = "aon_status";
@@ -124,6 +129,7 @@ public interface ICommonMessages {
 	String SUPPORT_TELEPHONE_NUMBER = "aon_support_telephone_number";
 	String SUPPORT_TELEPHONE_NUMBER2 = "aon_support_telephone_number2";
 	String TARGET = "aon_target";
+	String TARGET_ADVERTISING = "target_advertising";
 	String TIME_2_PATTERN = "aon_time2_pattern";
 	String TIMESTAMP_PATTERN = "aon_timestamp_pattern";
 	String TIMESTAMP_2_PATTERN = "aon_timestamp2_pattern";
@@ -151,7 +157,6 @@ public interface ICommonMessages {
 	
 	String ACCOUNTING_TOTAL_RESULT_NULL = "accounting_total_result_null";
 	String ACCOUNTING_TOTAL_RESULT_LOSS = "accounting_total_result_loss";
-	String ACCOUNTING_TOTAL_RESULT = "accounting_total_result";
 	String ACCOUNTING_TOTAL_EXPENSES = "accounting_total_expenses";
 	String ACCOUNTING_GROSS_MARGIN = "accounting_gross_margin";
 	String ACCOUNTING_PROFIT_AND_LOSS_MODULE = "accounting_profit_and_loss_module";	
@@ -210,7 +215,6 @@ public interface ICommonMessages {
 	
 	String COMMERCIAL_OFFER_EMAIL_SUBJECT = "commercial_offer_email_subject";
 	String COMMERCIAL_OFFER_EMAIL_BODY = "commercial_offer_email_body";
-	String COMMERCIAL_TARGET_ADVERTISING = "commercial_target_advertising";
 	String COMMERCIAL_COMMISSION_DATES_ERROR = "commercial_commission_dates_error";	
 	
 	String COMPANY_LOGO_MAX_SIZE_ERROR = "company_logo_max_size_error";
@@ -219,8 +223,6 @@ public interface ICommonMessages {
 	String COMPANY_IMAGE_INVALID_CHARACTER = "company_image_invalid_character";	
 	String COMPANY_EMAIL_BODY_HEADER = "company_email_body_header";
 	String COMPANY_EMAIL_BODY_FOOTER = "company_email_body_footer";
-	String COMPANY_WORKPLACE = "company_workplace";
-	String COMPANY_DEPARTMENT = "company_department";
 	String COMPANY_SALE_INVOICE_FOOTER_TEXT = "company_saleInvoice_footer_text";
 	String COMPANY_SALE_INVOICE_FOOTER_LOPD = "company_saleInvoice_footer_LOPD";	
 	
@@ -241,9 +243,6 @@ public interface ICommonMessages {
 	String CONFIG_INVALID_START_DATE = "config_invalid_startDate";
 	String CONFIG_INVALID_END_DATE = "config_invalid_endDate";
 	String CONFIG_DATE_OVERLAP = "config_date_overlap";
-	String CONFIG_PAY_METHOD = "config_pay_method";
-	String CONFIG_BANK = "config_bank";
-	String CONFIG_BANK_ACCOUNT = "config_bank_account";	
 	
 	String INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY = "customer_invalid_invoicing_group_detail_child";
 	
@@ -272,7 +271,6 @@ public interface ICommonMessages {
 	String FINANCE_INVOICE_SEND_EMAIL = "finance_invoice_send_email";
 	String FINANCE_INVOICE_SEND_EMAIL_ERROR = "finance_invoice_send_email_error";
 	String FINANCE_INVOICE_SEND_EMAIL_FNINISH = "finance_invoice_send_email_finish";
-	String FINANCE_CASH = "finance_cash";
 	String FINANCE_INVOICE_CHECKING_MODULE_NO_FINANCE = "finance_invoice_checking_module_no_finance";	
 	String FINANCE_INVOICE_CHECKING_MODULE_WRONG_FINANCE = "finance_invoice_checking_module_wrong_finance";
 	String FINANCE_INVOICE_INTEGRITY_NO_RESULT = "finance_integrity_no_result";
@@ -298,13 +296,15 @@ public interface ICommonMessages {
 	String FINANCE_OUTPUT_VAT_REPORT = "finance_output_vat_report";
 	String NO_FEE_CUSTOMER_REPORT = "aon_no_fee_customer_report";	
 	
+	String FISCAL_RESULT = "fiscal_result";
+	
 	String INVOICE_TAX_TYPE = "invoice_tax_type";
 	String INVOICE_DOCUMENT = "invoice_document";
 	String INVOICE_DOCUMENT_NUMBER = "invoice_document_number";
 	String INVOICE_TAXDATE = "invoice_taxdate";
 	String INVOICE_RECTIFIED_ID = "invoice_rectified_id";
-	String INVOICE_RECTIFICATION_TYPE = "invoice_rectificationType";
-	String INVOICE_NATURE = "invoice_nature";
+	String FINANCE_RECTIFIER_INVOICE = "finance_rectifier_invoice";
+	String INVOICE_NATURE = "accounting_balance_detail_creditnature";
 	String INVOICE_TRANSACTION = "invoice_transaction";
 	String INVOICE_TYPE = "invoice_type";
 	String INVOICE_DED_TYPE = "invoice_ded_type";
@@ -372,6 +372,7 @@ public interface ICommonMessages {
 	String DELETE_OK = "publisher_delete_ok";
 	String DELETE_ERROR = "publisher_delete_error";
 	
+	String PURCHASE_DEPARTMENT = "purchase_department";
 	String PURCHASE_EMAIL_SUBJECT = "purchase_email_subject";
 	String PURCHASE_EMAIL_BODY_HEADER = "purchase_email_body_header";
 	String PURCHASE_EMAIL_BODY = "purchase_email_body";
@@ -441,8 +442,7 @@ public interface ICommonMessages {
 	String SELLER_STAT_CONTROL_PRODUCT = "seller_stat_control_product";
 	String SELLER_STAT_CONTROL_TARGET = "seller_stat_control_target";
 	String SELLER_STAT_CONTROL_SELLER = "seller_stat_control_seller";
-	String STAT_GEOZONE = "stat_geozone";
-	String STAT_SELLER = "stat_seller";	
+	String STAT_GEOZONE = "stat_geozone";	
 	
 	String WAREHOUSE_DELIVERY_EMAIL_SUBJECT = "warehouse_delivery_email_subject";
 	String WAREHOUSE_DELIVERY_EMAIL_BODY = "warehouse_delivery_email_body";

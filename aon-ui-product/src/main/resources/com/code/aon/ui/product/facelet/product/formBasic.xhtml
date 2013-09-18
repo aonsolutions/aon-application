@@ -26,7 +26,7 @@
 
 		<c:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
 			<aon:outputLabel for="Product_brand" styleClass="aon-margin-left aon-margin-right aon-italic"
-				value="#{productBundle.product_brand}" />
+				value="#{bundle.tas_make}" />
 			<aon:selectOneMenu id="Product_brand" value="#{controller.to.brand}">
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{productCollections.brands}" />

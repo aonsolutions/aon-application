@@ -43,7 +43,7 @@
 	
 						<c:if test="#{aonConfiguration.bean.customer.showTariff}">
 							<aon:outputLabel for="Customer_tariff_id"
-								value="#{productBundle.product_tariff}" />
+								value="#{bundle.report_tariff}" />
 							<aon:selectOneMenu id="Customer_tariff_id"
 								value="#{customer.to.tariff}">
 								<f:selectItem itemLabel="-" value="#{null}" />
@@ -291,7 +291,7 @@
 
 						<c:if test="#{customer.showAlumnData}">
 							<c:if test="#{aonConfiguration.bean.customer.showAbsence and customerAbsence.showTab}">
-								<aon:panelTab id="absence" label="#{academyBundle.academy_absences}">
+								<aon:panelTab id="absence" label="#{bundle.absence_absences}">
 									<ui:include	src="/com/code/aon/ui/academy/facelet/customerAbsence/tab_grid.xhtml">
 										<ui:param name="controller" value="#{customerAbsence}" />
 										<ui:param name="removeButtonReRender" value="customerTab" />

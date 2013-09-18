@@ -57,7 +57,7 @@
 										<aon:commandLink id="customer-management"
 											action="customer_search-management"
 											actionListener="#{customer.onEditSearch}"
-											value="#{customerBundle.customer_module}" />
+											value="#{bundle.customer_finance_checking}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="aon_invoicing_group-management"
@@ -253,7 +253,7 @@
 										<aon:commandLink id="purchase" 
 											action="purchase_search"
 											actionListener="#{purchase.onEditSearch}"
-											value="#{purchaseBundle.purchase_module}" />
+											value="#{purchaseBundle.purchase_module2}" />
 									</aon:div>									
 									<c:if test="#{aonRole.warehouseOperator}">
 										<c:if test="#{(domainSwitcher.type == 'HOTEL')}">

@@ -56,7 +56,7 @@
 						<f:selectItems value="#{groupWareCollections.taskHolders}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="DailyTracking_project" value="#{projectBundle.project_project}"/>
+					<aon:outputLabel for="DailyTracking_project" value="#{bundle.aon_project}"/>
 					<aon:panelGrid columns="2"
 						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
 					
@@ -64,7 +64,7 @@
 						<aon:div id="registrySelectDiv">
 							<aon:div styleClass="aon-margin-right" layout="inline">
 								<aon:selectOneMenu value="#{dailyTrackingSearchControllerListener.registryType}">
-									<f:selectItem itemValue="#{0}" itemLabel="#{customerBundle.customer_module}"/>
+									<f:selectItem itemValue="#{0}" itemLabel="#{bundle.customer_finance_checking}"/>
 									<f:selectItem itemValue="#{1}" itemLabel="#{bundle.aon_company}"/>
 									<f:selectItem itemValue="#{2}" itemLabel="#{bundle.aon_general}"/>
 									<a4j:support event="onchange"

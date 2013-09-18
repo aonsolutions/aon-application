@@ -65,8 +65,8 @@
 												value="#{bundle.aon_type}" />
 											<aon:selectOneRadio id="Finance_payment"
 												valueChangeListener="#{controller.addExpression}">
-												<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="false" />
-												<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="true" />
+												<f:selectItem itemLabel="#{bundle.finance_charge}" itemValue="false" />
+												<f:selectItem itemLabel="#{bundle.finance_payment}" itemValue="true" />
 											</aon:selectOneRadio>				
 										</c:if>
 
@@ -78,7 +78,7 @@
 										</aon:inputText>
 
 										<aon:outputLabel for="Finance_registryName" 
-											value="#{financeBundle.finance_debtor} / #{bundle.aon_creditor}" />
+											value="#{bundle.finance_debtor} / #{bundle.aon_creditor}" />
 										<aon:inputText id="Finance_registryName"
 											onblur="toUpperCase(this);"
 											valueChangeListener="#{controller.addExpression}"
@@ -86,7 +86,7 @@
 										</aon:inputText>
 
 										<aon:outputLabel for="Finance_concept" 
-											value="#{financeBundle.finance_invoice_document_number}" />
+											value="#{bundle.aon_document_number}" />
 										<aon:inputText id="Finance_concept"
 											onblur="toUpperCase(this);"
 											valueChangeListener="#{controller.addExpression}"
@@ -114,7 +114,7 @@
 										</aon:div>
 
 										<aon:outputLabel for="Finance_payMethod_id"
-											value="#{configBundle.config_pay_method}" />
+											value="#{bundle.finance_payMethod}" />
 										<aon:selectOneMenu id="Finance_payMethod_id"
 											value="#{configCollections.payMethod}"
 											valueChangeListener="#{controller.addIdEqualExpression}">

@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{financeBundle.finance_to_charge} #{financeBundle.finance_invoice}" />
+						<aon:outputText value="#{financeBundle.finance_to_charge} #{bundle.finance_invoice}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -63,7 +63,7 @@
 
 										<aon:outputText value="&#160;" />
 										<aon:div>
-											<aon:outputText value="#{financeBundle.finance_invoice_total}:" 
+											<aon:outputText value="#{bundle.invoice_total}:" 
 												styleClass="aon-bold aon-margin-right" style="text-transform:uppercase;" />
 											<aon:outputText value="#{invoiceController.toInvoiceTotalPrice}" styleClass="aon-bold">
 												<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
@@ -86,7 +86,7 @@
 
 										<aon:column styleClass="aon-panelGrid-odd aon-width-100 aon-editDataTable-textColumn">
 											<aon:outputLabel for="PosFinance_payMethod" 
-												value="#{configBundle.config_pay_method}" />
+												value="#{bundle.finance_payMethod}" />
 										</aon:column>
 
 										<aon:column styleClass="aon-panelGrid-even aon-width-180 aon-editDataTable-textColumn">

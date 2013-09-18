@@ -21,12 +21,12 @@
 					<aon:outputLabel for="CashFlowForecast_payment" value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="CashFlowForecast_payment"
 						value="#{cashFlowForecast.to.payment}">
-						<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="#{true}" />
-						<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="#{false}" />
+						<f:selectItem itemLabel="#{bundle.finance_payment}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{bundle.finance_charge}" itemValue="#{false}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="CashFlowForecast_registryBank_id"
-						value="#{configBundle.config_bank}" />
+						value="#{bundle.aon_bank}" />
 					<aon:selectOneMenu id="CashFlowForecast_registryBank_id"
 						value="#{cashFlowForecast.to.registryBank}">
 						<f:selectItem itemValue="#{null}" itemLabel=" - "/>

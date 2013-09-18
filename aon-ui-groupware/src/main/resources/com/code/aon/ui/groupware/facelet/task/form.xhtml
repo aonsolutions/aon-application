@@ -87,7 +87,7 @@
 					</aon:div>
 					
 					<aon:outputLabel for="Task_startDate"
-						value="#{groupwareBundle.groupware_initial_date}" />
+						value="#{bundle.aon_start_date}" />
 					<aon:selectInputDate id="Task_startDate"
 						value="#{task.to.startDate}" renderAsPopup="true"
 						enableManualInput="true"
@@ -96,7 +96,7 @@
 					</aon:selectInputDate>
 
 					<aon:outputLabel for="Task_endDate"
-						value="#{groupwareBundle.groupware_final_date}"
+						value="#{bundle.aon_end_date}"
 						rendered="#{task.to.finished or task.to.deleted}" />
 					<aon:selectInputDate id="Task_endDate" value="#{task.to.endDate}"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}"
@@ -180,7 +180,7 @@
 					</aon:div>
 					
 
-					<aon:outputLabel for="Task_project" value="#{projectBundle.project_project}"/>
+					<aon:outputLabel for="Task_project" value="#{bundle.aon_project}"/>
 					<aon:panelGrid columns="2"
 						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
 					

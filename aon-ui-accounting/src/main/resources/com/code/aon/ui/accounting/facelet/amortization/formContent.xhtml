@@ -47,7 +47,7 @@
 					value="#{accountingCollections.amortizationPeriods}" />
 			</aon:selectOneMenu>
 	
-			<aon:outputText value="#{accountingBundle.accounting_coefficient}" />
+			<aon:outputText value="#{bundle.accounting_amortization_coef}" />
 			<aon:panelGroup id="percentage">
 				<aon:outputText rendered="#{!amortization.new}" 
 					value="#{amortization.to.percentage}">
@@ -150,7 +150,7 @@
 	
 	
 			<aon:outputText
-				value="#{accountingBundle.accounting_allocation_account}" />
+				value="#{bundle.accounting_amortization_alloc_account}" />
 			<aon:panelGroup id="allocationAccount" styleClass="aon-nowrap">
 				<aon:outputText rendered="#{!amortization.new}"
 					value="#{amortization.to.allocationAccount.fullDescription}" />

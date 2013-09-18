@@ -515,6 +515,25 @@
 										<ignore />
 									</action>
 								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											com.esferalia.aon
+										</groupId>
+										<artifactId>
+											aon-maven-plugin
+										</artifactId>
+										<versionRange>
+											[7.22-SNAPSHOT,)
+										</versionRange>
+										<goals>
+											<goal>jasper</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>

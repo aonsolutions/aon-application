@@ -20,7 +20,7 @@
 				<ui:param name="controller" value="#{pos}" />
 				<ui:define name="searchContent">
 
-					<aon:outputLabel value="#{companyBundle.company_workplace}" />
+					<aon:outputLabel value="#{bundle.purchase_workplace}" />
 					<aon:selectOneMenu id="Pos_workPlace"
 						value="#{posSearch.workPlace}"
 						reRender="Pos_department">
@@ -29,7 +29,7 @@
 					</aon:selectOneMenu>
 
 					<c:if test="#{companyCollections.departmentsCount > 0}">
-						<aon:outputLabel value="#{companyBundle.company_department}" />
+						<aon:outputLabel value="#{bundle.purchase_department}" />
 						<aon:selectOneMenu id="Pos_department"
 							value="#{posSearch.department}" >
 							<f:selectItem itemLabel=" - " itemValue="null" />

@@ -34,7 +34,7 @@
 				<aon:panelGrid columns="2">
 
 					<aon:outputLabel for="AcademicYear_id"
-						value="#{bundle.aon_reset} #{academyBundle.academy_academic_year}" />
+						value="#{bundle.aon_reset} #{bundle.course_academic_year}" />
 					<aon:selectOneMenu id="AcademicYear_id"
 						value="#{duplicateGroup.academicYear}">
 						<f:selectItems value="#{academyCollections.academicYears}" />
@@ -58,7 +58,7 @@
 						<aon:selectBooleanCheckbox id="Alumns"
 							value="#{duplicateGroup.alumns}" />
 						<aon:outputLabel for="Alumns"
-							value="#{academyBundle.academy_alumns}"/>
+							value="#{bundle.aon_alumns}"/>
 						<f:verbatim>&#160;</f:verbatim>
 						<f:verbatim>&#160;</f:verbatim>
 						<aon:selectBooleanCheckbox id="Instructors"
@@ -76,7 +76,7 @@
 						<aon:selectBooleanCheckbox id="Skills"
 							value="#{duplicateGroup.skills}" />
 						<aon:outputLabel for="Skills"
-							value="#{academyBundle.academy_academic_skills}" />
+							value="#{bundle.academicSkill_academicSkills}" />
 					</aon:div>
 
 				</aon:panelGrid>

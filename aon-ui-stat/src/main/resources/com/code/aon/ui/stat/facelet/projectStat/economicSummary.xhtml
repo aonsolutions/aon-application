@@ -26,7 +26,7 @@
 				columnClasses="aon-panelGrid-odd aon-width-half aon-text-right
 							  ,aon-panelGrid-even aon-width-half aon-text-right">
 	
-				<aon:outputText value="#{statBundle.stat_offer_amount}" />
+				<aon:outputText value="#{statBundle.stat_offer_amount2}" />
 				<aon:outputText value="#{projectStat.totalOffered}">
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
@@ -63,7 +63,7 @@
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
 	
-				<aon:outputText value="#{statBundle.stat_labour_amount}" />
+				<aon:outputText value="#{bundle.tas_labour}" />
 				<aon:outputText value="#{projectStat.totalDailyTracking}">
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
@@ -151,7 +151,7 @@
 					['', ''],
 					['#{statBundle.stat_income_amount}'		 , #{projectStat.totalSales}],
 					['#{statBundle.stat_invoice_cost_amount}', #{projectStat.totalInvoiceCosts}],
-					['#{statBundle.stat_labour_amount}'      , #{projectStat.totalDailyTracking}]
+					['#{bundle.tas_labour}'      , #{projectStat.totalDailyTracking}]
 				]);
 				var options = {
 					colors:['#669966','#980000','#6699FF' ]
@@ -162,10 +162,10 @@
 				
 				data = google.visualization.arrayToDataTable([
 				  ['TITLE',
-				   	'#{statBundle.stat_offer_amount}',
+				   	'#{statBundle.stat_offer_amount2}',
 				   	'#{statBundle.stat_income_amount}',
 				   	'#{statBundle.stat_invoice_cost_amount}',
-				   	'#{statBundle.stat_labour_amount}',
+				   	'#{bundle.tas_labour}',
 				   	'#{bundle.aon_result}'],
 				  ['',    
 				  	#{projectStat.totalOffered},

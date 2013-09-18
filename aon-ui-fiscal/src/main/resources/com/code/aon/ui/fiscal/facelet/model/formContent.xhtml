@@ -149,13 +149,13 @@
 								,aon-panelGrid-even aon-width-auto
 								,aon-panelGrid-even aon-width-300">
 				
-					<aon:outputText value="#{fiscalBundle.fiscal_deposit}"
+					<aon:outputText value="#{bundle.fiscal_deposit}"
 						rendered="#{!controller.declaration.toDeduct and !controller.declaration.negative and !controller.declaration.compensate}" />
-					<aon:outputText value="#{fiscalBundle.fiscal_deduct}" 
+					<aon:outputText value="#{bundle.fiscal_deduct}" 
 						rendered="#{controller.declaration.toDeduct}" />
 					<aon:outputText value="#{fiscalBundle.fiscal_negative}" 
 						rendered="#{controller.declaration.negative}" />
-					<aon:outputText value="#{fiscalBundle.fiscal_compensate}" 
+					<aon:outputText value="#{bundle.fiscal_compensate}" 
 						rendered="#{controller.declaration.compensate}" />
 					
 					<aon:div>
@@ -229,7 +229,7 @@
 							disabled="#{controller.declaration.header.readOnly}"
 							value="#{controller.declaration.header.replacement}"/>
 						<aon:outputLabel for="controller_replacement" styleClass="aon-italic"
-							value="#{fiscalBundle.fiscal_replacement}" />
+							value="#{bundle.aon_replacement}" />
 					</aon:div>
 					<aon:div rendered="#{controller.declaration.withoutActivityDeclarationAvailable}">
 						<aon:selectBooleanCheckbox id="controller_withoutActivity"

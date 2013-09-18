@@ -60,7 +60,7 @@
 
 					<aon:outputLabel
 						rendered="#{!finance.new and !finance.to.emptyInvoice}"  
-						value="#{financeBundle.finance_invoice}" />
+						value="#{bundle.finance_invoice}" />
 					<aon:outputLabel for="Finance_type"
 						rendered="#{finance.new or finance.to.emptyInvoice}" 
 						value="#{bundle.aon_type}" />
@@ -147,7 +147,7 @@
 					</aon:div>
 
 					<aon:outputLabel for="Finance_concept" 
-						value="#{financeBundle.finance_invoice_document_number}" />
+						value="#{bundle.aon_document_number}" />
 					<aon:div> 
 						<aon:inputText id="Finance_concept"
 							value="#{finance.to.concept}" 
@@ -160,7 +160,7 @@
 					</aon:div>
 					
 					<aon:outputLabel for="Finance_payMethod_id"
-						value="#{configBundle.config_pay_method}" />
+						value="#{bundle.finance_payMethod}" />
 					<aon:selectOneMenu id="Finance_payMethod_id"
 						value="#{finance.to.payMethod}"
 						valueChangeListener="#{finance.onPayMethodChanged}"
@@ -174,7 +174,7 @@
 						<ui:param name="lookupTo" value="#{finance.to.registry}" />
 						<ui:param name="lookupForRegistry" value="#{true}" />
 						<ui:param name="lookupInputNameValue" value="#{finance.to.registryName}" />
-						<ui:param name="lookupLabel" value="#{financeBundle.finance_debtor}" />
+						<ui:param name="lookupLabel" value="#{bundle.finance_debtor}" />
 						<ui:param name="lookupDisabled" value="#{!finance.new}" />
 						<ui:param name="lookupRendered" value="#{!finance.to.payment}" />
 						<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
@@ -309,7 +309,7 @@
 						ajaxSingle="true" reRender="Finance_total" />
 
 					<aon:outputLabel for="Bank_idFinance"
-						value="#{configBundle.config_bank}" />
+						value="#{bundle.aon_bank}" />
 					<aon:div id="Finance_bankAccount_panel" styleClass="aon-nowrap">
 						<aon:panelGroup id="Finance_bankAccount" rendered="#{finance.showBankManualInput}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
@@ -462,7 +462,7 @@
 											action="fbatch_form" />
 										<aon:commandLink id="bankStatement_link" immediate="true"
 											styleClass="aon-button-goto aon-nowrap" style="padding-right: 20px;"
-											value="&#160;" title="#{financeBundle.finance_bank_statement}"
+											value="&#160;" title="#{bundle.finance_bank_statement_report}"
 											rendered="#{to.bankStatementLink != null}"
 											actionListener="#{financeTracking.onLoadBankStatement}"
 											action="bankStatement_list" />

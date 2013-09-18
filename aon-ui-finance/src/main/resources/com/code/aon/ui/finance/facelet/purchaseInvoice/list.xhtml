@@ -64,7 +64,7 @@
 						<aon:column alias="Invoice.series,Invoice.number"
 							styleClass="aon-editDataTable-textColumn aon-width-80">
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
+								<aon:outputText value="#{bundle.aon_document_number}" />
 							</f:facet>
 							<aon:outputText value="#{to.documentNumber}" />
 						</aon:column>
@@ -100,7 +100,7 @@
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
 								style="font-size: 0.9em;">
 								<f:facet name="header">
-									<aon:outputText value="#{configBundle.config_pay_method}" />
+									<aon:outputText value="#{bundle.finance_payMethod}" />
 								</f:facet>
 								<aon:outputText value="#{to.payMethod}">
 									<aon:abbreviateConverter maxWidth="15" />
@@ -127,7 +127,7 @@
 								<aon:div id="totalAmountContainer" style="float:right">
 									<aon:commandLink immediate="true" 
 										reRender="totalAmountContainer"
-										value="#{financeBundle.finance_total_amount}"
+										value="#{bundle.stat_total}"
 										styleClass="aon-dataTable-link aon-nowrap"
 										rendered="#{controller.totalInvoiceAmount == null}"
 										actionListener="#{controller.getSelectionTotalAmount}"/>									

@@ -12,7 +12,7 @@
 		<aon:form id="enterpriseWorkPlaceForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{companyBundle.company_workplace}" />
+				<ui:param name="toolbarTitle" value="#{bundle.purchase_workplace}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
 					<aon:htmlCommandLink id="calendarReport_list"
@@ -35,7 +35,7 @@
 					<aon:outputText value="#{bundle.aon_company}" />
 					<aon:outputText value="#{enterprise.to.registry.name}" />
 
-					<aon:outputText value="#{companyBundle.company_workplace}" />
+					<aon:outputText value="#{bundle.purchase_workplace}" />
 					<aon:outputText value="#{enterpriseTree.workPlace.description}" />
 
 					<aon:outputText value="#{bundle.aon_address}" />

@@ -5,9 +5,9 @@ import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_GROSS_MARGIN;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_PROFIT_AND_LOSS_MODULE;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_TOTAL_EXPENSES;
-import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_TOTAL_RESULT;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_TOTAL_RESULT_LOSS;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_TOTAL_RESULT_NULL;
+import static com.code.aon.ui.common.ICommonMessages.FISCAL_RESULT;
 import static com.code.aon.ui.common.ICommonMessages.PROFIT;
 
 import java.lang.ref.WeakReference;
@@ -283,7 +283,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 
 		Summary result = new Summary();
 		StringBuilder r = new StringBuilder();
-		r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, ACCOUNTING_TOTAL_RESULT));
+		r.append(AonUtil.getMessage(FISCAL_RESULT));
 		r.append(" (");
 		if (getTotalResult() > 0) {
 			r.append(AonUtil.getMessage(PROFIT));

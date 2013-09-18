@@ -45,7 +45,7 @@
 						</aon:selectOneMenu>
 					</c:if>
 
-					<aon:outputText value="#{pmsBundle.pms_checkIn}" />
+					<aon:outputText value="#{bundle.report_checkin}" />
 					<aon:div>
 						<aon:outputLabel for="ProjectReservation_startDate-From"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
@@ -61,7 +61,7 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 				
-					<aon:outputText value="#{pmsBundle.pms_checkOut}" />
+					<aon:outputText value="#{bundle.report_checkout}" />
 					<aon:div>
 						<aon:outputLabel for="ProjectReservation_endDate-From"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
@@ -79,7 +79,7 @@
 
 					<c:if test="#{!noShowInvoiceSearch.guestReservationSearch}">
 						<aon:outputLabel for="ProjectReservation_agency"
-							value="#{pmsBundle.pms_agency}" />
+							value="#{bundle.report_agency}" />
 						<aon:selectOneMenu id="ProjectReservation_agency" 
 							value="#{noShowInvoiceSearch.agency}">
 							<f:selectItem itemLabel="-" value="#{null}" />		
@@ -87,7 +87,7 @@
 						</aon:selectOneMenu>
 
 						<aon:outputLabel for="ProjectReservation_tariff"
-							value="#{productBundle.product_tariff}"/>
+							value="#{bundle.report_tariff}"/>
 						<aon:selectOneMenu id="ProjectReservation_tariff" 
 							value="#{noShowInvoiceSearch.tariff}">
 							<f:selectItem itemLabel=" - " itemValue="#{null}" />

@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="roomList">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_room_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.report_rooms}" />
 				<ui:param name="skipResetButton" value="#{!aonRole.admin}" />
 				<ui:param name="controller" value="#{room}" />
 				<ui:define name="additionalToolbarContent">

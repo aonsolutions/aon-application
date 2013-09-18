@@ -13,7 +13,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_journal_module}" />
+					value="#{bundle.account_journal_report}" />
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="toolbarActions">
@@ -96,7 +96,7 @@
 						<f:facet name="header">
 							<rich:columnGroup>
 								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{accountBundle.account_account}" />
+									<aon:outputText value="#{bundle.account_account}" />
 								</aon:column>
 								<aon:column styleClass="aon-dataTable-header">
 									<aon:outputText value="#{bundle.aon_description}" />
@@ -105,10 +105,10 @@
 									<aon:outputText value="#{bundle.aon_concept}" />
 								</aon:column>
 								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{accountingBundle.accounting_debit}" />
+									<aon:outputText value="#{bundle.account_debit}" />
 								</aon:column>
 								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{accountingBundle.accounting_credit}" />
+									<aon:outputText value="#{bundle.account_credit}" />
 								</aon:column>
 								<aon:column styleClass="aon-dataTable-header">
 									<aon:outputText
@@ -116,7 +116,7 @@
 								</aon:column>
 								<aon:column styleClass="aon-dataTable-header">
 									<aon:outputText
-										value="#{accountingBundle.accounting_document_number}" />
+										value="#{bundle.account_document_number}" />
 								</aon:column>
 							</rich:columnGroup>
 						</f:facet>
@@ -131,7 +131,7 @@
 										title="#{accountingBundle.accounting_lookup_account_entry}"
 										actionListener="#{journalReport.onAccountEntry}"
 										action="accountEntry_form">
-										<aon:outputText styleClass="aon-italic" value="#{accountingBundle.accounting_account_entry}: " />
+										<aon:outputText styleClass="aon-italic" value="#{bundle.account_account_entry}: " />
 										<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.id}" rendered="#{!journalReport.journal}"/>
 										<aon:outputText styleClass="aon-bold" value="#{to.accountEntry.journal}" rendered="#{journalReport.journal}"/>
 										<aon:outputText styleClass="aon-italic" value=" #{bundle.aon_date}: " />

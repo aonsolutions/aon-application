@@ -50,7 +50,7 @@
 					</aon:div>
 							
 					<aon:outputLabel for="FinanceBatch_registryBank_id"
-						value="#{configBundle.config_bank}" />
+						value="#{bundle.aon_bank}" />
 					<aon:selectOneMenu id="FinanceBatch_registryBank_id"
 						value="#{registryCollections.registryBank}"
 						valueChangeListener="#{fbatch.addIdEqualExpression}">
@@ -59,7 +59,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="FinanceBatch_financeBatchType"
-						value="#{financeBundle.finance_disk_type}" />
+						value="#{bundle.finance_disk_type}" />
 					<aon:selectOneMenu id="FinanceBatch_financeBatchType"
 						valueChangeListener="#{fbatch.addEqualExpression}">
 						<aon:enumConverter enum="com.code.aon.finance.enumeration.FinanceBatchType" />

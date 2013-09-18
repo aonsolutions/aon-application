@@ -22,12 +22,12 @@
 
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{alumnLoan.to.customer}" />
-						<ui:param name="lookupLabel" value="#{academyBundle.academy_alumn}"/>
+						<ui:param name="lookupLabel" value="#{bundle.aon_alumn}"/>
 						<ui:param name="idRequired" value="#{true}" />						
 					</ui:include>
 	
 					<aon:outputLabel for="AlumnLoan_material"
-						value="#{academyBundle.academy_loan_material}" />
+						value="#{bundle.academy_loan_material}" />
 					<aon:inputText id="AlumnLoan_material"
 						value="#{alumnLoan.to.material}" required="true"
 						size="16" maxlength="16" />

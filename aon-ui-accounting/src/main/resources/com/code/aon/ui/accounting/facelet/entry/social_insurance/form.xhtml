@@ -74,7 +74,7 @@
 					</aon:selectInputDate>
 
 					<aon:outputLabel for="Account_registryBank"
-						value="#{configBundle.config_bank}" />
+						value="#{bundle.aon_bank}" />
 					<aon:selectOneMenu id="Account_registryBank"
 						value="#{socialInsuranceEntry.entry.registryBank}">
 						<f:selectItem
@@ -99,7 +99,7 @@
 						ajaxSingle="true" focus="Account_recharge" />
 
 					<aon:outputLabel for="Account_recharge"
-						value="#{accountingBundle.accounting_recharge}" />
+						value="#{bundle.fiscal_extra_charge}" />
 					<aon:div>
 						<aon:inputText id="Account_recharge" reRender="Account_total"
 							value="#{socialInsuranceEntry.entry.recharge}" size="15"
@@ -112,7 +112,7 @@
 					</aon:div>
 
 					<aon:outputLabel for="Account_total"
-						value="#{accountingBundle.accounting_recharge}" />
+						value="#{bundle.fiscal_extra_charge}" />
 					<aon:inputText id="Account_total"
 						value="#{socialInsuranceEntry.entry.total}" size="15"
 						disabled="true" />
@@ -179,13 +179,13 @@
 							<aon:outputText
 								value="#{socialInsuranceEntry.socialInsuranceAccount.fullDescription}" />
 							<aon:outputText styleClass="aon-italic"
-								value="&#160;#{accountingBundle.accounting_debit_balance}:&#160;" />
+								value="&#160;#{bundle.account_debit_balance}:&#160;" />
 							<aon:outputText styleClass="aon-bold"
 								value="#{socialInsuranceEntry.socialInsuranceBalance.unpaidBalance}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
 							<aon:outputText styleClass="aon-italic"
-								value="&#160;#{accountingBundle.accounting_credit_balance}:&#160;" />
+								value="&#160;#{bundle.account_credit_balance}:&#160;" />
 							<aon:outputText styleClass="aon-bold"
 								value="#{socialInsuranceEntry.socialInsuranceBalance.creditBalance}">
 								<f:convertNumber pattern="#,##0.00" />

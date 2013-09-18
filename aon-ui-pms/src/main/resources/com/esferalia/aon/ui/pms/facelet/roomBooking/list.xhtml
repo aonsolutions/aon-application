@@ -11,7 +11,7 @@
 		<aon:form id="roomBooking">
 			
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_roomBooking_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.report_booking_list}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
 				
 				<ui:define name="additionalToolbarContent">
@@ -45,7 +45,7 @@
 					<aon:outputText styleClass="aon-margin-left "
 						value="#{(roomBooking.hotel!=null)?(roomBooking.hotel.workPlace.description):('-')}"/>
 
-					<aon:outputText value="#{pmsBundle.pms_agency}:" styleClass="aon-bold aon-margin-left"/>
+					<aon:outputText value="#{bundle.report_agency}:" styleClass="aon-bold aon-margin-left"/>
 					<aon:outputText styleClass="aon-margin-left"
 						value="#{(roomBooking.agency!=null and roomBooking.agency.id!=null)?(roomBooking.agency.registry.fullName):('-')}"/>
 
@@ -73,7 +73,7 @@
 								</rich:column>
 								
 								<rich:column colspan="6" >
-									<aon:outputText value="#{pmsBundle.pms_rooms}" />
+									<aon:outputText value="#{bundle.report_rooms}" />
 								</rich:column>
 								
 								<rich:column colspan="3" >
@@ -101,28 +101,28 @@
 									
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_checkIn}" />
+								<aon:outputText value="#{bundle.report_checkin}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomCheckin}" />
 						</aon:column>				
 									
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_checkOut}" />
+								<aon:outputText value="#{bundle.report_checkout}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomCheckout}" />
 						</aon:column>				
 									
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_occupation_group}" />
+								<aon:outputText value="#{bundle.report_occupation}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomBusy}" />
 						</aon:column>				
 									
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_free}" />
+								<aon:outputText value="#{bundle.report_free}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomFree}" />
 						</aon:column>				
@@ -143,14 +143,14 @@
 									
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_checkIn}" />
+								<aon:outputText value="#{bundle.report_checkin}" />
 							</f:facet>
 							<aon:outputText value="#{to.guestCheckin}" />
 						</aon:column>				
 									
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_checkOut}" />
+								<aon:outputText value="#{bundle.report_checkout}" />
 							</f:facet>
 							<aon:outputText value="#{to.guestCheckout}" />
 						</aon:column>				

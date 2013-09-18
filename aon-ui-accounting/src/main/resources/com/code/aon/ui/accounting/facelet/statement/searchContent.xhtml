@@ -32,7 +32,7 @@
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="Account_id"
-				value="#{accountBundle.account_account}" />
+				value="#{bundle.account_account}" />
 			<aon:div id="links">
 				<aon:inputText id="Account_id"
 					value="#{trialBalance.parameters.accountExpression}" size="14" />
@@ -47,7 +47,7 @@
 					<a4j:actionparam value="572*" assignTo="#{trialBalance.parameters.accountExpression}"/>
 				</aon:commandLink>
 				<aon:commandLink id="cash-search" 
-					value="#{accountingBundle.accounting_cash}" reRender="Account_id" tabindex="1002"  
+					value="#{bundle.report_pos}" reRender="Account_id" tabindex="1002"  
 					styleClass="aon-dataTable-link-simple aon-italic" >
 					<a4j:actionparam value="570*" assignTo="#{trialBalance.parameters.accountExpression}"/>
 				</aon:commandLink>
@@ -57,7 +57,7 @@
 					<a4j:actionparam value="47*" assignTo="#{trialBalance.parameters.accountExpression}"/>
 				</aon:commandLink>
 				<aon:commandLink id="customer-search" 
-					value="#{accountingBundle.accounting_customer}" reRender="Account_id" tabindex="1004"  
+					value="#{bundle.customer_finance_checking}" reRender="Account_id" tabindex="1004"  
 					styleClass="aon-dataTable-link-simple aon-italic" >
 					<a4j:actionparam value="430*" assignTo="#{trialBalance.parameters.accountExpression}"/>
 				</aon:commandLink>

@@ -10,7 +10,7 @@
 	<ui:define name="content">
 		<aon:form id="customerForm">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(academyBundle.academy_alumns):(customerBundle.customer_module)}" />
+				<ui:param name="toolbarTitle" value="#{(customer.showAlumnData)?(bundle.aon_alumns):(bundle.customer_finance_checking)}" />
 				<ui:param name="controller" value="#{customer}" />
 			</ui:include>
 

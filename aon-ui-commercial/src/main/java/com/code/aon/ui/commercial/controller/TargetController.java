@@ -6,8 +6,6 @@ import static com.code.aon.ui.common.ICommonMessages.ADDRESS;
 import static com.code.aon.ui.common.ICommonMessages.ALIAS;
 import static com.code.aon.ui.common.ICommonMessages.BLOCKED;
 import static com.code.aon.ui.common.ICommonMessages.CELLULAR;
-import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_BUNDLE;
-import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_TARGET_ADVERTISING;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_NAME;
 import static com.code.aon.ui.common.ICommonMessages.DOCUMENT;
 import static com.code.aon.ui.common.ICommonMessages.ENTITY;
@@ -22,6 +20,7 @@ import static com.code.aon.ui.common.ICommonMessages.REGISTRY_EMAIL;
 import static com.code.aon.ui.common.ICommonMessages.REGISTRY_NATIONALITY;
 import static com.code.aon.ui.common.ICommonMessages.STATE;
 import static com.code.aon.ui.common.ICommonMessages.STATUS;
+import static com.code.aon.ui.common.ICommonMessages.TARGET_ADVERTISING;
 import static com.code.aon.ui.common.ICommonMessages.WEB;
 
 import java.io.IOException;
@@ -174,7 +173,7 @@ public class TargetController extends RegistryController implements ICommercialC
 				+",'"+Advertising.AUTO_EXCLUSION.getName(AonUtil.getCurrentLocale())+"'"
 				+",'"+Advertising.DENIED.getName(AonUtil.getCurrentLocale())+"'"
 				+",'"+Advertising.ROBINSON.getName(AonUtil.getCurrentLocale())+"'"
-					+") `" + AonUtil.getMessage(COMMERCIAL_BUNDLE, COMMERCIAL_TARGET_ADVERTISING) + "`"
+					+") `" + AonUtil.getMessage(TARGET_ADVERTISING) + "`"
 			+",ELT(r.type+1" 
 				+",'"+RegistryType.LEGAL.getName(AonUtil.getCurrentLocale())+"'"
 				+",'"+RegistryType.NATURAL.getName(AonUtil.getCurrentLocale())+"'"

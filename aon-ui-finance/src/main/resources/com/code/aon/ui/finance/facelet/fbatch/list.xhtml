@@ -69,7 +69,7 @@
 						<aon:column alias="FinanceBatch.registryBank.bank.name"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{configBundle.config_bank}" />
+								<aon:outputText value="#{bundle.aon_bank}" />
 							</f:facet>
 							<aon:outputText value="#{to.registryBank.bank.name}" />
 						</aon:column>
@@ -77,7 +77,7 @@
 						<aon:column alias="FinanceBatch.registryBank.bankAccount"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{configBundle.config_bank_account}" />
+								<aon:outputText value="#{bundle.aon_bank_account}" />
 							</f:facet>
 							<aon:outputText value="#{to.registryBank.bankAccount}" />
 						</aon:column>
@@ -92,7 +92,7 @@
 						
 						<aon:column styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_regs}" />
+								<aon:outputText value="#{bundle.finance_regs}" />
 							</f:facet>
 							<aon:outputText value="#{to.financeBatchTotalDetails}" >
 								<f:convertNumber pattern="#{bundle.aon_integer_pattern}" />
