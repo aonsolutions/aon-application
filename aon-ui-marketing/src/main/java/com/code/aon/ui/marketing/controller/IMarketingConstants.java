@@ -2,8 +2,6 @@ package com.code.aon.ui.marketing.controller;
 
 public interface IMarketingConstants {
 
-	String BUNDLE_NAME = "marketingBundle";	
-	
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************
@@ -35,29 +33,6 @@ public interface IMarketingConstants {
 	
 	String NEWS_CONTROLLER_NAME = "news";
 
-	// ************************************************************
-	// MESSAGE
-	// ************************************************************
-
-	String ACTION_EXPORT = "marketing_action_export";
-	
-	String SURVEY = "marketing_survey";
-	
-	String TARGET_WITHOUT_COMMERCIAL_EMAIL = "marketing_target_without_commercial_email";
-	
-	String TARGET_SEND_EMAIL_ERROR = "marketing_target_send_email_error";
-	
-	String TARGET_EMAIL_SENT = "marketing_target_email_sent";
-	
-	String TARGET_INVALID_EMAIL = "marketing_target_invalid_email";
-
-	String TARGET_SEND_BULK_EMAIL_ERROR = "marketing_target_send_bulk_email_error";
-	
-	String TARGET_BULK_EMAIL_SENT = "marketing_target_bulk_email_sent";
-	
-	String RSS_PUBLISH_OK = "marketing_rss_publish_ok";
-	
-	String RSS_PUBLISH_ERROR = "marketing_rss_publish_error";	
 	
 	// ************************************************************
 	// CONFIGURATION

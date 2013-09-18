@@ -2,18 +2,19 @@ package com.code.aon.ui.infoweb.controller;
 
 import static com.code.aon.common.enumeration.AppParam.WEBINFO_HOMEPAGE_ID;
 import static com.code.aon.common.enumeration.AppParam.WEBINFO_TEMPLATE_NAME;
+import static com.code.aon.ui.common.ICommonMessages.DIRECTORY_CREATION_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.DIRECTORY_NOT_FOUND;
+import static com.code.aon.ui.common.ICommonMessages.DIRECTORY_NO_READABLE;
+import static com.code.aon.ui.common.ICommonMessages.IMAGE_COPY_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.INFOWEB_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.NO_PUBLISH_PARAMETERS;
+import static com.code.aon.ui.common.ICommonMessages.PAGE_WITHOUT_DETAIL;
+import static com.code.aon.ui.common.ICommonMessages.PUBLISHER_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.PUBLISH_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.PUBLISH_OK;
+import static com.code.aon.ui.common.ICommonMessages.WEB_GENERATED;
+import static com.code.aon.ui.common.ICommonMessages.WEB_GENERATION_ERROR;
 import static com.code.aon.ui.config.controller.ConfigConstants.PUBLISH_PARAMETER;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.BUNDLE_NAME;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DIRECTORY_CREATION_ERROR;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DIRECTORY_NOT_FOUND;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DIRECTORY_NO_READABLE;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.IMAGE_COPY_ERROR;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.NO_PUBLISH_PARAMETERS;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.PAGE_WITHOUT_DETAIL;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.WEB_GENERATED;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.WEB_GENERATION_ERROR;
-import static com.code.aon.ui.publisher.controller.IPublisherConstants.PUBLISH_ERROR;
-import static com.code.aon.ui.publisher.controller.IPublisherConstants.PUBLISH_OK;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
@@ -65,7 +66,6 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyImagesController;
 import com.code.aon.ui.config.PublishProperties;
-import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.PublishParameterController;
 import com.code.aon.ui.config.util.FTPUtil;
 import com.code.aon.ui.form.BasicController;
@@ -74,7 +74,6 @@ import com.code.aon.ui.infoweb.util.VelocityUtil;
 import com.code.aon.ui.infoweb.velocity.ImageHandler;
 import com.code.aon.ui.infoweb.velocity.MenuOptionHandler;
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
-import com.code.aon.ui.publisher.controller.IPublisherConstants;
 import com.code.aon.ui.publisher.util.ImageUtilEx;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -145,11 +144,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	public boolean isReadableDirectory( File directory ) {
 		if (!directory.exists()) {
-			log.error(AonUtil.getMessage(BUNDLE_NAME, DIRECTORY_NOT_FOUND, directory));
+			log.error(AonUtil.getMessage(INFOWEB_BUNDLE, DIRECTORY_NOT_FOUND, directory));
 			return false;
 		}
 		if (!directory.canRead()) {
-			log.error(AonUtil.getMessage(BUNDLE_NAME, DIRECTORY_NO_READABLE, directory));
+			log.error(AonUtil.getMessage(INFOWEB_BUNDLE, DIRECTORY_NO_READABLE, directory));
 			return false;
 		}		
 		return true;
@@ -160,7 +159,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		this.published = false;
 		try {
 			if ( this.publishProperties.isEmpty() ) {
-				log.error(AonUtil.getMessage(BUNDLE_NAME, NO_PUBLISH_PARAMETERS));
+				log.error(AonUtil.getMessage(INFOWEB_BUNDLE, NO_PUBLISH_PARAMETERS));
 				return;
 			}
 			
@@ -180,7 +179,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			File previewDirectory = PathUtil.getPreviewPath();
 			if (! previewDirectory.exists() ) {
 				if (! previewDirectory.mkdirs() ) {
-					log.error(AonUtil.getMessage(BUNDLE_NAME, DIRECTORY_CREATION_ERROR, previewDirectory));
+					log.error(AonUtil.getMessage(INFOWEB_BUNDLE, DIRECTORY_CREATION_ERROR, previewDirectory));
 					return;	
 				}
 			}
@@ -237,13 +236,13 @@ public class GeneratorController extends BasicController implements VelocityCons
 			copyDirectoryToDirectory(new File(currentTemplateCssDirectory, CSSIMG_PATH), cssPreviewDirectory );
 			copyDirectoryToDirectory(new File(templateDirectory, IMAGES_PATH), previewDirectory );
 
-			log.info(AonUtil.getMessage(BUNDLE_NAME, WEB_GENERATED));
+			log.info(AonUtil.getMessage(INFOWEB_BUNDLE, WEB_GENERATED));
 			
 			this.generated = upload(this.publishProperties.getPreviewPath());
 
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
-			log.error(AonUtil.getMessage(BUNDLE_NAME, WEB_GENERATION_ERROR));
+			log.error(AonUtil.getMessage(INFOWEB_BUNDLE, WEB_GENERATION_ERROR));
 		} finally {
 			HibernateUtil.setCloseSession(true);
 			HibernateUtil.closeSession(HibernateUtil.getSessionFactoryName());
@@ -266,12 +265,12 @@ public class GeneratorController extends BasicController implements VelocityCons
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
-			log.error( AonUtil.getMessage(IPublisherConstants.BUNDLE_NAME, PUBLISH_ERROR) );
+			log.error( AonUtil.getMessage(PUBLISHER_BUNDLE, PUBLISH_ERROR) );
 		} finally {
 			ftp.close();
 		}
 		if ( published ) {
-			log.info( AonUtil.getMessage(IPublisherConstants.BUNDLE_NAME, PUBLISH_OK) );
+			log.info( AonUtil.getMessage(PUBLISHER_BUNDLE, PUBLISH_OK) );
 		}		
 		log.finish();
 		return published;
@@ -315,7 +314,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		if (wipdList.size() > 0) {
 			wipd = (WebInfoPageDetail)wipdList.get(0);
 		} else {			
-			log.warn(AonUtil.getMessage(BUNDLE_NAME, PAGE_WITHOUT_DETAIL, wip.getName()));
+			log.warn(AonUtil.getMessage(INFOWEB_BUNDLE, PAGE_WITHOUT_DETAIL, wip.getName()));
 			return;
 		}
 
@@ -595,7 +594,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				String filename = getImageName(ra);
 				File path = new File(imagesDirectory, filename);
 				if (!copyRegistryBlobToFile(ra, 200, 200, path)) {
-					log.error(AonUtil.getMessage(BUNDLE_NAME, IMAGE_COPY_ERROR, filename)); 
+					log.error(AonUtil.getMessage(INFOWEB_BUNDLE, IMAGE_COPY_ERROR, filename)); 
 				}
 				ImageHandler ih = new ImageHandler(filename, getImagePageLink(ra.getDescription()), ra.getDescription());
 				all_images.add(ih);

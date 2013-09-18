@@ -1,6 +1,8 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.finance.IFinanceMessages.BUNDLE_KEY;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INACCURACY_MSG;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_NO_AMORTIZATION_MSG;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +34,6 @@ import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -167,11 +168,11 @@ public class InvoiceRecorder implements ITransferObject {
 	}
 	
 	public void addFinanceInaccuracyMessage() {
-		String msg = AonUtil.getMessage(BUNDLE_KEY, IFinanceMessages.FINANCE_INACCURACY_MSG);
+		String msg = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INACCURACY_MSG);
 		addMessage(msg);
 	}
 	public void addFinanceNoAmortizationForm() {
-		String msg = AonUtil.getMessage(BUNDLE_KEY, IFinanceMessages.FINANCE_NO_AMORTIZATION_MSG);
+		String msg = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_NO_AMORTIZATION_MSG);
 		addMessage(msg);
 	}
 	

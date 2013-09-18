@@ -1,15 +1,18 @@
 package com.code.aon.ui.marketing.print;
 
+import static com.code.aon.ui.commercial.controller.ICommercialConstants.BUNDLE_NAME;
+import static com.code.aon.ui.common.ICommonMessages.ACTION_EXPORT;
 import static com.code.aon.ui.common.ICommonMessages.COMMENT;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_DOCUMENT;
 import static com.code.aon.ui.common.ICommonMessages.ID;
 import static com.code.aon.ui.common.ICommonMessages.LOGIN_USER;
+import static com.code.aon.ui.common.ICommonMessages.MARKETING_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.QUESTION;
+import static com.code.aon.ui.common.ICommonMessages.REGISTRY_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.STATUS;
-import static com.code.aon.ui.marketing.controller.IMarketingConstants.ACTION_EXPORT;
-import static com.code.aon.ui.marketing.controller.IMarketingConstants.BUNDLE_NAME;
+import static com.code.aon.ui.common.ICommonMessages.SURVEY;
+import static com.code.aon.ui.common.ICommonMessages.TARGET;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME;
-import static com.code.aon.ui.marketing.controller.IMarketingConstants.SURVEY;
-import static com.code.aon.ui.registry.controller.IRegistryConstants.TARGET;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,11 +54,8 @@ import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Question;
 import com.code.aon.registry.enumeration.QuestionType;
-import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.marketing.controller.IMarketingConstants;
-import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -143,12 +143,12 @@ public class MarketingActionReport {
             row = sheet.createRow(1);
             HSSFCellUtil.createCell(row, 0, AonUtil.getMessage(ID), headerCellStyle);
             HSSFCellUtil.createCell(row, 1, AonUtil.getMessage(COMPANY_DOCUMENT), headerCellStyle);
-            HSSFCellUtil.createCell(row, 2, AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, TARGET), headerCellStyle);
+            HSSFCellUtil.createCell(row, 2, AonUtil.getMessage(TARGET), headerCellStyle);
             HSSFCellUtil.createCell(row, 3, AonUtil.getMessage(COMMENT), headerCellStyle);
             HSSFCellUtil.createCell(row, 4, AonUtil.getMessage(LOGIN_USER), headerCellStyle);
             HSSFCellUtil.createCell(row, 5, AonUtil.getMessage(STATUS), headerCellStyle);
             HSSFCellUtil.createCell(row, 6, AonUtil.getMessage(ID), headerCellStyle);
-            HSSFCellUtil.createCell(row, 7, AonUtil.getMessage(IMarketingConstants.BUNDLE_NAME, SURVEY), headerCellStyle);
+            HSSFCellUtil.createCell(row, 7, AonUtil.getMessage(MARKETING_BUNDLE, SURVEY), headerCellStyle);
 
 			cellIdx = 8;
 			for (Question q : getSurveyQuestionList()) {
@@ -185,9 +185,9 @@ public class MarketingActionReport {
             sheet.setColumnWidth(3, 200*256);
             row = sheet.createRow(0);
             HSSFCellUtil.createCell(row, 0, AonUtil.getMessage(ID), headerCellStyle);
-            HSSFCellUtil.createCell(row, 1, AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, IRegistryConstants.QUESTION), headerCellStyle);
-            HSSFCellUtil.createCell(row, 2, AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, IRegistryConstants.QUESTION), headerCellStyle);
-            HSSFCellUtil.createCell(row, 3, AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, IRegistryConstants.QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 1, AonUtil.getMessage(REGISTRY_BUNDLE, QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 2, AonUtil.getMessage(REGISTRY_BUNDLE, QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 3, AonUtil.getMessage(REGISTRY_BUNDLE, QUESTION), headerCellStyle);
             rowIdx = 1;
 			for (Question q : getSurveyQuestionList()) {
 				row = sheet.createRow(rowIdx);
@@ -198,7 +198,7 @@ public class MarketingActionReport {
 				rowIdx++;
 			}
  
-            String fileName = AonUtil.getMessage(BUNDLE_NAME, ACTION_EXPORT, action.getId());
+            String fileName = AonUtil.getMessage(MARKETING_BUNDLE, ACTION_EXPORT, action.getId());
             file = File.createTempFile(fileName, ".XLS");
             FileOutputStream fileOut = new FileOutputStream(file);
             wb.write(fileOut);

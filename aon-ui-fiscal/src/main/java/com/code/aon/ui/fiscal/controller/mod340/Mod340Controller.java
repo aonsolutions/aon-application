@@ -17,11 +17,10 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.tax.model.MOD340.MOD340Format;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.mod340.Model340Parameters;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.fiscal.file.MOD340Writer;
 import com.code.aon.ui.util.AonUtil;
 
-public class Mod340Controller implements IFinanceMessages {
+public class Mod340Controller {
 
 	private Model340Parameters params;
 	private MOD340Format format;

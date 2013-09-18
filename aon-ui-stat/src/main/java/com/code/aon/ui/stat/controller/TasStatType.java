@@ -1,15 +1,18 @@
 package com.code.aon.ui.stat.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.STAT_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.STAT_MENU_TAS_OWNER;
+import static com.code.aon.ui.common.ICommonMessages.STAT_MENU_TAS_TASITEM;
+
 import java.util.Locale;
 
 import com.code.aon.common.enumeration.IResourceable;
-import com.code.aon.ui.stat.IStatMessages;
 import com.code.aon.ui.util.AonUtil;
 
 public enum TasStatType implements IResourceable {
 
-	OWNER_STAT(IStatMessages.STAT_MENU_TAS_OWNER),
-	TAS_ITEM_STAT(IStatMessages.STAT_MENU_TAS_TASITEM);
+	OWNER_STAT(STAT_MENU_TAS_OWNER),
+	TAS_ITEM_STAT(STAT_MENU_TAS_TASITEM);
 
 	private String title;
 	
@@ -18,7 +21,7 @@ public enum TasStatType implements IResourceable {
 	}
 
     public String getName(Locale locale) {
-		return AonUtil.getMessage(IStatMessages.BUNDLE_NAME , title);
+		return AonUtil.getMessage(STAT_BUNDLE , title);
     }
 	
 }

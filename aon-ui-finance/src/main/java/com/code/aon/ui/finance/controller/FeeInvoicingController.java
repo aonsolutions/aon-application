@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.NO_INVOICE_KEY;
+
 import java.util.Collection;
 import java.util.Date;
 
@@ -33,13 +36,12 @@ import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingEngine;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class FeeInvoicingController implements IProgression, IFinanceConstants, IFinanceMessages {
+public class FeeInvoicingController implements IProgression, IFinanceConstants {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FeeInvoicingController.class.getName());
 
@@ -186,7 +188,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 				setRedirect(true);
 			} else {
 				setRedirect(false);
-				AonUtil.addInfoMessageFromBundle(BUNDLE_KEY, NO_INVOICE_KEY);
+				AonUtil.addInfoMessageFromBundle(FINANCE_BUNDLE, NO_INVOICE_KEY);
 			}
 		} catch (Exception e) {
 			setRedirect(false);

@@ -1,6 +1,11 @@
 package com.code.aon.ui.fiscal.controller;
 
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INPUT_VAT_REPORT;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVESTMENT_VAT_REPORT;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_OUTPUT_VAT_REPORT;
+
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -31,12 +36,11 @@ import com.code.aon.fiscal.enumeration.VatType;
 import com.code.aon.fiscal.vat.Vat;
 import com.code.aon.fiscal.vat.VatCollection;
 import com.code.aon.fiscal.vat.VatCollectionParameters;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.fiscal.vat.VatReportTypeBreakdown;
 import com.code.aon.ui.fiscal.vat.VatTypeBreakdown;
 import com.code.aon.ui.util.AonUtil;
 
-public class VatReportController implements ICollectionProvider, IFinanceMessages{
+public class VatReportController implements ICollectionProvider {
 
 	private static final Double GENERAL_PERCENT = new Double(16);
 	private static final Double REDUCED_PERCENT = new Double(7);
@@ -317,11 +321,11 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		Locale locale = AonUtil.getCurrentLocale();
 		StringBuilder buf = new StringBuilder(); 
 		if (params.getVatType() == VatType.OUTPUT) {
-			buf.append(AonUtil.getMessage(BUNDLE_KEY, FINANCE_OUTPUT_VAT_REPORT));
+			buf.append(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_OUTPUT_VAT_REPORT));
 		} else if (params.getVatType() == VatType.INPUT) {
-			buf.append(AonUtil.getMessage(BUNDLE_KEY, FINANCE_INPUT_VAT_REPORT));	
+			buf.append(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INPUT_VAT_REPORT));	
 		} else if (params.getVatType() == VatType.INVESTMENT) {
-			buf.append(AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVESTMENT_VAT_REPORT));
+			buf.append(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVESTMENT_VAT_REPORT));
 		}
 		if (params.getVatReportType() != null) {
 			Double percent = params.getVatPercent(); 

@@ -1,25 +1,29 @@
 package com.code.aon.ui.stat.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.CATEGORY;
+import static com.code.aon.ui.common.ICommonMessages.CREDITOR;
+import static com.code.aon.ui.common.ICommonMessages.CUSTOMER;
 import static com.code.aon.ui.common.ICommonMessages.DAY;
+import static com.code.aon.ui.common.ICommonMessages.EXPENSE;
 import static com.code.aon.ui.common.ICommonMessages.MONTH;
 import static com.code.aon.ui.common.ICommonMessages.PRODUCT;
+import static com.code.aon.ui.common.ICommonMessages.STAT_ABC_CREDITOR;
+import static com.code.aon.ui.common.ICommonMessages.STAT_ABC_EXPENSE;
+import static com.code.aon.ui.common.ICommonMessages.STAT_ABC_SUPPLIER;
+import static com.code.aon.ui.common.ICommonMessages.STAT_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.STAT_MENU_ACUMULADO;
+import static com.code.aon.ui.common.ICommonMessages.STAT_MENU_ACUMULADO2;
+import static com.code.aon.ui.common.ICommonMessages.STAT_MENU_ACUMULADO_CREDITOR;
+import static com.code.aon.ui.common.ICommonMessages.STAT_MENU_CUSTOMERS;
+import static com.code.aon.ui.common.ICommonMessages.STAT_MENU_EXPENSE;
+import static com.code.aon.ui.common.ICommonMessages.STAT_MENU_SUPPLIERS;
+import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_ABC_CATEGORY;
+import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_ABC_CUSTOMER;
+import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_ABC_PRODUCT;
+import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_CATEGORY;
+import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_SUMMARY;
+import static com.code.aon.ui.common.ICommonMessages.SUPPLIER;
 import static com.code.aon.ui.common.ICommonMessages.YEAR;
-import static com.code.aon.ui.stat.IStatMessages.BUNDLE_NAME;
-import static com.code.aon.ui.stat.IStatMessages.STAT_ABC_CREDITOR;
-import static com.code.aon.ui.stat.IStatMessages.STAT_ABC_EXPENSE;
-import static com.code.aon.ui.stat.IStatMessages.STAT_ABC_SUPPLIER;
-import static com.code.aon.ui.stat.IStatMessages.STAT_MENU_ACUMULADO;
-import static com.code.aon.ui.stat.IStatMessages.STAT_MENU_ACUMULADO2;
-import static com.code.aon.ui.stat.IStatMessages.STAT_MENU_ACUMULADO_CREDITOR;
-import static com.code.aon.ui.stat.IStatMessages.STAT_MENU_CUSTOMERS;
-import static com.code.aon.ui.stat.IStatMessages.STAT_MENU_EXPENSE;
-import static com.code.aon.ui.stat.IStatMessages.STAT_MENU_SUPPLIERS;
-import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_ABC_CATEGORY;
-import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_ABC_CUSTOMER;
-import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_ABC_PRODUCT;
-import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_CATEGORY;
-import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_SUMMARY;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -518,15 +522,15 @@ public class StatEngineController {
 			setYearStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_ACUMULADO));
 				setItemTitle(AonUtil.getMessage(YEAR));
 			}
 			if (invoiceType == 0) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO2));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_ACUMULADO2));
 				setItemTitle(AonUtil.getMessage(YEAR));
 			}
 			if (invoiceType == 2) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_EXPENSE));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_EXPENSE));
 				setItemTitle(AonUtil.getMessage(YEAR));
 			}
 			yearStatModel = null;
@@ -568,15 +572,15 @@ public class StatEngineController {
 			setMonthStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_ACUMULADO));
 				setItemTitle(AonUtil.getMessage(MONTH));
 			}
 			if (invoiceType == 0) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO2));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_ACUMULADO2));
 				setItemTitle(AonUtil.getMessage(MONTH));
 			}
 			if (invoiceType == 2) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_EXPENSE));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_EXPENSE));
 				setItemTitle(AonUtil.getMessage(MONTH));
 			}
 	
@@ -594,11 +598,11 @@ public class StatEngineController {
 			setMonthStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_ACUMULADO));
 				setItemTitle(AonUtil.getMessage(MONTH));
 			} else {
 				setReportName(AonUtil
-						.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO2));
+						.getMessage(STAT_BUNDLE, STAT_MENU_ACUMULADO2));
 				setItemTitle(AonUtil.getMessage(MONTH));
 			}
 			monthStatModel = null;
@@ -634,15 +638,15 @@ public class StatEngineController {
 			setDayStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_ACUMULADO));
 				setItemTitle(AonUtil.getMessage(DAY));
 			}
 			if (invoiceType == 0) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO2));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_ACUMULADO2));
 				setItemTitle(AonUtil.getMessage(DAY));
 			}
 			if (invoiceType == 2) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_EXPENSE));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_EXPENSE));
 				setItemTitle(AonUtil.getMessage(DAY));
 			}
 			dayStatModel = null;
@@ -682,16 +686,16 @@ public class StatEngineController {
 			setCustomerStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_CUSTOMERS));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_CUSTOMERS));
 				setItemTitle(AonUtil.getMessage(ICommonMessages.CUSTOMER));
 			}
 			if (invoiceType == 0) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_SUPPLIERS));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_SUPPLIERS));
 				setItemTitle(AonUtil.getMessage(ICommonMessages.SUPPLIER));
 			}
 			if (invoiceType == 2) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO_CREDITOR));
-				setItemTitle(AonUtil.getMessage(ICommonMessages.CREDITOR));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_ACUMULADO_CREDITOR));
+				setItemTitle(AonUtil.getMessage(CREDITOR));
 			}			
 			customerStatModel = null;
 		} catch (ManagerBeanException e) {
@@ -882,7 +886,7 @@ public class StatEngineController {
 			list.addAll(getStatEngine().getCategoryStats(params));
 			setYearStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_CATEGORY));
 			setItemTitle(AonUtil.getMessage(CATEGORY));
 			yearStatModel = null;
 			
@@ -919,7 +923,7 @@ public class StatEngineController {
 			list.addAll(getStatEngine().getCategoryCustomerStats(this.params));
 			setCustomerStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_CATEGORY));
 			setItemTitle(AonUtil.getMessage(ICommonMessages.CUSTOMER));
 			customerStatModel = null;
 			setBackAction("category_stats_year");
@@ -945,7 +949,7 @@ public class StatEngineController {
 			list.addAll(getStatEngine().getProductRegistryStats(this.params));
 			setCustomerStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_CATEGORY));
 			setItemTitle(AonUtil.getMessage(ICommonMessages.CUSTOMER));
 			customerStatModel = null;
 			setBackAction("category_product_stats");
@@ -979,7 +983,7 @@ public class StatEngineController {
 			list.addAll(getStatEngine().getSummaryStats(params));
 			setMonthStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_SUMMARY));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_SUMMARY));
 			setItemTitle(AonUtil.getMessage(MONTH));
 			monthStatModel = null;
 		} catch (ManagerBeanException e) {
@@ -997,16 +1001,16 @@ public class StatEngineController {
 			setAbcStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_ABC_CUSTOMER));
-				setItemTitle(AonUtil.getMessage(ICommonMessages.CUSTOMER));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_ABC_CUSTOMER));
+				setItemTitle(AonUtil.getMessage(CUSTOMER));
 			}
 			if (invoiceType == 0) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_ABC_SUPPLIER));
-				setItemTitle(AonUtil.getMessage(ICommonMessages.SUPPLIER));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_ABC_SUPPLIER));
+				setItemTitle(AonUtil.getMessage(SUPPLIER));
 			}
 			if (invoiceType == 2) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_ABC_CREDITOR));
-				setItemTitle(AonUtil.getMessage(ICommonMessages.CREDITOR));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_ABC_CREDITOR));
+				setItemTitle(AonUtil.getMessage(CREDITOR));
 			}	
 			abcStatModel = null;
 		} catch (ManagerBeanException e) {
@@ -1024,16 +1028,16 @@ public class StatEngineController {
 			setAbcStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_ABC_PRODUCT));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_ABC_PRODUCT));
 				setItemTitle(AonUtil.getMessage(PRODUCT));
 			}
 			if (invoiceType == 0) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_ABC_PRODUCT));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_ABC_PRODUCT));
 				setItemTitle(AonUtil.getMessage(PRODUCT));
 			}
 			if (invoiceType == 2) {
-				setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_ABC_EXPENSE));
-				setItemTitle(AonUtil.getMessage(ICommonMessages.EXPENSE));
+				setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_ABC_EXPENSE));
+				setItemTitle(AonUtil.getMessage(EXPENSE));
 			}	
 			
 			abcStatModel = null;
@@ -1052,7 +1056,7 @@ public class StatEngineController {
 			list.addAll(getStatEngine().getABCStatsByCategory(params));
 			setAbcStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_ABC_CATEGORY));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_ABC_CATEGORY));
 			setItemTitle(AonUtil.getMessage(CATEGORY));
 			abcStatModel = null;
 		} catch (ManagerBeanException e) {
@@ -1115,7 +1119,7 @@ public class StatEngineController {
 		list.addAll(getStatEngine().getRegistryProductStats(params));
 		setProductStats(list);
 		calculateTotals(list);
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_ABC_PRODUCT));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_ABC_PRODUCT));
 		setItemTitle(AonUtil.getMessage(PRODUCT));
 		productModel = null;
 	}
@@ -1128,7 +1132,7 @@ public class StatEngineController {
 		list.addAll(getStatEngine().getAbcCustomerStats(params));
 		setAbcStats(list);
 		calculateTotals(list);
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_ABC_CATEGORY));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_ABC_CATEGORY));
 		setItemTitle(AonUtil.getMessage(PRODUCT));
 		abcStatModel = null;
 	}
@@ -1141,15 +1145,15 @@ public class StatEngineController {
 		setMonthStats(list);
 		calculateTotals(list);
 		if (invoiceType == 1) {
-			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_CATEGORY));
 			setItemTitle(AonUtil.getMessage(PRODUCT));
 		}
 		if (invoiceType == 0) {
-			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_CATEGORY));
 			setItemTitle(AonUtil.getMessage(PRODUCT));
 		}
 		if (invoiceType == 2) {
-			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_CATEGORY));
 			setItemTitle(AonUtil.getMessage(ICommonMessages.EXPENSE));
 		}	
 		
@@ -1248,7 +1252,7 @@ public class StatEngineController {
 			list.addAll(getStatEngine().getCategoryStats(params));
 			setYearStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_CATEGORY));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_CATEGORY));
 			setItemTitle(AonUtil.getMessage(CATEGORY));
 			yearStatModel = null;
 		} catch (ManagerBeanException e) {
@@ -1264,7 +1268,7 @@ public class StatEngineController {
 		List<Stat> list = new LinkedList<Stat>();
 		list.addAll(getStatEngine().getYearStats(params));
 		calculateTotals(list);
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_MENU_ACUMULADO));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_MENU_ACUMULADO));
 		setItemTitle(AonUtil.getMessage(YEAR));
 		yearStatModel = null;
 		setBackAction("customer_stat_list_year");

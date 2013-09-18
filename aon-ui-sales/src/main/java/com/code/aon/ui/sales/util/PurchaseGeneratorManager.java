@@ -1,5 +1,9 @@
 package com.code.aon.ui.sales.util;
 
+import static com.code.aon.ui.common.ICommonMessages.SALES_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.SALES_PURCHASE_REFERENCE;
+import static com.code.aon.ui.common.ICommonMessages.SALES_TO_PURCHASE;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -39,7 +43,6 @@ import com.code.aon.sales.SalesDetail;
 import com.code.aon.seller.Seller;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.sales.ISalesMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -237,7 +240,7 @@ public class PurchaseGeneratorManager {
 			sales.setPurchaseGenerated(true);
 			StringBuffer buf = new StringBuffer();
 	    	for(Purchase purchase: purchaseList){
-	    		buf.append(AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_TO_PURCHASE) + " ");
+	    		buf.append(AonUtil.getMessage(SALES_BUNDLE, SALES_TO_PURCHASE) + " ");
 	    		buf.append(purchase.getReferenceCode());
 	    		buf.append("\n");
 	    	}
@@ -272,7 +275,7 @@ public class PurchaseGeneratorManager {
 		purchase.setStatus(PurchaseStatus.PENDING);
 		purchase.setComments(null);
 		if(StringUtils.isNotBlank(sales.getPurchaseReference())){
-			String message = AonUtil.getMessage(ISalesMessages.BUNDLE_KEY, ISalesMessages.SALES_PURCHASE_REFERENCE);
+			String message = AonUtil.getMessage(SALES_BUNDLE, SALES_PURCHASE_REFERENCE);
 			purchase.setRemarks(message + ": " +  sales.getPurchaseReference());
 		}
 		purchase.setEmailCommunication(false);

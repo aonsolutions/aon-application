@@ -1,6 +1,6 @@
 package com.code.aon.ui.admin.util;
 
-import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
+import static com.code.aon.ui.common.ICommonMessages.ADMIN_BUNDLE;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import javax.faces.application.FacesMessage;
@@ -94,7 +94,7 @@ public class IdCheckUtil {
 	}		
 	
 	private String getDuplicatedMessage( String newValue ) {
-		return AonUtil.getMessage(BUNDLE_NAME, duplicateMessage, newValue);
+		return AonUtil.getMessage(ADMIN_BUNDLE, duplicateMessage, newValue);
 	}
 	
 }

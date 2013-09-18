@@ -1,5 +1,8 @@
 package com.code.aon.ui.product.event;
 
+import static com.code.aon.ui.common.ICommonMessages.CATALOGUE_DEFINED_FOR_TARIFF_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.PRODUCT_BUNDLE;
+
 import java.util.List;
 
 import javax.faces.model.SelectItem;
@@ -13,13 +16,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.product.IItemMessages;
 import com.code.aon.ui.product.controller.IItemConstants;
 import com.code.aon.ui.product.controller.ProductCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class TariffCatalogueControllerListener extends ControllerAdapter implements IItemMessages, IItemConstants {
+public class TariffCatalogueControllerListener extends ControllerAdapter implements IItemConstants {
 
     @Override
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -45,7 +47,7 @@ public class TariffCatalogueControllerListener extends ControllerAdapter impleme
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_TARIFF_ID), tariffCatalogue.getTariff().getId());
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_ID), tariffCatalogue.getCatalogue().getId());
 			if (bean.getCount(criteria) > 0) {
-				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, CATALOGUE_DEFINED_FOR_TARIFF_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(PRODUCT_BUNDLE, CATALOGUE_DEFINED_FOR_TARIFF_ERROR));
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

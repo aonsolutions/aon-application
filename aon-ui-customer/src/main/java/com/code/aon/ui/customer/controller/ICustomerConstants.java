@@ -2,8 +2,6 @@ package com.code.aon.ui.customer.controller;
 
 public interface ICustomerConstants {
 	
-	String BUNDLE_NAME = "customerBundle";
-
 	// ************************************************************
 	// BEAN
 	// ************************************************************

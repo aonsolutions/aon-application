@@ -1,5 +1,9 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_CHECKING_MODULE_NO_FINANCE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_CHECKING_MODULE_WRONG_FINANCE;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,7 +27,7 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.finance.IFinanceMessages;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -102,7 +106,7 @@ public class FinanceCheckingController {
 		Query query = session.createQuery(select);
 		noFinanceInvoiceList = query.list();
 
-		setReportName(AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_INVOICE_CHECKING_MODULE_NO_FINANCE));
+		setReportName(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_CHECKING_MODULE_NO_FINANCE));
 		if (noFinanceInvoiceList.size() == 0) {
 			AonUtil.addInfoMessage("No hay facturas sin vencimientos");
 		}
@@ -147,7 +151,7 @@ public class FinanceCheckingController {
 			}
 		}
 
-		setReportName(AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_INVOICE_CHECKING_MODULE_WRONG_FINANCE));
+		setReportName(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_CHECKING_MODULE_WRONG_FINANCE));
 		if (notEqualAmountInvoiceList.size() == 0) {
 			AonUtil.addInfoMessage("No hay facturas con vencimientos erroneos");
 		}

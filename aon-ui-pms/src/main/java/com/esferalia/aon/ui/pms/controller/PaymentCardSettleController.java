@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_FRACTIONED;
 import static com.code.aon.ui.common.ICommonMessages.PRICE_PATTERN;
 
 import java.text.DecimalFormat;
@@ -40,9 +42,6 @@ import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.common.ICommonConstants;
-import com.code.aon.ui.common.ICommonMessages;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.FinanceListController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.event.FinanceListSearchListener;
@@ -621,7 +620,7 @@ public class PaymentCardSettleController {
 	}
 	
 	private void createFinanceTracking(Finance finance, int fractionNum, Double amount){
-		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, fractionNum, 2);
+		String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_FRACTIONED, fractionNum, 2);
 		FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 	}
 	

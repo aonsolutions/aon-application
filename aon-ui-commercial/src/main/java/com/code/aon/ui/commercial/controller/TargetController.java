@@ -1,12 +1,13 @@
 package com.code.aon.ui.commercial.controller;
 
 
-import static com.code.aon.ui.commercial.ICommercialMessages.COMMERCIAL_TARGET_ADVERTISING;
 import static com.code.aon.ui.common.ICommonMessages.ACTIVE;
 import static com.code.aon.ui.common.ICommonMessages.ADDRESS;
 import static com.code.aon.ui.common.ICommonMessages.ALIAS;
 import static com.code.aon.ui.common.ICommonMessages.BLOCKED;
 import static com.code.aon.ui.common.ICommonMessages.CELLULAR;
+import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_TARGET_ADVERTISING;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_NAME;
 import static com.code.aon.ui.common.ICommonMessages.DOCUMENT;
 import static com.code.aon.ui.common.ICommonMessages.ENTITY;
@@ -15,12 +16,13 @@ import static com.code.aon.ui.common.ICommonMessages.ID;
 import static com.code.aon.ui.common.ICommonMessages.INACTIVE;
 import static com.code.aon.ui.common.ICommonMessages.PHONE;
 import static com.code.aon.ui.common.ICommonMessages.POSTAL_CODE;
+import static com.code.aon.ui.common.ICommonMessages.REGISTRY_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.REGISTRY_CITY;
+import static com.code.aon.ui.common.ICommonMessages.REGISTRY_EMAIL;
+import static com.code.aon.ui.common.ICommonMessages.REGISTRY_NATIONALITY;
 import static com.code.aon.ui.common.ICommonMessages.STATE;
 import static com.code.aon.ui.common.ICommonMessages.STATUS;
 import static com.code.aon.ui.common.ICommonMessages.WEB;
-import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_CITY;
-import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_EMAIL;
-import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_NATIONALITY;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -71,9 +73,7 @@ import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.report.ReportException;
 import com.code.aon.sales.bridge.util.SalesBridgeUtil;
 import com.code.aon.seller.Seller;
-import com.code.aon.ui.commercial.ICommercialMessages;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.report.export.ReportExporter;
 import com.code.aon.ui.util.AonUtil;
@@ -174,7 +174,7 @@ public class TargetController extends RegistryController implements ICommercialC
 				+",'"+Advertising.AUTO_EXCLUSION.getName(AonUtil.getCurrentLocale())+"'"
 				+",'"+Advertising.DENIED.getName(AonUtil.getCurrentLocale())+"'"
 				+",'"+Advertising.ROBINSON.getName(AonUtil.getCurrentLocale())+"'"
-					+") `" + AonUtil.getMessage(ICommercialMessages.BUNDLE_KEY,COMMERCIAL_TARGET_ADVERTISING) + "`"
+					+") `" + AonUtil.getMessage(COMMERCIAL_BUNDLE, COMMERCIAL_TARGET_ADVERTISING) + "`"
 			+",ELT(r.type+1" 
 				+",'"+RegistryType.LEGAL.getName(AonUtil.getCurrentLocale())+"'"
 				+",'"+RegistryType.NATURAL.getName(AonUtil.getCurrentLocale())+"'"
@@ -192,16 +192,16 @@ public class TargetController extends RegistryController implements ICommercialC
 			+",r.document_country,r.document) AS CHAR) `" + AonUtil.getMessage(DOCUMENT) + "`"
 		 	+",r.name `" + AonUtil.getMessage(COMPANY_NAME) + "`"
 			+",r.alias `" + AonUtil.getMessage(ALIAS) + "`"
-			+",r.nationality `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_NATIONALITY) + "`"
+			+",r.nationality `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_NATIONALITY) + "`"
 			+",CAST( CONCAT_WS(' ',ra.street_type,ra.address,ra.number,ra.address2,ra.address3) AS CHAR) `" + AonUtil.getMessage(ADDRESS) + "`"
-			+",ra.city `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_CITY) + "`"
+			+",ra.city `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_CITY) + "`"
 			+",ra.zip `" + AonUtil.getMessage(POSTAL_CODE) + "`"
 			+",gz.code `Id " + AonUtil.getMessage(STATE) + "`"
 			+",gz.name `" + AonUtil.getMessage(STATE) + "`"
 			+",(SELECT rm1.value FROM rmedia rm1 WHERE r.id = rm1.registry  AND rm1.media = 1 LIMIT 1) `" + AonUtil.getMessage(PHONE) + "`"
 			+",(SELECT rm2.value FROM rmedia rm2 WHERE r.id = rm2.registry  AND rm2.media = 2 LIMIT 1) `" + AonUtil.getMessage(CELLULAR) + "`"
 			+",(SELECT rm3.value FROM rmedia rm3 WHERE r.id = rm3.registry  AND rm3.media = 3 LIMIT 1) `" + AonUtil.getMessage(FAX) + "`"
-			+",(SELECT rm4.value FROM rmedia rm4 WHERE r.id = rm4.registry  AND rm4.media = 4 LIMIT 1) `" + AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME,REGISTRY_EMAIL) + "`"
+			+",(SELECT rm4.value FROM rmedia rm4 WHERE r.id = rm4.registry  AND rm4.media = 4 LIMIT 1) `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_EMAIL) + "`"
 			+",(SELECT rm5.value FROM rmedia rm5 WHERE r.id = rm5.registry  AND rm5.media = 5 LIMIT 1) `" + AonUtil.getMessage(WEB) + "`"
 			+" FROM " + masterTable +" c"
 			+" INNER JOIN registry r ON r.id = c.registry"

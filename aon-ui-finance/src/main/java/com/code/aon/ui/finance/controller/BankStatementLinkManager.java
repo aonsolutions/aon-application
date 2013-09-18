@@ -1,5 +1,11 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_FRACTIONED;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_SETTLED;
+import static com.code.aon.ui.common.ICommonMessages.PAYMENT_INVALID_AMOUNT_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.PAYMENT_NOT_MATCH_AMOUNT_ERROR;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -38,7 +44,6 @@ import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.common.ICommonMessages;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -587,7 +592,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			} else if (statementLink.getStatus() == StatementLinkStatus.SETTLED) {
 				tracking.getFinance().setFinanceStatus(FinanceStatus.SETTLED);
 
-				String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_SETTLED);
+				String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_SETTLED);
 				FinanceTrackingWriter.addFinanceTracking(tracking.getFinance(), new Date(), FinanceTrackingType.SETTLED, message);
 			}
 			financeBean.update(tracking.getFinance());
@@ -684,7 +689,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 
 	public void onFraction(ActionEvent event) throws ManagerBeanException {
 		if (getAmount() == 0) {
-			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_INVALID_AMOUNT_ERROR);
+			AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, PAYMENT_INVALID_AMOUNT_ERROR);
 			throw new AbortProcessingException();
 		}
 		if (getAmount().doubleValue() != getFractionFinance().getTotalAmount()) {
@@ -693,15 +698,15 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			getFractionFinance().setAmount(CommonUtil.round(getAmount().doubleValue() - getFractionFinance().getExpenses()));
 			financeBean.update(getFractionFinance());
-			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 1, 2);
+			String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_FRACTIONED, 1, 2);
 			FinanceTrackingWriter.addFinanceTracking(getFractionFinance(), new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 
 			FinanceGenerator financeGenerator = new FinanceGenerator();
 			Finance fraction = financeGenerator.duplicateFinance(getFractionFinance(), CommonUtil.round(amount - getAmount().doubleValue()));
-			message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 2, 2);
+			message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_FRACTIONED, 2, 2);
 			FinanceTrackingWriter.addFinanceTracking(fraction, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 
-			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_NOT_MATCH_AMOUNT_ERROR);
+			AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, PAYMENT_NOT_MATCH_AMOUNT_ERROR);
 		}
 	}
 

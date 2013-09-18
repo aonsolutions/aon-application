@@ -4,31 +4,7 @@ public interface IPayrollConstants {
 	
 	String ZERO_VALUE = "0";
 	String IPREM_FORMMULA = "EXCESO_IPREM";
-
-	// ************************************************************
-	// MESSAGES
-	// ************************************************************
-	
-	/** ResourceBundle name. */
-	String BUNDLE_BASE_NAME = "com.esferalia.aon.ui.payroll.i18n.messages";
-	String BUNDLE_NAME = "payrollBundle";
-	String SALARY_EMAIL_SUBJECT = "payroll_email_subject";
-	String SALARY_EMAIL_BODY_HEADER = "payroll_email_subject_header";
-	String SALARY_EMAIL_BODY_LINE = "payroll_email_subject_line";
-	String SALARY_EMAIL_BODY_FOOTER = "payroll_email_subject_footer";
-	String PAYROLL_ECONOMIC_DATA = "payroll_economic_data";
-	String PAYROLL_SALARY_PAYMENTS = "payroll_salary_payments_tab";
-	String PAYROLL_SALARY_DEDUCTIONS = "payroll_salary_deductions_tab";
-	String PAYROLL_SALARY_BONUS = "payroll_salary_bonus_tab";
-	String PAYROLL_SALARY_EMBARGOS = "payroll_salary_embargos_tab";
-	String PAYROLL_SALARY = "payroll_salary";
-	String PAYROLL_SETTLE_NOTICE_DAY_AMOUNT = "payroll_settle_noticeDayAmount";
-	String PAYROLL_SETTLE_VACATION_AMOUNT = "payroll_settle_vacationAmount";
-	String PAYROLL_SETTLE_COMPENSATION = "payroll_settle_compensation";
-	String PAYROLL_IRPF = "payroll_irpf";
-	String PAYROLL_TRAINING_CENTER_DIRECT_DEBIT = "payroll_trainingCenter_directDebit";
-	
-	
+		
 	// ************************************************************
 	// CONTROLLERS
 	// ************************************************************

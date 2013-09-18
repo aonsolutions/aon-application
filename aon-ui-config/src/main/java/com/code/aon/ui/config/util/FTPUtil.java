@@ -1,19 +1,19 @@
 package com.code.aon.ui.config.util;
 
-import static com.code.aon.ui.config.controller.ConfigConstants.BUNDLE_NAME;
-import static com.code.aon.ui.config.controller.ConfigConstants.FTP_CONNECTED;
-import static com.code.aon.ui.config.controller.ConfigConstants.FTP_CONNECTING;
-import static com.code.aon.ui.config.controller.ConfigConstants.FTP_DISCONNECTED;
-import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_CHANGE_DIRECTORY;
-import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_CONNECTION;
-import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_CREATE_DIRECTORY;
-import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_CREATE_FILE;
-import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_DELETE_DIRECTORY;
-import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_DELETE_FILE;
-import static com.code.aon.ui.config.controller.ConfigConstants.FTP_ERROR_LOGIN;
-import static com.code.aon.ui.config.controller.ConfigConstants.FTP_LOGIN;
-import static com.code.aon.ui.config.controller.ConfigConstants.FTP_LOGOUT;
-import static com.code.aon.ui.config.controller.ConfigConstants.FTP_UPLOAD_FILE;
+import static com.code.aon.ui.common.ICommonMessages.CONFIG_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FTP_CONNECTED;
+import static com.code.aon.ui.common.ICommonMessages.FTP_CONNECTING;
+import static com.code.aon.ui.common.ICommonMessages.FTP_DISCONNECTED;
+import static com.code.aon.ui.common.ICommonMessages.FTP_ERROR_CHANGE_DIRECTORY;
+import static com.code.aon.ui.common.ICommonMessages.FTP_ERROR_CONNECTION;
+import static com.code.aon.ui.common.ICommonMessages.FTP_ERROR_CREATE_DIRECTORY;
+import static com.code.aon.ui.common.ICommonMessages.FTP_ERROR_CREATE_FILE;
+import static com.code.aon.ui.common.ICommonMessages.FTP_ERROR_DELETE_DIRECTORY;
+import static com.code.aon.ui.common.ICommonMessages.FTP_ERROR_DELETE_FILE;
+import static com.code.aon.ui.common.ICommonMessages.FTP_ERROR_LOGIN;
+import static com.code.aon.ui.common.ICommonMessages.FTP_LOGIN;
+import static com.code.aon.ui.common.ICommonMessages.FTP_LOGOUT;
+import static com.code.aon.ui.common.ICommonMessages.FTP_UPLOAD_FILE;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -92,7 +92,7 @@ public class FTPUtil {
 	private boolean connect(String server) {
 		this.ftp = new FTPClient();
 		LOGGER.debug("Connecting to: {}", server );
-		logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_CONNECTING) );
+		logger.info( AonUtil.getMessage(CONFIG_BUNDLE, FTP_CONNECTING) );
 		try {
 			ftp.connect(server);
 			if ( isReplyOk() ) {
@@ -101,13 +101,13 @@ public class FTPUtil {
 		} catch (Throwable e) {
 			LOGGER.error("Error connecting " + server, e);
 		}		
-		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_CONNECTION) );
+		logger.error( AonUtil.getMessage(CONFIG_BUNDLE, FTP_ERROR_CONNECTION) );
 		return false;
 	}
 
 	private void login( String user, String password ) {
 		try {
-			logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_LOGIN) );
+			logger.info( AonUtil.getMessage(CONFIG_BUNDLE, FTP_LOGIN) );
 			LOGGER.debug("Login user: {}", user );
 			ftp.login(user, password);
 			if ( isReplyOk() ) {
@@ -117,13 +117,13 @@ public class FTPUtil {
 				LOGGER.debug("System Name: {}", ftp.getSystemName());
 				LOGGER.debug("Working Directory: {}", ftp.printWorkingDirectory());
 				LOGGER.debug("File Type: {}", ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
-				logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_CONNECTED) );
+				logger.info( AonUtil.getMessage(CONFIG_BUNDLE, FTP_CONNECTED) );
 				return;
 			}
 		} catch (Throwable e) {
 			LOGGER.error("Error login user " + user, e);
 		}		
-		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_LOGIN) );
+		logger.error( AonUtil.getMessage(CONFIG_BUNDLE, FTP_ERROR_LOGIN) );
 		close();
 	}
 	
@@ -150,12 +150,12 @@ public class FTPUtil {
 	public void close() {
 		if ( ftp != null ) {
 			try {
-				logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_LOGOUT) );
+				logger.info( AonUtil.getMessage(CONFIG_BUNDLE, FTP_LOGOUT) );
 				ftp.logout();
 				if ( ftp.isConnected() ) {
 					ftp.disconnect();
 				}
-				logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_DISCONNECTED) );
+				logger.info( AonUtil.getMessage(CONFIG_BUNDLE, FTP_DISCONNECTED) );
 				ftp = null;
 			} catch (IOException e) {
 				LOGGER.error("Error closing ftp connection", e);
@@ -182,7 +182,7 @@ public class FTPUtil {
 		} catch (Throwable th) {
 			LOGGER.error("Error deleting file {}", pathname, th);
 		}
-		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_DELETE_FILE, pathname) );
+		logger.error( AonUtil.getMessage(CONFIG_BUNDLE, FTP_ERROR_DELETE_FILE, pathname) );
 	}
 
 	/**
@@ -200,7 +200,7 @@ public class FTPUtil {
 		} catch (Throwable th) {
 			LOGGER.error("Error deleting directory {}", pathname, th);
 		}
-		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_DELETE_DIRECTORY, pathname) );
+		logger.error( AonUtil.getMessage(CONFIG_BUNDLE, FTP_ERROR_DELETE_DIRECTORY, pathname) );
 	}
 
 	private void delete( String destination, FTPFile file ) throws IOException {
@@ -221,7 +221,7 @@ public class FTPUtil {
 		} catch (Throwable th) {
 			LOGGER.error( "Error in change of working directory: " + destination, th );
 		}
-		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_CHANGE_DIRECTORY, destination) );
+		logger.error( AonUtil.getMessage(CONFIG_BUNDLE, FTP_ERROR_CHANGE_DIRECTORY, destination) );
 		return false;
 	}
 	
@@ -249,7 +249,7 @@ public class FTPUtil {
 		} catch (IOException e) {
 			LOGGER.error( "Error in make directory: " + destination, e );
 		}
-		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_CREATE_DIRECTORY, destination) );
+		logger.error( AonUtil.getMessage(CONFIG_BUNDLE, FTP_ERROR_CREATE_DIRECTORY, destination) );
 	}	
 
 	private void uploadFile(File file, String destination) {
@@ -258,7 +258,7 @@ public class FTPUtil {
 		try {
 			in = new BufferedInputStream( new FileInputStream(file) );
 			double kbs = file.length() /1024.0;
-			logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_UPLOAD_FILE, file.getName(), kbs) );
+			logger.info( AonUtil.getMessage(CONFIG_BUNDLE, FTP_UPLOAD_FILE, file.getName(), kbs) );
 			if ( ftp.storeFile(destination, in) ) {
 				return;
 			}
@@ -267,7 +267,7 @@ public class FTPUtil {
 		} finally {
 			IOUtils.closeQuietly(in);
 		}
-		logger.error( AonUtil.getMessage(BUNDLE_NAME, FTP_ERROR_CREATE_FILE, destination) );
+		logger.error( AonUtil.getMessage(CONFIG_BUNDLE, FTP_ERROR_CREATE_FILE, destination) );
 	}	
 
 	public boolean upload(InputStream in, int length, String destination) {
@@ -276,7 +276,7 @@ public class FTPUtil {
 		try {
 			String name = FilenameUtils.getName(destination);
 			double kbs = length /1024.0;
-			logger.info( AonUtil.getMessage(BUNDLE_NAME, FTP_UPLOAD_FILE, name, kbs) );
+			logger.info( AonUtil.getMessage(CONFIG_BUNDLE, FTP_UPLOAD_FILE, name, kbs) );
 			uploaded = ftp.storeFile(destination, in);
 		} catch (IOException e) {
 			LOGGER.error( "Error creating file: " + destination, e );

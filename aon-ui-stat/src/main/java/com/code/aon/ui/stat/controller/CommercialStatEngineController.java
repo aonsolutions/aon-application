@@ -3,19 +3,19 @@ package com.code.aon.ui.stat.controller;
 import static com.code.aon.ui.common.ICommonMessages.ACTIVITY;
 import static com.code.aon.ui.common.ICommonMessages.CATEGORY;
 import static com.code.aon.ui.common.ICommonMessages.PRODUCT;
-import static com.code.aon.ui.stat.IStatMessages.BUNDLE_NAME;
-import static com.code.aon.ui.stat.IStatMessages.REPORT_ACTIVITIES_VIEW;
-import static com.code.aon.ui.stat.IStatMessages.SELLER_STAT_CONTROL_CATEGORY;
-import static com.code.aon.ui.stat.IStatMessages.SELLER_STAT_CONTROL_PRODUCT;
-import static com.code.aon.ui.stat.IStatMessages.SELLER_STAT_CONTROL_SELLER;
-import static com.code.aon.ui.stat.IStatMessages.SELLER_STAT_CONTROL_TARGET;
-import static com.code.aon.ui.stat.IStatMessages.STAT_GEOZONE;
-import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_COMMERCIAL_CATEGORY;
-import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_COMMERCIAL_GEOZONE;
-import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_COMMERCIAL_PRODUCT;
-import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_COMMERCIAL_SELLER;
-import static com.code.aon.ui.stat.IStatMessages.STAT_REPORT_COMMERCIAL_TARGET;
-import static com.code.aon.ui.stat.IStatMessages.STAT_SELLER;
+import static com.code.aon.ui.common.ICommonMessages.REPORT_ACTIVITIES_VIEW;
+import static com.code.aon.ui.common.ICommonMessages.SELLER_STAT_CONTROL_CATEGORY;
+import static com.code.aon.ui.common.ICommonMessages.SELLER_STAT_CONTROL_PRODUCT;
+import static com.code.aon.ui.common.ICommonMessages.SELLER_STAT_CONTROL_SELLER;
+import static com.code.aon.ui.common.ICommonMessages.SELLER_STAT_CONTROL_TARGET;
+import static com.code.aon.ui.common.ICommonMessages.STAT_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.STAT_GEOZONE;
+import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_COMMERCIAL_CATEGORY;
+import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_COMMERCIAL_GEOZONE;
+import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_COMMERCIAL_PRODUCT;
+import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_COMMERCIAL_SELLER;
+import static com.code.aon.ui.common.ICommonMessages.STAT_REPORT_COMMERCIAL_TARGET;
+import static com.code.aon.ui.common.ICommonMessages.STAT_SELLER;
 import static com.code.aon.ui.stat.controller.IStatConstants.COMMERCIAL_TRACKING_CONTROLLER_NAME;
 import static com.code.aon.ui.stat.controller.IStatConstants.OFFER_CONTROLLER_NAME;
 
@@ -1002,8 +1002,8 @@ public class CommercialStatEngineController {
 			}
 		}
 		count = 0;
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, SELLER_STAT_CONTROL_SELLER));
-		setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_SELLER));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, SELLER_STAT_CONTROL_SELLER));
+		setItemTitle(AonUtil.getMessage(STAT_BUNDLE, STAT_SELLER));
 	}
 
 	public void onTargetSummary(ActionEvent e) throws ManagerBeanException {
@@ -1041,7 +1041,7 @@ public class CommercialStatEngineController {
 			}
 		}
 		count = 0;
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, SELLER_STAT_CONTROL_TARGET));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, SELLER_STAT_CONTROL_TARGET));
 		setItemTitle(AonUtil.getMessage(ICommonMessages.TARGET));
 
 	}
@@ -1079,7 +1079,7 @@ public class CommercialStatEngineController {
 			}
 		}
 		count = 0;
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, SELLER_STAT_CONTROL_PRODUCT));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, SELLER_STAT_CONTROL_PRODUCT));
 		setItemTitle(AonUtil.getMessage(PRODUCT));
 	}
 	
@@ -1115,7 +1115,7 @@ public class CommercialStatEngineController {
 			}
 		}
 		count = 0;
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, SELLER_STAT_CONTROL_CATEGORY));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, SELLER_STAT_CONTROL_CATEGORY));
 		setItemTitle(AonUtil.getMessage(CATEGORY));
 	}
 
@@ -1228,7 +1228,7 @@ public class CommercialStatEngineController {
 				activitySummary.add(s);
 			}
 		}
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, REPORT_ACTIVITIES_VIEW));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, REPORT_ACTIVITIES_VIEW));
 		setItemTitle(AonUtil.getMessage(ACTIVITY));
 
 	}
@@ -1317,7 +1317,7 @@ public class CommercialStatEngineController {
 		}
 		setVisitsModel(new ListDataModel(getActivitiesList()));
 
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, REPORT_ACTIVITIES_VIEW));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, REPORT_ACTIVITIES_VIEW));
 	}
 
 	public void onPendingSellerActivities(ActionEvent e)
@@ -1375,7 +1375,7 @@ public class CommercialStatEngineController {
 			}
 		}
 
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, REPORT_ACTIVITIES_VIEW));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, REPORT_ACTIVITIES_VIEW));
 		setItemTitle(AonUtil.getMessage(ACTIVITY));
 	}
 
@@ -1431,7 +1431,7 @@ public class CommercialStatEngineController {
 				activitySummary.add(s);
 			}
 		}
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, REPORT_ACTIVITIES_VIEW));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, REPORT_ACTIVITIES_VIEW));
 		setItemTitle(AonUtil.getMessage(ACTIVITY));
 
 	}
@@ -1489,7 +1489,7 @@ public class CommercialStatEngineController {
 				activitySummary.add(s);
 			}
 		}
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, REPORT_ACTIVITIES_VIEW));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, REPORT_ACTIVITIES_VIEW));
 		setItemTitle(AonUtil.getMessage(ACTIVITY));
 
 	}
@@ -1529,7 +1529,7 @@ public class CommercialStatEngineController {
 		}
 		setVisitsModel(new ListDataModel(getActivitiesList()));
 
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, REPORT_ACTIVITIES_VIEW));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, REPORT_ACTIVITIES_VIEW));
 	}
 
 	public class ControlSummary {
@@ -1616,7 +1616,7 @@ public class CommercialStatEngineController {
 			list.addAll(se.getCommercialCategoryStats(params));
 			setYearStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(BUNDLE_NAME,STAT_REPORT_COMMERCIAL_CATEGORY));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_COMMERCIAL_CATEGORY));
 			setItemTitle(AonUtil.getMessage(CATEGORY));
 			yearStatModel = null;
 
@@ -1650,7 +1650,7 @@ public class CommercialStatEngineController {
 		list.addAll(se.getCommercialCategoryProductsStats(params));
 		setProductStats(list);
 		calculateTotals(list);
-		setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_COMMERCIAL_PRODUCT));
+		setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_COMMERCIAL_PRODUCT));
 		setItemTitle(AonUtil.getMessage(PRODUCT));
 		productStatModel = null;
 	}
@@ -1800,7 +1800,7 @@ public class CommercialStatEngineController {
 			list.addAll(se.getCommercialCategoryProductsStats(params));
 			setProductStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_COMMERCIAL_PRODUCT));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_COMMERCIAL_PRODUCT));
 			setItemTitle(AonUtil.getMessage(PRODUCT));
 			productStatModel = null;
 
@@ -1818,8 +1818,8 @@ public class CommercialStatEngineController {
 			list.addAll(se.getCommercialSellerStats(params));
 			setYearStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_COMMERCIAL_SELLER));
-			setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_SELLER));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_COMMERCIAL_SELLER));
+			setItemTitle(AonUtil.getMessage(STAT_BUNDLE, STAT_SELLER));
 			yearStatModel = null;
 
 		} catch (ManagerBeanException e) {
@@ -1836,7 +1836,7 @@ public class CommercialStatEngineController {
 			list.addAll(se.getCommercialTargetStats(params));
 			setYearStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_COMMERCIAL_TARGET));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_COMMERCIAL_TARGET));
 			setItemTitle(AonUtil.getMessage(ICommonMessages.TARGET));
 			yearStatModel = null;
 
@@ -1854,8 +1854,8 @@ public class CommercialStatEngineController {
 			list.addAll(se.getCommercialGeozoneStats(params));
 			setYearStats(list);
 			calculateTotals(list);
-			setReportName(AonUtil.getMessage(BUNDLE_NAME, STAT_REPORT_COMMERCIAL_GEOZONE));
-			setItemTitle(AonUtil.getMessage(BUNDLE_NAME, STAT_GEOZONE));
+			setReportName(AonUtil.getMessage(STAT_BUNDLE, STAT_REPORT_COMMERCIAL_GEOZONE));
+			setItemTitle(AonUtil.getMessage(STAT_BUNDLE, STAT_GEOZONE));
 			yearStatModel = null;
 
 		} catch (ManagerBeanException e) {

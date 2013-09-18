@@ -1,5 +1,13 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_FRACTIONED;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_GROUPED;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_SETTLED;
+import static com.code.aon.ui.common.ICommonMessages.PAYMENT_INVALID_AMOUNT_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.PAYMENT_NOT_MATCH_AMOUNT_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.PAYMENT_PAY_METHOD_UNDEFINED_ERROR;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -43,7 +51,6 @@ import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
@@ -400,7 +407,7 @@ public class FinanceController extends FinanceListController {
 	public void onFinancePaymentShow(ActionEvent event) throws ManagerBeanException {
 		Finance finance = (Finance)getTo();
 		if (finance.getPayMethod() == null || finance.getPayMethod().getId() == null) {
-			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_PAY_METHOD_UNDEFINED_ERROR);
+			AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, PAYMENT_PAY_METHOD_UNDEFINED_ERROR);
 			throw new AbortProcessingException();
 		} 
 		super.accept(null);
@@ -517,21 +524,21 @@ public class FinanceController extends FinanceListController {
 	public void onFinancePayment(ActionEvent event) throws ManagerBeanException {
 		Finance finance = (Finance)this.getTo();
 		if (getPaymentAmount() == 0) {
-			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_INVALID_AMOUNT_ERROR);
+			AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, PAYMENT_INVALID_AMOUNT_ERROR);
 			throw new AbortProcessingException();
 		}
 		if (getPaymentAmount() != finance.getTotalAmount()) {
 			double amount = finance.getTotalAmount();
 
 			finance.setAmount(CommonUtil.round(getPaymentAmount() - finance.getExpenses()));
-			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 1, 2);
+			String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_FRACTIONED, 1, 2);
 			FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 
 			Finance fraction = getFinanceGenerator().duplicateFinance(finance, CommonUtil.round(amount - getPaymentAmount()));
-			message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 2, 2);
+			message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_FRACTIONED, 2, 2);
 			FinanceTrackingWriter.addFinanceTracking(fraction, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 
-			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_NOT_MATCH_AMOUNT_ERROR);
+			AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, PAYMENT_NOT_MATCH_AMOUNT_ERROR);
 		}
 		finance.setFinanceStatus(FinanceStatus.PAID);
 		super.accept(null);
@@ -602,7 +609,7 @@ public class FinanceController extends FinanceListController {
 		finance.setFinanceStatus(FinanceStatus.SETTLED);
 		super.accept(null);
 
-		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_SETTLED);
+		String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_SETTLED);
 		createFinanceTracking(finance, message);
 
 		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
@@ -755,7 +762,7 @@ public class FinanceController extends FinanceListController {
 			finance.setFinanceGroup(financeGroup);
 			finance.setFinanceStatus(FinanceStatus.SETTLED);
 			financeBean.update(finance);
-			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_GROUPED);
+			String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_GROUPED);
 			createFinanceTracking(finance, message);
 			financeGroup.setAmount(financeGroup.getAmount()+finance.getAmount());
 		}

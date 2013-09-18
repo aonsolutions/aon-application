@@ -2,9 +2,9 @@ package com.code.aon.ui.infoweb.controller;
 
 import static com.code.aon.common.enumeration.AppParam.WEBINFO_HOMEPAGE_ID;
 import static com.code.aon.common.enumeration.AppParam.WEBINFO_TEMPLATE_NAME;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DEFAULT_VALUE;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.NO_STYLE_FILE_IN_TEMPLATE;
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.NO_TEMPLATE_DIRECTORY;
+import static com.code.aon.ui.common.ICommonMessages.DEFAULT_VALUE;
+import static com.code.aon.ui.common.ICommonMessages.NO_STYLE_FILE_IN_TEMPLATE;
+import static com.code.aon.ui.common.ICommonMessages.NO_TEMPLATE_DIRECTORY;
 
 import java.io.BufferedReader;
 import java.io.File;

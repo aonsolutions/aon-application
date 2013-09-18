@@ -1,5 +1,14 @@
 package com.code.aon.ui.finance.util;
 
+import static com.code.aon.ui.common.ICommonMessages.FACTURAE_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_EINVOICE_EMAIL_SUBJECT;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EMAIL_BODY;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EMAIL_SUBJECT;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_WITHOUT_EMAIL;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,14 +35,13 @@ import com.code.aon.facturae.FacturaeWriter;
 import com.code.aon.finance.Invoice;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.bean.AonMessage;
 
-public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessages, IFinanceConstants {
+public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConstants {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceEmailUtil.class.getName());
 	
@@ -64,7 +72,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 	
 	public String getEmailSubject( Invoice invoice ) {
 		String key = invoice.isSigned() ? FINANCE_EINVOICE_EMAIL_SUBJECT : FINANCE_INVOICE_EMAIL_SUBJECT; 
-		String message = AonUtil.getMessage(BUNDLE_KEY, key);
+		String message = AonUtil.getMessage(FINANCE_BUNDLE, key);
 		return formatEmailSubject(invoice, message);
 	}
 
@@ -73,16 +81,16 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 	}
 	
 	public String getEmailSubject() {
-		return AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_SUBJECT);
+		return AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_EMAIL_SUBJECT);
 	}
 
 	public String getEmailBody( Invoice invoice )  {
-		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_BODY); 
+		String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_EMAIL_BODY); 
 		return formatEmailBody(invoice, message);
 	}
 	
 	public String getEmailBody()  {
-		return AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_BODY); 
+		return AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_EMAIL_BODY); 
 	}
 
 	private String formatEmailBody( Invoice invoice, String message )  {
@@ -124,7 +132,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 			aonFile.setMimeType(MimeType.MIME_XML);
 		} catch (AonException e) {
 			LOGGER.error( e.getMessage(), e );
-			AonUtil.addErrorMessageFromBundle(BUNDLE_KEY, FACTURAE_ERROR, invoice.getReferenceCode());			
+			AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FACTURAE_ERROR, invoice.getReferenceCode());			
 			FileUtils.deleteQuietly(file);
 		}
 		return aonFile;
@@ -137,7 +145,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 		try {
 			String[] emails = getAdministrativeEmails(invoice.getRegistry());
 			if ( ArrayUtils.isEmpty(emails) ) {
-				String text = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_WITHOUT_EMAIL);
+				String text = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_WITHOUT_EMAIL);
 				String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName() );				
 				logger.error( message );				
 			} else {
@@ -150,13 +158,13 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 				if ( saveSent ) {
 					getEmailSender().storeMessage(aonMessage);
 				}
-				String text = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_SEND_EMAIL);
+				String text = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_SEND_EMAIL);
 				String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName(), ArrayUtils.toString(emails) );
 				logger.info( message );
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
-			String text = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_SEND_EMAIL_ERROR);
+			String text = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_SEND_EMAIL_ERROR);
 			String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName() );
 			logger.error( message );
 		} finally {

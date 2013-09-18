@@ -1,10 +1,10 @@
 package com.code.aon.ui.warehouse.controller;
 
-import static com.code.aon.ui.warehouse.IWarehouseMessages.BUNDLE_KEY;
-import static com.code.aon.ui.warehouse.IWarehouseMessages.STOCK_BY_ITEM_KEY;
-import static com.code.aon.ui.warehouse.IWarehouseMessages.STOCK_BY_ITEM_VALUED_KEY;
-import static com.code.aon.ui.warehouse.IWarehouseMessages.STOCK_BY_WAREHOUSE_KEY;
-import static com.code.aon.ui.warehouse.IWarehouseMessages.STOCK_BY_WAREHOUSE_VALUED_KEY;
+import static com.code.aon.ui.common.ICommonMessages.STOCK_BY_ITEM_KEY;
+import static com.code.aon.ui.common.ICommonMessages.STOCK_BY_ITEM_VALUED_KEY;
+import static com.code.aon.ui.common.ICommonMessages.STOCK_BY_WAREHOUSE_KEY;
+import static com.code.aon.ui.common.ICommonMessages.STOCK_BY_WAREHOUSE_VALUED_KEY;
+import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_BUNDLE;
 
 import java.util.Collection;
 
@@ -93,12 +93,12 @@ public class StockReport implements ICollectionProvider{
 	public String getTitle() {
 		if (isValued()) {
 			return isByItem()?
-					AonUtil.getMessage(BUNDLE_KEY, STOCK_BY_ITEM_VALUED_KEY):
-					AonUtil.getMessage(BUNDLE_KEY, STOCK_BY_WAREHOUSE_VALUED_KEY);
+					AonUtil.getMessage(WAREHOUSE_BUNDLE, STOCK_BY_ITEM_VALUED_KEY):
+					AonUtil.getMessage(WAREHOUSE_BUNDLE, STOCK_BY_WAREHOUSE_VALUED_KEY);
 		}
 		return isByItem()?
-			AonUtil.getMessage(BUNDLE_KEY, STOCK_BY_ITEM_KEY):
-			AonUtil.getMessage(BUNDLE_KEY, STOCK_BY_WAREHOUSE_KEY);
+			AonUtil.getMessage(WAREHOUSE_BUNDLE, STOCK_BY_ITEM_KEY):
+			AonUtil.getMessage(WAREHOUSE_BUNDLE, STOCK_BY_WAREHOUSE_KEY);
 	}
 	
 	public void onReportByWarehouse(ActionEvent event) {

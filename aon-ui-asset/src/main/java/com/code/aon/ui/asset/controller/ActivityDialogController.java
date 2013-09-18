@@ -1,17 +1,16 @@
 package com.code.aon.ui.asset.controller;
 
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ACTIVITY_DAYS;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ASSET;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_BUNDLE;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_END_DATE;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ERROR_DATE_RANGE;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ERROR_HOVERLAP;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_ERROR_TIME_RANGE;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_FROM_TIME;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_START_DATE;
-import static com.code.aon.ui.asset.controller.IAssetConstants.ASSET_TO_TIME;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
-import static com.code.aon.ui.common.ICommonMessages.BUNDLE_NAME;
+import static com.code.aon.ui.common.ICommonMessages.ASSET_ACTIVITY_DAYS;
+import static com.code.aon.ui.common.ICommonMessages.ASSET_ASSET;
+import static com.code.aon.ui.common.ICommonMessages.ASSET_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.ASSET_END_DATE;
+import static com.code.aon.ui.common.ICommonMessages.ASSET_ERROR_DATE_RANGE;
+import static com.code.aon.ui.common.ICommonMessages.ASSET_ERROR_HOVERLAP;
+import static com.code.aon.ui.common.ICommonMessages.ASSET_ERROR_TIME_RANGE;
+import static com.code.aon.ui.common.ICommonMessages.ASSET_FROM_TIME;
+import static com.code.aon.ui.common.ICommonMessages.ASSET_START_DATE;
+import static com.code.aon.ui.common.ICommonMessages.ASSET_TO_TIME;
 import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.REMARK;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
@@ -387,10 +386,10 @@ public class ActivityDialogController extends EmailParentController{
 		content.append( getAsset().getName() ).append(SystemUtils.LINE_SEPARATOR);
 		content.append( AonUtil.getMessage(ASSET_BUNDLE, ASSET_START_DATE) ).append( ": ");
 		cal.setTime(getFromDate());
-		content.append( DateFormatUtils.format(cal, AonUtil.getMessage(BUNDLE_NAME, DATE_PATTERN), locale) ).append(SystemUtils.LINE_SEPARATOR);
+		content.append( DateFormatUtils.format(cal, AonUtil.getMessage(DATE_PATTERN), locale) ).append(SystemUtils.LINE_SEPARATOR);
 		content.append( AonUtil.getMessage(ASSET_BUNDLE, ASSET_END_DATE) ).append( ": ");
 		cal.setTime(getToDate());
-		content.append( DateFormatUtils.format(cal, AonUtil.getMessage(BUNDLE_NAME, DATE_PATTERN), locale) ).append(SystemUtils.LINE_SEPARATOR);
+		content.append( DateFormatUtils.format(cal, AonUtil.getMessage(DATE_PATTERN), locale) ).append(SystemUtils.LINE_SEPARATOR);
 		content.append( AonUtil.getMessage(ASSET_BUNDLE, ASSET_FROM_TIME) ).append( ": ");
 		content.append( getFromTimeHours() ).append( ":").append( getFromTimeMins() ).append(SystemUtils.LINE_SEPARATOR);
 		content.append( AonUtil.getMessage(ASSET_BUNDLE, ASSET_TO_TIME) ).append( ": ");
@@ -416,7 +415,7 @@ public class ActivityDialogController extends EmailParentController{
 
 	private boolean isValidDate() {
 		if (fromDate.after(toDate)) {
-			AonUtil.addErrorMessageFromBundle(ASSET_BUNDLE,ASSET_ERROR_DATE_RANGE);
+			AonUtil.addErrorMessageFromBundle(ASSET_BUNDLE, ASSET_ERROR_DATE_RANGE);
 			return false;
 		}
 		return true;
@@ -424,7 +423,7 @@ public class ActivityDialogController extends EmailParentController{
 
 	private boolean isValidTime() {
 		if (fromTime.after(toTime) || fromTime.equals(toTime)) {
-			AonUtil.addErrorMessageFromBundle(ASSET_BUNDLE,ASSET_ERROR_TIME_RANGE);
+			AonUtil.addErrorMessageFromBundle(ASSET_BUNDLE, ASSET_ERROR_TIME_RANGE);
 			return false;
 		}
 		return true;

@@ -24,10 +24,9 @@ import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.retention.Retention;
 import com.code.aon.fiscal.retention.RetentionCollection;
 import com.code.aon.fiscal.retention.RetentionCollectionParameters;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.util.AonUtil;
 
-public class RetentionReportController implements ICollectionProvider, IFinanceMessages{
+public class RetentionReportController implements ICollectionProvider {
 
 	private RetentionCollectionParameters params;
 	private Integer year;

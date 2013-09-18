@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.event;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_GROUPED;
+
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -25,7 +28,6 @@ import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.FinanceController;
 import com.code.aon.ui.finance.controller.FinanceGroupListController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
@@ -172,7 +174,7 @@ public class FinanceControllerListener extends ControllerAdapter {
 				finance.setFinanceGroup(financeGroup);
 				finance.setFinanceStatus(FinanceStatus.SETTLED);
 				financeBean.update(finance);
-				String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_GROUPED);
+				String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_GROUPED);
 				financeController.createFinanceTracking(finance, message);
 			}
 

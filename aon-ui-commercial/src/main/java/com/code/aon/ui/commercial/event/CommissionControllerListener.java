@@ -1,7 +1,7 @@
 package com.code.aon.ui.commercial.event;
 
-import static com.code.aon.ui.commercial.ICommercialMessages.BUNDLE_KEY;
-import static com.code.aon.ui.commercial.ICommercialMessages.COMMERCIAL_COMMISSION_DATES_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_COMMISSION_DATES_ERROR;
 
 import java.util.Date;
 
@@ -20,7 +20,7 @@ public class CommissionControllerListener extends ControllerAdapter {
 			Date startDate = ((Commission) this.getController().getTo()).getStartDate();
 			if (endDate.before(startDate)) {
 				((Commission)this.getController().getTo()).setEndDate(null);
-				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_KEY, COMMERCIAL_COMMISSION_DATES_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(COMMERCIAL_BUNDLE, COMMERCIAL_COMMISSION_DATES_ERROR));
 			}
 		}
 	}
@@ -32,7 +32,7 @@ public class CommissionControllerListener extends ControllerAdapter {
 			Date startDate = ((Commission) this.getController().getTo()).getStartDate();
 			if (endDate.before(startDate)) {
 				((Commission)this.getController().getTo()).setEndDate(null);
-				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_KEY, COMMERCIAL_COMMISSION_DATES_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(COMMERCIAL_BUNDLE, COMMERCIAL_COMMISSION_DATES_ERROR));
 			}
 		}
 	}

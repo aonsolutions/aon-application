@@ -1,12 +1,12 @@
 package com.code.aon.ui.finance.util.print;
 
 import static com.code.aon.ui.common.ICommonMessages.DECIMAL_2_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.PERCENT_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.POS_GIFT_RECEIPT;
+import static com.code.aon.ui.common.ICommonMessages.POS_RECEIPT;
 import static com.code.aon.ui.common.ICommonMessages.QUANTITY_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.TIMESTAMP_2_PATTERN;
-import static com.code.aon.ui.finance.IFinanceMessages.BUNDLE_KEY;
-import static com.code.aon.ui.finance.IFinanceMessages.POS_GIFT_RECEIPT;
-import static com.code.aon.ui.finance.IFinanceMessages.POS_RECEIPT;
 import static com.code.aon.ui.finance.controller.IFinanceConstants.POS_INVOICE_PARAMS_CONTROLLER_NAME;
 import static com.code.aon.ui.finance.controller.IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME;
 
@@ -443,10 +443,10 @@ public class TicketPrinter {
 		}
 
 		if ( gift ) {
-			String label = AonUtil.getMessage(BUNDLE_KEY, POS_GIFT_RECEIPT);
+			String label = AonUtil.getMessage(FINANCE_BUNDLE, POS_GIFT_RECEIPT);
 			sb.append( getCenteredLine(StringUtils.upperCase(label)) );	
 		} else {
-			String label = AonUtil.getMessage(BUNDLE_KEY, POS_RECEIPT);
+			String label = AonUtil.getMessage(FINANCE_BUNDLE, POS_RECEIPT);
 			sb.append( getCenteredLine(StringUtils.upperCase(label)) );				
 		}
 		sb.append( getLine(getNumberDate(invoice)) );

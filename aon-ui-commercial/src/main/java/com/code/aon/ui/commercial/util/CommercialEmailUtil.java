@@ -1,5 +1,9 @@
 package com.code.aon.ui.commercial.util;
 
+import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_OFFER_EMAIL_BODY;
+import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_OFFER_EMAIL_SUBJECT;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -22,7 +26,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.ql.Criteria;
 import com.code.aon.report.ReportException;
-import com.code.aon.ui.commercial.ICommercialMessages;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.sign.controller.SignerController;
@@ -30,7 +33,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CommercialEmailUtil extends CompanyEmailUtil implements ICommercialMessages {
+public class CommercialEmailUtil extends CompanyEmailUtil {
 
 	public void initMessageController( MessageController messageController, Offer offer ) throws ManagerBeanException, IOException, ReportException {
 		String[] emails = null;
@@ -47,12 +50,12 @@ public class CommercialEmailUtil extends CompanyEmailUtil implements ICommercial
 	}
 	
 	public String getEmailSubject( Offer offer ) {
-		String message = AonUtil.getMessage(BUNDLE_KEY, COMMERCIAL_OFFER_EMAIL_SUBJECT);
+		String message = AonUtil.getMessage(COMMERCIAL_BUNDLE, COMMERCIAL_OFFER_EMAIL_SUBJECT);
 		return MessageFormat.format(message, offer.getReferenceCode() );
 	}
 	
 	public String getEmailBody( Offer offer ) throws UnsupportedEncodingException {
-		String bodyMessage = AonUtil.getMessage(BUNDLE_KEY, COMMERCIAL_OFFER_EMAIL_BODY); 
+		String bodyMessage = AonUtil.getMessage(COMMERCIAL_BUNDLE, COMMERCIAL_OFFER_EMAIL_BODY); 
 		return MessageFormat.format(bodyMessage, offer.getReferenceCode(), offer.getIssueDate() );
 	}
 	

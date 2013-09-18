@@ -1,5 +1,9 @@
 package com.code.aon.ui.finance.event;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_EXPENSE_INVOICE_CHECK_WARNING;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_EXPENSE_INVOICE_QUOTA_WARNING;
+
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -10,7 +14,6 @@ import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.ExpenseInvoiceController;
 import com.code.aon.ui.finance.controller.ExpenseInvoiceDetailController;
 import com.code.aon.ui.finance.controller.InvoiceDetailController;
@@ -111,20 +114,18 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 		double calculatedVatQuota = controller.getVatQuota(invoiceDetail);
 		double calculatedRetentionQuota = controller.getRetentionQuota(invoiceDetail);
 		if ((invoiceDetail.getVatQuota() != calculatedVatQuota) || (invoiceDetail.getRetentionQuota() != calculatedRetentionQuota)) {
-			String bundle = IFinanceMessages.BUNDLE_KEY;
-			String msg = IFinanceMessages.FINANCE_EXPENSE_INVOICE_QUOTA_WARNING;
 			DecimalFormat formatter = new DecimalFormat("#,###.00");
 			if (invoiceDetail.getVatQuota() != calculatedVatQuota) {
 				String taxType = TaxType.VAT.getName(AonUtil.getCurrentLocale());
 				String quotaFormatted = formatter.format(calculatedVatQuota);
-				AonUtil.addWarningMessage(AonUtil.getMessage(bundle, msg, taxType, quotaFormatted));
+				AonUtil.addWarningMessage(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_EXPENSE_INVOICE_QUOTA_WARNING, taxType, quotaFormatted));
 			}
 			if (invoiceDetail.getRetentionQuota() != calculatedRetentionQuota) {
 				String taxType = TaxType.RETENTION.getName(AonUtil.getCurrentLocale());
 				String quotaFormatted = formatter.format(calculatedRetentionQuota);
-				AonUtil.addWarningMessage(AonUtil.getMessage(bundle, msg, taxType, quotaFormatted));
+				AonUtil.addWarningMessage(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_EXPENSE_INVOICE_QUOTA_WARNING, taxType, quotaFormatted));
 			}
-			AonUtil.addWarningMessageFromBundle(bundle, IFinanceMessages.FINANCE_EXPENSE_INVOICE_CHECK_WARNING);
+			AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, FINANCE_EXPENSE_INVOICE_CHECK_WARNING);
 		}
 	}
 

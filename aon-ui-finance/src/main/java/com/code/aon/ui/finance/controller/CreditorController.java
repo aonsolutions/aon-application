@@ -1,6 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.registry.controller.IRegistryConstants.CREDITOR_REPORT;
+import static com.code.aon.ui.common.ICommonMessages.CREDITOR_REPORT;
+import static com.code.aon.ui.common.ICommonMessages.REGISTRY_BUNDLE;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -10,7 +11,6 @@ import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Creditor;
-import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -57,7 +57,7 @@ public class CreditorController extends RegistryController {
 	}
 
     public String getReportTitle(){
-    	return AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME, CREDITOR_REPORT);
+    	return AonUtil.getMessage(REGISTRY_BUNDLE, CREDITOR_REPORT);
 	}
 
 }

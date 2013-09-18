@@ -2,9 +2,6 @@ package com.code.aon.ui.admin.controller;
 
 public interface IAdminConstants {
 	
-	// Bundle
-	String BUNDLE_NAME = "adminBundle";
-
 	// Controllers
 	String ADMIN_CONTROLLER_NAME = "adminMain";
 	String DOMAIN_CONTROLLER_NAME = "adminDomain";
@@ -35,57 +32,5 @@ public interface IAdminConstants {
 	String COMPANY_TABLE = "company";
 	String SCOPE_TABLE = "scope";
 	String WORK_GROUP_TABLE = "workgroup";
-	
-	// Messages
-	String WRONG_MAIL_ACCOUNT = "admin_wrong_mail_account";
-	String INVALID_PASSWORD = "admin_invalid_password";
-	String USER_DUPLICATED = "admin_user_duplicated_login";
-	String DOMAIN_NAME_DUPLICATED = "admin_domain_duplicated_name";
-	String DOMAIN_INVALID_NAME = "admin_domain_invalid_name";
-	String DOMAIN_INVALID_NAME_LARGE = "admin_domain_invalid_name_large";
-	String DOMAIN_INVALID_NAME_LEVEL = "admin_domain_invalid_name_level";
-	String DOMAIN_INVALID_LABEL_DASH = "admin_domain_invalid_label_dash";
-	String DOMAIN_INVALID_LABEL_LENGTH = "admin_domain_invalid_label_length";
-	String DOMAIN_INVALID_LABEL_FORMAT = "admin_domain_invalid_label_format";
-	String DOMAIN_MANAGEMENT = "admin_domain_management";
-	
-	String MAIL_ACCOUNT_ENTERPRISE_TITLE = "admin_mailAccount_enterprise"; 
-	String SIGNATURE_ENTERPRISE_TITLE = "admin_signature_enterprise";
-	
-	String ACTIVE_USERS = "admin_active_users";
-	String MAXIMUM_NUMBER_USERS = "admin_maximum_number_users";
-
-	String DOMAIN_DISPLAY_NAME = "admin_domain_displayName";
-	String DOMAIN_TYPE = "admin_domain_type";
-	String DOMAIN_URL = "admin_domain_url";
-	String SUBDOMAIN_SUFFIX = "admin_domain_subDomainSuffix";
-	String DOMAIN_PARENT = "admin_domain_parent";
-	String DOMAIN_MAX_DEFINED_USERS = "admin_domain_maxDefinedUsers";
-	String DOMAIN_MAX_TOTAL_DOCUMENT_SIZE = "admin_domain_maxTotalDocumentSize";
-	String DOMAIN_DOMAIN_MANAGEMENT = "admin_domain_domainManagement";
-	String DOMAIN_MODULES = "admin_modules";
-	String WRONG_EMAIL = "admin_wrong_email";
-	String WRONG_EMAILS = "admin_wrong_emails";
-	
-	String DOMAIN_EMAIL_BODY_1 = "admin_domain_email_body_1";
-	String DOMAIN_EMAIL_BODY_2 = "admin_domain_email_body_2";
-	String DOMAIN_EMAIL_BODY_3 = "admin_domain_email_body_3";
-	String DOMAIN_EMAIL_BODY_4 = "admin_domain_email_body_4";
-	String DOMAIN_EMAIL_BODY_5 = "admin_domain_email_body_5";
-	String DOMAIN_EMAIL_BODY_FOOTER = "admin_domain_email_body_footer";
-	
-	String BACKUP_START = "admin_backup_start";
-	
-	String SYSTEM = "admin_system";
-	
-	String ADMIN_BACKUP_ERROR = "admin_backup_error";
-
-	String ADMIN_BACKUP_TABLE_FINISH = "admin_backup_table_finish";
-
-	String ADMIN_BACKUP_TABLE_PROGRESS = "admin_backup_table_progress";
-
-	String ADMIN_BACKUP_TABLE_START = "admin_backup_table_start";
-
-	String ADMIN_BACKUP_INFO = "admin_backup_info";
 		
 }

@@ -1,5 +1,11 @@
 package com.code.aon.ui.publisher.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.DELETE_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.DELETE_OK;
+import static com.code.aon.ui.common.ICommonMessages.PUBLISHER_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.PUBLISH_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.PUBLISH_OK;
+
 import java.io.File;
 import java.util.Properties;
 
@@ -73,12 +79,12 @@ public class PublisherController implements IPublisherConstants {
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
-			log.error( AonUtil.getMessage(BUNDLE_NAME, PUBLISH_ERROR) );
+			log.error( AonUtil.getMessage(PUBLISHER_BUNDLE, PUBLISH_ERROR) );
 		} finally {
 			ftp.close();
 		}
 		if ( published ) {
-			log.info( AonUtil.getMessage(BUNDLE_NAME, PUBLISH_OK) );
+			log.info( AonUtil.getMessage(PUBLISHER_BUNDLE, PUBLISH_OK) );
 		}
 		log.finish();
 	}		
@@ -90,7 +96,7 @@ public class PublisherController implements IPublisherConstants {
 			ftp.connect(properties);
 			if ( ftp.isConnected() ) {
 				ftp.delete(getDestination());
-				AonUtil.addInfoMessageFromBundle( BUNDLE_NAME, DELETE_OK );
+				AonUtil.addInfoMessageFromBundle( PUBLISHER_BUNDLE, DELETE_OK );
 				return;
 			}
 		} catch (Throwable th) {
@@ -98,7 +104,7 @@ public class PublisherController implements IPublisherConstants {
 		} finally {
 			ftp.close();
 		}
-		log.error( AonUtil.getMessage(BUNDLE_NAME, DELETE_ERROR) );		
+		log.error( AonUtil.getMessage(PUBLISHER_BUNDLE, DELETE_ERROR) );		
 	}		
 	
 }

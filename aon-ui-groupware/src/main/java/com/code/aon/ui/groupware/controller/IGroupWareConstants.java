@@ -4,14 +4,6 @@ package com.code.aon.ui.groupware.controller;
 public interface IGroupWareConstants {
 	
 	// ************************************************************
-	// MESSAGES
-	// ************************************************************
-
-	String BUNDLE_NAME = "groupwareBundle";
-	String ALARM_PENDING = "groupware_alarm_pending";	
-	String GROUPWARE_TASK_FINALIZATION_PANEL = "groupware_task_finalization_panel";
-	
-	// ************************************************************
 	// CONTROLLER
 	// ************************************************************
 	String ALARM_CONTROLLER_NAME = "alarm";

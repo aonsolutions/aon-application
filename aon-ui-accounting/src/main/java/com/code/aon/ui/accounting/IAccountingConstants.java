@@ -54,17 +54,6 @@ public interface IAccountingConstants {
 	String JOURNAL_LIST_NAVKEY =  "journal_list";
 	String PERIOD_AMORTIZATION_LIST_NAVKEY = "periodAmortization_list";
 	
-	// BUNDLES
-	String BUNDLE_KEY = "accountingBundle";
-	
-	// BUNDLE MESSAGES
-	String ACCOUNTING_TOTAL_RESULT_NULL = "accounting_total_result_null";
-	String ACCOUNTING_TOTAL_RESULT_LOSS = "accounting_total_result_loss";
-	String ACCOUNTING_TOTAL_RESULT = "accounting_total_result";
-	String ACCOUNTING_TOTAL_EXPENSES = "accounting_total_expenses";
-	String ACCOUNTING_GROSS_MARGIN = "accounting_gross_margin";
-	String ACCOUNTING_PROFIT_AND_LOSS_MODULE = "accounting_profit_and_loss_module";	
-
 	// OTHERS
 	String ACCUMULATED_ACCOUNT_PREFIX = "Amortización Acumulada ";
 	String ALLOCATION_ACCOUNT_PREFIX = "Amortización ";

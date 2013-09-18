@@ -1,6 +1,7 @@
 package com.code.aon.ui.company.event;
 
-import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_SALE_INVOICE_FOOTER_TEXT;
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_SALE_INVOICE_FOOTER_TEXT;
 
 import java.util.Date;
 
@@ -14,7 +15,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanySaleInvoiceFooterController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -80,7 +80,7 @@ public class CompanySaleInvoiceFooterControllerListener extends ControllerAdapte
 		RegistryAttachment attach = (RegistryAttachment)controller.getTo(); 
 		attach.setData(controller.getText().getBytes());
 		attach.setRegistryAttachmentType(RegistryAttachmentType.INVOICE_FOOTER_TEXT);
-		attach.setDescription(AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, COMPANY_SALE_INVOICE_FOOTER_TEXT));
+		attach.setDescription(AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_SALE_INVOICE_FOOTER_TEXT));
 		attach.setAttachDate(new Date());
 		attach.setMimeType(MimeType.MIME_TXT);
 	}

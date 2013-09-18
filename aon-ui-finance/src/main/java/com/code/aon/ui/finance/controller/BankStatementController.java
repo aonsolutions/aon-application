@@ -1,5 +1,11 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_UNRECORD_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_CHECK_NO_LINE_SELECTED;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_IMPORT_BANK_ACCOUNT_NOT_FOUND;
+import static com.code.aon.ui.common.ICommonMessages.PENDING;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -61,10 +67,8 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.report.dynamic.DynaElements;
 import com.code.aon.report.dynamic.DynaReport;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.event.BankStatementSearchListener;
 import com.code.aon.ui.finance.event.FinanceListSearchListener;
 import com.code.aon.ui.finance.event.FinanceTrackingListSearchListener;
@@ -558,7 +562,7 @@ public class BankStatementController extends BasicController implements IFinance
 			return (RegistryBank)iterator.next();
 		} else {
 			bankAcc = line.substring(2, 6) + "." + line.substring(6, 10) + ".**." + line.substring(10, 20);
-			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_IMPORT_BANK_ACCOUNT_NOT_FOUND, bankAcc);
+			AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FINANCE_IMPORT_BANK_ACCOUNT_NOT_FOUND, bankAcc);
 		}
 		return null;
 	}
@@ -711,7 +715,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 	public void onAutoCheckSelected(ActionEvent event) throws ManagerBeanException {
 		if (getCheckedBankStatement().size() == 0) {
-			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_CHECK_NO_LINE_SELECTED);
+			AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, FINANCE_CHECK_NO_LINE_SELECTED);
 			return;
 		}
 
@@ -1415,7 +1419,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 	public void onRecordSelected(ActionEvent event) throws ManagerBeanException {
 		if (getCheckedBankStatement().size() == 0) {
-			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_CHECK_NO_LINE_SELECTED);
+			AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, FINANCE_CHECK_NO_LINE_SELECTED);
 			return;
 		}
 
@@ -1573,7 +1577,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 	public void onUnrecordSelected(ActionEvent event) throws ManagerBeanException {
 		if (getCheckedBankStatement().size() == 0) {
-			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_CHECK_NO_LINE_SELECTED);
+			AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, FINANCE_CHECK_NO_LINE_SELECTED);
 			return;
 		}
 
@@ -1615,7 +1619,7 @@ public class BankStatementController extends BasicController implements IFinance
 				        if (getWriter().canRemoveAccountEntryFinanceBatch(fBatch)) {
 							getWriter().removeAccountEntryFinanceBatch(fBatch, false);
 				        } else {
-				        	String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_UNRECORD_ERROR);
+				        	String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_BATCH_UNRECORD_ERROR);
 				        	getErrors().put(statement.getId(), message);
 				        	return;
 				        }
@@ -1631,7 +1635,7 @@ public class BankStatementController extends BasicController implements IFinance
 						FinanceTracking tracking = accEntryTracking.getFinanceTracking();
 						getWriter().removeAccountEntryFinanceTracking(tracking, false);
 
-						tracking.setDescription(AonUtil.getMessage(ICommonMessages.PENDING));
+						tracking.setDescription(AonUtil.getMessage(PENDING));
 						tracking.setRecorded(false);
 				        trackingBean.update(tracking);
 					}

@@ -1,5 +1,10 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.PMS_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.PMS_DAMAGES;
+import static com.code.aon.ui.common.ICommonMessages.PMS_DEPOSITS;
+import static com.code.aon.ui.common.ICommonMessages.PMS_SERVICES;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,7 +59,6 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
-import com.esferalia.aon.ui.pms.IPmsMessages;
 
 public class ServiceInvoiceController extends BasicController implements IPmsConstants, ICalculableContainer {
 	
@@ -285,11 +289,11 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 
 	public List<SelectItem> getServiceTypes() {
 		List<SelectItem> serviceTypes = new LinkedList<SelectItem>();
-		SelectItem item = new SelectItem(ProductType.SERVICE, AonUtil.getMessage(IPmsMessages.BUNDLE_KEY, IPmsMessages.PMS_SERVICES));
+		SelectItem item = new SelectItem(ProductType.SERVICE, AonUtil.getMessage(PMS_BUNDLE, PMS_SERVICES));
 		serviceTypes.add(item);
-		item = new SelectItem(ProductType.COMMERCIAL_PRODUCT, AonUtil.getMessage(IPmsMessages.BUNDLE_KEY, IPmsMessages.PMS_DEPOSITS));
+		item = new SelectItem(ProductType.COMMERCIAL_PRODUCT, AonUtil.getMessage(PMS_BUNDLE, PMS_DEPOSITS));
 		serviceTypes.add(item);
-		item = new SelectItem(ProductType.EXTERNAL_WORK, AonUtil.getMessage(IPmsMessages.BUNDLE_KEY, IPmsMessages.PMS_DAMAGES));
+		item = new SelectItem(ProductType.EXTERNAL_WORK, AonUtil.getMessage(PMS_BUNDLE, PMS_DAMAGES));
 		serviceTypes.add(item);
 		return serviceTypes;
 	}

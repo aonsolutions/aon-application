@@ -1,6 +1,7 @@
 package com.code.aon.ui.accounting.controller.entry;
 
-import static com.code.aon.ui.finance.IFinanceMessages.BUNDLE_KEY;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -87,7 +88,6 @@ import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
@@ -795,8 +795,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		double invoiceTotal = getInvoiceTotal();
 		double financeTotal = getFinanceTotal();
 		if (financeTotal > 0 && invoiceTotal != financeTotal) {
-			String msg = AonUtil.addErrorMessageFromBundle(BUNDLE_KEY, 
-					IFinanceMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY);
+			String msg = AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, 
+					UNABLE_RECORD_INACCURACY_ERROR_KEY);
 			throw new AbortProcessingException(msg);
 		}
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();

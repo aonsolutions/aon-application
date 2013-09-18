@@ -1,10 +1,14 @@
 package com.esferalia.aon.ui.payroll.controller.salary.draft;
 
+import static com.code.aon.ui.common.ICommonMessages.PAYROLL_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.PAYROLL_SALARY;
+import static com.code.aon.ui.common.ICommonMessages.PAYROLL_SALARY_BONUS;
+import static com.code.aon.ui.common.ICommonMessages.PAYROLL_SALARY_DEDUCTIONS;
+import static com.code.aon.ui.common.ICommonMessages.PAYROLL_SALARY_PAYMENTS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGE;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,7 +20,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
-import java.util.Set;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -25,7 +28,6 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.PersonController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.AgreementLevel;
@@ -68,7 +71,6 @@ import com.esferalia.aon.payroll.calculator.HierarchyPayments;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -389,7 +391,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	@Override
 	public void onCheckError(String message) {
 		Warning warning = new Warning();
-		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY );
+		warning.title = AonUtil.getMessage( PAYROLL_BUNDLE, PAYROLL_SALARY );
 		warning.message = message;
 		warning.description = "";
 		warnings.add(warning);
@@ -399,7 +401,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	public void onInvalidData(String variableName, String message) {
 		
 		Warning warning = new Warning();
-		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY );
+		warning.title = AonUtil.getMessage( PAYROLL_BUNDLE, PAYROLL_SALARY );
 		
 		
 		if ( message == null ) {
@@ -424,7 +426,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	@Override
 	public void onCheckError(IContractBonus bonus, String message) {
 		Warning warning = new Warning();
-		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_BONUS );
+		warning.title = AonUtil.getMessage( PAYROLL_BUNDLE, PAYROLL_SALARY_BONUS );
 		warning.message = message;
 		warning.description = bonus.getDescription();
 		warnings.add(warning);
@@ -433,7 +435,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	public void onInvalidData(IContractBonus bonus, String variableName,
 			String message) {
 		Warning warning = new Warning();
-		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_BONUS );
+		warning.title = AonUtil.getMessage( PAYROLL_BUNDLE, PAYROLL_SALARY_BONUS );
 		warning.message = message;
 		warning.description = bonus.getDescription();
 		warning.variable = variableName;
@@ -444,7 +446,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	@Override
 	public void onCheckError(IContractPayment payment, String message) {
 		Warning warning = new Warning();
-		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_PAYMENTS );
+		warning.title = AonUtil.getMessage( PAYROLL_BUNDLE, PAYROLL_SALARY_PAYMENTS );
 		warning.message = message;
 		warning.description = payment.getDescription();
 		warnings.add(warning);
@@ -454,7 +456,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	public void onInvalidData(IContractPayment payment,
 			String variableName, String message) {
 		Warning warning = new Warning();
-		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_PAYMENTS );
+		warning.title = AonUtil.getMessage( PAYROLL_BUNDLE, PAYROLL_SALARY_PAYMENTS );
 		warning.message = message;
 		warning.description = payment.getDescription();
 		warning.variable = variableName;
@@ -464,7 +466,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	@Override
 	public void onCheckError(IContractDeduction deduction, String message) {
 		Warning warning = new Warning();
-		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_DEDUCTIONS );
+		warning.title = AonUtil.getMessage( PAYROLL_BUNDLE, PAYROLL_SALARY_DEDUCTIONS );
 		warning.message = message;
 		warning.description = deduction.getDescription();
 		warnings.add(warning);
@@ -474,7 +476,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	public void onInvalidData(IContractDeduction dedcution,
 			String variableName, String message) {
 		Warning warning = new Warning();
-		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_DEDUCTIONS);
+		warning.title = AonUtil.getMessage( PAYROLL_BUNDLE, PAYROLL_SALARY_DEDUCTIONS);
 		warning.message = message;
 		warning.description = dedcution.getDescription();
 		warning.variable = variableName;

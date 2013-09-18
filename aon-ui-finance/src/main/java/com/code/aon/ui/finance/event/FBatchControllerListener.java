@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.event;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DATE_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -11,7 +14,6 @@ import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.FBatchController;
 import com.code.aon.ui.finance.controller.FBatchDetailController;
 import com.code.aon.ui.finance.controller.FinanceListController;
@@ -61,7 +63,7 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
                 Date oldDate = ((FinanceBatch)fBatchController.getManagerBean().getList(criteria).get(0)).getIssueDate();
                 if (oldDate.after(fBatch.getIssueDate())) {
                     fBatch.setIssueDate(oldDate);
-                    AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DATE_ERROR);
+                    AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FINANCE_BATCH_DATE_ERROR);
                 }
             } catch (ManagerBeanException e) {
                 LOGGER.error("Error obtaining FinanceBatch with id=" + fBatch.getId(), e);

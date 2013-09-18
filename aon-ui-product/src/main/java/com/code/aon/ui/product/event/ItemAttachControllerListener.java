@@ -1,6 +1,8 @@
 package com.code.aon.ui.product.event;
 
 import static com.code.aon.ui.common.ICommonMessages.FILE_UPLOAD_ELEMENT;
+import static com.code.aon.ui.common.ICommonMessages.PRODUCT_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.PRODUCT_DOCUMENT_MAX_SIZE_ERROR;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
@@ -19,13 +21,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.product.IItemMessages;
 import com.code.aon.ui.product.controller.ItemAttachController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.sun.faces.util.MessageFactory;
 
-public class ItemAttachControllerListener extends ControllerAdapter implements IItemMessages {
+public class ItemAttachControllerListener extends ControllerAdapter {
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
@@ -86,7 +87,7 @@ public class ItemAttachControllerListener extends ControllerAdapter implements I
 			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage(FILE_UPLOAD_ELEMENT) );
 			throw new ControllerListenerException( message.getSummary() );			
 		} else if ( ciaController.isUploaded() && ciaController.isMaximumSizeExceeded() ) {
-	        String message = AonUtil.getMessage(BUNDLE_NAME, PRODUCT_DOCUMENT_MAX_SIZE_ERROR, ciaController.getMaximumSize());
+	        String message = AonUtil.getMessage(PRODUCT_BUNDLE, PRODUCT_DOCUMENT_MAX_SIZE_ERROR, ciaController.getMaximumSize());
 			throw new ControllerListenerException(message);			
 		}
 	}

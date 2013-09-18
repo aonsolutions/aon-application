@@ -1,5 +1,8 @@
 package com.code.aon.ui.fiscal.controller.batch;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DISK_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +19,6 @@ import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.fiscal.file.MOD303Writer;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -124,8 +126,7 @@ public class Mod303BatchModel extends AbstractFiscalBatchModel {
 		}
 		FileOutput fileOutput = mod303Writer.createMOD303(declarations, format);
 		if (fileOutput != null && fileOutput.getErrors().size() > 0) {
-			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY,
-					IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
+			AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FINANCE_BATCH_DISK_ERROR);
 			AonUtil.addErrorMessage("");
 			int i = 0;
 			for (Exception ex : fileOutput.getErrors()) {

@@ -1,6 +1,7 @@
 package com.code.aon.ui.groupware.controller;
 
-import static com.code.aon.ui.groupware.controller.IGroupWareConstants.BUNDLE_NAME;
+import static com.code.aon.ui.common.ICommonMessages.GROUPWARE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.GROUPWARE_TASK_FINALIZATION_PANEL;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -323,7 +324,7 @@ public class TaskController extends BasicController {
 		Task task = (Task) getTo();
 		transitions = new LinkedList<SelectItem>();
 		if (task != null) {
-			transitions.add(new SelectItem(new ProcessDetailTransition(), AonUtil.getMessage(BUNDLE_NAME,IGroupWareConstants.GROUPWARE_TASK_FINALIZATION_PANEL)));				
+			transitions.add(new SelectItem(new ProcessDetailTransition(), AonUtil.getMessage(GROUPWARE_BUNDLE, GROUPWARE_TASK_FINALIZATION_PANEL)));				
 			for (ProcessDetailTransition pdt : getTaskManager().getTransitions(task)) {
 				String description = pdt.getProcessTransitionType().getDescription();
 				SelectItem item = new SelectItem(pdt, description);

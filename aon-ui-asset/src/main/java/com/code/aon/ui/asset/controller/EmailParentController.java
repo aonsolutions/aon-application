@@ -1,5 +1,8 @@
 package com.code.aon.ui.asset.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_EMAIL_BODY_FOOTER;
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_EMAIL_BODY_HEADER;
 import static com.code.aon.ui.common.ICommonMessages.PHONE;
 
 import java.io.UnsupportedEncodingException;
@@ -98,9 +101,9 @@ public class EmailParentController {
 		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
 		body.append( "</head><body>" );
 		
-		body.append(AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_EMAIL_BODY_HEADER) );
+		body.append(AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_EMAIL_BODY_HEADER) );
 		body.append( text );
-		body.append(AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_EMAIL_BODY_FOOTER) );		
+		body.append(AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_EMAIL_BODY_FOOTER) );		
 
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		body.append( getCompany().getName() ).append( "<br/>" );

@@ -12,35 +12,6 @@ public interface ICompanyConstants {
 	String PRINCIPAL = "PRINCIPAL";
 	
 	// ************************************************************
-	// MESSAGES
-	// ************************************************************
-
-	/** ResourceBundle name. */
-	String BUNDLE_NAME = "companyBundle";
-	
-	String COMPANY_IMAGE_MAX_SIZE_ERROR = "company_image_max_size_error";
-	
-	String COMPANY_LOGO_MAX_SIZE_ERROR = "company_logo_max_size_error";
-
-	String COMPANY_SIGNATURE_MAX_SIZE_ERROR = "company_signature_max_size_error"; 
-	
-	String COMPANY_IMAGE_DUPLICATED_NAME = "company_image_duplicated_name";
-	
-	String COMPANY_IMAGE_INVALID_CHARACTER = "company_image_invalid_character";	
-	
-	String COMPANY_EMAIL_BODY_HEADER = "company_email_body_header";
-	
-	String COMPANY_EMAIL_BODY_FOOTER = "company_email_body_footer";
-	
-	String COMPANY_WORKPLACE = "company_workplace";
-	
-	String COMPANY_DEPARTMENT = "company_department";
-	
-	String COMPANY_SALE_INVOICE_FOOTER_TEXT = "company_saleInvoice_footer_text";
-	
-	String COMPANY_SALE_INVOICE_FOOTER_LOPD = "company_saleInvoice_footer_LOPD";
-	
-	// ************************************************************
 	// BEAN
 	// ************************************************************
 	String COLLECTIONS_CONTROLLER_NAME = "companyCollections";

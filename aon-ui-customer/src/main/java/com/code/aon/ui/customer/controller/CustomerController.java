@@ -1,6 +1,7 @@
 package com.code.aon.ui.customer.controller;
 
-import static com.code.aon.ui.registry.controller.IRegistryConstants.CUSTOMER_REPORT;
+import static com.code.aon.ui.common.ICommonMessages.CUSTOMER_REPORT;
+import static com.code.aon.ui.common.ICommonMessages.REGISTRY_BUNDLE;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -13,7 +14,6 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -131,7 +131,7 @@ public class CustomerController extends CustomerListController implements ICusto
 	}
 
     public String getReportTitle(){
-    	return AonUtil.getMessage(IRegistryConstants.BUNDLE_NAME, CUSTOMER_REPORT);
+    	return AonUtil.getMessage(REGISTRY_BUNDLE, CUSTOMER_REPORT);
 	}
 
 	public void onCustomerHistory(ActionEvent e){

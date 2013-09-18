@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.event;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_POS_CATALOGUE_ERROR;
+
 import java.util.List;
 
 import javax.faces.model.SelectItem;
@@ -10,7 +13,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.PosCatalogue;
 import com.code.aon.product.Catalogue;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -20,7 +22,7 @@ import com.code.aon.ui.product.controller.ProductCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class PosCatalogueControllerListener extends ControllerAdapter implements IFinanceConstants, IFinanceMessages {
+public class PosCatalogueControllerListener extends ControllerAdapter implements IFinanceConstants {
 
     @Override
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -46,7 +48,7 @@ public class PosCatalogueControllerListener extends ControllerAdapter implements
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_CATALOGUE_POS_ID), posCatalogue.getPos().getId());
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_CATALOGUE_CATALOGUE_ID), posCatalogue.getCatalogue().getId());
 			if (bean.getCount(criteria) > 0) {
-				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_KEY, FINANCE_POS_CATALOGUE_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_POS_CATALOGUE_ERROR));
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

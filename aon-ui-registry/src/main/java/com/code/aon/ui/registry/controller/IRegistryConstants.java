@@ -2,54 +2,7 @@ package com.code.aon.ui.registry.controller;
 
 public interface IRegistryConstants {
 	
-	// ************************************************************
-	// MESSAGES
-	// ************************************************************
-
-	/** ResourceBundle name. */
-	String BUNDLE_NAME = "registryBundle";
-	
 	String MUNICIPALITIES_BUNDLE_NAME = "com.code.aon.ui.registry.i18n.municipalities";
-	
-	String REGISTRY_DOCUMENT_MAX_SIZE_ERROR = "registry_document_max_size_error";
-	
-	String REGISTRY_ADDRESS_MODULE = "registry_address_module";
-	
-	String REGISTRY_FINANCE_DATA_MODULE = "registry_finance_data_module";
-	
-	String REGISTRY_DIR_STAFF = "registry_dir_staff";
-	
-	String REGISTRY_DOCUMENT_ERROR = "registry_document_error";
-	
-	String INVALID_EMAIL = "registry_invalid_email";
-	
-	String TARGET = "registry_target";
-
-	String QUESTION = "registry_question";
-	
-	String RESPONSE = "registry_response";
-	
-    String CREDITOR_REPORT = "aon_creditor_report";
-    
-    String SUPPLIER_REPORT = "aon_supplier_report";
-    
-    String SELLER_REPORT = "aon_seller_report";
-    
-    String CUSTOMER_REPORT = "aon_customer_report";
-    
-	String REGISTRY_EMAIL = "registry_email";
-
-	String REGISTRY_NATIONALITY = "registry_nationality";
-
-	String REGISTRY_NUMBER_OF_PAYMENTS = "registry_number_of_payments";
-
-	String REGISTRY_DAYS_TO_FIRST_PAYMENT = "registry_days_to_first_payment";
-
-	String REGISTRY_DAYS_BETWEEN_PAYMENTS = "registry_days_between_payments";
-
-	String REGISTRY_PAYMENT_DAYS = "registry_payment_days";
-
-	String REGISTRY_CITY = "registry_city";	
 	
 	// ************************************************************
 	// BEAN

@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_CASH;
+
 import java.util.Iterator;
 
 import javax.faces.event.AbortProcessingException;
@@ -22,7 +25,6 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
@@ -59,7 +61,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 		} else if (tracking.getPayMethodTypeDetail() != null) {
 			return tracking.getPayMethodTypeDetail().getDescription();
 		} else {
-			return AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_CASH);
+			return AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_CASH);
 		}
 	}
 

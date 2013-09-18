@@ -1,6 +1,9 @@
 package com.code.aon.ui.fiscal.controller;
 
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DISK_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,7 +35,6 @@ import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.fiscal.controller.model.Mipf;
 import com.code.aon.ui.fiscal.file.MOD303Writer;
 import com.code.aon.ui.form.LinesController;
@@ -221,7 +223,7 @@ public class VatTaxDeclarationController extends LinesController {
 		declarations.add(vatTaxDeclaration);
 		setFileOutput( mod303Writer.createMOD303(declarations,getFormat(vatTaxDeclaration)) );
         if (getFileOutput() != null && getFileOutput().getErrors().size() > 0) {
-    		AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
+    		AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FINANCE_BATCH_DISK_ERROR);
     		AonUtil.addErrorMessage("");
     		int i = 0;
     		for (Exception ex:getFileOutput().getErrors()) {

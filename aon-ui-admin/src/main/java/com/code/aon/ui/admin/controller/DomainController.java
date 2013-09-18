@@ -1,40 +1,43 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_DISPLAY_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_DOMAIN_MANAGEMENT;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_1;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_2;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_3;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_4;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_5;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_EMAIL_BODY_FOOTER;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_LABEL_DASH;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_LABEL_FORMAT;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_LABEL_LENGTH;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_NAME_LARGE;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_INVALID_NAME_LEVEL;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MANAGEMENT;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MAX_DEFINED_USERS;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MAX_TOTAL_DOCUMENT_SIZE;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_MODULES;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_NAME_DUPLICATED;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_PARENT;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_TYPE;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_URL;
-import static com.code.aon.ui.admin.controller.IAdminConstants.WRONG_EMAIL;
-import static com.code.aon.ui.admin.controller.IAdminConstants.WRONG_EMAILS;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_LEVEL;
-import static com.code.aon.ui.common.ICommonMessages.ACTIVE;
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
+import static com.code.aon.ui.common.ICommonMessages.ACTIVE;
+import static com.code.aon.ui.common.ICommonMessages.ADMIN_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.AUDIT_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.AUDIT_LEVEL;
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_EMAIL_BODY_HEADER;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_DISPLAY_NAME;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_DOMAIN_MANAGEMENT;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_EMAIL_BODY_1;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_EMAIL_BODY_2;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_EMAIL_BODY_3;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_EMAIL_BODY_4;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_EMAIL_BODY_5;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_EMAIL_BODY_FOOTER;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_INVALID_LABEL_DASH;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_INVALID_LABEL_FORMAT;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_INVALID_LABEL_LENGTH;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_INVALID_NAME;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_INVALID_NAME_LARGE;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_INVALID_NAME_LEVEL;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_MANAGEMENT;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_MAX_DEFINED_USERS;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_MAX_TOTAL_DOCUMENT_SIZE;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_MODULES;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_NAME_DUPLICATED;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_PARENT;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_TYPE;
+import static com.code.aon.ui.common.ICommonMessages.DOMAIN_URL;
 import static com.code.aon.ui.common.ICommonMessages.MODULE_MANAGEMENT_FINANCE;
 import static com.code.aon.ui.common.ICommonMessages.NO;
+import static com.code.aon.ui.common.ICommonMessages.SUBDOMAIN_SUFFIX;
+import static com.code.aon.ui.common.ICommonMessages.WRONG_EMAIL;
+import static com.code.aon.ui.common.ICommonMessages.WRONG_EMAILS;
 import static com.code.aon.ui.common.ICommonMessages.YES;
-import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_EMAIL_BODY_HEADER;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
@@ -101,9 +104,7 @@ import com.code.aon.ui.admin.DomainModuleInfo;
 import com.code.aon.ui.admin.DomainModuleInfoManagement;
 import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
-import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.common.controller.LoggedUser;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
@@ -475,7 +476,7 @@ public class DomainController extends BasicController {
 			try {
 				DomainController.checkDomainName(name, 3);
 			} catch (AonException e) {
-				String message = AonUtil.getMessage(BUNDLE_NAME, IAdminConstants.SUBDOMAIN_SUFFIX);
+				String message = AonUtil.getMessage(ADMIN_BUNDLE, SUBDOMAIN_SUFFIX);
 				FacesMessage fm = new FacesMessage(message + ": " + e.getMessage());
 				fm.setSeverity(SEVERITY_ERROR);
 				throw new ValidatorException(fm);		
@@ -484,7 +485,7 @@ public class DomainController extends BasicController {
 			criteria.setSkipDomainFilter(true);
 			criteria.addEqualExpression(getFieldName(IEntityAlias.DOMAIN_NAME), name);
 			if ( getManagerBean().getCount(criteria) > 0 ) {
-				String message = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_NAME_DUPLICATED, name);
+				String message = AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_NAME_DUPLICATED, name);
 				throw new ValidatorException(new FacesMessage(message));
 			}			
 		}
@@ -496,7 +497,7 @@ public class DomainController extends BasicController {
 			try {
 				DomainController.checkDomainName(name, 3);
 			} catch (AonException e) {
-				String message = AonUtil.getMessage(BUNDLE_NAME, IAdminConstants.SUBDOMAIN_SUFFIX);
+				String message = AonUtil.getMessage(ADMIN_BUNDLE, SUBDOMAIN_SUFFIX);
 				FacesMessage fm = new FacesMessage(message + ": " + e.getMessage());
 				fm.setSeverity(SEVERITY_ERROR);
 				throw new ValidatorException(fm);		
@@ -512,25 +513,25 @@ public class DomainController extends BasicController {
 					for( int i = 0; i < labels.length; i++ ) {
 						String label = labels[i];
 						if ( StringUtils.length(label) > MAX_DOMAIN_LABEL_LENGTH ) {
-							throw new AonException( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_LABEL_LENGTH, label) );
+							throw new AonException( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_INVALID_LABEL_LENGTH, label) );
 						}
 						if ( StringUtils.startsWith(label, "-") || StringUtils.endsWith(label, "-") ) {
-							throw new AonException( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_LABEL_DASH, label) );
+							throw new AonException( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_INVALID_LABEL_DASH, label) );
 						}
 						Pattern p = (i+1==labels.length) ? URL_TLD_PATTERN : URL_LABEL_PATTERN;
 						Matcher m = p.matcher(label);
 						if (! m.matches() ) {
-							throw new AonException( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_LABEL_FORMAT, label) );
+							throw new AonException( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_INVALID_LABEL_FORMAT, label) );
 						}
 					}	
 				} else {
-					throw new AonException( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_NAME_LEVEL, maxLevel) );
+					throw new AonException( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_INVALID_NAME_LEVEL, maxLevel) );
 				}
 			} else {
-				throw new AonException( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_NAME_LARGE) );
+				throw new AonException( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_INVALID_NAME_LARGE) );
 			}
 		} else {
-			throw new AonException( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_INVALID_NAME, name) );	
+			throw new AonException( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_INVALID_NAME, name) );	
 		}
 	}
 	
@@ -663,19 +664,19 @@ public class DomainController extends BasicController {
 		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
 		body.append( "</head><body>" );
 		
-		body.append( AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, COMPANY_EMAIL_BODY_HEADER) );
+		body.append( AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_EMAIL_BODY_HEADER) );
 		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
-		body.append( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_EMAIL_BODY_1, loggedUser.getLoggedUserName(), di.getUrl()) );
-		body.append( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_EMAIL_BODY_2, di.getName()) );
+		body.append( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_EMAIL_BODY_1, loggedUser.getLoggedUserName(), di.getUrl()) );
+		body.append( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_EMAIL_BODY_2, di.getName()) );
 		if ( (di.getParent() != null) && (di.getParent().getId() != null) ) {
-			body.append( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_EMAIL_BODY_3, di.getParent().getDescription()) );
+			body.append( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_EMAIL_BODY_3, di.getParent().getDescription()) );
 		}
 		Locale locale = AonUtil.getCurrentLocale();
 		String type = di.getType().getName(locale);
 		String size = FileUtils.byteCountToDisplaySize(di.getMaxTotalDocumentSize()*FileUtils.ONE_MB);
-		body.append( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
+		body.append( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
 		String multiDomain = di.isDomainManagement() ? AonUtil.getMessage(YES) : AonUtil.getMessage(NO) ;
-		body.append( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_EMAIL_BODY_5, multiDomain, di.getModules().size()) );
+		body.append( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_EMAIL_BODY_5, multiDomain, di.getModules().size()) );
 		if (! di.getModules().isEmpty() ) {
 			body.append( "<ul>" );
 			for( Module module : di.getModules() ) {
@@ -684,13 +685,13 @@ public class DomainController extends BasicController {
 			body.append( "</ul>" );
 		}
 		
-		body.append( AonUtil.getMessage(BUNDLE_NAME, DOMAIN_EMAIL_BODY_FOOTER) );
+		body.append( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_EMAIL_BODY_FOOTER) );
 		body.append( "</body>" );
 		return body.toString();
 	}	
 
 	private void diff( StringBuffer sb, String message, Object oldValue, Object newValue ) {
-		diff( AonUtil.getMessage(BUNDLE_NAME, message), sb, oldValue, newValue );
+		diff( AonUtil.getMessage(ADMIN_BUNDLE, message), sb, oldValue, newValue );
 	}
 
 	private void diff( String message, StringBuffer sb, Object oldValue, Object newValue ) {
@@ -734,7 +735,7 @@ public class DomainController extends BasicController {
 			diff( AonUtil.getMessage(ACTIVE), sb, active1, active2 );
 		}
 		if (! ObjectUtils.equals(di1.getAuditLevel(), di2.getAuditLevel()) ) {
-			diff( AonUtil.getMessage(IAuditConstants.BUNDLE_NAME, AUDIT_LEVEL), sb, di1.getAuditLevel().getName(locale), di2.getAuditLevel().getName(locale) );
+			diff( AonUtil.getMessage(AUDIT_BUNDLE, AUDIT_LEVEL), sb, di1.getAuditLevel().getName(locale), di2.getAuditLevel().getName(locale) );
 		}
 		
 		if ( sb.length() > 0 ) {
@@ -757,7 +758,7 @@ public class DomainController extends BasicController {
 			if (! ArrayUtils.isEmpty(emails) ) {
 				LOGGER.info( "Notication emails: {}", ArrayUtils.toString(emails) );
 				EmailSender sender = getEmailSender();
-				String subject = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_MANAGEMENT);
+				String subject = AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_MANAGEMENT);
 				AonMessage message = sender.createMessage(subject);
 				message.setRecipientsBcc(emails);
 				sender.addMessageContent(message, getEmailContent(di), MimeType.MIME_HTML, diffFile);
@@ -820,13 +821,13 @@ public class DomainController extends BasicController {
 			if (! ArrayUtils.isEmpty(addresses) ) {
 				for( InternetAddress address : addresses ) {
 					if (! EmailValidator.getInstance().isValid(address.toString()) ) {
-						String message = AonUtil.getMessage(BUNDLE_NAME, WRONG_EMAIL, address.toString());
+						String message = AonUtil.getMessage(ADMIN_BUNDLE, WRONG_EMAIL, address.toString());
 						throw new ValidatorException(new FacesMessage(SEVERITY_ERROR, message, null));
 					}
 				}
 			}
 		} catch (AddressException e) {
-			String message = AonUtil.getMessage(BUNDLE_NAME, WRONG_EMAILS);
+			String message = AonUtil.getMessage(ADMIN_BUNDLE, WRONG_EMAILS);
 			throw new ValidatorException(new FacesMessage(SEVERITY_ERROR, message, null));
 		}
 	}			

@@ -1,5 +1,9 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DISK_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_UNRECORD_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +52,6 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.event.FinanceListSearchListener;
 import com.code.aon.ui.finance.file.AEB19Writer;
 import com.code.aon.ui.finance.file.AEB32Writer;
@@ -404,7 +407,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
         if (aebOutput != null) {
         	if (aebOutput.getErrors().size() > 0) {
-        		AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
+        		AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FINANCE_BATCH_DISK_ERROR);
         	} else {
                 fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
                 getManagerBean().update(fbatch);
@@ -472,7 +475,7 @@ public class FBatchController extends BasicController implements ICollectionProv
             getWriter().removeAccountEntryFinanceBatch(fBatch);
             loadDetails();
         } else {
-            AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_UNRECORD_ERROR);
+            AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FINANCE_BATCH_UNRECORD_ERROR);
             throw new AbortProcessingException();
         }
     }

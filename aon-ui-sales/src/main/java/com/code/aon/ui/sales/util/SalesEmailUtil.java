@@ -1,5 +1,9 @@
 package com.code.aon.ui.sales.util;
 
+import static com.code.aon.ui.common.ICommonMessages.SALES_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.SALES_EMAIL_BODY;
+import static com.code.aon.ui.common.ICommonMessages.SALES_EMAIL_SUBJECT;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
@@ -24,12 +28,12 @@ public class SalesEmailUtil extends CompanyEmailUtil implements ISalesMessages {
 	}
 	
 	public String getEmailSubject( Sales sales ) {
-		String message = AonUtil.getMessage(BUNDLE_KEY, SALES_EMAIL_SUBJECT);
+		String message = AonUtil.getMessage(SALES_BUNDLE, SALES_EMAIL_SUBJECT);
 		return MessageFormat.format(message, sales.getReferenceCode() );
 	}
 	
 	public String getEmailBody( Sales sales ) throws UnsupportedEncodingException {
-		String bodyMessage = AonUtil.getMessage(BUNDLE_KEY, SALES_EMAIL_BODY); 
+		String bodyMessage = AonUtil.getMessage(SALES_BUNDLE, SALES_EMAIL_BODY); 
 		return MessageFormat.format(bodyMessage, sales.getReferenceCode(), sales.getIssueDate() );
 	}
 

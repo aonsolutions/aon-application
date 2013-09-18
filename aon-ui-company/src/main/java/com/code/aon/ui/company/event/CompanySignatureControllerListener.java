@@ -1,6 +1,9 @@
 package com.code.aon.ui.company.event;
 
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_SIGNATURE_MAX_SIZE_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FILE_UPLOAD_ELEMENT;
+import static com.code.aon.ui.company.controller.ICompanyConstants.SIGNATURE_MAX_SIZE;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
@@ -19,7 +22,6 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.CompanyImagesController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -29,7 +31,7 @@ import com.sun.faces.util.MessageFactory;
 /**
  * Listener added to the CompanyController.
  */
-public class CompanySignatureControllerListener extends ControllerAdapter implements ICompanyConstants {
+public class CompanySignatureControllerListener extends ControllerAdapter {
 
 	/** The LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanySignatureControllerListener.class.getName());
@@ -40,7 +42,7 @@ public class CompanySignatureControllerListener extends ControllerAdapter implem
 			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage(FILE_UPLOAD_ELEMENT) );
 			throw new ControllerListenerException( message.getSummary() );									
 		} else if (aonFile.getSize() > SIGNATURE_MAX_SIZE) {
-			String message = AonUtil.getMessage(BUNDLE_NAME, COMPANY_SIGNATURE_MAX_SIZE_ERROR, SIGNATURE_MAX_SIZE);
+			String message = AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_SIGNATURE_MAX_SIZE_ERROR, SIGNATURE_MAX_SIZE);
 			throw new ControllerListenerException(message);										
 		}
 	}	

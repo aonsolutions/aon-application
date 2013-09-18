@@ -2,9 +2,6 @@ package com.code.aon.ui.audit.controller;
 
 public interface IAuditConstants {
 
-	// Bundle
-	String BUNDLE_NAME = "auditBundle";
-	
 	// Controllers	
 	String AUDIT_COLLECTIONS_CONTROLLER_NAME = "auditCollections";
 	String APPLICATION_OPTION_CONTROLLER_NAME = "appOption";
@@ -32,9 +29,6 @@ public interface IAuditConstants {
 	// Id preffixes
 	String FAVORITE_PREFFIX = "favorite_";
 	String MORE_USED_PREFFIX = "moreUsed_";	
-	
-	// Messages
-	String AUDIT_LEVEL = "audit_audit_level";
 	
 	// Menu IDs
 	String ENTERPRISE_CATEGORY = "enterprise";

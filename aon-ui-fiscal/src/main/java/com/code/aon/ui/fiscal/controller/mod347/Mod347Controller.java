@@ -1,6 +1,9 @@
 package com.code.aon.ui.fiscal.controller.mod347;
 
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DISK_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +24,6 @@ import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.enumeration.Mod347Status;
 import com.code.aon.fiscal.mod347.Mod347Parameters;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.fiscal.file.MOD347Writer;
 import com.code.aon.ui.form.BasicController;
@@ -76,8 +78,7 @@ public class Mod347Controller extends BasicController {
 		}
 		if (getFileOutput() != null) {
 			if (getFileOutput().getErrors().size() > 0) {
-				AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY,
-						IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
+				AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FINANCE_BATCH_DISK_ERROR);
 			}
 		}
 	}

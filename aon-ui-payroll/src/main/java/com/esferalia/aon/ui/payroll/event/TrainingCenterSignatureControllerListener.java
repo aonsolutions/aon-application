@@ -1,6 +1,9 @@
 package com.esferalia.aon.ui.payroll.event;
 
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.COMPANY_LOGO_MAX_SIZE_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FILE_UPLOAD_ELEMENT;
+import static com.code.aon.ui.company.controller.ICompanyConstants.LOGO_MAX_SIZE;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
@@ -14,7 +17,6 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -33,8 +35,8 @@ public class TrainingCenterSignatureControllerListener extends ControllerAdapter
 	private void checkAonFile( AonFile aonFile ) throws ControllerListenerException {
 		if ( ArrayUtils.isEmpty(aonFile.getData()) ) {
 			throw new ControllerListenerException( AonUtil.getMessage(FILE_UPLOAD_ELEMENT) );									
-		} else if (aonFile.getSize() > ICompanyConstants.LOGO_MAX_SIZE) {
-			String message = AonUtil.getMessage(ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_LOGO_MAX_SIZE_ERROR, ICompanyConstants.LOGO_MAX_SIZE);
+		} else if (aonFile.getSize() > LOGO_MAX_SIZE) {
+			String message = AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_LOGO_MAX_SIZE_ERROR, LOGO_MAX_SIZE);
 			throw new ControllerListenerException(message);										
 		}
 	}	

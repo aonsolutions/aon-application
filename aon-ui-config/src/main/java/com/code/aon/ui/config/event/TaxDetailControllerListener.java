@@ -1,8 +1,8 @@
 package com.code.aon.ui.config.event;
 
-import static com.code.aon.ui.config.controller.ConfigConstants.BUNDLE_NAME;
-import static com.code.aon.ui.config.controller.ConfigConstants.CONFIG_DATE_OVERLAP;
-import static com.code.aon.ui.config.controller.ConfigConstants.CONFIG_INVALID_END_DATE;
+import static com.code.aon.ui.common.ICommonMessages.CONFIG_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.CONFIG_DATE_OVERLAP;
+import static com.code.aon.ui.common.ICommonMessages.CONFIG_INVALID_END_DATE;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -22,7 +22,7 @@ public class TaxDetailControllerListener extends ControllerAdapter {
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		TaxDetail taxDetail = (TaxDetail) event.getController().getTo();
 		if (taxDetail.getStartDate().after(taxDetail.getEndDate())) {
-			throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, CONFIG_INVALID_END_DATE));
+			throw new ControllerListenerException(AonUtil.getMessage(CONFIG_BUNDLE, CONFIG_INVALID_END_DATE));
 		}
 
 		try {
@@ -31,7 +31,7 @@ public class TaxDetailControllerListener extends ControllerAdapter {
 			criteria.addEqualExpression(taxBean.getFieldName(IEntityAlias.TAX_ID), taxDetail.getTax().getId());
 			criteria.addLessThanOrEqualExpression(taxBean.getFieldName(IEntityAlias.TAX_START_DATE), taxDetail.getEndDate());
 			if (taxBean.getCount(criteria) > 0) {
-				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, CONFIG_DATE_OVERLAP));
+				throw new ControllerListenerException(AonUtil.getMessage(CONFIG_BUNDLE, CONFIG_DATE_OVERLAP));
 			}
 
 			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
@@ -41,7 +41,7 @@ public class TaxDetailControllerListener extends ControllerAdapter {
 			criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), taxDetail.getEndDate());
 			criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), taxDetail.getStartDate());
 			if (taxDetailBean.getCount(criteria) > 0) {
-				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, CONFIG_DATE_OVERLAP));
+				throw new ControllerListenerException(AonUtil.getMessage(CONFIG_BUNDLE, CONFIG_DATE_OVERLAP));
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

@@ -1,13 +1,13 @@
 package com.code.aon.ui.academy.print;
 
-import static com.code.aon.ui.academy.controller.IAcademyConstants.BUNDLE_NAME;
 import static com.code.aon.ui.academy.controller.IAcademyConstants.COURSE_CONTROLLER_NAME;
-import static com.code.aon.ui.academy.controller.IAcademyConstants.MARK_AVERAGE;
-import static com.code.aon.ui.academy.controller.IAcademyConstants.MARK_AVERAGE_ABRV;
-import static com.code.aon.ui.academy.controller.IAcademyConstants.MARK_QUALITATIVE;
-import static com.code.aon.ui.academy.controller.IAcademyConstants.MARK_QUANTITATIVE;
-import static com.code.aon.ui.academy.controller.IAcademyConstants.MARK_QUANTITATIVE_AVERAGE;
-import static com.code.aon.ui.academy.controller.IAcademyConstants.MARK_QUANTITATIVE_AVERAGE_FINAL;
+import static com.code.aon.ui.common.ICommonMessages.ACADEMY_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.MARK_AVERAGE;
+import static com.code.aon.ui.common.ICommonMessages.MARK_AVERAGE_ABRV;
+import static com.code.aon.ui.common.ICommonMessages.MARK_QUALITATIVE;
+import static com.code.aon.ui.common.ICommonMessages.MARK_QUANTITATIVE;
+import static com.code.aon.ui.common.ICommonMessages.MARK_QUANTITATIVE_AVERAGE;
+import static com.code.aon.ui.common.ICommonMessages.MARK_QUANTITATIVE_AVERAGE_FINAL;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,10 +62,10 @@ public class MarkPrinter implements ICollectionProvider{
 
 	public List<SelectItem> getPrintOptions() throws ManagerBeanException {
     	List<SelectItem> printTypes = new LinkedList<SelectItem>();
-        printTypes.add(new SelectItem(1, AonUtil.getMessage(BUNDLE_NAME, MARK_QUALITATIVE)));
-        printTypes.add(new SelectItem(2, AonUtil.getMessage(BUNDLE_NAME, MARK_QUANTITATIVE)));
-        printTypes.add(new SelectItem(3, AonUtil.getMessage(BUNDLE_NAME, MARK_QUANTITATIVE_AVERAGE)));
-        printTypes.add(new SelectItem(4, AonUtil.getMessage(BUNDLE_NAME, MARK_QUANTITATIVE_AVERAGE_FINAL)));
+        printTypes.add(new SelectItem(1, AonUtil.getMessage(ACADEMY_BUNDLE, MARK_QUALITATIVE)));
+        printTypes.add(new SelectItem(2, AonUtil.getMessage(ACADEMY_BUNDLE, MARK_QUANTITATIVE)));
+        printTypes.add(new SelectItem(3, AonUtil.getMessage(ACADEMY_BUNDLE, MARK_QUANTITATIVE_AVERAGE)));
+        printTypes.add(new SelectItem(4, AonUtil.getMessage(ACADEMY_BUNDLE, MARK_QUANTITATIVE_AVERAGE_FINAL)));
         return printTypes;
     }
 
@@ -204,8 +204,8 @@ public class MarkPrinter implements ICollectionProvider{
 
 	private CourseAcademicSkill getAverageSubject(CourseAlumn alumn) {
 		AcademicSkill academicSkill = new AcademicSkill();
-		academicSkill.setDescription(AonUtil.getMessage(BUNDLE_NAME, MARK_AVERAGE));
-		academicSkill.setCode(AonUtil.getMessage(BUNDLE_NAME, MARK_AVERAGE_ABRV));
+		academicSkill.setDescription(AonUtil.getMessage(ACADEMY_BUNDLE, MARK_AVERAGE));
+		academicSkill.setCode(AonUtil.getMessage(ACADEMY_BUNDLE, MARK_AVERAGE_ABRV));
 
 		CourseAcademicSkill subject = new CourseAcademicSkill();
 		subject.setAcademicSkill(academicSkill);

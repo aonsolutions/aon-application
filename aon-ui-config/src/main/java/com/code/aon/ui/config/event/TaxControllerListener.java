@@ -1,7 +1,7 @@
 package com.code.aon.ui.config.event;
 
-import static com.code.aon.ui.config.controller.ConfigConstants.BUNDLE_NAME;
-import static com.code.aon.ui.config.controller.ConfigConstants.CONFIG_INVALID_START_DATE;
+import static com.code.aon.ui.common.ICommonMessages.BUNDLE_NAME;
+import static com.code.aon.ui.common.ICommonMessages.CONFIG_INVALID_START_DATE;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;

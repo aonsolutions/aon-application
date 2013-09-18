@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_INTEGRITY_NO_RESULT;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +23,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.registry.enumeration.DocumentType;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceIntegrityController {
@@ -128,7 +130,7 @@ public class InvoiceIntegrityController {
 			}
 			setModel(new ListDataModel(list));
 			if (list.size() == 0) {
-				AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY,IFinanceMessages.FINANCE_INVOICE_INTEGRITY_NO_RESULT );
+				AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, FINANCE_INVOICE_INTEGRITY_NO_RESULT );
 			}
 		} catch (SQLException e) {
 			String msg = "No se pudo generar la lista de facturas.";

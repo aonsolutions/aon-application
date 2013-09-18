@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.EMPTY_INVOICE_LIST_ERROR_KEY;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +24,6 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -106,7 +108,7 @@ public class InvoiceRemoverController extends BasicController implements IProgre
 	public void onRemoveSelected(ActionEvent event){
 		int count = getCheckedInvoices().size();
 		if (count == 0) {
-			String msg = AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY,IFinanceMessages.EMPTY_INVOICE_LIST_ERROR_KEY);
+			String msg = AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, EMPTY_INVOICE_LIST_ERROR_KEY);
 			throw new AbortProcessingException(msg);
 		}
 		setProgressionCurrentValue(0L);

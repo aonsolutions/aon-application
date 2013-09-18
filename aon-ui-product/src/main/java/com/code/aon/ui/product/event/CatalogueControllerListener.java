@@ -1,5 +1,8 @@
 package com.code.aon.ui.product.event;
 
+import static com.code.aon.ui.common.ICommonMessages.PRODUCT_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.PRODUCT_CATALOGUE_DATES_ERROR;
+
 import java.util.Date;
 
 import com.code.aon.common.BeanManager;
@@ -12,11 +15,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.product.IItemMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CatalogueControllerListener extends ControllerAdapter implements IItemMessages {
+public class CatalogueControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
@@ -25,7 +27,7 @@ public class CatalogueControllerListener extends ControllerAdapter implements II
 			Date startDate = ((Catalogue) this.getController().getTo()).getStartDate();
 			if (endDate.before(startDate)) {
 				((Catalogue)this.getController().getTo()).setEndDate(null);
-				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, PRODUCT_CATALOGUE_DATES_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(PRODUCT_BUNDLE, PRODUCT_CATALOGUE_DATES_ERROR));
 			}
 		}
 	}
@@ -37,7 +39,7 @@ public class CatalogueControllerListener extends ControllerAdapter implements II
 			Date startDate = ((Catalogue) this.getController().getTo()).getStartDate();
 			if (endDate.before(startDate)) {
 				((Catalogue)this.getController().getTo()).setEndDate(null);
-				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, PRODUCT_CATALOGUE_DATES_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(PRODUCT_BUNDLE, PRODUCT_CATALOGUE_DATES_ERROR));
 			}
 		}
 	}
