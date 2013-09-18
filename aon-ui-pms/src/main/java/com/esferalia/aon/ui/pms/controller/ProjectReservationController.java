@@ -41,7 +41,6 @@ import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryPayMethod;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
@@ -912,8 +911,9 @@ public class ProjectReservationController extends BasicController implements IPm
 		setInvoiceModel(null);
 		try {
 			if (validateModificationInvoice(getInvoiceToModify())) {
+				Invoice invoice = getInvoiceToModify();
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-				if (DateUtils.isSameDay(getInvoiceToModify().getIssueDate(), new Date()) && isInvoiceInUserPosShift(getInvoiceToModify())) {
+				if (DateUtils.isSameDay(invoice.getIssueDate(), new Date()) && isInvoiceInUserPosShift(invoice) && invoice.isAllFinancePending()) {
 					reservationInvoicing.modify(getInvoiceToModify(), getReservationInvoiceTo());
 				} else {
 					setInvoiceToRectify(getInvoiceToModify());
