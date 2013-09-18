@@ -329,17 +329,13 @@ public class ProposalController extends BasicController {
 				HibernateUtil.setBeginTransaction(false);
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
-				
 				// BEGIN operaciones de la transaccion
-				
 				Proposal destinationProposal = createDestinationProposal();
 				updateSourceProposal(destinationProposal);
-				this.refresh(event);
-				
 				// FIN operaciones de la transaccion
-				
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
+				this.refresh(event);
 			} catch (Exception e) {
 				String msg = e.getMessage();
 				try {
