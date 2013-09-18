@@ -240,43 +240,45 @@ public class Employees extends ResizeComposite implements
 				// --------------------------------------------------------------
 				//
 
+				Agreement agreement = workplace.getAgreement();
+
 				EventMetaData fteMetaData = new EnumEventMetaData("FTE",
 						"DESEMPE\u00D1O",
 						"Desempe\u00F1o por Trabajador y Jornada", "", "4",
 						"8", "10", "12", "L", "LT", "LR", "F", "FT", "FR", "V",
 						"B", "P", "AI", "M");
 
-				// EventsDraftObject eventsDraftObject = new EventsDraftObject(
-				// workplace.getId(),
-				// employeesService,
-				// new DecimalEventMetaData("INCENTIVOS"),
-				// new DecimalEventMetaData("ATRASOS"),
-				// new DecimalEventMetaData("ANTICIPOS"),
-				// new DecimalEventMetaData("EMBARGOS"),
-				// new DecimalEventMetaData("LTA",
-				// "D\u00EDas Libres Trabajados canjeados por Alojamiento"),
-				// new DecimalEventMetaData("CLT",
-				// "Coste d\u00EDa Libre Trabajado"),
-				// new DecimalEventMetaData("CD",
-				// "Coste Diario del trabajador (jornada 8 horas)"),
-				// new ConstantEventMetaData("CFT",
-				// "Coste d\u00EDa Festivo Trabajado ( = CD * 1.75 \u20A0)"),
-				// new BooleanEventMetaData("LTNR",
-				// "D\u00EDas Libres Trabajados No Recuperables"),
-				// new DecimalEventMetaData("HFD",
-				// "Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"),
-				// fteMetaData, new EventMetaData("OBSERVACIONES"),
-				// new ConstantEventMetaData("PLUS_TURNICIDAD",
-				// "Plus de Turnicidad = (\u2211LT - \u2211LR - LTA) * CLT"));
-
-				Agreement agreement = workplace.getAgreement();
+				 final EventsDraftObject eventsDraftObject = new EventsDraftObject(
+				 workplace.getId(),
+				 agreement != null ? agreement.getId() : null,
+				 employeesService,
+				 new DecimalEventMetaData("INCENTIVOS"),
+				 new DecimalEventMetaData("ATRASOS"),
+				 new DecimalEventMetaData("ANTICIPOS"),
+				 new DecimalEventMetaData("EMBARGOS"),
+				 new DecimalEventMetaData("LTA",
+				 "D\u00EDas Libres Trabajados canjeados por Alojamiento"),
+				 new DecimalEventMetaData("CLT",
+				 "Coste d\u00EDa Libre Trabajado"),
+				 new DecimalEventMetaData("CD",
+				 "Coste Diario del trabajador (jornada 8 horas)"),
+				 new ConstantEventMetaData("CFT",
+				 "Coste d\u00EDa Festivo Trabajado ( = CD * 1.75 \u20A0)"),
+				 new BooleanEventMetaData("LTNR",
+				 "D\u00EDas Libres Trabajados No Recuperables"),
+				 new DecimalEventMetaData("HFD",
+				 "Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"),
+				 fteMetaData, new EventMetaData("OBSERVACIONES"),
+				 new ConstantEventMetaData("PLUS_TURNICIDAD",
+				 "Plus de Turnicidad = (\u2211LT - \u2211LR - LTA) * CLT"));
+				/*
 				final EventsDraftObject eventsDraftObject = new EventsDraftObject(
 						workplace.getId(),
 						agreement != null ? agreement.getId() : null,
 						employeesService, new BooleanEventMetaData(
 								"DIAS_EFECTIVOS"), new BooleanEventMetaData(
 								"HUELGA"), new EventMetaData("OBSERVACIONES"));
-
+				*/
 				Date date = new Date();
 
 				eventsDraftObject.setPeriod(
