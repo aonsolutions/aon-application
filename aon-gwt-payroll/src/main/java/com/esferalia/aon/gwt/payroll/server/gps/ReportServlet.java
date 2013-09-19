@@ -19,6 +19,9 @@ import java.util.Enumeration;
 import java.util.Formattable;
 import java.util.Formatter;
 import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -43,6 +46,7 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 	private static final String DEFAULT_CHARSET = "ISO-8859-1";
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(
 			DATE_FORMAT_PATTERN);
+	private static final Pattern HOURS_PATTERN = Pattern.compile("\"(.*)\"");
 
 	static class StringFormattable implements Formattable{
 		private String str;
@@ -111,21 +115,27 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 					+ SQLConstants.CONTRACT + "." + ContractColumns.DESCRIPTION + ", " 
 					+ SQLConstants.CONTRACT + "." + ContractColumns.CATEGORY_DESCRIPTION + ", "
 					+ SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.END_DATE + ", "
-					+ SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.EXPRESSION 
-
+					+ SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.EXPRESSION +", " 
+					+ "DPT." + ContractDataColumns.EXPRESSION 
 					+ " FROM "
 					+ SQLConstants.WORKPLACE + ", " 
 					+ SQLConstants.CONTRACT + ", " 
 					+ SQLConstants.PERSON + ", "
-					+ SQLConstants.CONTRACT_DATA 
+					+ SQLConstants.CONTRACT_DATA + ", " 
+					+ SQLConstants.CONTRACT_DATA + " AS DPT"
 					+ " WHERE " + SQLConstants.WORKPLACE + "." + WorkplaceColumns.ID + " = " + SQLConstants.CONTRACT + "." + ContractColumns.WORKPLACE
 					+ " AND " + SQLConstants.CONTRACT + "." + ContractColumns.ID + " = " + SQLConstants.CONTRACT_DATA + "." +  ContractDataColumns.CONTRACT 
+					+ " AND " + SQLConstants.CONTRACT + "." + ContractColumns.ID + " = DPT." +  ContractDataColumns.CONTRACT 
 					+ " AND " + SQLConstants.PERSON + "." + PersonColumns.REGISTRY + " = " + SQLConstants.CONTRACT + "." + ContractColumns.PERSON
 					+ " AND " + SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.NAME + " = ?" 
-					+ " AND " + SQLConstants.CONTRACT_DATA + "." +  ContractDataColumns.EXPRESSION + " IN ( 4, 8, 10, 12 )"
+					+ " AND " + SQLConstants.CONTRACT_DATA + "." +  ContractDataColumns.EXPRESSION + " IN ( '\"4\"', '\"8\"', '\"10\"', '\"12\"' )"
 					+ " AND " + SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.START_DATE + " <= ?"
 					+ " AND ( " + SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.END_DATE + " IS NULL "
 					+ " OR " + SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.END_DATE + " >= ? )"
+					+ " AND DPT." +  ContractDataColumns.NAME + " =  'DPT' "
+					+ " AND DPT." + ContractDataColumns.START_DATE + " <= " + SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.END_DATE 
+					+ " AND ( DPT." + ContractDataColumns.END_DATE + " IS NULL "
+					+ " OR DPT." + ContractDataColumns.END_DATE + " >= " + SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.START_DATE +  ")"
 					+ " AND " + SQLConstants.WORKPLACE + "." + WorkplaceColumns.ID + " IN ( " + "?" + StringUtils.repeat(",?", workplaces.length - 1) + ")"
 					+ " ORDER BY 1,2,3";
 
@@ -151,10 +161,17 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 
 				String hotel = rs.getString(SQLConstants.WORKPLACE + "."
 						+ WorkplaceColumns.DESCRIPTION);
-				String section = rs.getString(SQLConstants.CONTRACT + "."
-						+ ContractColumns.DESCRIPTION);
+				
+				String section = rs.getString("DPT."
+						+ ContractDataColumns.EXPRESSION);
+				if ( section != null ) {
+					Matcher matcher = HOURS_PATTERN.matcher(section);
+					if (matcher.matches()) 
+						section = matcher.group(1);
+				}
+				
 				String category = rs.getString(SQLConstants.CONTRACT + "."
-						+ ContractColumns.CATEGORY_DESCRIPTION);
+						+ ContractColumns.DESCRIPTION);
 
 				String firstSurname = rs.getString(SQLConstants.PERSON + "."
 						+ PersonColumns.FIRST_SURNAME);
@@ -180,8 +197,12 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 
 				String fte = rs.getString(SQLConstants.CONTRACT_DATA + "."
 						+ ContractDataColumns.EXPRESSION);
-
-				int hours = Integer.parseInt(fte);
+				
+				Matcher matcher = HOURS_PATTERN.matcher(fte);
+				if ( ! matcher.matches() )
+					continue;
+				
+				int hours = Integer.parseInt(matcher.group(1));	
 
 				for (Pair<Date, Integer> day : days) {
 
@@ -288,5 +309,6 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 		}
 		
 	}
+	
 
 }
