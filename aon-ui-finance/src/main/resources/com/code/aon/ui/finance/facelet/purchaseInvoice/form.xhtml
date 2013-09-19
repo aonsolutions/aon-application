@@ -43,7 +43,7 @@
 					<ui:define name="moreMenuContent">
 						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 							<aon:menuItem id="incomeTransfer"
-								value="#{financeBundle.finance_invoice_deliveries}"
+								value="#{configBundle.config_series_deliveries}"
 								immediate="#{true}" rendered="#{!purchaseInvoice.readOnly}"
 								iconClass="aon-icon-sincronize"
 								actionListener="#{purchaseInvoice.onIncomeTransferShow}"

@@ -210,16 +210,16 @@
 				<aon:outputText value="#{bundle.account_account_entry}" />
 			</f:facet>
 			<aon:commandButton actionListener="#{amortizationDetail.onUnrecord}"
-				title="#{accountingBundle.accounting_unrecord}"
+				title="#{financeBundle.finance_unrecord}"
 				rendered="#{amortizationDetail.to == to and to.scored}"
 				reRender="amortizationForm"
-				onclick="if (!confirm('#{accountingBundle.accounting_unrecord}?')) return false;"
+				onclick="if (!confirm('#{financeBundle.finance_unrecord}?')) return false;"
 				styleClass="aon-editDataTable-button aon-icon-task-liberate" />
 			<aon:commandButton actionListener="#{amortizationDetail.onRecord}"
-				title="#{accountingBundle.accounting_record}"
+				title="#{financeBundle.finance_record}"
 				rendered="#{amortizationDetail.to == to and !to.scored}"
 				reRender="amortizationForm"
-				onclick="if (!confirm('#{accountingBundle.accounting_record}?')) return false;"
+				onclick="if (!confirm('#{financeBundle.finance_record}?')) return false;"
 				styleClass="aon-editDataTable-button aon-icon-task-assume" />
 			<aon:commandLink id="accountEntry-search" 
 				immediate="true" styleClass="aon-dataTable-link"

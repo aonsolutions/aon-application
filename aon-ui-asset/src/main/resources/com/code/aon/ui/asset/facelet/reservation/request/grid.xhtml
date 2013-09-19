@@ -123,7 +123,7 @@
 				<aon:actionListener method="#{activityDialog.onInitializeRequest}" />
 			</aon:commandButton>
 			<aon:commandButton id="activityDialog-email"
-				value="#{assetBundle.asset_activity_send_request}" reRender="activityDialogTable"
+				value="#{webmailBundle.webmail_send_email}" reRender="activityDialogTable"
 				rendered="#{activityDialog.new and activityDialog.request}"
 				styleClass="aon-icon-webmail2"
 				accesskey="#{bundle.aon_key_new}" >

@@ -33,7 +33,7 @@
 					<aon:methodParam name="searchAction" value="journal_list" />
 
 					<aon:outputLabel for="reportDate"
-						value="#{accountingBundle.accounting_report_date}" />
+						value="#{financeBundle.finance_report_date}" />
 					<aon:selectInputDate id="reportDate"
 						value="#{journalReport.date}"
 						timeZone="#{timeZoneController.timeZone}"
@@ -106,7 +106,7 @@
 						value="#{journalReport.credit}"  />
 					
 					<aon:outputLabel for="AccountEntry_detail_balancingAccount_code"
-						value="#{accountingBundle.accounting_balancing_account}" />
+						value="#{financeBundle.finance_balancing_account}" />
 					<aon:inputText id="AccountEntry_detail_balancingAccount_code" size="10"
 						value="#{journalReport.balancingAccount}"  />
 					

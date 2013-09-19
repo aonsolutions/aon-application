@@ -73,7 +73,7 @@
 			size="30" maxlength="64" required="true" />
 	</aon:div>
 
-	<aon:outputLabel for="ProjectReservation_creationDate" value="#{pmsBundle.pms_reservation_creationDate}"
+	<aon:outputLabel for="ProjectReservation_creationDate" value="#{registryBundle.registry_rd_creation_date}"
 		rendered="#{!reservation.new}" />
 	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto" rendered="#{!reservation.new}">
 		<aon:outputText id="ProjectReservation_creationDate" value="#{reservation.to.creationDate}"
@@ -269,7 +269,7 @@
 		</aon:div>
 		<aon:div id="AdvanceDiv">
 			<aon:outputLabel for="ProjectReservation_advance"
-				value="#{pmsBundle.pms_advance}:" 
+				value="#{financeBundle.finance_money_advance}:" 
 				styleClass="aon-margin-right aon-italic" />
 			<aon:outputText value="#{reservation.to.advancedAmount}" 
 				rendered="#{!reservation.reservationPermission.advanceEditable}"	

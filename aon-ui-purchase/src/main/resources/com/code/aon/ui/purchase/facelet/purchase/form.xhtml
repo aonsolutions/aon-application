@@ -164,23 +164,23 @@
 
 								<aon:commandButton id="toPending" value="&#160;"
 									actionListener="#{purchase.onPending}" 
-									title="#{purchaseBundle.purchase_to_pending}"
+									title="#{salesBundle.sales_to_pending}"
 									immediate="true" rendered="#{purchase.closed}"
 									styleClass="aon-icon-commandButton aon-icon-refresh aon-margin-left" />
 								<aon:commandButton id="close" value="&#160;"
 									actionListener="#{purchase.onClose}"
-									title="#{purchaseBundle.purchase_to_close}"
+									title="#{salesBundle.sales_to_close}"
 									immediate="true" rendered="#{purchase.pending and purchaseDetail.model.rowCount > 0}"
 									styleClass="aon-icon-commandButton aon-icon-point-red" />
 								<aon:commandButton id="block" value="&#160;"
 									actionListener="#{purchase.onBlock}"
-									title="#{purchaseBundle.purchase_to_block}"
+									title="#{salesBundle.sales_to_block}"
 									immediate="true" rendered="#{!purchase.new and purchase.pending}"
 									styleClass="aon-icon-commandButton aon-icon-lock">
 								</aon:commandButton>										
 								<aon:commandButton id="unblock" value="&#160;"
 									actionListener="#{purchase.onUnblock}"
-									title="#{purchaseBundle.purchase_to_unblock}"
+									title="#{salesBundle.sales_to_unblock}"
 									immediate="true" rendered="#{purchase.blocked}"
 									styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
 								</aon:commandButton>										
@@ -403,7 +403,7 @@
 				
 				<c:if test="#{!purchase.new}">
 					<aon:panelTabSet id="purchasePanelTab">
-						<aon:panelTab label="#{purchaseBundle.purchase_detail}">
+						<aon:panelTab label="#{salesBundle.sales_detail}">
 							<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formDetail.xhtml">
 								<c:if test="#{!aonConfiguration.bean.purchase.showTasData}">
 									<ui:param name="projectLabel" value="#{bundle.aon_project}" />

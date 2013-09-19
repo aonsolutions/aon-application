@@ -34,7 +34,7 @@
 							<aon:outputText value="#{bundle.aon_preview}"/>
 						</h:outputLink>				     									
 						<aon:commandButton id="publish" reRender="aonStatus"
-							value="#{infowebBundle.infoweb_publish}"
+							value="#{publisherBundle.publisher_publish}"
 							rendered="#{generator.generated}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-upload"
 							actionListener="#{generator.onPublish}" immediate="true" >
@@ -43,7 +43,7 @@
 						<h:outputLink id="web" value="#{generator.webPage}" target="_blank"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							rendered="#{generator.published}">
-							<aon:outputText value="#{infowebBundle.infoweb_view}"/>
+							<aon:outputText value="#{publisherBundle.publisher_view}"/>
 						</h:outputLink>
 					</aon:div>
 				</aon:panelGrid>
@@ -51,7 +51,7 @@
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />		
 		<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
-			<ui:param name="logPanelTitle" value="#{infowebBundle.infoweb_publish}" />
+			<ui:param name="logPanelTitle" value="#{publisherBundle.publisher_publish}" />
 		</ui:include>		
 	</ui:define>
 </ui:composition>

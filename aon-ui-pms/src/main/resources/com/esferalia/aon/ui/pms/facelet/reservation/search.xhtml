@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="reservationSearch">
 			<ui:include	src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_module}" />
+				<ui:param name="toolbarTitle" value="#{assetBundle.asset_activity_module}" />
 				<ui:param name="controller" value="#{reservation}" />
 				<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationAllowed}" />
 			</ui:include>

@@ -65,7 +65,7 @@
 						aon-panelGrid-odd aon-width-150,
 						aon-panelGrid-even aon-width-auto">
 
-					<aon:outputText value="#{accountingBundle.accounting_report_date}" />
+					<aon:outputText value="#{financeBundle.finance_report_date}" />
 					<aon:outputText
 						value="#{ledgerReport.date}"
 						timeZone="#{timeZoneController.timeZone}">
@@ -113,7 +113,7 @@
 								</aon:column>
 								<aon:column styleClass="aon-dataTable-header">
 									<aon:outputText
-										value="#{accountingBundle.accounting_balancing_account}" />
+										value="#{financeBundle.finance_balancing_account}" />
 								</aon:column>
 							</rich:columnGroup>
 						</f:facet>

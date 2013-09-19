@@ -37,7 +37,7 @@
 
 				<aon:column styleClass="aon-editDataTable-textColumn" >
 					<f:facet name="header">
-						<aon:outputText value="#{adminBundle.admin_roles}" />
+						<aon:outputText value="#{richBundle.aon_permissions}" />
 					</f:facet>
 					<aon:outputText value="#{appProfile.roleList}" />
 				</aon:column>					
@@ -56,7 +56,7 @@
 					
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-250 aon-vertical-align-top" >
 					<f:facet name="header">
-						<aon:outputText value="#{adminBundle.admin_applications}" />
+						<aon:outputText value="#{auditBundle.audit_applications_module}" />
 					</f:facet>
 					<aon:outputText styleClass="aon-bold"
 						value="#{appInfo.domainApplication.application.description}" />

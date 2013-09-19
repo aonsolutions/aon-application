@@ -145,7 +145,7 @@
 			<aon:div>
 				<aon:commandButton id="requestRoom-AvailabilityQuery"
 					value="&#160;" styleClass="aon-icon-question aon-noborder"
-					title="#{pmsBundle.pms_availability}" immediate="true"
+					title="#{assetBundle.asset_filter_availability}" immediate="true"
 					rendered="#{empty to.crsCode}"
 					actionListener="#{controller.sendAvailabilityQuery}"
 					reRender="aonContent"
@@ -222,7 +222,7 @@
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<f:facet name="header">
-						<aon:outputText value="#{pmsBundle.pms_availability}" />
+						<aon:outputText value="#{assetBundle.asset_filter_availability}" />
 					</f:facet>
 					<aon:outputText value="#{availableRoomStay.availability}"
 						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}" />

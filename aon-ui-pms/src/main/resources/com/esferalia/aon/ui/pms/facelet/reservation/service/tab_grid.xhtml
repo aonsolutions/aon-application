@@ -57,7 +57,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel value="#{pmsBundle.pms_service}" />
+					<aon:outputLabel value="#{financeBundle.finance_service}" />
 				</f:facet>
 				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" />
 			</aon:column>
@@ -82,13 +82,13 @@
 			<aon:div>
 				<aon:commandButton id="showServiceDetailTable"
 					value="&#160;" styleClass="aon-icon-tree-root aon-noborder"
-					title="#{pmsBundle.pms_to_breakdown}"
+					title="#{financeBundle.finance_tobreakdown}"
 					rendered="#{!to.showServiceDetail}" 
 					actionListener="#{controller.onShowServiceDetails}"
 					reRender="#{dataTableId}" />
 				<aon:commandButton id="hideServiceDetailTable"
 					value="&#160;" styleClass="aon-icon-index aon-noborder"
-					title="#{pmsBundle.pms_to_hide}"
+					title="#{financeBundle.finance_hide}"
 					rendered="#{to.showServiceDetail}" 
 					actionListener="#{controller.onHideServiceDetails}"
 					reRender="#{dataTableId}" />

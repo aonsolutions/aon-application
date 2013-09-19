@@ -39,7 +39,7 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="serviceDetail-accept"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										value="#{bundle.aon_save} #{pmsBundle.pms_service}"
+										value="#{bundle.aon_save} #{financeBundle.finance_service}"
 										rendered="#{reservation.reservationPermission.acceptReservationServiceAllowed}"
 										actionListener="#{controller.onAcceptReservationService}">
 										<rich:componentControl for="serviceDetailModalPanel"
@@ -50,7 +50,7 @@
 									</aon:commandButton>	
 									<aon:commandButton id="serviceDetail-remove"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
-										value="#{bundle.aon_remove} #{pmsBundle.pms_service}"
+										value="#{bundle.aon_remove} #{financeBundle.finance_service}"
 										rendered="#{!controller.new and reservation.reservationPermission.removeReservationServiceAllowed}"
 										actionListener="#{controller.onRemoveReservationService}">
 										<rich:componentControl for="serviceDetailModalPanel"
@@ -116,7 +116,7 @@
 										</aon:div>
 
 										<aon:outputLabel for="Item_id" 
-											value="#{pmsBundle.pms_service}" />
+											value="#{financeBundle.finance_service}" />
 										<aon:outputText	value="#{controller.to.item.product.code} - #{controller.to.item.product.name}" styleClass="aon-bold"
 											rendered="#{!reservation.reservationPermission.reservationServicesEditable}" />
 										<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">

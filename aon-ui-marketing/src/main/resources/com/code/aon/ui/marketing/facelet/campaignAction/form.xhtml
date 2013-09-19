@@ -46,7 +46,7 @@
 							required="true" size="32" maxlength="64" />		
 	
 						<aon:outputLabel for="Action_mediaType"
-							value="#{marketingBundle.marketing_action_media_type}" />
+							value="#{registryBundle.registry_media_type}" />
 						<aon:selectOneMenu id="Action_mediaType"
 							reRender="actionGrid,campaignActionTargetDataDiv" required="true"
 							process="Action_description,Action_startDate,Action_endDate,Template_id"
@@ -136,7 +136,7 @@
 					</aon:div>
 					
 					<aon:div styleClass="aon-toolbar">
-						<aon:commandButton value="#{marketingBundle.marketing_action_add}"
+						<aon:commandButton value="#{accountingBundle.accounting_add}"
 							action="campaignActionTarget_search"
 							actionListener="#{target.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-new" />

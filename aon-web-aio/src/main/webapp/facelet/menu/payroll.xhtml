@@ -28,7 +28,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_employee" action="gwt_employee_tree"
-											value="#{gwtPayrollBundle.menu_employee_tree}" target="gwt">
+											value="#{payrollBundle.menu_integral}" target="gwt">
 											<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
 											<aon:actionListener method="#{enterprise.onEditSearch}" />
 										</aon:commandLink>
@@ -65,7 +65,7 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-offer aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="#{payrollBundle.payroll_concepts}" />
+									<aon:outputText value="#{accountingBundle.accounting_concepts}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">

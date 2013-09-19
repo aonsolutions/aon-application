@@ -56,7 +56,7 @@
 							<aon:div>
 								<c:if test="#{aonConfiguration.bean.customer.showDeliveryData}">
 									<aon:outputText	styleClass="aon-margin-left aon-bold"
-										value="#{financeBundle.finance_invoice_deliveries}:" />
+										value="#{configBundle.config_series_deliveries}:" />
 									<aon:selectBooleanCheckbox id="Customer_deliveryGrouped" styleClass="aon-margin-left"
 										value="#{customer.to.deliveryGrouped}" />
 									<aon:outputLabel for="Customer_deliveryGrouped" styleClass="aon-italic"
@@ -101,7 +101,7 @@
 						</c:if>
 	
 						<c:if test="#{!customer.new and aonRole.accountingOperator and aonConfiguration.bean.customer.showAccount}">
-							<aon:outputLabel for="Account_id" value="#{accountBundle.account_accounting}" />
+							<aon:outputLabel for="Account_id" value="#{financeBundle.finance_account}" />
 							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
 								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 									<ui:param name="lookupTo" value="#{customer.to.account}" />
@@ -131,7 +131,7 @@
 						</c:if>
 
 						<aon:outputLabel for="Observation"
-							value="#{customerBundle.customer_observation}" />
+							value="#{registryBundle.registry_observation}" />
 						<aon:inputTextarea id="Observation" cols="120" rows="3"
 							value="#{customerObservation.observation.comments}" />
 					</aon:panelGrid>

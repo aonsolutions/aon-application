@@ -35,15 +35,15 @@
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
 					<aon:commandButton actionListener="#{periodAmortization.onRecord}"
-						title="#{accountingBundle.accounting_record}"
-						value="#{accountingBundle.accounting_record}"
-						onclick="if (!confirm('#{accountingBundle.accounting_record}?')) return false;"
+						title="#{financeBundle.finance_record}"
+						value="#{financeBundle.finance_record}"
+						onclick="if (!confirm('#{financeBundle.finance_record}?')) return false;"
 						styleClass="aon-finding-toolbar-item aon-icon-task-assume" />
 						
 					<aon:commandButton actionListener="#{periodAmortization.onUnrecord}"
-						title="#{accountingBundle.accounting_unrecord}"
-						value="#{accountingBundle.accounting_unrecord}"
-						onclick="if (!confirm('#{accountingBundle.accounting_unrecord}?')) return false;"
+						title="#{financeBundle.finance_unrecord}"
+						value="#{financeBundle.finance_unrecord}"
+						onclick="if (!confirm('#{financeBundle.finance_unrecord}?')) return false;"
 						styleClass="aon-finding-toolbar-item aon-icon-task-liberate" />
 				</ui:define>
 

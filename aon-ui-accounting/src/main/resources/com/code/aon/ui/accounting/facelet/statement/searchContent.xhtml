@@ -13,7 +13,7 @@
 			<ui:param name="skipSearchButton" value="true" />
 
 			<aon:outputLabel for="reportDate"
-				value="#{accountingBundle.accounting_report_date}" />
+				value="#{financeBundle.finance_report_date}" />
 			<aon:selectInputDate id="reportDate"
 				value="#{trialBalance.parameters.date}"
 				timeZone="#{timeZoneController.timeZone}"
@@ -67,7 +67,7 @@
 					<a4j:actionparam value="400*" assignTo="#{trialBalance.parameters.accountExpression}"/>
 				</aon:commandLink>
 				<aon:commandLink id="creditor-search" 
-					value="#{accountingBundle.accounting_creditor}" reRender="Account_id" tabindex="1006"  
+					value="#{financeBundle.finance_creditor_module}" reRender="Account_id" tabindex="1006"  
 					styleClass="aon-dataTable-link-simple aon-italic">
 					<a4j:actionparam value="410*" assignTo="#{trialBalance.parameters.accountExpression}"/>
 				</aon:commandLink>

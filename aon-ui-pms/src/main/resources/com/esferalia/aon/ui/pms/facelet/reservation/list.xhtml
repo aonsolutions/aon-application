@@ -10,12 +10,12 @@
 		<aon:form>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_module}" />
+				<ui:param name="toolbarTitle" value="#{assetBundle.asset_activity_module}" />
 				<ui:param name="controller" value="#{reservation}" />
 				<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationAllowed}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="reservation-Refresh"
-						value="#{pmsBundle.pms_to_refresh}"	immediate="#{true}"
+						value="#{webmailBundle.webmail_refresh}"	immediate="#{true}"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						actionListener="#{reservation.onSearch}"
 						reRender="aonContent" />

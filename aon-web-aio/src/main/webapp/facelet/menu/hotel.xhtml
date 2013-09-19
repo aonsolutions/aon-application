@@ -22,7 +22,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-book aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_reservation_module}"/>
+								<aon:outputText value="#{assetBundle.asset_activity_module}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -35,7 +35,7 @@
 									<aon:commandLink id="reservation" 
 										action="reservation_list"
 										actionListener="#{reservation.onLoad}"
-										value="#{pmsBundle.pms_reservation_module}"/>
+										value="#{assetBundle.asset_activity_module}"/>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="reservation-search"

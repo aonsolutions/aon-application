@@ -18,7 +18,7 @@
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="makeBackup" 
-						value="#{adminBundle.admin_make_backup}" 
+						value="#{financeBundle.finance_create_disk}" 
 						actionListener="#{backup.onPrepareBackup}"
 						rendered="#{!backup.backupAvailable}"
 						reRender="backupContent"

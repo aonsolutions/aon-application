@@ -91,7 +91,7 @@
 						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="campainas" rendered="#{contractContrata.handler.showCampainasPanel}"
-					value="#{sepeBundle.sepe_contrata_contract_campainas_data}" />
+					value="#{marketingBundle.marketing_campaign_module}" />
 					
 				<aon:selectBooleanCheckbox id="causaInterinidad" rendered="#{contractContrata.handler.showCausaInterinidadPanel}"
 					value="#{contractContrata.params.interimData}">
@@ -308,7 +308,7 @@
 		<aon:div id="campainasPanel" rendered="#{contractContrata.params.canpaignData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_campainas_data}" />
+					<aon:outputText value="#{marketingBundle.marketing_campaign_module}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="campaignGeozone"

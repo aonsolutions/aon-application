@@ -30,9 +30,9 @@
 			<f:setPropertyActionListener target="#{financeList.showFinanceSearchWindow}"
 				value="#{true}" />
 		</aon:commandButton>
-		<aon:commandButton title="#{pmsBundle.pms_include}"
+		<aon:commandButton title="#{payrollBundle.payroll_include}"
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
-			value="#{pmsBundle.pms_include}"
+			value="#{payrollBundle.payroll_include}"
 			rendered="#{financeList.checkedCount > 0}"
 			actionListener="#{paymentCardSettle.onAddSelected}" reRender="financeToolBarDiv,financeDataDiv"
 			onclick="Richfaces.showModalPanel('waitProccess')" 

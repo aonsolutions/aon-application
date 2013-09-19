@@ -97,7 +97,7 @@
 									value="#{projectBundle.project_project_type}"/>
 								<aon:selectOneMenu id="Task_projectType"
 									value="#{taskSearchControllerListener.projectType}">
-									<f:selectItem itemLabel="-- #{groupwareBundle.groupware_all} --" value="#{null}"/>
+									<f:selectItem itemLabel="-- #{financeBundle.finance_all} --" value="#{null}"/>
 									<f:selectItems value="#{projectCollections.projectTypes}" />
 									<a4j:support event="onchange" actionListener="#{task.onFilter}"
 										reRender="taskTableContainer"/>
@@ -109,7 +109,7 @@
 								<aon:selectOneMenu id="Task_process"
 									disabled="#{taskSearchControllerListener.processDetail != null}"
 									value="#{taskSearchControllerListener.process}">
-									<f:selectItem itemLabel="-- #{groupwareBundle.groupware_all} --" value="#{null}"/>
+									<f:selectItem itemLabel="-- #{financeBundle.finance_all} --" value="#{null}"/>
 									<f:selectItems value="#{groupWareCollections.processes}" />
 									<a4j:support event="onchange" actionListener="#{task.onFilter}"
 										reRender="taskTableContainer"/>
@@ -121,7 +121,7 @@
 								<aon:selectOneMenu id="Task_processDetail"
 									disabled="#{taskSearchControllerListener.process == null}"
 									value="#{taskSearchControllerListener.processDetail}">
-									<f:selectItem itemLabel="-- #{groupwareBundle.groupware_all} --" value="#{null}"/>
+									<f:selectItem itemLabel="-- #{financeBundle.finance_all} --" value="#{null}"/>
 									<f:selectItems value="#{taskSearchControllerListener.processDetails}" />
 									<a4j:support event="onchange" actionListener="#{task.onFilter}"
 										reRender="taskTableContainer"/>

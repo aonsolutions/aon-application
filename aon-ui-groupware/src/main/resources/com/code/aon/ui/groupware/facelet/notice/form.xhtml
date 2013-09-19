@@ -40,7 +40,7 @@
 							<f:selectItem itemLabel="#{groupwareBundle.groupware_select_one}" itemValue="#{notice.selectOneValue}"/>
 						</c:if>
 						<c:if test="#{notice.workGroupCount &gt; 1}">
-							<f:selectItem itemLabel="#{groupwareBundle.groupware_all}" value="#{null}"/>
+							<f:selectItem itemLabel="#{financeBundle.finance_all}" value="#{null}"/>
 						</c:if>
 						<f:selectItems value="#{notice.workGroups}" />
 					</aon:selectOneMenu>
@@ -55,7 +55,7 @@
 							<f:selectItem itemLabel="#{groupwareBundle.groupware_select_one}" itemValue="#{notice.selectOneValue}"/>
 						</c:if>
 						<c:if test="#{notice.recipientSelectable}">						
-							<f:selectItem itemLabel="#{groupwareBundle.groupware_all}" value="#{null}"/>
+							<f:selectItem itemLabel="#{financeBundle.finance_all}" value="#{null}"/>
 							<f:selectItems value="#{notice.users}" />
 						</c:if>
 					</aon:selectOneMenu>

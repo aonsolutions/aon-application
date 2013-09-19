@@ -51,8 +51,8 @@
 			<aon:outputText value="#{bundle.aon_source}" />
 		</f:facet>
 		<aon:outputText value="#{bundle.aon_reservation}" rendered="#{!to.service and !to.advance}" />
-		<aon:outputText value="#{pmsBundle.pms_service}" rendered="#{to.service}" />
-		<aon:outputText value="#{pmsBundle.pms_advance}" rendered="#{to.advance}" />
+		<aon:outputText value="#{financeBundle.finance_service}" rendered="#{to.service}" />
+		<aon:outputText value="#{financeBundle.finance_money_advance}" rendered="#{to.advance}" />
 		<c:if test="#{showGoToReservation}">
 			<aon:commandLink id="reservationLink" immediate="true"
 				styleClass="aon-button-goto"

@@ -59,7 +59,7 @@
 						</aon:div>
 				
 						<c:if test="#{!supplier.new and aonRole.accountingOperator and aonConfiguration.bean.supplier.showAccount}">				
-							<aon:outputLabel for="Account_id" value="#{accountBundle.account_accounting}" />
+							<aon:outputLabel for="Account_id" value="#{financeBundle.finance_account}" />
 							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
 								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 									<ui:param name="lookupTo" value="#{supplier.to.account}" />
