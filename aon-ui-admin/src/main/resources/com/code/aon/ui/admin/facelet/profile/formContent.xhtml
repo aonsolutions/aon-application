@@ -22,7 +22,7 @@
 		
 			<aon:panelTabSet selectedTab="#{controller.selectedTab}" >
 			               
-				<aon:panelTab name="roles" label="#{richBundle.aon_permissions}">
+				<aon:panelTab name="roles" label="#{bundle.aon_permissions}">
 					<a4j:repeat value="#{controller.roles}" var="profileRole">
 						<aon:div>
 							<aon:selectBooleanCheckbox value="#{profileRole.checked}" />								

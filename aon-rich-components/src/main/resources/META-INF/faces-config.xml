@@ -243,13 +243,6 @@
 		</property>
 	</converter>
     
-	<application>
-		<resource-bundle>
-		   <base-name>com.code.aon.faces.component.i18n.messages</base-name>
-		   <var>richBundle</var>
-		</resource-bundle>
-	</application>
-
 	<!-- ************* Menu Selection ***************** -->
 	<managed-bean>
 		<managed-bean-name>selectedMenu</managed-bean-name>

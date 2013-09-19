@@ -13,7 +13,7 @@
 		<aon:form id="listFileManager">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{richBundle.rich_fileManager}" />
+				<ui:param name="toolbarTitle" value="#{bundle.rich_fileManager}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="search" 
@@ -23,35 +23,35 @@
 						styleClass="aon-finding-toolbar-item aon-icon-search"
 						accesskey="#{bundle.aon_key_search}" />				
 					<aon:commandButton id="createFolder"
-						value="#{richBundle.aon_create_folder}" immediate="true"
+						value="#{bundle.aon_create_folder}" immediate="true"
 						reRender="createSubFolderGrid"
 						styleClass="aon-finding-toolbar-item aon-icon-new">		
 						<rich:componentControl for="newFolderModalPanel" operation="show" event="onclick"/>
 						<f:setPropertyActionListener value="#{null}" target="#{fileManager.folderName}" />
 					</aon:commandButton>			
 					<aon:confirmButton id="cleanFolder"
-						value="#{richBundle.aon_clean_folder}" immediate="true"
+						value="#{bundle.aon_clean_folder}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						confirmTitle="#{bundle.aon_confirm_title}"
-						confirmMessage="#{richBundle.aon_clean_folder_confirm}"
+						confirmMessage="#{bundle.aon_clean_folder_confirm}"
 						confirmActionListener="#{fileManager.onCleanCurrentFolder}">
 					</aon:confirmButton>
 					<aon:commandButton id="uploadZip"
-						value="#{richBundle.aon_zip_upload}"
+						value="#{bundle.aon_zip_upload}"
 						reRender="uploadFileTitle"
 						styleClass="aon-finding-toolbar-item aon-icon-file-upload">	
 						<f:setPropertyActionListener target="#{fileManager.uploadZip}" value="#{true}" />	
 						<rich:componentControl for="uploadFileModalPanel" operation="show" event="onclick"/>
 					</aon:commandButton>					
 					<aon:commandButton id="uploadFile"
-						value="#{richBundle.aon_file_upload}"
+						value="#{bundle.aon_file_upload}"
 						reRender="uploadFileTitle"
 						styleClass="aon-finding-toolbar-item aon-icon-file-upload">		
 						<f:setPropertyActionListener target="#{fileManager.uploadZip}" value="#{false}" />
 						<rich:componentControl for="uploadFileModalPanel" operation="show" event="onclick"/>
 					</aon:commandButton>
 					<aon:commandButton id="zipDirectory"
-						value="#{richBundle.aon_create_zip}"
+						value="#{bundle.aon_create_zip}"
 						reRender="zipName,createSubFolderGrid"
 						actionListener="#{fileManager.onShowZipWindow}"
 						styleClass="aon-finding-toolbar-item aon-icon-zip">		
@@ -80,7 +80,7 @@
 								actionListener="#{fileManager.onGoParent}" />
 						</aon:panelGroup>				
 						<aon:panelGroup>
-							<aon:outputText value="#{richBundle.aon_current_folder}: " styleClass="aon-panel-title"/>
+							<aon:outputText value="#{bundle.aon_current_folder}: " styleClass="aon-panel-title"/>
 							<aon:outputText value="#{fileManager.currentPath}" styleClass="aon-panel-title"/>
 						</aon:panelGroup>
 					</aon:panelGrid>
@@ -109,7 +109,7 @@
 									confirmMessage="#{bundle.aon_remove_confirm}"
 									confirmActionListener="#{fileManager.onCurrentRemove}" />
 								<aon:commandButton id="rename"
-									title="#{richBundle.aon_click_rename}"
+									title="#{bundle.aon_click_rename}"
 									value="&#160;" reRender="renameDiv"
 									style="line-height:16px;border:0;padding-left:10px;"
 									styleClass="aon-icon-rename">
@@ -165,7 +165,7 @@
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 							<f:facet name="header">
-								<aon:outputText value="#{richBundle.aon_permissions}" />
+								<aon:outputText value="#{bundle.aon_permissions}" />
 							</f:facet>
 							<aon:outputText value="#{to.permissions}" />
 						</aon:column>

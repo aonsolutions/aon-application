@@ -15,10 +15,10 @@
 			<f:facet name="header">
 				<aon:div id="uploadFileTitle" styleClass="aon-popupWindow-title">
 					<c:if test="#{fileManager.uploadZip}">
-						<aon:outputText value="#{richBundle.aon_zip_upload}" />
+						<aon:outputText value="#{bundle.aon_zip_upload}" />
 					</c:if>
 					<c:if test="#{!fileManager.uploadZip}">
-						<aon:outputText value="#{richBundle.aon_file_upload}" />
+						<aon:outputText value="#{bundle.aon_file_upload}" />
 					</c:if>
 				</aon:div>
 			</f:facet>

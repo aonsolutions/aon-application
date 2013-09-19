@@ -97,8 +97,7 @@ public class CustomizeBean {
 
 	public void initMessages( Locale locale ) {
 		bundle = ResourceBundle.getBundle(BUNDLE_RESOURCE, locale);
-		ResourceBundle appBundle = ResourceBundle.getBundle("com.code.aon.web.aio.i18n.messages", locale);
-		this.applicationTitle = appBundle.getString( APPLICATION_TITLE );
+		this.applicationTitle = bundle.getString( APPLICATION_TITLE );
 		this.supportTelephone = bundle.getString(SUPPORT_TELEPHONE_NUMBER) + " · " + bundle.getString(SUPPORT_TELEPHONE_NUMBER2);
 		this.supportEmail = bundle.getString(SUPPORT_SEND_EMAIL);
 	}	

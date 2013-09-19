@@ -10,10 +10,6 @@
 			<supported-locale>en</supported-locale>
 		</locale-config> 
 		<navigation-handler>com.code.aon.ui.audit.AuditNavigationHandler</navigation-handler>
-		<resource-bundle>
-			<base-name>com.code.aon.web.aio.i18n.messages</base-name>
-			<var>appBundle</var>
-		</resource-bundle>
 	</application>
 
 	<!-- *************** RESOURCE RESOLVER ***************** --> 

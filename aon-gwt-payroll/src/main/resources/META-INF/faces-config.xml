@@ -3,14 +3,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-	<application>
-		<resource-bundle>
-			<base-name>com.esferalia.aon.gwt.payroll.i18n.messages</base-name>
-			<var>gwtPayrollBundle</var>
-		</resource-bundle>
-	</application>
-
-	
 	<managed-bean>
 		<managed-bean-name>employeeTree</managed-bean-name>
 		<managed-bean-class>
