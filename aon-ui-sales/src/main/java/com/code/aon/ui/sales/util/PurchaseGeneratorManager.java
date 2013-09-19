@@ -1,7 +1,6 @@
 package com.code.aon.ui.sales.util;
 
 import static com.code.aon.ui.common.ICommonMessages.SALES_BUNDLE;
-import static com.code.aon.ui.common.ICommonMessages.SALES_PURCHASE_REFERENCE;
 import static com.code.aon.ui.common.ICommonMessages.SALES_TO_PURCHASE;
 
 import java.util.Collections;
@@ -216,6 +215,7 @@ public class PurchaseGeneratorManager {
 				msg = "Unable to rollback transaction!";
 				LOGGER.error(msg, e);
 			}
+			throw new AbortProcessingException("No se han podido generar las compras", e);
 		} finally {
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
@@ -275,7 +275,7 @@ public class PurchaseGeneratorManager {
 		purchase.setStatus(PurchaseStatus.PENDING);
 		purchase.setComments(null);
 		if(StringUtils.isNotBlank(sales.getPurchaseReference())){
-			String message = AonUtil.getMessage(SALES_BUNDLE, SALES_PURCHASE_REFERENCE);
+			String message = AonUtil.getMessage(SALES_BUNDLE, SALES_TO_PURCHASE);
 			purchase.setRemarks(message + ": " +  sales.getPurchaseReference());
 		}
 		purchase.setEmailCommunication(false);
