@@ -252,6 +252,7 @@ public class Employees extends ResizeComposite implements
 				 workplace.getId(),
 				 agreement != null ? agreement.getId() : null,
 				 employeesService,
+				 fteMetaData, 
 				 new DecimalEventMetaData("INCENTIVOS"),
 				 new DecimalEventMetaData("ATRASOS"),
 				 new DecimalEventMetaData("ANTICIPOS"),
@@ -268,7 +269,7 @@ public class Employees extends ResizeComposite implements
 				 "D\u00EDas Libres Trabajados No Recuperables"),
 				 new DecimalEventMetaData("HFD",
 				 "Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"),
-				 fteMetaData, new EventMetaData("OBSERVACIONES"),
+				 new EventMetaData("OBSERVACIONES"),
 				 new ConstantEventMetaData("PLUS_TURNICIDAD",
 				 "Plus de Turnicidad = (\u2211LT - \u2211LR - LTA) * CLT"));
 				/*
