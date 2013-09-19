@@ -1,0 +1,72 @@
+package com.code.aon.aio;
+
+import com.code.aon.groupware.enumeration.NoticeType;
+
+public class NoticeInfo {
+
+    private int callCount;
+    private int visitCount;
+    private int messageCount;
+    private int communicationCount;
+    
+
+    public void add(NoticeType noticeType, int count) {
+        if (noticeType == NoticeType.CALL) {
+        	setCallCount(count);	
+        } else if (noticeType == NoticeType.VISIT) {
+        	setVisitCount(count);
+        } else if (noticeType == NoticeType.MESSAGE) {
+        	setMessageCount(count);
+        } else if (noticeType == NoticeType.COMMUNICATION) {
+        	setCommunicationCount(count);
+        } else {
+        	// ignore.
+        }
+    }
+
+
+	public int getCallCount() {
+		return callCount;
+	}
+	public void setCallCount(int callCount) {
+		this.callCount = callCount;
+	}
+
+
+	public int getVisitCount() {
+		return visitCount;
+	}
+	public void setVisitCount(int visitCount) {
+		this.visitCount = visitCount;
+	}
+
+
+	public int getMessageCount() {
+		return messageCount;
+	}
+	public void setMessageCount(int messageCount) {
+		this.messageCount = messageCount;
+	}
+
+
+	public int getCommunicationCount() {
+		return communicationCount;
+	}
+	public void setCommunicationCount(int communicationCount) {
+		this.communicationCount = communicationCount;
+	}
+	
+	public NoticeType getCallType() {
+		return NoticeType.CALL;
+	}
+	public NoticeType getVisitType() {
+		return NoticeType.VISIT;
+	}
+	public NoticeType getMessageType() {
+		return NoticeType.MESSAGE;
+	}
+	public NoticeType getCommunicationType() {
+		return NoticeType.COMMUNICATION;
+	}
+	
+}

@@ -15,6 +15,7 @@
 						
 			<ui:define name="toolbarContent">
 				<aon:commandButton id="resetTask" value="#{bundle.aon_reset}"
+					rendered="#{!task.parentDomain}"
 					immediate="true" action="task_form"
 					actionListener="#{task.onReset}"
 					styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -36,18 +37,19 @@
 
 				<aon:commandButton id="daily_tracking" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-version"
+					rendered="#{!task.parentDomain}"
 					value="#{groupwareBundle.aon_daily_tracking_module}" 
 					action="dailyTracking_form"
 					actionListener="#{dailyTracking.onReset}" />
 
-				<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}"
-					rendered="#{aonRole.taskMonitor}">
-					<a4j:support event="onclick" reRender="toolbar,taskTableContainer"
-						actionListener="#{task.onSwicthMonitor}">
-					</a4j:support>
-				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="monitor" value="Monitor"
-					rendered="#{aonRole.taskMonitor}" />
+					<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}"
+						rendered="#{!task.parentDomain and aonRole.taskMonitor}">
+						<a4j:support event="onclick" reRender="toolbar,taskTableContainer"
+							actionListener="#{task.onSwicthMonitor}">
+						</a4j:support>
+					</aon:selectBooleanCheckbox>
+					<aon:outputLabel for="monitor" value="Monitor"
+						rendered="#{!task.parentDomain and aonRole.taskMonitor}" />
 			</ui:define>
 		</ui:decorate>
 		<!--  aon-region-body -->
@@ -62,7 +64,7 @@
 					<h:panelGrid columns="2" styleClass="aon-width-all" 
 						columnClasses="aon-width-auto, aon-width-120">
 						<aon:div>
-							<aon:div>
+							<aon:div styleClass="aon-margin-bottom">
 								<aon:outputText styleClass="aon-italic aon-margin-right" 
 									value="#{groupwareBundle.groupware_due_date_task_of} "/>
 								<aon:commandLink value="#{groupwareBundle.groupware_before}"
@@ -91,7 +93,7 @@
 									reRender="taskTableContainer"/>
 							</aon:div>
 							
-							<aon:div styleClass="aon-margin-top aon-margin-bottom">
+							<aon:div styleClass="aon-margin-bottom" rendered="#{!task.parentDomain}">
 								<aon:outputLabel for="Task_projectType"
 									styleClass="aon-italic aon-margin-right" 
 									value="#{projectBundle.project_project_type}"/>
@@ -312,7 +314,7 @@
 							</rich:toolTip>
 						</aon:div>
 					</aon:column>
-
+ 
 					<aon:column alias="Task.description" styleClass="aon-editDataTable-text aon-width-auto aon-nowrap" >
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_description}" />

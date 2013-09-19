@@ -17,6 +17,7 @@
 				<ui:param name="controller" value="#{task}" />
 				<ui:param name="skipSaveButton" value="#{true}" />
 				<ui:param name="skipRemoveButton" value="#{true}" />
+				<ui:param name="skipResetButton" value="#{task.parentDomain}" />
 				
 				<ui:define name="beforeToolbarContent">
 					<aon:commandButton id="toolbar-save"
@@ -63,13 +64,14 @@
 						styleClass="aon-finding-toolbar-item aon-icon-task-finish"
 						rendered="#{!task.monitor and !task.new and !task.to.finished and !task.to.deleted}" />
 				</ui:define>
+				
 				<ui:define name="additionalToolbarContent">
 					<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}"
-						rendered="#{aonRole.taskMonitor}">
+						rendered="#{!task.parentDomain and aonRole.taskMonitor}">
 						<a4j:support event="onclick" reRender="toolbar,taskForm" ajaxSingle="true"/>
 					</aon:selectBooleanCheckbox>
 					<aon:outputLabel for="monitor" value="Monitor"
-						rendered="#{aonRole.taskMonitor}" />
+						rendered="#{!task.parentDomain and aonRole.taskMonitor}" />
 				</ui:define>
 			</ui:decorate>
 
@@ -140,7 +142,9 @@
 
 					<aon:outputLabel for="Task_workgroup"
 						 value="#{bundle.aon_group}" />
-					<aon:div id="workgroup">						
+					<aon:outputText rendered="#{task.parentDomain}" 
+						value="#{task.to.workGroup.description}"/>
+					<aon:div id="workgroup" rendered="#{!task.parentDomain}">						
 						<aon:selectOneMenu id="Task_workgroup"
 							disabled="#{!task.monitor and !task.new}"
 							reRender="workgroup,user"
@@ -159,9 +163,10 @@
 							value="#{groupwareBundle.groupware_task_all_members}" rendered="#{task.new}" />
 					</aon:div>
 
-					<aon:outputText  
-						value="#{bundle.aon_login_user}" />
-					<aon:div id="user">
+					<aon:outputText value="#{bundle.aon_login_user}" />
+					<aon:outputText rendered="#{task.parentDomain}" 
+						value="#{task.to.taskHolder.user.name}"/>
+					<aon:div id="user" rendered="#{!task.parentDomain}">
 						<aon:selectOneMenu
 							disabled="#{task.allMembers or (!task.monitor and !task.new)}" 
 							rendered="#{task.to.workGroup.id == null}"
@@ -181,36 +186,49 @@
 					
 
 					<aon:outputLabel for="Task_project" value="#{bundle.aon_project}"/>
-					<aon:panelGrid columns="2"
+					<aon:panelGrid columns="2" styleClass="aon-width-all"
 						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
 					
 						<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
-						<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
-							<ui:param name="lookupTo" value="#{task.to.registry}" />
-							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="lookupReRender" value="Task_project, Task_activityType" />
-							<aon:methodParam name="lookupChangeListener"
-								value="#{task.onRegistryChanged}" type="lookupChangeListener" />
-						</ui:include>
+						<aon:div>
+							<aon:outputText rendered="#{task.parentDomain}" value="#{task.to.registry.fullName}"/>
+							<aon:div rendered="#{!task.parentDomain}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
+									<ui:param name="lookupTo" value="#{task.to.registry}" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="lookupReRender" value="Task_project, Task_activityType" />
+									<aon:methodParam name="lookupChangeListener"
+										value="#{task.onRegistryChanged}" type="lookupChangeListener" />
+								</ui:include>
+							</aon:div>
+						</aon:div>
 						
 						<aon:outputText value="#{bundle.aon_name}"/>
-						<aon:selectOneMenu id="Task_project" value="#{task.to.project}"
-							disabled="#{task.allMembers or (!task.monitor and !task.new)}">
-							<f:selectItem itemLabel="-" value="#{null}"/>
-							<f:selectItems value="#{task.projects}" />
-							<a4j:support event="onchange"
-								actionListener="#{task.onChangeProject}"
-								reRender="lookupRegistry, Task_project, Task_activityType"
-								ajaxSingle="true" />
-						</aon:selectOneMenu>
+						<aon:div>
+							<aon:outputText rendered="#{task.parentDomain}" value="#{task.to.project.name}"/>
+							<aon:selectOneMenu id="Task_project" value="#{task.to.project}"
+								rendered="#{!task.parentDomain}"
+								disabled="#{task.allMembers or (!task.monitor and !task.new)}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{task.projects}" />
+								<a4j:support event="onchange"
+									actionListener="#{task.onChangeProject}"
+									reRender="lookupRegistry, Task_project, Task_activityType"
+									ajaxSingle="true" />
+							</aon:selectOneMenu>
+						</aon:div>
 						
 						<aon:outputLabel for="Task_activityType" value="#{projectBundle.project_activity_type}"/>
-						<aon:selectOneMenu id="Task_activityType"
-							value="#{task.to.activityType}"
-							disabled="#{task.allMembers or (!task.monitor and !task.new)}">
-							<f:selectItem itemLabel="-" value="#{null}"/>
-							<f:selectItems value="#{task.activityTypes}" />
-						</aon:selectOneMenu>
+						<aon:div>
+							<aon:outputText rendered="#{task.parentDomain}" value="#{task.to.activityType.description}"/>
+							<aon:selectOneMenu id="Task_activityType"
+								rendered="#{!task.parentDomain}"
+								value="#{task.to.activityType}"
+								disabled="#{task.allMembers or (!task.monitor and !task.new)}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{task.activityTypes}" />
+							</aon:selectOneMenu>
+						</aon:div>
 					</aon:panelGrid>
 
 					<aon:outputLabel for="Task_sender"
@@ -232,28 +250,6 @@
 						cols="120" rows="10"
 						disabled="#{task.to.finished or task.to.deleted}" />
 						
-<!-- 					
-					<aon:outputText value="&#160;" />
-					<aon:div>
-						<aon:selectBooleanCheckbox value="#{task.richEditor}">
-							<a4j:support event="onclick"
-								reRender="comments_label,comments_input" ajaxSingle="true" />
-						</aon:selectBooleanCheckbox>
-						<aon:outputText value="#{projectBundle.aon_rich_editor}" />
-					</aon:div>
-					<aon:div id="comments_input">
-						rendered="#{!task.richEditor}"
-						<aon:inputTextarea id="Task_comments" value="#{task.to.comments}"
-							rendered="#{!task.richEditor}" cols="120" rows="10"
-							disabled="#{task.to.finished or task.to.deleted}" />
-						<rich:editor id="messageEditor"
-							rendered="#{task.richEditor}"
-							disabled="#{task.to.finished or task.to.deleted}" 
-							value="#{task.to.comments}" 
-							height="400" configuration="tinyMCE"
-							language="#{facesContext.application.defaultLocale.language}" />	
-					</aon:div>
- -->
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>

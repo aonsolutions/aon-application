@@ -17,21 +17,37 @@
 			</aon:commandLink>
 		</aon:div>
 		<aon:div styleClass="aon-portlet-body">
-			<aon:dataTable id="taskSummaryList"
-				value="#{desktop.taskSummaryModel}" var="to"
-				columnClasses="aon-table-portlet-column"
+			<aon:panelGrid columns="3" styleClass="aon-width-all"
 				rowClasses="aon-table-portlet-row"
-				styleClass="aon-width-170 aon-table-portlet">
-
-				<aon:column styleClass="aon-text-left" >
-					<aon:outputText value="#{to.description}"/>
-				</aon:column>
-
-				<aon:column styleClass="aon-text-right" >
-					<aon:outputText value="#{to.total}"/>
-				</aon:column>
-
-			</aon:dataTable>
+				columnClasses="aon-table-portlet-column,aon-table-portlet-column,aon-table-portlet-column">
+				
+				<aon:outputText value="&#160;" styleClass="aon-icon-contact" style="padding-left: 15px;"/>
+				<aon:outputText value="En progreso: " />
+				<aon:div styleClass="aon-text-right">
+					<aon:outputText value="#{desktop.taskInfo.inProgressUserTasks + desktop.taskInfo.expiredInProgressUserTasks}"/>
+					<aon:outputText value=" / " rendered="#{desktop.taskInfo.expiredInProgressUserTasks gt 0}"/>
+					<aon:outputText value="#{desktop.taskInfo.expiredInProgressUserTasks}" style="color:red;"
+						rendered="#{desktop.taskInfo.expiredInProgressUserTasks gt 0}"/>
+				</aon:div>
+				
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="Pendientes: " />
+				<aon:div styleClass="aon-text-right">
+					<aon:outputText value="#{desktop.taskInfo.pendingUserTasks + desktop.taskInfo.expiredPendingUserTasks}"/>
+					<aon:outputText value=" / " rendered="#{desktop.taskInfo.expiredPendingUserTasks gt 0}"/>
+					<aon:outputText value="#{desktop.taskInfo.expiredPendingUserTasks}" style="color:red;"
+						rendered="#{desktop.taskInfo.expiredPendingUserTasks gt 0}"/>
+				</aon:div>
+				
+				<aon:outputText value="&#160;" styleClass="aon-icon-contactGroup" style="padding-left: 15px;"/>
+				<aon:outputText value="Pendientes: " />
+				<aon:div styleClass="aon-text-right">
+					<aon:outputText value="#{desktop.taskInfo.pendingGroupTasks + desktop.taskInfo.expiredPendingGroupTasks}"/>
+					<aon:outputText value=" / " rendered="#{desktop.taskInfo.expiredPendingGroupTasks gt 0}"/>
+					<aon:outputText value="#{desktop.taskInfo.expiredPendingGroupTasks}" style="color:red;"
+						rendered="#{desktop.taskInfo.expiredPendingGroupTasks gt 0}"/>
+				</aon:div>
+			</aon:panelGrid>
 		</aon:div>
 	</aon:div>
 

@@ -16,11 +16,12 @@
 				<ui:param name="toolbarTitle" value="#{groupwareBundle.groupware_task_inbox}"/>
 				<ui:param name="controller" value="#{task}" />
 				<ui:define name="additionalToolbarContent">
-						<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}" 
-						rendered="#{aonRole.taskMonitor}">
+					<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}" 
+						rendered="#{!task.parentDomain and aonRole.taskMonitor}">
 							<a4j:support event="onclick" reRender="toolbar,taskForm" />
 						</aon:selectBooleanCheckbox>
-						<aon:outputLabel for="monitor" value="Monitor" rendered="#{aonRole.taskMonitor}"/>
+					<aon:outputLabel for="monitor" value="Monitor" 
+						rendered="#{!task.parentDomain and aonRole.taskMonitor}"/>
 				</ui:define>
 			</ui:decorate>
 
@@ -89,10 +90,10 @@
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
 					</aon:div>
-
-					<aon:outputLabel for="workgroup" rendered="#{task.monitor}" 
+			
+					<aon:outputLabel for="workgroup" rendered="#{!task.parentDomain and task.monitor}" 
 						value="#{bundle.aon_group}" />
-					<aon:selectOneMenu id="workgroup" rendered="#{task.monitor}"
+					<aon:selectOneMenu id="workgroup" rendered="#{!task.parentDomain and task.monitor}"
 						disabled="#{taskSearchControllerListener.taskHolder != null}"
 						reRender="workgroup,user"
 						value="#{taskSearchControllerListener.workGroup}">
@@ -101,9 +102,9 @@
 						<a4j:support event="onchange" reRender="user" ajaxSingle="true" />
 					</aon:selectOneMenu>
 
-					<aon:outputText rendered="#{task.monitor}" 
+					<aon:outputText rendered="#{!task.parentDomain and task.monitor}" 
 						value="#{bundle.aon_login_user}" />
-					<aon:div id="user" rendered="#{task.monitor}">
+					<aon:div id="user" rendered="#{!task.parentDomain and task.monitor}">
 						<aon:selectOneMenu rendered="#{taskSearchControllerListener.workGroup == null}"
 							value="#{taskSearchControllerListener.taskHolder}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
@@ -118,16 +119,22 @@
 						</aon:selectOneMenu>
 					</aon:div>
 
-					<aon:outputLabel for="Task_projectType" value="#{projectBundle.project_project_type}"/>
+					<aon:outputLabel for="Task_projectType"
+						rendered="#{!task.parentDomain}" 
+						value="#{projectBundle.project_project_type}"/>
 					<aon:selectOneMenu id="Task_projectType"
+						rendered="#{!task.parentDomain}"
 						value="#{taskSearchControllerListener.projectType}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{projectCollections.projectTypes}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Task_project" value="#{bundle.aon_project}"/>
+					<aon:outputLabel for="Task_project"
+						rendered="#{!task.parentDomain}" 
+						value="#{bundle.aon_project}"/>
 					<aon:panelGrid columns="2"
-						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
+						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto"
+						rendered="#{!task.parentDomain}">
 					
 						<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
 						<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >

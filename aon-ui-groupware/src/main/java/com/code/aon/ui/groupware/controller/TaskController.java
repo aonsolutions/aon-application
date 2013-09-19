@@ -24,12 +24,14 @@ import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.TaskHolderWorkgroup;
 import com.code.aon.groupware.enumeration.TaskSource;
 import com.code.aon.groupware.task.TaskManager;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.project.controller.IProjectConstants;
 import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.util.AonUtil;
@@ -39,7 +41,8 @@ public class TaskController extends BasicController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
 
-	private GroupwareUtils groupwareUtils;
+	private TaskHolder currentTaskHolder;
+	
 	private TaskManager taskManager;
 	private boolean allMembers;
 	private boolean monitor;
@@ -48,6 +51,12 @@ public class TaskController extends BasicController {
 	private ProcessDetailTransition transitionSelected;
 	private  List<SelectItem> projects;
 	private  List<SelectItem> activityTypes;
+
+
+	public boolean isParentDomain() {
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean( ConfigConstants.DOMAIN_SWITCHER );
+		return( ds != null && !ds.isChildDomain());
+	}
 
 	public boolean isMonitor() {
 		return monitor;
@@ -100,13 +109,30 @@ public class TaskController extends BasicController {
 		this.transitionSelected = transitionSelected;
 	}
 	
-	public GroupwareUtils getGroupwareUtils() {
-		if (groupwareUtils == null) {
-			groupwareUtils = new GroupwareUtils();
+	public TaskHolder getCurrentTaskHolder() {
+		if (currentTaskHolder == null) {
+			try {
+		        AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		        if( principal.getUserId() == null){
+		        	throw new IllegalStateException("No es posible encontrar el usuario actual");
+		        }
+				IManagerBean bean = BeanManager.getManagerBean(TaskHolder.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_USER_ID), principal.getUserId());
+				if (isParentDomain()) {
+					criteria.setSkipDomainFilter(true);
+				}
+				List<ITransferObject> list = bean.getList(criteria);
+				if (list != null && list.size() > 0) {
+					currentTaskHolder = (TaskHolder) list.get(0);
+				} 
+			} catch (ManagerBeanException e) {
+				// currentTaskHolder remains null.
+			}
 		}
-		return groupwareUtils;
+		return currentTaskHolder;
 	}
-
+	
 	public TaskManager getTaskManager() {
 		if (taskManager == null) {
 			taskManager = new TaskManager();
@@ -129,7 +155,7 @@ public class TaskController extends BasicController {
 	public void onStartTaskFromList(ActionEvent event) {
 		try {
 			Task task = (Task) model.getRowData();
-			getTaskManager().startTask(getGroupwareUtils().getCurrentTaskHolder(), task );
+			getTaskManager().startTask(getCurrentTaskHolder(), task );
 			onSearch(event);
 		} catch (ManagerBeanException e) {
 			String msg = "No se puede empezar la tarea. " + e.getMessage();
@@ -141,7 +167,7 @@ public class TaskController extends BasicController {
 	public void onStartTask(ActionEvent event) {
 		try {
 			Task task = (Task) getTo();
-			task = getTaskManager().startTask(getGroupwareUtils().getCurrentTaskHolder(), task );
+			task = getTaskManager().startTask(getCurrentTaskHolder(), task );
 			setTo(task);
 		} catch (ManagerBeanException e) {
 			String msg = "No se puede empezar la tarea. " + e.getMessage();
@@ -154,7 +180,7 @@ public class TaskController extends BasicController {
 	public void onStopTaskFromList(ActionEvent event) {
 		try {
 			Task task = (Task) model.getRowData();
-			getTaskManager().stopTask(getGroupwareUtils().getCurrentTaskHolder(), task );
+			getTaskManager().stopTask(getCurrentTaskHolder(), task );
 			onSearch(event);
 		} catch (ManagerBeanException e) {
 			String msg = "No se puede parar la tarea. " + e.getMessage();
@@ -166,7 +192,7 @@ public class TaskController extends BasicController {
 	public void onStopTask(ActionEvent event) {
 		try {
 			Task task = (Task) getTo();
-			task = getTaskManager().stopTask(getGroupwareUtils().getCurrentTaskHolder(), task );
+			task = getTaskManager().stopTask(getCurrentTaskHolder(), task );
 			setTo(task);
 		} catch (ManagerBeanException e) {
 			String msg = "No se puede parar la tarea. " + e.getMessage();
@@ -178,7 +204,7 @@ public class TaskController extends BasicController {
 	public void onReopenTaskFromList(ActionEvent event) {
 		try {
 			Task task = (Task) model.getRowData();
-			getTaskManager().reopenTask(getGroupwareUtils().getCurrentTaskHolder(), task );
+			getTaskManager().reopenTask(getCurrentTaskHolder(), task );
 			onSearch(event);
 		} catch (ManagerBeanException e) {
 			String msg = "No se puede abrir la tarea. " + e.getMessage();
@@ -190,7 +216,7 @@ public class TaskController extends BasicController {
 	public void onReopenTask(ActionEvent event) {
 		try {
 			Task task = (Task) getTo();
-			task = getTaskManager().reopenTask(getGroupwareUtils().getCurrentTaskHolder(), task );
+			task = getTaskManager().reopenTask(getCurrentTaskHolder(), task );
 			setTo(task);
 		} catch (ManagerBeanException e) {
 			String msg = "No se puede abrir la tarea. " + e.getMessage();
@@ -203,7 +229,7 @@ public class TaskController extends BasicController {
 	public void onAssumeTaskFromList(ActionEvent event) {
 		try {
 			Task task = (Task) model.getRowData();
-			getTaskManager().assumeTask(getGroupwareUtils().getCurrentTaskHolder(), task );
+			getTaskManager().assumeTask(getCurrentTaskHolder(), task );
 			onSearch(event);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
@@ -216,7 +242,7 @@ public class TaskController extends BasicController {
 	public void onAssumeTask(ActionEvent event) {
 		try {
 			Task task = (Task) getTo();
-			task = getTaskManager().assumeTask(getGroupwareUtils().getCurrentTaskHolder(), task );
+			task = getTaskManager().assumeTask(getCurrentTaskHolder(), task );
 			setTo(task);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
@@ -229,7 +255,7 @@ public class TaskController extends BasicController {
 	public void onReleaseTaskFromList(ActionEvent event) {
 		try {
 			Task task = (Task) model.getRowData();
-			getTaskManager().releaseTask(getGroupwareUtils().getCurrentTaskHolder(), task );
+			getTaskManager().releaseTask(getCurrentTaskHolder(), task );
 			onSearch(event);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
@@ -242,7 +268,7 @@ public class TaskController extends BasicController {
 	public void onReleaseTask(ActionEvent event) {
 		try {
 			Task task = (Task) getTo();
-			task = getTaskManager().releaseTask(getGroupwareUtils().getCurrentTaskHolder(), task );
+			task = getTaskManager().releaseTask(getCurrentTaskHolder(), task );
 			setTo(task);
 		} catch (ManagerBeanException e) {
 			String msg = e.getMessage();
@@ -298,26 +324,21 @@ public class TaskController extends BasicController {
 	
 	private Task finishTask(Task task) throws ManagerBeanException {
 		getManagerBean().restoreNullSubPOJOs(task);
-		task = getTaskManager().finishTask(getGroupwareUtils().getCurrentTaskHolder(), task, getTransitionSelected() );
+		task = getTaskManager().finishTask(getCurrentTaskHolder(), task, getTransitionSelected() );
 		getManagerBean().initializePOJO(task);
 		return task;
 	}
 
 	public boolean isMyTaskFromList() {
 		try {
-			return ((Task) this.getModel().getRowData()).isMine(getGroupwareUtils().getCurrentTaskHolder());
+			return ((Task) this.getModel().getRowData()).isMine(getCurrentTaskHolder());
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Imposible identificar de quien es la tarea.", e);
 		}
 		return false;
 	}
 	public boolean isMyTask() {
-		try {
-			return ((Task) getTo()).isMine(getGroupwareUtils().getCurrentTaskHolder());
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Imposible identificar de quien es la tarea.", e);
-		}
-		return false;
+		return ((Task) getTo()).isMine(getCurrentTaskHolder());
 	}
 	
 	private void initializeTransitions() throws ManagerBeanException {
@@ -472,7 +493,7 @@ public class TaskController extends BasicController {
 	private void prepareForInsert(Task task) throws ManagerBeanException {
 		if (!isMyTask()) {
 			task.setSource(TaskSource.ASSIGNED);
-			task.setSender(getGroupwareUtils().getCurrentTaskHolder());
+			task.setSender(getCurrentTaskHolder());
 		}
 		Date startDate = task.getStartDate();
 		Date dueDate = task.getDueDate();

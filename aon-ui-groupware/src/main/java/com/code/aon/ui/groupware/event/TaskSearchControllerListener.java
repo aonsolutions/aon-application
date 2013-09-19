@@ -22,6 +22,7 @@ import com.code.aon.groupware.TaskHolderWorkgroup;
 import com.code.aon.groupware.enumeration.Priority;
 import com.code.aon.groupware.enumeration.TaskSource;
 import com.code.aon.groupware.enumeration.TaskStatus;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.project.ActivityType;
 import com.code.aon.project.Project;
 import com.code.aon.project.ProjectType;
@@ -31,6 +32,8 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.code.aon.ui.groupware.GroupwareUtils;
@@ -367,20 +370,37 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria( criteria );
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean( ConfigConstants.DOMAIN_SWITCHER );
+		boolean childDomain = ds != null && ds.isChildDomain();
 		TaskController controller = (TaskController) FormUtil.getController(IGroupWareConstants.TASK_CONTROLLER_NAME);
 		if(!controller.isMonitor()){
-			TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
-			if (taskHolder == null || taskHolder.getId() == null) {
-				String msg = "No existe un usuario de tareas vinculado a la cuenta de acceso. Cree un usuario y vincule la cuenta de acceso.";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg); 
+			if (childDomain){
+				TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
+				if (taskHolder == null || taskHolder.getId() == null) {
+					String msg = "No existe un usuario de tareas vinculado a la cuenta de acceso. Cree un usuario y vincule la cuenta de acceso.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg); 
+				}
+				String taskHolderAlias = getFieldName(IEntityAlias.TASK_TASK_HOLDER_ID);
+				Expression userExpr = ExpressionUtilities.getEqualExpression(taskHolderAlias, taskHolder.getId() );
+				Expression workGroupExpr = obtainTaskHolderWorkGroupsExpression(taskHolder, getFieldName(IEntityAlias.TASK_WORK_GROUP_ID));
+				Expression groupExpr = ExpressionUtilities.getNullExpression(taskHolderAlias);
+				workGroupExpr = ExpressionUtilities.getAndExpression(workGroupExpr, groupExpr);
+				criteria.addExpression(ExpressionUtilities.getOrExpression(userExpr, workGroupExpr));
+			} else {
+		        AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		        if( principal.getUserId() == null){
+		        	throw new IllegalStateException("No es posible encontrar el usuario actual");
+		        }
+				Integer userId = principal.getUserId();
+				Expression userExpr = ExpressionUtilities.getEqualExpression("Task.taskHolder<user<id", userId );
+				Expression workGroupExpr = obtainTaskHolderWorkGroupsExpression(userId, getFieldName(IEntityAlias.TASK_WORK_GROUP_ID));  
+				Expression groupExpr = ExpressionUtilities.getNullExpression("Task.taskHolder<id");
+				workGroupExpr = ExpressionUtilities.getAndExpression(groupExpr , workGroupExpr);
+				
+				criteria.addExpression(ExpressionUtilities.getOrExpression(userExpr, workGroupExpr));
 			}
-			String taskHolderAlias = getFieldName(IEntityAlias.TASK_TASK_HOLDER_ID);
-			Expression userExpr = ExpressionUtilities.getEqualExpression(taskHolderAlias, taskHolder.getId() );
-			Expression workGroupExpr = obtainTaskHolderWorkGroupsExpression(taskHolder, getFieldName(IEntityAlias.TASK_WORK_GROUP_ID));
-			Expression groupExpr = ExpressionUtilities.getNullExpression(taskHolderAlias);
-			workGroupExpr = ExpressionUtilities.getAndExpression(workGroupExpr, groupExpr);
-			criteria.addExpression(ExpressionUtilities.getOrExpression(userExpr, workGroupExpr));
+			
 		} else {
 			if (getWorkGroup() != null) {
 				criteria.addEqualExpression( getFieldName(IEntityAlias.TASK_WORK_GROUP_ID), getWorkGroup().getId() ); 	
@@ -433,9 +453,12 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		}		
 		if ((getProcessDetail() != null) && (getProcessDetail().getId() != null)) {
 			criteria.addEqualExpression("Task.processTask.processDetail.id", getProcessDetail().getId());
-		}		
+		}
 		loadStatusCriteria(criteria);
 		loadPriorityCriteria(criteria);
+		if (!childDomain) {
+			criteria.setSkipDomainFilter(true);	
+		}
 	}
 
     private Expression obtainTaskHolderWorkGroupsExpression(TaskHolder taskHolder, String alias) throws ManagerBeanException {
@@ -450,8 +473,23 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
         }
         return expression;
     }
+    
+    private Expression obtainTaskHolderWorkGroupsExpression(Integer userId, String alias) throws ManagerBeanException {
+        Expression expression = null;
+        IManagerBean bean = BeanManager.getManagerBean(TaskHolderWorkgroup.class);
+        Criteria criteria = new Criteria();
+        criteria.addEqualExpression("TaskHolderWorkgroup.taskHolder.user.id", userId);
+        criteria.setSkipDomainFilter(true);
+        List<ITransferObject> list = bean.getList(criteria);
+        for (ITransferObject to: list ) {
+        	TaskHolderWorkgroup thwg = (TaskHolderWorkgroup) to;
+            expression = ExpressionUtilities.getOrExpression(expression, ExpressionUtilities.getEqualExpression(alias, thwg.getWorkGroup().getId()));
+        }
+        return expression;
+    }
+    
 
-	private void loadStatusCriteria(Criteria criteria) throws ManagerBeanException {
+    private void loadStatusCriteria(Criteria criteria) throws ManagerBeanException {
 		if (isStatusDeleted() || isStatusFinished() || isStatusInProgress() || isStatusPending()) {
 			String statusAlias = getFieldName(IEntityAlias.TASK_STATUS);
 			// Hay que realizar una expression OR con los valores

@@ -25,7 +25,22 @@
 				<c:if test="#{!(domainSwitcher.childDomain and desktop.fiscalEnabled)}">
 					<aon:div id="desktopDiv1">
 						<c:if test="#{domainSwitcher.parentDomain or (domainSwitcher.childDomain and !desktop.fiscalEnabled)}">
-							<c:if test="#{desktop.taskHolderAvailable}">
+						
+						
+						<aon:div styleClass="aon-portlet">
+							<aon:div styleClass="aon-portlet-title">								
+								<aon:commandLink id="menu_refresh"
+									title="#{bundle.aon_refresh}"
+									reRender="desktopDiv1" immediate="true"
+									actionListener="#{desktop.onRefresh}">
+									<aon:outputText value="#{bundle.aon_refresh}" styleClass="aon-portlet-title-text aon-icon aon-icon-refresh"/>
+								</aon:commandLink>
+							</aon:div>
+						</aon:div>
+						
+						
+						
+							<c:if test="#{domainSwitcher.parentDomain or desktop.groupwareEnabled}">
 								<ui:include src="/facelet/homepage/portlet/taskPortlet.xhtml" />
 							</c:if>
 							<ui:include src="/facelet/homepage/portlet/noticePortlet.xhtml" />

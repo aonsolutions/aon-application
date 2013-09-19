@@ -103,6 +103,7 @@ public class TaskManager {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean
 				.getFieldName(IEntityAlias.PROCESS_DETAIL_TRANSITION_PROCESS_DETAIL_ID), pd.getId());
+		criteria.setSkipDomainFilter(true);
 		List<?> list = bean.getList(criteria);
 		return (list != null && list.size()>0);
 	}
@@ -114,13 +115,10 @@ public class TaskManager {
 		IManagerBean bean = BeanManager.getManagerBean(ProcessDetailTransition.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_DETAIL_TRANSITION_PROCESS_DETAIL_ID), pd.getId());
+		criteria.setSkipDomainFilter(true);
 		List<?> list = bean.getList(criteria);
 		return (List<ProcessDetailTransition>) list;
 	}
-	
-	// ---------------			
-	// PRIVATE METHODS
-	// ---------------			
 	
 	private Task updateTask(Task task) throws ManagerBeanException {
 		// inicio transaccion
@@ -161,6 +159,7 @@ public class TaskManager {
 		IManagerBean bean = BeanManager.getManagerBean(ProcessTask.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_ID), task.getId());
+		criteria.setSkipDomainFilter(true);
 		Iterator<?> iterator = bean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			ProcessTask processTask = (ProcessTask) iterator.next();
@@ -317,6 +316,7 @@ public class TaskManager {
 		criteria.addEqualExpression(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_ACTIVE), true);
 		criteria.addGreaterThanExpression(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_POSITION), processDetail.getPosition());
 		criteria.addOrder(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_POSITION));
+		criteria.setSkipDomainFilter(true);
 		List<ITransferObject>  list = processDetailBean.getList(criteria);
 		if (list.size() > 0) {
 			return (ProcessDetail) list.get(0);
@@ -373,6 +373,7 @@ public class TaskManager {
 		newTask.setStatus(TaskStatus.PENDING);
 		newTask.setTaskHolder(task.getTaskHolder());
 		newTask.setWorkGroup(task.getWorkGroup());
+		newTask.setDomain(task.getDomain());
 		Date startDate = task.getStartDate();
 		Date dueDate = task.getDueDate();
 		// Se truncan las horas, minutos, segundos, porque lo que nos interesa
