@@ -22,13 +22,12 @@ import static com.code.aon.ui.common.ICommonMessages.STATUS;
 import static com.code.aon.ui.common.ICommonMessages.TARGET_ADVERTISING;
 import static com.code.aon.ui.common.ICommonMessages.WEB;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -51,7 +50,6 @@ import com.code.aon.config.Scope;
 import com.code.aon.customer.Customer;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.geozone.GeoZone;
-import com.code.aon.pool.AonConnectionException;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
@@ -68,7 +66,6 @@ import com.code.aon.registry.RegistrySeller;
 import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.code.aon.report.ReportException;
 import com.code.aon.sales.bridge.util.SalesBridgeUtil;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.form.BasicController;
@@ -156,6 +153,8 @@ public class TargetController extends RegistryController implements ICommercialC
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			
+			Locale locale = AonUtil.getCurrentLocale();
+			
 			String mappingPrefix = Target.class.getSimpleName();
 			Table table = Target.class.getAnnotation(Table.class);
 			String masterTable = table.name();
@@ -168,24 +167,24 @@ public class TargetController extends RegistryController implements ICommercialC
 			+",'"+AonUtil.getMessage(BLOCKED)+"'"
 				+") `" + AonUtil.getMessage(STATUS) + "`"
 				+",ELT(c.advertising+1"
-				+",'"+Advertising.ALLOWED.getName(AonUtil.getCurrentLocale())+"'"
-				+",'"+Advertising.AUTO_EXCLUSION.getName(AonUtil.getCurrentLocale())+"'"
-				+",'"+Advertising.DENIED.getName(AonUtil.getCurrentLocale())+"'"
-				+",'"+Advertising.ROBINSON.getName(AonUtil.getCurrentLocale())+"'"
+				+",'"+Advertising.ALLOWED.getName(locale)+"'"
+				+",'"+Advertising.AUTO_EXCLUSION.getName(locale)+"'"
+				+",'"+Advertising.DENIED.getName(locale)+"'"
+				+",'"+Advertising.ROBINSON.getName(locale)+"'"
 					+") `" + AonUtil.getMessage(TARGET_ADVERTISING) + "`"
 			+",ELT(r.type+1" 
-				+",'"+RegistryType.LEGAL.getName(AonUtil.getCurrentLocale())+"'"
-				+",'"+RegistryType.NATURAL.getName(AonUtil.getCurrentLocale())+"'"
+				+",'"+RegistryType.LEGAL.getName(locale)+"'"
+				+",'"+RegistryType.NATURAL.getName(locale)+"'"
 			 	+") `" + AonUtil.getMessage(ENTITY) + "`"
 			+",CAST( CONCAT_WS('/',"
 			+"ELT(r.document_type+1" 
-				+",'"+DocumentType.NIF.getName(AonUtil.getCurrentLocale())+"'"
-				+",'"+DocumentType.CIF.getName(AonUtil.getCurrentLocale())+"'"
-				+",'"+DocumentType.NIE.getName(AonUtil.getCurrentLocale())+"'"
-				+",'"+DocumentType.PASSPORT.getName(AonUtil.getCurrentLocale())+"'"
-				+",'"+DocumentType.WORK_PERMIT.getName(AonUtil.getCurrentLocale())+"'"
-				+",'"+DocumentType.COMMUNITY_CARD.getName(AonUtil.getCurrentLocale())+"'"
-				+",'"+DocumentType.OTHER.getName(AonUtil.getCurrentLocale())+"'"
+				+",'"+DocumentType.NIF.getName(locale)+"'"
+				+",'"+DocumentType.CIF.getName(locale)+"'"
+				+",'"+DocumentType.NIE.getName(locale)+"'"
+				+",'"+DocumentType.PASSPORT.getName(locale)+"'"
+				+",'"+DocumentType.WORK_PERMIT.getName(locale)+"'"
+				+",'"+DocumentType.COMMUNITY_CARD.getName(locale)+"'"
+				+",'"+DocumentType.OTHER.getName(locale)+"'"
 			 	+")" 
 			+",r.document_country,r.document) AS CHAR) `" + AonUtil.getMessage(DOCUMENT) + "`"
 		 	+",r.name `" + AonUtil.getMessage(COMPANY_NAME) + "`"
@@ -212,14 +211,14 @@ public class TargetController extends RegistryController implements ICommercialC
 			+" LEFT OUTER JOIN segment s ON rs.segment = s.id"
 			+" LEFT OUTER JOIN rattach cd ON cd.registry = r.id"
 			+" LEFT OUTER JOIN category cdc ON cd.category = cdc.id"
-			+" LEFT OUTER JOIN target_item ti ON ti.target = r.id"
+			+" LEFT OUTER JOIN ritem ti ON ti.registry = r.id"
 			+" LEFT OUTER JOIN item i ON ti.item = i.id"
 			+" LEFT OUTER JOIN product p ON p.id = i.product"
 			+" LEFT OUTER JOIN pcategory pc ON pc.id = p.category"
-			+" LEFT OUTER JOIN target_seller tsll ON tsll.target = r.id"
+			+" LEFT OUTER JOIN rseller tsll ON tsll.registry = r.id"
 			+" LEFT OUTER JOIN seller sll ON sll.registry = tsll.seller"
 			+" LEFT OUTER JOIN registry sllr ON sllr.id = sll.registry"
-			+" LEFT OUTER JOIN target_profile ps ON ps.target = r.id"
+			+" LEFT OUTER JOIN rprofile ps ON ps.registry = r.id"
 			+" LEFT OUTER JOIN question q ON ps.question = q.id"
 			;
 
@@ -289,23 +288,7 @@ public class TargetController extends RegistryController implements ICommercialC
 			rm.run2Excel(ps, output);
 			response.flushBuffer();
 			faces.responseComplete();
-		} catch (SQLException e) {
-			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		} catch (ReportException e) {
-			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		} catch (IOException e) {
-			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		} catch (ManagerBeanException e) {
-			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		} catch (AonConnectionException e) {
+		} catch (Throwable e) {
 			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
