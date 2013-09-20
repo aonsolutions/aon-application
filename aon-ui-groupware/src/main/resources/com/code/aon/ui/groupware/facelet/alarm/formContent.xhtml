@@ -17,7 +17,7 @@
 					popupDateFormat="#{bundle.aon_timestamp2_pattern}">									
 				</aon:selectInputDate>
 				<aon:outputLabel for="Alarm_delayTime" rendered="#{!alarm.new}"
-					value="#{groupwareBundle.alarm_delay_time}" />
+					value="#{bundle.alarm_delay_time}" />
 				<aon:selectOneMenu id="Alarm_delayTime"
 					styleClass="aon-margin-left" rendered="#{!alarm.new}"
 					valueChangeListener="#{alarm.onDelayTimeChanged}"
@@ -54,7 +54,7 @@
 					<c:if test="#{aonConfiguration.bean.alarm.showGoToCallCenter and alarm.to.callCenter}" >
 						<aon:commandButton immediate="true"
 							value="&#160;" style="border:0;"
-							title="#{marketingBundle.marketing_survey_start}"
+							title="#{bundle.marketing_survey_start}"
 							action="communicationCenter"
 							actionListener="#{communicationCenter.onGoToActionTarget}"
 							styleClass="aon-finding-toolbar-item aon-icon-telephone" />

@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{sepeBundle.sepe_batch_selection}" />
+						<aon:outputText value="#{bundle.sepe_batch_selection}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -85,7 +85,7 @@
 										 	value="#{contractCertificados.suspensionCause}"
 										 	listHeight="300px" listWidth="300px"
 										 	style="background-color: #CEE3F6; margin-left: 10px; width:300px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
-											defaultLabel="#{sepeBundle.sepe_certificados_suspensionCause_select}" >
+											defaultLabel="#{bundle.sepe_certificados_suspensionCause_select}" >
 											<f:selectItems value="#{sepeCollections.suspensionCauses}" />
 										</rich:inplaceSelect>
 											

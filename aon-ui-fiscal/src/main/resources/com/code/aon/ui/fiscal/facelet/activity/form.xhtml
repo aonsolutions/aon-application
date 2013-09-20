@@ -13,7 +13,7 @@
 		<aon:form id="fiscalActivityForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_activities_modules}" />
+				<ui:param name="toolbarTitle" value="#{bundle.fiscal_activities_modules}" />
 				<ui:param name="controller" value="#{fiscalActivity}" />
 				<ui:param name="skipSaveButton" value="#{fiscalActivity.to.epigraph == null}" />
 			</ui:decorate>
@@ -40,12 +40,12 @@
 								reRender="epigraphTable"
 								actionListener="#{fiscalActivity.onClearSector}"/>
 						</aon:selectBooleanCheckbox>
-						<aon:outputLabel for="FiscalActivity_farmer" value="#{fiscalBundle.fiscal_farmer_activity}" />
+						<aon:outputLabel for="FiscalActivity_farmer" value="#{bundle.fiscal_farmer_activity}" />
 					</aon:div>
 					
 					<c:if test="#{fiscalActivity.new}">
 						<aon:outputLabel for="FiscalActivity_sector"
-							value="#{fiscalBundle.fiscal_sector}" />
+							value="#{bundle.fiscal_sector}" />
 						<aon:div id="epigraphContainer">
 							<aon:inputText id="FiscalActivity_sector" size="60"
 								disabled="#{fiscalActivity.to.epigraph != null}"
@@ -82,7 +82,7 @@
 						
 						<c:if test="#{fiscalActivity.to.sector != null}">
 							<c:if test="#{fiscalActivity.to.epigraph == null}">
-								<aon:outputText value="#{fiscalBundle.fiscal_epigraph}" />
+								<aon:outputText value="#{bundle.fiscal_epigraph}" />
 								<aon:div styleClass="aon-padding">
 									<aon:div styleClass="aon-margin-bottom">
 										<aon:outputText value="Seleccione un epigrafe de la siguiente lista" styleClass="aon-italic" />
@@ -109,7 +109,7 @@
 						</c:if>
 					</c:if>
 					<c:if test="#{fiscalActivity.to.epigraph != null}">
-						<aon:outputText value="#{fiscalBundle.fiscal_epigraph}" />
+						<aon:outputText value="#{bundle.fiscal_epigraph}" />
 						<aon:outputText value="#{fiscalActivity.to.epigraph} - #{fiscalActivity.to.description}"
 							styleClass="aon-bold" style="font-size: 1.2em;"/>
 					</c:if>
@@ -118,19 +118,19 @@
 				<aon:panelTabSet id="activityTab" selectedTab="#{fiscalActivity.selectedTab}" >
 					
 					<c:if test="#{fiscalActivity.info.rowCount > 0}">
-						<aon:panelTab id="InfoTab" label="#{fiscalBundle.fiscal_epigraph_addinfo}">
+						<aon:panelTab id="InfoTab" label="#{bundle.fiscal_epigraph_addinfo}">
 							<ui:include src="/com/code/aon/ui/fiscal/facelet/activity/info.xhtml" />		
 						</aon:panelTab>
 					</c:if>
 					
 					<c:if test="#{fiscalActivity.irpfModules.rowCount > 0}">
-						<aon:panelTab id="irpfTab" label="#{fiscalBundle.fiscal_irpf_modules}">
+						<aon:panelTab id="irpfTab" label="#{bundle.fiscal_irpf_modules}">
 							<ui:include src="/com/code/aon/ui/fiscal/facelet/activity/irpfModules.xhtml" />		
 						</aon:panelTab>
 					</c:if>
 					
 					<c:if test="#{fiscalActivity.vatModules.rowCount > 0}">
-						<aon:panelTab id="vatTab" label="#{fiscalBundle.fiscal_vat_modules}">
+						<aon:panelTab id="vatTab" label="#{bundle.fiscal_vat_modules}">
 							<ui:include src="/com/code/aon/ui/fiscal/facelet/activity/vatModules.xhtml" />		
 						</aon:panelTab>
 					</c:if>

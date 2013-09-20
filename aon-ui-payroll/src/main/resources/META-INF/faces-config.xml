@@ -3,13 +3,6 @@
 	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-	<application>
-		<resource-bundle>
-			<base-name>com.esferalia.aon.ui.payroll.i18n.messages</base-name>
-			<var>payrollBundle</var>
-		</resource-bundle>
-	</application>
-
 	<!-- ************** PAYROLL COLLECTIONS ****************** -->
 	<managed-bean>
 		<managed-bean-name>payrollCollections</managed-bean-name>

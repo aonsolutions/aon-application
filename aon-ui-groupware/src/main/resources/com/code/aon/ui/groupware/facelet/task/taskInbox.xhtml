@@ -10,7 +10,7 @@
 	<aon:form id="taskList">
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 			<ui:param name="toolbarID" value="toolbar"/>
-			<ui:param name="toolbarTitle" value="#{groupwareBundle.groupware_task_inbox}"/>
+			<ui:param name="toolbarTitle" value="#{bundle.groupware_task_inbox}"/>
 			<ui:param name="toolbarDescription" value="#{bundle.aon_listing}"/>
 						
 			<ui:define name="toolbarContent">
@@ -38,7 +38,7 @@
 				<aon:commandButton id="daily_tracking" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-version"
 					rendered="#{!task.parentDomain}"
-					value="#{groupwareBundle.aon_daily_tracking_module}" 
+					value="#{bundle.aon_daily_tracking_module}" 
 					action="dailyTracking_form"
 					actionListener="#{dailyTracking.onReset}" />
 
@@ -57,7 +57,7 @@
 
 			<aon:panel style="background-color:#f6f5e3; padding: 0px; margin-bottom: 5px;">
 				<f:facet name="header">
-					<aon:outputText styleClass="aon-bold" value="#{groupwareBundle.groupware_filter_by}"/>
+					<aon:outputText styleClass="aon-bold" value="#{bundle.groupware_filter_by}"/>
 				</f:facet>
 				
 				<aon:div style="text-align:left; padding: 0px; margin: 0px;">
@@ -66,28 +66,28 @@
 						<aon:div>
 							<aon:div styleClass="aon-margin-bottom">
 								<aon:outputText styleClass="aon-italic aon-margin-right" 
-									value="#{groupwareBundle.groupware_due_date_task_of} "/>
-								<aon:commandLink value="#{groupwareBundle.groupware_before}"
+									value="#{bundle.groupware_due_date_task_of} "/>
+								<aon:commandLink value="#{bundle.groupware_before}"
 									style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsBefore?'font-weight:bold;':''}"
 									actionListener="#{taskSearchControllerListener.onFilterBefore}"
 									reRender="taskTableContainer"/>
-								<aon:commandLink value="#{groupwareBundle.groupware_today}"
+								<aon:commandLink value="#{bundle.groupware_today}"
 									style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsToday?'font-weight:bold;':''}"
 									actionListener="#{taskSearchControllerListener.onFilterToday}"
 									reRender="taskTableContainer"/>
-								<aon:commandLink value="#{groupwareBundle.groupware_week}"
+								<aon:commandLink value="#{bundle.groupware_week}"
 									style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsWeek?'font-weight:bold;':''}"
 									actionListener="#{taskSearchControllerListener.onFilterWeek}"
 									reRender="taskTableContainer"/>
-								<aon:commandLink value="#{groupwareBundle.groupware_two_weeks}"
+								<aon:commandLink value="#{bundle.groupware_two_weeks}"
 									style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsTwoWeeks?'font-weight:bold;':''}"
 									actionListener="#{taskSearchControllerListener.onFilterTwoWeeks}"
 									reRender="taskTableContainer"/>
-								<aon:commandLink value="#{groupwareBundle.groupware_month}"
+								<aon:commandLink value="#{bundle.groupware_month}"
 									style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsMonth?'font-weight:bold;':''}"
 									actionListener="#{taskSearchControllerListener.onFilterMonth}"
 									reRender="taskTableContainer"/>
-								<aon:commandLink value="#{groupwareBundle.groupware_any_moment}"
+								<aon:commandLink value="#{bundle.groupware_any_moment}"
 									style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsAlways?'font-weight:bold;':''}"
 									actionListener="#{taskSearchControllerListener.onFilterAll}"
 									reRender="taskTableContainer"/>
@@ -96,10 +96,10 @@
 							<aon:div styleClass="aon-margin-bottom" rendered="#{!task.parentDomain}">
 								<aon:outputLabel for="Task_projectType"
 									styleClass="aon-italic aon-margin-right" 
-									value="#{projectBundle.project_project_type}"/>
+									value="#{bundle.project_project_type}"/>
 								<aon:selectOneMenu id="Task_projectType"
 									value="#{taskSearchControllerListener.projectType}">
-									<f:selectItem itemLabel="-- #{financeBundle.finance_all} --" value="#{null}"/>
+									<f:selectItem itemLabel="-- #{bundle.finance_all} --" value="#{null}"/>
 									<f:selectItems value="#{projectCollections.projectTypes}" />
 									<a4j:support event="onchange" actionListener="#{task.onFilter}"
 										reRender="taskTableContainer"/>
@@ -111,7 +111,7 @@
 								<aon:selectOneMenu id="Task_process"
 									disabled="#{taskSearchControllerListener.processDetail != null}"
 									value="#{taskSearchControllerListener.process}">
-									<f:selectItem itemLabel="-- #{financeBundle.finance_all} --" value="#{null}"/>
+									<f:selectItem itemLabel="-- #{bundle.finance_all} --" value="#{null}"/>
 									<f:selectItems value="#{groupWareCollections.processes}" />
 									<a4j:support event="onchange" actionListener="#{task.onFilter}"
 										reRender="taskTableContainer"/>
@@ -119,11 +119,11 @@
 								
 								<aon:outputLabel for="Task_processDetail"
 									styleClass="aon-italic aon-margin-right aon-margin-left" 
-									value="#{groupwareBundle.groupware_process_detail}"/>
+									value="#{bundle.groupware_process_detail}"/>
 								<aon:selectOneMenu id="Task_processDetail"
 									disabled="#{taskSearchControllerListener.process == null}"
 									value="#{taskSearchControllerListener.processDetail}">
-									<f:selectItem itemLabel="-- #{financeBundle.finance_all} --" value="#{null}"/>
+									<f:selectItem itemLabel="-- #{bundle.finance_all} --" value="#{null}"/>
 									<f:selectItems value="#{taskSearchControllerListener.processDetails}" />
 									<a4j:support event="onchange" actionListener="#{task.onFilter}"
 										reRender="taskTableContainer"/>
@@ -159,32 +159,32 @@
 
 						<aon:div id="task-operation">
 							<aon:commandButton id="task-start"
-								alt="#{groupwareBundle.groupware_task_start}"
-								title="#{groupwareBundle.groupware_task_start}"
+								alt="#{bundle.groupware_task_start}"
+								title="#{bundle.groupware_task_start}"
 								ajaxSingle="true" limitToList="true" value="&#160;"
 								rendered="#{to.pending and task.myTaskFromList}"
 								reRender="taskData"
-								onclick="if (!confirm('#{groupwareBundle.groupware_task_start}?')) return false;"
+								onclick="if (!confirm('#{bundle.groupware_task_start}?')) return false;"
 								styleClass="aon-icon-commandButton aon-icon-task-start"
 								style="padding:0px;margin:0px;padding-left:15px;"
 								actionListener="#{task.onStartTaskFromList}" />
 							<aon:commandButton id="task-stop"
-								alt="#{groupwareBundle.groupware_task_stop}"
-								title="#{groupwareBundle.groupware_task_stop}"
+								alt="#{bundle.groupware_task_stop}"
+								title="#{bundle.groupware_task_stop}"
 								ajaxSingle="true" limitToList="true" value="&#160;"
 								rendered="#{to.inProgress and task.myTaskFromList}"
 								reRender="taskData"
-								onclick="if (!confirm('#{groupwareBundle.groupware_task_stop}?')) return false;"
+								onclick="if (!confirm('#{bundle.groupware_task_stop}?')) return false;"
 								styleClass="aon-icon-commandButton aon-icon-task-stop"
 								style="padding:0px;margin:0px;padding-left:15px;"
 								actionListener="#{task.onStopTaskFromList}" />
 							<aon:commandButton id="task-reopen"
-								alt="#{groupwareBundle.groupware_task_reopen}"
-								title="#{groupwareBundle.groupware_task_reopen}"
+								alt="#{bundle.groupware_task_reopen}"
+								title="#{bundle.groupware_task_reopen}"
 								ajaxSingle="true" limitToList="true" value="&#160;"
 								rendered="#{!to.sourceProcess and to.finished and task.myTaskFromList}"
 								reRender="taskData"
-								onclick="if (!confirm('#{groupwareBundle.groupware_task_reopen}?')) return false;"
+								onclick="if (!confirm('#{bundle.groupware_task_reopen}?')) return false;"
 								styleClass="aon-icon-commandButton aon-icon-task-reopen"
 								style="padding:0px;margin:0px;padding-left:15px;width:18px;"
 								actionListener="#{task.onReopenTaskFromList}" />
@@ -196,21 +196,21 @@
 							<aon:outputText value="P" />
 						</f:facet>
 							<aon:outputText value="&#160;" rendered="#{to.highPriority}"
-								alt="#{groupwareBundle.groupware_high}" title="#{groupwareBundle.groupware_high}"
+								alt="#{bundle.groupware_high}" title="#{bundle.groupware_high}"
 								style="padding:0px;margin:0px;padding-left:10px;" 
 								styleClass="aon-icon-task-high-priority" />
 							<aon:outputText value="&#160;" rendered="#{to.lowPriority}"
-								alt="#{groupwareBundle.groupware_low}" title="#{groupwareBundle.groupware_low}"
+								alt="#{bundle.groupware_low}" title="#{bundle.groupware_low}"
 								style="padding:0px;margin:0px;padding-left:10px;"
 								styleClass="aon-icon-task-low-priority" />
 							<aon:outputText value="&#160;" rendered="#{to.normalPriority}"
-								alt="#{groupwareBundle.groupware_normal}" title="#{groupwareBundle.groupware_normal}"
+								alt="#{bundle.groupware_normal}" title="#{bundle.groupware_normal}"
 								style="padding:0px;margin:0px;padding-left:10px;"
 								styleClass="aon-icon-task-medium-priority" />
 							<aon:outputText value="&#160;" rendered="#{to.nonePriority}" 
-								alt="#{groupwareBundle.groupware_none}"
+								alt="#{bundle.groupware_none}"
 								style="padding:0px;margin:0px;padding-left:10px;" 
-								title="#{groupwareBundle.groupware_none}"/>
+								title="#{bundle.groupware_none}"/>
 					</aon:column>
 
 					<aon:column alias="Task.status" styleClass="aon-editDataTable-iconColumn aon-width-40">
@@ -221,13 +221,13 @@
 							<aon:outputText value="&#160;" rendered="#{to.pending}"
 								alt="#{bundle.aon_pending}" title="#{bundle.aon_pending}"/>
 							<aon:outputText value="&#160;" rendered="#{to.inProgress}"
-								alt="#{groupwareBundle.groupware_in_progress}" title="#{groupwareBundle.groupware_in_progress}"
+								alt="#{bundle.groupware_in_progress}" title="#{bundle.groupware_in_progress}"
 								style="padding-left:15px;" styleClass="aon-icon-point-green" />
 							<aon:outputText value="&#160;" rendered="#{to.deleted}"
-								alt="#{groupwareBundle.groupware_deleted}" title="#{groupwareBundle.groupware_deleted}"
+								alt="#{bundle.groupware_deleted}" title="#{bundle.groupware_deleted}"
 								style="padding-left:15px;"  styleClass="aon-icon-point-red" />
 							<aon:outputText value="&#160;" rendered="#{to.finished}"
-								alt="#{groupwareBundle.groupware_finished}" title="#{groupwareBundle.groupware_finished}"
+								alt="#{bundle.groupware_finished}" title="#{bundle.groupware_finished}"
 								style="padding-left:15px;"  styleClass="aon-icon-predetermine" />
 						</aon:div>
 					</aon:column>
@@ -238,12 +238,12 @@
 						</f:facet>
 
 						<aon:commandButton id="task-finish"
-							alt="#{groupwareBundle.groupware_task_finish}"
-							title="#{groupwareBundle.groupware_task_finish}"
+							alt="#{bundle.groupware_task_finish}"
+							title="#{bundle.groupware_task_finish}"
 							ajaxSingle="true" limitToList="true" value="&#160;"
 							rendered="#{!task.monitor and !to.finished and !to.deleted}"
 							disabled="#{task.monitor}"
-							onclick="if (!confirm('#{groupwareBundle.groupware_task_finish}?')) return false;"
+							onclick="if (!confirm('#{bundle.groupware_task_finish}?')) return false;"
 							styleClass="aon-icon-commandButton aon-icon-task-finish"
 							actionListener="#{task.onFinishTaskFromList}"
 							style="padding:0px;margin:0px;padding-left:15px;"/>
@@ -256,25 +256,25 @@
 						</f:facet>
 
 						<aon:commandButton id="task-release"
-							alt="#{groupwareBundle.groupware_task_user_task} #{to.taskHolder.registry.fullName}"
-							title="#{groupwareBundle.groupware_task_user_task} #{to.taskHolder.registry.fullName}"
+							alt="#{bundle.groupware_task_user_task} #{to.taskHolder.registry.fullName}"
+							title="#{bundle.groupware_task_user_task} #{to.taskHolder.registry.fullName}"
 							ajaxSingle="true" limitToList="true" value="&#160;"
 							rendered="#{to != null and task.myTaskFromList}"
 							disabled="#{task.monitor}"
 							reRender="taskData"
-							onclick="if (!confirm('#{groupwareBundle.groupware_task_release}?')) return false;"
+							onclick="if (!confirm('#{bundle.groupware_task_release}?')) return false;"
 							styleClass="aon-icon-commandButton aon-icon-contact"
 							style="padding:0px;margin:0px;padding-left:15px;"
 							actionListener="#{task.onReleaseTaskFromList}" />
 
 						<aon:commandButton id="task-assume"
-							alt="#{groupwareBundle.groupware_task_group_task} #{to.workGroup.description}"
-							title="#{groupwareBundle.groupware_task_group_task} #{to.workGroup.description}"
+							alt="#{bundle.groupware_task_group_task} #{to.workGroup.description}"
+							title="#{bundle.groupware_task_group_task} #{to.workGroup.description}"
 							ajaxSingle="true" limitToList="true" value="&#160;"
 							rendered="#{to != null and !task.myTaskFromList}"
 							disabled="#{task.monitor}"
 							reRender="taskData"
-							onclick="if (!confirm('#{groupwareBundle.groupware_task_assume}?')) return false;"
+							onclick="if (!confirm('#{bundle.groupware_task_assume}?')) return false;"
 							styleClass="aon-icon-commandButton aon-icon-contactGroup"
 							style="padding:0px;margin:0px;padding-left:15px;"
 							actionListener="#{task.onAssumeTaskFromList}" />
@@ -333,7 +333,7 @@
 
 					<aon:column alias="Task.registry.name" styleClass="aon-editDataTable-text aon-width-150 aon-nowrap">
 						<f:facet name="header">
-							<aon:outputText value="#{projectBundle.project_assigned}" />
+							<aon:outputText value="#{bundle.project_assigned}" />
 						</f:facet>
 						<aon:outputText value="#{to.project.registry.fullName}"
 							style="font-size: 0.8em;#{to.expired?'color:red;':''}">
@@ -373,7 +373,7 @@
 
 					<aon:column alias="Task.dueDate" styleClass="aon-editDataTable-text aon-width-80">
 						<f:facet name="header">
-							<aon:outputText value="#{groupwareBundle.groupware_due_date}" />
+							<aon:outputText value="#{bundle.groupware_due_date}" />
 						</f:facet>
 						<aon:outputText value="#{to.dueDate}"
 							style="#{to.expired?'color:red;':''}">

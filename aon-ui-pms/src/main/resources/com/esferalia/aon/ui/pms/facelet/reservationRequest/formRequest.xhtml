@@ -16,7 +16,7 @@
 		<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel for="ReservationRequest_id" value="#{pmsBundle.pms_reservation_request_id}"
+	<aon:outputLabel for="ReservationRequest_id" value="#{bundle.pms_reservation_request_id}"
 		rendered="#{!reservationRequest.new}" />
 	<aon:outputText	id="ReservationRequest_id" value="#{reservationRequest.to.id}" 
 		styleClass="aon-bold" rendered="#{!reservationRequest.new}" />
@@ -49,7 +49,7 @@
 				focus="ReservationRequest_nights" />
 		</aon:selectInputDate>
 		<aon:div>
-			<aon:outputLabel for="ReservationRequest_nights" value="#{pmsBundle.pms_nights}:" 
+			<aon:outputLabel for="ReservationRequest_nights" value="#{bundle.pms_nights}:" 
 				styleClass="aon-margin-right aon-italic" />
 			<aon:outputText value="#{reservationRequest.nights}" styleClass="aon-bold" 
 				rendered="#{!reservationRequest.to.active}" />
@@ -84,7 +84,7 @@
 			focus="ReservationRequest_bookingHolder" />
 	</aon:selectInputDate>
 
-	<aon:outputLabel for="ReservationRequest_bookingHolder" value="#{pmsBundle.pms_reservation_holder}" />
+	<aon:outputLabel for="ReservationRequest_bookingHolder" value="#{bundle.pms_reservation_holder}" />
 	<aon:outputText value="#{reservationRequest.to.bookingHolder}" styleClass="aon-bold" 
 		rendered="#{!reservationRequest.to.active or reservationRequest.agencyUser}" />
 	<aon:selectOneMenu id="ReservationRequest_bookingHolder" value="#{reservationRequest.to.bookingHolder}" 

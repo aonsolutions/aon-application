@@ -9,7 +9,7 @@
 	
 	<c:if test="#{showFeeButton}">
 		<aon:menuItem id="fee-button"
-			value="#{(feeButtonLabel!=null)?(feeButtonLabel):(financeBundle.finance_fees_module)}"
+			value="#{(feeButtonLabel!=null)?(feeButtonLabel):(bundle.finance_fees_module)}"
 			reRender="showNewFeeWindow"
 			iconClass="aon-icon-auxiliary"
 			actionListener="#{feeController.onReset}">
@@ -36,7 +36,7 @@
 	</c:if>
 	<c:if test="#{showRelationshipButton}">
 		<aon:menuItem id="rrelationship-button"
-			value="#{(relationshipButtonLabel!=null)?(relationshipButtonLabel):(registryBundle.registry_relationship)}"
+			value="#{(relationshipButtonLabel!=null)?(relationshipButtonLabel):(bundle.registry_relationship)}"
 			reRender="showNewRelationshipWindow"
 			iconClass="aon-icon-relationship"
 			actionListener="#{relationshipController.onReset}">
@@ -45,7 +45,7 @@
 	</c:if>
 	<c:if test="#{showRecordDataButton}">
 		<aon:menuItem id="recordData-button"
-			value="#{(recordDataButtonLabel!=null)?(recordDataButtonLabel):(registryBundle.registry_rd_module)}"
+			value="#{(recordDataButtonLabel!=null)?(recordDataButtonLabel):(bundle.registry_rd_module)}"
 			reRender="showNewRecordDataWindow"
 			iconClass="aon-icon-data"
 			actionListener="#{recordDataController.onReset}">
@@ -54,7 +54,7 @@
 	</c:if>
 	<c:if test="#{showSegmentButton}">
 		<aon:menuItem id="segment-button"
-			value="#{(segmentButtonLabel!=null)?(segmentButtonLabel):(registryBundle.registry_segment_module)}"
+			value="#{(segmentButtonLabel!=null)?(segmentButtonLabel):(bundle.registry_segment_module)}"
 			reRender="showNewSegmentWindow"
 			iconClass="aon-icon-segment"
 			actionListener="#{segmentController.onReset}">
@@ -72,7 +72,7 @@
 	</c:if>
 	<c:if test="#{showDirStaffButton}">
 		<aon:menuItem id="dirStaff-button"
-			value="#{(dirStaffButtonLabel!=null)?(dirStaffButtonLabel):(registryBundle.registry_dir_staff)}"
+			value="#{(dirStaffButtonLabel!=null)?(dirStaffButtonLabel):(bundle.registry_dir_staff)}"
 			reRender="showNewDirStaffWindow"
 			iconClass="aon-icon-data"
 			actionListener="#{dirStaffController.onReset}">
@@ -90,7 +90,7 @@
 	</c:if>
 	<c:if test="#{showProfileButton}">
 		<aon:menuItem id="profile-button"
-			value="#{(profileButtonLabel!=null)?(profileButtonLabel):(registryBundle.registry_profile)}"
+			value="#{(profileButtonLabel!=null)?(profileButtonLabel):(bundle.registry_profile)}"
 			iconClass="aon-icon-reservation"
 			reRender="showNewRegistryProfileWindow"
 			actionListener="#{registryProfileController.onReset}">
@@ -108,7 +108,7 @@
 	</c:if>
 	<c:if test="#{showRegistrySupplierButton}">
 		<aon:menuItem id="registrySupplier-button"
-			value="#{(supplierButtonLabel!=null)?(supplierButtonLabel):(registryBundle.registry_supplier_info)}"
+			value="#{(supplierButtonLabel!=null)?(supplierButtonLabel):(bundle.registry_supplier_info)}"
 			iconClass="aon-icon-purchase"
 			reRender="showNewRegistrySupplierWindow"
 			actionListener="#{registrySupplierController.onReset}">

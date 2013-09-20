@@ -30,7 +30,7 @@
 			<aon:selectBooleanCheckbox id="PaymentConcept_decorateDescription"
 				value="#{controller.to.descriptionDecorable}" />
 			<aon:outputLabel for="PaymentConcept_decorateDescription"
-				value="#{payrollBundle.payroll_salary_show_expression}" />
+				value="#{bundle.payroll_salary_show_expression}" />
 		</aon:panelGroup>
 
 		<aon:outputLabel for="PaymentConcept_expression"
@@ -66,7 +66,7 @@
 		</aon:inputTextarea-->
 
 		<aon:outputLabel for="PaymentConcept_irpf_expression"
-			value="#{payrollBundle.payroll_salary_irpf_expression}" />
+			value="#{bundle.payroll_salary_irpf_expression}" />
 		<aon:div id="PaymentConcept_taxation">
 			<aon:selectOneMenu id="PaymentConcept_irpf_taxation"
 				value="#{controller.to.taxation}">
@@ -109,7 +109,7 @@
 		</aon:div>
 
 		<aon:outputLabel for="PaymentConcept_quote_expression"
-			value="#{payrollBundle.payroll_salary_quote_expression}" />
+			value="#{bundle.payroll_salary_quote_expression}" />
 		<aon:div id="PaymentConcept_quote">
 			<aon:selectOneMenu id="PaymentConcept_quote_quote"
 				value="#{controller.to.quote}">

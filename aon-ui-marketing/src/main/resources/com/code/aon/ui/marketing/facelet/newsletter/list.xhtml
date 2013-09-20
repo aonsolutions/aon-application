@@ -16,7 +16,7 @@
 		<aon:form id="newsletterList">
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_newsletter_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.marketing_newsletter_module}" />
 				<ui:param name="controller" value="#{newsletter}" />
 			</ui:include>
 
@@ -33,7 +33,7 @@
 						<aon:column styleClass="aon-editDataTable-textColumn"
 							alias="Newsletter.layout" >
 							<f:facet name="header">
-								<aon:outputText value="#{marketingBundle.marketing_newsletter_layout}" />
+								<aon:outputText value="#{bundle.marketing_newsletter_layout}" />
 							</f:facet>
 							<aon:outputText value="#{to.layout}"/>
 						</aon:column>

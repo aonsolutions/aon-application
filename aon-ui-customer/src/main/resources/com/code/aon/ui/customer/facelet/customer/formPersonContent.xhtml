@@ -15,7 +15,7 @@
 				aon-panelGrid-even aon-width-auto">
 	
 			<aon:outputLabel id="Person_birthDate_label" for="Person_birthDate"
-				value="#{registryBundle.registry_person_birthDate}" />
+				value="#{bundle.registry_person_birthDate}" />
 			<aon:div>
 				<aon:selectInputDate id="Person_birthDate"
 					value="#{customerPersonListener.person.birthDate}"
@@ -30,19 +30,19 @@
 			</aon:div>
 	
 			<aon:outputLabel id="Person_gender_label" for="Person_gender"
-				 value="#{registryBundle.registry_person_gender}" />
+				 value="#{bundle.registry_person_gender}" />
 			<aon:selectOneMenu id="Person_gender" required="true"
 				value="#{customerPersonListener.person.gender}">
 				<f:selectItems value="#{registryCollections.genders}" />
 			</aon:selectOneMenu>
 			
 			<aon:outputLabel id="Person_socialSecurityNumber_label" for="Person_socialSecurityNumber"
-				value="#{registryBundle.registry_person_nss}" />
+				value="#{bundle.registry_person_nss}" />
 			<aon:inputText id="Person_socialSecurityNumber"
 				value="#{customerPersonListener.person.socialSecurityNumber}" size="32" maxlength="32" />		
 	
 			<aon:outputLabel id="Person_maritalStatus_label" for="Person_maritalStatus"
-				value="#{registryBundle.registry_person_marital_status}" />
+				value="#{bundle.registry_person_marital_status}" />
 			<aon:selectOneMenu id="Person_maritalStatus"
 				value="#{customerPersonListener.person.maritalStatus}">
 				<f:selectItems value="#{registryCollections.maritalStatuses}" />

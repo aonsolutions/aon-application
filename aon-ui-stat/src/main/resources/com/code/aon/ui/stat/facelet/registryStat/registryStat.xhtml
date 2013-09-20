@@ -32,36 +32,36 @@
 
 				<aon:panelTabSet switchType="client">
 					<aon:panelTab id="tab3"
-						label="#{statBundle.registry_stat_products}">
+						label="#{bundle.registry_stat_products}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/registryStat/boughtProductsList.xhtml" />
 					</aon:panelTab>
 					<aon:panelTab id="tab2"
-						label="#{statBundle.registry_stat_unpayed_finances}">
+						label="#{bundle.registry_stat_unpayed_finances}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/registryStat/pendingFinancesList.xhtml" />
 					</aon:panelTab>
 					<aon:panelTab id="tab1"
-						label="#{statBundle.registry_stat_invoices}">
+						label="#{bundle.registry_stat_invoices}">
 						<ui:include
 							src="/com/code/aon/ui/stat/facelet/registryStat/pendingInvoicesList.xhtml" />
 					</aon:panelTab>
 
 					<c:if test="#{aonConfiguration.bean.customer.showDeliveryData}">
 					<aon:panelTab id="tab4"
-							label="#{statBundle.registry_stat_delivery}">
+							label="#{bundle.registry_stat_delivery}">
 							<ui:include
 								src="/com/code/aon/ui/stat/facelet/registryStat/pendingDeliveriesList.xhtml" />
 						</aon:panelTab>
 				 	</c:if> 
 				 	<c:if test="#{aonConfiguration.bean.customer.showPurchaseData}">	
-						<aon:panelTab id="tab5" label="#{statBundle.registry_stat_purhase}">
+						<aon:panelTab id="tab5" label="#{bundle.registry_stat_purhase}">
 							<ui:include
 								src="/com/code/aon/ui/stat/facelet/registryStat/pendingSalesList.xhtml" />
 						</aon:panelTab>
 					</c:if>
 					<c:if test="#{aonConfiguration.bean.customer.showOfferData}">		
-						<aon:panelTab id="tab6" label="#{statBundle.registry_stat_offer}">
+						<aon:panelTab id="tab6" label="#{bundle.registry_stat_offer}">
 							<ui:include
 								src="/com/code/aon/ui/stat/facelet/registryStat/pendingOfferList.xhtml" />
 						</aon:panelTab>

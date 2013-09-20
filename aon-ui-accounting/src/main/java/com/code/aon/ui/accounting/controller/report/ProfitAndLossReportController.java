@@ -1,7 +1,6 @@
 package com.code.aon.ui.accounting.controller.report;
 
 import static com.code.aon.ui.accounting.IAccountingConstants.TRIAL_BALANCE_CONTROLLER_NAME;
-import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_GROSS_MARGIN;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_PROFIT_AND_LOSS_MODULE;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_TOTAL_EXPENSES;
@@ -269,14 +268,14 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		Collection<Summary> list = new LinkedList<Summary>();
 		list.addAll(getGrossMargin().getSummaryList());
 		Summary gmTotal = new Summary();
-		gmTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, ACCOUNTING_GROSS_MARGIN));
+		gmTotal.setDescription(AonUtil.getMessage(ACCOUNTING_GROSS_MARGIN));
 		gmTotal.setCredit(getGrossMargin().getCredit());
 		gmTotal.setDebit(getGrossMargin().getDebit());
 		list.add(gmTotal);
 
 		list.addAll(getTotalExpenses().getSummaryList());
 		Summary teTotal = new Summary();
-		teTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, ACCOUNTING_TOTAL_EXPENSES));
+		teTotal.setDescription(AonUtil.getMessage(ACCOUNTING_TOTAL_EXPENSES));
 		teTotal.setCredit(getTotalExpenses().getCredit());
 		teTotal.setDebit(getTotalExpenses().getDebit());
 		list.add(teTotal);
@@ -288,9 +287,9 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		if (getTotalResult() > 0) {
 			r.append(AonUtil.getMessage(PROFIT));
 		} else if (getTotalResult() < 0) {
-			r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, ACCOUNTING_TOTAL_RESULT_LOSS));
+			r.append(AonUtil.getMessage(ACCOUNTING_TOTAL_RESULT_LOSS));
 		} else {
-			r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, ACCOUNTING_TOTAL_RESULT_NULL));
+			r.append(AonUtil.getMessage(ACCOUNTING_TOTAL_RESULT_NULL));
 		}
 		r.append(")");
 		result.setDescription(r.toString());
@@ -320,7 +319,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	}
 
 	public String getReportTitle() {
-		return AonUtil.getMessage(ACCOUNTING_BUNDLE, ACCOUNTING_PROFIT_AND_LOSS_MODULE);
+		return AonUtil.getMessage(ACCOUNTING_PROFIT_AND_LOSS_MODULE);
 	}
 	
 	public String getGraphName() {

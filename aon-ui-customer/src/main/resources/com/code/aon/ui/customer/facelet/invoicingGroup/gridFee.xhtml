@@ -76,7 +76,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 				<f:facet name="header">
-					<aon:outputLabel value="#{financeBundle.finance_fee_billing_date_abrv}" />
+					<aon:outputLabel value="#{bundle.finance_fee_billing_date_abrv}" />
 				</f:facet>
 				<aon:div styleClass="aon-nowrap">
 					<aon:outputText value="#{to.billingDateMonth}" />
@@ -103,7 +103,7 @@
 				styleClass="aon-editDataTable-button aon-icon-delete"
 				title="#{bundle.aon_remove}"
 				confirmTitle="#{bundle.aon_confirm_title}"
-				confirmMessage="#{customerBundle.customer_invoicing_group_delete_confirm}"
+				confirmMessage="#{bundle.customer_invoicing_group_delete_confirm}"
 				confirmActionListener="#{controller.onRemove}"
 				reRender="invoicingGroupForm" ajaxSingle="true" />
 		</ui:define>

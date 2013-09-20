@@ -11,7 +11,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_loan_module}" />
+					value="#{bundle.accounting_loan_module}" />
 				<ui:param name="controller" value="#{loan}" />
 			</ui:include>
 
@@ -44,15 +44,15 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 
-					<aon:outputLabel for="Loan_term" value="#{accountingBundle.accounting_term}" />
+					<aon:outputLabel for="Loan_term" value="#{bundle.accounting_term}" />
 					<aon:inputText id="Loan_term" size="5"
 						valueChangeListener="#{loan.addExpression}" />
 
-					<aon:outputLabel for="Loan_interest" value="#{accountingBundle.accounting_interest}" />
+					<aon:outputLabel for="Loan_interest" value="#{bundle.accounting_interest}" />
 					<aon:inputText id="Loan_interest" size="5"
 						valueChangeListener="#{loan.addExpression}" />
 
-					<aon:outputLabel for="Loan_review" value="#{accountingBundle.accounting_review}" />
+					<aon:outputLabel for="Loan_review" value="#{bundle.accounting_review}" />
 					<aon:inputText id="Loan_review" size="40"
 						valueChangeListener="#{loan.addExpression}" />
 

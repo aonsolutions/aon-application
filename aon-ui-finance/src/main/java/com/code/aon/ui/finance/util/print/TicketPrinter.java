@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.util.print;
 
 import static com.code.aon.ui.common.ICommonMessages.DECIMAL_2_PATTERN;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.PERCENT_PATTERN;
 import static com.code.aon.ui.common.ICommonMessages.POS_GIFT_RECEIPT;
 import static com.code.aon.ui.common.ICommonMessages.POS_RECEIPT;
@@ -443,10 +442,10 @@ public class TicketPrinter {
 		}
 
 		if ( gift ) {
-			String label = AonUtil.getMessage(FINANCE_BUNDLE, POS_GIFT_RECEIPT);
+			String label = AonUtil.getMessage( POS_GIFT_RECEIPT);
 			sb.append( getCenteredLine(StringUtils.upperCase(label)) );	
 		} else {
-			String label = AonUtil.getMessage(FINANCE_BUNDLE, POS_RECEIPT);
+			String label = AonUtil.getMessage(POS_RECEIPT);
 			sb.append( getCenteredLine(StringUtils.upperCase(label)) );				
 		}
 		sb.append( getLine(getNumberDate(invoice)) );

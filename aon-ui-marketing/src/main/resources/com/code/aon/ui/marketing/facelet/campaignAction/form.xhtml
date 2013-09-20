@@ -16,7 +16,7 @@
 		<aon:form id="campaignActionForm">		
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >		
-				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_actions}" />
+				<ui:param name="toolbarTitle" value="#{bundle.marketing_actions}" />
 				<ui:param name="controller" value="#{campaignAction}" />
 				<ui:param name="skipSearchButton" value="true" />	
 				<ui:define name="beforeSpinToolbarContent">
@@ -46,7 +46,7 @@
 							required="true" size="32" maxlength="64" />		
 	
 						<aon:outputLabel for="Action_mediaType"
-							value="#{registryBundle.registry_media_type}" />
+							value="#{bundle.registry_media_type}" />
 						<aon:selectOneMenu id="Action_mediaType"
 							reRender="actionGrid,campaignActionTargetDataDiv" required="true"
 							process="Action_description,Action_startDate,Action_endDate,Template_id"
@@ -56,7 +56,7 @@
 						</aon:selectOneMenu>
 						
 						<aon:outputLabel for="Action_startDate"
-							value="#{marketingBundle.marketing_action_start_date}" />
+							value="#{bundle.marketing_action_start_date}" />
 						<aon:selectInputDate id="Action_startDate" 
 							value="#{campaignAction.to.startDate}" required="true"
 							timeZone="#{timeZoneController.timeZone}"
@@ -64,7 +64,7 @@
 						</aon:selectInputDate>
 	
 						<aon:outputLabel for="Action_endDate"
-							value="#{marketingBundle.marketing_action_end_date}" />
+							value="#{bundle.marketing_action_end_date}" />
 						<aon:selectInputDate id="Action_endDate" 
 							value="#{campaignAction.to.endDate}" 
 							timeZone="#{timeZoneController.timeZone}"
@@ -73,8 +73,8 @@
 	
 						<ui:include src="/com/code/aon/ui/marketing/facelet/news/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{campaignAction.to.news}" />
-							<ui:param name="lookupLabel" value="#{marketingBundle.marketing_message}" />
-							<ui:param name="searchButtonTitle" value="#{marketingBundle.marketing_message_selection}" />
+							<ui:param name="lookupLabel" value="#{bundle.marketing_message}" />
+							<ui:param name="searchButtonTitle" value="#{bundle.marketing_message_selection}" />
 							<ui:param name="lookupControllerListener" value="#{marketingCampaign.newsFilter}" />							
 							<ui:param name="lookupRendered" value="#{(campaignAction.to.mediaType  == 'PHONE') or (campaignAction.to.mediaType  == 'EMAIL')}" />
 						</ui:include>					
@@ -131,12 +131,12 @@
 				<aon:div styleClass="aon-form-group" rendered="#{!campaignAction.new}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="campaignActionTargetData" value="#{commercialBundle.commercial_target_module}" />
+							<aon:outputLabel for="campaignActionTargetData" value="#{bundle.commercial_target_module}" />
 						</aon:div>
 					</aon:div>
 					
 					<aon:div styleClass="aon-toolbar">
-						<aon:commandButton value="#{accountingBundle.accounting_add}"
+						<aon:commandButton value="#{bundle.accounting_add}"
 							action="campaignActionTarget_search"
 							actionListener="#{target.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-new" />
@@ -148,7 +148,7 @@
 							<aon:actionListener method="#{campaignActionTargetSearch.onFilter}" />
 						</aon:commandButton>					
 						<aon:commandButton id="clearStatus"
-							value="#{marketingBundle.marketing_action_clear_status}"
+							value="#{bundle.marketing_action_clear_status}"
 							reRender="campaignActionTargetDataDiv"
 							actionListener="#{campaignActionTarget.onClearStatus}"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" >

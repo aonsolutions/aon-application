@@ -35,7 +35,7 @@
 			<aon:outputText value="&#160;" />
 				
 			<aon:outputLabel for="Delivery_driver"
-				value="#{warehouseBundle.warehouse_delivery_shipment_driver}" />
+				value="#{bundle.warehouse_delivery_shipment_driver}" />
 			<aon:inputText id="Delivery_driver" 
 				value="#{delivery.to.driver}" />
 				
@@ -57,7 +57,7 @@
 			<aon:outputText value="&#160;" />
 			
 			<aon:outputLabel for="Delivery_trackingNumber"
-				value="#{warehouseBundle.warehouse_delivery_shipment_trackingNumber}" />
+				value="#{bundle.warehouse_delivery_shipment_trackingNumber}" />
 			<aon:inputText id="Delivery_trackingNumber"  
 				value="#{delivery.to.trackingNumber}" />
 				
@@ -83,7 +83,7 @@
 			</aon:selectOneMenu>
 				
 			<aon:outputLabel for="Delivery_modificationDate"
-				value="#{warehouseBundle.warehouse_delivery_shipment_deliveryDate}" />
+				value="#{bundle.warehouse_delivery_shipment_deliveryDate}" />
 			<aon:selectInputDate id="Delivery_modificationDate"
 				direction="auto"
 				value="#{delivery.to.statusModificationDate}" 
@@ -96,7 +96,7 @@
 				value="#{delivery.to.totalPackages}" />
 				
 			<aon:outputLabel for="Delivery_modificationTime"
-				value="#{warehouseBundle.warehouse_delivery_shipment_deliveryTime}" />
+				value="#{bundle.warehouse_delivery_shipment_deliveryTime}" />
 			<aon:div id="Delivery_modificationTime">
 				<aon:selectOneMenu id="Delivery_modificationTime-hour" value="#{delivery.to.statusModificationHour}">
 					<f:selectItem itemValue="#{null}" itemLabel=" - " />
@@ -128,7 +128,7 @@
 							eventsQueue="shippingAlternativeAddress"
 							reRender="alternativeShippingAddressPanel" />
 					</aon:selectBooleanCheckbox>
-					<aon:outputLabel for="shippingAlternativeAddressSelect" value="#{carrierBundle.carrier_shipment_alternativeAddress}" />
+					<aon:outputLabel for="shippingAlternativeAddressSelect" value="#{bundle.carrier_shipment_alternativeAddress}" />
 				</aon:div>
 			</f:facet>
 		
@@ -144,7 +144,7 @@
 				<aon:inputText id="shippingAlternativeAddress" maxlength="128" size="80"
 					value="#{delivery.to.shippingAlternativeAddress}" />
 				
-				<aon:outputLabel for="Delivery_shippingAlternativeAddress2" value="#{registryBundle.registry_address_detail}" />
+				<aon:outputLabel for="Delivery_shippingAlternativeAddress2" value="#{bundle.registry_address_detail}" />
 				<aon:inputText id="Delivery_shippingAlternativeAddress2" maxlength="128" size="80"
 					value="#{delivery.to.shippingAlternativeAddress2}" />
 				
@@ -154,7 +154,7 @@
 					value="#{delivery.to.shippingAlternativeZip}" size="16" maxlength="16"/>
 					
 				<aon:outputLabel for="Delivery_shippingAlternativeCity" 
-					value="#{registryBundle.registry_city}" />
+					value="#{bundle.registry_city}" />
 				<aon:inputText id="Delivery_shippingAlternativeCity" 
 					value="#{delivery.to.shippingAlternativeCity}" size="64" maxlength="64"/>
 					

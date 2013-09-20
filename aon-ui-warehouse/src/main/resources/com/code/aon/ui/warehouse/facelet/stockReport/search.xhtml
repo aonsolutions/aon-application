@@ -39,7 +39,7 @@
 					<aon:inputText id="Stock_quantity" size="10"
 						value="#{stockReport.quantity}" />				
 				
-					<aon:outputLabel for="Stock_price_type" value="#{warehouseBundle.warehouse_valued_by}" rendered="#{stockReport.valued}"/>
+					<aon:outputLabel for="Stock_price_type" value="#{bundle.warehouse_valued_by}" rendered="#{stockReport.valued}"/>
 					<aon:selectOneMenu id="Stock_price_type" rendered="#{stockReport.valued}"
 						value="#{stockReport.priceType}">
 						<f:selectItems value="#{warehouseCollections.priceTypes}" />

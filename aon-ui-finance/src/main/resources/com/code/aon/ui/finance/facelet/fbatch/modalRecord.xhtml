@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{financeBundle.finance_record}" />
+						<aon:outputText value="#{bundle.finance_record}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -37,7 +37,7 @@
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="fbatchRecord-record"
-										value="#{financeBundle.finance_record}"
+										value="#{bundle.finance_record}"
 										reRender="showFbatchRecordWindow,financeBatchForm"
 										actionListener="#{fbatch.onRecord}"
 										styleClass="aon-finding-toolbar-item aon-icon-task-assume"
@@ -63,7 +63,7 @@
 									<aon:panelGrid id="menuGrid" columns="2" dir="true">
 
 										<aon:outputLabel for="FinanceBatch_recordDate"
-											value="#{financeBundle.finance_record_date}" />
+											value="#{bundle.finance_record_date}" />
 										<aon:selectInputDate id="FinanceBatch_recordDate" 
 											value="#{fbatch.recordDate}"
 											timeZone="#{timeZoneController.timeZone}"

@@ -14,7 +14,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_check_balance_module}" />
+					value="#{bundle.accounting_check_balance_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="aonToolbar-back" value="#{bundle.aon_back}"
@@ -31,14 +31,14 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{accountingBundle.accounting_check_error}" />
+							<aon:outputText value="#{bundle.accounting_check_error}" />
 						</f:facet>
 						<aon:outputText value="#{to.message}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{accountingBundle.accounting_check_action}" />
+							<aon:outputText value="#{bundle.accounting_check_action}" />
 						</f:facet>
 						<aon:div rendered="#{to.fixAvailable}">
 							<aon:commandLink id="accountCheckFix" 
@@ -48,7 +48,7 @@
 								styleClass="aon-dataTable-link">
 								<aon:outputText value="#{to.fixActionLabel}" style="color:red;"/>
 							</aon:commandLink>
-							<aon:outputText rendered="#{to.fixed}" value="#{accountingBundle.accounting_check_fixed}"  
+							<aon:outputText rendered="#{to.fixed}" value="#{bundle.accounting_check_fixed}"  
 								styleClass="aon-icon-checked" style="color:green;padding-left: 18px; padding-top: 5px;"/>	
 						</aon:div>
 					</aon:column>

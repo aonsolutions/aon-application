@@ -4,7 +4,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:outputLabel for="RegistryProfile_lastUpdate" value="#{registryBundle.registry_profile_lastUpdate}" />
+	<aon:outputLabel for="RegistryProfile_lastUpdate" value="#{bundle.registry_profile_lastUpdate}" />
 	<aon:selectInputDate id="RegistryProfile_lastUpdate" value="#{controller.to.lastUpdate}"
 		timeZone="#{timeZoneController.timeZone}"  required="true"
 		popupDateFormat="#{bundle.aon_date_pattern}">
@@ -20,7 +20,7 @@
 	</ui:include>
 
 	<aon:outputLabel for="RegistryProfile_value-New"
-		value="#{registryBundle.registry_response}" />
+		value="#{bundle.registry_response}" />
 	<aon:div id="RegistryProfile_response-New">
 		<aon:div layout="none">
 			<ui:include src="/com/code/aon/ui/registry/facelet/valueHolder/inputValueEx.xhtml" >

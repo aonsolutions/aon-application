@@ -35,7 +35,7 @@
 				required="true" />
 		
 			<aon:outputLabel for="EnterpriseActivity_quoteRegime"
-				value="#{payrollBundle.payroll_activity_quoteRegime}" />
+				value="#{bundle.payroll_activity_quoteRegime}" />
 			<aon:selectOneMenu id="EnterpriseActivity_quoteRegime" required="true"
 				value="#{enterpriseActivity.to.type}">
 				<f:selectItems value="#{payrollCollections.ssRegimes}" />
@@ -51,7 +51,7 @@
 			<aon:div styleClass="aon-form-group" rendered="#{!enterpriseActivity.new}">
 				<aon:div styleClass="aon-form-group-title">
 					<aon:div styleClass="aon-form-group-title-internal">
-						<aon:outputLabel for="enterpriseCCCData" value="#{companyBundle.company_enterprise_ccc}" />
+						<aon:outputLabel for="enterpriseCCCData" value="#{bundle.company_enterprise_ccc}" />
 					</aon:div>
 				</aon:div>
 				

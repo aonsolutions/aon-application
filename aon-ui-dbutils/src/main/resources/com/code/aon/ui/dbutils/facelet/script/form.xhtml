@@ -16,7 +16,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="#{dbutilsBundle.dbutils_script_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.dbutils_script_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
 
 				<ui:define name="toolbarContent">
@@ -28,7 +28,7 @@
 						onclick="if (!confirm('Se va a ejecutar el contenido del archivo. Desea continuar?')) return false;Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					<aon:commandButton id="view" 
-						value="#{dbutilsBundle.dbutils_show}"
+						value="#{bundle.dbutils_show}"
 						actionListener="#{sqlScript.onView}"
 						reRender="fileContainer"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"

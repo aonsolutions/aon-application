@@ -11,7 +11,7 @@
 		<aon:form id="systemDataGrid">
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_systemData_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_systemData_module}" />
 				<ui:param name="controller" value="#{systemData}" />
 			</ui:include>			
 
@@ -86,7 +86,7 @@
 						<aon:column alias="systemData.readOnly" styleClass="aon-width-80"
 							style="padding-bottom: 6px;">
 							<f:facet name="header">
-								<aon:outputLabel for="systemData_readOnly" value="#{payrollBundle.payroll_constant}" />
+								<aon:outputLabel for="systemData_readOnly" value="#{bundle.payroll_constant}" />
 							</f:facet>
 							<aon:outputText value="&#160;" 
 								styleClass="#{(to.readOnly)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"

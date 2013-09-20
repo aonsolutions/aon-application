@@ -1,7 +1,6 @@
 package com.code.aon.ui.fiscal.controller;
 
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INPUT_VAT_REPORT;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVESTMENT_VAT_REPORT;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_OUTPUT_VAT_REPORT;
@@ -321,11 +320,11 @@ public class VatReportController implements ICollectionProvider {
 		Locale locale = AonUtil.getCurrentLocale();
 		StringBuilder buf = new StringBuilder(); 
 		if (params.getVatType() == VatType.OUTPUT) {
-			buf.append(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_OUTPUT_VAT_REPORT));
+			buf.append(AonUtil.getMessage(FINANCE_OUTPUT_VAT_REPORT));
 		} else if (params.getVatType() == VatType.INPUT) {
-			buf.append(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INPUT_VAT_REPORT));	
+			buf.append(AonUtil.getMessage(FINANCE_INPUT_VAT_REPORT));	
 		} else if (params.getVatType() == VatType.INVESTMENT) {
-			buf.append(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVESTMENT_VAT_REPORT));
+			buf.append(AonUtil.getMessage(FINANCE_INVESTMENT_VAT_REPORT));
 		}
 		if (params.getVatReportType() != null) {
 			Double percent = params.getVatPercent(); 

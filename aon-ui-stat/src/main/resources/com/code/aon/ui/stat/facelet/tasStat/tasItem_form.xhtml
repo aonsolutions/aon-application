@@ -12,7 +12,7 @@
 	<ui:define name="content">
 		<aon:form id="contentForm">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{statBundle.stat_menu_tas_tasItem}" />
+				<ui:param name="toolbarTitle" value="#{bundle.stat_menu_tas_tasItem}" />
 				<ui:param name="controller" value="#{tasStat}" />
 
 				<ui:define name="toolbarContent">
@@ -45,7 +45,7 @@
 						<aon:outputText value="#{tasStat.header.tasItemDescription}" styleClass="aon-margin-left aon-bold"/>
 					</aon:div>
 					<aon:div rendered="#{tasStat.header.tasItemAdditionalInfo != null}">
-						<aon:outputText value="#{tasBundle.tas_add_info}" styleClass="aon-margin-left aon-italic"/>
+						<aon:outputText value="#{bundle.tas_add_info}" styleClass="aon-margin-left aon-italic"/>
 						<aon:outputText value="#{tasStat.header.tasItemAdditionalInfo}" styleClass="aon-margin-left aon-bold"/>
 					</aon:div>
 				</aon:div>
@@ -199,7 +199,7 @@
 						<aon:column styleClass="aon-width-150"
 							style="background-color:#{to.type.color};">
 							<f:facet name="header">
-								<aon:outputText value="#{tasBundle.tas_projectTas_taskHolder}" />	
+								<aon:outputText value="#{bundle.tas_projectTas_taskHolder}" />	
 							</f:facet> 
 							<aon:outputText value="#{to.taskHolderName}">
 								<aon:abbreviateConverter maxWidth="20" />

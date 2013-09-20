@@ -28,7 +28,7 @@
 
 				<aon:div styleClass="aon-box aon-box-outstanding2"
 					rendered="#{webmailFolder.folder.messageCount==0}">
-					<aon:outputText value="#{webmailBundle.webmail_nomessages}" />
+					<aon:outputText value="#{bundle.webmail_nomessages}" />
 				</aon:div>
 			
 				<aon:div style="width:99%" rendered="#{webmailFolder.folder.messageCount>0}">
@@ -39,7 +39,7 @@
 						<aon:rowSelector action="#{webmailFolder.getSelectedMessageAction}"
 							actionListener="#{webmailFolder.changeSelectedMessage}" />
 							
-						<aon:column id="stateColumn" label="#{webmailBundle.webmail_message_selectEmail}"
+						<aon:column id="stateColumn" label="#{bundle.webmail_message_selectEmail}"
 							styleClass="aon-nopadding aon-nomargin" width="70px" >
  							<rich:dragSupport id="messageDrag" rendered="#{webmail.enableDragAndDrop}"
  								dragIndicator="messageIndicator" dragType="MESSAGE" dragValue="#{to}" />							

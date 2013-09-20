@@ -53,14 +53,14 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Course_courseSubject"
-						value="#{academyBundle.academy_subject}" />
+						value="#{bundle.academy_subject}" />
 					<aon:selectOneMenu id="Course_courseSubject"
 						required="true" value="#{course.to.courseSubject}">
 						<f:selectItems value="#{academyCollections.courseSubjects}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Course_courseLevel"
-						value="#{academyBundle.academy_level}" />
+						value="#{bundle.academy_level}" />
 					<aon:selectOneMenu id="Course_courseLevel"
 						required="true" value="#{course.to.courseLevel}">
 						<f:selectItems value="#{academyCollections.courseLevels}" />
@@ -81,7 +81,7 @@
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<aon:outputLabel for="Course_alumnLimit"
-						value="#{payrollBundle.payroll_limit}" />
+						value="#{bundle.payroll_limit}" />
 					<aon:inputText id="Course_alumnLimit"
 						required="true" value="#{course.to.alumnLimit}"
 						size="5" maxlength="3"/>
@@ -105,7 +105,7 @@
 								<ui:param name="controller" value="#{courseSchedule}" />
 							</ui:include>
 						</aon:panelTab>
-						<aon:panelTab id="instructors" label="#{academyBundle.academy_teachers}">
+						<aon:panelTab id="instructors" label="#{bundle.academy_teachers}">
 							<ui:include	src="/com/code/aon/ui/academy/facelet/courseInstructor/tab_grid.xhtml">
 								<ui:param name="controller" value="#{courseInstructor}" />
 							</ui:include>
@@ -125,10 +125,10 @@
 								<ui:param name="controller" value="#{courseAcademicSkill}" />
 							</ui:include>
 						</aon:panelTab>
-						<aon:panelTab id="evaluation" label="#{academyBundle.academy_course_evaluation}">
+						<aon:panelTab id="evaluation" label="#{bundle.academy_course_evaluation}">
 							<ui:include	src="/com/code/aon/ui/academy/facelet/courseEvaluation/grid.xhtml" />
 						</aon:panelTab>
-						<aon:panelTab id="qualification" label="#{academyBundle.academy_qualification}">
+						<aon:panelTab id="qualification" label="#{bundle.academy_qualification}">
 							<ui:include	src="/com/code/aon/ui/academy/facelet/courseMark/tab_grid.xhtml" >
 								<ui:param name="controller" value="#{courseMark}" />
 							</ui:include>

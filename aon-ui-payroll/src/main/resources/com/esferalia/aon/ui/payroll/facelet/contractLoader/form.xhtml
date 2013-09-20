@@ -16,12 +16,12 @@
     		<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contractLoader_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_contractLoader_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="execute"
-						value="#{accountingBundle.aon_loader_load}"
+						value="#{bundle.aon_loader_load}"
 						actionListener="#{contractLoader.onShowPanel}"
 						rendered="#{contractLoader.aonFile.size > 0}"
 						disabled="#{contractLoader.loader == null}"
@@ -101,7 +101,7 @@
 				</rich:modalPanel>
 				<ui:param name="closeButtonReRender" value="showNewMessageWindow-Loader" />
 				<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
-					<ui:param name="logPanelTitle" value="#{payrollBundle.payroll_contractLoader_module}" />
+					<ui:param name="logPanelTitle" value="#{bundle.payroll_contractLoader_module}" />
 				</ui:include>		
 			</c:if>
 		</aon:panelGroup>

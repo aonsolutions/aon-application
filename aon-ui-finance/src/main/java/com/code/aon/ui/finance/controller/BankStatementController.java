@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_UNRECORD_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_CHECK_NO_LINE_SELECTED;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_IMPORT_BANK_ACCOUNT_NOT_FOUND;
 import static com.code.aon.ui.common.ICommonMessages.PENDING;
@@ -562,7 +561,7 @@ public class BankStatementController extends BasicController implements IFinance
 			return (RegistryBank)iterator.next();
 		} else {
 			bankAcc = line.substring(2, 6) + "." + line.substring(6, 10) + ".**." + line.substring(10, 20);
-			AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FINANCE_IMPORT_BANK_ACCOUNT_NOT_FOUND, bankAcc);
+			AonUtil.addErrorMessageFromBundle(FINANCE_IMPORT_BANK_ACCOUNT_NOT_FOUND, bankAcc);
 		}
 		return null;
 	}
@@ -715,7 +714,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 	public void onAutoCheckSelected(ActionEvent event) throws ManagerBeanException {
 		if (getCheckedBankStatement().size() == 0) {
-			AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, FINANCE_CHECK_NO_LINE_SELECTED);
+			AonUtil.addWarningMessageFromBundle(FINANCE_CHECK_NO_LINE_SELECTED);
 			return;
 		}
 
@@ -1419,7 +1418,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 	public void onRecordSelected(ActionEvent event) throws ManagerBeanException {
 		if (getCheckedBankStatement().size() == 0) {
-			AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, FINANCE_CHECK_NO_LINE_SELECTED);
+			AonUtil.addWarningMessageFromBundle(FINANCE_CHECK_NO_LINE_SELECTED);
 			return;
 		}
 
@@ -1577,7 +1576,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 	public void onUnrecordSelected(ActionEvent event) throws ManagerBeanException {
 		if (getCheckedBankStatement().size() == 0) {
-			AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, FINANCE_CHECK_NO_LINE_SELECTED);
+			AonUtil.addWarningMessageFromBundle(FINANCE_CHECK_NO_LINE_SELECTED);
 			return;
 		}
 
@@ -1619,7 +1618,7 @@ public class BankStatementController extends BasicController implements IFinance
 				        if (getWriter().canRemoveAccountEntryFinanceBatch(fBatch)) {
 							getWriter().removeAccountEntryFinanceBatch(fBatch, false);
 				        } else {
-				        	String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_BATCH_UNRECORD_ERROR);
+				        	String message = AonUtil.getMessage(FINANCE_BATCH_UNRECORD_ERROR);
 				        	getErrors().put(statement.getId(), message);
 				        	return;
 				        }

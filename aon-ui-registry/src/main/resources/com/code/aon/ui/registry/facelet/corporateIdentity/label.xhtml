@@ -13,7 +13,7 @@
 		<aon:form id="corporateIdentityLabelForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{registryBundle.registry_corporateIdentity_label}" />
+				<ui:param name="toolbarTitle" value="#{bundle.registry_corporateIdentity_label}" />
 				<ui:param name="toolbarDescription" value="#{corporateIdentity.identityReport.company.fullName}" />
 				<ui:define name="toolbarContent">
 					<aon:htmlCommandLink id="export2pdf_label" value="PDF" title="PDF"
@@ -46,7 +46,7 @@
 						value="#{corporateIdentity.identityReport.label_to}" />
 
 					<aon:outputLabel for="label_att"
-						value="#{registryBundle.registry_corporateIdentity_label_att}" />
+						value="#{bundle.registry_corporateIdentity_label_att}" />
 					<aon:inputText id="label_att" 
 						size="85" 
 						value="#{corporateIdentity.identityReport.label_att}" />
@@ -66,7 +66,7 @@
 					</aon:inputText>
 
 					<aon:outputLabel for="label_to_phone"
-						value="#{registryBundle.registry_corporateIdentity_label_to_phone}" />
+						value="#{bundle.registry_corporateIdentity_label_to_phone}" />
 					<aon:inputText id="label_to_phone" 
 						size="42" 
 						value="#{corporateIdentity.identityReport.label_to_phone}">
@@ -87,7 +87,7 @@
 						cols="80" rows="5"/>
 
 					<aon:outputLabel for="label_to_bultos"
-						value="#{registryBundle.registry_corporateIdentity_label_to_bultos}" />
+						value="#{bundle.registry_corporateIdentity_label_to_bultos}" />
 					<aon:inputText id="label_to_bultos" 
 						size="10" 
 						value="#{corporateIdentity.identityReport.label_to_bultos}" />

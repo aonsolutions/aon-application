@@ -14,7 +14,7 @@
 
 			<aon:div ajaxRendered="true" layout="none">
 				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-					<ui:param name="toolbarTitle" value="#{sepeBundle.sepe_sepeTables_module}" />
+					<ui:param name="toolbarTitle" value="#{bundle.sepe_sepeTables_module}" />
 					<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
 				</ui:include>			
 
@@ -67,7 +67,7 @@
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 									<f:facet name="header">
 										<aon:outputLabel 
-											value="#{sepeBundle.sepe_sepeTables_lastUpdate_date}" />
+											value="#{bundle.sepe_sepeTables_lastUpdate_date}" />
 									</f:facet>
 									<aon:outputText value="#{to.lastUpdateDate}" >
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -104,7 +104,7 @@
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 									<f:facet name="header">
 										<aon:outputLabel 
-											value="#{sepeBundle.sepe_sepeTables_lastUpdate_date}" />
+											value="#{bundle.sepe_sepeTables_lastUpdate_date}" />
 									</f:facet>
 									<aon:outputText value="#{to.lastUpdateDate}" >
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"

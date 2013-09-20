@@ -12,7 +12,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_fee_print_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_fee_print_module}" />
 				<ui:param name="controller" value="#{feePrint}" />
 				<ui:param name="skipResetButton" value="true" />
 				
@@ -124,7 +124,7 @@
 					
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_fee_billing_date2}" />
+							<aon:outputText value="#{bundle.finance_fee_billing_date2}" />
 						</f:facet>
 						<aon:outputText value="#{to.billingDateMonth}" />
 						<aon:outputText value=" / #{to.billingDateYear}" />

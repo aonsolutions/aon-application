@@ -13,11 +13,11 @@
 		<aon:form id="commercialTrackingList">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_tracking_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.commercial_tracking_module}" />
 				<ui:param name="controller" value="#{commercialTracking}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:htmlCommandLink id="commercialTrackingFile-report"
-						value="#{commercialBundle.commercial_tracking_file_tracing}" target="_blank"
+						value="#{bundle.commercial_tracking_file_tracing}" target="_blank"
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
@@ -70,7 +70,7 @@
 						<aon:column styleClass="aon-editDataTable-iconColumn">
 							<aon:outputText value="&#160;"
 								rendered="#{controller.currentHasAlarm}"
-								title="#{groupwareBundle.aon_alarm}"
+								title="#{bundle.aon_alarm}"
 								styleClass="aon-icon2 aon-icon-alarm" />														
 						</aon:column>
 

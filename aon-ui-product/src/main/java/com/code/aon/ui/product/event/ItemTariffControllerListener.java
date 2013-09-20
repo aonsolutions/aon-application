@@ -1,6 +1,5 @@
 package com.code.aon.ui.product.event;
 
-import static com.code.aon.ui.common.ICommonMessages.PRODUCT_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.PRODUCT_DEFINED_FOR_TARIFF_ERROR;
 
 import com.code.aon.common.BeanManager;
@@ -43,7 +42,7 @@ public class ItemTariffControllerListener extends ControllerAdapter {
 			criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_ITEM_ID), itemTariff.getItem().getId());
 			criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_TARIFF_ID), itemTariff.getTariff().getId());
 			if (itemTariffBean.getCount(criteria) > 0) {
-				throw new ControllerListenerException(AonUtil.getMessage(PRODUCT_BUNDLE, PRODUCT_DEFINED_FOR_TARIFF_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(PRODUCT_DEFINED_FOR_TARIFF_ERROR));
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

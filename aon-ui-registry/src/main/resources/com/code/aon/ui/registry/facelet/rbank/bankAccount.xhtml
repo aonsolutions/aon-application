@@ -9,12 +9,12 @@
 	<aon:valueParam name="renderBankAccount" default="#{true}" />
 
 	<aon:div rendered="#{renderBankAccount}" >
-		<aon:inputText label="#{configBundle.config_bank_code}"
+		<aon:inputText label="#{bundle.config_bank_code}"
 			value="#{bankAccountTo.office}" required="true"
 			size="4" maxlength="4">
 			<f:validateLength minimum="4" maximum="4" />
 		</aon:inputText>
-		<aon:inputText label="#{configBundle.config_bank_control}"
+		<aon:inputText label="#{bundle.config_bank_control}"
 			value="#{bankAccountTo.control}" required="true"
 			size="2" maxlength="2">
 			<f:validateLength minimum="2" maximum="2" />

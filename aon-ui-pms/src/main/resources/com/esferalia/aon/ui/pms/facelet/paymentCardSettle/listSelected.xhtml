@@ -9,24 +9,24 @@
 
 	<aon:div id="paymentCardSettleToolBarDiv" styleClass="aon-toolbar"
 		rendered="#{paymentCardSettle.financeModel.rowCount > 0}">
-     	<aon:commandButton title="#{pmsBundle.pms_exclude} #{bundle.aon_all}"
+     	<aon:commandButton title="#{bundle.pms_exclude} #{bundle.aon_all}"
 			styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
-			value="#{pmsBundle.pms_exclude} #{bundle.aon_all}"
+			value="#{bundle.pms_exclude} #{bundle.aon_all}"
 			rendered="#{paymentCardSettle.financeModel.rowCount > 0}"
 			actionListener="#{paymentCardSettle.onRemoveAllSelected}" reRender="paymentCardSettleList"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-     	<aon:commandButton title="#{financeBundle.finance_to_fraction} #{pmsBundle.pms_differences}"
+     	<aon:commandButton title="#{bundle.finance_to_fraction} #{bundle.pms_differences}"
 			styleClass="aon-finding-toolbar-item aon-icon-fraction"
-			value="#{financeBundle.finance_to_fraction} #{pmsBundle.pms_differences}"
+			value="#{bundle.finance_to_fraction} #{bundle.pms_differences}"
 			rendered="#{paymentCardSettle.financeModel.rowCount > 0 and paymentCardSettle.existAmountDifferences}"
 			reRender="showFinanceFractionWindow">
 			<f:setPropertyActionListener target="#{paymentCardSettle.showFinanceFractionWindow}"
 				value="#{true}" />
 		</aon:commandButton>
-		<aon:commandButton title="#{financeBundle.finance_add_batch}"
+		<aon:commandButton title="#{bundle.finance_add_batch}"
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
-			value="#{financeBundle.finance_to_batch}"
+			value="#{bundle.finance_to_batch}"
 			rendered="#{paymentCardSettle.financeModel.rowCount > 0}"
 			actionListener="#{paymentCardSettle.onFinanceBatchShow}" 
 			reRender="showFinanceBatchWindow">
@@ -85,7 +85,7 @@
 				<aon:div rendered="#{to.finance.invoice.rectifier}">
 					<aon:outputText value="#{to.finance.invoice.rectificationType}" />
 					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
-						<aon:outputFormat value="#{financeBundle.finance_invoice_rectifier_message2}" styleClass="aon-bold aon-label-error">
+						<aon:outputFormat value="#{bundle.finance_invoice_rectifier_message2}" styleClass="aon-bold aon-label-error">
 							<f:param value="#{to.finance.invoice.rectificationInvoice.referenceCode}" />
 						</aon:outputFormat>
 					</rich:toolTip>
@@ -93,7 +93,7 @@
 				<aon:div rendered="#{to.finance.invoice.rectified}">
 					<aon:outputText value="#{to.finance.invoice.rectificationType}" />
 					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
-						<aon:outputFormat value="#{financeBundle.finance_invoice_rectified_message2}" styleClass="aon-bold">
+						<aon:outputFormat value="#{bundle.finance_invoice_rectified_message2}" styleClass="aon-bold">
 							<f:param value="#{to.finance.invoice.rectificationInvoicesString}" />
 						</aon:outputFormat>
 					</rich:toolTip>
@@ -245,7 +245,7 @@
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{pmsBundle.pms_difference}" />
+					<aon:outputText value="#{bundle.pms_difference}" />
 				</f:facet>
 				<aon:outputText id="difference_amount" value="#{ (empty to.amount)?(''):(to.finance.totalAmount - to.amount)}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -264,7 +264,7 @@
 					<aon:outputText value="&#160;" />
 				</f:facet>
 				<aon:commandButton
-					id="remove-button" title="#{pmsBundle.pms_exclude}"
+					id="remove-button" title="#{bundle.pms_exclude}"
 					immediate="true"  
 					reRender="paymentCardSettleList"
 					actionListener="#{paymentCardSettle.onRemoveSelected}"

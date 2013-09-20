@@ -13,7 +13,7 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{fiscalBundle.fiscal_retention_report_module}" />
+					value="#{bundle.fiscal_retention_report_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 				<ui:param name="skipClearButton" value="true" />
@@ -34,7 +34,7 @@
 					<aon:methodParam name="searchAction" value="retention_report_list" />
 
 					<aon:outputLabel for="reportDate"
-						value="#{financeBundle.finance_report_date}" />
+						value="#{bundle.finance_report_date}" />
 					<aon:panelGrid columns="1">
 						<aon:selectInputDate id="reportDate" value="#{retentionReport.params.date}"
 							timeZone="#{timeZoneController.timeZone}"
@@ -46,7 +46,7 @@
 						<aon:selectBooleanCheckbox id="report_toCustomer"
 							value="#{retentionReport.params.toCustomer}" />
 						<aon:outputLabel for="report_toCustomer" styleClass="aon-bold"
-							value="#{fiscalBundle.fiscal_sales_retention}" />
+							value="#{bundle.fiscal_sales_retention}" />
 					</aon:div>
 
 					<aon:outputLabel for="report_year"
@@ -68,7 +68,7 @@
 					</aon:panelGrid>
 
 					<aon:outputLabel for="invoiceDate-From"
-						value="#{financeBundle.finance_invoice_date}" />
+						value="#{bundle.finance_invoice_date}" />
 					<aon:panelGrid columns="3">
 						<aon:selectInputDate id="invoiceDate-From"
 							value="#{retentionReport.params.fromInvoiceDate}"
@@ -109,7 +109,7 @@
 					</c:if>
 
 					<aon:outputLabel for="report_order"
-						value="#{financeBundle.finance_invoice_order_by}" />
+						value="#{bundle.finance_invoice_order_by}" />
 					<aon:selectOneMenu id="report_order" value="#{retentionReport.order}" style="margin-left: 0.5em;">
 						<f:selectItems value="#{fiscalCollections.invoiceReportOrders}" />
 					</aon:selectOneMenu>

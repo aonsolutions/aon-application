@@ -15,18 +15,18 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_social_insurance_entry_module}" />
+					value="#{bundle.accounting_social_insurance_entry_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save"
-						value="#{accountingBundle.accounting_entry_generate}"
+						value="#{bundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
-						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
+						title="#{bundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
 						actionListener="#{socialInsuranceEntry.onAccept}"
 						action="#{socialInsuranceEntry.accept}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?')) return false;" />
+						onclick="if (!confirm('#{bundle.accounting_entry_generate}?')) return false;" />
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}"
 						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
@@ -78,7 +78,7 @@
 					<aon:selectOneMenu id="Account_registryBank"
 						value="#{socialInsuranceEntry.entry.registryBank}">
 						<f:selectItem
-							itemLabel="#{accountingBundle.accounting_def_cash_acc}"
+							itemLabel="#{bundle.accounting_def_cash_acc}"
 							value="#{null}" />
 						<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
 					</aon:selectOneMenu>
@@ -124,11 +124,11 @@
 							reRender="Account_month,Account_year,AccountEntryDetail_accountEntry_entryDate-From,AccountEntryDetail_accountEntry_entryDate-To,StatementContainer,AccountEntry_securityLevel"
 							value="#{socialInsuranceEntry.entry.paymentAdjustable}" />
 						<aon:outputLabel for="Account_paymentAdjustable"
-							value="#{accountingBundle.accounting_payment_adjustable}" />
+							value="#{bundle.accounting_payment_adjustable}" />
 					</aon:div>
 
 					<aon:outputLabel for="Account_month"
-						value="#{accountingBundle.accounting_payment_adjust_month}" />
+						value="#{bundle.accounting_payment_adjust_month}" />
 					<aon:div>
 						<aon:selectOneMenu id="Account_month" required="true"
 							disabled="#{!socialInsuranceEntry.entry.paymentAdjustable}"

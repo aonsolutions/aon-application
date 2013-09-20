@@ -14,7 +14,7 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle"
-						value="#{(activityDialog.request)?(assetBundle.asset_request_module):(assetBundle.asset_activity_module)}" />
+						value="#{(activityDialog.request)?(bundle.asset_request_module):(bundle.asset_activity_module)}" />
 				<ui:param name="toolbarDescription"
 						value="#{activityDialog.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
@@ -40,7 +40,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-new"
 						accesskey="#{bundle.aon_key_new}" />
 					<aon:commandButton id="activityDialog-email"
-						value="#{webmailBundle.webmail_send_email}"
+						value="#{bundle.webmail_send_email}"
 						rendered="#{activityDialog.new and activityDialog.request}"
 						actionListener="#{activityDialog.onEmail}"
 						action="activityDialog_form" 
@@ -74,41 +74,41 @@
 						disabled="#{!activityDialog.new}"/>
 
 					<aon:outputLabel for="ActivityDialog_fromTime"
-						value="#{assetBundle.asset_fromTime}" />
+						value="#{bundle.asset_fromTime}" />
 					<aon:div id="ActivityDialog_fromTime">
 						<aon:selectOneMenu id="fromTimeHours" disabled="#{!activityDialog.new}"
 							value="#{activityDialog.fromTimeHours}">
 							<f:selectItems value="#{activityDialog.hours}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel 
-							value="#{assetBundle.asset_hours}" />
+							value="#{bundle.asset_hours}" />
 						<aon:selectOneMenu id="fromTimeMins" disabled="#{!activityDialog.new}"
 							value="#{activityDialog.fromTimeMins}">
 							<f:selectItems value="#{activityDialog.mins}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel
-							value="#{assetBundle.asset_minutes}" />
+							value="#{bundle.asset_minutes}" />
 					</aon:div>
 
 					<aon:outputLabel for="ActivityDialog_toTime"
-						value="#{assetBundle.asset_toTime}" />
+						value="#{bundle.asset_toTime}" />
 					<aon:div id="ActivityDialog_toTime">
 						<aon:selectOneMenu id="toTimeHours" disabled="#{!activityDialog.new}"
 							value="#{activityDialog.toTimeHours}">
 							<f:selectItems value="#{activityDialog.hours}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel 
-							value="#{assetBundle.asset_hours}" />
+							value="#{bundle.asset_hours}" />
 						<aon:selectOneMenu id="toTimeMins" disabled="#{!activityDialog.new}"
 							value="#{activityDialog.toTimeMins}">
 							<f:selectItems value="#{activityDialog.mins}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel
-							value="#{assetBundle.asset_minutes}" />
+							value="#{bundle.asset_minutes}" />
 					</aon:div>
 					
 					<aon:outputLabel for="ActivityDialog_weekDays"
-						value="#{assetBundle.asset_activity_days}" />
+						value="#{bundle.asset_activity_days}" />
 					<aon:div>
 						<aon:outputLabel for="ActivityDialog_weekDays_monday"
 							value="#{bundle.aon_monday}" />
@@ -159,7 +159,7 @@
 				<aon:div id="newActivities"> 				  
 					<aon:panel rendered="#{!activityDialog.new and !activityDialog.request}">
 						<f:facet name="header">
-							<aon:outputLabel value="#{assetBundle.asset_activity_added_records}" />
+							<aon:outputLabel value="#{bundle.asset_activity_added_records}" />
 						</f:facet>
 						<ui:include src="grid.xhtml" />
 					</aon:panel>

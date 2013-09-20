@@ -29,7 +29,7 @@
 		value="#{bundle.aon_address}" />
 	<aon:div>
 		<aon:selectOneMenu id="Company_streetType" required="true"
-			label="#{registryBundle.registry_street_type}"
+			label="#{bundle.registry_street_type}"
 			value="#{controller.mainAddress.streetType}">
 			<f:selectItems value="#{registryCollections.streetTypes}" />
 		</aon:selectOneMenu>
@@ -43,7 +43,7 @@
 			valueChangeListener="#{controller.addressChanged}" maxlength="12" size="5" />
 	</aon:div>
 
-	<aon:outputLabel for="Company_address2" value="#{registryBundle.registry_address_detail}" />
+	<aon:outputLabel for="Company_address2" value="#{bundle.registry_address_detail}" />
 	<aon:div>
 		<aon:inputText id="Company_address2"
 			value="#{controller.mainAddress.address2}"
@@ -54,7 +54,7 @@
 	</aon:div>
 
 	<aon:outputLabel for="Company_address_city"
-		value="#{registryBundle.registry_city}" />
+		value="#{bundle.registry_city}" />
 	<aon:inputText id="Company_address_city"
 		value="#{controller.mainAddress.city}" maxlength="64"
 		valueChangeListener="#{controller.addressChanged}" size="30" />
@@ -77,7 +77,7 @@
 	
 	<c:if test="#{showMunicipality}" >
 		<aon:outputLabel for="Company_address_municipality" 
-			value="#{registryBundle.registry_municipality}" />
+			value="#{bundle.registry_municipality}" />
 		<aon:selectOneMenu id="Company_address_municipality"
 			value="#{controller.mainAddress.municipalityCode}"
 			valueChangeListener="#{controller.addressChanged}">
@@ -97,7 +97,7 @@
 		valueChangeListener="#{controller.faxChanged}" maxlength="64" size="15" />
 
 	<aon:outputLabel for="Company_email"
-		value="#{registryBundle.registry_email}" />
+		value="#{bundle.registry_email}" />
 	<aon:inputText id="Company_email" value="#{controller.email.value}"
 		onblur="toLowerCase(this);" maxlength="64"
 		valueChangeListener="#{controller.emailChanged}" size="45" />

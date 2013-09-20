@@ -14,7 +14,7 @@
 		<aon:form id="newDomainForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{adminBundle.admin_new_domain}" />
+				<ui:param name="toolbarTitle" value="#{bundle.admin_new_domain}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="newDomainAccept" 
 						value="#{bundle.aon_accept}" 
@@ -34,16 +34,16 @@
 					<aon:div>
 						<aon:outputLabel value="#{bundle.aon_login_passwd}" for="passwd"/>
 						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
-							<aon:outputText value="#{adminBundle.admin_new_domain_passwd_help}" />
+							<aon:outputText value="#{bundle.admin_new_domain_passwd_help}" />
 						</aon:div>
 					</aon:div>
 					<aon:inputSecret id="passwd" required="true" styleClass="aon-inputText"
 						value="#{adminNewDomain.password}" size="20" maxlength="20" />
 					
 					<aon:div>
-						<aon:outputLabel for="NewDomain_name" value="#{adminBundle.admin_new_domain_name}" />
+						<aon:outputLabel for="NewDomain_name" value="#{bundle.admin_new_domain_name}" />
 						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
-							<aon:outputText value="#{adminBundle.admin_new_domain_name_help}"/>
+							<aon:outputText value="#{bundle.admin_new_domain_name_help}"/>
 						</aon:div>
 					</aon:div>
 					<aon:div>
@@ -56,27 +56,27 @@
 					</aon:div>
  
 					<aon:div>
-						<aon:outputLabel for="NewDomain_description" value="#{adminBundle.admin_new_domain_description}" />
+						<aon:outputLabel for="NewDomain_description" value="#{bundle.admin_new_domain_description}" />
 						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
-							<aon:outputText value="#{adminBundle.admin_new_domain_description_help}"/>
+							<aon:outputText value="#{bundle.admin_new_domain_description_help}"/>
 						</aon:div>
 					</aon:div>
 					<aon:inputText id="NewDomain_description" required="true" size="40" maxlength="64" 
 						value="#{adminNewDomain.domainDescription}" />
 
 					<aon:div>
-						<aon:outputLabel for="NewDomain_owner" value="#{adminBundle.admin_new_domain_owner}" />
+						<aon:outputLabel for="NewDomain_owner" value="#{bundle.admin_new_domain_owner}" />
 						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
-							<aon:outputText value="#{adminBundle.admin_new_domain_owner_help}"/>
+							<aon:outputText value="#{bundle.admin_new_domain_owner_help}"/>
 						</aon:div>
 					</aon:div>
 					<aon:inputText id="NewDomain_owner" size="80" maxlength="256" required="true"
 						value="#{adminNewDomain.owner}" validator="#{adminDomain.ownerCheck}" />
 
 					<aon:div>
-						<aon:outputLabel for="NewDomain_expirationDate" value="#{adminBundle.admin_domain_expiration}" />
+						<aon:outputLabel for="NewDomain_expirationDate" value="#{bundle.admin_domain_expiration}" />
 						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
-							<aon:outputText value="#{adminBundle.admin_domain_expiration_help}"/>
+							<aon:outputText value="#{bundle.admin_domain_expiration_help}"/>
 						</aon:div>
 					</aon:div>
 					<aon:selectInputDate id="NewDomain_expirationDate" 
@@ -87,15 +87,15 @@
  
 					<aon:div>
 						<aon:outputLabel styleClass="aon-outputLabel aon-input-required"
-							value="#{adminBundle.admin_new_domain_defaults}" />
+							value="#{bundle.admin_new_domain_defaults}" />
 						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
-							<aon:outputText value="#{adminBundle.admin_new_domain_defaults_help}"/>
+							<aon:outputText value="#{bundle.admin_new_domain_defaults_help}"/>
 						</aon:div>
 					</aon:div>
 					<aon:div id="valuesDiv">
 						<c:if test="#{adminNewDomain.parentDomain != null}">
 							<aon:outputLabel for="Domain_enableHeredity"
-								value="#{adminBundle.admin_domain_enableHeredity}" />
+								value="#{bundle.admin_domain_enableHeredity}" />
 							<aon:selectBooleanCheckbox id="Domain_enableHeredity"
 								required="true" reRender="valuesDiv"
 								value="#{adminNewDomain.enableHeredity}" />
@@ -105,17 +105,17 @@
 								<aon:selectOneMenu id="Domain_loadDefaults"
 									required="true" reRender="valuesDiv,NewDomain_expirationDate"
 									value="#{adminNewDomain.loadDefaultValuesEnabled}">
-									<f:selectItem itemValue="#{true}" itemLabel="#{adminBundle.admin_new_domain_defaults_1}" />
-									<f:selectItem itemValue="#{false}" itemLabel="#{adminBundle.admin_new_domain_defaults_2}" />
+									<f:selectItem itemValue="#{true}" itemLabel="#{bundle.admin_new_domain_defaults_1}" />
+									<f:selectItem itemValue="#{false}" itemLabel="#{bundle.admin_new_domain_defaults_2}" />
 								</aon:selectOneMenu>				
 								<c:if test="#{adminNewDomain.loadDefaultValuesEnabled and (adminNewDomain.parentDomain == null)}">
 									<aon:div styleClass="aon-margin-top">
 										<aon:outputLabel for="Domain_domainManagement"
-											value="#{adminBundle.admin_domain_domainManagement}" />
+											value="#{bundle.admin_domain_domainManagement}" />
 										<aon:selectBooleanCheckbox id="Domain_domainManagement"
 											value="#{adminNewDomain.domainManagement}" required="true" />
 										<aon:outputLabel for="Domain_type" style="margin-left:1em;"
-											value="#{adminBundle.admin_domain_type}" />
+											value="#{bundle.admin_domain_type}" />
 										<aon:selectOneMenu id="Domain_type" 
 											value="#{adminNewDomain.type}" required="true" >
 											<f:selectItems value="#{adminCollections.newDomainTypes}" />

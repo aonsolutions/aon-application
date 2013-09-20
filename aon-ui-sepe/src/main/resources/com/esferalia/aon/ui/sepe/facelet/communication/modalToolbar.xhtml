@@ -18,7 +18,7 @@
 
 			<c:if test="#{!skipBatchButton}">
 				<aon:commandButton id="batch-file"
-					value="#{sepeBundle.sepe_contrata_batch}"
+					value="#{bundle.sepe_contrata_batch}"
 					rendered="#{!controller.communicationIdReceived}"
 					styleClass="aon-finding-toolbar-item aon-icon-newFolder" >
 					<f:setPropertyActionListener
@@ -27,7 +27,7 @@
 			</c:if>
 				
 			<aon:commandButton id="sepe-communication"
-				value="#{sepeBundle.sepe_communicate}"
+				value="#{bundle.sepe_communicate}"
 				reRender="showContrataLoginWindow,contrataResponseContainer,contrataData,contractForm"
 				actionListener="#{controller.onSendSepeFile}"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -35,7 +35,7 @@
 				styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
 			
 			<aon:commandButton id="sepe-dataQuery"
-				value="#{sepeBundle.sepe_status_check}"
+				value="#{bundle.sepe_status_check}"
 				disabled="#{!controller.communicationIdReceived}"
 				reRender="showContrataLoginWindow,contrataResponseContainer,contrataData,contractForm"
 				actionListener="#{controller.onSepeDataQuery}"
@@ -44,7 +44,7 @@
 				styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
 				
 			<aon:commandButton id="refresh-result"
-				value="#{sepeBundle.sepe_reload}"
+				value="#{bundle.sepe_reload}"
 				reRender="showContrataCommunicationWindow"
 				styleClass="aon-finding-toolbar-item aon-icon-refresh" />
 				

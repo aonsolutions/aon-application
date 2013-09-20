@@ -11,7 +11,7 @@
 	<ui:define name="content">
 		<aon:form id="noShowInvoiceList">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_noShow_invoice_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_noShow_invoice_module}" />
 				<ui:param name="controller" value="#{noShowInvoice}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 				<ui:define name="additionalToolbarContent">
@@ -33,7 +33,7 @@
 							value="#{true}" />
 					</aon:commandButton>
 					<aon:commandButton id="noShowInvoice-noInvoice"
-						value="#{pmsBundle.pms_no_invoiceable}"
+						value="#{bundle.pms_no_invoiceable}"
 						immediate="true" rendered="#{noShowInvoice.checkedCount > 0}"
 						styleClass="aon-finding-toolbar-item aon-icon-exit"
 						reRender="showConfirmWindow">
@@ -141,7 +141,7 @@
 
 						<aon:column styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_money_advance}" />
+								<aon:outputText value="#{bundle.finance_money_advance}" />
 							</f:facet>
 							<aon:outputText value="#{to.advancedAmount}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

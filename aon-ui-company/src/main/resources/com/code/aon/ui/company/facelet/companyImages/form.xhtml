@@ -12,7 +12,7 @@
 	<ui:define name="content">
 		<aon:form id="companyImagesForm">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{companyBundle.company_images_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.company_images_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 			</ui:include>
 			
@@ -112,7 +112,7 @@
 											<aon:outputText value="#{companyImages.aonFile.mimeType}"/>
 										</c:if>
 											
-										<aon:outputLabel for="RegistryAttachment_inputFile" value="#{companyBundle.company_image}" />
+										<aon:outputLabel for="RegistryAttachment_inputFile" value="#{bundle.company_image}" />
 										<a4j:region>
 											<h:panelGrid>
 												<aon:fileUpload id="RegistryAttachment_inputFile"
@@ -138,10 +138,10 @@
 										</a4j:region>
 
 										<c:if test="#{companyImages.image != null}">
-											<aon:outputLabel for="ratio" value="#{companyBundle.aon_image_ratio}"/>
+											<aon:outputLabel for="ratio" value="#{bundle.aon_image_ratio}"/>
 											<aon:selectBooleanCheckbox id="ratio" value="#{companyImages.ratio}" />
 	
-											<aon:outputLabel for="width" value="#{companyBundle.aon_width}" />
+											<aon:outputLabel for="width" value="#{bundle.aon_width}" />
 											<rich:inputNumberSlider id="width" 
 												value="#{companyImages.width}" width="500"
 												minValue="1" maxValue="#{companyImages.maxWidth}">
@@ -150,7 +150,7 @@
 													actionListener="#{companyImages.onChangeWidth}" />
 											</rich:inputNumberSlider>
 	
-											<aon:outputLabel for="height" value="#{companyBundle.aon_height}" />
+											<aon:outputLabel for="height" value="#{bundle.aon_height}" />
 											<rich:inputNumberSlider id="height" 
 												value="#{companyImages.height}" width="500" 
 												minValue="1" maxValue="#{companyImages.maxHeight}">

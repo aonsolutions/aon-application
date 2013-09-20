@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{(controller.to.roomNumber == null) ? (pmsBundle.pms_room_assign) : (pmsBundle.pms_room_change)}" />
+						<aon:outputText value="#{(controller.to.roomNumber == null) ? (bundle.pms_room_assign) : (bundle.pms_room_change)}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -40,7 +40,7 @@
 									<aon:commandButton id="roomDetail-accept"
 										rendered="#{modalController.allReallocated}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										value="#{bundle.aon_save} #{pmsBundle.pms_stay}"
+										value="#{bundle.aon_save} #{bundle.pms_stay}"
 										actionListener="#{modalController.onAcceptDivert}">
 										<rich:componentControl for="roomDetailModalPanel"
 											event="onclick" operation="hide"/>																					

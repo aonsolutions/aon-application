@@ -1,5 +1,7 @@
 package com.code.aon.ui.loader;
 
+import static com.code.aon.ui.common.ICommonMessages.BUNDLE_NAME;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,7 +51,6 @@ public class Loader implements ILoaderEngine {
 	private static final String HELP_TEMPLATE_PACKAGE = "/com/code/aon/ui/loader";
 	private static final String HELP_TEMPLATE = "help.html.ftl";
 	private static final String FACTORIES_KEY = "factories";
-	private static final String BUNDLE_KEY = "bundle";
 	private static final String VM_HELP_BUNDLE = "com.code.aon.ui.loader.help";
 	
 	private static final String SEMICOLON = ";";
@@ -559,7 +560,7 @@ public class Loader implements ILoaderEngine {
 	private void processTemplate(Writer output) throws AonException, IOException, TemplateException, ClassNotFoundException  {
 		Map<String,Object> context = new HashMap<String,Object>();
 		ResourceBundle bundle = ResourceBundle.getBundle(VM_HELP_BUNDLE);
-		context.put( BUNDLE_KEY, bundle );
+		context.put( BUNDLE_NAME, bundle );
 		context.put( FACTORIES_KEY, getFactoryManager().getFactories() );
 
 		Configuration cfg = new Configuration();

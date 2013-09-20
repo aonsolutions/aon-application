@@ -1,5 +1,7 @@
 package com.code.aon.faces.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FILE_DUPLICATED_NAME;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -511,7 +513,7 @@ public class FileManager implements IRichConstants {
 			List<FileWrapper> list = (List<FileWrapper>) getModel().getWrappedData(); 
 			for( FileWrapper fw : list ) {
 				if ( fw.getWrappedObject().getName().equals(name) ) {
-					FacesMessage message = new FacesMessage(AonUtil.getMessage(BUNDLE_NAME, FILE_DUPLICATED_NAME));
+					FacesMessage message = new FacesMessage(AonUtil.getMessage(FILE_DUPLICATED_NAME));
 					message.setSeverity(FacesMessage.SEVERITY_ERROR);
 					throw new ValidatorException( message );
 				}

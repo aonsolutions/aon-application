@@ -1,6 +1,5 @@
 package com.code.aon.ui.company.event;
 
-import static com.code.aon.ui.common.ICommonMessages.COMPANY_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_LOGO_MAX_SIZE_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FILE_UPLOAD_ELEMENT;
 import static com.code.aon.ui.company.controller.ICompanyConstants.LOGO_MAX_SIZE;
@@ -42,7 +41,7 @@ public class CompanyLogoControllerListener extends ControllerAdapter {
 			FacesMessage message = MessageFactory.getMessage( UIInput.REQUIRED_MESSAGE_ID, AonUtil.getMessage(FILE_UPLOAD_ELEMENT) );
 			throw new ControllerListenerException( message.getSummary() );									
 		} else if (aonFile.getSize() > LOGO_MAX_SIZE) {
-			String message = AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_LOGO_MAX_SIZE_ERROR, LOGO_MAX_SIZE);
+			String message = AonUtil.getMessage( COMPANY_LOGO_MAX_SIZE_ERROR, LOGO_MAX_SIZE);
 			throw new ControllerListenerException(message);										
 		}
 	}	

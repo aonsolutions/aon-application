@@ -25,14 +25,14 @@
 					styleClass="aon-finding-toolbar-item aon-icon-lock" />
 
 				<aon:commandButton id="#{toolbarID}-reopen"
-					value="#{fiscalBundle.fiscal_reopen}"
+					value="#{bundle.fiscal_reopen}"
 					actionListener="#{controller.onReopen}"
 					rendered="#{!controller.new and controller.to.finished}"
 					styleClass="aon-finding-toolbar-item aon-icon-unlock"
-					onclick="if (!confirm('#{fiscalBundle.fiscal_reopen}?')) return false;"/>
+					onclick="if (!confirm('#{bundle.fiscal_reopen}?')) return false;"/>
 
 				<aon:commandButton id="#{toolbarID}-recalculate"
-					value="#{fiscalBundle.fiscal_recalculate}"
+					value="#{bundle.fiscal_recalculate}"
 					actionListener="#{controller.onRecalculate}"
 					accesskey="W" title="ALT+W [+May]" 
 					rendered="#{!controller.new and !controller.to.readOnly}"
@@ -153,7 +153,7 @@
 						rendered="#{!controller.declaration.toDeduct and !controller.declaration.negative and !controller.declaration.compensate}" />
 					<aon:outputText value="#{bundle.fiscal_deduct}" 
 						rendered="#{controller.declaration.toDeduct}" />
-					<aon:outputText value="#{fiscalBundle.fiscal_negative}" 
+					<aon:outputText value="#{bundle.fiscal_negative}" 
 						rendered="#{controller.declaration.negative}" />
 					<aon:outputText value="#{bundle.fiscal_compensate}" 
 						rendered="#{controller.declaration.compensate}" />
@@ -207,7 +207,7 @@
 							style="border-width: 0px 0px 0px 0px;"
 							rendered="#{!controller.new and controller.to.finished and controller.aeatWebPage != null}"
 							styleClass="aon-finding-toolbar-item aon-icon-aeat">
-							<aon:outputText value="#{fiscalBundle.fiscal_electronic_presentation}"/>
+							<aon:outputText value="#{bundle.fiscal_electronic_presentation}"/>
 						</h:outputLink>
 					</aon:div>
 				</aon:panelGrid>
@@ -236,22 +236,22 @@
 							disabled="#{controller.declaration.header.readOnly}"
 							value="#{controller.declaration.header.withoutActivity}"/>
 						<aon:outputLabel for="controller_withoutActivity" styleClass="aon-italic"
-							value="#{fiscalBundle.fiscal_without_activity}" />
+							value="#{bundle.fiscal_without_activity}" />
 					</aon:div>
 				</aon:div>
 				
 				<aon:div>
 					<aon:div>
 						<aon:commandButton id="gen-disk"
-							value="#{financeBundle.finance_create_disk}"
+							value="#{bundle.finance_create_disk}"
 							actionListener="#{controller.onCreateDisk}"
 							rendered="#{!controller.new and controller.declaration.header.finished}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							style="border-width: 0px 0px 0px 0px;" reRender="panelComments"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:htmlCommandLink target="_blank"
-							title="#{controller.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
-							value="#{controller.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
+							title="#{controller.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
+							value="#{controller.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
 							style="border-width: 0px 0px 0px 0px;"
 							actionListener="#{controller.downloadDisk}"
 							rendered="#{!controller.new and controller.fileOutput!=null}"
@@ -261,12 +261,12 @@
 			</aon:panelGrid>
 			
 			<aon:panelTabSet selectedTab="#{controller.selectedTab}" immediate="true">
-				<aon:panelTab id="#{controller.dataTabName}" label="#{fiscalBundle.fiscal_identification_data}">
+				<aon:panelTab id="#{controller.dataTabName}" label="#{bundle.fiscal_identification_data}">
 					<ui:include src="/com/code/aon/ui/fiscal/facelet/model/header.xhtml" />
 				</aon:panelTab>
 				
 				<c:if test="#{!controller.new}">
-					<aon:panelTab id="#{controller.liquidationTabName}" label="#{fiscalBundle.fiscal_liquidation}">
+					<aon:panelTab id="#{controller.liquidationTabName}" label="#{bundle.fiscal_liquidation}">
 						<c:if test="#{!skipDetail}">
 							<ui:include src="/com/code/aon/ui/fiscal/facelet/model/detail.xhtml">
 								<ui:param name="controller" value="#{controller}" />

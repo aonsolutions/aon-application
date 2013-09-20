@@ -13,7 +13,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{(finance.payment) ? (financeBundle.finance_payment_module) : (financeBundle.finance_charge_module)}" />
+					value="#{(finance.payment) ? (bundle.finance_payment_module) : (bundle.finance_charge_module)}" />
 				<ui:param name="controller" value="#{finance}" />
 
 				<ui:define name="additionalToolbarContent">
@@ -32,7 +32,7 @@
 						<f:param name="reportKey" value="financeList" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="financeListByAccount-report"
-						value="#{financeBundle.finance_list_by_account}"
+						value="#{bundle.finance_list_by_account}"
 						target="_blank" action="#{report.onExecute}"
 						actionListener="#{finance.onOrderFinanceListByRegistry}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
@@ -40,7 +40,7 @@
 						<f:param name="reportKey" value="financeListByAccount" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="financeListByDate-report"
-						value="#{financeBundle.finance_list_by_date}"
+						value="#{bundle.finance_list_by_date}"
 						target="_blank" action="#{report.onExecute}"
 						actionListener="#{finance.onOrderFinanceListByDate}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
@@ -48,7 +48,7 @@
 						<f:param name="reportKey" value="financeListByDate" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="financeListByPayment-report"
-						value="#{financeBundle.finance_list_by_paymethod}"
+						value="#{bundle.finance_list_by_paymethod}"
 						target="_blank" action="#{report.onExecute}"
 						actionListener="#{finance.onOrderFinanceListByPayment}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
@@ -56,7 +56,7 @@
 						<f:param name="reportKey" value="financeListByPayment" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="financeListByBank-report"
-						value="#{financeBundle.finance_list_by_bank}"
+						value="#{bundle.finance_list_by_bank}"
 						target="_blank" action="#{report.onExecute}" rendered="#{finance.payment}"
 						actionListener="#{finance.onOrderFinanceListByBank}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
@@ -70,7 +70,7 @@
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="receiptFinance-report"
-						value="#{financeBundle.finance_receipts}"
+						value="#{bundle.finance_receipts}"
 						target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="receiptFinance" />

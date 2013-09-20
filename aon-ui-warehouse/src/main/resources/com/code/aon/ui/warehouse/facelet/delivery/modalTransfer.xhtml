@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{warehouseBundle.warehouse_delivery_sales_pending}" />
+						<aon:outputText value="#{bundle.warehouse_delivery_sales_pending}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -52,7 +52,7 @@
 										actionListener="#{delivery.salesTransferManager.checkNoneSales}" 
 										reRender="salesData,detailDataContainer" />	
 									<aon:commandButton id="salesTransfer-accept"
-										value="#{warehouseBundle.warehouse_delivery_to_transfer}"
+										value="#{bundle.warehouse_delivery_to_transfer}"
 										rendered="#{delivery.salesTransferManager.salesModel.rowCount > 0}"
 										reRender="showSalesTransferWindow,deliveryForm"
 										actionListener="#{delivery.onSalesTransfer}"
@@ -136,7 +136,7 @@
 												<aon:outputText value="&#160;" />
 											</f:facet>
 											<aon:commandButton value="&#160;" immediate="true"
-												title="#{warehouseBundle.warehouse_delivery_see_sales_details}"
+												title="#{bundle.warehouse_delivery_see_sales_details}"
 												styleClass="aon-finding-toolbar-item aon-icon-tree-root aon-finding-toolbar-item-no-border"
 												actionListener="#{delivery.salesTransferManager.onSelectSales}"
 												reRender="salesData,detailDataContainer" ajaxSingle="true">

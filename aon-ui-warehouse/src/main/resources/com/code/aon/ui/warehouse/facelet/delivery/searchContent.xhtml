@@ -10,13 +10,13 @@
 	<aon:outputText value="" />
 	<aon:div style="width:600px;">
 	
-		<aon:panelCollapsible expanded="true" label="#{warehouseBundle.warehouse_delivery_module}">
+		<aon:panelCollapsible expanded="true" label="#{bundle.warehouse_delivery_module}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 				<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/searchBasicContent.xhtml" />
 			</aon:panelGrid>
 		</aon:panelCollapsible>					
 
-		<aon:panelCollapsible expanded="false" label="#{warehouseBundle.warehouse_delivery_detail}" >
+		<aon:panelCollapsible expanded="false" label="#{bundle.warehouse_delivery_detail}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 			
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
@@ -42,10 +42,10 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 
-		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_customer_data}" >
+		<aon:panelCollapsible expanded="false" label="#{bundle.registry_customer_data}" >
 			<aon:panel style="text-align:right;">
 				<f:facet name="header">
-					<aon:outputLabel value="#{registryBundle.registry_address_module}" />
+					<aon:outputLabel value="#{bundle.registry_address_module}" />
 				</f:facet>
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 					<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml" />

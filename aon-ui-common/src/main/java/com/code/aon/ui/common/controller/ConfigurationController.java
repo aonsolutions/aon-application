@@ -1,7 +1,6 @@
 package com.code.aon.ui.common.controller;
 
 import static com.code.aon.ui.common.ICommonConstants.ON_LOGOUT;
-import static com.code.aon.ui.common.ICommonMessages.BUNDLE_NAME;
 import static com.code.aon.ui.common.ICommonMessages.CONFIGURATION_ERROR;
 
 import java.io.IOException;
@@ -302,11 +301,11 @@ public class ConfigurationController implements Serializable, JAXPConstants {
 			builder.setErrorHandler( errorHandler );
 			document = builder.parse(config.toString());
 		} catch (Throwable th) {
-			AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, CONFIGURATION_ERROR, AON_CONFIG_XML, th.getMessage() );
+			AonUtil.addErrorMessageFromBundle( CONFIGURATION_ERROR, AON_CONFIG_XML, th.getMessage() );
 			LOGGER.error(th.getMessage(), th);
 		} finally {
 			if ( errorHandler.isValidationError() ) {
-				AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, CONFIGURATION_ERROR, AON_CONFIG_XML, errorHandler.getException().getMessage() );
+				AonUtil.addErrorMessageFromBundle( CONFIGURATION_ERROR, AON_CONFIG_XML, errorHandler.getException().getMessage() );
 				document = null;
 			}
 		}

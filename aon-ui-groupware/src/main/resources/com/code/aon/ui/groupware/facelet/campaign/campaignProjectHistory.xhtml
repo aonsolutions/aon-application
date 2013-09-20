@@ -11,7 +11,7 @@
 	<ui:define name="content">
 		<aon:form id="processTaskForm" styleClass="aon-form">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.groupware_campaign_monitor} >> #{groupwareBundle.groupware_task_view}" />
+				<ui:param name="toolbarTitle" value="#{bundle.groupware_campaign_monitor} >> #{bundle.groupware_task_view}" />
 				<ui:param name="controller" value="#{processTask}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipSearchButton" value="true" />
@@ -41,7 +41,7 @@
 
 				<aon:div styleClass="aon-form-group">
 					<aon:div styleClass="aon-form-group-title">
-						<aon:outputText value="#{groupwareBundle.groupware_task_details}" />
+						<aon:outputText value="#{bundle.groupware_task_details}" />
 					</aon:div>
 					<aon:div styleClass="aon-form-group-body">
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
@@ -93,7 +93,7 @@
 	
 								<aon:column alias="ProcessTask.task.dueDate" styleClass="aon-width-80">
 									<f:facet name="header">
-										<aon:outputText value="#{groupwareBundle.groupware_due_date}" />
+										<aon:outputText value="#{bundle.groupware_due_date}" />
 									</f:facet>
 									<aon:outputText value="#{to.task.dueDate}">
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -109,13 +109,13 @@
 										<aon:outputText value="&#160;" rendered="#{to.task.pending}"
 											alt="#{bundle.aon_pending}" title="#{bundle.aon_pending}"/>
 										<aon:outputText value="&#160;" rendered="#{to.task.inProgress}"
-											alt="#{groupwareBundle.groupware_in_progress}" title="#{groupwareBundle.groupware_in_progress}"
+											alt="#{bundle.groupware_in_progress}" title="#{bundle.groupware_in_progress}"
 											style="padding-left:15px;" styleClass="aon-icon-point-green" />
 										<aon:outputText value="&#160;" rendered="#{to.task.deleted}"
-											alt="#{groupwareBundle.groupware_deleted}" title="#{groupwareBundle.groupware_deleted}"
+											alt="#{bundle.groupware_deleted}" title="#{bundle.groupware_deleted}"
 											style="padding-left:15px;"  styleClass="aon-icon-point-red" />
 										<aon:outputText value="&#160;" rendered="#{to.task.finished}"
-											alt="#{groupwareBundle.groupware_finished}" title="#{groupwareBundle.groupware_finished}"
+											alt="#{bundle.groupware_finished}" title="#{bundle.groupware_finished}"
 											style="padding-left:15px;"  styleClass="aon-icon-predetermine" />
 									</aon:div>
 								</aon:column>

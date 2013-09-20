@@ -27,7 +27,7 @@
 		<aon:column alias="person.socialSecurityNumber"
 			styleClass="aon-editDataTable-textColumn aon-width-150">
 			<f:facet name="header">
-				<aon:outputText value="#{registryBundle.registry_person_nss}" />
+				<aon:outputText value="#{bundle.registry_person_nss}" />
 			</f:facet>
 			<aon:outputText value="#{to.socialSecurityNumber}" />
 		</aon:column>
@@ -45,7 +45,7 @@
 		<aon:column alias="person.birthDate"
 			styleClass="aon-editDataTable-textColumn aon-width-150">
 			<f:facet name="header">
-				<aon:outputText value="#{registryBundle.registry_person_birthDate}" />
+				<aon:outputText value="#{bundle.registry_person_birthDate}" />
 			</f:facet>
 			<aon:outputText value="#{to.birthDate}" >
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />

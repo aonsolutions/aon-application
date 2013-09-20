@@ -1,12 +1,9 @@
 package com.code.aon.ui.warehouse.util;
 
-import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_DELIVERY_EMAIL_BODY;
 import static com.code.aon.ui.common.ICommonMessages.WAREHOUSE_DELIVERY_EMAIL_SUBJECT;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.text.MessageFormat;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.report.ReportException;
@@ -25,13 +22,11 @@ public class WarehouseEmailUtil extends CompanyEmailUtil {
 	}
 	
 	public String getEmailSubject( Delivery delivery ) {
-		String message = AonUtil.getMessage(WAREHOUSE_BUNDLE, WAREHOUSE_DELIVERY_EMAIL_SUBJECT);
-		return MessageFormat.format(message, delivery.getReferenceCode() );
+		return AonUtil.getMessage(WAREHOUSE_DELIVERY_EMAIL_SUBJECT, delivery.getReferenceCode());
 	}
 	
-	public String getEmailBody( Delivery delivery ) throws UnsupportedEncodingException {
-		String bodyMessage = AonUtil.getMessage(WAREHOUSE_BUNDLE, WAREHOUSE_DELIVERY_EMAIL_BODY); 
-		return MessageFormat.format(bodyMessage, delivery.getReferenceCode(), delivery.getIssueTime() );
+	public String getEmailBody( Delivery delivery ) {
+		return AonUtil.getMessage(WAREHOUSE_DELIVERY_EMAIL_BODY, delivery.getReferenceCode(), delivery.getIssueTime()); 
 	}
 
 }

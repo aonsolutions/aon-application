@@ -2,13 +2,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-	<application>
-		<resource-bundle>
-			<base-name>com.code.aon.ui.audabridge.i18n.messages</base-name>
-			<var>audabridgeBundle</var>
-		</resource-bundle>
-	</application>
-
 	<!-- ************ PARAMETERS **************** -->
 	<managed-bean>
 		<managed-bean-name>audabridgeParams</managed-bean-name>

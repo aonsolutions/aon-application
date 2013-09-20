@@ -15,16 +15,16 @@
 	<aon:methodParam name="customerFacelet"	value="customer_stat_list_month" />
 	<aon:methodParam name="lastColumnAction" value="#{stat.onCustomerStats}" type="actionListener" />
 	<c:if test="#{stat.invoiceType==1}">
-		<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
-		<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado}" />
+		<ui:param name="lastColumnName" value="#{bundle.stat_show_clients}" />
+		<ui:param name="windowTitle" value="#{bundle.stat_menu_acumulado}" />
 	</c:if>
 	<c:if test="#{stat.invoiceType==0}">
-		<ui:param name="lastColumnName" value="#{statBundle.stat_show_suppliers}" />
-		<ui:param name="windowTitle" value="#{statBundle.stat_menu_acumulado2}" />
+		<ui:param name="lastColumnName" value="#{bundle.stat_show_suppliers}" />
+		<ui:param name="windowTitle" value="#{bundle.stat_menu_acumulado2}" />
 	</c:if>
 	<c:if  test="#{stat.invoiceType==2}">
-		<ui:param name="windowTitle" value="#{statBundle.stat_menu_expense}" />
-		<ui:param name="lastColumnName" value="#{statBundle.stat_show_creditors}" />
+		<ui:param name="windowTitle" value="#{bundle.stat_menu_expense}" />
+		<ui:param name="lastColumnName" value="#{bundle.stat_show_creditors}" />
 	</c:if>	 
 	<ui:decorate
 		template="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">

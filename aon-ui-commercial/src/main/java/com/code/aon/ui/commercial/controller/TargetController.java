@@ -14,7 +14,6 @@ import static com.code.aon.ui.common.ICommonMessages.ID;
 import static com.code.aon.ui.common.ICommonMessages.INACTIVE;
 import static com.code.aon.ui.common.ICommonMessages.PHONE;
 import static com.code.aon.ui.common.ICommonMessages.POSTAL_CODE;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.REGISTRY_CITY;
 import static com.code.aon.ui.common.ICommonMessages.REGISTRY_EMAIL;
 import static com.code.aon.ui.common.ICommonMessages.REGISTRY_NATIONALITY;
@@ -191,16 +190,16 @@ public class TargetController extends RegistryController implements ICommercialC
 			+",r.document_country,r.document) AS CHAR) `" + AonUtil.getMessage(DOCUMENT) + "`"
 		 	+",r.name `" + AonUtil.getMessage(COMPANY_NAME) + "`"
 			+",r.alias `" + AonUtil.getMessage(ALIAS) + "`"
-			+",r.nationality `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_NATIONALITY) + "`"
+			+",r.nationality `" + AonUtil.getMessage(REGISTRY_NATIONALITY) + "`"
 			+",CAST( CONCAT_WS(' ',ra.street_type,ra.address,ra.number,ra.address2,ra.address3) AS CHAR) `" + AonUtil.getMessage(ADDRESS) + "`"
-			+",ra.city `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_CITY) + "`"
+			+",ra.city `" + AonUtil.getMessage(REGISTRY_CITY) + "`"
 			+",ra.zip `" + AonUtil.getMessage(POSTAL_CODE) + "`"
 			+",gz.code `Id " + AonUtil.getMessage(STATE) + "`"
 			+",gz.name `" + AonUtil.getMessage(STATE) + "`"
 			+",(SELECT rm1.value FROM rmedia rm1 WHERE r.id = rm1.registry  AND rm1.media = 1 LIMIT 1) `" + AonUtil.getMessage(PHONE) + "`"
 			+",(SELECT rm2.value FROM rmedia rm2 WHERE r.id = rm2.registry  AND rm2.media = 2 LIMIT 1) `" + AonUtil.getMessage(CELLULAR) + "`"
 			+",(SELECT rm3.value FROM rmedia rm3 WHERE r.id = rm3.registry  AND rm3.media = 3 LIMIT 1) `" + AonUtil.getMessage(FAX) + "`"
-			+",(SELECT rm4.value FROM rmedia rm4 WHERE r.id = rm4.registry  AND rm4.media = 4 LIMIT 1) `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_EMAIL) + "`"
+			+",(SELECT rm4.value FROM rmedia rm4 WHERE r.id = rm4.registry  AND rm4.media = 4 LIMIT 1) `" + AonUtil.getMessage(REGISTRY_EMAIL) + "`"
 			+",(SELECT rm5.value FROM rmedia rm5 WHERE r.id = rm5.registry  AND rm5.media = 5 LIMIT 1) `" + AonUtil.getMessage(WEB) + "`"
 			+" FROM " + masterTable +" c"
 			+" INNER JOIN registry r ON r.id = c.registry"

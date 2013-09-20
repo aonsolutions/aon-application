@@ -122,7 +122,7 @@
 							<c:if test="#{aonRole.accountingOperator}">
 								<aon:column>
 									<f:facet name="header">
-										<aon:outputLabel for="Account_id-Purchase" value="#{productBundle.product_expense_account}" />
+										<aon:outputLabel for="Account_id-Purchase" value="#{bundle.product_expense_account}" />
 									</f:facet>
 									<aon:div style="width: 90%;" rendered="#{formList}" ajaxRendered="true">
 										<aon:outputText value="#{to.product.purchaseAccount.code}" />

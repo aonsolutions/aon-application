@@ -1,13 +1,6 @@
 <faces-config version="1.2" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-	<application>
-		<resource-bundle>
-			<base-name>com.code.aon.ui.supplier.i18n.messages</base-name>
-			<var>supplierBundle</var>
-		</resource-bundle>
-	</application>
-
 	<!--  ********* SUPPLIER COLLECTIONS ***************** -->
 	<managed-bean>
 		<managed-bean-name>supplierCollections</managed-bean-name>

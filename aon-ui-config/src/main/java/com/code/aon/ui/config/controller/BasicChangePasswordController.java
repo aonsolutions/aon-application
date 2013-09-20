@@ -1,6 +1,5 @@
 package com.code.aon.ui.config.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.BUNDLE_NAME;
 import static com.code.aon.ui.common.ICommonMessages.NEW_PASSWORD_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.PASSWORD_ERROR;
 
@@ -50,11 +49,11 @@ public abstract class BasicChangePasswordController {
 	
 	public void acceptPassword(ActionEvent event) {
 		if (! isCorrectPassword() ) {
-			String message = AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, PASSWORD_ERROR);
+			String message = AonUtil.addErrorMessageFromBundle(PASSWORD_ERROR);
 			throw new AbortProcessingException( message );			
 		}
 		if (! StringUtils.equals(newPassword, confirmPassword) ) {
-			String message = AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, NEW_PASSWORD_ERROR);
+			String message = AonUtil.addErrorMessageFromBundle(NEW_PASSWORD_ERROR);
 			throw new AbortProcessingException( message );
 		}
 		updatePassword( newPassword );			

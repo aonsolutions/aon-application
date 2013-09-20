@@ -464,31 +464,13 @@ public class AonUtil {
 	}
 	
     /**
-     * @param messageKey
-     * @return String
-     */
-    public static String getMessage(String messageKey) {
-    	return AonUtil.getMessage(ICommonMessages.BUNDLE_NAME, messageKey);
-    }
-	
-    /**
      * @param bundleKey
      * @param messageKey
      * @param arguments 
      * @return String
      */
-    public static String addFatalMessageFromBundle( String bundleKey, String messageKey, Object ... arguments) {
-    	String msg = AonUtil.getMessage(bundleKey, messageKey, arguments);
-    	addFatalMessage(msg);
-    	return msg;
-    }
-
-    /**
-     * @param messageKey
-     * @return String
-     */
-    public static String addFatalMessageFromBundle(String messageKey) {
-    	String msg = AonUtil.getMessage(messageKey);
+    public static String addFatalMessageFromBundle( String messageKey, Object ... arguments) {
+    	String msg = AonUtil.getMessage(messageKey, arguments);
     	addFatalMessage(msg);
     	return msg;
     }
@@ -499,18 +481,8 @@ public class AonUtil {
      * @param arguments 
      * @return String
      */
-    public static String addErrorMessageFromBundle( String bundleKey, String messageKey, Object ... arguments) {
-    	String msg = AonUtil.getMessage(bundleKey, messageKey, arguments);
-    	addErrorMessage(msg);
-    	return msg;
-    }
-
-    /**
-     * @param messageKey
-     * @return String
-     */
-    public static String addErrorMessageFromBundle(String messageKey) {
-    	String msg = AonUtil.getMessage(messageKey);
+    public static String addErrorMessageFromBundle( String messageKey, Object ... arguments) {
+    	String msg = AonUtil.getMessage(messageKey, arguments);
     	addErrorMessage(msg);
     	return msg;
     }
@@ -521,8 +493,8 @@ public class AonUtil {
      * @param arguments 
      * @return String
      */
-    public static String addInfoMessageFromBundle(String bundleKey, String messageKey, Object ... arguments ) {
-    	String msg = AonUtil.getMessage(bundleKey, messageKey, arguments);
+    public static String addInfoMessageFromBundle(String messageKey, Object ... arguments ) {
+    	String msg = AonUtil.getMessage(messageKey, arguments);
     	addInfoMessage(msg);
     	return msg;
     }
@@ -531,29 +503,8 @@ public class AonUtil {
      * @param messageKey
      * @return String
      */
-    public static String addInfoMessageFromBundle(String messageKey) {
-    	String msg = AonUtil.getMessage(messageKey);
-    	addInfoMessage(msg);
-    	return msg;
-    }
-
-    /**
-     * @param bundleKey
-     * @param messageKey
-     * @return String
-     */
-    public static String addWarningMessageFromBundle(String bundleKey,String messageKey) {
-    	String msg = AonUtil.getMessage(bundleKey, messageKey);
-    	addWarningMessage(msg);
-    	return msg;
-    }
-
-    /**
-     * @param messageKey
-     * @return String
-     */
-    public static String addWarningMessageFromBundle(String messageKey) {
-    	String msg = AonUtil.getMessage(messageKey);
+    public static String addWarningMessageFromBundle(String messageKey, Object ... arguments ) {
+    	String msg = AonUtil.getMessage(messageKey, arguments);
     	addWarningMessage(msg);
     	return msg;
     }
@@ -580,15 +531,15 @@ public class AonUtil {
      * 
      * @return String
      */
-    public static String getMessage(String bundleKey, String messageKey, Object ... arguments ) {
-    	ResourceBundle bundle = getResourceBundle(bundleKey);
+    public static String getMessage(String messageKey, Object ... arguments ) {
+    	ResourceBundle bundle = getResourceBundle(ICommonMessages.BUNDLE_NAME);
     	String value = bundle.getString(messageKey);
     	if ( arguments.length > 0 ) {
     		MessageFormat mf = new MessageFormat( value, AonUtil.getCurrentLocale() );
     		value = mf.format( arguments );
     	}
     	return value;
-    }
+    } 
     
     private static String getUserAgent() {
     	FacesContext context = FacesContext.getCurrentInstance();

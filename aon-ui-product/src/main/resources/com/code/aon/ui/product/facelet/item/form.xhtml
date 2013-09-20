@@ -26,7 +26,7 @@
 					</c:if>
 					<c:if test="#{aonConfiguration.bean.product.showTariff}">
 						<aon:menuItem id="tariff-button"
-							value="#{productBundle.product_tariff_module2}"
+							value="#{bundle.product_tariff_module2}"
 							reRender="showNewTariffWindow"
 							iconClass="aon-icon-tariff"
 							actionListener="#{itemTariff.onReset}">
@@ -35,7 +35,7 @@
 					</c:if>
 					<c:if test="#{aonConfiguration.bean.product.showCatalogues}">
 						<aon:menuItem id="catalogue-button"
-							value="#{productBundle.product_catalogue_module}"
+							value="#{bundle.product_catalogue_module}"
 							reRender="showNewCatalogueWindow"
 							iconClass="aon-icon-catalogue"
 							actionListener="#{itemCatalogue.onReset}">
@@ -53,7 +53,7 @@
 					</c:if>
 					<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
 						<aon:menuItem id="alternative-button"
-							value="#{productBundle.product_alternative_items}"
+							value="#{bundle.product_alternative_items}"
 							reRender="showNewAlternativeWindow"
 							iconClass="aon-icon-alternative"
 							actionListener="#{itemAlternative.onReset}">
@@ -71,7 +71,7 @@
 					</c:if>
 					<c:if test="#{aonConfiguration.bean.product.showAttachment}">
 						<aon:menuItem id="attachment-button"
-							value="#{productBundle.product_attachment}"
+							value="#{bundle.product_attachment}"
 							reRender="showNewAttachmentWindow"
 							iconClass="aon-icon-documents"
 							actionListener="#{itemAttach.onReset}">
@@ -104,7 +104,7 @@
 						<aon:panelTabSet id="itemTab" selectedTab="#{item.selectedTab}">
 							<c:if test="#{aonConfiguration.bean.product.showComposition and item.to.product.composition}">
 								<aon:panelTab id="itemCompositionPanelTab"
-									label="#{productBundle.product_composition}">
+									label="#{bundle.product_composition}">
 									<ui:include
 										src="/com/code/aon/ui/product/facelet/item/composition/tab_grid.xhtml">
 									</ui:include>
@@ -113,7 +113,7 @@
 
 							<c:if test="#{aonConfiguration.bean.product.showStock and item.to.product.inventoriable}">
 								<aon:panelTab id="itemWarehousePanelTab"
-									label="#{warehouseBundle.warehouse_item_warehouse_module}">
+									label="#{bundle.warehouse_item_warehouse_module}">
 									<ui:include
 										src="/com/code/aon/ui/warehouse/facelet/itemwarehouse/tab_grid.xhtml">
 									</ui:include>
@@ -122,7 +122,7 @@
 
 							<c:if test="#{aonConfiguration.bean.product.showTariff and itemTariff.model.rowCount > 0}">
 								<aon:panelTab id="itemTariffPanelTab"
-									label="#{productBundle.product_tariff_module2}">
+									label="#{bundle.product_tariff_module2}">
 									<ui:include	src="/com/code/aon/ui/product/facelet/item/tariff/tab_grid.xhtml">
 										<ui:param name="controller" value="#{itemTariff}" />
 										<ui:param name="removeButtonReRender" value="itemDiv" />
@@ -132,7 +132,7 @@
 
 							<c:if test="#{aonConfiguration.bean.product.showCatalogues and itemCatalogue.model.rowCount > 0}">
 								<aon:panelTab id="itemCataloguePanelTab"
-									label="#{productBundle.product_catalogue_module}">
+									label="#{bundle.product_catalogue_module}">
 									<ui:include	src="/com/code/aon/ui/product/facelet/item/catalogue/tab_grid.xhtml">
 										<ui:param name="controller" value="#{itemCatalogue}" />
 										<ui:param name="removeButtonReRender" value="itemDiv" />
@@ -152,7 +152,7 @@
 
 							<c:if test="#{aonConfiguration.bean.product.showAlternatives and itemAlternative.model.rowCount > 0}">
 								<aon:panelTab id="itemAlternativePanelTab"
-									label="#{productBundle.product_alternative_items}">
+									label="#{bundle.product_alternative_items}">
 									<ui:include	src="/com/code/aon/ui/product/facelet/item/alternative/tab_grid.xhtml">
 										<ui:param name="controller" value="#{itemAlternative}" />
 										<ui:param name="removeButtonReRender" value="itemDiv" />
@@ -172,7 +172,7 @@
 
 							<c:if test="#{aonConfiguration.bean.product.showAttachment and itemAttach.model.rowCount > 0}">
 								<aon:panelTab id="itemAttachPanelTab"
-									label="#{productBundle.product_attachment}">
+									label="#{bundle.product_attachment}">
 									<ui:include	src="/com/code/aon/ui/product/facelet/item/attach/tab_grid.xhtml">
 										<ui:param name="controller" value="#{itemAttach}" />
 										<ui:param name="removeButtonReRender" value="itemDiv" />

@@ -14,14 +14,14 @@
 	<ui:define name="content">
 		<aon:form id="communicationCenterSurveyForm"> 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_communication_center_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.commercial_communication_center_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="next" value="#{bundle.aon_next}"
 						action="#{communicationCenter.nextQuestionAction}" actionListener="#{communicationCenter.onNextQuestion}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}"/>
-					<aon:commandButton id="skip" value="#{marketingBundle.marketing_skip}"
+					<aon:commandButton id="skip" value="#{bundle.marketing_skip}"
 						rendered="#{communicationCenter.question.type != 'INFO'}"
 						action="#{communicationCenter.nextQuestionAction}" actionListener="#{communicationCenter.onNextQuestion}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
@@ -55,7 +55,7 @@
 					</aon:outputText>							
 	
 					<aon:outputLabel for="CommunicationCenter_survey_id" 
-						value="#{marketingBundle.marketing_survey}" />
+						value="#{bundle.marketing_survey}" />
 					<aon:outputText id="CommunicationCenter_survey_id"
 						value="#{communicationCenter.survey.id} (#{communicationCenter.survey.description})" />
 
@@ -76,7 +76,7 @@
 				<aon:div styleClass="aon-form-group">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel value="#{registryBundle.registry_question}"
+							<aon:outputLabel value="#{bundle.registry_question}"
 								rendered="#{communicationCenter.question.type != 'INFO'}" />
 							<aon:outputLabel value="#{communicationCenter.question.type}"
 								rendered="#{communicationCenter.question.type == 'INFO'}" />
@@ -89,14 +89,14 @@
 						<aon:outputText value="#{bundle.aon_description}" />
 						<aon:outputText value="#{communicationCenter.question.text}" />
 
-						<aon:outputText value="#{registryBundle.registry_question_argument}"
+						<aon:outputText value="#{bundle.registry_question_argument}"
 							rendered="#{communicationCenter.question.argument != null}" />
 						<aon:outputText value="#{communicationCenter.question.argument}"
 							rendered="#{communicationCenter.question.argument != null}" />
 						
 						<c:if test="#{communicationCenter.question.type != 'INFO'}" >
 							<aon:outputLabel for="CommunicationCenter_response_value"
-								value="#{registryBundle.registry_response}" />							
+								value="#{bundle.registry_response}" />							
 							<ui:include src="/com/code/aon/ui/registry/facelet/valueHolder/inputValueEx.xhtml" >
 								<ui:param name="inputId" value="CommunicationCenter_response_value" />
 								<ui:param name="valueHolder" value="#{communicationCenter.response}" />

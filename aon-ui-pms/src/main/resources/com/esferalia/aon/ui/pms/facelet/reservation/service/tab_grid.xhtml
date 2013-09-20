@@ -57,14 +57,14 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel value="#{financeBundle.finance_service}" />
+					<aon:outputLabel value="#{bundle.finance_service}" />
 				</f:facet>
 				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" />
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 				<f:facet name="header">
-					<aon:outputLabel value="#{pmsBundle.pms_room_number}" />
+					<aon:outputLabel value="#{bundle.pms_room_number}" />
 				</f:facet>
 				<aon:outputText value="#{to.roomNumber}" />
 			</aon:column>
@@ -82,13 +82,13 @@
 			<aon:div>
 				<aon:commandButton id="showServiceDetailTable"
 					value="&#160;" styleClass="aon-icon-tree-root aon-noborder"
-					title="#{financeBundle.finance_tobreakdown}"
+					title="#{bundle.finance_tobreakdown}"
 					rendered="#{!to.showServiceDetail}" 
 					actionListener="#{controller.onShowServiceDetails}"
 					reRender="#{dataTableId}" />
 				<aon:commandButton id="hideServiceDetailTable"
 					value="&#160;" styleClass="aon-icon-index aon-noborder"
-					title="#{financeBundle.finance_hide}"
+					title="#{bundle.finance_hide}"
 					rendered="#{to.showServiceDetail}" 
 					actionListener="#{controller.onHideServiceDetails}"
 					reRender="#{dataTableId}" />
@@ -139,7 +139,7 @@
 
 				<aon:column colspan="2" styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<aon:div>
-						<aon:outputLabel value="#{pmsBundle.pms_room}:" styleClass="aon-margin-right" />
+						<aon:outputLabel value="#{bundle.pms_room}:" styleClass="aon-margin-right" />
 						<aon:outputText value="#{serviceDetail.projectReservationRoomDetail.assetActivity.asset.name}" styleClass="aon-italic"
 							rendered="#{serviceDetail.projectReservationRoomDetail != null}" />
 						<aon:outputText value="--" styleClass="aon-italic"

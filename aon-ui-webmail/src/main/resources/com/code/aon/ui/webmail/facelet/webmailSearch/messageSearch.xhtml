@@ -16,7 +16,7 @@
 		<aon:form id="webmailForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_main}" />
+				<ui:param name="toolbarTitle" value="#{bundle.webmail_main}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_search}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton
@@ -40,7 +40,7 @@
 			
 					<aon:outputText value="" />
 			        <aon:div styleClass="aon-italic" style="padding-bottom:0.5em;">
-			        	<aon:outputFormat value="#{webmailBundle.webmail_search_message}" escape="false">
+			        	<aon:outputFormat value="#{bundle.webmail_search_message}" escape="false">
 			        		<f:param value="#{webmailFolder.folder.name}" />
 			        	</aon:outputFormat>
 			        </aon:div>
@@ -76,7 +76,7 @@
 				<aon:div rendered="#{webmailSearch.showResults}">
 					<aon:div rendered="#{!webmailSearch.messagesFound}" styleClass="aon-box aon-box-outstanding2">
 						<aon:div styleClass="aon-icon aon-icon-info" style="padding-top:2px;padding-bottom:2px;font-weight:bold;">
-							<aon:outputText value="#{webmailBundle.webmail_search_none}"/>
+							<aon:outputText value="#{bundle.webmail_search_none}"/>
 						</aon:div>
 					</aon:div>
 					<aon:div rendered="#{webmailSearch.messagesFound}">

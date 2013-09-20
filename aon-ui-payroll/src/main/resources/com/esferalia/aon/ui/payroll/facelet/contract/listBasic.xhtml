@@ -11,7 +11,7 @@
 		<aon:column alias="Contract.person.firstSurname,Contract.person.registry.name" 
 			styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
-				<aon:outputText value="#{registryBundle.registry_person}" />
+				<aon:outputText value="#{bundle.registry_person}" />
 			</f:facet>
 			<aon:div styleClass="aon-nowrap">
 				<aon:outputText value="#{to.person.fullName}"/>
@@ -23,7 +23,7 @@
 		<aon:column 
 			styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
-				<aon:outputText value="#{payrollBundle.payroll_contract_contract_code}" />
+				<aon:outputText value="#{bundle.payroll_contract_contract_code}" />
 			</f:facet>
 			<aon:outputText value="#{contract.contractCode}"/>
 		</aon:column>
@@ -33,7 +33,7 @@
 		<aon:column alias="Contract.person.socialSecurityNumber" 
 			styleClass="aon-editDataTable-textColumn aon-width-100">
 			<f:facet name="header">
-				<aon:outputText value="#{registryBundle.registry_person_nss}" />
+				<aon:outputText value="#{bundle.registry_person_nss}" />
 			</f:facet>
 			<aon:div styleClass="aon-nowrap">
 				<aon:outputText value="#{to.person.socialSecurityNumber}"/>
@@ -90,7 +90,7 @@
 	<aon:column 
 		styleClass="aon-editDataTable-textColumn aon-width-70">
 		<f:facet name="header">
-			<aon:outputText value="#{payrollBundle.payroll_contract_sepe_status}" />
+			<aon:outputText value="#{bundle.payroll_contract_sepe_status}" />
 		</f:facet>
 		<aon:outputText value="#{to.sepeStatus}"/>
 	</aon:column>

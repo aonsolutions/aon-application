@@ -14,14 +14,14 @@
 
 	<aon:column alias="Project.registry.name" styleClass="aon-editDataTable-textColumn aon-width-auto">
 		<f:facet name="header">
-			<aon:outputText value="#{projectBundle.project_assigned}" />
+			<aon:outputText value="#{bundle.project_assigned}" />
 		</f:facet>
 		<aon:outputText value="#{to.registry.fullName}" />
 	</aon:column>
 
 	<aon:column alias="Project.projectType" styleClass="aon-editDataTable-textColumn aon-width-150">
 		<f:facet name="header">
-			<aon:outputText value="#{projectBundle.project_project_type}" />
+			<aon:outputText value="#{bundle.project_project_type}" />
 		</f:facet>
 		<aon:outputText value="#{to.projectType.description}" />
 	</aon:column>

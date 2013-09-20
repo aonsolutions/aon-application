@@ -1,5 +1,9 @@
 package com.code.aon.ui.commercial.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.INVOICE_SALES;
+import static com.code.aon.ui.common.ICommonMessages.LINE;
+import static com.code.aon.ui.common.ICommonMessages.TRANSFERED_TO;
+
 import java.util.Date;
 import java.util.Iterator;
 
@@ -21,7 +25,6 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.SalesDetail;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
@@ -128,13 +131,13 @@ public class OfferDetailController extends LinesController implements ICommercia
 		Iterator<?> iterator = salesDetailBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			SalesDetail salesDetail = (SalesDetail)iterator.next();
-			info.append(AonUtil.getMessage(ICommonMessages.TRANSFERED_TO));
+			info.append(AonUtil.getMessage(TRANSFERED_TO));
 			info.append(" ");
-			info.append(AonUtil.getMessage(ICommonMessages.INVOICE_SALES));
+			info.append(AonUtil.getMessage(INVOICE_SALES));
 			info.append(" ");
 			info.append(salesDetail.getSales().getReferenceCode());
 			info.append(" - ");
-			info.append(AonUtil.getMessage(ICommonMessages.LINE));
+			info.append(AonUtil.getMessage(LINE));
 			info.append(" ");
 			info.append(salesDetail.getLine());
 		}

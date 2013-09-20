@@ -16,15 +16,15 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_change_account}" />
+					value="#{bundle.accounting_change_account}" />
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton
-						value="#{accountingBundle.accounting_change_account_button}"
+						value="#{bundle.accounting_change_account_button}"
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{accountChange.onChangeAccounts}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="if (!confirm('#{accountingBundle.accounting_change_account_button}?')){ return false;} else {Richfaces.showModalPanel('waitProccess')}"
+						onclick="if (!confirm('#{bundle.accounting_change_account_button}?')){ return false;} else {Richfaces.showModalPanel('waitProccess')}"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 				</ui:define>
 			</ui:decorate>
@@ -33,7 +33,7 @@
 				<aon:panelGrid columns="2" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 
-					<aon:outputLabel value="#{accountingBundle.accounting_change_account_origin}" />
+					<aon:outputLabel value="#{bundle.accounting_change_account_origin}" />
 					
 					<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
 						<ui:param name="skipLabel" value="#{true}" />
@@ -42,7 +42,7 @@
 					</ui:include>
 						
 					<aon:outputLabel
-						value="#{accountingBundle.accounting_change_account_destiny}" />
+						value="#{bundle.accounting_change_account_destiny}" />
 					<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
 						<ui:param name="skipLabel" value="#{true}" />
 						<ui:param name="lookupSuffix" value="Destiny" />
@@ -53,7 +53,7 @@
 
 				<aon:div id="loanContainer" style="margin-top: 10px;width: 100%;">
 					<aon:panelCollapsible
-						label="#{accountingBundle.accounting_account_change_parameters}">
+						label="#{bundle.accounting_account_change_parameters}">
 
 						<aon:panelGrid columns="2" style="width: 100%;text-align:left;"
 							columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
@@ -109,7 +109,7 @@
 								value="#{accountChange.credit}" size="15" />
 
 							<aon:outputLabel
-								value="#{financeBundle.finance_balancing_account}" />
+								value="#{bundle.finance_balancing_account}" />
 							<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
 								<ui:param name="skipLabel" value="#{true}" />
 								<ui:param name="lookupSuffix" value="BalancingAccount" />

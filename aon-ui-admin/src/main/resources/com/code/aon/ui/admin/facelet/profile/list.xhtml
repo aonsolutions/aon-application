@@ -11,13 +11,13 @@
 		<aon:form id="profileList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{adminBundle.admin_profiles}" />
+				<ui:param name="toolbarTitle" value="#{bundle.admin_profiles}" />
 				<ui:param name="controller" value="#{domainApplicationProfile}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
 				<ui:param name="skipResetButton" value="#{domainApplicationProfile.noRegisteredApplications}" />
 				<ui:define name="additionalToolbarContent" >
 					<aon:commandButton id="systemProfiles"
-						value="#{adminBundle.admin_systemProfiles}"
+						value="#{bundle.admin_systemProfiles}"
 						styleClass="aon-finding-toolbar-item aon-icon-index"
 						action="applicationProfile_list" immediate="true" />
 				</ui:define>

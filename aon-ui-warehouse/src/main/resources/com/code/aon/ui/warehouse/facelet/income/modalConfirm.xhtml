@@ -40,12 +40,12 @@
 									<aon:div style="margin-bottom:20px;">
 										<aon:outputText style="display: inline-block;" styleClass="aon-bold" 
 											rendered="#{controller.transferedGreatherThanPending}"
-											value="#{warehouseBundle.warehouse_income_purchase_quantity_update}" />
+											value="#{bundle.warehouse_income_purchase_quantity_update}" />
 										<aon:div styleClass="aon-underline aon-margin-top aon-margin-bottom" 
 											rendered="#{controller.transferedGreatherThanPending and controller.existsDetailToCancel}" />
 										<aon:outputText style="display: inline-block;" styleClass="aon-bold" 
 											rendered="#{controller.existsDetailToCancel}"
-											value="#{warehouseBundle.warehouse_income_purchase_pending_cancel}" />
+											value="#{bundle.warehouse_income_purchase_pending_cancel}" />
 									</aon:div>
 
 									<aon:div styleClass="aon-width-all aon-text-center">

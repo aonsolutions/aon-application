@@ -16,11 +16,11 @@
 		<aon:form id="rssForm">
 			
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_news_rss}" />
+				<ui:param name="toolbarTitle" value="#{bundle.marketing_news_rss}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="publishRSS" reRender="aonStatus"
-						value="#{marketingBundle.marketing_news_upload_rss}"
+						value="#{bundle.marketing_news_upload_rss}"
 						actionListener="#{rss.onPublish}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-accept" >
 						<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
@@ -33,7 +33,7 @@
 				<aon:panelGrid columns="2">
 
 					<aon:outputLabel for="RSS_category"
-						value="#{marketingBundle.marketing_news_channel}" />
+						value="#{bundle.marketing_news_channel}" />
 					<aon:selectOneMenu id="RSS_category" 
 						reRender="RSS_downloadURL"
 						value="#{rss.category}">
@@ -53,7 +53,7 @@
 			
 		</aon:form>
 		<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
-			<ui:param name="logPanelTitle" value="#{publisherBundle.publisher_publish}" />
+			<ui:param name="logPanelTitle" value="#{bundle.publisher_publish}" />
 		</ui:include>		
 	</ui:define>
 </ui:composition>

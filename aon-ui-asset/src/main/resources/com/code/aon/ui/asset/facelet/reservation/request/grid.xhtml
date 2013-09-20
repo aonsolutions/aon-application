@@ -28,41 +28,41 @@
 			disabled="#{!activityDialog.new}"/>
 
 		<aon:outputLabel for="ActivityDialog_fromTime"
-			value="#{assetBundle.asset_fromTime}" />
+			value="#{bundle.asset_fromTime}" />
 		<aon:div id="ActivityDialog_fromTime">
 			<aon:selectOneMenu id="fromTimeHours" disabled="#{!activityDialog.new}"
 				value="#{activityDialog.fromTimeHours}">
 				<f:selectItems value="#{activityDialog.hours}" />
 			</aon:selectOneMenu>
 			<aon:outputLabel 
-				value="#{assetBundle.asset_hours}" />
+				value="#{bundle.asset_hours}" />
 			<aon:selectOneMenu id="fromTimeMins" disabled="#{!activityDialog.new}"
 				value="#{activityDialog.fromTimeMins}">
 				<f:selectItems value="#{activityDialog.mins}" />
 			</aon:selectOneMenu>
 			<aon:outputLabel
-				value="#{assetBundle.asset_minutes}" />
+				value="#{bundle.asset_minutes}" />
 		</aon:div>
 
 		<aon:outputLabel for="ActivityDialog_toTime"
-			value="#{assetBundle.asset_toTime}" />
+			value="#{bundle.asset_toTime}" />
 		<aon:div id="ActivityDialog_toTime">
 			<aon:selectOneMenu id="toTimeHours" disabled="#{!activityDialog.new}"
 				value="#{activityDialog.toTimeHours}">
 				<f:selectItems value="#{activityDialog.hours}" />
 			</aon:selectOneMenu>
 			<aon:outputLabel 
-				value="#{assetBundle.asset_hours}" />
+				value="#{bundle.asset_hours}" />
 			<aon:selectOneMenu id="toTimeMins" disabled="#{!activityDialog.new}"
 				value="#{activityDialog.toTimeMins}">
 				<f:selectItems value="#{activityDialog.mins}" />
 			</aon:selectOneMenu>
 			<aon:outputLabel
-				value="#{assetBundle.asset_minutes}" />
+				value="#{bundle.asset_minutes}" />
 		</aon:div>
 
 		<aon:outputLabel for="ActivityDialog_weekDays"
-			value="#{assetBundle.asset_activity_days}" />
+			value="#{bundle.asset_activity_days}" />
 		<aon:div>
 			<aon:outputLabel for="ActivityDialog_weekDays_monday"
 				value="#{bundle.aon_monday}" />
@@ -123,7 +123,7 @@
 				<aon:actionListener method="#{activityDialog.onInitializeRequest}" />
 			</aon:commandButton>
 			<aon:commandButton id="activityDialog-email"
-				value="#{webmailBundle.webmail_send_email}" reRender="activityDialogTable"
+				value="#{bundle.webmail_send_email}" reRender="activityDialogTable"
 				rendered="#{activityDialog.new and activityDialog.request}"
 				styleClass="aon-icon-webmail2"
 				accesskey="#{bundle.aon_key_new}" >

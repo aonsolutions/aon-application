@@ -12,7 +12,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_ledger_module}" />
+					value="#{bundle.accounting_ledger_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
@@ -26,7 +26,7 @@
 					<aon:methodParam name="searchAction" value="ledger_list" />
 
 					<aon:outputLabel for="reportDate"
-						value="#{financeBundle.finance_report_date}" />
+						value="#{bundle.finance_report_date}" />
 					<aon:selectInputDate id="reportDate"
 						value="#{ledgerReport.date}"
 						timeZone="#{timeZoneController.timeZone}"
@@ -81,12 +81,12 @@
 					
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_order"
-						value="#{accountingBundle.accounting_show_order}" />
+						value="#{bundle.accounting_show_order}" />
 					<aon:selectOneMenu value="#{ledgerReport.order}" 
 						id="AccountEntryDetail_accountEntry_order">
-						<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_date}" itemValue="1" />
-						<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_id}" itemValue="2" />
-						<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_journal}" itemValue="3" />
+						<f:selectItem itemLabel="#{bundle.accounting_show_entry_date}" itemValue="1" />
+						<f:selectItem itemLabel="#{bundle.accounting_show_entry_id}" itemValue="2" />
+						<f:selectItem itemLabel="#{bundle.accounting_show_entry_journal}" itemValue="3" />
 					</aon:selectOneMenu>
 					
 					<aon:outputText value="&#160;" />
@@ -94,7 +94,7 @@
 						<aon:selectBooleanCheckbox id="Account_show_cover"
 							value="#{ledgerReport.coverVisible}" />
 						<aon:outputLabel for="Account_show_cover"
-							value="#{accountingBundle.accounting_show_cover}" />
+							value="#{bundle.accounting_show_cover}" />
 					</aon:div>
 
 					<aon:outputText value="&#160;" />
@@ -103,7 +103,7 @@
 							reRender="Account_page_counter"
 							value="#{ledgerReport.counterVisible}" />
 						<aon:outputLabel for="Account_continue_counter"
-							value="#{accountingBundle.accounting_continue_counter}" />
+							value="#{bundle.accounting_continue_counter}" />
 						<aon:inputText id="Account_page_counter"
 							styleClass="aon-margin-left"
 							disabled="#{!ledgerReport.counterVisible}"

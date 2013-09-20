@@ -10,17 +10,17 @@
 	<aon:outputText value="" />
 	<aon:div style="width:600px;">
 	
-		<aon:panelCollapsible expanded="true" label="#{financeBundle.finance_finance}">
+		<aon:panelCollapsible expanded="true" label="#{bundle.finance_finance}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 				<ui:include src="/com/code/aon/ui/finance/facelet/finance/searchBasicContent.xhtml" />
 			</aon:panelGrid>
 		</aon:panelCollapsible>					
 
 		<aon:panelCollapsible expanded="false" 
-			label="#{(!controller.payment) ? registryBundle.registry_customer_data : financeBundle.finance_invoice_supplier_creditor_data}">
+			label="#{(!controller.payment) ? bundle.registry_customer_data : bundle.finance_invoice_supplier_creditor_data}">
 			<aon:panel style="text-align:left;">
 				<f:facet name="header">
-					<aon:outputLabel value="#{(!controller.payment) ? bundle.aon_customer : financeBundle.finance_supplier_creditor}" />
+					<aon:outputLabel value="#{(!controller.payment) ? bundle.aon_customer : bundle.finance_supplier_creditor}" />
 				</f:facet>
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 
@@ -60,7 +60,7 @@
 			</aon:panel>
 			<aon:panel style="text-align:left;">
 				<f:facet name="header">
-					<aon:outputLabel value="#{registryBundle.registry_address_module}" />
+					<aon:outputLabel value="#{bundle.registry_address_module}" />
 				</f:facet>
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 					<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml" />

@@ -11,7 +11,7 @@
 		<aon:form id="cashFlowForecastForm">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{financeBundle.finance_cashflow_forecast_module}" />
+					value="#{bundle.finance_cashflow_forecast_module}" />
 				<ui:param name="controller" value="#{cashFlowForecast}" />
 			</ui:include>
 			<aon:div styleClass="aon-scroll-area">
@@ -68,11 +68,11 @@
 						value="#{cashFlowForecast.to.amount}" />
 
 					<aon:outputLabel for="CashFlowForecast_paymentDay"
-						value="#{financeBundle.finance_cashflow_payment_day}" />
+						value="#{bundle.finance_cashflow_payment_day}" />
 					<aon:inputText id="CashFlowForecast_paymentDay" size="10"
 						value="#{cashFlowForecast.to.paymentDay}" />
 					
-					<aon:outputText value="#{financeBundle.finance_cashflow_months}" />
+					<aon:outputText value="#{bundle.finance_cashflow_months}" />
 					<aon:div id="monthsChecks">
 						<h:panelGrid columns="6">
 							<aon:panelGroup styleClass="aon-nowrap">
@@ -141,20 +141,20 @@
 
 				<aon:div styleClass="aon-panelGrid-search">
 					<aon:div styleClass="aon-panelGrid-search-info">
-						<aon:outputText value="#{financeBundle.finance_cashflow_help}" 
+						<aon:outputText value="#{bundle.finance_cashflow_help}" 
 							styleClass="aon-panelGrid-search-info-internal"/>
 					</aon:div>			
 					
 					<aon:panelGrid columns="2">
 							<aon:outputLabel for="CashFlowForecast_startMonth"
-								value="#{financeBundle.finance_cashflow_start_month}" />
+								value="#{bundle.finance_cashflow_start_month}" />
 							<aon:selectOneMenu id="CashFlowForecast_startMonth"
 								value="#{cashFlowForecast.startMonth}">
 								<f:selectItems value="#{commonCollections.months}" />
 							</aon:selectOneMenu>
 							
 							<aon:outputLabel for="CashFlowForecast_billingPeriod"
-								value="#{financeBundle.finance_cashflow_start_period}" />
+								value="#{bundle.finance_cashflow_start_period}" />
 							<aon:selectOneMenu id="CashFlowForecast_billingPeriod"
 								value="#{cashFlowForecast.billingPeriod}">
 								<f:selectItems value="#{financeCollections.billingPeriods}" />

@@ -1,7 +1,6 @@
 package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.SIGNATURE_DUPLICATED;
-import static com.code.aon.ui.common.ICommonMessages.WEBMAIL_BUNDLE;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
 
 import java.util.LinkedList;
@@ -28,7 +27,7 @@ public class SignatureDBController extends MailDBController implements ISignatur
 	
 	@Override
 	protected String getDuplicatedMessage( String name ) {
-		return AonUtil.getMessage(WEBMAIL_BUNDLE, SIGNATURE_DUPLICATED, name);
+		return AonUtil.getMessage(SIGNATURE_DUPLICATED, name);
 	}
 	
 	@Override

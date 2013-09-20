@@ -14,7 +14,7 @@
 		</c:if>
 	
 		<c:if test="#{enterprisePayroll.ccc != null}" >	
-			<aon:outputText value="#{companyBundle.company_enterprise_ccc}" />
+			<aon:outputText value="#{bundle.company_enterprise_ccc}" />
 			<aon:outputText value="#{enterprisePayroll.ccc.ccc}" />
 		</c:if>
 	</c:if>
@@ -30,7 +30,7 @@
 	</aon:div>
 				
 	<c:if test="#{enterprise.dirStaff != null}" >
-		<aon:outputText value="#{registryBundle.registry_dir_staff_representative_labor}" />
+		<aon:outputText value="#{bundle.registry_dir_staff_representative_labor}" />
 		<aon:outputText value="#{enterprise.dirStaff.name}, #{bundle.aon_company_document} #{enterprise.dirStaff.document}" />
 	</c:if>
 	

@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components" >
 
 	<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/alarmList.xhtml" >
-		<ui:param name="alarmListTitle" value="#{groupwareBundle.groupware_alarm_today}" />
+		<ui:param name="alarmListTitle" value="#{bundle.groupware_alarm_today}" />
 		<ui:param name="alarmListModel" value="#{alarm.todayModel}" />
 		<ui:param name="useDatePattern" value="#{false}" />		
 		<aon:methodParam name="alarmListRowSelectorActionListener"
@@ -15,14 +15,14 @@
 	</ui:include>								
 
 	<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/alarmList.xhtml" >
-		<ui:param name="alarmListTitle" value="#{auditBundle.audit_last_executed_module}" />
+		<ui:param name="alarmListTitle" value="#{bundle.audit_last_executed_module}" />
 		<ui:param name="alarmListModel" value="#{alarm.recentModel}" />
 		<aon:methodParam name="alarmListRowSelectorActionListener"
 			value="#{alarm.onSelectRecentAlarm}" type="actionListener" />
 	</ui:include>								
 
 	<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/alarmList.xhtml" >
-		<ui:param name="alarmListTitle" value="#{groupwareBundle.groupware_alarm_ancient}" />
+		<ui:param name="alarmListTitle" value="#{bundle.groupware_alarm_ancient}" />
 		<ui:param name="alarmListModel" value="#{alarm.ancientModel}" />
 		<aon:methodParam name="alarmListRowSelectorActionListener"
 			value="#{alarm.onSelectAncientAlarm}" type="actionListener" />

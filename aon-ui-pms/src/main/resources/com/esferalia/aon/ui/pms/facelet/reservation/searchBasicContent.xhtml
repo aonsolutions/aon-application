@@ -24,7 +24,7 @@
 		size="20" />
 
 	<aon:outputLabel for="ProjectReservation_crsCode" 
-		value="#{bundle.aon_id} #{pmsBundle.pms_crs}" />
+		value="#{bundle.aon_id} #{bundle.pms_crs}" />
 	<aon:inputText id="ProjectReservation_crsCode"
 		valueChangeListener="#{controller.addExpression}"
 		size="20" />
@@ -35,7 +35,7 @@
 		valueChangeListener="#{controller.addExpression}"
 		size="20" />
 
-	<aon:outputLabel value="#{registryBundle.registry_rd_creation_date}" />
+	<aon:outputLabel value="#{bundle.registry_rd_creation_date}" />
 	<aon:div>
 		<aon:outputLabel for="ProjectReservation_creationDate-From"
 			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
@@ -84,7 +84,7 @@
 	</aon:div>
 
 	<aon:outputLabel for="ProjectReservation_insideDate" 
-		value="#{pmsBundle.pms_reservation_insideDate}" />
+		value="#{bundle.pms_reservation_insideDate}" />
 	<aon:selectInputDate id="ProjectReservation_insideDate"
 		value="#{searchController.insideDate}"
 		timeZone="#{timeZoneController.timeZone}"
@@ -106,7 +106,7 @@
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ProjectReservation_seller" 
-		value="#{pmsBundle.pms_seller}" />
+		value="#{bundle.pms_seller}" />
 	<aon:selectOneMenu id="ProjectReservation_seller" 
 		value="#{searchController.seller}"
 		styleClass="aon-width-350">
@@ -129,7 +129,7 @@
 	</aon:div>
 
 	<c:if test="#{!skipStatus}">
-		<aon:outputText value="#{pmsBundle.pms_check}"/>
+		<aon:outputText value="#{bundle.pms_check}"/>
 		<aon:selectManyCheckbox value="#{searchController.reservationCheckStatuses}">
 			<f:selectItems value="#{pmsCollections.abbreviatedReservationCheckStatuses}"/>
 		</aon:selectManyCheckbox>

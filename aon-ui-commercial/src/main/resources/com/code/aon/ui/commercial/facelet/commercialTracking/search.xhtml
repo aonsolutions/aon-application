@@ -11,7 +11,7 @@
 		<aon:form id="commercialTrackingSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_tracking_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.commercial_tracking_module}" />
 				<ui:param name="controller" value="#{commercialTracking}" />
 			</ui:include>
 
@@ -72,7 +72,7 @@
 						valueChangeListener="#{controller.addExpression}" />
 						
 					<aon:outputLabel for="CommercialTracking_location"
-						value="#{commercialBundle.commercial_tracking_location}" />
+						value="#{bundle.commercial_tracking_location}" />
 					<aon:inputText id="CommercialTracking_location" size="75"
 						valueChangeListener="#{controller.addExpression}" />						
 

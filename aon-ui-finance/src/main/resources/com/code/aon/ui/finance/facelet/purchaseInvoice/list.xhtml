@@ -11,7 +11,7 @@
 		<aon:form id="purchaseInvoiceList">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_purchase_invoice_management_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_purchase_invoice_management_module}" />
 				<ui:param name="controller" value="#{purchaseInvoice}" />
 
 				<ui:define name="additionalToolbarContent">
@@ -37,7 +37,7 @@
 					<aon:selectBooleanCheckbox ajaxSingle="true"
 						reRender="purchaseInvoiceList"
 						value="#{purchaseInvoice.showPaymentDataInListView}"/>
-					<aon:outputText value="#{financeBundle.finance_invoice_show_payment_data}"/>
+					<aon:outputText value="#{bundle.finance_invoice_show_payment_data}"/>
 				</aon:div>
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{purchaseInvoice}" />
@@ -110,7 +110,7 @@
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-80"
 								style="font-size: 0.9em;">
 								<f:facet name="header">
-									<aon:outputText value="#{financeBundle.finance_checking_finance_status_abbrv}" />
+									<aon:outputText value="#{bundle.finance_checking_finance_status_abbrv}" />
 								</f:facet>
 								<aon:outputText value="#{to.invoiceFinanceStatus}" />
 							</aon:column>
@@ -145,10 +145,10 @@
 							</f:facet>
 							<c:if test="#{company.EInvoice}">						
 								<aon:outputText value="&#160;" rendered="#{to.signed}"
-									title="#{signBundle.sign_signed}"
+									title="#{bundle.sign_signed}"
 									styleClass="aon-icon aon-icon-signed" />
 								<aon:outputText value="&#160;" rendered="#{!to.signed}"
-									title="#{signBundle.sign_sign_pending}"
+									title="#{bundle.sign_sign_pending}"
 									styleClass="aon-icon aon-icon-unsigned" />
 							</c:if>
 							<aon:outputText value="&#160;" rendered="#{to.attachmentAvailable}"

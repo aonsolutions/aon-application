@@ -11,7 +11,7 @@
 	<aon:panelGrid id="menuGrid" columns="2" dir="true">
 
 		<aon:outputLabel for="keystore"
-			value="#{signBundle.sign_keystore}" />
+			value="#{bundle.sign_keystore}" />
 		<c:if test="#{empty certificate.certificates}">											
 			<aon:selectOneMenu id="keystore"
 				value="#{certificate.keystore}">
@@ -29,7 +29,7 @@
 				value="#{certificate.keystore.description}" />
 			
 			<aon:outputLabel for="certificates"
-				value="#{signBundle.sign_digital_certificate}" />
+				value="#{bundle.sign_digital_certificate}" />
 			<aon:selectOneMenu id="certificates"
 				value="#{certificate.alias}">
 				<f:selectItems value="#{certificate.certificates}" />
@@ -37,7 +37,7 @@
 		</c:if>
 		<c:if test="#{certificate.showCertificatePassword}">
 			<aon:outputLabel for="certificatePassword"
-				value="#{signBundle.sign_digital_certificate_password}" />
+				value="#{bundle.sign_digital_certificate_password}" />
 			<aon:inputSecret id="certificatePassword" 
 				value="#{certificate.certificatePassword}" />
 		</c:if>										
@@ -48,7 +48,7 @@
 		<aon:selectBooleanCheckbox id="storeCertificate"
 			value="#{certificate.storeCertificate}" />				
 		<aon:outputLabel for="storeCertificate"
-			value="#{signBundle.sign_certificate_store}" />
+			value="#{bundle.sign_certificate_store}" />
 	</h:panelGrid>								
 
 </ui:composition>

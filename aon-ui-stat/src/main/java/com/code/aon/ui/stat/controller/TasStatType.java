@@ -1,6 +1,5 @@
 package com.code.aon.ui.stat.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.STAT_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.STAT_MENU_TAS_OWNER;
 import static com.code.aon.ui.common.ICommonMessages.STAT_MENU_TAS_TASITEM;
 
@@ -21,7 +20,7 @@ public enum TasStatType implements IResourceable {
 	}
 
     public String getName(Locale locale) {
-		return AonUtil.getMessage(STAT_BUNDLE , title);
+		return AonUtil.getMessage(title);
     }
 	
 }

@@ -29,7 +29,7 @@
 				<rich:toolTip value="#{to.comments}" showEvent="onclick"
 					hideDelay="2000">
 					<f:facet name="defaultContent">
-						<aon:outputText value="#{financeBundle.finance_invoicing_wait}" />
+						<aon:outputText value="#{bundle.finance_invoicing_wait}" />
 					</f:facet>
 				</rich:toolTip>
 			</aon:div>
@@ -45,14 +45,14 @@
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 			<f:facet name="header">
 				<aon:outputText
-					value="#{groupwareBundle.groupware_job_type}" />
+					value="#{bundle.groupware_job_type}" />
 			</f:facet>
 			<aon:outputText value="#{to.jobDescription}" />
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
-				<aon:outputText value="#{projectBundle.project_assigned}" />
+				<aon:outputText value="#{bundle.project_assigned}" />
 			</f:facet>
 			<aon:outputText value="#{to.registryName}" />
 		</aon:column>

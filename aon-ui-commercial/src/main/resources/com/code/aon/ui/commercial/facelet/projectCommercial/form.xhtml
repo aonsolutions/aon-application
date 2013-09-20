@@ -16,7 +16,7 @@
 		<aon:form id="projectCommercialForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_operation_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.commercial_operation_module}" />
 				<ui:param name="controller" value="#{projectCommercial}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<c:if test="#{!projectCommercial.new}">
@@ -40,7 +40,7 @@
 
 				<c:if test="#{!projectCommercial.new}">
 					<aon:panelTabSet id="projectCommercialTab" selectedTab="#{projectCommercial.selectedTab}">
-						<aon:panelTab id="tracking" label="#{commercialBundle.commercial_tracking_module}">
+						<aon:panelTab id="tracking" label="#{bundle.commercial_tracking_module}">
 							<ui:include src="/com/code/aon/ui/commercial/facelet/projectCommercialTracking/grid.xhtml" />
 						</aon:panelTab>
 

@@ -10,7 +10,7 @@
 		<aon:form id="carrierSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{carrierBundle.carrier_carrier_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.carrier_carrier_module}" />
 				<ui:param name="controller" value="#{carrier}" />
 			</ui:include>
 
@@ -32,7 +32,7 @@
 							</aon:panelGrid>
 						</aon:panelCollapsible>					
 									
-						<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_address_module}" >
+						<aon:panelCollapsible expanded="false" label="#{bundle.registry_address_module}" >
 							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 								<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">
 									<ui:param name="controller" value="#{carrier}" />

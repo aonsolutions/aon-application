@@ -6,10 +6,8 @@ import static com.code.aon.ui.common.ICommonMessages.DIRECTORY_CREATION_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.DIRECTORY_NOT_FOUND;
 import static com.code.aon.ui.common.ICommonMessages.DIRECTORY_NO_READABLE;
 import static com.code.aon.ui.common.ICommonMessages.IMAGE_COPY_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.INFOWEB_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.NO_PUBLISH_PARAMETERS;
 import static com.code.aon.ui.common.ICommonMessages.PAGE_WITHOUT_DETAIL;
-import static com.code.aon.ui.common.ICommonMessages.PUBLISHER_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.PUBLISH_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.PUBLISH_OK;
 import static com.code.aon.ui.common.ICommonMessages.WEB_GENERATED;
@@ -144,11 +142,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	public boolean isReadableDirectory( File directory ) {
 		if (!directory.exists()) {
-			log.error(AonUtil.getMessage(INFOWEB_BUNDLE, DIRECTORY_NOT_FOUND, directory));
+			log.error(AonUtil.getMessage(DIRECTORY_NOT_FOUND, directory));
 			return false;
 		}
 		if (!directory.canRead()) {
-			log.error(AonUtil.getMessage(INFOWEB_BUNDLE, DIRECTORY_NO_READABLE, directory));
+			log.error(AonUtil.getMessage(DIRECTORY_NO_READABLE, directory));
 			return false;
 		}		
 		return true;
@@ -159,7 +157,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		this.published = false;
 		try {
 			if ( this.publishProperties.isEmpty() ) {
-				log.error(AonUtil.getMessage(INFOWEB_BUNDLE, NO_PUBLISH_PARAMETERS));
+				log.error(AonUtil.getMessage(NO_PUBLISH_PARAMETERS));
 				return;
 			}
 			
@@ -179,7 +177,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			File previewDirectory = PathUtil.getPreviewPath();
 			if (! previewDirectory.exists() ) {
 				if (! previewDirectory.mkdirs() ) {
-					log.error(AonUtil.getMessage(INFOWEB_BUNDLE, DIRECTORY_CREATION_ERROR, previewDirectory));
+					log.error(AonUtil.getMessage(DIRECTORY_CREATION_ERROR, previewDirectory));
 					return;	
 				}
 			}
@@ -236,13 +234,13 @@ public class GeneratorController extends BasicController implements VelocityCons
 			copyDirectoryToDirectory(new File(currentTemplateCssDirectory, CSSIMG_PATH), cssPreviewDirectory );
 			copyDirectoryToDirectory(new File(templateDirectory, IMAGES_PATH), previewDirectory );
 
-			log.info(AonUtil.getMessage(INFOWEB_BUNDLE, WEB_GENERATED));
+			log.info(AonUtil.getMessage(WEB_GENERATED));
 			
 			this.generated = upload(this.publishProperties.getPreviewPath());
 
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
-			log.error(AonUtil.getMessage(INFOWEB_BUNDLE, WEB_GENERATION_ERROR));
+			log.error(AonUtil.getMessage(WEB_GENERATION_ERROR));
 		} finally {
 			HibernateUtil.setCloseSession(true);
 			HibernateUtil.closeSession(HibernateUtil.getSessionFactoryName());
@@ -265,12 +263,12 @@ public class GeneratorController extends BasicController implements VelocityCons
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
-			log.error( AonUtil.getMessage(PUBLISHER_BUNDLE, PUBLISH_ERROR) );
+			log.error( AonUtil.getMessage(PUBLISH_ERROR) );
 		} finally {
 			ftp.close();
 		}
 		if ( published ) {
-			log.info( AonUtil.getMessage(PUBLISHER_BUNDLE, PUBLISH_OK) );
+			log.info( AonUtil.getMessage(PUBLISH_OK) );
 		}		
 		log.finish();
 		return published;
@@ -314,7 +312,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		if (wipdList.size() > 0) {
 			wipd = (WebInfoPageDetail)wipdList.get(0);
 		} else {			
-			log.warn(AonUtil.getMessage(INFOWEB_BUNDLE, PAGE_WITHOUT_DETAIL, wip.getName()));
+			log.warn(AonUtil.getMessage(PAGE_WITHOUT_DETAIL, wip.getName()));
 			return;
 		}
 
@@ -594,7 +592,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				String filename = getImageName(ra);
 				File path = new File(imagesDirectory, filename);
 				if (!copyRegistryBlobToFile(ra, 200, 200, path)) {
-					log.error(AonUtil.getMessage(INFOWEB_BUNDLE, IMAGE_COPY_ERROR, filename)); 
+					log.error(AonUtil.getMessage(IMAGE_COPY_ERROR, filename)); 
 				}
 				ImageHandler ih = new ImageHandler(filename, getImagePageLink(ra.getDescription()), ra.getDescription());
 				all_images.add(ih);

@@ -47,7 +47,7 @@
 
 	<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{offerDetailCommissionSearch.supplier}" />
-		<ui:param name="lookupLabel" value="#{commercialBundle.commercial_offer_distributor}"/>
+		<ui:param name="lookupLabel" value="#{bundle.commercial_offer_distributor}"/>
 		<ui:param name="skipNewButton" value="#{true}" />
 	</ui:include>	
 
@@ -71,7 +71,7 @@
 	</c:if>
 
 	<c:if test="#{company.EInvoice}">
-		<aon:outputLabel for="OfferDetailCommission_OfferDetail_Offer_signed" value="#{registryBundle.registry_corporateIdentity_signature}" />
+		<aon:outputLabel for="OfferDetailCommission_OfferDetail_Offer_signed" value="#{bundle.registry_corporateIdentity_signature}" />
 		<aon:selectOneRadio id="OfferDetailCommission_OfferDetail_Offer_signed"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />

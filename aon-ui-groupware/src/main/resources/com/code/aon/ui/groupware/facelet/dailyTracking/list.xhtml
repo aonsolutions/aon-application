@@ -14,7 +14,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarID" value="toolbar" />
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_daily_tracking_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_daily_tracking_module}" />
 				<ui:param name="controller" value="#{dailyTracking}" />
 				
 				<ui:define name="additionalToolbarContent">
@@ -63,7 +63,7 @@
 							<rich:toolTip value="#{to.comments}" showEvent="onclick"
 								hideDelay="2000">
 								<f:facet name="defaultContent">
-									<aon:outputText value="#{financeBundle.finance_invoicing_wait}" />
+									<aon:outputText value="#{bundle.finance_invoicing_wait}" />
 								</f:facet>
 							</rich:toolTip>
 						</aon:div>
@@ -87,7 +87,7 @@
 					<aon:column styleClass="aon-editDataTable-text" alias="DailyTracking.activityType&lt;description">
 						<f:facet name="header">
 							<aon:outputText
-								value="#{projectBundle.project_activity_type}" />
+								value="#{bundle.project_activity_type}" />
 						</f:facet>
 						<aon:outputText value="#{to.activityType.description}" />
 					</aon:column>
@@ -95,14 +95,14 @@
 					<aon:column styleClass="aon-editDataTable-text" alias="DailyTracking.jobType.description">
 						<f:facet name="header">
 							<aon:outputText
-								value="#{groupwareBundle.groupware_job_type}" />
+								value="#{bundle.groupware_job_type}" />
 						</f:facet>
 						<aon:outputText value="#{to.jobType.description}" />
 					</aon:column>
 
 					<aon:column styleClass="aon-editDataTable-text" alias="DailyTracking.registry.name">
 						<f:facet name="header">
-							<aon:outputText value="#{projectBundle.project_assigned}" />
+							<aon:outputText value="#{bundle.project_assigned}" />
 						</f:facet>
 						<aon:outputText value="#{to.registry.fullName}" />
 					</aon:column>

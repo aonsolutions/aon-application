@@ -57,14 +57,14 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel value="#{pmsBundle.pms_room_type}" />
+					<aon:outputLabel value="#{bundle.pms_room_type}" />
 				</f:facet>
 				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" />
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 				<f:facet name="header">
-					<aon:outputLabel value="#{pmsBundle.pms_room_number}" />
+					<aon:outputLabel value="#{bundle.pms_room_number}" />
 				</f:facet>
 				<aon:outputText value="#{to.roomNumber}" />
 			</aon:column>
@@ -78,14 +78,14 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel value="#{pmsBundle.pms_adults}" />
+					<aon:outputLabel value="#{bundle.pms_adults}" />
 				</f:facet>
 				<aon:outputText value="#{to.adults}" />
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel value="#{pmsBundle.pms_children}" />
+					<aon:outputLabel value="#{bundle.pms_children}" />
 				</f:facet>
 				<aon:outputText value="#{to.children}" />
 			</aon:column>
@@ -95,13 +95,13 @@
 			<aon:div>
 				<aon:commandButton id="showRoomDetailTable"
 					value="&#160;" styleClass="aon-icon-tree-root aon-noborder"
-					title="#{financeBundle.finance_tobreakdown}"
+					title="#{bundle.finance_tobreakdown}"
 					rendered="#{to.roomNumber != null and !to.showRoomDetail}" 
 					actionListener="#{controller.onShowRoomDetails}"
 					reRender="#{dataTableId}" />
 				<aon:commandButton id="hideRoomDetailTable"
 					value="&#160;" styleClass="aon-icon-index aon-noborder"
-					title="#{financeBundle.finance_hide}"
+					title="#{bundle.finance_hide}"
 					rendered="#{to.roomNumber != null and to.showRoomDetail}" 
 					actionListener="#{controller.onHideRoomDetails}"
 					reRender="#{dataTableId}" />
@@ -131,7 +131,7 @@
 							</aon:outputText>
 						</aon:div>
 						<aon:div>
-							<aon:outputLabel value="#{pmsBundle.pms_room}:" styleClass="aon-margin-right" />
+							<aon:outputLabel value="#{bundle.pms_room}:" styleClass="aon-margin-right" />
 							<aon:outputText value="#{roomDetail.assetActivity.asset.name}" styleClass="aon-italic" />
 						</aon:div>
 						<aon:div rendered="#{roomDetail.room.item.id != roomDetail.projectReservationRoom.item.id}">

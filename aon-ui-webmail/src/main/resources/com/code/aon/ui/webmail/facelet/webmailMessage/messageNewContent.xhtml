@@ -18,15 +18,15 @@
 		<aon:valueParam name="inputTextSize" default="120" />
 		<aon:valueParam name="contentHeight" default="400" />		
 		<c:if test="#{!innerToolbar}">
-			<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_main}" />
-			<ui:param name="toolbarDescription" value="#{webmailBundle.webmail_newmail}" />
+			<ui:param name="toolbarTitle" value="#{bundle.webmail_main}" />
+			<ui:param name="toolbarDescription" value="#{bundle.webmail_newmail}" />
 		</c:if>
 
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 			<ui:define name="toolbarContent">
 				<c:if test="#{!skipSendButton}">
 					<aon:commandButton id="send#{messageSuffix}"
-						value="#{webmailBundle.webmail_send}"
+						value="#{bundle.webmail_send}"
 						styleClass="aon-icon-accept aon-finding-toolbar-item"
 						action="#{sendAction}" actionListener="#{sendActionListener}"
 						reRender="#{sendButtonReRender}"
@@ -35,7 +35,7 @@
 				</c:if>
 				<c:if test="#{!skipSaveDraftButton}">
 					<aon:commandButton id="save_draft#{messageSuffix}" 
-						value="#{webmailBundle.webmail_save_draft}"
+						value="#{bundle.webmail_save_draft}"
 						styleClass="aon-icon aon-icon-mail-save aon-finding-toolbar-item"
 						action="#{saveDraftAction}" actionListener="#{saveDraftActionListener}"
 						reRender="#{saveDraftButtonReRender}" />
@@ -44,7 +44,7 @@
 		     		<aon:confirmButton id="sendCancel#{messageSuffix}" immediate="true"
 						title="#{bundle.aon_back}" value="#{bundle.aon_back}"
 						confirmTitle="#{bundle.aon_confirm_title}"
-						confirmMessage="#{webmailBundle.webmail_back_confirm}"
+						confirmMessage="#{bundle.webmail_back_confirm}"
 						confirmActionListener="#{sendCancelActionListener}"
 						confirmAction="#{sendCancelAction}"
 						accesskey="#{bundle.aon_key_cancel}"
@@ -76,7 +76,7 @@
 
 					<aon:div rendered="#{webmailMessage.showTemplates and (marketingTemplate.templateCount &gt; 0)}">
 						<aon:outputLabel for="NewMail_Template#{messageSuffix}" 
-							value="#{marketingBundle.marketing_mail_template}" />
+							value="#{bundle.marketing_mail_template}" />
 					</aon:div>							
 					<aon:selectOneMenu id="NewMail_Template#{messageSuffix}"
 						reRender="messageContent#{messageSuffix}"
@@ -131,7 +131,7 @@
 								reRender="showEmailWindow#{messageSuffix}" disabled="#{disableContacts}"
 								actionListener="#{webmailMessage.openEmailsBccPanelPopup}" 
 								styleClass="new-mail-button"
-								value="#{webmailBundle.webmail_bcc}" />							
+								value="#{bundle.webmail_bcc}" />							
 						</aon:div>
 						<aon:div>
 							<aon:inputText id="NewMail_Bcc#{messageSuffix}"
@@ -155,7 +155,7 @@
 
 					<c:if test="#{!skipAttachments}" >
 						<aon:outputLabel for="attach_file#{messageSuffix}" 
-							value="#{webmailBundle.webmail_attach_file}" />
+							value="#{bundle.webmail_attach_file}" />
 						<aon:div>
 							<aon:fileUpload id="attach_file#{messageSuffix}"
 								fileUploadListener="#{webmailMessage.fileUploaded}"
@@ -205,7 +205,7 @@
 						rendered="#{webmailMessage.showAppendSignature or webmailMessage.showSaveSent}">
 						<aon:outputLabel for="NewMail_saveSent#{messageSuffix}"
 							rendered="#{webmailMessage.showSaveSent}"
-							value="#{webmailBundle.webmail_save_sent}" />
+							value="#{bundle.webmail_save_sent}" />
 						<aon:selectBooleanCheckbox
 							id="NewMail_saveSent#{messageSuffix}"
 							rendered="#{webmailMessage.showSaveSent}"
@@ -213,7 +213,7 @@
 						<aon:div layout="inline" styleClass="aon-margin-left">
 							<aon:outputLabel for="NewMail_appendSignature#{messageSuffix}"
 								rendered="#{webmailMessage.showAppendSignature}"
-								value="#{webmailBundle.webmail_signature_include}" />
+								value="#{bundle.webmail_signature_include}" />
 							<aon:selectBooleanCheckbox
 								id="NewMail_appendSignature#{messageSuffix}"
 								value="#{webmailMessage.appendSignature}"

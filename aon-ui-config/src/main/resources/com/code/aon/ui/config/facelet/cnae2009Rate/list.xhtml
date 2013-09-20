@@ -13,7 +13,7 @@
 
 			<aon:div ajaxRendered="true" layout="none">
 				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-					<ui:param name="toolbarTitle" value="#{configBundle.config_cnae2009Rate_module}" />
+					<ui:param name="toolbarTitle" value="#{bundle.config_cnae2009Rate_module}" />
 					<ui:param name="controller" value="#{cnae2009Rate}" />
 					<ui:param name="skipResetButton" value="true" />
 					<ui:param name="skipSearchButton" value="true" />
@@ -65,7 +65,7 @@
   							<aon:column styleClass="aon-editDataTable-numberColumn">
 								<f:facet name="header">
 									<aon:outputLabel
-										value="#{configBundle.config_cnae2009Rate_itAmount}" />
+										value="#{bundle.config_cnae2009Rate_itAmount}" />
 								</f:facet>
 								<aon:outputText value="#{to.itAmount}">
 									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -75,7 +75,7 @@
   							<aon:column styleClass="aon-editDataTable-numberColumn">
 								<f:facet name="header">
 									<aon:outputLabel
-										value="#{configBundle.config_cnae2009Rate_imsAmount}" />
+										value="#{bundle.config_cnae2009Rate_imsAmount}" />
 								</f:facet>
 								<aon:outputText value="#{to.imsAmount}">
 									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

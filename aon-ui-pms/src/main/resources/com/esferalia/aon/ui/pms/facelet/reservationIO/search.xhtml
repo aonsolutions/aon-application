@@ -12,7 +12,7 @@
 		<aon:form id="reservationIOSearch">
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservationIO_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_reservationIO_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_search}" />
 			</ui:include>
 				
@@ -45,7 +45,7 @@
 							<a4j:support event="onclick" reRender="reservationIOSearch" ignoreDupResponses="true"  ajaxSingle="true"/>
 						</aon:selectOneRadio>	
 						
-						<aon:outputText value="#{pmsBundle.pms_check}"/>
+						<aon:outputText value="#{bundle.pms_check}"/>
 						<aon:selectManyCheckbox value="#{reservationIO.checkStatuses}" >
 							<f:selectItems value="#{reservationIO.abbreviatedReservationCheckStatuses}"/>
 						</aon:selectManyCheckbox>
@@ -92,13 +92,13 @@
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 						</aon:div>				
 						
-						<aon:outputText value="#{pmsBundle.pms_order_by}"/>
+						<aon:outputText value="#{bundle.pms_order_by}"/>
 						<aon:selectOneRadio value="#{reservationIO.shortOption}" layout="pageDirection">
 							<f:selectItem itemLabel="#{bundle.aon_reservation}" itemValue="0" />
 							<f:selectItem itemLabel="#{bundle.report_guest}" itemValue="1" />
 							<f:selectItem itemLabel="#{bundle.report_agency} + #{bundle.report_guest}" itemValue="2" />
 							<f:selectItem itemLabel="#{bundle.report_agency}" itemValue="3" />
-							<f:selectItem itemLabel="#{pmsBundle.pms_room}" itemValue="4" />
+							<f:selectItem itemLabel="#{bundle.pms_room}" itemValue="4" />
 						</aon:selectOneRadio>	
 					
 						<aon:outputText value="&#160;" />

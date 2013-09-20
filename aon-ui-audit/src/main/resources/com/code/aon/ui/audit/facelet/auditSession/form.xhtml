@@ -16,7 +16,7 @@
 		<aon:form id="sessionForm">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{auditBundle.audit_sessions_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.audit_sessions_module}" />
 				<ui:param name="controller" value="#{auditSession}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipSaveButton" value="true" />
@@ -45,7 +45,7 @@
 					</aon:outputText>
 					
 					<aon:outputLabel for="Session_application_name"
-						value="#{auditBundle.audit_application}" />
+						value="#{bundle.audit_application}" />
 					<aon:outputText id="Session_application_name"
 						value="#{auditSession.to.application.name}"/>
 
@@ -55,12 +55,12 @@
 						value="#{auditSession.to.user.login}"/>
 
 					<aon:outputLabel for="Session_remoteAddress"
-						value="#{auditBundle.audit_session_remoteAddress}" />
+						value="#{bundle.audit_session_remoteAddress}" />
 					<aon:outputText id="Session_remoteAddress"
 						value="#{auditSession.to.remoteAddress}"/>
 
 					<aon:outputLabel for="Session_remoteHost"
-						value="#{auditBundle.audit_session_remoteHost}" />
+						value="#{bundle.audit_session_remoteHost}" />
 					<aon:outputText id="Session_remoteHost"
 						value="#{auditSession.to.remoteHost}"/>
 					
@@ -69,7 +69,7 @@
 				<aon:div styleClass="aon-form-group" rendered="#{!seller.new}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="actionEntryData" value="#{marketingBundle.marketing_actions}" />
+							<aon:outputLabel for="actionEntryData" value="#{bundle.marketing_actions}" />
 						</aon:div>
 					</aon:div>
 					<ui:include src="/com/code/aon/ui/audit/facelet/actionEntry/list.xhtml"/>

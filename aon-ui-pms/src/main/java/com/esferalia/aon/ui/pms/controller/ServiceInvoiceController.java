@@ -1,6 +1,5 @@
 package com.esferalia.aon.ui.pms.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.PMS_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.PMS_DAMAGES;
 import static com.code.aon.ui.common.ICommonMessages.PMS_DEPOSITS;
 import static com.code.aon.ui.common.ICommonMessages.PMS_SERVICES;
@@ -289,11 +288,11 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 
 	public List<SelectItem> getServiceTypes() {
 		List<SelectItem> serviceTypes = new LinkedList<SelectItem>();
-		SelectItem item = new SelectItem(ProductType.SERVICE, AonUtil.getMessage(PMS_BUNDLE, PMS_SERVICES));
+		SelectItem item = new SelectItem(ProductType.SERVICE, AonUtil.getMessage(PMS_SERVICES));
 		serviceTypes.add(item);
-		item = new SelectItem(ProductType.COMMERCIAL_PRODUCT, AonUtil.getMessage(PMS_BUNDLE, PMS_DEPOSITS));
+		item = new SelectItem(ProductType.COMMERCIAL_PRODUCT, AonUtil.getMessage(PMS_DEPOSITS));
 		serviceTypes.add(item);
-		item = new SelectItem(ProductType.EXTERNAL_WORK, AonUtil.getMessage(PMS_BUNDLE, PMS_DAMAGES));
+		item = new SelectItem(ProductType.EXTERNAL_WORK, AonUtil.getMessage(PMS_DAMAGES));
 		serviceTypes.add(item);
 		return serviceTypes;
 	}

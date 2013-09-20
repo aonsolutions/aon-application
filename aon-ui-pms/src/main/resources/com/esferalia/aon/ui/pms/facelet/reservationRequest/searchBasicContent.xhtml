@@ -18,7 +18,7 @@
 	</c:if>
 
 	<aon:outputLabel for="ReservationRequest_id" 
-		value="#{pmsBundle.pms_reservation_request_id}" />
+		value="#{bundle.pms_reservation_request_id}" />
 	<aon:div>
 		<aon:inputText id="ReservationRequest_id"
 			valueChangeListener="#{controller.addExpression}"
@@ -26,7 +26,7 @@
 	</aon:div>
 
 	<aon:outputLabel for="ReservationRequest_crsCode" 
-		value="#{bundle.aon_id} #{pmsBundle.pms_crs}" />
+		value="#{bundle.aon_id} #{bundle.pms_crs}" />
 	<aon:inputText id="ReservationRequest_crsCode"
 		value="#{searchController.crsCode}"
 		size="20" />
@@ -94,7 +94,7 @@
 	<aon:selectOneRadio id="ReservationRequest_active"
 		valueChangeListener="#{controller.addExpression}">
 		<f:selectItem itemLabel="#{bundle.aon_pending}" itemValue="true" />
-		<f:selectItem itemLabel="#{pmsBundle.pms_reservation_request_processed}" itemValue="false" />
+		<f:selectItem itemLabel="#{bundle.pms_reservation_request_processed}" itemValue="false" />
 	</aon:selectOneRadio>				
 
 </ui:composition>

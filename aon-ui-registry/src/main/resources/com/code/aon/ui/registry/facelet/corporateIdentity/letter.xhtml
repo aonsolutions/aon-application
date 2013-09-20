@@ -14,7 +14,7 @@
 		<aon:form id="corporateIdentityLetterForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{registryBundle.registry_corporateIdentity_letter}" />
+				<ui:param name="toolbarTitle" value="#{bundle.registry_corporateIdentity_letter}" />
 				<ui:param name="toolbarDescription" value="#{corporateIdentity.identityReport.company.fullName}" />
 				<ui:define name="toolbarContent">
 					<aon:htmlCommandLink id="export2pdf_letter" value="PDF" title="PDF"
@@ -40,34 +40,34 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2">
 					<aon:outputLabel for="letter_date"
-						value="#{registryBundle.registry_corporateIdentity_date}" />
+						value="#{bundle.registry_corporateIdentity_date}" />
 					<aon:inputText id="letter_date" size="120" 
 						value="#{corporateIdentity.identityReport.letter_date}" />
 	
 					<aon:outputLabel for="letter_salutation"
-						value="#{registryBundle.registry_corporateIdentity_salutation}" />
+						value="#{bundle.registry_corporateIdentity_salutation}" />
 					<aon:inputText id="letter_salutation" size="120" 
 						value="#{corporateIdentity.identityReport.letter_salutation}" />
 	
 					<aon:outputLabel for="letter_content"
-						value="#{registryBundle.registry_corporateIdentity_content}" />
+						value="#{bundle.registry_corporateIdentity_content}" />
 					<aon:inputTextarea id="letter_content"
 						value="#{corporateIdentity.identityReport.letter_content}"
 						cols="120" rows="25"/>
 	
 					<aon:outputLabel for="letter_goodbye"
-						value="#{registryBundle.registry_corporateIdentity_goodbye}" />
+						value="#{bundle.registry_corporateIdentity_goodbye}" />
 					<aon:inputText id="letter_goodbye" size="120" 
 						value="#{corporateIdentity.identityReport.letter_goodbye}" />
 	
 					<aon:outputLabel for="letter_signature"
-						value="#{registryBundle.registry_corporateIdentity_signature}" />
+						value="#{bundle.registry_corporateIdentity_signature}" />
 					<aon:inputTextarea id="letter_signature"
 						value="#{corporateIdentity.identityReport.letter_signature}"
 						cols="120" rows="3"/>
 
 					<aon:outputLabel for="letter_registry_data"
-						value="#{registryBundle.registry_corporateIdentity_registry_data}" />
+						value="#{bundle.registry_corporateIdentity_registry_data}" />
 					<aon:selectBooleanCheckbox id="letter_registry_data" 
 							value="#{corporateIdentity.identityReport.printRegistryData}">
 					</aon:selectBooleanCheckbox>

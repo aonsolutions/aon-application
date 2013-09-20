@@ -12,13 +12,13 @@
 	
 		<aon:form id="invoiceList">
 			<c:if test="#{stat.invoiceType==0}">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_purchase_invoice_management_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_purchase_invoice_management_module}" />
 			</c:if>
 			<c:if test="#{stat.invoiceType==1}">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_sale_invoice_management_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_sale_invoice_management_module}" />
 			</c:if>
 			<c:if test="#{stat.invoiceType==2}">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_expense_invoice_management_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_expense_invoice_management_module}" />
 			</c:if>
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="skipResetButton" value="true" />

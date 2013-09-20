@@ -14,7 +14,7 @@
 			<aon:div styleClass="aon-portlet-title">
 				<aon:div styleClass="aon-portlet-title-buttons" style="width:40px;border-left:0;">
 					<aon:commandLink id="serachDomainDesktop" 
-						title="#{adminBundle.admin_domain_list}"
+						title="#{bundle.admin_domain_list}"
 						value="&#160;" styleClass="aon-icon-portlet aon-icon-category aon-margin-right" 
 						actionListener="#{domainPrint.onEditSearch}"
 						action="domainPrint_search">
@@ -22,13 +22,13 @@
 					</aon:commandLink> 
 					<c:if test="#{aonRole.admin}">
 						<aon:commandLink id="newDomainDesktop" 
-							title="#{adminBundle.admin_new_domain}"
+							title="#{bundle.admin_new_domain}"
 							value="&#160;" styleClass="aon-icon-portlet aon-icon-new" 
 							actionListener="#{domains.onNewDomain}"
 							action="newDomain_form"/>
 					</c:if> 
 				</aon:div>
-				<aon:outputText value="#{configBundle.config_domain_module}"
+				<aon:outputText value="#{bundle.config_domain_module}"
 					styleClass="aon-portlet-title-text aon-icon aon-icon-company"/>
 			</aon:div>
 			<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
@@ -50,7 +50,7 @@
 					</aon:inputText>
 					<aon:outputLabel for="Domains_allDomains"
 						styleClass="aon-italic aon-bold aon-margin-left aon-margin-right" 
-						value="#{adminBundle.admin_domain_all_domains}" />
+						value="#{bundle.admin_domain_all_domains}" />
 					<aon:selectBooleanCheckbox id="Domains_allDomains"
 						value="#{domains.allDomains}" >
 						<a4j:support 
@@ -74,7 +74,7 @@
 							<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap"
 								alias="Domain.description" >
 								<f:facet name="header">
-									<aon:outputText value="#{adminBundle.admin_domain_displayName}" />
+									<aon:outputText value="#{bundle.admin_domain_displayName}" />
 								</f:facet>							
 								<aon:outputText value="#{to.description}" />
 							</aon:column>
@@ -82,7 +82,7 @@
 								<aon:column styleClass="aon-editDataTable-textColumn"
 									alias="Domain.parent&lt;description" >
 									<f:facet name="header">
-										<aon:outputText value="#{adminBundle.admin_domain_parent}" />
+										<aon:outputText value="#{bundle.admin_domain_parent}" />
 									</f:facet>							
 									<aon:outputText value="#{to.parent.description}" />
 								</aon:column>
@@ -90,7 +90,7 @@
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
 								alias="Domain.type" >
 								<f:facet name="header">
-									<aon:outputText value="#{adminBundle.admin_domain_type}" />
+									<aon:outputText value="#{bundle.admin_domain_type}" />
 								</f:facet>							
 								<aon:outputText value="#{to.type}" />
 							</aon:column>
@@ -105,7 +105,7 @@
 							<aon:column styleClass="aon-editDataTable-iconColumn"
 								alias="Domain.domainManagement" >
 								<f:facet name="header">
-									<aon:outputText value="#{adminBundle.admin_domain_domainManagement}" />
+									<aon:outputText value="#{bundle.admin_domain_domainManagement}" />
 								</f:facet>
 								<aon:outputText value="&#160;"
 									styleClass="aon-icon #{(to.domainManagement)?'aon-icon-checked':'aon-icon-check'}" />							
@@ -113,7 +113,7 @@
 							<aon:column styleClass="aon-editDataTable-textColumn  aon-nowrap aon-width-200"
 								alias="Domain.name" >
 								<f:facet name="header">
-									<aon:outputText value="#{adminBundle.admin_domain_url}" />
+									<aon:outputText value="#{bundle.admin_domain_url}" />
 								</f:facet>							
 								<aon:div onmouseover="disableRowSelector();"
 									onmouseup="disableRowSelector();"
@@ -125,7 +125,7 @@
 							</aon:column>
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-40">
 								<f:facet name="header">
-									<aon:outputText value="#{adminBundle.admin_domain_childs_short}" />
+									<aon:outputText value="#{bundle.admin_domain_childs_short}" />
 								</f:facet>							
 								<aon:outputText value="#{domains.currentDomainChildNumber}" />
 							</aon:column>
@@ -138,7 +138,7 @@
 										onmouseover="disableRowSelector();"
 										onmouseup="disableRowSelector();"
 										onmouseout="enableRowSelector();"
-										title="#{adminBundle.admin_remove_domain} (#{bundle.aon_key_remove_line_accelerator})"
+										title="#{bundle.admin_remove_domain} (#{bundle.aon_key_remove_line_accelerator})"
 										action="removeDomain_form" actionListener="#{domains.onRemoveDomain}"
 										rendered="#{domains.currentDomainChildNumber == 0}"
 										styleClass="aon-editDataTable-button aon-icon-delete"

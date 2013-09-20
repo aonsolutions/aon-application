@@ -1,7 +1,7 @@
 package com.code.aon.ui.purchase.controller;
 
 import static com.code.aon.faces.controller.IRichConstants.LOG_PANEL_CONTROLLER_NAME;
-import static com.code.aon.ui.common.ICommonMessages.PURCHASE_BUNDLE;
+import static com.code.aon.ui.common.ICommonMessages.PURCHASE_EMAIL_BODY_HEADER;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_SEND_EMAIL_ERROR_COUNT;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_SEND_EMAIL_FNINISH;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_SEND_EMAIL_NUMBER;
@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.purchase.Purchase;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.purchase.util.PurchaseEmailUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
@@ -42,7 +41,7 @@ public class PurchasePrintController extends PurchaseController {
 				emailUtil.initMessageController(controller);
 				controller.setSubject( emailUtil.getEmailSubject() );
 				String body = emailUtil.getEmailBody();
-				controller.updateMessageBody( emailUtil.getEmailContent(body, AonUtil.getMessage(PURCHASE_BUNDLE, ICommonMessages.PURCHASE_EMAIL_BODY_HEADER)) );
+				controller.updateMessageBody( emailUtil.getEmailContent(body, AonUtil.getMessage(PURCHASE_EMAIL_BODY_HEADER)) );
 			} catch (Throwable th) {
 				LOGGER.error(th.getMessage(), th);
 				AonUtil.addErrorMessage(th.getMessage());
@@ -64,7 +63,7 @@ public class PurchasePrintController extends PurchaseController {
 		try {
 			emailUtil.changeMailAccount(account);
 			List<ITransferObject> list = getManagerBean().getList(getCriteria());
-			logger.info( AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_SEND_EMAIL_NUMBER, list.size()) );
+			logger.info( AonUtil.getMessage(PURCHASE_SEND_EMAIL_NUMBER, list.size()) );
 			LogPanelController logPanel = (LogPanelController) AonUtil.getRegisteredBean(LOG_PANEL_CONTROLLER_NAME);
 			for( ITransferObject to : list ) {
 				if ( logPanel.isActivePoll() ) {
@@ -75,14 +74,14 @@ public class PurchasePrintController extends PurchaseController {
 					break;
 				}
 			}
-			logger.info( AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_SEND_EMAIL_SENDED_COUNT) + (list.size()-logger.getErrors().size()) );
-			logger.info( AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_SEND_EMAIL_ERROR_COUNT) + logger.getErrors().size() );
+			logger.info( AonUtil.getMessage(PURCHASE_SEND_EMAIL_SENDED_COUNT) + (list.size()-logger.getErrors().size()) );
+			logger.info( AonUtil.getMessage(PURCHASE_SEND_EMAIL_ERROR_COUNT) + logger.getErrors().size() );
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		} finally {
-			logger.info( AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_SEND_EMAIL_FNINISH) );
+			logger.info( AonUtil.getMessage(PURCHASE_SEND_EMAIL_FNINISH) );
 			logger.finish();
 			messageController.setShowNewMessageWindow(false);
 			this.initializeModel();

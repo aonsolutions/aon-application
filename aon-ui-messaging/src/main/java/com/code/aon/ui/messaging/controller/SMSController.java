@@ -1,7 +1,9 @@
 package com.code.aon.ui.messaging.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.MESSAGING_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.SMS_EMPTY_RECIPIENT_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.SMS_MESSAGE_SIZE_LIMIT;
+import static com.code.aon.ui.common.ICommonMessages.SMS_MESSAGE_SIZE_MANY;
+import static com.code.aon.ui.common.ICommonMessages.SMS_MESSAGE_SIZE_ONE;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -33,7 +35,6 @@ import com.code.aon.messaging.sms.SMSException;
 import com.code.aon.messaging.sms.Sender;
 import com.code.aon.messaging.sms.SynchronizedSender;
 import com.code.aon.messaging.util.Utils;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.messaging.PriceTariff;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.IContact;
@@ -220,16 +221,16 @@ public class SMSController implements Serializable {
 	public String getCharacterCountMessage() {
 		int count = getCharacterCount();
 		if ( count == 1 ) {
-			return AonUtil.getMessage(MESSAGING_BUNDLE, ICommonMessages.SMS_MESSAGE_SIZE_ONE);
+			return AonUtil.getMessage(SMS_MESSAGE_SIZE_ONE);
 		} else {
-			String pattern = AonUtil.getMessage(MESSAGING_BUNDLE, ICommonMessages.SMS_MESSAGE_SIZE_MANY);
+			String pattern = AonUtil.getMessage(SMS_MESSAGE_SIZE_MANY);
 			return MessageFormat.format(pattern, count);
 		}
 	}
 
 	public void checkMessageLength() {
 		if ( getCharacterCount() > 160 ) {
-			String message = AonUtil.getMessage(MESSAGING_BUNDLE, ICommonMessages.SMS_MESSAGE_SIZE_LIMIT);
+			String message = AonUtil.getMessage(SMS_MESSAGE_SIZE_LIMIT);
 			AonUtil.addErrorMessage( message );
 			throw new AbortProcessingException( message );							
 		}
@@ -268,7 +269,7 @@ public class SMSController implements Serializable {
 				throw new AbortProcessingException(e.getMessage(), e);				
 			}
 		} else {
-			String message = AonUtil.getMessage(MESSAGING_BUNDLE, SMS_EMPTY_RECIPIENT_ERROR);
+			String message = AonUtil.getMessage(SMS_EMPTY_RECIPIENT_ERROR);
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException( message );
 		}

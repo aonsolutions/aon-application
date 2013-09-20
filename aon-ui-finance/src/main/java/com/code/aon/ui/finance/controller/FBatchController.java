@@ -2,7 +2,6 @@ package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DISK_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_UNRECORD_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -407,7 +406,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
         if (aebOutput != null) {
         	if (aebOutput.getErrors().size() > 0) {
-        		AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FINANCE_BATCH_DISK_ERROR);
+        		AonUtil.addErrorMessageFromBundle(FINANCE_BATCH_DISK_ERROR);
         	} else {
                 fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
                 getManagerBean().update(fbatch);
@@ -475,7 +474,7 @@ public class FBatchController extends BasicController implements ICollectionProv
             getWriter().removeAccountEntryFinanceBatch(fBatch);
             loadDetails();
         } else {
-            AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FINANCE_BATCH_UNRECORD_ERROR);
+            AonUtil.addErrorMessageFromBundle(FINANCE_BATCH_UNRECORD_ERROR);
             throw new AbortProcessingException();
         }
     }

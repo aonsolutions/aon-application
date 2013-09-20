@@ -1,6 +1,5 @@
 package com.code.aon.ui.marketing.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.MARKETING_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.SEND_EMAIL_FINISH;
 import static com.code.aon.ui.common.ICommonMessages.TARGET_BULK_EMAIL_SENT;
 import static com.code.aon.ui.common.ICommonMessages.TARGET_EMAIL_SENT;
@@ -8,7 +7,6 @@ import static com.code.aon.ui.common.ICommonMessages.TARGET_INVALID_EMAIL;
 import static com.code.aon.ui.common.ICommonMessages.TARGET_SEND_BULK_EMAIL_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.TARGET_SEND_EMAIL_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.TARGET_WITHOUT_COMMERCIAL_EMAIL;
-import static com.code.aon.ui.common.ICommonMessages.WEBMAIL_BUNDLE;
 
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -88,7 +86,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 	}	
 	
 	private void log( String message, boolean error, Target target, String argument) {
-		String rawText = AonUtil.getMessage(MARKETING_BUNDLE, message);
+		String rawText = AonUtil.getMessage(message);
 		String targetName = target.getRegistry().getFullName();
 		String text = MessageFormat.format(rawText, targetName, argument);
 		LogPanelController logger = LogPanelController.getInstance();
@@ -106,7 +104,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 		for( ActionTarget actionTarget : list ) {    		
 			List<String> targetEmails = getEmails(actionTarget.getTarget());
 			if ( targetEmails.isEmpty() ) {					
-				String rawText = AonUtil.getMessage(MARKETING_BUNDLE, TARGET_WITHOUT_COMMERCIAL_EMAIL);
+				String rawText = AonUtil.getMessage(TARGET_WITHOUT_COMMERCIAL_EMAIL);
 				logger.error( MessageFormat.format(rawText, actionTarget.getTarget().getRegistry().getFullName()) );				
 				actionTarget.setStatus(ActionTargetStatus.CANCEL);				
 			} else {
@@ -135,10 +133,10 @@ public class EmailCommunicationController implements IMarketingConstants {
 		LogPanelController logger = LogPanelController.getInstance();
 		if ( list.size() > 1) {
 			if ( sent ) {
-				String rawText = AonUtil.getMessage(MARKETING_BUNDLE, TARGET_BULK_EMAIL_SENT);
+				String rawText = AonUtil.getMessage(TARGET_BULK_EMAIL_SENT);
 				logger.info( MessageFormat.format(rawText, offset+1, (offset + list.size())) );
 			} else {
-				String rawText = AonUtil.getMessage(MARKETING_BUNDLE, TARGET_SEND_BULK_EMAIL_ERROR);
+				String rawText = AonUtil.getMessage(TARGET_SEND_BULK_EMAIL_ERROR);
 				logger.error( MessageFormat.format(rawText, offset+1, (offset + list.size())) );				
 			}
 		}
@@ -203,7 +201,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
 			messageController.finishMessage();
-			logger.info( AonUtil.getMessage(WEBMAIL_BUNDLE, SEND_EMAIL_FINISH) );			
+			logger.info( AonUtil.getMessage(SEND_EMAIL_FINISH) );			
 		}
 		getCommunicationController().onInit(event);
     }

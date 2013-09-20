@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{financeBundle.finance_bank_statement_import_statement}" />
+						<aon:outputText value="#{bundle.finance_bank_statement_import_statement}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -67,8 +67,8 @@
 											value="#{bundle.aon_type}" />
 										<aon:selectOneRadio id="BankStatement_aeb43" 
 											value="#{bankStatement.aeb43}">
-											<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_file_aeb43}" itemValue="#{true}" />
-											<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_file_csv}" itemValue="#{false}" />
+											<f:selectItem itemLabel="#{bundle.finance_bank_statement_file_aeb43}" itemValue="#{true}" />
+											<f:selectItem itemLabel="#{bundle.finance_bank_statement_file_csv}" itemValue="#{false}" />
 										</aon:selectOneRadio>
 
 										<aon:outputLabel for="BankStatement_confidential"
@@ -80,7 +80,7 @@
 										</aon:selectOneRadio>
 
 										<aon:outputLabel for="BankStatement_file"
-											value="#{financeBundle.finance_disk}" />
+											value="#{bundle.finance_disk}" />
 										<aon:div>
 											<aon:fileUpload id="BankStatement_file"
 												addControlLabel="#{bundle.aon_fileUpload_add}"

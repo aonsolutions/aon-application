@@ -12,7 +12,7 @@
 		<aon:form id="catalogueForm">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{productBundle.product_catalogue_module}" />
+					value="#{bundle.product_catalogue_module}" />
 				<ui:param name="controller" value="#{catalogue}" />
 			</ui:decorate>
 
@@ -53,7 +53,7 @@
 						</aon:panelTab>
 
 						<c:if test="#{aonConfiguration.bean.catalogue.showEcommerceData}">
-							<aon:panelTab id="ecommerceEccatalogue"   label="#{productBundle.product_eccatalogue}" >
+							<aon:panelTab id="ecommerceEccatalogue"   label="#{bundle.product_eccatalogue}" >
 								<ui:include	src="/com/code/aon/ui/ebackoffice/facelet/ecCatalogue/tab_grid.xhtml" />
 							</aon:panelTab>
 						</c:if>

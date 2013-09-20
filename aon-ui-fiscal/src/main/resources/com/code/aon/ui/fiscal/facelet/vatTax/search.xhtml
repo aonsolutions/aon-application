@@ -10,7 +10,7 @@
 		<aon:form id="vatTaxForm" styleClass="aon-form">
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_vat_tax_module2}" />
+				<ui:param name="toolbarTitle" value="#{bundle.fiscal_vat_tax_module2}" />
 				<ui:param name="controller" value="#{vatTax}" />
 			</ui:include>
 			<ui:decorate
@@ -23,7 +23,7 @@
 						valueChangeListener="#{vatTax.addExpression}" />
 
 					<aon:outputLabel for="VatTax_period"
-						value="#{financeBundle.finance_vat_period}" />
+						value="#{bundle.finance_vat_period}" />
 					<aon:selectOneMenu id="VatTax_period"
 						valueChangeListener="#{controller.addEqualExpression}"
 						converter="aon.EnumConverter">

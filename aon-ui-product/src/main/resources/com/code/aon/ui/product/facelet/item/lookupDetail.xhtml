@@ -14,8 +14,8 @@
 		<ui:param name="lookupInputSuggestExpression" value="#{lto.fullName}#{(empty lto.barcode)?'':' ('}#{lto.barcode}#{(empty lto.barcode)?'':')'}"/>
 		<ui:param name="lookupLabel" value="#{bundle.aon_product}" />
 		<ui:param name="controller" value="#{item}" />
-		<ui:param name="searchButtonTitle" value="#{productBundle.product_itemDetail_selection}" />
-		<ui:param name="newButtonTitle" value="#{productBundle.product_item_new}" />
+		<ui:param name="searchButtonTitle" value="#{bundle.product_itemDetail_selection}" />
+		<ui:param name="newButtonTitle" value="#{bundle.product_item_new}" />
 		<ui:param name="searchButtonWidth" value="680"/>
 				
 		<ui:define name="lookupInputTextContent">

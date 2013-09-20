@@ -12,12 +12,12 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="#{adminBundle.admin_backup}" />
+				<ui:param name="toolbarTitle" value="#{bundle.admin_backup}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="execute" 
-						value="#{dbutilsBundle.dbutils_make_copy}"
+						value="#{bundle.dbutils_make_copy}"
 						target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{dbDumper.onDump}"
@@ -30,8 +30,8 @@
 					<aon:outputText value="El fichero de copia '#{dbDumper.aonFile.fileName}' se ha generado correctamente." />
 				</aon:div>
 				<aon:htmlCommandLink target="_blank"
-					title="#{dbutilsBundle.download_file}"
-					value="#{dbutilsBundle.download_file}"
+					title="#{bundle.download_file}"
+					value="#{bundle.download_file}"
 					style="border-width: 0px 0px 0px 0px;"
 					actionListener="#{dbDumper.onDownloadDisk}" 
 					styleClass="aon-finding-toolbar-item aon-icon-mail-save" />

@@ -14,7 +14,7 @@
 
 		<c:if test="#{aonConfiguration.bean.product.showBarcode}">
 			<aon:outputLabel for="Item_barcode" styleClass="aon-margin-left aon-margin-right aon-italic"
-				value="#{productBundle.product_barcode}" />
+				value="#{bundle.product_barcode}" />
 			<aon:inputText id="Item_barcode" 
 				value="#{controller.to.barcode}" size="25" maxlength="32" />
  		</c:if>
@@ -60,13 +60,13 @@
 				<aon:selectBooleanCheckbox id="Item_internet" 
 					value="#{controller.to.internet}" />
 				<aon:outputLabel for="Item_internet" styleClass="aon-margin-right aon-italic"
-					value="#{productBundle.product_ecommerce_available}" />
+					value="#{bundle.product_ecommerce_available}" />
 			</c:if>
 		</aon:div>
 	</c:if>
 
 	<c:if test="#{aonConfiguration.bean.product.showStock or aonConfiguration.bean.product.showComposition}">
-		<aon:outputLabel value="#{productBundle.product_info}" />
+		<aon:outputLabel value="#{bundle.product_info}" />
 		<aon:div id="itemCheckValues">
 			<c:if test="#{aonConfiguration.bean.product.showStock}">
 				<aon:selectBooleanCheckbox id="Item_product_inventoriable"
@@ -74,7 +74,7 @@
 					disabled="#{controller.to.product.composition}"
 					ajaxSingle="true" reRender="itemCheckValues" />
 				<aon:outputLabel for="Item_product_inventoriable" styleClass="aon-margin-right aon-italic"
-					value="#{productBundle.product_inventoriable}" />
+					value="#{bundle.product_inventoriable}" />
 			</c:if>
 
 			<c:if test="#{aonConfiguration.bean.product.showComposition}">
@@ -83,13 +83,13 @@
 					disabled="#{controller.to.product.inventoriable}"
 					ajaxSingle="true" reRender="itemCheckValues" />
 				<aon:outputLabel for="Item_product_composition" styleClass="aon-margin-right aon-italic"
-					value="#{productBundle.product_composite_product}" />
+					value="#{bundle.product_composite_product}" />
 
 				<aon:panelGroup id="Item_product_composition_price">
 					<aon:selectBooleanCheckbox value="#{controller.to.product.compositionPrice}"
 						rendered="#{controller.to.product.composition}" />
 					<aon:outputLabel for="Item_product_composition_price" styleClass="aon-margin-right aon-italic"
-						value="#{productBundle.product_composition_price}"
+						value="#{bundle.product_composition_price}"
 						rendered="#{controller.to.product.composition}" />
 				</aon:panelGroup>
 			</c:if>

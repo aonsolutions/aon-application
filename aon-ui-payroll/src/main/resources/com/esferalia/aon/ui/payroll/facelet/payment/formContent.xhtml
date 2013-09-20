@@ -23,7 +23,7 @@
 		popupDateFormat="#{bundle.aon_date_pattern}" />
 
 	<aon:outputLabel for="Payment_month"
-		value="#{payrollBundle.payroll_salary_payment_month}" />
+		value="#{bundle.payroll_salary_payment_month}" />
 
 	<aon:selectOneMenu id="Payment_month" value="#{controller.to.month}">
 		<f:selectItem itemLabel=" - " itemValue="#{null}" />
@@ -36,7 +36,7 @@
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="Payment_salaryType"
-		value="#{payrollBundle.payroll_salary_type}" />
+		value="#{bundle.payroll_salary_type}" />
 	<aon:selectOneMenu id="Payment_salaryType"
 		value="#{controller.to.salaryType}">
 		<f:selectItems value="#{payrollCollections.salaryTypes}" />
@@ -140,7 +140,7 @@
 	</ui:decorate>
 
 	<aon:outputLabel for="#{controller.beanName}IrpfExpression"
-		value="#{payrollBundle.payroll_salary_irpf_expression}" />
+		value="#{bundle.payroll_salary_irpf_expression}" />
 	<aon:methodParam name="inheritActionListener"
 		value="#{controller.onEnableIrpfExpressionOverride}"
 		type="actionListener" />
@@ -188,7 +188,7 @@
 
 
 	<aon:outputLabel for="#{controller.beanName}QuoteExpression"
-		value="#{payrollBundle.payroll_salary_quote_expression}" />
+		value="#{bundle.payroll_salary_quote_expression}" />
 	<aon:methodParam name="inheritActionListener"
 		value="#{controller.onEnableQuoteExpressionOverride}"
 		type="actionListener" />

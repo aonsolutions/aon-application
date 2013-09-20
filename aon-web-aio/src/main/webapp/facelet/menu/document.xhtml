@@ -37,13 +37,13 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="batchDocument" 
 										action="batchDocument_form"
-										value="#{registryBundle.registry_batch_document}"/>
+										value="#{bundle.registry_batch_document}"/>
 								</aon:div>					
 								<c:if test="#{aonRole.documentManager and domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="documentMassiveUpload" 
 											action="corporateIdentityAttach_form"
-											value="#{registryBundle.registry_document_massive_upload}">
+											value="#{bundle.registry_document_massive_upload}">
 											<f:setPropertyActionListener value="#{true}"
 												target="#{corporateIdentityAttach.massiveUpload}"  />
 											<aon:actionListener method="#{corporateIdentityAttach.onReset}" />
@@ -55,7 +55,7 @@
 										<aon:commandLink id="documentGlobal" 
 											action="documentGlobal_search"
 											actionListener="#{documentGlobal.onEditSearch}"
-											value="#{registryBundle.registry_document_global_search}"/>
+											value="#{bundle.registry_document_global_search}"/>
 									</aon:div>					
 								</c:if>								
 							</aon:div>
@@ -69,14 +69,14 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-utilities aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="#{registryBundle.registry_qualifier_group}" />
+									<aon:outputText value="#{bundle.registry_qualifier_group}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="tag" 
 											action="registryAttachmentTag_form" 
 											actionListener="#{registryAttachmentTag.onCancel}"
-											value="#{registryBundle.registry_tag_module}"/>	
+											value="#{bundle.registry_tag_module}"/>	
 									</aon:div>								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="category" 

@@ -8,7 +8,7 @@
 	template="/com/code/aon/ui/groupware/facelet/processLauncher/step_template.xhtml">
 
 	<ui:define name="step_name">
-		<aon:outputText value="#{groupwareBundle.groupware_process_wizard_step1}" />
+		<aon:outputText value="#{bundle.groupware_process_wizard_step1}" />
 	</ui:define>
 
 	<ui:define name="step_content">
@@ -21,7 +21,7 @@
 			<aon:inputText id="Campaign_description" value="#{processWizard.description}" required="true" size="60" />
 
 			<aon:outputLabel for="Campaign_type"
-				value="#{groupwareBundle.groupware_campaign_type}" />
+				value="#{bundle.groupware_campaign_type}" />
 			<aon:selectOneMenu id="Campaign_type" 
 				value="#{processWizard.type}">
 				<f:selectItem value="#{nullSelectItem.value}" />

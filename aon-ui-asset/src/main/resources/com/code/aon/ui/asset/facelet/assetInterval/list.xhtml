@@ -11,7 +11,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{assetBundle.asset_interval_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.asset_interval_module}" />
 				<ui:param name="controller" value="#{assetInterval}" />
 			</ui:decorate>
 
@@ -40,7 +40,7 @@
 						
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{assetBundle.asset_interval_interval}" />
+								<aon:outputText value="#{bundle.asset_interval_interval}" />
 							</f:facet>
 							<aon:outputText value="#{to.interval}" />
 						</aon:column>

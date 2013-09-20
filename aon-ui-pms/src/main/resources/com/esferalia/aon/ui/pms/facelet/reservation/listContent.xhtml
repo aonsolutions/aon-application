@@ -25,16 +25,16 @@
 												('aon-icon-point-green')))))}" 
 				value="&#160;&#160;&#160;&#160;"
 				title="#{(to.invoiced) ? 
-							(pmsBundle.pms_invoiced) :
+							(bundle.pms_invoiced) :
 							((to.cancelled) ?
-								(pmsBundle.pms_cancelled) :
+								(bundle.pms_cancelled) :
 								((to.blocked) ?
-									(pmsBundle.pms_blocked) :
+									(bundle.pms_blocked) :
 									((reservation.pendingRoomAssignation) ?
-										(pmsBundle.pms_room_assignation_pending_msg) :
+										(bundle.pms_room_assignation_pending_msg) :
 										((reservation.pendingServiceAssignation) ?
-											(pmsBundle.pms_service_assignation_pending_msg) :
-											(pmsBundle.pms_active)))))}" 
+											(bundle.pms_service_assignation_pending_msg) :
+											(bundle.pms_active)))))}" 
 				immediate="true" ajaxSingle="true" requestDelay="100"
 				action="#{rowSelectorAction}"
 				actionListener="#{rowSelectorActionListener}"
@@ -65,11 +65,11 @@
 											('aon-icon-no-show') : 
 											('')))}" 
 				title="#{(to.checkIn) ? 
-							(pmsBundle.pms_check_in) : 
+							(bundle.pms_check_in) : 
 							((to.checkOut) ? 
-								(pmsBundle.pms_check_out) : 
+								(bundle.pms_check_out) : 
 								((to.noShow) ? 
-									(pmsBundle.pms_no_show) : 
+									(bundle.pms_no_show) : 
 									('')))}" /> 
 		</aon:column>
 	</c:if>

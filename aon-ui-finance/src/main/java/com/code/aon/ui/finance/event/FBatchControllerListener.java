@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.event;
 
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DATE_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 
 import java.util.Date;
 
@@ -63,7 +62,7 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
                 Date oldDate = ((FinanceBatch)fBatchController.getManagerBean().getList(criteria).get(0)).getIssueDate();
                 if (oldDate.after(fBatch.getIssueDate())) {
                     fBatch.setIssueDate(oldDate);
-                    AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FINANCE_BATCH_DATE_ERROR);
+                    AonUtil.addErrorMessageFromBundle(FINANCE_BATCH_DATE_ERROR);
                 }
             } catch (ManagerBeanException e) {
                 LOGGER.error("Error obtaining FinanceBatch with id=" + fBatch.getId(), e);

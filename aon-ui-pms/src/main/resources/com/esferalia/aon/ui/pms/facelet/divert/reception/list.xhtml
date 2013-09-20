@@ -10,7 +10,7 @@
 		<aon:form id="divertReceptionList">
 			
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_divertReception_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_divertReception_module}" />
 				<ui:param name="controller" value="#{divertReception}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:decorate>
@@ -53,7 +53,7 @@
 					<aon:column alias="ProjectReservationDivert.divertHotel.workPlace.description"
 						styleClass="aon-editDataTable-textColumn aon-width-auto">
 						<f:facet name="header">
-							<aon:outputText value="#{warehouseBundle.warehouse_stock_target}" />
+							<aon:outputText value="#{bundle.warehouse_stock_target}" />
 						</f:facet>
 						<aon:outputText value="#{to.divertHotel.workPlace.description}" />
 					</aon:column>
@@ -80,7 +80,7 @@
 					<aon:column alias="ProjectReservationDivert.requestUser"
 						styleClass="aon-editDataTable-textColumn aon-width-auto">
 						<f:facet name="header">
-							<aon:outputLabel value="#{pmsBundle.pms_divert_request}" />
+							<aon:outputLabel value="#{bundle.pms_divert_request}" />
 						</f:facet>
 						<aon:outputText value="#{to.requestUser.name}" />
 					</aon:column>
@@ -88,7 +88,7 @@
 					<aon:column alias="ProjectReservationDivert.responseUser"
 						styleClass="aon-editDataTable-textColumn aon-width-auto">
 						<f:facet name="header">
-							<aon:outputLabel value="#{pmsBundle.pms_divert_response}" />
+							<aon:outputLabel value="#{bundle.pms_divert_response}" />
 						</f:facet>
 						<aon:outputText value="#{to.responseUser.name}" />
 					</aon:column>

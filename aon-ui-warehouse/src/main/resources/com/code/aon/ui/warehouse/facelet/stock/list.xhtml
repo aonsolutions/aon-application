@@ -12,7 +12,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_stock_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.warehouse_stock_module}" />
 				<ui:param name="controller" value="#{stock}" />
 				<ui:param name="skipResetButton" value="true" />
 				
@@ -32,14 +32,14 @@
 					</aon:htmlCommandLink>
 <!-- 					
 					<aon:htmlCommandLink id="stockWarehouseList-report"
-						value="#{warehouseBundle.warehouse_print_by_warehouse2}"
+						value="#{bundle.warehouse_print_by_warehouse2}"
 						action="#{report.onExecute}" target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="stockWarehouseList" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="stockItemList-report"
-						value="#{warehouseBundle.warehouse_print_by_item2}"
+						value="#{bundle.warehouse_print_by_item2}"
 						action="#{report.onExecute}" target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="stockItemList" />

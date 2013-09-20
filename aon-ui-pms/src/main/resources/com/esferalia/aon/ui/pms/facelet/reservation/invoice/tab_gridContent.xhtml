@@ -51,8 +51,8 @@
 			<aon:outputText value="#{bundle.aon_source}" />
 		</f:facet>
 		<aon:outputText value="#{bundle.aon_reservation}" rendered="#{!to.service and !to.advance}" />
-		<aon:outputText value="#{financeBundle.finance_service}" rendered="#{to.service}" />
-		<aon:outputText value="#{financeBundle.finance_money_advance}" rendered="#{to.advance}" />
+		<aon:outputText value="#{bundle.finance_service}" rendered="#{to.service}" />
+		<aon:outputText value="#{bundle.finance_money_advance}" rendered="#{to.advance}" />
 		<c:if test="#{showGoToReservation}">
 			<aon:commandLink id="reservationLink" immediate="true"
 				styleClass="aon-button-goto"
@@ -75,7 +75,7 @@
 		<aon:div rendered="#{to.rectifier}">
 			<aon:outputText value="#{to.rectificationType}" />
 			<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
-				<aon:outputFormat value="#{financeBundle.finance_invoice_rectifier_message2}" styleClass="aon-bold aon-label-error">
+				<aon:outputFormat value="#{bundle.finance_invoice_rectifier_message2}" styleClass="aon-bold aon-label-error">
 					<f:param value="#{to.rectificationInvoice.referenceCode}" />
 				</aon:outputFormat>
 			</rich:toolTip>
@@ -83,7 +83,7 @@
 		<aon:div rendered="#{to.rectified}">
 			<aon:outputText value="#{to.rectificationType}" />
 			<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
-				<aon:outputFormat value="#{financeBundle.finance_invoice_rectified_message2}" styleClass="aon-bold">
+				<aon:outputFormat value="#{bundle.finance_invoice_rectified_message2}" styleClass="aon-bold">
 					<f:param value="#{to.rectificationInvoicesString}" />
 				</aon:outputFormat>
 			</rich:toolTip>
@@ -102,7 +102,7 @@
 	<c:if test="#{showFinanceStatus}">
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 			<f:facet name="header">
-				<aon:outputText value="#{financeBundle.finance_checking_finance_status_abbrv}" />
+				<aon:outputText value="#{bundle.finance_checking_finance_status_abbrv}" />
 			</f:facet>
 			<aon:outputText value="#{to.invoiceFinanceStatus}"/>
 		</aon:column>
@@ -124,7 +124,7 @@
 		<c:if test="#{!skipRectifyButton}">
 			<aon:commandButton id="reservationInvoice-rectify"
 				styleClass="aon-icon-removed aon-noborder"
-				value="&#160;" title="#{pmsBundle.pms_to_return_label}"
+				value="&#160;" title="#{bundle.pms_to_return_label}"
 				rendered="#{to.noRectification and (!to.advance or !reservation.to.invoiced) and (aonRole.financeOperator or (to.service and to.allCommercialProducts))}"
 				actionListener="#{controller.onRectifyInvoiceShow}"
 				reRender="showRectificationWindow">
@@ -133,7 +133,7 @@
 			</aon:commandButton>
 			<aon:commandButton id="reservationInvoice-modify"
 				styleClass="aon-icon-edit aon-noborder"
-				value="&#160;" title="#{pmsBundle.pms_to_modify_invoice_label}"
+				value="&#160;" title="#{bundle.pms_to_modify_invoice_label}"
 				rendered="#{to.noRectification and (to.service or reservation.to.guestHolder)}"
 				actionListener="#{controller.onModifyInvoiceShow}"
 				reRender="showModificationWindow">

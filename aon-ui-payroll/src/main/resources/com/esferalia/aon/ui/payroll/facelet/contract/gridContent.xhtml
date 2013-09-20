@@ -12,7 +12,7 @@
 					  ,aon-panelGrid-even aon-width-auto
 					  ,aon-panelGrid-even aon-width-250">
 	
-		<aon:outputText value="#{registryBundle.registry_person}" />
+		<aon:outputText value="#{bundle.registry_person}" />
 		<aon:div> 
 			<aon:outputText value="#{contract.to.person.registry.document}" />
 			<aon:outputText value=" - " />
@@ -55,7 +55,7 @@
 -->			
 		</aon:div>
 
-		<aon:outputText value="#{payrollBundle.payroll_salary_ss_number2}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{bundle.payroll_salary_ss_number2}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:outputText value="#{contract.to.person.socialSecurityNumber}"  style="margin-left: 50px;"/>
 		<aon:div>
 			<aon:outputText value="#{contract.to.status}" style="padding-left: 20px;" styleClass="aon-icon-point-orange" rendered="#{contract.to.pending}"/>	
@@ -85,7 +85,7 @@
 		</aon:div>
 		<aon:outputText value="&#160;" />
 
-		<aon:outputText value="#{companyBundle.company_enterprise_ccc}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{bundle.company_enterprise_ccc}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:outputText value="#{contract.to.enterpriseCCC.ccc}"  style="margin-left: 50px;"/>
 		<aon:outputText value="&#160;" />
 		
@@ -104,14 +104,14 @@
 		</aon:div>
 		<aon:outputText value="&#160;" />
 
-		<aon:outputText value="#{payrollBundle.payroll_salary_seniority_date2}" />
+		<aon:outputText value="#{bundle.payroll_salary_seniority_date2}" />
 		<aon:outputText value="#{contract.to.seniorityDate}" >
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>		
 		<aon:outputText value="&#160;" />
 		
-		<aon:outputText value="#{payrollBundle.payroll_salary_registration}"/>
+		<aon:outputText value="#{bundle.payroll_salary_registration}"/>
 		<aon:outputText value="#{contract.to.registration}"/>
 		<aon:outputText value="&#160;" />
 	</aon:panelGrid>
@@ -130,7 +130,7 @@
 				actionListener="#{contract.onShowVariables}"
 				action="contractData_list"
 				styleClass="aon-dataTable-link #{variablesSelected?'aon-bold':''}"
-				value="#{payrollBundle.payroll_contract_data_variables}" />
+				value="#{bundle.payroll_contract_data_variables}" />
 		</aon:div>	
 
 		<aon:div>
@@ -139,7 +139,7 @@
 				actionListener="#{contract.onShowPayments}"
 				styleClass="aon-dataTable-link #{paymentsSelected?'aon-bold':''}"
 				action="contractPayment_list"
-				value="#{payrollBundle.payroll_salary_payments_tab}" />
+				value="#{bundle.payroll_salary_payments_tab}" />
 		</aon:div>	
 
 		<aon:div>
@@ -148,7 +148,7 @@
 				actionListener="#{contract.onShowDeductions}"
 				styleClass="aon-dataTable-link #{deductionsSelected?'aon-bold':''}"
 				action="contractDeduction_list"
-				value="#{payrollBundle.payroll_salary_deductions_tab}" />
+				value="#{bundle.payroll_salary_deductions_tab}" />
 		</aon:div>	
 
 		<aon:div>
@@ -157,7 +157,7 @@
 				actionListener="#{contract.onShowBonus}"
 				styleClass="aon-dataTable-link #{bonusSelected?'aon-bold':''}"
 				action="contractBonus_list"
-				value="#{payrollBundle.payroll_salary_bonus_tab}" />
+				value="#{bundle.payroll_salary_bonus_tab}" />
 		</aon:div>	
 
 		<aon:div>
@@ -166,7 +166,7 @@
 				actionListener="#{contract.onShowEmbargos}"
 				styleClass="aon-dataTable-link #{embargosSelected?'aon-bold':''}"
 				action="contractEmbargo_list"
-				value="#{payrollBundle.payroll_salary_embargos_tab}" />
+				value="#{bundle.payroll_salary_embargos_tab}" />
 		</aon:div>	
 
 		<aon:outputText value="&#160;" />

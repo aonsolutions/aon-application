@@ -10,7 +10,7 @@
 		<aon:form id="domainSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{adminBundle.admin_users} (#{adminDomain.to.name})" />
+				<ui:param name="toolbarTitle" value="#{bundle.admin_users} (#{adminDomain.to.name})" />
 				<ui:param name="controller" value="#{domainUser}" />
 				<ui:param name="skipResetButton" value="#{domainUser.skipUserReset}" />
 			</ui:include>

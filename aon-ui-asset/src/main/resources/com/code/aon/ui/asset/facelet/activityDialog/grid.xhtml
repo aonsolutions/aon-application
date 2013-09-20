@@ -42,7 +42,7 @@
  				
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{assetBundle.asset_fromTime}" />
+							<aon:outputText value="#{bundle.asset_fromTime}" />
 						</f:facet>
 						<aon:outputText value="#{to.fromTime}" rendered="#{to!=activityBasic.to}"
 							size="5" >
@@ -55,19 +55,19 @@
 								<f:selectItems value="#{activityDialog.hours}" />
 							</aon:selectOneMenu>
 							<aon:outputLabel 
-								value="#{assetBundle.asset_hours}" />
+								value="#{bundle.asset_hours}" />
 							<aon:selectOneMenu id="fromTimeMins" 
 								value="#{activityBasic.fromTimeMins}">
 								<f:selectItems value="#{activityDialog.mins}" />
 							</aon:selectOneMenu>
 							<aon:outputLabel
-								value="#{assetBundle.asset_minutes}" />
+								value="#{bundle.asset_minutes}" />
 						</aon:div>
 					</aon:column>
 					
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{assetBundle.asset_toTime}" />
+							<aon:outputText value="#{bundle.asset_toTime}" />
 						</f:facet>
 						<aon:outputText value="#{to.toTime}" rendered="#{to!=activityBasic.to}"
 							size="5" >
@@ -80,13 +80,13 @@
 								<f:selectItems value="#{activityDialog.hours}" />
 							</aon:selectOneMenu>
 							<aon:outputLabel 
-								value="#{assetBundle.asset_hours}" />
+								value="#{bundle.asset_hours}" />
 							<aon:selectOneMenu id="toTimeMins" 
 								value="#{activityBasic.toTimeMins}">
 								<f:selectItems value="#{activityDialog.mins}" />
 							</aon:selectOneMenu>
 							<aon:outputLabel
-								value="#{assetBundle.asset_minutes}" />
+								value="#{bundle.asset_minutes}" />
 						</aon:div>
 					</aon:column>
 					

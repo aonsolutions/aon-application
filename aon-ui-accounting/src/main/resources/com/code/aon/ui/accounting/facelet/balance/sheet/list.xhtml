@@ -17,7 +17,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_balance_sheet}" />
+					value="#{bundle.accounting_balance_sheet}" />
 				<ui:param name="skipResetButton" value="true" />
 
 				<ui:define name="toolbarActions">
@@ -107,7 +107,7 @@
 								styleClass="aon-dataTable-link"
 								actionListener="#{balanceSheet.onAccountStatement}"
 								style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}"
-								title="#{accountingBundle.accounting_statement_module}"
+								title="#{bundle.accounting_statement_module}"
 								action="accountStatement_account_list">
 								<aon:outputText value="#{to.amount}">
 									<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
@@ -132,7 +132,7 @@
 								styleClass="aon-dataTable-link"
 								actionListener="#{balanceSheet.onAccountPreviousStatement}"
 								style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}"
-								title="#{accountingBundle.accounting_statement_module}"
+								title="#{bundle.accounting_statement_module}"
 								action="accountStatement_account_list">
 								<aon:outputText value="#{to.previousAmount}">
 									<f:convertNumber pattern="#,##0.00;(#,##0.00)" />

@@ -63,7 +63,7 @@
 	</c:if>
 	
 	<aon:outputLabel for="Course_courseSubject_id"
-		value="#{academyBundle.academy_subject}" />
+		value="#{bundle.academy_subject}" />
 	<aon:selectOneMenu id="Course_courseSubject_id"
 		value="#{academyCollections.courseSubject}"
 		valueChangeListener="#{controller.addIdEqualExpression}">
@@ -72,7 +72,7 @@
 	</aon:selectOneMenu>					
 
 	<aon:outputLabel for="Course_courseLevel_id"
-		value="#{academyBundle.academy_level}" />
+		value="#{bundle.academy_level}" />
 	<aon:selectOneMenu id="Course_courseLevel_id"
 		value="#{academyCollections.courseLevel}"
 		valueChangeListener="#{controller.addIdEqualExpression}">

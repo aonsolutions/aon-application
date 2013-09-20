@@ -28,7 +28,7 @@
 			<aon:column alias="TrainingCourse.occupationName"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="TrainingCourse_occupationName" value="#{payrollBundle.payroll_trainingCourse_occupationName}" />
+					<aon:outputLabel for="TrainingCourse_occupationName" value="#{bundle.payroll_trainingCourse_occupationName}" />
 				</f:facet>
 				<aon:outputText value="#{to.occupationName}" rendered="#{formList}"
 					title="#{to.occupationName}" >
@@ -45,7 +45,7 @@
 			<aon:column alias="TrainingCourse.certificationName"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="TrainingCourse_certificationName" value="#{payrollBundle.payroll_trainingCourse_certificationName}" />
+					<aon:outputLabel for="TrainingCourse_certificationName" value="#{bundle.payroll_trainingCourse_certificationName}" />
 				</f:facet>
 				<aon:outputText value="#{to.certificationName}" rendered="#{formList}" 
 					title="#{to.certificationName}" >
@@ -62,7 +62,7 @@
 			<aon:column alias="TrainingCourse.fpTitleName"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="TrainingCourse_fpTitleName" value="#{payrollBundle.payroll_trainingCourse_fpTitleName}" />
+					<aon:outputLabel for="TrainingCourse_fpTitleName" value="#{bundle.payroll_trainingCourse_fpTitleName}" />
 				</f:facet>
 				<aon:outputText value="#{to.fpTitleName}" rendered="#{formList}" >
 					<aon:abbreviateConverter maxWidth="35" />
@@ -79,7 +79,7 @@
 			<aon:column alias="TrainingCourse.CNO.title"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="CNO_id" value="#{payrollBundle.payroll_contract_cno}" />
+					<aon:outputLabel for="CNO_id" value="#{bundle.payroll_contract_cno}" />
 				</f:facet>
 				<aon:outputText value="#{to.CNO.fullDescription}" rendered="#{formList}" >
 					<aon:abbreviateConverter maxWidth="40" />
@@ -104,7 +104,7 @@
 			<aon:column alias="TrainingCourse.modality" 
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="TrainingCourse_modality" value="#{payrollBundle.payroll_trainingCourse_modality}" />
+					<aon:outputLabel for="TrainingCourse_modality" value="#{bundle.payroll_trainingCourse_modality}" />
 				</f:facet>
 				<aon:outputText value="#{to.modality}" rendered="#{formList}" />
 				<aon:selectOneMenu id="TrainingCourse_modality" styleClass="aon-noborder" 
@@ -124,7 +124,7 @@
   			<aon:column alias="TrainingCourse.professionalCertificate"
   				 styleClass="aon-editDataTable-iconColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="TrainingCourse_professionalCertificate" value="#{payrollBundle.payroll_trainingCourse_professionalCertificate}" />
+					<aon:outputLabel for="TrainingCourse_professionalCertificate" value="#{bundle.payroll_trainingCourse_professionalCertificate}" />
 				</f:facet>
 				<aon:div rendered="#{formList}" styleClass="#{to.professionalCertificate?'aon-icon-checked':'aon-icon-check'}">
 					<aon:outputText value="&#160;" />
@@ -140,7 +140,7 @@
   			<aon:column alias="TrainingCourse.fpTitle"
   				 styleClass="aon-editDataTable-iconColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="TrainingCourse_fpTitle" value="#{payrollBundle.payroll_trainingCourse_fpTitle}" />
+					<aon:outputLabel for="TrainingCourse_fpTitle" value="#{bundle.payroll_trainingCourse_fpTitle}" />
 				</f:facet>
 				<aon:div rendered="#{formList}" styleClass="#{to.fpTitle?'aon-icon-checked':'aon-icon-check'}">
 					<aon:outputText value="&#160;" />
@@ -156,7 +156,7 @@
   			<aon:column alias="TrainingCourse.centerAvailable" 
   				 styleClass="aon-editDataTable-iconColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="TrainingCourse_centerAvailable" value="#{payrollBundle.payroll_trainingCourse_centerAvailable}" />
+					<aon:outputLabel for="TrainingCourse_centerAvailable" value="#{bundle.payroll_trainingCourse_centerAvailable}" />
 				</f:facet>
 				<aon:div rendered="#{formList}" styleClass="#{to.centerAvailable?'aon-icon-checked':'aon-icon-check'}">
 					<aon:outputText value="&#160;" />

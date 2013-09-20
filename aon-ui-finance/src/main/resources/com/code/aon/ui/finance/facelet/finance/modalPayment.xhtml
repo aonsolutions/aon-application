@@ -37,7 +37,7 @@
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="financePayment-payment"
-										value="#{(finance.payment) ? (financeBundle.finance_to_pay) : (financeBundle.finance_to_charge)}"
+										value="#{(finance.payment) ? (bundle.finance_to_pay) : (bundle.finance_to_charge)}"
 										reRender="showFinancePaymentWindow,financeForm"
 										actionListener="#{finance.onFinancePayment}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
@@ -103,7 +103,7 @@
 
 										<c:if test="#{aonRole.accountingOperator}">
 											<aon:outputLabel for="Finance_record"
-												value="#{financeBundle.finance_record}" />
+												value="#{bundle.finance_record}" />
 											<aon:selectOneRadio id="Finance_record" 
 												value="#{finance.paymentRecordable}">
 												<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />

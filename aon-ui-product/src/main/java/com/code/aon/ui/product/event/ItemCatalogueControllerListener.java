@@ -1,6 +1,5 @@
 package com.code.aon.ui.product.event;
 
-import static com.code.aon.ui.common.ICommonMessages.PRODUCT_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.PRODUCT_DEFINED_FOR_CATALOGUE_ERROR;
 
 import java.util.List;
@@ -47,7 +46,7 @@ public class ItemCatalogueControllerListener extends ControllerAdapter implement
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_ID), catalogueItem.getItem().getId());
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), catalogueItem.getCatalogue().getId());
 			if (bean.getCount(criteria) > 0) {
-				throw new ControllerListenerException(AonUtil.getMessage(PRODUCT_BUNDLE, PRODUCT_DEFINED_FOR_CATALOGUE_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(PRODUCT_DEFINED_FOR_CATALOGUE_ERROR));
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

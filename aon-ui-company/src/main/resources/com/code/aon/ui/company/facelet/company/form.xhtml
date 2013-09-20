@@ -14,7 +14,7 @@
 		<aon:form id="companyForm">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle"
-					value="#{companyBundle.company_data_module}" />
+					value="#{bundle.company_data_module}" />
 				<ui:param name="toolbarDescription"
 					value="#{formNew?(bundle.aon_reset):(bundle.aon_editing)}" />
 				<ui:define name="toolbarContent">
@@ -39,7 +39,7 @@
 				columnClasses="aon-width-half-plus aon-vertical-align-top,aon-width-half-minus aon-vertical-align-top">
 				<aon:div styleClass="aon-group">
 					<aon:div styleClass="aon-group-title">
-						<aon:outputText value="#{companyBundle.company_data_module}"/>
+						<aon:outputText value="#{bundle.company_data_module}"/>
 					</aon:div>
 					<aon:div styleClass="aon-group-body"> 
 						<aon:div styleClass="aon-group-body-internal">
@@ -55,13 +55,13 @@
 				<aon:div>
 					<aon:div styleClass="aon-group">
 						<aon:div styleClass="aon-group-title">
-							<aon:outputText value="#{companyBundle.company_logo_and_signature}"/>
+							<aon:outputText value="#{bundle.company_logo_and_signature}"/>
 						</aon:div>
 						<aon:div styleClass="aon-group-body"> 
 							<aon:div styleClass="aon-group-body-internal">
 								<aon:panelGrid columns="4" style="width:100%">
 									<aon:outputLabel for="attach_file"
-										value="#{companyBundle.company_logo}" />
+										value="#{bundle.company_logo}" />
 									<a4j:region>
 										<h:panelGrid id="attachGrid" columns="2">
 											<a4j:mediaOutput element="img" cacheable="false"
@@ -123,33 +123,33 @@
 	
 												<c:if test="#{aonConfiguration.bean.company.showEInvoice}">
 													<aon:outputLabel for="Company_EInvoice"
-														value="#{companyBundle.company_eInvoice}" />
+														value="#{bundle.company_eInvoice}" />
 													<aon:selectBooleanCheckbox id="Company_EInvoice"
 														reRender="companyOtherData" ajaxSingle="false"
 														value="#{company.to.EInvoice}" />
 			
 													<aon:outputLabel for="Company_smartCard"
 														rendered="#{company.to.EInvoice}"
-														value="#{companyBundle.company_smartCard}" />
+														value="#{bundle.company_smartCard}" />
 													<aon:selectBooleanCheckbox id="Company_smartCard"
 														rendered="#{company.to.EInvoice}"
 														value="#{company.smartCard}" />
 												</c:if>		
 													
 												<aon:outputLabel for="Company_print_header"
-													value="#{companyBundle.company_print_header}" />
+													value="#{bundle.company_print_header}" />
 												<aon:selectBooleanCheckbox id="Company_print_header"
 													value="#{company.printHeader}" />
 												
 												<aon:outputLabel for="Company_print_record_data"
-													value="#{companyBundle.company_print_record_data}" />
+													value="#{bundle.company_print_record_data}" />
 												<aon:selectBooleanCheckbox id="Company_print_record_data"
 													value="#{company.printRecordData}" />
 											</aon:panelGrid>
 											<c:if test="#{aonConfiguration.bean.company.showSaleInvoiceReportParams}">
 												<aon:panelGrid columns="2" style="width:100%">
 													<aon:outputLabel for="Company_invoice_template"
-														value="#{companyBundle.company_saleInvoice_template}" />
+														value="#{bundle.company_saleInvoice_template}" />
 													<c:if test="#{!company.customReportTemplate}">
 														<aon:selectOneMenu id="Company_invoice_template"
 															value="#{company.saleInvoiceTemplate}" >
@@ -158,44 +158,44 @@
 													</c:if>
 													<c:if test="#{company.customReportTemplate}">
 														<aon:outputText id="Company_invoice_template"
-															value="#{companyBundle.company_custom_template}" />
+															value="#{bundle.company_custom_template}" />
 													</c:if>
 														
 													<aon:outputLabel for="Company_print_logo"
-														value="#{companyBundle.company_print_logo}" />
+														value="#{bundle.company_print_logo}" />
 													<aon:selectBooleanCheckbox id="Company_print_logo"
 														value="#{company.printLogo}" />
 														
 													<aon:outputLabel for="Company_print_name"
-														value="#{companyBundle.company_print_name}" />
+														value="#{bundle.company_print_name}" />
 													<aon:selectOneMenu id="Company_print_name"
 														value="#{company.printName}" >
 														<f:selectItems value="#{companyCollections.reportPrintOptions}" />
 													</aon:selectOneMenu>
 														
 													<aon:outputLabel for="Company_print_nif"
-														value="#{companyBundle.company_print_nif}" />
+														value="#{bundle.company_print_nif}" />
 													<aon:selectOneMenu id="Company_print_nif"
 														value="#{company.printNif}" >
 														<f:selectItems value="#{companyCollections.reportPrintOptions}" />
 													</aon:selectOneMenu>
 														
 													<aon:outputLabel for="Company_print_address"
-														value="#{companyBundle.company_print_address}" />
+														value="#{bundle.company_print_address}" />
 													<aon:selectOneMenu id="Company_print_address"
 														value="#{company.printAddress}" >
 														<f:selectItems value="#{companyCollections.shortReportPrintOptions}" />
 													</aon:selectOneMenu>
 														
 													<aon:outputLabel for="Company_print_internet_data"
-														value="#{companyBundle.company_print_internet_data}" />
+														value="#{bundle.company_print_internet_data}" />
 													<aon:selectOneMenu id="Company_print_internet_data"
 														value="#{company.printInternetData}">
 														<f:selectItems value="#{companyCollections.shortReportPrintOptions}" />
 													</aon:selectOneMenu>
 													
 													<aon:outputLabel for="Company_print_saleInvoice_footer"
-														value="#{companyBundle.company_saleInvoice_footer_text}" />
+														value="#{bundle.company_saleInvoice_footer_text}" />
 													<aon:selectBooleanCheckbox id="Company_print_saleInvoice_footer"
 														value="#{company.printSaleInvoiceFooter}" />
 												</aon:panelGrid>
@@ -212,24 +212,24 @@
 	 		<c:if test="#{aonConfiguration.bean.company.showPanelTabSet}">
 				<aon:div styleClass="aon-scroll-area">
 					<aon:panelTabSet>
-						<aon:panelTab label="#{registryBundle.registry_addresses}">
+						<aon:panelTab label="#{bundle.registry_addresses}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="skipTypeColumn" value="true" />
 								<ui:param name="controller" value="#{companyAddress}" />
 							</ui:include>
 						</aon:panelTab>
-						<aon:panelTab label="#{companyBundle.company_workplaces}">
+						<aon:panelTab label="#{bundle.company_workplaces}">
 							<ui:include	src="/com/code/aon/ui/company/facelet/workplace/tab_grid.xhtml" >
 								<ui:param name="controller" value="#{companyWorkPlace}" />
 								<ui:param name="showPayrollData" value="#{false}" />
 							</ui:include>
 						</aon:panelTab>
 						<c:if test="#{aonConfiguration.bean.company.showRegistryBank}">
-							<aon:panelTab label="#{registryBundle.registry_banks_module}">
+							<aon:panelTab label="#{bundle.registry_banks_module}">
 								<aon:panel>
 									<f:facet name="header">
 										<aon:outputText
-											value="#{registryBundle.registry_banks_module}" />
+											value="#{bundle.registry_banks_module}" />
 									</f:facet>
 									<ui:include src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
 										<ui:param name="controller" value="#{companyRbank}" />
@@ -238,7 +238,7 @@
 								</aon:panel>
 								<aon:panel>
 									<f:facet name="header">
-										<aon:outputText value="#{configBundle.config_predef_paymethod}" />
+										<aon:outputText value="#{bundle.config_predef_paymethod}" />
 									</f:facet>
 									<ui:include src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
 										<ui:param name="controller" value="#{companyRPayMethod}" />
@@ -246,7 +246,7 @@
 								</aon:panel>
 							</aon:panelTab>
 						</c:if>				
-						<aon:panelTab label="#{registryBundle.registry_rd_module}">
+						<aon:panelTab label="#{bundle.registry_rd_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/record_data/tab_include.xhtml">
 								<ui:param name="controller" value="#{companyRecordData}" />
 							</ui:include>
@@ -254,7 +254,7 @@
 						
 						<c:if test="#{aonConfiguration.bean.company.showDirStaff}">
 							<aon:panelTab id="dirStaff"
-								label="#{registryBundle.registry_dir_staff}">
+								label="#{bundle.registry_dir_staff}">
 								<aon:div rendered="#{true}">
 									<ui:include	src="/com/code/aon/ui/registry/facelet/rdirstaff/tab_grid.xhtml">
 										<ui:param name="controller" value="#{companyDirStaff}" />
@@ -264,7 +264,7 @@
 						</c:if>
 										
 						<c:if test="#{aonConfiguration.bean.company.showDigitalCertificate}">
-							<aon:panelTab label="#{registryBundle.registry_digital_certificates}">
+							<aon:panelTab label="#{bundle.registry_digital_certificates}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
 									<ui:param name="controller" value="#{companyCertificate}" />
 									<ui:param name="skipCategoryColumn" value="#{true}" />
@@ -273,7 +273,7 @@
 						</c:if>
 
 						<c:if test="#{company.printSaleInvoiceFooter}">
-							<aon:panelTab label="#{companyBundle.company_saleInvoice_footer_text}">
+							<aon:panelTab label="#{bundle.company_saleInvoice_footer_text}">
 								<ui:include src="/com/code/aon/ui/company/facelet/saleInvoiceFooter/tab_grid.xhtml">
 									
 								</ui:include>
@@ -281,7 +281,7 @@
 						</c:if>
 						
 						<c:if test="#{actionDenied.moduleEnabled['pos']}">
-							<aon:panelTab label="#{financeBundle.finance_posInvoice_params}"
+							<aon:panelTab label="#{bundle.finance_posInvoice_params}"
 								actionListener="#{posInvoiceParams.onInit}">
 								<ui:include src="/com/code/aon/ui/finance/facelet/posInvoiceParams/tab_grid.xhtml" />
 							</aon:panelTab>

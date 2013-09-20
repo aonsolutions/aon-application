@@ -64,7 +64,7 @@
 
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<h:outputText value="#{configBundle.config_bank_selection}" />
+						<h:outputText value="#{bundle.config_bank_selection}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -90,7 +90,7 @@
 								requestDelay="100" actionListener="#{wizard.inputChanged}" />
 						</aon:inputText>
 
-						<aon:outputText value="#{configBundle.config_bank_code}" />
+						<aon:outputText value="#{bundle.config_bank_code}" />
 						<aon:div>
 							<aon:inputText value="#{wizard.code}" size="20">
 								<a4j:support event="onchange" ajaxSingle="true"

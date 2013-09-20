@@ -31,7 +31,7 @@
 			<aon:selectBooleanCheckbox id="ApplicationUser_active"
 				value="#{controller.to.active}" />
 					
-			<aon:outputText value="#{adminBundle.admin_profiles}" />
+			<aon:outputText value="#{bundle.admin_profiles}" />
 			<a4j:repeat value="#{appUser.userProfiles}" var="userProfile">
 				<aon:div>
 					<aon:selectBooleanCheckbox value="#{userProfile.checked}" />								

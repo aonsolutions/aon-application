@@ -1,6 +1,6 @@
 package com.code.aon.faces.controller;
 
-import static com.code.aon.faces.controller.IRichConstants.SEARCH_NO_RESULTS;
+import static com.code.aon.ui.common.ICommonMessages.SEARCH_NO_RESULTS;
 
 import java.io.Serializable;
 import java.util.Collections;

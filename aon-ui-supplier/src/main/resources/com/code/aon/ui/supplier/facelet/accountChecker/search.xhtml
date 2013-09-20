@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="accountCheckerForm">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{supplierBundle.supplier_account_checker_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.supplier_account_checker_module}" />
 				<ui:param name="controller" value="#{supplierAccountChecker}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
@@ -38,7 +38,7 @@
 						<aon:selectBooleanCheckbox id="Supplier_showEmptyAccountsOnly"
 							value="#{supplierAccountCheckerSearch.showEmptyAccountsOnly}" />
 						<aon:outputLabel for="Supplier_showEmptyAccountsOnly" 
-							value="#{supplierBundle.supplier_account_checker_show_empty_accounts_only}" />
+							value="#{bundle.supplier_account_checker_show_empty_accounts_only}" />
 					</aon:div>
 				</ui:define>
 			</ui:decorate>

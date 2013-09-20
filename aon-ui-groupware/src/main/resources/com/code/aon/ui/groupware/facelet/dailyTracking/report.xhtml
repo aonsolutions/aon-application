@@ -13,7 +13,7 @@
 				<aon:panelGrid columns="3" dir="true" columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 					<aon:div styleClass="aon-finding-title-internal">
 						<aon:outputText value="#{bundle.aon_reports}: " />
-						<aon:outputText value="#{groupwareBundle.aon_daily_tracking_module}" />
+						<aon:outputText value="#{bundle.aon_daily_tracking_module}" />
 					</aon:div>
 					<aon:div styleClass="aon-finding-subtitle-internal">
 						<aon:outputText value="#{bundle.aon_editing}" />
@@ -95,7 +95,7 @@
 					</aon:div>
 
 					<aon:outputLabel for="jobType"
-						value="#{groupwareBundle.groupware_job_type}"/>
+						value="#{bundle.groupware_job_type}"/>
 					<aon:selectOneMenu id="jobType"
 						reRender="jobType"
 						value="#{dailyTrackingReport.params.jobType}">
@@ -107,7 +107,7 @@
 					<aon:panelGrid columns="2"
 						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
 					
-						<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
+						<aon:outputLabel for="Registry_id" value="#{bundle.project_assigned}"/>
 						<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
 							<ui:param name="lookupTo" value="#{dailyTrackingReport.params.registry}" />
 							<ui:param name="skipLabel" value="#{true}" />
@@ -126,7 +126,7 @@
 								ajaxSingle="true" />
 						</aon:selectOneMenu>
 						
-						<aon:outputLabel for="DailyTracking_activityType" value="#{projectBundle.project_activity_type}"/>
+						<aon:outputLabel for="DailyTracking_activityType" value="#{bundle.project_activity_type}"/>
 						<aon:selectOneMenu id="DailyTracking_activityType"
 							value="#{dailyTrackingReport.params.activityType}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
@@ -134,7 +134,7 @@
 						</aon:selectOneMenu>
 					</aon:panelGrid>
 
-					<aon:outputLabel for="project_type" value="#{projectBundle.project_project_type}"/>
+					<aon:outputLabel for="project_type" value="#{bundle.project_project_type}"/>
 					<aon:selectOneMenu id="project_type"
 						value="#{dailyTrackingReport.params.projectType}">
 						<f:selectItem itemLabel="-" value="#{null}" />

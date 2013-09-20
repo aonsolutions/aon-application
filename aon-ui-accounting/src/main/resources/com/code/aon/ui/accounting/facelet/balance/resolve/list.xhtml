@@ -15,7 +15,7 @@
 
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
-				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_balance_sheet}" />
+				<ui:param name="toolbarTitle" value="#{bundle.accounting_balance_sheet}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:define name="toolbarActions">
 					<aon:methodParam name="searchActionListener" value="#{balanceSheetResolver.onReset}" type="actionListener" />

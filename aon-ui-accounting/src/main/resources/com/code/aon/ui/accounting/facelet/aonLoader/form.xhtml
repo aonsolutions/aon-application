@@ -16,12 +16,12 @@
     		<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="#{accountingBundle.aon_loader_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_loader_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="execute"
-						value="#{accountingBundle.aon_loader_load}"
+						value="#{bundle.aon_loader_load}"
 						actionListener="#{aonLoader.onShowPanel}"
 						rendered="#{aonLoader.aonFile.size > 0}"
 						reRender="showLoadMessageWindow"
@@ -88,7 +88,7 @@
 									value="#{aonLoader.params.documentValidable}" />
 								<aon:outputLabel
 									for="aonLoader_documentValid"
-									value="#{accountingBundle.aon_loader_document}" />
+									value="#{bundle.aon_loader_document}" />
 							</aon:div>
 						
 	
@@ -144,7 +144,7 @@
 				</rich:modalPanel>
 				<ui:param name="closeButtonReRender" value="showLoadMessageWindow" />
 				<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
-					<ui:param name="logPanelTitle" value="#{accountingBundle.aon_loader_module}" />
+					<ui:param name="logPanelTitle" value="#{bundle.aon_loader_module}" />
 					<ui:param name="pollInterval" value="2000" />
 				</ui:include>		
 			</c:if>

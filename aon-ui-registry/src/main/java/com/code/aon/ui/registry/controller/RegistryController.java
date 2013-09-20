@@ -8,7 +8,6 @@ import static com.code.aon.ui.common.ICommonMessages.BANK_ACCOUNT;
 import static com.code.aon.ui.common.ICommonMessages.BLOCKED;
 import static com.code.aon.ui.common.ICommonMessages.CELLULAR;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_NAME;
-import static com.code.aon.ui.common.ICommonMessages.CONFIG_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.DOCUMENT;
 import static com.code.aon.ui.common.ICommonMessages.ENTITY;
 import static com.code.aon.ui.common.ICommonMessages.FAX;
@@ -17,7 +16,6 @@ import static com.code.aon.ui.common.ICommonMessages.INACTIVE;
 import static com.code.aon.ui.common.ICommonMessages.PAY_METHOD;
 import static com.code.aon.ui.common.ICommonMessages.PHONE;
 import static com.code.aon.ui.common.ICommonMessages.POSTAL_CODE;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.REGISTRY_CITY;
 import static com.code.aon.ui.common.ICommonMessages.REGISTRY_DAYS_BETWEEN_PAYMENTS;
 import static com.code.aon.ui.common.ICommonMessages.REGISTRY_DAYS_TO_FIRST_PAYMENT;
@@ -251,7 +249,7 @@ public class RegistryController extends BasicController {
 			criteria.addEqualExpression(preffix + ".documentCountry", registry.getDocumentCountry());
 			List<ITransferObject> list = bean.getList(criteria);
 			if (list.size() > 0 ) {
-				String msg = AonUtil.getMessage(REGISTRY_BUNDLE, REGISTRY_DOCUMENT_ERROR); 
+				String msg = AonUtil.getMessage(REGISTRY_DOCUMENT_ERROR); 
 				AonUtil.addWarningMessage(msg + " " + registry.getDocument());
 			}
 		}
@@ -364,24 +362,24 @@ public class RegistryController extends BasicController {
 		+",r.document_country,r.document) AS CHAR) `" + AonUtil.getMessage(DOCUMENT) + "`"
 	 	+",r.name `" + AonUtil.getMessage(COMPANY_NAME) + "`"
 		+",r.alias `" + AonUtil.getMessage(ALIAS) + "`"
-		+",r.nationality `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_NATIONALITY) + "`"
+		+",r.nationality `" + AonUtil.getMessage(REGISTRY_NATIONALITY) + "`"
 		+",CAST( CONCAT_WS(' ',ra.street_type,ra.address,ra.number,ra.address2,ra.address3) AS CHAR) `" + AonUtil.getMessage(ADDRESS) + "`"
-		+",ra.city `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_CITY) + "`"
+		+",ra.city `" + AonUtil.getMessage(REGISTRY_CITY) + "`"
 		+",ra.zip `" + AonUtil.getMessage(POSTAL_CODE) + "`"
 		+",gz.code `Id " + AonUtil.getMessage(STATE) + "`"
 		+",gz.name `" + AonUtil.getMessage(STATE) + "`"
 		+",(SELECT rm1.value FROM rmedia rm1 WHERE r.id = rm1.registry  AND rm1.media = 1 LIMIT 1) `" + AonUtil.getMessage(PHONE) + "`"
 		+",(SELECT rm2.value FROM rmedia rm2 WHERE r.id = rm2.registry  AND rm2.media = 2 LIMIT 1) `" + AonUtil.getMessage(CELLULAR) + "`"
 		+",(SELECT rm3.value FROM rmedia rm3 WHERE r.id = rm3.registry  AND rm3.media = 3 LIMIT 1) `" + AonUtil.getMessage(FAX) + "`"
-		+",(SELECT rm4.value FROM rmedia rm4 WHERE r.id = rm4.registry  AND rm4.media = 4 LIMIT 1) `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_EMAIL) + "`"
+		+",(SELECT rm4.value FROM rmedia rm4 WHERE r.id = rm4.registry  AND rm4.media = 4 LIMIT 1) `" + AonUtil.getMessage(REGISTRY_EMAIL) + "`"
 		+",(SELECT rm5.value FROM rmedia rm5 WHERE r.id = rm5.registry  AND rm5.media = 5 LIMIT 1) `" + AonUtil.getMessage(WEB) + "`"
 		+",pm.name `" + AonUtil.getMessage(PAY_METHOD) + "`"
 		+",b.name `" + AonUtil.getMessage(BANK) + "`"
 		+",rb.bank_account `" + AonUtil.getMessage(BANK_ACCOUNT) + "`"
-		+",rpm.number_of_pymnts `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_NUMBER_OF_PAYMENTS) + "`"
-		+",rpm.days_to_first_pymnt `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_DAYS_TO_FIRST_PAYMENT) + "`"
-		+",rpm.days_between_pymnts `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_DAYS_BETWEEN_PAYMENTS) + "`"
-		+",rpm.pymnt_days `" + AonUtil.getMessage(REGISTRY_BUNDLE,REGISTRY_PAYMENT_DAYS) + "`"
+		+",rpm.number_of_pymnts `" + AonUtil.getMessage(REGISTRY_NUMBER_OF_PAYMENTS) + "`"
+		+",rpm.days_to_first_pymnt `" + AonUtil.getMessage(REGISTRY_DAYS_TO_FIRST_PAYMENT) + "`"
+		+",rpm.days_between_pymnts `" + AonUtil.getMessage(REGISTRY_DAYS_BETWEEN_PAYMENTS) + "`"
+		+",rpm.pymnt_days `" + AonUtil.getMessage(REGISTRY_PAYMENT_DAYS) + "`"
 		;
 	}
 

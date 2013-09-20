@@ -13,7 +13,7 @@
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
-				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_annual_financial_statements_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.accounting_annual_financial_statements_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
@@ -30,13 +30,13 @@
 					<aon:outputText value="" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="coverEnabled" value="#{annualFinancialStatements.coverEnabled}"/>
-						<aon:outputLabel for="coverEnabled" value="#{accountingBundle.accounting_annual_financial_statements_apartado0}" />
+						<aon:outputLabel for="coverEnabled" value="#{bundle.accounting_annual_financial_statements_apartado0}" />
 					</aon:div>
 
 					<aon:outputText value="" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="situationEnabled" value="#{annualFinancialStatements.situationEnabled}" />
-						<aon:outputLabel for="situationEnabled" value="#{accountingBundle.accounting_annual_financial_statements_bal}" />
+						<aon:outputLabel for="situationEnabled" value="#{bundle.accounting_annual_financial_statements_bal}" />
 						<aon:outputText value="" />
 						<aon:selectOneMenu value="#{annualFinancialStatements.situationBalance}">
 							<f:selectItems value="#{annualFinancialStatements.situationBalances}" />
@@ -46,7 +46,7 @@
 					<aon:outputText value="" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="profitAndLostEnabled" value="#{annualFinancialStatements.profitAndLostEnabled}" />
-						<aon:outputLabel for="profitAndLostEnabled" value="#{accountingBundle.accounting_annual_financial_statements_pyg}" />
+						<aon:outputLabel for="profitAndLostEnabled" value="#{bundle.accounting_annual_financial_statements_pyg}" />
 						<aon:outputText value="" />
 						<aon:selectOneMenu value="#{annualFinancialStatements.profitAndLostBalance}">
 							<f:selectItems value="#{annualFinancialStatements.profitAndLostBalances}" />
@@ -56,7 +56,7 @@
 					<aon:outputText value="" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="patrimonyAEnabled" value="#{annualFinancialStatements.patrimonyAEnabled}" disabled="true"/>
-						<aon:outputLabel for="patrimonyAEnabled" value="#{accountingBundle.accounting_annual_financial_statements_patnetA}" />
+						<aon:outputLabel for="patrimonyAEnabled" value="#{bundle.accounting_annual_financial_statements_patnetA}" />
 						<aon:outputText value="" />
 						<aon:selectOneMenu value="#{annualFinancialStatements.patrimonyABalance}" disabled="true">
 							<f:selectItems value="#{annualFinancialStatements.patrimonyBalances}" />
@@ -66,7 +66,7 @@
 					<aon:outputText value="" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="patrimonyBEnabled" value="#{annualFinancialStatements.patrimonyBEnabled}" disabled="true"/>
-						<aon:outputLabel for="patrimonyBEnabled" value="#{accountingBundle.accounting_annual_financial_statements_patnetB}" />
+						<aon:outputLabel for="patrimonyBEnabled" value="#{bundle.accounting_annual_financial_statements_patnetB}" />
 						<aon:outputText value="" />
 						<aon:selectOneMenu value="#{annualFinancialStatements.patrimonyBBalance}" disabled="true">
 							<f:selectItems value="#{annualFinancialStatements.patrimonyBalances}" />
@@ -76,7 +76,7 @@
 					<aon:outputText value="" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="reportEnabled" value="#{annualFinancialStatements.reportEnabled}" disabled="true"/>
-						<aon:outputLabel for="reportTemplateEnabled" value="#{accountingBundle.accounting_annual_financial_statements_mem}" />
+						<aon:outputLabel for="reportTemplateEnabled" value="#{bundle.accounting_annual_financial_statements_mem}" />
 					</aon:div>
 
 					<aon:outputText value="" />

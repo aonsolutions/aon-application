@@ -13,7 +13,7 @@
 		<aon:form id="balanceForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_loan_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.accounting_loan_module}" />
 				<ui:param name="controller" value="#{loan}" />
 			</ui:decorate>
 
@@ -50,34 +50,34 @@
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 
 					<aon:outputLabel for="Loan_term"
-						value="#{accountingBundle.accounting_term}" />
+						value="#{bundle.accounting_term}" />
 					<aon:div>
 						<aon:inputText id="Loan_term" value="#{loan.to.term}" size="8"/>
-						<aon:outputText value="#{accountingBundle.accounting_term_months}"
+						<aon:outputText value="#{bundle.accounting_term_months}"
 							styleClass="aon-italic aon-margin-left" />						
 					</aon:div>
 
 					<aon:outputLabel for="Loan_recurrence"
-						value="#{accountingBundle.accounting_recurrence}" />
+						value="#{bundle.accounting_recurrence}" />
 					<aon:inputText id="Loan_recurrence"
 						value="#{loan.to.recurrence}" size="5">
 						<f:validateLongRange />
 					</aon:inputText>
 
 					<aon:outputLabel for="Loan_pay_day"
-						value="#{financeBundle.finance_cashflow_payment_day}" />
+						value="#{bundle.finance_cashflow_payment_day}" />
 					<aon:inputText id="Loan_pay_day"
 						value="#{loan.to.payDay}" size="5">
 						<f:validateLongRange />
 					</aon:inputText>
 
 					<aon:outputLabel for="Loan_interest"
-						value="#{accountingBundle.accounting_interest}" />
+						value="#{bundle.accounting_interest}" />
 					<aon:inputText id="Loan_interest"
 						value="#{loan.to.interest}" size="60" />
 
 					<aon:outputLabel for="Loan_review"
-						value="#{accountingBundle.accounting_review}" />
+						value="#{bundle.accounting_review}" />
 					<aon:inputText id="Loan_review"
 						value="#{loan.to.review}" size="60" />
 
@@ -109,7 +109,7 @@
 					</aon:inputText>
 
 					<aon:outputLabel for="Loan_fee_amount"
-						value="#{accountingBundle.accounting_fee_amount}" />
+						value="#{bundle.accounting_fee_amount}" />
 					<aon:inputText id="Loan_fee_amount"
 						value="#{loan.to.feeAmount}" size="15">
 						<f:validateDoubleRange />
@@ -140,12 +140,12 @@
 						immediate="#{true}" 
 						styleClass="aon-dataTable-link"
 						actionListener="#{loan.onAccountStatement}"
-						title="#{accountingBundle.accounting_statement_module}"
+						title="#{bundle.accounting_statement_module}"
 						action="accountStatement_list">
 							<aon:outputText value="#{loan.relatedAccount.fullDescription}" />
 					</aon:commandLink>
 
-					<aon:outputText value="#{accountingBundle.accounting_outstanding_balance}" />
+					<aon:outputText value="#{bundle.accounting_outstanding_balance}" />
 					<aon:outputText value="#{loan.outstandingBalance}">
 						<f:convertNumber pattern="#,##0.00" />
 					</aon:outputText>

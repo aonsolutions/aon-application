@@ -16,7 +16,7 @@
 		<aon:form id="sellerForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{sellerBundle.seller_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.seller_module}" />
 				<ui:param name="controller" value="#{seller}" />
 				<ui:param name="showMoreMenu" value="#{!seller.new}" />
 				<ui:define name="moreMenuContent">
@@ -48,7 +48,7 @@
 
 					<aon:panelTabSet id="sellerTab" selectedTab="#{seller.selectedTab}">
 
-						<aon:panelTab id="sellerAddress" label="#{registryBundle.registry_address_module}">
+						<aon:panelTab id="sellerAddress" label="#{bundle.registry_address_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="controller" value="#{sellerAddress}" />
 							</ui:include>

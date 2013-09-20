@@ -12,7 +12,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{supplierBundle.supplier_account_checker_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.supplier_account_checker_module}" />
 				<ui:param name="controller" value="#{supplierAccountChecker}" />
 				<ui:param name="skipResetButton" value="true" />
 			</ui:decorate>
@@ -54,16 +54,16 @@
 							</f:facet>
 							<aon:div>
 								<aon:commandLink id="SupplierAccountChecker_newAccount"
-									value="#{accountBundle.account_new_account_abbrv}"
-									title="#{accountBundle.account_new_account}"
+									value="#{bundle.account_new_account_abbrv}"
+									title="#{bundle.account_new_account}"
 									styleClass="aon-dataTable-link" 
 									rendered="#{to.account == null or to.account.id == null}"
 									actionListener="#{supplierAccountChecker.onNewAccount}"
 									reRender="#{dataTableId}">
 								</aon:commandLink>
 								<aon:commandLink id="SupplierAccountChecker_synchronizeAccount"
-									value="#{accountBundle.account_synchronize_abbrv}"
-									title="#{accountBundle.account_synchronize}"
+									value="#{bundle.account_synchronize_abbrv}"
+									title="#{bundle.account_synchronize}"
 									styleClass="aon-dataTable-link" 
 									rendered="#{supplierAccountChecker.accountSynchronizable}"
 									actionListener="#{supplierAccountChecker.onAccountSynchronize}"

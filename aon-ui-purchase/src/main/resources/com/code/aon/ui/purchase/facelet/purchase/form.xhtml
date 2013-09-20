@@ -15,7 +15,7 @@
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					<ui:param name="toolbarTitle"
-						value="#{purchaseBundle.purchase_module2}" />
+						value="#{bundle.purchase_module2}" />
 					<ui:param name="controller" value="#{purchase}" />
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{!purchase.pending}" />
@@ -24,7 +24,7 @@
 					<ui:param name="showMoreMenu" value="#{aonRole.warehouseOperator or aonRole.financeOperator}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:commandButton value="&#160;" id="email"
-							title="#{webmailBundle.webmail_send_email}" ajaxSingle="true" immediate="true"
+							title="#{bundle.webmail_send_email}" ajaxSingle="true" immediate="true"
 							actionListener="#{purchase.onShowEmailMessage}" reRender="showNewMessageWindow-Purchase"
 							rendered="#{purchaseDetail.model.rowCount > 0 and purchaseDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
@@ -40,7 +40,7 @@
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
 						<c:if test="#{aonRole.purchaseOperator}">
-							<aon:htmlCommandLink id="purchaseForm_valued-report" value="#{purchaseBundle.purchase_valued_report}"
+							<aon:htmlCommandLink id="purchaseForm_valued-report" value="#{bundle.purchase_valued_report}"
 								target="_new" rendered="#{!purchase.new and purchaseDetail.model.rowCount > 0}"
 								action="#{purchaseReport.onExecute}"
 								accesskey="#{bundle.aon_key_print}"
@@ -75,14 +75,14 @@
 							</aon:menuItem>
 						</c:if>
 						<aon:menuItem id="purchaseReturnRequest"
-							value="#{purchaseBundle.purchase_return_request}"
+							value="#{bundle.purchase_return_request}"
 							rendered="#{!purchase.new and !purchase.to.itemReturn}"
 							iconClass="aon-icon-alternative"
 							action="purchase_form"
 							actionListener="#{purchase.onReturnRequest}" 
 							onclick="if (!confirm('#{bundle.aon_confirm_title}')) { return false;}" />
 						<aon:menuItem id="purchaseShipment"
-							value="#{carrierBundle.carrier_shipment}"
+							value="#{bundle.carrier_shipment}"
 							rendered="#{!purchase.new and purchase.pending}"
 							iconClass="aon-icon-rename"
 							reRender="showShipmentWindow">
@@ -141,7 +141,7 @@
 								
 								<aon:outputText id="purchase-emailCommunication"
 									rendered="#{purchase.to.emailCommunication}"
-									title="#{purchaseBundle.purchase_emailCommunication}"
+									title="#{bundle.purchase_emailCommunication}"
 									value="&#160;"
 									styleClass="aon-icon-mailForward aon-margin-left aon-padding-left aon-padding-right" />
 									
@@ -164,23 +164,23 @@
 
 								<aon:commandButton id="toPending" value="&#160;"
 									actionListener="#{purchase.onPending}" 
-									title="#{salesBundle.sales_to_pending}"
+									title="#{bundle.sales_to_pending}"
 									immediate="true" rendered="#{purchase.closed}"
 									styleClass="aon-icon-commandButton aon-icon-refresh aon-margin-left" />
 								<aon:commandButton id="close" value="&#160;"
 									actionListener="#{purchase.onClose}"
-									title="#{salesBundle.sales_to_close}"
+									title="#{bundle.sales_to_close}"
 									immediate="true" rendered="#{purchase.pending and purchaseDetail.model.rowCount > 0}"
 									styleClass="aon-icon-commandButton aon-icon-point-red" />
 								<aon:commandButton id="block" value="&#160;"
 									actionListener="#{purchase.onBlock}"
-									title="#{salesBundle.sales_to_block}"
+									title="#{bundle.sales_to_block}"
 									immediate="true" rendered="#{!purchase.new and purchase.pending}"
 									styleClass="aon-icon-commandButton aon-icon-lock">
 								</aon:commandButton>										
 								<aon:commandButton id="unblock" value="&#160;"
 									actionListener="#{purchase.onUnblock}"
-									title="#{salesBundle.sales_to_unblock}"
+									title="#{bundle.sales_to_unblock}"
 									immediate="true" rendered="#{purchase.blocked}"
 									styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
 								</aon:commandButton>										
@@ -232,7 +232,7 @@
 							disabled="#{!purchase.pending}">
 							<f:selectItems value="#{purchase.addresses}" />
 						</aon:selectOneMenu>
-						<aon:outputLabel value="#{registryBundle.registry_no_address_available}"
+						<aon:outputLabel value="#{bundle.registry_no_address_available}"
 							rendered="#{purchase.addressCount == 0}"
 							styleClass="aon-italic" />
 					</aon:div>
@@ -344,10 +344,10 @@
 								aon-panelGrid-even aon-width-200">
 
 							<aon:outputText value="#{bundle.aon_type}"/>
-							<aon:outputText value="#{registryBundle.registry_number_of_payments}" />
-							<aon:outputText value="#{registryBundle.registry_days_to_first_payment}" />
-							<aon:outputText value="#{registryBundle.registry_days_between_payments}" />
-							<aon:outputText value="#{registryBundle.registry_payment_days}" />
+							<aon:outputText value="#{bundle.registry_number_of_payments}" />
+							<aon:outputText value="#{bundle.registry_days_to_first_payment}" />
+							<aon:outputText value="#{bundle.registry_days_between_payments}" />
+							<aon:outputText value="#{bundle.registry_payment_days}" />
 							<aon:outputText value="#{bundle.aon_bank}" />
 							<aon:outputText value="#{bundle.aon_bank_account}" />
 
@@ -403,7 +403,7 @@
 				
 				<c:if test="#{!purchase.new}">
 					<aon:panelTabSet id="purchasePanelTab">
-						<aon:panelTab label="#{salesBundle.sales_detail}">
+						<aon:panelTab label="#{bundle.sales_detail}">
 							<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formDetail.xhtml">
 								<c:if test="#{!aonConfiguration.bean.purchase.showTasData}">
 									<ui:param name="projectLabel" value="#{bundle.aon_project}" />
@@ -415,7 +415,7 @@
 						</aon:panelTab>
 						<c:if test="#{purchase.shippingDataDefined}">
 							<aon:panelTab id="purchaseShipmentTab" 
-								label="#{carrierBundle.carrier_shipment}">
+								label="#{bundle.carrier_shipment}">
 								<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formShipment.xhtml" />
 							</aon:panelTab>
 						</c:if>

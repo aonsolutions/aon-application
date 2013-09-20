@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{productBundle.product_info}" />
+						<aon:outputText value="#{bundle.product_info}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -37,7 +37,7 @@
 		
 						<aon:panelTabSet id="itemInfoTabSet">
 							<c:if test="#{aonConfiguration.bean.product.showStock and itemInfo.stockVisible}">
-								<aon:panelTab id="itemInfoPanelTab" label="#{productBundle.product_stock}">
+								<aon:panelTab id="itemInfoPanelTab" label="#{bundle.product_stock}">
 			
 									<aon:outputText value="#{bundle.aon_search_no_results}"
 										style="aon-bold aon-margin-top"
@@ -68,7 +68,7 @@
 							</c:if>
 		
 							<c:if test="#{aonConfiguration.bean.product.showAlternatives and itemInfo.alternativesVisible}">
-								<aon:panelTab id="itemAlternativePanelTab" label="#{productBundle.product_alternative_items}">
+								<aon:panelTab id="itemAlternativePanelTab" label="#{bundle.product_alternative_items}">
 			
 									<aon:outputText value="#{bundle.aon_search_no_results}"
 										style="aon-bold aon-margin-top"

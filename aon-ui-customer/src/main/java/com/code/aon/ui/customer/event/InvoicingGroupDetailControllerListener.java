@@ -1,6 +1,5 @@
 package com.code.aon.ui.customer.event;
 
-import static com.code.aon.ui.common.ICommonMessages.CUSTOMER_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY;
 
 import com.code.aon.common.BeanManager;
@@ -80,7 +79,7 @@ public class InvoicingGroupDetailControllerListener extends ControllerAdapter {
         	criteria.addEqualExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_ID), customer.getId());
         	criteria.addNotNullExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_INVOICING_GROUP));
         	if (customerBean.getCount(criteria) > 0) {
-        		String message = AonUtil.getMessage(CUSTOMER_BUNDLE, INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY);
+        		String message = AonUtil.getMessage(INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY);
         		throw new ControllerListenerException(message);
         	}
 	   	} catch (ManagerBeanException ex) {

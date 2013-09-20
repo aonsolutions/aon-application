@@ -25,17 +25,17 @@
 				styleClass="aon-finding-toolbar-item aon-icon-cancel" />
 
 			<aon:commandButton id="contract-refresh"
-				value="#{sepeBundle.sepe_reload}"
+				value="#{bundle.sepe_reload}"
 				rendered="#{!contractPdf.new}"
 				reRender="#{toolbarReRender}"
 				action="contractPdfEdition_form"
 				actionListener="#{contractPdf.onDocumentReload}"
-				onclick="if (!confirm('#{payrollBundle.payroll_refresh_confirm}')) { return false;}"
+				onclick="if (!confirm('#{bundle.payroll_refresh_confirm}')) { return false;}"
 				styleClass="aon-finding-toolbar-item aon-icon-refresh" />
 
 			<aon:htmlCommandLink id="document-download" 
 				value="#{bundle.aon_draft}" target="_blank" 
-				title="#{payrollBundle.payroll_draft_download}"
+				title="#{bundle.payroll_draft_download}"
 				rendered="#{!contractPdf.new}"
 				actionListener="#{contractPdf.onDownloadPdf}"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" />

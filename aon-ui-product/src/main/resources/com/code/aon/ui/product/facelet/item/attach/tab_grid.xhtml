@@ -44,7 +44,7 @@
 			<c:if test="#{!skipMimetypeColumn}">
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputLabel for="ItemAttach_mimeType" value="#{productBundle.product_mimetype}" />
+						<aon:outputLabel for="ItemAttach_mimeType" value="#{bundle.product_mimetype}" />
 					</f:facet>
 					<aon:outputText value="#{to.mimeType}" rendered="#{formList}" />
 					<aon:outputText value="#{to.mimeType}" disabled="true" rendered="#{formEdit}" />

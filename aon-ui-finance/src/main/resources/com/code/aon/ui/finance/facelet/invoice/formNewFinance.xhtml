@@ -7,17 +7,17 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:outputLabel for="InvoiceFinance_generationMode" value="#{financeBundle.finance_finance}" />
+	<aon:outputLabel for="InvoiceFinance_generationMode" value="#{bundle.finance_finance}" />
 	<aon:selectOneRadio id="InvoiceFinance_generationMode"
 		value="#{invoiceController.financeGenerationMode}"
 		valueChangeListener="#{invoiceController.onFinanceGenerationModeChanged}"
 	 	reRender="#{formName}" ajaxSingle="true">
-		<f:selectItem itemLabel="#{financeBundle.finance_automatic}" itemValue="0" />
-		<f:selectItem itemLabel="#{financeBundle.finance_manual}" itemValue="1" />
-		<f:selectItem itemLabel="#{financeBundle.finance_not_generate}" itemValue="-1" />
+		<f:selectItem itemLabel="#{bundle.finance_automatic}" itemValue="0" />
+		<f:selectItem itemLabel="#{bundle.finance_manual}" itemValue="1" />
+		<f:selectItem itemLabel="#{bundle.finance_not_generate}" itemValue="-1" />
 	</aon:selectOneRadio>				
 
-	<aon:outputLabel for="Finance_dueDate" value="#{financeBundle.finance_finance_date}"
+	<aon:outputLabel for="Finance_dueDate" value="#{bundle.finance_finance_date}"
 		rendered="#{invoiceController.financeGenerationMode == 1}" />
 	<aon:selectInputDate id="Finance_dueDate"
 		value="#{financeController.to.dueDate}"
@@ -76,10 +76,10 @@
 			</aon:inputText>
 			<aon:panelGroup id="CreateBank_panel">
 				<aon:commandButton id="CreateBank"
-					value="&#160;" title="#{configBundle.config_bank_creation} #{invoiceController.to.registryName}"
+					value="&#160;" title="#{bundle.config_bank_creation} #{invoiceController.to.registryName}"
 					styleClass="aon-editDataTable-button aon-lookupButton-new"
 					rendered="#{financeController.bankCreationEnabled}"
-					onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{invoiceController.to.registryName}?')) return false;"	
+					onclick="if (!confirm('#{bundle.config_bank_creation_confirm} #{invoiceController.to.registryName}?')) return false;"	
 					actionListener="#{financeController.onAddRegistryBank}"
 					reRender="InvoiceFinance_bankAccount" ajaxSingle="true" />
 			</aon:panelGroup>

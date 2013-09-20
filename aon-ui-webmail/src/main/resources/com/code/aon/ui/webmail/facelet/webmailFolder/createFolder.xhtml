@@ -15,7 +15,7 @@
 		<rich:modalPanel id="newFolderModalPanel" height="120" width="400">
 			<f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
-					<aon:outputText value="#{webmailBundle.webmail_folder_create_new}" />
+					<aon:outputText value="#{bundle.webmail_folder_create_new}" />
 				</aon:div>
 			</f:facet>
 			<f:facet name="controls">
@@ -26,7 +26,7 @@
 				</aon:commandButton>
 			</f:facet>
 
-			<aon:outputLabel for="newFolderName" value="#{webmailBundle.webmail_folder_name}:" />
+			<aon:outputLabel for="newFolderName" value="#{bundle.webmail_folder_name}:" />
 			<h:panelGrid id="createSubFolderGrid"
 				width="100%" cellpadding="2" cellspacing="0" columns="2"
 				styleClass="aon-panelGrid-formatting">
@@ -43,7 +43,7 @@
 					<aon:selectBooleanCheckbox
 						disabled="#{webmailTree.current.inboxFolder}" 
 						value="#{webmailFolder.createAsSubfolder}" />				
-					<aon:outputFormat value="#{webmailBundle.webmail_newfolder_subfolder}" >
+					<aon:outputFormat value="#{bundle.webmail_newfolder_subfolder}" >
 						<f:param value="#{webmailTree.current.fullName}" />
 					</aon:outputFormat>
 				</aon:panelGroup>

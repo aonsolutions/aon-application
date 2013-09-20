@@ -10,7 +10,7 @@
 	<ui:define name="content">
 		<aon:form>
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{academyBundle.academy_duplicate_groups}" />
+				<ui:param name="toolbarTitle" value="#{bundle.academy_duplicate_groups}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_listing}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="accept"
@@ -41,7 +41,7 @@
 					</aon:selectOneMenu>	
 
 					<aon:outputLabel for="Date_Increment"
-						value="#{academyBundle.academy_course_dates_increment}" />
+						value="#{bundle.academy_course_dates_increment}" />
 					<aon:selectOneMenu id="Date_Increment"
 						value="#{duplicateGroup.dateIncrement}">
 						<f:selectItem itemLabel="1 #{bundle.aon_month}" itemValue="1" />
@@ -53,7 +53,7 @@
 						<f:selectItem itemLabel="2 #{bundle.aon_years}" itemValue="24" />
 					</aon:selectOneMenu>	
 
-					<aon:outputLabel value="#{academyBundle.academy_course_transfer_data}" />
+					<aon:outputLabel value="#{bundle.academy_course_transfer_data}" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="Alumns"
 							value="#{duplicateGroup.alumns}" />
@@ -64,13 +64,13 @@
 						<aon:selectBooleanCheckbox id="Instructors"
 							value="#{duplicateGroup.instructors}" />
 						<aon:outputLabel for="Instructors"
-							value="#{academyBundle.academy_teachers}"/>
+							value="#{bundle.academy_teachers}"/>
 						<f:verbatim>&#160;</f:verbatim>
 						<f:verbatim>&#160;</f:verbatim>
 						<aon:selectBooleanCheckbox id="Schedules"
 							value="#{duplicateGroup.schedules}" />
 						<aon:outputLabel for="Schedules"
-							value="#{academyBundle.academy_schedule_schedules}"/>
+							value="#{bundle.academy_schedule_schedules}"/>
 						<f:verbatim>&#160;</f:verbatim>
 						<f:verbatim>&#160;</f:verbatim>
 						<aon:selectBooleanCheckbox id="Skills"

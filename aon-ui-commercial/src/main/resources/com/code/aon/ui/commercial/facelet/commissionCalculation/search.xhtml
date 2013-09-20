@@ -15,7 +15,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{commercialBundle.commercial_commission_calculation_module}" />
+					value="#{bundle.commercial_commission_calculation_module}" />
 				<ui:param name="controller" value="#{commissionCalculation}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="resetAction" value="" />
@@ -24,7 +24,7 @@
 
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="commissionCalculation"
-						value="#{commercialBundle.commercial_commission_calculate}"
+						value="#{bundle.commercial_commission_calculate}"
 						actionListener="#{commissionCalculation.onCalculate}" action="offerDetailCommission_list"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -34,7 +34,7 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_invoicing_criteria}" />
+					<aon:outputText value="#{bundle.finance_invoicing_criteria}" />
 				</f:facet>
 				<aon:panelGrid columns="2">
 				

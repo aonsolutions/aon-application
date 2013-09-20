@@ -12,7 +12,7 @@
 		<aon:form>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
-				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_reports_launcher_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.accounting_reports_launcher_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 
@@ -65,11 +65,11 @@
 							<a4j:support event="onchange" reRender="aonContent" ajaxSingle="true" actionListener="#{reportsLauncher.onChangeUseDefaultTemplate}" />
 						</aon:selectBooleanCheckbox>
 						<aon:outputLabel for="Account_useDefaultTemplate"
-							value="#{accountingBundle.accounting_launcher_default_template}" />
+							value="#{bundle.accounting_launcher_default_template}" />
 						<aon:outputText value="&#160;" />
 						<aon:htmlCommandLink id="reportsLauncher-download-report-html"
 							rendered="#{reportsLauncher.useDefaultTemplate}"
-							value="[#{accountingBundle.accounting_launcher_default_template_download}]" 
+							value="[#{bundle.accounting_launcher_default_template_download}]" 
 							target="_blank" style="text-decoration: underline;"
 							actionListener="#{reportsLauncher.onDefaultTemplate}"
 							title="#{bundle.aon_listing}"
@@ -84,7 +84,7 @@
 							<a4j:support event="onchange" reRender="aonContent" ajaxSingle="true" actionListener="#{reportsLauncher.onChangeUseAttachedTemplate}" />
 						</aon:selectBooleanCheckbox>
 						<aon:outputLabel for="Account_useAttachedTemplate"
-							value="#{accountingBundle.accounting_launcher_attached_template}" />
+							value="#{bundle.accounting_launcher_attached_template}" />
 						<aon:outputText value="&#160;" />
 						<aon:selectOneMenu required="true" id="reportsLauncher_reportTemplate"
 							rendered="#{reportsLauncher.useAttachedTemplate}"
@@ -102,7 +102,7 @@
 							<a4j:support event="onchange" reRender="aonContent" ajaxSingle="true" actionListener="#{reportsLauncher.onChangeUseLoadedTemplate}" />
 						</aon:selectBooleanCheckbox>
 						<aon:outputLabel for="Account_useLoadedTemplate"
-							value="#{accountingBundle.accounting_launcher_load_template}" />
+							value="#{bundle.accounting_launcher_load_template}" />
 						<aon:outputText value="&#160;" />
 						<a4j:region rendered="#{reportsLauncher.useLoadedTemplate}">
 							<h:panelGrid id="attachGrid" columns="2" >

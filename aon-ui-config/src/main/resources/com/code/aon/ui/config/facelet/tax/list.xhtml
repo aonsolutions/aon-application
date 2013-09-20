@@ -12,7 +12,7 @@
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="skipSearchButton" value="true" />
-				<ui:param name="toolbarTitle" value="#{configBundle.config_tax_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.config_tax_module}" />
 				<ui:param name="controller" value="#{tax}" />
 			</ui:include>
 			
@@ -32,7 +32,7 @@
 					<aon:column alias="Tax.type"
 						styleClass="aon-editDataTable-textColumn aon-width-250">
 						<f:facet name="header">
-							<aon:outputLabel value="#{configBundle.config_tax}" />
+							<aon:outputLabel value="#{bundle.config_tax}" />
 						</f:facet>
 						<aon:div>
 							<aon:outputText value="#{to.type}" />

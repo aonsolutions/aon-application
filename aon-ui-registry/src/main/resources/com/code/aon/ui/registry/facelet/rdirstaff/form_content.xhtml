@@ -18,7 +18,7 @@
 		size="40" value="#{controller.to.name}" />
 
 	<aon:outputText
-		value="#{registryBundle.registry_dir_staff_is_shareholder}" />
+		value="#{bundle.registry_dir_staff_is_shareholder}" />
 	<aon:selectBooleanCheckbox id="RegistryDirStaff_shareHolder-Edit"
 		value="#{controller.to.shareHolder}"
 		valueChangeListener="#{controller.onChangeShareHolder}"
@@ -26,42 +26,42 @@
 		ajaxSingle="true"/>
 
 	<aon:outputText
-		value="#{registryBundle.registry_dir_staff_is_representative}" />
+		value="#{bundle.registry_dir_staff_is_representative}" />
 	<aon:selectBooleanCheckbox id="RegistryDirStaff_representative-Edit"
 		value="#{controller.to.representative}" />
 
-	<aon:outputText	value="#{registryBundle.registry_dir_staff_is_director}" />
+	<aon:outputText	value="#{bundle.registry_dir_staff_is_director}" />
 	<aon:selectBooleanCheckbox id="RegistryDirStaff_director-Edit"
 		reRender="RegistryDirStaff_dueDate-Edit" ajaxSingle="true"
 		value="#{controller.to.director}" />
 
 	<aon:outputText
-		value="#{registryBundle.registry_dir_staff_is_representative_labor}" />
+		value="#{bundle.registry_dir_staff_is_representative_labor}" />
 	<aon:selectBooleanCheckbox id="RegistryDirStaff_representativeLabor-Edit"
 		value="#{controller.to.representativeLabor}" />
 
 	<aon:outputText
-		value="#{registryBundle.registry_dir_staff_percent_shares}" />
+		value="#{bundle.registry_dir_staff_percent_shares}" />
 	<aon:inputText id="RegistryDirStaff_percentShare-Edit"
 		size="5"
 		disabled="#{!controller.to.shareHolder}"
 		value="#{controller.to.percentShare}" />
 
 	<aon:outputText
-		value="#{registryBundle.registry_dir_staff_share_number}" />
+		value="#{bundle.registry_dir_staff_share_number}" />
 	<aon:inputText id="RegistryDirStaff_shareNumber-Edit"
 		size="5"
 		disabled="#{!controller.to.shareHolder}"
 		value="#{controller.to.shareNumber}" />
 
 	<aon:outputText
-		value="#{registryBundle.registry_dir_staff_nominal_value}" />
+		value="#{bundle.registry_dir_staff_nominal_value}" />
 	<aon:inputText id="RegistryDirStaff_nominalValue-Edit"
 		size="5"
 		disabled="#{!controller.to.shareHolder}"
 		value="#{controller.to.nominalValue}" />
 
-	<aon:outputText value="#{registryBundle.registry_dir_staff_date}" />
+	<aon:outputText value="#{bundle.registry_dir_staff_date}" />
 	<aon:selectInputDate id="RegistryDirStaff_dueDate-Edit"
 		value="#{controller.to.dueDate}" 
 		disabled="#{!controller.to.director}"

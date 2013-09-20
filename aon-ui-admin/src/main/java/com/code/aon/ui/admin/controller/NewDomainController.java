@@ -2,7 +2,6 @@ package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_HERITABLE_ID;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_ID;
-import static com.code.aon.ui.common.ICommonMessages.ADMIN_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.DOMAIN_NAME_DUPLICATED;
 import static com.code.aon.ui.common.ICommonMessages.INVALID_PASSWORD;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
@@ -221,7 +220,7 @@ public class NewDomainController {
 		User user = UserUtils.getInstance().getLoggedUser();
 		String sent_passwd  = AdminUtil.encodeSHA(password);
 		if (!StringUtils.equals(user.getPassword(), sent_passwd)) {
-			String message = AonUtil.addErrorMessageFromBundle(ADMIN_BUNDLE, INVALID_PASSWORD);
+			String message = AonUtil.addErrorMessageFromBundle(INVALID_PASSWORD);
 			throw new AbortProcessingException(message);
 		}			
 	}
@@ -236,7 +235,7 @@ public class NewDomainController {
 		}		
 		try {
 			if ( existsDomainName(domainFinalName) ) {
-				String message = AonUtil.addErrorMessageFromBundle(ADMIN_BUNDLE, DOMAIN_NAME_DUPLICATED, domainFinalName);
+				String message = AonUtil.addErrorMessageFromBundle(DOMAIN_NAME_DUPLICATED, domainFinalName);
 				throw new AbortProcessingException(message);			
 			}			
 		} catch ( ManagerBeanException e ) {

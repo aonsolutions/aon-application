@@ -17,8 +17,8 @@
 		</aon:panelCollapsible>					
 
 		<aon:panelCollapsible expanded="false" 
-			label="#{(searchController.sales) ? registryBundle.registry_customer_data : 
-					 (searchController.purchase) ? financeBundle.finance_invoice_supplier_data : financeBundle.finance_invoice_creditor_data}">
+			label="#{(searchController.sales) ? bundle.registry_customer_data : 
+					 (searchController.purchase) ? bundle.finance_invoice_supplier_data : bundle.finance_invoice_creditor_data}">
 			<aon:panel style="text-align:left;">
 				<f:facet name="header">
 					<aon:outputLabel value="#{(searchController.sales) ? bundle.aon_customer : 
@@ -61,7 +61,7 @@
 			</aon:panel>
 			<aon:panel style="text-align:left;">
 				<f:facet name="header">
-					<aon:outputLabel value="#{registryBundle.registry_address_module}" />
+					<aon:outputLabel value="#{bundle.registry_address_module}" />
 				</f:facet>
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">		
 					<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml" />
@@ -77,7 +77,7 @@
 			</aon:panel>
 		</aon:panelCollapsible>
 
-		<aon:panelCollapsible expanded="false" label="#{financeBundle.finance_invoice_lines}" >
+		<aon:panelCollapsible expanded="false" label="#{bundle.finance_invoice_lines}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 				<c:if test="#{searchController.sales or searchController.purchase}">
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
@@ -121,7 +121,7 @@
 		<aon:panelCollapsible expanded="false" label="#{bundle.finance_checking}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 				<aon:outputLabel 
-					value="#{financeBundle.finance_finance_date_abbrv}" />
+					value="#{bundle.finance_finance_date_abbrv}" />
 				<aon:div>
 					<aon:outputLabel for="Invoice_finances_dueDate-From" styleClass="aon-form-date-label aon-padding-right"
 						value="#{bundle.aon_date_from}:" />

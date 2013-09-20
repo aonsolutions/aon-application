@@ -54,7 +54,7 @@
 							eventsQueue="shippingAlternativeAddress"
 							reRender="alternativeShippingAddressPanel" />
 					</aon:selectBooleanCheckbox>
-					<aon:outputLabel for="shippingAlternativeAddressSelect" value="#{carrierBundle.carrier_shipment_alternativeAddress}" />
+					<aon:outputLabel for="shippingAlternativeAddressSelect" value="#{bundle.carrier_shipment_alternativeAddress}" />
 				</aon:div>
 			</f:facet>
 			<aon:panelGrid columns="2" rendered="#{purchase.shippingAlternativeAddress}"  
@@ -69,7 +69,7 @@
 				<aon:inputText id="Purchase_shippingAlternativeAddress" maxlength="128" size="80"
 					value="#{purchase.to.shippingAlternativeAddress}" />
 				
-				<aon:outputLabel for="Purchase_shippingAlternativeAddress2" value="#{registryBundle.registry_address_detail}" />
+				<aon:outputLabel for="Purchase_shippingAlternativeAddress2" value="#{bundle.registry_address_detail}" />
 				<aon:inputText id="Purchase_shippingAlternativeAddress2" maxlength="128" size="80"
 					value="#{purchase.to.shippingAlternativeAddress2}" />
 				
@@ -79,7 +79,7 @@
 					value="#{purchase.to.shippingAlternativeZip}" size="16" maxlength="16"/>
 					
 				<aon:outputLabel for="Purchase_shippingAlternativeCity" 
-					value="#{registryBundle.registry_city}" />
+					value="#{bundle.registry_city}" />
 				<aon:inputText id="Purchase_shippingAlternativeCity" 
 					value="#{purchase.to.shippingAlternativeCity}" size="64" maxlength="64"/>
 					

@@ -88,7 +88,7 @@
 						style="font-size: 0.9em;"
 						styleClass="aon-editDataTable-numberColumn aon-bold aon-width-80">
 						<f:facet name="header">
-							<aon:outputText value="#{fiscalBundle.fiscal_vatTax_accumulated}" />
+							<aon:outputText value="#{bundle.fiscal_vatTax_accumulated}" />
 						</f:facet>
 						<aon:outputText value="#{to.accumulated}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -101,7 +101,7 @@
 						style="font-size: 0.9em;"
 						styleClass="aon-editDataTable-numberColumn aon-bold aon-width-80">
 						<f:facet name="header">
-							<aon:outputText value="#{fiscalBundle.fiscal_vatTax_declared}" />
+							<aon:outputText value="#{bundle.fiscal_vatTax_declared}" />
 						</f:facet>
 						<aon:outputText value="#{to.declared}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -114,7 +114,7 @@
 						style="font-size: 0.9em;"
 						styleClass="aon-editDataTable-numberColumn aon-bold aon-width-80">
 						<f:facet name="header">
-							<aon:outputLabel for="mod349_detail_amount" value="#{fiscalBundle.fiscal_vatTax_to_declare}" />
+							<aon:outputLabel for="mod349_detail_amount" value="#{bundle.fiscal_vatTax_to_declare}" />
 						</f:facet>
 						<aon:outputText value="#{to.amount}" rendered="#{formList}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

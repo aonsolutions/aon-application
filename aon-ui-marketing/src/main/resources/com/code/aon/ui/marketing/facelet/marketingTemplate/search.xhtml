@@ -11,7 +11,7 @@
 		<aon:form id="marketingTemplateSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_template_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.marketing_template_module}" />
 				<ui:param name="controller" value="#{marketingTemplate}" />
 			</ui:include>
 
@@ -34,7 +34,7 @@
 					<aon:inputText id="Template_subject" size="60"
 						valueChangeListener="#{controller.addExpression}" />
 		
-					<aon:outputText value="#{marketingBundle.marketing_creationDate}" />
+					<aon:outputText value="#{bundle.marketing_creationDate}" />
 					<aon:div>
 						<aon:outputLabel for="Template_creationDate-From" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_from}:" />

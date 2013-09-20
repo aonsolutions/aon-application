@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="vatTaxForm" styleClass="aon-form">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_vat_tax_summary_report_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.fiscal_vat_tax_summary_report_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
@@ -29,7 +29,7 @@
 						<aon:selectBooleanCheckbox id="VatTax_accumulatedColumnVisible"
 							value="#{vatTaxSummaryReport.accumulatedColumnVisible}" />
 						<aon:outputLabel for="VatTax_accumulatedColumnVisible"
-							value="#{fiscalBundle.fiscal_vatTax_show_accumulated}" />
+							value="#{bundle.fiscal_vatTax_show_accumulated}" />
 					</aon:div>
 
 					<aon:outputText value="&#160;" />
@@ -37,7 +37,7 @@
 						<aon:selectBooleanCheckbox id="VatTax_declaredColumnVisible"
 							value="#{vatTaxSummaryReport.declaredColumnVisible}" />
 						<aon:outputLabel for="VatTax_declaredColumnVisible"
-							value="#{fiscalBundle.fiscal_vatTax_show_declared}" />
+							value="#{bundle.fiscal_vatTax_show_declared}" />
 					</aon:div>
 						
 					<aon:outputText value="&#160;" />
@@ -45,7 +45,7 @@
 						<aon:selectBooleanCheckbox id="VatTax_resultColumnVisible"
 							value="#{vatTaxSummaryReport.resultColumnVisible}" />
 						<aon:outputLabel for="VatTax_resultColumnVisible"
-							value="#{fiscalBundle.fiscal_vatTax_show_result}" />
+							value="#{bundle.fiscal_vatTax_show_result}" />
 					</aon:div>
 
 					<aon:outputText value="&#160;" />
@@ -53,7 +53,7 @@
 						<aon:selectBooleanCheckbox id="VatTax_adjustColumnVisible"
 							value="#{vatTaxSummaryReport.adjustColumnVisible}" />
 						<aon:outputLabel for="VatTax_adjustColumnVisible"
-							value="#{fiscalBundle.fiscal_vatTax_show_adjusts}" />
+							value="#{bundle.fiscal_vatTax_show_adjusts}" />
 					</aon:div>
 
 					<aon:outputText value="&#160;" />
@@ -61,7 +61,7 @@
 						<aon:selectBooleanCheckbox id="VatTax_toDeclareColumnVisible"
 							value="#{vatTaxSummaryReport.toDeclareColumnVisible}" />
 						<aon:outputLabel for="VatTax_toDeclareColumnVisible"
-							value="#{fiscalBundle.fiscal_vatTax_show_to_declare}" />
+							value="#{bundle.fiscal_vatTax_show_to_declare}" />
 					</aon:div>
 
 					<aon:outputLabel for="VatTax_status"

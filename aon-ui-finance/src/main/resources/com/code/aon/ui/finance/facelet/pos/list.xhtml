@@ -11,7 +11,7 @@
 		<aon:form id="posList">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_pos_definition_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_pos_definition_module}" />
 				<ui:param name="controller" value="#{pos}" />
 			</ui:include>
 
@@ -39,7 +39,7 @@
 
 						<aon:column alias="Pos.name">
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_pos_name}" />
+								<aon:outputText value="#{bundle.finance_pos_name}" />
 							</f:facet>
 							<aon:outputText value="#{to.name}" />
 						</aon:column>

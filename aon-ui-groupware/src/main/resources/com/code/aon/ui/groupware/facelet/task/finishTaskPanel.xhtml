@@ -15,7 +15,7 @@
 					width="600" zindex="1000">
 					<f:facet name="header">
 						<aon:div styleClass="aon-popupWindow-title">
-							<h:outputText value="#{groupwareBundle.groupware_task_finish}" />
+							<h:outputText value="#{bundle.groupware_task_finish}" />
 						</aon:div>
 					</f:facet>
 					<f:facet name="controls">
@@ -28,7 +28,7 @@
 						<aon:div styleClass="aon-finding-title-toolbar" style="width: 100%;">
 							<aon:panelGrid columns="1" dir="true" columnClasses="aon-finding-toolbar">
 								<aon:div styleClass="aon-finding-toolbar-item-group">
-									<aon:commandButton value="#{groupwareBundle.groupware_task_finish}"
+									<aon:commandButton value="#{bundle.groupware_task_finish}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										actionListener="#{task.onFinishTransitionTask}" immediate="true"
 										action="task_list" />
@@ -42,7 +42,7 @@
 								<aon:div columns="1" dir="true" style="width: 100%;">
 									<aon:div>
 										<aon:panelGroup rendered="#{task.transitionSelected.processDetail != null}">
-											<aon:outputText value="#{groupwareBundle.groupware_process_next_process}" styleClass="aon-form-date-label"/>
+											<aon:outputText value="#{bundle.groupware_process_next_process}" styleClass="aon-form-date-label"/>
 											<aon:outputText value="#{task.transitionSelected.nextProcessDetail.description}" styleClass="aon-bold aon-margin-left"/>
 										</aon:panelGroup>
 										<aon:outputText value="&#160;"/>
@@ -50,7 +50,7 @@
 	
 									<aon:div>
 										<aon:panelGroup rendered="#{task.transitionSelected.processDetail != null}">
-											<aon:outputText value="#{groupwareBundle.groupware_send_group}" styleClass="aon-form-date-label"/>
+											<aon:outputText value="#{bundle.groupware_send_group}" styleClass="aon-form-date-label"/>
 											<aon:outputText value="#{task.transitionSelected.processDetail.workgroup.description}" styleClass="aon-bold aon-margin-left"/>
 										</aon:panelGroup>
 										<aon:outputText value="&#160;"/>

@@ -1,7 +1,6 @@
 package com.code.aon.ui.groupware.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.ALARM_PENDING;
-import static com.code.aon.ui.common.ICommonMessages.GROUPWARE_BUNDLE;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -248,7 +247,7 @@ public class AlarmController extends BasicController {
 	}
 	
 	public String getPendingAlarmTitle() {
-		return AonUtil.getMessage(GROUPWARE_BUNDLE, ALARM_PENDING, pendingCount);
+		return AonUtil.getMessage(ALARM_PENDING, pendingCount);
 	}
 
 	public void onRefresh( ActionEvent event ) {

@@ -12,7 +12,7 @@
 
 		<aon:form id="campaignList">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.groupware_campaign_monitor}" />
+				<ui:param name="toolbarTitle" value="#{bundle.groupware_campaign_monitor}" />
 				<ui:param name="controller" value="#{campaign}" />
 				<ui:param name="skipResetButton" value="true" />
 			</ui:decorate>
@@ -82,8 +82,8 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_type}" />
 							</f:facet>
-							<aon:outputText value="#{financeBundle.finance_manual}" rendered="#{to.manual}" />
-							<aon:outputText value="#{groupwareBundle.groupware_automatic}" rendered="#{!to.manual}" />
+							<aon:outputText value="#{bundle.finance_manual}" rendered="#{to.manual}" />
+							<aon:outputText value="#{bundle.groupware_automatic}" rendered="#{!to.manual}" />
 						</aon:column>							
 
 					</ui:define>

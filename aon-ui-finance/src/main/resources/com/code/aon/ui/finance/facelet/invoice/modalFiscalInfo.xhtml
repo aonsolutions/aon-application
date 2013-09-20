@@ -15,7 +15,7 @@
 				showWhenRendered="#{invoiceController.showFiscalInformationWindow}" >
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{financeBundle.finance_fiscal_information}" />
+						<aon:outputText value="#{bundle.finance_fiscal_information}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -61,7 +61,7 @@
 										<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
 												
 											<aon:outputLabel for="Invoice_taxDate" 
-												value="#{financeBundle.finance_tax_date}" />
+												value="#{bundle.finance_tax_date}" />
 											<aon:selectInputDate id="Invoice_taxDate"
 												value="#{invoiceController.to.taxDate}" required="true" 
 												timeZone="#{timeZoneController.timeZone}"
@@ -78,7 +78,7 @@
 											<aon:outputText value="&#160;" />
 											<aon:div>
 												<aon:selectBooleanCheckbox id="Invoice_service" value="#{invoiceController.to.service}" />
-												<aon:outputLabel for="Invoice_service" value="#{financeBundle.finance_service_invoice}" />
+												<aon:outputLabel for="Invoice_service" value="#{bundle.finance_service_invoice}" />
 											</aon:div>
 											
 											<aon:outputText value="&#160;" />
@@ -92,7 +92,7 @@
 											
 										<aon:panel>
 											<f:facet name="header">
-												<aon:outputText value="#{financeBundle.finance_tax_breakdown}" />
+												<aon:outputText value="#{bundle.finance_tax_breakdown}" />
 											</f:facet>
 											
 											<aon:dataTable id="TaxBreakDownsTable"  value="#{invoiceController.taxBreakDowns}" var="taxBreakDown">

@@ -16,7 +16,7 @@
 				<ui:param name="skipSearchButton" value="true" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="toolbarTitle"
-					value="#{commercialBundle.commercial_offer_module}" />
+					value="#{bundle.commercial_offer_module}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton value="#{bundle.aon_back}"
 						action="#{commercialStat.getOfferBackAction}"
@@ -49,7 +49,7 @@
 
 					</c:if>
 					<c:if test="#{commercialStat.controlType==4}">
-						<aon:outputText value="#{statBundle.stat_geozone}" />
+						<aon:outputText value="#{bundle.stat_geozone}" />
 						<aon:outputText value="#{commercialStat.zoneName}"></aon:outputText>
 					</c:if>
 

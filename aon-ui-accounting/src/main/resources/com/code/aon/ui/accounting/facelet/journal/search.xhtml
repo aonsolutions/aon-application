@@ -33,7 +33,7 @@
 					<aon:methodParam name="searchAction" value="journal_list" />
 
 					<aon:outputLabel for="reportDate"
-						value="#{financeBundle.finance_report_date}" />
+						value="#{bundle.finance_report_date}" />
 					<aon:selectInputDate id="reportDate"
 						value="#{journalReport.date}"
 						timeZone="#{timeZoneController.timeZone}"
@@ -106,7 +106,7 @@
 						value="#{journalReport.credit}"  />
 					
 					<aon:outputLabel for="AccountEntry_detail_balancingAccount_code"
-						value="#{financeBundle.finance_balancing_account}" />
+						value="#{bundle.finance_balancing_account}" />
 					<aon:inputText id="AccountEntry_detail_balancingAccount_code" size="10"
 						value="#{journalReport.balancingAccount}"  />
 					
@@ -117,18 +117,18 @@
 
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_journal"
-						value="#{accountingBundle.accounting_show_order}" />
+						value="#{bundle.accounting_show_order}" />
 					<aon:div id="orderContainer">
 						<aon:selectOneMenu value="#{journalReport.order}"
 							id="AccountEntryDetail_accountEntry_journal">
 							<a4j:support event="onchange" actionListener="#{journalReport.onChangeOrder}" reRender="orderContainer" />
-							<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_id}" itemValue="0" />
-							<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_date}" itemValue="1" />
-							<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_journal}" itemValue="2" />
+							<f:selectItem itemLabel="#{bundle.accounting_show_entry_id}" itemValue="0" />
+							<f:selectItem itemLabel="#{bundle.accounting_show_entry_date}" itemValue="1" />
+							<f:selectItem itemLabel="#{bundle.accounting_show_entry_journal}" itemValue="2" />
 						</aon:selectOneMenu>
 						<aon:commandLink id="journalReportRegenerate" 
 							styleClass="aon-margin-left aon-bold" style="color:red; text-decoration: underline;"
-							value="#{accountingBundle.accounting_regenerate_journal_counter_module}" 
+							value="#{bundle.accounting_regenerate_journal_counter_module}" 
 							actionListener="#{journalReport.onRegenerate}"
 							onclick="Richfaces.showModalPanel('waitProccess')"
 							oncomplete="Richfaces.hideModalPanel('waitProccess')"
@@ -141,7 +141,7 @@
 						<aon:selectBooleanCheckbox id="Account_show_cover"
 							value="#{journalReport.coverVisible}" />
 						<aon:outputLabel for="Account_show_cover"
-							value="#{accountingBundle.accounting_show_cover}" />
+							value="#{bundle.accounting_show_cover}" />
 					</aon:div>
 
 					<aon:outputText value="&#160;" />
@@ -150,7 +150,7 @@
 							reRender="Account_page_counter"
 							value="#{journalReport.counterVisible}" />
 						<aon:outputLabel for="Account_continue_counter"
-							value="#{accountingBundle.accounting_continue_counter}" />
+							value="#{bundle.accounting_continue_counter}" />
 						<aon:inputText id="Account_page_counter"
 							styleClass="aon-margin-left"
 							disabled="#{!journalReport.counterVisible}"

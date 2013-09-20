@@ -11,7 +11,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{financeBundle.finance_vat_report_module}" />
+					value="#{bundle.finance_vat_report_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipSearchButton" value="true" />
 				
@@ -69,7 +69,7 @@
 					
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{financeBundle.finance_tax_date}" />
+							<aon:outputText value="#{bundle.finance_tax_date}" />
 						</f:facet>
 						<aon:outputText value="#{to.date}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"

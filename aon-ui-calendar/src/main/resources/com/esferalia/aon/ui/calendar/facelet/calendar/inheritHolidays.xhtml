@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelCollapsible expanded="false" 
-		label="#{calendarBundle.aon_calendar_days_of}&#160;#{calendar.masterCalendar.description}"
+		label="#{bundle.aon_calendar_days_of}&#160;#{calendar.masterCalendar.description}"
 		rendered="#{calendar.to.calendar!=null and calendar.inheritHolidaysModel.rowCount>0}">
 		<aon:dataTable value="#{calendar.inheritHolidaysModel}" var="to"
 			columnClasses="aon-editDataTable-date aon-width-100, 
@@ -40,7 +40,7 @@
 					<aon:outputLabel value="#{bundle.aon_type}:" />
 					<aon:outputText value="#{to.dayType}" />
 
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_hours}:" />
+					<aon:outputLabel value="#{bundle.aon_calendar_hours}:" />
 					<aon:outputText value="#{to.hours}" />
 
 					<aon:outputLabel value="#{bundle.aon_description}:" />

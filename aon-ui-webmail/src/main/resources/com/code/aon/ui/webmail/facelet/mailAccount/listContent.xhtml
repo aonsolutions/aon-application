@@ -53,21 +53,21 @@
 				<aon:column styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputText
-							value="#{webmailBundle.webmail_mailAccount_type}" />
+							value="#{bundle.webmail_mailAccount_type}" />
 					</f:facet>
 					<aon:outputText
-						value="#{webmailBundle.webmail_mailAccount_user_account}"
+						value="#{bundle.webmail_mailAccount_user_account}"
 						rendered="#{mailConfig.currentMailAccountEditable}">
 					</aon:outputText>
 					<aon:outputText
-						value="#{webmailBundle.webmail_mailAccount_system_account}"
+						value="#{bundle.webmail_mailAccount_system_account}"
 						rendered="#{!mailConfig.currentMailAccountEditable}" />
 				</aon:column>
 
 				<c:if test="#{!mailConfig.skipDefaultAccountColumn}">	
 					<aon:column styleClass="aon-editDataTable-iconColumn">
 						<f:facet name="header">
-							<aon:outputText value="#{webmailBundle.webmail_mailAccount_default_account}" />
+							<aon:outputText value="#{bundle.webmail_mailAccount_default_account}" />
 						</f:facet>
 						<aon:div onmouseover="disableRowSelector();"
 							onmouseup="disableRowSelector();"
@@ -93,13 +93,13 @@
 							onmouseup="disableRowSelector();"
 							onmouseout="enableRowSelector();" >
 							<aon:outputText
-								value="#{webmailBundle.webmail_signature_active}"
+								value="#{bundle.webmail_signature_active}"
 								rendered="#{mailConfig.activeMailAccount}" />
 							<aon:commandButton id="mailAccountChange"
 								rendered="#{!mailConfig.activeMailAccount}"
-								title="#{webmailBundle.webmail_mailAccountChange}"
+								title="#{bundle.webmail_mailAccountChange}"
 								actionListener="#{mailConfig.onChangeServer}"
-								value="#{webmailBundle.webmail_mailAccountChange}"
+								value="#{bundle.webmail_mailAccountChange}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								styleClass="aon-icon-commandButton aon-icon-predetermine">
 							</aon:commandButton>

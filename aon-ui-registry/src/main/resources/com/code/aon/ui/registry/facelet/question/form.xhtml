@@ -16,7 +16,7 @@
 		<aon:form id="questionForm">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{registryBundle.registry_question_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.registry_question_module}" />
 				<ui:param name="controller" value="#{question}" />
 			</ui:include>
 
@@ -45,12 +45,12 @@
 					</aon:inputTextarea>
 					
 					<aon:outputLabel for="Question_alias"
-						value="#{configBundle.config_tag_module}" />
+						value="#{bundle.config_tag_module}" />
 					<aon:inputText id="Question_alias" 
 						value="#{question.to.alias}" size="60" maxlength="64" />
 
 					<aon:outputLabel for="Question_argument"
-						value="#{registryBundle.registry_question_argument}" />
+						value="#{bundle.registry_question_argument}" />
 					<aon:inputTextarea id="Question_argument" 
 						value="#{question.to.argument}" cols="80" rows="4" >
 						<f:validateLength  maximum="65536"/>
@@ -66,7 +66,7 @@
 				<aon:div styleClass="aon-form-group" rendered="#{(!question.new) and (question.to.type != 'INFO')}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="questionValueData" value="#{registryBundle.registry_question_values}" />
+							<aon:outputLabel for="questionValueData" value="#{bundle.registry_question_values}" />
 						</aon:div>
 					</aon:div>
 					<ui:include src="/com/code/aon/ui/registry/facelet/question/valueGrid.xhtml" />

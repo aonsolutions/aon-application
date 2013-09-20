@@ -17,7 +17,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_regenerate_vat_module}" />
+					value="#{bundle.accounting_regenerate_vat_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="clean" value="#{bundle.aon_clear}"
@@ -43,13 +43,13 @@
 					rendered="#{vatRegenerator.validated}">
 
 					<aon:div>
-						<aon:outputText value="#{accountingBundle.account_invoice_update}" />
+						<aon:outputText value="#{bundle.account_invoice_update}" />
 						<aon:outputText value="&#160;" />
 						<aon:outputText value="#{vatRegenerator.params.count}" styleClass="aon-weight-bold"/>
 					</aon:div>
 					<aon:div rendered="#{!vatRegenerator.params.valid}">
 						<aon:outputText style="color:red;" styleClass="aon-weight-bold aon-margin-top" 
-							value="#{accountingBundle.account_invoice_update_error}" />
+							value="#{bundle.account_invoice_update_error}" />
 					</aon:div>
 				</aon:div>				
 
@@ -108,14 +108,14 @@
 					<aon:outputText value="&#160;"/>
 					<aon:div>
 						<aon:selectBooleanCheckbox value="#{vatRegenerator.params.investment}" />
-						<aon:outputText value="#{accountingBundle.accounting_investment}" />
+						<aon:outputText value="#{bundle.accounting_investment}" />
 					</aon:div>
 
 					<aon:outputText value="&#160;"/>
 					<aon:outputText value="&#160;"/>
 
 					<aon:outputLabel for="AccountEntryDetail_input_series"
-						value="#{accountingBundle.account_invoices_series}" />
+						value="#{bundle.account_invoices_series}" />
 					<aon:selectOneMenu id="AccountEntryDetail_input_series"
 						disabled="#{vatRegenerator.validated}"
 						value="#{vatRegenerator.params.series}">
@@ -123,7 +123,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="AccountEntryDetail_first_number"
-						value="#{accountingBundle.account_first_number}" />
+						value="#{bundle.account_first_number}" />
 					<aon:inputText id="AccountEntryDetail_first_number" size="10" required="true"
 						disabled="#{vatRegenerator.validated}"
 						value="#{vatRegenerator.params.firstNumber}" />

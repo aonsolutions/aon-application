@@ -13,7 +13,7 @@
 				<ui:insert name="editor" />
 
 				<aon:commandButton id="#{conceptContentID}-override-button"
-					title="#{payrollBundle.payroll_variable_manual_edit_cancel}"
+					title="#{bundle.payroll_variable_manual_edit_cancel}"
 					value="&#160;" ajaxSingle="true" rendered="#{inheritEnabled}"
 					reRender="#{reRender}"
 					actionListener="#{overrideActionListener}"
@@ -29,7 +29,7 @@
 				<aon:outputText value="#{inheritValue}" />
 
 				<aon:commandButton id="#{conceptContentID}-inherit-button"
-					title="#{payrollBundle.payroll_variable_manual_edit}"
+					title="#{bundle.payroll_variable_manual_edit}"
 					value="&#160;" ajaxSingle="true" rendered="#{editEnabled}"
 					reRender="#{reRender}"
 					actionListener="#{inheritActionListener}"

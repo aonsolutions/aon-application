@@ -13,19 +13,19 @@
 		<aon:form id="batchDocumentForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{registryBundle.registry_batch_document}" />
+				<ui:param name="toolbarTitle" value="#{bundle.registry_batch_document}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="email"
 						actionListener="#{batchDocument.onSendInvoiceByEmail}"
-						value="#{webmailBundle.webmail_send_email}"
+						value="#{bundle.webmail_send_email}"
 						reRender="showNewMessageWindow"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2">
 					</aon:commandButton>								
 					<aon:commandButton id="addDocuments"
 						action="batchDocument_search"
 						actionListener="#{corporateIdentityAttach.onEditSearch}"
-						value="#{registryBundle.registry_add_documents}"
+						value="#{bundle.registry_add_documents}"
 						styleClass="aon-finding-toolbar-item aon-icon-new">
 					</aon:commandButton>								
 					<aon:commandButton id="clear"

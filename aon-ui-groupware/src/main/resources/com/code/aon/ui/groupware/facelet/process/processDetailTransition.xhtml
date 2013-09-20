@@ -14,7 +14,7 @@
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputLabel for="ProcessDetailTransition_ProcessTransitionType" 
-						value="#{groupwareBundle.groupware_process_transition_type}" />
+						value="#{bundle.groupware_process_transition_type}" />
 				</f:facet>
 				<aon:outputText value="#{to.processTransitionType.description}" rendered="#{formList}" />
 				<aon:selectOneMenu id="ProcessDetailTransition_processTransitionType" 
@@ -36,7 +36,7 @@
 			<aon:column styleClass="aon-editDataTable-textColumn" colspan="3">
 				<f:facet name="header">
 					<aon:outputLabel for="ProcessDetailTransition_NextProcessDetail" 
-						value="#{groupwareBundle.groupware_process_next_process}" />
+						value="#{bundle.groupware_process_next_process}" />
 				</f:facet>
 				<aon:outputText value="#{to.nextProcessDetail.description}" rendered="#{formList}" />
 				<aon:selectOneMenu for="ProcessDetailTransition_NextProcessDetail" 

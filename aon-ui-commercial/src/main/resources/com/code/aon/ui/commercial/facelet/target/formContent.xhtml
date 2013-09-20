@@ -21,7 +21,7 @@
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
 		</aon:selectOneMenu>
 
-		<aon:outputText value="#{commercialBundle.commercial_target_taxes}" />
+		<aon:outputText value="#{bundle.commercial_target_taxes}" />
 		<aon:div>
 			<aon:selectBooleanCheckbox id="Target_surcharge" styleClass="aon-margin-left"
 				value="#{controller.to.surcharge}" />
@@ -57,8 +57,8 @@
 				actionListener="#{controller.onLoadCustomer}"
 				action="customer_form" />
 			<aon:commandButton
-				value="#{commercialBundle.commercial_target_create_customer}" 
-				title="#{commercialBundle.commercial_target_create_customer}"
+				value="#{bundle.commercial_target_create_customer}" 
+				title="#{bundle.commercial_target_create_customer}"
 				style="border: #808080 1px solid;"
 				styleClass="aon-finding-toolbar-item aon-icon-reset"
 				rendered="#{!controller.to.customer}"

@@ -13,7 +13,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{sepeBundle.sepe_certifica2Batch_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.sepe_certifica2Batch_module}" />
 				<ui:param name="controller" value="#{certifica2Batch}" />
 				
 			</ui:decorate>
@@ -44,7 +44,7 @@
 						<aon:column alias="Certifica2Batch.date"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{payrollBundle.fanBatch_liquidation_period}" />
+								<aon:outputText value="#{bundle.fanBatch_liquidation_period}" />
 							</f:facet>
 							<aon:outputText value="#{to.date}">
 								<f:convertDateTime pattern="MMMMM yyyy"

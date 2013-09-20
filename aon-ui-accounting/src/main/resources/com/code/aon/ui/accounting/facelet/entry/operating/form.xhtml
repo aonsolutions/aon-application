@@ -12,11 +12,11 @@
 	<ui:define name="content">
 		<aon:form>
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_operating_entry_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.accounting_operating_entry_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="save" value="#{accountingBundle.accounting_entry_generate}"
+					<aon:commandButton id="save" value="#{bundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{endPeriodEntries.onOperatingEntry}"
 						action="#{endPeriodEntries.navigate}"

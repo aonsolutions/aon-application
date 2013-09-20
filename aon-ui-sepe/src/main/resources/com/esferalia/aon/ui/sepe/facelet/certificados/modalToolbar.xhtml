@@ -18,7 +18,7 @@
 
 			<c:if test="#{!skipBatchButton and empty controller.generatedFile}">
 				<aon:commandButton id="batch-file"
-					value="#{sepeBundle.sepe_contrata_batch}"
+					value="#{bundle.sepe_contrata_batch}"
 					rendered="#{!controller.communicationIdReceived}"
 					styleClass="aon-finding-toolbar-item aon-icon-newFolder" >
 					<f:setPropertyActionListener
@@ -28,7 +28,7 @@
 			
 			<c:if test="#{empty controller.generatedFile}">
 				<aon:commandButton id="generate-certificados"
-					value="#{sepeBundle.sepe_certificados_generate_certificate}"
+					value="#{bundle.sepe_certificados_generate_certificate}"
 					reRender="showGenerationWindow"
 					styleClass="aon-finding-toolbar-item aon-icon-file-entrance" >
 					<f:setPropertyActionListener
@@ -38,7 +38,7 @@
 			
 			<c:if test="#{not empty controller.generatedFile}">
 				<aon:commandButton id="sepe-communication"
-					value="#{sepeBundle.sepe_communicate}"
+					value="#{bundle.sepe_communicate}"
 					reRender="showCertificadosLoginWindow,contrataResponseContainer,contrataData,contractForm"
 					actionListener="#{controller.onSendSepeFile}"
 					onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -46,7 +46,7 @@
 					styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
 				
 				<aon:commandButton id="sepe-dataQuery"
-					value="#{sepeBundle.sepe_status_check}"
+					value="#{bundle.sepe_status_check}"
 					disabled="#{!controller.communicationIdReceived}"
 					reRender="showCertificadosLoginWindow,contractForm"
 					actionListener="#{controller.onSepeDataQuery}"
@@ -55,7 +55,7 @@
 					styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
 					
 				<aon:commandButton id="refresh-result"
-					value="#{sepeBundle.sepe_reload}"
+					value="#{bundle.sepe_reload}"
 					reRender="showCertificadosCommunicationWindow"
 					styleClass="aon-finding-toolbar-item aon-icon-refresh" />
 					

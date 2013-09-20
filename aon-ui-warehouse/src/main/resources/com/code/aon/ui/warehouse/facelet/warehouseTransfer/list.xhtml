@@ -11,7 +11,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_transfer_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.warehouse_transfer_module}" />
 				<ui:param name="controller" value="#{warehouseTransfer}" />
 			</ui:decorate>
 
@@ -51,7 +51,7 @@
 						<aon:column alias="WarehouseTransfer.targetWarehouse.name"
 							styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
-								<h:outputText value="#{warehouseBundle.warehouse_stock_target}" />
+								<h:outputText value="#{bundle.warehouse_stock_target}" />
 							</f:facet>
 							<aon:outputText value="#{to.targetWarehouse.name}" />
 						</aon:column>

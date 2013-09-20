@@ -11,7 +11,7 @@
 		<aon:form id="domainUserList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{adminBundle.admin_users} (#{adminDomain.to.name})" />
+				<ui:param name="toolbarTitle" value="#{bundle.admin_users} (#{adminDomain.to.name})" />
 				<ui:param name="controller" value="#{domainUser}" />
 				<ui:param name="skipResetButton" value="#{domainUser.skipUserReset}" />
 				<ui:define name="additionalToolbarContent">
@@ -52,7 +52,7 @@
 
 						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{adminBundle.admin_profiles}" />
+								<aon:outputText value="#{bundle.admin_profiles}" />
 							</f:facet>
 							<aon:outputText value="#{controller.profileList}"/>
 						</aon:column>

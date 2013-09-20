@@ -14,7 +14,7 @@
 			<!-- TOOLBAR -->
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle"
-						value="#{assetBundle.asset_statistic_module}" />
+						value="#{bundle.asset_statistic_module}" />
 				<ui:param name="toolbarDescription"
 						value="#{bundle.aon_list}" />
 
@@ -50,7 +50,7 @@
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:panelGrid id="assetTable" columns="2" width="30%">
-					<aon:outputLabel value="#{assetBundle.asset_stat_statType_filterBy}" />
+					<aon:outputLabel value="#{bundle.asset_stat_statType_filterBy}" />
 					<aon:selectOneRadio value="#{assetStat.statType}" disabled="true">
 						<f:selectItem itemLabel="#{bundle.aon_reservation}" itemValue="ASSET" />
 						<f:selectItem itemLabel="#{bundle.aon_login_user}" itemValue="USER" />

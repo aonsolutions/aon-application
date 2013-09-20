@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.DATE_PATTERN;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -397,7 +399,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		}
 		if (expression instanceof Date) {
 			Date date = (Date) expression;
-			String pattern = AonUtil.getMessage("aon_date_pattern");
+			String pattern = AonUtil.getMessage(DATE_PATTERN);
 			return new SimpleDateFormat(pattern).format(date);
 		}
 		return expression.toString();
@@ -811,7 +813,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 					setExpressionValue(true);
 				}
 			}else if(getVariable()!=null && getVariable().getType()==VariableType.DATE){
-				String pattern = AonUtil.getMessage("aon_date_pattern");
+				String pattern = AonUtil.getMessage(DATE_PATTERN);
 				try {
 					String[] patterns = {pattern};
 					DateUtils.parseDate(getExpression(), patterns);

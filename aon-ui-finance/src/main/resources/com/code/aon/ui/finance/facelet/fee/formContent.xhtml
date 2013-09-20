@@ -96,7 +96,7 @@
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 	</aon:panelGrid>
 
-	<aon:outputLabel for="CustomerFee_billingDateYear" value="#{financeBundle.finance_fee_billing_date_abrv}" />
+	<aon:outputLabel for="CustomerFee_billingDateYear" value="#{bundle.finance_fee_billing_date_abrv}" />
 	<aon:panelGrid columns="3" columnClasses="aon-width-150,aon-width-60,aon-width-auto">
 		<aon:div styleClass="aon-nowrap">
 			<aon:selectOneMenu value="#{controller.to.billingDateMonth}">
@@ -143,7 +143,7 @@
 		</ui:include>
 	</c:if>
 	<c:if test="#{controller.to.invoicingGroup.id != null and !controller.invoicingGroupInMyScopes}">
-		<aon:outputText	value="#{customerBundle.customer_invoicingGroup}" />
+		<aon:outputText	value="#{bundle.customer_invoicingGroup}" />
 		<aon:outputText	value="#{controller.to.invoicingGroup.customer.registry.fullName}" />
 	</c:if>
 

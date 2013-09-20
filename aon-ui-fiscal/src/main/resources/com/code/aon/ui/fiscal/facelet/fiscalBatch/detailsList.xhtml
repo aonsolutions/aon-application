@@ -21,9 +21,9 @@
 				actionListener="#{fiscalBatch.detailsCheckNone}" reRender="fiscalBatchPanelTabSet"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
 	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-			<aon:commandButton title="#{fiscalBundle.fiscal_remove_batch}"
+			<aon:commandButton title="#{bundle.fiscal_remove_batch}"
 				styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
-				value="#{fiscalBundle.fiscal_remove_batch}" immediate="true"
+				value="#{bundle.fiscal_remove_batch}" immediate="true"
 				rendered="#{fiscalBatch.detailsCheckedCount > 0}"
 				actionListener="#{fiscalBatch.onRemoveSelected}" 
 				reRender="fiscalBatchPanelTabSet"
@@ -57,7 +57,7 @@
 <!-- 			
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{fiscalBundle.fiscal_complementary}" />
+					<aon:outputText value="#{bundle.fiscal_complementary}" />
 				</f:facet>
 				<aon:outputText styleClass="aon-nowrap" value="#{to.complementary}" />
 			</aon:column>

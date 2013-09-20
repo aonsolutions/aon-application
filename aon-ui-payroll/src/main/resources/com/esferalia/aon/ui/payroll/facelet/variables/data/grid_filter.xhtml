@@ -10,7 +10,7 @@
 	
 	<aon:div styleClass="aon-group aon-panelGrid-search">
 		<aon:div styleClass="aon-group-title">
-			<aon:outputText value="#{payrollBundle.payroll_data_filter}" styleClass="aon-bold" />
+			<aon:outputText value="#{bundle.payroll_data_filter}" styleClass="aon-bold" />
 		</aon:div>
 		<aon:div styleClass="aon-group-body" >	
 			
@@ -18,8 +18,8 @@
 				columnClasses="aon-panelGrid-odd aon-width-100, aon-panelGrid-even aon-width-300, aon-panelGrid-even aon-width-auto">
 				
 				<aon:selectOneRadio value="#{controller.variableFilter.searchCurrentVariables}" style="display:inline;">
-					<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
-					<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
+					<f:selectItem itemLabel="#{bundle.payroll_current}" itemValue="#{true}" />
+					<f:selectItem itemLabel="#{bundle.payroll_historyc}" itemValue="#{false}" />
 					<a4j:support event="onclick" reRender="#{controller.beanName}VarContainer" ignoreDupResponses="true" >
 						<aon:actionListener method="#{controller.variableFilter.onChangeSearchCurrent}" />
 						<aon:actionListener method="#{controller.reloadData}" />

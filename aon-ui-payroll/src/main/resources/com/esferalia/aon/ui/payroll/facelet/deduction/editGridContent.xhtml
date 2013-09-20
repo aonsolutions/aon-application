@@ -11,8 +11,8 @@
 		<aon:panelGrid columns="1" style="width: 100%;"
 			columnClasses="aon-panelGrid-even  aon-width-auto">
 			<aon:selectOneRadio value="#{contractDeduction.searchCurrent}">
-				<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
-				<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
+				<f:selectItem itemLabel="#{bundle.payroll_current}" itemValue="#{true}" />
+				<f:selectItem itemLabel="#{bundle.payroll_historyc}" itemValue="#{false}" />
 				<a4j:support event="onclick" reRender="contractDeductionTable" >
 					<aon:actionListener method="#{contractDeduction.onSearch}" />
 				</a4j:support>

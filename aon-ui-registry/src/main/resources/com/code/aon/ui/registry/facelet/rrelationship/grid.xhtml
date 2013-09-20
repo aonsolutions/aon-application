@@ -19,7 +19,7 @@
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText for="Registry_id"
-						value="#{registryBundle.registry_relationed}" />
+						value="#{bundle.registry_relationed}" />
 				</f:facet>
 				<aon:outputText value="#{to.relatedRegistry.name}"
 					rendered="#{formList}" />
@@ -65,7 +65,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<h:outputText value="#{registryBundle.registry_observation}" />
+					<h:outputText value="#{bundle.registry_observation}" />
 				</f:facet>
 				<aon:outputText value="#{to.comments}"
 					rendered="#{to.id!=controller.to.id}">

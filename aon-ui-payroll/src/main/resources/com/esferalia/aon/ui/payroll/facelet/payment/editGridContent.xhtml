@@ -11,8 +11,8 @@
 		<aon:panelGrid columns="1" style="width: 100%;"
 			columnClasses="aon-panelGrid-even  aon-width-auto">
 			<aon:selectOneRadio value="#{contractPayment.searchCurrent}">
-				<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
-				<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
+				<f:selectItem itemLabel="#{bundle.payroll_current}" itemValue="#{true}" />
+				<f:selectItem itemLabel="#{bundle.payroll_historyc}" itemValue="#{false}" />
 				<a4j:support event="onclick" reRender="contractPaymentTable" >
 					<aon:actionListener method="#{contractPayment.initialize}" />
 				</a4j:support>
@@ -26,7 +26,7 @@
 				<aon:outputText value="&#160;" />
 			</f:facet>
 			<aon:commandButton id="ContractPayment-select"
-				title="#{(controller.readOnly)?(payrollBundle.payroll_overwrite):(bundle.aon_update)}" 
+				title="#{(controller.readOnly)?(bundle.payroll_overwrite):(bundle.aon_update)}" 
 				actionListener="#{controller.onEdit}"
 				reRender="#{controller.beanName}ModalContainer"
 				styleClass="aon-editDataTable-button #{(controller.readOnly)?('aon-icon-go'):('aon-icon-rowSelector')}"/>
@@ -85,7 +85,7 @@
 		
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 			<f:facet name="header">
-				<aon:outputText value="#{payrollBundle.payroll_salary_payment_month}" />
+				<aon:outputText value="#{bundle.payroll_salary_payment_month}" />
 			</f:facet>
 			<aon:outputText value="#{to.month}" />
 		</aon:column>

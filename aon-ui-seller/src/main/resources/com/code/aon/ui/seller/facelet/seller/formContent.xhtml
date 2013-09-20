@@ -9,7 +9,7 @@
 		<ui:param name="includeRegistryScope" value="#{true}"/>
 	</ui:include>		
 	
-	<aon:outputLabel for="Seller_commissionType" value="#{configBundle.config_commission_type}" />
+	<aon:outputLabel for="Seller_commissionType" value="#{bundle.config_commission_type}" />
 	<aon:selectOneMenu id="Seller_commissionType" value="#{controller.to.commissionType}">
 		<f:selectItem itemLabel="-" value="#{null}"/>
 		<f:selectItems value="#{configCollections.commissionTypes}" />

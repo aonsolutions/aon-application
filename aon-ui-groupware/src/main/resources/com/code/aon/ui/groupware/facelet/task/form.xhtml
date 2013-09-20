@@ -13,7 +13,7 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarID" value="toolbar" />
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.groupware_task_inbox}"/>
+				<ui:param name="toolbarTitle" value="#{bundle.groupware_task_inbox}"/>
 				<ui:param name="controller" value="#{task}" />
 				<ui:param name="skipSaveButton" value="#{true}" />
 				<ui:param name="skipRemoveButton" value="#{true}" />
@@ -39,27 +39,27 @@
 				</ui:define>
 
 				<ui:define name="beforeSpinToolbarContent">
-					<aon:commandButton id="startTask" value="#{groupwareBundle.groupware_task_start}"
+					<aon:commandButton id="startTask" value="#{bundle.groupware_task_start}"
 						actionListener="#{task.onStartTask}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-start"
 						rendered="#{!task.monitor and !task.new and task.myTask and task.to.pending}" />
-					<aon:commandButton id="stopTask" value="#{groupwareBundle.groupware_task_stop}"
+					<aon:commandButton id="stopTask" value="#{bundle.groupware_task_stop}"
 						actionListener="#{task.onStopTask}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-stop"
 						rendered="#{!task.monitor and task.myTask and task.to.inProgress}" />
-					<aon:commandButton id="reopenTask" value="#{groupwareBundle.groupware_task_reopen}"
+					<aon:commandButton id="reopenTask" value="#{bundle.groupware_task_reopen}"
 						actionListener="#{task.onReopenTask}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-reopen"
 						rendered="#{(task.monitor or task.myTask) and !task.to.sourceProcess and task.to.finished}" />
-					<aon:commandButton id="assumeTask" value="#{groupwareBundle.groupware_task_assume}"
+					<aon:commandButton id="assumeTask" value="#{bundle.groupware_task_assume}"
 						actionListener="#{task.onAssumeTask}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-assume"
 						rendered="#{!task.monitor and !task.new and task.to.unassigned}" />
-					<aon:commandButton id="releaseTask" value="#{groupwareBundle.groupware_task_release}"
+					<aon:commandButton id="releaseTask" value="#{bundle.groupware_task_release}"
 						actionListener="#{task.onReleaseTask}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
 						rendered="#{!task.monitor and !task.new and task.myTask and !task.to.finished and !task.to.deleted and !task.to.inProgress}" />
-					<aon:commandButton id="finishTask" value="#{groupwareBundle.groupware_task_finish}" 
+					<aon:commandButton id="finishTask" value="#{bundle.groupware_task_finish}" 
 						actionListener="#{task.onFinishTask}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-finish"
 						rendered="#{!task.monitor and !task.new and !task.to.finished and !task.to.deleted}" />
@@ -107,7 +107,7 @@
 					</aon:selectInputDate>
 
 					<aon:outputLabel for="Task_dueDate"
-						value="#{groupwareBundle.groupware_due_date}" />
+						value="#{bundle.groupware_due_date}" />
 					<aon:selectInputDate id="Task_dueDate" required="true"
 						renderAsPopup="true" value="#{task.to.dueDate}"
 						enableManualInput="true"
@@ -129,7 +129,7 @@
 
 					<aon:outputLabel for="Task_period"
 						rendered="#{!task.to.sourceProcess}"
-						value="#{groupwareBundle.groupware_task_period}" />
+						value="#{bundle.groupware_task_period}" />
 					<aon:selectOneMenu id="Task_period" value="#{task.to.repeatPeriod}"
 						rendered="#{!task.to.sourceProcess}">
 						<f:selectItems value="#{groupWareCollections.taskPeriods}" />
@@ -160,7 +160,7 @@
 								reRender="user" />
 						</aon:selectBooleanCheckbox>
 						<aon:outputLabel for="allMembers"
-							value="#{groupwareBundle.groupware_task_all_members}" rendered="#{task.new}" />
+							value="#{bundle.groupware_task_all_members}" rendered="#{task.new}" />
 					</aon:div>
 
 					<aon:outputText value="#{bundle.aon_login_user}" />
@@ -189,7 +189,7 @@
 					<aon:panelGrid columns="2" styleClass="aon-width-all"
 						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
 					
-						<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
+						<aon:outputLabel for="Registry_id" value="#{bundle.project_assigned}"/>
 						<aon:div>
 							<aon:outputText rendered="#{task.parentDomain}" value="#{task.to.registry.fullName}"/>
 							<aon:div rendered="#{!task.parentDomain}">
@@ -218,7 +218,7 @@
 							</aon:selectOneMenu>
 						</aon:div>
 						
-						<aon:outputLabel for="Task_activityType" value="#{projectBundle.project_activity_type}"/>
+						<aon:outputLabel for="Task_activityType" value="#{bundle.project_activity_type}"/>
 						<aon:div>
 							<aon:outputText rendered="#{task.parentDomain}" value="#{task.to.activityType.description}"/>
 							<aon:selectOneMenu id="Task_activityType"

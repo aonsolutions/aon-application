@@ -1,6 +1,5 @@
 package com.code.aon.ui.product.event;
 
-import static com.code.aon.ui.common.ICommonMessages.PRODUCT_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.PRODUCT_CATALOGUE_DATES_ERROR;
 
 import java.util.Date;
@@ -27,7 +26,7 @@ public class CatalogueControllerListener extends ControllerAdapter {
 			Date startDate = ((Catalogue) this.getController().getTo()).getStartDate();
 			if (endDate.before(startDate)) {
 				((Catalogue)this.getController().getTo()).setEndDate(null);
-				throw new ControllerListenerException(AonUtil.getMessage(PRODUCT_BUNDLE, PRODUCT_CATALOGUE_DATES_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(PRODUCT_CATALOGUE_DATES_ERROR));
 			}
 		}
 	}
@@ -39,7 +38,7 @@ public class CatalogueControllerListener extends ControllerAdapter {
 			Date startDate = ((Catalogue) this.getController().getTo()).getStartDate();
 			if (endDate.before(startDate)) {
 				((Catalogue)this.getController().getTo()).setEndDate(null);
-				throw new ControllerListenerException(AonUtil.getMessage(PRODUCT_BUNDLE, PRODUCT_CATALOGUE_DATES_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(PRODUCT_CATALOGUE_DATES_ERROR));
 			}
 		}
 	}

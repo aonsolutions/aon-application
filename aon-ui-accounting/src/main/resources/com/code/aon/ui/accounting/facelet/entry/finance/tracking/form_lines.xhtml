@@ -20,9 +20,9 @@
 			actionListener="#{financeTrackingEntry.checkNoneLines}" reRender="lineDataDiv"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-		<aon:commandButton title="#{accountingBundle.accounting_finance_remove_record_list}"
+		<aon:commandButton title="#{bundle.accounting_finance_remove_record_list}"
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
-			value="#{accountingBundle.accounting_finance_remove_record_list}"
+			value="#{bundle.accounting_finance_remove_record_list}"
 			actionListener="#{financeTrackingEntry.onRemoveSelected}" 
 			reRender="financeTrackingEntryForm,financePanelTabSet"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -98,7 +98,7 @@
 	
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_deposit}" />
+					<aon:outputText value="#{bundle.finance_deposit}" />
 				</f:facet>
 				<aon:outputText value="#{to.registryBank.fullName}" rendered="#{to.registryBank != null}"/>
 				<aon:outputText value="#{to.payMethodTypeDetail.description}" rendered="#{to.payMethodTypeDetail != null}"/>

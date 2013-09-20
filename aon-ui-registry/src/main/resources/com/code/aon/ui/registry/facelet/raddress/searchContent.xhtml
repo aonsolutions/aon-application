@@ -7,7 +7,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:outputLabel for="#{searchController.preffix}addresses_streetType"
-		value="#{registryBundle.registry_street_type}" />
+		value="#{bundle.registry_street_type}" />
 	<aon:selectOneMenu id="#{searchController.preffix}addresses_streetType"
 		converter="aon.EnumConverter"
 		valueChangeListener="#{controller.addExpression}" >
@@ -27,7 +27,7 @@
 	<aon:inputText id="#{searchController.preffix}addresses_zip" size="12"
 		valueChangeListener="#{controller.addExpression}" />
 	<aon:outputLabel for="#{searchController.preffix}addresses_city"
-		value="#{registryBundle.registry_city}" />
+		value="#{bundle.registry_city}" />
 	<aon:inputText id="#{searchController.preffix}addresses_city" size="60"
 		valueChangeListener="#{controller.addExpression}" />
 	<aon:outputLabel for="#{searchController.preffix}addresses_geozone_id"

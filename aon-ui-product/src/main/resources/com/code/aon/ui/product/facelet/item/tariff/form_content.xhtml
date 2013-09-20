@@ -12,7 +12,7 @@
 		<f:selectItems value="#{configCollections.tariffs}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel for="ItemTariff_type" value="#{productBundle.product_tariff_type}" />
+	<aon:outputLabel for="ItemTariff_type" value="#{bundle.product_tariff_type}" />
 	<aon:selectOneMenu id="ItemTariff_type"
 		value="#{controller.to.type}"
 		valueChangeListener="#{controller.onTariffTypeChanged}"
@@ -29,7 +29,7 @@
 		focus="ItemTariff_price"
 		required="true" size="5" />
 
-	<aon:outputLabel for="ItemTariff_price" value="#{productBundle.product_sales_base_price}" />
+	<aon:outputLabel for="ItemTariff_price" value="#{bundle.product_sales_base_price}" />
 	<aon:inputText id="ItemTariff_price"
 		value="#{controller.to.price}"
 		valueChangeListener="#{controller.onPriceChanged}" 

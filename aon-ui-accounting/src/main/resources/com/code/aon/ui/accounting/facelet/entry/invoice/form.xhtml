@@ -26,15 +26,15 @@
 				<ui:define name="toolbarContent">
 
 					<aon:commandButton
-						value="#{accountingBundle.accounting_entry_generate}"
+						value="#{bundle.accounting_entry_generate}"
 						id="saveInvoice"
-						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
+						title="#{bundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{invoiceEntry.onGenerate}"
 						action="#{invoiceEntry.generate}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						disabled="#{invoiceEntry.details.rowCount == 0}"
-						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?'))  return false;" />
+						onclick="if (!confirm('#{bundle.accounting_entry_generate}?'))  return false;" />
 					<aon:commandButton value="#{bundle.aon_reset}"
 						accesskey="#{bundle.aon_key_new}"
 						title="#{bundle.aon_reset} (ALT+#{bundle.aon_key_new})"
@@ -66,8 +66,8 @@
 						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;" />
 
 					<aon:commandButton id="finances" reRender="FinancesData"
-						value="#{accountingBundle.accounting_generate_finances}"
-						title="#{accountingBundle.accounting_generate_finances} (ALT+W)"
+						value="#{bundle.accounting_generate_finances}"
+						title="#{bundle.accounting_generate_finances} (ALT+W)"
 						actionListener="#{invoiceEntry.generateFinances}" accesskey="W"
 						styleClass="aon-finding-toolbar-item aon-icon-sincronize"
 						rendered="#{invoiceEntry.details.rowCount > 0 and invoiceEntry.finances.rowCount==0}" />
@@ -115,7 +115,7 @@
 									</a4j:support>
 								</aon:selectBooleanCheckbox>
 								<aon:outputLabel for="Account_investment"
-									value="#{accountingBundle.accounting_investment}" />
+									value="#{bundle.accounting_investment}" />
 							</aon:div>
 						</aon:div>
 
@@ -196,7 +196,7 @@
 
 							<aon:outputLabel for="Account_taxDate"
 								styleClass="aon-italic" style="margin-right: 5px;"
-								value="#{financeBundle.finance_tax_date}" />
+								value="#{bundle.finance_tax_date}" />
 							<aon:selectInputDate size="8" id="Account_taxDate"
 								disabled="#{invoiceEntry.newDetail}"
 								value="#{invoiceEntry.header.taxDate}"
@@ -318,7 +318,7 @@
 						</aon:selectOneMenu>
 
 						<aon:outputLabel for="Account_invoiceVatDeductionType"
-							value="#{accountingBundle.accounting_vat_type}" />
+							value="#{bundle.accounting_vat_type}" />
 						<aon:panelGroup id="taxInfoPanel">
 							<aon:selectOneMenu id="Account_invoiceVatDeductionType"
 								disabled="#{invoiceEntry.newDetail}"
@@ -351,10 +351,10 @@
 
 						<aon:outputLabel for="Invoice_charged_retention_account"
 							rendered="#{invoiceEntry.header.withholding and !invoiceEntry.sales}"
-							value="#{accountingBundle.accounting_retention_account}" />
+							value="#{bundle.accounting_retention_account}" />
 						<aon:outputLabel for="Invoice_paid_retention_account"
 							rendered="#{invoiceEntry.header.withholding and invoiceEntry.sales}"
-							value="#{accountingBundle.accounting_retention_account}" />
+							value="#{bundle.accounting_retention_account}" />
 						<aon:selectOneMenu id="Invoice_charged_retention_account"
 							rendered="#{invoiceEntry.header.withholding and !invoiceEntry.sales}"
 							value="#{invoiceEntry.header.retentionAccount}" style="width: 400px;">
@@ -369,7 +369,7 @@
 						</aon:selectOneMenu>
 						<aon:outputLabel for="Account_invoiceWithholdingType"
 							rendered="#{invoiceEntry.header.withholding}"
-							value="#{accountingBundle.accounting_retention_type}" />
+							value="#{bundle.accounting_retention_type}" />
 						<aon:selectOneMenu id="Account_invoiceWithholdingType"
 							disabled="#{invoiceEntry.newDetail}"
 							rendered="#{invoiceEntry.header.withholding}"
@@ -480,7 +480,7 @@
 							</aon:div>
 
 							<aon:div>
-								<aon:commandButton value="#{accountingBundle.accounting_add}"
+								<aon:commandButton value="#{bundle.accounting_add}"
 									rendered="#{invoiceEntry.registryFilled}"
 									disabled="#{invoiceEntry.newDetail}"
 									styleClass="aon-finding-toolbar-item aon-icon-favorite"

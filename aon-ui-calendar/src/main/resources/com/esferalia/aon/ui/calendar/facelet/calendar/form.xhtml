@@ -13,7 +13,7 @@
 		<aon:form id="calendarForm">
 			<aon:methodParam name="removeAction" value="#{calendar.backAction}" />
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{payrollBundle.calendar_menu_group}" />
+				<ui:param name="toolbarTitle" value="#{bundle.calendar_menu_group}" />
 				<ui:param name="controller" value="#{calendar}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:htmlCommandLink id="calendarReport_list" value="#{bundle.aon_report}"
@@ -34,7 +34,7 @@
 				
 					<aon:panelGrid columns="2" id="calendar_data" style="width:100%;">
 						
-						<aon:outputLabel value="#{calendarBundle.aon_calendar_inherit_from}" />
+						<aon:outputLabel value="#{bundle.aon_calendar_inherit_from}" />
 						<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{calendar.to.calendar}" />
 							<ui:param name="skipLabel" value="#{true}" />
@@ -60,7 +60,7 @@
 							value="#{calendar.to.description}"  />
 						
 						<aon:outputLabel for="Calendar_anualHours"
-							value="#{calendarBundle.aon_calendar_anual_hours}" />
+							value="#{bundle.aon_calendar_anual_hours}" />
 						<aon:inputText id="Calendar_anualHours" size="10" maxlength="6"
 							value="#{calendar.to.anualHours}" />
 							

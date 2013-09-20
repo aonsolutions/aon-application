@@ -14,7 +14,7 @@
 		
 		<aon:div rendered="#{formEdit}" style="display: inline;" >
 			<aon:commandButton id="#{inputTextId}_variableExpressionEditor#{editorSuffix}"
-				title="#{(controller.handler.data.enableExpressionEditor)?(payrollBundle.payroll_variable_manual_edit_cancel):(payrollBundle.payroll_variable_manual_edit)}" 
+				title="#{(controller.handler.data.enableExpressionEditor)?(bundle.payroll_variable_manual_edit_cancel):(bundle.payroll_variable_manual_edit)}" 
 				value="&#160;" ajaxSingle="true"
 				rendered="#{ baseVariableType!=null and baseVariableType!='UNKNOWN' and baseVariableType!='EXPRESSION' and baseVariableType!='STRING' }"
 				reRender="variableHelperModalContainer#{helperSuffix}, #{container}"

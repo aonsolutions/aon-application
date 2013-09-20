@@ -1,6 +1,5 @@
 package com.code.aon.ui.config.event;
 
-import static com.code.aon.ui.common.ICommonMessages.BUNDLE_NAME;
 import static com.code.aon.ui.common.ICommonMessages.CONFIG_INVALID_START_DATE;
 
 import java.util.Calendar;
@@ -71,7 +70,7 @@ public class TaxControllerListener extends ControllerAdapter {
 		if (!tax.getStartDate().equals(oldTax.getStartDate())) {
 			if (hasOverlap(tax)) {
 				tax.setStartDate(oldTax.getStartDate());
-				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, CONFIG_INVALID_START_DATE));
+				throw new ControllerListenerException(AonUtil.getMessage(CONFIG_INVALID_START_DATE));
 			}
 
 			if (tax.getStartDate().after(oldTax.getStartDate())) {

@@ -15,13 +15,13 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_removing_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_invoice_removing_module}" />
 				<ui:param name="controller" value="#{invoiceRemover}" />
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="remove_selected"
-						value="#{financeBundle.finance_remove_selected}"
+						value="#{bundle.finance_remove_selected}"
 						rendered="#{invoiceRemover.model.rowCount > 0}"
 						reRender="invoiceRemoverDataDiv"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
@@ -70,7 +70,7 @@
 									<aon:outputText value="&#160;"
 										styleClass="aon-icon-errorwarning" style="padding-left:20px"
 										rendered="#{!invoiceRemover.modelToRemovable}" />
-									<rich:toolTip value="#{financeBundle.finance_unable_remove_paid_error}" />
+									<rich:toolTip value="#{bundle.finance_unable_remove_paid_error}" />
 								</aon:div>
 							</aon:column>
 		
@@ -116,10 +116,10 @@
 										<aon:outputText value="#{bundle.aon_signature}" />
 									</f:facet>
 									<aon:outputText value="&#160;" rendered="#{to.signed}"
-										title="#{signBundle.sign_signed}"
+										title="#{bundle.sign_signed}"
 										styleClass="aon-icon aon-icon-signed" />
 									<aon:outputText value="&#160;" rendered="#{!to.signed}"
-										title="#{signBundle.sign_sign_pending}"
+										title="#{bundle.sign_sign_pending}"
 										styleClass="aon-icon aon-icon-unsigned" />
 								</aon:column>
 							</c:if>

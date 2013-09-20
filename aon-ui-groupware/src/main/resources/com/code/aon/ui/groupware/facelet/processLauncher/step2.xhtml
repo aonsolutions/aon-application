@@ -8,7 +8,7 @@
 	template="/com/code/aon/ui/groupware/facelet/processLauncher/step_template.xhtml">
 
 	<ui:define name="step_name">
-		<aon:outputText value="#{groupwareBundle.groupware_process_wizard_step2}" />
+		<aon:outputText value="#{bundle.groupware_process_wizard_step2}" />
 	</ui:define>
 
 	<ui:define name="step_content">
@@ -40,12 +40,12 @@
 			<aon:outputText value="#{bundle.aon_supervisor}" />
 			<aon:outputText value="#{processWizard.workGroup.description}" />
 
-			<aon:outputText value="#{groupwareBundle.groupware_campaign_type}" />
+			<aon:outputText value="#{bundle.groupware_campaign_type}" />
 			<aon:outputText value="#{processWizard.type.description}" />
 		</aon:panelGrid>
 		
 		<aon:panelTabSet id="projectTab">
-			<aon:panelTab id="existingProject" label="#{groupwareBundle.groupware_process_wizard_add_project}" immediate="true">
+			<aon:panelTab id="existingProject" label="#{bundle.groupware_process_wizard_add_project}" immediate="true">
 
 				<aon:div id="existingContainer">
 					<aon:panelGrid columns="2" dir="true" style="margin: 5px;width: 95%;">
@@ -54,7 +54,7 @@
 						<aon:panelGrid columns="2" style="width: 95%;"
 							columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
 							
-							<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
+							<aon:outputLabel for="Registry_id" value="#{bundle.project_assigned}"/>
 							<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
 								<ui:param name="lookupTo" value="#{processWizard.registry}" />
 								<ui:param name="skipLabel" value="#{true}" />
@@ -73,7 +73,7 @@
 							</aon:selectOneMenu>
 						</aon:panelGrid>
 
-						<aon:outputLabel for="processWizard_type" value="#{projectBundle.project_project_type}"/>
+						<aon:outputLabel for="processWizard_type" value="#{bundle.project_project_type}"/>
 						<aon:selectOneMenu id="processWizard_type"
 							reRender="processWizard_activityType"
 							value="#{processWizard.projectType}">
@@ -81,7 +81,7 @@
 							<f:selectItems value="#{projectCollections.projectTypes}" />
 						</aon:selectOneMenu>
 				
-						<aon:outputLabel for="processWizard_activityType" value="#{projectBundle.project_activity_type}"/>
+						<aon:outputLabel for="processWizard_activityType" value="#{bundle.project_activity_type}"/>
 						<aon:selectOneMenu id="processWizard_activityType"
 							value="#{processWizard.activityType}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
@@ -92,7 +92,7 @@
 						<aon:div>
 							<aon:inputText id="processWizard_projectName" size="40"
 								value="#{processWizard.projectName}" maxlength="64" />
-							<aon:commandButton value="#{groupwareBundle.groupware_add_project_list}"
+							<aon:commandButton value="#{bundle.groupware_add_project_list}"
 								actionListener="#{processWizard.addExistingProject}"
 								focus="Registry_id" 
 								styleClass="aon-commandButton aon-margin-left"
@@ -103,12 +103,12 @@
 				</aon:div>
 		 	</aon:panelTab>
 
-			<aon:panelTab id="newProject" label="#{groupwareBundle.groupware_process_wizard_add_new_project}" immediate="true">
+			<aon:panelTab id="newProject" label="#{bundle.groupware_process_wizard_add_new_project}" immediate="true">
 
 				<aon:div id="newContainer">
 					<aon:panelGrid columns="2" dir="true" style="margin: 5px;width: 95%;">
 	
-						<aon:outputLabel for="Registry_id-New" value="#{projectBundle.project_assigned}"/>
+						<aon:outputLabel for="Registry_id-New" value="#{bundle.project_assigned}"/>
 						<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
 							<ui:param name="lookupTo" value="#{processWizard.registry}" />
 							<ui:param name="lookupSuffix" value="-New" />
@@ -116,7 +116,7 @@
 							<aon:methodParam name="lookupChangeListener" value="#{processWizard.registryChanged}" type="lookupChangeListener" />
 						</ui:include>
 							
-						<aon:outputLabel for="processWizard_type-New" value="#{projectBundle.project_project_type}"/>
+						<aon:outputLabel for="processWizard_type-New" value="#{bundle.project_project_type}"/>
 						<aon:selectOneMenu id="processWizard_type-New"
 							value="#{processWizard.projectType}">
 							<f:selectItem itemLabel="-" value="#{null}" />
@@ -128,7 +128,7 @@
 							value="#{processWizard.projectName}" maxlength="64" />
 							
 						<aon:outputText value="&#160;" />
-						<aon:commandButton value="#{groupwareBundle.groupware_process_wizard_add_project}"
+						<aon:commandButton value="#{bundle.groupware_process_wizard_add_project}"
 							actionListener="#{processWizard.addNewProject}"
 							focus="Customer_IdNew"
 							styleClass="aon-commandButton aon-icon-new"
@@ -149,14 +149,14 @@
 					<aon:outputText value="&#160;"
 						style="padding-left: 20px;"
 					    styleClass="aon-icon-new-page"
-					    title="#{groupwareBundle.groupware_process_wizard_new_project_added}"
-					    alt="#{groupwareBundle.groupware_process_wizard_new_project_added}"
+					    title="#{bundle.groupware_process_wizard_new_project_added}"
+					    alt="#{bundle.groupware_process_wizard_new_project_added}"
 						rendered="#{to.project.id==null}" />
 					<aon:outputText value="&#160;"
 						style="padding-left: 20px;"
 					    styleClass="aon-icon-page"
-					    title="#{groupwareBundle.groupware_process_wizard_project_added}"
-					    alt="#{groupwareBundle.groupware_process_wizard_project_added}"
+					    title="#{bundle.groupware_process_wizard_project_added}"
+					    alt="#{bundle.groupware_process_wizard_project_added}"
 						rendered="#{to.project.id!=null}" />
 				</aon:column>
 
@@ -169,7 +169,7 @@
 				
 				<aon:column styleClass="aon-width-auto">
 					<f:facet name="header">
-						<aon:outputText value="#{projectBundle.project_assigned}" />
+						<aon:outputText value="#{bundle.project_assigned}" />
 					</f:facet>
 					<aon:outputText value="#{to.project.registry.fullName}" />
 				</aon:column>

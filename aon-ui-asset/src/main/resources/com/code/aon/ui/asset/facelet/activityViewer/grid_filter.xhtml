@@ -38,7 +38,7 @@
 			
 				<!--  
 				<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{assetBundle.asset_filter_viewerType}" />
+					value="#{bundle.asset_filter_viewerType}" />
 				<aon:selectOneMenu 
 					styleClass="aon-margin-right"
 					value="#{controller.viewerType}" >
@@ -86,7 +86,7 @@
 					</a4j:support>
 				</aon:selectInputDate>
 				
-				<aon:outputLabel value="#{assetBundle.asset_filter_availability}" />
+				<aon:outputLabel value="#{bundle.asset_filter_availability}" />
 				<h:panelGrid columns="2" >
 					<rich:inputNumberSpinner 
 						value="#{controller.assetAvailability}" inputSize="2" >
@@ -98,7 +98,7 @@
 						</a4j:support>
 			  		</rich:inputNumberSpinner>
 					<aon:outputText styleClass="aon-margin-left" 
-						value="#{assetBundle.asset_activity_days}" />
+						value="#{bundle.asset_activity_days}" />
 				</h:panelGrid>
 				
 				<aon:outputText value="&#160;" />
@@ -112,7 +112,7 @@
 				-->
 				<!--  
 				<aon:outputLabel 
-					value="#{assetBundle.asset_features}" />
+					value="#{bundle.asset_features}" />
 				<aon:div>
 					<aon:selectOneMenu 
 						value="#{controller.featureFilter}" >
@@ -139,7 +139,7 @@
 				</aon:div>
 				-->
 				<aon:outputLabel 
-					value="#{assetBundle.asset_features}" />
+					value="#{bundle.asset_features}" />
 				<aon:div>
 					<aon:selectManyCheckbox layout="pageDirection" 
 						value="#{controller.featureFilter}" >

@@ -10,7 +10,7 @@
 	<ui:define name="content">
 		<aon:form>
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{academyBundle.academy_loans}" />
+				<ui:param name="toolbarTitle" value="#{bundle.academy_loans}" />
 				<ui:param name="controller" value="#{alumnLoan}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:htmlCommandLink id="alumnLoan-excel-report"
@@ -36,7 +36,7 @@
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="pendingAlumnLoan-report"
-						value="#{academyBundle.academy_pending_loan_listing}"
+						value="#{bundle.academy_pending_loan_listing}"
 						target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="pendingAlumnLoanList" />

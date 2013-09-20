@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{salesBundle.sales_purchase_window_title}" />
+						<aon:outputText value="#{bundle.sales_purchase_window_title}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -42,7 +42,7 @@
 										columnClasses="aon-finding-subtitle, aon-finding-toolbar">
 							
 										<aon:div styleClass="aon-finding-subtitle-internal">
-											<aon:outputText value="#{!sales.purchaseGenerator.generated?bundle.aon_reset:salesBundle.sales_to_purchase}" />			
+											<aon:outputText value="#{!sales.purchaseGenerator.generated?bundle.aon_reset:bundle.sales_to_purchase}" />			
 										</aon:div>
 										
 										<aon:div styleClass="aon-finding-toolbar-item-group">
@@ -75,7 +75,7 @@
 											value="#{sales.purchaseGenerator.customerShippingAddress}" />
 										<aon:outputLabel for="Purchase_customer_address"
 											styleClass="aon-italic aon-margin-right aon-bold"
-											value="#{salesBundle.sales_purchase_send_to_customer}" />
+											value="#{bundle.sales_purchase_send_to_customer}" />
 									</aon:panel>
 									
 										<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">

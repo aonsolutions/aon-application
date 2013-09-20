@@ -1,6 +1,5 @@
 package com.code.aon.ui.admin;
 
-import static com.code.aon.ui.common.ICommonMessages.ADMIN_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.SYSTEM;
 
 import org.apache.commons.lang.StringUtils;
@@ -57,7 +56,7 @@ public class UserProfileInfo {
 		String suffix = null;
 		this.name = profile.getName();
 		if ( profile.getDomain() == null ) {
-			suffix = AonUtil.getMessage(ADMIN_BUNDLE, SYSTEM); 
+			suffix = AonUtil.getMessage(SYSTEM); 
 		} else if (! DomainManager.getCurrentDomain().equals(profile.getDomain().getId()) ) {
 			suffix = profile.getDomain().getDescription();
 		}

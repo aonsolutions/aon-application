@@ -27,7 +27,7 @@
 	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
 		<f:facet name="header">
 			<c:if test="#{!skipHeader}">
-				<aon:outputText value="#{fiscalBundle.fiscal_vatTax_accumulated}" />	
+				<aon:outputText value="#{bundle.fiscal_vatTax_accumulated}" />	
 			</c:if>
 		</f:facet>
 		<aon:div rendered="#{!key.title and !key.total}">
@@ -41,7 +41,7 @@
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
 			<f:facet name="header">
 				<c:if test="#{!skipHeader}">
-					<aon:outputText value="#{fiscalBundle.fiscal_vatTax_declared}" />
+					<aon:outputText value="#{bundle.fiscal_vatTax_declared}" />
 				</c:if>
 			</f:facet>
 			<aon:div rendered="#{key.difEnabled}">
@@ -70,7 +70,7 @@
 	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
 		<f:facet name="header">
 			<c:if test="#{!skipHeader}">
-				<aon:outputText value="#{fiscalBundle.fiscal_vatTax_adjusts}" />
+				<aon:outputText value="#{bundle.fiscal_vatTax_adjusts}" />
 			</c:if>
 		</f:facet>
 		<aon:div rendered="#{!key.title and !key.total}">
@@ -87,7 +87,7 @@
 	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
 		<f:facet name="header">
 			<c:if test="#{!skipHeader}">
-				<aon:outputText value="#{fiscalBundle.fiscal_vatTax_to_declare}" />
+				<aon:outputText value="#{bundle.fiscal_vatTax_to_declare}" />
 			</c:if>
 		</f:facet>
 		<aon:div rendered="#{!key.title}">

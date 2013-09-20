@@ -13,7 +13,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_print_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_invoice_print_module}" />
 				<ui:param name="controller" value="#{invoicePrint}" />
 				<ui:param name="skipResetButton" value="true" />
 				
@@ -31,13 +31,13 @@
 						<f:param name="reportKey" value="#{company.invoicePrintTemplateValue}" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="receipt-report"
-						value="#{financeBundle.finance_receipts}" target="_blank"
+						value="#{bundle.finance_receipts}" target="_blank"
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" >
 						<f:param name="reportKey" value="receipt" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="facturae"
-						value="#{financeBundle.finance_facturae}" target="_blank"
+						value="#{bundle.finance_facturae}" target="_blank"
 						actionListener="#{invoicePrint.downloadInvoiceZip}"
 						styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
 				</ui:define>				
@@ -118,10 +118,10 @@
 								<aon:outputText value="#{bundle.aon_signature}" />
 							</f:facet>
 							<aon:outputText value="&#160;" rendered="#{to.signed}"
-								title="#{signBundle.sign_signed}"
+								title="#{bundle.sign_signed}"
 								styleClass="aon-icon aon-icon-signed" />
 							<aon:outputText value="&#160;" rendered="#{!to.signed}"
-								title="#{signBundle.sign_sign_pending}"
+								title="#{bundle.sign_sign_pending}"
 								styleClass="aon-icon aon-icon-unsigned" />
 						</aon:column>
 					</c:if>
@@ -142,7 +142,7 @@
 				<ui:param name="windowHeight" value="440" />
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="send"
-						value="#{webmailBundle.webmail_send}"
+						value="#{bundle.webmail_send}"
 						styleClass="aon-icon-accept aon-finding-toolbar-item"
 						actionListener="#{invoicePrint.onSendInvoicesByEmail}"
 						reRender="#{sendButtonReRender}" >
@@ -152,7 +152,7 @@
 			</ui:decorate>
 			
 			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
-				<ui:param name="logPanelTitle" value="#{financeBundle.finance_invoice_send_email_title}" />
+				<ui:param name="logPanelTitle" value="#{bundle.finance_invoice_send_email_title}" />
 			</ui:include>		
 			
 		</c:if>

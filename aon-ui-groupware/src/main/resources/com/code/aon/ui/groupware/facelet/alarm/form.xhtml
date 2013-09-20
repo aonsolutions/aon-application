@@ -11,14 +11,14 @@
 		<aon:form id="alarmForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_alarm}" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_alarm}" />
 				<ui:param name="controller" value="#{alarm}" />
 				<ui:param name="skipRemoveButton" value="#{true}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 				<ui:param name="skipSpin" value="#{true}" />
 				<ui:define name="beforeSpinToolbarContent">
-					<aon:commandButton id="alarm_finish" value="#{groupwareBundle.alarm_finish}"
+					<aon:commandButton id="alarm_finish" value="#{bundle.alarm_finish}"
 						styleClass="aon-finding-toolbar-item aon-icon-alarms-finish"
 						action="#{alarm.backAction}" actionListener="#{alarm.onFinishAlarm}"/>	
 				</ui:define>				

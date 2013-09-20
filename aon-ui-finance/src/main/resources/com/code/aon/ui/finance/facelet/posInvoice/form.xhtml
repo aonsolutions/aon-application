@@ -19,7 +19,7 @@
 		<aon:form id="posInvoiceForm">
 			<aon:div id="menuExt"> 
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-					<ui:param name="toolbarTitle" value="#{financeBundle.finance_pos_invoice_management_module}" />
+					<ui:param name="toolbarTitle" value="#{bundle.finance_pos_invoice_management_module}" />
 					<ui:param name="controller" value="#{posInvoice}" />
 					<ui:param name="skipFocusFirst" value="#{true}" />
 					<ui:param name="skipResetButton" value="#{true}" />
@@ -65,7 +65,7 @@
 								<aon:outputText value="&#160;" />
 								<aon:outputText value="&#160;" />
 								<aon:outputText styleClass="aon-label-error"
-									value="#{financeBundle.finance_pos_no_current_invoice}" />
+									value="#{bundle.finance_pos_no_current_invoice}" />
 							</c:if>
 
 							<c:if test="#{!posInvoice.new}">
@@ -105,7 +105,7 @@
 									<aon:outputText value="#{posInvoice.to.registryDocument}" />
 								</c:if>
 <!-- 
-								<aon:outputLabel value="#{financeBundle.finance_pos_seller_label}:" />
+								<aon:outputLabel value="#{bundle.finance_pos_seller_label}:" />
 								<aon:div>
 									<c:if test="#{posInvoice.to.seller.registry.id != null}">
 										<aon:outputText value="#{posInvoice.to.seller.registry.fullName}">
@@ -198,7 +198,7 @@
 								accesskey="1" />
 							<aon:commandButton id="finishTicket" immediate="true"
 								styleClass="aon-big-commandButton aon-width-105"
-								value="2 #{financeBundle.finance_to_charge}"
+								value="2 #{bundle.finance_to_charge}"
 								title="Alt+{Mayús}+2"
 								disabled="#{posInvoice.new or posInvoice.pendingAmount == 0}"
 								actionListener="#{posInvoice.onShowFinishTicket}"
@@ -230,7 +230,7 @@
 							</aon:commandButton>											
 							<aon:commandButton id="parkTicket" immediate="true"
 								styleClass="aon-big-commandButton aon-width-105"
-								value="4 #{financeBundle.finance_pos_suspend}"
+								value="4 #{bundle.finance_pos_suspend}"
 								title="Alt+{Mayús}+4"
 								disabled="#{posInvoice.new or posInvoice.pendingAmount == 0}"
 								actionListener="#{posInvoice.onSuspendTicket}"
@@ -238,7 +238,7 @@
 								accesskey="4" />
 							<aon:commandButton id="recoverTicket" immediate="true"
 								styleClass="aon-big-commandButton aon-width-105"
-								value="5 #{financeBundle.finance_pos_recover}"
+								value="5 #{bundle.finance_pos_recover}"
 								title="Alt+{Mayús}+5"
 								disabled="#{!posInvoice.new and (posInvoice.pendingAmount != 0 or posInvoiceFinance.rowCount == 0)}"
 								actionListener="#{posInvoice.onShowRecoverTicket}"
@@ -249,7 +249,7 @@
 							</aon:commandButton>				
 							<aon:htmlCommandLink id="printGiftReceiptPDF" immediate="true" target="_new"
 								styleClass="aon-big-commandButton aon-width-110"
-								value="6 #{financeBundle.finance_pos_gift_receipt}"
+								value="6 #{bundle.finance_pos_gift_receipt}"
 								title="Alt+{Mayús}+6"
 								disabled="#{posInvoice.new or posInvoice.toInvoiceTotalPrice == 0 or posInvoice.pendingAmount != 0}"
 								rendered="#{posInvoiceParams.printPDF}"
@@ -260,7 +260,7 @@
 							</aon:htmlCommandLink>  	
 							<aon:commandButton id="printGiftTicketRAW" immediate="true"
 								styleClass="aon-big-commandButton aon-width-110"
-								value="6 #{financeBundle.finance_pos_gift_receipt}"
+								value="6 #{bundle.finance_pos_gift_receipt}"
 								title="Alt+{Mayús}+6"
 								disabled="#{posInvoice.new or posInvoice.toInvoiceTotalPrice == 0 or posInvoice.pendingAmount != 0}"
 								rendered="#{!posInvoiceParams.printPDF}"
@@ -280,11 +280,11 @@
 								accesskey="7" />
 							<aon:confirmButton id="cancelLine" immediate="true"
 								styleClass="aon-big-commandButton aon-width-105"
-								value="8 #{financeBundle.finance_pos_cancel_line}"
+								value="8 #{bundle.finance_pos_cancel_line}"
 								title="Alt+{Mayús}+8"
 								disabled="#{posInvoice.new or posInvoiceFinance.rowCount > 0 or	(posInvoiceDetail.rowCount > 0 and posInvoice.to.totalQuantity == 0)}"
 								confirmTitle="#{bundle.aon_confirm_title}"
-								confirmMessage="#{financeBundle.finance_pos_cancel_line_confirm}"
+								confirmMessage="#{bundle.finance_pos_cancel_line_confirm}"
 								confirmActionListener="#{posInvoice.onCancelLine}"
 								reRender="posInvoiceForm" ajaxSingle="true"
 								accesskey="8" />
@@ -294,7 +294,7 @@
 								title="Alt+{Mayús}+9"
 								disabled="#{posInvoiceDetail.checkedCount == 0}"
 								confirmTitle="#{bundle.aon_confirm_title}"
-								confirmMessage="#{financeBundle.finance_return_confirm}"
+								confirmMessage="#{bundle.finance_return_confirm}"
 								confirmActionListener="#{posInvoice.onReturnTicket}"
 								reRender="posInvoiceForm" ajaxSingle="true"
 								accesskey="9" />

@@ -13,7 +13,7 @@
 	<aon:outputLabel for="Person_firstSurname" value="#{bundle.payroll_mod145_perceptor10}" />
 	<aon:inputText id="Person_firstSurname" size="40" valueChangeListener="#{controller.addExpression}" />
 
-	<aon:outputLabel for="Person_secondSurname"	value="#{registryBundle.registry_person_secondSurname}" />
+	<aon:outputLabel for="Person_secondSurname"	value="#{bundle.registry_person_secondSurname}" />
 	<aon:inputText id="Person_secondSurname" size="40" valueChangeListener="#{controller.addExpression}" />
 
 	<aon:outputLabel for="Person_name"	value="#{bundle.aon_name}" />
@@ -28,17 +28,17 @@
 	<aon:outputLabel for="Person_registry_id" value="#{bundle.aon_id}" />
 	<aon:inputText id="#{controller.pojoShortName}_registry_id" size="12" valueChangeListener="#{controller.addExpression}" />
 
-	<aon:outputLabel for="Person_socialSecurityNumber"	value="#{registryBundle.registry_person_nss}" />
+	<aon:outputLabel for="Person_socialSecurityNumber"	value="#{bundle.registry_person_nss}" />
 	<aon:inputText id="Person_socialSecurityNumber" size="20"	valueChangeListener="#{controller.addExpression}" />
 
-	<aon:outputLabel for="Person_gender" value="#{registryBundle.registry_person_gender}" />
+	<aon:outputLabel for="Person_gender" value="#{bundle.registry_person_gender}" />
 	<aon:selectOneMenu id="Person_gender" converter="aon.EnumConverter"
 		valueChangeListener="#{controller.addEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{registryCollections.genders}" />
 	</aon:selectOneMenu>
 				
-	<aon:outputLabel for="Person_maritalStatus"	value="#{registryBundle.registry_person_marital_status}" />
+	<aon:outputLabel for="Person_maritalStatus"	value="#{bundle.registry_person_marital_status}" />
 	<aon:selectOneMenu id="Person_maritalStatus" converter="aon.EnumConverter"
 		valueChangeListener="#{controller.addEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" />

@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="loanForm">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{academyBundle.academy_loans}" />
+				<ui:param name="toolbarTitle" value="#{bundle.academy_loans}" />
 				<ui:param name="controller" value="#{alumnLoan}" />
 			</ui:include>
 
@@ -66,7 +66,7 @@
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 	
 						<aon:outputLabel for="AlumnLoan_notReturned"
-							value="#{academyBundle.academy_loan_not_returned}" />
+							value="#{bundle.academy_loan_not_returned}" />
 						<aon:selectBooleanCheckbox id="AlumnLoan_notReturned"
 							value="#{alumnLoanSearch.notReturned}"/>
 					</aon:div>					

@@ -39,7 +39,7 @@
 				value="#{controller.handler.data.name}" maxlength="128" size="32" 
 				disabled="#{controller.handler.data.id!=null}" />
 			<aon:commandButton id="variableHelpName-select"
-				title="#{payrollBundle.payroll_variable_helper}" ajaxSingle="true"
+				title="#{bundle.payroll_variable_helper}" ajaxSingle="true"
 				value="&#160;"
 				rendered="#{controller.handler.data.id==null}"
 				actionListener="#{controller.handler.onShowVariableNameHelp}"
@@ -57,7 +57,7 @@
 				<ui:param name="formEdit" value="true" />
 			</ui:include>
 			<aon:commandButton id="variableHelpValue-select"
-				title="#{payrollBundle.payroll_variable_helper}" ajaxSingle="true"
+				title="#{bundle.payroll_variable_helper}" ajaxSingle="true"
 				value="&#160;"
 				rendered="#{controller.handler.data.variable==null or controller.handler.data.variable.type=='STRING' or controller.handler.data.variable.type=='UNKNOWN'}"
 				actionListener="#{controller.handler.onShowVariableExpressionHelp}"

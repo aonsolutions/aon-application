@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{registryBundle.registry_addresses}" />
+						<aon:outputText value="#{bundle.registry_addresses}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -80,7 +80,7 @@
 										</aon:div>
 
 										<aon:outputLabel for="InvoiceAddress_address2" 
-											value="#{registryBundle.registry_address_detail}" />
+											value="#{bundle.registry_address_detail}" />
 										<aon:inputText id="InvoiceAddress_address2"
 											value="#{invoiceAddress.to.address2}" size="50" maxlength="45" />
 
@@ -90,7 +90,7 @@
 											value="#{invoiceAddress.to.zip}" size="12" maxlength="16" />
 
 										<aon:outputLabel for="InvoiceAddress_city"
-											value="#{registryBundle.registry_city}" />
+											value="#{bundle.registry_city}" />
 										<aon:inputText id="InvoiceAddress_city" required="true"
 											value="#{invoiceAddress.to.city}" size="50" maxlength="45" />
 

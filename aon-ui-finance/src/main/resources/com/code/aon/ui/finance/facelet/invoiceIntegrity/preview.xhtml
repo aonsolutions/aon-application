@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="accountEntryList">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_integrity_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_invoice_integrity_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="toolbarActions">
@@ -38,10 +38,10 @@
 				<aon:div id="closingMessagesContainer"
 					style="background-color:#f6f5e3; border: solid green 1px; padding:5px; padding-left:50px; margin: 10px;; width: 90%;">
 					<aon:div>
-						<aon:outputText value="#{financeBundle.finance_integrity_msg}"/>
+						<aon:outputText value="#{bundle.finance_integrity_msg}"/>
 					</aon:div>
 					<aon:div style="color:red;margin-top:10px;">
-						<aon:outputText value="#{financeBundle.finance_integrity_warning}"/>
+						<aon:outputText value="#{bundle.finance_integrity_warning}"/>
 					</aon:div>
 				</aon:div>
 
@@ -54,7 +54,7 @@
 						</f:facet>
 							<aon:commandLink id="selectButton"
 								styleClass="aon-table-row-link" 
-								title="#{financeBundle.finance_breakdown}"
+								title="#{bundle.finance_breakdown}"
 								actionListener="#{invoiceIntegrity.onSelect}"
 								action="invoiceIntegrity_list">
 								

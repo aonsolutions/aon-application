@@ -37,7 +37,7 @@
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="financeReturn-return"
-										value="#{financeBundle.finance_to_return}"
+										value="#{bundle.finance_to_return}"
 										reRender="showFinanceReturnWindow,financeForm"
 										actionListener="#{finance.onFinanceReturn}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
@@ -61,7 +61,7 @@
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
 
 										<aon:outputLabel for="Finance_returnDate"
-											value="#{financeBundle.finance_return_date}" />
+											value="#{bundle.finance_return_date}" />
 										<aon:selectInputDate id="Finance_returnDate" 
 											value="#{finance.returnDate}" required="true"
 											timeZone="#{timeZoneController.timeZone}"
@@ -77,7 +77,7 @@
 											required="true" size="10" />
 
 										<aon:outputLabel for="Finance_returnDeposit"
-											value="#{financeBundle.finance_deposit}" />
+											value="#{bundle.finance_deposit}" />
 										<aon:selectOneRadio id="Finance_returnDeposit"
 											style="display:inline;" ajaxSingle="true"
 											value="#{finance.returnDeposit}"
@@ -107,7 +107,7 @@
 
 										<c:if test="#{aonRole.accountingOperator}">
 											<aon:outputLabel for="Finance_record"
-												value="#{financeBundle.finance_record}" />
+												value="#{bundle.finance_record}" />
 											<aon:selectOneRadio id="Finance_record" ajaxSingle="true"
 												value="#{finance.returnRecordable}">
 												<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />

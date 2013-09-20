@@ -1,6 +1,5 @@
 package com.esferalia.aon.ui.payroll.controller.salary;
 
-import static com.code.aon.ui.common.ICommonMessages.PAYROLL_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.PHONE;
 import static com.code.aon.ui.common.ICommonMessages.SALARY_EMAIL_BODY_FOOTER;
 import static com.code.aon.ui.common.ICommonMessages.SALARY_EMAIL_BODY_HEADER;
@@ -314,7 +313,7 @@ public class SalaryController extends BasicController implements IPayrollConstan
 	}	
 		
 	private String getEmailSubject( Enterprise enterprise ) {
-		String message = AonUtil.getMessage(PAYROLL_BUNDLE, SALARY_EMAIL_SUBJECT);
+		String message = AonUtil.getMessage(SALARY_EMAIL_SUBJECT);
 		return MessageFormat.format(message, enterprise.getRegistry().getFullName() );
 	}
 	
@@ -343,13 +342,13 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
 		body.append( "</head><body>" );
 		
-		body.append(AonUtil.getMessage(PAYROLL_BUNDLE, SALARY_EMAIL_BODY_HEADER) );
+		body.append(AonUtil.getMessage(SALARY_EMAIL_BODY_HEADER) );
 		for( Salary salary : salaries ) {
-			String message = AonUtil.getMessage(PAYROLL_BUNDLE, SALARY_EMAIL_BODY_LINE);
+			String message = AonUtil.getMessage(SALARY_EMAIL_BODY_LINE);
 			String line = MessageFormat.format(message, salary.getContract().getPerson().getFullName(), salary.getIssueDate() );
 			body.append( line );
 		}
-		body.append(AonUtil.getMessage(PAYROLL_BUNDLE, SALARY_EMAIL_BODY_FOOTER) );		
+		body.append(AonUtil.getMessage(SALARY_EMAIL_BODY_FOOTER) );		
 
 		body.append( enterprise.getRegistry().getFullName() ).append( "<br/>" );
 		RegistryMedia phone = getRegistryMedia(enterprise, MediaType.FIXED_PHONE);

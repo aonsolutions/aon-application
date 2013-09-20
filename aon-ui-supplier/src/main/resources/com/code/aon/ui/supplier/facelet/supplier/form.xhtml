@@ -55,11 +55,11 @@
 							<aon:selectBooleanCheckbox id="Supplier_purchaseValuated" styleClass="aon-margin-left"
 								value="#{supplier.to.purchaseValuated}" />
 							<aon:outputLabel for="Supplier_purchaseValuated" styleClass="aon-italic"
-								value="#{supplierBundle.supplier_printValuated}" />
+								value="#{bundle.supplier_printValuated}" />
 						</aon:div>
 				
 						<c:if test="#{!supplier.new and aonRole.accountingOperator and aonConfiguration.bean.supplier.showAccount}">				
-							<aon:outputLabel for="Account_id" value="#{financeBundle.finance_account}" />
+							<aon:outputLabel for="Account_id" value="#{bundle.finance_account}" />
 							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
 								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 									<ui:param name="lookupTo" value="#{supplier.to.account}" />
@@ -67,8 +67,8 @@
 								</ui:include>
 								<aon:div id="accountLookupButtons">
 									<aon:commandButton
-										value="#{accountBundle.account_synchronize}"
-										title="#{accountBundle.account_synchronize}"
+										value="#{bundle.account_synchronize}"
+										title="#{bundle.account_synchronize}"
 										style="border: #808080 1px solid;"
 										styleClass="aon-finding-toolbar-item aon-icon-refresh"
 										rendered="#{supplier.accountSynchronizable}"
@@ -76,8 +76,8 @@
 										reRender="accountContainer">
 									</aon:commandButton>
 									<aon:commandButton
-										value="#{accountBundle.account_new_account}" 
-										title="#{accountBundle.account_new_account}"
+										value="#{bundle.account_new_account}" 
+										title="#{bundle.account_new_account}"
 										style="border: #808080 1px solid;"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										rendered="#{supplier.to.account == null or supplier.to.account.id == null}"
@@ -90,7 +90,7 @@
 					</aon:panelGrid>
 
 					<aon:panelTabSet id="supplierTab" selectedTab="#{supplier.selectedTab}">
-						<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">
+						<aon:panelTab id="address" label="#{bundle.registry_address_module}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="controller" value="#{supplierAddress}" />
 							</ui:include>
@@ -104,10 +104,10 @@
  
  						<c:if test="#{aonConfiguration.bean.supplier.showFinanceData and aonRole.financeOperator}">
 							<aon:panelTab id="finance"
-								label="#{registryBundle.registry_finance_data_module}">
+								label="#{bundle.registry_finance_data_module}">
 								<aon:panel>
 									<f:facet name="header">
-										<aon:outputText	value="#{registryBundle.registry_banks_module}" />
+										<aon:outputText	value="#{bundle.registry_banks_module}" />
 									</f:facet>
 									<ui:include
 										src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
@@ -116,7 +116,7 @@
 								</aon:panel>
 								<aon:panel>
 									<f:facet name="header">
-										<aon:outputText value="#{configBundle.config_predef_paymethod}" />
+										<aon:outputText value="#{bundle.config_predef_paymethod}" />
 									</f:facet>
 									<ui:include
 										src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
@@ -128,7 +128,7 @@
 
 						<c:if test="#{aonConfiguration.bean.supplier.showSegment and supplierSegment.model.rowCount > 0}">
 							<aon:panelTab id="segment"
-								label="#{registryBundle.registry_segment_module}">
+								label="#{bundle.registry_segment_module}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rsegment/tab_grid.xhtml">
 									<ui:param name="controller" value="#{supplierSegment}" />
 									<ui:param name="removeButtonReRender" value="supplierTab" />

@@ -10,7 +10,7 @@
 
 	<c:if test="#{!skipDeniedContentToolbar}">
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-			<ui:param name="toolbarTitle" value="#{auditBundle.audit_option_denied_module}" />
+			<ui:param name="toolbarTitle" value="#{bundle.audit_option_denied_module}" />
 			<ui:param name="toolbarDescription" value="&#160;" />
 			<ui:param name="innerToolbar" value="#{skipUserLookup}" />
 			<ui:param name="skipToolbarTitle" value="#{skipUserLookup}" />
@@ -44,8 +44,8 @@
 			converter="applicationOptionConverter" var="to"
 			listsHeight="400" sourceListWidth="450" targetListWidth="450"
 			orderControlsVisible="false" fastOrderControlsVisible="false"
-			sourceCaptionLabel="#{auditBundle.audit_available_options}"
-			targetCaptionLabel="#{auditBundle.audit_option_denied_module}"
+			sourceCaptionLabel="#{bundle.audit_available_options}"
+			targetCaptionLabel="#{bundle.audit_option_denied_module}"
 			copyAllControlLabel="#{bundle.aon_copyAll}"
 			copyControlLabel="#{bundle.aon_copy}"
 			removeControlLabel="#{bundle.aon_remove}"

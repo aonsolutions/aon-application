@@ -1,7 +1,6 @@
 package com.code.aon.ui.webmail.event;
 
 import static com.code.aon.ui.common.ICommonMessages.CONTACT_USED;
-import static com.code.aon.ui.common.ICommonMessages.WEBMAIL_BUNDLE;
 
 import javax.faces.event.AbortProcessingException;
 
@@ -32,7 +31,7 @@ public class ContactControllerListener extends ControllerAdapter implements IWeb
 		IContact contact = (IContact) controller.getTo();
 		String list = controller.isUsed(contact);
 		if ( list != null ) {
-			String message = AonUtil.addErrorMessageFromBundle(WEBMAIL_BUNDLE, CONTACT_USED, contact.getDisplayName(), list );
+			String message = AonUtil.addErrorMessageFromBundle( CONTACT_USED, contact.getDisplayName(), list );
 			throw new AbortProcessingException( message );			
 		}
 	}

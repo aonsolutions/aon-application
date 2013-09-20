@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="systemPaymentSearch">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_systemPayment_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_systemPayment_module}" />
 				<ui:param name="controller" value="#{systemPayment}" />
 				<!--  
 				<ui:param name="skipResetButton" value="true" />
@@ -34,7 +34,7 @@
 					</aon:selectOneMenu>	
 					
 					<aon:outputLabel for="systemPayment_salaryType" 
-						value="#{payrollBundle.payroll_salary_type}" />
+						value="#{bundle.payroll_salary_type}" />
 					<aon:selectOneMenu id="systemPayment_salaryType" 
 						valueChangeListener="#{systemPayment.addEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}" />

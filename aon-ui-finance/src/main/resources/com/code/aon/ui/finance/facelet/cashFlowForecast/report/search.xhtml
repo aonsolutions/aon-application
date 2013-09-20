@@ -10,7 +10,7 @@
 	<ui:define name="content">
 		<aon:form id="cashFlowForecastReportForm">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_cashflow_forecast_report_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_cashflow_forecast_report_module}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 				<ui:param name="skipBackButton" value="#{true}" />
 				<ui:param name="skipClearButton" value="true" />
@@ -32,7 +32,7 @@
 					<aon:methodParam name="searchAction" value="cashFlowForecastReport_list" />
 
 					<aon:outputLabel for="CashFlowForecastReport_fromDate" 
-						value="#{financeBundle.finance_cashflow_from_date}" />
+						value="#{bundle.finance_cashflow_from_date}" />
 					<aon:selectInputDate id="CashFlowForecastReport_fromDate"
 						value="#{cashFlowForecastReport.fromDate}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
@@ -42,7 +42,7 @@
 					</aon:selectInputDate>
 						
 					<aon:outputLabel for="CashFlowForecastReport_toDate" 
-						 value="#{financeBundle.finance_cashflow_to_date}" />
+						 value="#{bundle.finance_cashflow_to_date}" />
 					<aon:selectInputDate id="CashFlowForecastReport_toDate"
 						value="#{cashFlowForecastReport.toDate}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
@@ -53,7 +53,7 @@
 						<aon:selectBooleanCheckbox id="CashFlowForecastReport_include_returned"
 							value="#{cashFlowForecastReport.returnedFinanceIncluded}"/>
 						<aon:outputLabel for="CashFlowForecastReport_include_returned" 
-							value="#{financeBundle.finance_cashflow_include_returned}" />
+							value="#{bundle.finance_cashflow_include_returned}" />
 					</aon:div>
 
 					<aon:outputText value="&#160;"/>
@@ -61,7 +61,7 @@
 						<aon:selectBooleanCheckbox id="CashFlowForecastReport_include_pending" 
 							value="#{cashFlowForecastReport.pendingFinanceIncluded}"/>
 						<aon:outputLabel for="CashFlowForecastReport_include_pending" 
-							value="#{financeBundle.finance_cashflow_include_pending} " />
+							value="#{bundle.finance_cashflow_include_pending} " />
 						<aon:outputText value="#{cashFlowForecastReport.fromDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
@@ -69,7 +69,7 @@
 							
 					</aon:div>
 
-					<aon:outputText value="#{financeBundle.finance_cashflow_banks}"/>
+					<aon:outputText value="#{bundle.finance_cashflow_banks}"/>
 					<aon:div id="bankContainer">
 						
 						<aon:dataTable value="#{cashFlowForecastReport.bankModel}" var="cashFlowBank"
@@ -92,7 +92,7 @@
 
 							<aon:column styleClass="aon-editDataTable-numberColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{financeBundle.finance_cashflow_initial_balance}" />
+									<aon:outputText value="#{bundle.finance_cashflow_initial_balance}" />
 								</f:facet>
 								<aon:inputText value="#{cashFlowBank.initialBalance}" size="10"/>
 							</aon:column>

@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:outputLabel for="FtpServer"
-		value="#{configBundle.config_ftp_server}" />
+		value="#{bundle.config_ftp_server}" />
 	<aon:inputText id="FtpServer" value="#{publishParameter.to.ftpServer}"
 		size="60" required="true" />
 
@@ -23,24 +23,24 @@
 
 	<c:if test="#{!publishParameter.showOnlyFTP}">
 		<aon:outputLabel for="PreviewPath"
-			value="#{configBundle.config_preview_path}" />
+			value="#{bundle.config_preview_path}" />
 		<aon:inputText id="PreviewPath" value="#{publishParameter.to.previewPath}"
 			size="60" required="true" />
 	
 		<aon:outputLabel for="PreviewURL"
-			value="#{configBundle.config_preview_url}" />
+			value="#{bundle.config_preview_url}" />
 		<aon:inputText id="PreviewURL" value="#{publishParameter.to.previewURL}"
 			size="60" required="true" />
 	</c:if>
 
 	<aon:outputLabel for="PublishPath"
-		value="#{configBundle.config_publish_path}" />
+		value="#{bundle.config_publish_path}" />
 	<aon:inputText id="PublishPath" value="#{publishParameter.to.publishPath}"
 		size="60" required="true" />
 
 	<c:if test="#{!publishParameter.showOnlyFTP}">
 		<aon:outputLabel for="PublishURL"
-			value="#{configBundle.config_pubish_url}" />
+			value="#{bundle.config_pubish_url}" />
 		<aon:inputText id="PublishURL" value="#{publishParameter.to.publishURL}"
 			size="60" required="true" />
 	</c:if>

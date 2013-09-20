@@ -21,18 +21,18 @@
 			actionListener="#{financeList.checkNone}" reRender="financeToolBarDiv,financeDataDiv"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-		<aon:commandButton title="#{financeBundle.finance_refine_search}"
+		<aon:commandButton title="#{bundle.finance_refine_search}"
 			styleClass="aon-finding-toolbar-item aon-icon-search"
-			value="#{financeBundle.finance_refine_search}"
+			value="#{bundle.finance_refine_search}"
 			rendered="#{paymentCardSettle.selectedTab == 'tab2'}"
 			actionListener="#{paymentCardSettle.onEditSearchFinance}" 
 			reRender="showFinanceSearchWindow">
 			<f:setPropertyActionListener target="#{financeList.showFinanceSearchWindow}"
 				value="#{true}" />
 		</aon:commandButton>
-		<aon:commandButton title="#{payrollBundle.payroll_include}"
+		<aon:commandButton title="#{bundle.payroll_include}"
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
-			value="#{payrollBundle.payroll_include}"
+			value="#{bundle.payroll_include}"
 			rendered="#{financeList.checkedCount > 0}"
 			actionListener="#{paymentCardSettle.onAddSelected}" reRender="financeToolBarDiv,financeDataDiv"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -108,7 +108,7 @@
 				<aon:div rendered="#{to.invoice.rectifier}">
 					<aon:outputText value="#{to.invoice.rectificationType}" />
 					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
-						<aon:outputFormat value="#{financeBundle.finance_invoice_rectifier_message2}" styleClass="aon-bold aon-label-error">
+						<aon:outputFormat value="#{bundle.finance_invoice_rectifier_message2}" styleClass="aon-bold aon-label-error">
 							<f:param value="#{to.invoice.rectificationInvoice.referenceCode}" />
 						</aon:outputFormat>
 					</rich:toolTip>
@@ -116,7 +116,7 @@
 				<aon:div rendered="#{to.invoice.rectified}">
 					<aon:outputText value="#{to.invoice.rectificationType}" />
 					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
-						<aon:outputFormat value="#{financeBundle.finance_invoice_rectified_message2}" styleClass="aon-bold">
+						<aon:outputFormat value="#{bundle.finance_invoice_rectified_message2}" styleClass="aon-bold">
 							<f:param value="#{to.invoice.rectificationInvoicesString}" />
 						</aon:outputFormat>
 					</rich:toolTip>

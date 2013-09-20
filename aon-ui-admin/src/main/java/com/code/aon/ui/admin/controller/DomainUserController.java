@@ -3,7 +3,6 @@ package com.code.aon.ui.admin.controller;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonMessages.ACTIVE_USERS;
-import static com.code.aon.ui.common.ICommonMessages.ADMIN_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.MAXIMUM_NUMBER_USERS;
 import static com.code.aon.ui.common.ICommonMessages.NEW_PASSWORD_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.USER_DUPLICATED;
@@ -233,14 +232,14 @@ public class DomainUserController extends BasicController {
 	}
 
 	public String getActiveUsersMessage() {
-		return AonUtil.getMessage(ADMIN_BUNDLE, ACTIVE_USERS, getNumberOfActiveUsers());		
+		return AonUtil.getMessage(ACTIVE_USERS, getNumberOfActiveUsers());		
 	}
 
 	public String getDetailMessage() {
 		String message = getActiveUsersMessage();
 		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		if ( dc.getDomain().getMaxDefinedUsers() != null ) {
-			message += ", " + AonUtil.getMessage(ADMIN_BUNDLE, MAXIMUM_NUMBER_USERS, dc.getDomain().getMaxDefinedUsers());
+			message += ", " + AonUtil.getMessage(MAXIMUM_NUMBER_USERS, dc.getDomain().getMaxDefinedUsers());
 		}
 		return message;
 	}

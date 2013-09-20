@@ -8,7 +8,7 @@
 	template="/com/code/aon/ui/groupware/facelet/processLauncher/step_template.xhtml">
 
 	<ui:define name="step_name">
-		<aon:outputText value="#{groupwareBundle.groupware_process_wizard_step3}"/>
+		<aon:outputText value="#{bundle.groupware_process_wizard_step3}"/>
 	</ui:define>
 	
 	<ui:define name="step_content">
@@ -39,7 +39,7 @@
 			<aon:outputLabel for="Campaign_workGroup" value="#{bundle.aon_supervisor}" />
 			<aon:outputText value="#{processWizard.workGroup.description}" />
 
-			<aon:outputText value="#{groupwareBundle.groupware_campaign_type}" />
+			<aon:outputText value="#{bundle.groupware_campaign_type}" />
 			<aon:outputText value="#{processWizard.type.description}" />
 		</aon:panelGrid>
 		
@@ -53,14 +53,14 @@
 					<aon:outputText value="&#160;"
 						style="padding-left: 20px;"
 					    styleClass="aon-icon-new-page"
-					    title="#{groupwareBundle.groupware_process_wizard_new_project_added}"
-					    alt="#{groupwareBundle.groupware_process_wizard_new_project_added}"
+					    title="#{bundle.groupware_process_wizard_new_project_added}"
+					    alt="#{bundle.groupware_process_wizard_new_project_added}"
 						rendered="#{to.project.id==null}" />
 					<aon:outputText value="&#160;"
 						style="padding-left: 20px;"
 					    styleClass="aon-icon-page"
-					    title="#{groupwareBundle.groupware_process_wizard_project_added}"
-					    alt="#{groupwareBundle.groupware_process_wizard_project_added}"
+					    title="#{bundle.groupware_process_wizard_project_added}"
+					    alt="#{bundle.groupware_process_wizard_project_added}"
 						rendered="#{to.project.id!=null}" />
 				</aon:column>
 
@@ -73,7 +73,7 @@
 				
 				<aon:column styleClass="aon-width-auto">
 					<f:facet name="header">
-						<aon:outputText value="#{projectBundle.project_assigned}" />
+						<aon:outputText value="#{bundle.project_assigned}" />
 					</f:facet>
 					<aon:outputText value="#{to.project.registry.fullName}" />
 				</aon:column>

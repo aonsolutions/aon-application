@@ -1,6 +1,5 @@
 package com.code.aon.ui.sales.util;
 
-import static com.code.aon.ui.common.ICommonMessages.SALES_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.SALES_TO_PURCHASE;
 
 import java.util.Collections;
@@ -240,7 +239,7 @@ public class PurchaseGeneratorManager {
 			sales.setPurchaseGenerated(true);
 			StringBuffer buf = new StringBuffer();
 	    	for(Purchase purchase: purchaseList){
-	    		buf.append(AonUtil.getMessage(SALES_BUNDLE, SALES_TO_PURCHASE) + " ");
+	    		buf.append(AonUtil.getMessage(SALES_TO_PURCHASE) + " ");
 	    		buf.append(purchase.getReferenceCode());
 	    		buf.append("\n");
 	    	}
@@ -275,7 +274,7 @@ public class PurchaseGeneratorManager {
 		purchase.setStatus(PurchaseStatus.PENDING);
 		purchase.setComments(null);
 		if(StringUtils.isNotBlank(sales.getPurchaseReference())){
-			String message = AonUtil.getMessage(SALES_BUNDLE, SALES_TO_PURCHASE);
+			String message = AonUtil.getMessage(SALES_TO_PURCHASE);
 			purchase.setRemarks(message + ": " +  sales.getPurchaseReference());
 		}
 		purchase.setEmailCommunication(false);

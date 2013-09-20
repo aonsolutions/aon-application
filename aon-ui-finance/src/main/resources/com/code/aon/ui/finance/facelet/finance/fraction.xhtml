@@ -13,7 +13,7 @@
 
 			<ui:decorate 
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_fractioning}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_fractioning}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 				<ui:define name="toolbarContent">
 					<aon:confirmButton id="save"
@@ -96,7 +96,7 @@
 				<aon:div styleClass="aon-form-group">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="financeFractionData" value="#{financeBundle.finance_resulting_finances}" />
+							<aon:outputLabel for="financeFractionData" value="#{bundle.finance_resulting_finances}" />
 						</aon:div>
 					</aon:div>
 					<aon:div styleClass="aon-scroll-area">
@@ -113,7 +113,7 @@
 
 								<aon:column>
 									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.finance_finance_date}" />
+										<aon:outputText value="#{bundle.finance_finance_date}" />
 									</f:facet>
 									<aon:outputText value="#{to.dueDate}" rendered="#{formList}">
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"

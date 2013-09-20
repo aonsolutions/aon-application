@@ -13,7 +13,7 @@
 		<aon:form id="campaignForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.groupware_campaign_monitor}" />
+				<ui:param name="toolbarTitle" value="#{bundle.groupware_campaign_monitor}" />
 				<ui:param name="controller" value="#{campaign}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipRemoveButton" value="#{campaign.to.deleted or campaign.to.finished}" />
@@ -28,22 +28,22 @@
 						</aon:htmlCommandLink>
 						
 						<aon:commandButton
-							title="#{groupwareBundle.groupware_campaign_exclude_project}"
+							title="#{bundle.groupware_campaign_exclude_project}"
 							styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
-							value="#{groupwareBundle.groupware_campaign_exclude_project}"
+							value="#{bundle.groupware_campaign_exclude_project}"
 							actionListener="#{campaignProject.onRemoveCampaignProject}"
 							rendered="#{campaign.to.inProgress}" />
 							
-						<aon:commandButton value="#{groupwareBundle.groupware_campaign_add_project}"
+						<aon:commandButton value="#{bundle.groupware_campaign_add_project}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							rendered="#{campaign.to.inProgress}"
-							title="#{groupwareBundle.groupware_campaign_add_project}"
+							title="#{bundle.groupware_campaign_add_project}"
 							actionListener="#{addCampaignProject.showAddPanel}"
 							reRender="addPanelContainer"/>
 							
 						<aon:commandButton id="finishCampaign"
-							value="#{groupwareBundle.groupware_campaign_finish}"
-							onclick="if(confirm('#{groupwareBundle.groupware_campaign_finish}?')){Richfaces.showModalPanel('waitProccess');}else{ return false; }"
+							value="#{bundle.groupware_campaign_finish}"
+							onclick="if(confirm('#{bundle.groupware_campaign_finish}?')){Richfaces.showModalPanel('waitProccess');}else{ return false; }"
 							oncomplete="Richfaces.hideModalPanel('waitProccess')"
 							styleClass="aon-finding-toolbar-item aon-icon-task-finish"
 							actionListener="#{campaign.onFinishCampaign}"
@@ -183,7 +183,7 @@
 						<aon:column styleClass="aon-width-200"
 							rendered="#{campaign.to.inProgress}">
 							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.groupware_current_action}" />
+								<aon:outputText value="#{bundle.groupware_current_action}" />
 							</f:facet>
 							<rich:inplaceSelect value="#{to.processDetail}"
 								styleClass="aon-inplace-select" showControls="true"
@@ -192,8 +192,8 @@
 								<f:facet name="controls">
 									<aon:div>
 										<aon:commandButton style="margin-left: 5px;" value="&#160;"
-											alt="#{groupwareBundle.groupware_change_current_action}"
-											title="#{groupwareBundle.groupware_change_current_action}"
+											alt="#{bundle.groupware_change_current_action}"
+											title="#{bundle.groupware_change_current_action}"
 											onmousedown="#{rich:component('inplaceSelect')}.save();"
 											onclick="return false"
 											styleClass="aon-icon-commandButton aon-icon-accept" />
@@ -233,7 +233,7 @@
 	
 						<aon:column styleClass="aon-editDataTable-text aon-width-80">
 							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.groupware_due_date}" />
+								<aon:outputText value="#{bundle.groupware_due_date}" />
 							</f:facet>
 							<aon:outputText value="#{to.task.dueDate}"
 								style="#{to.task.expired?'color:red;':''}">

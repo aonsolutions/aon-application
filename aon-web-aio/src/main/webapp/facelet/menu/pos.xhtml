@@ -29,26 +29,26 @@
 									<aon:commandLink id="pos_opening-tpv" 
 										action="posOpening_form-tpv"
 										actionListener="#{posOpening.onReset}"
-										value="#{financeBundle.finance_posOpening_module}" />
+										value="#{bundle.finance_posOpening_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="pos_closing-tpv" 
 										action="posClosing_form-tpv"
 										actionListener="#{posClosing.onLoad}" 
-										value="#{financeBundle.finance_posClosing_module}" />
+										value="#{bundle.finance_posClosing_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="pos_invoice" 
 										action="posInvoice_form"
 										actionListener="#{posInvoice.onLoad}" 
-										value="#{financeBundle.finance_pos_invoice_management_module}" />
+										value="#{bundle.finance_pos_invoice_management_module}" />
 								</aon:div>
 								<c:if test="#{aonRole.financeOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="pos_finance_bath-tpv" 
 											action="posFinance_search-tpv"
 											actionListener="#{posFinance.onEditSearch}"
-											value="#{financeBundle.finance_posFinance_module}" />
+											value="#{bundle.finance_posFinance_module}" />
 									</aon:div>
 								</c:if>
 								<c:if test="#{aonRole.productOperator}">
@@ -75,7 +75,7 @@
 									<aon:commandLink id="productTag-pos" 
 										action="productTag_form-pos" 
 										actionListener="#{productTag.onCancel}"
-										value="#{productBundle.product_tag_module}"/>	
+										value="#{bundle.product_tag_module}"/>	
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="productCategory-pos" 
@@ -87,7 +87,7 @@
 										<aon:commandLink id="posDefinition-tpv" 
 											action="pos_search-tpv"
 											actionListener="#{pos.onEditSearch}"
-											value="#{financeBundle.finance_pos_definition_module}" />
+											value="#{bundle.finance_pos_definition_module}" />
 									</aon:div>
 								</c:if>
 								<c:if test="#{aonRole.admin or aonRole.config or aonRole.saleOperator}">

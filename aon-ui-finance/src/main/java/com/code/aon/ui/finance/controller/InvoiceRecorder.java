@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INACCURACY_MSG;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_NO_AMORTIZATION_MSG;
 
@@ -168,11 +167,11 @@ public class InvoiceRecorder implements ITransferObject {
 	}
 	
 	public void addFinanceInaccuracyMessage() {
-		String msg = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INACCURACY_MSG);
+		String msg = AonUtil.getMessage(FINANCE_INACCURACY_MSG);
 		addMessage(msg);
 	}
 	public void addFinanceNoAmortizationForm() {
-		String msg = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_NO_AMORTIZATION_MSG);
+		String msg = AonUtil.getMessage(FINANCE_NO_AMORTIZATION_MSG);
 		addMessage(msg);
 	}
 	

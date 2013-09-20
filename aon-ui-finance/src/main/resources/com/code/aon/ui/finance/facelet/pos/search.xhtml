@@ -11,7 +11,7 @@
 		<aon:form id="posSearch">
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_pos_definition_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_pos_definition_module}" />
 				<ui:param name="controller" value="#{pos}" />
 			</ui:include>
 				
@@ -37,7 +37,7 @@
 						</aon:selectOneMenu>
 					</c:if>
 
-					<aon:outputLabel value="#{financeBundle.finance_pos_name}" />
+					<aon:outputLabel value="#{bundle.finance_pos_name}" />
 					<aon:inputText id="Pos_name" 
 						valueChangeListener="#{pos.addExpression}" />
 

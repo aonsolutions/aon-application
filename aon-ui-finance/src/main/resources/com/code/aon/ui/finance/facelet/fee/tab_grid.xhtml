@@ -108,7 +108,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 				<f:facet name="header">
-					<aon:outputLabel value="#{financeBundle.finance_fee_billing_date_abrv}" />
+					<aon:outputLabel value="#{bundle.finance_fee_billing_date_abrv}" />
 				</f:facet>
 				<aon:div styleClass="aon-nowrap">
 					<aon:outputText value="#{to.billingDateMonth}" />
@@ -151,7 +151,7 @@
 					<aon:outputText value="&#160;" styleClass="aon-icon-customer"
 						style="padding-left:12px" />
 					<rich:toolTip>
-						<aon:outputText styleClass="aon-italic" value="#{customerBundle.customer_invoicingGroup}:" />
+						<aon:outputText styleClass="aon-italic" value="#{bundle.customer_invoicingGroup}:" />
 						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{to.invoicingGroup.description}" />
 					</rich:toolTip>
 				</aon:div>

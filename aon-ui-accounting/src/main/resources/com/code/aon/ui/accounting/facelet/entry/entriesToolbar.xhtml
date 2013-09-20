@@ -13,7 +13,7 @@
 			template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 			<ui:param name="toolbarID" value="aonToolbarAux" />
 			<ui:param name="toolbarTitle"
-				value="#{accountingBundle.accounting_new_entry}" />
+				value="#{bundle.accounting_new_entry}" />
 			<ui:param name="skipToolbarDescription" value="true" />
 	
 			<ui:define name="additionalToolbarContent">
@@ -24,19 +24,19 @@
 					action="invoiceEntry_form" 
 					styleClass="aon-finding-toolbar-item aon-icon-go" />
 				<aon:commandButton
-					value="#{accountingBundle.accounting_new_expense_entry}"
+					value="#{bundle.accounting_new_expense_entry}"
 					accesskey="2" title="Alt+2 [+May]"
 					actionListener="#{expenseEntry.onReset}"
 					action="expenseEntry_form" 
 					styleClass="aon-finding-toolbar-item aon-icon-go" />
 				<aon:commandButton
-					value="#{accountingBundle.accounting_new_finance_entry}"
+					value="#{bundle.accounting_new_finance_entry}"
 					accesskey="3" title="Alt+3 [+May]"
 					actionListener="#{financeEntry.onReset}"
 					action="financeEntry_form" 
 					styleClass="aon-finding-toolbar-item aon-icon-go" />
 				<aon:commandButton
-					value="#{accountingBundle.accounting_new_finance_tracking_entry}"
+					value="#{bundle.accounting_new_finance_tracking_entry}"
 					accesskey="4" title="Alt+4 [+May]"
 					actionListener="#{financeTrackingEntry.onReset}"
 					action="financeTrackingEntry_form"
@@ -48,7 +48,7 @@
 					action="salaryEntry_form"
 					styleClass="aon-finding-toolbar-item aon-icon-go" />
 				<aon:commandButton
-					value="#{accountingBundle.accounting_new_social_insurance_entry}"
+					value="#{bundle.accounting_new_social_insurance_entry}"
 					accesskey="6" title="Alt+6 [+May]"
 					actionListener="#{socialInsuranceEntry.onReset}"
 					action="socialInsuranceEntry_form" 

@@ -69,7 +69,7 @@
 		</aon:div>
 		<aon:commandButton id="PosDetail-itemInfo" immediate="true" 
 			styleClass="aon-medium-commandButton aon-width-60"
-			value="#{productBundle.product_stock}"
+			value="#{bundle.product_stock}"
 			disabled="#{detailController.to.item.id == null or !detailController.to.item.product.inventoriable}"
 			actionListener="#{itemInfo.onShowPanel}"
 			reRender="itemInfoContainer">

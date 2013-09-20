@@ -1,8 +1,9 @@
 package com.code.aon.ui.asset.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.COMPANY_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_EMAIL_BODY_FOOTER;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_EMAIL_BODY_HEADER;
+import static com.code.aon.ui.common.ICommonMessages.FAX;
+import static com.code.aon.ui.common.ICommonMessages.NOT_MAIL_ACCOUNT;
 import static com.code.aon.ui.common.ICommonMessages.PHONE;
 
 import java.io.UnsupportedEncodingException;
@@ -19,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
@@ -55,7 +55,7 @@ public class EmailParentController {
 				Address from = new InternetAddress(username, username);
 				this.sender = new EmailSender( from, mailAccount );							
 			} else {
-				String text = AonUtil.getMessage(ICommonMessages.NOT_MAIL_ACCOUNT); 
+				String text = AonUtil.getMessage(NOT_MAIL_ACCOUNT); 
 				String message = MessageFormat.format(text, login );
 				throw new AbortProcessingException( message );
 			}
@@ -83,13 +83,9 @@ public class EmailParentController {
 			Address[] recipients = new Address[1];
 			recipients[0] = new InternetAddress(to, to);
 			String bodyContent = getEmailBody(content);
-//			AonFile file = null;
-//			AonFile xml = null;
 			getEmailSender(username).sendMessage(recipients, subject, bodyContent, MimeType.MIME_HTML);
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
-//			String text = AonUtil.getMessage(BUNDLE_KEY, ECOMMERCE_SEND_EMAIL_ERROR);
-//			String message = MessageFormat.format(text, username );				
 			AonUtil.addErrorMessage(SEND_EMAIL_ERROR);
 			throw new AbortProcessingException( SEND_EMAIL_ERROR );
 		}
@@ -101,9 +97,9 @@ public class EmailParentController {
 		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
 		body.append( "</head><body>" );
 		
-		body.append(AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_EMAIL_BODY_HEADER) );
+		body.append(AonUtil.getMessage(COMPANY_EMAIL_BODY_HEADER) );
 		body.append( text );
-		body.append(AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_EMAIL_BODY_FOOTER) );		
+		body.append(AonUtil.getMessage(COMPANY_EMAIL_BODY_FOOTER) );		
 
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		body.append( getCompany().getName() ).append( "<br/>" );
@@ -115,7 +111,7 @@ public class EmailParentController {
 		}
 		RegistryMedia fax = companyController.getFax();
 		if ( fax != null ) {
-			String faxLabel = AonUtil.getMessage(ICommonMessages.FAX);
+			String faxLabel = AonUtil.getMessage(FAX);
 			body.append(faxLabel).append( ": " ).append( fax.getValue() ).append( "<br/>" );
 		}
 		RegistryMedia web = companyController.getWeb();

@@ -12,11 +12,11 @@
 		<aon:form id="inventoryCloseForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_inventory_remake_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.warehouse_inventory_remake_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 				<ui:define name="toolbarContent">		
 					<aon:commandButton id="accept"
-						value="#{warehouseBundle.warehouse_inventory_close_module}"
+						value="#{bundle.warehouse_inventory_close_module}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{inventory.onClosing}"
 						action="inventory_form"
@@ -48,7 +48,7 @@
 						required="true" size="64" />
 
 					<aon:outputLabel for="Inventory_init"
-						value="#{warehouseBundle.warehouse_inventory_init_stock}" />
+						value="#{bundle.warehouse_inventory_init_stock}" />
 					<aon:selectOneRadio id="Inventory_init"
 						value="#{inventory.initStock}">
 						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />

@@ -15,14 +15,14 @@
 	<aon:methodParam name="lastColumnAction" value="#{commercialStat.onCommercialProductOfferStats}" type="actionListener" />
 	<aon:methodParam  name="offerFacelet" value="offers_list" />
 	<ui:param name="showLastColumn" value="true" />
-	<ui:param name="lastColumnName" value="#{statBundle.stat_show_offers}" />	
+	<ui:param name="lastColumnName" value="#{bundle.stat_show_offers}" />	
 	<ui:decorate
 		template="/com/code/aon/ui/stat/facelet/generic/commercialStatList.xhtml">
 		<ui:param name="statController" value="#{commercialStat}" />
 		<ui:param name="statModel" value="#{commercialStat.productStatModel}" />
 		<ui:param name="clickable" value="#{false}" />
 		<ui:param name="categoryLabel" value="#{bundle.aon_product}" />
-		<ui:param name="windowTitle" value="#{statBundle.stat_menu_category}" />
+		<ui:param name="windowTitle" value="#{bundle.stat_menu_category}" />
 		<ui:param name="paramName" value="product" />
 		<ui:param name="reportKeyParam" value="commercialProductStatsList" />
 		<ui:param name="reportGraphKeyParam" value="commercialProductStatsGraph" />

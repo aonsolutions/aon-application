@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{configBundle.config_series_deliveries}" />
+						<aon:outputText value="#{bundle.config_series_deliveries}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -52,7 +52,7 @@
 										actionListener="#{purchaseInvoice.incomeTransferManager.checkNoneIncomes}" 
 										reRender="incomeData" />	
 									<aon:commandButton id="incomeTransfer-accept"
-										value="#{financeBundle.finance_invoice_to_transfer}"
+										value="#{bundle.finance_invoice_to_transfer}"
 										rendered="#{purchaseInvoice.incomeTransferManager.incomeModel.rowCount > 0}"
 										reRender="showIncomeTransferWindow,purchaseInvoiceForm"
 										actionListener="#{purchaseInvoice.onIncomeTransfer}"
@@ -139,7 +139,7 @@
 												<aon:outputText value="&#160;" />
 											</f:facet>
 											<aon:commandButton value="&#160;" immediate="true"
-												title="#{financeBundle.finance_invoice_see_delivery_details}"
+												title="#{bundle.finance_invoice_see_delivery_details}"
 												styleClass="aon-finding-toolbar-item aon-icon-tree-root aon-finding-toolbar-item-no-border"
 												actionListener="#{purchaseInvoice.incomeTransferManager.onSelectIncome}"
 												reRender="incomeData,detailDataContainer" ajaxSingle="true">

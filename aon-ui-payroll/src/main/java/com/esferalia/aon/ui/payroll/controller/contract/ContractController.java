@@ -1,6 +1,5 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
-import static com.code.aon.ui.common.ICommonMessages.PAYROLL_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.PAYROLL_TRAINING_CENTER_DIRECT_DEBIT;
 
 import java.io.ByteArrayInputStream;
@@ -40,7 +39,6 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.report.controller.ReportManager;
@@ -687,7 +685,7 @@ public class ContractController extends BasicController {
 		attach.setMimeType(MimeType.MIME_PDF);
 		attach.setAttachmentType(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT);
 		attach.setAttachDate(new Date());
-		attach.setDescription( AonUtil.getMessage(PAYROLL_BUNDLE, PAYROLL_TRAINING_CENTER_DIRECT_DEBIT));
+		attach.setDescription( AonUtil.getMessage(PAYROLL_TRAINING_CENTER_DIRECT_DEBIT));
 		return attach;
 	}
 	

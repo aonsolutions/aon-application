@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.NO_INVOICE_KEY;
 
 import java.util.Collection;
@@ -188,7 +187,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants {
 				setRedirect(true);
 			} else {
 				setRedirect(false);
-				AonUtil.addInfoMessageFromBundle(FINANCE_BUNDLE, NO_INVOICE_KEY);
+				AonUtil.addInfoMessageFromBundle(NO_INVOICE_KEY);
 			}
 		} catch (Exception e) {
 			setRedirect(false);

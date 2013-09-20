@@ -10,7 +10,7 @@
 		<aon:form id="noticeSearch">
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_notice}" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_notice}" />
 				<ui:param name="controller" value="#{notice}" />
 			</ui:include>
 
@@ -46,7 +46,7 @@
 						valueChangeListener="#{notice.addExpression}" />
 
 					<aon:outputLabel for="Notice_phone"
-						value="#{groupwareBundle.notice_phone}" />
+						value="#{bundle.notice_phone}" />
 					<aon:inputText id="Notice_phone" size="20"
 						valueChangeListener="#{notice.addExpression}" />
 				</ui:define>

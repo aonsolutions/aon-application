@@ -11,7 +11,7 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarID" value="toolbar" />
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.groupware_campaign_monitor}" />
+				<ui:param name="toolbarTitle" value="#{bundle.groupware_campaign_monitor}" />
 				<ui:param name="controller" value="#{campaign}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:decorate>
@@ -26,7 +26,7 @@
 					<aon:inputText id="Campaign_description" size="60" valueChangeListener="#{campaign.addExpression}" />
 
 					<aon:outputLabel for="Campaign_campaignType_id"
-						value="#{groupwareBundle.groupware_campaign_type}" />
+						value="#{bundle.groupware_campaign_type}" />
 					<aon:selectOneMenu id="Campaign_campaignType_id"
 						value="#{campaignSearchListener.campaignType}"
 						valueChangeListener="#{controller.addIdEqualExpression}">
@@ -47,11 +47,11 @@
 						<aon:selectBooleanCheckbox id="st0" value="#{campaignSearchListener.statusPending}" />
 						<aon:outputLabel for="st0" value="#{bundle.aon_pending}" />
 						<aon:selectBooleanCheckbox id="st1" value="#{campaignSearchListener.statusInProgress}" />
-						<aon:outputLabel for="st1" value="#{groupwareBundle.groupware_in_progress}" />
+						<aon:outputLabel for="st1" value="#{bundle.groupware_in_progress}" />
 						<aon:selectBooleanCheckbox id="st2" value="#{campaignSearchListener.statusFinished}" />
-						<aon:outputLabel for="st2" value="#{groupwareBundle.groupware_finished}" />
+						<aon:outputLabel for="st2" value="#{bundle.groupware_finished}" />
 						<aon:selectBooleanCheckbox id="st3" value="#{campaignSearchListener.statusDeleted}" />
-						<aon:outputLabel for="st3" value="#{groupwareBundle.groupware_deleted}" />
+						<aon:outputLabel for="st3" value="#{bundle.groupware_deleted}" />
 					</aon:div>
 
 				</ui:define>

@@ -14,14 +14,14 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{(finance.payment)?(financeBundle.finance_payment_module):(financeBundle.finance_charge_module)}" />
+				<ui:param name="toolbarTitle" value="#{(finance.payment)?(bundle.finance_payment_module):(bundle.finance_charge_module)}" />
 				<ui:param name="controller" value="#{finance}" />
 				<ui:param name="skipSaveButton" value="#{!finance.new and !finance.pending and !finance.returned}" />
 				<ui:param name="skipRemoveButton" value="#{finance.new or !finance.to.emptyInvoice or finance.grouped}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="paymentPopup" 
-						value="#{(finance.payment)?(financeBundle.finance_to_pay):(financeBundle.finance_to_charge)}"
+						value="#{(finance.payment)?(bundle.finance_to_pay):(bundle.finance_to_charge)}"
 						immediate="#{true}" rendered="#{!finance.new and (finance.pending or finance.returned)}"
 						styleClass="aon-finding-toolbar-item aon-icon-pay"
 						actionListener="#{finance.onFinancePaymentShow}"
@@ -30,7 +30,7 @@
 							value="#{true}" />
 					</aon:commandButton>
 					<aon:commandButton id="returnPopup" 
-						value="#{financeBundle.finance_to_return}"
+						value="#{bundle.finance_to_return}"
 						immediate="#{true}" rendered="#{!finance.new and finance.paid}"
 						styleClass="aon-finding-toolbar-item aon-icon-return"
 						actionListener="#{finance.onFinanceReturnShow}"
@@ -39,12 +39,12 @@
 							value="#{true}" />
 					</aon:commandButton>
 					<aon:commandButton id="settle" 
-						value="#{financeBundle.finance_to_settle}"
+						value="#{bundle.finance_to_settle}"
 						immediate="#{true}" rendered="#{!finance.new and (finance.pending or finance.returned)}"
 						styleClass="aon-finding-toolbar-item aon-icon-settle"
 						actionListener="#{finance.onSettleFinance}" />
 					<aon:commandButton id="fraction" 
-						value="#{financeBundle.finance_to_fraction}"
+						value="#{bundle.finance_to_fraction}"
 						immediate="#{true}" rendered="#{!finance.new and (finance.pending or finance.returned)}"
 						styleClass="aon-finding-toolbar-item aon-icon-fraction"
 						actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction" />
@@ -68,10 +68,10 @@
 						<aon:panelGrid columns="2" columnClasses="aon-width-250,aon-width-auto">
 							<aon:div rendered="#{!finance.new}" >
 								<aon:div rendered="#{finance.to.emptyInvoice and !finance.financeGroup}">
-									<aon:outputText value="#{financeBundle.finance_individual_finance}" />
+									<aon:outputText value="#{bundle.finance_individual_finance}" />
 								</aon:div>
 								<aon:div rendered="#{finance.to.emptyInvoice and finance.financeGroup}">
-									<aon:outputText value="#{financeBundle.finance_agrupation_finance}" />
+									<aon:outputText value="#{bundle.finance_agrupation_finance}" />
 								</aon:div>
 								<aon:div>
 									<aon:div rendered="#{!finance.to.emptyInvoice}"> 
@@ -103,8 +103,8 @@
 								<aon:selectOneRadio id="Finance_type"
 									value="#{finance.financeGroup}"
 									reRender="Finance_amount-Panel, financeGroup-button">
-									<f:selectItem itemLabel="#{financeBundle.finance_individual_finance}" itemValue="false" />
-									<f:selectItem itemLabel="#{financeBundle.finance_agrupation_finance}" itemValue="true" />
+									<f:selectItem itemLabel="#{bundle.finance_individual_finance}" itemValue="false" />
+									<f:selectItem itemLabel="#{bundle.finance_agrupation_finance}" itemValue="true" />
 								</aon:selectOneRadio>	
 							</aon:div> 		
 						
@@ -114,7 +114,7 @@
 									rendered="#{!finance.payment}"
 									disabled="#{!finance.to.emptyInvoice or !finance.pending}" />
 								<aon:outputText styleClass="aon-italic aon-margin-right"
-									value="#{financeBundle.finance_advance}"
+									value="#{bundle.finance_advance}"
 									rendered="#{!finance.payment}" />
 
 								<c:if test="#{aonRole.confidentiality}">
@@ -134,7 +134,7 @@
 					</aon:div>					
 
 					<aon:outputLabel for="Finance_dueDate"
-						value="#{financeBundle.finance_finance_date}" />
+						value="#{bundle.finance_finance_date}" />
 					<aon:div>
 						<aon:selectInputDate id="Finance_dueDate" 
 							value="#{finance.to.dueDate}"
@@ -197,7 +197,7 @@
 							valueChangeListener="#{finance.onPaymentTypeChanged}"
 							reRender="paymentTypeDiv">
 							<f:selectItem itemLabel="#{bundle.aon_expense}" itemValue="false" />
-							<f:selectItem itemLabel="#{financeBundle.finance_purchase}" itemValue="true" />
+							<f:selectItem itemLabel="#{bundle.finance_purchase}" itemValue="true" />
 						</aon:selectOneRadio>
 					</aon:div>
 					<aon:div id="paymentTypeDiv" rendered="#{finance.to.payment}">
@@ -242,13 +242,13 @@
 							reRender="showFinanceGroupWindow" ajaxSingle="true"
 							actionListener="#{finance.onShowFinanceGroupWindow}"
 							styleClass="aon-icon-newFolder aon-margin-left" style="padding-right: 20px;"
-							value="&#160;" title="#{financeBundle.finance_group_finances}" >
+							value="&#160;" title="#{bundle.finance_group_finances}" >
 							<f:setPropertyActionListener target="#{finance.showFinanceGroupWindow}"
 								value="#{true}" />
 						</aon:commandLink>
 							
 						<aon:outputText styleClass="aon-italic aon-margin-left"
-							value="(#{financeBundle.finance_total_regs}: " rendered="#{finance.financeGroup}" />
+							value="(#{bundle.finance_total_regs}: " rendered="#{finance.financeGroup}" />
 						<aon:outputText styleClass="aon-bold"
 							value="#{financeGroupList.model.rowCount}"
 							rendered="#{finance.financeGroup}" >
@@ -417,7 +417,7 @@
 
 								<aon:column styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.finance_recorded}" />
+										<aon:outputText value="#{bundle.finance_recorded}" />
 									</f:facet>
 									<aon:outputText value="#{(to.recordable)?((aonRole.accountingOperator)?(to.description):((to.recorded)?(bundle.aon_yes):(bundle.aon_no))):('---------')}" />
 								</aon:column>
@@ -438,7 +438,7 @@
 									<aon:div styleClass="aon-nowrap">
 										<c:if test="#{aonRole.accountingOperator}">
 											<aon:commandButton id="record"
-												title="#{financeBundle.finance_record}"
+												title="#{bundle.finance_record}"
 												immediate="true" rendered="#{to.recordable and !to.recorded and to.bankStatementLink == null}"
 												actionListener="#{financeTracking.recordTracking}"
 												styleClass="aon-editDataTable-button aon-icon-task-assume aon-nowrap"
@@ -468,7 +468,7 @@
 											action="bankStatement_list" />
 										<aon:commandLink id="financeGroup_link" 
 											styleClass="aon-button-goto aon-nowrap" style="padding-right: 20px;"
-											value="&#160;" title="#{financeBundle.finance_agrupation_finance}"
+											value="&#160;" title="#{bundle.finance_agrupation_finance}"
 											rendered="#{to.finance.financeGroup != null}"
 											actionListener="#{financeTracking.onLoadFinanceGroup}"
 											action="finance_form" />

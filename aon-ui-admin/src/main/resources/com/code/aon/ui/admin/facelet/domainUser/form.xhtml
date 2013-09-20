@@ -12,20 +12,20 @@
 		<aon:form id="domainUserForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{adminBundle.admin_users} (#{adminDomain.to.name})" />
+				<ui:param name="toolbarTitle" value="#{bundle.admin_users} (#{adminDomain.to.name})" />
 				<ui:param name="controller" value="#{domainUser}" />
 				<ui:param name="skipResetButton" value="#{domainUser.skipUserReset}" />
-				<ui:param name="removeConfirmMessage" value="#{adminBundle.admin_domain_user_remove_confirm}" />
+				<ui:param name="removeConfirmMessage" value="#{bundle.admin_domain_user_remove_confirm}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="resetPassword"
-						value="#{adminBundle.admin_reset_password}"
+						value="#{bundle.admin_reset_password}"
 						actionListener="#{domainUser.onResetPassword}" immediate="true"
 						rendered="#{!domainUser.new}" reRender="passwordChangedWindow"
 						styleClass="aon-finding-toolbar-item aon-icon-utilities">
 						<aon:actionListener method="#{saveActionListener}" />
 					</aon:commandButton>				
 					<aon:commandButton id="changePassword"
-						value="#{adminBundle.admin_change_password}"
+						value="#{bundle.admin_change_password}"
 						actionListener="#{domainUser.onShowChangePasswordWindow}"
 						reRender="showChangePasswordWindow"  immediate="true"
 						rendered="#{(!domainUser.new) and aonRole.sysAdmin}"
@@ -47,7 +47,7 @@
 							size="20" maxlength="16" required="true" 
 							validator="#{domainUser.idCheck}"
 							value="#{domainUser.to.login}" />
-						<aon:outputText value="#{adminBundle.admin_user_init_password}"
+						<aon:outputText value="#{bundle.admin_user_init_password}"
 							styleClass="aon-margin-left"
 							rendered="#{domainUser.new}" />							
 					</h:panelGrid>
@@ -103,7 +103,7 @@
 					
 					<c:if test="#{!domainUser.new}" >
 						<aon:outputText for="User_initAction"
-							value="#{adminBundle.admin_user_init_action}"/>
+							value="#{bundle.admin_user_init_action}"/>
 						<aon:selectOneMenu id="User_initAction" 
 							value="#{domainUser.to.initAction}" >
 							<f:selectItem itemLabel="-" value="#{null}" />
@@ -112,7 +112,7 @@
 					</c:if>			
 																	
 					<aon:outputLabel for="User_toolbar"
-						value="#{adminBundle.admin_user_toolbar}" />
+						value="#{bundle.admin_user_toolbar}" />
 					<aon:selectOneMenu id="User_toolbar" 
 						value="#{domainUser.to.toolbar}">
 						<f:selectItems value="#{configCollections.toolbars}" />
@@ -120,7 +120,7 @@
 
 					<c:if test="#{aonRole.sysAdmin}" >						
 						<aon:outputLabel for="User_passwordExpiration"
-							value="#{adminBundle.admin_password_expiration}" />
+							value="#{bundle.admin_password_expiration}" />
 						<aon:selectInputDate id="User_passwordExpiration" 
 							value="#{domainUser.to.passwordExpiration}"
 							timeZone="#{timeZoneController.timeZone}" inputSize="20"
@@ -133,21 +133,21 @@
                     
 					<aon:panelTabSet selectedTab="#{domainUser.selectedTab}" >
                     
-						<aon:panelTab name="applications" label="#{adminBundle.admin_profiles}"
+						<aon:panelTab name="applications" label="#{bundle.admin_profiles}"
 							rendered="#{domainUser.applicationsInfoSize &gt; 0}">
 							<ui:include src="/com/code/aon/ui/admin/facelet/domainUser/applications.xhtml" />						
 	                    </aon:panelTab>
                     
-						<aon:panelTab name="userWorkGroups" label="#{configBundle.config_workgroup_module}">
+						<aon:panelTab name="userWorkGroups" label="#{bundle.config_workgroup_module}">
 							<ui:include src="/com/code/aon/ui/admin/facelet/userWorkgroup/form.xhtml" />						
 	                    </aon:panelTab>
 
-						<aon:panelTab name="scopes" label="#{configBundle.config_scopes}">
+						<aon:panelTab name="scopes" label="#{bundle.config_scopes}">
 							<ui:include src="/com/code/aon/ui/admin/facelet/userScope/form.xhtml" />
 	                    </aon:panelTab>
 	                    
 						<aon:panelTab name="deniedOptions"
-							label="#{auditBundle.audit_option_denied_module}">
+							label="#{bundle.audit_option_denied_module}">
 							<ui:include src="/com/code/aon/ui/audit/facelet/action/deniedContent.xhtml" >
 								<ui:param name="controller" value="#{actionDenied}" />
 								<ui:param name="skipUserLookup" value="#{true}" />
@@ -162,14 +162,14 @@
 	                    </aon:panelTab>
 			
 						<aon:panelTab name="mailAccount"
-							label="#{webmailBundle.webmail_mailAccount}">
+							label="#{bundle.webmail_mailAccount}">
 							<ui:include src="/com/code/aon/ui/webmail/facelet/mailAccount/grid.xhtml" >
 								<ui:param name="controller" value="#{mailConfig.mailAccount}" />
 							</ui:include>						
 	                    </aon:panelTab>
 
 						<aon:panelTab name="signature"
-							label="#{webmailBundle.webmail_signature}">
+							label="#{bundle.webmail_signature}">
 							<ui:include src="/com/code/aon/ui/webmail/facelet/signature/grid.xhtml" >
 								<ui:param name="controller" value="#{mailConfig.signature}" />
 							</ui:include>						

@@ -1,6 +1,5 @@
 package com.code.aon.ui.purchase.util;
 
-import static com.code.aon.ui.common.ICommonMessages.PURCHASE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_EMAIL_BODY;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_EMAIL_BODY_HEADER;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_EMAIL_SUBJECT;
@@ -50,7 +49,7 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 	public void initMessageController( MessageController messageController, Purchase purchase, List<String> moreRecipients ) throws ManagerBeanException, IOException, ReportException {
 		String[] emails = getEmails( purchase, moreRecipients );
 		initMessageController(messageController, emails);
-		messageController.updateMessageBody( getEmailContent(getEmailBody(purchase), AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_EMAIL_BODY_HEADER)) );
+		messageController.updateMessageBody( getEmailContent(getEmailBody(purchase), AonUtil.getMessage(PURCHASE_EMAIL_BODY_HEADER)) );
 		messageController.setSubject( getEmailSubject(purchase) );
 		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean(PURCHASE_REPORT_CONTROLLER_NAME);
 		purchaseReportManager.setValued(purchase.getSupplier().isPurchaseValuated());
@@ -87,12 +86,12 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 	}
 	
 	public String getEmailSubject( Purchase purchase ) {
-		String message = AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_EMAIL_SUBJECT);
+		String message = AonUtil.getMessage(PURCHASE_EMAIL_SUBJECT);
 		return MessageFormat.format(message, purchase.getReferenceCode() );
 	}
 	
 	public String getEmailBody( Purchase purchase ) throws UnsupportedEncodingException {
-		String bodyMessage = AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_EMAIL_BODY); 
+		String bodyMessage = AonUtil.getMessage(PURCHASE_EMAIL_BODY); 
 		return MessageFormat.format(bodyMessage, purchase.getReferenceCode(), purchase.getIssueDate() );
 	}
 	
@@ -105,11 +104,11 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 	}
 	
 	public String getEmailSubject() {
-		return AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_EMAIL_SUBJECT);
+		return AonUtil.getMessage(PURCHASE_EMAIL_SUBJECT);
 	}
 	
 	public String getEmailBody()  {
-		return AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_EMAIL_BODY); 
+		return AonUtil.getMessage(PURCHASE_EMAIL_BODY); 
 	}
 	
 	public void sendPurchase( Purchase purchase, String subject, String content ) {
@@ -123,7 +122,7 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 		try {
 			String[] emails = getEmails(purchase, moreRecipients);
 			if ( ArrayUtils.isEmpty(emails) ) {
-				String text = AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_WITHOUT_EMAIL);
+				String text = AonUtil.getMessage(PURCHASE_WITHOUT_EMAIL);
 				String message = MessageFormat.format(text, purchase.getReferenceCode(), purchase.getSupplier().getRegistry().getFullName() );				
 				logger.error( message );				
 			} else {
@@ -140,13 +139,13 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 				aonMessage.setRecipientsBcc(recipientsBcc);
 				getEmailSender().sendMessage(aonMessage);
 				
-				String text = AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_SEND_EMAIL);
+				String text = AonUtil.getMessage(PURCHASE_SEND_EMAIL);
 				String message = MessageFormat.format(text, purchase.getReferenceCode(), purchase.getSupplier().getRegistry().getFullName(), ArrayUtils.toString(emails) );
 				logger.info( message );
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
-			String text = AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_SEND_EMAIL_ERROR);
+			String text = AonUtil.getMessage(PURCHASE_SEND_EMAIL_ERROR);
 			String message = MessageFormat.format(text, purchase.getReferenceCode() );
 			logger.error( message + "<br />" + th.getMessage() + "<br />" + th.getCause() );
 		} finally {

@@ -16,7 +16,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_regenerate_account_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.accounting_regenerate_account_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="execute" 
@@ -60,11 +60,11 @@
 				<aon:div>
 					<aon:div>
 						<aon:selectBooleanCheckbox value="#{accountRegenerator.journal}" />
-						<aon:outputText value="#{accountingBundle.accounting_regenerate_journal_counter_module}" />
+						<aon:outputText value="#{bundle.accounting_regenerate_journal_counter_module}" />
 					</aon:div>
 					<aon:div>
 						<aon:selectBooleanCheckbox value="#{accountRegenerator.helper}" />
-						<aon:outputText value="#{accountingBundle.accounting_regenerate_helper_module}" />
+						<aon:outputText value="#{bundle.accounting_regenerate_helper_module}" />
 					</aon:div>
 				</aon:div>
 			</aon:panelGrid>

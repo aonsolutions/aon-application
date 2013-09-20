@@ -1,5 +1,7 @@
 package com.code.aon.ui.accounting.controller.entry;
 
+import static com.code.aon.ui.common.ICommonMessages.TRACKING_RECORDED;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -48,7 +50,6 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.SortOrderMap;
 import com.code.aon.ui.util.AonUtil;
@@ -379,7 +380,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 					finance.setFinanceStatus(FinanceStatus.PAID);
 					financeBean.update(finance);
 	
-					String message = AonUtil.getMessage(ICommonMessages.TRACKING_RECORDED) + " " + accountEntry.getId();
+					String message = AonUtil.getMessage(TRACKING_RECORDED) + " " + accountEntry.getId();
 					FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, getDate(), FinanceTrackingType.PAID, message, 
 								getDeposit()==0?getRegistryBank():null, getDeposit()==1?getPayMethodTypeDetail():null, finance.getTotalAmount(), true);
 					getWriter().insertAccountEntryFinanceTracking(accountEntry, tracking);

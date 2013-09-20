@@ -16,11 +16,11 @@
 		<aon:form id="smsForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{smsBundle.sms_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.sms_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 				<ui:define name="toolbarContent">
 					<c:if test="#{sms.showToolbar}" >
-						<aon:commandButton id="sendSMS" value="#{smsBundle.sms_send}"
+						<aon:commandButton id="sendSMS" value="#{bundle.sms_send}"
 							disabled="#{!sms.allowSending}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept #{(sms.allowSending)?'':'aon-commandLink-disabled'}"
 							actionListener="#{smsManager.sendMessage}"
@@ -45,7 +45,7 @@
 							<aon:outputLabel for="SMS_originator" value="#{bundle.aon_sender}" />
 							<aon:inputText id="SMS_originator" size="40" maxlength="11" value="#{sms.message.info.originator}" />
 		
-							<aon:outputLabel for="SMS_message" value="#{marketingBundle.marketing_message}" />
+							<aon:outputLabel for="SMS_message" value="#{bundle.marketing_message}" />
 							<a4j:region>
 								<aon:div>
 									<aon:inputTextarea id="SMS_message" value="#{sms.message.info.message}"
@@ -59,7 +59,7 @@
 								</aon:div>
 							</a4j:region>
 
-							<aon:outputLabel for="SMS_recipient" value="#{smsBundle.sms_recipients}" />
+							<aon:outputLabel for="SMS_recipient" value="#{bundle.sms_recipients}" />
 							<a4j:region>
 								<aon:div style="height: 240px;overflow: auto;">
 									<c:if test="#{sms.allowUpdateRecipients}">								
@@ -67,12 +67,12 @@
 											<f:validateLength maximum="13" />
 											<f:validateLongRange maximum="0099999999999" />
 										</aon:inputText>
-										<aon:commandButton id="add2List" value="#{smsBundle.sms_add2list}" title="#{smsBundle.sms_add2list}"
+										<aon:commandButton id="add2List" value="#{bundle.sms_add2list}" title="#{bundle.sms_add2list}"
 											styleClass="aon-commandButton aon-icon-new-phone aon-icon-button"
 											actionListener="#{sms.add2List}"
 											reRender="SMS_recipient, recipientList"
 											accesskey="#{bundle.aon_key_save}" />										
-										<aon:commandButton id="findContact" value="#{smsBundle.sms_find_contacts}" title="#{smsBundle.sms_find_contacts}"
+										<aon:commandButton id="findContact" value="#{bundle.sms_find_contacts}" title="#{bundle.sms_find_contacts}"
 											reRender="showWindow" immediate="true"
 											styleClass="aon-commandButton  aon-icon-search aon-icon-button"
 											actionListener="#{sms.openContacts}" />
@@ -83,7 +83,7 @@
 					           				<aon:outputText value="#{recipient}"/>
 					           				<c:if test="#{sms.allowUpdateRecipients}">
 												<a4j:commandButton id="removeFromList" value="&#160;" 
-													title="#{smsBundle.sms_removeFromlist}"
+													title="#{bundle.sms_removeFromlist}"
 													styleClass="aon-margin-left aon-icon-commandButton aon-icon-delete"													
 													reRender="SMS_recipient, recipientList"
 													accesskey="#{bundle.aon_key_save}" >
@@ -103,7 +103,7 @@
 					<aon:div style="margin-left:1em;">
 						<aon:panel id="smsSummary">
 							<f:facet name="header">
-								<aon:outputText value="#{smsBundle.sms_summary}" />
+								<aon:outputText value="#{bundle.sms_summary}" />
 							</f:facet>
 							
 							<a4j:region>
@@ -121,7 +121,7 @@
 										<f:selectItems value="#{commonCollections.months}" />
 									</aon:selectOneMenu>
 	
-									<aon:commandButton id="Summary" value="&#160;" title="#{smsBundle.sms_filter}"
+									<aon:commandButton id="Summary" value="&#160;" title="#{bundle.sms_filter}"
 										reRender="smsSummary"
 										styleClass="aon-margin-left aon-icon-commandButton aon-icon-advanced-search"
 										actionListener="#{sms.summary}"
@@ -130,26 +130,26 @@
 							</a4j:region>
 
 							<aon:panelGrid columns="2" width="100%;">
-								<aon:outputLabel value="#{smsBundle.sms_user_messages}:" />
+								<aon:outputLabel value="#{bundle.sms_user_messages}:" />
 								<aon:outputText value="#{sms.userTotalSentMessages}" />
 
-								<aon:outputLabel value="#{smsBundle.sms_company_messages}:" />
+								<aon:outputLabel value="#{bundle.sms_company_messages}:" />
 								<aon:outputText value="#{sms.companyTotalSentMessages}" />
 
-								<aon:outputLabel value="#{smsBundle.sms_unit_price}:" />
+								<aon:outputLabel value="#{bundle.sms_unit_price}:" />
 								<aon:panelGroup>
 									<aon:outputText value="#{sms.companyMessageUnitPrice}" >
 											<f:convertNumber maxFractionDigits="2"/>
 									</aon:outputText>
-									<aon:outputLabel value=" #{smsBundle.sms_tarif}" />
+									<aon:outputLabel value=" #{bundle.sms_tarif}" />
 								</aon:panelGroup>
 
-								<aon:outputLabel value="#{smsBundle.sms_total_month}:" />
+								<aon:outputLabel value="#{bundle.sms_total_month}:" />
 								<aon:panelGroup>
 									<aon:outputText value="#{sms.companyTotalConsume}" >
 										<f:convertNumber maxFractionDigits="2"/>
 									</aon:outputText>
-									<aon:outputLabel value=" #{smsBundle.sms_tarif}" />
+									<aon:outputLabel value=" #{bundle.sms_tarif}" />
 								</aon:panelGroup>
 							</aon:panelGrid>
 						</aon:panel>
@@ -157,21 +157,21 @@
 						<aon:panel>
 							
 							<f:facet name="header">
-								<aon:outputText value="#{smsBundle.sms_pricelist}" />
+								<aon:outputText value="#{bundle.sms_pricelist}" />
 							</f:facet>
 						
 							<aon:dataTable id="priceDataList" value="#{sms.priceList}" var="to">
 			
 								<aon:column>
 									<f:facet name="header">
-										<aon:outputText value="#{smsBundle.sms_messages_number}" />
+										<aon:outputText value="#{bundle.sms_messages_number}" />
 									</f:facet>
 									<aon:outputText value="#{to.filter} #{to.number}"/>
 								</aon:column>
 			
 			 					<aon:column>
 									<f:facet name="header">
-										<aon:outputText value="#{smsBundle.sms_unit_price}" />
+										<aon:outputText value="#{bundle.sms_unit_price}" />
 									</f:facet>
 									<aon:outputText value="" rendered="#{to.price == 0}" />
 									<aon:outputText value="#{to.price}" rendered="#{to.price > 0}" >
@@ -187,7 +187,7 @@
 				</aon:panelGrid>
 				<aon:div>
 					<aon:selectBooleanCheckbox id="priceInfo" value="#{sms.allowSending}" reRender="sendSMS" />
-					<aon:outputText value="#{smsBundle.sms_priceinfo}" />
+					<aon:outputText value="#{bundle.sms_priceinfo}" />
 				</aon:div>
 			</aon:div>
    		</aon:form>

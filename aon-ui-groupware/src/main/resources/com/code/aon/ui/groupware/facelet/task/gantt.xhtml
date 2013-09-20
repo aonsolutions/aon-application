@@ -13,7 +13,7 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="toolbar" />
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.groupware_gantt_diagram}"/>
+				<ui:param name="toolbarTitle" value="#{bundle.groupware_gantt_diagram}"/>
 				<ui:param name="controller" value="#{gantt}" />
 				<ui:define name="additionalToolbarContent">
 						<aon:selectBooleanCheckbox id="monitor" value="#{gantt.monitor}" 
@@ -49,7 +49,7 @@
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true" />
 					</aon:div>
 
-					<aon:outputLabel value="#{groupwareBundle.groupware_due_date}" />
+					<aon:outputLabel value="#{bundle.groupware_due_date}" />
 					<aon:div>
 						<aon:outputLabel for="Gantt_dueDate-From"
 							styleClass="aon-form-date-label aon-margin-left aon-margin-right"
@@ -78,14 +78,14 @@
 						</aon:selectOneMenu>
 						<aon:selectBooleanCheckbox styleClass="aon-margin-left" 
 							id="gt" value="#{gantt.groupTasksVisible}" />
-						<aon:outputLabel for="gt" value="#{groupwareBundle.groupware_group_tasks}" />
+						<aon:outputLabel for="gt" value="#{bundle.groupware_group_tasks}" />
 					</aon:div>
 
 					<aon:outputLabel for="Gantt_project" value="#{bundle.aon_project}"/>
 					<aon:panelGrid columns="2"
 						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
 					
-						<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
+						<aon:outputLabel for="Registry_id" value="#{bundle.project_assigned}"/>
 						<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
 							<ui:param name="lookupTo" value="#{gantt.registry}" />
 							<ui:param name="skipLabel" value="#{true}" />
@@ -114,10 +114,10 @@
 						<aon:outputLabel for="st0" value="#{bundle.aon_pending}" />
 						
 						<aon:selectBooleanCheckbox id="st1" value="#{gantt.statusInProgress}" />
-						<aon:outputLabel for="st1" value="#{groupwareBundle.groupware_in_progress}" />
+						<aon:outputLabel for="st1" value="#{bundle.groupware_in_progress}" />
 						
 						<aon:selectBooleanCheckbox id="st2" value="#{gantt.statusFinished}" />
-						<aon:outputLabel for="st2" value="#{groupwareBundle.groupware_finished}" />
+						<aon:outputLabel for="st2" value="#{bundle.groupware_finished}" />
 						
 						<aon:commandButton
 							style="margin-left: 20px; padding: 5px 0px 0px 20px !important;background-position: 5px 2px;"

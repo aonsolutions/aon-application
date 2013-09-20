@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.event;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_GROUPED;
 
 import java.util.List;
@@ -174,7 +173,7 @@ public class FinanceControllerListener extends ControllerAdapter {
 				finance.setFinanceGroup(financeGroup);
 				finance.setFinanceStatus(FinanceStatus.SETTLED);
 				financeBean.update(finance);
-				String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_GROUPED);
+				String message = AonUtil.getMessage(FINANCE_TRACKING_GROUPED);
 				financeController.createFinanceTracking(finance, message);
 			}
 

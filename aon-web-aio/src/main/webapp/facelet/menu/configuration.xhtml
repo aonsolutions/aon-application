@@ -30,13 +30,13 @@
 									<aon:commandLink id="mailAccount"
 										action="mailAccount_list"
 										actionListener="#{mailConfig.onInitMailAccount}"
-										value="#{webmailBundle.webmail_mailAccount_full}" />						
+										value="#{bundle.webmail_mailAccount_full}" />						
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="signature"
 										action="signature_list"
 										actionListener="#{mailConfig.onInitSignature}"
-										value="#{webmailBundle.webmail_signature_full}" />
+										value="#{bundle.webmail_signature_full}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="contact"
@@ -52,14 +52,14 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-company aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="#{companyBundle.company_data_module}"/>
+									<aon:outputText value="#{bundle.company_data_module}"/>
 								</f:facet>					
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="company" 
 											action="company"
 											actionListener="#{company.onLoad}"
-											value="#{companyBundle.company_data_module}" />
+											value="#{bundle.company_data_module}" />
 									</aon:div>
 									<c:if test="#{companyCustomize.show}">
 										<aon:div styleClass="aon-direct-access-list-element">
@@ -73,38 +73,38 @@
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="hotel" 
 												action="hotel_list" 
-												value="#{pmsBundle.pms_hotel_module}" />
+												value="#{bundle.pms_hotel_module}" />
 										</aon:div>								
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="department" 
 												action="department_grid" 
-												value="#{companyBundle.company_department_module}" />
+												value="#{bundle.company_department_module}" />
 										</aon:div>
 									</c:if>																	
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="mailAccountEnterprise"
 											action="mailAccount_list-enterprise"
 											actionListener="#{adminMain.onInitMailAccount}"
-											value="#{adminBundle.admin_mailAccount_enterprise}" />						
+											value="#{bundle.admin_mailAccount_enterprise}" />						
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="signatureEnterprise"
 											action="signature_list-enterprise"
 											actionListener="#{adminMain.onInitSignature}"
-											value="#{adminBundle.admin_signature_enterprise}" />
+											value="#{bundle.admin_signature_enterprise}" />
 									</aon:div>								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="dump"
 											action="backup_form"
 											actionListener="#{backup.onInit}"
-											value="#{adminBundle.admin_backup}" />
+											value="#{bundle.admin_backup}" />
 									</aon:div>
 									<c:if test="#{aonRole.sysAdmin}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="applicationParameter"
 												action="applicationParameter_list"
 												actionListener="#{applicationParameter.onSearch}"
-												value="#{configBundle.config_app_param_module}" />
+												value="#{bundle.config_app_param_module}" />
 										</aon:div>
 									</c:if>																											
 								</aon:div>
@@ -130,7 +130,7 @@
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="aon_invoicing_group-configuration"
 													action="invoicingGroup_list-configuration"
-													value="#{customerBundle.customer_invoicing_group_module}" />
+													value="#{bundle.customer_invoicing_group_module}" />
 											</aon:div>
 										</c:if>
 										<c:if test="#{aonRole.purchaseOperator}">
@@ -144,7 +144,7 @@
 												<aon:commandLink id="creditor-configuration" 
 													action="creditor_search-configuration"
 													actionListener="#{creditor.onEditSearch}"
-													value="#{financeBundle.finance_creditor_module}" />
+													value="#{bundle.finance_creditor_module}" />
 											</aon:div>
 										</c:if>
 									</c:if>
@@ -169,13 +169,13 @@
 												<aon:commandLink id="target-configuration" 
 													action="target_search-configuration" 
 													actionListener="#{target.onEditSearch}"
-													value="#{commercialBundle.commercial_target_module}" />
+													value="#{bundle.commercial_target_module}" />
 											</aon:div>
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="seller-configuration" 
 													action="seller_search-configuration" 
 													actionListener="#{seller.onEditSearch}"
-													value="#{sellerBundle.seller_module}" />
+													value="#{bundle.seller_module}" />
 											</aon:div>
 										</c:if>
 									</c:if>
@@ -196,7 +196,7 @@
 											<aon:commandLink id="adminDomain"
 												action="adminDomain_form"
 												actionListener="#{adminMain.onInit}"
-												value="#{adminBundle.admin_domain_management}" >
+												value="#{bundle.admin_domain_management}" >
 												<aon:actionListener method="#{adminDomain.onInit}" />
 											</aon:commandLink>
 										</aon:div>
@@ -205,7 +205,7 @@
 										<aon:commandLink id="domainUsers"
 											action="domainUser_list"
 											actionListener="#{adminMain.onInit}"
-											value="#{adminBundle.admin_users}" >
+											value="#{bundle.admin_users}" >
 											<aon:actionListener method="#{domainUser.onSearch}" />
 										</aon:commandLink>						
 									</aon:div>
@@ -214,7 +214,7 @@
 											<aon:commandLink id="overloadUsers"
 												action="userOverload_list"
 												actionListener="#{adminMain.onInit}"
-												value="#{adminBundle.admin_overload_users}" >
+												value="#{bundle.admin_overload_users}" >
 												<aon:actionListener method="#{userOverload.onSearch}" />
 											</aon:commandLink>						
 										</aon:div>
@@ -224,7 +224,7 @@
 											<aon:commandLink id="domainApplications"
 												action="domainApplication_list"
 												actionListener="#{adminMain.onInit}"
-												value="#{auditBundle.audit_applications_module}" >
+												value="#{bundle.audit_applications_module}" >
 												<aon:actionListener method="#{domainApplication.onSearch}" />
 											</aon:commandLink>						
 										</aon:div>
@@ -233,7 +233,7 @@
 										<aon:commandLink id="profiles"
 											action="domainApplicationProfile_list"
 											actionListener="#{adminMain.onInit}"
-											value="#{adminBundle.admin_profiles}" >
+											value="#{bundle.admin_profiles}" >
 											<aon:actionListener method="#{domainApplicationProfile.onInit}" />
 										</aon:commandLink>						
 									</aon:div>									
@@ -241,13 +241,13 @@
 										<aon:commandLink id="scope"
 											action="scope_list"
 											actionListener="#{scope.onSearch}"
-											value="#{configBundle.config_scopes}" />
+											value="#{bundle.config_scopes}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="workGroup"
 											action="workgroup_list-utilities"
 											actionListener="#{workGroup.onSearch}"
-											value="#{configBundle.config_workgroup_module}" />
+											value="#{bundle.config_workgroup_module}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
@@ -266,13 +266,13 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="payMethod-configuration"
 											action="payMethod-configuration"
-											value="#{configBundle.config_paymethod_module}" />
+											value="#{bundle.config_paymethod_module}" />
 									</aon:div>
 									<c:if test="#{aonRole.accountingOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="paymethodTypeDetail-configuration"
 												action="paymethodTypeDetail-configuration"
-												value="#{configBundle.config_paymethodTypeDetail_module}" />
+												value="#{bundle.config_paymethodTypeDetail_module}" />
 										</aon:div>
 									</c:if>
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -284,34 +284,34 @@
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="bankConcept"
 												action="bankConcept" 
-												value="#{financeBundle.finance_bank_concept_module}" />
+												value="#{bundle.finance_bank_concept_module}" />
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="series-configuration" 
 												action="series-configuration" 
-												value="#{configBundle.config_series_module}" />
+												value="#{bundle.config_series_module}" />
 										</aon:div>								
 									</c:if>	
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="tax-configuration" 
 											action="tax_list-configuration" 
-											value="#{configBundle.config_tax_module}" />
+											value="#{bundle.config_tax_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="geotreeParent_list-configuration" 
 											action="geotreeParent_list-configuration" 
 											actionListener="#{geotreeParent.onSearch}"
-											value="#{geozoneBundle.geozone_module}" />
+											value="#{bundle.geozone_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="segment_form-configuration" 
 											action="segment_form-configuration" 
-											value="#{registryBundle.registry_segment_module}" />
+											value="#{bundle.registry_segment_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="relationship" 
 											action="relationship_form" 
-											value="#{registryBundle.registry_relationship_module}" />
+											value="#{bundle.registry_relationship_module}" />
 									</aon:div>								
 								</aon:div>							
 							</aon:panelGrid>
@@ -329,7 +329,7 @@
 										<aon:commandLink id="productTag" 
 											action="productTag_form" 
 											actionListener="#{productTag.onCancel}"
-											value="#{productBundle.product_tag_module}"/>	
+											value="#{bundle.product_tag_module}"/>	
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="productCategory-configuration" 
@@ -339,19 +339,19 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="brand-configuration"
 											action="brand-configuration"
-											value="#{productBundle.product_brand_module}" />
+											value="#{bundle.product_brand_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="tariff-configuration" 
 											action="tariff_list-configuration"
 											actionListener="#{tariff.onSearch}"
-											value="#{productBundle.product_tariff_module2}" />
+											value="#{bundle.product_tariff_module2}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="catalogue-configuration" 
 											action="catalogue_search-configuration"
 											actionListener="#{catalogue.onEditSearch}"
-											value="#{productBundle.product_catalogue_module}" />
+											value="#{bundle.product_catalogue_module}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
@@ -370,19 +370,19 @@
 											<aon:commandLink id="defaultParams-configuration" 
 												action="accountingDefaultParams-configuration"
 												actionListener="#{accAppParams.onLoad}"
-												value="#{accountingBundle.accounting_default_params_module}" />
+												value="#{bundle.accounting_default_params_module}" />
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="fiscalParams-configuration" 
 												action="fiscalParams-configuration"
 												actionListener="#{fiscalParams.onLoad}"
-												value="#{fiscalBundle.fiscal_parameters_module}" />
+												value="#{bundle.fiscal_parameters_module}" />
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="payrollParams-configuration" 
 												action="payrollDefaultParams-configuration"
 												actionListener="#{payrollAppParams.onLoad}"
-												value="#{payrollBundle.payroll_default_params_module}" >
+												value="#{bundle.payroll_default_params_module}" >
 												<f:setPropertyActionListener target="#{payrollAppParams.skipPayrollData}" value="#{false}" />
 											</aon:commandLink>
 										</aon:div>
@@ -400,7 +400,7 @@
 											<aon:commandLink id="aonLoader"
 												action="aonLoader_form"
 												actionListener="#{aonLoader.onStart}"
-												value="#{accountingBundle.aon_loader_module}" />
+												value="#{bundle.aon_loader_module}" />
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>

@@ -36,7 +36,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel for="ReservationRequestRoom_units" value="#{pmsBundle.pms_room_count}" />
+					<aon:outputLabel for="ReservationRequestRoom_units" value="#{bundle.pms_room_count}" />
 				</f:facet>
 				<aon:outputText value="#{to.units}" rendered="#{formList}" />
 				<aon:selectOneMenu id="ReservationRequestRoom_units" 
@@ -73,7 +73,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel for="ReservationRequestRoom_item" value="#{pmsBundle.pms_room_type}" />
+					<aon:outputLabel for="ReservationRequestRoom_item" value="#{bundle.pms_room_type}" />
 				</f:facet>
 				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" 
 					rendered="#{formList}" />
@@ -93,7 +93,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel for="ReservationRequestRoom_adults" value="#{pmsBundle.pms_adults}" />
+					<aon:outputLabel for="ReservationRequestRoom_adults" value="#{bundle.pms_adults}" />
 				</f:facet>
 				<aon:outputText value="#{to.adults}" rendered="#{formList}" />
 				<aon:inputText id="ReservationRequestRoom_adults" 
@@ -112,7 +112,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel for="ReservationRequestRoom_babies" value="#{pmsBundle.pms_children} 0-5 #{bundle.aon_years}" />
+					<aon:outputLabel for="ReservationRequestRoom_babies" value="#{bundle.pms_children} 0-5 #{bundle.aon_years}" />
 				</f:facet>
 				<aon:outputText value="#{to.babies}" rendered="#{formList}" />
 				<aon:inputText id="ReservationRequestRoom_babies" 
@@ -127,7 +127,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel for="ReservationRequestRoom_children" value="#{pmsBundle.pms_children} 6-11 #{bundle.aon_years}" />
+					<aon:outputLabel for="ReservationRequestRoom_children" value="#{bundle.pms_children} 6-11 #{bundle.aon_years}" />
 				</f:facet>
 				<aon:outputText value="#{to.children}" rendered="#{formList}" />
 				<aon:inputText id="ReservationRequestRoom_children" 
@@ -145,7 +145,7 @@
 			<aon:div>
 				<aon:commandButton id="requestRoom-AvailabilityQuery"
 					value="&#160;" styleClass="aon-icon-question aon-noborder"
-					title="#{assetBundle.asset_filter_availability}" immediate="true"
+					title="#{bundle.asset_filter_availability}" immediate="true"
 					rendered="#{empty to.crsCode}"
 					actionListener="#{controller.sendAvailabilityQuery}"
 					reRender="aonContent"
@@ -178,7 +178,7 @@
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<f:facet name="header">
-						<aon:outputText value="#{pmsBundle.pms_regime}" />
+						<aon:outputText value="#{bundle.pms_regime}" />
 					</f:facet>
 					<aon:outputText value="#{availableRoomStay.mealPlan}" rendered="#{!availableRoomStay.error}"
 						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}" />
@@ -187,7 +187,7 @@
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<f:facet name="header">
-						<aon:outputText value="#{pmsBundle.pms_room_type}" />
+						<aon:outputText value="#{bundle.pms_room_type}" />
 					</f:facet>
 					<aon:outputText value="#{availableRoomStay.roomCode} - #{availableRoomStay.roomDescription}" rendered="#{!availableRoomStay.error}"
 						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}" />
@@ -222,7 +222,7 @@
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<f:facet name="header">
-						<aon:outputText value="#{assetBundle.asset_filter_availability}" />
+						<aon:outputText value="#{bundle.asset_filter_availability}" />
 					</f:facet>
 					<aon:outputText value="#{availableRoomStay.availability}"
 						 style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}" />
@@ -230,7 +230,7 @@
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<aon:commandLink id="requestRoom-bookingButton"
-						value="#{pmsBundle.pms_to_book}" 
+						value="#{bundle.pms_to_book}" 
 						styleClass="aon-italic" style="#{(availableRoomStay.roomCode == to.item.product.code) ? 'color: #2152A5;' : ''}"
 						rendered="#{!availableRoomStay.error and availableRoomStay.availability >= to.units}"
 						actionListener="#{controller.sendBookingQuery}"
@@ -266,14 +266,14 @@
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<f:facet name="header">
-						<aon:outputText value="#{pmsBundle.pms_regime}" />
+						<aon:outputText value="#{bundle.pms_regime}" />
 					</f:facet>
 					<aon:outputText value="#{reservationData.mealPlan}" />
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<f:facet name="header">
-						<aon:outputText value="#{pmsBundle.pms_room_type}" />
+						<aon:outputText value="#{bundle.pms_room_type}" />
 					</f:facet>
 					<aon:outputText value="#{reservationData.roomCode} - #{reservationData.roomDescription}" />
 					<aon:outputText value="&#160;" styleClass="aon-margin-left aon-padding-left aon-icon-commandButton aon-icon-info"
@@ -304,7 +304,7 @@
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_reservation} #{pmsBundle.pms_crs}" />
+						<aon:outputText value="#{bundle.aon_reservation} #{bundle.pms_crs}" />
 					</f:facet>
 					<aon:div>
 						<aon:outputText value="#{reservationData.crsCode}" />

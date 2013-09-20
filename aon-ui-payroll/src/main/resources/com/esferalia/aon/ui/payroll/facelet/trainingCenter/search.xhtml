@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="trainingCenterSearch">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_trainingCenter_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_trainingCenter_module}" />
 				<ui:param name="controller" value="#{trainingCenter}" />
 			</ui:include>
 			
@@ -21,7 +21,7 @@
 					<aon:outputText value="" />
 					<aon:div style="width:550px;">
 					
-						<aon:panelCollapsible expanded="true" label="#{payrollBundle.payroll_trainingCenter}">
+						<aon:panelCollapsible expanded="true" label="#{bundle.payroll_trainingCenter}">
 							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 							
 								<aon:outputLabel for="trainingCenter_code"
@@ -44,7 +44,7 @@
 							</aon:panelGrid>
 						</aon:panelCollapsible>					
 									
-						<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_address_module}" >
+						<aon:panelCollapsible expanded="false" label="#{bundle.registry_address_module}" >
 							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 								<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">
 									<ui:param name="controller" value="#{trainingCenter}" />

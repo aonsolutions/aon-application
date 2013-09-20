@@ -17,7 +17,7 @@
 							
 			<aon:commandButton value="&#160;"
 				id="newFolder" reRender="createSubFolderGrid"
-				title="#{webmailBundle.webmail_newfolder}"
+				title="#{bundle.webmail_newfolder}"
 				styleClass="aon-icon-commandButton aon-icon-newFolder"
 				actionListener="#{webmailFolder.openNewFolderPanelPopup}">
 				<rich:componentControl for="newFolderModalPanel" operation="show" event="onclick"/>
@@ -28,7 +28,7 @@
 			<aon:commandButton value="&#160;"
 				id="deleteFolder_n"
 				rendered="#{webmailFolder.folder.deleteable}"
-				title="#{webmailBundle.webmail_delfolder}"
+				title="#{bundle.webmail_delfolder}"
 				actionListener="#{webmailFolder.deleteFolder}"
 				reRender="foldersTree,buttonsGrid,messageGrid"
 				styleClass="aon-icon-commandButton aon-icon-deleteFolder">
@@ -37,14 +37,14 @@
 			<aon:commandButton value="&#160;"
 				id="deleteFolder_d" disabled="true"
 				rendered="#{!webmailFolder.folder.deleteable}"
-				title="#{webmailBundle.webmail_delfolder}"
+				title="#{bundle.webmail_delfolder}"
 				styleClass="aon-icon-commandButton-disabled aon-icon-deleteFolder-disabled">
 			</aon:commandButton>
 		
 			<aon:commandButton value="&#160;"
 				id="renameFolder_n" reRender="aonStatus"
 				rendered="#{webmailFolder.folder.renameable}"
-				title="#{webmailBundle.webmail_renamefolder}"
+				title="#{bundle.webmail_renamefolder}"
 				actionListener="#{webmailFolder.openRenameFolderPanelPopup}"
 				styleClass="aon-icon-commandButton aon-icon-renameFolder">
 				<rich:componentControl for="renameFolderModalPanel" operation="show" event="onclick"/>
@@ -53,7 +53,7 @@
 			<aon:commandButton value="&#160;"
 				id="renameFolder_d" disabled="true"
 				rendered="#{!webmailFolder.folder.renameable}"
-				title="#{webmailBundle.webmail_renamefolder}"					
+				title="#{bundle.webmail_renamefolder}"					
 				styleClass="aon-icon-commandButton-disabled aon-icon-renameFolder-disabled">
 			</aon:commandButton>
 		</aon:div>
@@ -63,7 +63,7 @@
 				<aon:graphicImage value="#{webmail.quotaImage}" styleClass="aon-border"
 					width="200" height="10" />
 			</aon:div>
-			<aon:outputFormat value="#{webmailBundle.webmail_quota}" >
+			<aon:outputFormat value="#{bundle.webmail_quota}" >
 				<f:param value="#{webmail.quotaPercent}"/>
 				<f:param value="#{webmail.quotaLimit}"/>
 			</aon:outputFormat>
@@ -93,7 +93,7 @@
 			<aon:commandButton reRender="mailAccountDiv" ajaxSingle="true"
 				rendered="#{(mailAccount.model.rowCount &gt; 1) and (!mailConfig.showMailAccountList)}"
 				actionListener="#{mailConfig.onSelectMailAccount}"
-				title="#{webmailBundle.webmail_mailAccount_select}" value="&#160;"
+				title="#{bundle.webmail_mailAccount_select}" value="&#160;"
 				styleClass="aon-icon-commandButton aon-icon-dropDown">
 			</aon:commandButton>			
 		</aon:div>	

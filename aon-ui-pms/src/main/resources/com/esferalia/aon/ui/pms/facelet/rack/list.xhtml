@@ -13,7 +13,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_rack_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_rack_module}" />
 				<ui:param name="controller" value="#{rack}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 				<ui:define name="additionalToolbarContent">
@@ -27,7 +27,7 @@
 							styleClass="aon-margin-left aon-margin-right"
 							value="#{rack.filterParams.startDateIncrease}">
 							<f:selectItem itemLabel="#{bundle.aon_month}" itemValue="3" />
-							<f:selectItem itemLabel="#{pmsBundle.pms_fortnight}" itemValue="2" />
+							<f:selectItem itemLabel="#{bundle.pms_fortnight}" itemValue="2" />
 							<f:selectItem itemLabel="#{bundle.aon_week}" itemValue="1" />
 							<f:selectItem itemLabel="#{bundle.aon_day}" itemValue="0" />
 						</aon:selectOneMenu>
@@ -49,7 +49,7 @@
 						</aon:selectOneMenu>
 						<aon:commandButton id="refreshView"
 							styleClass="aon-commandButton aon-text-center" style="padding-left:0.5em !important;"
-							value="#{webmailBundle.webmail_refresh}" ignoreDupResponses="true"
+							value="#{bundle.webmail_refresh}" ignoreDupResponses="true"
 							reRender="aonContent"
 							actionListener="#{rack.onSearch}" />
 					</aon:div>
@@ -80,20 +80,20 @@
  						<f:facet name="header">
 							<rich:columnGroup>
 								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{pmsBundle.pms_room_abrv}" />
+									<aon:outputText value="#{bundle.pms_room_abrv}" />
 								</aon:column>
 
 								<rich:columns styleClass="aon-dataTable-header aon-nopadding aon-nomargin" 
 									value="#{controller.rackDayList}" var="rackDay">
 									<aon:div>
 										<aon:outputText value="#{rackDay.time}" >
-											<f:convertDateTime pattern="#{pmsBundle.aon_day_pattern}" 
+											<f:convertDateTime pattern="#{bundle.aon_day_pattern}" 
 												timeZone="#{timeZoneController.timeZoneId}"  />
 										</aon:outputText>
 									</aon:div>
 									<aon:div>
 										<aon:outputText value="#{rackDay.time}" >
-											<f:convertDateTime pattern="#{pmsBundle.aon_month_pattern}" 
+											<f:convertDateTime pattern="#{bundle.aon_month_pattern}" 
 												timeZone="#{timeZoneController.timeZoneId}"  />
 										</aon:outputText>
 									</aon:div>
@@ -133,7 +133,7 @@
 								<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto" 
 									rendered="#{rackTo.roomId != null and rackTo.reservationId != null}">
 									<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic,aon-noborder aon-bold">
-										<aon:outputText value="#{pmsBundle.pms_room_number}:" />
+										<aon:outputText value="#{bundle.pms_room_number}:" />
 										<aon:outputText value="#{to.asset.name}" />
 
 										<aon:outputText value="#{bundle.report_id}:" />

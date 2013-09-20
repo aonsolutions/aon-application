@@ -13,7 +13,7 @@
 		<aon:form id="taskHolderForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.groupware_taskHolders}" />
+				<ui:param name="toolbarTitle" value="#{bundle.groupware_taskHolders}" />
 				<ui:param name="controller" value="#{taskHolder}" />
 			</ui:decorate>
 
@@ -26,14 +26,14 @@
 						<ui:param name="controller" value="#{taskHolder}" />
 					</ui:include>					
 					
-					<aon:outputLabel for="TaskHolder_user" value="#{groupwareBundle.groupware_access_user}"/>
+					<aon:outputLabel for="TaskHolder_user" value="#{bundle.groupware_access_user}"/>
 					<aon:selectOneMenu id="TaskHolder_user"
 						value="#{taskHolder.to.user}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{taskHolder.users}" />
 					</aon:selectOneMenu>
 					
-					<aon:outputLabel for="TaskHolder_costProfile" value="#{groupwareBundle.groupware_cost_profile}"/>
+					<aon:outputLabel for="TaskHolder_costProfile" value="#{bundle.groupware_cost_profile}"/>
 					<aon:selectOneMenu id="TaskHolder_costProfile"
 						value="#{taskHolder.to.costProfile}">
 						<f:selectItem itemLabel="-" value="#{null}"/>

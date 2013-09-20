@@ -22,7 +22,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 						actionListener="#{room.checkNone}" />
 					<aon:commandButton id="room-Block"
-						value="#{pmsBundle.pms_to_block}" immediate="#{true}"
+						value="#{bundle.pms_to_block}" immediate="#{true}"
 						styleClass="aon-finding-toolbar-item aon-icon-lock"
 						actionListener="#{room.onShowRoomBlockWindow}">
 						<f:setPropertyActionListener target="#{room.showRoomBlockWindow}"
@@ -31,7 +31,7 @@
 							value="#{true}" />
 					</aon:commandButton>
 					<aon:commandButton id="room-Unblock"
-						value="#{pmsBundle.pms_to_unblock}" immediate="#{true}"
+						value="#{bundle.pms_to_unblock}" immediate="#{true}"
 						styleClass="aon-finding-toolbar-item aon-icon-unlock"
 						actionListener="#{room.onShowRoomBlockWindow}">
 						<f:setPropertyActionListener target="#{room.showRoomBlockWindow}"

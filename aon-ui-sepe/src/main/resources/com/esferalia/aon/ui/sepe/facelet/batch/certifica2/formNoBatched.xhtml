@@ -16,7 +16,7 @@
 		<ui:define name="afterToolbarContent" >
 			<aon:commandButton id="apply"
 				rendered="#{certifica2List.checkHandler.checkedCount > 0}"
-				value="#{payrollBundle.payroll_apply_to_all}"
+				value="#{bundle.payroll_apply_to_all}"
 				styleClass="aon-icon-commandButton aon-icon-accept aon-margin-left" >
 				<aon:actionListener method="#{certifica2List.onApplyAllSuspensionCause}" />
 			</aon:commandButton>
@@ -25,7 +25,7 @@
 			 	value="#{certifica2List.suspensionCauseForAll}"
 			 	listHeight="300px" listWidth="300px"
 			 	style="margin-left: 10px; width:300px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
-				defaultLabel="#{payrollBundle.payroll_causes}" >
+				defaultLabel="#{bundle.payroll_causes}" >
 				<f:selectItems value="#{sepeCollections.suspensionCauses}" />
 			</rich:inplaceSelect>
 			<aon:outputText value="&#160;"

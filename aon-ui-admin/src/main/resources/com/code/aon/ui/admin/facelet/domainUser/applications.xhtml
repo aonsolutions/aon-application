@@ -44,7 +44,7 @@
 
 				<aon:column styleClass="aon-editDataTable-textColumn" >
 					<f:facet name="header">
-						<aon:outputText value="#{adminBundle.admin_modules_denied}" />
+						<aon:outputText value="#{bundle.admin_modules_denied}" />
 					</f:facet>
 					<aon:outputText value="#{appProfile.moduleDeniedList}" />
 				</aon:column>					
@@ -56,7 +56,7 @@
 					
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-250 aon-vertical-align-top" >
 					<f:facet name="header">
-						<aon:outputText value="#{auditBundle.audit_applications_module}" />
+						<aon:outputText value="#{bundle.audit_applications_module}" />
 					</f:facet>
 					<aon:outputText styleClass="aon-bold"
 						value="#{appInfo.domainApplication.application.description}" />
@@ -64,7 +64,7 @@
 	
 				<aon:column styleClass="aon-editDataTable-textColumn" >
 					<f:facet name="header">
-						<aon:outputText value="#{adminBundle.admin_profiles}" />
+						<aon:outputText value="#{bundle.admin_profiles}" />
 					</f:facet>
 					<a4j:repeat value="#{appInfo.profileInfos}" var="appProfile">
 						<aon:div>

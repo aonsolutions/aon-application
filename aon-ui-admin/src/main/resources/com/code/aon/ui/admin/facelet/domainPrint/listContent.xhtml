@@ -9,7 +9,7 @@
 	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap"
 		alias="Domain.description" >
 		<f:facet name="header">
-			<aon:outputText value="#{adminBundle.admin_domain_displayName}" />
+			<aon:outputText value="#{bundle.admin_domain_displayName}" />
 		</f:facet>							
 		<aon:outputText value="#{to.description}" />
 	</aon:column>
@@ -17,7 +17,7 @@
 	<aon:column styleClass="aon-editDataTable-textColumn  aon-nowrap aon-width-200"
 		alias="Domain.name" >
 		<f:facet name="header">
-			<aon:outputText value="#{adminBundle.admin_domain_url}" />
+			<aon:outputText value="#{bundle.admin_domain_url}" />
 		</f:facet>							
 		<aon:outputText style="#{customize.fontStyle}" value="http://#{to.name}" />
 	</aon:column>	
@@ -25,14 +25,14 @@
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
 		alias="Domain.type" >
 		<f:facet name="header">
-			<aon:outputText value="#{adminBundle.admin_domain_type}" />
+			<aon:outputText value="#{bundle.admin_domain_type}" />
 		</f:facet>							
 		<aon:outputText value="#{to.type}" />
 	</aon:column>
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap">
 		<f:facet name="header">
-			<aon:outputText value="#{adminBundle.admin_modules}" />
+			<aon:outputText value="#{bundle.admin_modules}" />
 		</f:facet>							
 		<aon:outputText value="#{controller.currentDomainModuleList}" />
 	</aon:column>
@@ -40,7 +40,7 @@
 	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap"
 		alias="Domain.parent&lt;description" >
 		<f:facet name="header">
-			<aon:outputText value="#{adminBundle.admin_domain_parent}" />
+			<aon:outputText value="#{bundle.admin_domain_parent}" />
 		</f:facet>							
 		<aon:outputText value="#{to.parent.description}" />
 	</aon:column>
@@ -48,7 +48,7 @@
 	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap" 
 		alias="Domain.creationDate" >
 		<f:facet name="header">
-			<aon:outputText value="#{adminBundle.admin_domain_created}" />
+			<aon:outputText value="#{bundle.admin_domain_created}" />
 		</f:facet>							
 		<aon:outputText rendered="#{to.creationUser != null}"
 			value="#{to.creationUser} / " />
@@ -62,7 +62,7 @@
 	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap"
 		alias="Domain.modificationDate" >
 		<f:facet name="header">
-			<aon:outputText value="#{adminBundle.admin_domain_modified}" />
+			<aon:outputText value="#{bundle.admin_domain_modified}" />
 		</f:facet>							
 		<aon:outputText rendered="#{to.modificationUser != null}"
 			value="#{to.modificationUser} / " />
@@ -76,7 +76,7 @@
 	<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-80"
 		alias="Domain.expirationDate" >
 		<f:facet name="header">
-			<aon:outputText value="#{adminBundle.admin_domain_expiration_short}" />
+			<aon:outputText value="#{bundle.admin_domain_expiration_short}" />
 		</f:facet>							
 		<aon:outputText value="#{to.expirationDate}" >
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -86,7 +86,7 @@
 	
 	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 		<f:facet name="header">
-			<aon:outputText value="#{adminBundle.admin_users}" />
+			<aon:outputText value="#{bundle.admin_users}" />
 		</f:facet>							
 		<aon:outputText value="#{controller.currentDomainUserNumber} / #{to.maxDefinedUsers}" />
 	</aon:column>
@@ -100,7 +100,7 @@
 
 	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-40">
 		<f:facet name="header">
-			<aon:outputText value="#{adminBundle.admin_domain_childs_short}" />
+			<aon:outputText value="#{bundle.admin_domain_childs_short}" />
 		</f:facet>							
 		<aon:outputText value="#{controller.currentDomainChildNumber}" />
 	</aon:column>
@@ -117,7 +117,7 @@
 	<aon:column styleClass="aon-editDataTable-iconColumn"
 		alias="Domain.enableHeredity" >
 		<f:facet name="header">
-			<aon:outputText value="#{adminBundle.admin_domain_heredity}" />
+			<aon:outputText value="#{bundle.admin_domain_heredity}" />
 		</f:facet>
 		<aon:outputText value="&#160;"
 			styleClass="aon-icon #{(to.enableHeredity)?'aon-icon-checked':'aon-icon-check'}" />							
@@ -126,7 +126,7 @@
 	<aon:column styleClass="aon-editDataTable-iconColumn"
 		alias="Domain.domainManagement" >
 		<f:facet name="header">
-			<aon:outputText value="#{adminBundle.admin_domain_domainManagement}" />
+			<aon:outputText value="#{bundle.admin_domain_domainManagement}" />
 		</f:facet>
 		<aon:outputText value="&#160;"
 			styleClass="aon-icon #{(to.domainManagement)?'aon-icon-checked':'aon-icon-check'}" />							

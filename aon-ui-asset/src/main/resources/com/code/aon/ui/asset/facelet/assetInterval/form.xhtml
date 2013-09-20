@@ -13,7 +13,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{assetBundle.asset_interval_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.asset_interval_module}" />
 				<ui:param name="controller" value="#{assetInterval}" />
 			</ui:decorate>
 
@@ -31,21 +31,21 @@
 				</aon:inputText>
 			
 				<aon:outputLabel for="assetInterval_interval" 
-					value="#{assetBundle.asset_interval_interval}" />
+					value="#{bundle.asset_interval_interval}" />
 				<aon:inputText id="assetInterval_interval"
 					value="#{assetStretch.to.interval}" size="5" >
 					<f:validateDoubleRange  />
 				</aon:inputText>
 			
 				<aon:outputLabel for="assetInterval_startTime" 
-					value="#{assetBundle.asset_startTime}" />
+					value="#{bundle.asset_startTime}" />
 				<aon:inputText id="assetInterval_startTime"
 					value="#{assetInterval.to.startTime}" size="5" >
 					<f:validateLength maximum="32" />
 				</aon:inputText>
 			
 				<aon:outputLabel for="assetInterval_endTime" 
-					value="#{assetBundle.asset_endTime}" />
+					value="#{bundle.asset_endTime}" />
 				<aon:inputText id="assetInterval_endTime"
 					value="#{assetInterval.to.endTime}" size="5" >
 					<f:validateLength maximum="32" />

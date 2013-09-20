@@ -15,19 +15,19 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="sss #{accountingBundle.accounting_entry_finance_module}" />
+				<ui:param name="toolbarTitle" value="sss #{bundle.accounting_entry_finance_module}" />
 				<ui:param name="toolbarDescription" value="#{financeEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 				
 				<ui:define name="toolbarContent">
-					<aon:commandButton value="#{accountingBundle.accounting_entry_generate}"
+					<aon:commandButton value="#{bundle.accounting_entry_generate}"
 						id="saveFinance" accesskey="#{bundle.aon_key_save}"
-						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
+						title="#{bundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
 						actionListener="#{financeEntry.accept}"
 						action="#{financeEntry.generate}"
 						disabled="#{financeEntry.lines.rowCount == 0}"
 						rendered="#{financeEntry.payment != null}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?')) return false;" />
+						onclick="if (!confirm('#{bundle.accounting_entry_generate}?')) return false;" />
 					<aon:commandButton value="#{bundle.aon_reset}"
 						accesskey="#{bundle.aon_key_new}"
 						title="#{bundle.aon_reset} (ALT+#{bundle.aon_key_new})"
@@ -70,7 +70,7 @@
 				<aon:div id="financeEntryHeader" styleClass="aon-panelGrid-search">
 
 					<aon:div styleClass="aon-panelGrid-search-info">
-						<aon:outputText value="#{accountingBundle.accounting_finance_filter}"
+						<aon:outputText value="#{bundle.accounting_finance_filter}"
 							styleClass="aon-panelGrid-search-info-internal" />
 					</aon:div>
 
@@ -122,7 +122,7 @@
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 
 					<aon:outputLabel for="AccountEntry_balancingDeposit"
-						value="#{financeBundle.finance_deposit}" />
+						value="#{bundle.finance_deposit}" />
 					<aon:selectOneRadio id="AccountEntry_balancingDeposit"
 						style="display:inline;" value="#{financeEntry.deposit}">
 						<f:selectItem itemLabel="#{bundle.aon_bank}" itemValue="0" />
@@ -172,13 +172,13 @@
 					<aon:panelTabSet rendered="#{financeEntry.payment != null}">
 
 						<c:if test="#{financeEntry.lines.rowCount > 0}">
-							<aon:panelTab name="lines" label="#{accountingBundle.accounting_finance_record_list}">
+							<aon:panelTab name="lines" label="#{bundle.accounting_finance_record_list}">
 								<ui:include src="/com/code/aon/ui/accounting/facelet/entry/finance/form_lines.xhtml" />
 							</aon:panelTab>
 						</c:if>
 
 						<c:if test="#{financeEntry.finances.rowCount > 0}">
-							<aon:panelTab name="finances" label="#{accountingBundle.accounting_finance_pending_list}">
+							<aon:panelTab name="finances" label="#{bundle.accounting_finance_pending_list}">
 								<ui:include src="/com/code/aon/ui/accounting/facelet/entry/finance/form_finances.xhtml" />
 							</aon:panelTab>
 						</c:if>

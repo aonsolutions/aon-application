@@ -14,7 +14,7 @@
 		<aon:form id="noticeForm">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_notice}" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_notice}" />
 				<ui:param name="controller" value="#{notice}" />
 			</ui:include>
 
@@ -37,10 +37,10 @@
 						value="#{notice.to.workGroup.id}" reRender="Notice_workGroup_id,Notice_recipient_id, Notice_sendEmail"
 						valueChangeListener="#{notice.workGroupChange}" >
 						<c:if test="#{notice.to.workGroup.id == notice.selectOneValue}">
-							<f:selectItem itemLabel="#{groupwareBundle.groupware_select_one}" itemValue="#{notice.selectOneValue}"/>
+							<f:selectItem itemLabel="#{bundle.groupware_select_one}" itemValue="#{notice.selectOneValue}"/>
 						</c:if>
 						<c:if test="#{notice.workGroupCount &gt; 1}">
-							<f:selectItem itemLabel="#{financeBundle.finance_all}" value="#{null}"/>
+							<f:selectItem itemLabel="#{bundle.finance_all}" value="#{null}"/>
 						</c:if>
 						<f:selectItems value="#{notice.workGroups}" />
 					</aon:selectOneMenu>
@@ -52,10 +52,10 @@
 						value="#{notice.to.recipient}" reRender="Notice_recipient_id,Notice_sendEmail"
 						valueChangeListener="#{notice.recipientChange}">
 						<c:if test="#{!notice.recipientSelectable}">
-							<f:selectItem itemLabel="#{groupwareBundle.groupware_select_one}" itemValue="#{notice.selectOneValue}"/>
+							<f:selectItem itemLabel="#{bundle.groupware_select_one}" itemValue="#{notice.selectOneValue}"/>
 						</c:if>
 						<c:if test="#{notice.recipientSelectable}">						
-							<f:selectItem itemLabel="#{financeBundle.finance_all}" value="#{null}"/>
+							<f:selectItem itemLabel="#{bundle.finance_all}" value="#{null}"/>
 							<f:selectItems value="#{notice.users}" />
 						</c:if>
 					</aon:selectOneMenu>
@@ -73,7 +73,7 @@
 						value="#{notice.to.company}" />
 
 					<aon:outputLabel for="Notice_phone"
-						value="#{groupwareBundle.notice_phone}" />
+						value="#{bundle.notice_phone}" />
 					<aon:inputText id="Notice_phone"
 						maxlength="16" size="20"
 						value="#{notice.to.phone}" />
@@ -104,7 +104,7 @@
 					<aon:inputTextarea id="Notice_subject"
 						value="#{notice.to.subject}" cols="100" rows="7" />	
 
-					<aon:outputLabel for="Notice_sendEmail" value="#{groupwareBundle.notice_send_email}" rendered="#{notice.new}"/>
+					<aon:outputLabel for="Notice_sendEmail" value="#{bundle.notice_send_email}" rendered="#{notice.new}"/>
 					<aon:div id="Notice_sendEmail" style="vertical-align:top" rendered="#{notice.new}">
 						<aon:selectBooleanCheckbox id="Notice_sendEmail_checkbox"
 							value="#{notice.sendMail}" style="vertical-align:top" reRender="Notice_sendEmail" />

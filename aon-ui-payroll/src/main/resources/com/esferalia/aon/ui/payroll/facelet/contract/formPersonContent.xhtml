@@ -20,7 +20,7 @@
 		<aon:inputText disabled="#{true}" size="12"
 			value="#{contract.to.person.registry.document}"/>
 		
-		<aon:outputText value="#{registryBundle.registry_person_birthDate}" />
+		<aon:outputText value="#{bundle.registry_person_birthDate}" />
 		<aon:div>
 			<aon:selectInputDate disabled="#{true}" 
 				value="#{contract.to.person.birthDate}" 
@@ -33,14 +33,14 @@
 			<aon:outputText value=")" rendered="#{contract.to.person.age!=null}"/>
 		</aon:div>
 		
-		<aon:outputText value="#{registryBundle.registry_nationality}" />
+		<aon:outputText value="#{bundle.registry_nationality}" />
 		<aon:selectOneMenu disabled="#{true}"
 			value="#{contract.to.person.registry.nationality}" >
 			<f:selectItem value="#{null}" itemLabel="-"/>
 			<f:selectItems value="#{commonCollections.countries}" />
 		</aon:selectOneMenu>	
 		
-		<aon:outputText value="#{registryBundle.registry_person_nss}" />
+		<aon:outputText value="#{bundle.registry_person_nss}" />
 		<aon:inputText disabled="#{true}" size="13"
 			value="#{contract.to.person.socialSecurityNumber}"/>
 

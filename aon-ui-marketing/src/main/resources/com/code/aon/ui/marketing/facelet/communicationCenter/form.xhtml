@@ -16,13 +16,13 @@
 		<aon:form id="communicationCenterSurveyForm"> 
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_communication_center_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.commercial_communication_center_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 				<ui:define name="toolbarContent">
 					<c:if test="#{(communicationCenter.actionSelected) and (communicationCenter.pendingTargets &gt; 0)}" >
 						<c:if test="#{aonConfiguration.bean.marketingCampaign.showPhoneActionMediaType}" >
 							<c:if test="#{communicationCenter.action.mediaType  == 'PHONE'}" >
-								<aon:commandButton id="accept" value="#{marketingBundle.marketing_survey}"
+								<aon:commandButton id="accept" value="#{bundle.marketing_survey}"
 									action="communicationCenter_response" actionListener="#{communicationCenter.onStartSurveyResponse}"
 									rendered="#{communicationCenter.surveySelected and communicationCenter.targetSelected}"
 									styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -37,13 +37,13 @@
 									accesskey="#{bundle.aon_key_cancel}"/>
 								<c:if test="#{aonConfiguration.bean.alarm.showNew}">									
 									<aon:commandButton id="alarm"
-										value="#{groupwareBundle.groupware_alarm_new}"
+										value="#{bundle.groupware_alarm_new}"
 										reRender="newAlarmWindow" immediate="true"
 										actionListener="#{communicationCenter.onNewAlarm}"
 										styleClass="aon-finding-toolbar-item aon-icon-alarms" />
 								</c:if>
 								<aon:commandButton id="newCommercialTracking"
-									value="#{commercialBundle.commercial_tracking_new_action}"
+									value="#{bundle.commercial_tracking_new_action}"
 									reRender="showNewTrackingWindow"
 									actionListener="#{communicationCenter.onNewCommercialTracking}"
 									styleClass="aon-finding-toolbar-item aon-icon-new" />
@@ -53,7 +53,7 @@
 							<aon:commandButton id="email"
 								action="communicationCenter_mail"
 								actionListener="#{communicationCenter.onGenerateTargetMailing}"
-								value="#{marketingBundle.marketing_mailing}"
+								value="#{bundle.marketing_mailing}"
 								styleClass="aon-finding-toolbar-item aon-icon-webmail2">
 							</aon:commandButton>								
 						</c:if>
@@ -61,7 +61,7 @@
 							<aon:commandButton id="email"
 								action="#{communicationCenter.newEmailAction}"
 								actionListener="#{communicationCenter.onNewEmail}"
-								value="#{webmailBundle.webmail_newmail}"
+								value="#{bundle.webmail_newmail}"
 								styleClass="aon-finding-toolbar-item aon-icon-newMail" />
 						</c:if>
 					</c:if>						
@@ -94,7 +94,7 @@
 							<ui:include src="/com/code/aon/ui/marketing/facelet/news/lookup.xhtml" >
 								<ui:param name="lookupTo" value="#{communicationCenter.news}" />
 								<ui:param name="lookupDisabled" value="#{true}" />
-								<ui:param name="searchButtonTitle" value="#{marketingBundle.marketing_message_selection}" />
+								<ui:param name="searchButtonTitle" value="#{bundle.marketing_message_selection}" />
 								<ui:param name="lookupControllerListener" value="#{marketingCampaign.newsFilter}" />
 								<ui:param name="goToBackAction" value="communicationCenter" />															
 								<ui:param name="goToBackActionListener"
@@ -135,7 +135,7 @@
 									<ui:param name="goToBackActionListener"
 										value="communicationCenter.onTargetBackActionListener" />									
 									<ui:define name="afterLookupContent2">
-										<aon:commandLink title="#{webmailBundle.webmail_send_email}" 
+										<aon:commandLink title="#{bundle.webmail_send_email}" 
 											ajaxSingle="true" reRender="showNewMessageWindow-Target"
 											actionListener="#{communicationCenter.onInitEmail}" value="&#160;"
 											styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border" />							
@@ -162,14 +162,14 @@
 						<c:if test="#{((communicationCenter.action.mediaType  == 'EMAIL') or (communicationCenter.action.mediaType  == 'NEWSLETTER')) 
 							and (communicationCenter.pendingTargets &gt; 0)}" >
 							<aon:outputLabel for="CommunicationCenter_numberOfTargetsInEmail"
-								value="#{marketingBundle.marketing_target_bulk_email}" />
+								value="#{bundle.marketing_target_bulk_email}" />
 							<aon:div>
 								<aon:inputText id="CommunicationCenter_numberOfTargetsInEmail"
 									value="#{communicationCenter.numberOfTargetsInEmail}" size="10" >
 									<f:validateLongRange minimum="1" maximum="#{communicationCenter.pendingTargets}" />
 								</aon:inputText>
 								<aon:outputText styleClass="aon-margin-left aon-italic"
-									value="#{marketingBundle.marketing_action_pending_targets}: #{communicationCenter.pendingTargets}" />
+									value="#{bundle.marketing_action_pending_targets}: #{communicationCenter.pendingTargets}" />
 							</aon:div>
 						</c:if>					
 					</c:if>

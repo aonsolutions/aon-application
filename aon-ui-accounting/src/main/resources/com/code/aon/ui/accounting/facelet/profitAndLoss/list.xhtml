@@ -13,7 +13,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_profit_and_loss_module}" />
+					value="#{bundle.accounting_profit_and_loss_module}" />
 				<ui:param name="skipResetButton" value="true" />
 
 				<ui:define name="toolbarActions">
@@ -46,7 +46,7 @@
 					<aon:htmlCommandLink id="profitAndLossMonthly-excel-report"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
 						value="&#160;" action="#{report.onExecute}" target="_blank"
-						title="#{accountingBundle.accounting_monthly_report} MS Excel">
+						title="#{bundle.accounting_monthly_report} MS Excel">
 						<f:param name="reportKey" value="profitAndLossMonthly" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
@@ -60,7 +60,7 @@
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="profitAndLossMonthly-report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						value="#{accountingBundle.accounting_monthly_report}"
+						value="#{bundle.accounting_monthly_report}"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="profitAndLossMonthly" />
 						<f:param name="outputFormat" value="PDF" />
@@ -72,31 +72,31 @@
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="profitAndLossTotalExpenses" />
 						<f:param name="outputFormat" value="PDF" />
-						<f:setPropertyActionListener value="#{accountingBundle.accounting_profit_and_loss_module_expense_graph}" target="#{profitAndLossReport.graphName}" />
+						<f:setPropertyActionListener value="#{bundle.accounting_profit_and_loss_module_expense_graph}" target="#{profitAndLossReport.graphName}" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="profitAndLossGrossMargin-report"
 						styleClass="aon-finding-toolbar-item aon-icon-index" target="_blank"
-						value="#{accountingBundle.account_gross_margin_button}"
+						value="#{bundle.account_gross_margin_button}"
 						action="#{report.onExecute}" actionListener="#{profitAndLossReport.onGenerateLists}">
 						<f:param name="reportKey" value="profitAndLossGrossMargin" />
 						<f:param name="outputFormat" value="PDF" />
-						<f:setPropertyActionListener value="#{accountingBundle.account_gross_margin}" target="#{profitAndLossReport.graphName}" />
+						<f:setPropertyActionListener value="#{bundle.account_gross_margin}" target="#{profitAndLossReport.graphName}" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="profitAndLossNetExpenses-report"
 						styleClass="aon-finding-toolbar-item aon-icon-index" target="_blank"
-						value="#{accountingBundle.accounting_profit_and_loss_module_net}"
+						value="#{bundle.accounting_profit_and_loss_module_net}"
 						action="#{report.onExecute}" actionListener="#{profitAndLossReport.onNetExpenses}">
 						<f:param name="reportKey" value="profitAndLossNetExpenses" />
 						<f:param name="outputFormat" value="PDF" />
-						<f:setPropertyActionListener value="#{accountingBundle.accounting_profit_and_loss_module_net_graph}" target="#{profitAndLossReport.graphName}" />
+						<f:setPropertyActionListener value="#{bundle.accounting_profit_and_loss_module_net_graph}" target="#{profitAndLossReport.graphName}" />
 					</aon:htmlCommandLink>
 				 	<aon:htmlCommandLink target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-index"
-						value="#{accountingBundle.accounting_profit_and_loss_module_month_graph}"
+						value="#{bundle.accounting_profit_and_loss_module_month_graph}"
 						action="#{report.onExecute}" >
 						<f:param name="reportKey" value="profitAndLossMonthlyGraph" />
 						<f:param name="outputFormat" value="PDF" />
-					<f:setPropertyActionListener value="#{accountingBundle.accounting_profit_and_loss_module_month_graph}" target="#{profitAndLossReport.graphName}" />
+					<f:setPropertyActionListener value="#{bundle.accounting_profit_and_loss_module_month_graph}" target="#{profitAndLossReport.graphName}" />
 					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>
@@ -165,7 +165,7 @@
 							<aon:column styleClass="aon-width-100">
 								<aon:commandLink id="trialBalanceGrossMargin-search" 
 									immediate="true"
-									title="#{accountingBundle.accounting_statement_module}"
+									title="#{bundle.accounting_statement_module}"
 									styleClass="aon-dataTable-link" action="accountStatement_account_list">
 									<f:setPropertyActionListener value="#{to.code}"
 										target="#{profitAndLossReport.accountStatement}" />
@@ -196,7 +196,7 @@
 						</rich:subTable>
 	
 						<aon:column colspan="2" styleClass="aon-text-right">
-							<aon:outputText value="#{accountingBundle.accounting_gross_margin}" />
+							<aon:outputText value="#{bundle.accounting_gross_margin}" />
 						</aon:column>
 						<aon:column styleClass="aon-text-right">
 							<aon:outputText value="#{controller.grossMargin.periodUnpaidBalance}" rendered="#{controller.grossMargin.periodUnpaidBalance != 0}">
@@ -214,7 +214,7 @@
 							<aon:column>
 								<aon:commandLink id="trialBalanceTotalExpenses-search" 
 									immediate="true"
-									title="#{accountingBundle.accounting_statement_module}"
+									title="#{bundle.accounting_statement_module}"
 									styleClass="aon-dataTable-link" action="accountStatement_account_list">
 									<f:setPropertyActionListener value="#{to.code}"
 										target="#{profitAndLossReport.accountStatement}" />
@@ -244,7 +244,7 @@
 						</rich:subTable>
 	
 						<aon:column colspan="2" styleClass="aon-text-right">
-							<aon:outputText value="#{accountingBundle.accounting_total_expenses}" />
+							<aon:outputText value="#{bundle.accounting_total_expenses}" />
 						</aon:column>
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn">
@@ -265,10 +265,10 @@
 								value=" ( #{bundle.aon_profit} )"
 								rendered="#{profitAndLossReport.totalResult gt 0}" />
 							<aon:outputText
-								value=" ( #{accountingBundle.accounting_total_result_loss} )"
+								value=" ( #{bundle.accounting_total_result_loss} )"
 								rendered="#{profitAndLossReport.totalResult lt 0}" />
 							<aon:outputText
-								value=" ( #{accountingBundle.accounting_total_result_null} )"
+								value=" ( #{bundle.accounting_total_result_null} )"
 								rendered="#{profitAndLossReport.totalResult == 0}" />
 						</aon:column>
 	

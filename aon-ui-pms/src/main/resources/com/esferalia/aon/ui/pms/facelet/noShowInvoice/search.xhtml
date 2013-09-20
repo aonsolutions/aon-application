@@ -12,7 +12,7 @@
 		<aon:form id="noShowInvoiceSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_noShow_invoice_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_noShow_invoice_module}" />
 				<ui:param name="controller" value="#{noShowInvoice}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 				<ui:param name="skipBackButton" value="#{true}" />
@@ -29,7 +29,7 @@
 							<a4j:support event="onclick" reRender="noShowInvoiceSearch" ignoreDumpResponses="true" ajaxSingle="true" />
 						</aon:selectBooleanCheckbox>
 						<aon:outputLabel for="ProjectReservation_guestReservationSearch"
-							value="#{pmsBundle.pms_guest_reservation_search}"/>
+							value="#{bundle.pms_guest_reservation_search}"/>
 					</aon:div>
 
 					<aon:outputText value="&#160;"/>

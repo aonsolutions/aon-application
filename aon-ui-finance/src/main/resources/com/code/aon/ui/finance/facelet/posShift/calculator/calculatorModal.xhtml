@@ -16,7 +16,7 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{financeBundle.finance_calculator}" />
+						<aon:outputText value="#{bundle.finance_calculator}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -282,7 +282,7 @@
 												<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 											</aon:outputText>
 
-											<aon:outputText value="#{financeBundle.finance_initial_amount}" />
+											<aon:outputText value="#{bundle.finance_initial_amount}" />
 											<aon:outputText value="#{cashCalculator.initialAmount}">
 												<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 											</aon:outputText>

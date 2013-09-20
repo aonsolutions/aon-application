@@ -36,7 +36,7 @@
 								styleClass="aon-bold aon-menu-icon aon-icon-alarm-pending" />					
 						</c:if>
 						<aon:commandLink styleClass="aon-menu-icon aon-icon-email"
-							title="#{webmailBundle.webmail_send_email}" 
+							title="#{bundle.webmail_send_email}" 
 							ajaxSingle="true" reRender="showNewMessageWindow"
 							rendered="#{mailConfig.mailAccountCount &gt; 0}"
 							value="&#160;" actionListener="#{webmailMessage.onSendEmail}" >
@@ -55,7 +55,7 @@
 			                </f:facet>					                
 			                <c:if test="#{aonConfiguration.bean.alarm.showList}">
 		                		<aon:menuItem id="alarm"
-									value="#{groupwareBundle.aon_alarm}"
+									value="#{bundle.aon_alarm}"
 									action="alarm_list" actionListener="#{alarm.onInit}" 
 									iconClass="aon-icon-alarm" />
 							</c:if>	

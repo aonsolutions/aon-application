@@ -28,7 +28,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_employee" action="gwt_employee_tree"
-											value="#{payrollBundle.menu_integral}" target="gwt">
+											value="#{bundle.menu_integral}" target="gwt">
 											<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
 											<aon:actionListener method="#{enterprise.onEditSearch}" />
 										</aon:commandLink>
@@ -65,26 +65,26 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-offer aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="#{accountingBundle.accounting_concepts}" />
+									<aon:outputText value="#{bundle.accounting_concepts}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="paymentConcept"
 											action="paymentConcept_search"
 											actionListener="#{paymentConcept.onEditSearch}"
-											value="#{payrollBundle.payroll_paymentConcept_module}" />
+											value="#{bundle.payroll_paymentConcept_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="deductionConcept"
 											action="deductionConcept_search"
 											actionListener="#{deductionConcept.onEditSearch}"
-											value="#{payrollBundle.payroll_deductionConcept_module}" />
+											value="#{bundle.payroll_deductionConcept_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="bonusConcept"
 											action="bonusConcept_search"
 											actionListener="#{bonusConcept.onEditSearch}"
-											value="#{payrollBundle.payroll_bonusConcept_module}" />
+											value="#{bundle.payroll_bonusConcept_module}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
@@ -97,25 +97,25 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-company aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="#{payrollBundle.payroll_system}" />
+									<aon:outputText value="#{bundle.payroll_system}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="systemPayment"
 											action="systemPayment_search"
 											actionListener="#{systemPayment.onEditSearch}"
-											value="#{payrollBundle.payroll_systemPayment_module}" />
+											value="#{bundle.payroll_systemPayment_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="systemDeduction"
 											action="systemDeduction_search"
 											actionListener="#{systemDeduction.onEditSearch}"
-											value="#{payrollBundle.payroll_systemDeduction_module}" />
+											value="#{bundle.payroll_systemDeduction_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="systemData" action="systemData_grid"
 											actionListener="#{systemData.onSearch}"
-											value="#{payrollBundle.payroll_systemData_module}" />
+											value="#{bundle.payroll_systemData_module}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>

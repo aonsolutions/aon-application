@@ -12,7 +12,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="skipSearchButton" value="true" />
-				<ui:param name="toolbarTitle" value="#{geozoneBundle.geozone_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.geozone_module}" />
 				<ui:param name="controller" value="#{geotreeParent}" />
 				<ui:param name="skipResetButton" value="#{geotreeParent.to.child.system}" />
 				<ui:param name="skipRemoveButton" value="#{geotreeParent.to.child.system}" />
@@ -32,7 +32,7 @@
 						disabled="#{geotreeParent.to.child.system}" size="3" />
 
 					<aon:outputLabel for="GeoTree_parent_child_name" 
-						value="#{geozoneBundle.geozone_country}" />
+						value="#{bundle.geozone_country}" />
 					<aon:inputText id="GeoTree_parent_child_name" 
 						value="#{geotreeParent.to.child.name}"
 						required="#{true}" size="40" />
@@ -43,7 +43,7 @@
 					<aon:div styleClass="aon-padding-top">
 						<aon:panel>
 							<f:facet name="header">
-								<aon:outputText value="#{geozoneBundle.geozone_provinces}"/>
+								<aon:outputText value="#{bundle.geozone_provinces}"/>
 							</f:facet>
 							<ui:decorate
 								template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">

@@ -27,7 +27,7 @@
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 					
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{webmailBundle.webmail_main}" />
+						<aon:outputText value="#{bundle.webmail_main}" />
 					</aon:div>
 					
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -36,9 +36,9 @@
 					
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="newMailMessage"
-							title="#{webmailBundle.webmail_newmail}" action="messageNew"
+							title="#{bundle.webmail_newmail}" action="messageNew"
 							actionListener="#{webmailMessage.onNewMessage}"
-							value="#{webmailBundle.webmail_newmail}"
+							value="#{bundle.webmail_newmail}"
 							styleClass="aon-finding-toolbar-item aon-icon-newMail">
 						</aon:commandButton>
 							
@@ -59,8 +59,8 @@
 		
 						<!-- Move button  -->
 						<aon:commandButton id="moveButton" reRender="folderWindow"
-							title="#{webmailBundle.webmail_movemail}"
-							value="#{webmailBundle.webmail_movemail}"
+							title="#{bundle.webmail_movemail}"
+							value="#{bundle.webmail_movemail}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-move">
 							<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
 								value="#{true}" />							
@@ -68,44 +68,44 @@
 						
 						<!-- Purge button  -->						
 						<aon:confirmButton id="purgeMail"
-							title="#{webmailBundle.webmail_mail_purge}"
+							title="#{bundle.webmail_mail_purge}"
 							confirmTitle="#{bundle.aon_advice}"
-							confirmMessage="#{webmailBundle.webmail_purge_confirm}"
+							confirmMessage="#{bundle.webmail_purge_confirm}"
 							accesskey="#{bundle.aon_key_remove}"
 							confirmActionListener="#{webmailFolder.purgeCheckedMessages}"
-							value="#{webmailBundle.webmail_mail_purge}"
+							value="#{bundle.webmail_mail_purge}"
 							styleClass="aon-icon-mailDelete aon-finding-toolbar-item" />
 
 						<!-- Purge All button -->
 						<aon:confirmButton id="purgeAll"
 							rendered="#{webmailFolder.folder.purgableAllMessages}"
-							title="#{webmailBundle.webmail_mail_purge_all}"
+							title="#{bundle.webmail_mail_purge_all}"
 							confirmTitle="#{bundle.aon_advice}"
-							confirmMessage="#{webmailBundle.webmail_purge_all_confirm}"
+							confirmMessage="#{bundle.webmail_purge_all_confirm}"
 							confirmActionListener="#{webmailFolder.purgeAllMessages}"
-							value="#{webmailBundle.webmail_mail_purge_all}"
+							value="#{bundle.webmail_mail_purge_all}"
 							styleClass="aon-icon-mailDeleteAll aon-finding-toolbar-item" />		
 								
 						<!--  Refresh button -->
 						<aon:commandButton id="refreshAccounts" 
 							actionListener="#{webmailFolder.refresh}"
-							title="#{webmailBundle.webmail_refresh}"
-							value="#{webmailBundle.webmail_refresh}"
+							title="#{bundle.webmail_refresh}"
+							value="#{bundle.webmail_refresh}"
 							styleClass="aon-finding-toolbar-item aon-icon-refresh">
 						</aon:commandButton> 
 
 						<!--  Mark buttons button -->
 						<aon:commandButton id="markRead" 
 							actionListener="#{webmailFolder.markAsReadCheckedMessages}"
-							title="#{webmailBundle.webmail_mark_read}" value="&#160;"
+							title="#{bundle.webmail_mark_read}" value="&#160;"
 							style="padding-left: 10px;"
 							styleClass="aon-finding-toolbar-item aon-icon-mailInbox-read aon-finding-toolbar-item-no-border">
 						</aon:commandButton> 				
 
 						<aon:commandButton id="markUnread" 
 							actionListener="#{webmailFolder.markAsUnreadCheckedMessages}"
-							title="#{webmailBundle.webmail_mark_unread}"
-							value="#{webmailBundle.webmail_mark}"
+							title="#{bundle.webmail_mark_unread}"
+							value="#{bundle.webmail_mark}"
 							styleClass="aon-finding-toolbar-item aon-icon-mailInbox">
 						</aon:commandButton> 				
 						

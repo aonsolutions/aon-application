@@ -14,18 +14,18 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 
-				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_expense_entry_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.accounting_expense_entry_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save" 
-						value="#{accountingBundle.accounting_entry_generate}"
+						value="#{bundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
-						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
+						title="#{bundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
 						actionListener="#{expenseEntry.onAccept}"
 						action="#{expenseEntry.accept}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?')) return false;" />
+						onclick="if (!confirm('#{bundle.accounting_entry_generate}?')) return false;" />
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}" immediate="true"
 						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
@@ -65,7 +65,7 @@
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 
 					<aon:outputLabel for="AccountEntry_deposit"
-						value="#{financeBundle.finance_deposit}" />
+						value="#{bundle.finance_deposit}" />
 					<aon:selectOneRadio id="AccountEntry_deposit"
 						style="display:inline;" ajaxSingle="true"
 						value="#{expenseEntry.entry.deposit}"

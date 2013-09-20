@@ -31,7 +31,7 @@
 					</a4j:repeat>
 				</aon:panelTab>
 			               
-				<aon:panelTab name="deniedModules" label="#{adminBundle.admin_modules_denied}">
+				<aon:panelTab name="deniedModules" label="#{bundle.admin_modules_denied}">
 					<a4j:repeat value="#{controller.deniedModules}" var="profileDeniedModule">
 						<aon:div>
 							<aon:selectBooleanCheckbox value="#{profileDeniedModule.checked}" />								
@@ -41,7 +41,7 @@
 				</aon:panelTab>
 			
 				<aon:panelTab name="deniedOptions"
-					label="#{auditBundle.audit_option_denied_module}">
+					label="#{bundle.audit_option_denied_module}">
 					<ui:include src="/com/code/aon/ui/audit/facelet/action/deniedContent.xhtml" >
 						<ui:param name="skipUserLookup" value="#{true}" />						
 						<ui:param name="skipDeniedContentToolbar" value="#{true}" />

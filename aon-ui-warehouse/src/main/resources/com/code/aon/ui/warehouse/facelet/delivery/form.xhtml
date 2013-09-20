@@ -15,7 +15,7 @@
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					<ui:param name="toolbarTitle"
-						value="#{warehouseBundle.warehouse_delivery_module}" />
+						value="#{bundle.warehouse_delivery_module}" />
 					<ui:param name="controller" value="#{delivery}" />
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{!delivery.pending}" />
@@ -42,7 +42,7 @@
 							</aon:commandButton>
 						</c:if>
 						<aon:commandButton value="&#160;" id="email"
-							title="#{webmailBundle.webmail_send_email}"
+							title="#{bundle.webmail_send_email}"
 							rendered="#{deliveryDetail.model.rowCount > 0 and deliveryDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 							<aon:actionListener method="#{delivery.onSendByEmail}" />
@@ -152,7 +152,7 @@
 							disabled="#{!delivery.pending}">
 							<f:selectItems value="#{delivery.addresses}" />
 						</aon:selectOneMenu>
-						<aon:outputLabel value="#{registryBundle.registry_no_address_available}"
+						<aon:outputLabel value="#{bundle.registry_no_address_available}"
 							rendered="#{delivery.addressCount == 0}"
 							styleClass="aon-italic" />
 					</aon:div>
@@ -291,10 +291,10 @@
 								aon-panelGrid-even aon-width-200">
 
 							<aon:outputText value="#{bundle.aon_type}"/>
-							<aon:outputText value="#{registryBundle.registry_number_of_payments}" />
-							<aon:outputText value="#{registryBundle.registry_days_to_first_payment}" />
-							<aon:outputText value="#{registryBundle.registry_days_between_payments}" />
-							<aon:outputText value="#{registryBundle.registry_payment_days}" />
+							<aon:outputText value="#{bundle.registry_number_of_payments}" />
+							<aon:outputText value="#{bundle.registry_days_to_first_payment}" />
+							<aon:outputText value="#{bundle.registry_days_between_payments}" />
+							<aon:outputText value="#{bundle.registry_payment_days}" />
 							<aon:outputText value="#{bundle.aon_bank}" />
 							<aon:outputText value="#{bundle.aon_bank_account}" />
 
@@ -351,11 +351,11 @@
 				<c:if test="#{!delivery.new}">
 					<aon:panelTabSet selectedTab="#{sales.selectedTab}">
 						<aon:panelTab id="deliveryDetail" 
-							label="#{warehouseBundle.warehouse_delivery_detail}">
+							label="#{bundle.warehouse_delivery_detail}">
 							<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/formDetail.xhtml" />
 						</aon:panelTab>
 						<aon:panelTab id="deliveryShipment" 
-							label="#{carrierBundle.carrier_shipment}">
+							label="#{bundle.carrier_shipment}">
 							<ui:include src="/com/code/aon/ui/warehouse/facelet/delivery/formShipment.xhtml" />
 						</aon:panelTab>
 					</aon:panelTabSet>

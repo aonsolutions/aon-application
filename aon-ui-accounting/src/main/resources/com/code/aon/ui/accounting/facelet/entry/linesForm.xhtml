@@ -84,7 +84,7 @@
 							styleClass="aon-dataTable-link"
 							rendered="#{accountEntry.statementAvailable}"
 							actionListener="#{accountEntryDetail.onAccountStatement}"
-							title="#{accountingBundle.accounting_statement_module}"
+							title="#{bundle.accounting_statement_module}"
 							action="accountStatement_list"
 							reRender="aonContent">
 								<aon:outputText value="#{to.account.code}" />
@@ -247,7 +247,7 @@
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-150 aon-nowrap">
 					<f:facet name="header">
 						<aon:outputLabel for="Account_idBalancingAccount"
-							value="#{financeBundle.finance_balancing_account}" />
+							value="#{bundle.finance_balancing_account}" />
 					</f:facet>
 
 					<aon:div style="width: 90%;" rendered="#{to!=accountEntryDetail.to}" ajaxRendered="true">

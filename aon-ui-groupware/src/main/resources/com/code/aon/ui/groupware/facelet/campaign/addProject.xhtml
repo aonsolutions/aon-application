@@ -13,7 +13,7 @@
 		
 		<f:facet name="header">
 			<aon:div styleClass="aon-popupWindow-title">
-				<aon:outputText value="#{groupwareBundle.groupware_campaign_add_project}" />
+				<aon:outputText value="#{bundle.groupware_campaign_add_project}" />
 			</aon:div>
 		</f:facet>
 		<f:facet name="controls">
@@ -28,7 +28,7 @@
 						columnClasses="aon-finding-toolbar">
 
 						<aon:div styleClass="aon-finding-toolbar-item-group">
-							<aon:commandButton value="#{groupwareBundle.groupware_add_projects_to_campaign}"
+							<aon:commandButton value="#{bundle.groupware_add_projects_to_campaign}"
 								actionListener="#{addCampaignProject.onAddCampaignProjects}"
 								immediate="true" styleClass="aon-finding-toolbar-item aon-icon-accept"
 								reRender="addPanelContainer,CampaignProjectDataListContainer" />
@@ -42,7 +42,7 @@
 					<aon:panelGrid columns="2"
 						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
 					
-						<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
+						<aon:outputLabel for="Registry_id" value="#{bundle.project_assigned}"/>
 						<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
 							<ui:param name="lookupTo" value="#{addCampaignProject.registry}" />
 							<ui:param name="skipLabel" value="#{true}" />
@@ -61,7 +61,7 @@
 						</aon:selectOneMenu>
 					</aon:panelGrid>
 
-					<aon:outputLabel for="addCampaignProject_type" value="#{projectBundle.project_project_type}"/>
+					<aon:outputLabel for="addCampaignProject_type" value="#{bundle.project_project_type}"/>
 					<aon:selectOneMenu id="addCampaignProject_type"
 						reRender="addCampaignProject_type"
 						value="#{addCampaignProject.projectType}">
@@ -69,7 +69,7 @@
 						<f:selectItems value="#{projectCollections.projectTypes}" />
 					</aon:selectOneMenu>
 				
-					<aon:outputLabel for="addCampaignProject_activityType" value="#{projectBundle.project_activity_type}"/>
+					<aon:outputLabel for="addCampaignProject_activityType" value="#{bundle.project_activity_type}"/>
 					<aon:selectOneMenu id="addCampaignProject_activityType"
 						reRender="addCampaignProject_activityType"
 						value="#{addCampaignProject.activityType}">
@@ -82,7 +82,7 @@
 						<aon:inputText id="addCampaignProject_projectName" size="25"
 							reRender="addCampaignProject_projectName"
 							value="#{addCampaignProject.projectName}" maxlength="64" />
-						<aon:commandButton value="#{groupwareBundle.groupware_add_project_list}"
+						<aon:commandButton value="#{bundle.groupware_add_project_list}"
 							actionListener="#{addCampaignProject.addExistingProject}"
 							focus="Registry_id" immediate="true"
 							styleClass="aon-commandButton aon-icon-reset"
@@ -108,7 +108,7 @@
 							
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{projectBundle.project_assigned}" />
+									<aon:outputText value="#{bundle.project_assigned}" />
 								</f:facet>
 								<aon:outputText value="#{to.project.registry.fullName}" />
 							</aon:column>

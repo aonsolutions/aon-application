@@ -13,7 +13,7 @@
 		<aon:form id="purchaseOrderForm">
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_purchaseOrder_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.purchase_purchaseOrder_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 				<ui:define name="toolbarContent">
 				
@@ -66,7 +66,7 @@
 							
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 								<f:facet name="header">
-									<aon:outputText value="#{purchaseBundle.purchase_request_count}" />
+									<aon:outputText value="#{bundle.purchase_request_count}" />
 								</f:facet>
 								<aon:outputText value="#{to.totalItem}" 
 									styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
@@ -87,7 +87,7 @@
 							columnClasses="aon-panelGrid-odd aon-width-50, 
 							aon-panelGrid-even aon-width-auto">
 							
-							<aon:outputLabel value="#{purchaseBundle.purchase_issueDate}" />
+							<aon:outputLabel value="#{bundle.purchase_issueDate}" />
 							<aon:div>
 								<aon:outputLabel for="Proposal_issueDate-From"
 									styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />

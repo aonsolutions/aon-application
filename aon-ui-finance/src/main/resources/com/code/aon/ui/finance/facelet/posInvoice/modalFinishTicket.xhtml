@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{financeBundle.finance_to_charge} #{bundle.finance_invoice}" />
+						<aon:outputText value="#{bundle.finance_to_charge} #{bundle.finance_invoice}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -71,7 +71,7 @@
 											<aon:outputText value=" €" styleClass="aon-bold" />
 										</aon:div>
 										<aon:div>
-											<aon:outputText value="#{financeBundle.finance_pos_pending_amount}:"
+											<aon:outputText value="#{bundle.finance_pos_pending_amount}:"
 												styleClass="aon-bold aon-margin-right" style="text-transform:uppercase;" />
 											<aon:outputText value="#{invoiceController.pendingAmount}" styleClass="aon-bold">
 												<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
@@ -108,7 +108,7 @@
 
 										<aon:column styleClass="aon-panelGrid-odd aon-width-80 aon-editDataTable-textColumn">
 											<aon:outputLabel for="PosFinance_amount" 
-												value="#{financeBundle.finance_pos_paid_amount}" />
+												value="#{bundle.finance_pos_paid_amount}" />
 										</aon:column>
 
 										<aon:column styleClass="aon-panelGrid-even aon-width-auto aon-editDataTable-textColumn">
@@ -141,7 +141,7 @@
 
 										<aon:outputText value="&#160;" />
 										<aon:div>
-											<aon:outputText value="#{financeBundle.finance_pos_total_cash}:"
+											<aon:outputText value="#{bundle.finance_pos_total_cash}:"
 												styleClass="aon-bold aon-margin-right" style="text-transform:uppercase;" />
 											<aon:outputText value="#{financeController.financesCashAmount}" styleClass="aon-bold"
 												style="#{(!financeController.financesCashOk) ? 'color:red;' : ''}">
@@ -150,7 +150,7 @@
 											<aon:outputText value=" €" styleClass="aon-bold" />
 										</aon:div>
 										<aon:div>
-											<aon:outputText value="#{financeBundle.finance_pos_total_card}:"
+											<aon:outputText value="#{bundle.finance_pos_total_card}:"
 												styleClass="aon-bold aon-margin-right" style="text-transform:uppercase;" />
 											<aon:outputText value="#{financeController.financesCardAmount}" styleClass="aon-bold"
 												style="#{(!financeController.financesCardOk) ? 'color:red;' : ''}">
@@ -166,7 +166,7 @@
 
 										<aon:outputText value="&#160;" />
 										<aon:div>
-											<aon:outputText value="#{financeBundle.finance_pos_cash_change}:"
+											<aon:outputText value="#{bundle.finance_pos_cash_change}:"
 												styleClass="aon-bold aon-margin-right" style="text-transform:uppercase;" />
 											<aon:outputText value="#{financeController.financesCashChange}" styleClass="aon-bold"
 												style="#{(!financeController.financesChangeOk) ? 'color:red;' : ''}">
@@ -175,7 +175,7 @@
 											<aon:outputText value=" €" styleClass="aon-bold" />
 										</aon:div>
 										<aon:div>
-											<aon:outputText value="#{financeBundle.finance_pos_total_finances}:"
+											<aon:outputText value="#{bundle.finance_pos_total_finances}:"
 												styleClass="aon-bold aon-margin-right" style="text-transform:uppercase;" />
 											<aon:outputText value="#{financeController.financesAmount}" styleClass="aon-bold"
 												style="#{(!financeController.financesTotalOk) ? 'color:red;' : ''}">

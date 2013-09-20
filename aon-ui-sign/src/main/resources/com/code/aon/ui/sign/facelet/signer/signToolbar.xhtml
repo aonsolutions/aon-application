@@ -14,7 +14,7 @@
 	<c:if test="#{company.EInvoice and aonRole.ESignature}">
 		<c:if test="#{!skipSignButton and !certificate.sessionCertificateStored}">
 			<aon:commandButton id="sign"
-				value="#{signBundle.sign_sign}"
+				value="#{bundle.sign_sign}"
 				actionListener="#{certificate.onShowSignWindow}"
 				styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
 				reRender="showSignWindow" >
@@ -24,7 +24,7 @@
 		</c:if>
 		<c:if test="#{!skipSignButton and certificate.sessionCertificateStored}">
 			<aon:commandButton id="sign"
-				value="#{signBundle.sign_sign}"
+				value="#{bundle.sign_sign}"
 				actionListener="#{signActionListener}"
 				styleClass="aon-finding-toolbar-item aon-icon-sign aon-finding-toolbar-item-no-border"
 				reRender="#{signButtonReRender}"
@@ -33,7 +33,7 @@
 		</c:if>
 		<c:if test="#{!skipCancelSignButton}">
 			<aon:commandButton id="cancel_sign"
-				value="#{signBundle.sign_cancel_sign}"
+				value="#{bundle.sign_cancel_sign}"
 				actionListener="#{cancelSignActionListener}"
 				styleClass="aon-finding-toolbar-item aon-icon-cancel-sign aon-finding-toolbar-item-no-border"
 				onclick="Richfaces.showModalPanel('waitProccess')" 

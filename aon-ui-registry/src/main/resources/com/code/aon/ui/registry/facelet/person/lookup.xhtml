@@ -4,14 +4,14 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:valueParam name="lookupLabel" default="#{registryBundle.registry_person}"/>
+	<aon:valueParam name="lookupLabel" default="#{bundle.registry_person}"/>
 
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{personLookup}" />
 		<ui:param name="controller" value="#{person}" />
 		<ui:param name="lookupInputSuggestExpression" value="#{lto.fullName}"/>		
-		<ui:param name="searchButtonTitle" value="#{registryBundle.registry_person_selection}" />
-		<ui:param name="newButtonTitle" value="#{registryBundle.registry_person_new}" />
+		<ui:param name="searchButtonTitle" value="#{bundle.registry_person_selection}" />
+		<ui:param name="newButtonTitle" value="#{bundle.registry_person_new}" />
 		<ui:param name="newButtonHeight" value="600"/>
 	</ui:include>
 

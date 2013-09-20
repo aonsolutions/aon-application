@@ -13,7 +13,7 @@
 		<aon:panel style="width: 100%;" id="specificOptionsPanel">
 	
 			<f:facet name="header">
-				<aon:outputText value="#{sepeBundle.sepe_contrata_contract_specific_data}" />
+				<aon:outputText value="#{bundle.sepe_contrata_contract_specific_data}" />
 			</f:facet>
 			
 			<aon:panelGrid columns="6" style="width: 100%;">
@@ -26,7 +26,7 @@
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="datosProgramaEmpleo" 
 					rendered="#{contractContrata.handler.showDatosProgramaEmpleoPanel}"
-					value="#{sepeBundle.sepe_contrata_contract_datosProgramaEmpleo_data}" />
+					value="#{bundle.sepe_contrata_contract_datosProgramaEmpleo_data}" />
 					
 				<aon:selectBooleanCheckbox id="ettData"  
 					rendered="#{contractContrata.handler.showEttPanel}"
@@ -35,7 +35,7 @@
 						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="ettData" rendered="#{contractContrata.handler.showEttPanel}"
-					value="#{sepeBundle.sepe_contrata_contract_ett_data}" />
+					value="#{bundle.sepe_contrata_contract_ett_data}" />
 					
 				<aon:selectBooleanCheckbox id="contratoRelevo" rendered="#{contractContrata.handler.showContratoRelevoPanel}"
 					value="#{contractContrata.params.reliefData}">
@@ -43,7 +43,7 @@
 						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="contratoRelevo" rendered="#{contractContrata.handler.showContratoRelevoPanel}"
-					value="#{sepeBundle.sepe_contrata_contract_contratoRelevo_data}" />
+					value="#{bundle.sepe_contrata_contract_contratoRelevo_data}" />
 					
 				<aon:selectBooleanCheckbox id="datosOfertaTrabajo" rendered="#{contractContrata.handler.showDatosOfertaTrabajoPanel}"
 					value="#{contractContrata.params.offerData}">
@@ -51,7 +51,7 @@
 						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="datosOfertaTrabajo" rendered="#{contractContrata.handler.showDatosOfertaTrabajoPanel}"
-					value="#{sepeBundle.sepe_contrata_contract_datosOfertaTrabajo_data}" />
+					value="#{bundle.sepe_contrata_contract_datosOfertaTrabajo_data}" />
 					
 				<aon:selectBooleanCheckbox id="escuelasTaller" rendered="#{contractContrata.handler.showEscuelasTallerPanel}"
 					value="#{contractContrata.params.schoolWorkshopData}">
@@ -59,7 +59,7 @@
 						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="escuelasTaller" rendered="#{contractContrata.handler.showEscuelasTallerPanel}"
-					value="#{sepeBundle.sepe_contrata_contract_escuelasTaller_data}" />
+					value="#{bundle.sepe_contrata_contract_escuelasTaller_data}" />
 					
 				<aon:selectBooleanCheckbox id="discapacidad" rendered="#{contractContrata.handler.showDiscapacidadPanel}"
 					value="#{contractContrata.params.disabilityData}">
@@ -75,7 +75,7 @@
 						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="mayores52" rendered="#{contractContrata.handler.showMayor52Panel}"
-					value="#{sepeBundle.sepe_contrata_contract_mayores52_data}" />
+					value="#{bundle.sepe_contrata_contract_mayores52_data}" />
 					
 				<aon:selectBooleanCheckbox id="anexoGestionColectiva" rendered="#{contractContrata.handler.showAnexoGestionColectivaPanel}"
 					value="#{contractContrata.params.annexData}">
@@ -83,7 +83,7 @@
 						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="anexoGestionColectiva" rendered="#{contractContrata.handler.showAnexoGestionColectivaPanel}"
-					value="#{sepeBundle.sepe_contrata_contract_anexoGestionColectiva_data}" />
+					value="#{bundle.sepe_contrata_contract_anexoGestionColectiva_data}" />
 					
 				<aon:selectBooleanCheckbox id="campainas" rendered="#{contractContrata.handler.showCampainasPanel}"
 					value="#{contractContrata.params.canpaignData}">
@@ -91,7 +91,7 @@
 						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="campainas" rendered="#{contractContrata.handler.showCampainasPanel}"
-					value="#{marketingBundle.marketing_campaign_module}" />
+					value="#{bundle.marketing_campaign_module}" />
 					
 				<aon:selectBooleanCheckbox id="causaInterinidad" rendered="#{contractContrata.handler.showCausaInterinidadPanel}"
 					value="#{contractContrata.params.interimData}">
@@ -99,7 +99,7 @@
 						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="causaInterinidad" rendered="#{contractContrata.handler.showCausaInterinidadPanel}"
-					value="#{sepeBundle.sepe_contrata_contract_causaInterinidad_data}" />
+					value="#{bundle.sepe_contrata_contract_causaInterinidad_data}" />
 					
 				<aon:selectBooleanCheckbox id="investigacion" rendered="#{contractContrata.handler.showInvestigacionPanel}"
 					value="#{contractContrata.params.researchData}">
@@ -107,7 +107,7 @@
 						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="investigacion" rendered="#{contractContrata.handler.showInvestigacionPanel}"
-					value="#{sepeBundle.sepe_contrata_contract_investigacion_data}" />
+					value="#{bundle.sepe_contrata_contract_investigacion_data}" />
 					
 				<aon:selectBooleanCheckbox id="reduccionCuotas" rendered="#{contractContrata.handler.showReduccionCuotasPanel}"
 					value="#{contractContrata.params.reductionData}">
@@ -115,7 +115,7 @@
 						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="reduccionCuotas" rendered="#{contractContrata.handler.showReduccionCuotasPanel}"
-					value="#{sepeBundle.sepe_contrata_contract_reduccionCuotas_data}" />
+					value="#{bundle.sepe_contrata_contract_reduccionCuotas_data}" />
 					
 				<aon:selectBooleanCheckbox id="medidasFomento" rendered="#{contractContrata.handler.showMedidasFomentoPanel}"
 					value="#{contractContrata.params.medidasFomentoData}">
@@ -123,7 +123,7 @@
 						reRender="specificOptionsDiv"/>
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="medidasFomento" rendered="#{contractContrata.handler.showMedidasFomentoPanel}"
-					value="#{sepeBundle.sepe_contrata_contract_medidasFomento_data}" />
+					value="#{bundle.sepe_contrata_contract_medidasFomento_data}" />
 					
 			</aon:panelGrid>
 		</aon:panel>	
@@ -131,11 +131,11 @@
 		<aon:div id="datosProgramaEmpleoPanel" rendered="#{contractContrata.params.employmentProgramData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_datosProgramaEmpleo_data}" />
+					<aon:outputText value="#{bundle.sepe_contrata_contract_datosProgramaEmpleo_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="employmentProgram" 
-						value="#{sepeBundle.sepe_contrata_contract_employmentProgram}" />
+						value="#{bundle.sepe_contrata_contract_employmentProgram}" />
 					<aon:selectOneMenu id="employmentProgram"
 						value="#{contractContrata.params.codigoProgramaEmpleo}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
@@ -148,7 +148,7 @@
 		<aon:div id="ettPanel" rendered="#{contractContrata.params.ettData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_ett_data}" />
+					<aon:outputText value="#{bundle.sepe_contrata_contract_ett_data}" />
 				</f:facet>
 			<aon:panelGrid columns="2" style="width: 100%;">
 				<aon:outputLabel for="ettCif" 
@@ -166,7 +166,7 @@
 					<aon:selectBooleanCheckbox id="ettContractTemplate"
 						value="#{contractContrata.params.ettContractTemplate}"/>
 					<aon:outputLabel for="ettContractTemplate"
-						value="#{sepeBundle.sepe_contrata_contract_ettContractTemplate}" />
+						value="#{bundle.sepe_contrata_contract_ettContractTemplate}" />
 				</aon:div>
 	
 				<aon:outputText value="&#160;" />
@@ -174,7 +174,7 @@
 					<aon:selectBooleanCheckbox id="ettForeignEnterprise"
 						value="#{contractContrata.params.ettForeignEnterprise}"/>
 					<aon:outputLabel for="ettForeignEnterprise"
-						value="#{sepeBundle.sepe_contrata_contract_ettForeignEnterprise}" />
+						value="#{bundle.sepe_contrata_contract_ettForeignEnterprise}" />
 				</aon:div>
 			</aon:panelGrid>
 			</aon:panel>
@@ -183,11 +183,11 @@
 		<aon:div id="contratoRelevoPanel" rendered="#{contractContrata.params.reliefData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_contratoRelevo_data}" />
+					<aon:outputText value="#{bundle.sepe_contrata_contract_contratoRelevo_data}" />
 				</f:facet>
 			<aon:panelGrid columns="2" style="width: 100%;">
 				<aon:outputLabel for="reliefEmployeeType" 
-					value="#{sepeBundle.sepe_contrata_contract_relief_employee_type}" />
+					value="#{bundle.sepe_contrata_contract_relief_employee_type}" />
 				<aon:selectOneMenu id="reliefEmployeeType"
 					required="#{contractContrata.params.reliefData}"
 					value="#{contractContrata.params.tipoTrabajadorRelevo}" >
@@ -197,7 +197,7 @@
 			</aon:panelGrid>
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_relief_employee_data}" />
+					<aon:outputText value="#{bundle.sepe_contrata_contract_relief_employee_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="reliefName" value="#{bundle.aon_name}" />
@@ -208,7 +208,7 @@
 					<aon:inputText id="reliefFirstSurname"
 						required="#{contractContrata.params.reliefData}"
 						value="#{contractContrata.params.reliefPerson.firstSurname}" />
-					<aon:outputLabel for="reliefSecondSurname" value="#{registryBundle.registry_person_secondSurname}" />
+					<aon:outputLabel for="reliefSecondSurname" value="#{bundle.registry_person_secondSurname}" />
 					<aon:inputText id="reliefSecondSurname"
 						value="#{contractContrata.params.reliefPerson.secondSurname}" />
 				</aon:panelGrid>
@@ -219,11 +219,11 @@
 		<aon:div id="datosOfertaTrabajoPanel" rendered="#{contractContrata.params.offerData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_datosOfertaTrabajo_data}" />
+					<aon:outputText value="#{bundle.sepe_contrata_contract_datosOfertaTrabajo_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="offer"
-						value="#{sepeBundle.sepe_contrata_contract_offer}" />
+						value="#{bundle.sepe_contrata_contract_offer}" />
 					<aon:inputText id="offer"
 						value="#{contractContrata.params.offer}" />
 				</aon:panelGrid>
@@ -233,11 +233,11 @@
 		<aon:div id="escuelasTallerPanel" rendered="#{contractContrata.params.schoolWorkshopData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_escuelasTaller_data}" />
+					<aon:outputText value="#{bundle.sepe_contrata_contract_escuelasTaller_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="schoolWorkshop" 
-						value="#{sepeBundle.sepe_contrata_contract_schoolWorkshop}" />
+						value="#{bundle.sepe_contrata_contract_schoolWorkshop}" />
 					<aon:selectOneMenu id="schoolWorkshop"
 						value="#{contractContrata.params.codigoEtCoTe}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
@@ -254,7 +254,7 @@
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="disability_code"
-						value="#{sepeBundle.sepe_contrata_contract_disability_code}" />
+						value="#{bundle.sepe_contrata_contract_disability_code}" />
 					<aon:selectOneMenu id="disability_code"
 						value="#{contractContrata.params.indDiscapacidad}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
@@ -267,11 +267,11 @@
 		<aon:div id="mayor52Panel" rendered="#{contractContrata.params.olderThan52Data}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_mayores52_data}" />
+					<aon:outputText value="#{bundle.sepe_contrata_contract_mayores52_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="otherLaws" 
-						value="#{sepeBundle.sepe_contrata_contract_otherLaws}" />
+						value="#{bundle.sepe_contrata_contract_otherLaws}" />
 					<aon:selectOneMenu id="otherLaws"
 						value="#{contractContrata.params.otrasLegislaciones}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
@@ -284,19 +284,19 @@
 		<aon:div id="anexoGestionColectivaPanel" rendered="#{contractContrata.params.annexData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_anexoGestionColectiva_data}" />
+					<aon:outputText value="#{bundle.sepe_contrata_contract_anexoGestionColectiva_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="employmentCharacter"
-						value="#{sepeBundle.sepe_contrata_contract_employment_character}" />
+						value="#{bundle.sepe_contrata_contract_employment_character}" />
 					<aon:selectOneRadio id="employmentCharacter" layout="inline"
 						value="#{contractContrata.params.employmentCharacter}" >
-						<f:selectItem itemLabel="#{sepeBundle.sepe_contrata_contract_anex_estable}" itemValue="E" />
-						<f:selectItem itemLabel="#{sepeBundle.sepe_contrata_contract_anex_seasonal}" itemValue="T" />
+						<f:selectItem itemLabel="#{bundle.sepe_contrata_contract_anex_estable}" itemValue="E" />
+						<f:selectItem itemLabel="#{bundle.sepe_contrata_contract_anex_seasonal}" itemValue="T" />
 					</aon:selectOneRadio>
 					
 					<aon:outputLabel for="anexEmploymentYear"
-						value="#{sepeBundle.sepe_contrata_contract_anexEmploymentYear}" />
+						value="#{bundle.sepe_contrata_contract_anexEmploymentYear}" />
 					<aon:inputText id="anexEmploymentYear" size="5" maxlength="4"
 						value="#{contractContrata.params.anexEmploymentYear}" >
 						<f:validateLength maximum="4" />
@@ -308,18 +308,18 @@
 		<aon:div id="campainasPanel" rendered="#{contractContrata.params.canpaignData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{marketingBundle.marketing_campaign_module}" />
+					<aon:outputText value="#{bundle.marketing_campaign_module}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="campaignGeozone"
-						value="#{sepeBundle.sepe_contrata_cc_aa}" />
+						value="#{bundle.sepe_contrata_cc_aa}" />
 					<aon:inputText id="campaignGeozone" size="3" maxlength="2"
 						value="#{contractContrata.params.campaignGeozone}" >
 						<f:validateLength maximum="2" />
 					</aon:inputText>
 	
 					<aon:outputLabel for="campaign"
-						value="#{sepeBundle.sepe_contrata_contract_campaign}" />
+						value="#{bundle.sepe_contrata_contract_campaign}" />
 					<aon:inputText id="campaign" size="4" maxlength="3"
 						value="#{contractContrata.params.campaign}" >
 						<f:validateLength maximum="3" />
@@ -338,11 +338,11 @@
 		<aon:div id="causaInterinidadPanel" rendered="#{contractContrata.params.interimData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_causaInterinidad_data}" />
+					<aon:outputText value="#{bundle.sepe_contrata_contract_causaInterinidad_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="interimCause"
-						value="#{sepeBundle.sepe_contrata_contract_causaInterinidad_data}" />
+						value="#{bundle.sepe_contrata_contract_causaInterinidad_data}" />
 					<aon:selectOneMenu id="interimCause"
 						required="#{true}"
 						value="#{contractContrata.params.causaInterinidad}" >
@@ -356,11 +356,11 @@
 		<aon:div id="investigacionPanel" rendered="#{contractContrata.params.researchData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_investigacion_data}" />
+					<aon:outputText value="#{bundle.sepe_contrata_contract_investigacion_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="researchEmployer"
-						value="#{sepeBundle.sepe_contrata_contract_research_employer}" />
+						value="#{bundle.sepe_contrata_contract_research_employer}" />
 					<aon:selectOneMenu id="researchEmployer"
 						value="#{contractContrata.params.indEmpleador}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
@@ -368,7 +368,7 @@
 					</aon:selectOneMenu>
 	
 					<aon:outputLabel for="researchEmployee"
-						value="#{sepeBundle.sepe_contrata_contract_research_employee}" />
+						value="#{bundle.sepe_contrata_contract_research_employee}" />
 					<aon:selectOneMenu id="researchEmployee"
 						value="#{contractContrata.params.indtrabajador}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
@@ -380,7 +380,7 @@
 						<aon:selectBooleanCheckbox id="researchFormation"
 							value="#{contractContrata.params.indrd632006}"/>
 						<aon:outputLabel for="researchFormation"
-							value="#{sepeBundle.sepe_contrata_contract_research_formation}" />
+							value="#{bundle.sepe_contrata_contract_research_formation}" />
 					</aon:div>
 				</aon:panelGrid>
 			</aon:panel>
@@ -389,11 +389,11 @@
 		<aon:div id="reduccionCuotasPanel" rendered="#{contractContrata.params.reductionData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_reduccionCuotas_data}" />
+					<aon:outputText value="#{bundle.sepe_contrata_contract_reduccionCuotas_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 					<aon:outputLabel for="reductionCollective"
-						value="#{sepeBundle.sepe_contrata_contract_reduction_collective}" />
+						value="#{bundle.sepe_contrata_contract_reduction_collective}" />
 					<aon:selectOneMenu id="reductionCollective"
 						value="#{contractContrata.params.codigoColectivoReduccion}" >
 						<f:selectItem itemLabel="-" value="#{null}" />
@@ -401,16 +401,16 @@
 					</aon:selectOneMenu>
 	
 					<aon:outputLabel for="reductionPercent"
-						value="#{sepeBundle.sepe_contrata_contract_reduction_percent}" />
+						value="#{bundle.sepe_contrata_contract_reduction_percent}" />
 					<aon:selectOneRadio id="reductionPercent" layout="pageDirection"
 						value="#{contractContrata.params.porcentajeReduccion}" >
-						<f:selectItem itemLabel="#{sepeBundle.sepe_contrata_contract_reduction_gt_250}" itemValue="75" />
-						<f:selectItem itemLabel="#{sepeBundle.sepe_contrata_contract_reduction_lt_250}" itemValue="100" />
+						<f:selectItem itemLabel="#{bundle.sepe_contrata_contract_reduction_gt_250}" itemValue="75" />
+						<f:selectItem itemLabel="#{bundle.sepe_contrata_contract_reduction_lt_250}" itemValue="100" />
 					</aon:selectOneRadio>
 					
 					<!--  
 					<aon:outputLabel for="reductionJournalPercent"
-						value="#{sepeBundle.sepe_contrata_contract_reduction_journal_percent}" />
+						value="#{bundle.sepe_contrata_contract_reduction_journal_percent}" />
 					<aon:div>
 						<aon:inputText id="reductionJournalPercent" size="6" maxLenght="5"
 							value="#{contractContrata.params.porcentajeJornadaReduccion}" >
@@ -427,17 +427,17 @@
 		<aon:div id="medidasFomentoPanel" rendered="#{contractContrata.params.medidasFomentoData}">
 			<aon:panel style="width: 100%;">
 				<f:facet name="header">
-					<aon:outputText value="#{sepeBundle.sepe_contrata_contract_medidasFomento_data}" />
+					<aon:outputText value="#{bundle.sepe_contrata_contract_medidasFomento_data}" />
 				</f:facet>
 				<aon:panelGrid columns="2" style="width: 100%;">
 			
 					<aon:outputLabel for="indCosteDespido"
-						value="#{sepeBundle.sepe_contrata_contract_indCosteDespido}" />
+						value="#{bundle.sepe_contrata_contract_indCosteDespido}" />
 					<aon:selectBooleanCheckbox id="indCosteDespido"
 						value="#{contractContrata.params.indCosteDespido}"/>
 					
 					<aon:outputLabel for="codigoColectivoDespido"
-						value="#{sepeBundle.sepe_contrata_contract_codigoColectivoDespido}" />
+						value="#{bundle.sepe_contrata_contract_codigoColectivoDespido}" />
 					<aon:selectOneMenu id="codigoColectivoDespido"
 						value="#{contractContrata.params.codigoColectivoDespido}" >
 						<f:selectItem itemLabel="-" value="#{null}" />

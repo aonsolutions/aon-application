@@ -12,7 +12,7 @@
 		<aon:form id="paymentCardSettleSearch">
 			
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_paymentCardSettle_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_paymentCardSettle_module}" />
 			</ui:decorate>
 			
 			<aon:div styleClass="aon-scroll-area">
@@ -27,7 +27,7 @@
 						<aon:outputText value="" />
 						<aon:div style="width:700px;">
 						
-							<aon:panelCollapsible expanded="true" label="#{financeBundle.finance_finance}" id="financeSearchPanel">
+							<aon:panelCollapsible expanded="true" label="#{bundle.finance_finance}" id="financeSearchPanel">
 								<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even" >
 
 									<aon:outputLabel rendered="#{paymentCardSettle.agenciesSize > 0}" value="&#160;" />

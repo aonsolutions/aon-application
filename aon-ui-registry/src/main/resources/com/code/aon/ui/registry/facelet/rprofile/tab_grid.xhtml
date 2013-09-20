@@ -13,7 +13,7 @@
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-120"
 					alias="RegistryProfile.lastUpdate" >
 					<f:facet name="header">
-						<aon:outputLabel for="RegistryProfile_lastUpdate" value="#{registryBundle.registry_profile_lastUpdate}" />
+						<aon:outputLabel for="RegistryProfile_lastUpdate" value="#{bundle.registry_profile_lastUpdate}" />
 					</f:facet>
 					<aon:outputText value="#{to.lastUpdate}" rendered="#{formList}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -33,7 +33,7 @@
 	
 				<aon:column styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
-						<aon:outputLabel for="Question_id" value="#{registryBundle.registry_question}" />
+						<aon:outputLabel for="Question_id" value="#{bundle.registry_question}" />
 					</f:facet>
 					<aon:outputText value="#{to.question.description}" />
 					<f:facet name="footer">
@@ -53,7 +53,7 @@
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-250">
 					<f:facet name="header">
 						<aon:outputLabel for="RegistryProfile_value"
-							value="#{registryBundle.registry_response}" />
+							value="#{bundle.registry_response}" />
 					</f:facet>
 					<aon:div layout="none" rendered="#{formList}">
 						<ui:include src="/com/code/aon/ui/registry/facelet/valueHolder/outputValue.xhtml" >

@@ -2,13 +2,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-	<application>
-		<resource-bundle>
-			<base-name>com.code.aon.ui.asset.i18n.messages</base-name>
-			<var>assetBundle</var>
-		</resource-bundle>
-	</application>
-	
 	<!-- ************** ASSET COLLECTIONS ****************** -->
 	<managed-bean>
 		<managed-bean-name>assetCollections</managed-bean-name>

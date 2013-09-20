@@ -13,22 +13,22 @@
 		<aon:form>
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 
-				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_en_period_entries_management}" />
+				<ui:param name="toolbarTitle" value="#{bundle.accounting_en_period_entries_management}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="save" value="#{accountingBundle.accounting_entry_generate}"
+					<aon:commandButton id="save" value="#{bundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}" styleClass="aon-finding-toolbar-item aon-icon-accept"
 						disabled="#{endPeriodEntries.disabled}"
 						rendered="#{empty endPeriodEntries.outputMessages}"
 						actionListener="#{endPeriodEntries.onAccept}"
-						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}')) return false; else Richfaces.showModalPanel('waitProccess');"
+						onclick="if (!confirm('#{bundle.accounting_entry_generate}')) return false; else Richfaces.showModalPanel('waitProccess');"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					<aon:commandButton id="back" value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_save}" styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						rendered="#{!empty endPeriodEntries.outputMessages}"
 						actionListener="#{endPeriodEntries.onInit}"/>
-					<aon:commandButton id="see" value="#{accountingBundle.accounting_entry_generated}"
+					<aon:commandButton id="see" value="#{bundle.accounting_entry_generated}"
 						accesskey="#{bundle.aon_key_save}" styleClass="aon-finding-toolbar-item aon-icon-go"
 						rendered="#{!empty endPeriodEntries.outputMessages}"
 						actionListener="#{endPeriodEntries.onSeeEntries}"
@@ -84,7 +84,7 @@
 									ajaxSingle="true" reRender="endPeriodData,save" />
 							</aon:selectBooleanCheckbox>
 							<aon:outputLabel for="operatingEnabled" 
-								value="#{accountingBundle.accounting_generate_operating_entry}" />
+								value="#{bundle.accounting_generate_operating_entry}" />
 						</aon:div>
 						<aon:div id="operatingMessagesContainer"
 							style="background-color:#f6f5e3; border: solid green 1px; padding:5px; padding-left:50px; margin: 10px; width: 90%;"
@@ -123,7 +123,7 @@
 									ajaxSingle="true" reRender="endPeriodData,save" />
 							</aon:selectBooleanCheckbox>
 							<aon:outputLabel for="closingEnabled" 
-								value="#{accountingBundle.accounting_generate_closing_entry}" />
+								value="#{bundle.accounting_generate_closing_entry}" />
 						</aon:div>
 						<aon:div id="closingMessagesContainer"
 							style="background-color:#f6f5e3; border: solid green 1px; padding:5px; padding-left:50px; margin: 10px;; width: 90%;"
@@ -160,7 +160,7 @@
 									ajaxSingle="true" reRender="endPeriodData,save" />
 							</aon:selectBooleanCheckbox>
 							<aon:outputLabel for="openingEnabled" 
-								value="#{accountingBundle.accounting_generate_opening_entry}" />
+								value="#{bundle.accounting_generate_opening_entry}" />
 						</aon:div>
 						
 						<aon:div id="openingMessagesContainer"
@@ -176,10 +176,10 @@
 								rendered="#{endPeriodEntries.params.openingEntry}"
 								columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 								
-									<aon:outputText value="#{accountingBundle.accounting_opening_period}" />
+									<aon:outputText value="#{bundle.accounting_opening_period}" />
 									<aon:div>
 										<aon:outputText value="#{endPeriodEntries.params.openingPeriod.name}" />
-										<aon:outputText value="(#{accountingBundle.accounting_opening_period_creation})"
+										<aon:outputText value="(#{bundle.accounting_opening_period_creation})"
 											rendered="#{endPeriodEntries.params.openingPeriodCreationEnabled}" 
 											styleClass="aon-italic aon-padding-left"/>
 									</aon:div>

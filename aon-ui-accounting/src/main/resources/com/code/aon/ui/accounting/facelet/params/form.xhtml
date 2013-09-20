@@ -14,7 +14,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_default_params_module}" />
+					value="#{bundle.accounting_default_params_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 
 				<ui:define name="toolbarContent">
@@ -33,7 +33,7 @@
 				<aon:panelGrid columns="2">
 
 					<aon:outputLabel for="ACC_default_period"
-						value="#{accountingBundle.accounting_def_period}" />
+						value="#{bundle.accounting_def_period}" />
 					<aon:selectOneMenu id="ACC_default_period"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PERIOD'].value}">
 						<f:selectItem itemValue="" itemLabel=" " />
@@ -55,35 +55,35 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_cash_account"
-						value="#{accountingBundle.accounting_def_cash_acc}" />
+						value="#{bundle.accounting_def_cash_acc}" />
 					<aon:selectOneMenu id="ACC_default_cash_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_CASH_ACC'].value}">
 						<f:selectItems value="#{accountCollections.cashAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_charged_vat_account"
-						value="#{accountingBundle.accounting_def_charged_vat_acc}" />
+						value="#{bundle.accounting_def_charged_vat_acc}" />
 					<aon:selectOneMenu id="ACC_default_charged_vat_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_CHARGED_VAT_ACC'].value}">
 						<f:selectItems value="#{accountCollections.chargedVatAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_paid_vat_account"
-						value="#{accountingBundle.accounting_def_paid_vat_acc}" />
+						value="#{bundle.accounting_def_paid_vat_acc}" />
 					<aon:selectOneMenu id="ACC_default_paid_vat_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PAID_VAT_ACC'].value}">
 						<f:selectItems value="#{accountCollections.paidVatAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_paid_retention_account"
-						value="#{accountingBundle.accounting_def_paid_ret_acc}" />
+						value="#{bundle.accounting_def_paid_ret_acc}" />
 					<aon:selectOneMenu id="ACC_default_paid_retention_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PAID_RET_ACC'].value}">
 						<f:selectItems value="#{accountCollections.paidRetentionAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_charged_retention_account"
-						value="#{accountingBundle.accounting_def_charged_ret_acc}" />
+						value="#{bundle.accounting_def_charged_ret_acc}" />
 					<aon:selectOneMenu id="ACC_default_charged_retention_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_CHARGED_RET_ACC'].value}">
 						<f:selectItems
@@ -91,7 +91,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_salary_charged_retention_account"
-						value="#{accountingBundle.accounting_sal_charged_ret_acc}" />
+						value="#{bundle.accounting_sal_charged_ret_acc}" />
 					<aon:selectOneMenu id="ACC_salary_charged_retention_account"
 						value="#{accAppParams.parameters['ACC_SALARY_CHARGED_RET_ACC'].value}">
 						<f:selectItems
@@ -99,35 +99,35 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_salary_account"
-						value="#{accountingBundle.accounting_def_salary_acc}" />
+						value="#{bundle.accounting_def_salary_acc}" />
 					<aon:selectOneMenu id="ACC_default_salary_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_SALARY_ACC'].value}">
 						<f:selectItems value="#{accountCollections.salaryAccountsIds}" />
 					</aon:selectOneMenu>
 					
 					<aon:outputLabel for="ACC_default_salary_allowance_account"
-						value="#{accountingBundle.accounting_def_salary_allowance_acc}" />
+						value="#{bundle.accounting_def_salary_allowance_acc}" />
 					<aon:selectOneMenu id="ACC_default_salary_allowance_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_ALLOWANCE_ACC'].value}">
 						<f:selectItems value="#{accountCollections.salaryAllowanceAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_salary_compensation_account"
-						value="#{accountingBundle.accounting_def_salary_compensation_acc}" />
+						value="#{bundle.accounting_def_salary_compensation_acc}" />
 					<aon:selectOneMenu id="ACC_default_salary_compensation_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_COMPENSATION_ACC'].value}">
 						<f:selectItems value="#{accountCollections.salaryCompensationAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_pending_salary_account"
-						value="#{accountingBundle.accounting_def_pending_salary_acc}" />
+						value="#{bundle.accounting_def_pending_salary_acc}" />
 					<aon:selectOneMenu id="ACC_default_pending_salary_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PENDING_SALARY_ACC'].value}">
 						<f:selectItems value="#{accountCollections.pendingSalaryAccountsIds}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_social_insurance_account"
-						value="#{accountingBundle.accounting_def_social_insurance_acc}" />
+						value="#{bundle.accounting_def_social_insurance_acc}" />
 					<aon:selectOneMenu id="ACC_default_social_insurance_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_SOCIAL_INSURANCE_ACC'].value}">
 						<f:selectItems 
@@ -136,7 +136,7 @@
 
 					<aon:outputLabel
 						for="ACC_default_enterprise_social_insurance_account"
-						value="#{accountingBundle.accounting_def_enterprise_social_insurance_acc}" />
+						value="#{bundle.accounting_def_enterprise_social_insurance_acc}" />
 					<aon:selectOneMenu
 						id="ACC_default_enterprise_social_insurance_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_COMPANY_SOC_INS_ACC'].value}">
@@ -146,7 +146,7 @@
 
 					<aon:outputLabel
 						for="ACC_accounting_def_vat_percent"
-						value="#{accountingBundle.accounting_def_vat_percent}" />
+						value="#{bundle.accounting_def_vat_percent}" />
 					<aon:selectOneMenu
 						id="ACC_accounting_def_vat_percent"
 						value="#{accAppParams.parameters['ACC_DEFAULT_VAT_PERCENT'].value}">
@@ -156,7 +156,7 @@
 					
 					<aon:outputLabel
 						for="ACC_accounting_def_retention_percent"
-						value="#{accountingBundle.accounting_def_retention_percent}" />
+						value="#{bundle.accounting_def_retention_percent}" />
 					<aon:selectOneMenu
 						id="ACC_accounting_def_retention_percent"
 						value="#{accAppParams.parameters['ACC_DEFAULT_RETENTION_PERCENT'].value}">
@@ -166,7 +166,7 @@
 
 					<aon:outputLabel
 						for="ACC_accounting_def_invoice_series"
-						value="#{accountingBundle.accounting_def_invoice_series}" />
+						value="#{bundle.accounting_def_invoice_series}" />
 					<aon:selectOneMenu
 						id="ACC_accounting_def_invoice_series"
 						value="#{accAppParams.parameters['ACC_DEFAULT_INVOICE_SERIES'].value}">
@@ -175,14 +175,14 @@
 					</aon:selectOneMenu>
 					
 					<aon:outputLabel for="ACC_default_asset_lost"
-						value="#{accountingBundle.accounting_def_asset_lost_acc}" />
+						value="#{bundle.accounting_def_asset_lost_acc}" />
 					<aon:selectOneMenu id="ACC_default_asset_lost"
 						value="#{accAppParams.parameters['ACC_DEFAULT_ASSET_LOST_ACC'].value}">
 						<f:selectItems value="#{accountCollections.assetLostAccountsIds}" />
 					</aon:selectOneMenu>
 					
 					<aon:outputLabel for="ACC_default_asset_profit"
-						value="#{accountingBundle.accounting_def_asset_profit_acc}" />
+						value="#{bundle.accounting_def_asset_profit_acc}" />
 					<aon:selectOneMenu id="ACC_default_asset_profit"
 						value="#{accAppParams.parameters['ACC_DEFAULT_ASSET_PROFIT_ACC'].value}">
 						<f:selectItems value="#{accountCollections.assetProfitAccountsIds}" />

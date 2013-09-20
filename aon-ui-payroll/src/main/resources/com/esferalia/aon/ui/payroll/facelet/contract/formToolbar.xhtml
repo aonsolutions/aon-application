@@ -8,7 +8,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components" >
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
+		<ui:param name="toolbarTitle" value="#{bundle.payroll_contract_module}" />
 		<ui:param name="controller" value="#{contract}" />
 		<ui:param name="skipRemoveButton" value="#{contract.to.sepeStatus!='PENDING'}" />
 		<ui:param name="showMoreMenu" value="#{!contract.new}" />
@@ -36,7 +36,7 @@
 		<ui:define name="moreMenuContent">
 			<c:if test="#{!contract.skipPayrollData}" >
 				<aon:menuItem 
-					value="#{payrollBundle.payroll_contractCalendarEvent}"
+					value="#{bundle.payroll_contractCalendarEvent}"
 					iconClass="aon-icon-daily-tracking"
 					rendered="#{!contract.new}"
 					action="contractCalendarEvent_form" >
@@ -48,7 +48,7 @@
 						target="#{contractCalendarEvent.backAction}" value="contract_form" />
 				</aon:menuItem>
 				<aon:menuItem id="contract_leave"
-					value="#{payrollBundle.payroll_contractLeave_module}"
+					value="#{bundle.payroll_contractLeave_module}"
 					action="contractLeave_form"
 					iconClass="aon-icon-copy">
 					<f:setPropertyActionListener
@@ -60,7 +60,7 @@
 						target="#{contractLeave.backAction}" value="contract_form" />
 				</aon:menuItem>
 				<aon:menuItem id="settle"
-					value="#{payrollBundle.payroll_settle_module}"
+					value="#{bundle.payroll_settle_module}"
 					action="settle_form"
 					rendered="#{contract.to.endDate==null}"
 					iconClass="aon-icon-black-list">
@@ -69,7 +69,7 @@
 					<aon:actionListener method="#{contract.onShowSettle}" />
 				</aon:menuItem>
 				<aon:menuItem id="IRPF-calculator"
-					value="#{payrollBundle.payroll_contract_irpf_data}"
+					value="#{bundle.payroll_contract_irpf_data}"
 					action="irpfData_form"
 					iconClass="aon-icon-aeat">
 					<aon:actionListener method="#{contract.onShowIrpfData}" />
@@ -79,7 +79,7 @@
 			</c:if>
 			
 			<aon:menuItem id="document-issue" 
-				value="#{payrollBundle.payroll_contract_generate_document}"
+				value="#{bundle.payroll_contract_generate_document}"
 				rendered="#{!contract.new and contract.to.pending}"
 				reRender="contract-panelTab"
 				actionListener="#{contract.onGenerateDocument}"
@@ -190,7 +190,7 @@
 
 			<c:if test="#{actionDenied.moduleEnabled['payroll']}">
 				<aon:menuItem id="certificados-communication-log"
-					value="#{sepeBundle.sepe_certificados}"
+					value="#{bundle.sepe_certificados}"
 					disabled="#{empty contract.to.endDate}"
 					rendered="#{true}" ajaxSingle="true"
 					reRender="showCertificadosCommunicationWindow"

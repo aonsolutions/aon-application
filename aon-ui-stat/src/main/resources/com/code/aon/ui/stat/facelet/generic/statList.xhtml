@@ -42,8 +42,8 @@
 					<f:param name="reportKey" value="#{reportKeyParam}" />
 					<f:param name="outputFormat" value="CSV" />
 				</aon:htmlCommandLink>
-				<aon:htmlCommandLink id="graph" value="#{statBundle.stat_graph}"
-					title="#{statBundle.stat_graph}"
+				<aon:htmlCommandLink id="graph" value="#{bundle.stat_graph}"
+					title="#{bundle.stat_graph}"
 					styleClass="aon-finding-toolbar-item aon-icon-statistics"
 					action="#{report.onExecute}" target="_blank">
 					<f:param name="reportKey" value="#{reportGraphKeyParam}" />
@@ -105,13 +105,13 @@
 				<aon:column>
 					<f:facet name="header">
 						<c:if test="#{stat.invoiceType==1}">
-							<aon:outputText value="#{statBundle.stat_sales_amount}" />
+							<aon:outputText value="#{bundle.stat_sales_amount}" />
 						</c:if>
 						<c:if test="#{stat.invoiceType==0}">
-							<aon:outputText value="#{statBundle.stat_purchases_amount}" />
+							<aon:outputText value="#{bundle.stat_purchases_amount}" />
 						</c:if>
 						<c:if test="#{stat.invoiceType==2}">
-							<aon:outputText value="#{statBundle.stat_expenses_amount}" />
+							<aon:outputText value="#{bundle.stat_expenses_amount}" />
 						</c:if>
 					</f:facet>
 					<aon:outputText value="#{to.amount}">
@@ -143,7 +143,7 @@
 				<c:if test="#{showProductCountColumn}">
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{statBundle.stat_productCount}" />
+							<aon:outputText value="#{bundle.stat_productCount}" />
 						</f:facet>
 						<aon:outputText value="#{to.productCount}">
 							<f:convertNumber type="number" maxFractionDigits="0"/>

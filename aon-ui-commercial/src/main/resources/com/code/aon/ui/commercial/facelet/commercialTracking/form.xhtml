@@ -18,19 +18,19 @@
 			<aon:methodParam name="saveAction" value="#{commercialTracking.saveAction}" />
 			<aon:methodParam name="saveActionListener" value="#{commercialTracking.accepAndSurvey}" type="actionListener" />
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_tracking_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.commercial_tracking_module}" />
 				<ui:param name="controller" value="#{commercialTracking}" />
 				<ui:define name="beforeSpinToolbarContent" >				
 					<aon:commandButton id="viewAlarm"
 						rendered="#{!formNew and commercialTracking.hasAlarm}"
-						value="#{groupwareBundle.groupware_alarm_view}"
+						value="#{bundle.groupware_alarm_view}"
 						action="alarm_form" immediate="true"
 						actionListener="#{commercialTracking.onSelectAlarm}"
 						styleClass="aon-finding-toolbar-item aon-icon-alarm-pending" />
 					<c:if test="#{aonConfiguration.bean.alarm.showNew}">
 						<aon:commandButton id="alarm"
 							rendered="#{!formNew}"
-							value="#{groupwareBundle.groupware_alarm_new}"
+							value="#{bundle.groupware_alarm_new}"
 							reRender="newAlarmWindow" immediate="true"
 							actionListener="#{commercialTracking.onNewAlarm}"
 							styleClass="aon-finding-toolbar-item aon-icon-alarms" />
@@ -43,14 +43,14 @@
 				<aon:commandButton
 					rendered="#{commercialTracking.previous != null}" immediate="true"
 					actionListener="#{commercialTracking.onPreviousAction}"
-					value="#{commercialBundle.commercial_tracking_action_previous}" ajaxSingle="true"
+					value="#{bundle.commercial_tracking_action_previous}" ajaxSingle="true"
 					styleClass="aon-icon-commandButton aon-icon-mailPrevious">
 				</aon:commandButton>
 	
 				<aon:commandButton
 					rendered="#{commercialTracking.to.next.id != null}" immediate="true"
 					actionListener="#{commercialTracking.onNextAction}"
-					value="#{commercialBundle.commercial_tracking_action_next}" ajaxSingle="true"
+					value="#{bundle.commercial_tracking_action_next}" ajaxSingle="true"
 					styleClass="aon-icon-commandButton aon-icon-mailNext">
 				</aon:commandButton>
 			</aon:div>

@@ -17,11 +17,11 @@
 				</aon:column>
 				<aon:column styleClass="aon-dataTable-header" colspan="3">
 					<aon:outputText
-						value="#{accountingBundle.accounting_account_amortization}" />
+						value="#{bundle.accounting_account_amortization}" />
 				</aon:column>
 				<aon:column styleClass="aon-dataTable-header" colspan="3">
 					<aon:outputText
-						value="#{accountingBundle.accounting_fiscal_amortization}" />
+						value="#{bundle.accounting_fiscal_amortization}" />
 				</aon:column>
 				<aon:column styleClass="aon-dataTable-header">
 					<aon:outputText value="&#160;" />
@@ -210,21 +210,21 @@
 				<aon:outputText value="#{bundle.account_account_entry}" />
 			</f:facet>
 			<aon:commandButton actionListener="#{amortizationDetail.onUnrecord}"
-				title="#{financeBundle.finance_unrecord}"
+				title="#{bundle.finance_unrecord}"
 				rendered="#{amortizationDetail.to == to and to.scored}"
 				reRender="amortizationForm"
-				onclick="if (!confirm('#{financeBundle.finance_unrecord}?')) return false;"
+				onclick="if (!confirm('#{bundle.finance_unrecord}?')) return false;"
 				styleClass="aon-editDataTable-button aon-icon-task-liberate" />
 			<aon:commandButton actionListener="#{amortizationDetail.onRecord}"
-				title="#{financeBundle.finance_record}"
+				title="#{bundle.finance_record}"
 				rendered="#{amortizationDetail.to == to and !to.scored}"
 				reRender="amortizationForm"
-				onclick="if (!confirm('#{financeBundle.finance_record}?')) return false;"
+				onclick="if (!confirm('#{bundle.finance_record}?')) return false;"
 				styleClass="aon-editDataTable-button aon-icon-task-assume" />
 			<aon:commandLink id="accountEntry-search" 
 				immediate="true" styleClass="aon-dataTable-link"
 				rendered="#{amortizationDetail.to != to and to.scored}"
-				title="#{accountingBundle.accounting_lookup_account_entry}"
+				title="#{bundle.accounting_lookup_account_entry}"
 				actionListener="#{amortizationDetail.onAccountEntry}"
 				action="accountEntry_form"
 				reRender="aonContent">

@@ -10,7 +10,7 @@
 	<ui:define name="content">
 		<aon:form id="calendarList">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{payrollBundle.calendar_menu_group}"  />
+				<ui:param name="toolbarTitle" value="#{bundle.calendar_menu_group}"  />
 				<ui:param name="controller" value="#{calendar}" />
 			</ui:decorate>
 			<aon:div styleClass="aon-scroll-area">
@@ -29,7 +29,7 @@
 						<aon:column alias="Calendar.anualHours" 
 							styleClass="aon-editDataTable-numberColumn aon-width-150">
 							<f:facet name="header">
-								<h:outputText value="#{calendarBundle.aon_calendar_anual_hours}"  />
+								<h:outputText value="#{bundle.aon_calendar_anual_hours}"  />
 							</f:facet>
 							<aon:outputText value="#{to.anualHours}" />
 						</aon:column>

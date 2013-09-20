@@ -13,7 +13,7 @@
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{(fbatch.payment)?(financeBundle.finance_fbatch_payment_module):(financeBundle.finance_fbatch_charge_module)}" />
+				<ui:param name="toolbarTitle" value="#{(fbatch.payment)?(bundle.finance_fbatch_payment_module):(bundle.finance_fbatch_charge_module)}" />
 				<ui:param name="controller" value="#{fbatch}" />
 			</ui:include>
 

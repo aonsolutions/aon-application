@@ -8,19 +8,19 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
 	<c:if test="#{aonConfiguration.bean.enterprise.showEnterpriseParams}" >
-		<aon:outputLabel for="salary_model" value="#{companyBundle.company_enterprise_params_salary_model}" />
+		<aon:outputLabel for="salary_model" value="#{bundle.company_enterprise_params_salary_model}" />
 		<aon:selectOneMenu id="salary_model"
 			value="#{enterpriseParams.parameters['PAY_REPORT_salary_PAY'].expression}">
 			<f:selectItems value="#{companyCollections.salaryTemplates}" />
 		</aon:selectOneMenu>
 
-		<aon:outputLabel for="enterprise_salary_model" value="#{companyBundle.company_enterprise_params_enterprise_salary_model}" />
+		<aon:outputLabel for="enterprise_salary_model" value="#{bundle.company_enterprise_params_enterprise_salary_model}" />
 		<aon:selectOneMenu id="enterprise_salary_model"
 			value="#{enterpriseParams.parameters['PAY_REPORT_enterpriseSalary_PAY'].expression}">
 			<f:selectItems value="#{companyCollections.enterpriseSalaryTemplates}" />
 		</aon:selectOneMenu>
 
-		<aon:outputLabel for="salary_sending_method" value="#{companyBundle.company_enterprise_params_salary_sending_method}" />
+		<aon:outputLabel for="salary_sending_method" value="#{bundle.company_enterprise_params_salary_sending_method}" />
 		<aon:selectOneMenu id="salary_sending_method"
 			value="#{enterpriseParams.parameters['PAY_salarySendingMethod_PAY'].expression}">
 			<f:selectItems value="#{companyCollections.salarySendingMethods}" />

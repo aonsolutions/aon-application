@@ -1,6 +1,5 @@
 package com.code.aon.ui.marketing.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.MARKETING_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.RSS_PUBLISH_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.RSS_PUBLISH_OK;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
@@ -218,14 +217,14 @@ public class RSSController {
 			if ( ftp.isConnected() ) {
 				String path = ftp.getFTPPath(destination, name);
 				if ( ftp.upload(in, length, path) ) {
-					log.info( AonUtil.getMessage(MARKETING_BUNDLE, RSS_PUBLISH_OK) );		
+					log.info( AonUtil.getMessage(RSS_PUBLISH_OK) );		
 				} else {
-					log.error( AonUtil.getMessage(MARKETING_BUNDLE, RSS_PUBLISH_ERROR) );
+					log.error( AonUtil.getMessage(RSS_PUBLISH_ERROR) );
 				}
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
-			log.error( AonUtil.getMessage(MARKETING_BUNDLE, RSS_PUBLISH_ERROR) );
+			log.error( AonUtil.getMessage(RSS_PUBLISH_ERROR) );
 		} finally {
 			ftp.close();
 		}

@@ -47,7 +47,7 @@
 
 	<aon:column styleClass="aon-editDataTable-dateColumn aon-width-80">
 		<f:facet name="header">
-			<aon:outputText value="#{payrollBundle.payroll_leaveBatch_leave_date}" />
+			<aon:outputText value="#{bundle.payroll_leaveBatch_leave_date}" />
 		</f:facet>
 		<aon:outputText value="#{to.contractLeaveDetail.contractLeave.startDate}" >
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -57,7 +57,7 @@
 
 	<aon:column styleClass="aon-editDataTable-dateColumn aon-width-80">
 		<f:facet name="header">
-			<aon:outputText value="#{payrollBundle.payroll_leaveBatch_discharge_date}" />
+			<aon:outputText value="#{bundle.payroll_leaveBatch_discharge_date}" />
 		</f:facet>
 		<aon:outputText value="#{to.contractLeaveDetail.contractLeave.endDate}" >
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -67,7 +67,7 @@
 
 	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50">
 		<f:facet name="header">
-			<aon:outputText value="#{payrollBundle.payroll_leaveBatch_parent_increment}" />
+			<aon:outputText value="#{bundle.payroll_leaveBatch_parent_increment}" />
 		</f:facet>
 		<aon:outputText rendered="#{to.contractLeaveDetail.confirm}"
 			value="#{to.contractLeaveDetail.confirmOrder}" />
@@ -75,7 +75,7 @@
 
 	<aon:column styleClass="aon-editDataTable-dateColumn aon-width-80">
 		<f:facet name="header">
-			<aon:outputText value="#{payrollBundle.payroll_leaveBatch_confirm_date}" />
+			<aon:outputText value="#{bundle.payroll_leaveBatch_confirm_date}" />
 		</f:facet>
 		<aon:outputText rendered="#{to.contractLeaveDetail.confirm}"
 			value="#{to.contractLeaveDetail.date}" >
@@ -86,14 +86,14 @@
 
 	<aon:column  styleClass="aon-editDataTable-textColumn aon-width-150, aon-nowrap">
 		<f:facet name="header">
-			<aon:outputText value="#{payrollBundle.payroll_contractLeave_type}" />
+			<aon:outputText value="#{bundle.payroll_contractLeave_type}" />
 		</f:facet>
 		<aon:outputText value="#{to.contractLeaveDetail.contractLeave.type}" />
 	</aon:column>
 
 	<aon:column styleClass="aon-editDataTable-iconColumn">
 		<f:facet name="header">
-			<aon:outputText value="#{payrollBundle.payroll_contractLeave_relapse}" />
+			<aon:outputText value="#{bundle.payroll_contractLeave_relapse}" />
 		</f:facet>
 		<aon:div>
 			<aon:outputText value="&#160;" style="padding-left: 15px;"
@@ -104,7 +104,7 @@
 				<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-info" />
 				<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="auto">
 					<f:facet name="header">
-						<aon:outputText value="#{payrollBundle.payroll_contractLeave_previous_leave}" />
+						<aon:outputText value="#{bundle.payroll_contractLeave_previous_leave}" />
 					</f:facet>
 					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
 						<aon:outputText value="#{bundle.aon_period}" styleClass="aon-margin-left" />
@@ -120,7 +120,7 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 						</aon:div>
-						<aon:outputText value="#{payrollBundle.payroll_contractLeave_type}" styleClass="aon-margin-left" />
+						<aon:outputText value="#{bundle.payroll_contractLeave_type}" styleClass="aon-margin-left" />
 						<aon:outputText value="#{to.contractLeaveDetail.contractLeave.parent.type}" />
 						<aon:outputText value="#{bundle.aon_description}" styleClass="aon-margin-left" />
 						<aon:outputText value="#{to.contractLeaveDetail.contractLeave.parent.description}" />

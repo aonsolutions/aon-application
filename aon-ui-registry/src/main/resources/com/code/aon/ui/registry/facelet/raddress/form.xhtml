@@ -13,7 +13,7 @@
 	<aon:outputLabel for="#{pojoName}_address" value="#{bundle.aon_address}" />
 	<aon:div>
 		<aon:selectOneMenu id="#{pojoName}_streetType" required="#{addressRequired}"
-			label="#{registryBundle.registry_street_type}"
+			label="#{bundle.registry_street_type}"
 			value="#{registryAddress.streetType}">
 			<f:selectItems value="#{registryCollections.streetTypes}" />
 		</aon:selectOneMenu>
@@ -25,7 +25,7 @@
 			value="#{registryAddress.number}" maxlength="8" size="5" />
 	</aon:div>
 
-	<aon:outputLabel for="#{pojoName}_address2" value="#{registryBundle.registry_address_detail}" />
+	<aon:outputLabel for="#{pojoName}_address2" value="#{bundle.registry_address_detail}" />
 	<aon:div>
 		<aon:inputText id="#{pojoName}_address2" value="#{registryAddress.address2}" 
 			style="display:inline" maxlength="128" size="32" />
@@ -39,7 +39,7 @@
 		value="#{registryAddress.zip}" size="32" maxlength="16"/>
 		
 	<aon:outputLabel for="#{pojoName}_address_city" 
-		value="#{registryBundle.registry_city}" />
+		value="#{bundle.registry_city}" />
 	<aon:inputText id="#{pojoName}_address_city" 
 		value="#{registryAddress.city}" size="64" maxlength="64"/>
 		
@@ -54,7 +54,7 @@
 	
 	<c:if test="#{showMunicipality}" >
 		<aon:outputLabel for="#{pojoName}_address_municipality" 
-			value="#{registryBundle.registry_municipality}" />
+			value="#{bundle.registry_municipality}" />
 		<aon:selectOneMenu id="#{pojoName}_address_municipality"
 			value="#{registryAddress.municipalityCode}">
 			<f:selectItem itemLabel="-" value="#{null}" />

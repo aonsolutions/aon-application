@@ -13,7 +13,7 @@
 		<ui:param name="statModel" value="#{commercialStat.yearStatModel}" />
 		<ui:param name="categoryLabel" value="#{bundle.aon_category}" />
 		<ui:param name="clickable" value="#{true}" />
-		<ui:param name="windowTitle" value="#{statBundle.stat_menu_category}"/>
+		<ui:param name="windowTitle" value="#{bundle.stat_menu_category}"/>
 		<ui:param name="paramName" value="category" />
 		<ui:param name="showLastColumn" value="true" />
 		<ui:param name="reportKeyParam" value="commercialStatsList" />
@@ -21,7 +21,7 @@
 		<aon:methodParam name="backAction" value="commercial_category_stat_search"/>	
 		<aon:methodParam name="backMethod" value="" type="actionListener" />			
 		<aon:methodParam name="goAction" value="commercial_product_stats"/>
-		<ui:param name="lastColumnName" value="#{statBundle.stat_show_offers}" />	
+		<ui:param name="lastColumnName" value="#{bundle.stat_show_offers}" />	
 		<aon:methodParam name="goMethod" value="#{commercialStat.onCategorySelect}" type="actionListener" />
 		<aon:methodParam name="lastColumnAction" value="#{commercialStat.onCommercialCategoryOfferStats}" type="actionListener" />
 		<aon:methodParam  name="offerFacelet" value="offers_list" />

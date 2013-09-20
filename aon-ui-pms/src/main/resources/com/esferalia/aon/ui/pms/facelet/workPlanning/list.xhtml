@@ -10,7 +10,7 @@
 		<aon:form id="posShiftList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_workPlanning_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_workPlanning_module}" />
 				
 				<ui:define name="additionalToolbarContent">
 				
@@ -66,14 +66,14 @@
 						
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_room}" />
+								<aon:outputText value="#{bundle.pms_room}" />
 							</f:facet>
 							<aon:outputText value="#{to.room.asset.name}" />
 						</aon:column>
 						
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_guests}" />
+								<aon:outputText value="#{bundle.pms_guests}" />
 							</f:facet>
 							<aon:outputText value="#{to.reservationRoomDetail.projectReservationRoom.adults + to.reservationRoomDetail.projectReservationRoom.children}" />
 						</aon:column>

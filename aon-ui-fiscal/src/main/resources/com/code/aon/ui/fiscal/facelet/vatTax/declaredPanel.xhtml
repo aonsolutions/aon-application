@@ -15,7 +15,7 @@
 					showWhenRendered="true" zindex="90">
 					<f:facet name="header">
 						<aon:div styleClass="aon-popupWindow-title">
-							<aon:outputText value="#{fiscalBundle.fiscal_vatTax_declared_info}" />
+							<aon:outputText value="#{bundle.fiscal_vatTax_declared_info}" />
 						</aon:div>
 					</f:facet>
 					<f:facet name="controls">
@@ -34,7 +34,7 @@
 
 								<aon:column styleClass="aon-editDataTable-TextColumn aon-width-auto #{dec.vatTax.replaced?'aon-line-through':''}">
 									<f:facet name="header">
-										<aon:outputText value="#{financeBundle.finance_vat_period}" />
+										<aon:outputText value="#{bundle.finance_vat_period}" />
 									</f:facet>
 									<aon:outputText value="#{dec.vatTax.period}" />
 									<aon:outputLabel for="VatTax_replacement" styleClass="aon-italic"
@@ -48,7 +48,7 @@
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80 #{dec.vatTax.replaced?'aon-line-through':''}" 
 									style="background-color:#f6f5e3;font-size: 0.9em;">
 									<f:facet name="header">
-										<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
+										<aon:outputText value="#{bundle.fiscal_tax_base}" />
 									</f:facet>
 									<aon:outputText value="#{dec.taxableBase}" rendered="#{dec.key.taxableBaseVisible}">
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

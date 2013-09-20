@@ -1,7 +1,6 @@
 package com.code.aon.ui.accounting.controller.report;
 
 import static com.code.aon.ui.accounting.IAccountingConstants.PROFIT_AND_LOSS_CONTROLLER_NAME;
-import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_GROSS_MARGIN;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_TOTAL_EXPENSES;
 import static com.code.aon.ui.common.ICommonMessages.ACCOUNTING_TOTAL_RESULT_LOSS;
@@ -39,7 +38,7 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 			SummaryCollection grossMargin = sp.getGrossMarginSummaryCollection(params);
 			list.addAll(grossMargin.getSummaryList());
 			SummaryMonthly gmTotal = new SummaryMonthly();
-			gmTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, ACCOUNTING_GROSS_MARGIN));
+			gmTotal.setDescription(AonUtil.getMessage(ACCOUNTING_GROSS_MARGIN));
 			gmTotal.setCredit(grossMargin.getCredit());
 			gmTotal.setDebit(grossMargin.getDebit());
 			Double[] months0 = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
@@ -59,7 +58,7 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 			SummaryCollection totalExpenses = sp.getTotalExpensesSummaryCollection(params);
 			list.addAll(totalExpenses.getSummaryList());
 			SummaryMonthly teTotal = new SummaryMonthly();
-			teTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, ACCOUNTING_TOTAL_EXPENSES));
+			teTotal.setDescription(AonUtil.getMessage(ACCOUNTING_TOTAL_EXPENSES));
 			teTotal.setCredit(totalExpenses.getCredit());
 			teTotal.setDebit(totalExpenses.getDebit());
 			Double[] months1 = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
@@ -86,9 +85,9 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 			if (total > 0) {
 				r.append(AonUtil.getMessage(PROFIT));
 			} else if (total < 0) {
-				r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, ACCOUNTING_TOTAL_RESULT_LOSS));
+				r.append(AonUtil.getMessage(ACCOUNTING_TOTAL_RESULT_LOSS));
 			} else {
-				r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, ACCOUNTING_TOTAL_RESULT_NULL));
+				r.append(AonUtil.getMessage(ACCOUNTING_TOTAL_RESULT_NULL));
 			}
 			r.append(")");
 			result.setDescription(r.toString());

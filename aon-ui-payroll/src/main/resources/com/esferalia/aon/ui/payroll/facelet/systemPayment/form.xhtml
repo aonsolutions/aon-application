@@ -14,7 +14,7 @@
 		<aon:form  id="systemPaymentForm">
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_systemPayment_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_systemPayment_module}" />
 				<ui:param name="controller" value="#{systemPayment}" />
 				<!--  
 				<ui:param name="skipResetButton" value="true" />
@@ -74,10 +74,10 @@
 							<aon:outputText	value="#{bundle.aon_value}" />
 							<aon:outputText value="#{systemPayment.to.paymentConcept.expression}" />
 
-							<aon:outputText	value="#{payrollBundle.payroll_salary_irpf_expression}" />
+							<aon:outputText	value="#{bundle.payroll_salary_irpf_expression}" />
 							<aon:outputText value="#{systemPayment.to.paymentConcept.irpfExpression}" />
 
-							<aon:outputText value="#{payrollBundle.payroll_salary_quote_expression}" />
+							<aon:outputText value="#{bundle.payroll_salary_quote_expression}" />
 							<aon:outputText value="#{systemPayment.to.paymentConcept.quoteExpression}" />
 							
 						</aon:panelGrid>
@@ -90,22 +90,22 @@
 					<aon:outputText value="&#160;"/>
 					<aon:panelGroup>
 						<aon:selectBooleanCheckbox id="systemPayment_decorateDescription" value="#{systemPayment.to.descriptionDecorable}" disabled="true"/>
-						<aon:outputLabel for="systemPayment_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
+						<aon:outputLabel for="systemPayment_decorateDescription" value="#{bundle.payroll_salary_show_expression}" />
 					</aon:panelGroup>
 
 					<aon:outputText value="#{bundle.aon_type}" />
 					<aon:outputText value="#{systemPayment.to.salaryType}" />
 			
-					<aon:outputText value="#{payrollBundle.payroll_salary_payment_month}" />
+					<aon:outputText value="#{bundle.payroll_salary_payment_month}" />
 					<aon:outputText value="#{systemPayment.to.month}" />
 
 					<aon:outputText	value="#{bundle.aon_value}" />
 					<aon:outputText	value="#{systemPayment.to.expression}" />
 
-					<aon:outputText	value="#{payrollBundle.payroll_salary_irpf_expression}" />
+					<aon:outputText	value="#{bundle.payroll_salary_irpf_expression}" />
 					<aon:outputText	value="#{systemPayment.to.irpfExpression}" />
 
-					<aon:outputText value="#{payrollBundle.payroll_salary_quote_expression}" />
+					<aon:outputText value="#{bundle.payroll_salary_quote_expression}" />
 					<aon:outputText	value="#{systemPayment.to.quoteExpression}" />
 
 				</aon:panelGrid>

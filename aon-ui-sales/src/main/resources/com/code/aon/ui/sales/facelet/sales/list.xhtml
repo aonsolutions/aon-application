@@ -11,7 +11,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{salesBundle.sales_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.sales_module}" />
 				<ui:param name="controller" value="#{sales}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:htmlCommandLink id="salesList2-excel-report" value="&#160;" 
@@ -114,7 +114,7 @@
 								<aon:div id="totalAmountContainer" style="float:right">
 									<aon:commandLink immediate="true" 
 										reRender="totalAmountContainer"
-										value="#{salesBundle.sales_show_total_amount}"
+										value="#{bundle.sales_show_total_amount}"
 										styleClass="aon-dataTable-link aon-nowrap"
 										onclick="this.disabled=true"
 										rendered="#{controller.salesTotalAmount == null}"

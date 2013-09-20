@@ -12,7 +12,7 @@
 		<aon:form id="divertReceptionForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_divertReception_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_divertReception_module}" />
 				<ui:param name="controller" value="#{divertReception}" />
 			</ui:decorate>
 	
@@ -65,7 +65,7 @@
 						<aon:column alias="ProjectReservationDivert.hotel.workPlace.description"
 							styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
-								<aon:outputLabel value="#{pmsBundle.pms_divert_request}" />
+								<aon:outputLabel value="#{bundle.pms_divert_request}" />
 							</f:facet>
 							<aon:outputText value="#{to.requestHotel.workPlace.description}" />
 						</aon:column>
@@ -74,7 +74,7 @@
 							styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
 								<aon:outputLabel for="Divert_hotel_id" 
-									value="#{warehouseBundle.warehouse_stock_target}" />
+									value="#{bundle.warehouse_stock_target}" />
 							</f:facet>
 							<aon:outputText value="#{to.divertHotel.workPlace.description}" rendered="#{formList}"/>
 							<aon:selectOneMenu id="Divert_hotel_id" rendered="#{formEdit}"

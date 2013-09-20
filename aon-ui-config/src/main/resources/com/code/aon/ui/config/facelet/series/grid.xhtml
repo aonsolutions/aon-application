@@ -14,7 +14,7 @@
 			<aon:div ajaxRendered="true" layout="none">
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
-					<ui:param name="toolbarTitle" value="#{configBundle.config_series_module}" />
+					<ui:param name="toolbarTitle" value="#{bundle.config_series_module}" />
 					<ui:param name="controller" value="#{series}" />
 				</ui:decorate>
 
@@ -77,7 +77,7 @@
 								<aon:column alias="Series.tas" 
 									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-50">
 									<f:facet name="header">
-										<aon:outputLabel for="Series_tas" value="#{configBundle.config_series_tas}" />
+										<aon:outputLabel for="Series_tas" value="#{bundle.config_series_tas}" />
 									</f:facet>
 									<aon:outputText rendered="#{formList}"
 										value="&#160;"
@@ -134,7 +134,7 @@
 								<aon:column alias="Series.delivery" 
 									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-50">
 									<f:facet name="header">
-										<aon:outputLabel for="Series_delivery" value="#{configBundle.config_series_deliveries}" />
+										<aon:outputLabel for="Series_delivery" value="#{bundle.config_series_deliveries}" />
 									</f:facet>
 									<aon:outputText rendered="#{formList}"
 										value="&#160;"
@@ -172,7 +172,7 @@
 								<aon:column alias="Series.rectification" 
 									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-50">
 									<f:facet name="header">
-										<aon:outputLabel for="Series_rectification" value="#{configBundle.config_series_rectifications}"
+										<aon:outputLabel for="Series_rectification" value="#{bundle.config_series_rectifications}"
 											styleClass="" />
 									</f:facet>
 									<aon:outputText rendered="#{formList}"

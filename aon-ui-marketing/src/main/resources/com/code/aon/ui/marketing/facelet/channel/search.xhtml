@@ -11,7 +11,7 @@
 		<aon:form id="channelSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_channel_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.marketing_channel_module}" />
 				<ui:param name="controller" value="#{channel}" />
 			</ui:include>
 
@@ -30,7 +30,7 @@
 						valueChangeListener="#{controller.addExpression}" />
 
 					<aon:outputLabel for="Category_url"
-						value="#{marketingBundle.marketing_news_url}" />
+						value="#{bundle.marketing_news_url}" />
 					<aon:inputText id="Category_url" size="80"
 						valueChangeListener="#{controller.addExpression}" />			
 

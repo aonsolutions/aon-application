@@ -1,6 +1,5 @@
 package com.code.aon.ui.company.event;
 
-import static com.code.aon.ui.common.ICommonMessages.COMPANY_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_SALE_INVOICE_FOOTER_TEXT;
 
 import java.util.Date;
@@ -80,7 +79,7 @@ public class CompanySaleInvoiceFooterControllerListener extends ControllerAdapte
 		RegistryAttachment attach = (RegistryAttachment)controller.getTo(); 
 		attach.setData(controller.getText().getBytes());
 		attach.setRegistryAttachmentType(RegistryAttachmentType.INVOICE_FOOTER_TEXT);
-		attach.setDescription(AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_SALE_INVOICE_FOOTER_TEXT));
+		attach.setDescription(AonUtil.getMessage(COMPANY_SALE_INVOICE_FOOTER_TEXT));
 		attach.setAttachDate(new Date());
 		attach.setMimeType(MimeType.MIME_TXT);
 	}

@@ -16,8 +16,8 @@
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText 
-							value="#{(invoiceController.to.sales) ? registryBundle.registry_customer_data :
-									(invoiceController.to.purchase) ? financeBundle.finance_invoice_supplier_data : financeBundle.finance_invoice_creditor_data}" />
+							value="#{(invoiceController.to.sales) ? bundle.registry_customer_data :
+									(invoiceController.to.purchase) ? bundle.finance_invoice_supplier_data : bundle.finance_invoice_creditor_data}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">

@@ -11,24 +11,24 @@
 		<aon:form id="reservationForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{assetBundle.asset_activity_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.asset_activity_module}" />
 				<ui:param name="controller" value="#{reservation}" />
 				<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationAllowed}" />
 				<ui:param name="skipRemoveButton" value="#{true}" />
 				<ui:param name="showMoreMenu" value="#{!reservation.new and reservation.reservationPermission.showMoreMenuAllowed}" />
 				<ui:define name="moreMenuContent">
 					<aon:menuItem id="reservation-CheckIn"
-						value="#{pmsBundle.pms_check_in}" immediate="#{true}" 
+						value="#{bundle.pms_check_in}" immediate="#{true}" 
 						rendered="#{reservation.reservationPermission.checkInAllowed}"
 						iconClass="aon-icon-check-in"
 						actionListener="#{reservation.onCheckIn}" />
 					<aon:menuItem id="reservation-CheckOut"
-						value="#{pmsBundle.pms_check_out}" immediate="#{true}" 
+						value="#{bundle.pms_check_out}" immediate="#{true}" 
 						rendered="#{reservation.reservationPermission.checkOutAllowed}"
 						iconClass="aon-icon-check-out"
 						actionListener="#{reservation.onCheckOut}" />
 					<aon:menuItem id="reservation-EarlyCheckOut"
-						value="#{pmsBundle.pms_early_check_out}" immediate="#{true}" 
+						value="#{bundle.pms_early_check_out}" immediate="#{true}" 
 						rendered="#{reservation.reservationPermission.earlyCheckOutAllowed}"
 						iconClass="aon-icon-check-out"
 						actionListener="#{reservation.onEarlyCheckOutShow}"
@@ -45,7 +45,7 @@
 							value="#{true}" />
 					</aon:menuItem>
 					<aon:menuItem id="reservation-NoShow"
-						value="#{pmsBundle.pms_no_show}" immediate="#{true}" 
+						value="#{bundle.pms_no_show}" immediate="#{true}" 
 						rendered="#{reservation.reservationPermission.noShowAllowed}"
 						iconClass="aon-icon-no-show"
 						reRender="showConfirmWindow">
@@ -55,7 +55,7 @@
 							value="#{true}" />
 					</aon:menuItem>
 					<aon:menuItem id="reservation-Cancel"
-						value="#{pmsBundle.pms_to_cancel_reservation}" immediate="#{true}" 
+						value="#{bundle.pms_to_cancel_reservation}" immediate="#{true}" 
 						rendered="#{reservation.reservationPermission.cancelAllowed}"
 						iconClass="aon-icon-removed"
 						reRender="showConfirmWindow">
@@ -65,7 +65,7 @@
 							value="#{false}" />
 					</aon:menuItem>
 					<aon:menuItem id="reservation-divert"
-						value="#{pmsBundle.pms_divert_reservation}" immediate="true" 
+						value="#{bundle.pms_divert_reservation}" immediate="true" 
 						rendered="#{reservation.reservationPermission.divertAllowed}"
 						iconClass="aon-icon-transfer"
 						actionListener="#{reservation.onDivertModalShow}"
@@ -95,13 +95,13 @@
 							</ui:include>
 						</aon:panelTab>
 
-						<aon:panelTab id="service" label="#{pmsBundle.pms_services}">
+						<aon:panelTab id="service" label="#{bundle.pms_services}">
 							<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/service/tab_grid.xhtml">
 								<ui:param name="controller" value="#{reservationService}" />
 							</ui:include>
 						</aon:panelTab>
 
-						<aon:panelTab id="guest" label="#{pmsBundle.pms_guests}">
+						<aon:panelTab id="guest" label="#{bundle.pms_guests}">
 							<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/guest/tab_grid.xhtml">
 								<ui:param name="controller" value="#{reservationGuest}" />
 							</ui:include>

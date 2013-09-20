@@ -10,7 +10,7 @@
 
 	<aon:div id="paymentTotalsDiv" styleClass="aon-group" style="width: 100%; margin-top: 2em;" ajaxRendered="true">
 		<aon:div styleClass="aon-group-title">
-			<aon:outputText value="#{pmsBundle.pms_liquidation}"/>
+			<aon:outputText value="#{bundle.pms_liquidation}"/>
 		</aon:div>
 		<aon:div styleClass="aon-group-body"> 
 			<aon:div styleClass="aon-group-body-internal">
@@ -27,7 +27,7 @@
 					</aon:column>
 
 					<aon:column styleClass="aon-panelGrid-odd aon-width-80 aon-editDataTable-textColumn">
-						<aon:outputLabel value="#{(paymentTotal.totalAmount >= 0) ? (pmsBundle.pms_total_to_pay) : (pmsBundle.pms_total_to_return)}" />
+						<aon:outputLabel value="#{(paymentTotal.totalAmount >= 0) ? (bundle.pms_total_to_pay) : (bundle.pms_total_to_return)}" />
 					</aon:column>
 
 					<aon:column styleClass="aon-panelGrid-even aon-width-auto aon-editDataTable-textColumn">
@@ -38,12 +38,12 @@
 						<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-info" />
 						<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="bottom-left">
 							<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-80,aon-noborder aon-bold aon-text-right">
-								<aon:outputLabel value="#{pmsBundle.pms_returns}:" />
+								<aon:outputLabel value="#{bundle.pms_returns}:" />
 								<aon:outputText	value="#{paymentTotal.totalReturnAmount}">
 									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 								</aon:outputText>
 
-								<aon:outputLabel value="#{financeBundle.finance_payment_menu}:" />
+								<aon:outputLabel value="#{bundle.finance_payment_menu}:" />
 								<aon:outputText	value="#{paymentTotal.paymentAmount}">
 									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 								</aon:outputText>
@@ -53,7 +53,7 @@
 
 				</aon:dataTable>
 
-				<aon:outputText value="#{pmsBundle.pms_no_returns_message}"
+				<aon:outputText value="#{bundle.pms_no_returns_message}"
 					styleClass="aon-bold"
 					rendered="#{empty controller.totals}" />
 

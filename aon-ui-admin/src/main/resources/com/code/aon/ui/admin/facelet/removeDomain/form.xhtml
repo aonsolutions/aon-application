@@ -14,7 +14,7 @@
 		<aon:form id="removeDomainForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{adminBundle.admin_remove_domain}" />
+				<ui:param name="toolbarTitle" value="#{bundle.admin_remove_domain}" />
 				<ui:define name="toolbarContent">
 					<aon:confirmButton id="removeDomainAccept"
 						title="#{bundle.aon_key_remove_accelerator}"
@@ -35,7 +35,7 @@
 					<aon:div styleClass="aon-margin-bottom aon-padding aon-bold"
 						 style="color:red; font-size: 1.4em; border: solid 1px red;"
 						 rendered="#{adminRemoveDomain.domain.id != null}">
-						<aon:outputText value="#{adminBundle.admin_remove_domain_warning}"/>
+						<aon:outputText value="#{bundle.admin_remove_domain_warning}"/>
 						<aon:outputText value="&#160;"/>
 						<aon:div>
 							<aon:outputText value="#{adminRemoveDomain.domain.description}"/>
@@ -45,7 +45,7 @@
 
 				<aon:panelGrid columns="2">
 				
-					<aon:outputLabel value="#{adminBundle.admin_remove_domain_domain}" for="Domain_id"/>
+					<aon:outputLabel value="#{bundle.admin_remove_domain_domain}" for="Domain_id"/>
 					<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{adminRemoveDomain.domain}" />
 						<ui:param name="idRequired" value="#{true}" />

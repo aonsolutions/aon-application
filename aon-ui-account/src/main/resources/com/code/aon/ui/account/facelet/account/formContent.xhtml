@@ -32,7 +32,7 @@
 		<f:validateLength maximum="32" />
 	</aon:inputText>
 
-	<aon:outputLabel for="Account_costCenter" value="#{accountBundle.account_cost_center}" />
+	<aon:outputLabel for="Account_costCenter" value="#{bundle.account_cost_center}" />
 	<aon:selectOneMenu id="Account_costCenter" value="#{controller.to.costCenter}">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{accountCollections.costCenters}" />

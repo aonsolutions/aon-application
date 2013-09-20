@@ -1,7 +1,6 @@
 package com.code.aon.ui.registry.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.INVALID_EMAIL;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_BUNDLE;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -53,7 +52,7 @@ public class RegistryMediaController extends LinesController {
 		RegistryMedia media = (RegistryMedia) getTo();
 		if ( MediaType.EMAIL.equals(media.getMediaType()) ) {
 			if ( ! EmailValidator.getInstance().isValid(media.getValue()) ) {
-				String message = AonUtil.getMessage(REGISTRY_BUNDLE, INVALID_EMAIL, media.getValue());
+				String message = AonUtil.getMessage(INVALID_EMAIL, media.getValue());
 				AonUtil.addErrorMessage(message);
 				throw new AbortProcessingException(message);
 			}

@@ -12,7 +12,7 @@
 		<aon:form id="accountEntryReportList">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_loan_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.accounting_loan_module}" />
 				<ui:param name="controller" value="#{loan}" />
 			</ui:decorate>
 
@@ -68,7 +68,7 @@
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText
-									value="#{financeBundle.finance_cashflow_payment_day}" />
+									value="#{bundle.finance_cashflow_payment_day}" />
 							</f:facet>
 							<aon:outputText value="#{to.payDay}" />
 						</aon:column>
@@ -76,7 +76,7 @@
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText
-									value="#{accountingBundle.accounting_fee_amount}" />
+									value="#{bundle.accounting_fee_amount}" />
 							</f:facet>
 							<aon:outputText value="#{to.feeAmount}">
 								<f:convertNumber pattern="#,##0.00" />

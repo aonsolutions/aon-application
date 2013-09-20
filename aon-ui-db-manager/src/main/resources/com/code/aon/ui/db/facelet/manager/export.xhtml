@@ -16,11 +16,11 @@
 		<aon:form id="exportForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{dbManagerBundle.db_manager_export_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.db_manager_export_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 				<ui:define name="toolbarContent">
 					<a4j:htmlCommandLink id="downloadZip" target="_blank"
-						value="#{accountBundle.account_export}"
+						value="#{bundle.account_export}"
 						actionListener="#{dbManager.onExport}"
 						styleClass="aon-finding-toolbar-item aon-icon-file-download"
 						accesskey="#{bundle.aon_key_save}">

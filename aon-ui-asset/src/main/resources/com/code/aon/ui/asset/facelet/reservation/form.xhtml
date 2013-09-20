@@ -14,7 +14,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{assetBundle.asset_reservation_module}" />
+					value="#{bundle.asset_reservation_module}" />
 				<ui:param name="controller" value="#{assetCalendar}" />
 				<aon:valueParam name="skipResetButton" default="#{true}" />
 				<aon:valueParam name="skipSearchButton" default="#{true}" />
@@ -23,7 +23,7 @@
 			<h:panelGrid columns="2" width="100%" id="calendar" styleClass="calendar-panelGrid" >
 				<aon:panel>
 					<f:facet name="header">
-						<aon:outputLabel value="#{assetBundle.asset_reservation_select}" />
+						<aon:outputLabel value="#{bundle.asset_reservation_select}" />
 					</f:facet>
 					<aon:div styleClass="aon-scroll-area" >
 						<rich:calendar value="#{assetCalendar.calendarDay}" popup="false" 
@@ -39,7 +39,7 @@
 				</aon:panel>
 				<aon:panel>
 					<f:facet name="header">
-						<aon:outputLabel value="#{assetBundle.asset_reservation_resource_request}" />
+						<aon:outputLabel value="#{bundle.asset_reservation_resource_request}" />
 					</f:facet>
 					<aon:div styleClass="aon-scroll-area" id="activityRequestDiv" >
 						<ui:include src="request/grid.xhtml" />

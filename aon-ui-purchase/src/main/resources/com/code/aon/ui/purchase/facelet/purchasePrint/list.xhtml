@@ -13,7 +13,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_purchasePrint_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.purchase_purchasePrint_module}" />
 				<ui:param name="controller" value="#{purchasePrint}" />
 				<ui:param name="skipResetButton" value="true" />
 				
@@ -24,7 +24,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 					</aon:commandButton>	
 					<aon:htmlCommandLink id="purchasePrint-report"
-						value="#{purchaseBundle.purchase_module2}" target="_blank"
+						value="#{bundle.purchase_module2}" target="_blank"
 						action="#{purchaseReport.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
@@ -33,7 +33,7 @@
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
 					<c:if test="#{aonRole.purchaseOperator}">
-						<aon:htmlCommandLink id="purchaseForm_valued-report" value="#{purchaseBundle.purchase_valued_reports}"
+						<aon:htmlCommandLink id="purchaseForm_valued-report" value="#{bundle.purchase_valued_reports}"
 							target="_new" rendered="#{!purchase.new and purchaseDetail.model.rowCount > 0}"
 							action="#{purchaseReport.onExecute}"
 							accesskey="#{bundle.aon_key_print}"
@@ -73,7 +73,7 @@
 				<ui:param name="windowHeight" value="500" />
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="send"
-						value="#{webmailBundle.webmail_send}"
+						value="#{bundle.webmail_send}"
 						styleClass="aon-icon-accept aon-finding-toolbar-item"
 						actionListener="#{purchasePrint.onSendPurchasesByEmail}"
 						reRender="#{sendButtonReRender}" >
@@ -83,7 +83,7 @@
 			</ui:decorate>
 			
 			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
-				<ui:param name="logPanelTitle" value="#{purchaseBundle.purchase_send_email_title}" />
+				<ui:param name="logPanelTitle" value="#{bundle.purchase_send_email_title}" />
 				<ui:param name="closeButtonReRender" value="aonContent" />
 			</ui:include>		
 		</c:if>

@@ -10,7 +10,7 @@
 
 	<aon:form id="taskHolderList">
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-			<ui:param name="toolbarTitle" value="#{groupwareBundle.groupware_taskHolders}" />
+			<ui:param name="toolbarTitle" value="#{bundle.groupware_taskHolders}" />
 			<ui:param name="controller" value="#{taskHolder}" />
 		</ui:decorate>
 		
@@ -43,7 +43,7 @@
 				
 					<aon:column alias="TaskHolder.costProfile&lt;description" styleClass="aon-width-150">
 						<f:facet name="header">
-							<aon:outputText value="#{groupwareBundle.groupware_cost_profile}" />
+							<aon:outputText value="#{bundle.groupware_cost_profile}" />
 						</f:facet>
 						<aon:outputText value="#{to.costProfile.description}" />
 					</aon:column>

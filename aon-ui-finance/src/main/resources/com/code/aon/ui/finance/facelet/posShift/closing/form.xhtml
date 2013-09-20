@@ -13,15 +13,15 @@
 		<aon:form id="posClosingForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_posClosing_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_posClosing_module}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="posClosing-closePos" 
 						styleClass="aon-finding-toolbar-item #{(posClosing.posShift.endTime != null) ? ('aon-icon-accept') : ('aon-icon-safeBox')}"
-						value="#{(posClosing.posShift.endTime != null) ? (bundle.aon_save) : (financeBundle.finance_pos_to_close)}"
+						value="#{(posClosing.posShift.endTime != null) ? (bundle.aon_save) : (bundle.finance_pos_to_close)}"
 						actionListener="#{posClosing.onAccept}" />
 					<aon:htmlCommandLink id="posShift_report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						value="#{financeBundle.finance_count}"
+						value="#{bundle.finance_count}"
 						rendered="#{posClosing.posShift.endTime != null}"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="posShift" />
@@ -36,7 +36,7 @@
 
 					<aon:panel>
 						<f:facet name="header">
-							<aon:outputLabel value="#{financeBundle.finance_pos_shift_data}" />
+							<aon:outputLabel value="#{bundle.finance_pos_shift_data}" />
 						</f:facet>
 						<aon:panelGrid columns="2" styleClass="aon-width-all">
 
@@ -76,14 +76,14 @@
 					<aon:div>
 						<aon:panel id="posShiftCountPanel">
 							<f:facet name="header">
-								<aon:outputLabel value="#{financeBundle.finance_total_count}" />
+								<aon:outputLabel value="#{bundle.finance_total_count}" />
 							</f:facet>
 							<aon:panelGrid columns="3" styleClass="aon-width-all aon-margin-bottom"
 								columnClasses="aon-panelGrid-even aon-width-auto aon-noborder,
 									aon-panelGrid-even aon-width-160 aon-noborder,aon-width-200 aon-noborder">
 								<aon:div>
 									<aon:outputLabel styleClass="aon-margin-right aon-italic"
-										value="#{financeBundle.finance_initial_amount}:" />
+										value="#{bundle.finance_initial_amount}:" />
 									<aon:outputText styleClass="aon-bold"
 										value="#{posClosing.posShift.initialAmount}">
 										<f:convertNumber pattern="#{bundle.aon_price_pattern}" />

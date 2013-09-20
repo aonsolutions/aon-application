@@ -15,7 +15,7 @@
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_trainingCenter_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_trainingCenter_module}" />
 				<ui:param name="controller" value="#{trainingCenter}" />
 			</ui:include>
 			
@@ -23,7 +23,7 @@
 				columnClasses="aon-width-half-plus aon-vertical-align-top,aon-width-half-minus aon-vertical-align-top">
 				<aon:div styleClass="aon-group">
 					<aon:div styleClass="aon-group-title">
-						<aon:outputText value="#{payrollBundle.payroll_trainingCenter}"/>
+						<aon:outputText value="#{bundle.payroll_trainingCenter}"/>
 					</aon:div>
 					<aon:div styleClass="aon-group-body"> 
 						<aon:div styleClass="aon-group-body-internal">
@@ -56,7 +56,7 @@
 									value="#{bundle.aon_address}" />
 								<aon:div>
 									<aon:selectOneMenu id="TrainingCenter_streetType" required="true"
-										label="#{registryBundle.registry_street_type}"
+										label="#{bundle.registry_street_type}"
 										value="#{trainingCenter.mainAddress.streetType}">
 										<f:selectItems value="#{registryCollections.streetTypes}" />
 									</aon:selectOneMenu>
@@ -70,7 +70,7 @@
 										valueChangeListener="#{trainingCenter.addressChanged}" maxlength="12" size="5" />
 								</aon:div>
 							
-								<aon:outputLabel for="TrainingCenter_address2" value="#{registryBundle.registry_address_detail}" />
+								<aon:outputLabel for="TrainingCenter_address2" value="#{bundle.registry_address_detail}" />
 								<aon:div>
 									<aon:inputText id="TrainingCenter_address2"
 										value="#{trainingCenter.mainAddress.address2}"
@@ -81,7 +81,7 @@
 								</aon:div>
 							
 								<aon:outputLabel for="TrainingCenter_address_city"
-									value="#{registryBundle.registry_city}" />
+									value="#{bundle.registry_city}" />
 								<aon:inputText id="TrainingCenter_address_city"
 									value="#{trainingCenter.mainAddress.city}" maxlength="64"
 									valueChangeListener="#{trainingCenter.addressChanged}" size="30" />
@@ -112,7 +112,7 @@
 									valueChangeListener="#{trainingCenter.faxChanged}" maxlength="64" size="15" />
 							
 								<aon:outputLabel for="TrainingCenter_email"
-									value="#{registryBundle.registry_email}" />
+									value="#{bundle.registry_email}" />
 								<aon:inputText id="TrainingCenter_email" value="#{trainingCenter.email.value}"
 									onblur="toLowerCase(this);" maxlength="64"
 									valueChangeListener="#{trainingCenter.emailChanged}" size="45" />
@@ -131,13 +131,13 @@
 					
 					<aon:div styleClass="aon-group">
 						<aon:div styleClass="aon-group-title">
-							<aon:outputText value="#{companyBundle.company_logo_and_signature}"/>
+							<aon:outputText value="#{bundle.company_logo_and_signature}"/>
 						</aon:div>
 						<aon:div styleClass="aon-group-body"> 
 							<aon:div styleClass="aon-group-body-internal">
 								<aon:panelGrid columns="4" style="width:100%">
 									<aon:outputLabel for="attach_file"
-										value="#{companyBundle.company_logo}" />
+										value="#{bundle.company_logo}" />
 									<a4j:region>
 										<h:panelGrid id="attachGrid" columns="2">
 											<a4j:mediaOutput element="img" cacheable="false"
@@ -185,19 +185,19 @@
 				<c:if test="#{!trainingCenter.new}">
 					<aon:panelTabSet >
 					
-						<aon:panelTab id="trainingCourse" label="#{payrollBundle.payroll_trainingCourse_module}">
+						<aon:panelTab id="trainingCourse" label="#{bundle.payroll_trainingCourse_module}">
 							<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/course/tab_grid.xhtml" >
 								<ui:param name="controller" value="#{trainingCourse}" />
 							</ui:include>
 						</aon:panelTab>
 						
-						<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">
+						<aon:panelTab id="address" label="#{bundle.registry_address_module}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="controller" value="#{trainingCenterAddress}" />
 							</ui:include>
 						</aon:panelTab>
 						
-						<aon:panelTab id="dirStaff" label="#{registryBundle.registry_dir_staff}">
+						<aon:panelTab id="dirStaff" label="#{bundle.registry_dir_staff}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/rdirstaff/tab_grid.xhtml">
 								<ui:param name="controller" value="#{trainingCenterDirStaff}" />
 							</ui:include>

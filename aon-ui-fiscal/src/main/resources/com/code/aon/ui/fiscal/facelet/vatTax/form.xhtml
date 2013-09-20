@@ -13,7 +13,7 @@
 
 		<aon:form id="vatTaxForm">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_vat_tax_module2}" />
+				<ui:param name="toolbarTitle" value="#{bundle.fiscal_vat_tax_module2}" />
 				<ui:param name="controller" value="#{vatTax}" />
 				<ui:param name="skipRemoveButton" value="#{vatTax.to.finished}" />
 				
@@ -25,14 +25,14 @@
 						styleClass="aon-finding-toolbar-item aon-icon-lock"
 						onclick="if (!confirm('#{bundle.aon_finalice}?')) return false;"/>
 					<aon:commandButton id="#{toolbarID}-reopen"
-						value="#{fiscalBundle.fiscal_reopen}"
+						value="#{bundle.fiscal_reopen}"
 						actionListener="#{vatTax.onReopen}"
 						rendered="#{!vatTax.new and vatTax.to.finished}"
 						styleClass="aon-finding-toolbar-item aon-icon-unlock"
-						onclick="if (!confirm('#{fiscalBundle.fiscal_reopen}?')) return false;"/>
+						onclick="if (!confirm('#{bundle.fiscal_reopen}?')) return false;"/>
 
 					<aon:commandButton id="#{toolbarID}-recalculate"
-						value="#{fiscalBundle.fiscal_recalculate}"
+						value="#{bundle.fiscal_recalculate}"
 						actionListener="#{vatTax.onRecalculate}"
 						accesskey="W" title="ALT+W [+May]" 
 						rendered="#{!vatTax.new and !vatTax.to.finished}"
@@ -68,7 +68,7 @@
 						required="true" disabled="#{vatTax.to.finished or vatTax.detailNew}"/>
 
 					<aon:outputLabel for="VatTax_period"
-						value="#{financeBundle.finance_vat_period}" />
+						value="#{bundle.finance_vat_period}" />
 					<aon:selectOneMenu id="VatTax_period" value="#{vatTax.to.period}"
 						required="true" disabled="#{vatTax.to.finished or vatTax.detailNew}">
 						<f:selectItems value="#{fiscalCollections.periods}" />
@@ -106,7 +106,7 @@
 						<aon:div rendered="#{!vatTax.params.mod303AvailableByDifferenceDisabled}">
 							<aon:div>
 								<aon:outputText
-									value="#{fiscalBundle.fiscal_tax_provious_adjust}"
+									value="#{bundle.fiscal_tax_provious_adjust}"
 									style="color:red" 
 									rendered="#{vatTax.anyPreviousAdjust}" />
 							</aon:div>
@@ -116,9 +116,9 @@
 									onmouseover="this.style.textDecoration='underline';"
 									onmouseout="this.style.textDecoration='inherit';"
 									actionListener="#{vatTax.onAdjustCopy}"
-									onclick="if (!confirm('#{fiscalBundle.fiscal_adjust_copy}')) return false;"
+									onclick="if (!confirm('#{bundle.fiscal_adjust_copy}')) return false;"
 									rendered="#{!vatTax.to.finished and vatTax.anyPreviousAdjust}">
-									<aon:outputText value="#{fiscalBundle.fiscal_copy} "/>								
+									<aon:outputText value="#{bundle.fiscal_copy} "/>								
 									<aon:outputText value="#{vatTax.previousPeriod}"/>
 								</aon:commandLink>
 							</aon:div>
@@ -154,7 +154,7 @@
 								disabled="#{vatTax.to.finished or vatTax.detailNew}"
 								value="#{vatTax.to.taxRefundRegistry}"/>
 							<aon:outputLabel for="VatTax_tax_refund_registry" styleClass="aon-italic"
-								value="#{fiscalBundle.fiscal_tax_refund_registry}" />
+								value="#{bundle.fiscal_tax_refund_registry}" />
 						</aon:div>
 					</aon:div>
 				</aon:panelGrid>
@@ -162,7 +162,7 @@
 				<c:if test="#{vatTax.new}">
 					<aon:div styleClass="aon-panelGrid-search">
 						<aon:div styleClass="aon-panelGrid-search-info">
-							<aon:outputText value="#{fiscalBundle.fiscal_vat_tax_import_info}" 
+							<aon:outputText value="#{bundle.fiscal_vat_tax_import_info}" 
 									styleClass="aon-panelGrid-search-info-internal"/>
 						</aon:div>
 						
@@ -170,7 +170,7 @@
 							<aon:outputText value="&#160;" />
 							<aon:div>
 								<aon:selectBooleanCheckbox id="vatTax_scoredInvoices" value="#{vatTax.scoredInvoices}"/>
-								<aon:outputLabel for="vatTax_scoredInvoices" value="#{fiscalBundle.fiscal_vatTax_scored_invoices}" />
+								<aon:outputLabel for="vatTax_scoredInvoices" value="#{bundle.fiscal_vatTax_scored_invoices}" />
 							</aon:div>
 						</aon:panelGrid>
 					</aon:div>

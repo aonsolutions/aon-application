@@ -16,7 +16,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_check_balance_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.accounting_check_balance_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="execute" 
@@ -42,7 +42,7 @@
 				</aon:selectOneMenu>
 	
 		
-				<aon:outputText value="#{accountingBundle.accounting_check_list}" />
+				<aon:outputText value="#{bundle.accounting_check_list}" />
 				<aon:div style="margin-left: 10px;">
 	 				<rich:dataList value="#{accountCheck.accountChecks}"
 	 					var="check" rows="0">

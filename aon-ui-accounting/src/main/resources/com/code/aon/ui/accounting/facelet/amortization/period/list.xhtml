@@ -13,7 +13,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_period_amortization_module}" />
+					value="#{bundle.accounting_period_amortization_module}" />
 				<ui:param name="controller" value="#{periodAmortization}" />
 
 				<ui:param name="skipResetButton" value="true" />				
@@ -35,15 +35,15 @@
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
 					<aon:commandButton actionListener="#{periodAmortization.onRecord}"
-						title="#{financeBundle.finance_record}"
-						value="#{financeBundle.finance_record}"
-						onclick="if (!confirm('#{financeBundle.finance_record}?')) return false;"
+						title="#{bundle.finance_record}"
+						value="#{bundle.finance_record}"
+						onclick="if (!confirm('#{bundle.finance_record}?')) return false;"
 						styleClass="aon-finding-toolbar-item aon-icon-task-assume" />
 						
 					<aon:commandButton actionListener="#{periodAmortization.onUnrecord}"
-						title="#{financeBundle.finance_unrecord}"
-						value="#{financeBundle.finance_unrecord}"
-						onclick="if (!confirm('#{financeBundle.finance_unrecord}?')) return false;"
+						title="#{bundle.finance_unrecord}"
+						value="#{bundle.finance_unrecord}"
+						onclick="if (!confirm('#{bundle.finance_unrecord}?')) return false;"
 						styleClass="aon-finding-toolbar-item aon-icon-task-liberate" />
 				</ui:define>
 
@@ -115,7 +115,7 @@
 						<aon:commandLink id="accountEntry-search" 
 							styleClass="aon-dataTable-link"
 							rendered="#{to.scored}" immediate="true" 
-							title="#{accountingBundle.accounting_lookup_account_entry}"
+							title="#{bundle.accounting_lookup_account_entry}"
 							actionListener="#{periodAmortization.onAccountEntry}"
 							action="accountEntry_form">
 							<aon:outputText

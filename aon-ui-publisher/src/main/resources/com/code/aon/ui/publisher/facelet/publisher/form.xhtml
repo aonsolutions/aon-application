@@ -14,7 +14,7 @@
 		<aon:form id="generatorForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{publisherBundle.publisher_production_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.publisher_production_module}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
 					<h:outputLink id="preview" value="#{publisher.previewPage}" target="_blank"
@@ -22,14 +22,14 @@
 						<aon:outputText value="#{bundle.aon_preview}"/>
 					</h:outputLink>				     									
 					<aon:commandButton id="publish" reRender="aonStatus"
-						value="#{publisherBundle.publisher_publish}"
+						value="#{bundle.publisher_publish}"
 						styleClass="aon-finding-toolbar-item aon-icon-file-upload"
 						actionListener="#{publisher.onPublish}" immediate="true" >
 			     		<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
 			     	</aon:commandButton>								
 					<aon:confirmButton id="delete"
 						title="#{bundle.aon_key_remove_accelerator}"
-						value="#{publisherBundle.publisher_delete_web}" immediate="true"
+						value="#{bundle.publisher_delete_web}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						confirmTitle="#{bundle.aon_confirm_title}"
 						confirmMessage="#{bundle.aon_remove_confirm}"
@@ -39,7 +39,7 @@
 						accesskey="#{bundle.aon_key_remove}" />
 					<h:outputLink id="web" value="#{publisher.webPage}" target="_blank"
 						styleClass="aon-finding-toolbar-item aon-icon-file-entrance">
-						<aon:outputText value="#{publisherBundle.publisher_view}"/>
+						<aon:outputText value="#{bundle.publisher_view}"/>
 					</h:outputLink>
 				</ui:define>
 			</ui:decorate>
@@ -47,7 +47,7 @@
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />		
 		<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
-			<ui:param name="logPanelTitle" value="#{publisherBundle.publisher_publish}" />
+			<ui:param name="logPanelTitle" value="#{bundle.publisher_publish}" />
 		</ui:include>		
 	</ui:define>
 </ui:composition>

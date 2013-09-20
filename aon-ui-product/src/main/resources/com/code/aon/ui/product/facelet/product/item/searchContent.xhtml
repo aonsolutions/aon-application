@@ -8,7 +8,7 @@
 	
 	<c:if test="#{aonConfiguration.bean.product.showBarcode}">
 		<aon:outputLabel for="Product_items_barcode"
-			value="#{productBundle.product_barcode}" />
+			value="#{bundle.product_barcode}" />
 		<aon:inputText id="Product_items_barcode" size="25"
 			valueChangeListener="#{controller.addExpression}" />
 	</c:if>
@@ -21,13 +21,13 @@
 	
 		<c:if test="#{product.detailLevel &gt; 1}">
 			<aon:outputLabel for="Product_items_detail2"
-				value="#{productBundle.product_detail2}" />
+				value="#{bundle.product_detail2}" />
 			<aon:inputText id="Product_items_detail2" size="50"
 				valueChangeListener="#{controller.addExpression}" />
 
 			<c:if test="#{product.detailLevel &gt; 2}">
 				<aon:outputLabel for="Product_items_detail3"
-					value="#{productBundle.product_detail3}" />
+					value="#{bundle.product_detail3}" />
 				<aon:inputText id="Product_items_detail3" size="50"
 					valueChangeListener="#{controller.addExpression}" />
 			</c:if>
@@ -50,7 +50,7 @@
 		
 	<c:if test="#{aonConfiguration.bean.product.showEcommerceData}">
 		<aon:outputLabel for="Product_items_internet"
-			value="#{productBundle.product_ecommerce}" />
+			value="#{bundle.product_ecommerce}" />
 		<aon:selectOneRadio id="Product_items_internet"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
@@ -59,7 +59,7 @@
 	</c:if>		
 	
 	<aon:outputLabel for="Product_items_purchasePrice"
-		value="#{productBundle.product_purchase_price}" />
+		value="#{bundle.product_purchase_price}" />
 	<aon:inputText id="Product_items_purchasePrice" size="25"
 		valueChangeListener="#{controller.addExpression}" />
 	
@@ -69,7 +69,7 @@
 		valueChangeListener="#{controller.addExpression}" />
 	
 	<aon:outputLabel for="Product_items_price"
-		value="#{productBundle.product_sales_base_price}" />
+		value="#{bundle.product_sales_base_price}" />
 	<aon:inputText id="Product_items_price" size="25"
 		valueChangeListener="#{controller.addExpression}" />
 	

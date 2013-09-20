@@ -9,7 +9,7 @@
 		<aon:form id="assetType">
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{assetBundle.asset_feature_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.asset_feature_module}" />
 				<ui:param name="controller" value="#{feature}" />
 			</ui:include>
 				
@@ -28,7 +28,7 @@
 					<aon:inputText id="Feature_description"
 						valueChangeListener="#{feature.addExpression}" />
 
-					<aon:outputLabel for="Feature_assetType" value="#{assetBundle.asset_assetType}" />
+					<aon:outputLabel for="Feature_assetType" value="#{bundle.asset_assetType}" />
 					<aon:inputText id="Feature_assetType"
 						valueChangeListener="#{feature.addExpression}" />
 					-->

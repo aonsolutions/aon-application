@@ -10,7 +10,7 @@
 	<ui:define name="content">
 		<aon:form id="feeAssignmentList">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_fee_assignment_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_fee_assignment_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_listing}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="feeAssignment-accept"
@@ -106,7 +106,7 @@
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:panelGrid>
 
-					<aon:outputLabel for="CustomerFee_billingDateYear" value="#{financeBundle.finance_fee_billing_date_abrv}" />
+					<aon:outputLabel for="CustomerFee_billingDateYear" value="#{bundle.finance_fee_billing_date_abrv}" />
 					<aon:panelGrid columns="3" columnClasses="aon-width-150,aon-width-60,aon-width-auto">
 						<aon:div styleClass="aon-nowrap">
 							<aon:selectOneMenu value="#{feeAssignment.fee.billingDateMonth}">

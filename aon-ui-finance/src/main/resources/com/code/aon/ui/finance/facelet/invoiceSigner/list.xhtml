@@ -15,7 +15,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_invoice_signing_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_invoice_signing_module}" />
 				<ui:param name="controller" value="#{invoiceSigner}" />
 				<ui:param name="skipResetButton" value="true" />
 				
@@ -109,10 +109,10 @@
 									<aon:outputText value="#{bundle.aon_signature}" />
 								</f:facet>
 								<aon:outputText value="&#160;" rendered="#{to.signed}"
-									title="#{signBundle.sign_signed}"
+									title="#{bundle.sign_signed}"
 									styleClass="aon-icon aon-icon-signed" />
 								<aon:outputText value="&#160;" rendered="#{!to.signed}"
-									title="#{signBundle.sign_sign_pending}"
+									title="#{bundle.sign_sign_pending}"
 									styleClass="aon-icon aon-icon-unsigned" />
 							</aon:column>
 						</ui:define>

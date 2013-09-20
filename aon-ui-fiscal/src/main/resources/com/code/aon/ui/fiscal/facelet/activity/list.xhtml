@@ -11,7 +11,7 @@
 		<aon:form id="fiscalActivityForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_activities_modules}" />
+				<ui:param name="toolbarTitle" value="#{bundle.fiscal_activities_modules}" />
 				<ui:param name="controller" value="#{fiscalActivity}" />
 			</ui:decorate>
 			<aon:div styleClass="aon-scroll-area">
@@ -29,7 +29,7 @@
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-text-center aon-width-150" alias="FiscalBatch.epigraph">
 							<f:facet name="header">
-								<aon:outputText value="#{fiscalBundle.fiscal_epigraph}" />
+								<aon:outputText value="#{bundle.fiscal_epigraph}" />
 							</f:facet>
 							<aon:outputText value="#{to.epigraph}" />
 						</aon:column>

@@ -11,7 +11,7 @@
 		<aon:form id="noticeList">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_notice}" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_notice}" />
 				<ui:param name="controller" value="#{notice}" />
 			</ui:include>
 
@@ -27,7 +27,7 @@
 								<aon:outputText value="#{bundle.purchase_shipping_recipient}" />
 							</f:facet>
 							<aon:outputText rendered="#{to.recipient != null}" value="#{to.recipient.name}" />
-							<aon:outputText rendered="#{to.recipient == null}" value="#{financeBundle.finance_all}" />
+							<aon:outputText rendered="#{to.recipient == null}" value="#{bundle.finance_all}" />
 						</aon:column>
 	
 						<aon:column styleClass="aon-width-130 aon-nowrap" alias="Notice.workGroup&lt;description">
@@ -35,7 +35,7 @@
 								<aon:outputText value="#{bundle.aon_group}" />
 							</f:facet>
 							<aon:outputText rendered="#{to.workGroup != null}" value="#{to.workGroup.description}" />
-							<aon:outputText rendered="#{to.workGroup == null}" value="#{financeBundle.finance_all}" />
+							<aon:outputText rendered="#{to.workGroup == null}" value="#{bundle.finance_all}" />
 						</aon:column>
 						
 						<aon:column styleClass="aon-width-130" alias="Notice.source">

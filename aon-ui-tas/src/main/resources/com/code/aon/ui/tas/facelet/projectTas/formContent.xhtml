@@ -9,7 +9,7 @@
 	<aon:div>
 		<aon:div styleClass="aon-group">
 			<aon:div styleClass="aon-group-title">
-				<aon:outputText value="#{tasBundle.tas_projectTas_detail}"/>
+				<aon:outputText value="#{bundle.tas_projectTas_detail}"/>
 			</aon:div>
 			<aon:div styleClass="aon-group-body"> 
 				<aon:div styleClass="aon-group-body-internal">
@@ -53,7 +53,7 @@
 							<aon:methodParam name="lookupChangeListener" value="#{controller.tasItemData}" type="lookupChangeListener" />
 						</ui:include>
 						
-						<aon:outputText value="#{tasBundle.tas_projectTas_tasItemData}"/>
+						<aon:outputText value="#{bundle.tas_projectTas_tasItemData}"/>
 						<aon:panelGroup id="TasItemDiv" style="font-size: 0.9em;" styleClass="aon-italic aon-margin-left">
 							<aon:panelGroup rendered="#{controller.to.tasItem.id != null}">
 								<aon:outputLabel value="#{bundle.tas_privateCode}:" />
@@ -80,7 +80,7 @@
 							<aon:methodParam name="lookupChangeListener" value="#{controller.targetData}" type="lookupChangeListener" />
 						</ui:include>
 
-						<aon:outputText value="#{payrollBundle.payroll_person_data}"/>
+						<aon:outputText value="#{bundle.payroll_person_data}"/>
 						<aon:panelGroup id="TargetDiv" style="font-size: 0.9em;" styleClass="aon-italic aon-margin-left">
 							<aon:panelGroup rendered="#{controller.to.target.id != null}">
 								<aon:outputText value="#{bundle.aon_company_document}:" />
@@ -103,12 +103,12 @@
 							</aon:panelGroup>
 						</aon:panelGroup>
 
-						<aon:outputLabel for="ProjectTas_counter" value="#{tasBundle.tas_odometer}" />
+						<aon:outputLabel for="ProjectTas_counter" value="#{bundle.tas_odometer}" />
 						<aon:inputText id="ProjectTas_counter" size="7" value="#{controller.to.counter}" disabled="#{controller.finished}">
 							<f:validateDoubleRange />
 						</aon:inputText>
 
-						<aon:outputLabel for="ProjectTas_taskHolder" value="#{tasBundle.tas_projectTas_taskHolder}" />
+						<aon:outputLabel for="ProjectTas_taskHolder" value="#{bundle.tas_projectTas_taskHolder}" />
 						<aon:selectOneMenu id="ProjectTas_taskHolder"
 							value="#{controller.to.taskHolder}"
 							disabled="#{controller.finished}">

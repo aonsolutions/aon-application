@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelCollapsible expanded="false" 
-		label="#{calendarBundle.aon_calendar_inherit_periods}&#160;#{calendar.masterCalendar.description}"
+		label="#{bundle.aon_calendar_inherit_periods}&#160;#{calendar.masterCalendar.description}"
 		rendered="#{calendar.to.calendar!=null and calendar.inheritPeriodsModel.rowCount>0}">
 		<aon:dataTable value="#{calendar.inheritPeriodsModel}" var="to" >
 		
@@ -39,37 +39,37 @@
 
 					<aon:div>
 					
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_monday_abr}:" />
+					<aon:outputLabel value="#{bundle.aon_calendar_monday_abr}:" />
 						<aon:outputText value="#{to.monday}" />
 						<aon:outputText value="(#{to.mondayHours})" />
 						<aon:outputText value="&#160;-&#160;" />
 
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_tuesday_abr}:" />
+					<aon:outputLabel value="#{bundle.aon_calendar_tuesday_abr}:" />
 						<aon:outputText value="#{to.tuesday}" />
 						<aon:outputText value="(#{to.tuesdayHours})" />
 						<aon:outputText value="&#160;-&#160;" />
 
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_wednesday_abr}:" />
+					<aon:outputLabel value="#{bundle.aon_calendar_wednesday_abr}:" />
 						<aon:outputText value="#{to.wednesday}" />
 						<aon:outputText value="(#{to.wednesdayHours})" />
 						<aon:outputText value="&#160;-&#160;" />
 
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_thursday_abr}:" />
+					<aon:outputLabel value="#{bundle.aon_calendar_thursday_abr}:" />
 						<aon:outputText value="#{to.thursday}" />
 						<aon:outputText value="(#{to.thursdayHours})" />
 						<aon:outputText value="&#160;-&#160;" />
 
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_friday_abr}:" />
+					<aon:outputLabel value="#{bundle.aon_calendar_friday_abr}:" />
 						<aon:outputText value="#{to.friday}" />
 						<aon:outputText value="(#{to.fridayHours})" />
 						<aon:outputText value="&#160;-&#160;" />
 
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_saturday_abr}:" />
+					<aon:outputLabel value="#{bundle.aon_calendar_saturday_abr}:" />
 						<aon:outputText value="#{to.saturday}" />
 						<aon:outputText value="(#{to.saturdayHours})" />
 						<aon:outputText value="&#160;-&#160;" />
 
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_sunday_abr}:" />
+					<aon:outputLabel value="#{bundle.aon_calendar_sunday_abr}:" />
 						<aon:outputText value="#{to.sunday}" />
 						<aon:outputText value="(#{to.sundayHours})" />
 					
@@ -114,7 +114,7 @@
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 				<f:facet name="header">
 					<aon:outputLabel 
-						value="#{calendarBundle.aon_calendar_start_day}" />
+						value="#{bundle.aon_calendar_start_day}" />
 				</f:facet>
 				<aon:outputText value="#{to.startDay}" />
 			</aon:column>
@@ -122,7 +122,7 @@
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 				<f:facet name="header">
 					<aon:outputLabel 
-						value="#{calendarBundle.aon_calendar_end_day}" />
+						value="#{bundle.aon_calendar_end_day}" />
 				</f:facet>
 				<aon:outputText value="#{to.endDay}" />
 			</aon:column>
@@ -145,7 +145,7 @@
 			
 			<aon:column styleClass="aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_wednesday}" />
+					<aon:outputLabel value="#{bundle.aon_calendar_wednesday}" />
 				</f:facet>
 				<aon:outputText value="#{to.wednesday}" />
 				<aon:outputText value="(#{to.wednesdayHours})" />

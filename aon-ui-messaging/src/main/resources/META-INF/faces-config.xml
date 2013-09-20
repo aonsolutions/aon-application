@@ -3,13 +3,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-	<application>
-		<resource-bundle>
-			<base-name>com.code.aon.ui.messaging.i18n.messages</base-name>
-			<var>smsBundle</var>
-		</resource-bundle>
-	</application>
-
 	<managed-bean>
 		<managed-bean-name>sms</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.messaging.controller.SMSController</managed-bean-class>

@@ -22,7 +22,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-direct-access-panel aon-icon-general">
 							<f:facet name="header">
-								<aon:outputText value="#{infowebBundle.infoweb_module}" />
+								<aon:outputText value="#{bundle.infoweb_module}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<c:if test="#{aonRole.admin}">
@@ -30,7 +30,7 @@
 										<aon:commandLink id="company-marketing" 
 											action="company-marketing"
 											actionListener="#{company.onLoad}"
-											value="#{companyBundle.company_data_module}" />
+											value="#{bundle.company_data_module}" />
 									</aon:div>
 								</c:if>
 								<c:if test="#{aonRole.config}">								
@@ -46,7 +46,7 @@
 										<aon:commandLink id="webPage" 
 											action="webPage" 
 											actionListener="#{companyWebInfo.onInit}"
-											value="#{infowebBundle.infoweb_pages}" >
+											value="#{bundle.infoweb_pages}" >
 											<aon:actionListener method="#{webPage.onInit}" />
 										</aon:commandLink>
 									</aon:div>
@@ -62,7 +62,7 @@
 										<aon:commandLink id="images" 
 											action="companyImages" 
 											actionListener="#{companyWebInfo.onInit}"
-											value="#{companyBundle.company_images_module}">
+											value="#{bundle.company_images_module}">
 											<aon:actionListener method="#{companyImages.onCancel}" />
 										</aon:commandLink>
 									</aon:div>
@@ -77,14 +77,14 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-reservation">
 								<f:facet name="header">
-									<aon:outputText value="#{infowebBundle.infoweb_publish_group}" />
+									<aon:outputText value="#{bundle.infoweb_publish_group}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="publishParameter" 
 											action="publishParameter" 
 											actionListener="#{publishParameter.onInit}"
-											value="#{configBundle.config_publish_parameters_module}" >
+											value="#{bundle.config_publish_parameters_module}" >
 											<f:setPropertyActionListener target="#{publishParameter.showOnlyFTP}" value="#{false}" />
 										</aon:commandLink>											
 									</aon:div>
@@ -92,7 +92,7 @@
 										<aon:commandLink id="generator" 
 											action="generator" 
 											actionListener="#{companyWebInfo.onInit}"
-											value="#{infowebBundle.infoweb_generate}" >
+											value="#{bundle.infoweb_generate}" >
 											<aon:actionListener method="#{generator.onInit}" />
 										</aon:commandLink>
 									</aon:div>

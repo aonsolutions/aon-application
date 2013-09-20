@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="100" style="overflow: auto;" >
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{financeBundle.finance_refine_search}" />
+						<aon:outputText value="#{bundle.finance_refine_search}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -64,9 +64,9 @@
 								</aon:div>
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 								
-									<aon:panel label="#{financeBundle.finance_finance}">
+									<aon:panel label="#{bundle.finance_finance}">
 										<f:facet name="header">
-											<aon:outputText value="#{financeBundle.finance_finance}" />
+											<aon:outputText value="#{bundle.finance_finance}" />
 										</f:facet>
 										<aon:panelGrid columns="2" >
 											
@@ -87,7 +87,7 @@
 											</aon:inputText>
 											
 											<aon:outputLabel 
-													value="#{financeBundle.finance_finance_date_abbrv}" />
+													value="#{bundle.finance_finance_date_abbrv}" />
 											<aon:div>
 												<aon:outputLabel for="Finance_invoice_issueDate_from"
 													styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />

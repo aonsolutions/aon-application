@@ -10,7 +10,7 @@
 		<aon:form id="financeSearch">
 
 			<ui:include	src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{(finance.payment) ? (financeBundle.finance_payment_module) : (financeBundle.finance_charge_module)}" />
+				<ui:param name="toolbarTitle" value="#{(finance.payment) ? (bundle.finance_payment_module) : (bundle.finance_charge_module)}" />
 				<ui:param name="controller" value="#{finance}" />
 			</ui:include>
 

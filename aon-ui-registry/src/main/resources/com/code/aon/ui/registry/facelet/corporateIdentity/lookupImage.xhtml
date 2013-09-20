@@ -9,10 +9,10 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookupAudit.xhtml" >
 		<ui:param name="lookupBean" value="#{imageLookup}" />
 		<ui:param name="controller" value="#{companyImages}" />
-		<ui:param name="lookupLabel" value="#{registryBundle.registry_image}"/>
+		<ui:param name="lookupLabel" value="#{bundle.registry_image}"/>
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}"/>
 		<ui:param name="lookupInputSuggestExpression" value="#{lto.description} (#{lto.id})"/>		
-		<ui:param name="searchButtonTitle" value="#{registryBundle.registry_image_selection}" />
+		<ui:param name="searchButtonTitle" value="#{bundle.registry_image_selection}" />
 		<ui:param name="skipNewButton" value="#{true}" />
 		<ui:param name="skipGoToButton" value="#{true}" />
 		<ui:param name="skipSuggestText" value="#{lookupTo.id != null}" />

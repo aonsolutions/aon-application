@@ -16,16 +16,16 @@
 			<aon:panelGrid columns="2">		
 
 				<aon:outputLabel for="Domain_description"
-					value="#{adminBundle.admin_domain_displayName}" />
+					value="#{bundle.admin_domain_displayName}" />
 				<aon:inputText id="Domain_description" size="80"
 					value="#{domainSearch.description}" />
 
 				<aon:outputLabel for="Domain_name"
-					value="#{adminBundle.admin_domain_url}" />
+					value="#{bundle.admin_domain_url}" />
 				<aon:inputText id="Domain_name" size="80"
 					value="#{domainSearch.name}" />
 
-				<aon:outputLabel value="#{adminBundle.admin_domain_parent}" for="Domain_id"/>
+				<aon:outputLabel value="#{bundle.admin_domain_parent}" for="Domain_id"/>
 				<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
 					<ui:param name="lookupTo" value="#{domainSearch.parent}" />
 					<ui:param name="skipLabel" value="#{true}" />
@@ -34,7 +34,7 @@
 				</ui:include>
 				
 				<aon:outputLabel for="Domain_type"
-					value="#{adminBundle.admin_domain_type}" />
+					value="#{bundle.admin_domain_type}" />
 				<aon:div id="typeDiv">
 					<a4j:region>
 						<a4j:repeat value="#{domainSearch.types}" rowKeyVar="index" var="type">
@@ -107,7 +107,7 @@
 				</aon:selectOneMenu>
 
 				<aon:outputLabel for="Domain_enableHeredity"
-					value="#{adminBundle.admin_domain_heredity}" />
+					value="#{bundle.admin_domain_heredity}" />
 				<aon:selectOneMenu id="Domain_enableHeredity"
 					value="#{domainSearch.enableHeredity}">
 					<f:selectItem itemLabel="-"	itemValue="#{null}" />
@@ -116,7 +116,7 @@
 				</aon:selectOneMenu>
 
 				<aon:outputLabel for="Domain_domainManagement"
-					value="#{adminBundle.admin_domain_domainManagement}" />
+					value="#{bundle.admin_domain_domainManagement}" />
 				<aon:selectOneMenu id="Domain_domainManagement"
 					value="#{domainSearch.domainManagement}">
 					<f:selectItem itemLabel="-"	itemValue="#{null}" />

@@ -13,7 +13,7 @@
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_fanBatchWizard_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_fanBatchWizard_module}" />
 				<ui:param name="controller" value="#{fanBatch}" />
 			</ui:include>
 
@@ -22,7 +22,7 @@
 				<ui:param name="controller" value="#{fanBatch}" />
 				<ui:define name="searchContent">
 				
-					<aon:outputLabel value="#{payrollBundle.fanBatch_liquidation_period}" />
+					<aon:outputLabel value="#{bundle.fanBatch_liquidation_period}" />
 					<aon:div>
 						<aon:outputLabel for="FanBatch_date-from" styleClass="aon-form-date-label aon-margin-right"
 							value="#{bundle.aon_date_from}" />
@@ -40,7 +40,7 @@
 					</aon:div>
 					
 					<aon:outputLabel for="FanBatch_liquidationType" 
-						value="#{payrollBundle.fanBatch_liquidation_type}" />
+						value="#{bundle.fanBatch_liquidation_type}" />
 					<aon:selectOneMenu id="FanBatch_liquidationType" 
 						valueChangeListener="#{controller.addEqualExpression}"
 						disabled="#{true}" >

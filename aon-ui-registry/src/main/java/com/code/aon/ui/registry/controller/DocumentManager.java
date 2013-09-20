@@ -1,6 +1,5 @@
 package com.code.aon.ui.registry.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.BUNDLE_NAME;
 import static com.code.aon.ui.common.ICommonMessages.DOCUMENT_SIZE_MESSAGE;
 import static com.code.aon.ui.common.ICommonMessages.USED_SPACE_MESSAGE;
 
@@ -111,7 +110,7 @@ public class DocumentManager {
 		String totalSpace = FileUtils.byteCountToDisplaySize(this.maxTotalDocumentSize);
 		String freeSpace = FileUtils.byteCountToDisplaySize(getFreeSpace()); 
 		String maxSize = FileUtils.byteCountToDisplaySize(maxDocumentSize);
-		return AonUtil.getMessage(BUNDLE_NAME, DOCUMENT_SIZE_MESSAGE, totalSpace, freeSpace, maxSize);
+		return AonUtil.getMessage(DOCUMENT_SIZE_MESSAGE, totalSpace, freeSpace, maxSize);
 	}
 	
 	public String getFreeSpaceStyle() {
@@ -120,7 +119,7 @@ public class DocumentManager {
 
 	public String getUsedSpaceMessage() {
 		String usedSpace = FileUtils.byteCountToDisplaySize(getUsedSpace()); 
-		return AonUtil.getMessage(BUNDLE_NAME, USED_SPACE_MESSAGE, usedSpace);
+		return AonUtil.getMessage(USED_SPACE_MESSAGE, usedSpace);
 	}
 	
 	public int getUsedSpaceInMB() {

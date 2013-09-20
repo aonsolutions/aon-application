@@ -15,7 +15,7 @@
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 					<ui:param name="toolbarID" value="aonToolbarMain" />
-					<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_entry_module}" />
+					<ui:param name="toolbarTitle" value="#{bundle.accounting_entry_module}" />
 					<ui:param name="toolbarDescription"
 						value="#{accountEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 	
@@ -104,10 +104,10 @@
 								actionListener="#{accountEntry.onChangeSecurityLevel}" 
 								styleClass="aon-finding-toolbar-item #{accountEntry.to.confidential?'aon-icon-unlock':'aon-icon-lock'}"
 								immediate="true"
-								onclick="if (!confirm('#{accountingBundle.accounting_change_security}')) return false;" />
+								onclick="if (!confirm('#{bundle.accounting_change_security}')) return false;" />
 						</c:if>
-						<aon:commandButton id="duplicate" value="#{accountingBundle.accounting_duplicate}"
-							title="#{accountingBundle.accounting_duplicate}"
+						<aon:commandButton id="duplicate" value="#{bundle.accounting_duplicate}"
+							title="#{bundle.accounting_duplicate}"
 							actionListener="#{accountEntry.showDuplicateEntryPanel}"
 							rendered="#{!accountEntry.new and accountEntry.manual}"
 							reRender="duplicateEntryContainer"
@@ -181,7 +181,7 @@
 								rendered="#{!accountEntry.new and (!accountEntry.manual or !accountEntry.periodActive)}" />
 						</aon:div>
 
-						<aon:outputText value="#{accountingBundle.accounting_journal}: " />
+						<aon:outputText value="#{bundle.accounting_journal}: " />
 						<aon:div>
 							<aon:outputText value="#{accountEntry.to.journal}" rendered="#{!accountEntry.new}" />
 						</aon:div>
@@ -316,7 +316,7 @@
 					showWhenRendered="true" zindex="90">
 					<f:facet name="header">
 						<aon:div styleClass="aon-popupWindow-title">
-							<aon:outputText value="#{accountingBundle.accounting_duplicate}" />
+							<aon:outputText value="#{bundle.accounting_duplicate}" />
 						</aon:div>
 					</f:facet>
 					<f:facet name="controls">
@@ -338,9 +338,9 @@
 									<aon:div style="width:99%">
 										<aon:div styleClass="aon-toolbar">
 											<aon:commandButton id="duplicateEntryAccept"
-												value="#{accountingBundle.accounting_duplicate}"
+												value="#{bundle.accounting_duplicate}"
 												actionListener="#{accountEntry.onDuplicate}"
-												onclick="if (!confirm('#{accountingBundle.accounting_duplicate_confirm}')) return false;"
+												onclick="if (!confirm('#{bundle.accounting_duplicate_confirm}')) return false;"
 												styleClass="aon-finding-toolbar-item aon-icon-accept">
 												<f:setPropertyActionListener
 													target="#{accountEntry.duplicateEntryPanelVisible}"
@@ -374,7 +374,7 @@
 													<aon:selectBooleanCheckbox id="AccountEntry_invert"
 														value="#{accountEntry.duplicateInvertible}"/>
 													<aon:outputLabel for="AccountEntry_invert"
-														value="#{accountingBundle.accounting_duplicate_invert_debit}" />
+														value="#{bundle.accounting_duplicate_invert_debit}" />
 												</aon:div>
 											</aon:panelGrid>
 										</aon:div>

@@ -16,12 +16,12 @@
 		<aon:form id="newsForm">
 			
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >		
-				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_news_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.marketing_news_module}" />
 				<ui:param name="controller" value="#{news}" />
 				<ui:define name="beforeSpinToolbarContent" >
 					<aon:commandButton id="sendEmail"
 						reRender="showNewMessageWindow" immediate="true"
-						value="#{webmailBundle.webmail_send}"
+						value="#{bundle.webmail_send}"
 						actionListener="#{news.onSendEmail}"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2" />	
 				</ui:define>				
@@ -51,7 +51,7 @@
 						
 					<c:if test="#{news.to.type  == 'NEWS'}" >						
 						<aon:outputLabel for="News_category"
-							value="#{marketingBundle.marketing_news_channel}" />
+							value="#{bundle.marketing_news_channel}" />
 						<aon:selectOneMenu id="News_category" required="true"
 							value="#{news.to.category}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
@@ -113,7 +113,7 @@
 						</aon:selectInputDate>		
 	
 						<aon:outputLabel for="News_rss"
-							value="#{marketingBundle.marketing_news_publish_rss}" />
+							value="#{bundle.marketing_news_publish_rss}" />
 						<aon:selectBooleanCheckbox id="News_rss" 
 							reRender="News_url-label,News_url"
 							value="#{news.to.rss}" />

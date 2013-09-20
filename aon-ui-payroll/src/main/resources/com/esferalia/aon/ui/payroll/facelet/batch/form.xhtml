@@ -16,7 +16,7 @@
 				<ui:param name="toolbarTitle" value="#{toolbarTitle}" />
 				<ui:param name="controller" value="#{controller}" />
 				<ui:define name="beforeSpinToolbarContent">
-					<aon:commandButton id="create-button" value="#{payrollBundle.payroll_create_disk}"
+					<aon:commandButton id="create-button" value="#{bundle.payroll_create_disk}"
 						rendered="#{!controller.new and !controller.recorded and controllerDetail.model.rowCount > 0}"
 						reRender="batchForm"
 						styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
@@ -33,12 +33,12 @@
 				
 				<aon:panelTabSet id="batchPanelTabSet" rendered="#{!controller.new}">
 					<c:if test="#{controllerDetail.model.rowCount > 0}" >
-						<aon:panelTab id="batchedTab" label="#{payrollBundle.payroll_batch_included}">
+						<aon:panelTab id="batchedTab" label="#{bundle.payroll_batch_included}">
 							<ui:insert name="batchedTabContent" />
 						</aon:panelTab>
 					</c:if>
 					<c:if test="#{!controller.recorded}" >
-						<aon:panelTab id="noBatchedTab" label="#{payrollBundle.payroll_not_batched}">
+						<aon:panelTab id="noBatchedTab" label="#{bundle.payroll_not_batched}">
 							<ui:insert name="noBatchedTabContent" />
 						</aon:panelTab>
 					</c:if>

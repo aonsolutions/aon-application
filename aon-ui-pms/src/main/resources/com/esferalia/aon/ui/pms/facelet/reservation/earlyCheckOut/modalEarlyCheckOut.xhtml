@@ -17,7 +17,7 @@
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{pmsBundle.pms_early_check_out}" />
+						<aon:outputText value="#{bundle.pms_early_check_out}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -88,7 +88,7 @@
 										</aon:selectInputDate>
 
 										<aon:outputLabel for="ProjectReservation_chargeCheckOut"
-											value="#{pmsBundle.pms_charge_check_out}"
+											value="#{bundle.pms_charge_check_out}"
 											rendered="#{!empty controller.reservationFinances}" />
 										<aon:selectOneRadio id="ProjectReservation_chargeCheckOut"
 											value="#{controller.chargeCheckOut}"
@@ -99,7 +99,7 @@
 										</aon:selectOneRadio>
 
 										<aon:outputLabel for="ProjectReservation_earlyCheckOutPenalty"
-											value="#{pmsBundle.pms_penalty_days}"
+											value="#{bundle.pms_penalty_days}"
 											rendered="#{controller.chargeCheckOut and !controller.reservation.agencyHolder}" />
 										<aon:selectOneMenu id="ProjectReservation_earlyCheckOutPenalty"
 											value="#{controller.earlyCheckOutPenalty}"

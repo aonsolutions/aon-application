@@ -23,11 +23,11 @@
 					<aon:panelGrid columns="4" styleClass="aon-width-all" >
 						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formPersonContent.xhtml" />
 						
-						<aon:outputLabel value="#{payrollBundle.payroll_contract_sepe_communicationId}" />
+						<aon:outputLabel value="#{bundle.payroll_contract_sepe_communicationId}" />
 						<aon:outputText disabled="#{true}"
 							value="#{contract.sepeCommunicationId}" />
 													
-						<aon:outputLabel value="#{payrollBundle.payroll_contract_sepe_status}" />
+						<aon:outputLabel value="#{bundle.payroll_contract_sepe_status}" />
 						<aon:outputText disabled="#{true}"
 							value="#{contract.to.sepeStatus}" />
 							
@@ -36,11 +36,11 @@
 					<aon:panelTabSet id="contract-panelTab" selectedTab="#{contract.selectedTab}" 
 						switchType="ajax" immediate="true">
 						
-						<aon:panelTab id="mainData" label="#{payrollBundle.payroll_contract_general_data}" >
+						<aon:panelTab id="mainData" label="#{bundle.payroll_contract_general_data}" >
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
 						</aon:panelTab>
 
-						<aon:panelTab id="contrataData" label="#{sepeBundle.sepe_contrata_contract_specific_data}" 
+						<aon:panelTab id="contrataData" label="#{bundle.sepe_contrata_contract_specific_data}" 
 							actionListener="#{contractContrata.onContrataDataShow}">
 							<c:if test="#{contractContrata.enabledContrataEdition}">
 								<aon:div style="width:850px;">
@@ -54,7 +54,7 @@
 							</c:if>
 						</aon:panelTab>
 
-						<aon:panelTab id="additionalClausesData" label="#{payrollBundle.payroll_contract_additional_clauses}"
+						<aon:panelTab id="additionalClausesData" label="#{bundle.payroll_contract_additional_clauses}"
 							actionListener="#{contractClauses.onAdditionalClausesShow}">
 							<c:if test="#{not empty contract.to.model}">
 								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/additionalClauses/form.xhtml" />

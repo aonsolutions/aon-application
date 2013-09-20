@@ -8,7 +8,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:outputLabel for="Registry_id"
-		value="#{registryBundle.registry_relationed}" />
+		value="#{bundle.registry_relationed}" />
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
 		<ui:param name="lookupTo" value="#{controller.to.relatedRegistry}" />
 		<ui:param name="idRequired" value="#{true}" />
@@ -25,7 +25,7 @@
 	</aon:selectOneMenu>
 	
 	<aon:outputLabel for="comments"  
-		value="#{registryBundle.registry_observation}" />
+		value="#{bundle.registry_observation}" />
 	<aon:inputText id="comments"
 		styleClass="aon-form-input-text" size="64"
 		value="#{controller.to.comments}" />

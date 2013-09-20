@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.POS_ERROR_PRINT_TICKET;
 
 import java.util.Collections;
@@ -46,7 +45,6 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.ReportException;
 import com.code.aon.seller.Seller;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.finance.util.print.TicketPrinter;
 import com.code.aon.ui.form.FormUtil;
@@ -714,8 +712,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 			TicketPrinter tp = new TicketPrinter();
 			return tp.execute( getInvoice(), giftTicket );			
 		} catch (ReportException ex) {
-			String msg = AonUtil.getMessage(FINANCE_BUNDLE, POS_ERROR_PRINT_TICKET);
-			AonUtil.addErrorMessage(msg);
+			String msg = AonUtil.addErrorMessageFromBundle(POS_ERROR_PRINT_TICKET);
 			throw new AbortProcessingException(msg);
 		}
 	}

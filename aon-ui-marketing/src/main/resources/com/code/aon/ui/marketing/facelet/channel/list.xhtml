@@ -16,7 +16,7 @@
 		<aon:form id="channelList">
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_channel_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.marketing_channel_module}" />
 				<ui:param name="controller" value="#{channel}" />
 			</ui:include>
 
@@ -48,7 +48,7 @@
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150"
 							alias="Category.url" >
 							<f:facet name="header">
-								<aon:outputText value="#{marketingBundle.marketing_news_url}" />
+								<aon:outputText value="#{bundle.marketing_news_url}" />
 							</f:facet>
 							<aon:outputText value="#{to.url}"/>
 						</aon:column>

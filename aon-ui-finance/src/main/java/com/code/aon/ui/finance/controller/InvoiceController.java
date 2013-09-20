@@ -3,7 +3,6 @@ package com.code.aon.ui.finance.controller;
 import static com.code.aon.finance.enumeration.InvoiceAttachmentType.INVOICE;
 import static com.code.aon.finance.enumeration.InvoiceAttachmentType.RECEIPT;
 import static com.code.aon.ui.common.ICommonMessages.CALCULATE_FINANCES_AMOUNT_ERROR_KEY;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_PURCHASE_INVOICE_WARNING;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_UNRECORD_INVOICE_WARNING;
@@ -573,7 +572,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 				criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_TYPE), invoice.getType());
 				if (getManagerBean().getCount(criteria) > 0) {
 					String msg = (getInvoice().isPurchase()) ? FINANCE_DUPLICATE_PURCHASE_INVOICE_WARNING : FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING;
-					msg = AonUtil.getMessage(FINANCE_BUNDLE, msg); 
+					msg = AonUtil.getMessage(msg); 
 					AonUtil.addWarningMessage(msg + " [" + getInvoice().getReferenceCode() + "]");
 					return false;
 				}
@@ -620,7 +619,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 				financeTotal += finance.getAmount();
 			}
 		} catch (ManagerBeanException ex) {
-			String msg = AonUtil.getMessage(FINANCE_BUNDLE, CALCULATE_FINANCES_AMOUNT_ERROR_KEY) + ". " + ex.getMessage();
+			String msg = AonUtil.getMessage(CALCULATE_FINANCES_AMOUNT_ERROR_KEY) + ". " + ex.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, ex);
 		}
@@ -673,7 +672,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			}
 			invoiceFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
-			String msg = AonUtil.getMessage(FINANCE_BUNDLE, GENERATE_FINANCES_ERROR_KEY) + ". " + e.getMessage();
+			String msg = AonUtil.getMessage(GENERATE_FINANCES_ERROR_KEY) + ". " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}
@@ -687,12 +686,12 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		double invoiceTotal = getToInvoiceTotalPrice();
 		double financeTotal = getToInvoiceFinanceTotal();
 		if (financeTotal != 0 && invoiceTotal != financeTotal) {
-			String message = AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, UNABLE_RECORD_INACCURACY_ERROR_KEY);
+			String message = AonUtil.addErrorMessageFromBundle(UNABLE_RECORD_INACCURACY_ERROR_KEY);
 			throw new AbortProcessingException(message);
 		}
 		Invoice invoice = getInvoice();
 		if (invoice.isInvestment() && !isAmortizationForm()) {
-			String message = AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY);
+			String message = AonUtil.addErrorMessageFromBundle(UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY);
 			throw new AbortProcessingException(message);
 		}
 		
@@ -750,7 +749,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			if (ObjectUtils.equals(ACCOUNT_ENTRY_FORM_PAGE, this.backAction())) {
 				setBackAction(ACCOUNT_ENTRY_SEARCH_PAGE);
 				setBackActionListener(ACCOUNT_ENTRY_ON_EDIT_SEARCH_ACTION);
-				AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, FINANCE_UNRECORD_INVOICE_WARNING);
+				AonUtil.addWarningMessageFromBundle(FINANCE_UNRECORD_INVOICE_WARNING);
 			}
 		} catch (Exception e) {
 			try {

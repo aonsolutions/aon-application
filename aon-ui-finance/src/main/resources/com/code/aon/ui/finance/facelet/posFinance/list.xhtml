@@ -12,7 +12,7 @@
 		<aon:form id="posFinanceList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_posFinance_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_posFinance_module}" />
 				<ui:param name="controller" value="#{posFinance}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:define name="additionalToolbarContent">
@@ -30,9 +30,9 @@
 						actionListener="#{posFinance.checkNone}"
 						onclick="Richfaces.showModalPanel('waitProccess')"
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-			     	<aon:commandButton title="#{financeBundle.finance_add_batch}"
+			     	<aon:commandButton title="#{bundle.finance_add_batch}"
 						styleClass="aon-finding-toolbar-item aon-icon-newFolder"
-						value="#{financeBundle.finance_to_batch}"
+						value="#{bundle.finance_to_batch}"
 						rendered="#{posFinance.checkedCount > 0}"
 						actionListener="#{posFinance.onFinanceBatchShow}" 
 						reRender="showFinanceBatchWindow">
@@ -62,7 +62,7 @@
 					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" 
 						value="#{posFinanceSearch.payMethod.name}" />
 					<aon:outputText styleClass="aon-margin-left"
-						value="#{financeBundle.finance_selected_amount}:" />
+						value="#{bundle.finance_selected_amount}:" />
 					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold"
 						value="#{posFinance.selectedAmount}" >
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -87,7 +87,7 @@
 						<aon:column alias="Finance.dueDate"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_charge_date}" />
+								<aon:outputText value="#{bundle.finance_charge_date}" />
 							</f:facet>
 							<aon:outputText value="#{to.dueDate}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -136,13 +136,13 @@
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_source}" />
 								</f:facet>
-								<aon:outputText value="#{financeBundle.finance_direct}" 
+								<aon:outputText value="#{bundle.finance_direct}" 
 									rendered="#{to.invoice.project.id == null and !to.invoice.service and !to.invoice.advance}" />
 								<aon:outputText value="#{bundle.aon_reservation}" 
 									rendered="#{to.invoice.project.id != null and !to.invoice.service and !to.invoice.advance}" />
-								<aon:outputText value="#{financeBundle.finance_service}" 
+								<aon:outputText value="#{bundle.finance_service}" 
 									rendered="#{to.invoice.service}" />
-								<aon:outputText value="#{financeBundle.finance_money_advance}" 
+								<aon:outputText value="#{bundle.finance_money_advance}" 
 									rendered="#{to.invoice.advance}" />
 								<aon:commandLink id="reservationLink" immediate="true"
 									styleClass="aon-button-goto" style="padding-right: 20px;" 
@@ -164,7 +164,7 @@
 							<aon:div rendered="#{to.invoice.rectifier}">
 								<aon:outputText value="#{to.invoice.rectificationType}" />
 								<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
-									<aon:outputFormat value="#{financeBundle.finance_invoice_rectifier_message2}" styleClass="aon-bold aon-label-error">
+									<aon:outputFormat value="#{bundle.finance_invoice_rectifier_message2}" styleClass="aon-bold aon-label-error">
 										<f:param value="#{to.invoice.rectificationInvoice.referenceCode}" />
 									</aon:outputFormat>
 								</rich:toolTip>
@@ -172,7 +172,7 @@
 							<aon:div rendered="#{to.invoice.rectified}">
 								<aon:outputText value="#{to.invoice.rectificationType}" />
 								<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
-									<aon:outputFormat value="#{financeBundle.finance_invoice_rectified_message2}" styleClass="aon-bold">
+									<aon:outputFormat value="#{bundle.finance_invoice_rectified_message2}" styleClass="aon-bold">
 										<f:param value="#{to.invoice.rectificationInvoicesString}" />
 									</aon:outputFormat>
 								</rich:toolTip>

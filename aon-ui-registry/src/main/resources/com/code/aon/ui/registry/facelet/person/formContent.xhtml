@@ -47,7 +47,7 @@
 		</aon:inputText>
 
 		<aon:outputLabel for="Person_secondSurname"
-			value="#{registryBundle.registry_person_secondSurname}" />
+			value="#{bundle.registry_person_secondSurname}" />
 		<aon:inputText id="Person_secondSurname" 
 			value="#{controller.to.secondSurname}" size="64" maxlength="64">
 			<f:validateLength minimum="1" maximum="64" />
@@ -61,7 +61,7 @@
 		</aon:inputText>
 
 		<aon:outputLabel for="Person_birthDate"
-			value="#{registryBundle.registry_person_birthDate}" />
+			value="#{bundle.registry_person_birthDate}" />
 		<aon:div>
 			<aon:selectInputDate id="Person_birthDate" 
 				value="#{controller.to.birthDate}"
@@ -74,7 +74,7 @@
 				<aon:outputText value="&#160;#{bundle.aon_years}" rendered="#{controller.to.age!=null}"/>
 				<aon:outputText value=")" rendered="#{controller.to.age!=null}"/>
 			</aon:div>
-			<aon:outputText value="#{registryBundle.registry_nationality}" styleClass="aon-margin-left aon-italic"/>
+			<aon:outputText value="#{bundle.registry_nationality}" styleClass="aon-margin-left aon-italic"/>
 			<aon:selectOneMenu id="Person_nationality" value="#{controller.to.registry.nationality}"
 				styleClass="aon-margin-left">
 				<f:selectItem value="#{null}" itemLabel="-"/>
@@ -82,7 +82,7 @@
 			</aon:selectOneMenu>
 		</aon:div>
 
-		<aon:outputLabel for="Person_socialSecurityNumber" value="#{registryBundle.registry_person_nss}" />
+		<aon:outputLabel for="Person_socialSecurityNumber" value="#{bundle.registry_person_nss}" />
 		<aon:panelGroup id="Person_SSNumberPanel">
 			<aon:inputText id="Person_socialSecurityNumber" value="#{controller.to.socialSecurityNumber}"
 				size="32" maxlength="12" >
@@ -104,13 +104,13 @@
 				value="&#160;" />
 		</aon:panelGroup>
 
-		<aon:outputLabel for="Person_gender" value="#{registryBundle.registry_person_gender}" />
+		<aon:outputLabel for="Person_gender" value="#{bundle.registry_person_gender}" />
 		<aon:div>
 			<aon:selectOneMenu id="Person_gender"
 				value="#{controller.to.gender}">
 				<f:selectItems value="#{registryCollections.genders}" />
 			</aon:selectOneMenu>
-			<aon:outputText value="#{registryBundle.registry_person_marital_status}" styleClass="aon-margin-left aon-italic"/>
+			<aon:outputText value="#{bundle.registry_person_marital_status}" styleClass="aon-margin-left aon-italic"/>
 			<aon:selectOneMenu id="Person_maritalStatus"
 				styleClass="aon-margin-left"
 				value="#{controller.to.maritalStatus}">

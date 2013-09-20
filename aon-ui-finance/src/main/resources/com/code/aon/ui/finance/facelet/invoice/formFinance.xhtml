@@ -17,7 +17,7 @@
 				<aon:div styleClass="aon-bold aon-margin-bottom"
 					rendered="#{!invoiceController.readOnly and financeController.advancedFinancesAvailable}">
 					<aon:outputText styleClass="aon-icon-info" style="padding-left: 1.3em;"
-						value="#{financeBundle.finance_advances_available}" />
+						value="#{bundle.finance_advances_available}" />
 					<aon:commandLink id="AdvanceFinances-import"
 						value="#{bundle.aon_import}"
 						styleClass="aon-label-info"
@@ -57,7 +57,7 @@
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
-								<aon:outputLabel for="Finance_DueDate" value="#{financeBundle.finance_finance_date}" />
+								<aon:outputLabel for="Finance_DueDate" value="#{bundle.finance_finance_date}" />
 							</f:facet>
 							<aon:outputText rendered="#{formList}" value="#{to.dueDate}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -143,7 +143,7 @@
 											rendered="#{controller.bankCreationEnabled}"
 											ajaxSingle="true"
 											actionListener="#{controller.onAddRegistryBank}"
-											onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{controller.to.registryName}?')) return false;"	
+											onclick="if (!confirm('#{bundle.config_bank_creation_confirm} #{controller.to.registryName}?')) return false;"	
 											styleClass="aon-editDataTable-button aon-lookupButton-new" />
 									</aon:panelGroup>
 									<aon:commandLink id="bankAccount_hide_manualInput" ajaxSingle="true"
@@ -210,7 +210,7 @@
 												rendered="#{controller.bankCreationEnabled}"
 												ajaxSingle="true"
 												actionListener="#{controller.onAddRegistryBank}"
-												onclick="if (!confirm('#{configBundle.config_bank_creation_confirm} #{controller.to.registryName}?')) return false;"	
+												onclick="if (!confirm('#{bundle.config_bank_creation_confirm} #{controller.to.registryName}?')) return false;"	
 												styleClass="aon-editDataTable-button aon-lookupButton-new" />
 										</aon:panelGroup>
 										<aon:commandLink id="bankAccount_hide_manualInput-New" ajaxSingle="true"
@@ -286,7 +286,7 @@
 							reRender="aonContent" />
 						<aon:commandLink id="finance_exclude" immediate="true"
 							styleClass="aon-icon-exclude" style="padding-right: 10px;"
-							value="&#160;" title="#{financeBundle.finance_exclude_advance}" 
+							value="&#160;" title="#{bundle.finance_exclude_advance}" 
 							rendered="#{!invoiceController.readOnly and formList and to.advance}"
 							actionListener="#{financeController.onExcludeAdvance}"
 							reRender="aonContent" />

@@ -6,7 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:outputLabel for="Item_purchase_price" value="#{productBundle.product_purchase_price}" />
+	<aon:outputLabel for="Item_purchase_price" value="#{bundle.product_purchase_price}" />
 	<aon:inputText id="Item_purchase_price" 
 		value="#{controller.to.purchasePrice}" required="true" size="10"
 		valueChangeListener="#{controller.onPurchasePriceChanged}" 
@@ -24,7 +24,7 @@
 		<f:validateDoubleRange />
 	</aon:inputText>
 
-	<aon:outputLabel for="Item_price" value="#{productBundle.product_sales_base_price}" />
+	<aon:outputLabel for="Item_price" value="#{bundle.product_sales_base_price}" />
 	<aon:inputText id="Item_price" 
 		value="#{controller.to.price}" required="true" size="10"
 		valueChangeListener="#{controller.onPriceChanged}" 

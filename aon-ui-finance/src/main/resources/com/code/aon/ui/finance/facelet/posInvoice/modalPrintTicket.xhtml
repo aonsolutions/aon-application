@@ -42,13 +42,13 @@
 								<aon:div styleClass="aon-note-internal">
 									<aon:panelGroup>
 										<aon:outputText id="printTicketStatus"
-											value="#{financeBundle.finance_pos_loading_applet}" />
+											value="#{bundle.finance_pos_loading_applet}" />
 										<rich:jQuery name="changePrintTicketPrinting"
 											selector="#printTicketStatus"
-											timing="onJScall" query="text('#{financeBundle.finance_pos_printing_ticket}');" />													
+											timing="onJScall" query="text('#{bundle.finance_pos_printing_ticket}');" />													
 										<rich:jQuery name="changePrintTicketEror"
 											selector="#printTicketStatus"
-											timing="onJScall" query="text('#{financeBundle.finance_pos_error_print_ticket}');" />													
+											timing="onJScall" query="text('#{bundle.finance_pos_error_print_ticket}');" />													
 									</aon:panelGroup>
 								</aon:div>
 							</aon:div>

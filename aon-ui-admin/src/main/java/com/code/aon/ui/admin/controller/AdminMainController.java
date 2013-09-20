@@ -1,6 +1,5 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.ADMIN_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.MAIL_ACCOUNT_ENTERPRISE_TITLE;
 import static com.code.aon.ui.common.ICommonMessages.SIGNATURE_ENTERPRISE_TITLE;
 import static com.code.aon.ui.common.ICommonMessages.USER_PASSWORD_INVALID;
@@ -104,8 +103,7 @@ public class AdminMainController implements IAdminConstants {
 		if (amUser.equals(_user) && amPassword.equals(crypted)) {
 			initSysAdmin(event);
 		} else {
-			String message = AonUtil.getMessage(USER_PASSWORD_INVALID, _user);
-			AonUtil.addErrorMessage(message);
+			AonUtil.addErrorMessageFromBundle(USER_PASSWORD_INVALID, _user);
 		}
 		_user = null;
 		_password = null;
@@ -136,7 +134,7 @@ public class AdminMainController implements IAdminConstants {
 		signature.updateUser(user);
 		signature.onSearch(null);
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		String title = (user == null) ? AonUtil.getMessage(ADMIN_BUNDLE, SIGNATURE_ENTERPRISE_TITLE) : null;
+		String title = (user == null) ? AonUtil.getMessage(SIGNATURE_ENTERPRISE_TITLE) : null;
 		mailConfig.setSignatureTitle(title);
 	}
 
@@ -145,7 +143,7 @@ public class AdminMainController implements IAdminConstants {
 		account.updateUser(user);
 		account.onSearch(null);		
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		String title = (user == null) ? AonUtil.getMessage(ADMIN_BUNDLE, MAIL_ACCOUNT_ENTERPRISE_TITLE) : null;
+		String title = (user == null) ? AonUtil.getMessage(MAIL_ACCOUNT_ENTERPRISE_TITLE) : null;
 		mailConfig.setMailAccountTitle(title);
 		mailConfig.setSkipDefaultAccountColumn(true);
 	}

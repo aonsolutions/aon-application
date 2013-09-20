@@ -52,7 +52,7 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelTabSet selectedTab="#{enterprise.selectedTab}">				
 					
-					<aon:panelTab label="#{registryBundle.registry_addresses}">
+					<aon:panelTab label="#{bundle.registry_addresses}">
 						<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 							<ui:param name="skipTypeColumn" value="true" />
 							<ui:param name="controller" value="#{companyAddress}" />
@@ -68,7 +68,7 @@
 						</aon:panelTab>
 					</c:if>
 					
-					<aon:panelTab id="workplace" label="#{companyBundle.company_workplaces}">
+					<aon:panelTab id="workplace" label="#{bundle.company_workplaces}">
 						<ui:include	src="/com/code/aon/ui/company/facelet/workplace/tab_grid.xhtml">
 							<ui:param name="controller" value="#{enterpriseWorkPlace}" />
 							<ui:param name="showPayrollData" value="#{true}" />
@@ -76,11 +76,11 @@
 					</aon:panelTab>
 					
 					<c:if test="#{aonConfiguration.bean.company.showRegistryBank}">
-						<aon:panelTab label="#{registryBundle.registry_banks_module}">
+						<aon:panelTab label="#{bundle.registry_banks_module}">
 							<aon:panel>
 								<f:facet name="header">
 									<aon:outputText
-										value="#{registryBundle.registry_banks_module}" />
+										value="#{bundle.registry_banks_module}" />
 								</f:facet>
 								<ui:include src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
 									<ui:param name="controller" value="#{companyRbank}" />
@@ -89,7 +89,7 @@
 							</aon:panel>
 							<aon:panel>
 								<f:facet name="header">
-									<aon:outputText value="#{configBundle.config_predef_paymethod}" />
+									<aon:outputText value="#{bundle.config_predef_paymethod}" />
 								</f:facet>
 								<ui:include src="/com/code/aon/ui/registry/facelet/rpaymethod/tab_grid.xhtml">
 									<ui:param name="controller" value="#{companyRPayMethod}" />
@@ -100,7 +100,7 @@
 									
 					<c:if test="#{aonConfiguration.bean.company.showDirStaff}">
 						<aon:panelTab id="dirStaff"
-							label="#{registryBundle.registry_dir_staff}">
+							label="#{bundle.registry_dir_staff}">
 							<aon:div rendered="#{true}">
 								<ui:include	src="/com/code/aon/ui/registry/facelet/rdirstaff/tab_grid.xhtml">
 									<ui:param name="controller" value="#{companyDirStaff}" />
@@ -110,7 +110,7 @@
 					</c:if>
 					
 					<c:if test="#{aonConfiguration.bean.enterprise.showFinanceData and aonRole.financeOperator}">
-						<aon:panelTab id="finance" label="#{registryBundle.registry_finance_data_module}">
+						<aon:panelTab id="finance" label="#{bundle.registry_finance_data_module}">
 							<ui:include	src="/com/code/aon/ui/company/facelet/enterprise/financeTemplate.xhtml" />
 						</aon:panelTab>
 					</c:if>
@@ -141,7 +141,7 @@
 					</c:if>	
 								
 					<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
-						<aon:panelTab id="contractClauses" label="#{payrollBundle.payroll_contract_clauses}">
+						<aon:panelTab id="contractClauses" label="#{bundle.payroll_contract_clauses}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
 								<ui:param name="controller" value="#{enterpriseClauses}" />
 							</ui:include>

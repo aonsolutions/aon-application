@@ -16,7 +16,7 @@
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{financeBundle.finance_to_batch}" />
+						<aon:outputText value="#{bundle.finance_to_batch}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -63,8 +63,8 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;">
 									<aon:selectOneRadio styleClass="aon-padding-bottom"
 										value="#{controller.newBatch}">
-										<f:selectItem itemLabel="#{financeBundle.finance_create_finance_batch}" itemValue="#{true}" />
-										<f:selectItem itemLabel="#{financeBundle.finance_modify_finance_batch}" itemValue="#{false}" />
+										<f:selectItem itemLabel="#{bundle.finance_create_finance_batch}" itemValue="#{true}" />
+										<f:selectItem itemLabel="#{bundle.finance_modify_finance_batch}" itemValue="#{false}" />
 										<a4j:support event="onclick" ajaxSingle="true" 
 											actionListener="#{controller.onBatchModeChanged}" reRender="financeBatchGrid" />
 									</aon:selectOneRadio>
@@ -99,7 +99,7 @@
 										</aon:selectOneMenu>
 
 										<aon:outputLabel for="FinanceBatchList"
-											value="#{financeBundle.finance_batches}"
+											value="#{bundle.finance_batches}"
 											rendered="#{!controller.newBatch}" />
 										<aon:selectOneMenu id="FinanceBatchList"
 											value="#{controller.financeBatch}" required="true"

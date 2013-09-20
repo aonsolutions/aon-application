@@ -26,7 +26,7 @@
 				columnClasses="aon-panelGrid-odd aon-width-half aon-text-right
 							  ,aon-panelGrid-even aon-width-half aon-text-right">
 	
-				<aon:outputText value="#{statBundle.stat_offer_amount2}" />
+				<aon:outputText value="#{bundle.stat_offer_amount2}" />
 				<aon:outputText value="#{projectStat.totalOffered}">
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
@@ -34,12 +34,12 @@
 				<aon:outputText value="&#160;" />
 				<aon:outputText value="&#160;" />
 	
-				<aon:outputText value="#{statBundle.stat_income_amount}" />
+				<aon:outputText value="#{bundle.stat_income_amount}" />
 				<aon:outputText value="#{projectStat.totalSales}">
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
 	
-				<aon:outputText value="#{statBundle.stat_cost_amount}" />
+				<aon:outputText value="#{bundle.stat_cost_amount}" />
 				<aon:outputText value="#{projectStat.totalCosts}">
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
@@ -58,7 +58,7 @@
 				<f:facet name="header">
 					<aon:outputText value="Desglose de Costos" />	
 				</f:facet>
-				<aon:outputText value="#{statBundle.stat_invoice_cost_amount}" />
+				<aon:outputText value="#{bundle.stat_invoice_cost_amount}" />
 				<aon:outputText value="#{projectStat.totalInvoiceCosts}">
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
@@ -149,8 +149,8 @@
 				Array.prototype.reduce=function(fun){var len=this.length&#62;&#62;&#62;0;if(typeof fun!="function")throw new TypeError;if(len==0&#38;&#38;arguments.length==1)throw new TypeError;var i=0;if(arguments.length&#62;=2)var rv=arguments[1];else{do{if(i in this){var rv=this[i++];break}if(++i&#62;=len)throw new TypeError;}while(true)}for(;i&#60;len;i++)if(i in this)rv=fun.call(undefined,rv,this[i],i,this);return rv};
 				var data = google.visualization.arrayToDataTable([
 					['', ''],
-					['#{statBundle.stat_income_amount}'		 , #{projectStat.totalSales}],
-					['#{statBundle.stat_invoice_cost_amount}', #{projectStat.totalInvoiceCosts}],
+					['#{bundle.stat_income_amount}'		 , #{projectStat.totalSales}],
+					['#{bundle.stat_invoice_cost_amount}', #{projectStat.totalInvoiceCosts}],
 					['#{bundle.tas_labour}'      , #{projectStat.totalDailyTracking}]
 				]);
 				var options = {
@@ -162,9 +162,9 @@
 				
 				data = google.visualization.arrayToDataTable([
 				  ['TITLE',
-				   	'#{statBundle.stat_offer_amount2}',
-				   	'#{statBundle.stat_income_amount}',
-				   	'#{statBundle.stat_invoice_cost_amount}',
+				   	'#{bundle.stat_offer_amount2}',
+				   	'#{bundle.stat_income_amount}',
+				   	'#{bundle.stat_invoice_cost_amount}',
 				   	'#{bundle.tas_labour}',
 				   	'#{bundle.aon_result}'],
 				  ['',    

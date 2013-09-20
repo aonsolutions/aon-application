@@ -14,7 +14,7 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>					
 					
-		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_address_module}" >
+		<aon:panelCollapsible expanded="false" label="#{bundle.registry_address_module}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 				<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml" />
 			</aon:panelGrid>
@@ -27,7 +27,7 @@
 		</aon:panelCollapsible>
 				
 		<c:if test="#{aonConfiguration.bean.creditor.showSegment}">
-			<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_segment_module}">
+			<aon:panelCollapsible expanded="false" label="#{bundle.registry_segment_module}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 					<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/searchContent.xhtml" />
 				</aon:panelGrid>

@@ -1,6 +1,5 @@
 package com.code.aon.ui.commercial.util;
 
-import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_OFFER_EMAIL_BODY;
 import static com.code.aon.ui.common.ICommonMessages.COMMERCIAL_OFFER_EMAIL_SUBJECT;
 
@@ -50,12 +49,12 @@ public class CommercialEmailUtil extends CompanyEmailUtil {
 	}
 	
 	public String getEmailSubject( Offer offer ) {
-		String message = AonUtil.getMessage(COMMERCIAL_BUNDLE, COMMERCIAL_OFFER_EMAIL_SUBJECT);
+		String message = AonUtil.getMessage(COMMERCIAL_OFFER_EMAIL_SUBJECT);
 		return MessageFormat.format(message, offer.getReferenceCode() );
 	}
 	
 	public String getEmailBody( Offer offer ) throws UnsupportedEncodingException {
-		String bodyMessage = AonUtil.getMessage(COMMERCIAL_BUNDLE, COMMERCIAL_OFFER_EMAIL_BODY); 
+		String bodyMessage = AonUtil.getMessage(COMMERCIAL_OFFER_EMAIL_BODY); 
 		return MessageFormat.format(bodyMessage, offer.getReferenceCode(), offer.getIssueDate() );
 	}
 	

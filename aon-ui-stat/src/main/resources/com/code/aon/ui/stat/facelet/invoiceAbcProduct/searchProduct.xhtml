@@ -14,13 +14,13 @@
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
 				<c:if test="#{stat.invoiceType==1}">
-					<ui:param name="toolbarTitle" value="#{statBundle.stat_abc_product}" />
+					<ui:param name="toolbarTitle" value="#{bundle.stat_abc_product}" />
 				</c:if>
 				<c:if test="#{stat.invoiceType==0}">
-					<ui:param name="toolbarTitle" value="#{statBundle.stat_abc_product}" />
+					<ui:param name="toolbarTitle" value="#{bundle.stat_abc_product}" />
 				</c:if>
 				<c:if test="#{stat.invoiceType==2}">
-					<ui:param name="toolbarTitle" value="#{statBundle.stat_abc_expense}" />
+					<ui:param name="toolbarTitle" value="#{bundle.stat_abc_expense}" />
 				</c:if>
 				<ui:param name="toolbarDescription" value="#{bundle.aon_search}" />		
 				<ui:param name="skipResetButton" value="true" />

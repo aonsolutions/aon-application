@@ -79,7 +79,7 @@
 							
 								<c:if test="#{controller.communicator.testEnv}">
 									<aon:div style="color: red; font-weight:bold; width: 100%; text-align: center; margin-bottom: -1em;">
-										<aon:outputText value="#{sepeBundle.sepe_test_environment_active}" />
+										<aon:outputText value="#{bundle.sepe_test_environment_active}" />
 									</aon:div>
 								</c:if>
 								
@@ -89,16 +89,16 @@
 										
 										<aon:panelGroup>
 											<aon:outputLabel for="contrata_user" 
-												value="#{sepeBundle.sepe_login_user}" />
+												value="#{bundle.sepe_login_user}" />
 											<br />
-											<aon:outputText value="#{sepeBundle.sepe_login_user2}" />
+											<aon:outputText value="#{bundle.sepe_login_user2}" />
 										</aon:panelGroup>	
 										<aon:inputText id="contrata_user" 
 											required="#{true}" style="width: 100%;" 
 											value="#{controller.communicator.user}" />
 										
 										<aon:outputLabel for="contrata_passwd" 
-											value="#{sepeBundle.sepe_login_passwd}" />
+											value="#{bundle.sepe_login_passwd}" />
 										<aon:div id="passwd-div">
 											<aon:inputSecret id="contrata_passwd" 
 												required="#{true}" style="width: 100%;"
@@ -117,7 +117,7 @@
 											value="#{controller.communicator.loginRemember}" />
 										<aon:outputLabel for="contrataLogin_remember"
 											styleClass="aon-italic" 
-											value="#{sepeBundle.sepe_login_contrataLoginRemember}" />
+											value="#{bundle.sepe_login_contrataLoginRemember}" />
 									</aon:div>
 									
 								</aon:div>

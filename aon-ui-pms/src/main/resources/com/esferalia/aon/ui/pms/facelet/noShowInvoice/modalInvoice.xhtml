@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{pmsBundle.pms_noShow_invoice_module}" />
+						<aon:outputText value="#{bundle.pms_noShow_invoice_module}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -62,7 +62,7 @@
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
 
 										<aon:outputLabel for="NoShowInvoice_issueDate"
-											value="#{financeBundle.finance_invoice_date}" />
+											value="#{bundle.finance_invoice_date}" />
 										<aon:selectInputDate id="NoShowInvoice_issueDate" 
 											value="#{controller.noShowDate}" required="true"
 											timeZone="#{timeZoneController.timeZone}"
@@ -76,7 +76,7 @@
 										</aon:selectInputDate>
 
 										<aon:outputLabel for="NoShowInvoice_noShowPenalty"
-											value="#{pmsBundle.pms_penalty_days}" />
+											value="#{bundle.pms_penalty_days}" />
 										<aon:selectOneMenu id="NoShowInvoice_noShowPenalty"
 											value="#{controller.noShowPenalty}" required="true"
 											ajaxSingle="true">
@@ -114,7 +114,7 @@
 										</aon:selectOneMenu>
 
 										<aon:outputLabel for="NoShowInvoice_daysToPayment"
-											value="#{registryBundle.registry_days_to_first_payment}" />
+											value="#{bundle.registry_days_to_first_payment}" />
 										<aon:panelGroup>
 											<aon:inputText id="NoShowInvoice_daysToPayment"
 												value="#{controller.noShowDaysToPayment}"
@@ -123,7 +123,7 @@
 												<f:validateDoubleRange minimum="0" />
 											</aon:inputText>
 
-											<aon:outputText value="#{financeBundle.finance_pay_date}" 
+											<aon:outputText value="#{bundle.finance_pay_date}" 
 												styleClass="aon-italic aon-margin-left"/>
 											<aon:outputText id="NoShowInvoice_dueDate" 
 												value="#{controller.noShowPaymentDate}" 

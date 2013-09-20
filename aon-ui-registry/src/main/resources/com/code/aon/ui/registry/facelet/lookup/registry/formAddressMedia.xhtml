@@ -51,7 +51,7 @@
 	</c:if>
 		
 	<c:if test="#{!skipEmail}">
-		<aon:outputLabel for="#{pojoName}_email" value="#{registryBundle.registry_email}" />
+		<aon:outputLabel for="#{pojoName}_email" value="#{bundle.registry_email}" />
 		<aon:inputText id="#{pojoName}_email" 
 			value="#{controllerLookupListener.email.value}" size="64" maxlength="64" onblur="toLowerCase(this);" />
 	</c:if>

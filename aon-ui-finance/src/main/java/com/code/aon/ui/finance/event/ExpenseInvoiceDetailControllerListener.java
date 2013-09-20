@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.event;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_EXPENSE_INVOICE_CHECK_WARNING;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_EXPENSE_INVOICE_QUOTA_WARNING;
 
@@ -118,14 +117,14 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 			if (invoiceDetail.getVatQuota() != calculatedVatQuota) {
 				String taxType = TaxType.VAT.getName(AonUtil.getCurrentLocale());
 				String quotaFormatted = formatter.format(calculatedVatQuota);
-				AonUtil.addWarningMessage(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_EXPENSE_INVOICE_QUOTA_WARNING, taxType, quotaFormatted));
+				AonUtil.addWarningMessageFromBundle(FINANCE_EXPENSE_INVOICE_QUOTA_WARNING, taxType, quotaFormatted);
 			}
 			if (invoiceDetail.getRetentionQuota() != calculatedRetentionQuota) {
 				String taxType = TaxType.RETENTION.getName(AonUtil.getCurrentLocale());
 				String quotaFormatted = formatter.format(calculatedRetentionQuota);
-				AonUtil.addWarningMessage(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_EXPENSE_INVOICE_QUOTA_WARNING, taxType, quotaFormatted));
+				AonUtil.addWarningMessageFromBundle(FINANCE_EXPENSE_INVOICE_QUOTA_WARNING, taxType, quotaFormatted);
 			}
-			AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, FINANCE_EXPENSE_INVOICE_CHECK_WARNING);
+			AonUtil.addWarningMessageFromBundle(FINANCE_EXPENSE_INVOICE_CHECK_WARNING);
 		}
 	}
 

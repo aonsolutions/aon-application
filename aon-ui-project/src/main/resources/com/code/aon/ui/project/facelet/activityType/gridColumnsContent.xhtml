@@ -25,7 +25,7 @@
 	<c:if test="#{showProjectType}">
 		<aon:column alias="ActivityType.projectType.id" styleClass="aon-editDataTable-text aon-width-auto">
 			<f:facet name="header">
-				<aon:outputLabel for="ActivityType_projectType" value="#{projectBundle.project_project_type}" />
+				<aon:outputLabel for="ActivityType_projectType" value="#{bundle.project_project_type}" />
 			</f:facet>
 			<aon:outputText value="#{to.projectType.description}" rendered="#{formList}"/>
 			<aon:selectOneMenu id="ActivityType_projectType" rendered="#{formEdit}"

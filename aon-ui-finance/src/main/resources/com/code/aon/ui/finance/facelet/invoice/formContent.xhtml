@@ -31,7 +31,7 @@
 						rendered="#{!invoiceController.readOnly and financeController.allPending}"
 						ajaxSingle="true" />
 					<aon:commandButton id="invoiceNextNumber" value="&#160;"
-						title="#{financeBundle.finance_invoice_find_next_number}"
+						title="#{bundle.finance_invoice_find_next_number}"
 						styleClass="aon-finding-toolbar-item aon-icon-ambito aon-finding-toolbar-item-no-border"
 						rendered="#{!invoiceController.readOnly and financeController.allPending}"
 						actionListener="#{invoiceController.onFindNextFreeNumber}"
@@ -72,7 +72,7 @@
 
 				<c:if test="#{company.EInvoice}">
 					<aon:outputText value="&#160;"
-						title="#{signBundle.sign_signed}"
+						title="#{bundle.sign_signed}"
 						styleClass="aon-icon aon-icon-signed" 
 						rendered="#{!invoiceController.new and invoiceController.to.signed}" />
 				</c:if>						
@@ -137,7 +137,7 @@
 	</c:if>
 
 	<aon:outputLabel for="Invoice_taxDate" 
-		value="#{financeBundle.finance_tax_date}"
+		value="#{bundle.finance_tax_date}"
 		rendered="#{!invoiceController.new}" />
 	<aon:div rendered="#{!invoiceController.new}">
 		<c:if test="#{aonRole.accountingOperator}">
@@ -216,7 +216,7 @@
 			<f:selectItems value="#{invoiceController.addresses}" />
 		</aon:selectOneMenu>
 		<aon:outputLabel styleClass="aon-italic"
-			value="#{registryBundle.registry_no_address_available}"
+			value="#{bundle.registry_no_address_available}"
 			rendered="#{addressController.to.id == null and ((invoiceController.readOnly and invoiceController.to.registryAddress.id == null) or (!invoiceController.readOnly and invoiceController.addressCount == 0))}" />
 		<aon:outputText styleClass="aon-bold"
 			value="#{invoiceController.address}" 
@@ -230,7 +230,7 @@
 		</aon:outputText>
 		<aon:div layout="inline" styleClass="aon-margin-left">
 			<aon:commandButton id="invoiceAddressButton"
-				value="#{registryBundle.registry_address_other}"
+				value="#{bundle.registry_address_other}"
 				styleClass="aon-icon-commandButton aon-icon-go aon-bold aon-italic"
 				rendered="#{!invoiceController.new and !invoiceController.readOnly}"
 				actionListener="#{invoiceController.onInvoiceAddressShow}"

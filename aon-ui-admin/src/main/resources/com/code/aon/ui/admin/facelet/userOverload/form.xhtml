@@ -12,7 +12,7 @@
 		<aon:form id="userOverloadForm">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{adminBundle.admin_overload_users}" />
+				<ui:param name="toolbarTitle" value="#{bundle.admin_overload_users}" />
 				<ui:param name="controller" value="#{userOverload}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
 			</ui:include>
@@ -38,7 +38,7 @@
 					<aon:selectBooleanCheckbox id="ApplicationUser_active"
 						value="#{userOverload.to.active}" />
 							
-					<aon:outputText value="#{adminBundle.admin_profiles}" />
+					<aon:outputText value="#{bundle.admin_profiles}" />
 					<a4j:repeat value="#{userOverload.userProfiles}" var="userProfile">
 						<aon:div>
 							<aon:selectBooleanCheckbox value="#{userProfile.checked}" />								

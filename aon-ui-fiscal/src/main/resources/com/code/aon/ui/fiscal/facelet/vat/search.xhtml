@@ -14,7 +14,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{financeBundle.finance_vat_report_module}" />
+					value="#{bundle.finance_vat_report_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 				<ui:param name="skipClearButton" value="true" />
@@ -36,7 +36,7 @@
 					<aon:methodParam name="searchAction" value="vat_report_list" />
 
 					<aon:outputLabel for="reportDate"
-						value="#{financeBundle.finance_report_date}" />
+						value="#{bundle.finance_report_date}" />
 					<aon:panelGrid columns="1">
 						<aon:selectInputDate id="reportDate" value="#{vatReport.date}"
 							timeZone="#{timeZoneController.timeZone}"
@@ -44,7 +44,7 @@
 					</aon:panelGrid>
 
 					<aon:outputLabel for="Vat_period"
-						value="#{financeBundle.finance_vat_period}" />
+						value="#{bundle.finance_vat_period}" />
 					<aon:panelGrid columns="2">
 						<aon:inputText id="Vat_Year" 
 							value="#{vatReport.year}" size="5"
@@ -62,7 +62,7 @@
 					</aon:panelGrid>
 
 					<aon:outputLabel for="entryDate-From"
-						value="#{financeBundle.finance_tax_date}" />
+						value="#{bundle.finance_tax_date}" />
 					<aon:panelGrid columns="3">
 						<aon:selectInputDate id="entryDate-From"
 							value="#{vatReport.fromDate}"
@@ -75,7 +75,7 @@
 					</aon:panelGrid>
 
 					<aon:outputLabel for="invoiceDate-From"
-						value="#{financeBundle.finance_invoice_date}" />
+						value="#{bundle.finance_invoice_date}" />
 					<aon:panelGrid columns="3">
 						<aon:selectInputDate id="invoiceDate-From"
 							value="#{vatReport.fromInvoiceDate}"
@@ -116,7 +116,7 @@
 					</c:if>
 
 					<aon:outputLabel for="Vat_type"
-						value="#{financeBundle.finance_invoice_order_by}" />
+						value="#{bundle.finance_invoice_order_by}" />
 					<aon:selectOneMenu id="Vat_type" value="#{vatReport.order}" style="margin-left: 0.5em;">
 						<f:selectItems value="#{fiscalCollections.invoiceReportOrders}" />
 					</aon:selectOneMenu>
@@ -126,7 +126,7 @@
 						<aon:selectBooleanCheckbox id="Account_show_cover"
 							value="#{vatReport.coverVisible}" />
 						<aon:outputLabel for="Account_show_cover"
-							value="#{accountingBundle.accounting_show_cover}" />
+							value="#{bundle.accounting_show_cover}" />
 					</aon:div>
 
 					<aon:outputText value="&#160;" />
@@ -135,7 +135,7 @@
 							reRender="Account_page_counter"
 							value="#{vatReport.counterVisible}" />
 						<aon:outputLabel for="Account_continue_counter"
-							value="#{accountingBundle.accounting_continue_counter}" />
+							value="#{bundle.accounting_continue_counter}" />
 						<aon:inputText id="Account_page_counter"
 							styleClass="aon-margin-left"
 							disabled="#{!vatReport.counterVisible}"

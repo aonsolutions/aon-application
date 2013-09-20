@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.util;
 
 import static com.code.aon.ui.common.ICommonMessages.FACTURAE_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_EINVOICE_EMAIL_SUBJECT;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EMAIL_BODY;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EMAIL_SUBJECT;
@@ -72,7 +71,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 	
 	public String getEmailSubject( Invoice invoice ) {
 		String key = invoice.isSigned() ? FINANCE_EINVOICE_EMAIL_SUBJECT : FINANCE_INVOICE_EMAIL_SUBJECT; 
-		String message = AonUtil.getMessage(FINANCE_BUNDLE, key);
+		String message = AonUtil.getMessage(key);
 		return formatEmailSubject(invoice, message);
 	}
 
@@ -81,16 +80,16 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 	}
 	
 	public String getEmailSubject() {
-		return AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_EMAIL_SUBJECT);
+		return AonUtil.getMessage(FINANCE_INVOICE_EMAIL_SUBJECT);
 	}
 
 	public String getEmailBody( Invoice invoice )  {
-		String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_EMAIL_BODY); 
+		String message = AonUtil.getMessage(FINANCE_INVOICE_EMAIL_BODY); 
 		return formatEmailBody(invoice, message);
 	}
 	
 	public String getEmailBody()  {
-		return AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_EMAIL_BODY); 
+		return AonUtil.getMessage(FINANCE_INVOICE_EMAIL_BODY); 
 	}
 
 	private String formatEmailBody( Invoice invoice, String message )  {
@@ -132,7 +131,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 			aonFile.setMimeType(MimeType.MIME_XML);
 		} catch (AonException e) {
 			LOGGER.error( e.getMessage(), e );
-			AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FACTURAE_ERROR, invoice.getReferenceCode());			
+			AonUtil.addErrorMessageFromBundle(FACTURAE_ERROR, invoice.getReferenceCode());			
 			FileUtils.deleteQuietly(file);
 		}
 		return aonFile;
@@ -145,7 +144,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		try {
 			String[] emails = getAdministrativeEmails(invoice.getRegistry());
 			if ( ArrayUtils.isEmpty(emails) ) {
-				String text = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_WITHOUT_EMAIL);
+				String text = AonUtil.getMessage(FINANCE_INVOICE_WITHOUT_EMAIL);
 				String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName() );				
 				logger.error( message );				
 			} else {
@@ -158,13 +157,13 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 				if ( saveSent ) {
 					getEmailSender().storeMessage(aonMessage);
 				}
-				String text = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_SEND_EMAIL);
+				String text = AonUtil.getMessage(FINANCE_INVOICE_SEND_EMAIL);
 				String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName(), ArrayUtils.toString(emails) );
 				logger.info( message );
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
-			String text = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_SEND_EMAIL_ERROR);
+			String text = AonUtil.getMessage(FINANCE_INVOICE_SEND_EMAIL_ERROR);
 			String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName() );
 			logger.error( message );
 		} finally {

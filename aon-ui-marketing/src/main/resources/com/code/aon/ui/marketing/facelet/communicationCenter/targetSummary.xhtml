@@ -18,7 +18,7 @@
 		<aon:outputText value="#{bundle.aon_address}" />
 		<aon:outputText value="#{communicationCenter.fullAddress}" /> 
 		
-		<aon:outputText value="#{registryBundle.registry_city}" 
+		<aon:outputText value="#{bundle.registry_city}" 
 			rendered="#{communicationCenter.mainAddress.city != null}" />
 		<aon:outputText value="#{communicationCenter.mainAddress.city}"
 			rendered="#{communicationCenter.mainAddress.city != null}" />
@@ -49,7 +49,7 @@
 	<aon:outputText value="#{communicationCenter.fax.value}"
 		rendered="#{communicationCenter.fax != null}" />
 
-	<aon:outputText value="#{registryBundle.registry_email}"
+	<aon:outputText value="#{bundle.registry_email}"
 		rendered="#{communicationCenter.email != null}" />								
 	<aon:outputText value="#{communicationCenter.email.value}"
 		rendered="#{communicationCenter.email != null}" />

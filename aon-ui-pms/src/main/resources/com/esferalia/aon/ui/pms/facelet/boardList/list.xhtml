@@ -12,7 +12,7 @@
 		<aon:form id="boardList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_boardList_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_boardList_module}" />
 				
 				<ui:define name="additionalToolbarContent">
 				
@@ -71,7 +71,7 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 						<aon:outputLabel for="BoardList_boardItemFilter_id" styleClass="aon-bold aon-margin-left"
-							value="#{pmsBundle.pms_board}" />
+							value="#{bundle.pms_board}" />
 						<aon:selectOneMenu id="BoardList_boardItemFilter_id"
 							value="#{boardList.params.boardItemFilter}" >
 							<f:selectItem itemLabel=" - " itemValue="null" />
@@ -83,7 +83,7 @@
 							<h:selectBooleanCheckbox id="boardPageBreak" 
 								value="#{boardList.params.boardPageBreak}" />
 							<aon:outputLabel for="boardPageBreak"
-								value="#{pmsBundle.pms_board_page_break}" />
+								value="#{bundle.pms_board_page_break}" />
 						</aon:div>
 					</aon:panelGrid>
 										
@@ -108,14 +108,14 @@
 						
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_board}" />
+								<aon:outputText value="#{bundle.pms_board}" />
 							</f:facet>
 							<aon:outputText value="#{to.boardName}" />
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_room}" />
+								<aon:outputText value="#{bundle.pms_room}" />
 							</f:facet>
 							<aon:outputText value="#{to.room}" />
 						</aon:column>

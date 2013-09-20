@@ -19,16 +19,16 @@
 			actionListener="#{fBatchDetail.checkNone}" reRender="fBatchDetailToolBarDiv,fBatchDetailDataDiv"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-		<aon:commandButton title="#{financeBundle.finance_remove_batch}"
+		<aon:commandButton title="#{bundle.finance_remove_batch}"
 			styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
-			value="#{financeBundle.finance_remove_batch}"
+			value="#{bundle.finance_remove_batch}"
 			rendered="#{fBatchDetail.checkedCount > 0}"
 			actionListener="#{fbatch.onRemoveSelected}" reRender="financeBatchForm,fbatchPanelTabSet"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 		<aon:htmlCommandLink target="_blank"
-			title="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
-			value="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
+			title="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
+			value="#{fbatch.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
 			actionListener="#{fbatch.downloadDisk}" rendered="#{fbatch.aebOutput!=null}"
 			styleClass="aon-finding-toolbar-item aon-icon-mail-save"
 			onclick="this.style.display='none';" />
@@ -55,7 +55,7 @@
 	
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_finance_date}" />
+					<aon:outputText value="#{bundle.finance_finance_date}" />
 				</f:facet>
 				<aon:outputText value="#{to.finance.dueDate}">
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"

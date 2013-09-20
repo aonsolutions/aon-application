@@ -1,6 +1,5 @@
 package com.code.aon.ui.supplier.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.SUPPLIER_REPORT;
 
 import javax.faces.event.AbortProcessingException;
@@ -57,7 +56,7 @@ public class SupplierController extends RegistryController {
 	}
 
 	   public String getReportTitle(){
-	    	return AonUtil.getMessage(REGISTRY_BUNDLE, SUPPLIER_REPORT);
+	    	return AonUtil.getMessage(SUPPLIER_REPORT);
 		}
 
 }

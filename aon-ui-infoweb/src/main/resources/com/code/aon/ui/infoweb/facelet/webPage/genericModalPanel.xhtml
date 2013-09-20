@@ -15,7 +15,7 @@
 
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{infowebBundle.infoweb_page_generic}" />
+						<aon:outputText value="#{bundle.infoweb_page_generic}" />
 					</aon:div>
 				</f:facet>				
 				<f:facet name="controls">
@@ -68,7 +68,7 @@
 								</aon:selectOneMenu>
 
 								<aon:outputLabel for="Generic_content_richTextEnabled"
-									value="#{infowebBundle.infoweb_page_rich_enable}" />
+									value="#{bundle.infoweb_page_rich_enable}" />
 								<aon:selectBooleanCheckbox id="Generic_content_richTextEnabled"
 									value="#{webPage.richTextEnabled}">
 									<a4j:support ajaxSingle="true" event="onclick"

@@ -30,7 +30,7 @@
 										<aon:commandLink id="target-marketing" 
 											action="target_search-marketing" 
 											actionListener="#{target.onEditSearch}"
-											value="#{commercialBundle.commercial_target_module}" />
+											value="#{bundle.commercial_target_module}" />
 									</aon:div>
 								</aon:div>							
 							</aon:panelGrid>
@@ -40,39 +40,39 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-report aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{marketingBundle.marketing_news_module}" />
+								<aon:outputText value="#{bundle.marketing_news_module}" />
 							</f:facet>							
 							<aon:div styleClass="aon-direct-access-list">	
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="channel" 
 										action="channel_list"
 										actionListener="#{channel.onSearch}" 
-										value="#{marketingBundle.marketing_channel_module}"/>	
+										value="#{bundle.marketing_channel_module}"/>	
 								</aon:div>							
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="news"
 										action="news_list"
 										actionListener="#{news.onSearch}"
-										value="#{marketingBundle.marketing_news_module}" />
+										value="#{bundle.marketing_news_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="newsletter"
 										action="newsletter_list"
 										actionListener="#{newsletter.onSearch}"
-										value="#{marketingBundle.marketing_newsletter_module}" />
+										value="#{bundle.marketing_newsletter_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="publishParameter-marketing" 
 										action="publishParameter-marketing" 
 										actionListener="#{publishParameter.onInit}"
-										value="#{configBundle.config_publish_parameters_module}" >
+										value="#{bundle.config_publish_parameters_module}" >
 										<f:setPropertyActionListener target="#{publishParameter.showOnlyFTP}" value="#{true}" />
 									</aon:commandLink>
 								</aon:div>								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="rss" action="rss_form"
 										actionListener="#{rss.onInit}"
-										value="#{marketingBundle.marketing_news_rss}" />
+										value="#{bundle.marketing_news_rss}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
@@ -89,13 +89,13 @@
 									<aon:commandLink id="marketingCampaign"
 										action="marketingCampaign_list"
 										actionListener="#{marketingCampaign.onSearch}"
-										value="#{marketingBundle.marketing_campaign_module}" />
+										value="#{bundle.marketing_campaign_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="communicationCenter"
 										action="communicationCenter"
 										actionListener="#{communicationCenter.onInit}"
-										value="#{commercialBundle.commercial_communication_center_module}" />										
+										value="#{bundle.commercial_communication_center_module}" />										
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
@@ -107,14 +107,14 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-reservation">
 								<f:facet name="header">
-									<aon:outputText value="#{marketingBundle.marketing_survey_module}" />
+									<aon:outputText value="#{bundle.marketing_survey_module}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="question"
 											action="question_list"
 											actionListener="#{question.onEditSearch}"
-											value="#{registryBundle.registry_question_module}" >
+											value="#{bundle.registry_question_module}" >
 											<aon:actionListener method="#{question.onSearch}" />
 										</aon:commandLink>
 									</aon:div>
@@ -122,13 +122,13 @@
 										<aon:commandLink id="surveyResponse"
 											action="surveyResponse_list"
 											actionListener="#{surveyResponse.onSearch}"
-											value="#{marketingBundle.marketing_survey_response_module}" />
+											value="#{bundle.marketing_survey_response_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="survey"
 											action="survey_list"
 											actionListener="#{survey.onEditSearch}" 
-											value="#{marketingBundle.marketing_survey_module}" >
+											value="#{bundle.marketing_survey_module}" >
 											<aon:actionListener method="#{survey.onSearch}" />
 										</aon:commandLink>
 									</aon:div>								
@@ -139,20 +139,20 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-mail">
 								<f:facet name="header">
-									<aon:outputText value="#{marketingBundle.marketing_template_module}" />
+									<aon:outputText value="#{bundle.marketing_template_module}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="htmlTemplate" 
 											action="htmlTemplate_list"
 											actionListener="#{htmlTemplate.onEditSearch}"
-											value="#{marketingBundle.marketing_html_template_module}" />
+											value="#{bundle.marketing_html_template_module}" />
 									</aon:div>															
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="marketingTemplate"
 											action="marketingTemplate_list"
 											actionListener="#{marketingTemplate.onEditSearch}" 
-											value="#{marketingBundle.marketing_template_module}" >
+											value="#{bundle.marketing_template_module}" >
 											<aon:actionListener method="#{marketingTemplate.onSearch}" />
 										</aon:commandLink>
 									</aon:div>
@@ -160,7 +160,7 @@
 										<aon:commandLink id="images-marketing" 
 											action="companyImages-marketing" 
 											actionListener="#{companyWebInfo.onInit}"
-											value="#{companyBundle.company_images_module}">
+											value="#{bundle.company_images_module}">
 											<aon:actionListener method="#{companyImages.onEditSearch}" />
 											<aon:actionListener method="#{companyImages.onSearch}" />
 										</aon:commandLink>

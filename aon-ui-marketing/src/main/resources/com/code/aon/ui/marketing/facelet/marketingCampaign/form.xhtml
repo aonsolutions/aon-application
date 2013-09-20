@@ -16,7 +16,7 @@
 		<aon:form id="campaignForm">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_campaign_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.marketing_campaign_module}" />
 				<ui:param name="controller" value="#{marketingCampaign}" />
 			</ui:include>
 
@@ -53,7 +53,7 @@
 				<aon:div styleClass="aon-form-group" rendered="#{!marketingCampaign.new}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="campaignActionData" value="#{marketingBundle.marketing_actions}" />
+							<aon:outputLabel for="campaignActionData" value="#{bundle.marketing_actions}" />
 						</aon:div>
 					</aon:div>
 					<ui:include src="/com/code/aon/ui/marketing/facelet/campaignAction/list.xhtml" />

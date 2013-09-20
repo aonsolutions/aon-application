@@ -1,6 +1,5 @@
 package com.code.aon.ui.company.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.COMPANY_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_IMAGE_DUPLICATED_NAME;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_IMAGE_INVALID_CHARACTER;
 
@@ -151,14 +150,14 @@ public class CompanyImagesController extends RegistryAttachController {
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_DESCRIPTION), imageName);
 		int count = bean.getCount(criteria);
 		if ( count > 0 ) {
-			FacesMessage message = new FacesMessage(AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_IMAGE_DUPLICATED_NAME));
+			FacesMessage message = new FacesMessage(AonUtil.getMessage(COMPANY_IMAGE_DUPLICATED_NAME));
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException( message );
 		}
 		for( int i = 0; i < imageName.length(); i++ ) {
 			char c = imageName.charAt(i);
 			if (! (Character.isLetter(c) || Character.isDigit(c) || (c == ' ') ) ) {
-				String text = AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_IMAGE_INVALID_CHARACTER, c);
+				String text = AonUtil.getMessage(COMPANY_IMAGE_INVALID_CHARACTER, c);
 				FacesMessage message = new FacesMessage(text);
 				message.setSeverity(FacesMessage.SEVERITY_ERROR);				
 				throw new ValidatorException( message );										

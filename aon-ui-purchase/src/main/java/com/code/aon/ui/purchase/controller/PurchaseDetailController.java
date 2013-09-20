@@ -1,6 +1,10 @@
 package com.code.aon.ui.purchase.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.INVOICE_DELIVERY;
+import static com.code.aon.ui.common.ICommonMessages.LINE;
 import static com.code.aon.ui.common.ICommonMessages.QUANTITY_PATTERN;
+import static com.code.aon.ui.common.ICommonMessages.TRANSFERED_TO;
+import static com.code.aon.ui.common.ICommonMessages.UNITS;
 
 import java.text.DecimalFormat;
 import java.util.Iterator;
@@ -19,7 +23,6 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
@@ -131,7 +134,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 
 	public String getLineStatusInfo() throws ManagerBeanException {
 		StringBuffer info = new StringBuffer(64);
-		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.BUNDLE_NAME, QUANTITY_PATTERN));
+		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(QUANTITY_PATTERN));
 
 		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
@@ -141,20 +144,20 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		while (iterator.hasNext()) {
 			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
 			info.append("<aon:div>");
-			info.append(AonUtil.getMessage(ICommonMessages.TRANSFERED_TO));
+			info.append(AonUtil.getMessage(TRANSFERED_TO));
 			info.append(" ");
-			info.append(AonUtil.getMessage(ICommonMessages.INVOICE_DELIVERY));
+			info.append(AonUtil.getMessage(INVOICE_DELIVERY));
 			info.append(" ");
 			info.append(incomeDetail.getIncome().getReferenceCode());
 			info.append(" - ");
-			info.append(AonUtil.getMessage(ICommonMessages.LINE));
+			info.append(AonUtil.getMessage(LINE));
 			info.append(" ");
 			info.append(incomeDetail.getLine());
 			if (purchaseDetail.getQuantity() > incomeDetail.getQuantity()) {
 				info.append(" (");
 				info.append(formatter.format(incomeDetail.getQuantity()));
 				info.append(" ");
-				info.append(AonUtil.getMessage(ICommonMessages.UNITS));
+				info.append(AonUtil.getMessage(UNITS));
 				info.append(")");
 			}
 			info.append("</aon:div>");

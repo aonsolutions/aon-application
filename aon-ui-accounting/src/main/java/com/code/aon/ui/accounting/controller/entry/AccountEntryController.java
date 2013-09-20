@@ -228,7 +228,7 @@ public class AccountEntryController extends BasicController {
             model.setRowIndex(0);
             super.onSelect(null);
         } else {
-			AonUtil.addInfoMessage( AonUtil.getMessage(SEARCH_NO_RESULTS) );
+			AonUtil.addInfoMessageFromBundle(SEARCH_NO_RESULTS);
 			onEditSearch(event);
         }
     }

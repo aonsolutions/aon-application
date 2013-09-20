@@ -140,10 +140,10 @@
 		<aon:menuItem id="favorites" action="actionFavorite"
 			iconClass="aon-icon-favorite"
 			actionListener="#{actionFavorite.onInit}"
-			value="#{groupwareBundle.aon_favorites_management}" />
+			value="#{bundle.aon_favorites_management}" />
 		<c:if test="#{!aonRole.sysAdmin}">
 			<aon:menuItem id="advancedMode" action="advancedMode"
-				value="#{adminBundle.admin_advanced_mode}" />
+				value="#{bundle.admin_advanced_mode}" />
 		</c:if>
 		<aon:menuItem id="changePassword" action="changePassword_form"
 			iconClass="aon-icon-changePassword"

@@ -49,7 +49,7 @@
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText
-						value="#{registryBundle.registry_dir_staff_is_shareholder}" />
+						value="#{bundle.registry_dir_staff_is_shareholder}" />
 				</f:facet>
 				<aon:div rendered="#{formList}"
 					styleClass="#{to.shareHolder?'aon-text-center aon-icon-checked':'aon-text-center aon-icon-check'}">
@@ -71,7 +71,7 @@
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText
-						value="#{registryBundle.registry_dir_staff_is_representative}" />
+						value="#{bundle.registry_dir_staff_is_representative}" />
 				</f:facet>
 				<aon:div rendered="#{formList}"
 					styleClass="#{to.representative?'aon-text-center aon-icon-checked':'aon-text-center aon-icon-check'}">
@@ -87,7 +87,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText	value="#{registryBundle.registry_dir_staff_is_director}" />
+					<aon:outputText	value="#{bundle.registry_dir_staff_is_director}" />
 				</f:facet>
 				<aon:div rendered="#{formList}"
 					styleClass="#{to.director?'aon-text-center aon-icon-checked':'aon-text-center aon-icon-check'}">
@@ -106,7 +106,7 @@
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText
-						value="#{registryBundle.registry_dir_staff_is_representative_labor}" />
+						value="#{bundle.registry_dir_staff_is_representative_labor}" />
 				</f:facet>
 				<aon:div rendered="#{formList}"
 					styleClass="#{to.representativeLabor?'aon-text-center aon-icon-checked':'aon-text-center aon-icon-check'}">
@@ -123,7 +123,7 @@
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText
-						value="#{registryBundle.registry_dir_staff_percent_shares}" />
+						value="#{bundle.registry_dir_staff_percent_shares}" />
 				</f:facet>
 				<aon:outputText value="#{to.percentShare}" rendered="#{formList}">
 					<f:convertNumber pattern="#,##0.00" />
@@ -151,7 +151,7 @@
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText
-						value="#{registryBundle.registry_dir_staff_share_number}" />
+						value="#{bundle.registry_dir_staff_share_number}" />
 				</f:facet>
 				<aon:outputText value="#{to.shareNumber}" rendered="#{formList}" />
 				<aon:inputText id="RegistryDirStaff_shareNumber-Edit"
@@ -175,7 +175,7 @@
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText
-						value="#{registryBundle.registry_dir_staff_nominal_value}" />
+						value="#{bundle.registry_dir_staff_nominal_value}" />
 				</f:facet>
 				<aon:outputText value="#{to.nominalValue}" rendered="#{formList}">
 					<f:convertNumber pattern="#,##0.00" />
@@ -202,7 +202,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{registryBundle.registry_dir_staff_date}" />
+					<aon:outputText value="#{bundle.registry_dir_staff_date}" />
 				</f:facet>
 				<aon:outputText value="#{to.dueDate}"
 					rendered="#{to.id!=controller.to.id}">

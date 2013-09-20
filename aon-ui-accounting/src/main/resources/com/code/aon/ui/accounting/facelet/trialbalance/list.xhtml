@@ -54,7 +54,7 @@
 
 			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
 				<aon:div style="background-color:#f6f5e3; padding:5px; margin-bottom:5px;">
-					<aon:outputText value="#{accountingBundle.accounting_params}:" styleClass="aon-bold"/>
+					<aon:outputText value="#{bundle.accounting_params}:" styleClass="aon-bold"/>
 					
 					<aon:outputText value="#{bundle.aon_financial_year}:" rendered="#{trialBalance.parameters.periodNotNull}" styleClass="aon-italic aon-margin-left" style="font-size: 0.9em;"/>
 					<aon:outputText value="#{trialBalance.parameters.period.name}" rendered="#{trialBalance.parameters.periodNotNull}" styleClass="aon-margin-left"/>
@@ -115,7 +115,7 @@
 							style="margin-left: #{(to.level-1)/2}em;" 
 							styleClass="aon-dataTable-link"
 							actionListener="#{trialBalance.onStatement}"
-							title="#{accountingBundle.accounting_statement_module}"
+							title="#{bundle.accounting_statement_module}"
 							action="accountStatement_list">
 							<aon:outputText value="#{to.code}" />
 							<f:setPropertyActionListener 

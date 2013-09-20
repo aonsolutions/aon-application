@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_CUSTOMER_REQUIRED_ERROR;
 
 import java.io.StringWriter;
@@ -143,8 +142,7 @@ public class RectifierInvoiceController implements IFinanceConstants {
 
 	public void onSearch(ActionEvent event) {
 		if (customer == null || customer.getId() == null) {
-			String msg = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_CUSTOMER_REQUIRED_ERROR);
-			AonUtil.addErrorMessage(msg);
+			String msg = AonUtil.addErrorMessageFromBundle(FINANCE_CUSTOMER_REQUIRED_ERROR);
 			throw new AbortProcessingException(msg);
 		}
 		

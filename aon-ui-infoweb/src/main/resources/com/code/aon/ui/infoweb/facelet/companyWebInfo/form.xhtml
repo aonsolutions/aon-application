@@ -25,7 +25,7 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" dir="true" style="width:100%">
 			
-					<aon:outputLabel for="WebInfo_slogan" value="#{infowebBundle.infoweb_data_slogan}" />
+					<aon:outputLabel for="WebInfo_slogan" value="#{bundle.infoweb_data_slogan}" />
 					<aon:inputText id="WebInfo_slogan" 
 						size="64" maxlength="64" value="#{companyWebInfo.to.slogan}" />
 			
@@ -34,14 +34,14 @@
 						cols="90" rows="3" value="#{companyWebInfo.to.schedule}" />
 			
 					<aon:outputLabel for="Generic_content_richTextEnabled"
-						value="#{infowebBundle.infoweb_page_rich_enable}" />
+						value="#{bundle.infoweb_page_rich_enable}" />
 					<aon:selectBooleanCheckbox id="Generic_content_richTextEnabled"
 						value="#{webPage.richTextEnabled}">
 						<a4j:support ajaxSingle="true" event="onclick"
 							reRender="WebInfo_commercialDescription" />
 					</aon:selectBooleanCheckbox>
 
-					<aon:outputLabel for="WebInfo_commercialDescription" value="#{infowebBundle.infoweb_data_short_description}" />
+					<aon:outputLabel for="WebInfo_commercialDescription" value="#{bundle.infoweb_data_short_description}" />
 					<rich:editor 
 						id="WebInfo_commercialDescription"
 						value="#{companyWebInfo.to.commercialDescription}"

@@ -2,8 +2,6 @@ package com.code.aon.ui.commercial.controller;
 
 public interface ICommercialConstants {
 	
-	String BUNDLE_NAME = "commercialBundle";
-
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************

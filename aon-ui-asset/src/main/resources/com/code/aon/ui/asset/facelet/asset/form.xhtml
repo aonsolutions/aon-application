@@ -13,7 +13,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{assetBundle.asset_asset_module}" />
+					value="#{bundle.asset_asset_module}" />
 				<ui:param name="controller" value="#{asset}" />
 			</ui:include>
 
@@ -42,7 +42,7 @@
 
 				<aon:panel rendered="#{!asset.new}">
 					<f:facet name="header">
-						<aon:outputLabel value="#{assetBundle.asset_asset_feature}" />
+						<aon:outputLabel value="#{bundle.asset_asset_feature}" />
 					</f:facet>
 					<ui:include src="/com/code/aon/ui/asset/facelet/assetFeature/grid.xhtml" >
 						<ui:param name="controller" value="#{assetFeature}" />
@@ -51,19 +51,19 @@
 					
 				<aon:panel id="assetRequestData" rendered="#{!asset.new}">
 					<f:facet name="header">
-						<aon:outputLabel value="#{assetBundle.asset_asset_requests}" />
+						<aon:outputLabel value="#{bundle.asset_asset_requests}" />
 					</f:facet>
 					<aon:div styleClass="aon-scroll-area">
 						<aon:div styleClass="aon-panelGrid-search">
 							<aon:panelGrid id="id" columns="6">
 								<ui:insert name="searchContent" />
-									<aon:outputLabel value="#{financeBundle.finance_cashflow_from_date}" />
+									<aon:outputLabel value="#{bundle.finance_cashflow_from_date}" />
 									<aon:selectInputDate renderAsPopup="true"
 										rendered="#{to==activityBasic.to}"
 										popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"
 										value="#{activityLines.fromDateFilter}" enableManualInput="true" />
 			
-									<aon:outputLabel value="#{assetBundle.asset_asset_toDate}" />
+									<aon:outputLabel value="#{bundle.asset_asset_toDate}" />
 									<aon:selectInputDate renderAsPopup="true"
 										rendered="#{to==activityBasic.to}"
 										popupDateFormat="#{bundle.aon_date2_pattern}" inputSize="8"

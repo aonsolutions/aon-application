@@ -36,7 +36,7 @@
 			<a4j:support event="onchange" actionListener="#{contract.onActivityChanged}" ajaxSingle="true" reRender="enterpriseCCCs"/>
 		</aon:selectOneMenu>
 
-		<aon:outputLabel for="enterpriseCCCs" value="#{companyBundle.company_enterprise_ccc}"
+		<aon:outputLabel for="enterpriseCCCs" value="#{bundle.company_enterprise_ccc}"
 			style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:selectOneMenu id="enterpriseCCCs" required="true"
 			disabled="#{contract.to.activity.id==null}"
@@ -46,7 +46,7 @@
 		
 <!--  
 		<aon:outputLabel for="Contract_tc2Code"
-			value="#{payrollBundle.payroll_contract_contract_code}" />
+			value="#{bundle.payroll_contract_contract_code}" />
 		<aon:selectOneMenu id="Contract_tc2Code" required="true" 
 			value="#{contract.params.contractModelCode}">
 			<f:selectItem itemLabel="-" value="#{null}" />
@@ -58,7 +58,7 @@
 -->
 		
 		<aon:outputLabel for="Contract_contractCode"
-			value="#{payrollBundle.payroll_contract_contract_code}" />
+			value="#{bundle.payroll_contract_contract_code}" />
 		<aon:selectOneMenu id="Contract_contractCode" required="true" 
 			disabled="#{contract.params.contractTransformCode!=null}"
 			value="#{contract.params.contractCode}">
@@ -68,7 +68,7 @@
 		</aon:selectOneMenu>
 		
 		<aon:outputLabel for="Contract_contractModel"
-			value="#{payrollBundle.payroll_contract_contract_model}" />
+			value="#{bundle.payroll_contract_contract_model}" />
 		<aon:selectOneMenu id="Contract_contractModel" 
 			disabled="#{contract.params.contractTransformCode!=null}"
 			value="#{contract.to.model}">
@@ -78,7 +78,7 @@
 		
 		<aon:outputLabel for="Contract_contractTransformCode"
 			rendered="#{contract.params.contractTransformCode!=null}"
-			value="#{payrollBundle.payroll_contract_contract_code}" />
+			value="#{bundle.payroll_contract_contract_code}" />
 		<aon:selectOneMenu id="Contract_contractTransformCode" required="true" 
 			rendered="#{contract.params.contractTransformCode!=null}"
 			value="#{contract.params.contractTransformCode}">
@@ -89,7 +89,7 @@
 		
 		<aon:outputLabel for="Contract_contractTransformModel"
 			rendered="#{contract.params.contractTransformCode!=null}"
-			value="#{payrollBundle.payroll_contract_contract_model}" />
+			value="#{bundle.payroll_contract_contract_model}" />
 		<aon:selectOneMenu id="Contract_contractTransformModel" 
 			rendered="#{contract.params.contractTransformCode!=null}"
 			value="#{contract.to.model}">
@@ -99,7 +99,7 @@
 		
 		<c:if test="#{!contract.skipPayrollData}" >
 			<aon:outputLabel  
-				value="#{payrollBundle.payroll_agreementLevel_category_level}" />
+				value="#{bundle.payroll_agreementLevel_category_level}" />
 			<aon:panelGrid id="agreementLevelCategory-content" columns="2" 
 				columnClasses="aon-panelGrid-even aon-noborder aon-italic, aon-panelGrid-even aon-noborder" >
 	
@@ -113,7 +113,7 @@
 					<ui:define name="afterLookupContent">
 						<aon:outputText id="agreementLevelCategory-info" 
 							value="&#160;&#160;&#160;&#160;&#160;"
-							title="#{payrollBundle.payroll_contract_no_category_selected}"
+							title="#{bundle.payroll_contract_no_category_selected}"
 							styleClass="aon-icon-info"
 							rendered="#{contract.agreement.id!=null and contract.to.agreementLevelCategory.id==null}" />
 					</ui:define>
@@ -128,14 +128,14 @@
 						<f:selectItems value="#{contract.agreementLevelCategories}" />
 					</aon:selectOneMenu>
 					<aon:outputLabel for="agreementLevelCategory-alias" styleClass="aon-margin-left aon-margin-right" 
-						value="#{payrollBundle.payroll_display_as}" />
+						value="#{bundle.payroll_display_as}" />
 					<aon:inputText id="agreementLevelCategory-alias" maxlength="64"
 						value="#{contract.to.categoryDescription}" />
 				</aon:panelGroup>
 			</aon:panelGrid>
 		
 			<aon:outputLabel for="quote_group"
-				value="#{payrollBundle.payroll_contract_quote_group}" />
+				value="#{bundle.payroll_contract_quote_group}" />
 			<aon:selectOneMenu id="quote_group" required="true" 
 				value="#{contract.params.quoteGroup}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
@@ -163,7 +163,7 @@
 			</aon:selectInputDate>
 			<aon:outputLabel for="Contract_seniorityDate" 
 				styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
-				value="#{payrollBundle.payroll_salary_seniority_date2}" />
+				value="#{bundle.payroll_salary_seniority_date2}" />
 			<aon:panelGroup id="seniorityDateContainer">
 				<aon:selectInputDate id="Contract_seniorityDate"
 					value="#{contract.to.seniorityDate}" required="true" 
@@ -174,7 +174,7 @@
 					<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
 				</aon:selectInputDate>
 				<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
-					title="#{payrollBundle.payroll_salary_start_date_seniority_date_difference}"
+					title="#{bundle.payroll_salary_start_date_seniority_date_difference}"
 					styleClass="aon-icon-info"
 					rendered="#{contract.to.seniorityDateDifferent}" />
 			</aon:panelGroup>
@@ -202,7 +202,7 @@
 
 <!--  
 			<aon:outputLabel for="gross_salary"
-				value="#{payrollBundle.payroll_contract_gross_salary}" />
+				value="#{bundle.payroll_contract_gross_salary}" />
 			<aon:div id="grossSalaryDiv">
 				<aon:inputText id="gross_salary"
 					disabled="#{contract.params.agreementSalaryCheck}"
@@ -215,7 +215,7 @@
 					<a4j:support event="onclick" reRender="gross_salary" ajaxSingle="true" />
 				</aon:selectBooleanCheckbox>
 				<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{payrollBundle.payroll_contract_like_agreement}&#160;" />
+					value="#{bundle.payroll_contract_like_agreement}&#160;" />
 			</aon:div>
 -->			
 	
@@ -238,7 +238,7 @@
 		</c:if>
 		
 		<c:if test="#{contract.trainingContract}" >
-				<aon:outputLabel for="contract_subsidized" value="#{payrollBundle.payroll_contract_subsidized}" />
+				<aon:outputLabel for="contract_subsidized" value="#{bundle.payroll_contract_subsidized}" />
 				<aon:selectBooleanCheckbox id="contract_subsidized" value="#{contract.params.subsidized}" />
 			
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/course/lookup.xhtml" >
@@ -246,7 +246,7 @@
 					<ui:param name="skipNewButton" value="#{true}" />
 				</ui:include>
 				
-				<aon:outputText value="#{payrollBundle.payroll_trainingCourse_trainingCalendar}" />
+				<aon:outputText value="#{bundle.payroll_trainingCourse_trainingCalendar}" />
 				<aon:div>
 					<aon:outputLabel for="trainingStartDate" 
 						styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 

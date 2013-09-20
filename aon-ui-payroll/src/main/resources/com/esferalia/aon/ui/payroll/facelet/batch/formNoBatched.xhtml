@@ -23,17 +23,17 @@
 				actionListener="#{controllerList.checkHandler.checkNone}" reRender="listDataDiv"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
 	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-			<aon:commandButton title="#{payrollBundle.payroll_refine_search}"
+			<aon:commandButton title="#{bundle.payroll_refine_search}"
 				styleClass="aon-finding-toolbar-item aon-icon-search"
-				value="#{payrollBundle.payroll_refine_search}"
+				value="#{bundle.payroll_refine_search}"
 				actionListener="#{controller.onEditSearchList}" 
 				reRender="showListSearchWindow">
 				<f:setPropertyActionListener target="#{controllerList.checkHandler.showListSearchWindow}"
 					value="#{true}" />
 			</aon:commandButton>
-			<aon:commandButton title="#{payrollBundle.payroll_add_batch}"
+			<aon:commandButton title="#{bundle.payroll_add_batch}"
 				styleClass="aon-finding-toolbar-item aon-icon-newFolder"
-				value="#{payrollBundle.payroll_add_batch}"
+				value="#{bundle.payroll_add_batch}"
 				rendered="#{controllerList.checkHandler.checkedCount > 0}"
 				actionListener="#{controller.onBatchSelected}" reRender="batchForm, batchPanelTabSet"
 				onclick="Richfaces.showModalPanel('waitProccess')" 

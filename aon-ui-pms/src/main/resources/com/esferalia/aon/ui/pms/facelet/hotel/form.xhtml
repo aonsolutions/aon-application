@@ -10,7 +10,7 @@
 		<aon:form id="hotelForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_hotel_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_hotel_module}" />
 				<ui:param name="controller" value="#{hotel}" />
 				<ui:param name="skipSearchButton" value="true" />
 				<ui:param name="skipResetButton" value="#{companyCollections.currentUserEnterprisesCount == 0}" />
@@ -66,7 +66,7 @@
 					</aon:div>
 
 					<aon:outputLabel for="Hotel_workPlace_address2" 
-						value="#{registryBundle.registry_address_detail}" />
+						value="#{bundle.registry_address_detail}" />
 					<aon:div>
 						<aon:inputText id="Hotel_workPlace_address2"
 							value="#{hotel.to.workPlace.address.address2}"
@@ -77,7 +77,7 @@
 					</aon:div>
 
 					<aon:outputLabel for="Hotel_workPlace_city"
-						value="#{registryBundle.registry_city}" />
+						value="#{bundle.registry_city}" />
 					<aon:inputText id="Hotel_workPlace_city"
 						value="#{hotel.to.workPlace.address.city}" required="true"
 						size="30" maxlength="64" />
@@ -123,7 +123,7 @@
 					</aon:div>
 
 					<aon:outputLabel for="Customer_id" 
-						value="#{pmsBundle.pms_direct_customer}" />
+						value="#{bundle.pms_direct_customer}" />
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{hotel.to.workPlace.customer}" />
 						<ui:param name="idRequired" value="#{true}" />
@@ -131,7 +131,7 @@
 					</ui:include>
 
 					<aon:outputLabel for="Hotel_serviceCatalogue" 
-						value="#{pmsBundle.pms_service_catalogue}" />
+						value="#{bundle.pms_service_catalogue}" />
 					<aon:selectOneMenu id="Hotel_serviceCatalogue" 
 						value="#{hotel.to.serviceCatalogue}">
 						<f:selectItem itemLabel=" - " itemValue="#{null}" />
@@ -139,7 +139,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Item_id_advance" 
-						value="#{pmsBundle.pms_advance_item}" />
+						value="#{bundle.pms_advance_item}" />
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{hotel.to.itemAdvance}" />
 						<ui:param name="lookupSuffix" value="_advance" />
@@ -147,7 +147,7 @@
 					</ui:include>
 
 					<aon:outputLabel for="Item_id_noshow" 
-						value="#{pmsBundle.pms_no_show_item}" />
+						value="#{bundle.pms_no_show_item}" />
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{hotel.to.itemNoShow}" />
 						<ui:param name="lookupSuffix" value="_noshow" />
@@ -155,7 +155,7 @@
 					</ui:include>
 
 					<aon:outputLabel for="Item_id_penalty" 
-						value="#{pmsBundle.pms_penalty_item}" />
+						value="#{bundle.pms_penalty_item}" />
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{hotel.to.itemPenalty}" />
 						<ui:param name="lookupSuffix" value="_penalty" />
@@ -163,7 +163,7 @@
 					</ui:include>
 
 					<aon:outputLabel for="Hotel_sheetChanging"
-						value="#{pmsBundle.pms_hotel_sheet_changing}" />
+						value="#{bundle.pms_hotel_sheet_changing}" />
 					<aon:inputText id="Hotel_sheetChanging"
 						value="#{hotel.to.sheetChanging}"
 						size="2" maxlength="2" />
@@ -180,7 +180,7 @@
 				
 				<c:if test="#{!hotel.new}">
 					<aon:panelTabSet id="hotelTab" >
-						<aon:panelTab id="department" label="#{companyBundle.company_departments}">
+						<aon:panelTab id="department" label="#{bundle.company_departments}">
 							<ui:include	src="/com/code/aon/ui/company/facelet/workplaceDepartment/tab_grid.xhtml">
 								<ui:param name="controller" value="#{workplaceDepartment}" />
 							</ui:include>

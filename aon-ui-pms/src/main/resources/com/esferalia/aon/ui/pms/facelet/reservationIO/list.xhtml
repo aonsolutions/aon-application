@@ -10,7 +10,7 @@
 		<aon:form id="posShiftList">
 			
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservationIO_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_reservationIO_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
 				
 				<ui:define name="toolbarContent">
@@ -76,10 +76,10 @@
 					
 					<aon:rowSelector action="reservation_form" actionListener="#{reservationIO.onSelect}" />
 					
-					<aon:column id="roomNumberColumn" label="#{pmsBundle.pms_room_number}" 
+					<aon:column id="roomNumberColumn" label="#{bundle.pms_room_number}" 
 						styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
-							<aon:outputLabel value="#{pmsBundle.pms_room_number}" />
+							<aon:outputLabel value="#{bundle.pms_room_number}" />
 						</f:facet>
 						<aon:div>
 							<aon:outputText
@@ -91,10 +91,10 @@
 						</aon:div>
 					</aon:column>
 
-					<aon:column id="productCodeColumn" label="#{pmsBundle.pms_room_type}" 
+					<aon:column id="productCodeColumn" label="#{bundle.pms_room_type}" 
 						styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
-							<aon:outputLabel value="#{pmsBundle.pms_room_type}" />
+							<aon:outputLabel value="#{bundle.pms_room_type}" />
 						</f:facet>
 						<aon:outputText
 							value="#{to.item.product.code} - #{to.item.product.name}" />
@@ -167,10 +167,10 @@
 						<aon:outputText value="#{to.projectReservation.status}" />
 					</aon:column>
 
-					<aon:column id="reservationCheckStatusColumn" label="#{pmsBundle.pms_check}"
+					<aon:column id="reservationCheckStatusColumn" label="#{bundle.pms_check}"
 						styleClass="aon-editDataTable-textColumn">
 						<f:facet name="header">
-							<aon:outputLabel value="#{pmsBundle.pms_check}" />
+							<aon:outputLabel value="#{bundle.pms_check}" />
 						</f:facet>
 						<aon:outputText value="#{to.projectReservation.checkStatus}" />
 					</aon:column>

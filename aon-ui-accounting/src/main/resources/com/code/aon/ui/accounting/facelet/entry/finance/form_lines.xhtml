@@ -21,9 +21,9 @@
 			actionListener="#{financeEntry.checkNoneLines}" reRender="lineDataDiv"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-		<aon:commandButton title="#{accountingBundle.accounting_finance_remove_record_list}"
+		<aon:commandButton title="#{bundle.accounting_finance_remove_record_list}"
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
-			value="#{accountingBundle.accounting_finance_remove_record_list}"
+			value="#{bundle.accounting_finance_remove_record_list}"
 			actionListener="#{financeEntry.onRemoveSelected}" 
 			reRender="financeEntryForm,financePanelTabSet"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -49,14 +49,14 @@
 					<aon:outputText value="&#160;"
 						styleClass="aon-icon-errorwarning" style="padding-left:20px"
 						rendered="#{!financeEntry.lastTracking}" />
-					<rich:toolTip value="#{accountingBundle.accounting_finance_payment_returned_info}" />
+					<rich:toolTip value="#{bundle.accounting_finance_payment_returned_info}" />
 				</aon:div>
 			</aon:column>
 
 			<aon:column sortBy="#{to.dueDate}"
 				sortOrder="#{financeEntry.order['Finance_dueDate']}">
 				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_finance_date}" />
+					<aon:outputText value="#{bundle.finance_finance_date}" />
 				</f:facet>
 				<aon:outputText value="#{to.dueDate}">
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"

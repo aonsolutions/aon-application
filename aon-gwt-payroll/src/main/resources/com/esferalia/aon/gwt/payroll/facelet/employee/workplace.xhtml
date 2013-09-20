@@ -24,7 +24,7 @@
 
 					<aon:commandButton id="Contract-reset" ajaxSingle="true"
 						title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
-						value="#{payrollBundle.payroll_contract_new}"
+						value="#{bundle.payroll_contract_new}"
 						reRender="#{contract.beanName}ModalContainer"
 						styleClass="aon-finding-toolbar-item aon-icon-reset">
 						<aon:actionListener
@@ -54,7 +54,7 @@
 
 					<aon:div styleClass="aon-group">
 						<aon:div styleClass="aon-group-title">
-							<aon:outputText value="#{companyBundle.company_workplace_data}" />
+							<aon:outputText value="#{bundle.company_workplace_data}" />
 						</aon:div>
 						<aon:div styleClass="aon-group-body">
 							<aon:div styleClass="aon-group-body-internal">
@@ -81,7 +81,7 @@
 									</aon:selectOneMenu>
 
 									<aon:outputText for="WorkPlace_economicAgreement"
-										value="#{configBundle.config_administration}" />
+										value="#{bundle.config_administration}" />
 									<aon:selectOneMenu id="WorkPlace_economicAgreement"
 										value="#{payrollWorkPlace.to.workPlace.economicAgreement}">
 										<f:selectItem itemLabel="-" value="#{null}" />
@@ -103,7 +103,7 @@
 					<aon:div styleClass="aon-group">
 						<aon:div styleClass="aon-group-title">
 							<aon:outputText
-								value="#{companyBundle.company_workplace_payroll_data}" />
+								value="#{bundle.company_workplace_payroll_data}" />
 						</aon:div>
 						<aon:div styleClass="aon-group-body">
 							<aon:div styleClass="aon-group-body-internal">
@@ -160,7 +160,7 @@
 		src="/com/esferalia/aon/ui/payroll/facelet/contract/modalNewContract.xhtml">
 		<ui:param name="controller" value="#{contract}" />
 		<ui:param name="popupWindowTitle"
-			value="#{payrollBundle.payroll_contract}" />
+			value="#{bundle.payroll_contract}" />
 		<ui:param name="lookupDisabled" value="true" />
 	</ui:include>
 

@@ -14,7 +14,7 @@
 		<aon:form  id="systemDeductionForm">
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_systemDeduction_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_systemDeduction_module}" />
 				<ui:param name="controller" value="#{systemDeduction}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipRemoveButton" value="true" />
@@ -69,10 +69,10 @@
 					<aon:outputText value="&#160;"/>
 					<aon:panelGroup>
 						<aon:selectBooleanCheckbox id="systemDeduction_decorateDescription" value="#{systemDeduction.to.descriptionDecorable}" disabled="true"/>
-						<aon:outputLabel for="systemDeduction_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
+						<aon:outputLabel for="systemDeduction_decorateDescription" value="#{bundle.payroll_salary_show_expression}" />
 					</aon:panelGroup>
 
-					<aon:outputText value="#{payrollBundle.payroll_salary_deduction_month}" />
+					<aon:outputText value="#{bundle.payroll_salary_deduction_month}" />
 					<aon:outputText value="#{systemDeduction.to.month}" />
 
 					<aon:outputText	value="#{bundle.aon_value}" />

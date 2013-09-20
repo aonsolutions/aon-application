@@ -20,7 +20,7 @@
 
 				<ui:define name="toolbarContent">
 
-					<aon:commandButton id="save" value="#{accountingBundle.accounting_entry_generate}"
+					<aon:commandButton id="save" value="#{bundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{endPeriodEntries.onOpeningEntry}"
 						action="#{endPeriodEntries.navigate}"
@@ -34,7 +34,7 @@
 				<aon:panelGrid columns="2">
 
 					<aon:outputLabel for="Opening_Period_Previous"
-						value="#{accountingBundle.accounting_previous_period}" />
+						value="#{bundle.accounting_previous_period}" />
 					<aon:selectOneMenu id="Opening_Period_Previous"
 						value="#{endPeriodEntries.previousPeriod}">
 						<f:selectItem itemLabel="-" value="#{null}" />
@@ -42,14 +42,14 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Opening_Period"
-						value="#{accountingBundle.accounting_opening_period}" />
+						value="#{bundle.accounting_opening_period}" />
 					<aon:selectOneMenu id="Opening_Period"
 						value="#{endPeriodEntries.period}">
 						<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Opening_date"
-						value="#{accountingBundle.accounting_opening_date}" />
+						value="#{bundle.accounting_opening_date}" />
 					<aon:selectInputDate id="Opening_date"
 						value="#{endPeriodEntries.date}"
 						timeZone="#{timeZoneController.timeZone}"

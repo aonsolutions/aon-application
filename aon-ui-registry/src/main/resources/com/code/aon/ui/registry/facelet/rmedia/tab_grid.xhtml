@@ -19,7 +19,7 @@
 		<ui:define name="columns">
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryMedia_mediaType" value="#{registryBundle.registry_media_type}" />
+					<aon:outputLabel for="RegistryMedia_mediaType" value="#{bundle.registry_media_type}" />
 				</f:facet>
 				<aon:outputText value="#{to.mediaType}"
 					rendered="#{formList}" />
@@ -84,7 +84,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryMedia_administrative" value="#{registryBundle.registry_administrative}" />
+					<aon:outputLabel for="RegistryMedia_administrative" value="#{bundle.registry_administrative}" />
 				</f:facet>
 				<aon:div rendered="#{formList}" styleClass="#{to.administrative?'aon-icon-checked':'aon-icon-check'}">
 					<aon:outputText value="&#160;" />
@@ -114,7 +114,7 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryMedia_technical" value="#{registryBundle.registry_technical}" />
+					<aon:outputLabel for="RegistryMedia_technical" value="#{bundle.registry_technical}" />
 				</f:facet>
 				<aon:div rendered="#{formList}" styleClass="#{to.technical?'aon-icon-checked':'aon-icon-check'}">
 					<aon:outputText value="&#160;" />
@@ -133,7 +133,7 @@
 			<c:if test="#{aonConfiguration.bean.rmedia.showSendEmail}">			
 				<aon:div onmouseover="disableRowSelector();"
 					onmouseout="enableRowSelector();" >										
-					<aon:commandLink title="#{webmailBundle.webmail_send_email}" 
+					<aon:commandLink title="#{bundle.webmail_send_email}" 
 						ajaxSingle="true" reRender="showNewMessageWindow"
 						actionListener="#{webmailMessage.onSendEmail}" value="&#160;"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"

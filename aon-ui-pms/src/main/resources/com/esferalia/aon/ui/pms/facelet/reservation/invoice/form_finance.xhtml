@@ -9,7 +9,7 @@
 
 	<aon:div id="invoiceFinancesDiv" styleClass="aon-group" style="width: 100%; margin-top: 2em;">
 		<aon:div styleClass="aon-group-title">
-			<aon:outputText value="#{financeBundle.finance_payment_menu}"/>
+			<aon:outputText value="#{bundle.finance_payment_menu}"/>
 		</aon:div>
 		<aon:div styleClass="aon-group-body"> 
 			<aon:div styleClass="aon-group-body-internal">
@@ -39,7 +39,7 @@
 
 					<aon:column styleClass="aon-panelGrid-odd aon-width-80 aon-editDataTable-textColumn">
 						<aon:outputLabel for="ProjectReservation_financeAmount"
-							value="#{pmsBundle.pms_total_to_pay}" />
+							value="#{bundle.pms_total_to_pay}" />
 					</aon:column>
 
 					<aon:column styleClass="aon-panelGrid-even aon-width-auto aon-editDataTable-textColumn">
@@ -74,7 +74,7 @@
 				<aon:panelGrid columns="3" styleClass="aon-margin-top aon-noborder"
 					columnClasses="aon-width-120,aon-width-120,aon-width-auto">
 					<aon:outputText value="&#160;" />
-					<aon:outputText value="#{pmsBundle.pms_total_finances}:" styleClass="aon-bold" />
+					<aon:outputText value="#{bundle.pms_total_finances}:" styleClass="aon-bold" />
 					<aon:div>
 						<aon:outputText value="#{controller.financesAmount}" styleClass="aon-bold">
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />

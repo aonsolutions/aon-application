@@ -15,7 +15,7 @@
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					<ui:param name="toolbarTitle"
-						value="#{financeBundle.finance_sale_invoice_management_module}" />
+						value="#{bundle.finance_sale_invoice_management_module}" />
 					<ui:param name="controller" value="#{saleInvoice}" />
 					<ui:param name="skipFocusFirst" value="#{!saleInvoice.new}" />
 					<ui:param name="skipSaveButton" value="#{saleInvoice.readOnly}" />
@@ -45,7 +45,7 @@
 					<ui:define name="moreMenuContent">
 						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 							<aon:menuItem id="deliveryTransfer"
-								value="#{configBundle.config_series_deliveries}"
+								value="#{bundle.config_series_deliveries}"
 								immediate="#{true}" rendered="#{!saleInvoice.readOnly}"
 								iconClass="aon-icon-sincronize"
 								actionListener="#{saleInvoice.onDeliveryTransferShow}"
@@ -67,7 +67,7 @@
 								value="#{null}" />
 						</aon:menuItem>
 						<aon:menuItem id="rectify"
-							value="#{financeBundle.finance_rectify}"
+							value="#{bundle.finance_rectify}"
 							rendered="#{!saleInvoice.rectifier and !saleInvoice.accountSource and saleInvoiceDetail.model.rowCount > 0}"
 							iconClass="aon-icon-version"
 							actionListener="#{saleInvoice.onRectificationShow}"
@@ -77,7 +77,7 @@
 						</aon:menuItem>
 						<c:if test="#{aonRole.accountingOperator}">
 							<aon:menuItem id="record"
-								value="#{financeBundle.finance_record}"
+								value="#{bundle.finance_record}"
 								actionListener="#{saleInvoice.onRecordInvoice}"
 								rendered="#{!saleInvoice.recorded and saleInvoiceDetail.model.rowCount > 0}"
 								iconClass="aon-icon-task-assume"
@@ -87,7 +87,7 @@
 						</c:if>
 						<c:if test="#{aonRole.accountingManager}">
 							<aon:menuItem id="unrecord"
-								value="#{financeBundle.finance_unrecord}"
+								value="#{bundle.finance_unrecord}"
 								actionListener="#{saleInvoice.onUnrecordInvoice}"
 								rendered="#{saleInvoice.recorded and !saleInvoice.accountSource}"
 								iconClass="aon-icon-task-liberate"
@@ -138,7 +138,7 @@
 						<c:if test="#{aonRole.accountingOperator}">
 							<rich:menuSeparator id="invoiceAddsMenuSeparator1" />
 							<aon:menuItem id="fiscalInformation"
-								value="#{financeBundle.finance_fiscal_information}"
+								value="#{bundle.finance_fiscal_information}"
 								iconClass="aon-icon-info"
 								reRender="showFiscalInformationWindow">
 								<f:setPropertyActionListener target="#{saleInvoice.showFiscalInformationWindow}"
@@ -189,7 +189,7 @@
 									rendered="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
 									required="true" size="7" />
 								<aon:commandButton value="&#160;"
-									title="#{financeBundle.finance_invoice_find_next_number}"
+									title="#{bundle.finance_invoice_find_next_number}"
 									styleClass="aon-finding-toolbar-item aon-icon-ambito aon-finding-toolbar-item-no-border"
 		 							style="aon-margin-left aon-margin-right" 
 									rendered="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
@@ -216,7 +216,7 @@
 								<c:if test="#{company.EInvoice}">
 									<aon:outputText value="&#160;"
 										rendered="#{!saleInvoice.new and saleInvoice.to.signed}"
-										title="#{signBundle.sign_signed}"
+										title="#{bundle.sign_signed}"
 										styleClass="aon-icon aon-icon-signed" />
 								</c:if>						
 
@@ -264,7 +264,7 @@
 					</ui:include>
 					
 					<aon:outputLabel for="Invoice_taxDate" 
-						value="#{financeBundle.finance_tax_date}" />
+						value="#{bundle.finance_tax_date}" />
 					<c:if test="#{aonRole.accountingOperator}">
 						<aon:selectInputDate id="Invoice_taxDate"
 							value="#{saleInvoice.to.taxDate}" required="true" 
@@ -338,7 +338,7 @@
 							<f:selectItems value="#{saleInvoice.addresses}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel styleClass="aon-italic"
-							value="#{registryBundle.registry_no_address_available}"
+							value="#{bundle.registry_no_address_available}"
 							rendered="#{saleInvoiceAddress.to.id == null and ((saleInvoice.readOnly and saleInvoice.to.registryAddress.id == null) or (!saleInvoice.readOnly and saleInvoice.addressCount == 0))}" />
 						<aon:outputText styleClass="aon-bold"
 							value="#{saleInvoice.address}" 
@@ -352,7 +352,7 @@
 						</aon:outputText>
 						<aon:div layout="inline" styleClass="aon-margin-left">
 							<aon:commandButton id="invoiceAddressButton"
-								value="#{registryBundle.registry_address_other}"
+								value="#{bundle.registry_address_other}"
 								styleClass="aon-icon-commandButton aon-icon-go aon-bold aon-italic"
 								rendered="#{!saleInvoice.new and !saleInvoice.readOnly}"
 								actionListener="#{saleInvoice.onInvoiceAddressShow}"
@@ -398,12 +398,12 @@
 							</ui:include>
 							<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
 								<aon:outputLabel styleClass="aon-italic"
-									value="#{projectBundle.project_no_project_linked}"
+									value="#{bundle.project_no_project_linked}"
 									rendered="#{saleInvoice.readOnly and saleInvoice.to.project.id == null and saleInvoice.projectCount > 0}" />
 							</c:if>
 							<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
 								<aon:outputLabel styleClass="aon-italic"
-									value="#{tasBundle.tas_no_projectTas_linked}"
+									value="#{bundle.tas_no_projectTas_linked}"
 									rendered="#{saleInvoice.readOnly and saleInvoice.to.project.id == null and saleInvoice.projectCount > 0}" />
 							</c:if>
 							<aon:outputText styleClass="aon-bold"
@@ -457,13 +457,13 @@
 							disabled="#{saleInvoice.readOnly}" />
 						<aon:div rendered="#{saleInvoice.rectifier}">
 							<aon:outputFormat styleClass="aon-bold aon-label-error"
-								 value="#{financeBundle.finance_invoice_rectifier_message2}">
+								 value="#{bundle.finance_invoice_rectifier_message2}">
 								<f:param value="#{saleInvoice.to.rectificationInvoice.referenceCode}" />
 							</aon:outputFormat>
 						</aon:div>
 						<aon:div rendered="#{saleInvoice.rectified}">
 							<aon:outputFormat styleClass="aon-bold aon-label-error"
-								 value="#{financeBundle.finance_invoice_rectified_message2}">
+								 value="#{bundle.finance_invoice_rectified_message2}">
 								<f:param value="#{saleInvoice.to.rectificationInvoicesString}" />
 							</aon:outputFormat>
 						</aon:div>

@@ -10,7 +10,7 @@
 		<aon:form id="incomeSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_transfer_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.warehouse_transfer_module}" />
 				<ui:param name="controller" value="#{warehouseTransfer}" />
 			</ui:include>
 
@@ -45,7 +45,7 @@
 						<f:selectItems value="#{warehouseCollections.warehouses}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="WarehouseTransfer_targetWarehouse_id" value="#{warehouseBundle.warehouse_stock_target}" />
+					<aon:outputLabel for="WarehouseTransfer_targetWarehouse_id" value="#{bundle.warehouse_stock_target}" />
 					<aon:selectOneMenu id="WarehouseTransfer_targetWarehouse_id"
 						value="#{warehouseTransferSearch.targetWarehouse}">
 						<f:selectItem itemLabel="-" value="#{null}"/>

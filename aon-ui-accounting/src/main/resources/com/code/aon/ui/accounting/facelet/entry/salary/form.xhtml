@@ -19,14 +19,14 @@
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save" 
-						value="#{accountingBundle.accounting_entry_generate}"
+						value="#{bundle.accounting_entry_generate}"
 						accesskey="#{bundle.aon_key_save}"
-						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
+						title="#{bundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
 						actionListener="#{salaryEntry.onAccept}"
 						action="#{salaryEntry.accept}"
 						disabled="#{salaryEntry.entry.grossSalary == 0}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?')) return false;" />
+						onclick="if (!confirm('#{bundle.accounting_entry_generate}?')) return false;" />
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}"
 						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})" 
@@ -68,7 +68,7 @@
 						value="#{bundle.aon_bank}" />
 					<aon:selectOneMenu id="Account_registryBank"
 						value="#{salaryEntry.entry.registryBank}">
-						<f:selectItem itemLabel="#{accountingBundle.accounting_pending_salary}" value="#{null}" />
+						<f:selectItem itemLabel="#{bundle.accounting_pending_salary}" value="#{null}" />
 						<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
 					</aon:selectOneMenu>
 
@@ -85,21 +85,21 @@
 						buttonStyle="display:none;"/>
 
 					<aon:outputLabel for="Account_gross_salary"
-						value="#{accountingBundle.accounting_gross_salary}" />
+						value="#{bundle.accounting_gross_salary}" />
 					<aon:inputText id="Account_gross_salary" required="true"
 						value="#{salaryEntry.entry.grossSalary}" size="15"
 						ajaxSingle="true" reRender="save,Account_net_salary,Account_employee_social_insurance,Account_accrued_total"
 						focus="Account_Allowance" />
 
 					<aon:outputLabel for="Account_Allowance"
-						value="#{accountingBundle.accounting_allowance}" />
+						value="#{bundle.accounting_allowance}" />
 					<aon:inputText id="Account_Allowance" required="true"
 						value="#{salaryEntry.entry.allowance}" size="15"
 						ajaxSingle="true" reRender="Account_net_salary,Account_employee_social_insurance,Account_accrued_total"
 						focus="Account_Compensation" />
 
 					<aon:outputLabel for="Account_Compensation"
-						value="#{accountingBundle.accounting_compensation}" />
+						value="#{bundle.accounting_compensation}" />
 					<aon:inputText id="Account_Compensation" required="true"
 						value="#{salaryEntry.entry.compensation}" size="15"
 						ajaxSingle="true" reRender="Account_net_salary,Account_employee_social_insurance,Account_accrued_total"
@@ -118,7 +118,7 @@
 						focus="Account_employee_social_insurance1"/>
 
 					<aon:outputLabel for="Account_employee_social_insurance1"
-						value="#{accountingBundle.accounting_employee_social_insurance}" />
+						value="#{bundle.accounting_employee_social_insurance}" />
 					<aon:div>
 						<aon:inputText id="Account_employee_social_insurance" disabled="true" styleClass="aon-bold"
 							value="#{salaryEntry.entry.employeeSocialInsurance}" size="15"/>
@@ -145,12 +145,12 @@
 					</aon:div>
 
 					<aon:outputLabel for="Account_net_salary"
-						value="#{accountingBundle.accounting_net_salary}" />
+						value="#{bundle.accounting_net_salary}" />
 					<aon:inputText id="Account_net_salary" disabled="true" styleClass="aon-bold"
 						value="#{salaryEntry.entry.netSalary}" size="15"/>
 
 					<aon:outputLabel for="Account_company_social_insurance"
-						value="#{accountingBundle.accounting_company_social_insurance}" />
+						value="#{bundle.accounting_company_social_insurance}" />
 					<aon:inputText id="Account_company_social_insurance" required="true"
 						value="#{salaryEntry.entry.companySocialInsurance}" size="15" />
 				</aon:panelGrid>

@@ -15,7 +15,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{payrollBundle.payroll_default_params_module}" />
+					value="#{bundle.payroll_default_params_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 
 				<ui:define name="toolbarContent">
@@ -41,7 +41,7 @@
 							<aon:div styleClass="aon-group-body-internal">
 								<aon:panelGrid columns="2">
 									<aon:outputLabel for="salary_model"
-										value="#{companyBundle.company_enterprise_params_salary_model}" />
+										value="#{bundle.company_enterprise_params_salary_model}" />
 									<aon:selectOneMenu id="salary_model"
 										value="#{payrollAppParams.parameters['PAY_REPORT_salary_PAY'].value}">
 										<f:selectItems value="#{companyCollections.salaryTemplates}" />
@@ -53,13 +53,13 @@
 		
 					<aon:div styleClass="aon-group">
 						<aon:div styleClass="aon-group-title">
-							<aon:outputText value="#{payrollBundle.payroll_settle_module}"/>
+							<aon:outputText value="#{bundle.payroll_settle_module}"/>
 						</aon:div>
 						<aon:div styleClass="aon-group-body"> 
 							<aon:div styleClass="aon-group-body-internal">
 								<aon:panelGrid columns="2">
 									<!--  
-									<aon:outputLabel value="#{payrollBundle.payroll_settle_vacation_default_concept}" />
+									<aon:outputLabel value="#{bundle.payroll_settle_vacation_default_concept}" />
 									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
 										<ui:param name="lookupTo" value="#{payrollAppParams.settleVacationConcept}" />
 										<ui:param name="skipNewButton" value="#{true}" />
@@ -68,7 +68,7 @@
 										<ui:param name="lookupSuffix" value="-vacation" />
 									</ui:include>
 				
-									<aon:outputLabel value="#{payrollBundle.payroll_settle_noticeDay_default_concept}" />
+									<aon:outputLabel value="#{bundle.payroll_settle_noticeDay_default_concept}" />
 									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
 										<ui:param name="lookupTo" value="#{payrollAppParams.settleNoticeDayConcept}" />
 										<ui:param name="skipNewButton" value="#{true}" />
@@ -77,7 +77,7 @@
 										<ui:param name="lookupSuffix" value="-noticeDay" />
 									</ui:include>
 				
-									<aon:outputLabel value="#{payrollBundle.payroll_settle_compensation_default_concept}" />
+									<aon:outputLabel value="#{bundle.payroll_settle_compensation_default_concept}" />
 									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
 										<ui:param name="lookupTo" value="#{payrollAppParams.settleCompensationConcept}" />
 										<ui:param name="skipNewButton" value="#{true}" />
@@ -94,7 +94,7 @@
 				
 				<aon:div styleClass="aon-group">
 					<aon:div styleClass="aon-group-title">
-						<aon:outputText value="#{payrollBundle.payroll_contract_newContractData}"/>
+						<aon:outputText value="#{bundle.payroll_contract_newContractData}"/>
 					</aon:div>
 					<aon:div styleClass="aon-group-body"> 
 						<aon:div styleClass="aon-group-body-internal">
@@ -102,7 +102,7 @@
 
 								<aon:panelGrid columns="2">
 									<aon:outputLabel for="contract_default_code" 
-										value="#{payrollBundle.payroll_contract_contract_code}" />
+										value="#{bundle.payroll_contract_contract_code}" />
 									<aon:selectOneMenu id="contract_default_code"
 										value="#{payrollAppParams.parameters['PAY_default_contractCode_PAY'].value}" >
 										<f:selectItem itemValue="#{null}" itemLabel="-" />

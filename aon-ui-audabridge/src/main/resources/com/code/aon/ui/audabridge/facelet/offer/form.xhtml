@@ -14,7 +14,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{audabridgeBundle.audabridge_offer_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.audabridge_offer_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="createAssessment" value="Crear Valoracion"
@@ -60,21 +60,21 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2">
 
-					<aon:outputLabel for="reference" value="#{audabridgeBundle.audabridge_reference_number}" />
+					<aon:outputLabel for="reference" value="#{bundle.audabridge_reference_number}" />
 					<aon:inputText id="reference" value="#{audabridgeOffer.assessment.referenceNumber}"
 						size="15"/>
 
 					<aon:outputLabel for="publicCode" value="#{bundle.tas_publicCode}" />
 					<aon:inputText id="publicCode" value="#{audabridgeOffer.assessment.registration}" size="10"/>
 						
-					<aon:outputLabel for="registrationDate" value="#{tasBundle.tas_registrationDate}" />
+					<aon:outputLabel for="registrationDate" value="#{bundle.tas_registrationDate}" />
 					<aon:selectInputDate id="registrationDate"
 						value="#{audabridgeOffer.assessment.registrationDate}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 
-					<aon:outputLabel for="odometer" value="#{tasBundle.tas_odometer}" />
+					<aon:outputLabel for="odometer" value="#{bundle.tas_odometer}" />
 					<aon:inputText id="odometer" value="#{audabridgeOffer.assessment.odometer}" size="10">
 						<f:validateDoubleRange />
 					</aon:inputText>

@@ -16,7 +16,7 @@
 		<aon:form id="surveyForm">
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_survey_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.marketing_survey_module}" />
 				<ui:param name="controller" value="#{survey}" />
 			</ui:include>
 
@@ -60,7 +60,7 @@
 				<aon:div styleClass="aon-form-group" rendered="#{!survey.new}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="surveyQuestionData" value="#{registryBundle.registry_question_module}" />
+							<aon:outputLabel for="surveyQuestionData" value="#{bundle.registry_question_module}" />
 						</aon:div>
 					</aon:div>
 					<ui:include src="/com/code/aon/ui/marketing/facelet/surveyQuestion/grid.xhtml" />

@@ -13,7 +13,7 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarID" value="toolbar" />
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_daily_tracking_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.aon_daily_tracking_module}" />
 				<ui:param name="controller" value="#{dailyTracking}" />
 
 				<ui:define name="additionalToolbarContent">
@@ -28,7 +28,7 @@
 						styleClass="aon-margin-left"
 						reRender="DailyTracking_trackingDuration_Container" />
 					<aon:outputLabel for="tracking_minutesModeEnabled" 
-						value="#{groupwareBundle.groupware_minutes_mode}"/>
+						value="#{bundle.groupware_minutes_mode}"/>
 				</ui:define>
 
 			</ui:decorate>				
@@ -69,7 +69,7 @@
 					<aon:panelGrid columns="2"
 						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
 															
-						<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
+						<aon:outputLabel for="Registry_id" value="#{bundle.project_assigned}"/>
 						<aon:div id="registrySelectDiv">
 							<aon:div styleClass="aon-margin-right" layout="inline">
 								<aon:selectOneMenu value="#{dailyTracking.registryType}">
@@ -112,7 +112,7 @@
 								ajaxSingle="true" />
 						</aon:selectOneMenu>
 						
-						<aon:outputLabel for="DailyTracking_activityType" value="#{projectBundle.project_activity_type}"/>
+						<aon:outputLabel for="DailyTracking_activityType" value="#{bundle.project_activity_type}"/>
 						<aon:selectOneMenu id="DailyTracking_activityType"
 							value="#{dailyTracking.to.activityType}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
@@ -121,7 +121,7 @@
 					</aon:panelGrid>
 					
 					<aon:outputLabel for="DailyTracking_jobType"
-						value="#{groupwareBundle.groupware_job_type}"/>
+						value="#{bundle.groupware_job_type}"/>
 					<aon:selectOneMenu id="DailyTracking_jobType" required="true"
 						value="#{dailyTracking.to.jobType}">
 						<f:selectItem itemLabel="-" value="#{null}"/>

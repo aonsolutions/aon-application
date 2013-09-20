@@ -53,7 +53,7 @@
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 				<f:facet name="header">
 					<aon:outputLabel for="Calendar_period_startDay"
-						value="#{calendarBundle.aon_calendar_start_day}" />
+						value="#{bundle.aon_calendar_start_day}" />
 				</f:facet>
 				<aon:outputText value="#{to.startDay}" rendered="#{formList}" />
 				<aon:selectOneMenu id="Calendar_period_startDay"
@@ -73,7 +73,7 @@
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 				<f:facet name="header">
 					<aon:outputLabel for="Calendar_period_end_day"
-						value="#{calendarBundle.aon_calendar_end_day}" />
+						value="#{bundle.aon_calendar_end_day}" />
 				</f:facet>
 				<aon:outputText value="#{to.endDay}" rendered="#{formList}" />
 				<aon:selectOneMenu id="Calendar_period_end_day"
@@ -140,7 +140,7 @@
 			
 			<aon:column styleClass="aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel value="#{calendarBundle.aon_calendar_wednesday}" />
+					<aon:outputLabel value="#{bundle.aon_calendar_wednesday}" />
 				</f:facet>
 				<aon:outputText rendered="#{formList}" value="#{to.wednesday}" />
 				<aon:outputText rendered="#{formList}" value="(#{to.wednesdayHours})" />

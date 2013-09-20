@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{warehouseBundle.warehouse_income_purchase_pending}" />
+						<aon:outputText value="#{bundle.warehouse_income_purchase_pending}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -52,7 +52,7 @@
 										actionListener="#{income.purchaseTransferManager.checkNonePurchases}" 
 										reRender="purchaseData,detailDataContainer" />	
 									<aon:commandButton id="purchaseTransfer-accept"
-										value="#{warehouseBundle.warehouse_income_to_transfer}"
+										value="#{bundle.warehouse_income_to_transfer}"
 										rendered="#{income.purchaseTransferManager.purchaseModel.rowCount > 0}"
 										reRender="showPurchaseTransferWindow,incomeForm,showConfirmWindow"
 										actionListener="#{income.onPurchaseTransfer}"
@@ -122,7 +122,7 @@
 												<aon:outputText value="&#160;&#160;&#160;"
 													rendered="#{!to.served}" 
 													styleClass="aon-padding-right aon-icon-info" 
-													title="#{purchaseBundle.purchase_to_partially_served}" />
+													title="#{bundle.purchase_to_partially_served}" />
 												<aon:outputText value="#{income.purchaseTransferManager.purchaseTotalPrice}">
 													<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 												</aon:outputText>
@@ -134,7 +134,7 @@
 												<aon:outputText value="&#160;" />
 											</f:facet>
 											<aon:commandButton value="&#160;" immediate="true"
-												title="#{warehouseBundle.warehouse_income_see_purchase_details}"
+												title="#{bundle.warehouse_income_see_purchase_details}"
 												styleClass="aon-finding-toolbar-item aon-icon-tree-root aon-finding-toolbar-item-no-border"
 												actionListener="#{income.purchaseTransferManager.onSelectPurchase}"
 												reRender="purchaseData,detailDataContainer" ajaxSingle="true">
@@ -243,11 +243,11 @@
 													<aon:outputText value="&#160;&#160;&#160;"
 														rendered="#{income.purchaseTransferManager.transferedGreatherThanPending}" 
 														styleClass="aon-padding-right aon-icon-point-orange" 
-														title="#{warehouseBundle.warehouse_income_transfered_gt_quantity}" />
+														title="#{bundle.warehouse_income_transfered_gt_quantity}" />
 													
 													<aon:commandButton value="&#160;" immediate="true"
 														rendered="#{income.purchaseTransferManager.detailRowChecked and income.purchaseTransferManager.transferedLessThanPending}" 
-														title="#{(to.forcePendingQuantityCancel)?(warehouseBundle.warehouse_income_purchase_product_transfered):(warehouseBundle.warehouse_income_purchase_product_pending)}"
+														title="#{(to.forcePendingQuantityCancel)?(bundle.warehouse_income_purchase_product_transfered):(bundle.warehouse_income_purchase_product_pending)}"
 														styleClass="aon-icon-commandButton #{(to.forcePendingQuantityCancel)?('aon-icon-point-red'):('aon-icon-point-light-green')}"
 														actionListener="#{income.purchaseTransferManager.detailToCloseRowSelected}"
 														reRender="buttonColumn" ajaxSingle="true">

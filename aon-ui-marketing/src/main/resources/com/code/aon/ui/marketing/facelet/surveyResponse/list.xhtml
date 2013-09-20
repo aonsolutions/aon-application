@@ -16,7 +16,7 @@
 		<aon:form id="surveyResponseList">
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_survey_response_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.marketing_survey_response_module}" />
 				<ui:param name="controller" value="#{surveyResponse}" />
 				<ui:param name="skipResetButton" value="true" />
 			</ui:include>
@@ -31,7 +31,7 @@
 						<aon:column styleClass="aon-editDataTable-textColumn"
 							alias="SurveyResponse.survey.description" >
 							<f:facet name="header">
-								<aon:outputText value="#{marketingBundle.marketing_survey}" />
+								<aon:outputText value="#{bundle.marketing_survey}" />
 							</f:facet>
 							<aon:outputText value="#{to.survey.description}">
 								<aon:abbreviateConverter maxWidth="40" />

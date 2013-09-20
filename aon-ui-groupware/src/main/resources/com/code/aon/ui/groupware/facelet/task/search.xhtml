@@ -13,7 +13,7 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarID" value="toolbar" />
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.groupware_task_inbox}"/>
+				<ui:param name="toolbarTitle" value="#{bundle.groupware_task_inbox}"/>
 				<ui:param name="controller" value="#{task}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}" 
@@ -72,7 +72,7 @@
 						</aon:selectInputDate>
 					</aon:div>
 
-					<aon:outputLabel value="#{groupwareBundle.groupware_due_date}" />
+					<aon:outputLabel value="#{bundle.groupware_due_date}" />
 					<aon:div>
 						<aon:outputLabel for="Task_dueDate-From"
 							styleClass="aon-form-date-label aon-margin-left aon-margin-right"
@@ -121,7 +121,7 @@
 
 					<aon:outputLabel for="Task_projectType"
 						rendered="#{!task.parentDomain}" 
-						value="#{projectBundle.project_project_type}"/>
+						value="#{bundle.project_project_type}"/>
 					<aon:selectOneMenu id="Task_projectType"
 						rendered="#{!task.parentDomain}"
 						value="#{taskSearchControllerListener.projectType}">
@@ -136,7 +136,7 @@
 						columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto"
 						rendered="#{!task.parentDomain}">
 					
-						<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
+						<aon:outputLabel for="Registry_id" value="#{bundle.project_assigned}"/>
 						<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
 							<ui:param name="lookupTo" value="#{taskSearchControllerListener.registry}" />
 							<ui:param name="skipLabel" value="#{true}" />
@@ -155,7 +155,7 @@
 								ajaxSingle="true" />
 						</aon:selectOneMenu>
 						
-						<aon:outputLabel for="Task_activityType" value="#{projectBundle.project_activity_type}"/>
+						<aon:outputLabel for="Task_activityType" value="#{bundle.project_activity_type}"/>
 						<aon:selectOneMenu id="Task_activityType"
 							value="#{taskSearchControllerListener.activityType}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
@@ -166,7 +166,7 @@
 					<aon:outputText value=""/>
 					<aon:div>
 						<aon:selectBooleanCheckbox id="Task_source" value="#{taskSearchControllerListener.processTask}" />
-						<aon:outputLabel for="Task_source" value="#{groupwareBundle.groupware_task_source}" />
+						<aon:outputLabel for="Task_source" value="#{bundle.groupware_task_source}" />
 					</aon:div>
 
 					<aon:outputText value="#{bundle.aon_status}"/>
@@ -175,28 +175,28 @@
 						<aon:outputLabel for="st0" value="#{bundle.aon_pending}" />
 						
 						<aon:selectBooleanCheckbox id="st1" value="#{taskSearchControllerListener.statusInProgress}" />
-						<aon:outputLabel for="st1" value="#{groupwareBundle.groupware_in_progress}" />
+						<aon:outputLabel for="st1" value="#{bundle.groupware_in_progress}" />
 						
 						<aon:selectBooleanCheckbox id="st2" value="#{taskSearchControllerListener.statusFinished}" />
-						<aon:outputLabel for="st2" value="#{groupwareBundle.groupware_finished}" />
+						<aon:outputLabel for="st2" value="#{bundle.groupware_finished}" />
 						
 						<aon:selectBooleanCheckbox id="st3" value="#{taskSearchControllerListener.statusDeleted}" />
-						<aon:outputLabel for="st3" value="#{groupwareBundle.groupware_deleted}" />
+						<aon:outputLabel for="st3" value="#{bundle.groupware_deleted}" />
 					</aon:div>
 					
 					<aon:outputText value="#{bundle.aon_priority}"/>
 					<aon:div>
 						<aon:selectBooleanCheckbox id="pr0" value="#{taskSearchControllerListener.highPriority}" />
-						<aon:outputLabel for="pr0" value="#{groupwareBundle.groupware_high}" />
+						<aon:outputLabel for="pr0" value="#{bundle.groupware_high}" />
 						
 						<aon:selectBooleanCheckbox id="pr1" value="#{taskSearchControllerListener.normalPriority}" />
-						<aon:outputLabel for="pr1" value="#{groupwareBundle.groupware_normal}" />
+						<aon:outputLabel for="pr1" value="#{bundle.groupware_normal}" />
 						
 						<aon:selectBooleanCheckbox id="pr2" value="#{taskSearchControllerListener.lowPriority}" />
-						<aon:outputLabel for="pr2" value="#{groupwareBundle.groupware_low}" />
+						<aon:outputLabel for="pr2" value="#{bundle.groupware_low}" />
 						
 						<aon:selectBooleanCheckbox id="pr3" value="#{taskSearchControllerListener.nonePriority}" />
-						<aon:outputLabel for="pr3" value="#{groupwareBundle.groupware_none}" />
+						<aon:outputLabel for="pr3" value="#{bundle.groupware_none}" />
 					</aon:div>
 
 				</ui:define>

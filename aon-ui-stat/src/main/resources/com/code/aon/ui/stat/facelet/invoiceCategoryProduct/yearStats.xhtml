@@ -24,16 +24,16 @@
 		<aon:methodParam name="lastColumnAction" value="#{stat.onCategoryRegistryStats}" type="actionListener" />
 		<aon:methodParam  name="customerFacelet" value="category_customer_list" />				
 		<c:if  test="#{stat.invoiceType==1}">
-			<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
-			<ui:param name="windowTitle" value="#{statBundle.stat_menu_category}"/>
+			<ui:param name="lastColumnName" value="#{bundle.stat_show_clients}" />
+			<ui:param name="windowTitle" value="#{bundle.stat_menu_category}"/>
 		</c:if>
 		<c:if  test="#{stat.invoiceType==0}">
-			<ui:param name="lastColumnName" value="#{statBundle.stat_show_suppliers}" />
-			<ui:param name="windowTitle" value="#{statBundle.stat_menu_category}"/>
+			<ui:param name="lastColumnName" value="#{bundle.stat_show_suppliers}" />
+			<ui:param name="windowTitle" value="#{bundle.stat_menu_category}"/>
 		</c:if>	
 		<c:if  test="#{stat.invoiceType==2}">
-			<ui:param name="lastColumnName" value="#{statBundle.stat_show_creditors}" />
-			<ui:param name="windowTitle" value="#{statBundle.stat_menu_category_expense}"/>
+			<ui:param name="lastColumnName" value="#{bundle.stat_show_creditors}" />
+			<ui:param name="windowTitle" value="#{bundle.stat_menu_category_expense}"/>
 		</c:if>	 	   
 	</ui:include>			
 

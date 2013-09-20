@@ -1,7 +1,6 @@
 package com.code.aon.ui.product.event;
 
 import static com.code.aon.ui.common.ICommonMessages.CATALOGUE_DEFINED_FOR_TARIFF_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.PRODUCT_BUNDLE;
 
 import java.util.List;
 
@@ -47,7 +46,7 @@ public class TariffCatalogueControllerListener extends ControllerAdapter impleme
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_TARIFF_ID), tariffCatalogue.getTariff().getId());
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_ID), tariffCatalogue.getCatalogue().getId());
 			if (bean.getCount(criteria) > 0) {
-				throw new ControllerListenerException(AonUtil.getMessage(PRODUCT_BUNDLE, CATALOGUE_DEFINED_FOR_TARIFF_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(CATALOGUE_DEFINED_FOR_TARIFF_ERROR));
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

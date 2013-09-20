@@ -12,7 +12,7 @@
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_fee_print_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_fee_print_module}" />
 				<ui:param name="controller" value="#{feePrint}" />
 				<ui:param name="skipResetButton" value="true" />
 			</ui:include>
@@ -28,7 +28,7 @@
 					</ui:include>
 
 					<aon:outputLabel styleClass="aon-form-input-text-label"
-						value="#{financeBundle.finance_fee_billing_date2}" />
+						value="#{bundle.finance_fee_billing_date2}" />
 					<aon:div>
 						<aon:selectOneMenu value="#{feePrintSearch.billingDateMonth}">
 							<f:selectItem itemLabel="-" value="#{null}"/>

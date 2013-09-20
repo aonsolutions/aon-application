@@ -5,10 +5,7 @@ import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CON
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonMessages.ACTIVE;
-import static com.code.aon.ui.common.ICommonMessages.ADMIN_BUNDLE;
-import static com.code.aon.ui.common.ICommonMessages.AUDIT_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.AUDIT_LEVEL;
-import static com.code.aon.ui.common.ICommonMessages.COMPANY_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_EMAIL_BODY_HEADER;
 import static com.code.aon.ui.common.ICommonMessages.DOMAIN_DISPLAY_NAME;
 import static com.code.aon.ui.common.ICommonMessages.DOMAIN_DOMAIN_MANAGEMENT;
@@ -476,7 +473,7 @@ public class DomainController extends BasicController {
 			try {
 				DomainController.checkDomainName(name, 3);
 			} catch (AonException e) {
-				String message = AonUtil.getMessage(ADMIN_BUNDLE, SUBDOMAIN_SUFFIX);
+				String message = AonUtil.getMessage(SUBDOMAIN_SUFFIX);
 				FacesMessage fm = new FacesMessage(message + ": " + e.getMessage());
 				fm.setSeverity(SEVERITY_ERROR);
 				throw new ValidatorException(fm);		
@@ -485,7 +482,7 @@ public class DomainController extends BasicController {
 			criteria.setSkipDomainFilter(true);
 			criteria.addEqualExpression(getFieldName(IEntityAlias.DOMAIN_NAME), name);
 			if ( getManagerBean().getCount(criteria) > 0 ) {
-				String message = AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_NAME_DUPLICATED, name);
+				String message = AonUtil.getMessage(DOMAIN_NAME_DUPLICATED, name);
 				throw new ValidatorException(new FacesMessage(message));
 			}			
 		}
@@ -497,7 +494,7 @@ public class DomainController extends BasicController {
 			try {
 				DomainController.checkDomainName(name, 3);
 			} catch (AonException e) {
-				String message = AonUtil.getMessage(ADMIN_BUNDLE, SUBDOMAIN_SUFFIX);
+				String message = AonUtil.getMessage(SUBDOMAIN_SUFFIX);
 				FacesMessage fm = new FacesMessage(message + ": " + e.getMessage());
 				fm.setSeverity(SEVERITY_ERROR);
 				throw new ValidatorException(fm);		
@@ -513,25 +510,25 @@ public class DomainController extends BasicController {
 					for( int i = 0; i < labels.length; i++ ) {
 						String label = labels[i];
 						if ( StringUtils.length(label) > MAX_DOMAIN_LABEL_LENGTH ) {
-							throw new AonException( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_INVALID_LABEL_LENGTH, label) );
+							throw new AonException( AonUtil.getMessage(DOMAIN_INVALID_LABEL_LENGTH, label) );
 						}
 						if ( StringUtils.startsWith(label, "-") || StringUtils.endsWith(label, "-") ) {
-							throw new AonException( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_INVALID_LABEL_DASH, label) );
+							throw new AonException( AonUtil.getMessage(DOMAIN_INVALID_LABEL_DASH, label) );
 						}
 						Pattern p = (i+1==labels.length) ? URL_TLD_PATTERN : URL_LABEL_PATTERN;
 						Matcher m = p.matcher(label);
 						if (! m.matches() ) {
-							throw new AonException( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_INVALID_LABEL_FORMAT, label) );
+							throw new AonException( AonUtil.getMessage(DOMAIN_INVALID_LABEL_FORMAT, label) );
 						}
 					}	
 				} else {
-					throw new AonException( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_INVALID_NAME_LEVEL, maxLevel) );
+					throw new AonException( AonUtil.getMessage(DOMAIN_INVALID_NAME_LEVEL, maxLevel) );
 				}
 			} else {
-				throw new AonException( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_INVALID_NAME_LARGE) );
+				throw new AonException( AonUtil.getMessage(DOMAIN_INVALID_NAME_LARGE) );
 			}
 		} else {
-			throw new AonException( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_INVALID_NAME, name) );	
+			throw new AonException( AonUtil.getMessage(DOMAIN_INVALID_NAME, name) );	
 		}
 	}
 	
@@ -664,19 +661,19 @@ public class DomainController extends BasicController {
 		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
 		body.append( "</head><body>" );
 		
-		body.append( AonUtil.getMessage(COMPANY_BUNDLE, COMPANY_EMAIL_BODY_HEADER) );
+		body.append( AonUtil.getMessage(COMPANY_EMAIL_BODY_HEADER) );
 		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
-		body.append( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_EMAIL_BODY_1, loggedUser.getLoggedUserName(), di.getUrl()) );
-		body.append( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_EMAIL_BODY_2, di.getName()) );
+		body.append( AonUtil.getMessage(DOMAIN_EMAIL_BODY_1, loggedUser.getLoggedUserName(), di.getUrl()) );
+		body.append( AonUtil.getMessage(DOMAIN_EMAIL_BODY_2, di.getName()) );
 		if ( (di.getParent() != null) && (di.getParent().getId() != null) ) {
-			body.append( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_EMAIL_BODY_3, di.getParent().getDescription()) );
+			body.append( AonUtil.getMessage(DOMAIN_EMAIL_BODY_3, di.getParent().getDescription()) );
 		}
 		Locale locale = AonUtil.getCurrentLocale();
 		String type = di.getType().getName(locale);
 		String size = FileUtils.byteCountToDisplaySize(di.getMaxTotalDocumentSize()*FileUtils.ONE_MB);
-		body.append( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
+		body.append( AonUtil.getMessage(DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
 		String multiDomain = di.isDomainManagement() ? AonUtil.getMessage(YES) : AonUtil.getMessage(NO) ;
-		body.append( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_EMAIL_BODY_5, multiDomain, di.getModules().size()) );
+		body.append( AonUtil.getMessage(DOMAIN_EMAIL_BODY_5, multiDomain, di.getModules().size()) );
 		if (! di.getModules().isEmpty() ) {
 			body.append( "<ul>" );
 			for( Module module : di.getModules() ) {
@@ -685,13 +682,13 @@ public class DomainController extends BasicController {
 			body.append( "</ul>" );
 		}
 		
-		body.append( AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_EMAIL_BODY_FOOTER) );
+		body.append( AonUtil.getMessage(DOMAIN_EMAIL_BODY_FOOTER) );
 		body.append( "</body>" );
 		return body.toString();
 	}	
 
 	private void diff( StringBuffer sb, String message, Object oldValue, Object newValue ) {
-		diff( AonUtil.getMessage(ADMIN_BUNDLE, message), sb, oldValue, newValue );
+		diff( AonUtil.getMessage(message), sb, oldValue, newValue );
 	}
 
 	private void diff( String message, StringBuffer sb, Object oldValue, Object newValue ) {
@@ -735,7 +732,7 @@ public class DomainController extends BasicController {
 			diff( AonUtil.getMessage(ACTIVE), sb, active1, active2 );
 		}
 		if (! ObjectUtils.equals(di1.getAuditLevel(), di2.getAuditLevel()) ) {
-			diff( AonUtil.getMessage(AUDIT_BUNDLE, AUDIT_LEVEL), sb, di1.getAuditLevel().getName(locale), di2.getAuditLevel().getName(locale) );
+			diff( AonUtil.getMessage(AUDIT_LEVEL), sb, di1.getAuditLevel().getName(locale), di2.getAuditLevel().getName(locale) );
 		}
 		
 		if ( sb.length() > 0 ) {
@@ -758,7 +755,7 @@ public class DomainController extends BasicController {
 			if (! ArrayUtils.isEmpty(emails) ) {
 				LOGGER.info( "Notication emails: {}", ArrayUtils.toString(emails) );
 				EmailSender sender = getEmailSender();
-				String subject = AonUtil.getMessage(ADMIN_BUNDLE, DOMAIN_MANAGEMENT);
+				String subject = AonUtil.getMessage(DOMAIN_MANAGEMENT);
 				AonMessage message = sender.createMessage(subject);
 				message.setRecipientsBcc(emails);
 				sender.addMessageContent(message, getEmailContent(di), MimeType.MIME_HTML, diffFile);
@@ -821,13 +818,13 @@ public class DomainController extends BasicController {
 			if (! ArrayUtils.isEmpty(addresses) ) {
 				for( InternetAddress address : addresses ) {
 					if (! EmailValidator.getInstance().isValid(address.toString()) ) {
-						String message = AonUtil.getMessage(ADMIN_BUNDLE, WRONG_EMAIL, address.toString());
+						String message = AonUtil.getMessage(WRONG_EMAIL, address.toString());
 						throw new ValidatorException(new FacesMessage(SEVERITY_ERROR, message, null));
 					}
 				}
 			}
 		} catch (AddressException e) {
-			String message = AonUtil.getMessage(ADMIN_BUNDLE, WRONG_EMAILS);
+			String message = AonUtil.getMessage(WRONG_EMAILS);
 			throw new ValidatorException(new FacesMessage(SEVERITY_ERROR, message, null));
 		}
 	}			

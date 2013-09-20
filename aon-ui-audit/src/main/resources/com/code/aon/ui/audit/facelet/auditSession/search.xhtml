@@ -10,7 +10,7 @@
 		<aon:form id="sessionSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{auditBundle.audit_sessions_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.audit_sessions_module}" />
 				<ui:param name="controller" value="#{auditSession}" />
 				<ui:param name="skipResetButton" value="true" />
 			</ui:include>
@@ -24,7 +24,7 @@
 						valueChangeListener="#{auditSession.addExpression}" />
 
 					<aon:outputLabel for="Session_application_id"
-						value="#{auditBundle.audit_application}" />
+						value="#{bundle.audit_application}" />
 					<aon:selectOneMenu id="Session_application_id"
 						valueChangeListener="#{auditSession.addExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
@@ -71,12 +71,12 @@
 						valueChangeListener="#{auditSession.addExpression}" />
 						
 					<aon:outputLabel for="Session_remoteAddress"
-						value="#{auditBundle.audit_session_remoteAddress}" />
+						value="#{bundle.audit_session_remoteAddress}" />
 					<aon:inputText id="Session_remoteAddress" size="60"
 						valueChangeListener="#{auditSession.addExpression}" />
 
 					<aon:outputLabel for="Session_remoteHost"
-						value="#{auditBundle.audit_session_remoteHost}" />
+						value="#{bundle.audit_session_remoteHost}" />
 					<aon:inputText id="Session_remoteHost" size="60"
 						valueChangeListener="#{auditSession.addExpression}" />						
 						

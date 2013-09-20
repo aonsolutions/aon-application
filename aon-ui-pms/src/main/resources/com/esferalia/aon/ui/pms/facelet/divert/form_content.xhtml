@@ -35,12 +35,12 @@
 					
 	<c:if test="#{!skipRequestHotel}">
 		<aon:outputLabel for="Divert_hotelRequest_id"
-			value="#{pmsBundle.pms_divert_request}" />
+			value="#{bundle.pms_divert_request}" />
 		<aon:outputText value="#{divert.to.requestHotel.workPlace.description}" />
 	</c:if>
 					
 	<aon:outputLabel for="Divert_hotel_id"
-		value="#{warehouseBundle.warehouse_stock_target}" />
+		value="#{bundle.warehouse_stock_target}" />
 	<aon:selectOneMenu id="Divert_hotel_id" 
 		value="#{divert.to.divertHotel}">
 		<f:selectItems value="#{divert.availableHotels}" />

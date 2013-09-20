@@ -1,14 +1,11 @@
 package com.code.aon.ui.marketing.print;
 
-import static com.code.aon.ui.commercial.controller.ICommercialConstants.BUNDLE_NAME;
 import static com.code.aon.ui.common.ICommonMessages.ACTION_EXPORT;
 import static com.code.aon.ui.common.ICommonMessages.COMMENT;
 import static com.code.aon.ui.common.ICommonMessages.COMPANY_DOCUMENT;
 import static com.code.aon.ui.common.ICommonMessages.ID;
 import static com.code.aon.ui.common.ICommonMessages.LOGIN_USER;
-import static com.code.aon.ui.common.ICommonMessages.MARKETING_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.QUESTION;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.STATUS;
 import static com.code.aon.ui.common.ICommonMessages.SURVEY;
 import static com.code.aon.ui.common.ICommonMessages.TARGET;
@@ -148,7 +145,7 @@ public class MarketingActionReport {
             HSSFCellUtil.createCell(row, 4, AonUtil.getMessage(LOGIN_USER), headerCellStyle);
             HSSFCellUtil.createCell(row, 5, AonUtil.getMessage(STATUS), headerCellStyle);
             HSSFCellUtil.createCell(row, 6, AonUtil.getMessage(ID), headerCellStyle);
-            HSSFCellUtil.createCell(row, 7, AonUtil.getMessage(MARKETING_BUNDLE, SURVEY), headerCellStyle);
+            HSSFCellUtil.createCell(row, 7, AonUtil.getMessage(SURVEY), headerCellStyle);
 
 			cellIdx = 8;
 			for (Question q : getSurveyQuestionList()) {
@@ -185,9 +182,9 @@ public class MarketingActionReport {
             sheet.setColumnWidth(3, 200*256);
             row = sheet.createRow(0);
             HSSFCellUtil.createCell(row, 0, AonUtil.getMessage(ID), headerCellStyle);
-            HSSFCellUtil.createCell(row, 1, AonUtil.getMessage(REGISTRY_BUNDLE, QUESTION), headerCellStyle);
-            HSSFCellUtil.createCell(row, 2, AonUtil.getMessage(REGISTRY_BUNDLE, QUESTION), headerCellStyle);
-            HSSFCellUtil.createCell(row, 3, AonUtil.getMessage(REGISTRY_BUNDLE, QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 1, AonUtil.getMessage(QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 2, AonUtil.getMessage(QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 3, AonUtil.getMessage(QUESTION), headerCellStyle);
             rowIdx = 1;
 			for (Question q : getSurveyQuestionList()) {
 				row = sheet.createRow(rowIdx);
@@ -198,7 +195,7 @@ public class MarketingActionReport {
 				rowIdx++;
 			}
  
-            String fileName = AonUtil.getMessage(MARKETING_BUNDLE, ACTION_EXPORT, action.getId());
+            String fileName = AonUtil.getMessage(ACTION_EXPORT, action.getId());
             file = File.createTempFile(fileName, ".XLS");
             FileOutputStream fileOut = new FileOutputStream(file);
             wb.write(fileOut);
@@ -217,7 +214,7 @@ public class MarketingActionReport {
 		try {
 			FacesContext faces = FacesContext.getCurrentInstance();
 			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
-			String fileName = AonUtil.getMessage(BUNDLE_NAME, ACTION_EXPORT, action.getId());
+			String fileName = AonUtil.getMessage(ACTION_EXPORT, action.getId());
 			response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
 			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xls\";");
 

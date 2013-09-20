@@ -16,7 +16,7 @@
 		<aon:form id="applicationForm">
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{auditBundle.audit_applications_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.audit_applications_module}" />
 				<ui:param name="controller" value="#{auditApplication}" />
 			</ui:include>
 
@@ -37,7 +37,7 @@
 				<aon:div styleClass="aon-form-group" rendered="#{!seller.new}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="applicationActionData" value="#{marketingBundle.marketing_actions}" />
+							<aon:outputLabel for="applicationActionData" value="#{bundle.marketing_actions}" />
 						</aon:div>
 					</aon:div>
 					<ui:include src="/com/code/aon/ui/audit/facelet/applicationAction/grid.xhtml"/>

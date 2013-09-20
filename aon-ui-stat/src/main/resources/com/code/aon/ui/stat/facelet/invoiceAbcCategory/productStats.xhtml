@@ -12,7 +12,7 @@
 		<ui:param name="statController" value="#{stat}" />
 		<ui:param name="statModel" value="#{stat.monthStatModel}" />
 		<aon:methodParam name="backAction" value="abc_category_stats"/>
-		<ui:param name="windowTitle" value="#{statBundle.stat_abc_category}" />
+		<ui:param name="windowTitle" value="#{bundle.stat_abc_category}" />
 		<aon:methodParam name="goAction" value="month_stats"/>
 	    <aon:methodParam name="goMethod" value="#{stat.onAbcProductSelect}" type="actionListener" />
 		<ui:param name="paramName" value="product" />
@@ -24,15 +24,15 @@
 	    <aon:methodParam name="lastColumnAction" value="#{stat.onProductRegistryStats}" type="actionListener" />
 		<aon:methodParam  name="customerFacelet" value="customer_stat_list" />				
 		<c:if  test="#{stat.invoiceType==1}">
-			<ui:param name="lastColumnName" value="#{statBundle.stat_show_clients}" />
+			<ui:param name="lastColumnName" value="#{bundle.stat_show_clients}" />
 			<ui:param name="categoryLabel" value="#{bundle.aon_product}" />
 		</c:if>
 		<c:if  test="#{stat.invoiceType==0}">
-			<ui:param name="lastColumnName" value="#{statBundle.stat_show_suppliers}" />
+			<ui:param name="lastColumnName" value="#{bundle.stat_show_suppliers}" />
 			<ui:param name="categoryLabel" value="#{bundle.aon_product}" />
 		</c:if>
 		<c:if  test="#{stat.invoiceType==2}">
-			<ui:param name="lastColumnName" value="#{statBundle.stat_show_creditors}" />
+			<ui:param name="lastColumnName" value="#{bundle.stat_show_creditors}" />
 			<ui:param name="categoryLabel" value="#{bundle.aon_expense}" />
 		</c:if>	  
 	</ui:include>		

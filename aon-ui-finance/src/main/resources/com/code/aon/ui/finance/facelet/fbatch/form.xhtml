@@ -13,7 +13,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{(fbatch.payment)?(financeBundle.finance_fbatch_payment_module):(financeBundle.finance_fbatch_charge_module)}" />
+				<ui:param name="toolbarTitle" value="#{(fbatch.payment)?(bundle.finance_fbatch_payment_module):(bundle.finance_fbatch_charge_module)}" />
 				<ui:param name="controller" value="#{fbatch}" />
 				<ui:param name="skipSaveButton" value="#{fbatch.readOnly}" />
 				<ui:param name="skipRemoveButton" value="#{fbatch.readOnly}" />
@@ -33,14 +33,14 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="fBatch" />
 					</aon:htmlCommandLink>
-					<aon:commandButton id="aeb" value="#{financeBundle.finance_create_disk}"
+					<aon:commandButton id="aeb" value="#{bundle.finance_create_disk}"
 						rendered="#{!fbatch.new and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
 						styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 						action="fbatch_form" actionListener="#{fbatch.onCreateDisk}"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 					<c:if test="#{aonRole.accountingOperator}">
-						<aon:commandButton id="recordPopup" value="#{financeBundle.finance_record}"
+						<aon:commandButton id="recordPopup" value="#{bundle.finance_record}"
 							rendered="#{!fbatch.new and !fbatch.readOnly and (fbatch.done or !fbatch.diskMode)}"
 							styleClass="aon-finding-toolbar-item aon-icon-task-assume"
 							reRender="showFbatchRecordWindow">	
@@ -49,7 +49,7 @@
 						</aon:commandButton>								
 					</c:if>
 					<c:if test="#{aonRole.accountingManager}">
-						<aon:commandButton id="unrecord" value="#{financeBundle.finance_unrecord}"
+						<aon:commandButton id="unrecord" value="#{bundle.finance_unrecord}"
 							rendered="#{fbatch.recorded and !fbatch.inStatement}"
 							styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
 							action="fbatch_form" actionListener="#{fbatch.onUnrecord}"
@@ -158,13 +158,13 @@
 					<aon:panelTabSet rendered="#{!fbatch.new}">
 	
 						<c:if test="#{fBatchDetail.model.rowCount > 0}" >
-							<aon:panelTab id="fBatchDetailTab" label="#{financeBundle.finance_included_finance}">
+							<aon:panelTab id="fBatchDetailTab" label="#{bundle.finance_included_finance}">
 								<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formDetail.xhtml" />
 							</aon:panelTab>
 						</c:if>
 	
 						<c:if test="#{!fbatch.readOnly}" >
-							<aon:panelTab id="financeTab" label="#{financeBundle.finance_not_batched_finances}">
+							<aon:panelTab id="financeTab" label="#{bundle.finance_not_batched_finances}">
 								<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formFinance.xhtml" />
 							</aon:panelTab>
 						</c:if>

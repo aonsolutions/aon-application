@@ -9,7 +9,6 @@ import static com.code.aon.ui.common.ICommonMessages.NOT_MAIL_ACCOUNTS;
 import static com.code.aon.ui.common.ICommonMessages.REPLIED_MESSAGE;
 import static com.code.aon.ui.common.ICommonMessages.SUBJECT;
 import static com.code.aon.ui.common.ICommonMessages.TO_MESSAGE;
-import static com.code.aon.ui.common.ICommonMessages.WEBMAIL_BUNDLE;
 import static com.code.aon.webmail.bean.IMailConstants.IMAP;
 
 import java.io.BufferedOutputStream;
@@ -1187,7 +1186,7 @@ public class MessageController implements IWebMailConstants {
 			}
 			setShowNewMessageWindow(true);
 		} else {
-			AonUtil.addErrorMessageFromBundle(WEBMAIL_BUNDLE, NOT_MAIL_ACCOUNTS);
+			AonUtil.addErrorMessageFromBundle(NOT_MAIL_ACCOUNTS);
 		}
 	}
 
@@ -1197,7 +1196,7 @@ public class MessageController implements IWebMailConstants {
 		if (mailConfig.getMailAccountCount() > 0) {
 			setShowNewMessageWindow(true);
 		} else {
-			AonUtil.addErrorMessageFromBundle(WEBMAIL_BUNDLE, NOT_MAIL_ACCOUNTS);
+			AonUtil.addErrorMessageFromBundle(NOT_MAIL_ACCOUNTS);
 		}
 	}
 	

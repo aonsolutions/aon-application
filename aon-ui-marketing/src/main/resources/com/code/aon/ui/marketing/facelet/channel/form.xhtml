@@ -16,7 +16,7 @@
 		<aon:form id="channelForm">
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_channel_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.marketing_channel_module}" />
 				<ui:param name="controller" value="#{channel}" />
 			</ui:include>
 
@@ -37,7 +37,7 @@
 					</aon:inputTextarea>						
 
 					<aon:outputLabel for="Category_url"
-						value="#{marketingBundle.marketing_news_url}" />
+						value="#{bundle.marketing_news_url}" />
 					<aon:inputText id="Category_url" required="true"
 						value="#{channel.to.url}" size="80" maxlength="256" />
 						

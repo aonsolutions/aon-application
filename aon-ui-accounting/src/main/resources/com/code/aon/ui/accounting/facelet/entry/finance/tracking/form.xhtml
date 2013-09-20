@@ -16,7 +16,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
+					value="#{bundle.accounting_entry_finance_tracking_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 
 				<ui:define name="toolbarContent">
@@ -27,15 +27,15 @@
 						rendered="#{financeTrackingEntry.payment == null}"
 						styleClass="aon-finding-toolbar-item aon-icon-search" />
 					<aon:commandButton
-						value="#{accountingBundle.accounting_entry_generate}" 
+						value="#{bundle.accounting_entry_generate}" 
 						id="saveFinance" accesskey="#{bundle.aon_key_save}"
-						title="#{accountingBundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
+						title="#{bundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
 						actionListener="#{financeTrackingEntry.accept}"
 						action="#{financeTrackingEntry.generate}"
 						rendered="#{financeTrackingEntry.payment != null}"
 						disabled="#{financeTrackingEntry.lines.rowCount == 0}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						onclick="if (!confirm('#{accountingBundle.accounting_entry_generate}?')) return false;" />
+						onclick="if (!confirm('#{bundle.accounting_entry_generate}?')) return false;" />
 					<aon:commandButton value="#{bundle.aon_reset}"
 						accesskey="#{bundle.aon_key_new}"
 						title="#{bundle.aon_reset} (ALT+#{bundle.aon_key_new})"
@@ -56,7 +56,7 @@
 				<aon:div id="financeTrackingEntryHeader" styleClass="aon-panelGrid-search">
 
 					<aon:div styleClass="aon-panelGrid-search-info">
-						<aon:outputText value="#{accountingBundle.accounting_finance_filter}"
+						<aon:outputText value="#{bundle.accounting_finance_filter}"
 							styleClass="aon-panelGrid-search-info-internal" />
 					</aon:div>
 
@@ -102,13 +102,13 @@
 					<aon:panelTabSet rendered="#{financeTrackingEntry.payment != null}">
 
 						<c:if test="#{financeTrackingEntry.lines.rowCount > 0}">
-							<aon:panelTab name="lines" label="#{accountingBundle.accounting_finance_record_list}">
+							<aon:panelTab name="lines" label="#{bundle.accounting_finance_record_list}">
 								<ui:include src="/com/code/aon/ui/accounting/facelet/entry/finance/tracking/form_lines.xhtml" />
 							</aon:panelTab>
 						</c:if>
 	
 						<c:if test="#{financeTrackingEntry.finances.rowCount > 0}">
-							<aon:panelTab name="finances" label="#{accountingBundle.accounting_finance_pending_list}">
+							<aon:panelTab name="finances" label="#{bundle.accounting_finance_pending_list}">
 								<ui:include src="/com/code/aon/ui/accounting/facelet/entry/finance/tracking/form_finances.xhtml" />
 							</aon:panelTab>
 						</c:if>

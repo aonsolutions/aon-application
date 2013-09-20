@@ -44,7 +44,7 @@
 		valueChangeListener="#{controller.addExpression}" />
 		
 	<aon:outputLabel for="News_url"
-		value="#{marketingBundle.marketing_news_url}" />
+		value="#{bundle.marketing_news_url}" />
 	<aon:inputText id="News_url" size="80"
 		valueChangeListener="#{controller.addExpression}" />			
 		
@@ -87,7 +87,7 @@
 	</aon:div>						
 
 	<aon:outputLabel for="News_rss"				
-		value="#{marketingBundle.marketing_news_publish_rss}"/>
+		value="#{bundle.marketing_news_publish_rss}"/>
 	<aon:selectOneMenu id="News_rss"
 		valueChangeListener="#{controller.addExpression}">
 		<f:selectItem itemLabel="-" value="#{null}"/>

@@ -23,9 +23,9 @@
 					actionListener="#{controllerDetail.checkHandler.checkNone}" reRender="detailDataDiv"
 					onclick="Richfaces.showModalPanel('waitProccess')" 
 		     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-				<aon:commandButton title="#{payrollBundle.payroll_remove_batch}"
+				<aon:commandButton title="#{bundle.payroll_remove_batch}"
 					styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
-					value="#{payrollBundle.payroll_remove_batch}"
+					value="#{bundle.payroll_remove_batch}"
 					rendered="#{controllerDetail.checkHandler.checkedCount > 0}"
 					actionListener="#{controller.onRemoveSelected}" reRender="batchForm, batchPanelTabSet"
 					onclick="Richfaces.showModalPanel('waitProccess')" 

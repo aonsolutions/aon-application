@@ -1,6 +1,5 @@
 package com.code.aon.ui.accounting.controller.entry;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY;
 
 import java.text.DateFormat;
@@ -795,8 +794,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		double invoiceTotal = getInvoiceTotal();
 		double financeTotal = getFinanceTotal();
 		if (financeTotal > 0 && invoiceTotal != financeTotal) {
-			String msg = AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, 
-					UNABLE_RECORD_INACCURACY_ERROR_KEY);
+			String msg = AonUtil.addErrorMessageFromBundle(UNABLE_RECORD_INACCURACY_ERROR_KEY);
 			throw new AbortProcessingException(msg);
 		}
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();

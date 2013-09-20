@@ -11,7 +11,7 @@
 	<aon:panel styleClass="aon-width-all">
 
 		<f:facet name="header">
-			<aon:outputText value="#{sepeBundle.sepe_contrata_contract_other_data}" />
+			<aon:outputText value="#{bundle.sepe_contrata_contract_other_data}" />
 		</f:facet>
 
 		<aon:panelGrid columns="2" id="otherDataPanel"
@@ -20,7 +20,7 @@
 			
 			<aon:outputLabel for="nivelFormativo"
 				rendered="#{contractContrata.handler.showNivelFormativo}" 
-				value="#{sepeBundle.sepe_contrata_contract_nivel_formativo}" />
+				value="#{bundle.sepe_contrata_contract_nivel_formativo}" />
 			<aon:selectOneMenu id="nivelFormativo"
 				rendered="#{contractContrata.handler.showNivelFormativo}" 
 				required="true" 
@@ -32,7 +32,7 @@
 
 			<aon:outputLabel for="titulacionAcademica"
 				rendered="#{contractContrata.handler.showTitulacionAcademica}" 
-				value="#{sepeBundle.sepe_contrata_contract_titulacion_academica}" />
+				value="#{bundle.sepe_contrata_contract_titulacion_academica}" />
 			<aon:selectOneMenu id="titulacionAcademica"
 				rendered="#{contractContrata.handler.showTitulacionAcademica}" 
 				required="#{contractContrata.handler.titulacionAcademicaRequired}" 
@@ -43,14 +43,14 @@
 			
 			<aon:outputLabel for="certificadoProfesionalidad" 
 				rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
-				value="#{sepeBundle.sepe_contrata_contract_certificado_profesionalidad}" />
+				value="#{bundle.sepe_contrata_contract_certificado_profesionalidad}" />
 			<aon:selectBooleanCheckbox id="certificadoProfesionalidad" 
 				required="#{contractContrata.handler.certificadoProfesionalidadRequired}"  
 				rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
 				value="#{contractContrata.params.indCertifProfesionalidad}" />
 					
 			<aon:outputLabel for="basicCopySignatureType" 
-				value="#{sepeBundle.sepe_contrata_contract_basicCopySignatureType}" />
+				value="#{bundle.sepe_contrata_contract_basicCopySignatureType}" />
 			<aon:selectOneMenu id="basicCopySignatureType"
 				required="true"
 				value="#{contractContrata.params.tipoFirmaCopiaBasica}" >
@@ -59,13 +59,13 @@
 			</aon:selectOneMenu>
 		
 			<aon:outputLabel for="basicCopyComments" 
-				value="#{sepeBundle.sepe_contrata_contract_basicCopyComments}" />
+				value="#{bundle.sepe_contrata_contract_basicCopyComments}" />
 			<aon:inputTextarea id="basicCopyComments"
 				value="#{contractContrata.params.textoCopiaBasica}"
 				cols="120" rows="5"/>
 						
 			<aon:outputLabel for="enterpriseFreeUse" 
-				value="#{sepeBundle.sepe_contrata_usoLibreEmpresa}" />
+				value="#{bundle.sepe_contrata_usoLibreEmpresa}" />
 			<aon:inputText id="enterpriseFreeUse"
 				value="#{contractContrata.params.usoLibreEmpresa}" maxlength="30" size="55" >
 				<f:validateLength maximum="30" />
@@ -73,7 +73,7 @@
 			
 			<aon:outputLabel for="workingDayType" 
 				rendered="#{contractContrata.handler.showTipoJornada}"
-				value="#{sepeBundle.sepe_contrata_contract_working_day_type}" />
+				value="#{bundle.sepe_contrata_contract_working_day_type}" />
 			<aon:selectOneMenu id="workingDayType"
 				required="true"
 				disabled="#{!contractContrata.handler.availableTipoJornada}"
@@ -85,28 +85,28 @@
 			
 			<aon:outputLabel 
 				rendered="#{contractContrata.handler.showHorasMinutosJornada}"
-				value="#{sepeBundle.sepe_contrata_contract_working_day_duration}" />
+				value="#{bundle.sepe_contrata_contract_working_day_duration}" />
 			<aon:div rendered="#{contractContrata.handler.showHorasMinutosJornada}">
 				<aon:outputLabel for="workingDayHours" styleClass="aon-italic aon-margin-right"
-					value="#{sepeBundle.sepe_hours}:" />
+					value="#{bundle.sepe_hours}:" />
 				<aon:inputText id="workingDayHours" size="4" maxlength="4"
 					value="#{contractContrata.params.horasJornada}"/>
 				<aon:outputLabel for="workingDayMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{sepeBundle.sepe_minutes}:" />
+					value="#{bundle.sepe_minutes}:" />
 				<aon:inputText id="workingDayMinutes" size="2" maxlength="2"
 					value="#{contractContrata.params.minutosJornada}"/>
 			</aon:div>
 
 			<aon:outputLabel 
 				rendered="#{contractContrata.handler.showHorasMinutosConvenio}"
-				value="#{sepeBundle.sepe_contrata_contract_agreement_hours}" />
+				value="#{bundle.sepe_contrata_contract_agreement_hours}" />
 			<aon:div rendered="#{contractContrata.handler.showHorasMinutosConvenio}">
 				<aon:outputLabel for="agreementHours" styleClass="aon-italic aon-margin-right"
-					value="#{sepeBundle.sepe_hours}:" />
+					value="#{bundle.sepe_hours}:" />
 				<aon:inputText id="agreementHours" size="4" maxlength="4"
 					value="#{contractContrata.params.horasConvenio}"/>
 				<aon:outputLabel for="agreementMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{sepeBundle.sepe_minutes}:" />
+					value="#{bundle.sepe_minutes}:" />
 				<aon:inputText id="agreementMinutes" size="2" maxlength="2"
 					value="#{contractContrata.params.minutosConvenio}"/>
 			</aon:div>
@@ -118,7 +118,7 @@
 			
 			<aon:outputLabel for="formationReceived" 
 				rendered="#{contractContrata.handler.showIndicFormacionTeorica}"
-				value="#{sepeBundle.sepe_contrata_contract_formation_received}" />
+				value="#{bundle.sepe_contrata_contract_formation_received}" />
 			<aon:selectOneRadio id="formationReceived"
 				rendered="#{contractContrata.handler.showIndicFormacionTeorica}"
 				value="#{contractContrata.params.indicFormacionTeorica}" >
@@ -129,18 +129,18 @@
 
 			<aon:outputLabel for="formationDuration" 
 				rendered="#{contractContrata.handler.showHorasMinutosFormacion}"
-				value="#{sepeBundle.sepe_contrata_contract_formation_hours}" />
+				value="#{bundle.sepe_contrata_contract_formation_hours}" />
 			<aon:div id="formationDuration"
 				rendered="#{contractContrata.handler.showHorasMinutosFormacion}" >
 				<aon:outputLabel for="formationHours" styleClass="aon-italic aon-margin-right"
-					value="#{sepeBundle.sepe_hours}:" />
+					value="#{bundle.sepe_hours}:" />
 				<aon:inputText id="formationHours" size="4" maxlength="4"
 					disabled="#{contractContrata.params.indicFormacionTeorica=='S'}" 
 					value="#{contractContrata.params.horasFormacion}">
 					<a4j:support event="onblur" reRender="formationWorkingDaysPercent, otherDataPanel2" />
 				</aon:inputText>
 				<aon:outputLabel for="formationMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{sepeBundle.sepe_minutes}:" />
+					value="#{bundle.sepe_minutes}:" />
 				<aon:inputText id="formationMinutes" size="2" maxlength="2"
 					disabled="#{contractContrata.params.indicFormacionTeorica=='S'}" 
 					value="#{contractContrata.params.minutosFormacion}">
@@ -157,7 +157,7 @@
 			
 			<aon:outputLabel for="ageCollective" 
 				rendered="#{contractContrata.handler.showColectivoEdad}"
-				value="#{sepeBundle.sepe_contrata_contract_age_collective}" />
+				value="#{bundle.sepe_contrata_contract_age_collective}" />
 			<aon:selectOneMenu id="ageCollective"
 				rendered="#{contractContrata.handler.showColectivoEdad}"
 				value="#{contractContrata.params.colectivoEdad}" >
@@ -167,7 +167,7 @@
 			
 			<aon:outputLabel for="retirementPercent"
 				rendered="#{contractContrata.handler.showPorcentajeJubilacionParcial}"
-				value="#{sepeBundle.sepe_contrata_contract_retirement_percent}" />
+				value="#{bundle.sepe_contrata_contract_retirement_percent}" />
 			<aon:inputText id="retirementPercent" size="6" maxLenght="5"
 				rendered="#{contractContrata.handler.showPorcentajeJubilacionParcial}"
 				value="#{contractContrata.params.porcentajeJubilacionParcial}">
@@ -181,7 +181,7 @@
 				<aon:selectBooleanCheckbox id="periodicallyDiscontinuous" 
 					value="#{contractContrata.params.fijoDiscontinuoPeriodico}" />
 				<aon:outputLabel for="periodicallyDiscontinuous"
-					value="#{sepeBundle.sepe_contrata_contract_periodically_discontinuous}" />
+					value="#{bundle.sepe_contrata_contract_periodically_discontinuous}" />
 			</aon:div>
 
 		</aon:panelGrid>

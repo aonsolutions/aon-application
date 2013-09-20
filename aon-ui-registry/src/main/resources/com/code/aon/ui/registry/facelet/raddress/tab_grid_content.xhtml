@@ -34,7 +34,7 @@
 					value="#{controller.to.number}" size="10" maxlength="5" />
 			</aon:div>
 			
-			<aon:outputText value="#{registryBundle.registry_address_detail}" styleClass="aon-italic"/>
+			<aon:outputText value="#{bundle.registry_address_detail}" styleClass="aon-italic"/>
 			<aon:div>
 				<aon:inputText id="RegistryAddress_address2#{sufix}" styleClass="aon-margin-left aon-form-input-text"
 					value="#{controller.to.address2}" size="30" maxlength="128" />
@@ -47,7 +47,7 @@
 				<aon:inputText id="RegistryAddress_zip#{sufix}"	required="true" styleClass="aon-margin-left aon-form-input-text"
 					value="#{controller.to.zip}" size="8" maxlength="16" />
 
-				<aon:outputLabel for="RegistryAddress_city" value="#{registryBundle.registry_city}" styleClass="aon-italic aon-margin-left"/>
+				<aon:outputLabel for="RegistryAddress_city" value="#{bundle.registry_city}" styleClass="aon-italic aon-margin-left"/>
 				<aon:inputText id="RegistryAddress_city#{sufix}" required="true" styleClass="aon-margin-left aon-form-input-text"
 					value="#{controller.to.city}" size="20" maxlength="64" />
 			</aon:div>
@@ -62,7 +62,7 @@
 				</aon:selectOneMenu>
 			
 				<c:if test="#{showMunicipality}" >
-					<aon:outputLabel for="RegistryAddress_municipality" value="#{registryBundle.registry_municipality}" styleClass="aon-italic aon-margin-left"/>
+					<aon:outputLabel for="RegistryAddress_municipality" value="#{bundle.registry_municipality}" styleClass="aon-italic aon-margin-left"/>
 					<aon:selectOneMenu id="RegistryAddress_municipality#{sufix}" styleClass="aon-margin-left aon-form-input-text"
 						value="#{controller.to.municipalityCode}">
 						<f:selectItem itemLabel="-" value="#{null}" />

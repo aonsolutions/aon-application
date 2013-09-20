@@ -25,7 +25,7 @@
 				</c:if>
 
 				<aon:outputLabel for="Room_item_id"
-					value="#{pmsBundle.pms_room_type}" />
+					value="#{bundle.pms_room_type}" />
 				<aon:selectOneMenu id="Room_item_id"
 					value="#{searchController.item}" >
 					<f:selectItem itemLabel=" - " itemValue="#{null}" />
@@ -33,7 +33,7 @@
 				</aon:selectOneMenu>
 
 				<aon:outputText for="Room_asset_name"
-					value="#{pmsBundle.pms_room_number}" />
+					value="#{bundle.pms_room_number}" />
 				<aon:inputText id="Room_asset_name"
 					value="#{searchController.roomName}"
 					size="3" maxlength="5" />

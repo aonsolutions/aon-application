@@ -13,7 +13,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_amortization_type_module}" />
+					value="#{bundle.accounting_amortization_type_module}" />
 				<ui:param name="controller" value="#{amortizationType}" />
 			</ui:include>
 
@@ -29,14 +29,14 @@
 					</aon:inputText>
 
 					<aon:outputLabel for="fixedAccountId"
-						value="#{accountingBundle.accounting_fixed_asset_account}" />
+						value="#{bundle.accounting_fixed_asset_account}" />
 					<aon:selectOneMenu id="fixedAccountId" required="true"  value="#{amortizationType.to.fixedAssetAccount}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{amortizationType.fixedAssetAccounts}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="accumulatedAccountId"
-						value="#{accountingBundle.accounting_accumulated_account}" />
+						value="#{bundle.accounting_accumulated_account}" />
 					<aon:selectOneMenu id="accumulatedAccountId" required="true"  value="#{amortizationType.to.accumulatedAccount}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{amortizationType.accumulatedDepreciationAccounts}" />

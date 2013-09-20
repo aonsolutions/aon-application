@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_SEND_EMAIL_FNINISH;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
@@ -35,7 +34,6 @@ import com.code.aon.facturae.FacturaeWriter;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
@@ -100,7 +98,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 			throw new AbortProcessingException(th.getMessage(), th);
 		} finally {
 			LogPanelController logger = LogPanelController.getInstance();
-			logger.info( AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INVOICE_SEND_EMAIL_FNINISH) );
+			logger.info( AonUtil.getMessage(FINANCE_INVOICE_SEND_EMAIL_FNINISH) );
 			logger.finish();
 			messageController.setShowNewMessageWindow(false);
 		}

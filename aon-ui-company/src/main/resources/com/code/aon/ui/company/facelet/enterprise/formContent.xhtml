@@ -10,7 +10,7 @@
 	<aon:div>
 		<aon:div styleClass="aon-group">
 			<aon:div styleClass="aon-group-title">
-				<aon:outputText value="#{companyBundle.company_data_module}"/>
+				<aon:outputText value="#{bundle.company_data_module}"/>
 			</aon:div>
 			<aon:div styleClass="aon-group-body"> 
 				<aon:div styleClass="aon-group-body-internal">
@@ -36,13 +36,13 @@
 	<aon:div>
 		<aon:div styleClass="aon-group">
 			<aon:div styleClass="aon-group-title">
-				<aon:outputText value="#{companyBundle.company_logo_and_signature}"/>
+				<aon:outputText value="#{bundle.company_logo_and_signature}"/>
 			</aon:div>
 			<aon:div styleClass="aon-group-body"> 
 				<aon:div styleClass="aon-group-body-internal">
 					<aon:panelGrid columns="4" style="width:100%">
 						<aon:outputLabel for="attach_file"
-							value="#{companyBundle.company_logo}" />
+							value="#{bundle.company_logo}" />
 						<a4j:region>
 							<h:panelGrid id="attachGrid" columns="2">
 								<a4j:mediaOutput element="img" cacheable="false"

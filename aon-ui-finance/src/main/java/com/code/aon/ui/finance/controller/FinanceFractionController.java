@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_FRACTIONED;
 
 import java.util.Date;
@@ -142,7 +141,7 @@ public class FinanceFractionController implements IFinanceConstants {
 			targetFinance.setFinanceGroup(targetFinance.getFinanceGroup().getId() == null ? null : targetFinance.getFinanceGroup());
 			financeBean.update(targetFinance);
 
-			String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_FRACTIONED, 1, list.size());
+			String message = AonUtil.getMessage(FINANCE_TRACKING_FRACTIONED, 1, list.size());
 			FinanceTrackingWriter.addFinanceTracking(targetFinance, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 
 			for(int i=1; i<list.size(); i++) {
@@ -153,7 +152,7 @@ public class FinanceFractionController implements IFinanceConstants {
 				finance.setFinanceGroup(null);
 				financeBean.insert(finance);
 
-				message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_FRACTIONED, i+1, list.size());
+				message = AonUtil.getMessage(FINANCE_TRACKING_FRACTIONED, i+1, list.size());
 				FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 			}
 

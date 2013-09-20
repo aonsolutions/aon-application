@@ -23,7 +23,7 @@
 				
 				<rich:columns value="#{activityViewer.viewerDays}" var="days" index="idx"	>
 					<aon:outputText styleClass="calendar-header" value="#{days.time}" >
-						<f:convertDateTime pattern="#{assetBundle.aon_simple_date_pattern}" 
+						<f:convertDateTime pattern="#{bundle.aon_simple_date_pattern}" 
 							timeZone="#{timeZoneController.timeZoneId}"  />
 					</aon:outputText>
 				</rich:columns>

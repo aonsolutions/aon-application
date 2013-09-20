@@ -16,7 +16,7 @@
 		onblur="toUpperCase(this);" />
 
 	<c:if test="#{aonConfiguration.bean.product.showBarcode}">
-		<aon:outputLabel for="Item_barcode" value="#{productBundle.product_barcode}" />
+		<aon:outputLabel for="Item_barcode" value="#{bundle.product_barcode}" />
 		<aon:inputText id="Item_barcode" size="15"
 			valueChangeListener="#{controller.addExpression}" />
 	</c:if>
@@ -56,7 +56,7 @@
 
 	<c:if test="#{aonConfiguration.bean.product.showStock}">
 		<aon:outputLabel for="Item_product_inventoriable"
-			value="#{productBundle.product_inventoriable}" />
+			value="#{bundle.product_inventoriable}" />
 		<aon:selectOneRadio id="Item_product_inventoriable"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
@@ -66,7 +66,7 @@
 
 	<c:if test="#{aonConfiguration.bean.product.showComposition}">
 		<aon:outputLabel for="Item_product_composition"
-			value="#{productBundle.product_composite_product}" />
+			value="#{bundle.product_composite_product}" />
 		<aon:selectOneRadio id="Item_product_composition"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
@@ -76,7 +76,7 @@
 
 	<c:if test="#{aonConfiguration.bean.product.showEcommerceData}">
 		<aon:outputLabel for="Item_internet"
-			value="#{productBundle.product_ecommerce}" />
+			value="#{bundle.product_ecommerce}" />
 		<aon:selectOneRadio id="Item_internet"
 			valueChangeListener="#{controller.addExpression}">
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />

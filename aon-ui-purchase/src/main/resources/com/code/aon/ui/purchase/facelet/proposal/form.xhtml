@@ -14,13 +14,13 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_proposal_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.purchase_proposal_module}" />
 				<ui:param name="controller" value="#{proposal}" />
 				<ui:param name="skipRemoveButton" value="#{proposal.transferProcessed and !proposal.to.itemReturn}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="showTransferWindow-button"
-						value="#{purchaseBundle.purchase_proposal_transfer_to}"
+						value="#{bundle.purchase_proposal_transfer_to}"
 						reRender="showTransferWindow"
 						rendered="#{proposal.transferPending}"
 						actionListener="#{proposal.onShowTransferWindow}"
@@ -30,7 +30,7 @@
 							target="#{proposal.showTransferWindow}"
 							value="#{true}" />
 					</aon:commandButton>
-					<aon:htmlCommandLink id="purchaseProposal-report" value="#{purchaseBundle.purchase_proposal}"
+					<aon:htmlCommandLink id="purchaseProposal-report" value="#{bundle.purchase_proposal}"
 						target="_new" rendered="#{!proposal.new and proposalDetail.model.rowCount > 0}"
 						action="#{report.onExecute}"
 						accesskey="#{bundle.aon_key_print}"
@@ -39,7 +39,7 @@
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
 					<c:if test="#{aonRole.purchaseOperator}">
-						<aon:htmlCommandLink id="purchaseProposal_valued-report" value="#{purchaseBundle.purchase_valued_report}"
+						<aon:htmlCommandLink id="purchaseProposal_valued-report" value="#{bundle.purchase_valued_report}"
 							target="_new" rendered="#{!proposal.new and proposalDetail.model.rowCount > 0}"
 							action="#{purchaseReport.onExecute}"
 							accesskey="#{bundle.aon_key_print}"
@@ -71,7 +71,7 @@
 						
 						<aon:commandButton id="undoTransfer" value="&#160;"
 							styleClass="aon-icon-commandButton aon-icon-rubber aon-margin-left"
-							title="#{purchaseBundle.purchase_proposal_transfer_undo}"  
+							title="#{bundle.purchase_proposal_transfer_undo}"  
 							actionListener="#{proposal.onUndoTransfer}"
 							reRender="proposalPanel"
 							rendered="#{proposal.to.pending and proposal.to.transferProposal.pending and proposal.to.itemReturn}" />
@@ -86,7 +86,7 @@
 					</aon:selectOneRadio>
 						
 						
-					<aon:outputText value="#{purchaseBundle.purchase_issueDate}" />
+					<aon:outputText value="#{bundle.purchase_issueDate}" />
 					<aon:div>
 						<aon:outputText value="#{proposal.to.issueDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"

@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="100">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{financeBundle.finance_group_finances}" />
+						<aon:outputText value="#{bundle.finance_group_finances}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -51,7 +51,7 @@
 									<aon:panelTabSet >
 					
 										<c:if test="#{financeGroupList.model.rowCount > 0}" >
-											<aon:panelTab id="groupTab" label="#{financeBundle.finance_grouped_finances}">
+											<aon:panelTab id="groupTab" label="#{bundle.finance_grouped_finances}">
 												<aon:div id="fGroupDetailToolBarDiv" styleClass="aon-toolbar" >
 													<aon:commandButton title="#{bundle.aon_check_all}"
 														styleClass="aon-finding-toolbar-item aon-icon-checkAll"
@@ -66,9 +66,9 @@
 														onclick="Richfaces.showModalPanel('waitProccess')" 
 											     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 													<aon:div id="removeButton" style="display:inline;" >
-														<aon:commandButton title="#{financeBundle.finance_remove_batch}"
+														<aon:commandButton title="#{bundle.finance_remove_batch}"
 															styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
-															value="#{financeBundle.finance_remove_group}"
+															value="#{bundle.finance_remove_group}"
 															rendered="#{not empty financeGroupList.checkedFinances}"
 															actionListener="#{finance.onUngroupSelected}" reRender="financeBatchForm,fGroupPanelTabSet"
 															onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -101,7 +101,7 @@
 												
 														<aon:column>
 															<f:facet name="header">
-																<aon:outputText value="#{financeBundle.finance_finance_date}" />
+																<aon:outputText value="#{bundle.finance_finance_date}" />
 															</f:facet>
 															<aon:outputText value="#{to.dueDate}">
 																<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -154,7 +154,7 @@
 											</aon:panelTab>
 										</c:if>
 					
-										<aon:panelTab id="financeTab" label="#{financeBundle.finance_not_grouped_finances}">
+										<aon:panelTab id="financeTab" label="#{bundle.finance_not_grouped_finances}">
 											<aon:div id="financeToolBarDiv" styleClass="aon-toolbar"
 												rendered="#{financeList.model.rowCount > 0}">
 												<aon:commandButton title="#{bundle.aon_check_all}"
@@ -170,9 +170,9 @@
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 												<aon:div id="addButton" style="display:inline;" >
-													<aon:commandButton title="#{financeBundle.finance_add_group}"
+													<aon:commandButton title="#{bundle.finance_add_group}"
 														styleClass="aon-finding-toolbar-item aon-icon-newFolder"
-														value="#{financeBundle.finance_add_group}"
+														value="#{bundle.finance_add_group}"
 														rendered="#{not empty financeList.checkedFinances}"
 														actionListener="#{finance.onGroupSelected}" reRender="financeBatchForm,fGroupPanelTabSet"
 														onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -205,7 +205,7 @@
 													
 													<aon:column>
 														<f:facet name="header">
-															<aon:outputText value="#{financeBundle.finance_finance_date}" />
+															<aon:outputText value="#{bundle.finance_finance_date}" />
 														</f:facet>
 														<aon:outputText value="#{to.dueDate}">
 															<f:convertDateTime pattern="#{bundle.aon_date_pattern}"

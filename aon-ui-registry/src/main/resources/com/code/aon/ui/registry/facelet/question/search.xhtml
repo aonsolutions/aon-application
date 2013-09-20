@@ -11,7 +11,7 @@
 		<aon:form id="questionSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{registryBundle.registry_question_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.registry_question_module}" />
 				<ui:param name="controller" value="#{question}" />
 			</ui:include>
 
@@ -34,17 +34,17 @@
 					</aon:selectOneMenu>		
 					
 					<aon:outputLabel for="Question_text"
-						value="#{registryBundle.registry_question}" />
+						value="#{bundle.registry_question}" />
 					<aon:inputText id="Question_text" size="60"
 						valueChangeListener="#{controller.addExpression}" />
 
 					<aon:outputLabel for="Question_alias"
-						value="#{configBundle.config_tag_module}" />
+						value="#{bundle.config_tag_module}" />
 					<aon:inputText id="Question_alias" size="60"
 						valueChangeListener="#{controller.addExpression}" />
 
 					<aon:outputLabel for="Question_argument"
-						value="#{registryBundle.registry_question_argument}" />
+						value="#{bundle.registry_question_argument}" />
 					<aon:inputText id="Question_argument" size="60"
 						valueChangeListener="#{controller.addExpression}" />
 				

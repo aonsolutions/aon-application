@@ -25,31 +25,31 @@
 					<aon:div styleClass="aon-section-title">
 						<aon:div styleClass="aon-float-right aon-text-smaller">
 							<aon:commandButton
-								title="#{webmailBundle.webmail_previous_message}"
+								title="#{bundle.webmail_previous_message}"
 								rendered="#{webmailMessage.previousMessage}"
 								action="message"
 								actionListener="#{webmailMessage.onPreviousMessage}"
-								value="#{webmailBundle.webmail_previous_message}"
+								value="#{bundle.webmail_previous_message}"
 								styleClass="aon-icon-commandButton aon-icon-mailPrevious" />
 				
 							<aon:commandButton
-								title="#{webmailBundle.webmail_previous_message}"
+								title="#{bundle.webmail_previous_message}"
 								rendered="#{!webmailMessage.previousMessage}" disabled="true"
-								value="#{webmailBundle.webmail_previous_message}"
+								value="#{bundle.webmail_previous_message}"
 								styleClass="aon-icon-commandButton aon-icon-mailPrevious-dis" />
 				
 							<aon:commandButton
-								title="#{webmailBundle.webmail_next_message}"
+								title="#{bundle.webmail_next_message}"
 								rendered="#{webmailMessage.nextMessage}"
 								action="message"
 								actionListener="#{webmailMessage.onNextMessage}"
-								value="#{webmailBundle.webmail_next_message}"
+								value="#{bundle.webmail_next_message}"
 								styleClass="aon-icon-commandButton aon-icon-mailNext" />
 							
 							<aon:commandButton
-								title="#{webmailBundle.webmail_next_message}"
+								title="#{bundle.webmail_next_message}"
 								rendered="#{!webmailMessage.nextMessage}" disabled="true"
-								value="#{webmailBundle.webmail_next_message}"
+								value="#{bundle.webmail_next_message}"
 								styleClass="aon-icon-commandButton aon-icon-mailNext-dis" />
 						</aon:div>
 						<aon:outputText value="#{webmailFolder.folder.name}"/>
@@ -58,37 +58,37 @@
 					<aon:div styleClass="aon-toolbar">	
 						<aon:commandButton
 							id="newMailMessage"
-							title="#{webmailBundle.webmail_newmail}"
+							title="#{bundle.webmail_newmail}"
 							action="messageNew"
 							actionListener="#{webmailMessage.onNewMessage}"
-							value="#{webmailBundle.webmail_newmail}"
+							value="#{bundle.webmail_newmail}"
 							styleClass="aon-finding-toolbar-item aon-icon-newMail" />
 								
 						<!-- Reply to message  -->									
 						<aon:commandButton
 							id="replyButton"
-							title="#{webmailBundle.webmail_newmail_reply}"
+							title="#{bundle.webmail_newmail_reply}"
 							action="messageNew"
 							actionListener="#{webmailMessage.onReplyMessage}"
-							value="#{webmailBundle.webmail_newmail_reply}"
+							value="#{bundle.webmail_newmail_reply}"
 							styleClass="aon-finding-toolbar-item aon-icon-mailReply" />
 		
 						<!-- Reply to all button  -->										
 						<aon:commandButton
 							id="replyAllButton"
-							title="#{webmailBundle.webmail_newmail_replyAll}"
+							title="#{bundle.webmail_newmail_replyAll}"
 							action="messageNew"
 							actionListener="#{webmailMessage.onReplyAllMessage}"
-							value="#{webmailBundle.webmail_newmail_replyAll}"
+							value="#{bundle.webmail_newmail_replyAll}"
 							styleClass="aon-finding-toolbar-item aon-icon-mailReplyAll" />
 		
 						<!-- Forward button  -->
 						<aon:commandButton
 							id="forwardButton"
-							title="#{webmailBundle.webmail_newmail_forward}"
+							title="#{bundle.webmail_newmail_forward}"
 							action="messageNew"
 							actionListener="#{webmailMessage.onForwardMessage}"
-							value="#{webmailBundle.webmail_newmail_forward}"
+							value="#{bundle.webmail_newmail_forward}"
 							styleClass="aon-finding-toolbar-item aon-icon-mailForward" />
 		
 						<!-- Delete button  -->
@@ -103,13 +103,13 @@
 									
 						<aon:confirmButton id="purgeMail"
 							rendered="#{webmailFolder.folder.purgableAllMessages}"
-							title="#{webmailBundle.webmail_mail_purge}"
+							title="#{bundle.webmail_mail_purge}"
 							confirmTitle="#{bundle.aon_advice}"
-							confirmMessage="#{webmailBundle.webmail_purge_confirm}"
+							confirmMessage="#{bundle.webmail_purge_confirm}"
 							accesskey="#{bundle.aon_key_remove}"
 							confirmAction="#{webmailMessage.getReturnAction}"
 							confirmActionListener="#{webmailMessage.purgeSelectedMessage}"
-							value="#{webmailBundle.webmail_mail_purge}"
+							value="#{bundle.webmail_mail_purge}"
 							styleClass="aon-icon-mailDelete aon-finding-toolbar-item" />
 	
 						<a4j:htmlCommandLink id="save" target="_blank"
@@ -129,8 +129,8 @@
 						<!-- Move button  -->
 						<aon:commandButton
 							id="moveButton" reRender="folderWindow"
-							title="#{webmailBundle.webmail_movemail}"
-							value="#{webmailBundle.webmail_movemail}"
+							title="#{bundle.webmail_movemail}"
+							value="#{bundle.webmail_movemail}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-move">
 							<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
 								value="#{true}" />							
@@ -156,7 +156,7 @@
 								<aon:outputText escape="false" converter="longString" value="#{webmailMessage.message.sender}" />
 								<aon:commandButton
 									value="&#160;" id="addToContacts" reRender="aonStatus"
-									title="#{webmailBundle.webmail_email_add}"
+									title="#{bundle.webmail_email_add}"
 									styleClass="aon-icon-commandButton aon-icon-agenda aon-margin-left">
 									<rich:componentControl for="addContactModalPanel" operation="show" event="onclick"/>
 								</aon:commandButton>
@@ -233,7 +233,7 @@
 							
 							<aon:outputText rendered="#{webmailAttach.attachment}" 
 								styleClass="aon-form-input-text-label aon-nowrap"
-								value="#{webmailBundle.webmail_attach_files}: " />
+								value="#{bundle.webmail_attach_files}: " />
 							<aon:panelGroup rendered="#{webmailAttach.attachment}" >
 									
 								<aon:selectOneMenu 
@@ -247,7 +247,7 @@
 									actionListener="#{webmailAttach.downloadAttachment}"
 									styleClass="aon-icon aon-icon-mail-save"
 									style="margin-left:10px;margin-right:5px;"
-									title="#{webmailBundle.webmail_download}" >
+									title="#{bundle.webmail_download}" >
 									<f:param name="index" value="#{webmailAttach.attach.position}" />
 									<aon:outputText value="&#160;" />
 								</a4j:htmlCommandLink>
@@ -255,7 +255,7 @@
 								<a4j:htmlCommandLink id="downloadZip" target="_blank"
 									actionListener="#{webmailAttach.downloadZippedAttachments}"
 									styleClass="aon-icon aon-icon-zip" value="&#160;"
-									title="#{webmailBundle.webmail_download_zipped}" />
+									title="#{bundle.webmail_download_zipped}" />
 			
 							</aon:panelGroup>
 								

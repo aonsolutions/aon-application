@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.CREDITOR_REPORT;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_BUNDLE;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -57,7 +56,7 @@ public class CreditorController extends RegistryController {
 	}
 
     public String getReportTitle(){
-    	return AonUtil.getMessage(REGISTRY_BUNDLE, CREDITOR_REPORT);
+    	return AonUtil.getMessage(CREDITOR_REPORT);
 	}
 
 }

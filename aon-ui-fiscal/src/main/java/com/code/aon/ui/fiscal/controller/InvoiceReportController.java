@@ -3,7 +3,6 @@ package com.code.aon.ui.fiscal.controller;
 import static com.code.aon.ui.common.ICommonMessages.DATE;
 import static com.code.aon.ui.common.ICommonMessages.FEE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_RECTIFIER_INVOICE;
-import static com.code.aon.ui.common.ICommonMessages.FISCAL_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.HOLDER;
 import static com.code.aon.ui.common.ICommonMessages.INVOICE_DEDUCTIBLE_QUOTA;
 import static com.code.aon.ui.common.ICommonMessages.INVOICE_DED_TYPE;
@@ -235,25 +234,25 @@ public class InvoiceReportController {
 			report.getReport().setReportLocale(locale);
 			report
 				.addColumn(dyn.getIntegerColumn("id","ID"))
-				.addColumn(dyn.getStringColumn("abbreviatedInvoiceType",AonUtil.getMessage(FISCAL_BUNDLE, INVOICE_TYPE),27))
-				.addColumn(dyn.getStringColumn("invoiceTypeDesc",AonUtil.getMessage(FISCAL_BUNDLE, INVOICE_TYPE),47))
-				.addColumn(dyn.getStringColumn("transactionDesc",AonUtil.getMessage(FISCAL_BUNDLE, INVOICE_TRANSACTION),60)) 
+				.addColumn(dyn.getStringColumn("abbreviatedInvoiceType",AonUtil.getMessage(INVOICE_TYPE),27))
+				.addColumn(dyn.getStringColumn("invoiceTypeDesc",AonUtil.getMessage(INVOICE_TYPE),47))
+				.addColumn(dyn.getStringColumn("transactionDesc",AonUtil.getMessage(INVOICE_TRANSACTION),60)) 
 				.addColumn(dyn.getStringColumn("conceptNature",AonUtil.getMessage(INVOICE_NATURE),64))
 				.addColumn(dyn.getStringColumn("rectificationTypeDesc",AonUtil.getMessage(FINANCE_RECTIFIER_INVOICE),64))
-				.addColumn(dyn.getIntegerColumn("rectifiedInvoice",AonUtil.getMessage(FISCAL_BUNDLE, INVOICE_RECTIFIED_ID)))
+				.addColumn(dyn.getIntegerColumn("rectifiedInvoice",AonUtil.getMessage(INVOICE_RECTIFIED_ID)))
 				.addColumn(dyn.getDateColumn("issueDate",AonUtil.getMessage(DATE)))
-				.addColumn(dyn.getDateColumn("taxDate",AonUtil.getMessage(FISCAL_BUNDLE, INVOICE_TAXDATE)))
+				.addColumn(dyn.getDateColumn("taxDate",AonUtil.getMessage(INVOICE_TAXDATE)))
 				.addColumn(dyn.getStringColumn("referenceCode",AonUtil.getMessage(INVOICE_NUMBER),100))
 				.addColumn(dyn.getStringColumn("documentNumber",AonUtil.getMessage(INVOICE_DOCUMENT_NUMBER),100))
 				.addColumn(dyn.getStringColumn("registryDocument",AonUtil.getMessage(INVOICE_DOCUMENT),64))
 				.addColumn(dyn.getStringColumn("registryName",AonUtil.getMessage(HOLDER),308))
-				.addColumn(dyn.getStringColumn("taxTypeDesc",AonUtil.getMessage(FISCAL_BUNDLE, INVOICE_TAX_TYPE),47))
-				.addColumn(dyn.getStringColumn("vatDeductionTypeDesc",AonUtil.getMessage(FISCAL_BUNDLE, INVOICE_DED_TYPE),114))
-				.addColumn(dyn.getStringColumn("withholdingTypeDesc",AonUtil.getMessage(FISCAL_BUNDLE, INVOICE_RET_TYPE),66))
+				.addColumn(dyn.getStringColumn("taxTypeDesc",AonUtil.getMessage(INVOICE_TAX_TYPE),47))
+				.addColumn(dyn.getStringColumn("vatDeductionTypeDesc",AonUtil.getMessage(INVOICE_DED_TYPE),114))
+				.addColumn(dyn.getStringColumn("withholdingTypeDesc",AonUtil.getMessage(INVOICE_RET_TYPE),66))
 				.addColumn(dyn.getNumberColumn("taxableBase",AonUtil.getMessage(INVOICE_TAXABLE_BASE)))
 				.addColumn(dyn.getNumberColumn("percentage",AonUtil.getMessage(INVOICE_PERCENTAGE)))
 				.addColumn(dyn.getNumberColumn("quota",AonUtil.getMessage(FEE)))
-				.addColumn(dyn.getNumberColumn("deductibleQuota",AonUtil.getMessage(FISCAL_BUNDLE, INVOICE_DEDUCTIBLE_QUOTA)))
+				.addColumn(dyn.getNumberColumn("deductibleQuota",AonUtil.getMessage(INVOICE_DEDUCTIBLE_QUOTA)))
 				;
 			DynaReportManager drm = new DynaReportManager();
 			drm.toExcel(report,"Facturas",getInvoices() );

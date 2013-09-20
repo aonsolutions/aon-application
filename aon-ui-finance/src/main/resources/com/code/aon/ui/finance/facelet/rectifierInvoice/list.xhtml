@@ -12,7 +12,7 @@
 		<aon:form id="invoiceList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_special_rectifier_invoice_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_special_rectifier_invoice_module}" />
 				<ui:param name="controller" value="#{rectifierInvoice}" />
 				<ui:param name="skipResetButton" value="true" />
 
@@ -23,7 +23,7 @@
 	
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="rectify"
-						value="#{financeBundle.finance_rectify}"
+						value="#{bundle.finance_rectify}"
 						styleClass="aon-finding-toolbar-item aon-icon-version"
 						actionListener="#{rectifierInvoice.onRectificationShow}"
 						reRender="showRectificationWindow">

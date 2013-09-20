@@ -12,7 +12,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="skipSearchButton" value="true" />
-				<ui:param name="toolbarTitle" value="#{productBundle.product_tariff_module2}" />
+				<ui:param name="toolbarTitle" value="#{bundle.product_tariff_module2}" />
 				<ui:param name="controller" value="#{tariff}" />
 			</ui:include>
 
@@ -30,7 +30,7 @@
 				<c:if test="#{!tariff.new}">
 					<aon:div styleClass="aon-group">
 						<aon:div styleClass="aon-group-title">
-							<aon:outputText value="#{productBundle.product_catalogue_module}"/>
+							<aon:outputText value="#{bundle.product_catalogue_module}"/>
 						</aon:div>
 						<aon:div styleClass="aon-group-body"> 
 							<aon:div styleClass="aon-group-body-internal">

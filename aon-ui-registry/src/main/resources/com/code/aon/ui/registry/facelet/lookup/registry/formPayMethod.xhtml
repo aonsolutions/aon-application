@@ -35,12 +35,12 @@
 							<ui:param name="lookupTo" value="#{controllerLookupListener.registryBank.bank}" />
 						</ui:include>						
 						<aon:panelGroup styleClass="aon-margin-left">
-							<aon:inputText label="#{configBundle.config_bank_code}" 
+							<aon:inputText label="#{bundle.config_bank_code}" 
 								value="#{controllerLookupListener.registryBank.bankAccount.office}"
 								required="true" size="3" maxlength="4">
 								<f:validateLength minimum="4" maximum="4" />
 							</aon:inputText>
-							<aon:inputText label="#{configBundle.config_bank_control}"
+							<aon:inputText label="#{bundle.config_bank_control}"
 								value="#{controllerLookupListener.registryBank.bankAccount.control}"
 								required="true" size="1" maxlength="2">
 								<f:validateLength minimum="2" maximum="2" />
@@ -64,24 +64,24 @@
 					
 			<c:if test="#{controllerLookupListener.registryPayMethod.payment.type != null}">				
 				<aon:outputLabel for="RegistryPayMethod_numberOfPayments" 
-					value="#{registryBundle.registry_number_of_payments}" />
+					value="#{bundle.registry_number_of_payments}" />
 				<aon:inputText id="RegistryPayMethod_numberOfPayments"
 					value="#{controllerLookupListener.registryPayMethod.numberOfPayments}" required="true" size="5" >
 					<f:validateLongRange minimum="1" />
 				</aon:inputText>	
 				
 				<aon:outputLabel for="RegistryPayMethod_daysToFirstPayment" 
-					value="#{registryBundle.registry_days_to_first_payment}" />
+					value="#{bundle.registry_days_to_first_payment}" />
 				<aon:inputText id="RegistryPayMethod_daysToFirstPayment"
 					value="#{controllerLookupListener.registryPayMethod.daysToFirstPayment}" required="true" size="5" />
 			
 				<aon:outputLabel for="RegistryPayMethod_daysBetweenPayments" 
-					value="#{registryBundle.registry_days_between_payments}" />
+					value="#{bundle.registry_days_between_payments}" />
 				<aon:inputText id="RegistryPayMethod_daysBetweenPayments"
 					value="#{controllerLookupListener.registryPayMethod.daysBetweenPayments}" required="true" size="5" />
 			
 				<aon:outputLabel for="RegistryPayMethod_paymentDays" 
-					value="#{registryBundle.registry_payment_days}" />
+					value="#{bundle.registry_payment_days}" />
 				<aon:inputText id="RegistryPayMethod_paymentDays"
 					value="#{controllerLookupListener.registryPayMethod.paymentDays}" size="5" />
 			</c:if>

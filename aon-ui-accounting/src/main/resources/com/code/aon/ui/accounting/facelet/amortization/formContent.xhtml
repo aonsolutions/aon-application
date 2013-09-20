@@ -24,7 +24,7 @@
 			</aon:div>
 			
 			<aon:outputLabel for="Amortization_initial_date"
-				value="#{accountingBundle.accounting_initial_use_date}" />
+				value="#{bundle.accounting_initial_use_date}" />
 			<aon:selectInputDate required="true"
 				disabled="#{!amortization.updatable}"
 				id="Amortization_initial_date"
@@ -62,7 +62,7 @@
 
 			<aon:outputText
 				rendered="#{amortization.to.deadline != null}"
-				value="#{accountingBundle.accounting_cancellation_date}" />
+				value="#{bundle.accounting_cancellation_date}" />
 			<aon:outputText value="#{amortization.to.deadline}" rendered="#{amortization.to.deadline != null}">
 				<f:convertDateTime type="date"
 					pattern="#{bundle.aon_date_pattern}"
@@ -83,7 +83,7 @@
 	
 			<c:if test="#{amortization.new}">
 				<aon:outputLabel for="Amortization_amortizationType"
-					value="#{accountingBundle.accounting_amortization_type}" />
+					value="#{bundle.accounting_amortization_type}" />
 				<aon:selectOneMenu id="Amortization_amortizationType"
 					disabled=""
 					value="#{amortization.to.amortizationType}"
@@ -99,7 +99,7 @@
 				<aon:outputText value="&#160;"/>
 			</c:if>
 	
-			<aon:outputText value="#{accountingBundle.accounting_fixed_asset_account}" />
+			<aon:outputText value="#{bundle.accounting_fixed_asset_account}" />
 			<aon:panelGroup id="fixedAssetAccount" styleClass="aon-nowrap">
 				<aon:outputText rendered="#{!amortization.new}"
 					value="#{amortization.to.fixedAssetAccount.fullDescription}" />
@@ -112,10 +112,10 @@
 				<aon:outputText rendered="#{!amortization.new and amortization.to.amortizationType == null}" value="&#160;" />
 				<aon:commandButton
 					value="&#160;"
-					title="#{accountBundle.account_synchronize}"
+					title="#{bundle.account_synchronize}"
 					style="border: none;width:10px;"
 					styleClass="aon-finding-toolbar-item aon-icon-transfer"
-					onclick="if (!confirm('#{accountBundle.account_synchronize}?')){ return false;}"
+					onclick="if (!confirm('#{bundle.account_synchronize}?')){ return false;}"
 					rendered="#{amortization.fixedAssetAccountSynchronizable}"
 					reRender="AmortizationData"
 					actionListener="#{amortization.onFixedAssetAccountSynchronize}">
@@ -124,7 +124,7 @@
 				
 	
 			<aon:outputText
-				value="#{accountingBundle.accounting_accumulated_account}" />
+				value="#{bundle.accounting_accumulated_account}" />
 			<aon:panelGroup id="accumulatedAccount" styleClass="aon-nowrap">
 				<aon:outputText rendered="#{!amortization.new}"
 					value="#{amortization.to.accumulatedAccount.fullDescription}" />
@@ -137,8 +137,8 @@
 				<aon:outputText rendered="#{!amortization.new and amortization.to.amortizationType == null}" value="&#160;" />
 				<aon:commandButton
 					value="&#160;"
-					title="#{accountBundle.account_synchronize}"
-					onclick="if (!confirm('#{accountBundle.account_synchronize}?')){ return false;}"
+					title="#{bundle.account_synchronize}"
+					onclick="if (!confirm('#{bundle.account_synchronize}?')){ return false;}"
 					style="border: none;width:10px;"
 					styleClass="aon-finding-toolbar-item aon-icon-transfer"
 					rendered="#{amortization.accumulatedAccountSynchronizable}"
@@ -163,8 +163,8 @@
 				<aon:outputText rendered="#{!amortization.new and amortization.to.amortizationType == null}" value="&#160;" />
 				<aon:commandButton
 					value="&#160;"
-					title="#{accountBundle.account_synchronize}"
-					onclick="if (!confirm('#{accountBundle.account_synchronize}?')){ return false;}"
+					title="#{bundle.account_synchronize}"
+					onclick="if (!confirm('#{bundle.account_synchronize}?')){ return false;}"
 					style="border: none;width:10px;"
 					styleClass="aon-finding-toolbar-item aon-icon-transfer"
 					rendered="#{amortization.allocationAccountSynchronizable}"
@@ -175,7 +175,7 @@
 			
 			<aon:outputText
 				rendered="#{amortization.to.deadline != null}"
-				value="#{accountingBundle.accounting_sale_amount}" />
+				value="#{bundle.accounting_sale_amount}" />
 			<aon:outputText value="#{amortization.to.saleAmount}" rendered="#{amortization.to.deadline != null}">
 				<f:convertNumber pattern="#,##0.00" />
 			</aon:outputText>

@@ -14,7 +14,7 @@
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
 					<ui:param name="toolbarTitle"
-						value="#{financeBundle.finance_bank_concept_module}" />
+						value="#{bundle.finance_bank_concept_module}" />
 					<ui:param name="controller" value="#{bankConcept}" />
 				</ui:decorate>
 
@@ -46,7 +46,7 @@
 							<c:if test="#{aonRole.accountingOperator}">
 								<aon:column styleClass="aon-width-auto">
 									<f:facet name="header">
-										<aon:outputLabel for="Account_id" value="#{financeBundle.finance_account}" />
+										<aon:outputLabel for="Account_id" value="#{bundle.finance_account}" />
 									</f:facet>
 									<aon:outputText value="#{to.account.fullDescription}" rendered="#{formList}" />
 									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">

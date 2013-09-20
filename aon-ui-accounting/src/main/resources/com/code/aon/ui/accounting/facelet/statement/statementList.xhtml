@@ -13,7 +13,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_statement_module}" />
+					value="#{bundle.accounting_statement_module}" />
 				<ui:param name="skipSaveButton" value="true" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipCancelButton" value="true" />
@@ -134,7 +134,7 @@
 									styleClass="aon-text-right"
 									style="font-size: 1em;background: #FFF;font-weight: normal;">
 									<aon:outputText
-										value="#{accountingBundle.accounting_accumulated_amounts} " />
+										value="#{bundle.accounting_accumulated_amounts} " />
 									<aon:panelGroup
 										rendered="#{statement.periodBalance.fromDate != null or statement.periodBalance.toDate != null}">
 										<aon:outputText value=" (" />
@@ -202,7 +202,7 @@
 							<aon:commandLink id="accountEntry-search" 
 								immediate="true" 
 								styleClass="aon-dataTable-link"
-								title="#{accountingBundle.accounting_lookup_account_entry}"
+								title="#{bundle.accounting_lookup_account_entry}"
 								actionListener="#{trialBalance.onAccountEntry}"
 								action="accountEntry_form">
 								<aon:outputText value="#{to.accountEntry}" />
@@ -273,7 +273,7 @@
 						<aon:column styleClass="aon-width-100">
 							<f:facet name="header">
 								<aon:outputText
-									value="#{financeBundle.finance_balancing_account}" />
+									value="#{bundle.finance_balancing_account}" />
 							</f:facet>
 							<aon:outputText id="balancingAccount"
 								value="#{to.balancingAccount}">

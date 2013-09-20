@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="loanForm">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{academyBundle.academy_mark}" />
+				<ui:param name="toolbarTitle" value="#{bundle.academy_mark}" />
 				<ui:param name="controller" value="#{mark}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:include>
@@ -35,7 +35,7 @@
 					</aon:selectOneMenu>					
 
 					<aon:outputLabel for="Mark_alumn_course_courseSubject_id"
-						value="#{academyBundle.academy_subject}" />
+						value="#{bundle.academy_subject}" />
 					<aon:selectOneMenu id="Mark_alumn_course_courseSubject_id"
 						value="#{academyCollections.courseSubject}"
 						valueChangeListener="#{controller.addIdEqualExpression}">
@@ -44,7 +44,7 @@
 					</aon:selectOneMenu>					
 				
 					<aon:outputLabel for="Mark_alumn_course_courseLevel_id"
-						value="#{academyBundle.academy_level}" />
+						value="#{bundle.academy_level}" />
 					<aon:selectOneMenu id="Mark_alumn_course_courseLevel_id"
 						value="#{academyCollections.courseLevel}"
 						valueChangeListener="#{controller.addIdEqualExpression}">

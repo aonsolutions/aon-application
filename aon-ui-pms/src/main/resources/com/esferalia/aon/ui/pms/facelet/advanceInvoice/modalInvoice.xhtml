@@ -15,7 +15,7 @@
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{pmsBundle.pms_advance_invoice_module}" />
+						<aon:outputText value="#{bundle.pms_advance_invoice_module}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -62,7 +62,7 @@
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
 
 										<aon:outputLabel for="AdvanceInvoice_issueDate"
-											value="#{financeBundle.finance_invoice_date}" />
+											value="#{bundle.finance_invoice_date}" />
 										<aon:selectInputDate id="AdvanceInvoice_issueDate" 
 											value="#{controller.advanceDate}" required="true"
 											timeZone="#{timeZoneController.timeZone}"
@@ -77,7 +77,7 @@
 
 										<c:if test="#{!searchListener.guestReservationSearch}">
 											<aon:outputLabel for="AdvanceInvoice_percent"
-												value="#{pmsBundle.pms_invoice_percent}" />
+												value="#{bundle.pms_invoice_percent}" />
 											<aon:inputText id="AdvanceInvoice_percent" 
 												value="#{controller.advancePercent}" 
 												required="true" size="3" maxlength="3" 
@@ -114,7 +114,7 @@
 										</aon:selectOneMenu>
 
 										<aon:outputLabel for="AdvanceInvoice_daysToPayment"
-											value="#{registryBundle.registry_days_to_first_payment}" />
+											value="#{bundle.registry_days_to_first_payment}" />
 										<aon:panelGroup>
 											<aon:inputText id="AdvanceInvoice_daysToPayment"
 												value="#{controller.advanceDaysToPayment}"
@@ -123,7 +123,7 @@
 												<f:validateDoubleRange minimum="0" />
 											</aon:inputText>
 
-											<aon:outputText value="#{financeBundle.finance_pay_date}" 
+											<aon:outputText value="#{bundle.finance_pay_date}" 
 												styleClass="aon-italic aon-margin-left"/>
 											<aon:outputText id="AdvanceInvoice_dueDate" 
 												value="#{controller.advancePaymentDate}" 

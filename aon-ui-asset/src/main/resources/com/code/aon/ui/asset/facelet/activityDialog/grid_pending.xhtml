@@ -14,7 +14,7 @@
 	<!-- TOOLBAR -->
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle"
-						value="#{assetBundle.asset_activity_module}" />
+						value="#{bundle.asset_activity_module}" />
 				<ui:param name="toolbarDescription"
 						value="#{bundle.aon_editing}" />
 
@@ -41,8 +41,8 @@
 						</a4j:support>
 					</aon:commandButton>
 					<aon:commandButton
-						id="activity-cancel" title="#{assetBundle.asset_refuse}"
-						value="#{assetBundle.asset_refuse}"
+						id="activity-cancel" title="#{bundle.asset_refuse}"
+						value="#{bundle.asset_refuse}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel">
 						<a4j:support event="onclick" reRender="activityDataDiv">
 							<aon:actionListener method="#{activityBasic.cancelPendingAssetList}" />
@@ -76,7 +76,7 @@
 					
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{assetBundle.asset_asset}" />
+						<aon:outputText value="#{bundle.asset_asset}" />
 					</f:facet>
 					<aon:outputText value="#{to.asset.name}" />
 				</aon:column>
@@ -102,7 +102,7 @@
 				
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{assetBundle.asset_fromTime}" />
+						<aon:outputText value="#{bundle.asset_fromTime}" />
 					</f:facet>
 					<aon:outputText value="#{to.fromTime}" 
 						size="5" >
@@ -113,7 +113,7 @@
 				
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{assetBundle.asset_toTime}" />
+						<aon:outputText value="#{bundle.asset_toTime}" />
 					</f:facet>
 					<aon:outputText value="#{to.toTime}" 
 						size="5" >

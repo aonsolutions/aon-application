@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.event;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_POS_CATALOGUE_ERROR;
 
 import java.util.List;
@@ -48,7 +47,7 @@ public class PosCatalogueControllerListener extends ControllerAdapter implements
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_CATALOGUE_POS_ID), posCatalogue.getPos().getId());
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_CATALOGUE_CATALOGUE_ID), posCatalogue.getCatalogue().getId());
 			if (bean.getCount(criteria) > 0) {
-				throw new ControllerListenerException(AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_POS_CATALOGUE_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(FINANCE_POS_CATALOGUE_ERROR));
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

@@ -33,7 +33,7 @@
 	</aon:selectInputDate>
 	
 	<c:if test="#{!skipRegistryLookup}">  
-		<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
+		<aon:outputLabel for="Registry_id" value="#{bundle.project_assigned}"/>
 		<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
 			<ui:param name="lookupTo" value="#{controller.to.registry}" />
 			<ui:param name="skipLabel" value="#{true}" />
@@ -41,7 +41,7 @@
 		</ui:include>
 	</c:if>
 	
-	<aon:outputLabel for="Project_projectType" value="#{projectBundle.project_project_type}"/>
+	<aon:outputLabel for="Project_projectType" value="#{bundle.project_project_type}"/>
 	<aon:selectOneMenu id="Project_projectType"
 		value="#{controller.to.projectType}">
 		<f:selectItem itemLabel="-" value="#{null}"/>
@@ -52,13 +52,13 @@
 	<aon:div>
 		<aon:selectBooleanCheckbox id="Project_commercial" disabled="true" 
 			styleClass="aon-margin-left" value="#{controller.to.commercial}" />	
-		<aon:outputLabel for="Project_commercial" value="#{projectBundle.project_commercial}"/>
+		<aon:outputLabel for="Project_commercial" value="#{bundle.project_commercial}"/>
 		<aon:selectBooleanCheckbox id="Project_tas" disabled="true" 
 			styleClass="aon-margin-left" value="#{controller.to.tas}" />	
-		<aon:outputLabel for="Project_tas" value="#{projectBundle.project_tas}"/>
+		<aon:outputLabel for="Project_tas" value="#{bundle.project_tas}"/>
 		<aon:selectBooleanCheckbox id="Project_dossier" disabled="true" 
 			styleClass="aon-margin-left" value="#{controller.to.dossier}" />	
-		<aon:outputLabel for="Project_dossier" value="#{projectBundle.project_dossier}"/>
+		<aon:outputLabel for="Project_dossier" value="#{bundle.project_dossier}"/>
 	</aon:div>
 
 		

@@ -16,19 +16,19 @@
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
 				<c:if test="#{commercialStat.controlType==0}">
 					<ui:param name="toolbarTitle"
-						value="#{statBundle.seller_stat_control_seller}" />
+						value="#{bundle.seller_stat_control_seller}" />
 				</c:if>
 				<c:if test="#{commercialStat.controlType==1}">
 					<ui:param name="toolbarTitle"
-						value="#{statBundle.seller_stat_control_target}" />
+						value="#{bundle.seller_stat_control_target}" />
 				</c:if>
 				<c:if test="#{commercialStat.controlType==2}">
 					<ui:param name="toolbarTitle"
-						value="#{statBundle.seller_stat_control_product}" />
+						value="#{bundle.seller_stat_control_product}" />
 				</c:if>
 				<c:if test="#{commercialStat.controlType==3}">
 					<ui:param name="toolbarTitle"
-						value="#{statBundle.seller_stat_control_category}" />
+						value="#{bundle.seller_stat_control_category}" />
 				</c:if>
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
@@ -73,7 +73,7 @@
 					</aon:panelGrid>
 
 					<aon:outputLabel 
-						value="#{statBundle.aon_zero_lines}" />
+						value="#{bundle.aon_zero_lines}" />
 					<aon:selectBooleanCheckbox id="zeroLines"
 						value="#{commercialStat.showZeroLines}">
 					</aon:selectBooleanCheckbox>

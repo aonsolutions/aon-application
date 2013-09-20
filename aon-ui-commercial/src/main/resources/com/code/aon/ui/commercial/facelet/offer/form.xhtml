@@ -15,7 +15,7 @@
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					<ui:param name="toolbarTitle"
-						value="#{commercialBundle.commercial_offer_module}" />
+						value="#{bundle.commercial_offer_module}" />
 					<ui:param name="controller" value="#{offer}" />
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{offer.readOnly}" />
@@ -55,7 +55,7 @@
 							</aon:commandButton>
 						</c:if>
 						<aon:commandButton value="&#160;" id="email"
-							title="#{webmailBundle.webmail_send_email}"
+							title="#{bundle.webmail_send_email}"
 							actionListener="#{offer.onSendOfferByEmail}"
 							rendered="#{offerDetail.model.rowCount > 0 and offerDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
@@ -82,13 +82,13 @@
 							<ui:param name="signButtonReRender" value="offerForm,showNewMessageWindow" />
 						</ui:include>
 						<c:if test="#{aonConfiguration.bean.offer.showTasData}">
-							<aon:htmlCommandLink id="audagateCall" value="#{audabridgeBundle.audabridge_edit_assessment}"
+							<aon:htmlCommandLink id="audagateCall" value="#{bundle.audabridge_edit_assessment}"
 								rendered="#{!offer.new and offer.to.audatexOffer and offer.to.externalReference != null and offerDetail.model.rowCount == 0}" target="_new"
 								actionListener="#{audabridgeOffer.onCallAudaGate}"
 								style="padding-left: 25px;"
 								styleClass="aon-finding-toolbar-item aon-icon-audatex">
 							</aon:htmlCommandLink>
-							<aon:commandButton id="offerCreation" value="#{audabridgeBundle.audabridge_import_assessment}"
+							<aon:commandButton id="offerCreation" value="#{bundle.audabridge_import_assessment}"
 								rendered="#{!offer.new and offer.to.audatexOffer and offer.to.externalReference != null and offerDetail.model.rowCount == 0}" 
 								actionListener="#{audabridgeOffer.onImportAssessment}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
@@ -127,14 +127,14 @@
 									value="#{offer.to.referenceCode}"
 									rendered="#{!offer.new}" />
 								<aon:confirmButton id="version" value="&#160;"
-									title="#{commercialBundle.commercial_offer_new_version}"
+									title="#{bundle.commercial_offer_new_version}"
 									immediate="true" rendered="#{!offer.new and !(offer.approved or offer.invoiced)}"
 									styleClass="aon-icon-commandButton aon-icon-version"
 									confirmTitle="#{bundle.aon_confirm_title}"
-									confirmMessage="#{commercialBundle.commercial_offer_confirm_new_version}"
+									confirmMessage="#{bundle.commercial_offer_confirm_new_version}"
 									confirmActionListener="#{offer.onVersion}" />
 								<aon:commandButton id="copy" value="&#160;"
-									title="#{commercialBundle.commercial_offer_copy}"
+									title="#{bundle.commercial_offer_copy}"
 									immediate="#{true}" rendered="#{!offer.new}"
 									styleClass="aon-icon-commandButton aon-icon-copy" 
 									actionListener="#{offer.onOfferCopyShow}"
@@ -159,7 +159,7 @@
 								<c:if test="#{company.EInvoice}">
 									<aon:outputText value="&#160;"
 										rendered="#{!offer.new and offer.to.signed}"
-										title="#{signBundle.sign_signed}"
+										title="#{bundle.sign_signed}"
 										styleClass="aon-icon aon-icon-signed" />
 								</c:if>
 
@@ -182,28 +182,28 @@
 							
 								<aon:commandButton id="toPending" value="&#160;"
 									actionListener="#{offer.onPending}" 
-									title="#{commercialBundle.commercial_offer_to_pending}"
+									title="#{bundle.commercial_offer_to_pending}"
 									immediate="true" rendered="#{offer.refused or (offer.approved and !offer.linesSold)}"
 									styleClass="aon-icon-commandButton aon-icon-refresh aon-margin-left" />
 								<aon:commandButton id="approve" value="&#160;"
 									actionListener="#{offer.onApprove}" 
-									title="#{commercialBundle.commercial_offer_to_approve}"
+									title="#{bundle.commercial_offer_to_approve}"
 									immediate="true" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
 									styleClass="aon-icon-commandButton aon-icon-point-green aon-margin-left" />
 								<aon:commandButton id="refuse" value="&#160;"
 									actionListener="#{offer.onRefuse}"
-									title="#{commercialBundle.commercial_offer_to_refuse}"
+									title="#{bundle.commercial_offer_to_refuse}"
 									immediate="true" rendered="#{offer.pending and offerDetail.model.rowCount > 0}"
 									styleClass="aon-icon-commandButton aon-icon-point-red" />
 								<aon:commandButton id="block" value="&#160;"
 									actionListener="#{offer.onBlock}"
-									title="#{commercialBundle.commercial_offer_to_block}"
+									title="#{bundle.commercial_offer_to_block}"
 									immediate="true" rendered="#{!offer.new and !(offer.blocked or offer.invoiced)}"
 									styleClass="aon-icon-commandButton aon-icon-lock">
 								</aon:commandButton>										
 								<aon:commandButton id="unblock" value="&#160;"
 									actionListener="#{offer.onUnblock}"
-									title="#{commercialBundle.commercial_offer_to_unblock}"
+									title="#{bundle.commercial_offer_to_unblock}"
 									immediate="true" rendered="#{offer.blocked}"
 									styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
 								</aon:commandButton>
@@ -243,7 +243,7 @@
 							disabled="#{offer.readOnly}">
 							<f:selectItems value="#{offer.addresses}" />
 						</aon:selectOneMenu>
-						<aon:outputLabel value="#{registryBundle.registry_no_address_available}"
+						<aon:outputLabel value="#{bundle.registry_no_address_available}"
 							rendered="#{offer.addressCount == 0}"
 							styleClass="aon-italic" />
 					</aon:div>
@@ -424,10 +424,10 @@
 								aon-panelGrid-even aon-width-200">
 
 							<aon:outputText value="#{bundle.aon_type}"/>
-							<aon:outputText value="#{registryBundle.registry_number_of_payments}" />
-							<aon:outputText value="#{registryBundle.registry_days_to_first_payment}" />
-							<aon:outputText value="#{registryBundle.registry_days_between_payments}" />
-							<aon:outputText value="#{registryBundle.registry_payment_days}" />
+							<aon:outputText value="#{bundle.registry_number_of_payments}" />
+							<aon:outputText value="#{bundle.registry_days_to_first_payment}" />
+							<aon:outputText value="#{bundle.registry_days_between_payments}" />
+							<aon:outputText value="#{bundle.registry_payment_days}" />
 							<aon:outputText value="#{bundle.aon_bank}" />
 							<aon:outputText value="#{bundle.aon_bank_account}" />
 
@@ -485,11 +485,11 @@
 				<c:if test="#{!offer.new}">
 					<aon:panelTabSet selectedTab="#{offer.selectedTab}">
 
-						<aon:panelTab id="offerDetail" label="#{commercialBundle.commercial_offer_detail}">
+						<aon:panelTab id="offerDetail" label="#{bundle.commercial_offer_detail}">
 							<ui:include src="/com/code/aon/ui/commercial/facelet/offer/formDetail.xhtml" />
 						</aon:panelTab>
 
-						<aon:panelTab id="offerAttachment" label="#{commercialBundle.commercial_offer_attachment}">
+						<aon:panelTab id="offerAttachment" label="#{bundle.commercial_offer_attachment}">
 							<ui:include src="/com/code/aon/faces/attachment/grid.xhtml">
 								<ui:param name="controller" value="#{offerAttachment}" />
 								<ui:param name="skipResetButton" value="#{offer.readOnly}" />
@@ -498,13 +498,13 @@
 							</ui:include>
 						</aon:panelTab>
 					
-						<aon:panelTab id="offerTermGeneral" label="#{commercialBundle.commercial_offer_term_general}">
+						<aon:panelTab id="offerTermGeneral" label="#{bundle.commercial_offer_term_general}">
 							<ui:include src="/com/code/aon/ui/commercial/facelet/offer/formTerm.xhtml" >
 								<ui:param name="controller" value="#{offerTermGeneral}" />
 							</ui:include>
 						</aon:panelTab>
 
-						<aon:panelTab id="offerTermParticular" label="#{commercialBundle.commercial_offer_term_particular}">
+						<aon:panelTab id="offerTermParticular" label="#{bundle.commercial_offer_term_particular}">
 							<ui:include src="/com/code/aon/ui/commercial/facelet/offer/formTerm.xhtml" >
 								<ui:param name="controller" value="#{offerTermParticular}" />
 							</ui:include>

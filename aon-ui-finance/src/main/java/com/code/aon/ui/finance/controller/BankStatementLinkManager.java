@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_FRACTIONED;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_SETTLED;
 import static com.code.aon.ui.common.ICommonMessages.PAYMENT_INVALID_AMOUNT_ERROR;
@@ -592,7 +591,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			} else if (statementLink.getStatus() == StatementLinkStatus.SETTLED) {
 				tracking.getFinance().setFinanceStatus(FinanceStatus.SETTLED);
 
-				String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_SETTLED);
+				String message = AonUtil.getMessage(FINANCE_TRACKING_SETTLED);
 				FinanceTrackingWriter.addFinanceTracking(tracking.getFinance(), new Date(), FinanceTrackingType.SETTLED, message);
 			}
 			financeBean.update(tracking.getFinance());
@@ -689,7 +688,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 
 	public void onFraction(ActionEvent event) throws ManagerBeanException {
 		if (getAmount() == 0) {
-			AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, PAYMENT_INVALID_AMOUNT_ERROR);
+			AonUtil.addErrorMessageFromBundle(PAYMENT_INVALID_AMOUNT_ERROR);
 			throw new AbortProcessingException();
 		}
 		if (getAmount().doubleValue() != getFractionFinance().getTotalAmount()) {
@@ -698,15 +697,15 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			getFractionFinance().setAmount(CommonUtil.round(getAmount().doubleValue() - getFractionFinance().getExpenses()));
 			financeBean.update(getFractionFinance());
-			String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_FRACTIONED, 1, 2);
+			String message = AonUtil.getMessage(FINANCE_TRACKING_FRACTIONED, 1, 2);
 			FinanceTrackingWriter.addFinanceTracking(getFractionFinance(), new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 
 			FinanceGenerator financeGenerator = new FinanceGenerator();
 			Finance fraction = financeGenerator.duplicateFinance(getFractionFinance(), CommonUtil.round(amount - getAmount().doubleValue()));
-			message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_FRACTIONED, 2, 2);
+			message = AonUtil.getMessage(FINANCE_TRACKING_FRACTIONED, 2, 2);
 			FinanceTrackingWriter.addFinanceTracking(fraction, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 
-			AonUtil.addWarningMessageFromBundle(FINANCE_BUNDLE, PAYMENT_NOT_MATCH_AMOUNT_ERROR);
+			AonUtil.addWarningMessageFromBundle(PAYMENT_NOT_MATCH_AMOUNT_ERROR);
 		}
 	}
 

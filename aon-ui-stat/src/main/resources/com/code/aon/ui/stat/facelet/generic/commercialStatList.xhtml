@@ -42,8 +42,8 @@
 					<f:param name="reportKey" value="#{reportKeyParam}" />
 					<f:param name="outputFormat" value="CSV" />
 				</aon:htmlCommandLink>
-				<aon:htmlCommandLink id="graph-report" value="#{statBundle.stat_graph}"
-					title="#{statBundle.stat_graph}"
+				<aon:htmlCommandLink id="graph-report" value="#{bundle.stat_graph}"
+					title="#{bundle.stat_graph}"
 					styleClass="aon-finding-toolbar-item aon-icon-statistics"
 					action="#{report.onExecute}" target="_blank">
 					<f:param name="reportKey" value="#{reportGraphKeyParam}" />
@@ -108,7 +108,7 @@
 
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputText value="#{statBundle.stat_offer_amount2}" />
+						<aon:outputText value="#{bundle.stat_offer_amount2}" />
 					</f:facet>
 					<aon:outputText value="#{to.amount}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_POS_OPENED;
 
 import java.util.Date;
@@ -118,7 +117,7 @@ public class PosOpeningController {
 				PosShift posShift = (PosShift)ito;
 				for (SelectItem item : shiftList) {
 					if ((item.getValue().equals(posShift.getShift()))) {
-						String label = " (" + AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_POS_OPENED) + ")";
+						String label = " (" + AonUtil.getMessage(FINANCE_POS_OPENED) + ")";
 						item.setLabel(item.getLabel() + label);
 						item.setDisabled(true);
 					}

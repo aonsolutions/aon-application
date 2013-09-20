@@ -38,8 +38,8 @@
 				<c:if test="#{invoiceController.to.investment}">
 					<aon:commandLink id="linkAmortization" 
 						value="#{bundle.invoice_investment}" 
-					 	title="#{financeBundle.finance_create_amortization}" 
-					 	alt="#{financeBundle.finance_create_amortization}"
+					 	title="#{bundle.finance_create_amortization}" 
+					 	alt="#{bundle.finance_create_amortization}"
 						rendered="#{!invoiceController.amortizationForm}"
 						actionListener="#{invoiceController.onShowAmortizationPanel}"
 						styleClass="aon-icon-errorwarning aon-italic aon-margin-right"
@@ -49,8 +49,8 @@
 					
 					<aon:commandLink id="viewAmortization"
 					 	value="#{bundle.invoice_investment}"
-					 	title="#{financeBundle.finance_show_amortization}" 
-					 	alt="#{financeBundle.finance_show_amortization}"
+					 	title="#{bundle.finance_show_amortization}" 
+					 	alt="#{bundle.finance_show_amortization}"
 						rendered="#{invoiceController.amortizationForm}"
 						disabled="#{invoiceController.amoritizationNavigationDisabled}"
 						action="#{invoiceController.showAmortization}"

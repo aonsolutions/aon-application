@@ -1,7 +1,6 @@
 package com.code.aon.ui.fiscal.controller.mod111;
 
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DISK_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -48,7 +47,7 @@ public class Mod111Controller extends FiscalModelController {
 			setFileOutput( mod111Writer.createMOD111(list, format) );
 		    if (getFileOutput() != null) {
 		    	if (getFileOutput().getErrors().size() > 0) {
-		    		AonUtil.addErrorMessageFromBundle(FINANCE_BUNDLE, FINANCE_BATCH_DISK_ERROR);
+		    		AonUtil.addErrorMessageFromBundle(FINANCE_BATCH_DISK_ERROR);
 		        }
 		    }
 		    if (isAeatValidable()) {

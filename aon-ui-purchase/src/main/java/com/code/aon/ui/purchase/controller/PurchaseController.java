@@ -1,7 +1,6 @@
 package com.code.aon.ui.purchase.controller;
 
 
-import static com.code.aon.ui.common.ICommonMessages.PURCHASE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_RETURNED_IN_MSG;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_RETURN_OVER_MSG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
@@ -608,7 +607,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 			HibernateUtil.beginTransaction(sessionName);
 			
 			returnSourcePurchase = (Purchase) this.getTo();
-			String comments = AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_RETURN_OVER_MSG, returnSourcePurchase.getReferenceCode());
+			String comments = AonUtil.getMessage(PURCHASE_RETURN_OVER_MSG, returnSourcePurchase.getReferenceCode());
 			comments += StringUtils.isBlank(returnSourcePurchase.getComments())?"":returnSourcePurchase.getComments();
 			PurchaseUtils utils = new PurchaseUtils();
 			Purchase purchase = utils.createPurchase(returnSourcePurchase.getSeries(),
@@ -653,7 +652,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 
 	private void markSourcePurchaseAsReturned(String referenceCode) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Purchase.class);
-		String comments = AonUtil.getMessage(PURCHASE_BUNDLE, PURCHASE_RETURNED_IN_MSG, referenceCode);
+		String comments = AonUtil.getMessage(PURCHASE_RETURNED_IN_MSG, referenceCode);
 		comments += StringUtils.isBlank(returnSourcePurchase.getComments())?"":returnSourcePurchase.getComments();
 		returnSourcePurchase.setComments(comments);
 		bean.restoreNullSubPOJOs(returnSourcePurchase);

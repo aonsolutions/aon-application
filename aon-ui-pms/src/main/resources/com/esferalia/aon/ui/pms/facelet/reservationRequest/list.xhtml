@@ -11,7 +11,7 @@
 		<aon:form>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_request_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.pms_reservation_request_module}" />
 				<ui:param name="controller" value="#{reservationRequest}" />
 			</ui:decorate>
 
@@ -25,7 +25,7 @@
 							<aon:commandLink id="#{dataTableId}-selectButton" 
 								styleClass="#{(to.active) ? ('aon-icon-point-red') : ('aon-icon-point-green')}" 
 								value="&#160;&#160;&#160;&#160;"
-								title="#{(to.active) ? (bundle.aon_pending) : (pmsBundle.pms_reservation_request_processed)}" 
+								title="#{(to.active) ? (bundle.aon_pending) : (bundle.pms_reservation_request_processed)}" 
 								immediate="true" ajaxSingle="true" requestDelay="100"
 								action="#{rowSelectorAction}"
 								actionListener="#{rowSelectorActionListener}"
@@ -53,7 +53,7 @@
 						<aon:column alias="ReservationRequest.id"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_reservation_request_id}" />
+								<aon:outputText value="#{bundle.pms_reservation_request_id}" />
 							</f:facet>
 							<aon:outputText value="#{to.id}" />
 						</aon:column>
@@ -109,7 +109,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
-							<aon:outputText value="#{(to.active) ? (bundle.aon_pending) : (pmsBundle.pms_reservation_request_processed)}" />
+							<aon:outputText value="#{(to.active) ? (bundle.aon_pending) : (bundle.pms_reservation_request_processed)}" />
 
 						</aon:column>
 

@@ -13,11 +13,11 @@
 		<aon:form id="posOpeningForm">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_posOpening_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_posOpening_module}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="posOpening-openPos" 
 						styleClass="aon-finding-toolbar-item #{(posOpening.posShift.id != null) ? ('aon-icon-accept') : ('aon-icon-open-safeBox')}"
-						value="#{(posOpening.posShift.id != null) ? (bundle.aon_save) : (financeBundle.finance_pos_to_open)}"
+						value="#{(posOpening.posShift.id != null) ? (bundle.aon_save) : (bundle.finance_pos_to_open)}"
 						actionListener="#{posOpening.onAccept}" />
 				</ui:define>
 			</ui:decorate>
@@ -62,7 +62,7 @@
 						value="#{posOpening.posShift.shift}"
 						rendered="#{posOpening.posShift.id != null}" />
 
-					<aon:outputLabel for="PosShift_initialAmount" value="#{financeBundle.finance_initial_amount}" />
+					<aon:outputLabel for="PosShift_initialAmount" value="#{bundle.finance_initial_amount}" />
 					<aon:div>
 						<aon:inputText id="PosShift_initialAmount"
 							value="#{posOpening.posShift.amount}"
@@ -83,7 +83,7 @@
 							<f:setPropertyActionListener target="#{posOpening.calculator.recipient}"
 								value="#{posOpening.posShift}" />
 							<f:setPropertyActionListener target="#{posOpening.calculator.headerLabel}"
-								value="#{financeBundle.finance_initial_amount}" />
+								value="#{bundle.finance_initial_amount}" />
 							<f:setPropertyActionListener target="#{posOpening.calculator.footerLabel}"
 								value="#{bundle.report_amount_difference}" />
 						</aon:commandButton>

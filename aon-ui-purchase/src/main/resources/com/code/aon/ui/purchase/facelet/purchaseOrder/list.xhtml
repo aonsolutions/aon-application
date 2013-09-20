@@ -13,7 +13,7 @@
 		<aon:form id="proposalList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_purchaseOrder_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.purchase_purchaseOrder_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_listing}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="purchaseOrder-back" 
@@ -52,7 +52,7 @@
 										<aon:outputText value=" (#{to.department.name})" />
 									</aon:div>
 									<aon:div >
-										<aon:outputText value="#{purchaseBundle.purchase_request_count} " />
+										<aon:outputText value="#{bundle.purchase_request_count} " />
 										<aon:outputText value="#{to.detailCount}" />
 									</aon:div>
 									

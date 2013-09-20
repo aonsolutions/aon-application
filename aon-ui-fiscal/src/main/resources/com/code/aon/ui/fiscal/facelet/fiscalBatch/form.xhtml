@@ -11,7 +11,7 @@
 		<aon:form id="mod347Form">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{registryBundle.registry_batch_document}" />
+				<ui:param name="toolbarTitle" value="#{bundle.registry_batch_document}" />
 				<ui:param name="controller" value="#{fiscalBatch}" />
 				
 				<ui:param name="skipSaveButton" value="#{fiscalBatch.to.generated}" />
@@ -26,11 +26,11 @@
 						onclick="if (!confirm('#{bundle.aon_close}?')) return false;"/>
 						
 					<aon:commandButton id="fiscalBatch_reopen"
-						value="#{fiscalBundle.fiscal_reopen}"
+						value="#{bundle.fiscal_reopen}"
 						actionListener="#{fiscalBatch.onReopen}"
 						rendered="#{!fiscalBatch.new and fiscalBatch.to.generated}"
 						styleClass="aon-finding-toolbar-item aon-icon-unlock"
-						onclick="if (!confirm('#{fiscalBundle.fiscal_reopen}?')) return false;"/>
+						onclick="if (!confirm('#{bundle.fiscal_reopen}?')) return false;"/>
 				</ui:define>
 				
 			</ui:decorate>
@@ -70,7 +70,7 @@
 					</c:if>
 					
 					<c:if test="#{!fiscalBatch.new and fiscalBatch.to.generated}">
-						<aon:outputLabel for="FiscalBatch_issueDate" value="#{fiscalBundle.fiscal_batch_issue_date}" />
+						<aon:outputLabel for="FiscalBatch_issueDate" value="#{bundle.fiscal_batch_issue_date}" />
 						<aon:selectInputDate id="FiscalBatch_issueDate"
 							value="#{fiscalBatch.to.issueDate}" required="true"
 							timeZone="#{timeZoneController.timeZone}"
@@ -115,8 +115,8 @@
 					<c:if test="#{!fiscalBatch.new and fiscalBatch.to.generated}">
 						<aon:outputText value="&#160;"/>
 						<aon:htmlCommandLink target="_blank"
-							title="#{financeBundle.finance_download_disk}"
-							value="#{financeBundle.finance_download_disk}"
+							title="#{bundle.finance_download_disk}"
+							value="#{bundle.finance_download_disk}"
 							style="border-width: 0px 0px 0px 0px;"
 							actionListener="#{fiscalBatch.onDownloadDisk}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
@@ -136,14 +136,14 @@
 					<aon:panelTabSet>
 						<c:if test="#{!fiscalBatch.to.generated}">
 							<c:if test="#{fiscalBatch.pending.rowCount > 0}" >
-								<aon:panelTab id="fiscalBatchPendingTab" label="#{fiscalBundle.fiscal_not_included_declarations}">
+								<aon:panelTab id="fiscalBatchPendingTab" label="#{bundle.fiscal_not_included_declarations}">
 									<ui:include src="/com/code/aon/ui/fiscal/facelet/fiscalBatch/pendingList.xhtml" />
 								</aon:panelTab>
 							</c:if>
 						</c:if>
 	
 						<c:if test="#{fiscalBatch.details.rowCount > 0}" >
-							<aon:panelTab id="fiscalDetailsTab" label="#{fiscalBundle.fiscal_included_declarations}">
+							<aon:panelTab id="fiscalDetailsTab" label="#{bundle.fiscal_included_declarations}">
 									<ui:include src="/com/code/aon/ui/fiscal/facelet/fiscalBatch/detailsList.xhtml" />
 							</aon:panelTab>
 						</c:if>

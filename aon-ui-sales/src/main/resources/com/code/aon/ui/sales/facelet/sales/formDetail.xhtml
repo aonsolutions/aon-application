@@ -81,7 +81,7 @@
 				<aon:panelGroup id="salesDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<c:if test="#{aonConfiguration.bean.product.showStock}">
 						<aon:commandButton value="&#160;"
-							title="#{productBundle.product_info}"
+							title="#{bundle.product_info}"
 							rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null and salesDetail.to.item.product.inventoriable}"
 							styleClass="aon-icon aon-icon-edit-end aon-icon-info"
 							actionListener="#{itemInfo.onShowPanel}"
@@ -127,7 +127,7 @@
 						<aon:panelGroup id="salesDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 							<c:if test="#{aonConfiguration.bean.product.showStock}">
 								<aon:commandButton value="&#160;"
-									title="#{productBundle.product_info}"
+									title="#{bundle.product_info}"
 									rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null and salesDetail.to.item.product.inventoriable}"
 									styleClass="aon-icon aon-icon-edit-end aon-icon-info"
 									actionListener="#{itemInfo.onShowPanel}"

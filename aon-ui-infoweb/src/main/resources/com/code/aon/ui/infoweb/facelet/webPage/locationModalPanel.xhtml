@@ -15,7 +15,7 @@
 
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{infowebBundle.infoweb_page_location}" />
+						<aon:outputText value="#{bundle.infoweb_page_location}" />
 					</aon:div>
 				</f:facet>				
 				<f:facet name="controls">
@@ -49,14 +49,14 @@
 	
 						<aon:panelGrid columns="2" dir="true" >
 					
-							<aon:outputLabel for="Generic_extra" value="#{infowebBundle.infoweb_page_extra_coords}" />
+							<aon:outputLabel for="Generic_extra" value="#{bundle.infoweb_page_extra_coords}" />
 							<aon:inputText id="Generic_extra" 
 								size="70" maxlength="255" value="#{webPage.detail.extra}" />
 
 							<aon:outputLabel value="&#160;" />
 							<aon:div>
-								<aon:outputText value="#{infowebBundle.infoweb_page_extra_coords_exp}. "/>
-								<aon:outputText value=" #{infowebBundle.infoweb_page_extra_coords_exp2}"/>
+								<aon:outputText value="#{bundle.infoweb_page_extra_coords_exp}. "/>
+								<aon:outputText value=" #{bundle.infoweb_page_extra_coords_exp2}"/>
 							</aon:div>
 						</aon:panelGrid>
 

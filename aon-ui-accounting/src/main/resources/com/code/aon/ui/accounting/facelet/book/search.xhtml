@@ -14,7 +14,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_book_module}" />
+					value="#{bundle.accounting_book_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
@@ -34,7 +34,7 @@
 						<aon:selectBooleanCheckbox id="coverEnabled"
 							reRender="coverData" 
 							value="#{accountingBook.coverEnabled}"/>
-						<aon:outputLabel for="coverEnabled" value="#{accountingBundle.accounting_coverEnabled}" />
+						<aon:outputLabel for="coverEnabled" value="#{bundle.accounting_coverEnabled}" />
 						<aon:div id="coverData" styleClass="aon-margin-left">
 							<aon:inputText value="#{accountingBook.coverTitle}" rendered="#{accountingBook.coverEnabled}" size="70"/>
 							<aon:div styleClass="aon-margin-top" rendered="#{accountingBook.coverEnabled}">
@@ -48,7 +48,7 @@
 
 						<aon:commandLink id="accountingBookRegenerate" 
 							styleClass="aon-margin-left aon-margin-top aon-bold" style="color:red; text-decoration: underline;"
-							value="#{accountingBundle.accounting_regenerate_journal_counter_module}" 
+							value="#{bundle.accounting_regenerate_journal_counter_module}" 
 							actionListener="#{accountingBook.onRegenerate}"
 							onclick="Richfaces.showModalPanel('waitProccess')"
 							oncomplete="Richfaces.hideModalPanel('waitProccess')"

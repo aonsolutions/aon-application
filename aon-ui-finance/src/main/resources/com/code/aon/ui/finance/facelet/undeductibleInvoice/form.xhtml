@@ -15,7 +15,7 @@
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					<ui:param name="toolbarTitle"
-						value="#{financeBundle.finance_undeductible_invoice_management_module}" />
+						value="#{bundle.finance_undeductible_invoice_management_module}" />
 					<ui:param name="controller" value="#{undeductibleInvoice}" />
 					<ui:param name="skipFocusFirst" value="#{!undeductibleInvoice.new}" />
 					<ui:param name="skipSaveButton" value="#{undeductibleInvoice.readOnly}" />
@@ -37,7 +37,7 @@
 						</aon:menuItem>
 						<c:if test="#{aonRole.accountingOperator}">
 							<aon:menuItem id="record"
-								value="#{financeBundle.finance_record}"
+								value="#{bundle.finance_record}"
 								actionListener="#{undeductibleInvoice.onRecordInvoice}"
 								rendered="#{!undeductibleInvoice.recorded and undeductibleInvoiceDetail.model.rowCount > 0}"
 								iconClass="aon-icon-task-assume"
@@ -47,7 +47,7 @@
 						</c:if>
 						<c:if test="#{aonRole.accountingManager}">
 							<aon:menuItem id="unrecord"
-								value="#{financeBundle.finance_unrecord}"
+								value="#{bundle.finance_unrecord}"
 								actionListener="#{undeductibleInvoice.onUnrecordInvoice}"
 								rendered="#{undeductibleInvoice.recorded and !undeductibleInvoice.accountSource}"
 								iconClass="aon-icon-task-liberate"
@@ -98,7 +98,7 @@
 						<c:if test="#{aonRole.accountingOperator}">
 							<rich:menuSeparator id="invoiceAddsMenuSeparator1" />
 							<aon:menuItem id="fiscalInformation"
-								value="#{financeBundle.finance_fiscal_information}"
+								value="#{bundle.finance_fiscal_information}"
 								iconClass="aon-icon-info"
 								reRender="showFiscalInformationWindow">
 								<f:setPropertyActionListener target="#{undeductibleInvoice.showFiscalInformationWindow}"
@@ -165,7 +165,7 @@
 								<c:if test="#{company.EInvoice}">
 									<aon:outputText value="&#160;"
 										rendered="#{!undeductibleInvoice.new and undeductibleInvoice.to.signed}"
-										title="#{signBundle.sign_signed}"
+										title="#{bundle.sign_signed}"
 										styleClass="aon-icon aon-icon-signed" />
 								</c:if>						
 
@@ -215,7 +215,7 @@
 					</ui:include>
 					
 					<aon:outputLabel for="Invoice_taxDate" 
-						value="#{financeBundle.finance_tax_date}" />
+						value="#{bundle.finance_tax_date}" />
 					<c:if test="#{aonRole.accountingOperator}">
 						<aon:selectInputDate id="Invoice_taxDate"
 							value="#{undeductibleInvoice.to.taxDate}" required="true" 
@@ -291,7 +291,7 @@
 							<f:selectItems value="#{undeductibleInvoice.addresses}" />
 						</aon:selectOneMenu>
 						<aon:outputLabel styleClass="aon-italic"
-							value="#{registryBundle.registry_no_address_available}"
+							value="#{bundle.registry_no_address_available}"
 							rendered="#{undeductibleInvoiceAddress.to.id == null and ((undeductibleInvoice.readOnly and undeductibleInvoice.to.registryAddress.id == null) or (!undeductibleInvoice.readOnly and undeductibleInvoice.addressCount == 0))}" />
 						<aon:outputText styleClass="aon-bold"
 							value="#{undeductibleInvoice.address}" 
@@ -305,7 +305,7 @@
 						</aon:outputText>
 						<aon:div layout="inline" styleClass="aon-margin-left">
 							<aon:commandButton id="invoiceAddressButton"
-								value="#{registryBundle.registry_address_other}"
+								value="#{bundle.registry_address_other}"
 								styleClass="aon-icon-commandButton aon-icon-go"
 								rendered="#{!undeductibleInvoice.new and !undeductibleInvoice.readOnly}"
 								actionListener="#{undeductibleInvoice.onInvoiceAddressShow}"
@@ -352,12 +352,12 @@
 							</aon:selectOneMenu>
 							<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
 								<aon:outputLabel styleClass="aon-italic"
-									value="#{projectBundle.project_no_project_linked}"
+									value="#{bundle.project_no_project_linked}"
 									rendered="#{undeductibleInvoice.readOnly and undeductibleInvoice.to.project.id == null and undeductibleInvoice.projectCount > 0}" />
 							</c:if>
 							<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
 								<aon:outputLabel styleClass="aon-italic"
-									value="#{tasBundle.tas_no_projectTas_linked}"
+									value="#{bundle.tas_no_projectTas_linked}"
 									rendered="#{undeductibleInvoice.readOnly and undeductibleInvoice.to.project.id == null and undeductibleInvoice.projectCount > 0}" />
 							</c:if>
 							<aon:outputText styleClass="aon-bold"

@@ -24,7 +24,7 @@
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:htmlCommandLink id="posShift_report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						value="#{financeBundle.finance_count}"
+						value="#{bundle.finance_count}"
 						rendered="#{posShift.to.endTime != null}"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="posShift" />
@@ -39,7 +39,7 @@
 
 					<aon:panel>
 						<f:facet name="header">
-							<aon:outputLabel value="#{financeBundle.finance_pos_shift_data}" />
+							<aon:outputLabel value="#{bundle.finance_pos_shift_data}" />
 						</f:facet>
 						<aon:panelGrid columns="2" styleClass="aon-width-all">
 
@@ -101,7 +101,7 @@
 								</aon:outputText>
 								<aon:div>
 									<aon:outputLabel for="PosShift_initialAmount" styleClass="aon-margin-right aon-italic"
-										value="#{financeBundle.finance_initial_amount}:" />
+										value="#{bundle.finance_initial_amount}:" />
 									<aon:inputText id="PosShift_initialAmount"
 										value="#{posShift.to.initialAmount}"
 										size="8" maxlength="8" 
@@ -125,7 +125,7 @@
 										<f:setPropertyActionListener target="#{posShift.calculator.recipient}"
 											value="#{posShift.to}" />
 										<f:setPropertyActionListener target="#{posShift.calculator.headerLabel}"
-											value="#{financeBundle.finance_initial_amount}" />
+											value="#{bundle.finance_initial_amount}" />
 										<f:setPropertyActionListener target="#{posShift.calculator.footerLabel}"
 											value="#{bundle.report_amount_difference}" />
 									</aon:commandButton>
@@ -165,14 +165,14 @@
 						<c:if test="#{!posShift.new}">
 							<aon:panel id="totalPosShiftCountPanel">
 								<f:facet name="header">
-									<aon:outputLabel value="#{financeBundle.finance_total_count}" />
+									<aon:outputLabel value="#{bundle.finance_total_count}" />
 								</f:facet>
 								<aon:panelGrid columns="3" styleClass="aon-width-all aon-margin-bottom"
 									columnClasses="aon-panelGrid-even aon-width-auto aon-noborder,
 										aon-panelGrid-even aon-width-200 aon-noborder,aon-width-180 aon-noborder">
 									<aon:div>
 										<aon:outputLabel styleClass="aon-margin-right aon-italic"
-											value="#{financeBundle.finance_initial_amount}:" />
+											value="#{bundle.finance_initial_amount}:" />
 										<aon:outputText styleClass="aon-bold"
 											value="#{posShift.to.initialAmount}">
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
@@ -207,7 +207,7 @@
 
 							<aon:panel id="posShiftCountPanel">
 								<f:facet name="header">
-									<aon:outputLabel value="#{financeBundle.finance_pos_cash_count}" />
+									<aon:outputLabel value="#{bundle.finance_pos_cash_count}" />
 								</f:facet>
 								<ui:include src="/com/code/aon/ui/finance/facelet/posShift/posShiftCount.xhtml">
 									<ui:param name="shiftController" value="#{posShift}" />

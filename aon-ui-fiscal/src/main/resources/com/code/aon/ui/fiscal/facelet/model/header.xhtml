@@ -35,42 +35,42 @@
 					  
 		<aon:outputText value="#{bundle.aon_address}" />
 		<aon:div>
-			<aon:outputText value="#{fiscalBundle.fiscal_streetInitial}" 
+			<aon:outputText value="#{bundle.fiscal_streetInitial}" 
 				styleClass="aon-italic"/>
 			<aon:inputText id="controller_streetInitial" size="2" maxlength="2"
 				style="margin-left: 5px;" disabled="#{controller.declaration.header.readOnly}"
 				value="#{controller.to.streetInitial}">
 			</aon:inputText>
 			
-			<aon:outputText value="#{fiscalBundle.fiscal_streetName}" 
+			<aon:outputText value="#{bundle.fiscal_streetName}" 
 				styleClass="aon-margin-left aon-italic"/>
 			<aon:inputText id="controller_streetName" size="17" maxlength="17" 
 				style="margin-left: 5px;" disabled="#{controller.declaration.header.readOnly}" 
 				value="#{controller.to.streetName}">
 			</aon:inputText>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_streetNumber}" 
+			<aon:outputText value="#{bundle.fiscal_streetNumber}" 
 				styleClass="aon-margin-left aon-italic"/>
 			<aon:inputText id="controller_streetNumber" size="4" maxlength="4" 
 				style="margin-left: 5px;" disabled="#{controller.declaration.header.readOnly}" 
 				value="#{controller.to.streetNumber}">
 			</aon:inputText>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_streetStair}" 
+			<aon:outputText value="#{bundle.fiscal_streetStair}" 
 				styleClass="aon-margin-left aon-italic"/>
 			<aon:inputText id="controller_streetStair" size="2" maxlength="2" 
 				style="margin-left: 5px;" disabled="#{controller.declaration.header.readOnly}" 
 				value="#{controller.to.streetStair}">
 			</aon:inputText>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_streetFloor}" 
+			<aon:outputText value="#{bundle.fiscal_streetFloor}" 
 				styleClass="aon-margin-left aon-italic"/>
 			<aon:inputText id="controller_streetFloor" size="2" maxlength="2" 
 				style="margin-left: 5px;" disabled="#{controller.declaration.header.readOnly}" 
 				value="#{controller.to.streetFloor}">
 			</aon:inputText>
 
-			<aon:outputText value="#{fiscalBundle.fiscal_streetDoor}" 
+			<aon:outputText value="#{bundle.fiscal_streetDoor}" 
 				styleClass="aon-margin-left aon-italic"/>
 			<aon:inputText id="controller_streetDoor" size="2" maxlength="2" 
 				style="margin-left: 5px;" disabled="#{controller.declaration.header.readOnly}" 
@@ -96,25 +96,25 @@
 			value="#{controller.to.zip}">
 		</aon:inputText>
 		
-		<aon:outputLabel for="controller_contactPerson" value="#{fiscalBundle.fiscal_contact_person}"/>
+		<aon:outputLabel for="controller_contactPerson" value="#{bundle.fiscal_contact_person}"/>
 		<aon:inputText id="controller_contactPerson" size="50" maxlength="100" 
 			disabled="#{controller.declaration.header.readOnly}" 
 			value="#{controller.to.contactPerson}">
 		</aon:inputText>
 	
-		<aon:outputLabel for="controller_contactPhone" value="#{fiscalBundle.fiscal_contact_phone}"/>
+		<aon:outputLabel for="controller_contactPhone" value="#{bundle.fiscal_contact_phone}"/>
 		<aon:inputText id="controller_contactPhone" size="9" maxlength="9" 
 			disabled="#{controller.declaration.header.readOnly}" 
 			value="#{controller.to.contactPhone}">
 		</aon:inputText>
 
-		<aon:outputLabel for="controller_contactCellular" value="#{fiscalBundle.fiscal_contact_cellular}"/>
+		<aon:outputLabel for="controller_contactCellular" value="#{bundle.fiscal_contact_cellular}"/>
 		<aon:inputText id="controller_contactCellular" size="9" maxlength="9" 
 			disabled="#{controller.declaration.header.readOnly}"
 			value="#{controller.to.contactCellular}">
 		</aon:inputText>
 		
-		<aon:outputLabel for="controller_contactEmail" value="#{fiscalBundle.fiscal_contact_email}"/>
+		<aon:outputLabel for="controller_contactEmail" value="#{bundle.fiscal_contact_email}"/>
 		<aon:inputText id="controller_contactEmail" size="50" maxlength="50" 
 			disabled="#{controller.declaration.header.readOnly}"
 			value="#{controller.to.contactEmail}">
@@ -122,7 +122,7 @@
 		
 		<aon:outputLabel for="administration_code"
 			rendered="#{controller.to.fromCommonTerritory}" 
-			value="#{fiscalBundle.fiscal_administration_code}" />
+			value="#{bundle.fiscal_administration_code}" />
 		<aon:inputText id="administration_code" size="6" maxlength="5"
 			rendered="#{controller.to.fromCommonTerritory}"
 			disabled="#{controller.declaration.header.readOnly}"

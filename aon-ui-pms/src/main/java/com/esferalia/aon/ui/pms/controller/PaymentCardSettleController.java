@@ -1,6 +1,5 @@
 package com.esferalia.aon.ui.pms.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_BUNDLE;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_TRACKING_FRACTIONED;
 import static com.code.aon.ui.common.ICommonMessages.PRICE_PATTERN;
 
@@ -620,7 +619,7 @@ public class PaymentCardSettleController {
 	}
 	
 	private void createFinanceTracking(Finance finance, int fractionNum, Double amount){
-		String message = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_TRACKING_FRACTIONED, fractionNum, 2);
+		String message = AonUtil.getMessage(FINANCE_TRACKING_FRACTIONED, fractionNum, 2);
 		FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 	}
 	

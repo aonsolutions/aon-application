@@ -13,7 +13,7 @@
 
 		<c:if test="#{!skipProjectData}">
 			<aon:outputLabel for="ProjectCommercial_id" 
-				value="#{commercialBundle.commercial_operation_module}" />
+				value="#{bundle.commercial_operation_module}" />
 			<aon:div>
 				<ui:include src="/com/code/aon/ui/commercial/facelet/projectCommercial/lookup.xhtml" >
 					<ui:param name="lookupTo" value="#{commercialTracking.to.project}" />
@@ -76,7 +76,7 @@
 					value="#{commercialTracking.to.allDay}" ajaxSingle="false"
 					reRender="CommercialTracking_dateDiv" />						
 				<aon:outputLabel for="CommercialTracking_allDay"
-					value="#{commercialBundle.commercial_tracking_allDay}" />
+					value="#{bundle.commercial_tracking_allDay}" />
 			</a4j:region>
 		</aon:div>
 		
@@ -128,12 +128,12 @@
 		</aon:inputTextarea>
 			
 		<aon:outputLabel for="CommercialTracking_location"
-			value="#{commercialBundle.commercial_tracking_location}" />
+			value="#{bundle.commercial_tracking_location}" />
 		<aon:inputText id="CommercialTracking_location"
 			value="#{commercialTracking.to.location}" size="80" maxlength="255" />											
 
 		<aon:outputLabel for="CommercialTracking_next_id"
-			value="#{commercialBundle.commercial_tracking_next_action2}" />
+			value="#{bundle.commercial_tracking_next_action2}" />
 		<aon:selectBooleanCheckbox id="CommercialTracking_next_id"
 			reRender="next_action" process="CommercialTracking_location"
 			actionListener="#{commercialTracking.onNextChanged}"
@@ -145,7 +145,7 @@
 	<aon:div id="next_action" styleClass="aon-margin-top">
 		<aon:div styleClass="aon-group" rendered="#{commercialTracking.nextAction}">
 			<aon:div styleClass="aon-group-title">
-				<aon:outputText value="#{commercialBundle.commercial_tracking_next_action2}"/>
+				<aon:outputText value="#{bundle.commercial_tracking_next_action2}"/>
 			</aon:div>
 			<aon:div styleClass="aon-group-body"> 
 				<aon:div styleClass="aon-group-body-internal">
@@ -182,7 +182,7 @@
 						</aon:inputTextarea>
 					
 						<aon:outputLabel for="CommercialTracking_next_location"
-							value="#{commercialBundle.commercial_tracking_location}" />
+							value="#{bundle.commercial_tracking_location}" />
 						<aon:inputText id="CommercialTracking_next_location"
 							value="#{commercialTracking.next.location}" size="80" maxlength="255" />									
 

@@ -14,11 +14,11 @@
 		<aon:form id="userOverloadForm">
 	
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{adminBundle.admin_backup}" />
+				<ui:param name="toolbarTitle" value="#{bundle.admin_backup}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="makeBackup" 
-						value="#{financeBundle.finance_create_disk}" 
+						value="#{bundle.finance_create_disk}" 
 						actionListener="#{backup.onPrepareBackup}"
 						rendered="#{!backup.backupAvailable}"
 						reRender="backupContent"
@@ -38,14 +38,14 @@
 					<aon:panelGrid columns="2">
 	
 						<c:if test="#{backup.showIncludeChildDomains}">						
-							<aon:outputLabel value="#{adminBundle.admin_domain_childs}" 
+							<aon:outputLabel value="#{bundle.admin_domain_childs}" 
 								for="Backup_childDomains"/>
 							<aon:selectBooleanCheckbox id="Backup_childDomains"
 								value="#{backup.includeChildDomains}" />								
 						</c:if>
 	
 						<c:if test="#{backup.showIncludeParentDomain}">						
-							<aon:outputLabel value="#{adminBundle.admin_domain_parent}" 
+							<aon:outputLabel value="#{bundle.admin_domain_parent}" 
 								for="Backup_parentDomain"/>
 							<aon:selectBooleanCheckbox id="Backup_parentDomain"
 								value="#{backup.includeParentDomain}" />								

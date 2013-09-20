@@ -13,12 +13,12 @@
 		<aon:form id="newsletterForm">
 			
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_newsletter_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.marketing_newsletter_module}" />
 				<ui:param name="controller" value="#{newsletter}" />
 				<ui:define name="beforeSpinToolbarContent" >
 					<aon:commandButton id="sendEmail"
 						reRender="showNewMessageWindow" immediate="true"
-						value="#{webmailBundle.webmail_send}"
+						value="#{bundle.webmail_send}"
 						actionListener="#{newsletter.onSendEmail}"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2" />	
 				</ui:define>								
@@ -59,7 +59,7 @@
 					</aon:selectInputDate>								
 						
 					<aon:outputLabel for="Newsletter_layout"
-						value="#{marketingBundle.marketing_newsletter_layout}" />
+						value="#{bundle.marketing_newsletter_layout}" />
 					<aon:selectOneMenu id="Newsletter_layout" required="true"
 						value="#{newsletter.to.layout}">
 						<f:selectItem itemLabel="-" value="#{null}" />
@@ -67,7 +67,7 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Newsletter_highlightFirst"
-						value="#{marketingBundle.marketing_newsletter_highlightFirst}" />
+						value="#{bundle.marketing_newsletter_highlightFirst}" />
 					<aon:selectBooleanCheckbox id="Newsletter_highlightFirst" 
 						value="#{newsletter.to.highlightFirst}" />
 
@@ -85,7 +85,7 @@
 				<aon:div styleClass="aon-form-group" rendered="#{!newsletter.new}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="newsletterDetailData" value="#{marketingBundle.marketing_news_module}" />
+							<aon:outputLabel for="newsletterDetailData" value="#{bundle.marketing_news_module}" />
 						</aon:div>
 					</aon:div>
 									

@@ -13,19 +13,19 @@
 
 			<c:if test="#{commercialStat.controlType==0}">
 				<ui:param name="toolbarTitle"
-					value="#{statBundle.seller_stat_control_seller}" />
+					value="#{bundle.seller_stat_control_seller}" />
 			</c:if>
 			<c:if test="#{commercialStat.controlType==1}">
 				<ui:param name="toolbarTitle"
-					value="#{statBundle.seller_stat_control_target}" />
+					value="#{bundle.seller_stat_control_target}" />
 			</c:if>
 			<c:if test="#{commercialStat.controlType==2}">
 				<ui:param name="toolbarTitle"
-					value="#{statBundle.seller_stat_control_product}" />
+					value="#{bundle.seller_stat_control_product}" />
 			</c:if>
 			<c:if test="#{commercialStat.controlType==3}">
 				<ui:param name="toolbarTitle"
-					value="#{statBundle.seller_stat_control_category}" />
+					value="#{bundle.seller_stat_control_category}" />
 			</c:if>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
@@ -100,19 +100,19 @@
 									<aon:div>
 										<c:if test="#{commercialStat.controlType==0}">
 											<aon:outputText
-												value="#{statBundle.seller_stat_control_seller}" />
+												value="#{bundle.seller_stat_control_seller}" />
 										</c:if>
 										<c:if test="#{commercialStat.controlType==1}">
 											<aon:outputText
-												value="#{statBundle.seller_stat_control_target}" />
+												value="#{bundle.seller_stat_control_target}" />
 										</c:if>
 										<c:if test="#{commercialStat.controlType==2}">
 											<aon:outputText
-												value="#{statBundle.seller_stat_control_product}" />
+												value="#{bundle.seller_stat_control_product}" />
 										</c:if>
 										<c:if test="#{commercialStat.controlType==3}">
 											<aon:outputText
-												value="#{statBundle.seller_stat_control_category}" />
+												value="#{bundle.seller_stat_control_category}" />
 										</c:if>
 									</aon:div>
 									<aon:div>
@@ -270,28 +270,28 @@
 							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onSellerDetail}"
 								action="commercial_seller_stat"
-								value="#{statBundle.stat_show_detail}"
+								value="#{bundle.stat_show_detail}"
 								reRender="aonContent" />
 						</c:if>
 						<c:if test="#{commercialStat.controlType==1}">
 							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onTargetDetail}"
 								action="commercial_seller_stat"
-								value="#{statBundle.stat_show_detail}"
+								value="#{bundle.stat_show_detail}"
 								reRender="aonContent" />
 						</c:if>
 						<c:if test="#{commercialStat.controlType==2}">
 							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onProductDetail}"
 								action="commercial_seller_stat"
-								value="#{statBundle.stat_show_detail}"
+								value="#{bundle.stat_show_detail}"
 								reRender="aonContent" />
 						</c:if>
 						<c:if test="#{commercialStat.controlType==3}">
 							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onCategoryDetail}"
 								action="commercial_seller_stat"
-								value="#{statBundle.stat_show_detail}"
+								value="#{bundle.stat_show_detail}"
 								reRender="aonContent" />
 						</c:if>
 					</aon:column>

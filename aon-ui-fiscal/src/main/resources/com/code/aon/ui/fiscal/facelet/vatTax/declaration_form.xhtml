@@ -29,22 +29,22 @@
 				<aon:selectBooleanCheckbox id="VatTaxDeclaration_wihout_activity" styleClass="aon-margin-left"
 					value="#{vatTaxDeclaration.to.withoutActivity}"/>
 				<aon:outputLabel for="VatTaxDeclaration_wihout_activity" styleClass="aon-italic"
-					value="#{fiscalBundle.fiscal_wihout_activity}" />
+					value="#{bundle.fiscal_wihout_activity}" />
 			</aon:div>
 			<aon:div styleClass="aon-text-left">
 				<aon:selectOneMenu id="VatTax_Declaration_status" value="#{vatTaxDeclaration.to.status}" required="true">
 					<f:selectItems value="#{fiscalCollections.vatTaxDeclarationStatuses}" />
 				</aon:selectOneMenu>
 				<aon:commandButton id="gen-disk"
-					value="#{financeBundle.finance_create_disk}"
+					value="#{bundle.finance_create_disk}"
 					actionListener="#{vatTaxDeclaration.onCreateDisk}"
 					rendered="#{!vatTaxDeclaration.new and !vatTaxDeclaration.to.generated}"
 					styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 					style="border-width: 0px 0px 0px 0px;margin-left: 10px;" reRender="VatTaxDeclarationGrid"
 					accesskey="#{bundle.aon_key_cancel}" />
 				<aon:htmlCommandLink target="_blank"
-					title="#{vatTaxDeclaration.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
-					value="#{vatTaxDeclaration.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
+					title="#{vatTaxDeclaration.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
+					value="#{vatTaxDeclaration.diskOk?(bundle.finance_download_disk):(bundle.finance_download_error)}"
 					style="border-width: 0px 0px 0px 0px;"
 					actionListener="#{vatTaxDeclaration.downloadDisk}"
 					rendered="#{!vatTaxDeclaration.new and vatTaxDeclaration.fileOutput!=null}"
@@ -60,7 +60,7 @@
 			</aon:div>
 			<aon:outputText value="&#160;" />
 
-			<aon:outputText value="#{fiscalBundle.fiscal_operations_volume}" rendered="#{vatTax.to.anual}"/>
+			<aon:outputText value="#{bundle.fiscal_operations_volume}" rendered="#{vatTax.to.anual}"/>
 			<aon:outputText value="#{vatTaxDeclaration.to.operationsVolume}" styleClass="aon-bold" rendered="#{vatTax.to.anual}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}"/>
 			</aon:outputText>
@@ -80,7 +80,7 @@
 			</aon:outputText>
 			<aon:outputText value="&#160;" />
 
-			<aon:outputLabel for="VatTaxDeclaration_previousYearCompesateQuota" value="#{fiscalBundle.fiscal_prev_year_compesate_quota2}" />
+			<aon:outputLabel for="VatTaxDeclaration_previousYearCompesateQuota" value="#{bundle.fiscal_prev_year_compesate_quota2}" />
 			<aon:inputText id="VatTaxDeclaration_previousYearCompesateQuota" size="8" value="#{vatTaxDeclaration.to.previousYearCompensateQuota}"
 				required="true">
 				<a4j:support event="onchange" reRender="VatTaxDeclarationGrid" limitToList="true"
@@ -89,13 +89,13 @@
 			</aon:inputText>
 			<aon:outputText value="&#160;" />
 
-			<aon:outputText value="#{fiscalBundle.fiscal_difference}" rendered="#{vatTax.to.anual}"/>
+			<aon:outputText value="#{bundle.fiscal_difference}" rendered="#{vatTax.to.anual}"/>
 			<aon:outputText value="#{vatTaxDeclaration.to.difference}" styleClass="aon-bold" rendered="#{vatTax.to.anual}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 			<aon:outputText value="&#160;" rendered="#{vatTax.to.anual}"/>
 
-			<aon:outputLabel for="VatTaxDeclaration_doneDeposits" value="#{fiscalBundle.fiscal_done_deposits}" rendered="#{vatTax.to.anual}"/>
+			<aon:outputLabel for="VatTaxDeclaration_doneDeposits" value="#{bundle.fiscal_done_deposits}" rendered="#{vatTax.to.anual}"/>
 			<aon:inputText id="VatTaxDeclaration_doneDeposits" size="8" value="#{vatTaxDeclaration.to.doneDeposits}"
 				required="true" rendered="#{vatTax.to.anual}">
 				<a4j:support event="onchange" reRender="VatTaxDeclarationGrid" limitToList="true"
@@ -103,7 +103,7 @@
 			</aon:inputText>
 			<aon:outputText value="&#160;" rendered="#{vatTax.to.anual}"/>
 
-			<aon:outputLabel for="VatTaxDeclaration_doneRefunds" value="#{fiscalBundle.fiscal_done_refunds}" rendered="#{vatTax.to.anual}"/>
+			<aon:outputLabel for="VatTaxDeclaration_doneRefunds" value="#{bundle.fiscal_done_refunds}" rendered="#{vatTax.to.anual}"/>
 			<aon:inputText id="VatTaxDeclaration_doneRefunds" size="8" value="#{vatTaxDeclaration.to.doneRefunds}"
 				required="true" rendered="#{vatTax.to.anual}">
 				<a4j:support event="onchange" reRender="VatTaxDeclarationGrid" limitToList="true"
@@ -148,7 +148,7 @@
 			</aon:outputText>
 			<aon:outputText value="&#160;" rendered="#{vatTaxDeclaration.to.depositEnabled}"/>
 
-			<aon:outputLabel for="VatTaxDeclaration_previousDeposit" value="#{fiscalBundle.fiscal_previous_deposit}" rendered="#{vatTax.to.extraDeclaration}"/>
+			<aon:outputLabel for="VatTaxDeclaration_previousDeposit" value="#{bundle.fiscal_previous_deposit}" rendered="#{vatTax.to.extraDeclaration}"/>
 			<aon:inputText id="VatTaxDeclaration_previousDeposit" size="8" value="#{vatTaxDeclaration.to.previousDeposit}"
 				required="true" rendered="#{vatTax.to.extraDeclaration}">
 				<a4j:support event="onchange" reRender="VatTaxDeclarationGrid" limitToList="true"
@@ -156,7 +156,7 @@
 			</aon:inputText>
 			<aon:outputText value="&#160;" rendered="#{vatTax.to.extraDeclaration}"/>
 
-			<aon:outputLabel for="VatTaxDeclaration_previousPayBack" value="#{fiscalBundle.fiscal_previous_pay_back}" rendered="#{vatTax.to.extraDeclaration}"/>
+			<aon:outputLabel for="VatTaxDeclaration_previousPayBack" value="#{bundle.fiscal_previous_pay_back}" rendered="#{vatTax.to.extraDeclaration}"/>
 			<aon:inputText id="VatTaxDeclaration_previousPayBack" size="8" value="#{vatTaxDeclaration.to.previousPayBack}"
 				required="true" rendered="#{vatTax.to.extraDeclaration}">
 				<a4j:support event="onchange" reRender="VatTaxDeclarationGrid" limitToList="true"
