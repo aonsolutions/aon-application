@@ -24,6 +24,7 @@
 						value="#{bundle.aon_refresh}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh" />							
 					<aon:htmlCommandLink id="campaignActionReport-excel-hssf-report"
+						rendered="#{!campaignAction.new and campaignAction.to.mediaType  == 'PHONE'}"
 						value="#{bundle.aon_listing}" target="_blank" actionListener="#{campaignActionReport.onExcelReport}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 					</aon:htmlCommandLink>
@@ -48,7 +49,7 @@
 						<aon:outputLabel for="Action_mediaType"
 							value="#{bundle.registry_media_type}" />
 						<aon:selectOneMenu id="Action_mediaType"
-							reRender="actionGrid,campaignActionTargetDataDiv" required="true"
+							reRender="actionGrid,campaignActionTargetDataDiv,campaignActionToolbar" required="true"
 							process="Action_description,Action_startDate,Action_endDate,Template_id"
 							value="#{campaignAction.to.mediaType}">
 							<f:selectItem itemLabel="-" value="#{null}" />
