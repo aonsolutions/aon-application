@@ -12,6 +12,8 @@ public class RegistryAttachController extends AttachmentController {
 
 	private RegistryAttachmentType type;
 	
+	private boolean skipHeredity;
+	
 	public RegistryAttachmentType getType() {
 		return type;
 	}
@@ -20,6 +22,14 @@ public class RegistryAttachController extends AttachmentController {
 		this.type = type;
 	}
 	
+	public boolean isSkipHeredity() {
+		return skipHeredity;
+	}
+
+	public void setSkipHeredity(boolean skipHeredity) {
+		this.skipHeredity = skipHeredity;
+	}
+
 	public long getMaximumSize() {
 		DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(DOCUMENT_MANAGER_CONTROLLER_NAME);
 		return dm.getMaximumDocumentSize();

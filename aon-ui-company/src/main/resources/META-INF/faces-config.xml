@@ -555,6 +555,10 @@
 			<value>#{registryCollections.registryAttachmentTypes[2].value}</value>
 		</managed-property>
 		<managed-property>
+			<property-name>skipHeredity</property-name>
+			<value>#{true}</value>
+		</managed-property>
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>

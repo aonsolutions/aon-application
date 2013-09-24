@@ -32,7 +32,14 @@
 					</f:facet>
 				</aon:column>
 	 			
-	 			<ui:include src="/com/code/aon/faces/attachment/fileColumn.xhtml" />
+	 			<ui:decorate template="/com/code/aon/faces/attachment/fileColumn.xhtml" >
+	 				<ui:define name="afterFileUploadContent">
+						<aon:graphicImage
+							title="#{to.description}" rendered="#{formList}"
+							style="vertical-align:top;margin-left: 1em;"
+							value="#{to.downloadURL}" />
+	 				</ui:define>
+	 			</ui:decorate>
 			
 			</ui:define>
 		</ui:decorate>

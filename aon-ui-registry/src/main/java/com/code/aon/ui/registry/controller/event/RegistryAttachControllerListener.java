@@ -49,7 +49,7 @@ public class RegistryAttachControllerListener extends AttachmentControllerListen
 		try {		
 			Criteria criteria = raController.getCriteria();
 			String id = raController.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
-			if ( ds.isChildDomain() ) {
+			if ( ds.isChildDomain() && (!raController.isSkipHeredity()) ) {
 				Integer parentCompanyId = getParentCompanyId(ds.getParentDomainId());
 				criteria.addInExpression(id, new Object[] {parentCompanyId, registry.getId()});
 			} else {

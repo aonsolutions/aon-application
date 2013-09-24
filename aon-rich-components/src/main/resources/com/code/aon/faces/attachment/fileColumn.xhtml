@@ -37,7 +37,8 @@
 					<a4j:support event="onuploadcomplete"
 						reRender="#{controller.beanName}_attachFile,#{controller.beanName}_description" />
 				</aon:fileUpload>
-			</a4j:region>	
+			</a4j:region>
+			<ui:insert name="afterFileUploadContent"/>	
 		</aon:div>
 		<f:facet name="footer">
 			<aon:div id="#{controller.beanName}_attachFileNew">
