@@ -83,6 +83,10 @@ public enum ContrataCodeTables {
 	return null;
 	}
 
+	public boolean isActive(){
+		return true;
+	}
+
 	public static ContrataCodeTables getEnumByValue(String expression) {
 		for( ContrataCodeTables o : ContrataCodeTables.values() ) {
 			if ( o.getCode().equals(expression) ) {

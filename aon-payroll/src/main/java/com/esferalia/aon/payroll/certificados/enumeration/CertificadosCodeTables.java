@@ -60,6 +60,10 @@ public enum CertificadosCodeTables {
 	return null;
 	}
 
+	public boolean isActive(){
+		return true;
+	}
+
 	public static CertificadosCodeTables getEnumByValue(String expression) {
 		for( CertificadosCodeTables o : CertificadosCodeTables.values() ) {
 			if ( o.getCode().equals(expression) ) {

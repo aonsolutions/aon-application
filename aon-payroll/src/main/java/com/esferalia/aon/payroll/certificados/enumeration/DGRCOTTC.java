@@ -2,7 +2,10 @@ package com.esferalia.aon.payroll.certificados.enumeration;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+
+import org.apache.commons.lang.time.DateUtils;
 
 /** 
  * Enumeration for represent Certific@2 (S.E.P.E.) DGRCOTTC table codes.
@@ -64,7 +67,7 @@ public enum DGRCOTTC {
 	public Date getStartDate(){
 		try {
 			if(startDate!=null){
-				return sdf.parse(startDate);
+				return DateUtils.ceiling(sdf.parse(startDate), Calendar.DAY_OF_MONTH);
 			}
 		} catch (ParseException e) {
 			// nothing to do
@@ -75,12 +78,21 @@ public enum DGRCOTTC {
 	public Date getEndDate(){
 		try {
 			if(endDate!=null){
-				return sdf.parse(endDate);
+				return DateUtils.ceiling(sdf.parse(endDate), Calendar.DAY_OF_MONTH);
 			}
 		} catch (ParseException e) {
 			// nothing to do
 		}
 	return null;
+	}
+
+	public boolean isActive(){
+		Date now = new Date();
+		now = DateUtils.ceiling(now, Calendar.DAY_OF_MONTH);
+		if( (getStartDate()!=null && getStartDate().after(now)) || (getEndDate()!=null && getEndDate().before(now)) ){
+			return false;
+		}
+		return true;
 	}
 
 	public static DGRCOTTC getEnumByValue(String expression) {
