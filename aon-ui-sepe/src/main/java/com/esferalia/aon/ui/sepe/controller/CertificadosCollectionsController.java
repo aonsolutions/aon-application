@@ -27,9 +27,11 @@ public class CertificadosCollectionsController {
 			CertificadosCodeTablesCodeList = new LinkedList<SelectItem>();
 			CertificadosCodeTables[] el = CertificadosCodeTables.values();
 			for (CertificadosCodeTables obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				CertificadosCodeTablesCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					CertificadosCodeTablesCodeList.add(item);
+				}
 			}
 		}
 		return CertificadosCodeTablesCodeList;
@@ -48,9 +50,11 @@ public class CertificadosCollectionsController {
 			DCODEDTCCodeList = new LinkedList<SelectItem>();
 			DCODEDTC[] el = DCODEDTC.values();
 			for (DCODEDTC obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				DCODEDTCCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					DCODEDTCCodeList.add(item);
+				}
 			}
 		}
 		return DCODEDTCCodeList;
@@ -69,9 +73,11 @@ public class CertificadosCollectionsController {
 			DCSPCPTCCodeList = new LinkedList<SelectItem>();
 			DCSPCPTC[] el = DCSPCPTC.values();
 			for (DCSPCPTC obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				DCSPCPTCCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					DCSPCPTCCodeList.add(item);
+				}
 			}
 		}
 		return DCSPCPTCCodeList;
@@ -90,9 +96,11 @@ public class CertificadosCollectionsController {
 			DGRCOTTCCodeList = new LinkedList<SelectItem>();
 			DGRCOTTC[] el = DGRCOTTC.values();
 			for (DGRCOTTC obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				DGRCOTTCCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					DGRCOTTCCodeList.add(item);
+				}
 			}
 		}
 		return DGRCOTTCCodeList;
@@ -111,9 +119,11 @@ public class CertificadosCollectionsController {
 			DSTEMCTCCodeList = new LinkedList<SelectItem>();
 			DSTEMCTC[] el = DSTEMCTC.values();
 			for (DSTEMCTC obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				DSTEMCTCCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					DSTEMCTCCodeList.add(item);
+				}
 			}
 		}
 		return DSTEMCTCCodeList;
@@ -132,9 +142,11 @@ public class CertificadosCollectionsController {
 			SACECOTCCodeList = new LinkedList<SelectItem>();
 			SACECOTC[] el = SACECOTC.values();
 			for (SACECOTC obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				SACECOTCCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					SACECOTCCodeList.add(item);
+				}
 			}
 		}
 		return SACECOTCCodeList;
@@ -153,9 +165,11 @@ public class CertificadosCollectionsController {
 			TAICLAOCCodeList = new LinkedList<SelectItem>();
 			TAICLAOC[] el = TAICLAOC.values();
 			for (TAICLAOC obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TAICLAOCCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TAICLAOCCodeList.add(item);
+				}
 			}
 		}
 		return TAICLAOCCodeList;
@@ -174,9 +188,11 @@ public class CertificadosCollectionsController {
 			TCGPROVICodeList = new LinkedList<SelectItem>();
 			TCGPROVI[] el = TCGPROVI.values();
 			for (TCGPROVI obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TCGPROVICodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TCGPROVICodeList.add(item);
+				}
 			}
 		}
 		return TCGPROVICodeList;
@@ -195,9 +211,11 @@ public class CertificadosCollectionsController {
 			TCHRGCOTCodeList = new LinkedList<SelectItem>();
 			TCHRGCOT[] el = TCHRGCOT.values();
 			for (TCHRGCOT obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TCHRGCOTCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TCHRGCOTCodeList.add(item);
+				}
 			}
 		}
 		return TCHRGCOTCodeList;
@@ -216,9 +234,11 @@ public class CertificadosCollectionsController {
 			TerroresCodeList = new LinkedList<SelectItem>();
 			Terrores[] el = Terrores.values();
 			for (Terrores obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TerroresCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TerroresCodeList.add(item);
+				}
 			}
 		}
 		return TerroresCodeList;
@@ -237,9 +257,11 @@ public class CertificadosCollectionsController {
 			TKCSITEMCodeList = new LinkedList<SelectItem>();
 			TKCSITEM[] el = TKCSITEM.values();
 			for (TKCSITEM obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TKCSITEMCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TKCSITEMCodeList.add(item);
+				}
 			}
 		}
 		return TKCSITEMCodeList;
@@ -258,9 +280,11 @@ public class CertificadosCollectionsController {
 			TKDIASACCodeList = new LinkedList<SelectItem>();
 			TKDIASAC[] el = TKDIASAC.values();
 			for (TKDIASAC obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TKDIASACCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TKDIASACCodeList.add(item);
+				}
 			}
 		}
 		return TKDIASACCodeList;
@@ -279,9 +303,11 @@ public class CertificadosCollectionsController {
 			TKEINDUCCodeList = new LinkedList<SelectItem>();
 			TKEINDUC[] el = TKEINDUC.values();
 			for (TKEINDUC obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TKEINDUCCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TKEINDUCCodeList.add(item);
+				}
 			}
 		}
 		return TKEINDUCCodeList;
@@ -300,9 +326,11 @@ public class CertificadosCollectionsController {
 			TKFCOEFICodeList = new LinkedList<SelectItem>();
 			TKFCOEFI[] el = TKFCOEFI.values();
 			for (TKFCOEFI obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TKFCOEFICodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TKFCOEFICodeList.add(item);
+				}
 			}
 		}
 		return TKFCOEFICodeList;
@@ -321,9 +349,11 @@ public class CertificadosCollectionsController {
 			TKZCARPSCodeList = new LinkedList<SelectItem>();
 			TKZCARPS[] el = TKZCARPS.values();
 			for (TKZCARPS obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TKZCARPSCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TKZCARPSCodeList.add(item);
+				}
 			}
 		}
 		return TKZCARPSCodeList;
@@ -342,9 +372,11 @@ public class CertificadosCollectionsController {
 			TLDCAUSSCodeList = new LinkedList<SelectItem>();
 			TLDCAUSS[] el = TLDCAUSS.values();
 			for (TLDCAUSS obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TLDCAUSSCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TLDCAUSSCodeList.add(item);
+				}
 			}
 		}
 		return TLDCAUSSCodeList;
@@ -363,9 +395,11 @@ public class CertificadosCollectionsController {
 			TMJMINSSCodeList = new LinkedList<SelectItem>();
 			TMJMINSS[] el = TMJMINSS.values();
 			for (TMJMINSS obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TMJMINSSCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TMJMINSSCodeList.add(item);
+				}
 			}
 		}
 		return TMJMINSSCodeList;
@@ -384,9 +418,11 @@ public class CertificadosCollectionsController {
 			TMPORCRDCodeList = new LinkedList<SelectItem>();
 			TMPORCRD[] el = TMPORCRD.values();
 			for (TMPORCRD obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TMPORCRDCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TMPORCRDCodeList.add(item);
+				}
 			}
 		}
 		return TMPORCRDCodeList;
@@ -405,9 +441,11 @@ public class CertificadosCollectionsController {
 			TMQTDISTCodeList = new LinkedList<SelectItem>();
 			TMQTDIST[] el = TMQTDIST.values();
 			for (TMQTDIST obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TMQTDISTCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TMQTDISTCodeList.add(item);
+				}
 			}
 		}
 		return TMQTDISTCodeList;
@@ -426,9 +464,11 @@ public class CertificadosCollectionsController {
 			TNWTPCOMCodeList = new LinkedList<SelectItem>();
 			TNWTPCOM[] el = TNWTPCOM.values();
 			for (TNWTPCOM obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TNWTPCOMCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TNWTPCOMCodeList.add(item);
+				}
 			}
 		}
 		return TNWTPCOMCodeList;

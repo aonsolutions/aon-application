@@ -286,11 +286,11 @@ public class CertificadosWriter {
 		o.setGrupoCotizacion(quoteGroup!=null?quoteGroup:null);
 		String tc2 = utils.getContractDataMap(batchDetail.getContract()).get(ContextVariable.TC2.getName());
 		o.setTipoContrato(tc2);
-		o.setDuracionContrato(parseToLength(differenceBetweenDates(batchDetail.getContract().getStartDate(), batchDetail.getContract().getEndDate()).toString(),5));
+		o.setDuracionContrato(completeLength(differenceBetweenDates(batchDetail.getContract().getStartDate(), batchDetail.getContract().getEndDate()).toString(),5));
 		o.setIndicadorDuracionContrato(null);
 
 		String occupation = utils.getContractDataMap(batchDetail.getContract()).get(ContextVariable.CNO.getName());
-		o.setCodProfesion(parseToLength(occupation,7,false));
+		o.setCodProfesion(completeLength(occupation,7,false));
 		o.setCargoPublicoSindical(null);
 		
 //		<xsd:choice minOccurs="0">
@@ -407,7 +407,7 @@ public class CertificadosWriter {
 			PERIODODISTRIBUCIONJORNADASTYPE tempPeriodo = listaPeriodos.get(listaPeriodos.size()-1);
 			try {
 				if(tempPeriodo.getTipoDistribucion().equals(tipoTp) 
-						&& tempPeriodo.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(parseToLength(diasTp, 5))
+						&& tempPeriodo.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(completeLength(diasTp, 5))
 						&& differenceBetweenDates(dateYYYYMMDD.parse(tempPeriodo.getFechaFinPeriodo()),startDate).equals(2)){
 					tempPeriodo.setFechaFinPeriodo(createFechaSimpleType(endDate));
 				} else {
@@ -440,7 +440,7 @@ public class CertificadosWriter {
 		o.setTipoDistribucion(tipoDistribucion);
 		o.setFechaInicioPeriodo(createFechaSimpleType(inicio));
 		o.setFechaFinPeriodo(createFechaSimpleType(fin));
-		o.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(numDiasSemanaPeriodo, 5));
+		o.setNumeroDiasTrabajadosPorSemanaOPeriodo(completeLength(numDiasSemanaPeriodo, 5));
 		return o;
 	}
 	
@@ -475,10 +475,10 @@ public class CertificadosWriter {
 		COTIZACIONTYPE o = new COTIZACIONTYPE();
 		Cotizacion data = batchData;
 		o.setAno(data.getYear().toString());
-		o.setMes(parseToLength(data.getMonth().toString(), 2));
-		o.setNumDiasCotizados(parseToLength(data.getContributionDays(), 3));
-		o.setBaseCotizacionContingenciasComunes(parseToLength(data.getCgcContributionBase(), 9));
-		o.setBaseCotizacionDesempleo(parseToLength(data.getUnemploymentContributionBase(), 9));
+		o.setMes(completeLength(data.getMonth().toString(), 2));
+		o.setNumDiasCotizados(completeLength(data.getContributionDays(), 3));
+		o.setBaseCotizacionContingenciasComunes(completeLength(data.getCgcContributionBase(), 9));
+		o.setBaseCotizacionDesempleo(completeLength(data.getUnemploymentContributionBase(), 9));
 		o.setObservaciones(data.getComments());
 		return o;
 	}
@@ -584,13 +584,13 @@ public class CertificadosWriter {
 	 */
 	private COTIZACIONREATYPE createCotizacionReaType(){
 		COTIZACIONREATYPE o = new COTIZACIONREATYPE();
-		o.setAno(createAnioSimpleType());
-		o.setMes(createMesSimpleType());
-		o.setGrupoCotizacion(createN2BasicType());
+		o.setAno(createAnioSimpleType(null));
+		o.setMes(createMesSimpleType(null));
+		o.setGrupoCotizacion(createN2BasicType(null));
 		o.setNumDiasCotizados(createDiasCotizReaSimpleType());
 		o.setNumJornadasCotizadas(createJornCotizReaSimpleType());
-		o.setBaseCotizacionDesempleo(createN9BasicType());
-		o.setObservaciones(createBigStringBasicType());
+		o.setBaseCotizacionDesempleo(createN9BasicType(null));
+		o.setObservaciones(createBigStringBasicType(null));
 		return o;
 	}
 	
@@ -625,9 +625,9 @@ public class CertificadosWriter {
 //					baseAccidentesTrabajo += finiquitodf.getBaseAccidentesTrabajo();
 //					baseContingenciaGenerales += finiquitodf.getBaseContingenciasGenerales();
 //				}
-				o.setNumDiasCotizados(parseToLength(noHolidays,3));
-				o.setBaseCotizacionContingenciasComunes(parseToLength(baseContingenciaGenerales, 9));
-				o.setBaseCotizacionDesempleo(parseToLength(baseAccidentesTrabajo, 9));
+				o.setNumDiasCotizados(completeLength(noHolidays,3));
+				o.setBaseCotizacionContingenciasComunes(completeLength(baseContingenciaGenerales, 9));
+				o.setBaseCotizacionDesempleo(completeLength(baseAccidentesTrabajo, 9));
 				o.setObservaciones(null);
 			}
 		} catch (ManagerBeanException e) {
@@ -655,11 +655,11 @@ public class CertificadosWriter {
 	 */
 	private TRABAJADORTYPE.DatosVacacionesCotizadasREA createVacacionesCotizadasReaType(){
 		TRABAJADORTYPE.DatosVacacionesCotizadasREA o = new TRABAJADORTYPE.DatosVacacionesCotizadasREA();
-		o.setGrupoCotizacion(createN2BasicType());
-		o.setNumDiasCotizados(createN2BasicType());
+		o.setGrupoCotizacion(createN2BasicType(null));
+		o.setNumDiasCotizados(createN2BasicType(null));
 		o.setNumJornadasCotizadas(createVacacJornCotizReaSimpleType());
-		o.setBaseCotizacionDesempleo(createN9BasicType());
-		o.setObservaciones(createBigStringBasicType());
+		o.setBaseCotizacionDesempleo(createN9BasicType(null));
+		o.setObservaciones(createBigStringBasicType(null));
 		return o;
 	}
 	
@@ -676,7 +676,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createCifNifSimpleType(){
+	private String createCifNifSimpleType(String value){
 		return null;
 	}
 	
@@ -689,7 +689,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createNifNieSimpleType(){
+	private String createNifNieSimpleType(String value){
 		return null;
 	}
 	
@@ -827,8 +827,8 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createAnioSimpleType(){
-		return null;
+	private String createAnioSimpleType(Date date){
+		return completeLength(CommonUtil.getYear(date), 2);
 	}
 	
 	/**
@@ -840,8 +840,8 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createMesSimpleType(){
-		return null;
+	private String createMesSimpleType(Date date){
+		return completeLength(CommonUtil.getMonth(date), 2);
 	}
 	
 	/**
@@ -853,8 +853,8 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createDiasSimpleType(){
-		return null;
+	private String createDiasSimpleType(Date date){
+		return completeLength(CommonUtil.getDay(date), 3);
 	}
 
 	/**
@@ -908,7 +908,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createN1BasicType(){
+	private String createN1BasicType(String value){
 		return null;
 	}
 
@@ -921,7 +921,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createN2BasicType(){
+	private String createN2BasicType(String value){
 		return null;
 	}
 
@@ -934,7 +934,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createN3BasicType(){
+	private String createN3BasicType(String value){
 		return null;
 	}
 	
@@ -947,7 +947,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createN4BasicType(){
+	private String createN4BasicType(String value){
 		return null;
 	}
 
@@ -960,7 +960,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createN5BasicType(){
+	private String createN5BasicType(String value){
 		return null;
 	}
 
@@ -973,7 +973,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createN5BasicTypeMayor(){
+	private String createN5BasicTypeMayor(String value){
 		return null;
 	}
 
@@ -986,7 +986,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createN6BasicType(){
+	private String createN6BasicType(String value){
 		return null;
 	}
 
@@ -999,7 +999,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createN7BasicType(){
+	private String createN7BasicType(String value){
 		return null;
 	}
 
@@ -1012,7 +1012,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createN8BasicType(){
+	private String createN8BasicType(String value){
 		return null;
 	}
 
@@ -1025,7 +1025,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createN9BasicType(){
+	private String createN9BasicType(String value){
 		return null;
 	}
 	
@@ -1038,7 +1038,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createN10BasicType(){
+	private String createN10BasicType(String value){
 		return null;
 	}
 	
@@ -1051,7 +1051,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createSmallStringBasicType(){
+	private String createSmallStringBasicType(String value){
 		return null;
 	}
 	
@@ -1065,7 +1065,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createBigStringBasicType(){
+	private String createBigStringBasicType(String value){
 		return null;
 	}
 	
@@ -1078,7 +1078,7 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createCharStringBasicType(){
+	private String createCharStringBasicType(String value){
 		return null;
 	}
 	
@@ -1176,42 +1176,65 @@ public class CertificadosWriter {
 //		return null;
 //	}
 	
-	private String parseToLength(String var, Integer lon, Boolean dir) {
-		StringBuffer parse = new StringBuffer();
-		if(var != null) {
-			if(!dir) {
-				parse.append(var);
-			}
-			for(int i = var.length(); i < Math.abs(lon); ++i) {
-				parse.append("0");
-			}
-			if(dir) {
-				parse.append(var);
-			}
+	private String completeLength(Integer value, Integer length, boolean rightAppend) {
+		return completeLength(value.toString(), length, rightAppend);
+	}
+	
+	private String completeLength(String value, Integer length, boolean rightAppend) {
+		return completeLength(value, length, "0", rightAppend);
+	}
+	
+	private String completeLength(String value, Integer length, String appendValue, boolean rightAppend) {
+		if(value==null)return null;
+		StringBuilder builder = new StringBuilder("");
+		if(rightAppend){
+			builder.append(value);
 		}
-		return parse.toString();
+		for(int i=value.length(); i<length; i++){
+			builder.append(appendValue);
+		}
+		if(!rightAppend){
+			builder.append(value);
+		}
+		return builder.toString();
 	}
 	
-	private String parseToLength(String var, Integer lon) {
-		return parseToLength(var, lon, true);
+//	private String parseToLength(String var, Integer lon, Boolean dir) {
+//		StringBuffer parse = new StringBuffer();
+//		if(var != null) {
+//			if(!dir) {
+//				parse.append(var);
+//			}
+//			for(int i = var.length(); i < Math.abs(lon); ++i) {
+//				parse.append("0");
+//			}
+//			if(dir) {
+//				parse.append(var);
+//			}
+//		}
+//		return parse.toString();
+//	}
+	
+	private String completeLength(String var, Integer lon) {
+		return completeLength(var, lon, true);
 	}
 	
-	private String parseToLength(Integer var, Integer lon, Boolean dir) {
-		return parseToLength(String.valueOf(var), lon, dir);
+	private String completeLength(Integer var, Integer lon, Boolean dir) {
+		return completeLength(String.valueOf(var), lon, dir);
 	}
 	
-	private String parseToLength(Integer var, Integer lon) {
-		return parseToLength(var, lon, true);
+	private String completeLength(Integer var, Integer lon) {
+		return completeLength(var, lon, true);
 	}
 	
-	private String parseToLength(Double var, Integer lon, Boolean dir) {
+	private String completeLength(Double var, Integer lon, Boolean dir) {
 		var *= 100;
 		var = CommonUtil.round(var);
-		return parseToLength(String.valueOf(var.intValue()), lon, dir);
+		return completeLength(String.valueOf(var.intValue()), lon, dir);
 	}
 	
-	private String parseToLength(Double var, Integer lon) {
-		return parseToLength(var, lon, true);
+	private String completeLength(Double var, Integer lon) {
+		return completeLength(var, lon, true);
 	}
 	
 	private Integer differenceBetweenDates(Date from, Date to) {

@@ -442,8 +442,6 @@ public class ModelPE230 extends AbstractAnnexModel {
 		}
 	}
 	
-	
-	
 	@Override
 	public void afterBuildPdf(PdfReader reader, PdfStamper stamp){
 		try {

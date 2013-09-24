@@ -68,6 +68,14 @@
 				</aon:selectBooleanCheckbox>
 				<aon:outputLabel for="discapacidad" rendered="#{contractContrata.handler.showDiscapacidadPanel}"
 					value="#{bundle.payroll_mod145_perceptor18}" />
+
+				<aon:selectBooleanCheckbox id="apoyoEmprendedores" rendered="#{contractContrata.handler.showApoyoEmprendedoresPanel}"
+					value="#{contractContrata.params.apoyoEmprendedoresData}">
+					<a4j:support event="onclick" ajaxSingle="true"
+						reRender="specificOptionsDiv"/>
+				</aon:selectBooleanCheckbox>
+				<aon:outputLabel for="apoyoEmprendedores" rendered="#{contractContrata.handler.showApoyoEmprendedoresPanel}"
+					value="#{bundle.sepe_contrata_contract_apoyoEmprendedores_data}" />
 					
 				<aon:selectBooleanCheckbox id="mayores52" rendered="#{contractContrata.handler.showMayor52Panel}"
 					value="#{contractContrata.params.olderThan52Data}"> 
@@ -260,6 +268,43 @@
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{contrataCollections.TEJINDISCodeList}" />
 					</aon:selectOneMenu>
+				</aon:panelGrid>
+			</aon:panel>
+		</aon:div>
+				
+		<aon:div id="apoyoEmprendedoresPanel" rendered="#{contractContrata.params.apoyoEmprendedoresData}">
+			<aon:panel style="width: 100%;">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.sepe_contrata_contract_apoyoEmprendedores_data}" />
+				</f:facet>
+				<c:if test="#{contractContrata.handler.showColectivoBonificacion}">
+					<aon:panel style="width: 100%;">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.sepe_contrata_contract_bonus}" />
+						</f:facet>
+						<aon:panelGrid columns="2" style="width: 100%;">
+								<aon:outputLabel for="bonus_collective"
+									rendered="#{contractContrata.params.indDiscapacidad!=TEJINDIS_C}"
+									value="#{bundle.sepe_contrata_contract_bonus_collective}" />
+								<aon:selectOneMenu id="bonus_collective"
+									rendered="#{contractContrata.params.indDiscapacidad!=TEJINDIS_C}"
+									value="#{contractContrata.params.colectivoBonificacion}" >
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{contrataCollections.TELCOLBOCodeList}" />
+								</aon:selectOneMenu>
+						</aon:panelGrid>
+					</aon:panel>
+				</c:if>
+				<aon:panelGrid columns="2" style="width: 100%;">
+					<c:if test="#{contractContrata.handler.showIndEmpleadAutonomo}">
+						<aon:outputText value="&#160;" />
+						<aon:div>
+							<aon:selectBooleanCheckbox id="ind_emplead_autonomo"
+								value="#{contractContrata.params.indEmpleadAutonomo}"/>
+							<aon:outputLabel for="ind_emplead_autonomo"
+								value="#{bundle.sepe_contrata_contract_ind_emplead_autonomo}" />
+						</aon:div>
+					</c:if> 
 				</aon:panelGrid>
 			</aon:panel>
 		</aon:div>

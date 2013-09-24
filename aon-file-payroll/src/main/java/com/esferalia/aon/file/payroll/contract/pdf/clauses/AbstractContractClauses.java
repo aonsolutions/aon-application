@@ -98,7 +98,8 @@ public abstract class AbstractContractClauses implements IContractPdfDocument {
 		return CONTRACT_CLAUSES_PATH;
 	}
 	
-	public byte[] buildPdf() {
+	@Override
+	public byte[] buildPdf(boolean readOnly) {
 		try {
 			
 			PdfReader reader = new PdfReader(getContractClausesUrl(documentName+".pdf"));

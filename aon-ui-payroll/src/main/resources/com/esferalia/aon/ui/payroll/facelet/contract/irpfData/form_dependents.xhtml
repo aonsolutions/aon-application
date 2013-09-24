@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+					
+	<aon:div>
+		<aon:panel>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_irpfData_descendients}" />
+			</f:facet>
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+				<ui:param name="controller" value="#{irpfDataDescendients}" />
+				<ui:param name="saveButtonReRender" value="irpfDataForm" />
+				<ui:param name="removeButtonReRender" value="irpfDataForm" />
+				<ui:define name="beginFormListContent">
+					<aon:outputText value="#{irpfDataDescendients.model.rowIndex + 1}" />
+				</ui:define>
+				<ui:define name="columns">
+					<ui:include 
+						src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/descendients/gridContent.xhtml" />
+				</ui:define>
+			</ui:decorate>
+		</aon:panel>
+							
+		<aon:panel>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_irpfData_ascendants}" />
+			</f:facet>
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+				<ui:param name="controller" value="#{irpfDataAscendants}" />
+				<ui:param name="saveButtonReRender" value="irpfDataForm" />
+				<ui:param name="removeButtonReRender" value="irpfDataForm" />
+				<ui:define name="beginFormListContent">
+					<aon:outputText value="#{irpfDataAscendants.model.rowIndex + 1}" />
+				</ui:define>
+				<ui:define name="columns">
+					<ui:include 
+						src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/ascendants/gridContent.xhtml" />
+				</ui:define>
+			</ui:decorate>
+		</aon:panel>
+				
+	</aon:div>
+
+</ui:composition>

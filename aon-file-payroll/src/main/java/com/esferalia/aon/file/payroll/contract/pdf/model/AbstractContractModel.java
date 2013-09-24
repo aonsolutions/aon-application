@@ -198,7 +198,8 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		return CONTRACT_DOCUMENT_PATH;
 	}
 	
-	public byte[] buildPdf() {
+	@Override
+	public byte[] buildPdf(boolean readOnly) {
 		try {
 			
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
@@ -225,8 +226,7 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 				}
 			}
 			
-//    		stamp.setFormFlattening(true);
-			stamp.setFormFlattening(false);
+			stamp.setFormFlattening(readOnly);
 			stamp.close();
 			reader.close();
 			return baos.toByteArray();

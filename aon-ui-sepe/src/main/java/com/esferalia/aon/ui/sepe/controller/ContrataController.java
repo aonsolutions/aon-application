@@ -250,7 +250,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	
 	@Override
 	public boolean isNew(){
-		return getGeneratedFile()!=null && getGeneratedFile().getId()!=null;
+		return getGeneratedFile()==null || getGeneratedFile().getId()==null;
 	}
 	
 	public String getCommunicationAvailableCodes(){
@@ -271,6 +271,16 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	@Override
 	public boolean isCommunicationResponseReceived(){
 		return getResponseFile()!=null && getResponseFile().getId()!=null;
+	}
+
+	@Override
+	public boolean isCommunicationAccepted(){
+		return isCommunicationIdReceived() && getCommunicator().isCommunicationAccepted(getCommunicationIdFile().getData());
+	}
+	
+	@Override
+	public boolean isCommunicationFinished(){
+		return isCommunicationResponseReceived() && getCommunicator().isCommunicationFinished(getResponseFile().getData());
 	}
 	
 	@Override
@@ -530,13 +540,13 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	
 	@Override
 	public void onSendSepeFile(ActionEvent event){
+		getCommunicator().setDataCommunication(true);
 		if(!isShowLoginWindow()){
 			getCommunicator().initialize();
 		}
 		if( getCommunicator().isLoginRequired() ){
 			setShowLoginWindow(true);
 		} else {
-			getCommunicator().setDataCommunication(true);
 			getCommunicator().setDocument(new String(getGeneratedFile().getData()));
 			String result = getCommunicator().communicate();
 			if(isBatchView()){
@@ -554,6 +564,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	
 	@Override
 	public void onSepeDataQuery(ActionEvent event){
+		getCommunicator().setDataQuery(true);
 		String document = getCommunicator().obtainCommunicationNumber(getCommunicationIdFile().getData());
 		if( StringUtils.isBlank(document) ){
 			String msg = "No se puede obtener el número del envío de la comunicación.";
@@ -566,7 +577,6 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 		if( getCommunicator().isLoginRequired() ){
 			setShowLoginWindow(true);
 		} else {
-			getCommunicator().setDataQuery(true);
 			getCommunicator().setDocument(document);
 			String result = getCommunicator().communicate();
 			if(isBatchView()){
@@ -582,6 +592,25 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 			setShowLoginWindow(false);
 			processSepeResult(result);
 		}
+	}
+	
+	public void onRemoveSepeFiles(ActionEvent event){
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			bean.remove(getCommunicationIdFile());
+			bean.remove(getResponseFile());
+			initialize(getContract());
+		} catch (ManagerBeanException e) {
+			String msg = "No se han podido guardar los datos de respuesta de Contrat@";
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(msg, e);
+		}
+	}
+	
+	public void onProcessSepeResult(ActionEvent event){
+		processSepeResult(new String(getResponseFile().getData()));
 	}
 	
 	private void processSepeResult(String result) {
@@ -636,7 +665,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 		if( isCommunicationIdReceived() ){
 			communicationLogContent += getCommunicator().obtainCommunicationNumber(getCommunicationIdFile().getData());
 		}
-		if(getResponseFile()!=null && getResponseFile().getId()!=null){
+		if( isCommunicationResponseReceived() ){
 			String status = getCommunicator().obtainCommunicationStatus(getResponseFile().getData());
 			if(StringUtils.isNotEmpty(status)){
 				communicationLogContent += status;
@@ -697,7 +726,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 		ContractAttachment resultAttach = (ContractAttachment) obtainContrataAttach(type);
 		if(resultAttach==null){
 			resultAttach = new ContractAttachment();
-			if(type == ContractAttachmentType.SEPE_CERTIFICADOS_COMMUNICATION_ID){
+			if(type == ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID){
 				resultAttach.setDescription("ID comunicacion Contrat@");
 			} else if(type == ContractAttachmentType.SEPE_CONTRACT_RESPONSE){
 				resultAttach.setDescription("Respuesta Contrat@");

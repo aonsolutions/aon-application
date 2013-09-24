@@ -15,7 +15,8 @@
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="Contrat@: ESTADO DE LAS COMUNICACIONES" />
+						<aon:outputText value="#{bundle.sepe_contrata}:&#160;" />
+						<aon:outputText value="#{bundle.sepe_communication_status}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -49,6 +50,10 @@
 						</aon:div>
 					</aon:div>
 				</aon:form>
+				
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalLogin.xhtml" >
+					<ui:param name="controller" value="#{controller}" />
+				</ui:include>
 				
 			</rich:modalPanel>
 		</c:if>

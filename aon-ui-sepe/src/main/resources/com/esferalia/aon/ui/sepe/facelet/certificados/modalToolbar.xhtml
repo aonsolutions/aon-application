@@ -39,33 +39,40 @@
 			<c:if test="#{not empty controller.generatedFile}">
 				<aon:commandButton id="sepe-communication"
 					value="#{bundle.sepe_communicate}"
-					reRender="showCertificadosLoginWindow,contrataResponseContainer,contrataData,contractForm"
+					disabled="#{controller.communicationAccepted}"
+					reRender="showCertificadosCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
 					actionListener="#{controller.onSendSepeFile}"
 					onclick="Richfaces.showModalPanel('waitProccess')" 
 	 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
-					styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
+					styleClass="aon-finding-toolbar-item aon-icon-commit" />
 				
 				<aon:commandButton id="sepe-dataQuery"
 					value="#{bundle.sepe_status_check}"
-					disabled="#{!controller.communicationIdReceived}"
-					reRender="showCertificadosLoginWindow,contractForm"
+					disabled="#{!controller.communicationAccepted}"
+					reRender="showCertificadosCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
 					actionListener="#{controller.onSepeDataQuery}"
 					onclick="Richfaces.showModalPanel('waitProccess')" 
 	 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
-					styleClass="aon-finding-toolbar-item aon-icon-sincronize" />
-					
-				<aon:commandButton id="refresh-result"
-					value="#{bundle.sepe_reload}"
-					reRender="showCertificadosCommunicationWindow"
-					styleClass="aon-finding-toolbar-item aon-icon-refresh" />
+					styleClass="aon-finding-toolbar-item aon-icon-update" />
 					
 				<c:if test="#{!skipDownloadButton}">
-					<aon:htmlCommandLink id="sepeXmldownload" target="_blank"
-						value="XML"
-						actionListener="#{controller.onDownloadSepeXml}"
-						styleClass="aon-finding-toolbar-item aon-icon-mail-save"
-		     			style="line-height:16px;margin-right:0;" />
+					<aon:dropDownMenu value="#{bundle.aon_more2}"
+					 	style="display:inline-block;font-size:0.8em;margin-right:4px;" >
+			            <f:facet name="label">
+							<aon:panelGroup>
+								<aon:outputText value="#{bundle.aon_more2}" /> 
+								<aon:graphicImage style="vertical-align:middle;"
+			                     	value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
+							</aon:panelGroup>
+			            </f:facet>			
+						<aon:menuItem iconClass="aon-icon-mail-save">
+							<aon:htmlCommandLink id="sepeXmldownload" 
+								value="XML" target="_blank"
+								actionListener="#{controller.onDownloadSepeXml}" />
+			     		</aon:menuItem>
+					</aon:dropDownMenu>			
 				</c:if>
+				
 			</c:if>
 			
 		</ui:define>

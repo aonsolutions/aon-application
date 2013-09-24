@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showDocumentGenerationWindow">
+		<c:if test="#{contractPdf.showDocumentGenerationWindow}">
+			<rich:modalPanel id="documentGenerationPanel" 
+				width="350" height="#{90+(contractPdf.availableDocumentCount*25)}"
+				minWidth="350" minHeight="#{90+(contractPdf.availableDocumentCount*25)}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{payrollBundle.payroll_contract_generate_document}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showDocumentGenerationWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{contractPdf.showDocumentGenerationWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="documentGenerationForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<aon:div styleClass="aon-toolbar">
+										<aon:commandButton id="documentGeneration-generate"
+											value="#{bundle.aon_accept}"
+											rendered="#{!contractPdf.generatonFinished}"
+											reRender="documentGenerationForm"
+											actionListener="#{contractPdf.onGenerateDocument}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept"
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+ 											oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+										<aon:commandButton value="&#160;" id="email" title="Enviar por email"
+											rendered="#{contractPdf.generatonFinished}"
+											actionListener="#{contractPdf.onSendSelectedByEmail}"
+											styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
+											style="width: 14px;" reRender="showNewMessageWindow">
+										</aon:commandButton>
+									    <aon:htmlCommandLink id="download-pdf" target="_blank"
+											rendered="#{contractPdf.generatonFinished}"
+								     		actionListener="#{contractPdf.onDownloadMergedFile}" 
+											styleClass="aon-finding-toolbar-item aon-icon-pdf"
+											style="line-height:16px;margin-right:0;"
+											title="#{bundle.aon_fileupload_download}">
+											<aon:outputText value="#{bundle.aon_documents}" />
+										</aon:htmlCommandLink>			
+									</aon:div>
+									
+									<aon:div styleClass="aon-scroll-area" style="margin-top: 2px;">
+										<aon:selectManyCheckbox layout="pageDirection"
+											disabled="#{contractPdf.generatonFinished}" 
+											value="#{contractPdf.selectedDocuments}">
+											<f:selectItems value="#{contractPdf.availableDocumentList}"/>
+										</aon:selectManyCheckbox>
+									</aon:div>
+									
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+				
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+</ui:composition>

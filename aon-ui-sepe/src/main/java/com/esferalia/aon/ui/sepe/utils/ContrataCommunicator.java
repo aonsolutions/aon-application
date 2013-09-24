@@ -33,6 +33,7 @@ public class ContrataCommunicator implements ISepeCommunicator {
 	private String passwd;
 	private boolean loginRemember;
 	private boolean testEnv;
+	private boolean sslEnv;
 	private boolean passwdVisible;
 	
 	private String xmlResult;
@@ -94,20 +95,13 @@ public class ContrataCommunicator implements ISepeCommunicator {
 		this.passwd = passwd;
 	}
 
-	public boolean isTestEnv() {
-		return testEnv;
-	}
-
-	public void setTestEnv(boolean testEnv) {
-		this.testEnv = testEnv;
-	}
-	
 	public boolean isLoginRemember() {
 		return loginRemember;
 	}
 	public void setLoginRemember(boolean loginRemember) {
 		this.loginRemember = loginRemember;
 	}
+	
 	public boolean isPasswdVisible() {
 		return passwdVisible;
 	}
@@ -123,10 +117,26 @@ public class ContrataCommunicator implements ISepeCommunicator {
 		this.xmlResult = xmlResult;
 	}
 	
+	public boolean isTestEnv() {
+		return testEnv;
+	}
+
+	public void setTestEnv(boolean testEnv) {
+		this.testEnv = testEnv;
+	}
+
+	public boolean isSslEnv() {
+		return sslEnv;
+	}
+
+	public void setSslEnv(boolean sslEnv) {
+		this.sslEnv = sslEnv;
+	}
+
 	@Override
 	public void initialize() {
 		searchContrataLogin();
-		searchTestEnvironment();
+		searchEnvironmentParams();
 	}
 	
 	public boolean isLoginRequired() {
@@ -141,6 +151,48 @@ public class ContrataCommunicator implements ISepeCommunicator {
 			return contrataDataQuery();
 		}
 		return null;
+	}
+	
+	@Override
+	public boolean isCommunicationAccepted(byte[] data) {
+		if( data!=null ){
+			String value = new String(data); 
+			value = value.replaceAll("\n", "");
+			value = StringUtils.removeStart(value, "<?xml version='1.0' encoding='ISO-8859-1'?>");
+			value = StringUtils.removeStart(value, "<COMUNICACION>");
+			value = StringUtils.removeEnd(value, "</COMUNICACION>");
+			if(value.contains("<NUM_ENVIO>") && !value.contains("<ERROR>")){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isCommunicationFinished(byte[] data) {
+		if(data!=null){
+			String errorMsg = new String(data);
+//			fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
+			if(errorMsg.contains("<COMUNICACION>") && errorMsg.contains("<ERROR>")){
+				return false;
+			}
+//			fichero si procesado: si se obtiene el fichero con los datos procesados
+			try {
+				FICHEROCONTRATOS contratos = obtainFicheroContratos(data);
+				for(Object o: contratos.getCONTRATOSPROCESADOS().getENVIO100AndENVIO130AndENVIO150()){
+					RESPUESTACONTRATOTYPE respuestaContratos = obtainRespuestaContrato(o);
+					if(StringUtils.equals(respuestaContratos.getRESULTADO(),"ACEPTADO")){
+						return true;
+					} else if(StringUtils.equals(respuestaContratos.getRESULTADO(),"ACEPTADO CON ERRORES")){
+						return true;
+					}
+					return false;
+				}
+			} catch (IOException e) {
+			} catch (Throwable th) {
+			}
+		}
+		return false;
 	}
 	
 	@Override
@@ -161,12 +213,12 @@ public class ContrataCommunicator implements ISepeCommunicator {
 				value = StringUtils.substringBetween(value, "<ERROR>", "</ERROR>");
 			}
 			status += "<br /> ";
-			
 			return status;
 		}
 		return null;
 	}
 	
+	@Override
 	public String obtainCommunicationStatus(byte[] data) {
 		String status = "";
 		status += "<br /> ";
@@ -308,13 +360,14 @@ public class ContrataCommunicator implements ISepeCommunicator {
 		}
 	}
 
-	private void searchTestEnvironment() {
+	private void searchEnvironmentParams() {
 		SepeAppParamsController appParams = (SepeAppParamsController) AonUtil.getRegisteredBean(ISepeConstants.SEPE_APP_PARAMS_CONTROLLER_NAME);
 		try {
 			appParams.loadParameters();
 			testEnv = appParams.getContrataTestEnviroment();
+			sslEnv = appParams.getContrataSSLEnviroment();
 		} catch (ManagerBeanException e) {
-			String msg = "No se ha podido verificar el entorno de trabajo. Se activa el entorno de pruebas (TEST).";
+			String msg = "No se ha podido verificar el entorno de trabajo. Se activa el entorno de pruebas (TEST) sin seguridad (no SSL).";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -323,17 +376,13 @@ public class ContrataCommunicator implements ISepeCommunicator {
 	}
 	
 	private String sendContrataFile(){
-		xmlResult = SEPEConnectionProvider.processContrataCommunication(testEnv, document, user, user, passwd);
-		System.out.println("RESPUESTA RESULTANTE DE LA COMUNICACION CON EL S.E.P.E. :  " );
-		System.out.println(xmlResult);
+		xmlResult = SEPEConnectionProvider.processContrataCommunication(sslEnv, testEnv, document, user, user, passwd);
 		afterCommunication();
 		return xmlResult;
 	}
 
 	private String contrataDataQuery(){
-		xmlResult = SEPEConnectionProvider.processContrataQuery(testEnv, document, user, user, passwd);
-		System.out.println("RESPUESTA RESULTANTE DE LA CONSULTA AL S.E.P.E. :  " );
-		System.out.println(xmlResult);
+		xmlResult = SEPEConnectionProvider.processContrataQuery(sslEnv, testEnv, document, user, user, passwd);
 		afterCommunication();
 		return xmlResult;
 	}

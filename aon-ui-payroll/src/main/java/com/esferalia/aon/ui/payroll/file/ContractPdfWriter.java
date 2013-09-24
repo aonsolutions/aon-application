@@ -72,8 +72,8 @@ public class ContractPdfWriter {
 	}
 	
 	
-	public byte[] buildPdf() {
-		return pdfDocument.buildPdf();
+	public byte[] buildPdf(boolean readOnly) {
+		return pdfDocument.buildPdf(readOnly);
 	}
 	
 	public void loadNewPdf(ContractModel model, Contract contract, IContrataParams contrataParams) throws IOException, UnsupportedContractDocumentException {

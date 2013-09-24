@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -142,7 +141,8 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 		return CONTRACT_BASIC_COPY_PATH;
 	}
 	
-	public byte[] buildPdf() {
+	@Override
+	public byte[] buildPdf(boolean readOnly) {
 		try {
 			
 			PdfReader reader = new PdfReader(getContractBasicCopyUrl(documentName+".pdf"));
@@ -169,8 +169,7 @@ public abstract class AbstractContractBasicCopy implements IContractPdfDocument 
 				}
 			}
 			
-//    		stamp.setFormFlattening(true);
-			stamp.setFormFlattening(false);
+			stamp.setFormFlattening(readOnly);
 			stamp.close();
 			reader.close();
 			return baos.toByteArray();

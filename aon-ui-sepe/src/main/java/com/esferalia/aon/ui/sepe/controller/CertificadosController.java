@@ -202,6 +202,15 @@ public class CertificadosController implements ISepeHandler{
 	public boolean isCommunicationResponseReceived(){
 		return getResponseFile()!=null && getResponseFile().getId()!=null;
 	}
+	@Override
+	public boolean isCommunicationAccepted(){
+		return isCommunicationIdReceived() && getCommunicator().isCommunicationAccepted(getCommunicationIdFile().getData());
+	}
+	
+	@Override
+	public boolean isCommunicationFinished() {
+		return isCommunicationResponseReceived() && getCommunicator().isCommunicationFinished(getResponseFile().getData());
+	}
 	
 	private void reset(){
 		setContract(null);

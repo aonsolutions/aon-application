@@ -12,7 +12,7 @@
 		<c:if test="#{controller.showLoginWindow}">
 			<rich:modalPanel id="contrataLoginModalPanel" minHeight="180"
 				minWidth="450" rendered="#{controller.showLoginWindow}"
-				showWhenRendered="true" zindex="90">
+				showWhenRendered="true" zindex="91">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{bundle.aon_login}" />
@@ -38,8 +38,8 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="contrataCommunicationLogin-accept"
 										value="#{bundle.aon_accept}"
-										reRender="showContrataLoginWindow,contrataResponseContainer,#{(controller.batch.id!=null)?(''):('contractForm')}"
-										rendered="#{!controller.communicationIdReceived}"
+										reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
+										rendered="#{controller.communicator.dataCommunication}"
 										actionListener="#{controller.onSendSepeFile}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -53,8 +53,8 @@
 									</aon:commandButton>
 									<aon:commandButton id="contrataQueryLogin-accept"
 										value="#{bundle.aon_accept}"
-										reRender="showContrataLoginWindow,contrataResponseContainer,#{(controller.batch.id!=null)?(''):('contractForm')}"
-										rendered="#{controller.communicationIdReceived}"
+										reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
+										rendered="#{controller.communicator.dataQuery}"
 										actionListener="#{controller.onSepeDataQuery}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										onclick="Richfaces.showModalPanel('waitProccess')" 

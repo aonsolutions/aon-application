@@ -12,6 +12,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.registry.enumeration.RegistryType;
 import com.esferalia.aon.file.payroll.afi.AFI;
 import com.esferalia.aon.file.payroll.afi.data.EMP;
 import com.esferalia.aon.file.payroll.afi.data.ETI;
@@ -73,10 +74,23 @@ public class AFIWriter {
 //		ent.initMainActiviy();
 //		String ccc = ent.getCcc().getCcc();
 //		emp.setCodigoCuentaCotizacionSeguridadSocial(ccc);
-		String tipo = String.valueOf(enterprise.getRegistry().getType().ordinal());
-		if (StringUtils.isBlank(tipo)) {
+		
+		/*
+		T-3. Tipo de identificación de empresario
+		1 D.N.I., N.I.F.
+		2 Pasaporte
+		6 Número de Identificación de Extranjero
+		9 Código de Identificación Fiscal
+		  Documento identificativo de un país comunitario Clave por asignar+
+		*/
+		String tipo = null;
+		if(enterprise.getRegistry().getType()==null){
 			tipo = "9";
-		}
+		} else if(enterprise.getRegistry().getType() == RegistryType.NATURAL){
+			tipo = "1";
+		} else if(enterprise.getRegistry().getType() == RegistryType.LEGAL){
+			tipo = "9";
+		} 
 		emp.setTipo(tipo);
 		String pais = null;
 		try {

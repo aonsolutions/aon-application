@@ -34,6 +34,7 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.contrata.enumeration.TBONVFOR;
 import com.esferalia.aon.payroll.contrata.enumeration.TEIINTER;
 import com.esferalia.aon.payroll.contrata.enumeration.TEJINDIS;
+import com.esferalia.aon.payroll.contrata.enumeration.TELCOLBO;
 import com.esferalia.aon.payroll.contrata.enumeration.TEOCOLDE;
 import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
 import com.esferalia.aon.payroll.contrata.enumeration.TERFIRCB;
@@ -803,7 +804,22 @@ public class ContrataReader {
 		// TODO
 	}
 	private void completeDatosBonificacion(DATOSBONIFICACIONTYPE datos) {
-		// TODO
+		if(datos != null){
+			IContratoType c = (IContratoType) contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
+			params.setDisabilityData(true);
+			if( c.getDATOSGENERALESCONTRATO().getINDDISCAPACIDAD()!=null ){
+				if( !c.getDATOSGENERALESCONTRATO().getINDDISCAPACIDAD().equals(TEJINDIS.TEJINDIS_C.getCode()) ){
+					params.setColectivoBonificacion(TELCOLBO.getEnumByValue(datos.getCODIGOCOLECTIVOBONIF()));
+				}
+			}
+			if(datos.getINDICEMPLEADAUTONOMO()!=null){
+				if(datos.getINDICEMPLEADAUTONOMO().equals("1")){
+					params.setIndEmpleadAutonomo(true);
+				} else if(datos.getINDICEMPLEADAUTONOMO().equals("2")){
+					params.setIndEmpleadAutonomo(false);
+				}
+			}
+		}
 	}
 	private void completeDatosEmpresaInsercion(DATOSEMPRESAINSERCIONTYPE dato) {
 		// TODO

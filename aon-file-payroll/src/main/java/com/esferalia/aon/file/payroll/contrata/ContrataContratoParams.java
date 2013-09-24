@@ -7,6 +7,7 @@ import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.contrata.enumeration.TBONVFOR;
 import com.esferalia.aon.payroll.contrata.enumeration.TEIINTER;
 import com.esferalia.aon.payroll.contrata.enumeration.TEJINDIS;
+import com.esferalia.aon.payroll.contrata.enumeration.TELCOLBO;
 import com.esferalia.aon.payroll.contrata.enumeration.TEOCOLDE;
 import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
 import com.esferalia.aon.payroll.contrata.enumeration.TERFIRCB;
@@ -56,6 +57,8 @@ public class ContrataContratoParams implements IContrataParams{
 	// DATOS_GENERALESCONTRATOTYPE
 	private String offer;
 	private TEJINDIS indDiscapacidad;
+	private TELCOLBO colectivoBonificacion;
+	private Boolean indEmpleadAutonomo;
 	private THYDISLE otrasLegislaciones;
 	private String campaignGeozone;
 	private String campaign;
@@ -91,6 +94,7 @@ public class ContrataContratoParams implements IContrataParams{
 	private boolean offerData;
 	private boolean schoolWorkshopData;
 	private boolean disabilityData;
+	private boolean apoyoEmprendedoresData;
 	private boolean olderThan52Data;
 	private boolean annexData;
 	private boolean canpaignData;
@@ -105,6 +109,7 @@ public class ContrataContratoParams implements IContrataParams{
 	private boolean showOfferData;
 	private boolean showSchoolWorkshopData;
 	private boolean showDisabilityData;
+	private boolean showApoyoEmprendedoresData;
 	private boolean showOlderThan52Data;
 	private boolean showAnnexData;
 	private boolean showCanpaignData;
@@ -162,6 +167,12 @@ public class ContrataContratoParams implements IContrataParams{
 	}
 	public void setShowDisabilityData(boolean showDisabilityData) {
 		this.showDisabilityData = showDisabilityData;
+	}
+	public boolean isShowApoyoEmprendedoresData() {
+		return showApoyoEmprendedoresData;
+	}
+	public void setShowApoyoEmprendedoresData(boolean showApoyoEmprendedoresData) {
+		this.showApoyoEmprendedoresData = showApoyoEmprendedoresData;
 	}
 	public boolean isShowOlderThan52Data() {
 		return showOlderThan52Data;
@@ -235,6 +246,12 @@ public class ContrataContratoParams implements IContrataParams{
 	public void setDisabilityData(boolean disabilityData) {
 		this.disabilityData = disabilityData;
 	}
+	public boolean isApoyoEmprendedoresData() {
+		return apoyoEmprendedoresData;
+	}
+	public void setApoyoEmprendedoresData(boolean apoyoEmprendedoresData) {
+		this.apoyoEmprendedoresData = apoyoEmprendedoresData;
+	}
 	public boolean isOlderThan52Data() {
 		return olderThan52Data;
 	}
@@ -282,6 +299,18 @@ public class ContrataContratoParams implements IContrataParams{
 	}
 	public void setIndDiscapacidad(TEJINDIS indDiscapacidad) {
 		this.indDiscapacidad = indDiscapacidad;
+	}
+	public TELCOLBO getColectivoBonificacion() {
+		return colectivoBonificacion;
+	}
+	public void setColectivoBonificacion(TELCOLBO colectivoBonificacion) {
+		this.colectivoBonificacion = colectivoBonificacion;
+	}
+	public Boolean getIndEmpleadAutonomo() {
+		return indEmpleadAutonomo;
+	}
+	public void setIndEmpleadAutonomo(Boolean indEmpleadAutonomo) {
+		this.indEmpleadAutonomo = indEmpleadAutonomo;
 	}
 	public boolean isCollectiveAgreement() {
 		return collectiveAgreement;

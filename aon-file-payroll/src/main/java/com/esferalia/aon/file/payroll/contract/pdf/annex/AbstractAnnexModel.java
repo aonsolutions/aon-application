@@ -104,7 +104,8 @@ public abstract class AbstractAnnexModel implements IContractPdfDocument {
 		return CONTRACT_DOCUMENT_PATH;
 	}
 	
-	public byte[] buildPdf() {
+	@Override
+	public byte[] buildPdf(boolean readOnly) {
 		try {
 			
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
@@ -133,8 +134,7 @@ public abstract class AbstractAnnexModel implements IContractPdfDocument {
 			
 			afterBuildPdf(reader, stamp);
 			
-//    		stamp.setFormFlattening(true);
-			stamp.setFormFlattening(false);
+			stamp.setFormFlattening(readOnly);
 			stamp.close();
 			reader.close();
 			return baos.toByteArray();
@@ -147,10 +147,8 @@ public abstract class AbstractAnnexModel implements IContractPdfDocument {
 		}
 		return null;
 	}
-
-	public void afterBuildPdf(PdfReader reader, PdfStamper stamp){
-		
-	}
+	
+	public abstract void afterBuildPdf(PdfReader reader, PdfStamper stamp);
 	
 	public void loadPdfFields(ContractAttachment contractPdfDraft) {
 		try {

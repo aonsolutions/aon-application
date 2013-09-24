@@ -20,6 +20,7 @@ import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.contrata.enumeration.TBONVFOR;
+import com.esferalia.aon.payroll.contrata.enumeration.TEJINDIS;
 import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -513,6 +514,10 @@ public class ContrataContratosHandler implements IContrataHandler{
 		// Datos comunes a todos los contratos
 		return true;
 	}
+	public Boolean getShowApoyoEmprendedoresPanel(){
+		// TODO
+		return getContractCode()==ContractCode.C150;
+	}
 	public Boolean getShowMayor52Panel(){
 		// Datos comunes a todos los contratos
 		return true;
@@ -603,6 +608,24 @@ public class ContrataContratosHandler implements IContrataHandler{
 				|| getContractCode()==ContractCode.C520 || getContractCode()==ContractCode.C530
 				|| getContractCode()==ContractCode.C540 || getContractCode()==ContractCode.C541
 				|| getContractCode()==ContractCode.C550 || getContractCode()==ContractCode.C552;
+	}
+	
+	////////////////////////////////////////
+	// checks datos especificos contrato
+	////////////////////////////////////////
+	public Boolean getShowColectivoBonificacion(){
+		return getParams().getIndDiscapacidad() != TEJINDIS.TEJINDIS_C;
+	}
+	/**
+	 * <xsd:documentation xml:lang="es">
+		Indicador de empleador autónomo.   
+		Obligatorio para contratos de código 150, 250 y 350 iniciados antes del 01/07/2006.  
+		Refleja si el empleador que contrata es autónomo(1) o no lo es(2).
+		</xsd:documentation>
+	 * @return
+	 */
+	public Boolean getShowIndEmpleadAutonomo(){
+		return getContractCode()==ContractCode.C150 || getContractCode()==ContractCode.C250 || getContractCode()==ContractCode.C350;
 	}
 	
 }

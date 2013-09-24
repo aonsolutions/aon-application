@@ -1,30 +1,48 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
+
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.SingleCollectionProvider;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.report.ReportException;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.util.DownloadUtil;
+import com.code.aon.ui.webmail.controller.MailConfigController;
+import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.SecurityInfo;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
@@ -44,6 +62,7 @@ import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.ContractPdfWriter;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
+import com.esferalia.aon.ui.payroll.utils.PayrollEmailUtil;
 import com.esferalia.aon.ui.payroll.utils.PdfUtils;
 import com.esferalia.aon.ui.sepe.controller.ContrataController;
 
@@ -72,6 +91,15 @@ public class ContractPdfController {
 	private String backAction;
 	private ContractAttachmentType documentType;
 	private IContrataParams contrataParams;
+	
+	private boolean showDocumentGenerationWindow;
+	
+	public boolean isShowDocumentGenerationWindow() {
+		return showDocumentGenerationWindow;
+	}
+	public void setShowDocumentGenerationWindow(boolean showDocumentGenerationWindow) {
+		this.showDocumentGenerationWindow = showDocumentGenerationWindow;
+	}
 	
 	public Integer getDocumentPage() {
 		return documentPage;
@@ -197,8 +225,13 @@ public class ContractPdfController {
 		this.contrataParams = contrataParams;
 	}
 	private void initialize() {
+		initialize(true);
+	}
+	private void initialize(boolean loadDocumentType) {
 		setContract((Contract) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER).getTo());
-		setContractPdfDraft( obtainContractPdfDraft() );
+		if(loadDocumentType){
+			setContractPdfDraft( obtainContractPdfDraft() );
+		}
 	}
 	
 	private ContractAttachment obtainContractPdfDraft() {
@@ -409,7 +442,7 @@ public class ContractPdfController {
 			ContractAttachment attach = getContractPdfDraft();
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			attach.setContract(getContract());
-			attach.setData(getContractPdfWriter().buildPdf());
+			attach.setData(getContractPdfWriter().buildPdf(false));
 			attach.setAttachDate(new Date());
 			attach.setAttachmentType(getDocumentType());
 			attach.setMimeType(MimeType.MIME_PDF);
@@ -451,7 +484,7 @@ public class ContractPdfController {
 	private void download() throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-		byte[] buffer = getContractPdfWriter().buildPdf();
+		byte[] buffer = getContractPdfWriter().buildPdf(true);
 		InputStream in = new ByteArrayInputStream(buffer);
 		int bytes = in.read(buffer);
 		while (bytes != -1) {
@@ -462,6 +495,197 @@ public class ContractPdfController {
 		response.setContentType(MimeType.MIME_PDF.getName()); 
 		response.flushBuffer();
 		context.responseComplete();
+	}
+	
+	////////////////////////////////////
+	// DOCUMENTS GENERATION
+	////////////////////////////////////
+	
+	private List<SelectItem> availableDocumentList;
+	
+	private ContractAttachmentType[] selectedDocuments;
+
+	private Map<ContractAttachmentType, byte[]> generatedMap;
+	
+	public ContractAttachmentType[] getSelectedDocuments() {
+		return selectedDocuments;
+	}
+	public void setSelectedDocuments(ContractAttachmentType[] selectedDocuments) {
+		this.selectedDocuments = selectedDocuments;
+	}
+
+	public boolean isGeneratonFinished(){
+		return generatedMap!=null && generatedMap.size()>0;
+	}
+	
+	public int getAvailableDocumentCount(){
+		return getAvailableDocumentList().size();
+	}
+	
+	public List<SelectItem> getAvailableDocumentList(){
+		if(availableDocumentList==null){
+			availableDocumentList = new LinkedList<SelectItem>();
+			ContractUtils utils = ContractUtils.getInstance();
+			SelectItem item = new SelectItem(ContractAttachmentType.CONTRACT_DOC_DRAFT, ContractAttachmentType.CONTRACT_DOC_DRAFT.getName(AonUtil.getCurrentLocale()));
+			availableDocumentList.add(item);
+			item = new SelectItem(ContractAttachmentType.BASIC_COPY_DRAFT, ContractAttachmentType.BASIC_COPY_DRAFT.getName(AonUtil.getCurrentLocale()));
+			availableDocumentList.add(item);
+			if( utils.isTrainingContract(getContract()) && utils.getContractDataMap(getContract()).get(ContextVariable.TRAINING_COURSE.getName())!=null ){
+				item = new SelectItem(ContractAttachmentType.TRAINING_ANNEX_II, ContractAttachmentType.TRAINING_ANNEX_II.getName(AonUtil.getCurrentLocale()));
+				availableDocumentList.add(item);
+				item = new SelectItem(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT, ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT.getName(AonUtil.getCurrentLocale()));
+				availableDocumentList.add(item);
+			}
+		}
+		return availableDocumentList;
+	}
+	
+	public void onDocumentGenerationShow(ActionEvent event){
+		initialize(false);
+		availableDocumentList = null;
+		generatedMap = null;
+		selectedDocuments = (null);
+		selectAllDocuments();
+	}
+	
+	public void onGenerateDocument(ActionEvent event){
+		generateDocument();
+	}
+	
+	public void selectAllDocuments(){
+		for(SelectItem item: getAvailableDocumentList()){
+			selectedDocuments = (ContractAttachmentType[]) ArrayUtils.add(selectedDocuments, (ContractAttachmentType)item.getValue());
+		}
+	}
+	
+	public void generateDocument(){
+		ContractUtils utils = ContractUtils.getInstance();
+		
+		generatedMap = new HashMap<ContractAttachmentType, byte[]>();
+		
+		// Documento del contrato
+		if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.CONTRACT_DOC_DRAFT)){
+			try {
+				setDocumentType(ContractAttachmentType.CONTRACT_DOC_DRAFT);
+				loadDocument(true);
+				generatedMap.put(ContractAttachmentType.CONTRACT_DOC_DRAFT, getContractPdfWriter().buildPdf(true));
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar el documento del contrato");
+				AonUtil.addErrorMessage(e.getMessage());
+			} catch (UnsupportedContractDocumentException e) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar el documento del contrato");
+				AonUtil.addErrorMessage(e.getMessage());
+			} catch (Exception e){
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar el documento del contrato");
+				AonUtil.addErrorMessage(e.getMessage());
+			}
+		}
+		
+		// Documento de la copia basica
+		if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.BASIC_COPY_DRAFT)){
+			try {
+				setDocumentType(ContractAttachmentType.BASIC_COPY_DRAFT);
+				loadDocument(true);
+				generatedMap.put(ContractAttachmentType.BASIC_COPY_DRAFT, getContractPdfWriter().buildPdf(true));
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
+				AonUtil.addErrorMessage(e.getMessage());
+			} catch (UnsupportedContractDocumentException e) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
+				AonUtil.addErrorMessage(e.getMessage());
+			} catch (Exception e){
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
+				AonUtil.addErrorMessage(e.getMessage());
+			}
+		}
+		
+		if( utils.isTrainingContract(getContract()) && utils.getContractDataMap(getContract()).get(ContextVariable.TRAINING_COURSE.getName())!=null ){
+			// Acuerdo actividad formativa, Anexo II del contrato de formacion (421)
+			if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.TRAINING_ANNEX_II)){
+				try {
+					setDocumentType(ContractAttachmentType.TRAINING_ANNEX_II);
+					loadDocument(true);
+					generatedMap.put(ContractAttachmentType.TRAINING_ANNEX_II, getContractPdfWriter().buildPdf(true));
+				} catch (IOException e) {
+					LOGGER.error(e.getMessage(), e);
+					AonUtil.addErrorMessage("No se ha podido generar el documento del anexo II");
+					AonUtil.addErrorMessage(e.getMessage());
+				} catch (UnsupportedContractDocumentException e) {
+					LOGGER.error(e.getMessage(), e);
+					AonUtil.addErrorMessage("No se ha podido generar el documento del anexo II");
+					AonUtil.addErrorMessage(e.getMessage());
+				} catch (Exception e){
+					LOGGER.error(e.getMessage(), e);
+					AonUtil.addErrorMessage("No se ha podido generar el documento del anexo II");
+					AonUtil.addErrorMessage(e.getMessage());
+				}
+			}
+		
+			// Domiciliacion bancaria del contrato de formacion (421)
+			if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT)){
+				try {
+					generatedMap.put(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT, getReport(IPayrollConstants.TRAINING_DIRECT_DEBIT_REPORT_KEY));
+				} catch (ReportException e) {
+					LOGGER.error(e.getMessage(), e);
+					AonUtil.addErrorMessage("No se ha podido generar el documento de la domiciliacion bancaria");
+					AonUtil.addErrorMessage(e.getMessage());
+				}
+			}
+		}
+		
+	}
+	
+	private List<IAttachment> getGeneratedAttach(){
+		List<IAttachment> list = new LinkedList<IAttachment>();
+		for(ContractAttachmentType type: generatedMap.keySet()){
+			ContractAttachment attach = new ContractAttachment();
+			attach.setAttachmentType(type);
+			attach.setDescription(type.getName(AonUtil.getCurrentLocale()));
+			attach.setData(generatedMap.get(type));
+			list.add(attach);
+		}
+		return list;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private byte[] getReport( String report ) throws ReportException {
+		ReportManager reportManager = new ReportManager();
+		reportManager.setCollectionProvider( new SingleCollectionProvider(getContract()) );
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		reportManager.execute( out, report);
+		return out.toByteArray();
+	}	
+	
+	public void onDownloadMergedFile(ActionEvent event){
+		byte[] data = PdfUtils.mergePdf(getGeneratedAttach());
+		InputStream in = new ByteArrayInputStream(data);
+		long size = ArrayUtils.getLength(data);
+		DownloadUtil.downloadAttachment("Contract-documents", MimeType.MIME_PDF, in, size);
+	}
+	
+	public void onSendSelectedByEmail(ActionEvent event) throws ManagerBeanException, IOException {
+		sendSelectedByEmail(null, true);
+	}
+
+	private void sendSelectedByEmail(SecurityInfo securyInfo, boolean facturae) throws ManagerBeanException, IOException {
+		PayrollEmailUtil emailController = new PayrollEmailUtil();
+		
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		if (mailConfig.getMailAccountCount() > 0) {
+			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+			messageController.initNewMessage();
+			emailController.initMessageController(messageController, getContract(), getGeneratedAttach(), facturae);
+			messageController.setShowNewMessageWindow(true);
+			messageController.setSecurityInfo(securyInfo);
+		} else {
+			AonUtil.addErrorMessageFromBundle(ICommonMessages.NOT_MAIL_ACCOUNTS);
+		}
 	}
 	
 }

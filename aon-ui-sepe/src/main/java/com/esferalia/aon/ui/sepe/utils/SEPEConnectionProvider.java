@@ -1,11 +1,22 @@
 package com.esferalia.aon.ui.sepe.utils;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.commons.lang.StringUtils;
+import javax.faces.event.AbortProcessingException;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.util.Classpath;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.certificados.enumeration.Terrores;
 import com.esferalia.aon.payroll.contrata.enumeration.TERRORES;
 import com.esferalia.aon.sepe.api.SWComunicacionDatos.SWComunicacionDatos;
@@ -19,45 +30,39 @@ import com.esferalia.aon.sepe.api.ServicioWebEntrada.ServicioWebEntradaService;
 
 public final class SEPEConnectionProvider {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SEPEConnectionProvider.class.getName());
+	
 	private final static String IDIOMA = "14";
 	
 	private final static String COMUNIDAD = "99";
 	
+	private final static String URL_SCHEME_SSL 	= "https://";
+
+	private final static String URL_SCHEME_NO_SSL 	= "http://";
+	
 	/**
 	 * CONTRAT@ COMMUNICATION ADDRESS LOCATION
 	 */
-//	FIXME: secure http ?? 
-//	private final static String CONTRATA_COMMUNICATION_PRODUCTION_ENVIRONMENT = 	"https://www.sepe.es/ccomunicacto/services/SWComunicacionDatos";
-//	private final static String CONTRATA_COMMUNICATION_TEST_ENVIRONMENT = 			"https://www.sepe.es/ecomunicacto/services/SWComunicacionDatos";
-	private final static String CONTRATA_COMMUNICATION_PRODUCTION_ENVIRONMENT = 	"http://www.sepe.es/ccomunicacto/services/SWComunicacionDatos";
-	private final static String CONTRATA_COMMUNICATION_TEST_ENVIRONMENT = 			"http://www.sepe.es/ecomunicacto/services/SWComunicacionDatos";
+	private final static String CONTRATA_COMMUNICATION_PRODUCTION_ENVIRONMENT 	= "www.sepe.es/ccomunicacto/services/SWComunicacionDatos";
+	private final static String CONTRATA_COMMUNICATION_TEST_ENVIRONMENT 		= "www.sepe.es/ecomunicacto/services/SWComunicacionDatos";
 
 	/**
 	 * CONTRAT@ QUERY ADDRESS LOCATION
 	 */
-//	FIXME: secure http ?? 
-//	private final static String CONTRATA_QUERY_PRODUCTION_ENVIRONMENT = 			"https://www.sepe.es/ccomunicacto/services/SWConsultaDatos";
-//	private final static String CONTRATA_QUERY_TEST_ENVIRONMENT = 					"https://www.sepe.es/ecomunicacto/services/SWConsultaDatos";
-	private final static String CONTRATA_QUERY_PRODUCTION_ENVIRONMENT = 			"http://www.sepe.es/ccomunicacto/services/SWConsultaDatos";
-	private final static String CONTRATA_QUERY_TEST_ENVIRONMENT = 					"http://www.sepe.es/ecomunicacto/services/SWConsultaDatos";
+	private final static String CONTRATA_QUERY_PRODUCTION_ENVIRONMENT 	= "www.sepe.es/ccomunicacto/services/SWConsultaDatos";
+	private final static String CONTRATA_QUERY_TEST_ENVIRONMENT 		= "www.sepe.es/ecomunicacto/services/SWConsultaDatos";
 
 	/**
 	 * CERTIFIC@2 COMMUNICATION ADDRESS LOCATION
 	 */
-//	FIXME: secure http ?? 
-	private final static String CERTIFICADOS_COMMUNICATION_PRODUCTION_ENVIRONMENT = 	"https://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
-	private final static String CERTIFICADOS_COMMUNICATION_TEST_ENVIRONMENT =			"https://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
-//	private final static String CERTIFICADOS_COMMUNICATION_PRODUCTION_ENVIRONMENT = 	"http://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta";
-//	private final static String CERTIFICADOS_COMMUNICATION_TEST_ENVIRONMENT =			"http://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta";
+	private final static String CERTIFICADOS_COMMUNICATION_PRODUCTION_ENVIRONMENT 	= "sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
+	private final static String CERTIFICADOS_COMMUNICATION_TEST_ENVIRONMENT 		= "formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
 	
 	/**
 	 * CERTIFIC@2 QUERY ADDRESS LOCATION
 	 */
-//	FIXME: secure http ?? 
-	private final static String CERTIFICADOS_QUERY_PRODUCTION_ENVIRONMENT = 			"https://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta";
-	private final static String CERTIFICADOS_QUERY_TEST_ENVIRONMENT =					"https://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta";
-//	private final static String CERTIFICADOS_QUERY_PRODUCTION_ENVIRONMENT = 			"http://sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
-//	private final static String CERTIFICADOS_QUERY_TEST_ENVIRONMENT =					"http://formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebEntrada";
+	private final static String CERTIFICADOS_QUERY_PRODUCTION_ENVIRONMENT 	= "sede.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta";
+	private final static String CERTIFICADOS_QUERY_TEST_ENVIRONMENT 		= "formacion.sepe.gob.es/DCertificadosWeb/services/ServicioWebConsulta";
 	
 	/**
 	 * CONTRAT@: COMMUNICATION
@@ -81,18 +86,22 @@ public final class SEPEConnectionProvider {
 	 * @param passwd
 	 * @return
 	 */
-	public static String processContrataCommunication(boolean isTestEnv, byte[] data, String connectedUser, String mainUser, String passwd){
-		return processContrataCommunication(isTestEnv, new String(data), connectedUser, mainUser, passwd);
+	public static String processContrataCommunication(boolean isSslEnv, boolean isTestEnv, byte[] data, String connectedUser, String mainUser, String passwd){
+		return processContrataCommunication(isSslEnv, isTestEnv, new String(data), connectedUser, mainUser, passwd);
 	}
 	
-	public static String processContrataCommunication(boolean isTestEnv, String data, String connectedUser, String mainUser, String passwd){
+	public static String processContrataCommunication(boolean isSslEnv, boolean isTestEnv, String data, String connectedUser, String mainUser, String passwd){
+		assignSslSystemProperies();
 		try {
-			SWComunicacionDatosService service = new SWComunicacionDatosService(new URL(isTestEnv ? CONTRATA_COMMUNICATION_TEST_ENVIRONMENT : CONTRATA_COMMUNICATION_PRODUCTION_ENVIRONMENT));
+			SWComunicacionDatosService service = new SWComunicacionDatosService(new URL((isSslEnv?URL_SCHEME_SSL:URL_SCHEME_NO_SSL) + (isTestEnv ? CONTRATA_COMMUNICATION_TEST_ENVIRONMENT : CONTRATA_COMMUNICATION_PRODUCTION_ENVIRONMENT)));
 			SWComunicacionDatos datos = service.getSWComunicacionDatos();
 			String result = datos.servicioContratos(data, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+			LOGGER.info("INFO SEPE (Contrat@) - RESPUESTA RESULTANTE DE LA COMUNICACION CON EL S.E.P.E. :  \n" + result);
 			return result;
 		} catch (MalformedURLException e) {
-			// nada, no se comunica
+			LOGGER.error("Error de comunicacion con el SEPE.");
+		} finally{
+			restoreSslSystemProperies();
 		}
 		return null;
 	}
@@ -119,14 +128,18 @@ public final class SEPEConnectionProvider {
 	 * @param passwd
 	 * @return
 	 */
-	public static String processContrataQuery(boolean isTestEnv, String communicationId, String connectedUser, String mainUser, String passwd){
+	public static String processContrataQuery(boolean isSslEnv, boolean isTestEnv, String communicationId, String connectedUser, String mainUser, String passwd){
+		assignSslSystemProperies();
 		try {
-			SWConsultaDatosService service = new SWConsultaDatosService(new URL(isTestEnv ? CONTRATA_QUERY_TEST_ENVIRONMENT : CONTRATA_QUERY_PRODUCTION_ENVIRONMENT));
+			SWConsultaDatosService service = new SWConsultaDatosService(new URL((isSslEnv?URL_SCHEME_SSL:URL_SCHEME_NO_SSL) + (isTestEnv ? CONTRATA_QUERY_TEST_ENVIRONMENT : CONTRATA_QUERY_PRODUCTION_ENVIRONMENT)));
 			SWConsultaDatos datos = service.getSWConsultaDatos();
 			String result = datos.servicioConsulta(communicationId, connectedUser, mainUser, passwd, IDIOMA, COMUNIDAD);
+			LOGGER.info("INFO SEPE (Contrat@) - RESPUESTA RESULTANTE DE LA CONSULTA AL S.E.P.E. :  \n" + result);
 			return result;
 		} catch (MalformedURLException e) {
-			// nada, no se comunica
+			LOGGER.error("Error de comunicacion con el SEPE.");
+		} finally{
+			restoreSslSystemProperies();
 		}
 		return null;
 	}
@@ -160,23 +173,24 @@ public final class SEPEConnectionProvider {
 	 * @param isTestEnv
 	 * @return
 	 */
-	public static String processCertificadosCommunication(boolean isTestEnv, String _Xml, String _UsuarioConectado, String _UsuarioPrincipal, String _Password){
+	public static String processCertificadosCommunication(boolean isSslEnv, boolean isTestEnv, String _Xml, String _UsuarioConectado, String _UsuarioPrincipal, String _Password){
 		assignSslSystemProperies();
 		try {
-			ServicioWebEntradaService service = new ServicioWebEntradaService(new URL(isTestEnv ? CERTIFICADOS_COMMUNICATION_TEST_ENVIRONMENT : CERTIFICADOS_COMMUNICATION_PRODUCTION_ENVIRONMENT)); 
+			ServicioWebEntradaService service = new ServicioWebEntradaService(new URL((isSslEnv?URL_SCHEME_SSL:URL_SCHEME_NO_SSL) + (isTestEnv ? CERTIFICADOS_COMMUNICATION_TEST_ENVIRONMENT : CERTIFICADOS_COMMUNICATION_PRODUCTION_ENVIRONMENT))); 
 			ServicioWebEntrada datos = service.getServicioWebEntrada();
 			String result = datos.ejecuta(_UsuarioConectado, _UsuarioPrincipal, _Password, _Xml, IDIOMA, COMUNIDAD);
+			LOGGER.info("INFO SEPE (Certific@2) - RESPUESTA RESULTANTE DE LA COMUNICACION CON EL S.E.P.E. :  \n" + result);
 			return result;
 		} catch (MalformedURLException e) {
-			// nada, no se comunica
+			LOGGER.error("Error de comunicacion con el SEPE.");
 		} finally{
 			restoreSslSystemProperies();
 		}
 		return null;
 	}
 
-	public static String processCertificadosCommunication(boolean isTestEnv, byte[] _Xml, String _UsuarioConectado, String _UsuarioPrincipal, String _Password){
-		return processCertificadosCommunication(isTestEnv, new String(_Xml), _UsuarioConectado, _UsuarioPrincipal, _Password);
+	public static String processCertificadosCommunication(boolean isSslEnv, boolean isTestEnv, byte[] _Xml, String _UsuarioConectado, String _UsuarioPrincipal, String _Password){
+		return processCertificadosCommunication(isSslEnv, isTestEnv, new String(_Xml), _UsuarioConectado, _UsuarioPrincipal, _Password);
 	}
 	
 	/**
@@ -211,41 +225,39 @@ public final class SEPEConnectionProvider {
 	 * @param isTestEnv
 	 * @return
 	 */
-	private static String processCertificadosQuery(boolean isTestEnv, String _idComunicacion, String _UsuarioConectado, String _UsuarioPrincipal, String _Password, String _Idioma, String _Comunidad){
+	private static String processCertificadosQuery(boolean isSslEnv, boolean isTestEnv, String _idComunicacion, String _UsuarioConectado, String _UsuarioPrincipal, String _Password, String _Idioma, String _Comunidad){
 		assignSslSystemProperies();
 		try {
-			ServicioWebConsultaService service = new ServicioWebConsultaService(new URL(isTestEnv ? CERTIFICADOS_QUERY_TEST_ENVIRONMENT : CERTIFICADOS_QUERY_PRODUCTION_ENVIRONMENT));  
+			ServicioWebConsultaService service = new ServicioWebConsultaService(new URL((isSslEnv?URL_SCHEME_SSL:URL_SCHEME_NO_SSL) + (isTestEnv ? CERTIFICADOS_QUERY_TEST_ENVIRONMENT : CERTIFICADOS_QUERY_PRODUCTION_ENVIRONMENT)));  
 			ServicioWebConsulta datos = service.getServicioWebConsulta();
 			String result = datos.ejecuta(_UsuarioConectado, _UsuarioPrincipal, _Password, _idComunicacion, _Idioma, _Comunidad);
+			LOGGER.info("INFO SEPE (Certific@2) - RESPUESTA RESULTANTE DE LA CONSULTA AL S.E.P.E. :  \n" + result);
 			return result;
 		} catch (MalformedURLException e) {
-			// nada, no se comunica
+			LOGGER.error("Error de comunicacion con el SEPE.");
 		} finally{
 			restoreSslSystemProperies();
 		}
 		return null;
 	}
 	
-	public static String processCertificadosQuery(boolean isTestEnv, String _idComunicacion, String _UsuarioConectado, String _UsuarioPrincipal, String _Password){
-		return processCertificadosQuery(isTestEnv, _idComunicacion, _UsuarioConectado, _UsuarioPrincipal, _Password, IDIOMA, COMUNIDAD);
+	public static String processCertificadosQuery(boolean isSslEnv, boolean isTestEnv, String _idComunicacion, String _UsuarioConectado, String _UsuarioPrincipal, String _Password){
+		return processCertificadosQuery(isSslEnv, isTestEnv, _idComunicacion, _UsuarioConectado, _UsuarioPrincipal, _Password, IDIOMA, COMUNIDAD);
 	}
 	
-	public static boolean validateContrataLogin(boolean b, String contrataUser, String mainUser, String contrataPassword) {
-		assignSslSystemProperies();
-		try {
-			String result = processContrataCommunication(b, "<?xml>", contrataUser, mainUser, contrataPassword);
-			System.out.println("INFO SEPE (Contrat@): " + result);
-			result = result.replaceAll("\n", "");
-			result = StringUtils.substringBetween(result, "<ERROR>", "</ERROR>");
-			return TERRORES.getEnumByValue(result)!=null;
-		} finally{
-			restoreSslSystemProperies();
-		}
+	// ******************************
+	// VALIDATION
+	// ******************************
+	
+	public static boolean validateContrataLogin(boolean ssl, boolean test, String contrataUser, String mainUser, String contrataPassword) {
+		String result = processContrataCommunication(ssl, test, "<?xml>", contrataUser, mainUser, contrataPassword);
+		result = result.replaceAll("\n", "");
+		result = StringUtils.substringBetween(result, "<ERROR>", "</ERROR>");
+		return TERRORES.getEnumByValue(result)!=null;
 	}
 	
-	public static boolean validateCertifica2Login(boolean b, String certifica2User, String mainUser, String certifica2Password) {
-		String result = processCertificadosCommunication(b, "<?xml>", certifica2User, mainUser, certifica2Password);
-		System.out.println("INFO SEPE (Certific@2): " + result);
+	public static boolean validateCertifica2Login(boolean ssl, boolean test, String certifica2User, String mainUser, String certifica2Password) {
+		String result = processCertificadosCommunication(ssl, test, "<?xml>", certifica2User, mainUser, certifica2Password);
 		result = result.replaceAll("\n", "");
 		if(StringUtils.contains(result, "DEX0023")
 			|| StringUtils.contains(result, "DEX0207")
@@ -267,47 +279,89 @@ public final class SEPEConnectionProvider {
 	private static String trustStore = null;
 	private static String trustStorePassword = null;
 
-//	private static final String KEY_STORE 			= "C:\\tmp\\cacerts";
-//	private static final String KEY_STORE 			= System.getProperty("java.home")+"\\lib\\security\\cacerts";
-//	private static final String KEY_STORE 			= "C:\\java\\jdk1.6.0_05\\jre\\lib\\security\\cacerts";
-	private static final String KEY_STORE 			= "/tmp/cacerts";
+	private static final String KEY_STORE_NAME		= "cacerts";
 	private static final String KEY_STORE_PASSWD 	= "changeit";
-//	private static final String TRUST_STORE 		= System.getProperty("java.home")+"\\lib\\security\\cacerts";
-//	private static final String TRUST_STORE 		= "C:\\java\\jdk1.6.0_05\\jre\\lib\\security\\cacerts";
-	private static final String TRUST_STORE 		= "/tmp/cacerts";
-	private static final String TRUST_STORE_PASSWD 	= "changeit";
+	private static File caFile = null;
 	
 	private static void assignSslSystemProperies() {
+		createCAFile();
+		
 		keyStore = System.getProperty("javax.net.ssl.keyStore");
 		keyStorePassword = System.getProperty("javax.net.ssl.keyStorePassword");
 		trustStore = System.getProperty("javax.net.ssl.trustStore");
 		trustStorePassword = System.getProperty("javax.net.ssl.trustStorePassword");
-		System.setProperty("javax.net.ssl.keyStore", KEY_STORE);
+		
+		System.setProperty("javax.net.ssl.keyStore", caFile.getPath());
 		System.setProperty("javax.net.ssl.keyStorePassword", KEY_STORE_PASSWD);
-		System.setProperty("javax.net.ssl.trustStore", TRUST_STORE);
-		System.setProperty("javax.net.ssl.trustStorePassword", TRUST_STORE_PASSWD);
+		System.setProperty("javax.net.ssl.trustStore", caFile.getPath());
+		System.setProperty("javax.net.ssl.trustStorePassword", KEY_STORE_PASSWD);
 	}
 
 	private static void restoreSslSystemProperies() {
-		if(StringUtils.isBlank(keyStore)){
-			System.clearProperty("javax.net.ssl.keyStore");
-		} else {
-			System.setProperty("javax.net.ssl.keyStore",keyStore);
+		try {
+			if(StringUtils.isBlank(keyStore)){
+				System.clearProperty("javax.net.ssl.keyStore");
+			} else {
+				System.setProperty("javax.net.ssl.keyStore",keyStore);
+			}
+			if(StringUtils.isBlank(keyStorePassword)){
+				System.clearProperty("javax.net.ssl.keyStorePassword");
+			} else {
+				System.setProperty("javax.net.ssl.keyStorePassword",keyStorePassword);
+			}
+			if(StringUtils.isBlank(trustStore)){
+				System.clearProperty("javax.net.ssl.trustStore");
+			} else {
+				System.setProperty("javax.net.ssl.trustStore",trustStore);
+			}
+			if(StringUtils.isBlank(trustStorePassword)){
+				System.clearProperty("javax.net.ssl.trustStorePassword");
+			} else {
+				System.setProperty("javax.net.ssl.trustStorePassword",trustStorePassword);
+			}
+		} finally {
+			if(caFile.exists()){
+				caFile.delete();
+			}
 		}
-		if(StringUtils.isBlank(keyStorePassword)){
-			System.clearProperty("javax.net.ssl.keyStorePassword");
-		} else {
-			System.setProperty("javax.net.ssl.keyStorePassword",keyStorePassword);
-		}
-		if(StringUtils.isBlank(trustStore)){
-			System.clearProperty("javax.net.ssl.trustStore");
-		} else {
-			System.setProperty("javax.net.ssl.trustStore",trustStore);
-		}
-		if(StringUtils.isBlank(trustStorePassword)){
-			System.clearProperty("javax.net.ssl.trustStorePassword");
-		} else {
-			System.setProperty("javax.net.ssl.trustStorePassword",trustStorePassword);
+	}
+	
+	private static void createCAFile() {
+		InputStream keystoreStream = null;
+		OutputStream outputStream = null;
+		try {
+			caFile = File.createTempFile(KEY_STORE_NAME, "");
+			ClassLoader cl = Thread.currentThread().getContextClassLoader();
+			URL[] urls = Classpath.search(cl, "META-INF", KEY_STORE_NAME);
+			keystoreStream = urls[0].openStream();
+			outputStream = new FileOutputStream(caFile);
+	 		int read = 0;
+			byte[] bytes = new byte[1024];
+	 
+			while ((read = keystoreStream.read(bytes)) != -1) {
+				outputStream.write(bytes, 0, read);
+			}
+		} catch (IOException e) {
+			String msg = "No se ha podido generar el certificado de autoridad para la comunicacion a traves de ssl";
+			LOGGER.info(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		} finally {
+			if (keystoreStream != null) {
+				try {
+					keystoreStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	 
+			}
 		}
 	}
 	
@@ -323,7 +377,7 @@ public final class SEPEConnectionProvider {
 //		String DOCUMENTO = "C7534747";
 //		String result = processDataQuery(DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
 
-		String result = processCertificadosCommunication(true, DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
+		String result = processCertificadosCommunication(false, true, DOCUMENTO, USUARIO_CONECTADO, USUARIO_PRINCIPAL, PASSWORD);
 		
 		System.out.println("RESULTADO = " );
 		System.out.println(result);

@@ -1,6 +1,7 @@
 package com.esferalia.aon.ui.sepe.utils;
 
 
+
 public interface ISepeCommunicator {
 	
 	public void initialize();
@@ -17,5 +18,10 @@ public interface ISepeCommunicator {
 
 	public String obtainCommunicationNumber(byte[] data);
 		
+	public String obtainCommunicationStatus(byte[] data);
+	
+	public boolean isCommunicationAccepted(byte[] data);
+
+	public boolean isCommunicationFinished(byte[] data);
 	
 }

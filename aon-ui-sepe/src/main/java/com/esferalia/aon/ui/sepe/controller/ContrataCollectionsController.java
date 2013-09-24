@@ -27,9 +27,11 @@ public class ContrataCollectionsController {
 			ContrataCodeTablesCodeList = new LinkedList<SelectItem>();
 			ContrataCodeTables[] el = ContrataCodeTables.values();
 			for (ContrataCodeTables obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				ContrataCodeTablesCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					ContrataCodeTablesCodeList.add(item);
+				}
 			}
 		}
 		return ContrataCodeTablesCodeList;
@@ -48,9 +50,11 @@ public class ContrataCollectionsController {
 			STDIDETCCodeList = new LinkedList<SelectItem>();
 			STDIDETC[] el = STDIDETC.values();
 			for (STDIDETC obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				STDIDETCCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					STDIDETCCodeList.add(item);
+				}
 			}
 		}
 		return STDIDETCCodeList;
@@ -69,9 +73,11 @@ public class ContrataCollectionsController {
 			TABCCNAECodeList = new LinkedList<SelectItem>();
 			TABCCNAE[] el = TABCCNAE.values();
 			for (TABCCNAE obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TABCCNAECodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TABCCNAECodeList.add(item);
+				}
 			}
 		}
 		return TABCCNAECodeList;
@@ -90,9 +96,11 @@ public class ContrataCollectionsController {
 			TAICLAOC2011CodeList = new LinkedList<SelectItem>();
 			TAICLAOC2011[] el = TAICLAOC2011.values();
 			for (TAICLAOC2011 obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TAICLAOC2011CodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TAICLAOC2011CodeList.add(item);
+				}
 			}
 		}
 		return TAICLAOC2011CodeList;
@@ -111,9 +119,11 @@ public class ContrataCollectionsController {
 			TAUCOMAUCodeList = new LinkedList<SelectItem>();
 			TAUCOMAU[] el = TAUCOMAU.values();
 			for (TAUCOMAU obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TAUCOMAUCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TAUCOMAUCodeList.add(item);
+				}
 			}
 		}
 		return TAUCOMAUCodeList;
@@ -132,9 +142,11 @@ public class ContrataCollectionsController {
 			TBONVFORCodeList = new LinkedList<SelectItem>();
 			TBONVFOR[] el = TBONVFOR.values();
 			for (TBONVFOR obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TBONVFORCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TBONVFORCodeList.add(item);
+				}
 			}
 		}
 		return TBONVFORCodeList;
@@ -153,9 +165,11 @@ public class ContrataCollectionsController {
 			TBXCPAISCodeList = new LinkedList<SelectItem>();
 			TBXCPAIS[] el = TBXCPAIS.values();
 			for (TBXCPAIS obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TBXCPAISCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TBXCPAISCodeList.add(item);
+				}
 			}
 		}
 		return TBXCPAISCodeList;
@@ -174,9 +188,11 @@ public class ContrataCollectionsController {
 			TCGPROVICodeList = new LinkedList<SelectItem>();
 			TCGPROVI[] el = TCGPROVI.values();
 			for (TCGPROVI obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TCGPROVICodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TCGPROVICodeList.add(item);
+				}
 			}
 		}
 		return TCGPROVICodeList;
@@ -195,9 +211,11 @@ public class ContrataCollectionsController {
 			TCHRGCOTCodeList = new LinkedList<SelectItem>();
 			TCHRGCOT[] el = TCHRGCOT.values();
 			for (TCHRGCOT obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TCHRGCOTCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TCHRGCOTCodeList.add(item);
+				}
 			}
 		}
 		return TCHRGCOTCodeList;
@@ -216,9 +234,11 @@ public class ContrataCollectionsController {
 			TCMCSEXOCodeList = new LinkedList<SelectItem>();
 			TCMCSEXO[] el = TCMCSEXO.values();
 			for (TCMCSEXO obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TCMCSEXOCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TCMCSEXOCodeList.add(item);
+				}
 			}
 		}
 		return TCMCSEXOCodeList;
@@ -237,9 +257,11 @@ public class ContrataCollectionsController {
 			TDTVINFOCodeList = new LinkedList<SelectItem>();
 			TDTVINFO[] el = TDTVINFO.values();
 			for (TDTVINFO obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TDTVINFOCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TDTVINFOCodeList.add(item);
+				}
 			}
 		}
 		return TDTVINFOCodeList;
@@ -258,9 +280,11 @@ public class ContrataCollectionsController {
 			TEHTPCTOCodeList = new LinkedList<SelectItem>();
 			TEHTPCTO[] el = TEHTPCTO.values();
 			for (TEHTPCTO obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TEHTPCTOCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TEHTPCTOCodeList.add(item);
+				}
 			}
 		}
 		return TEHTPCTOCodeList;
@@ -279,9 +303,11 @@ public class ContrataCollectionsController {
 			TEIINTERCodeList = new LinkedList<SelectItem>();
 			TEIINTER[] el = TEIINTER.values();
 			for (TEIINTER obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TEIINTERCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TEIINTERCodeList.add(item);
+				}
 			}
 		}
 		return TEIINTERCodeList;
@@ -300,9 +326,11 @@ public class ContrataCollectionsController {
 			TEJINDISCodeList = new LinkedList<SelectItem>();
 			TEJINDIS[] el = TEJINDIS.values();
 			for (TEJINDIS obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TEJINDISCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TEJINDISCodeList.add(item);
+				}
 			}
 		}
 		return TEJINDISCodeList;
@@ -321,9 +349,11 @@ public class ContrataCollectionsController {
 			TEKLEYBOCodeList = new LinkedList<SelectItem>();
 			TEKLEYBO[] el = TEKLEYBO.values();
 			for (TEKLEYBO obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TEKLEYBOCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TEKLEYBOCodeList.add(item);
+				}
 			}
 		}
 		return TEKLEYBOCodeList;
@@ -342,9 +372,11 @@ public class ContrataCollectionsController {
 			TELCOLBOCodeList = new LinkedList<SelectItem>();
 			TELCOLBO[] el = TELCOLBO.values();
 			for (TELCOLBO obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TELCOLBOCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TELCOLBOCodeList.add(item);
+				}
 			}
 		}
 		return TELCOLBOCodeList;
@@ -363,9 +395,11 @@ public class ContrataCollectionsController {
 			TENLEYDECodeList = new LinkedList<SelectItem>();
 			TENLEYDE[] el = TENLEYDE.values();
 			for (TENLEYDE obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TENLEYDECodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TENLEYDECodeList.add(item);
+				}
 			}
 		}
 		return TENLEYDECodeList;
@@ -384,9 +418,11 @@ public class ContrataCollectionsController {
 			TEOCOLDECodeList = new LinkedList<SelectItem>();
 			TEOCOLDE[] el = TEOCOLDE.values();
 			for (TEOCOLDE obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TEOCOLDECodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TEOCOLDECodeList.add(item);
+				}
 			}
 		}
 		return TEOCOLDECodeList;
@@ -405,9 +441,11 @@ public class ContrataCollectionsController {
 			TEQPTIEMCodeList = new LinkedList<SelectItem>();
 			TEQPTIEM[] el = TEQPTIEM.values();
 			for (TEQPTIEM obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TEQPTIEMCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TEQPTIEMCodeList.add(item);
+				}
 			}
 		}
 		return TEQPTIEMCodeList;
@@ -426,9 +464,11 @@ public class ContrataCollectionsController {
 			TERFIRCBCodeList = new LinkedList<SelectItem>();
 			TERFIRCB[] el = TERFIRCB.values();
 			for (TERFIRCB obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TERFIRCBCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TERFIRCBCodeList.add(item);
+				}
 			}
 		}
 		return TERFIRCBCodeList;
@@ -447,9 +487,11 @@ public class ContrataCollectionsController {
 			TERRORESCodeList = new LinkedList<SelectItem>();
 			TERRORES[] el = TERRORES.values();
 			for (TERRORES obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TERRORESCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TERRORESCodeList.add(item);
+				}
 			}
 		}
 		return TERRORESCodeList;
@@ -468,9 +510,11 @@ public class ContrataCollectionsController {
 			TESCETCOCodeList = new LinkedList<SelectItem>();
 			TESCETCO[] el = TESCETCO.values();
 			for (TESCETCO obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TESCETCOCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TESCETCOCodeList.add(item);
+				}
 			}
 		}
 		return TESCETCOCodeList;
@@ -489,9 +533,11 @@ public class ContrataCollectionsController {
 			TETPGMEMCodeList = new LinkedList<SelectItem>();
 			TETPGMEM[] el = TETPGMEM.values();
 			for (TETPGMEM obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TETPGMEMCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TETPGMEMCodeList.add(item);
+				}
 			}
 		}
 		return TETPGMEMCodeList;
@@ -510,9 +556,11 @@ public class ContrataCollectionsController {
 			TEUECCLLCodeList = new LinkedList<SelectItem>();
 			TEUECCLL[] el = TEUECCLL.values();
 			for (TEUECCLL obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TEUECCLLCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TEUECCLLCodeList.add(item);
+				}
 			}
 		}
 		return TEUECCLLCodeList;
@@ -531,9 +579,11 @@ public class ContrataCollectionsController {
 			TEVACTCLCodeList = new LinkedList<SelectItem>();
 			TEVACTCL[] el = TEVACTCL.values();
 			for (TEVACTCL obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TEVACTCLCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TEVACTCLCodeList.add(item);
+				}
 			}
 		}
 		return TEVACTCLCodeList;
@@ -552,9 +602,11 @@ public class ContrataCollectionsController {
 			TEWEINVECodeList = new LinkedList<SelectItem>();
 			TEWEINVE[] el = TEWEINVE.values();
 			for (TEWEINVE obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TEWEINVECodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TEWEINVECodeList.add(item);
+				}
 			}
 		}
 		return TEWEINVECodeList;
@@ -573,9 +625,11 @@ public class ContrataCollectionsController {
 			TEXTINVECodeList = new LinkedList<SelectItem>();
 			TEXTINVE[] el = TEXTINVE.values();
 			for (TEXTINVE obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TEXTINVECodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TEXTINVECodeList.add(item);
+				}
 			}
 		}
 		return TEXTINVECodeList;
@@ -594,9 +648,11 @@ public class ContrataCollectionsController {
 			TEYTRELECodeList = new LinkedList<SelectItem>();
 			TEYTRELE[] el = TEYTRELE.values();
 			for (TEYTRELE obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TEYTRELECodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TEYTRELECodeList.add(item);
+				}
 			}
 		}
 		return TEYTRELECodeList;
@@ -615,9 +671,11 @@ public class ContrataCollectionsController {
 			TFGGRCOTCodeList = new LinkedList<SelectItem>();
 			TFGGRCOT[] el = TFGGRCOT.values();
 			for (TFGGRCOT obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TFGGRCOTCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TFGGRCOTCodeList.add(item);
+				}
 			}
 		}
 		return TFGGRCOTCodeList;
@@ -636,9 +694,11 @@ public class ContrataCollectionsController {
 			THPCOLFOCodeList = new LinkedList<SelectItem>();
 			THPCOLFO[] el = THPCOLFO.values();
 			for (THPCOLFO obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				THPCOLFOCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					THPCOLFOCodeList.add(item);
+				}
 			}
 		}
 		return THPCOLFOCodeList;
@@ -657,9 +717,11 @@ public class ContrataCollectionsController {
 			THYDISLECodeList = new LinkedList<SelectItem>();
 			THYDISLE[] el = THYDISLE.values();
 			for (THYDISLE obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				THYDISLECodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					THYDISLECodeList.add(item);
+				}
 			}
 		}
 		return THYDISLECodeList;
@@ -678,9 +740,11 @@ public class ContrataCollectionsController {
 			TQNLEYRECodeList = new LinkedList<SelectItem>();
 			TQNLEYRE[] el = TQNLEYRE.values();
 			for (TQNLEYRE obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TQNLEYRECodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TQNLEYRECodeList.add(item);
+				}
 			}
 		}
 		return TQNLEYRECodeList;
@@ -699,9 +763,11 @@ public class ContrataCollectionsController {
 			TQOCOLRECodeList = new LinkedList<SelectItem>();
 			TQOCOLRE[] el = TQOCOLRE.values();
 			for (TQOCOLRE obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TQOCOLRECodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TQOCOLRECodeList.add(item);
+				}
 			}
 		}
 		return TQOCOLRECodeList;
@@ -720,9 +786,11 @@ public class ContrataCollectionsController {
 			TRCMODFOCodeList = new LinkedList<SelectItem>();
 			TRCMODFO[] el = TRCMODFO.values();
 			for (TRCMODFO obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TRCMODFOCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TRCMODFOCodeList.add(item);
+				}
 			}
 		}
 		return TRCMODFOCodeList;
@@ -741,9 +809,11 @@ public class ContrataCollectionsController {
 			TRDACTFOCodeList = new LinkedList<SelectItem>();
 			TRDACTFO[] el = TRDACTFO.values();
 			for (TRDACTFO obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TRDACTFOCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TRDACTFOCodeList.add(item);
+				}
 			}
 		}
 		return TRDACTFOCodeList;
@@ -762,9 +832,11 @@ public class ContrataCollectionsController {
 			TRWCOLDFCodeList = new LinkedList<SelectItem>();
 			TRWCOLDF[] el = TRWCOLDF.values();
 			for (TRWCOLDF obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TRWCOLDFCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TRWCOLDFCodeList.add(item);
+				}
 			}
 		}
 		return TRWCOLDFCodeList;
@@ -783,9 +855,11 @@ public class ContrataCollectionsController {
 			TRXLEYDFCodeList = new LinkedList<SelectItem>();
 			TRXLEYDF[] el = TRXLEYDF.values();
 			for (TRXLEYDF obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TRXLEYDFCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TRXLEYDFCodeList.add(item);
+				}
 			}
 		}
 		return TRXLEYDFCodeList;
@@ -804,9 +878,11 @@ public class ContrataCollectionsController {
 			TSATPCENCodeList = new LinkedList<SelectItem>();
 			TSATPCEN[] el = TSATPCEN.values();
 			for (TSATPCEN obj : el) {
-				String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
-				SelectItem item = new SelectItem(obj, name);
-				TSATPCENCodeList.add(item);
+				if(obj.isActive()){
+					String name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+"..."):obj.getDescription());
+					SelectItem item = new SelectItem(obj, name);
+					TSATPCENCodeList.add(item);
+				}
 			}
 		}
 		return TSATPCENCodeList;

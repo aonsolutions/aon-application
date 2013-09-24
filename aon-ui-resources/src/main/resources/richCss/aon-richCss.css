@@ -994,6 +994,12 @@ color:#000;
 .aon-icon-data{
 	background:transparent url(images/aon-icon/aon-icon-data.png) scroll left center no-repeat;
 }
+.aon-icon-commit{
+	background:transparent url(images/aon-icon/aon-icon-commit.png) scroll left center no-repeat;
+}
+.aon-icon-update{
+	background:transparent url(images/aon-icon/aon-icon-update.png) scroll left center no-repeat;
+}
 
 /******* GROUP  **********/
 .aon-form-group{

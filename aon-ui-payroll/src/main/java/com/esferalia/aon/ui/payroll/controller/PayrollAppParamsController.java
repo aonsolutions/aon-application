@@ -28,7 +28,7 @@ import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 
 public class PayrollAppParamsController{
-	
+
 	public final static String SETTLE_VACATION_CONCEPT = "PAY_settle_vacation_concept_PAY";
 	public final static String SETTLE_NOTICE_DAY_CONCEPT = "PAY_settle_noticeDay_concept_PAY";
 	public final static String SETTLE_COMPENSATION_CONCEPT = "PAY_settle_compens_concept_PAY";
@@ -37,6 +37,7 @@ public class PayrollAppParamsController{
 	public final static String DEFAULT_TRAINING_CENTER = "PAY_default_trainingCenter_PAY";
 
 	public final static String AVAILABLE_NEW_CONTRACT_CODES = "PAY_available_contract_codes_PAY";
+
 	
 	private PaymentConcept settleVacationConcept;
 	private PaymentConcept settleNoticeDayConcept;

@@ -3,7 +3,6 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 import static com.code.aon.ui.common.ICommonMessages.PAYROLL_TRAINING_CENTER_DIRECT_DEBIT;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -28,7 +27,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.SingleCollectionProvider;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
@@ -39,12 +37,12 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelData;
@@ -583,126 +581,6 @@ public class ContractController extends BasicController {
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}
-	public void onGenerateDocument(ActionEvent event){
-		generateDocument();
-	}
-	public void generateDocument(){
-		
-		ContractPdfController pdfDocument = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
-		// Documento del contrato
-		try {
-			pdfDocument.setDocumentType(ContractAttachmentType.CONTRACT_DOC_DRAFT);
-			pdfDocument.loadDocument(true);
-			pdfDocument.saveDocument();
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("No se ha podido generar el documento del contrato");
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (UnsupportedContractDocumentException e) {
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("No se ha podido generar el documento del contrato");
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (Exception e){
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("No se ha podido generar el documento del contrato");
-			AonUtil.addErrorMessage(e.getMessage());
-		}
-		
-		// Documento de la copia basica
-		try {
-			pdfDocument.setDocumentType(ContractAttachmentType.BASIC_COPY_DRAFT);
-			pdfDocument.loadDocument(true);
-			pdfDocument.saveDocument();
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (UnsupportedContractDocumentException e) {
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (Exception e){
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
-			AonUtil.addErrorMessage(e.getMessage());
-		}
-		
-		// Documento del anexxo ii de contrato de formacion (421)
-		try {
-			if( isTrainingContract() && isTrainingCourseDefined() ){
-				pdfDocument.setDocumentType(ContractAttachmentType.TRAINING_ANNEX_II);
-				pdfDocument.loadDocument(true);
-				pdfDocument.saveDocument();
-			}
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("No se ha podido generar el documento del anexo II");
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (UnsupportedContractDocumentException e) {
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("No se ha podido generar el documento del anexo II");
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (Exception e){
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("No se ha podido generar el documento del anexo II");
-			AonUtil.addErrorMessage(e.getMessage());
-		}
-		
-		generateDirectDebitDocument();
-		
-		setSelectedTab("attachData");
-	}
-	
-	public void generateDirectDebitDocument(){
-		try {
-			if( isTrainingCourseDefined() ){
-				ContractAttachment attach = obtainDirectDebitReport();
-				BeanManager.getManagerBean(ContractAttachment.class).insertOrUpdate(attach);
-				ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
-				attachController.initializeModel();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-			AonUtil.addErrorMessage("No se ha podido generar el documento de la domiciliacion bancaria");
-			AonUtil.addErrorMessage(e.getMessage());
-		}
-	}
-
-	private ContractAttachment obtainDirectDebitReport() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), ((Contract)this.getTo()).getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT);
-		List<ITransferObject> list = bean.getList(criteria);
-		ContractAttachment attach = null;
-		if(!list.isEmpty()){
-			attach = (ContractAttachment) list.get(0);
-		} else {
-			attach = new ContractAttachment();
-		}
-		attach.setContract((Contract) this.getTo());
-		attach.setData(getReport(IPayrollConstants.TRAINING_DIRECT_DEBIT_REPORT_KEY));
-		attach.setMimeType(MimeType.MIME_PDF);
-		attach.setAttachmentType(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT);
-		attach.setAttachDate(new Date());
-		attach.setDescription( AonUtil.getMessage(PAYROLL_TRAINING_CENTER_DIRECT_DEBIT));
-		return attach;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private byte[] getReport( String report ) {
-		try {
-			ReportManager reportManager = new ReportManager();
-			reportManager.setCollectionProvider( new SingleCollectionProvider(this.getTo()) );
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			reportManager.execute( out, report);
-			return out.toByteArray();
-		} catch (Throwable e) {
-			LOGGER.error(">>>> onReport " + e.getMessage());
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}			
-	}	
 	
 	public void onContrataExtensionShow(ActionEvent event){
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);

@@ -34,6 +34,7 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 	private String passwd;
 	private boolean loginRemember;
 	private boolean testEnv;
+	private boolean sslEnv;
 	private boolean passwdVisible;
 	
 	private String xmlResult;
@@ -94,15 +95,7 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 	public void setPasswd(String passwd) {
 		this.passwd = passwd;
 	}
-
-	public boolean isTestEnv() {
-		return testEnv;
-	}
-
-	public void setTestEnv(boolean testEnv) {
-		this.testEnv = testEnv;
-	}
-	
+		
 	public boolean isLoginRemember() {
 		return loginRemember;
 	}
@@ -124,10 +117,26 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 		this.xmlResult = xmlResult;
 	}
 	
+	public boolean isTestEnv() {
+		return testEnv;
+	}
+
+	public void setTestEnv(boolean testEnv) {
+		this.testEnv = testEnv;
+	}
+
+	public boolean isSslEnv() {
+		return sslEnv;
+	}
+
+	public void setSslEnv(boolean sslEnv) {
+		this.sslEnv = sslEnv;
+	}
+
 	@Override
 	public void initialize() {
 		searchCertificadosLogin();
-		searchTestEnvironment();
+		searchEnvironmentParams();
 	}
 	
 	public boolean isLoginRequired() {
@@ -143,6 +152,47 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 		}
 		return null;
 	}
+	
+	@Override
+	public boolean isCommunicationAccepted(byte[] data) {
+		if( data!=null ){
+			String value = new String(data); 
+			value = value.replaceAll("\n", "");
+			value = StringUtils.removeStart(value, "<?xml version='1.0' encoding='ISO-8859-1'?>");
+			value = StringUtils.removeStart(value, "<COMUNICACION>");
+			value = StringUtils.removeEnd(value, "</COMUNICACION>");
+			if(value.contains("<NUM_ENVIO>") && !value.contains("<COD_ERROR>")){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isCommunicationFinished(byte[] data) {
+		if(data!=null){
+			String errorMsg = new String(data);
+//			fichero no procesado: si se obtiene algun error (comunicacion, fichero no procesado, ...)
+			if(errorMsg.contains("<COMUNICACION>") && errorMsg.contains("<ERROR>")){
+				return false;
+			}
+//			fichero si procesado: si se obtiene el fichero con los datos procesados
+			try {
+				RespuestaCertificadoEmpresa certificado = obtainFicheroCertificado(data);
+				for(CuentaCotizacion cuentaCotizacion: certificado.getResultado().getCuentaCotizacion()){
+					if(StringUtils.equals(cuentaCotizacion.getDescripcionResultado(),"PROCESADO")){
+						return true;
+					} else if(StringUtils.equals(cuentaCotizacion.getDescripcionResultado(),"PROCESADO PARCIALMENTE")){
+						return true;
+					}
+				}
+			} catch (IOException e) {
+			} catch (Throwable th) {
+			}
+		}
+		return false;
+	}
+
 	
 	@Override
 	public String obtainCommunicationNumber(byte[] data) {
@@ -162,12 +212,12 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 				value = StringUtils.substringBetween(value, "<COD_ERROR>", "</COD_ERROR>");
 			}
 			status += "<br /> ";
-			
 			return status;
 		}
 		return null;
 	}
 	
+	@Override
 	public String obtainCommunicationStatus(byte[] data) {
 		String status = "";
 		status += "<br /> ";
@@ -278,13 +328,14 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 		}
 	}
 
-	private void searchTestEnvironment() {
+	private void searchEnvironmentParams() {
 		SepeAppParamsController appParams = (SepeAppParamsController) AonUtil.getRegisteredBean(ISepeConstants.SEPE_APP_PARAMS_CONTROLLER_NAME);
 		try {
 			appParams.loadParameters();
 			testEnv = appParams.getCertifica2TestEnviroment();
+			sslEnv = appParams.getCertifica2SSLEnviroment();
 		} catch (ManagerBeanException e) {
-			String msg = "No se ha podido verificar el entorno de trabajo. Se activa el entorno de pruebas (TEST).";
+			String msg = "No se ha podido verificar el entorno de trabajo. Se activa el entorno de pruebas (TEST) sin seguridad (no SSL).";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -293,17 +344,13 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 	}
 	
 	private String sendCertificadosFile(){
-		xmlResult = SEPEConnectionProvider.processCertificadosCommunication(testEnv, document, user, user, passwd);
-		System.out.println("RESPUESTA RESULTANTE DE LA COMUNICACION CON EL S.E.P.E. :  " );
-		System.out.println(xmlResult);
+		xmlResult = SEPEConnectionProvider.processCertificadosCommunication(sslEnv, testEnv, document, user, user, passwd);
 		afterCommunication();
 		return xmlResult;
 	}
 
 	private String certificadosDataQuery(){
-		xmlResult = SEPEConnectionProvider.processCertificadosQuery(testEnv, document, user, user, passwd);
-		System.out.println("RESPUESTA RESULTANTE DE LA CONSULTA AL S.E.P.E. :  " );
-		System.out.println(xmlResult);
+		xmlResult = SEPEConnectionProvider.processCertificadosQuery(sslEnv, testEnv, document, user, user, passwd);
 		afterCommunication();
 		return xmlResult;
 	}

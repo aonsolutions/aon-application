@@ -188,7 +188,8 @@ public abstract class AbstractContractExtension implements IContractPdfDocument 
 		return CONTRACT_EXTENSION_PATH;
 	}
 	
-	public byte[] buildPdf() {
+	@Override
+	public byte[] buildPdf(boolean readOnly) {
 		try {
 			
 			PdfReader reader = new PdfReader(getContractExtensionUrl(documentName+".pdf"));

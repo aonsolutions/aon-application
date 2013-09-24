@@ -12,7 +12,7 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 
 public interface IContractPdfDocument {
 	
-	public byte[] buildPdf();
+	public byte[] buildPdf(boolean readOnly);
 
 	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException;
 	

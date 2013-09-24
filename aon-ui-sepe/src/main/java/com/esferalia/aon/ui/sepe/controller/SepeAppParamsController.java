@@ -20,30 +20,59 @@ import com.esferalia.aon.ui.sepe.utils.SEPEConnectionProvider;
 
 public class SepeAppParamsController{
 	
+	public final static String DEVELOPMENT_MODE = "PAY_dev_mode_PAY";
 	
 	public final static String CONTRATA_USER = "PAY_contrata_user_PAY";
 	public final static String CONTRATA_PASSWORD = "PAY_contrata_passwd_PAY";
 	public final static String CONTRATA_TEST_ENVIRONMENT_ACTIVE = "PAY_contrata_test_env_active_PAY";
+	public final static String CONTRATA_SSL_ENVIRONMENT_ACTIVE = "PAY_contrata_ssl_env_active_PAY";
 
 	public final static String CERTIFICA2_USER = "PAY_certifica2_user_PAY";
 	public final static String CERTIFICA2_PASSWORD = "PAY_certifica2_passwd_PAY";
 	public final static String CERTIFICA2_TEST_ENVIRONMENT_ACTIVE = "PAY_certifica2_test_env_PAY";
+	public final static String CERTIFICA2_SSL_ENVIRONMENT_ACTIVE = "PAY_certifica2_ssl_env_PAY";
+
+	private Boolean developmentMode;
 
 	private String contrataUser;
 	private String contrataPassword;
 	private Boolean validContrataLogin;
 	private Boolean contrataTestEnviroment;
+	private Boolean contrataSSLEnviroment;
 
 	private String certifica2User;
 	private String certifica2Password;
 	private Boolean validCertifica2Login;
 	private Boolean certifica2TestEnviroment;
+	private Boolean certifica2SSLEnviroment;
 	
 	
 	private Map<String, ApplicationParameter> parameters;
 
 	private Map<String, String> defaultParameters;
 	
+	public Boolean getDevelopmentMode() {
+		if(developmentMode==null){
+			initDevelopmentMode();
+		}
+		return developmentMode;
+	}
+	
+	public void setDevelopmentMode(Boolean developmentMode) {
+		this.developmentMode = developmentMode;
+	}
+	
+	private void initDevelopmentMode() {
+		try {
+			if(getParameter(DEVELOPMENT_MODE).getValue()!=null){
+				setDevelopmentMode(new Boolean(getParameter(DEVELOPMENT_MODE).getValue()));
+			} else {
+				setDevelopmentMode(false);
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
 	
 	public Boolean getValidContrataLogin() {
 		return validContrataLogin;
@@ -120,6 +149,29 @@ public class SepeAppParamsController{
 				setContrataTestEnviroment(new Boolean(getParameter(CONTRATA_TEST_ENVIRONMENT_ACTIVE).getValue()));
 			} else {
 				setContrataTestEnviroment(true);
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+	
+	public Boolean getContrataSSLEnviroment() {
+		if(contrataSSLEnviroment==null){
+			initContrataSSLEnviroment();
+		}
+		return contrataSSLEnviroment;
+	}
+	
+	public void setContrataSSLEnviroment(Boolean contrataSSLEnviroment) {
+		this.contrataSSLEnviroment = contrataSSLEnviroment;
+	}
+	
+	private void initContrataSSLEnviroment() {
+		try {
+			if(getParameter(CONTRATA_SSL_ENVIRONMENT_ACTIVE).getValue()!=null){
+				setContrataSSLEnviroment(new Boolean(getParameter(CONTRATA_SSL_ENVIRONMENT_ACTIVE).getValue()));
+			} else {
+				setContrataSSLEnviroment(true);
 			}
 		} catch (ManagerBeanException e) {
 			// NADA
@@ -207,6 +259,29 @@ public class SepeAppParamsController{
 		}
 	}
 	
+	public Boolean getCertifica2SSLEnviroment() {
+		if(certifica2SSLEnviroment==null){
+			initCertifica2SSLEnviroment();
+		}
+		return certifica2SSLEnviroment;
+	}
+	
+	public void setCertifica2SSLEnviroment(Boolean certifica2SSLEnviroment) {
+		this.certifica2SSLEnviroment = certifica2SSLEnviroment;
+	}
+	
+	private void initCertifica2SSLEnviroment() {
+		try {
+			if(getParameter(CERTIFICA2_SSL_ENVIRONMENT_ACTIVE).getValue()!=null){
+				setCertifica2SSLEnviroment(new Boolean(getParameter(CERTIFICA2_SSL_ENVIRONMENT_ACTIVE).getValue()));
+			} else {
+				setCertifica2SSLEnviroment(true);
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+	
 	public Map<String, ApplicationParameter> getParameters() {
 		return parameters;
 	}
@@ -258,6 +333,8 @@ public class SepeAppParamsController{
 
 	public void loadParameters() throws ManagerBeanException{
 		
+		setDevelopmentMode(null);
+
 		setContrataUser(null);
 		setContrataPassword(null);
 		setValidContrataLogin(null);
@@ -297,24 +374,28 @@ public class SepeAppParamsController{
 	
 	private void beforeBeanUpdate() throws ManagerBeanException {
 	
+		getParameter(DEVELOPMENT_MODE).setValue(getDevelopmentMode().toString());
+
 		// CONTRATA PARAMS
 		getParameter(CONTRATA_USER).setValue(getContrataUser());
 		getParameter(CONTRATA_PASSWORD).setValue(getContrataPassword());
 		getParameter(CONTRATA_TEST_ENVIRONMENT_ACTIVE).setValue(getContrataTestEnviroment().toString());
+		getParameter(CONTRATA_SSL_ENVIRONMENT_ACTIVE).setValue(getContrataSSLEnviroment().toString());
 		
 		// CERTIFICA2 PARAMS
 		getParameter(CERTIFICA2_USER).setValue(getCertifica2User());
 		getParameter(CERTIFICA2_PASSWORD).setValue(getCertifica2Password());
 		getParameter(CERTIFICA2_TEST_ENVIRONMENT_ACTIVE).setValue(getCertifica2TestEnviroment().toString());
+		getParameter(CERTIFICA2_SSL_ENVIRONMENT_ACTIVE).setValue(getCertifica2SSLEnviroment().toString());
 
 	}
 	
 	public void validateContrataLogin(ActionEvent event){
-		setValidContrataLogin( SEPEConnectionProvider.validateContrataLogin(getContrataTestEnviroment(), getContrataUser(), getContrataUser(), getContrataPassword()) );
+		setValidContrataLogin( SEPEConnectionProvider.validateContrataLogin(getContrataSSLEnviroment(), getContrataTestEnviroment(), getContrataUser(), getContrataUser(), getContrataPassword()) );
 	}
 	
 	public void validateCertifica2Login(ActionEvent event){
-		setValidCertifica2Login( SEPEConnectionProvider.validateCertifica2Login(getCertifica2TestEnviroment(), getCertifica2User(), getCertifica2User(), getCertifica2Password()) );
+		setValidCertifica2Login( SEPEConnectionProvider.validateCertifica2Login(getCertifica2SSLEnviroment(), getCertifica2TestEnviroment(), getCertifica2User(), getCertifica2User(), getCertifica2Password()) );
 	}
 	
 }

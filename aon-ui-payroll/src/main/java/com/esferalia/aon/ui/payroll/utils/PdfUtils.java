@@ -79,7 +79,7 @@ public class PdfUtils {
         return bb;
 	}
 
-	public static byte[] mergePdf(ArrayList<IAttachment> attachList) {
+	public static byte[] mergePdf(List<IAttachment> attachList) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		try {
 			List<PdfReader> pdfReaderList = new ArrayList<PdfReader>();

@@ -16,6 +16,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
 
 
 
@@ -44,6 +45,11 @@ public class ModelPE229 extends AbstractAnnexModel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void afterBuildPdf(PdfReader reader, PdfStamper stamp){
+		
 	}
 	
 	public Map<String, String> getContractDataMap(Contract contract) {

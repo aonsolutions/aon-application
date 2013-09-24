@@ -12,7 +12,7 @@
 
 		<ui:define name="modalContent" >
 
-			<aon:outputLabel for="Contrata_fileType" value="Tipo de comunicacion" />
+			<aon:outputLabel for="Contrata_fileType" value="#{sepeBundle.sepe_communication_type}" />
 			<aon:selectOneMenu id="Contrata_fileType" required="true" 
 				value="#{controller.fileType}">
 				<f:selectItems value="#{sepeCollections.contrataFileTypeList}" />

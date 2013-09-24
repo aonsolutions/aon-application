@@ -314,7 +314,12 @@ public class ContrataCodeTablesWriter {
 		out.newLine();
 		out.write( "import java.text.SimpleDateFormat;" );
 		out.newLine();
+		out.write( "import java.util.Calendar;" );
+		out.newLine();
 		out.write( "import java.util.Date;" );
+		out.newLine();
+		out.newLine();
+		out.write( "import org.apache.commons.lang.time.DateUtils;" );
 		out.newLine();
 		out.newLine();
 		
@@ -395,7 +400,7 @@ public class ContrataCodeTablesWriter {
 		out.newLine();
 		out.write("\t\t\tif(startDate!=null){");
 		out.newLine();
-		out.write("\t\t\t\treturn sdf.parse(startDate);");
+		out.write("\t\t\t\treturn DateUtils.ceiling(sdf.parse(startDate), Calendar.DAY_OF_MONTH);");
 		out.newLine();
 		out.write("\t\t\t}");
 		out.newLine();
@@ -417,7 +422,7 @@ public class ContrataCodeTablesWriter {
 		out.newLine();
 		out.write("\t\t\tif(endDate!=null){");
 		out.newLine();
-		out.write("\t\t\t\treturn sdf.parse(endDate);");
+		out.write("\t\t\t\treturn DateUtils.ceiling(sdf.parse(endDate), Calendar.DAY_OF_MONTH);");
 		out.newLine();
 		out.write("\t\t\t}");
 		out.newLine();
@@ -427,7 +432,25 @@ public class ContrataCodeTablesWriter {
 		out.newLine();
 		out.write("\t\t}");
 		out.newLine();
-		out.write("\treturn null;");
+		out.write("\t\treturn null;");
+		out.newLine();
+		out.write("\t}");
+		out.newLine();
+		out.newLine();
+
+		out.write("\tpublic boolean isActive(){");
+		out.newLine();
+		out.write("\t\tDate now = new Date();");
+		out.newLine();
+		out.write("\t\tnow = DateUtils.ceiling(now, Calendar.DAY_OF_MONTH);");
+		out.newLine();
+		out.write("\t\tif( (getStartDate()!=null && getStartDate().after(now)) || (getEndDate()!=null && getEndDate().before(now)) ){");
+		out.newLine();
+		out.write("\t\t\treturn false;");
+		out.newLine();
+		out.write("\t\t}");
+		out.newLine();
+		out.write("\t\treturn true;");
 		out.newLine();
 		out.write("\t}");
 		out.newLine();
@@ -607,11 +630,15 @@ public class ContrataCodeTablesWriter {
 				out.newLine();
 				out.write( "\t\t\tfor ("+enumName+" obj : el) {");
 				out.newLine();
-				out.write( "\t\t\t\tString name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+\"...\"):obj.getDescription());");
+				out.write( "\t\t\t\tif(obj.isActive()){");
 				out.newLine();
-				out.write( "\t\t\t\tSelectItem item = new SelectItem(obj, name);");
+				out.write( "\t\t\t\t\tString name = (obj.getDescription().length()>80?(obj.getDescription().substring(0, 80)+\"...\"):obj.getDescription());");
 				out.newLine();
-				out.write( "\t\t\t\t"+enumName+"CodeList.add(item);");
+				out.write( "\t\t\t\t\tSelectItem item = new SelectItem(obj, name);");
+				out.newLine();
+				out.write( "\t\t\t\t\t"+enumName+"CodeList.add(item);");
+				out.newLine();
+				out.write( "\t\t\t\t}");
 				out.newLine();
 				out.write( "\t\t\t}");
 				out.newLine();
@@ -664,9 +691,6 @@ public class ContrataCodeTablesWriter {
 	 */
 	private static void writeTablesEnum( File file, File newFile ) throws IOException {
 		try {
-//			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-//			URL[] codeUrls = Classpath.search(cl, CODE_TXT_FILE_URL, LEAME_FILE_NAME+".txt");
-//			URL url = codeUrls[0];
 		
 			final String HEADER = " TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN";
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
@@ -810,6 +834,14 @@ public class ContrataCodeTablesWriter {
 			out.write("\t\t}");
 			out.newLine();
 			out.write("\treturn null;");
+			out.newLine();
+			out.write("\t}");
+			out.newLine();
+			out.newLine();
+			
+			out.write("\tpublic boolean isActive(){");
+			out.newLine();
+			out.write("\t\treturn true;");
 			out.newLine();
 			out.write("\t}");
 			out.newLine();

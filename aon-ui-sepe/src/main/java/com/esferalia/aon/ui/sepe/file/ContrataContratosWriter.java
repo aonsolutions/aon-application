@@ -229,7 +229,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		c.setDATOSMEDIDASFOMENTO(createDatosMedidasFomento(ContrataContratoParams));
 		c.setDATOSANEXOCONTRATORELEVO(createDatosAnexoContratoRelevo(ContrataContratoParams));
 		c.setDATOSETCOTE(createDatosEtCote(ContrataContratoParams));
-		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion());
+		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion(ContrataContratoParams));
 		return c;
 	}
 	private CONTRATO200TYPE createContract200(IContratoType contratoType, ContrataContratoParams ContrataContratoParams) throws ManagerBeanException{
@@ -259,7 +259,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		c.setDATOSMEDIDASFOMENTO(createDatosMedidasFomento(ContrataContratoParams));
 		c.setDATOSANEXOCONTRATORELEVO(createDatosAnexoContratoRelevo(ContrataContratoParams));
 		c.setDATOSETCOTE(createDatosEtCote(ContrataContratoParams));
-		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion());
+		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion(ContrataContratoParams));
 		c.setDATOSREDUCCIONRDL12011(createDatosReduccionRdl2011(ContrataContratoParams));
 		return c;
 	}
@@ -289,7 +289,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		c.setDATOSMEDIDASFOMENTO(createDatosMedidasFomento(ContrataContratoParams));
 		c.setDATOSANEXOCONTRATORELEVO(createDatosAnexoContratoRelevo(ContrataContratoParams));
 		c.setDATOSETCOTE(createDatosEtCote(ContrataContratoParams));
-		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion());
+		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion(ContrataContratoParams));
 		c.setDATOSREDUCCIONRDL12011(createDatosReduccionRdl2011(ContrataContratoParams));
 		return c;
 	}
@@ -362,7 +362,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		c.setDATOSETCOTE(createDatosEtCote(ContrataContratoParams));
 		c.setDATOSCOPIABASICA(createDatosCopiaBasica(ContrataContratoParams));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(ContrataContratoParams));
-		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion());
+		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion(ContrataContratoParams));
 		return c;
 	}
 	private CONTRATO452TYPE createContract452(IContratoType contratoType, ContrataContratoParams ContrataContratoParams) throws ManagerBeanException{
@@ -371,7 +371,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		c.setDATOSETCOTE(createDatosEtCote(ContrataContratoParams));
 		c.setDATOSCOPIABASICA(createDatosCopiaBasica(ContrataContratoParams));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(ContrataContratoParams));
-		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion());
+		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion(ContrataContratoParams));
 		return c;
 	}
 	private CONTRATO501TYPE createContract501(IContratoType contratoType, ContrataContratoParams ContrataContratoParams) throws ManagerBeanException{
@@ -450,7 +450,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		c.setDATOSETCOTE(createDatosEtCote(ContrataContratoParams));
 		c.setDATOSCOPIABASICA(createDatosCopiaBasica(ContrataContratoParams));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(ContrataContratoParams));
-		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion());
+		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion(ContrataContratoParams));
 		c.setDATOSREDUCCIONRDL12011(createDatosReduccionRdl2011(ContrataContratoParams));
 		return c;
 	}
@@ -461,7 +461,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		c.setDATOSETCOTE(createDatosEtCote(ContrataContratoParams));
 		c.setDATOSCOPIABASICA(createDatosCopiaBasica(ContrataContratoParams));
 		c.setPROGEMPLEOPUBLICO(createDatosProgramaEmpleoPublico(ContrataContratoParams));
-		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion());
+		c.setDATOSEMPRESAINSERCION(createDatosEmpresaInsercion(ContrataContratoParams));
 		return c;
 	}
 	private CONTRATO970TYPE createContract970(IContratoType contratoType, ContrataContratoParams ContrataContratoParams) throws ManagerBeanException{
@@ -1554,17 +1554,24 @@ public class ContrataContratosWriter implements IContrataWriter{
 	 * @return
 	 */
 	private DATOSBONIFICACIONTYPE createDatosBonificacion(ContrataContratoParams params) {
-		// TODO
-		String tc2 = getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
-		DATOSBONIFICACIONTYPE datos = new DATOSBONIFICACIONTYPE();
-		if( params.getIndDiscapacidad()!=TEJINDIS.TEJINDIS_C ){
-			datos.setCODIGOCOLECTIVOBONIF("00");
+		if(params.isApoyoEmprendedoresData()){
+			DATOSBONIFICACIONTYPE datos = new DATOSBONIFICACIONTYPE();
+			if( params.getIndDiscapacidad()!=TEJINDIS.TEJINDIS_C ){
+				if(params.getColectivoBonificacion()!=null){
+					datos.setCODIGOCOLECTIVOBONIF(params.getColectivoBonificacion().getCode());
+				}
+			}
+			String tc2 = getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
+			if( tc2.equals("150") || tc2.equals("250") || tc2.equals("350") ){
+				if(params.getIndEmpleadAutonomo()!=null){
+					datos.setINDICEMPLEADAUTONOMO(params.getIndEmpleadAutonomo()?"1":"2");
+				}
+			}
+			return datos;
 		}
-		if( tc2.equals("150") || tc2.equals("250") || tc2.equals("350") ){
-			datos.setINDICEMPLEADAUTONOMO("1");
-		}
-		return datos;
+		return null;
 	}
+	
 	/**
 	 * <xsd:complexType name="DATOS_EMPRESA_INSERCIONTYPE">
 		<xsd:annotation>
@@ -1605,12 +1612,19 @@ public class ContrataContratosWriter implements IContrataWriter{
 	 * 
 	 * @return
 	 */
-	private DATOSEMPRESAINSERCIONTYPE createDatosEmpresaInsercion() {
-		// TODO
-		DATOSEMPRESAINSERCIONTYPE datos = new DATOSEMPRESAINSERCIONTYPE();
-		datos.setINDEMPRESAINSERCION("N");
-		datos.setINDDURACINFERIOR(null);
-		return datos;
+	private DATOSEMPRESAINSERCIONTYPE createDatosEmpresaInsercion(ContrataContratoParams params) {
+//		DATOSEMPRESAINSERCIONTYPE datos = new DATOSEMPRESAINSERCIONTYPE();
+//		String tc2 = getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
+//		if( tc2.equals("452") || tc2.equals("552") ){
+//			datos.setINDEMPRESAINSERCION("S");
+//			datos.setINDEMPRESAINSERCION("N");
+//			if(contract_duration between 6 and 12 motnh){
+//				datos.setINDDURACINFERIOR("S");
+//				datos.setINDDURACINFERIOR("N");
+//			}
+//		}
+//		return datos;
+		return null;
 	}
 	/**
 	 * <xsd:complexType name="DATOS_COPIABASICATYPE">
