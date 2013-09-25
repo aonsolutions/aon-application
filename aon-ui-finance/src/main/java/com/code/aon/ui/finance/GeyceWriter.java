@@ -1,39 +1,49 @@
 package com.code.aon.ui.finance;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.AonException;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.Enterprise;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.TaxBreakDown;
+import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.enumeration.StreetType;
 
 public class GeyceWriter extends BasicExporter {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeyceWriter.class.getName());
 
-	private static final int REGISTRY_SIZE = 252;
+	private static final int GYCCON_SIZE = 252;
 	
+	private static final int GYCPLAN_SIZE = 141;
+
+	private String enterpriseCode;
+	
+	private String journal;	
+	
+	public GeyceWriter(String enterpriseCode, String journal) {
+		this.enterpriseCode = enterpriseCode;
+		this.journal = journal;
+	}
+
 	private void setNumber( double value, int offset, int maxLength ) {
 		double _value = CommonUtil.round(value);
 		String pattern = StringUtils.leftPad("0.00", maxLength, "0");
@@ -47,14 +57,30 @@ public class GeyceWriter extends BasicExporter {
 		Arrays.fill(getLine(), 216, 226, (byte) '0');
 	}
 	
+	private String getDiario() {
+		if (! StringUtils.isBlank(journal) ) {
+			return journal;
+		}
+		switch ( getInvoice().getType() ) {
+			case SALES:
+				return "2";
+			case PURCHASE:
+				return "3";
+			case EXPENSES:
+				return "4";
+		}		
+		return "1";
+	}
+	
 	private void initLine() {
-		setLine( new byte[REGISTRY_SIZE] );
+		setLine( new byte[GYCCON_SIZE] );
 		Arrays.fill(getLine(), (byte) ' ');
-		Enterprise enterprise = getEnterprise();
 		// Codigo de Empresa
-		setStringLeftPad( enterprise.getId().toString(), 0, 6);
+		setStringLeftPad( enterpriseCode, 0, 6);
 		// Fecha asiento
 		setDate(getAccountEntry().getEntryDate(), 6);
+		// Numero de Diario Contable
+		setStringLeftPad( getDiario(), 24, 2);		
 		// Numero de Factura
 		setStringRightPad( getInvoice().getId().toString(), 26, 7);
 		// Descripcion de la Factura
@@ -99,11 +125,11 @@ public class GeyceWriter extends BasicExporter {
 			setString("B", 63, 1);
 			amount = aed.getCredit();
 		}
-		String code = aed.getAccount().getCode();
+		String[] cuenta = getCuenta(aed.getAccount().getCode());
 		// Cuenta
-		setStringRightPad( StringUtils.substring(code, 0, 4), 64, 4);
+		setStringRightPad( cuenta[0], 64, 4);
 		// Codigo de Subcuenta
-		setStringRightPad( StringUtils.substring(code, 4), 68, 10);
+		setStringRightPad( cuenta[1], 68, 10);
 		// Importe
 		setNumber( amount, 78, 12);
 	}
@@ -162,9 +188,67 @@ public class GeyceWriter extends BasicExporter {
 		}
 	}	
 	
-	@Override
-	public String getFileName() {
-		return "geyce.txt";
+	private String getSiglasViaPublica( StreetType type ) {
+		String value = "CL";
+		if ( type != null ) {
+			value = type.getValue();
+		}
+		return value;
+	}	
+	
+	private String[] getCuenta( String code ) {
+		String cuenta = StringUtils.substring(code, 0, 4);
+		String subCuenta = StringUtils.trimToNull(StringUtils.substring(code, 4));
+		if ( NumberUtils.isDigits(subCuenta) && (NumberUtils.toInt(subCuenta) == 0) ) {
+			subCuenta = "00";
+			if ( cuenta.endsWith("00") ) {
+				cuenta = StringUtils.substring(cuenta, 0, 3);
+			}
+		}
+		return new String[]{cuenta, subCuenta};
+	}
+	
+	private byte[] getGycPlan() {
+		setLine( new byte[GYCPLAN_SIZE] );
+		Arrays.fill(getLine(), (byte) ' ');
+		
+		// Codigo de Empresa
+		setStringLeftPad( enterpriseCode, 0, 6);
+		AccountEntryDetail aed = getRegistryDetail();		
+		String[] cuenta = getCuenta(aed.getAccount().getCode());
+		// Cuenta
+		setStringRightPad( cuenta[0], 6, 4);
+		// Codigo de Subcuenta
+		setStringRightPad( cuenta[1], 10, 10);
+		// Descripcion
+		setStringRightPad(getInvoice().getRegistryName(), 20, 30);
+		// NIF
+		setStringLeftPad(getInvoice().getRegistryDocument(), 50, 15);
+		try {
+			RegistryAddress address = getInvoice().getRegistry().getDefaultAddress();
+			if ( address != null ) {
+				// Siglas
+				setStringLeftPad(getSiglasViaPublica(address.getStreetType()), 65, 2);				
+				// Calle			
+				setStringRightPad(address.getAddress(), 67, 30);
+				// Numero		
+				setStringLeftPad( address.getNumber(), 97, 5);
+				// Codigo Postal		
+				setStringRightPad( address.getZip(), 102, 5);
+				// Municipio		
+				setStringRightPad( address.getCity(), 107, 30);
+				// Codigo de Provincia		
+				setStringLeftPad( StringUtils.substring(address.getZip(), 0, 2), 137, 2);	
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error( "Error obtaining registry address", e ); 
+		}
+		// Se lista 347 S/N
+		setString("S", 139, 1);
+		// Se lista 349 S/N
+		setString("S", 140, 1);
+
+		return getLine();
 	}
 
 	@Override
@@ -173,13 +257,14 @@ public class GeyceWriter extends BasicExporter {
 		fillLine(getRegistryDetail());
 		writeLine();
 		while (! getDetails().isEmpty() ) {
+			writeNewLine();
 			AccountEntryDetail aed = getDetails().get(0);
 			getDetails().remove(0);
 			writeDetail(aed);
 		}
 	}
 	
-	public void serialize( Invoice invoice, OutputStream out ) throws AonException {
+	public void serialize( Invoice invoice ) throws AonException {
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
 		boolean initSessionState = HibernateUtil.mustCloseSession();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
@@ -187,7 +272,7 @@ public class GeyceWriter extends BasicExporter {
 		HibernateUtil.setBeginTransaction(false);
 		try {
 			HibernateUtil.getSession(sessionFactoryName).refresh(invoice);
-			init( invoice, out );
+			init( invoice );
 			write();
 		} catch (Throwable t ) {
 		    try {
@@ -205,15 +290,13 @@ public class GeyceWriter extends BasicExporter {
 			}
 		}
 	}
-    
-	public static void main(String[] args) throws IOException, AonException {
-		GeyceWriter writer = new GeyceWriter();
-		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
-		Invoice invoice = (Invoice) bean.get(83282);
-		File file = new File("/tmp/geyce.txt");
-		OutputStream out = new FileOutputStream(file);
-		writer.serialize(invoice, out);
-		out.close();
+
+	@Override
+	public Map<String, byte[]> getDataMap() {
+		Map<String, byte[]> map = new HashMap<String, byte[]>();
+		map.put("gyccon.txt", getData());
+		map.put("gycplan.txt", getGycPlan());
+		return map;
 	}
 	
 }

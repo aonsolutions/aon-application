@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showGeyceWindow">
+		<c:if test="#{invoiceExporter.showGeyceWindow}">
+			<rich:modalPanel id="geyceModalPanel" 
+				minHeight="180" minWidth="500"  zindex="100"
+				showWhenRendered="#{invoiceExporter.showGeyceWindow}" >
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.finance_invoiceExport_geyce}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showGeyceWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{invoiceExporter.showGeyceWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form>
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<aon:div styleClass="aon-toolbar">
+										<aon:htmlCommandLink id="geyce-accept"
+											value="#{bundle.aon_accept}" target="_blank"
+											actionListener="#{invoiceExporter.onDownloadGeyce}"
+											styleClass="aon-finding-toolbar-item aon-icon-mail-save">
+											<rich:componentControl for="geyceModalPanel"
+												event="onclick" operation="hide"/>																					
+										</aon:htmlCommandLink>
+										<aon:commandButton id="geyce-cancel"
+											value="#{bundle.aon_cancel}"
+											reRender="showGeyceWindow"
+											immediate="true"
+											styleClass="aon-finding-toolbar-item aon-icon-cancel">
+											<f:setPropertyActionListener
+												target="#{invoiceExporter.showGeyceWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+									</aon:div>
+									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+										<aon:panelGrid id="menuGrid" columns="2" style="width: 100%;">
+	
+											<aon:outputLabel for="Geyce_enterpriseCode"
+												value="#{bundle.aon_company_id}" />
+											<aon:inputText id="Geyce_enterpriseCode"
+												value="#{invoiceExporter.enterpriseCode}"
+												size="10" maxlength="6"
+												required="true" /> 
+	
+											<aon:outputLabel for="Geyce_journal"
+												value="#{bundle.accounting_journal}" />
+											<aon:inputText id="Geyce_journal"
+												size="2" maxlength="2"
+												value="#{invoiceExporter.journal}" />
+		
+										</aon:panelGrid>
+									</aon:div>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

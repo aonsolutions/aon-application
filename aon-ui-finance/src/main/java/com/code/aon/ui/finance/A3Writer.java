@@ -1,16 +1,15 @@
 package com.code.aon.ui.finance;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -597,11 +596,6 @@ public class A3Writer extends BasicExporter {
 
 		writeLine();
 	}
-
-	@Override
-	public String getFileName() {
-		return "suenlac3.txt";
-	}
 	
 	@Override
 	public void write() throws IOException, ManagerBeanException {
@@ -618,7 +612,7 @@ public class A3Writer extends BasicExporter {
 		writeRegistry();
 	}
 	
-	public void serialize( Invoice invoice, OutputStream out ) throws AonException {
+	public void serialize( Invoice invoice ) throws AonException {
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
 		boolean initSessionState = HibernateUtil.mustCloseSession();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
@@ -626,7 +620,7 @@ public class A3Writer extends BasicExporter {
 		HibernateUtil.setBeginTransaction(false);
 		try {
 			HibernateUtil.getSession(sessionFactoryName).refresh(invoice);
-			init( invoice, out );
+			init( invoice );
 			write();
 		} catch (Throwable t ) {
 		    try {
@@ -644,15 +638,12 @@ public class A3Writer extends BasicExporter {
 			}
 		}
 	}
-    
-	public static void main(String[] args) throws IOException, AonException {
-		A3Writer writer = new A3Writer();
-		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
-		Invoice invoice = (Invoice) bean.get(280791);
-		File file = new File("/tmp/suenlac3.txt");
-		OutputStream out = new FileOutputStream(file);
-		writer.serialize(invoice, out);
-		out.close();
+
+	@Override
+	public Map<String, byte[]> getDataMap() {
+		Map<String, byte[]> map = new HashMap<String, byte[]>();
+		map.put("suenlac3.txt", getData());
+		return map;
 	}
 	
 }

@@ -20,11 +20,13 @@
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:htmlCommandLink id="geyce"
-						value="#{bundle.finance_invoiceExport_geyce}" target="_blank"
-						disabled="#{empty invoiceExporter.checkList}"
-						actionListener="#{invoiceExporter.onDownloadGeyce}"
-						styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+					<aon:commandLink id="geyce"
+						reRender="showGeyceWindow" immediate="#{true}"
+						value="#{bundle.finance_invoiceExport_geyce}"
+						actionListener="#{invoiceExporter.onShowGeyceWindow}"
+						styleClass="aon-finding-toolbar-item aon-icon-mail-save" >
+					</aon:commandLink>
+						
 					<aon:htmlCommandLink id="a3"
 						value="#{bundle.finance_invoiceExport_a3}" target="_blank"
 						disabled="#{empty invoiceExporter.checkList}"
@@ -129,5 +131,7 @@
 			</aon:div>
 		</aon:form>
 
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoiceExporter/modalGeyce.xhtml" />
+		
 	</ui:define>
 </ui:composition>

@@ -1,13 +1,14 @@
 package com.code.aon.ui.finance;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -38,7 +39,7 @@ public abstract class BasicExporter {
 	
 	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 
-	private OutputStream out;
+	private ByteArrayOutputStream out;
 	
 	private byte[] line;
 	
@@ -52,8 +53,11 @@ public abstract class BasicExporter {
 	
 	private List<AccountEntryDetail> details;
 	
-	public void init( Invoice invoice, OutputStream out ) throws ManagerBeanException {
-		this.out = out;
+	public BasicExporter() {
+		this.out = new ByteArrayOutputStream();
+	}
+
+	public void init( Invoice invoice ) throws ManagerBeanException {
 		this.invoice = invoice;
 		this.accountEntry = obtainAccountEntry();
 		InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
@@ -61,7 +65,7 @@ public abstract class BasicExporter {
 		this.details = obtainDetails();
 		this.registryDetail = obtainRegistryDetail();
 	}
-	
+
 	private AccountEntry obtainAccountEntry() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 		Criteria criteria = new Criteria();
@@ -239,6 +243,10 @@ public abstract class BasicExporter {
 	protected void writeLine() throws IOException {
 		out.write(this.line);
 	}
+
+	protected void writeNewLine() throws IOException {
+		out.write("\r\n".getBytes());
+	}
 	
 	protected Invoice getInvoice() {
 		return invoice;
@@ -259,9 +267,13 @@ public abstract class BasicExporter {
 	protected AccountEntryDetail getRegistryDetail() {
 		return registryDetail;
 	}
-
-	public abstract String getFileName();
+	
+	protected byte[] getData() {
+		return out.toByteArray();
+	}
 	
 	public abstract void write() throws IOException, ManagerBeanException;
+	
+	public abstract Map<String,byte[]> getDataMap();
 	
 }
