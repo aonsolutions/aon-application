@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showContractEmbargoWindow">
+		<c:if test="#{contract.showContractEmbargoWindow}">
+			<rich:modalPanel id="embargoModalPanel" minHeight="400"
+				minWidth="500" showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.payroll_salary_embargos_tab}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							actionListener="#{controller.onCancel}"
+							reRender="showContractEmbargoWindow,#{reRender}" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{contract.showContractEmbargoWindow}" value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="embargoModalForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<aon:div styleClass="aon-toolbar">
+										<aon:commandButton id="embargoSave"
+											value="#{bundle.aon_accept}"
+											reRender="showContractEmbargoWindow, #{reRender}"
+											actionListener="#{controller.onAccept}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept">
+											<f:setPropertyActionListener
+												target="#{contract.showContractEmbargoWindow}" value="#{false}" />
+										</aon:commandButton>
+										<aon:commandButton id="embargoCancel"
+											value="#{bundle.aon_cancel}"
+											reRender="showContractEmbargoWindow, #{reRender}"
+											actionListener="#{controller.onCancel}"
+											immediate="true"
+											styleClass="aon-finding-toolbar-item aon-icon-cancel">
+											<f:setPropertyActionListener
+												target="#{contract.showContractEmbargoWindow}" value="#{false}" />
+										</aon:commandButton>
+									</aon:div>
+
+									<aon:panelGrid id="embargoModalContent" columns="2" style="width: 100%;">
+										<aon:outputLabel for="ContractEmbargo_embargableType" value="#{bundle.aon_type}" />
+										<aon:selectOneMenu id="ContractEmbargo_embargableType"
+											value="#{controller.to.embargableType}">
+											<f:selectItem value="#{null}" itemLabel=" - " />
+											<f:selectItems value="#{payrollCollections.embargableTypeList}"  />
+										</aon:selectOneMenu>	
+									
+										<aon:outputLabel for="ContractEmbargo_startDate" value="#{bundle.aon_start_date}" />
+										<aon:selectInputDate id="ContractEmbargo_startDate" 
+											required="#{true}" 
+											value="#{controller.to.startDate}"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"/>
+											
+										<aon:outputLabel for="ContractEmbargo_endDate" value="#{bundle.aon_end_date}" />
+										<aon:selectInputDate id="ContractEmbargo_endDate"
+											value="#{controller.to.endDate}"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"/>
+										
+										<aon:outputText value="#{bundle.aon_end_date}" 
+											rendered="#{controller.to.endDate!=null}" />
+										<aon:outputText value="#{controller.to.endDate}"
+											rendered="#{controller.to.endDate!=null}" >
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+												timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:outputText>  
+										
+										<aon:outputLabel for="ContractEmbargo_amount" value="#{bundle.aon_amount}" />
+										<aon:inputText id="ContractEmbargo_amount" required="#{true}"
+											size="20" maxlength="18"
+											value="#{controller.to.amount}" />
+										
+										<aon:outputLabel for="ContractEmbargo_description" value="#{bundle.aon_description}" />
+										<aon:inputText id="ContractEmbargo_description"
+											size="64" maxlength="64"
+											value="#{controller.to.description}" />
+									</aon:panelGrid>
+									
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+</ui:composition>

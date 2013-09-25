@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+	
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:param name="controller" value="#{contractEmbargo}" />
+		<ui:define name="columns">
+	
+		<aon:column alias="ContractEmbargo.expression" 
+			styleClass="aon-editDataTable-textColumn aon-width-70 aon-nowrap">
+			<f:facet name="header">
+				<aon:outputLabel for="ContractEmbargo_embargableType" value="#{bundle.aon_type}" />
+			</f:facet>
+			<aon:outputText value="#{to.embargableType}" rendered="#{formList}"/>
+			<aon:selectOneMenu id="ContractEmbargo_embargableType" rendered="#{formEdit}"
+				value="#{controller.to.embargableType}">
+				<f:selectItem value="#{null}" itemLabel=" - " />
+				<f:selectItems value="#{payrollCollections.embargableTypeList}"  />
+			</aon:selectOneMenu>	
+			<f:facet name="footer">
+				<aon:selectOneMenu id="ContractEmbargo_embargableType-New" rendered="#{formNew}"
+					value="#{controller.to.embargableType}">
+					<f:selectItem value="#{null}" itemLabel=" - " />
+					<f:selectItems value="#{payrollCollections.embargableTypeList}"  />
+				</aon:selectOneMenu>
+			</f:facet>
+		</aon:column>
+		
+		<aon:column alias="ContractEmbargo.startDate"
+			styleClass="aon-editDataTable-dateColumn aon-width-150">
+			<f:facet name="header">
+				<aon:outputLabel for="ContractEmbargo_startDate" value="#{bundle.aon_start_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.startDate}" rendered="#{formList}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+			<aon:selectInputDate id="ContractEmbargo_startDate" rendered="#{formEdit}"
+				required="#{true}"
+				value="#{controller.to.startDate}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}"/>
+			<f:facet name="footer">
+				<aon:selectInputDate id="ContractEmbargo_startDate-New" rendered="#{formNew}"
+					required="#{true}"
+					value="#{controller.to.startDate}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}"/>
+			</f:facet>
+		</aon:column>
+		
+		<aon:column alias="ContractEmbargo.endDate"
+			styleClass="aon-editDataTable-dateColumn aon-width-150">
+			<f:facet name="header">
+				<aon:outputLabel for="ContractEmbargo_endDate" value="#{bundle.aon_end_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.endDate}" rendered="#{formList}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+			<aon:selectInputDate id="ContractEmbargo_endDate" rendered="#{formEdit}"
+				value="#{controller.to.endDate}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}"/>
+			<f:facet name="footer">
+				<aon:selectInputDate id="ContractEmbargo_endDate-New" rendered="#{formNew}"
+					value="#{controller.to.endDate}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}"/>
+			</f:facet>
+		</aon:column>
+		
+		<aon:column alias="ContractEmbargo.amount"
+			styleClass="aon-editDataTable-numberColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputLabel for="ContractEmbargo_amount" value="#{bundle.aon_amount}" />
+			</f:facet>
+			<aon:outputText value="#{to.amount}" rendered="#{formList}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:inputText id="ContractEmbargo_amount" required="#{true}"
+				rendered="#{formEdit}" size="20"
+				value="#{controller.to.amount}" maxlength="18" />
+			<f:facet name="footer">
+				<aon:inputText id="ContractEmbargo_amount-New" required="#{true}"
+					rendered="#{formNew}" size="20"
+					value="#{controller.to.amount}" maxlength="18" />
+			</f:facet>
+		</aon:column>
+		
+		<aon:column alias="ContractEmbargo.description"
+			styleClass="aon-editDataTable-textColumn aon-width-auto">
+			<f:facet name="header">
+				<aon:outputLabel for="ContractEmbargo_description" value="#{bundle.aon_description}" />
+			</f:facet>
+			<aon:outputText value="#{to.description}" rendered="#{formList}" />
+			<aon:inputText id="ContractEmbargo_description"
+				rendered="#{formEdit}" size="64"
+				value="#{controller.to.description}" maxlength="64" />
+			<f:facet name="footer">
+				<aon:inputText id="ContractEmbargo_description-New"
+					rendered="#{formNew}" size="64"
+					value="#{controller.to.description}" maxlength="64" />
+			</f:facet>
+		</aon:column>
+		
+	</ui:define>
+	
+</ui:decorate>
+	
+</ui:composition>

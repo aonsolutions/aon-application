@@ -1,7 +1,5 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
-import static com.code.aon.ui.common.ICommonMessages.PAYROLL_TRAINING_CENTER_DIRECT_DEBIT;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +35,6 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
-import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.report.controller.ReportManager;
@@ -85,6 +82,7 @@ public class ContractController extends BasicController {
 	private ContractParams params;
 
 	private boolean showNewContractModal;
+	private boolean showContractEmbargoWindow;
 	private boolean skipPayrollData;
 	
 	public ContractParams getParams() {
@@ -108,6 +106,12 @@ public class ContractController extends BasicController {
 	}
 	public void setShowNewContractModal(boolean showNewContractModal) {
 		this.showNewContractModal = showNewContractModal;
+	}
+	public boolean isShowContractEmbargoWindow() {
+		return showContractEmbargoWindow;
+	}
+	public void setShowContractEmbargoWindow(boolean showContractEmbargoWindow) {
+		this.showContractEmbargoWindow = showContractEmbargoWindow;
 	}
 	public Agreement getAgreement() {
 		return agreement;

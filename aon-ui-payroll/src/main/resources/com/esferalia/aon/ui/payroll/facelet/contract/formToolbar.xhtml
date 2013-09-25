@@ -179,6 +179,17 @@
 					target="#{extensionContrata.showExtensionContrataWindow}" value="#{true}" />
 			</aon:menuItem>
 			
+			<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+				<aon:menuItem id="contract-embargo" 
+					value="#{bundle.payroll_salary_embargos_tab}"
+					reRender="showContractEmbargoWindow"
+					actionListener="#{contractEmbargo.onReset}"
+					iconClass="aon-icon-settle" >
+					<f:setPropertyActionListener
+						target="#{contract.showContractEmbargoWindow}" value="#{true}" />
+				</aon:menuItem>
+			</c:if>
+			
 			<rich:menuSeparator id="actionsSeparator" />
 			
 			<aon:menuItem id="contrata-communication-log"

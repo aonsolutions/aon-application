@@ -11,7 +11,7 @@
 	<aon:column styleClass="aon-editDataTable-numberColumn">
 		<f:facet name="header">
 			<aon:outputLabel for="IrpfDataAscendants_birthYear"
-				value="#{payrollBundle.payroll_irpfData_birthYear}" />
+				value="#{bundle.payroll_irpfData_birthYear}" />
 		</f:facet>
 		<aon:outputText value="#{to.birthYear}" 
 			rendered="#{formList}" />
@@ -30,7 +30,7 @@
 	<aon:column styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputLabel for="IrpfDataAscendants_disabilityLevel"
-				value="#{payrollBundle.payroll_irpfData_disabilityLevel}" />
+				value="#{bundle.payroll_irpfData_disabilityLevel}" />
 		</f:facet>
 		<aon:outputText value="#{to.disabilityLevel}" 
 			rendered="#{formList}" />
@@ -51,7 +51,7 @@
 	<aon:column styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputLabel for="IrpfDataAscendants_dependence"
-				value="#{payrollBundle.payroll_irpfData_dependence}" />
+				value="#{bundle.payroll_irpfData_dependence}" />
 		</f:facet>
 		<aon:outputText value="&#160;" style="padding-left: 15px;" rendered="#{formList}"
 			styleClass="#{to.dependence?'aon-icon-checked':'aon-icon-check'}"/>
@@ -64,7 +64,7 @@
 	<aon:column styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputLabel for="IrpfDataAscendants_anotherDescendient"
-				value="#{payrollBundle.payroll_irpfData_anotherDescendient}" />
+				value="#{bundle.payroll_irpfData_anotherDescendient}" />
 		</f:facet>
 		<aon:outputText value="&#160;" style="padding-left: 15px;" rendered="#{formList}"
 			styleClass="#{to.anotherDescendient?'aon-icon-checked':'aon-icon-check'}"/>
