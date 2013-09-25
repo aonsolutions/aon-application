@@ -11,7 +11,7 @@
 	<aon:div>
 		<aon:panel>
 			<f:facet name="header">
-				<aon:outputText value="#{payrollBundle.payroll_irpfData_descendients}" />
+				<aon:outputText value="#{bundle.payroll_irpfData_descendients}" />
 			</f:facet>
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 				<ui:param name="controller" value="#{irpfDataDescendients}" />
@@ -29,7 +29,7 @@
 							
 		<aon:panel>
 			<f:facet name="header">
-				<aon:outputText value="#{payrollBundle.payroll_irpfData_ascendants}" />
+				<aon:outputText value="#{bundle.payroll_irpfData_ascendants}" />
 			</f:facet>
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 				<ui:param name="controller" value="#{irpfDataAscendants}" />

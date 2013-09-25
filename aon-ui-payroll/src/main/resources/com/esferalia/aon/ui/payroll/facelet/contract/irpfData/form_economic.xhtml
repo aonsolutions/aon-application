@@ -13,28 +13,28 @@
 		<aon:panelGrid columns="2" width="100%">
 
 			<aon:outputLabel for="irpfData_annualRemuneration"
-				value="#{payrollBundle.payroll_irpfData_annualRemuneration}" />
+				value="#{bundle.payroll_irpfData_annualRemuneration}" />
 			<aon:inputText id="irpfData_annualRemuneration" 
 				value="#{irpfData.to.annualRemuneration}" maxlength="18" size="25">
 				<f:validateDoubleRange />
 			</aon:inputText>
 
 			<aon:outputLabel for="irpfData_irregular18_2Reduction"
-				value="#{payrollBundle.payroll_irpfData_irregular18_2Reduction}" />
+				value="#{bundle.payroll_irpfData_irregular18_2Reduction}" />
 			<aon:inputText id="irpfData_irregular18_2Reduction" 
 				value="#{irpfData.to.irregular18_2Reduction}" maxlength="18" size="25">
 				<f:validateDoubleRange />
 			</aon:inputText>
 
 			<aon:outputLabel for="irpfData_irregular18_3Reduction"
-				value="#{payrollBundle.payroll_irpfData_irregular18_3Reduction}" />
+				value="#{bundle.payroll_irpfData_irregular18_3Reduction}" />
 			<aon:inputText id="irpfData_irregular18_3Reduction" 
 				value="#{irpfData.to.irregular18_3Reduction}" maxlength="18" size="25">
 				<f:validateDoubleRange />
 			</aon:inputText>
 
 			<aon:outputLabel for="irpfData_deducciblesExpenses"
-				value="#{payrollBundle.payroll_irpfData_deducciblesExpenses}" />
+				value="#{bundle.payroll_irpfData_deducciblesExpenses}" />
 			<aon:inputText id="irpfData_deducciblesExpenses" 
 				value="#{irpfData.to.deducciblesExpenses}" maxlength="18" size="25">
 				<f:validateDoubleRange />
@@ -50,14 +50,14 @@
 -->
 
 			<aon:outputLabel for="irpfData_spousalSupport"
-				value="#{payrollBundle.payroll_irpfData_spousalSupport}" />
+				value="#{bundle.payroll_irpfData_spousalSupport}" />
 			<aon:inputText id="irpfData_spousalSupport" 
 				value="#{irpfData.to.spousalSupport}" maxlength="18" size="25">
 				<f:validateDoubleRange />
 			</aon:inputText>
 
 			<aon:outputLabel for="irpfData_foodAnnuity"
-				value="#{payrollBundle.payroll_irpfData_foodAnnuity}" />
+				value="#{bundle.payroll_irpfData_foodAnnuity}" />
 			<aon:inputText id="irpfData_foodAnnuity" 
 				value="#{irpfData.to.foodAnnuity}" maxlength="18" size="25">
 				<f:validateDoubleRange />
@@ -69,12 +69,12 @@
 		
 		<aon:panel>
 			<f:facet name="header">
-				<aon:outputText value="#{payrollBundle.payroll_irpfData_deductHomeLoan}" />
+				<aon:outputText value="#{bundle.payroll_irpfData_deductHomeLoan}" />
 			</f:facet>
 			<aon:selectOneRadio id="irpfData_deductHomeLoan" layout="pageDirection" 
 				value="#{irpfData.to.deductHomeLoan}" >
-				<f:selectItem itemLabel="#{payrollBundle.payroll_irpfData_deductHomeLoan_check1}" itemValue="#{irpfData.deductHomeLoanAfter}"  />
-				<f:selectItem itemLabel="#{payrollBundle.payroll_irpfData_deductHomeLoan_check2}" itemValue="#{irpfData.deductHomeLoanBefore}"  />
+				<f:selectItem itemLabel="#{bundle.payroll_irpfData_deductHomeLoan_check1}" itemValue="#{irpfData.deductHomeLoanAfter}"  />
+				<f:selectItem itemLabel="#{bundle.payroll_irpfData_deductHomeLoan_check2}" itemValue="#{irpfData.deductHomeLoanBefore}"  />
 			</aon:selectOneRadio>
 		</aon:panel>
 		
