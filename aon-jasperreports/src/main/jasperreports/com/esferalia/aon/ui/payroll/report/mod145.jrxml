@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mod145" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0">
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="384"/>
-	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
+	<property name="ireport.y" value="275"/>
+	<style name="default" isDefault="true" fontName="SansSerif"/>
 	<style name="Default"/>
 	<style name="complements_TABLE">
 		<box>
@@ -73,6 +73,22 @@
 	<field name="dependence" class="java.lang.Boolean"/>
 	<field name="movingDate" class="java.util.Date"/>
 	<field name="labourProlongation" class="java.lang.Boolean"/>
+
+	<field name="descendientCount" class="java.lang.Integer"/>
+	<field name="fiscalExclusion" class="java.lang.Boolean"/>
+	<field name="issueDate" class="java.util.Date"/>
+	<field name="annualRemuneration" class="java.lang.Double"/>
+	<field name="irregular18_2Reduction" class="java.lang.Double"/>
+	<field name="irregular18_3Reduction" class="java.lang.Double"/>
+	<field name="deducciblesExpenses" class="java.lang.Double"/>
+	<field name="spousalSupport" class="java.lang.Double"/>
+	<field name="foodAnnuity" class="java.lang.Double"/>
+	<field name="deductHomeLoan" class="com.esferalia.aon.payroll.enumeration.DeductHomeLoan"/>
+	<field name="requestIrpf" class="java.lang.Double"/>
+
+
+
+
 	<variable name="formatter" class="java.text.SimpleDateFormat">
 		<initialValueExpression><![CDATA[new SimpleDateFormat("dd' de 'MMMMMMMMMMM' de 'yyyy")]]></initialValueExpression>
 	</variable>
@@ -97,31 +113,38 @@
 		<band height="95" splitType="Stretch">
 			<textField>
 				<reportElement positionType="Float" mode="Opaque" x="0" y="24" width="495" height="16" forecolor="#FFFFFF" backcolor="#666666"/>
-				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
-					<font size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_header1}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement positionType="Float" mode="Opaque" x="495" y="24" width="59" height="34" backcolor="#CCCCCC"/>
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font size="11" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+					<font size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Modelo 145"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_header1}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" x="0" y="58" width="551" height="34"/>
+				<reportElement positionType="Float" mode="Opaque" x="500" y="24" width="55" height="11" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Modelo"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="58" width="555" height="34"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font size="7" isBold="false" isUnderline="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_header3}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_header3}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" mode="Opaque" x="0" y="40" width="495" height="16" forecolor="#FFFFFF" backcolor="#666666"/>
-				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
-					<font size="11" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font size="12" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_header2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_header2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" mode="Opaque" x="500" y="35" width="55" height="21" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font size="16" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["145"]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -136,128 +159,134 @@
 			<textField>
 				<reportElement x="340" y="35" width="84" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="true" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_salary_nif}+" :"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_salary_nif}+" :"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="424" y="35" width="71" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract}.getPerson().getRegistry().getDocument()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contract}.getPerson().getRegistry().getDocument()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="424" y="82" width="119" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract}.getPerson().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contract}.getPerson().getName()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="340" y="82" width="84" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="true" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_name}+" :"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_name}+" :"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="424" y="58" width="119" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract}.getPerson().getFirstSurname()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contract}.getPerson().getFirstSurname()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="340" y="58" width="84" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="true" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor10}+" :"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor10}+" :"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="424" y="70" width="119" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract}.getPerson().getSecondSurname()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contract}.getPerson().getSecondSurname()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="340" y="70" width="84" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="true" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor11}+" :"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor11}+" :"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="340" y="106" width="84" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="true" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor13}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor13}]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="513" y="106" width="30" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{contract}.getPerson().getBirthDate()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contract}.getPerson().getBirthDate()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="28" y="35" width="283" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="28" y="46" width="283" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor3}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor3}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="28" y="57" width="283" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor4}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor4}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="28" y="68" width="283" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor5}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor5}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="28" y="79" width="283" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor6}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor6}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="28" y="90" width="283" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor7}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor7}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="28" y="101" width="283" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor8}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor8}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="10" y="6" width="283" height="11" forecolor="#FFFFFF" backcolor="#666666"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineColor="#000000"/>
+				</box>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="8" isBold="false" isItalic="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor1}]]></textFieldExpression>
 			</textField>
 			<rectangle radius="0">
 				<reportElement mode="Opaque" x="2" y="258" width="552" height="136" forecolor="#000000" backcolor="#CCCCCC"/>
@@ -285,318 +314,341 @@
 			</rectangle>
 			<textField>
 				<reportElement mode="Opaque" x="10" y="252" width="503" height="11" forecolor="#FFFFFF" backcolor="#666666"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineColor="#000000"/>
+				</box>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="8" isBold="false" isItalic="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_descendants1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_descendants1}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="10" y="397" width="443" height="11" forecolor="#FFFFFF" backcolor="#666666"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineColor="#000000"/>
+				</box>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="8" isBold="false" isItalic="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_ascendants1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_ascendants1}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="10" y="506" width="526" height="11" forecolor="#FFFFFF" backcolor="#666666"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineColor="#000000"/>
+				</box>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="8" isBold="false" isItalic="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_pension1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_pension1}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="" isBlankWhenNull="false">
 				<reportElement mode="Opaque" x="10" y="551" width="414" height="11" forecolor="#FFFFFF" backcolor="#666666"/>
-				<textElement verticalAlignment="Middle" markup="none">
-					<font isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_payments1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_payments1}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="10" y="611" width="199" height="11" forecolor="#FFFFFF" backcolor="#666666"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineColor="#000000"/>
+				</box>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="8" isBold="false" isItalic="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_sign1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_sign1}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="293" y="611" width="118" height="11" forecolor="#FFFFFF" backcolor="#666666"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineColor="#000000"/>
+				</box>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isBold="false" isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="8" isBold="false" isItalic="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_receipt1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_receipt1}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="16" y="134" width="84" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="true" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor14}+": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor14}+": "]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="100" y="134" width="413" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor15}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor15}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="100" y="145" width="413" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor16}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor16}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="100" y="156" width="311" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor9}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor9}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="100" y="167" width="413" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor17}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor17}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="411" y="156" width="71" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{spouseDocument}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{spouseDocument}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="516" y="134" width="20" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="516" y="134" width="20" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{familySituation}.ordinal()==0?"X":""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="516" y="145" width="20" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="516" y="145" width="20" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{familySituation}.ordinal()==1?"X":""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="516" y="167" width="20" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="516" y="167" width="20" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{familySituation}.ordinal()==2?"X":""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="16" y="181" width="137" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="true" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor18}+$R{payroll_mod145_disability_level}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor18}+$R{payroll_mod145_disability_level}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="153" y="181" width="112" height="11"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_disability_level_GT_EQ_33_LT_65}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_disability_level_GT_EQ_33_LT_65}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="283" y="181" width="107" height="11"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_disability_level_GT_65}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_disability_level_GT_65}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="265" y="181" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="265" y="181" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{disabilityLevel}.ordinal()==0?"X":""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="390" y="181" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="390" y="181" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{disabilityLevel}.ordinal()==1?"X":""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="516" y="181" width="20" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="516" y="181" width="20" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="409" y="181" width="107" height="11"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_dependence}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_dependence}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="16" y="198" width="84" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="true" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor19}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor19}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="100" y="198" width="353" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor17}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor17}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="453" y="198" width="83" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{movingDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{movingDate}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="16" y="214" width="105" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="true" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="true" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor20}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor20}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="129" y="214" width="387" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_perceptor21}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_perceptor21}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="516" y="214" width="20" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="516" y="214" width="20" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{labourProlongation}?"X":""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="11" y="263" width="502" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font fontName="SansSerif" size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_descendants2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_descendants2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="121" y="274" width="286" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_descendants3}+$R{payroll_mod145_disability_level}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_descendants3}+$R{payroll_mod145_disability_level}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="413" y="274" width="129" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_descendants2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_descendants2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="121" y="285" width="286" height="27"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_descendants2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_descendants2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="413" y="285" width="129" height="27"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_descendants2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_descendants2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="11" y="517" width="249" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_descendants3}+$R{payroll_mod145_disability_level}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_descendants3}+$R{payroll_mod145_disability_level}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="11" y="528" width="182" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_pension2}+$R{payroll_mod145_pension4}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_pension2}+$R{payroll_mod145_pension4}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="276" y="528" width="184" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_pension3}+$R{payroll_mod145_pension4}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_pension3}+$R{payroll_mod145_pension4}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="193" y="528" width="83" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[]]></textFieldExpression>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="460" y="528" width="83" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[]]></textFieldExpression>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="11" y="562" width="515" height="16"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_payments2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_payments2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="11" y="578" width="515" height="16"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_payments3}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_payments3}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="526" y="567" width="20" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="526" y="583" width="20" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="11" y="596" width="249" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_payments4}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_payments4}]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="7" y="644" width="262" height="60"/>
@@ -609,412 +661,364 @@
 				<textElement verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[]]></textFieldExpression>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="7" y="623" width="262" height="21"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_sign2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_sign2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="287" y="623" width="71" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_receipt2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_receipt2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="287" y="634" width="256" height="10"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_receipt3}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_receipt3}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="11" y="315" width="44" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_birth_date}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_birth_date}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="63" y="315" width="44" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_descendants5}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_descendants5}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="10" y="330" width="45" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 0 )).getBirthYear()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 0 )).getBirthYear()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="10" y="343" width="45" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 1 )).getBirthYear()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 1 )).getBirthYear()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="10" y="356" width="45" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[(!$P{descendants}.isEmpty()&&$P{descendants}.size()>2)?((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 2 )).getBirthYear():""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[(!$P{descendants}.isEmpty()&&$P{descendants}.size()>2)?((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 2 )).getBirthYear():""]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="10" y="369" width="45" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[(!$P{descendants}.isEmpty()&&$P{descendants}.size()>3)?((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 3 )).getBirthYear():""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[(!$P{descendants}.isEmpty()&&$P{descendants}.size()>3)?((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 3 )).getBirthYear():""]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="62" y="330" width="45" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 0 )).getAdoptionYear()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 0 )).getAdoptionYear()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="62" y="343" width="45" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 1 )).getAdoptionYear()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 1 )).getAdoptionYear()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="62" y="356" width="45" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[(!$P{descendants}.isEmpty()&&$P{descendants}.size()>=2)?((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 2 ))==null?"":((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 2 )).getAdoptionYear():""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[(!$P{descendants}.isEmpty()&&$P{descendants}.size()>=2)?((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 2 ))==null?"":((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 2 )).getAdoptionYear():""]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="62" y="369" width="45" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[(!$P{descendants}.isEmpty()&&$P{descendants}.size()>3)?((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 3 ))==null?"":((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 3 )).getAdoptionYear():""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[(!$P{descendants}.isEmpty()&&$P{descendants}.size()>3)?((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 3 ))==null?"":((com.esferalia.aon.payroll.IrpfDataDescendients)$P{descendants}.get( 3 )).getAdoptionYear():""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="150" y="315" width="59" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_disability_level_GT_EQ_33_LT_65}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_disability_level_GT_EQ_33_LT_65}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="216" y="315" width="71" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_disability_level_GT_65}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_disability_level_GT_65}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="175" y="330" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="175" y="330" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="175" y="343" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="175" y="343" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="175" y="356" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="175" y="356" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="175" y="369" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="175" y="369" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="243" y="330" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="243" y="330" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="243" y="343" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="243" y="343" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="243" y="356" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="243" y="356" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="243" y="369" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="243" y="369" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="300" y="315" width="107" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_dependence}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_dependence}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="340" y="330" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="340" y="330" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="340" y="356" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="340" y="356" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="340" y="369" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="340" y="369" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="340" y="343" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="340" y="343" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="470" y="330" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="470" y="330" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="470" y="356" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="470" y="356" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="470" y="343" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="470" y="343" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="470" y="369" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="470" y="369" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="10" y="383" width="502" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
 					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_descendants6}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_descendants6}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="11" y="453" width="44" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_birth_date}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_birth_date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="10" y="468" width="45" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[]]></textFieldExpression>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="175" y="468" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="175" y="468" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="150" y="453" width="59" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_disability_level_GT_EQ_33_LT_65}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_disability_level_GT_EQ_33_LT_65}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="216" y="453" width="71" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_disability_level_GT_65}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_disability_level_GT_65}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="175" y="481" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="175" y="481" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="470" y="481" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="470" y="481" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="470" y="468" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="470" y="468" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="340" y="481" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="340" y="481" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="243" y="481" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="243" y="481" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="243" y="468" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="243" y="468" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="300" y="453" width="107" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_dependence}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_dependence}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="340" y="468" width="18" height="11">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				<reportElement mode="Opaque" x="340" y="468" width="18" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["X"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["X"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="10" y="481" width="45" height="11"/>
 				<textElement verticalAlignment="Middle">
-					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[]]></textFieldExpression>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="10" y="409" width="502" height="11"/>
 				<textElement verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_ascendants2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_ascendants2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="120" y="420" width="286" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_ascendants3}+$R{payroll_mod145_disability_level}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_ascendants3}+$R{payroll_mod145_disability_level}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="412" y="431" width="129" height="27"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_descendants2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_descendants2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="417" y="420" width="129" height="11"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font isItalic="false" pdfFontName="Helvetica-Oblique"/>
+					<font size="7" isItalic="false" pdfFontName="Helvetica-Oblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_mod145_ascendants4}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_mod145_ascendants4}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -1033,7 +1037,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-16" x="281" y="7" width="259" height="20">
@@ -1048,7 +1052,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of2} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of2} + " "]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

@@ -192,27 +192,23 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 		}
 		return false;
 	}
-
 	
 	@Override
 	public String obtainCommunicationNumber(byte[] data) {
-		String status = "";
-		status += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Datos comunicados al SEPE</b></div>";
-		if( data!=null ){
-			String value = new String(data); 
-			value = value.replaceAll("\n", "");
-			value = StringUtils.removeStart(value, "<?xml version='1.0' encoding='ISO-8859-1'?>");
-			value = StringUtils.removeStart(value, "<COMUNICACION>");
-			value = StringUtils.removeEnd(value, "</COMUNICACION>");
-			if(value.contains("NUM_ENVIO") && !value.contains("ERROR")){
-				status += "NUM ENVIO:         " + value;
-				value = StringUtils.substringBetween(value, "<NUM_ENVIO>", "</NUM_ENVIO>");
+		String id = new String(data); 
+		if( StringUtils.isNotBlank(id) ){
+			id = id.replaceAll("\n", "");
+			id = StringUtils.removeStart(id, "<?xml version='1.0' encoding='ISO-8859-1'?>");
+			id = StringUtils.removeStart(id, "<COMUNICACION>");
+			id = StringUtils.removeEnd(id, "</COMUNICACION>");
+			if(id.contains("<NUM_ENVIO>")){
+				id = StringUtils.removeStart(id, "<NUM_ENVIO>");
+				id = StringUtils.removeEnd(id, "</NUM_ENVIO>");
 			} else {
-				status += "ERROR:             " + value;
-				value = StringUtils.substringBetween(value, "<COD_ERROR>", "</COD_ERROR>");
+				id = StringUtils.removeStart(id, "<COD_ERROR>");
+				id = StringUtils.removeEnd(id, "</COD_ERROR>");
 			}
-			status += "<br /> ";
-			return status;
+			return id;
 		}
 		return null;
 	}

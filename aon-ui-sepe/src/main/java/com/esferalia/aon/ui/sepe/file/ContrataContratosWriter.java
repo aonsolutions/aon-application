@@ -642,7 +642,6 @@ public class ContrataContratosWriter implements IContrataWriter{
 				datos.setIDENTIFICADORPFISICA("E"+person.getRegistry().getDocument());
 			}
 		}
-		datos.setMUNICIPIORESIDENCIA(person.getRegistry().getDefaultAddress().getMunicipalityCode());
 		datos.setNACIONALIDAD(completeLength(person.getRegistry().getNationality().getIsoNum(),3,ZERO_VALUE,false));
 		datos.setNOMBREAPELLIDOS(createNombreApellidos(person));
 		if(StringUtils.isEmpty(person.getSocialSecurityNumber())){
@@ -652,6 +651,11 @@ public class ContrataContratosWriter implements IContrataWriter{
 		}
 		if(person.getRegistry().getDefaultAddress()!=null){
 			datos.setPAISRESIDENCIA(completeLength(person.getRegistry().getDefaultAddress().getRegistry().getNationality().getIsoNum(),3,ZERO_VALUE,false));
+			if(person.getRegistry().getDefaultAddress().getMunicipalityCode()!=null){
+				datos.setMUNICIPIORESIDENCIA(person.getRegistry().getDefaultAddress().getMunicipalityCode());
+			} else {
+				AonUtil.addErrorMessage("El trabajador no tiene definido el municipio de residencia.");
+			}
 		} else {
 			AonUtil.addErrorMessage("El trabajador no tiene definida la dirección.");
 		}
