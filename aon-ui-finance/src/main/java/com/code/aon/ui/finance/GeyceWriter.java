@@ -317,11 +317,16 @@ public class GeyceWriter extends BasicExporter {
 	private void writeRegistryDetail() throws IOException {
 		AccountEntryDetail aed = getRegistryDetail();
 		fillLine(aed);
+		boolean lineWritten = false;
 		while (! getTaxBreakDowns().isEmpty() ) {
 			writeDetailWithTaxes();
 			if (! getTaxBreakDowns().isEmpty() ) {
 				writeNewLine();
 			}
+			lineWritten = true;
+		}
+		if (! lineWritten) {
+			writeLine();
 		}
 	}
 
