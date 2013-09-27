@@ -141,7 +141,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private Scope SCOPE_STEPS[] = { Scope.CONTRACT, Scope.AGREEMENT,
 			Scope.SYSTEM };
 	
-	private static String [] SKIP_VARIABLES = {"CONVENIO", "SISTEMA" };
+	private static String [] SKIP_VARIABLES = {"CONVENIO", "SISTEMA", "NETO" };
 	
 	private static boolean skipVariable(Variable variable) {
 		String name = variable.getName();

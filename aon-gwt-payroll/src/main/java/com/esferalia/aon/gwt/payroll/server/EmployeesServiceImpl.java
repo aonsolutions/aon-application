@@ -1857,7 +1857,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Set<Payment> payments = SQLEvents.getPayments(connection,
 					workplaceId, startDate, endDate);
 
-			if (agreementId != null){
+			if (agreementId != null) {
 				payments.addAll(SQLAgreementDraft.getPayments(connection,
 						agreementId, startDate, endDate));
 			}
@@ -2469,6 +2469,89 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							new ExpressionException(e));
 				} catch (ExpressionException e) {
 					throw new ExpressionExceptionWrapper(e);
+				}
+			}
+
+			@Override
+			protected ISalaryCalculatorContext getLiquidCalculatorContext(
+					Connection conn, Date startDate, Date endDate,
+					Date issueDate, Criteria criteria, final double x) {
+				try {
+					SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
+							conn, startDate, endDate, issueDate, criteria) {
+						@Override
+						public Object liquid(double liquid)
+								throws ExpressionException, SQLException {
+							return x;
+						}
+						
+						@Override
+						protected IIrpfCalculatorContext getIrpfCalculatorContext(
+								Connection conn, Date startDate, Date endDate,
+								Criteria criteria) {
+							try {
+								SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
+										conn, startDate, endDate, endDate, criteria) {
+
+									@Override
+									protected double getIrpf() {
+										return 0.00;
+									}
+									
+									@Override
+									public Object liquid(double liquid)
+											throws ExpressionException, SQLException {
+										return x;
+									}
+									
+
+								};
+
+								SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
+										draft, sqlContractSalaryCalculatorCtx);
+
+								return new SQLIrpfCalculatorContext(conn, startDate,
+										endDate, sqlDraftSalaryCalculatorCtx) {
+									@Override
+									public String getNif() {
+										return "87449445H";
+									}
+
+									@Override
+									public String getApellidosNombre() {
+										return "TORVALDS BENEDICT LINUS";
+									}
+
+									@Override
+									public String getRetenedorNif() {
+										return "Z7896423E";
+									}
+
+									@Override
+									public String getRetenedorApellidosNombre() {
+										return "LINUX FOUNDATION";
+									}
+								};
+							} catch (SQLException e) {
+								throw new ExpressionExceptionWrapper(
+										new ExpressionException(e));
+							} catch (ExpressionException e) {
+								throw new ExpressionExceptionWrapper(e);
+							}
+						}
+						
+					};
+					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
+							draft, sqlContractSalaryCalculatorCtx);
+
+					sqlDraftSalaryCalculatorCtx.next();
+					return sqlDraftSalaryCalculatorCtx;
+
+				} catch (ExpressionException e) {
+					throw new ExpressionExceptionWrapper(e);
+				} catch (SQLException e) {
+					throw new ExpressionExceptionWrapper(
+							new ExpressionException(e));
 				}
 			}
 		};

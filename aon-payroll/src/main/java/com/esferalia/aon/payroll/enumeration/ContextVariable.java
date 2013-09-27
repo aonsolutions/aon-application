@@ -172,6 +172,7 @@ public enum ContextVariable implements IResourceable{
 	public static final String REMOVE = "REMOVE";
 	public static final String CONTEXT = "CONTEXT";
 
+	public static final String LIQUID = "NETO";
 	public static final String SYSTEM = "SISTEMA";
 	public static final String AGREEMENT = "CONVENIO";
 
