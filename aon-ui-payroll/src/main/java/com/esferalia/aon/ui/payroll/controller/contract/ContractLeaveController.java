@@ -196,20 +196,28 @@ public class ContractLeaveController extends BasicController {
 	
 	private void createNewConfirmReport(ContractLeaveDetail detail, ContractLeaveDetail lastLeave){
 		detail.setType(LeaveReportType.CONFIRM);
-		detail.setConfirmOrder(lastLeave.getConfirmOrder()==null?1:lastLeave.getConfirmOrder()+1);
-		detail.setContractLeave(lastLeave.getContractLeave());
-		detail.getContractLeave().setParent(detail.getContractLeave().getParent()==null?new ContractLeave():detail.getContractLeave().getParent());
-		detail.setCias(lastLeave.getCias());
-		detail.setCollegeNumber(lastLeave.getCollegeNumber());
-		detail.setStatus(lastLeave.getStatus());
-		detail.setDate(getConfirmSuggestedDate(detail.getContractLeave().getStartDate(),lastLeave.getConfirmOrder()));
+		detail.setStatus(ContractLeaveStatus.PENDING);
+		if(lastLeave!=null && lastLeave.getId()!=null){
+			detail.setConfirmOrder(lastLeave.getConfirmOrder()==null?1:lastLeave.getConfirmOrder()+1);
+			detail.setContractLeave(lastLeave.getContractLeave());
+			detail.getContractLeave().setParent(detail.getContractLeave().getParent()==null?new ContractLeave():detail.getContractLeave().getParent());
+			detail.setCias(lastLeave.getCias());
+			detail.setCollegeNumber(lastLeave.getCollegeNumber());
+			detail.setDate(getConfirmSuggestedDate(detail.getContractLeave().getStartDate(),lastLeave.getConfirmOrder()));
+		} else {
+			detail.getContractLeave().setParent(new ContractLeave());
+			detail.setDate(new Date());
+		}
 	}
+	
 	private void createNewLeaveReport(ContractLeaveDetail detail, ContractLeaveDetail lastLeave){
 		detail.setType(LeaveReportType.LEAVE);
 		detail.setContractLeave(new ContractLeave());
 		detail.getContractLeave().setParent(new ContractLeave());
-		detail.setCias(lastLeave!=null?lastLeave.getCias():null);
-		detail.setCollegeNumber(lastLeave!=null?lastLeave.getCollegeNumber():null);
+		if(lastLeave!=null && lastLeave.getId()!=null){
+			detail.setCias(lastLeave!=null?lastLeave.getCias():null);
+			detail.setCollegeNumber(lastLeave!=null?lastLeave.getCollegeNumber():null);
+		}
 		detail.setStatus(ContractLeaveStatus.PENDING);
 		detail.setDate(new Date());
 		calculateBases(detail.getContractLeave());

@@ -69,7 +69,7 @@
 		value="#{bundle.payroll_contractLeave_collegeNumber}" />
 	<aon:div id="collegeNumber">
 		<aon:inputText id="ContractLeaveDetail_collegeNumber"
-			value="#{contractLeave.to.collegeNumber}" >
+			value="#{contractLeave.to.collegeNumber}" maxlength="8">
 			<a4j:support event="onchange" reRender="collegeNumber" ajaxSingle="true"
 				actionListener="#{contractLeave.onChangeCollegeNumber}"/>
 		</aon:inputText>
@@ -85,7 +85,7 @@
 		value="#{bundle.payroll_contractLeave_cias}" />
 	<aon:div id="cias">
 		<aon:inputText id="ContractLeaveDetail_cias"
-			value="#{contractLeave.to.cias}" >
+			value="#{contractLeave.to.cias}" maxlength="11">
 			<a4j:support event="onchange" reRender="cias" ajaxSingle="true"
 				actionListener="#{contractLeave.onChangeCias}"/>
 		</aon:inputText>
@@ -117,21 +117,21 @@
 		rendered="#{contractLeave.to.leave}"
 		value="#{bundle.payroll_contractLeave_bases}" />
 	<aon:div rendered="#{contractLeave.to.leave}">
-		<aon:outputLabel for="ContractLeave_dailyCgcBase" value="#{bundle.payroll_contractLeave_dailyCgcBase}:" 
+		<aon:outputLabel for="ContractLeave_dailyCgcBase" value="#{bundle.payroll_contractLeave_dailyCgc}:" 
 			styleClass="aon-italic" />
 		<aon:inputText id="ContractLeave_dailyCgcBase" value="#{contractLeave.to.contractLeave.dailyCgcBase}" 
 			rendered="#{contractLeave.to.leave}" size="7" >
 			<f:validateDoubleRange />
 		</aon:inputText>
 		
-		<aon:outputLabel for="ContractLeave_dailyCgpBase" value="#{bundle.payroll_contractLeave_dailyCgpBase}:"  
+		<aon:outputLabel for="ContractLeave_dailyCgpBase" value="#{bundle.payroll_contractLeave_dailyCgp}:"  
 			styleClass="aon-italic aon-margin-left" />
 		<aon:inputText id="ContractLeave_dailyCgpBase" value="#{contractLeave.to.contractLeave.dailyCgpBase}" 
 			rendered="#{contractLeave.to.leave}" size="7" >
 			<f:validateDoubleRange />
 		</aon:inputText>
 		
-		<aon:outputLabel for="ContractLeave_dailyRegBase" value="#{bundle.payroll_contractLeave_dailyRegBase}:"  
+		<aon:outputLabel for="ContractLeave_dailyRegBase" value="#{bundle.payroll_contractLeave_dailyReg}:"  
 			styleClass="aon-italic aon-margin-left" />
 		<aon:inputText id="ContractLeave_dailyRegBase" value="#{contractLeave.to.contractLeave.dailyRegBase}" 
 			rendered="#{contractLeave.to.leave}" size="7" >

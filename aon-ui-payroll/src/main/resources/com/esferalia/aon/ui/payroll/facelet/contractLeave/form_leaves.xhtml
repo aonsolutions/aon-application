@@ -14,6 +14,13 @@
 		
 		<aon:rowSelector actionListener="#{contractLeave.onSelectLeave}" />
 		
+		<aon:column styleClass="aon-editDataTable-iconColumn">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<aon:outputText value="&#160;" />
+		</aon:column>
+		
 		<aon:column alias="ContractLeave.id"
 			styleClass="aon-editDataTable-numberColumn aon-width-50">
 			<f:facet name="header">
@@ -102,13 +109,6 @@
 			<aon:outputText value="#{leave.parent.id}" />
 		</aon:column>
 		
-		<aon:column styleClass="aon-editDataTable-iconColumn">
-			<f:facet name="header">
-				<aon:outputText value="&#160;" />
-			</f:facet>
-			<aon:outputText value="&#160;" />
-		</aon:column>
-  
 		<ui:include 
 			src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/leaveDetail_list.xhtml" />
 

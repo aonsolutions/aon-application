@@ -234,7 +234,7 @@
 				value="#{contract.params.trainingSchedule}" />
 		</c:if>
 		
-		<c:if test="#{not empty contract.params.bonus}" >
+		<c:if test="#{not empty contract.params.bonus.id}" >
 			<aon:outputText value="#{bundle.sepe_contrata_contract_bonus}" />
 			<aon:div>
 				<aon:outputText value="#{contract.params.bonus.fullDescription}" />
