@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="contractLeaveForm">
+			<ui:decorate
+				template="/com/esferalia/aon/ui/payroll/facelet/contractLeave/formToolbar.xhtml" >
+				<ui:param name="controller" value="#{contractLeave}" />
+				<ui:param name="skipCancelButton" value="#{contractLeave.backAction==null}" />
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" style="width:100%;" 
+					columnClasses="
+					aon-panelGrid-even aon-noborder aon-vertical-align-top aon-width-500
+					, 
+					aon-panelGrid-even aon-noborder aon-vertical-align-top aon-width-auto
+					">
+				
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.payroll_contractLeave_report_type}" />
+						</f:facet>
+						<aon:panelGrid columns="2" id="report_panel" style="width:100%;">
+							<c:if test="#{contractLeave.contract.id!=null and contractLeave.to!=null}">
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_report.xhtml" />
+							</c:if>
+						</aon:panelGrid>
+					</aon:panel>
+
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.payroll_salary_employee}" />
+						</f:facet>
+						<aon:panelGrid columns="2" id="form_header" style="width:100%;">
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_header.xhtml" >
+								<ui:param name="controller" value="#{contractLeave}" />
+							</ui:include>
+						</aon:panelGrid>
+					</aon:panel>
+					
+				</aon:panelGrid>
+			</aon:div>
+
+			<c:if test="#{contractLeave.contract.id!=null}">
+				<aon:div styleClass="aon-scroll-area" id="form_leaves">
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_tracking}" />
+						</f:facet>
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_leaves.xhtml" />
+					</aon:panel>
+				</aon:div>
+			</c:if>				
+				
+		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{contractLookup}" />
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		
+	</ui:define>
+</ui:composition>
