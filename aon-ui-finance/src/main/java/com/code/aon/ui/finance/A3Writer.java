@@ -18,20 +18,16 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -610,33 +606,6 @@ public class A3Writer extends BasicExporter {
 			writeFinance(finance);
 		}
 		writeRegistry();
-	}
-	
-	public void serialize( Invoice invoice ) throws AonException {
-		boolean initTransState = HibernateUtil.mustBeginTransaction();
-		boolean initSessionState = HibernateUtil.mustCloseSession();
-		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
-		HibernateUtil.setCloseSession(false);
-		HibernateUtil.setBeginTransaction(false);
-		try {
-			HibernateUtil.getSession(sessionFactoryName).refresh(invoice);
-			init( invoice );
-			write();
-		} catch (Throwable t ) {
-		    try {
-				HibernateUtil.rollbackTransaction(sessionFactoryName);
-			} catch (DAOException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		    throw new AonException( t.getMessage(), t);
-		} finally {
-			if (initTransState != HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.setBeginTransaction(initTransState);
-			}
-			if (initSessionState != HibernateUtil.mustCloseSession()) {
-				HibernateUtil.setCloseSession(initSessionState);
-			}
-		}
 	}
 
 	@Override

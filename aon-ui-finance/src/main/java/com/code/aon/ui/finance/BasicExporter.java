@@ -2,6 +2,7 @@ package com.code.aon.ui.finance;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,6 +23,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Invoice;
@@ -57,13 +59,16 @@ public abstract class BasicExporter {
 		this.out = new ByteArrayOutputStream();
 	}
 
-	public void init( Invoice invoice ) throws ManagerBeanException {
+	public void init( Invoice invoice ) throws ManagerBeanException, IOException {
 		this.invoice = invoice;
 		this.accountEntry = obtainAccountEntry();
 		InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
 		this.taxBreakDowns = priceStrategy.getTaxBreakDowns(invoice, invoice);		
 		this.details = obtainDetails();
 		this.registryDetail = obtainRegistryDetail();
+		if ( this.out.size() > 0 ) {
+			writeNewLine();
+		}
 	}
 
 	private AccountEntry obtainAccountEntry() throws ManagerBeanException {
@@ -78,8 +83,16 @@ public abstract class BasicExporter {
 		return null;
 	}
 	
+	protected VatDeductionType getVatDeductionType() {
+		for( TaxBreakDown tbd : taxBreakDowns ) {
+			if ( tbd.getVatDeductionType() != VatDeductionType.WITH_RIGHT ) {
+				return tbd.getVatDeductionType();
+			}
+		}
+		return VatDeductionType.WITH_RIGHT;		
+	}
 	
-	private boolean isSkipAccount( Account account ) {
+	protected boolean isSkipAccount( Account account ) {
 		for( String preffix : SKIP_ACCOUNTS ) {
 			if ( StringUtils.startsWith(account.getCode(), preffix) ) {
 				return true;
@@ -245,6 +258,11 @@ public abstract class BasicExporter {
 	}
 
 	protected void writeNewLine() throws IOException {
+		writeNewLine(this.out);
+	}
+	
+	
+	protected void writeNewLine( OutputStream out ) throws IOException {
 		out.write("\r\n".getBytes());
 	}
 	
