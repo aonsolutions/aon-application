@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components" >
 
 	<aon:panelGrid columns="2" id="contract_panel" 
@@ -43,19 +44,6 @@
 			value="#{contract.to.enterpriseCCC}" >
 			<f:selectItems value="#{contract.enterpriseCCCs}" />
 		</aon:selectOneMenu>
-		
-<!--  
-		<aon:outputLabel for="Contract_tc2Code"
-			value="#{bundle.payroll_contract_contract_code}" />
-		<aon:selectOneMenu id="Contract_tc2Code" required="true" 
-			value="#{contract.params.contractModelCode}">
-			<f:selectItem itemLabel="-" value="#{null}" />
-			<f:selectItems value="#{payrollCollections.tc2List}" />
-			<a4j:support event="onchange" 
-					ajaxSingle="true"
-					reRender="contract_panel" />
-		</aon:selectOneMenu>
--->
 		
 		<aon:outputLabel for="Contract_contractCode"
 			value="#{bundle.payroll_contract_contract_code}" />
@@ -188,37 +176,6 @@
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}">
 		</aon:selectInputDate>
-<!--  
-		<aon:selectInputDate id="Contract_endDate" 
-			disabled="#{!contract.endDateOptional and !contract.new}"
-			required="#{contract.endDateRequired}"
-			value="#{contract.to.endDate}"
-			inputSize="10" renderAsPopup="true" enableManualInput="true"
-			timeZone="#{timeZoneController.timeZone}"
-			popupDateFormat="#{bundle.aon_date_pattern}">
-		</aon:selectInputDate>
--->
-		
-
-<!--  
-			<aon:outputLabel for="gross_salary"
-				value="#{bundle.payroll_contract_gross_salary}" />
-			<aon:div id="grossSalaryDiv">
-				<aon:inputText id="gross_salary"
-					disabled="#{contract.params.agreementSalaryCheck}"
-					value="#{contract.params.grossSalary}" />
-				<aon:selectBooleanCheckbox id="gross_salary_check"
-					ajaxSingle="true"
-					value="#{contract.params.agreementSalaryCheck}"
-					styleClass="-margin-left"
-					disabled="#{contract.agreement.id == null}">
-					<a4j:support event="onclick" reRender="gross_salary" ajaxSingle="true" />
-				</aon:selectBooleanCheckbox>
-				<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{bundle.payroll_contract_like_agreement}&#160;" />
-			</aon:div>
--->			
-	
 		
 		<c:if test="#{!contract.trainingContract}" >
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
@@ -238,65 +195,78 @@
 		</c:if>
 		
 		<c:if test="#{contract.trainingContract}" >
-				<aon:outputLabel for="contract_subsidized" value="#{bundle.payroll_contract_subsidized}" />
-				<aon:selectBooleanCheckbox id="contract_subsidized" value="#{contract.params.subsidized}" />
+			<aon:outputLabel for="contract_subsidized" value="#{bundle.payroll_contract_subsidized}" />
+			<aon:selectBooleanCheckbox id="contract_subsidized" value="#{contract.params.subsidized}" />
+		
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/course/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.params.trainingCourse}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+			</ui:include>
 			
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/course/lookup.xhtml" >
-					<ui:param name="lookupTo" value="#{contract.params.trainingCourse}" />
-					<ui:param name="skipNewButton" value="#{true}" />
-				</ui:include>
-				
-				<aon:outputText value="#{bundle.payroll_trainingCourse_trainingCalendar}" />
-				<aon:div>
-					<aon:outputLabel for="trainingStartDate" 
-						styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
-						value="#{bundle.aon_start_date}" />
-					<aon:selectInputDate id="trainingStartDate" 
-						value="#{contract.params.trainingStartDate}" required="#{contract.params.trainingCourse.id!=null}"
-						inputSize="10" renderAsPopup="true" enableManualInput="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-					<aon:outputLabel for="trainingEndDate" 
-						styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
-						value="#{bundle.aon_end_date}" />
-					<aon:selectInputDate id="trainingEndDate"
-						value="#{contract.params.trainingEndDate}" required="#{contract.params.trainingCourse.id!=null}"  
-						inputSize="10" renderAsPopup="true" enableManualInput="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-				</aon:div>
-				
-				<aon:outputLabel for="Contract_workSchedule"  
-					value="Horario del trabajo efectivo" />
-				<aon:inputText id="Contract_workSchedule" maxlength="80" size="96"
-					value="#{contract.params.workSchedule}" />
+			<aon:outputText value="#{bundle.payroll_trainingCourse_trainingCalendar}" />
+			<aon:div>
+				<aon:outputLabel for="trainingStartDate" 
+					styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
+					value="#{bundle.aon_start_date}" />
+				<aon:selectInputDate id="trainingStartDate" 
+					value="#{contract.params.trainingStartDate}" required="#{contract.params.trainingCourse.id!=null}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+				<aon:outputLabel for="trainingEndDate" 
+					styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
+					value="#{bundle.aon_end_date}" />
+				<aon:selectInputDate id="trainingEndDate"
+					value="#{contract.params.trainingEndDate}" required="#{contract.params.trainingCourse.id!=null}"  
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+			</aon:div>
+			
+			<aon:outputLabel for="Contract_workSchedule"  
+				value="Horario del trabajo efectivo" />
+			<aon:inputText id="Contract_workSchedule" maxlength="80" size="96"
+				value="#{contract.params.workSchedule}" />
 
-				<aon:outputLabel for="Contract_trainingSchedule"  
-					value="Horario de la actividad formativa" />
-				<aon:inputText id="Contract_trainingSchedule" maxlength="25" size="32"
-					value="#{contract.params.trainingSchedule}" />
-				
-				
-
-				<!--  
-				<aon:outputLabel for="trainingCourse_schedule" value="#{bundle.aon_calendar_schedule}" />
-				<aon:div>
-					<aon:outputLabel for="trainingCourse_startTime" value="#{bundle.aon_date_from}" />
-					<aon:selectOneMenu id="trainingCourse"
-						value="#{contract.params.trainingCourseStartTime}" >
-						<f:selectItem itemLabel=" - " itemValue="#{null}" />
-						<f:selectItems value="#{contract.trainingCourses}" />
-					</aon:selectOneMenu>
-					
-					<aon:outputLabel for="trainingCourse_endTime" value="#{bundle.aon_date_to}" />
-					<aon:selectOneMenu id="trainingCourse_endTime" value="#{reservation.endTime}"
-						value="#{contract.params.trainingCourseEndTime}" >
-						<f:selectItems value="#{reservation.reservationTimes}" />
-					</aon:selectOneMenu>
-					
-				</aon:div>
-				-->
-				
+			<aon:outputLabel for="Contract_trainingSchedule"  
+				value="Horario de la actividad formativa" />
+			<aon:inputText id="Contract_trainingSchedule" maxlength="25" size="32"
+				value="#{contract.params.trainingSchedule}" />
+		</c:if>
+		
+		<c:if test="#{not empty contract.params.bonus}" >
+			<aon:outputText value="#{bundle.sepe_contrata_contract_bonus}" />
+			<aon:div>
+				<aon:outputText value="#{contract.params.bonus.fullDescription}" />
+				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.sepe_contrata_contract_bonus}" />
+					</f:facet>
+					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
+						<aon:outputText value="#{bundle.aon_description}" styleClass="aon-margin-right" />
+						<aon:outputText value="#{contract.params.bonus.fullDescription}" />
+						
+						<aon:outputText value="#{bundle.aon_period}" styleClass="aon-margin-right" />
+						<aon:div>
+							<aon:outputText value="#{bundle.aon_start_date}:" styleClass="aon-italic" />
+							<aon:outputText value="#{contract.params.bonus.startDate}" styleClass="aon-margin-left">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:outputText value="#{bundle.aon_end_date}:" styleClass="aon-margin-left aon-italic" />
+							<aon:outputText value="#{contract.params.bonus.endDate}" styleClass="aon-margin-left">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:div>
+					</aon:panelGrid>
+				</rich:toolTip>
+				<aon:commandButton id="removeContractBonus" 
+					value="&#160;" title="#{bundle.aon_remove}" 
+					styleClass="aon-icon-commandButton aon-icon-delete"
+					actionListener="#{contract.onRemoveBonus}" 
+					reRender="contract_panel" />
+			</aon:div>
 		</c:if>
 		
 	</aon:panelGrid>

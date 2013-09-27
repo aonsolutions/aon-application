@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.contrata.enumeration.TERRORES;
+import com.esferalia.aon.payroll.enumeration.contrata.TERRORES;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contrata.contratos.FICHEROCONTRATOS;
 import com.esferalia.aon.sepe.api.contrata.contratos.RESPUESTACONTRATOTYPE;

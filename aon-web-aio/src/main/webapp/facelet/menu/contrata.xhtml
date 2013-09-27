@@ -69,8 +69,16 @@
 									<aon:commandLink id="contractBatch" 
 										action="contractBatch_search"
 										actionListener="#{contractBatch.onEditSearch}"
-										value="#{bundle.payroll_contractBatchWizard_module}" />
+										value="#{bundle.payroll_contrata_contractBatch_module}" />
 								</aon:div>
+								<!--  
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="leaveBatch" 
+										action="leaveBatch_search"
+										actionListener="#{leaveBatch.onEditSearch}"
+										value="#{bundle.payroll_leaveBatchWizard_module}" />
+								</aon:div>
+								-->
 							</aon:div>
 						</aon:panelGrid>
 						
@@ -81,15 +89,25 @@
 								<aon:outputText value="#{bundle.aon_utilities}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="irpfData"
-											action="irpfData_search"
-											actionListener="#{irpfData.onEditSearch}"
-											value="#{bundle.payroll_model_145_module}">
-											<aon:actionListener method="#{contract.onEditSearch}" />
-										</aon:commandLink>
-									</aon:div>
+								<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+									<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="irpfData"
+												action="irpfData_search"
+												actionListener="#{irpfData.onEditSearch}"
+												value="#{bundle.payroll_model_145_module}">
+												<aon:actionListener method="#{contract.onEditSearch}" />
+											</aon:commandLink>
+										</aon:div>
+										<!--  
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="contractLeave" 
+												action="contractLeave_search" 
+												actionListener="#{contract.onEditSearch}"
+												value="#{bundle.payroll_contractLeave_module}" />
+										</aon:div>
+										-->
+									</c:if>
 								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="contractLoader"

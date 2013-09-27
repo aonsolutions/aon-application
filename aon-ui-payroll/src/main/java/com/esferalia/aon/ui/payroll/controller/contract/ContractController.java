@@ -46,6 +46,7 @@ import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
@@ -83,6 +84,7 @@ public class ContractController extends BasicController {
 
 	private boolean showNewContractModal;
 	private boolean showContractEmbargoWindow;
+	private boolean showContractBonusWindow;
 	private boolean skipPayrollData;
 	
 	public ContractParams getParams() {
@@ -112,6 +114,12 @@ public class ContractController extends BasicController {
 	}
 	public void setShowContractEmbargoWindow(boolean showContractEmbargoWindow) {
 		this.showContractEmbargoWindow = showContractEmbargoWindow;
+	}
+	public boolean isShowContractBonusWindow() {
+		return showContractBonusWindow;
+	}
+	public void setShowContractBonusWindow(boolean showContractBonusWindow) {
+		this.showContractBonusWindow = showContractBonusWindow;
 	}
 	public Agreement getAgreement() {
 		return agreement;
@@ -240,6 +248,43 @@ public class ContractController extends BasicController {
 		
 	public void onShowNewContractModal(ActionEvent event) {
 		setShowNewContractModal(true);
+	}
+	
+	public void onShowBonusWindow(ActionEvent event){
+		try {
+			if(getParams().getBonus()==null || getParams().getBonus().getId()==null){
+				getParams().setBonus((ContractBonus) BeanManager.getManagerBean(ContractBonus.class).createNewTo());
+				getParams().getBonus().setContract((Contract) this.getTo());
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al mostrar la bonificacion";
+			LOGGER.error(msg,e);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+	}
+	
+	public void onSaveBonus(ActionEvent event){
+		try {
+			if(getParams().getBonus()==null || getParams().getBonus().getId()==null){
+				IManagerBean bean = BeanManager.getManagerBean(ContractBonus.class);
+				bean.insertOrUpdate(getParams().getBonus());
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al mostrar la bonificacion";
+			LOGGER.error(msg,e);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+	}
+	public void onCancelBonus(ActionEvent event){
+		getParams().setBonus(null);
+	}
+
+	public void onRemoveBonus(ActionEvent event){
+		ContractUtils utils = ContractUtils.getInstance();
+		utils.removeContractBonus(getParams().getBonus());
+		getParams().setBonus(null);
 	}
 	
 	public void onPersonBack(ActionEvent event){
@@ -710,6 +755,7 @@ public class ContractController extends BasicController {
 		private ContractDuration contractDuration;
 		private ContractWorkingDay contractWorkingDay;
 		private CNO cno;
+		private ContractBonus bonus;
 		
 		private boolean agreementSalaryCheck;
 		private boolean agreementSalary;
@@ -855,6 +901,12 @@ public class ContractController extends BasicController {
 		}
 		public void setCno(CNO cno) {
 			this.cno = cno;
+		}
+		public ContractBonus getBonus() {
+			return bonus;
+		}
+		public void setBonus(ContractBonus bonus) {
+			this.bonus = bonus;
 		}
 		
 	}

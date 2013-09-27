@@ -10,8 +10,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.esferalia.aon.entity.master.EnterpriseActivityDB;
-import com.esferalia.aon.payroll.contrata.enumeration.TCHRGCOT;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.enumeration.contrata.TCHRGCOT;
 
 @Entity
 @Table(name="enterprise_activity")

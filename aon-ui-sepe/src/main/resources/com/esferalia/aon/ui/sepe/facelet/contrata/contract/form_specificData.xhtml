@@ -284,10 +284,8 @@
 						</f:facet>
 						<aon:panelGrid columns="2" style="width: 100%;">
 								<aon:outputLabel for="bonus_collective"
-									rendered="#{contractContrata.params.indDiscapacidad!=TEJINDIS_C}"
 									value="#{bundle.sepe_contrata_contract_bonus_collective}" />
 								<aon:selectOneMenu id="bonus_collective"
-									rendered="#{contractContrata.params.indDiscapacidad!=TEJINDIS_C}"
 									value="#{contractContrata.params.colectivoBonificacion}" >
 									<f:selectItem itemLabel="-" value="#{null}" />
 									<f:selectItems value="#{contrataCollections.TELCOLBOCodeList}" />

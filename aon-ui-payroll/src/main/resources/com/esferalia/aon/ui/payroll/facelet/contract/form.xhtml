@@ -20,7 +20,7 @@
 			
 				<c:if test="#{!contract.new}" >
 				
-					<aon:panelGrid columns="4" styleClass="aon-width-all" >
+					<aon:panelGrid id="contract-panelGrib" columns="4" styleClass="aon-width-all" >
 						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formPersonContent.xhtml" />
 						
 						<aon:outputLabel value="#{bundle.payroll_contract_sepe_communicationId}" />
@@ -89,30 +89,19 @@
 		
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
-
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/modalEmbargo.xhtml" >
 			<ui:param name="controller" value="#{contractEmbargo}" />
 			<ui:param name="reRender" value="contract-panelTab" />
 		</ui:include>
-		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/bonus/modalBonus.xhtml" >
+			<ui:param name="reRender" value="contract-panelTab" />
+		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/modalGeneration.xhtml" />
-
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/extension/modalExtension.xhtml" />
-
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >
 			<ui:param name="controller" value="#{contractContrata}" />
 		</ui:include>
-		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalBatch.xhtml" >
-			<ui:param name="controller" value="#{contractContrata}" />
-		</ui:include>
-	
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalCommunication.xhtml" >
-			<ui:param name="controller" value="#{contractCertificados}" />
-		</ui:include>
-		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalGeneration.xhtml" >
-			<ui:param name="controller" value="#{contractCertificados}" />
-		</ui:include>
-		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalBatch.xhtml" >
 			<ui:param name="controller" value="#{contractCertificados}" />
 		</ui:include>
 		

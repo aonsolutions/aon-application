@@ -491,7 +491,8 @@ public class CertificadosController implements ISepeHandler{
 	public String getCommunicationLogContent() {
 		String communicationLogContent = "<div>";
 		if( isCommunicationIdReceived() ){
-			communicationLogContent += getCommunicator().obtainCommunicationNumber(getCommunicationIdFile().getData());
+			communicationLogContent += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Datos comunicados al SEPE</b></div>";
+			communicationLogContent += "NUM ENVIO:         " + getCommunicator().obtainCommunicationNumber(getCommunicationIdFile().getData());
 		}
 		if( isCommunicationResponseReceived() ){
 			String status = getCommunicator().obtainCommunicationStatus(getResponseFile().getData());

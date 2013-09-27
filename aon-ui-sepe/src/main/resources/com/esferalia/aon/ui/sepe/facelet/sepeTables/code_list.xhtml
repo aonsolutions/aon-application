@@ -18,7 +18,7 @@
 					<ui:param name="toolbarDescription" value="#{sepeTables.selectedTableLabel}" />
 					
 					<ui:define name="toolbarContent">
-						<aon:commandButton id="cancel" immediate="true"
+						<aon:commandButton id="back" immediate="true"
 							value="#{bundle.aon_back}"
 							action="sepeTables_list"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" />
@@ -28,6 +28,37 @@
 
 				<!--  aon-region-body -->
 				<aon:div styleClass="aon-scroll-area">
+				
+					<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
+						<aon:div styleClass="aon-panelGrid-search-info">
+							<aon:outputText value="#{bundle.aon_filter}" styleClass="aon-panelGrid-search-info-internal"/>
+						</aon:div>
+						<aon:panelGrid columns="3">
+							<aon:inputText id="sepeTablesFilter" size="100" value="#{sepeTables.codesFilter}">
+								<a4j:support 
+									event="onkeyup"
+									actionListener="#{sepeTables.onInitCodesModels}"
+									reRender="contractCodelList"
+									eventsQueue="contractCodelListKeyUp"
+									requestDelay="500"
+									ajaxSingle="true"
+									ignoreDupResponses="true"
+									limitToList="true"/>
+							</aon:inputText>
+							<aon:outputText value="#{bundle.aon_active}:" styleClass="aon-margin-left"/>
+							<aon:selectBooleanCheckbox value="#{sepeTables.activeCodes}" >
+								<a4j:support 
+									event="onclick"
+									actionListener="#{sepeTables.onInitCodesModels}"
+									reRender="contractCodelList"
+									eventsQueue="contractCodelListKeyUp"
+									requestDelay="500"
+									ajaxSingle="true"
+									ignoreDupResponses="true"
+									limitToList="true"/>
+							</aon:selectBooleanCheckbox>
+						</aon:panelGrid>	
+					</aon:div>
 				
 					<aon:dataTable id="contractCodelList" value="#{sepeTables.codesModel}" var="to">
 	

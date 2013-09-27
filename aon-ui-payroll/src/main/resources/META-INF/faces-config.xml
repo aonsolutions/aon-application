@@ -573,6 +573,45 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************ CONTRACT LEAVE ************** -->
+	<managed-bean>
+		<managed-bean-name>contractLeave</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractLeaveController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.ContractLeaveDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractLeave</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ContractLeaveDetail_date desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contractLeaveControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>contractLeaveControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.contract.ContractLeaveControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************ Proceso de creacion del fichero AFI **************** -->
 	<managed-bean>
 		<managed-bean-name>contractBatch</managed-bean-name>
@@ -1648,6 +1687,37 @@
 			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/trainingCourse/search.xhtml</value>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- ************ BonusConcept LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>bonusConceptLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>bonusConceptLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.esferalia.aon.payroll.BonusConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>BonusConcept_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>BonusConcept_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/bonusConcept/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/bonusConcept/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
 
 	<!-- ************ PaymentConcept LOOKUP ************** -->
 	<managed-bean>
@@ -2098,7 +2168,7 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/bonusConcept/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!-- =================== IirpfData ========================== -->
+	<!-- =================== IrpfData ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>irpfData_form</from-outcome>
@@ -2111,6 +2181,21 @@
 		<navigation-case>
 			<from-outcome>irpfData_search</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- =================== ContractLeave ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contractLeave_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractLeave/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contractLeave_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractLeave/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contractLeave_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractLeave/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

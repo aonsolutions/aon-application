@@ -34,49 +34,6 @@
 -->		
 		
 		<ui:define name="moreMenuContent">
-			<c:if test="#{!contract.skipPayrollData}" >
-				<aon:menuItem 
-					value="#{bundle.payroll_contractCalendarEvent}"
-					iconClass="aon-icon-daily-tracking"
-					rendered="#{!contract.new}"
-					action="contractCalendarEvent_form" >
-					<f:setPropertyActionListener
-						target="#{contractCalendarEvent.backActionListener}" value="contractCalendarEvent.onBack" />
-					<f:setPropertyActionListener
-						target="#{contractCalendarEvent.forceBackAction}" value="true" />
-					<f:setPropertyActionListener
-						target="#{contractCalendarEvent.backAction}" value="contract_form" />
-				</aon:menuItem>
-				<aon:menuItem id="contract_leave"
-					value="#{bundle.payroll_contractLeave_module}"
-					action="contractLeave_form"
-					iconClass="aon-icon-copy">
-					<f:setPropertyActionListener
-						target="#{contractLeave.treeOutcome}" value="#{true}" />
-					<f:setPropertyActionListener
-						target="#{contractLeave.contractEditable}" value="#{false}" />
-					<aon:actionListener method="#{contract.onShowContractLeave}" />
-					<f:setPropertyActionListener
-						target="#{contractLeave.backAction}" value="contract_form" />
-				</aon:menuItem>
-				<aon:menuItem id="settle"
-					value="#{bundle.payroll_settle_module}"
-					action="settle_form"
-					rendered="#{contract.to.endDate==null}"
-					iconClass="aon-icon-black-list">
-					<f:setPropertyActionListener
-						target="#{settle.backAction}" value="contract_form" />
-					<aon:actionListener method="#{contract.onShowSettle}" />
-				</aon:menuItem>
-				<aon:menuItem id="IRPF-calculator"
-					value="#{bundle.payroll_contract_irpf_data}"
-					action="irpfData_form"
-					iconClass="aon-icon-aeat">
-					<aon:actionListener method="#{contract.onShowIrpfData}" />
-					<f:setPropertyActionListener
-						target="#{irpfData.backAction}" value="contract_form" />
-				</aon:menuItem>
-			</c:if>
 			
 			<aon:menuItem id="document-issue" 
 				value="#{bundle.payroll_contract_generate_document}"
@@ -179,17 +136,6 @@
 					target="#{extensionContrata.showExtensionContrataWindow}" value="#{true}" />
 			</aon:menuItem>
 			
-			<c:if test="#{actionDenied.moduleEnabled['payroll']}">
-				<aon:menuItem id="contract-embargo" 
-					value="#{bundle.payroll_salary_embargos_tab}"
-					reRender="showContractEmbargoWindow"
-					actionListener="#{contractEmbargo.onReset}"
-					iconClass="aon-icon-settle" >
-					<f:setPropertyActionListener
-						target="#{contract.showContractEmbargoWindow}" value="#{true}" />
-				</aon:menuItem>
-			</c:if>
-			
 			<rich:menuSeparator id="actionsSeparator" />
 			
 			<aon:menuItem id="contrata-communication-log"
@@ -214,6 +160,38 @@
 				</aon:menuItem>
 			</c:if>
 			
+			<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+			
+				<rich:menuSeparator id="payrollSeparator" />
+
+				<aon:menuItem id="contract-bonus" 
+					value="#{bundle.sepe_contrata_contract_bonus}"
+					reRender="showContractBonusWindow"
+					actionListener="#{contract.onShowBonusWindow}"
+					iconClass="aon-icon-fraction" >
+					<f:setPropertyActionListener
+						target="#{contract.showContractBonusWindow}" value="#{true}" />
+				</aon:menuItem>
+				
+				<aon:menuItem id="contract-embargo" 
+					value="#{bundle.payroll_salary_embargos_tab}"
+					reRender="showContractEmbargoWindow"
+					actionListener="#{contractEmbargo.onReset}"
+					iconClass="aon-icon-settle" >
+					<f:setPropertyActionListener
+						target="#{contract.showContractEmbargoWindow}" value="#{true}" />
+				</aon:menuItem>
+				
+				<aon:menuItem id="contract_leave"
+					value="#{bundle.payroll_contractLeave_module}"
+					action="contractLeave_form"
+					iconClass="aon-icon-copy">
+					<aon:actionListener method="#{contractLeave.onSelectCurrentContract}" />
+					<f:setPropertyActionListener
+						target="#{contractLeave.backAction}" value="contract_form" />
+				</aon:menuItem>
+				
+			</c:if>
 			
 		</ui:define>
 

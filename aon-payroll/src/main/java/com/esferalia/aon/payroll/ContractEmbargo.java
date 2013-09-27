@@ -36,13 +36,13 @@ public class ContractEmbargo extends ContractEmbargoDB {
 	private EmbargableType expressionToType(){
 		if(getExpression()!=null){
 			String s = (String) ((new MessageFormat(EXPRESSION_PATTERN)).parse(StringUtils.deleteWhitespace(getExpression()),new ParsePosition(0))[0]);
-			if(s.equals(SALARY)){
+			if(s.equals(StringUtils.deleteWhitespace(SALARY))){
 				return EmbargableType.SALARY;
-			} else if(s.equals(EXTRA)){
+			} else if(s.equals(StringUtils.deleteWhitespace(EXTRA))){
 				return EmbargableType.EXTRA;
-			} else if(s.equals(BOTH)){
+			} else if(s.equals(StringUtils.deleteWhitespace(BOTH))){
 				return EmbargableType.BOTH;
-			} else if(s.equals(DELAY)){
+			} else if(s.equals(StringUtils.deleteWhitespace(DELAY))){
 				return EmbargableType.DELAY;
 			}
 		}

@@ -56,7 +56,7 @@
 		            </f:facet>			
 					<aon:menuItem id="sepe-process-restart"
 						value="Reiniciar proceso"
-						rendered="#{controller.communicationAccepted and not controller.communicationFinished}"
+						rendered="#{(controller.communicationIdReceived and not controller.communicationAccepted) or (controller.communicationResponseReceived and not controller.communicationFinished)}"
 						actionListener="#{controller.onRemoveSepeFiles}"
 						reRender="showContrataCommunicationWindow,#{(controller.batch.id!=null)?(''):('contractForm')}"
 						iconClass="aon-icon-refresh" 

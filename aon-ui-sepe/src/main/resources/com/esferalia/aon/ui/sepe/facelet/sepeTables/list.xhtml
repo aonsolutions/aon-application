@@ -26,10 +26,10 @@
 							<aon:outputText value="#{bundle.aon_filter}" styleClass="aon-panelGrid-search-info-internal"/>
 						</aon:div>
 						<aon:panelGrid columns="1">
-							<aon:inputText id="sepeTablesFilter" size="150" value="#{sepeTables.filter}">
+							<aon:inputText id="sepeTablesFilter" size="150" value="#{sepeTables.tablesFilter}">
 								<a4j:support 
 									event="onkeyup"
-									actionListener="#{sepeTables.onInitModels}"
+									actionListener="#{sepeTables.onInitTablesModels}"
 									reRender="sepeTablesTab"
 									eventsQueue="sepeTablesFilterKeyUp"
 									requestDelay="500"

@@ -4,21 +4,21 @@ import java.util.Date;
 
 import com.code.aon.person.Person;
 import com.esferalia.aon.payroll.CNO;
-import com.esferalia.aon.payroll.contrata.enumeration.TBONVFOR;
-import com.esferalia.aon.payroll.contrata.enumeration.TEIINTER;
-import com.esferalia.aon.payroll.contrata.enumeration.TEJINDIS;
-import com.esferalia.aon.payroll.contrata.enumeration.TELCOLBO;
-import com.esferalia.aon.payroll.contrata.enumeration.TEOCOLDE;
-import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
-import com.esferalia.aon.payroll.contrata.enumeration.TERFIRCB;
-import com.esferalia.aon.payroll.contrata.enumeration.TESCETCO;
-import com.esferalia.aon.payroll.contrata.enumeration.TETPGMEM;
-import com.esferalia.aon.payroll.contrata.enumeration.TEWEINVE;
-import com.esferalia.aon.payroll.contrata.enumeration.TEXTINVE;
-import com.esferalia.aon.payroll.contrata.enumeration.TEYTRELE;
-import com.esferalia.aon.payroll.contrata.enumeration.THPCOLFO;
-import com.esferalia.aon.payroll.contrata.enumeration.THYDISLE;
-import com.esferalia.aon.payroll.contrata.enumeration.TQOCOLRE;
+import com.esferalia.aon.payroll.enumeration.contrata.TBONVFOR;
+import com.esferalia.aon.payroll.enumeration.contrata.TEIINTER;
+import com.esferalia.aon.payroll.enumeration.contrata.TEJINDIS;
+import com.esferalia.aon.payroll.enumeration.contrata.TELCOLBO;
+import com.esferalia.aon.payroll.enumeration.contrata.TEOCOLDE;
+import com.esferalia.aon.payroll.enumeration.contrata.TEQPTIEM;
+import com.esferalia.aon.payroll.enumeration.contrata.TERFIRCB;
+import com.esferalia.aon.payroll.enumeration.contrata.TESCETCO;
+import com.esferalia.aon.payroll.enumeration.contrata.TETPGMEM;
+import com.esferalia.aon.payroll.enumeration.contrata.TEWEINVE;
+import com.esferalia.aon.payroll.enumeration.contrata.TEXTINVE;
+import com.esferalia.aon.payroll.enumeration.contrata.TEYTRELE;
+import com.esferalia.aon.payroll.enumeration.contrata.THPCOLFO;
+import com.esferalia.aon.payroll.enumeration.contrata.THYDISLE;
+import com.esferalia.aon.payroll.enumeration.contrata.TQOCOLRE;
 
 public class ContrataContratoParams implements IContrataParams{
 	

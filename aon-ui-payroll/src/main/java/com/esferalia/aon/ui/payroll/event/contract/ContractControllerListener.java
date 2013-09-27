@@ -65,7 +65,7 @@ public class ContractControllerListener extends ControllerAdapter{
 			throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
 		ContractUtils utils = ContractUtils.getInstance();
-		utils.removeContractData((Contract) controller.getTo());
+		utils.removeContractData((Contract) controller.getTo(), controller.getParams());
 		
 		removeContrataAttach(event);
 	}

@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.certificados.enumeration.Terrores;
+import com.esferalia.aon.payroll.enumeration.certificados.Terrores;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RESPUESTACERTIFICADOEMPRESATYPE.CuentaCotizacion;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RESPUESTACERTIFICADOEMPRESATYPE.CuentaCotizacion.DatosTrabajador;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RespuestaCertificadoEmpresa;

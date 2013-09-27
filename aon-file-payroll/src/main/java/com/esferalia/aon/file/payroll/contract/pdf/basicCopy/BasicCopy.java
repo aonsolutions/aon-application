@@ -7,7 +7,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentEx
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.contrata.enumeration.TEQPTIEM;
+import com.esferalia.aon.payroll.enumeration.contrata.TEQPTIEM;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.lowagie.text.pdf.PdfReader;
 

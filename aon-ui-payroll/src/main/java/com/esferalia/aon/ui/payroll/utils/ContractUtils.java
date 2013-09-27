@@ -23,6 +23,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.TrainingCenter;
@@ -534,9 +535,24 @@ public class ContractUtils {
 			}
 		}
 		
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractBonus.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_CONTRACT_ID), contract.getId());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_CONTRACT_ID));
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				params.setBonus( (ContractBonus) list.get(0) ); 
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al cargar la bonificacion del contrato";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+		
 	}
 	
-	public void removeContractData(Contract contract) throws ControllerListenerException {
+	public void removeContractData(Contract contract, ContractParams params) throws ControllerListenerException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
@@ -546,10 +562,24 @@ public class ContractUtils {
 				bean.remove(data);
 				
 			}
+			removeContractBonus(params.getBonus());
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible eliminar los datos de contrato. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
+		}
+	}
+		
+	public void removeContractBonus(ContractBonus bonus) {
+		try {
+			if(bonus!=null && bonus.getId()!=null){
+				IManagerBean bean = BeanManager.getManagerBean(ContractBonus.class);
+				bean.remove(bonus);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al borrar los datos de la bonificacion";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
 		}
 	}
 	

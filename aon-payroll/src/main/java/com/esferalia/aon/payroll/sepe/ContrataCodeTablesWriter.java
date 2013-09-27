@@ -24,12 +24,13 @@ import com.code.aon.common.util.Classpath;
 
 public class ContrataCodeTablesWriter {
 	
-	final static String ENUMERATIONS_FOLDER_PATH 		= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/contrata/enumeration/";
+	final static String PARENT_FOLDER_PATH 				= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/";
+	final static String ENUMERATIONS_FOLDER_PATH 		= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/contrata/";
 	final static String COLLECTIONS_CLASS_PATH			= "/AON-TRUNK/aon.parent/aon-ui-sepe/src/main/java/com/esferalia/aon/ui/sepe/controller/";
 	final static String COLLECTIONS_CLASS_NAME			= "ContrataCollectionsController";
 	final static String COLLECTIONS_CLASS_PACKAGE_NAME	= "com.esferalia.aon.ui.sepe.controller";
 
-	public final static String ENUMERATION_CLASS_PACKAGE_NAME = "com.esferalia.aon.payroll.contrata.enumeration";
+	public final static String ENUMERATION_CLASS_PACKAGE_NAME = "com.esferalia.aon.payroll.enumeration.contrata";
 	
 	final static String JAVA_FILE_EXTENSION = ".java";
 	
@@ -318,6 +319,7 @@ public class ContrataCodeTablesWriter {
 		out.newLine();
 		out.write( "import java.util.Date;" );
 		out.newLine();
+		out.write( "import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;" );
 		out.newLine();
 		out.write( "import org.apache.commons.lang.time.DateUtils;" );
 		out.newLine();
@@ -340,7 +342,7 @@ public class ContrataCodeTablesWriter {
 		out.newLine();
 		out.write( " */ " );
 		out.newLine();
-		out.write( "public enum " + getFileNameWithoutExtension(file) + " {");
+		out.write( "public enum " + getFileNameWithoutExtension(file) + " implements ISepeEnum {");
 		out.newLine();
 		out.newLine();
 	}
@@ -715,6 +717,7 @@ public class ContrataCodeTablesWriter {
 			out.newLine();
 			out.write( "import java.util.Date;" );
 			out.newLine();
+			out.write( "import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;" );
 			out.newLine();
 			
 			out.write( "/** " );
@@ -725,7 +728,7 @@ public class ContrataCodeTablesWriter {
 			out.newLine();
 			out.write( " */ " );
 			out.newLine();
-			out.write( "public enum " + getFileNameWithoutExtension(file) + " {");
+			out.write( "public enum " + getFileNameWithoutExtension(file) + " implements ISepeEnum {");
 			out.newLine();
 			out.newLine();
 			

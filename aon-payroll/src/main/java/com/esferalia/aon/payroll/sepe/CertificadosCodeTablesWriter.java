@@ -25,12 +25,13 @@ import com.code.aon.common.util.Classpath;
 
 public class CertificadosCodeTablesWriter {
 	
-	final static String ENUMERATIONS_FOLDER_PATH 		= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/certificados/enumeration/";
+	final static String PARENT_FOLDER_PATH 				= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/";
+	final static String ENUMERATIONS_FOLDER_PATH 		= "/AON-TRUNK/aon.parent/aon-payroll/src/main/java/com/esferalia/aon/payroll/enumeration/certificados/";
 	final static String COLLECTIONS_CLASS_PATH			= "/AON-TRUNK/aon.parent/aon-ui-sepe/src/main/java/com/esferalia/aon/ui/sepe/controller/";
 	final static String COLLECTIONS_CLASS_NAME			= "CertificadosCollectionsController";
 	final static String COLLECTIONS_CLASS_PACKAGE_NAME	= "com.esferalia.aon.ui.sepe.controller";
 	
-	public final static String ENUMERATION_CLASS_PACKAGE_NAME = "com.esferalia.aon.payroll.certificados.enumeration";
+	public final static String ENUMERATION_CLASS_PACKAGE_NAME = "com.esferalia.aon.payroll.enumeration.certificados";
 
 	final static String JAVA_FILE_EXTENSION = ".java";
 	
@@ -394,6 +395,7 @@ public class CertificadosCodeTablesWriter {
 		out.newLine();
 		out.write( "import java.util.Date;" );
 		out.newLine();
+		out.write( "import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;" );
 		out.newLine();
 		out.write( "import org.apache.commons.lang.time.DateUtils;" );
 		out.newLine();
@@ -416,7 +418,7 @@ public class CertificadosCodeTablesWriter {
 		out.newLine();
 		out.write( " */ " );
 		out.newLine();
-		out.write( "public enum " + getFileNameWithoutExtension(file) + " {");
+		out.write( "public enum " + getFileNameWithoutExtension(file) + " implements ISepeEnum {");
 		out.newLine();
 		out.newLine();
 	}
@@ -682,6 +684,7 @@ public class CertificadosCodeTablesWriter {
 			out.newLine();
 			out.write( "import java.util.Date;" );
 			out.newLine();
+			out.write( "import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;" );
 			out.newLine();
 			
 			out.write( "/** " );
@@ -692,7 +695,7 @@ public class CertificadosCodeTablesWriter {
 			out.newLine();
 			out.write( " */ " );
 			out.newLine();
-			out.write( "public enum " + getFileNameWithoutExtension(file) + " {");
+			out.write( "public enum " + getFileNameWithoutExtension(file) + " implements ISepeEnum {");
 			out.newLine();
 			out.newLine();
 			

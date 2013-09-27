@@ -597,8 +597,12 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	public void onRemoveSepeFiles(ActionEvent event){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-			bean.remove(getCommunicationIdFile());
-			bean.remove(getResponseFile());
+			if(getCommunicationIdFile()!=null && getCommunicationIdFile().getId()!=null){
+				bean.remove(getCommunicationIdFile());
+			}
+			if(getResponseFile()!=null && getResponseFile().getId()!=null){
+				bean.remove(getResponseFile());
+			}
 			initialize(getContract());
 		} catch (ManagerBeanException e) {
 			String msg = "No se han podido guardar los datos de respuesta de Contrat@";
@@ -663,7 +667,8 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	public String getCommunicationLogContent() {
 		String communicationLogContent = "<div>";
 		if( isCommunicationIdReceived() ){
-			communicationLogContent += getCommunicator().obtainCommunicationNumber(getCommunicationIdFile().getData());
+			communicationLogContent += "<div style='background-color:#E4E4E4; width:100%; padding:5px;'><b>Datos comunicados al SEPE</b></div>";
+			communicationLogContent += "NUM ENVIO:         " + getCommunicator().obtainCommunicationNumber(getCommunicationIdFile().getData());
 		}
 		if( isCommunicationResponseReceived() ){
 			String status = getCommunicator().obtainCommunicationStatus(getResponseFile().getData());

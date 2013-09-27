@@ -12,5 +12,15 @@ public class SEPECodeTablesWriter {
 		ContrataCodeTablesWriter.main(args);
 		CertificadosCodeTablesWriter.main(args);
 	}
+	
+	public interface ISepeEnum {
+		
+		public String getCode();
+
+		public String getDescription();
+
+		public boolean isActive();
+		
+	}
 		
 }

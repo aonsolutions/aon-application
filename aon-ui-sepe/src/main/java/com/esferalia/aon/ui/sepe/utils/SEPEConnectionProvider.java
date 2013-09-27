@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.certificados.enumeration.Terrores;
-import com.esferalia.aon.payroll.contrata.enumeration.TERRORES;
+import com.esferalia.aon.payroll.enumeration.certificados.Terrores;
+import com.esferalia.aon.payroll.enumeration.contrata.TERRORES;
 import com.esferalia.aon.sepe.api.SWComunicacionDatos.SWComunicacionDatos;
 import com.esferalia.aon.sepe.api.SWComunicacionDatos.SWComunicacionDatosService;
 import com.esferalia.aon.sepe.api.SWConsultaDatos.SWConsultaDatos;

@@ -9,10 +9,11 @@ import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.esferalia.aon.payroll.certificados.enumeration.CertificadosCodeTables;
-import com.esferalia.aon.payroll.contrata.enumeration.ContrataCodeTables;
+import com.esferalia.aon.payroll.enumeration.certificados.CertificadosCodeTables;
+import com.esferalia.aon.payroll.enumeration.contrata.ContrataCodeTables;
 import com.esferalia.aon.payroll.sepe.CertificadosCodeTablesWriter;
 import com.esferalia.aon.payroll.sepe.ContrataCodeTablesWriter;
+import com.esferalia.aon.payroll.sepe.SEPECodeTablesWriter.ISepeEnum;
 
 public class SepeTablesController {
 
@@ -32,17 +33,37 @@ public class SepeTablesController {
 	
 	private String selectedTab;
 	
-	private String filter;
+	private String tablesFilter;
+
+	private String codesFilter;
+
+	private boolean activeCodes;
 	
-	
-	public String getFilter() {
-		return filter;
+		
+	public boolean isActiveCodes() {
+		return activeCodes;
 	}
 
-	public void setFilter(String filter) {
-		this.filter = filter;
+	public void setActiveCodes(boolean activeCodes) {
+		this.activeCodes = activeCodes;
 	}
-	
+
+	public String getTablesFilter() {
+		return tablesFilter;
+	}
+
+	public void setTablesFilter(String tablesFilter) {
+		this.tablesFilter = tablesFilter;
+	}
+
+	public String getCodesFilter() {
+		return codesFilter;
+	}
+
+	public void setCodesFilter(String codesFilter) {
+		this.codesFilter = codesFilter;
+	}
+
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -110,22 +131,43 @@ public class SepeTablesController {
 	
 	public void onInit(ActionEvent event){
 		setSelectedTab("contrata");
-		setFilter(null);
-		onInitModels(event);
+		setTablesFilter(null);
+		onInitTablesModels(event);
 	}
 	
-	public void onInitModels(ActionEvent event){
+	public void onInitTablesModels(ActionEvent event){
 		initContrataTablesModel();
 		initCertificadosTablesModel();
 	}
 	
+	public void onInitCodesModels(ActionEvent event){
+		if(isContrataSelected()){
+			initContrataCodesModel();
+		} else if(isCertificadosSelected()){
+			initCertificadosCodesModel();
+		}
+	}
+	
+	public void onSelectContrata(ActionEvent event){
+		setContrataTable( ((ContrataCodeTables)getContrataTablesModel().getRowData()) );
+		setCodesFilter(null);
+		setActiveCodes(true);
+		initContrataCodesModel();
+	}
+	
+	public void onSelectCertificados(ActionEvent event){
+		setCertificadosTable( ((CertificadosCodeTables)getCertificadosTablesModel().getRowData()) );
+		setCodesFilter(null);
+		setActiveCodes(true);
+		initCertificadosCodesModel();
+	}
 	
 	private void initContrataTablesModel(){
 		List<Enum<?>> list = new ArrayList<Enum<?>>();
 		for (ContrataCodeTables obj : ContrataCodeTables.values()) {
-			if ( StringUtils.isBlank(getFilter()) 
-					|| StringUtils.containsIgnoreCase(obj.getCode(), getFilter())  
-					|| StringUtils.containsIgnoreCase(obj.getDescription(), getFilter()) ) {
+			if ( StringUtils.isBlank(getTablesFilter()) 
+					|| StringUtils.containsIgnoreCase(obj.getCode(), getTablesFilter())  
+					|| StringUtils.containsIgnoreCase(obj.getDescription(), getTablesFilter()) ) {
 				list.add(obj);
 			}
 		}
@@ -135,44 +177,45 @@ public class SepeTablesController {
 	private void initCertificadosTablesModel(){
 		List<Enum<?>> list = new ArrayList<Enum<?>>();
 		for (CertificadosCodeTables obj : CertificadosCodeTables.values()) {
-			if ( StringUtils.isBlank(getFilter()) 
-					|| StringUtils.containsIgnoreCase(obj.getCode(), getFilter())  
-					|| StringUtils.containsIgnoreCase(obj.getDescription(), getFilter()) ) {
+			if ( StringUtils.isBlank(getTablesFilter()) 
+					|| StringUtils.containsIgnoreCase(obj.getCode(), getTablesFilter())  
+					|| StringUtils.containsIgnoreCase(obj.getDescription(), getTablesFilter()) ) {
 				list.add(obj);
 			}
 		}
 		setCertificadosTablesModel(new ListDataModel(list));
 	}
 	
-	public void onSelectContrata(ActionEvent event){
-		List<Enum<?>> list = new ArrayList<Enum<?>>();
-		setContrataTable( ((ContrataCodeTables)getContrataTablesModel().getRowData()) );
+	private void initContrataCodesModel(){
 		try {
 			Class<?> clazz = Class.forName(CONTRATA_ENUMERATIONS_PACKAGE_NAME + "." + getContrataTable().getCode().trim().replace("*", ""));
-			clazz.getEnumConstants();
-			for (Object obj : clazz.getEnumConstants()) {
-				list.add((Enum<?>) obj);	
-			}
+			completeCodesModel(clazz);
 		} catch (ClassNotFoundException e1) {
 			// nothing to do
 		}
-		
-		setCodesModel(new ListDataModel(list));
 	}
 	
-	public void onSelectCertificados(ActionEvent event){
-		List<Enum<?>> list = new ArrayList<Enum<?>>();
-		setCertificadosTable( ((CertificadosCodeTables)getCertificadosTablesModel().getRowData()) );
+	private void initCertificadosCodesModel(){
 		try {
 			Class<?> clazz = Class.forName(CERTIFICADOS_ENUMERATIONS_PACKAGE_NAME + "." + getCertificadosTable().getCode().trim().replace("*", ""));
-			clazz.getEnumConstants();
-			for (Object obj : clazz.getEnumConstants()) {
-				list.add((Enum<?>) obj);	
-			}
+			completeCodesModel(clazz);
 		} catch (ClassNotFoundException e1) {
 			// nothing to do
 		}
-		
+	}
+
+	private void completeCodesModel(Class<?> clazz){
+		List<ISepeEnum> list = new ArrayList<ISepeEnum>();
+		for (Object obj : clazz.getEnumConstants()) {
+			ISepeEnum enumeration = (ISepeEnum) obj;
+			if ( StringUtils.isBlank(getCodesFilter()) 
+					|| StringUtils.containsIgnoreCase(enumeration.getCode(), getCodesFilter())  
+					|| StringUtils.containsIgnoreCase(enumeration.getDescription(), getCodesFilter()) ) {
+				if(!isActiveCodes() || (isActiveCodes() && enumeration.isActive())){
+					list.add(enumeration);	
+				}
+			}
+		}
 		setCodesModel(new ListDataModel(list));
 	}
 	

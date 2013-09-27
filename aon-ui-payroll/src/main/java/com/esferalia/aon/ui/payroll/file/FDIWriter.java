@@ -190,7 +190,7 @@ public class FDIWriter {
 		dit.setFechaBaja(  Integer.parseInt( dateFormatter.format( detail.getContractLeave().getStartDate() )) );
 		dit.setNumeroColegiado(detail.getCollegeNumber());
 		dit.setCias(detail.getCias());
-		if (dit.getNumeroColegiado() != null) {
+		if (StringUtils.isNotBlank(dit.getNumeroColegiado())) {
 			String prov = dit.getNumeroColegiado().substring(0, 2);
 			dit.setNumeroColegiado(prov + dit.getNumeroColegiado());
 		}

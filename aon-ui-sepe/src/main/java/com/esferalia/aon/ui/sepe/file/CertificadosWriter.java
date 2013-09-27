@@ -41,7 +41,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.contrata.enumeration.TCHRGCOT;
+import com.esferalia.aon.payroll.enumeration.contrata.TCHRGCOT;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
