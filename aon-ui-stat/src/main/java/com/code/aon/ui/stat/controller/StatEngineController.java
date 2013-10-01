@@ -766,21 +766,16 @@ public class StatEngineController {
 	public void onRegistryInvoiceList(ActionEvent event) {
 		try {
 			invoices = new LinkedList<Invoice>();
-			ExternalContext ec = FacesContext.getCurrentInstance()
-					.getExternalContext();
-			Map<String, String> paramss = ec.getRequestParameterMap();
-			String cus = paramss.get("customer");
-			Integer customer = Integer.parseInt(cus);
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+			Map<String, String> requestParams = ec.getRequestParameterMap();
+			String registry = requestParams.get("customer");
+			Integer registryId = Integer.parseInt(registry);
 			
-			IManagerBean invoiceBean = BeanManager
-					.getManagerBean(Invoice.class);
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceBean
-					.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), customer);
-			criteria.addBetweenExpression(invoiceBean
-					.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
-			criteria.addEqualExpression(invoiceBean
-					.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), registryId);
+			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
 
 			List<ITransferObject> list;
 			list = invoiceBean.getList(criteria);
@@ -789,6 +784,7 @@ public class StatEngineController {
 				invoices.add(inv);
 			}
 			setInvoiceBackAction("abc_customer_stats");
+			setInvoicesModel(null);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
