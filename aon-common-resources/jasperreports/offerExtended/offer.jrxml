@@ -524,7 +524,9 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getPhone().getValue()+"/"+$F{target}.getRegistry().getCellular().getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{target}.getRegistry().getPhone()!=null?$F{target}.getRegistry().getPhone().getValue():"") +
+(($F{target}.getRegistry().getPhone()!=null && $F{target}.getRegistry().getCellular()!=null)?" / ":"") +
+($F{target}.getRegistry().getCellular()!=null?$F{target}.getRegistry().getCellular().getValue():"")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-126" x="175" y="146" width="31" height="23"/>

@@ -15,7 +15,7 @@
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<field name="id" class="java.lang.Integer"/>
 	<field name="date" class="java.util.Date"/>
-	<field name="target" class="com.code.aon.commercial.Target"/>
+	<field name="project" class="com.code.aon.commercial.ProjectCommercial"/>
 	<field name="seller" class="com.code.aon.seller.Seller"/>
 	<field name="activity" class="com.code.aon.commercial.CommercialActivity"/>
 	<field name="comments" class="java.lang.String"/>
@@ -313,7 +313,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getFullName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{project}.getTarget().getRegistry().getFullName()]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Transparent" x="0" y="0" width="60" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -369,7 +369,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getDefaultAddress().getFullAddress()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{project}.getTarget().getRegistry().getDefaultAddress().getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Transparent" x="1159" y="0" width="100" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -383,7 +383,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getPhones()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{project}.getTarget().getRegistry().getPhones()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Transparent" x="1259" y="0" width="100" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -397,7 +397,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getCellular().getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{project}.getTarget().getRegistry().getCellular().getValue()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Transparent" x="1359" y="0" width="100" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -411,7 +411,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getEmail().getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{project}.getTarget().getRegistry().getEmail().getValue()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Transparent" x="890" y="0" width="100" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -425,7 +425,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getDefaultAddress().getCity()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{project}.getTarget().getRegistry().getDefaultAddress().getCity()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Transparent" x="1059" y="0" width="100" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -439,7 +439,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getDefaultAddress().getGeozone().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{project}.getTarget().getRegistry().getDefaultAddress().getGeozone().getName()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Transparent" x="990" y="0" width="69" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -453,7 +453,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getDefaultAddress().getZip()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{project}.getTarget().getRegistry().getDefaultAddress().getZip()]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

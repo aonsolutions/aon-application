@@ -289,8 +289,8 @@
 					<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
 				</textField>
 			</frame>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-134" x="330" y="3" width="208" height="42"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-134" x="330" y="3" width="208" height="42" isPrintWhenDetailOverflows="true"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -309,7 +309,7 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="672" splitType="Stretch">
+		<band height="388" splitType="Stretch">
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" x="70" y="162" width="468" height="23" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{shippingAlternativeAddressDefined}]]></printWhenExpression>

@@ -15,7 +15,7 @@
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<field name="id" class="java.lang.Integer"/>
 	<field name="date" class="java.util.Date"/>
-	<field name="target" class="com.code.aon.commercial.Target"/>
+	<field name="project" class="com.code.aon.commercial.ProjectCommercial"/>
 	<field name="seller" class="com.code.aon.seller.Seller"/>
 	<field name="activity" class="com.code.aon.commercial.CommercialActivity"/>
 	<field name="comments" class="java.lang.String"/>
@@ -24,13 +24,13 @@
 	<field name="offer" class="com.code.aon.commercial.Offer"/>
 	<field name="endDate" class="java.util.Date"/>
 	<variable name="telephone" class="java.lang.String">
-		<variableExpression><![CDATA[($F{target}.getRegistry().getPhones()==null?(""):($R{commercial_tracking_telephone_abr}+": "+$F{target}.getRegistry().getPhones()+", "))]]></variableExpression>
+		<variableExpression><![CDATA[($F{project}.getTarget().getRegistry().getPhones()==null?(""):($R{commercial_tracking_telephone_abr}+": "+$F{project}.getTarget().getRegistry().getPhones()+", "))]]></variableExpression>
 	</variable>
 	<variable name="celular" class="java.lang.String">
-		<variableExpression><![CDATA[($F{target}.getRegistry().getCellular()==null?(""):($R{commercial_tracking_celular_abr}+": "+$F{target}.getRegistry().getCellular().getValue()+", "))]]></variableExpression>
+		<variableExpression><![CDATA[($F{project}.getTarget().getRegistry().getCellular()==null?(""):($R{commercial_tracking_celular_abr}+": "+$F{project}.getTarget().getRegistry().getCellular().getValue()+", "))]]></variableExpression>
 	</variable>
 	<variable name="email" class="java.lang.String">
-		<variableExpression><![CDATA[($F{target}.getRegistry().getEmail()==null?(new String("")):($R{commercial_tracking_email_abr}+": "+$F{target}.getRegistry().getEmail().getValue()))]]></variableExpression>
+		<variableExpression><![CDATA[($F{project}.getTarget().getRegistry().getEmail()==null?(new String("")):($R{commercial_tracking_email_abr}+": "+$F{project}.getTarget().getRegistry().getEmail().getValue()))]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -224,7 +224,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getFullName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{project}.getTarget().getRegistry().getFullName()]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy  " isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Opaque" x="0" y="0" width="50" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -280,10 +280,10 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getDefaultAddress().getFullAddress()+", "+
-$F{target}.getRegistry().getDefaultAddress().getZip()+", "+
-$F{target}.getRegistry().getDefaultAddress().getCity()+" ("+
-$F{target}.getRegistry().getDefaultAddress().getGeozone().getName()+")"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{project}.getTarget().getRegistry().getDefaultAddress().getFullAddress()+", "+
+$F{project}.getTarget().getRegistry().getDefaultAddress().getZip()+", "+
+$F{project}.getTarget().getRegistry().getDefaultAddress().getCity()+" ("+
+$F{project}.getTarget().getRegistry().getDefaultAddress().getGeozone().getName()+")"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Opaque" x="40" y="22" width="514" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
