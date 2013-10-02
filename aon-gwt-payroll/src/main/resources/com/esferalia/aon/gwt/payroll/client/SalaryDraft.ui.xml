@@ -517,9 +517,8 @@
 												<g:Label styleName="{style.cell-label}">LIQUIDO A
 													PERCIBIR (A-B)</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<!--  e:ValueInlineHTML
-														changeDisplayStyleName="{style.value-changed}" ui:field="totalLiquidLabel">&nbsp; </e:ValueInlineHTML-->
-													<e:ValueTextBox changeDisplayStyleName="{style.value-changed}" ui:field="totalLiquidLabel" />	
+													<e:ValueInlineHTML
+														changeDisplayStyleName="{style.value-changed}" ui:field="totalLiquidLabel">&nbsp; </e:ValueInlineHTML>
 													<g:InlineHTML ui:field="dbTotalLiquidLabel"
 														visible="false" />
 												</g:HTMLPanel>

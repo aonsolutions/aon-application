@@ -873,7 +873,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	@UiField
 	Label dbTotalPaymentsLabel;
 	@UiField
-	ValueTextBox totalLiquidLabel;
+	ValueLabel totalLiquidLabel;
 	@UiField
 	Label dbTotalLiquidLabel;
 	@UiField
