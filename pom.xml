@@ -156,6 +156,8 @@
 		<module>aon.python</module>
 		<module>aon.aeat.mipf</module>
 		<module>aon-jasperreports</module>
+
+		<module>aon-solutions-release</module>
 	</modules>
 
 	<scm>
