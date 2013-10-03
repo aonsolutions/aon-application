@@ -13,8 +13,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
@@ -23,7 +21,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.Enterprise;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.finance.Finance;
@@ -43,8 +40,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class A3Writer extends BasicExporter {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(A3Writer.class.getName());
-	
 	private StreetType[] VALID_STREET_TYPES = new StreetType[]{
 			StreetType.AD, StreetType.AL, StreetType.AP, StreetType.AV, StreetType.BL, StreetType.BO,
 			StreetType.CH, StreetType.CL, StreetType.CM, StreetType.CO, StreetType.CT, StreetType.CS,
@@ -54,7 +49,13 @@ public class A3Writer extends BasicExporter {
 			StreetType.UR};
 
 	private static final int REGISTRY_SIZE = 256;
-
+	
+	private String enterpriseCode;
+	
+	public A3Writer(String enterpriseCode) {
+		this.enterpriseCode = StringUtils.leftPad(enterpriseCode, 5, "0");
+	}
+	
 	private void setNumber( double value, int offset, int maxLength ) {
 		double _value = CommonUtil.round(value);
 		String pattern = StringUtils.leftPad("0.00", maxLength-1, "0");
@@ -77,8 +78,15 @@ public class A3Writer extends BasicExporter {
 	}
 
 	private void setAccount( Account account, int offset ) {
+		String cuenta = StringUtils.substring(account.getCode(), 0, 4);
+		String subCuenta = StringUtils.substring(account.getCode(), 4);
+		int length = StringUtils.length(subCuenta);
+		if ( length > 4 ) {
+			subCuenta = StringUtils.substring(subCuenta, length-4, length);	
+		}
+		subCuenta = StringUtils.leftPad(subCuenta, 4, '0');
 		// Cuenta
-		String code = StringUtils.rightPad(account.getCode(), 12, '0'); 
+		String code = StringUtils.rightPad(cuenta + subCuenta, 12, '0'); 
 		setString( code, offset, 12);
 	}
 
@@ -94,8 +102,7 @@ public class A3Writer extends BasicExporter {
 		// Tipo de Formato
 		setInteger( 3, 0, 1);
 		// Codigo de Empresa
-		Enterprise enterprise = getEnterprise();
-		setInteger( enterprise.getId(), 1, 5);
+		setString(enterpriseCode, 1, 5);
 		// Moneda enlace
 		setString("E", 252, 1);
 		// Indicador de Generado (N)
@@ -248,9 +255,9 @@ public class A3Writer extends BasicExporter {
 		}
 		if ( retentionIncluded ) {
 			// Porcentaje de Retencion
-			setPercent( retentionPercent, 134 );
+			setPercent( retentionPercent, 153 );
 			// Cuota de Retencion
-			setNumber( retentionQuota, 139, 14 );
+			setNumber( retentionQuota, 158, 14 );
 		}
 		// Operacion sujeta a IVA
 		setString( vatIncluded ? "S" : "N", 174, 1);				
@@ -611,7 +618,7 @@ public class A3Writer extends BasicExporter {
 	@Override
 	public Map<String, byte[]> getDataMap() {
 		Map<String, byte[]> map = new HashMap<String, byte[]>();
-		map.put("suenlac3.txt", getData());
+		map.put("suenlace.dat", getData());
 		return map;
 	}
 	

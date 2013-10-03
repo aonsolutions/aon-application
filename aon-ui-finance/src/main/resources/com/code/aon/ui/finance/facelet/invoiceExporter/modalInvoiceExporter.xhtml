@@ -8,24 +8,29 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="showGeyceWindow">
-		<c:if test="#{invoiceExporter.showGeyceWindow}">
-			<rich:modalPanel id="geyceModalPanel" 
+	<aon:panelGroup id="showInvoiceExporterWindow">
+		<c:if test="#{invoiceExporter.showInvoiceExporterWindow}">
+			<rich:modalPanel id="invoiceExporterModalPanel" 
 				minHeight="180" minWidth="500"  zindex="100"
-				showWhenRendered="#{invoiceExporter.showGeyceWindow}" >
+				showWhenRendered="#{invoiceExporter.showInvoiceExporterWindow}" >
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{bundle.finance_invoiceExport_geyce}" />
+						<c:if test="#{invoiceExporter.type == 0}">
+							<aon:outputText value="#{bundle.finance_invoiceExport_geyce}" />
+						</c:if>
+						<c:if test="#{invoiceExporter.type == 1}">
+							<aon:outputText value="#{bundle.finance_invoiceExport_a3}" />
+						</c:if>
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
 					<aon:form>
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							reRender="showGeyceWindow" immediate="true">
+							reRender="showInvoiceExporterWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{invoiceExporter.showGeyceWindow}"
+								target="#{invoiceExporter.showInvoiceExporterWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -36,38 +41,40 @@
 							<aon:div styleClass="aon-popupWindow-content-internal">
 								<aon:div style="width:99%">
 									<aon:div styleClass="aon-toolbar">
-										<aon:htmlCommandLink id="geyce-accept"
+										<aon:htmlCommandLink id="invoice_exporter-accept"
 											value="#{bundle.aon_accept}" target="_blank"
-											actionListener="#{invoiceExporter.onDownloadGeyce}"
+											actionListener="#{invoiceExporter.onDownload}"
 											styleClass="aon-finding-toolbar-item aon-icon-mail-save">
-											<rich:componentControl for="geyceModalPanel"
+											<rich:componentControl for="invoiceExporterModalPanel"
 												event="onclick" operation="hide"/>																					
 										</aon:htmlCommandLink>
-										<aon:commandButton id="geyce-cancel"
+										<aon:commandButton id="invoice_exporter-cancel"
 											value="#{bundle.aon_cancel}"
-											reRender="showGeyceWindow"
+											reRender="showInvoiceExporterWindow"
 											immediate="true"
 											styleClass="aon-finding-toolbar-item aon-icon-cancel">
 											<f:setPropertyActionListener
-												target="#{invoiceExporter.showGeyceWindow}"
+												target="#{invoiceExporter.showInvoiceExporterWindow}"
 												value="#{false}" />
 										</aon:commandButton>
 									</aon:div>
 									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 										<aon:panelGrid id="menuGrid" columns="2" style="width: 100%;">
 	
-											<aon:outputLabel for="Geyce_enterpriseCode"
+											<aon:outputLabel for="InvoiceExporter_enterpriseCode"
 												value="#{bundle.aon_company_id}" />
-											<aon:inputText id="Geyce_enterpriseCode"
+											<aon:inputText id="InvoiceExporter_enterpriseCode"
 												value="#{invoiceExporter.enterpriseCode}"
-												size="10" maxlength="6"
+												size="10" maxlength="#{invoiceExporter.enterpriseCodeLength}"
 												required="true" /> 
 	
-											<aon:outputLabel for="Geyce_journal"
-												value="#{bundle.accounting_journal}" />
-											<aon:inputText id="Geyce_journal"
-												size="2" maxlength="2"
-												value="#{invoiceExporter.journal}" />
+											<c:if test="#{invoiceExporter.type == 0}">
+												<aon:outputLabel for="Geyce_journal"
+													value="#{bundle.accounting_journal}" />
+												<aon:inputText id="Geyce_journal"
+													size="2" maxlength="2"
+													value="#{invoiceExporter.journal}" />
+											</c:if>												
 		
 										</aon:panelGrid>
 									</aon:div>

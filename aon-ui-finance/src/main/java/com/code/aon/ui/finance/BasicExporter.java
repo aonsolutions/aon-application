@@ -62,8 +62,7 @@ public abstract class BasicExporter {
 	public void init( Invoice invoice ) throws ManagerBeanException, IOException {
 		this.invoice = invoice;
 		this.accountEntry = obtainAccountEntry();
-		InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
-		this.taxBreakDowns = priceStrategy.getTaxBreakDowns(invoice, invoice);		
+		this.taxBreakDowns = obtainTaxBreakDowns();		
 		this.details = obtainDetails();
 		this.registryDetail = obtainRegistryDetail();
 		if ( this.out.size() > 0 ) {
@@ -113,6 +112,22 @@ public abstract class BasicExporter {
 			@Override
 			public int compare(AccountEntryDetail o1, AccountEntryDetail o2) {
 				return o1.getAccount().getCode().compareTo(o2.getAccount().getCode());
+			}
+			
+		};
+		Collections.sort( list, comparator );
+		return list;
+	}
+	
+	private List<TaxBreakDown> obtainTaxBreakDowns() {
+		InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();		
+		List<TaxBreakDown> list = priceStrategy.getTaxBreakDowns(invoice, invoice);
+		Comparator<TaxBreakDown> comparator = new Comparator<TaxBreakDown>() {
+
+			@Override
+			public int compare(TaxBreakDown o1, TaxBreakDown o2) {
+				Integer i1 = o1.getTaxType().ordinal();
+				return i1.compareTo(o2.getTaxType().ordinal());
 			}
 			
 		};

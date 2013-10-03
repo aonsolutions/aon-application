@@ -38,18 +38,26 @@ public class InvoiceExporterController extends BasicController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceExporterController.class.getName());
 	
-	private boolean showGeyceWindow;
+	private static final int GEYCE = 0;
+	
+	private static final int A3 = 1;
+	
+	private boolean showInvoiceExporterWindow;
 	
 	private String enterpriseCode;
 	
 	private String journal;
+
+	private int type;
+		
+	private int enterpriseCodeLength;
 	
-	public boolean isShowGeyceWindow() {
-		return showGeyceWindow;
+	public boolean isShowInvoiceExporterWindow() {
+		return showInvoiceExporterWindow;
 	}
 
-	public void setShowGeyceWindow(boolean showGeyceWindow) {
-		this.showGeyceWindow = showGeyceWindow;
+	public void setShowInvoiceExporterWindow(boolean showInvoiceExporterWindow) {
+		this.showInvoiceExporterWindow = showInvoiceExporterWindow;
 	}
 
 	public String getEnterpriseCode() {
@@ -67,25 +75,51 @@ public class InvoiceExporterController extends BasicController {
 	public void setJournal(String journal) {
 		this.journal = journal;
 	}
+	
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
+	public int getEnterpriseCodeLength() {
+		return enterpriseCodeLength;
+	}
+
+	public void setEnterpriseCodeLength(int enterpriseCodeLength) {
+		this.enterpriseCodeLength = enterpriseCodeLength;
+	}
 
 	public void onShowGeyceWindow( ActionEvent event ) {
 		if (! getCheckList().isEmpty() ) {
-			setShowGeyceWindow(true);	
+			setType(GEYCE);
+			setEnterpriseCodeLength(6);
+			setShowInvoiceExporterWindow(true);	
 		}
 	}
-	
-	public void onDownloadGeyce( ActionEvent event ) {
-		setShowGeyceWindow(false);
-		download( new GeyceWriter(enterpriseCode, journal) );
-	}
 
-	public void onDownloadA3( ActionEvent event ) {
-		download( new A3Writer() );
+	public void onShowA3Window( ActionEvent event ) {
+		if (! getCheckList().isEmpty() ) {
+			setType(A3);
+			setEnterpriseCodeLength(5);
+			setShowInvoiceExporterWindow(true);	
+		}
+	}	
+	
+	public void onDownload( ActionEvent event ) {
+		setShowInvoiceExporterWindow(false);
+		if ( getType() == GEYCE ) {
+			download( new GeyceWriter(enterpriseCode, journal) );	
+		} else if ( getType() == A3 ) {
+			download( new A3Writer(enterpriseCode) );
+		}
 	}
 	
 	private void downloadFile( String name, byte[] data ) {
     	InputStream in = new ByteArrayInputStream(data);
-        DownloadUtil.downloadAttachment(name, MimeType.MIME_TXT, in, data.length);	    				    					
+        DownloadUtil.downloadAttachment(name, null, in, data.length);	    				    					
 	}
 
     private File getZipFile( Map<String,byte[]> dataMap ) throws IOException {
