@@ -34,7 +34,7 @@
 							title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save})"
 							accesskey="#{bundle.aon_key_save}"
 							actionListener="#{accountEntry.accept}"
-							rendered="#{accountEntry.new and accountEntry.manual and (accountEntry.model.rowCount > 0 or accountEntry.new)}"
+							rendered="#{accountEntry.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							focus="Account_Id">
 						</aon:commandButton>
@@ -133,118 +133,113 @@
 							controller="#{accountEntry}" action="accountEntry_form" 
 							rendered="#{!accountEntry.new}" 
 							style="float:right;margin-right:0;" />
-						
 					</ui:define>
 				</ui:decorate>
-		
 				<c:if test="#{!accountEntry.new}">
 					<ui:include src="/com/code/aon/ui/accounting/facelet/entry/entriesToolbar.xhtml" />
 				</c:if>
-
-			</aon:div>
-
+ 			</aon:div>
+ 			
 			<aon:div id="entryContainer" styleClass="aon-scroll-area" >
-					<aon:panelGrid columns="11" style="width: 99%;margin-bottom: 1em;"
-						columnClasses="
-						 aon-panelGrid-odd aon-width-50
-						,aon-panelGrid-even aon-width-80
-						,aon-panelGrid-odd aon-width-70
-						,aon-panelGrid-even aon-width-80
-						,aon-panelGrid-odd aon-width-100
-						,aon-panelGrid-even aon-width-80
-						,aon-panelGrid-even aon-width-150
-						,aon-panelGrid-odd aon-width-50
-						,aon-panelGrid-even aon-width-150
-						,aon-panelGrid-even aon-width-auto
-						,aon-panelGrid-even aon-width-50">
+				<aon:panelGrid columns="11" style="width: 99%;margin-bottom: 1em;"
+					columnClasses="
+					 aon-panelGrid-odd aon-width-50
+					,aon-panelGrid-even aon-width-80
+					,aon-panelGrid-odd aon-width-70
+					,aon-panelGrid-even aon-width-80
+					,aon-panelGrid-odd aon-width-100
+					,aon-panelGrid-even aon-width-80
+					,aon-panelGrid-even aon-width-150
+					,aon-panelGrid-odd aon-width-50
+					,aon-panelGrid-even aon-width-150
+					,aon-panelGrid-even aon-width-auto
+					,aon-panelGrid-even aon-width-50">
 
-						<aon:outputText value="#{bundle.aon_id}: " />
-						<aon:div>
-							<aon:div rendered="#{!accountEntry.new}">
-								<aon:outputText value="#{accountEntry.to.id}" />
-							</aon:div>
+					<aon:outputText value="#{bundle.aon_id}: " />
+					<aon:div>
+						<aon:div rendered="#{!accountEntry.new}">
+							<aon:outputText value="#{accountEntry.to.id}" />
 						</aon:div>
+					</aon:div>
 
-						<aon:outputText value="#{bundle.aon_financial_year}: " />
-						<aon:div>
-							<aon:selectOneMenu id="AccountEntry_accountPeriod"
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{accountEntry.to.accountPeriod}"
-								rendered="#{accountEntry.new or (!accountEntry.new and accountEntry.manual and accountEntry.periodActive)}">
-								<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
-							</aon:selectOneMenu>
-							<aon:outputText value="#{accountEntry.to.accountPeriod.name}"
-								rendered="#{!accountEntry.new and (!accountEntry.manual or !accountEntry.periodActive)}" />
-						</aon:div>
+					<aon:outputText value="#{bundle.aon_financial_year}: " />
+					<aon:div>
+						<aon:selectOneMenu id="AccountEntry_accountPeriod"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{accountEntry.to.accountPeriod}"
+							rendered="#{accountEntry.new or (!accountEntry.new and accountEntry.manual and accountEntry.periodActive)}">
+							<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
+						</aon:selectOneMenu>
+						<aon:outputText value="#{accountEntry.to.accountPeriod.name}"
+							rendered="#{!accountEntry.new and (!accountEntry.manual or !accountEntry.periodActive)}" />
+					</aon:div>
 
-						<aon:outputText value="#{bundle.accounting_journal}: " />
-						<aon:div>
-							<aon:outputText value="#{accountEntry.to.journal}" rendered="#{!accountEntry.new}" />
-						</aon:div>
-						
-						
-						<aon:div>
-							<c:if test="#{aonRole.confidentiality}">
-								<aon:selectBooleanCheckbox id="AccountEntry_securityLevel"
-									value="#{accountEntry.to.confidential}"
-									rendered="#{accountEntry.new or (!accountEntry.new and accountEntry.manual and accountEntry.periodActive)}" />
-								<aon:outputText styleClass="aon-italic aon-margin-right"
-									value="#{bundle.aon_confidential}"
-									rendered="#{accountEntry.manual}"/>
-								<aon:outputText styleClass="aon-margin-left aon-icon aon-icon-confidential" 
-									value="#{bundle.aon_confidential}" 
-									title="#{bundle.aon_confidential}"
-									rendered="#{!accountEntry.manual and accountEntry.to.confidential}">
-								</aon:outputText>
-								
-							</c:if>
-						</aon:div>
-
-						<aon:outputText value="#{bundle.aon_date}: " />
-						<aon:div>
-							<aon:selectInputDate required="true"
-								id="AccountEntry_entryDate" value="#{accountEntry.to.entryDate}"
-								rendered="#{accountEntry.new or (!accountEntry.new and accountEntry.manual and accountEntry.periodActive)}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"/>
-							<aon:outputText value="#{accountEntry.to.entryDate}"
-								rendered="#{!accountEntry.new and (!accountEntry.manual or !accountEntry.periodActive)}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
+					<aon:outputText value="#{bundle.accounting_journal}: " />
+					<aon:div>
+						<aon:outputText value="#{accountEntry.to.journal}" rendered="#{!accountEntry.new}" />
+					</aon:div>
+					
+					
+					<aon:div>
+						<c:if test="#{aonRole.confidentiality}">
+							<aon:selectBooleanCheckbox id="AccountEntry_securityLevel"
+								value="#{accountEntry.to.confidential}"
+								rendered="#{accountEntry.new or (!accountEntry.new and accountEntry.manual and accountEntry.periodActive)}" />
+							<aon:outputText styleClass="aon-italic aon-margin-right"
+								value="#{bundle.aon_confidential}"
+								rendered="#{accountEntry.manual}"/>
+							<aon:outputText styleClass="aon-margin-left aon-icon aon-icon-confidential" 
+								value="#{bundle.aon_confidential}" 
+								title="#{bundle.aon_confidential}"
+								rendered="#{!accountEntry.manual and accountEntry.to.confidential}">
 							</aon:outputText>
-						</aon:div>
-
-						<aon:div>
-							<aon:outputText value="#{accountEntry.to.type}" />
-						</aon:div>
-
-						<aon:div id="commentIconContainer" style="text-align:center;cursor:pointer;">
-							<c:if test="#{!accountEntry.new}">
-								<a4j:support
-									event="onclick"
-									reRender="commentContainer,commentIconContainer"
-									rendered="#{!accountEntry.commentPanelVisible}"
-									actionListener="#{accountEntry.showCommentPanel}">
-								</a4j:support>
-								
-								<aon:outputText value="&#160;" styleClass="aon-icon-comment"
-									rendered="#{empty accountEntry.to.comments}" 
-									style="padding-left:20px"/>
-	
-								<aon:div rendered="#{!empty accountEntry.to.comments}">
-									<aon:outputText value="&#160;" styleClass="aon-icon-comment-red"
-										style="padding-left:20px"/>
-									<rich:toolTip>
-										<aon:outputText value="#{accountEntry.to.comments}"/>
-									</rich:toolTip>
-								</aon:div>
-							</c:if>
 							
-						</aon:div>
-						
-					</aon:panelGrid>
-				<c:if test="#{accountEntry.new}">
+						</c:if>
+					</aon:div>
 
+					<aon:outputText value="#{bundle.aon_date}: " />
+					<aon:div>
+						<aon:selectInputDate required="true"
+							id="AccountEntry_entryDate" value="#{accountEntry.to.entryDate}"
+							rendered="#{accountEntry.new or (!accountEntry.new and accountEntry.manual and accountEntry.periodActive)}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+						<aon:outputText value="#{accountEntry.to.entryDate}"
+							rendered="#{!accountEntry.new and (!accountEntry.manual or !accountEntry.periodActive)}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:div>
+
+					<aon:div>
+						<aon:outputText value="#{accountEntry.to.type}" />
+					</aon:div>
+
+					<aon:div id="commentIconContainer" style="text-align:center;cursor:pointer;">
+						<c:if test="#{!accountEntry.new}">
+							<a4j:support
+								event="onclick"
+								reRender="commentContainer,commentIconContainer"
+								rendered="#{!accountEntry.commentPanelVisible}"
+								actionListener="#{accountEntry.showCommentPanel}">
+							</a4j:support>
+							
+							<aon:outputText value="&#160;" styleClass="aon-icon-comment"
+								rendered="#{empty accountEntry.to.comments}" 
+								style="padding-left:20px"/>
+
+							<aon:div rendered="#{!empty accountEntry.to.comments}">
+								<aon:outputText value="&#160;" styleClass="aon-icon-comment-red"
+									style="padding-left:20px"/>
+								<rich:toolTip>
+									<aon:outputText value="#{accountEntry.to.comments}"/>
+								</rich:toolTip>
+							</aon:div>
+						</c:if>
+						
+					</aon:div>
+				</aon:panelGrid>
+				<c:if test="#{accountEntry.new}">
 					<aon:div styleClass="aon-panelGrid-search">
 						<aon:div styleClass="aon-panelGrid-search-info">
 							<aon:outputText styleClass="aon-panelGrid-search-info-internal"
@@ -289,9 +284,9 @@
 					</aon:div>
 				</c:if>
 				
-					<ui:include
+				<ui:include
 						src="/com/code/aon/ui/accounting/facelet/entry/linesForm.xhtml" />
-				</aon:div>
+			</aon:div>
 		</aon:form>
 		<aon:div id="commentContainer">
 			<c:if test="#{accountEntry.commentPanelVisible}">
@@ -427,9 +422,8 @@
 					</aon:form>
 				</rich:modalPanel>
 			</c:if>
-
 		</aon:div>
-		<aon:lookupButtonPopup lookup="#{accountLookup}" />
+ 		<aon:lookupButtonPopup lookup="#{accountLookup}" />
 		<c:if test="#{accountEntry.new}">
 			<rich:jQuery timing="onload" selector="#AccountEntry_accountPeriod" query="focus()"/>
 		</c:if>

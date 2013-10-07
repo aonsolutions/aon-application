@@ -16,6 +16,18 @@
 				<ui:param name="toolbarTitle" value="#{bundle.accounting_entry_module}" />
 				<ui:param name="controller" value="#{accountEntry}" />
 				<ui:param name="skipBackButton" value="#{true}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+				 
+				<ui:define name="additionalToolbarContent">
+						<aon:commandButton id="reset" 
+							value="#{bundle.aon_reset}"
+							accesskey="#{bundle.aon_key_new}"
+							title="#{bundle.aon_key_new} (ALT+#{bundle.aon_key_new})"
+							action="accountEntry_form"
+							actionListener="#{accountEntry.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							rendered="#{!accountEntry.new}"/>
+				</ui:define>				
 			</ui:decorate>
 
 			<c:if test="#{!accountEntry.new}">
