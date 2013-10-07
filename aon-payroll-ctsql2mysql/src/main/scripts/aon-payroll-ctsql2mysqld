@@ -10,7 +10,6 @@ CLASSPATH=$CLASSPATH:/usr/share/java/ctsql-jdbc.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/mysql-connector-java.jar
 
 CLASSPATH=$CLASSPATH:/usr/share/java/slf4j/api.jar
-#CLASSPATH=$CLASSPATH:/usr/share/java/slf4j/jcl.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/slf4j/simple.jar
 
 
@@ -28,7 +27,8 @@ CLASSPATH=$CLASSPATH:/usr/share/java/aon-entity-common.jar
 
 CLASSPATH=$CLASSPATH:/usr/share/java/commons-cli.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/commons-lang.jar
-#CLASSPATH=$CLASSPATH:/usr/share/java/commons-logging.jar
+CLASSPATH=$CLASSPATH:/usr/share/java/commons-codec.jar
+CLASSPATH=$CLASSPATH:/usr/share/java/commons-dbutils.jar
 
 CLASSPATH=$CLASSPATH:/usr/share/java/aon-payroll-ctsql2mysql.jar
 

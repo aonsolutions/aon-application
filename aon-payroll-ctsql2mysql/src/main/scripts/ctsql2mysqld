@@ -14,7 +14,7 @@
 #
 # aon-payroll-ctsql2mysqld	Syncing daemon
 #
-# Author:       Raúl Trepiana <rtrepiana@esferalia.com>
+# Author:       RaÃºl Trepiana <rtrepiana@esferalia.com>
 #
 # chkconfig:	345 97 03
 #
@@ -48,7 +48,7 @@ LOCKFILE=${LOCKFILE-/var/lock/subsys/aon-payroll-ctsql2mysqld}
 # source function library
 . /etc/rc.d/init.d/functions
 
-ARGS=
+declare -a ARGS
 RETVAL=0
 
 # check for configuration
@@ -66,14 +66,19 @@ check () {
 function parseargs() {
 	CONFFILE=$1
 	check $CONFFILE || exit 1
-    ARGS=
+    I=0
     while read LINE
     do 
     	LINE=${LINE%%#*}
-    	if [ -n "$LINE" ] 
-    	then  
-    		ARGS=$ARGS' -'${LINE%%=*}' "'${LINE#*=}'"' 
-    	fi
+    	[ -z "$LINE" ] && continue;
+    	
+    	if [[ $LINE == *=* ]]; then 
+    		ARGS[$((I++))]='-'${LINE%%=*};
+    		ARGS[$((I++))]=${LINE#*=};
+    	else 
+    		ARGS[$((I++))]=$LINE;
+    	fi 
+	
 	done < $CONFFILE;
 }
 
@@ -84,7 +89,7 @@ function procrunning() {
 	
 	parseargs $CONFFILE || exit 1
 
-	SCRIPTARGS=$(echo $ARGS | sed 's/\([-"]\)/\\\1/g')   
+	SCRIPTARGS=$(echo "${ARGS[@]}" | sed 's/\([-"]\)/\\\1/g')   
    
 	for procid in `pidof -x "java"`; do
 		ps -fp $procid | grep "$SCRIPTARGS"  > /dev/null && pid=$procid
@@ -107,9 +112,8 @@ start() {
 
     parseargs $CONFFILE || exit 1
 	
-	CMD_START="$PROG $ARGS"
-    echo "$CMD_START" >$LOGFILE
-    $CMD_START >>$LOGFILE 2>&1  &
+    echo $PROG "${ARGS[@]}" >$LOGFILE
+    $PROG "${ARGS[@]}" >>$LOGFILE 2>&1  &
 	RETVAL=$?
 
     if [ $RETVAL -eq 0 ]; then

@@ -1,18 +1,5 @@
 #/bin/sh
 #
-#####################################################################
-# Copyright (c) 2010, esferalia NETWORKS S.A
-#
-# The copyright of the computer program herein is the property 
-# of esferalia NETWORKS.
-#####################################################################
-# The program may be used and/or copied only with the written 
-# permission of esferalia NETWORKS, or in accordance with the 
-# terms and conditions stipulated in the agreement contract 
-# under which the program has been supplied.
-####################################################################
-#
-#
 
 
 CLASSPATH=$CLASSPATH:/usr/share/java/ctsql-jdbc.jar

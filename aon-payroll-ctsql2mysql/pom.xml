@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -22,21 +23,21 @@
 		<url>http://dev.esferalia.com/websvn/wsvn/aon-payroll-ctsql2mysql</url>
 	</scm>
 
-        <repositories>
-                <repository>
-                        <id>dynamicJasper-public-repository</id>
-                        <name>DynamicJasper public Repository</name>
-                        <url>http://archiva.fdvs.com.ar/repository/public1/</url>
-                        <releases>
-                                <enabled>false</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </releases>
-                        <snapshots>
-                                <enabled>false</enabled>
-                                <updatePolicy>never</updatePolicy>
-                        </snapshots>
-                </repository>
-        </repositories>
+	<repositories>
+		<repository>
+			<id>dynamicJasper-public-repository</id>
+			<name>DynamicJasper public Repository</name>
+			<url>http://archiva.fdvs.com.ar/repository/public1/</url>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -59,12 +60,12 @@
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
-        <dependency>
+		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.3</version>
 			<scope>provided</scope>
-        </dependency>
+		</dependency>
 		<dependency>
 			<groupId>com.transtools</groupId>
 			<artifactId>ctsql-jdbc</artifactId>
@@ -120,7 +121,7 @@
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.den_4</groupId>
 			<artifactId>inotify_java</artifactId>
@@ -149,7 +150,7 @@
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon-dbutils</artifactId>
@@ -164,30 +165,18 @@
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
+
 	</dependencies>
 
 	<build>
 		<plugins>
-			<!--plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.2</version>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<doCheck>false</doCheck>
-					<doUpdate>false</doUpdate>
-				</configuration>
-			</plugin-->
+			<!--plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>buildnumber-maven-plugin</artifactId> 
+				<version>1.2</version> <executions> <execution> <phase>validate</phase> <goals> 
+				<goal>create</goal> </goals> </execution> </executions> <configuration> <doCheck>false</doCheck> 
+				<doUpdate>false</doUpdate> </configuration> </plugin -->
 		</plugins>
 	</build>
-	
+
 	<profiles>
 		<profile>
 			<id>rpm-release</id>
@@ -219,10 +208,10 @@
 						<configuration>
 							<group>Applications/Aon</group>
 							<release>${buildNumber}</release>
-							<copyright>2010, esferalia Networks S.A</copyright>
+							<copyright>2013, esferalia Networks S.A</copyright>
 							<requires>
-								<!--  require>slf4j</require-->
-								<!-- require>inotify-java</require -->
+								<require>java</require>
+								<require>inotify-java</require>
 								<require>aon-dbutils</require>
 								<require>aon-master</require>
 								<require>jakarta-commons-lang</require>
@@ -315,6 +304,14 @@
 											<location>/usr/share/java/ctsql-jdbc-2.2.3.6.jar</location>
 											<destination>ctsql-jdbc.jar</destination>
 										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/javacsv-2.0.jar</location>
+											<destination>javacsv.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/log4jdbc-log4j2-jdbc4-1.15.jar</location>
+											<destination>log4jdbc-log4j2-jdbc4.jar</destination>
+										</softlinkSource>
 									</sources>
 								</mapping>
 
@@ -367,10 +364,10 @@
 				</plugins>
 			</build>
 		</profile>
-      	<profile>
-            <id>perform-stats</id>
-        </profile>
+		<profile>
+			<id>perform-stats</id>
+		</profile>
 	</profiles>
-	
+
 
 </project>
