@@ -244,7 +244,7 @@
 								<ui:param name="idRequired" value="#{true}" />						
 								<ui:param name="skipLabel" value="#{true}" />
 								<ui:param name="skipSuggestText" value="#{invoiceEntry.header.registry != null and invoiceEntry.header.registry.id != null}" />
-								<ui:param name="lookupInputOnFocus" value="Customer_name" />
+								<ui:param name="lookupInputOnFocus" value="Invoice_TaxableBase" />
 								<ui:param name="lookupInputSuggestSize" value="50" />
 							</ui:include>
 							<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml" >
@@ -258,7 +258,7 @@
 								<ui:param name="idRequired" value="#{true}" />						
 								<ui:param name="skipLabel" value="#{true}" />
 								<ui:param name="skipSuggestText" value="#{invoiceEntry.header.registry != null and invoiceEntry.header.registry.id != null}" />
-								<ui:param name="lookupInputOnFocus" value="Supplier_name" />
+								<ui:param name="lookupInputOnFocus" value="Invoice_TaxableBase" />
 								<ui:param name="lookupInputSuggestSize" value="50" />
 							</ui:include>
 							<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml" >
@@ -272,13 +272,13 @@
 								<ui:param name="idRequired" value="#{true}" />						
 								<ui:param name="skipLabel" value="#{true}" />
 								<ui:param name="skipSuggestText" value="#{invoiceEntry.header.registry != null and invoiceEntry.header.registry.id != null}" />
-								<ui:param name="lookupInputOnFocus" value="Creditor_name" />
+								<ui:param name="lookupInputOnFocus" value="Invoice_TaxableBase" />
 								<ui:param name="lookupInputSuggestSize" value="50" />
 							</ui:include>
 						</h:panelGrid>
 
 						<aon:outputText for="Registry_document"
-							value="#{bundle.aon_company_document}" />
+							value="#{bundle.aon_company_document}sccc" />
 						<aon:div id="documentPanel">
 							<aon:selectOneMenu id="Registry_document_type" 
 								disabled="#{invoiceEntry.newDetail}"
@@ -412,13 +412,22 @@
 								disabled="#{invoiceEntry.newDetail}"
 								suggestionValues="#{accountingCollections.conceptsDescriptions}"
 								value="#{invoiceEntry.header.concept}" maxlength="32"
-								width="150" directInputSuggestions="true"
+								width="180" directInputSuggestions="true"
 								inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;font-size:1em;"
 								buttonDisabledStyle="display:none;"
 								buttonInactiveStyle="display:none;" buttonStyle="display:none;" />
 
-							<aon:outputLabel for="Invoice_TaxableBase"
-								value="#{bundle.aon_taxable_base} (F9)" />
+							<aon:div>
+								<aon:outputLabel for="Invoice_TaxableBase"
+									value="#{bundle.aon_taxable_base}" />
+								<aon:outputText styleClass="aon-icon-question"
+									style="padding-left: 15px;"
+									value="&#160;"/>
+								<rich:toolTip style="width: 300px; white-space: normal; text-align: left; font-weight: normal;">
+									<aon:outputText value="Con el foco en el campo 'Base Imponible', pulse la tecla F9 para que le valor introducido sea tomado como total."/>
+								</rich:toolTip>
+							</aon:div>
+							
 							<aon:inputText id="Invoice_TaxableBase"
 								value="#{invoiceEntry.header.taxableBase}" size="10"
 								disabled="#{invoiceEntry.newDetail}">
@@ -436,7 +445,7 @@
 								value="% #{bundle.aon_vat}" />
 
 							<aon:inputText id="Invoice_TaxPercent"
-								value="#{invoiceEntry.header.taxPercent}" size="2"
+								value="#{invoiceEntry.header.taxPercent}" size="4"
 								disabled="#{invoiceEntry.newDetail}">
 								<a4j:support event="onkeyup"
 									onsubmit="if(event.keyCode != 120) return false;"
@@ -455,7 +464,7 @@
 							</aon:div>
 							<aon:div>
 								<aon:inputText id="Invoice_SurchargePercent"
-									value="#{invoiceEntry.header.surchargePercent}" size="2"
+									value="#{invoiceEntry.header.surchargePercent}" size="4"
 									rendered="#{invoiceEntry.header.surcharge}"
 									disabled="#{invoiceEntry.newDetail}">
 									<a4j:support event="onkeyup"

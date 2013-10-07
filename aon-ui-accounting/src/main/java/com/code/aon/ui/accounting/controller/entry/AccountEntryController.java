@@ -11,9 +11,11 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
@@ -52,6 +54,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class AccountEntryController extends BasicController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AccountEntryController.class.getName());
+	
+	private Account debitAccount;
+	private Account creditAccount;
+	private Double	amount;
+	private String  concept;
+	private String  numDocument;
+	
 	
 	private SpecialEntryControllerManager controllerManager;
 	
@@ -540,5 +549,95 @@ public class AccountEntryController extends BasicController {
 		}
 		
 	}
+
+	/*
+	 * 
+	 */
 	
+	public Account getDebitAccount() {
+		return debitAccount;
+	}
+
+	public void setDebitAccount(Account debitAccount) {
+		this.debitAccount = debitAccount;
+	}
+
+	public Account getCreditAccount() {
+		return creditAccount;
+	}
+
+	public void setCreditAccount(Account creditAccount) {
+		this.creditAccount = creditAccount;
+	}
+
+	public Double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+
+	public String getConcept() {
+		return concept;
+	}
+
+	public void setConcept(String concept) {
+		this.concept = concept;
+	}
+
+	public String getNumDocument() {
+		return numDocument;
+	}
+
+	public void setNumDocument(String numDocument) {
+		this.numDocument = numDocument;
+	}
+
+	public void accept(ActionEvent event) {
+		boolean newRow = isNew();
+		if (newRow) {
+			if ((getDebitAccount() != null && getDebitAccount().getId() != null) ||
+				(getCreditAccount() != null && getCreditAccount().getId() != null)){
+				if (StringUtils.isEmpty(getConcept())) {
+					String msg = "No se ha indicado el concepto.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+				if (getAmount() == null || getAmount() == 0.0) {
+					String msg = "No se ha indicado el importe.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+			}
+		}
+		super.accept(event);
+		if (newRow) {
+			IController detailController = FormUtil.getController( IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_DETAIL_NAME);
+			detailController.onReset(event);
+			if (getDebitAccount() != null && getDebitAccount().getId() != null) {
+				AccountEntryDetail detail = (AccountEntryDetail) detailController.getTo();
+				detail.setAccount(getDebitAccount());
+				detail.setConcept(getConcept());
+				detail.setDocumentNumber(getNumDocument());
+				detail.setDebit(getAmount());
+				if (getCreditAccount() != null && getCreditAccount().getId() != null) {
+					detail.setBalancingAccount(getCreditAccount());	
+				}
+				detailController.onAccept(event);
+				detailController.onReset(event);
+			}
+			if (getCreditAccount() != null && getCreditAccount().getId() != null) {
+				AccountEntryDetail detail = (AccountEntryDetail) detailController.getTo();
+				detail.setAccount(getCreditAccount());
+				detail.setConcept(getConcept());
+				detail.setDocumentNumber(getNumDocument());
+				detail.setCredit(getAmount());
+				if (getDebitAccount() != null && getDebitAccount().getId() != null) {
+					detail.setBalancingAccount(getDebitAccount());	
+				}
+				detailController.onAccept(event);
+			}
+		}
+	}
 }

@@ -2,6 +2,7 @@ package com.code.aon.ui.accounting.event;
 
 import java.util.Date;
 
+import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
@@ -69,6 +70,13 @@ public class AccountEntryControllerListener extends ControllerAdapter {
 	        }
 	        c.setTotalCredit(null);
 	        c.setTotalDebit(null);
+	        
+	        c.setDebitAccount( new Account());
+	        c.setCreditAccount( new Account());
+	        c.setAmount(0.0);
+	        c.setConcept(null);
+	        c.setNumDocument(null);
+	        
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e);
         }
