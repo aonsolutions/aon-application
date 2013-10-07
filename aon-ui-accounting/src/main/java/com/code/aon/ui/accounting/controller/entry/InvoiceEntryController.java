@@ -789,8 +789,21 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	public String generate() {
 		return onGenerateKey;
 	}
-
+	
+	public void onGenerateNew(ActionEvent event) {
+		onGenerate();
+		
+		onReset(event);
+	}
+	
 	public void onGenerate(ActionEvent event) {
+		onGenerate();
+		
+		onViewAccountEntry(event);
+		onGenerateKey = IAccountingConstants.ACCOUNT_ENTRY_FORM_NAVKEY;
+	}
+
+	public void onGenerate() {
 		double invoiceTotal = getInvoiceTotal();
 		double financeTotal = getFinanceTotal();
 		if (financeTotal > 0 && invoiceTotal != financeTotal) {
@@ -815,8 +828,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			insertOrUpdateInvoice(sessionName); //Grabar los totales de factura.
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
-			onViewAccountEntry(event);
-			onGenerateKey = IAccountingConstants.ACCOUNT_ENTRY_FORM_NAVKEY;
 		} catch (Exception e) {
 			onGenerateKey = null;
 			try {

@@ -27,14 +27,25 @@
 
 					<aon:commandButton
 						value="#{bundle.accounting_entry_generate}"
-						id="saveInvoice"
+						id="saveInvoiceNew"
 						title="#{bundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
+						accesskey="#{bundle.aon_key_save}"
+						actionListener="#{invoiceEntry.onGenerateNew}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						disabled="#{invoiceEntry.details.rowCount == 0}"
+						onclick="if (!confirm('#{bundle.accounting_entry_generate}?'))  return false;" />
+
+					<aon:commandButton
+						value="#{bundle.accounting_entry_generate_and_see}"
+						id="saveInvoiceSee"
+						title="#{bundle.accounting_entry_generate} (ALT+Q)"
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{invoiceEntry.onGenerate}"
 						action="#{invoiceEntry.generate}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						disabled="#{invoiceEntry.details.rowCount == 0}"
 						onclick="if (!confirm('#{bundle.accounting_entry_generate}?'))  return false;" />
+
 					<aon:commandButton value="#{bundle.aon_reset}"
 						accesskey="#{bundle.aon_key_new}"
 						title="#{bundle.aon_reset} (ALT+#{bundle.aon_key_new})"
