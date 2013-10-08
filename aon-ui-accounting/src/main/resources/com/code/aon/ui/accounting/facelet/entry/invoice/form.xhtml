@@ -28,8 +28,8 @@
 					<aon:commandButton
 						value="#{bundle.accounting_entry_generate}"
 						id="saveInvoiceNew"
-						title="#{bundle.accounting_entry_generate} (ALT+#{bundle.aon_key_save})"
-						accesskey="#{bundle.aon_key_save}"
+						title="#{bundle.accounting_entry_generate} (ALT+[shift]+#{bundle.aon_key_new})"
+						accesskey="#{bundle.aon_key_new}"
 						actionListener="#{invoiceEntry.onGenerateNew}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						disabled="#{invoiceEntry.details.rowCount == 0}"
@@ -38,8 +38,8 @@
 					<aon:commandButton
 						value="#{bundle.accounting_entry_generate_and_see}"
 						id="saveInvoiceSee"
-						title="#{bundle.accounting_entry_generate} (ALT+Q)"
-						accesskey="Q"
+						title="#{bundle.accounting_entry_generate} (ALT+[shift]+#{bundle.aon_key_save})"
+						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{invoiceEntry.onGenerate}"
 						action="#{invoiceEntry.generate}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -48,13 +48,13 @@
 
 					<aon:commandButton value="#{bundle.aon_reset}"
 						accesskey="#{bundle.aon_key_new}"
-						title="#{bundle.aon_reset} (ALT+#{bundle.aon_key_new})"
+						title="#{bundle.aon_reset} (ALT+[shift]+#{bundle.aon_key_new})"
 						actionListener="#{invoiceEntry.onReset}"
 						rendered="#{!invoiceEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset" />
 					<aon:commandButton value="#{bundle.aon_remove}"
 						accesskey="#{bundle.aon_key_remove}" action="accountEntry_search"
-						title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove})"
+						title="#{bundle.aon_remove} (ALT+[shift]+#{bundle.aon_key_remove})"
 						actionListener="#{invoiceEntry.onRemove}"
 						rendered="#{!invoiceEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
@@ -63,14 +63,14 @@
 
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}"
-						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
+						title="#{bundle.aon_back} (ALT+[shift]+#{bundle.aon_key_cancel})"
 						action="accountEntry_form" rendered="#{!invoiceEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						immediate="true"
 						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;" />
 					<aon:commandButton value="#{bundle.aon_back}"
 						accesskey="#{bundle.aon_key_cancel}"
-						title="#{bundle.aon_back} (ALT+#{bundle.aon_key_cancel})"
+						title="#{bundle.aon_back} (ALT+[shift]+#{bundle.aon_key_cancel})"
 						action="accountEntry_search" rendered="#{invoiceEntry.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						immediate="true"
@@ -78,7 +78,7 @@
 
 					<aon:commandButton id="finances" reRender="FinancesData"
 						value="#{bundle.accounting_generate_finances}"
-						title="#{bundle.accounting_generate_finances} (ALT+W)"
+						title="#{bundle.accounting_generate_finances} (ALT+[shift]+W)"
 						actionListener="#{invoiceEntry.generateFinances}" accesskey="W"
 						styleClass="aon-finding-toolbar-item aon-icon-sincronize"
 						rendered="#{invoiceEntry.details.rowCount > 0 and invoiceEntry.finances.rowCount==0}" />
