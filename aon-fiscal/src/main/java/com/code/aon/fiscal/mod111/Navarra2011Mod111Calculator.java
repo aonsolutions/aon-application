@@ -20,38 +20,81 @@ public class Navarra2011Mod111Calculator extends FiscalModelDetailCalculator imp
 		calculateDetails(mod111.getDetails());
 	}
 
-	@Override
-	public Mod111Key getKeyForReceivers() {
-		return null;
-	}
-
-	@Override
-	public Mod111Key getKeyForPerception() {
-		return null;
-	}
-
-	@Override
-	public Mod111Key getKeyForWitholding() {
-		return null;
-	}
-
-	@Override
-	public Mod111Key getKeyForInKindReceivers() {
-		return null;
-	}
-
-	@Override
-	public Mod111Key getKeyForInKindPerception() {
-		return null;
-	}
-
-	@Override
-	public Mod111Key getKeyForInKindWitholding() {
-		return null;
-	}
 
 	@Override
 	public double getResult(Mod111 mod111) {
 		return 0;
+	}
+
+	@Override
+	public Mod111Key getKeyForWorkReceivers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Mod111Key getKeyForWorkPerception() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Mod111Key getKeyForWorkWitholding() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Mod111Key getKeyForWorkInKindReceivers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Mod111Key getKeyForWorkInKindPerception() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Mod111Key getKeyForWorkInKindWitholding() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceReceivers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoicePerception() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceWitholding() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceInKindReceivers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceInKindPerception() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceInKindWitholding() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

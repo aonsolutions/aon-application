@@ -37,33 +37,63 @@ public class Bizkaia2011Mod111Calculator extends FiscalModelDetailCalculator imp
 	}
 
 	@Override
-	public Mod111Key getKeyForReceivers() {
+	public Mod111Key getKeyForWorkReceivers() {
 		return Mod111Key.BZ_C01;
 	}
 
 	@Override
-	public Mod111Key getKeyForPerception() {
+	public Mod111Key getKeyForWorkPerception() {
 		return Mod111Key.BZ_C02;
 	}
 
 	@Override
-	public Mod111Key getKeyForWitholding() {
+	public Mod111Key getKeyForWorkWitholding() {
 		return Mod111Key.BZ_C03;
 	}
 
 	@Override
-	public Mod111Key getKeyForInKindReceivers() {
-		return Mod111Key.BZ_C01;
+	public Mod111Key getKeyForWorkInKindReceivers() {
+		return Mod111Key.BZ_C28;
 	}
 
 	@Override
-	public Mod111Key getKeyForInKindPerception() {
-		return Mod111Key.BZ_C02;
+	public Mod111Key getKeyForWorkInKindPerception() {
+		return Mod111Key.BZ_C29;
 	}
 
 	@Override
-	public Mod111Key getKeyForInKindWitholding() {
-		return Mod111Key.BZ_C03;
+	public Mod111Key getKeyForWorkInKindWitholding() {
+		return Mod111Key.BZ_C30;
+	}
+	
+	@Override
+	public Mod111Key getKeyForInvoiceReceivers() {
+		return Mod111Key.BZ_C19;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoicePerception() {
+		return Mod111Key.BZ_C20;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceWitholding() {
+		return Mod111Key.BZ_C21;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceInKindReceivers() {
+		return Mod111Key.BZ_C28;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceInKindPerception() {
+		return Mod111Key.BZ_C29;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceInKindWitholding() {
+		return Mod111Key.BZ_C30;
 	}
 	
 	@Override

@@ -125,11 +125,11 @@ public class Mod111Manager extends FiscalModelManager {
 				String document = rs.getString(3);
 				if (!receiverDocuments.contains(document) ) {
 					receiverDocuments.add(document);
-					mod111.ensureDetail(calculator.getKeyForReceivers()).addAccumulatedAmount(1);
+					mod111.ensureDetail(calculator.getKeyForInvoiceReceivers()).addAccumulatedAmount(1);
 				}
 				
-				mod111.ensureDetail(calculator.getKeyForPerception()).addAccumulatedAmount(rentingAmount);
-				mod111.ensureDetail(calculator.getKeyForWitholding()).addAccumulatedAmount(retention);
+				mod111.ensureDetail(calculator.getKeyForInvoicePerception()).addAccumulatedAmount(rentingAmount);
+				mod111.ensureDetail(calculator.getKeyForInvoiceWitholding()).addAccumulatedAmount(retention);
 			}
 		} catch (NumberFormatException e) {
 			//Nothing
@@ -185,15 +185,15 @@ public class Mod111Manager extends FiscalModelManager {
 						double cre = rs.getDouble(3);
 						if (acc == retentionAccount) {
 							found = true;
-							mod111.ensureDetail(calculator.getKeyForWitholding()).addAccumulatedAmount(cre);
+							mod111.ensureDetail(calculator.getKeyForWorkWitholding()).addAccumulatedAmount(cre);
 						}
 						if (acc == salaryAccount) {
 							found = true;
-							mod111.ensureDetail(calculator.getKeyForPerception()).addAccumulatedAmount(deb);
+							mod111.ensureDetail(calculator.getKeyForWorkPerception()).addAccumulatedAmount(deb);
 						}
 					}
 					if (found) {
-						mod111.ensureDetail(calculator.getKeyForReceivers()).addAccumulatedAmount( fiscalModel.getReceiverCount());
+						mod111.ensureDetail(calculator.getKeyForWorkReceivers()).addAccumulatedAmount( fiscalModel.getReceiverCount());
 					}
 				}
 			}

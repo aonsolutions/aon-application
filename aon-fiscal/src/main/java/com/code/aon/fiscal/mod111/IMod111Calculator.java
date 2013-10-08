@@ -9,14 +9,22 @@ public interface IMod111Calculator {
 	boolean accept(int year, Administration administration);
 	void calculate(Mod111 mod111) throws AonException;
 	
-	Mod111Key getKeyForReceivers();
-	Mod111Key getKeyForPerception();
-	Mod111Key getKeyForWitholding();
+	Mod111Key getKeyForWorkReceivers();
+	Mod111Key getKeyForWorkPerception();
+	Mod111Key getKeyForWorkWitholding();
 
-	Mod111Key getKeyForInKindReceivers();
-	Mod111Key getKeyForInKindPerception();
-	Mod111Key getKeyForInKindWitholding();
+	Mod111Key getKeyForWorkInKindReceivers();
+	Mod111Key getKeyForWorkInKindPerception();
+	Mod111Key getKeyForWorkInKindWitholding();
 	
+	Mod111Key getKeyForInvoiceReceivers();
+	Mod111Key getKeyForInvoicePerception();
+	Mod111Key getKeyForInvoiceWitholding();
+
+	Mod111Key getKeyForInvoiceInKindReceivers();
+	Mod111Key getKeyForInvoiceInKindPerception();
+	Mod111Key getKeyForInvoiceInKindWitholding();
+
 	double getResult(Mod111 mod111);
 
 }

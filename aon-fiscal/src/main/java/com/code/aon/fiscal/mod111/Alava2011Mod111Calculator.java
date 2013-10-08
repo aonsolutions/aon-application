@@ -39,33 +39,63 @@ public class Alava2011Mod111Calculator extends FiscalModelDetailCalculator imple
 	}
 
 	@Override
-	public Mod111Key getKeyForReceivers() {
+	public Mod111Key getKeyForWorkReceivers() {
 		return Mod111Key.AR_C01;
 	}
 
 	@Override
-	public Mod111Key getKeyForPerception() {
+	public Mod111Key getKeyForWorkPerception() {
 		return Mod111Key.AR_C02;
 	}
 
 	@Override
-	public Mod111Key getKeyForWitholding() {
+	public Mod111Key getKeyForWorkWitholding() {
 		return Mod111Key.AR_C03;
 	}
 
 	@Override
-	public Mod111Key getKeyForInKindReceivers() {
-		return Mod111Key.AR_C01;
+	public Mod111Key getKeyForWorkInKindReceivers() {
+		return Mod111Key.AR_C25;
 	}
 
 	@Override
-	public Mod111Key getKeyForInKindPerception() {
-		return Mod111Key.AR_C02;
+	public Mod111Key getKeyForWorkInKindPerception() {
+		return Mod111Key.AR_C26;
 	}
 
 	@Override
-	public Mod111Key getKeyForInKindWitholding() {
-		return Mod111Key.AR_C03;
+	public Mod111Key getKeyForWorkInKindWitholding() {
+		return Mod111Key.AR_C27;
+	}
+	
+	@Override
+	public Mod111Key getKeyForInvoiceReceivers() {
+		return Mod111Key.AR_C13;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoicePerception() {
+		return Mod111Key.AR_C14;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceWitholding() {
+		return Mod111Key.AR_C15;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceInKindReceivers() {
+		return Mod111Key.AR_C25;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceInKindPerception() {
+		return Mod111Key.AR_C26;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceInKindWitholding() {
+		return Mod111Key.AR_C27;
 	}
 	
 	@Override

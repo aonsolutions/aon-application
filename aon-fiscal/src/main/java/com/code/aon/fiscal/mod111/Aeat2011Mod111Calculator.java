@@ -37,34 +37,65 @@ public class Aeat2011Mod111Calculator extends FiscalModelDetailCalculator implem
 	}
 
 	@Override
-	public Mod111Key getKeyForReceivers() {
+	public Mod111Key getKeyForWorkReceivers() {
 		return Mod111Key.CT_C01;
 	}
 
 	@Override
-	public Mod111Key getKeyForPerception() {
+	public Mod111Key getKeyForWorkPerception() {
 		return Mod111Key.CT_C02;
 	}
 
 	@Override
-	public Mod111Key getKeyForWitholding() {
+	public Mod111Key getKeyForWorkWitholding() {
 		return Mod111Key.CT_C03;
 	}
 
 	@Override
-	public Mod111Key getKeyForInKindReceivers() {
+	public Mod111Key getKeyForWorkInKindReceivers() {
 		return Mod111Key.CT_C04;
 	}
 
 	@Override
-	public Mod111Key getKeyForInKindPerception() {
+	public Mod111Key getKeyForWorkInKindPerception() {
 		return Mod111Key.CT_C05;
 	}
 
 	@Override
-	public Mod111Key getKeyForInKindWitholding() {
+	public Mod111Key getKeyForWorkInKindWitholding() {
 		return Mod111Key.CT_C06;
 	}
+	
+	@Override
+	public Mod111Key getKeyForInvoiceReceivers() {
+		return Mod111Key.CT_C07;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoicePerception() {
+		return Mod111Key.CT_C08;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceWitholding() {
+		return Mod111Key.CT_C09;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceInKindReceivers() {
+		return Mod111Key.CT_C10;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceInKindPerception() {
+		return Mod111Key.CT_C11;
+	}
+
+	@Override
+	public Mod111Key getKeyForInvoiceInKindWitholding() {
+		return Mod111Key.CT_C12;
+	}
+
 	
 	@Override
 	public double getResult(Mod111 mod111) {
