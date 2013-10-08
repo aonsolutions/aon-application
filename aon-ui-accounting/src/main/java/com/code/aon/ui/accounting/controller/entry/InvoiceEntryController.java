@@ -688,6 +688,18 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				return false;
 			}
 		}
+		if (isSales() && getHeader().getTransaction() == InvoiceTransactionType.INTRACOMMUNITY) {
+			if (detail.getVatQuota() != 0) { 
+				String msg="A las Ventas intracomunitarias no se les debe aplicar IVA.";
+				AonUtil.addInfoMessage(msg);
+			}
+		} else if (isSales() && getHeader().getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY) {
+			if (detail.getVatQuota() != 0) { 
+				String msg="A las Ventas extracomunitarias no se les debe aplicar IVA.";
+				AonUtil.addInfoMessage(msg);
+			}
+		}
+
 		return true;
 	}
 
