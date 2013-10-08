@@ -75,6 +75,15 @@
 							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 						</aon:selectOneRadio>				
 					</c:if>
+
+					<c:if test="#{aonRole.accountingOperator and searchController.defaultStatus == null}">
+						<aon:outputLabel for="Invoice_status" value="#{bundle.finance_invoice_recorded}" />
+						<aon:selectOneRadio id="Invoice_status"
+							value="#{controller.scored}">
+							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+						</aon:selectOneRadio>				
+					</c:if>
 					
 				</ui:define>
 			

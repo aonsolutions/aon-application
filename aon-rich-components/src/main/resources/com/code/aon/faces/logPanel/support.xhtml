@@ -4,7 +4,7 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<a4j:support 
-		event="onclick" reRender="logPanel_poll" ajaxSingle="true"
+		event="onclick" reRender="logPanel_poll,logPanel_content" ajaxSingle="true"
 		actionListener="#{logPanel.onShowWindow}"  
 		onclick="javascript:Richfaces.showModalPanel('logPanel');" />
 

@@ -1,5 +1,10 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EXPORT;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EXPORT_ERROR;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_RECORD;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_RECORD_ERROR;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -22,99 +27,132 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonException;
+import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.ui.finance.A3Writer;
 import com.code.aon.ui.finance.BasicExporter;
 import com.code.aon.ui.finance.GeyceWriter;
+import com.code.aon.ui.finance.InvoiceExportConfiguration;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceExporterController extends BasicController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceExporterController.class.getName());
 	
-	private static final int GEYCE = 0;
+	private boolean scored = true;
 	
-	private static final int A3 = 1;
+	private InvoiceExportConfiguration configuration;
 	
-	private boolean showInvoiceExporterWindow;
+	private String backAction;
 	
-	private String enterpriseCode;
+	private boolean finished;
 	
-	private String journal;
-
-	private int type;
-		
-	private int enterpriseCodeLength;
+	private Map<String,byte[]> dataMap;
 	
-	public boolean isShowInvoiceExporterWindow() {
-		return showInvoiceExporterWindow;
+	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
+	
+	public boolean isScored() {
+		return scored;
 	}
 
-	public void setShowInvoiceExporterWindow(boolean showInvoiceExporterWindow) {
-		this.showInvoiceExporterWindow = showInvoiceExporterWindow;
-	}
-
-	public String getEnterpriseCode() {
-		return enterpriseCode;
-	}
-
-	public void setEnterpriseCode(String enterpriseCode) {
-		this.enterpriseCode = enterpriseCode;
-	}
-
-	public String getJournal() {
-		return journal;
-	}
-
-	public void setJournal(String journal) {
-		this.journal = journal;
+	public void setScored(boolean scored) {
+		this.scored = scored;
 	}
 	
-	public int getType() {
-		return type;
+	public InvoiceExportConfiguration getConfiguration() {
+		return configuration;
 	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
-
-	public int getEnterpriseCodeLength() {
-		return enterpriseCodeLength;
-	}
-
-	public void setEnterpriseCodeLength(int enterpriseCodeLength) {
-		this.enterpriseCodeLength = enterpriseCodeLength;
-	}
-
-	public void onShowGeyceWindow( ActionEvent event ) {
-		if (! getCheckList().isEmpty() ) {
-			setType(GEYCE);
-			setEnterpriseCodeLength(6);
-			setShowInvoiceExporterWindow(true);	
+	
+	public String initialAction() {
+		if (! this.configuration.isConfigured() ) {
+			this.backAction = searchAction();
+			return formAction();
 		}
+		return searchAction();
 	}
-
-	public void onShowA3Window( ActionEvent event ) {
-		if (! getCheckList().isEmpty() ) {
-			setType(A3);
-			setEnterpriseCodeLength(5);
-			setShowInvoiceExporterWindow(true);	
-		}
+	
+	public String backAction() {
+		return backAction;
 	}	
+
+	public void onInit( ActionEvent event ) {
+		this.configuration = new InvoiceExportConfiguration();
+		this.finished = false;
+		this.dataMap = null;
+		onEditSearch(event);
+	}
+
+	public void onEditConfiguration( ActionEvent event ) {
+		this.backAction = listAction();
+	}
+	
+	public void onSaveConfiguration( ActionEvent event ) {
+		this.configuration.save();
+	}
+	
+	public boolean isFinished() {
+		return this.finished;
+	}
+
+	@Override
+	public void onSearch(ActionEvent arg0) { 
+		try {
+			InvoiceStatus status = scored ? InvoiceStatus.SCORED : InvoiceStatus.PENDING;
+			getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_STATUS), status);
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+		super.onSearch(arg0);
+	}
+	
+	public void onStart( ActionEvent event ) {
+		this.dataMap = null;
+		this.finished = false;
+		switch ( this.configuration.getType() ) {
+			case GEYCE:
+				obtainData( new GeyceWriter(this.configuration) );
+				break;
+			case A3:
+				obtainData( new A3Writer(this.configuration) );
+				break;
+		}
+		this.finished = true;
+		if ( ! this.scored ) {
+			super.onSearch(event);
+		}
+	}
 	
 	public void onDownload( ActionEvent event ) {
-		setShowInvoiceExporterWindow(false);
-		if ( getType() == GEYCE ) {
-			download( new GeyceWriter(enterpriseCode, journal) );	
-		} else if ( getType() == A3 ) {
-			download( new A3Writer(enterpriseCode) );
-		}
+    	if ((dataMap != null) && !dataMap.isEmpty() ) {
+    		try {
+	    		if ( dataMap.size() == 1 ) {
+	    			Map.Entry<String,byte[]> entry = dataMap.entrySet().iterator().next();
+	    			downloadFile(entry.getKey(), entry.getValue());
+	    		} else {
+	    			downloadZip(dataMap);
+	    		}
+    		} catch (Throwable th) {
+    			LOGGER.error(th.getMessage(), th);
+    			AonUtil.addErrorMessage(th.getMessage());
+    			throw new AbortProcessingException(th.getMessage(), th);
+    		}
+    	}
+		onFinish(event);
+	}
+	
+	public void onFinish( ActionEvent event ) {
+    	this.finished = false;
+    	this.dataMap = null;
+    	LogPanelController.getInstance().onCloseWindow(event);
 	}
 	
 	private void downloadFile( String name, byte[] data ) {
@@ -144,48 +182,82 @@ public class InvoiceExporterController extends BasicController {
         DownloadUtil.downloadAttachment("geyce.zip", MimeType.MIME_ZIP, in, zipFile.length() );
 	}
 	
-	private void download( BasicExporter exporter ) {
-		try {    	
-			if (! getCheckList().isEmpty() ) {
-				Map<String,byte[]> dataMap = getData(exporter);
-		    	if (! dataMap.isEmpty() ) {
-		    		if ( dataMap.size() == 1 ) {
-		    			Map.Entry<String,byte[]> entry = dataMap.entrySet().iterator().next();
-		    			downloadFile(entry.getKey(), entry.getValue());
-		    		} else {
-		    			downloadZip(dataMap);
-		    		}
-		    	}
-			}
-		} catch (Throwable th) {
-			LOGGER.error(th.getMessage(), th);
-			AonUtil.addErrorMessage(th.getMessage());
-			throw new AbortProcessingException(th.getMessage(), th);
-		}
+	private void exportInvoice( BasicExporter exporter, Invoice invoice ) {
+		LogPanelController log = LogPanelController.getInstance();
+		log.info(AonUtil.getMessage(FINANCE_INVOICE_EXPORT, configuration.getType().getName(AonUtil.getCurrentLocale()), invoice.getReferenceCode()) );
+		try {
+			exporter.init( invoice );
+			exporter.write();
+		} catch ( Throwable e ) {
+			String msg = AonUtil.getMessage(FINANCE_INVOICE_EXPORT_ERROR, invoice.getReferenceCode(), e.getMessage());
+			LOGGER.error(msg, e);
+			log.error(msg);			
+		}		
 	}
 	
-	private Map<String,byte[]> getData( BasicExporter exporter ) throws AonException {
+	private void recordInvoice( String sessionName, Invoice invoice ) {
+		LogPanelController log = LogPanelController.getInstance();
+		try {
+			log.info(AonUtil.getMessage(FINANCE_INVOICE_RECORD, invoice.getReferenceCode()) );
+			HibernateUtil.beginTransaction(sessionName);
+			getAccountEntryInvoiceWriter().recordInvoice(invoice);
+			invoice.setStatus(InvoiceStatus.SCORED);
+			HibernateUtil.getSession(sessionName).merge(invoice);
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			String msg = AonUtil.getMessage(FINANCE_INVOICE_RECORD_ERROR, invoice.getReferenceCode(), e.getMessage());
+			LOGGER.error(msg, e);
+			log.error(msg);
+		}			
+	}
+	
+	private AccountEntryInvoiceWriter getAccountEntryInvoiceWriter() {
+		if (accountEntryInvoiceWriter == null) {
+			accountEntryInvoiceWriter = new AccountEntryInvoiceWriter();
+		}
+		return accountEntryInvoiceWriter;
+	}	
+	
+	private void obtainData( BasicExporter exporter ) {
+		LogPanelController log = LogPanelController.getInstance();
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
 		boolean initSessionState = HibernateUtil.mustCloseSession();
-		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		String sessionName = HibernateUtil.getSessionFactoryName();
 		HibernateUtil.setCloseSession(false);
 		HibernateUtil.setBeginTransaction(false);
 		try {
-			Session session = HibernateUtil.getSession(sessionFactoryName);
+			Session session = HibernateUtil.getSession(sessionName);
+			if ( ! this.scored ) {			
+				for( Serializable id : getCheckList() ) {
+					Invoice invoice = (Invoice) session.get(Invoice.class, id);
+					if (invoice.getStatus() == InvoiceStatus.PENDING) {
+						recordInvoice(sessionName, invoice);
+					}
+				}
+			}
+			HibernateUtil.closeSession(sessionName);
+			session = HibernateUtil.getSession(sessionName);
 			for( Serializable id : getCheckList() ) {
 				Invoice invoice = (Invoice) session.get(Invoice.class, id);
-				exporter.init( invoice );
-				exporter.write();				
+				exportInvoice(exporter, invoice);
 			}
-			return exporter.getDataMap();
+			this.dataMap = exporter.getDataMap();
 		} catch (Throwable t ) {
 		    try {
-				HibernateUtil.rollbackTransaction(sessionFactoryName);
+				HibernateUtil.rollbackTransaction(sessionName);
 			} catch (DAOException e) {
 				LOGGER.error(e.getMessage(), e);
-			}
-		    throw new AonException( t.getMessage(), t);
+			}		    
+		    log.error(AonUtil.getMessage(FINANCE_INVOICE_EXPORT_ERROR, t.getMessage()));
 		} finally {
+			log.finish();
+			HibernateUtil.closeSession(sessionName);
 			if (initTransState != HibernateUtil.mustBeginTransaction()) {
 				HibernateUtil.setBeginTransaction(initTransState);
 			}

@@ -20,32 +20,25 @@
 				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="additionalToolbarContent">
-					<aon:commandLink id="geyce"
-						reRender="showInvoiceExporterWindow" immediate="#{true}"
-						value="#{bundle.finance_invoiceExport_geyce}"
-						actionListener="#{invoiceExporter.onShowGeyceWindow}"
-						styleClass="aon-finding-toolbar-item aon-icon-mail-save" >
-					</aon:commandLink>
-					<aon:commandLink id="a3"
-						reRender="showInvoiceExporterWindow" immediate="#{true}"
-						value="#{bundle.finance_invoiceExport_a3}"
-						actionListener="#{invoiceExporter.onShowA3Window}"
-						styleClass="aon-finding-toolbar-item aon-icon-mail-save" >
-					</aon:commandLink>
-					<!--						
-					<aon:htmlCommandLink id="a3"
-						value="#{bundle.finance_invoiceExport_a3}" target="_blank"
-						disabled="#{empty invoiceExporter.checkList}"
-						actionListener="#{invoiceExporter.onDownloadA3}"
-						styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
-					-->
+					<aon:commandButton id="startDownloadExport"
+						value="#{bundle.webmail_download}: #{invoiceExporter.configuration.type}"
+						styleClass="aon-finding-toolbar-item aon-icon-mail-save" 
+						disabled="#{empty invoiceExporter.checkList}" reRender="invoiceExporterToolbar,invoiceDataDiv"
+						actionListener="#{invoiceExporter.onStart}" >
+						<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+					</aon:commandButton>
+					<aon:commandButton id="configurationExport"
+						value="#{bundle.aon_configuration}"
+						styleClass="aon-finding-toolbar-item aon-icon-config"
+						action="invoiceExporter_form"
+						actionListener="#{invoiceExporter.onEditConfiguration}" >
+					</aon:commandButton>
 				</ui:define>				
 				
 			</ui:decorate>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-
 				<aon:div styleClass="aon-toolbar" rendered="#{invoiceExporter.model.rowCount > 0}">
 					<aon:commandButton title="#{bundle.aon_check_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
@@ -58,7 +51,6 @@
 						ajaxSingle="true" reRender="invoiceDataDiv,invoiceExporterToolbar"
 						actionListener="#{invoiceExporter.checkNone}" />				
 				</aon:div>
-
 				<aon:div id="invoiceDataDiv">					
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 						<ui:param name="controller" value="#{invoiceExporter}" />
@@ -74,25 +66,9 @@
 									value="#{invoiceExporter.rowChecked}"
 									ajaxSingle="true" reRender="invoiceExporterToolbar" />	
 							</aon:column>
-		
-							<aon:column alias="Invoice.referenceCode"
-								styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
-								</f:facet>
-								<aon:outputText value="#{to.referenceCode}" />
-							</aon:column>
-		
-							<aon:column alias="Invoice.registryName"
-								styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_customer}" />
-								</f:facet>
-								<aon:outputText value="#{to.registryName}" />
-							</aon:column>
-		
+
 							<aon:column alias="Invoice.issueDate"
-								styleClass="aon-editDataTable-textColumn aon-width-150">
+								styleClass="aon-editDataTable-textColumn aon-width-80">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_date}" />
 								</f:facet>
@@ -100,6 +76,38 @@
 									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
+							</aon:column>
+		
+							<aon:column alias="Invoice.referenceCode"
+								styleClass="aon-editDataTable-textColumn aon-width-100">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_invoice_number}" />
+								</f:facet>
+								<aon:outputText value="#{to.referenceCode}" />
+							</aon:column>
+	
+							<aon:column alias="Invoice.series,Invoice.number"
+								styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-80">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_document_number}" />
+								</f:facet>
+								<aon:outputText value="#{to.documentNumber}" />
+							</aon:column>
+		
+							<aon:column alias="Invoice.registryName"
+								styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.warehouse_stock_target}" />
+								</f:facet>
+								<aon:outputText value="#{to.registryName}" />
+							</aon:column>
+
+							<aon:column alias="Invoice.registryDocument" 
+								styleClass="aon-editDataTable-textColumn aon-width-80">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_company_document}" />
+								</f:facet>
+								<aon:outputText value="#{to.registryDocument}" />
 							</aon:column>
 
 							<aon:column alias="Invoice.type"
@@ -111,12 +119,22 @@
 							</aon:column>
 		
 							<aon:column alias="Invoice.status"
-								styleClass="aon-editDataTable-textColumn">
+								styleClass="aon-editDataTable-textColumn aon-width-80"
+								style="font-size: 0.9em;">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_status}" />
 								</f:facet>
 								<aon:outputText value="#{to.status}" />
 							</aon:column>
+							
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_total}" />
+								</f:facet>
+								<aon:outputText value="#{to.total}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+							</aon:column>							
 	
 							<c:if test="#{company.EInvoice}">
 								<aon:column alias="Invoice.signed"
@@ -138,7 +156,24 @@
 			</aon:div>
 		</aon:form>
 
-		<ui:include src="/com/code/aon/ui/finance/facelet/invoiceExporter/modalInvoiceExporter.xhtml" />
+		<aon:methodParam name="closeLogPanelAtionListener" value="#{invoiceExporter.onFinish}" type="actionListener" />
+		<ui:decorate template="/com/code/aon/faces/logPanel/modal.xhtml" >
+			<ui:param name="logPanelTitle" value="#{bundle.finance_invoiceExport_module}" />			
+			<ui:param name="pollInterval" value="5000" /> 
+			<ui:define name="additionalLogPanelContent">
+				<c:if test="#{invoiceExporter.finished}">
+					<aon:div styleClass="aon-margin-bottom">
+						<aon:htmlCommandLink id="downloadExport"
+							value="#{bundle.aon_fileupload_download}" target="_blank"
+							actionListener="#{invoiceExporter.onDownload}"
+							style="border: none;"
+							styleClass="aon-finding-toolbar-item aon-icon-mail-save" >
+							<rich:componentControl for="logPanel" operation="hide" event="onclick" />
+						</aon:htmlCommandLink>
+					</aon:div>
+				</c:if>
+			</ui:define>
+		</ui:decorate>	
 		
 	</ui:define>
 </ui:composition>

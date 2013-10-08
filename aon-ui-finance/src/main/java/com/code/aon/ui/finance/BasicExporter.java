@@ -43,6 +43,8 @@ public abstract class BasicExporter {
 
 	private ByteArrayOutputStream out;
 	
+	private InvoiceExportConfiguration configuration;
+	
 	private byte[] line;
 	
 	private Invoice invoice;
@@ -55,8 +57,9 @@ public abstract class BasicExporter {
 	
 	private List<AccountEntryDetail> details;
 	
-	public BasicExporter() {
+	public BasicExporter( InvoiceExportConfiguration configuration ) {
 		this.out = new ByteArrayOutputStream();
+		this.configuration = configuration;
 	}
 
 	public void init( Invoice invoice ) throws ManagerBeanException, IOException {
@@ -281,6 +284,10 @@ public abstract class BasicExporter {
 		out.write("\r\n".getBytes());
 	}
 	
+	public InvoiceExportConfiguration getConfiguration() {
+		return configuration;
+	}
+
 	protected Invoice getInvoice() {
 		return invoice;
 	}

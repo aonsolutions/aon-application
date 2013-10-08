@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
@@ -28,6 +27,8 @@ import com.code.aon.finance.enumeration.StatementConcept;
 import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.finance.InvoiceExportType;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceCollectionsController {
@@ -45,10 +46,11 @@ public class FinanceCollectionsController {
 	private List<SelectItem> statementStatuses;
 	private List<SelectItem> posDisplayModes;
 	private List<SelectItem> shifts;
+	private List<SelectItem> invoiceExportTypes;
 
 	public List<SelectItem> getBillingPeriods() {
 		if (billingPeriods == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			billingPeriods = new LinkedList<SelectItem>();
 			for (BillingPeriod period : BillingPeriod.values()) {
 				SelectItem item = new SelectItem(period, period.getName(locale));
@@ -60,7 +62,7 @@ public class FinanceCollectionsController {
 
 	public List<SelectItem> getCreditorStatuses() {
 		if (creditorStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			creditorStatuses = new LinkedList<SelectItem>();
 			for (CreditorStatus status : CreditorStatus.values()) {
 				SelectItem item = new SelectItem(status, status.getName(locale));
@@ -72,7 +74,7 @@ public class FinanceCollectionsController {
 
 	public List<SelectItem> getFinanceTrackingTypes() {
 		if (financeTrackingTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			financeTrackingTypes = new LinkedList<SelectItem>();
 			for (FinanceTrackingType type : FinanceTrackingType.values()) {
 				SelectItem item = new SelectItem(type, type.getName(locale));
@@ -84,7 +86,7 @@ public class FinanceCollectionsController {
 
 	public List<SelectItem> getFinanceBatchStatus() {
 		if (financeBatchStatus == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			financeBatchStatus = new LinkedList<SelectItem>();
 			for (FinanceBatchStatus status : FinanceBatchStatus.values()) {
 				SelectItem item = new SelectItem(status, status.getName(locale));
@@ -96,7 +98,7 @@ public class FinanceCollectionsController {
 
 	public List<SelectItem> getFinanceBatchPaymentTypes() {
 		if (financeBatchPaymentTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			financeBatchPaymentTypes = new LinkedList<SelectItem>();
 			for (FinanceBatchType type : FinanceBatchType.values()) {
 				if (type.isPayment() == null || type.isPayment()) {
@@ -110,7 +112,7 @@ public class FinanceCollectionsController {
 
 	public List<SelectItem> getFinanceBatchChargeTypes() {
 		if (financeBatchChargeTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			financeBatchChargeTypes = new LinkedList<SelectItem>();
 			for (FinanceBatchType type : FinanceBatchType.values()) {
 				if (type.isPayment() == null || !type.isPayment()) {
@@ -124,7 +126,7 @@ public class FinanceCollectionsController {
 
 	public List<SelectItem> getFinanceStatuses() {
 		if (financeStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			financeStatuses = new LinkedList<SelectItem>();
 			for (FinanceStatus status : FinanceStatus.values()) {
 				SelectItem item = new SelectItem(status, status.getName(locale));
@@ -136,7 +138,7 @@ public class FinanceCollectionsController {
 
 	public List<SelectItem> getInvoiceTypes() {
 		if (invoiceTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			invoiceTypes = new LinkedList<SelectItem>();
 			for (InvoiceType type : InvoiceType.values()) {
 				SelectItem item = new SelectItem(type, type.getName(locale));
@@ -148,7 +150,7 @@ public class FinanceCollectionsController {
 
 	public List<SelectItem> getInvoiceStatuses() {
 		if (invoiceStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			invoiceStatuses = new LinkedList<SelectItem>();
 			for (InvoiceStatus status : InvoiceStatus.values()) {
 				SelectItem item = new SelectItem(status, status.getName(locale));
@@ -160,7 +162,7 @@ public class FinanceCollectionsController {
 	
 	public List<SelectItem> getStatementConcepts() {
 		if (statementConcepts == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			statementConcepts = new LinkedList<SelectItem>();
 			for (StatementConcept concept : StatementConcept.values()) {
 				SelectItem item = new SelectItem(concept, concept.getName(locale));
@@ -172,7 +174,7 @@ public class FinanceCollectionsController {
 	
 	public List<SelectItem> getStatementStatuses() {
 		if (statementStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			statementStatuses = new LinkedList<SelectItem>();
 			for (StatementStatus status : StatementStatus.values()) {
 				SelectItem item = new SelectItem(status, status.getName(locale));
@@ -233,7 +235,7 @@ public class FinanceCollectionsController {
 	
 	public List<SelectItem> getPosDisplayModes() {
 		if (posDisplayModes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			posDisplayModes = new LinkedList<SelectItem>();
 			for (PosDisplayMode posDisplayMode : PosDisplayMode.values()) {
 				SelectItem item = new SelectItem(posDisplayMode, posDisplayMode.getName(locale));
@@ -245,7 +247,7 @@ public class FinanceCollectionsController {
 
 	public List<SelectItem> getShifts() {
 		if (shifts == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			Locale locale = AonUtil.getCurrentLocale();
 			shifts = new LinkedList<SelectItem>();
 			for (Shift shift : Shift.values()) {
 				SelectItem item = new SelectItem(shift, shift.getName(locale));
@@ -255,4 +257,16 @@ public class FinanceCollectionsController {
 		return shifts;
 	}
 
+	public List<SelectItem> getInvoiceExportTypes() {
+		if (invoiceExportTypes == null) {
+			Locale locale = AonUtil.getCurrentLocale();
+			invoiceExportTypes = new LinkedList<SelectItem>();
+			for (InvoiceExportType type : InvoiceExportType.values()) {
+				SelectItem item = new SelectItem(type, type.getName(locale));
+				invoiceExportTypes.add(item);
+			}
+		}
+		return invoiceExportTypes;
+	}
+	
 }

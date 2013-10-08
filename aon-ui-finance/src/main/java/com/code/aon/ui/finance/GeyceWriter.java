@@ -57,14 +57,9 @@ public class GeyceWriter extends BasicExporter {
 	private ByteArrayOutputStream outGycPlan;
 	
 	private Set<String> exportedAccounts;
-
-	private String enterpriseCode;
 	
-	private String journal;	
-	
-	public GeyceWriter(String enterpriseCode, String journal) {
-		this.enterpriseCode = enterpriseCode;
-		this.journal = journal;
+	public GeyceWriter(InvoiceExportConfiguration configuration) {
+		super(configuration);
 		this.outGycPlan = new ByteArrayOutputStream();
 		this.exportedAccounts = new HashSet<String>();
 	}
@@ -92,21 +87,6 @@ public class GeyceWriter extends BasicExporter {
 		Arrays.fill(getLine(), 63, getLine().length, (byte) ' ');
 	}
 	
-	private String getDiario() {
-		if (! StringUtils.isBlank(journal) ) {
-			return journal;
-		}
-		switch ( getInvoice().getType() ) {
-			case SALES:
-				return "2";
-			case PURCHASE:
-				return "3";
-			case EXPENSES:
-				return "4";
-		}		
-		return "1";
-	}
-	
 	private String getTipoDeOperacion() {
 		String result = "IN";
 		VatDeductionType vdt = getVatDeductionType();
@@ -132,13 +112,13 @@ public class GeyceWriter extends BasicExporter {
 		setLine( new byte[GYCCON_SIZE] );
 		Arrays.fill(getLine(), (byte) ' ');
 		// Codigo de Empresa
-		setStringLeftPad( enterpriseCode, 0, 6);
+		setStringLeftPad( getConfiguration().getEnterpriseCode(), 0, 6);
 		// Fecha asiento
 		setDate(getAccountEntry().getEntryDate(), 6);
 		// Contador de Numero de asiento
 		setStringLeftPad( getAccountEntry().getJournal().toString(), 14, 6);		
 		// Numero de Diario Contable
-		setStringLeftPad( getDiario(), 24, 2);		
+		setStringLeftPad( getConfiguration().getJournal(getInvoice().getType()), 24, 2);		
 		// Numero de Factura
 		setStringRightPad( getInvoice().getId().toString(), 26, 7);
 		// Descripcion de la Factura
@@ -269,7 +249,7 @@ public class GeyceWriter extends BasicExporter {
 		Arrays.fill(getLine(), (byte) ' ');
 		
 		// Codigo de Empresa
-		setStringLeftPad( enterpriseCode, 0, 6);
+		setStringLeftPad( getConfiguration().getEnterpriseCode(), 0, 6);
 		String[] cuenta = getCuenta(aed.getAccount().getCode());
 		// Cuenta
 		setStringRightPad( cuenta[0], 6, 4);

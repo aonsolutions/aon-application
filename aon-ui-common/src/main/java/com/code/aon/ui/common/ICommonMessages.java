@@ -268,7 +268,14 @@ public interface ICommonMessages {
 	String FINANCE_INVESTMENT_VAT_REPORT = "finance_investment_vat_report";
 	String FINANCE_INPUT_VAT_REPORT = "finance_input_vat_report";
 	String FINANCE_OUTPUT_VAT_REPORT = "finance_output_vat_report";
-	String NO_FEE_CUSTOMER_REPORT = "aon_no_fee_customer_report";	
+	String NO_FEE_CUSTOMER_REPORT = "aon_no_fee_customer_report";
+	String FINANCE_INVOICE_EXPORT_GEYCE = "finance_invoice_export_geyce";
+	String FINANCE_INVOICE_EXPORT_A3 = "finance_invoice_export_a3";
+	String FINANCE_INVOICE_RECORD = "finance_invoice_record";
+	String FINANCE_INVOICE_RECORD_ERROR = "finance_invoice_record_error";
+	String FINANCE_INVOICE_EXPORT = "finance_invoice_export";
+	String FINANCE_INVOICE_EXPORT_ERROR = "finance_invoice_export_error";
+	String FINANCE_INVOICES_EXPORT_ERROR = "finance_invoices_export";
 	
 	String FISCAL_RESULT = "fiscal_result";
 	

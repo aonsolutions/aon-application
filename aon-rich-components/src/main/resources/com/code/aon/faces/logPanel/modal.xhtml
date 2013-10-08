@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<aon:methodParam name="closeButtonAction" default="" />
@@ -19,7 +20,7 @@
     </a4j:region>
 	<aon:form>
         <rich:modalPanel id="logPanel"
-			minHeight="550" height="550" minWidth="1000" width="1000">
+			minHeight="570" height="570" minWidth="1000" width="1000">
 			<f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
 					<aon:outputText value="#{logPanelTitle}" />
@@ -29,11 +30,15 @@
 				<aon:commandButton styleClass="aon-popupWindow-close"
 					action="#{closeButtonAction}" actionListener="#{logPanel.onCloseWindow}" immediate="true"
 					reRender="aonStatus,logPanel_poll,logPanel_content#{(closeButtonReRender != null)?',':''}#{closeButtonReRender}">
+					<c:if test="#{closeLogPanelAtionListener != null}">									
+						<aon:actionListener method="#{closeLogPanelAtionListener}" />
+					</c:if>					
 					<rich:componentControl for="logPanel"
 						operation="hide" event="onclick" />
 				</aon:commandButton>
 	        </f:facet>
 			<rich:panel id="logPanel_content">
+				<ui:insert name="additionalLogPanelContent"/>
 				<aon:panelGrid styleClass="aon-width-all" columnClasses="aon-panel-head">
 					<aon:div>
 						<aon:outputText value="#{bundle.aon_messages}" styleClass="aon-panel-title"/>

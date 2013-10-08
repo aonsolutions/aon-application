@@ -50,10 +50,8 @@ public class A3Writer extends BasicExporter {
 
 	private static final int REGISTRY_SIZE = 256;
 	
-	private String enterpriseCode;
-	
-	public A3Writer(String enterpriseCode) {
-		this.enterpriseCode = StringUtils.leftPad(enterpriseCode, 5, "0");
+	public A3Writer(InvoiceExportConfiguration configuration) {
+		super(configuration);
 	}
 	
 	private void setNumber( double value, int offset, int maxLength ) {
@@ -102,6 +100,7 @@ public class A3Writer extends BasicExporter {
 		// Tipo de Formato
 		setInteger( 3, 0, 1);
 		// Codigo de Empresa
+		String enterpriseCode = StringUtils.leftPad(getConfiguration().getEnterpriseCode(), 5, "0");
 		setString(enterpriseCode, 1, 5);
 		// Moneda enlace
 		setString("E", 252, 1);
