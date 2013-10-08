@@ -8,6 +8,8 @@ public interface ITaxInfo {
 
     public boolean isWithholding();
 
+    public boolean isWithholdingFarmer();
+
     public InvoiceTransactionType getTransaction();
 
     public boolean isVatFree();

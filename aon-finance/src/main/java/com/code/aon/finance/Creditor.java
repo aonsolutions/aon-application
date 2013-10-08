@@ -44,6 +44,11 @@ public class Creditor extends CreditorDB implements ITaxInfo, IScopable, IRegist
 	}
 
 	@Transient
+	public boolean isWithholdingFarmer() {
+		return false;
+	}
+
+	@Transient
 	public boolean isVatFree() {
 		return (getTransaction() != InvoiceTransactionType.NATIONAL);
 	}

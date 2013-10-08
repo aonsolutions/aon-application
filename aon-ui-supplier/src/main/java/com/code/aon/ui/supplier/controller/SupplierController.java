@@ -4,6 +4,7 @@ import static com.code.aon.ui.common.ICommonMessages.SUPPLIER_REPORT;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
@@ -14,6 +15,20 @@ import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
 public class SupplierController extends RegistryController {
+
+	public void onWithholdingChanged(ValueChangeEvent event) {
+		Boolean value = (Boolean)event.getNewValue();
+		if (!value) {
+			((Supplier)getTo()).setWithholdingFarmer(false);
+		}
+	}
+
+	public void onWithholdingFarmerChanged(ValueChangeEvent event) {
+		Boolean value = (Boolean)event.getNewValue();
+		if (value) {
+			((Supplier)getTo()).setWithholding(true);
+		}
+	}
 
 	public boolean isAccountSynchronizable() {
 		return isAccountSynchronizable((Supplier)getTo());

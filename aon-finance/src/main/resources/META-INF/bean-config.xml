@@ -29,6 +29,13 @@
 	</bean>
 	
 	<bean description="">
+		<pojo>com.code.aon.finance.InvoiceTax</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.InvoiceTaxBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="">
 		<pojo>com.code.aon.finance.Finance</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.finance.event.FinanceBeanVetoListener</vetoListener>

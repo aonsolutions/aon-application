@@ -12,7 +12,7 @@ import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
-import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
@@ -32,11 +32,11 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
 		if (InvoiceType.UNDEDUCTIBLE != detail.getInvoice().getType() && detail.getItem() != null) {
-			InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat());
+			InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat(), null);
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			invoiceTaxBean.insert(detailVat);
 			if (detail.getInvoice().isWithholding() && detail.getItem().getProduct().isWithholding()) {
-				InvoiceTax detailRetention = getInvoiceTax(detail, detail.getItem().getProduct().getRetention());
+				InvoiceTax detailRetention = getInvoiceTax(detail, detail.getItem().getProduct().getRetention(), detailVat);
 				invoiceTaxBean.insert(detailRetention);
 			}
 		}
@@ -77,11 +77,11 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
 		if (detail.isUpdateEnabled()) {
 			if (InvoiceType.UNDEDUCTIBLE != detail.getInvoice().getType() && detail.getItem() != null) {
-				InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat());
+				InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat(), null);
 				IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 				invoiceTaxBean.insert(detailVat);
 				if (detail.getInvoice().isWithholding() && detail.getItem().getProduct().isWithholding()) {
-					InvoiceTax detailRetention = getInvoiceTax(detail, detail.getItem().getProduct().getRetention());
+					InvoiceTax detailRetention = getInvoiceTax(detail, detail.getItem().getProduct().getRetention(), detailVat);
 					invoiceTaxBean.insert(detailRetention);
 				}
 			}
@@ -151,9 +151,10 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		}
 	}
 
-	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax) throws ManagerBeanException {
+	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax, InvoiceTax detailVat) throws ManagerBeanException {
 		InvoiceTax invoiceTax = new InvoiceTax();
 		invoiceTax.setInvoiceDetail(invoiceDetail);
+		invoiceTax.setBase(invoiceDetail.getTaxableBase());
 		invoiceTax.setTaxType(tax.getType());
 		invoiceTax.setVatDeductionType(tax.getVatDeductionType());
 		invoiceTax.setWithholdingType(tax.getWithholdingType());
@@ -163,9 +164,19 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 
 		Invoice invoice = (!invoiceDetail.getInvoice().isRectifier()) ? invoiceDetail.getInvoice() : invoiceDetail.getInvoice().getRectificationInvoice();
 		if (invoice.isNational() || !invoice.isSales()) {
+			if (tax.isRetention() && tax.getWithholdingType() == WithholdingType.FARMER && invoiceDetail.getInvoice().isWithholdingFarmer()) {
+				double detailVatBase = 0;
+				if (detailVat.getQuota() != 0) {
+					detailVatBase = CommonUtil.round(detailVat.getQuota() + detailVat.getSurchargeQuota());
+				} else {
+					detailVatBase = CommonUtil.round(detailVat.getBase() * (detailVat.getPercentage() + detailVat.getSurcharge()) / 100);
+				}
+				invoiceTax.setBase(CommonUtil.round(invoiceTax.getBase() + detailVatBase));
+			}
+
 			if (invoiceDetail.isTaxDataInDetail()) {
-				percentage = (TaxType.VAT == tax.getType()) ? invoiceDetail.getVatPercent() : invoiceDetail.getRetentionPercent();
-				quota = (TaxType.VAT == tax.getType()) ? invoiceDetail.getVatQuota() : invoiceDetail.getRetentionQuota();
+				percentage = (tax.isVat()) ? invoiceDetail.getVatPercent() : invoiceDetail.getRetentionPercent();
+				quota = (tax.isVat()) ? invoiceDetail.getVatQuota() : invoiceDetail.getRetentionQuota();
 			} else {
 				if (invoice.getIssueDate().before(tax.getStartDate())) {
 					tax = obtainTax(tax.getId(), invoice.getIssueDate());

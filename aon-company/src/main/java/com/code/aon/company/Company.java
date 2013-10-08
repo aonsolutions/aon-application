@@ -79,6 +79,11 @@ public class Company extends Registry implements ITaxInfo, IDomain {
 	}
 	
 	@Transient
+	public boolean isWithholdingFarmer() {
+		return false;
+	}
+
+	@Transient
 	public boolean isVatFree() {
 		return false;
 	}

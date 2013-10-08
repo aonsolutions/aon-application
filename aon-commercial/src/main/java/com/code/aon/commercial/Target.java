@@ -97,6 +97,11 @@ public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable {
 	}
 	
 	@Transient
+	public boolean isWithholdingFarmer() {
+		return false;
+	}
+	
+	@Transient
 	public boolean isVatFree() {
 		return (getTransaction() != InvoiceTransactionType.NATIONAL);
 	}

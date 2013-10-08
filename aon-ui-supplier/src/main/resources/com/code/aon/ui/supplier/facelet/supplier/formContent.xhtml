@@ -22,8 +22,18 @@
 		</aon:selectOneMenu>
 
 		<aon:outputLabel for="Supplier_withholding" value="#{bundle.aon_retention}" />
-		<aon:selectBooleanCheckbox id="Supplier_withholding" 
-			value="#{controller.to.withholding}" />
+		<aon:div>
+			<aon:selectBooleanCheckbox id="Supplier_withholding" styleClass="aon-margin-right" 
+				value="#{controller.to.withholding}"
+				valueChangeListener="#{controller.onWithholdingChanged}"
+				reRender="Supplier_withholdingFarmer" />
+			<aon:outputLabel for="Supplier_withholdingFarmer" styleClass="aon-italic aon-margin-left"
+				value="#{bundle.registry_agrarian_special_regime}" />
+			<aon:selectBooleanCheckbox id="Supplier_withholdingFarmer" styleClass="aon-padding-left"
+				value="#{controller.to.withholdingFarmer}"
+				valueChangeListener="#{controller.onWithholdingFarmerChanged}"
+				reRender="Supplier_withholding" />
+		</aon:div>
 	</c:if>
 
 </ui:composition>

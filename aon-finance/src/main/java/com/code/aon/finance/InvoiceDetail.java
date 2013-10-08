@@ -125,7 +125,7 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 			for (ITransferObject ito : invoiceTaxBean.getList(criteria)) {
 				InvoiceTax invoiceTax = (InvoiceTax)ito;
 				TaxBreakDown taxBreakDown = new TaxBreakDown();
-				taxBreakDown.setBase(getTaxableBase());
+				taxBreakDown.setBase(invoiceTax.getBase());
 				taxBreakDown.setTaxType(invoiceTax.getTaxType());
 				taxBreakDown.setTaxPercent(invoiceTax.getPercentage());
 				taxBreakDown.setSurchargePercent(invoiceTax.getSurcharge());

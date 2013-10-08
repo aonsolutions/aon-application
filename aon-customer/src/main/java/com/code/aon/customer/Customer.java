@@ -80,6 +80,11 @@ public class Customer extends CustomerDB implements ITaxInfo,IScopable,IRegistry
 	}	
 
 	@Transient
+	public boolean isWithholdingFarmer() {
+		return false;
+	}
+	
+	@Transient
 	public boolean isVatFree() {
 		return (getTransaction() != InvoiceTransactionType.NATIONAL);
 	}

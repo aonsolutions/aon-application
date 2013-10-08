@@ -57,6 +57,7 @@ public class PreInvoiceDetail extends InvoiceDetail {
 		InvoiceTax invoiceTax = new InvoiceTax();
 		invoiceTax.setInvoiceDetail(detail);
 		invoiceTax.setTaxType(tax.getType());
+		invoiceTax.setBase(detail.getTaxableBase());
 		invoiceTax.setPercentage(tax.getPercentage());
 		invoiceTax.setSurcharge((detail.getInvoice().isSurcharge()) ? tax.getSurcharge() : 0.0);
 		this.taxList.add(invoiceTax);
@@ -85,7 +86,7 @@ public class PreInvoiceDetail extends InvoiceDetail {
 		for (ITransferObject ito : taxList) {
 			InvoiceTax invoiceTax = (InvoiceTax)ito;
 			TaxBreakDown taxBreakDown = new TaxBreakDown();
-			taxBreakDown.setBase(getTaxableBase());
+			taxBreakDown.setBase(invoiceTax.getBase());
 			taxBreakDown.setTaxType(invoiceTax.getTaxType());
 			taxBreakDown.setTaxPercent(invoiceTax.getPercentage());
 			taxBreakDown.setSurchargePercent(invoiceTax.getSurcharge());

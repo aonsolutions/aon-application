@@ -18,6 +18,9 @@ public class SupplierBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     	if (to.getTransaction() == null) {
     		to.setTransaction(InvoiceTransactionType.NATIONAL);
     	}
+    	if (to.isWithholdingFarmer() && !to.isWithholding()) {
+    		to.setWithholding(true);
+    	}
     }
 
 }
