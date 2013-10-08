@@ -24,15 +24,5 @@
 		value="#{bundle.account_cost_center}" />
 	<aon:inputText id="Account_costCenter" size="20"
 		valueChangeListener="#{controller.addExpression}" />
-
-	<aon:outputLabel for="Account_entryEnabled"
-		value="#{bundle.account_entryEnabled}" />
-	<aon:selectOneMenu id="Account_entryEnabled"
-		valueChangeListener="#{controller.addExpression}">
-		<f:selectItem itemLabel="#{bundle.aon_common_all}"
-			itemValue="#{null}" />
-		<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
-		<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-	</aon:selectOneMenu>
 	
 </ui:composition>

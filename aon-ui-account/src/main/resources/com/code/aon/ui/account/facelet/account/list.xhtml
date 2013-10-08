@@ -55,12 +55,12 @@
 							<aon:outputText value="#{to.alias}" />
 						</aon:column>
 	
-						<aon:column alias="Account.entryEnabled"
+						<aon:column alias="Account.active"
 							styleClass="aon-editDataTable-textColumn aon-width-100">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.account_entryEnabled}" />
+								<aon:outputText value="#{bundle.aon_active}" />
 							</f:facet>
-							<aon:div styleClass="#{to.entryEnabled?'aon-icon-checked':'aon-icon-check'}">
+							<aon:div styleClass="#{to.active?'aon-icon-checked':'aon-icon-check'}">
 								<aon:outputText value="&#160;" />
 							</aon:div>
 						</aon:column>

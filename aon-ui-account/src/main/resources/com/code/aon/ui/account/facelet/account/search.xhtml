@@ -19,6 +19,26 @@
 				<ui:define name="searchContent">
 					<ui:include src="/com/code/aon/ui/account/facelet/account/searchContent.xhtml" />
 
+					<aon:outputLabel for="Account_active"
+						value="#{bundle.aon_active}" />
+					<aon:selectOneMenu id="Account_active"
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="#{bundle.aon_common_all}"
+							itemValue="#{null}" />
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Account_entryEnabled"
+						value="#{bundle.account_entryEnabled}" />
+					<aon:selectOneMenu id="Account_entryEnabled"
+						valueChangeListener="#{controller.addExpression}">
+						<f:selectItem itemLabel="#{bundle.aon_common_all}"
+							itemValue="#{null}" />
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="Account_order" value="#{bundle.aon_order}" />
 					<aon:selectOneMenu id="Account_order"
 						value="#{account.orderAlias}">
