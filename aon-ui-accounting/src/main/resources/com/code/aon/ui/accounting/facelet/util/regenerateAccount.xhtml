@@ -49,6 +49,7 @@
 						<aon:selectOneMenu
 							id="AccountEntryDetail_accountEntry_securityLevel"
 							value="#{accountRegenerator.securityLevel}">
+							<f:selectItem itemValue="#{null}" itemLabel=" -- "/>
 							<f:selectItems value="#{commonCollections.confidentialValues}" />
 						</aon:selectOneMenu>
 					</c:if>

@@ -1,28 +1,23 @@
 package com.code.aon.accounting.util;
 
-import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountHelper;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.enumeration.AccountEntryType;
-import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.ql.Criteria;
-import com.esferalia.aon.entity.IEntityAlias;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 
 public class AccountJournalManager {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AccountJournalManager.class.getName()); 
 	private IManagerBean bean;
 
 	public IManagerBean getBean() throws ManagerBeanException {
@@ -32,89 +27,65 @@ public class AccountJournalManager {
 		return bean;
 	}
 
-	public void regenerateJournalCounter(Period period,SecurityLevel securityLevel) throws ManagerBeanException {
-		//inicio transaccion
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName();
+	private void execute( Connection conn, String sql ) throws SQLException {
+		Statement stmt = null; 
 		try {
-			try {
-				HibernateUtil.setBeginTransaction(false);
-				HibernateUtil.setCloseSession(false);
-				HibernateUtil.beginTransaction(sessionName);
-				// BEGIN operaciones de la transaccion
-				AccountPeriodStatus originalStatus;
-				boolean periodChanged=false;
-				originalStatus=AccountPeriodStatus.ACTIVE;
-				Period per = null;
-				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-				if (period.getStatus() != AccountPeriodStatus.ACTIVE) {
-					ITransferObject to = periodBean.get(period.getId());
-					per = (Period) to;
-					originalStatus = per.getStatus();
-					periodChanged = true;
-					per.setStatus(AccountPeriodStatus.ACTIVE);
-					periodBean.update(per);
-				}
-				
-				AccountingUtil util = new AccountingUtil();
-				boolean opening = util.existsEntry(period, AccountEntryType.OPENING, securityLevel);
-				boolean operating = util.existsEntry(period, AccountEntryType.OPERATING, securityLevel);
-				boolean closing = util.existsEntry(period, AccountEntryType.CLOSING, securityLevel);
-					
-				IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), period.getId());
-				if (securityLevel != null) {
-					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel );	
-				}
-				criteria.addOrder(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENTRY_DATE));
-				criteria.addOrder(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID));
-				
-				List<ITransferObject> list = bean.getList(criteria); 
-				int count = list.size();
-		        int journal = (opening?2:1);
-		        for (ITransferObject to : list ) {
-		        	boolean mustAdd = false;
-		        	AccountEntry entry = (AccountEntry) to;
-		        	if (opening && entry.getType() == AccountEntryType.OPENING ) {
-		        		entry.setJournal(1);
-		        	} else  if (operating && entry.getType() == AccountEntryType.OPERATING ) {
-		        		entry.setJournal(count - (closing?1:0));
-		        	} else if (closing && entry.getType() == AccountEntryType.CLOSING ) {
-		        		entry.setJournal(count);
-		        	} else {
-		        		entry.setJournal(journal);	
-		        		mustAdd = true;
-		        	}
-			        bean.update(entry);
-		        	if (mustAdd) {
-		        		journal++;
-		        	}
-		        }
-		        
-				if(periodChanged){
-		        	per.setStatus(originalStatus);
-		        	periodBean.update(per);    	
-				}
-				// FIN operaciones de la transaccion
-				HibernateUtil.getSession(sessionName).flush();
-				HibernateUtil.commitTransaction(sessionName);
-			} catch (Exception e) {
-				try {
-					HibernateUtil.rollbackTransaction(sessionName);
-				} catch (DAOException daoe) {
-					String msg = "Unable to rollback transaction!";
-					LOGGER.error(msg, e);
-				}
-				throw new ManagerBeanException(e.getMessage(),e);
-			} finally {
-				HibernateUtil.closeSession(sessionName);
-			}
-		} finally {
-			HibernateUtil.setCloseSession(mustCloseSession);
-			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			stmt = conn.createStatement(); 
+			stmt.execute(sql);
 		}
-		
+		finally {
+			if ( stmt != null  )
+				stmt.close();
+		}
+	}
+
+	public void regenerateJournalCounter(String domainName, Period period,SecurityLevel securityLevel) throws ManagerBeanException {
+		String select = "SELECT id,entry_type,IFNULL(ELT(entry_type+1,0,3,2),1) okOrder"
+				+" FROM account_entry" 
+				+" WHERE " + DomainManager.getSQLWhereClause("domain")
+				+" AND account_period = ?";
+		if (securityLevel != null) {
+			select += " AND security_level = ?";
+		}
+		select += " ORDER by okOrder";
+		Connection conn = null;
+		PreparedStatement ps = null; 
+		ResultSet rs = null;
+		PreparedStatement update = null;
+		try {
+			conn = DatabaseUtil.getConnection(domainName);
+			ps = conn.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			update = conn.prepareStatement("UPDATE account_entry set journal = ? WHERE id = ?");
+			ps.setInt(1, period.getId());
+			if (securityLevel != null) {
+				ps.setInt(2, securityLevel.ordinal());
+			}
+			execute(conn,"BEGIN");
+			rs = ps.executeQuery();
+			int count = 1;
+			while (rs.next()) {
+				update.setInt(1, count);
+				update.setInt(2, rs.getInt(1));
+				update.execute();
+				++count;
+			}
+			execute(conn,"COMMIT");
+		} catch (SQLException e) {
+			try {
+				execute(conn,"ROLLBACK");
+			} catch (SQLException e1) {
+			}
+			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			try {
+				execute(conn,"ROLLBACK");
+			} catch (SQLException e1) {
+			}
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
 	}
 }

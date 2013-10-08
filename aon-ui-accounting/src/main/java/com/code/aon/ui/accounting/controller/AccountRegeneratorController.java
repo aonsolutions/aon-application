@@ -1,5 +1,7 @@
 package com.code.aon.ui.accounting.controller;
 
+import java.util.Date;
+
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -86,9 +88,11 @@ public class AccountRegeneratorController {
 	}
 	private void regenerateJournalCounter() {
 		try {
+			Date now = new Date();
 			AccountJournalManager ajm = new AccountJournalManager();
-			ajm.regenerateJournalCounter(getPeriod(),getSecurityLevel());
-			AonUtil.addInfoMessage("- El número de diario se han regenerado correctamente.");
+			ajm.regenerateJournalCounter(AonUtil.getDomainName(), getPeriod(),getSecurityLevel());
+			long milis = (new Date()).getTime() - now.getTime();
+			AonUtil.addInfoMessage("- El número de diario se han regenerado correctamente.("+ ( (double) milis / 1000) + " segundos.)");
 		} catch (ManagerBeanException e) {
 			String msg = "- Se produjeron errores al regenerar el número de diario.";
 			AonUtil.addErrorMessage(msg);
