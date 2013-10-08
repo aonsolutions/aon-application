@@ -141,7 +141,7 @@ public class VatCollection {
 			String operation = "CEIL((i.investment+ELT((i.type+1),20,10,20,20)) / 10) ";
 			// ---------------------------------------------------------------------------
 			StringWriter stmt = new StringWriter();
-			stmt.append(" SELECT i.type,i.transaction,i.investment,i.tax_date,i.issue_date,i.reference_code,i.series,i.number,i.rdocument,i.rname ");
+			stmt.append(" SELECT i.id,i.type,i.transaction,i.investment,i.tax_date,i.issue_date,i.reference_code,i.series,i.number,i.rdocument,i.rname ");
 			stmt.append("  ,it.percentage,it.surcharge,SUM(id.taxable_base) ");
 			stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) IVA");
 			stmt.append("  ,SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(id.taxable_base * it.surcharge / 100, 2) ) ) RE,");
@@ -259,24 +259,25 @@ public class VatCollection {
 			List<Vat> vats = new LinkedList<Vat>();
 			while (rs.next()) {
 				Vat vat = new Vat();
-				InvoiceType type = InvoiceType.values()[rs.getInt(1)];
+				vat.setInvoiceId(rs.getInt(1));
+				InvoiceType type = InvoiceType.values()[rs.getInt(2)];
 				vat.setInvoiceType( type );
-				InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt(2)];
+				InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt(3)];
 				vat.setTransactionType(transaction);
-				vat.setInvestment( rs.getBoolean(3) );
-				vat.setDate(rs.getDate(4));
-				vat.setInvoiceDate(rs.getDate(5));
-				vat.setReference(rs.getString(6));
-				vat.setSeries(rs.getString(7));
-				vat.setNumber(rs.getInt(8));
-				vat.setDocument(rs.getString(9));
-				vat.setName(rs.getString(10));
-				vat.setPercent(rs.getDouble(11));
-				vat.setSurcharge(rs.getDouble(12));
-				vat.setBase(rs.getDouble(13));
-				vat.setVatQuota(rs.getDouble(14));
-				vat.setSurchargeQuota(rs.getDouble(15));
-				VatType vatType = VatType.values()[(rs.getInt(16) - 1)];
+				vat.setInvestment( rs.getBoolean(4) );
+				vat.setDate(rs.getDate(5));
+				vat.setInvoiceDate(rs.getDate(6));
+				vat.setReference(rs.getString(7));
+				vat.setSeries(rs.getString(8));
+				vat.setNumber(rs.getInt(9));
+				vat.setDocument(rs.getString(10));
+				vat.setName(rs.getString(11));
+				vat.setPercent(rs.getDouble(12));
+				vat.setSurcharge(rs.getDouble(13));
+				vat.setBase(rs.getDouble(14));
+				vat.setVatQuota(rs.getDouble(15));
+				vat.setSurchargeQuota(rs.getDouble(16));
+				VatType vatType = VatType.values()[(rs.getInt(17) - 1)];
 				vat.setVatType(vatType);
 				vats.add(vat);
 			}

@@ -31,8 +31,16 @@ public class Vat {
 	private InvoiceTransactionType transactionType;
 	private VatType vatType;
 	private boolean investment;
+	private Integer invoiceId;
 
 	Calendar calendar;
+
+	public Integer getInvoiceId() {
+		return invoiceId;
+	}
+	public void setInvoiceId(Integer invoiceId) {
+		this.invoiceId = invoiceId;
+	}
 
 	public InvoiceType getInvoiceType() {
 		return invoiceType;

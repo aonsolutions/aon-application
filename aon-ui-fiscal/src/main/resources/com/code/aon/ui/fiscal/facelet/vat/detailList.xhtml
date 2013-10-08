@@ -88,7 +88,14 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_invoice_number}" />
 						</f:facet>
-						<aon:outputText value="#{to.reference}" />
+						<aon:commandLink id="vatReport-invoice" 
+							immediate="#{true}"
+							styleClass="aon-dataTable-link"
+							actionListener="#{vatReport.onShowInvoice}"
+							action="#{vatReport.getInvoiceViewer}"
+							title="#{bundle.aon_go}">
+							<aon:outputText value="#{to.reference}" />
+						</aon:commandLink>
 					</aon:column>
 
 					<aon:column>

@@ -28,6 +28,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatReportType;
@@ -35,8 +36,10 @@ import com.code.aon.fiscal.enumeration.VatType;
 import com.code.aon.fiscal.vat.Vat;
 import com.code.aon.fiscal.vat.VatCollection;
 import com.code.aon.fiscal.vat.VatCollectionParameters;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.fiscal.vat.VatReportTypeBreakdown;
 import com.code.aon.ui.fiscal.vat.VatTypeBreakdown;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class VatReportController implements ICollectionProvider {
@@ -76,6 +79,8 @@ public class VatReportController implements ICollectionProvider {
 	private Map<VatType,VatTypeBreakdown> summary;
 	private DataModel model;
 	private String title;
+
+	private String invoiceViewer;
 
 	public Date getDate() {
 		return date;
@@ -566,6 +571,43 @@ public class VatReportController implements ICollectionProvider {
 	}
 	public void setAccountPeriod(com.code.aon.accounting.Period period) {
 		this.accountPeriod = period;
+	}
+	
+	
+	public void onShowInvoice(ActionEvent event) {
+		Vat vat = (Vat) getModel().getRowData();
+		String invoiceControllerName = "";
+		if (vat.getInvoiceType() == InvoiceType.SALES) {
+			invoiceControllerName = IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(IFinanceConstants.SALE_INVOICE_FORM_NAME);
+		} else if (vat.getInvoiceType() == InvoiceType.PURCHASE) {
+			invoiceControllerName = IFinanceConstants.PURCHASE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(IFinanceConstants.PURCHASE_INVOICE_FORM_NAME);
+		} else if (vat.getInvoiceType() == InvoiceType.EXPENSES) {
+			invoiceControllerName = IFinanceConstants.EXPENSE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(IFinanceConstants.EXPENSE_INVOICE_FORM_NAME);
+		} else if (vat.getInvoiceType() == InvoiceType.UNDEDUCTIBLE) {
+			invoiceControllerName = IFinanceConstants.UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME;
+			setInvoiceViewer(IFinanceConstants.UNDEDUCTIBLE_INVOICE_FORM_NAME);
+		}
+
+		BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(invoiceControllerName);
+		try {
+			invoiceController.onLoad(event, vat.getInvoiceId(), 
+					"vat_report_detail", "");
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo navegar a la factura.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	
+	public String getInvoiceViewer() {
+		return invoiceViewer;
+	}
+
+	public void setInvoiceViewer(String invoiceViewer) {
+		this.invoiceViewer = invoiceViewer;
 	}
 	
 }
