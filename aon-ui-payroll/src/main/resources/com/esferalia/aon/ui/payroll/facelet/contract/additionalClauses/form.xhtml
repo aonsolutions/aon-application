@@ -8,21 +8,22 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
 	
-	<aon:div style="width:850px;">
+	<aon:div id="clausesContent" style="width:850px;">
 		
 		<aon:panel rendered="#{contractClauses.existEnterpriseClauses}">
 			<aon:selectBooleanCheckbox id="Enterprise_contractClauses"
 				value="#{contractClauses.useEnterpriseClauses}" >
-				<a4j:support event="onchange" reRender="clausesContent" />
+				<a4j:support event="onclick" reRender="clausesContent" />
 			</aon:selectBooleanCheckbox>
-			<aon:outputLabel for="Enterprise_contractClauses" 
-				value="Anexar las clausulas establecidas por la empresa -i18n-" />
-			<aon:selectOneMenu value="#{contractClauses.selectedClause}" >
+			<aon:outputLabel for="Enterprise_contractClauses" styleClass="aon-margin-right"
+				value="#{bundle.payroll_contract_additional_clauses_enterprise}" />
+			<aon:selectOneMenu value="#{contractClauses.selectedClause}"
+				disabled="#{!contractClauses.useEnterpriseClauses}" >
 				<f:selectItems value="#{contractClauses.clausesList}" />
 			</aon:selectOneMenu>
 		</aon:panel>
 		 
-		<aon:div id="clausesContent">
+		<aon:div>
 			<aon:inputTextarea 
 				rendered="#{!contractClauses.useEnterpriseClauses}" 
 				value="#{contractClauses.additionalClauses}"

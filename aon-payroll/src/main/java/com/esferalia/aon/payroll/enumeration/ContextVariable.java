@@ -114,7 +114,7 @@ public enum ContextVariable implements IResourceable{
 	SEPE_CONTRACT_ID("ID_CONTRATO_SEPE", VariableType.STRING),
 	SEPE_EXTENSION_ID("ID_PRORROGA_SEPE", VariableType.STRING),
 	SEPE_TRANSFORM_ID("ID_TRANSFORMACION_SEPE", VariableType.STRING),
-	
+	ENTERPRISE_CLAUSES("ENTERPRISE_CLAUSES", VariableType.INTEGER),
 	
 	// Bajas, Incapacidad Temporal
 	MATERNITY("MTNAD", VariableType.BOOLEAN),

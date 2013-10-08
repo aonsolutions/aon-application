@@ -120,7 +120,6 @@ public class ContrataWriter implements IContrataWriter{
 			throw new AbortProcessingException(msg);	
 		}
 		
-		
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(modelPath);
 			Marshaller marshaller = jaxbContext.createMarshaller();
@@ -129,17 +128,10 @@ public class ContrataWriter implements IContrataWriter{
 			File file = File.createTempFile("aon-temp", ".XML"); 
 			if( contratoFile ){
 				marshaller.marshal( contratos, file );
-				// TODO
-//				FileUtils.validateContrataXmlPattern(file, FileUtils.CONTRATOS_SCHEMA_FILE_NAME, map.get(ContextVariable.TC2.getName()));
 			} else if( transformacionFile ) {
 				marshaller.marshal( transformaciones, file );
-				// TODO
-//				FileUtils.validateContrataXmlPattern(file, FileUtils.TRANSFORMACIONES_SCHEMA_FILE_NAME, map.get(ContextVariable.TC2.getName()));
-			} 
-			else if( prorrogaFile ) {
+			} else if( prorrogaFile ) {
 				marshaller.marshal( prorrogas, file );
-				// TODO
-//				FileUtils.validateContrataXmlPattern(file, FileUtils.PRORROGAS_SCHEMA_FILE_NAME, map.get(ContextVariable.TC2.getName()));
 			}
 			return file;
 		} catch (JAXBException e) {

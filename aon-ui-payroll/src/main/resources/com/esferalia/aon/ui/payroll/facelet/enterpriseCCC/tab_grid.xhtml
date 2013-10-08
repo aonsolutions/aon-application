@@ -36,6 +36,7 @@
 					<aon:outputLabel for="EnterpriseCCC_ccc" value="#{bundle.aon_value}" />
 				</f:facet>
 				<aon:panelGroup rendered="#{formList}">
+					<aon:outputText value="#{to.activity.quoteRegimeCode}" />
 					<aon:outputText value="#{to.ccc}" />
 					<aon:outputText 
 						rendered="#{to.validSSNumber}"
@@ -49,6 +50,7 @@
 						value="&#160;" />
 				</aon:panelGroup>
 				<aon:panelGroup id="EnterpriseCCC_SSNumberPanel" rendered="#{formEdit}">
+					<aon:outputText value="#{to.activity.quoteRegimeCode}" />
 					<aon:inputText id="EnterpriseCCC_ccc" value="#{to.ccc}"
 						required="true" maxlength="11" size="12" >
 						<f:validateLength minimum="1" maximum="11" />
@@ -70,6 +72,7 @@
 				</aon:panelGroup>
 				<f:facet name="footer">
 					<aon:panelGroup id="EnterpriseCCC_SSNumberPanel-New" rendered="#{formNew}">
+						<aon:outputText value="#{controller.to.activity.quoteRegimeCode}" />
 						<aon:inputText id="EnterpriseCCC_ccc-New" value="#{controller.to.ccc}"
 							required="true" maxlength="11" size="12" >
 							<f:validateLength minimum="1" maximum="11" />

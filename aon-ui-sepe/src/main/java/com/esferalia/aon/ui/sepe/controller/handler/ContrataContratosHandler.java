@@ -104,28 +104,6 @@ public class ContrataContratosHandler implements IContrataHandler{
 		}
 		return qualifications;
 	}
-	
-//	private ContractAttachment obtainContrataFileAttach(){
-//		return obtainContrataAttach(ContractAttachmentType.SEPE_CONTRACT_FILE);
-//	}
-		
-//	public ContractAttachment obtainContrataAttach(ContractAttachmentType type){
-//		try {
-//			if(getParams()!=null && getContract()!=null && getContract().getId()!=null){
-//				IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-//				Criteria criteria = new Criteria();
-//				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getContract().getId());
-//				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), type);
-//				List<ITransferObject> list = bean.getList(criteria);
-//				if(!list.isEmpty()){
-//					return (ContractAttachment) list.get(0);
-//				}
-//			}
-//		} catch (ManagerBeanException e) {
-//			// NOTHING TO DO
-//		}
-//		return null;
-//	}
 
 	////////////////////////////////////////
 	// fields otros datos contrato

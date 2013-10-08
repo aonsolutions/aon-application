@@ -40,8 +40,11 @@
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
 						</aon:panelTab>
 
+<!--  
 						<aon:panelTab id="contrataData" label="#{bundle.sepe_contrata_contract_specific_data}" 
 							actionListener="#{contractContrata.onContrataDataShow}">
+-->
+						<aon:panelTab id="contrataData" label="#{bundle.sepe_contrata_contract_specific_data}">
 							<c:if test="#{contractContrata.enabledContrataEdition}">
 								<aon:div style="width:850px;">
 									<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" />

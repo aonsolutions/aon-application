@@ -19,10 +19,8 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" style="width:100%;" 
 					columnClasses="
-					aon-panelGrid-even aon-noborder aon-vertical-align-top aon-width-500
-					, 
-					aon-panelGrid-even aon-noborder aon-vertical-align-top aon-width-auto
-					">
+					aon-panelGrid-even aon-noborder aon-vertical-align-top aon-width-500, 
+					aon-panelGrid-even aon-noborder aon-vertical-align-top aon-width-auto">
 				
 					<aon:panel>
 						<f:facet name="header">
@@ -47,18 +45,19 @@
 					</aon:panel>
 					
 				</aon:panelGrid>
-			</aon:div>
 
-			<c:if test="#{contractLeave.contract.id!=null}">
-				<aon:div styleClass="aon-scroll-area" id="form_leaves">
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_tracking}" />
-						</f:facet>
-						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_leaves.xhtml" />
-					</aon:panel>
-				</aon:div>
-			</c:if>				
+				<c:if test="#{contractLeave.contract.id!=null}">
+					<aon:div id="form_leaves">
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_tracking}" />
+							</f:facet>
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_leaves.xhtml" />
+						</aon:panel>
+					</aon:div>
+				</c:if>			
+					
+			</aon:div>
 				
 		</aon:form>
 		

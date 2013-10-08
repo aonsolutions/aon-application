@@ -13,7 +13,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.faces.event.AbortProcessingException;
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -64,20 +63,11 @@ public class SEPEFileUtils {
 				Validator validator = schema.newValidator();
 				validator.validate(source);
 			} else {
-				AonUtil.addErrorMessage("Imporsible obtener el esquema (XSD) de validación.");
 				AonUtil.addErrorMessage("No se ha podido validar el fichero.");
+				AonUtil.addErrorMessage("Imposible obtener el esquema (XSD) de validación.");
 			}
-		} catch (SAXException saxe) {
-			throw new SAXException(saxe);
-		} catch (IOException ioe) {
-			throw new IOException(ioe);
-		} catch (Exception e) {
-			String msg = "Error de formato al validar el contenido";
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage("*** ERROR *** :" + e );
-			throw new AbortProcessingException(msg, e);
 		} finally {
-			schemaFile.delete();
+			FileUtils.deleteQuietly(schemaFile);
 		}
 	}
 	
@@ -179,8 +169,8 @@ public class SEPEFileUtils {
 		} catch (IOException e) {
 			String msg = "Error al obtener el esquema de validacion";
 			AonUtil.addErrorMessage(msg);
-		} finally {
-			FileUtils.deleteQuietly(tempFile);
+//		} finally {
+//			FileUtils.deleteQuietly(tempFile);
 		}
 		return null;
 	}	

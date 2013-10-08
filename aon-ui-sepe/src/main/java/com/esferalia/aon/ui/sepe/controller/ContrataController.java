@@ -53,6 +53,7 @@ import com.esferalia.aon.ui.sepe.controller.handler.ContrataTransformacionesHand
 import com.esferalia.aon.ui.sepe.controller.handler.IContrataHandler;
 import com.esferalia.aon.ui.sepe.file.ContrataWriter;
 import com.esferalia.aon.ui.sepe.utils.ContrataCommunicator;
+import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 
 
 public class ContrataController implements IContrataHandler, ISepeHandler{
@@ -401,7 +402,8 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 			} else if(isProrrogaFile()){
 				attach.setAttachmentType(ContractAttachmentType.SEPE_EXTENSION_FILE);
 			} else if(isTransformacionFile()){
-				
+				// TODO
+//				attach.setAttachmentType(ContractAttachmentType.SEPE_TRANSFORM_FILE);
 			}
 			bean.insertOrUpdate(attach);
 		} catch (ManagerBeanException e) {
@@ -409,6 +411,37 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(msg, e);
+		}
+	}
+	
+	public void validateContrataData() {
+		InputStream is = new ByteArrayInputStream(getGeneratedFile().getData());
+		String contractCode = getHandler().getContractCode().getValue();
+		String schema = null;
+		if( contratoFile ){
+			schema = SEPEFileUtils.CONTRATOS_SCHEMA_FILE_NAME;
+		} else if( transformacionFile ) {
+			schema = SEPEFileUtils.TRANSFORMACIONES_SCHEMA_FILE_NAME;
+		} else if( prorrogaFile ) {
+			schema = SEPEFileUtils.PRORROGAS_SCHEMA_FILE_NAME;
+		}
+		try {
+			SEPEFileUtils.validateContrataXmlPattern(is, schema, contractCode);
+		} catch (SAXException saxe) {
+			String msg = "Error de formato al validar el fichero xml de Contrat@";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(saxe.getMessage() );
+			throw new AbortProcessingException(msg, saxe);
+		} catch (IOException ioe) {
+			String msg = "Error de lectura al validar el fichero xml de Contrat@";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage("*** ERROR *** :" + ioe );
+			throw new AbortProcessingException(msg, ioe);
+		} catch (Exception e) {
+			String msg = "Error general al validar el fichero xml de Contrat@";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage("*** ERROR *** :" + e );
 			throw new AbortProcessingException(msg, e);
 		}
 	}

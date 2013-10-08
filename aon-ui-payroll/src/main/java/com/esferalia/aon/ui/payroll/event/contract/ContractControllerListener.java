@@ -3,7 +3,6 @@ package com.esferalia.aon.ui.payroll.event.contract;
 
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +82,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize((Contract) controller.getTo());
+		contrataController.onContrataDataShow(null);
 
 		CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
 		certificadosController.initialize((Contract) controller.getTo());
@@ -154,14 +154,13 @@ public class ContractControllerListener extends ControllerAdapter{
 	
 	private void updateContrataData() {
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		contrataController.getHandler().initialize((Contract) this.getController().getTo());
 		contrataController.onContrataAccept(null);
 	}
 	
 	private void updateAdditionalClauses() {
 		ContractClausesController controller = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
-		if( StringUtils.isNotBlank(controller.getAdditionalClauses()) ){
-			controller.generateAdditionalClauseDocument();
-		}
+		controller.accept();
 	}
 	
 	private void removeContrataAttach(ControllerEvent event) throws ControllerListenerException {

@@ -45,18 +45,26 @@
 											styleClass="aon-finding-toolbar-item aon-icon-accept"
 											onclick="Richfaces.showModalPanel('waitProccess')" 
  											oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-										<aon:commandButton value="&#160;" id="email" title="Enviar por email"
+										<!--  
+										<aon:commandButton value="#{bundle.aon_save}" id="documents-accept" 
+											rendered="#{contractPdf.generatonFinished}"
+											actionListener="#{contractPdf.onSaveFiles}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept"
+											reRender="showNewMessageWindow"
+											title="Guardar en documentos de contrato" />
+										-->
+										<aon:commandButton value="#{bundle.aon_email_abrv}" id="documents-email" 
 											rendered="#{contractPdf.generatonFinished}"
 											actionListener="#{contractPdf.onSendSelectedByEmail}"
-											styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
-											style="width: 14px;" reRender="showNewMessageWindow">
-										</aon:commandButton>
-									    <aon:htmlCommandLink id="download-pdf" target="_blank"
+											styleClass="aon-finding-toolbar-item aon-icon-webmail2"
+											reRender="showNewMessageWindow"
+											title="Enviar por email" />
+									    <aon:htmlCommandLink id="download-pdf" target="_blank" 
 											rendered="#{contractPdf.generatonFinished}"
 								     		actionListener="#{contractPdf.onDownloadMergedFile}" 
 											styleClass="aon-finding-toolbar-item aon-icon-pdf"
 											style="line-height:16px;margin-right:0;"
-											title="#{bundle.aon_fileupload_download}">
+									    	title="#{bundle.aon_fileupload_download}">
 											<aon:outputText value="#{bundle.aon_documents}" />
 										</aon:htmlCommandLink>			
 									</aon:div>

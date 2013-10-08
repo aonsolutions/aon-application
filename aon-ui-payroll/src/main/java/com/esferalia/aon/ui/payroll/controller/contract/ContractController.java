@@ -197,7 +197,7 @@ public class ContractController extends BasicController {
 	public boolean isTransformableContract(){
 		// TODO: what contracts are transformable?
 		String contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
-		String[] codes = {};
+		String[] codes = {"189"};
 		return ArrayUtils.contains(codes, contractCode) ;
 	}
 	
@@ -637,6 +637,16 @@ public class ContractController extends BasicController {
 		contrataController.onContrataDataShow(event);
 	}
 	
+	public void onContrataWindowShow(ActionEvent event){
+		manageContrataData();
+	}
+	
+	private void manageContrataData() {
+		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		contrataController.getHandler().initialize((Contract) this.getTo());
+		contrataController.onContrataAccept(null);
+		contrataController.validateContrataData();
+	}
 
 //	 * ************************************
 //	 * 			DOWNLOAD & UPLOAD METHODS		

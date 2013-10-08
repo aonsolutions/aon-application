@@ -124,10 +124,11 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 	final String EMPLOYEE_ADDRESS_COUNTRY_CODE1 = "codpaisdomtr1";
 	final String EMPLOYEE_ADDRESS_COUNTRY_CODE2 = "codpaisdomtr2";
 	final String EMPLOYEE_ADDRESS_COUNTRY_CODE3 = "codpaisdomtr3";
-	
+
 	/*
-	 * Contract sign fields
+	 * Other fields
 	 */
+	public final static String ADDITIONAL_CLAUSES = "clausadici";
 	final static String SIGN_TOWN = "munifirma";
 	final static String SIGN_DAY = "diafirma";
 	final static String SIGN_MONTH = "mesfirma";
@@ -500,6 +501,8 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 			// do nothing
 		}
 		
+		setPdfFieldValue(ADDITIONAL_CLAUSES,"");
+
 		SimpleDateFormat dateFormatter = new SimpleDateFormat();
 		setPdfFieldValue(SIGN_TOWN,contract.getWorkPlace().getAddress().getCity());
 		dateFormatter.applyPattern("dd");

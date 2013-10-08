@@ -15,7 +15,6 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
-import org.xml.sax.SAXException;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
@@ -188,10 +187,8 @@ public class ContractContrataLoader implements IContractLoader{
 		try {
 			input.reset();
 			SEPEFileUtils.validateContrataXmlPattern(input, SEPEFileUtils.CONTRATOS_SCHEMA_FILE_NAME, "");
-		} catch (IOException ioe) {
-			raiseException(0, ioe.getMessage());
-		} catch (SAXException saxe) {
-			raiseException(0, saxe.getMessage());
+		} catch (Exception e) {
+			raiseException(0, e.getMessage());
 		}
 			
 		logInfo(" Finalizada la validación de formato.");

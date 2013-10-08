@@ -30,7 +30,14 @@ public abstract class AbstractContractClauses implements IContractPdfDocument {
 	/* 
 	 * Enterprise fields
 	 */
-	public final static String CLAUSES = "clausulas";
+//	public final static String CLAUSES = "clausulas";
+	public final static String CLAUSES_ENTERPRISE_NAME = "NOMBRE_EMP";
+	public final static String CLAUSES_EMPLOYEE_NAME = "NOMBRE_TRABAJADOR";
+	public final static String CLAUSES_CONTENT = "ADICIONAL1";
+	public final static String CLAUSES_SIGN_TOWN = "NOMLOCA_S";
+	public final static String CLAUSES_SIGN_DAY = "DIAC";
+	public final static String CLAUSES_SIGN_MONTH = "MESC";
+	public final static String CLAUSES_SIGN_YEAR = "ANOC";
 	
 	
 	public final static String CONTRACT_CLAUSES_PATH = "com/esferalia/aon/file/payroll/contract/clausesPdf/";
@@ -238,8 +245,13 @@ public abstract class AbstractContractClauses implements IContractPdfDocument {
 	}
 	
 	public void loadPdfCommonFields(Contract contract) throws ManagerBeanException{
-		
-		setPdfFieldValue(CLAUSES,"");
+		setPdfFieldValue(CLAUSES_ENTERPRISE_NAME,"");
+		setPdfFieldValue(CLAUSES_EMPLOYEE_NAME,"");
+		setPdfFieldValue(CLAUSES_CONTENT,"");
+		setPdfFieldValue(CLAUSES_SIGN_TOWN,"");
+		setPdfFieldValue(CLAUSES_SIGN_DAY,"");
+		setPdfFieldValue(CLAUSES_SIGN_MONTH,"");
+		setPdfFieldValue(CLAUSES_SIGN_YEAR,"");
 	}
 	
 	/*

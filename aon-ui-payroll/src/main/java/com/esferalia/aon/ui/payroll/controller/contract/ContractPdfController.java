@@ -50,6 +50,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
 import com.esferalia.aon.file.payroll.contract.pdf.clauses.Clauses;
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
+import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
@@ -379,11 +380,11 @@ public class ContractPdfController {
 		ContractController contractController = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
 		ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
 		if(attachType==ContractAttachmentType.CONTRACT_DOC_DRAFT){
-			if(StringUtils.isNotBlank(clausesController.getAdditionalClauses())){
+			if(StringUtils.isNotBlank(clausesController.getAdditionalClauses()) && getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.ADDITIONAL_CLAUSES)!=null){
 				if(clausesController.getAdditionalClauses().length()>50){
-					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("clausadici").setValue("Segun anexo adjunto");
+					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.ADDITIONAL_CLAUSES).setValue("Segun anexo adjunto");
 				} else {
-					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("clausadici").setValue(clausesController.getAdditionalClauses());
+					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.ADDITIONAL_CLAUSES).setValue(clausesController.getAdditionalClauses());
 				}
 			}
 			if(contractController.getParams().getContractCode()==ContractCode.C421){
@@ -392,7 +393,7 @@ public class ContractPdfController {
 		} else if(attachType==ContractAttachmentType.TRAINING_ANNEX_II) {
 			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("horario").setValue(contractController.getParams().getTrainingSchedule());
 		} else if(attachType==ContractAttachmentType.CONTRACT_CLAUSES) {
-			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("clausulas").setValue(clausesController.getAdditionalClauses());
+			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(Clauses.CLAUSES_CONTENT).setValue(clausesController.getAdditionalClauses());
 		}
 	}
 	
@@ -437,19 +438,21 @@ public class ContractPdfController {
 	}
 	
 	public void saveDocument() {
+		saveDocument(getContractPdfWriter().buildPdf(false), getDocumentType());
+	}
+
+	public void saveDocument(byte[] data, ContractAttachmentType type) {
 		try {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			ContractAttachment attach = getContractPdfDraft();
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			attach.setContract(getContract());
-			attach.setData(getContractPdfWriter().buildPdf(false));
+			attach.setData(data);
 			attach.setAttachDate(new Date());
-			attach.setAttachmentType(getDocumentType());
+			attach.setAttachmentType(type);
 			attach.setMimeType(MimeType.MIME_PDF);
 			attach.setDescription(getDocumentType().getName(locale));
 			bean.insertOrUpdate(attach);
-			ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
-			attachController.initializeModel();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new AbortProcessingException(e);
@@ -566,9 +569,19 @@ public class ContractPdfController {
 		// Documento del contrato
 		if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.CONTRACT_DOC_DRAFT)){
 			try {
+				IAttachment clausesAttach = obtainContractClauses();
 				setDocumentType(ContractAttachmentType.CONTRACT_DOC_DRAFT);
 				loadDocument(true);
-				generatedMap.put(ContractAttachmentType.CONTRACT_DOC_DRAFT, getContractPdfWriter().buildPdf(true));
+				if(clausesAttach!=null){
+					List<IAttachment> list = new LinkedList<IAttachment>();
+					ContractAttachment attach = new ContractAttachment();
+					attach.setData(getContractPdfWriter().buildPdf(true));
+					list.add(attach);
+					list.add(clausesAttach);
+					generatedMap.put(ContractAttachmentType.CONTRACT_DOC_DRAFT, PdfUtils.mergePdf(list));
+				} else {
+					generatedMap.put(ContractAttachmentType.CONTRACT_DOC_DRAFT, getContractPdfWriter().buildPdf(true));
+				}
 			} catch (IOException e) {
 				LOGGER.error(e.getMessage(), e);
 				AonUtil.addErrorMessage("No se ha podido generar el documento del contrato");
@@ -641,6 +654,12 @@ public class ContractPdfController {
 		
 	}
 	
+	private IAttachment obtainContractClauses() throws UnsupportedContractDocumentException, IOException {
+		ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
+		IAttachment clausesAttach = clausesController.getContractClauses();
+		return clausesAttach;
+	}
+	
 	private List<IAttachment> getGeneratedAttach(){
 		List<IAttachment> list = new LinkedList<IAttachment>();
 		for(ContractAttachmentType type: generatedMap.keySet()){
@@ -662,6 +681,15 @@ public class ContractPdfController {
 		return out.toByteArray();
 	}	
 	
+	public void onSaveFiles(ActionEvent event){
+		for(IAttachment attachment: getGeneratedAttach()){
+			ContractAttachment attach = (ContractAttachment) attachment; 
+			saveDocument(attach.getData(), attach.getAttachmentType());
+		}
+		ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
+		attachController.initializeModel();
+	}
+
 	public void onDownloadMergedFile(ActionEvent event){
 		byte[] data = PdfUtils.mergePdf(getGeneratedAttach());
 		InputStream in = new ByteArrayInputStream(data);
