@@ -272,7 +272,9 @@ public class TargetController extends RegistryController implements ICommercialC
 			} else {
 				select = select.substring(0,i) + " GROUP BY `" + AonUtil.getMessage(ID) + "` " + select.substring(i+1);
 			}
-
+			select = StringUtils.replace(select, "c.customer = 'true'", "(1 IN (SELECT 1 FROM customer WHERE registry = c.registry))");
+			select = StringUtils.replace(select, "c.customer = 'false'", "(1 NOT IN (SELECT 1 FROM customer WHERE registry = c.registry))");
+			
 			System.out.println( " ----------------------" );
 			System.out.println( select );
 			System.out.println( " ----------------------" );
