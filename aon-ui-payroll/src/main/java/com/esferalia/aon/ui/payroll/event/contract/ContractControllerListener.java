@@ -86,6 +86,9 @@ public class ContractControllerListener extends ControllerAdapter{
 
 		CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
 		certificadosController.initialize((Contract) controller.getTo());
+
+		ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean("contractClauses");
+		clausesController.onAdditionalClausesShow(null);
 		
 		try {
 			ContractUtils utils = ContractUtils.getInstance();
@@ -134,6 +137,9 @@ public class ContractControllerListener extends ControllerAdapter{
 		utils.insertContractData((Contract) controller.getTo(), controller.getParams());
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize((Contract) controller.getTo());
+		contrataController.onContrataDataShow(null);
+		ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean("contractClauses");
+		clausesController.onAdditionalClausesShow(null);
 	}
 
 	@Override

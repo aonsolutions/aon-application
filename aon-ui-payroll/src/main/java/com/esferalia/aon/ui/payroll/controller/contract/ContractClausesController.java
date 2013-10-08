@@ -96,7 +96,7 @@ public class ContractClausesController {
 	}
 	
 	public IAttachment getContractClauses(){
-		initialize();
+//		initialize();
 		try{
 			if( isUseEnterpriseClauses() ){
 				return (IAttachment) obtainEnterpriseClausesList(Integer.parseInt(enterpriseClausesData.getExpression())).get(0);
@@ -199,7 +199,7 @@ public class ContractClausesController {
 		return bean.getList(criteria);
 	}
 	
-	public void onAdditionalClausesShow(ActionEvent event) throws ManagerBeanException{
+	public void onAdditionalClausesShow(ActionEvent event){
 		initialize();
 	}
 	

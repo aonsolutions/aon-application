@@ -15,15 +15,14 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.contrata.TBONVFOR;
 import com.esferalia.aon.payroll.enumeration.contrata.TEJINDIS;
 import com.esferalia.aon.payroll.enumeration.contrata.TEQPTIEM;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.file.ContrataReader;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
@@ -282,9 +281,6 @@ public class ContrataContratosHandler implements IContrataHandler{
 	public Boolean getShowColectivoEdad() {
 		if(getContract().getPerson().getAge()!=null){
 			return getContractCode()==ContractCode.C421 && getContract().getPerson().getAge()>=21;
-		} else {
-			String msg = "El trabajador no tiene definida la fecha de nacimiento";
-			AonUtil.addErrorMessage(msg);
 		}
 		return false;
 	}
