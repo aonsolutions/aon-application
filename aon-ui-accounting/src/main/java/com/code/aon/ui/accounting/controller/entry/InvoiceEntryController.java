@@ -914,15 +914,10 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private Account fillAccountEntry(AccountEntry entry) throws ManagerBeanException {
 		Account account = null;
 		entry.setAccountPeriod(getHeader().getPeriod());
-		
 		if (getHeader().getDate() == null) {
 			throw new ManagerBeanException("La fecha de la factura no puede estar vacia.");
 		}
-		Date entryDate = getHeader().getDate();
-		if (getHeader().getTaxDate() != null) {
-			entryDate = getHeader().getTaxDate().after(entryDate)?getHeader().getTaxDate():entryDate;
-		}
-		entry.setEntryDate(entryDate);
+		entry.setEntryDate(getHeader().getDate());
 		entry.setJournal(null);
 		entry.setSecurityLevel(getHeader().getSecurityLevel());
 		if (getHeader().getType().equals(InvoiceType.SALES)) {

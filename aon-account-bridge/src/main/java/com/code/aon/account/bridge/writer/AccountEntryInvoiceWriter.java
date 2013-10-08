@@ -127,9 +127,6 @@ public class AccountEntryInvoiceWriter {
 			throw new ManagerBeanException("La fecha de la factura no puede estar vacia.");
 		}
 		Date entryDate = invoice.getIssueDate();
-		if (invoice.getTaxDate() != null) {
-			entryDate = invoice.getTaxDate().after(entryDate)?invoice.getTaxDate():entryDate;
-		}
 		entry.setAccountPeriod(getAccountingUtil().obtainPeriod(entryDate));
 		entry.setEntryDate(entryDate);
 		entry.setJournal(null);
