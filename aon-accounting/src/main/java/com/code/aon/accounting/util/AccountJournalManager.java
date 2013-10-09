@@ -47,7 +47,7 @@ public class AccountJournalManager {
 		if (securityLevel != null) {
 			select += " AND security_level = ?";
 		}
-		select += " ORDER by okOrder";
+		select += " ORDER by okOrder,entry_date,id";
 		Connection conn = null;
 		PreparedStatement ps = null; 
 		ResultSet rs = null;

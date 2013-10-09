@@ -32,9 +32,10 @@
 						accesskey="#{bundle.aon_key_new}"
 						actionListener="#{invoiceEntry.onGenerateNew}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						disabled="#{invoiceEntry.details.rowCount == 0}"
-						onclick="if (!confirm('#{bundle.accounting_entry_generate}?'))  return false;" />
-
+						disabled="#{invoiceEntry.details.rowCount == 0}"/>
+<!-- 						
+						onclick="if (!confirm('#{bundle.accounting_entry_generate}?'))  return false;" 
+ -->
 					<aon:commandButton
 						value="#{bundle.accounting_entry_generate_and_see}"
 						id="saveInvoiceSee"
@@ -43,8 +44,7 @@
 						actionListener="#{invoiceEntry.onGenerate}"
 						action="#{invoiceEntry.generate}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						disabled="#{invoiceEntry.details.rowCount == 0}"
-						onclick="if (!confirm('#{bundle.accounting_entry_generate}?'))  return false;" />
+						disabled="#{invoiceEntry.details.rowCount == 0}"/>
 
 					<aon:commandButton value="#{bundle.aon_reset}"
 						accesskey="#{bundle.aon_key_new}"
