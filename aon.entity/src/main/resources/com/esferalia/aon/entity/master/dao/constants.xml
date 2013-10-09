@@ -169,8 +169,8 @@
 	</bean>
 
 	<bean class="com.code.aon.finance.Invoice" sqlName="invoice">
-		<alias names="id,series,number,referenceCode,project,project_id,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,surcharge,withholding,comments,remarks,investment,transaction,signed,scope_id,service,rectificationType,rectificationInvoice,rectificationInvoice_id,advance,posShift_id,posShift_pos_id,seller_id,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationUser,modificationDate" />
-		<hibernate names="id,series,number,referenceCode,project,project.id,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,surcharge,withholding,comments,remarks,investment,transaction,signed,scope.id,service,rectificationType,rectificationInvoice,rectificationInvoice.id,advance,posShift.id,posShift.pos.id,seller.id,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationUser,modificationDate" />
+		<alias names="id,series,number,referenceCode,project,project_id,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,surcharge,withholding,withholdingFarmer,comments,remarks,investment,transaction,signed,scope_id,service,rectificationType,rectificationInvoice,rectificationInvoice_id,advance,posShift_id,posShift_pos_id,seller_id,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationUser,modificationDate" />
+		<hibernate names="id,series,number,referenceCode,project,project.id,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,surcharge,withholding,withholdingFarmer,comments,remarks,investment,transaction,signed,scope.id,service,rectificationType,rectificationInvoice,rectificationInvoice.id,advance,posShift.id,posShift.pos.id,seller.id,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationUser,modificationDate" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceDetail" sqlName="invoice_detail">
@@ -179,8 +179,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceTax" sqlName="invoice_tax">
-		<alias names="id,invoiceDetail_id,invoiceDetail_invoice_id,taxType,percentage,surcharge,quota,surchargeQuota,vatDeductionType,withholdingType,deductibleQuota" />
-		<hibernate names="id,invoiceDetail.id,invoiceDetail.invoice.id,taxType,percentage,surcharge,quota,surchargeQuota,vatDeductionType,withholdingType,deductibleQuota" />
+		<alias names="id,invoiceDetail_id,invoiceDetail_invoice_id,taxType,base,percentage,surcharge,quota,surchargeQuota,vatDeductionType,withholdingType,deductibleQuota" />
+		<hibernate names="id,invoiceDetail.id,invoiceDetail.invoice.id,taxType,base,percentage,surcharge,quota,surchargeQuota,vatDeductionType,withholdingType,deductibleQuota" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.Finance" sqlName="finance">
@@ -424,8 +424,8 @@
 	
 	<!-- ** AON SUPPLIER   **************************************************** -->
 	<bean class="com.code.aon.supplier.Supplier" sqlName="supplier">
-		<alias names="id,registry_alias,registry_document,registry_id,registry_name,registry_type,scope_id,status,withholding,transaction,purchaseValuated,account,account_id,account_code" />
-		<hibernate names="id,registry.alias,registry.document,registry.id,registry.name,registry.type,scope.id,status,withholding,transaction,purchaseValuated,account,account.id,account.code" />
+		<alias names="id,registry_alias,registry_document,registry_id,registry_name,registry_type,scope_id,status,withholding,withholdingFarmer,transaction,purchaseValuated,account,account_id,account_code" />
+		<hibernate names="id,registry.alias,registry.document,registry.id,registry.name,registry.type,scope.id,status,withholding,withholdingFarmer,transaction,purchaseValuated,account,account.id,account.code" />
 	</bean>
 	
 	<!-- ** AON TAS   **************************************************** -->
