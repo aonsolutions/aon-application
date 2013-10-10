@@ -319,7 +319,7 @@ public class EndPeriodEntriesController {
 		if (!getParams().isOpeningEntry()) {
 			Period nextPeriod = obtainOpeningPeriod();
 			if (nextPeriod != null && util.existsEntry(nextPeriod, AccountEntryType.OPENING, null)){
-				getClosingMessages().add("ERROR. Existe un asiento de apertura en el ejercicio "+ nextPeriod.getId() +".");
+				getClosingMessages().add("ERROR. Existe un asiento de apertura en el ejercicio "+ nextPeriod.getName() +".");
 				setDisabled(true);
 			}
 		}
@@ -331,11 +331,11 @@ public class EndPeriodEntriesController {
 	private void tryToEnableOpeningCheck() throws ManagerBeanException {
 		AccountingUtil util = new AccountingUtil();
 		if (util.existsEntry(getParams().getOpeningPeriod(), AccountEntryType.OPERATING, null)) {
-			getOpeningMessages().add("ERROR. Existe un asiento de explotación en el ejercicio " + getParams().getOpeningPeriod().getId() +".");
+			getOpeningMessages().add("ERROR. Existe un asiento de explotación en el ejercicio " + getParams().getOpeningPeriod().getName() +".");
 			setDisabled(true);
 		}
 		if (util.existsEntry(getParams().getOpeningPeriod(), AccountEntryType.CLOSING, null)) {
-			getOpeningMessages().add("ERROR. Existe un asiento de cierre en el ejercicio " + getParams().getOpeningPeriod().getId() +".");
+			getOpeningMessages().add("ERROR. Existe un asiento de cierre en el ejercicio " + getParams().getOpeningPeriod().getName() +".");
 			setDisabled(true);
 		}
 		if (!isDisabled() && util.existsEntry(getParams().getOpeningPeriod(), AccountEntryType.OPENING, null)) {
