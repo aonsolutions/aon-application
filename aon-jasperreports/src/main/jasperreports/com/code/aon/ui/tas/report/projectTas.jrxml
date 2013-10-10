@@ -380,7 +380,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_detailled_list} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{tas_projectTas_detail} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-50" x="275" y="73" width="40" height="13"/>
