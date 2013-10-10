@@ -32,9 +32,9 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
-import com.code.aon.ui.registry.controller.RegistryController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistrySearchListener extends ControllerSearchListenerEx {
@@ -295,7 +295,7 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 	}
 
 	private String getPojoShortName() {
-		RegistryController controller = (RegistryController) getController();
+		BasicController controller = (BasicController) getController();
 		return controller.getPojoShortName();
 	}
 		
