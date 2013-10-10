@@ -91,11 +91,13 @@
 						<aon:outputText styleClass="aon-margin-left"
 							value="#{fbatch.to.financeBatchStatus}" />
 						<c:if test="#{aonRole.accountingOperator and fbatch.recorded}">
-							<aon:outputText styleClass="aon-italic aon-margin-left"
-								value="(#{bundle.account_account_entry}:" />
-							<aon:outputText styleClass="aon-bold"
-								value="#{fbatch.accountEntryId}" />
-							<aon:outputText styleClass="aon-italic" value=")" />
+							<aon:commandLink immediate="true"
+								styleClass="aon-button-goto"
+								style="margin-left: 5px; padding-left: 17px;" 
+								actionListener="#{fbatch.onViewAccountEntry}" 
+								action="accountEntry_form"
+								title="#{bundle.account_account_entry}: #{fbatch.accountEntryId}"
+								alt="#{bundle.account_account_entry}: #{fbatch.accountEntryId}" />
 						</c:if>
 					</aon:div>
 

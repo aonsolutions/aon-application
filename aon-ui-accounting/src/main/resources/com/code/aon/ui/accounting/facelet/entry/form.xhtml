@@ -76,7 +76,7 @@
 							accesskey="Q" title="#{bundle.aon_update} Alt+Q"
 							action="#{accountEntry.onNavigate}"
 							actionListener="#{accountEntry.onSelectEntry}"
-							rendered="#{!accountEntry.new and accountEntry.updatableViaWizard}"
+							rendered="#{!accountEntry.new and accountEntry.updatableViaWizard and accountEntry.accountInvoiceNavigationEnabled}"
 							styleClass="aon-finding-toolbar-item aon-icon-refresh"
 							immediate="true" />
 
@@ -84,7 +84,7 @@
 							value="#{bundle.finance_invoice}"
 							accesskey="I" title="#{bundle.finance_invoice} Alt+I"
 							action="#{accountEntry.onLoadInvoice}"
-							rendered="#{!accountEntry.new and accountEntry.aonInvoice}"
+							rendered="#{!accountEntry.new and accountEntry.invoiceNavigationEnabled}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="true" />
 

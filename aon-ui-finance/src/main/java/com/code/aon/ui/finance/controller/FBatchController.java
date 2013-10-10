@@ -492,4 +492,21 @@ public class FBatchController extends BasicController implements ICollectionProv
 		loadAvailableFinances();
 	}
 
+	public void onViewAccountEntry(ActionEvent event) {
+		try {
+			BasicController entryController = (BasicController) FormUtil.getController(IFinanceConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), getAccountEntryId());
+			entryController.setCriteria(criteria);
+			entryController.onSearch(null);
+			entryController.getModel().setRowIndex(0);
+			entryController.onSelect(null);
+			entryController.setBackAction(FINANCE_BATCH_FORM_NAME);
+		} catch (ManagerBeanException e) {
+			String msg = "Error al cargar el apunte.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+
 }

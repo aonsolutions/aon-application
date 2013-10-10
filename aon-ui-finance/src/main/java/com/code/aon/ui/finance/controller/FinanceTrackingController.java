@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.controller;
 import static com.code.aon.ui.common.ICommonMessages.POS;
 
 import java.util.Iterator;
+import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -24,6 +25,7 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
@@ -222,4 +224,52 @@ public class FinanceTrackingController extends LinesController implements IFinan
 		currentTracking = null;
 	}
 
+	
+	// **********************************************************************
+	// Metodos para la navegación al apunte contable.
+	// **********************************************************************
+	public boolean isRecorded() {
+		try {
+			if (getModel().isRowAvailable()) {
+				FinanceTracking to = (FinanceTracking) this.getModel().getRowData();
+				IManagerBean bean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), to.getId());
+				Integer count = bean.getCount(criteria);
+				return (count>0);
+			}
+			return false;
+		} catch (ManagerBeanException e) {
+			return false;
+		}
+	}
+	
+	public void onViewAccountEntry(ActionEvent event) {
+		try {
+			BasicController entryController = (BasicController) FormUtil.getController(IFinanceConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
+			FinanceTracking to = (FinanceTracking) this.getModel().getRowData();
+			IManagerBean bean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), to.getId());
+			List<ITransferObject> list = bean.getList(c);
+			if (list != null && list.size() > 0 ) {
+				AccountEntryFinanceTracking aeft = (AccountEntryFinanceTracking) list.get(0);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), aeft.getAccountEntry().getId() );
+				entryController.setCriteria(criteria);
+				entryController.onSearch(null);
+				entryController.getModel().setRowIndex(0);
+				entryController.onSelect(null);
+				entryController.setBackAction(FINANCE_FORM_NAME);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al cargar el apunte.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	// **********************************************************************
+	// FIN Metodos para la navegación al apunte contable.
+	// **********************************************************************
+	
 }

@@ -170,12 +170,14 @@
 								</c:if>						
 
 								<aon:outputText value="#{undeductibleInvoice.to.status}" />
-								<c:if test="#{aonRole.accountingOperator and undeductibleInvoice.recorded}">
-									<aon:outputText styleClass="aon-italic aon-margin-left"
-										value="(#{bundle.account_account_entry}: " />
-									<aon:outputText styleClass="aon-bold"
-										value="#{undeductibleInvoice.accountEntryId}" />
-									<aon:outputText styleClass="aon-italic" value=")" />
+								<c:if test="#{aonRole.accountingOperator and undeductibleInvoice.recorded and undeductibleInvoice.backAction != 'accountEntry_form'}">
+									<aon:commandLink immediate="true"
+											styleClass="aon-button-goto"
+											style="margin-left: 5px; padding-left: 17px;" 
+											actionListener="#{undeductibleInvoice.onViewAccountEntry}" 
+											action="accountEntry_form"
+											title="#{bundle.account_account_entry}: #{undeductibleInvoice.accountEntryId}"
+											alt="#{bundle.account_account_entry}: #{undeductibleInvoice.accountEntryId}" />
 								</c:if>
 							</aon:div>
 						</aon:panelGrid>

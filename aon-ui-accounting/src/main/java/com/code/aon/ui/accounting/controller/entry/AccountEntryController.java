@@ -165,6 +165,13 @@ public class AccountEntryController extends BasicController {
 				|| entry.getType() == AccountEntryType.INVESTMENT_INVOICE));
 	}
 	
+	public boolean isInvoiceNavigationEnabled() {
+		return isInvoice() && StringUtils.indexOf(getBackAction(), "Invoice_form") == -1;
+	}
+	public boolean isAccountInvoiceNavigationEnabled() {
+		return isAccountInvoice() && StringUtils.indexOf(getBackAction(), "Invoice_form") == -1;
+	}
+
 	private boolean isAccountInvoice(AccountEntry entry) throws ManagerBeanException {
 		IManagerBean aeiBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 		Criteria criteria = new Criteria();

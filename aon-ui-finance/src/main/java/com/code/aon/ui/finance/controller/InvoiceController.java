@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationInvoice;
 import com.code.aon.common.BeanManager;
@@ -1116,6 +1117,23 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message);
 		}		
+	}
+	
+	public void onViewAccountEntry(ActionEvent event) {
+		try {
+			BasicController entryController = (BasicController) FormUtil.getController(IFinanceConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), getAccountEntryId());
+			entryController.setCriteria(criteria);
+			entryController.onSearch(null);
+			entryController.getModel().setRowIndex(0);
+			entryController.onSelect(null);
+			entryController.setBackAction(getBeanName() + "_form");
+		} catch (ManagerBeanException e) {
+			String msg = "Error al cargar el apunte.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 	
 }

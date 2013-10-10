@@ -420,6 +420,14 @@
 										<aon:outputText value="#{bundle.finance_recorded}" />
 									</f:facet>
 									<aon:outputText value="#{(to.recordable)?((aonRole.accountingOperator)?(to.description):((to.recorded)?(bundle.aon_yes):(bundle.aon_no))):('---------')}" />
+<!-- 									
+									<aon:commandLink immediate="true"
+											rendered="#{aonRole.accountingOperator and financeTracking.recorded}"
+											styleClass="aon-button-goto"
+											style="margin-left: 5px; padding-left: 17px;" 
+											actionListener="#{financeTracking.onViewAccountEntry}" 
+											action="accountEntry_form"/>
+ -->
 								</aon:column>
 
 								<aon:column styleClass="aon-editDataTable-numberColumn">
