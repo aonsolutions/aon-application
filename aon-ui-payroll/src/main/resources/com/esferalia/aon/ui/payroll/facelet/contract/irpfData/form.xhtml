@@ -34,7 +34,7 @@
 			</aon:div>	
 
 			
-			<aon:div styleClass="aon-scroll-area" >
+			<aon:div styleClass="aon-scroll-area" style="padding-bottom:1px;" >
 
 				<aon:panelGrid columns="4" dir="true" width="100%">
 					<aon:outputLabel value="#{bundle.payroll_salary_employee}" />
@@ -91,15 +91,16 @@
 					<aon:selectOneRadio id="irpfData_familySituation" layout="pageDirection" 
 						value="#{irpfData.to.familySituation}" >
 						<f:selectItems value="#{payrollCollections.familySituations}"  />
-						<a4j:support event="onchange" reRender="irpfDataContent" ajaxSingle="true" />
-						<a4j:support event="onclick" reRender="irpfDataContent" ajaxSingle="true" />
+						<a4j:support event="onchange" reRender="irpfDataContent" />
+						<a4j:support event="onclick" reRender="irpfDataContent" />
 					</aon:selectOneRadio>
 					
 					<aon:outputLabel for="irpfData_spouseDocument" value="#{bundle.payroll_irpfData_spouseDocument}" 
 						rendered="#{irpfData.to.familySituation=='MARRIED'}"/>
 					<aon:panelGroup id="irpfDataDocumentPanel"
 						rendered="#{irpfData.to.familySituation=='MARRIED'}" required="true">
-						<aon:inputText id="irpfData_spouseDocument" style="margin-left: 3px;" required="true"
+						<aon:inputText id="irpfData_spouseDocument" style="margin-left: 3px;" 
+							rendered="#{irpfData.to.familySituation=='MARRIED'}"
 							value="#{irpfData.to.spouseDocument}" size="16" maxlength="16">
 							<f:validateLength minimum="1" maximum="16" />
 							<a4j:support onsubmit="toUpperCase(this);"
@@ -150,6 +151,7 @@
 					<aon:selectBooleanCheckbox id="irpfData_labourProlongation" value="#{irpfData.to.labourProlongation}"/>
 					
 				</aon:panelGrid>
+
 			
 				<c:if test="#{!irpfData.new}" >
 					<aon:panelTabSet>

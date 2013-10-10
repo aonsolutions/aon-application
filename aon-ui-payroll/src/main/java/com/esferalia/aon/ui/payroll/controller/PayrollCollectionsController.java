@@ -56,6 +56,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
+import com.esferalia.aon.ui.sepe.controller.SepeAppParamsController;
 
 public class PayrollCollectionsController {
 	
@@ -473,13 +474,25 @@ public class PayrollCollectionsController {
 	}
 	
 	public List<SelectItem> getContractAttachTypes() {
-		if (contractAttachTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			contractAttachTypes = new LinkedList<SelectItem>();
-			ContractAttachmentType[] cat = ContractAttachmentType.values();
-			for (ContractAttachmentType c : cat) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, name);
+		SepeAppParamsController paramsController = (SepeAppParamsController) AonUtil.getRegisteredBean(ISepeConstants.SEPE_APP_PARAMS_CONTROLLER_NAME);
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		contractAttachTypes = new LinkedList<SelectItem>();
+		ContractAttachmentType[] cat = ContractAttachmentType.values();
+		for (ContractAttachmentType t : cat) {
+			if (paramsController.getDevelopmentMode()
+					|| (!paramsController.getDevelopmentMode() 
+							&& t != ContractAttachmentType.SEPE_CONTRACT_FILE
+							&& t != ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID
+							&& t != ContractAttachmentType.SEPE_CONTRACT_RESPONSE
+							&& t != ContractAttachmentType.SEPE_EXTENSION_FILE
+							&& t != ContractAttachmentType.SEPE_EXTENSION_COMMUNICATION_ID
+							&& t != ContractAttachmentType.SEPE_EXTENSION_RESPONSE
+							&& t != ContractAttachmentType.SEPE_CERTIFICADOS_FILE
+							&& t != ContractAttachmentType.SEPE_CERTIFICADOS_COMMUNICATION_ID
+							&& t != ContractAttachmentType.SEPE_CERTIFICADOS_RESPONSE 
+							&& t != ContractAttachmentType.CONTRACT_CLAUSES)) {
+				String name = t.getName(locale);
+				SelectItem item = new SelectItem(t, name);
 				contractAttachTypes.add(item);
 			}
 		}

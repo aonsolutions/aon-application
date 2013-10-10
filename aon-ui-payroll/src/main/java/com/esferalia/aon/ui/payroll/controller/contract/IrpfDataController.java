@@ -22,6 +22,7 @@ import com.code.aon.ui.form.LinesController;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.IrpfData;
+import com.esferalia.aon.payroll.IrpfDataAscendants;
 import com.esferalia.aon.payroll.IrpfDataDescendients;
 import com.esferalia.aon.payroll.enumeration.DeductHomeLoan;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
@@ -41,9 +42,6 @@ public class IrpfDataController extends LinesController {
 	}
 	public void setDisabilityLevel(DisabilityLevel disabilityLevel) {
 		this.disabilityLevel = disabilityLevel;
-		if(this.disabilityLevel!=DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE){
-			((IrpfData)this.getTo()).setDependence(false);
-		}
 	}
 	public DeductHomeLoan getDeductHomeLoanAfter() {
 		return DeductHomeLoan.AFTER_01_01_2001;
@@ -121,8 +119,8 @@ public class IrpfDataController extends LinesController {
 		BasicController controller = (BasicController) FormUtil.getController("irpfDataAscendants");
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		list.addAll(controller.getWrappedList());
-		list.add(new IrpfDataDescendients());
-		list.add(new IrpfDataDescendients());
+		list.add(new IrpfDataAscendants());
+		list.add(new IrpfDataAscendants());
 		return list;
 	}
 	

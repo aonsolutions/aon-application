@@ -43,7 +43,7 @@ public class SEPEUtils {
 			}
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
-				map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
+				map.put(data.getName(), data.getExpression()!=null?data.getExpression().replace('"', ' ').trim():"");
 			}
 		} catch (ManagerBeanException e) {
 			// NADA, se devuelve un mapa vacio

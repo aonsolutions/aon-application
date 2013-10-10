@@ -21,7 +21,6 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
@@ -148,7 +147,6 @@ public class Certifica2ListController extends BasicController {
 			}
 			
 			getCriteria().addNotNullExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE));
-			getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_SEPE_STATUS), ContractStatus.PROCESSED);
 			if(getEnterprise()!=null && getEnterprise().getId()!=null){
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());
 			}

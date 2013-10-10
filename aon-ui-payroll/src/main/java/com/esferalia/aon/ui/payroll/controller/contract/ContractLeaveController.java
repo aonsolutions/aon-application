@@ -275,7 +275,7 @@ public class ContractLeaveController extends BasicController {
 	
 	public void onLeaveDateChange(ActionEvent event) {
 		ContractLeaveDetail detail = (ContractLeaveDetail) getTo();
-		if(existLeave(getContract(), detail.getDate()) && detail.getType()==LeaveReportType.LEAVE){
+		if(existLeave(getContract(), detail) && detail.getType()==LeaveReportType.LEAVE){
 			String msg = "Ya existe una incidencia de IT en la fecha indicada";
 			AonUtil.addErrorMessage(msg);
 			detail.setDate(new Date());
@@ -303,6 +303,7 @@ public class ContractLeaveController extends BasicController {
 		controller.onSelect(event);
 		setContract((Contract) controller.getTo());
 		initialize();
+		onSelectLeave(null);
 	}
 
 	public void onSelectCurrentContract(ActionEvent event) {
@@ -321,6 +322,9 @@ public class ContractLeaveController extends BasicController {
 	}
 	
 	public Date getConfirmSuggestedDate(Date startDate, Integer confirmReportNumber) {
+		if(startDate==null){
+			return new Date();
+		}
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(startDate);
 		cal.add(Calendar.DAY_OF_YEAR, 3 + (((confirmReportNumber==null?0:confirmReportNumber)  * 7)));
@@ -379,13 +383,14 @@ public class ContractLeaveController extends BasicController {
 		}
 	}
 	
-	private boolean existLeave(Contract contract, Date date) {
+	public boolean existLeave(Contract contract, ContractLeaveDetail leaveDetail) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractLeave.class);
 			Criteria criteria = new Criteria();
+			criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_ID), leaveDetail.getContractLeave().getId());
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_CONTRACT_ID), contract.getId());
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_START_DATE), date);
-			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE), date);
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_START_DATE), leaveDetail.getDate());
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE), leaveDetail.getDate());
 			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE));
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 			return bean.getCount(criteria)>0;

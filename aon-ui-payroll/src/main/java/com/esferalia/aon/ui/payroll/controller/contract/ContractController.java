@@ -205,18 +205,25 @@ public class ContractController extends BasicController {
 		ContractModel[] availableModels = {ContractModel.PE151, ContractModel.PE170, 
 				ContractModel.PE176, ContractModel.PE177, ContractModel.PE179, 
 				ContractModel.PE183, ContractModel.PE187, ContractModel.PE226};
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		if(getParams().getContractCode()!=null){
-			for( ContractType type : ContractType.values() ) {
-				if( ArrayUtils.contains(availableModels, type.getModel()) ){
-					for( ContractCode code : type.getCodes() ) {
-						if ( code ==  getParams().getContractCode()) {
-							SelectItem item = new SelectItem(type.getModel(), type.getName(locale));
-							list.add(item);
-						}
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			List<ContractModel> modelList = new LinkedList<ContractModel>();
+			for( ContractModel model: ContractModel.values() ) {
+				for( ContractType type : ContractType.values() ) {
+					if( type.getModel()==model 
+							&& ArrayUtils.contains(availableModels, model)
+							&& ArrayUtils.contains(type.getCodes(), getParams().getContractCode())
+							&& !ArrayUtils.contains(modelList.toArray(), model) ){
+						modelList.add(model);
 					}
 				}
+			}
+			for( ContractModel model: modelList ) {
+				String name = model.getName(locale);
+				name = name.length()>80?name.substring(0, 79):name;
+				SelectItem item = new SelectItem(model, model.name() + " - " + name);
+				list.add(item);
 			}
 		}
 		return list;

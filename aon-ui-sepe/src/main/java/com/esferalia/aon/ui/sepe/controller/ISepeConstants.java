@@ -33,20 +33,22 @@ public interface ISepeConstants {
 	// ************************************************************
 	// OTHER
 	// ************************************************************
-	public static final String[] AVAILABLE_CONTRACT_CODE_COMMUNICATION = {"100","200","150","410","420","430","421","510","520","530"};
-	// 100 150 -- 
-	// 100 200 --
-	// 401 402 410 501 502 510 540
-	// 410 510 --
-	// 420 520 --
-	// 421 --
-	// 430 530
+	public static final String[] AVAILABLE_CONTRACT_CODE_COMMUNICATION = {
+	 "100", "150",  
+	 "100", "200", 
+	 "401", "402", "410", "501", "502", "510", "540",
+	 "410", "510", 
+	 "420", "520", 
+	 "421", 
+	 "430", "530",
+	};
 	
-	public static final String[] AVAILABLE_TRANSFORM_CODE_COMMUNICATION = {};
-//	109 139
-//	189 209
-//	239 289
-//	309 389
+	public static final String[] AVAILABLE_TRANSFORM_CODE_COMMUNICATION = {
+//	"109", 139",
+//	"189", 209",
+//	"239", 289",
+//	"309", 389",
+	};
 	
 	public static final ContrataFileType[] AVAILABLE_CONTRATA_FILE_TYPES = {ContrataFileType.CONTRACT};
 	

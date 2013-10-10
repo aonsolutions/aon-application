@@ -1829,8 +1829,12 @@ public class ContrataContratosWriter implements IContrataWriter{
 	private DATOSCONTRATOINVESTIGACIONTYPE createDatosContratoInvestigacion(ContrataContratoParams params) {
 		if(params.isResearchData()){
 			DATOSCONTRATOINVESTIGACIONTYPE datos = new  DATOSCONTRATOINVESTIGACIONTYPE();
-			datos.setINDEMPLEADOR(params.getIndEmpleador().getCode());
-			datos.setINDTRABAJADOR(params.getIndTrabajador().getCode());
+			if(params.getIndEmpleador()!=null){
+				datos.setINDEMPLEADOR(params.getIndEmpleador().getCode());
+			}
+			if(params.getIndTrabajador()!=null){
+				datos.setINDTRABAJADOR(params.getIndTrabajador().getCode());
+			}
 			datos.setINDRD632006(params.getIndRd632006()?"S":null);
 			return datos;
 		}

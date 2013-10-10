@@ -839,9 +839,10 @@ public class ContrataReader {
 	}
 	private void completeDatosContratoInvestigacion(DATOSCONTRATOINVESTIGACIONTYPE datos) {
 		if(datos != null){
+			params.setResearchData(true);
 			params.setIndEmpleador(TEWEINVE.getEnumByValue(datos.getINDEMPLEADOR()));
 			params.setIndTrabajador(TEXTINVE.getEnumByValue(datos.getINDTRABAJADOR()));
-			params.setIndRd632006(datos.getINDRD632006().equals("S"));
+			params.setIndRd632006(datos.getINDRD632006()!=null && datos.getINDRD632006().equals("S"));
 		}
 	}
 	private void completeDatosContratoInsercion(DATOSCONTRATOINSERCIONTYPE datos) {

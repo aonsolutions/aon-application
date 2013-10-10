@@ -41,9 +41,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.enumeration.contrata.TCHRGCOT;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.Period;
@@ -193,29 +191,9 @@ public class CertificadosWriter {
 	 */
 	private EMPRESATYPE createEmpresaType(EnterpriseCCC ccc) {
 		EMPRESATYPE o = new EMPRESATYPE();
-		o.setCIFNIF(ccc.getActivity().getEnterprise().getRegistry().getDocument());
-
-		// TODO: research about ccc quote regime
-		String quoteRegime = "0000";
-		if(ccc.getActivity().getType()==SSRegimeType.GENERAL){
-			quoteRegime = TCHRGCOT.TCHRGCOT_0111.getCode();
-		} else if(ccc.getActivity().getType()==SSRegimeType.AGRICULTURAL){
-			quoteRegime = TCHRGCOT.TCHRGCOT_0613.getCode();
-		} else if(ccc.getActivity().getType()==SSRegimeType.ARTIST){
-			quoteRegime = TCHRGCOT.TCHRGCOT_0112.getCode();
-		} else if(ccc.getActivity().getType()==SSRegimeType.COAL_MINING){
-			quoteRegime = TCHRGCOT.TCHRGCOT_0911.getCode();
-		} else if(ccc.getActivity().getType()==SSRegimeType.DOMESTIC_EMPLOYEES){
-			quoteRegime = TCHRGCOT.TCHRGCOT_0138.getCode();
-		} else if(ccc.getActivity().getType()==SSRegimeType.SEA_WORKERS){
-			quoteRegime = TCHRGCOT.TCHRGCOT_0800.getCode();
-		} else if(ccc.getActivity().getType()==SSRegimeType.SELF_EMPLOYED){
-			quoteRegime = TCHRGCOT.TCHRGCOT_0721.getCode();
-		} else if(ccc.getActivity().getType()==SSRegimeType.STUDENT_INSURANCE){
-			quoteRegime = TCHRGCOT.TCHRGCOT_1911.getCode();
-		}
 		if(ccc!=null){
-			o.setCCC(quoteRegime+ccc.getCcc());
+			o.setCIFNIF(ccc.getActivity().getEnterprise().getRegistry().getDocument());
+			o.setCCC(ccc.getActivity().getQuoteRegimeCode() + ccc.getCcc());
 		}
 		return o;
 	}

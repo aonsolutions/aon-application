@@ -21,6 +21,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
+import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.ui.payroll.controller.contract.IrpfDataController;
 
 public class IrpfDataControllerListener extends ControllerAdapter{
@@ -29,6 +30,10 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		IrpfData data = ((IrpfData) getController().getTo());
+		if(data.getFamilySituation()!=FamilySituation.MARRIED){
+			data.setSpouseDocument(null);
+		}
 		completeHandicap();
 	}
 
@@ -43,6 +48,10 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
 	throws ControllerListenerException {
+		IrpfData data = ((IrpfData) getController().getTo());
+		if(data.getFamilySituation()!=FamilySituation.MARRIED){
+			data.setSpouseDocument(null);
+		}
 		completeHandicap();
 	}
 	
@@ -93,10 +102,18 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 	private void completeHandicap() {
 		IrpfDataController controller = (IrpfDataController) getController();
 		IrpfData data = ((IrpfData) getController().getTo());
-		if(controller.getDisabilityLevel()==DisabilityLevel.GT_EQ_33_LT_65 && data.isDependence()){
-			data.setDisabilityLevel(DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE);
-		} else if(data.getDisabilityLevel()==DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE){
-			controller.setDisabilityLevel(DisabilityLevel.GT_EQ_33_LT_65);
+		if(controller.getDisabilityLevel()==DisabilityLevel.GT_EQ_33_LT_65){
+			if(data.isDependence()){
+				data.setDisabilityLevel(DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE);
+			} else {
+				data.setDisabilityLevel(DisabilityLevel.GT_EQ_33_LT_65);
+			}
+		} else if(controller.getDisabilityLevel()==DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE){
+			data.setDisabilityLevel(DisabilityLevel.GT_EQ_33_LT_65);
+			data.setDependence(true);
+		} else if(controller.getDisabilityLevel()==DisabilityLevel.GT_EQ_65){
+			data.setDisabilityLevel(DisabilityLevel.GT_EQ_65);
+			data.setDependence(false);
 		}
 	}
 	
