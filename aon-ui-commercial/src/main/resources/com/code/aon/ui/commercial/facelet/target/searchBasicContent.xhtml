@@ -24,6 +24,8 @@
 		<f:selectItems value="#{commercialCollections.advertisings}" />		
 	</aon:selectOneMenu>	
 	
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/searchProjectContent.xhtml" />
+	
 	<aon:outputText value="#{bundle.aon_status}"/>
 	<aon:selectManyCheckbox value="#{targetSearch.targetStatuses}">
 		<f:selectItems value="#{commercialCollections.targetStatuses}"/>

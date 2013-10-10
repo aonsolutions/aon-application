@@ -66,6 +66,8 @@ import com.code.aon.config.Scope;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.pool.AonConnectionException;
+import com.code.aon.project.Project;
+import com.code.aon.project.ProjectActivity;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.IRegistry;
@@ -398,6 +400,8 @@ public class RegistryController extends BasicController {
 		tableMapping.put(mappingPrefix + ".registry.payMethods.payment", "pm");
 		tableMapping.put(mappingPrefix + ".documents", "cd");
 		tableMapping.put(mappingPrefix + ".documents.category", "cdc");
+		tableMapping.put("Project", "project");
+		tableMapping.put("ProjectActivity", "project_activity");
 		
 		Map<String,Class<?>> pojoMapping = new HashMap<String, Class<?>>();
 		pojoMapping.put(mappingPrefix, pojoClass);
@@ -412,6 +416,8 @@ public class RegistryController extends BasicController {
 		pojoMapping.put(mappingPrefix + ".registry.payMethods.payment", PayMethod.class);
 		pojoMapping.put(mappingPrefix + ".documents", RegistryAttachment.class);
 		pojoMapping.put(mappingPrefix + ".documents.category", Category.class);
+		pojoMapping.put("Project", Project.class);
+		pojoMapping.put("ProjectActivity", ProjectActivity.class);
 
 		return CriteriaUtilities.toSQLString(getCriteria(), true, pojoMapping, tableMapping);
 	}

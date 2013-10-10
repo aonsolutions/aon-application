@@ -12,10 +12,17 @@ import org.apache.commons.lang.ClassUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Scope;
 import com.code.aon.geozone.GeoZone;
+import com.code.aon.project.ActivityType;
+import com.code.aon.project.Project;
+import com.code.aon.project.ProjectActivity;
+import com.code.aon.project.ProjectType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -27,6 +34,8 @@ import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
+import com.code.aon.ui.registry.controller.RegistryController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistrySearchListener extends ControllerSearchListenerEx {
 	
@@ -55,6 +64,10 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 	private Integer questionValueId;	
 	
 	private Registry registrySeller;
+	
+	private ProjectType projectType;
+	
+	private ActivityType activityType;
 	
 	public Scope[] getScopes() {
 		if (ArrayUtils.isEmpty(scopes)) {
@@ -218,6 +231,42 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		setQuestionValues(null);		
 	}
 	
+	public ProjectType getProjectType() {
+		return projectType;
+	}
+
+	public void setProjectType(ProjectType projectType) {
+		this.projectType = projectType;
+	}
+	
+	public ActivityType getActivityType() {
+		return activityType;
+	}
+
+	public void setActivityType(ActivityType activityType) {
+		this.activityType = activityType;
+	}
+	
+	public List<SelectItem> getAvailableActivityTypes() throws ManagerBeanException {
+		List<SelectItem> activityTypes = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(ActivityType.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_ACTIVE), true);
+		if ( (getProjectType() != null) && (getProjectType().getId() != null) ) {		
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID), getProjectType().getId());
+		} else {
+			criteria.addNullExpression(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID));
+		}
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_DESCRIPTION));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to:list) {
+			ActivityType activityType = (ActivityType) to;
+			SelectItem item = new SelectItem(activityType, activityType.getDescription());
+			activityTypes.add(item);
+		}
+		return activityTypes;
+	}	
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		setMediaTypes(new LinkedList<MediaType>());
@@ -229,6 +278,8 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		setRegistrySeller( (Registry) registryBean.createNewTo() );
 		setQuestion( (Question) BeanManager.getManagerBean(Question.class).createNewTo() );
 		resetQuestionValue();
+		setProjectType(null);
+		setActivityType(null);
 	}
 	
 	public String getPreffix() throws ManagerBeanException {
@@ -242,22 +293,54 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 	protected String resolveAlias(String alias) throws ManagerBeanException {
 		return getController().resolveAlias(getPreffix() + alias);
 	}
-	
+
+	private String getPojoShortName() {
+		RegistryController controller = (RegistryController) getController();
+		return controller.getPojoShortName();
+	}
+		
 	private void completeCriteria( Criteria criteria, QuestionValue qv ) {
 		switch ( qv.getQuestion().getType() ) {
 			case BOOLEAN:
 			case NUMBER:
-				criteria.addEqualExpression("Registry.profiles.number", qv.getNumber());
+				criteria.addEqualExpression(getPojoShortName()+".profiles.number", qv.getNumber());
 				break;
 			case DATE:
-				criteria.addEqualExpression("Registry.profiles.date", qv.getDate());
+				criteria.addEqualExpression(getPojoShortName()+".profiles.date", qv.getDate());
 				break;
 			case TEXT:
-				Expression exp = ExpressionUtilities.getLikeExpression("Registry.profiles.text", "%"+qv.getText()+"%");
+				Expression exp = ExpressionUtilities.getLikeExpression(getPojoShortName()+".profiles.text", "%"+qv.getText()+"%");
 				criteria.addExpression(exp);
 				break;
 		}		
 	}	
+	
+	public void addProjectTypeSubQuery(ProjectType type, Criteria criteria) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Project.class);			
+		Criteria subCriteria = new Criteria();
+		subCriteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_PROJECT_TYPE_ID), type.getId());
+		String idAlias = bean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID);
+		ProjectionList pl = new ProjectionList( Projection.property(idAlias) );
+		Expression exp = ExpressionUtilities.getSubQueryExpression(Project.class, subCriteria, pl);
+		criteria.addInExpression(getPojoShortName()+".id", exp);			
+	}
+
+	public void addActivityTypeSubQuery(ActivityType type, Criteria criteria) throws ManagerBeanException {
+		IManagerBean paBean = BeanManager.getManagerBean(ProjectActivity.class);
+		Criteria paSubCriteria = new Criteria();
+		paSubCriteria.addEqualExpression(paBean.getFieldName(IEntityAlias.PROJECT_ACTIVITY_ACTIVITY_TYPE_ID), type.getId());
+		String paIdAlias = paBean.getFieldName(IEntityAlias.PROJECT_ACTIVITY_PROJECT_ID);
+		ProjectionList paPL = new ProjectionList( Projection.property(paIdAlias) );
+		Expression paExp = ExpressionUtilities.getSubQueryExpression(ProjectActivity.class, paSubCriteria, paPL);
+		
+		IManagerBean bean = BeanManager.getManagerBean(Project.class);			
+		Criteria subCriteria = new Criteria();
+		subCriteria.addInExpression(bean.getFieldName(IEntityAlias.PROJECT_ID), paExp);
+		String idAlias = bean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID);
+		ProjectionList pl = new ProjectionList( Projection.property(idAlias) );
+		Expression exp = ExpressionUtilities.getSubQueryExpression(Project.class, subCriteria, pl);
+		criteria.addInExpression(getPojoShortName()+".id", exp);			
+	}
 	
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
@@ -268,14 +351,14 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		String segment = resolveAlias("segments_segment_id");
 		addEnumToCriteria(criteria, segment, getSegmentsIds().toArray());
 		if ( getScopesSize() > 0 ) {
-			addEnumToCriteria(criteria, "Registry.scope<id", getScopesIds().toArray());	
+			addEnumToCriteria(criteria, getPojoShortName()+".scope<id", getScopesIds().toArray());	
 		}		
 		if ( (getRegistrySeller() != null) && (getRegistrySeller().getId() != null) ) {
-			String seller = getController().resolveAlias("Registry_sellers_seller_id");
+			String seller = getController().resolveAlias(getPojoShortName()+"_sellers_seller_id");
 			criteria.addEqualExpression(seller, getRegistrySeller().getId());			
 		}
 		if ( isQuestionResolved() ) {
-			criteria.addEqualExpression("Registry.profiles.question.id", getQuestion().getId());	
+			criteria.addEqualExpression(getPojoShortName()+".profiles.question.id", getQuestion().getId());	
 			if ( getQuestionValueId() != null ) {
 				IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
 				QuestionValue qv = (QuestionValue) bean.get(getQuestionValueId());
@@ -285,7 +368,12 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 			} else if (! getQuestionValue().isNotFilled() ) {
 				completeCriteria(criteria, getQuestionValue());
 			}
-		}				
+		}
+		if ( (getActivityType() != null) && (getActivityType().getId() != null) ) {
+			addActivityTypeSubQuery(getActivityType(), criteria);
+		} else if ( (getProjectType() != null) && (getProjectType().getId() != null) ) {
+			addProjectTypeSubQuery(getProjectType(), criteria);			
+		}		
 	}
 	
 	public void onAddMediaType(ActionEvent event) {

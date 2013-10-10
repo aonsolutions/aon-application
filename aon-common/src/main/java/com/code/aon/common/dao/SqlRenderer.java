@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 
 import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,7 @@ public class SqlRenderer implements CriterionVisitor {
 	private Writer out;
 	private Map<String,String> tableMapping;
 	private Map<String,Class<?>> pojoMapping;
+	private boolean inSubQuery;
 	
 	public SqlRenderer(Writer out) {
 		this.out = out;
@@ -69,18 +72,35 @@ public class SqlRenderer implements CriterionVisitor {
 	}
 
 	public void visitProjection(Projection projection) {
-		throw new UnsupportedOperationException( "Projection not supported" );
+		if ( projection.getExpression() != null ) {
+			projection.getExpression().accept(this);
+		}
 	}
 	
 	public void visitProjectionList(ProjectionList projectionList) {
-		throw new UnsupportedOperationException( "Projection not supported" );
+		Iterator<Projection> i = projectionList.getProjections().iterator();
+		while (i.hasNext()) {
+			Projection projection = i.next();
+			projection.accept(this);
+			if (i.hasNext()) {
+				write(", ");
+			}
+		}		
 	}
 
 	@Override
-	public void visitSubQueryExpression(SubQueryExpression expression) {
-		write("( ");
-		expression.getCriteria().accept(this);
-		write(" )");		
+	public void visitSubQueryExpression(SubQueryExpression subQuery) {
+		boolean oldInSubQueryValue = this.inSubQuery;
+		this.inSubQuery = true;
+		write("( SELECT ");
+		subQuery.getProjectionList().accept(this);
+		write(" FROM ");
+		String pojoName = ClassUtils.getShortClassName(subQuery.getPojo()); 
+		write( tableMapping.get(pojoName) );
+		write(" WHERE ");
+		subQuery.getCriteria().accept(this);
+		write(" )");
+		this.inSubQuery = oldInSubQueryValue;
 	}
 
 	public void visitOrderByList(OrderByList orderByList) {
@@ -225,6 +245,9 @@ public class SqlRenderer implements CriterionVisitor {
 	private String getSqlName(String alias) throws DAOException {
 		try {
 			alias = alias.replace('<', '.');
+			if ( this.inSubQuery && (StringUtils.countMatches(alias, ".")>1) && alias.endsWith(".id") ) {
+				alias = StringUtils.substringBeforeLast(alias, ".id");
+			}
 			String table = alias.substring(0 , alias.lastIndexOf('.') );
 			String property = alias.substring( alias.lastIndexOf('.') + 1 );
 
@@ -234,10 +257,15 @@ public class SqlRenderer implements CriterionVisitor {
 			BeanUtilsBean bub = BeanUtilsBean.getInstance();
 			PropertyDescriptor pd = bub.getPropertyUtils().getPropertyDescriptor(to, property);
 			Method method = bub.getPropertyUtils().getReadMethod(pd);
-			Column columnAnnotation = method.getAnnotation(Column.class);
 			String columnName = property;
-			if (columnAnnotation != null) {
-				columnName = StringUtils.isEmpty(columnAnnotation.name())?property:columnAnnotation.name();	
+			Column columnAnnotation = method.getAnnotation(Column.class);
+			if ( (columnAnnotation != null) && !StringUtils.isEmpty(columnAnnotation.name())) {
+				columnName = columnAnnotation.name();	
+			} else {
+				JoinColumn joinColumn = method.getAnnotation(JoinColumn.class);
+				if ( (joinColumn != null) && !StringUtils.isEmpty(joinColumn.name())) {
+					columnName = joinColumn.name();
+				}
 			}
 			String t = tableMapping.containsKey(table)?tableMapping.get(table):table;
 			String ret = t + "." + columnName; 
