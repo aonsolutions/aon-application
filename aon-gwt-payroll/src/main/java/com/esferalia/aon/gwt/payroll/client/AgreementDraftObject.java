@@ -9,10 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.filefilter.AgeFileFilter;
-
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
-import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
@@ -20,7 +17,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
