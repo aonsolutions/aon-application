@@ -1,0 +1,69 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'>
+
+
+	<!-- GIFs needed for ie6 work arounds. Can't use <ui:image>, it makes PNGs -->
+	<ui:data field='configgroupIe6Data' src='configgroup_ie6.gif' />
+
+	<ui:style>
+	
+	.stackHeader {
+	  padding: .7em .5em .7em .6em;
+	  
+	}
+
+	 @if user.agent ie6 {
+	   @url employeesgroupIe6 employeesgroupIe6Data;
+
+	   .configIcon {
+	     background-image: configgroupIe6;
+	     width: 31px;
+	     height: 22px;
+	     float: left;
+	   }
+
+
+	 } @else {
+	
+
+	@sprite .configIcon {
+	     gwt-image: 'configgroup';
+	     float: left;
+	   }
+
+
+	 }
+	 
+	</ui:style>
+	
+	<ui:image field='configgroup' src='configgroup.png' />
+
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+		<g:west size='275'>
+
+			<g:StackLayoutPanel unit='EM'>
+
+				<g:stack ui:field="configStack">
+					<g:header size='3'>
+						<div class='{style.stackHeader}'>
+							<div class='{style.configIcon}' />
+							CONVENIOS
+						</div>
+					</g:header>
+					<aon:Agreements ui:field='agreements' />
+				</g:stack>
+
+			</g:StackLayoutPanel>
+
+
+		</g:west>
+		<g:center>
+			<g:SimpleLayoutPanel>
+				<aon:AgreementDraft ui:field="agreementDraft" />
+			</g:SimpleLayoutPanel>
+		</g:center>
+
+
+	</g:SplitLayoutPanel>
+
+</ui:UiBinder>

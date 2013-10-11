@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,19 +9,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.filefilter.AgeFileFilter;
+
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
+import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.HasId;
+import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class AgreementDraftObject implements IContextProvider {
 
+	public static Date NULL_DATE = new Date() {
+	};
+	
 	static interface CalculateCallback {
 		void onCalculateFailure(Throwable throwable);
 
@@ -92,6 +102,9 @@ public class AgreementDraftObject implements IContextProvider {
 
 	}
 
+	private Date draftEndDate;
+	private Date draftStartDate;
+
 	private int nextDraftLevelId = 0;
 	private int nextDraftPaymentId = 0;
 	private AgreementDraft agreementDraft;
@@ -120,6 +133,26 @@ public class AgreementDraftObject implements IContextProvider {
 		return payment;
 
 	}
+
+	public Date getDraftEndDate() {
+		return draftEndDate == null ? agreementDraft.getEndDate()
+				: (draftEndDate == NULL_DATE ? null : draftEndDate);
+	}
+
+	public Date getDraftStartDate() {
+		return draftStartDate == null ? agreementDraft.getStartDate()
+				: draftStartDate;
+	}
+
+	public void setDraftPeriod(Date draftStartDate) {
+		setDraftPeriod(draftStartDate, NULL_DATE);
+	}
+
+	public void setDraftPeriod(Date draftStartDate, Date draftEndDate) {
+		this.draftStartDate = draftStartDate;
+		this.draftEndDate = draftEndDate;
+	}
+
 
 	// ------------------------------------------
 	// AgreeementDraft delegates
@@ -177,6 +210,12 @@ public class AgreementDraftObject implements IContextProvider {
 		return agreementDraft.getCategoriesMap().get(level.getId());
 	}
 
+	public boolean hasDrafts() {
+		return agreementDraft.hasDrafts()
+				|| !isDraftPeriodSet(getDraftStartDate(), getDraftEndDate(),
+						agreementDraft);
+	}
+
 	// ------------------------------------------
 	// Undo & Redo Support
 
@@ -230,6 +269,43 @@ public class AgreementDraftObject implements IContextProvider {
 	//
 	// ------------------------------------------
 
+	public void save(final CalculateCallback callback) {
+
+
+		employeesServiceAsync.saveAgreementDraft(agreementDraft,
+				new AsyncCallback<Void>() {
+
+					@Override
+					public void onSuccess(Void result) {
+
+
+						undoManager.discardAll();
+
+						employeesServiceAsync.calculateAgreementDraft(agreementDraft,
+								new AsyncCallback<AgreementDraft>() {
+
+									@Override
+									public void onSuccess(AgreementDraft result) {
+										AgreementDraftObject.this.agreementDraft= result;
+										callback.onCalculateSucces(AgreementDraftObject.this);
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+										callback.onCalculateFailure(caught);
+									}
+								});
+
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onCalculateFailure(caught);
+					}
+				});
+
+	}
+
 	public void calculate(final CalculateCallback callback) {
 
 		employeesServiceAsync.calculateAgreementDraft(agreementDraft,
@@ -253,6 +329,7 @@ public class AgreementDraftObject implements IContextProvider {
 		employeesServiceAsync.getAvailablePayments(Integer.MIN_VALUE, callback);
 	}
 
+
 	// ------------------------------------------
 	//
 	// ------------------------------------------
@@ -269,6 +346,7 @@ public class AgreementDraftObject implements IContextProvider {
 	// ------------------------------------------
 	// Differences
 	// ------------------------------------------
+
 	Set<Level> getChangedLevels() {
 		if (oldAgreementDraft == null || oldAgreementDraft.getLevels() == null )
 			return Collections.emptySet();
@@ -302,5 +380,35 @@ public class AgreementDraftObject implements IContextProvider {
 		return map;
 	}
 	
+	// -------------------------------------------------- TODO: Common factor ? 
+	
+	private static <T> boolean sameDate(Date d1, Date d2) {
+		if (d1 == d2)
+			return true;
+		if (d1 == null)
+			return false;
+		if (d2 == null)
+			return false;
+		return CalendarUtil.isSameDate(d1, d2);
+	}
+
+	private static boolean isDraftPeriodSet(Date draftStartDate,
+			Date draftEndDate, AgreementDraft draft) {
+		if (!isStartAndEndDatesSet(draftStartDate, draftEndDate,
+				draft.getDraftPayments()))
+			return false;
+		return true;
+	}
+
+	private static <T extends HasStartAndEndDate> boolean isStartAndEndDatesSet(
+			Date draftStartDate, Date draftEndDate, Collection<T> items) {
+		for (T item : items) {
+			if (!sameDate(draftStartDate, item.getStartDate()))
+				return false;
+			if (!sameDate(draftEndDate, item.getEndDate()))
+				return false;
+		}
+		return true;
+	}
 
 }

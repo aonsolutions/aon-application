@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.gps.ReportConstants;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -922,6 +923,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		Date endDate = dateTimeFormat.parse(endDateString);
 		salaryDraft.setEndDate(endDate);
 		salaryDraft.setIssueDate(endDate);
+		salaryDraft.setType(Type.SALARY);
 
 		EmployeesServiceAsync employeesServiceAsync = employeeTree.employees
 				.getEmployeesService();

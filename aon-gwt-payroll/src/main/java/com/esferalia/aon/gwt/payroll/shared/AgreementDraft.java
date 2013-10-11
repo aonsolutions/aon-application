@@ -76,6 +76,10 @@ public class AgreementDraft extends Agreement {
 
 		private Map<Key, Variable> map = new HashMap<Key, Variable>();;
 
+		public int size() {
+			return map.size();
+		}
+
 		public void put(int level, Variable var) {
 			map.put(Key.make(level, var.name), var);
 		}
@@ -83,6 +87,9 @@ public class AgreementDraft extends Agreement {
 		public Variable get(int level, String var) {
 			return map.get(Key.make(level, var));
 		}
+
+		
+		
 	}
 	
 	static class HasIdSet<T extends HasId<?>> extends AbstractSet<T> {
@@ -219,5 +226,10 @@ public class AgreementDraft extends Agreement {
 		draftSalaryTable.put(level.getId(), var);
 	}
 	
+	public boolean hasDrafts(){
+		return  (draftLevels.size() > 0) ||
+				(draftPayments.size() > 0) ||
+				(draftSalaryTable.size() > 0 );
+	}
 	
 }

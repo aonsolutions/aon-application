@@ -140,13 +140,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private Scope SCOPE_STEPS[] = { Scope.CONTRACT, Scope.AGREEMENT,
 			Scope.SYSTEM };
-	
-	private static String [] SKIP_VARIABLES = {"CONVENIO", "SISTEMA", "NETO" };
-	
+
+	private static String[] SKIP_VARIABLES = { "CONVENIO", "SISTEMA", "NETO",
+			"ANTICIPO_ATRASOS" };
+
 	private static boolean skipVariable(Variable variable) {
 		String name = variable.getName();
 		for (String skip : SKIP_VARIABLES) {
-			if ( skip.equals(name))
+			if (skip.equals(name))
 				return true;
 		}
 		return false;
@@ -188,15 +189,15 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				@Override
 				public void onDoubleClick(DoubleClickEvent event) {
 					InputDialog inputDialog = new InputDialog("Renombrar...",
-							"Nuevo Nombre"){
+							"Nuevo Nombre") {
 						@Override
 						public void onAccept() {
 							String newName = getInputValue();
-							if ( variable.getName().equals(newName) )
+							if (variable.getName().equals(newName))
 								return;
 							salaryDraftObject.renameVariable(variable, newName);
 							salaryDraftObject.calculate(SalaryDraft.this);
-							
+
 						}
 					};
 					inputDialog.setInputValue(variable.getName());
@@ -873,7 +874,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	@UiField
 	Label dbTotalPaymentsLabel;
 	@UiField
-	ValueLabel totalLiquidLabel;
+	ValueTextBox totalLiquidLabel;
 	@UiField
 	Label dbTotalLiquidLabel;
 	@UiField
@@ -977,6 +978,30 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	@UiHandler("irpfPreviewButton")
 	void onIrpfPreviewClick(ClickEvent event) {
 		irpfPreview();
+	}
+
+	@UiHandler("totalLiquidLabel")
+	void onLiquidChanges(ChangeEvent event) {
+
+		Payment draftPayment = new Payment();
+
+		draftPayment.setExpression("NETO(" + totalLiquidLabel.getValue() + ")");
+		draftPayment.setScope(Scope.SALARY);
+		draftPayment.setName("NETO");
+		draftPayment.setIrpfExpression("_P");
+		draftPayment.setQuoteExpression("_P");
+		draftPayment.setType(Payment.Type.SALARY_SUPPLEMENTS);
+		draftPayment.setDescription("SUPLEMENTO NETO");
+
+		draftPayment.setEndDate(salaryDraftObject.getEndDate());
+		draftPayment.setStartDate(salaryDraftObject.getStartDate());
+		draftPayment.setSalaryType(salaryDraftObject.getType());
+		// draftPayment.setMonth(deduction.getMonth());
+
+		salaryDraftObject.addDraftPayment(draftPayment);
+
+		salaryDraftObject.calculate(this);
+		
 	}
 
 	private void setDbVisible(boolean visible) {
@@ -1849,11 +1874,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			if (scope.compareTo(to) < 0) {
 				break;
 			}
-			
-			if ( skipVariable(variable)) {
+
+			if (skipVariable(variable)) {
 				continue;
 			}
-			
+
 			HTMLPanel htmlPanel = new HTMLPanel("");
 
 			VariableChangeHandler<TextBox> variableChangeHandler = new VariableChangeHandler<TextBox>(

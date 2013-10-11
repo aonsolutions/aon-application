@@ -106,6 +106,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -135,6 +136,8 @@ import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryBuilderListener;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
@@ -685,6 +688,32 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
+			releaseFacesContext();
+		}
+
+	}
+
+	public void saveAgreementDraft(AgreementDraft agreementDraft)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			disableAutoCommit(conn);
+			SQLAgreementDraft.save(conn, agreementDraft, getDomainID(),
+					getParentDomainID());
+			commit(conn);
+		} catch (SQLException e) {
+			rollback(conn);
+			throw new IllegalArgumentException(e);
+		} finally {
+			enableAutoCommit(conn);
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 			releaseFacesContext();
 		}
 
@@ -2414,6 +2443,63 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	private static IContractSalaryCalculatorContext getSalaryCalculatorContext(
 			final Connection conn, final SalaryDraft draft,
+			final IContractSalaryCalculatorContext.IListener listener)
+			throws ExpressionException, SQLException {
+		
+		SalaryType salaryType = SalaryType.values()[draft.getType().ordinal()];
+		return salaryType
+				.accept(new SalaryTypeVisitor<IContractSalaryCalculatorContext>() {
+					@Override
+					public IContractSalaryCalculatorContext visitSalary(
+							SalaryType salaryType) {
+						try {
+							return getSalaryCalculatorContextImpl(conn, draft,
+									listener);
+						} catch (SQLException e) {
+							throw new IllegalArgumentException(e);
+						} catch (ExpressionException e) {
+							throw new ExpressionExceptionWrapper(e);
+						}
+					}
+
+					@Override
+					public IContractSalaryCalculatorContext visitDelay(
+							SalaryType salaryType) {
+						try {
+							return getDelayCalculatorContextImpl(conn, draft,
+									listener);
+						} catch (SQLException e) {
+							throw new IllegalArgumentException(e);
+						} catch (ExpressionException e) {
+							throw new ExpressionExceptionWrapper(e);
+						}
+					}
+
+					@Override
+					public IContractSalaryCalculatorContext visitSettle(
+							SalaryType salaryType) {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					@Override
+					public IContractSalaryCalculatorContext visitExtra(
+							SalaryType salaryType) {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					@Override
+					public IContractSalaryCalculatorContext visitNotEnjoyedVacations(
+							SalaryType salaryType) {
+						// TODO Auto-generated method stub
+						return null;
+					}
+				});
+	}
+
+	private static IContractSalaryCalculatorContext getSalaryCalculatorContextImpl(
+			final Connection conn, final SalaryDraft draft,
 			IContractSalaryCalculatorContext.IListener listener)
 			throws ExpressionException, SQLException {
 
@@ -2484,34 +2570,36 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 								throws ExpressionException, SQLException {
 							return x;
 						}
-						
+
 						@Override
 						protected IIrpfCalculatorContext getIrpfCalculatorContext(
 								Connection conn, Date startDate, Date endDate,
 								Criteria criteria) {
 							try {
 								SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorCtx = new SQLContractSalaryCalculatorContext(
-										conn, startDate, endDate, endDate, criteria) {
+										conn, startDate, endDate, endDate,
+										criteria) {
 
 									@Override
 									protected double getIrpf() {
 										return 0.00;
 									}
-									
+
 									@Override
 									public Object liquid(double liquid)
-											throws ExpressionException, SQLException {
+											throws ExpressionException,
+											SQLException {
 										return x;
 									}
-									
 
 								};
 
 								SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
 										draft, sqlContractSalaryCalculatorCtx);
 
-								return new SQLIrpfCalculatorContext(conn, startDate,
-										endDate, sqlDraftSalaryCalculatorCtx) {
+								return new SQLIrpfCalculatorContext(conn,
+										startDate, endDate,
+										sqlDraftSalaryCalculatorCtx) {
 									@Override
 									public String getNif() {
 										return "87449445H";
@@ -2539,7 +2627,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 								throw new ExpressionExceptionWrapper(e);
 							}
 						}
-						
+
 					};
 					SQLSalaryDraftCalculatorContext sqlDraftSalaryCalculatorCtx = new SQLSalaryDraftCalculatorContext(
 							draft, sqlContractSalaryCalculatorCtx);
@@ -2554,6 +2642,30 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							new ExpressionException(e));
 				}
 			}
+		};
+
+		ctx.setListener(listener);
+		ctx.next();
+
+		SalaryDraftCalculatorContext<IContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<IContractSalaryCalculatorContext>(
+				draft, ctx);
+		draftCtx.setListener(listener);
+		return draftCtx;
+	}
+
+	private static IContractSalaryCalculatorContext getDelayCalculatorContextImpl(
+			final Connection conn, final SalaryDraft draft,
+			IContractSalaryCalculatorContext.IListener listener)
+			throws ExpressionException, SQLException {
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
+				draft.getEmployee().getId());
+
+		SQLContractSalaryCalculatorContext ctx = new SQLContractDelayCalculatorContext(
+				conn, draft.getStartDate(), draft.getEndDate(),
+				draft.getIssueDate(), criteria) {
+
 		};
 
 		ctx.setListener(listener);

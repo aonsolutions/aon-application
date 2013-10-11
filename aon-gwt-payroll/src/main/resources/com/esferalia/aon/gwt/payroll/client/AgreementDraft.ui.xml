@@ -176,8 +176,7 @@
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='acceptButton'
-									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
-									enabled="false" />
+									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
 								<g:ListBox ui:field="dateListBox" visible="false" />
 								<g:Button ui:field="fxButton"
 									styleName='aon-finding-toolbar-item {style.fxButton}' enabled="false" />

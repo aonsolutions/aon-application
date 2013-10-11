@@ -377,12 +377,12 @@ public class ContractSalaryCalculatorContext
 						criteria) {
 					@Override
 					protected String getDescriptionForSalaryDelay(
-							IContractPayment payment) {
+							IContractPayment payment, int ordinal) {
 						return String.format("NOMINA DEL  %1$td/%1$tm/%1$tY  AL  %2$td/%2$tm/%2$tY", payment.getStartDate(), payment.getEndDate());
 					}
 					@Override
 					protected String getDescriptionForExtraDelay(
-							IContractPayment payment) {
+							IContractPayment payment, int ordinal) {
 						return String.format("PAGA EXTRA     %1$tm/%1$tY", payment.getEndDate());
 					}
 				};

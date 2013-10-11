@@ -61,6 +61,9 @@ public interface EmployeesService extends RemoteService {
 	SalaryDraft saveSalary(SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
+	void saveAgreementDraft(AgreementDraft agreementDraft)
+			throws IllegalArgumentException;
+
 	ContextDescriptor getContext(SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
@@ -91,15 +94,18 @@ public interface EmployeesService extends RemoteService {
 	List<Employee> getEmployees(int workplaceId, Date endDate, String pattern,
 			int offset, int limit) throws IllegalArgumentException;
 
-	void saveEvents(Events events, Date startDate, Date endDate )
+	void saveEvents(Events events, Date startDate, Date endDate)
 			throws IllegalArgumentException;
 
 	Events getEvents(Integer workplaceId, Date startDate, Date endDate,
-			int offset, int limit, String names []) throws IllegalArgumentException;
-	
-	Period getAvailPeriod(Integer workplaceId, String name)throws IllegalArgumentException ;
-	
-	Map<String, String> getEventsVariables(Integer workplaceId, Integer agreementId,
-			Date startDate, Date endDate) throws IllegalArgumentException;	
-	
+			int offset, int limit, String names[])
+			throws IllegalArgumentException;
+
+	Period getAvailPeriod(Integer workplaceId, String name)
+			throws IllegalArgumentException;
+
+	Map<String, String> getEventsVariables(Integer workplaceId,
+			Integer agreementId, Date startDate, Date endDate)
+			throws IllegalArgumentException;
+
 }

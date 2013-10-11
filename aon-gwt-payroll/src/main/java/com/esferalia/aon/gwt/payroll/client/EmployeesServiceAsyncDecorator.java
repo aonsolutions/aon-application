@@ -143,6 +143,14 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				new AsyncCallbackWrapper<Void>(callback));
 
 	}
+	
+	@Override
+	public void saveAgreementDraft(AgreementDraft agreementDraft,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.saveAgreementDraft(agreementDraft,
+				new AsyncCallbackWrapper<Void>(callback));
+	}
 
 	@Override
 	public void saveSalary(SalaryDraft salaryDraft,

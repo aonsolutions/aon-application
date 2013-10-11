@@ -221,7 +221,7 @@
 								<g:ListBox ui:field='datesListBox'>
 									<g:item value="{ONLY_THIS_MONTH}">S&oacute;lo este mes</g:item>
 									<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
-									<g:item value="{CUSTOM}">GridPersonalizado...</g:item>
+									<g:item value="{CUSTOM}">Personalizado...</g:item>
 								</g:ListBox>
 								<g:CheckBox ui:field='dbSalaryCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
@@ -517,8 +517,8 @@
 												<g:Label styleName="{style.cell-label}">LIQUIDO A
 													PERCIBIR (A-B)</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<e:ValueInlineHTML
-														changeDisplayStyleName="{style.value-changed}" ui:field="totalLiquidLabel">&nbsp; </e:ValueInlineHTML>
+													<e:ValueTextBox styleName="gwt-TextBox aon-nopadding aon-text-center" visibleLength="9"
+														changeDisplayStyleName="{style.value-changed}" ui:field="totalLiquidLabel">&nbsp; </e:ValueTextBox>
 													<g:InlineHTML ui:field="dbTotalLiquidLabel"
 														visible="false" />
 												</g:HTMLPanel>

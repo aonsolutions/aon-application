@@ -44,5 +44,13 @@
 		</navigation-case>
 	</navigation-rule>
 			
+	<!-- =================== Main Agreement  ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_main_agreement</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/agreement.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 </faces-config>
 		

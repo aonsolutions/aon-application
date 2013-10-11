@@ -5,22 +5,62 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import javax.lang.model.type.TypeVisitor;
 
 public class Salary implements Serializable {
 	
+	public static interface TypeVisitor<E> {
+
+		E visitSalary(Type type);
+
+		E visitExtra(Type type);
+
+		E visitSettle(Type type);
+
+		E visitDelay(Type type);
+
+		E visitNotEnjoyedVacations(Type type);
+
+	}
 	
-	public enum Type implements HasDescription{
-		SALARY,
-		EXTRA,
-		SETTLE,
-		DELAY,
-		NOT_ENJOYED_VACATIONS;
+	public static enum Type implements HasDescription{
+		SALARY {
+			@Override
+			public <E> E accept(TypeVisitor<E> visitor) {
+				return visitor.visitSalary(this);
+			}
+		},
+		EXTRA{
+			@Override
+			public <E> E accept(TypeVisitor<E> visitor) {
+				return visitor.visitExtra(this);
+			}
+		},
+		SETTLE {
+			@Override
+			public <E> E accept(TypeVisitor<E> visitor) {
+				return visitor.visitSettle(this);
+			}
+		},
+		DELAY {
+			@Override
+			public <E> E accept(TypeVisitor<E> visitor) {
+				return visitor.visitDelay(this);
+			}
+		},
+		NOT_ENJOYED_VACATIONS{
+			@Override
+			public <E> E accept(TypeVisitor<E> visitor) {
+				return visitor.visitNotEnjoyedVacations(this);
+			}
+		};
 		
 		
 		public String getDescription(){
 			return DESCRIPTIONS.get(this);
 		}
+		
+		public abstract <E> E accept(TypeVisitor<E>  visitor);
 
 		static Map<Type, String> DESCRIPTIONS = 
 				new HashMap<Salary.Type, String>() {

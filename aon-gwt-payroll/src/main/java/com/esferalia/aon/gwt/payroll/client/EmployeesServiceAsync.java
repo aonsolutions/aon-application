@@ -60,8 +60,12 @@ public interface EmployeesServiceAsync {
 	void saveSalaryDraft(SalaryDraft salaryDraft, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 
+	void saveAgreementDraft(AgreementDraft agreementDraft, AsyncCallback<Void> callback)
+			throws IllegalArgumentException;
+
 	void saveSalary(SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
+	
 
 	void calculateSalaryDraft(SalaryDraft salaryDraft,
 			AsyncCallback<SalaryDraft> callback)
@@ -70,7 +74,7 @@ public interface EmployeesServiceAsync {
 	void calculateAgreementDraft(AgreementDraft agreementDraft,
 			AsyncCallback<AgreementDraft> callback)
 			throws IllegalArgumentException;
-
+	
 	void eval(String expression, SalaryDraft salaryDraft,
 			AsyncCallback<Double> callback) throws IllegalArgumentException,
 			EvalException;

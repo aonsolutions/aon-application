@@ -6,8 +6,10 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
-import com.esferalia.aon.payroll.sql.AbstractSQL.ISalary;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.gwt.payroll.shared.Salary.TypeVisitor;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -15,7 +17,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -32,6 +33,34 @@ public class SalarySelect extends Composite {
 		void onChange(SalarySelect salarySelect);
 	}
 
+	static interface PeriodParser {
+		Period parse(String str);
+	}
+
+	static class MonthParser implements PeriodParser {
+		
+		public Period parse(String str) {
+			Date date = DATE_FORMAT.parseStrict(str);
+			return new Period(DateUtils.getFirstDayOfMonth(date),
+					DateUtils.getLastDayOfMonth(date));
+		}
+	}
+
+	static class EndMonthParser implements PeriodParser {
+		
+		private Date start;
+		
+		public EndMonthParser(Date start) {
+			this.start = start;
+		}
+		
+		public Period parse(String str) {
+			Date date = DATE_FORMAT.parseStrict(str);
+			return new Period(start,
+					DateUtils.getLastDayOfMonth(date));
+		}
+	}
+
 	static interface Binder extends UiBinder<Widget, SalarySelect> {
 	}
 
@@ -43,6 +72,8 @@ public class SalarySelect extends Composite {
 	ListBox dateListBox;
 
 	private List<Listener> listeners;
+	
+	private PeriodParser periodParser;
 
 	private com.esferalia.aon.gwt.payroll.shared.SalaryPreview salaryPreview;
 
@@ -56,8 +87,9 @@ public class SalarySelect extends Composite {
 	public void setSalaryPreview(
 			com.esferalia.aon.gwt.payroll.shared.SalaryPreview salaryPreview) {
 		this.salaryPreview = salaryPreview;
-		syncDateListBox();
 		syncTypeListBox();
+		syncDateListBox(getSelectedType());
+
 	}
 
 	public void addListener(Listener listener) {
@@ -67,8 +99,6 @@ public class SalarySelect extends Composite {
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
-	
-	
 
 	private void fireOnChange() {
 		for (Listener listener : listeners) {
@@ -78,17 +108,31 @@ public class SalarySelect extends Composite {
 
 	private void initTypeListBox() {
 
-		// Salary.Type types [] = Salary.Type.values();
-		// for ( int i = 0; i< types.length; i++) {
-		// typeListBox.addItem(types[i].getDescription(), types[i].name() );
-		// }
-		// TODO : Not only standard salary.
 		typeListBox.addItem(Salary.Type.SALARY.getDescription(),
 				Salary.Type.SALARY.name());
+		/*
+		 * typeListBox.addItem(Salary.Type.EXTRA.getDescription(),
+		 * Salary.Type.EXTRA.name());
+		 */
+		typeListBox.addItem(Salary.Type.DELAY.getDescription(),
+				Salary.Type.DELAY.name());
+		/*
+		 * typeListBox.addItem(Salary.Type.SETTLE.getDescription(),
+		 * Salary.Type.SETTLE.name());
+		 * typeListBox.addItem(Salary.Type.NOT_ENJOYED_VACATIONS
+		 * .getDescription(), Salary.Type.NOT_ENJOYED_VACATIONS.name());
+		 */
 
 		typeListBox.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
+				Type type = getSelectedType();
+				salaryPreview.setType(type);
+				syncDateListBox(type);
+				Period period = getSelectedPeriod();
+				salaryPreview.setStartDate(period.getStart());
+				salaryPreview.setEndDate(period.getEnd());
+				fireOnChange();
 			}
 		});
 	}
@@ -98,51 +142,99 @@ public class SalarySelect extends Composite {
 		dateListBox.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				Date date = getSelectedDate();
-				salaryPreview.setStartDate(DateUtils.getFirstDayOfMonth(date));
-				salaryPreview.setEndDate(DateUtils.getLastDayOfMonth(date));
+				Period period = getSelectedPeriod();
+				salaryPreview.setStartDate(period.getStart());
+				salaryPreview.setEndDate(period.getEnd());
 				fireOnChange();
 			}
 		});
 	}
-	
-	private Date getSelectedDate() {
-		int selected = dateListBox.getSelectedIndex();
-		String text = dateListBox.getItemText(selected);
-		return DATE_FORMAT.parseStrict(text);
+
+	private Type getSelectedType() {
+		int selected = typeListBox.getSelectedIndex();
+		String value = typeListBox.getValue(selected);
+		return Type.valueOf(value);
 	}
 
-	private void syncDateListBox() {
+	private Period getSelectedPeriod() {
+		int selected = dateListBox.getSelectedIndex();
+		String text = dateListBox.getItemText(selected);
+		return periodParser.parse(text);
+	}
 
+	private void syncDateListBox(Type type) {
+		
 		dateListBox.clear();
 
 		Employee employee = salaryPreview.getEmployee();
 
-		Date startDate = CalendarUtil.copyDate(employee.getStartDate());
-		Date draftDate = CalendarUtil.copyDate(salaryPreview.getEndDate());
-		Date endDate = CalendarUtil.copyDate(employee.getEndDate());
+		final Date contractStartDate = CalendarUtil.copyDate(employee.getStartDate());
+		final Date draftEndDate = CalendarUtil.copyDate(salaryPreview.getEndDate());
+		final Date contractEndDate = CalendarUtil.copyDate(employee.getEndDate());
 
-		CalendarUtil.setToFirstDayOfMonth(startDate);
-		CalendarUtil.setToFirstDayOfMonth(draftDate);
+		type.accept(new TypeVisitor<Void>() {
 
-		Date firstDate = getFirstDropDate(draftDate, startDate);
-		Date lastDate = getLastDropDate(draftDate, endDate);
+			@Override
+			public Void visitSalary(Type type) {
+				CalendarUtil.setToFirstDayOfMonth(contractStartDate);
+				CalendarUtil.setToFirstDayOfMonth(draftEndDate);
+				Date firstDate = getFirstDropDate(draftEndDate, contractStartDate);
+				Date lastDate = getLastDropDate(draftEndDate, contractEndDate);
+				Date date = CalendarUtil.copyDate(firstDate);
+				while (draftEndDate.after(date)) {
+					dateListBox.addItem(DATE_FORMAT.format(date));
+					CalendarUtil.addMonthsToDate(date, 1);
+				}
+				int draftIndex = dateListBox.getItemCount();
+				while (lastDate.after(date)) {
+					dateListBox.addItem(DATE_FORMAT.format(date));
+					CalendarUtil.addMonthsToDate(date, 1);
+				}
+				dateListBox.setSelectedIndex(draftIndex);
+				periodParser = new MonthParser();
+				return null;
+			}
 
-		Date date = CalendarUtil.copyDate(firstDate);
+			@Override
+			public Void visitExtra(Type type) {
+				// TODO Auto-generated method stub
+				return null;
+			}
 
-		while (draftDate.after(date)) {
-			dateListBox.addItem(DATE_FORMAT.format(date));
-			CalendarUtil.addMonthsToDate(date, 1);
-		}
+			@Override
+			public Void visitSettle(Type type) {
+				// TODO Auto-generated method stub
+				return null;
+			}
 
-		int draftIndex = dateListBox.getItemCount();
+			@Override
+			public Void visitDelay(Type type) {
+				CalendarUtil.setToFirstDayOfMonth(contractStartDate);
+				CalendarUtil.setToFirstDayOfMonth(draftEndDate);
+				Date firstDate = getFirstDropDate(draftEndDate, contractStartDate);
+				Date lastDate = getLastDropDate(draftEndDate, contractEndDate);
+				Date date = CalendarUtil.copyDate(firstDate);
+				while (draftEndDate.after(date)) {
+					dateListBox.addItem(DATE_FORMAT.format(date));
+					CalendarUtil.addMonthsToDate(date, 1);
+				}
+				int draftIndex = dateListBox.getItemCount();
+				while (lastDate.after(date)) {
+					dateListBox.addItem(DATE_FORMAT.format(date));
+					CalendarUtil.addMonthsToDate(date, 1);
+				}
+				dateListBox.setSelectedIndex(draftIndex);
+				periodParser = new EndMonthParser(contractStartDate);
+				return null;
+			}
 
-		while (lastDate.after(date)) {
-			dateListBox.addItem(DATE_FORMAT.format(date));
-			CalendarUtil.addMonthsToDate(date, 1);
-		}
-
-		dateListBox.setSelectedIndex(draftIndex);
+			@Override
+			public Void visitNotEnjoyedVacations(Type type) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+		});
 	}
 
 	private void syncTypeListBox() {

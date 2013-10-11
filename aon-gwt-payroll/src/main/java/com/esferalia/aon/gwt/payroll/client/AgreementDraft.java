@@ -134,6 +134,7 @@ public class AgreementDraft extends ResizeComposite implements
 		@Override
 		public void onChange(UndoManager undoManager) {
 			enableUndoRedoButtons();
+			acceptButton.setEnabled(agreementDraftObject.hasDrafts());
 		}
 
 	}
@@ -373,6 +374,9 @@ public class AgreementDraft extends ResizeComposite implements
 
 	@UiField
 	Button redoButton;
+
+	@UiField
+	Button acceptButton;
 
 	@UiField
 	FlexTable salaryTable;

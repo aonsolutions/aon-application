@@ -65,6 +65,7 @@ public class MainEntryPoint implements EntryPoint {
 		ImageResource agreement();
 	}
 
+	private static final String MAIN_AGREEMENT_ENTRY_POINT = "MainAgreement";
 	private static final String MAIN_CALCULATOR_ENTRY_POINT = "MainCalculator";
 	private static final String EMPLOYEE_TREE_ENTRY_POINT = "EmployeeTree";
 	private static final String ENTERPRISE_SITE_ENTRY_POINT = "EnterpriseSite";
@@ -88,6 +89,10 @@ public class MainEntryPoint implements EntryPoint {
 		else if ( entryPoint.equalsIgnoreCase(MAIN_CALCULATOR_ENTRY_POINT)) {
 			MainCalculator mainCalculator = new MainCalculator();
 			mainCalculator.onModuleLoad();
+		}
+		else if ( entryPoint.equalsIgnoreCase(MAIN_AGREEMENT_ENTRY_POINT)) {
+			MainAgreement mainAgreement = new MainAgreement();
+			mainAgreement.onModuleLoad();
 		}
 
 	}

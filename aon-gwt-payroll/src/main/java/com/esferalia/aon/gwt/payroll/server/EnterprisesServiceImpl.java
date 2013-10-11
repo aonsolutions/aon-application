@@ -8,8 +8,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 
@@ -38,10 +40,29 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+	
+	@Override
+	public List<Agreement> getAgreements(int offset, int limit) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection();
+			return getAgreements(connection, offset, limit);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
 
 	// --------------------------------------------------------- Private methods
 	
-	public List<Enterprise> getEnterprises(Connection connection, int offset,
+	private List<Enterprise> getEnterprises(Connection connection, int offset,
 			int limit) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
@@ -72,4 +93,37 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
+
+	private List<Agreement> getAgreements(Connection connection, int offset,
+			int limit) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			stmt = connection.prepareStatement("SELECT * FROM "
+					+ SQLConstants.AGREEMENT + " LIMIT ?, ?");
+			stmt.setInt(1, offset);
+			stmt.setInt(2, limit);
+
+			rs = stmt.executeQuery();
+
+			List<Agreement> agreements = new LinkedList<Agreement>();
+			while (rs.next()) {
+				Agreement agreement = new Agreement();
+				agreement.setId(rs.getInt(AgreementColumns.ID)); // Not NULL
+				agreement.setDescription(rs.getString(AgreementColumns.DESCRIPTION));
+				agreements.add(agreement);
+			}
+
+			return agreements;
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+
+		}
+
+	}
+
 }

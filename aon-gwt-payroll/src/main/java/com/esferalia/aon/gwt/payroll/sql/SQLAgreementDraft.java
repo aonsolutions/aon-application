@@ -10,11 +10,10 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -22,7 +21,6 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
@@ -280,6 +278,21 @@ public class SQLAgreementDraft {
 				rs.close();
 			if (stmt != null)
 				stmt.close();
+		}
+
+	}
+
+	public static void save(Connection conn, AgreementDraft draft,
+			Integer domain, Integer parentDomain) throws SQLException {
+
+		Set<Level> levels = draft.getLevels();
+		Set<String> vars = draft.getVariables();
+		SalaryTable salaryTable = draft.getSalaryTable();
+
+		for (Level level : levels) {
+			for (String var : vars) {
+				Variable variable = salaryTable.get(level.getId(), var);
+			}
 		}
 
 	}

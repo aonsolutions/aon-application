@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -241,7 +242,7 @@ public class Employees extends ResizeComposite implements
 				//
 
 				Agreement agreement = workplace.getAgreement();
-
+/*
 				EventMetaData fteMetaData = new EnumEventMetaData("FTE",
 						"DESEMPE\u00D1O",
 						"Desempe\u00F1o por Trabajador y Jornada", "", "4",
@@ -272,14 +273,13 @@ public class Employees extends ResizeComposite implements
 				 new EventMetaData("OBSERVACIONES"),
 				 new ConstantEventMetaData("PLUS_TURNICIDAD",
 				 "Plus de Turnicidad = (\u2211LT - \u2211LR - LTA) * CLT"));
-/*
+*/
 				final EventsDraftObject eventsDraftObject = new EventsDraftObject(
 						workplace.getId(),
 						agreement != null ? agreement.getId() : null,
 						employeesService, new BooleanEventMetaData(
 								"DIAS_EFECTIVOS"), new BooleanEventMetaData(
 								"HUELGA"), new EventMetaData("OBSERVACIONES"));
-*/
 				Date date = new Date();
 
 				eventsDraftObject.setPeriod(
@@ -754,6 +754,7 @@ public class Employees extends ResizeComposite implements
 				salaryDraft.setStartDate(startDate);
 				salaryDraft.setEndDate(endDate);
 				salaryDraft.setIssueDate(issueDate);
+				salaryDraft.setType(Type.SALARY);
 				SalaryDraftObject draftObject = new SalaryDraftObject(
 						salaryDraft, employeesService);
 				salaryDraftItem.setUserObject(draftObject);
