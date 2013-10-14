@@ -8,8 +8,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 	
 	<c:if test="#{showEnterpriseColumn}">
-		<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
-			styleClass="aon-editDataTable-textColumn">
+		<aon:column styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_company}" />
 			</f:facet>
@@ -17,32 +16,28 @@
 		</aon:column>
 	</c:if>
 
-	<aon:column alias="Contract.enterpriseCCC.ccc"
-		styleClass="aon-editDataTable-textColumn">
+	<aon:column styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.company_enterprise_ccc}" />
 		</f:facet>
-		<aon:outputText value="#{to.contract.enterpriseCCC.ccc}" />
+		<aon:outputText value="#{to.contract.enterpriseCCC.fullCcc}" />
 	</aon:column>
 	
-	<aon:column alias="Contract.person.registry.document"
-		styleClass="aon-editDataTable-textColumn">
+	<aon:column styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_document}" />
 		</f:facet>
 		<aon:outputText value="#{to.contract.person.registry.document}" />
 	</aon:column>
 
-	<aon:column alias="Contract.person.firstSurname, Contract.person.secondSurname, Contract.person.name"
-		styleClass="aon-editDataTable-textColumn">
+	<aon:column styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.payroll_salary_employee}" />
 		</f:facet>
 		<aon:outputText value="#{to.contract.person.fullName}" />		
 	</aon:column>
 	
-	<aon:column alias="Contract.endDate"
-		styleClass="aon-editDataTable-dateColumn">
+	<aon:column styleClass="aon-editDataTable-dateColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_end_date}" />
 		</f:facet>
@@ -52,8 +47,7 @@
 		</aon:outputText>
 	</aon:column>
 	
-	<aon:column alias="Contract.sepeStatus"
-		styleClass="aon-editDataTable-textColumn">
+	<aon:column styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_status}" />
 		</f:facet>

@@ -33,6 +33,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryDirStaff;
+import com.code.aon.ui.common.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Certifica2Batch;
@@ -99,15 +100,33 @@ public class CertificadosWriter {
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage("[" + e + "]");
 			throw new AbortProcessingException(msg, e);
-		}
+		}		
 	}
 	
 	
 	
 	public CertificadoEmpresa createCertificadoEmpresaType(Certifica2Batch batch, List<ITransferObject> batchDetailList) throws ManagerBeanException {
 		CertificadoEmpresa certificado = new CertificadoEmpresa();
-		for(EnterpriseCCC ccc: getCccList(batchDetailList)){
-			certificado.getCuentaCotizacion().add(createCuentaCotizacionType(ccc, batch, batchDetailList));
+//		for(EnterpriseCCC ccc: getCccList(batchDetailList)){
+//			certificado.getCuentaCotizacion().add(createCuentaCotizacionType(ccc, batch, batchDetailList));
+//		}
+//		return certificado;
+		EnterpriseCCC ccc = null;
+		CUENTACOTIZACIONTYPE cuentaCotizacionType = null;
+		int i = 0;
+		for(ITransferObject to: batchDetailList){
+			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
+			EnterpriseCCC contractCcc = detail.getContract().getEnterpriseCCC();
+			if(ccc == null || !ccc.getId().equals(contractCcc.getId())){
+				cuentaCotizacionType = createCuentaCotizacionType(contractCcc);
+				certificado.getCuentaCotizacion().add(cuentaCotizacionType);
+				ccc = contractCcc;
+			}
+			cuentaCotizacionType.getDatosTrabajador().add(createTrabajadorType(detail));
+			i++;
+			System.out.println("__ " + i);
+			
+			
 		}
 		return certificado;
 	}
@@ -126,17 +145,27 @@ public class CertificadosWriter {
 	 * @param listaDetalle
 	 * @return
 	 */
-	private CUENTACOTIZACIONTYPE createCuentaCotizacionType(EnterpriseCCC ccc, Certifica2Batch batch, List<ITransferObject> batchDetailList) {
+	private CUENTACOTIZACIONTYPE createCuentaCotizacionType(EnterpriseCCC ccc) {
 		CUENTACOTIZACIONTYPE o = new CUENTACOTIZACIONTYPE();
-		o.setDatosRepresentante(createRepresentanteType(batch.getEnterprise()));
+		o.setDatosRepresentante(createRepresentanteType(ccc.getActivity().getEnterprise()));
 		o.setDatosEmpresa(createEmpresaType(ccc));
-		for(ITransferObject to: batchDetailList){
-			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
-			o.getDatosTrabajador().add(createTrabajadorType(detail));
-		}
 		return o;
 		
 	}
+//	private CUENTACOTIZACIONTYPE createCuentaCotizacionType(EnterpriseCCC ccc, Certifica2Batch batch, List<ITransferObject> batchDetailList) {
+//		CUENTACOTIZACIONTYPE o = new CUENTACOTIZACIONTYPE();
+//		o.setDatosRepresentante(createRepresentanteType(batch.getEnterprise()));
+//		o.setDatosEmpresa(createEmpresaType(ccc));
+////		int i = 0;
+////		for(ITransferObject to: batchDetailList){
+////			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
+////			o.getDatosTrabajador().add(createTrabajadorType(detail));
+////			i++;
+////			System.out.println("__ " + i);
+////		}
+//		return o;
+//		
+//	}
 
 	/**
 	 * <xsd:complexType name="REPRESENTANTE_TYPE">
@@ -264,7 +293,7 @@ public class CertificadosWriter {
 		o.setGrupoCotizacion(quoteGroup!=null?quoteGroup:null);
 		String tc2 = utils.getContractDataMap(batchDetail.getContract()).get(ContextVariable.TC2.getName());
 		o.setTipoContrato(tc2);
-		o.setDuracionContrato(completeLength(differenceBetweenDates(batchDetail.getContract().getStartDate(), batchDetail.getContract().getEndDate()).toString(),5));
+		o.setDuracionContrato(completeLength(differenceBetweenDates(batchDetail.getContract().getStartDate(), batchDetail.getContract().getEndDate()).toString(),5,false));
 		o.setIndicadorDuracionContrato(null);
 
 		String occupation = utils.getContractDataMap(batchDetail.getContract()).get(ContextVariable.CNO.getName());
@@ -332,16 +361,17 @@ public class CertificadosWriter {
 				
 				Map<String, ContractData> map = utils.getContractDataMap(batchDetail.getContract(), p.getStart(), p.getEnd());
 				
-				String diasTp = map.get(ContextVariable.CONTRACT_DAYS.getName()).getExpression();
-				String diasSemanaTp = map.get(ContextVariable.WEEK_DAYS.getName()).getExpression();
+				ContractData diasTp = map.get(ContextVariable.CONTRACT_DAYS.getName());
+				ContractData diasSemanaTp = map.get(ContextVariable.WEEK_DAYS.getName());
+				
 				
 //				String diasTp = getContractDataExpression(batchDetail.getContract(), p, ContextVariable.CONTRACT_DAYS);
 //				String diasSemanaTp = getContractDataExpression(batchDetail.getContract(), p, ContextVariable.WEEK_DAYS);
 				if(diasTp!=null || diasSemanaTp!=null){
 					if(isIrregular(batchDetail.getContract(), p)){
-						addPeriod(IRREGULAR_VALUE, p, diasTp, listaPeriodos, periodo);
+						addPeriod(IRREGULAR_VALUE, p, diasTp.getExpression(), listaPeriodos, periodo);
 					} else {
-						addPeriod(REGULAR_VALUE, p, diasSemanaTp, listaPeriodos, periodo);
+						addPeriod(REGULAR_VALUE, p, diasSemanaTp.getExpression(), listaPeriodos, periodo);
 					}
 				}
 			}
@@ -453,10 +483,10 @@ public class CertificadosWriter {
 		COTIZACIONTYPE o = new COTIZACIONTYPE();
 		Cotizacion data = batchData;
 		o.setAno(data.getYear().toString());
-		o.setMes(completeLength(data.getMonth().toString(), 2));
-		o.setNumDiasCotizados(completeLength(data.getContributionDays(), 3));
-		o.setBaseCotizacionContingenciasComunes(completeLength(data.getCgcContributionBase(), 9));
-		o.setBaseCotizacionDesempleo(completeLength(data.getUnemploymentContributionBase(), 9));
+		o.setMes(completeLength(data.getMonth().toString(), 2,false));
+		o.setNumDiasCotizados(completeLength(data.getContributionDays().toString(), 3,false));
+		o.setBaseCotizacionContingenciasComunes(completeLength(data.getCgcContributionBase(), 9, false));
+		o.setBaseCotizacionDesempleo(completeLength(data.getUnemploymentContributionBase(), 9,false));
 		o.setObservaciones(data.getComments());
 		return o;
 	}
@@ -487,6 +517,12 @@ public class CertificadosWriter {
 //				Double baseDesempleo = nomina.getBasePerdes(); 
 				Double baseDesempleo = nomina.getIrpfBase();
 				// TODO obtener las nominas diferencia
+				ISalary atraso = getSalary(detail.getContract(),  sDate.getTime(), eDate.getTime(), SalaryType.DELAY);
+				if(atraso!=null){
+					baseCg += atraso.getCommonBase();
+					baseAcc += atraso.getProfessionalBase();
+					baseDesempleo += atraso.getIrpfBase();
+				}
 //				List<INominaDiferencia> nominasDiferencia = getNominaDAO().getNominasDiferencia(params);
 //				for(INominaDiferencia nomDf:nominasDiferencia) {
 //					baseCg += nomDf.getBaseCgPts();
@@ -514,11 +550,19 @@ public class CertificadosWriter {
 	}
 	
 	public ISalary getSalary(Contract contract, Date startDate, Date endDate) {
+		return getSalary(contract, startDate, endDate, SalaryType.SALARY);
+	}
+	
+	public ISalary getSalary(Contract contract, Date startDate, Date endDate, SalaryType type) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
+			if(type!=null){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), type);
+			} else {
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
+			}
 			if(startDate != null){
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(startDate);
@@ -603,9 +647,9 @@ public class CertificadosWriter {
 //					baseAccidentesTrabajo += finiquitodf.getBaseAccidentesTrabajo();
 //					baseContingenciaGenerales += finiquitodf.getBaseContingenciasGenerales();
 //				}
-				o.setNumDiasCotizados(completeLength(noHolidays,3));
-				o.setBaseCotizacionContingenciasComunes(completeLength(baseContingenciaGenerales, 9));
-				o.setBaseCotizacionDesempleo(completeLength(baseAccidentesTrabajo, 9));
+				o.setNumDiasCotizados(completeLength(noHolidays,3,false));
+				o.setBaseCotizacionContingenciasComunes(completeLength(baseContingenciaGenerales, 9,false));
+				o.setBaseCotizacionDesempleo(completeLength(baseAccidentesTrabajo, 9,false));
 				o.setObservaciones(null);
 			}
 		} catch (ManagerBeanException e) {

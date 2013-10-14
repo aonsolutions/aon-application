@@ -313,7 +313,7 @@ public class ContractLeaveController extends BasicController {
 	}
 	
 	public void onSelectLeave(ActionEvent event) {
-		if(getSelectedLeaveIndex().intValue()==getLeaveModel().getRowIndex()){
+		if(getSelectedLeaveIndex()!=null && getSelectedLeaveIndex().intValue()==getLeaveModel().getRowIndex()){
 			setSelectedLeaveIndex(-1);
 		} else {
 			setSelectedLeaveIndex(getLeaveModel().getRowIndex());

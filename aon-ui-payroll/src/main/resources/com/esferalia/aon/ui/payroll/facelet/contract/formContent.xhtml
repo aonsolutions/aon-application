@@ -85,6 +85,44 @@
 			<f:selectItems value="#{contract.contractModel}" />
 		</aon:selectOneMenu>
 		
+		<aon:outputLabel for="Contract_startDate" value="#{bundle.aon_start_date}" />
+		<aon:div>
+			<aon:selectInputDate id="Contract_startDate" 
+				value="#{contract.to.startDate}" required="true" 
+				inputSize="10" renderAsPopup="true" enableManualInput="true"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}">
+				<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true"/>
+				<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
+			</aon:selectInputDate>
+			<aon:outputLabel for="Contract_seniorityDate" 
+				styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
+				value="#{bundle.payroll_salary_seniority_date2}" />
+			<aon:panelGroup id="seniorityDateContainer">
+				<aon:selectInputDate id="Contract_seniorityDate"
+					value="#{contract.to.seniorityDate}" required="true" 
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+					<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true"/>
+					<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
+				</aon:selectInputDate>
+				<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
+					title="#{bundle.payroll_salary_start_date_seniority_date_difference}"
+					styleClass="aon-icon-info"
+					rendered="#{contract.to.seniorityDateDifferent}" />
+			</aon:panelGroup>
+		</aon:div>
+		
+		<aon:outputLabel for="Contract_endDate" value="#{bundle.aon_end_date}" />
+		<aon:selectInputDate id="Contract_endDate" 
+			required="#{contract.endDateRequired}"
+			value="#{contract.to.endDate}"
+			inputSize="10" renderAsPopup="true" enableManualInput="true"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}">
+		</aon:selectInputDate>
+		
 		<c:if test="#{!contract.skipPayrollData}" >
 			<aon:outputLabel  
 				value="#{bundle.payroll_agreementLevel_category_level}" />
@@ -139,44 +177,6 @@
 			</aon:selectOneMenu>
 		</c:if>
 		
-		<aon:outputLabel for="Contract_startDate" value="#{bundle.aon_start_date}" />
-		<aon:div>
-			<aon:selectInputDate id="Contract_startDate" 
-				value="#{contract.to.startDate}" required="true" 
-				inputSize="10" renderAsPopup="true" enableManualInput="true"
-				timeZone="#{timeZoneController.timeZone}"
-				popupDateFormat="#{bundle.aon_date_pattern}">
-				<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true"/>
-				<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
-			</aon:selectInputDate>
-			<aon:outputLabel for="Contract_seniorityDate" 
-				styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
-				value="#{bundle.payroll_salary_seniority_date2}" />
-			<aon:panelGroup id="seniorityDateContainer">
-				<aon:selectInputDate id="Contract_seniorityDate"
-					value="#{contract.to.seniorityDate}" required="true" 
-					inputSize="10" renderAsPopup="true" enableManualInput="true"
-					timeZone="#{timeZoneController.timeZone}"
-					popupDateFormat="#{bundle.aon_date_pattern}">
-					<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true"/>
-					<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
-				</aon:selectInputDate>
-				<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
-					title="#{bundle.payroll_salary_start_date_seniority_date_difference}"
-					styleClass="aon-icon-info"
-					rendered="#{contract.to.seniorityDateDifferent}" />
-			</aon:panelGroup>
-		</aon:div>
-		
-		<aon:outputLabel for="Contract_endDate" value="#{bundle.aon_end_date}" />
-		<aon:selectInputDate id="Contract_endDate" 
-			required="#{contract.endDateRequired}"
-			value="#{contract.to.endDate}"
-			inputSize="10" renderAsPopup="true" enableManualInput="true"
-			timeZone="#{timeZoneController.timeZone}"
-			popupDateFormat="#{bundle.aon_date_pattern}">
-		</aon:selectInputDate>
-		
 		<c:if test="#{!contract.trainingContract}" >
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.params.cno}" />
@@ -185,13 +185,6 @@
 				<ui:param name="lookupReRender" value="Contract_categoryDescription, trainingCenter, trainingCourse" />
 				<aon:methodParam name="lookupChangeListener" value="#{contract.onChangeCno}" type="lookupChangeListener" />
 			</ui:include>
-			
-			<c:if test="#{!contract.skipPayrollData}" >
-				<aon:outputLabel for="Contract_categoryDescription"  
-					value="#{bundle.aon_category}" />
-				<aon:inputText id="Contract_categoryDescription" maxlength="64" size="56"
-					value="#{contract.to.categoryDescription}" />
-			</c:if>
 		</c:if>
 		
 		<c:if test="#{contract.trainingContract}" >
