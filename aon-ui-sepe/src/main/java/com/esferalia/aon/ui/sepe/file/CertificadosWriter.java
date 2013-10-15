@@ -517,12 +517,12 @@ public class CertificadosWriter {
 //				Double baseDesempleo = nomina.getBasePerdes(); 
 				Double baseDesempleo = nomina.getIrpfBase();
 				// TODO obtener las nominas diferencia
-				ISalary atraso = getSalary(detail.getContract(),  sDate.getTime(), eDate.getTime(), SalaryType.DELAY);
-				if(atraso!=null){
-					baseCg += atraso.getCommonBase();
-					baseAcc += atraso.getProfessionalBase();
-					baseDesempleo += atraso.getIrpfBase();
-				}
+//				ISalary atraso = getSalary(detail.getContract(),  sDate.getTime(), eDate.getTime(), SalaryType.DELAY);
+//				if(atraso!=null){
+//					baseCg += atraso.getCommonBase();
+//					baseAcc += atraso.getProfessionalBase();
+//					baseDesempleo += atraso.getIrpfBase();
+//				}
 //				List<INominaDiferencia> nominasDiferencia = getNominaDAO().getNominasDiferencia(params);
 //				for(INominaDiferencia nomDf:nominasDiferencia) {
 //					baseCg += nomDf.getBaseCgPts();
