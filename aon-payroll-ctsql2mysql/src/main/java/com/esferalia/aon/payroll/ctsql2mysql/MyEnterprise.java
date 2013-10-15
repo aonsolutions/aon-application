@@ -368,7 +368,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		String nroDocRep = emprnif.getNrodocrep();
 		String represantante = emprnif.getRepresentante();
 		if (represantante != null && nroDocRep != null) {
-			mysqlDB.insertRdir_staff(registry, domain, nroDocRep,
+			mysqlDB.insertRdir_staff(domain, registry, nroDocRep,
 					represantante, false, // shareholder,
 					true, // representative,
 					false, // director,
