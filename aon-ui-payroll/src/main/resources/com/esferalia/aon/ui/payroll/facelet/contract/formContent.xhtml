@@ -123,7 +123,7 @@
 			popupDateFormat="#{bundle.aon_date_pattern}">
 		</aon:selectInputDate>
 		
-		<c:if test="#{!contract.skipPayrollData}" >
+		<c:if test="#{actionDenied.moduleEnabled['payroll']}">
 			<aon:outputLabel  
 				value="#{bundle.payroll_agreementLevel_category_level}" />
 			<aon:panelGrid id="agreementLevelCategory-content" columns="2" 
