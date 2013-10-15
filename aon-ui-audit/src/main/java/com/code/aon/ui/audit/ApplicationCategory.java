@@ -1,6 +1,5 @@
 package com.code.aon.ui.audit;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,7 @@ import com.code.aon.ui.util.AonUtil;
 /**
  * The Class ApplicationCategory.
  */
-public class ApplicationCategory implements Comparable<ApplicationCategory>, Serializable {
+public class ApplicationCategory extends BasicOption implements Comparable<ApplicationCategory> {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -25,9 +24,6 @@ public class ApplicationCategory implements Comparable<ApplicationCategory>, Ser
 
 	/** The styleClass. */
 	private String styleClass;
-	
-	/** The rendered. */
-	private String rendered;
 	
 	private List<OptionGroup> groups;
 
@@ -63,39 +59,6 @@ public class ApplicationCategory implements Comparable<ApplicationCategory>, Ser
 	}	
 
 	/**
-	 * Gets the rendered.
-	 * 
-	 * @return the rendered
-	 */
-	public String getRendered() {
-		return rendered;
-	}
-
-	/**
-	 * Sets the rendered.
-	 * 
-	 * @param rendered the new rendered
-	 */
-	public void setRendered(String rendered) {
-		this.rendered = rendered;
-	}	
-
-	/**
-	 * Gets the value of the expression.
-	 * 
-	 * @param expression
-	 *            the expression
-	 * 
-	 * @return the expression value
-	 */
-	public boolean isRendered() {
-		if ( this.rendered != null ) {
-			return (Boolean) AonUtil.getValue(this.rendered);			
-		}
-		return true;
-	}	
-	
-	/**
 	 * Adds the group.
 	 * 
 	 * @param group the group
@@ -112,7 +75,7 @@ public class ApplicationCategory implements Comparable<ApplicationCategory>, Ser
 	public List<OptionGroup> getGroups() {
 		return this.groups;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) { return false; }
@@ -139,7 +102,8 @@ public class ApplicationCategory implements Comparable<ApplicationCategory>, Ser
 	     return new ToStringBuilder(this).
 	       append("name", name).
 	       append("alias", alias).
-	       append("rendered", rendered).
+	       append("action", getAction()).
+	       append("rendered", getRendered()).
 	       append("styleClass", styleClass).
 	       toString();
 	}	

@@ -21,6 +21,7 @@ import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.audit.ActionSource;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
+import com.code.aon.ui.audit.IOption;
 import com.code.aon.ui.audit.OptionGroup;
 import com.sun.facelets.impl.DefaultResourceResolver;
 import com.sun.facelets.impl.ResourceResolver;
@@ -201,7 +202,9 @@ public class MenuParser {
 				category.setRendered(rendered);
 			}
 			controller.addCategory(category);
+			initOption(category, element);
 			String action = getAction(element);
+			category.setAction(action);
 			if ( StringUtils.startsWith(action, MENU_ACTION_PREFFIX) ) {
 				String viewId = getPath(action);
 				Document document = getDocument(viewId);
@@ -308,7 +311,7 @@ public class MenuParser {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void parseActionSources( ApplicationOption option, Element element ) {
+	private void parseActionSources( IOption option, Element element ) {
 		List<Element> list = element.elements();
 		for ( Element child : list ) {
 			String name = child.getQualifiedName();
@@ -323,6 +326,15 @@ public class MenuParser {
 			}
         }	
 	}	
+	
+	private void initOption( IOption option, Element element ) {
+		String actionListener = element.attributeValue(ACTION_LISTENER_ATTRIBUTE);
+		if (! StringUtils.isEmpty(actionListener) ) {
+			ActionSource as = new ActionSource(actionListener);
+			option.getActionSources().add(as);
+		}		
+		parseActionSources( option, element );		
+	}
 	
 	private ApplicationOption getApplicationOption( Element element ) {
 		ApplicationOption option = null;
@@ -344,12 +356,7 @@ public class MenuParser {
 				option.setRendered(rendered);
 				element.addAttribute(RENDERED_ATTRIBUTE, rendered);
 			}
-			String actionListener = element.attributeValue(ACTION_LISTENER_ATTRIBUTE);
-			if (! StringUtils.isEmpty(actionListener) ) {
-				ActionSource as = new ActionSource(actionListener);
-				option.getActionSources().add(as);
-			}		
-			parseActionSources( option, element );
+			initOption(option, element);
 			option.setGroup( getOptionGroup(element) );
 			option.setDescription( element.attributeValue(VALUE_ATTRIBUTE) );
 			element.addAttribute(ID_ATTRIBUTE, ApplicationOption.ID_PATTERN);
@@ -391,50 +398,64 @@ public class MenuParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void parseFacesConfig( Document document, Map<String,String> viewIdMap ) {
-		List<Element> list = document.selectNodes(NAVIGATON_CASE );
-		for ( Element element : list ) {
-			Element action = element.element(FROM_OUTCOME);
-			if ( action != null ) {
-				String actionName = action.getText();
-				if (! StringUtils.isEmpty(actionName) ) {
-					Element viewId = element.element(TO_VIEW_ID);
-					if ( viewId != null ) {
-						String viewIdValue = viewId.getText();
-						if (! StringUtils.isEmpty(viewIdValue) ) {
-							viewIdMap.put(actionName, viewIdValue);
-						}
-					}	
-				}	
-			}
+	private void parseFacesConfig( URL url, Map<String,String> viewIdMap ) {
+        try {
+        	LOGGER.debug("Faces config URL: {}", url);
+    		Document document = getDocument(url);
+    		if ( document != null ) {
+    			List<Element> list = document.selectNodes(NAVIGATON_CASE );
+    			for ( Element element : list ) {
+    				Element action = element.element(FROM_OUTCOME);
+    				if ( action != null ) {
+    					String actionName = action.getText();
+    					if (! StringUtils.isEmpty(actionName) ) {
+    						Element viewId = element.element(TO_VIEW_ID);
+    						if ( viewId != null ) {
+    							String viewIdValue = viewId.getText();
+    							if (! StringUtils.isEmpty(viewIdValue) ) {
+    								viewIdMap.put(actionName, viewIdValue);
+    							}
+    						}	
+    					}	
+    				}
+    	        }		
+    		}		
+        } catch (Exception e) {
+            LOGGER.error("Error Loading Faces Config: {} {}",url, e.getMessage());
         }		
 	}
 	
-	private void parseFacesConfigs() {
+	private Map<String,String> getViewIdMap() {
+       	Map<String,String> viewIdMap = new HashMap<String, String>();
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
 	        URL[] urls = Classpath.search(cl, "META-INF/", FACES_CONFIG_FILE);
 	        if (! ArrayUtils.isEmpty(urls) ) {
-	        	Map<String,String> viewIdMap = new HashMap<String, String>();
 		        for (URL url : urls) {
-		            try {
-		            	LOGGER.debug("Faces config URL: {}", url);
-		        		Document document = getDocument(url);
-		        		if ( document != null ) {
-		        			parseFacesConfig( document, viewIdMap );
-		        		}		
-		            } catch (Exception e) {
-		                LOGGER.error("Error Loading Faces Config: {} {}",url, e.getMessage());
-		            }
+		        	parseFacesConfig(url, viewIdMap);
 		        }	        	
-		        for( ApplicationOption option : controller.getOptionMap().values() ) {
-					String name = StringUtils.substringBefore(option.getAction(), "-");
-					String viewId = viewIdMap.get(name);
-					option.setViewId(viewId);
-		        }
+	        }
+	    	FacesContext ctx = FacesContext.getCurrentInstance();
+	        URL url = ctx.getExternalContext().getResource("/WEB-INF/"+ FACES_CONFIG_FILE);
+	        if ( url != null ) {
+	        	parseFacesConfig(url, viewIdMap);        	
 	        }
 		} catch (IOException e) {
         	LOGGER.error("Error searching report config files", e);
+        }		
+        return viewIdMap;
+	}
+	
+	private void parseFacesConfigs() {
+       	Map<String,String> viewIdMap = getViewIdMap();
+        for( ApplicationOption option : controller.getOptionMap().values() ) {
+			String name = StringUtils.substringBefore(option.getAction(), "-");
+			String viewId = viewIdMap.get(name);
+			option.setViewId(viewId);
+        }
+        for( ApplicationCategory category : controller.getCategories() ) {
+			String viewId = viewIdMap.get(category.getAction());
+			category.setViewId(viewId);		        	
         }
 	}
 	

@@ -5,6 +5,8 @@ public interface IRichConstants {
 	String LOG_PANEL_CONTROLLER_NAME = "logPanel";
 	
 	String FILE_MANAGER_FORM = "fileManager_form";
+	
+	String SELECTED_MENU_CONTROLLER_NAME = "selectedMenu";
 
 	// UIViewRoot attributes keys
 	

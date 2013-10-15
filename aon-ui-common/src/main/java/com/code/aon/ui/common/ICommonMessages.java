@@ -53,6 +53,7 @@ public interface ICommonMessages {
 	String LINK_TRANSFER = "aon_link_transfer";
 	String LOGIN_ERROR_DEFAULT = "aon_login_error_default";
 	String LOGIN_USER = "aon_login_user";
+	String MENU = "aon_menu";
 	String MODULE_ACCOUNTING = "aon_module_accounting";	
 	String MODULE_COMMERCIAL = "aon_module_commercial";
 	String MODULE_DOCUMENT = "aon_module_document";

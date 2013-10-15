@@ -4,6 +4,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonMessages.ACTIVE_USERS;
 import static com.code.aon.ui.common.ICommonMessages.MAXIMUM_NUMBER_USERS;
+import static com.code.aon.ui.common.ICommonMessages.MENU;
 import static com.code.aon.ui.common.ICommonMessages.NEW_PASSWORD_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.USER_DUPLICATED;
 import static com.esferalia.aon.entity.IEntityAlias.APPLICATION_USER_PROFILE_APPLICATION_USER_ID;
@@ -40,6 +41,7 @@ import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.UserApplicationInfo;
 import com.code.aon.ui.admin.util.IdCheckUtil;
+import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.config.util.UserUtils;
@@ -308,6 +310,14 @@ public class DomainUserController extends BasicController {
 			String name = StringUtils.abbreviate(option.getDescription(), 60) + " (" + option.getGroup().getCategory().getName() + ")";
 			SelectItem item = new SelectItem(option.getAction(), name);
 			actionList.add(item);
+		}
+		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+		for( ApplicationCategory category : adc.getCategories() ) {
+			if ( category.isRendered() ) {
+				String name = category.getName() + " (" + AonUtil.getMessage(MENU) + ")";
+				SelectItem item = new SelectItem(category.getAction(), name);
+				actionList.add(item);				
+			}
 		}
 		AonUtil.sortSelectItems(actionList);
 	}

@@ -2,6 +2,7 @@ package com.code.aon.aio.controller;
 
 
 import static com.code.aon.common.enumeration.AppParam.AON_SUPPORT_ENABLED;
+import static com.code.aon.faces.controller.IRichConstants.SELECTED_MENU_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.CONFIGURATION_CATEGORY;
@@ -23,6 +24,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.ConnectException;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -52,6 +54,7 @@ import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.faces.controller.SelectedMenuController;
 import com.code.aon.groupware.Note;
 import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.groupware.enumeration.AlarmStatus;
@@ -61,7 +64,9 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.ActionSource;
+import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
+import com.code.aon.ui.audit.IOption;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
@@ -99,11 +104,11 @@ public class DesktopController {
     private NoticeInfo noticeInfo;
     private TaskInfo taskInfo;
     private boolean checkUpdateURL = true;
-    private ApplicationOption homepagOption;
+    private IOption homepagOption;
     private boolean adminDomain;
     private boolean supportEnabled;
 
-    public DesktopController() {
+    public DesktopController() throws MalformedURLException {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		this.adminDomain = ds.getType() == DomainType.ADMIN;
 		if ( this.adminDomain ) {
@@ -229,13 +234,22 @@ public class DesktopController {
 		}
 	}
 	
-	private ApplicationOption getOption( String actionName ) {
+	private IOption getOption( String actionName ) {
+		SelectedMenuController smc = (SelectedMenuController) AonUtil.getRegisteredBean(SELECTED_MENU_CONTROLLER_NAME);
 		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		ApplicationOption option = aoc.getOptionMap().get(actionName);
 		if ( (option != null) && (option.getViewId() != null) ) {
-			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 			if (! adc.isDenied(option) ) {
+				smc.setLastMenuAction(option.getGroup().getCategory().getAction());
 				return option;	
+			}
+		}
+		ApplicationCategory category = aoc.getCategory(actionName);
+		if ( category != null ) {
+			if (category.isRendered() && !adc.isDeniedModule(category.getAlias()) ) {
+				smc.setLastMenuAction(category.getAction());
+				return category;	
 			}
 		}
 		return null;

@@ -57,6 +57,15 @@ public class ApplicationOptionController {
 	public List<ApplicationCategory> getCategories() {
 		return categories;
 	}
+
+	public ApplicationCategory getCategory( String action ) {
+		for( ApplicationCategory category : categories ) {
+			if ( category.getAction().equals(action) ) {
+				return category;
+			}
+		}
+		return null;
+	}
 	
 	private void init() {
 		this.optionMap = new HashMap<String, ApplicationOption>();

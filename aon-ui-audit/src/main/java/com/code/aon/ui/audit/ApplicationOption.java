@@ -1,11 +1,8 @@
 package com.code.aon.ui.audit;
 
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -16,7 +13,7 @@ import com.code.aon.ui.util.AonUtil;
 /**
  * The Class ApplicationOption.
  */
-public class ApplicationOption implements Serializable {
+public class ApplicationOption extends BasicOption {
 
 	private static final long serialVersionUID = 1L;
 
@@ -30,48 +27,16 @@ public class ApplicationOption implements Serializable {
 		
 	private static final String ID_ATTRIBUTE_PATTERN = "id=\"" + ID_PATTERN + "\"";
 
-	/** The action. */
-	private String action;
-
 	/** The id. */
 	private String id;
 	
 	/** The description. */
 	private String description;
 	
-	/** The rendered. */
-	private String rendered;
-	
 	/** The group. */
 	private OptionGroup group;
 	
 	private String xml;	
-	
-	private String viewId;
-	
-	private List<ActionSource> actionSources;
-	
-	public ApplicationOption() {
-		this.actionSources = new LinkedList<ActionSource>();
-	}
-
-	/**
-	 * Gets the action.
-	 * 
-	 * @return the action
-	 */
-	public String getAction() {
-		return action;
-	}
-
-	/**
-	 * Sets the action.
-	 * 
-	 * @param action the new action
-	 */
-	public void setAction(String action) {
-		this.action = action;
-	}
 	
 	/**
 	 * Gets the id.
@@ -107,41 +72,7 @@ public class ApplicationOption implements Serializable {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-	
-	/**
-	 * Gets the rendered.
-	 * 
-	 * @return the rendered
-	 */
-	public String getRendered() {
-		return rendered;
-	}
-
-	/**
-	 * Sets the rendered.
-	 * 
-	 * @param rendered the new rendered
-	 */
-	public void setRendered(String rendered) {
-		this.rendered = rendered;
-	}
-
-	/**
-	 * Gets the value of the expression.
-	 * 
-	 * @param expression
-	 *            the expression
-	 * 
-	 * @return the expression value
-	 */
-	public boolean isRendered() {
-		if ( this.rendered != null ) {
-			return (Boolean) AonUtil.getValue(this.rendered);			
-		}
-		return true;
 	}	
-	
 	
 	/**
 	 * Gets the group.
@@ -187,18 +118,6 @@ public class ApplicationOption implements Serializable {
 	 */
 	public void setXml(String xml) {
 		this.xml = xml;
-	}
-
-	public String getViewId() {
-		return viewId;
-	}
-
-	public void setViewId(String viewId) {
-		this.viewId = viewId;
-	}
-	
-	public List<ActionSource> getActionSources() {
-		return actionSources;
 	}
 
 	@Override
