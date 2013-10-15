@@ -15,6 +15,14 @@ public class EnterpriseCCC extends EnterpriseCCCDB {
 	private static final long serialVersionUID = 1L;
 	
 	@Transient
+	public String getFullCcc(){
+		if(this.getActivity()!=null && this.getActivity().getQuoteRegimeCode()!=null){
+			return this.getActivity().getQuoteRegimeCode() + this.getCcc();
+		}
+		return this.getCcc();
+	}
+	
+	@Transient
 	public boolean isValidSSNumber(){
 		try {
 			if(StringUtils.isEmpty(getCcc()) || !getValidSSNumber(getCcc()).isEmpty()){

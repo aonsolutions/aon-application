@@ -210,9 +210,13 @@ public class Certifica2BatchController extends BasicController {
 			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DETAIL_CERTIFICA2BATCH_ID), batch.getId());
+			criteria.addOrder("Certifica2BatchDetail.contract.enterpriseCCC.activity.type");
+			criteria.addOrder("Certifica2BatchDetail.contract.enterpriseCCC.ccc");
+			criteria.addOrder("Certifica2BatchDetail.contract.person.registry.document");
 			return bean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			// NADA, que siga con la generacion del fichero
+			System.out.println("");
 		}
 		return null;
 	}

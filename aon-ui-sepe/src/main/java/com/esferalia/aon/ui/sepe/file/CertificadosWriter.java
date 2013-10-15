@@ -297,7 +297,7 @@ public class CertificadosWriter {
 		o.setIndicadorDuracionContrato(null);
 
 		String occupation = utils.getContractDataMap(batchDetail.getContract()).get(ContextVariable.CNO.getName());
-		o.setCodProfesion(completeLength(occupation,7,false));
+		o.setCodProfesion(completeLength(occupation,7));
 		o.setCargoPublicoSindical(null);
 		
 //		<xsd:choice minOccurs="0">
@@ -554,6 +554,8 @@ public class CertificadosWriter {
 	}
 	
 	public ISalary getSalary(Contract contract, Date startDate, Date endDate, SalaryType type) {
+		if(startDate == null)return null;
+		if(endDate == null)return null;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			Criteria criteria = new Criteria();
@@ -563,18 +565,35 @@ public class CertificadosWriter {
 			} else {
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
 			}
-			if(startDate != null){
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(startDate);
-				cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
-				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), cal.getTime());
-			}
-			if(endDate != null){
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(endDate);
-				cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), cal.getTime());
-			}
+//			if(startDate != null){
+//				Calendar startCal = Calendar.getInstance();
+//				startCal.setTime(startDate);
+//				startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
+//				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), startCal.getTime());
+//			}
+//			if(endDate != null){
+//				Calendar endCal = Calendar.getInstance();
+//				endCal.setTime(endDate);
+//				endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+//				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endCal.getTime());
+//			}
+			
+			
+			Calendar startCal = Calendar.getInstance();
+			startCal.setTime(startDate);
+			startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
+			Calendar endCal = Calendar.getInstance();
+			endCal.setTime(endDate);
+			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			
+
+//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), startCal.getTime());
+//			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endCal.getTime());
+			
+			criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), startCal.getTime(), endCal.getTime());
+		
+				
+				
 			criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE), false);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(list!=null && !list.isEmpty()){
@@ -784,8 +803,11 @@ public class CertificadosWriter {
 	 * @return
 	 */
 	private String createFechaSimpleType(Date date){
-		String pattern = "yyyyMMdd";
-		return DateFormatUtils.format(date, pattern);
+		if(date!=null){
+			String pattern = "yyyyMMdd";
+			return DateFormatUtils.format(date, pattern);
+		}
+		return null;
 	}
 
 	/**
