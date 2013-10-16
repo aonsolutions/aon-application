@@ -222,10 +222,7 @@ public class CustomizeBean {
 	}
 	
 	private void updateApplicationTitle( Connection connection ) {
-		String value = getValue( connection, AON_CUSTOMIZE_TITLE);
-		if (! StringUtils.isEmpty(value) ) {
-			this.applicationTitle = value;
-		}
+		this.applicationTitle = getValue( connection, AON_CUSTOMIZE_TITLE);;
 	}
 
 	private void updateFontStyle( Connection connection ) {
