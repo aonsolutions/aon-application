@@ -4,7 +4,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/com/code/aon/ui/resources/facelet/shared/mainLayout.xhtml">
 
-	<ui:define name="title">#{customize.applicationTitle}</ui:define>
+	<ui:define name="title">#{empty customize.applicationTitle ? ( companyDisplay.show ? companyDisplay.companyLabel : "" ) : customize.applicationTitle}</ui:define>
 
 	<ui:define name="mainHeader">
 		<c:if test="#{desktop.hideHeaderContent}" />

@@ -5,8 +5,7 @@
 <%@page import="java.text.MessageFormat"%>
 <%@page import="java.util.Locale"%>
 <%@page import="java.util.ResourceBundle"%>
-
-
+<%@page import="org.apache.commons.lang.StringUtils" %>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <jsp:useBean id="failedLogin" class="com.code.aon.ui.common.controller.FailedLogin" scope="request"/>
 <jsp:useBean id="customize" class="com.code.aon.ui.resources.bean.CustomizeBean" scope="request"/>
@@ -19,10 +18,13 @@ try {
 	customize.initApplicationVersion(application.getResourceAsStream("META-INF/MANIFEST.MF"));
 	customize.init(request.getServerName());
 	ResourceBundle commonBundle = ResourceBundle.getBundle("com.code.aon.common.i18n.messages", request.getLocale());
+	companyDisplay.init(request.getServerName());
+	
 %>
 
 <head>
-	<title><%=customize.getApplicationTitle()%></title>
+	<title><%=StringUtils.isEmpty(customize.getApplicationTitle()) ? companyDisplay.getCompanyLabel() : customize.getApplicationTitle()  %></title>
+
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8"/>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="Expires" content="0" />
@@ -33,7 +35,6 @@ try {
 	
 </head>
 <%
-	companyDisplay.init(request.getServerName());
 	com.code.aon.ui.dbutils.controller.DatabaseUptodate du = new com.code.aon.ui.dbutils.controller.DatabaseUptodate();
 	if (du.isUpdatable()) {
 		throw new com.code.aon.pool.AonConnectionException("La base de datos necesita ser actualizada. <br/> Versión actual de la BD: " + du.getCurrentVersion());
@@ -96,9 +97,11 @@ try {
 							<div class="aon-login-title">
 								<img class="aon-graphicImage"
 									src="<%=customize.getLoginLogo()%>" />
-								<span style="<%=customize.getFontStyle()%>" class="aon-outputText">
-									/ <%=customize.getApplicationTitle()%>
-								</span>
+                						<c:if test="${not empty customize.applicationTitle}">
+								  <span style="<%=customize.getFontStyle()%>" class="aon-outputText">
+									  / <%=customize.getApplicationTitle()%>
+								  </span>
+						                </c:if>
 							</div>
 
 							<div class="aon-login-box">
