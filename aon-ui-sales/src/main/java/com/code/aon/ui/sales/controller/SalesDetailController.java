@@ -167,7 +167,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 
 	public String getLineStatusInfo() throws ManagerBeanException {
 		StringBuffer info = new StringBuffer(64);
-		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.BUNDLE_NAME, ICommonMessages.QUANTITY_PATTERN));
+		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonMessages.QUANTITY_PATTERN));
 
 		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
