@@ -22,7 +22,7 @@
 				columnClasses="aon-table-portlet-column,aon-table-portlet-column,aon-table-portlet-column">
 				
 				<aon:outputText value="&#160;" styleClass="aon-icon-contact" style="padding-left: 15px;"/>
-				<aon:outputText value="En progreso: " />
+				<aon:outputText value="#{bundle.groupware_in_progress}: " />
 				<aon:div styleClass="aon-text-right">
 					<aon:outputText value="#{desktop.taskInfo.inProgressUserTasks + desktop.taskInfo.expiredInProgressUserTasks}"/>
 					<aon:outputText value=" / " rendered="#{desktop.taskInfo.expiredInProgressUserTasks gt 0}"/>
@@ -31,7 +31,7 @@
 				</aon:div>
 				
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="Pendientes: " />
+				<aon:outputText value="#{bundle.aon_pendings}: " />
 				<aon:div styleClass="aon-text-right">
 					<aon:outputText value="#{desktop.taskInfo.pendingUserTasks + desktop.taskInfo.expiredPendingUserTasks}"/>
 					<aon:outputText value=" / " rendered="#{desktop.taskInfo.expiredPendingUserTasks gt 0}"/>
@@ -40,7 +40,7 @@
 				</aon:div>
 				
 				<aon:outputText value="&#160;" styleClass="aon-icon-contactGroup" style="padding-left: 15px;"/>
-				<aon:outputText value="Pendientes: " />
+				<aon:outputText value="#{bundle.aon_pendings}: " />
 				<aon:div styleClass="aon-text-right">
 					<aon:outputText value="#{desktop.taskInfo.pendingGroupTasks + desktop.taskInfo.expiredPendingGroupTasks}"/>
 					<aon:outputText value=" / " rendered="#{desktop.taskInfo.expiredPendingGroupTasks gt 0}"/>
