@@ -16,6 +16,19 @@
 		<url-pattern>/testServlet</url-pattern>
 	</servlet-mapping>
 
+	<!-- -Login Servlet -->
+	<servlet>
+		<servlet-name>LoginServlet</servlet-name>
+		<servlet-class>com.code.aon.aio.servlet.LoginServlet</servlet-class>
+		<init-param>
+			<param-name>loginContext</param-name>
+			<param-value>aon.security</param-value>
+		</init-param>				
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LoginServlet</servlet-name>
+		<url-pattern>/login</url-pattern>
+	</servlet-mapping>
 
 	<!-- Resource Servlet -->
 	<servlet>
