@@ -14,23 +14,24 @@
 		<ui:param name="checkReRender" value="listToolBarDiv, listDataDiv" />
 		
 		<ui:define name="afterToolbarContent" >
-			<aon:commandButton id="apply"
-				rendered="#{certifica2List.checkHandler.checkedCount > 0}"
-				value="#{bundle.payroll_apply_to_all}"
-				styleClass="aon-icon-commandButton aon-icon-accept aon-margin-left" >
-				<aon:actionListener method="#{certifica2List.onApplyAllSuspensionCause}" />
-			</aon:commandButton>
-			<rich:inplaceSelect id="suspensionCauseApplyAll"
-				rendered="#{certifica2List.checkHandler.checkedCount > 0}" 
-			 	value="#{certifica2List.suspensionCauseForAll}"
-			 	listHeight="300px" listWidth="300px"
-			 	style="margin-left: 10px; width:300px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
-				defaultLabel="#{bundle.payroll_causes}" >
-				<f:selectItems value="#{sepeCollections.suspensionCauses}" />
-			</rich:inplaceSelect>
-			<aon:outputText value="&#160;"
-				rendered="#{certifica2List.checkHandler.checkedCount > 0}" 
-				styleClass="aon-finding-toolbar-item"/>
+				<aon:div style="float:right;width:300px;">
+					<rich:inplaceSelect id="suspensionCauseApplyAll" 
+						disabled="#{certifica2List.checkHandler.checkedCount le 0}" 
+					 	value="#{certifica2List.suspensionCauseForAll}"
+					 	listHeight="300px" listWidth="300px" 
+					 	style="margin-left: 10px; border-bottom-style:none; cursor: pointer;"
+						defaultLabel="#{bundle.certifica2Batch_suspension_cause_select}" >
+						<f:selectItems value="#{sepeCollections.suspensionCauses}" />
+					</rich:inplaceSelect>
+				</aon:div>
+			<aon:div style="float:right;">
+				<aon:commandButton id="apply"
+					disabled="#{certifica2List.checkHandler.checkedCount le 0}"
+					value="#{bundle.payroll_apply_to_all}"
+					styleClass="aon-icon-commandButton aon-icon-accept aon-margin-left" >
+					<aon:actionListener method="#{certifica2List.onApplyAllSuspensionCause}" />
+				</aon:commandButton>
+			</aon:div>
 		</ui:define>
 		
 		<ui:define name="listDataColumns" >

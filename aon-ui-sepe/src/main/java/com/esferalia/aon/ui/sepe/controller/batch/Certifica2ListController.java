@@ -30,7 +30,7 @@ public class Certifica2ListController extends BasicController {
 
 	private Enterprise enterprise;
 	private Person person;
-	private BatchListCheckHandler checkHandler;
+	private Certifica2BatchListCheckHandler checkHandler;
 	
 	private Map<Integer, RemesableContract> remesableContracts = new HashMap<Integer, RemesableContract>();
 	
@@ -86,14 +86,14 @@ public class Certifica2ListController extends BasicController {
 		this.suspensionCauseForAll = suspensionCauseForAll;
 	}
 	
-	public BatchListCheckHandler getCheckHandler() {
+	public Certifica2BatchListCheckHandler getCheckHandler() {
 		if(checkHandler == null){
-			checkHandler = new BatchListCheckHandler(this);
+			checkHandler = new Certifica2BatchListCheckHandler(this);
 		}
 		return checkHandler;
 	}
 
-	public void setCheckHandler(BatchListCheckHandler checkHandler) {
+	public void setCheckHandler(Certifica2BatchListCheckHandler checkHandler) {
 		this.checkHandler = checkHandler;
 	}
 
@@ -139,16 +139,17 @@ public class Certifica2ListController extends BasicController {
 		setSuspensionCauseForAll(null);
 		try {
 			SEPEUtils utils = new SEPEUtils();
-			
-			clearCriteria();
-			if(DomainManager.isDomainManagementAvailable()){
-				getCriteria().setSkipDomainFilter( true );
-				getCriteria().addInExpression(getFieldName(IEntityAlias.CONTRACT_DOMAIN), utils.getCurrentChildDomainIds());
+			if(getPerson()!=null && getPerson().getId()!=null){
+				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_PERSON_ID), getPerson().getId());
 			}
-			
 			getCriteria().addNotNullExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE));
 			if(getEnterprise()!=null && getEnterprise().getId()!=null){
+				getCriteria().setSkipDomainFilter( true );
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());
+				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_DOMAIN), getEnterprise().getDomain());
+			} else if(DomainManager.isDomainManagementAvailable()){
+				getCriteria().setSkipDomainFilter( true );
+				getCriteria().addInExpression(getFieldName(IEntityAlias.CONTRACT_DOMAIN), utils.getCurrentChildDomainIds());
 			}
 			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_REGISTRY_NAME));
 			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_PERSON_FIRST_SURNAME));

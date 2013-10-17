@@ -85,7 +85,6 @@ public class ContractController extends BasicController {
 	private boolean showNewContractModal;
 	private boolean showContractEmbargoWindow;
 	private boolean showContractBonusWindow;
-	private boolean skipPayrollData;
 	
 	public ContractParams getParams() {
 		if(params==null){
@@ -97,12 +96,6 @@ public class ContractController extends BasicController {
 		this.params = params;
 	}
 	
-	public boolean isSkipPayrollData() {
-		return skipPayrollData;
-	}
-	public void setSkipPayrollData(boolean skipPayrollData) {
-		this.skipPayrollData = skipPayrollData;
-	}
 	public boolean isShowNewContractModal() {
 		return showNewContractModal;
 	}
@@ -197,7 +190,13 @@ public class ContractController extends BasicController {
 	public boolean isTransformableContract(){
 		// TODO: what contracts are transformable?
 		String contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
-		String[] codes = {"189"};
+		String[] codes = {""};
+		return ArrayUtils.contains(codes, contractCode) ;
+	}
+
+	public boolean isTransformedContract(){
+		String contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
+		String[] codes = {"109","139","189","209","239","289","309","339","389"};
 		return ArrayUtils.contains(codes, contractCode) ;
 	}
 	
@@ -492,6 +491,7 @@ public class ContractController extends BasicController {
 		}
 	}
 	
+	@Deprecated
 	public void onChangeCno(LookupChangeEvent event){
 		Contract contract = (Contract) this.getTo();
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {

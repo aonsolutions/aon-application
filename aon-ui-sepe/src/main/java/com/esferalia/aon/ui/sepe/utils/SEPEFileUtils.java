@@ -166,11 +166,11 @@ public class SEPEFileUtils {
 		} catch (FileNotFoundException e) {
 			String msg = "Error al obtener el esquema de validacion";
 			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
 		} catch (IOException e) {
 			String msg = "Error al obtener el esquema de validacion";
 			AonUtil.addErrorMessage(msg);
-//		} finally {
-//			FileUtils.deleteQuietly(tempFile);
+			AonUtil.addErrorMessage(e.getMessage());
 		}
 		return null;
 	}	
@@ -216,9 +216,11 @@ public class SEPEFileUtils {
 		} catch (FileNotFoundException e) {
 			String msg = "Error al obtener el esquema de validacion";
 			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
 		} catch (IOException e) {
 			String msg = "Error al obtener el esquema de validacion";
 			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
 		}
 		return tempFile;
 	}	

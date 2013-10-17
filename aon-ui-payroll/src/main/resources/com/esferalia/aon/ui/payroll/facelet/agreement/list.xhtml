@@ -16,15 +16,13 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				
-				<aon:methodParam name="rowSelectorAction" default="agreement_formTree"/>
 
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{agreement}" />
 					
 					<ui:define name="columns">
 						
-						<aon:column 
+						<aon:column alias="Agreement.id"
 							styleClass="aon-editDataTable-textColumn aon-width-100">
 							<f:facet name="header">
 								<h:outputText value="#{bundle.aon_id}" />
@@ -32,7 +30,7 @@
 							<aon:outputText value="#{to.id}" />
 						</aon:column>
 						
-						<aon:column 
+						<aon:column alias="Agreement.description"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<h:outputText value="#{bundle.aon_description}" />

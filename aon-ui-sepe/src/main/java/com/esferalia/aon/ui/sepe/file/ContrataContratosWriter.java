@@ -624,10 +624,10 @@ public class ContrataContratosWriter implements IContrataWriter{
 		if(person.getBirthDate()!=null){
 			datos.setFECHANACIMIENTO(getFormatedDate(person.getBirthDate()));
 		} else {
-			AonUtil.addErrorMessage("El trabajador no tiene definida la fecha de nacimiento.");
+//			AonUtil.addErrorMessage("El trabajador no tiene definida la fecha de nacimiento.");
 		}
 		if(StringUtils.isEmpty(person.getRegistry().getDocument())){
-			AonUtil.addErrorMessage("El trabajador no tiene definido el número de documento.");
+//			AonUtil.addErrorMessage("El trabajador no tiene definido el número de documento.");
 		} else {
 			// FIXME
 			/*
@@ -645,7 +645,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		datos.setNACIONALIDAD(completeLength(person.getRegistry().getNationality().getIsoNum(),3,ZERO_VALUE,false));
 		datos.setNOMBREAPELLIDOS(createNombreApellidos(person));
 		if(StringUtils.isEmpty(person.getSocialSecurityNumber())){
-			AonUtil.addErrorMessage("El trabajador no tiene definido el número de seguridad social.");
+//			AonUtil.addErrorMessage("El trabajador no tiene definido el número de seguridad social.");
 		} else {
 			datos.setNUMEROSEGURIDADSOCIAL(person.getSocialSecurityNumber());
 		}
@@ -654,13 +654,13 @@ public class ContrataContratosWriter implements IContrataWriter{
 			if(person.getRegistry().getDefaultAddress().getMunicipalityCode()!=null){
 				datos.setMUNICIPIORESIDENCIA(person.getRegistry().getDefaultAddress().getMunicipalityCode());
 			} else {
-				AonUtil.addErrorMessage("El trabajador no tiene definido el municipio de residencia.");
+//				AonUtil.addErrorMessage("El trabajador no tiene definido el municipio de residencia.");
 			}
 		} else {
-			AonUtil.addErrorMessage("El trabajador no tiene definida la dirección.");
+//			AonUtil.addErrorMessage("El trabajador no tiene definida la dirección.");
 		}
 		if(person.getGender()==null || person.getGender()==Gender.UNKNOWN){
-			AonUtil.addErrorMessage("El sexo del trabajador es desconocido.");
+//			AonUtil.addErrorMessage("El sexo del trabajador es desconocido.");
 		} else {
 			datos.setSEXO(person.getGender()==Gender.MALE?"1":"2");
 		}
@@ -898,7 +898,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 				|| tc2.equals("530") || tc2.equals("420") || tc2.equals("520")  
 				|| tc2.equals("421") || tc2.equals("441") || tc2.equals("541") 
 				|| tc2.equals("452") || tc2.equals("552") || tc2.equals("970") ) ){
-			AonUtil.addErrorMessage("La fecha final es necesaria para este tipo de contrato.");
+//			AonUtil.addErrorMessage("La fecha final es necesaria para este tipo de contrato.");
 		} else {
 			datos.setFECHATERMINO(getFormatedDate(getContract().getEndDate()));
 		}
@@ -925,7 +925,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		}
 		String cno = getContractDataMap(getContract()).get(ContextVariable.CNO.getName());
 		if(StringUtils.isEmpty(cno)){
-			AonUtil.addErrorMessage("El trabajador no tiene definido el código de ocupacion (CNO).");
+//			AonUtil.addErrorMessage("El trabajador no tiene definido el código de ocupacion (CNO).");
 		} else {
 			datos.setCODIGOOCUPACION(completeLength(cno, 8,  BLANK_1, true));
 		}

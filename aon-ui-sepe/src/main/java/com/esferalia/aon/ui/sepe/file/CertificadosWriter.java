@@ -1284,7 +1284,7 @@ public class CertificadosWriter {
 	private Integer differenceBetweenDates(Date from, Date to) {
 		Integer diffDays = new Integer(0);
 		final Double MS_PER_DAY = new Double(1000 * 60 * 60 * 24);
-		if(from.before(to)) {
+		if(!from.after(to)) {
 			diffDays = (int)((Math.floor((to.getTime() - from.getTime()) / MS_PER_DAY + 0.5d) + 1));
 		}
 		return diffDays;

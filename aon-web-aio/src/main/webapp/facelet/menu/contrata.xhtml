@@ -28,11 +28,9 @@
 								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="contract-contrata"
-											action="#{contract.initialAction}"
+											action="contract_search"
 											actionListener="#{contract.onEditSearch}"
-											value="#{bundle.payroll_contract_module}">
-											<f:setPropertyActionListener target="#{contract.skipPayrollData}" value="#{true}" />
-										</aon:commandLink>
+											value="#{bundle.payroll_contract_module}"/>
 									</aon:div>
 								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -156,16 +154,9 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="agreement-contrata" 
-										action="agreement_grid"
+										action="agreement_search"
+										actionListener="#{agreement.onEditSearch}"
 										value="#{bundle.payroll_agreement_module}"/>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="calendar-contrata"
-										action="#{calendar.initialAction}"
-										actionListener="#{calendar.onEditSearch}"
-										value="#{bundle.calendar_menu_group}">
-										<aon:actionListener method="#{calendar.onInitialize}" />
-									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="trainingCenter-contrata"
@@ -183,6 +174,26 @@
 										action="sepeTables_list-contrata"
 										actionListener="#{sepeTables.onInit}"  
 										value="#{bundle.sepe_sepeTables_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+						
+						<aon:panelGrid id="group_contrata_links"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-report aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="Enlaces externos" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<h:outputLink target="_blank" value="http://www.sepe.es/">
+										<aon:outputText value="S.E.P.E. - Servicio Publico de Empleo Estatal"/>	
+									</h:outputLink>
+								</aon:div>	
+								<aon:div styleClass="aon-direct-access-list-element">
+									<h:outputLink target="_blank" value="http://www.seg-social.es">
+										<aon:outputText value="S.S. - Seguridad Social"/>	
+									</h:outputLink>	
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

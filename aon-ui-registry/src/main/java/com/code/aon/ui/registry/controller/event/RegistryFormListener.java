@@ -204,7 +204,7 @@ public class RegistryFormListener extends ControllerAdapter {
 		List<SelectItem> municipalities = new LinkedList<SelectItem>();
 		if(this.getMainAddress()!=null){
 			RegistryAddress address = (RegistryAddress) this.getMainAddress();
-			if(address!=null && address.getGeozone()!=null && address.getGeozone().getCode()!=null) {
+			if(address!=null && address.getGeozone()!=null && StringUtils.isNotBlank(address.getGeozone().getCode())) {
 				TreeSet<String> tree = new TreeSet<String>(bundle.keySet());
 				for(String key: tree){
 					if(key.startsWith(address.getGeozone().getCode())){

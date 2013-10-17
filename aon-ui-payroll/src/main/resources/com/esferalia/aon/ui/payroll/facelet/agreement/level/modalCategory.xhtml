@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="categoryModalContainer">
+		<c:if test="#{agreementLevel.showCategoryWindow}">
+			<rich:modalPanel id="categoryModalPanel" minHeight="400"
+				minWidth="310" showWhenRendered="true" style="overflow:auto;">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{bundle.aon_categories}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="categoryModalContainer" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{agreementLevel.showCategoryWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="categoryModalForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<aon:div styleClass="aon-toolbar">
+										<aon:commandButton id="category-save"
+											value="#{bundle.aon_save}"
+											reRender="categoryModalContainer, agreementForm"
+											actionListener="#{agreementLevel.onSaveCategories}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept">
+										</aon:commandButton>
+										<aon:commandButton id="category-reset"
+											value="#{bundle.aon_reset}"
+											reRender="categoryModalForm"
+											actionListener="#{agreementLevel.onAddCategory}"
+											styleClass="aon-finding-toolbar-item aon-icon-reset">
+										</aon:commandButton>
+									</aon:div>
+									
+									<aon:div style="margin-top: 1em;">
+										<aon:dataTable value="#{agreementLevel.categoryModel}" var="to" >
+											<aon:column>
+												<aon:panelGroup>
+													<aon:inputText  
+														value="#{to.description}"
+														size="32" maxlength="64" />
+													<aon:commandButton id="removeCategory" value="&#160;"
+														rendered="#{not empty to.description}"
+														reRender="categoryModalContainer, agreementForm"
+														actionListener="#{agreementLevel.onRemoveCategory}"
+														styleClass="aon-editDataTable-button aon-icon-rubber" />
+												</aon:panelGroup>
+											</aon:column>			
+										</aon:dataTable>
+									</aon:div>
+									
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+				
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+</ui:composition>

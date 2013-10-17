@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showListSearchWindow">
 		<c:if test="#{controller.checkHandler.showListSearchWindow}">
-			<rich:modalPanel id="listSearchModalPanel" minHeight="280"
+			<rich:modalPanel id="listSearchModalPanel" minHeight="370"
 				minWidth="650" rendered="#{controller.checkHandler.showListSearchWindow}"
 				showWhenRendered="true" zindex="100">
 				<f:facet name="header">
@@ -57,20 +57,24 @@
 											value="#{false}" />
 									</aon:commandButton>
 								</aon:div>
-								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
+								<aon:div styleClass="aon-scroll-area" >
+								
+									<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
+										<aon:panelGrid id="menuGrid" columns="2" dir="true" >
+										
+											<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+												<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+													<ui:param name="lookupTo" value="#{controller.enterprise}" />
+													<ui:param name="skipNewButton" value="#{true}" />
+													<ui:param name="skipGoToButton" value="#{true}" />
+												</ui:include>
+											</c:if>
+	
+											<ui:insert name="modalContent" />
+	
+										</aon:panelGrid>
+									</aon:div>
 									
-										<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
-											<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-												<ui:param name="lookupTo" value="#{controller.enterprise}" />
-												<ui:param name="skipNewButton" value="#{true}" />
-												<ui:param name="skipGoToButton" value="#{true}" />
-											</ui:include>
-										</c:if>
-
-										<ui:insert name="modalContent" />
-
-									</aon:panelGrid>
 								</aon:div>
 							</aon:div>
 						</aon:div>

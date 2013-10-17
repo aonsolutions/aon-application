@@ -7,6 +7,8 @@ import java.util.TreeSet;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.ui.form.LinesController;
 
@@ -17,7 +19,7 @@ public class RegistryAddressController extends LinesController {
 		List<SelectItem> municipalities = new LinkedList<SelectItem>();
 		if(this.getTo()!=null){
 			RegistryAddress address = (RegistryAddress) this.getTo();
-			if(address!=null && address.getGeozone()!=null && address.getGeozone().getCode()!=null) {
+			if(address!=null && address.getGeozone()!=null && StringUtils.isNotBlank(address.getGeozone().getCode())) {
 				TreeSet<String> tree = new TreeSet<String>(bundle.keySet());
 				for(String key: tree){
 					if(key.startsWith(address.getGeozone().getCode())){

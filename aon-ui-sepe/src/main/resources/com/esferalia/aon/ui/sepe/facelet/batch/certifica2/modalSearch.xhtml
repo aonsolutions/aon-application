@@ -11,7 +11,12 @@
 	<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/modalSearch.xhtml">
 
 		<ui:define name="modalContent" >
-			
+		
+			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{controller.person}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+			</ui:include>
+		
 			<aon:outputLabel value="#{bundle.aon_start_date}" />
 			<aon:div>
 				<aon:outputLabel for="Contract_startDate-From" styleClass="aon-form-date-label"
@@ -46,6 +51,10 @@
 					popupDateFormat="#{bundle.aon_date_pattern}"/>
 			</aon:div>
 			
+		</ui:define>
+		
+		<ui:define name="afterFormContent" >
+			<aon:lookupButtonPopup lookup="#{personLookup}" />
 		</ui:define>
 	
 	</ui:decorate>

@@ -4,7 +4,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{cnae2009Lookup}" />
 		<ui:param name="controller" value="#{cnae2009}" />
 		<ui:param name="lookupInputValue" value="#{lookupTo.code}"/>
@@ -18,6 +18,6 @@
 		<ui:define name="lookupInputTextContent">
 			<aon:joinProperty alias="CNAE2009_code" value="#{lookupInputValue}" />
 		</ui:define>		
-	</ui:include>
+	</ui:decorate>
 	
 </ui:composition>

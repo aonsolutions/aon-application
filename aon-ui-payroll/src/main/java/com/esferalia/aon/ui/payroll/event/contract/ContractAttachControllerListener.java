@@ -4,6 +4,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.controller.event.AttachmentControllerListener;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
@@ -29,16 +31,28 @@ public class ContractAttachControllerListener extends AttachmentControllerListen
 			}
 			SepeAppParamsController paramsController = (SepeAppParamsController) AonUtil.getRegisteredBean(ISepeConstants.SEPE_APP_PARAMS_CONTROLLER_NAME);
 			if(!paramsController.getDevelopmentMode()){
-				criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_CONTRACT_FILE);
-				criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID);
-				criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_CONTRACT_RESPONSE);
-				criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_EXTENSION_FILE);
-				criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_EXTENSION_COMMUNICATION_ID);
-				criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_EXTENSION_RESPONSE);
-				criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_CERTIFICADOS_FILE);
-				criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_CERTIFICADOS_COMMUNICATION_ID);
-				criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_CERTIFICADOS_RESPONSE);
-				criteria.addNotEqualExpression(attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.CONTRACT_CLAUSES);
+				String alias = attachBean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE);
+				Expression expToAdd = null;
+				expToAdd = ExpressionUtilities.getEqualExpression(alias, ContractAttachmentType.CONTRACT_DOC_DRAFT);				
+				Expression exp  = ExpressionUtilities.getEqualExpression(alias, ContractAttachmentType.CONTRACT_DOC);
+				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				exp  = ExpressionUtilities.getEqualExpression(alias, ContractAttachmentType.BASIC_COPY_DRAFT);
+				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				exp  = ExpressionUtilities.getEqualExpression(alias, ContractAttachmentType.BASIC_COPY);
+				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				exp  = ExpressionUtilities.getEqualExpression(alias, ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT);
+				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				exp  = ExpressionUtilities.getEqualExpression(alias, ContractAttachmentType.TRAINING_ANNEX_I);
+				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				exp  = ExpressionUtilities.getEqualExpression(alias, ContractAttachmentType.TRAINING_ANNEX_II);
+				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				exp  = ExpressionUtilities.getEqualExpression(alias, ContractAttachmentType.EXTENSION_DOC_DRAFT);
+				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				exp  = ExpressionUtilities.getEqualExpression(alias, ContractAttachmentType.EXTENSION_DOC);
+				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				exp  = ExpressionUtilities.getNullExpression(alias);
+				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				criteria.addExpression(expToAdd);
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Error before model Initialized",e);

@@ -25,19 +25,18 @@
 					<aon:outputLabel for="Agreement_description"
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="Agreement_description"
-						value="#{agreement.to.description}" size="64" maxlength="64" />
-						
-					<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{agreement.to.calendar}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="lookupInputSuggestSize" value="40" />
-					</ui:include>
+						value="#{agreement.to.description}" size="96" maxlength="64" />
+					
 				</aon:panelGrid>
 			</aon:div>
+			  
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/level/grid.xhtml" >
+				<ui:param name="skipResetButton" value="#{agreement.new}" />
+			</ui:include>
 
 		</aon:form>
-		
-		<aon:lookupButtonPopup lookup="#{calendarLookup}" />
+
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/level/modalCategory.xhtml" />
 		
 	</ui:define>
 	

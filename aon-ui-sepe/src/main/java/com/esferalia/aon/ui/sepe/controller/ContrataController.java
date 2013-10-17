@@ -429,19 +429,17 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 		try {
 			SEPEFileUtils.validateContrataXmlPattern(is, schema, contractCode);
 		} catch (SAXException saxe) {
-			String msg = "Error de formato al validar los datos de Contrat@";
+			String msg = "Error validación de Contrat@. Formato no correcto o ausencia de datos de contrato.";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(saxe.getMessage() );
 			throw new AbortProcessingException(msg, saxe);
 		} catch (IOException ioe) {
-			String msg = "Error de lectura al validar los datos de Contrat@";
+			String msg = "Error de lectura al validar los datos a comunicar a Contrat@";
 			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage("*** ERROR *** :" + ioe );
 			throw new AbortProcessingException(msg, ioe);
 		} catch (Exception e) {
-			String msg = "Error general al validar los datos de Contrat@";
+			String msg = "Error general al validar los datos a comunicar a Contrat@";
 			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage("*** ERROR *** :" + e );
 			throw new AbortProcessingException(msg, e);
 		}
 	}
