@@ -4,38 +4,22 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.security.Principal;
 
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
-import org.apache.catalina.authenticator.Constants;
 import org.apache.catalina.connector.Request;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.code.aon.jaas.auth.AuthPrincipal;
 
 public class LoginServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoginServlet.class.getName());
-	
-	public static final String LOGIN_CONTEXT_INIT_PARAM = "loginContext";
-	
-	private String loginContext;
-	
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
-	    this.loginContext = StringUtils.trimToNull(config.getInitParameter(LOGIN_CONTEXT_INIT_PARAM));
-	}
 	
 	@Override
 	protected void doPost(HttpServletRequest request,
@@ -49,57 +33,43 @@ public class LoginServlet extends HttpServlet {
 			f.setAccessible(true); // grant access to (protected) field
 			return (Request)f.get(request);				
 		} catch (Throwable e) {
-			e.printStackTrace();
+			LOGGER.error( e.getMessage(), e );
 		}
 		return null;
 	}
 	
-	private AuthPrincipal getAuthPrincipal( HttpServletRequest request ) {
-		// The CallbackHandler gets the username and password from
-		// request parameters in the URL; therefore, the ServletRequest is
-		// passed to the CallbackHandler constructor
-		WebCallbackHandler webcallback = new WebCallbackHandler(request);
-
-		try {
-			LoginContext lcontext = new LoginContext(loginContext, webcallback);
-			lcontext.login();
-			for( Principal principal : lcontext.getSubject().getPrincipals() ) {
-				if ( principal instanceof AuthPrincipal ) {
-					return (AuthPrincipal) principal;
-				}
-			}				
-		} catch (LoginException e) {
-			LOGGER.error(e.getMessage(),e);
-		}		
-		return null;
-	}
-
 	@Override
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest httpRequest,
+			HttpServletResponse httpResponse) throws ServletException, IOException {
 
-		Request req = getRealRequest(request);
-		if ( req != null ) {
-			Session session = req.getSessionInternal(false);
+		Request request = getRealRequest(httpRequest);
+		if ( request != null ) {
+			Session session = request.getSessionInternal(false);
 			if ( session == null ) {
-				session = req.getSessionInternal();
-				session.setAuthType(Constants.FORM_METHOD);
+				session = request.getSessionInternal();
+	            Manager manager = request.getContext().getManager();
+	            manager.changeSessionId(session);
+	            request.changeSessionId(session.getId());
 			}
+			
 			Principal principal = session.getPrincipal(); 
 			if ( principal == null ) {
-				principal = getAuthPrincipal(request);
+				String username = httpRequest.getParameter("j_username");
+				String password = httpRequest.getParameter("j_password");
+				principal = request.getContext().getRealm().authenticate(username, password);
 				if ( principal != null ) {
+					request.setUserPrincipal(principal);
 					session.setPrincipal(principal);
-					// req.setUserPrincipal(principal);
 				}
 			}
 			if ( principal != null ) {
-				response.sendRedirect("./home.jsf");
+				httpResponse.setHeader("p3p", "CP=\"NOI ADM DEV COM NAV OUR STP\"");
+				httpResponse.sendRedirect("index.jsp");
 			} else {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
 		} else {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);			
+			httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);			
 		}
 		
 	}
