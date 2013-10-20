@@ -144,15 +144,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private static String[] SKIP_VARIABLES = { "CONVENIO", "SISTEMA", "NETO",
 			"ANTICIPO_ATRASOS" };
 
-	private static boolean skipVariable(Variable variable) {
-		String name = variable.getName();
-		for (String skip : SKIP_VARIABLES) {
-			if (skip.equals(name))
-				return true;
-		}
-		return false;
-	}
-
 	static class VisibilityImpl implements HasVisibility {
 
 		private com.google.gwt.dom.client.Element elem;
@@ -920,6 +911,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private HasValue<String> fxhasValue;
 
+	private Payment totalLiquidPayment = null;
+
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
 		initPaymentsTable();
@@ -985,13 +978,30 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		Payment draftPayment = new Payment();
 
-		draftPayment.setExpression("NETO(" + totalLiquidLabel.getValue() + ")");
+		String str = totalLiquidLabel.getValue();
+
+		Double liquid = null;
+		try {
+			liquid = Double.parseDouble(str);
+		} catch (NumberFormatException e) {
+			liquid = parse(str);
+		} catch (NullPointerException e) {
+			liquid = 0.00;
+		}
+
+		draftPayment.setExpression("NETO(" + liquid + ")");
 		draftPayment.setScope(Scope.SALARY);
 		draftPayment.setName("NETO");
 		draftPayment.setIrpfExpression("_P");
 		draftPayment.setQuoteExpression("_P");
 		draftPayment.setType(Payment.Type.SALARY_SUPPLEMENTS);
-		draftPayment.setDescription("SUPLEMENTO NETO");
+		if (totalLiquidPayment != null) {
+			draftPayment.setId(totalLiquidPayment.getId());
+			draftPayment.setDescription(totalLiquidPayment.getDescription());
+
+		} else {
+			draftPayment.setDescription("SUPLEMENTO NETO");
+		}
 
 		draftPayment.setEndDate(salaryDraftObject.getEndDate());
 		draftPayment.setStartDate(salaryDraftObject.getStartDate());
@@ -1001,7 +1011,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		salaryDraftObject.addDraftPayment(draftPayment);
 
 		salaryDraftObject.calculate(this);
-		
+
+		totalLiquidPayment = draftPayment;
+
 	}
 
 	private void setDbVisible(boolean visible) {
@@ -1536,6 +1548,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		int row = paymentsTable.getRowCount();
 		for (Payment payment : payments) {
+			if (!displayNow(payment))
+				continue;
+
 			// dumpPayment(deduction, tr++, AON.AON_ICON_ROW_SELECTOR);
 			if (payment.getAmount() != null) {
 				dumpItem(payment, row++, AON.AON_ICON_ROW_SELECTOR,
@@ -2098,6 +2113,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				.round(amount * 1000.00) / 1000.00);
 	}
 
+	private Double parse(String str) {
+		return str == null ? 0.00 : AON.CURRENCY_FORMAT.parse(str);
+	}
+
 	private void setDbStyleName(Label l2, HasText l1) {
 		setDbStyleName(l2, l1.getText(), l2.getText());
 	}
@@ -2313,4 +2332,32 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		return paymentsTable.getRowFormatter().getElement(idx);
 	}
 
+	// TODO : ???
+	private boolean displayNow(Payment payment) {
+		Short month = payment.getMonth();
+		if (month == null)
+			return true;
+		Date start = salaryDraftObject.getStartDate();
+		if (month < start.getMonth())
+			return false;
+		Date end = salaryDraftObject.getEndDate();
+		return (month <= end.getMonth());
+	}
+
+	private boolean displayNow(UndefinedPaymentVariable var) {
+		return displayNow(var.getPayment());
+	}
+
+	private boolean skipVariable(Variable variable) {
+		String name = variable.getName();
+		for (String skip : SKIP_VARIABLES) {
+			if (skip.equals(name))
+				return true;
+		}
+		if (variable instanceof UndefinedPaymentVariable
+				&& !displayNow((UndefinedPaymentVariable) variable))
+			return true;
+
+		return false;
+	}
 }

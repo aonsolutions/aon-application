@@ -143,10 +143,10 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		requestDataBuffer.append("&" + ISSUE_DATE + "="
 				+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
 
-		if (!enterpriseDataGrid.isAllSelected())
-			for (Enterprise enterprise : enterpriseDataGrid.getSelectedItems())
-				requestDataBuffer.append("&" + ENPERPRISES + "="
-						+ enterprise.getId());
+		for (Enterprise enterprise : enterpriseDataGrid.getSelectedItems())
+			requestDataBuffer.append("&" + ENPERPRISES + "="
+					+ enterprise.getId());
+
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open("POST", CALC_URL);
 		xhr.setRequestHeader("Content-type",

@@ -76,6 +76,7 @@ public class MonthListBox extends ListBox {
 			addItem(date);
 			DateUtils.addMonths2Date(date, 1);
 		}
+		int selected = getItemCount();
 		addItem(date);
 		DateUtils.addMonths2Date(date, 1);
 		while ( DateUtils.isAfterOrEquals(lastMonth, date) && ( getItemCount() <= VISIBLE_MONTHS ) ){
@@ -83,7 +84,7 @@ public class MonthListBox extends ListBox {
 			DateUtils.addMonths2Date(date, 1);
 		}
 		
-
+		setSelectedIndex(selected);
 	}
 	
 	

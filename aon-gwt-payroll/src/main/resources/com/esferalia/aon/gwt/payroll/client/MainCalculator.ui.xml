@@ -46,25 +46,6 @@
 									ui:field="monthListBox" />
 							</td>
 						</tr>
-						<tr style="height:90%;">
-							<td class="aon-panelGrid-odd aon-height-all ">
-								<g:Label styleName="aon-outputLabel" text="Empresas" />
-							</td>
-							<td class="aon-panelGrid-even aon-width-all aon-height-all" >
-								<aon:SelectDataGrid  nameLabel="Empresa" ui:field="enterpriseDataGrid" styleName="aon-width-all aon-height-all" />
-							</td>
-						</tr>
-						<tr>
-							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel" text="Guardar" />
-							</td>
-							<td class="aon-panelGrid-even">
-								<g:HorizontalPanel>
-									<g:RadioButton name="saveGroup">Si</g:RadioButton>
-									<g:RadioButton name="saveGroup">No</g:RadioButton>
-								</g:HorizontalPanel>
-							</td>
-						</tr>
 						<tr>
 							<td class="aon-panelGrid-odd">
 								<g:Label styleName="aon-outputLabel" text="Sobreescribir Antiguas" />
@@ -89,10 +70,29 @@
 						</tr>
 						<tr>
 							<td class="aon-panelGrid-odd">
+								<g:Label styleName="aon-outputLabel" text="Guardar" />
+							</td>
+							<td class="aon-panelGrid-even">
+								<g:HorizontalPanel>
+									<g:RadioButton name="saveGroup">Si</g:RadioButton>
+									<g:RadioButton name="saveGroup">No</g:RadioButton>
+								</g:HorizontalPanel>
+							</td>
+						</tr>
+						<tr>
+							<td class="aon-panelGrid-odd">
 								<span class="aon-outputText"></span>
 							</td>
 							<td class="aon-panelGrid-even">
 								<g:Button ui:field="calcButton">Calcular</g:Button>
+							</td>
+						</tr>
+						<tr style="height:90%;">
+							<td class="aon-panelGrid-odd aon-height-all ">
+								<g:Label styleName="aon-outputLabel" text="Empresas" />
+							</td>
+							<td class="aon-panelGrid-even aon-width-all aon-height-all" >
+								<aon:SelectDataGrid  nameLabel="Empresa" ui:field="enterpriseDataGrid" styleName="aon-width-all aon-height-all" />
 							</td>
 						</tr>
 					</table>

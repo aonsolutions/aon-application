@@ -278,7 +278,8 @@ public class Employees extends ResizeComposite implements
 						workplace.getId(),
 						agreement != null ? agreement.getId() : null,
 						employeesService, new BooleanEventMetaData(
-								"DIAS_EFECTIVOS"), new BooleanEventMetaData(
+								"DIAS_EFECTIVOS"),new BooleanEventMetaData(
+										"DIAS_VACACIONES"), new BooleanEventMetaData(
 								"HUELGA"), new EventMetaData("OBSERVACIONES"));
 				Date date = new Date();
 

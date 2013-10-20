@@ -1302,7 +1302,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 		IIrpfCalculatorContext irpfCalculatorContext = getIrpfCalculatorContext(
 				connection, startDate, endYear, contractCriteria);
-		double irpf =  IrpfCalculator.calculate(irpfCalculatorContext);
+		double irpf = IrpfCalculator.calculate(irpfCalculatorContext);
 		return irpf;
 	}
 
@@ -1327,9 +1327,26 @@ public class SQLContractSalaryCalculatorContext implements
 
 	private boolean isHoliday(Calendar day) {
 		Date date = day.getTime();
-		Object holidays = this.contractExpressionContext.getVariable(HOLIDAYS,
-				date, date, Object.class);
-		return holidays != null;
+		ITimedVariable<?> holidays = this.contractExpressionContext
+				.getVariable(HOLIDAYS, date, date);
+		if (holidays == null)
+			return false;
+
+		try {
+			Period period = holidays.getPeriod();
+			Object value = holidays.getValue(period);
+			int days = Integer.parseInt(value.toString());
+
+			Calendar holiday = Calendar.getInstance();
+			holiday.setTime(period.getStart());
+			holiday.add(Calendar.DAY_OF_MONTH, days);
+			
+			return day.compareTo(holiday) <= 0 ;
+
+		} catch (Error e) {
+			return false;
+		}
+
 	}
 
 	/*
