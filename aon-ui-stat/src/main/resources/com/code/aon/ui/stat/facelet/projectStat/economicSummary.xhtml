@@ -154,6 +154,7 @@
 					['#{bundle.tas_labour}'      , #{projectStat.totalDailyTracking}]
 				]);
 				var options = {
+					tooltip: {isHtml: true},
 					colors:['#669966','#980000','#6699FF' ]
 				};
 				var chart = new google.visualization.PieChart(document.getElementById('pie_chart_div'));
@@ -176,6 +177,7 @@
 				]);
 				options = {
 					legend: {position: 'bottom'},
+					tooltip: {isHtml: true},
 					colors:['#99FF33','#669966','#980000','#6699FF', '#{projectStat.totalResult lt 0?'red':'green'}']
 				};
 				 chart = new google.visualization.BarChart(document.getElementById('bar_chart_div'));
