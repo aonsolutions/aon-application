@@ -29,7 +29,6 @@ import static com.code.aon.ui.common.ICommonMessages.STATUS;
 import static com.code.aon.ui.common.ICommonMessages.WEB;
 
 import java.io.IOException;
-import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -84,6 +83,7 @@ import com.code.aon.report.ReportException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.report.export.ReportExporter;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.master.TargetDB;
 
 public class RegistryController extends BasicController {
 
@@ -451,10 +451,17 @@ public class RegistryController extends BasicController {
 					+",'"+AonUtil.getMessage(BLOCKED)+"'"
 					+") "
 					
-					+((!pojoClass.isAssignableFrom(Target.class))?"":(",ELT(c.advertising+1"+",'"+Advertising.ALLOWED.getName(AonUtil.getCurrentLocale())+"'"+",'"+Advertising.AUTO_EXCLUSION.getName(AonUtil.getCurrentLocale())+"'"+",'"+Advertising.DENIED.getName(AonUtil.getCurrentLocale())+"'"+",'"+Advertising.ROBINSON.getName(AonUtil.getCurrentLocale())+"'"+") "))
+					+((!TargetDB.class.isAssignableFrom(pojoClass))?"":(",ELT(c.advertising+1"+",'"+Advertising.ALLOWED.getName(AonUtil.getCurrentLocale())+"'"+",'"+Advertising.AUTO_EXCLUSION.getName(AonUtil.getCurrentLocale())+"'"+",'"+Advertising.DENIED.getName(AonUtil.getCurrentLocale())+"'"+",'"+Advertising.ROBINSON.getName(AonUtil.getCurrentLocale())+"'"+") "))
 					+ getSqlTables(pojoClass);
 			String where = getSqlCriteria(pojoClass);
 			select = select + " " + where;
+			
+			if (TargetDB.class.isAssignableFrom(pojoClass)) {
+				// Se chequea el caso especial del @Formula que hay en Target para saber si es cliente o no.
+				select = StringUtils.replace(select, "c.customer = 'true'", "(1 IN (SELECT 1 FROM customer WHERE registry = c.registry))");
+				select = StringUtils.replace(select, "c.customer = 'false'", "(1 NOT IN (SELECT 1 FROM customer WHERE registry = c.registry))");
+			}
+
 			int i = StringUtils.indexOfIgnoreCase(select, " order by ");
 			if (i == -1) {
 				select = select + " GROUP BY c.registry";	
@@ -478,7 +485,7 @@ public class RegistryController extends BasicController {
 				String alias= (String) o[4];
 				String status= (String) o[5];
 				String advertising = null;
-				if (pojoClass.isAssignableFrom(Target.class)) {
+				if (TargetDB.class.isAssignableFrom(pojoClass)) {
 					advertising = (String) o[6];	
 				}
 				ITransferObject rr = new RegistryReport(id, document, name,phone, alias, status, advertising);
