@@ -533,7 +533,7 @@ public class SQLContractSalaryCalculatorContext implements
 		// initBonusStmt();
 		// initEmbargoStmt();
 		initCeventStmt();
-		// initLeaveStmt();
+		initLeaveStmt();
 		// initSystemCosts();
 		initSystemDeductions();
 		initSystemPayments();
@@ -1793,7 +1793,7 @@ public class SQLContractSalaryCalculatorContext implements
 		this.contractExpressionContext.addVariable(SELF, this, startDate,
 				endDate);
 
-		// loadContractLeave(this.contractExpressionContext);
+		loadContractLeave(this.contractExpressionContext);
 		loadContractData(this.contractExpressionContext);
 		loadPersonData(this.contractExpressionContext);
 
