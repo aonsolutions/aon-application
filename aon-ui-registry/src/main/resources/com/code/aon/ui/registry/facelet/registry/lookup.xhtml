@@ -18,7 +18,8 @@
 				<aon:inputText id="#{pojoName}_name#{lookupSuffix}"
 					value="#{lookupInputNameValue}" 
 					disabled="#{lookupInputNameDisabled}" size="#{lookupInputSuggestSize}"
-					rendered="#{lookupInputNameValue != null}" />
+					rendered="#{lookupInputNameValue != null}"
+					ajaxSingle="true" />
 			</c:if>
 			<ui:insert name="afterLookupContent2"/>
 		</ui:define>
