@@ -2,6 +2,8 @@ package com.esferalia.aon.payroll.ctsql2mysql;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -212,7 +214,7 @@ public class Ctsql2Mysql {
 		OptionBuilder.hasArgs();
 		OptionBuilder.withArgName("table");
 		OptionBuilder.withType(String.class);
-		OptionBuilder.withValueSeparator((char)0);
+		OptionBuilder.withValueSeparator((char) 0);
 		OptionBuilder
 				.withDescription("Tablas de ctsql que lanzan la sincronización ( sólo para el demonio ). ");
 		Option tablesOption = OptionBuilder.create("table");
@@ -228,7 +230,7 @@ public class Ctsql2Mysql {
 		OptionBuilder.hasArgs();
 		OptionBuilder.withArgName("command");
 		OptionBuilder.withType(String.class);
-		OptionBuilder.withValueSeparator((char)0);
+		OptionBuilder.withValueSeparator((char) 0);
 		OptionBuilder
 				.withDescription("Comandos despues de la sincronización ( sólo para el demonio ). ");
 		Option commandsOption = OptionBuilder.create("command");
@@ -259,7 +261,7 @@ public class Ctsql2Mysql {
 		HelpFormatter helpFormatter = new HelpFormatter();
 
 		try {
-			
+
 			CommandLine line = parser.parse(options, args);
 
 			if (line.hasOption(helpOption.getOpt())) {
@@ -324,7 +326,7 @@ public class Ctsql2Mysql {
 			String delayString = line
 					.getOptionValue(delayOption.getOpt(), "15");
 			delay = Short.parseShort(delayString);
-			
+
 			commands = line.getOptionValues(commandsOption.getOpt());
 
 		} catch (Exception e) {
@@ -473,10 +475,34 @@ public class Ctsql2Mysql {
 		}
 	}
 
+	public void exec() throws IOException {
+		if (commands == null)
+			return;
+		for (String cmd : commands)
+			exec(cmd);
+	}
+
+	public void exec(String command) throws IOException {
+
+		MysqlDB.info("ctsql2mysql : command {}", command);
+
+		Runtime runtime = Runtime.getRuntime();
+		String cmd[] = { "/bin/sh", "-c", command };
+		Process process = runtime.exec(cmd);
+
+		InputStream out = process.getInputStream();
+		new InputStream2Output(out, System.out).run();
+
+		InputStream err = process.getErrorStream();
+		new InputStream2Output(err, System.err).run();
+	}
+
 	public static void main(String[] args) throws SQLException,
 			ClassNotFoundException, java.text.ParseException, AonSQLException,
 			IOException, InterruptedException {
-		new Ctsql2Mysql(args).transfer();
+		Ctsql2Mysql ctsql2Mysql = new Ctsql2Mysql(args);
+		ctsql2Mysql.transfer();
+		ctsql2Mysql.exec();
 	}
 
 	public boolean isDryRun() {
@@ -491,6 +517,30 @@ public class Ctsql2Mysql {
 	private static URL getScript(String name) {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		return cl.getResource(name);
+	}
+	
+	static class InputStream2Output implements Runnable {
+
+		private InputStream in;
+		private OutputStream out;
+
+		public InputStream2Output(InputStream in, OutputStream out) {
+			this.in = in;
+			this.out = out;
+		}
+
+		@Override
+		public void run() {
+			try {
+				int read = -1;
+				byte b[] = new byte[256];
+				while ((read = in.read(b)) != -1)
+					out.write(b, 0, read);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
 	}
 
 }

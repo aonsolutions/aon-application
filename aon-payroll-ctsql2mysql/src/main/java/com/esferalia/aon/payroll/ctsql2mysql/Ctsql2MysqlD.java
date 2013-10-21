@@ -57,29 +57,6 @@ public class Ctsql2MysqlD {
 		}
 	}
 
-	static class InputStream2Output implements Runnable {
-
-		private InputStream in;
-		private OutputStream out;
-
-		public InputStream2Output(InputStream in, OutputStream out) {
-			this.in = in;
-			this.out = out;
-		}
-
-		@Override
-		public void run() {
-			try {
-				int read = -1;
-				byte b[] = new byte[256];
-				while ((read = in.read(b)) != -1)
-					out.write(b, 0, read);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		}
-	}
 
 	private class Ctsql2MysqlDump implements Runnable, InotifyEventListener {
 
@@ -121,7 +98,7 @@ public class Ctsql2MysqlD {
 			try {
 				ctsql2Mysql.transfer();
 				MysqlDB.info("ctsql2mysqld : exec ");
-				exec();
+				ctsql2Mysql.exec();
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -214,28 +191,6 @@ public class Ctsql2MysqlD {
 		}
 	}
 
-	private void exec() throws IOException {
-		String commands[] = ctsql2Mysql.getCommands();
-		if (commands == null)
-			return;
-		for (String cmd : commands)
-			exec(cmd);
-	}
-
-	private void exec(String command) throws IOException {
-
-		MysqlDB.info("ctsql2mysqld : command {}", command);
-
-		Runtime runtime = Runtime.getRuntime();
-		String cmd [] = {"/bin/sh" , "-c", command };
-		Process process = runtime.exec(cmd);
-
-		InputStream out = process.getInputStream();
-		new InputStream2Output(out, System.out).run();
-
-		InputStream err = process.getErrorStream();
-		new InputStream2Output(err, System.err).run();
-	}
 
 	/**
 	 * @param args
