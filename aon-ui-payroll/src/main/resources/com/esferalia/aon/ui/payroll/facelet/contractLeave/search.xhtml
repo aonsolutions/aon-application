@@ -7,24 +7,82 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="salarySearch">
+		<aon:form id="contractLeaveSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.payroll_contractLeave_module}" />
-				<ui:param name="controller" value="#{contract}" />
-				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="controller" value="#{contractLeave}" />
 			</ui:include>
 
-			<aon:methodParam name="searchAction" value="contractLeave_list" />
-			<!--  
-			<aon:methodParam name="searchActionListener" value="#{contractLeave.onSearchContract}" type="actionListener" />
-			-->
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{contract}" />
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{contractLeave}" />
 				
 				<ui:define name="searchContent">
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/searchContent.xhtml" />					
+					
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{contractLeaveSearch.contract}" />
+						<ui:param name="lookupControllerListener" value="#{contractLeave.contractFilter}" />
+					</ui:include>
+					
+					<aon:outputLabel for="ContractLeave_startDate"
+						value="#{bundle.payroll_leaveBatch_leave_date}" />
+					<aon:div>
+						<aon:outputLabel for="ContractLeave_startDate-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="ContractLeave_startDate-From"
+							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					
+						<aon:outputLabel for="ContractLeave_startDate-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="ContractLeave_startDate-To"
+							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+<!--  
+					<aon:outputLabel for="ContractLeave_type"
+						value="#{bundle.payroll_contractLeave_leaveCause}" />
+					<aon:selectOneMenu id="ContractLeave_type"
+						valueChangeListener="#{contractLeave.addExpression}">
+						<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						<f:selectItems value="#{payrollCollections.leaveTypes}" />
+					</aon:selectOneMenu>
+-->					
+
+					<aon:outputLabel for="ContractLeave_endDate"
+						value="#{bundle.payroll_leaveBatch_discharge_date}" />
+					<aon:div>
+						<aon:outputLabel for="ContractLeave_endDate-From" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_from}:" />
+						<aon:selectInputDate id="ContractLeave_endDate-From"
+							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+						<aon:outputLabel for="ContractLeave_endDate-To" styleClass="aon-form-date-label"
+							value="#{bundle.aon_date_to}:" />
+						<aon:selectInputDate id="ContractLeave_endDate-To"
+							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+<!--  
+					<aon:outputLabel for="ContractLeave_dischargeCause"
+						value="#{bundle.payroll_contractLeave_dischargeCause}" />
+					<aon:selectOneMenu id="ContractLeave_dischargeCause"
+						valueChangeListener="#{contractLeave.addEqualExpression}">
+						<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						<f:selectItems value="#{payrollCollections.dischargeCauses}" />
+					</aon:selectOneMenu>
+-->					
+				
+					<aon:outputLabel for="ContractLeave_description"
+						value="#{bundle.aon_remark}" />
+					<aon:inputText id="ContractLeave_description"
+						size="60" maxlength="64"
+						valueChangeListener="#{contractLeave.addExpression}" />
+				
 				</ui:define>
 			</ui:decorate>
 

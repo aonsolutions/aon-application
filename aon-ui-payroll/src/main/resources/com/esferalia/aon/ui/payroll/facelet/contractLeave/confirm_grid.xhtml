@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+	
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:param name="controller" value="#{contractLeaveDetail}" />
+		<ui:define name="columns">
+		
+			<aon:column alias="ContractLeaveDetail.confirmOrder" 
+				styleClass="aon-editDataTable-textColumn aon-width-70 aon-nowrap">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractLeaveDetail_confirmOrder" 
+						value="#{bundle.payroll_contractLeave_confirmfOrder}" />
+				</f:facet>
+				<aon:outputText value="#{to.confirmOrder}" rendered="#{formList}"/>
+				<aon:inputText id="ContractLeaveDetail_confirmOrder" rendered="#{formEdit}"
+					value="#{controller.to.confirmOrder}" required="#{true}" >
+					<f:validateDoubleRange />
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:inputText id="ContractLeaveDetail_confirmOrder-New" rendered="#{formNew}"
+						value="#{controller.to.confirmOrder}" required="#{true}" >
+						<f:validateDoubleRange />
+					</aon:inputText>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column alias="ContractLeaveDetail.date"
+				styleClass="aon-editDataTable-dateColumn aon-width-150">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractLeaveDetail_date" value="#{bundle.aon_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.date}" rendered="#{formList}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="ContractLeaveDetail_date" rendered="#{formEdit}"
+					value="#{controller.to.date}" required="#{true}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}"/>
+				<f:facet name="footer">
+					<aon:selectInputDate id="ContractLeaveDetail_date-New" rendered="#{formNew}"
+						value="#{controller.to.date}" required="#{true}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column alias="ContractLeaveDetail.collegeNumber"
+				styleClass="aon-editDataTable-textColumn aon-width-auto">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractLeaveDetail_collegeNumber" 
+						value="#{bundle.payroll_contractLeave_collegeNumber}" />
+				</f:facet>
+				<aon:outputText value="#{to.collegeNumber}" rendered="#{formList}" />
+				<aon:inputText id="ContractLeaveDetail_collegeNumber"
+					rendered="#{formEdit}" size="64"
+					value="#{controller.to.collegeNumber}" maxlength="64" />
+				<f:facet name="footer">
+					<aon:inputText id="ContractLeaveDetail_collegeNumber-New"
+						rendered="#{formNew}" size="64"
+						value="#{controller.to.collegeNumber}" maxlength="64" />
+				</f:facet>
+			</aon:column>
+					
+			<aon:column alias="ContractLeaveDetail.cias"
+				styleClass="aon-editDataTable-textColumn aon-width-auto">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractLeaveDetail_cias" 
+						value="#{bundle.payroll_contractLeave_cias}" />
+				</f:facet>
+				<aon:outputText value="#{to.cias}" rendered="#{formList}" />
+				<aon:inputText id="ContractLeaveDetail_cias"
+					rendered="#{formEdit}" size="64"
+					value="#{controller.to.cias}" maxlength="64" />
+				<f:facet name="footer">
+					<aon:inputText id="ContractLeaveDetail_cias-New"
+						rendered="#{formNew}" size="64"
+						value="#{controller.to.cias}" maxlength="64" />
+				</f:facet>
+			</aon:column>
+			
+	</ui:define>
+	
+</ui:decorate>
+	
+</ui:composition>

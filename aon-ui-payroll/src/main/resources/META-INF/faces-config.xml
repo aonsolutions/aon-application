@@ -584,7 +584,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.ContractLeaveDetail</value>
+			<value>com.esferalia.aon.payroll.ContractLeave</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -596,19 +596,95 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ContractLeaveDetail_date desc</value>
+			<value>ContractLeave_startDate desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contractLeaveSearch}</value>
 				<value>#{contractLeaveControllerListener}</value>
+				<value>#{contractLeaveDetailChildListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
+		<managed-bean-name>contractLeaveSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.contract.ContractLeaveSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
 		<managed-bean-name>contractLeaveControllerListener</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.contract.ContractLeaveControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>contractLeaveDetailChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>contractLeaveDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ContractLeaveDetail_contractLeave_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>contractLeaveDetail</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.BatchDetailController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.ContractLeaveDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractLeave</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CcontractLeaveDetail_date</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>contractLeave</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>contractLeave.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contractLeaveSearch}</value>
+				<value>#{contractLeaveDetailListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>contractLeaveDetailListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.contract.ContractLeaveDetailControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	

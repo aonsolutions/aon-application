@@ -8,38 +8,41 @@
 
 	<ui:define name="content">
 		<aon:form>
-			<aon:methodParam name="searchAction" value="contractLeave_search" />
-			<aon:methodParam name="rowSelectorAction" value="contractLeave_form" />
-			<aon:methodParam name="rowSelectorActionListener" default="#{contractLeave.onSelectContract}" type="actionListener" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.payroll_contractLeave_module}" />
-				<ui:param name="controller" value="#{contract}" />
-				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="controller" value="#{contractLeave}" />
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:methodParam name="rowSelectorAction" value="contractLeave_form" />
-				<aon:methodParam name="rowSelectorActionListener" value="#{contractLeave.onSelectContract}" type="actionListener" />
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{contract}" />
+					<ui:param name="controller" value="#{contractLeave}" />
 					
 					<ui:define name="columns">
 						
-						<aon:column alias="Contract.person.firstSurname,Contract.person.registry.name"
+						<aon:column alias="ContractLeave.id"
+							styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.id}" />
+						</aon:column>
+
+						<aon:column alias="ContractLeave.contract.person.firstSurname,ContractLeave.contract.person.registry.name"
 							styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.payroll_salary_employee}" />
 							</f:facet>
-							<aon:outputText value="#{to.person.registry.fullName}">
+							<aon:outputText value="#{to.contract.person.registry.fullName}">
 								<aon:abbreviateConverter maxWidth="40" />
 							</aon:outputText>
 						</aon:column>
 						
-						<aon:column alias="Contract.startDate" styleClass="aon-editDataTable-dateColumn aon-width-150">
+						<aon:column alias="ContractLeave.startDate" 
+							styleClass="aon-editDataTable-dateColumn aon-width-150">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_start_date}" />
+								<aon:outputText value="#{bundle.payroll_leaveBatch_leave_date}" />
 							</f:facet>
 							<aon:outputText value="#{to.startDate}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -47,9 +50,28 @@
 							</aon:outputText>		
 						</aon:column>
 					
-						<aon:column alias="Contract.endDate" styleClass="aon-editDataTable-dateColumn aon-width-150">
+						<aon:column alias="ContractLeave.dischargeCause"
+							styleClass="aon-editDataTable-textColumn aon-width-250">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_end_date}" />
+								<aon:outputText value="#{bundle.payroll_contractLeave_leaveCause}" />
+							</f:facet>
+							<aon:outputText value="#{to.type}" />
+						</aon:column>
+						
+						<aon:column alias="ContractLeave.description"
+							styleClass="aon-editDataTable-textColumn aon-width-250">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_remark}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}">
+								<aon:abbreviateConverter maxWidth="30" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column alias="ContractLeave.endDate" 
+							styleClass="aon-editDataTable-dateColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.payroll_leaveBatch_discharge_date}" />
 							</f:facet>
 							<aon:outputText value="#{to.endDate}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -57,24 +79,12 @@
 							</aon:outputText>		
 						</aon:column>
 						
-						<aon:column alias="Contract.workPlace.enterprise.registry.name"
+						<aon:column alias="ContractLeave.dischargeCause"
 							styleClass="aon-editDataTable-textColumn aon-width-250">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_company}" />
+								<aon:outputText value="#{bundle.payroll_contractLeave_dischargeCause}" />
 							</f:facet>
-							<aon:outputText value="#{to.workPlace.enterprise.registry.fullName}">
-								<aon:abbreviateConverter maxWidth="30" />
-							</aon:outputText>
-						</aon:column>
-						
-						<aon:column alias="Contract.workPlace.description"
-							styleClass="aon-editDataTable-textColumn aon-width-250">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.payroll_workplace}" />
-							</f:facet>
-							<aon:outputText value="#{to.workPlace.description}">
-								<aon:abbreviateConverter maxWidth="30" />
-							</aon:outputText>
+							<aon:outputText value="#{to.dischargeCause}" />
 						</aon:column>
 						
 					</ui:define>

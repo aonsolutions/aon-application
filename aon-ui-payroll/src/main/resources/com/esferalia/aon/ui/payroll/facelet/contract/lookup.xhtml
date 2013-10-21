@@ -11,10 +11,11 @@
 		<ui:param name="lookupInputSuggestWidth" value="400"/>
 		<ui:param name="lookupInputSuggestHeight" value="200"/>
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.person.fullName}" />
-		<aon:valueParam name="lookupInputSuggestExpression" default="#{lto.person.fullName}"/>		
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.person.fullName} (#{lto.person.registry.document})"/>		
 		<ui:param name="skipNewButton" value="true" />
 		<ui:param name="searchButtonTitle" value="#{bundle.payroll_contract_selection}" />
 		<ui:param name="lookupLabel" value="#{bundle.payroll_contract}" />
+		
 	</ui:include>
 	
 </ui:composition>
