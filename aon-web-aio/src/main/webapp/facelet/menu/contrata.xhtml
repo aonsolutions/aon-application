@@ -98,7 +98,7 @@
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="contractLeave" 
 												action="contractLeave_search" 
-												actionListener="#{contract.onEditSearch}"
+												actionListener="#{contractLeave.onEditSearch}"
 												value="#{bundle.payroll_contractLeave_module}" />
 										</aon:div>
 									</c:if>
@@ -187,12 +187,12 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<h:outputLink target="_blank" value="http://www.sepe.es/">
-										<aon:outputText value="S.E.P.E. - Servicio Publico de Empleo Estatal"/>	
+										<aon:outputText value="#{bundle.sepe_contrata_externalLink_sepe}"/>	
 									</h:outputLink>
 								</aon:div>	
 								<aon:div styleClass="aon-direct-access-list-element">
 									<h:outputLink target="_blank" value="http://www.seg-social.es">
-										<aon:outputText value="S.S. - Seguridad Social"/>	
+										<aon:outputText value="#{bundle.sepe_contrata_externalLink_ss}"/>	
 									</h:outputLink>	
 								</aon:div>
 							</aon:div>
