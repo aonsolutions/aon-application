@@ -23,6 +23,10 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.event.ControllerAdapter;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.calendar.CalendarHoliday;
@@ -41,6 +45,7 @@ public class CalendarController extends BasicController {
 	private Calendar masterCalendar;
 	private Integer calendarId;
 	private Calendar currentCalendar;
+	private IControllerListener excludeCurrentCalendar;
 	
 	public Integer getCalendarId() {
 		return calendarId;
@@ -99,20 +104,40 @@ public class CalendarController extends BasicController {
 		this.year = year;
 	}
 	
+	public IControllerListener getExcludeCurrentCalendar() {
+		if ( this.excludeCurrentCalendar == null ) {
+			this.excludeCurrentCalendar = new ControllerAdapter() {
+				@Override
+				public void beforeModelInitialized(ControllerEvent event)
+						throws ControllerListenerException {
+					IController controller = event.getController();
+					Calendar c = (Calendar) getTo();
+					try {
+						String alias = controller.getFieldName(IEntityAlias.CALENDAR_ID);
+						controller.getCriteria().addNotEqualExpression(alias, c.getId());
+					} catch (ManagerBeanException e) {
+						LOGGER.error("Error filtering current calendar", e);
+					}
+				}
+			};
+		}
+		return this.excludeCurrentCalendar;
+	}
+	
 	public DataModel getInheritHolidaysModel(){
 		return new ListDataModel(getInheritHolidays());
 	}
 	
 	public List<ITransferObject> getInheritHolidays(){
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
-		Calendar calendar = ((Calendar) getTo()).getCalendar();
-		if(calendar!=null){
+		Calendar currentCalendar = ((Calendar) getTo()).getCalendar();
+		if(currentCalendar!=null){
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(CalendarHoliday.class);
 				Criteria criteria = new Criteria();
-				Expression e1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CALENDAR_HOLIDAY_CALENDAR_ID), calendar.getId()); 
-				calendar = calendar.getCalendar();
-				while(calendar!=null){
+				Expression e1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CALENDAR_HOLIDAY_CALENDAR_ID), currentCalendar.getId()); 
+				Calendar calendar = currentCalendar.getCalendar();
+				while(calendar!=null && calendar.getId()!=null && !calendar.getId().equals(currentCalendar.getId())){
 					Expression e2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CALENDAR_HOLIDAY_CALENDAR_ID), calendar.getId());
 					e1 = ExpressionUtilities.getOrExpression(e1, e2);
 					calendar = calendar.getCalendar();
@@ -141,14 +166,14 @@ public class CalendarController extends BasicController {
 	
 	public List<ITransferObject> getInheritPeriods(){
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
-		Calendar calendar = ((Calendar) getTo()).getCalendar();
-		if(calendar!=null){
+		Calendar currentCalendar = ((Calendar) getTo()).getCalendar();
+		if(currentCalendar!=null){
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(CalendarPeriod.class);
 				Criteria criteria = new Criteria();
-				Expression e1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CALENDAR_PERIOD_CALENDAR_ID), calendar.getId()); 
-				calendar = calendar.getCalendar();
-				while(calendar!=null){
+				Expression e1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CALENDAR_PERIOD_CALENDAR_ID), currentCalendar.getId()); 
+				Calendar calendar = currentCalendar.getCalendar();
+				while(calendar!=null && calendar.getId()!=null && !calendar.getId().equals(currentCalendar.getId())){
 					Expression e2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CALENDAR_PERIOD_CALENDAR_ID), calendar.getId());
 					e1 = ExpressionUtilities.getOrExpression(e1, e2);
 					calendar = calendar.getCalendar();
