@@ -242,7 +242,6 @@ public class Employees extends ResizeComposite implements
 				//
 
 				Agreement agreement = workplace.getAgreement();
-/*
 				EventMetaData fteMetaData = new EnumEventMetaData("FTE",
 						"DESEMPE\u00D1O",
 						"Desempe\u00F1o por Trabajador y Jornada", "", "4",
@@ -273,7 +272,7 @@ public class Employees extends ResizeComposite implements
 				 new EventMetaData("OBSERVACIONES"),
 				 new ConstantEventMetaData("PLUS_TURNICIDAD",
 				 "Plus de Turnicidad = (\u2211LT - \u2211LR - LTA) * CLT"));
-*/
+/*
 				final EventsDraftObject eventsDraftObject = new EventsDraftObject(
 						workplace.getId(),
 						agreement != null ? agreement.getId() : null,
@@ -281,6 +280,7 @@ public class Employees extends ResizeComposite implements
 								"DIAS_EFECTIVOS"),new BooleanEventMetaData(
 										"DIAS_VACACIONES"), new BooleanEventMetaData(
 								"HUELGA"), new EventMetaData("OBSERVACIONES"));
+*/
 				Date date = new Date();
 
 				eventsDraftObject.setPeriod(
