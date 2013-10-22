@@ -6,6 +6,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Product;
+import com.code.aon.product.ProductCategory;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -19,6 +20,7 @@ public class ItemSearchListener extends RegistrySearchListener {
 	private Supplier supplier;
 	private Supplier supplierParam;
 	private Product product;
+	private ProductCategory category;
 	
 	public ProductStatus[] getItemStatuses() {
 		return itemStatuses;
@@ -52,6 +54,14 @@ public class ItemSearchListener extends RegistrySearchListener {
 		this.product = product;
 	}
 
+	public ProductCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ProductCategory category) {
+		this.category = category;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		ProductStatus[] defaultItemStatus = {ProductStatus.ACTIVE};
@@ -64,6 +74,7 @@ public class ItemSearchListener extends RegistrySearchListener {
 		}
 		setSupplierParam((Supplier)supplierBean.createNewTo());
 		setProduct( (Product) BeanManager.getManagerBean(Product.class).createNewTo() );
+		setCategory( (ProductCategory) BeanManager.getManagerBean(ProductCategory.class).createNewTo() );
 		super.init();
 	}
 	
@@ -78,6 +89,9 @@ public class ItemSearchListener extends RegistrySearchListener {
 		}
 		if (getProduct() != null && getProduct().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.ITEM_PRODUCT_ID), getProduct().getId());
+		}
+		if (getCategory() != null && getCategory().getId() != null) {
+			criteria.addEqualExpression(getController().resolveAlias("Item_product_category<id"), getCategory().getId());
 		}
 		super.completeCriteria(criteria);
 	}

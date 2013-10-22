@@ -134,7 +134,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Product_category_name,Product_name,Product_code</value>
+			<value>Product_code,Product_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>suggestAlias</property-name>
@@ -790,7 +790,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Item_product_category_name,Item_product_name,Item_detail,Item_detail2,Item_product_code</value>
+			<value>Item_product_category&lt;name,Item_product_name,Item_detail,Item_detail2,Item_product_code</value>
 		</managed-property>
 		<managed-property>
 			<property-name>suggestAlias</property-name>

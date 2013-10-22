@@ -17,6 +17,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tag;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.TagType;
+import com.code.aon.product.ProductCategory;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
@@ -46,6 +47,8 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 	private Tag[] tags;
 	
 	private Supplier supplier;
+	
+	private ProductCategory category;
 	
 	public Supplier getSupplier() {
 		return supplier;
@@ -135,6 +138,14 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		}
 		return ids;
 	}			
+	
+	public ProductCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ProductCategory category) {
+		this.category = category;
+	}	
 
 	@Override
 	protected void init() throws ManagerBeanException {
@@ -150,6 +161,7 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		setTags( new Tag[]{EMPTY_TAG} );
 		IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
 		setSupplier((Supplier)supplierBean.createNewTo());
+		setCategory( (ProductCategory) BeanManager.getManagerBean(ProductCategory.class).createNewTo() );
 	}
 	
 	@Override
@@ -186,6 +198,9 @@ public class ProductSearchListener extends ControllerSearchListenerEx {
 		}
 		if (getSupplier() != null && getSupplier().getId() != null) {
 			criteria.addEqualExpression(getController().resolveAlias("Product_items_suppliers_supplier_id"), getSupplier().getId());
+		}
+		if (getCategory() != null && getCategory().getId() != null) {
+			criteria.addEqualExpression(getController().resolveAlias("Product_category<id"), getCategory().getId());
 		}
 	}
 	

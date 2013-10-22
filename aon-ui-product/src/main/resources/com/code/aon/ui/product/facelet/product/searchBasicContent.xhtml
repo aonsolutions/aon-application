@@ -24,8 +24,7 @@
 	<aon:outputLabel for="Product_category_id"
 		value="#{bundle.aon_category}" />
 	<aon:selectOneMenu id="Product_category_id"
-		value="#{productCollections.category}"
-		valueChangeListener="#{controller.addIdEqualExpression}">
+		value="#{searchController.category}">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{productCollections.categories}" />
 	</aon:selectOneMenu>
