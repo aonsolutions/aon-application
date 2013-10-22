@@ -150,7 +150,7 @@ public class AccountEntryController extends BasicController {
             flag = false;
 		}
 		setUpdatable(isPeriodActive() && flag);
-		setUpdatableViaWizard(isPeriodActive() && (type == AccountEntryType.COLLECTION || type == AccountEntryType.PAYMENT || isAccountInvoice()));
+		setUpdatableViaWizard(isPeriodActive() && (type == AccountEntryType.COLLECTION || type == AccountEntryType.PAYMENT || (isAccountInvoice() && StringUtils.indexOf(getBackAction(), "Invoice_form") == -1)));
 	}
 	
 	private boolean isAccountInvoice() {
@@ -166,10 +166,7 @@ public class AccountEntryController extends BasicController {
 	}
 	
 	public boolean isInvoiceNavigationEnabled() {
-		return isInvoice() && StringUtils.indexOf(getBackAction(), "Invoice_form") == -1;
-	}
-	public boolean isAccountInvoiceNavigationEnabled() {
-		return isAccountInvoice() && StringUtils.indexOf(getBackAction(), "Invoice_form") == -1;
+		return isInvoice() && !isAccountInvoice();
 	}
 
 	private boolean isAccountInvoice(AccountEntry entry) throws ManagerBeanException {
