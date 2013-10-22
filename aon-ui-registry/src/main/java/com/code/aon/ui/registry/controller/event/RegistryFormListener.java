@@ -135,6 +135,11 @@ public class RegistryFormListener extends ControllerAdapter {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		resetRegistryLines();
+	}
 
 	public void initDocument(Registry registry) {
 		registry.setType(RegistryType.LEGAL);
@@ -162,6 +167,15 @@ public class RegistryFormListener extends ControllerAdapter {
 		updateRegistryMedia(registry, fax, address);
 		updateRegistryMedia(registry, email, address);
 		updateRegistryMedia(registry, web, address);
+	}
+	
+	protected void resetRegistryLines() {
+		this.mainAddress = null;
+		this.phone = null;
+		this.cellular = null;
+		this.fax = null;
+		this.email = null;
+		this.web = null;		
 	}
 	
 	private RegistryAddress updateRegistryAddress(Registry registry, RegistryAddress address) throws ManagerBeanException {

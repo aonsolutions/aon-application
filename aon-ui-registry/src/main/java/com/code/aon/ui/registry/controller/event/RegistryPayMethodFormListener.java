@@ -88,6 +88,12 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 		updateRegistryPayMethod(registry);
 	}	
 	
+	@Override
+	protected void resetRegistryLines() {
+		super.resetRegistryLines();
+		this.registryPayMethod = null;
+	}
+
 	protected void updateRegistryBank(Registry registry) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
 		if (registryPayMethod != null) {
