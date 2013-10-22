@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
@@ -57,9 +58,18 @@
 						value="#{bundle.payroll_contractLeave_collegeNumber}" />
 				</f:facet>
 				<aon:outputText value="#{to.collegeNumber}" rendered="#{formList}" />
-				<aon:inputText id="ContractLeaveDetail_collegeNumber"
-					rendered="#{formEdit}" size="64"
-					value="#{controller.to.collegeNumber}" maxlength="64" />
+				<aon:div id="ContractLeaveDetail_collegeNumber-div" rendered="#{formEdit}">
+					<aon:inputText id="ContractLeaveDetail_collegeNumber"
+						value="#{controller.to.collegeNumber}" maxlength="8">
+						<a4j:support event="onchange" reRender="ContractLeaveDetail_collegeNumber-div" />
+					</aon:inputText>
+					<aon:outputText value="&#160;" 
+						rendered="#{contractLeave.validDischargeCollegeNumber and contractLeave.validDischargeCollegeNumber!=null}"
+						styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
+					<aon:outputText value="&#160;" 
+						rendered="#{!contractLeave.validDischargeCollegeNumber and contractLeave.validDischargeCollegeNumber!=null}"
+						styleClass="aon-icon-exception" style="padding-left: 15px;" />
+				</aon:div>
 				<f:facet name="footer">
 					<aon:inputText id="ContractLeaveDetail_collegeNumber-New"
 						rendered="#{formNew}" size="64"
@@ -74,9 +84,18 @@
 						value="#{bundle.payroll_contractLeave_cias}" />
 				</f:facet>
 				<aon:outputText value="#{to.cias}" rendered="#{formList}" />
-				<aon:inputText id="ContractLeaveDetail_cias"
-					rendered="#{formEdit}" size="64"
-					value="#{controller.to.cias}" maxlength="64" />
+				<aon:div id="ContractLeaveDetail_cias-div" rendered="#{formEdit}">
+					<aon:inputText id="ContractLeaveDetail_cias"
+						value="#{controller.to.cias}" maxlength="11">
+						<a4j:support event="onchange" reRender="ContractLeaveDetail_cias-div" />
+					</aon:inputText>
+					<aon:outputText value="&#160;" 
+						rendered="#{contractLeave.validLeaveCias and contractLeave.validLeaveCias!=null}"
+						styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
+					<aon:outputText value="&#160;" 
+						rendered="#{!contractLeave.validLeaveCias and contractLeave.validLeaveCias!=null}"
+						styleClass="aon-icon-exception" style="padding-left: 15px;" />
+				</aon:div>
 				<f:facet name="footer">
 					<aon:inputText id="ContractLeaveDetail_cias-New"
 						rendered="#{formNew}" size="64"

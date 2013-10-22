@@ -12,6 +12,7 @@ import com.esferalia.aon.payroll.Contract;
 public class ContractLeaveSearchListener extends ControllerSearchListener{
 	
 	private Contract contract;
+	private boolean active;
 	
 	public Contract getContract() {
 		return contract;
@@ -21,10 +22,19 @@ public class ContractLeaveSearchListener extends ControllerSearchListener{
 		this.contract = contract;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
 		setContract((Contract) contractBean.createNewTo());
+		setActive(true);
 	}
 	
 	@Override
@@ -33,6 +43,12 @@ public class ContractLeaveSearchListener extends ControllerSearchListener{
 			criteria.addEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_CONTRACT_ID), getContract().getId());			
 		} else {
 			// TODO: FUTURE: filtrar los contratos segun se este en el dominio parent o no
+		}
+		if(isActive()){
+			this.getController();
+			criteria.addNullExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE));			
+		} else {
+			criteria.addNotNullExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE));			
 		}
 	}
 	

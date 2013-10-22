@@ -41,15 +41,6 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
-<!--  
-					<aon:outputLabel for="ContractLeave_type"
-						value="#{bundle.payroll_contractLeave_leaveCause}" />
-					<aon:selectOneMenu id="ContractLeave_type"
-						valueChangeListener="#{contractLeave.addExpression}">
-						<f:selectItem itemLabel=" - " itemValue="#{null}" />
-						<f:selectItems value="#{payrollCollections.leaveTypes}" />
-					</aon:selectOneMenu>
--->					
 
 					<aon:outputLabel for="ContractLeave_endDate"
 						value="#{bundle.payroll_leaveBatch_discharge_date}" />
@@ -67,21 +58,20 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
-<!--  
-					<aon:outputLabel for="ContractLeave_dischargeCause"
-						value="#{bundle.payroll_contractLeave_dischargeCause}" />
-					<aon:selectOneMenu id="ContractLeave_dischargeCause"
-						valueChangeListener="#{contractLeave.addEqualExpression}">
-						<f:selectItem itemLabel=" - " itemValue="#{null}" />
-						<f:selectItems value="#{payrollCollections.dischargeCauses}" />
-					</aon:selectOneMenu>
--->					
 				
 					<aon:outputLabel for="ContractLeave_description"
 						value="#{bundle.aon_remark}" />
 					<aon:inputText id="ContractLeave_description"
 						size="60" maxlength="64"
 						valueChangeListener="#{contractLeave.addExpression}" />
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="ContractLeave_active"
+							value="#{contractLeaveSearch.active}" />
+						<aon:outputLabel for="ContractLeave_active"
+							value="#{bundle.payroll_current}" />
+					</aon:div>
 				
 				</ui:define>
 			</ui:decorate>

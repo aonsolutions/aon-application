@@ -16,7 +16,9 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="4" style="width:100%;">
+				<aon:panelGrid columns="4" style="width:100%;"
+					columnClasses="aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-500,
+							aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
 				
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{contractLeave.to.contract}" />
@@ -43,72 +45,6 @@
 						</aon:selectOneMenu>
 					</aon:div>
 					
-					<aon:outputLabel for="ContractLeave_startDate"
-						value="#{bundle.payroll_leaveBatch_leave_date}" />
-					<aon:selectInputDate id="ContractLeave_startDate" required="true" 
-						value="#{contractLeave.to.startDate}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-					
-					<aon:outputLabel for="ContractLeave_type"
-						value="#{bundle.payroll_contractLeave_leaveCause}" />
-					<aon:selectOneMenu id="ContractLeave_type" 
-						value="#{contractLeave.to.type}">
-						<f:selectItem itemLabel=" - " itemValue="#{null}" />
-						<f:selectItems value="#{payrollCollections.leaveTypes}" />
-					</aon:selectOneMenu>
-					
-					<aon:outputLabel for="ContractLeave_endDate"
-						value="#{bundle.payroll_leaveBatch_discharge_date}" />
-					<aon:selectInputDate id="ContractLeave_endDate"  
-						value="#{contractLeave.to.endDate}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-					
-					
-<!--  
-					<aon:outputLabel for="ContractLeaveDetail_collegeNumber"
-						value="#{bundle.payroll_contractLeave_collegeNumber}" />
-					<aon:div id="collegeNumber">
-						<aon:inputText id="ContractLeaveDetail_collegeNumber"
-							value="#{contractLeave.to.collegeNumber}" maxlength="8">
-							<a4j:support event="onchange" reRender="collegeNumber" ajaxSingle="true"
-								actionListener="#{contractLeave.onChangeCollegeNumber}"/>
-						</aon:inputText>
-						<aon:outputText value="&#160;" 
-							rendered="#{contractLeave.validCollegeNumber and contractLeave.validCollegeNumber!=null}"
-							styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
-						<aon:outputText value="&#160;" 
-							rendered="#{!contractLeave.validCollegeNumber and contractLeave.validCollegeNumber!=null}"
-							styleClass="aon-icon-exception" style="padding-left: 15px;" />
-					</aon:div>
-				
-					<aon:outputLabel for="ContractLeaveDetail_cias"
-						value="#{bundle.payroll_contractLeave_cias}" />
-					<aon:div id="cias">
-						<aon:inputText id="ContractLeaveDetail_cias"
-							value="#{contractLeave.to.cias}" maxlength="11">
-							<a4j:support event="onchange" reRender="cias" ajaxSingle="true"
-								actionListener="#{contractLeave.onChangeCias}"/>
-						</aon:inputText>
-						<aon:outputText value="&#160;" 
-							rendered="#{contractLeave.validCias and contractLeave.validCias!=null}"
-							styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
-						<aon:outputText value="&#160;" 
-							rendered="#{!contractLeave.validCias and contractLeave.validCias!=null}"
-							styleClass="aon-icon-exception" style="padding-left: 15px;" />
-					</aon:div>
--->
-				
-				
-					<aon:outputLabel for="ContractLeave_dischargeCause"
-						value="#{bundle.payroll_contractLeave_dischargeCause}" />
-					<aon:selectOneMenu id="ContractLeave_dischargeCause"
-						value="#{contractLeave.to.dischargeCause}">
-						<f:selectItem itemLabel=" - " itemValue="#{null}" />
-						<f:selectItems value="#{payrollCollections.dischargeCauses}" />
-					</aon:selectOneMenu>
-						
 					<aon:outputText 
 						value="#{bundle.payroll_contractLeave_bases}" />
 					<aon:div id="ContractLeave_bases_div">
@@ -161,13 +97,130 @@
 						value="#{bundle.aon_remark}" />
 					<aon:inputText id="ContractLeave_description"
 						size="60" maxlength="64"
-						value="#{contractLeave.to.description}" />			
+						value="#{contractLeave.to.description}" />	
 					
 				</aon:panelGrid>
 				
+				<aon:panel>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.payroll_contractLeave_report_leave}" />
+					</f:facet>
+					<aon:panelGrid columns="4" style="width:100%;"
+						columnClasses="aon-panelGrid-odd aon-width-130, aon-panelGrid-even aon-width-500,
+							aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
+				
+						<aon:outputLabel for="ContractLeave_startDate"
+							value="#{bundle.payroll_leaveBatch_leave_date}" />
+						<aon:selectInputDate id="ContractLeave_startDate" required="true" 
+							value="#{contractLeave.to.startDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+						
+						<aon:outputLabel for="ContractLeaveDetail_collegeNumber-leave"
+							value="#{bundle.payroll_contractLeave_collegeNumber}" />
+						<aon:div id="ContractLeaveDetail_collegeNumber-leave-div">
+							<aon:inputText id="ContractLeaveDetail_collegeNumber-leave"
+								value="#{contractLeave.leave.collegeNumber}" maxlength="8">
+								<a4j:support event="onchange" reRender="ContractLeaveDetail_collegeNumber-leave-div" />
+							</aon:inputText>
+							<aon:outputText value="&#160;" 
+								rendered="#{contractLeave.validLeaveCollegeNumber and contractLeave.validLeaveCollegeNumber!=null}"
+								styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
+							<aon:outputText value="&#160;" 
+								rendered="#{!contractLeave.validLeaveCollegeNumber and contractLeave.validLeaveCollegeNumber!=null}"
+								styleClass="aon-icon-exception" style="padding-left: 15px;" />
+						</aon:div>
+						
+						<aon:outputLabel for="ContractLeave_type"
+							value="#{bundle.payroll_contractLeave_leaveCause}" />
+						<aon:selectOneMenu id="ContractLeave_type" 
+							value="#{contractLeave.to.type}">
+							<f:selectItem itemLabel=" - " itemValue="#{null}" />
+							<f:selectItems value="#{payrollCollections.leaveTypes}" />
+						</aon:selectOneMenu>
+					
+						<aon:outputLabel for="ContractLeaveDetail_cias-leave"
+							value="#{bundle.payroll_contractLeave_cias}" />
+						<aon:div id="ContractLeaveDetail_cias-leave-div">
+							<aon:inputText id="ContractLeaveDetail_cias-leave"
+								value="#{contractLeave.leave.cias}" maxlength="11">
+								<a4j:support event="onchange" reRender="ContractLeaveDetail_cias-leave-div" />
+							</aon:inputText>
+							<aon:outputText value="&#160;" 
+								rendered="#{contractLeave.validLeaveCias and contractLeave.validLeaveCias!=null}"
+								styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
+							<aon:outputText value="&#160;" 
+								rendered="#{!contractLeave.validLeaveCias and contractLeave.validLeaveCias!=null}"
+								styleClass="aon-icon-exception" style="padding-left: 15px;" />
+						</aon:div>
+						
+					</aon:panelGrid>
+					
+				</aon:panel>
+				
 				<aon:panel rendered="#{!contractLeave.new}">
 					<f:facet name="header">
-						<aon:outputText value="#{bundle.payroll_contractLeave_confirm}" />
+						<aon:outputText value="#{bundle.payroll_contractLeave_report_discharge}" />
+					</f:facet>
+					<aon:panelGrid columns="4" style="width:100%;" id="dischargePanel"
+						columnClasses="aon-panelGrid-odd aon-width-130, aon-panelGrid-even aon-width-500,
+							aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
+						
+						<aon:outputLabel for="ContractLeave_endDate"
+							value="#{bundle.payroll_leaveBatch_discharge_date}" />
+						<aon:selectInputDate id="ContractLeave_endDate"  
+							value="#{contractLeave.to.endDate}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}" >
+							<a4j:support event="onchanged" reRender="dischargePanel" />
+						</aon:selectInputDate>
+						
+						<aon:outputLabel for="ContractLeaveDetail_collegeNumber-discharge"
+							value="#{bundle.payroll_contractLeave_collegeNumber}" />
+						<aon:div id="ContractLeaveDetail_collegeNumber-discharge-div">
+							<aon:inputText id="ContractLeaveDetail_collegeNumber-discharge"
+								disabled="#{empty contractLeave.to.endDate}"
+								value="#{contractLeave.discharge.collegeNumber}" maxlength="8">
+								<a4j:support event="onchange" reRender="dischargePanel" />
+							</aon:inputText>
+							<aon:outputText value="&#160;" 
+								rendered="#{contractLeave.validDischargeCollegeNumber and contractLeave.validDischargeCollegeNumber!=null}"
+								styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
+							<aon:outputText value="&#160;" 
+								rendered="#{!contractLeave.validDischargeCollegeNumber and contractLeave.validDischargeCollegeNumber!=null}"
+								styleClass="aon-icon-exception" style="padding-left: 15px;" />
+						</aon:div>
+					
+						<aon:outputLabel for="ContractLeave_dischargeCause"
+							value="#{bundle.payroll_contractLeave_dischargeCause}" />
+						<aon:selectOneMenu id="ContractLeave_dischargeCause"
+							value="#{contractLeave.to.dischargeCause}">
+							<f:selectItem itemLabel=" - " itemValue="#{null}" />
+							<f:selectItems value="#{payrollCollections.dischargeCauses}" />
+						</aon:selectOneMenu>
+					
+						<aon:outputLabel for="ContractLeaveDetail_cias-discharge"
+							value="#{bundle.payroll_contractLeave_cias}" />
+						<aon:div id="ContractLeaveDetail_cias-discharge-div">
+							<aon:inputText id="ContractLeaveDetail_cias-discharge"
+								disabled="#{empty contractLeave.to.endDate}"
+								value="#{contractLeave.discharge.cias}" maxlength="11">
+								<a4j:support event="onchange" reRender="ContractLeaveDetail_cias-discharge-div" />
+							</aon:inputText>
+							<aon:outputText value="&#160;" 
+								rendered="#{contractLeave.validDischargeCias and contractLeave.validDischargeCias!=null}"
+								styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
+							<aon:outputText value="&#160;" 
+								rendered="#{!contractLeave.validDischargeCias and contractLeave.validDischargeCias!=null}"
+								styleClass="aon-icon-exception" style="padding-left: 15px;" />
+						</aon:div>
+							
+					</aon:panelGrid>
+				</aon:panel>
+				
+				<aon:panel rendered="#{!contractLeave.new}">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.payroll_contractLeave_report_confirm}" />
 					</f:facet>
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/confirm_grid.xhtml" />
 				</aon:panel>

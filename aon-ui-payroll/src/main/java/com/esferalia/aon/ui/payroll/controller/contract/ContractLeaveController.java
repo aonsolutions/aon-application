@@ -10,6 +10,7 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractLeave;
+import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.ui.payroll.utils.NumberValidation;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContractLeaveController extends BasicController {
@@ -41,9 +44,28 @@ public class ContractLeaveController extends BasicController {
 	
 	private final int RELAPSE_IT_LIST_SIZE = 10;
 	
+	private ContractLeaveDetail leave;
+	private ContractLeaveDetail discharge;
+	
 	private IControllerListener contractFilter;
 	
 	
+	public ContractLeaveDetail getLeave() {
+		return leave;
+	}
+
+	public void setLeave(ContractLeaveDetail leave) {
+		this.leave = leave;
+	}
+
+	public ContractLeaveDetail getDischarge() {
+		return discharge;
+	}
+
+	public void setDischarge(ContractLeaveDetail discharge) {
+		this.discharge = discharge;
+	}
+
 	public List<ITransferObject> getLeaveList() {
 		ContractLeave leave = (ContractLeave) this.getTo();
 		if( leave.getContract()!=null && leave.getContract().getId()!=null){
@@ -78,40 +100,46 @@ public class ContractLeaveController extends BasicController {
 		return new Date();
 	}
 	
-// TODO	
-//	public Boolean getValidCollegeNumber() {
-//		return checkCollegeNumber((ContractLeaveDetail) this.getTo());
-//	}
-//	public Boolean getValidCias() {
-//		return checkCiasNumber((ContractLeaveDetail) this.getTo());
-//	}
+	public Boolean getValidLeaveCollegeNumber() {
+		return checkCollegeNumber(getLeave());
+	}
 	
-// TODO	
-//	public Boolean checkCollegeNumber(ContractLeaveDetail detail){
-//		if (detail!=null && !StringUtils.isBlank(detail.getCollegeNumber())) {
-//			if (NumberValidation.validCollegeNumberPattern(detail.getCollegeNumber())
-//					&& NumberValidation.validCollegeNumberControlDigit(detail.getCollegeNumber())) {
-//				return true;
-//			} else {
-//				return false;
-//			}
-//		} else {
-//			return null;
-//		}
-//	}
-//	
-//	public Boolean checkCiasNumber(ContractLeaveDetail detail){
-//		if (detail!=null && !StringUtils.isBlank(detail.getCias())) {
-//			if (NumberValidation.validCiasPattern(detail.getCias())
-//					&& NumberValidation.validCiasControlDigit(detail .getCias())) {
-//				return true;
-//			} else {
-//				return false;
-//			}
-//		} else {
-//			return null;
-//		}
-//	}
+	public Boolean getValidLeaveCias() {
+		return checkCiasNumber(getLeave());
+	}
+	public Boolean getValidDischargeCollegeNumber() {
+		return checkCollegeNumber(getDischarge());
+	}
+	
+	public Boolean getValidDischargeCias() {
+		return checkCiasNumber(getDischarge());
+	}
+	
+	public Boolean checkCollegeNumber(ContractLeaveDetail detail){
+		if (detail!=null && !StringUtils.isBlank(detail.getCollegeNumber())) {
+			if (NumberValidation.validCollegeNumberPattern(detail.getCollegeNumber())
+					&& NumberValidation.validCollegeNumberControlDigit(detail.getCollegeNumber())) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return null;
+		}
+	}
+	
+	public Boolean checkCiasNumber(ContractLeaveDetail detail){
+		if (detail!=null && !StringUtils.isBlank(detail.getCias())) {
+			if (NumberValidation.validCiasPattern(detail.getCias())
+					&& NumberValidation.validCiasControlDigit(detail .getCias())) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return null;
+		}
+	}
 	
 	public List<SelectItem> getRelapseITList() {
 		List<SelectItem> relapseITList = new LinkedList<SelectItem>();
@@ -147,7 +175,7 @@ public class ContractLeaveController extends BasicController {
 						controller.getCriteria().addOrder(controller.getFieldName(IEntityAlias.CONTRACT_PERSON_SECOND_SURNAME));
 						controller.getCriteria().addOrder(controller.getFieldName(IEntityAlias.CONTRACT_PERSON_REGISTRY_NAME));
 					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering not finished", e);
+						LOGGER.error("Error filtering contracts by endDate", e);
 					}
 				}
 			};
