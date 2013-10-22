@@ -218,7 +218,8 @@
 					</aon:panelGrid>
 				</aon:panel>
 				
-				<aon:panel rendered="#{!contractLeave.new}">
+				<aon:panel id="confirmReport-panel" 
+					rendered="#{!contractLeave.new}">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.payroll_contractLeave_report_confirm}" />
 					</f:facet>

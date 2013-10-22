@@ -19,11 +19,15 @@
 				</f:facet>
 				<aon:outputText value="#{to.confirmOrder}" rendered="#{formList}"/>
 				<aon:inputText id="ContractLeaveDetail_confirmOrder" rendered="#{formEdit}"
+					valueChangeListener="#{controller.onChangeConfirmNumber}"
+					reRender="ContractLeaveDetail_date"
 					value="#{controller.to.confirmOrder}" required="#{true}" >
 					<f:validateDoubleRange />
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText id="ContractLeaveDetail_confirmOrder-New" rendered="#{formNew}"
+						valueChangeListener="#{controller.onChangeConfirmNumber}"
+						reRender="ContractLeaveDetail_date-New"
 						value="#{controller.to.confirmOrder}" required="#{true}" >
 						<f:validateDoubleRange />
 					</aon:inputText>
@@ -64,16 +68,25 @@
 						<a4j:support event="onchange" reRender="ContractLeaveDetail_collegeNumber-div" />
 					</aon:inputText>
 					<aon:outputText value="&#160;" 
-						rendered="#{contractLeave.validDischargeCollegeNumber and contractLeave.validDischargeCollegeNumber!=null}"
+						rendered="#{controller.validCollegeNumber and controller.validCollegeNumber!=null}"
 						styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
 					<aon:outputText value="&#160;" 
-						rendered="#{!contractLeave.validDischargeCollegeNumber and contractLeave.validDischargeCollegeNumber!=null}"
+						rendered="#{!controller.validCollegeNumber and controller.validCollegeNumber!=null}"
 						styleClass="aon-icon-exception" style="padding-left: 15px;" />
 				</aon:div>
 				<f:facet name="footer">
-					<aon:inputText id="ContractLeaveDetail_collegeNumber-New"
-						rendered="#{formNew}" size="64"
-						value="#{controller.to.collegeNumber}" maxlength="64" />
+					<aon:div id="ContractLeaveDetail_collegeNumber-new-div" rendered="#{formNew}">
+						<aon:inputText id="ContractLeaveDetail_collegeNumber-New"
+							value="#{controller.to.collegeNumber}" maxlength="8" >
+							<a4j:support event="onchange" reRender="ContractLeaveDetail_collegeNumber-new-div" />
+						</aon:inputText>
+						<aon:outputText value="&#160;" 
+							rendered="#{controller.validCollegeNumber and controller.validCollegeNumber!=null}"
+							styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
+						<aon:outputText value="&#160;" 
+							rendered="#{!controller.validCollegeNumber and controller.validCollegeNumber!=null}"
+							styleClass="aon-icon-exception" style="padding-left: 15px;" />
+					</aon:div>
 				</f:facet>
 			</aon:column>
 					
@@ -90,16 +103,25 @@
 						<a4j:support event="onchange" reRender="ContractLeaveDetail_cias-div" />
 					</aon:inputText>
 					<aon:outputText value="&#160;" 
-						rendered="#{contractLeave.validLeaveCias and contractLeave.validLeaveCias!=null}"
+						rendered="#{controller.validCias and controller.validCias!=null}"
 						styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
 					<aon:outputText value="&#160;" 
-						rendered="#{!contractLeave.validLeaveCias and contractLeave.validLeaveCias!=null}"
+						rendered="#{!controller.validCias and controller.validCias!=null}"
 						styleClass="aon-icon-exception" style="padding-left: 15px;" />
 				</aon:div>
 				<f:facet name="footer">
-					<aon:inputText id="ContractLeaveDetail_cias-New"
-						rendered="#{formNew}" size="64"
-						value="#{controller.to.cias}" maxlength="64" />
+					<aon:div id="ContractLeaveDetail_cias-New-div" rendered="#{formNew}">
+						<aon:inputText id="ContractLeaveDetail_cias-New"
+							value="#{controller.to.cias}" maxlength="11" >
+							<a4j:support event="onchange" reRender="ContractLeaveDetail_cias-New-div" />
+						</aon:inputText>
+						<aon:outputText value="&#160;" 
+							rendered="#{controller.validCias and controller.validCias!=null}"
+							styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
+						<aon:outputText value="&#160;" 
+							rendered="#{!controller.validCias and controller.validCias!=null}"
+							styleClass="aon-icon-exception" style="padding-left: 15px;" />
+					</aon:div>
 				</f:facet>
 			</aon:column>
 			
