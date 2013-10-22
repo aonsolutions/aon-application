@@ -638,7 +638,7 @@
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>contractLeaveDetail</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.BatchDetailController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractLeaveDetailController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
