@@ -1305,7 +1305,8 @@
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{customerSearch}</value>
 				<value>#{customerForm}</value>
-				<value>#{customerScopeListener}</value>				
+				<value>#{customerScopeListener}</value>
+				<value>#{customerObservationListener}</value>				
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
