@@ -13,10 +13,18 @@
 				mimeType="#{company.logoMimeType}" 
 				cacheable="false" element="img" 
 				value="#{company.logoFile.key}" 
-				style="max-width:200px;"
+				style="max-width:201px;"
+				onload="setMaxWidth(this, 200);"
 				createContent="#{company.createLogoContent}">
 			</a4j:mediaOutput>
 		</aon:div>
+		<script type="text/javascript">
+			function setMaxWidth(img, width) {
+				if (img.width > width) {
+		    		img.width = width;
+				}
+			}
+		</script>	
 	</c:if>
 
 </ui:composition>

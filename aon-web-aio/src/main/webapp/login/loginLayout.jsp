@@ -32,7 +32,13 @@ try {
 	<meta http-equiv="Cache-Control" content="no-store" />
 	<link rel="stylesheet" href="aonResource/com/code/aon/ui/resources/facelet/login/css/login-aon.css" />
 	<link rel="shortcut icon" type="image/x-icon" href="<%=customize.getFavicon()%>" />
-	
+	<script type="text/javascript">
+		function setMaxWidth(img, width) {
+			if (img.width > width) {
+	    		img.width = width;
+			}
+		}
+	</script>	
 </head>
 <%
 	com.code.aon.ui.dbutils.controller.DatabaseUptodate du = new com.code.aon.ui.dbutils.controller.DatabaseUptodate();
@@ -66,8 +72,9 @@ try {
 														<c:if test="${companyDisplay.withLogo}">
 															<img
 																title="<%=companyDisplay.getCompanyLabel()%>"
-																style="max-width: 200px;"
-																src="aonDocuments/company.logo" />
+																style="max-width: 201px;"
+																src="aonDocuments/company.logo"
+																onload="setMaxWidth(this, 200);"/>
 														</c:if>
 													</td>
 												</tr>
