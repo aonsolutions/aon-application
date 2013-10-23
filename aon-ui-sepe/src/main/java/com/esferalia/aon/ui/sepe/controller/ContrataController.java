@@ -339,52 +339,50 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 		
 		if( getContractCode()==null ){
 			setEnabledContrataEdition(false);
-			String msg = "El código de contrato no puede ser nulo.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-		
-		String code = getContractCode().getValue();
-		
-		if( code.equals(ContractCode.C109.getValue())
-				 || code.equals(ContractCode.C139.getValue())
-				 || code.equals(ContractCode.C189.getValue())
-				 || code.equals(ContractCode.C209.getValue())
-				 || code.equals(ContractCode.C239.getValue())
-				 || code.equals(ContractCode.C289.getValue())
-				 || code.equals(ContractCode.C309.getValue())
-				 || code.equals(ContractCode.C389.getValue()) ){
-			// Transformaciones de contrato
-			setEnabledContrataEdition(false);
+		} else {
+			String code = getContractCode().getValue();
+			
+			if( code.equals(ContractCode.C109.getValue())
+					|| code.equals(ContractCode.C139.getValue())
+					|| code.equals(ContractCode.C189.getValue())
+					|| code.equals(ContractCode.C209.getValue())
+					|| code.equals(ContractCode.C239.getValue())
+					|| code.equals(ContractCode.C289.getValue())
+					|| code.equals(ContractCode.C309.getValue())
+					|| code.equals(ContractCode.C389.getValue()) ){
+				// Transformaciones de contrato
+				setEnabledContrataEdition(false);
 //			String msg = "Transformaciones de contrato sin implementación para comunicaciones con Contrat@.";
 //			AonUtil.addErrorMessage(msg);
 //			throw new AbortProcessingException(msg);
-		} else if( code.equals(ContractCode.C408.getValue())
-				 || code.equals(ContractCode.C418.getValue())
-				 || code.equals(ContractCode.C508.getValue())
-				 || code.equals(ContractCode.C518.getValue()) ){
-			// Contratos de caracter administrativo
-			setEnabledContrataEdition(false);
+			} else if( code.equals(ContractCode.C408.getValue())
+					|| code.equals(ContractCode.C418.getValue())
+					|| code.equals(ContractCode.C508.getValue())
+					|| code.equals(ContractCode.C518.getValue()) ){
+				// Contratos de caracter administrativo
+				setEnabledContrataEdition(false);
 //			String msg = "Tipo de contrato sin implementación para comunicaciones con Contrat@. (Códigos de contrato 408, 418, 508 y 518)";
 //			AonUtil.addErrorMessage(msg);
 //			throw new AbortProcessingException(msg);
+			}
+			
+			try {
+				loadContrataData(getGeneratedFile());
+			} catch (ManagerBeanException e) {
+				String msg = "No se han podido obtener los datos de Contrat@ previamente guardados.";
+				LOGGER.error(msg, e);
+				AonUtil.addErrorMessage(msg);
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(msg, e);
+			} catch (IOException e) {
+				String msg = "No se han podido obtener los datos de Contrat@ previamente guardados.";
+				LOGGER.error(msg, e);
+				AonUtil.addErrorMessage(msg);
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(msg, e);
+			}
 		}
-
-		try {
-			loadContrataData(getGeneratedFile());
-		} catch (ManagerBeanException e) {
-			String msg = "No se han podido obtener los datos de Contrat@ previamente guardados.";
-			LOGGER.error(msg, e);
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(msg, e);
-		} catch (IOException e) {
-			String msg = "No se han podido obtener los datos de Contrat@ previamente guardados.";
-			LOGGER.error(msg, e);
-			AonUtil.addErrorMessage(msg);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(msg, e);
-		}
+		
 	}
 	
 	public void onContrataAccept( ActionEvent event ) {

@@ -17,6 +17,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.enumeration.certificados.Terrores;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RESPUESTACERTIFICADOEMPRESATYPE.CuentaCotizacion;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RESPUESTACERTIFICADOEMPRESATYPE.CuentaCotizacion.DatosTrabajador;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RESPUESTACERTIFICADOEMPRESATYPE.CuentaCotizacion.DescripcionResultado;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RespuestaCertificadoEmpresa;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.RespuestaCertificadoEmpresa.Resultado;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
@@ -180,9 +181,9 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 			try {
 				RespuestaCertificadoEmpresa certificado = obtainFicheroCertificado(data);
 				for(CuentaCotizacion cuentaCotizacion: certificado.getResultado().getCuentaCotizacion()){
-					if(StringUtils.equals(cuentaCotizacion.getDescripcionResultado(),"PROCESADO")){
+					if(cuentaCotizacion.getDescripcionResultado()==DescripcionResultado.PROCESADO){
 						return true;
-					} else if(StringUtils.equals(cuentaCotizacion.getDescripcionResultado(),"PROCESADO PARCIALMENTE")){
+					} else if(cuentaCotizacion.getDescripcionResultado()==DescripcionResultado.PROCESADO_PARCIALMENTE){
 						return true;
 					}
 				}
@@ -237,11 +238,11 @@ public class CertificadosCommunicator implements ISepeCommunicator {
 					
 					String bgColor = null;
 					
-					if(StringUtils.equals(cuentaCotizacion.getDescripcionResultado(),"PROCESADO")){
+					if(cuentaCotizacion.getDescripcionResultado()==DescripcionResultado.PROCESADO){
 						bgColor = "#E0F8E0";
-					} else if(StringUtils.equals(cuentaCotizacion.getDescripcionResultado(),"PROCESADO PARCIALMENTE")){
+					} else if(cuentaCotizacion.getDescripcionResultado()==DescripcionResultado.PROCESADO_PARCIALMENTE){
 						bgColor = "#F6E3CE";
-					} else if(StringUtils.equals(cuentaCotizacion.getDescripcionResultado(),"RECHAZADO")){
+					} else if(cuentaCotizacion.getDescripcionResultado()==DescripcionResultado.RECHAZADO){
 						bgColor = "#F8E0E0";
 					} else {
 						bgColor = "#E4E4E4";

@@ -44,19 +44,30 @@
 
 					<aon:outputLabel for="ContractLeave_endDate"
 						value="#{bundle.payroll_leaveBatch_discharge_date}" />
-					<aon:div>
+					<aon:div id="ContractLeave_endDate">
 						<aon:outputLabel for="ContractLeave_endDate-From" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="ContractLeave_endDate-From"
+							disabled="#{contractLeaveSearch.active}"
 							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 						<aon:outputLabel for="ContractLeave_endDate-To" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="ContractLeave_endDate-To"
+							disabled="#{contractLeaveSearch.active}"
 							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
+					</aon:div>
+
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="ContractLeave_active"
+							reRender="ContractLeave_endDate"
+							value="#{contractLeaveSearch.active}" />
+						<aon:outputLabel for="ContractLeave_active"
+							value="#{bundle.payroll_current}" />
 					</aon:div>
 				
 					<aon:outputLabel for="ContractLeave_description"
@@ -64,14 +75,6 @@
 					<aon:inputText id="ContractLeave_description"
 						size="60" maxlength="64"
 						valueChangeListener="#{contractLeave.addExpression}" />
-
-					<aon:outputText value="&#160;" />
-					<aon:div>
-						<aon:selectBooleanCheckbox id="ContractLeave_active"
-							value="#{contractLeaveSearch.active}" />
-						<aon:outputLabel for="ContractLeave_active"
-							value="#{bundle.payroll_current}" />
-					</aon:div>
 				
 				</ui:define>
 			</ui:decorate>

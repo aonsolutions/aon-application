@@ -39,7 +39,7 @@
 				<aon:outputLabel for="Contract_endDate-From" styleClass="aon-form-date-label"
 					value="#{bundle.aon_date_from}:" />
 				<aon:selectInputDate id="Contract_endDate-From"
-					valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+					value="#{controller.endDateFrom}"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}"/>
 			

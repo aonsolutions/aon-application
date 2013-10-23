@@ -199,6 +199,11 @@ public class ContractController extends BasicController {
 		String[] codes = {"109","139","189","209","239","289","309","339","389"};
 		return ArrayUtils.contains(codes, contractCode) ;
 	}
+
+	public boolean isUnsuportedContract(){
+		String contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
+		return contractCode!=null && (isTransformedContract() || !ArrayUtils.contains(ISepeConstants.AVAILABLE_CONTRACT_CODE_COMMUNICATION, contractCode));
+	}
 	
 	public List<SelectItem> getContractModel() {
 		ContractModel[] availableModels = {ContractModel.PE151, ContractModel.PE170, 

@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,10 +47,46 @@ public class ContractLeaveController extends BasicController {
 	
 	private ContractLeaveDetail leave;
 	private ContractLeaveDetail discharge;
+	private boolean editBases;
+	private Double dailyCgcBase;
+	private Double dailyCgpBase;
+	private Double dailyRegBase;
 	
 	private IControllerListener contractFilter;
 	
 	
+	public Double getDailyCgcBase() {
+		return dailyCgcBase;
+	}
+
+	public void setDailyCgcBase(Double dailyCgcBase) {
+		this.dailyCgcBase = dailyCgcBase;
+	}
+
+	public Double getDailyCgpBase() {
+		return dailyCgpBase;
+	}
+
+	public void setDailyCgpBase(Double dailyCgpBase) {
+		this.dailyCgpBase = dailyCgpBase;
+	}
+
+	public Double getDailyRegBase() {
+		return dailyRegBase;
+	}
+
+	public void setDailyRegBase(Double dailyRegBase) {
+		this.dailyRegBase = dailyRegBase;
+	}
+
+	public boolean isEditBases() {
+		return editBases;
+	}
+
+	public void setEditBases(boolean editBases) {
+		this.editBases = editBases;
+	}
+
 	public ContractLeaveDetail getLeave() {
 		return leave;
 	}
@@ -91,7 +128,7 @@ public class ContractLeaveController extends BasicController {
 		ContractLeave leave = (ContractLeave) this.getTo();
 		if(leave!=null && leave.getId()!=null){
 			int days = Integer.parseInt(String.valueOf(CommonUtil.getDaysBetweenDates(leave.getStartDate(), leave.getEndDate()!=null?leave.getEndDate():new Date(), false)));
-			return days>=0?days:0;
+			return days>=0?days+1:0;
 		}
 		return null;
 	}
@@ -184,28 +221,45 @@ public class ContractLeaveController extends BasicController {
 	}
 	
 	public void onContractChange(LookupChangeEvent event){
-		Contract contract = (Contract)event.getNewValue();
-		if(contract!=null && contract.getId()!=null){
-			calculateBases((ContractLeave) this.getTo(),contract);
+		calculateBases( (ContractLeave) this.getTo(), (Contract)event.getNewValue() );
+	}
+	public void onStartDateChange(ActionEvent event){
+		ContractLeave leave = (ContractLeave) this.getTo();
+		if(leave!=null){
+			calculateBases( leave, leave.getContract() );
+		}
+	}
+	public void onReloadBases(ActionEvent event){
+		ContractLeave leave = (ContractLeave) this.getTo();
+		if(leave!=null){
+			calculateBases( leave, leave.getContract() );
 		}
 	}
 	
 	public void calculateBases(ContractLeave leave, Contract contract) {
 		// TODO obtener las bases del trabajador, 
-//		las de la nomina del mes anterior dividido por 30
+//		las de la nomina del mes anterior dividido por 30, si el trabajador tiene salario mensual; 30, 31 ó 28, 29 si tiene salario diario)
 //		el problema viene cuando no existe nomina anterior (cae de baja el primer mes)
-		ISalary salary = PayrollUtils.getInstance().getBeforeDateSalary(contract, leave.getStartDate());
-		if(salary==null){
-			try{
-				salary = PayrollUtils.getInstance().calculateSalary(contract, leave.getStartDate()!=null?leave.getStartDate():new Date());
-			} catch(Exception e){
-				// no se carga ninguna base
+		if(leave.getStartDate()!=null && contract!=null && contract.getId()!=null){
+			ISalary salary = PayrollUtils.getInstance().getBeforeDateSalary(contract, leave.getStartDate());
+			if(salary==null){
+				try{
+					salary = PayrollUtils.getInstance().calculateSalary(contract, leave.getStartDate());
+				} catch(Exception e){
+					// no se carga ninguna base
+					salary = null;
+				}
 			}
+			if(salary!=null){
+				setDailyCgcBase( CommonUtil.round(salary.getCommonBase()/salary.getTimeUnits()) );
+				setDailyCgpBase( CommonUtil.round(salary.getProfessionalBase()/salary.getTimeUnits()) );
+				setDailyRegBase( CommonUtil.round(salary.getRawCommonBase()/salary.getTimeUnits()) );
+			}
+		} else {
+			setDailyCgcBase( null );
+			setDailyCgpBase( null );
+			setDailyRegBase( null );
 		}
-		if(salary!=null){
-			leave.setDailyCgcBase( CommonUtil.round(salary.getCommonBase()/salary.getTimeUnits()) );
-			leave.setDailyCgpBase( CommonUtil.round(salary.getProfessionalBase()/salary.getTimeUnits()) );
-			leave.setDailyRegBase( CommonUtil.round(salary.getRawCommonBase()/salary.getTimeUnits()) );
-		}
+		setEditBases(false);
 	}
 }

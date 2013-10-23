@@ -20,6 +20,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
@@ -136,6 +137,7 @@ public class Certifica2BatchController extends BasicController {
 	public void onSearchContracts(ActionEvent event) throws ManagerBeanException {
 		Certifica2ListController list = (Certifica2ListController) FormUtil.getController(ISepeConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
 		list.clearCriteria();
+		list.setEndDateFrom(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), CommonUtil.getDay(new Date())-10));
 		list.onSearch(event);
 	}
 	
@@ -143,6 +145,7 @@ public class Certifica2BatchController extends BasicController {
 		Certifica2ListController list = (Certifica2ListController) FormUtil.getController(ISepeConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
 		list.clearCriteria();
 		list.onEditSearch(event);
+		list.setEndDateFrom(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), CommonUtil.getDay(new Date())-10));
 	}
 	
 	public void onInit(ActionEvent event) {

@@ -186,7 +186,13 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Certifica2BatchDetail_contract_enterpriseCCC_activity_type, Certifica2BatchDetail_contract_enterpriseCCC_ccc, Certifica2BatchDetail_contract_person_registry_document</value>
+			<value>
+			Certifica2BatchDetail_contract_workPlace_enterprise_registry_name, 
+			Certifica2BatchDetail_contract_person_firstSurname, 
+			Certifica2BatchDetail_contract_person_secondSurname, 
+			Certifica2BatchDetail_contract_person_registry_name, 
+			Certifica2BatchDetail_contract_endDate desc
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -294,7 +300,13 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Contract_enterpriseCCC_activity_type, Contract_enterpriseCCC_ccc, Contract_person_registry_document</value>
+			<value>
+			Contract_workPlace_enterprise_registry_name, 
+			Contract_person_firstSurname, 
+			Contract_person_secondSurname, 
+			Contract_person_registry_name, 
+			Contract_endDate desc
+			</value>
 		</managed-property>				
 	</managed-bean>
 	

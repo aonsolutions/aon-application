@@ -45,7 +45,6 @@ public class ContractLeaveSearchListener extends ControllerSearchListener{
 			// TODO: FUTURE: filtrar los contratos segun se este en el dominio parent o no
 		}
 		if(isActive()){
-			this.getController();
 			criteria.addNullExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE));			
 		} else {
 			criteria.addNotNullExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE));			

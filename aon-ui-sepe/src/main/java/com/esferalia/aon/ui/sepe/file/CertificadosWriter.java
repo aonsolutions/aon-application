@@ -33,7 +33,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryDirStaff;
-import com.code.aon.ui.common.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Certifica2Batch;
@@ -193,7 +192,7 @@ public class CertificadosWriter {
 			if (dirStaff.isShareHolder()){
 				cargo = "Socio";
 			} else if (dirStaff.isRepresentative()){
-				cargo = "Administrativo";
+				cargo = "Administrador";
 			} else if (dirStaff.isRepresentativeLabor()){
 				cargo = "Representante Laboral";
 			} else if (dirStaff.isDirector()){

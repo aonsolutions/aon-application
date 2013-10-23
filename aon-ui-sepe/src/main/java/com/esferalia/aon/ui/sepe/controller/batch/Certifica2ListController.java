@@ -1,7 +1,9 @@
 package com.esferalia.aon.ui.sepe.controller.batch;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
@@ -13,15 +15,20 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
+import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class Certifica2ListController extends BasicController {
@@ -31,11 +38,22 @@ public class Certifica2ListController extends BasicController {
 	private Enterprise enterprise;
 	private Person person;
 	private Certifica2BatchListCheckHandler checkHandler;
+	private Date endDateFrom;
 	
 	private Map<Integer, RemesableContract> remesableContracts = new HashMap<Integer, RemesableContract>();
 	
 	private SuspensionCause suspensionCauseForAll;
 	
+	
+
+	public Date getEndDateFrom() {
+		return endDateFrom;
+	}
+
+	public void setEndDateFrom(Date endDateFrom) {
+		this.endDateFrom = endDateFrom;
+	}
+
 	public Map<Integer, RemesableContract> getRemesableContracts() {
 		return remesableContracts;
 	}
@@ -138,6 +156,7 @@ public class Certifica2ListController extends BasicController {
 		remesableContracts = new HashMap<Integer, RemesableContract>();
 		setSuspensionCauseForAll(null);
 		try {
+			this.setCriteria( new Criteria() );
 			SEPEUtils utils = new SEPEUtils();
 			if(getPerson()!=null && getPerson().getId()!=null){
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_PERSON_ID), getPerson().getId());
@@ -151,6 +170,17 @@ public class Certifica2ListController extends BasicController {
 				getCriteria().setSkipDomainFilter( true );
 				getCriteria().addInExpression(getFieldName(IEntityAlias.CONTRACT_DOMAIN), utils.getCurrentChildDomainIds());
 			}
+			if(getEndDateFrom()!=null){
+				getCriteria().addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE), getEndDateFrom());
+			}
+			LinesController controller = (LinesController) AonUtil.getRegisteredBean(ISepeConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
+			// ******************************
+			// FIXME: this code is temporary, while the contract certificate status is not defined
+			for(ITransferObject to: (List<ITransferObject>)controller.getModel().getWrappedData()){
+				Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
+				getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_ID), detail.getContract().getId());
+			}
+			// ****************
 			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_REGISTRY_NAME));
 			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_PERSON_FIRST_SURNAME));
 			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_PERSON_SECOND_SURNAME));

@@ -38,10 +38,11 @@
 	</aon:div>
 
 	<aon:outputLabel value="#{bundle.aon_end_date}" />
-	<aon:div>
+	<aon:div id="Contract_endDate">
 		<aon:outputLabel for="Contract_endDate-From" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_from}:" />
 		<aon:selectInputDate id="Contract_endDate-From"
+			disabled="#{contractSearch.active}"
 			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
@@ -49,9 +50,20 @@
 		<aon:outputLabel for="Contract_endDate-To" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_to}:" />
 		<aon:selectInputDate id="Contract_endDate-To"
+			disabled="#{contractSearch.active}"
 			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+	
+	<aon:outputText value="&#160;" />
+	<aon:div>
+		<aon:selectBooleanCheckbox id="Contract_active"
+			reRender="Contract_endDate"
+			value="#{contractSearch.active}" >
+		</aon:selectBooleanCheckbox>
+		<aon:outputLabel for="Contract_active"
+			value="#{bundle.payroll_current}" />
 	</aon:div>
 
 </ui:composition>

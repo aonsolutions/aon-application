@@ -13,8 +13,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -25,7 +23,6 @@ import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.TrainingCourse;
-import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -176,9 +173,6 @@ public class ContractControllerListener extends ControllerAdapter{
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
-			Expression exp1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID);
-			Expression exp2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SEPE_CONTRACT_RESPONSE);
-			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractAttachment attach = (ContractAttachment) to;
 				bean.remove(attach);

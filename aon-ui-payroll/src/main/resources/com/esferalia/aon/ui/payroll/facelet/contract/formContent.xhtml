@@ -48,13 +48,13 @@
 		<aon:outputLabel for="Contract_contractCode"
 			value="#{bundle.payroll_contract_contract_code}" />
 		<aon:selectOneMenu id="Contract_contractCode" required="true" 
-			rendered="#{!contract.transformedContract}"
+			rendered="#{contract.new or !contract.unsuportedContract}"
 			value="#{contract.params.contractCode}">
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{payrollCollections.contractCodes}" />
 			<a4j:support event="onchange" reRender="Contract_contractModelDiv" />
 		</aon:selectOneMenu>
-		<aon:panelGroup rendered="#{contract.transformedContract}">
+		<aon:panelGroup rendered="#{!contract.new and contract.unsuportedContract}">
 			<aon:outputText value="#{contract.params.contractCode.value}" />
 			<aon:outputText value=" - " />
 			<aon:outputText value="#{contract.params.contractCode}" />

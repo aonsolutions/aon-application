@@ -13,7 +13,9 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -23,14 +25,32 @@ public class ContractSearchListener extends ControllerSearchListener {
 
 	private Person person;
 	private WorkPlace workPlace;
-	private Date endDate; 
+	private Date endDateFrom;
+	private Date endDateTo;
+	private boolean active;
 	
-	public Date getEndDate() {
-		return endDate;
+	public boolean isActive() {
+		return active;
 	}
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public Date getEndDateFrom() {
+		return endDateFrom;
+	}
+
+	public void setEndDateFrom(Date endDateFrom) {
+		this.endDateFrom = endDateFrom;
+	}
+
+	public Date getEndDateTo() {
+		return endDateTo;
+	}
+
+	public void setEndDateTo(Date endDateTo) {
+		this.endDateTo = endDateTo;
 	}
 
 	public Person getPerson() {
@@ -48,13 +68,14 @@ public class ContractSearchListener extends ControllerSearchListener {
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
 	}
-
-
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		IManagerBean personBean = BeanManager.getManagerBean(Person.class);
 		setPerson((Person) personBean.createNewTo());
 		setWorkPlace(null);
+		setEndDateTo(null);
+		setActive(true);
 	}
 	
 	@Override
@@ -64,7 +85,19 @@ public class ContractSearchListener extends ControllerSearchListener {
 		}
 		if ((getWorkPlace() != null) && (getWorkPlace().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ID), getWorkPlace().getId());			
-		} 
+		}
+		if(isActive()){
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE), new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE));
+			criteria.addExpression( ExpressionUtilities.getOrExpression(expr1, expr2) );
+		} else {
+			if(getEndDateFrom()!=null){
+				criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE), getEndDateFrom());			
+			}
+			if(getEndDateTo()!=null){
+				criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE), getEndDateTo());			
+			}
+		}
 	}
 	
 	public List<SelectItem> getWorkPlaces() throws ManagerBeanException {

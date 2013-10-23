@@ -32,6 +32,18 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 	}
 	
 	@Override
+	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		updateFinalBases(event);
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		updateFinalBases(event);
+	}
+	
+	@Override
 	public void beforeBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
 		ContractLeave leave = (ContractLeave) event.getController().getTo();
@@ -43,6 +55,10 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		loadContractLeave(event);
+		ContractLeaveController controller = (ContractLeaveController) event.getController();
+		ContractLeave leave = (ContractLeave) controller.getTo();
+		controller.setEditBases(leave.getDailyCgcBase()!=null || leave.getDailyCgpBase()!=null || leave.getDailyRegBase()!=null);
+		updateTempBases(event);
 	}
 	
 	@Override
@@ -53,6 +69,7 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 		insertOrUpdateDetail(leave,LeaveReportType.LEAVE,leave.getStartDate());
 		insertOrUpdateDetail(leave,LeaveReportType.DISCHARGE, leave.getEndDate());
 		loadContractLeave(event);
+		updateTempBases(event);
 	}
 	
 	@Override
@@ -71,6 +88,28 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 		ContractLeaveController controller = (ContractLeaveController) event.getController();
 		controller.setLeave(obtainDetail((ContractLeave) controller.getTo(),LeaveReportType.LEAVE));
 		controller.setDischarge(obtainDetail((ContractLeave) controller.getTo(),LeaveReportType.DISCHARGE));
+	}
+	
+	private void updateFinalBases(ControllerEvent event) {
+		ContractLeaveController controller = (ContractLeaveController) event.getController();
+		ContractLeave leave = (ContractLeave) controller.getTo();
+		if(!controller.isEditBases()){
+			leave.setDailyCgcBase(null);
+			leave.setDailyCgpBase(null);
+			leave.setDailyRegBase(null);
+		}
+	}
+	
+	private void updateTempBases(ControllerEvent event) {
+		ContractLeaveController controller = (ContractLeaveController) event.getController();
+		ContractLeave leave = (ContractLeave) controller.getTo();
+		if(controller.isEditBases()){
+			controller.setDailyCgcBase(leave.getDailyCgcBase());
+			controller.setDailyCgpBase(leave.getDailyCgpBase());
+			controller.setDailyRegBase(leave.getDailyRegBase());
+		} else {
+			controller.calculateBases(leave, leave.getContract());
+		}
 	}
 	
 	private ContractLeaveDetail obtainDetail(ContractLeave contractLeave, LeaveReportType type) {

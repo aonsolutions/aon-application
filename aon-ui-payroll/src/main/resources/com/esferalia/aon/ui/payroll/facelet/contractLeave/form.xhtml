@@ -16,7 +16,7 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="4" style="width:100%;"
+				<aon:panelGrid columns="4" style="width:100%;" id="leaveMainPanel"
 					columnClasses="aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-500,
 							aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
 				
@@ -47,33 +47,72 @@
 					
 					<aon:outputText 
 						value="#{bundle.payroll_contractLeave_bases}" />
-					<aon:div id="ContractLeave_bases_div">
-						<aon:outputLabel for="ContractLeave_dailyCgcBase" 
+					<aon:outputText value="&#160;" rendered="#{contractLeave.new}" />
+					<aon:div id="ContractLeave_bases_div" rendered="#{!contractLeave.new}">
+						<aon:outputLabel for="ContractLeave_dailyCgcBase"
+							title="#{bundle.payroll_contractLeave_dailyCgc_description}" 
 							value="#{bundle.payroll_contractLeave_dailyCgc}:" 
 							styleClass="aon-italic" />
 						<aon:inputText id="ContractLeave_dailyCgcBase" 
+							rendered="#{contractLeave.editBases}"
 							value="#{contractLeave.to.dailyCgcBase}" 
-							size="7" >
+							size="5" >
 							<f:validateDoubleRange />
 						</aon:inputText>
+						<aon:outputText value="#{contractLeave.dailyCgcBase}" 
+							rendered="#{!contractLeave.editBases}" 
+							styleClass="aon-margin-left" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
 						
 						<aon:outputLabel for="ContractLeave_dailyCgpBase" 
+							title="#{bundle.payroll_contractLeave_dailyCgp_description}"  
 							value="#{bundle.payroll_contractLeave_dailyCgp}:"  
 							styleClass="aon-italic aon-margin-left" />
 						<aon:inputText id="ContractLeave_dailyCgpBase" 
+							rendered="#{contractLeave.editBases}"
 							value="#{contractLeave.to.dailyCgpBase}" 
-							size="7" >
+							size="5" >
 							<f:validateDoubleRange />
 						</aon:inputText>
+						<aon:outputText value="#{contractLeave.dailyCgpBase}" 
+							rendered="#{!contractLeave.editBases}" 
+							styleClass="aon-margin-left" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
 						
 						<aon:outputLabel for="ContractLeave_dailyRegBase" 
+							title="#{bundle.payroll_contractLeave_dailyReg_description}"  
 							value="#{bundle.payroll_contractLeave_dailyReg}:"  
 							styleClass="aon-italic aon-margin-left" />
 						<aon:inputText id="ContractLeave_dailyRegBase" 
+							rendered="#{contractLeave.editBases}"
 							value="#{contractLeave.to.dailyRegBase}" 
-							size="7" >
+							size="5" >
 							<f:validateDoubleRange />
 						</aon:inputText>
+						<aon:outputText value="#{contractLeave.dailyRegBase}"
+							rendered="#{!contractLeave.editBases}"
+							styleClass="aon-margin-left" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						
+						<aon:commandButton id="editBases" value="&#160;"
+							title="#{bundle.aon_edit}"
+							rendered="#{!contractLeave.editBases}"
+							reRender="ContractLeave_bases_div"
+							styleClass="aon-editDataTable-button aon-icon-edit-add" >
+							<f:setPropertyActionListener target="#{contractLeave.editBases}" value="#{true}" />
+						</aon:commandButton>
+
+						<aon:commandButton id="editBases-refresh" value="&#160;"
+							title="#{bundle.payroll_contractLeave_bases_load_defaults}"
+							rendered="#{contractLeave.editBases}"
+							reRender="ContractLeave_bases_div"
+							actionListener="#{contractLeave.onReloadBases}"
+							styleClass="aon-editDataTable-button aon-margin-left aon-icon-refresh" >
+							<f:setPropertyActionListener target="#{contractLeave.editBases}" value="#{false}" />
+						</aon:commandButton>
 						
 						<aon:div rendered="#{!contractLeave.new}" style="display:inline;">
 							<aon:outputText value="#{bundle.payroll_leaveBatch_leave_days}: "  
@@ -111,10 +150,13 @@
 				
 						<aon:outputLabel for="ContractLeave_startDate"
 							value="#{bundle.payroll_leaveBatch_leave_date}" />
-						<aon:selectInputDate id="ContractLeave_startDate" required="true" 
+						<aon:selectInputDate id="ContractLeave_startDate" required="true"
 							value="#{contractLeave.to.startDate}"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}" />
+							popupDateFormat="#{bundle.aon_date_pattern}" >
+							<a4j:support event="onchanged" reRender="ContractLeave_bases_div"
+								actionListener="#{contractLeave.onStartDateChange}" />
+						</aon:selectInputDate>
 						
 						<aon:outputLabel for="ContractLeaveDetail_collegeNumber-leave"
 							value="#{bundle.payroll_contractLeave_collegeNumber}" />

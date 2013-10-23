@@ -210,16 +210,16 @@
 							<generatePackage>com.esferalia.aon.sepe.api.contrata.contratos</generatePackage>
 							<schemaDirectory>${project.basedir}/src/main/resources/META-INF/schemas/contrata</schemaDirectory>
 							<schemaIncludes>
-					<!--  
+<!--  
 								<include>EsquemaContratos50.xsd</include>
-					-->
+-->
 								<include>EsquemaRespuestaContratos50.xsd</include>
 							</schemaIncludes>
 <!--  
 							<bindingIncludes>
-	                            <include>EsquemaContratos50_binding.xjb</include>
+	                            <include>../binding.xjb</include>
 	                        </bindingIncludes>
--->
+-->  
 							<forceRegenerate>false</forceRegenerate>
 							<!-- whether old output should be removed, this field should generally be set to "true" -->  
 							<removeOldOutput>true</removeOldOutput>  
@@ -373,6 +373,9 @@
 							<schemaIncludes>
 								<include>RespuestaCertificadoEmpresa.xsd</include>
 							</schemaIncludes>
+							<bindingIncludes>
+	                            <include>binding.xjb</include>
+	                        </bindingIncludes>
 							<forceRegenerate>false</forceRegenerate>
 							<removeOldOutput>true</removeOldOutput>
 							<verbose>true</verbose>

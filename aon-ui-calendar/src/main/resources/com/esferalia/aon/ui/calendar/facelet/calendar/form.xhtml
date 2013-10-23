@@ -39,6 +39,7 @@
 							<ui:param name="lookupTo" value="#{calendar.to.calendar}" />
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="lookupControllerListener" value="#{calendar.excludeCurrentCalendar}" />
 						</ui:include>
 							
 						<aon:outputLabel rendered="#{!calendar.new}"
