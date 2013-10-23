@@ -41,11 +41,11 @@ public enum VatTaxKey implements IResourceable, IStringEnum   {
 	// CT=TOTAL IMPORTACIONES
 	CT	("CT"	,false	,false	,true	,false	,true	,false	,false	,new VatTaxKey[]{VatTaxKey.C1,VatTaxKey.C2},null),
 	// D1=ADQ. INTRACOM. DE BIENES CORRIENTES
-	D1	("D1"	,false	,false	,true	,false	,false	,false	,false	,null,null),
+	D1	("D1"	,false	,false	,true	,false	,false	,false	,true	,null,null),
 	// D2=ADQ. INTRACOM. DE BIENES DE INVERSION
-	D2	("D2"	,false	,false	,true	,false	,false	,false	,false	,null,null),
+	D2	("D2"	,false	,false	,true	,false	,false	,false	,true	,null,null),
 	// D3=TOTAL ADQ. INTRACOM. DE GASTOS
-	D3	("D3"	,false	,false	,true	,false	,false	,false	,false	,null,null),
+	D3	("D3"	,false	,false	,true	,false	,false	,false	,true	,null,null),
 	// DT=TOTAL ADQ. INTRACOM.
 	DT	("DT"	,false	,false	,true	,false	,true	,false	,false	,new VatTaxKey[]{VatTaxKey.D1,VatTaxKey.D2,VatTaxKey.D3},null),
 	// ET=COMPENSACION REGIMEN ESPECIAL A,G Y P.
