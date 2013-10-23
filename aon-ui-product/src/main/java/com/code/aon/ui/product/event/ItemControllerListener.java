@@ -1,7 +1,5 @@
 package com.code.aon.ui.product.event;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -14,6 +12,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.product.controller.IItemConstants;
+import com.code.aon.ui.product.controller.ItemController;
 import com.code.aon.ui.product.controller.ItemTariffController;
 import com.code.aon.ui.product.controller.ProductController;
 import com.code.aon.ui.util.AonUtil;
@@ -54,7 +53,7 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 			if (item.getStatus() == null) {
 				item.setStatus(ProductStatus.ACTIVE);
 			}
-			clearBarcode(item);
+			ItemController.clearBarcode(item);
 			
 			item.getProduct().setStatus(item.getStatus());
 			ProductController.updateVat(item.getProduct());
@@ -73,7 +72,7 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 			if (item.getStatus() == null) {
 				item.setStatus(ProductStatus.ACTIVE);
 			}
-			clearBarcode(item);
+			ItemController.clearBarcode(item);
 			item.getProduct().setStatus(item.getStatus());
 
 			IManagerBean productBean = BeanManager.getManagerBean(Product.class);
@@ -103,12 +102,6 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
-		}
-	}
-
-	private void clearBarcode( Item item ) {
-		if ( StringUtils.isEmpty(item.getBarcode()) ) {
-			item.setBarcode(null);
 		}
 	}
 	

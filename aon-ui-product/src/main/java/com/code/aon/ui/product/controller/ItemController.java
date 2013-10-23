@@ -4,6 +4,8 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -127,5 +129,11 @@ public class ItemController extends BasicController {
 	public void setCurrentItem( Item item ) {
 		setTo(item);
 	}
+
+	public static void clearBarcode( Item item ) {
+		if ( StringUtils.isEmpty(item.getBarcode()) ) {
+			item.setBarcode(null);
+		}
+	}	
 	
 }

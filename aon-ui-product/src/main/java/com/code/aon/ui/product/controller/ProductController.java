@@ -110,6 +110,7 @@ public class ProductController extends BasicController {
 	
 	public void acceptItem(ActionEvent event) throws ManagerBeanException {
 		ItemController controller = getItemController();
+		ItemController.clearBarcode( (Item) controller.getTo() );
 		controller.accept(event);
 		updateItem(controller);
 		getManagerBean().initializePOJO(getTo());
