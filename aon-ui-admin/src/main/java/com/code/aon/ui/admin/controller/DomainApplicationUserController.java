@@ -53,10 +53,11 @@ public class DomainApplicationUserController extends LinesController {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static List<ApplicationUserProfile> getApplicationUserProfiles( ApplicationUser user ) throws ManagerBeanException  {
+	private static List<ApplicationUserProfile> getApplicationUserProfiles( ApplicationUser user, boolean skipDomain ) throws ManagerBeanException  {
 		if ( user != null ) {
 			IManagerBean bean = BeanManager.getManagerBean(ApplicationUserProfile.class);
 			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(skipDomain);
 			String alias = bean.getFieldName(IEntityAlias.APPLICATION_USER_PROFILE_APPLICATION_USER_ID);
 			criteria.addEqualExpression(alias, user.getId());
 			return (List) bean.getList(criteria);			
@@ -84,7 +85,7 @@ public class DomainApplicationUserController extends LinesController {
 		List<SelectTransferObject<Profile,ApplicationUserProfile>> list = new LinkedList<SelectTransferObject<Profile,ApplicationUserProfile>>();
 		List<ApplicationUserProfile> profiles = null;
 		if ( (applicationUser != null) && (applicationUser.getId() != null) ) {
-			profiles = getApplicationUserProfiles(applicationUser);
+			profiles = getApplicationUserProfiles(applicationUser, false);
 		}
 		for( ITransferObject to : UserApplicationInfo.getProfiles(da) ) {
 			Profile profile = (Profile) to;
@@ -103,7 +104,7 @@ public class DomainApplicationUserController extends LinesController {
 	}
 	
 	public static String getProfileList( ApplicationUser user ) throws ManagerBeanException {
-		List<ApplicationUserProfile> profiles = getApplicationUserProfiles(user);
+		List<ApplicationUserProfile> profiles = getApplicationUserProfiles(user, false);
 		if (! profiles.isEmpty() ) {
 			String[] profileNames = new String[profiles.size()];
 			for( int i = 0; i < profileNames.length; i++ ) {
@@ -145,7 +146,7 @@ public class DomainApplicationUserController extends LinesController {
 	}
 	
 	public static void removeUserProfiles( ApplicationUser appUser ) throws ManagerBeanException {
-		List<ApplicationUserProfile> profiles = getApplicationUserProfiles( appUser );
+		List<ApplicationUserProfile> profiles = getApplicationUserProfiles( appUser, true );
 		IManagerBean bean = BeanManager.getManagerBean(ApplicationUserProfile.class);
 		for( ApplicationUserProfile aup : profiles ) {
 			bean.remove(aup);
@@ -155,6 +156,7 @@ public class DomainApplicationUserController extends LinesController {
 	public void removeApplicationUsers( String alias, Serializable id ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ApplicationUser.class);
 		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
 		criteria.addEqualExpression(bean.getFieldName(alias), id);
 		for( ITransferObject to : bean.getList(criteria) ) {
 			removeUserProfiles( (ApplicationUser) to );

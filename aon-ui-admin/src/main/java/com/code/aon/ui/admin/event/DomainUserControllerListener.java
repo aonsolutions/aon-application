@@ -101,20 +101,20 @@ public class DomainUserControllerListener extends ControllerAdapter {
 		try {		
 			DomainApplicationUserController dausc = (DomainApplicationUserController) AonUtil.getRegisteredBean(APPLICATION_USER_CONTROLLER_NAME);
 			dausc.removeApplicationUsers( IEntityAlias.APPLICATION_USER_USER_ID, id );
-			FormUtil.remove(UserScope.class, id, IEntityAlias.USER_SCOPE_USER_ID);
-			FormUtil.remove(UserWorkGroup.class, id, IEntityAlias.USER_WORK_GROUP_USER_ID);
-			FormUtil.remove(ActionDenied.class, id, IEntityAlias.ACTION_DENIED_USER_ID);
-			FormUtil.remove(ActionFavorite.class, id, IEntityAlias.ACTION_FAVORITE_USER_ID);
-			FormUtil.remove(Contact.class, id, IEntityAlias.CONTACT_USER_ID);
-			FormUtil.remove(MailAccount.class, id, IEntityAlias.MAIL_ACCOUNT_USER_ID);
-			FormUtil.remove(Signature.class, id, IEntityAlias.SIGNATURE_USER_ID);
-			FormUtil.remove(ActionEntry.class, id, IEntityAlias.ACTION_ENTRY_SESSION_USER_ID);
-			FormUtil.remove(Session.class, id, IEntityAlias.SESSION_USER_ID);
-			FormUtil.remove(Alarm.class, id, IEntityAlias.ALARM_USER_ID);
-			FormUtil.remove(Favorite.class, id, IEntityAlias.FAVORITE_USER_ID);
-			FormUtil.remove(FavoriteCategory.class, id, IEntityAlias.FAVORITE_CATEGORY_USER_ID);
-			FormUtil.remove(Note.class, id, IEntityAlias.NOTE_OWNER_ID);
-			FormUtil.remove(Notice.class, id, IEntityAlias.NOTICE_SENDER_ID, IEntityAlias.NOTICE_RECIPIENT_ID);
+			FormUtil.remove(UserScope.class, id, true, IEntityAlias.USER_SCOPE_USER_ID);
+			FormUtil.remove(UserWorkGroup.class, id, true, IEntityAlias.USER_WORK_GROUP_USER_ID);
+			FormUtil.remove(ActionDenied.class, id, true, IEntityAlias.ACTION_DENIED_USER_ID);
+			FormUtil.remove(ActionFavorite.class, id, true, IEntityAlias.ACTION_FAVORITE_USER_ID);
+			FormUtil.remove(Contact.class, id, true, IEntityAlias.CONTACT_USER_ID);
+			FormUtil.remove(MailAccount.class, id, true, IEntityAlias.MAIL_ACCOUNT_USER_ID);
+			FormUtil.remove(Signature.class, id, true, IEntityAlias.SIGNATURE_USER_ID);
+			FormUtil.remove(ActionEntry.class, id, true, IEntityAlias.ACTION_ENTRY_SESSION_USER_ID);
+			FormUtil.remove(Session.class, id, true, IEntityAlias.SESSION_USER_ID);
+			FormUtil.remove(Alarm.class, id, true, IEntityAlias.ALARM_USER_ID);
+			FormUtil.remove(Favorite.class, id, true, IEntityAlias.FAVORITE_USER_ID);
+			FormUtil.remove(FavoriteCategory.class, id, true, IEntityAlias.FAVORITE_CATEGORY_USER_ID);
+			FormUtil.remove(Note.class, id, true, IEntityAlias.NOTE_OWNER_ID);
+			FormUtil.remove(Notice.class, id, true, IEntityAlias.NOTICE_SENDER_ID, IEntityAlias.NOTICE_RECIPIENT_ID);
 			resetTaskHolder(id);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -169,6 +169,7 @@ public class DomainUserControllerListener extends ControllerAdapter {
 	private void resetTaskHolder( Serializable id ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(TaskHolder.class);
 		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_USER_ID), id);
 		for( ITransferObject to : bean.getList(criteria) ) {
 			((TaskHolder) to).setUser(null);
