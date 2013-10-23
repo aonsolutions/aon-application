@@ -19,6 +19,7 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{stock}" />
+				<ui:param name="skipAfterSearch" value="#{true}" />
 
 				<ui:define name="searchContent">
 					<aon:outputLabel for="Stock_warehouse_id" value="#{bundle.aon_module_warehouse}" />

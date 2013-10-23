@@ -5,10 +5,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class StockSearchListener extends ControllerSearchListener {
+public class StockSearchListener extends ControllerSearchListenerEx {
 
 	private Item item;
 	

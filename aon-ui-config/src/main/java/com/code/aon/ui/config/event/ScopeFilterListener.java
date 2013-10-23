@@ -37,7 +37,7 @@ public class ScopeFilterListener extends ControllerAdapter {
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
 			if (!DomainManager.isParentDomainUserInChildDomain()) {
-				Expression exp = getExpression( event.getController().getFieldName(this.aliasName) );
+				Expression exp = getExpression( event.getController().resolveAlias(this.aliasName) );
 				event.getController().getCriteria().addExpression(exp);
 			} 
 		} catch (ManagerBeanException e) {
