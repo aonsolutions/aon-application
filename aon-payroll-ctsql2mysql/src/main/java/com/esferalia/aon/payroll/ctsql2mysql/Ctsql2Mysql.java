@@ -67,6 +67,7 @@ public class Ctsql2Mysql {
 	private String mysqlUser;
 	private String mysqlPasswd;
 	private boolean dryRun;
+	private boolean merge;
 	private boolean disabled;
 	private String domainName;
 	private String domainUser;
@@ -235,6 +236,12 @@ public class Ctsql2Mysql {
 				.withDescription("Comandos despues de la sincronización ( sólo para el demonio ). ");
 		Option commandsOption = OptionBuilder.create("command");
 
+		OptionBuilder.isRequired(false);
+		OptionBuilder.hasArg(false);
+		OptionBuilder
+				.withDescription("Añadir a la base de datos existente. No borrar la base de datos.");
+		Option mergeOption = OptionBuilder.create("merge");
+
 		options.addOption(helpOption);
 		options.addOption(dryRunOption);
 		options.addOption(disabledOption);
@@ -255,6 +262,7 @@ public class Ctsql2Mysql {
 		options.addOption(tablesOption);
 		options.addOption(delayOption);
 		options.addOption(commandsOption);
+		options.addOption(mergeOption);
 
 		CommandLineParser parser = new PosixParser();
 
@@ -329,6 +337,8 @@ public class Ctsql2Mysql {
 
 			commands = line.getOptionValues(commandsOption.getOpt());
 
+			merge = line.hasOption(mergeOption.getOpt());
+
 		} catch (Exception e) {
 			helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX,
 					options, true);
@@ -342,6 +352,10 @@ public class Ctsql2Mysql {
 
 		return mysqlDB.newConsultancyDomain(domainName, domainUser,
 				domainPasswd);
+	}
+
+	public boolean drop() {
+		return !merge;
 	}
 
 	public String[] getCommands() {
@@ -501,6 +515,13 @@ public class Ctsql2Mysql {
 			ClassNotFoundException, java.text.ParseException, AonSQLException,
 			IOException, InterruptedException {
 		Ctsql2Mysql ctsql2Mysql = new Ctsql2Mysql(args);
+		
+		if (ctsql2Mysql.drop()) {
+			try {
+				ctsql2Mysql.dropDatabase();
+			} catch (SQLException e) {
+			}
+		}
 		ctsql2Mysql.transfer();
 		ctsql2Mysql.exec();
 	}
@@ -518,7 +539,7 @@ public class Ctsql2Mysql {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		return cl.getResource(name);
 	}
-	
+
 	static class InputStream2Output implements Runnable {
 
 		private InputStream in;
