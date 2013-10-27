@@ -206,6 +206,11 @@ public class SalaryBuilder implements ISalaryBuilder {
 	}
 	
 	@Override
+	public void setTotalIrpf(Double totalIrpf) {
+		this.salary.setTotalIrpf(totalIrpf);
+	}
+	
+	@Override
 	public void setSocialSecurityContributions(Double socialSecurityContributions){
 		this.salary.setSocialSecurityContributions(socialSecurityContributions);
 	}

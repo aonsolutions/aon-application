@@ -17,36 +17,16 @@
 				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
+					<!--
+						SALARIES 
+						 -->
 					<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-						<aon:panelGroup>
-
-							<aon:panelGrid id="group_process_payroll"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-task aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_processes}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_calculator"
-											action="gwt_main_calculator"
-											value="#{bundle.menu_main_calculator}" target="gwt">
-										</aon:commandLink>
-									</aon:div>
-								</aon:div>
-
-							</aon:panelGrid>
-						</aon:panelGroup>
-
-						<aon:panelGroup>
-						</aon:panelGroup>
-
 						<aon:panelGroup>
 							<aon:panelGrid id="group_main_payroll" styleClass="aon-width-all"
 								columnClasses="aon-padding"
 								headerClass="aon-icon-general aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_module_payroll}" />
+									<aon:outputText value="#{bundle.payroll_salary_menu_group}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -56,7 +36,235 @@
 											<aon:actionListener method="#{enterprise.onEditSearch}" />
 										</aon:commandLink>
 									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="contractLeave"
+											action="contractLeave_search"
+											actionListener="#{contract.onEditSearch}"
+											value="#{bundle.payroll_contractLeave_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<a4j:commandLink ajaxSingle="true" immediate="true"
+											onclick="alert('#{bundle.aio_not_yet}');return false;"
+											value="¿ Partes de accidente ?"
+											style="color:red;text-decoration:line-through" />
+									</aon:div>
 								</aon:div>
+
+							</aon:panelGrid>
+						</aon:panelGroup>
+					</c:if>
+					<!--
+						EMPLOYEES 
+						 -->
+					<aon:panelGroup>
+						<aon:panelGrid id="group_contrata_general"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-account-entry aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.contrata_main_menu_group}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="contract-contrata"
+											action="contract_search"
+											actionListener="#{contract.onEditSearch}"
+											value="#{bundle.payroll_contract_module}" />
+									</aon:div>
+								</c:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="person-contrata"
+										action="#{person.initialAction}"
+										actionListener="#{person.onEditSearch}"
+										value="#{bundle.report_room_persons}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+
+					<!--
+						SS 
+						 -->
+					<aon:panelGroup>
+						<aon:panelGrid id="group_seguridad_social"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-winsuite aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.payroll_ss_menu_group}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contractBatch"
+										action="contractBatch_search"
+										actionListener="#{contractBatch.onEditSearch}"
+										value="#{bundle.payroll_contrata_contractBatch_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<a4j:commandLink ajaxSingle="true" immediate="true"
+										onclick="alert('#{bundle.aio_not_yet}');return false;"
+										value="(FAN) Fichero de aplicación de Nóminas"
+										style="color:red;" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="leaveBatch" action="leaveBatch_search"
+										actionListener="#{leaveBatch.onEditSearch}"
+										value="#{bundle.payroll_leaveBatchWizard_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<a4j:commandLink ajaxSingle="true" immediate="true"
+										onclick="alert('#{bundle.aio_not_yet}');return false;"
+										value="¿ Fichero Delt@ ?"
+										style="color:red;text-decoration:line-through" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+
+					<!--
+						CONCEPTS 
+						 -->
+					<aon:panelGroup>
+						<aon:panelGrid id="group_config_editable"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-offer aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.accounting_concepts}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="paymentConcept"
+										action="paymentConcept_search"
+										actionListener="#{paymentConcept.onEditSearch}"
+										value="#{bundle.payroll_paymentConcept_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="deductionConcept"
+										action="deductionConcept_search"
+										actionListener="#{deductionConcept.onEditSearch}"
+										value="#{bundle.payroll_deductionConcept_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="bonusConcept" action="bonusConcept_search"
+										actionListener="#{bonusConcept.onEditSearch}"
+										value="#{bundle.payroll_bonusConcept_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+
+					<!--
+						HACIENDA 
+						 -->
+					<aon:panelGroup>
+						<aon:panelGrid id="group_hacienda" styleClass="aon-width-all"
+							columnClasses="aon-padding"
+							headerClass="aon-icon-aeat aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.payroll_aeat_menu_group}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="irpfData" action="irpfData_search"
+										actionListener="#{irpfData.onEditSearch}"
+										value="#{bundle.payroll_model_145_module}">
+										<aon:actionListener method="#{contract.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="mod111-fiscal"
+										action="mod111_search-fiscal"
+										actionListener="#{mod111.onEditSearch}"
+										value="#{bundle.fiscal_model_111_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<a4j:commandLink ajaxSingle="true" immediate="true"
+										onclick="alert('#{bundle.aio_not_yet}');return false;"
+										value="Modelo 190/Certificados de Renta" style="color:red;" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+
+					<!-- 
+							GLOBALS
+						 -->
+					<aon:panelGroup>
+						<aon:panelGrid id="group_system_editable"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-company aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.payroll_system}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="systemPayment"
+										action="systemPayment_search"
+										actionListener="#{systemPayment.onEditSearch}"
+										value="#{bundle.payroll_systemPayment_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="systemDeduction"
+										action="systemDeduction_search"
+										actionListener="#{systemDeduction.onEditSearch}"
+										value="#{bundle.payroll_systemDeduction_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="systemData" action="systemData_grid"
+										actionListener="#{systemData.onSearch}"
+										value="#{bundle.payroll_systemData_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+
+					<!-- 
+							SEPE
+						 -->
+					<aon:panelGroup>
+						<aon:panelGrid id="group_contrata_batch"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-sepe aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.payroll_sepe_menu_group}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contrataBatch-contrata"
+										action="contrataBatch_search-contrata"
+										value="#{bundle.sepe_contrataBatch_module}">
+										<aon:actionListener method="#{contrataBatch.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="certifica2Batch-contrata"
+										action="certifica2Batch_search-contrata"
+										actionListener="#{certifica2Batch.onEditSearch}"
+										value="#{bundle.sepe_certifica2Batch_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+
+					<!--
+						CONFIG 
+						 -->
+					<aon:panelGroup>
+						<aon:panelGrid id="group_contrata_parameters"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-config">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_configuration}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="enterprise-contrata"
+										action="#{enterprise.initialAction}"
+										value="#{bundle.company_data_module}">
+										<aon:actionListener method="#{enterprise.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>
+
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_agreement"
@@ -66,111 +274,120 @@
 									</aon:div>
 								</aon:div>
 
-							</aon:panelGrid>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<a4j:commandLink ajaxSingle="true" immediate="true"
+										onclick="alert('#{bundle.aio_not_yet}');return false;"
+										value="Calendario Laboral" style="color:red;" />
+								</aon:div>
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="sepeAppParams-contrata"
+										action="sepeAppParams_form-contrata"
+										actionListener="#{sepeAppParams.onLoad}"
+										value="#{bundle.payroll_default_params_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+
+					<!--
+						PROCESS 
+						 -->
+					<aon:panelGroup>
+						<aon:panelGrid id="group_process_payroll"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-task aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_processes}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_calculator"
+										action="gwt_main_calculator"
+										value="#{bundle.menu_main_calculator}" target="gwt">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<a4j:commandLink ajaxSingle="true" immediate="true"
+										onclick="alert('#{bundle.aio_not_yet}');return false;"
+										value="Remesa Transferencia de Nóminas" style="color:red;" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<a4j:commandLink ajaxSingle="true" immediate="true"
+										onclick="alert('#{bundle.aio_not_yet}');return false;"
+										value="Regularización IRPF" style="color:red;" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<a4j:commandLink ajaxSingle="true" immediate="true"
+										onclick="alert('#{bundle.aio_not_yet}');return false;"
+										value="Generación Apuntes Contables" style="color:red;" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+
+					<!--
+						AUXILIARS 
+						 -->
+					<aon:panelGroup>
+						<aon:panelGrid id="group_contrata_auxiliaries"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-utilities aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_auxiliaries}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="trainingCenter-contrata"
+										action="trainingCenter_list-contrata"
+										value="#{bundle.payroll_trainingCenter_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contractMode-contrata"
+										action="contractOption_list-contrata"
+										actionListener="#{contractModel.onReset}"
+										value="#{bundle.payroll_contract_mode_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="sepeTables-contrata"
+										action="sepeTables_list-contrata"
+										actionListener="#{sepeTables.onInit}"
+										value="#{bundle.sepe_sepeTables_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+
+					<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+						<aon:panelGroup>
 						</aon:panelGroup>
 					</c:if>
 
-					<c:if test="#{domainSwitcher.domainManagementAvailable}">
-						<aon:panelGroup>
-
-							<aon:panelGrid id="group_process_payroll_root"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-task aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_processes}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_calculator_root"
-											action="gwt_main_calculator"
-											value="#{bundle.menu_main_calculator}" target="gwt">
-										</aon:commandLink>
-									</aon:div>
+					<!--
+						Interesting LINKS 
+						 -->
+					<aon:panelGroup>
+						<aon:panelGrid id="group_contrata_links"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-report aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="Enlaces externos" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<h:outputLink target="_blank" value="http://www.sepe.es/">
+										<aon:outputText
+											value="S.E.P.E. - Servicio Publico de Empleo Estatal" />
+									</h:outputLink>
 								</aon:div>
-
-							</aon:panelGrid>
-						</aon:panelGroup>
-						<aon:panelGroup>
-
-							<aon:panelGrid id="group_config_editable"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-offer aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.accounting_concepts}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="paymentConcept"
-											action="paymentConcept_search"
-											actionListener="#{paymentConcept.onEditSearch}"
-											value="#{bundle.payroll_paymentConcept_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="deductionConcept"
-											action="deductionConcept_search"
-											actionListener="#{deductionConcept.onEditSearch}"
-											value="#{bundle.payroll_deductionConcept_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="bonusConcept"
-											action="bonusConcept_search"
-											actionListener="#{bonusConcept.onEditSearch}"
-											value="#{bundle.payroll_bonusConcept_module}" />
-									</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<h:outputLink target="_blank" value="http://www.seg-social.es">
+										<aon:outputText value="S.S. - Seguridad Social" />
+									</h:outputLink>
 								</aon:div>
-							</aon:panelGrid>
-						</aon:panelGroup>
-						
-						<aon:panelGroup>
-							<aon:panelGrid id="group_agreement_payroll"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-task aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.payroll_agreement_module}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_agreement"
-											action="gwt_main_agreement"
-											value="#{bundle.payroll_agreement_module}" target="gwt">
-										</aon:commandLink>
-									</aon:div>
-								</aon:div>
-
-							</aon:panelGrid>
-						</aon:panelGroup>
-						
-						<aon:panelGroup>
-
-							<aon:panelGrid id="group_system_editable"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-company aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.payroll_system}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="systemPayment"
-											action="systemPayment_search"
-											actionListener="#{systemPayment.onEditSearch}"
-											value="#{bundle.payroll_systemPayment_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="systemDeduction"
-											action="systemDeduction_search"
-											actionListener="#{systemDeduction.onEditSearch}"
-											value="#{bundle.payroll_systemDeduction_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="systemData" action="systemData_grid"
-											actionListener="#{systemData.onSearch}"
-											value="#{bundle.payroll_systemData_module}" />
-									</aon:div>
-								</aon:div>
-							</aon:panelGrid>
-						</aon:panelGroup>
-
-					</c:if>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
 
 
 				</h:panelGrid>

@@ -17,6 +17,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
@@ -51,6 +52,11 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 	@UiField
 	MonthListBox monthListBox;
+
+	@UiField
+	CheckBox saveCheckBox;
+	@UiField
+	CheckBox compareCheckBox;
 
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
@@ -146,6 +152,11 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		for (Enterprise enterprise : enterpriseDataGrid.getSelectedItems())
 			requestDataBuffer.append("&" + ENPERPRISES + "="
 					+ enterprise.getId());
+		
+		if ( saveCheckBox.getValue() )
+			requestDataBuffer.append("&" + SAVE );
+		if ( compareCheckBox.getValue() )
+			requestDataBuffer.append("&" + COMPARE );
 
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open("POST", CALC_URL);
@@ -159,6 +170,7 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 			@Override
 			public void onReadyStateChange(XMLHttpRequest xhr) {
 				int state = xhr.getReadyState();
+
 				if (state == XMLHttpRequest.LOADING
 						|| state == XMLHttpRequest.DONE) {
 
@@ -167,8 +179,10 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 					resultsPanel.addHTML(html);
 					loaded = text.length();
 				}
+				
 			}
 		});
+		
 
 		xhr.send(requestDataBuffer.toString());
 

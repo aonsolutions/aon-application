@@ -335,6 +335,12 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	}
 
 	@Override
+	public void setTotalIrpf(Double totalIrpf) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
 	public void setSocialSecurityContributions(
 			Double socialSecurityContributions) {
 		// TODO Auto-generated method stub

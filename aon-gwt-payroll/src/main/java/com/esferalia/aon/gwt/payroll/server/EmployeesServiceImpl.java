@@ -31,6 +31,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -126,7 +127,13 @@ import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PayrollWorkplaceColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryBonusColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryCostColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDeductionColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryEmbargoColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
@@ -168,11 +175,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	};
 
-	private static interface ICalculateHook<S extends ISalaryBuilder, L extends ContractSalaryCalculator.IListener> {
-		void beforeCalculate(S salaryBuilder, L calculatorlistener,
-				IContractSalaryCalculatorContext ctx);
-	}
+	// ----------------------------------------------- EmployeesService methods
 
+	@Override
 	public Enterprise getEnterprise() throws IllegalArgumentException {
 		Connection conn = null;
 		try {
@@ -197,6 +202,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
 	public Enterprise[] getEnterprises() throws IllegalArgumentException {
 		Connection conn = null;
 		try {
@@ -226,6 +232,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
 	public List<Salary> getSalaries(Employee employee)
 			throws IllegalArgumentException {
 		Connection conn = null;
@@ -253,6 +260,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
 	public List<Irpf> getIrpfs(Employee employee)
 			throws IllegalArgumentException {
 		Connection conn = null;
@@ -273,6 +281,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
 	public List<Employee> getEmployees(int workplaceId, Date fromDate,
 			String pattern, int offset, int limit)
 			throws IllegalArgumentException {
@@ -297,6 +306,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
 	public List<Cost> getWorkplaceCosts(int workplaceId)
 			throws IllegalArgumentException {
 		Connection conn = null;
@@ -317,6 +327,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
 	public List<Cost> getEnterpriseCosts(int enterpriseId)
 			throws IllegalArgumentException {
 		Connection conn = null;
@@ -337,6 +348,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
 	public String getIrpfReceiptHTML(final Irpf irpf, int zoom)
 			throws IllegalArgumentException {
 
@@ -397,6 +409,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
 	public String getSalaryReceiptHTML(Salary salary, int zoom)
 			throws IllegalArgumentException {
 
@@ -408,7 +421,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 																		 * to
 																		 * int
 																		 */);
-
+		
 		Map<Object, Object> images = new HashMap<Object, Object>();
 		parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images);
 		String imagesUri = String.format("jasper_image/salary/%d/",
@@ -425,6 +438,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return html;
 	}
 
+	@Override
 	public String getSalaryReceiptHTML(Cost cost, int zoom)
 			throws IllegalArgumentException {
 
@@ -456,74 +470,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return html;
 	}
 
-	public String getSalaryReceiptHTML(Salary salary,
-			Map<Object, Object> parameters) throws IllegalArgumentException {
-
-		try {
-
-			initFacesContext();
-
-			String salaryReport = getSalaryReport();
-
-			IManagerBean beanManager = BeanManager
-					.getManagerBean(com.esferalia.aon.payroll.Salary.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(
-					beanManager.getFieldName(IEntityAlias.SALARY_ID),
-					salary.getId());
-
-			ReportManager reportManager = new ReportManager();
-			reportManager.setOutputFormat(OutputFormat.HTML);
-			reportManager
-					.setCollectionProvider(new AonServletUtils.SalaryProvider(
-							criteria));
-
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-			reportManager.execute(out, salaryReport, parameters);
-
-			return out.toString();
-
-		} catch (ReportException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} finally {
-			releaseFacesContext();
-		}
-
-	}
-
-	public String getSalaryReceiptHTML(Cost cost, Map<Object, Object> parameters)
-			throws IllegalArgumentException {
-		try {
-
-			initFacesContext();
-
-			ReportManager reportManager = new ReportManager();
-			reportManager.setOutputFormat(OutputFormat.HTML);
-			reportManager.setCollectionProvider(getSalariesProvider(cost));
-
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-			String salaryReport = getSalaryReport();
-			reportManager.execute(out, salaryReport, parameters);
-
-			return out.toString();
-
-		} catch (ReportException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} finally {
-			releaseFacesContext();
-		}
-	}
-
+	@Override
 	public String getCostReceiptHTML(Cost cost, int zoom)
 			throws IllegalArgumentException {
 		try {
@@ -572,6 +519,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	@Override
 	public String getSalaryDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
 			throws IllegalArgumentException {
 
@@ -602,6 +550,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	@Override
 	public String getIrpfDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
 			throws IllegalArgumentException {
 
@@ -640,6 +589,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
 	public ContextDescriptor getContext(SalaryDraft salaryDraft) {
 		try {
 			initFacesContext();
@@ -649,6 +599,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
 	public SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		try {
@@ -661,6 +612,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	@Override
 	public Map<String, String> getEventsVariables(Integer workplaceId,
 			Integer agreementId, Date startDate, Date endDate)
 			throws IllegalArgumentException {
@@ -679,6 +631,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	@Override
 	public AgreementDraft calculateAgreementDraft(AgreementDraft agreementDraft)
 			throws IllegalArgumentException {
 		try {
@@ -693,6 +646,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	@Override
 	public void saveAgreementDraft(AgreementDraft agreementDraft)
 			throws IllegalArgumentException {
 		Connection conn = null;
@@ -719,6 +673,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	@Override
 	public void saveSalaryDraft(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		Connection conn = null;
@@ -745,6 +700,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	@Override
 	public SalaryDraft saveSalary(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		Connection conn = null;
@@ -767,6 +723,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	@Override
 	public String getSalaryDraftReceipt(final SalaryDraft draft, String mime)
 			throws IllegalArgumentException {
 
@@ -831,6 +788,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	@Override
 	public String getIrpfDraftReceipt(final SalaryDraft draft, String mime)
 			throws IllegalArgumentException {
 
@@ -894,6 +852,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	@Override
 	public String getSalaryPreviewReceiptHTML(SalaryPreview salaryPreview,
 			int zoom) throws IllegalArgumentException {
 		Map<Object, Object> parameters = new HashMap<Object, Object>(
@@ -922,7 +881,240 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		return html;
 	}
 
-	public String getSalaryPreviewReceiptHTML(final SalaryPreview draft,
+	@Override
+	public List<Payment> getAvailablePayments(int employeeId)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+
+			conn = getConnection();
+
+			int domainId = getDomainID();
+
+			List<Payment> paymentConcepts = getPaymentConcepts(conn, domainId,
+					getParentDomainID());
+			List<Payment> employeePayments = getEmployeePayments(conn,
+					employeeId);
+			List<Payment> enterprisePayments = getEnterprisePayments(conn,
+					domainId);
+
+			List<Payment> payments = new ArrayList<Payment>(
+					paymentConcepts.size() + employeePayments.size()
+							+ enterprisePayments.size());
+
+			payments.addAll(paymentConcepts);
+			payments.addAll(employeePayments);
+			payments.addAll(enterprisePayments);
+
+			return payments;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
+	@Override
+	public void saveEvents(Events events, Date startDate, Date endDate) {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			int domainId = getDomainID();
+			conn = getConnection();
+			SQLEvents.completeEvents(conn, events, startDate, endDate);
+			SQLEvents.saveEvents(conn, events, startDate, endDate, domainId);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
+	@Override
+	public Events getEvents(Integer workplaceId, Date startDate, Date endDate,
+			int offset, int limit, String names[]) {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			return SQLEvents.getEvents(conn, workplaceId, startDate, endDate,
+					offset, limit);
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+
+	}
+
+	@Override
+	public Period getAvailPeriod(Integer workplaceId, String name)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			return SQLEvents.getAvailPeriod(conn, workplaceId, name);
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
+	@Override
+	public void delete(Salary[] salaries) throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			
+			int ids [] = new  int [salaries.length];
+			for (int i = 0; i < salaries.length; i++)
+				ids[i] = salaries[i].getId();
+			
+			deleteSalaries(conn, ids);
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
+	// -------------------------------------------------------- Private methods
+
+	private String getSalaryReport() throws ReportException {
+		int enterpriseId = getEnterpriseID();
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			return AonServletUtils.getSalaryReport(conn, enterpriseId);
+		} catch (SQLException e) {
+			throw new ReportException(e.getLocalizedMessage());
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+
+	private String getSalaryReceiptHTML(Salary salary,
+			Map<Object, Object> parameters) throws IllegalArgumentException {
+
+		try {
+
+			initFacesContext();
+			
+			
+
+			String salaryReport = getSalaryReport();
+
+			IManagerBean beanManager = BeanManager
+					.getManagerBean(com.esferalia.aon.payroll.Salary.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(
+					beanManager.getFieldName(IEntityAlias.SALARY_ID),
+					salary.getId());
+
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			ctx.getViewRoot().setLocale(new Locale("es", "ES"));
+			ReportManager reportManager = new ReportManager();
+			
+			reportManager.setOutputFormat(OutputFormat.HTML);
+			reportManager
+					.setCollectionProvider(new AonServletUtils.SalaryProvider(
+							criteria));
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+			reportManager.execute(out, salaryReport, parameters);
+
+			return out.toString();
+
+		} catch (ReportException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+
+	}
+
+	private String getSalaryReceiptHTML(Cost cost,
+			Map<Object, Object> parameters) throws IllegalArgumentException {
+		try {
+
+			initFacesContext();
+
+			ReportManager reportManager = new ReportManager();
+			reportManager.setOutputFormat(OutputFormat.HTML);
+			reportManager.setCollectionProvider(getSalariesProvider(cost));
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+			String salaryReport = getSalaryReport();
+			reportManager.execute(out, salaryReport, parameters);
+
+			return out.toString();
+
+		} catch (ReportException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
+		}
+	}
+
+	private String getSalaryPreviewReceiptHTML(final SalaryPreview draft,
 			Map<Object, Object> parameters) throws IllegalArgumentException {
 
 		try {
@@ -973,7 +1165,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	public String getSalaryDraftReceiptHTML(final SalaryDraft draft,
+	private String getSalaryDraftReceiptHTML(final SalaryDraft draft,
 			Map<Object, Object> parameters) throws IllegalArgumentException {
 
 		try {
@@ -1021,7 +1213,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	public String getIrpfDraftReceiptHTML(final SalaryDraft draft,
+	private String getIrpfDraftReceiptHTML(final SalaryDraft draft,
 			Map<Object, Object> parameters) throws IllegalArgumentException {
 
 		try {
@@ -1072,136 +1264,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	public List<Payment> getAvailablePayments(int employeeId)
-			throws IllegalArgumentException {
-		Connection conn = null;
-		try {
-			initFacesContext();
+	// ------------------------------------------------- Private Static methods
 
-			conn = getConnection();
-
-			int domainId = getDomainID();
-
-			List<Payment> paymentConcepts = getPaymentConcepts(conn, domainId,
-					getParentDomainID());
-			List<Payment> employeePayments = getEmployeePayments(conn,
-					employeeId);
-			List<Payment> enterprisePayments = getEnterprisePayments(conn,
-					domainId);
-
-			List<Payment> payments = new ArrayList<Payment>(
-					paymentConcepts.size() + employeePayments.size()
-							+ enterprisePayments.size());
-
-			payments.addAll(paymentConcepts);
-			payments.addAll(employeePayments);
-			payments.addAll(enterprisePayments);
-
-			return payments;
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
-			releaseFacesContext();
-		}
-	}
-
-	public void saveEvents(Events events, Date startDate, Date endDate) {
-		Connection conn = null;
-		try {
-			initFacesContext();
-			int domainId = getDomainID();
-			conn = getConnection();
-			SQLEvents.completeEvents(conn, events, startDate, endDate);
-			SQLEvents.saveEvents(conn, events, startDate, endDate, domainId);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
-			releaseFacesContext();
-		}
-	}
-
-	public Events getEvents(Integer workplaceId, Date startDate, Date endDate,
-			int offset, int limit, String names[]) {
-		Connection conn = null;
-		try {
-			initFacesContext();
-			conn = getConnection();
-			return SQLEvents.getEvents(conn, workplaceId, startDate, endDate,
-					offset, limit);
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
-			releaseFacesContext();
-		}
-
-	}
-
-	public Period getAvailPeriod(Integer workplaceId, String name)
-			throws IllegalArgumentException {
-		Connection conn = null;
-		try {
-			initFacesContext();
-			conn = getConnection();
-			return SQLEvents.getAvailPeriod(conn, workplaceId, name);
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			throw new IllegalArgumentException(e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
-			releaseFacesContext();
-		}
-	}
-
-	// -----------------------------------------
-	// Private members...
-	// -----------------------------------------
-
-	private String getSalaryReport() throws ReportException {
-		int enterpriseId = getEnterpriseID();
-		Connection conn = null;
-		try {
-			conn = getConnection();
-			return AonServletUtils.getSalaryReport(conn, enterpriseId);
-		} catch (SQLException e) {
-			throw new ReportException(e.getLocalizedMessage());
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
-		}
-	}
+	// Note that below methods can be moved to another place safely.
 
 	private static List<Payment> getPaymentConcepts(Connection connection,
 			Integer domainId, Integer parentDomainId) throws SQLException {
@@ -2445,7 +2510,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			final Connection conn, final SalaryDraft draft,
 			final IContractSalaryCalculatorContext.IListener listener)
 			throws ExpressionException, SQLException {
-		
+
 		SalaryType salaryType = SalaryType.values()[draft.getType().ordinal()];
 		return salaryType
 				.accept(new SalaryTypeVisitor<IContractSalaryCalculatorContext>() {
@@ -2922,6 +2987,123 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		} finally {
 
 		}
+	}
+
+	private static void deleteSalaries(Connection conn, int... ids)
+			throws SQLException {
+		PreparedStatement dataStmt = null;
+		PreparedStatement bonusStmt = null;
+		PreparedStatement costsStmt = null;
+		PreparedStatement paymentStmt = null;
+		PreparedStatement deductionStmt = null;
+		PreparedStatement embargoStmt = null;
+		PreparedStatement salaryStmt = null;
+		
+		boolean autoCommit =  conn.getAutoCommit();
+		try {
+
+			Character questions[] = new Character[ids.length];
+			Arrays.fill(questions, 0, ids.length, '?');
+			String params = asString(",", questions);
+			
+			conn.setAutoCommit(false);
+			
+			// First of all clean childs...
+			dataStmt = conn.prepareStatement(String.format(
+					"DELETE FROM %s WHERE %s IN (%s)",
+					SQLConstants.SALARY_DATA, SalaryDataColumns.SALARY,
+					params));
+			for (int i = 1; i <= ids.length; i++)
+				dataStmt.setInt(i, ids[i-1]);
+			dataStmt.execute();
+
+			bonusStmt = conn.prepareStatement(String.format(
+					"DELETE FROM %s WHERE %s IN (%s)",
+					SQLConstants.SALARY_BONUS, SalaryBonusColumns.SALARY,
+					params));
+			for (int i = 1; i <= ids.length; i++)
+				bonusStmt.setInt(i, ids[i-1]);
+			bonusStmt.execute();
+
+			costsStmt = conn.prepareStatement(String.format(
+					"DELETE FROM %s WHERE %s IN (%s)",
+					SQLConstants.SALARY_COST, SalaryCostColumns.SALARY,
+					params));
+			for (int i = 1; i <= ids.length; i++)
+				costsStmt.setInt(i, ids[i-1]);
+			costsStmt.execute();
+			
+			paymentStmt = conn.prepareStatement(String.format(
+					"DELETE FROM %s WHERE %s IN (%s)",
+					SQLConstants.SALARY_PAYMENT, SalaryPaymentColumns.SALARY,
+					params));
+			for (int i = 1; i <= ids.length; i++)
+				paymentStmt.setInt(i, ids[i-1]);
+			paymentStmt.execute();
+
+			deductionStmt = conn.prepareStatement(String.format(
+					"DELETE FROM %s WHERE %s IN (%s)",
+					SQLConstants.SALARY_DEDUCTION, SalaryDeductionColumns.SALARY,
+					params));
+			for (int i = 1; i <= ids.length; i++)
+				deductionStmt.setInt(i, ids[i-1]);
+			deductionStmt.execute();
+
+			embargoStmt = conn.prepareStatement(String.format(
+					"DELETE FROM %s WHERE %s IN (%s)",
+					SQLConstants.SALARY_EMBARGO, SalaryEmbargoColumns.SALARY,
+					params));
+			for (int i = 1; i <= ids.length; i++)
+				embargoStmt.setInt(i, ids[i-1]);
+			embargoStmt.execute();
+
+			salaryStmt = conn.prepareStatement(String.format(
+					"DELETE FROM %s WHERE %s IN (%s)",
+					SQLConstants.SALARY, SalaryColumns.ID,
+					params));
+			for (int i = 1; i <= ids.length; i++)
+				salaryStmt.setInt(i, ids[i-1]);
+			salaryStmt.execute();
+			
+			conn.commit();
+			
+
+		} finally {
+			conn.rollback();
+			conn.setAutoCommit(autoCommit);
+
+			if (bonusStmt != null)
+				bonusStmt.close();
+			if (costsStmt != null)
+				costsStmt.close();
+			if (dataStmt != null)
+				dataStmt.close();
+			if (paymentStmt != null)
+				paymentStmt.close();
+			if (embargoStmt != null)
+				embargoStmt.close();
+			if (deductionStmt != null)
+				deductionStmt.close();
+			if (salaryStmt != null)
+				salaryStmt.close();
+			
+		}
+	}
+
+	private static <T> String asString(String sep, T array []) {
+
+		if (array.length == 0)
+			return "";
+
+		StringBuffer buff = new StringBuffer();
+		buff.append(array[0]);
+
+		for (int i = 1; i < array.length; i++) {
+			buff.append(sep);
+			buff.append(array[0]);
+		}
+
+		return buff.toString();
 	}
 
 }

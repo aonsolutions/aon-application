@@ -89,6 +89,8 @@ public interface ISalaryBuilder {
 	
 	public void setTotalDeduction(Double totalDeduction);
 	
+	public void setTotalIrpf(Double totalIrpf);
+
 	public void setSocialSecurityContributions(Double socialSecurityContributions);
 	
 	public void setTotalEnterprise(Double totalEnterprise);

@@ -269,4 +269,11 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				new AsyncCallbackWrapper<Map<String, String>>(callback));
 
 	}
+	
+	@Override
+	public void delete(Salary[] salaries, AsyncCallback<Void> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.delete(salaries,new AsyncCallbackWrapper<Void>(callback));
+	}
 }

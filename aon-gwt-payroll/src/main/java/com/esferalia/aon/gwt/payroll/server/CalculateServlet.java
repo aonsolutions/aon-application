@@ -223,10 +223,9 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			throws ServletException, IOException {
 		long salaries = 0;
 		long startTimeMillis = System.currentTimeMillis();
-		
-		PrintWriter writer =  resp.getWriter();
-		SalaryBuilderListener listener = new SalaryBuilderListener(
-				writer );
+
+		PrintWriter writer = resp.getWriter();
+		SalaryBuilderListener listener = new SalaryBuilderListener(writer);
 		Connection connection = null;
 		try {
 
@@ -241,21 +240,10 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 					+ " - "
 					+ DATE_FORMAT.format(endDate) + "</span>.");
 
-			RelationalExpression employeesExpr = getEmployeesExpression(req);
-			RelationalExpression workPlacesExpr = getWorkPlacesExpression(req);
-			RelationalExpression enterprisesExpr = getEnperprisesExpression(req);
-
-			Criteria criteria = new Criteria();
-			if (employeesExpr != null)
-				criteria.addExpression(employeesExpr);
-			if (workPlacesExpr != null)
-				criteria.addExpression(workPlacesExpr);
-			if (enterprisesExpr != null)
-				criteria.addExpression(enterprisesExpr);
+			Criteria criteria = getCriteria(req);
 
 			ServletContext ctx = getServletContext();
 			AonServletUtils.initFacesContext(ctx, req, resp);
-
 			connection = AonServletUtils.getConnection();
 
 			SQLContractSalaryCalculatorContext sqlContractSalaryCalculatorContext = new SQLContractSalaryCalculatorContext(
@@ -303,7 +291,6 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			listener.onError(exception.getMessage());
-
 		} catch (ParseException exception) {
 			listener.onError(exception.getMessage());
 		} catch (ExpressionException exception) {
@@ -312,11 +299,12 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			AonServletUtils.releaseFacesContext();
 			long endTimeMillis = System.currentTimeMillis();
 			double elapsedTime = (endTimeMillis - startTimeMillis) / 1000.00;
+
 			listener.onInfo("N&oacute;minas procesadas <span class='aon-input-required' > "
 					+ INTEGER_FORMAT.format(salaries)
 					+ " </span>. Tiempo transcurrido: <span class='aon-input-required' >"
 					+ SECONDS_FORMAT.format(elapsedTime) + " segundos</span>.");
-			
+
 			writer.flush();
 			if (connection != null) {
 				try {
@@ -325,7 +313,6 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 				}
 			}
-			
 
 		}
 
@@ -356,6 +343,22 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 		String value = request.getParameter(name);
 		return value != null ? DATE_FORMAT.parse(value) : null;
 
+	}
+
+	private static Criteria getCriteria(HttpServletRequest req) {
+		RelationalExpression employeesExpr = getEmployeesExpression(req);
+		RelationalExpression workPlacesExpr = getWorkPlacesExpression(req);
+		RelationalExpression enterprisesExpr = getEnperprisesExpression(req);
+
+		Criteria criteria = new Criteria();
+		if (employeesExpr != null)
+			criteria.addExpression(employeesExpr);
+		if (workPlacesExpr != null)
+			criteria.addExpression(workPlacesExpr);
+		if (enterprisesExpr != null)
+			criteria.addExpression(enterprisesExpr);
+
+		return criteria;
 	}
 
 	private static RelationalExpression getEnperprisesExpression(

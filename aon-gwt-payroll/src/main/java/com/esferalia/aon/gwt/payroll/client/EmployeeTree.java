@@ -703,8 +703,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	 */
 	public void onModuleLoad() {
 
-		// Window.alert("This method constructs the application user interface by instantiating controls and hooking up event handler.");
-
 		// Inject rich styles.
 		GWT.<MainEntryPoint.GWTResources> create(
 				MainEntryPoint.GWTResources.class).css().ensureInjected();

@@ -181,6 +181,10 @@ public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
+	public void setTotalIrpf(Double totalIrpf) {
+	}
+	
+	@Override
 	public void setSocialSecurityContributions(
 			Double socialSecurityContributions) {
 		

@@ -135,7 +135,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		salaryBuilder.setTotalDeduction(totalDeduction + totalEmbargos);
 
-		Double totalCost = 0.00; // fillCosts(contractSalaryCalculatorContext);
+		Double totalCost = fillCosts(contractSalaryCalculatorContext);
 		expressionContext.addVariable(ENTERPRISE_QUOTA, totalCost, start, end);
 		Double totalBonus = 0.00; // fillBonus(contractSalaryCalculatorContext);
 
@@ -355,6 +355,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 	private Double fillDeductions(IContractSalaryCalculatorContext ctx)
 			throws SalaryException {
 		try {
+			double totalIrpf = 0;
 			double totalDeduction = 0;
 			double ssContributions = 0;
 
@@ -373,6 +374,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				if (type.isTaxDeduction()) {
 					deductionStart = ctx.getIrpfDate();
 					deductionEnd = ctx.getIrpfDate();
+					
 				} else {
 					deductionStart = Period.max(
 							contractDeduction.getStartDate(), start);
@@ -389,6 +391,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 					if (type.isSsDeduction()) {
 						ssContributions += deduction;
+					} else if (type.isTaxDeduction()){
+						totalIrpf += deduction;
 					}
 				} catch (RemoveException e) {
 					// TODO: Something ??? It's really necessary...
@@ -408,6 +412,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			}
 
+			salaryBuilder.setTotalIrpf(totalIrpf);
 			salaryBuilder.setSocialSecurityContributions(ssContributions);
 			expressionContext.addVariable(EMPLOYEE_QUOTA, ssContributions,
 					start, end);

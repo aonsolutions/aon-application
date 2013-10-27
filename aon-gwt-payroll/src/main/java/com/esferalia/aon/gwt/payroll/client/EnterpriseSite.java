@@ -118,8 +118,10 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		jsf = new JSF();
 		cost = new Cost();
 		salary = new Salary();
+		salary.hideDeleteButton();
 		documents = new Documents();
 		employees.addListener(this);
+		
 
 	}
 

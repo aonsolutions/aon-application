@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
@@ -58,7 +57,8 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 	}
 	
 	public SQLSalaryBuilderTester(Connection connection, SalaryType salaryType) 
-	throws SQLException{
+	throws SQLException{	
+
 		this.connection = connection;
 		this.salaryStmt = 
 			this.connection.prepareStatement(SALARY_SQL);
@@ -105,7 +105,8 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 	public void setEnterpriseDocument(String enterpriseDocument) {
 		// TODO Auto-generated method stub
 
-	}
+	}	static String OVERWRITE = "overwrite";
+
 
 	@Override
 	public void setRegistration(Integer registration) {
@@ -248,6 +249,13 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 
 	}
 
+	
+	@Override
+	public void setTotalIrpf(Double totalIrpf) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Override
 	public void setSocialSecurityContributions(
 			Double socialSecurityContributions) {

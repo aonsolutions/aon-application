@@ -224,11 +224,13 @@ public class Employees extends ResizeComposite implements
 			}
 		}
 
+		TreeItem workplaceItem = null;
+
 		for (Workplace workplace : workplaces) {
 
 			String description = workplace.getDescription();
 
-			TreeItem workplaceItem = addImageItem(enterpriseItem, description,
+			workplaceItem = addImageItem(enterpriseItem, description,
 					images.workplace());
 			workplaceItem.setUserObject(workplace);
 
@@ -242,45 +244,42 @@ public class Employees extends ResizeComposite implements
 				//
 
 				Agreement agreement = workplace.getAgreement();
-				EventMetaData fteMetaData = new EnumEventMetaData("FTE",
-						"DESEMPE\u00D1O",
-						"Desempe\u00F1o por Trabajador y Jornada", "", "4",
-						"8", "10", "12", "L", "LT", "LR", "F", "FT", "FR", "V",
-						"B", "P", "AI", "M");
-
-				 final EventsDraftObject eventsDraftObject = new EventsDraftObject(
-				 workplace.getId(),
-				 agreement != null ? agreement.getId() : null,
-				 employeesService,
-				 fteMetaData, 
-				 new DecimalEventMetaData("INCENTIVOS"),
-				 new DecimalEventMetaData("ATRASOS"),
-				 new DecimalEventMetaData("ANTICIPOS"),
-				 new DecimalEventMetaData("EMBARGOS"),
-				 new DecimalEventMetaData("LTA",
-				 "D\u00EDas Libres Trabajados canjeados por Alojamiento"),
-				 new DecimalEventMetaData("CLT",
-				 "Coste d\u00EDa Libre Trabajado"),
-				 new DecimalEventMetaData("CD",
-				 "Coste Diario del trabajador (jornada 8 horas)"),
-				 new ConstantEventMetaData("CFT",
-				 "Coste d\u00EDa Festivo Trabajado ( = CD * 1.75 \u20A0)"),
-				 new BooleanEventMetaData("LTNR",
-				 "D\u00EDas Libres Trabajados No Recuperables"),
-				 new DecimalEventMetaData("HFD",
-				 "Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"),
-				 new EventMetaData("OBSERVACIONES"),
-				 new ConstantEventMetaData("PLUS_TURNICIDAD",
-				 "Plus de Turnicidad = (\u2211LT - \u2211LR - LTA) * CLT"));
-/*
+				/*
+				 * EventMetaData fteMetaData = new EnumEventMetaData("FTE",
+				 * "DESEMPE\u00D1O", "Desempe\u00F1o por Trabajador y Jornada",
+				 * "", "4", "8", "10", "12", "L", "LT", "LR", "F", "FT", "FR",
+				 * "V", "B", "P", "AI", "M");
+				 * 
+				 * final EventsDraftObject eventsDraftObject = new
+				 * EventsDraftObject( workplace.getId(), agreement != null ?
+				 * agreement.getId() : null, employeesService, fteMetaData, new
+				 * DecimalEventMetaData("INCENTIVOS"), new
+				 * DecimalEventMetaData("ATRASOS"), new
+				 * DecimalEventMetaData("ANTICIPOS"), new
+				 * DecimalEventMetaData("EMBARGOS"), new
+				 * DecimalEventMetaData("LTA",
+				 * "D\u00EDas Libres Trabajados canjeados por Alojamiento"), new
+				 * DecimalEventMetaData("CLT",
+				 * "Coste d\u00EDa Libre Trabajado"), new
+				 * DecimalEventMetaData("CD",
+				 * "Coste Diario del trabajador (jornada 8 horas)"), new
+				 * ConstantEventMetaData("CFT",
+				 * "Coste d\u00EDa Festivo Trabajado ( = CD * 1.75 \u20A0)"),
+				 * new BooleanEventMetaData("LTNR",
+				 * "D\u00EDas Libres Trabajados No Recuperables"), new
+				 * DecimalEventMetaData("HFD",
+				 * "Horas m\u00EDnimas a cumplimentar en contratos Fijo-Discontinuo"
+				 * ), new EventMetaData("OBSERVACIONES"), new
+				 * ConstantEventMetaData("PLUS_TURNICIDAD",
+				 * "Plus de Turnicidad = (\u2211LT - \u2211LR - LTA) * CLT"));
+				 */
 				final EventsDraftObject eventsDraftObject = new EventsDraftObject(
 						workplace.getId(),
 						agreement != null ? agreement.getId() : null,
 						employeesService, new BooleanEventMetaData(
-								"DIAS_EFECTIVOS"),new BooleanEventMetaData(
-										"DIAS_VACACIONES"), new BooleanEventMetaData(
+								"DIAS_EFECTIVOS"), new BooleanEventMetaData(
+								"DIAS_VACACIONES"), new BooleanEventMetaData(
 								"HUELGA"), new EventMetaData("OBSERVACIONES"));
-*/
 				Date date = new Date();
 
 				eventsDraftObject.setPeriod(
@@ -321,7 +320,10 @@ public class Employees extends ResizeComposite implements
 		}
 
 		enterpriseItem.setState(true, true);
-		tree.setSelectedItem(enterpriseItem, true);
+		tree.setSelectedItem(enterpriseItem, true); // Send event to show
+													// enterprise data
+		if (workplaces.size() == 1)
+			workplaceItem.setState(true, true); // Send event to show employees
 
 		scrollPanel.scrollToLeft();
 
@@ -369,7 +371,7 @@ public class Employees extends ResizeComposite implements
 		} else if (userObject instanceof CostDocuments) {
 			onCostsSelected((CostDocuments) userObject);
 		} else if (userObject instanceof SalaryDocuments) {
-			onSalariesSelected((SalaryDocuments) userObject);
+			onSalariesSelected(item);
 		} else if (userObject instanceof ISpinnable<?>) {
 			onDocumentsSelected((ISpinnable<IDocument>) userObject);
 		} else if (userObject instanceof EventsDraftObject) {
@@ -564,7 +566,6 @@ public class Employees extends ResizeComposite implements
 		} // end-if: Salaries of this employee have been already loaded.
 
 		Employee employee = (Employee) employeeItem.getUserObject();
-
 		employeesService.getSalaries(employee,
 				new AsyncCallback<List<Salary>>() {
 					@Override
@@ -581,7 +582,6 @@ public class Employees extends ResizeComposite implements
 						salariesItem.setUserObject(documents);
 					}
 				});
-
 		final TreeItem irpfOutcomesItem = employeeItem
 				.getChild(EMPLOYEE_IRPFOUTCOMES_INDEX);
 		if (irpfOutcomesItem.getUserObject() != null) {
@@ -629,10 +629,29 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
-	private void onSalariesSelected(SalaryDocuments docs) {
-		for (Listener listener : listeners) {
-			listener.onSalariesSelected(docs);
-		}
+	private void onSalariesSelected(final TreeItem salariesItem) {
+		TreeItem employeeItem = salariesItem.getParentItem();
+		Employee employee = (Employee) employeeItem.getUserObject();
+		employeesService.getSalaries(employee,
+				new AsyncCallback<List<Salary>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						Window.alert(caught.getLocalizedMessage());
+
+					}
+
+					@Override
+					public void onSuccess(List<Salary> salaries) {
+						SalaryDocuments docs = new SalaryDocuments(
+								salaries, employeesService);
+						salariesItem.setUserObject(docs);
+						for (Listener listener : listeners) {
+							listener.onSalariesSelected(docs);
+						}
+					}
+				});
+
 	}
 
 	private void onIrpfsSelected(IrpfDocuments docs) {

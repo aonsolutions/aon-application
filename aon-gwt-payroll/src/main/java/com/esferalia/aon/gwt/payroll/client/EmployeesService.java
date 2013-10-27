@@ -108,4 +108,7 @@ public interface EmployeesService extends RemoteService {
 			Integer agreementId, Date startDate, Date endDate)
 			throws IllegalArgumentException;
 
+	void delete(Salary salaries [])
+			throws IllegalArgumentException;
+
 }

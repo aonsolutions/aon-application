@@ -47,36 +47,13 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel" text="Sobreescribir Antiguas" />
-							</td>
-							<td class="aon-panelGrid-even">
-								<g:HorizontalPanel>
-									<g:RadioButton name="overwriteGroup">Si</g:RadioButton>
-									<g:RadioButton name="overwriteGroup">No</g:RadioButton>
-								</g:HorizontalPanel>
-							</td>
-						</tr>
-						<tr  >
-							<td class="aon-panelGrid-odd ">
-								<g:Label styleName="aon-outputLabel" text="Comparar con Antiguas" />
-							</td>
-							<td class="aon-panelGrid-even">
-								<g:HorizontalPanel>
-									<g:RadioButton name="overwriteGroup">Si</g:RadioButton>
-									<g:RadioButton name="overwriteGroup">No</g:RadioButton>
-								</g:HorizontalPanel>
+							<td class="aon-panelGrid-odd" colspan="2">
+								<g:CheckBox ui:field="saveCheckBox" >Guardar</g:CheckBox>
 							</td>
 						</tr>
 						<tr>
-							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel" text="Guardar" />
-							</td>
-							<td class="aon-panelGrid-even">
-								<g:HorizontalPanel>
-									<g:RadioButton name="saveGroup">Si</g:RadioButton>
-									<g:RadioButton name="saveGroup">No</g:RadioButton>
-								</g:HorizontalPanel>
+							<td class="aon-panelGrid-odd " colspan="2" >
+								<g:CheckBox ui:field="compareCheckBox" enabled="false" >Comparar con n&oacute;minas guardadas</g:CheckBox>
 							</td>
 						</tr>
 						<tr>

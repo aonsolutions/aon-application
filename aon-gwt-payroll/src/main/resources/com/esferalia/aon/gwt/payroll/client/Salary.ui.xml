@@ -55,6 +55,8 @@
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
+								<g:Button ui:field='deleteButton'
+									styleName='aon-finding-toolbar-item aon-icon-delete' text="Borrar"/>
 								<g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" />
 								<g:ListBox ui:field='salaryTypeListBox' styleName=''  />
 								<g:ListBox ui:field='dateListBox' styleName=''  />

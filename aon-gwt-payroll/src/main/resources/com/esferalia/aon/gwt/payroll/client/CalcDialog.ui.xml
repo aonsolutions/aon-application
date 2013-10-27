@@ -82,9 +82,6 @@
 				<td class="{style.field}" colspan="2"><g:CheckBox ui:field="saveCheckBox" >Guardar</g:CheckBox></td>
 			</tr>
 			<tr>
-				<td class="{style.field}" colspan="2"><g:CheckBox ui:field="overrideCheckBox" enabled="false" >Sobreescribir n&oacute;minas guardadas</g:CheckBox></td>
-			</tr>
-			<tr>
 				<td class="{style.field}" colspan="2"><g:CheckBox ui:field="compareCheckBox" enabled="false" >Comparar con n&oacute;minas guardadas</g:CheckBox></td>
 			</tr>
 			<tr>

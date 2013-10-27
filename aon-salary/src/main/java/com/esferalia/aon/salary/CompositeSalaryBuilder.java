@@ -212,6 +212,12 @@ public class CompositeSalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
+	public void setTotalIrpf(Double totalIrpf) {
+		for (ISalaryBuilder builder : builders)
+			builder.setTotalIrpf(totalIrpf);
+	}
+	
+	@Override
 	public void setSocialSecurityContributions(
 			Double socialSecurityContributions) {
 		for (ISalaryBuilder builder : builders)

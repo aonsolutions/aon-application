@@ -1,23 +1,18 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
@@ -29,8 +24,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class Salary extends ResizeComposite {
 
 	private static final int ZOOM_STEP = 20;
-	private static final int MIN_ZOOM =  25;
-	private static final int MAX_ZOOM =  500;
+	private static final int MIN_ZOOM = 25;
+	private static final int MAX_ZOOM = 500;
 
 	private static final int DEFAULT_ZOOM = 135;
 
@@ -47,6 +42,8 @@ public class Salary extends ResizeComposite {
 
 	@UiField
 	Button printButton;
+	@UiField
+	Button deleteButton;
 
 	@UiField
 	MenuItem printMenuItem;
@@ -76,48 +73,24 @@ public class Salary extends ResizeComposite {
 		types = new ArrayList<com.esferalia.aon.gwt.payroll.shared.Salary.Type>(
 				com.esferalia.aon.gwt.payroll.shared.Salary.Type.values().length);
 
-		salaryTypeListBox.addChangeHandler(new ChangeHandler() {
+		printMenuItem.setScheduledCommand(new Command() {
+
 			@Override
-			public void onChange(ChangeEvent event) {
-				onSalaryTypeChanged();
-			}
-		});
-		dateListBox.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				onSalaryDateChanged();
-			}
-		});
-	
-		printButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent arg0) {
-				IDocument document = salaryDocuments.current();
-				document.print();
+			public void execute() {
+				print();
 			}
 		});
 
-		printMenuItem.setCommand(new Command() {
-			
+		downloadMenuItem.setScheduledCommand(new Command() {
+
 			@Override
 			public void execute() {
-				IDocument document = salaryDocuments.current();
-				document.print();
-			}
-		});
-		
-		downloadMenuItem.setCommand(new Command() {
-			
-			@Override
-			public void execute() {
-				IDocument document = salaryDocuments.current();
-				document.download();
+				download();
 			}
 		});
 
-		
-		reduceMenuItem.setCommand(new Command() {
-			
+		reduceMenuItem.setScheduledCommand(new Command() {
+
 			@Override
 			public void execute() {
 				zoom = Math.max(MIN_ZOOM, zoom - ZOOM_STEP);
@@ -125,19 +98,68 @@ public class Salary extends ResizeComposite {
 			}
 		});
 
-		enlargeMenuItem.setCommand(new Command() {
-			
+		enlargeMenuItem.setScheduledCommand(new Command() {
+
 			@Override
 			public void execute() {
 				zoom = Math.min(MAX_ZOOM, zoom + ZOOM_STEP);
 				getAsHTML();
 			}
 		});
+
+	}
+
+	public void hideDeleteButton() {
+		deleteButton.setVisible(false);
 	}
 
 	public void setSalaryDocuments(SalaryDocuments salaryDocuments) {
 		this.salaryDocuments = salaryDocuments;
 		onSalaryDocumentsChanged();
+	}
+
+	@UiHandler("deleteButton")
+	void onDeleteButton(ClickEvent e) {
+		delete();
+	}
+
+	@UiHandler("printButton")
+	void onPrintButton(ClickEvent e) {
+		print();
+	}
+
+	@UiHandler("dateListBox")
+	void onDateListBox(ChangeEvent e) {
+		onSalaryDateChanged();
+		;
+	}
+
+	@UiHandler("salaryTypeListBox")
+	void onSalaryTypeListBox(ChangeEvent e) {
+		onSalaryTypeChanged();
+	}
+
+	private void print() {
+		salaryDocuments.print();
+	}
+
+	private void delete() {
+		salaryDocuments.delete(new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void v) {
+				onSalaryDocumentsChanged();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
+		});
+		
+	}
+
+	private void download() {
+		salaryDocuments.download();
 	}
 
 	private void getAsHTML() {
@@ -156,22 +178,34 @@ public class Salary extends ResizeComposite {
 	}
 
 	private void onSalaryDocumentsChanged() {
-		getAsHTML();
-		syncSalaryTypeListBox();
+		if (salaryDocuments.size() > 0) {
+			getAsHTML();
+			syncSalaryTypeListBox();
+			printButton.setEnabled(true);
+			deleteButton.setEnabled(true);
+		} else {
+			container.setHTML("");
+			dateListBox.clear();
+			salaryTypeListBox.clear();
+			printButton.setEnabled(false);
+			deleteButton.setEnabled(false);
+		} // end : No salaries
+
 	}
 
 	private void onSalaryTypeChanged() {
+		selectNewestSalary(getSelectedType());
 		syncSalaryDateListBox();
 		onSalaryDateChanged();
 	}
 
 	private void onSalaryDateChanged() {
-		com.esferalia.aon.gwt.payroll.shared.Salary currentSalary = 
-				salaries.get(dateListBox.getSelectedIndex());
+		com.esferalia.aon.gwt.payroll.shared.Salary currentSalary = salaries
+				.get(dateListBox.getSelectedIndex());
 		salaryDocuments.setCurrent(currentSalary);
 		getAsHTML();
 	}
-	
+
 	private void syncSalaryTypeListBox() {
 		types.clear();
 		salaryTypeListBox.clear();
@@ -202,43 +236,55 @@ public class Salary extends ResizeComposite {
 
 		com.esferalia.aon.gwt.payroll.shared.Salary currentSalary = getCurrentSalary();
 
-		com.esferalia.aon.gwt.payroll.shared.Salary.Type type = types
-				.get(salaryTypeListBox.getSelectedIndex());
-		
+		com.esferalia.aon.gwt.payroll.shared.Salary.Type type = getSelectedType();
+
 		salaries = getSalaries(type);
-		
+
 		int index = 0;
 		for (com.esferalia.aon.gwt.payroll.shared.Salary salary : salaries) {
 			dateListBox.addItem(DATE_FORMAT.format(salary.getEndDate()));
-			if ( salary.getEndDate().before(currentSalary.getEndDate()) ){
-				index ++;
+			if (salary.getEndDate().before(currentSalary.getEndDate())) {
+				index++;
 			}
 		}
-		
+
 		dateListBox.setSelectedIndex(index);
 	}
 	
-	
-	private com.esferalia.aon.gwt.payroll.shared.Salary getCurrentSalary() {
-		return salaryDocuments.getSalaries().get(salaryDocuments.getCurrentIndex());
+	private com.esferalia.aon.gwt.payroll.shared.Salary.Type getSelectedType(){
+		return types
+				.get(salaryTypeListBox.getSelectedIndex());
 	}
 	
-	private List<com.esferalia.aon.gwt.payroll.shared.Salary> getSalaries(){
+	private void selectNewestSalary(
+			com.esferalia.aon.gwt.payroll.shared.Salary.Type type) {
+		List<com.esferalia.aon.gwt.payroll.shared.Salary> salaries = getSalaries();
+		for (int i = salaries.size()-1; i >= 0; i--)
+			if (salaries.get(i).getType() == type)
+				salaryDocuments.setCurrentIndex(i);
+
+	}
+
+	private com.esferalia.aon.gwt.payroll.shared.Salary getCurrentSalary() {
+		return salaryDocuments.getSalaries().get(
+				salaryDocuments.getCurrentIndex());
+	}
+
+	private List<com.esferalia.aon.gwt.payroll.shared.Salary> getSalaries() {
 		return salaryDocuments.getSalaries();
 	}
-	
-	
-	private List<com.esferalia.aon.gwt.payroll.shared.Salary> getSalaries(com.esferalia.aon.gwt.payroll.shared.Salary.Type type){
+
+	private List<com.esferalia.aon.gwt.payroll.shared.Salary> getSalaries(
+			com.esferalia.aon.gwt.payroll.shared.Salary.Type type) {
 		List<com.esferalia.aon.gwt.payroll.shared.Salary> salaries = new ArrayList<com.esferalia.aon.gwt.payroll.shared.Salary>();
-		
+
 		for (com.esferalia.aon.gwt.payroll.shared.Salary salary : getSalaries()) {
 			if (salary.getType() == type) {
 				salaries.add(salary);
 			}
 		}
-		
+
 		return salaries;
 	}
-	
 
 }

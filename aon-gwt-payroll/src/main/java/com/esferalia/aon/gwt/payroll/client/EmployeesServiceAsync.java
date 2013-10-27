@@ -48,8 +48,8 @@ public interface EmployeesServiceAsync {
 	void getCostReceiptHTML(Cost cost, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 
-	void getIrpfReceiptHTML(Irpf irpf, int zoom,
-			AsyncCallback<String> callback) throws IllegalArgumentException;
+	void getIrpfReceiptHTML(Irpf irpf, int zoom, AsyncCallback<String> callback)
+			throws IllegalArgumentException;
 
 	void getSalaryReceiptHTML(Cost cost, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
@@ -60,12 +60,11 @@ public interface EmployeesServiceAsync {
 	void saveSalaryDraft(SalaryDraft salaryDraft, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 
-	void saveAgreementDraft(AgreementDraft agreementDraft, AsyncCallback<Void> callback)
-			throws IllegalArgumentException;
+	void saveAgreementDraft(AgreementDraft agreementDraft,
+			AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void saveSalary(SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
-	
 
 	void calculateSalaryDraft(SalaryDraft salaryDraft,
 			AsyncCallback<SalaryDraft> callback)
@@ -74,7 +73,7 @@ public interface EmployeesServiceAsync {
 	void calculateAgreementDraft(AgreementDraft agreementDraft,
 			AsyncCallback<AgreementDraft> callback)
 			throws IllegalArgumentException;
-	
+
 	void eval(String expression, SalaryDraft salaryDraft,
 			AsyncCallback<Double> callback) throws IllegalArgumentException,
 			EvalException;
@@ -111,8 +110,13 @@ public interface EmployeesServiceAsync {
 
 	void getAvailPeriod(Integer workplaceId, String name,
 			AsyncCallback<Period> callback) throws IllegalArgumentException;
-	
+
 	void getEventsVariables(Integer workplaceId, Integer agreementId,
-			Date startDate, Date endDate, AsyncCallback<Map<String, String>> callback ) throws IllegalArgumentException;	
+			Date startDate, Date endDate,
+			AsyncCallback<Map<String, String>> callback)
+			throws IllegalArgumentException;
+
+	void delete(Salary salaries[], AsyncCallback<Void> callback)
+			throws IllegalArgumentException;
 
 }

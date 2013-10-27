@@ -201,6 +201,11 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 	public void setTotalDeduction(Double totalDeduction) {
 		salary.setTotalDeduction(totalDeduction);
 	}
+	
+	@Override
+	public void setTotalIrpf(Double totalIrpf) {
+		salary.setTotalIrpf(totalIrpf);
+	}
 
 	@Override
 	public void setSocialSecurityContributions(
