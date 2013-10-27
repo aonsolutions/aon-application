@@ -220,7 +220,7 @@
 				<textField>
 					<reportElement uuid="fee4bcbd-d086-4489-8819-e6eb47ab938d" style="title" x="4" y="178" width="226" height="12"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format("Del {0,date,d 'de' MMMM} al {1,date,d 'de' MMMM 'de' yyyy}", $F{salary}.getStartDate(), $F{salary}.getEndDate() )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[(new java.text.MessageFormat("Del {0,date,d 'de' MMMM} al {1,date,d 'de' MMMM 'de' yyyy}", $P{REPORT_LOCALE})).format( new Object [] { $F{salary}.getStartDate(), $F{salary}.getEndDate()}, new StringBuffer(), null ).toString()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="122cd7c8-5424-445f-9d24-9f3bd17f0854" style="title" x="230" y="164" width="20" height="12"/>
@@ -268,7 +268,7 @@
 					<textField>
 						<reportElement uuid="8a00a065-3534-4523-87fe-969fa49c557f" style="label" x="2" y="66" width="106" height="12"/>
 						<textElement textAlignment="Center"/>
-						<textFieldExpression><![CDATA[java.text.MessageFormat.format("{0,date,dd/MM/yyyy}", $F{salary}.getSeniorityDate())]]></textFieldExpression>
+						<textFieldExpression><![CDATA[(new java.text.MessageFormat("{0,date,dd/MM/yyyy}", $P{REPORT_LOCALE})).format( new Object [] { $F{salary}.getSeniorityDate() }, new StringBuffer(), null ).toString()]]></textFieldExpression>
 					</textField>
 					<staticText>
 						<reportElement uuid="508d78c7-da27-4f85-b5a0-ec61a25cd691" style="label" x="108" y="52" width="133" height="12"/>
@@ -1046,7 +1046,7 @@
 				<textField>
 					<reportElement uuid="82c3ed7b-b444-43dd-9e8d-b259ce3e3c7f" style="title" x="304" y="60" width="241" height="12"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format("{0,date,d 'de' MMMM 'de' yyyy}", $F{salary}.getChargeDate())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( new java.text.MessageFormat("{0,date,d 'de' MMMM 'de' yyyy}",$P{REPORT_LOCALE})).format( new Object [] {$F{salary}.getChargeDate()}, new StringBuffer(), null).toString() ]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement uuid="af265c28-dafd-400a-895b-b758ef6e2cf3" style="label" x="167" y="65" width="136" height="12"/>

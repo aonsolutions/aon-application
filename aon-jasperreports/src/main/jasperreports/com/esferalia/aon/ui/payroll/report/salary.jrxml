@@ -205,7 +205,7 @@
 				<textField isBlankWhenNull="true">
 					<reportElement uuid="dd87230b-aeb5-49c1-af5a-37e98ae3b77b" style="label" x="115" y="2" width="348" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format("del {0,date,dd 'de' MMMMMMMMMMM 'de' yyyy} al {1,date,dd 'de' MMMMMMMMMMM 'de' yyyy}", $F{salary}.getStartDate(), $F{salary}.getEndDate() )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( new java.text.MessageFormat("del {0,date,dd 'de' MMMMMMMMMMM 'de' yyyy} al {1,date,dd 'de' MMMMMMMMMMM 'de' yyyy}", $P{REPORT_LOCALE})).format( new Object [] { $F{salary}.getStartDate(), $F{salary}.getEndDate() } , new StringBuffer(), null ).toString() ]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="f5a5f51b-85ba-404a-b526-a10700a151ae" style="label" x="471" y="2" width="47" height="13"/>
@@ -714,7 +714,7 @@
 				<textField isBlankWhenNull="true">
 					<reportElement uuid="0a12ef49-490a-498a-97df-c6977206e47c" style="label" x="350" y="225" width="195" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format("{0,date,dd 'de' MMMMMMMMMMM 'de' yyyy}", $F{salary}.getIssueDate(), $F{salary}.getEndDate() )]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( new java.text.MessageFormat("{0,date,dd 'de' MMMMMMMMMMM 'de' yyyy}", $P{REPORT_LOCALE})).format( new Object [] { $F{salary}.getIssueDate(), $F{salary}.getEndDate() }, new StringBuffer(), null ).toString()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="c96af4ea-c286-48a8-b7e8-b1c79e1e5590" style="label" x="350" y="241" width="33" height="13"/>
