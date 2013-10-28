@@ -183,6 +183,11 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		return map2.get(key2);
 	}
 
+	protected static <K1, K2, V> int count(Map<K1, Map<K2, V>> map, K1 key1) {
+		Map<K2, V> map2 = map.get(key1);
+		return (map2 == null) ? 0 : map.size();
+	}
+
 	protected static <K1, K2, K3, V> boolean save(
 			Map<K1, Map<K2, Map<K3, V>>> map, K1 key1, K2 key2, K3 key3, V value) {
 		Map<K3, V> map3;

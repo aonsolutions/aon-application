@@ -1,34 +1,25 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileChannel.MapMode;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import javax.sql.rowset.serial.SerialBlob;
-
-import org.hibernate.cfg.annotations.ArrayBinder;
 
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.MimeType;
@@ -47,10 +38,8 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprban;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprccc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprctra;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprdom;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprnif;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Domain;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Rattach;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.CNAENotFoundException;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.InvalidFaxException;
@@ -127,6 +116,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			}
 		};
 	}
+
 	final static Map<String, AddressType> ADDRESSES_MAP = new HashMap<String, AddressType>() {
 		{
 			put("A", AddressType.MAIN);
@@ -166,7 +156,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 
 	private Map<Integer, Map<String, Integer>> cccs;
 
-	private Map<String, Integer> cifs;
+	private Map<String, Map<String, Integer>> cifs;
 	private Map<Integer, Enterprise> enterprises;
 	private Map<String, Integer> customerChilds;
 	private Integer customerId;
@@ -192,7 +182,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		this.domainSuffix = domainSuffix;
 		this.disabled = disabled;
 		this.activities = new HashMap<Integer, Activity>();
-		this.cifs = new HashMap<String, Integer>();
+		this.cifs = new HashMap<String, Map<String, Integer>>();
 		this.enterprises = new HashMap<Integer, Enterprise>();
 		this.cccs = new HashMap<Integer, Map<String, Integer>>();
 		this.cnae_activity = new HashMap<Integer, Map<Integer, Integer>>();
@@ -259,8 +249,8 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	public void visitCliente_delegacion(Cliente cliente, Delegacion delegacion)
 			throws SQLException {
 		boolean activo = "N".equals(cliente.getInactivo());
-		
-		if ( !disabled && !activo ) 
+
+		if (!disabled && !activo)
 			return;
 
 		customerChilds.clear();
@@ -274,8 +264,9 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 						.enum2short(CustomerStatus.ACTIVE) : DefaultMysqlDB
 						.enum2short(CustomerStatus.INACTIVE);
 				Country docCountry = mysqlDB.getCountry(cliente.getPaiemi());
-				DocumentType docType = mysqlDB.getDocumentType(cliente.getInddoc());
-				if ( docType == null )
+				DocumentType docType = mysqlDB.getDocumentType(cliente
+						.getInddoc());
+				if (docType == null)
 					docType = DocumentType.CIF;
 
 				registry = mysqlDB.insertRegistry(
@@ -306,8 +297,9 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	@Override
 	public void visitRel_emp_cli(Emprnif emprnif, Cliente cliente)
 			throws SQLException {
-		
-		Integer registry = cifs.get(emprnif.getNumdoc());
+
+		Integer registry = DefaultMysqlDB.get(cifs, emprnif.getNumdoc(),
+				emprnif.getCecon()); // cifs.get(emprnif.getNumdoc());
 
 		if (registry != null) {
 			enterprises.put(emprnif.getCdg(),
@@ -324,6 +316,15 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		String name = emprnif.getDescripcion();
 		String doc = emprnif.getNumdoc();
 
+		if (DefaultMysqlDB.count(cifs, doc) > 0) {
+			Administration administration = Enterprise.ADMINISTRATIONS_MAP
+					.get(emprnif.getCecon());
+			name = String.format("%s - %s", name , administration.getName(new Locale("es", "ES")));
+			MysqlDB.warn(
+					"emprnif[{}]: CIFs duplicated for '{}' . Renamed to '{}'.",
+					emprnif.getCdg(), emprnif.getDescripcion(), name);
+		}
+
 		StringBuffer domainNameBuff = new StringBuffer();
 		for (int i = 0; i < name.length(); i++) {
 			char ch = name.charAt(i);
@@ -333,6 +334,8 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 				continue;
 			domainNameBuff.append(Character.toLowerCase(ch));
 		}
+
+
 		String domainName = domainNameBuff.toString();
 
 		int MaxLength = 64 - (this.domainSuffix.length() + 1);
@@ -356,9 +359,10 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		} catch (InterruptedException e1) {
 			throw new RuntimeException(e1);
 		}
-		
+
 		DocumentType docType = mysqlDB.getDocumentType(emprnif.getInddoc());
-		
+
+
 		registry = mysqlDB.insertEnterprise(domain, doc, docCountry, name,
 				Country.ES, emprnif.getAlias(), scopeId, status, docType);
 
@@ -383,7 +387,9 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 					registry, emprnif.getNumdoc(), emprnif.getDescripcion());
 		}
 
-		cifs.put(emprnif.getNumdoc(), registry);
+		DefaultMysqlDB.save(cifs, emprnif.getNumdoc(), emprnif.getCecon(),
+				registry);
+		// cifs.put(emprnif.getNumdoc(), registry);
 		enterprises.put(emprnif.getCdg(),
 				new Enterprise(registry, emprnif.getCecon(), scopeId));
 
@@ -414,13 +420,13 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		Integer domainApplicationId = mysqlDB.getDomainApplicationId(domain,
 				applicationId);
 
-		Integer guestId = mysqlDB.getProfileId(null, applicationId,
-				"Invitado");
-		Integer payrollId = mysqlDB.getProfileId(null, applicationId,
-				"Laboral");
-		if ( payrollId == null ) {
+		Integer guestId = mysqlDB.getProfileId(null, applicationId, "Invitado");
+		Integer payrollId = mysqlDB
+				.getProfileId(null, applicationId, "Laboral");
+		if (payrollId == null) {
 			payrollId = mysqlDB.insertProfile("Laboral", applicationId, null);
-			mysqlDB.insertProfile_role(payrollId, mysqlDB.getApplicationRole("Payroll"));
+			mysqlDB.insertProfile_role(payrollId,
+					mysqlDB.getApplicationRole("Payroll"));
 		}
 
 		int applicationUserId = mysqlDB.insertApplication_user(domain, userId,
@@ -520,20 +526,23 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 							cnae2009);
 		}
 		Date startDate = new Date(0);
-		
-		if ( "G".equalsIgnoreCase(empract.getTiponomina()) ) {
-			mysqlDB.insertEnterprise_data(enterprise.id, "PAY_REPORT_salary_PAY", "nominasta", startDate , null);
-		} 
-		else if ( "R".equalsIgnoreCase(empract.getTiponomina()) ) {
-			mysqlDB.insertEnterprise_data(enterprise.id, "PAY_REPORT_salary_PAY", "nominasta_ldh", startDate , null);
-		} 
-		else if ( "C".equalsIgnoreCase(empract.getTiponomina()) ) {
-			mysqlDB.insertEnterprise_data(enterprise.id, "PAY_REPORT_salary_PAY", "nominasta_codint", startDate , null);
-		} 
-		else if ( "D".equalsIgnoreCase(empract.getTiponomina()) ) {
-			mysqlDB.insertEnterprise_data(enterprise.id, "PAY_REPORT_salary_PAY", "nominasta_condias", startDate , null);
-		} 
-		
+
+		if ("G".equalsIgnoreCase(empract.getTiponomina())) {
+			mysqlDB.insertEnterprise_data(enterprise.id,
+					"PAY_REPORT_salary_PAY", "nominasta", startDate, null);
+		} else if ("R".equalsIgnoreCase(empract.getTiponomina())) {
+			mysqlDB.insertEnterprise_data(enterprise.id,
+					"PAY_REPORT_salary_PAY", "nominasta_ldh", startDate, null);
+		} else if ("C".equalsIgnoreCase(empract.getTiponomina())) {
+			mysqlDB.insertEnterprise_data(enterprise.id,
+					"PAY_REPORT_salary_PAY", "nominasta_codint", startDate,
+					null);
+		} else if ("D".equalsIgnoreCase(empract.getTiponomina())) {
+			mysqlDB.insertEnterprise_data(enterprise.id,
+					"PAY_REPORT_salary_PAY", "nominasta_condias", startDate,
+					null);
+		}
+
 		DefaultMysqlDB.save(cnae_activity, enterprise.id, cnae, activityId);
 
 		Activity activity = new Activity();
@@ -597,25 +606,24 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 
 	@Override
 	public void visitDomicilio(Domicilio domicilio) throws SQLException {
-		domicilio.visitEmprdom_domicilio(new DefaultCtsqlDBVisitor(){
+		domicilio.visitEmprdom_domicilio(new DefaultCtsqlDBVisitor() {
 			@Override
-			public void visitEmprdom_domicilio(Emprdom emprdom, Domicilio domicilio)
-					throws SQLException {
-				if ( ADDRESSES_MAP.get(emprdom.getTipdom()) == AddressType.MAIN)
-						visitEmprdom_domicilioImpl(emprdom, domicilio);
+			public void visitEmprdom_domicilio(Emprdom emprdom,
+					Domicilio domicilio) throws SQLException {
+				if (ADDRESSES_MAP.get(emprdom.getTipdom()) == AddressType.MAIN)
+					visitEmprdom_domicilioImpl(emprdom, domicilio);
 			}
 		});
-		domicilio.visitEmprdom_domicilio(new DefaultCtsqlDBVisitor(){
+		domicilio.visitEmprdom_domicilio(new DefaultCtsqlDBVisitor() {
 			@Override
-			public void visitEmprdom_domicilio(Emprdom emprdom, Domicilio domicilio)
-					throws SQLException {
-				if ( ADDRESSES_MAP.get(emprdom.getTipdom()) != AddressType.MAIN)
+			public void visitEmprdom_domicilio(Emprdom emprdom,
+					Domicilio domicilio) throws SQLException {
+				if (ADDRESSES_MAP.get(emprdom.getTipdom()) != AddressType.MAIN)
 					visitEmprdom_domicilioImpl(emprdom, domicilio);
 			}
 		});
 	}
 
-	
 	private void visitEmprdom_domicilioImpl(Emprdom emprdom, Domicilio domicilio)
 			throws SQLException {
 
@@ -627,22 +635,21 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			return;
 		}
 		String tipoDom = emprdom.getTipdom();
-		
-		
+
 		Integer raddress = DefaultMysqlDB.get(raddresses, enterprise.id,
 				domicilio.getCdg());
 		if (raddress == null) {
 
 			Integer geozone = null;
 			geozone = mysqlDB.getGeoZone(domicilio.getProvincia());
-			
+
 			AddressType addressType = ADDRESSES_MAP.get(tipoDom);
-			if ( addressType == null ) {
+			if (addressType == null) {
 				addressType = AddressType.DELEGATION;
 				MysqlDB.error("emprdom[{}] : Invalid tipdom {}",
 						emprdom.getCdg(), emprdom.getTipdom());
 			}
-			
+
 			raddress = mysqlDB.insertRaddress(enterprise.id,
 					DefaultMysqlDB.enum2short(addressType), null,
 					domicilio.getTipovia(), domicilio.getNomvia(),
