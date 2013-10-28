@@ -42,12 +42,14 @@
 											actionListener="#{contractLeave.onEditSearch}"
 											value="#{bundle.payroll_contractLeave_module}" />
 									</aon:div>
+									<!--
 									<aon:div styleClass="aon-direct-access-list-element">
 										<a4j:commandLink ajaxSingle="true" immediate="true"
 											onclick="alert('#{bundle.aio_not_yet}');return false;"
 											value="¿ Partes de accidente ?"
 											style="color:red;text-decoration:line-through" />
 									</aon:div>
+									-->
 								</aon:div>
 
 							</aon:panelGrid>
@@ -84,13 +86,15 @@
 
 					<!--
 						SS 
-						 -->
+						-->
 					<aon:panelGroup>
 						<aon:panelGrid id="group_seguridad_social"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-winsuite aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.payroll_ss_menu_group}" />
+								<h:outputLink target="_blank" value="http://www.seg-social.es">
+									<aon:outputText value="#{bundle.payroll_ss_menu_group}" />
+								</h:outputLink>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -110,12 +114,14 @@
 										actionListener="#{leaveBatch.onEditSearch}"
 										value="#{bundle.payroll_leaveBatchWizard_module}" />
 								</aon:div>
+								<!--
 								<aon:div styleClass="aon-direct-access-list-element">
 									<a4j:commandLink ajaxSingle="true" immediate="true"
 										onclick="alert('#{bundle.aio_not_yet}');return false;"
 										value="¿ Fichero Delt@ ?"
 										style="color:red;text-decoration:line-through" />
 								</aon:div>
+								-->
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
@@ -160,7 +166,9 @@
 							columnClasses="aon-padding"
 							headerClass="aon-icon-aeat aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.payroll_aeat_menu_group}" />
+								<h:outputLink target="_blank" value="http://www.agenciatributaria.es">
+									<aon:outputText value="#{bundle.payroll_aeat_menu_group}" />
+								</h:outputLink>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -174,7 +182,7 @@
 									<aon:commandLink id="mod111-fiscal"
 										action="mod111_search-fiscal"
 										actionListener="#{mod111.onEditSearch}"
-										value="#{bundle.fiscal_model_111_module}" />
+										value="#{bundle.fiscal_model_111_module_abbr}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<a4j:commandLink ajaxSingle="true" immediate="true"
@@ -225,7 +233,9 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-sepe aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.payroll_sepe_menu_group}" />
+								<h:outputLink target="_blank" value="http://www.sepe.es/">
+									<aon:outputText value="#{bundle.payroll_sepe_menu_group}" />
+								</h:outputLink>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -279,13 +289,14 @@
 										onclick="alert('#{bundle.aio_not_yet}');return false;"
 										value="Calendario Laboral" style="color:red;" />
 								</aon:div>
-
+								<!--  
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="sepeAppParams-contrata"
 										action="sepeAppParams_form-contrata"
 										actionListener="#{sepeAppParams.onLoad}"
 										value="#{bundle.payroll_default_params_module}" />
 								</aon:div>
+								-->
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
@@ -365,7 +376,6 @@
 
 					<!--
 						Interesting LINKS 
-						 -->
 					<aon:panelGroup>
 						<aon:panelGrid id="group_contrata_links"
 							styleClass="aon-width-all" columnClasses="aon-padding"
@@ -388,6 +398,7 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
+						 -->
 
 
 				</h:panelGrid>
