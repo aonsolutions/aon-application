@@ -37,8 +37,8 @@
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="contractLeave"
-											action="contractLeave_search"
+										<aon:commandLink id="contractLeave-payroll"
+											action="contractLeave_search-payroll"
 											actionListener="#{contractLeave.onEditSearch}"
 											value="#{bundle.payroll_contractLeave_module}" />
 									</aon:div>
@@ -59,7 +59,7 @@
 						EMPLOYEES 
 						 -->
 					<aon:panelGroup>
-						<aon:panelGrid id="group_contrata_general"
+						<aon:panelGrid id="group_payroll_contrata_general"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-account-entry aon-direct-access-panel">
 							<f:facet name="header">
@@ -68,14 +68,14 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="contract-contrata"
-											action="contract_search"
+										<aon:commandLink id="contract-payroll"
+											action="contract_search-payroll"
 											actionListener="#{contract.onEditSearch}"
 											value="#{bundle.payroll_contract_module}" />
 									</aon:div>
 								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="person-contrata"
+									<aon:commandLink id="person-payroll"
 										action="#{person.initialAction}"
 										actionListener="#{person.onEditSearch}"
 										value="#{bundle.report_room_persons}" />
@@ -96,8 +96,8 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="contractBatch"
-										action="contractBatch_search"
+									<aon:commandLink id="contractBatch-payroll"
+										action="contractBatch_search-payroll"
 										actionListener="#{contractBatch.onEditSearch}"
 										value="#{bundle.payroll_contrata_contractBatch_module}" />
 								</aon:div>
@@ -108,7 +108,7 @@
 										style="color:red;" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="leaveBatch" action="leaveBatch_search"
+									<aon:commandLink id="leaveBatch-payroll" action="leaveBatch_search-payroll"
 										actionListener="#{leaveBatch.onEditSearch}"
 										value="#{bundle.payroll_leaveBatchWizard_module}" />
 								</aon:div>
@@ -168,15 +168,15 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="irpfData" action="irpfData_search"
+									<aon:commandLink id="irpfData-payroll" action="irpfData_search-payroll"
 										actionListener="#{irpfData.onEditSearch}"
 										value="#{bundle.payroll_model_145_module}">
 										<aon:actionListener method="#{contract.onEditSearch}" />
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mod111-fiscal"
-										action="mod111_search-fiscal"
+									<aon:commandLink id="mod111-payroll"
+										action="mod111_search-payroll"
 										actionListener="#{mod111.onEditSearch}"
 										value="#{bundle.fiscal_model_111_module_abbr}" />
 								</aon:div>
@@ -225,7 +225,7 @@
 							SEPE
 						 -->
 					<aon:panelGroup>
-						<aon:panelGrid id="group_contrata_batch"
+						<aon:panelGrid id="group_payroll_contrata_batch"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-sepe aon-direct-access-panel">
 							<f:facet name="header">
@@ -233,15 +233,15 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="contrataBatch-contrata"
-										action="contrataBatch_search-contrata"
+									<aon:commandLink id="contrataBatch-payroll"
+										action="contrataBatch_search-payroll"
 										value="#{bundle.sepe_contrataBatch_module}">
 										<aon:actionListener method="#{contrataBatch.onEditSearch}" />
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="certifica2Batch-contrata"
-										action="certifica2Batch_search-contrata"
+									<aon:commandLink id="certifica2Batch-payroll"
+										action="certifica2Batch_search-payroll"
 										actionListener="#{certifica2Batch.onEditSearch}"
 										value="#{bundle.sepe_certifica2Batch_module}" />
 								</aon:div>
@@ -253,7 +253,7 @@
 						CONFIG 
 						 -->
 					<aon:panelGroup>
-						<aon:panelGrid id="group_contrata_parameters"
+						<aon:panelGrid id="group_payroll_contrata_parameters"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-direct-access-panel aon-icon-config">
 							<f:facet name="header">
@@ -262,7 +262,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="enterprise-contrata"
+									<aon:commandLink id="enterprise-payroll"
 										action="#{enterprise.initialAction}"
 										value="#{bundle.company_data_module}">
 										<aon:actionListener method="#{enterprise.onEditSearch}" />
@@ -328,7 +328,7 @@
 						AUXILIARS 
 						 -->
 					<aon:panelGroup>
-						<aon:panelGrid id="group_contrata_auxiliaries"
+						<aon:panelGrid id="group_payroll_contrata_auxiliaries"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-utilities aon-direct-access-panel">
 							<f:facet name="header">
@@ -336,19 +336,19 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="trainingCenter-contrata"
-										action="trainingCenter_list-contrata"
+									<aon:commandLink id="trainingCenter-payroll"
+										action="trainingCenter_list-payroll"
 										value="#{bundle.payroll_trainingCenter_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="contractMode-contrata"
-										action="contractOption_list-contrata"
+									<aon:commandLink id="contractMode-payroll"
+										action="contractOption_list-payroll"
 										actionListener="#{contractModel.onReset}"
 										value="#{bundle.payroll_contract_mode_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="sepeTables-contrata"
-										action="sepeTables_list-contrata"
+									<aon:commandLink id="sepeTables-payroll"
+										action="sepeTables_list-payroll"
 										actionListener="#{sepeTables.onInit}"
 										value="#{bundle.sepe_sepeTables_module}" />
 								</aon:div>

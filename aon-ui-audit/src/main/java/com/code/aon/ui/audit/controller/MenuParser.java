@@ -76,8 +76,6 @@ public class MenuParser {
 	
 	private static final String TEST_ATTRIBUTE = "test";
 	
-	private static final String STYLE_CLASS_ATTRIBUTE = "styleClass";
-	
 	private static final String ID_ATTRIBUTE = "id";
 	
 	private static final String METHOD_ATTRIBUTE = "method";
@@ -193,10 +191,6 @@ public class MenuParser {
 			String categoryName = element.attributeValue(VALUE_ATTRIBUTE);
 			String alias = StringUtils.substringAfter(id, MENU_ACTION_PREFFIX);
 			category = new ApplicationCategory(categoryName, alias);
-			String styleClass = element.attributeValue(STYLE_CLASS_ATTRIBUTE);
-			if (! StringUtils.isEmpty(styleClass) ) {
-				category.setStyleClass(styleClass);	
-			}
 			String rendered = getRendered(element);
 			if (! StringUtils.isEmpty(rendered) ) {
 				category.setRendered(rendered);
@@ -247,7 +241,7 @@ public class MenuParser {
 	}
 	
 	private String getOptionGroupDescription( Element panelGrid ) {
-		String path = panelGrid.getUniquePath() + "/" + F_FACET + "/" + AON_OUTPUTTEXT;
+		String path = panelGrid.getUniquePath() + "/" + F_FACET + "[@name='header']//" + AON_OUTPUTTEXT;
 		Element outputText = (Element) panelGrid.selectSingleNode(path );
 		return outputText.attributeValue(VALUE_ATTRIBUTE);
 	}
