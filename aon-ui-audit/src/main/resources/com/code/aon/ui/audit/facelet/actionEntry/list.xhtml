@@ -11,22 +11,16 @@
 			<ui:param name="skipSelectButton" value="#{true}" />
 			<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
 			<ui:define name="columns">
-
-				<aon:column styleClass="aon-width-80 aon-editDataTable-numberColumn">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_id}" />
-					</f:facet>
-					<aon:outputText value="#{to.id}"/>
-				</aon:column>
 	
 				<aon:column styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_action}" />
 					</f:facet>
-					<aon:outputText value="#{to.action.name}"/>
+					<aon:outputText value="#{actionEntry.currentName}"/>
 				</aon:column>
 	
-				<aon:column styleClass="aon-width-150 aon-editDataTable-textColumn">
+				<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn"
+					alias="ActionEntry.executionDate">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_date}" />
 					</f:facet>

@@ -8,43 +8,41 @@
 
 	<ui:define name="content">
 		<aon:form>
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{bundle.audit_last_executed_module}" />
-				<ui:param name="controller" value="#{actionLastExecuted}" />
-				<ui:param name="skipSearchButton" value="#{true}" />
-				<ui:param name="skipResetButton" value="#{true}" />
-			</ui:decorate>
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{bundle.audit_more_used_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="moreUsedBack"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						value="#{bundle.aon_back}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						action="auditSession_list"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>		
 
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{actionLastExecuted}" />
+					<ui:param name="dataTableId" value="#{auditSession.beanName}Data" />
+					<ui:param name="dataModel" value="#{auditSession.moreUsedModel}" />
+					<ui:param name="rows" value="#{auditSession.moreUsedPageLimit}" />
 					<ui:param name="skipSelectButton" value="#{true}" />
 					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />					
 					<ui:define name="columns">
 			
-						<aon:column styleClass="aon-width-150 aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-width-100 aon-editDataTable-numberColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date}" />
+								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
-							<aon:outputText value="#{to.executionDate}">
-								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>							
+							<aon:outputText value="#{to.count}"/>
 						</aon:column>
 			
 						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.audit_option}" />
 							</f:facet>
-							<aon:outputText value="#{actionLastExecuted.description}"/>
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_group}" />
-							</f:facet>					
-							<aon:outputText value="#{actionLastExecuted.category.description}" />
+							<aon:outputText value="#{auditSession.currentDescription}"/>
 						</aon:column>
 	
 					</ui:define>

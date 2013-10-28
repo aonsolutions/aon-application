@@ -15,12 +15,29 @@
 
 		<aon:form id="sessionList">
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.audit_sessions_module}" />
 				<ui:param name="controller" value="#{auditSession}" />
-				<ui:param name="skipResetButton" value="true" />				
-			</ui:include>
-
+				<ui:param name="skipResetButton" value="true" />
+				<ui:define name="additionalToolbarContent" >
+					<aon:commandButton id="optionMoreUsed"
+						value="#{bundle.audit_more_used_module}"
+						action="auditSession_moreUsed"
+						actionListener="#{auditSession.onInitMoreUsed}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept" />
+					<c:if test="#{aonRole.sysAdmin}">				
+						<aon:confirmButton id="removeSessions"
+							title="#{bundle.aon_key_remove_accelerator}"
+							value="#{bundle.audit_remove_sessions}" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							confirmTitle="#{bundle.audit_remove_sessions}"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{auditSession.onRemoveSessions}"
+							accesskey="#{bundle.aon_key_remove}" />
+					</c:if>						
+				</ui:define>						
+			</ui:decorate>
+			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
@@ -28,14 +45,16 @@
 					<ui:param name="controller" value="#{auditSession}" />
 					<ui:define name="columns">
 
-						<aon:column styleClass="aon-width-80 aon-editDataTable-numberColumn">
+						<aon:column styleClass="aon-editDataTable-textColumn"
+							alias="Session.sessionId">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_id}" />
 							</f:facet>
-							<aon:outputText value="#{to.id}"/>
+							<aon:outputText value="#{to.sessionId}"/>
 						</aon:column>
 	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
+	 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-150"
+	 						alias="Session.startDate">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_start_date}" />
 							</f:facet>
@@ -45,7 +64,8 @@
 							</aon:outputText>							
 						</aon:column>
 	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
+	 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-150"
+	 						alias="Session.endDate">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_end_date}" />
 							</f:facet>
@@ -55,21 +75,31 @@
 							</aon:outputText>							
 						</aon:column>
 	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.audit_application}" />
-							</f:facet>
-							<aon:outputText value="#{to.application.name}"/>
-						</aon:column>
-	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
+	 					<aon:column styleClass="aon-editDataTable-textColumn"
+	 						alias="Session.user.login">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_login_user}" />
 							</f:facet>
 							<aon:outputText value="#{to.user.login}"/>
 						</aon:column>
-	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
+
+	 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.marketing_actions}" />
+							</f:facet>
+							<aon:outputText value="#{auditSession.count}"/>
+						</aon:column>
+						
+	 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-140"
+	 						alias="Session.remoteHost">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.audit_session_remoteHost}" />
+							</f:facet>
+							<aon:outputText value="#{to.remoteHost}"/>
+						</aon:column>
+							
+	 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
+	 						alias="Session.remoteAddress">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.audit_session_remoteAddress}" />
 							</f:facet>

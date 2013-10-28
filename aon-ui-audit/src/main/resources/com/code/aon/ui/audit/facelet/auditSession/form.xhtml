@@ -20,13 +20,16 @@
 				<ui:param name="controller" value="#{auditSession}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipSaveButton" value="true" />
-				<ui:param name="skipRemoveButton" value="true" />
+				<ui:param name="skipRemoveButton" value="#{!aonRole.sysAdmin}" />
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="menuGrid" columns="2" width="100%">
-					<aon:outputLabel for="Session_id" value="#{bundle.aon_id}" />
-					<aon:outputText id="Session_id" value="#{auditSession.to.id}" />
+				<aon:panelGrid id="menuGrid" columns="2" styleClass="aon-width-all">
+				
+					<aon:outputLabel for="Session_id"
+						value="#{bundle.aon_id}" />
+					<aon:outputText id="Session_id"
+						value="#{auditSession.to.sessionId}" />
 				
 					<aon:outputLabel for="Session_startDate"
 						value="#{bundle.aon_start_date}" />

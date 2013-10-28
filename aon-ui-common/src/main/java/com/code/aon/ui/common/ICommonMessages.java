@@ -26,6 +26,7 @@ public interface ICommonMessages {
 	String CONTACTS = "aon_contacts";
 	String CREDITOR = "aon_creditor";
 	String CUSTOMER = "aon_customer";
+	String DOMAIN_CHANGE = "aon_domain_change";
 	String DATE = "aon_date";
 	String DATE_PATTERN = "aon_date_pattern";
 	String DAY = "aon_day";
@@ -37,12 +38,14 @@ public interface ICommonMessages {
 	String ENTITY = "aon_entity";
 	String EXPENSE = "aon_expense";
 	String ERROR = "aon_error";
+	String FAVORITES_MANAGEMENT = "aon_favorites_management";
 	String FAX = "aon_fax";
 	String FEE = "aon_fee";
 	String FILE_DUPLICATED_NAME = "rich_file_duplicated_name";
 	String FILE_UPLOAD_ELEMENT = "aon_fileupload_element";
 	String FILE_UPLOAD_ERROR = "aon_fileUpload_error";
 	String HOLDER = "aon_holder";
+	String HOME = "aon_home";
 	String ID = "aon_id";
 	String INACTIVE = "aon_inactive";	
 	String INVOICE_DELIVERY = "aon_invoice_delivery";
@@ -108,12 +111,16 @@ public interface ICommonMessages {
 	String TIME_2_PATTERN = "aon_time2_pattern";
 	String TIMESTAMP_PATTERN = "aon_timestamp_pattern";
 	String TIMESTAMP_2_PATTERN = "aon_timestamp2_pattern";
+	String TOOLBAR_FORM = "aon_editing";
+	String TOOLBAR_LIST = "aon_list";
+	String TOOLBAR_SEARCH = "aon_toolbar_search";
 	String TRACKING_RECORDED = "aon_tracking_recorded";
 	String TRANSFERED_TO = "aon_transfered_to";
 	String UNITS = "aon_units";
 	String USER_PASSWORD_INVALID = "aon_login_err_0";
 	String USED_SPACE_MESSAGE = "aon_used_space_message";
 	String WEB = "aon_web";
+	String WEB_MAP = "aon_web_map";
 	String YES = "aon_yes";
 	String YEAR = "aon_year";	
 	
@@ -185,6 +192,7 @@ public interface ICommonMessages {
 	String ADMIN_BACKUP_TABLE_PROGRESS = "admin_backup_table_progress";
 	String ADMIN_BACKUP_TABLE_START = "admin_backup_table_start";
 	String ADMIN_BACKUP_INFO = "admin_backup_info";
+	String ADMIN_ADVANCED_MODE = "admin_advanced_mode";
 	
 	String AUDIT_LEVEL = "audit_audit_level";	
 	

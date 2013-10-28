@@ -3,11 +3,8 @@ package com.code.aon.ui.audit;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-
-import com.code.aon.ui.util.AonUtil;
 
 /**
  * The Class ApplicationCategory.
@@ -16,42 +13,15 @@ public class ApplicationCategory extends BasicOption implements Comparable<Appli
 
 	private static final long serialVersionUID = 1L;
 	
-	/** The name. */
-	private String name;
-	
 	/** The alias. */
 	private String alias;
 
-	/** The styleClass. */
-	private String styleClass;
-	
 	private List<OptionGroup> groups;
 
-	public ApplicationCategory(String name, String alias) {
+	public ApplicationCategory(String description, String alias) {
 		this.groups = new ArrayList<OptionGroup>();		
-		this.name = name;
+		setDescription(description);
 		this.alias = alias;
-	}
-
-	public String getIconClass() {
-		for( String style : StringUtils.split(styleClass) ) {
-			if ( StringUtils.startsWith(style, "aon-icon-") ) {
-				return style;
-			}
-		}
-		return null;
-	}
-	
-	public String getStyleClass() {
-		return styleClass;
-	}
-
-	public void setStyleClass(String styleClass) {
-		this.styleClass = styleClass;
-	}
-
-	public String getName() {
-		return (String) AonUtil.getValue(name);
 	}
 
 	public String getAlias() {
@@ -84,27 +54,26 @@ public class ApplicationCategory extends BasicOption implements Comparable<Appli
 			return false;
 		}
 		ApplicationCategory rhs = (ApplicationCategory) obj;
-		return new EqualsBuilder().append(name, rhs.name).isEquals();		
+		return new EqualsBuilder().append(getRawDescription(), rhs.getRawDescription()).isEquals();		
 	}
 	
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return getRawDescription().hashCode();
 	}
 	
 	@Override
 	public int compareTo(ApplicationCategory o) {
-		return getName().compareTo( o.getName() );
+		return getRawDescription().compareTo( o.getRawDescription() );
 	}
 
 	@Override
 	public String toString() {
 	     return new ToStringBuilder(this).
-	       append("name", name).
+	       append("name", getRawDescription()).
 	       append("alias", alias).
 	       append("action", getAction()).
 	       append("rendered", getRendered()).
-	       append("styleClass", styleClass).
 	       toString();
 	}	
 	

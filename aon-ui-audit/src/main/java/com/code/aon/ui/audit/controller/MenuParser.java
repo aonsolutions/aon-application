@@ -240,10 +240,15 @@ public class MenuParser {
 		}									
 	}
 	
-	private String getOptionGroupDescription( Element panelGrid ) {
+	private String getOptionGroupDescription( Element panelGrid, String id ) {
 		String path = panelGrid.getUniquePath() + "/" + F_FACET + "[@name='header']//" + AON_OUTPUTTEXT;
 		Element outputText = (Element) panelGrid.selectSingleNode(path );
-		return outputText.attributeValue(VALUE_ATTRIBUTE);
+		if ( outputText != null ) {
+			return outputText.attributeValue(VALUE_ATTRIBUTE);	
+		} else {
+			LOGGER.warn( "Description not found for group {}", id );
+			return id;
+		}
 	}
 	
 	public static boolean isReference( String value ) {
@@ -274,9 +279,9 @@ public class MenuParser {
 	private OptionGroup getOptionGroup( Element commandLink ) {
 		Element panelGrid = getPanelGrid(commandLink);
 		if ( (panelGrid != null) && (panelGrid != lastPanelGrid) ) {
-			String description = getOptionGroupDescription(panelGrid);
-			this.group = new OptionGroup(category, description);
 			String id = getId(panelGrid);
+			String description = getOptionGroupDescription(panelGrid, id);
+			this.group = new OptionGroup(category, description);
 			if ( id != null ) {
 				if (! controller.getGroupMap().containsKey(id) ) {
 					this.group.setId(id);

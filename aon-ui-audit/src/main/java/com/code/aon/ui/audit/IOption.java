@@ -8,6 +8,8 @@ public interface IOption {
 	
 	void setAction(String action);
 	
+	String getDescription();
+	
 	String getViewId();
 	
 	void setViewId(String viewId);

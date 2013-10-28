@@ -107,7 +107,7 @@
 						<aon:selectOneMenu id="User_initAction" 
 							value="#{domainUser.to.initAction}" >
 							<f:selectItem itemLabel="-" value="#{null}" />
-							<f:selectItems value="#{domainUser.actionList}" />
+							<f:selectItems value="#{actionDenied.actionList}" />
 						</aon:selectOneMenu>
 					</c:if>			
 																	
@@ -150,7 +150,6 @@
 							label="#{bundle.audit_option_denied_module}">
 							<ui:include src="/com/code/aon/ui/audit/facelet/action/deniedContent.xhtml" >
 								<ui:param name="controller" value="#{actionDenied}" />
-								<ui:param name="skipUserLookup" value="#{true}" />
 							</ui:include>
 	                    </aon:panelTab>
 

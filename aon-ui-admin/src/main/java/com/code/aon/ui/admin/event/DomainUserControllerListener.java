@@ -136,7 +136,7 @@ public class DomainUserControllerListener extends ControllerAdapter {
 			duc.initApplicationInfos(user);
 			duc.registerAllApplications();
 			updateWebmail(user);
-			updateDeniedOptions(duc, user);
+			updateDeniedOptions(user);
 			updateScopes(user);
 			updateWorkGroups(user);
 		} catch (Throwable e) {
@@ -150,10 +150,10 @@ public class DomainUserControllerListener extends ControllerAdapter {
 		admin.initWebmail(user);
 	}	
 
-	private void updateDeniedOptions( DomainUserController duc, User user ) {
+	private void updateDeniedOptions( User user ) {
 		ActionDeniedController denied = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		denied.initEdit(user);
-		duc.updateActionList(denied.getOptions());
+		denied.updateActionList();
 	}	
 
 	private void updateScopes( User user ) {

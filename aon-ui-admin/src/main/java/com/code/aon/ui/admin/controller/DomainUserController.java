@@ -4,7 +4,6 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonMessages.ACTIVE_USERS;
 import static com.code.aon.ui.common.ICommonMessages.MAXIMUM_NUMBER_USERS;
-import static com.code.aon.ui.common.ICommonMessages.MENU;
 import static com.code.aon.ui.common.ICommonMessages.NEW_PASSWORD_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.USER_DUPLICATED;
 import static com.esferalia.aon.entity.IEntityAlias.APPLICATION_USER_PROFILE_APPLICATION_USER_ID;
@@ -17,7 +16,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -41,8 +39,6 @@ import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.UserApplicationInfo;
 import com.code.aon.ui.admin.util.IdCheckUtil;
-import com.code.aon.ui.audit.ApplicationCategory;
-import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
@@ -64,8 +60,6 @@ public class DomainUserController extends BasicController {
 	private IdCheckUtil idCheck;
 	
 	private List<UserApplicationInfo> applicationInfos;
-	
-	private List<SelectItem> actionList;
 	
 	public DomainUserController() {
 		this.idCheck = new IdCheckUtil(this, IEntityAlias.USER_LOGIN, USER_DUPLICATED);
@@ -302,28 +296,6 @@ public class DomainUserController extends BasicController {
 				adc.initCurrentUser();
 			}
 		}
-	}	
-
-	public void updateActionList( List<ApplicationOption> options ) {
-		actionList = new LinkedList<SelectItem>();
-		for( ApplicationOption option : options ) {
-			String name = StringUtils.abbreviate(option.getDescription(), 60) + " (" + option.getGroup().getCategory().getName() + ")";
-			SelectItem item = new SelectItem(option.getAction(), name);
-			actionList.add(item);
-		}
-		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-		for( ApplicationCategory category : adc.getCategories() ) {
-			if ( category.isRendered() ) {
-				String name = category.getName() + " (" + AonUtil.getMessage(MENU) + ")";
-				SelectItem item = new SelectItem(category.getAction(), name);
-				actionList.add(item);				
-			}
-		}
-		AonUtil.sortSelectItems(actionList);
-	}
-	
-	public List<SelectItem> getActionList() {
-        return actionList;
 	}	
 
 	public String getProfileList() throws ManagerBeanException {

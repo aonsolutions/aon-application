@@ -554,10 +554,6 @@
 			<value>com.code.aon.config.User</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>-1</value>
-		</managed-property>		
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>User_login</value>
 		</managed-property>

@@ -201,6 +201,16 @@
 											</aon:commandLink>
 										</aon:div>
 									</c:if>								
+									<c:if test="#{auditSession.showAudit}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="auditSession"
+												action="auditSession_search"
+												actionListener="#{auditSession.onInit}"
+												value="#{bundle.aon_audit}" >
+												<aon:actionListener method="#{auditSession.onEditSearch}" />
+											</aon:commandLink>
+										</aon:div>
+									</c:if>								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="domainUsers"
 											action="domainUser_list"

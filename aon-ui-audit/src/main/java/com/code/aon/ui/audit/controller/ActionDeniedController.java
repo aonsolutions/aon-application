@@ -7,6 +7,7 @@ import static com.code.aon.ui.audit.controller.IAuditConstants.CONFIGURATION_CAT
 import static com.code.aon.ui.audit.controller.IAuditConstants.ENTERPRISE_CATEGORY;
 import static com.code.aon.ui.audit.controller.IAuditConstants.MODULES_ENABLED;
 import static com.code.aon.ui.audit.controller.IAuditConstants.PROFILE_DENIED_ACTIONS_ENABLED;
+import static com.code.aon.ui.common.ICommonMessages.MENU;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +25,7 @@ import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -53,12 +56,10 @@ import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.audit.OptionGroup;
-import com.code.aon.ui.audit.event.UserLoookupListener;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.common.role.IAonRole;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -77,13 +78,13 @@ public class ActionDeniedController {
 	
 	private User user;
 	
-	private  Map<String,ActionDenied> deniedActions;
+	private  Map<String,IAction> deniedActions;
 	
 	private List<ApplicationOption> options;
 	
 	private List<ApplicationOption> selected;
 	
-	private IControllerListener listener;
+	private List<SelectItem> actionList;
 	
 	private SkipManagedBeanMap skipManagedBean;
 	
@@ -92,7 +93,6 @@ public class ActionDeniedController {
 	private Map<String,ApplicationOption> enabledManagedBeans;
 	
 	public ActionDeniedController() {
-		this.listener = new UserLoookupListener();	
 		this.moduleEnabled = new ModuleEnabledMap();
 		init();
 	}
@@ -164,12 +164,12 @@ public class ActionDeniedController {
 			for( ApplicationOption option : this.selected ) {
 				map.put( option.getAction(), option );
 			}
-			for( ActionDenied actionDenied : this.deniedActions.values() ) {
+			for( IAction actionDenied : this.deniedActions.values() ) {
 				String action = actionDenied.getAction().getName();
 				if ( map.containsKey(action) ) {
 					map.remove(action);
 				} else {
-					bean.remove( actionDenied );
+					bean.remove( (ITransferObject) actionDenied );
 					changed = true;
 				}
 			}
@@ -194,8 +194,8 @@ public class ActionDeniedController {
 		}
 	}
 	
-	private Map<String,ActionDenied> getUserDeniedActions( User user ) {
-		Map<String,ActionDenied> map = new HashMap<String, ActionDenied>();
+	private Map<String,IAction> getUserDeniedActions( User user ) {
+		Map<String, IAction> map = new HashMap<String, IAction>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ActionDenied.class);
 			Criteria criteria = new Criteria();
@@ -204,7 +204,7 @@ public class ActionDeniedController {
 			Application application = getAuditController().getApplication();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTION_DENIED_ACTION_APPLICATION_ID), application.getId());			
 			for( ITransferObject to :  bean.getList(criteria) ) {
-				ActionDenied ad = (ActionDenied) to;
+				IAction ad = (IAction) to;
 				map.put(ad.getAction().getName(), ad);
 			}
 		} catch (ManagerBeanException e) {
@@ -424,10 +424,6 @@ public class ActionDeniedController {
 		}
 	}
 	
-	public IControllerListener getListener() {
-		return listener;
-	}
-	
 	@SuppressWarnings("unchecked")
 	public static List<Module> getProfileDeniedModules( Integer profile ) {
 		Query query = AdminUtil.getQuery("SELECT pmd.module FROM ProfileModuleDenied pmd WHERE pmd.profile = ?");
@@ -610,6 +606,28 @@ public class ActionDeniedController {
 			}
 		}
 	}
+	
+	public void updateActionList() {
+		actionList = new LinkedList<SelectItem>();
+		for( ApplicationOption option : getOptions() ) {
+			String name = StringUtils.abbreviate(option.getDescription(), 60) + " (" + option.getGroup().getCategory().getDescription() + ")";
+			SelectItem item = new SelectItem(option.getAction(), name);
+			actionList.add(item);
+		}
+		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+		for( ApplicationCategory category : adc.getCategories() ) {
+			if ( category.isRendered() ) {
+				String name = category.getDescription() + " (" + AonUtil.getMessage(MENU) + ")";
+				SelectItem item = new SelectItem(category.getAction(), name);
+				actionList.add(item);				
+			}
+		}
+		AonUtil.sortSelectItems(actionList);
+	}
+	
+	public List<SelectItem> getActionList() {
+        return actionList;
+	}	
 	
 	public class SkipManagedBeanMap extends AbstractMap<String,Boolean> {
 		

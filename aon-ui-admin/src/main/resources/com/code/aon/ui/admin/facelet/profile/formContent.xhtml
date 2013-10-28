@@ -42,8 +42,7 @@
 			
 				<aon:panelTab name="deniedOptions"
 					label="#{bundle.audit_option_denied_module}">
-					<ui:include src="/com/code/aon/ui/audit/facelet/action/deniedContent.xhtml" >
-						<ui:param name="skipUserLookup" value="#{true}" />						
+					<ui:include src="/com/code/aon/ui/audit/facelet/action/deniedContent.xhtml" >				
 						<ui:param name="skipDeniedContentToolbar" value="#{true}" />
 						<ui:param name="controller" value="#{profileActionDenied}" />
 					</ui:include>

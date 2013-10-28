@@ -18,18 +18,11 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:param name="controller" value="#{auditSession}" />
 				<ui:define name="searchContent">
-					<aon:outputLabel for="Session_id"
+				
+					<aon:outputLabel for="Session_sessionId"
 						value="#{bundle.aon_id}" />
-					<aon:inputText id="Session_id" size="60"
+					<aon:inputText id="Session_sessionId" size="60"
 						valueChangeListener="#{auditSession.addExpression}" />
-
-					<aon:outputLabel for="Session_application_id"
-						value="#{bundle.audit_application}" />
-					<aon:selectOneMenu id="Session_application_id"
-						valueChangeListener="#{auditSession.addExpression}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{auditCollections.applications}" />
-					</aon:selectOneMenu>					
 
 					<aon:outputLabel value="#{bundle.aon_start_date}" />
 					<aon:div>
@@ -37,15 +30,15 @@
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="Session_startDate-From"
 							valueChangeListener="#{auditSession.addGreaterThanOrEqualExpression}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
+							timeZone="#{timeZoneController.timeZone}" inputSize="16"
+							popupDateFormat="#{bundle.aon_timestamp2_pattern}"/>
 
 						<aon:outputLabel for="Session_startDate-To" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="Session_startDate-To"
 							valueChangeListener="#{auditSession.addLessThanOrEqualExpression}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
+							timeZone="#{timeZoneController.timeZone}" inputSize="16"
+							popupDateFormat="#{bundle.aon_timestamp2_pattern}"/>
 					</aon:div>
 
 					<aon:outputLabel value="#{bundle.aon_end_date}" />
@@ -54,21 +47,29 @@
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="Session_endDate-From"
 							valueChangeListener="#{auditSession.addGreaterThanOrEqualExpression}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
+							timeZone="#{timeZoneController.timeZone}" inputSize="16"
+							popupDateFormat="#{bundle.aon_timestamp2_pattern}"/>
 
 						<aon:outputLabel for="Session_endDate-To" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="Session_endDate-To"
 							valueChangeListener="#{auditSession.addLessThanOrEqualExpression}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
+							timeZone="#{timeZoneController.timeZone}" inputSize="16"
+							popupDateFormat="#{bundle.aon_timestamp2_pattern}"/>
 					</aon:div>
 
-					<aon:outputLabel for="Session_user_login"
-						value="#{bundle.aon_login_user}" />
-					<aon:inputText id="Session_user_login" size="60"
-						valueChangeListener="#{auditSession.addExpression}" />
+					<ui:include src="/com/code/aon/ui/config/facelet/user/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{auditSessionSearch.user}" />
+						<ui:param name="lookupControllerListener" value="#{auditSession.listener}" />
+					</ui:include>						
+					
+					<aon:outputText for="Session_action"
+						value="#{bundle.audit_option}"/>
+					<aon:selectOneMenu id="Session_action" 
+						value="#{auditSessionSearch.action}" >
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{actionDenied.actionList}" />
+					</aon:selectOneMenu>					
 						
 					<aon:outputLabel for="Session_remoteAddress"
 						value="#{bundle.audit_session_remoteAddress}" />
@@ -84,5 +85,6 @@
 			</ui:decorate>
 			
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{userLookup}" />
 	</ui:define>
 </ui:composition>

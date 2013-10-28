@@ -13,6 +13,9 @@ public class BasicOption implements Serializable, IOption {
 	/** The action. */
 	private String action;
 	
+	/** The description. */
+	private String description;	
+	
 	/** The rendered. */
 	private String rendered;	
 	
@@ -46,6 +49,27 @@ public class BasicOption implements Serializable, IOption {
 		this.action = action;
 	}
 	
+	/**
+	 * Gets the description.
+	 * 
+	 * @return the description
+	 */
+	public String getDescription() {
+		return (String) AonUtil.getValue(description);
+	}
+	
+	public String getRawDescription() {
+		return this.description;
+	}
+
+	/**
+	 * Sets the description.
+	 * 
+	 * @param description the new description
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}	
 	
 	/**
 	 * Gets the rendered.

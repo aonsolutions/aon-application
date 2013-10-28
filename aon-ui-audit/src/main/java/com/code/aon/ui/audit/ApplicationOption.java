@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.ui.audit.controller.MenuParser;
-import com.code.aon.ui.util.AonUtil;
 
 /**
  * The Class ApplicationOption.
@@ -29,9 +28,6 @@ public class ApplicationOption extends BasicOption {
 
 	/** The id. */
 	private String id;
-	
-	/** The description. */
-	private String description;
 	
 	/** The group. */
 	private OptionGroup group;
@@ -55,24 +51,6 @@ public class ApplicationOption extends BasicOption {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	/**
-	 * Gets the description.
-	 * 
-	 * @return the description
-	 */
-	public String getDescription() {
-		return (String) AonUtil.getValue(description);
-	}
-
-	/**
-	 * Sets the description.
-	 * 
-	 * @param description the new description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}	
 	
 	/**
 	 * Gets the group.
@@ -94,7 +72,7 @@ public class ApplicationOption extends BasicOption {
 
 	public String getXml( String prefix ) {
 		String newId = prefix + this.id;
-		String newXml = StringUtils.replace(this.xml, VALUE_PATTERN, this.description);
+		String newXml = StringUtils.replace(this.xml, VALUE_PATTERN, getRawDescription());
 		return StringUtils.replace(newXml, ID_PATTERN, newId);
 	}
 
@@ -103,7 +81,7 @@ public class ApplicationOption extends BasicOption {
 	}
 	
 	public String getRecentXml( Date date ) {
-		String newValue = this.description;
+		String newValue = getRawDescription();
 		if ( date != null ) {
 			newValue = RECENT_DATE_FORMAT.format(date) + "&#160;&#160;&#160;" + newValue;
 		}
