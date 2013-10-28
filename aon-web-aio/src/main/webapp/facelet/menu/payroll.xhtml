@@ -92,7 +92,16 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-winsuite aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.payroll_ss_menu_group}" />
+								<aon:div>
+									<h:outputLink target="_blank" value="http://www.seg-social.es">
+										<aon:outputText value="#{bundle.payroll_ss_menu_group}" />
+									</h:outputLink>
+									<h:outputLink target="_blank" value="http://www.seg-social.es">
+										<h:graphicImage
+											styleClass="aon-vertical-align-middle aon-margin-left"
+											url="#{aonResource.resolve['/images/aon-icon/aon-icon-lookup-goto.png']}" />
+									</h:outputLink>
+								</aon:div>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -108,7 +117,8 @@
 										style="color:red;" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="leaveBatch-payroll" action="leaveBatch_search-payroll"
+									<aon:commandLink id="leaveBatch-payroll"
+										action="leaveBatch_search-payroll"
 										actionListener="#{leaveBatch.onEditSearch}"
 										value="#{bundle.payroll_leaveBatchWizard_module}" />
 								</aon:div>
@@ -164,11 +174,21 @@
 							columnClasses="aon-padding"
 							headerClass="aon-icon-aeat aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.payroll_aeat_menu_group}" />
+								<aon:div>
+									<h:outputLink target="_blank" value="http://www.agenciatributaria.es">
+										<aon:outputText value="#{bundle.payroll_aeat_menu_group}" />
+									</h:outputLink>
+									<h:outputLink target="_blank" value="http://www.agenciatributaria.es">
+										<h:graphicImage
+											styleClass="aon-vertical-align-middle aon-margin-left"
+											url="#{aonResource.resolve['/images/aon-icon/aon-icon-lookup-goto.png']}" />
+									</h:outputLink>
+								</aon:div>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="irpfData-payroll" action="irpfData_search-payroll"
+									<aon:commandLink id="irpfData-payroll"
+										action="irpfData_search-payroll"
 										actionListener="#{irpfData.onEditSearch}"
 										value="#{bundle.payroll_model_145_module}">
 										<aon:actionListener method="#{contract.onEditSearch}" />
@@ -229,7 +249,16 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-sepe aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.payroll_sepe_menu_group}" />
+								<aon:div>
+									<h:outputLink target="_blank" value="http://www.sepe.es">
+										<aon:outputText value="#{bundle.payroll_sepe_menu_group}" />
+									</h:outputLink>
+									<h:outputLink target="_blank" value="http://www.sepe.es">
+										<h:graphicImage
+											styleClass="aon-vertical-align-middle aon-margin-left"
+											url="#{aonResource.resolve['/images/aon-icon/aon-icon-lookup-goto.png']}" />
+									</h:outputLink>
+								</aon:div>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">

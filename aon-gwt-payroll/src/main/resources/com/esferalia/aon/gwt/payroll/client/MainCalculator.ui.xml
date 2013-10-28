@@ -47,12 +47,16 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="aon-panelGrid-odd" colspan="2">
+							<td class="aon-panelGrid-odd">
+							</td>
+							<td class="aon-panelGrid-even" >
 								<g:CheckBox ui:field="saveCheckBox" >Guardar</g:CheckBox>
 							</td>
 						</tr>
 						<tr>
-							<td class="aon-panelGrid-odd " colspan="2" >
+							<td class="aon-panelGrid-odd">
+							</td>
+							<td class="aon-panelGrid-even " >
 								<g:CheckBox ui:field="compareCheckBox" enabled="false" >Comparar con n&oacute;minas guardadas</g:CheckBox>
 							</td>
 						</tr>
