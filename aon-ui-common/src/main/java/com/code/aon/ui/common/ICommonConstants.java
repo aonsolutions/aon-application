@@ -25,7 +25,10 @@ public interface ICommonConstants {
 
 	/** The customize controller. */
 	String CUSTOMIZE_CONTROLLER_NAME = "customize";
-	
+
+	/** The bean config controller. */
+	String BEAN_CONFIG_CONTROLLER_NAME = "beanConfig";
+		
 	// ************************************************************
 	// CONFIGURATION
 	// ************************************************************

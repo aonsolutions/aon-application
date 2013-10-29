@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.ConnectException;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -108,7 +107,7 @@ public class DesktopController {
     private boolean adminDomain;
     private boolean supportEnabled;
 
-    public DesktopController() throws MalformedURLException {
+    public DesktopController() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		this.adminDomain = ds.getType() == DomainType.ADMIN;
 		if ( this.adminDomain ) {
@@ -203,7 +202,7 @@ public class DesktopController {
 		}
 		return hide;			
 	}
- 
+ 	
 	private void initGarage() {
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		if (! adc.isDeniedModule(Module.GARAGE.getName()) ) {
