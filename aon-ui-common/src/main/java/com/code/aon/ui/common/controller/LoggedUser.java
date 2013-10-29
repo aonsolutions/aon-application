@@ -49,7 +49,8 @@ public class LoggedUser {
     		if (principal.getDomainId() != null) {
     			q = q + " AND u.domain = " + principal.getDomainId();
     		}
-			this.userName = (String) session.createQuery(q).uniqueResult();
+    		Query query = session.createQuery(q).setMaxResults(1);
+			this.userName = (String) query.uniqueResult();
 		}
 		if ( StringUtils.isEmpty(this.userName) ) {
     		this.userName = principal.getShortName();	
@@ -58,7 +59,7 @@ public class LoggedUser {
 		if (principal.getDomainId() != null) {
     		String sessionFactoryName = HibernateUtil.getSessionFactoryName("com.code.aon.company.Company");
     		String q = "SELECT name FROM Company c  WHERE c.domain = ?";
-    		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
+    		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q).setMaxResults(1);
 			this.companyName = (String) query.setInteger(0, principal.getDomainId()).uniqueResult();
 		}
     }

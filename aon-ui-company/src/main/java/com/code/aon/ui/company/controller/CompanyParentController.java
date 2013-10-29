@@ -35,6 +35,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.Company;
 import com.code.aon.company.enumeration.ReportPrintOption;
@@ -375,6 +376,9 @@ public class CompanyParentController extends BasicController implements ICompany
 			}
 			initializeModel();
 			if(this.getModel().getRowCount() > 0){
+				if(this.getModel().getRowCount() > 1){
+					LOGGER.error( "More than 1 company found in domain {}", DomainManager.getCurrentDomain());
+				}
 				this.getModel().setRowIndex(0);
 				onSelect(null);
 				loadMainAddress();
