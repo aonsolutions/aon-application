@@ -9,10 +9,6 @@
 			<var>bundle</var>
 		</resource-bundle>
 	</application>
-	
-	<lifecycle>
-		<phase-listener>com.code.aon.ui.common.controller.LoggedInCheck</phase-listener>
-	</lifecycle>	
 
 	<!-- ********* ITransferObject CONVERTER ************* -->
 	<converter>
