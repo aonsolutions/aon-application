@@ -12,6 +12,11 @@
 		<ui:param name="lookupTo" value="#{searchController.customer}" />
 		<ui:param name="skipNewButton" value="#{true}" />
 	</ui:include>
+
+	<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{searchController.seller}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+	</ui:include>
 	
 	<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{searchController.project}" />

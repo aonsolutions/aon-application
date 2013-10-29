@@ -10,6 +10,7 @@ import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.sales.enumeration.SalesStatus;
+import com.code.aon.seller.Seller;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -18,6 +19,8 @@ public class SalesSearchListener extends RegistrySearchListener {
 	private static final String REGISTRY_SEARCH_PREFFIX = "Sales_customer_registry_";
 
 	private Customer customer;
+
+	private Seller seller;
 	
 	private SalesStatus[] salesStatuses;
 	
@@ -28,6 +31,14 @@ public class SalesSearchListener extends RegistrySearchListener {
 	public String getPreffix() throws ManagerBeanException {
 		return REGISTRY_SEARCH_PREFFIX;
 	}	
+	
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
 
 	public Customer getCustomer() {
 		return customer;
@@ -65,6 +76,7 @@ public class SalesSearchListener extends RegistrySearchListener {
 	protected void init() throws ManagerBeanException {
 		super.init();
 		setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
+		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
 		SalesStatus[] defaultSalesStatus = {SalesStatus.PENDING};
 		setSalesStatuses(defaultSalesStatus);
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
@@ -76,6 +88,9 @@ public class SalesSearchListener extends RegistrySearchListener {
 		super.completeCriteria(criteria);
 		if (getCustomer() != null && getCustomer().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.SALES_CUSTOMER_ID), getCustomer().getId());			
+		}
+		if (getSeller() != null && getSeller().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.SALES_SELLER_ID), getSeller().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getSalesStatuses())) {
 			String status = getController().resolveAlias(IEntityAlias.SALES_STATUS);
