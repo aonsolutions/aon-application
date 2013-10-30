@@ -52,7 +52,7 @@
 			value="#{contract.params.contractCode}">
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{payrollCollections.contractCodes}" />
-			<a4j:support event="onchange" reRender="Contract_contractModelDiv" />
+			<a4j:support event="onchange" reRender="Contract_contractModelDiv" ajaxSingle="#{true}" />
 		</aon:selectOneMenu>
 		<aon:panelGroup rendered="#{!contract.new and contract.unsuportedContract}">
 			<aon:outputText value="#{contract.params.contractCode.value}" />
@@ -78,8 +78,8 @@
 				inputSize="10" renderAsPopup="true" enableManualInput="true"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}">
-				<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true"/>
-				<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
+				<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true" />
+				<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true" />
 			</aon:selectInputDate>
 			<aon:outputLabel for="Contract_seniorityDate" 
 				styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
@@ -90,8 +90,8 @@
 					inputSize="10" renderAsPopup="true" enableManualInput="true"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}">
-					<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true"/>
-					<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
+					<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true" />
+					<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true" />
 				</aon:selectInputDate>
 				<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
 					title="#{bundle.payroll_salary_start_date_seniority_date_difference}"

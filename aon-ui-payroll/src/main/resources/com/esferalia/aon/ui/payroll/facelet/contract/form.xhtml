@@ -57,12 +57,12 @@
 							</c:if>
 						</aon:panelTab>
 
-						<aon:panelTab id="additionalClausesData" label="#{bundle.payroll_contract_additional_clauses}"
-							actionListener="#{contractClauses.onAdditionalClausesShow}">
-							<c:if test="#{not empty contract.to.model}">
-								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/additionalClauses/form.xhtml" />
-							</c:if>
-						</aon:panelTab>
+						<c:if test="#{not empty contract.to.model}">
+							<aon:panelTab id="additionalClausesData" label="#{bundle.payroll_contract_additional_clauses}"
+								actionListener="#{contractClauses.onAdditionalClausesShow}">
+									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/additionalClauses/form.xhtml" />
+							</aon:panelTab>
+						</c:if>
 
 						<aon:panelTab id="attachData"  
 							label="#{bundle.aon_documents}">

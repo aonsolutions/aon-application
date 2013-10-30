@@ -116,8 +116,8 @@ public class SEPEFileUtils {
 		map.put("CONTRATO_970", contractCode.equals(ContractCode.C970.getValue()));
 		map.put("CONTRATO_980", contractCode.equals(ContractCode.C980.getValue()));
 		map.put("CONTRATO_990", contractCode.equals(ContractCode.C990.getValue()));
-		File tempFile = new File("tmpEsquemaContratos50.xsd");
 		try {
+			File tempFile = File.createTempFile("tmpEsquemaContratos50",".xsd");
 			
 			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), XML_FILE_ENCODING));
 			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(tempFile), XML_FILE_ENCODING);
@@ -164,11 +164,11 @@ public class SEPEFileUtils {
 			writer.close();
 			return tempFile;
 		} catch (FileNotFoundException e) {
-			String msg = "Error al obtener el esquema de validacion";
+			String msg = "No se encuentra el esquema de validacion";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
 		} catch (IOException e) {
-			String msg = "Error al obtener el esquema de validacion";
+			String msg = "Error de lectura al obtener el esquema de validacion";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
 		}
@@ -188,9 +188,8 @@ public class SEPEFileUtils {
 		map.put("T_339", false);
 		map.put("T_389", contractCode.equals(ContractCode.C389.getValue()));
 		
-		File tempFile = null;
 		try {
-			tempFile = new File("tmpEsquemaTransformaciones50.xsd");
+			File tempFile = File.createTempFile("tmpEsquemaTransformaciones50",".xsd");
 			
 			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), XML_FILE_ENCODING));
 			OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(tempFile), XML_FILE_ENCODING);
@@ -213,15 +212,16 @@ public class SEPEFileUtils {
 				writer.write(currentLine);
 			}
 			writer.close();
+			return tempFile;
 		} catch (FileNotFoundException e) {
-			String msg = "Error al obtener el esquema de validacion";
+			String msg = "No se encuentra el esquema de validacion";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
 		} catch (IOException e) {
-			String msg = "Error al obtener el esquema de validacion";
+			String msg = "Error de lectura al obtener el esquema de validacion";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage());
 		}
-		return tempFile;
+		return null;
 	}	
 }

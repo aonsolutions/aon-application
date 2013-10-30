@@ -22,6 +22,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryData;
 
 public class SEPEUtils {
 
@@ -34,12 +36,14 @@ public class SEPEUtils {
 			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
 			Expression endDateExp = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 			if(contract.getEndDate()!=null){
-//				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
 				Expression exp = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
 				endDateExp = ExpressionUtilities.getOrExpression(exp, endDateExp);
 			} else {
-//				criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 				criteria.addExpression(endDateExp);
+			}
+			if(DomainManager.isDomainManagementAvailable()){
+				criteria.setSkipDomainFilter( true );
+				criteria.addInExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_DOMAIN), getCurrentChildDomainIds());
 			}
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
@@ -66,6 +70,30 @@ public class SEPEUtils {
 			}
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
+				if(data.getExpression()!=null){
+					map.put(data.getName(), data);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, que siga generando el fichero
+		}
+		return map;
+	}
+	
+	public Map<String, SalaryData> getSalaryDataMap(Salary salary, Date startDate, Date endDate) {
+		Map<String, SalaryData> map = new HashMap<String, SalaryData>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(SalaryData.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_SALARY_ID), salary.getId());
+			if(startDate!=null){
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_START_DATE), startDate);
+			}
+			if(endDate!=null){
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_END_DATE), endDate);
+			}
+			for(ITransferObject to: bean.getList(criteria)){
+				SalaryData data = (SalaryData) to;
 				if(data.getExpression()!=null){
 					map.put(data.getName(), data);
 				}

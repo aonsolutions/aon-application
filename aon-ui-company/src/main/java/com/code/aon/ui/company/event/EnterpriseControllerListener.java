@@ -27,7 +27,7 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 	public void beforeBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-		controller.select(null);
+		controller.onLoad(null);
 	}
 	
 	@Override

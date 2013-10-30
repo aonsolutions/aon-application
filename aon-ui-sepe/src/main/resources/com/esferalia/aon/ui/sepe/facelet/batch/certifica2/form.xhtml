@@ -15,8 +15,8 @@
 		
 		<ui:define name="moreToolbarContent" >
 			<aon:commandButton id="certificados-batch-communication"
-				value="Certific@2"
-				rendered="#{true}" ajaxSingle="true"
+				value="#{bundle.sepe_certificados}"
+				rendered="#{controller.recorded}" ajaxSingle="true"
 				reRender="showCertificadosCommunicationWindow"
 				actionListener="#{certifica2Batch.onInitCertificados}"
 				styleClass="aon-finding-toolbar-item aon-icon-sepe-certificados" >

@@ -41,6 +41,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -106,13 +107,9 @@ public class CertificadosWriter {
 	
 	public CertificadoEmpresa createCertificadoEmpresaType(Certifica2Batch batch, List<ITransferObject> batchDetailList) throws ManagerBeanException {
 		CertificadoEmpresa certificado = new CertificadoEmpresa();
-//		for(EnterpriseCCC ccc: getCccList(batchDetailList)){
-//			certificado.getCuentaCotizacion().add(createCuentaCotizacionType(ccc, batch, batchDetailList));
-//		}
-//		return certificado;
 		EnterpriseCCC ccc = null;
 		CUENTACOTIZACIONTYPE cuentaCotizacionType = null;
-		int i = 0;
+//		int i = 0;
 		for(ITransferObject to: batchDetailList){
 			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
 			EnterpriseCCC contractCcc = detail.getContract().getEnterpriseCCC();
@@ -122,8 +119,8 @@ public class CertificadosWriter {
 				ccc = contractCcc;
 			}
 			cuentaCotizacionType.getDatosTrabajador().add(createTrabajadorType(detail));
-			i++;
-			System.out.println("__ " + i);
+//			i++;
+//			System.out.println("__ " + i);
 			
 			
 		}
@@ -151,20 +148,6 @@ public class CertificadosWriter {
 		return o;
 		
 	}
-//	private CUENTACOTIZACIONTYPE createCuentaCotizacionType(EnterpriseCCC ccc, Certifica2Batch batch, List<ITransferObject> batchDetailList) {
-//		CUENTACOTIZACIONTYPE o = new CUENTACOTIZACIONTYPE();
-//		o.setDatosRepresentante(createRepresentanteType(batch.getEnterprise()));
-//		o.setDatosEmpresa(createEmpresaType(ccc));
-////		int i = 0;
-////		for(ITransferObject to: batchDetailList){
-////			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
-////			o.getDatosTrabajador().add(createTrabajadorType(detail));
-////			i++;
-////			System.out.println("__ " + i);
-////		}
-//		return o;
-//		
-//	}
 
 	/**
 	 * <xsd:complexType name="REPRESENTANTE_TYPE">
@@ -296,7 +279,7 @@ public class CertificadosWriter {
 		o.setIndicadorDuracionContrato(null);
 
 		String occupation = utils.getContractDataMap(batchDetail.getContract()).get(ContextVariable.CNO.getName());
-		o.setCodProfesion(completeLength(occupation,7));
+		o.setCodProfesion(completeLength(occupation,7, true));
 		o.setCargoPublicoSindical(null);
 		
 //		<xsd:choice minOccurs="0">
@@ -320,9 +303,6 @@ public class CertificadosWriter {
 			o.setDistribucionJornadas(createDistribucionJornadasType(batchDetail));
 		}
 		
-//		for(ITransferObject to: obtainBatchData(batchDetail)){
-//			Certifica2BatchData batchData = (Certifica2BatchData) to;
-//			o.getDatosCotizacion().add(createCotizacionType(batchData));
 		for(Cotizacion cotizacion: getCotizacionList(batchDetail)){
 			o.getDatosCotizacion().add(createCotizacionType(cotizacion));
 		}
@@ -363,9 +343,9 @@ public class CertificadosWriter {
 				ContractData diasTp = map.get(ContextVariable.CONTRACT_DAYS.getName());
 				ContractData diasSemanaTp = map.get(ContextVariable.WEEK_DAYS.getName());
 				
-				
 //				String diasTp = getContractDataExpression(batchDetail.getContract(), p, ContextVariable.CONTRACT_DAYS);
 //				String diasSemanaTp = getContractDataExpression(batchDetail.getContract(), p, ContextVariable.WEEK_DAYS);
+				
 				if(diasTp!=null || diasSemanaTp!=null){
 					if(isIrregular(batchDetail.getContract(), p)){
 						addPeriod(IRREGULAR_VALUE, p, diasTp.getExpression(), listaPeriodos, periodo);
@@ -414,7 +394,7 @@ public class CertificadosWriter {
 			PERIODODISTRIBUCIONJORNADASTYPE tempPeriodo = listaPeriodos.get(listaPeriodos.size()-1);
 			try {
 				if(tempPeriodo.getTipoDistribucion().equals(tipoTp) 
-						&& tempPeriodo.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(completeLength(diasTp, 5))
+						&& tempPeriodo.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(completeLength(diasTp, 5, false))
 						&& differenceBetweenDates(dateYYYYMMDD.parse(tempPeriodo.getFechaFinPeriodo()),startDate).equals(2)){
 					tempPeriodo.setFechaFinPeriodo(createFechaSimpleType(endDate));
 				} else {
@@ -447,7 +427,7 @@ public class CertificadosWriter {
 		o.setTipoDistribucion(tipoDistribucion);
 		o.setFechaInicioPeriodo(createFechaSimpleType(inicio));
 		o.setFechaFinPeriodo(createFechaSimpleType(fin));
-		o.setNumeroDiasTrabajadosPorSemanaOPeriodo(completeLength(numDiasSemanaPeriodo, 5));
+		o.setNumeroDiasTrabajadosPorSemanaOPeriodo(completeLength(numDiasSemanaPeriodo, 5, false));
 		return o;
 	}
 	
@@ -467,17 +447,6 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-//	private COTIZACIONTYPE createCotizacionType(Certifica2BatchData batchData){
-//		COTIZACIONTYPE o = new COTIZACIONTYPE();
-//		Certifica2BatchData data = batchData;
-//		o.setAno(data.getYear().toString());
-//		o.setMes(parseToLength(data.getMonth().toString(), 2));
-//		o.setNumDiasCotizados(parseToLength(data.getContributionDays(), 3));
-//		o.setBaseCotizacionContingenciasComunes(parseToLength(data.getCgcContributionBase(), 9));
-//		o.setBaseCotizacionDesempleo(parseToLength(data.getUnemploymentContributionBase(), 9));
-//		o.setObservaciones(data.getComments());
-//		return o;
-//	}
 	private COTIZACIONTYPE createCotizacionType(Cotizacion batchData){
 		COTIZACIONTYPE o = new COTIZACIONTYPE();
 		Cotizacion data = batchData;
@@ -512,26 +481,12 @@ public class CertificadosWriter {
 			if(nomina != null) {
 				Double baseCg = nomina.getCommonBase();
 				Double baseAcc = nomina.getProfessionalBase();
-				//TODO obtener la base por desempleo
-//				Double baseDesempleo = nomina.getBasePerdes(); 
-				Double baseDesempleo = nomina.getIrpfBase();
-				// TODO obtener las nominas diferencia
-//				ISalary atraso = getSalary(detail.getContract(),  sDate.getTime(), eDate.getTime(), SalaryType.DELAY);
-//				if(atraso!=null){
-//					baseCg += atraso.getCommonBase();
-//					baseAcc += atraso.getProfessionalBase();
-//					baseDesempleo += atraso.getIrpfBase();
-//				}
-//				List<INominaDiferencia> nominasDiferencia = getNominaDAO().getNominasDiferencia(params);
-//				for(INominaDiferencia nomDf:nominasDiferencia) {
-//					baseCg += nomDf.getBaseCgPts();
-//					baseAcc += nomDf.getBaseAccPts();
-//					baseDesempleo += nomDf.getBasePerdes();
-//				}
-				if ((nomina.getOvertimeBase() == null || nomina.getOvertimeBase() == 0)
-						&& (nomina.getNonEstructuralOvertimeBase() == null || nomina.getNonEstructuralOvertimeBase() == 0)) {
-					baseDesempleo = baseAcc;
-				} 
+				// obtener las nominas diferencia de atrasos
+				ISalary atraso = getSalary(detail.getContract(),  sDate.getTime(), eDate.getTime(), SalaryType.DELAY);
+				if(atraso != null){
+					baseCg += getDelayBaseAmount(atraso, nomina.getStartDate(), nomina.getEndDate(), ContextVariable.CGC_BASE);
+					baseAcc += getDelayBaseAmount(atraso, nomina.getStartDate(), nomina.getEndDate(), ContextVariable.CGP_BASE);
+				}
 				totalDias += nomina.getTimeUnits();
 				Cotizacion cotizacion = new Cotizacion();
 				Calendar cal = new GregorianCalendar();
@@ -540,7 +495,7 @@ public class CertificadosWriter {
 				cotizacion.setMonth(cal.get(Calendar.MONTH)+1);
 				cotizacion.setContributionDays(nomina.getTimeUnits());
 				cotizacion.setCgcContributionBase(baseCg);
-				cotizacion.setUnemploymentContributionBase(baseDesempleo);
+				cotizacion.setUnemploymentContributionBase(baseAcc);
 				cotizacion.setComments(null);
 				cotizacionList.add(cotizacion);
 			}
@@ -548,6 +503,25 @@ public class CertificadosWriter {
 		return cotizacionList;
 	}
 	
+	private Double getDelayBaseAmount(ISalary salary, Date startDate, Date endDate, ContextVariable base) {
+		// TODO  
+		SEPEUtils utils = new SEPEUtils();
+		Map<String, SalaryData> map = utils.getSalaryDataMap((Salary) salary, startDate, endDate);
+		if(map.containsKey(base.getName())){
+			try {
+				return Double.parseDouble(map.get(base.getName()).getExpression());
+			} catch (NumberFormatException e) {
+				String msg = "Ha ocurrido un error al obtener la base '" +base.getName();
+				msg += "' para la nomina del "+salary.getIssueDate();
+				msg += " del trabajador "+salary.getEmployeeName();
+				msg += " ("+salary.getEnterpriseName()+")";
+				AonUtil.addErrorMessage(msg);
+				AonUtil.addErrorMessage("Valor obtenido: "+map.get(base.getName()).getExpression());
+			}
+		}
+		return 0.0;
+	}
+
 	public ISalary getSalary(Contract contract, Date startDate, Date endDate) {
 		return getSalary(contract, startDate, endDate, SalaryType.SALARY);
 	}
@@ -1179,7 +1153,6 @@ public class CertificadosWriter {
 		String fullTime = utils.getContractDataMap(detail.getContract()).get(ContextVariable.FULL_TIME.getName());
 		String tc2 = utils.getContractDataMap(detail.getContract()).get(ContextVariable.TC2.getName());
 		if(fullTime==null || new Boolean(fullTime)){
-//			if(detail.getContractType().startsWith("1") || detail.getContractType().startsWith("4")){ 
 			if(tc2.startsWith("1") || tc2.startsWith("4")){ 
 				return true;
 			} 
@@ -1242,30 +1215,6 @@ public class CertificadosWriter {
 		return builder.toString();
 	}
 	
-//	private String parseToLength(String var, Integer lon, Boolean dir) {
-//		StringBuffer parse = new StringBuffer();
-//		if(var != null) {
-//			if(!dir) {
-//				parse.append(var);
-//			}
-//			for(int i = var.length(); i < Math.abs(lon); ++i) {
-//				parse.append("0");
-//			}
-//			if(dir) {
-//				parse.append(var);
-//			}
-//		}
-//		return parse.toString();
-//	}
-	
-	private String completeLength(String var, Integer lon) {
-		return completeLength(var, lon, true);
-	}
-	
-	private String completeLength(Integer var, Integer lon, Boolean dir) {
-		return completeLength(String.valueOf(var), lon, dir);
-	}
-	
 	private String completeLength(Integer var, Integer lon) {
 		return completeLength(var, lon, true);
 	}
@@ -1276,9 +1225,17 @@ public class CertificadosWriter {
 		return completeLength(String.valueOf(var.intValue()), lon, dir);
 	}
 	
-	private String completeLength(Double var, Integer lon) {
-		return completeLength(var, lon, true);
-	}
+//	private String completeLength(String var, Integer lon) {
+//		return completeLength(var, lon, true);
+//	}
+	
+//	private String completeLength(Integer var, Integer lon, Boolean dir) {
+//		return completeLength(String.valueOf(var), lon, dir);
+//	}
+	
+//	private String completeLength(Double var, Integer lon) {
+//		return completeLength(var, lon, true);
+//	}
 	
 	private Integer differenceBetweenDates(Date from, Date to) {
 		Integer diffDays = new Integer(0);

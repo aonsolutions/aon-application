@@ -90,7 +90,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		try {
 			ContractUtils utils = ContractUtils.getInstance();
 			utils.loadContractData((Contract) controller.getTo(), controller.getParams());
-//			utils.searchAgreement();
+			controller.setAgreement(utils.obtainAgreement((Contract) controller.getTo()));
 		} catch (ManagerBeanException e) {
 			String msg = "Error loading contract data";
 			LOGGER.error(msg);

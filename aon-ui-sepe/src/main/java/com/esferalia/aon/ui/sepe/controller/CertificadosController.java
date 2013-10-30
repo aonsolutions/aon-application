@@ -393,13 +393,13 @@ public class CertificadosController implements ISepeHandler{
 	
 	@Override
 	public void onSendSepeFile(ActionEvent event){
+		getCommunicator().setDataCommunication(true);
 		if(!isShowLoginWindow()){
 			getCommunicator().initialize();
 		}
 		if( getCommunicator().isLoginRequired() ){
 			setShowLoginWindow(true);
 		} else {
-			getCommunicator().setDataCommunication(true);
 			getCommunicator().setDocument(new String(getGeneratedFile().getData()));
 			String result = getCommunicator().communicate();
 			if(isBatchView()){
@@ -417,6 +417,7 @@ public class CertificadosController implements ISepeHandler{
 	
 	@Override
 	public void onSepeDataQuery(ActionEvent event){
+		getCommunicator().setDataQuery(true);
 		String document = getCommunicator().obtainCommunicationNumber(getCommunicationIdFile().getData());
 		if( StringUtils.isBlank(document) ){
 			String msg = "No se puede obtener el número del envío de la comunicación.";
@@ -429,7 +430,6 @@ public class CertificadosController implements ISepeHandler{
 		if( getCommunicator().isLoginRequired() ){
 			setShowLoginWindow(true);
 		} else {
-			getCommunicator().setDataQuery(true);
 			getCommunicator().setDocument(document);
 			String result = getCommunicator().communicate();
 			if(isBatchView()){

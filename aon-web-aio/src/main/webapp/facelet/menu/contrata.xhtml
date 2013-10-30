@@ -69,12 +69,14 @@
 										actionListener="#{contractBatch.onEditSearch}"
 										value="#{bundle.payroll_contrata_contractBatch_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="leaveBatch" 
-										action="leaveBatch_search"
-										actionListener="#{leaveBatch.onEditSearch}"
-										value="#{bundle.payroll_leaveBatchWizard_module}" />
-								</aon:div>
+								<c:if test="#{actionDenied.moduleEnabled['payroll']}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="leaveBatch" 
+											action="leaveBatch_search"
+											actionListener="#{leaveBatch.onEditSearch}"
+											value="#{bundle.payroll_leaveBatchWizard_module}" />
+									</aon:div>
+								</c:if>
 							</aon:div>
 						</aon:panelGrid>
 						
