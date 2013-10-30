@@ -4778,10 +4778,22 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEntidad_Descripcion() {
 			return entidadDescripcion;
 		}
+		
+		private String entidadBic;  
+		
+		/**
+		 * BIC
+		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEntidad_Bic() {
+			return entidadBic;
+		}
 		public void visitJautentidad(Autonomos autonomos, Entidad entidad)
 		throws SQLException {
 			entidadCdg = entidad.getCdg();  
 			entidadDescripcion = entidad.getDescripcion();  
+			entidadBic = entidad.getBic();  
 		}
 	
 	}
@@ -4845,6 +4857,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getSucursal_Cpsuc() {
 			return sucursalCpsuc;
 		}
+		
+		private String sucursalBic;  
+		
+		/**
+		 * BIC
+		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSucursal_Bic() {
+			return sucursalBic;
+		}
 		public void visitJautsucursal(Autonomos autonomos, Sucursal sucursal)
 		throws SQLException {
 			sucursalCodent = sucursal.getCodent();  
@@ -4852,6 +4875,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			sucursalDomsuc = sucursal.getDomsuc();  
 			sucursalMunsuc = sucursal.getMunsuc();  
 			sucursalCpsuc = sucursal.getCpsuc();  
+			sucursalBic = sucursal.getBic();  
 		}
 	
 	}
@@ -7580,6 +7604,1120 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	}
 
 	/**
+	 * Nominaexdf_nomina shows join between Nomina and Nominaexdf
+	 */
+	public static class Nominaexdf_nomina extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer nominaCdg;  
+		
+		/**
+		 * Codigo de Nomina
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Cdg() {
+			return nominaCdg;
+		}
+		
+		private Integer nominaNumero;  
+		
+		/**
+		 * Codigo de Trabajador
+		 * @return the column 'numero' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Numero() {
+			return nominaNumero;
+		}
+		
+		private Integer nominaMes;  
+		
+		/**
+		 * Mes de Nomina
+		 * @return the column 'mes' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Mes() {
+			return nominaMes;
+		}
+		
+		private Integer nominaAnio;  
+		
+		/**
+		 * Anio de Nomina
+		 * @return the column 'anio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Anio() {
+			return nominaAnio;
+		}
+		
+		private Integer nominaOrden;  
+		
+		/**
+		 * Orden dentro del Mes - Anio
+		 * @return the column 'orden' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Orden() {
+			return nominaOrden;
+		}
+		
+		private String nominaTipo;  
+		
+		/**
+		 * Tipo de Nomina
+		 * @return the column 'tipo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Tipo() {
+			return nominaTipo;
+		}
+		
+		private String nominaNomemp;  
+		
+		/**
+		 * Nombre de Actividad
+		 * @return the column 'nomemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Nomemp() {
+			return nominaNomemp;
+		}
+		
+		private Date nominaFecemi;  
+		
+		/**
+		 * Fecha de Emision
+		 * @return the column 'fecemi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fecemi() {
+			return nominaFecemi;
+		}
+		
+		private String nominaNomper;  
+		
+		/**
+		 * Nombre de Trabajador
+		 * @return the column 'nomper' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Nomper() {
+			return nominaNomper;
+		}
+		
+		private String nominaDireccion;  
+		
+		/**
+		 * Datos Direccion
+		 * @return the column 'direccion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Direccion() {
+			return nominaDireccion;
+		}
+		
+		private String nominaLocalidad;  
+		
+		/**
+		 * Datos Localidad
+		 * @return the column 'localidad' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Localidad() {
+			return nominaLocalidad;
+		}
+		
+		private String nominaDescat;  
+		
+		/**
+		 * Descripcion Categoria
+		 * @return the column 'descat' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Descat() {
+			return nominaDescat;
+		}
+		
+		private String nominaProfesion;  
+		
+		/**
+		 * Profesion
+		 * @return the column 'profesion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Profesion() {
+			return nominaProfesion;
+		}
+		
+		private Integer nominaNummat;  
+		
+		/**
+		 * Numero de Matricula
+		 * @return the column 'nummat' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Nummat() {
+			return nominaNummat;
+		}
+		
+		private Date nominaFecant;  
+		
+		/**
+		 * Fecha de Antiguedad
+		 * @return the column 'fecant' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fecant() {
+			return nominaFecant;
+		}
+		
+		private Date nominaFecini;  
+		
+		/**
+		 * Inicio Periodo Nomina
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fecini() {
+			return nominaFecini;
+		}
+		
+		private Date nominaFecfin;  
+		
+		/**
+		 * Fin Periodo Nomina
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fecfin() {
+			return nominaFecfin;
+		}
+		
+		private Integer nominaDiasnomina;  
+		
+		/**
+		 * Numero de Dias Periodo Nomina
+		 * @return the column 'diasnomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Diasnomina() {
+			return nominaDiasnomina;
+		}
+		
+		private BigDecimal nominaTotal_devengos;  
+		
+		/**
+		 * Total Devengos
+		 * @return the column 'total_devengos' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Total_devengos() {
+			return nominaTotal_devengos;
+		}
+		
+		private BigDecimal nominaTotal_devengos_e;  
+		
+		/**
+		 * Total Devengos Especie
+		 * @return the column 'total_devengos_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Total_devengos_e() {
+			return nominaTotal_devengos_e;
+		}
+		
+		private BigDecimal nominaTotal_deducir;  
+		
+		/**
+		 * Total a Deducir
+		 * @return the column 'total_deducir' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Total_deducir() {
+			return nominaTotal_deducir;
+		}
+		
+		private BigDecimal nominaTotal_liquido;  
+		
+		/**
+		 * Total Liquido
+		 * @return the column 'total_liquido' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Total_liquido() {
+			return nominaTotal_liquido;
+		}
+		
+		private Date nominaFeccob;  
+		
+		/**
+		 * Fecha de Cobro
+		 * @return the column 'feccob' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Feccob() {
+			return nominaFeccob;
+		}
+		
+		private BigDecimal nominaBase_concom;  
+		
+		/**
+		 * Contingencias Comunes
+		 * @return the column 'base_concom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_concom() {
+			return nominaBase_concom;
+		}
+		
+		private BigDecimal nominaBase_acctra;  
+		
+		/**
+		 * Accidentes Trabajo
+		 * @return the column 'base_acctra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acctra() {
+			return nominaBase_acctra;
+		}
+		
+		private BigDecimal nominaBase_proext;  
+		
+		/**
+		 * Prorrata Pagas Extras
+		 * @return the column 'base_proext' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_proext() {
+			return nominaBase_proext;
+		}
+		
+		private BigDecimal nominaBase_con_it;  
+		
+		/**
+		 * Contingencias Comunes IT
+		 * @return the column 'base_con_it' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_it() {
+			return nominaBase_con_it;
+		}
+		
+		private BigDecimal nominaBase_acc_it;  
+		
+		/**
+		 * Accidentes Trabajo IT
+		 * @return the column 'base_acc_it' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_it() {
+			return nominaBase_acc_it;
+		}
+		
+		private BigDecimal nominaBase_con_mat;  
+		
+		/**
+		 * Contingencias Comunes Maternidad
+		 * @return the column 'base_con_mat' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_mat() {
+			return nominaBase_con_mat;
+		}
+		
+		private BigDecimal nominaBase_acc_mat;  
+		
+		/**
+		 * Accidentes Trabajo Maternidad
+		 * @return the column 'base_acc_mat' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_mat() {
+			return nominaBase_acc_mat;
+		}
+		
+		private BigDecimal nominaBase_con_mat_no;  
+		
+		/**
+		 * Contingencias Comunes Maternidad No Aporta
+		 * @return the column 'base_con_mat_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_mat_no() {
+			return nominaBase_con_mat_no;
+		}
+		
+		private BigDecimal nominaBase_acc_mat_no;  
+		
+		/**
+		 * Accidentes Trabajo no Aporta
+		 * @return the column 'base_acc_mat_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_mat_no() {
+			return nominaBase_acc_mat_no;
+		}
+		
+		private BigDecimal nominaBase_fogasa;  
+		
+		/**
+		 * Fondo Garantia Salarial
+		 * @return the column 'base_fogasa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_fogasa() {
+			return nominaBase_fogasa;
+		}
+		
+		private BigDecimal nominaBase_fp;  
+		
+		/**
+		 * Formacion Profesional
+		 * @return the column 'base_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_fp() {
+			return nominaBase_fp;
+		}
+		
+		private BigDecimal nominaBase_desempleo;  
+		
+		/**
+		 * Desempleo
+		 * @return the column 'base_desempleo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_desempleo() {
+			return nominaBase_desempleo;
+		}
+		
+		private BigDecimal nominaBase_hextras;  
+		
+		/**
+		 * Horas Estras Estructurales
+		 * @return the column 'base_hextras' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_hextras() {
+			return nominaBase_hextras;
+		}
+		
+		private BigDecimal nominaBase_hextras_no;  
+		
+		/**
+		 * Horas Extras No Extructurales
+		 * @return the column 'base_hextras_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_hextras_no() {
+			return nominaBase_hextras_no;
+		}
+		
+		private BigDecimal nominaBase_exceso;  
+		
+		/**
+		 * Exceso Extrasalariales
+		 * @return the column 'base_exceso' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_exceso() {
+			return nominaBase_exceso;
+		}
+		
+		private BigDecimal nominaBase_nocotiza;  
+		
+		/**
+		 * No cotiza a S.S.
+		 * @return the column 'base_nocotiza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_nocotiza() {
+			return nominaBase_nocotiza;
+		}
+		
+		private BigDecimal nominaBase_especie;  
+		
+		/**
+		 * Base en Especie Repercutida
+		 * @return the column 'base_especie' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_especie() {
+			return nominaBase_especie;
+		}
+		
+		private BigDecimal nominaBase_especie_no;  
+		
+		/**
+		 * Base en Especie no Repercutida
+		 * @return the column 'base_especie_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_especie_no() {
+			return nominaBase_especie_no;
+		}
+		
+		private BigDecimal nominaBase_irpf;  
+		
+		/**
+		 * Base IRPF Dinararia
+		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf() {
+			return nominaBase_irpf;
+		}
+		
+		private BigDecimal nominaBase_irpf_especie;  
+		
+		/**
+		 * IRPF en Especie Repercutido
+		 * @return the column 'base_irpf_especie' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_especie() {
+			return nominaBase_irpf_especie;
+		}
+		
+		private BigDecimal nominaBase_irpf_espec_no;  
+		
+		/**
+		 * IRPF en Especie no Repercutido
+		 * @return the column 'base_irpf_espec_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_espec_no() {
+			return nominaBase_irpf_espec_no;
+		}
+		
+		private BigDecimal nominaBase_irpf_nocotiza;  
+		
+		/**
+		 * IRPF no Cotiza Dinerario
+		 * @return the column 'base_irpf_nocotiza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_nocotiza() {
+			return nominaBase_irpf_nocotiza;
+		}
+		
+		private BigDecimal nominaBase_irpf_nocoti_e;  
+		
+		/**
+		 * IRPF no Cotiza Especie
+		 * @return the column 'base_irpf_nocoti_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_nocoti_e() {
+			return nominaBase_irpf_nocoti_e;
+		}
+		
+		private BigDecimal nominaBase_horascom;  
+		
+		/**
+		 * Horas Complementarias
+		 * @return the column 'base_horascom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_horascom() {
+			return nominaBase_horascom;
+		}
+		
+		private BigDecimal nominaBase_perdes;  
+		
+		/**
+		 * Percepcion por Desempleo
+		 * @return the column 'base_perdes' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_perdes() {
+			return nominaBase_perdes;
+		}
+		
+		private BigDecimal nominaRemuneracion;  
+		
+		/**
+		 * Remuneracion
+		 * @return the column 'remuneracion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Remuneracion() {
+			return nominaRemuneracion;
+		}
+		
+		private BigDecimal nominaBase_it;  
+		
+		/**
+		 * Base IT
+		 * @return the column 'base_it' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_it() {
+			return nominaBase_it;
+		}
+		
+		private BigDecimal nominaTotal_1;  
+		
+		/**
+		 * Total 1
+		 * @return the column 'total_1' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Total_1() {
+			return nominaTotal_1;
+		}
+		
+		private String nominaCodbas;  
+		
+		/**
+		 * Grupo de Tarifa
+		 * @return the column 'codbas' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Codbas() {
+			return nominaCodbas;
+		}
+		
+		private BigDecimal nominaBase_cg;  
+		
+		/**
+		 * Contingencias Generales
+		 * @return the column 'base_cg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_cg() {
+			return nominaBase_cg;
+		}
+		
+		private BigDecimal nominaBase_acc;  
+		
+		/**
+		 * Accidentes Trabajo - Enfermedad Profesional
+		 * @return the column 'base_acc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc() {
+			return nominaBase_acc;
+		}
+		
+		private BigDecimal nominaPrc_cg;  
+		
+		/**
+		 * Porcentaje Contingencias Generales
+		 * @return the column 'prc_cg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_cg() {
+			return nominaPrc_cg;
+		}
+		
+		private BigDecimal nominaPrc_acc;  
+		
+		/**
+		 * Porcentaje Accidentes
+		 * @return the column 'prc_acc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_acc() {
+			return nominaPrc_acc;
+		}
+		
+		private BigDecimal nominaPrc_hex;  
+		
+		/**
+		 * Porcentaje Horas Extras Estructurales
+		 * @return the column 'prc_hex' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_hex() {
+			return nominaPrc_hex;
+		}
+		
+		private BigDecimal nominaPrc_hexno;  
+		
+		/**
+		 * Porcentaje Horas Extras NO Estructurales
+		 * @return the column 'prc_hexno' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_hexno() {
+			return nominaPrc_hexno;
+		}
+		
+		private BigDecimal nominaImporte_cg;  
+		
+		/**
+		 * Importe Contingencias Comunes
+		 * @return the column 'importe_cg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_cg() {
+			return nominaImporte_cg;
+		}
+		
+		private BigDecimal nominaImporte_acc;  
+		
+		/**
+		 * Importe Accidentes Trabajo
+		 * @return the column 'importe_acc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_acc() {
+			return nominaImporte_acc;
+		}
+		
+		private BigDecimal nominaImporte_hex;  
+		
+		/**
+		 * Importe Horas Extras Estructurales
+		 * @return the column 'importe_hex' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_hex() {
+			return nominaImporte_hex;
+		}
+		
+		private BigDecimal nominaImporte_hexno;  
+		
+		/**
+		 * Importe Horas Extras NO Estructurales
+		 * @return the column 'importe_hexno' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_hexno() {
+			return nominaImporte_hexno;
+		}
+		
+		private BigDecimal nominaMincg;  
+		
+		/**
+		 * Tope Minimo para C.G.
+		 * @return the column 'mincg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Mincg() {
+			return nominaMincg;
+		}
+		
+		private BigDecimal nominaMaxcg;  
+		
+		/**
+		 * Tope Maximo para C.G.
+		 * @return the column 'maxcg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Maxcg() {
+			return nominaMaxcg;
+		}
+		
+		private BigDecimal nominaMinacc;  
+		
+		/**
+		 * Tope Minimo para Accidentes
+		 * @return the column 'minacc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Minacc() {
+			return nominaMinacc;
+		}
+		
+		private BigDecimal nominaMaxacc;  
+		
+		/**
+		 * Tope Maximo para Accidentes
+		 * @return the column 'maxacc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Maxacc() {
+			return nominaMaxacc;
+		}
+		
+		private BigDecimal nominaCuota_empresa;  
+		
+		/**
+		 * Cuota Total de la Emrpesa
+		 * @return the column 'cuota_empresa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Cuota_empresa() {
+			return nominaCuota_empresa;
+		}
+		
+		private BigDecimal nominaBase_acc_sin_hex;  
+		
+		/**
+		 * Accidentes Trabajo Sin Horas Extras
+		 * @return the column 'base_acc_sin_hex' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_sin_hex() {
+			return nominaBase_acc_sin_hex;
+		}
+		
+		private BigDecimal nominaImporte_cuotas;  
+		
+		/**
+		 * Importe Cuotas Deducciones
+		 * @return the column 'importe_cuotas' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_cuotas() {
+			return nominaImporte_cuotas;
+		}
+		
+		private BigDecimal nominaPrc_irpf;  
+		
+		/**
+		 * Porcentaje IRPF
+		 * @return the column 'prc_irpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_irpf() {
+			return nominaPrc_irpf;
+		}
+		
+		private BigDecimal nominaImporte_irpf;  
+		
+		/**
+		 * Importe IRPF
+		 * @return the column 'importe_irpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_irpf() {
+			return nominaImporte_irpf;
+		}
+		
+		private Date nominaFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fecnew() {
+			return nominaFecnew;
+		}
+		
+		private Time nominaHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getNomina_Hornew() {
+			return nominaHornew;
+		}
+		
+		private Date nominaFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fecmod() {
+			return nominaFecmod;
+		}
+		
+		private Time nominaHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getNomina_Hormod() {
+			return nominaHormod;
+		}
+		
+		private Integer nominaDiastrab;  
+		
+		/**
+		 * Dias Trabajados
+		 * @return the column 'diastrab' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Diastrab() {
+			return nominaDiastrab;
+		}
+		
+		private Integer nominaDiasefec;  
+		
+		/**
+		 * Dias Efectivos
+		 * @return the column 'diasefec' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Diasefec() {
+			return nominaDiasefec;
+		}
+		
+		private BigDecimal nominaBaseant;  
+		
+		/**
+		 * Base Calculo Antiguedad
+		 * @return the column 'baseant' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Baseant() {
+			return nominaBaseant;
+		}
+		
+		private String nominaProret;  
+		
+		/**
+		 * Prorrateo Retribucion
+		 * @return the column 'proret' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Proret() {
+			return nominaProret;
+		}
+		
+		private String nominaProcot;  
+		
+		/**
+		 * Prorrateo Cotizacion
+		 * @return the column 'procot' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Procot() {
+			return nominaProcot;
+		}
+		
+		private String nominaCodcon;  
+		
+		/**
+		 * Codigo Convenio
+		 * @return the column 'codcon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Codcon() {
+			return nominaCodcon;
+		}
+		
+		private String nominaCodpct;  
+		
+		/**
+		 * Asimilado a % Cotizacion
+		 * @return the column 'codpct' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Codpct() {
+			return nominaCodpct;
+		}
+		
+		private Date nominaFeccobreal;  
+		
+		/**
+		 * Fecha Cobro Real
+		 * @return the column 'feccobreal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Feccobreal() {
+			return nominaFeccobreal;
+		}
+		
+		private String nominaDivisa;  
+		
+		/**
+		 * Tipo de divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Divisa() {
+			return nominaDivisa;
+		}
+		
+		private BigDecimal nominaBase_irpf_ant;  
+		
+		/**
+		 * Base Imponible IRPF de ejercicios anteriores
+		 * @return the column 'base_irpf_ant' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_ant() {
+			return nominaBase_irpf_ant;
+		}
+		
+		private BigDecimal nominaImporte_irpf_ant;  
+		
+		/**
+		 * Importe de IRPF de ejercicios anteriores
+		 * @return the column 'importe_irpf_ant' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_irpf_ant() {
+			return nominaImporte_irpf_ant;
+		}
+		
+		private BigDecimal nominaImporte_cuotas_ant;  
+		
+		/**
+		 * Importe de cuotas S.S. de ejercicios anteriores
+		 * @return the column 'importe_cuotas_ant' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_cuotas_ant() {
+			return nominaImporte_cuotas_ant;
+		}
+		
+		private BigDecimal nominaBase_cg_pts;  
+		
+		/**
+		 * Base de Contingencias Generales en Pesetas
+		 * @return the column 'base_cg_pts' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_cg_pts() {
+			return nominaBase_cg_pts;
+		}
+		
+		private BigDecimal nominaBase_acc_pts;  
+		
+		/**
+		 * Base de Accidentes de Trabajo en Pesetas
+		 * @return the column 'base_acc_pts' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_pts() {
+			return nominaBase_acc_pts;
+		}
+		
+		private BigDecimal nominaBase_acc_sin_h_pts;  
+		
+		/**
+		 * Base de Accidentes de Trabajo sin Horas Extras en Pesetas
+		 * @return the column 'base_acc_sin_h_pts' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_sin_h_pts() {
+			return nominaBase_acc_sin_h_pts;
+		}
+		
+		private Date nominaFvisione;  
+		
+		/**
+		 * Fecha visionado empresa
+		 * @return the column 'fvisione' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fvisione() {
+			return nominaFvisione;
+		}
+		
+		private Date nominaFvisiont;  
+		
+		/**
+		 * Fecha visionado trabajador
+		 * @return the column 'fvisiont' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fvisiont() {
+			return nominaFvisiont;
+		}
+		public void visitNominaexdf_nomina(Nominaexdf nominaexdf, Nomina nomina)
+		throws SQLException {
+			nominaCdg = nomina.getCdg();  
+			nominaNumero = nomina.getNumero();  
+			nominaMes = nomina.getMes();  
+			nominaAnio = nomina.getAnio();  
+			nominaOrden = nomina.getOrden();  
+			nominaTipo = nomina.getTipo();  
+			nominaNomemp = nomina.getNomemp();  
+			nominaFecemi = nomina.getFecemi();  
+			nominaNomper = nomina.getNomper();  
+			nominaDireccion = nomina.getDireccion();  
+			nominaLocalidad = nomina.getLocalidad();  
+			nominaDescat = nomina.getDescat();  
+			nominaProfesion = nomina.getProfesion();  
+			nominaNummat = nomina.getNummat();  
+			nominaFecant = nomina.getFecant();  
+			nominaFecini = nomina.getFecini();  
+			nominaFecfin = nomina.getFecfin();  
+			nominaDiasnomina = nomina.getDiasnomina();  
+			nominaTotal_devengos = nomina.getTotal_devengos();  
+			nominaTotal_devengos_e = nomina.getTotal_devengos_e();  
+			nominaTotal_deducir = nomina.getTotal_deducir();  
+			nominaTotal_liquido = nomina.getTotal_liquido();  
+			nominaFeccob = nomina.getFeccob();  
+			nominaBase_concom = nomina.getBase_concom();  
+			nominaBase_acctra = nomina.getBase_acctra();  
+			nominaBase_proext = nomina.getBase_proext();  
+			nominaBase_con_it = nomina.getBase_con_it();  
+			nominaBase_acc_it = nomina.getBase_acc_it();  
+			nominaBase_con_mat = nomina.getBase_con_mat();  
+			nominaBase_acc_mat = nomina.getBase_acc_mat();  
+			nominaBase_con_mat_no = nomina.getBase_con_mat_no();  
+			nominaBase_acc_mat_no = nomina.getBase_acc_mat_no();  
+			nominaBase_fogasa = nomina.getBase_fogasa();  
+			nominaBase_fp = nomina.getBase_fp();  
+			nominaBase_desempleo = nomina.getBase_desempleo();  
+			nominaBase_hextras = nomina.getBase_hextras();  
+			nominaBase_hextras_no = nomina.getBase_hextras_no();  
+			nominaBase_exceso = nomina.getBase_exceso();  
+			nominaBase_nocotiza = nomina.getBase_nocotiza();  
+			nominaBase_especie = nomina.getBase_especie();  
+			nominaBase_especie_no = nomina.getBase_especie_no();  
+			nominaBase_irpf = nomina.getBase_irpf();  
+			nominaBase_irpf_especie = nomina.getBase_irpf_especie();  
+			nominaBase_irpf_espec_no = nomina.getBase_irpf_espec_no();  
+			nominaBase_irpf_nocotiza = nomina.getBase_irpf_nocotiza();  
+			nominaBase_irpf_nocoti_e = nomina.getBase_irpf_nocoti_e();  
+			nominaBase_horascom = nomina.getBase_horascom();  
+			nominaBase_perdes = nomina.getBase_perdes();  
+			nominaRemuneracion = nomina.getRemuneracion();  
+			nominaBase_it = nomina.getBase_it();  
+			nominaTotal_1 = nomina.getTotal_1();  
+			nominaCodbas = nomina.getCodbas();  
+			nominaBase_cg = nomina.getBase_cg();  
+			nominaBase_acc = nomina.getBase_acc();  
+			nominaPrc_cg = nomina.getPrc_cg();  
+			nominaPrc_acc = nomina.getPrc_acc();  
+			nominaPrc_hex = nomina.getPrc_hex();  
+			nominaPrc_hexno = nomina.getPrc_hexno();  
+			nominaImporte_cg = nomina.getImporte_cg();  
+			nominaImporte_acc = nomina.getImporte_acc();  
+			nominaImporte_hex = nomina.getImporte_hex();  
+			nominaImporte_hexno = nomina.getImporte_hexno();  
+			nominaMincg = nomina.getMincg();  
+			nominaMaxcg = nomina.getMaxcg();  
+			nominaMinacc = nomina.getMinacc();  
+			nominaMaxacc = nomina.getMaxacc();  
+			nominaCuota_empresa = nomina.getCuota_empresa();  
+			nominaBase_acc_sin_hex = nomina.getBase_acc_sin_hex();  
+			nominaImporte_cuotas = nomina.getImporte_cuotas();  
+			nominaPrc_irpf = nomina.getPrc_irpf();  
+			nominaImporte_irpf = nomina.getImporte_irpf();  
+			nominaFecnew = nomina.getFecnew();  
+			nominaHornew = nomina.getHornew();  
+			nominaFecmod = nomina.getFecmod();  
+			nominaHormod = nomina.getHormod();  
+			nominaDiastrab = nomina.getDiastrab();  
+			nominaDiasefec = nomina.getDiasefec();  
+			nominaBaseant = nomina.getBaseant();  
+			nominaProret = nomina.getProret();  
+			nominaProcot = nomina.getProcot();  
+			nominaCodcon = nomina.getCodcon();  
+			nominaCodpct = nomina.getCodpct();  
+			nominaFeccobreal = nomina.getFeccobreal();  
+			nominaDivisa = nomina.getDivisa();  
+			nominaBase_irpf_ant = nomina.getBase_irpf_ant();  
+			nominaImporte_irpf_ant = nomina.getImporte_irpf_ant();  
+			nominaImporte_cuotas_ant = nomina.getImporte_cuotas_ant();  
+			nominaBase_cg_pts = nomina.getBase_cg_pts();  
+			nominaBase_acc_pts = nomina.getBase_acc_pts();  
+			nominaBase_acc_sin_h_pts = nomina.getBase_acc_sin_h_pts();  
+			nominaFvisione = nomina.getFvisione();  
+			nominaFvisiont = nomina.getFvisiont();  
+		}
+	
+	}
+	/**
 	 * Nominaexdf_divisa shows join between Divisa and Nominaexdf
 	 */
 	public static class Nominaexdf_divisa extends  DefaultCtsqlDBVisitor {
@@ -9961,6 +11099,134 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	}
 
 	/**
+	 * Emprbanc_entbic shows join between Entidad and Emprban
+	 */
+	public static class Emprbanc_entbic extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String entidadCdg;  
+		
+		/**
+		 * Codigo de Entidad
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEntidad_Cdg() {
+			return entidadCdg;
+		}
+		
+		private String entidadDescripcion;  
+		
+		/**
+		 * Descripcion de Entidad
+		 * @return the column 'descripcion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEntidad_Descripcion() {
+			return entidadDescripcion;
+		}
+		
+		private String entidadBic;  
+		
+		/**
+		 * BIC
+		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEntidad_Bic() {
+			return entidadBic;
+		}
+		public void visitEmprbanc_entbic(Emprban emprban, Entidad entidad)
+		throws SQLException {
+			entidadCdg = entidad.getCdg();  
+			entidadDescripcion = entidad.getDescripcion();  
+			entidadBic = entidad.getBic();  
+		}
+	
+	}
+	/**
+	 * Emprbanc_sucbic shows join between Sucursal and Emprban
+	 */
+	public static class Emprbanc_sucbic extends  DefaultCtsqlDBVisitor {
+		
+		
+		private String sucursalCodent;  
+		
+		/**
+		 * Codigo de Entidad
+		 * @return the column 'codent' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSucursal_Codent() {
+			return sucursalCodent;
+		}
+		
+		private String sucursalCdg;  
+		
+		/**
+		 * Codigo de Sucursal
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSucursal_Cdg() {
+			return sucursalCdg;
+		}
+		
+		private String sucursalDomsuc;  
+		
+		/**
+		 * Domicilio de Sucursal
+		 * @return the column 'domsuc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSucursal_Domsuc() {
+			return sucursalDomsuc;
+		}
+		
+		private String sucursalMunsuc;  
+		
+		/**
+		 * Municipio de Sucursal
+		 * @return the column 'munsuc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSucursal_Munsuc() {
+			return sucursalMunsuc;
+		}
+		
+		private String sucursalCpsuc;  
+		
+		/**
+		 * Codigo Postal de Sucursal
+		 * @return the column 'cpsuc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSucursal_Cpsuc() {
+			return sucursalCpsuc;
+		}
+		
+		private String sucursalBic;  
+		
+		/**
+		 * BIC
+		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSucursal_Bic() {
+			return sucursalBic;
+		}
+		public void visitEmprbanc_sucbic(Emprban emprban, Sucursal sucursal)
+		throws SQLException {
+			sucursalCodent = sucursal.getCodent();  
+			sucursalCdg = sucursal.getCdg();  
+			sucursalDomsuc = sucursal.getDomsuc();  
+			sucursalMunsuc = sucursal.getMunsuc();  
+			sucursalCpsuc = sucursal.getCpsuc();  
+			sucursalBic = sucursal.getBic();  
+		}
+	
+	}
+	/**
 	 * Emprbanc_entidad shows join between Entidad and Emprban
 	 */
 	public static class Emprbanc_entidad extends  DefaultCtsqlDBVisitor {
@@ -9987,10 +11253,22 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEntidad_Descripcion() {
 			return entidadDescripcion;
 		}
+		
+		private String entidadBic;  
+		
+		/**
+		 * BIC
+		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEntidad_Bic() {
+			return entidadBic;
+		}
 		public void visitEmprbanc_entidad(Emprban emprban, Entidad entidad)
 		throws SQLException {
 			entidadCdg = entidad.getCdg();  
 			entidadDescripcion = entidad.getDescripcion();  
+			entidadBic = entidad.getBic();  
 		}
 	
 	}
@@ -10054,6 +11332,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getSucursal_Cpsuc() {
 			return sucursalCpsuc;
 		}
+		
+		private String sucursalBic;  
+		
+		/**
+		 * BIC
+		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSucursal_Bic() {
+			return sucursalBic;
+		}
 		public void visitEmprbanc_sucursal(Emprban emprban, Sucursal sucursal)
 		throws SQLException {
 			sucursalCodent = sucursal.getCodent();  
@@ -10061,6 +11350,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			sucursalDomsuc = sucursal.getDomsuc();  
 			sucursalMunsuc = sucursal.getMunsuc();  
 			sucursalCpsuc = sucursal.getCpsuc();  
+			sucursalBic = sucursal.getBic();  
 		}
 	
 	}
@@ -13955,10 +15245,22 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEntidad_Descripcion() {
 			return entidadDescripcion;
 		}
+		
+		private String entidadBic;  
+		
+		/**
+		 * BIC
+		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEntidad_Bic() {
+			return entidadBic;
+		}
 		public void visitJentidad(Httrabajador httrabajador, Entidad entidad)
 		throws SQLException {
 			entidadCdg = entidad.getCdg();  
 			entidadDescripcion = entidad.getDescripcion();  
+			entidadBic = entidad.getBic();  
 		}
 	
 	}
@@ -14022,6 +15324,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getSucursal_Cpsuc() {
 			return sucursalCpsuc;
 		}
+		
+		private String sucursalBic;  
+		
+		/**
+		 * BIC
+		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSucursal_Bic() {
+			return sucursalBic;
+		}
 		public void visitJsucursal(Httrabajador httrabajador, Sucursal sucursal)
 		throws SQLException {
 			sucursalCodent = sucursal.getCodent();  
@@ -14029,6 +15342,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			sucursalDomsuc = sucursal.getDomsuc();  
 			sucursalMunsuc = sucursal.getMunsuc();  
 			sucursalCpsuc = sucursal.getCpsuc();  
+			sucursalBic = sucursal.getBic();  
 		}
 	
 	}
@@ -14714,6 +16028,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException {
 	}
 	public void visitJautentidad(Autonomos autonomos, Entidad entidad)
+	throws SQLException {
+	}
+	public void visitEmprbanc_entbic(Emprban emprban, Entidad entidad)
 	throws SQLException {
 	}
 
@@ -23224,10 +24541,22 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEntidad_Descripcion() {
 			return entidadDescripcion;
 		}
+		
+		private String entidadBic;  
+		
+		/**
+		 * BIC
+		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEntidad_Bic() {
+			return entidadBic;
+		}
 		public void visitRel_tra_ent(Trabajo trabajo, Entidad entidad)
 		throws SQLException {
 			entidadCdg = entidad.getCdg();  
 			entidadDescripcion = entidad.getDescripcion();  
+			entidadBic = entidad.getBic();  
 		}
 	
 	}
@@ -23291,6 +24620,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getSucursal_Cpsuc() {
 			return sucursalCpsuc;
 		}
+		
+		private String sucursalBic;  
+		
+		/**
+		 * BIC
+		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSucursal_Bic() {
+			return sucursalBic;
+		}
 		public void visitRel_tra_suc(Trabajo trabajo, Sucursal sucursal)
 		throws SQLException {
 			sucursalCodent = sucursal.getCodent();  
@@ -23298,6 +24638,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			sucursalDomsuc = sucursal.getDomsuc();  
 			sucursalMunsuc = sucursal.getMunsuc();  
 			sucursalCpsuc = sucursal.getCpsuc();  
+			sucursalBic = sucursal.getBic();  
 		}
 	
 	}
@@ -30221,6 +31562,1120 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	}
 
 	/**
+	 * Nominadf_nomina shows join between Nomina and Nominadf
+	 */
+	public static class Nominadf_nomina extends  DefaultCtsqlDBVisitor {
+		
+		
+		private Integer nominaCdg;  
+		
+		/**
+		 * Codigo de Nomina
+		 * @return the column 'cdg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Cdg() {
+			return nominaCdg;
+		}
+		
+		private Integer nominaNumero;  
+		
+		/**
+		 * Codigo de Trabajador
+		 * @return the column 'numero' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Numero() {
+			return nominaNumero;
+		}
+		
+		private Integer nominaMes;  
+		
+		/**
+		 * Mes de Nomina
+		 * @return the column 'mes' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Mes() {
+			return nominaMes;
+		}
+		
+		private Integer nominaAnio;  
+		
+		/**
+		 * Anio de Nomina
+		 * @return the column 'anio' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Anio() {
+			return nominaAnio;
+		}
+		
+		private Integer nominaOrden;  
+		
+		/**
+		 * Orden dentro del Mes - Anio
+		 * @return the column 'orden' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Orden() {
+			return nominaOrden;
+		}
+		
+		private String nominaTipo;  
+		
+		/**
+		 * Tipo de Nomina
+		 * @return the column 'tipo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Tipo() {
+			return nominaTipo;
+		}
+		
+		private String nominaNomemp;  
+		
+		/**
+		 * Nombre de Actividad
+		 * @return the column 'nomemp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Nomemp() {
+			return nominaNomemp;
+		}
+		
+		private Date nominaFecemi;  
+		
+		/**
+		 * Fecha de Emision
+		 * @return the column 'fecemi' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fecemi() {
+			return nominaFecemi;
+		}
+		
+		private String nominaNomper;  
+		
+		/**
+		 * Nombre de Trabajador
+		 * @return the column 'nomper' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Nomper() {
+			return nominaNomper;
+		}
+		
+		private String nominaDireccion;  
+		
+		/**
+		 * Datos Direccion
+		 * @return the column 'direccion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Direccion() {
+			return nominaDireccion;
+		}
+		
+		private String nominaLocalidad;  
+		
+		/**
+		 * Datos Localidad
+		 * @return the column 'localidad' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Localidad() {
+			return nominaLocalidad;
+		}
+		
+		private String nominaDescat;  
+		
+		/**
+		 * Descripcion Categoria
+		 * @return the column 'descat' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Descat() {
+			return nominaDescat;
+		}
+		
+		private String nominaProfesion;  
+		
+		/**
+		 * Profesion
+		 * @return the column 'profesion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Profesion() {
+			return nominaProfesion;
+		}
+		
+		private Integer nominaNummat;  
+		
+		/**
+		 * Numero de Matricula
+		 * @return the column 'nummat' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Nummat() {
+			return nominaNummat;
+		}
+		
+		private Date nominaFecant;  
+		
+		/**
+		 * Fecha de Antiguedad
+		 * @return the column 'fecant' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fecant() {
+			return nominaFecant;
+		}
+		
+		private Date nominaFecini;  
+		
+		/**
+		 * Inicio Periodo Nomina
+		 * @return the column 'fecini' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fecini() {
+			return nominaFecini;
+		}
+		
+		private Date nominaFecfin;  
+		
+		/**
+		 * Fin Periodo Nomina
+		 * @return the column 'fecfin' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fecfin() {
+			return nominaFecfin;
+		}
+		
+		private Integer nominaDiasnomina;  
+		
+		/**
+		 * Numero de Dias Periodo Nomina
+		 * @return the column 'diasnomina' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Diasnomina() {
+			return nominaDiasnomina;
+		}
+		
+		private BigDecimal nominaTotal_devengos;  
+		
+		/**
+		 * Total Devengos
+		 * @return the column 'total_devengos' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Total_devengos() {
+			return nominaTotal_devengos;
+		}
+		
+		private BigDecimal nominaTotal_devengos_e;  
+		
+		/**
+		 * Total Devengos Especie
+		 * @return the column 'total_devengos_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Total_devengos_e() {
+			return nominaTotal_devengos_e;
+		}
+		
+		private BigDecimal nominaTotal_deducir;  
+		
+		/**
+		 * Total a Deducir
+		 * @return the column 'total_deducir' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Total_deducir() {
+			return nominaTotal_deducir;
+		}
+		
+		private BigDecimal nominaTotal_liquido;  
+		
+		/**
+		 * Total Liquido
+		 * @return the column 'total_liquido' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Total_liquido() {
+			return nominaTotal_liquido;
+		}
+		
+		private Date nominaFeccob;  
+		
+		/**
+		 * Fecha de Cobro
+		 * @return the column 'feccob' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Feccob() {
+			return nominaFeccob;
+		}
+		
+		private BigDecimal nominaBase_concom;  
+		
+		/**
+		 * Contingencias Comunes
+		 * @return the column 'base_concom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_concom() {
+			return nominaBase_concom;
+		}
+		
+		private BigDecimal nominaBase_acctra;  
+		
+		/**
+		 * Accidentes Trabajo
+		 * @return the column 'base_acctra' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acctra() {
+			return nominaBase_acctra;
+		}
+		
+		private BigDecimal nominaBase_proext;  
+		
+		/**
+		 * Prorrata Pagas Extras
+		 * @return the column 'base_proext' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_proext() {
+			return nominaBase_proext;
+		}
+		
+		private BigDecimal nominaBase_con_it;  
+		
+		/**
+		 * Contingencias Comunes IT
+		 * @return the column 'base_con_it' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_it() {
+			return nominaBase_con_it;
+		}
+		
+		private BigDecimal nominaBase_acc_it;  
+		
+		/**
+		 * Accidentes Trabajo IT
+		 * @return the column 'base_acc_it' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_it() {
+			return nominaBase_acc_it;
+		}
+		
+		private BigDecimal nominaBase_con_mat;  
+		
+		/**
+		 * Contingencias Comunes Maternidad
+		 * @return the column 'base_con_mat' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_mat() {
+			return nominaBase_con_mat;
+		}
+		
+		private BigDecimal nominaBase_acc_mat;  
+		
+		/**
+		 * Accidentes Trabajo Maternidad
+		 * @return the column 'base_acc_mat' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_mat() {
+			return nominaBase_acc_mat;
+		}
+		
+		private BigDecimal nominaBase_con_mat_no;  
+		
+		/**
+		 * Contingencias Comunes Maternidad No Aporta
+		 * @return the column 'base_con_mat_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_con_mat_no() {
+			return nominaBase_con_mat_no;
+		}
+		
+		private BigDecimal nominaBase_acc_mat_no;  
+		
+		/**
+		 * Accidentes Trabajo no Aporta
+		 * @return the column 'base_acc_mat_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_mat_no() {
+			return nominaBase_acc_mat_no;
+		}
+		
+		private BigDecimal nominaBase_fogasa;  
+		
+		/**
+		 * Fondo Garantia Salarial
+		 * @return the column 'base_fogasa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_fogasa() {
+			return nominaBase_fogasa;
+		}
+		
+		private BigDecimal nominaBase_fp;  
+		
+		/**
+		 * Formacion Profesional
+		 * @return the column 'base_fp' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_fp() {
+			return nominaBase_fp;
+		}
+		
+		private BigDecimal nominaBase_desempleo;  
+		
+		/**
+		 * Desempleo
+		 * @return the column 'base_desempleo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_desempleo() {
+			return nominaBase_desempleo;
+		}
+		
+		private BigDecimal nominaBase_hextras;  
+		
+		/**
+		 * Horas Estras Estructurales
+		 * @return the column 'base_hextras' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_hextras() {
+			return nominaBase_hextras;
+		}
+		
+		private BigDecimal nominaBase_hextras_no;  
+		
+		/**
+		 * Horas Extras No Extructurales
+		 * @return the column 'base_hextras_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_hextras_no() {
+			return nominaBase_hextras_no;
+		}
+		
+		private BigDecimal nominaBase_exceso;  
+		
+		/**
+		 * Exceso Extrasalariales
+		 * @return the column 'base_exceso' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_exceso() {
+			return nominaBase_exceso;
+		}
+		
+		private BigDecimal nominaBase_nocotiza;  
+		
+		/**
+		 * No cotiza a S.S.
+		 * @return the column 'base_nocotiza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_nocotiza() {
+			return nominaBase_nocotiza;
+		}
+		
+		private BigDecimal nominaBase_especie;  
+		
+		/**
+		 * Base en Especie Repercutida
+		 * @return the column 'base_especie' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_especie() {
+			return nominaBase_especie;
+		}
+		
+		private BigDecimal nominaBase_especie_no;  
+		
+		/**
+		 * Base en Especie no Repercutida
+		 * @return the column 'base_especie_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_especie_no() {
+			return nominaBase_especie_no;
+		}
+		
+		private BigDecimal nominaBase_irpf;  
+		
+		/**
+		 * Base IRPF Dinararia
+		 * @return the column 'base_irpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf() {
+			return nominaBase_irpf;
+		}
+		
+		private BigDecimal nominaBase_irpf_especie;  
+		
+		/**
+		 * IRPF en Especie Repercutido
+		 * @return the column 'base_irpf_especie' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_especie() {
+			return nominaBase_irpf_especie;
+		}
+		
+		private BigDecimal nominaBase_irpf_espec_no;  
+		
+		/**
+		 * IRPF en Especie no Repercutido
+		 * @return the column 'base_irpf_espec_no' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_espec_no() {
+			return nominaBase_irpf_espec_no;
+		}
+		
+		private BigDecimal nominaBase_irpf_nocotiza;  
+		
+		/**
+		 * IRPF no Cotiza Dinerario
+		 * @return the column 'base_irpf_nocotiza' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_nocotiza() {
+			return nominaBase_irpf_nocotiza;
+		}
+		
+		private BigDecimal nominaBase_irpf_nocoti_e;  
+		
+		/**
+		 * IRPF no Cotiza Especie
+		 * @return the column 'base_irpf_nocoti_e' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_nocoti_e() {
+			return nominaBase_irpf_nocoti_e;
+		}
+		
+		private BigDecimal nominaBase_horascom;  
+		
+		/**
+		 * Horas Complementarias
+		 * @return the column 'base_horascom' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_horascom() {
+			return nominaBase_horascom;
+		}
+		
+		private BigDecimal nominaBase_perdes;  
+		
+		/**
+		 * Percepcion por Desempleo
+		 * @return the column 'base_perdes' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_perdes() {
+			return nominaBase_perdes;
+		}
+		
+		private BigDecimal nominaRemuneracion;  
+		
+		/**
+		 * Remuneracion
+		 * @return the column 'remuneracion' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Remuneracion() {
+			return nominaRemuneracion;
+		}
+		
+		private BigDecimal nominaBase_it;  
+		
+		/**
+		 * Base IT
+		 * @return the column 'base_it' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_it() {
+			return nominaBase_it;
+		}
+		
+		private BigDecimal nominaTotal_1;  
+		
+		/**
+		 * Total 1
+		 * @return the column 'total_1' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Total_1() {
+			return nominaTotal_1;
+		}
+		
+		private String nominaCodbas;  
+		
+		/**
+		 * Grupo de Tarifa
+		 * @return the column 'codbas' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Codbas() {
+			return nominaCodbas;
+		}
+		
+		private BigDecimal nominaBase_cg;  
+		
+		/**
+		 * Contingencias Generales
+		 * @return the column 'base_cg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_cg() {
+			return nominaBase_cg;
+		}
+		
+		private BigDecimal nominaBase_acc;  
+		
+		/**
+		 * Accidentes Trabajo - Enfermedad Profesional
+		 * @return the column 'base_acc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc() {
+			return nominaBase_acc;
+		}
+		
+		private BigDecimal nominaPrc_cg;  
+		
+		/**
+		 * Porcentaje Contingencias Generales
+		 * @return the column 'prc_cg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_cg() {
+			return nominaPrc_cg;
+		}
+		
+		private BigDecimal nominaPrc_acc;  
+		
+		/**
+		 * Porcentaje Accidentes
+		 * @return the column 'prc_acc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_acc() {
+			return nominaPrc_acc;
+		}
+		
+		private BigDecimal nominaPrc_hex;  
+		
+		/**
+		 * Porcentaje Horas Extras Estructurales
+		 * @return the column 'prc_hex' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_hex() {
+			return nominaPrc_hex;
+		}
+		
+		private BigDecimal nominaPrc_hexno;  
+		
+		/**
+		 * Porcentaje Horas Extras NO Estructurales
+		 * @return the column 'prc_hexno' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_hexno() {
+			return nominaPrc_hexno;
+		}
+		
+		private BigDecimal nominaImporte_cg;  
+		
+		/**
+		 * Importe Contingencias Comunes
+		 * @return the column 'importe_cg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_cg() {
+			return nominaImporte_cg;
+		}
+		
+		private BigDecimal nominaImporte_acc;  
+		
+		/**
+		 * Importe Accidentes Trabajo
+		 * @return the column 'importe_acc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_acc() {
+			return nominaImporte_acc;
+		}
+		
+		private BigDecimal nominaImporte_hex;  
+		
+		/**
+		 * Importe Horas Extras Estructurales
+		 * @return the column 'importe_hex' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_hex() {
+			return nominaImporte_hex;
+		}
+		
+		private BigDecimal nominaImporte_hexno;  
+		
+		/**
+		 * Importe Horas Extras NO Estructurales
+		 * @return the column 'importe_hexno' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_hexno() {
+			return nominaImporte_hexno;
+		}
+		
+		private BigDecimal nominaMincg;  
+		
+		/**
+		 * Tope Minimo para C.G.
+		 * @return the column 'mincg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Mincg() {
+			return nominaMincg;
+		}
+		
+		private BigDecimal nominaMaxcg;  
+		
+		/**
+		 * Tope Maximo para C.G.
+		 * @return the column 'maxcg' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Maxcg() {
+			return nominaMaxcg;
+		}
+		
+		private BigDecimal nominaMinacc;  
+		
+		/**
+		 * Tope Minimo para Accidentes
+		 * @return the column 'minacc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Minacc() {
+			return nominaMinacc;
+		}
+		
+		private BigDecimal nominaMaxacc;  
+		
+		/**
+		 * Tope Maximo para Accidentes
+		 * @return the column 'maxacc' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Maxacc() {
+			return nominaMaxacc;
+		}
+		
+		private BigDecimal nominaCuota_empresa;  
+		
+		/**
+		 * Cuota Total de la Emrpesa
+		 * @return the column 'cuota_empresa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Cuota_empresa() {
+			return nominaCuota_empresa;
+		}
+		
+		private BigDecimal nominaBase_acc_sin_hex;  
+		
+		/**
+		 * Accidentes Trabajo Sin Horas Extras
+		 * @return the column 'base_acc_sin_hex' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_sin_hex() {
+			return nominaBase_acc_sin_hex;
+		}
+		
+		private BigDecimal nominaImporte_cuotas;  
+		
+		/**
+		 * Importe Cuotas Deducciones
+		 * @return the column 'importe_cuotas' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_cuotas() {
+			return nominaImporte_cuotas;
+		}
+		
+		private BigDecimal nominaPrc_irpf;  
+		
+		/**
+		 * Porcentaje IRPF
+		 * @return the column 'prc_irpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Prc_irpf() {
+			return nominaPrc_irpf;
+		}
+		
+		private BigDecimal nominaImporte_irpf;  
+		
+		/**
+		 * Importe IRPF
+		 * @return the column 'importe_irpf' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_irpf() {
+			return nominaImporte_irpf;
+		}
+		
+		private Date nominaFecnew;  
+		
+		/**
+		 * Fecha Creacion Fila
+		 * @return the column 'fecnew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fecnew() {
+			return nominaFecnew;
+		}
+		
+		private Time nominaHornew;  
+		
+		/**
+		 * Hora Creacion Fila
+		 * @return the column 'hornew' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getNomina_Hornew() {
+			return nominaHornew;
+		}
+		
+		private Date nominaFecmod;  
+		
+		/**
+		 * Fecha Modificacion Fila
+		 * @return the column 'fecmod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fecmod() {
+			return nominaFecmod;
+		}
+		
+		private Time nominaHormod;  
+		
+		/**
+		 * Hora Modificacion Fila
+		 * @return the column 'hormod' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Time getNomina_Hormod() {
+			return nominaHormod;
+		}
+		
+		private Integer nominaDiastrab;  
+		
+		/**
+		 * Dias Trabajados
+		 * @return the column 'diastrab' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Diastrab() {
+			return nominaDiastrab;
+		}
+		
+		private Integer nominaDiasefec;  
+		
+		/**
+		 * Dias Efectivos
+		 * @return the column 'diasefec' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Integer getNomina_Diasefec() {
+			return nominaDiasefec;
+		}
+		
+		private BigDecimal nominaBaseant;  
+		
+		/**
+		 * Base Calculo Antiguedad
+		 * @return the column 'baseant' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Baseant() {
+			return nominaBaseant;
+		}
+		
+		private String nominaProret;  
+		
+		/**
+		 * Prorrateo Retribucion
+		 * @return the column 'proret' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Proret() {
+			return nominaProret;
+		}
+		
+		private String nominaProcot;  
+		
+		/**
+		 * Prorrateo Cotizacion
+		 * @return the column 'procot' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Procot() {
+			return nominaProcot;
+		}
+		
+		private String nominaCodcon;  
+		
+		/**
+		 * Codigo Convenio
+		 * @return the column 'codcon' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Codcon() {
+			return nominaCodcon;
+		}
+		
+		private String nominaCodpct;  
+		
+		/**
+		 * Asimilado a % Cotizacion
+		 * @return the column 'codpct' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Codpct() {
+			return nominaCodpct;
+		}
+		
+		private Date nominaFeccobreal;  
+		
+		/**
+		 * Fecha Cobro Real
+		 * @return the column 'feccobreal' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Feccobreal() {
+			return nominaFeccobreal;
+		}
+		
+		private String nominaDivisa;  
+		
+		/**
+		 * Tipo de divisa
+		 * @return the column 'divisa' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getNomina_Divisa() {
+			return nominaDivisa;
+		}
+		
+		private BigDecimal nominaBase_irpf_ant;  
+		
+		/**
+		 * Base Imponible IRPF de ejercicios anteriores
+		 * @return the column 'base_irpf_ant' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_irpf_ant() {
+			return nominaBase_irpf_ant;
+		}
+		
+		private BigDecimal nominaImporte_irpf_ant;  
+		
+		/**
+		 * Importe de IRPF de ejercicios anteriores
+		 * @return the column 'importe_irpf_ant' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_irpf_ant() {
+			return nominaImporte_irpf_ant;
+		}
+		
+		private BigDecimal nominaImporte_cuotas_ant;  
+		
+		/**
+		 * Importe de cuotas S.S. de ejercicios anteriores
+		 * @return the column 'importe_cuotas_ant' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Importe_cuotas_ant() {
+			return nominaImporte_cuotas_ant;
+		}
+		
+		private BigDecimal nominaBase_cg_pts;  
+		
+		/**
+		 * Base de Contingencias Generales en Pesetas
+		 * @return the column 'base_cg_pts' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_cg_pts() {
+			return nominaBase_cg_pts;
+		}
+		
+		private BigDecimal nominaBase_acc_pts;  
+		
+		/**
+		 * Base de Accidentes de Trabajo en Pesetas
+		 * @return the column 'base_acc_pts' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_pts() {
+			return nominaBase_acc_pts;
+		}
+		
+		private BigDecimal nominaBase_acc_sin_h_pts;  
+		
+		/**
+		 * Base de Accidentes de Trabajo sin Horas Extras en Pesetas
+		 * @return the column 'base_acc_sin_h_pts' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public BigDecimal getNomina_Base_acc_sin_h_pts() {
+			return nominaBase_acc_sin_h_pts;
+		}
+		
+		private Date nominaFvisione;  
+		
+		/**
+		 * Fecha visionado empresa
+		 * @return the column 'fvisione' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fvisione() {
+			return nominaFvisione;
+		}
+		
+		private Date nominaFvisiont;  
+		
+		/**
+		 * Fecha visionado trabajador
+		 * @return the column 'fvisiont' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public Date getNomina_Fvisiont() {
+			return nominaFvisiont;
+		}
+		public void visitNominadf_nomina(Nominadf nominadf, Nomina nomina)
+		throws SQLException {
+			nominaCdg = nomina.getCdg();  
+			nominaNumero = nomina.getNumero();  
+			nominaMes = nomina.getMes();  
+			nominaAnio = nomina.getAnio();  
+			nominaOrden = nomina.getOrden();  
+			nominaTipo = nomina.getTipo();  
+			nominaNomemp = nomina.getNomemp();  
+			nominaFecemi = nomina.getFecemi();  
+			nominaNomper = nomina.getNomper();  
+			nominaDireccion = nomina.getDireccion();  
+			nominaLocalidad = nomina.getLocalidad();  
+			nominaDescat = nomina.getDescat();  
+			nominaProfesion = nomina.getProfesion();  
+			nominaNummat = nomina.getNummat();  
+			nominaFecant = nomina.getFecant();  
+			nominaFecini = nomina.getFecini();  
+			nominaFecfin = nomina.getFecfin();  
+			nominaDiasnomina = nomina.getDiasnomina();  
+			nominaTotal_devengos = nomina.getTotal_devengos();  
+			nominaTotal_devengos_e = nomina.getTotal_devengos_e();  
+			nominaTotal_deducir = nomina.getTotal_deducir();  
+			nominaTotal_liquido = nomina.getTotal_liquido();  
+			nominaFeccob = nomina.getFeccob();  
+			nominaBase_concom = nomina.getBase_concom();  
+			nominaBase_acctra = nomina.getBase_acctra();  
+			nominaBase_proext = nomina.getBase_proext();  
+			nominaBase_con_it = nomina.getBase_con_it();  
+			nominaBase_acc_it = nomina.getBase_acc_it();  
+			nominaBase_con_mat = nomina.getBase_con_mat();  
+			nominaBase_acc_mat = nomina.getBase_acc_mat();  
+			nominaBase_con_mat_no = nomina.getBase_con_mat_no();  
+			nominaBase_acc_mat_no = nomina.getBase_acc_mat_no();  
+			nominaBase_fogasa = nomina.getBase_fogasa();  
+			nominaBase_fp = nomina.getBase_fp();  
+			nominaBase_desempleo = nomina.getBase_desempleo();  
+			nominaBase_hextras = nomina.getBase_hextras();  
+			nominaBase_hextras_no = nomina.getBase_hextras_no();  
+			nominaBase_exceso = nomina.getBase_exceso();  
+			nominaBase_nocotiza = nomina.getBase_nocotiza();  
+			nominaBase_especie = nomina.getBase_especie();  
+			nominaBase_especie_no = nomina.getBase_especie_no();  
+			nominaBase_irpf = nomina.getBase_irpf();  
+			nominaBase_irpf_especie = nomina.getBase_irpf_especie();  
+			nominaBase_irpf_espec_no = nomina.getBase_irpf_espec_no();  
+			nominaBase_irpf_nocotiza = nomina.getBase_irpf_nocotiza();  
+			nominaBase_irpf_nocoti_e = nomina.getBase_irpf_nocoti_e();  
+			nominaBase_horascom = nomina.getBase_horascom();  
+			nominaBase_perdes = nomina.getBase_perdes();  
+			nominaRemuneracion = nomina.getRemuneracion();  
+			nominaBase_it = nomina.getBase_it();  
+			nominaTotal_1 = nomina.getTotal_1();  
+			nominaCodbas = nomina.getCodbas();  
+			nominaBase_cg = nomina.getBase_cg();  
+			nominaBase_acc = nomina.getBase_acc();  
+			nominaPrc_cg = nomina.getPrc_cg();  
+			nominaPrc_acc = nomina.getPrc_acc();  
+			nominaPrc_hex = nomina.getPrc_hex();  
+			nominaPrc_hexno = nomina.getPrc_hexno();  
+			nominaImporte_cg = nomina.getImporte_cg();  
+			nominaImporte_acc = nomina.getImporte_acc();  
+			nominaImporte_hex = nomina.getImporte_hex();  
+			nominaImporte_hexno = nomina.getImporte_hexno();  
+			nominaMincg = nomina.getMincg();  
+			nominaMaxcg = nomina.getMaxcg();  
+			nominaMinacc = nomina.getMinacc();  
+			nominaMaxacc = nomina.getMaxacc();  
+			nominaCuota_empresa = nomina.getCuota_empresa();  
+			nominaBase_acc_sin_hex = nomina.getBase_acc_sin_hex();  
+			nominaImporte_cuotas = nomina.getImporte_cuotas();  
+			nominaPrc_irpf = nomina.getPrc_irpf();  
+			nominaImporte_irpf = nomina.getImporte_irpf();  
+			nominaFecnew = nomina.getFecnew();  
+			nominaHornew = nomina.getHornew();  
+			nominaFecmod = nomina.getFecmod();  
+			nominaHormod = nomina.getHormod();  
+			nominaDiastrab = nomina.getDiastrab();  
+			nominaDiasefec = nomina.getDiasefec();  
+			nominaBaseant = nomina.getBaseant();  
+			nominaProret = nomina.getProret();  
+			nominaProcot = nomina.getProcot();  
+			nominaCodcon = nomina.getCodcon();  
+			nominaCodpct = nomina.getCodpct();  
+			nominaFeccobreal = nomina.getFeccobreal();  
+			nominaDivisa = nomina.getDivisa();  
+			nominaBase_irpf_ant = nomina.getBase_irpf_ant();  
+			nominaImporte_irpf_ant = nomina.getImporte_irpf_ant();  
+			nominaImporte_cuotas_ant = nomina.getImporte_cuotas_ant();  
+			nominaBase_cg_pts = nomina.getBase_cg_pts();  
+			nominaBase_acc_pts = nomina.getBase_acc_pts();  
+			nominaBase_acc_sin_h_pts = nomina.getBase_acc_sin_h_pts();  
+			nominaFvisione = nomina.getFvisione();  
+			nominaFvisiont = nomina.getFvisiont();  
+		}
+	
+	}
+	/**
 	 * Nominadf_emprper shows join between Emprper and Nominadf
 	 */
 	public static class Nominadf_emprper extends  DefaultCtsqlDBVisitor {
@@ -30564,6 +33019,12 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	throws SQLException {
 	}
 	public void visitPrc_nomina(Prcdivnom prcdivnom, Nomina nomina)
+	throws SQLException {
+	}
+	public void visitNominaexdf_nomina(Nominaexdf nominaexdf, Nomina nomina)
+	throws SQLException {
+	}
+	public void visitNominadf_nomina(Nominadf nominadf, Nomina nomina)
 	throws SQLException {
 	}
 
@@ -33082,6 +35543,9 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 	public void visitJautsucursal(Autonomos autonomos, Sucursal sucursal)
 	throws SQLException {
 	}
+	public void visitEmprbanc_sucbic(Emprban emprban, Sucursal sucursal)
+	throws SQLException {
+	}
 
 	/**
 	 * Sucursal_entidad shows join between Entidad and Sucursal
@@ -33110,10 +35574,22 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEntidad_Descripcion() {
 			return entidadDescripcion;
 		}
+		
+		private String entidadBic;  
+		
+		/**
+		 * BIC
+		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEntidad_Bic() {
+			return entidadBic;
+		}
 		public void visitSucursal_entidad(Sucursal sucursal, Entidad entidad)
 		throws SQLException {
 			entidadCdg = entidad.getCdg();  
 			entidadDescripcion = entidad.getDescripcion();  
+			entidadBic = entidad.getBic();  
 		}
 	
 	}
@@ -43558,6 +46034,28 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public Integer getEmprban_Codcli() {
 			return emprbanCodcli;
 		}
+		
+		private String emprbanIban;  
+		
+		/**
+		 * IBAN
+		 * @return the column 'iban' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprban_Iban() {
+			return emprbanIban;
+		}
+		
+		private String emprbanSufijo;  
+		
+		/**
+		 * Sufijo
+		 * @return the column 'sufijo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprban_Sufijo() {
+			return emprbanSufijo;
+		}
 		public void visitEmprlban_emprban(Emprlban emprlban, Emprban emprban)
 		throws SQLException {
 			emprbanCdg = emprban.getCdg();  
@@ -43566,6 +46064,8 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprbanDc = emprban.getDc();  
 			emprbanNumcta = emprban.getNumcta();  
 			emprbanCodcli = emprban.getCodcli();  
+			emprbanIban = emprban.getIban();  
+			emprbanSufijo = emprban.getSufijo();  
 		}
 	
 	}

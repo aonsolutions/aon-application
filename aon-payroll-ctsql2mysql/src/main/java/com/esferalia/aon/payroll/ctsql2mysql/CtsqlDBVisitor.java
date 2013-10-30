@@ -746,6 +746,9 @@ public interface CtsqlDBVisitor {
 	public void visitJautentidad(Autonomos autonomos, Entidad entidad)
 	throws SQLException;
 
+	public void visitEmprbanc_entbic(Emprban emprban, Entidad entidad)
+	throws SQLException;
+
 
 	public void visitNomdto(Nomdto nomdto)
 	throws SQLException;
@@ -1114,6 +1117,12 @@ public interface CtsqlDBVisitor {
 	public void visitPrc_nomina(Prcdivnom prcdivnom, Nomina nomina)
 	throws SQLException;
 
+	public void visitNominaexdf_nomina(Nominaexdf nominaexdf, Nomina nomina)
+	throws SQLException;
+
+	public void visitNominadf_nomina(Nominadf nominadf, Nomina nomina)
+	throws SQLException;
+
 
 	public void visitExclusion(Exclusion exclusion)
 	throws SQLException;
@@ -1214,6 +1223,9 @@ public interface CtsqlDBVisitor {
 	throws SQLException;
 
 	public void visitJautsucursal(Autonomos autonomos, Sucursal sucursal)
+	throws SQLException;
+
+	public void visitEmprbanc_sucbic(Emprban emprban, Sucursal sucursal)
 	throws SQLException;
 
 

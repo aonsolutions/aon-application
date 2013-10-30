@@ -21,7 +21,9 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdto;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomdtoex;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nomina;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominadev;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominadf;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominaex;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominaexdf;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Salary_embargo;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultCtsqlDBVisitor.Rel_epp_ccc;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultCtsqlDBVisitor.Rel_epp_emp;
@@ -254,9 +256,25 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		nomina.visitRel_nmd_nom(this);
 		nomina.visitRel_dto_nom(this);
 
+		if ("A".equals(nomina.getTipo())) {
+			nomina.visitNominadf_nomina(this);
+		}
+
 		add(contractId, nomina.getFecnew());
 	}
-
+	
+	@Override
+	public void visitNominadf_nomina(Nominadf nominadf, Nomina nomina)
+			throws SQLException {
+		mysqlDB.insertSalary_data(ContextVariable.CGC_BASE.getName(), String.format("%.3f", nominadf.getBase_cg()) , nominadf.getFecini(), nominadf.getFecfin(), salaryId);
+		mysqlDB.insertSalary_data(ContextVariable.CGP_BASE.getName(), String.format("%.3f", nominadf.getBase_acc()) , nominadf.getFecini(), nominadf.getFecfin(), salaryId);
+	}
+	
+	@Override
+	public void visitNominaexdf_nomina(Nominaexdf nominaexdf, Nomina nomina)
+			throws SQLException {
+	}
+	
 	@Override
 	public void visitRel_nmd_nom(Nominadev nominadev, Nomina nomina)
 			throws SQLException {

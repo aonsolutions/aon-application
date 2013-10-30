@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -316,14 +317,8 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		String name = emprnif.getDescripcion();
 		String doc = emprnif.getNumdoc();
 
-		if (DefaultMysqlDB.count(cifs, doc) > 0) {
-			Administration administration = Enterprise.ADMINISTRATIONS_MAP
-					.get(emprnif.getCecon());
-			name = String.format("%s - %s", name , administration.getName(new Locale("es", "ES")));
-			MysqlDB.warn(
-					"emprnif[{}]: CIFs duplicated for '{}' . Renamed to '{}'.",
-					emprnif.getCdg(), emprnif.getDescripcion(), name);
-		}
+		Administration administration = Enterprise.ADMINISTRATIONS_MAP
+				.get(emprnif.getCecon());
 
 		StringBuffer domainNameBuff = new StringBuffer();
 		for (int i = 0; i < name.length(); i++) {
@@ -335,9 +330,27 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			domainNameBuff.append(Character.toLowerCase(ch));
 		}
 
+		// if (DefaultMysqlDB.count(cifs, doc) > 0) {
+		if (administration != Administration.COMMON_TERRITORY) {
+			String conciertoEconomico = administration.getName(new Locale("es",
+					"ES"));
+			name = String.format("%s - %s", name, conciertoEconomico);
+			MysqlDB.warn(
+					"emprnif[{}]: Concierto Economico '{}' . Enterprise Renamed to '{}'.",
+					conciertoEconomico, name);
+
+			conciertoEconomico = Normalizer.normalize(conciertoEconomico,
+					Normalizer.Form.NFD);
+
+			domainNameBuff.append("-");
+			for (char ch : conciertoEconomico.toCharArray())
+				if (ch <= '\u007F')
+					domainNameBuff.append(Character.toLowerCase(ch));
+		}
 
 		String domainName = domainNameBuff.toString();
-
+		MysqlDB.warn("emprnif[{}]: '{}' has domain name '{}.{}'. ",
+				emprnif.getCdg(), name, domainName, this.domainSuffix);
 		int MaxLength = 64 - (this.domainSuffix.length() + 1);
 
 		if (domainName.length() > MaxLength) {
@@ -361,7 +374,6 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		}
 
 		DocumentType docType = mysqlDB.getDocumentType(emprnif.getInddoc());
-
 
 		registry = mysqlDB.insertEnterprise(domain, doc, docCountry, name,
 				Country.ES, emprnif.getAlias(), scopeId, status, docType);

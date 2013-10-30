@@ -2701,6 +2701,8 @@ public class AbstractCtsqlDB {
 				+ ",dc" 
 				+ ",numcta" 
 				+ ",codcli" 
+				+ ",iban" 
+				+ ",sufijo" 
 				+ " FROM emprban"
 				+ " WHERE" 
 				+ " codcli = ?  " 			); 
@@ -4333,6 +4335,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "cdg" 
 				+ ",descripcion" 
+				+ ",bic" 
 				+ " FROM entidad"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -4356,6 +4359,7 @@ public class AbstractCtsqlDB {
 				+ ",domsuc" 
 				+ ",munsuc" 
 				+ ",cpsuc" 
+				+ ",bic" 
 				+ " FROM sucursal"
 				+ " WHERE" 
 				+ " codent = ?  "  + "AND" 				+ " cdg = ?  " 			); 
@@ -5492,6 +5496,7 @@ public class AbstractCtsqlDB {
 				+ ",tipotp" 
 				+ ",diastp" 
 				+ ",guardalegal" 
+				+ ",iban" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " codepi = ?  " 			); 
@@ -6864,6 +6869,7 @@ public class AbstractCtsqlDB {
 				+ ",tipotp" 
 				+ ",diastp" 
 				+ ",guardalegal" 
+				+ ",iban" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " codbas = ?  " 			); 
@@ -7708,6 +7714,116 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	private PreparedStatement _animon_fdxeanimonStmt = null;
+		
+	private void initAnimon_fdxeanimonStmt() 
+	throws SQLException{
+		this._animon_fdxeanimonStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",mes" 
+				+ ",anio" 
+				+ ",orden" 
+				+ ",tipo" 
+				+ ",nomemp" 
+				+ ",fecemi" 
+				+ ",nomper" 
+				+ ",direccion" 
+				+ ",localidad" 
+				+ ",descat" 
+				+ ",profesion" 
+				+ ",nummat" 
+				+ ",fecant" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",diasnomina" 
+				+ ",total_devengos" 
+				+ ",total_devengos_e" 
+				+ ",total_deducir" 
+				+ ",total_liquido" 
+				+ ",feccob" 
+				+ ",base_concom" 
+				+ ",base_acctra" 
+				+ ",base_proext" 
+				+ ",base_con_it" 
+				+ ",base_acc_it" 
+				+ ",base_con_mat" 
+				+ ",base_acc_mat" 
+				+ ",base_con_mat_no" 
+				+ ",base_acc_mat_no" 
+				+ ",base_fogasa" 
+				+ ",base_fp" 
+				+ ",base_desempleo" 
+				+ ",base_hextras" 
+				+ ",base_hextras_no" 
+				+ ",base_exceso" 
+				+ ",base_nocotiza" 
+				+ ",base_especie" 
+				+ ",base_especie_no" 
+				+ ",base_irpf" 
+				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
+				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
+				+ ",base_horascom" 
+				+ ",base_perdes" 
+				+ ",remuneracion" 
+				+ ",base_it" 
+				+ ",total_1" 
+				+ ",codbas" 
+				+ ",base_cg" 
+				+ ",base_acc" 
+				+ ",prc_cg" 
+				+ ",prc_acc" 
+				+ ",prc_hex" 
+				+ ",prc_hexno" 
+				+ ",importe_cg" 
+				+ ",importe_acc" 
+				+ ",importe_hex" 
+				+ ",importe_hexno" 
+				+ ",mincg" 
+				+ ",maxcg" 
+				+ ",minacc" 
+				+ ",maxacc" 
+				+ ",cuota_empresa" 
+				+ ",base_acc_sin_hex" 
+				+ ",importe_cuotas" 
+				+ ",prc_irpf" 
+				+ ",importe_irpf" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",diastrab" 
+				+ ",diasefec" 
+				+ ",baseant" 
+				+ ",proret" 
+				+ ",procot" 
+				+ ",codcon" 
+				+ ",codpct" 
+				+ ",feccobreal" 
+				+ ",divisa" 
+				+ ",base_irpf_ant" 
+				+ ",importe_irpf_ant" 
+				+ ",importe_cuotas_ant" 
+				+ ",base_cg_pts" 
+				+ ",base_acc_pts" 
+				+ ",base_acc_sin_h_pts" 
+				+ ",fvisione" 
+				+ ",fvisiont" 
+				+ " FROM nomina"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeAnimon_fdxeanimonStmt() 
+	throws SQLException{
+		if ( _animon_fdxeanimonStmt != null ) { 
+			_animon_fdxeanimonStmt.close();
+			_animon_fdxeanimonStmt = null;	
+		}
+	}
 	private PreparedStatement _asivid_fdxeanimonStmt = null;
 		
 	private void initAsivid_fdxeanimonStmt() 
@@ -8025,6 +8141,30 @@ public class AbstractCtsqlDB {
 			return rs.getInt(31);
 		}
 
+		/**
+		 * Visit Nomina that's parent of this Nominaexdf. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitNominaexdf_nomina(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _animon_fdxeanimonStmt == null )
+					 initAnimon_fdxeanimonStmt();
+				
+				_animon_fdxeanimonStmt.setInt(1, this.getCdgnom()); 
+				rs = _animon_fdxeanimonStmt.executeQuery();
+				Nomina nomina = new Nomina(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitNominaexdf_nomina(this, nomina);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 		/**
 		 * Visit Divisa that's parent of this Nominaexdf. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -10008,6 +10148,7 @@ public class AbstractCtsqlDB {
 				+ ",tipotp" 
 				+ ",diastp" 
 				+ ",guardalegal" 
+				+ ",iban" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " codtc2 = ?  " 			); 
@@ -10821,6 +10962,51 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	private PreparedStatement _cibtne_cnabrpmeStmt = null;
+		
+	private void initCibtne_cnabrpmeStmt() 
+	throws SQLException{
+		this._cibtne_cnabrpmeStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",bic" 
+				+ " FROM entidad"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeCibtne_cnabrpmeStmt() 
+	throws SQLException{
+		if ( _cibtne_cnabrpmeStmt != null ) { 
+			_cibtne_cnabrpmeStmt.close();
+			_cibtne_cnabrpmeStmt = null;	
+		}
+	}
+	private PreparedStatement _cibcus_cnabrpmeStmt = null;
+		
+	private void initCibcus_cnabrpmeStmt() 
+	throws SQLException{
+		this._cibcus_cnabrpmeStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "codent" 
+				+ ",cdg" 
+				+ ",domsuc" 
+				+ ",munsuc" 
+				+ ",cpsuc" 
+				+ ",bic" 
+				+ " FROM sucursal"
+				+ " WHERE" 
+				+ " codent = ?  "  + "AND" 				+ " cdg = ?  " 			); 
+	}
+
+	private void closeCibcus_cnabrpmeStmt() 
+	throws SQLException{
+		if ( _cibcus_cnabrpmeStmt != null ) { 
+			_cibcus_cnabrpmeStmt.close();
+			_cibcus_cnabrpmeStmt = null;	
+		}
+	}
 	private PreparedStatement _daditne_cnabrpmeStmt = null;
 		
 	private void initDaditne_cnabrpmeStmt() 
@@ -10829,6 +11015,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "cdg" 
 				+ ",descripcion" 
+				+ ",bic" 
 				+ " FROM entidad"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -10852,6 +11039,7 @@ public class AbstractCtsqlDB {
 				+ ",domsuc" 
 				+ ",munsuc" 
 				+ ",cpsuc" 
+				+ ",bic" 
 				+ " FROM sucursal"
 				+ " WHERE" 
 				+ " codent = ?  "  + "AND" 				+ " cdg = ?  " 			); 
@@ -10985,7 +11173,74 @@ public class AbstractCtsqlDB {
 		throws SQLException {
 			return rs.getInt(6);
 		}
+		/**
+		 * IBAN
+		 * @return the column 'iban' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getIban()
+		throws SQLException {
+			return rs.getString(7);
+		}
+		/**
+		 * Sufijo
+		 * @return the column 'sufijo' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getSufijo()
+		throws SQLException {
+			return rs.getString(8);
+		}
 
+		/**
+		 * Visit Entidad that's parent of this Emprban. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitEmprbanc_entbic(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _cibtne_cnabrpmeStmt == null )
+					 initCibtne_cnabrpmeStmt();
+				
+				_cibtne_cnabrpmeStmt.setString(1, this.getCodent()); 
+				rs = _cibtne_cnabrpmeStmt.executeQuery();
+				Entidad entidad = new Entidad(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitEmprbanc_entbic(this, entidad);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
+		 * Visit Sucursal that's parent of this Emprban. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitEmprbanc_sucbic(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _cibcus_cnabrpmeStmt == null )
+					 initCibcus_cnabrpmeStmt();
+				
+				_cibcus_cnabrpmeStmt.setString(1, this.getCodent()); 
+				_cibcus_cnabrpmeStmt.setString(2, this.getCodsuc()); 
+				rs = _cibcus_cnabrpmeStmt.executeQuery();
+				Sucursal sucursal = new Sucursal(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitEmprbanc_sucbic(this, sucursal);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
 		/**
 		 * Visit Entidad that's parent of this Emprban. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -11156,6 +11411,7 @@ public class AbstractCtsqlDB {
 				+ ",tipotp" 
 				+ ",diastp" 
 				+ ",guardalegal" 
+				+ ",iban" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " colectivo = ?  " 			); 
@@ -11598,6 +11854,7 @@ public class AbstractCtsqlDB {
 				+ ",tipotp" 
 				+ ",diastp" 
 				+ ",guardalegal" 
+				+ ",iban" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -14670,6 +14927,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "cdg" 
 				+ ",descripcion" 
+				+ ",bic" 
 				+ " FROM entidad"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -14693,6 +14951,7 @@ public class AbstractCtsqlDB {
 				+ ",domsuc" 
 				+ ",munsuc" 
 				+ ",cpsuc" 
+				+ ",bic" 
 				+ " FROM sucursal"
 				+ " WHERE" 
 				+ " codent = ?  "  + "AND" 				+ " cdg = ?  " 			); 
@@ -15804,6 +16063,7 @@ public class AbstractCtsqlDB {
 				+ ",tipotp" 
 				+ ",diastp" 
 				+ ",guardalegal" 
+				+ ",iban" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " codcont = ?  " 			); 
@@ -16908,6 +17168,7 @@ public class AbstractCtsqlDB {
 				+ ",domsuc" 
 				+ ",munsuc" 
 				+ ",cpsuc" 
+				+ ",bic" 
 				+ " FROM sucursal"
 				+ " WHERE" 
 				+ " codent = ?  " 			); 
@@ -16933,6 +17194,8 @@ public class AbstractCtsqlDB {
 				+ ",dc" 
 				+ ",numcta" 
 				+ ",codcli" 
+				+ ",iban" 
+				+ ",sufijo" 
 				+ " FROM emprban"
 				+ " WHERE" 
 				+ " codent = ?  " 			); 
@@ -17012,6 +17275,7 @@ public class AbstractCtsqlDB {
 				+ ",tipotp" 
 				+ ",diastp" 
 				+ ",guardalegal" 
+				+ ",iban" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " codent = ?  " 			); 
@@ -17162,6 +17426,33 @@ public class AbstractCtsqlDB {
 			jautentidadStmt = null;	
 		}
 	}
+		
+	private PreparedStatement emprbanc_entbicStmt = null;
+		
+	private void initEmprbanc_entbicStmt() 
+	throws SQLException{
+		this.emprbanc_entbicStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codent" 
+				+ ",codsuc" 
+				+ ",dc" 
+				+ ",numcta" 
+				+ ",codcli" 
+				+ ",iban" 
+				+ ",sufijo" 
+				+ " FROM emprban"
+				+ " WHERE" 
+				+ " codent = ?  " 			); 
+	}
+
+	private void closeEmprbanc_entbicStmt() 
+	throws SQLException{
+		if ( emprbanc_entbicStmt != null ) { 
+			emprbanc_entbicStmt.close();
+			emprbanc_entbicStmt = null;	
+		}
+	}
 
 
 	/**
@@ -17194,6 +17485,15 @@ public class AbstractCtsqlDB {
 		public String getDescripcion()
 		throws SQLException {
 			return rs.getString(2);
+		}
+		/**
+		 * BIC
+		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getBic()
+		throws SQLException {
+			return rs.getString(3);
 		}
 
 
@@ -17315,6 +17615,31 @@ public class AbstractCtsqlDB {
 				Autonomos autonomos = new Autonomos(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitJautentidad(autonomos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Emprban that're children of this Entidad. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitEmprbanc_entbic(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( emprbanc_entbicStmt == null )
+					 initEmprbanc_entbicStmt();
+				
+				emprbanc_entbicStmt.setString(1, this.getCdg()); 
+				rs = emprbanc_entbicStmt.executeQuery();
+				Emprban emprban = new Emprban(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitEmprbanc_entbic(emprban, this);
 				}
 			}
 			finally {
@@ -20917,6 +21242,7 @@ public class AbstractCtsqlDB {
 				+ ",tipotp" 
 				+ ",diastp" 
 				+ ",guardalegal" 
+				+ ",iban" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " codpct = ?  " 			); 
@@ -24077,6 +24403,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "cdg" 
 				+ ",descripcion" 
+				+ ",bic" 
 				+ " FROM entidad"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -24100,6 +24427,7 @@ public class AbstractCtsqlDB {
 				+ ",domsuc" 
 				+ ",munsuc" 
 				+ ",cpsuc" 
+				+ ",bic" 
 				+ " FROM sucursal"
 				+ " WHERE" 
 				+ " codent = ?  "  + "AND" 				+ " cdg = ?  " 			); 
@@ -24725,6 +25053,15 @@ public class AbstractCtsqlDB {
 		public String getGuardalegal()
 		throws SQLException {
 			return rs.getString(60);
+		}
+		/**
+		 * IBAN
+		 * @return the column 'iban' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getIban()
+		throws SQLException {
+			return rs.getString(61);
 		}
 
 		/**
@@ -30723,6 +31060,116 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	private PreparedStatement _animon_fdanimonStmt = null;
+		
+	private void initAnimon_fdanimonStmt() 
+	throws SQLException{
+		this._animon_fdanimonStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",mes" 
+				+ ",anio" 
+				+ ",orden" 
+				+ ",tipo" 
+				+ ",nomemp" 
+				+ ",fecemi" 
+				+ ",nomper" 
+				+ ",direccion" 
+				+ ",localidad" 
+				+ ",descat" 
+				+ ",profesion" 
+				+ ",nummat" 
+				+ ",fecant" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",diasnomina" 
+				+ ",total_devengos" 
+				+ ",total_devengos_e" 
+				+ ",total_deducir" 
+				+ ",total_liquido" 
+				+ ",feccob" 
+				+ ",base_concom" 
+				+ ",base_acctra" 
+				+ ",base_proext" 
+				+ ",base_con_it" 
+				+ ",base_acc_it" 
+				+ ",base_con_mat" 
+				+ ",base_acc_mat" 
+				+ ",base_con_mat_no" 
+				+ ",base_acc_mat_no" 
+				+ ",base_fogasa" 
+				+ ",base_fp" 
+				+ ",base_desempleo" 
+				+ ",base_hextras" 
+				+ ",base_hextras_no" 
+				+ ",base_exceso" 
+				+ ",base_nocotiza" 
+				+ ",base_especie" 
+				+ ",base_especie_no" 
+				+ ",base_irpf" 
+				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
+				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
+				+ ",base_horascom" 
+				+ ",base_perdes" 
+				+ ",remuneracion" 
+				+ ",base_it" 
+				+ ",total_1" 
+				+ ",codbas" 
+				+ ",base_cg" 
+				+ ",base_acc" 
+				+ ",prc_cg" 
+				+ ",prc_acc" 
+				+ ",prc_hex" 
+				+ ",prc_hexno" 
+				+ ",importe_cg" 
+				+ ",importe_acc" 
+				+ ",importe_hex" 
+				+ ",importe_hexno" 
+				+ ",mincg" 
+				+ ",maxcg" 
+				+ ",minacc" 
+				+ ",maxacc" 
+				+ ",cuota_empresa" 
+				+ ",base_acc_sin_hex" 
+				+ ",importe_cuotas" 
+				+ ",prc_irpf" 
+				+ ",importe_irpf" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",diastrab" 
+				+ ",diasefec" 
+				+ ",baseant" 
+				+ ",proret" 
+				+ ",procot" 
+				+ ",codcon" 
+				+ ",codpct" 
+				+ ",feccobreal" 
+				+ ",divisa" 
+				+ ",base_irpf_ant" 
+				+ ",importe_irpf_ant" 
+				+ ",importe_cuotas_ant" 
+				+ ",base_cg_pts" 
+				+ ",base_acc_pts" 
+				+ ",base_acc_sin_h_pts" 
+				+ ",fvisione" 
+				+ ",fvisiont" 
+				+ " FROM nomina"
+				+ " WHERE" 
+				+ " cdg = ?  " 			); 
+	}
+
+	private void closeAnimon_fdanimonStmt() 
+	throws SQLException{
+		if ( _animon_fdanimonStmt != null ) { 
+			_animon_fdanimonStmt.close();
+			_animon_fdanimonStmt = null;	
+		}
+	}
 	private PreparedStatement _reprpme_fdanimonStmt = null;
 		
 	private void initReprpme_fdanimonStmt() 
@@ -31620,6 +32067,30 @@ public class AbstractCtsqlDB {
 		}
 
 		/**
+		 * Visit Nomina that's parent of this Nominadf. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitNominadf_nomina(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( _animon_fdanimonStmt == null )
+					 initAnimon_fdanimonStmt();
+				
+				_animon_fdanimonStmt.setInt(1, this.getCdgnom()); 
+				rs = _animon_fdanimonStmt.executeQuery();
+				Nomina nomina = new Nomina(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitNominadf_nomina(this, nomina);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		/**
 		 * Visit Emprper that's parent of this Nominadf. 
 		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
 		 * @throws SQLException
@@ -31804,6 +32275,166 @@ public class AbstractCtsqlDB {
 		if ( prc_nominaStmt != null ) { 
 			prc_nominaStmt.close();
 			prc_nominaStmt = null;	
+		}
+	}
+		
+	private PreparedStatement nominaexdf_nominaStmt = null;
+		
+	private void initNominaexdf_nominaStmt() 
+	throws SQLException{
+		this.nominaexdf_nominaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",codcom" 
+				+ ",importe" 
+				+ ",fijovar" 
+				+ ",irpf" 
+				+ ",impirpf" 
+				+ ",liquido" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",feccob" 
+				+ ",descom" 
+				+ ",feccobreal" 
+				+ ",divisa" 
+				+ ",fecemi" 
+				+ ",nomemp" 
+				+ ",nomper" 
+				+ ",direccion" 
+				+ ",localidad" 
+				+ ",descat" 
+				+ ",profesion" 
+				+ ",nummat" 
+				+ ",fecant" 
+				+ ",total_deducir" 
+				+ ",cdgnom" 
+				+ " FROM nominaexdf"
+				+ " WHERE" 
+				+ " cdgnom = ?  " 			); 
+	}
+
+	private void closeNominaexdf_nominaStmt() 
+	throws SQLException{
+		if ( nominaexdf_nominaStmt != null ) { 
+			nominaexdf_nominaStmt.close();
+			nominaexdf_nominaStmt = null;	
+		}
+	}
+		
+	private PreparedStatement nominadf_nominaStmt = null;
+		
+	private void initNominadf_nominaStmt() 
+	throws SQLException{
+		this.nominadf_nominaStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",mes" 
+				+ ",anio" 
+				+ ",orden" 
+				+ ",tipo" 
+				+ ",nomemp" 
+				+ ",fecemi" 
+				+ ",nomper" 
+				+ ",direccion" 
+				+ ",localidad" 
+				+ ",descat" 
+				+ ",profesion" 
+				+ ",nummat" 
+				+ ",fecant" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",diasnomina" 
+				+ ",total_devengos" 
+				+ ",total_devengos_e" 
+				+ ",total_deducir" 
+				+ ",total_liquido" 
+				+ ",feccob" 
+				+ ",base_concom" 
+				+ ",base_acctra" 
+				+ ",base_proext" 
+				+ ",base_con_it" 
+				+ ",base_acc_it" 
+				+ ",base_con_mat" 
+				+ ",base_acc_mat" 
+				+ ",base_con_mat_no" 
+				+ ",base_acc_mat_no" 
+				+ ",base_fogasa" 
+				+ ",base_fp" 
+				+ ",base_desempleo" 
+				+ ",base_hextras" 
+				+ ",base_hextras_no" 
+				+ ",base_exceso" 
+				+ ",base_nocotiza" 
+				+ ",base_especie" 
+				+ ",base_especie_no" 
+				+ ",base_irpf" 
+				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
+				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
+				+ ",base_horascom" 
+				+ ",base_perdes" 
+				+ ",remuneracion" 
+				+ ",base_it" 
+				+ ",total_1" 
+				+ ",codbas" 
+				+ ",base_cg" 
+				+ ",base_acc" 
+				+ ",prc_cg" 
+				+ ",prc_acc" 
+				+ ",prc_hex" 
+				+ ",prc_hexno" 
+				+ ",importe_cg" 
+				+ ",importe_acc" 
+				+ ",importe_hex" 
+				+ ",importe_hexno" 
+				+ ",mincg" 
+				+ ",maxcg" 
+				+ ",minacc" 
+				+ ",maxacc" 
+				+ ",cuota_empresa" 
+				+ ",base_acc_sin_hex" 
+				+ ",importe_cuotas" 
+				+ ",prc_irpf" 
+				+ ",importe_irpf" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",diastrab" 
+				+ ",diasefec" 
+				+ ",baseant" 
+				+ ",proret" 
+				+ ",procot" 
+				+ ",codcon" 
+				+ ",codpct" 
+				+ ",feccobreal" 
+				+ ",divisa" 
+				+ ",base_irpf_ant" 
+				+ ",importe_irpf_ant" 
+				+ ",importe_cuotas_ant" 
+				+ ",base_cg_pts" 
+				+ ",base_acc_pts" 
+				+ ",base_acc_sin_h_pts" 
+				+ ",cdgnom" 
+				+ " FROM nominadf"
+				+ " WHERE" 
+				+ " cdgnom = ?  " 			); 
+	}
+
+	private void closeNominadf_nominaStmt() 
+	throws SQLException{
+		if ( nominadf_nominaStmt != null ) { 
+			nominadf_nominaStmt.close();
+			nominadf_nominaStmt = null;	
 		}
 	}
 
@@ -32829,6 +33460,56 @@ public class AbstractCtsqlDB {
 				Prcdivnom prcdivnom = new Prcdivnom(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitPrc_nomina(prcdivnom, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Nominaexdf that're children of this Nomina. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitNominaexdf_nomina(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( nominaexdf_nominaStmt == null )
+					 initNominaexdf_nominaStmt();
+				
+				nominaexdf_nominaStmt.setInt(1, this.getCdg()); 
+				rs = nominaexdf_nominaStmt.executeQuery();
+				Nominaexdf nominaexdf = new Nominaexdf(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitNominaexdf_nomina(nominaexdf, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Nominadf that're children of this Nomina. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitNominadf_nomina(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( nominadf_nominaStmt == null )
+					 initNominadf_nominaStmt();
+				
+				nominadf_nominaStmt.setInt(1, this.getCdg()); 
+				rs = nominadf_nominaStmt.executeQuery();
+				Nominadf nominadf = new Nominadf(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitNominadf_nomina(nominadf, this);
 				}
 			}
 			finally {
@@ -35184,6 +35865,7 @@ public class AbstractCtsqlDB {
 				+ ",tipotp" 
 				+ ",diastp" 
 				+ ",guardalegal" 
+				+ ",iban" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " autorizacion = ?  " 			); 
@@ -36338,6 +37020,8 @@ public class AbstractCtsqlDB {
 				+ ",dc" 
 				+ ",numcta" 
 				+ ",codcli" 
+				+ ",iban" 
+				+ ",sufijo" 
 				+ " FROM emprban"
 				+ " WHERE" 
 				+ " codent = ?  "  + "AND" 				+ " codsuc = ?  " 			); 
@@ -36417,6 +37101,7 @@ public class AbstractCtsqlDB {
 				+ ",tipotp" 
 				+ ",diastp" 
 				+ ",guardalegal" 
+				+ ",iban" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " codent = ?  "  + "AND" 				+ " codsuc = ?  " 			); 
@@ -36567,6 +37252,33 @@ public class AbstractCtsqlDB {
 			jautsucursalStmt = null;	
 		}
 	}
+		
+	private PreparedStatement emprbanc_sucbicStmt = null;
+		
+	private void initEmprbanc_sucbicStmt() 
+	throws SQLException{
+		this.emprbanc_sucbicStmt = ctsqlConnection.prepareStatement(
+				"SELECT "
+				+ "cdg" 
+				+ ",codent" 
+				+ ",codsuc" 
+				+ ",dc" 
+				+ ",numcta" 
+				+ ",codcli" 
+				+ ",iban" 
+				+ ",sufijo" 
+				+ " FROM emprban"
+				+ " WHERE" 
+				+ " codent = ?  "  + "AND" 				+ " codsuc = ?  " 			); 
+	}
+
+	private void closeEmprbanc_sucbicStmt() 
+	throws SQLException{
+		if ( emprbanc_sucbicStmt != null ) { 
+			emprbanc_sucbicStmt.close();
+			emprbanc_sucbicStmt = null;	
+		}
+	}
 
 	private PreparedStatement _daditne_lasrucusStmt = null;
 		
@@ -36576,6 +37288,7 @@ public class AbstractCtsqlDB {
 				"SELECT "
 				+ "cdg" 
 				+ ",descripcion" 
+				+ ",bic" 
 				+ " FROM entidad"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -36646,6 +37359,15 @@ public class AbstractCtsqlDB {
 		public String getCpsuc()
 		throws SQLException {
 			return rs.getString(5);
+		}
+		/**
+		 * BIC
+		 * @return the column 'bic' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getBic()
+		throws SQLException {
+			return rs.getString(6);
 		}
 
 		/**
@@ -36770,6 +37492,32 @@ public class AbstractCtsqlDB {
 				Autonomos autonomos = new Autonomos(rs); 
 				while ( rs.next() ) {
 					ctsqlDBVisitor.visitJautsucursal(autonomos, this);
+				}
+			}
+			finally {
+				if ( rs != null )
+					rs.close();
+			}
+		}
+		
+		/**
+		 * Visit Emprban that're children of this Sucursal. 
+		 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+		 * @throws SQLException
+		 */
+		public void visitEmprbanc_sucbic(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+			ResultSet 			rs 	= null;
+			try {
+				
+				if ( emprbanc_sucbicStmt == null )
+					 initEmprbanc_sucbicStmt();
+				
+				emprbanc_sucbicStmt.setString(1, this.getCodent()); 
+				emprbanc_sucbicStmt.setString(2, this.getCdg()); 
+				rs = emprbanc_sucbicStmt.executeQuery();
+				Emprban emprban = new Emprban(rs); 
+				while ( rs.next() ) {
+					ctsqlDBVisitor.visitEmprbanc_sucbic(emprban, this);
 				}
 			}
 			finally {
@@ -37633,6 +38381,7 @@ public class AbstractCtsqlDB {
 				+ ",tipotp" 
 				+ ",diastp" 
 				+ ",guardalegal" 
+				+ ",iban" 
 				+ " FROM trabajo"
 				+ " WHERE" 
 				+ " codcon = ?  " 			); 
@@ -49413,6 +50162,8 @@ public class AbstractCtsqlDB {
 				+ ",dc" 
 				+ ",numcta" 
 				+ ",codcli" 
+				+ ",iban" 
+				+ ",sufijo" 
 				+ " FROM emprban"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -59388,6 +60139,8 @@ public class AbstractCtsqlDB {
 				+ ",dc" 
 				+ ",numcta" 
 				+ ",codcli" 
+				+ ",iban" 
+				+ ",sufijo" 
 				+ " FROM emprban");
 			Emprban emprban = new Emprban(rs); 
 			while ( rs.next() ) {
@@ -59419,6 +60172,8 @@ public class AbstractCtsqlDB {
 				+ ",dc" 
 				+ ",numcta" 
 				+ ",codcli" 
+				+ ",iban" 
+				+ ",sufijo" 
 				+ " FROM emprban" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -60748,6 +61503,7 @@ public class AbstractCtsqlDB {
 			rs = stmt.executeQuery("SELECT "
 				+ "cdg" 
 				+ ",descripcion" 
+				+ ",bic" 
 				+ " FROM entidad");
 			Entidad entidad = new Entidad(rs); 
 			while ( rs.next() ) {
@@ -60775,6 +61531,7 @@ public class AbstractCtsqlDB {
 			stmt = ctsqlConnection.prepareStatement("SELECT "
 				+ "cdg" 
 				+ ",descripcion" 
+				+ ",bic" 
 				+ " FROM entidad" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  
@@ -63036,6 +63793,7 @@ public class AbstractCtsqlDB {
 				+ ",tipotp" 
 				+ ",diastp" 
 				+ ",guardalegal" 
+				+ ",iban" 
 				+ " FROM trabajo");
 			Trabajo trabajo = new Trabajo(rs); 
 			while ( rs.next() ) {
@@ -63121,6 +63879,7 @@ public class AbstractCtsqlDB {
 				+ ",tipotp" 
 				+ ",diastp" 
 				+ ",guardalegal" 
+				+ ",iban" 
 				+ " FROM trabajo" 
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				  
@@ -66365,6 +67124,7 @@ public class AbstractCtsqlDB {
 				+ ",domsuc" 
 				+ ",munsuc" 
 				+ ",cpsuc" 
+				+ ",bic" 
 				+ " FROM sucursal");
 			Sucursal sucursal = new Sucursal(rs); 
 			while ( rs.next() ) {
@@ -66395,6 +67155,7 @@ public class AbstractCtsqlDB {
 				+ ",domsuc" 
 				+ ",munsuc" 
 				+ ",cpsuc" 
+				+ ",bic" 
 				+ " FROM sucursal" 
 				+ " WHERE" 
 				+ " codent = ?  "  + "AND" 				  
@@ -72371,6 +73132,7 @@ public class AbstractCtsqlDB {
 		closeLevin_vincrepStmt();
 		closeMoc_ncp_lerStmt();
 		closeRel_nominaexdfStmt();
+		closeAnimon_fdxeanimonStmt();
 		closeAsivid_fdxeanimonStmt();
 		closeRel_ccc_mutStmt();
 		closeRel_mut_linStmt();
@@ -72395,6 +73157,8 @@ public class AbstractCtsqlDB {
 		closeAnosrep_creprtoStmt();
 		closeFinrpme_creprtoStmt();
 		closeEmprlban_emprbanStmt();
+		closeCibtne_cnabrpmeStmt();
+		closeCibcus_cnabrpmeStmt();
 		closeDaditne_cnabrpmeStmt();
 		closeLasrucus_cnabrpmeStmt();
 		closeEtneilc_cnabrpmeStmt();
@@ -72462,6 +73226,7 @@ public class AbstractCtsqlDB {
 		closeRel_tra_entStmt();
 		closeJentidadStmt();
 		closeJautentidadStmt();
+		closeEmprbanc_entbicStmt();
 		closeMon_otd_lerStmt();
 		closeJlincnaeStmt();
 		closeLin190_impr190Stmt();
@@ -72579,11 +73344,14 @@ public class AbstractCtsqlDB {
 		closeMoc_tth_lerStmt();
 		closeNomdfdev_nominadfStmt();
 		closeNomdfdto_nominadfStmt();
+		closeAnimon_fdanimonStmt();
 		closeReprpme_fdanimonStmt();
 		closeAsivid_fdanimonStmt();
 		closeRel_dto_nomStmt();
 		closeRel_nmd_nomStmt();
 		closePrc_nominaStmt();
+		closeNominaexdf_nominaStmt();
+		closeNominadf_nominaStmt();
 		closeRep_mon_lerStmt();
 		closeAsivid_mon_lerStmt();
 		closeFdanimon_otdfdmonStmt();
@@ -72605,6 +73373,7 @@ public class AbstractCtsqlDB {
 		closeRel_tra_sucStmt();
 		closeJsucursalStmt();
 		closeJautsucursalStmt();
+		closeEmprbanc_sucbicStmt();
 		closeDaditne_lasrucusStmt();
 		closeRel_com_paiStmt();
 		closeRel_cli_paiStmt();
