@@ -122,7 +122,6 @@ public class CertificadosWriter {
 //			i++;
 //			System.out.println("__ " + i);
 			
-			
 		}
 		return certificado;
 	}
@@ -469,23 +468,23 @@ public class CertificadosWriter {
 		calFin.setTime(detail.getContract().getEndDate());
 		calFin.set(Calendar.DAY_OF_MONTH, calFin.getActualMaximum(Calendar.DAY_OF_MONTH));
 		cotizacionList = new ArrayList<Cotizacion>();
+		ISalary atraso = getSalary(detail.getContract(), detail.getContract().getStartDate(), detail.getContract().getEndDate(), SalaryType.DELAY);
 		while((calInicio.before(calFin) || calInicio.equals(calFin)) && totalDias < 180) {
-			Calendar sDate = new GregorianCalendar();
-			Calendar eDate = new GregorianCalendar();
-			sDate.setTime(new Date(calFin.getTimeInMillis()));
-			eDate.setTime(new Date(calFin.getTimeInMillis()));
-			sDate.set(Calendar.DAY_OF_MONTH, 1);
-			eDate.set(Calendar.DAY_OF_MONTH, sDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-			nomina = getSalary(detail.getContract(),  sDate.getTime(), eDate.getTime());
+			Calendar startDate = new GregorianCalendar();
+			Calendar endDate = new GregorianCalendar();
+			startDate.setTime(new Date(calFin.getTimeInMillis()));
+			endDate.setTime(new Date(calFin.getTimeInMillis()));
+			startDate.set(Calendar.DAY_OF_MONTH, 1);
+			endDate.set(Calendar.DAY_OF_MONTH, startDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+			nomina = getSalary(detail.getContract(),  startDate.getTime(), endDate.getTime());
 			calFin.add(Calendar.DATE, -calFin.get(Calendar.DAY_OF_MONTH));
 			if(nomina != null) {
 				Double baseCg = nomina.getCommonBase();
 				Double baseAcc = nomina.getProfessionalBase();
-				// obtener las nominas diferencia de atrasos
-				ISalary atraso = getSalary(detail.getContract(),  sDate.getTime(), eDate.getTime(), SalaryType.DELAY);
+				// obtener las bases de los atrasos que correspondan al periodo
 				if(atraso != null){
-					baseCg += getDelayBaseAmount(atraso, nomina.getStartDate(), nomina.getEndDate(), ContextVariable.CGC_BASE);
-					baseAcc += getDelayBaseAmount(atraso, nomina.getStartDate(), nomina.getEndDate(), ContextVariable.CGP_BASE);
+					baseCg += getDelayBaseAmount(atraso, startDate.getTime(), endDate.getTime(), ContextVariable.CGC_BASE);
+					baseAcc += getDelayBaseAmount(atraso, startDate.getTime(), endDate.getTime(), ContextVariable.CGP_BASE);
 				}
 				totalDias += nomina.getTimeUnits();
 				Cotizacion cotizacion = new Cotizacion();
@@ -504,7 +503,6 @@ public class CertificadosWriter {
 	}
 	
 	private Double getDelayBaseAmount(ISalary salary, Date startDate, Date endDate, ContextVariable base) {
-		// TODO  
 		SEPEUtils utils = new SEPEUtils();
 		Map<String, SalaryData> map = utils.getSalaryDataMap((Salary) salary, startDate, endDate);
 		if(map.containsKey(base.getName())){
@@ -538,35 +536,20 @@ public class CertificadosWriter {
 			} else {
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
 			}
-//			if(startDate != null){
-//				Calendar startCal = Calendar.getInstance();
-//				startCal.setTime(startDate);
-//				startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
-//				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), startCal.getTime());
-//			}
-//			if(endDate != null){
-//				Calendar endCal = Calendar.getInstance();
-//				endCal.setTime(endDate);
-//				endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-//				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endCal.getTime());
-//			}
 			
+			if(startDate != null){
+				Calendar startCal = Calendar.getInstance();
+				startCal.setTime(startDate);
+				startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), startCal.getTime());
+			}
+			if(endDate != null){
+				Calendar endCal = Calendar.getInstance();
+				endCal.setTime(endDate);
+				endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), endCal.getTime());
+			}
 			
-			Calendar startCal = Calendar.getInstance();
-			startCal.setTime(startDate);
-			startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
-			Calendar endCal = Calendar.getInstance();
-			endCal.setTime(endDate);
-			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-			
-
-//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), startCal.getTime());
-//			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endCal.getTime());
-			
-			criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), startCal.getTime(), endCal.getTime());
-		
-				
-				
 			criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE), false);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(list!=null && !list.isEmpty()){
@@ -1225,17 +1208,6 @@ public class CertificadosWriter {
 		return completeLength(String.valueOf(var.intValue()), lon, dir);
 	}
 	
-//	private String completeLength(String var, Integer lon) {
-//		return completeLength(var, lon, true);
-//	}
-	
-//	private String completeLength(Integer var, Integer lon, Boolean dir) {
-//		return completeLength(String.valueOf(var), lon, dir);
-//	}
-	
-//	private String completeLength(Double var, Integer lon) {
-//		return completeLength(var, lon, true);
-//	}
 	
 	private Integer differenceBetweenDates(Date from, Date to) {
 		Integer diffDays = new Integer(0);
