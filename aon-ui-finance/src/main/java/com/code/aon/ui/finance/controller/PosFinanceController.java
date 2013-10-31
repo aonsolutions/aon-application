@@ -124,7 +124,7 @@ public class PosFinanceController extends FinanceListController implements IFina
 			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 			for (Finance finance : getCheckedFinances()) {
 				finance = (Finance)financeBean.get(finance.getId());
-				if (finance.getFinanceStatus() == FinanceStatus.PENDING || finance.getFinanceStatus() == FinanceStatus.RETURNED) {
+				if (finance.isPending() || finance.isReturned()) {
 					FinanceBatchDetail fBatchDetail = new FinanceBatchDetail();
 					fBatchDetail.setFinance(finance);
 					fBatchDetail.setFinanceBatch(financeBatch);

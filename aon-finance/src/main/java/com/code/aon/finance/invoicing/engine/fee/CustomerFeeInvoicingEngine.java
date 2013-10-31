@@ -229,7 +229,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 			if (!isReadOnly()) {
 				fee = (CustomerFee)getHibernateSession().merge(fee);
 			}
-			getInvoicingDAO().updateSource(fee);
+			getInvoicingDAO().updateSource(fee, invoiceDetail);
 			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());
 			
 			i++;

@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
-import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationInvoice;
 import com.code.aon.common.BeanManager;
@@ -49,7 +48,6 @@ import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceAttachment;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.RectificationInvoicingManager;
-import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceAttachmentType;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -662,7 +660,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			List<ITransferObject> financeList = invoiceFinanceController.getManagerBean().getList(invoiceFinanceController.getCriteria());
 			for (ITransferObject ito : financeList) {
 				Finance finance = (Finance)ito;
-				if (!finance.isAdvance() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
+				if (!finance.isAdvance() && finance.isPending()) {
 					invoiceFinanceController.getManagerBean().remove(finance);
 				}
 			}

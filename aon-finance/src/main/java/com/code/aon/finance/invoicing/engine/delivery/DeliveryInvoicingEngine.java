@@ -241,7 +241,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 				invoiceDetail = createInvoiceDetails(deliveryDetailList, invoice);
 				if (invoiceDetail != null) {
 					delivery = (Delivery)getHibernateSession().merge(delivery);
-					getInvoicingDAO().updateSource(delivery);
+					getInvoicingDAO().updateSource(delivery, null);
 				}
 			}
 			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());
@@ -394,7 +394,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			if (deliveryDetailList.size() > 0) {
 				invoiceDetail = createInvoiceDetails(deliveryDetailList, invoice);
 				if (invoiceDetail != null) {
-					getInvoicingDAO().updateSource(delivery);
+					getInvoicingDAO().updateSource(delivery, null);
 				}
 			}
 		}

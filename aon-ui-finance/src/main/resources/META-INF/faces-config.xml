@@ -3964,6 +3964,51 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ******************* PREPAYMENT ******************** -->
+	<managed-bean>
+		<managed-bean-name>prepayment</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.PrepaymentController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Prepayment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>prepayment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Prepayment_finance_dueDate,Prepayment_creditor_registry_name,Prepayment_customer_registry_name</value>
+		</managed-property>									
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{prepaymentSearch}</value>
+				<value>#{prepaymentControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>prepaymentSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.PrepaymentSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>prepaymentControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.PrepaymentControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* CASH FLOW FORECAST  ***************** -->
 	<managed-bean>
 		<managed-bean-name>cashFlowForecast</managed-bean-name>
@@ -4482,6 +4527,22 @@
 		</navigation-case>
 	</navigation-rule>
 	   
+	<!-- =================== Prepayment ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>prepayment_search</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/prepayment/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>prepayment_list</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/prepayment/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>prepayment_form</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/prepayment/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+  
 	<!-- =================== Cashflow Forecast ========================== -->
 	<navigation-rule>
 	    <navigation-case>

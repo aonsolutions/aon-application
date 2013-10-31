@@ -99,6 +99,10 @@ public class UserUtils {
 		return scopes;
 	}
 
+	public boolean isScopeInUserScopes(Scope scope) {
+		return getCurrentUserScopes().contains(scope);
+	}
+
 	public void addScopeFilterToCriteria(Criteria criteria, String alias) throws ManagerBeanException {
 		Expression scopeExpression = null;
 		for(Scope scope : getCurrentUserScopes()) {

@@ -29,6 +29,9 @@ ${pojo.generateAnnIdGenerator()}
 <#elseif property.getName()=="payMethodTypeDetail" && pojo.getDeclarationName()=="PayMethodTypeDetailAccountDB">	@${pojo.importType("javax.persistence.ManyToOne")}(fetch=${pojo.importType("javax.persistence.FetchType")}.EAGER)
     @javax.persistence.JoinColumn(name="pm_type_detail", nullable=false)
 	@${pojo.importType("com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull")}
+<#elseif property.getName()=="finance" && pojo.getDeclarationName()=="PrepaymentDB">	@${pojo.importType("javax.persistence.ManyToOne")}(fetch=${pojo.importType("javax.persistence.FetchType")}.EAGER)
+    @javax.persistence.JoinColumn(name="finance", nullable=false)
+	@${pojo.importType("com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull")}
 <#elseif property.getName()=="content" && pojo.getDeclarationName()=="MessageDB">	@${pojo.importType("javax.persistence.ManyToOne")}(cascade = {${pojo.importType("javax.persistence.CascadeType")}.ALL} )
 	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE} )
 	@javax.persistence.JoinColumn(name="message_content")

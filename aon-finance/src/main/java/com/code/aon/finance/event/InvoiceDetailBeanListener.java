@@ -31,7 +31,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
-		if (InvoiceType.UNDEDUCTIBLE != detail.getInvoice().getType() && detail.getItem() != null) {
+		if (InvoiceType.UNDEDUCTIBLE != detail.getInvoice().getType() && !detail.isPrepayment() && detail.getItem() != null) {
 			InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat(), null);
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			invoiceTaxBean.insert(detailVat);
@@ -76,7 +76,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
 		if (detail.isUpdateEnabled()) {
-			if (InvoiceType.UNDEDUCTIBLE != detail.getInvoice().getType() && detail.getItem() != null) {
+			if (InvoiceType.UNDEDUCTIBLE != detail.getInvoice().getType() && !detail.isPrepayment() && detail.getItem() != null) {
 				InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat(), null);
 				IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 				invoiceTaxBean.insert(detailVat);

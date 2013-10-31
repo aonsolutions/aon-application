@@ -56,7 +56,7 @@ public class DeliveryInvoicingDAO implements IInvoicingDAO {
 		}
 	}
 	
-	public void updateSource(ITransferObject to) {
+	public void updateSource(ITransferObject to, InvoiceDetail invoiceDetail) {
 		Delivery delivery = (Delivery)to;
 		try {
 			IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);

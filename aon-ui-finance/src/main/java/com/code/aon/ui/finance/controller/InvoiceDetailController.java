@@ -21,7 +21,6 @@ import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
@@ -110,7 +109,7 @@ public class InvoiceDetailController extends LinesController implements IFinance
 	public boolean isEditable() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			InvoiceDetail to = (InvoiceDetail)this.getModel().getRowData();
-			if (to.isDeliverySource() || to.isIncomeSource() || to.isSalesSource() || to.isPurchaseSource() || to.isOfferSource()) {
+			if (to.isDeliverySource() || to.isIncomeSource() || to.isSalesSource() || to.isPurchaseSource() || to.isOfferSource() || to.isPrepaymentSource()) {
 				return false;
 			}
 		}
@@ -229,76 +228,88 @@ public class InvoiceDetailController extends LinesController implements IFinance
 
 		InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
 		if (!isEditable() && invoiceDetail.getSourceId() != null) {
-			String message = "";
-			String refCode = "";
-			int line = 0;
-			if (invoiceDetail.getSource() == InvoiceSource.OFFER) {
+			String message = null;
+			String refCode = null;
+			Integer line = null;
+			if (invoiceDetail.isOfferSource()) {
 				IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 				OfferDetail offerDetail = (OfferDetail)offerDetailBean.get(invoiceDetail.getSourceId());
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_OFFER);
 				refCode = offerDetail.getOffer().getReferenceCode();
-				line = offerDetail.getLine().intValue();
-			} else if (invoiceDetail.getSource() == InvoiceSource.SALES) {
+				line = offerDetail.getLine();
+			} else if (invoiceDetail.isSalesSource()) {
 				IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 				SalesDetail salesDetail = (SalesDetail)salesDetailBean.get(invoiceDetail.getSourceId());
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_SALES);
 				refCode = salesDetail.getSales().getReferenceCode();
-				line = salesDetail.getLine().intValue();
-			} else if (invoiceDetail.getSource() == InvoiceSource.PURCHASE) {
+				line = salesDetail.getLine();
+			} else if (invoiceDetail.isPurchaseSource()) {
 				IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 				PurchaseDetail purchaseDetail = (PurchaseDetail)purchaseDetailBean.get(invoiceDetail.getSourceId());
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_SALES);
 				refCode = purchaseDetail.getPurchase().getReferenceCode();
-				line = purchaseDetail.getLine().intValue();
-			} else if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
+				line = purchaseDetail.getLine();
+			} else if (invoiceDetail.isDeliverySource()) {
 				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_DELIVERY);
 				refCode = deliveryDetail.getDelivery().getReferenceCode();
-				line = deliveryDetail.getLine().intValue();
-			} else if (invoiceDetail.getSource() == InvoiceSource.INCOME) {
+				line = deliveryDetail.getLine();
+			} else if (invoiceDetail.isIncomeSource()) {
 				IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 				IncomeDetail incomeDetail = (IncomeDetail)incomeDetailBean.get(invoiceDetail.getSourceId());
 				message = AonUtil.getMessage(ICommonMessages.INVOICE_DELIVERY);
 				refCode = incomeDetail.getIncome().getReferenceCode();
-				line = incomeDetail.getLine().intValue();
+				line = incomeDetail.getLine();
+			} else if (invoiceDetail.isPrepaymentSource()) {
+				message = AonUtil.getMessage(ICommonMessages.FINANCE_PREPAYMENTS);
 			}
 
-			info.append(AonUtil.getMessage(SOURCE));
-			info.append(" ");
-			info.append(message);
-			info.append(" ");
-			info.append(refCode);
-			info.append(" - ");
-			info.append(AonUtil.getMessage(LINE));
-			info.append(" ");
-			info.append(line);
+			if (message != null) {
+				info.append(AonUtil.getMessage(SOURCE));
+				info.append(" ");
+				info.append(message);
+			}
+			if (refCode != null) {
+				info.append(" ");
+				info.append(refCode);
+			}
+			if (line != null) {
+				info.append(" - ");
+				info.append(AonUtil.getMessage(LINE));
+				info.append(" ");
+				info.append(line);
+			}
 		}
 		return info.toString();
 	}
 
 	public void onLoadSource(ActionEvent event) throws ManagerBeanException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
-		if (invoiceDetail.getSource() == InvoiceSource.OFFER) {
+		if (invoiceDetail.isOfferSource()) {
 			setSourceViewer(OFFER_FORM_NAME);
 			BasicController sourceController = (BasicController)AonUtil.getRegisteredBean(OFFER_CONTROLLER_NAME);
 			sourceController.onLoad(event, ((Offer)invoiceDetail.getSourceTo()).getId(), SALE_INVOICE_FORM_NAME, null);
-		} else if (invoiceDetail.getSource() == InvoiceSource.SALES) {
+		} else if (invoiceDetail.isSalesSource()) {
 			setSourceViewer(SALES_FORM_NAME);
 			BasicController sourceController = (BasicController)AonUtil.getRegisteredBean(SALES_CONTROLLER_NAME);
 			sourceController.onLoad(event, ((Sales)invoiceDetail.getSourceTo()).getId(), SALE_INVOICE_FORM_NAME, null);
-		} else if (invoiceDetail.getSource() == InvoiceSource.PURCHASE) {
+		} else if (invoiceDetail.isPurchaseSource()) {
 			setSourceViewer(PURCHASE_FORM_NAME);
 			BasicController sourceController = (BasicController)AonUtil.getRegisteredBean(PURCHASE_CONTROLLER_NAME);
 			sourceController.onLoad(event, ((Purchase)invoiceDetail.getSourceTo()).getId(), PURCHASE_INVOICE_FORM_NAME, null);
-		} else if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
+		} else if (invoiceDetail.isDeliverySource()) {
 			setSourceViewer(DELIVERY_FORM_NAME);
 			BasicController sourceController = (BasicController)AonUtil.getRegisteredBean(DELIVERY_CONTROLLER_NAME);
 			sourceController.onLoad(event, ((Delivery)invoiceDetail.getSourceTo()).getId(), SALE_INVOICE_FORM_NAME, null);
-		} else if (invoiceDetail.getSource() == InvoiceSource.INCOME) {
+		} else if (invoiceDetail.isIncomeSource()) {
 			setSourceViewer(INCOME_FORM_NAME);
 			BasicController sourceController = (BasicController)AonUtil.getRegisteredBean(INCOME_CONTROLLER_NAME);
 			sourceController.onLoad(event, ((Income)invoiceDetail.getSourceTo()).getId(), PURCHASE_INVOICE_FORM_NAME, null);
+		} else if (invoiceDetail.isPrepaymentSource()) {
+			setSourceViewer(PREPAYMENT_FORM_NAME);
+			BasicController sourceController = (BasicController)AonUtil.getRegisteredBean(PREPAYMENT_CONTROLLER_NAME);
+			sourceController.onLoad(event, invoiceDetail.getPrepaymentId(), SALE_INVOICE_FORM_NAME, null);
 		}
 	}
 

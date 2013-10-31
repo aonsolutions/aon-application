@@ -377,7 +377,7 @@ public class RegistryStatEngineController {
 		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
-			if (FinanceStatus.PAID != finance.getFinanceStatus() && FinanceStatus.SETTLED != finance.getFinanceStatus()) {
+			if (!finance.isPaid() && !finance.isSettled()) {
 				return FinanceStatus.PENDING;
 			}
 		}

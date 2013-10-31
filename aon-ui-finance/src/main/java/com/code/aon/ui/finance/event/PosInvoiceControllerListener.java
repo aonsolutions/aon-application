@@ -17,6 +17,7 @@ import com.code.aon.finance.Pos;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.PosInvoiceController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -91,7 +92,7 @@ public class PosInvoiceControllerListener extends SaleInvoiceControllerListener 
 		} else {
 			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), "POS_CUSTOMER_ID");
+			criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), IFinanceConstants.POS_DEFAULT_CUSTOMER_ID);
 			for (ITransferObject ito : appParamBean.getList(criteria)) {
 				String value = ((ApplicationParameter)ito).getValue();
 				if (StringUtils.isNotEmpty(value)) {

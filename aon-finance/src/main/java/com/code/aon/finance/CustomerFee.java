@@ -10,11 +10,18 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.customer.Customer;
+import com.code.aon.finance.enumeration.PrepaymentCollect;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.ICalculable;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.CustomerFeeDB;
 
 @Entity
@@ -80,6 +87,32 @@ public class CustomerFee extends CustomerFeeDB implements ICalculable {
 	@Transient
 	public double getTaxes() throws ManagerBeanException {
 		return 0;
+	}
+
+	@Transient
+	public boolean isPrepaymentFee() throws ManagerBeanException {
+		if (getItem() != null && getItem().getId() != null && getItem().getProduct().getType() == ProductType.PREPAYMENT) {
+			IManagerBean prepaymentBean = BeanManager.getManagerBean(Prepayment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(prepaymentBean.getFieldName(IEntityAlias.PREPAYMENT_COLLECT), PrepaymentCollect.FEE);
+			criteria.addEqualExpression(prepaymentBean.getFieldName(IEntityAlias.PREPAYMENT_COLLECT_ID), getId());
+			return prepaymentBean.getCount(criteria) > 0;
+		}
+		return false;
+	}
+
+	@Transient
+	public Integer getPrepaymentId() throws ManagerBeanException {
+		if (getItem() != null && getItem().getId() != null && getItem().getProduct().getType() == ProductType.PREPAYMENT) {
+			IManagerBean prepaymentBean = BeanManager.getManagerBean(Prepayment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(prepaymentBean.getFieldName(IEntityAlias.PREPAYMENT_COLLECT), PrepaymentCollect.FEE);
+			criteria.addEqualExpression(prepaymentBean.getFieldName(IEntityAlias.PREPAYMENT_COLLECT_ID), getId());
+			for (ITransferObject ito : prepaymentBean.getList(criteria)) {
+				return ((Prepayment)ito).getId();
+			}
+		}
+		return null;
 	}
 
 }

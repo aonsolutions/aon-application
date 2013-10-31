@@ -187,6 +187,14 @@
 						value="#{accAppParams.parameters['ACC_DEFAULT_ASSET_PROFIT_ACC'].value}">
 						<f:selectItems value="#{accountCollections.assetProfitAccountsIds}" />
 					</aon:selectOneMenu>
+
+					<aon:outputLabel for="ACC_default_prepayment"
+						value="#{bundle.accounting_def_prepayment_acc}" />
+					<aon:selectOneMenu id="ACC_default_prepayment"
+						value="#{accAppParams.parameters['ACC_DEFAULT_PREPAYMENT_ACC'].value}">
+						<f:selectItems value="#{accountCollections.prepaymentAccountsIds}" />
+					</aon:selectOneMenu>
+
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>

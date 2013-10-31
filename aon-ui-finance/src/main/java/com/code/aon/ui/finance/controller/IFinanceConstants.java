@@ -73,6 +73,9 @@ public interface IFinanceConstants {
 	String POS_FINANCE_CONTROLLER_NAME = "posFinance";
 	String POS_FINANCE_SEARCH_LISTENER_NAME = "posFinanceSearch";
 
+	String PREPAYMENT_FORM_NAME = "prepayment_form";
+	String PREPAYMENT_CONTROLLER_NAME = "prepayment";
+
 	String RESERVATION_CONTROLLER_NAME = "reservation";
 
 	String BANK_STATEMENT_CONTROLLER_NAME = "bankStatement";
@@ -88,6 +91,7 @@ public interface IFinanceConstants {
 	
 	String TARGET_CONTROLLER_NAME = "target";
 	String CUSTOMER_CONTROLLER_NAME = "customer";
+	String CUSTOMER_FORM_NAME = "customer_form";
 	String SUPPLIER_CONTROLLER_NAME = "supplier";
 	String OFFER_FORM_NAME = "offer_form";
 	String OFFER_CONTROLLER_NAME = "offer";
@@ -99,9 +103,12 @@ public interface IFinanceConstants {
 	String DELIVERY_CONTROLLER_NAME = "delivery";
 	String INCOME_FORM_NAME = "income_form";
 	String INCOME_CONTROLLER_NAME = "income";
+	String CUSTOMER_FEE_CONTROLLER_NAME = "customerFee";
 
 	String AMORTIZATION_CONTROLLER_NAME = "amortization";
 	String AMORTIZATION_LIST_VIEW  = "amortization_list";
-	String AMORTIZATION_FORM_VIEW = "amortization_form";	
+	String AMORTIZATION_FORM_VIEW = "amortization_form";
+
+	String POS_DEFAULT_CUSTOMER_ID = "POS_CUSTOMER_ID";
 
 }

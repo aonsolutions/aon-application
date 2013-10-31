@@ -90,6 +90,23 @@
 						</aon:panelGroup>
 	
 						<aon:panelGroup>
+
+							<aon:panelGrid id="group_treasury_prepayment"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-product aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.finance_prepayments}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="prepayment-trasury"
+											action="prepayment_search"
+											actionListener="#{prepayment.onEditSearch}"
+											value="#{bundle.finance_prepayment_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+
 							<c:if test="#{cashFlowForecast.availableRegistryBanks > 0}">
 								<aon:panelGrid id="group_treasury_forecast"
 									styleClass="aon-width-all" columnClasses="aon-padding"

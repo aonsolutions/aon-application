@@ -267,6 +267,7 @@ public interface ICommonMessages {
 	String FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING = "finance_duplicate_expense_invoice_warning";
 	String FINANCE_POS_OPENED = "finance_pos_opened";
 	String FINANCE_POS_CATALOGUE_ERROR = "finance_pos_catalogue_error";
+	String FINANCE_PREPAYMENTS = "finance_prepayments";
 	String FINANCE_INACCURACY_MSG = "finance_unable_record_inaccuracy_error";
 	String FINANCE_NO_AMORTIZATION_MSG = "finance_unable_record_no_amortization_error";
 	String FACTURAE_ERROR = "finance_facturae_error";	

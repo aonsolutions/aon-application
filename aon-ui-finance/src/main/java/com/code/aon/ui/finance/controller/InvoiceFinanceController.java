@@ -19,7 +19,6 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
@@ -56,7 +55,7 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 	public boolean isModelToEditable() throws ManagerBeanException{
 		if (getModel().isRowAvailable()) {
 			Finance finance = (Finance)getModel().getRowData(); 
-			return (finance.getFinanceStatus().equals(FinanceStatus.PENDING) || finance.getFinanceStatus().equals(FinanceStatus.RETURNED));
+			return (finance.isPending() || finance.isReturned());
 		}
 		return false;
 	}
@@ -64,7 +63,7 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 	public boolean isModelToPending() throws ManagerBeanException{
 		if (getModel().isRowAvailable()) {
 			Finance finance = (Finance)getModel().getRowData(); 
-			return (finance.getFinanceStatus().equals(FinanceStatus.PENDING));
+			return (finance.isPending());
 		}
 		return false;
 	}
@@ -73,7 +72,7 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 	public boolean isAllPending() throws ManagerBeanException{
 		for (ITransferObject ito : (List<ITransferObject>)getModel().getWrappedData()) {
 			Finance finance = (Finance)ito;
-			if (FinanceStatus.PENDING != finance.getFinanceStatus()) {
+			if (!finance.isPending()) {
 				return false;
 			}
 		}
@@ -84,7 +83,7 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 	public boolean isOnePending() throws ManagerBeanException{
 		for (ITransferObject ito : (List<ITransferObject>)getModel().getWrappedData()) {
 			Finance finance = (Finance)ito;
-			if (FinanceStatus.PENDING == finance.getFinanceStatus()) {
+			if (finance.isPending()) {
 				return true;
 			}
 		}

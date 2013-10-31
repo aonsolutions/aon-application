@@ -17,7 +17,6 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
@@ -114,7 +113,7 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	}
 
 	private void removeFractionTracking(Finance finance) throws ManagerBeanVetoListenerException {
-		if (finance.getFinanceStatus() == FinanceStatus.PENDING) {
+		if (finance.isPending()) {
 			try {
 				IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 				Criteria criteria = new Criteria();

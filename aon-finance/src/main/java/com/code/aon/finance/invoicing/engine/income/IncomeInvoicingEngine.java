@@ -58,7 +58,7 @@ public class IncomeInvoicingEngine implements IInvoicingEngine {
 		for (Income income : incomeList) {
 			boolean lastIncome = (incomeList.indexOf(income) == (incomeList.size() - 1));
 			createInvoiceDetails(invoice, income, lastIncome);
-			getInvoicingDAO().updateSource(income);
+			getInvoicingDAO().updateSource(income, null);
 		}
 	}
 

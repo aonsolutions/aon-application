@@ -271,7 +271,6 @@ public class FBatchController extends BasicController implements ICollectionProv
     }
 
 	public void onBatchSelected(ActionEvent event) {
-		
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Finance.class.getName());
@@ -297,7 +296,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	        while (iterator.hasNext()) {
 	        	i++;
 				Finance finance = (Finance)financeBean.get(iterator.next().getId());
-				if (finance.getFinanceStatus() == FinanceStatus.PENDING || finance.getFinanceStatus() == FinanceStatus.RETURNED) {
+				if (finance.isPending() || finance.isReturned()) {
 		            FinanceBatchDetail fBatchDetail = new FinanceBatchDetail();
 					fBatchDetail.setFinance(finance);
 					fBatchDetail.setFinanceBatch(fBatch);
@@ -329,7 +328,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 	        loadDetails();
 	        onSearchFinance(event);
 		}
-		
 	}
 
 	public void onRemoveSelected(ActionEvent event) {

@@ -17,10 +17,13 @@ import com.code.aon.config.IPayMethod;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.Prepayment;
 import com.code.aon.finance.enumeration.BillingPeriod;
+import com.code.aon.finance.enumeration.PrepaymentCollect;
 import com.code.aon.finance.invoicing.engine.IInvoicingDAO;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
@@ -79,11 +82,25 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 		}
 	}
 	
-	public void updateSource(ITransferObject to) {
+	public void updateSource(ITransferObject to, InvoiceDetail invoiceDetail) {
 		CustomerFee customerFee = (CustomerFee)to;
 		try {
 			if (customerFee.getPeriod().equals(BillingPeriod.NO_PERIOD)) {
 				BeanManager.getManagerBean(CustomerFee.class).remove(customerFee);
+
+				if (customerFee.getItem().getProduct().getType() == ProductType.PREPAYMENT) {
+					IManagerBean prepaymentBean = BeanManager.getManagerBean(Prepayment.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(prepaymentBean.getFieldName(IEntityAlias.PREPAYMENT_COLLECT), PrepaymentCollect.FEE);
+					criteria.addEqualExpression(prepaymentBean.getFieldName(IEntityAlias.PREPAYMENT_COLLECT_ID), customerFee.getId());
+					for (ITransferObject ito : prepaymentBean.getList(criteria)) {
+						Prepayment prepayment = (Prepayment)ito;
+						prepayment.setCollect(PrepaymentCollect.INVOICE_DETAIL);
+						prepayment.setCollectId(invoiceDetail.getId());
+						prepaymentBean.update(prepayment);
+						break;
+					}
+				}
 			} else {
 				Calendar billingCalendar = new GregorianCalendar();
 				billingCalendar.setTime(customerFee.getBillingDate());

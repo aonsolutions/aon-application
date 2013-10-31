@@ -50,7 +50,7 @@ public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {
 		}
 	}
 	
-	public void updateSource(ITransferObject to) {
+	public void updateSource(ITransferObject to, InvoiceDetail invoiceDetail) {
 	}
 	
 	public void createFinances(Invoice invoice, IPayMethod payMethod) {

@@ -24,7 +24,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.config.Scope;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
@@ -35,11 +34,12 @@ import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CustomerFeeController extends LinesController {
+public class CustomerFeeController extends LinesController implements IFinanceConstants {
 
 	private boolean longDescription;
 	private IPriceStrategy priceStrategy;
@@ -146,19 +146,15 @@ public class CustomerFeeController extends LinesController {
 
 	public boolean isInvoicingGroupInMyScopes() {
 		CustomerFee fee = (CustomerFee)getTo();
-		return isScopeInMyScopes(fee.getInvoicingGroup().getCustomer().getScope());
+		return UserUtils.getInstance().isScopeInUserScopes(fee.getInvoicingGroup().getCustomer().getScope());
 	}
 
 	public boolean isModelInvoicingGroupInMyScopes() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			CustomerFee fee = (CustomerFee)getModel().getRowData();
-			return isScopeInMyScopes(fee.getInvoicingGroup().getCustomer().getScope());
+			return UserUtils.getInstance().isScopeInUserScopes(fee.getInvoicingGroup().getCustomer().getScope());
 		}
 		return false;
-	}
-
-	private boolean isScopeInMyScopes(Scope scope) {
-		return UserUtils.getInstance().getCurrentUserScopes().contains(scope);
 	}
 
 	public void removeProject(ActionEvent event) throws ManagerBeanException {
@@ -184,6 +180,14 @@ public class CustomerFeeController extends LinesController {
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		noFeeCustomersList = query.list();
+	}
+
+	public void onLoadPrepayment(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			CustomerFee fee = (CustomerFee)getModel().getRowData();
+			BasicController prepaymentController = (BasicController)AonUtil.getRegisteredBean(PREPAYMENT_CONTROLLER_NAME);
+			prepaymentController.onLoad(event, fee.getPrepaymentId(), CUSTOMER_FORM_NAME, CUSTOMER_FEE_CONTROLLER_NAME + ".onSearch");
+		}
 	}
 
 }

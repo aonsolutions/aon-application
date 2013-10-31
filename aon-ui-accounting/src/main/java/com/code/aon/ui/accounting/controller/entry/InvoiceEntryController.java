@@ -725,10 +725,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	public void onSelectFinance(ActionEvent event) {
 		Finance finance = (Finance) finances.getRowData();
-		if (finance.getFinanceStatus() == FinanceStatus.PAID ||
-			finance.getFinanceStatus() == FinanceStatus.BATCHED ||
-			finance.getFinanceStatus() == FinanceStatus.SETTLED ) {
-
+		if (finance.isPaid() || finance.isBatched() || finance.isSettled()) {
 			String msg = "No se puede modificar un vencimiento no pendiente.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);

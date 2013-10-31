@@ -26,6 +26,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.audit.IAuditable;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
@@ -223,6 +224,15 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	}
 
 	@Transient
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+	@Transient
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+	}
+
+	@Transient
 	public IAddress getAddress() {
 		for (IAddress iAddress : getAddresses()) {
 			return iAddress;
@@ -341,7 +351,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		List<ITransferObject> financeList = financeBean.getList(criteria);
 		for (ITransferObject ito : financeList) {
 			Finance finance = (Finance)ito;
-			if (FinanceStatus.PAID != finance.getFinanceStatus() && FinanceStatus.SETTLED != finance.getFinanceStatus()) {
+			if (!finance.isPaid() && !finance.isSettled()) {
 				return FinanceStatus.PENDING;
 			}
 		}
@@ -355,7 +365,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getId());
 		for (ITransferObject ito : financeBean.getList(criteria)) {
 			Finance finance = (Finance)ito;
-			if (FinanceStatus.PENDING != finance.getFinanceStatus()) {
+			if (!finance.isPending()) {
 				return false;
 			}
 		}

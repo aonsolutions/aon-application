@@ -18,5 +18,5 @@ public interface IInvoicingDAO {
 	
 	public Collection<Invoice> getCollection();
 	
-	public void updateSource(ITransferObject to);
+	public void updateSource(ITransferObject to, InvoiceDetail invoiceDetail);
 }

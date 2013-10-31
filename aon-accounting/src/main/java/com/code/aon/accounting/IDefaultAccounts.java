@@ -22,6 +22,7 @@ public interface IDefaultAccounts {
 	public static final String FINANCIAL_EXPENSES_ACCOUNT = "ACC_DEFAULT_FINAN_EXPENSES_ACC";
 	public static final String ASSET_LOST_ACCOUNT = "ACC_DEFAULT_ASSET_LOST_ACC";
 	public static final String ASSET_PROFIT_ACCOUNT = "ACC_DEFAULT_ASSET_PROFIT_ACC";
+	public static final String PREPAYMENT_ACCOUNT = "ACC_DEFAULT_PREPAYMENT_ACC";
 
 	public static final String DEFAULT_VAT_PERCENT = "ACC_DEFAULT_VAT_PERCENT";
 	public static final String DEFAULT_SURCHARGE_PERCENT = "ACC_DEFAULT_SURCHARGE_PERCENT";

@@ -49,6 +49,7 @@ public class AccountEntryInvoiceWriter {
 
 	private Account salesDefaultAccount;
 	private Account purchaseDefaultAccount;
+	private Account prepaymentDefaultAccount;
 
 	private IPriceStrategy priceStrategy;
 	private AccountBridgeUtil accountBridgeUtil;
@@ -239,6 +240,9 @@ public class AccountEntryInvoiceWriter {
 					throw new ManagerBeanException("El gasto \"" + invoiceDetail.getDescription() + "\" no tiene cuenta contable asociada.");
 				}
 			}
+			if (invoiceDetail.isPrepayment()) {
+				account = obtainPrepaymentDefaultAccount();
+			}
 			if (account == null) {
 				account = (invoice.isSales()) ? obtainSalesDefaultAccount() : obtainPurchaseDefaultAccount();
 			}
@@ -334,6 +338,23 @@ public class AccountEntryInvoiceWriter {
 		return salesDefaultAccount;
 	}
 	
+	private Account obtainPurchaseDefaultAccount() throws ManagerBeanException {
+		if (purchaseDefaultAccount == null) {
+			purchaseDefaultAccount = obtainDefaultAccount(IDefaultAccounts.PURCHASE_ACCOUNT);
+		}
+		if (purchaseDefaultAccount == null) {
+			throw new ManagerBeanException("Revise el valor de la cuenta contable de compras en los Parámetros Contables.");
+		}
+		return purchaseDefaultAccount;
+	}
+
+	private Account obtainPrepaymentDefaultAccount() throws ManagerBeanException {
+		if (prepaymentDefaultAccount == null) {
+			prepaymentDefaultAccount = obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
+		}
+		return prepaymentDefaultAccount;
+	}
+
 	private Account obtainDefaultAccount(String paramName) throws ManagerBeanException {
 		IManagerBean appParamsBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
@@ -350,16 +371,6 @@ public class AccountEntryInvoiceWriter {
 			}
 		}
 		return null;
-	}
-
-	private Account obtainPurchaseDefaultAccount() throws ManagerBeanException {
-		if (purchaseDefaultAccount == null) {
-			purchaseDefaultAccount = obtainDefaultAccount(IDefaultAccounts.PURCHASE_ACCOUNT);
-		}
-		if (purchaseDefaultAccount == null) {
-			throw new ManagerBeanException("Revise el valor de la cuenta contable de compras en los Parámetros Contables.");
-		}
-		return purchaseDefaultAccount;
 	}
 
 	public String obtainConcept(String prefix, Invoice invoice) {

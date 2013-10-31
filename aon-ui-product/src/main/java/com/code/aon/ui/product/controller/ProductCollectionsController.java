@@ -157,20 +157,28 @@ public class ProductCollectionsController {
 	}
 
 	public List<SelectItem> getExpenseItems() throws ManagerBeanException {
-		List<SelectItem> expenseItems = new LinkedList<SelectItem>();
+		return getItemsByType(ProductType.EXPENSE);
+	}
+
+	public List<SelectItem> getPrepaymentItems() throws ManagerBeanException {
+		return getItemsByType(ProductType.PREPAYMENT);
+	}
+
+	private List<SelectItem> getItemsByType(ProductType type) throws ManagerBeanException {
+		List<SelectItem> items = new LinkedList<SelectItem>();
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_TYPE), ProductType.EXPENSE);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_TYPE), type);
 		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
 		for (ITransferObject ito : itemBean.getList(criteria)) {
 			Item item = (Item)ito;
 			SelectItem selectItem = new SelectItem(item, item.getProduct().getName());
-			expenseItems.add(selectItem);
+			items.add(selectItem);
 		}
-		return expenseItems;
+		return items;
 	}
 
-    public List<String> getAddInfoAttributes() throws ManagerBeanException{
+	public List<String> getAddInfoAttributes() throws ManagerBeanException{
     	List<String> addInfos = new LinkedList<String>();
     	IManagerBean addInfoBean = BeanManager.getManagerBean(ItemAddInfo.class);
     	Criteria criteria = new Criteria();

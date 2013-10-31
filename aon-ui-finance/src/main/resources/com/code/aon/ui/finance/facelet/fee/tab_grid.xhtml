@@ -20,13 +20,20 @@
 				id="customerFee-edit"
 				styleClass="aon-editDataTable-button aon-table-row-link"
 				title="#{bundle.aon_edit}"
-				rendered="#{to.invoicingGroup.id == null or controller.modelInvoicingGroupInMyScopes}" 
+				rendered="#{(to.invoicingGroup.id == null or controller.modelInvoicingGroupInMyScopes) and !to.prepaymentFee}" 
 				actionListener="#{controller.onSelect}"
 				reRender="showNewFeeWindow"
 				focus="Item_id">
 				<f:setPropertyActionListener target="#{customer.showNewFeeWindow}" 
 					value="#{true}" />
 			</aon:commandButton>
+			<aon:commandLink id="customerFee_prepayment_link" immediate="true"
+				styleClass="aon-button-goto" style="padding-right: 12px;"
+				value="&#160;" title="#{bundle.aon_go}"
+				rendered="#{(to.invoicingGroup.id == null or controller.modelInvoicingGroupInMyScopes) and to.prepaymentFee}" 
+				actionListener="#{controller.onLoadPrepayment}"
+				action="prepayment_form"
+				reRender="aonContent" />
 		</ui:define>
 		<ui:define name="beginFooterContent">
 			<aon:commandButton

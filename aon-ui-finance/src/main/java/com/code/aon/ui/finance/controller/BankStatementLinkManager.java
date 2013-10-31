@@ -337,13 +337,13 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		statementLink.setSourceId(0);
 		statementLink.setSourceDate(statement.getOperationDate());
 		statementLink.setAmount(finance.getTotalAmount());
-		if (finance.getFinanceStatus() == FinanceStatus.PAID) {
+		if (finance.isPaid()) {
 			statementLink.setStatus(StatementLinkStatus.PAID);
-		} else if (finance.getFinanceStatus() == FinanceStatus.PENDING) {
+		} else if (finance.isPending()) {
 			statementLink.setStatus(StatementLinkStatus.PENDING);
-		} else if (finance.getFinanceStatus() == FinanceStatus.RETURNED) {
+		} else if (finance.isReturned()) {
 			statementLink.setStatus(StatementLinkStatus.RETURNED);
-		} else if (finance.getFinanceStatus() == FinanceStatus.SETTLED) {
+		} else if (finance.isSettled()) {
 			statementLink.setStatus(StatementLinkStatus.SETTLED);
 
 			FinanceTrackingWriter.removeLastTrackingByType(finance, FinanceTrackingType.SETTLED);
@@ -356,7 +356,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		financeBean.update(finance);
 
 		String message = AonUtil.getMessage(ICommonMessages.PENDING);
-		FinanceTrackingType type = (finance.getFinanceStatus() == FinanceStatus.PAID) ? FinanceTrackingType.PAID : FinanceTrackingType.RETURNED;
+		FinanceTrackingType type = (finance.isPaid()) ? FinanceTrackingType.PAID : FinanceTrackingType.RETURNED;
 		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, statement.getOperationDate(), type, message, 
 									statement.getRegistryBank(), null, finance.getTotalAmount(), false, statementLink);
 		if (type == FinanceTrackingType.RETURNED) {

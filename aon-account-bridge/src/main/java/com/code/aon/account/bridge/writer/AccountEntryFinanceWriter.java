@@ -14,6 +14,7 @@ import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -151,9 +152,16 @@ public class AccountEntryFinanceWriter {
 		if (!fbatchDetail.getFinance().isPayment()) {
 			registryAccount = getAccountBridgeUtil().obtainCustomerAccount(fbatchDetail.getFinance().getRegistry());
 		} else {
-			registryAccount = getAccountBridgeUtil().obtainSupplierAccount(fbatchDetail.getFinance().getRegistry());
-			if (registryAccount == null) {
-				registryAccount = getAccountBridgeUtil().obtainCreditorAccount(fbatchDetail.getFinance().getRegistry());
+			if (!fbatchDetail.getFinance().isPrepayment()) {
+				registryAccount = getAccountBridgeUtil().obtainSupplierAccount(fbatchDetail.getFinance().getRegistry());
+				if (registryAccount == null) {
+					registryAccount = getAccountBridgeUtil().obtainCreditorAccount(fbatchDetail.getFinance().getRegistry());
+				}
+			} else {
+				registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
+				if (registryAccount == null) {
+					registryAccount = getAccountBridgeUtil().obtainCreditorAccount(fbatchDetail.getFinance().getRegistry());
+				}
 			}
 		}
 
@@ -278,9 +286,16 @@ public class AccountEntryFinanceWriter {
 			if (!finance.isPayment()) {
 				registryAccount = getAccountBridgeUtil().obtainCustomerAccount(finance.getRegistry());
 			} else {
-				registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
-				if (registryAccount == null) {
-					registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
+				if (!finance.isPrepayment()) {
+					registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
+					if (registryAccount == null) {
+						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
+					}
+				} else {
+					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
+					if (registryAccount == null) {
+						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
+					}
 				}
 			}
 			concept = obtainConcept(finance, finance.getTotalAmount(), null);
@@ -373,9 +388,16 @@ public class AccountEntryFinanceWriter {
 			if (!finance.isPayment()) {
 				registryAccount = getAccountBridgeUtil().obtainCustomerAccount(finance.getRegistry());
 			} else {
-				registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
-				if (registryAccount == null) {
-					registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
+				if (!finance.isPrepayment()) {
+					registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
+					if (registryAccount == null) {
+						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
+					}
+				} else {
+					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
+					if (registryAccount == null) {
+						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
+					}
 				}
 			}
 			concept = obtainReturnConcept(finance);
@@ -485,9 +507,16 @@ public class AccountEntryFinanceWriter {
 			if (!tracking.getFinance().isPayment()) {
 				registryAccount = getAccountBridgeUtil().obtainCustomerAccount(tracking.getFinance().getRegistry());
 			} else {
-				registryAccount = getAccountBridgeUtil().obtainSupplierAccount(tracking.getFinance().getRegistry());
-				if (registryAccount == null) {
-					registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
+				if (!tracking.getFinance().isPrepayment()) {
+					registryAccount = getAccountBridgeUtil().obtainSupplierAccount(tracking.getFinance().getRegistry());
+					if (registryAccount == null) {
+						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
+					}
+				} else {
+					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
+					if (registryAccount == null) {
+						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
+					}
 				}
 			}
 			concept = obtainConcept(tracking.getFinance(), tracking.getAmount(), null);
@@ -556,9 +585,16 @@ public class AccountEntryFinanceWriter {
 			if (!tracking.getFinance().isPayment()) {
 				registryAccount = getAccountBridgeUtil().obtainCustomerAccount(tracking.getFinance().getRegistry());
 			} else {
-				registryAccount = getAccountBridgeUtil().obtainSupplierAccount(tracking.getFinance().getRegistry());
-				if (registryAccount == null) {
-					registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
+				if (!tracking.getFinance().isPrepayment()) {
+					registryAccount = getAccountBridgeUtil().obtainSupplierAccount(tracking.getFinance().getRegistry());
+					if (registryAccount == null) {
+						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
+					}
+				} else {
+					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
+					if (registryAccount == null) {
+						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
+					}
 				}
 			}
 			concept = obtainReturnConcept(tracking.getFinance());

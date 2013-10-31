@@ -25,7 +25,6 @@ import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
@@ -349,14 +348,14 @@ public class A3Writer extends BasicExporter {
 	private String getEstado( Finance finance ) {
 		String estado = "P";
 		if ( finance.isPayment() ) {
-			if ( finance.getFinanceStatus() == FinanceStatus.RETURNED ) {
+			if ( finance.isReturned() ) {
 				estado = "D";
-			} else if ( finance.getFinanceStatus() == FinanceStatus.PAID ) {
+			} else if ( finance.isPaid() ) {
 				estado = "C";
 			}
 			
 		} else {
-			if ( finance.getFinanceStatus() == FinanceStatus.PAID ) {
+			if ( finance.isPaid() ) {
 				estado = "G";
 			}
 		}

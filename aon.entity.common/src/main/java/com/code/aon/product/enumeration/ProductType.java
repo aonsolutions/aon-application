@@ -38,9 +38,14 @@ public enum ProductType implements IResourceable {
     /**
      * Expense
      */
-	EXPENSE;
+	EXPENSE,
    
     /**
+     * Prepayment
+     */
+	PREPAYMENT;
+
+	/**
      * Message key prefix. 
      */
     private static final String MSG_KEY_PREFIX = "aon_enum_product_type_";

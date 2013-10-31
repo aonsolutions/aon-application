@@ -1075,6 +1075,10 @@
 		<column name="remarks" type="text"/>
 	</table>
 		
+	<table name="prepayment">
+		<column name="collect" type="com.code.aon.finance.enumeration.PrepaymentCollect"/>
+	</table>
+
 	<table name="process_detail">
 		<column name="date_reference" type="com.code.aon.groupware.enumeration.DateReference"/>
 		<column name="priority" type="com.code.aon.groupware.enumeration.Priority"/>

@@ -223,6 +223,11 @@
 		<hibernate names="id,domain,posShift.id,payMethod.id,payMethod.name,payMethod.type,amount"/>
 	</bean> 
 
+	<bean class="com.code.aon.finance.Prepayment" sqlName="prepayment">
+		<alias names="id,domain,creditor_id,customer_id,finance_id,collect,collectId,finance_concept,finance_dueDate,finance_financeStatus" />
+		<hibernate names="id,domain,creditor.id,customer.id,finance.id,collect,collectId,finance.concept,finance.dueDate,finance.financeStatus" />
+	</bean>
+
 	<!-- ** AON FISCAL  **************************************************** -->
 	<bean class="com.code.aon.fiscal.VatTaxDetail">
 		<alias names="deductibleQuota,deductibleQuotaAdjust,id,key,percent,quota,quotaAdjust,taxableBase,taxableBaseAdjust,vatTax_id,vatTax_period,vatTax_status,vatTax_type,vatTax_year,vatTax_securityLevel"/>

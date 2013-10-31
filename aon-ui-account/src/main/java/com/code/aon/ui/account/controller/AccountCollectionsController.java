@@ -385,6 +385,21 @@ public class AccountCollectionsController {
 		return getAssetProfitAccounts(false);
 	}
 	
+	private List<SelectItem> getPrepaymentAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "55*");
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getPrepaymentAccounts() throws ManagerBeanException, ExpressionException {
+		return getPrepaymentAccounts(true);
+	}
+	public List<SelectItem> getPrepaymentAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getPrepaymentAccounts(false);
+	}
+	
 	public List<SelectItem> getCostCenters() {
 		 try {
 			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);

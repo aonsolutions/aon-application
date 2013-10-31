@@ -20,6 +20,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryDocument;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -75,7 +76,28 @@ public class Finance extends FinanceDB implements IBankAccountContainer, IScopab
 	public boolean isRegistryDocumentValidable() {
 		return getRegistryFullDocument().isValidable();
 	}
-	
+
+	@Transient
+	public boolean isPending() {
+		return FinanceStatus.PENDING == getFinanceStatus();
+	}
+	@Transient
+	public boolean isBatched() {
+		return FinanceStatus.BATCHED == getFinanceStatus();
+	}
+	@Transient
+	public boolean isReturned() {
+		return FinanceStatus.RETURNED == getFinanceStatus();
+	}
+	@Transient
+	public boolean isPaid() {
+		return FinanceStatus.PAID == getFinanceStatus();
+	}
+	@Transient
+	public boolean isSettled() {
+		return FinanceStatus.SETTLED == getFinanceStatus();
+	}
+
 	@Transient
 	public boolean isConfidential() {
 		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();

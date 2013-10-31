@@ -4,13 +4,16 @@ import java.util.Date;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.Prepayment;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.finance.enumeration.InvoiceSource;
+import com.code.aon.finance.enumeration.PrepaymentCollect;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -47,7 +50,24 @@ public class FeeInvoiceDetailRemover implements IInvoiceDetailRemover {
 			customerFee.setWorkPlace(invoiceDetail.getWorkPlace());
 
 			IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
-			customerFeeBean.insert(customerFee);
+			customerFee = (CustomerFee)customerFeeBean.insert(customerFee);
+
+			if (invoiceDetail.isPrepayment()) {
+				IManagerBean prepaymentBean = BeanManager.getManagerBean(Prepayment.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(prepaymentBean.getFieldName(IEntityAlias.PREPAYMENT_COLLECT), PrepaymentCollect.INVOICE_DETAIL);
+				criteria.addEqualExpression(prepaymentBean.getFieldName(IEntityAlias.PREPAYMENT_COLLECT_ID), invoiceDetail.getId());
+				for (ITransferObject ito : prepaymentBean.getList(criteria)) {
+					Prepayment prepayment = (Prepayment)ito;
+					if (prepayment.getCustomer().getId() != customer.getId()) {
+						prepayment.setCustomer(customer);
+					}
+					prepayment.setCollect(PrepaymentCollect.FEE);
+					prepayment.setCollectId(customerFee.getId());
+					prepaymentBean.update(prepayment);
+					break;
+				}
+			}
 		} catch (ManagerBeanException e) {
 			throw new InvoicingException(e.getMessage(),e);
 		}

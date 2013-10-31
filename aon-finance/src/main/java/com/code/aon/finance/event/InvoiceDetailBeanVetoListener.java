@@ -15,6 +15,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.enumeration.InvoiceSource;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -26,11 +27,14 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
-		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null && invoiceDetail.getItem().getProduct().isInventoriable()) {
-			try {
-				invoiceDetail.setWarehouse(obtainWarehouse(invoiceDetail.getInvoice(), invoiceDetail.getSource(), invoiceDetail.getWorkPlace()));
-			} catch (ManagerBeanException e) {
-				LOGGER.error("Error obtaining warehouse for invoiceDetail with id= " + invoiceDetail.getId(), e);
+		if (invoiceDetail.getItem() != null && invoiceDetail.getItem().getId() != null) {
+			invoiceDetail.setPrepayment(invoiceDetail.getItem().getProduct().getType() == ProductType.PREPAYMENT);
+			if (invoiceDetail.getItem().getProduct().isInventoriable()) {
+				try {
+					invoiceDetail.setWarehouse(obtainWarehouse(invoiceDetail.getInvoice(), invoiceDetail.getSource(), invoiceDetail.getWorkPlace()));
+				} catch (ManagerBeanException e) {
+					LOGGER.error("Error obtaining warehouse for invoiceDetail with id= " + invoiceDetail.getId(), e);
+				}
 			}
 		}
 	}
@@ -39,6 +43,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
 		if (invoiceDetail.isUpdateEnabled() && invoiceDetail.getItem() != null) {
+			invoiceDetail.setPrepayment(invoiceDetail.getItem().getProduct().getType() == ProductType.PREPAYMENT);
 			try {
 				removeInvoiceTax(invoiceDetail);
 			} catch (ManagerBeanException e) {

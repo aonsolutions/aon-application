@@ -22,6 +22,7 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.PosDisplayMode;
+import com.code.aon.finance.enumeration.PrepaymentCollect;
 import com.code.aon.finance.enumeration.Shift;
 import com.code.aon.finance.enumeration.StatementConcept;
 import com.code.aon.finance.enumeration.StatementStatus;
@@ -46,6 +47,7 @@ public class FinanceCollectionsController {
 	private List<SelectItem> statementStatuses;
 	private List<SelectItem> posDisplayModes;
 	private List<SelectItem> shifts;
+	private List<SelectItem> prepaymentCollects;
 	private List<SelectItem> invoiceExportTypes;
 
 	public List<SelectItem> getBillingPeriods() {
@@ -255,6 +257,18 @@ public class FinanceCollectionsController {
 			}
 		}
 		return shifts;
+	}
+
+	public List<SelectItem> getPrepaymentCollects() {
+		if (prepaymentCollects == null) {
+			Locale locale = AonUtil.getCurrentLocale();
+			prepaymentCollects = new LinkedList<SelectItem>();
+			for (PrepaymentCollect prepaymentCollect : PrepaymentCollect.values()) {
+				SelectItem item = new SelectItem(prepaymentCollect, prepaymentCollect.getName(locale));
+				prepaymentCollects.add(item);
+			}
+		}
+		return prepaymentCollects;
 	}
 
 	public List<SelectItem> getInvoiceExportTypes() {

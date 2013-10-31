@@ -378,15 +378,15 @@ public class FinanceController extends FinanceListController {
 	}
 	
 	public boolean isPending() {
-    	return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.PENDING);
+    	return ((Finance)this.getTo()).isPending();
     }
     
     public boolean isReturned(){
-    	return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.RETURNED);
+    	return ((Finance)this.getTo()).isReturned();
     }
 
     public boolean isPaid(){
-    	return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.PAID);
+    	return ((Finance)this.getTo()).isPaid();
     }
     
     public boolean isGrouped(){

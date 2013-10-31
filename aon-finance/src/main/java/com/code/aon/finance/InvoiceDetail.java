@@ -14,6 +14,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.enumeration.InvoiceSource;
+import com.code.aon.finance.enumeration.PrepaymentCollect;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.purchase.PurchaseDetail;
@@ -215,6 +216,35 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 	@Transient
 	public boolean isOfferSource() {
 		return (getSource() == InvoiceSource.OFFER);
+	}
+	@Transient
+	public boolean isFeeSource() {
+		return (getSource() == InvoiceSource.FEE);
+	}
+	@Transient
+	public boolean isPrepaymentSource() throws ManagerBeanException {
+		if (isFeeSource() && isPrepayment()) {
+			IManagerBean prepaymentBean = BeanManager.getManagerBean(Prepayment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(prepaymentBean.getFieldName(IEntityAlias.PREPAYMENT_COLLECT), PrepaymentCollect.INVOICE_DETAIL);
+			criteria.addEqualExpression(prepaymentBean.getFieldName(IEntityAlias.PREPAYMENT_COLLECT_ID), getId());
+			return prepaymentBean.getCount(criteria) > 0;
+		}
+		return false;
+	}
+
+	@Transient
+	public Integer getPrepaymentId() throws ManagerBeanException {
+		if (isFeeSource() && isPrepayment()) {
+			IManagerBean prepaymentBean = BeanManager.getManagerBean(Prepayment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(prepaymentBean.getFieldName(IEntityAlias.PREPAYMENT_COLLECT), PrepaymentCollect.INVOICE_DETAIL);
+			criteria.addEqualExpression(prepaymentBean.getFieldName(IEntityAlias.PREPAYMENT_COLLECT_ID), getId());
+			for (ITransferObject ito : prepaymentBean.getList(criteria)) {
+				return ((Prepayment)ito).getId();
+			}
+		}
+		return null;
 	}
 
 	@Transient

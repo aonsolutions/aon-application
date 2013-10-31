@@ -153,7 +153,7 @@
 							value="#{finance.to.concept}" 
 							onblur="toUpperCase(this);"
 							rendered="#{finance.to.emptyInvoice and finance.pending}"
-							required="true" size="45" maxlength="25" />
+							required="true" size="45" maxlength="32" />
 						<aon:outputText styleClass="aon-bold"
 							value="#{finance.to.documentNumber}"
 							rendered="#{!finance.to.emptyInvoice or !finance.pending}" />
@@ -234,7 +234,7 @@
 					<aon:panelGroup id="Finance_amount-Panel">
 						<aon:inputText id="Finance_amount"
 							value="#{finance.to.amount}"
-							disabled="#{!finance.to.emptyInvoice or (!finance.pending and !finance.returned) or finance.financeGroup}"
+							disabled="#{!finance.to.emptyInvoice or (!finance.pending and !finance.returned) or finance.financeGroup or finance.to.prepayment}"
 							required="true" size="10"
 							ajaxSingle="true" reRender="Finance_total" />
 						<aon:commandLink id="Finance_financeGroup_button"
@@ -304,7 +304,7 @@
 						value="#{bundle.aon_expenses}" />
 					<aon:inputText id="Finance_expenses"
 						value="#{finance.to.expenses}"
-						disabled="#{!finance.pending and !finance.returned}"
+						disabled="#{(!finance.pending and !finance.returned) or finance.to.prepayment}"
 						required="true" size="10"
 						ajaxSingle="true" reRender="Finance_total" />
 

@@ -10,7 +10,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
@@ -61,7 +60,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 			for (ITransferObject ito : financeBean.getList(criteria)) {
 				Finance finance = (Finance)ito;
 				finance.setRegistry(invoice.getRegistry());
-				if (finance.getFinanceStatus() == FinanceStatus.PENDING || finance.getFinanceStatus() == FinanceStatus.RETURNED) {
+				if (finance.isPending() || finance.isReturned()) {
 					finance.setRegistryName(invoice.getRegistryName());
 					finance.setRegistryDocument(invoice.getRegistryDocument());
 					finance.setRegistryDocumentType(invoice.getRegistryDocumentType());
