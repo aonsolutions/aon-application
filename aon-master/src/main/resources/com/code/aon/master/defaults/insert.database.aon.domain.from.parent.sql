@@ -28,6 +28,7 @@ INSERT INTO `app_param` (`domain`,`name`,`value`) VALUES
   (@Domain,'ACC_DEFAULT_SALARY_ACC',(SELECT `id` FROM `account` WHERE `domain` = @Domain AND `code` = '640000000')),
   (@Domain,'ACC_DEFAULT_SALES_ACC',(SELECT `id` FROM `account` WHERE `domain` = @Domain AND `code` = '700000000')),
   (@Domain,'ACC_DEFAULT_SOCIAL_INSURANCE_ACC',(SELECT `id` FROM `account` WHERE `domain` = @Domain AND `code` = '476000000')),
+  (@Domain,'ACC_DEFAULT_PREPAYMENT_ACC',(SELECT `id` FROM `account` WHERE `domain` = @Domain AND `code` = '555900000')),
   (@Domain,'APP_PRINT_HEADER_PARAM','false'),
   (@Domain,'APP_PRINT_RECORD_DATA_PARAM','false');
 

@@ -561,6 +561,8 @@ INSERT INTO `account` (`domain`,`code`,`description`,`alias`,`entryEnabled`,`lev
 	(@Domain,'5540','Cuenta corriente con uniones temporales de empresas y comunidades de bienes.',NULL,0,4),
 	(@Domain,'555','Partidas pendientes de aplicación.',NULL,0,3),
 	(@Domain,'5550','Partidas pendientes de aplicación.',NULL,0,4),
+	(@Domain,'5559','Suplidos y pagos a cuenta.',NULL,0,4),
+	(@Domain,'555900000','Suplidos y pagos a cuenta.',NULL,1,5),
 	(@Domain,'556','Desembolsos exigidos sobre participaciones en el patrimonio neto.',NULL,0,3),
 	(@Domain,'5560','Desembolsos exigidos sobre participaciones en el patrimonio neto.',NULL,0,4),
 	(@Domain,'557','Dividendo activo a cuenta.',NULL,0,3),

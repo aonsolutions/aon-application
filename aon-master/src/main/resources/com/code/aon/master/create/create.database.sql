@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.23.0
+# Version: 7.24.0
 # Created by: girazu
-# Creation Date: 07/10/2013 18:50
+# Creation Date: 31/10/2013 16:40
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -37,6 +37,7 @@ CREATE TABLE `domain` (
   `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   `expirationDate` date default NULL COMMENT 'Fecha de Expiracion del Dominio',
   PRIMARY KEY  (`id`),
+  UNIQUE KEY `IDX_UNQ_DOMAIN_NAME` (`name`),
   KEY `IDX_DOMAIN_PARENT` (`parent`),
   CONSTRAINT `FK_DOMAIN_PARENT` FOREIGN KEY (`parent`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dominios';
@@ -888,6 +889,7 @@ CREATE TABLE `finance` (
   `scope` int(4) NOT NULL default '1' COMMENT 'Ambito del Vencimiento',
   `advance` tinyint(1) default '0' COMMENT 'Indica si el Vencimiento es un anticipo',
   `payroll` tinyint(1) default '0' COMMENT 'Indica si el Vencimiento es de Nominas',
+  `prepayment` tinyint(1) default '0' COMMENT 'Indica si el Vencimiento es un Suplido',
   `finance_group` int(4) default NULL COMMENT 'Identificador unico del Vencimiento agrupador',
   PRIMARY KEY  (`id`),
   KEY `IDX_FINANCE_SCOPE` (`scope`),
@@ -1056,6 +1058,7 @@ CREATE TABLE `user` (
   `linesPageLimit` int(4) default NULL COMMENT 'Limite de filas en pantalla en lineas del Usuario',
   `initAction` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Nombre la acicón de inicio del Usuario',
   PRIMARY KEY  (`id`),
+  UNIQUE KEY `IDX_UNQ_USER_DOMAIN_LOGIN` (`domain`,`login`),
   KEY `IDX_USER_ENTERPRISE` (`enterprise`),
   KEY `IDX_USER_REGISTRY` (`registry`),
   KEY `IDX_USER_DOMAIN` (`domain`),
@@ -1495,6 +1498,7 @@ CREATE TABLE `domain_application` (
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si la Aplicacion del Dominio esta activa o no',
   `audit_level` tinyint(2) NOT NULL default '0' COMMENT 'Nivel de auditoria',
   PRIMARY KEY  (`id`),
+  UNIQUE KEY `IDX_UNQ_DOMAIN_APPLICATION` (`domain`,`application`),
   KEY `IDX_APPLICATION_DOMAIN` (`domain`),
   KEY `IDX_DOMAIN_APPLICATION_APPLICATION` (`application`),
   CONSTRAINT `FK_APPLICATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
@@ -2606,6 +2610,7 @@ CREATE TABLE `company` (
   `withholding` tinyint(1) default '0' COMMENT 'Indica si la Compañia aplica retencion de impuestos',
   `e_invoice` tinyint(1) default '0' COMMENT 'Indica si la Compañia desea emitir Facturas electronicas',
   PRIMARY KEY  (`registry`),
+  UNIQUE KEY `IDX_UNQ_COMPANY_DOMAIN` (`domain`),
   KEY `IDX_COMPANY_DOMAIN` (`domain`),
   CONSTRAINT `FK_COMPANY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_COMPANY_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
@@ -4560,6 +4565,7 @@ CREATE TABLE `invoice_detail` (
   `source_id` int(4) default NULL COMMENT 'Identificador del Origen del Detalle de la Factura',
   `taxable_base` double(15,4) default '0.0000' COMMENT 'Base Imponible del Detalle de Factura',
   `taxes` double(15,3) default '0.000' COMMENT 'Tasas del Detalle de Factura',
+  `prepayment` tinyint(1) default '0' COMMENT 'Indica si el Detalle de Factura es un Suplido',
   `seller` int(4) default NULL COMMENT 'Identificador de Agente Comercial',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
   `warehouse` int(4) default NULL COMMENT 'Identificador del Almacen',
@@ -5535,6 +5541,29 @@ CREATE TABLE `pos_shift_count` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Arqueo del TPV';
 
 #
+# Structure for the `prepayment` table : 
+#
+
+CREATE TABLE `prepayment` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `creditor` int(4) NOT NULL COMMENT 'Identificador del Acreedor',
+  `customer` int(4) NOT NULL COMMENT 'Identificador del Cliente',
+  `finance` int(4) NOT NULL COMMENT 'Identificador del Vencimiento',
+  `collect` tinyint(2) default '0' COMMENT 'Localizacion del cobro del Suplido',
+  `collect_id` int(4) default NULL COMMENT 'Identificador del cobro del Suplido',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_PREPAYMENT_DOMAIN` (`domain`),
+  KEY `IDX_PREPAYMENT_CREDITOR` (`creditor`),
+  KEY `IDX_PREPAYMENT_CUSTOMER` (`customer`),
+  KEY `IDX_PREPAYMENT_FINANCE` (`finance`),
+  CONSTRAINT `FK_PREPAYMENT_CREDITOR` FOREIGN KEY (`creditor`) REFERENCES `creditor` (`registry`),
+  CONSTRAINT `FK_PREPAYMENT_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
+  CONSTRAINT `FK_PREPAYMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_PREPAYMENT_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Suplidos';
+
+#
 # Structure for the `process_detail` table : 
 #
 
@@ -6104,6 +6133,7 @@ CREATE TABLE `rdir_staff` (
   `nominal_value` double(15,3) default '0.000' COMMENT 'Valor Nominal',
   `due_date` date default NULL COMMENT 'Fecha de vencimiento del cargo',
   `representative_labor` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el Directivo es representante laboral',
+  `charge_description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del cargo de Directivo',
   PRIMARY KEY  (`id`),
   KEY `IDX_RDIR_STAFF_REGISTRY` (`registry`),
   KEY `IDX_RDIR_STAFF_DOMAIN` (`domain`),
@@ -7151,7 +7181,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.23.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.24.0');
 
 COMMIT;
 
