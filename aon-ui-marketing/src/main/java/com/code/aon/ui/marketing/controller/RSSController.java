@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.marketing.News;
 import com.code.aon.registry.Category;
@@ -47,7 +48,9 @@ public class RSSController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RSSController.class.getName());
 	
-	public static final String RSS_FILE = "rss.xml";
+	public static final String RSS_PREFFIX = "rss";
+	public static final String RSS_REGEX = RSS_PREFFIX + "-(\\d+)\\." + MimeType.MIME_XML.getExtension();
+	
 	public static final String CHANNEL_PARAMETER = "channel";
 	
 	private static final String DESCRIPTION_ELEMENT = "description";
@@ -82,14 +85,21 @@ public class RSSController {
 		String url = null;
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		try {
-			url = ds.getDomainURL() + SERVLET_PATH + RSS_FILE;
-			if ( (category != null) && (category.getId() != null) ) {
-				url += "?" + CHANNEL_PARAMETER + "=" + category.getId();
-			}
+			url = ds.getDomainURL() + SERVLET_PATH + getRSSFileName();
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}		
 		return url;
+	}
+	
+	private String getRSSFileName() {
+		StringBuffer url = new StringBuffer();
+		url.append(RSS_PREFFIX);
+		if ( (category != null) && (category.getId() != null) ) {
+			url.append("-").append(category.getId());
+		}
+		url.append(".").append(MimeType.MIME_XML.getExtension());
+		return url.toString();
 	}
 
 	private byte[] getRSS() throws IOException {
@@ -206,7 +216,7 @@ public class RSSController {
 		byte[] data = getRSS();
 		if (! ArrayUtils.isEmpty(data) ) {
 			InputStream in = new ByteArrayInputStream(data);
-			upload(this.publishProperties.getPublishPath(), RSS_FILE, in, data.length);			
+			upload(this.publishProperties.getPublishPath(), getRSSFileName(), in, data.length);			
 		}
 	}	
 	

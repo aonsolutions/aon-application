@@ -1,6 +1,6 @@
 package com.code.aon.ui.marketing.servlet;
 
-import static com.code.aon.ui.marketing.controller.RSSController.RSS_FILE;
+import static com.code.aon.ui.marketing.controller.RSSController.RSS_PREFFIX;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,8 +36,6 @@ import com.code.aon.ui.util.DownloadUtil;
 
 public class RSSServlet extends HttpServlet {
 
-	private static final String CHANNEL_PARAMETER = "channel";
-
 	private static final long serialVersionUID = 1L;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(RSSServlet.class.getName());
@@ -61,17 +59,21 @@ public class RSSServlet extends HttpServlet {
 		return "http://" + server + context;
 	}
 	
-	private Integer getChannelId( HttpServletRequest req ) {
-		String value = req.getParameter(CHANNEL_PARAMETER);
+	private Integer getChannelId( String value ) {
 		if (! StringUtils.isEmpty(value) ) {
-			if ( NumberUtils.isNumber(value) ) {
-				return NumberUtils.toInt(value);
-			}
+			Pattern pattern = Pattern.compile(RSSController.RSS_REGEX);
+			Matcher matcher = pattern.matcher(value);
+			if ( matcher.find() ) {
+				String idValue = matcher.group(1);
+				if ( NumberUtils.isNumber(idValue) ) {
+					return NumberUtils.toInt(idValue);
+				}
+			}			
 		}
 		return null;
 	}
 	
-	private byte[] getRSSData( HttpServletRequest req ) {
+	private byte[] getRSSData( HttpServletRequest req, String value ) {
 		byte[] data = null;
 		String sessionName = HibernateUtil.getSessionFactoryName(News.class.getName());
 		Connection c = null;
@@ -80,7 +82,7 @@ public class RSSServlet extends HttpServlet {
 			String domainName = req.getServerName(); 
 			c =  DatabaseUtil.getConnection(domainName);
 			Integer domainId = DatabaseUtil.getDomain(c,domainName);
-			Integer channelId = getChannelId(req);
+			Integer channelId = getChannelId(value);
 			data = RSSController.getRSS(session, domainId, channelId, getURLPreffix(req));
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error getting rss", th );
@@ -151,10 +153,10 @@ public class RSSServlet extends HttpServlet {
 		try {
 			String uri = StringUtils.substringBefore(req.getRequestURI(), ";");
 			String value = StringUtils.substringAfterLast(uri, "/");
-			if ( StringUtils.equals(RSS_FILE, value) ) {
-				byte[] data = getRSSData(req);
+			if ( StringUtils.startsWith(value, RSS_PREFFIX) ) {
+				byte[] data = getRSSData(req, value);
 				if (! ArrayUtils.isEmpty(data) ) {
-					out = DownloadUtil.initDownload(res, RSS_FILE, MimeType.MIME_RSS, data.length);
+					out = DownloadUtil.initDownload(res, value, MimeType.MIME_RSS, data.length);
 					InputStream in = new ByteArrayInputStream(data);
 					IOUtils.copyLarge(in, out);
 				}

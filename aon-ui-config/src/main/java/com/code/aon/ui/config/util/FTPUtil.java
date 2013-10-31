@@ -30,6 +30,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,8 +81,8 @@ public class FTPUtil {
 	}
 	
 	private boolean isReplyOk() {
-		int code = ftp.getReplyCode();
-		if ( (code >= 200) && (code <300) ) {
+		int reply = ftp.getReplyCode();
+		if ( FTPReply.isPositiveCompletion(reply) ) {
 			return true;
 		}
 		LOGGER.error( ftp.getReplyString() );
@@ -90,6 +91,7 @@ public class FTPUtil {
 	
 	private boolean connect(String server) {
 		this.ftp = new FTPClient();
+		ftp.setListHiddenFiles(true);		
 		LOGGER.debug("Connecting to: {}", server );
 		logger.info( AonUtil.getMessage(FTP_CONNECTING) );
 		try {
@@ -108,14 +110,11 @@ public class FTPUtil {
 		try {
 			logger.info( AonUtil.getMessage(FTP_LOGIN) );
 			LOGGER.debug("Login user: {}", user );
-			ftp.login(user, password);
-			if ( isReplyOk() ) {
+			if ( ftp.login(user, password) ) {
 				ftp.enterLocalPassiveMode();
-				ftp.setListHiddenFiles(true);
-				LOGGER.debug("Reply String: {}", ftp.getReplyString());
-				LOGGER.debug("System Name: {}", ftp.getSystemName());
+				ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+				LOGGER.debug("Remote system: {}", ftp.getSystemType());
 				LOGGER.debug("Working Directory: {}", ftp.printWorkingDirectory());
-				LOGGER.debug("File Type: {}", ftp.setFileType(FTPClient.BINARY_FILE_TYPE));
 				logger.info( AonUtil.getMessage(FTP_CONNECTED) );
 				return;
 			}
@@ -163,7 +162,13 @@ public class FTPUtil {
 	}		
 	
 	public String getFTPPath( String destination, String name ) {
-		return destination + PATH_SEPARATOR + name;
+		if (! StringUtils.isEmpty(destination) ) {
+			if ( StringUtils.endsWith(destination, PATH_SEPARATOR) ) {
+				return destination + name;
+			}
+			return destination + PATH_SEPARATOR + name;	
+		}
+		return name;
 	}
 	
 	/**
