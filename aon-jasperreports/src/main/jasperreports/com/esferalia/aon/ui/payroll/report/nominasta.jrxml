@@ -8,6 +8,7 @@
 	<import value="com.code.aon.registry.enumeration.AddressType"/>
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
 	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
+	<import value="com.esferalia.aon.salary.enumeration.SalaryType"/>
 	<style name="label" vAlign="Middle" isBlankWhenNull="true" fontSize="8"/>
 	<style name="title" style="label" hAlign="Center" isBold="true"/>
 	<style name="head" style="title" hAlign="Left" fontSize="9"/>
@@ -89,7 +90,7 @@
 		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
 	</parameter>
 	<queryString language="hql">
-		<![CDATA[FROM Salary WHERE Id=15246 OR Id=15226]]>
+		<![CDATA[FROM Salary WHERE id=9]]>
 	</queryString>
 	<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
 	<variable name="payments" class="java.util.List">
@@ -158,15 +159,15 @@
 					<textFieldExpression><![CDATA["RECIBO DE " + $F{salary}.getType().getName($P{REPORT_LOCALE}).toUpperCase()]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement uuid="98e0f00f-b53a-41f4-ba43-339582381b9a" x="11" y="156" width="239" height="1" backcolor="#000000"/>
+					<reportElement uuid="98e0f00f-b53a-41f4-ba43-339582381b9a" x="11" y="156" width="247" height="1" backcolor="#000000"/>
 				</line>
 				<line>
-					<reportElement uuid="30621915-2fd5-415c-9502-f18fa2f32682" x="250" y="72" width="1" height="85" backcolor="#000000"/>
+					<reportElement uuid="30621915-2fd5-415c-9502-f18fa2f32682" x="258" y="72" width="1" height="85" backcolor="#000000"/>
 				</line>
 				<frame>
-					<reportElement uuid="304c13b9-a3af-4fc5-bd3a-f051cd2971d1" style="gray_box" x="9" y="70" width="241" height="86"/>
+					<reportElement uuid="304c13b9-a3af-4fc5-bd3a-f051cd2971d1" style="gray_box" x="9" y="70" width="249" height="86"/>
 					<textField>
-						<reportElement uuid="4cba3d89-b753-4cfb-a231-b387224f4f7a" style="label" x="2" y="2" width="239" height="12"/>
+						<reportElement uuid="4cba3d89-b753-4cfb-a231-b387224f4f7a" style="label" x="2" y="2" width="247" height="12"/>
 						<textElement/>
 						<textFieldExpression><![CDATA["C"+ $F{salary}.getContract().getWorkPlace().getEnterprise().getId()
     + "E" + $F{salary}.getContract().getWorkPlace().getEnterprise().getId()
@@ -174,43 +175,43 @@
     + "D" + $F{salary}.getContract().getWorkPlace().getAddress().getId()]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement uuid="2d631714-87a2-49da-a8dc-c20f6e2070a8" style="label" x="2" y="20" width="239" height="12"/>
+						<reportElement uuid="2d631714-87a2-49da-a8dc-c20f6e2070a8" style="label" x="2" y="20" width="247" height="12"/>
 						<textElement/>
 						<textFieldExpression><![CDATA[$F{salary}.getEnterpriseName()]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement uuid="325312ad-5914-4def-9e7f-ce7d2d6621fd" style="label" x="2" y="38" width="239" height="12"/>
+						<reportElement uuid="325312ad-5914-4def-9e7f-ce7d2d6621fd" style="label" x="2" y="38" width="247" height="12"/>
 						<textElement/>
 						<textFieldExpression><![CDATA[$F{salary}.getContract().getWorkPlace().getAddress().getFullAddress()]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement uuid="5cdbd906-dce7-4813-9d3d-fbe43dd6de44" style="label" x="2" y="50" width="239" height="12"/>
+						<reportElement uuid="5cdbd906-dce7-4813-9d3d-fbe43dd6de44" style="label" x="2" y="50" width="247" height="12"/>
 						<textElement/>
 						<textFieldExpression><![CDATA[$F{salary}.getEnterpriseAddress()]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement uuid="0939619c-1225-407d-bb29-da6a7953e4f9" style="label" x="5" y="63" width="135" height="10"/>
+						<reportElement uuid="0939619c-1225-407d-bb29-da6a7953e4f9" style="label" x="5" y="63" width="139" height="10"/>
 						<textElement/>
 						<text><![CDATA[N. Inscripción seguridad social]]></text>
 					</staticText>
 					<textField>
-						<reportElement uuid="4d72b888-7540-4509-b2dc-759d1c7e8e03" style="label" x="5" y="73" width="135" height="12"/>
+						<reportElement uuid="4d72b888-7540-4509-b2dc-759d1c7e8e03" style="label" x="5" y="73" width="139" height="12"/>
 						<textElement textAlignment="Center"/>
 						<textFieldExpression><![CDATA[$F{salary}.getCcc()]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement uuid="8884baee-6365-4e60-bfa9-a0d145bd7889" style="label" x="141" y="63" width="95" height="10"/>
+						<reportElement uuid="8884baee-6365-4e60-bfa9-a0d145bd7889" style="label" x="145" y="63" width="99" height="10"/>
 						<textElement/>
 						<text><![CDATA[N. Identificación fiscal]]></text>
 					</staticText>
 					<textField>
-						<reportElement uuid="30d1d455-782a-47ed-a333-5b4c37a5f690" style="label" x="141" y="73" width="95" height="12"/>
+						<reportElement uuid="30d1d455-782a-47ed-a333-5b4c37a5f690" style="label" x="145" y="73" width="99" height="12"/>
 						<textElement textAlignment="Center"/>
 						<textFieldExpression><![CDATA[$F{salary}.getEnterpriseDocument()]]></textFieldExpression>
 					</textField>
 				</frame>
 				<staticText>
-					<reportElement uuid="a9442a04-33ba-419f-965c-5ac3471cf9a0" style="title" x="9" y="164" width="217" height="12"/>
+					<reportElement uuid="a9442a04-33ba-419f-965c-5ac3471cf9a0" style="title" x="9" y="164" width="225" height="12"/>
 					<box>
 						<bottomPen lineWidth="0.5"/>
 					</box>
@@ -218,12 +219,23 @@
 					<text><![CDATA[Periodo de liquidación]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="fee4bcbd-d086-4489-8819-e6eb47ab938d" style="title" x="4" y="178" width="226" height="12"/>
+					<reportElement uuid="fee4bcbd-d086-4489-8819-e6eb47ab938d" style="title" x="4" y="178" width="234" height="12">
+						<printWhenExpression><![CDATA[$F{salary}.getStartDate().getYear() == $F{salary}.getEndDate().getYear()]]></printWhenExpression>
+					</reportElement>
 					<textElement/>
-					<textFieldExpression><![CDATA[(new java.text.MessageFormat("Del {0,date,d 'de' MMMM} al {1,date,d 'de' MMMM 'de' yyyy}", $P{REPORT_LOCALE})).format( new Object [] { $F{salary}.getStartDate(), $F{salary}.getEndDate()}, new StringBuffer(), null ).toString()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[(new java.text.MessageFormat("Del {0,date,d 'de' MMMM } al {1,date,d 'de' MMMM 'de' yyyy}", $P{REPORT_LOCALE})).format( new Object [] { $F{salary}.getStartDate(), $F{salary}.getEndDate()}, new StringBuffer(), null ).toString()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="4a338095-ba90-4804-9332-11f628259458" style="title" x="1" y="178" width="237" height="12">
+						<printWhenExpression><![CDATA[$F{salary}.getStartDate().getYear() != $F{salary}.getEndDate().getYear()]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(new java.text.MessageFormat("Del {0,date,d 'de' MMMM 'de' yyyy} al {1,date,d 'de' MMMM 'de' yyyy}", $P{REPORT_LOCALE})).format( new Object [] { $F{salary}.getStartDate(), $F{salary}.getEndDate()}, new StringBuffer(), null ).toString()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="122cd7c8-5424-445f-9d24-9f3bd17f0854" style="title" x="230" y="164" width="20" height="12"/>
+					<reportElement uuid="122cd7c8-5424-445f-9d24-9f3bd17f0854" style="title" x="238" y="164" width="20" height="12"/>
 					<box>
 						<bottomPen lineWidth="0.5"/>
 					</box>
@@ -231,64 +243,64 @@
 					<text><![CDATA[Días]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="48fdd64f-e768-4238-b338-e6b2aabf01a3" style="title" x="230" y="178" width="20" height="12"/>
+					<reportElement uuid="48fdd64f-e768-4238-b338-e6b2aabf01a3" style="title" x="238" y="178" width="20" height="12"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{salary}.getTimeUnits()]]></textFieldExpression>
 				</textField>
 				<frame>
-					<reportElement uuid="e3e09037-a34d-4f36-8d6f-a86745315ce0" x="293" y="27" width="241" height="78"/>
+					<reportElement uuid="e3e09037-a34d-4f36-8d6f-a86745315ce0" x="289" y="27" width="249" height="78"/>
 					<box>
 						<leftPen lineWidth="0.5"/>
 					</box>
 					<staticText>
-						<reportElement uuid="fbb12750-4e6d-455b-bc08-c5bec2318c0f" style="label" x="2" y="2" width="239" height="12"/>
+						<reportElement uuid="fbb12750-4e6d-455b-bc08-c5bec2318c0f" style="label" x="2" y="2" width="247" height="12"/>
 						<textElement/>
 						<text><![CDATA[Categoría profesional]]></text>
 					</staticText>
 					<textField>
-						<reportElement uuid="8b8eb476-5274-41a5-a23d-c063191887ed" style="label" x="16" y="14" width="225" height="12"/>
+						<reportElement uuid="8b8eb476-5274-41a5-a23d-c063191887ed" style="label" x="16" y="14" width="233" height="12"/>
 						<textElement/>
 						<textFieldExpression><![CDATA[$F{salary}.getCategory()]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement uuid="490eddf1-7c48-465c-bb93-3108383c6986" style="label" x="2" y="27" width="239" height="12"/>
+						<reportElement uuid="490eddf1-7c48-465c-bb93-3108383c6986" style="label" x="2" y="27" width="247" height="12"/>
 						<textElement/>
 						<text><![CDATA[Profesión]]></text>
 					</staticText>
 					<textField>
-						<reportElement uuid="2a51b2e1-7515-4e13-b213-5b4aa695f1bf" style="label" x="16" y="40" width="225" height="12"/>
+						<reportElement uuid="2a51b2e1-7515-4e13-b213-5b4aa695f1bf" style="label" x="16" y="40" width="233" height="12"/>
 						<textElement/>
 						<textFieldExpression><![CDATA[$F{salary}.getCategory()]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement uuid="03f9e7f6-bd92-493d-98b8-671996aa4a65" style="label" x="2" y="52" width="106" height="12"/>
+						<reportElement uuid="03f9e7f6-bd92-493d-98b8-671996aa4a65" style="label" x="2" y="52" width="110" height="12"/>
 						<textElement/>
 						<text><![CDATA[Fecha de antigüedad]]></text>
 					</staticText>
 					<textField>
-						<reportElement uuid="8a00a065-3534-4523-87fe-969fa49c557f" style="label" x="2" y="66" width="106" height="12"/>
+						<reportElement uuid="8a00a065-3534-4523-87fe-969fa49c557f" style="label" x="2" y="66" width="110" height="12"/>
 						<textElement textAlignment="Center"/>
 						<textFieldExpression><![CDATA[(new java.text.MessageFormat("{0,date,dd/MM/yyyy}", $P{REPORT_LOCALE})).format( new Object [] { $F{salary}.getSeniorityDate() }, new StringBuffer(), null ).toString()]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement uuid="508d78c7-da27-4f85-b5a0-ec61a25cd691" style="label" x="108" y="52" width="133" height="12"/>
+						<reportElement uuid="508d78c7-da27-4f85-b5a0-ec61a25cd691" style="label" x="112" y="52" width="137" height="12"/>
 						<textElement/>
 						<text><![CDATA[N. Afiliación a la seguridad social]]></text>
 					</staticText>
 					<textField>
-						<reportElement uuid="3ee2fabe-60ad-444d-b9d9-62de91be4b8a" style="label" x="110" y="66" width="131" height="12"/>
+						<reportElement uuid="3ee2fabe-60ad-444d-b9d9-62de91be4b8a" style="label" x="114" y="66" width="135" height="12"/>
 						<textElement textAlignment="Center"/>
 						<textFieldExpression><![CDATA[$F{salary}.getSocialSecurityNumber()]]></textFieldExpression>
 					</textField>
 				</frame>
 				<line>
-					<reportElement uuid="6daff6b3-5626-4192-bd8f-581c60db72d6" x="295" y="187" width="239" height="1" backcolor="#000000"/>
+					<reportElement uuid="6daff6b3-5626-4192-bd8f-581c60db72d6" x="291" y="187" width="247" height="1" backcolor="#000000"/>
 				</line>
 				<line>
-					<reportElement uuid="cd7424e7-e837-40d2-bc2a-cce0ca79ec21" x="534" y="112" width="1" height="76" backcolor="#000000"/>
+					<reportElement uuid="cd7424e7-e837-40d2-bc2a-cce0ca79ec21" x="538" y="112" width="1" height="76" backcolor="#000000"/>
 				</line>
 				<frame>
-					<reportElement uuid="0b5035b8-f4e0-42fd-808c-ff500033601e" style="gray_box" x="293" y="110" width="241" height="77"/>
+					<reportElement uuid="0b5035b8-f4e0-42fd-808c-ff500033601e" style="gray_box" x="289" y="110" width="249" height="77"/>
 					<staticText>
 						<reportElement uuid="d555c6da-a9f1-4f8f-b8d6-a830f866c465" style="label" x="11" y="5" width="36" height="12">
 							<printWhenExpression><![CDATA[!$P{CODINTERNO}]]></printWhenExpression>
@@ -297,14 +309,14 @@
 						<text><![CDATA[Persona]]></text>
 					</staticText>
 					<textField>
-						<reportElement uuid="12b04717-8671-4bb4-9f47-7c84df6e562d" style="label" x="47" y="5" width="63" height="12">
+						<reportElement uuid="12b04717-8671-4bb4-9f47-7c84df6e562d" style="label" x="47" y="5" width="67" height="12">
 							<printWhenExpression><![CDATA[!$P{CODINTERNO}]]></printWhenExpression>
 						</reportElement>
 						<textElement textAlignment="Right"/>
 						<textFieldExpression><![CDATA[$F{salary}.getContract().getPerson().getRegistry().getId()]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement uuid="0e64a58c-2ad1-45dc-bac1-32d440785383" style="label" x="2" y="5" width="106" height="12">
+						<reportElement uuid="0e64a58c-2ad1-45dc-bac1-32d440785383" style="label" x="2" y="5" width="110" height="12">
 							<printWhenExpression><![CDATA[$P{CODINTERNO}]]></printWhenExpression>
 						</reportElement>
 						<textElement textAlignment="Left"/>
@@ -312,33 +324,33 @@
 "T" + $F{salary}.getContract().getPerson().getRegistry().getId()]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement uuid="9ae9d587-a149-4df6-b032-402096901c55" style="label" x="119" y="5" width="45" height="12"/>
+						<reportElement uuid="9ae9d587-a149-4df6-b032-402096901c55" style="label" x="123" y="5" width="49" height="12"/>
 						<textElement/>
 						<textFieldExpression><![CDATA[$P{CODINTERNO} ? "C.I" : "Trabajador"]]></textFieldExpression>
 					</textField>
 					<textField isBlankWhenNull="true">
-						<reportElement uuid="f8af1ad8-0d1a-4cd9-80c6-e33adabfdc03" style="label" x="164" y="5" width="66" height="12"/>
+						<reportElement uuid="f8af1ad8-0d1a-4cd9-80c6-e33adabfdc03" style="label" x="172" y="5" width="70" height="12"/>
 						<textElement textAlignment="Right"/>
 						<textFieldExpression><![CDATA[$P{CODINTERNO} ? $F{salary}.getContract().getCodInt(): $F{salary}.getContract().getId()]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement uuid="7b9aa293-380d-49e7-8f9f-ebf6cb99e704" style="label" x="2" y="27" width="239" height="12"/>
+						<reportElement uuid="7b9aa293-380d-49e7-8f9f-ebf6cb99e704" style="label" x="2" y="27" width="247" height="12"/>
 						<textElement/>
 						<textFieldExpression><![CDATA[$F{salary}.getEmployeeName()]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement uuid="56f01407-3a7e-4fbd-acaf-f0950f2b5d80" style="label" x="2" y="47" width="239" height="10"/>
+						<reportElement uuid="56f01407-3a7e-4fbd-acaf-f0950f2b5d80" style="label" x="2" y="47" width="247" height="10"/>
 						<textElement/>
 						<textFieldExpression><![CDATA[$V{address}.getFullAddress()]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement uuid="42f51cf3-59ed-4eeb-a2be-61b7da5a9284" style="label" x="2" y="57" width="239" height="10"/>
+						<reportElement uuid="42f51cf3-59ed-4eeb-a2be-61b7da5a9284" style="label" x="2" y="57" width="247" height="10"/>
 						<textElement/>
 						<textFieldExpression><![CDATA[($V{address}.getZip() != null ? $V{address}.getZip()+ " - " : "" )
                         + $V{address}.getCity()]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement uuid="28d1b855-3b08-48da-8cbe-f0b09e1bc262" style="label" x="2" y="67" width="239" height="10">
+						<reportElement uuid="28d1b855-3b08-48da-8cbe-f0b09e1bc262" style="label" x="2" y="67" width="247" height="10">
 							<printWhenExpression><![CDATA[$V{address}.getGeozone() != null]]></printWhenExpression>
 						</reportElement>
 						<textElement/>
@@ -356,7 +368,7 @@
 					<textFieldExpression><![CDATA[java.text.MessageFormat.format("{0,date,dd/MM/yyyy}", $F{salary}.getIssueDate())]]></textFieldExpression>
 				</textField>
 				<image scaleImage="RetainShape" isUsingCache="true" onErrorType="Blank">
-					<reportElement uuid="f3ccbbff-1a15-46c0-89ff-dbcca485f8f6" x="9" y="15" width="239" height="51">
+					<reportElement uuid="f3ccbbff-1a15-46c0-89ff-dbcca485f8f6" x="9" y="15" width="249" height="51">
 						<printWhenExpression><![CDATA[$V{logo} != null]]></printWhenExpression>
 					</reportElement>
 					<graphicElement fill="Solid"/>
@@ -1046,7 +1058,7 @@
 				<textField>
 					<reportElement uuid="82c3ed7b-b444-43dd-9e8d-b259ce3e3c7f" style="title" x="304" y="60" width="241" height="12"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA[( new java.text.MessageFormat("{0,date,d 'de' MMMM 'de' yyyy}",$P{REPORT_LOCALE})).format( new Object [] {$F{salary}.getChargeDate()}, new StringBuffer(), null).toString() ]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( new java.text.MessageFormat("{0,date,d 'de' MMMM 'de' yyyy}",$P{REPORT_LOCALE})).format( new Object [] {$F{salary}.getChargeDate()}, new StringBuffer(), null).toString()]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement uuid="af265c28-dafd-400a-895b-b758ef6e2cf3" style="label" x="167" y="65" width="136" height="12"/>
