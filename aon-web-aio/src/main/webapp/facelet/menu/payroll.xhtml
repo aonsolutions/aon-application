@@ -96,7 +96,8 @@
 									<h:outputLink target="_blank" value="http://www.seg-social.es">
 										<aon:outputText value="#{bundle.payroll_ss_menu_group}" />
 									</h:outputLink>
-									<h:outputLink target="_blank" value="http://www.seg-social.es">
+									<h:outputLink target="_blank" value="http://www.seg-social.es"
+										title="#{bundle.aon_navigate_to_official_website}">
 										<h:graphicImage
 											styleClass="aon-vertical-align-middle aon-margin-left"
 											url="#{aonResource.resolve['/images/aon-icon/aon-icon-lookup-goto.png']}" />
@@ -114,7 +115,7 @@
 									<a4j:commandLink ajaxSingle="true" immediate="true"
 										onclick="alert('#{bundle.aio_not_yet}');return false;"
 										value="(FAN) Fichero de aplicación de Nóminas"
-										style="color:red;" />
+										style="color:grey;font-style:oblique;" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="leaveBatch-payroll"
@@ -178,7 +179,8 @@
 									<h:outputLink target="_blank" value="http://www.agenciatributaria.es">
 										<aon:outputText value="#{bundle.payroll_aeat_menu_group}" />
 									</h:outputLink>
-									<h:outputLink target="_blank" value="http://www.agenciatributaria.es">
+									<h:outputLink target="_blank" value="http://www.agenciatributaria.es"
+										title="#{bundle.aon_navigate_to_official_website}">
 										<h:graphicImage
 											styleClass="aon-vertical-align-middle aon-margin-left"
 											url="#{aonResource.resolve['/images/aon-icon/aon-icon-lookup-goto.png']}" />
@@ -203,7 +205,7 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<a4j:commandLink ajaxSingle="true" immediate="true"
 										onclick="alert('#{bundle.aio_not_yet}');return false;"
-										value="Modelo 190/Certificados de Renta" style="color:red;" />
+										value="Modelo 190/Certificados de Renta" style="color:grey;font-style:oblique;" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
@@ -253,7 +255,8 @@
 									<h:outputLink target="_blank" value="http://www.sepe.es">
 										<aon:outputText value="#{bundle.payroll_sepe_menu_group}" />
 									</h:outputLink>
-									<h:outputLink target="_blank" value="http://www.sepe.es">
+									<h:outputLink target="_blank" value="http://www.sepe.es"
+										title="#{bundle.aon_navigate_to_official_website}">
 										<h:graphicImage
 											styleClass="aon-vertical-align-middle aon-margin-left"
 											url="#{aonResource.resolve['/images/aon-icon/aon-icon-lookup-goto.png']}" />
@@ -308,9 +311,12 @@
 								</aon:div>
 
 								<aon:div styleClass="aon-direct-access-list-element">
-									<a4j:commandLink ajaxSingle="true" immediate="true"
-										onclick="alert('#{bundle.aio_not_yet}');return false;"
-										value="Calendario Laboral" style="color:red;" />
+									<aon:commandLink id="calendar-payroll"
+										action="#{calendar.initialAction}"
+										actionListener="#{calendar.onEditSearch}"
+										value="#{bundle.calendar_menu_group}">
+										<aon:actionListener method="#{calendar.onInitialize}" />
+									</aon:commandLink>
 								</aon:div>
 
 							</aon:div>
@@ -337,17 +343,17 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<a4j:commandLink ajaxSingle="true" immediate="true"
 										onclick="alert('#{bundle.aio_not_yet}');return false;"
-										value="Remesa Transferencia de Nóminas" style="color:red;" />
+										value="Remesa Transferencia de Nóminas" style="color:grey;font-style:oblique;" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<a4j:commandLink ajaxSingle="true" immediate="true"
 										onclick="alert('#{bundle.aio_not_yet}');return false;"
-										value="Regularización IRPF" style="color:red;" />
+										value="Regularización IRPF" style="color:grey;font-style:oblique;" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<a4j:commandLink ajaxSingle="true" immediate="true"
 										onclick="alert('#{bundle.aio_not_yet}');return false;"
-										value="Generación Apuntes Contables" style="color:red;" />
+										value="Generación Apuntes Contables" style="color:grey;font-style:oblique;" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
