@@ -27,14 +27,32 @@ public class InvoiceDetailByDeliveryPrinter {
 		return new InvoiceDetailByDeliveryPrinter();
 	}
 
-	@SuppressWarnings("unchecked")
-	public Collection getCollection(Integer invoiceId, boolean productTypeOrder) {
+	public Double getPrepaymentsTotal(Integer invoiceId, boolean productTypeOrder) {
+		Double total = null;
+		Collection<InvoiceDetail> collection = getCollection(invoiceId, productTypeOrder, true);
+		if(!collection.isEmpty()){
+			total = 0.0;
+			for(InvoiceDetail detail: collection){
+				total += detail.getTaxableBase();
+			}
+		}
+		return total!=null?total:null;
+	}
+	
+	public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder) {
+		return getCollection(invoiceId, productTypeOrder, null);
+	}
+	
+	public Collection<InvoiceDetail> getCollection(Integer invoiceId, boolean productTypeOrder, Boolean searchPrepayments) {
 		List<InvoiceDetail> invoiceDetailList = new LinkedList<InvoiceDetail>();
 		Map<Integer, List<InvoiceDetail>> deliveryMap = new HashMap<Integer, List<InvoiceDetail>>();
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoiceId);
+			if (searchPrepayments!=null) {
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_PREPAYMENT), searchPrepayments);
+			}
 			if (productTypeOrder) {
 				criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE));
 			}

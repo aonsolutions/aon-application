@@ -109,6 +109,7 @@
 		</params>
 		<nested-report report="invoiceDetailDefault"/>
 		<nested-report report="invoiceTaxBreakDown"/>
+		<nested-report report="invoicePrepaymentsDefault"/>
 		<nested-report report="invoiceFinancesDefault"/>
 	</report>
 	<report id="invoiceDetail" description="Detalle de la factura">
@@ -122,6 +123,12 @@
 	</report>
 	<report id="invoiceDetailDefault" description="Detalle de la factura">
 		<template path="/com/code/aon/ui/finance/report/invoiceDetailDefault.jasper"/>
+	</report>
+	<report id="invoicePrepayments" description="Suplidos de la factura">
+		<template path="/com/code/aon/ui/finance/report/invoicePrepayments.jasper"/>
+	</report>
+	<report id="invoicePrepaymentsDefault" description="Suplidos de la factura">
+		<template path="/com/code/aon/ui/finance/report/invoicePrepaymentsDefault.jasper"/>
 	</report>
 	<report id="invoiceFinancesDefault" description="invoice Finances">
 		<template path="/com/code/aon/ui/finance/report/invoiceFinancesDefault.jasper"/>
@@ -174,6 +181,7 @@
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
+		<nested-report report="invoicePrepayments"/>
 		<nested-report report="invoiceFinances"/>
 	</report>
 	<report id="saleInvoiceTemplate3" description="Fee Invoice's Report Template3">
@@ -200,6 +208,7 @@
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
+		<nested-report report="invoicePrepayments"/>
 		<nested-report report="invoiceFinances"/>
 	</report>
 	<report id="saleInvoiceTemplate4" description="Fee Invoice's Report Template4">
