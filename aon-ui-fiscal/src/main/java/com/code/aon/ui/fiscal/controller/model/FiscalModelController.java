@@ -156,6 +156,9 @@ public abstract class FiscalModelController extends BasicController {
 		String defYear = fiscalParams.getDefaultYear();
 		to.setYear(defYear == null ? null : Integer.parseInt(defYear));
 		Administration admon = fiscalParams.getDefaultAdministration();
+		if (admon == null) {
+			to.setAdministration(Administration.COMMON_TERRITORY);
+		}
 		if (admon != null) {
 			to.setAdministration(admon);
 			if (admon == Administration.COMMON_TERRITORY) {
