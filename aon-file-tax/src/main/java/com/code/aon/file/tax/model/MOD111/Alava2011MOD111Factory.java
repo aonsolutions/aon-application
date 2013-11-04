@@ -15,6 +15,7 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.enumeration.Mod111Key;
 
 
@@ -188,7 +189,32 @@ public class Alava2011MOD111Factory implements IMOD111Factory {
 		addClave(mod, 76,declaration.getBoxes().get(Mod111Key.AR_C24.getValue()));	
 		addClave(mod, 57,declaration.getBoxes().get(Mod111Key.AR_C25.getValue()),true);	
 		addClave(mod, 67,declaration.getBoxes().get(Mod111Key.AR_C26.getValue()));	
-		addClave(mod, 77,declaration.getBoxes().get(Mod111Key.AR_C27.getValue()));	
+		addClave(mod, 77,declaration.getBoxes().get(Mod111Key.AR_C27.getValue()));
+		
+		double c50 = declaration.getBoxes().get(Mod111Key.AR_C01.getValue());	
+		double c51 = declaration.getBoxes().get(Mod111Key.AR_C04.getValue());	
+		double c52 = declaration.getBoxes().get(Mod111Key.AR_C07.getValue());	
+		double c53 = declaration.getBoxes().get(Mod111Key.AR_C10.getValue());	
+		double c54 = declaration.getBoxes().get(Mod111Key.AR_C13.getValue());	
+		double c58 = declaration.getBoxes().get(Mod111Key.AR_C16.getValue());	
+		double c55 = declaration.getBoxes().get(Mod111Key.AR_C19.getValue());	
+		double c56 = declaration.getBoxes().get(Mod111Key.AR_C22.getValue());	
+		double c57 = declaration.getBoxes().get(Mod111Key.AR_C25.getValue());
+		double c80 = CommonUtil.round(c50 + c51 + c52 + c53 + c54 + c58 + c55 + c56 + c57);
+		addClave(mod, 80, c80, true);
+		
+		double c60 = declaration.getBoxes().get(Mod111Key.AR_C02.getValue());	
+		double c61 = declaration.getBoxes().get(Mod111Key.AR_C05.getValue());	
+		double c62 = declaration.getBoxes().get(Mod111Key.AR_C08.getValue());	
+		double c63 = declaration.getBoxes().get(Mod111Key.AR_C11.getValue());	
+		double c64 = declaration.getBoxes().get(Mod111Key.AR_C14.getValue());	
+		double c68 = declaration.getBoxes().get(Mod111Key.AR_C17.getValue());	
+		double c65 = declaration.getBoxes().get(Mod111Key.AR_C20.getValue());	
+		double c66 = declaration.getBoxes().get(Mod111Key.AR_C23.getValue());	
+		double c67 = declaration.getBoxes().get(Mod111Key.AR_C26.getValue());
+		double c81 = CommonUtil.round(c60 + c61 + c62 + c63 + c64 + c68 + c65 + c66 + c67);
+		addClave(mod, 81, c81);
+		
 		addClave(mod, 82,declaration.getBoxes().get(Mod111Key.AR_C28.getValue()));	
 		addClave(mod, 84,declaration.getBoxes().get(Mod111Key.AR_C29.getValue()));
 		addClave(mod, 85,declaration.getBoxes().get(Mod111Key.AR_C30.getValue()));	
