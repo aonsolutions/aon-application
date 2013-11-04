@@ -1,18 +1,26 @@
 package com.code.aon.ui.marketing.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.ACTION_ADD_TARGETS_FINISH;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
+import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.Target;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
@@ -21,6 +29,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.commercial.controller.TargetController;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
@@ -45,22 +54,50 @@ public class CampaignActionTargetController extends LinesController {
 		return getManagerBean().getList(projectList, criteria);
 	}
 	
-	public void onAcceptTargets( ActionEvent event ) throws ManagerBeanException {
-		List<Integer> currentTargets = getCurrentTargets();
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private Collection<Integer> getSelectedTargets() {
 		TargetController targetController = (TargetController) AonUtil.getRegisteredBean(ICommercialConstants.TARGET_CONTROLLER_NAME);
-		Set<Integer> targets = targetController.getCheckedTargets();
+		return (Collection) targetController.getCheckList();
+	}
+	
+	public void onAcceptTargets( ActionEvent event ) throws ManagerBeanException {
+		LogPanelController logger = LogPanelController.getInstance();
+		Collection<Integer> targets = getSelectedTargets();
+		targets.removeAll(getCurrentTargets());
 		IController actionController = FormUtil.getController(IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME);
 		MarketingAction action = (MarketingAction) actionController.getTo();
-		for( Integer targetId : targets ) {
-			if (! currentTargets.contains(targetId) ) {
+		logger.info( AonUtil.getMessage(ICommonMessages.ACTION_ADD_TARGETS_START, targets.size()) );
+		Integer domainId = DomainManager.getCurrentDomain();
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory(sessionFactoryName);
+		StatelessSession session = sessionFactory.openStatelessSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			int i = 0;
+			for( Integer targetId : targets ) {
 				ActionTarget at = new ActionTarget();
+				at.setDomain( domainId );
 				at.setAction( action );
 				Target target = new Target();
 				target.setId( targetId );
 				at.setTarget( target );
-				getManagerBean().insert( at );
+				session.insert(at);
+				if ( (++i % 1000) == 0 ) {
+					logger.info( AonUtil.getMessage(ICommonMessages.ACTION_ADD_TARGETS_STATUS, i) );
+				}
 			}
-		}
+			tx.commit();
+		} catch (HibernateException he) {
+			tx.rollback();
+			logger.error( he.getMessage() );
+			LOGGER.error(">>>> onAcceptTargets ", he);
+			AonUtil.addErrorMessage( he.getMessage() );
+			throw new AbortProcessingException(he.getMessage(), he);			
+		} finally {
+			session.close();
+			logger.info( AonUtil.getMessage(ACTION_ADD_TARGETS_FINISH) );
+		}		
 		initializeModel();
 	}
 
@@ -137,13 +174,58 @@ public class CampaignActionTargetController extends LinesController {
 		return this.actionFilter;
 	}
 	
-	public void onClearStatus( ActionEvent event ) throws ManagerBeanException {
-		for( ITransferObject to : getManagerBean().getList(getCriteria()) ) {
-			ActionTarget at = (ActionTarget) to;
-			at.setStatus(ActionTargetStatus.PENDING);
-			at.setUser(null);
-			getManagerBean().update(at);
+	public void onClearStatus( ActionEvent event ) {
+		MarketingAction action = (MarketingAction) getMasterController().getTo();
+		resetStatuses(action, ActionTargetStatus.PENDING);
+	}
+
+	private void resetStatuses( MarketingAction action, ActionTargetStatus status ) {
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory(sessionFactoryName);
+		StatelessSession session = sessionFactory.openStatelessSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			String hqlUpdate = "update ActionTarget at set at.status = :actionStatus, at.user = null where at.action = :actionId";
+			int updatedEntities = session.createQuery( hqlUpdate )
+					.setInteger( "actionStatus", status.ordinal() )
+			        .setInteger( "actionId", action.getId() )
+			        .executeUpdate();
+			LOGGER.info( "updatedEntities: {}", updatedEntities );
+			tx.commit();
+		} catch (HibernateException he) {
+			tx.rollback();
+			LOGGER.error(">>>> onClearStatus ", he);
+			AonUtil.addErrorMessage(he.getMessage());
+			throw new AbortProcessingException(he.getMessage(), he);			
+		} finally {
+			session.close();
 		}
 	}
+	
+	public static void resetStatuses( List<Integer> actionTargets, ActionTargetStatus status ) {
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory(sessionFactoryName);
+		StatelessSession session = sessionFactory.openStatelessSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			for( Integer id : actionTargets ) {
+				ActionTarget at = (ActionTarget) session.get(ActionTarget.class, id);
+				at.setStatus(status);
+				at.setUser(null);
+				session.update(at);
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			tx.rollback();
+			LOGGER.error(">>>> onClearStatus ", he);
+			AonUtil.addErrorMessage(he.getMessage());
+			throw new AbortProcessingException(he.getMessage(), he);			
+		} finally {
+			session.close();
+		}
+	}
+	
 	
 }

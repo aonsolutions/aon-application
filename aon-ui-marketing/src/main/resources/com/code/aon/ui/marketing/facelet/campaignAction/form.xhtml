@@ -96,7 +96,8 @@
 
 					</aon:panelGrid>
 
-					<aon:panelGrid columns="2" styleClass="aon-margin-left" rendered="#{!campaignAction.new}"
+					<aon:panelGrid id="campaignActionStatus" columns="2" 
+						styleClass="aon-margin-left" rendered="#{!campaignAction.new}"
 						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
 						<aon:outputText value="#{marketingCollections.actionTargetStatuses[0].label}" />
 						<aon:inputText value="#{campaignActionTarget.pendingCount}"
@@ -150,7 +151,7 @@
 						</aon:commandButton>					
 						<aon:commandButton id="clearStatus"
 							value="#{bundle.marketing_action_clear_status}"
-							reRender="campaignActionTargetDataDiv"
+							reRender="campaignActionTargetDataDiv,campaignActionStatus"
 							actionListener="#{campaignActionTarget.onClearStatus}"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" >
 							<aon:actionListener method="#{campaignActionTargetSearch.onFilter}" />

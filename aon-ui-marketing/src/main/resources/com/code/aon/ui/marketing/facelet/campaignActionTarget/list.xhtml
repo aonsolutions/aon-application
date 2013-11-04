@@ -19,10 +19,13 @@
 				<ui:param name="toolbarTitle" value="#{bundle.commercial_target_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_listing}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="accept" value="#{bundle.aon_accept}"
-						action="campaignAction_form" actionListener="#{campaignActionTarget.onAcceptTargets}"
+					<aon:commandButton id="accept"
+						value="#{bundle.aon_accept}" reRender="aonStatus"
+						actionListener="#{campaignActionTarget.onAcceptTargets}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						accesskey="#{bundle.aon_key_accept}" />				
+						accesskey="#{bundle.aon_key_accept}" >
+						<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+					</aon:commandButton>				
 					<aon:commandButton value="#{bundle.aon_search}"
 						action="campaignActionTarget_search" actionListener="#{target.onEditSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-search"
@@ -90,6 +93,12 @@
 			</aon:div>
 	
 		</aon:form>
+		
+		<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+			<ui:param name="logPanelTitle" value="#{bundle.commercial_target_module}" />
+			<ui:param name="closeButtonReRender" value="aonContent"/>
+			<aon:methodParam name="closeButtonAction" value="campaignAction_form" />
+		</ui:include>		
 
 	</ui:define>
 

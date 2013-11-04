@@ -25,11 +25,8 @@ import static com.code.aon.ui.common.ICommonMessages.WEB;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -42,7 +39,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.Advertising;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.MimeType;
@@ -75,8 +71,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class TargetController extends RegistryController implements ICommercialConstants {
 
-	private Set<Integer> checks = new HashSet<Integer>();
-			
 	public String getAliasPreffix() {
 		return getPojoShortName();
 	}
@@ -87,41 +81,8 @@ public class TargetController extends RegistryController implements ICommercialC
 		checkNone(event);
 	}
 	
-	public Set<Integer> getCheckedTargets() {
-		return checks;
-	}
-	
 	protected Integer getId( Object o ) {
 		return ((Target) o).getId();
-	}
-	
-	public void checkAll(ActionEvent event) throws ManagerBeanException{
-		Iterator<ITransferObject> iter = this.getManagerBean().getList(this.getCriteria()).iterator();
-		while(iter.hasNext()){
-			checks.add( getId(iter.next()) );
-		}
-	}
-
-	public void checkNone(ActionEvent event) {
-		this.checks.clear();
-	}
-
-	public boolean getRowChecked() {
-		Integer id = getId( model.getRowData() );
-		return checks.contains(id);
-	}
-
-	public void setRowChecked(boolean rowChecked) {
-		Integer id = getId(model.getRowData());		
-		if (rowChecked) {
-			if (!checks.contains(id)) {
-				checks.add(id);
-			}
-		} else {
-			if (checks.contains(id)) {
-				checks.remove(id);
-			}
-		}
 	}
 	
 	public String getListReportKey() {

@@ -54,8 +54,9 @@
 								action="communicationCenter_mail"
 								actionListener="#{communicationCenter.onGenerateTargetMailing}"
 								value="#{bundle.marketing_mailing}"
-								styleClass="aon-finding-toolbar-item aon-icon-webmail2">
-							</aon:commandButton>								
+								styleClass="aon-finding-toolbar-item aon-icon-webmail2"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+			     				oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 						</c:if>
 						<c:if test="#{(communicationCenter.action.mediaType  == 'EMAIL') or (communicationCenter.action.mediaType  == 'NEWSLETTER')}" >
 							<aon:commandButton id="email"
@@ -202,6 +203,7 @@
 			<ui:param name="lookupProjectCommercialListener" value="#{communicationCenter.projectCommercialListener}" />
 		</ui:include>
 		<aon:lookupButtonPopup lookup="#{projectCommercialLookup}" />
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>
 

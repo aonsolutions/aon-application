@@ -331,6 +331,9 @@ public interface ICommonMessages {
 	String TARGET_BULK_EMAIL_SENT = "marketing_target_bulk_email_sent";
 	String RSS_PUBLISH_OK = "marketing_rss_publish_ok";
 	String RSS_PUBLISH_ERROR = "marketing_rss_publish_error";		
+	String ACTION_ADD_TARGETS_START = "marketing_action_addTargets_start";
+	String ACTION_ADD_TARGETS_STATUS = "marketing_action_addTargets_status";
+	String ACTION_ADD_TARGETS_FINISH = "marketing_action_addTargets_finish";
 	
 	String SALARY_EMAIL_SUBJECT = "payroll_email_subject";
 	String SALARY_EMAIL_BODY_HEADER = "payroll_email_subject_header";

@@ -51,6 +51,8 @@ import com.code.aon.marketing.SurveyWorkflow;
 import com.code.aon.marketing.enumeration.ActionMediaType;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Question;
@@ -693,11 +695,18 @@ public class CommunicationCenterController implements IMarketingConstants {
 		return null;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<ActionTarget> getActionTargets() throws ManagerBeanException {
+	@SuppressWarnings({ "unchecked" })
+	public List<Integer> getActionTargets( boolean registryId ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
 		Criteria criteria = getPendingTargetsCriteria(bean);
-		return (List) bean.getList(criteria);
+		String id = null;
+		if ( registryId ) {
+			id = bean.getFieldName(IEntityAlias.ACTION_TARGET_TARGET_ID);
+		} else {
+			id = bean.getFieldName(IEntityAlias.ACTION_TARGET_ID);
+		}
+		ProjectionList projectList = new ProjectionList(Projection.property(id));
+		return bean.getList(projectList, criteria);
 	}
 
 	public Criteria getPendingTargetsCriteria( IManagerBean bean ) throws ManagerBeanException {
@@ -711,14 +720,11 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 	
 	public void onGenerateTargetMailing(ActionEvent event) throws ManagerBeanException {
-        List<ActionTarget> targets = getActionTargets();
+        List<Integer> targets = getActionTargets(true);
         List<MailData> data = MailingManager.generateMailingList(targets);
         this.mailingModel = new ListDataModel(data);
-        IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
-        for( ActionTarget target : targets ) {
-        	target.setStatus(ActionTargetStatus.FINISHED);
-        	bean.update(target);
-        }
+        List<Integer> actionTargets = getActionTargets(false);
+        CampaignActionTargetController.resetStatuses(actionTargets, ActionTargetStatus.FINISHED);
 	}		
 
 	@SuppressWarnings("unchecked")
