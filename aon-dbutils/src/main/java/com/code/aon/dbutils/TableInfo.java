@@ -29,6 +29,7 @@ public class TableInfo implements Constants {
 	private Map<Integer,Integer> keys;
 	private Integer baseId;
 	private boolean forceHeredity;
+	private TableInfoListener listener;
 	
 	public TableInfo(String name, DatabaseMetaData metaData) {
 		this.name = name;
@@ -309,4 +310,12 @@ public class TableInfo implements Constants {
 		return domains;
 	}
 
+	public TableInfoListener getListener() {
+		return listener;
+	}
+
+	public void setListener(TableInfoListener listener) {
+		this.listener = listener;
+	}
+	
 }

@@ -133,29 +133,13 @@ public class AonDomainDuplicate implements Constants {
 			DbUtils.closeQuietly(update);
 		}					
 	}
-	
-	private void updateNewDomain( String domainName ) throws AonSQLException {
-		PreparedStatement ps = null;
-		try {
-	        String stmt = "UPDATE domain SET name = ?, description=?, owner=? where id = ?";
-	        ps = connection.prepareStatement(stmt);
-	        ps.setString(1, domainName);
-	        ps.setString(2, getDescription());
-	        ps.setString(3, getOwner());
-	        ps.setInt(4, newDomain);
-	        ps.execute();
-		} catch (SQLException e) {
-			throw new AonSQLException("Error actualizando la información del nuevo dominio", e);
-		} finally {
-			DbUtils.closeQuietly(ps);
-		}					
-	}
 
 	private void mergeDomain( String domainName) throws AonSQLException {
 		TableInfo tableInfo = tables.get(DOMAIN_TABLE_NAME); 
+		DomainTableInfoListener listener = new DomainTableInfoListener(domainName, getDescription(), getOwner());
+		tableInfo.setListener(listener);
 		merge( tableInfo );
 		this.newDomain = tableInfo.getNewKey(sourceDomain);
-		updateNewDomain( domainName );
 	}
 	
 	private void merge(TableInfo t) throws AonSQLException {
@@ -268,6 +252,9 @@ public class AonDomainDuplicate implements Constants {
 					
 				}
 				insert.setObject((i + 1),value);
+			}
+			if ( t.getListener() != null ) {
+				t.getListener().beforeInsert(insert, rs, t);
 			}
 			insert.execute();
 			if (t.isAutoincrementPK()) {
