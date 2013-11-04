@@ -139,6 +139,9 @@ public class MOD111Writer implements IFinanceConstants{
 		
 		if (fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
 			declaration.setAdministrationCode(fiscalModel.getAdmonAeat());
+			if (StringUtils.isEmpty(declaration.getAdministrationCode())) {
+				throw new ManagerBeanException("No se ha indicado el Código de Administración.");
+			}
 		}
 		
 		IManagerBean bean = BeanManager.getManagerBean(FiscalModelDetail.class);
@@ -171,6 +174,7 @@ public class MOD111Writer implements IFinanceConstants{
 			} 
 		}
 		declaration.setResult(d);
+		declaration.changeInvalidCharacters();
 		return declaration;
 	}
 

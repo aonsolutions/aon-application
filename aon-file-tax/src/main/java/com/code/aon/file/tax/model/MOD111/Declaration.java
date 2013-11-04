@@ -315,5 +315,26 @@ public class Declaration {
 	public String getComplementaryStr() {
 		return isComplementary()?"1":"0";
 	}
-	
+
+	public void changeInvalidCharacters() {
+		String[] tokens = new String[] {
+			administrationCode,			currentLetterMonth,			complementaryCode,			
+			replacedNumber,				document,					name,				
+			surname,					phone,						streetInitial,
+			streetName,					streetNumber,				streetStair,
+			streetFloor,				streetDoor,					town,
+			province,					zip,						contactPerson,
+			contactPhone,				contactCellular,			contactMail,
+			payInCash,					payInAccount				
+		};
+		char[] seek  = new char[]{'á','é','í','ó','ú','Á','É','Í','Ó','Ú','º','ª'};
+		char[] alter = new char[]{'a','e','i','o','u','A','E','I','O','U',' ',' '};
+		for (String token: tokens) {
+			if (StringUtils.isNotBlank(token)) {
+				for (int i = 0; i < seek.length ; i ++) {
+					StringUtils.replaceChars(token, seek[i], alter[i]);
+				}
+			}
+		}
+	}
 }

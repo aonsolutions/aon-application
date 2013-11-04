@@ -318,4 +318,25 @@ public class Declaration {
 	public String toString() {
 		return getDocument() + " " + getName();
 	}
+	public void changeInvalidCharacters() {
+		String[] tokens = new String[] {
+			administrationCode,			currentLetterMonth,			complementaryCode,			
+			replacedNumber,				document,					name,				
+			surname,					phone,						streetInitial,
+			streetName,					streetNumber,				streetStair,
+			streetFloor,				streetDoor,					town,
+			province,					zip,						contactPerson,
+			contactPhone,				contactCellular,			contactMail,
+			payment,					toDeduct				
+		};
+		char[] seek  = new char[]{'á','é','í','ó','ú','Á','É','Í','Ó','Ú','º','ª'};
+		char[] alter = new char[]{'a','e','i','o','u','A','E','I','O','U',' ',' '};
+		for (String token: tokens) {
+			if (StringUtils.isNotBlank(token)) {
+				for (int i = 0; i < seek.length ; i ++) {
+					StringUtils.replaceChars(token, seek[i], alter[i]);
+				}
+			}
+		}
+	}
 }

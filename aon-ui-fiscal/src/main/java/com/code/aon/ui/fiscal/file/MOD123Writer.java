@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -115,6 +117,9 @@ public class MOD123Writer implements IFinanceConstants{
 
 		if (fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
 			declaration.setAdministrationCode(fiscalModel.getAdmonAeat());
+			if (StringUtils.isEmpty(declaration.getAdministrationCode())) {
+				throw new ManagerBeanException("No se ha indicado el Código de Administración.");
+			}
 		}
 		
 		IManagerBean bean = BeanManager.getManagerBean(FiscalModelDetail.class);
@@ -157,6 +162,7 @@ public class MOD123Writer implements IFinanceConstants{
 				}
 			}
 		}
+		declaration.changeInvalidCharacters();
 		return declaration;
 	}
 

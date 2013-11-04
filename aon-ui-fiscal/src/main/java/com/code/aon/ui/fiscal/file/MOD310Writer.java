@@ -118,6 +118,9 @@ public class MOD310Writer implements IFinanceConstants{
 
 		if (fiscalModel.getAdministration() == Administration.COMMON_TERRITORY) {
 			declaration.setAdministrationCode(fiscalModel.getAdmonAeat());
+			if (StringUtils.isEmpty(declaration.getAdministrationCode())) {
+				throw new ManagerBeanException("No se ha indicado el Código de Administración.");
+			}
 		}
 		
 		declaration.setToDeduct("");
@@ -185,6 +188,7 @@ public class MOD310Writer implements IFinanceConstants{
 			}
 			declaration.setDeposit(d);			
 		}
+		declaration.changeInvalidCharacters();
 		return declaration;
 	}
 

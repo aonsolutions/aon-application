@@ -905,4 +905,28 @@ public class Declaration {
 		return getDocument() + " " + getName();
 	}
 	
+	public void changeInvalidCharacters() {
+		String[] tokens = new String[] {
+			period,				bankName,			ccc1,				
+			ccc2,				ccc3,				ccc4,				
+			document,			name,				surname,
+			address,			entity,				city,
+			provinceID,			province,			telephone,
+			fax,				email,				todayMonth,
+			depositBankEntity,	depositBankOffice,	depositBankControl,
+			depositBankAccount,	payBackBankEntity,	payBackBankOffice,
+			payBackBankControl,	payBackBankAccount
+		};
+		char[] seek  = new char[]{'á','é','í','ó','ú','Á','É','Í','Ó','Ú','º','ª'};
+		char[] alter = new char[]{'a','e','i','o','u','A','E','I','O','U',' ',' '};
+		for (String token: tokens) {
+			if (StringUtils.isNotBlank(token)) {
+				for (int i = 0; i < seek.length ; i ++) {
+					StringUtils.replaceChars(token, seek[i], alter[i]);
+				}
+			}
+		}
+	}
+	
+	
 }

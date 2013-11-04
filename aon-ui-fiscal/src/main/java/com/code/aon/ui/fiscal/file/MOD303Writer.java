@@ -164,7 +164,7 @@ public class MOD303Writer {
 			populateDeclarationDetail(vatTax,declaration);
 			
 			populateDeclaration(vatTaxDeclaration,declaration);
-			
+			declaration.changeInvalidCharacters();
 			return declaration;
 	}
 	
@@ -362,5 +362,4 @@ public class MOD303Writer {
 		}
 		
 	}
-
 }
