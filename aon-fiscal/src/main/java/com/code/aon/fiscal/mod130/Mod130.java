@@ -16,12 +16,14 @@ import com.code.aon.fiscal.enumeration.IFiscalModelKey;
 import com.code.aon.fiscal.enumeration.Mod130Key;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.model.IFiscalDeclaration;
+import com.code.aon.registry.enumeration.TaxRegime;
 
 public class Mod130 implements IFiscalDeclaration {
 
 	private FiscalModel fiscalModel;
 	private Map<Mod130Key,FiscalModelDetail> map;
 	private boolean permanentAddressChanges;
+	private TaxRegime taxRegime;
 	
 	public Mod130() {
 		
@@ -29,6 +31,13 @@ public class Mod130 implements IFiscalDeclaration {
 	@Override
 	public FiscalModelType getType() {
 		return FiscalModelType.M130;
+	}
+	
+	public TaxRegime getTaxRegime() {
+		return taxRegime;
+	}
+	public void setTaxRegime(TaxRegime taxRegime) {
+		this.taxRegime = taxRegime;
 	}
 	public boolean isPermanentAddressChanges() {
 		return permanentAddressChanges;	
