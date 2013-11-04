@@ -534,6 +534,7 @@ public abstract class FiscalModelController extends BasicController {
 		FiscalModel to = (FiscalModel) getTo();
 		return ( !isNew() 
 			&& to.isFinished() 
+			&& to.getAdministration() == Administration.COMMON_TERRITORY
 			&& isScriptPresent());
 	}
 
