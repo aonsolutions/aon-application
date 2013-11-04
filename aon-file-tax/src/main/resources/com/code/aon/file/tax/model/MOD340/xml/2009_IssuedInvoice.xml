@@ -33,7 +33,7 @@
  <field name="rect_numero_factura" value="bean" bean="ISSUED" property="rectifiedInvoiceNumber" format="AlphaNumeric" pattern="X(40)" />
  <field name="re_porcentaje" value="bean" bean="ISSUED" property="surchargePercent" format="Numeric" pattern="9(3)V99" />
  <field name="re_quota" value="bean" bean="ISSUED" property="surchargeQuota" format="Numeric" pattern="S9(11)V99" />
- <field name="situacion_inmueble" value=" " format="Alphabetic" pattern="X(1)" />
+ <field name="situacion_inmueble" value="0" format="Numeric" pattern="9(1)" />
  <field name="referencia_catastral" value=" " format="Alphabetic" pattern="X(25)" />
  <field name="importe_metalico" value="0" format="Numeric" pattern="9(15)" />
  <field name="ejercicio_inm" value="0" format="Numeric" pattern="9(4)" />
