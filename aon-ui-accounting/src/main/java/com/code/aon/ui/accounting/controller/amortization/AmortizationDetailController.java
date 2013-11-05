@@ -239,7 +239,7 @@ public class AmortizationDetailController extends LinesController {
 			// Se calcula la dotación fiscal para cada periodo, la última se calcula por diferencia.				
 			Double fiscalAllocation = CommonUtil.round(getAnnualSummary().getFiscalAllocation() / count);
 			Double diff = CommonUtil.round((fiscalAllocation * count) - getAnnualSummary().getFiscalAllocation());
-			Double lastFiscalAllocation = (diff == 0.0)?fiscalAllocation:CommonUtil.round(fiscalAllocation + diff);
+			Double lastFiscalAllocation = (diff == 0.0)?fiscalAllocation:CommonUtil.round(fiscalAllocation - diff);
 							
 			// Se modifica las cuotas con las nueva dotación fiscal.
 			int i = 0;
