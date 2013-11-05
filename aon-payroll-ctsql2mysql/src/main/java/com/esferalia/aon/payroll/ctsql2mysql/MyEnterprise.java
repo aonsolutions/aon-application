@@ -172,6 +172,8 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	private Map<Integer, Map<Integer, String>> workplaces_old_agreements;
 	private Map<Integer, Map<RegistryAttachmentType, List<String>>> images;
 
+	private Map<String, Integer> domains;
+
 	public MyEnterprise(DefaultMysqlDB mysqlDB, IAgreements agreements,
 			ICalendars calendars, File logosAndSignaturesDir,
 			String passwdHash, String domainSuffix, boolean disabled) {
@@ -193,6 +195,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		this.customerChilds = new HashMap<String, Integer>();
 		this.calendarsMap = new HashMap<Integer, Integer>();
 		this.images = new Hashtable<Integer, Map<RegistryAttachmentType, List<String>>>();
+		this.domains = new Hashtable<String, Integer>();
 	}
 
 	protected void init(AbstractCtsqlDB ctsqlDB) throws SQLException {
@@ -361,11 +364,25 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 					emprnif.getCdg(), domainName, truncated);
 			domainName = truncated;
 		}
-
+		
+		int duplicates = domains.containsKey(domainName) ? domains.get(domainName) : 0;
+		if ( duplicates > 0){
+			if ( domainName.length() == MaxLength) {
+				domainName = domainName.substring(0, MaxLength-3);
+			}
+			domainName += String.format("-%d", duplicates );
+			MysqlDB.warn(
+					"emprnif[{}]: Domain duplicate. Renamed '{}'.",
+					emprnif.getCdg(), domainName);
+			
+		}
+		domains.put(domainName, duplicates+1);
+		
 		Integer domain;
 		try {
 			domain = mysqlDB.newEnterpriseDomain(
 					String.format("%s.%s", domainName, this.domainSuffix),
+					name,
 					mysqlDB.getDefaultDomain());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
