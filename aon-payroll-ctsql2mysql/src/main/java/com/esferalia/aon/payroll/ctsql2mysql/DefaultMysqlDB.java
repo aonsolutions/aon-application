@@ -789,11 +789,10 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 
 	static final String PROFILES[] = { "Administrador" };
 
-	public Integer newEnterpriseDomain(String name, Integer parent)
+	public Integer newEnterpriseDomain(String name, String description, Integer parent)
 			throws IOException, InterruptedException, SQLException {
 
 		DomainType type = DomainType.ENTERPRISE;
-		String description = name;
 		String subDomainSuffix = null;
 		String owner = "ctsql2mysql";
 		boolean userManagement = true;
