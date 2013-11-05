@@ -7,7 +7,7 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<script type="text/javascript">
-            	<![CDATA[
+            	//<![CDATA[
             	    var form = #{rich:element(form)};
 					for ( var i = 0; i < form.length; i++ ){
 						var element = form.elements[i];
@@ -23,6 +23,8 @@
 							element.style.display = 'none';
 						if ( element.type == 'file')
 							element.style.display = 'none';
+						if ( element.type == 'text' && element.value )
+							element.size = element.value.length;;
 						
 						if ( element.tagName == 'SELECT') {
 							try {
@@ -30,6 +32,7 @@
 								var input = document.createElement("INPUT");
 								input.value =  value;
 								input.disabled = true;
+								input.size = value.length;
 								input.style.color = 'inherit';
 								input.style.borderColor = 'transparent';
 								input.style.backgroundColor = 'transparent';
@@ -40,7 +43,7 @@
 							}
 						}
 					}
-					
+
 					var imgs = form.getElementsByTagName('img');
 					for ( var i = 0; i < imgs.length; i++ ) {
 						if ( imgs[i].className.indexOf('rich-calendar-button') >= 0 )
@@ -54,7 +57,7 @@
 					}
 					
 					form.style.display='';
-            	]]>
+            	//]]>
 	</script>
 
 </ui:composition>
