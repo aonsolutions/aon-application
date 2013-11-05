@@ -23,6 +23,7 @@
 				actionListener="#{controllerList.checkHandler.checkNone}" reRender="listDataDiv"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
 	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+			<!--  
 			<aon:commandButton title="#{bundle.payroll_refine_search}"
 				styleClass="aon-finding-toolbar-item aon-icon-search"
 				value="#{bundle.payroll_refine_search}"
@@ -31,6 +32,7 @@
 				<f:setPropertyActionListener target="#{controllerList.checkHandler.showListSearchWindow}"
 					value="#{true}" />
 			</aon:commandButton>
+			-->
 			<aon:commandButton title="#{bundle.payroll_add_batch}"
 				styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 				value="#{bundle.payroll_add_batch}"
@@ -42,6 +44,27 @@
 	     	<ui:insert name="afterToolbarContent" />
 	     	
 		</aon:div>
+		
+		<a4j:region id="searchPanel">
+			<aon:panelCollapsible 
+				label="#{bundle.payroll_data_filter}"
+				headerClass="aon-panelGrid-search-info" 
+				bodyClass="aon-panelGrid-search" >
+				<aon:panelGrid columns="2">
+				
+					<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{controllerList.enterprise}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="skipGoToButton" value="#{true}" />
+						</ui:include>
+					</c:if>
+				
+				 	<ui:insert name="searchContent" />
+				
+				</aon:panelGrid>
+			</aon:panelCollapsible>
+		</a4j:region>
 
 		<aon:dataTable id="listData" value="#{controllerList.model}"
 			var="to" rows="20" rendered="#{controllerList.model.rowCount > 0}" >	

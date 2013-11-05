@@ -109,7 +109,6 @@ public class CertificadosWriter {
 		CertificadoEmpresa certificado = new CertificadoEmpresa();
 		EnterpriseCCC ccc = null;
 		CUENTACOTIZACIONTYPE cuentaCotizacionType = null;
-//		int i = 0;
 		for(ITransferObject to: batchDetailList){
 			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
 			EnterpriseCCC contractCcc = detail.getContract().getEnterpriseCCC();
@@ -117,11 +116,10 @@ public class CertificadosWriter {
 				cuentaCotizacionType = createCuentaCotizacionType(contractCcc);
 				certificado.getCuentaCotizacion().add(cuentaCotizacionType);
 				ccc = contractCcc;
+				System.out.println("__ccc: " + ccc.getFullCcc());
 			}
 			cuentaCotizacionType.getDatosTrabajador().add(createTrabajadorType(detail));
-//			i++;
-//			System.out.println("__ " + i);
-			
+			System.out.println("__trabajador: " + detail.getContract().getPerson().getFullName());
 		}
 		return certificado;
 	}
@@ -302,8 +300,8 @@ public class CertificadosWriter {
 			o.setDistribucionJornadas(createDistribucionJornadasType(batchDetail));
 		}
 		
-		for(Cotizacion cotizacion: getCotizacionList(batchDetail)){
-			o.getDatosCotizacion().add(createCotizacionType(cotizacion));
+		for(COTIZACIONTYPE cotizacion: getCotizacionList(batchDetail)){
+			o.getDatosCotizacion().add(cotizacion);
 		}
 		
 		o.getDatosCotizacionREA().add(null);
@@ -341,9 +339,6 @@ public class CertificadosWriter {
 				
 				ContractData diasTp = map.get(ContextVariable.CONTRACT_DAYS.getName());
 				ContractData diasSemanaTp = map.get(ContextVariable.WEEK_DAYS.getName());
-				
-//				String diasTp = getContractDataExpression(batchDetail.getContract(), p, ContextVariable.CONTRACT_DAYS);
-//				String diasSemanaTp = getContractDataExpression(batchDetail.getContract(), p, ContextVariable.WEEK_DAYS);
 				
 				if(diasTp!=null || diasSemanaTp!=null){
 					if(isIrregular(batchDetail.getContract(), p)){
@@ -446,121 +441,66 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private COTIZACIONTYPE createCotizacionType(Cotizacion batchData){
+	private COTIZACIONTYPE createCotizacionType(int year, int month, Integer contributionDays, 
+			Double cgcContributionBase, Double unemploymentContributionBase, String comments) {
 		COTIZACIONTYPE o = new COTIZACIONTYPE();
-		Cotizacion data = batchData;
-		o.setAno(data.getYear().toString());
-		o.setMes(completeLength(data.getMonth().toString(), 2,false));
-		o.setNumDiasCotizados(completeLength(data.getContributionDays().toString(), 3,false));
-		o.setBaseCotizacionContingenciasComunes(completeLength(data.getCgcContributionBase(), 9, false));
-		o.setBaseCotizacionDesempleo(completeLength(data.getUnemploymentContributionBase(), 9,false));
-		o.setObservaciones(data.getComments());
+		o.setAno(String.valueOf(year));
+		o.setMes(completeLength(String.valueOf(month), 2,false));
+		o.setNumDiasCotizados(completeLength(contributionDays.toString(), 3,false));
+		o.setBaseCotizacionContingenciasComunes(completeLength(cgcContributionBase, 9, false));
+		o.setBaseCotizacionDesempleo(completeLength(unemploymentContributionBase, 9,false));
+		o.setObservaciones(comments);
 		return o;
 	}
 	
-	private List<Cotizacion> getCotizacionList(Certifica2BatchDetail detail) {
-		ISalary nomina = null;
-		List<Cotizacion> cotizacionList = null;
+	private List<COTIZACIONTYPE> getCotizacionList(Certifica2BatchDetail detail) {
+		List<ISalary> salaryList = null;
+		List<COTIZACIONTYPE> cotizacionList = null;
 		Integer totalDias = 0;
 		Calendar calInicio = new GregorianCalendar();
 		Calendar calFin = new GregorianCalendar();
 		calInicio.setTime(detail.getContract().getStartDate());
 		calFin.setTime(detail.getContract().getEndDate());
 		calFin.set(Calendar.DAY_OF_MONTH, calFin.getActualMaximum(Calendar.DAY_OF_MONTH));
-		cotizacionList = new ArrayList<Cotizacion>();
-		ISalary atraso = getSalary(detail.getContract(), detail.getContract().getStartDate(), detail.getContract().getEndDate(), SalaryType.DELAY);
-		while((calInicio.before(calFin) || calInicio.equals(calFin)) && totalDias < 180) {
-			Calendar startDate = new GregorianCalendar();
-			Calendar endDate = new GregorianCalendar();
-			startDate.setTime(new Date(calFin.getTimeInMillis()));
-			endDate.setTime(new Date(calFin.getTimeInMillis()));
-			startDate.set(Calendar.DAY_OF_MONTH, 1);
-			endDate.set(Calendar.DAY_OF_MONTH, startDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-			nomina = getSalary(detail.getContract(),  startDate.getTime(), endDate.getTime());
-			calFin.add(Calendar.DATE, -calFin.get(Calendar.DAY_OF_MONTH));
-			if(nomina != null) {
-				Double baseCg = nomina.getCommonBase();
-				Double baseAcc = nomina.getProfessionalBase();
-				// obtener las bases de los atrasos que correspondan al periodo
-				if(atraso != null){
-					baseCg += getDelayBaseAmount(atraso, startDate.getTime(), endDate.getTime(), ContextVariable.CGC_BASE);
-					baseAcc += getDelayBaseAmount(atraso, startDate.getTime(), endDate.getTime(), ContextVariable.CGP_BASE);
-				}
-				totalDias += nomina.getTimeUnits();
-				Cotizacion cotizacion = new Cotizacion();
-				Calendar cal = new GregorianCalendar();
-				cal.setTime(nomina.getEndDate());
-				cotizacion.setYear(cal.get(Calendar.YEAR));
-				cotizacion.setMonth(cal.get(Calendar.MONTH)+1);
-				cotizacion.setContributionDays(nomina.getTimeUnits());
-				cotizacion.setCgcContributionBase(baseCg);
-				cotizacion.setUnemploymentContributionBase(baseAcc);
-				cotizacion.setComments(null);
-				cotizacionList.add(cotizacion);
-			}
-		}
-		return cotizacionList;
-	}
-	
-	private Double getDelayBaseAmount(ISalary salary, Date startDate, Date endDate, ContextVariable base) {
-		SEPEUtils utils = new SEPEUtils();
-		Map<String, SalaryData> map = utils.getSalaryDataMap((Salary) salary, startDate, endDate);
-		if(map.containsKey(base.getName())){
-			try {
-				return Double.parseDouble(map.get(base.getName()).getExpression());
-			} catch (NumberFormatException e) {
-				String msg = "Ha ocurrido un error al obtener la base '" +base.getName();
-				msg += "' para la nomina del "+salary.getIssueDate();
-				msg += " del trabajador "+salary.getEmployeeName();
-				msg += " ("+salary.getEnterpriseName()+")";
-				AonUtil.addErrorMessage(msg);
-				AonUtil.addErrorMessage("Valor obtenido: "+map.get(base.getName()).getExpression());
-			}
-		}
-		return 0.0;
-	}
-
-	public ISalary getSalary(Contract contract, Date startDate, Date endDate) {
-		return getSalary(contract, startDate, endDate, SalaryType.SALARY);
-	}
-	
-	public ISalary getSalary(Contract contract, Date startDate, Date endDate, SalaryType type) {
-		if(startDate == null)return null;
-		if(endDate == null)return null;
+		cotizacionList = new ArrayList<COTIZACIONTYPE>();
+		List<ISalary> delayList;
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
-			if(type!=null){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), type);
-			} else {
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
-			}
-			
-			if(startDate != null){
-				Calendar startCal = Calendar.getInstance();
-				startCal.setTime(startDate);
-				startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
-				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), startCal.getTime());
-			}
-			if(endDate != null){
-				Calendar endCal = Calendar.getInstance();
-				endCal.setTime(endDate);
-				endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), endCal.getTime());
-			}
-			
-			criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE), false);
-			List<ITransferObject> list = bean.getList(criteria);
-			if(list!=null && !list.isEmpty()){
-				return (ISalary) list.get(0);
+			delayList = getSalaries(detail.getContract(), detail.getContract().getStartDate(), detail.getContract().getEndDate(), SalaryType.DELAY);
+			while((calInicio.before(calFin) || calInicio.equals(calFin)) && totalDias < 180) {
+				Calendar startDate = new GregorianCalendar();
+				Calendar endDate = new GregorianCalendar();
+				startDate.setTime(new Date(calFin.getTimeInMillis()));
+				endDate.setTime(new Date(calFin.getTimeInMillis()));
+				startDate.set(Calendar.DAY_OF_MONTH, 1);
+				endDate.set(Calendar.DAY_OF_MONTH, startDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+				salaryList = getSalaries(detail.getContract(), startDate.getTime(), endDate.getTime());
+				calFin.add(Calendar.DATE, -calFin.get(Calendar.DAY_OF_MONTH));
+				for(ISalary salary: salaryList){
+					Double baseCg = salary.getCommonBase();
+					Double baseAcc = salary.getProfessionalBase();
+					
+					// obtener las bases de los atrasos de las nominas
+					if(delayList.size()>0){
+						baseCg += getDelayBaseAmount(delayList, startDate.getTime(), endDate.getTime(), ContextVariable.CGC_BASE);
+						baseAcc += getDelayBaseAmount(delayList, startDate.getTime(), endDate.getTime(), ContextVariable.CGP_BASE);
+					}
+					
+					totalDias += salary.getTimeUnits();
+					Calendar cal = new GregorianCalendar();
+					cal.setTime(salary.getEndDate());
+					COTIZACIONTYPE cotizacion = createCotizacionType( cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, 
+							salary.getTimeUnits(), baseCg, baseAcc, null);
+					cotizacionList.add(cotizacion);
+					System.out.println("__cotizacion: " + cotizacion.getMes()+"/"+cotizacion.getAno());
+				}
 			}
 		} catch (ManagerBeanException e) {
-			String msg = "Imposible obtener la ultima nomina";
+			String msg = "Ha ocurrido un error al obtener datos de las nominas.";
 			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(msg, e);
 		}
-		return null;
+		return cotizacionList;
 	}
 	
 	/**
@@ -610,22 +550,23 @@ public class CertificadosWriter {
 		TRABAJADORTYPE.DatosVacacionesCotizadas o = null;
 		SEPEUtils utils = new SEPEUtils();
 		try {
-			Salary settle = obtainSettle(contract);;
+			List<ISalary> settleList = getSalaries(contract, null, null, SalaryType.SETTLE);
 			String noHolidays = utils.getContractDataMap(contract).get(ContextVariable.NO_HOLIDAYS.getName());
-			if(settle!=null && noHolidays!=null && noHolidays!="0"){
-				o = new TRABAJADORTYPE.DatosVacacionesCotizadas();
-				Double baseContingenciaGenerales = settle.getCommonBase();
-				Double baseAccidentesTrabajo = settle.getProfessionalBase();
-// TODO contemplar el caso de que exista atraso de finiquito 
-//				IFiniquitoDiferencia finiquitodf = getNominaDAO().getFiniquitoDiferencia(empleado);
-//				if(finiquitodf != null && finiquitodf.getDiasVacaciones() != 0 && finiquitodf.getImporteVacaciones() != 0) {
-//					baseAccidentesTrabajo += finiquitodf.getBaseAccidentesTrabajo();
-//					baseContingenciaGenerales += finiquitodf.getBaseContingenciasGenerales();
-//				}
-				o.setNumDiasCotizados(completeLength(noHolidays,3,false));
-				o.setBaseCotizacionContingenciasComunes(completeLength(baseContingenciaGenerales, 9,false));
-				o.setBaseCotizacionDesempleo(completeLength(baseAccidentesTrabajo, 9,false));
-				o.setObservaciones(null);
+			for(ISalary settle: settleList){
+				if(settle!=null && noHolidays!=null && noHolidays!="0"){
+					o = new TRABAJADORTYPE.DatosVacacionesCotizadas();
+					Double baseCg = settle.getCommonBase();
+					Double baseAcc = settle.getProfessionalBase();
+					
+					// obtener las bases de los atrasos de finiquitos 
+					baseCg += getDelayBaseAmount(settleList, null, null, ContextVariable.CGC_BASE);
+					baseAcc += getDelayBaseAmount(settleList, null, null, ContextVariable.CGP_BASE);
+					
+					o.setNumDiasCotizados(completeLength(noHolidays,3,false));
+					o.setBaseCotizacionContingenciasComunes(completeLength(baseCg, 9,false));
+					o.setBaseCotizacionDesempleo(completeLength(baseAcc, 9,false));
+					o.setObservaciones(null);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener el finiquito de "+contract.getPerson().getFullName();
@@ -1088,30 +1029,6 @@ public class CertificadosWriter {
 	// ****************************************************
 	// ****************************************************
 	
-//	private List<ITransferObject> obtainBatchDetailList(Certifica2Batch batch) {
-//		try {
-//			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DETAIL_CERTIFICA2BATCH_ID), batch.getId());
-//			return bean.getList(criteria);
-//		} catch (ManagerBeanException e) {
-//			// NADA, que siga con la generacion del fichero
-//		}
-//		return null;
-//	}
-
-	private List<EnterpriseCCC> getCccList(List<ITransferObject> batchDetailList) {
-		List<EnterpriseCCC> list = new ArrayList<EnterpriseCCC>();
-		for(ITransferObject to: batchDetailList){
-			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
-			EnterpriseCCC ccc = detail.getContract().getEnterpriseCCC();
-			if(!list.contains(ccc)){
-				list.add(ccc);
-			}
-		}
-		return list;
-	}
-	
 	private RegistryDirStaff getRegistryDirStaff(Enterprise enterprise) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
@@ -1120,7 +1037,8 @@ public class CertificadosWriter {
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
 			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE));
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-			
+			SEPEUtils utils = new SEPEUtils();
+			utils.completeDomainCriteria(criteria, bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DOMAIN));
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				return (RegistryDirStaff) list.get(0);
@@ -1149,31 +1067,60 @@ public class CertificadosWriter {
 		return (cd!=null && new Boolean(cd.getExpression()));
 	}
 	
-	private Salary obtainSettle(Contract contract) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SETTLE);
-		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
-			return (Salary) list.get(0);
+	private Double getDelayBaseAmount(List<ISalary> delayList, Date startDate, Date endDate, ContextVariable baseName) {
+		SEPEUtils utils = new SEPEUtils();
+		try {
+			Double amount = 0.0;
+			if(baseName!=null){
+				for(ISalary delay: delayList){
+					for(SalaryData data: utils.getSalaryDataList((Salary) delay, startDate, endDate, baseName.getName())){
+						amount += Double.parseDouble(data.getExpression());
+					}
+				}
+			}
+			return amount;
+		} catch (ManagerBeanException e) {
+			String msg = "Ha ocurrido un error al obtener la base '" + baseName.getName();
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
 		}
 		return null;
 	}
+
+	public List<ISalary> getSalaries(Contract contract, Date startDate, Date endDate) throws ManagerBeanException {
+		return getSalaries(contract, startDate, endDate, SalaryType.SALARY);
+	}
 	
-//	private List<ITransferObject> obtainBatchData(Certifica2BatchDetail detail) {
-//		try {
-//			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchData.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DATA_CERTIFICA2BATCH_DETAIL_ID), detail.getId());
-//			criteria.addOrder(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DATA_YEAR), false);
-//			criteria.addOrder(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DATA_MONTH), false);
-//			return bean.getList(criteria);
-//		} catch (ManagerBeanException e) {
-//			// NADA, que siga con la generacion del fichero
-//		}
-//		return null;
-//	}
+	public List<ISalary> getSalaries(Contract contract, Date startDate, Date endDate, SalaryType type) throws ManagerBeanException {
+		SEPEUtils utils = new SEPEUtils();
+		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
+		if(type!=null){
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), type);
+		} else {
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
+		}
+		if(startDate != null){
+			Calendar startCal = Calendar.getInstance();
+			startCal.setTime(startDate);
+			startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), startCal.getTime());
+		}
+		if(endDate != null){
+			Calendar endCal = Calendar.getInstance();
+			endCal.setTime(endDate);
+			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), endCal.getTime());
+		}
+		utils.completeDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SALARY_DOMAIN));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE), false);
+		List<ISalary> list = new LinkedList<ISalary>();
+		for(ITransferObject to: bean.getList(criteria)){
+			list.add((ISalary) to);
+		}
+		return list;
+	}
 	
 	private String completeLength(Integer value, Integer length, boolean rightAppend) {
 		return completeLength(value.toString(), length, rightAppend);
@@ -1208,59 +1155,15 @@ public class CertificadosWriter {
 		return completeLength(String.valueOf(var.intValue()), lon, dir);
 	}
 	
-	
 	private Integer differenceBetweenDates(Date from, Date to) {
 		Integer diffDays = new Integer(0);
 		final Double MS_PER_DAY = new Double(1000 * 60 * 60 * 24);
-		if(!from.after(to)) {
+		if(from.equals(to)) {
+			return 1;
+		} else if(!from.after(to)) {
 			diffDays = (int)((Math.floor((to.getTime() - from.getTime()) / MS_PER_DAY + 0.5d) + 1));
 		}
 		return diffDays;
-	}
-	
-	class Cotizacion{
-		private Integer year;
-		private Integer month;
-		private Integer contributionDays;
-		private Double cgcContributionBase;
-		private Double unemploymentContributionBase;
-		private String comments;
-		public Integer getYear() {
-			return year;
-		}
-		public void setYear(Integer year) {
-			this.year = year;
-		}
-		public Integer getMonth() {
-			return month;
-		}
-		public void setMonth(Integer month) {
-			this.month = month;
-		}
-		public Integer getContributionDays() {
-			return contributionDays;
-		}
-		public void setContributionDays(Integer contributionDays) {
-			this.contributionDays = contributionDays;
-		}
-		public Double getCgcContributionBase() {
-			return cgcContributionBase;
-		}
-		public void setCgcContributionBase(Double cgcContributionBase) {
-			this.cgcContributionBase = cgcContributionBase;
-		}
-		public Double getUnemploymentContributionBase() {
-			return unemploymentContributionBase;
-		}
-		public void setUnemploymentContributionBase(Double unemploymentContributionBase) {
-			this.unemploymentContributionBase = unemploymentContributionBase;
-		}
-		public String getComments() {
-			return comments;
-		}
-		public void setComments(String comments) {
-			this.comments = comments;
-		}
 	}
 	
 }

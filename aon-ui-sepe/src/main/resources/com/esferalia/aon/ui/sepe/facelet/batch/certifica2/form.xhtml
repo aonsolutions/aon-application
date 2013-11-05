@@ -26,12 +26,10 @@
 		</ui:define>
 		
 		<ui:define name="batchContent" >
-			<aon:panelGrid id="dataTable" columns="2" style="width: 30%;"
-				columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
+			<aon:panelGrid id="dataTable" columns="4" style="width: 60%;"
+				columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto,
+					aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
 
-				<aon:outputLabel value="#{bundle.aon_id}" />
-				<aon:outputText value="#{certifica2Batch.to.id}" />
-				
 				<aon:outputLabel for="certifica2Batch_date" value="#{bundle.aon_date}" />
 				<aon:div>
 					<aon:selectInputDate id="certifica2Batch_date" rendered="#{!certifica2Batch.recorded}"

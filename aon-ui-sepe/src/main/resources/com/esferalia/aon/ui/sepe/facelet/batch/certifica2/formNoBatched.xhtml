@@ -34,6 +34,13 @@
 			</aon:div>
 		</ui:define>
 		
+		<ui:define name="searchContent" >
+			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/search_content.xhtml" >
+				<ui:param name="controller" value="#{certifica2List}" />
+				<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
+			</ui:include>
+		</ui:define>
+		
 		<ui:define name="listDataColumns" >
 			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/listColumns.xhtml" />
 		</ui:define>

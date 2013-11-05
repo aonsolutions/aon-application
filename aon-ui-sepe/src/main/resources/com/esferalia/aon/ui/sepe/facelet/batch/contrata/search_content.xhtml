@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+		
+	<aon:outputLabel for="Contrata_fileType" value="#{bundle.sepe_communication_type}" />
+	<aon:selectOneMenu id="Contrata_fileType" required="true" 
+		value="#{controller.fileType}">
+		<f:selectItems value="#{sepeCollections.contrataFileTypeList}" />
+	</aon:selectOneMenu>
+
+	<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{controller.person}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+		<ui:param name="skipGoToButton" value="#{true}" />
+	</ui:include>
+	
+	<aon:outputText value="" />
+	<aon:commandButton id="detailSearch"
+		value="#{bundle.aon_search}" status="aonStatus"
+		reRender="#{searchReRender}"
+		actionListener="#{controller.onSearch}"
+		requestDelay="100"
+		styleClass="aon-icon-rubber aon-search-lookup-button">
+	</aon:commandButton>
+	
+</ui:composition>

@@ -11,6 +11,14 @@
 		<ui:param name="controller" value="#{contrataBatch}" />
 		<ui:param name="controllerList" value="#{contrataList}" />
 		
+		
+		<ui:define name="searchContent" >
+			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/contrata/search_content.xhtml" >
+				<ui:param name="controller" value="#{contrataList}" />
+				<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
+			</ui:include>
+		</ui:define>
+		
 		<ui:define name="listDataColumns" >
 			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/contrata/listColumns.xhtml" />
 		</ui:define>

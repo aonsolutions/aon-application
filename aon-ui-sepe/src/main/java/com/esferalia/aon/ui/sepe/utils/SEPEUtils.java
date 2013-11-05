@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -41,10 +43,7 @@ public class SEPEUtils {
 			} else {
 				criteria.addExpression(endDateExp);
 			}
-			if(DomainManager.isDomainManagementAvailable()){
-				criteria.setSkipDomainFilter( true );
-				criteria.addInExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_DOMAIN), getCurrentChildDomainIds());
-			}
+			completeDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CONTRACT_DATA_DOMAIN));
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				map.put(data.getName(), data.getExpression()!=null?data.getExpression().replace('"', ' ').trim():"");
@@ -68,6 +67,7 @@ public class SEPEUtils {
 			if(endDate!=null){
 				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), endDate);
 			}
+			completeDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CONTRACT_DATA_DOMAIN));
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				if(data.getExpression()!=null){
@@ -80,9 +80,9 @@ public class SEPEUtils {
 		return map;
 	}
 	
-	public Map<String, SalaryData> getSalaryDataMap(Salary salary, Date startDate, Date endDate) {
-		Map<String, SalaryData> map = new HashMap<String, SalaryData>();
-		try {
+	public List<SalaryData> getSalaryDataList(Salary salary, Date startDate, Date endDate, String name) throws ManagerBeanException {
+		List<SalaryData> list = new LinkedList<SalaryData>();
+		if( salary!=null && salary.getId()!=null ){
 			IManagerBean bean = BeanManager.getManagerBean(SalaryData.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_SALARY_ID), salary.getId());
@@ -92,14 +92,31 @@ public class SEPEUtils {
 			if(endDate!=null){
 				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_END_DATE), endDate);
 			}
+			if(StringUtils.isNotBlank(name)){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_NAME), name);
+			}
+			completeDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SALARY_DATA_DOMAIN));
 			for(ITransferObject to: bean.getList(criteria)){
 				SalaryData data = (SalaryData) to;
 				if(data.getExpression()!=null){
-					map.put(data.getName(), data);
+					list.add(data);
 				}
 			}
-		} catch (ManagerBeanException e) {
-			// NADA, que siga generando el fichero
+		}
+		return list;
+	}
+	
+	public List<SalaryData> getSalaryDataList(Salary salary, Date startDate, Date endDate) throws ManagerBeanException {
+		return getSalaryDataList(salary, startDate, endDate, null);
+	}
+	
+	public Map<String, SalaryData> getSalaryDataMap(Salary salary, Date startDate, Date endDate) throws ManagerBeanException {
+		Map<String, SalaryData> map = new HashMap<String, SalaryData>();
+		for(ITransferObject to: getSalaryDataList(salary, startDate, endDate)){
+			SalaryData data = (SalaryData) to;
+			if(data.getExpression()!=null){
+				map.put(data.getName(), data);
+			}
 		}
 		return map;
 	}
@@ -107,6 +124,13 @@ public class SEPEUtils {
 	// //////////////////////////////////
 	// DOMAIN METHODS
 	// //////////////////////////////////
+	
+	public void completeDomainCriteria(Criteria criteria, String fieldName){
+		if(DomainManager.isDomainManagementAvailable()){
+			criteria.setSkipDomainFilter( true );
+			criteria.addInExpression(fieldName, getCurrentChildDomainIds());
+		}
+	}
 	
 	public Enterprise getCurrentDomainEnterprise(){
 		try {
@@ -143,22 +167,5 @@ public class SEPEUtils {
 		} 
 		return idList;
 	}
-	
-//	public List<ITransferObject> getCurrentChildEnterprises(){
-//		if( DomainManager.isDomainManagementAvailable() ){
-//			try {
-//				IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
-//				Criteria criteria = new Criteria();
-//				criteria.addInExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN), getCurrentChildDomainIds());
-//				criteria.addOrder(bean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_NAME));
-//				criteria.setSkipDomainFilter(true);
-//				return bean.getList(criteria);
-//			} catch (ManagerBeanException e) {
-//				// NADA. se devuelve vacio
-//			}
-//		} 
-//		return null;
-//	}
-	
 	
 }

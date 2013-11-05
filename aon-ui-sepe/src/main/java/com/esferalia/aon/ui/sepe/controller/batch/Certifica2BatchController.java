@@ -93,14 +93,6 @@ public class Certifica2BatchController extends BasicController {
         onSearchContracts(event);
 	}
 	
-	protected Integer differenceBetweenDates(Date from, Date to) {
-		Integer diffDays = new Integer(0);
-		final Double MS_PER_DAY = new Double(1000 * 60 * 60 * 24);
-		if(from.before(to)) {
-			diffDays = (int)((Math.floor((to.getTime() - from.getTime()) / MS_PER_DAY + 0.5d) + 1));
-		}
-		return diffDays;
-	}
 	
 	private void checkAllSuspensionCauses(
 			Map<Integer, RemesableContract> remesableContracts,
