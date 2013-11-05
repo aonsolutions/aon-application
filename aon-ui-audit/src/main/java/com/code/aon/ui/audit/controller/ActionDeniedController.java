@@ -3,7 +3,6 @@ package com.code.aon.ui.audit.controller;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.CONFIGURATION_CATEGORY;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ENTERPRISE_CATEGORY;
 import static com.code.aon.ui.audit.controller.IAuditConstants.MODULES_ENABLED;
 import static com.code.aon.ui.audit.controller.IAuditConstants.PROFILE_DENIED_ACTIONS_ENABLED;
@@ -70,7 +69,7 @@ public class ActionDeniedController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionDeniedController.class);
 	
-	private final static String[] SKIP_CATEGORIES = new String[]{ENTERPRISE_CATEGORY,CONFIGURATION_CATEGORY};
+	private final static String[] SKIP_CATEGORIES = new String[]{ENTERPRISE_CATEGORY};
 	
 	private Map<String,ApplicationOption> deniedActionsMap;
 	
@@ -310,6 +309,7 @@ public class ActionDeniedController {
 				enabledModules.remove(Module.DOCUMENT_PORTAL);
 				enabledModules.add(Module.DOCUMENT);
 			}
+			enabledModules.add(Module.CONFIGURATION);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading enabled modules for " + user, e);
 		}			

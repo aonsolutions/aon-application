@@ -322,6 +322,9 @@ public class DomainController extends BasicController {
 					LOGGER.debug( "Removed from list: {}", info );
 				}
 			}
+		} else {
+			DomainModuleInfo info =  appInfo.getModuleInfo(Module.CONFIGURATION);
+			appInfo.removeModuleInfo(info);
 		}
 		joinManagementTreasury();
 		initPortalModules();

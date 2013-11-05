@@ -67,7 +67,10 @@ public enum Module implements IResourceable {
 	POS( "pos" ),
 	
     /** CONTRAT@. */
-	CONTRATA( "contrata" );
+	CONTRATA( "contrata" ),
+
+    /** CONFIGURATION. */
+	CONFIGURATION( "configuration" );
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_module_";
