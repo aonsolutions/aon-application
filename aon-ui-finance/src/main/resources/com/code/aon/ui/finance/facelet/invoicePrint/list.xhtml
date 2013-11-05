@@ -27,8 +27,11 @@
 						value="#{bundle.aon_invoices}" target="_blank"
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						accesskey="#{bundle.aon_key_print}">
+						accesskey="#{bundle.aon_key_print}"
+						actionListener="#{companySaleInvoiceFooter.onSearch}">
 						<f:param name="reportKey" value="#{company.invoicePrintTemplateValue}" />
+						<f:setPropertyActionListener target="#{report.reportKey}"
+							value="#{company.invoicePrintTemplateValue}" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="receipt-report"
 						value="#{bundle.finance_receipts}" target="_blank"

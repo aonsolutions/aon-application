@@ -422,9 +422,11 @@
 			<param id="printAddress" value="#{company.getPrintAddress}" />
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
 		</params>
 		<nested-report report="invoiceDetailDefault"/>
 		<nested-report report="invoiceTaxBreakDown"/>
+		<nested-report report="invoicePrepaymentsDefault"/>
 		<nested-report report="invoiceFinancesDefault"/>
 	</report>
 	<report id="invoicePrintTemplate1" description="Invoice's Report1">
@@ -448,10 +450,8 @@
 			<param id="printAddress" value="#{company.getPrintAddress}" />
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
 		</params>
-		<nested-report report="invoiceDetail"/>
-		<nested-report report="invoiceTaxBreakDown"/>
-		<nested-report report="invoiceFinances"/>
 	</report>
 	<report id="invoicePrintTemplate2" description="Invoice's Report Template2">
 		<template path="/com/code/aon/ui/finance/report/saleInvoiceTemplate2.jasper"/>
@@ -474,9 +474,11 @@
 			<param id="printAddress" value="#{company.getPrintAddress}" />
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
+		<nested-report report="invoicePrepayments"/>
 		<nested-report report="invoiceFinances"/>
 	</report>
 	<report id="invoicePrintTemplate3" description="Invoice's Report Template3">
@@ -500,10 +502,36 @@
 			<param id="printAddress" value="#{company.getPrintAddress}" />
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
 		<nested-report report="invoiceTaxBreakDown"/>
+		<nested-report report="invoicePrepayments"/>
 		<nested-report report="invoiceFinances"/>
+	</report>
+	<report id="invoicePrintTemplate4" description="Invoice's Report Template4">
+		<template path="/com/code/aon/ui/finance/report/saleInvoiceTemplate4.jasper"/>
+		<bean key="com.code.aon.finance.Invoice" />
+		<criteria provider="#{invoicePrint}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="printLogo" value="#{company.isPrintLogo}" />
+			<param id="printName" value="#{company.getPrintName}" />
+			<param id="printNif" value="#{company.getPrintNif}" />
+			<param id="printAddress" value="#{company.getPrintAddress}" />
+			<param id="printInternetData" value="#{company.getPrintInternetData}" />
+			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
+			<param id="invoiceFooterText" value="#{companySaleInvoiceFooter.getText}" />
+		</params>
 	</report>
 	<report id="invoicePrintGta" description="Invoice's Report">
 		<template path="/com/code/aon/ui/finance/report/saleInvoiceGta.jasper"/>

@@ -118,9 +118,12 @@
 		</band>
 	</background>
 	<title>
-		<band height="85" splitType="Stretch">
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="187" splitType="Stretch">
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
-				<reportElement key="image-1" positionType="Float" mode="Opaque" x="71" y="4" width="180" height="79" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="image-1" positionType="Float" mode="Opaque" x="71" y="0" width="180" height="79" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printLogo}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -133,7 +136,7 @@
 				<imageExpression><![CDATA[$P{logoImageFile}]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-56" x="382" y="28" width="170" height="12">
+				<reportElement key="textField-56" x="382" y="24" width="170" height="12">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printNif}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -151,7 +154,7 @@
 + $P{company}.getDocument()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-24" x="382" y="73" width="170" height="12">
+				<reportElement key="textField-24" x="382" y="69" width="170" height="12">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printAddress}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -166,7 +169,7 @@
 				<textFieldExpression><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue() + ($P{fax}==null?"":" - " + $R{aon_fax} + ": " + $P{fax}.getValue())]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-26" x="382" y="40" width="170" height="21" isPrintWhenDetailOverflows="true">
+				<reportElement key="textField-26" x="382" y="36" width="170" height="21" isPrintWhenDetailOverflows="true">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printAddress}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box bottomPadding="2">
@@ -181,7 +184,7 @@
 				<textFieldExpression><![CDATA[$P{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-23" x="382" y="15" width="170" height="13">
+				<reportElement key="textField-23" x="382" y="11" width="170" height="13">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printName}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -196,7 +199,7 @@
 				<textFieldExpression><![CDATA[$P{company}.getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-25" x="382" y="61" width="170" height="12">
+				<reportElement key="textField-25" x="382" y="57" width="170" height="12">
 					<printWhenExpression><![CDATA[$P{printHeader} && $P{printAddress}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -211,7 +214,7 @@
 				<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-56" x="251" y="61" width="123" height="12">
+				<reportElement key="textField-56" x="251" y="57" width="123" height="12">
 					<printWhenExpression><![CDATA[$P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -226,7 +229,7 @@
 				<textFieldExpression><![CDATA[$P{company}.getWeb().getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-56" x="251" y="73" width="123" height="12">
+				<reportElement key="textField-56" x="251" y="69" width="123" height="12">
 					<printWhenExpression><![CDATA[$P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -240,12 +243,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getEmail().getValue()]]></textFieldExpression>
 			</textField>
-		</band>
-	</title>
-	<pageHeader>
-		<band height="102" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-47" x="122" y="30" width="170" height="13"/>
+				<reportElement key="textField-47" x="122" y="114" width="170" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -258,7 +257,7 @@
 				<textFieldExpression><![CDATA[($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-48" x="74" y="30" width="48" height="13"/>
+				<reportElement key="textField-48" x="74" y="114" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -271,7 +270,7 @@
 				<textFieldExpression><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
-				<reportElement key="textField-49" x="122" y="43" width="170" height="13"/>
+				<reportElement key="textField-49" x="122" y="127" width="170" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -284,7 +283,7 @@
 				<textFieldExpression><![CDATA[$F{issueDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-50" x="74" y="43" width="48" height="13"/>
+				<reportElement key="textField-50" x="74" y="127" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -297,7 +296,7 @@
 				<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-51" x="122" y="56" width="170" height="13"/>
+				<reportElement key="textField-51" x="122" y="140" width="170" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -311,7 +310,7 @@
 +$F{registryDocument}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-52" x="74" y="56" width="48" height="13"/>
+				<reportElement key="textField-52" x="74" y="140" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -324,7 +323,7 @@
 				<textFieldExpression><![CDATA[$R{aon_company_document} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-55" x="74" y="10" width="95" height="20"/>
+				<reportElement key="textField-55" x="74" y="94" width="95" height="20"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -337,7 +336,7 @@
 				<textFieldExpression><![CDATA[$R{finance_invoice}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-55" x="169" y="10" width="123" height="20"/>
+				<reportElement key="textField-55" x="169" y="94" width="123" height="20"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -350,7 +349,7 @@
 				<textFieldExpression><![CDATA[($F{rectifier}) ?  $R{finance_rectifier_invoice}.toUpperCase() : ($F{rectified}) ? $R{finance_rectified_invoice}.toUpperCase() : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-35" x="306" y="30" width="246" height="13"/>
+				<reportElement key="textField-35" x="306" y="114" width="246" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -363,7 +362,7 @@
 				<textFieldExpression><![CDATA[$F{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-36" x="306" y="43" width="246" height="13"/>
+				<reportElement key="textField-36" x="306" y="127" width="246" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -376,7 +375,7 @@
 				<textFieldExpression><![CDATA[($F{address}.getZip()==null?"":$F{address}.getZip() + " ") + ($F{address}.getCity()==null?"":$F{address}.getCity())]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-34" x="306" y="10" width="246" height="16"/>
+				<reportElement key="textField-34" x="306" y="94" width="246" height="16"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -389,7 +388,7 @@
 				<textFieldExpression><![CDATA[$F{registryName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-37" x="306" y="56" width="246" height="13"/>
+				<reportElement key="textField-37" x="306" y="140" width="246" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
