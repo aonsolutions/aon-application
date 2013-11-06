@@ -4,12 +4,17 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.ui.util.AonUtil;
 
 public class BasicOption implements Serializable, IOption {
 
 	private static final long serialVersionUID = 1L;
 
+	/** The id. */
+	private String id;
+		
 	/** The action. */
 	private String action;
 	
@@ -22,6 +27,8 @@ public class BasicOption implements Serializable, IOption {
 	private String viewId;	
 
 	private List<ActionSource> actionSources;
+	
+	private String xml;		
 	
 	public BasicOption() {
 		this.actionSources = new LinkedList<ActionSource>();
@@ -47,6 +54,24 @@ public class BasicOption implements Serializable, IOption {
 	 */
 	public void setAction(String action) {
 		this.action = action;
+	}
+	
+	/**
+	 * Gets the id.
+	 * 
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * Sets the id.
+	 * 
+	 * @param id the new id
+	 */
+	public void setId(String id) {
+		this.id = id;
 	}
 	
 	/**
@@ -111,5 +136,19 @@ public class BasicOption implements Serializable, IOption {
 	public void setViewId(String viewId) {
 		this.viewId = viewId;
 	}	
+
+	public String getXml() {
+		return xml;
+	}
+
+	public void setXml(String xml) {
+		this.xml = xml;
+	}
 	
+	public String getXml( String prefix ) {
+		String newId = prefix + getId();
+		String newXml = StringUtils.replace(getXml(), VALUE_PATTERN, getRawDescription());
+		return StringUtils.replace(newXml, ID_PATTERN, newId);
+	}
+
 }

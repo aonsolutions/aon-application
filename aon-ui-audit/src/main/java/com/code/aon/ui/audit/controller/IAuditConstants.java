@@ -18,8 +18,10 @@ public interface IAuditConstants {
 	String MENU_ITEM_TEMPLATE = "menuItem.xhtml.vm";
 	String LAST_EXECUTED_TEMPLATE = "lastExecuted.xhtml.vm";
 	String WEB_MAP_TEMPLATE = "webMap.xhtml.vm";
+	String INIT_ACTION_TEMPLATE = "initAction.xhtml.vm";
 	
 	// Velocity Attributes
+	String OPTION_VM = "option";
 	String OPTIONS_VM = "options";
 	String ACTIONS_VM = "actions";
 	String PREFFIX_VM = "preffix";

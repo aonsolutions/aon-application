@@ -206,6 +206,10 @@ public class MenuParser {
 					parseTemplate(document);
 				}
 			}
+			category.setId(id);
+			element.addAttribute(ID_ATTRIBUTE, IOption.ID_PATTERN);
+			element.addAttribute(VALUE_ATTRIBUTE, IOption.VALUE_PATTERN);
+			category.setXml( element.asXML() );			
 		}
 	}
 
@@ -358,8 +362,8 @@ public class MenuParser {
 			initOption(option, element);
 			option.setGroup( getOptionGroup(element) );
 			option.setDescription( element.attributeValue(VALUE_ATTRIBUTE) );
-			element.addAttribute(ID_ATTRIBUTE, ApplicationOption.ID_PATTERN);
-			element.addAttribute(VALUE_ATTRIBUTE, ApplicationOption.VALUE_PATTERN);
+			element.addAttribute(ID_ATTRIBUTE, IOption.ID_PATTERN);
+			element.addAttribute(VALUE_ATTRIBUTE, IOption.VALUE_PATTERN);
 			option.setXml( element.asXML() );
 			if ( StringUtils.isEmpty(option.getDescription()) ) {
 				LOGGER.error( "Null description for {}", option );

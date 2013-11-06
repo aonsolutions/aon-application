@@ -16,42 +16,15 @@ public class ApplicationOption extends BasicOption {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String ID_PATTERN = "(id)";
-	
-	public static final String VALUE_PATTERN = "(value)";
-	
 	public static final String AON_MENU_ITEM = "aon:menuItem";
 
 	private static final DateFormat RECENT_DATE_FORMAT = new SimpleDateFormat("dd/MM/yy - HH:mm");
 		
 	private static final String ID_ATTRIBUTE_PATTERN = "id=\"" + ID_PATTERN + "\"";
 
-	/** The id. */
-	private String id;
-	
 	/** The group. */
 	private OptionGroup group;
-	
-	private String xml;	
-	
-	/**
-	 * Gets the id.
-	 * 
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * Sets the id.
-	 * 
-	 * @param id the new id
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-	
+		
 	/**
 	 * Gets the group.
 	 * 
@@ -70,12 +43,6 @@ public class ApplicationOption extends BasicOption {
 		this.group = group;
 	}
 
-	public String getXml( String prefix ) {
-		String newId = prefix + this.id;
-		String newXml = StringUtils.replace(this.xml, VALUE_PATTERN, getRawDescription());
-		return StringUtils.replace(newXml, ID_PATTERN, newId);
-	}
-
 	public String getMenuItemXml( String prefix ) {
 		return StringUtils.replace(getXml(prefix), MenuParser.AON_COMMAND_LINK, AON_MENU_ITEM);
 	}
@@ -85,17 +52,8 @@ public class ApplicationOption extends BasicOption {
 		if ( date != null ) {
 			newValue = RECENT_DATE_FORMAT.format(date) + "&#160;&#160;&#160;" + newValue;
 		}
-		String xmlWithoutId = StringUtils.remove(this.xml, ID_ATTRIBUTE_PATTERN);
+		String xmlWithoutId = StringUtils.remove(getXml(), ID_ATTRIBUTE_PATTERN);
 		return StringUtils.replace(xmlWithoutId, VALUE_PATTERN, newValue);
-	}
-	
-	/**
-	 * Sets the xml.
-	 * 
-	 * @param xml the new xml
-	 */
-	public void setXml(String xml) {
-		this.xml = xml;
 	}
 
 	@Override

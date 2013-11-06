@@ -9,6 +9,7 @@ import static com.code.aon.ui.audit.controller.IAuditConstants.CONFIGURATION_CAT
 import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_COMPANY;
 import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_SECURITY;
 import static com.code.aon.ui.audit.controller.IAuditConstants.MAIL_ACCOUNT_ACTION;
+import static com.code.aon.ui.audit.controller.IAuditConstants.OPTION_VM;
 import static com.code.aon.ui.audit.controller.IAuditConstants.SIGNATURE_ACTION;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
@@ -20,6 +21,7 @@ import static com.code.aon.ui.groupware.controller.IGroupWareConstants.NOTE_CONT
 import static com.code.aon.ui.product.controller.IItemConstants.SHOW_SALES_PRICE;
 import static com.code.aon.ui.tas.controller.ITasConstants.SHOW_TAS_DATA;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.ConnectException;
@@ -33,6 +35,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
@@ -68,6 +71,7 @@ import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.IOption;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
+import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.common.LocaleElement;
 import com.code.aon.ui.common.controller.ConfigurationController;
@@ -90,9 +94,12 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class DesktopController {
 
+	private static final String PATCH_INIT_ACTION = "aon.patch.initAction";
+	
 	private static final String HOMEPAGE_DESKTOP = "/homepage.xhtml";
 	private static final String DESKTOP_TEMPLATE = "/facelet/homepage/desktop.xhtml";
 	private static final String ADMIN_TEMPLATE = "/com/code/aon/ui/admin/facelet/domains/list.xhtml";
+	private static final String INIT_ACTION_TEMPLATE = "/facelet/homepage/initAction.xhtml";
 	private static final String NEW_COMPANY_TEMPLATE = "/com/code/aon/ui/company/facelet/company/form.xhtml";
 	private static final String PASSWORD_EXPIRED_TEMPLATE = "/com/code/aon/ui/config/facelet/changePassword/expiredPasswordContent.xhtml";
 	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
@@ -106,6 +113,7 @@ public class DesktopController {
     private IOption homepagOption;
     private boolean adminDomain;
     private boolean supportEnabled;
+    private boolean patchInitAction;
 
     public DesktopController() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
@@ -257,7 +265,7 @@ public class DesktopController {
 	private void initUser() {
 		User user = UserUtils.getInstance().getLoggedUser();
 		if ( user.getInitAction() != null ) {
-			this.homepagOption = getOption(user.getInitAction());
+			setupInitAction(user.getInitAction());
 		}
 		ConfigurationController cc = AonUtil.getConfigurationController();
 		if (! StringUtils.isEmpty(user.getLocale()) ) {
@@ -285,12 +293,12 @@ public class DesktopController {
 	
 	private String getHomepage() {
 		String value = HOMEPAGE_DESKTOP;
-		if ( this.homepagOption != null ) {
+		if ( (this.homepagOption != null) && (!patchInitAction) ) {
 			for( ActionSource as : this.homepagOption.getActionSources() ) {
 				as.execute();
 			}
 			value = this.homepagOption.getViewId();
-			this.homepagOption = null;
+			this.homepagOption = null;				
 		}
 		return value;
 	}
@@ -316,7 +324,12 @@ public class DesktopController {
 	}
 	
 	public String getTemplate() {
-		return adminDomain ?  ADMIN_TEMPLATE : DESKTOP_TEMPLATE;
+		if ( adminDomain ) {
+			return ADMIN_TEMPLATE;
+		} else if ( (homepagOption != null) && patchInitAction ) {
+			return INIT_ACTION_TEMPLATE;
+		}
+		return DESKTOP_TEMPLATE;
 	}
 
 	private void initSupport() {
@@ -493,4 +506,22 @@ public class DesktopController {
 			LOGGER.error( e.getMessage(), e);
 		}
     }
+	
+	private void setupInitAction( String action ) {
+		if (! StringUtils.isEmpty(action) ) {
+			this.homepagOption = getOption(action);	
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			String value = ctx.getExternalContext().getInitParameter(PATCH_INIT_ACTION);
+			this.patchInitAction = StringUtils.equals(value, Boolean.TRUE.toString());
+		}
+	}
+	
+	public String getInitActionTemplate() throws IOException {
+		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
+		String template = aoc.getTemplate(IAuditConstants.INIT_ACTION_TEMPLATE, 
+			OPTION_VM, this.homepagOption);
+		this.homepagOption = null;
+		return template;
+	}		
+	
 }
