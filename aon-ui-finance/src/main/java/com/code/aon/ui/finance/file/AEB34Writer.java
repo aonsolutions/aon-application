@@ -39,13 +39,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB34Writer implements IFinanceConstants {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public FileOutput createAEB34(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
 		return createAEB34(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public FileOutput createAEB34(Company company, FinanceBatch fBatch, Collection fbatchDetailCollection) throws ManagerBeanException {
 		Orderer orderer = new Orderer();
 		orderer.setCode(StringUtils.leftPad(company.getDocument(), 10));
@@ -100,13 +100,13 @@ public class AEB34Writer implements IFinanceConstants {
 		Detail detail = (finance.getPayMethod().getType() == PayMethodType.BANK_TRANSFER) ? new Transfer() : new Check();
 		detail.setReceiver(receiver);
 		detail.setAccount(account);
-		detail.setMode("9");
+		detail.setMode(finance.isPayroll() ? "1" : "9");
 		detail.setAmount(new Double(finance.getTotalAmount()));
 		detail.setConcept((!finance.isEmptyInvoice()) ? "PAGO FACTURA: " + finance.getInvoice().getReferenceCode() : finance.getConcept());
 		return detail;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private IAddress obtainInvoiceAddress(Invoice invoice, Registry registry) throws ManagerBeanException {
 		if (invoice != null && invoice.getId() != null) {
 			IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
@@ -120,7 +120,7 @@ public class AEB34Writer implements IFinanceConstants {
 		return obtainRegistryAddress(registry.getId());
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private IAddress obtainRegistryAddress(Integer registryId) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();

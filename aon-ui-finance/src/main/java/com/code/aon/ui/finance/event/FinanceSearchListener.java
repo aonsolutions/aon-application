@@ -85,6 +85,7 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_PAYMENT), ((FinanceController)getController()).isPayment());
+		criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_PAYROLL), ((FinanceController)getController()).isPayroll());
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_REGISTRY_ID), getRegistry().getId());			
 		}		

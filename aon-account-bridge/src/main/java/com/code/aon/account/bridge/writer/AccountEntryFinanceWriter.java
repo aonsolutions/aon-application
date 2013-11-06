@@ -153,9 +153,13 @@ public class AccountEntryFinanceWriter {
 			registryAccount = getAccountBridgeUtil().obtainCustomerAccount(fbatchDetail.getFinance().getRegistry());
 		} else {
 			if (!fbatchDetail.getFinance().isPrepayment()) {
-				registryAccount = getAccountBridgeUtil().obtainSupplierAccount(fbatchDetail.getFinance().getRegistry());
-				if (registryAccount == null) {
-					registryAccount = getAccountBridgeUtil().obtainCreditorAccount(fbatchDetail.getFinance().getRegistry());
+				if (!fbatchDetail.getFinance().isPayroll()) {
+					registryAccount = getAccountBridgeUtil().obtainSupplierAccount(fbatchDetail.getFinance().getRegistry());
+					if (registryAccount == null) {
+						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(fbatchDetail.getFinance().getRegistry());
+					}
+				} else {
+					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PENDING_SALARY_ACCOUNT);
 				}
 			} else {
 				registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
@@ -287,9 +291,13 @@ public class AccountEntryFinanceWriter {
 				registryAccount = getAccountBridgeUtil().obtainCustomerAccount(finance.getRegistry());
 			} else {
 				if (!finance.isPrepayment()) {
-					registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
-					if (registryAccount == null) {
-						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
+					if (!finance.isPayroll()) {
+						registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
+						if (registryAccount == null) {
+							registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
+						}
+					} else {
+						registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PENDING_SALARY_ACCOUNT);
 					}
 				} else {
 					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
@@ -389,9 +397,13 @@ public class AccountEntryFinanceWriter {
 				registryAccount = getAccountBridgeUtil().obtainCustomerAccount(finance.getRegistry());
 			} else {
 				if (!finance.isPrepayment()) {
-					registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
-					if (registryAccount == null) {
-						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
+					if (!finance.isPayroll()) {
+						registryAccount = getAccountBridgeUtil().obtainSupplierAccount(finance.getRegistry());
+						if (registryAccount == null) {
+							registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
+						}
+					} else {
+						registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PENDING_SALARY_ACCOUNT);
 					}
 				} else {
 					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
@@ -508,9 +520,13 @@ public class AccountEntryFinanceWriter {
 				registryAccount = getAccountBridgeUtil().obtainCustomerAccount(tracking.getFinance().getRegistry());
 			} else {
 				if (!tracking.getFinance().isPrepayment()) {
-					registryAccount = getAccountBridgeUtil().obtainSupplierAccount(tracking.getFinance().getRegistry());
-					if (registryAccount == null) {
-						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
+					if (!tracking.getFinance().isPayroll()) {
+						registryAccount = getAccountBridgeUtil().obtainSupplierAccount(tracking.getFinance().getRegistry());
+						if (registryAccount == null) {
+							registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
+						}
+					} else {
+						registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PENDING_SALARY_ACCOUNT);
 					}
 				} else {
 					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
@@ -586,9 +602,13 @@ public class AccountEntryFinanceWriter {
 				registryAccount = getAccountBridgeUtil().obtainCustomerAccount(tracking.getFinance().getRegistry());
 			} else {
 				if (!tracking.getFinance().isPrepayment()) {
-					registryAccount = getAccountBridgeUtil().obtainSupplierAccount(tracking.getFinance().getRegistry());
-					if (registryAccount == null) {
-						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
+					if (!tracking.getFinance().isPayroll()) {
+						registryAccount = getAccountBridgeUtil().obtainSupplierAccount(tracking.getFinance().getRegistry());
+						if (registryAccount == null) {
+							registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
+						}
+					} else {
+						registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PENDING_SALARY_ACCOUNT);
 					}
 				} else {
 					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);

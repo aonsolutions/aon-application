@@ -39,7 +39,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class FinanceControllerListener extends ControllerAdapter {
 
 	@Override
-	public void afterModelInitialized(ControllerEvent event)throws ControllerListenerException {
+	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		FinanceController controller = (FinanceController)event.getController();
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);	
@@ -68,45 +68,19 @@ public class FinanceControllerListener extends ControllerAdapter {
 		controller.setFinanceGroup(false);
 		Finance finance = (Finance)controller.getTo();
 		finance.setPayment(controller.isPayment());
+		finance.setPayroll(controller.isPayroll());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setSecurityLevel(SecurityLevel.OFFICIAL);
 		FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
 		groupListController.init();
 	}
-	
+
 	@Override
-	public void afterBeanAdded(ControllerEvent event)
-			throws ControllerListenerException {
-		FinanceController controller = (FinanceController)event.getController();
-		if(controller.isFinanceGroup()){
-			updateGroupedFinances(event, (Finance) controller.getTo());
-		}
-	}
-	
-	@Override
-	public void afterBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		FinanceController controller = (FinanceController)event.getController();
 		Finance finance = (Finance) controller.getTo(); 
-		controller.setShowBankManualInput(finance.getBank()!=null && finance.getBank().getId()!=null);
-	}
-	
-	@Override
-	public void beforeBeanRemoved(ControllerEvent event)
-			throws ControllerListenerException {
-		FinanceController controller = (FinanceController)event.getController();
-		try {
-			controller.ungroupSelected(getGroupedFinances((Finance) controller.getTo()));
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
-	}
-	
-	@Override
-	public void afterBeanSelected(ControllerEvent event)
-			throws ControllerListenerException {
-		FinanceController controller = (FinanceController)event.getController();
-		Finance finance = (Finance) controller.getTo(); 
+		controller.setPayment(finance.isPayment());
+		controller.setPayroll(finance.isPayroll());
 		controller.setShowBankManualInput(finance.getBank()!=null && finance.getBank().getId()!=null);
 		controller.setRegistryBank(null);
 		try {
@@ -125,6 +99,7 @@ public class FinanceControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
+
 		try {
 			controller.setFinanceGroup(isFinanceGroup(finance));
 			if(controller.isFinanceGroup()){
@@ -135,7 +110,32 @@ public class FinanceControllerListener extends ControllerAdapter {
 		}
 	}
 	
-	private boolean isFinanceGroup(Finance finance) throws ManagerBeanException{
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		FinanceController controller = (FinanceController)event.getController();
+		if (controller.isFinanceGroup()) {
+			updateGroupedFinances(event, (Finance) controller.getTo());
+		}
+	}
+	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event)	throws ControllerListenerException {
+		FinanceController controller = (FinanceController)event.getController();
+		Finance finance = (Finance) controller.getTo(); 
+		controller.setShowBankManualInput(finance.getBank()!=null && finance.getBank().getId()!=null);
+	}
+	
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		FinanceController controller = (FinanceController)event.getController();
+		try {
+			controller.ungroupSelected(getGroupedFinances((Finance) controller.getTo()));
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
+	}
+	
+	private boolean isFinanceGroup(Finance finance) throws ManagerBeanException {
 		if( finance.getInvoice()==null || finance.getInvoice().getId()==null){
 			if( containsGroupedFinances(finance) ){
 				return true;

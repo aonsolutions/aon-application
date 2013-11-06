@@ -5,6 +5,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -96,13 +97,15 @@
 							</aon:outputText>
 						</aon:column>
 		
-						<aon:column alias="Finance.invoice&lt;referenceCode"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.finance_invoice}" />
-							</f:facet>
-							<aon:outputText value="#{to.referenceCode}" />
-						</aon:column>
+						<c:if test="#{!finance.payroll}">
+							<aon:column alias="Finance.invoice&lt;referenceCode"
+								styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.finance_invoice}" />
+								</f:facet>
+								<aon:outputText value="#{to.referenceCode}" />
+							</aon:column>
+						</c:if>
 	
 						<aon:column alias="Finance.concept"
 							styleClass="aon-editDataTable-textColumn">
@@ -115,7 +118,9 @@
 						<aon:column alias="Finance.registryName"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText	value="#{(finance.payment) ? (bundle.aon_creditor) : (bundle.finance_debtor)}" />
+								<aon:outputText	value="#{(finance.payroll) ? 
+															(bundle.payroll_salary_employee) : 
+															(finance.payment) ? (bundle.aon_creditor) : (bundle.finance_debtor)}" />
 							</f:facet>
 							<aon:outputText value="#{to.registryName}" />
 						</aon:column>

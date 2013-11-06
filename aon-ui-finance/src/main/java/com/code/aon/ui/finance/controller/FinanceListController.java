@@ -121,8 +121,7 @@ public class FinanceListController extends BasicController implements IFinanceCo
 		if (getModel().isRowAvailable()) {
 			Finance finance = (Finance)this.getModel().getRowData();
 
-			FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
-			financeController.setPayment(finance.isPayment());
+			BasicController financeController = (BasicController)AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
 			financeController.onLoad(event, finance.getId(), FINANCE_BATCH_FORM_NAME, FINANCE_BATCH_CONTROLLER_NAME + ".loadAvailableFinances");
 		}
 	}

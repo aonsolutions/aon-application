@@ -1,5 +1,7 @@
 package com.code.aon.finance.event;
 
+import java.util.Date;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
@@ -22,6 +24,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.Contract;
 
 public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -89,7 +92,15 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			if (!finance.isEmptyInvoice()) {
 				finance.setScope(finance.getInvoice().getScope());
 			} else {
-				finance.setScope(obtainRegistryScope(finance.isPayment(), finance.getRegistry()));
+				if (!finance.isPayroll()) {
+					finance.setScope(obtainRegistryScope(finance.isPayment(), finance.getRegistry()));
+				} else {
+					finance.setScope(obtainContractScope(finance.getDueDate(), finance.getRegistry()));
+				}
+			}
+
+			if (finance.getScope() == null || finance.getScope().getId() == null) {
+				throw new ManagerBeanVetoListenerException("No es posible encontrar un Ambito valido para el Vencimiento.");
 			}
 		}
 	}
@@ -107,6 +118,30 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			}
 			IScopable scopable = (IScopable)bean.get(registry.getId());
 			return scopable.getScope();
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+		}
+	}
+
+	private Scope obtainContractScope(Date dueDate, Registry registry) throws ManagerBeanVetoListenerException {
+		try {
+			IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(contractBean.getFieldName(IEntityAlias.CONTRACT_PERSON_ID), registry.getId());
+			criteria.addNullExpression(contractBean.getFieldName(IEntityAlias.CONTRACT_END_DATE));
+			criteria.addOrder(contractBean.getFieldName(IEntityAlias.CONTRACT_START_DATE), false);
+			for (ITransferObject ito : contractBean.getList(criteria)) {
+				return ((Contract)ito).getWorkPlace().getScope();
+			}
+
+			criteria = new Criteria();
+			criteria.addEqualExpression(contractBean.getFieldName(IEntityAlias.CONTRACT_PERSON_ID), registry.getId());
+			criteria.addOrder(contractBean.getFieldName(IEntityAlias.CONTRACT_END_DATE), false);
+			criteria.addOrder(contractBean.getFieldName(IEntityAlias.CONTRACT_START_DATE), false);
+			for (ITransferObject ito : contractBean.getList(criteria)) {
+				return ((Contract)ito).getWorkPlace().getScope();
+			}
+			return null;
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}

@@ -341,9 +341,22 @@
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<a4j:commandLink ajaxSingle="true" immediate="true"
-										onclick="alert('#{bundle.aio_not_yet}');return false;"
-										value="Remesa Transferencia de Nóminas" style="color:grey;font-style:oblique;" />
+									<aon:commandLink id="fbatchPayment-payroll" 
+										action="fbatch_search-Payroll"
+										actionListener="#{fbatch.onEditSearchPayment}"
+										value="#{bundle.payroll_fbatch_payment_module}">
+										<f:setPropertyActionListener target="#{fbatch.payroll}"
+											value="#{true}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="financePayment-payroll"
+										action="finance_search-Payroll"
+										actionListener="#{finance.onEditSearchPayment}"
+										value="#{bundle.payroll_finance_payment_module}">
+										<f:setPropertyActionListener target="#{finance.payroll}"
+											value="#{true}" />
+									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<a4j:commandLink ajaxSingle="true" immediate="true"

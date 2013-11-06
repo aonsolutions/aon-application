@@ -17,10 +17,14 @@
 		</aon:panelCollapsible>					
 
 		<aon:panelCollapsible expanded="false" 
-			label="#{(!controller.payment) ? bundle.registry_customer_data : bundle.finance_invoice_supplier_creditor_data}">
+			label="#{(!controller.payroll) ?
+						(!controller.payment) ? (bundle.registry_customer_data) : (bundle.finance_invoice_supplier_creditor_data) :
+						(bundle.payroll_salary_employee_data)}">
 			<aon:panel style="text-align:left;">
 				<f:facet name="header">
-					<aon:outputLabel value="#{(!controller.payment) ? bundle.aon_customer : bundle.finance_supplier_creditor}" />
+					<aon:outputLabel value="#{(!controller.payroll) ? 
+												(!controller.payment) ? (bundle.aon_customer) : (bundle.finance_supplier_creditor) :
+												(bundle.payroll_salary_employee_data)}" />
 				</f:facet>
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 

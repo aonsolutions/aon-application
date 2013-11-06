@@ -30,13 +30,19 @@
 										<aon:commandLink id="financeCharge-treasury"
 											action="finance_search-Charge"
 											actionListener="#{finance.onEditSearchCharge}"
-											value="#{bundle.finance_charge_module}" />
+											value="#{bundle.finance_charge_module}">
+											<f:setPropertyActionListener target="#{finance.payroll}"
+												value="#{false}" />
+										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="fbatchCharge" 
 											action="fbatch_search-Charge"
 											actionListener="#{fbatch.onEditSearchCharge}"
-											value="#{bundle.finance_fbatch_charge_module}" />
+											value="#{bundle.finance_fbatch_charge_module}">
+											<f:setPropertyActionListener target="#{fbatch.payroll}"
+												value="#{false}" />
+										</aon:commandLink>
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
@@ -52,13 +58,19 @@
 										<aon:commandLink id="financePayment-treasury"
 											action="finance_search-Payment"
 											actionListener="#{finance.onEditSearchPayment}"
-											value="#{bundle.finance_payment_module}" />
+											value="#{bundle.finance_payment_module}">
+											<f:setPropertyActionListener target="#{finance.payroll}"
+												value="#{false}" />
+										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="fbatchPayment" 
 											action="fbatch_search-Payment"
 											actionListener="#{fbatch.onEditSearchPayment}"
-											value="#{bundle.finance_fbatch_payment_module}" />
+											value="#{bundle.finance_fbatch_payment_module}">
+											<f:setPropertyActionListener target="#{fbatch.payroll}"
+												value="#{false}" />
+										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="fPaymentPrint" 

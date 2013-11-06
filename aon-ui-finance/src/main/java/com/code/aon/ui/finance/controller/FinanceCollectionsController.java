@@ -40,6 +40,7 @@ public class FinanceCollectionsController {
 	private List<SelectItem> financeBatchStatus;
 	private List<SelectItem> financeBatchPaymentTypes;
 	private List<SelectItem> financeBatchChargeTypes;
+	private List<SelectItem> financeBatchPayrollTypes;
 	private List<SelectItem> financeStatuses;
 	private List<SelectItem> invoiceTypes;
 	private List<SelectItem> invoiceStatuses;
@@ -103,7 +104,7 @@ public class FinanceCollectionsController {
 			Locale locale = AonUtil.getCurrentLocale();
 			financeBatchPaymentTypes = new LinkedList<SelectItem>();
 			for (FinanceBatchType type : FinanceBatchType.values()) {
-				if (type.isPayment() == null || type.isPayment()) {
+				if ((type.isPayment() == null || type.isPayment()) && !type.isPayroll()) {
 					SelectItem item = new SelectItem(type, type.getName(locale));
 					financeBatchPaymentTypes.add(item);
 				}
@@ -125,6 +126,21 @@ public class FinanceCollectionsController {
 		}
 		return financeBatchChargeTypes;
 	}
+
+	public List<SelectItem> getFinanceBatchPayrollTypes() {
+		if (financeBatchPayrollTypes == null) {
+			Locale locale = AonUtil.getCurrentLocale();
+			financeBatchPayrollTypes = new LinkedList<SelectItem>();
+			for (FinanceBatchType type : FinanceBatchType.values()) {
+				if ((type.isPayment() == null || type.isPayment()) && type.isPayroll()) {
+					SelectItem item = new SelectItem(type, type.getName(locale));
+					financeBatchPayrollTypes.add(item);
+				}
+			}
+		}
+		return financeBatchPayrollTypes;
+	}
+
 
 	public List<SelectItem> getFinanceStatuses() {
 		if (financeStatuses == null) {

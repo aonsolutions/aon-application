@@ -278,8 +278,7 @@ public class PrepaymentController extends BasicController implements IFinanceCon
 	public void onLoadFinance(ActionEvent event) throws ManagerBeanException {
 		Finance finance = ((Prepayment)getTo()).getFinance();
 
-		FinanceController financeController = (FinanceController)AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
-		financeController.setPayment(true);
+		BasicController financeController = (BasicController)AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
 		financeController.onLoad(event, finance.getId(), PREPAYMENT_FORM_NAME, PREPAYMENT_CONTROLLER_NAME + ".refresh");
 	}
 

@@ -46,13 +46,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB58Writer implements IFinanceConstants {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public FileOutput createAEB58(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
 		return createAEB58(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public FileOutput createAEB58(Company company, FinanceBatch fBatch, Collection fbatchDetailCollection) throws ManagerBeanException {
 		Lot lot = new Lot();
 		if (fBatch.getFinanceBatchType().equals(FinanceBatchType.AEB_58)) {
@@ -148,7 +148,7 @@ public class AEB58Writer implements IFinanceConstants {
 		return (concept.length() > 40)?concept.substring(0, 39):concept;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private void addExtendedData(Individual individual, Invoice invoice) throws ManagerBeanException {
 		if (invoice != null && invoice.getId() != null) {
 			NumberFormat formatter = new DecimalFormat("###,###,##0.00");
@@ -221,7 +221,7 @@ public class AEB58Writer implements IFinanceConstants {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private IAddress obtainInvoiceAddress(Invoice invoice, Registry registry) throws ManagerBeanException {
 		if (invoice != null && invoice.getId() != null) {
 			IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
@@ -235,7 +235,7 @@ public class AEB58Writer implements IFinanceConstants {
 		return obtainRegistryAddress(registry.getId());
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private IAddress obtainRegistryAddress(Integer registryId) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();

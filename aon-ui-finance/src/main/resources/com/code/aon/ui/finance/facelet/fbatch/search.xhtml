@@ -13,7 +13,9 @@
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{(fbatch.payment)?(bundle.finance_fbatch_payment_module):(bundle.finance_fbatch_charge_module)}" />
+				<ui:param name="toolbarTitle" value="#{(fbatch.payment)?
+														(fbatch.payroll) ? (bundle.payroll_fbatch_payment_module) : (bundle.finance_fbatch_payment_module) :
+														(bundle.finance_fbatch_charge_module)}" />
 				<ui:param name="controller" value="#{fbatch}" />
 			</ui:include>
 
@@ -64,7 +66,12 @@
 						valueChangeListener="#{fbatch.addEqualExpression}">
 						<aon:enumConverter enum="com.code.aon.finance.enumeration.FinanceBatchType" />
 						<f:selectItem itemLabel="-" itemValue=""/>
-						<f:selectItems value="#{(fbatch.payment)?(financeCollections.financeBatchPaymentTypes):(financeCollections.financeBatchChargeTypes)}" />
+						<c:if test="#{!fbatch.payroll}">
+							<f:selectItems value="#{(fbatch.payment)?(financeCollections.financeBatchPaymentTypes):(financeCollections.financeBatchChargeTypes)}" />
+						</c:if>
+						<c:if test="#{fbatch.payroll}">
+							<f:selectItems value="#{financeCollections.financeBatchPayrollTypes}" />
+						</c:if>
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="FinanceBatch_financeBatchStatus"

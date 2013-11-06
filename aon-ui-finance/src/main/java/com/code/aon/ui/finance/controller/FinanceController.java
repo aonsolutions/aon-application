@@ -61,6 +61,7 @@ public class FinanceController extends FinanceListController {
 
 	private Company company;
 	private boolean payment;
+	private boolean payroll;
 	private Date paymentDate;
 	private double paymentAmount;
 	private RegistryBank paymentRegistryBank;
@@ -136,6 +137,14 @@ public class FinanceController extends FinanceListController {
 
 	public void setPayment(boolean payment) {
 		this.payment = payment;
+	}
+
+	public boolean isPayroll() {
+		return payroll;
+	}
+
+	public void setPayroll(boolean payroll) {
+		this.payroll = payroll;
 	}
 
 	public Date getPaymentDate() {

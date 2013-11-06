@@ -38,6 +38,25 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
 		fBatch.setSecurityLevel(SecurityLevel.OFFICIAL);
 	}
 	
+    @Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		FBatchController fBatchController = (FBatchController)event.getController();
+		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
+		fBatchController.setPayment(fBatch.isPayment());
+		fBatchController.setRecordDate(fBatch.getIssueDate());
+		fBatchController.setAebOutput(null);
+		try {
+			fBatchController.loadAvailableFinances();
+		} catch(ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
+
+        FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
+        fBatchDetailController.clearCheckedFinanceBatchDetails();
+        FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
+        financeController.clearCheckedFinances();
+    }
+
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		FBatchController fBatchController = (FBatchController)event.getController();
@@ -82,24 +101,6 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
-    }
-
-    @Override
-	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		FBatchController fBatchController = (FBatchController)event.getController();
-		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
-		fBatchController.setRecordDate(fBatch.getIssueDate());
-		fBatchController.setAebOutput(null);
-		try {
-			fBatchController.loadAvailableFinances();
-		} catch(ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
-
-        FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-        fBatchDetailController.clearCheckedFinanceBatchDetails();
-        FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
-        financeController.clearCheckedFinances();
     }
 
 }

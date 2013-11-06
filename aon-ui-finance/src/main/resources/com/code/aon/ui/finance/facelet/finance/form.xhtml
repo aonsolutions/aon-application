@@ -170,20 +170,10 @@
 						<f:selectItems value="#{configCollections.payMethods}" />
 					</aon:selectOneMenu>
 					
-					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{finance.to.registry}" />
-						<ui:param name="lookupForRegistry" value="#{true}" />
-						<ui:param name="lookupInputNameValue" value="#{finance.to.registryName}" />
-						<ui:param name="lookupLabel" value="#{bundle.finance_debtor}" />
-						<ui:param name="lookupDisabled" value="#{!finance.new}" />
-						<ui:param name="lookupRendered" value="#{!finance.to.payment}" />
-						<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
-						<ui:param name="idRequired" value="#{true}" />						
-						<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
-						<aon:methodParam name="lookupChangeListener"
-							value="#{finance.registryData}" type="lookupChangeListener" />
-					</ui:include>
-					<aon:div rendered="#{finance.to.payment}">
+					<aon:div rendered="#{!finance.to.payroll}">
+						<aon:outputLabel for="Customer_id"
+							value="#{bundle.finance_debtor}"
+							rendered="#{!finance.to.payment}" />
 						<aon:outputLabel for="Supplier_id"
 							value="#{bundle.aon_creditor}"
 							rendered="#{finance.to.payment and finance.purchase}" />
@@ -193,14 +183,31 @@
 						<aon:selectOneRadio id="Finance_purchase"
 							styleClass="aon-italic aon-normal" style="font-size: 11px;"
 							value="#{finance.purchase}"
-							rendered="#{finance.new}"
+							rendered="#{finance.new and finance.to.payment}"
 							valueChangeListener="#{finance.onPaymentTypeChanged}"
 							reRender="paymentTypeDiv">
 							<f:selectItem itemLabel="#{bundle.aon_expense}" itemValue="false" />
 							<f:selectItem itemLabel="#{bundle.finance_purchase}" itemValue="true" />
 						</aon:selectOneRadio>
 					</aon:div>
-					<aon:div id="paymentTypeDiv" rendered="#{finance.to.payment}">
+					<aon:div rendered="#{finance.to.payroll}">
+						<aon:outputLabel for="Person_id"
+							value="#{bundle.payroll_salary_employee}" />
+					</aon:div>
+					<aon:div id="paymentTypeDiv" rendered="#{!finance.to.payroll}">
+						<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+							<ui:param name="lookupTo" value="#{finance.to.registry}" />
+							<ui:param name="lookupForRegistry" value="#{true}" />
+							<ui:param name="lookupInputNameValue" value="#{finance.to.registryName}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupDisabled" value="#{!finance.new}" />
+							<ui:param name="lookupRendered" value="#{!finance.to.payment}" />
+							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
+							<ui:param name="idRequired" value="#{true}" />						
+							<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{finance.registryData}" type="lookupChangeListener" />
+						</ui:include>
 						<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
 							<ui:param name="lookupTo" value="#{finance.to.registry}" />
 							<ui:param name="lookupForRegistry" value="#{true}" />
@@ -228,7 +235,21 @@
 								value="#{finance.registryData}" type="lookupChangeListener" />
 						</ui:include>
 					</aon:div>
-					
+					<aon:div rendered="#{finance.to.payroll}">
+						<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{finance.to.registry}" />
+							<ui:param name="lookupForRegistry" value="#{true}" />
+							<ui:param name="lookupInputNameValue" value="#{finance.to.registryName}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupDisabled" value="#{!finance.new}" />
+							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
+							<ui:param name="idRequired" value="#{true}" />						
+							<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{finance.registryData}" type="lookupChangeListener" />
+						</ui:include>
+					</aon:div>
+
 					<aon:outputLabel for="Finance_amount"
 						value="#{bundle.aon_amount}" />
 					<aon:panelGroup id="Finance_amount-Panel">
@@ -493,6 +514,7 @@
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{creditorLookup}" />
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalPayment.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalReturn.xhtml" />

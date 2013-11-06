@@ -25,6 +25,7 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
@@ -273,8 +274,7 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 				backActionListener = UNDEDUCTIBLE_INVOICE_FINANCE_CONTROLLER_NAME;
 			}
 
-			FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
-			financeController.setPayment(finance.isPayment());
+			BasicController financeController = (BasicController)AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
 			financeController.onLoad(event, finance.getId(), backAction, backActionListener + ".onSearch");
 		}
 	}

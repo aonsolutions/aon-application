@@ -35,13 +35,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB32Writer implements IFinanceConstants {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public FileOutput createAEB32(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
 		return createAEB32(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public FileOutput createAEB32(Company company, FinanceBatch fBatch, Collection fbatchDetailCollection) throws ManagerBeanException {
 		Lot lot = new Lot();
 		RegistryBank companyRBank = fBatch.getRegistryBank();
@@ -124,7 +124,7 @@ public class AEB32Writer implements IFinanceConstants {
 		return individual;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private IAddress obtainInvoiceAddress(Invoice invoice, Registry registry) throws ManagerBeanException {
 		if (invoice != null && invoice.getId() != null) {
 			IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
@@ -138,7 +138,7 @@ public class AEB32Writer implements IFinanceConstants {
 		return obtainRegistryAddress(registry.getId());
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private IAddress obtainRegistryAddress(Integer registryId) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();

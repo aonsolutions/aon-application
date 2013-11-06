@@ -68,6 +68,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	private Company company;
 	private boolean payment;
+	private boolean payroll;
 	private FileOutput aebOutput;
 	private Date recordDate;
 	private boolean showFbatchRecordWindow;
@@ -91,6 +92,14 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public void setPayment(boolean payment) {
 		this.payment = payment;
+	}
+
+	public boolean isPayroll() {
+		return payroll;
+	}
+
+	public void setPayroll(boolean payroll) {
+		this.payroll = payroll;
 	}
 
 	public FileOutput getAebOutput() {
@@ -197,7 +206,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 			PayMethod payMethod = (PayMethod) iter.next();
 			boolean validPayMethod = true;
 			if (to.getFinanceBatchType() != (FinanceBatchType.NONE)) {
-				if (to.getFinanceBatchType() != FinanceBatchType.AEB_34) {
+				if (to.getFinanceBatchType() != FinanceBatchType.AEB_34 && to.getFinanceBatchType() != FinanceBatchType.AEB_34_N) {
 					validPayMethod = (payMethod.getType() == PayMethodType.NEGOTIABLE_DOCUMENT);
 				} else {
 					validPayMethod = (payMethod.getType() == PayMethodType.CHEQUE || payMethod.getType() == PayMethodType.BANK_TRANSFER);
@@ -221,10 +230,11 @@ public class FBatchController extends BasicController implements ICollectionProv
 
         FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
         Criteria criteria = new Criteria();
-        criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYMENT), new Boolean(payment));
+        criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYMENT), isPayment());
+        criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYROLL), isPayroll());
         if (to.getFinanceBatchType() != (FinanceBatchType.NONE)) {
             criteria.addGreaterThanExpression(financeController.getFieldName(IEntityAlias.FINANCE_AMOUNT), new Double(0));
-        	if (to.getFinanceBatchType() != FinanceBatchType.AEB_34) {
+        	if (to.getFinanceBatchType() != FinanceBatchType.AEB_34 && to.getFinanceBatchType() != FinanceBatchType.AEB_34_N) {
         		String payMethodTypeAlias = financeController.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE);
         		criteria.addEqualExpression(payMethodTypeAlias, PayMethodType.NEGOTIABLE_DOCUMENT);
         	} else {
@@ -232,11 +242,13 @@ public class FBatchController extends BasicController implements ICollectionProv
         		Expression transferExpr = ExpressionUtilities.getEqualExpression(payMethodTypeAlias, PayMethodType.BANK_TRANSFER);
                 Expression chequeExpr = ExpressionUtilities.getEqualExpression(payMethodTypeAlias, PayMethodType.CHEQUE);
                 criteria.addExpression(ExpressionUtilities.getOrExpression(transferExpr, chequeExpr));
+
+                criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYROLL), (to.getFinanceBatchType() == FinanceBatchType.AEB_34_N));
         	}
             if ((to.getFinanceBatchType() != FinanceBatchType.AEB_58) && (to.getFinanceBatchType() != FinanceBatchType.AEB_58_D)) {
             	criteria.addNotNullExpression(financeController.getFieldName(IEntityAlias.FINANCE_BANK_ACCOUNT));
             	criteria.addNotEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_BANK_ACCOUNT), new BankAccount());
-                if ((to.getFinanceBatchType() != FinanceBatchType.AEB_32) && (to.getFinanceBatchType() != FinanceBatchType.AEB_34)) {
+                if ((to.getFinanceBatchType() == FinanceBatchType.AEB_19) || (to.getFinanceBatchType() == FinanceBatchType.AEB_19_D)) {
                     criteria.addLessThanOrEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_DUE_DATE), to.getIssueDate());
                 }
             }
@@ -393,7 +405,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 			AEB32Writer aeb32Writer = new AEB32Writer();
 			aebOutput = aeb32Writer.createAEB32(getCompany(), fbatch, fbatchDetailCollection);
 		}
-		else if (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_34) {
+		else if (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_34 || fbatch.getFinanceBatchType() == FinanceBatchType.AEB_34_N) {
 			AEB34Writer aeb34Writer = new AEB34Writer();
 			aebOutput = aeb34Writer.createAEB34(getCompany(), fbatch, fbatchDetailCollection);
 		}

@@ -37,11 +37,11 @@ import com.code.aon.report.dynamic.DynaElements;
 import com.code.aon.report.dynamic.DynaReport;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.report.controller.DynaReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-
 
 public class CashFlowForecastReport {
 	
@@ -282,15 +282,8 @@ public class CashFlowForecastReport {
 				cffc.onSelect(null);
 				cffc.setBackAction("cashFlowForecastReport_list");
 			} else {
-				FinanceController fc = (FinanceController) FormUtil.getController(IFinanceConstants.FINANCE_CONTROLLER_NAME);
-				fc.setPayment(cfr.isPayment());
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(fc.getManagerBean().getFieldName(IEntityAlias.FINANCE_ID), cfr.getId());
-				fc.setCriteria(criteria);
-				fc.onSearch(null);
-				fc.getModel().setRowIndex(0);
-				fc.onSelect(null);
-				fc.setBackAction("cashFlowForecastReport_list");
+				BasicController fc = (BasicController)FormUtil.getController(IFinanceConstants.FINANCE_CONTROLLER_NAME);
+				fc.onLoad(event, cfr.getId(), "cashFlowForecastReport_list", null);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al mostrar el detalle de la línea.";
