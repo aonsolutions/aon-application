@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showContractSalaryInfoWindow">
+		<c:if test="#{contract.showContractSalaryInfoWindow}">
+			<rich:modalPanel id="salaryInfoModalPanel" 
+				minHeight="600" minWidth="800"
+				showWhenRendered="true" zindex="90"
+				style="overflow:auto;"
+				>
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="SALARY INFO" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showContractSalaryInfoWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{contract.showContractSalaryInfoWindow}" value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="salaryInfoModalForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									
+<aon:panel styleClass="aon-panelGrid-search"  id="filterPanel"
+	style="margin-bottom:10px; padding:10px 0 10px 10px;">
+	<f:facet name="header">
+		<aon:outputText value="#{bundle.payroll_data_filter}" />
+	</f:facet>
+	<aon:panelGrid columns="3" 
+			columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even aon-width-auto,aon-panelGrid-even aon-width-auto">
+		
+		<aon:selectOneRadio value="#{contract.salaryInfoHandler.searchCurrent}" style="display:inline;">
+			<f:selectItem itemLabel="#{bundle.payroll_current}" itemValue="#{true}" />
+			<f:selectItem itemLabel="#{bundle.payroll_historyc}" itemValue="#{false}" />
+			<!--  
+			<a4j:support event="onclick" reRender="contractMainDataForm" ignoreDupResponses="true" >
+				<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
+			</a4j:support>
+			-->
+			<a4j:support 
+				event="onclick"
+				actionListener="#{contract.salaryInfoHandler.onLoad}"
+				reRender="filterPanel, contractDataPanel, contractPaymentPanel, contractDeductionPanel"
+				eventsQueue="salaryInfoFilterKeyUp"
+				requestDelay="500"
+				ajaxSingle="true"
+				ignoreDupResponses="true"
+				limitToList="true"/>
+		</aon:selectOneRadio>
+		
+		<aon:panelGroup >
+			<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
+				value="#{bundle.aon_end_date}:" />
+			<aon:selectOneMenu 
+				styleClass="aon-margin-right"
+				disabled="#{contract.salaryInfoHandler.searchCurrent}"
+				value="#{contract.salaryInfoHandler.inactiveLastPeriod}" >
+				<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
+				<!--  
+				<a4j:support event="onchange" reRender="contractMainDataForm" ignoreDupResponses="true" >
+					<aon:actionListener method="#{enterpriseTree.onChangeLastPeriod}" />
+					<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
+				</a4j:support>
+				-->
+				<a4j:support 
+					event="onchange"
+					actionListener="#{contract.salaryInfoHandler.onLoad}"
+					reRender="filterPanel, contractDataPanel, contractPaymentPanel, contractDeductionPanel"
+					eventsQueue="salaryInfoFilterKeyUp"
+					requestDelay="500"
+					ajaxSingle="true"
+					ignoreDupResponses="true"
+					limitToList="true"/>
+			</aon:selectOneMenu>
+			<aon:selectInputDate  
+				disabled="#{!(!contract.salaryInfoHandler.searchCurrent and contract.salaryInfoHandler.inactiveLastPeriod=='MANUAL')}"
+				value="#{contract.salaryInfoHandler.inactiveDate}"
+				inputSize="10" renderAsPopup="true" enableManualInput="true"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}">
+				<!--  
+				<a4j:support event="onchanged" reRender="contractMainDataForm" ignoreDupResponses="true">
+					<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
+				</a4j:support>
+				-->
+				<a4j:support 
+					event="onchanged"
+					actionListener="#{contract.salaryInfoHandler.onLoad}"
+					reRender="filterPanel, contractDataPanel, contractPaymentPanel, contractDeductionPanel"
+					eventsQueue="salaryInfoFilterKeyUp"
+					requestDelay="500"
+					ajaxSingle="true"
+					ignoreDupResponses="true"
+					limitToList="true"/>
+			</aon:selectInputDate>
+		</aon:panelGroup>
+	
+	</aon:panelGrid>
+
+</aon:panel>	
+									
+<aon:panel id="contractDataPanel">
+	<f:facet name="header">
+		<aon:outputText value="#{bundle.payroll_contract}" />
+	</f:facet>
+	<aon:dataTable id="contractDataTable" var="to" value="#{contract.salaryInfoHandler.contractDataModel}" rows="0">
+		<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<!--  
+			<aon:commandButton id="ContractPayment-select"
+				title="#{(controller.readOnly)?(payrollBundle.payroll_overwrite):(bundle.aon_update)}" 
+				actionListener="#{controller.onEdit}"
+				reRender="#{controller.beanName}ModalContainer"
+				styleClass="aon-editDataTable-button #{(controller.readOnly)?('aon-icon-go'):('aon-icon-rowSelector')}"/>
+			-->
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_start_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.startDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_end_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.endDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>		
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputText	value="#{bundle.aon_name}" />
+			</f:facet>
+			<aon:outputText value="#{to.name}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_description}" />
+			</f:facet>
+			<aon:outputText value="#{to.expression}" />
+		</aon:column>
+ 
+	</aon:dataTable>
+</aon:panel>
+									
+<aon:panel id="contractPaymentPanel">
+	<f:facet name="header">
+		<aon:outputText value="#{bundle.payroll_salary_payments_tab}" />
+	</f:facet>
+	<aon:dataTable id="contractPaymentTable" var="to" value="#{contract.salaryInfoHandler.paymentModel}" rows="0">
+		<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<!--  
+			<aon:commandButton id="ContractPayment-select"
+				title="#{(controller.readOnly)?(payrollBundle.payroll_overwrite):(bundle.aon_update)}" 
+				actionListener="#{controller.onEdit}"
+				reRender="#{controller.beanName}ModalContainer"
+				styleClass="aon-editDataTable-button #{(controller.readOnly)?('aon-icon-go'):('aon-icon-rowSelector')}"/>
+			-->
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputText	value="#{bundle.aon_type}" />
+			</f:facet>
+			<aon:outputText value="#{to.salaryType}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_start_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.startDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_end_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.endDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>		
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.payroll_salary_payment_month}" />
+			</f:facet>
+			<aon:outputText value="#{to.month}" />
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputText	value="#{bundle.aon_concept}" />
+			</f:facet>
+			<aon:outputText value="#{to.paymentConcept.code}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_description}" />
+			</f:facet>
+			<aon:outputText value="#{to.fullDescription}" />
+		</aon:column>
+ 
+	</aon:dataTable>
+</aon:panel>
+
+<aon:panel id="contractDeductionPanel">
+	<f:facet name="header">
+		<aon:outputText value="#{bundle.payroll_salary_deductions_tab}" />
+	</f:facet>
+	<aon:dataTable id="contractDeductionTable" var="to" value="#{contract.salaryInfoHandler.deductionModel}" rows="0">
+		<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<!--  
+			<aon:commandButton id="ContractDeduction-select"
+				title="#{bundle.aon_update}" 
+				actionListener="#{controller.onEdit}"
+				reRender="#{controller.beanName}ModalContainer"
+				styleClass="aon-editDataTable-button aon-icon-rowSelector"
+				focus="accountId" />
+			-->
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_start_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.startDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:column>
+	
+		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_end_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.endDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>		
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_type}" />
+			</f:facet>
+			<aon:outputText value="#{to.type}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_description}" />
+			</f:facet>
+			<aon:outputText value="#{to.fullDescription}" />
+		</aon:column>
+	</aon:dataTable>
+</aon:panel>
+
+									
+									
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+</ui:composition>
