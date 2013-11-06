@@ -317,24 +317,39 @@ public class Declaration {
 	}
 
 	public void changeInvalidCharacters() {
-		String[] tokens = new String[] {
-			administrationCode,			currentLetterMonth,			complementaryCode,			
-			replacedNumber,				document,					name,				
-			surname,					phone,						streetInitial,
-			streetName,					streetNumber,				streetStair,
-			streetFloor,				streetDoor,					town,
-			province,					zip,						contactPerson,
-			contactPhone,				contactCellular,			contactMail,
-			payInCash,					payInAccount				
-		};
+		setAdministrationCode(changeInvalidCharacters(getAdministrationCode()));
+		setCurrentLetterMonth(changeInvalidCharacters(getCurrentLetterMonth()));
+		setComplementaryCode(changeInvalidCharacters(getComplementaryCode()));
+		setReplacedNumber(changeInvalidCharacters(getReplacedNumber()));
+		setDocument(changeInvalidCharacters(getDocument()));
+		setName(changeInvalidCharacters(getName()));
+		setSurname(changeInvalidCharacters(getSurname()));
+		setPhone(changeInvalidCharacters(getPhone()));
+		setStreetInitial(changeInvalidCharacters(getStreetInitial()));
+		setStreetName(changeInvalidCharacters(getStreetName()));
+		setStreetNumber(changeInvalidCharacters(getStreetNumber()));
+		setStreetStair(changeInvalidCharacters(getStreetStair()));
+		setStreetFloor(changeInvalidCharacters(getStreetFloor()));
+		setStreetDoor(changeInvalidCharacters(getStreetDoor()));
+		setTown(changeInvalidCharacters(getTown()));
+		setProvince(changeInvalidCharacters(getProvince()));
+		setZip(changeInvalidCharacters(getZip()));
+		setContactPerson(changeInvalidCharacters(getContactPerson()));
+		setContactPhone(changeInvalidCharacters(getContactPhone()));
+		setContactCellular(changeInvalidCharacters(getContactCellular()));
+		setContactMail(changeInvalidCharacters(getContactMail()));
+		setPayInCash(changeInvalidCharacters(getPayInCash()));
+		setPayInAccount(changeInvalidCharacters(getPayInAccount()));
+	}
+	
+	public String changeInvalidCharacters(String token) {
 		char[] seek  = new char[]{'á','é','í','ó','ú','Á','É','Í','Ó','Ú','º','ª'};
 		char[] alter = new char[]{'a','e','i','o','u','A','E','I','O','U',' ',' '};
-		for (String token: tokens) {
-			if (StringUtils.isNotBlank(token)) {
-				for (int i = 0; i < seek.length ; i ++) {
-					StringUtils.replaceChars(token, seek[i], alter[i]);
-				}
+		if (StringUtils.isNotBlank(token)) {
+			for (int i = 0; i < seek.length ; i ++) {
+				token = StringUtils.replaceChars(token, seek[i], alter[i]);
 			}
 		}
+		return token;
 	}
 }

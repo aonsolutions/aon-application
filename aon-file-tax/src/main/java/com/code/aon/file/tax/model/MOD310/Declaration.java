@@ -396,27 +396,49 @@ public class Declaration {
 		return getDocument() + " " + getName();
 	}
 	public void changeInvalidCharacters() {
-		String[] tokens = new String[] {
-			administrationCode,			currentLetterMonth,			complementaryCode,			
-			replacedNumber,				document,					name,				
-			surname,					phone,						streetInitial,
-			streetName,					streetNumber,				streetStair,
-			streetFloor,				streetDoor,					town,
-			province,					zip,						contactPerson,
-			contactPhone,				contactCellular,			contactMail,
-			payment,					toDeduct,					comments,
-			epi1,						epi2,						epi3,
-			epi4,						epi5,						agri1,
-			agri2,						agri3,						agri4
-		};
+		setAdministrationCode(changeInvalidCharacters(getAdministrationCode()));
+		setCurrentLetterMonth(changeInvalidCharacters(getCurrentLetterMonth()));
+		setComplementaryCode(changeInvalidCharacters(getComplementaryCode()));
+		setReplacedNumber(changeInvalidCharacters(getReplacedNumber()));
+		setDocument(changeInvalidCharacters(getDocument()));
+		setName(changeInvalidCharacters(getName()));
+		setSurname(changeInvalidCharacters(getSurname()));
+		setPhone(changeInvalidCharacters(getPhone()));
+		setStreetInitial(changeInvalidCharacters(getStreetInitial()));
+		setStreetName(changeInvalidCharacters(getStreetName()));
+		setStreetNumber(changeInvalidCharacters(getStreetNumber()));
+		setStreetStair(changeInvalidCharacters(getStreetStair()));
+		setStreetFloor(changeInvalidCharacters(getStreetFloor()));
+		setStreetDoor(changeInvalidCharacters(getStreetDoor()));
+		setTown(changeInvalidCharacters(getTown()));
+		setProvince(changeInvalidCharacters(getProvince()));
+		setZip(changeInvalidCharacters(getZip()));
+		setContactPerson(changeInvalidCharacters(getContactPerson()));
+		setContactPhone(changeInvalidCharacters(getContactPhone()));
+		setContactCellular(changeInvalidCharacters(getContactCellular()));
+		setContactMail(changeInvalidCharacters(getContactMail()));
+		setPayment(changeInvalidCharacters(getPayment()));
+		setToDeduct(changeInvalidCharacters(getToDeduct()));
+		setComments(changeInvalidCharacters(getComments()));
+		setEpi1(changeInvalidCharacters(getEpi1()));
+		setEpi2(changeInvalidCharacters(getEpi2()));
+		setEpi3(changeInvalidCharacters(getEpi3()));
+		setEpi4(changeInvalidCharacters(getEpi4()));
+		setEpi5(changeInvalidCharacters(getEpi5()));
+		setAgri1(changeInvalidCharacters(getAgri1()));
+		setAgri2(changeInvalidCharacters(getAgri2()));
+		setAgri3(changeInvalidCharacters(getAgri3()));
+		setAgri4(changeInvalidCharacters(getAgri4()));
+	}
+	
+	public String changeInvalidCharacters(String token) {
 		char[] seek  = new char[]{'á','é','í','ó','ú','Á','É','Í','Ó','Ú','º','ª'};
 		char[] alter = new char[]{'a','e','i','o','u','A','E','I','O','U',' ',' '};
-		for (String token: tokens) {
-			if (StringUtils.isNotBlank(token)) {
-				for (int i = 0; i < seek.length ; i ++) {
-					StringUtils.replaceChars(token, seek[i], alter[i]);
-				}
+		if (StringUtils.isNotBlank(token)) {
+			for (int i = 0; i < seek.length ; i ++) {
+				token = StringUtils.replaceChars(token, seek[i], alter[i]);
 			}
 		}
+		return token;
 	}
 }

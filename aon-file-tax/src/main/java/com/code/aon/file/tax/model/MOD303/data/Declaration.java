@@ -906,27 +906,42 @@ public class Declaration {
 	}
 	
 	public void changeInvalidCharacters() {
-		String[] tokens = new String[] {
-			period,				bankName,			ccc1,				
-			ccc2,				ccc3,				ccc4,				
-			document,			name,				surname,
-			address,			entity,				city,
-			provinceID,			province,			telephone,
-			fax,				email,				todayMonth,
-			depositBankEntity,	depositBankOffice,	depositBankControl,
-			depositBankAccount,	payBackBankEntity,	payBackBankOffice,
-			payBackBankControl,	payBackBankAccount
-		};
-		char[] seek  = new char[]{'á','é','í','ó','ú','Á','É','Í','Ó','Ú','º','ª'};
-		char[] alter = new char[]{'a','e','i','o','u','A','E','I','O','U',' ',' '};
-		for (String token: tokens) {
-			if (StringUtils.isNotBlank(token)) {
-				for (int i = 0; i < seek.length ; i ++) {
-					StringUtils.replaceChars(token, seek[i], alter[i]);
-				}
-			}
-		}
+		setPeriod(changeInvalidCharacters(getPeriod()));
+		setBankName(changeInvalidCharacters(getBankName()));
+		setCcc1(changeInvalidCharacters(getCcc1()));	
+		setCcc2(changeInvalidCharacters(getCcc2()));
+		setCcc3(changeInvalidCharacters(getCcc3()));
+		setCcc4(changeInvalidCharacters(getCcc4()));
+		setDocument(changeInvalidCharacters(getDocument()));
+		setName(changeInvalidCharacters(getName()));
+		setSurname(changeInvalidCharacters(getSurname()));
+		setAddress(changeInvalidCharacters(getAddress()));
+		setEntity(changeInvalidCharacters(getEntity()));
+		setCity(changeInvalidCharacters(getCity()));
+		setProvinceID(changeInvalidCharacters(getProvinceID()));
+		setProvince(changeInvalidCharacters(getProvince()));
+		setTelephone(changeInvalidCharacters(getTelephone()));
+		setFax(changeInvalidCharacters(getFax()));
+		setEmail(changeInvalidCharacters(getEmail()));
+		setTodayMonth(changeInvalidCharacters(getTodayMonth()));
+		setDepositBankEntity(changeInvalidCharacters(getDepositBankEntity()));
+		setDepositBankOffice(changeInvalidCharacters(getDepositBankOffice()));
+		setDepositBankControl(changeInvalidCharacters(getDepositBankControl()));
+		setDepositBankAccount(changeInvalidCharacters(getDepositBankAccount()));
+		setPayBackBankEntity(changeInvalidCharacters(getPayBackBankEntity()));
+		setPayBackBankOffice(changeInvalidCharacters(getPayBackBankOffice()));
+		setPayBackBankControl(changeInvalidCharacters(getPayBackBankControl()));
+		setPayBackBankAccount(changeInvalidCharacters(getPayBackBankAccount()));
 	}
 	
-	
+	public String changeInvalidCharacters(String token) {
+		char[] seek  = new char[]{'á','é','í','ó','ú','Á','É','Í','Ó','Ú','º','ª'};
+		char[] alter = new char[]{'a','e','i','o','u','A','E','I','O','U',' ',' '};
+		if (StringUtils.isNotBlank(token)) {
+			for (int i = 0; i < seek.length ; i ++) {
+				token = StringUtils.replaceChars(token, seek[i], alter[i]);
+			}
+		}
+		return token;
+	}
 }
