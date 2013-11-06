@@ -1,5 +1,8 @@
 package com.code.aon.ui.audit;
 
+import static com.code.aon.ui.audit.controller.MenuParser.A4J_COMMAND_LINK;
+import static com.code.aon.ui.audit.controller.MenuParser.AON_COMMAND_LINK;
+
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -151,4 +154,9 @@ public class BasicOption implements Serializable, IOption {
 		return StringUtils.replace(newXml, ID_PATTERN, newId);
 	}
 
+	public String getInitActionXml( String prefix ) {
+		String xml = StringUtils.replace(getXml(prefix), AON_COMMAND_LINK, A4J_COMMAND_LINK);
+		return StringUtils.replace(xml, "<"+A4J_COMMAND_LINK, "<"+A4J_COMMAND_LINK+" reRender='aonContent'");
+	}
+	
 }

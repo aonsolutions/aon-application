@@ -112,10 +112,7 @@
 			<aon:commandLink id="menu_payroll_portal"
 				value="#{bundle.aon_payroll_portal}"
 				action="gwt_enterprise_site" immediate="true"
-				styleClass="aon-top-menu-item" >
-				<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
-				<aon:actionListener method="#{enterprise.onEditSearch}" />
-			</aon:commandLink>					
+				styleClass="aon-top-menu-item" />
 		</c:if>
 		
 		<c:if test="#{(domainSwitcher.type == 'CONSULTANCY') or (!domainSwitcher.domainManagementAvailable)}">

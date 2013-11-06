@@ -2,12 +2,13 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
 	<aon:div style="display: none;">
-		${option.getXml("")}
-		<rich:jQuery selector="#${option.getId()}" timing="onload" query="click()" />
+		${option.getInitActionXml("fix")}
+		<rich:jQuery selector="#fix${option.getId()}" timing="onload" query="click()" />
 	</aon:div>			
 
 </ui:composition>

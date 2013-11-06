@@ -43,6 +43,8 @@ public class MenuParser {
 	private static final String MENU_TEMPLATE_PATH = "/facelet/homepage/menu.xhtml";
 	
 	public static final String AON_COMMAND_LINK = "aon:commandLink";
+	
+	public static final String A4J_COMMAND_LINK = "a4j:commandLink";
 		
 	private static final String AON_OUTPUTTEXT = "aon:outputText";
 	
