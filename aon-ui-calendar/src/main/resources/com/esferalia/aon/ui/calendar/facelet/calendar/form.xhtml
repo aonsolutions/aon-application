@@ -16,6 +16,11 @@
 				<ui:param name="toolbarTitle" value="#{bundle.calendar_menu_group}" />
 				<ui:param name="controller" value="#{calendar}" />
 				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandLink id="calendar-holiday"
+						value="festivos"
+						action="#{holiday.initialAction}"
+						actionListener="#{holiday.onEditSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-calendar" />
 					<aon:htmlCommandLink id="calendarReport_list" value="#{bundle.aon_report}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						actionListener="#{calendarPrint.onLoad}"
@@ -85,11 +90,11 @@
 				
 				<c:if test="#{!calendar.new}">
 					<aon:panelTabSet id="tabPanel">
-						<aon:panelTab label="#{bundle.aon_days}">
+						<aon:panelTab label="#{bundle.aon_dates}">
 							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/holiday_panel.xhtml" />
 							<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/inheritHolidays.xhtml" />
 							<aon:panel 
-								header="#{bundle.aon_days}">
+								header="#{bundle.aon_dates}">
 									<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendarHoliday/tab_grid.xhtml" />
 							</aon:panel>
 						</aon:panelTab>

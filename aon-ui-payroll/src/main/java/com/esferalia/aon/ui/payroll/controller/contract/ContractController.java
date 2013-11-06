@@ -3,6 +3,7 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -13,6 +14,8 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
@@ -47,6 +50,9 @@ import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractBonus;
+import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.ContractDeduction;
+import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
@@ -61,6 +67,7 @@ import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
+import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -82,10 +89,21 @@ public class ContractController extends BasicController {
 	
 	private ContractParams params;
 
+	private SalaryInfoHandler salaryInfoHandler;
+
 	private boolean showNewContractModal;
 	private boolean showContractEmbargoWindow;
 	private boolean showContractBonusWindow;
+	private boolean showContractSalaryInfoWindow;
 	
+	
+	
+	public SalaryInfoHandler getSalaryInfoHandler() {
+		return salaryInfoHandler;
+	}
+	public void setSalaryInfoHandler(SalaryInfoHandler salaryInfoHandler) {
+		this.salaryInfoHandler = salaryInfoHandler;
+	}
 	public ContractParams getParams() {
 		if(params==null){
 			params = new ContractParams();
@@ -107,6 +125,12 @@ public class ContractController extends BasicController {
 	}
 	public void setShowContractEmbargoWindow(boolean showContractEmbargoWindow) {
 		this.showContractEmbargoWindow = showContractEmbargoWindow;
+	}
+	public boolean isShowContractSalaryInfoWindow() {
+		return showContractSalaryInfoWindow;
+	}
+	public void setShowContractSalaryInfoWindow(boolean showContractSalaryInfoWindow) {
+		this.showContractSalaryInfoWindow = showContractSalaryInfoWindow;
 	}
 	public boolean isShowContractBonusWindow() {
 		return showContractBonusWindow;
@@ -296,6 +320,11 @@ public class ContractController extends BasicController {
 		ContractUtils utils = ContractUtils.getInstance();
 		utils.removeContractBonus(getParams().getBonus());
 		getParams().setBonus(null);
+	}
+	
+	public void onShowSalaryInfoWindow(ActionEvent event){
+		setSalaryInfoHandler(new SalaryInfoHandler((Contract) this.getTo()));
+		getSalaryInfoHandler().onLoad(event);
 	}
 	
 	public void onPersonBack(ActionEvent event){
@@ -761,6 +790,187 @@ public class ContractController extends BasicController {
 		}
 	}
 	
+	
+	/*
+	 * INNER CLASES
+	 */
+	public class SalaryInfoHandler{
+		private Contract contract;
+		private DataModel contractDataModel;
+		private DataModel paymentModel;
+		private DataModel deductionModel;
+		// filter options
+		private boolean searchCurrent;
+		private InactiveLastPeriod inactiveLastPeriod;
+		private Date inactiveDate;
+		
+		public SalaryInfoHandler(Contract contract){
+			this.contract = contract;
+			this.searchCurrent = true;
+			this.inactiveLastPeriod = InactiveLastPeriod.LAST_MONTH;
+			this.inactiveDate = null;
+		}
+		
+		public Date getInactiveDate() {
+			return inactiveDate;
+		}
+		public void setInactiveDate(Date inactiveDate) {
+			this.inactiveDate = inactiveDate;
+		}
+		public InactiveLastPeriod getInactiveLastPeriod() {
+			return inactiveLastPeriod;
+		}
+		public void setInactiveLastPeriod(InactiveLastPeriod inactiveLastPeriod) {
+			this.inactiveLastPeriod = inactiveLastPeriod;
+		}
+		public boolean isSearchCurrent() {
+			return searchCurrent;
+		}
+		public void setSearchCurrent(boolean searchCurrent) {
+			this.searchCurrent = searchCurrent;
+		}
+		public DataModel getContractDataModel() {
+			return contractDataModel;
+		}
+		public void setContractDataModel(DataModel contractDataModel) {
+			this.contractDataModel = contractDataModel;
+		}
+		public DataModel getPaymentModel() {
+			return paymentModel;
+		}
+		public DataModel getDeductionModel() {
+			return deductionModel;
+		}
+		public void setDeductionModel(DataModel deductionModel) {
+			this.deductionModel = deductionModel;
+		}
+		public void setPaymentModel(DataModel paymentModel) {
+			this.paymentModel = paymentModel;
+		}
+		
+		public void onLoad(ActionEvent event){
+			loadContractData(contract);
+			loadPayments(contract);
+			loadDeductions(contract);
+		}
+		public void loadContractData(Contract contract){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+				if(searchCurrent){
+					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), new Date());
+					Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+					criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+				} else {
+					Calendar cal = Calendar.getInstance();
+					cal.set(Calendar.DAY_OF_MONTH, 1);
+					if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
+						cal.add(Calendar.MONTH, -1);
+					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
+						cal.add(Calendar.MONTH, -3);
+					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
+						cal.add(Calendar.MONTH, -6);
+					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
+						cal.add(Calendar.YEAR, -1);
+					} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
+						cal = null;
+					}
+					if(getInactiveLastPeriod()!=InactiveLastPeriod.MANUAL){
+						setInactiveDate(cal!=null?cal.getTime():null);
+					}
+					if(getInactiveDate()!=null){
+						criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), getInactiveDate());
+					}
+				}
+				setContractDataModel( new ListDataModel(bean.getList(criteria)));
+			} catch (ManagerBeanException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		public void loadPayments(Contract contract){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
+				if(searchCurrent){
+					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), new Date());
+					Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
+					criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+				} else {
+					Calendar cal = Calendar.getInstance();
+					cal.set(Calendar.DAY_OF_MONTH, 1);
+					if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
+						cal.add(Calendar.MONTH, -1);
+					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
+						cal.add(Calendar.MONTH, -3);
+					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
+						cal.add(Calendar.MONTH, -6);
+					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
+						cal.add(Calendar.YEAR, -1);
+					} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
+						cal = null;
+					}
+					if(getInactiveLastPeriod()!=InactiveLastPeriod.MANUAL){
+						setInactiveDate(cal!=null?cal.getTime():null);
+					}
+					if(getInactiveDate()!=null){
+						criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), getInactiveDate());
+					}
+				}
+				setPaymentModel( new ListDataModel(bean.getList(criteria)));
+			} catch (ManagerBeanException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		public void loadDeductions(Contract contract){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractDeduction.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_CONTRACT_ID), contract.getId());
+				if(searchCurrent){
+					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE), new Date());
+					Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE));
+					criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+				} else {
+					Calendar cal = Calendar.getInstance();
+					cal.set(Calendar.DAY_OF_MONTH, 1);
+					if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
+						cal.add(Calendar.MONTH, -1);
+					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
+						cal.add(Calendar.MONTH, -3);
+					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
+						cal.add(Calendar.MONTH, -6);
+					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
+						cal.add(Calendar.YEAR, -1);
+					} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
+						cal = null;
+					}
+					if(getInactiveLastPeriod()!=InactiveLastPeriod.MANUAL){
+						setInactiveDate(cal!=null?cal.getTime():null);
+					}
+					if(getInactiveDate()!=null){
+						criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE), getInactiveDate());
+					}
+				}
+				setDeductionModel( new ListDataModel(bean.getList(criteria)));
+			} catch (ManagerBeanException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		public void onRemovePayment(ActionEvent event){
+			// TODO
+			
+		}
+		public void onRemoveDeduction(ActionEvent event){
+			// TODO
+			
+		}
+	}
 	
 // ************************************
 // ************************************

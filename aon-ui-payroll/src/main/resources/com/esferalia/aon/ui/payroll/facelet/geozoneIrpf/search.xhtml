@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="geozoneIrpfSearch">
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_geozoneIrpf_module}" />
+				<ui:param name="controller" value="#{geozoneIrpf}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+			</ui:include>
+			
+			<aon:div styleClass="aon-scroll-area">
+		
+				<aon:div styleClass="aon-panelGrid-search">
+					<aon:div styleClass="aon-panelGrid-search-info">
+						<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+					</aon:div>			
+					
+					<aon:panelGrid columns="2">
+						
+						<aon:outputLabel for="GeozoneIrpf_administration"
+							value="#{bundle.config_administration}" />
+						<aon:selectOneMenu id="GeozoneIrpf_administration"
+							value="#{geozoneIrpf.administration}" >
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{geozoneIrpf.administrationList}" />
+						</aon:selectOneMenu>
+						
+						<aon:outputLabel for="GeozoneIrpf_year"
+							value="#{bundle.aon_year}" />
+						<rich:inputNumberSpinner id="GeozoneIrpf_year" 
+							value="#{geozoneIrpf.year}"
+			   				inputSize="4" minValue="2009" maxValue="2020">
+			   			</rich:inputNumberSpinner>
+						
+						<aon:outputText value="" />
+						<aon:div >
+							<aon:commandButton
+								title="#{bundle.aon_key_search_accelerator}"
+								value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
+								action="geozoneIrpf_list" actionListener="#{geozoneIrpf.onSearch}"
+								requestDelay="100" accesskey="#{bundle.aon_key_search}" >
+							</aon:commandButton> 
+						</aon:div>	
+									
+					</aon:panelGrid>
+					
+				</aon:div>		
+			</aon:div>
+			
+		</aon:form>
+	</ui:define>
+</ui:composition>

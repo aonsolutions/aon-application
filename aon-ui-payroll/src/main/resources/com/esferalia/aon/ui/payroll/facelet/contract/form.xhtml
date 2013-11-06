@@ -40,10 +40,6 @@
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
 						</aon:panelTab>
 
-<!--  
-						<aon:panelTab id="contrataData" label="#{bundle.sepe_contrata_contract_specific_data}" 
-							actionListener="#{contractContrata.onContrataDataShow}">
--->
 						<aon:panelTab id="contrataData" label="#{bundle.sepe_contrata_contract_specific_data}">
 							<c:if test="#{contractContrata.enabledContrataEdition}">
 								<aon:div style="width:850px;">
@@ -99,6 +95,7 @@
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/bonus/modalBonus.xhtml" >
 			<ui:param name="reRender" value="contract-panelTab" />
 		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/salaryInfo/modalSalaryInfo.xhtml" />
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/modalGeneration.xhtml" />
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/extension/modalExtension.xhtml" />
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >

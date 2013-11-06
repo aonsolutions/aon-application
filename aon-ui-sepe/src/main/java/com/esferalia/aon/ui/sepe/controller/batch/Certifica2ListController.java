@@ -35,6 +35,8 @@ public class Certifica2ListController extends BasicController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(Certifica2ListController.class);
 
+	private boolean searchPanelExpanded;
+	
 	private Enterprise enterprise;
 	private Person person;
 	private Certifica2BatchListCheckHandler checkHandler;
@@ -44,7 +46,14 @@ public class Certifica2ListController extends BasicController {
 	
 	private SuspensionCause suspensionCauseForAll;
 	
-	
+
+	public boolean isSearchPanelExpanded() {
+		return searchPanelExpanded;
+	}
+
+	public void setSearchPanelExpanded(boolean searchPanelExpanded) {
+		this.searchPanelExpanded = searchPanelExpanded;
+	}
 
 	public Date getEndDateFrom() {
 		return endDateFrom;

@@ -6,8 +6,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	xmlns:aon="http://www.code.es/aon-rich-components" >
-
+	
 	<aon:panelGrid columns="2" id="contract_panel" 
 		columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
 			
@@ -30,20 +31,29 @@
 		
 		<aon:outputLabel for="enterpriseActivities" value="#{bundle.aon_activity}" 
 			style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
-		<aon:selectOneMenu id="enterpriseActivities" required="true"
+		<aon:selectOneMenu id="enterpriseActivities" 
 			disabled="#{contract.to.workPlace.id==null}"
 			value="#{contract.to.activity}" >
 			<f:selectItems value="#{contract.activities}" />
 			<a4j:support event="onchange" actionListener="#{contract.onActivityChanged}" ajaxSingle="true" reRender="enterpriseCCCs"/>
 		</aon:selectOneMenu>
 
-		<aon:outputLabel for="enterpriseCCCs" value="#{bundle.company_enterprise_ccc}"
+		<aon:outputLabel for="enterpriseCCClist" value="#{bundle.company_enterprise_ccc}"
 			style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
-		<aon:selectOneMenu id="enterpriseCCCs" required="true"
-			disabled="#{contract.to.activity.id==null}"
-			value="#{contract.to.enterpriseCCC}" >
-			<f:selectItems value="#{contract.enterpriseCCCs}" />
-		</aon:selectOneMenu>
+		<aon:div id="enterpriseCCCs">
+			<aon:selectOneMenu id="enterpriseCCClist" required="true"
+				rendered="#{fn:length(contract.activities) > 0}"
+				disabled="#{contract.to.activity.id==null}"
+				value="#{contract.to.enterpriseCCC}" >
+				<f:selectItems value="#{contract.enterpriseCCCs}" />
+			</aon:selectOneMenu>
+			<aon:outputText 
+				rendered="#{not (fn:length(contract.activities) > 0)}"
+				value="#{contract.to.enterpriseCCC.type}" />
+			<aon:outputText 
+				rendered="#{not (fn:length(contract.activities) > 0)}"
+				value=" (#{contract.to.enterpriseCCC.fullCcc})" />
+		</aon:div>
 		
 		<aon:outputLabel for="Contract_contractCode"
 			value="#{bundle.payroll_contract_contract_code}" />
@@ -120,7 +130,7 @@
 					<ui:param name="lookupTo" value="#{contract.agreement}" />
 					<ui:param name="skipInputText" value="#{true}" />
 					<ui:param name="skipNewButton" value="#{true}" />
-					<ui:param name="lookupInputSuggestSize" value="30" />
+					<ui:param name="lookupInputSuggestSize" value="75" />
 					<ui:param name="lookupReRender" value="agreementLevelCategory-content" />
 					<ui:define name="afterLookupContent">
 						<aon:outputText id="agreementLevelCategory-info" 

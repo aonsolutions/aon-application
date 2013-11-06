@@ -32,6 +32,7 @@ import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchAttachment;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.SepeBatchAttachment;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
 import com.esferalia.aon.ui.sepe.controller.CertificadosController;
@@ -192,8 +193,10 @@ public class Certifica2BatchController extends BasicController {
 	}
 
 	private void checkDiskCreated() throws ManagerBeanException {
-		LinesController controller = (LinesController)FormUtil.getController(ISepeConstants.CERTIFICA2_BATCH_ATTACH_CONTROLLER_NAME);
-		if(controller.getRowCount()>0){
+		IManagerBean bean = BeanManager.getManagerBean(SepeBatchAttachment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), ((Certifica2Batch)this.getTo()).getId());
+		if(bean.getCount(criteria)>0){
 			setRecorded(true);
 		} else {
 			setRecorded(false);

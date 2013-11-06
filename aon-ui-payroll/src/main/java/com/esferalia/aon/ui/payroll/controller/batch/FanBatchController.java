@@ -11,10 +11,13 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.io.IOUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -26,6 +29,7 @@ import com.esferalia.aon.payroll.FanBatchAttachment;
 import com.esferalia.aon.payroll.FanBatchDetail;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
+import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.FANWriter;
 
@@ -143,28 +147,28 @@ public class FanBatchController extends BasicController {
 	public void onCreateDisk(ActionEvent event) {
 		try {
 			FanBatch batch = (FanBatch) getTo();
-//			File file = getFANWriter().createFAN(getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
-			File file = null;
+			File file = getFANWriter().createFAN(getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
+//			File file = null;
 			IManagerBean bean = BeanManager.getManagerBean(FanBatchAttachment.class);
-//			if (file != null) {
+			if (file != null) {
 				FileInputStream in = new FileInputStream(file);
-//				byte[] data = IOUtils.toByteArray(in);
-//				FanBatchAttachment attach;
-//				attach = new FanBatchAttachment();
-//				attach.setFanBatch( (FanBatch) getTo());
-//				attach.setMimeType(MimeType.MIME_TXT);
-//				attach.setDescription(getFANWriter().getEti().getFichero());
-//				attach.setSize(null);
-//				attach.setAttachmentType(FanBatchAttachmentType.FAN_DOCUMENT);
-//				attach.setScope(null);
-//				attach.setData(data);
-//				attach.setAttachDate(new Date());
-//				bean.insertOrUpdate(attach);
-//				setRecorded(true);
-//				changeBatchStatus(FileStatus.GENERATED);
-//				FanBatchAttachController controller = (FanBatchAttachController) FormUtil.getController("fanBatchAttach");
-//				controller.initializeModel();
-//			}
+				byte[] data = IOUtils.toByteArray(in);
+				FanBatchAttachment attach;
+				attach = new FanBatchAttachment();
+				attach.setFanBatch( (FanBatch) getTo());
+				attach.setMimeType(MimeType.MIME_TXT);
+				attach.setDescription(getFANWriter().getEti().getFichero());
+				attach.setSize(null);
+				attach.setAttachmentType(PayrollBatchAttachmentType.GENERATED_DOCUMENT);
+				attach.setScope(null);
+				attach.setData(data);
+				attach.setAttachDate(new Date());
+				bean.insertOrUpdate(attach);
+				setRecorded(true);
+				changeBatchStatus(FileStatus.GENERATED);
+				FanBatchAttachController controller = (FanBatchAttachController) FormUtil.getController("fanBatchAttach");
+				controller.initializeModel();
+			}
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("error on generateFanFile ["+e.getMessage()+"]");
 		} catch (FileNotFoundException e) {

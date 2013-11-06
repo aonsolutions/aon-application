@@ -27,10 +27,21 @@ public class ContrataListController extends BasicController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ContrataListController.class);
 
+	private boolean searchPanelExpanded;
+	
 	private ContrataFileType fileType;
 	private Person person;
 	private Enterprise enterprise;
 	private BatchListCheckHandler checkHandler;
+
+	
+	public boolean isSearchPanelExpanded() {
+		return searchPanelExpanded;
+	}
+
+	public void setSearchPanelExpanded(boolean searchPanelExpanded) {
+		this.searchPanelExpanded = searchPanelExpanded;
+	}
 
 	public ContrataFileType getFileType() {
 		return fileType;

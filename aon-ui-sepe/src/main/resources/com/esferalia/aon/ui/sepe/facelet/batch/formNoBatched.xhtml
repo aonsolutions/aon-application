@@ -8,7 +8,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:div id="listDataDiv">
-		<aon:div id="listToolBarDiv" styleClass="aon-toolbar">
+		<aon:div id="listToolBarDiv" styleClass="aon-toolbar" style="width:98%;display:inline-block;">
 			<aon:commandButton title="#{bundle.aon_check_all}"
 				styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 				value="#{bundle.aon_check_all}"
@@ -49,7 +49,8 @@
 			<aon:panelCollapsible 
 				label="#{bundle.payroll_data_filter}"
 				headerClass="aon-panelGrid-search-info" 
-				bodyClass="aon-panelGrid-search" >
+				bodyClass="aon-panelGrid-search"
+				value="#{controllerList.searchPanelExpanded}" >
 				<aon:panelGrid columns="2">
 				
 					<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">

@@ -17,9 +17,9 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{bonusConcept}" />
 				<ui:define name="searchContent">
-					<aon:outputLabel for="BonusConcept_code"
+					<aon:outputLabel for="BonusConcept_id"
 						value="#{bundle.aon_id}" />
-					<aon:inputText id="BonusConcept_code" size="5" maxlength="5"
+					<aon:inputText id="BonusConcept_id" size="5" maxlength="5"
 						valueChangeListener="#{bonusConcept.addExpression}" />
 
 					<aon:outputLabel for="BonusConcept_description"

@@ -18,7 +18,7 @@ public class FanBatchAttachment extends PayrollBatchAttachment {
 	public FanBatch getFanBatch() {
 		return obtainFanBatch(getSourceBatch());
 	}
-	public void setFanBatch(LeaveBatch to) {
+	public void setFanBatch(FanBatch to) {
 		setSourceBatch(to.getId());
 	}
 

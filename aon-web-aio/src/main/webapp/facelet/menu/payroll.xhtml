@@ -112,10 +112,10 @@
 										value="#{bundle.payroll_contrata_contractBatch_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<a4j:commandLink ajaxSingle="true" immediate="true"
-										onclick="alert('#{bundle.aio_not_yet}');return false;"
-										value="(FAN) Fichero de aplicación de Nóminas"
-										style="color:grey;font-style:oblique;" />
+									<aon:commandLink id="fanBatch-payroll"
+										action="fanBatch_search-payroll"
+										actionListener="#{fanBatch.onEditSearch}"
+										value="#{bundle.payroll_fanBatchWizard_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="leaveBatch-payroll"
@@ -358,6 +358,7 @@
 											value="#{true}" />
 									</aon:commandLink>
 								</aon:div>
+							<!--  
 								<aon:div styleClass="aon-direct-access-list-element">
 									<a4j:commandLink ajaxSingle="true" immediate="true"
 										onclick="alert('#{bundle.aio_not_yet}');return false;"
@@ -367,6 +368,13 @@
 									<a4j:commandLink ajaxSingle="true" immediate="true"
 										onclick="alert('#{bundle.aio_not_yet}');return false;"
 										value="Generación Apuntes Contables" style="color:grey;font-style:oblique;" />
+								</aon:div>
+							-->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="expenseInvoice-payroll"
+										action="expenseInvoice_search-payroll"
+										actionListener="#{expenseInvoice.onEditSearch}"
+										value="#{bundle.finance_expense_invoice_management_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
@@ -399,6 +407,12 @@
 										action="sepeTables_list-payroll"
 										actionListener="#{sepeTables.onInit}"
 										value="#{bundle.sepe_sepeTables_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="geozoneIrpf-payroll"
+										action="geozoneIrpf_search-payroll" 
+										actionListener="#{geozoneIrpf.onInitialize}" 
+										value="#{bundle.payroll_geozoneIrpf_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

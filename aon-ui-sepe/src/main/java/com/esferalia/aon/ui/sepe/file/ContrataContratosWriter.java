@@ -4,34 +4,25 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.WorkPlace;
 import com.code.aon.person.Person;
 import com.code.aon.person.enumeration.Gender;
-import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.DocumentType;
-import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
-import com.esferalia.aon.payroll.PayrollWorkPlace;
-import com.esferalia.aon.payroll.enumeration.contrata.TCHRGCOT;
-import com.esferalia.aon.payroll.enumeration.contrata.TEJINDIS;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.enumeration.contrata.TCHRGCOT;
+import com.esferalia.aon.payroll.enumeration.contrata.TEJINDIS;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contrata.contratos.CIFNIFTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO100TYPE;
@@ -517,7 +508,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 	private DATOSEMPRESATYPE createDatosEmpresa(ContrataContratoParams params) throws ManagerBeanException {
 		DATOSEMPRESATYPE datos = factory.createDATOSEMPRESATYPE();
 		datos.setCIFNIFEMPRESA(createCifNif(getContract().getWorkPlace().getEnterprise().getRegistry().getDocument()));
-		EnterpriseCCC ccc = getEnterpriseCCC(getContract().getWorkPlace());
+		EnterpriseCCC ccc = getContract().getEnterpriseCCC();
 		// TODO: research about ccc quote regime
 		String quoteRegime = "0000";
 		if(getContract().getEnterpriseCCC().getActivity().getType()==SSRegimeType.GENERAL){
@@ -2036,32 +2027,6 @@ public class ContrataContratosWriter implements IContrataWriter{
 	}
 	protected Map<String, String> getContractDataMap() {
 		return contractDataMap;
-	}
-	
-	private PayrollWorkPlace getPayrollWorkPlace(WorkPlace workPlace) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), workPlace.getId());
-		Iterator<ITransferObject> it = bean.getList(criteria).iterator();
-		while(it.hasNext()){
-			return (PayrollWorkPlace) it.next();
-		}
-		return null;
-	}
-
-	private EnterpriseCCC getEnterpriseCCC(WorkPlace workPlace) throws ManagerBeanException {
-		PayrollWorkPlace pw = getPayrollWorkPlace(workPlace);
-		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), workPlace.getEnterprise().getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ID), pw.getEnterpriseActivity().getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_GEOZONE_ID), workPlace.getAddress().getGeozone().getId());
-
-		Iterator<ITransferObject> it = bean.getList(criteria).iterator();
-		while(it.hasNext()){
-			return (EnterpriseCCC) it.next();
-		}
-		return null;
 	}
 	
 	private String getFormatedDate(Date date){

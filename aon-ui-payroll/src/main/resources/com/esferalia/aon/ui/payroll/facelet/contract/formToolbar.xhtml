@@ -37,7 +37,7 @@
 			
 			<aon:menuItem id="document-issue" 
 				value="#{bundle.payroll_contract_generate_document}"
-				rendered="#{!contract.new and contract.to.pending}"
+				rendered="#{!contract.new}"
 				reRender="showDocumentGenerationWindow"
 				actionListener="#{contractPdf.onDocumentGenerationShow}"
 				iconClass="aon-icon-new-page">
@@ -178,16 +178,14 @@
 					<f:setPropertyActionListener
 						target="#{contract.showContractEmbargoWindow}" value="#{true}" />
 				</aon:menuItem>
-<!--  
-				<aon:menuItem id="contract_leave"
-					value="#{bundle.payroll_contractLeave_module}"
-					action="contractLeave_form"
-					iconClass="aon-icon-copy">
-					<aon:actionListener method="#{contractLeave.onSelectCurrentContract}" />
+				<aon:menuItem id="contract-salary-info" 
+					value="Datos de calculo"
+					reRender="showContractSalaryInfoWindow"
+					actionListener="#{contract.onShowSalaryInfoWindow}"
+					iconClass="aon-icon-copy" >
 					<f:setPropertyActionListener
-						target="#{contractLeave.backAction}" value="contract_form" />
-				</aon:menuItem>
--->				
+						target="#{contract.showContractSalaryInfoWindow}" value="#{true}" />
+				</aon:menuItem>				
 			</c:if>
 			
 		</ui:define>
