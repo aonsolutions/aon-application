@@ -27,7 +27,7 @@ public enum ProjectStatus implements IResourceable {
 	CLOSED;
     
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_project_status_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_commercial_project_status_";
     
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
