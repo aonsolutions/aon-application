@@ -365,7 +365,7 @@
 				<textField>
 					<reportElement uuid="da6add36-4073-4f10-b2ff-c86b99007230" style="label" x="29" y="198" width="54" height="12"/>
 					<textElement textAlignment="Center"/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format("{0,date,dd/MM/yyyy}", $F{salary}.getIssueDate())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[ReportUtils.toExcelNumberFormat($F{salary}.getIssueDate())]]></textFieldExpression>
 				</textField>
 				<image scaleImage="RetainShape" isUsingCache="true" onErrorType="Blank">
 					<reportElement uuid="f3ccbbff-1a15-46c0-89ff-dbcca485f8f6" x="9" y="15" width="249" height="51">
