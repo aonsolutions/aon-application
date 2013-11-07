@@ -233,7 +233,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
 			requestDataBuffer.append("&" + ISSUE_DATE + "="
 					+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
-
+			
 			for (Employee employee : calcDialog.getSelectedData())
 				requestDataBuffer.append("&" + EMPLOYEES + "="
 						+ employee.getId());
@@ -793,6 +793,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		cost.setCostDocuments(docs);
 	}
 
+	@Override
+	public void onSalariesSelected(SalariesDocuments docs) {
+		employeeDetail.setWidget(cost);
+		cost.setCostDocuments(docs);
+	}
+	
 	@Override
 	public void onDocumentsSelected(ISpinnable<IDocument> docs) {
 		employeeDetail.setWidget(documents);

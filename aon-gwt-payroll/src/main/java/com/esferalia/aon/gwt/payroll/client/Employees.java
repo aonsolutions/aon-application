@@ -5,9 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.BooleanEventMetaData;
-import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.ConstantEventMetaData;
-import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.DecimalEventMetaData;
-import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EnumEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EventMetaData;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -18,12 +15,11 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
-import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -74,6 +70,8 @@ public class Employees extends ResizeComposite implements
 
 		void onSalariesSelected(SalaryDocuments docs);
 
+		void onSalariesSelected(SalariesDocuments docs);
+
 		void onDocumentsSelected(ISpinnable<IDocument> docs);
 
 		void onSalaryDraftSelected(SalaryDraftObject salaryDraftDocument);
@@ -99,7 +97,9 @@ public class Employees extends ResizeComposite implements
 
 	private static final int EMPLOYEE_SCROLL_GAP = 5;
 	private static final int ENTERPRISE_COSTS_INDEX = 0;
+	private static final int ENTERPRISE_SALARIES_INDEX = 1;
 	private static final int WORKPLACE_COSTS_INDEX = 0;
+	private static final int WORKPLACE_SALARIES_INDEX = 1;
 	private static final int EMPLOYEE_SALARIES_INDEX = 0;
 	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 3; // TODO : It's not
 																// statci ???
@@ -213,6 +213,7 @@ public class Employees extends ResizeComposite implements
 		tree.addItem(enterpriseItem);
 
 		addImageItem(enterpriseItem, "Costos", images.costs());
+		addImageItem(enterpriseItem, "N\u00F3minas", images.salaries());
 
 		if (extended) {
 			List<Activity> activities = enterprise.getActivities();
@@ -235,6 +236,7 @@ public class Employees extends ResizeComposite implements
 			workplaceItem.setUserObject(workplace);
 
 			addImageItem(workplaceItem, "Costos", images.costs());
+			addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
 
 			if (extended) {
 				final TreeItem eventsItem = addImageItem(workplaceItem,
@@ -368,6 +370,12 @@ public class Employees extends ResizeComposite implements
 			onSalaryPreviewSelected((SalaryPreviewDocument) userObject);
 		} else if (userObject instanceof Activity) {
 			onActivitySelected((Activity) userObject);
+		}
+		// I apologize about this. Inheritance it's like Kate Beckinsale. Due
+		// 'SalariesDocuments' extends 'CostDocuments' its test must be first.
+		// If not, onSalariesSelected(SalariesDocuments) method won't be called.
+		else if (userObject instanceof SalariesDocuments) {
+			onSalariesSelected((SalariesDocuments) userObject);
 		} else if (userObject instanceof CostDocuments) {
 			onCostsSelected((CostDocuments) userObject);
 		} else if (userObject instanceof SalaryDocuments) {
@@ -488,6 +496,9 @@ public class Employees extends ResizeComposite implements
 			return;
 		} // end-if: Cost of enterprise have been already loaded.
 
+		final TreeItem salariesItem = enterpriseItem
+				.getChild(ENTERPRISE_SALARIES_INDEX);
+
 		Enterprise enterprise = (Enterprise) enterpriseItem.getUserObject();
 
 		employeesService.getEnterpriseCosts(enterprise.getId(),
@@ -504,6 +515,10 @@ public class Employees extends ResizeComposite implements
 						CostDocuments documents = new CostDocuments(costs,
 								employeesService);
 						costsItem.setUserObject(documents);
+
+						SalariesDocuments salariesDocuments = new SalariesDocuments(
+								costs, employeesService);
+						salariesItem.setUserObject(salariesDocuments);
 					}
 				});
 	}
@@ -514,6 +529,9 @@ public class Employees extends ResizeComposite implements
 
 		final TreeItem costsItem = workplaceItem
 				.getChild(WORKPLACE_COSTS_INDEX);
+
+		final TreeItem salariesItem = workplaceItem
+				.getChild(WORKPLACE_SALARIES_INDEX);
 
 		if (costsItem.getUserObject() == null) {
 			employeesService.getWorkplaceCosts(workplace.getId(),
@@ -527,9 +545,13 @@ public class Employees extends ResizeComposite implements
 
 						@Override
 						public void onSuccess(List<Cost> costs) {
-							CostDocuments documents = new CostDocuments(costs,
-									employeesService);
-							costsItem.setUserObject(documents);
+							CostDocuments costDocuments = new CostDocuments(
+									costs, employeesService);
+							costsItem.setUserObject(costDocuments);
+							
+							SalariesDocuments salariesDocuments = new SalariesDocuments(
+									costs, employeesService);
+							salariesItem.setUserObject(salariesDocuments);
 						}
 					});
 		} // end-if: Costs of this workplace haven't been loaded yet.
@@ -629,6 +651,12 @@ public class Employees extends ResizeComposite implements
 		}
 	}
 
+	private void onSalariesSelected(SalariesDocuments docs) {
+		for (Listener listener : listeners) {
+			listener.onSalariesSelected(docs);
+		}
+	}
+
 	private void onSalariesSelected(final TreeItem salariesItem) {
 		TreeItem employeeItem = salariesItem.getParentItem();
 		Employee employee = (Employee) employeeItem.getUserObject();
@@ -643,8 +671,8 @@ public class Employees extends ResizeComposite implements
 
 					@Override
 					public void onSuccess(List<Salary> salaries) {
-						SalaryDocuments docs = new SalaryDocuments(
-								salaries, employeesService);
+						SalaryDocuments docs = new SalaryDocuments(salaries,
+								employeesService);
 						salariesItem.setUserObject(docs);
 						for (Listener listener : listeners) {
 							listener.onSalariesSelected(docs);
@@ -742,7 +770,7 @@ public class Employees extends ResizeComposite implements
 
 			employeeItem.setUserObject(employee);
 
-			addImageItem(employeeItem, "Nominas", images.salaries());
+			addImageItem(employeeItem, "N\u00F3minas", images.salaries());
 
 			if (extended) {
 				TreeItem salaryPreviewItem = addImageItem(employeeItem,
@@ -1015,7 +1043,7 @@ public class Employees extends ResizeComposite implements
 	}
 
 	private int getEmployeesOffset() {
-		return extended ? 3 : 1;
+		return extended ? 4 : 2;
 	}
 
 	private void showEndDate(boolean endDate) {

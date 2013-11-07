@@ -23,6 +23,7 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
@@ -96,6 +97,8 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	private Cost cost;
 	private Salary salary;
 	private Documents documents;
+	
+	
 
 	/*
 	 * (non-Javadoc)
@@ -121,8 +124,6 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		salary.hideDeleteButton();
 		documents = new Documents();
 		employees.addListener(this);
-		
-
 	}
 
 	@Override
@@ -151,6 +152,12 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
 	@Override
 	public void onCostsSelected(CostDocuments docs) {
+		detailPanel.setWidget(cost);
+		cost.setCostDocuments(docs);
+	}
+	
+	@Override
+	public void onSalariesSelected(SalariesDocuments docs) {
 		detailPanel.setWidget(cost);
 		cost.setCostDocuments(docs);
 	}
