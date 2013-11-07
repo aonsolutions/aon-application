@@ -8,6 +8,7 @@ public interface IReservationConstants {
 	String DATE = "Date";
 	String TIME = "Time";
 	String DESCRIPTION = "Description";
+	String MEAL_PLAN_CODES = "MealPlanCodes";
 	String DISCOUNT_MODE = "DiscountMode";
 	String DISCOUNT = "Discount";
 	String PERCENT = "Percent";
@@ -28,8 +29,10 @@ public interface IReservationConstants {
 	String COMPANY = "EMPRESA";
 	String SOLRES = "Solres";
 	String REQRES = "Reqres";
+	String PROMO_CODE = "PROMO_CODE";
 	String CRO = "CRO";
 	String AGENCY_REBATE = "S";
+	String MEAL_PLAN = "MEAL_PLAN";
 	String RATE_PLAN = "RATEPLAN";
 	String BOOKING_PAYMENT = "BOOKING_PAYMENT";
 	String VOUCHER = "Voucher";
