@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>7.24.0</version>
+		<version>7.25-SNAPSHOT</version>
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-payroll-ctsql2mysql</artifactId>
@@ -17,9 +17,9 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/aon.parent-7.24.x/aon-payroll-ctsql2mysql</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releasesr/aon.parent-7.24.x/aon-payroll-ctsql2mysqlr</connection>
-		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/aon.parent-7.24.x/aon-payroll-ctsql2mysql</url>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-payroll-ctsql2mysql</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-payroll-ctsql2mysqlr</connection>
+		<url>http://dev.esferalia.com/websvn/wsvn/aon-payroll-ctsql2mysql</url>
 	</scm>
 
 	<repositories>
