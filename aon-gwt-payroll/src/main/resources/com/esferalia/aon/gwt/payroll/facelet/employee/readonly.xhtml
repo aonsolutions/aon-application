@@ -24,7 +24,7 @@
 						if ( element.type == 'file')
 							element.style.display = 'none';
 						if ( element.type == 'text' && element.value )
-							element.size = element.value.length;;
+							element.size = element.value.length + Math.max(10, element.value.length * 0.10 );
 						
 						if ( element.tagName == 'SELECT') {
 							try {
@@ -32,10 +32,10 @@
 								var input = document.createElement("INPUT");
 								input.value =  value;
 								input.disabled = true;
-								input.size = value.length;
 								input.style.color = 'inherit';
 								input.style.borderColor = 'transparent';
 								input.style.backgroundColor = 'transparent';
+								input.size = value.length + Math.max(10, value.length * 0.10 );
 								
 								element.parentNode.replaceChild(input, element);
 							} catch ( e ) {
