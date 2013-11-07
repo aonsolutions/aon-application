@@ -1105,13 +1105,13 @@ public class CertificadosWriter {
 			Calendar startCal = Calendar.getInstance();
 			startCal.setTime(startDate);
 			startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), startCal.getTime());
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), startCal.getTime());
 		}
 		if(endDate != null){
 			Calendar endCal = Calendar.getInstance();
 			endCal.setTime(endDate);
 			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), endCal.getTime());
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endCal.getTime());
 		}
 		utils.completeDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SALARY_DOMAIN));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE), false);

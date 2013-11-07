@@ -70,6 +70,8 @@
 		</ui:define>
 		
 		<ui:define name="afterFormContent" >
+			<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+			<aon:lookupButtonPopup lookup="#{personLookup}" />
 			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/contrata/modalSearch.xhtml">
 				<ui:param name="controller" value="#{contrataList}" />
 				<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
