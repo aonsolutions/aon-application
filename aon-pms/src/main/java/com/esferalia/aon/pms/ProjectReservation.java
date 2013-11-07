@@ -46,6 +46,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectReservation.class.getName());
 	private boolean forceCalculateTotals;
+	private double vatPercent;
 	private Set<ProjectReservationGuest> guests = new HashSet<ProjectReservationGuest>();
 	private Set<ProjectReservationRoom> rooms = new HashSet<ProjectReservationRoom>();
 
@@ -61,6 +62,14 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setForceCalculateTotals(boolean forceCalculateTotals) {
 		this.forceCalculateTotals = forceCalculateTotals;
+	}
+
+	@Transient
+	public double getVatPercent() {
+		return vatPercent;
+	}
+	public void setVatPercent(double vatPercent) {
+		this.vatPercent = vatPercent;
 	}
 
 	@OneToMany(mappedBy = "projectReservation", cascade={CascadeType.REMOVE})
