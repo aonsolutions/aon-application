@@ -227,5 +227,27 @@ public class CampaignActionTargetController extends LinesController {
 		}
 	}
 	
+	public void deleteActionTargets( MarketingAction action ) {
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		SessionFactory sessionFactory = HibernateUtil.getSessionFactory(sessionFactoryName);
+		StatelessSession session = sessionFactory.openStatelessSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			String hqlUpdate = "delete ActionTarget at where at.action = :actionId";
+			int deletedEntities = session.createQuery( hqlUpdate )
+			        .setInteger( "actionId", action.getId() )
+			        .executeUpdate();
+			LOGGER.info( "deletedEntities: {}", deletedEntities );
+			tx.commit();
+		} catch (HibernateException he) {
+			tx.rollback();
+			LOGGER.error(">>>> deleteActionTargets ", he);
+			AonUtil.addErrorMessage(he.getMessage());
+			throw new AbortProcessingException(he.getMessage(), he);			
+		} finally {
+			session.close();
+		}
+	}
 	
 }

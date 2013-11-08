@@ -377,11 +377,18 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
+				<value>#{marketingCampaignListener}</value>
 				<value>#{marketingCampaignScopeListener}</value>
 				<value>#{marketingCampaignActionListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>marketingCampaignListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.marketing.event.CampaignControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
 	
 	<managed-bean>
 		<managed-bean-name>marketingCampaignScopeListener</managed-bean-name>
@@ -430,10 +437,6 @@
 			<value>campaignAction</value>
 		</managed-property>
 		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>marketingCampaign</value>
 		</managed-property>
@@ -450,11 +453,18 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{campaignActionListener}</value>
 				<value>#{campaignActionTargetSearch}</value>
 				<value>#{phoneActionFilterListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>campaignActionListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.marketing.event.CampaignActionControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
 
 	<managed-bean>
 		<managed-bean-name>campaignActionTargetSearch</managed-bean-name>
@@ -554,10 +564,6 @@
 			<property-name>defaultOrder</property-name>
 			<value>ActionTarget_target_registry_name</value>
 		</managed-property>		
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>campaignAction</value>

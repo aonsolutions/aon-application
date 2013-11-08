@@ -46,16 +46,6 @@
 						<aon:inputText id="Action_description" value="#{campaignAction.to.description}"
 							required="true" size="32" maxlength="64" />		
 	
-						<aon:outputLabel for="Action_mediaType"
-							value="#{bundle.registry_media_type}" />
-						<aon:selectOneMenu id="Action_mediaType"
-							reRender="actionGrid,campaignActionTargetDataDiv,campaignActionToolbar" required="true"
-							process="Action_description,Action_startDate,Action_endDate,Template_id"
-							value="#{campaignAction.to.mediaType}">
-							<f:selectItem itemLabel="-" value="#{null}" />
-							<f:selectItems value="#{marketingCampaign.actionMediaTypes}" />
-						</aon:selectOneMenu>
-						
 						<aon:outputLabel for="Action_startDate"
 							value="#{bundle.marketing_action_start_date}" />
 						<aon:selectInputDate id="Action_startDate" 
@@ -71,7 +61,17 @@
 							timeZone="#{timeZoneController.timeZone}"
 							renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 						</aon:selectInputDate>
-	
+
+						<aon:outputLabel for="Action_mediaType"
+							value="#{bundle.registry_media_type}" />
+						<aon:selectOneMenu id="Action_mediaType"
+							reRender="actionGrid,campaignActionTargetDataDiv,campaignActionToolbar" required="true"
+							process="Action_description,Action_startDate,Action_endDate,Template_id"
+							value="#{campaignAction.to.mediaType}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{marketingCampaign.actionMediaTypes}" />
+						</aon:selectOneMenu>
+							
 						<ui:include src="/com/code/aon/ui/marketing/facelet/news/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{campaignAction.to.news}" />
 							<ui:param name="lookupLabel" value="#{bundle.marketing_message}" />
