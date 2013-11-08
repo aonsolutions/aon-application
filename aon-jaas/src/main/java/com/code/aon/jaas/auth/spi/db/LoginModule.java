@@ -114,7 +114,12 @@ public class LoginModule extends UsernamePasswordLoginModule {
 				throw new AuthenticationLoginException( "aon_login_user_inactive", principal.getShortName() );	
 			}
 			principal.setUserId(user.getId());
-			principal.setUserDomainId(user.getDomain());			
+			principal.setUserDomainId(user.getDomain());						
+			if ( (domain.getScope() != null) && (domain.getParent() == user.getDomain()) ) {
+				if (! dbUtil.hasScope(user.getId(), domain.getScope()) ) {
+					throw new AuthenticationLoginException( "aon_login_application_user_domain_limited", new Object[]{principal.getShortName(), domain.getName()} );
+				}
+			}			
 			DomainApplication da = dbUtil.getDomainApplication(user.getDomain(), applicationId );
 			if ( da == null ) {
 				throw new AuthenticationLoginException( "aon_login_application_not_registered", applicationName );

@@ -94,11 +94,25 @@
 					</aon:div>
 					<aon:div id="valuesDiv">
 						<c:if test="#{adminNewDomain.parentDomain != null}">
-							<aon:outputLabel for="Domain_enableHeredity"
-								value="#{bundle.admin_domain_enableHeredity}" />
-							<aon:selectBooleanCheckbox id="Domain_enableHeredity"
-								required="true" reRender="valuesDiv"
-								value="#{adminNewDomain.enableHeredity}" />
+							<aon:div styleClass="aon-margin-top">
+								<a4j:region>
+									<aon:outputLabel for="Domain_enableHeredity"
+										value="#{bundle.admin_domain_enableHeredity}" />
+									<aon:selectBooleanCheckbox id="Domain_enableHeredity"
+										required="true" reRender="valuesDiv" ajaxSingle="false"
+										actionListener="#{adminNewDomain.onChangedEnableHeredity}"
+										value="#{adminNewDomain.enableHeredity}" />
+									<c:if test="#{adminNewDomain.loadDefaultValuesEnabled and !(empty adminDomain.domainScopes)}">
+										<aon:outputLabel for="Domain_scope" style="margin-left:2em;margin-right:0.5em;"
+											value="#{bundle.aon_scope}" />
+										<aon:selectOneMenu id="Domain_scope" 
+											value="#{adminNewDomain.scope}">
+											<f:selectItem itemLabel="-" value="#{null}"/>
+											<f:selectItems value="#{adminDomain.domainScopes}" />
+										</aon:selectOneMenu>
+									</c:if>		
+								</a4j:region>
+							</aon:div>										
 						</c:if>
 						<c:if test="#{!adminNewDomain.enableHeredity}">
 							<aon:div styleClass="aon-margin-top">
@@ -122,6 +136,7 @@
 										</aon:selectOneMenu>
 									</aon:div>		
 								</c:if>
+								
 								<c:if test="#{!adminNewDomain.loadDefaultValuesEnabled}">
 									<aon:div styleClass="aon-margin-top">	
 										<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >

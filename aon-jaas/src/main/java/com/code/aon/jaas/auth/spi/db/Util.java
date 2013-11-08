@@ -69,7 +69,7 @@ public class Util {
 		try {
 			ResultSetHandler<Domain> h = new BeanHandler<Domain>(Domain.class);
 			Domain domain = run.query( connection,
-				    "SELECT id, name, parent, active, expirationDate FROM " + DB_SEP + dbName + DB_SEP + ".domain WHERE name =?", h, domainName); 
+				    "SELECT id, name, parent, active, expirationDate, scope FROM " + DB_SEP + dbName + DB_SEP + ".domain WHERE name =?", h, domainName); 
 			LOGGER.debug( "Get domain {} id from {}", domainName, dbName );
 			if ( domain != null ) {
 				domain.setDataBaseName(dbName);
@@ -209,38 +209,57 @@ public class Util {
 		return null;	
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<Integer> getProfiles( Integer applicationUserId ) {
 		QueryRunner run = new QueryRunner();
 		try {
 			LOGGER.debug( "application user: {}", applicationUserId );
-			ResultSetHandler<List<Object>> h = new ColumnListHandler();
-			List<Object> result = run.query( connection,
+			ResultSetHandler<List<Integer>> h = new ColumnListHandler<Integer>();
+			List<Integer> result = run.query( connection,
 				    "SELECT profile FROM application_user_profile WHERE application_user=?", h, applicationUserId );
-			return (List) result;
+			return result;
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
 		return null;	
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<String> getRoles( Integer profileId ) {
 		QueryRunner run = new QueryRunner();
 		try {
 			LOGGER.debug( "profile: {}", profileId );
-			ResultSetHandler<List<Object>> h = new ColumnListHandler();
-			List<Object> result = run.query( connection,
+			ResultSetHandler<List<String>> h = new ColumnListHandler<String>();
+			List<String> result = run.query( connection,
 					"SELECT role.name FROM profile_role, application_role, role WHERE " +
 					"profile_role.application_role = application_role.id and " +
 					"application_role.role = role.id and " +
 					"profile_role.profile = ?", h, profileId );
-			return (List) result;
+			return result;
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
 		return null;	
 	}
 
+	public List<Integer> getUserScopes( Integer userId ) {
+		QueryRunner run = new QueryRunner();
+		try {
+			LOGGER.debug( "user: {}", userId );
+			ResultSetHandler<List<Integer>> h = new ColumnListHandler<Integer>();
+			List<Integer> result = run.query( connection,
+				    "SELECT scope FROM user_scope WHERE user_id=?", h, userId );
+			return result;
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return null;	
+	}
+
+	public boolean hasScope( Integer userId, Integer scopeId ) {
+		List<Integer> scopes = getUserScopes(userId);
+		if ( (scopes != null) && (!scopes.isEmpty()) ) {
+			return scopes.contains(scopeId);
+		}
+		return false;
+	}
 	
 }

@@ -87,9 +87,12 @@ import com.code.aon.config.Application;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
+import com.code.aon.config.Scope;
 import com.code.aon.config.User;
+import com.code.aon.config.UserScope;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -929,5 +932,35 @@ public class DomainController extends BasicController {
 	public int getMaxDomainNameLength() {
 		return MAX_DOMAIN_NAME_LENGTH;
 	}
-	
+
+	public List<SelectItem> getDomainScopes() {
+		List<SelectItem> scopes = new LinkedList<SelectItem>();
+		try {
+			AuthPrincipal principal = AonUtil.getAuthPrincipal();
+			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
+			if ( DomainSwitcher.getDomainType(principal.getDomainId()) == DomainType.ADMIN ) {
+				DomainSwitcher dw = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+				Integer domainId = dw.isChildDomain() ? dw.getParentDomainId() : dw.getDomainId();
+				IManagerBean bean = BeanManager.getManagerBean(Scope.class);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SCOPE_DOMAIN), domainId);
+				criteria.addOrder(bean.getFieldName(IEntityAlias.SCOPE_DESCRIPTION));
+				for (ITransferObject ito : bean.getList(criteria)) {
+					Scope scope = (Scope) ito;
+					scopes.add( new SelectItem(scope, scope.getDescription()) );
+				}				
+			} else {
+				IManagerBean bean = BeanManager.getManagerBean(UserScope.class);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), principal.getUserId());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_DESCRIPTION));
+				for (ITransferObject ito : bean.getList(criteria)) {
+					Scope scope = ((UserScope) ito).getScope();
+					scopes.add( new SelectItem(scope, scope.getDescription()) );
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error( "Error getting domain scopes. " + e.getMessage(), e);
+		}
+		return scopes;
+	}	
 }

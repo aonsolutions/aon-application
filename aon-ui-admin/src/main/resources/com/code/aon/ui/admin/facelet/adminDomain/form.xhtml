@@ -51,8 +51,24 @@
 							required="true" value="#{adminDomain.to.type}">
 							<f:selectItems value="#{adminCollections.newDomainTypes}" />
 						</aon:selectOneMenu>		
-					</c:if>						
-
+					</c:if>				
+					
+					<c:if test="#{domainSwitcher.childDomain}" >
+						<aon:outputLabel for="Domain_scope"
+							value="#{bundle.aon_scope}" />
+						<c:if test="#{!(domainSwitcher.parentDomainUserInChildDomain or aonRole.sysAdmin)}">
+							<aon:inputText id="Domain_scope" size="60" disabled="true"
+								value="#{adminDomain.to.scope}" />
+						</c:if>
+						<c:if test="#{domainSwitcher.parentDomainUserInChildDomain or aonRole.sysAdmin}">						
+							<aon:selectOneMenu id="Domain_scope" 
+								value="#{adminDomain.to.scope}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{adminDomain.domainScopes}" />
+							</aon:selectOneMenu>		
+						</c:if>													
+					</c:if>								
+							
 					<aon:outputLabel for="Domain_name"
 						value="#{bundle.admin_domain_url}" />
 					<c:if test="#{!aonRole.sysAdmin}">

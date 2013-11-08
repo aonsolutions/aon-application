@@ -29,6 +29,7 @@ import com.code.aon.common.domain.DomainEvent;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomainChangeListener;
 import com.code.aon.config.Domain;
+import com.code.aon.config.UserScope;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.util.AonUtil;
@@ -150,26 +151,45 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 			return filteredModel;
 		}
 	}
+	
+	private List<Integer> getUserScopes() {
+		List<Integer> scopes = new LinkedList<Integer>();
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName(UserScope.class.getName());
+		String q = "SELECT us FROM UserScope us WHERE us.user = " + principal.getUserId();
+		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
+		for( Object o : query.list() ) {
+			scopes.add( ((UserScope) o).getScope().getId() );
+		}
+		return scopes;
+	}
+	
 	private void initializeModel() {
 		List<Domain> domains = new LinkedList<Domain>();
 		if (getParentDomain() != null) {
 			String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
-			String q = "SELECT d FROM Domain d"
-					+ " WHERE (d.parent = " + getParentDomain() 
-					+ " OR d.id = " + getParentDomain() + ")"
+			StringBuffer sb = new StringBuffer(
+					"SELECT d FROM Domain d"
+					+ " WHERE d.parent = " + getParentDomain() 
 					+ " AND d.active = 1"
-					+ " AND (d.expirationDate is null OR d.expirationDate > NOW())"
-					+ " ORDER BY d.parent ,d.description";
-			Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
+					+ " AND (d.expirationDate is null OR d.expirationDate > NOW())" );
+			if (! isAdminDomain() ) {
+				sb.append( " AND (d.scope is null" );
+				List<Integer> scopes = getUserScopes();
+				if (! scopes.isEmpty() ) {
+					sb.append( " or d.scope in (" );
+					sb.append( StringUtils.join(scopes, ",") );
+					sb.append( ")" );
+				}
+				sb.append( ")" );
+			}
+			sb.append(" ORDER BY d.description" );
+			Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(sb.toString());
 			List<?> queryList = query.list();
 			Iterator<?> iterator = queryList.iterator();
 			while (iterator.hasNext()) {
 				Domain dom = (Domain) iterator.next();
-				int idActive = getDomainId();
-				int idRead = dom.getId(); 
-				if (idActive  != idRead) {
-					domains.add(dom);	
-				}
+				domains.add(dom);	
 			}
 		} 
 		setModel(new ListDataModel(domains));

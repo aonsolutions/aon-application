@@ -30,6 +30,7 @@ import com.code.aon.config.Application;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
+import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
@@ -69,6 +70,7 @@ public class NewDomainController {
 	private DomainType type;
 	private String owner;
 	private Date expirationDate;
+	private Scope scope;
 	
 	private IControllerListener templateDomainFilter;
 	
@@ -163,6 +165,14 @@ public class NewDomainController {
 		this.expirationDate = expirationDate;
 	}
 	
+	public Scope getScope() {
+		return scope;
+	}
+
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+
 	public void onInit( ActionEvent event) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
@@ -181,6 +191,8 @@ public class NewDomainController {
 		setLoadDefaultValuesEnabled(true);
 		setDomainManagement(false);
 		setEnableHeredity(parentDomain != null);
+		setScope(null);
+		setExpirationDate(null);
 		setType(DomainType.ENTERPRISE);
 		setParentDomain(parentDomain);
 		setTemplateDomain((Domain)BeanManager.getManagerBean(Domain.class).createNewTo());
@@ -247,7 +259,7 @@ public class NewDomainController {
 		
 		try {			
 			if ( isLoadDefaultValuesEnabled() ) {
-				Integer newDomain = createDomain(domainFinalName, getDomainDescription());
+				Integer newDomain = createDomain(domainFinalName);
 				if (! isEnableHeredity() ) {
 					insertDefaults(newDomain,domainFinalName);	
 				}
@@ -293,7 +305,7 @@ public class NewDomainController {
 		}
 	}		
 
-	private Integer createDomain(String name, String description) throws ManagerBeanException {
+	private Integer createDomain(String name) throws ManagerBeanException {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();		
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 		Domain domain = new Domain();
@@ -302,10 +314,11 @@ public class NewDomainController {
 		domain.setParent( getParentDomain() );
 		domain.setOwner( getOwner() );
 		domain.setName(name);
-		domain.setDescription(description);
+		domain.setDescription( getDomainDescription() );
 		domain.setEnableHeredity( isEnableHeredity() );
 		domain.setMaxDefinedUsers(0);
 		domain.setExpirationDate(getExpirationDate());
+		domain.setScope( getScope() );
 		if ( isDomainManagement() ) {
 			domain.setSubDomainSuffix(name);
 		}
@@ -378,6 +391,10 @@ public class NewDomainController {
 	
 	public int getMaxDomainNameLength() {
 		return DomainController.DEFAULT_MAX_TOTAL_DOCUMENT_SIZE - StringUtils.length(getDomainSuffix());
+	}
+
+	public void onChangedEnableHeredity( ActionEvent event ) {
+		setLoadDefaultValuesEnabled(true);
 	}
 	
 }

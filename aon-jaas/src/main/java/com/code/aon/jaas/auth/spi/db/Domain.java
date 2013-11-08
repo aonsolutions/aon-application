@@ -11,6 +11,8 @@ public class Domain extends BasicInfo {
 	private Integer parent;
 	
 	private Date expirationDate;
+	
+	private Integer scope;
 
 	public String getDataBaseName() {
 		return dataBaseName;
@@ -42,6 +44,14 @@ public class Domain extends BasicInfo {
 
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
+	}
+
+	public Integer getScope() {
+		return scope;
+	}
+
+	public void setScope(Integer scope) {
+		this.scope = scope;
 	}
 	
 }
