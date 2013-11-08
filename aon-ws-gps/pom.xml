@@ -98,6 +98,12 @@
 			<artifactId>aon.pms</artifactId>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>aon.payroll</artifactId>
+					<groupId>com.esferalia.aon</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 		<!--  DEPENDENCIAS DE EJECUCION PARA TOMCAT -->
