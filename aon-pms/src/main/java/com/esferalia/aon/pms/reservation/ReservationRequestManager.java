@@ -212,6 +212,7 @@ public class ReservationRequestManager implements IReservationConstants {
 			}
 		}
 
+		criteria = new Criteria();
 		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), customer.getRegistry().getId());
 		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), RATE_PLAN);
 		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), getReservationUtils().getDomain());
