@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.24.0
+# Version: 7.25.0
 # Created by: girazu
-# Creation Date: 31/10/2013 16:40
+# Creation Date: 06/11/2013 17:56
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -13,6 +13,19 @@ CREATE DATABASE `aon_master`
 USE `aon_master`;
 
 #
+# Structure for the `scope` table : 
+#
+
+CREATE TABLE `scope` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `description` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Ambito',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_SCOPE_DOMAIN` (`domain`),
+  CONSTRAINT `FK_SCOPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos';
+
+#
 # Structure for the `domain` table : 
 #
 
@@ -22,6 +35,7 @@ CREATE TABLE `domain` (
   `description` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Dominio',
   `parent` int(4) default NULL COMMENT 'Identificador del Dominio padre',
   `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Dominio',
+  `scope` int(4) default NULL COMMENT 'Identificador del Ambito',
   `subDomainSuffix` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Sufijo de los Dominio Hijo',
   `enableHeredity` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el Dominio tiene deshabilitado la herencia de registros o no',
   `domainManagement` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el Dominio tiene capacidad de MultiDominio o no',
@@ -39,7 +53,9 @@ CREATE TABLE `domain` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_DOMAIN_NAME` (`name`),
   KEY `IDX_DOMAIN_PARENT` (`parent`),
-  CONSTRAINT `FK_DOMAIN_PARENT` FOREIGN KEY (`parent`) REFERENCES `domain` (`id`)
+  KEY `IDX_DOMAIN_SCOPE` (`scope`),
+  CONSTRAINT `FK_DOMAIN_PARENT` FOREIGN KEY (`parent`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_DOMAIN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dominios';
 
 #
@@ -139,19 +155,6 @@ CREATE TABLE `registry` (
   KEY `IDX_REGISTRY_DOMAIN` (`domain`),
   CONSTRAINT `FK_REGISTRY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Registro de Personas o Empresas';
-
-#
-# Structure for the `scope` table : 
-#
-
-CREATE TABLE `scope` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `description` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Ambito',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_SCOPE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SCOPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos';
 
 #
 # Structure for the `tariff` table : 
@@ -7181,7 +7184,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.24.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.25.0');
 
 COMMIT;
 
