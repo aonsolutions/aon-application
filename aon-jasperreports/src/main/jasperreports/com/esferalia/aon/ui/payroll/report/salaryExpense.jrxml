@@ -474,7 +474,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{salary}.getType().getName($P{REPORT_LOCALE})]]></textFieldExpression>
+					<textFieldExpression><![CDATA[($F{salary}.getIssueYear() == 0 ? "*" : "" ) + $F{salary}.getType().getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="11f471b3-15b8-41a2-8ebc-da7ee3600e51" key="textField-8" style="employee" x="220" y="0" width="67" height="14"/>
