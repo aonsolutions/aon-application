@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="151b439e-a229-4f6e-84b0-9d72972045ec">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.x" value="133"/>
+	<property name="ireport.y" value="0"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.esferalia.aon.salary.enumeration.PaymentType"/>
 	<import value="com.code.aon.registry.enumeration.AddressType"/>
@@ -11,7 +11,7 @@
 	<import value="com.esferalia.aon.salary.enumeration.SalaryType"/>
 	<style name="label" vAlign="Middle" isBlankWhenNull="true" fontSize="8">
 		<conditionalStyle>
-			<conditionExpression><![CDATA[$F{salary}.getIssueYear() == 0]]></conditionExpression>
+			<conditionExpression><![CDATA[true]]></conditionExpression>
 			<style forecolor="#808080"/>
 		</conditionalStyle>
 	</style>
@@ -162,7 +162,7 @@
 					<textElement verticalAlignment="Bottom">
 						<font size="17" isBold="true" isItalic="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["RECIBO DE " + $F{salary}.getType().getName($P{REPORT_LOCALE}).toUpperCase()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( $F{salary}.getIssueYear() == 0 ?  "RECIBO DE " : " PELIMINAR DE " ) + $F{salary}.getType().getName($P{REPORT_LOCALE}).toUpperCase()]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement uuid="98e0f00f-b53a-41f4-ba43-339582381b9a" x="11" y="156" width="247" height="1" backcolor="#000000"/>
