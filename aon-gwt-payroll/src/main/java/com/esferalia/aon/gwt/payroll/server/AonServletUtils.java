@@ -10,26 +10,27 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.faces.FactoryFinder;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIComponentBase;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.lifecycle.Lifecycle;
 import javax.faces.lifecycle.LifecycleFactory;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,29 +39,35 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.WorkPlace;
 import com.code.aon.dbutils.DatabaseUtil;
-import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.person.Person;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.Registry;
-import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.ui.common.converter.TransferObjectConverter;
+import com.code.aon.ql.Order;
+import com.code.aon.ql.OrderByList;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AppParamColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
+import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class AonServletUtils {
@@ -71,7 +78,37 @@ public class AonServletUtils {
 		MimeType mimeType;
 
 	}
-	
+
+	protected static class CompositeProvider implements ICollectionProvider {
+
+		private final static Logger LOGGER = LoggerFactory
+				.getLogger(CompositeProvider.class);
+
+		private ICollectionProvider providers[];
+
+		public CompositeProvider(ICollectionProvider... providers) {
+			this.providers = providers;
+		}
+
+		@Override
+		public Collection getCollection() {
+			try {
+				return getCollection(false);
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return null;
+		}
+
+		@Override
+		public Collection getCollection(boolean forceRefresh)
+				throws ManagerBeanException {
+			List<?> collection = new LinkedList();
+			for (ICollectionProvider provider : providers)
+				collection.addAll(provider.getCollection(forceRefresh));
+			return collection;
+		}
+	}
 
 	protected static class SalaryProvider implements ICollectionProvider {
 
@@ -103,13 +140,156 @@ public class AonServletUtils {
 		}
 	}
 
+	protected static class CalcSalaryProvider implements ICollectionProvider {
+
+		private final static Logger LOGGER = LoggerFactory
+				.getLogger(CalcSalaryProvider.class);
+
+		private Date endDate;
+		private Date startDate;
+		private Criteria criteria;
+		private SalaryProvider salaryProvider;
+
+		public CalcSalaryProvider(Date startDate, Date endDate,
+				Criteria criteria, SalaryProvider salaryProvider) {
+			this.criteria = criteria;
+			this.endDate = endDate;
+			this.startDate = startDate;
+			this.salaryProvider = salaryProvider;
+		}
+
+		@Override
+		public Collection getCollection() {
+			try {
+				return getCollection(false);
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+			return null;
+		}
+
+		@Override
+		public Collection getCollection(boolean forceRefresh)
+				throws ManagerBeanException {
+
+			Connection conn = null;
+			SQLContractSalaryCalculatorContext ctx = null;
+
+			try {
+				conn = getConnection();
+
+				SalaryBuilder salaryBuilder = new SalaryBuilder();
+				ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+				calculator.setSalaryBuilder(salaryBuilder);
+
+				List<Salary> allSalaries = new ArrayList<Salary>();
+
+				Collection salaries = salaryProvider
+						.getCollection(forceRefresh);
+				allSalaries.addAll(salaries);
+
+				ctx = new SQLContractSalaryCalculatorContext(conn, startDate,
+						endDate, getStartOfKnowEra(), criteria);
+
+				SalaryComparator salaryComparator = new SalaryComparator();
+
+				while (ctx.next())
+					if (!find(salaries, ctx)) {
+						Salary salary = (Salary) calculator.calculate(ctx);
+						
+						salary.setIssueYear(0);
+						salary.setContract(getContract(ctx.getId()));
+						
+						int index = Collections.binarySearch(allSalaries,
+								salary, salaryComparator);
+						
+						allSalaries.add(-( index + 1 ), salary);
+					}
+
+				return allSalaries;
+
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				throw new ManagerBeanException(e);
+			} catch (SalaryException e) {
+				// TODO Auto-generated catch block
+				throw new ManagerBeanException(e);
+			} catch (ExpressionException e) {
+				// TODO Auto-generated catch block
+				throw new ManagerBeanException(e);
+			} finally {
+				if (ctx != null) {
+					try {
+						ctx.close();
+					} catch (SQLException logOrIgnrore) {
+					}
+				}
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException logOrIgnrore) {
+					}
+				}
+			}
+
+		}
+
+		private static boolean find(Collection collection,
+				SQLContractSalaryCalculatorContext ctx) {
+			Integer id = ctx.getId();
+			SalaryType type = ctx.getSalaryType();
+			for (Object object : collection) {
+				Salary salary = (Salary) object;
+				if (salary.getType() != type)
+					continue;
+				if (!salary.getContract().getId().equals(id))
+					continue;
+
+				return true;
+
+			}
+
+			return false;
+		}
+	}
+
+	public static class SalaryComparator implements Comparator<Salary> {
+
+		@Override
+		public int compare(Salary o1, Salary o2) {
+
+			Integer workplace1Id = o1.getContract().getWorkPlace().getId();
+			Integer workplace2Id = o2.getContract().getWorkPlace().getId();
+			int compare = workplace1Id.compareTo(workplace2Id);
+			if (compare != 0)
+				return compare;
+
+			String employee1Name = o1.getEmployeeName();
+			String employee2Name = o2.getEmployeeName();
+			compare = employee1Name.compareTo(employee2Name);
+			if (compare != 0)
+				return compare;
+
+			Integer contract1Id = o1.getContract().getId();
+			Integer contract2Id = o1.getContract().getId();
+			compare = contract1Id.compareTo(contract2Id);
+			if (compare != 0)
+				return compare;
+
+			SalaryType type1 = o1.getType();
+			SalaryType type2 = o2.getType();
+			return type1.compareTo(type2);
+			
+		}
+	}
+
 	public static Connection getConnection() throws SQLException {
 		try {
 			String domainName = AonUtil.getDomainName();
 			Connection connection = DatabaseUtil.getConnection(domainName);
 			return connection;
 		} catch (AonConnectionException e) {
-			throw new SQLException(e.getMessage(),e);
+			throw new SQLException(e.getMessage(), e);
 		}
 	}
 
@@ -123,7 +303,6 @@ public class AonServletUtils {
 	public static void commit(Connection conn) throws SQLException {
 		conn.commit();
 	}
-
 
 	public static void execute(Connection connection, String... sqls)
 			throws SQLException {
@@ -294,7 +473,7 @@ public class AonServletUtils {
 		PreparedStatement stmt = null;
 		try {
 			conn = getConnection();
-			
+
 			stmt = conn.prepareStatement("SELECT *" + " FROM "
 					+ SQLConstants.RATTACH + " WHERE " + RattachColumns.ID
 					+ "= ? ");
@@ -345,13 +524,22 @@ public class AonServletUtils {
 
 		Contract contract = (Contract) list.get(0);
 		return contract;
-		
-		
 
 	}
-	
+
+	private static Date getStartOfKnowEra() {
+		Calendar epoch = Calendar.getInstance();
+		epoch.set(Calendar.YEAR, 1900);
+		// epoch.set(Calendar.MONTH, 0);
+		// epoch.set(Calendar.DAY_OF_MONTH, 1);
+		// epoch.set(Calendar.HOUR, 0);
+		// epoch.set(Calendar.MINUTE, 0);
+		// epoch.set(Calendar.SECOND, 0);
+		return epoch.getTime();
+	}
+
 	public static void main(String[] args) {
+		System.out.println(getStartOfKnowEra().getYear());
 	}
-
 
 }

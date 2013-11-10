@@ -65,6 +65,8 @@ import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Order;
+import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.report.OutputFormat;
@@ -158,6 +160,7 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
+import com.google.web.bindery.requestfactory.shared.impl.EntityCodex;
 
 /**
  * The server side implementation of the RPC service.
@@ -421,7 +424,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 																		 * to
 																		 * int
 																		 */);
-		
+
 		Map<Object, Object> images = new HashMap<Object, Object>();
 		parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images);
 		String imagesUri = String.format("jasper_image/salary/%d/",
@@ -1000,11 +1003,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			conn = getConnection();
-			
-			int ids [] = new  int [salaries.length];
+
+			int ids[] = new int[salaries.length];
 			for (int i = 0; i < salaries.length; i++)
 				ids[i] = salaries[i].getId();
-			
+
 			deleteSalaries(conn, ids);
 
 		} catch (SQLException e) {
@@ -1047,8 +1050,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 
 			initFacesContext();
-			
-			
 
 			String salaryReport = getSalaryReport();
 
@@ -1062,7 +1063,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ctx.getViewRoot().setLocale(new Locale("es", "ES"));
 			ReportManager reportManager = new ReportManager();
-			
+
 			reportManager.setOutputFormat(OutputFormat.HTML);
 			reportManager
 					.setCollectionProvider(new AonServletUtils.SalaryProvider(
@@ -1419,7 +1420,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws ManagerBeanException {
 		IManagerBean beanManager = BeanManager
 				.getManagerBean(com.esferalia.aon.payroll.Salary.class);
-		Criteria criteria = new Criteria();
+
+		Criteria sqlCriteria = new Criteria();
+		Criteria aliasCriteria = new Criteria();
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, cost.getYear());
@@ -1437,26 +1440,50 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Date endDate = calendar.getTime();
 
 		if (cost.getWorkplaceId() != 0) {
-			criteria.addEqualExpression(beanManager
+
+			sqlCriteria.addEqualExpression(WORKPLACE + "."
+					+ WorkplaceColumns.ID, cost.getWorkplaceId());
+
+			aliasCriteria.addEqualExpression(beanManager
 					.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID),
 					cost.getWorkplaceId());
 		} else {
-			criteria.addEqualExpression(
-					beanManager
-							.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID),
-					cost.getEnterpriseId());
+			sqlCriteria.addEqualExpression(ENTERPRISE + "."
+					+ EnterpriseColumns.REGISTRY, cost.getEnterpriseId());
+			aliasCriteria
+					.addEqualExpression(
+							beanManager
+									.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID),
+							cost.getEnterpriseId());
 		}
 
-		criteria.addBetweenExpression(
+		sqlCriteria.addLessThanOrEqualExpression(CONTRACT + "."
+				+ ContractColumns.START_DATE, endDate);
+		sqlCriteria.addExpression(ExpressionUtilities.getOrExpression(
+				ExpressionUtilities.getNullExpression(CONTRACT + "."
+						+ ContractColumns.END_DATE),
+				ExpressionUtilities.getGreaterThanOrEqualExpression(CONTRACT
+						+ "." + ContractColumns.END_DATE, startDate)));
+
+		
+		sqlCriteria.addOrder(SQLConstants.WORKPLACE + "." + WorkplaceColumns.ID);
+		sqlCriteria.addOrder(SQLContractSalaryCalculatorContext.PERSON_REGISTRY
+				+ "." + RegistryColumns.NAME);
+
+		aliasCriteria.addBetweenExpression(
 				beanManager.getFieldName(IEntityAlias.SALARY_END_DATE),
 				startDate, endDate);
 
-		criteria.addOrder(beanManager
+		aliasCriteria.addOrder(beanManager
 				.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
-		criteria.addOrder(beanManager
+		aliasCriteria.addOrder(beanManager
 				.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
+		
+		
 
-		return new AonServletUtils.SalaryProvider(criteria);
+		return new AonServletUtils.CalcSalaryProvider(startDate, endDate,
+				sqlCriteria, new AonServletUtils.SalaryProvider(aliasCriteria));
+
 	}
 
 	private static List<Salary> getSalaries(Connection connection,
@@ -2998,23 +3025,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		PreparedStatement deductionStmt = null;
 		PreparedStatement embargoStmt = null;
 		PreparedStatement salaryStmt = null;
-		
-		boolean autoCommit =  conn.getAutoCommit();
+
+		boolean autoCommit = conn.getAutoCommit();
 		try {
 
 			Character questions[] = new Character[ids.length];
 			Arrays.fill(questions, 0, ids.length, '?');
 			String params = asString(",", questions);
-			
+
 			conn.setAutoCommit(false);
-			
+
 			// First of all clean childs...
-			dataStmt = conn.prepareStatement(String.format(
-					"DELETE FROM %s WHERE %s IN (%s)",
-					SQLConstants.SALARY_DATA, SalaryDataColumns.SALARY,
-					params));
+			dataStmt = conn
+					.prepareStatement(String.format(
+							"DELETE FROM %s WHERE %s IN (%s)",
+							SQLConstants.SALARY_DATA, SalaryDataColumns.SALARY,
+							params));
 			for (int i = 1; i <= ids.length; i++)
-				dataStmt.setInt(i, ids[i-1]);
+				dataStmt.setInt(i, ids[i - 1]);
 			dataStmt.execute();
 
 			bonusStmt = conn.prepareStatement(String.format(
@@ -3022,31 +3050,32 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					SQLConstants.SALARY_BONUS, SalaryBonusColumns.SALARY,
 					params));
 			for (int i = 1; i <= ids.length; i++)
-				bonusStmt.setInt(i, ids[i-1]);
+				bonusStmt.setInt(i, ids[i - 1]);
 			bonusStmt.execute();
 
-			costsStmt = conn.prepareStatement(String.format(
-					"DELETE FROM %s WHERE %s IN (%s)",
-					SQLConstants.SALARY_COST, SalaryCostColumns.SALARY,
-					params));
+			costsStmt = conn
+					.prepareStatement(String.format(
+							"DELETE FROM %s WHERE %s IN (%s)",
+							SQLConstants.SALARY_COST, SalaryCostColumns.SALARY,
+							params));
 			for (int i = 1; i <= ids.length; i++)
-				costsStmt.setInt(i, ids[i-1]);
+				costsStmt.setInt(i, ids[i - 1]);
 			costsStmt.execute();
-			
+
 			paymentStmt = conn.prepareStatement(String.format(
 					"DELETE FROM %s WHERE %s IN (%s)",
 					SQLConstants.SALARY_PAYMENT, SalaryPaymentColumns.SALARY,
 					params));
 			for (int i = 1; i <= ids.length; i++)
-				paymentStmt.setInt(i, ids[i-1]);
+				paymentStmt.setInt(i, ids[i - 1]);
 			paymentStmt.execute();
 
 			deductionStmt = conn.prepareStatement(String.format(
 					"DELETE FROM %s WHERE %s IN (%s)",
-					SQLConstants.SALARY_DEDUCTION, SalaryDeductionColumns.SALARY,
-					params));
+					SQLConstants.SALARY_DEDUCTION,
+					SalaryDeductionColumns.SALARY, params));
 			for (int i = 1; i <= ids.length; i++)
-				deductionStmt.setInt(i, ids[i-1]);
+				deductionStmt.setInt(i, ids[i - 1]);
 			deductionStmt.execute();
 
 			embargoStmt = conn.prepareStatement(String.format(
@@ -3054,19 +3083,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					SQLConstants.SALARY_EMBARGO, SalaryEmbargoColumns.SALARY,
 					params));
 			for (int i = 1; i <= ids.length; i++)
-				embargoStmt.setInt(i, ids[i-1]);
+				embargoStmt.setInt(i, ids[i - 1]);
 			embargoStmt.execute();
 
 			salaryStmt = conn.prepareStatement(String.format(
-					"DELETE FROM %s WHERE %s IN (%s)",
-					SQLConstants.SALARY, SalaryColumns.ID,
-					params));
+					"DELETE FROM %s WHERE %s IN (%s)", SQLConstants.SALARY,
+					SalaryColumns.ID, params));
 			for (int i = 1; i <= ids.length; i++)
-				salaryStmt.setInt(i, ids[i-1]);
+				salaryStmt.setInt(i, ids[i - 1]);
 			salaryStmt.execute();
-			
+
 			conn.commit();
-			
 
 		} finally {
 			conn.rollback();
@@ -3086,11 +3113,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				deductionStmt.close();
 			if (salaryStmt != null)
 				salaryStmt.close();
-			
+
 		}
 	}
 
-	private static <T> String asString(String sep, T array []) {
+	private static <T> String asString(String sep, T array[]) {
 
 		if (array.length == 0)
 			return "";
