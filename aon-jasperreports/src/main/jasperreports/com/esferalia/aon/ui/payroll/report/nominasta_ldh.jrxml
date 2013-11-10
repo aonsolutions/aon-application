@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f297c6a1-ad1e-4d4f-b01e-7dc2c4e4149b">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="96"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.esferalia.aon.salary.enumeration.PaymentType"/>
 	<import value="com.code.aon.registry.enumeration.AddressType"/>
@@ -11,7 +11,7 @@
 	<import value="com.esferalia.aon.salary.enumeration.SalaryType"/>
 	<style name="label" vAlign="Middle" isBlankWhenNull="true" fontSize="8">
 		<conditionalStyle>
-			<conditionExpression><![CDATA[$F{salary}.getIssueYear() == 0]]></conditionExpression>
+			<conditionExpression><![CDATA[false]]></conditionExpression>
 			<style forecolor="#808080"/>
 		</conditionalStyle>
 	</style>

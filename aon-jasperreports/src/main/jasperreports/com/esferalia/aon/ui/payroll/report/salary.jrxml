@@ -7,7 +7,7 @@
 	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
 	<style name="label" vAlign="Bottom" fontSize="9">
 		<conditionalStyle>
-			<conditionExpression><![CDATA[$F{salary}.getIssueYear() == 0]]></conditionExpression>
+			<conditionExpression><![CDATA[false]]></conditionExpression>
 			<style forecolor="#808080"/>
 		</conditionalStyle>
 	</style>
