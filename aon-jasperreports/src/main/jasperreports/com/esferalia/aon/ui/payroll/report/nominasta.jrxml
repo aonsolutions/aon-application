@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="151b439e-a229-4f6e-84b0-9d72972045ec">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="48"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.esferalia.aon.salary.enumeration.PaymentType"/>
 	<import value="com.code.aon.registry.enumeration.AddressType"/>
@@ -11,7 +11,7 @@
 	<import value="com.esferalia.aon.salary.enumeration.SalaryType"/>
 	<style name="label" vAlign="Middle" isBlankWhenNull="true" fontSize="8">
 		<conditionalStyle>
-			<conditionExpression><![CDATA[false]]></conditionExpression>
+			<conditionExpression><![CDATA[$F{salary}.getIssueYear() == 0]]></conditionExpression>
 			<style forecolor="#808080"/>
 		</conditionalStyle>
 	</style>
@@ -67,18 +67,12 @@
 	</style>
 	<style name="text_TD" style="label" hAlign="Left"/>
 	<style name="amount_TD" style="text_TD" hAlign="Right"/>
-	<style name="label_c" vAlign="Middle" isBlankWhenNull="true" fontSize="8">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[$F{salary}.getIssueYear() == 0]]></conditionExpression>
-			<style forecolor="#808080"/>
-		</conditionalStyle>
-	</style>
-	<style name="title_c" style="label_c" hAlign="Center" isBold="true"/>
 	<subDataset name="payment" uuid="d8ca8ee3-11f9-4842-ab30-c7342f77f517">
 		<parameter name="CONDIAS" class="java.lang.Boolean" isForPrompting="false">
 			<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
 		</parameter>
 		<field name="type" class="com.esferalia.aon.salary.enumeration.PaymentType"/>
+		<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
 		<field name="units" class="java.lang.Double"/>
 		<field name="unitAmount" class="java.lang.Double"/>
 		<field name="amount" class="java.lang.Double"/>
@@ -164,7 +158,7 @@
 			<frame>
 				<reportElement uuid="66e0eeda-58dc-4e4c-b07b-620ce3556dd1" style="box" x="0" y="0" width="555" height="212"/>
 				<textField pattern="">
-					<reportElement uuid="e4592311-f573-4186-a43c-f462df2bd0ac" style="label" x="266" y="1" width="272" height="23" isRemoveLineWhenBlank="true"/>
+					<reportElement uuid="e4592311-f573-4186-a43c-f462df2bd0ac" style="title" x="266" y="1" width="272" height="23" isRemoveLineWhenBlank="true"/>
 					<textElement verticalAlignment="Bottom">
 						<font size="17" isBold="true" isItalic="true"/>
 					</textElement>

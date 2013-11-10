@@ -11,7 +11,7 @@
 	<import value="com.esferalia.aon.salary.enumeration.SalaryType"/>
 	<style name="label" vAlign="Middle" isBlankWhenNull="true" fontSize="8">
 		<conditionalStyle>
-			<conditionExpression><![CDATA[false]]></conditionExpression>
+			<conditionExpression><![CDATA[$F{salary}.getIssueYear() == 0]]></conditionExpression>
 			<style forecolor="#808080"/>
 		</conditionalStyle>
 	</style>
@@ -69,6 +69,7 @@
 	<style name="amount_TD" style="text_TD" hAlign="Right"/>
 	<subDataset name="payment" uuid="fc131b59-a14f-4caa-9280-dc70058fa673">
 		<field name="type" class="com.esferalia.aon.salary.enumeration.PaymentType"/>
+		<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
 		<field name="amount" class="java.lang.Double"/>
 		<field name="description" class="java.lang.String"/>
 		<field name="expression" class="java.lang.String"/>
