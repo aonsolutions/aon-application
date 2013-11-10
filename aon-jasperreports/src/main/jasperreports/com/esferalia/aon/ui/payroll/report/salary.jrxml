@@ -2,14 +2,19 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7705eda3-9c23-4304-ad87-aeb921515614">
 	<property name="ireport.zoom" value="1.3636363636363635"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="613"/>
+	<property name="ireport.y" value="0"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
-	<style name="label" vAlign="Bottom" fontSize="9"/>
-	<style name="title" fontSize="11" isBold="true" isUnderline="true"/>
+	<style name="label" vAlign="Bottom" fontSize="9">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{salary}.getIssueYear() == 0]]></conditionExpression>
+			<style forecolor="#808080"/>
+		</conditionalStyle>
+	</style>
+	<style name="title" style="label" backcolor="#FFFFFF" fontSize="11" isBold="true" isUnderline="true"/>
 	<style name="title1" style="label" fontSize="10" isBold="true"/>
 	<style name="title2" style="label" fontSize="9" isBold="true"/>
-	<style name="box">
+	<style name="box" style="label">
 		<box>
 			<pen lineWidth="1.0"/>
 			<topPen lineWidth="1.0"/>
@@ -55,7 +60,7 @@
 	</subDataset>
 	<subDataset name="fills" uuid="50fe4606-92e3-421a-8239-17a2559423fa"/>
 	<queryString language="hql">
-		<![CDATA[FROM Salary WHERE Id=52048]]>
+		<![CDATA[FROM Salary WHERE Id=9]]>
 	</queryString>
 	<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
 	<variable name="supplements" class="java.util.List">
@@ -205,7 +210,7 @@
 				<textField isBlankWhenNull="true">
 					<reportElement uuid="dd87230b-aeb5-49c1-af5a-37e98ae3b77b" style="label" x="115" y="2" width="348" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[( new java.text.MessageFormat("del {0,date,dd 'de' MMMMMMMMMMM 'de' yyyy} al {1,date,dd 'de' MMMMMMMMMMM 'de' yyyy}", $P{REPORT_LOCALE})).format( new Object [] { $F{salary}.getStartDate(), $F{salary}.getEndDate() } , new StringBuffer(), null ).toString() ]]></textFieldExpression>
+					<textFieldExpression><![CDATA[( new java.text.MessageFormat("del {0,date,dd 'de' MMMMMMMMMMM 'de' yyyy} al {1,date,dd 'de' MMMMMMMMMMM 'de' yyyy}", $P{REPORT_LOCALE})).format( new Object [] { $F{salary}.getStartDate(), $F{salary}.getEndDate() } , new StringBuffer(), null ).toString()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement uuid="f5a5f51b-85ba-404a-b526-a10700a151ae" style="label" x="471" y="2" width="47" height="13"/>

@@ -9,11 +9,16 @@
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
 	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
 	<import value="com.esferalia.aon.salary.enumeration.SalaryType"/>
-	<style name="label" vAlign="Middle" isBlankWhenNull="true" fontSize="8"/>
+	<style name="label" vAlign="Middle" isBlankWhenNull="true" fontSize="8">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{salary}.getIssueYear() == 0]]></conditionExpression>
+			<style forecolor="#808080"/>
+		</conditionalStyle>
+	</style>
 	<style name="title" style="label" hAlign="Center" isBold="true"/>
 	<style name="head" style="title" hAlign="Left" fontSize="9"/>
 	<style name="amount" style="label" hAlign="Right"/>
-	<style name="box">
+	<style name="box" style="label">
 		<box>
 			<pen lineWidth="1.0"/>
 			<topPen lineWidth="1.0"/>
@@ -150,7 +155,7 @@
 	<pageHeader>
 		<band height="212">
 			<frame>
-				<reportElement uuid="66e0eeda-58dc-4e4c-b07b-620ce3556dd1" style="box" x="0" y="0" width="555" height="212"/>
+				<reportElement uuid="66e0eeda-58dc-4e4c-b07b-620ce3556dd1" x="0" y="0" width="555" height="212"/>
 				<textField pattern="">
 					<reportElement uuid="e4592311-f573-4186-a43c-f462df2bd0ac" style="label" x="266" y="1" width="272" height="23" isRemoveLineWhenBlank="true"/>
 					<textElement verticalAlignment="Bottom">
@@ -248,9 +253,12 @@
 					<textFieldExpression><![CDATA[$F{salary}.getTimeUnits()]]></textFieldExpression>
 				</textField>
 				<frame>
-					<reportElement uuid="e3e09037-a34d-4f36-8d6f-a86745315ce0" x="289" y="27" width="249" height="78"/>
+					<reportElement uuid="e3e09037-a34d-4f36-8d6f-a86745315ce0" style="box" x="289" y="27" width="249" height="78"/>
 					<box>
+						<topPen lineWidth="0.0"/>
 						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
 					</box>
 					<staticText>
 						<reportElement uuid="fbb12750-4e6d-455b-bc08-c5bec2318c0f" style="label" x="2" y="2" width="247" height="12"/>

@@ -2,14 +2,24 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6db98469-9803-48fe-b770-69ab2a604fe2">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="48"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
 	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
-	<style name="label" fontSize="7"/>
+	<style name="label" fontSize="7">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{salary}.getIssueYear() == 0]]></conditionExpression>
+			<style forecolor="#808080"/>
+		</conditionalStyle>
+	</style>
 	<style name="title" style="label" isBold="true"/>
-	<style name="text" style="label" forecolor="#2B5E90" hAlign="Center" fontSize="9"/>
-	<style name="cell">
+	<style name="text" style="label" forecolor="#2B5E90" hAlign="Center" fontSize="9">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[true]]></conditionExpression>
+			<style forecolor="#718497"/>
+		</conditionalStyle>
+	</style>
+	<style name="cell" style="label">
 		<box>
 			<pen lineWidth="0.5"/>
 			<topPen lineWidth="0.5"/>
@@ -18,7 +28,7 @@
 			<rightPen lineWidth="0.5"/>
 		</box>
 	</style>
-	<style name="table">
+	<style name="table" style="label">
 		<box topPadding="0" bottomPadding="0">
 			<pen lineWidth="0.0"/>
 			<topPen lineWidth="0.0"/>
@@ -30,13 +40,13 @@
 			<bottomPen lineWidth="0.5"/>
 		</box>
 	</style>
-	<style name="table_CH">
+	<style name="table_CH" style="label">
 		<box>
 			<pen lineWidth="0.5"/>
 		</box>
 	</style>
 	<style name="title_CH" style="title" hAlign="Center" vAlign="Middle"/>
-	<style name="table_TD">
+	<style name="table_TD" style="label">
 		<box topPadding="0" bottomPadding="0">
 			<pen lineWidth="0.5"/>
 			<topPen lineWidth="0.0"/>
@@ -58,7 +68,7 @@
 	</subDataset>
 	<subDataset name="fill" uuid="76c8e958-b971-4782-b1ba-c82f2c9fe8e4"/>
 	<queryString language="hql">
-		<![CDATA[FROM Salary WHERE Id=52047]]>
+		<![CDATA[FROM Salary WHERE Id=9]]>
 	</queryString>
 	<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
 	<variable name="payments" class="java.util.List">
