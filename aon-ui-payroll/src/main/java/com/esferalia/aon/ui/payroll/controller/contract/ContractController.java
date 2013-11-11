@@ -804,6 +804,8 @@ public class ContractController extends BasicController {
 		private ContractData selectedData;
 		private ContractPayment selectedPayment;
 		private ContractDeduction selectedDeduction;
+		private List<ITransferObject> dataTracking;
+		private List<ITransferObject> paymentTracking;
 		// filter options
 		private boolean searchCurrent;
 		private Integer filterYear;
@@ -871,6 +873,58 @@ public class ContractController extends BasicController {
 		public void setSelectedDeduction(ContractDeduction selectedDeduction) {
 			this.selectedDeduction = selectedDeduction;
 		}
+		public List<ITransferObject> getDataTracking() {
+			return dataTracking;
+		}
+		public void setDataTracking(List<ITransferObject> dataTracking) {
+			this.dataTracking = dataTracking;
+		}
+		public List<ITransferObject> getPaymentTracking() {
+			return paymentTracking;
+		}
+		public void setPaymentTracking(List<ITransferObject> paymentTracking) {
+			this.paymentTracking = paymentTracking;
+		}
+		public DataModel getDataTrackingModel(){
+			return new ListDataModel(dataTracking);
+		}
+		public DataModel getPaymentTrackingModel(){
+			return new ListDataModel(paymentTracking);
+		}
+		public Integer getDataTrackingCount(){
+			if(!isSearchCurrent()){
+				ContractData data = (ContractData) getContractDataModel().getRowData();
+				try {
+					IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+					criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_ID), data.getId());
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), data.getName());
+					criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), getFilterEndDate());
+					return bean.getCount(criteria);
+				} catch (ManagerBeanException e) {
+					AonUtil.addErrorMessage("No se han podido cargar correctamente los datos de contrato");
+				}
+			}
+			return null;
+		}
+		public Integer getPaymentTrackingCount(){
+			if(!isSearchCurrent()){
+				ContractPayment payment = (ContractPayment) getPaymentModel().getRowData();
+				try {
+					IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
+					criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_ID), payment.getId());
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_PAYMENT_CONCEPT_ID), payment.getPaymentConcept().getId());
+					criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), getFilterEndDate());
+					return bean.getCount(criteria);
+				} catch (ManagerBeanException e) {
+					AonUtil.addErrorMessage("No se han podido cargar correctamente los devengos");
+				}
+			}
+			return null;
+		}
 		
 		public String getResolvedPayment(){
 			ContractPayment payment = (ContractPayment) getPaymentModel().getRowData();
@@ -879,7 +933,7 @@ public class ContractController extends BasicController {
 					return payment.getExpression();
 				}
 			}
-			return "expr.";
+			return "expresión";
 		}
 		
 		private Date getFilterStartDate(){
@@ -912,6 +966,11 @@ public class ContractController extends BasicController {
 		}
 		
 		public void onLoad(ActionEvent event){
+			setSelectedData(null);
+			setSelectedPayment(null);
+			setSelectedDeduction(null);
+			dataTracking = null;
+			paymentTracking = null;
 			loadContractData(contract);
 			loadPayments(contract);
 			loadDeductions(contract);
@@ -925,35 +984,23 @@ public class ContractController extends BasicController {
 				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), getFilterStartDate());
 				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-				
-//				criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), getFilterStartDate(), getFilterEndDate());
-//				if(searchCurrent){
-//					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), new Date());
-//					Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
-//					criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-//				} else {
-//					Calendar cal = Calendar.getInstance();
-//					cal.set(Calendar.DAY_OF_MONTH, 1);
-//					if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
-//						cal.add(Calendar.MONTH, -1);
-//					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
-//						cal.add(Calendar.MONTH, -3);
-//					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
-//						cal.add(Calendar.MONTH, -6);
-//					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
-//						cal.add(Calendar.YEAR, -1);
-//					} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
-//						cal = null;
-//					}
-//					if(getInactiveLastPeriod()!=InactiveLastPeriod.MANUAL){
-//						setInactiveDate(cal!=null?cal.getTime():null);
-//					}
-//					if(getInactiveDate()!=null){
-//						criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), getInactiveDate());
-//					}
-//				}
 				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME));
 				setContractDataModel( new ListDataModel(bean.getList(criteria)));
+			} catch (ManagerBeanException e) {
+				AonUtil.addErrorMessage("No se han podido cargar correctamente los datos de contrato");
+			}
+		}
+		public void loadDataTracking(Contract contract){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+				criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_ID), getSelectedData().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), getSelectedData().getName());
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), getFilterEndDate());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), false);
+				dataTracking = bean.getList(criteria);
 			} catch (ManagerBeanException e) {
 				AonUtil.addErrorMessage("No se han podido cargar correctamente los datos de contrato");
 			}
@@ -967,33 +1014,21 @@ public class ContractController extends BasicController {
 				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), getFilterStartDate());
 				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-//				criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), getFilterStartDate(), getFilterEndDate());
-//				if(searchCurrent){
-//					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), new Date());
-//					Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
-//					criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-//				} else {
-//					Calendar cal = Calendar.getInstance();
-//					cal.set(Calendar.DAY_OF_MONTH, 1);
-//					if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
-//						cal.add(Calendar.MONTH, -1);
-//					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
-//						cal.add(Calendar.MONTH, -3);
-//					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
-//						cal.add(Calendar.MONTH, -6);
-//					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
-//						cal.add(Calendar.YEAR, -1);
-//					} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
-//						cal = null;
-//					}
-//					if(getInactiveLastPeriod()!=InactiveLastPeriod.MANUAL){
-//						setInactiveDate(cal!=null?cal.getTime():null);
-//					}
-//					if(getInactiveDate()!=null){
-//						criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), getInactiveDate());
-//					}
-//				}
 				setPaymentModel( new ListDataModel(bean.getList(criteria)));
+			} catch (ManagerBeanException e) {
+				AonUtil.addErrorMessage("No se han podido cargar correctamente los devengos");
+			}
+		}
+		public void loadPaymentTracking(Contract contract){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
+				criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_ID), getSelectedPayment().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_PAYMENT_CONCEPT_ID), getSelectedPayment().getPaymentConcept().getId());
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), getFilterEndDate());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), false);
+				paymentTracking = bean.getList(criteria);
 			} catch (ManagerBeanException e) {
 				AonUtil.addErrorMessage("No se han podido cargar correctamente los devengos");
 			}
@@ -1007,32 +1042,6 @@ public class ContractController extends BasicController {
 				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE), getFilterStartDate());
 				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-//				criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_START_DATE), getFilterStartDate(), getFilterEndDate());
-//				if(searchCurrent){
-//					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE), new Date());
-//					Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE));
-//					criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-//				} else {
-//					Calendar cal = Calendar.getInstance();
-//					cal.set(Calendar.DAY_OF_MONTH, 1);
-//					if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
-//						cal.add(Calendar.MONTH, -1);
-//					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
-//						cal.add(Calendar.MONTH, -3);
-//					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
-//						cal.add(Calendar.MONTH, -6);
-//					} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
-//						cal.add(Calendar.YEAR, -1);
-//					} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
-//						cal = null;
-//					}
-//					if(getInactiveLastPeriod()!=InactiveLastPeriod.MANUAL){
-//						setInactiveDate(cal!=null?cal.getTime():null);
-//					}
-//					if(getInactiveDate()!=null){
-//						criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE), getInactiveDate());
-//					}
-//				}
 				setDeductionModel( new ListDataModel(bean.getList(criteria)));
 			} catch (ManagerBeanException e) {
 				AonUtil.addErrorMessage("No se han podido cargar correctamente las deducciones");
@@ -1041,9 +1050,15 @@ public class ContractController extends BasicController {
 		
 		public void onSelectData(ActionEvent event){
 			setSelectedData((ContractData) getContractDataModel().getRowData());
+			if(!isSearchCurrent()){
+				loadDataTracking(contract);
+			}
 		}
 		public void onSelectPayment(ActionEvent event){
 			setSelectedPayment((ContractPayment) getPaymentModel().getRowData());
+			if(!isSearchCurrent()){
+				loadPaymentTracking(contract);
+			}
 		}
 		public void onSelectDeduction(ActionEvent event){
 			setSelectedDeduction((ContractDeduction) getDeductionModel().getRowData());

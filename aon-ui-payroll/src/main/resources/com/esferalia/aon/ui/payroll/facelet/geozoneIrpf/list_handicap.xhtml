@@ -7,6 +7,8 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:dataTable id="GeozoneIrpfHandicapTable" var="to" value="#{geozoneIrpf.handicapModel}" rows="50">
+	
+		<aon:rowSelector id="GeozoneIrpfHandicapList-select" toggleOnClick="#{false}" />
 
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 			<f:facet name="header">
@@ -23,7 +25,7 @@
 				<aon:outputText
 					value="#{bundle.aon_date_to}" />
 			</f:facet>
-			<aon:outputText value="#{to.toAmount==null?'>':to.toAmount}" >
+			<aon:outputText value="#{to.toAmount==null?'>':(to.toAmount-0.01)}" >
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:column>

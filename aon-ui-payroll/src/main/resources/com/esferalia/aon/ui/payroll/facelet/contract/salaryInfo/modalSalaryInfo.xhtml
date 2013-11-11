@@ -42,11 +42,12 @@
 		<aon:outputText value="#{bundle.payroll_data_filter}" />
 	</f:facet>
 		<aon:panelGrid columns="5" 
-			columnClasses="aon-panelGrid-odd aon-width-auto,aon-panelGrid-even aon-width-auto,
+			columnClasses="aon-panelGrid-even aon-width-auto,
 				aon-panelGrid-odd aon-width-auto,aon-panelGrid-even aon-width-auto">
-			<aon:outputLabel for="filter-searchCurrent" value="#{bundle.payroll_current}" />
-			<aon:selectBooleanCheckbox id="filter-searchCurrent" value="#{contract.salaryInfoHandler.searchCurrent}"
+			<aon:selectOneRadio value="#{contract.salaryInfoHandler.searchCurrent}" style="display:inline;"
 				valueChangeListener="#{contract.salaryInfoHandler.onChangeCurrentFilter}">
+				<f:selectItem itemLabel="#{bundle.payroll_current}" itemValue="#{true}" />
+				<f:selectItem itemLabel="#{bundle.payroll_historyc}" itemValue="#{false}" />
 				<a4j:support 
 					event="onclick"
 					actionListener="#{contract.salaryInfoHandler.onLoad}"
@@ -56,7 +57,7 @@
 					ajaxSingle="true"
 					ignoreDupResponses="true"
 					limitToList="true"/>
-			</aon:selectBooleanCheckbox>
+			</aon:selectOneRadio>
 			<aon:outputText value="#{bundle.aon_period}:" />
 			<aon:selectOneMenu value="#{contract.salaryInfoHandler.filterMonth}"
 				disabled="#{contract.salaryInfoHandler.searchCurrent}">
@@ -102,7 +103,7 @@
 				reRender="contractDataTable"
 				rendered="#{contract.salaryInfoHandler.selectedData.id != to.id}"
 				actionListener="#{contract.salaryInfoHandler.onSelectData}"
-				styleClass="aon-editDataTable-button aon-icon-rowSelector"/>
+				styleClass="aon-editDataTable-button #{contract.salaryInfoHandler.dataTrackingCount>0?'aon-icon-drop-down':'aon-icon-rowSelector'}"/>
 		</aon:column>
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
@@ -153,6 +154,33 @@
 				actionListener="#{contract.salaryInfoHandler.onCancelData}"
 				styleClass="aon-editDataTable-button aon-icon-cancel" />
 		</aon:column>
+		<rich:subTable rendered="#{contract.salaryInfoHandler.selectedData.id == to.id}"
+			style="background-color: #FBEDB6;"
+			value="#{contract.salaryInfoHandler.dataTrackingModel}"
+			var="detail" >
+			<aon:column styleClass="aon-editDataTable-iconColumn aon-width-auto" style="background-color: #FBEDB6;">
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="background-color: #FBEDB6;">
+				<aon:outputText value="#{detail.name}" />
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="background-color: #FBEDB6;">
+				<aon:outputText value="#{detail.expression}" />
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-100" style="background-color: #FBEDB6;">
+				<aon:outputText value="#{detail.startDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-100" style="background-color: #FBEDB6;">
+				<aon:outputText value="#{detail.endDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>		
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-buttonsColumn" style="background-color: #FBEDB6;">
+			</aon:column>
+		</rich:subTable>
 	</aon:dataTable>
 </aon:panel>
 									
@@ -171,13 +199,19 @@
 				reRender="contractPaymentTable"
 				rendered="#{contract.salaryInfoHandler.selectedPayment.id != to.id}"
 				actionListener="#{contract.salaryInfoHandler.onSelectPayment}"
-				styleClass="aon-editDataTable-button aon-icon-rowSelector"/>
+				styleClass="aon-editDataTable-button #{contract.salaryInfoHandler.paymentTrackingCount>0?'aon-icon-drop-down':'aon-icon-rowSelector'}"/>
 		</aon:column>
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
 			<f:facet name="header">
 				<aon:outputText	value="#{bundle.aon_type}" />
 			</f:facet>
 			<aon:outputText value="#{to.salaryType}" />
+		</aon:column>
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputText	value="#{bundle.aon_concept}" />
+			</f:facet>
+			<aon:outputText value="#{to.paymentConcept.code}" />
 		</aon:column>
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
@@ -216,15 +250,10 @@
 		</aon:column>
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
 			<f:facet name="header">
-				<aon:outputText	value="#{bundle.aon_concept}" />
-			</f:facet>
-			<aon:outputText value="#{to.paymentConcept.code}" />
-		</aon:column>
-		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
-			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_value}" />
 			</f:facet>
-			<aon:outputText value="#{contract.salaryInfoHandler.resolvedPayment}" />
+			<aon:outputText title="#{to.expression}"
+				value="#{contract.salaryInfoHandler.resolvedPayment}" />
 		</aon:column>
 		<aon:column styleClass="aon-editDataTable-iconColumn aon-width-auto">
 			<f:facet name="header">
@@ -265,7 +294,7 @@
 			value="#{contract.salaryInfoHandler.selectedPayment}"
 			var="detail" >
 			<rich:column colspan="11" styleClass="aon-width-all aon-noborder"
-				style="background-color: #FBEDB6;" >
+				style="background-color: #F2F2F2;" >
 				<h:panelGrid columns="2" style="font-size: 0.9em; width: 100%;" 
 					cellpadding="0" cellspacing="0" border="0"
 					columnClasses="aon-width-70 aon-noborder,aon-noborder" >
@@ -273,6 +302,57 @@
 					<aon:outputText value="#{detail.expression}" />
 				</h:panelGrid>
 			</rich:column> 
+		</rich:subTable>
+		<rich:subTable rendered="#{contract.salaryInfoHandler.selectedPayment.id == to.id}"
+			value="#{contract.salaryInfoHandler.paymentTrackingModel}"
+			var="detail" >
+			<aon:column styleClass="aon-editDataTable-iconColumn aon-width-auto" style="background-color: #FBEDB6;">
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-70" style="background-color: #FBEDB6;">
+				<aon:outputText value="#{detail.salaryType}" />
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-70" style="background-color: #FBEDB6;">
+				<aon:outputText value="#{detail.paymentConcept.code}" />
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="background-color: #FBEDB6;">
+				<aon:div>
+					<aon:outputText rendered="#{not empty to.description}" 
+						value="#{detail.description}" />
+					<aon:outputText rendered="#{empty to.description}" 
+						value="#{detail.paymentConcept.description}" />
+				</aon:div>
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-100" style="background-color: #FBEDB6;">
+				<aon:outputText value="#{detail.startDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-100" style="background-color: #FBEDB6;">
+				<aon:outputText value="#{detail.endDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>		
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-100" style="background-color: #FBEDB6;">
+				<aon:outputText value="#{detail.month}" />
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-70" style="background-color: #FBEDB6;">
+				<aon:outputText title="#{detail.expression}"
+					value="#{contract.salaryInfoHandler.resolvedPayment}" />
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-iconColumn aon-width-auto" style="background-color: #FBEDB6;">
+				<aon:div styleClass="#{(not empty detail.quoteExpression)?'aon-icon-checked':'aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-iconColumn aon-width-auto" style="background-color: #FBEDB6;">
+				<aon:div styleClass="#{(not empty detail.irpfExpression)?'aon-icon-checked':'aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+			</aon:column>
+			<aon:column styleClass="aon-editDataTable-buttonsColumn" style="background-color: #FBEDB6;">
+			</aon:column>
 		</rich:subTable>
 	</aon:dataTable>
 </aon:panel>

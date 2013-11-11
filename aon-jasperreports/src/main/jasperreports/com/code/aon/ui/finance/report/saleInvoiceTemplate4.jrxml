@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="48"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -18,12 +18,12 @@
 		<field name="discountExpression" class="com.code.aon.product.util.DiscountExpression"/>
 		<field name="taxableBase" class="java.lang.Double"/>
 		<field name="sourceId" class="java.lang.Integer"/>
-		<field name="sourceTo" class="com.code.aon.warehouse.DeliveryDetail"/>
+		<field name="sourceTo" class="com.code.aon.common.IHeaderObject"/>
 		<variable name="invoiceTotal" class="java.lang.Double" calculation="Sum">
 			<variableExpression><![CDATA[$F{taxableBase}]]></variableExpression>
 		</variable>
 		<group name="deliveryGroup">
-			<groupExpression><![CDATA[$F{sourceTo}.getDelivery().getId()]]></groupExpression>
+			<groupExpression><![CDATA[$F{sourceTo}.getReferenceCode()]]></groupExpression>
 		</group>
 	</subDataset>
 	<subDataset name="tax">
@@ -718,7 +718,7 @@
 				</jr:table>
 			</componentElement>
 			<componentElement>
-				<reportElement key="detail" positionType="Float" mode="Transparent" x="21" y="203" width="489" height="15" backcolor="#FFFFFF"/>
+				<reportElement key="detail" positionType="Float" mode="Opaque" x="21" y="203" width="489" height="15" backcolor="#F0F0F0"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="detail">
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false, new Boolean(false)))]]></dataSourceExpression>
@@ -864,7 +864,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 				</graphicElement>
 			</rectangle>
 			<componentElement>
-				<reportElement key="detail" positionType="Float" mode="Transparent" x="21" y="321" width="489" height="15" isRemoveLineWhenBlank="true" backcolor="#FFFFFF">
+				<reportElement key="detail" positionType="Float" mode="Opaque" x="21" y="321" width="489" height="15" isRemoveLineWhenBlank="true" backcolor="#F0F0F0">
 					<printWhenExpression><![CDATA[$V{prepaymentTotal}!=null]]></printWhenExpression>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
