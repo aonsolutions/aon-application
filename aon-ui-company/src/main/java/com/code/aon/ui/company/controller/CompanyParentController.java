@@ -12,6 +12,7 @@ import static com.code.aon.common.enumeration.AppParam.APP_SALE_INVOICE_TEMPLATE
 import static com.code.aon.common.enumeration.AppParam.APP_SMART_CARD_PARAM;
 import static com.code.aon.ui.company.controller.ICompanyConstants.INVOICE_PRINT_REPORT_KEY;
 import static com.code.aon.ui.company.controller.ICompanyConstants.SALE_INVOICE_REPORT_KEY;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,8 +41,12 @@ import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.company.Company;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
+import com.code.aon.config.Scope;
+import com.code.aon.config.UserScope;
+import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.geozone.GeoZone;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
@@ -54,6 +59,7 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
@@ -127,6 +133,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean customReportTemplate;
 	
 	private List<IControllerListener> listenerClasses;
+	
+	private Scope scope;
 	
     public CompanyParentController() {
     	this.listenerClasses = new LinkedList<IControllerListener>();
@@ -901,5 +909,44 @@ public class CompanyParentController extends BasicController implements ICompany
 	public void setOptionalListenerClasses(List<IControllerListener> listenerClasses) {
 		this.listenerClasses.addAll(listenerClasses);
 	}
+
+	public Scope getScope() {
+		return scope;
+	}
+
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+
+	public List<SelectItem> getDomainScopes() {
+		List<SelectItem> scopes = new LinkedList<SelectItem>();
+		try {
+			AuthPrincipal principal = AonUtil.getAuthPrincipal();
+			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
+			if ( DomainSwitcher.getDomainType(principal.getDomainId()) == DomainType.ADMIN ) {
+				DomainSwitcher dw = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+				Integer domainId = dw.isChildDomain() ? dw.getParentDomainId() : dw.getDomainId();
+				IManagerBean bean = BeanManager.getManagerBean(Scope.class);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SCOPE_DOMAIN), domainId);
+				criteria.addOrder(bean.getFieldName(IEntityAlias.SCOPE_DESCRIPTION));
+				for (ITransferObject ito : bean.getList(criteria)) {
+					Scope scope = (Scope) ito;
+					scopes.add( new SelectItem(scope, scope.getDescription()) );
+				}				
+			} else {
+				IManagerBean bean = BeanManager.getManagerBean(UserScope.class);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), principal.getUserId());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_DESCRIPTION));
+				for (ITransferObject ito : bean.getList(criteria)) {
+					Scope scope = ((UserScope) ito).getScope();
+					scopes.add( new SelectItem(scope, scope.getDescription()) );
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error( "Error getting domain scopes. " + e.getMessage(), e);
+		}
+		return scopes;
+	}	
 	
 }

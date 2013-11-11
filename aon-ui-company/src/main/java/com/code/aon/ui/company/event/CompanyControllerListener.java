@@ -38,11 +38,11 @@ public class CompanyControllerListener extends ControllerAdapter {
 			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
 			company.setName( domain.getDescription() );
 			company.setAlias( StringUtils.upperCase( StringUtils.substringBefore(domain.getName(), ".")) );
+			c.setScope(getDomainScope());
 		} catch (ManagerBeanException e) {
 			// Nada, no se inicializan los datos.
 			
-		} 
-		
+		} 	
 	}
 	
 	
@@ -92,7 +92,9 @@ public class CompanyControllerListener extends ControllerAdapter {
 			c.setPhone(phone);				
 			c.setFax(fax);				
 			c.setEmail(email);				
-			c.setWeb(web);				
+			c.setWeb(web);
+			
+			c.setScope(getDomainScope());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -119,6 +121,8 @@ public class CompanyControllerListener extends ControllerAdapter {
 			if(c.isAddressDirty()){
 				saveRegistryAddress(c.getMainAddress());
 			}
+			
+			updateDomainScope(c.getScope());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -158,6 +162,8 @@ public class CompanyControllerListener extends ControllerAdapter {
 				saveRegistryAddress(c.getMainAddress());
 				insertWorkPlace(c.getMainAddress(), enterprise);
 			}
+			
+			updateDomainScope(c.getScope());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -197,6 +203,24 @@ public class CompanyControllerListener extends ControllerAdapter {
 		workPlace.setAddress(address);
 		workPlace.setActive(true);
 		bean.insert(workPlace);
+	}
+	
+	private Scope getDomainScope() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+		Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
+		if ( domain != null ) {
+			return domain.getScope();
+		}
+		return null;
+	}
+
+	private void updateDomainScope( Scope scope ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+		Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
+		if ( domain != null ) {
+			domain.setScope(scope);
+			bean.update(domain);
+		}
 	}
 	
 }
