@@ -22,6 +22,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.INDEFINITE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_RATE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MALE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
@@ -44,9 +45,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_BENEFI
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_WEEKS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.LIQUID;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -90,13 +89,10 @@ import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.LRUCache;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.IListener;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.esferalia.aon.payroll.irpf.AEATRetencionesEntradaFactory;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
-import com.esferalia.aon.payroll.irpf.IrpfCalculateException;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
@@ -118,7 +114,6 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
-import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -130,15 +125,6 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
-
-import es.aeat.pret.rw13.jaxb.AEATRetencionesEntrada2013;
-import es.aeat.pret.rw13.jaxb.AEATRetencionesError2013;
-import es.aeat.pret.rw13.jaxb.AEATRetencionesSalida2013;
-import es.aeat.pret.rw13.jaxb.TipoError;
-import es.aeat.pret.rw13.jaxb.TipoRetenedorError2013;
-import es.aeat.pret.rw13.jaxb.TipoRetenedorSalida2013;
-import es.aeat.pret.rw13.jaxb.TipoRetenidoError2013;
-import es.aeat.pret.rw13.jaxb.TipoRetenidoSalida2013;
 
 public class SQLContractSalaryCalculatorContext implements
 		IContractSalaryCalculatorContext, NotFoundHandler,
@@ -783,19 +769,20 @@ public class SQLContractSalaryCalculatorContext implements
 	@Override
 	public Collection<IContractDeduction> getContractDeductions()
 			throws AonException {
-		return this.systemDeductions;
-		/*
-		 * try {
-		 * 
-		 * this.sqlContractDeduction.close(); int id = getId();
-		 * deductionStmt.setInt(1, id); ResultSet rs =
-		 * deductionStmt.executeQuery();
-		 * this.sqlContractDeduction.setResultSet(rs); HierarchyDeductions
-		 * hierarchyDeductions = new HierarchyDeductions(
-		 * this.sqlContractDeduction, this.systemDeductions.iterator()); return
-		 * hierarchyDeductions; } catch (SQLException e) { throw new
-		 * AonException(e); }
-		 */
+
+		try {
+			this.sqlContractDeduction.close();
+			int id = getId();
+			deductionStmt.setInt(1, id);
+			ResultSet rs = deductionStmt.executeQuery();
+			this.sqlContractDeduction.setResultSet(rs);
+			HierarchyDeductions hierarchyDeductions = new HierarchyDeductions(
+					this.sqlContractDeduction, this.systemDeductions.iterator());
+			return hierarchyDeductions;
+		} catch (SQLException e) {
+			throw new AonException(e);
+		}
+
 	}
 
 	@Override
@@ -1340,8 +1327,8 @@ public class SQLContractSalaryCalculatorContext implements
 			Calendar holiday = Calendar.getInstance();
 			holiday.setTime(period.getStart());
 			holiday.add(Calendar.DAY_OF_MONTH, days);
-			
-			return day.compareTo(holiday) <= 0 ;
+
+			return day.compareTo(holiday) <= 0;
 
 		} catch (Error e) {
 			return false;
