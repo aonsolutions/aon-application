@@ -1828,10 +1828,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			String sql = "SELECT * " + " FROM " + REGISTRY + ", " + ENTERPRISE
 					+ " LEFT JOIN " + WORKPLACE + " ON ( " + ENTERPRISE + "."
 					+ EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "."
-					+ WorkplaceColumns.ENTERPRISE + " AND " + WORKPLACE + "."
-					+ WorkplaceColumns.SCOPE + " IN ( SELECT "
-					+ UserScopeColumns.SCOPE + " FROM " + USER_SCOPE
-					+ " WHERE " + UserScopeColumns.USER_ID + " = ? " + ") )"
+					+ WorkplaceColumns.ENTERPRISE + " )"
 					+ " LEFT JOIN " + PAYROLL_WORKPLACE + " ON ( " + WORKPLACE
 					+ "." + WorkplaceColumns.ID + " = " + PAYROLL_WORKPLACE
 					+ "." + PayrollWorkplaceColumns.WORKPLACE + ") LEFT JOIN "
