@@ -38,29 +38,11 @@
 								<aon:div style="width:99%">
 									
 <aon:panel styleClass="aon-panelGrid-search" id="filterPanel" style="padding:5px;">
-	<f:facet name="header">
-		<aon:outputText value="#{bundle.payroll_data_filter}" />
-	</f:facet>
 		<aon:panelGrid columns="5" 
-			columnClasses="aon-panelGrid-even aon-width-auto,
-				aon-panelGrid-odd aon-width-auto,aon-panelGrid-even aon-width-auto">
-			<aon:selectOneRadio value="#{contract.salaryInfoHandler.searchCurrent}" style="display:inline;"
-				valueChangeListener="#{contract.salaryInfoHandler.onChangeCurrentFilter}">
-				<f:selectItem itemLabel="#{bundle.payroll_current}" itemValue="#{true}" />
-				<f:selectItem itemLabel="#{bundle.payroll_historyc}" itemValue="#{false}" />
-				<a4j:support 
-					event="onclick"
-					actionListener="#{contract.salaryInfoHandler.onLoad}"
-					reRender="filterPanel, contractDataPanel, contractPaymentPanel, contractDeductionPanel"
-					eventsQueue="salaryInfoFilterKeyUp"
-					requestDelay="200"
-					ajaxSingle="true"
-					ignoreDupResponses="true"
-					limitToList="true"/>
-			</aon:selectOneRadio>
+			columnClasses="aon-panelGrid-odd aon-width-auto,
+				aon-panelGrid-even aon-width-auto,aon-panelGrid-even aon-width-auto">
 			<aon:outputText value="#{bundle.aon_period}:" />
-			<aon:selectOneMenu value="#{contract.salaryInfoHandler.filterMonth}"
-				disabled="#{contract.salaryInfoHandler.searchCurrent}">
+			<aon:selectOneMenu value="#{contract.salaryInfoHandler.filterMonth}">
 				<f:selectItems value="#{commonCollections.months}" />
 				<a4j:support 
 					event="onchange"
@@ -72,8 +54,7 @@
 					ignoreDupResponses="true"
 					limitToList="true"/>
 			</aon:selectOneMenu>
-			<rich:inputNumberSpinner value="#{contract.salaryInfoHandler.filterYear}" 
-				disabled="#{contract.salaryInfoHandler.searchCurrent}"
+			<rich:inputNumberSpinner value="#{contract.salaryInfoHandler.filterYear}"
 				inputSize="4" minValue="2000" maxValue="2100">
 				<a4j:support 
 					event="onchange"
@@ -252,23 +233,52 @@
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_value}" />
 			</f:facet>
-			<aon:outputText title="#{to.expression}"
-				value="#{contract.salaryInfoHandler.resolvedPayment}" />
+			<aon:div>
+				<aon:outputText value="#{contract.salaryInfoHandler.resolvedPayment}" />
+				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+					<aon:div>
+						<aon:outputText value="#{to.expression}"
+							rendered="#{to.expression!=null}" />
+						<aon:outputText value="#{to.paymentConcept.expression}"
+							rendered="#{to.expression==null}" />
+					</aon:div>
+				</rich:toolTip>
+			</aon:div>
 		</aon:column>
 		<aon:column styleClass="aon-editDataTable-iconColumn aon-width-auto">
 			<f:facet name="header">
 				<aon:outputText value="Cot." />
 			</f:facet>
-			<aon:div styleClass="#{(not empty to.quoteExpression)?'aon-icon-checked':'aon-icon-check'}">
+			<aon:div styleClass="#{(contract.salaryInfoHandler.paymentQuote)?'aon-icon-checked':'aon-icon-check'}">
 				<aon:outputText value="&#160;" />
+				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+					<aon:div>
+						<aon:outputText value="#{contract.salaryInfoHandler.paymentQuoteValue}"
+							styleClass="aon-bold aon-margin-right" />
+						<aon:outputText value="#{to.quoteExpression}"
+							rendered="#{to.quoteExpression!=null}" />
+						<aon:outputText value="#{to.paymentConcept.quoteExpression}"
+							rendered="#{to.quoteExpression==null}" />
+					</aon:div>
+				</rich:toolTip>
 			</aon:div>
 		</aon:column>
 		<aon:column styleClass="aon-editDataTable-iconColumn aon-width-auto">
 			<f:facet name="header">
 				<aon:outputText value="Trib." />
 			</f:facet>
-			<aon:div styleClass="#{(not empty to.irpfExpression)?'aon-icon-checked':'aon-icon-check'}">
+			<aon:div styleClass="#{(contract.salaryInfoHandler.paymentIrpf)?'aon-icon-checked':'aon-icon-check'}">
 				<aon:outputText value="&#160;" />
+				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+					<aon:div>
+						<aon:outputText value="#{contract.salaryInfoHandler.paymentIrpfValue}"
+							styleClass="aon-bold aon-margin-right" />
+						<aon:outputText value="#{to.irpfExpression}"
+							rendered="#{to.irpfExpression!=null}" />
+						<aon:outputText value="#{to.paymentConcept.irpfExpression}"
+							rendered="#{to.irpfExpression==null}" />
+					</aon:div>
+				</rich:toolTip>
 			</aon:div>
 		</aon:column>
 		<aon:column styleClass="aon-editDataTable-buttonsColumn">
@@ -374,11 +384,17 @@
 				actionListener="#{contract.salaryInfoHandler.onSelectDeduction}"
 				styleClass="aon-editDataTable-button aon-icon-rowSelector" />
 		</aon:column>
-		<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-160">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_type}" />
 			</f:facet>
 			<aon:outputText value="#{to.type}" />
+		</aon:column>
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputText	value="#{bundle.aon_concept}" />
+			</f:facet>
+			<aon:outputText value="#{to.deductionConcept.code}" />
 		</aon:column>
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
@@ -404,13 +420,26 @@
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>		
 		</aon:column>
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.payroll_salary_payment_month}" />
+			</f:facet>
+			<aon:outputText value="#{to.month}" />
+		</aon:column>
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_value}" />
+			</f:facet>
+			<aon:outputText title="#{to.expression}"
+				value="#{contract.salaryInfoHandler.resolvedDeduction}" />
+		</aon:column>
 		<aon:column styleClass="aon-editDataTable-buttonsColumn">
 			<f:facet name="header">
 				<aon:outputText value="&#160;" />
 			</f:facet>
 			<aon:confirmButton id="contractDeductionTable-remove"
 				title="#{bundle.aon_remove}" 
-				immediate="true" reRender="contractPaymentTable"
+				immediate="true" reRender="contractDeductionTable"
 				rendered="#{contract.salaryInfoHandler.selectedDeduction.id == to.id}"
 				confirmTitle="#{bundle.aon_confirm_title}"
 				confirmMessage="#{bundle.aon_remove_confirm}"

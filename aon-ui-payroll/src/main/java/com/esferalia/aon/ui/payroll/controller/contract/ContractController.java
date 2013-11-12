@@ -72,6 +72,8 @@ import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
+import com.esferalia.aon.payroll.enumeration.QuoteType;
+import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
@@ -797,6 +799,8 @@ public class ContractController extends BasicController {
 	 * INNER CLASES
 	 */
 	public class SalaryInfoHandler{
+		public final String IPREM_FORMMULA = "EXCESO_IPREM";
+		public final String ZERO_VALUE = "0";
 		private Contract contract;
 		private DataModel contractDataModel;
 		private DataModel paymentModel;
@@ -807,20 +811,15 @@ public class ContractController extends BasicController {
 		private List<ITransferObject> dataTracking;
 		private List<ITransferObject> paymentTracking;
 		// filter options
-		private boolean searchCurrent;
 		private Integer filterYear;
 		private Month filterMonth;
 		
 		public SalaryInfoHandler(Contract contract){
 			this.contract = contract;
-			this.searchCurrent = true;
 			this.filterYear = Calendar.getInstance().get(Calendar.YEAR);
 			this.filterMonth = Month.getMonthByValue(Calendar.getInstance().get(Calendar.MONTH));
 		}
 		
-		public boolean isSearchCurrent() {
-			return searchCurrent;
-		}
 		public Integer getFilterYear() {
 			return filterYear;
 		}
@@ -832,10 +831,6 @@ public class ContractController extends BasicController {
 		}
 		public void setFilterMonth(Month filterMonth) {
 			this.filterMonth = filterMonth;
-		}
-
-		public void setSearchCurrent(boolean searchCurrent) {
-			this.searchCurrent = searchCurrent;
 		}
 		public DataModel getContractDataModel() {
 			return contractDataModel;
@@ -892,7 +887,7 @@ public class ContractController extends BasicController {
 			return new ListDataModel(paymentTracking);
 		}
 		public Integer getDataTrackingCount(){
-			if(!isSearchCurrent()){
+			if(getContractDataModel().isRowAvailable()){
 				ContractData data = (ContractData) getContractDataModel().getRowData();
 				try {
 					IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
@@ -900,7 +895,7 @@ public class ContractController extends BasicController {
 					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
 					criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_ID), data.getId());
 					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), data.getName());
-					criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), getFilterEndDate());
+					criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), data.getStartDate());
 					return bean.getCount(criteria);
 				} catch (ManagerBeanException e) {
 					AonUtil.addErrorMessage("No se han podido cargar correctamente los datos de contrato");
@@ -909,7 +904,7 @@ public class ContractController extends BasicController {
 			return null;
 		}
 		public Integer getPaymentTrackingCount(){
-			if(!isSearchCurrent()){
+			if(getPaymentModel().isRowAvailable()){
 				ContractPayment payment = (ContractPayment) getPaymentModel().getRowData();
 				try {
 					IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
@@ -917,7 +912,7 @@ public class ContractController extends BasicController {
 					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
 					criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_ID), payment.getId());
 					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_PAYMENT_CONCEPT_ID), payment.getPaymentConcept().getId());
-					criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), getFilterEndDate());
+					criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), payment.getStartDate());
 					return bean.getCount(criteria);
 				} catch (ManagerBeanException e) {
 					AonUtil.addErrorMessage("No se han podido cargar correctamente los devengos");
@@ -931,6 +926,78 @@ public class ContractController extends BasicController {
 			if(payment!=null && payment.getId()!=null){
 				if (NumberUtils.isNumber(payment.getExpression()) ) {
 					return payment.getExpression();
+				}
+			}
+			return "expresión";
+		}
+		
+		public boolean isPaymentQuote(){
+			return getPaymentQuoteValue() != QuoteType.NO_QUOTE;
+		}
+		public QuoteType getPaymentQuoteValue(){
+			ContractPayment payment = (ContractPayment) getPaymentModel().getRowData();
+			if(payment!=null && payment.getId()!=null){
+				String expression = payment.getQuoteExpression();
+				if(expression!=null){
+					if (NumberUtils.isNumber(expression) && Double.parseDouble(expression)==0) {
+						return QuoteType.NO_QUOTE;
+					} else if (expression.equals(IPREM_FORMMULA)) {
+						return QuoteType.IPREM_EXCESS;
+					} else if (expression != null) {
+						return QuoteType.QUOTE;
+					}
+				} else if(payment.getPaymentConcept()!=null){
+					expression = payment.getPaymentConcept().getQuoteExpression();
+					if(expression==null){
+						return QuoteType.NO_QUOTE;
+					} else if (NumberUtils.isNumber(expression) && Double.parseDouble(expression)==0) {
+						return QuoteType.NO_QUOTE;
+					} else if (expression.equals(payment.getPaymentConcept().getCode())) {
+						return QuoteType.QUOTE;
+					} else if (expression.equals(IPREM_FORMMULA)) {
+						return QuoteType.IPREM_EXCESS;
+					} else {
+						return QuoteType.MANUAL;
+					}
+				}
+			}
+			return null;
+		}
+		
+		public boolean isPaymentIrpf(){
+			return getPaymentIrpfValue() != TaxationType.NO_TAXED;
+		}
+		public TaxationType getPaymentIrpfValue(){
+			ContractPayment payment = (ContractPayment) getPaymentModel().getRowData();
+			if(payment!=null && payment.getId()!=null){
+				String expression = payment.getIrpfExpression();
+				if(expression!=null){
+					if (NumberUtils.isNumber(expression) && Double.parseDouble(expression)==0) {
+						return TaxationType.NO_TAXED;
+					} else if (expression != null) {
+						return TaxationType.TAXED;
+					}
+				} else if(payment.getPaymentConcept()!=null){
+					expression = payment.getPaymentConcept().getIrpfExpression();
+					if(expression==null){
+						return TaxationType.NO_TAXED;
+					} else if (NumberUtils.isNumber(expression) && Double.parseDouble(expression)==0) {
+						return TaxationType.NO_TAXED;
+					} else if (expression.equals(payment.getPaymentConcept().getCode())) {
+						return TaxationType.TAXED;
+					} else {
+						return TaxationType.MANUAL;
+					} 
+				}
+			}
+			return null;
+		}
+
+		public String getResolvedDeduction(){
+			ContractDeduction deduction = (ContractDeduction) getDeductionModel().getRowData();
+			if(deduction!=null && deduction.getId()!=null){
+				if (NumberUtils.isNumber(deduction.getExpression()) ) {
+					return deduction.getExpression();
 				}
 			}
 			return "expresión";
@@ -997,7 +1064,7 @@ public class ContractController extends BasicController {
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
 				criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_ID), getSelectedData().getId());
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), getSelectedData().getName());
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), getFilterEndDate());
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), getSelectedData().getStartDate());
 				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME));
 				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), false);
 				dataTracking = bean.getList(criteria);
@@ -1026,7 +1093,7 @@ public class ContractController extends BasicController {
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
 				criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_ID), getSelectedPayment().getId());
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_PAYMENT_CONCEPT_ID), getSelectedPayment().getPaymentConcept().getId());
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), getFilterEndDate());
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), getSelectedPayment().getStartDate());
 				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), false);
 				paymentTracking = bean.getList(criteria);
 			} catch (ManagerBeanException e) {
@@ -1050,15 +1117,11 @@ public class ContractController extends BasicController {
 		
 		public void onSelectData(ActionEvent event){
 			setSelectedData((ContractData) getContractDataModel().getRowData());
-			if(!isSearchCurrent()){
-				loadDataTracking(contract);
-			}
+			loadDataTracking(contract);
 		}
 		public void onSelectPayment(ActionEvent event){
 			setSelectedPayment((ContractPayment) getPaymentModel().getRowData());
-			if(!isSearchCurrent()){
-				loadPaymentTracking(contract);
-			}
+			loadPaymentTracking(contract);
 		}
 		public void onSelectDeduction(ActionEvent event){
 			setSelectedDeduction((ContractDeduction) getDeductionModel().getRowData());
