@@ -198,7 +198,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			if (conn != null) {
 				try {
 					conn.close();
-				} catch (SQLException logOrIgnrore) {
+				} catch (SQLException logOrIgnroreca) {
 				}
 			}
 			releaseFacesContext();
@@ -2356,6 +2356,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					.getId());
 
 			salary.setContract(contract);
+
+			// TODO: Calendar ???
+			salary.setIssueYear(ctx.getIssueDate().getYear());
+			salary.setIssueMonth(ctx.getIssueDate().getMonth());
 
 			return salary;
 		} catch (ExpressionException e) {
