@@ -65,6 +65,13 @@ a, a:hover, a:visited {
     border: 1px solid #D3C061;
 }
 
+.gwt-Tree .gwt-TreeItem-highlight {
+	color : #000000;
+	font-size: 1.1em;
+	font-weight: bolder;
+	
+}
+
 /* Splitters */
 .gwt-SplitLayoutPanel-HDragger,.gwt-SplitLayoutPanel-VDragger {
 	background-color: white;

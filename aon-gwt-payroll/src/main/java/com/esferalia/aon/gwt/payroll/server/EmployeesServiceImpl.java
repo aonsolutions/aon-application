@@ -1841,8 +1841,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					+ WORKPLACE + "." + WorkplaceColumns.DESCRIPTION + " )";
 
 			stmt = connection.prepareStatement(sql);
-			stmt.setInt(1, userID);
-			stmt.setInt(2, registryID);
+			stmt.setInt(1, registryID);
 
 			rs = stmt.executeQuery();
 

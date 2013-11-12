@@ -3,19 +3,13 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.payroll.client.Employees.Listener;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.Employee;
-import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -82,13 +76,33 @@ public class Agreements extends ResizeComposite {
 
 					@Override
 					public void onSuccess(List<Agreement> agreements) {
-						for (Agreement agreement : agreements) {
+						int item2Select  = -1 ;
+						for (int i = 0; i < agreements.size(); i++) {
+							Agreement agreement  = agreements.get(i);
+							String description = agreement.getDescription();
+							if (agreement.isRedefined()) { 
+								description = "*" + description;
+							}
+
 							TreeItem treeItem = new TreeItem(imageItemSafeHtml(
-									images.agreement(),
-									agreement.getDescription()));
+									images.agreement(), description));
 							treeItem.setUserObject(agreement);
+
+							if (agreement.isRedefined()) {
+								if ( item2Select == -1 ) item2Select = i;
+								treeItem.addStyleName("gwt-TreeItem-highlight");
+							}
+							if ( agreement.hasEmployees() ){
+								if ( item2Select == -1 ) item2Select = i;
+								treeItem.addStyleName("gwt-TreeItem-highlight");
+							}
+
 							tree.addItem(treeItem);
+
 						}
+						// Select the first one.
+						if (tree.getItemCount() > 0)
+							tree.setSelectedItem(tree.getItem(Math.max(item2Select, 0)), true);
 					}
 
 				});

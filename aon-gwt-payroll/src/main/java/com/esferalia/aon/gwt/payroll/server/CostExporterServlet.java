@@ -109,7 +109,7 @@ public class CostExporterServlet extends HttpServlet {
 			criteria.addOrder(beanManager.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
 			
 			final List<ITransferObject> list = beanManager.getList(criteria);
-			
+						
 			ReportManager reportManager = new ReportManager();
 			OutputFormat outputFormat = getOutputFormat(extension);
 			reportManager.setOutputFormat(outputFormat);

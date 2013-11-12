@@ -6,6 +6,9 @@ public class Agreement implements Serializable, HasId<Integer> {
 
 	private int 			id;
 	private String 			description;
+	
+	private int 			redefined;		
+	private int 			employees;		
 
 	
 	
@@ -25,4 +28,23 @@ public class Agreement implements Serializable, HasId<Integer> {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+
+	public boolean hasEmployees() {
+		return employees > 0;
+	}
+
+	public void setEmployees(int employees) {
+		this.employees = employees;
+	}
+	
+	public boolean isRedefined() {
+		return redefined > 0 ;
+	}
+
+	public void setRedefined(int redefined) {
+		this.redefined = redefined;
+	}
+	
+	
 }
