@@ -165,6 +165,9 @@ public enum ContextVariable implements IResourceable{
 	QUOTIENT("COCIENTE", VariableType.INTEGER ),
 	DAYS("DIAS", VariableType.INTEGER ),
 	
+	IT_START("INICIO_IT", VariableType.DATE),
+
+	ENTERPRISE_SITE_DATE("VISIONADOE", VariableType.DATE);
 	;
 	
 	public static final String ALL = "_P";
@@ -172,6 +175,7 @@ public enum ContextVariable implements IResourceable{
 	public static final String REMOVE = "REMOVE";
 	public static final String CONTEXT = "CONTEXT";
 
+	public static final String BR = "BR";
 	public static final String LIQUID = "NETO";
 	public static final String SYSTEM = "SISTEMA";
 	public static final String AGREEMENT = "CONVENIO";
