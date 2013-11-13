@@ -220,12 +220,14 @@
 
 				</aon:panelGrid>
 
-				<aon:panel>
-					<f:facet name="header">
-						<aon:outputLabel value="#{bundle.aon_invoices}" />
-					</f:facet>
-					<ui:include src="/com/code/aon/ui/finance/facelet/posShift/finance/tab_grid.xhtml" />
-				</aon:panel>
+				<c:if test="#{!posShift.new}">
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputLabel value="#{bundle.aon_invoices}" />
+						</f:facet>
+						<ui:include src="/com/code/aon/ui/finance/facelet/posShift/finance/tab_grid.xhtml" />
+					</aon:panel>
+				</c:if>
 			</aon:div>
 
 		</aon:form>
