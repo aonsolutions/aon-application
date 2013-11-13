@@ -1760,6 +1760,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			String sql = "SELECT" + " MONTH(" + SALARY + "."
 					+ SalaryColumns.CHARGE_DATE + ") " + monthCol + ", YEAR("
 					+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol
+					
+					+ ", MIN(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") AS CHARGE_DATE"
+					+ ", COUNT(*) AS SALARIES "
+					+ ",(COUNT( IF(" + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.EXPRESSION + " <= UTC_DATE(),1,NULL)) +  COUNT( IF(" + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.ID + " IS NULL,1,NULL))) AS VISIBLES"
+					+ ",(SELECT COUNT(*) FROM " + CONTRACT +" WHERE " + ContractColumns.DOMAIN+ " = " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN  + " AND " + CONTRACT + "." + ContractColumns.START_DATE + " <= LAST_DAY(CHARGE_DATE) "+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE + " IS NULL OR " + CONTRACT + "." + ContractColumns.END_DATE + " >=  DATE_FORMAT(CHARGE_DATE, '%Y-%m-01') )) AS CONTRACTS" 
+					
 					+ " FROM " + ENTERPRISE + ", " + SALARY + " LEFT JOIN "
 					+ SQLConstants.SALARY_DATA + " ON ( " + SQLConstants.SALARY
 					+ "." + SalaryColumns.ID + " = " + SQLConstants.SALARY_DATA
@@ -1770,8 +1776,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					+ SalaryColumns.DOMAIN + " AND " + ENTERPRISE + "."
 					+ EnterpriseColumns.REGISTRY + " = ? "
 					+ " GROUP BY 1, 2" 
-					+ " HAVING count(*) = ( count( " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.EXPRESSION + " <= UTC_DATE() ) "
-					+ " +  count( " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.ID + " = NULL )  )"
+					+ " HAVING SALARIES = VISIBLES AND SALARIES >= CONTRACTS"
 					+ " ORDER BY 2 , 1 ASC ";
 
 			stmt = connection.prepareStatement(sql);
@@ -1786,7 +1791,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				rs.close();
 			}
 			if (stmt != null) {
-				rs.close();
+				stmt.close();
 			}
 		}
 	}
@@ -1868,6 +1873,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			String sql = "SELECT" + " MONTH(" + SALARY + "."
 					+ SalaryColumns.CHARGE_DATE + ") " + monthCol + ", YEAR("
 					+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol
+
+					+ ", MIN(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") AS CHARGE_DATE"
+					+ ", COUNT(*) AS SALARIES "
+					+ ",(COUNT( IF(" + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.EXPRESSION + " <= UTC_DATE(),1,NULL)) +  COUNT( IF(" + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.ID + " IS NULL,1,NULL))) AS VISIBLES"
+					+ ",(SELECT COUNT(*) FROM " + CONTRACT +" WHERE " + ContractColumns.WORKPLACE+ " = " + WORKPLACE + "." + WorkplaceColumns.ID  + " AND " + CONTRACT + "." + ContractColumns.START_DATE + " <= LAST_DAY(CHARGE_DATE) "+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE + " IS NULL OR " + CONTRACT + "." + ContractColumns.END_DATE + " >=  DATE_FORMAT(CHARGE_DATE, '%Y-%m-01') )) AS CONTRACTS" 
+
 					+ " FROM " + WORKPLACE + ", " + CONTRACT + ", " + SALARY
 
 					+ " LEFT JOIN " + SQLConstants.SALARY_DATA + " ON ( "
@@ -1883,9 +1894,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					+ WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
 					+ " GROUP BY 1, 2" 
 
-					+ " HAVING count(*) = ( count( " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.EXPRESSION + " <= UTC_DATE() ) "
-					+ " +  count( " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.ID + " = NULL )  )"
-					
+					+ " HAVING SALARIES = VISIBLES AND SALARIES >= CONTRACTS"
 					+ " ORDER BY 2 , 1 ASC ";
 
 			stmt = connection.prepareStatement(sql);
@@ -1899,7 +1908,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				rs.close();
 			}
 			if (stmt != null) {
-				rs.close();
+				stmt.close();
 			}
 		}
 	}
