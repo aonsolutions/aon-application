@@ -16,6 +16,8 @@ import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.LeaveTypeVisitor;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.Period;
 
 public class SQLContractLeaveLoader  {
@@ -143,7 +145,7 @@ public class SQLContractLeaveLoader  {
 	}
 
 	public void loadContractLevae(ResultSet rs, final ExpressionContext exprCtx)
-		throws SQLException 
+		throws SQLException, ExpressionException 
 	{
 		this.leaves.clear();
 
@@ -154,7 +156,23 @@ public class SQLContractLeaveLoader  {
 			Date leaveEnd = rs.getDate(ContractLeaveColumns.END_DATE);
 			final Date end = Period.min( leaveEnd, endDate );
 			final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1 ; // Recuerda ambos inclusive
-			final double regBase = rs.getDouble(ContractLeaveColumns.DAILY_REG_BASE);
+			
+			exprCtx.addVariable(ContextVariable.IT_START, leaveStart, start, end );
+			if ( rs.getObject(ContractLeaveColumns.DAILY_REG_BASE) != null ){
+				exprCtx.addVariable(ContextVariable.REGULATORY_BASE, 
+						rs.getDouble(ContractLeaveColumns.DAILY_REG_BASE), start, end );
+			}
+			else {
+				ExpressionImpl exp = new ExpressionImpl();
+				exp.setName(ContextVariable.REGULATORY_BASE.getName());
+				exp.setExpression(String.format("%s(%s)", ContextVariable.BR, ContextVariable.IT_START));
+				exprCtx.addExpression(exp, start, end);
+			}
+				
+			/*
+			final Object regBase = rs.getObject(ContractLeaveColumns.DAILY_REG_BASE) != null ? 
+					rs.getDouble(ContractLeaveColumns.DAILY_REG_BASE) : exprCtx.eval(String.format("%s(%s)", ContextVariable.BR, ContextVariable.IT_START) , start, end ); 
+			*/
 			final long parentDays = rs.getLong(SQLContractSalaryCalculatorContext.CLEAVE_SQL_PARENT_DAYS) 
 				+ (leaveStart.before(startDate ) ? CommonUtil.getDaysBetweenDates(leaveStart, startDate): 0 ) ;
 			LeaveType type = LeaveType.values()[rs.getInt(ContractLeaveColumns.TYPE)]; // Los valores nulos como 0 'COMMON_SISEASE'
@@ -169,7 +187,7 @@ public class SQLContractLeaveLoader  {
 						String name = range.getName ( ContextVariable.COMMON_DISEASE_DAYS);
 						exprCtx.addVariable( name , days, start, end );
 					}
-					exprCtx.addVariable(ContextVariable.REGULATORY_BASE, regBase, start, end );
+					//exprCtx.addVariable(ContextVariable.REGULATORY_BASE, regBase, start, end );
 					exprCtx.addVariable(ContextVariable.COMMON_DISEASE_DAYS, leaveDays, start, end );
 					return null;
 				}
@@ -182,14 +200,14 @@ public class SQLContractLeaveLoader  {
 					if ( days <= 0 )
 						return null;
 					exprCtx.addVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS, days, start, end );
-					exprCtx.addVariable(ContextVariable.REGULATORY_BASE, regBase, start, end );
+					//exprCtx.addVariable(ContextVariable.REGULATORY_BASE, regBase, start, end );
 					return null;
 				}
 
 				@Override
 				public Void visitMaternity(LeaveType leaveType) {
 					exprCtx.addVariable(ContextVariable.MATERNITY_DAYS, leaveDays, start, end );
-					exprCtx.addVariable(ContextVariable.REGULATORY_BASE, regBase, start, end );
+					//exprCtx.addVariable(ContextVariable.REGULATORY_BASE, regBase, start, end );
 					return null;
 				}
 

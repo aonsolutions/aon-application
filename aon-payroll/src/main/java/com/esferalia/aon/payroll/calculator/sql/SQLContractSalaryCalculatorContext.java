@@ -7,6 +7,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.ASSIMILATED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_AGE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_START;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTEXT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DELAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
@@ -78,6 +79,7 @@ import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.payroll.Pair;
+import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
@@ -106,6 +108,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PayrollWorkplaceColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
@@ -1118,6 +1121,19 @@ public class SQLContractSalaryCalculatorContext implements
 													// null, perfecto.
 	}
 
+	public Object br(Date startDate) throws ExpressionException, SQLException,
+			SalaryException {
+		
+		ISalary salary = getDbSalary(connection, startDate, SalaryType.SALARY, getId());
+		if (salary == null)
+			salary = getSalary(connection, startDate, SalaryType.SALARY, getId());
+		if (salary == null)
+			throw new  ExpressionException(); // TODO: Alert somebody that we can't calculate proper BR.
+		
+		int days = salary.getTimeUnits();
+		return salary.getCommonBase() / days;
+	}
+
 	public Object liquid(double liquid) throws ExpressionException,
 			SQLException, SalaryException {
 		return liquidImpl(liquid, 0.005);
@@ -1780,6 +1796,8 @@ public class SQLContractSalaryCalculatorContext implements
 		this.contractExpressionContext.addVariable(SELF, this, startDate,
 				endDate);
 
+		loadExpression(this.contractExpressionContext, BR,
+				"def(x){ SELF.br(x)};", this.startDate, this.endDate);
 		loadContractLeave(this.contractExpressionContext);
 		loadContractData(this.contractExpressionContext);
 		loadPersonData(this.contractExpressionContext);
@@ -1954,7 +1972,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	}
 
-	private void loadContractLeave(ExpressionContext ctx) throws SQLException {
+	private void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
 		ResultSet rs = null;
 		try {
 			cleaveStmt.setInt(1, getId());
@@ -2050,6 +2068,90 @@ public class SQLContractSalaryCalculatorContext implements
 
 		buffer.append(orderBy.toString());
 		return buffer.toString();
+	}
+
+	protected static ISalary getSalary(Connection connection, Date date,
+			SalaryType type , Integer contractID ) throws SQLException, ExpressionException, SalaryException {
+		Date startDate = CommonUtil.getMonthFirstDay(date);
+
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.setTime(date);
+		endCalendar.add(Calendar.DAY_OF_MONTH, -1);
+		Date endDate = endCalendar.getTime();
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, contractID);
+		SQLContractSalaryCalculatorContext ctx = 
+				new SQLContractSalaryCalculatorContext(connection, startDate , endDate, endDate, criteria );
+		if ( !ctx.next() ) 
+			return null;
+		
+		SalaryBuilder salaryBuilder = new SalaryBuilder();
+		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+		calculator.setSalaryBuilder(salaryBuilder);
+		return calculator.calculate(ctx);
+		
+	}
+
+	protected static ISalary getDbSalary(Connection connection, Date date,
+			SalaryType type, Integer contractID ) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			stmt = connection.prepareStatement("SELECT * " + " FROM "
+					+ SQLConstants.SALARY 
+					+ " WHERE "  + SalaryColumns.CONTRACT + "= ? " 
+					+ " AND "+ SalaryColumns.TYPE + "= ? " 
+					+ " AND " + SalaryColumns.START_DATE + " <= ? "
+					+ " AND " + SalaryColumns.END_DATE + " >= ? ");
+
+			stmt.setInt(1, contractID);
+			stmt.setInt(2, type.ordinal());
+			java.sql.Date sqlDate = toSqlDate(date);
+			stmt.setDate(3, sqlDate);
+			stmt.setDate(4, sqlDate);
+
+			rs = stmt.executeQuery();
+			if (!rs.next())
+				return null;
+
+			Salary salary = new Salary();
+			salary.setStartDate(rs.getDate(SalaryColumns.START_DATE));
+			salary.setEndDate(rs.getDate(SalaryColumns.END_DATE));
+			salary.setTimeUnits(rs.getInt(SalaryColumns.TIME_UNITS));
+			salary.setTotalPayment(rs.getDouble(SalaryColumns.TOTAL_PAYMENT));
+			salary.setTotalDeduction(rs
+					.getDouble(SalaryColumns.TOTAL_DEDUCTION));
+			salary.setTotalLiquid(rs.getDouble(SalaryColumns.TOTAL_LIQUID));
+			salary.setTotalEnterprise(rs
+					.getDouble(SalaryColumns.TOTAL_ENTERPRISE));
+			salary.setIssueDate(rs.getDate(SalaryColumns.ISSUE_DATE));
+			salary.setRemuneration(rs.getDouble(SalaryColumns.REMUNERATION));
+			salary.setExtraPayProration(rs
+					.getDouble(SalaryColumns.PRO_EXT_BASE));
+			salary.setItBase(rs.getDouble(SalaryColumns.IT_BASE));
+			salary.setRawCommonBase(rs.getDouble(SalaryColumns.RAW_CGC_BASE));
+			salary.setCommonBase(rs.getDouble(SalaryColumns.CGC_BASE));
+			salary.setOvertimeBase(rs.getDouble(SalaryColumns.HEXTRA_BASE));
+			salary.setNonEstructuralOvertimeBase(rs
+					.getDouble(SalaryColumns.NON_HEXTRA_BASE));
+			salary.setProfessionalBase(rs.getDouble(SalaryColumns.CGP_BASE));
+			salary.setMoneyIrpfBase(rs.getDouble(SalaryColumns.MONEY_IRPF_BASE));
+			salary.setInkindIrpfBase(rs
+					.getDouble(SalaryColumns.INKIND_IRPF_BASE));
+			salary.setIrpfBase(rs.getDouble(SalaryColumns.IRPF_BASE));
+			salary.setSocialSecurityContributions(rs
+					.getDouble(SalaryColumns.SOCIAL_SECURITY_CONTRIBUTIONS));
+			salary.setTotalIrpf(rs.getDouble(SalaryColumns.TOTAL_IRPF));
+			salary.setChargeDate(rs.getDate(SalaryColumns.CHARGE_DATE));
+			return salary;
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
 	}
 
 }
