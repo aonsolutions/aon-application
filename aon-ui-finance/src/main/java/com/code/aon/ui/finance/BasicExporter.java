@@ -312,6 +312,17 @@ public abstract class BasicExporter {
 		return out.toByteArray();
 	}
 	
+	public String getFileName() {
+		return null;
+	}
+	
+	protected Integer getJournal() {
+		if ( getAccountEntry().getJournal() != null ) {
+			return getAccountEntry().getJournal();
+		}
+		return getAccountEntry().getId();
+	}
+	
 	public abstract void write() throws IOException, ManagerBeanException;
 	
 	public abstract Map<String,byte[]> getDataMap();

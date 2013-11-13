@@ -43,7 +43,16 @@ public class InvoiceExportConfiguration {
 	}
 	
 	public boolean isConfigured() {
-		return (this.type != null) && !StringUtils.isEmpty(this.enterpriseCode);
+		if (this.type != null) {
+			switch (this.type) {
+				case A3:
+				case GEYCE:
+					return !StringUtils.isEmpty(this.enterpriseCode);
+				case APLIFISA:
+					return true;
+			}
+		}
+		return false;
 	}
 
 	public String getEnterpriseCode() {

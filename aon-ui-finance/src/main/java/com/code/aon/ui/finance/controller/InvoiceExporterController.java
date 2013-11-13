@@ -36,6 +36,7 @@ import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.ui.finance.A3Writer;
+import com.code.aon.ui.finance.AplifisaWriter;
 import com.code.aon.ui.finance.BasicExporter;
 import com.code.aon.ui.finance.GeyceWriter;
 import com.code.aon.ui.finance.InvoiceExportConfiguration;
@@ -59,6 +60,8 @@ public class InvoiceExporterController extends BasicController {
 	private Map<String,byte[]> dataMap;
 	
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
+	
+	private String fileName;
 	
 	public boolean isScored() {
 		return scored;
@@ -124,6 +127,9 @@ public class InvoiceExporterController extends BasicController {
 			case A3:
 				obtainData( new A3Writer(this.configuration) );
 				break;
+			case APLIFISA:
+				obtainData( new AplifisaWriter(this.configuration) );
+				break;
 		}
 		this.finished = true;
 		if ( ! this.scored ) {
@@ -179,7 +185,7 @@ public class InvoiceExporterController extends BasicController {
 	private void downloadZip( Map<String,byte[]> dataMap ) throws IOException {
 		File zipFile = getZipFile(dataMap);
 		InputStream in = new BufferedInputStream(new FileInputStream(zipFile));
-        DownloadUtil.downloadAttachment("geyce.zip", MimeType.MIME_ZIP, in, zipFile.length() );
+        DownloadUtil.downloadAttachment(this.fileName, MimeType.MIME_ZIP, in, zipFile.length() );
 	}
 	
 	private void exportInvoice( BasicExporter exporter, Invoice invoice ) {
@@ -225,6 +231,7 @@ public class InvoiceExporterController extends BasicController {
 	}	
 	
 	private void obtainData( BasicExporter exporter ) {
+		this.fileName = exporter.getFileName();
 		LogPanelController log = LogPanelController.getInstance();
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
 		boolean initSessionState = HibernateUtil.mustCloseSession();

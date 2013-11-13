@@ -70,6 +70,11 @@ public class GeyceWriter extends BasicExporter {
 	}
 	
 	@Override
+	public String getFileName() {
+		return "geyce.zip";
+	}
+
+	@Override
 	public void init(Invoice invoice) throws ManagerBeanException, IOException {
 		super.init(invoice);
 		writeGycPlan();
@@ -116,7 +121,7 @@ public class GeyceWriter extends BasicExporter {
 		// Fecha asiento
 		setDate(getAccountEntry().getEntryDate(), 6);
 		// Contador de Numero de asiento
-		setStringLeftPad( getAccountEntry().getJournal().toString(), 14, 6);		
+		setStringLeftPad( getJournal().toString(), 14, 6);		
 		// Numero de Diario Contable
 		setStringLeftPad( getConfiguration().getJournal(getInvoice().getType()), 24, 2);		
 		// Numero de Factura

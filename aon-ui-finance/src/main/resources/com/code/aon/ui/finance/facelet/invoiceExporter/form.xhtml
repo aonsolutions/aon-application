@@ -46,7 +46,7 @@
 						<f:selectItems value="#{financeCollections.invoiceExportTypes}" />
 					</aon:selectOneMenu>
 
-					<c:if test="#{invoiceExporter.configuration.type != null}">
+					<c:if test="#{(invoiceExporter.configuration.type == 'A3') or (invoiceExporter.configuration.type == 'GEYCE')}">
 						<aon:outputLabel for="InvoiceExporter_enterpriseCode"
 							value="#{bundle.aon_company_id}" />
 						<aon:inputText id="InvoiceExporter_enterpriseCode"
