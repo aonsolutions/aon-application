@@ -1,8 +1,6 @@
 package com.code.aon.ui.registry.controller;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 
@@ -20,31 +18,24 @@ public class RegistryObservationController {
 
 	private RegistryNote observation;
 	
-	/**
-	 * @return the observation
-	 */
 	public RegistryNote getObservation() {
 		return observation;
 	}
 
-	/**
-	 * @param observation the observation to set
-	 */
 	public void setObservation(RegistryNote observation) {
 		this.observation = observation;
 	}
 
 	public void onRecover(Registry registry) throws ManagerBeanException {
 		RegistryNote observation = getRegistryObservation(registry);
-		if (observation==null){
+		if (observation == null) {
 			observation = new RegistryNote();
 			observation.setRegistry(registry);
 			observation.setNoteDate(new Date());
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			observation.setDescription(NoteType.OBSERVATION.getName(locale));
+			observation.setDescription(NoteType.OBSERVATION.getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()));
 			observation.setNotetype(NoteType.OBSERVATION);
 			setObservation(observation);
-		}else{
+		} else {
 			setObservation(observation);
 		}
 	}
@@ -54,13 +45,12 @@ public class RegistryObservationController {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rNoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_REGISTRY_ID), registry.getId());
 		criteria.addEqualExpression(rNoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION);
-		List<ITransferObject> l = rNoteBean.getList(criteria);
-		if (!l.isEmpty()){
-			return (RegistryNote)l.iterator().next();
+		for (ITransferObject ito : rNoteBean.getList(criteria)) {
+			return (RegistryNote)ito;
 		}
 		return null;
 	}
-	
+
 	public void onSave() throws ManagerBeanException {
 		IManagerBean rNoteBean = BeanManager.getManagerBean(RegistryNote.class);
 		if (observation.getId() == null) {
@@ -72,7 +62,9 @@ public class RegistryObservationController {
 
 	public void onRemove() throws ManagerBeanException {
 		IManagerBean rNoteBean = BeanManager.getManagerBean(RegistryNote.class);
-		rNoteBean.remove(observation);
+		if (observation.getId() != null) {
+			rNoteBean.remove(observation);
+		}
 	}
 
 }
