@@ -4,6 +4,15 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
 	<managed-bean>
+		<managed-bean-name>gwt</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.gwt.payroll.bean.GWT
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+			
+
+	<managed-bean>
 		<managed-bean-name>employeeTree</managed-bean-name>
 		<managed-bean-class>
 			com.esferalia.aon.gwt.payroll.bean.EmployeeTree

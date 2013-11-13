@@ -80,6 +80,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
+import com.esferalia.aon.gwt.payroll.shared.Constants;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -243,13 +244,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 			if (employee != null) {
-				return getSalaries(conn, employee.getId());
+				return isAtEnterpriseSite() ? getSiteSalaries(conn,
+						employee.getId()) : getSalaries(conn, employee.getId());
 			} else {
 				Integer personId = getPersonID();
 				Integer enterpriseId = getEnterpriseID();
 				Date maxChargeDate = Calendar.getInstance().getTime();
 				return getSalaries(conn, enterpriseId, personId, maxChargeDate);
-			}
+			} // EmployeeSite Not implemented yet.
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -316,7 +318,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			conn = getConnection();
-			return getWorkplaceCosts(conn, workplaceId);
+			return isAtEnterpriseSite() ? getSiteWorkplaceCosts(conn,
+					workplaceId) : getWorkplaceCosts(conn, workplaceId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -337,7 +340,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			initFacesContext();
 			conn = getConnection();
-			return getEnterpriseCosts(conn, enterpriseId);
+			return isAtEnterpriseSite() ? getSiteEnterpriseCosts(conn,
+					enterpriseId) : getEnterpriseCosts(conn, enterpriseId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -1465,8 +1469,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				ExpressionUtilities.getGreaterThanOrEqualExpression(CONTRACT
 						+ "." + ContractColumns.END_DATE, startDate)));
 
-		
-		sqlCriteria.addOrder(SQLConstants.WORKPLACE + "." + WorkplaceColumns.ID);
+		sqlCriteria
+				.addOrder(SQLConstants.WORKPLACE + "." + WorkplaceColumns.ID);
 		sqlCriteria.addOrder(SQLContractSalaryCalculatorContext.PERSON_REGISTRY
 				+ "." + RegistryColumns.NAME);
 
@@ -1478,8 +1482,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
 		aliasCriteria.addOrder(beanManager
 				.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
-		
-		
 
 		return new AonServletUtils.CalcSalaryProvider(startDate, endDate,
 				sqlCriteria, new AonServletUtils.SalaryProvider(aliasCriteria));
@@ -1502,23 +1504,65 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			stmt.setInt(1, contractId);
 			rs = stmt.executeQuery();
 
-			List<Salary> salaries = new LinkedList<Salary>();
-			while (rs.next()) {
-				Salary salary = new Salary();
-				salary.setId(rs.getInt(SalaryColumns.ID));
+			return getSalaries(rs);
 
-				salary.setStartDate(rs.getDate(SalaryColumns.START_DATE));
-				salary.setEndDate(rs.getDate(SalaryColumns.END_DATE));
-				salary.setIssueDate(rs.getDate(SalaryColumns.ISSUE_DATE));
-				salary.setChargeDate(rs.getDate(SalaryColumns.CHARGE_DATE));
-
-				salary.setType(getSalaryType((Integer) rs
-						.getObject(SalaryColumns.TYPE)));
-
-				salaries.add(salary);
+		} finally {
+			if (rs != null) {
+				rs.close();
 			}
+			if (stmt != null) {
+				rs.close();
+			}
+		}
+	}
 
-			return salaries;
+	private static List<Salary> getSalaries(ResultSet rs) throws SQLException {
+
+		List<Salary> salaries = new LinkedList<Salary>();
+		while (rs.next()) {
+			Salary salary = new Salary();
+			salary.setId(rs.getInt(SalaryColumns.ID));
+
+			salary.setStartDate(rs.getDate(SalaryColumns.START_DATE));
+			salary.setEndDate(rs.getDate(SalaryColumns.END_DATE));
+			salary.setIssueDate(rs.getDate(SalaryColumns.ISSUE_DATE));
+			salary.setChargeDate(rs.getDate(SalaryColumns.CHARGE_DATE));
+
+			salary.setType(getSalaryType((Integer) rs
+					.getObject(SalaryColumns.TYPE)));
+
+			salaries.add(salary);
+		}
+
+		return salaries;
+	}
+
+	private static List<Salary> getSiteSalaries(Connection connection,
+			Integer contractId) throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+
+		try {
+
+			String sql = "SELECT * " + " FROM " + SALARY + " LEFT JOIN "
+					+ SQLConstants.SALARY_DATA + " ON ( " + SQLConstants.SALARY
+					+ "." + SalaryColumns.ID + " = " + SQLConstants.SALARY_DATA
+					+ "." + SalaryDataColumns.SALARY + " AND "
+					+ SQLConstants.SALARY_DATA + "." + SalaryDataColumns.NAME
+					+ " =  ? " + ")" + " WHERE " + SALARY + "."
+					+ SalaryColumns.CONTRACT + " = ?" + " AND ( "
+					+ SQLConstants.SALARY_DATA + "." + SalaryDataColumns.ID
+					+ " IS NULL " + " OR " + SQLConstants.SALARY_DATA + "."
+					+ SalaryDataColumns.EXPRESSION + " <= UTC_DATE() ) "
+					+ " ORDER BY " + SALARY + "." + SalaryColumns.END_DATE
+					+ " ASC";
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, ContextVariable.ENTERPRISE_SITE_DATE.getName());
+			stmt.setInt(2, contractId);
+			rs = stmt.executeQuery();
+
+			return getSalaries(rs);
 		} finally {
 			if (rs != null) {
 				rs.close();
@@ -1689,29 +1733,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			stmt.setInt(1, enterpriseId);
 			rs = stmt.executeQuery();
 
-			List<Cost> costs = new LinkedList<Cost>();
-			while (rs.next()) {
+			return getEnterpriseCosts(rs, enterpriseId, yearCol, monthCol);
 
-				int month = rs.getInt(monthCol);
-				// MySQL MONTH(date) function returns the month for date,
-				// in the range 1 to 12 for January to December, or 0 for
-				// dates such as '0000-00-00' or '2008-00-00' that have a zero
-				// month part.
-				if (month == 0) {
-					continue;
-				}
-
-				Cost cost = new Cost();
-				int year = rs.getInt(yearCol);
-
-				cost.setYear(year);
-				cost.setMonth(month - 1);
-				cost.setEnterpriseId(enterpriseId);
-
-				costs.add(cost);
-			}
-
-			return costs;
 		} finally {
 			if (rs != null) {
 				rs.close();
@@ -1720,6 +1743,80 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				rs.close();
 			}
 		}
+	}
+
+	private static List<Cost> getSiteEnterpriseCosts(Connection connection,
+			Integer enterpriseId) throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+
+		try {
+			String yearCol = "YEAR";
+			String monthCol = "MONTH";
+
+			// We asume that one enterprise one domain. This way SELECT it's
+			// more clear.
+			String sql = "SELECT" + " MONTH(" + SALARY + "."
+					+ SalaryColumns.CHARGE_DATE + ") " + monthCol + ", YEAR("
+					+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol
+					+ " FROM " + ENTERPRISE + ", " + SALARY + " LEFT JOIN "
+					+ SQLConstants.SALARY_DATA + " ON ( " + SQLConstants.SALARY
+					+ "." + SalaryColumns.ID + " = " + SQLConstants.SALARY_DATA
+					+ "." + SalaryDataColumns.SALARY + " AND "
+					+ SQLConstants.SALARY_DATA + "." + SalaryDataColumns.NAME
+					+ " =  ? " + ")" + " WHERE " + ENTERPRISE + "."
+					+ EnterpriseColumns.DOMAIN + " = " + SALARY + "."
+					+ SalaryColumns.DOMAIN + " AND " + ENTERPRISE + "."
+					+ EnterpriseColumns.REGISTRY + " = ? "
+					+ " GROUP BY 1, 2" 
+					+ " HAVING count(*) = ( count( " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.EXPRESSION + " <= UTC_DATE() ) "
+					+ " +  count( " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.ID + " = NULL )  )"
+					+ " ORDER BY 2 , 1 ASC ";
+
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, ContextVariable.ENTERPRISE_SITE_DATE.getName());
+			stmt.setInt(2, enterpriseId);
+			rs = stmt.executeQuery();
+
+			return getEnterpriseCosts(rs, enterpriseId, yearCol, monthCol);
+
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				rs.close();
+			}
+		}
+	}
+
+	private static List<Cost> getEnterpriseCosts(ResultSet rs,
+			Integer enterpriseId, String yearCol, String monthCol)
+			throws SQLException {
+		List<Cost> costs = new LinkedList<Cost>();
+		while (rs.next()) {
+
+			int month = rs.getInt(monthCol);
+			// MySQL MONTH(date) function returns the month for date,
+			// in the range 1 to 12 for January to December, or 0 for
+			// dates such as '0000-00-00' or '2008-00-00' that have a zero
+			// month part.
+			if (month == 0) {
+				continue;
+			}
+
+			Cost cost = new Cost();
+			int year = rs.getInt(yearCol);
+
+			cost.setYear(year);
+			cost.setMonth(month - 1);
+			cost.setEnterpriseId(enterpriseId);
+
+			costs.add(cost);
+		}
+
+		return costs;
 	}
 
 	private static List<Cost> getWorkplaceCosts(Connection connection,
@@ -1747,29 +1844,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			stmt.setInt(1, workplaceId);
 			rs = stmt.executeQuery();
 
-			List<Cost> costs = new LinkedList<Cost>();
-			while (rs.next()) {
-
-				int month = rs.getInt(monthCol);
-				// MySQL MONTH(date) function returns the month for date,
-				// in the range 1 to 12 for January to December, or 0 for
-				// dates such as '0000-00-00' or '2008-00-00' that have a zero
-				// month part.
-				if (month == 0) {
-					continue;
-				}
-
-				Cost cost = new Cost();
-				int year = rs.getInt(yearCol);
-
-				cost.setYear(year);
-				cost.setMonth(month - 1);
-				cost.setWorkplaceId(workplaceId);
-
-				costs.add(cost);
-			}
-
-			return costs;
+			return getWorkplaceCosts(rs, workplaceId, yearCol, monthCol);
 		} finally {
 			if (rs != null) {
 				rs.close();
@@ -1778,6 +1853,84 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				rs.close();
 			}
 		}
+	}
+
+	private static List<Cost> getSiteWorkplaceCosts(Connection connection,
+			Integer workplaceId) throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+
+		try {
+			String yearCol = "YEAR";
+			String monthCol = "MONTH";
+
+			String sql = "SELECT" + " MONTH(" + SALARY + "."
+					+ SalaryColumns.CHARGE_DATE + ") " + monthCol + ", YEAR("
+					+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol
+					+ " FROM " + WORKPLACE + ", " + CONTRACT + ", " + SALARY
+
+					+ " LEFT JOIN " + SQLConstants.SALARY_DATA + " ON ( "
+					+ SQLConstants.SALARY + "." + SalaryColumns.ID + " = "
+					+ SQLConstants.SALARY_DATA + "." + SalaryDataColumns.SALARY
+					+ " AND " + SQLConstants.SALARY_DATA + "."
+					+ SalaryDataColumns.NAME + " =  ? " + ")"
+
+					+ " WHERE" + " " + WORKPLACE + "." + WorkplaceColumns.ID
+					+ " = " + CONTRACT + "." + ContractColumns.WORKPLACE
+					+ " AND " + CONTRACT + "." + ContractColumns.ID + " = "
+					+ SALARY + "." + SalaryColumns.CONTRACT + " AND "
+					+ WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
+					+ " GROUP BY 1, 2" 
+
+					+ " HAVING count(*) = ( count( " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.EXPRESSION + " <= UTC_DATE() ) "
+					+ " +  count( " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.ID + " = NULL )  )"
+					
+					+ " ORDER BY 2 , 1 ASC ";
+
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, ContextVariable.ENTERPRISE_SITE_DATE.getName());
+			stmt.setInt(2, workplaceId);
+			rs = stmt.executeQuery();
+
+			return getWorkplaceCosts(rs, workplaceId, yearCol, monthCol);
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				rs.close();
+			}
+		}
+	}
+
+	private static List<Cost> getWorkplaceCosts(ResultSet rs,
+			Integer workplaceId, String yearCol, String monthCol)
+			throws SQLException {
+		List<Cost> costs = new LinkedList<Cost>();
+		while (rs.next()) {
+
+			int month = rs.getInt(monthCol);
+			// MySQL MONTH(date) function returns the month for date,
+			// in the range 1 to 12 for January to December, or 0 for
+			// dates such as '0000-00-00' or '2008-00-00' that have a zero
+			// month part.
+			if (month == 0) {
+				continue;
+			}
+
+			Cost cost = new Cost();
+			int year = rs.getInt(yearCol);
+
+			cost.setYear(year);
+			cost.setMonth(month - 1);
+			cost.setWorkplaceId(workplaceId);
+
+			costs.add(cost);
+		}
+
+		return costs;
+
 	}
 
 	private static List<Activity> getEnterpriseActivities(
@@ -1828,10 +1981,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			String sql = "SELECT * " + " FROM " + REGISTRY + ", " + ENTERPRISE
 					+ " LEFT JOIN " + WORKPLACE + " ON ( " + ENTERPRISE + "."
 					+ EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "."
-					+ WorkplaceColumns.ENTERPRISE + " )"
-					+ " LEFT JOIN " + PAYROLL_WORKPLACE + " ON ( " + WORKPLACE
-					+ "." + WorkplaceColumns.ID + " = " + PAYROLL_WORKPLACE
-					+ "." + PayrollWorkplaceColumns.WORKPLACE + ") LEFT JOIN "
+					+ WorkplaceColumns.ENTERPRISE + " )" + " LEFT JOIN "
+					+ PAYROLL_WORKPLACE + " ON ( " + WORKPLACE + "."
+					+ WorkplaceColumns.ID + " = " + PAYROLL_WORKPLACE + "."
+					+ PayrollWorkplaceColumns.WORKPLACE + ") LEFT JOIN "
 					+ AGREEMENT + " ON ( " + PAYROLL_WORKPLACE + "."
 					+ PayrollWorkplaceColumns.AGREEMENT + " = " + AGREEMENT
 					+ "." + AgreementColumns.ID + " )" + " WHERE " + REGISTRY

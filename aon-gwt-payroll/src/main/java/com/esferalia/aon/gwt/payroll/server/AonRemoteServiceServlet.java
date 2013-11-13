@@ -6,10 +6,10 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,13 +23,16 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.role.RoleManagerDB;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.gwt.payroll.bean.GWT;
+import com.esferalia.aon.gwt.payroll.shared.Constants;
 import com.google.gwt.user.server.Base64Utils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
@@ -75,6 +78,14 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		
 		return ids;
 
+	}
+	
+	String getEntryPoint(){
+		return ((GWT) getSession().getAttribute("gwt")).getEntryPoint();
+	}
+
+	boolean isAtEnterpriseSite(){
+		return Constants.ENTERPRISE_SITE_ENTRY_POINT.equals(getEntryPoint());
 	}
 
 	Integer getDomainID() {
