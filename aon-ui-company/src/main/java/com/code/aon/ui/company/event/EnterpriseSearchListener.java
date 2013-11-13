@@ -5,14 +5,18 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Domain;
+import com.code.aon.config.Scope;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
@@ -25,6 +29,39 @@ import com.esferalia.aon.entity.IEntityAlias;
  */
 public class EnterpriseSearchListener extends ControllerSearchListenerEx {
 
+	private static final Scope EMPTY_SCOPE = new Scope();
+	
+	private Scope[] scopes;
+	
+	public Scope[] getScopes() {
+		if (ArrayUtils.isEmpty(scopes)) {
+			scopes = new Scope[]{EMPTY_SCOPE};
+		}
+		return scopes;
+	}
+
+	public void setScopes(Scope[] scopes) {
+		this.scopes = scopes;
+	}
+	
+	public int getScopesSize() {
+		return ArrayUtils.getLength(scopes);
+	}
+	
+	public List<Integer> getScopesIds() {
+		List<Integer> ids = new LinkedList<Integer>();
+		for( Scope scope : getScopes() ) {
+			if ((scope != null) && (scope.getId() != null)) {
+				ids.add(scope.getId());
+			}
+		}
+		return ids;
+	}
+	
+	private String getPojoShortName() {
+		BasicController controller = (BasicController) getController();
+		return controller.getPojoShortName();
+	}
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
@@ -46,11 +83,19 @@ public class EnterpriseSearchListener extends ControllerSearchListenerEx {
 	}
 	
 	@Override
+	protected void init() throws ManagerBeanException {
+		setScopes( new Scope[]{EMPTY_SCOPE} );
+	}
+	
+	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria(criteria);
 		if(DomainManager.isDomainManagementAvailable()){
 			criteria.setSkipDomainFilter( true );
 			criteria.addInExpression(getFieldName(IEntityAlias.ENTERPRISE_DOMAIN), getCurrentChildDomainIds());
+		}
+		if ( getScopesSize() > 0 ) {
+			addEnumToCriteria(criteria, getPojoShortName()+".scope<id", getScopesIds().toArray());	
 		}
 	}
 	
@@ -74,4 +119,5 @@ public class EnterpriseSearchListener extends ControllerSearchListenerEx {
 		} 
 		return idList;
 	}
+	
 }
