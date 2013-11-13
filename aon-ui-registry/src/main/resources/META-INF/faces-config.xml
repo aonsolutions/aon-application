@@ -46,44 +46,6 @@
 		</managed-property>												
 	</managed-bean>
 
-	<!-- ************ REGISTRY ATTACHMENT TAG ************** -->
-	<managed-bean>
-		<managed-bean-name>registryAttachmentTag</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.config.controller.TagController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.config.Tag</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>registryAttachmentTag</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Tag_name</value>
-		</managed-property>				
-		<managed-property>
-			<property-name>type</property-name>
-			<value>#{configCollections.tagTypes[0].value}</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultExpressions</property-name>
-			<map-entries>
-				<map-entry>
-					<key>Tag_type</key>
-					<value>#{configCollections.tagTypes[0].value}</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>						
-	</managed-bean>
-	
 	<!-- ************ RELATIONSHIP ************** -->
 	<managed-bean>
 		<managed-bean-name>relationship</managed-bean-name>
@@ -126,6 +88,78 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************ REGISTRY ATTACHMENT TAG ************** -->
+	<managed-bean>
+		<managed-bean-name>registryAttachmentTag</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.TagController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Tag</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>registryAttachmentTag</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Tag_name</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>type</property-name>
+			<value>#{configCollections.tagTypes[0].value}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Tag_type</key>
+					<value>#{configCollections.tagTypes[0].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>						
+	</managed-bean>
+	
+	<!-- ************ REGISTRY ADDINFO ************** -->
+	<managed-bean>
+		<managed-bean-name>registryAddInfo</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.RegistryAddInfoController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAddInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>registryAddInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAddInfo_registry_name,RegistryAddInfo_attribute,RegistryAddInfo_value</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{registryAddInfoSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>registryAddInfoSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryAddInfoSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!--  **** PERSON **** -->
 	<managed-bean>
 		<managed-bean-name>person</managed-bean-name>
@@ -683,6 +717,16 @@
 	</managed-bean>
 
 	<!-- ======================= NAVIGATION ========================== -->
+
+	<!-- =================== Category ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>category_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/category/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Relationship & Segment ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>relationship_form</from-outcome>
@@ -694,6 +738,25 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- =================== Registry Attachment Tag ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>registryAttachmentTag_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/registryAttachmentTag/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Registry AddInfo ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>registryAddInfo_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/registryAddInfo/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>registryAddInfo_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/registryAddInfo/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
 		
 	<!-- =================== Person ========================== -->
 	<navigation-rule>
@@ -716,22 +779,6 @@
 		<navigation-case>
 			<from-outcome>streetType_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/registry/facelet/streetType/list.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>	
-
-	<!-- =================== Category ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>category_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/registry/facelet/category/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>	
-
-	<!-- =================== Registry Attachment Tag ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>registryAttachmentTag_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/registry/facelet/registryAttachmentTag/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 

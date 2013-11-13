@@ -203,7 +203,7 @@
 
 						<aon:panelGrid id="group_hotel_governess"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-config aon-direct-access-panel">
+							headerClass="aon-icon-task aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.pms_governess_group}"/>
 							</f:facet>					
@@ -219,7 +219,7 @@
 
 						<aon:panelGrid id="group_hotel_boards"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-general aon-direct-access-panel">
+							headerClass="aon-icon-meal aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.pms_board_group}"/>
 							</f:facet>					
@@ -241,7 +241,7 @@
 
 						<aon:panelGrid id="group_hotel_booking"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-book aon-direct-access-panel">
+							headerClass="aon-icon-statistics aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_occupation}"/>
 							</f:facet>					
@@ -269,7 +269,7 @@
 
 						<aon:panelGrid id="group_hotel_config"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-book aon-direct-access-panel">
+							headerClass="aon-icon-config aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_module_configuration}"/>
 							</f:facet>					
@@ -280,6 +280,14 @@
 										actionListener="#{mailConfig.onInitMailAccount}"
 										value="#{bundle.webmail_mailAccount_full}" />						
 								</aon:div>
+								<c:if test="#{aonRole.commercialOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="registryAddInfo-hotel"
+											action="registryAddInfo_search-hotel"
+											actionListener="#{registryAddInfo.onEditSearch}"
+											value="#{bundle.pms_registry_add_info_module}" />						
+									</aon:div>
+								</c:if>
 							</aon:div>
 						</aon:panelGrid>
 

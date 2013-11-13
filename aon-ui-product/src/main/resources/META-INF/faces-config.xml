@@ -469,7 +469,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ItemAddInfo_attribute</value>
+			<value>ItemAddInfo_attribute,ItemAddInfo_value</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>

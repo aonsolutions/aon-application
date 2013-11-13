@@ -91,7 +91,7 @@
 	<c:if test="#{showProfileButton}">
 		<aon:menuItem id="profile-button"
 			value="#{(profileButtonLabel!=null)?(profileButtonLabel):(bundle.registry_profile)}"
-			iconClass="aon-icon-reservation"
+			iconClass="aon-icon-task"
 			reRender="showNewRegistryProfileWindow"
 			actionListener="#{registryProfileController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewRegistryProfileWindow}" value="#{true}" />							

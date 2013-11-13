@@ -935,6 +935,10 @@
 			<value>enterpriseAddInfo</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAddInfo_attribute,RegistryAddInfo_value</value>
+		</managed-property>				
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
