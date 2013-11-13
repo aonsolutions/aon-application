@@ -1,17 +1,13 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
+import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.SPANISH;
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.enum2short;
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.toDouble;
-import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.SPANISH;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-import com.code.aon.common.util.CommonUtil;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finidto;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finindem;
@@ -25,9 +21,6 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominadf;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominaex;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nominaexdf;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Salary_embargo;
-import com.esferalia.aon.payroll.ctsql2mysql.DefaultCtsqlDBVisitor.Rel_epp_ccc;
-import com.esferalia.aon.payroll.ctsql2mysql.DefaultCtsqlDBVisitor.Rel_epp_emp;
-import com.esferalia.aon.payroll.ctsql2mysql.DefaultCtsqlDBVisitor.Rel_epp_per;
 import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Concept;
 import com.esferalia.aon.payroll.ctsql2mysql.IContracts.FullEmbargo;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -146,6 +139,8 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				cgcBase, hextraBase, nonHextraBase, cgpBase, moneyIrpfBase,
 				kindIrpfBase, irpfBase, ssContributions, totalIrpf, chargeDate);
 
+		insert_Fvisione(nomina);
+
 		Double importeCg = toDouble(nomina.getImporte_cg());
 		if (importeCg > 0) {
 			double cgPercentage = toDouble(nomina.getPrc_cg());
@@ -262,19 +257,23 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		add(contractId, nomina.getFecnew());
 	}
-	
+
 	@Override
 	public void visitNominadf_nomina(Nominadf nominadf, Nomina nomina)
 			throws SQLException {
-		mysqlDB.insertSalary_data(ContextVariable.CGC_BASE.getName(), String.format("%.3f", nominadf.getBase_cg()) , nominadf.getFecini(), nominadf.getFecfin(), salaryId);
-		mysqlDB.insertSalary_data(ContextVariable.CGP_BASE.getName(), String.format("%.3f", nominadf.getBase_acc()) , nominadf.getFecini(), nominadf.getFecfin(), salaryId);
+		mysqlDB.insertSalary_data(ContextVariable.CGC_BASE.getName(),
+				String.format("%.3f", nominadf.getBase_cg()),
+				nominadf.getFecini(), nominadf.getFecfin(), salaryId);
+		mysqlDB.insertSalary_data(ContextVariable.CGP_BASE.getName(),
+				String.format("%.3f", nominadf.getBase_acc()),
+				nominadf.getFecini(), nominadf.getFecfin(), salaryId);
 	}
-	
+
 	@Override
 	public void visitNominaexdf_nomina(Nominaexdf nominaexdf, Nomina nomina)
 			throws SQLException {
 	}
-	
+
 	@Override
 	public void visitRel_nmd_nom(Nominadev nominadev, Nomina nomina)
 			throws SQLException {
@@ -400,6 +399,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				totalPayment, totalDeduction, totalLiquid, 0.00, issueDate,
 				0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, baseIRPF, 0.00,
 				baseIRPF, 0.00, totalIrpf, chargeDate);
+		insert_Fvisione(nominaex);
 
 		String function = String.format(SPANISH, "%.2f",
 				totalPayment != null ? totalPayment : 0);
@@ -584,6 +584,8 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				0.00, // nonHextraBase,
 				cgpBase, moneyIrpfBase, 0.00, // kindIrpfBase,
 				irpfBase, ssContributions, totalIrpf, chargeDate);
+		
+		insert_Fvisione( finiquito.getFvisione(), emprper.getFecalt(), finiquito.getFecbaj() );
 
 		// mysqlDB.insertSalary_payment(salary, type, payment_concept,
 		// description, expression, amount);
@@ -746,4 +748,24 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		return true;
 	}
+	
+	private void insert_Fvisione(Nomina nomina) throws SQLException{
+		insert_Fvisione(nomina.getFvisione(), nomina.getFecini(), nomina.getFecfin());
+		
+	}
+	private void insert_Fvisione(Nominaex nomina) throws SQLException{
+		insert_Fvisione(nomina.getFvisione(), nomina.getFecini(), nomina.getFecfin());
+		
+	}
+
+
+	private void insert_Fvisione(java.sql.Date fVisione, java.sql.Date fecIni, java.sql.Date fecFin) throws SQLException{
+		mysqlDB.insertSalary_data(
+				ContextVariable.ENTERPRISE_SITE_DATE.getName(),
+				fVisione == null ? null : String.format("%1$tY%1$tm%1$td", fVisione),
+				fecIni, fecFin, this.salaryId);
+		
+	}
+
+
 }
