@@ -44,6 +44,8 @@ INSERT IGNORE INTO `account` (`domain`, `code`, `description`, `entryEnabled`, `
 INSERT IGNORE INTO `account` (`domain`, `code`, `description`, `entryEnabled`, `level`, `active`) 
 	SELECT `domain`, '555900000', `description`, 1, 5, 1 FROM `account` WHERE `code` = '5559';
 INSERT IGNORE INTO `app_param` (`domain`, `name`, `value`) SELECT `domain`, 'ACC_DEFAULT_PREPAYMENT_ACC', id FROM `account` WHERE `code` = '555900000';
+INSERT INTO `app_param` (`domain`, `name`, `value`) SELECT `id`, 'ACC_DEFAULT_PREPAYMENT_ACC', NULL FROM `domain` WHERE `parent` IS NOT NULL AND `id` NOT IN (SELECT `domain` FROM `app_param` WHERE `name` = 'ACC_DEFAULT_PREPAYMENT_ACC');
+UPDATE `app_param` SET `value` = (SELECT `id` FROM `account` WHERE `domain` = (SELECT `parent` FROM `domain` WHERE `id` = `app_param`.`domain`) AND `code` = '555900000') WHERE `name` = 'ACC_DEFAULT_PREPAYMENT_ACC' AND `value` IS NULL;
 
 
 UPDATE `db_version` SET `version_number` = '7.24.0';
