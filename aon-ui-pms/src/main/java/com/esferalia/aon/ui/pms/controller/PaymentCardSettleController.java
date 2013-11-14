@@ -680,7 +680,7 @@ public class PaymentCardSettleController {
 			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 			for (AgencyFinance af : getFinanceList()) {
 				Finance finance = (Finance)financeBean.get(af.getFinance().getId());
-				if (finance.getFinanceStatus() == FinanceStatus.PENDING || finance.getFinanceStatus() == FinanceStatus.RETURNED) {
+				if (finance.isPending() || finance.isReturned()) {
 					FinanceBatchDetail fBatchDetail = new FinanceBatchDetail();
 					fBatchDetail.setFinance(finance);
 					fBatchDetail.setFinanceBatch(financeBatch);
