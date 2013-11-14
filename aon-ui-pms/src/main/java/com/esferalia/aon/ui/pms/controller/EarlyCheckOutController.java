@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import static com.code.aon.ui.common.ICommonMessages.PMS_EARLY_CHECK_OUT;
 import static com.code.aon.ui.common.ICommonMessages.PRICE_PATTERN;
 
 import java.text.DecimalFormat;
@@ -398,7 +399,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 			if (validateEarlyCheckOut()) {
 				if (getReservationInvoiceTo().getEarlyCheckOutDate().compareTo(getReservation().getEndDate()) != 0) {
 					getReservationInvoiceTo().setIssueDate(getReservation().getStartDate());
-					getReservationInvoiceTo().setComments("SALIDA ANTICIPADA");
+					getReservationInvoiceTo().setComments(AonUtil.getMessage(PMS_EARLY_CHECK_OUT).toUpperCase());
 					getReservationInvoiceTo().setPenaltyDays(getEarlyCheckOutPenaltyDays());
 					getReservationInvoiceTo().setPenaltyAmount(getEarlyCheckOutPenaltyAmount());
 					getReservationInvoiceTo().setPosShift(PosUtils.getUserPosShift());

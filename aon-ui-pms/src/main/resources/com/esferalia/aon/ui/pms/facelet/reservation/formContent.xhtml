@@ -158,24 +158,30 @@
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ProjectReservation_endDate" value="#{bundle.report_checkout}" />
-	<aon:outputText	value="#{reservation.to.endDate}" styleClass="aon-bold"
-		rendered="#{!reservation.new and !reservation.reservationPermission.reservationDatesEditable}">
-		<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-			timeZone="#{timeZoneController.timeZoneId}" />
-	</aon:outputText>
-	<aon:selectInputDate id="ProjectReservation_endDate" value="#{reservation.to.endDate}" 
-		required="true" rendered="#{reservation.new or reservation.reservationPermission.reservationDatesEditable}"
-		timeZone="#{timeZoneController.timeZone}"
-		popupDateFormat="#{bundle.aon_date_pattern}">
-		<a4j:support ajaxSingle="true" event="oninputchange"
-			actionListener="#{reservation.onEndDateChanged}"
-			reRender="ProjectReservation_nights,ProjectReservation_endDate"
-			focus="ProjectReservation_bookingHolder" />
-		<a4j:support ajaxSingle="true" event="onchanged"
-			actionListener="#{reservation.onEndDateChanged}"
-			reRender="ProjectReservation_nights,ProjectReservation_endDate"
-			focus="ProjectReservation_bookingHolder" />
-	</aon:selectInputDate>
+	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto">
+		<aon:outputText	value="#{reservation.to.endDate}" styleClass="aon-bold"
+			rendered="#{!reservation.new and !reservation.reservationPermission.reservationDatesEditable}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+		<aon:selectInputDate id="ProjectReservation_endDate" value="#{reservation.to.endDate}" 
+			required="true" rendered="#{reservation.new or reservation.reservationPermission.reservationDatesEditable}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}">
+			<a4j:support ajaxSingle="true" event="oninputchange"
+				actionListener="#{reservation.onEndDateChanged}"
+				reRender="ProjectReservation_nights,ProjectReservation_endDate"
+				focus="ProjectReservation_bookingHolder" />
+			<a4j:support ajaxSingle="true" event="onchanged"
+				actionListener="#{reservation.onEndDateChanged}"
+				reRender="ProjectReservation_nights,ProjectReservation_endDate"
+				focus="ProjectReservation_bookingHolder" />
+		</aon:selectInputDate>
+		<aon:div>
+			<aon:outputText value="#{bundle.pms_early_check_out}" styleClass="aon-label-error" 
+				rendered="#{!reservation.new and reservation.earlyCheckOut}" />
+		</aon:div>
+	</aon:panelGrid>
 
 	<aon:outputLabel for="ProjectReservation_endTime" value="#{bundle.pms_checkOut_hour}" 
 		rendered="#{!reservation.new}" />

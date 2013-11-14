@@ -52,6 +52,7 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationDivert;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
@@ -285,6 +286,20 @@ public class ProjectReservationController extends BasicController implements IPm
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+	}
+
+	public boolean isEarlyCheckOut() throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		if (reservation.isInvoiced()) {
+			IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+			Criteria criteria = new Criteria();
+			String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID);
+			criteria.addEqualExpression(alias, reservation.getId());
+			alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE);
+			criteria.addEqualExpression(alias, DateUtils.addDays(reservation.getEndDate(), -1));
+			return (reservationRoomDetailBean.getCount(criteria) == 0);
+		}
+		return false;
 	}
 
 	public List<SelectItem> getReservationTimes() {
@@ -910,13 +925,13 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onModifyInvoice(ActionEvent event) {
 		setInvoiceModel(null);
 		try {
-			if (validateModificationInvoice(getInvoiceToModify())) {
-				Invoice invoice = getInvoiceToModify();
+			Invoice invoice = getInvoiceToModify();
+			if (validateModificationInvoice(invoice)) {
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 				if (DateUtils.isSameDay(invoice.getIssueDate(), new Date()) && isInvoiceInUserPosShift(invoice) && invoice.isAllFinancePending()) {
-					reservationInvoicing.modify(getInvoiceToModify(), getReservationInvoiceTo());
+					reservationInvoicing.modify(invoice, getReservationInvoiceTo());
 				} else {
-					setInvoiceToRectify(getInvoiceToModify());
+					setInvoiceToRectify(invoice);
 					getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
 					getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 					getReservationInvoiceTo().setEarlyCheckOut(true); //Para que no borre los servicios asociados, en caso de Factura de Servicios.
@@ -924,7 +939,7 @@ public class ProjectReservationController extends BasicController implements IPm
 
 					getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 					getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
-					Invoice newInvoice = reservationInvoicing.duplicate(getInvoiceToModify(), reservationInvoiceTo);
+					Invoice newInvoice = reservationInvoicing.duplicate(invoice, reservationInvoiceTo);
 
 					if (!isFinancesModified()) {
 						reservationInvoicing.settle(rectifierInvoice, newInvoice);

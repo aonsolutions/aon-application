@@ -355,7 +355,8 @@ public interface ICommonMessages {
 	String PMS_SERVICES = "pms_services";
 	String PMS_DEPOSITS = "pms_deposits";
 	String PMS_DAMAGES = "pms_damages";	
-	
+	String PMS_EARLY_CHECK_OUT = "pms_early_check_out";	
+
 	String PRODUCT_DOCUMENT_MAX_SIZE_ERROR = "product_document_max_size_error";
 	String PRODUCT_CATALOGUE_DATES_ERROR = "product_catalogue_dates_error";
 	String PRODUCT_DEFINED_FOR_TARIFF_ERROR = "product_defined_for_tariff_error";
