@@ -4,6 +4,8 @@ import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_FONT_COLOR;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_PHONE;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_TITLE;
+import static com.code.aon.common.enumeration.AppParam.AON_HIDE_TRADEMARK;
+import static com.code.aon.common.enumeration.AppParam.AON_HIDE_VERSION;
 import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME;
 import static com.code.aon.ui.common.ICommonConstants.HEADER_LOGO_NAME;
 import static com.code.aon.ui.common.ICommonConstants.LOGIN_LOGO_NAME;
@@ -38,12 +40,18 @@ public class CompanyCustomizeController extends RegistryAttachController {
 	private String supportPhone;
 	
 	private String supportEmail;
+	
+	private boolean hideTrademark;
+	
+	private boolean hideVersion;
 
 	public void onInit( ActionEvent event ) {
 		setTitle( AppParamUtil.getValue(AON_CUSTOMIZE_TITLE) );
 		setColor( AppParamUtil.getValue(AON_CUSTOMIZE_FONT_COLOR) );
 		setSupportPhone( AppParamUtil.getValue(AON_CUSTOMIZE_SUPPORT_PHONE) );
 		setSupportEmail( AppParamUtil.getValue(AON_CUSTOMIZE_SUPPORT_EMAIL) );
+		setHideTrademark( AppParamUtil.getValueAsBoolean(AON_HIDE_TRADEMARK) );
+		setHideVersion( AppParamUtil.getValueAsBoolean(AON_HIDE_VERSION) );
 		onEditSearch(event);
 		onSearch(event);
 	}
@@ -53,6 +61,8 @@ public class CompanyCustomizeController extends RegistryAttachController {
 		AppParamUtil.insertParameter(AON_CUSTOMIZE_FONT_COLOR, getColor());
 		AppParamUtil.insertParameter(AON_CUSTOMIZE_SUPPORT_PHONE, getSupportPhone());
 		AppParamUtil.insertParameter(AON_CUSTOMIZE_SUPPORT_EMAIL, getSupportEmail());
+		AppParamUtil.insertParameter(AON_HIDE_TRADEMARK, isHideTrademark());
+		AppParamUtil.insertParameter(AON_HIDE_VERSION, isHideVersion());
 	}
 	
 	public boolean isShow() {
@@ -90,6 +100,22 @@ public class CompanyCustomizeController extends RegistryAttachController {
 
 	public void setSupportEmail(String suportEmail) {
 		this.supportEmail = suportEmail;
+	}
+	
+	public boolean isHideTrademark() {
+		return hideTrademark;
+	}
+
+	public void setHideTrademark(boolean hideTrademark) {
+		this.hideTrademark = hideTrademark;
+	}
+
+	public boolean isHideVersion() {
+		return hideVersion;
+	}
+
+	public void setHideVersion(boolean hideVersion) {
+		this.hideVersion = hideVersion;
 	}
 
 	@SuppressWarnings("unchecked")

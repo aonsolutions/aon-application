@@ -190,41 +190,45 @@ try {
 										</a>
 									</div>									
 								</div>							
-								<div class="aon-login-info2">	
-									<c:if test="${!customize.hideTrademark}">
-									    <c:if test="${customize.customized}">
-											<span class="aon-outputText">
-												<%=customize.getBundle().getString("aon_powered_by")%>
-											</span>
-									    </c:if>
-										<a target="_blank"
-											href="<%=customize.getBundle().getString("aon_solutions_url")%>">
-											<span class="aon-outputText">
-												<%=customize.getBundle().getString("aon_solutions")%>
-											</span>
-										</a>    
-									    <c:if test="${!customize.customized}">
-											<span class="aon-outputText">
-												<%=customize.getBundle().getString("aon_trademark")%>
-											</span>
-											<span class="aon-footer-company-label">
-												<%=customize.getBundle().getString("aon_esferalia")%> <%=customize.getBundle().getString("aon_networks")%>
-											</span>
+								<c:if test="${!(customize.hideTrademark and customize.hideVersion)}">
+									<div class="aon-login-info2">	
+										<c:if test="${!customize.hideTrademark}">
+										    <c:if test="${customize.customized}">
+												<span class="aon-outputText">
+													<%=customize.getBundle().getString("aon_powered_by")%>
+												</span>
+										    </c:if>
+											<a target="_blank"
+												href="<%=customize.getBundle().getString("aon_solutions_url")%>">
+												<span class="aon-outputText">
+													<%=customize.getBundle().getString("aon_solutions")%>
+												</span>
+											</a>    
+										    <c:if test="${!customize.customized}">
+												<span class="aon-outputText">
+													<%=customize.getBundle().getString("aon_trademark")%>
+												</span>
+												<span class="aon-footer-company-label">
+													<%=customize.getBundle().getString("aon_esferalia")%> <%=customize.getBundle().getString("aon_networks")%>
+												</span>
+											</c:if>
 										</c:if>
-									</c:if>
-									<c:if test="${customize.applicationVersion != null}">
-										<div>
-											<%
-											String value = customize.getBundle().getString("aon_about_version");
-								    		MessageFormat mf = new MessageFormat( value );
-								    		out.print( mf.format(new Object[]{customize.getApplicationVersion()}) ); 
-								    		%>
-							    		</div>
-									</c:if>
-										<div>
-											DB Vers: <%= du.getCurrentVersion() %>	
-							    		</div>
-								</div>
+										<c:if test="${!customize.hideVersion}">
+											<c:if test="${customize.applicationVersion != null}">
+												<div>
+													<%
+													String value = customize.getBundle().getString("aon_about_version");
+										    		MessageFormat mf = new MessageFormat( value );
+										    		out.print( mf.format(new Object[]{customize.getApplicationVersion()}) ); 
+										    		%>
+									    		</div>
+											</c:if>
+											<div>
+												DB Vers: <%= du.getCurrentVersion() %>	
+								    		</div>
+								    	</c:if>
+									</div>
+								</c:if>
 							</div>
 						</form> 
 									

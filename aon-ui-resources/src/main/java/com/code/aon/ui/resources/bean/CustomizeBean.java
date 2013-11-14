@@ -6,6 +6,7 @@ import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_EMA
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_PHONE;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_TITLE;
 import static com.code.aon.common.enumeration.AppParam.AON_HIDE_TRADEMARK;
+import static com.code.aon.common.enumeration.AppParam.AON_HIDE_VERSION;
 import static com.code.aon.ui.common.ICommonMessages.APPLICATION_TITLE;
 import static com.code.aon.ui.common.ICommonMessages.BUNDLE_RESOURCE;
 import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME;
@@ -67,6 +68,8 @@ public class CustomizeBean {
 	private String supportEmail;
 	
 	private boolean hideTrademark;
+	
+	private boolean hideVersion;
 	
 	private String applicationVersion;
 
@@ -206,6 +209,7 @@ public class CustomizeBean {
 		updateSupportEmail(connection);
 		updateFontStyle(connection);
 		updateHideTrademark(connection);
+		updateHideVersion(connection);
 		this.favicon = StringUtils.defaultIfEmpty(getImageRef(connection, FAVICON_NAME), this.favicon);
 		this.loginLogo = StringUtils.defaultIfEmpty(getImageRef(connection, LOGIN_LOGO_NAME), this.loginLogo);
 	}
@@ -250,6 +254,13 @@ public class CustomizeBean {
 		String value = getValue( connection, AON_HIDE_TRADEMARK);
 		if (! StringUtils.isEmpty(value) ) {
 			this.hideTrademark = Boolean.valueOf(value);
+		}
+	}		
+
+	private void updateHideVersion( Connection connection ) {
+		String value = getValue( connection, AON_HIDE_VERSION);
+		if (! StringUtils.isEmpty(value) ) {
+			this.hideVersion = Boolean.valueOf(value);
 		}
 	}		
 	
@@ -299,6 +310,10 @@ public class CustomizeBean {
 
 	public boolean isHideTrademark() {
 		return hideTrademark;
+	}
+	
+	public boolean isHideVersion() {
+		return hideVersion;
 	}
 
 	public boolean isCustomized() {

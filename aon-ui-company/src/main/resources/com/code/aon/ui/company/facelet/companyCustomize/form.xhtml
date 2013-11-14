@@ -48,6 +48,18 @@
 						value="#{bundle.aon_support_email}" />
 					<aon:inputText id="CompanyCustomize_supportEmail" onblur="toLowerCase(this);" 
 						value="#{companyCustomize.supportEmail}" maxlength="64" size="45" />
+						
+					<c:if test="#{aonRole.sysAdmin}">
+						<aon:outputLabel for="CompanyCustomize_hideTrademark"
+							value="#{bundle.aon_hide_trademark}" />					
+						<aon:selectBooleanCheckbox id="CompanyCustomize_hideTrademark"
+							value="#{companyCustomize.hideTrademark}" />
+					
+						<aon:outputLabel for="CompanyCustomize_hideVersion"
+							value="#{bundle.aon_hide_version}" />					
+						<aon:selectBooleanCheckbox id="CompanyCustomize_hideVersion"
+							value="#{companyCustomize.hideVersion}" />
+					</c:if>						
 
 				</aon:panelGrid>
 
