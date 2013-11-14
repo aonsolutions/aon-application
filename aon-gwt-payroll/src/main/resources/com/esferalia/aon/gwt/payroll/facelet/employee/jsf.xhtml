@@ -14,11 +14,11 @@
 			<aon:commandButton id="jsfBonusConceptsButton" reRender="xhtmlPanel"
 				actionListener="#{employeeTree.onBonusConceptsSelected}" />
 			<script type="text/javascript">
-            	<![CDATA[
+            	//<![CDATA[
 					bonusConceptsSelected = function(id){
 						#{rich:element('jsfBonusConceptsButton')}.click();	
 					}
-            	]]>
+            	//]]>
 			</script>
 		</aon:form>
 
@@ -27,11 +27,11 @@
 				reRender="xhtmlPanel"
 				actionListener="#{employeeTree.onPaymentConceptsSelected}" />
 			<script type="text/javascript">
-            	<![CDATA[
+            	//<![CDATA[
 					paymentConceptsSelected = function(id){
 						#{rich:element('jsfPaymentConceptsButton')}.click();	
 					}
-            	]]>
+            	//]]>
 			</script>
 		</aon:form>
 
@@ -40,11 +40,11 @@
 				reRender="xhtmlPanel"
 				actionListener="#{employeeTree.onDeductionConceptsSelected}" />
 			<script type="text/javascript">
-            	<![CDATA[
+            	//<![CDATA[
 					deductionConceptsSelected = function(id){
 						#{rich:element('jsfDeductionConceptsButton')}.click();	
 					}
-            	]]>
+            	//]]>
 			</script>
 		</aon:form>
 
@@ -54,12 +54,12 @@
 			<aon:commandButton id="jsfEnterpriseButton" reRender="xhtmlPanel"
 				actionListener="#{employeeTree.onEnterpriseSelected}" />
 			<script type="text/javascript">
-            	<![CDATA[
+            	//<![CDATA[
 					enterpriseSelected = function(id){
 						#{rich:element('jsfEnterpriseText')}.value = id;
 						#{rich:element('jsfEnterpriseButton')}.click();	
 					}
-            	]]>
+            	//]]>
 			</script>
 		</aon:form>
 
@@ -69,12 +69,12 @@
 			<aon:commandButton id="jsfWorkplaceButton" reRender="xhtmlPanel"
 				actionListener="#{employeeTree.onWorkplaceSelected}" />
 			<script type="text/javascript">
-            	<![CDATA[
+            	//<![CDATA[
 					workplaceSelected = function(id){
 						#{rich:element('jsfWorkplaceText')}.value = id;
 						#{rich:element('jsfWorkplaceButton')}.click();	
 					}
-            	]]>
+            	//]]>
 			</script>
 		</aon:form>
 
@@ -84,12 +84,12 @@
 			<aon:commandButton id="jsfEmployeeButton" reRender="xhtmlPanel"
 				actionListener="#{employeeTree.onEmployeeSelected}" />
 			<script type="text/javascript">
-            	<![CDATA[
+            	//<![CDATA[
 					employeeSelected = function(id){
 						#{rich:element('jsfEmployeeText')}.value = id;
 						#{rich:element('jsfEmployeeButton')}.click();	
 					}
-            	]]>
+            	//]]>
 			</script>
 		</aon:form>
 
@@ -99,12 +99,12 @@
 			<aon:commandButton id="jsfActivityButton" reRender="xhtmlPanel"
 				actionListener="#{employeeTree.onActivitySelected}" />
 			<script type="text/javascript">
-            	<![CDATA[
+            	//<![CDATA[
 					activitySelected = function(id){
 						#{rich:element('jsfActivityText')}.value = id;
 						#{rich:element('jsfActivityButton')}.click();	
 					}
-            	]]>
+            	//]]>
 			</script>
 		</aon:form>
 
@@ -141,9 +141,10 @@
 			</c:if>
 		</aon:div>
 		<script type="text/javascript">
-           	<![CDATA[
+           	//<![CDATA[
 				jsf = #{rich:element('jsf')};
-           	]]>
+           	//]]>
 		</script>
+		
 	</aon:div>
 </ui:composition>
