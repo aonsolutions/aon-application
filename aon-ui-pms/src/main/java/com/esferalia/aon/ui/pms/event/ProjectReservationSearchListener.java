@@ -22,9 +22,11 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 public class ProjectReservationSearchListener extends ControllerSearchListener {
 
 	private Hotel hotel;
+	private String invoiceNumber;
 	private Date creationDateFrom;
 	private Date creationDateTo;
-	private Date insideDate;
+	private Date insideDateFrom;
+	private Date insideDateTo;
 	private Customer agency;
 	private Seller seller;
 	private ReservationCheckStatus[] reservationCheckStatuses;
@@ -38,6 +40,14 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
+	}
+
+	public String getInvoiceNumber() {
+		return invoiceNumber;
+	}
+
+	public void setInvoiceNumber(String invoiceNumber) {
+		this.invoiceNumber = invoiceNumber;
 	}
 
 	public Date getCreationDateFrom() {
@@ -56,12 +66,20 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		this.creationDateTo = creationDateTo;
 	}
 
-	public Date getInsideDate() {
-		return insideDate;
+	public Date getInsideDateFrom() {
+		return insideDateFrom;
 	}
 
-	public void setInsideDate(Date insideDate) {
-		this.insideDate = insideDate;
+	public void setInsideDateFrom(Date insideDateFrom) {
+		this.insideDateFrom = insideDateFrom;
+	}
+
+	public Date getInsideDateTo() {
+		return insideDateTo;
+	}
+
+	public void setInsideDateTo(Date insideDateTo) {
+		this.insideDateTo = insideDateTo;
 	}
 
 	public Customer getAgency() {
@@ -115,9 +133,11 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
+		setInvoiceNumber(null);
 		setCreationDateFrom(null);
 		setCreationDateTo(null);
-		setInsideDate(null);
+		setInsideDateFrom(null);
+		setInsideDateTo(null);
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
 		setReservationCheckStatuses(null);
@@ -131,16 +151,20 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		if (getHotel() != null && getHotel().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());			
 		}
+		if (StringUtils.isNotEmpty(getInvoiceNumber())) {
+			criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.invoices.referenceCode"), getInvoiceNumber());
+		}
 		if (getCreationDateFrom() != null) {
 			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_CREATION_DATE), getCreationDateFrom());
 		}
 		if (getCreationDateTo() != null) {
-			int millisFullDay = (int)(DateUtils.MILLIS_PER_DAY - DateUtils.MILLIS_PER_SECOND);
-			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_CREATION_DATE), DateUtils.addMilliseconds(getCreationDateTo(), millisFullDay));
+			Date creationDateTo = DateUtils.addMilliseconds(getCreationDateTo(), (int)(DateUtils.MILLIS_PER_DAY - DateUtils.MILLIS_PER_SECOND));
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_CREATION_DATE), creationDateTo);
 		}
-		if (getInsideDate() != null) {
-			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), getInsideDate());			
-			criteria.addGreaterThanExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), getInsideDate());			
+		if (getInsideDateFrom() != null) {
+			Date insideDateTo = (getInsideDateTo() != null) ? getInsideDateTo() : getInsideDateFrom();
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), insideDateTo);			
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), getInsideDateFrom());			
 		}
 		if (getAgency() != null && getAgency().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());			

@@ -23,38 +23,11 @@
 		valueChangeListener="#{controller.addExpression}"
 		size="20" />
 
-	<aon:outputLabel for="ProjectReservation_crsCode" 
-		value="#{bundle.aon_id} #{bundle.pms_crs}" />
-	<aon:inputText id="ProjectReservation_crsCode"
-		valueChangeListener="#{controller.addExpression}"
-		size="20" />
-
 	<aon:outputLabel for="ProjectReservation_code" 
 		value="#{bundle.report_reservation_code}" />
 	<aon:inputText id="ProjectReservation_code"
 		valueChangeListener="#{controller.addExpression}"
 		size="20" />
-
-	<aon:outputLabel value="#{bundle.aon_invoice_number}" />
-	<aon:inputText id="ProjectReservation_invoices_referenceCode"
-		valueChangeListener="#{controller.addEqualExpression}"
-		size="20" maxlength="25" />
-
-	<aon:outputLabel value="#{bundle.registry_rd_creation_date}" />
-	<aon:div>
-		<aon:outputLabel for="ProjectReservation_creationDate-From"
-			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-		<aon:selectInputDate id="ProjectReservation_creationDate-From"
-			value="#{searchController.creationDateFrom}"
-			timeZone="#{timeZoneController.timeZone}"
-			popupDateFormat="#{bundle.aon_date_pattern}"/>
-		<aon:outputLabel for="ProjectReservation_creationDate-To"
-			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-		<aon:selectInputDate id="ProjectReservation_creationDate-To"
-			value="#{searchController.creationDateTo}"
-			timeZone="#{timeZoneController.timeZone}"
-			popupDateFormat="#{bundle.aon_date_pattern}"/>
-	</aon:div>
 
 	<aon:outputLabel value="#{bundle.report_checkin}" />
 	<aon:div>
@@ -88,19 +61,6 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 
-	<aon:outputLabel for="ProjectReservation_insideDate" 
-		value="#{bundle.pms_reservation_insideDate}" />
-	<aon:selectInputDate id="ProjectReservation_insideDate"
-		value="#{searchController.insideDate}"
-		timeZone="#{timeZoneController.timeZone}"
-		popupDateFormat="#{bundle.aon_date_pattern}"/>
-	
-	<aon:outputLabel for="ProjectReservation_remarks" 
-		value="#{bundle.aon_remark}" />
-	<aon:inputText id="ProjectReservation_remarks"
-		valueChangeListener="#{controller.addExpression}"
-		size="64" />
-
 	<aon:outputLabel for="ProjectReservation_agency" 
 		value="#{bundle.report_agency}" />
 	<aon:selectOneMenu id="ProjectReservation_agency" 
@@ -108,15 +68,6 @@
 		styleClass="aon-width-350">
 		<f:selectItem itemLabel="-" value="#{null}" />		
 		<f:selectItems value="#{pmsCollections.agencies}" />
-	</aon:selectOneMenu>
-
-	<aon:outputLabel for="ProjectReservation_seller" 
-		value="#{bundle.pms_seller}" />
-	<aon:selectOneMenu id="ProjectReservation_seller" 
-		value="#{searchController.seller}"
-		styleClass="aon-width-350">
-		<f:selectItem itemLabel="-" value="#{null}" />		
-		<f:selectItems value="#{pmsCollections.sellers}" />
 	</aon:selectOneMenu>
 
 	<aon:outputLabel value="#{bundle.report_guest}" />

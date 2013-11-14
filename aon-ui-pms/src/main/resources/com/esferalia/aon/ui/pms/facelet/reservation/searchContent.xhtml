@@ -16,6 +16,71 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>					
 
+		<aon:panelCollapsible expanded="false" 
+			label="#{bundle.admin_advanced_search}">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+
+				<aon:outputLabel for="ProjectReservation_crsCode" 
+					value="#{bundle.aon_id} #{bundle.pms_crs}" />
+				<aon:inputText id="ProjectReservation_crsCode"
+					valueChangeListener="#{controller.addExpression}"
+					size="20" />
+
+				<aon:outputLabel value="#{bundle.aon_invoice_number}" />
+				<aon:inputText id="ProjectReservation_invoices_referenceCode"
+					value="#{searchController.invoiceNumber}"
+					size="20" maxlength="25" />
+
+				<aon:outputLabel value="#{bundle.registry_rd_creation_date}" />
+				<aon:div>
+					<aon:outputLabel for="ProjectReservation_creationDate-From"
+						styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+					<aon:selectInputDate id="ProjectReservation_creationDate-From"
+						value="#{searchController.creationDateFrom}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					<aon:outputLabel for="ProjectReservation_creationDate-To"
+						styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+					<aon:selectInputDate id="ProjectReservation_creationDate-To"
+						value="#{searchController.creationDateTo}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</aon:div>
+
+				<aon:outputLabel value="#{bundle.pms_reservation_insideDate}" />
+				<aon:div>
+					<aon:outputLabel for="ProjectReservation_insideDate-From"
+						styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+					<aon:selectInputDate id="ProjectReservation_insideDate-From"
+						value="#{searchController.insideDateFrom}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					<aon:outputLabel for="ProjectReservation_insideDate-To"
+						styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+					<aon:selectInputDate id="ProjectReservation_insideDate-To"
+						value="#{searchController.insideDateTo}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</aon:div>
+	
+				<aon:outputLabel for="ProjectReservation_seller" 
+					value="#{bundle.pms_seller}" />
+				<aon:selectOneMenu id="ProjectReservation_seller" 
+					value="#{searchController.seller}"
+					styleClass="aon-width-350">
+					<f:selectItem itemLabel="-" value="#{null}" />		
+					<f:selectItems value="#{pmsCollections.sellers}" />
+				</aon:selectOneMenu>
+
+				<aon:outputLabel for="ProjectReservation_remarks" 
+					value="#{bundle.aon_remark}" />
+				<aon:inputText id="ProjectReservation_remarks"
+					valueChangeListener="#{controller.addExpression}"
+					size="64" />
+
+			</aon:panelGrid>
+		</aon:panelCollapsible>
+
 	</aon:div>
 
 </ui:composition>
