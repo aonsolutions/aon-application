@@ -167,6 +167,7 @@
 	<c:if test="#{!edit}">
 		<ui:include src="readonly.xhtml">
 			<ui:param name="form" value="workplaceForm" />
+			<ui:param name="hide" value="/WorkPlace_active|Calendar_id-PayrollWorkPlace|PayrollWorkPlace_enterpriseActivity/g" />
 		</ui:include>
 	</c:if>
 

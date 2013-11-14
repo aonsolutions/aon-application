@@ -50,6 +50,20 @@
 
 					<aon:div styleClass="aon-group">
 						<aon:div styleClass="aon-group-title">
+							<aon:outputText value="#{bundle.payroll_person_data}" />
+						</aon:div>
+						<aon:div styleClass="aon-group-body">
+							<aon:div styleClass="aon-group-body-internal">
+								<ui:include
+									src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml">
+									<ui:param name="controller" value="#{person}" />
+								</ui:include>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+
+					<aon:div styleClass="aon-group">
+						<aon:div styleClass="aon-group-title">
 							<aon:outputText value="#{bundle.payroll_contract_data}" />
 						</aon:div>
 						<aon:div styleClass="aon-group-body">
@@ -62,19 +76,6 @@
 						</aon:div>
 					</aon:div>
 
-					<aon:div styleClass="aon-group">
-						<aon:div styleClass="aon-group-title">
-							<aon:outputText value="#{bundle.payroll_person_data}" />
-						</aon:div>
-						<aon:div styleClass="aon-group-body">
-							<aon:div styleClass="aon-group-body-internal">
-								<ui:include
-									src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml">
-									<ui:param name="controller" value="#{person}" />
-								</ui:include>
-							</aon:div>
-						</aon:div>
-					</aon:div>
 
 				</aon:panelGrid>
 			</aon:div>
@@ -90,6 +91,7 @@
 	<c:if test="#{!edit}">
 		<ui:include src="readonly.xhtml">
 			<ui:param name="form" value="contractForm" />
+			<ui:param name="hide" value="/enterpriseActivities|Contract_contractModel|Agreement_name|quote_group|occupationType|CNO_id|Person_id|Person_alias|Person_gender|Person_address_municipality|Person_telephone|Person_cellular|Person_email|RegistryPayMethod_payment|agreementLevelCategory-content/g" />
 		</ui:include>
 	</c:if>
 

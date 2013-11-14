@@ -1,4 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core"
@@ -6,13 +7,119 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
+	<c:if test="#{not empty hide}">
+		<script type="text/javascript">
+			//<![CDATA[
+				function hideEl(el) {
+					try {
+						if( !el.id.match(#{hide}) ) 
+							return false;
+	
+						for( var parent = el.parentNode; parent; parent = parent.parentNode){
+							
+							if ( !parent.tagName.match(/TR/i) )
+								continue;
+	
+							parent.style.display = 'none';
+							return true;
+						}
+						
+						return false;
+					} catch ( e ){
+						return false;
+					}
+				}
+				function hideLabel(label) {
+					try {
+						
+						if( !label.htmlFor.match(#{hide}) ) 
+							return false;
+						
+						
+						for( var parent = label.parentNode; parent; parent = parent.parentNode){
+							
+							if ( !parent.tagName.match(/TR/i) )
+								continue;
+	
+							parent.style.display = 'none';
+							return true;
+						}
+						
+						return false;
+					} catch ( e ){
+						alert(e);
+						return false;
+					}
+				}
+				function hideTable(table) {
+					try {
+						
+						if( !table.id.match(#{hide}) && table.className.indexOf('rich-fileupload-toolbar-decor')<0 ) 
+							return false;
+						
+						
+						for( var parent = table.parentNode; parent; parent = parent.parentNode){
+							
+							if ( !parent.tagName.match(/TR/i) )
+								continue;
+	
+							parent.style.display = 'none';
+							return true;
+						}
+						
+						return false;
+					} catch ( e ){
+						alert(e);
+						return false;
+					}
+				}
+			//]]>			
+		</script>
+	</c:if>
+	<c:if test="#{empty hide}">
+		<script type="text/javascript">
+			//<![CDATA[
+				function hideEl(el) {
+					return false;
+				}
+				function hideLabel(label) {
+					return false;
+				}
+				function hideTable(table) {
+					if ( table.className.indexOf('rich-fileupload-toolbar-decor')<0 )
+						return false;
+					
+					table.parentNode.removeChild(table)
+					return true;
+				}
+			//]]>
+		</script>
+	</c:if>
+
 	<script type="text/javascript">
             	//<![CDATA[
-            	    var form = #{rich:element(form)};
+             	    
+            	           
+					var form = #{rich:element(form)};
+
+					var labels = form.getElementsByTagName('label');
+					for ( var i = 0; i < labels.length; i++ ){
+						hideLabel(labels[i]); 
+					}
+
+					var tables = form.getElementsByTagName('table');
+					for ( var i = 0; i < tables.length; i++ ) {
+						hideTable(tables[i]); 
+					}
+
 					for ( var i = 0; i < form.length; i++ ){
+						
 						var element = form.elements[i];
 						
-						element.disabled = true;
+		            	if (hideEl(element)) 
+		            		continue;
+
+		            	element.disabled = true;
 						element.style.color = 'inherit';
 						element.style.borderColor = 'transparent';
 						element.style.backgroundColor = 'transparent';
@@ -44,18 +151,15 @@
 						}
 					}
 
+					
 					var imgs = form.getElementsByTagName('img');
 					for ( var i = 0; i < imgs.length; i++ ) {
 						if ( imgs[i].className.indexOf('rich-calendar-button') >= 0 )
 							imgs[i].style.display = 'none';
 					}
 					
-					var tables = form.getElementsByTagName('table');
-					for ( var i = 0; i < tables.length; i++ ) {
-						if ( tables[i].className.indexOf('rich-fileupload-toolbar-decor')>=0 )
-							tables[i].style.display = 'none';
-					}
 					
+
 					form.style.display='';
             	//]]>
 	</script>
