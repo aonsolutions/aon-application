@@ -3,30 +3,20 @@ package com.esferalia.aon.ui.payroll.event.contract;
 
 import java.util.Date;
 
-import javax.faces.event.AbortProcessingException;
-
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.person.Person;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
@@ -67,8 +57,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		ContractController controller = (ContractController) this.getController();
 		ContractUtils utils = ContractUtils.getInstance();
 		utils.removeContractData((Contract) controller.getTo(), controller.getParams());
-		
-		removeContractLines(event);
+		utils.removeContractLines(event);
 	}
 	
 	@Override
@@ -169,92 +158,6 @@ public class ContractControllerListener extends ControllerAdapter{
 	private void updateAdditionalClauses() {
 		ContractClausesController controller = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
 		controller.accept();
-	}
-	
-	private void removeContractLines(ControllerEvent event) throws ControllerListenerException {
-		
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName();
-		Session session = HibernateUtil.getSession(sessionName);
-		try {
-			HibernateUtil.setBeginTransaction(false);
-			HibernateUtil.setCloseSession(false);
-			HibernateUtil.beginTransaction(sessionName);
-
-			removeContrataAttach(event);
-			removeContractPayment(event);
-			removeContractDeduction(event);
-			removeContractBonus(event);
-			removeContractEmbargo(event);
-			removeContractAttach(event);
-			removeContractIrpfdata(event);
-			removeContractLeave(event);
-			
-			HibernateUtil.commitTransaction(sessionName);
-		} catch (Exception e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			try {
-				HibernateUtil.rollbackTransaction(sessionName);
-			} catch (DAOException daoe) {
-				String msg = "Unable to rollback transaction!";
-				LOGGER.error(msg, e);
-			}
-			String msg = "Error durante la carga de datos. ";
-			LOGGER.error(msg, e);
-			throw new AbortProcessingException(msg  + e.getMessage());
-		} finally {
-			HibernateUtil.closeSession(sessionName);
-			HibernateUtil.setCloseSession(mustCloseSession);
-			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-	    }
-	}
-	
-	private void removeContrataAttach(ControllerEvent event) throws ControllerListenerException {
-		ContractController controller = (ContractController) event.getController();
-		Contract contract = (Contract) controller.getTo();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
-			for(ITransferObject to: bean.getList(criteria)){
-				ContractAttachment attach = (ContractAttachment) to;
-				bean.remove(attach);
-				
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible eliminar los datos obtenidos del SEPE del contrato. (" +e.getMessage() + ")";
-			LOGGER.error(msg);
-			throw new ControllerListenerException(msg,e);
-		}
-	}
-	
-	private void removeContractPayment(ControllerEvent event) throws ControllerListenerException {
-		// TODO
-	}
-	private void removeContractDeduction(ControllerEvent event) throws ControllerListenerException {
-		// TODO
-		
-	}
-	private void removeContractBonus(ControllerEvent event) throws ControllerListenerException {
-		// TODO
-		
-	}
-	private void removeContractEmbargo(ControllerEvent event) throws ControllerListenerException {
-		// TODO
-		
-	}
-	private void removeContractAttach(ControllerEvent event) throws ControllerListenerException {
-		// TODO
-		
-	}
-	private void removeContractIrpfdata(ControllerEvent event) throws ControllerListenerException {
-		// TODO
-		
-	}
-	private void removeContractLeave(ControllerEvent event) throws ControllerListenerException {
-		// TODO
-		
 	}
 	
 }

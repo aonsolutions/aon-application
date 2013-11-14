@@ -8,23 +8,35 @@ import java.util.Map;
 import javax.faces.event.AbortProcessingException;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.ContractDeduction;
+import com.esferalia.aon.payroll.ContractEmbargo;
+import com.esferalia.aon.payroll.ContractLeave;
+import com.esferalia.aon.payroll.ContractLeaveDetail;
+import com.esferalia.aon.payroll.ContractPayment;
+import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.TrainingCourse;
@@ -32,15 +44,17 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractParams;
 
 
 public class ContractUtils {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContractUtils.class.getName());
+	
 	private static ContractUtils instance;
 	
 	private ContractUtils(){
-
 	}
 	
 	public static ContractUtils getInstance(){
@@ -50,6 +64,110 @@ public class ContractUtils {
 		return instance;
 	}
 	
+	public void removeContractLines(ControllerEvent event) throws ControllerListenerException {
+		ContractController controller = (ContractController) event.getController();
+		Contract contract = (Contract) controller.getTo();
+		
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
+
+			removeContrataAttach(contract);
+			removeContractPayment(contract);
+			removeContractDeduction(contract);
+			removeContractBonus(contract);
+			removeContractEmbargo(contract);
+			removeContractIrpfdata(contract);
+			removeContractLeave(contract);
+			
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
+			String msg = "Error durante el borrado de datos. ";
+			throw new AbortProcessingException(msg  + e.getMessage());
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+	    }
+	}
+	
+	private void removeContrataAttach(Contract contract) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
+		for(ITransferObject to: bean.getList(criteria)){
+			bean.remove(to);
+		}
+	}
+	
+	private void removeContractPayment(Contract contract) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
+		for(ITransferObject to: bean.getList(criteria)){
+			bean.remove(to);
+		}
+	}
+	private void removeContractDeduction(Contract contract) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ContractDeduction.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_CONTRACT_ID), contract.getId());
+		for(ITransferObject to: bean.getList(criteria)){
+			bean.remove(to);
+		}
+	}
+	private void removeContractBonus(Contract contract) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ContractBonus.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_CONTRACT_ID), contract.getId());
+		for(ITransferObject to: bean.getList(criteria)){
+			bean.remove(to);
+		}
+	}
+	private void removeContractEmbargo(Contract contract) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ContractEmbargo.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_EMBARGO_CONTRACT_ID), contract.getId());
+		for(ITransferObject to: bean.getList(criteria)){
+			bean.remove(to);
+		}
+	}
+	private void removeContractIrpfdata(Contract contract) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(IrpfData.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.IRPF_DATA_CONTRACT_ID), contract.getId());
+		for(ITransferObject to: bean.getList(criteria)){
+			bean.remove(to);
+		}
+	}
+	private void removeContractLeave(Contract contract) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ContractLeave.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_CONTRACT_ID), contract.getId());
+		for(ITransferObject to: bean.getList(criteria)){
+			removeLeaveDetails((ContractLeave)to);
+			bean.remove(to);
+		}
+	}
+	private void removeLeaveDetails(ContractLeave contractLeave) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ContractLeaveDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), contractLeave.getId());
+		for(ITransferObject to: bean.getList(criteria)){
+			bean.remove(to);
+		}
+	}
 	
 	public void insertContractData(Contract contract, ContractParams params) {
 		IManagerBean bean;
@@ -735,4 +853,6 @@ public class ContractUtils {
 		}
 		return map;
 	}
+	
+	
 }

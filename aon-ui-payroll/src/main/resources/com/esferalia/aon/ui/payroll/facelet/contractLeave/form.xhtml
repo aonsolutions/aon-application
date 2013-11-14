@@ -155,7 +155,7 @@
 							value="#{contractLeave.to.startDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" >
-							<a4j:support event="onchanged" reRender="ContractLeave_bases_div"
+							<a4j:support event="onchanged" reRender="ContractLeave_bases_div" ajaxSingle="#{true}"
 								actionListener="#{contractLeave.onStartDateChange}" />
 						</aon:selectInputDate>
 						

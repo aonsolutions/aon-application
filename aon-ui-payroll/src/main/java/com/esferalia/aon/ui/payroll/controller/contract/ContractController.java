@@ -61,6 +61,7 @@ import com.esferalia.aon.payroll.ContrataBatchDetail;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.LeaveBatch;
+import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.TrainingCenter;
@@ -208,15 +209,14 @@ public class ContractController extends BasicController {
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRATA_BATCH_DETAIL_CONTRACT_ID), ((Contract)this.getTo()).getId());
 			if (bean.getCount(criteria)>0) return false;
 			// LEAVE BATCH
-			bean = BeanManager.getManagerBean(LeaveBatch.class);
+			bean = BeanManager.getManagerBean(LeaveBatchDetail.class);
 			criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.LEAVE_BATCH_DETAIL_CONTRACT_LEAVE_DETAIL_ID), ((Contract)this.getTo()).getId());
 			criteria.addEqualExpression("LeaveBatchDetail.contractLeaveDetail.contractLeave.contract.id", ((Contract)this.getTo()).getId());
 			if (bean.getCount(criteria)>0) return false;
 		} catch (ManagerBeanException e) {
 			return false;
 		}
-		return false;
+		return true;
 	}
 	
 	public boolean isEndDateRequired(){
