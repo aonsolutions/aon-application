@@ -3,6 +3,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<import value="com.esferalia.aon.payroll.enumeration.ContextVariable"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.esferalia.aon.salary.enumeration.PaymentType"/>
 	<import value="com.code.aon.registry.enumeration.AddressType"/>
@@ -279,7 +280,7 @@
 					<textField>
 						<reportElement uuid="2a51b2e1-7515-4e13-b213-5b4aa695f1bf" style="label" x="16" y="40" width="233" height="12"/>
 						<textElement/>
-						<textFieldExpression><![CDATA[$F{salary}.getCategory()]]></textFieldExpression>
+						<textFieldExpression><![CDATA[ReportUtils.ifEmpty( $F{salary}.getSalaryData(ContextVariable.PROFESSION.getName()) , $F{salary}.getCategory());]]></textFieldExpression>
 					</textField>
 					<staticText>
 						<reportElement uuid="03f9e7f6-bd92-493d-98b8-671996aa4a65" style="label" x="2" y="52" width="110" height="12"/>
