@@ -19,4 +19,12 @@ public interface IGroupWareConstants {
 	String TASK_SEARCH_CONTROLLER_NAME = "taskSearchControllerListener";
 	String DAILY_TRACKING_CONTROLLER_NAME = "dailyTracking";
 
+	// ************************************************************
+	// CONFIGURATION
+	// ************************************************************
+
+	String SHOW_PENDING = "showPending";	
+	
+	String SHOW_LIST = "showList";
+	
 }

@@ -41,6 +41,20 @@ public interface ICommonConstants {
 
 	/** The hide menu bar. */
 	String HIDE_MENU_BAR = "hideMenuBar";
+	
+	String HIDE_MENU_HOME = "hideMenuHome";
+	
+	String HIDE_MENU_FAVORITE = "hideMenuFavorite";
+	
+	String HIDE_MENU_ADVANCED_MODE = "hideMenuAdvancedMode";
+	
+	String HIDE_MENU_CHOOSE_LANGUAGE = "hideMenuChooseLanguage";
+	
+	String HIDE_MENU_WEB_MAP = "hideMenuWebMap";
+	
+	String HIDE_MENU_HELP = "hideMenuHelp";
+	
+	String HIDE_MENU_ABOUT = "hideMenuAbout";
 
 	/** Logout action listener. */
 	String ON_LOGOUT = "onLogout";

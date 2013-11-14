@@ -135,11 +135,13 @@
 	
 	<ui:define name="beforeWebMapMenuContent">
 		<aon:menuItem id="favorites" action="actionFavorite"
+			rendered="#{!aonConfiguration.properties.hideMenuFavorite}"
 			iconClass="aon-icon-favorite"
 			actionListener="#{actionFavorite.onInit}"
 			value="#{bundle.aon_favorites_management}" />
 		<c:if test="#{!aonRole.sysAdmin}">
 			<aon:menuItem id="advancedMode" action="advancedMode"
+				rendered="#{!aonConfiguration.properties.hideMenuAdvancedMode}"
 				value="#{bundle.admin_advanced_mode}" />
 		</c:if>
 		<aon:menuItem id="changePassword" action="changePassword_form"

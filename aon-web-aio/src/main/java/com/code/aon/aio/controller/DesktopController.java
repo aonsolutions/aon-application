@@ -18,6 +18,8 @@ import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_COURSE
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_LOAN;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_PERSON;
 import static com.code.aon.ui.groupware.controller.IGroupWareConstants.NOTE_CONTROLLER_NAME;
+import static com.code.aon.ui.groupware.controller.IGroupWareConstants.SHOW_LIST;
+import static com.code.aon.ui.groupware.controller.IGroupWareConstants.SHOW_PENDING;
 import static com.code.aon.ui.product.controller.IItemConstants.SHOW_SALES_PRICE;
 import static com.code.aon.ui.tas.controller.ITasConstants.SHOW_TAS_DATA;
 
@@ -34,6 +36,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -73,6 +77,7 @@ import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.LocaleElement;
 import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -83,6 +88,7 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.groupware.controller.IGroupWareConstants;
 import com.code.aon.ui.groupware.controller.NoteController;
 import com.code.aon.ui.product.controller.IItemConstants;
 import com.code.aon.ui.purchase.controller.IPurchaseConstants;
@@ -129,8 +135,8 @@ public class DesktopController {
 		}
 		initUser();
 		initSupport();
+		initPortal(ds);
     }
-
     
     public ListDataModel getRecentNoteModel() {
     	return this.recentNoteModel;
@@ -523,5 +529,24 @@ public class DesktopController {
 		this.homepagOption = null;
 		return template;
 	}		
+
+	private void initPortal( DomainSwitcher ds ) {
+		if ( ds.isChildDomain() && (this.homepagOption != null) ) {
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			List<Module> modules = adc.getVisibleModules();
+			if ( (modules.size() == 1) && (modules.get(0) == Module.PAYROLL_PORTAL) ) {
+				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, SHOW_PENDING, Boolean.FALSE);
+				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, SHOW_LIST, Boolean.FALSE);
+				Map<String, Object> properties = AonUtil.getConfigurationController().getProperties();
+				properties.put( ICommonConstants.HIDE_MENU_HOME, Boolean.TRUE );
+				properties.put( ICommonConstants.HIDE_MENU_FAVORITE, Boolean.TRUE );
+				properties.put( ICommonConstants.HIDE_MENU_CHOOSE_LANGUAGE, Boolean.TRUE );
+				properties.put( ICommonConstants.HIDE_MENU_ADVANCED_MODE, Boolean.TRUE );
+				properties.put( ICommonConstants.HIDE_MENU_WEB_MAP, Boolean.TRUE );
+				properties.put( ICommonConstants.HIDE_MENU_HELP, Boolean.TRUE );
+				properties.put( ICommonConstants.HIDE_MENU_ABOUT, Boolean.TRUE );
+			}
+		}
+	}
 	
 }

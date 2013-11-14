@@ -629,6 +629,19 @@ public class ActionDeniedController {
         return actionList;
 	}	
 	
+	public List<Module> getVisibleModules() {
+		List<Module> list = new ArrayList<Module>();
+		for( ApplicationCategory category : getOptionController().getCategories() ) {
+			if (category.isRendered() && !deniedModulesMap.containsValue(category) ) {
+				Module module = Module.get(category.getAlias());
+				if ( module != null ) {
+					list.add(module);	
+				}
+			}
+		}
+		return list;		
+	}
+	
 	public class SkipManagedBeanMap extends AbstractMap<String,Boolean> {
 		
 		@Override
