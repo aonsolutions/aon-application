@@ -66,8 +66,16 @@
 						
 					<aon:outputLabel for="Template_width"
 						value="#{bundle.marketing_newsletter_width}" />
-					<aon:inputText id="Template_width" 
-						value="#{marketingTemplate.to.width}" size="16" maxlength="16" />																		
+					<aon:div>
+						<aon:inputText id="Template_width" 
+							value="#{marketingTemplate.width}" size="10" maxlength="14" />
+						<aon:div layout="inline" styleClass="aon-margin-left">							
+							<aon:selectOneMenu id="Template_cssUnit"
+								value="#{marketingTemplate.cssUnit}">
+								<f:selectItems value="#{commonCollections.cssUnits}" />
+							</aon:selectOneMenu>
+						</aon:div>
+					</aon:div>																		
 						
 					<aon:outputLabel for="Template_backgroundColor"
 						value="#{bundle.marketing_newsletter_backgroundColor}" />

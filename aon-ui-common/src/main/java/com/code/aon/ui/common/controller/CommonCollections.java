@@ -11,6 +11,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.enumeration.CSSUnit;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
@@ -35,6 +36,7 @@ public class CommonCollections {
 	private List<SelectItem> mimeTypes;
 	private List<SelectItem> weekDays;
 	private List<SelectItem> pageLimits;
+	private List<SelectItem> cssUnits;
 	
 	/**
      * Get year months.
@@ -191,5 +193,18 @@ public class CommonCollections {
         }
         return pageLimits;
 	}
+
+	public List<SelectItem> getCssUnits() {
+		if ( cssUnits == null ) {
+			Locale locale = AonUtil.getCurrentLocale();
+			cssUnits = new LinkedList<SelectItem>();
+			for( CSSUnit cssUnit : CSSUnit.values() ) {
+				String name = cssUnit.getName(locale);
+				SelectItem item = new SelectItem(cssUnit, name);
+				cssUnits.add(item);			
+			}
+		}
+		return cssUnits;
+	}	
 	
 }

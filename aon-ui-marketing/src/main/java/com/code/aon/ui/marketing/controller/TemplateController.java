@@ -14,6 +14,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.CSSUnit;
 import com.code.aon.marketing.Template;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
@@ -27,6 +28,10 @@ import com.esferalia.aon.entity.IEntityAlias;
  * Controller used in the offer maintenance.
  */
 public class TemplateController extends BasicController {
+	
+	private Double width;
+	
+	private CSSUnit cssUnit;
 	
 	public void onSendEmail( ActionEvent event ) {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
@@ -130,6 +135,22 @@ public class TemplateController extends BasicController {
 	public void onClearTitleColor( ActionEvent event ) {
 		Template template = (Template) getTo();
 		template.setTitleColor(null);
+	}
+
+	public Double getWidth() {
+		return width;
+	}
+
+	public void setWidth(Double width) {
+		this.width = width;
+	}
+
+	public CSSUnit getCssUnit() {
+		return cssUnit;
+	}
+
+	public void setCssUnit(CSSUnit cssUnit) {
+		this.cssUnit = cssUnit;
 	}
 	
 }
