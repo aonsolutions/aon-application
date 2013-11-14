@@ -27,6 +27,7 @@ import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.Tax;
+import com.code.aon.finance.Invoice;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.IProject;
@@ -49,6 +50,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private double vatPercent;
 	private Set<ProjectReservationGuest> guests = new HashSet<ProjectReservationGuest>();
 	private Set<ProjectReservationRoom> rooms = new HashSet<ProjectReservationRoom>();
+	private Set<Invoice> invoices = new HashSet<Invoice>();
 
 	public ProjectReservation() {
 		setCheckStatus(ReservationCheckStatus.NO_CHECK);
@@ -88,6 +90,15 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setRooms(Set<ProjectReservationRoom> rooms) {
 		this.rooms = rooms;
+	}
+
+	@OneToMany(mappedBy = "project")
+	@OrderBy()
+	public Set<Invoice> getInvoices() {
+		return this.invoices;
+	}
+	public void setInvoices(Set<Invoice> invoices) {
+		this.invoices = invoices;
 	}
 
 	@Transient
