@@ -19,6 +19,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.file.format.output.FileOutput;
@@ -39,6 +40,7 @@ import com.esferalia.aon.ui.sepe.controller.CertificadosController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.batch.Certifica2ListController.RemesableContract;
 import com.esferalia.aon.ui.sepe.file.CertificadosWriter;
+import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class Certifica2BatchController extends BasicController {
 
@@ -91,6 +93,7 @@ public class Certifica2BatchController extends BasicController {
         listController.getCheckHandler().clearCheckedList();
         listController.getRemesableContracts().clear();
         loadDetails();
+        updateBatchEnterprise();
         onSearchContracts(event);
 	}
 	
@@ -119,6 +122,7 @@ public class Certifica2BatchController extends BasicController {
         }
         certifica2BatchDetailController.getCheckHandler().clearCheckedList();
         loadDetails();
+        removeBatchEnterprise();
         onSearchContracts(event);
     }
 	
@@ -126,19 +130,55 @@ public class Certifica2BatchController extends BasicController {
         LinesController batchDetailController = (LinesController)FormUtil.getController(ISepeConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
         batchDetailController.onSearch(null);
     }
+
+	private void updateBatchEnterprise() {
+		Certifica2Batch batch = (Certifica2Batch) this.getTo();
+		SEPEUtils utils = new SEPEUtils();
+		if(batch!=null && (batch.getEnterprise()==null || batch.getEnterprise().getId()==null || batch.getEnterprise().equals(utils.getCurrentDomainEnterprise()))){
+			try {
+				LinesController batchDetailController = (LinesController)FormUtil.getController(ISepeConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
+				if(batchDetailController.getRowCount()>0){
+					batch.setEnterprise(((Certifica2BatchDetail)batchDetailController.getWrappedList().get(0)).getContract().getWorkPlace().getEnterprise());
+					this.accept(null);
+				}
+			} catch (ManagerBeanException e) {
+				AonUtil.addWarningMessage("No se ha podido actualizar la empresa del certificado.");
+			}
+		}
+	}
+	
+	private void removeBatchEnterprise() {
+		try {
+			LinesController batchDetailController = (LinesController)FormUtil.getController(ISepeConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
+			if(batchDetailController.getRowCount()<=0){
+				SEPEUtils utils = new SEPEUtils();
+				Certifica2Batch batch = (Certifica2Batch) this.getTo();
+				batch.setEnterprise(utils.getCurrentDomainEnterprise());
+				this.accept(null);
+			}
+		} catch (ManagerBeanException e) {
+			AonUtil.addWarningMessage("No se ha podido actualizar la empresa del certificado.");
+		}
+	}
 	
 	public void onSearchContracts(ActionEvent event) throws ManagerBeanException {
-		Certifica2ListController list = (Certifica2ListController) FormUtil.getController(ISepeConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
-		list.clearCriteria();
-		list.setEndDateFrom(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), CommonUtil.getDay(new Date())-10));
-		list.onSearch(event);
+		Certifica2ListController listController = (Certifica2ListController) FormUtil.getController(ISepeConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
+		onEditSearchList(event);
+		listController.onSearch(event);
 	}
 	
 	public void onEditSearchList(ActionEvent event) throws ManagerBeanException {
-		Certifica2ListController list = (Certifica2ListController) FormUtil.getController(ISepeConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
-		list.clearCriteria();
-		list.onEditSearch(event);
-		list.setEndDateFrom(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), CommonUtil.getDay(new Date())-10));
+		Certifica2ListController listController = (Certifica2ListController) FormUtil.getController(ISepeConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
+		listController.clearCriteria();
+		listController.onEditSearch(event);
+		Certifica2Batch batch = (Certifica2Batch) this.getTo();
+//		SEPEUtils utils = new SEPEUtils();
+//		if(DomainManager.isDomainManagementAvailable() && batch!=null && !batch.getEnterprise().equals(utils.getCurrentDomainEnterprise())){
+		if(DomainManager.isDomainManagementAvailable() && batch!=null){
+			listController.init(batch.getEnterprise());
+		} else {
+			listController.init(null);
+		}
 	}
 	
 	public void onInit(ActionEvent event) {

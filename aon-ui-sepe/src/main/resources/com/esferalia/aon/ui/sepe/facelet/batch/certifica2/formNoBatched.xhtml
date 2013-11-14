@@ -12,11 +12,12 @@
 		<ui:param name="controller" value="#{certifica2Batch}" />
 		<ui:param name="controllerList" value="#{certifica2List}" />
 		<ui:param name="checkReRender" value="listToolBarDiv, listDataDiv" />
+		<ui:param name="enterpriseLookupDisabled" value="#{certifica2BatchDetail.model.rowCount gt 0}" />
 		
 		<ui:define name="afterToolbarContent" >
 				<aon:div style="float:right;width:300px;">
 					<rich:inplaceSelect id="suspensionCauseApplyAll" 
-						disabled="#{certifica2List.checkHandler.checkedCount le 0}" 
+						rendered="#{certifica2List.checkHandler.checkedCount gt 0}" 
 					 	value="#{certifica2List.suspensionCauseForAll}"
 					 	listHeight="300px" listWidth="300px" 
 					 	style="margin-left: 10px; border-bottom-style:none; cursor: pointer;"

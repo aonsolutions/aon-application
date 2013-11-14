@@ -31,7 +31,7 @@
 	</aon:div>
 
 	<aon:outputLabel value="#{bundle.aon_end_date}" />
-	<aon:div>
+	<aon:div id="endDate-search">
 		<aon:outputLabel for="Contract_endDate-From" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_from}:" />
 		<aon:selectInputDate id="Contract_endDate-From"
@@ -42,7 +42,7 @@
 		<aon:outputLabel for="Contract_endDate-To" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_to}:" />
 		<aon:selectInputDate id="Contract_endDate-To"
-			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			value="#{controller.endDateTo}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>

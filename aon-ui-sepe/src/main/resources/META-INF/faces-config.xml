@@ -136,11 +136,18 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{certifica2BatchSearch}</value>
 				<value>#{certifica2BatchControllerListener}</value>
 				<value>#{certifica2BatchDetailChildListener}</value>
 				<value>#{certifica2BatchAttachChildListener}</value>
 			</list-entries>
 		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>certifica2BatchSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.event.Certifica2BatchSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>
@@ -211,6 +218,19 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{certifica2BatchDetailSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>certifica2BatchDetailSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.event.Certifica2BatchDetailSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>

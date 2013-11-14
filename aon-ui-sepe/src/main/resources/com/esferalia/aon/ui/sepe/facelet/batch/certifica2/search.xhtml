@@ -22,6 +22,14 @@
 				<ui:param name="controller" value="#{certifica2Batch}" />
 				<ui:define name="searchContent">
 								
+					<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{certifica2BatchSearch.enterprise}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="skipGoToButton" value="#{true}" />
+						</ui:include>
+					</c:if>
+					
 					<aon:outputLabel value="#{bundle.aon_date}" />
 					<aon:div>
 						<aon:outputLabel for="Certifica2Batch_date-From" styleClass="aon-form-date-label aon-margin-right"
@@ -41,7 +49,7 @@
 					
 					<aon:outputLabel for="Certifica2Batch_status" value="#{bundle.aon_status}" />
 					<aon:selectOneMenu id="Certifica2Batch_status" converter="aon.EnumConverter"
-						valueChangeListener="#{controller.addEqualExpression}" >
+						value="#{certifica2BatchSearch.fileStatus}" >
 						<f:selectItem itemLabel=" - " value="#{null}" />
 						<f:selectItems value="#{payrollCollections.fileStatus}" />
 					</aon:selectOneMenu>

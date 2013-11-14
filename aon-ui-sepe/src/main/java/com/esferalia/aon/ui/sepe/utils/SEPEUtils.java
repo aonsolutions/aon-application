@@ -43,7 +43,7 @@ public class SEPEUtils {
 			} else {
 				criteria.addExpression(endDateExp);
 			}
-			completeDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CONTRACT_DATA_DOMAIN));
+			completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CONTRACT_DATA_DOMAIN));
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				map.put(data.getName(), data.getExpression()!=null?data.getExpression().replace('"', ' ').trim():"");
@@ -67,7 +67,7 @@ public class SEPEUtils {
 			if(endDate!=null){
 				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), endDate);
 			}
-			completeDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CONTRACT_DATA_DOMAIN));
+			completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CONTRACT_DATA_DOMAIN));
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				if(data.getExpression()!=null){
@@ -95,7 +95,7 @@ public class SEPEUtils {
 			if(StringUtils.isNotBlank(name)){
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_NAME), name);
 			}
-			completeDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SALARY_DATA_DOMAIN));
+			completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SALARY_DATA_DOMAIN));
 			for(ITransferObject to: bean.getList(criteria)){
 				SalaryData data = (SalaryData) to;
 				if(data.getExpression()!=null){
@@ -125,10 +125,19 @@ public class SEPEUtils {
 	// DOMAIN METHODS
 	// //////////////////////////////////
 	
-	public void completeDomainCriteria(Criteria criteria, String fieldName){
+	public void completeChildDomainCriteria(Criteria criteria, String fieldName){
+		completeChildDomainCriteria(criteria, fieldName, true);
+	}
+	public void completeChildDomainCriteria(Criteria criteria, String fieldName, boolean discardParentDomain){
 		if(DomainManager.isDomainManagementAvailable()){
 			criteria.setSkipDomainFilter( true );
-			criteria.addInExpression(fieldName, getCurrentChildDomainIds());
+			if(!discardParentDomain){
+				Expression expr1 = ExpressionUtilities.getInExpression(fieldName, getCurrentChildDomainIds());
+				Expression expr2 = ExpressionUtilities.getEqualExpression(fieldName, DomainManager.getCurrentDomain());
+				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+			} else {
+				criteria.addInExpression(fieldName, getCurrentChildDomainIds());
+			}
 		}
 	}
 	

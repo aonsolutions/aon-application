@@ -1038,7 +1038,7 @@ public class CertificadosWriter {
 			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE));
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 			SEPEUtils utils = new SEPEUtils();
-			utils.completeDomainCriteria(criteria, bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DOMAIN));
+			utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DOMAIN));
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				return (RegistryDirStaff) list.get(0);
@@ -1113,7 +1113,7 @@ public class CertificadosWriter {
 			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endCal.getTime());
 		}
-		utils.completeDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SALARY_DOMAIN));
+		utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SALARY_DOMAIN));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE), false);
 		List<ISalary> list = new LinkedList<ISalary>();
 		for(ITransferObject to: bean.getList(criteria)){

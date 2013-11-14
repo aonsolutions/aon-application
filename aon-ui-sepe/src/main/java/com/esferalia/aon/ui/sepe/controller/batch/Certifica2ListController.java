@@ -14,10 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
@@ -41,6 +41,7 @@ public class Certifica2ListController extends BasicController {
 	private Person person;
 	private Certifica2BatchListCheckHandler checkHandler;
 	private Date endDateFrom;
+	private Date endDateTo;
 	
 	private Map<Integer, RemesableContract> remesableContracts = new HashMap<Integer, RemesableContract>();
 	
@@ -61,6 +62,14 @@ public class Certifica2ListController extends BasicController {
 
 	public void setEndDateFrom(Date endDateFrom) {
 		this.endDateFrom = endDateFrom;
+	}
+
+	public Date getEndDateTo() {
+		return endDateTo;
+	}
+
+	public void setEndDateTo(Date endDateTo) {
+		this.endDateTo = endDateTo;
 	}
 
 	public Map<Integer, RemesableContract> getRemesableContracts() {
@@ -125,16 +134,6 @@ public class Certifica2ListController extends BasicController {
 	}
 
 	public Enterprise getEnterprise() {
-		try {
-			if(enterprise == null){
-				IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
-				enterprise = (Enterprise) bean.createNewTo();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> error on getEnterprise: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
 		return enterprise;
 	}
 
@@ -143,24 +142,48 @@ public class Certifica2ListController extends BasicController {
 	}
 
 	public Person getPerson() {
-		try {
-			if(person == null){
-				IManagerBean bean = BeanManager.getManagerBean(Person.class);
-				person = (Person) bean.createNewTo();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> error on getPerson: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
 		return person;
 	}
 
 	public void setPerson(Person person) {
 		this.person = person;
 	}
+	
+	public void init(Enterprise enterprise){
+		try {
+			if(enterprise!=null && enterprise.getId()!=null){
+				setEnterprise( enterprise );
+			} else {
+				setEnterprise( (Enterprise) BeanManager.getManagerBean(Enterprise.class).createNewTo() );
+			}
+			setPerson( (Person) BeanManager.getManagerBean(Person.class).createNewTo() );
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> error on init ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		setEndDateFrom(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), CommonUtil.getDay(new Date())-10));
+		setEndDateTo(new Date());
+	}
+	
+	public void checkValidEndDate(){
+		if( (getEndDateFrom()!=null && getEndDateFrom().after(new Date()))
+				|| (getEndDateTo()!=null && getEndDateTo().after(new Date()))){
+			AonUtil.addErrorMessage("La fecha de fin no puede ser porterior al día de hoy.");
+			throw new AbortProcessingException("La fecha de fin no puede ser porterior al día de hoy.");
+		}
+	}
 
+	@Override
+	public void initializeModel() {
+		if( !DomainManager.isDomainManagementAvailable() || (getEnterprise()!=null && getEnterprise().getId()!=null) ){
+			super.initializeModel();
+		}
+	}
+	
+	@Override
 	public void onSearch(ActionEvent event) {
+		checkValidEndDate();
 		getCheckHandler().clearCheckedList();
 		remesableContracts = new HashMap<Integer, RemesableContract>();
 		setSuspensionCauseForAll(null);
@@ -181,6 +204,11 @@ public class Certifica2ListController extends BasicController {
 			}
 			if(getEndDateFrom()!=null){
 				getCriteria().addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE), getEndDateFrom());
+			}
+			if(getEndDateTo()!=null){
+				getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE), getEndDateTo());
+			} else {
+				getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE), new Date());
 			}
 			LinesController controller = (LinesController) AonUtil.getRegisteredBean(ISepeConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
 			// ******************************

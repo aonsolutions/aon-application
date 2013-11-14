@@ -30,13 +30,16 @@
 				columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto,
 					aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
 
-				<aon:outputLabel for="certifica2Batch_date" value="#{bundle.aon_date}" />
+				<aon:outputLabel value="#{bundle.aon_date}" />
 				<aon:div>
+					<!--  
 					<aon:selectInputDate id="certifica2Batch_date" rendered="#{!certifica2Batch.recorded}"
 						value="#{certifica2Batch.to.date}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 					<aon:outputText value="#{certifica2Batch.to.date}" rendered="#{certifica2Batch.recorded}" >
+					-->
+					<aon:outputText value="#{certifica2Batch.to.date}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
@@ -44,6 +47,14 @@
 				
 				<aon:outputLabel value="#{bundle.aon_status}" />
 				<aon:outputText value="#{certifica2Batch.to.status}" />
+				
+				<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+					<aon:outputLabel value="#{bundle.aon_company}" />
+					<aon:outputText value="#{certifica2Batch.to.enterprise.registry.fullName}" />
+	
+					<aon:outputLabel value="#{bundle.aon_signature}" />
+					<aon:outputText value="#{certifica2Batch.to.sign}" />
+				</c:if>
 				
 			</aon:panelGrid>
 		</ui:define>
