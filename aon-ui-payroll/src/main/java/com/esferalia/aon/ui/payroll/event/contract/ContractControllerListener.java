@@ -3,6 +3,9 @@ package com.esferalia.aon.ui.payroll.event.contract;
 
 import java.util.Date;
 
+import javax.faces.event.AbortProcessingException;
+
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +13,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
@@ -63,7 +68,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		ContractUtils utils = ContractUtils.getInstance();
 		utils.removeContractData((Contract) controller.getTo(), controller.getParams());
 		
-		removeContrataAttach(event);
+		removeContractLines(event);
 	}
 	
 	@Override
@@ -166,6 +171,45 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.accept();
 	}
 	
+	private void removeContractLines(ControllerEvent event) throws ControllerListenerException {
+		
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		Session session = HibernateUtil.getSession(sessionName);
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
+
+			removeContrataAttach(event);
+			removeContractPayment(event);
+			removeContractDeduction(event);
+			removeContractBonus(event);
+			removeContractEmbargo(event);
+			removeContractAttach(event);
+			removeContractIrpfdata(event);
+			removeContractLeave(event);
+			
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
+			String msg = "Error durante la carga de datos. ";
+			LOGGER.error(msg, e);
+			throw new AbortProcessingException(msg  + e.getMessage());
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+	    }
+	}
+	
 	private void removeContrataAttach(ControllerEvent event) throws ControllerListenerException {
 		ContractController controller = (ContractController) event.getController();
 		Contract contract = (Contract) controller.getTo();
@@ -185,5 +229,32 @@ public class ContractControllerListener extends ControllerAdapter{
 		}
 	}
 	
+	private void removeContractPayment(ControllerEvent event) throws ControllerListenerException {
+		// TODO
+	}
+	private void removeContractDeduction(ControllerEvent event) throws ControllerListenerException {
+		// TODO
+		
+	}
+	private void removeContractBonus(ControllerEvent event) throws ControllerListenerException {
+		// TODO
+		
+	}
+	private void removeContractEmbargo(ControllerEvent event) throws ControllerListenerException {
+		// TODO
+		
+	}
+	private void removeContractAttach(ControllerEvent event) throws ControllerListenerException {
+		// TODO
+		
+	}
+	private void removeContractIrpfdata(ControllerEvent event) throws ControllerListenerException {
+		// TODO
+		
+	}
+	private void removeContractLeave(ControllerEvent event) throws ControllerListenerException {
+		// TODO
+		
+	}
 	
 }

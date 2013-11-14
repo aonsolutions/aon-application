@@ -52,13 +52,17 @@ import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractPayment;
+import com.esferalia.aon.payroll.ContrataBatchDetail;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
+import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
+import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -184,6 +188,35 @@ public class ContractController extends BasicController {
 	}
 	public void setActivities(List<SelectItem> activities) {
 		this.activities = activities;
+	}
+	
+	public boolean isRemovable(){
+		try {
+			// SALARY
+			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), ((Contract)this.getTo()).getId());
+			if (bean.getCount(criteria)>0) return false;
+			// AFI BATCH
+			bean = BeanManager.getManagerBean(ContractBatchDetail.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_BATCH_DETAIL_CONTRACT_ID), ((Contract)this.getTo()).getId());
+			if (bean.getCount(criteria)>0) return false;
+			// CONTRATA BATCH
+			bean = BeanManager.getManagerBean(ContrataBatchDetail.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRATA_BATCH_DETAIL_CONTRACT_ID), ((Contract)this.getTo()).getId());
+			if (bean.getCount(criteria)>0) return false;
+			// LEAVE BATCH
+			bean = BeanManager.getManagerBean(LeaveBatch.class);
+			criteria = new Criteria();
+//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.LEAVE_BATCH_DETAIL_CONTRACT_LEAVE_DETAIL_ID), ((Contract)this.getTo()).getId());
+			criteria.addEqualExpression("LeaveBatchDetail.contractLeaveDetail.contractLeave.contract.id", ((Contract)this.getTo()).getId());
+			if (bean.getCount(criteria)>0) return false;
+		} catch (ManagerBeanException e) {
+			return false;
+		}
+		return false;
 	}
 	
 	public boolean isEndDateRequired(){
@@ -906,16 +939,18 @@ public class ContractController extends BasicController {
 		public Integer getPaymentTrackingCount(){
 			if(getPaymentModel().isRowAvailable()){
 				ContractPayment payment = (ContractPayment) getPaymentModel().getRowData();
-				try {
-					IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
-					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
-					criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_ID), payment.getId());
-					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_PAYMENT_CONCEPT_ID), payment.getPaymentConcept().getId());
-					criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), payment.getStartDate());
-					return bean.getCount(criteria);
-				} catch (ManagerBeanException e) {
-					AonUtil.addErrorMessage("No se han podido cargar correctamente los devengos");
+				if(payment.getPaymentConcept()!=null){
+					try {
+						IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
+						Criteria criteria = new Criteria();
+						criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
+						criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_ID), payment.getId());
+						criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_PAYMENT_CONCEPT_ID), payment.getPaymentConcept().getId());
+						criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), payment.getStartDate());
+						return bean.getCount(criteria);
+					} catch (ManagerBeanException e) {
+						AonUtil.addErrorMessage("No se han podido cargar correctamente los devengos");
+					}
 				}
 			}
 			return null;

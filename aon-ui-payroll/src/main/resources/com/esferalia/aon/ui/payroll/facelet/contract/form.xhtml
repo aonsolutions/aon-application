@@ -68,7 +68,9 @@
 						<aon:panelTab id="contractEmbargoTab"
 							rendered="#{contractEmbargo.model.rowCount>0}"
 							label="#{bundle.payroll_salary_embargos_tab}">
-							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/grid.xhtml" />
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/grid.xhtml" >
+								<ui:param name="removeButtonReRender" value="contract-panelTab" />
+							</ui:include>
 						</aon:panelTab>
 						
 					</aon:panelTabSet>

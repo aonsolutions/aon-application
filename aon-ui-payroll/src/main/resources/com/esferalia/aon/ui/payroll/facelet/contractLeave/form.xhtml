@@ -23,6 +23,7 @@
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{contractLeave.to.contract}" />
 						<ui:param name="lookupReRender" value="ContractLeave_relapse_div,ContractLeave_bases_div" />
+						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="lookupControllerListener" value="#{contractLeave.contractFilter}" />
 						<aon:methodParam name="lookupChangeListener" 
 							value="#{contractLeave.onContractChange}" type="lookupChangeListener" />
@@ -175,7 +176,7 @@
 						
 						<aon:outputLabel for="ContractLeave_type"
 							value="#{bundle.payroll_contractLeave_leaveCause}" />
-						<aon:selectOneMenu id="ContractLeave_type" 
+						<aon:selectOneMenu id="ContractLeave_type" required="#{true}" 
 							value="#{contractLeave.to.type}">
 							<f:selectItem itemLabel=" - " itemValue="#{null}" />
 							<f:selectItems value="#{payrollCollections.leaveTypes}" />

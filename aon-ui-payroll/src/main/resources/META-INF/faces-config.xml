@@ -375,6 +375,10 @@
 			<value>ContractEmbargo_startDate</value>
 		</managed-property>
 		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>contract</value>
 		</managed-property>
@@ -427,6 +431,10 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>IrpfData_startDate desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
