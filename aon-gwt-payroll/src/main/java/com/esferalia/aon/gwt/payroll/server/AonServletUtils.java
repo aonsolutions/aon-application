@@ -202,8 +202,8 @@ public class AonServletUtils {
 						
 						int index = Collections.binarySearch(allSalaries,
 								salary, salaryComparator);
-						
-						allSalaries.add(-( index + 1 ), salary);
+						if ( index < 0 )
+							allSalaries.add(-( index + 1 ), salary);
 					}
 
 				return allSalaries;
@@ -271,7 +271,7 @@ public class AonServletUtils {
 				return compare;
 
 			Integer contract1Id = o1.getContract().getId();
-			Integer contract2Id = o1.getContract().getId();
+			Integer contract2Id = o2.getContract().getId();
 			compare = contract1Id.compareTo(contract2Id);
 			if (compare != 0)
 				return compare;
