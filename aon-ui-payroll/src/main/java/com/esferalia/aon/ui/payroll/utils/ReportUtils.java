@@ -116,7 +116,11 @@ public class ReportUtils {
 		
 		return days;
 	}
-
+	
+	public static String ifEmpty(String a, String b) {
+		return a == null || a.isEmpty() ? b : a;
+	}
+	
 	private static class ChainedComparator<T> implements Comparator<T> {
 
 		private Comparator<T> simpleComparators[];

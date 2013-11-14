@@ -57,6 +57,7 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	private Month month;
 	private Integer year;
 
+	private Set<SalaryData> salaryDatas = new HashSet<SalaryData>();
 	private Set<SalaryCost> salaryCosts = new HashSet<SalaryCost>();
 	private Set<SalaryBonus> salaryBonus = new HashSet<SalaryBonus>();
 	private Set<SalaryEmbargo> salaryEmbargos = new HashSet<SalaryEmbargo>();
@@ -117,6 +118,27 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 		cal.setTime(getSeniorityDate());
 		int seniorityYear = cal.get(Calendar.YEAR);
 		return getYear() - seniorityYear;
+	}
+
+	// *******************************************************
+	// ********************** DATA ***************************
+	// *******************************************************
+	@Transient
+	public String getSalaryData(String name) {
+		for (SalaryData salaryData : salaryDatas) {
+			if ( name.equals(salaryData.getName()) )
+				return salaryData.getExpression();
+		}
+		return null;
+	}
+
+	@OneToMany(mappedBy = "salary", cascade = { CascadeType.ALL })
+	public Set<SalaryData> getSalaryDatas() {
+		return salaryDatas;
+	}
+
+	public void setSalaryDatas(Set<SalaryData> salaryDatas) {
+		this.salaryDatas = salaryDatas;
 	}
 
 	// *******************************************************

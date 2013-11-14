@@ -140,6 +140,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				kindIrpfBase, irpfBase, ssContributions, totalIrpf, chargeDate);
 
 		insert_Fvisione(nomina);
+		insert_Profesion(nomina);
 
 		Double importeCg = toDouble(nomina.getImporte_cg());
 		if (importeCg > 0) {
@@ -400,6 +401,8 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, baseIRPF, 0.00,
 				baseIRPF, 0.00, totalIrpf, chargeDate);
 		insert_Fvisione(nominaex);
+		insert_Profesion(nominaex);
+		
 
 		String function = String.format(SPANISH, "%.2f",
 				totalPayment != null ? totalPayment : 0);
@@ -749,6 +752,14 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		return true;
 	}
 	
+	private void insert_Profesion(Nomina nomina) throws SQLException{
+		insert_Profession(nomina.getProfesion(), nomina.getFecini(), nomina.getFecfin());
+	}
+
+	private void insert_Profesion(Nominaex nomina) throws SQLException{
+		insert_Profession(nomina.getProfesion(), nomina.getFecini(), nomina.getFecfin());
+	}
+
 	private void insert_Fvisione(Nomina nomina) throws SQLException{
 		insert_Fvisione(nomina.getFvisione(), nomina.getFecini(), nomina.getFecfin());
 		
@@ -767,5 +778,14 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		
 	}
 
+	private void insert_Profession(String profesion, java.sql.Date fecIni, java.sql.Date fecFin) throws SQLException{
+		if ( profesion == null )
+			return;
+		mysqlDB.insertSalary_data(
+				ContextVariable.PROFESSION.getName(),
+				profesion,
+				fecIni, fecFin, this.salaryId);
+		
+	}
 
 }
