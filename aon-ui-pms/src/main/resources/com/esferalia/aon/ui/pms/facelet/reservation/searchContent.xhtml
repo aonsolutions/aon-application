@@ -28,7 +28,7 @@
 
 				<aon:outputLabel value="#{bundle.aon_invoice_number}" />
 				<aon:inputText id="ProjectReservation_invoices_referenceCode"
-					value="#{searchController.invoiceNumber}"
+					valueChangeListener="#{controller.addEqualExpression}"
 					size="20" maxlength="25" />
 
 				<aon:outputLabel value="#{bundle.registry_rd_creation_date}" />

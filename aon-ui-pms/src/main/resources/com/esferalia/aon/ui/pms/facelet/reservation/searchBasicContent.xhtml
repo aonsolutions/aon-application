@@ -72,15 +72,15 @@
 
 	<aon:outputLabel value="#{bundle.report_guest}" />
 	<aon:div>
-		<aon:outputLabel for="ProjectReservation_guestName"
+		<aon:outputLabel for="ProjectReservation_guests_name"
 			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_name}" />
-		<aon:inputText id="ProjectReservation_guestName"
-			value="#{searchController.guestName}"
+		<aon:inputText id="ProjectReservation_guests_name"
+			valueChangeListener="#{controller.addExpression}"
 			size="14" />
-		<aon:outputLabel for="ProjectReservation_guestSurname"
+		<aon:outputLabel for="ProjectReservation_guests_surname"
 			styleClass="aon-italic aon-margin-left aon-margin-right" value="#{bundle.aon_surname}" />
-		<aon:inputText id="ProjectReservation_guestSurname"
-			value="#{searchController.guestSurname}"
+		<aon:inputText id="ProjectReservation_guests_surname"
+			valueChangeListener="#{controller.addExpression}"
 			size="20" />
 	</aon:div>
 

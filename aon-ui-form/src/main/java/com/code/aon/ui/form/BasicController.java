@@ -775,7 +775,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	public void addExpression(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null) {
 			String value = event.getNewValue().toString();
-			if (! StringUtils.isBlank(value) ) {
+			if (! StringUtils.isBlank(value)) {
 				addExpression(criteria, event.getComponent().getId(), value);
 			}
 		}
@@ -783,25 +783,34 @@ public class BasicController extends AbstractPojoController implements IControll
 	
 	@Override
 	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			String fieldName = resolveAlias(event.getComponent().getId());
-			criteria.addEqualExpression(fieldName, event.getNewValue());
+		Object value = event.getNewValue();
+		if (value != null) {
+			if (! value.getClass().equals(String.class) || ! StringUtils.isBlank(value.toString())) {
+				String fieldName = resolveAlias(event.getComponent().getId());
+				criteria.addEqualExpression(fieldName, value);
+			}
 		}
 	}	
 
 	@Override
 	public void addGreaterThanOrEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			String fieldName = resolveAlias(event.getComponent().getId());
-			criteria.addGreaterThanOrEqualExpression(fieldName, event.getNewValue());
+		Object value = event.getNewValue();
+		if (value != null) {
+			if (! value.getClass().equals(String.class) || ! StringUtils.isBlank(value.toString())) {
+				String fieldName = resolveAlias(event.getComponent().getId());
+				criteria.addGreaterThanOrEqualExpression(fieldName, value);
+			}
 		}
 	}	
 
 	@Override
 	public void addLessThanOrEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			String fieldName = resolveAlias(event.getComponent().getId());
-			criteria.addLessThanOrEqualExpression(fieldName, event.getNewValue());
+		Object value = event.getNewValue();
+		if (value != null) {
+			if (! value.getClass().equals(String.class) || ! StringUtils.isBlank(value.toString())) {
+				String fieldName = resolveAlias(event.getComponent().getId());
+				criteria.addLessThanOrEqualExpression(fieldName, value);
+			}
 		}
 	}	
 	

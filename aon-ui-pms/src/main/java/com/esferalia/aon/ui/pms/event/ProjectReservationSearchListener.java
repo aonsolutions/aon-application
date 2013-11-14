@@ -3,7 +3,6 @@ package com.esferalia.aon.ui.pms.event;
 import java.util.Date;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.BeanManager;
@@ -11,7 +10,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -22,7 +20,6 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 public class ProjectReservationSearchListener extends ControllerSearchListener {
 
 	private Hotel hotel;
-	private String invoiceNumber;
 	private Date creationDateFrom;
 	private Date creationDateTo;
 	private Date insideDateFrom;
@@ -31,8 +28,6 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	private Seller seller;
 	private ReservationCheckStatus[] reservationCheckStatuses;
 	private ReservationStatus[] reservationStatuses;
-	private String guestName;
-	private String guestSurname;
 
 	public Hotel getHotel() {
 		return hotel;
@@ -40,14 +35,6 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
-	}
-
-	public String getInvoiceNumber() {
-		return invoiceNumber;
-	}
-
-	public void setInvoiceNumber(String invoiceNumber) {
-		this.invoiceNumber = invoiceNumber;
 	}
 
 	public Date getCreationDateFrom() {
@@ -114,26 +101,9 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		this.reservationStatuses = reservationStatuses;
 	}
 	
-	public String getGuestName() {
-		return guestName;
-	}
-
-	public void setGuestName(String guestName) {
-		this.guestName = guestName;
-	}
-
-	public String getGuestSurname() {
-		return guestSurname;
-	}
-
-	public void setGuestSurname(String guestSurname) {
-		this.guestSurname = guestSurname;
-	}
-	
 	@Override
 	protected void init() throws ManagerBeanException {
 		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
-		setInvoiceNumber(null);
 		setCreationDateFrom(null);
 		setCreationDateTo(null);
 		setInsideDateFrom(null);
@@ -142,17 +112,12 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
 		setReservationCheckStatuses(null);
 		setReservationStatuses(null);
-		setGuestName(null);
-		setGuestSurname(null);
 	}
 	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (getHotel() != null && getHotel().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());			
-		}
-		if (StringUtils.isNotEmpty(getInvoiceNumber())) {
-			criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.invoices.referenceCode"), getInvoiceNumber());
 		}
 		if (getCreationDateFrom() != null) {
 			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_CREATION_DATE), getCreationDateFrom());
@@ -179,12 +144,6 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		if (!ArrayUtils.isEmpty(getReservationStatuses())) {
 			String status = getController().resolveAlias(IEntityAlias.PROJECT_RESERVATION_STATUS);
 			addEnumToCriteria(criteria, status, getReservationStatuses());
-		}
-		if (StringUtils.isNotEmpty(getGuestName())) {
-			criteria.addExpression(ExpressionUtilities.getLikeExpression(getController().resolveAlias("ProjectReservation.guests.name"), "%"+getGuestName()+"%"));
-		}
-		if (StringUtils.isNotEmpty(getGuestSurname())) {
-			criteria.addExpression(ExpressionUtilities.getLikeExpression(getController().resolveAlias("ProjectReservation.guests.surname"), "%"+getGuestSurname()+"%"));
 		}
 	}
 
