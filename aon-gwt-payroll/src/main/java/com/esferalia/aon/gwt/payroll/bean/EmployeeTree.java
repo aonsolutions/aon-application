@@ -1,13 +1,13 @@
 package com.esferalia.aon.gwt.payroll.bean;
 
+import java.util.Random;
+
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -18,6 +18,7 @@ public class EmployeeTree {
 	private static enum Selection {
 		EMPLOYEE, ACTIVITY, WORKPLACE, ENTERPRISE, PAYMENT_CONCEPTS, DEDUCTION_CONCEPTS, BONUS_CONCEPTS
 	}
+	
 
 	private Selection selection;
 
@@ -25,7 +26,9 @@ public class EmployeeTree {
 	private Integer workplaceId;
 	private Integer employeeId;
 	private Integer activityId;
-
+	
+	
+	
 	public Integer getEnterpriseId() {
 		return enterpriseId;
 	}
@@ -188,4 +191,12 @@ public class EmployeeTree {
 
 		this.selection = Selection.BONUS_CONCEPTS;
 	}
+	
+	private static final Random RANDOM = new Random();
+	// I use this at 'gwt.xhtml'. This way I can force load of GWT javascript each time.
+	// src="...aon_gwt_payroll.nocache.js?...&amp;horribleFix=#{employeeTree.nextInt}"
+	public int getNextInt() {
+        return RANDOM.nextInt();
+    }
+	
 }

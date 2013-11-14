@@ -7,53 +7,71 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-	
-	<meta name="gwt:property" content="locale=es_ES"/>
-	
+
+	<meta name="gwt:property" content="locale=es_ES" />
+
 	<aon:valueParam name="edit" default="#{true}" />
 	<aon:valueParam name="entryPoint" default="EmployeeTree" />
-	
+
+	<c:if test="#{gwt.entryPoint != entryPoint }">
+		<aon:form id="entryPointForm" style="display:none">
+			<aon:inputText id="gwtEntryPointText" value="#{gwt.entryPoint}" />
+			<aon:commandButton id="gwtEntryPointButton" reRender="entryPointForm" />
+			<script type="text/javascript">
+           	//<![CDATA[
+				#{rich:element('gwtEntryPointText')}.value = '#{entryPoint}';	
+				#{rich:element('gwtEntryPointButton')}.click();	
+           	//]]>
+			</script>
+		</aon:form>
+	</c:if>
+
 	<style>
-		body {
-			margin: 0;
-		}
-	</style>
-	
-	<ui:include src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
-	
+body {
+	margin: 0;
+}
+</style>
+
+	<ui:include
+		src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
+
 	<ui:include src="/facelet/homepage/menu.xhtml" />
-		
-	<ui:include src="/com/esferalia/aon/gwt/payroll/facelet/employee/jsf.xhtml" >
+
+	<ui:include
+		src="/com/esferalia/aon/gwt/payroll/facelet/employee/jsf.xhtml">
 		<ui:param name="edit" value="#{edit}" />
 	</ui:include>
 
-    <script type="text/javascript" >
-            <![CDATA[
-            var search = "/aon_gwt_payroll.nocache.js";
-            var scripts = document.getElementsByTagName("script");
-            for (var i = 0; i < scripts.length; ++i) {
-                    var script = scripts[i];
-                    if (script.src != null && script.src.indexOf(search) != -1) {
-                            var parent = script.parentNode;
-                            parent.removeChild(script);
-                            break;
-                    }
-            }
-            ]]>
+	<script type="text/javascript">
+        //<![CDATA[
+        var search = "/aon_gwt_payroll.nocache.js";
+        var scripts = document.getElementsByTagName("script");
+        for (var i = 0; i < scripts.length; ++i) {
+                var script = scripts[i];
+                if (script.src != null && script.src.indexOf(search) != -1) {
+                        var parent = script.parentNode;
+                        parent.removeChild(script);
+                        break;
+                }
+        }
+        //]]>
     </script>
-		
-	<script type="text/javascript"  src="aon_gwt_payroll/aon_gwt_payroll.nocache.js?entryPoint=#{entryPoint}"/>
-	
-
-    <div id ="rootPanel" style="width:100%; min-height:100%; height: auto !important; height:100%; margin:0;">
-    </div>
 
 
-	<script type="text/javascript"  >
-		<![CDATA[ 
-		          aon_gwt_payroll.onInjectionDone('aon_gwt_payroll');
-		]]>
+
+	<script type="text/javascript"
+		src="aon_gwt_payroll/aon_gwt_payroll.nocache.js?entryPoint=#{entryPoint}&amp;horribleFix=#{employeeTree.nextInt}" />
+
+	<div id="rootPanel"
+		style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0;">
+	</div>
+
+
+	<script type="text/javascript">
+		//<![CDATA[ 
+				aon_gwt_payroll.onInjectionDone('aon_gwt_payroll');
+		//]]>
 	</script>
 
-	
+
 </ui:composition>
