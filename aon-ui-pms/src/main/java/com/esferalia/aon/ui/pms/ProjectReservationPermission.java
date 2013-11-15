@@ -7,6 +7,7 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.common.role.BasicRoleManager;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
@@ -85,6 +86,10 @@ public class ProjectReservationPermission {
 
 	/*************************** RESERVATION *******************************/
 
+	public boolean isMyScope() {
+		return (!reservation.isDiverted() || UserUtils.getInstance().isScopeInUserScopes(reservation.getHotel().getScope()));
+	}
+
 	private boolean isInHouse(Date date) {
 		return (!isBeforeCheckIn(date) && !isAfterCheckOut(date));
 	}
@@ -122,8 +127,12 @@ public class ProjectReservationPermission {
 		return isRoleCommercial();
 	}
 
+	public boolean isSaveReservationAllowed() {
+		return isMyScope();
+	}
+
 	public boolean isShowMoreMenuAllowed() {
-		return (!reservation.isCancelled() || !reservation.isNoShow()) && (reservation.isActive() || !reservation.isCheckOut());
+		return (!reservation.isCancelled() || !reservation.isNoShow()) && (reservation.isActive() || !reservation.isCheckOut()) && isMyScope();
 	}
 
 	public boolean isCheckInAllowed() throws ManagerBeanException {
@@ -271,11 +280,11 @@ public class ProjectReservationPermission {
 	/*************************** RESERVATION GUEST *******************************/
 
 	public boolean isNewReservationGuestAllowed() {
-		return reservation.isActive() || reservation.isInvoiced();
+		return (reservation.isActive() || reservation.isInvoiced()) && isMyScope();
 	}
 
 	public boolean isEditReservationGuestAllowed() {
-		return reservation.isActive() || reservation.isInvoiced();
+		return (reservation.isActive() || reservation.isInvoiced()) && isMyScope();
 	}
 
 
@@ -284,11 +293,11 @@ public class ProjectReservationPermission {
 	public boolean isNewReservationRoomAllowed() {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && reservation.isActive();
+		return roleAllowed && reservation.isActive() && isMyScope();
 	}
 
 	public boolean isSelectReservationRoomAllowed() {
-		return reservation.isActive() || reservation.isInvoiced();
+		return (reservation.isActive() || reservation.isInvoiced()) && isMyScope();
 	}
 
 	public boolean isAcceptReservationRoomAllowed() {
@@ -333,11 +342,11 @@ public class ProjectReservationPermission {
 	public boolean isNewReservationServiceAllowed() {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleCommercial() && !isAfterCheckOut(now)) || (isRoleConfig() && isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && reservation.isActive();
+		return roleAllowed && reservation.isActive() && isMyScope();
 	}
 
 	public boolean isSelectReservationServiceAllowed() throws ManagerBeanException {
-		return reservation.isActive();
+		return reservation.isActive() && isMyScope();
 	}
 
 	public boolean isAcceptReservationServiceAllowed() {

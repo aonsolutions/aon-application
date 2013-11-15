@@ -428,7 +428,6 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{reservationSearch}</value>
-				<value>#{reservationScopeListener}</value>
 				<value>#{reservationControllerListener}</value>
 				<value>#{reservationGuestListener}</value>
 				<value>#{reservationRoomListener}</value>
@@ -443,16 +442,6 @@
 		<managed-bean-class>com.esferalia.aon.ui.pms.event.ProjectReservationSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
-	
-	<managed-bean>
-		<managed-bean-name>reservationScopeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>aliasName</property-name>
-			<value>ProjectReservation_hotel_scope_id</value>
-		</managed-property>
-	</managed-bean>
 	
 	<managed-bean>
 		<managed-bean-name>reservationControllerListener</managed-bean-name>
@@ -1132,7 +1121,6 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{reservationSearch}</value>
-				<value>#{reservationScopeListener}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>

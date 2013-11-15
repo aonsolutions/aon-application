@@ -41,6 +41,7 @@ import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryPayMethod;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
@@ -317,6 +318,14 @@ public class ProjectReservationController extends BasicController implements IPm
 			fromDate = DateUtils.addHours(fromDate, 1);
 		}
 		return hours;
+	}
+
+	public boolean isMyScope() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			ProjectReservation reservation = (ProjectReservation)getModel().getRowData();
+			return UserUtils.getInstance().isScopeInUserScopes(reservation.getHotel().getScope());
+		}
+		return true;
 	}
 
 	public boolean isPendingRoomAssignation() throws ManagerBeanException {

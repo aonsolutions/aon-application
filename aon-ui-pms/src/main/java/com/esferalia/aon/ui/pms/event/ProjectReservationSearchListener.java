@@ -9,13 +9,17 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.seller.Seller;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.ui.pms.controller.ProjectReservationController;
 
 public class ProjectReservationSearchListener extends ControllerSearchListener {
 
@@ -145,6 +149,12 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 			String status = getController().resolveAlias(IEntityAlias.PROJECT_RESERVATION_STATUS);
 			addEnumToCriteria(criteria, status, getReservationStatuses());
 		}
+		Expression hotelScopeExp = UserUtils.getInstance().getNullableScopeExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_SCOPE_ID));
+		if (getController() instanceof ProjectReservationController) {
+			String alias = getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_RESERVATION_SCOPE_ID);
+			hotelScopeExp = ExpressionUtilities.getOrExpression(hotelScopeExp, UserUtils.getInstance().getNullableScopeExpression(alias));
+		}
+		criteria.addExpression(hotelScopeExp);
 	}
 
 }

@@ -157,6 +157,11 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
+	public boolean isDiverted() {
+		return !getHotel().equals(getHotelReservation());
+	}
+
+	@Transient
 	public String getGuestFullName() throws ManagerBeanException {
 		IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
 		Criteria criteria = new Criteria();
