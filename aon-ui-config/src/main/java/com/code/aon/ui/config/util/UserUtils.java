@@ -22,6 +22,8 @@ import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.enumeration.Toolbar;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.controller.ConfigConstants;
@@ -29,12 +31,24 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class UserUtils {
-	
+
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserUtils.class);
-	
+
 	private Boolean passwordExpired;
-	
 	private User loggedUser;
+
+	public boolean isPasswordExpired() {
+		if ( passwordExpired == null ) {
+			passwordExpired = Boolean.FALSE;
+			User user = getLoggedUser();
+			if ( user != null ) {
+				if ( user.getPasswordExpiration() != null ) {
+					passwordExpired = new Date().after(user.getPasswordExpiration());
+				}
+			}		
+		}
+		return passwordExpired;
+	}
 
 	public User getLoggedUser() {
 		if (this.loggedUser == null) {
@@ -43,7 +57,19 @@ public class UserUtils {
 		}
 		return loggedUser;
 	}
-	
+
+	private void updateUser( User user ) {
+		if ( user.getToolbar() == Toolbar.ESFERALIA_WEBMAIL ) {
+			user.setToolbar(Toolbar.ACENS);
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(User.class);
+				bean.update(user);
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+		}		
+	}
+
 	private User resolveUser() {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
@@ -103,6 +129,15 @@ public class UserUtils {
 		return getCurrentUserScopes().contains(scope);
 	}
 
+	@SuppressWarnings("unchecked")
+	private List<Integer> getCurrentUserScopeIds(User user) throws ManagerBeanException {
+		IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), user.getId());
+		Projection projection = Projection.property(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_ID));
+		return userScopeBean.getList(new ProjectionList(projection), criteria);
+	}
+
 	public void addScopeFilterToCriteria(Criteria criteria, String alias) throws ManagerBeanException {
 		Expression scopeExpression = null;
 		for(Scope scope : getCurrentUserScopes()) {
@@ -123,19 +158,16 @@ public class UserUtils {
 		String nullAlias = StringUtils.substringBeforeLast(resolvedAlias, ".");
 		Expression exp = ExpressionUtilities.getNullExpression(nullAlias);
 		if (user != null) {
-			List<Scope> list = getCurrentUserScopes();
+			List<Integer> list = getCurrentUserScopeIds(user);
 			if (! list.isEmpty() ) {
 				String ljAlias = getLeftJoinAlias(resolvedAlias);
-				for( ITransferObject to : list ) {
-					Scope scope = (Scope) to;
-					Expression scopeExp = ExpressionUtilities.getEqualExpression(ljAlias, scope.getId());
-					exp = ExpressionUtilities.getOrExpression(exp, scopeExp);					
-				}
+				Expression scopeExp = ExpressionUtilities.getInExpression(ljAlias, list);
+				exp = ExpressionUtilities.getOrExpression(exp, scopeExp);					
 			}
 		}
 		return exp;
 	}
-	
+
 	private String getLeftJoinAlias( String alias ) {
 		String ljAlias = alias;
 		int index = StringUtils.lastIndexOf(alias, '.');
@@ -145,30 +177,4 @@ public class UserUtils {
 		return ljAlias;
 	}
 
-
-	public boolean isPasswordExpired() {
-		if ( passwordExpired == null ) {
-			passwordExpired = Boolean.FALSE;
-			User user = getLoggedUser();
-			if ( user != null ) {
-				if ( user.getPasswordExpiration() != null ) {
-					passwordExpired = new Date().after(user.getPasswordExpiration());
-				}
-			}		
-		}
-		return passwordExpired;
-	}
-	
-	private void updateUser( User user ) {
-		if ( user.getToolbar() == Toolbar.ESFERALIA_WEBMAIL ) {
-			user.setToolbar(Toolbar.ACENS);
-			try {
-				IManagerBean bean = BeanManager.getManagerBean(User.class);
-				bean.update(user);
-			} catch (ManagerBeanException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		}		
-	}
-	
 }
