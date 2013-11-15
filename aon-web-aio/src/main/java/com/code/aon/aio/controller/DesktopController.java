@@ -304,7 +304,7 @@ public class DesktopController {
 				as.execute();
 			}
 			value = this.homepagOption.getViewId();
-			this.homepagOption = null;				
+			resetHomepage();		
 		}
 		return value;
 	}
@@ -526,7 +526,7 @@ public class DesktopController {
 		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
 		String template = aoc.getTemplate(IAuditConstants.INIT_ACTION_TEMPLATE, 
 			OPTION_VM, this.homepagOption);
-		this.homepagOption = null;
+		resetHomepage();
 		return template;
 	}		
 
@@ -546,6 +546,14 @@ public class DesktopController {
 				properties.put( ICommonConstants.HIDE_MENU_HELP, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_ABOUT, Boolean.TRUE );
 			}
+		}
+	}
+
+	private void resetHomepage() {
+		Map<String, Object> properties = AonUtil.getConfigurationController().getProperties();
+		Boolean value = (Boolean) properties.get( ICommonConstants.HIDE_MENU_HOME );
+		if ( value != Boolean.TRUE ) {
+			this.homepagOption = null;	
 		}
 	}
 	
