@@ -38,6 +38,7 @@
 ### END INIT INFO
 
 NAME=ctsql2mysqld
+SYNC=/usr/bin/aon-payroll-ctsql2mysql
 PROG=/usr/bin/aon-payroll-ctsql2mysqld
 CONFFILE=${CONFILE-/etc/aon-payroll-ctsql2mysqld.conf}
 LOGFILE=${LOGDIR-/var/log/aon-payroll-ctsql2mysqld.log}
@@ -96,6 +97,12 @@ function procrunning() {
 	done
 }
 
+sync() {
+    parseargs $CONFFILE || exit 1
+    echo $SYNC "${ARGS[@]}" 
+    $SYNC "${ARGS[@]}"
+    return $?
+}
 
 start() {
     echo -n $"Starting $PROG: "
@@ -203,6 +210,11 @@ condrestart() {
 
 
 case "$1" in
+  sync)
+  	stop
+  	sync
+	start
+	;;
   start)
 	start
 	;;

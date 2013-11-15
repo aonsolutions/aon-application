@@ -210,6 +210,7 @@
 							<copyright>2013, esferalia Networks S.A</copyright>
 							<requires>
 								<require>java</require>
+								<require>vixie-cron</require>
 								<require>inotify-java</require>
 								<require>aon-dbutils</require>
 								<require>aon-master</require>
@@ -347,6 +348,17 @@
 									<filemode>644</filemode>
 									<directory>/etc</directory>
 									<configuration>noreplace</configuration>
+								</mapping>
+
+								<mapping>
+									<sources>
+										<source>
+											<location>src/main/scripts/ctsql2mysql</location>
+										</source>
+									</sources>
+									<filemode>644</filemode>
+									<directory>/etc/cron.d</directory>
+									<directoryIncluded>false</directoryIncluded>
 								</mapping>
 
 							</mappings>
