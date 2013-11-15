@@ -31,5 +31,9 @@ public class SalariesDocuments extends CostDocuments {
 		getEmployeesService().getSalaryReceiptHTML(cost, zoom, callback);
 	}
 	
+	@Override
+	public String[] getSupportedFormats() {
+		return new String[] {};
+	}
 	
 }

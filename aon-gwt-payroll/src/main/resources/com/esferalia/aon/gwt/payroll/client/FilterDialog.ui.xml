@@ -56,7 +56,7 @@
 	<g:HTMLPanel styleName="{style.form}">
 		
 		<div class="{style.messages}" >
-			<g:Label styleName="{style.info}">Filtar los empleados a visualizar:</g:Label>
+			<g:Label styleName="{style.info}">Filtrar los empleados a visualizar:</g:Label>
 		</div>
 
 		<g:Grid width="100%" >

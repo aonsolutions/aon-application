@@ -54,7 +54,12 @@
 				function hideTable(table) {
 					try {
 						
-						if( !table.id.match(#{hide}) && table.className.indexOf('rich-fileupload-toolbar-decor')<0 ) 
+						if ( table.className.indexOf('rich-fileupload-toolbar-decor')>=0 ){
+							table.style.display='none';
+							return true;
+						}
+
+						if( !table.id.match(#{hide}) )
 							return false;
 						
 						
@@ -89,7 +94,7 @@
 					if ( table.className.indexOf('rich-fileupload-toolbar-decor')<0 )
 						return false;
 					
-					table.parentNode.removeChild(table)
+					table.style.display = 'none';
 					return true;
 				}
 			//]]>
@@ -151,7 +156,6 @@
 						}
 					}
 
-					
 					var imgs = form.getElementsByTagName('img');
 					for ( var i = 0; i < imgs.length; i++ ) {
 						if ( imgs[i].className.indexOf('rich-calendar-button') >= 0 )

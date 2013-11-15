@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
@@ -131,6 +132,8 @@ public class Cost extends ResizeComposite {
 	 * 
 	 */
 	public void setCostDocuments(CostDocuments costDocuments) {
+		
+		
 		this.costDocuments = costDocuments;
 		onCostDocumentsChanged();
 	}
@@ -152,6 +155,7 @@ public class Cost extends ResizeComposite {
 
 	private void onCostDocumentsChanged() {
 		getAsHTML();
+		syncFormatsButtons();
 		syncCostDateListBox();
 	}
 
@@ -171,6 +175,12 @@ public class Cost extends ResizeComposite {
 		dateListBox.setSelectedIndex(costDocuments.getCurrentIndex());
 	}
 	
+	private void syncFormatsButtons() {
+		String formats [] = costDocuments.getSupportedFormats();
+		Arrays.sort(formats);
+		
+		excelButton.setVisible(Arrays.binarySearch(formats, "xls")>=0);
+	}
 	
 
 }

@@ -212,7 +212,7 @@ public class Employees extends ResizeComposite implements
 		enterpriseItem.setUserObject(enterprise);
 		tree.addItem(enterpriseItem);
 
-		addImageItem(enterpriseItem, "Costos", images.costs());
+		addImageItem(enterpriseItem, "Costes", images.costs());
 		addImageItem(enterpriseItem, "N\u00F3minas", images.salaries());
 
 		if (extended) {
@@ -235,7 +235,7 @@ public class Employees extends ResizeComposite implements
 					images.workplace());
 			workplaceItem.setUserObject(workplace);
 
-			addImageItem(workplaceItem, "Costos", images.costs());
+			addImageItem(workplaceItem, "Costes", images.costs());
 			addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
 
 			if (extended) {
