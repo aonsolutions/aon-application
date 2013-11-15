@@ -35,7 +35,6 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -86,6 +85,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		public void onInvalidData(IContractBonus bonus, String variableName,
 				String message);
+
+
 	}
 
 	private IListener listener;
@@ -209,6 +210,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 									paymentEnd, Double.class);
 
 					double total = 0.00;
+					double totalPayment = 0.00;
 
 					for (ITimedResult<Double> result : results) {
 
@@ -223,6 +225,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 						double value = valueDouble != null ? valueDouble : 0.00;
 						
 						expressionContext.addVariable(ALL, value, amountStart, amountEnd);
+
+						quoteCalculator.quote(contractPayment, paymentStart,
+						paymentEnd, value);
 
 						Double payment = taxCalculator.tax(contractPayment,
 								amountStart, amountEnd, chargeDate, value);
@@ -245,11 +250,15 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 									description, contractPayment,
 									result.getContext());
 						}
+						else {
+							
+						}
 						total += value;
 
 					}
-					quoteCalculator.quote(contractPayment, paymentStart,
-							paymentEnd, total);
+//					quoteCalculator.quote(contractPayment, paymentStart,
+//							paymentEnd, total);
+					
 
 				} catch (RemoveException e) {
 					// TODO: Something ??? It's really necessary...
