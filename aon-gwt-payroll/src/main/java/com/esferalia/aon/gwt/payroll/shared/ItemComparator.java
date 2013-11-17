@@ -19,15 +19,14 @@ public class  ItemComparator<E extends Enum<?>> implements Comparator<Item<E>> {
 		
 		if ( id0 != null && id1 == null)
 			return 1; // p0 > p1  
-
-		if ( id0 < 0 && id1 >= 0)
-			return 1; // p0 > p1
-		
-		if ( id1 < 0 && id0 >= 0)
-			return -1; // p0 < p1
 			
 		if ( id0 != null && id1 != null)
-			return Math.abs(id0) - Math.abs(id1); // p0 - p1  
+			if ( id0 < 0 && id1 >= 0)
+				return 1; // p0 > p1
+			else if ( id1 < 0 && id0 >= 0)
+				return -1; // p0 < p1
+			else 
+				return Math.abs(id0) - Math.abs(id1); // p0 - p1  
 
 		E type0 = p0.getType();
 		E type1 = p1.getType();
