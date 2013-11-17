@@ -6,7 +6,7 @@ import java.util.Comparator;
 
 
 
-public class  ItemComparator<E extends Enum> implements Comparator<Item<E>> {
+public class  ItemComparator<E extends Enum<?>> implements Comparator<Item<E>> {
 	@Override
 	public int compare(Item<E> p0, Item<E> p1) {
 		
@@ -36,11 +36,11 @@ public class  ItemComparator<E extends Enum> implements Comparator<Item<E>> {
 			return 1;
 		if ( type0 == null && type1 != null )
 			return -1;
-		
-		int compareTo = type0 == type1 ? 0 : type0.compareTo(type1);
+		int compareTo = type0 == type1 ? 0 : type0.ordinal()-type1.ordinal();
 		if (compareTo != 0) {
 			return compareTo;
 		}
+
 		String description0 = p0.getDescription();
 		String description1 = p1.getDescription();
 		if (description0 == null) {
