@@ -21,6 +21,7 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 	Salary.Type salaryType;
 	Double dbAmount;
 	Integer conceptId;
+	
 
 	public Integer getId() {
 		return id;
@@ -29,7 +30,7 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
+	
 	public T getType() {
 		return type;
 	}

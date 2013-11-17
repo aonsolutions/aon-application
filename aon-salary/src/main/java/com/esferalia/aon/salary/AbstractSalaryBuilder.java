@@ -220,8 +220,11 @@ public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
 	public void addPayment(PaymentType type, String concept, Double amount,
 			String description, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
-		// TODO Auto-generated method stub
-		
+	}
+	
+	@Override
+	public void addZeroPayment(PaymentType type, String concept,
+			IPayment payment, Map<String, ITimedVariable<?>> context) {
 	}
 	
 	@Override
@@ -231,6 +234,11 @@ public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
 
 	}
 
+	@Override
+	public void addZeroDeduction(DeductionType type, String concept,
+			IDeduction deduction, Map<String, ITimedVariable<?>> context) {
+	}
+	
 	@Override
 	public void setListener(ISalaryBuilderListener listener) {
 		

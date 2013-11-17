@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -13,12 +12,11 @@ import java.util.Map;
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
-import com.esferalia.aon.gwt.payroll.shared.DeductionComparator;
 import com.esferalia.aon.gwt.payroll.shared.HasDeduction;
 import com.esferalia.aon.gwt.payroll.shared.HasPayment;
 import com.esferalia.aon.gwt.payroll.shared.Item;
+import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.PaymentComparator;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
@@ -358,7 +356,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			payment.setScope(Scope.SALARY);
 			payment.setDescription(description);
 			salaryDraftObject.addDraftPayment(payment);
-
 			salaryDraftObject.calculate(SalaryDraft.this);
 		}
 
@@ -421,6 +418,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		MultiWordSuggestOracle oracle;
 
 		Map<String, T> itemsConceptsMap;
+		
 
 		public void setDescriptionBox(SuggestBox descriptionBox) {
 			this.descriptionBox = descriptionBox;
@@ -576,7 +574,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				draftPayment.setType(Payment.Type.SALARY_SUPPLEMENTS);
 				draftPayment.setDescription(descriptionBox.getText());
 			}
-
 			draftPayment.setScope(Scope.SALARY);
 			draftPayment.setEndDate(salaryDraftObject.getEndDate());
 			draftPayment.setStartDate(salaryDraftObject.getStartDate());
@@ -1699,7 +1696,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private <I extends Item> void dumpItem(I item, int row,
 			String iconStyleName, ItemChangeHandler<TextBox, I> handler,
 			boolean isDeduction) {
-
+		
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
 		editButton.setStyleName(iconStyleName);
@@ -2280,7 +2277,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			String textStyleName) {
 
 		List<Payment> payments = salaryDraftObject.getPayments();
-		PaymentComparator comparator = new PaymentComparator();
+		ItemComparator comparator = new ItemComparator();
 
 		int idx = 0;
 		for (; idx < payments.size(); idx++)
@@ -2308,7 +2305,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			String textStyleName) {
 
 		List<Deduction> deductions = salaryDraftObject.getDeductions();
-		DeductionComparator comparator = new DeductionComparator();
+		ItemComparator<Deduction.Type> comparator = new ItemComparator<Deduction.Type>();
 
 		int idx = 0;
 		for (; idx < deductions.size(); idx++)
@@ -2360,4 +2357,5 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		return false;
 	}
+	
 }

@@ -20,44 +20,56 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 
 public class SalaryDeductionsFactory implements IDeductionsFactory {
 
+	private static final boolean IREPORT = SalaryDeductionsFactory.class
+			.getResource("/hibernate.cfg.xml") != null;
+
 	@Override
 	public boolean accept(IDeductionsFactoryContext ctx) {
 		ISalaryProxy proxy = ctx.getSalaryProxy();
-		return (proxy instanceof Salary); 
+
+		return (proxy instanceof Salary);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Deductions getDeductions(IDeductionsFactoryContext ctx) throws SalaryException {
+	public Deductions getDeductions(IDeductionsFactoryContext ctx)
+			throws SalaryException {
 		try {
 			Deductions deductions = new Deductions();
 			Collection<SalaryDeduction> salaryDeductions;
 			Salary salary = (Salary) ctx.getSalaryProxy().getSalary();
-			String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+			String sessionName = HibernateUtil
+					.getSessionFactoryName(Salary.class.getName());
 			Session session = HibernateUtil.getSession(sessionName);
-			// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
-			// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
+			// Si el Salary está conectado a la session de Hibernate utilizamos
+			// la potencia
+			// que nos da la obtención de colecciones tipo LAZY. En caso
+			// contrario vamos por
 			// el FrameWork.
-			if (session.contains(salary) || salary.getId() == null) {
+			if (session.contains(salary) || salary.getId() == null || IREPORT) {
 				salaryDeductions = salary.getSalaryDeductions();
-				for(SalaryDeduction sd: salaryDeductions){
-					manageDeductions(deductions,sd);
+				for (SalaryDeduction sd : salaryDeductions) {
+					manageDeductions(deductions, sd);
 				}
 			} else {
-				IManagerBean bean = BeanManager.getManagerBean(SalaryDeduction.class);
+				IManagerBean bean = BeanManager
+						.getManagerBean(SalaryDeduction.class);
 				Criteria c = new Criteria();
-				c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DEDUCTION_SALARY_ID), salary.getId());
+				c.addEqualExpression(bean
+						.getFieldName(IEntityAlias.SALARY_DEDUCTION_SALARY_ID),
+						salary.getId());
 				List<?> list = bean.getList(c);
 				salaryDeductions = (Collection<SalaryDeduction>) list;
-				for(SalaryDeduction sd: salaryDeductions){
-					manageDeductions(deductions,sd);
+				for (SalaryDeduction sd : salaryDeductions) {
+					manageDeductions(deductions, sd);
 				}
 			}
 			deductions.setTotal(salary.getTotalDeduction());
-			deductions.setSocialSecurityContributions(salary.getSocialSecurityContributions());
+			deductions.setSocialSecurityContributions(salary
+					.getSocialSecurityContributions());
 			return deductions;
-		} catch (ManagerBeanException  e) {
-			throw new SalaryException(e.getMessage(),e);
+		} catch (ManagerBeanException e) {
+			throw new SalaryException(e.getMessage(), e);
 		}
 	}
 

@@ -284,6 +284,13 @@ public class SalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
+	public void addZeroPayment(PaymentType type, String concept,
+			IPayment payment, Map<String, ITimedVariable<?>> context) {
+		//TODO: No payment, so we're not going to save it. But at upcoming versions
+		// we store taxes and quotes, so we'll have much more info.
+	}
+
+	@Override
 	public void addDeduction(DeductionType type, String concept, final Double amount,
 			String description, IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 		
@@ -309,6 +316,11 @@ public class SalaryBuilder implements ISalaryBuilder {
 		}
 		
 		
+	}
+	
+	@Override
+	public void addZeroDeduction(DeductionType type, String concept,
+			IDeduction deduction, Map<String, ITimedVariable<?>> context) {
 	}
 
 	@Override

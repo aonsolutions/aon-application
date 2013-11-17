@@ -83,6 +83,7 @@ public interface ISalaryBuilder {
 
 	// ------------------------------------------------------------------------
 	// Totals 
+	
 	public void setTotalLiquid(Double totalLiquid);
 	
 	public void setTotalPayment(Double totalPayment);
@@ -107,9 +108,12 @@ public interface ISalaryBuilder {
 
 	public void addPayment(PaymentType type, String concept, Double amount, String description , IPayment payment, Map<String, ITimedVariable<?>> context);
 
+	public void addZeroPayment(PaymentType type, String concept, IPayment payment, Map<String, ITimedVariable<?>> context);
+
 	public void addDeduction(DeductionType type, String concept, Double amount, String description , IDeduction deduction, Map<String, ITimedVariable<?>> context);
 
-		
+	public void addZeroDeduction(DeductionType type, String concept, IDeduction deduction, Map<String, ITimedVariable<?>> context);
+
 	// ------------------------------------------------------------------------
 	// Listener  
 	

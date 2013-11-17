@@ -98,13 +98,25 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 		}
 
 		private Set<Integer> ids = new HashSet<Integer>();
-
+		
+		
+		
+		// --------------------------------------------------------- Collection
+		
 		@Override
 		@SuppressWarnings("unchecked")
 		public Iterator<IContractPayment> iterator() {
-			return new FilterIterator(super.iterator(), this);
+			return new FilterIterator(super.iterator(), this){
+				@Override
+				public Object next() {
+					IContractPayment contractPayment = (IContractPayment)super.next();
+					return contractPayment;
+				}
+			};
 		}
-
+		
+		// ---------------------------------------------------------- Predicate
+		
 		@Override
 		public boolean evaluate(Object obj) {
 			IContractPayment payment = (IContractPayment) obj;

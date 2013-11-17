@@ -251,7 +251,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 									result.getContext());
 						}
 						else {
-							
+							salaryBuilder.addZeroPayment(type, concept, contractPayment,result.getContext());
 						}
 						total += value;
 
@@ -450,8 +450,13 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		for (ITimedResult<Double> result : results) {
 			Double value = result.getValue();
-			if (value == null || value == 0)
+			
+			if (value == null || value == 0){
+				salaryBuilder.addZeroDeduction(type, concept, d,
+						result.getContext());
 				continue;
+			}
+			
 			String description = null;
 			try {
 				Period period = result.getPeriod();

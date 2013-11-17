@@ -11,10 +11,9 @@ import java.util.Map.Entry;
 
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
-import com.esferalia.aon.gwt.payroll.shared.DeductionComparator;
 import com.esferalia.aon.gwt.payroll.shared.Item;
+import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.PaymentComparator;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -166,9 +165,9 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	@Override
 	public ISalary getSalary() {
-		Collections.sort(salaryDraft.getPayments(), new PaymentComparator());
+		Collections.sort(salaryDraft.getPayments(), new ItemComparator<Payment.Type>());
 		Collections
-				.sort(salaryDraft.getDeductions(), new DeductionComparator());
+				.sort(salaryDraft.getDeductions(), new ItemComparator<Deduction.Type>());
 		Collections.sort(salaryDraft.getContext(), new VariableComparator());
 		return null;
 	}
@@ -385,9 +384,15 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		draftPayment.setAmount(amount);
 		draftPayment.setDescription(description);
 		draftPayment.setType(getPaymentType(type));
-
+		
 		salaryDraft.addPayment(draftPayment);
 
+	}
+	
+	@Override
+	public void addZeroPayment(PaymentType type, String concept, 
+			IPayment payment, Map<String, ITimedVariable<?>> context) {
+		addPayment(type, concept, 0.00, payment.getDescription(), payment, context);
 	}
 
 	@Override
@@ -407,6 +412,12 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 		salaryDraft.addDeduction(deduction);
 
+	}
+	
+	@Override
+	public void addZeroDeduction(DeductionType type, String concept,
+			IDeduction deduction, Map<String, ITimedVariable<?>> context) {
+		addDeduction(type, concept, 0.00, deduction.getDescription(), deduction, context);
 	}
 
 	@Override

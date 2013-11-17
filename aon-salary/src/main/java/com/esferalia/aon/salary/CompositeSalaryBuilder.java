@@ -258,7 +258,14 @@ public class CompositeSalaryBuilder implements ISalaryBuilder {
 			builder.addPayment(type, concept, amount, description, payment,
 					context);
 	}
-
+	
+	@Override
+	public void addZeroPayment(PaymentType type, String concept,
+			IPayment payment, Map<String, ITimedVariable<?>> context) {
+		for (ISalaryBuilder builder : builders)
+			builder.addZeroPayment(type, concept, payment, context);
+	}
+	
 	@Override
 	public void addDeduction(DeductionType type, String concept, Double amount,
 			String description, IDeduction deduction,
@@ -266,6 +273,13 @@ public class CompositeSalaryBuilder implements ISalaryBuilder {
 		for (ISalaryBuilder builder : builders)
 			builder.addDeduction(type, concept, amount, description, deduction,
 					context);
+	}
+	
+	@Override
+	public void addZeroDeduction(DeductionType type, String concept,
+			IDeduction deduction, Map<String, ITimedVariable<?>> context) {
+		for (ISalaryBuilder builder : builders)
+			builder.addZeroDeduction(type, concept, deduction, context);
 	}
 
 	@Override

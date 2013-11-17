@@ -14,6 +14,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
+import com.esferalia.aon.salary.AbstractSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
@@ -26,7 +27,7 @@ import com.esferalia.aon.salary.payment.IPayment;
 
 
 
-public class SQLSalaryBuilderTester implements ISalaryBuilder {
+public class SQLSalaryBuilderTester extends  AbstractSalaryBuilder {
 
 	private static final String SALARY_SQL = "SELECT *"
 									+ " FROM " + SQLConstants.SALARY
@@ -67,120 +68,8 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 	}
 	
 	@Override
-	public ISalary getSalary() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void createNewSalary() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void setContract(Object contract) {
 		this.contract = ( ( SQLSalaryProxy ) contract).getContractId();
-	}
-
-	@Override
-	public void setCcc(String ccc) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setEnterpriseName(String enterpriseName) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setEnterpriseAddress(String enterpriseAddress) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setEnterpriseDocument(String enterpriseDocument) {
-		// TODO Auto-generated method stub
-
-	}	static String OVERWRITE = "overwrite";
-
-
-	@Override
-	public void setRegistration(Integer registration) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setEmployeeName(String employeeName) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setEmployeeDocument(String employeeDocument) {
-		this.employeeDocument = employeeDocument;
-	}
-
-	@Override
-	public void setSocialSecurityNumber(String socialSecurityNumber) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setCategory(String category) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setQuoteGroup(String quoteGroup) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setSeniorityDate(Date seniorityDate) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setType(SalaryType type) {
-		// TODO Auto-generated method stub
-
-	}
-	
-	@Override
-	public void setChargeDate(Date issueDate) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void setIssueDate(Date issueDate) {
-		// TODO Auto-generated method stub
-		this.issueDate = issueDate;
-	}
-
-	@Override
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	@Override
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-	@Override
-	public void setTimeUnits(Integer timeUnits) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -200,39 +89,9 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 	}
 
 	@Override
-	public void setRemuneration(Double remuneration) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void setProExtBase(Double extraPayProration) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void setIrpfBase(Double irpfBase) {
 		addField(SalaryColumns.IRPF_BASE, irpfBase);
 	}
-
-	@Override
-	public void setNonHExtraBase(Double overtimeBase) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setItBase(Double itBase) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setHExtraBase(Double hExtraBase) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	@Override
 	public void setTotalLiquid(Double totalLiquid) {
 		addField(SalaryColumns.TOTAL_LIQUID, totalLiquid);
@@ -243,65 +102,6 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 		addField(SalaryColumns.TOTAL_PAYMENT, totalPayment);
 	}
 
-	@Override
-	public void setTotalDeduction(Double totalDeduction) {
-		// TODO Auto-generated method stub
-
-	}
-
-	
-	@Override
-	public void setTotalIrpf(Double totalIrpf) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void setSocialSecurityContributions(
-			Double socialSecurityContributions) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setTotalEnterprise(Double totalEnterprise) {
-		addField(SalaryColumns.TOTAL_ENTERPRISE, totalEnterprise);
-	}
-	
-	@Override
-	public void addBonus(String concept, Double amount, String description) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void addCost(DeductionType type, String concept, Double amount,
-			String description) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void addEmbargo(Integer embargo, Double amount, String description) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void addPayment(PaymentType type, String concept, Double amount,
-			String description, IPayment payment,
-			Map<String, ITimedVariable<?>> context) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addDeduction(DeductionType type, String concept, Double amount,
-			String description, IDeduction deduction, Map<String, ITimedVariable<?>> context) {
-		// TODO Auto-generated method stub
-
-	}
-	
 	
 	public void test() throws SQLException {
 		ResultSet rs = null ;

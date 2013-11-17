@@ -12,7 +12,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.HasDescription;
 import com.esferalia.aon.gwt.payroll.shared.LevelComparator;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.PaymentComparator;
+import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -516,7 +516,7 @@ public class AgreementDraft extends ResizeComposite implements
 		int row = paymentsTable.getRowCount();
 
 		SortedSet<Payment> payments = new TreeSet<Payment>(
-				new PaymentComparator());
+				new ItemComparator());
 		payments.addAll(agreementDraftObject.getPayments());
 		for (Payment payment : payments) {
 			dumpPayment(payment, row++);

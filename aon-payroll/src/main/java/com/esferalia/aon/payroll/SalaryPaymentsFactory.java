@@ -19,6 +19,8 @@ import com.esferalia.aon.salary.payment.IPaymentsFactoryContext;
 import com.esferalia.aon.salary.payment.Payments;
 
 public class SalaryPaymentsFactory implements IPaymentsFactory {
+	private static final boolean IREPORT = SalaryDeductionsFactory.class
+			.getResource("/hibernate.cfg.xml") != null;
 
 	@Override
 	public boolean accept(IPaymentsFactoryContext ctx) {
@@ -38,7 +40,7 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 			// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
 			// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
 			// el FrameWork.
-			if (  session.contains(salary)  || salary.getId() == null ) {
+			if (  session.contains(salary)  || salary.getId() == null || IREPORT ) {
 				salaryPayments = salary.getSalaryPayments();
 				for(SalaryPayment sp: salaryPayments){
 					managePayment(payments,sp);

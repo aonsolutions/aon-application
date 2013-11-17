@@ -10,9 +10,12 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.Session;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -28,7 +31,10 @@ public class SalaryPayment extends SalaryPaymentDB implements IPayment,
 		IExpression {
 
 	private static final long serialVersionUID = 1L;
-
+	
+	private static final boolean IREPORT = SalaryDeductionsFactory.class
+			.getResource("/hibernate.cfg.xml") != null;
+	
 	@Override
 	@Transient
 	public String getName() {
@@ -90,16 +96,24 @@ public class SalaryPayment extends SalaryPaymentDB implements IPayment,
 	}
 
 	private String getData(String name) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(SalaryData.class);
-		Criteria c = new Criteria();
-		c.addEqualExpression(
-				bean.getFieldName(IEntityAlias.SALARY_DATA_SALARY_ID), getSalary().getId());
-		c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_NAME),
-				String.format("%d_%s", getId(), name ));
-		List<?> list = bean.getList(c);
-		if (list == null || list.size() == 0)
+		Salary salary = getSalary();
+		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+		Session session = HibernateUtil.getSession(sessionName);
+		if (  session.contains(salary)  || salary.getId() == null || IREPORT ) {
 			return null;
-		return ((SalaryData) list.get(0)).getExpression();
+		} 
+		else {
+			IManagerBean bean = BeanManager.getManagerBean(SalaryData.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(
+					bean.getFieldName(IEntityAlias.SALARY_DATA_SALARY_ID), salary.getId());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_NAME),
+					String.format("%d_%s", getId(), name ));
+			List<?> list = bean.getList(c);
+			if (list == null || list.size() == 0)
+				return null;
+			return ((SalaryData) list.get(0)).getExpression();
+		}
 	}
 
 }
