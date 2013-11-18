@@ -560,6 +560,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 			nomina.registration = 0;
 		}
 
+		
 		Double totalIrpf = toDouble(finiquito.getImporte_irpf());
 
 		java.sql.Date issuDate = finiquito.getFeccobreal();
