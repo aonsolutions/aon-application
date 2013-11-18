@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.Salary;

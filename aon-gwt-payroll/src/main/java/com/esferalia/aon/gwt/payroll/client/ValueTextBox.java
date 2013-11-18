@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.TextBox;
 
 public class ValueTextBox extends TextBox implements ValueLabel {

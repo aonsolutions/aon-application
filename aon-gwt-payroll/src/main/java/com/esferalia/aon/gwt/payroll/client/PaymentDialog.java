@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
-import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;

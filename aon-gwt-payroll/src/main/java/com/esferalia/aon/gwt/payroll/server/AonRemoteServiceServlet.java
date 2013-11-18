@@ -9,7 +9,6 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +22,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.common.ICommonConstants;
-import com.code.aon.ui.common.role.RoleManagerDB;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.controller.ConfigConstants;

@@ -1,8 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.Date;
 
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfResult;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;

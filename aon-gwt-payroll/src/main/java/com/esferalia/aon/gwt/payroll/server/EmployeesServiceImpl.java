@@ -17,7 +17,6 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.PERSON;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
-import static com.esferalia.aon.payroll.sql.SQLConstants.USER_SCOPE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
 
 import java.io.ByteArrayInputStream;
@@ -61,12 +60,9 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Order;
-import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.report.OutputFormat;
@@ -80,7 +76,6 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
-import com.esferalia.aon.gwt.payroll.shared.Constants;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -138,7 +133,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SalaryDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryEmbargoColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.CompositeSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
@@ -161,7 +155,6 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
-import com.google.web.bindery.requestfactory.shared.impl.EntityCodex;
 
 /**
  * The server side implementation of the RPC service.

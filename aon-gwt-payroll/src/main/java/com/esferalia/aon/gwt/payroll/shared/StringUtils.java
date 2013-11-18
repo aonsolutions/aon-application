@@ -1,8 +1,6 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
-import java.util.Date;
 
-import com.google.gwt.i18n.shared.DateTimeFormat;
 
 
 public class StringUtils {

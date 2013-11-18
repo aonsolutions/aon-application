@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;

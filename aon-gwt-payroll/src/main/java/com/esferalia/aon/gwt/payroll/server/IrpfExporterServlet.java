@@ -9,7 +9,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,6 @@ import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfRegularization;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfResult;
-import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 @SuppressWarnings("serial")
 public class IrpfExporterServlet extends HttpServlet {

@@ -1,10 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import org.apache.velocity.runtime.parser.node.GetExecutor;
 
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.google.gwt.core.client.GWT;

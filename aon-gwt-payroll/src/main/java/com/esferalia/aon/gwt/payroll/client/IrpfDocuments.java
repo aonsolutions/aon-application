@@ -1,14 +1,12 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfRegularization;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfResult;
-import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
