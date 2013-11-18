@@ -68,7 +68,7 @@ public abstract class AbstractSQL  {
 		/**
 		* @returns $column.remarks 
 		*/
-		public ${column.javaClass} get${column}() ;
+		${column.javaClass} get${column}() ;
 		
 #end
 	}

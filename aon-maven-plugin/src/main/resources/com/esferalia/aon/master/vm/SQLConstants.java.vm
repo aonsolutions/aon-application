@@ -22,14 +22,14 @@ public interface SQLConstants  {
 	/**
 	 *  $table $table.remarks
 	 */
-	public static final String ${table.name.toUpperCase()} = "${table.name}";
+	String ${table.name.toUpperCase()} = "${table.name}";
 	
-	public static interface ${table}Columns {
+	interface ${table}Columns {
 #foreach ($column in $table.columns)
 		/**
 		 *  $column	$column.remarks
 		 */
-		public static final String ${column.name.toUpperCase()} = "${column.name}";	
+		String ${column.name.toUpperCase()} = "${column.name}";	
 #end
 	}
 #end
