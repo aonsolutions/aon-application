@@ -106,6 +106,10 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		this.sourceViewer = sourceViewer;
 	}
 
+	public Invoice getInvoice() {
+		return (Invoice)getMasterController().getTo();
+	}
+
 	public boolean isEditable() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			InvoiceDetail to = (InvoiceDetail)this.getModel().getRowData();

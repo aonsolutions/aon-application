@@ -76,7 +76,7 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 
 	public void taxableBaseChanged(InvoiceDetail invoiceDetail) {
 		invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
-		invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
+		invoiceDetail.setRetentionQuota((getInvoice().isWithholding()) ? getRetentionQuota(invoiceDetail) : 0);
 	}
 
 	public void onVatQuotaChanged(ValueChangeEvent event) {
@@ -149,7 +149,7 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 
 		invoiceDetail.setTaxableBase(taxableBase);
 		invoiceDetail.setVatQuota(vatQuota);
-		invoiceDetail.setRetentionQuota(retentionQuota);
+		invoiceDetail.setRetentionQuota((getInvoice().isWithholding()) ? retentionQuota : 0);
 	}
 
 	public double getInvoiceDetailTotal() throws ManagerBeanException {
