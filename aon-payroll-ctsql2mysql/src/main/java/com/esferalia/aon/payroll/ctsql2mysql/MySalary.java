@@ -116,11 +116,11 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		java.sql.Date issueDate = nomina.getFecemi();
 		if (issueDate == null)
 			issueDate = nomina.getFecfin();
-		java.sql.Date chargeDate = nomina.getFeccobreal();
+		java.sql.Date chargeDate = nomina.getFeccob();
+		//if (chargeDate == null)
+		//	chargeDate = nomina.getFeccob();
 		if (chargeDate == null)
-			chargeDate = nomina.getFeccob();
-		if (chargeDate == null)
-			chargeDate = nomina.getFecfin();
+			chargeDate = issueDate ; // nomina.getFecfin();
 
 		this.salaryId = mysqlDB.insertSalary(enum2short(type), contractId,
 				nomina.getFecini(), nomina.getFecfin(),
@@ -381,11 +381,11 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		if (issueDate == null)
 			issueDate = nominaex.getFecfin();
 
-		java.sql.Date chargeDate = nominaex.getFeccobreal();
+		java.sql.Date chargeDate = nominaex.getFeccob();
+		//if (chargeDate == null)
+		//	chargeDate = nominaex.getFeccob();
 		if (chargeDate == null)
-			chargeDate = nominaex.getFeccob();
-		if (chargeDate == null)
-			chargeDate = nominaex.getFecfin();
+			chargeDate = issueDate ; //nominaex.getFecfin();
 
 		this.salaryId = mysqlDB.insertSalary(enum2short(SalaryType.EXTRA),
 				contractId, nominaex.getFecini(), nominaex.getFecfin(),
