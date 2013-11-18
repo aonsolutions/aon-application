@@ -532,7 +532,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			return;
 		}
 
-		// TODO : Cómo elegimos el tipo de actividad ?
+		// TODO : Cï¿½mo elegimos el tipo de actividad ?
 		Integer cnae2009 = null;
 		String cnae2009Str = empract.getCnae2009();
 		if (cnae2009Str != null && !cnae2009Str.isEmpty()) {
@@ -545,9 +545,13 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		Integer activityId = DefaultMysqlDB.get(cnae_activity, enterprise.id,
 				cnae);
 		if (activityId == null) {
+			String description = empract.getActeco();
+			if ( description == null || description.trim().isEmpty() )
+				description = empract.getDescripcion();
+
 			activityId = mysqlDB
 					.insertEnterprise_activity(
-							empract.getDescripcion(),
+							description,
 							enterprise.id,
 							cnae,
 							DefaultMysqlDB
