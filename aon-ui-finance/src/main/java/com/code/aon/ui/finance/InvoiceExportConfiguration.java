@@ -49,6 +49,7 @@ public class InvoiceExportConfiguration {
 				case GEYCE:
 					return !StringUtils.isEmpty(this.enterpriseCode);
 				case APLIFISA:
+				case LOGIC_WIN:
 					return true;
 			}
 		}
@@ -107,6 +108,9 @@ public class InvoiceExportConfiguration {
 			case EXPENSES:
 				journal = this.expensesJournal;
 				break;
+			case UNDEDUCTIBLE:
+				journal = this.generalJournal;
+				break;
 		}
 		return journal;
 	}
@@ -129,15 +133,22 @@ public class InvoiceExportConfiguration {
 	}
 	
 	public int getEnterpriseCodeLength() {
+		int length = 6;
 		if ( getType() != null ) {
 			switch ( getType() ) {
 				case GEYCE:
-					return 6;
+					length = 6;
+					break;
 				case A3:
-					return 5;
+					length = 5;
+					break;
+				case APLIFISA:
+				case LOGIC_WIN:
+					length = 0;
+					break;
 			}
 		}
-		return 6;
+		return length;
 	}
 	
 }

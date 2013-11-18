@@ -40,6 +40,7 @@ import com.code.aon.ui.finance.AplifisaWriter;
 import com.code.aon.ui.finance.BasicExporter;
 import com.code.aon.ui.finance.GeyceWriter;
 import com.code.aon.ui.finance.InvoiceExportConfiguration;
+import com.code.aon.ui.finance.LogicWinWriter;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
@@ -129,6 +130,9 @@ public class InvoiceExporterController extends BasicController {
 				break;
 			case APLIFISA:
 				obtainData( new AplifisaWriter(this.configuration) );
+				break;
+			case LOGIC_WIN:
+				obtainData( new LogicWinWriter(this.configuration) );
 				break;
 		}
 		this.finished = true;

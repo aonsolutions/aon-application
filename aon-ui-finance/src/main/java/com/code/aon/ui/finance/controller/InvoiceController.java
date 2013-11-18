@@ -255,7 +255,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			if (getInvoice().getType() == InvoiceType.SALES) {
 				criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), registryId);
 			}
-			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), Boolean.TRUE);
 			criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));
 			for (ITransferObject ito : projectBean.getList(criteria)) {
 				Project project = (Project)ito;

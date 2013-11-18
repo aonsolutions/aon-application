@@ -103,6 +103,11 @@ public class GeyceWriter extends BasicExporter {
 				case EXTRACOMMUNITY:
 					result = "EX";
 					break;
+				case CAN_CEU_MEL:
+				case NATIONAL:
+				case OTHER_ISP:
+					result = "IN";
+					break;					
 			}
 		} else if ( vdt == VatDeductionType.WITHOUT_RIGHT ) {
 			result = "ND";
@@ -316,8 +321,7 @@ public class GeyceWriter extends BasicExporter {
 	}
 
 	private void writeDetail() throws IOException {
-		AccountEntryDetail aed = getDetails().get(0);
-		getDetails().remove(0);
+		AccountEntryDetail aed = getNextDetail();
 		resetLine();
 		fillLine(aed);
 		writeLine();

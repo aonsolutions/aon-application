@@ -256,7 +256,7 @@ public class PrepaymentController extends BasicController implements IFinanceCon
 			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), prepayment.getCustomer().getId());
-			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), Boolean.TRUE);
 			criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));
 			for (ITransferObject ito : projectBean.getList(criteria)) {
 				Project project = (Project)ito;

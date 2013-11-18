@@ -132,7 +132,7 @@ public class PosShiftController extends BasicController implements IFinanceConst
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), new Boolean(false));
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), Boolean.FALSE);
 			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_POS_SHIFT_ID), posShift.getId());
 			criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_NAME));
 			criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_REFERENCE_CODE));
@@ -211,7 +211,7 @@ public class PosShiftController extends BasicController implements IFinanceConst
 			if (getDepartment() != null && getDepartment().getId() != null) {
 				criteria.addEqualExpression(posBean.getFieldName(IEntityAlias.POS_DEPARTMENT_ID), getDepartment().getId());
 			}
-			criteria.addEqualExpression(posBean.getFieldName(IEntityAlias.POS_ACTIVE), new Boolean(true));
+			criteria.addEqualExpression(posBean.getFieldName(IEntityAlias.POS_ACTIVE), Boolean.TRUE);
 			criteria.addOrder(posBean.getFieldName(IEntityAlias.POS_NAME));
 			for (ITransferObject ito : posBean.getList(criteria)) {
 				Pos pos = (Pos)ito;

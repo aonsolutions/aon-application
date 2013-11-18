@@ -782,12 +782,12 @@ public class BankStatementController extends BasicController implements IFinance
 		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		for (int key=1; key<=3 && to.isPending(); key++) {
 			Criteria criteriaFin = new Criteria();
-			criteriaFin.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), new Boolean(payment));
+			criteriaFin.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), Boolean.valueOf(payment));
 	        Criteria criteriaTrk = new Criteria();
-			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(payment));
+			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_PAYMENT), Boolean.valueOf(payment));
 			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_REGISTRY_BANK_ID), to.getRegistryBank().getId());
 			criteriaTrk.addNullExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_BANK_STATEMENT_LINK));
-			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_RECORDED), new Boolean(false));
+			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_RECORDED), Boolean.FALSE);
 			if (!AonUtil.getRoleManager().isConfidentiality()) {
 				criteriaFin.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 
@@ -880,7 +880,7 @@ public class BankStatementController extends BasicController implements IFinance
 		IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
 		for (int key=1; key<=2 && to.isPending(); key++) {
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_PAYMENT), new Boolean(to.isPayment()));
+			criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_PAYMENT), Boolean.valueOf(to.isPayment()));
 	        if (!AonUtil.getRoleManager().isConfidentiality()) {
 				criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 			}
@@ -958,7 +958,7 @@ public class BankStatementController extends BasicController implements IFinance
 			}
 	        Criteria criteria = new Criteria();
 	        criteria.addExpression((bankConceptExpr == null) ? accountExpr : ExpressionUtilities.getOrExpression(accountExpr, bankConceptExpr));
-	        criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_PAYMENT), new Boolean(!payment));
+	        criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_PAYMENT), Boolean.valueOf(!payment));
 	        if (!AonUtil.getRoleManager().isConfidentiality()) {
 				criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 			}
@@ -1029,7 +1029,7 @@ public class BankStatementController extends BasicController implements IFinance
 			Criteria criteria = new Criteria();
 			criteria.addNotEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_STATUS), StatementStatus.PENDING);
 			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_REGISTRY_BANK_ID), to.getRegistryBank().getId());
-			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_PAYMENT), new Boolean(to.isPayment()));
+			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_PAYMENT), Boolean.valueOf(to.isPayment()));
 			criteria.addOrder(getFieldName(IEntityAlias.BANK_STATEMENT_OPERATION_DATE), false);
 			switch (key) {
 				case 1: {
@@ -1170,7 +1170,7 @@ public class BankStatementController extends BasicController implements IFinance
 				financeSearch.setFinanceStatuses(financeStatuses);
 			}
 	        criteria = new Criteria();
-			criteria.addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_PAYMENT), new Boolean(payment));
+			criteria.addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_PAYMENT), Boolean.valueOf(payment));
 	        if (!AonUtil.getRoleManager().isConfidentiality()) {
 				criteria.addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 			}
@@ -1192,7 +1192,7 @@ public class BankStatementController extends BasicController implements IFinance
 				trackingSearch.setFinanceTrackingTypes(financeTrackingTypes);
 			}
 			criteria = new Criteria();
-			criteria.addEqualExpression(trackingList.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(payment));
+			criteria.addEqualExpression(trackingList.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_PAYMENT), Boolean.valueOf(payment));
 	        if (!AonUtil.getRoleManager().isConfidentiality()) {
 				criteria.addEqualExpression(trackingList.getFieldName(IEntityAlias.FINANCE_TRACKING_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 			}
@@ -1207,7 +1207,7 @@ public class BankStatementController extends BasicController implements IFinance
 			FBatchListController batchList = (FBatchListController)FormUtil.getController(FINANCE_BATCH_LIST_CONTROLLER_NAME);
 			batchList.onEditSearch(null);
 			criteria = new Criteria();
-			criteria.addEqualExpression(batchList.getFieldName(IEntityAlias.FINANCE_BATCH_PAYMENT), new Boolean(payment));
+			criteria.addEqualExpression(batchList.getFieldName(IEntityAlias.FINANCE_BATCH_PAYMENT), Boolean.valueOf(payment));
 	        if (!AonUtil.getRoleManager().isConfidentiality()) {
 				criteria.addEqualExpression(batchList.getFieldName(IEntityAlias.FINANCE_BATCH_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 			}
@@ -1238,7 +1238,7 @@ public class BankStatementController extends BasicController implements IFinance
 		}
         criteria = new Criteria();
         criteria.addExpression((bankConceptExpr == null) ? accountExpr : ExpressionUtilities.getOrExpression(accountExpr, bankConceptExpr));
-        criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_PAYMENT), new Boolean(!payment));
+        criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_PAYMENT), Boolean.valueOf(!payment));
         if (!AonUtil.getRoleManager().isConfidentiality()) {
 			criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		}

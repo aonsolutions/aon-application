@@ -37,9 +37,9 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public abstract class BasicExporter {
 	
-	private String[] SKIP_ACCOUNTS = new String[] { "477", "472", "473", "4751" };
+	private static final String[] SKIP_ACCOUNTS = new String[] { "477", "472", "473", "4751" };
 	
-	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 
 	private ByteArrayOutputStream out;
 	
@@ -306,6 +306,10 @@ public abstract class BasicExporter {
 
 	protected AccountEntryDetail getRegistryDetail() {
 		return registryDetail;
+	}
+
+	protected AccountEntryDetail getNextDetail() {
+		return getDetails().remove(0);
 	}
 	
 	protected byte[] getData() {

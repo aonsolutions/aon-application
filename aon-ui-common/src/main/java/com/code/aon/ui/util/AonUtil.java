@@ -390,7 +390,7 @@ public class AonUtil {
 				bundle = ResourceBundle.getBundle(bundleName, locale, getCurrentLoader(bundleName));
 				summary = bundle.getString(messageId);
 			} catch (MissingResourceException e) {
-				// NoOp
+				LOGGER.debug( e.getMessage(), e );
 			}
 		}
 
@@ -402,7 +402,7 @@ public class AonUtil {
 				}
 				summary = bundle.getString(messageId);
 			} catch (MissingResourceException e) {
-				// NoOp
+				LOGGER.debug( e.getMessage(), e );
 			}
 		}
 
@@ -418,7 +418,7 @@ public class AonUtil {
 		try {
 			detail = substituteParams(locale, bundle.getString(messageId + DETAIL_SUFFIX), params);
 		} catch (MissingResourceException e) {
-			// NoOp
+			LOGGER.debug( e.getMessage(), e );
 		}
 
 		return new FacesMessage(summary, detail);

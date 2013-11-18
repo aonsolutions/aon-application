@@ -80,10 +80,8 @@ public class DownloadUtil {
 	}
 	
 	public static MimeType resolveMimeType( String fileName, MimeType type) {
-		if ( type == null ) {
-			if (! StringUtils.isEmpty(fileName) ) {
-				return MimeResolver.getMimeTypeByExtension(fileName);
-			}
+		if ( (type == null) && !StringUtils.isEmpty(fileName) ) {
+			return MimeResolver.getMimeTypeByExtension(fileName);
 		}
 		return type;
 	}		

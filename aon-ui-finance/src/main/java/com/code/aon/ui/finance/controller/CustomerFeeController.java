@@ -134,7 +134,7 @@ public class CustomerFeeController extends LinesController implements IFinanceCo
 		IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), customer.getId());
-		criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), Boolean.TRUE);
 		criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));
 		for (ITransferObject ito : projectBean.getList(criteria)) {
 			Project project = (Project)ito;

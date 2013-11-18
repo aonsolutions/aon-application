@@ -62,11 +62,11 @@ public class MappedTransferObjectConverter implements Converter {
 					Class<?> valueClass = Class.forName(value);
 					MappedTransferObjectConverter.getEntityInterfaces().put(keyClass, valueClass);
 				} catch (ClassNotFoundException e) {
-					// Nothing
+					LOGGER.debug(e.getMessage(), e);
 				}
 			}
 		} catch (IOException e) {
-			// Nothing
+			LOGGER.debug(e.getMessage(), e);
 		}
 	}
 

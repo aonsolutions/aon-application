@@ -52,10 +52,8 @@ public class TransferObjectConverter implements Converter {
 		if ( type == null ) {
 			ValueExpression vb = component.getValueExpression("value");
 			Class<?> toType = (vb != null) ? vb.getType(context.getELContext()) : null;
-			if ( toType != null ) {
-				if ( toType.isArray() ) {
-					return toType.getComponentType();
-				}
+			if ( (toType != null) && toType.isArray() ) {
+				return toType.getComponentType();
 			}
 			return toType;			
 		}

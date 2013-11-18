@@ -27,12 +27,12 @@ public class HibernateUtil {
 
     private static ThreadLocal<Boolean> MUST_CLOSE_SESSION = new ThreadLocal<Boolean>(){
     	protected Boolean initialValue() {
-    		return new Boolean(true);
+    		return Boolean.TRUE;
     	}
     };
     private static ThreadLocal<Boolean>  MUST_BEGIN_TRANSACTION = new ThreadLocal<Boolean>(){
     	protected Boolean initialValue() {
-    		return new Boolean(true);
+    		return Boolean.TRUE;
     	}
     };
 
@@ -147,7 +147,7 @@ public class HibernateUtil {
     
     
     public static void setCloseSession(boolean mustCloseSession) {
-        HibernateUtil.MUST_CLOSE_SESSION.set(new Boolean(mustCloseSession));
+        HibernateUtil.MUST_CLOSE_SESSION.set(Boolean.valueOf(mustCloseSession));
     }
     
     public static boolean mustCloseSession() {
@@ -155,7 +155,7 @@ public class HibernateUtil {
     }
 
     public static void setBeginTransaction(boolean mustBeginTransaction) {
-        HibernateUtil.MUST_BEGIN_TRANSACTION.set(new Boolean(mustBeginTransaction));
+        HibernateUtil.MUST_BEGIN_TRANSACTION.set(Boolean.valueOf(mustBeginTransaction));
     }
 
     public static boolean mustBeginTransaction() {

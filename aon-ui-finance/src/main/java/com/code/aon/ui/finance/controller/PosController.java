@@ -35,8 +35,8 @@ public class PosController extends BasicController {
 			IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID), pos.getWorkPlace().getScope().getId());
-			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_POS), new Boolean(true));
-			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), new Boolean(true));
+			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_POS), Boolean.TRUE);
+			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), Boolean.TRUE);
 			if (!AonUtil.getRoleManager().isConfidentiality()) {
 				criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 			}
@@ -57,8 +57,8 @@ public class PosController extends BasicController {
 			IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID), pos.getWorkPlace().getScope().getId());
-			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_POS), new Boolean(true));
-			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), new Boolean(true));
+			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_POS), Boolean.TRUE);
+			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), Boolean.TRUE);
 			if (!AonUtil.getRoleManager().isConfidentiality()) {
 				criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 			}

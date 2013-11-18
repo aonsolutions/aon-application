@@ -51,14 +51,14 @@ public class LookupChangeEvent extends FacesEvent {
      * @return object
      */
     public Object getNewValue() {
-        return (this.newValue);
+        return this.newValue;
     }
 
 
     // ------------------------------------------------- Event Broadcast Methods
 
     public boolean isAppropriateListener(FacesListener listener) {
-        return (listener instanceof LookupChangeListener);
+        return listener instanceof LookupChangeListener;
     }
 
     /**

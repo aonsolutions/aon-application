@@ -108,7 +108,7 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 			if (getDepartment() != null && getDepartment().getId() != null) {
 				criteria.addEqualExpression(posBean.getFieldName(IEntityAlias.POS_DEPARTMENT_ID), getDepartment().getId());
 			}
-			criteria.addEqualExpression(posBean.getFieldName(IEntityAlias.POS_ACTIVE), new Boolean(true));
+			criteria.addEqualExpression(posBean.getFieldName(IEntityAlias.POS_ACTIVE), Boolean.TRUE);
 			criteria.addOrder(posBean.getFieldName(IEntityAlias.POS_NAME));
 			for (ITransferObject ito : posBean.getList(criteria)) {
 				Pos pos = (Pos)ito;

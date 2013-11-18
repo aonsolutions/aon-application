@@ -1,5 +1,7 @@
 package com.code.aon.ui.finance.util;
 
+import java.util.List;
+
 import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.common.BeanManager;
@@ -22,7 +24,7 @@ public class PosUtils {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_USERNAME), UserUtils.getInstance().getLoggedUser().getLogin());
 			criteria.addNullExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_END_TIME));
-			return (posShiftBean.getCount(criteria) > 0);
+			return posShiftBean.getCount(criteria) > 0;
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage());
@@ -30,20 +32,21 @@ public class PosUtils {
 	}
 
 	public static PosShift getUserPosShift() {
+		PosShift result = null;
 		try {
 			IManagerBean posShiftBean = BeanManager.getManagerBean(PosShift.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_USERNAME), UserUtils.getInstance().getLoggedUser().getLogin());
 			criteria.addNullExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_END_TIME));
-			for (ITransferObject ito : posShiftBean.getList(criteria)) {
-				return (PosShift)ito;
+			List<ITransferObject> list = posShiftBean.getList(criteria);
+			if (! list.isEmpty() ) {
+				result = (PosShift) list.get(0);
 			}
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage());
 		}
-
-		return null;
+		return result;
 	}
 
 	public static boolean isPosShiftAlreadyOpened(Pos pos, Shift shift) {
@@ -53,7 +56,7 @@ public class PosUtils {
 			criteria.addEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_POS_ID), pos.getId());
 			criteria.addEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_SHIFT), shift);
 			criteria.addNullExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_END_TIME));
-			return (posShiftBean.getCount(criteria) > 0);
+			return posShiftBean.getCount(criteria) > 0;
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage());

@@ -3,6 +3,7 @@ package com.code.aon.ui.finance;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EXPORT_A3;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EXPORT_APLIFISA;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EXPORT_GEYCE;
+import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EXPORT_LOGIC_WIN;
 
 import java.util.Locale;
 
@@ -15,7 +16,9 @@ public enum InvoiceExportType implements IResourceable {
 	
 	A3(FINANCE_INVOICE_EXPORT_A3),
 	
-	APLIFISA(FINANCE_INVOICE_EXPORT_APLIFISA);
+	APLIFISA(FINANCE_INVOICE_EXPORT_APLIFISA),
+	
+	LOGIC_WIN(FINANCE_INVOICE_EXPORT_LOGIC_WIN);
 
 	private String label;
 	
