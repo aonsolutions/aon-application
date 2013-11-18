@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
@@ -10,13 +11,14 @@
 	<name>AON PARENT</name>
 
 	<properties>
+		<compileSource>1.6</compileSource>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<jasperReportsArtifact>jasperreports-javaflow</jasperReportsArtifact>
 		<jasperReportsVersion>5.1.0</jasperReportsVersion>
-        <jasperreportsMavenPluginGroup>com.esferalia.aon</jasperreportsMavenPluginGroup>
-        <jasperreportsMavenPluginArtifact>aon-maven-plugin</jasperreportsMavenPluginArtifact>
+		<jasperreportsMavenPluginGroup>com.esferalia.aon</jasperreportsMavenPluginGroup>
+		<jasperreportsMavenPluginArtifact>aon-maven-plugin</jasperreportsMavenPluginArtifact>
 		<jasperreportsMavenPluginVersion>7.20-SNAPSHOT</jasperreportsMavenPluginVersion>
-        <maven-build-utils.activationProfiles>perform-stats</maven-build-utils.activationProfiles>
+		<maven-build-utils.activationProfiles>perform-stats</maven-build-utils.activationProfiles>
 	</properties>
 
 	<modules>
@@ -36,7 +38,7 @@
 		<module>aon-ui-dbutils</module>
 		<module>aon-ui-db-manager</module>
 		<module>aon-sql-payroll</module>
-		
+
 		<!-- FRAMEWORK -->
 		<module>aon.pool</module>
 		<module>aon-audit</module>
@@ -90,7 +92,7 @@
 		<module>aon-purchase-bridge</module>
 		<module>aon-tas</module>
 		<module>aon-pms</module>
-		<module>aon-academy</module>    
+		<module>aon-academy</module>
 
 		<!-- UI MODULES -->
 		<module>aon-ui-academy</module>
@@ -133,8 +135,8 @@
 
 		<!-- GENERATED -->
 		<module>aon-audabridge-api</module>
-	  	<module>aon-pms-api</module>
-	  	<module>aon-sepe-api</module>
+		<module>aon-pms-api</module>
+		<module>aon-sepe-api</module>
 
 		<!-- UTILITY -->
 		<module>aon-file-format</module>
@@ -266,18 +268,18 @@
 		</repository>
 
 		<repository>
-                    <id>maven2-repository.dev.java.net</id>
-                    <name>Java.net Repository for Maven 2</name>
-                    <url>http://download.java.net/maven/2</url>
-                    <releases>
-                        <enabled>true</enabled>
-			<updatePolicy>never</updatePolicy>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-			<updatePolicy>never</updatePolicy>
-                    </snapshots>
-                </repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net Repository for Maven 2</name>
+			<url>http://download.java.net/maven/2</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
 
 		<repository>
 			<id>jasperForge</id>
@@ -293,108 +295,93 @@
 				<updatePolicy>true</updatePolicy>
 			</snapshots>
 		</repository>
-<!-- 
-		<repository>
-			<id>dynamicJasper-public-repository</id>
-			<name>DynamicJasper public Repository</name>
-			<url>http://archiva.fdvs.com.ar/repository/public1/</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
- -->
 	</repositories>
 
 	<pluginRepositories>
-	
+
 		<pluginRepository>
 			<id>aon</id>
 			<url>http://dev.esferalia.com/maven2_repositories/inhouse</url>
-                        <snapshots>
-                                <enabled>false</enabled>
-                        </snapshots>
-                        <releases>
-                                <enabled>true</enabled>
-                        </releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</pluginRepository>
-		
+
 		<pluginRepository>
 			<id>aon.snapshots</id>
 			<url>http://dev.esferalia.com/maven2_repositories/inhouse_snapshot</url>
-                        <snapshots>
-                                <enabled>true</enabled>
-                        </snapshots>
-                        <releases>
-                                <enabled>false</enabled>
-                        </releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
 		</pluginRepository>
 
 		<pluginRepository>
 			<id>aon.external.free</id>
 			<url>http://dev.esferalia.com/maven2_repositories/external_free</url>
-                        <snapshots>
-                                <enabled>false</enabled>
-                        </snapshots>
-                        <releases>
-                                <enabled>true</enabled>
-                        </releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</pluginRepository>
 
 		<pluginRepository>
 			<id>maven2-repository.dev.java.net</id>
 			<url>http://download.java.net/maven/2/</url>
-                        <snapshots>
-                                <enabled>false</enabled>
-                        </snapshots>
-                        <releases>
-                                <enabled>true</enabled>
-                        </releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</pluginRepository>
-		
-                <pluginRepository>
-                        <id>Codehaus Public</id>
-                        <url>https://nexus.codehaus.org/content/groups/public/</url>
-                        <snapshots>
-                                <enabled>true</enabled>
-                        </snapshots>
-                        <releases>
-                                <enabled>true</enabled>
-                        </releases>
-                </pluginRepository>
-        </pluginRepositories>
+
+		<pluginRepository>
+			<id>Codehaus Public</id>
+			<url>https://nexus.codehaus.org/content/groups/public/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<build>
-		
-		<!--  Extension para mostrar las estadisticas de tiempo al final del build -->
-        <extensions>
-            <extension>
-                <groupId>com.github.lkoskela</groupId>
-                <artifactId>maven-build-utils</artifactId>
-                <version>1.4</version>
-            </extension>
-        </extensions>
-        
+
+		<!-- Extension para mostrar las estadisticas de tiempo al final del build -->
+		<extensions>
+			<extension>
+				<groupId>com.github.lkoskela</groupId>
+				<artifactId>maven-build-utils</artifactId>
+				<version>1.4</version>
+			</extension>
+		</extensions>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.5.1</version>
 				<configuration>
-					<source>1.6</source>
+					<source>${compileSource}</source>
 					<target>1.6</target>
-					<encoding>ISO-8859-1</encoding>
+					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-          		<artifactId>maven-surefire-plugin</artifactId>
-          		<version>2.10</version>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.10</version>
 				<configuration>
 					<workingDirectory>target</workingDirectory>
 				</configuration>
@@ -419,24 +406,24 @@
 				<artifactId>maven-source-plugin</artifactId>
 				<version>2.2</version>
 				<executions>
-            	    <execution>
-        	            <goals>
-    	                    <goal>jar-no-fork</goal>
-	                    </goals>
-                	</execution>
-            	</executions>
+					<execution>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.9</version>
 				<configuration>
 					<skip>true</skip>
-				</configuration> 
+				</configuration>
 			</plugin>
 
-   			<plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.3.2</version>
@@ -460,7 +447,7 @@
 						<groupId>com.jcraft</groupId>
 						<artifactId>jsch</artifactId>
 						<version>0.1.50</version>
-					</dependency>					
+					</dependency>
 				</dependencies>
 			</plugin>
 			<!-- Para añadir la carpeta de los fuentes generados como source folder. -->
@@ -484,6 +471,29 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<!-- The PMD Plugin allows you to automatically run the PMD code analysis 
+				tool on your project's source code. It also supports the separate Copy/Paste 
+				Detector tool (or CPD) distributed with PMD. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+							<goal>cpd-check</goal>
+						</goals>
+						<configuration>
+							<failOnViolation>false</failOnViolation>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<targetJdk>${compileSource}</targetJdk>
+					<sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+				</configuration>
 			</plugin>
 		</plugins>
 
@@ -539,9 +549,9 @@
 	</distributionManagement>
 
 	<profiles>
-      	<profile>
-            <id>perform-stats</id>
-        </profile>
-    </profiles>
+		<profile>
+			<id>perform-stats</id>
+		</profile>
+	</profiles>
 
 </project>
