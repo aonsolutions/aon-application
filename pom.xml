@@ -374,7 +374,7 @@
 				<configuration>
 					<source>${compileSource}</source>
 					<target>1.6</target>
-					<encoding>${project.build.sourceEncoding}</encoding>
+					<encoding>ISO-8859-1</encoding>
 				</configuration>
 			</plugin>
 
@@ -492,7 +492,7 @@
 				</executions>
 				<configuration>
 					<targetJdk>${compileSource}</targetJdk>
-					<sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+					<sourceEncoding>ISO-8859-1</sourceEncoding>
 				</configuration>
 			</plugin>
 		</plugins>
