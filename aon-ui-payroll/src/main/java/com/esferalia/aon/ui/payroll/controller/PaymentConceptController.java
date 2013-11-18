@@ -1,10 +1,7 @@
 package com.esferalia.aon.ui.payroll.controller;
 
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIInput;
 import javax.faces.event.ActionEvent;
 
-import org.ajax4jsf.component.html.HtmlAjaxSupport;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
 

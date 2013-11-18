@@ -1,8 +1,5 @@
 package com.esferalia.aon.ui.payroll.controller.launcher;
 
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester;

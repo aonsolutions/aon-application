@@ -1,6 +1,5 @@
 package com.esferalia.aon.ui.payroll.controller;
 
-import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.payroll.enumeration.QuoteType;

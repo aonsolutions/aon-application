@@ -6,7 +6,6 @@ import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
 
 import com.esferalia.aon.payroll.DeductionConcept;
-import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 
 

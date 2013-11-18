@@ -1,7 +1,6 @@
 package com.esferalia.aon.ui.payroll.utils;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,21 +8,14 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import net.sf.jasperreports.engine.JRImageRenderer;
 import net.sf.jasperreports.engine.JRRenderable;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.type.OrderedSetType;
 
 import com.code.aon.registry.RegistryAttachment;
-import com.esferalia.aon.payroll.SalaryDeduction;
-import com.esferalia.aon.salary.enumeration.DeductionType;
 
 public class ReportUtils {
 

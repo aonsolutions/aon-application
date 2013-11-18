@@ -28,7 +28,6 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.ui.payroll.controller.IPaymentHandler;
-import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class SystemPaymentController extends ContractDetailVariableController
 		implements IPaymentHandler {
