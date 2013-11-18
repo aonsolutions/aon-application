@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 
-import com.code.aon.common.util.CommonUtil;
 
 public class Period implements Comparable<Period>{
 

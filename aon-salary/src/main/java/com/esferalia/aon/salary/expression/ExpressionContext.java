@@ -17,11 +17,9 @@ import java.util.regex.Pattern;
 import org.mvel2.CompileException;
 import org.mvel2.ErrorDetail;
 import org.mvel2.MVEL;
-import org.mvel2.ParserConfiguration;
 import org.mvel2.ParserContext;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
-import org.mvel2.ast.ASTNode;
 import org.mvel2.templates.TemplateRuntime;
 import org.mvel2.util.MethodStub;
 

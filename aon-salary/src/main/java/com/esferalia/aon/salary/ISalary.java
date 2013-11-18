@@ -2,7 +2,6 @@ package com.esferalia.aon.salary;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
 
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.IDeduction;
