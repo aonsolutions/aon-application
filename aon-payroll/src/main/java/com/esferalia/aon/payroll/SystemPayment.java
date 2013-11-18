@@ -9,8 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.annotations.Heritable;
 import com.esferalia.aon.entity.master.SystemPaymentDB;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.enumeration.TaxationType;
-import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 

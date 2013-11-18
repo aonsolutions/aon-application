@@ -1,6 +1,5 @@
 package com.esferalia.aon.payroll;
 
-import java.util.Date;
 
 public class IrpfOutcome {
 	

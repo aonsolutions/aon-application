@@ -39,7 +39,6 @@ import es.aeat.pret.rw13.jaxb.TipoRetenidoEntrada2013.SituacionLaboral.Pensionis
 import es.aeat.pret.rw13.jaxb.TipoRetenidoEntrada2013.SituacionLaboral.TrabajadorActivo;
 import es.aeat.pret.rw13.jaxb.TipoRetenidoEntrada2013.SituacionLaboral.TrabajadorActivo.MovilidadGeografica;
 import es.aeat.pret.rw13.jaxb.TipoRetenidoEntrada2013.SituacionLaboral.TrabajadorActivo.ProlongacionLaboral;
-import es.aeat.pret.rw13.util.ValidaNif;
 
 public class AEATRetencionesEntradaFactory {
 

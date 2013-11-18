@@ -2,28 +2,21 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.*;
 
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.mvel2.util.MethodStub;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
-import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.calculator.ContextFunctions;
 import com.esferalia.aon.payroll.calculator.ExcelFunctions;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.DeferredTimedVariable;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
