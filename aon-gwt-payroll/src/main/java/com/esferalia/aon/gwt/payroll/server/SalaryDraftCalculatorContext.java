@@ -104,13 +104,7 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 		@Override
 		@SuppressWarnings("unchecked")
 		public Iterator<IContractPayment> iterator() {
-			return new FilterIterator(super.iterator(), this){
-				@Override
-				public Object next() {
-					IContractPayment contractPayment = (IContractPayment)super.next();
-					return contractPayment;
-				}
-			};
+			return new FilterIterator(super.iterator(), this);		
 		}
 		
 		// ---------------------------------------------------------- Predicate

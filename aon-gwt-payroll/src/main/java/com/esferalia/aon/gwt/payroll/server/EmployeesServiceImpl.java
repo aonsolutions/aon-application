@@ -1468,13 +1468,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				+ "." + RegistryColumns.NAME);
 
 		aliasCriteria.addBetweenExpression(
-				beanManager.getFieldName(IEntityAlias.SALARY_END_DATE),
+				beanManager.getFieldName(IEntityAlias.SALARY_CHARGE_DATE),
 				startDate, endDate);
 
 		aliasCriteria.addOrder(beanManager
 				.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
 		aliasCriteria.addOrder(beanManager
 				.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
+		aliasCriteria.addOrder(beanManager
+				.getFieldName(IEntityAlias.SALARY_CHARGE_DATE));
 
 		return new AonServletUtils.CalcSalaryProvider(startDate, endDate,
 				sqlCriteria, new AonServletUtils.SalaryProvider(aliasCriteria));

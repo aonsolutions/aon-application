@@ -242,8 +242,8 @@ public class Salary extends ResizeComposite {
 
 		int index = 0;
 		for (com.esferalia.aon.gwt.payroll.shared.Salary salary : salaries) {
-			dateListBox.addItem(DATE_FORMAT.format(salary.getEndDate()));
-			if (salary.getEndDate().before(currentSalary.getEndDate())) {
+			dateListBox.addItem(DATE_FORMAT.format(salary.getChargeDate()));
+			if (salary.getEndDate().before(currentSalary.getChargeDate())) {
 				index++;
 			}
 		}
