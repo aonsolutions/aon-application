@@ -14,7 +14,11 @@ import com.esferalia.aon.entity.master.RegistryBankDB;
 public class RegistryBank extends RegistryBankDB implements IBankAccountContainer {
 
 	private static final long serialVersionUID = 1L;
-	
+
+	public RegistryBank(){
+		setActive(true);
+	}
+
 	@Transient
 	public String getFullName() {
 		StringBuffer sb = new StringBuffer();
