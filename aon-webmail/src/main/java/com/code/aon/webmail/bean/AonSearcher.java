@@ -50,8 +50,9 @@ public class AonSearcher {
 	}
 
 	public AonMessage[] search() throws WebmailException{
-		if (!hasTerm())
+		if (!hasTerm()) {
 			return new AonMessage[0];
+		}
 		Folder folder = aonFolder.getFolder();
 		Message[] messages;
 		try {
@@ -91,8 +92,9 @@ public class AonSearcher {
 				break;
 		}
 		term = new FlagTerm(new Flags(Flags.Flag.DELETED), false);
-		if (value!=null)
+		if (value!=null) {
 			term = new AndTerm(term,value);
+		}
 	}
 	
 	public boolean hasTerm(){

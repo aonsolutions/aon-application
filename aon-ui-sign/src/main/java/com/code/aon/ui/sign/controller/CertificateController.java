@@ -288,7 +288,7 @@ public class CertificateController {
 	}	
 	
 	public boolean isSignable() throws ManagerBeanException {
-		return companyController.isSmartCard() || (getCertificateCount() > 0);
+		return companyController.isSmartCard() || getCertificateCount()>0;
 	}
 	
 	public byte[] getSignedFileData( byte[] in, boolean visible ) throws SinaduraCoreException, IOException {

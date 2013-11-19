@@ -1,12 +1,5 @@
 package com.code.aon.webmail.bean;
 
-import static com.code.aon.webmail.bean.IMailConstants.DRAFT_FOLDER_NAME;
-import static com.code.aon.webmail.bean.IMailConstants.INBOX_FOLDER_NAME;
-import static com.code.aon.webmail.bean.IMailConstants.OTHER_FOLDER_NAME;
-import static com.code.aon.webmail.bean.IMailConstants.SENT_FOLDER_NAME;
-import static com.code.aon.webmail.bean.IMailConstants.SPAM_FOLDER_NAME;
-import static com.code.aon.webmail.bean.IMailConstants.TRASH_FOLDER_NAME;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -245,21 +238,21 @@ public class AonFolder extends AonMessageSortableList {
 
     public String getFolderTypeName(){
 		if ( isInboxFolder() ) {
-			return INBOX_FOLDER_NAME;
+			return IMailConstants.INBOX_FOLDER_NAME;
 		} else if ( isTrashFolder() ) {
-			return TRASH_FOLDER_NAME;
+			return IMailConstants.TRASH_FOLDER_NAME;
 		} else if ( isSentFolder() ) {
-			return SENT_FOLDER_NAME;
+			return IMailConstants.SENT_FOLDER_NAME;
 		} else if ( isSpamFolder() ) {
-			return SPAM_FOLDER_NAME;
+			return IMailConstants.SPAM_FOLDER_NAME;
 		} else if ( isDraftFolder() ) {
-			return DRAFT_FOLDER_NAME;
+			return IMailConstants.DRAFT_FOLDER_NAME;
 		}
-    	return OTHER_FOLDER_NAME;
+    	return IMailConstants.OTHER_FOLDER_NAME;
     }
 
     public boolean isInboxFolder() {
-    	return INBOX_FOLDER_NAME.equals( getFolder().getFullName() );	
+    	return IMailConstants.INBOX_FOLDER_NAME.equals( getFolder().getFullName() );	
     }
     
     public boolean isDraftFolder() {
@@ -305,5 +298,11 @@ public class AonFolder extends AonMessageSortableList {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return getName().hashCode();
 	}    
+	
 }

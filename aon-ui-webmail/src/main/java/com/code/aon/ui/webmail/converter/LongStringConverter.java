@@ -23,10 +23,11 @@ public class LongStringConverter implements Converter {
     public String getAsString(FacesContext context, UIComponent component,
                               Object value) throws ConverterException {
     	try{
-		    if(((String)value).length() > 120)
-	        return breakLines((String)value, true);
-	        else
-	        return ((String)value);
+		    if (((String)value).length() > 120) {
+		        return breakLines((String)value, true);	
+		    } else {
+		        return ((String)value);	
+		    }
     	}catch (Exception e) {
     		return "";
 		}
@@ -35,18 +36,20 @@ public class LongStringConverter implements Converter {
 
     private String breakLines(String longString, boolean useSpace){
     	String delim = null;
-    	if(useSpace)
+    	if(useSpace) {
     		delim = "\\S{120}|\\s";
-    	else
+    	} else {
     		delim = ".{120}";
+    	}
 
         Pattern p = Pattern.compile(delim);
         Matcher m = p.matcher(longString);
 
 		StringBuffer sb = new StringBuffer();
 		while (m.find()){
-			if(!m.group().equals(" "))
-			m.appendReplacement(sb,m.group()+"<br/>");
+			if(!m.group().equals(" ")) {
+				m.appendReplacement(sb,m.group()+"<br/>");	
+			}
 		}
 		m.appendTail(sb);
         return sb.toString();

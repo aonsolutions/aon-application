@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.ui.util.ServleJSFtUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
@@ -23,14 +26,16 @@ public class CidServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -2679137324617541495L;
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(CidServlet.class);
+	
 	/** Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, java.io.IOException {
+    throws ServletException, IOException {
     	String cadena = request.getRequestURI();
-		cadena = "cid:" + cadena.substring(cadena.lastIndexOf("/")+1,cadena.indexOf(".cid"));
+		cadena = "cid:" + cadena.substring(cadena.lastIndexOf('/')+1,cadena.indexOf(".cid"));
 		String id  = "<" + cadena.substring(4,cadena.length()) + ">";
 
 		MessageController messageController = (MessageController) ServleJSFtUtil.getManagedBean( request, response, IWebMailConstants.BEAN_MESSAGE );
@@ -52,7 +57,9 @@ public class CidServlet extends HttpServlet {
 				read = input.read ( buff );
 			}
 			response.flushBuffer();
-		}catch (Exception e){}
+		}catch (Exception e){
+			LOGGER.error( e.getMessage(), e);			
+		}
 	}
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)

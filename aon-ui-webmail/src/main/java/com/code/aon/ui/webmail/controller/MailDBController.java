@@ -52,7 +52,7 @@ public abstract class MailDBController extends BasicController {
 	}
 
 	public void updateUser( User user ) throws ManagerBeanException {
-		if ( (user != null) && (user.getId() != null) ) {
+		if ( user!=null && user.getId()!=null ) {
 			setUser(user);
 		} else {
 			setUser(null);

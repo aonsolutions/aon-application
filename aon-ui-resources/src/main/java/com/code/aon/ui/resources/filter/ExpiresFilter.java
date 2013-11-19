@@ -37,7 +37,7 @@ public class ExpiresFilter implements Filter {
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		String value = filterConfig.getInitParameter(DEFAULT_EXPIRES);
-		if ( (!StringUtils.isBlank(value)) && NumberUtils.isNumber(value) ) {
+		if ( !StringUtils.isBlank(value) && NumberUtils.isNumber(value) ) {
 			defaultExpires = Long.valueOf(value);
 		}
 	}

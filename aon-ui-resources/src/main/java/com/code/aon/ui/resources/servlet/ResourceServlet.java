@@ -107,7 +107,7 @@ public class ResourceServlet extends HttpServlet {
 		response.setContentLength(data.length);
 
 		// If we're not in debug mode, set cache headers
-		if ( (!debug) && resource.isCacheable() ) {
+		if ( !debug && resource.isCacheable() ) {
 			DownloadUtil.setCacheable(response);
 		}
 	}

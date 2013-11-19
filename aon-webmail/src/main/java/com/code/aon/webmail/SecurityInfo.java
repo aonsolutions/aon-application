@@ -32,16 +32,16 @@ public class SecurityInfo {
 	}
 	
 	private static String getDefaultAlias( KeyStore keystore ) {
-		Enumeration<String> aliases;
+		String alias = null;
 		try {
-			aliases = keystore.aliases();
-			while (aliases.hasMoreElements()) {
-				return aliases.nextElement();
+			Enumeration<String> aliases = keystore.aliases();
+			if (aliases.hasMoreElements()) {
+				alias = aliases.nextElement();
 			}
 		} catch (KeyStoreException e) {
 			LOGGER.error(e.getMessage(), e );
 		}
-		return null;
+		return alias;
 	}
 	
 	public KeyStore getKeystore() {

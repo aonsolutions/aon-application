@@ -71,24 +71,26 @@ public class AonServer implements IMailConstants {
     }
     
     public Quota.Resource getQuotaResource() {
+    	Quota.Resource resource = null;
     	IMAPStore imapStore = (IMAPStore) store;
     	try {
 			Quota[] quotas = imapStore.getQuota(INBOX_FOLDER_NAME);
 			for( Quota quota : quotas ) {
-				for( Quota.Resource resource : quota.resources ) {
-					return resource;	
+				if (! ArrayUtils.isEmpty(quota.resources) ) {
+					resource = quota.resources[0];
+					break;
 				}
 			}
 		} catch (MessagingException e) {
 			LOGGER.error("Error getting QUOTA" + account.toString(),e);
 		}
-		return null;
+		return resource;
     }
 
     public boolean isQuotaExceeded() {
     	if ( this.quotaAware ) {
     		Quota.Resource quota = getQuotaResource();
-    		return ( quota.usage >= quota.limit );
+    		return quota.usage >= quota.limit;
     	}
     	return false;
     }
@@ -111,10 +113,8 @@ public class AonServer implements IMailConstants {
         if (! StringUtils.isEmpty(account.getProtocol())) {
         	store = account.getProtocol();
         }
-        if (account.getIncomingSecurity() == ConnectionSecurity.SSL) {
-        	if (! StringUtils.endsWith(store, "s") ) {
-        		store += "s";
-        	}
+        if ( account.getIncomingSecurity()==ConnectionSecurity.SSL && !StringUtils.endsWith(store, "s") ) {
+        	store += "s";
         }
         return store;
     }
@@ -290,7 +290,7 @@ public class AonServer implements IMailConstants {
     private void sendMessage(Message message) throws WebmailException {
     	Transport transport = null;
         try {
-            if ( (message != null) && (message.getFrom() != null) ) {
+            if ( message!=null && message.getFrom()!=null ) {
                 CommandMap.setDefaultCommandMap(new MailcapCommandMap());
             	transport = getTransport(session, account);
                 message.setSentDate(new Date());
@@ -333,10 +333,9 @@ public class AonServer implements IMailConstants {
 			if (!getRoot().getFolder(getDraftFolderName()).exists()){
 				createAonFolder(null, getDraftFolderName(), HOLDS_MESSAGES);
 			}
-			if ( account.isDefault() || (!StringUtils.isEmpty(account.getSpamFolder())) ) {
-				if (!getRoot().getFolder(getSpamFolderName()).exists()){
-					createAonFolder(null, getSpamFolderName(), HOLDS_MESSAGES);
-				}
+			if ( (account.isDefault() || !StringUtils.isEmpty(account.getSpamFolder()))
+				&& !getRoot().getFolder(getSpamFolderName()).exists() ) {
+				createAonFolder(null, getSpamFolderName(), HOLDS_MESSAGES);
 			}			
 		}
 	}
@@ -371,7 +370,7 @@ public class AonServer implements IMailConstants {
     }    
 	
     public static void closeQuietly( Service service ) {
-    	if ( (service != null) && service.isConnected() ) {
+    	if ( service!=null && service.isConnected() ) {
     		try {
 				service.close();
 			} catch (MessagingException e) {

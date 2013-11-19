@@ -47,7 +47,7 @@ public class MailAccount extends MailAccountDB implements IMailAccount {
 	@Override
 	@Transient
 	public boolean isEnterpriseAccount() {
-		return (getUser() == null) || (getUser().getId() == null);
+		return getUser()==null || getUser().getId() == null;
 	}
 
 	@Override

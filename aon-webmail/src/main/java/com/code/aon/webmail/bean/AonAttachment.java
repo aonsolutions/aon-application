@@ -58,11 +58,13 @@ public class AonAttachment {
 					fileName += ".eml";
 				}
 			} catch (MessagingException e1) {
+				LOGGER.debug(e1.getMessage(), e1);
 			}
 			if ( StringUtils.containsIgnoreCase(fileName, "=?") ) {
 				try {
 					fileName = MimeUtility.decodeWord(fileName);
 				} catch (Exception e) {
+					LOGGER.debug(e.getMessage(), e);
 				}
 			}
 		}
@@ -73,7 +75,7 @@ public class AonAttachment {
 		try {
 			int size = part.getSize();
 			size = size * 75 /100 / 1000;
-			return String.valueOf(size)+" Kb";
+			return size +" Kb";
 		} catch (MessagingException e) {
 			LOGGER.error(e.getMessage(), e );
 		}

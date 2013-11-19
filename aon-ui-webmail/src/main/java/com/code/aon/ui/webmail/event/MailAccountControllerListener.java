@@ -38,7 +38,7 @@ public class MailAccountControllerListener extends ControllerAdapter {
 		if ( getMailConfig().isConnectable() ) {
 			IMailAccount mailAccount = (IMailAccount) event.getController().getTo();
 			WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-			if ( (wmc.getServer() != null) && mailAccount.equals(wmc.getServer().getAccount()) ) {
+			if ( wmc.getServer()!=null && mailAccount.equals(wmc.getServer().getAccount()) ) {
 				wmc.getServer().setAccount(mailAccount);
 			}
 		}

@@ -1,11 +1,5 @@
 package com.code.aon.ui.webmail.bean;
 
-import static com.code.aon.ui.common.ICommonMessages.CC_MESSAGE;
-import static com.code.aon.ui.common.ICommonMessages.DATE;
-import static com.code.aon.ui.common.ICommonMessages.FROM_MESSAGE;
-import static com.code.aon.ui.common.ICommonMessages.SUBJECT;
-import static com.code.aon.ui.common.ICommonMessages.TO_MESSAGE;
-
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
@@ -36,6 +31,10 @@ public class AonMessageTracer implements IMimeType {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BeanManager.class);
 
+	private static final String ELEMENT_END = ":</b> ";
+
+	private static final String DIV_END = "</DIV>";
+	
 	private static final Pattern CID_PATTERN = Pattern.compile(
 			"=\\s*[\"\']?(cid:[^ >\"\']+)", Pattern.CASE_INSENSITIVE);
 	
@@ -46,7 +45,7 @@ public class AonMessageTracer implements IMimeType {
 	}
 
 	private boolean isContentText(Part part) throws MessagingException {
-		return part.isMimeType(TEXT_ANY) && (part.getFileName() == null);
+		return part.isMimeType(TEXT_ANY) && part.getFileName()==null;
 	}
 	
 	private String traceText(Part part) throws MessagingException, IOException {
@@ -216,7 +215,7 @@ public class AonMessageTracer implements IMimeType {
 				int start = tagMatcher.start(1) + offset;
 				int end = tagMatcher.end(1) + offset;
 				sb.replace( start, end, newText);
-				offset += (newText.length() - fullCid.length());
+				offset += newText.length() - fullCid.length();
 			} while( tagMatcher.find() );
 			return sb.toString();
 		}
@@ -233,7 +232,7 @@ public class AonMessageTracer implements IMimeType {
 	}
 
 	public static String getMessageEnvelope( AonMessage message, String content, String headerId ) throws WebmailException {
-		StringBuffer sb = new StringBuffer();
+		StringBuffer sb = new StringBuffer(500);
 		sb.append( "<br/>" );
 		if ( headerId != null ) {
 			sb.append( "<BLOCKQUOTE style='PADDING-RIGHT: 0px; PADDING-LEFT: 10px; MARGIN-LEFT: 5px; BORDER-LEFT: #000000 2px solid; MARGIN-RIGHT: 0px'>" );
@@ -244,18 +243,18 @@ public class AonMessageTracer implements IMimeType {
 		}
 		sb.append( "<DIV style='BACKGROUND: #e4e4e4'>" );
 		String from = message.getSender();
-		sb.append( "<b>" ).append(AonUtil.getMessage(FROM_MESSAGE)).append(":</b> ").append(from).append( "</DIV>" );
+		sb.append( "<b>" ).append(AonUtil.getMessage(ICommonMessages.FROM_MESSAGE)).append(ELEMENT_END).append(from).append( DIV_END );
 		if ( headerId == null ) {
 			String to = message.getRecipientsTo();
-			sb.append( "<b>" ).append(AonUtil.getMessage(TO_MESSAGE)).append(":</b> ").append(to).append( "</DIV>" );
+			sb.append( "<b>" ).append(AonUtil.getMessage(ICommonMessages.TO_MESSAGE)).append(ELEMENT_END).append(to).append( DIV_END );
 		}
-		sb.append( "<b>" ).append(AonUtil.getMessage(DATE)).append(":</b> ").append( message.getSentDate() );
+		sb.append( "<b>" ).append(AonUtil.getMessage(ICommonMessages.DATE)).append(ELEMENT_END).append( message.getSentDate() );
 		String cc = message.getRecipientsCc();
 		if (! StringUtils.isEmpty(cc) ) {
-			sb.append( "<br/><b>" ).append(AonUtil.getMessage(CC_MESSAGE)).append(":</b> ").append( cc );
+			sb.append( "<br/><b>" ).append(AonUtil.getMessage(ICommonMessages.CC_MESSAGE)).append(ELEMENT_END).append( cc );
 		}
 		String subject = message.getDisplaySubject();
-		sb.append( "<br/><b>" ).append(AonUtil.getMessage(SUBJECT)).append(":</b> ").append( subject );
+		sb.append( "<br/><b>" ).append(AonUtil.getMessage(ICommonMessages.SUBJECT)).append(ELEMENT_END).append( subject );
    		sb.append( "</font><br/><br/>" );
    		sb.append( content );
 		if ( headerId != null ) {

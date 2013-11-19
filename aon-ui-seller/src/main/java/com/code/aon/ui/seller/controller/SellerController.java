@@ -1,33 +1,5 @@
 package com.code.aon.ui.seller.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.ACTIVE;
-import static com.code.aon.ui.common.ICommonMessages.ADDRESS;
-import static com.code.aon.ui.common.ICommonMessages.ALIAS;
-import static com.code.aon.ui.common.ICommonMessages.BANK;
-import static com.code.aon.ui.common.ICommonMessages.BANK_ACCOUNT;
-import static com.code.aon.ui.common.ICommonMessages.BLOCKED;
-import static com.code.aon.ui.common.ICommonMessages.CELLULAR;
-import static com.code.aon.ui.common.ICommonMessages.COMPANY_NAME;
-import static com.code.aon.ui.common.ICommonMessages.DOCUMENT;
-import static com.code.aon.ui.common.ICommonMessages.ENTITY;
-import static com.code.aon.ui.common.ICommonMessages.FAX;
-import static com.code.aon.ui.common.ICommonMessages.ID;
-import static com.code.aon.ui.common.ICommonMessages.INACTIVE;
-import static com.code.aon.ui.common.ICommonMessages.PAY_METHOD;
-import static com.code.aon.ui.common.ICommonMessages.PHONE;
-import static com.code.aon.ui.common.ICommonMessages.POSTAL_CODE;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_CITY;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_DAYS_BETWEEN_PAYMENTS;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_DAYS_TO_FIRST_PAYMENT;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_EMAIL;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_NATIONALITY;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_NUMBER_OF_PAYMENTS;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_PAYMENT_DAYS;
-import static com.code.aon.ui.common.ICommonMessages.SELLER_REPORT;
-import static com.code.aon.ui.common.ICommonMessages.STATE;
-import static com.code.aon.ui.common.ICommonMessages.STATUS;
-import static com.code.aon.ui.common.ICommonMessages.WEB;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -62,13 +34,16 @@ import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.report.ReportException;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.report.export.ReportExporter;
 import com.code.aon.ui.util.AonUtil;
 
-public class SellerController extends RegistryController {
+public class SellerController extends RegistryController implements ICommonMessages {
 
-    public String getReportTitle(){
+    private static final String UNEXPECTED_ERROR = "Se ha producido un error inesperado durante la generación del informe. ";
+
+	public String getReportTitle(){
     	return AonUtil.getMessage(SELLER_REPORT);
 	}
 
@@ -77,7 +52,7 @@ public class SellerController extends RegistryController {
 		try {
 			pojoClass = (Class<?>) Class.forName( getPojo() );
 		} catch (ClassNotFoundException e) {
-			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
+			String msg = UNEXPECTED_ERROR + e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		}
@@ -126,7 +101,7 @@ public class SellerController extends RegistryController {
 			+",(SELECT rm2.value FROM rmedia rm2 WHERE r.id = rm2.registry  AND rm2.media = 2 LIMIT 1) `" + AonUtil.getMessage(CELLULAR) + "`"
 			+",(SELECT rm3.value FROM rmedia rm3 WHERE r.id = rm3.registry  AND rm3.media = 3 LIMIT 1) `" + AonUtil.getMessage(FAX) + "`"
 			+",(SELECT rm4.value FROM rmedia rm4 WHERE r.id = rm4.registry  AND rm4.media = 4 LIMIT 1) `" + AonUtil.getMessage(REGISTRY_EMAIL) + "`"
-			+",(SELECT rm5.value FROM rmedia rm5 WHERE r.id = rm5.registry  AND rm5.media = 5 LIMIT 1) `" + AonUtil.getMessage(WEB) + "`"
+			+",(SELECT rm5.value FROM rmedia rm5 WHERE r.id = rm5.registry  AND rm5.media = 5 LIMIT 1) `" + AonUtil.getMessage(ICommonMessages.WEB) + "`"
 			+",pm.name `" + AonUtil.getMessage(PAY_METHOD) + "`"
 			+",b.name `" + AonUtil.getMessage(BANK) + "`"
 			+",rb.bank_account `" + AonUtil.getMessage(BANK_ACCOUNT) + "`"
@@ -195,23 +170,23 @@ public class SellerController extends RegistryController {
 			response.flushBuffer();
 			faces.responseComplete();
 		} catch (SQLException e) {
-			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
+			String msg = UNEXPECTED_ERROR+ e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		} catch (ReportException e) {
-			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
+			String msg = UNEXPECTED_ERROR+ e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		} catch (IOException e) {
-			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
+			String msg = UNEXPECTED_ERROR+ e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		} catch (ManagerBeanException e) {
-			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
+			String msg = UNEXPECTED_ERROR+ e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		} catch (AonConnectionException e) {
-			String msg = "Se ha producido un error inesperado durante la generación del informe. ("+ e.getMessage()+")";
+			String msg = UNEXPECTED_ERROR+ e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		} finally {

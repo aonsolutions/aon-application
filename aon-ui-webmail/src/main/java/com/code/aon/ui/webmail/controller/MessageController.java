@@ -1,14 +1,6 @@
 package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
-import static com.code.aon.ui.common.ICommonMessages.CC_MESSAGE;
-import static com.code.aon.ui.common.ICommonMessages.DATE;
-import static com.code.aon.ui.common.ICommonMessages.FORWARDED_MESSAGE;
-import static com.code.aon.ui.common.ICommonMessages.FROM_MESSAGE;
-import static com.code.aon.ui.common.ICommonMessages.NOT_MAIL_ACCOUNTS;
-import static com.code.aon.ui.common.ICommonMessages.REPLIED_MESSAGE;
-import static com.code.aon.ui.common.ICommonMessages.SUBJECT;
-import static com.code.aon.ui.common.ICommonMessages.TO_MESSAGE;
 import static com.code.aon.webmail.bean.IMailConstants.IMAP;
 
 import java.io.BufferedOutputStream;
@@ -67,6 +59,7 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.common.velocity.TemplateHelper;
 import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -216,7 +209,7 @@ public class MessageController implements IWebMailConstants {
 			copyAttachmentsToFileList( message );			
 			recipientsTo = toString(message.getRecipientsToAddress());
 			recipientsCc = toString(message.getRecipientsCcAddress());
-			recipientsBcc = toString(message.getRecipientsBccAddress());;
+			recipientsBcc = toString(message.getRecipientsBccAddress());
 	       	subject = message.getSubject();
 	       	content = getMessageContent( message );
 		} catch (WebmailException e) {
@@ -231,7 +224,7 @@ public class MessageController implements IWebMailConstants {
 		try {
 			recipientsTo = getReplyToRecipients(message, true); 
 	       	subject = "Reply: "+message.getSubject();
-	       	messageBody = AonMessageTracer.getMessageEnvelope(message, getMessageContent(), REPLIED_MESSAGE);
+	       	messageBody = AonMessageTracer.getMessageEnvelope(message, getMessageContent(), ICommonMessages.REPLIED_MESSAGE);
 	       	content += messageBody;
 		} catch (WebmailException e) {
     		AonUtil.addErrorMessage(e.getMessage());
@@ -279,7 +272,7 @@ public class MessageController implements IWebMailConstants {
 		try{
 			recipientsTo = getReplyToRecipients(message, false);
 	       	subject = "ReplyALL: "+message.getSubject();
-	       	messageBody = AonMessageTracer.getMessageEnvelope(message, getMessageContent(), REPLIED_MESSAGE);
+	       	messageBody = AonMessageTracer.getMessageEnvelope(message, getMessageContent(), ICommonMessages.REPLIED_MESSAGE);
 	       	content += messageBody;
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -345,7 +338,7 @@ public class MessageController implements IWebMailConstants {
 		try {
 			copyAttachmentsToFileList( message );
 	       	subject = "Fwd: "+message.getSubject();
-	       	messageBody = AonMessageTracer.getMessageEnvelope(message, getMessageContent(), FORWARDED_MESSAGE);
+	       	messageBody = AonMessageTracer.getMessageEnvelope(message, getMessageContent(), ICommonMessages.FORWARDED_MESSAGE);
 	       	content += messageBody;
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -474,7 +467,7 @@ public class MessageController implements IWebMailConstants {
     }
     
     private void deleteDraftMessage( AonServer server ) throws MessagingException {
-    	if ( (this.draftMessageUID != null) && server.isIMAP() ) {
+    	if ( this.draftMessageUID!=null && server.isIMAP() ) {
     		AonFolder folder = server.getAonFolder(server.getDraftFolderName());
     		IMAPFolder imapFolder = (IMAPFolder) folder.getFolder();
     		imapFolder.open(Folder.READ_WRITE);
@@ -732,7 +725,7 @@ public class MessageController implements IWebMailConstants {
         	IContact e = lst.get(i);
         	emails.append( e.getEmailLarge() );
         	if (i+1 < max) {
-        		emails.append(AonMessageUtils.EMAIL_SEPARATOR).append(" ");
+        		emails.append(AonMessageUtils.EMAIL_SEPARATOR).append(' ');
         	}
 		}
         if (CONTAINER_TO.equals(selectedDestinyContainer)){
@@ -776,9 +769,9 @@ public class MessageController implements IWebMailConstants {
 			Folder folder = message.getParent().getFolder();
 			Message msg = folder.getMessage(message.getMessage().getMessageNumber());
 			if ((date = msg.getSentDate()) != null) {
-				fecha = (df.format(date));
+				fecha = df.format(date);
 			}	else if ((date = msg.getReceivedDate()) != null) {
-				fecha = (df.format(date));
+				fecha = df.format(date);
 			}
 			String from = message.getSender();
 			int index = from.indexOf("&lt;");
@@ -813,7 +806,9 @@ public class MessageController implements IWebMailConstants {
 	        		line += ": ";
 	        		line += header.getValue();
 	        		lineoutputstream.writeln(line);
-	        	}catch (Exception e){}
+	        	}catch (Exception e){
+	        		LOGGER.error(e.getMessage(), e);
+	        	}
 	        }
 	        lineoutputstream.writeln();
 
@@ -828,6 +823,7 @@ public class MessageController implements IWebMailConstants {
 			}
 			in.close();
 			response.flushBuffer();
+			lineoutputstream.close();
 			out.close();
 		} catch (IOException e) {
 			LOGGER.error( e.getMessage(), e);
@@ -913,17 +909,22 @@ public class MessageController implements IWebMailConstants {
 				return true;
 			}
 		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 		}
 		return false;
 	}
 	
 	public boolean isShortMessageToControlUp(){
-		if (isShortMessageToControl()) return shortMessageTo;
+		if (isShortMessageToControl()) {
+			return shortMessageTo;
+		}
 		return false;
 	}
 	
 	public boolean isShortMessageToControlDown(){
-		if (isShortMessageToControl()) return !shortMessageTo;
+		if (isShortMessageToControl()) {
+			return !shortMessageTo;
+		}
 		return false;
 	}
 	
@@ -937,20 +938,26 @@ public class MessageController implements IWebMailConstants {
 	
     private boolean isShortMessageCcControl() {
     	try {
-			if (message.getRecipientsCc().length()>MAX_LENGTH_STRING)
-				return true;
+			if (message.getRecipientsCc().length()>MAX_LENGTH_STRING) {
+				return true;	
+			}
 		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 		}
 		return false;
 	}
 
 	public boolean isShortMessageCcControlUp(){
-		if (isShortMessageCcControl()) return shortMessageCc;
+		if (isShortMessageCcControl()) {
+			return shortMessageCc;
+		}
 		return false;
 	}
 	
 	public boolean isShortMessageCcControlDown(){
-		if (isShortMessageCcControl()) return !shortMessageCc;
+		if (isShortMessageCcControl()) {
+			return !shortMessageCc;
+		}
 		return false;
 	}
 	
@@ -1030,7 +1037,7 @@ public class MessageController implements IWebMailConstants {
 	}	
 	
 	private boolean includeSignature( IMailAccount mailAccount ) {
-		return isAppendSignature() && (!AonUtil.isAppleDevice()) && (mailAccount.getISignature() != null);
+		return isAppendSignature() && !AonUtil.isAppleDevice() && mailAccount.getISignature()!=null;
 	}
 	
 	private void updateContent( IMailAccount mailAccount ) {
@@ -1065,18 +1072,18 @@ public class MessageController implements IWebMailConstants {
 			th.putInContext("username", loggedUser.getLoggedUserName());
 			SimpleDateFormat df = new SimpleDateFormat("EEE, dd/MM/yy-HH:mm");
 			th.putInContext("nowDate", df.format(new Date()));
-			th.putInContext("fromLiteral", AonUtil.getMessage(FROM_MESSAGE));
+			th.putInContext("fromLiteral", AonUtil.getMessage(ICommonMessages.FROM_MESSAGE));
 			th.putInContext("sender", message.getSender());
-			th.putInContext("toLiteral", AonUtil.getMessage(TO_MESSAGE));
+			th.putInContext("toLiteral", AonUtil.getMessage(ICommonMessages.TO_MESSAGE));
 			th.putInContext("recipientsTo", message.getRecipientsTo());
 			String cc = message.getRecipientsCc();
 			if (! StringUtils.isEmpty(cc) ) {
-				th.putInContext("ccLiteral", AonUtil.getMessage(CC_MESSAGE));
+				th.putInContext("ccLiteral", AonUtil.getMessage(ICommonMessages.CC_MESSAGE));
 				th.putInContext("recipientsCc", cc );				
 			}
-			th.putInContext("dateLiteral", AonUtil.getMessage(DATE));
+			th.putInContext("dateLiteral", AonUtil.getMessage(ICommonMessages.DATE));
 			th.putInContext("sentDateString", message.getSentDateString());
-			th.putInContext("subjectLiteral", AonUtil.getMessage(SUBJECT));
+			th.putInContext("subjectLiteral", AonUtil.getMessage(ICommonMessages.SUBJECT));
 			th.putInContext("subject", message.getSubject());
 			th.putInContext("messageContent", getMessageContent());
 			th.processTemplate(PRINT_TEMPLATE, out);
@@ -1186,7 +1193,7 @@ public class MessageController implements IWebMailConstants {
 			}
 			setShowNewMessageWindow(true);
 		} else {
-			AonUtil.addErrorMessageFromBundle(NOT_MAIL_ACCOUNTS);
+			AonUtil.addErrorMessageFromBundle(ICommonMessages.NOT_MAIL_ACCOUNTS);
 		}
 	}
 
@@ -1196,20 +1203,20 @@ public class MessageController implements IWebMailConstants {
 		if (mailConfig.getMailAccountCount() > 0) {
 			setShowNewMessageWindow(true);
 		} else {
-			AonUtil.addErrorMessageFromBundle(NOT_MAIL_ACCOUNTS);
+			AonUtil.addErrorMessageFromBundle(ICommonMessages.NOT_MAIL_ACCOUNTS);
 		}
 	}
 	
 	public boolean isShowAppendSignature() {
 		if (getSenderMailAccount() != null) {
 			ISignature signature = getSenderMailAccount().getISignature();
-			return (signature != null) && (signature.getName() != null);
+			return signature!=null && signature.getName()!=null;
 		}
 		return false;
 	}	
 	
 	public boolean isShowSaveSent() {
-		return (getSenderMailAccount() != null) && IMAP.equals(getSenderMailAccount().getProtocol());
+		return getSenderMailAccount()!=null && IMAP.equals(getSenderMailAccount().getProtocol());
 	}
 	
 	public boolean isSaveSent() {

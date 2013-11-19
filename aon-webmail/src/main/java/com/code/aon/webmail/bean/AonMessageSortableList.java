@@ -88,7 +88,7 @@ public class AonMessageSortableList extends AonSortableList {
 	 * Sort the list.
 	 */
 	protected void sort(final String column, final boolean ascending) {
-		if ( (messageList != null) && sortable) {
+		if ( messageList!=null && sortable) {
 			try {
 				Comparator<AonMessage> comparator = AonMessageComparator.getComparator(column, ascending);
 				Arrays.sort(messageList, comparator);

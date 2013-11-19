@@ -98,12 +98,12 @@ public class AonMessageUtils {
 			int offset = 0;
 			do {
 				String cidURL = tagMatcher.group(1);
-				int pos = cidURL.lastIndexOf("/");
+				int pos = cidURL.lastIndexOf('/');
 				String newText = "cid:" + cidURL.substring(pos+1, cidURL.length()-4);
 				int start = tagMatcher.start(1) + offset;
 				int end = tagMatcher.end(1) + offset;
 				sb.replace( start, end, newText);
-				offset += (newText.length() - cidURL.length());
+				offset += newText.length() - cidURL.length();
 			} while( tagMatcher.find() );
 			return sb.toString();
 		}		
@@ -129,7 +129,7 @@ public class AonMessageUtils {
 					}
 					if (! StringUtils.isEmpty(newText) ) {
 						sb.replace( start, end, newText);
-						offset += (newText.length() - encodedText.length());					
+						offset += newText.length() - encodedText.length();					
 					}
 				} while( tagMatcher.find() );
 				return sb.toString();
@@ -161,7 +161,7 @@ public class AonMessageUtils {
 			if ( size > MB_BYTES ) {
 				result = MB_FORMAT.format(size / MB_BYTES);
 			} else {
-				size = (size < KB_BYTES) ? 1 : size / KB_BYTES;
+				size = size < KB_BYTES ? 1 : size / KB_BYTES;
 				result = KB_FORMAT.format(size);
 			}
 		}
@@ -182,8 +182,8 @@ public class AonMessageUtils {
 	
 	private static boolean hasNameAndDomain(String email){
 		String[] tokens = email.split("@");
-		return (tokens.length == 2) && (!StringUtils.isBlank(tokens[0])) && 
-			(!StringUtils.isBlank(tokens[1]));
+		return tokens.length==2 && !StringUtils.isBlank(tokens[0]) && 
+			!StringUtils.isBlank(tokens[1]);
 	}
 	
 }

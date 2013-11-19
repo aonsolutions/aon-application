@@ -14,6 +14,8 @@ public class AonMessageComparator {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonMessageComparator.class);
 	
+	private static final String SORT_ERROR = "Sort error";
+	
 	public static Comparator<AonMessage> getComparator(String column, boolean ascending) {
 		if (AonMessageSortableList.DATE_COLUMN.equals(column) ) {
 			return new DateComparator( ascending );
@@ -54,7 +56,7 @@ public class AonMessageComparator {
 				}
 				return m2.getSubject().compareToIgnoreCase(m1.getSubject());
 			} catch (WebmailException e) {
-				LOGGER.error("Sort error", e);
+				LOGGER.error(SORT_ERROR, e);
 				return 0;
 			}
 		}
@@ -76,7 +78,7 @@ public class AonMessageComparator {
 				}
 				return m2.getSender().compareToIgnoreCase(m1.getSender());
 			} catch (WebmailException e) {
-				LOGGER.error("Sort error", e);
+				LOGGER.error(SORT_ERROR, e);
 				return 0;
 			}
 		}
@@ -99,7 +101,7 @@ public class AonMessageComparator {
 				}
 				return m2.getRecipientsTo().compareToIgnoreCase(m1.getRecipientsTo());
 			} catch (WebmailException e) {
-				LOGGER.error("Sort error", e);
+				LOGGER.error(SORT_ERROR, e);
 				return 0;
 			}
 		}
@@ -138,9 +140,9 @@ public class AonMessageComparator {
 				} 
 				return 0;
 			} catch (WebmailException e) {
-				LOGGER.error("Sort error", e);
+				LOGGER.error(SORT_ERROR, e);
 			} catch (MessagingException e) {
-				LOGGER.error("Sort error", e);
+				LOGGER.error(SORT_ERROR, e);
 			}
 			return 0;
 		}
@@ -163,7 +165,7 @@ public class AonMessageComparator {
 				}
 				return new Integer(m2.getMessage().getSize()).compareTo(m1.getMessage().getSize());
 			} catch (MessagingException e) {
-				LOGGER.error("Sort error", e);
+				LOGGER.error(SORT_ERROR, e);
 				return 0;
 			}
 		}

@@ -143,7 +143,7 @@ public class AttachController {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
 			DownloadUtil.finishDownload(response, out);
-			if ( (tempFile != null) && (tempFile.exists()) ) {
+			if ( tempFile!=null && tempFile.exists() ) {
 	    		tempFile.delete();
 			}
 		}

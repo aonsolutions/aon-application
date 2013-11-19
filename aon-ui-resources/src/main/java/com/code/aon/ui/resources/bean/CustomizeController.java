@@ -1,11 +1,5 @@
 package com.code.aon.ui.resources.bean;
 
-import static com.code.aon.ui.common.ICommonConstants.HEADER_LOGO_NAME;
-import static com.code.aon.ui.common.ICommonConstants.STATUS_FAILED_NAME;
-import static com.code.aon.ui.common.ICommonConstants.STATUS_START_NAME;
-import static com.code.aon.ui.common.ICommonConstants.STATUS_STOP_NAME;
-import static com.code.aon.ui.common.ICommonConstants.TOOLBAR_LOGO_NAME;
-
 import java.sql.Connection;
 
 import javax.faces.context.ExternalContext;
@@ -13,6 +7,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class CustomizeController extends CustomizeBean {
@@ -76,11 +71,11 @@ public class CustomizeController extends CustomizeBean {
 	@Override
 	protected void loadValues( Connection connection ) {
 		super.loadValues(connection);
-		this.headerLogo = StringUtils.defaultIfEmpty(getImageRef(connection, HEADER_LOGO_NAME), this.headerLogo);
-		this.toolbarLogo = StringUtils.defaultIfEmpty(getImageRef(connection, TOOLBAR_LOGO_NAME), this.toolbarLogo);
-		this.statusStartStyle = getStatusStyle(connection, STATUS_START_NAME, this.statusStartStyle);
-		this.statusStopStyle = getStatusStyle(connection, STATUS_STOP_NAME, this.statusStopStyle);
-		this.statusFailedStyle = getStatusStyle(connection, STATUS_FAILED_NAME, this.statusFailedStyle);
+		this.headerLogo = StringUtils.defaultIfEmpty(getImageRef(connection, ICommonConstants.HEADER_LOGO_NAME), this.headerLogo);
+		this.toolbarLogo = StringUtils.defaultIfEmpty(getImageRef(connection, ICommonConstants.TOOLBAR_LOGO_NAME), this.toolbarLogo);
+		this.statusStartStyle = getStatusStyle(connection, ICommonConstants.STATUS_START_NAME, this.statusStartStyle);
+		this.statusStopStyle = getStatusStyle(connection, ICommonConstants.STATUS_STOP_NAME, this.statusStopStyle);
+		this.statusFailedStyle = getStatusStyle(connection, ICommonConstants.STATUS_FAILED_NAME, this.statusFailedStyle);
 	}
 
 	public String getHeaderLogo() {

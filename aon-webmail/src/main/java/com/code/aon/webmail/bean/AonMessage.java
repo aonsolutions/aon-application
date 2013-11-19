@@ -40,6 +40,8 @@ import com.code.aon.webmail.WebmailUtil;
 
 public class AonMessage implements IMimeType {
 
+	private static final String CAN_NOT_RECOVER_ADDRESS = "Can not recover address";
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonMessage.class);
 
 	private static final DateFormat TODAY_FORMAT = new SimpleDateFormat("hh:mm a");
@@ -151,8 +153,9 @@ public class AonMessage implements IMimeType {
 		String email = "";
 		try {
 			InternetAddress addr = InternetAddress.parse(sender)[0];
-			if (addr.getAddress() != null)
+			if (addr.getAddress() != null) {
 				email = getDisplayAddressFull(addr);
+			}
 		} catch (AddressException e) {
 			LOGGER.error("Invalid sender", e);
 		} catch (IndexOutOfBoundsException e) {
@@ -311,7 +314,7 @@ public class AonMessage implements IMimeType {
 		try {
 			return getSender( message );
 		} catch (MessagingException e) {
-			LOGGER.error("Can not recover address.",e);
+			LOGGER.error(CAN_NOT_RECOVER_ADDRESS,e);
 			throw new WebmailException(e);
 		}
 	}
@@ -320,7 +323,7 @@ public class AonMessage implements IMimeType {
 		try {
 			InternetAddress address = InternetAddress.parse(from, true)[0];
 			setSender(address);
-		} catch (javax.mail.MessagingException e) {
+		} catch (MessagingException e) {
 			LOGGER.error("Could decode from string, maynot be in RFC822 format", e);
 			throw new WebmailException(e);
 		} catch (IndexOutOfBoundsException e) {
@@ -344,7 +347,7 @@ public class AonMessage implements IMimeType {
 			} catch (IllegalWriteException e) {
 				LOGGER.error("Could not set from address, read only message", e);
 				throw new WebmailException(e);
-			} catch (javax.mail.MessagingException e) {
+			} catch (MessagingException e) {
 				LOGGER.error("Could decode from string, maynot be in RFC822 format",e);
 				throw new WebmailException(e);
 			}
@@ -394,7 +397,7 @@ public class AonMessage implements IMimeType {
 				}
 			}
 			setRecipients(addresses, type);
-		} catch (javax.mail.MessagingException e) {
+		} catch (MessagingException e) {
 			LOGGER.error("Could decode from string, maynot be in RFC822 format", e);
 			throw new WebmailException(e);
 		} catch (IndexOutOfBoundsException e) {
@@ -654,8 +657,7 @@ public class AonMessage implements IMimeType {
 	 *            javax.mail.Message.RecipientType
 	 * @throws WebmailException 
 	 */
-	protected void setRecipients(Address[] address,
-			final javax.mail.Message.RecipientType type) throws WebmailException {
+	protected void setRecipients(Address[] address, final RecipientType type) throws WebmailException {
 		try {
 			message.setRecipients(type, address);
 		} catch (IllegalWriteException e) {
@@ -848,7 +850,7 @@ public class AonMessage implements IMimeType {
 		String pers = null;
 		String addr = null;
 		if (a instanceof InternetAddress
-				&& ((pers = ((InternetAddress)a).getPersonal()) != null)) {
+				&& (pers = ((InternetAddress)a).getPersonal())!=null) {
 			pers = AonMessageUtils.parse_email(pers);
 			addr = pers;
 		} else {
@@ -862,7 +864,7 @@ public class AonMessage implements IMimeType {
 		if ( a instanceof InternetAddress ) {
 			InternetAddress ia = (InternetAddress) a;
 			String per = ia.getPersonal();
-			if ( (! StringUtils.isEmpty(per)) && StringUtils.contains(per, "\"") ) {
+			if ( !StringUtils.isEmpty(per) && StringUtils.contains(per, "\"") ) {
 				try {
 					ia.setPersonal( StringUtils.remove(per, '"') );
 				} catch (UnsupportedEncodingException e) {
@@ -880,7 +882,7 @@ public class AonMessage implements IMimeType {
 		String pers = null;
 		String addr = null;
 		if (a instanceof InternetAddress
-				&& ((pers = ((InternetAddress)a).getPersonal()) != null)) {
+				&& (pers = ((InternetAddress)a).getPersonal()) != null) {
 			pers = AonMessageUtils.parse_email(pers);
 			addr = pers + " " + "&lt;"+((InternetAddress)a).getAddress()+"&gt;";
 		} else {

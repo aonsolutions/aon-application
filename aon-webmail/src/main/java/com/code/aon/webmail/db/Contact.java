@@ -51,7 +51,7 @@ public class Contact extends ContactDB implements IContact {
 	@Transient
 	public Boolean getContactGroup() {
 		if ( contactGroup == null ) {
-			contactGroup = (getContactData() == null) || (getContactData().getId() == null);
+			contactGroup = getContactData()==null || getContactData().getId() == null;
 		}
 		return contactGroup;
 	}

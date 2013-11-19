@@ -58,7 +58,7 @@ public class WebMailController implements IWebMailConstants {
     }
 	
 	public boolean isLogged() {
-		return (server != null) && server.isConnected();
+		return server!=null && server.isConnected();
 	}
 
 	public boolean isReady() {
@@ -128,11 +128,11 @@ public class WebMailController implements IWebMailConstants {
 	
 	public double getQuotaPercent() {
 		Quota.Resource quota = getServer().getQuotaResource();
-		return ( quota.usage / (double) quota.limit );
+		return quota.usage / (double) quota.limit;
 	}
 	
 	public double getQuotaLimit() {
-		return (getServer().getQuotaResource().limit / 1024.0);
+		return getServer().getQuotaResource().limit / 1024.0;
 	}
 	
 	public String getQuotaImage() {
@@ -164,7 +164,7 @@ public class WebMailController implements IWebMailConstants {
 			return "La extension del fichero " + file.getFileName() + " no esta permitida";
 		}
 		int size = (int) file.getFile().length();
-		if ( (maxAttachmentSize != -1) && (size > maxAttachmentSize) ) {
+		if ( maxAttachmentSize!=-1 && size>maxAttachmentSize ) {
 			return "El fichero " + file.getFileName() + " supera el tamaño maximo permitido ("+ (maxAttachmentSize / 1024) +" Kb)";
 		}
 		return null;

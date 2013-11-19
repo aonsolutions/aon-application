@@ -1,10 +1,5 @@
 package com.code.aon.ui.webmail.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.MAIL_ACCOUNT_TITLE;
-import static com.code.aon.ui.common.ICommonMessages.SIGNATURE_TITLE;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_CONTACT_DB;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_PROPERTY;
@@ -32,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
@@ -76,11 +72,11 @@ public class MailConfigController {
 	private boolean skipDefaultAccountColumn;
 	
 	public MailConfigController() {
-		SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
+		SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_SIGNATURE_DB);
 		setSignature(signature);
-		MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
+		MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MAIL_ACCOUNT_DB);
 		setMailAccount(account);			
-		ContactDBController contact = (ContactDBController) AonUtil.getRegisteredBean(BEAN_CONTACT_DB);
+		ContactDBController contact = (ContactDBController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_CONTACT_DB);
 		setContact(contact);			
 	}
 	
@@ -142,7 +138,7 @@ public class MailConfigController {
 	public boolean isCurrentMailAccountEditable() throws ManagerBeanException {
 		IMailAccount account = getSelectMailAccount();
 		if ( account != null ) {
-			return isSystemAccountEditable() || (!getSelectMailAccount().isDefault());
+			return isSystemAccountEditable() || !getSelectMailAccount().isDefault();
 		}
 		return false;
 	}
@@ -378,7 +374,7 @@ public class MailConfigController {
 		List<IMailAccount> list = new LinkedList<IMailAccount>();
 		for( SelectItem item : this.mailAccounts ) {
 			IMailAccount ma = (IMailAccount) item.getValue();
-			if ( connectDomainAccounts || (! ma.isEnterpriseAccount()) ) {
+			if ( connectDomainAccounts || !ma.isEnterpriseAccount() ) {
 				if ( ma.isDefaultAccount() ) {
 					return ma;
 				} else if ( ma.isDefault() ) {
@@ -387,7 +383,7 @@ public class MailConfigController {
 				list.add(ma);
 			}
 		}
-		if ( (defaultAccount == null) && (!list.isEmpty()) ) {
+		if ( defaultAccount==null && !list.isEmpty() ) {
 			defaultAccount = list.get(0);
 		}
 		return defaultAccount;
@@ -435,7 +431,7 @@ public class MailConfigController {
 
 	public String getMailAccountTitle() {
 		if ( mailAccountTitle == null ) {
-			return AonUtil.getMessage(MAIL_ACCOUNT_TITLE);
+			return AonUtil.getMessage(ICommonMessages.MAIL_ACCOUNT_TITLE);
 		}
 		return mailAccountTitle;
 	}
@@ -446,7 +442,7 @@ public class MailConfigController {
 
 	public String getSignatureTitle() {
 		if ( signatureTitle == null ) {
-			return AonUtil.getMessage(SIGNATURE_TITLE);
+			return AonUtil.getMessage(ICommonMessages.SIGNATURE_TITLE);
 		}
 		return signatureTitle;
 	}

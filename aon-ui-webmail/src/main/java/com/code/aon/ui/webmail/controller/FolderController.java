@@ -279,15 +279,16 @@ public class FolderController implements IMessageContainer, IWebMailConstants {
     // SELECTIONS
     //*************************************************************
 	public boolean isFolderSelected(){
-		return (folder!=null);
+		return folder!=null;
 	}
 
     //*************************************************************
     // SENDER OR DESTINY COLUMN
     //*************************************************************
 	public boolean isSentItemColumn(){
-		if (folder.isSentFolder() || folder.isDraftFolder())
+		if (folder.isSentFolder() || folder.isDraftFolder()) {
 			return true;
+		}
 		return false;
 	}
 
@@ -307,6 +308,7 @@ public class FolderController implements IMessageContainer, IWebMailConstants {
 				folder.refresh();
 				dest.refresh();
 			} catch (WebmailException e) {
+				LOGGER.error(e.getMessage(), e);
 			}
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -372,7 +374,7 @@ public class FolderController implements IMessageContainer, IWebMailConstants {
 	public boolean isRefreshNeeded() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		Map<String, String> parameters = context.getExternalContext().getRequestParameterMap();
-		if ( parameters.containsKey("aonDesktop") && (getFolder() != null) ) {
+		if ( parameters.containsKey("aonDesktop") && getFolder()!=null ) {
 			String name = getFolder().getName();
 			if ( INBOX_FOLDER_NAME.equals(name) ) {
 				try {

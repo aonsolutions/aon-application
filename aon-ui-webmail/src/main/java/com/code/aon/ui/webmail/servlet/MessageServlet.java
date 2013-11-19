@@ -29,7 +29,7 @@ public class MessageServlet extends HttpServlet {
      * @param response servlet response
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, java.io.IOException {
+    throws ServletException, IOException {
 
 		MessageController messageController = (MessageController) ServleJSFtUtil.getManagedBean( request, response, IWebMailConstants.BEAN_MESSAGE );
 		try {	

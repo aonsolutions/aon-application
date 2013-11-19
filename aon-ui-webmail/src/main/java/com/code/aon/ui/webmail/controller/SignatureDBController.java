@@ -58,7 +58,7 @@ public class SignatureDBController extends MailDBController implements ISignatur
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(controller.getFieldName(IEntityAlias.MAIL_ACCOUNT_SIGNATURE_ID), ((Signature)signature).getId());
 			controller.completeCriteria(criteria);
-			return (controller.getManagerBean().getCount(criteria) == 0); 
+			return controller.getManagerBean().getCount(criteria) == 0; 
 		} catch (ManagerBeanException e) {
 			LOGGER.error("checkRemovable for " + signature, e);
 			addMessage(e.getMessage());

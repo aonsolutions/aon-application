@@ -1,19 +1,6 @@
 package com.code.aon.ui.resources.bean;
 
-import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_FONT_COLOR;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_ID;
-import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL;
-import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_PHONE;
-import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_TITLE;
-import static com.code.aon.common.enumeration.AppParam.AON_HIDE_TRADEMARK;
-import static com.code.aon.common.enumeration.AppParam.AON_HIDE_VERSION;
-import static com.code.aon.ui.common.ICommonMessages.APPLICATION_TITLE;
-import static com.code.aon.ui.common.ICommonMessages.BUNDLE_RESOURCE;
-import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME;
-import static com.code.aon.ui.common.ICommonConstants.LOGIN_LOGO_NAME;
-import static com.code.aon.ui.common.ICommonMessages.SUPPORT_SEND_EMAIL;
-import static com.code.aon.ui.common.ICommonMessages.SUPPORT_TELEPHONE_NUMBER;
-import static com.code.aon.ui.common.ICommonMessages.SUPPORT_TELEPHONE_NUMBER2;
 
 import java.io.InputStream;
 import java.sql.Connection;
@@ -34,6 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.ICommonMessages;
 
 public class CustomizeBean {
 
@@ -99,10 +88,11 @@ public class CustomizeBean {
 	}
 
 	public void initMessages( Locale locale ) {
-		bundle = ResourceBundle.getBundle(BUNDLE_RESOURCE, locale);
-		this.applicationTitle = bundle.getString( APPLICATION_TITLE );
-		this.supportTelephone = bundle.getString(SUPPORT_TELEPHONE_NUMBER) + " · " + bundle.getString(SUPPORT_TELEPHONE_NUMBER2);
-		this.supportEmail = bundle.getString(SUPPORT_SEND_EMAIL);
+		bundle = ResourceBundle.getBundle(ICommonMessages.BUNDLE_RESOURCE, locale);
+		this.applicationTitle = bundle.getString( ICommonMessages.APPLICATION_TITLE );
+		this.supportTelephone = bundle.getString(ICommonMessages.SUPPORT_TELEPHONE_NUMBER) +
+				" · " + bundle.getString(ICommonMessages.SUPPORT_TELEPHONE_NUMBER2);
+		this.supportEmail = bundle.getString(ICommonMessages.SUPPORT_SEND_EMAIL);
 	}	
 	
 	/**
@@ -210,8 +200,8 @@ public class CustomizeBean {
 		updateFontStyle(connection);
 		updateHideTrademark(connection);
 		updateHideVersion(connection);
-		this.favicon = StringUtils.defaultIfEmpty(getImageRef(connection, FAVICON_NAME), this.favicon);
-		this.loginLogo = StringUtils.defaultIfEmpty(getImageRef(connection, LOGIN_LOGO_NAME), this.loginLogo);
+		this.favicon = StringUtils.defaultIfEmpty(getImageRef(connection, ICommonConstants.FAVICON_NAME), this.favicon);
+		this.loginLogo = StringUtils.defaultIfEmpty(getImageRef(connection, ICommonConstants.LOGIN_LOGO_NAME), this.loginLogo);
 	}
 	
 	private String getValue( Connection connection, AppParam appParam ) {
@@ -226,39 +216,39 @@ public class CustomizeBean {
 	}
 	
 	private void updateApplicationTitle( Connection connection ) {
-		this.applicationTitle = getValue( connection, AON_CUSTOMIZE_TITLE);;
+		this.applicationTitle = getValue( connection, AppParam.AON_CUSTOMIZE_TITLE);
 	}
 
 	private void updateFontStyle( Connection connection ) {
-		String value = getValue( connection, AON_CUSTOMIZE_FONT_COLOR);
+		String value = getValue( connection, AppParam.AON_CUSTOMIZE_FONT_COLOR);
 		if (! StringUtils.isEmpty(value) ) {
 			this.fontStyle = getColorStyle(value);
 		}
 	}
 	
 	private void updateSupportTelephone( Connection connection ) {
-		String value = getValue( connection, AON_CUSTOMIZE_SUPPORT_PHONE);
+		String value = getValue( connection, AppParam.AON_CUSTOMIZE_SUPPORT_PHONE);
 		if (! StringUtils.isEmpty(value) ) {
 			this.supportTelephone = value;
 		}
 	}
 
 	private void updateSupportEmail( Connection connection ) {
-		String value = getValue( connection, AON_CUSTOMIZE_SUPPORT_EMAIL);
+		String value = getValue( connection, AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL);
 		if (! StringUtils.isEmpty(value) ) {
 			this.supportEmail = value;
 		}
 	}
 	
 	private void updateHideTrademark( Connection connection ) {
-		String value = getValue( connection, AON_HIDE_TRADEMARK);
+		String value = getValue( connection, AppParam.AON_HIDE_TRADEMARK);
 		if (! StringUtils.isEmpty(value) ) {
 			this.hideTrademark = Boolean.valueOf(value);
 		}
 	}		
 
 	private void updateHideVersion( Connection connection ) {
-		String value = getValue( connection, AON_HIDE_VERSION);
+		String value = getValue( connection, AppParam.AON_HIDE_VERSION);
 		if (! StringUtils.isEmpty(value) ) {
 			this.hideVersion = Boolean.valueOf(value);
 		}
