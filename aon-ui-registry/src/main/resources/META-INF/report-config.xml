@@ -51,6 +51,19 @@
 			<param id="title" value="#{seller.getReportTitle}" />
 		</params>
 	</report>
+
+	<!-- *********  REGISTRY ADD INFO  ********* -->
+	<report id="registryAddInfoReport" description="Registry Add Info report ">
+		<template path="/com/code/aon/ui/registry/report/registryAddInfo.jasper" />
+		<bean key="com.code.aon.registry.RegistryAddInfo" />
+		<criteria provider="#{registryAddInfo}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+
 	<!-- *********  FAX  ********* -->
 	<report id="corporateIdentity_fax" description="Fax report">
 		<template path="/com/code/aon/ui/registry/report/corporateIdentity_fax.jasper" />
