@@ -229,1536 +229,1536 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Linirpf;
 
 public interface CtsqlDBVisitor {
 	
-	public void visit ( AbstractCtsqlDB ctsqlDB ) 
+	void visit ( AbstractCtsqlDB ctsqlDB ) 
 	throws SQLException;
 	
 
-	public void visitFinipextnu(Finipextnu finipextnu)
+	 void visitFinipextnu(Finipextnu finipextnu)
 	throws SQLException;
 
 
-	public void visitDb_version(Db_version db_version)
+	 void visitDb_version(Db_version db_version)
 	throws SQLException;
 
 
-	public void visitFinindem(Finindem finindem)
+	 void visitFinindem(Finindem finindem)
 	throws SQLException;
 
 
-	public void visitCuota(Cuota cuota)
+	 void visitCuota(Cuota cuota)
 	throws SQLException;
 
 
-	public void visitSincomun(Sincomun sincomun)
+	 void visitSincomun(Sincomun sincomun)
 	throws SQLException;
 
 
-	public void visitUnidades(Unidades unidades)
+	 void visitUnidades(Unidades unidades)
 	throws SQLException;
 
 
-	public void visitDetalle(Detalle detalle)
+	 void visitDetalle(Detalle detalle)
 	throws SQLException;
 
 
-	public void visitMinor_01(Minor_01 minor_01)
+	 void visitMinor_01(Minor_01 minor_01)
 	throws SQLException;
 
 
-	public void visitAvisos(Avisos avisos)
+	 void visitAvisos(Avisos avisos)
 	throws SQLException;
 
 
-	public void visitNszavis(Nszavis nszavis)
+	 void visitNszavis(Nszavis nszavis)
 	throws SQLException;
 
 
-	public void visitTipovia(Tipovia tipovia)
+	 void visitTipovia(Tipovia tipovia)
 	throws SQLException;
 
-	public void visitRel_dlg_via(Delegacion delegacion, Tipovia tipovia)
+	void visitRel_dlg_via(Delegacion delegacion, Tipovia tipovia)
 	throws SQLException;
 
-	public void visitRel_cli_via(Cliente cliente, Tipovia tipovia)
+	void visitRel_cli_via(Cliente cliente, Tipovia tipovia)
 	throws SQLException;
 
-	public void visitRel_dom_via(Domicilio domicilio, Tipovia tipovia)
+	void visitRel_dom_via(Domicilio domicilio, Tipovia tipovia)
 	throws SQLException;
 
-	public void visitRel_per_via(Persona persona, Tipovia tipovia)
+	void visitRel_per_via(Persona persona, Tipovia tipovia)
 	throws SQLException;
 
-	public void visitOpfile_tipovia(Opfile opfile, Tipovia tipovia)
+	void visitOpfile_tipovia(Opfile opfile, Tipovia tipovia)
 	throws SQLException;
 
-	public void visitJtipvia(Httrabajador httrabajador, Tipovia tipovia)
+	void visitJtipvia(Httrabajador httrabajador, Tipovia tipovia)
 	throws SQLException;
 
-	public void visitJauttipovia(Autonomos autonomos, Tipovia tipovia)
+	void visitJauttipovia(Autonomos autonomos, Tipovia tipovia)
 	throws SQLException;
 
 
-	public void visitLintc2(Lintc2 lintc2)
+	 void visitLintc2(Lintc2 lintc2)
 	throws SQLException;
 
 
-	public void visitVariables(Variables variables)
+	 void visitVariables(Variables variables)
 	throws SQLException;
 
-	public void visitRel_var_lin(Linvariables linvariables, Variables variables)
+	void visitRel_var_lin(Linvariables linvariables, Variables variables)
 	throws SQLException;
 
 
-	public void visitLintc2epi(Lintc2epi lintc2epi)
+	 void visitLintc2epi(Lintc2epi lintc2epi)
 	throws SQLException;
 
 
-	public void visitRemesa_inss(Remesa_inss remesa_inss)
+	 void visitRemesa_inss(Remesa_inss remesa_inss)
 	throws SQLException;
 
-	public void visitPit_remesa_inss(Remesa_parte_it remesa_parte_it, Remesa_inss remesa_inss)
+	void visitPit_remesa_inss(Remesa_parte_it remesa_parte_it, Remesa_inss remesa_inss)
 	throws SQLException;
 
 
-	public void visitLinprestacion(Linprestacion linprestacion)
+	 void visitLinprestacion(Linprestacion linprestacion)
 	throws SQLException;
 
 
-	public void visitTipocnae2009(Tipocnae2009 tipocnae2009)
+	 void visitTipocnae2009(Tipocnae2009 tipocnae2009)
 	throws SQLException;
 
 
-	public void visitCliente(Cliente cliente)
+	 void visitCliente(Cliente cliente)
 	throws SQLException;
 
-	public void visitRel_emp_cli(Emprnif emprnif, Cliente cliente)
+	void visitRel_emp_cli(Emprnif emprnif, Cliente cliente)
 	throws SQLException;
 
-	public void visitRel_dom_cli(Domicilio domicilio, Cliente cliente)
+	void visitRel_dom_cli(Domicilio domicilio, Cliente cliente)
 	throws SQLException;
 
-	public void visitEmprdom_cliente(Emprdom emprdom, Cliente cliente)
+	void visitEmprdom_cliente(Emprdom emprdom, Cliente cliente)
 	throws SQLException;
 
-	public void visitEmprbanc_cliente(Emprban emprban, Cliente cliente)
+	void visitEmprbanc_cliente(Emprban emprban, Cliente cliente)
 	throws SQLException;
 
-	public void visitEmprlban_cliente(Emprlban emprlban, Cliente cliente)
+	void visitEmprlban_cliente(Emprlban emprlban, Cliente cliente)
 	throws SQLException;
 
-	public void visitAvisos_codcli(Avisos avisos, Cliente cliente)
+	void visitAvisos_codcli(Avisos avisos, Cliente cliente)
 	throws SQLException;
 
-	public void visitRel_var_cli(Variaciones variaciones, Cliente cliente)
+	void visitRel_var_cli(Variaciones variaciones, Cliente cliente)
 	throws SQLException;
 
-	public void visitRegidocu_cliente(Regidocu regidocu, Cliente cliente)
+	void visitRegidocu_cliente(Regidocu regidocu, Cliente cliente)
 	throws SQLException;
 
 
-	public void visitNsztrab(Nsztrab nsztrab)
+	 void visitNsztrab(Nsztrab nsztrab)
 	throws SQLException;
 
 
-	public void visitAutonomos(Autonomos autonomos)
+	 void visitAutonomos(Autonomos autonomos)
 	throws SQLException;
 
-	public void visitJautautonomos(Autbases autbases, Autonomos autonomos)
+	void visitJautautonomos(Autbases autbases, Autonomos autonomos)
 	throws SQLException;
 
 
-	public void visitTipreg(Tipreg tipreg)
+	 void visitTipreg(Tipreg tipreg)
 	throws SQLException;
 
-	public void visitRegidocu_tipreg(Regidocu regidocu, Tipreg tipreg)
+	void visitRegidocu_tipreg(Regidocu regidocu, Tipreg tipreg)
 	throws SQLException;
 
 
-	public void visitComunica(Comunica comunica)
+	 void visitComunica(Comunica comunica)
 	throws SQLException;
 
-	public void visitLincomun_comunica(Lincomun lincomun, Comunica comunica)
+	void visitLincomun_comunica(Lincomun lincomun, Comunica comunica)
 	throws SQLException;
 
 
-	public void visitEpigrafe(Epigrafe epigrafe)
+	 void visitEpigrafe(Epigrafe epigrafe)
 	throws SQLException;
 
-	public void visitRel_lep_epi(Linepigr linepigr, Epigrafe epigrafe)
+	void visitRel_lep_epi(Linepigr linepigr, Epigrafe epigrafe)
 	throws SQLException;
 
-	public void visitRel_cat_epi(Categoria categoria, Epigrafe epigrafe)
+	void visitRel_cat_epi(Categoria categoria, Epigrafe epigrafe)
 	throws SQLException;
 
-	public void visitRel_tra_epi(Trabajo trabajo, Epigrafe epigrafe)
+	void visitRel_tra_epi(Trabajo trabajo, Epigrafe epigrafe)
 	throws SQLException;
 
-	public void visitJepigrafe(Httrabajador httrabajador, Epigrafe epigrafe)
+	void visitJepigrafe(Httrabajador httrabajador, Epigrafe epigrafe)
 	throws SQLException;
 
-	public void visitRel_cos_epi(Costes costes, Epigrafe epigrafe)
+	void visitRel_cos_epi(Costes costes, Epigrafe epigrafe)
 	throws SQLException;
 
 
-	public void visitHttincidencia(Httincidencia httincidencia)
+	 void visitHttincidencia(Httincidencia httincidencia)
 	throws SQLException;
 
 
-	public void visitMinora(Minora minora)
+	 void visitMinora(Minora minora)
 	throws SQLException;
 
 
-	public void visitNszpeop(Nszpeop nszpeop)
+	 void visitNszpeop(Nszpeop nszpeop)
 	throws SQLException;
 
 
-	public void visitFinidtonu(Finidtonu finidtonu)
+	 void visitFinidtonu(Finidtonu finidtonu)
 	throws SQLException;
 
 
-	public void visitPluses(Pluses pluses)
+	 void visitPluses(Pluses pluses)
 	throws SQLException;
 
-	public void visitRel_lpl_plu(Linplus linplus, Pluses pluses)
+	void visitRel_lpl_plu(Linplus linplus, Pluses pluses)
 	throws SQLException;
 
 
-	public void visitHttaviso(Httaviso httaviso)
+	 void visitHttaviso(Httaviso httaviso)
 	throws SQLException;
 
 
-	public void visitNszanex(Nszanex nszanex)
+	 void visitNszanex(Nszanex nszanex)
 	throws SQLException;
 
 
-	public void visitAction_entry(Action_entry action_entry)
+	 void visitAction_entry(Action_entry action_entry)
 	throws SQLException;
 
 
-	public void visitBasecoti(Basecoti basecoti)
+	 void visitBasecoti(Basecoti basecoti)
 	throws SQLException;
 
-	public void visitRel_lba_bas(Linbasec linbasec, Basecoti basecoti)
+	void visitRel_lba_bas(Linbasec linbasec, Basecoti basecoti)
 	throws SQLException;
 
-	public void visitRel_cat_com(Categoria categoria, Basecoti basecoti)
+	void visitRel_cat_com(Categoria categoria, Basecoti basecoti)
 	throws SQLException;
 
-	public void visitRel_tra_bas(Trabajo trabajo, Basecoti basecoti)
+	void visitRel_tra_bas(Trabajo trabajo, Basecoti basecoti)
 	throws SQLException;
 
-	public void visitJtarifa(Httrabajador httrabajador, Basecoti basecoti)
+	void visitJtarifa(Httrabajador httrabajador, Basecoti basecoti)
 	throws SQLException;
 
-	public void visitRel_cos_bas(Costes costes, Basecoti basecoti)
+	void visitRel_cos_bas(Costes costes, Basecoti basecoti)
 	throws SQLException;
 
 
-	public void visitLincnae2009(Lincnae2009 lincnae2009)
+	 void visitLincnae2009(Lincnae2009 lincnae2009)
 	throws SQLException;
 
 
-	public void visitPercniv(Percniv percniv)
+	 void visitPercniv(Percniv percniv)
 	throws SQLException;
 
 
-	public void visitNominaexdf(Nominaexdf nominaexdf)
+	 void visitNominaexdf(Nominaexdf nominaexdf)
 	throws SQLException;
 
-	public void visitRel_nominaexdf(Nomdfdtoex nomdfdtoex, Nominaexdf nominaexdf)
+	void visitRel_nominaexdf(Nomdfdtoex nomdfdtoex, Nominaexdf nominaexdf)
 	throws SQLException;
 
 
-	public void visitMutua(Mutua mutua)
+	 void visitMutua(Mutua mutua)
 	throws SQLException;
 
-	public void visitRel_ccc_mut(Emprccc emprccc, Mutua mutua)
+	void visitRel_ccc_mut(Emprccc emprccc, Mutua mutua)
 	throws SQLException;
 
-	public void visitRel_mut_lin(Linmutua linmutua, Mutua mutua)
+	void visitRel_mut_lin(Linmutua linmutua, Mutua mutua)
 	throws SQLException;
 
-	public void visitJautmutua(Autonomos autonomos, Mutua mutua)
+	void visitJautmutua(Autonomos autonomos, Mutua mutua)
 	throws SQLException;
 
 
-	public void visitDivisa(Divisa divisa)
+	 void visitDivisa(Divisa divisa)
 	throws SQLException;
 
-	public void visitLin_divisa_divisa(Lin_divisa lin_divisa, Divisa divisa)
+	void visitLin_divisa_divisa(Lin_divisa lin_divisa, Divisa divisa)
 	throws SQLException;
 
-	public void visitLin_divisa_divisa2(Lin_divisa lin_divisa, Divisa divisa)
+	void visitLin_divisa_divisa2(Lin_divisa lin_divisa, Divisa divisa)
 	throws SQLException;
 
-	public void visitNominaexdf_divisa(Nominaexdf nominaexdf, Divisa divisa)
+	void visitNominaexdf_divisa(Nominaexdf nominaexdf, Divisa divisa)
 	throws SQLException;
 
-	public void visitRel_pex_divisa(Nominaex nominaex, Divisa divisa)
+	void visitRel_pex_divisa(Nominaex nominaex, Divisa divisa)
 	throws SQLException;
 
-	public void visitRel_cli_divisa(Cliente cliente, Divisa divisa)
+	void visitRel_cli_divisa(Cliente cliente, Divisa divisa)
 	throws SQLException;
 
-	public void visitRel_emp_divisa(Emprnif emprnif, Divisa divisa)
+	void visitRel_emp_divisa(Emprnif emprnif, Divisa divisa)
 	throws SQLException;
 
-	public void visitRel_nom_divisa(Nomina nomina, Divisa divisa)
+	void visitRel_nom_divisa(Nomina nomina, Divisa divisa)
 	throws SQLException;
 
-	public void visitFiniquito_divisa(Finiquito finiquito, Divisa divisa)
+	void visitFiniquito_divisa(Finiquito finiquito, Divisa divisa)
 	throws SQLException;
 
-	public void visitFindf_divisa(Finiquitodf finiquitodf, Divisa divisa)
+	void visitFindf_divisa(Finiquitodf finiquitodf, Divisa divisa)
 	throws SQLException;
 
-	public void visitFinnu_divisa(Finiquitonu finiquitonu, Divisa divisa)
+	void visitFinnu_divisa(Finiquitonu finiquitonu, Divisa divisa)
 	throws SQLException;
 
-	public void visitImpr11x_divisa(Impr11x impr11x, Divisa divisa)
+	void visitImpr11x_divisa(Impr11x impr11x, Divisa divisa)
 	throws SQLException;
 
-	public void visitImpr190_divisa(Impr190 impr190, Divisa divisa)
+	void visitImpr190_divisa(Impr190 impr190, Divisa divisa)
 	throws SQLException;
 
-	public void visitNominadf_divisa(Nominadf nominadf, Divisa divisa)
+	void visitNominadf_divisa(Nominadf nominadf, Divisa divisa)
 	throws SQLException;
 
 
-	public void visitNominadev(Nominadev nominadev)
+	 void visitNominadev(Nominadev nominadev)
 	throws SQLException;
 
 
-	public void visitNszrece(Nszrece nszrece)
+	 void visitNszrece(Nszrece nszrece)
 	throws SQLException;
 
 
-	public void visitLincomun(Lincomun lincomun)
+	 void visitLincomun(Lincomun lincomun)
 	throws SQLException;
 
 
-	public void visitTipcotc2(Tipcotc2 tipcotc2)
+	 void visitTipcotc2(Tipcotc2 tipcotc2)
 	throws SQLException;
 
-	public void visitRel_tra_tc2(Trabajo trabajo, Tipcotc2 tipcotc2)
+	void visitRel_tra_tc2(Trabajo trabajo, Tipcotc2 tipcotc2)
 	throws SQLException;
 
-	public void visitJcontratotc2(Httrabajador httrabajador, Tipcotc2 tipcotc2)
+	void visitJcontratotc2(Httrabajador httrabajador, Tipcotc2 tipcotc2)
 	throws SQLException;
 
 
-	public void visitNszunco(Nszunco nszunco)
+	 void visitNszunco(Nszunco nszunco)
 	throws SQLException;
 
 
-	public void visitNszotpe(Nszotpe nszotpe)
+	 void visitNszotpe(Nszotpe nszotpe)
 	throws SQLException;
 
 
-	public void visitOtrperc(Otrperc otrperc)
+	 void visitOtrperc(Otrperc otrperc)
 	throws SQLException;
 
 
-	public void visitLincalcu(Lincalcu lincalcu)
+	 void visitLincalcu(Lincalcu lincalcu)
 	throws SQLException;
 
 
-	public void visitEmprban(Emprban emprban)
+	 void visitEmprban(Emprban emprban)
 	throws SQLException;
 
-	public void visitEmprlban_emprban(Emprlban emprlban, Emprban emprban)
+	void visitEmprlban_emprban(Emprlban emprlban, Emprban emprban)
 	throws SQLException;
 
 
-	public void visitColectivos(Colectivos colectivos)
+	 void visitColectivos(Colectivos colectivos)
 	throws SQLException;
 
-	public void visitRel_tra_col(Trabajo trabajo, Colectivos colectivos)
+	void visitRel_tra_col(Trabajo trabajo, Colectivos colectivos)
 	throws SQLException;
 
 
-	public void visitTrabajadores(Trabajadores trabajadores)
+	 void visitTrabajadores(Trabajadores trabajadores)
 	throws SQLException;
 
 
-	public void visitFinipext(Finipext finipext)
+	 void visitFinipext(Finipext finipext)
 	throws SQLException;
 
 
-	public void visitEmprper(Emprper emprper)
+	 void visitEmprper(Emprper emprper)
 	throws SQLException;
 
-	public void visitTrabajo_emprper(Trabajo trabajo, Emprper emprper)
+	void visitTrabajo_emprper(Trabajo trabajo, Emprper emprper)
 	throws SQLException;
 
-	public void visitRel_pcp_epp(Percep percep, Emprper emprper)
+	void visitRel_pcp_epp(Percep percep, Emprper emprper)
 	throws SQLException;
 
-	public void visitBonifica_emprper(Bonifica bonifica, Emprper emprper)
+	void visitBonifica_emprper(Bonifica bonifica, Emprper emprper)
 	throws SQLException;
 
-	public void visitAvisos_emprper(Avisos avisos, Emprper emprper)
+	void visitAvisos_emprper(Avisos avisos, Emprper emprper)
 	throws SQLException;
 
-	public void visitRel_nom_per(Nomina nomina, Emprper emprper)
+	void visitRel_nom_per(Nomina nomina, Emprper emprper)
 	throws SQLException;
 
-	public void visitTrabinci_emprper(Trabinci trabinci, Emprper emprper)
+	void visitTrabinci_emprper(Trabinci trabinci, Emprper emprper)
 	throws SQLException;
 
-	public void visitNominait_emprper(Nominait nominait, Emprper emprper)
+	void visitNominait_emprper(Nominait nominait, Emprper emprper)
 	throws SQLException;
 
-	public void visitRel_dto_per(Trabdto trabdto, Emprper emprper)
+	void visitRel_dto_per(Trabdto trabdto, Emprper emprper)
 	throws SQLException;
 
-	public void visitRel_pit_epp(Parteit parteit, Emprper emprper)
+	void visitRel_pit_epp(Parteit parteit, Emprper emprper)
 	throws SQLException;
 
-	public void visitPitnu_emprper(Parteitnu parteitnu, Emprper emprper)
+	void visitPitnu_emprper(Parteitnu parteitnu, Emprper emprper)
 	throws SQLException;
 
-	public void visitNitnu_emprper(Nominaitnu nominaitnu, Emprper emprper)
+	void visitNitnu_emprper(Nominaitnu nominaitnu, Emprper emprper)
 	throws SQLException;
 
-	public void visitRel_fin_epp(Finiquito finiquito, Emprper emprper)
+	void visitRel_fin_epp(Finiquito finiquito, Emprper emprper)
 	throws SQLException;
 
-	public void visitFindf_emprper(Finiquitodf finiquitodf, Emprper emprper)
+	void visitFindf_emprper(Finiquitodf finiquitodf, Emprper emprper)
 	throws SQLException;
 
-	public void visitFinnu_emprper(Finiquitonu finiquitonu, Emprper emprper)
+	void visitFinnu_emprper(Finiquitonu finiquitonu, Emprper emprper)
 	throws SQLException;
 
-	public void visitComunica_emprper(Comunica comunica, Emprper emprper)
+	void visitComunica_emprper(Comunica comunica, Emprper emprper)
 	throws SQLException;
 
-	public void visitCalculo_emprper(Calculo calculo, Emprper emprper)
+	void visitCalculo_emprper(Calculo calculo, Emprper emprper)
 	throws SQLException;
 
-	public void visitNominadf_emprper(Nominadf nominadf, Emprper emprper)
+	void visitNominadf_emprper(Nominadf nominadf, Emprper emprper)
 	throws SQLException;
 
-	public void visitEmbargo_emprper(Embargo embargo, Emprper emprper)
+	void visitEmbargo_emprper(Embargo embargo, Emprper emprper)
 	throws SQLException;
 
-	public void visitRel_pex_per(Nominaex nominaex, Emprper emprper)
+	void visitRel_pex_per(Nominaex nominaex, Emprper emprper)
 	throws SQLException;
 
-	public void visitRegidocu_emprper(Regidocu regidocu, Emprper emprper)
+	void visitRegidocu_emprper(Regidocu regidocu, Emprper emprper)
 	throws SQLException;
 
-	public void visitPrc_emprper(Prcdivtrab prcdivtrab, Emprper emprper)
+	void visitPrc_emprper(Prcdivtrab prcdivtrab, Emprper emprper)
 	throws SQLException;
 
-	public void visitPit_remesa_emp(Remesa_parte_it remesa_parte_it, Emprper emprper)
+	void visitPit_remesa_emp(Remesa_parte_it remesa_parte_it, Emprper emprper)
 	throws SQLException;
 
-	public void visitFk_cert_remesa_emp(Rem_cert_empr_det rem_cert_empr_det, Emprper emprper)
+	void visitFk_cert_remesa_emp(Rem_cert_empr_det rem_cert_empr_det, Emprper emprper)
 	throws SQLException;
 
 
-	public void visitNszfini(Nszfini nszfini)
+	 void visitNszfini(Nszfini nszfini)
 	throws SQLException;
 
 
-	public void visitPagaext(Pagaext pagaext)
+	 void visitPagaext(Pagaext pagaext)
 	throws SQLException;
 
 
-	public void visitNszcoco(Nszcoco nszcoco)
+	 void visitNszcoco(Nszcoco nszcoco)
 	throws SQLException;
 
 
-	public void visitLinporco(Linporco linporco)
+	 void visitLinporco(Linporco linporco)
 	throws SQLException;
 
 
-	public void visitHttrabajador(Httrabajador httrabajador)
+	 void visitHttrabajador(Httrabajador httrabajador)
 	throws SQLException;
 
-	public void visitRel_htt_bon(Httbonificacion httbonificacion, Httrabajador httrabajador)
+	void visitRel_htt_bon(Httbonificacion httbonificacion, Httrabajador httrabajador)
 	throws SQLException;
 
-	public void visitRel_htt_avi(Httaviso httaviso, Httrabajador httrabajador)
+	void visitRel_htt_avi(Httaviso httaviso, Httrabajador httrabajador)
 	throws SQLException;
 
-	public void visitRel_htt_com(Httcomplemento httcomplemento, Httrabajador httrabajador)
+	void visitRel_htt_com(Httcomplemento httcomplemento, Httrabajador httrabajador)
 	throws SQLException;
 
-	public void visitRel_htt_inc(Httincidencia httincidencia, Httrabajador httrabajador)
+	void visitRel_htt_inc(Httincidencia httincidencia, Httrabajador httrabajador)
 	throws SQLException;
 
 
-	public void visitTipocont(Tipocont tipocont)
+	 void visitTipocont(Tipocont tipocont)
 	throws SQLException;
 
-	public void visitRel_tra_cont(Trabajo trabajo, Tipocont tipocont)
+	void visitRel_tra_cont(Trabajo trabajo, Tipocont tipocont)
 	throws SQLException;
 
-	public void visitJcontrato(Httrabajador httrabajador, Tipocont tipocont)
+	void visitJcontrato(Httrabajador httrabajador, Tipocont tipocont)
 	throws SQLException;
 
 
-	public void visitLinbasec(Linbasec linbasec)
+	 void visitLinbasec(Linbasec linbasec)
 	throws SQLException;
 
 
-	public void visitNszcatg(Nszcatg nszcatg)
+	 void visitNszcatg(Nszcatg nszcatg)
 	throws SQLException;
 
 
-	public void visitLinocupacion(Linocupacion linocupacion)
+	 void visitLinocupacion(Linocupacion linocupacion)
 	throws SQLException;
 
 
-	public void visitRemesainss(Remesainss remesainss)
+	 void visitRemesainss(Remesainss remesainss)
 	throws SQLException;
 
 
-	public void visitBasehogar(Basehogar basehogar)
+	 void visitBasehogar(Basehogar basehogar)
 	throws SQLException;
 
 
-	public void visitLincnae(Lincnae lincnae)
+	 void visitLincnae(Lincnae lincnae)
 	throws SQLException;
 
 
-	public void visitFinindemdf(Finindemdf finindemdf)
+	 void visitFinindemdf(Finindemdf finindemdf)
 	throws SQLException;
 
 
-	public void visitEntidad(Entidad entidad)
+	 void visitEntidad(Entidad entidad)
 	throws SQLException;
 
-	public void visitSucursal_entidad(Sucursal sucursal, Entidad entidad)
+	void visitSucursal_entidad(Sucursal sucursal, Entidad entidad)
 	throws SQLException;
 
-	public void visitEmprbanc_entidad(Emprban emprban, Entidad entidad)
+	void visitEmprbanc_entidad(Emprban emprban, Entidad entidad)
 	throws SQLException;
 
-	public void visitRel_tra_ent(Trabajo trabajo, Entidad entidad)
+	void visitRel_tra_ent(Trabajo trabajo, Entidad entidad)
 	throws SQLException;
 
-	public void visitJentidad(Httrabajador httrabajador, Entidad entidad)
+	void visitJentidad(Httrabajador httrabajador, Entidad entidad)
 	throws SQLException;
 
-	public void visitJautentidad(Autonomos autonomos, Entidad entidad)
+	void visitJautentidad(Autonomos autonomos, Entidad entidad)
 	throws SQLException;
 
-	public void visitEmprbanc_entbic(Emprban emprban, Entidad entidad)
+	void visitEmprbanc_entbic(Emprban emprban, Entidad entidad)
 	throws SQLException;
 
 
-	public void visitNomdto(Nomdto nomdto)
+	 void visitNomdto(Nomdto nomdto)
 	throws SQLException;
 
 
-	public void visitNszreac(Nszreac nszreac)
+	 void visitNszreac(Nszreac nszreac)
 	throws SQLException;
 
 
-	public void visitCnae(Cnae cnae)
+	 void visitCnae(Cnae cnae)
 	throws SQLException;
 
-	public void visitJlincnae(Lincnae lincnae, Cnae cnae)
+	void visitJlincnae(Lincnae lincnae, Cnae cnae)
 	throws SQLException;
 
 
-	public void visitImpr190(Impr190 impr190)
+	 void visitImpr190(Impr190 impr190)
 	throws SQLException;
 
-	public void visitLin190_impr190(Lin190 lin190, Impr190 impr190)
+	void visitLin190_impr190(Lin190 lin190, Impr190 impr190)
 	throws SQLException;
 
 
-	public void visitUsuario(Usuario usuario)
+	 void visitUsuario(Usuario usuario)
 	throws SQLException;
 
-	public void visitFk_user(Session session, Usuario usuario)
+	void visitFk_user(Session session, Usuario usuario)
 	throws SQLException;
 
-	public void visitFk_af_user(Action_favorite action_favorite, Usuario usuario)
+	void visitFk_af_user(Action_favorite action_favorite, Usuario usuario)
 	throws SQLException;
 
-	public void visitFk_ad_user(Action_denied action_denied, Usuario usuario)
+	void visitFk_ad_user(Action_denied action_denied, Usuario usuario)
 	throws SQLException;
 
 
-	public void visitFiniquitonu(Finiquitonu finiquitonu)
+	 void visitFiniquitonu(Finiquitonu finiquitonu)
 	throws SQLException;
 
-	public void visitFinexnu_finnu(Finipextnu finipextnu, Finiquitonu finiquitonu)
+	void visitFinexnu_finnu(Finipextnu finipextnu, Finiquitonu finiquitonu)
 	throws SQLException;
 
-	public void visitFinidnu_finnu(Finindemnu finindemnu, Finiquitonu finiquitonu)
+	void visitFinidnu_finnu(Finindemnu finindemnu, Finiquitonu finiquitonu)
 	throws SQLException;
 
-	public void visitFindtonu_finnu(Finidtonu finidtonu, Finiquitonu finiquitonu)
+	void visitFindtonu_finnu(Finidtonu finidtonu, Finiquitonu finiquitonu)
 	throws SQLException;
 
 
-	public void visitLinplus(Linplus linplus)
+	 void visitLinplus(Linplus linplus)
 	throws SQLException;
 
 
-	public void visitRem_cert_empr(Rem_cert_empr rem_cert_empr)
+	 void visitRem_cert_empr(Rem_cert_empr rem_cert_empr)
 	throws SQLException;
 
-	public void visitFk_rem_cert_empr(Rem_cert_empr_det rem_cert_empr_det, Rem_cert_empr rem_cert_empr)
+	void visitFk_rem_cert_empr(Rem_cert_empr_det rem_cert_empr_det, Rem_cert_empr rem_cert_empr)
 	throws SQLException;
 
 
-	public void visitEmbargo(Embargo embargo)
+	 void visitEmbargo(Embargo embargo)
 	throws SQLException;
 
 
-	public void visitNomdfdev(Nomdfdev nomdfdev)
+	 void visitNomdfdev(Nomdfdev nomdfdev)
 	throws SQLException;
 
 
-	public void visitAutomat(Automat automat)
+	 void visitAutomat(Automat automat)
 	throws SQLException;
 
-	public void visitLinautom_automati(Linautom linautom, Automat automat)
+	void visitLinautom_automati(Linautom linautom, Automat automat)
 	throws SQLException;
 
 
-	public void visitNszcopa(Nszcopa nszcopa)
+	 void visitNszcopa(Nszcopa nszcopa)
 	throws SQLException;
 
 
-	public void visitParteitnu(Parteitnu parteitnu)
+	 void visitParteitnu(Parteitnu parteitnu)
 	throws SQLException;
 
 
-	public void visitCategoria(Categoria categoria)
+	 void visitCategoria(Categoria categoria)
 	throws SQLException;
 
 
-	public void visitEmprccos(Emprccos emprccos)
+	 void visitEmprccos(Emprccos emprccos)
 	throws SQLException;
 
-	public void visitRel_epp_cco(Emprper emprper, Emprccos emprccos)
+	void visitRel_epp_cco(Emprper emprper, Emprccos emprccos)
 	throws SQLException;
 
 
-	public void visitPorcoti(Porcoti porcoti)
+	 void visitPorcoti(Porcoti porcoti)
 	throws SQLException;
 
-	public void visitRel_lpc_pct(Linporco linporco, Porcoti porcoti)
+	void visitRel_lpc_pct(Linporco linporco, Porcoti porcoti)
 	throws SQLException;
 
-	public void visitRel_tco_codpct(Tipocont tipocont, Porcoti porcoti)
+	void visitRel_tco_codpct(Tipocont tipocont, Porcoti porcoti)
 	throws SQLException;
 
-	public void visitRel_tra_pct(Trabajo trabajo, Porcoti porcoti)
+	void visitRel_tra_pct(Trabajo trabajo, Porcoti porcoti)
 	throws SQLException;
 
-	public void visitRel_cos_pct(Costes costes, Porcoti porcoti)
+	void visitRel_cos_pct(Costes costes, Porcoti porcoti)
 	throws SQLException;
 
 
-	public void visitRegidocu(Regidocu regidocu)
+	 void visitRegidocu(Regidocu regidocu)
 	throws SQLException;
 
 
-	public void visitCalendar(Calendar calendar)
+	 void visitCalendar(Calendar calendar)
 	throws SQLException;
 
 
-	public void visitNacion(Nacion nacion)
+	 void visitNacion(Nacion nacion)
 	throws SQLException;
 
-	public void visitRel_per_nac(Persona persona, Nacion nacion)
+	void visitRel_per_nac(Persona persona, Nacion nacion)
 	throws SQLException;
 
 
-	public void visitElemirpf(Elemirpf elemirpf)
+	 void visitElemirpf(Elemirpf elemirpf)
 	throws SQLException;
 
-	public void visitLinirpf_elemirpf(Linirpf linirpf, Elemirpf elemirpf)
+	void visitLinirpf_elemirpf(Linirpf linirpf, Elemirpf elemirpf)
 	throws SQLException;
 
 
-	public void visitTrabdto(Trabdto trabdto)
+	 void visitTrabdto(Trabdto trabdto)
 	throws SQLException;
 
 
-	public void visitDomicilio(Domicilio domicilio)
+	 void visitDomicilio(Domicilio domicilio)
 	throws SQLException;
 
-	public void visitEmprctra_domicilio(Emprctra emprctra, Domicilio domicilio)
+	void visitEmprctra_domicilio(Emprctra emprctra, Domicilio domicilio)
 	throws SQLException;
 
-	public void visitEmprdom_domicilio(Emprdom emprdom, Domicilio domicilio)
+	void visitEmprdom_domicilio(Emprdom emprdom, Domicilio domicilio)
 	throws SQLException;
 
-	public void visitEmprper_domiclio(Emprper emprper, Domicilio domicilio)
+	void visitEmprper_domiclio(Emprper emprper, Domicilio domicilio)
 	throws SQLException;
 
-	public void visitRel_var_dom(Variaciones variaciones, Domicilio domicilio)
+	void visitRel_var_dom(Variaciones variaciones, Domicilio domicilio)
 	throws SQLException;
 
-	public void visitRel_pre_dom(Prestaciones prestaciones, Domicilio domicilio)
+	void visitRel_pre_dom(Prestaciones prestaciones, Domicilio domicilio)
 	throws SQLException;
 
-	public void visitJdomicilio(Httrabajador httrabajador, Domicilio domicilio)
+	void visitJdomicilio(Httrabajador httrabajador, Domicilio domicilio)
 	throws SQLException;
 
 
-	public void visitMasivo(Masivo masivo)
+	 void visitMasivo(Masivo masivo)
 	throws SQLException;
 
 
-	public void visitComplevar(Complevar complevar)
+	 void visitComplevar(Complevar complevar)
 	throws SQLException;
 
 
-	public void visitNszcere(Nszcere nszcere)
+	 void visitNszcere(Nszcere nszcere)
 	throws SQLException;
 
 
-	public void visitCuota_01(Cuota_01 cuota_01)
+	 void visitCuota_01(Cuota_01 cuota_01)
 	throws SQLException;
 
 
-	public void visitFinidto(Finidto finidto)
+	 void visitFinidto(Finidto finidto)
 	throws SQLException;
 
 
-	public void visitNszrari(Nszrari nszrari)
+	 void visitNszrari(Nszrari nszrari)
 	throws SQLException;
 
 
-	public void visitNszdomi(Nszdomi nszdomi)
+	 void visitNszdomi(Nszdomi nszdomi)
 	throws SQLException;
 
 
-	public void visitOcupacion(Ocupacion ocupacion)
+	 void visitOcupacion(Ocupacion ocupacion)
 	throws SQLException;
 
-	public void visitJlinocupacion(Linocupacion linocupacion, Ocupacion ocupacion)
+	void visitJlinocupacion(Linocupacion linocupacion, Ocupacion ocupacion)
 	throws SQLException;
 
 
-	public void visitTrabajo(Trabajo trabajo)
+	 void visitTrabajo(Trabajo trabajo)
 	throws SQLException;
 
 
-	public void visitNszconv(Nszconv nszconv)
+	 void visitNszconv(Nszconv nszconv)
 	throws SQLException;
 
 
-	public void visitEmpresa(Empresa empresa)
+	 void visitEmpresa(Empresa empresa)
 	throws SQLException;
 
 
-	public void visitNszcont(Nszcont nszcont)
+	 void visitNszcont(Nszcont nszcont)
 	throws SQLException;
 
 
-	public void visitCnae2009(Cnae2009 cnae2009)
+	 void visitCnae2009(Cnae2009 cnae2009)
 	throws SQLException;
 
-	public void visitJlincnae2009(Lincnae2009 lincnae2009, Cnae2009 cnae2009)
+	void visitJlincnae2009(Lincnae2009 lincnae2009, Cnae2009 cnae2009)
 	throws SQLException;
 
 
-	public void visitEmprccc(Emprccc emprccc)
+	 void visitEmprccc(Emprccc emprccc)
 	throws SQLException;
 
-	public void visitRel_epp_ccc(Emprper emprper, Emprccc emprccc)
+	void visitRel_epp_ccc(Emprper emprper, Emprccc emprccc)
 	throws SQLException;
 
-	public void visitFormcont_emprccc(Formcont formcont, Emprccc emprccc)
+	void visitFormcont_emprccc(Formcont formcont, Emprccc emprccc)
 	throws SQLException;
 
 
-	public void visitNszepig(Nszepig nszepig)
+	 void visitNszepig(Nszepig nszepig)
 	throws SQLException;
 
 
-	public void visitPersona(Persona persona)
+	 void visitPersona(Persona persona)
 	throws SQLException;
 
-	public void visitRel_epp_per(Emprper emprper, Persona persona)
+	void visitRel_epp_per(Emprper emprper, Persona persona)
 	throws SQLException;
 
-	public void visitOtrperc_persona(Otrperc otrperc, Persona persona)
+	void visitOtrperc_persona(Otrperc otrperc, Persona persona)
 	throws SQLException;
 
-	public void visitLintc2_persona(Lintc2 lintc2, Persona persona)
+	void visitLintc2_persona(Lintc2 lintc2, Persona persona)
 	throws SQLException;
 
-	public void visitJautpersona(Autonomos autonomos, Persona persona)
+	void visitJautpersona(Autonomos autonomos, Persona persona)
 	throws SQLException;
 
 
-	public void visitVariaciones(Variaciones variaciones)
+	 void visitVariaciones(Variaciones variaciones)
 	throws SQLException;
 
 
-	public void visitNsztido(Nsztido nsztido)
+	 void visitNsztido(Nsztido nsztido)
 	throws SQLException;
 
 
-	public void visitOpercepciones(Opercepciones opercepciones)
+	 void visitOpercepciones(Opercepciones opercepciones)
 	throws SQLException;
 
 
-	public void visitEmprnif(Emprnif emprnif)
+	 void visitEmprnif(Emprnif emprnif)
 	throws SQLException;
 
-	public void visitEmpract_emprnif(Empract empract, Emprnif emprnif)
+	void visitEmpract_emprnif(Empract empract, Emprnif emprnif)
 	throws SQLException;
 
-	public void visitEmprctra_emprnif(Emprctra emprctra, Emprnif emprnif)
+	void visitEmprctra_emprnif(Emprctra emprctra, Emprnif emprnif)
 	throws SQLException;
 
-	public void visitEmprdom_emprnif(Emprdom emprdom, Emprnif emprnif)
+	void visitEmprdom_emprnif(Emprdom emprdom, Emprnif emprnif)
 	throws SQLException;
 
-	public void visitEmprlban_emprnif(Emprlban emprlban, Emprnif emprnif)
+	void visitEmprlban_emprnif(Emprlban emprlban, Emprnif emprnif)
 	throws SQLException;
 
-	public void visitRel_epp_emp(Emprper emprper, Emprnif emprnif)
+	void visitRel_epp_emp(Emprper emprper, Emprnif emprnif)
 	throws SQLException;
 
-	public void visitOtrperc_emprnif(Otrperc otrperc, Emprnif emprnif)
+	void visitOtrperc_emprnif(Otrperc otrperc, Emprnif emprnif)
 	throws SQLException;
 
-	public void visitAvisos_codemp(Avisos avisos, Emprnif emprnif)
+	void visitAvisos_codemp(Avisos avisos, Emprnif emprnif)
 	throws SQLException;
 
-	public void visitImpr11x_emprnif(Impr11x impr11x, Emprnif emprnif)
+	void visitImpr11x_emprnif(Impr11x impr11x, Emprnif emprnif)
 	throws SQLException;
 
-	public void visitImpr190_codemp(Impr190 impr190, Emprnif emprnif)
+	void visitImpr190_codemp(Impr190 impr190, Emprnif emprnif)
 	throws SQLException;
 
-	public void visitImpr190_repres(Impr190 impr190, Emprnif emprnif)
+	void visitImpr190_repres(Impr190 impr190, Emprnif emprnif)
 	throws SQLException;
 
-	public void visitImpr190_cargo(Impr190 impr190, Emprnif emprnif)
+	void visitImpr190_cargo(Impr190 impr190, Emprnif emprnif)
 	throws SQLException;
 
-	public void visitRel_var_emp(Variaciones variaciones, Emprnif emprnif)
+	void visitRel_var_emp(Variaciones variaciones, Emprnif emprnif)
 	throws SQLException;
 
-	public void visitRegidocu_emprnif(Regidocu regidocu, Emprnif emprnif)
+	void visitRegidocu_emprnif(Regidocu regidocu, Emprnif emprnif)
 	throws SQLException;
 
-	public void visitFk_cert_rem_empr(Rem_cert_empr rem_cert_empr, Emprnif emprnif)
+	void visitFk_cert_rem_empr(Rem_cert_empr rem_cert_empr, Emprnif emprnif)
 	throws SQLException;
 
 
-	public void visitTipboni(Tipboni tipboni)
+	 void visitTipboni(Tipboni tipboni)
 	throws SQLException;
 
-	public void visitRel_bpe_bon(Bonifica bonifica, Tipboni tipboni)
+	void visitRel_bpe_bon(Bonifica bonifica, Tipboni tipboni)
 	throws SQLException;
 
 
-	public void visitConfig(Config config)
+	 void visitConfig(Config config)
 	throws SQLException;
 
 
-	public void visitEmprdom(Emprdom emprdom)
+	 void visitEmprdom(Emprdom emprdom)
 	throws SQLException;
 
 
-	public void visitNomdtoex(Nomdtoex nomdtoex)
+	 void visitNomdtoex(Nomdtoex nomdtoex)
 	throws SQLException;
 
 
-	public void visitLbonifica(Lbonifica lbonifica)
+	 void visitLbonifica(Lbonifica lbonifica)
 	throws SQLException;
 
 
-	public void visitParteit(Parteit parteit)
+	 void visitParteit(Parteit parteit)
 	throws SQLException;
 
-	public void visitParteconf_parteit(Parteconf parteconf, Parteit parteit)
+	void visitParteconf_parteit(Parteconf parteconf, Parteit parteit)
 	throws SQLException;
 
 
-	public void visitCalen(Calen calen)
+	 void visitCalen(Calen calen)
 	throws SQLException;
 
 
-	public void visitFormcont(Formcont formcont)
+	 void visitFormcont(Formcont formcont)
 	throws SQLException;
 
 
-	public void visitHttcomplemento(Httcomplemento httcomplemento)
+	 void visitHttcomplemento(Httcomplemento httcomplemento)
 	throws SQLException;
 
 
-	public void visitNominadf(Nominadf nominadf)
+	 void visitNominadf(Nominadf nominadf)
 	throws SQLException;
 
-	public void visitNomdfdev_nominadf(Nomdfdev nomdfdev, Nominadf nominadf)
+	void visitNomdfdev_nominadf(Nomdfdev nomdfdev, Nominadf nominadf)
 	throws SQLException;
 
-	public void visitNomdfdto_nominadf(Nomdfdto nomdfdto, Nominadf nominadf)
+	void visitNomdfdto_nominadf(Nomdfdto nomdfdto, Nominadf nominadf)
 	throws SQLException;
 
 
-	public void visitNomina(Nomina nomina)
+	 void visitNomina(Nomina nomina)
 	throws SQLException;
 
-	public void visitRel_dto_nom(Nomdto nomdto, Nomina nomina)
+	void visitRel_dto_nom(Nomdto nomdto, Nomina nomina)
 	throws SQLException;
 
-	public void visitRel_nmd_nom(Nominadev nominadev, Nomina nomina)
+	void visitRel_nmd_nom(Nominadev nominadev, Nomina nomina)
 	throws SQLException;
 
-	public void visitPrc_nomina(Prcdivnom prcdivnom, Nomina nomina)
+	void visitPrc_nomina(Prcdivnom prcdivnom, Nomina nomina)
 	throws SQLException;
 
-	public void visitNominaexdf_nomina(Nominaexdf nominaexdf, Nomina nomina)
+	void visitNominaexdf_nomina(Nominaexdf nominaexdf, Nomina nomina)
 	throws SQLException;
 
-	public void visitNominadf_nomina(Nominadf nominadf, Nomina nomina)
+	void visitNominadf_nomina(Nominadf nominadf, Nomina nomina)
 	throws SQLException;
 
 
-	public void visitExclusion(Exclusion exclusion)
+	 void visitExclusion(Exclusion exclusion)
 	throws SQLException;
 
 
-	public void visitNszpaga(Nszpaga nszpaga)
+	 void visitNszpaga(Nszpaga nszpaga)
 	throws SQLException;
 
 
-	public void visitNomdfdto(Nomdfdto nomdfdto)
+	 void visitNomdfdto(Nomdfdto nomdfdto)
 	throws SQLException;
 
 
-	public void visitNszmupa(Nszmupa nszmupa)
+	 void visitNszmupa(Nszmupa nszmupa)
 	throws SQLException;
 
 
-	public void visitTiposdoc(Tiposdoc tiposdoc)
+	 void visitTiposdoc(Tiposdoc tiposdoc)
 	throws SQLException;
 
 
-	public void visitNszbolc(Nszbolc nszbolc)
+	 void visitNszbolc(Nszbolc nszbolc)
 	throws SQLException;
 
 
-	public void visitNszpoco(Nszpoco nszpoco)
+	 void visitNszpoco(Nszpoco nszpoco)
 	throws SQLException;
 
 
-	public void visitTipinc(Tipinc tipinc)
+	 void visitTipinc(Tipinc tipinc)
 	throws SQLException;
 
-	public void visitRel_inc_tip(Trabinci trabinci, Tipinc tipinc)
+	void visitRel_inc_tip(Trabinci trabinci, Tipinc tipinc)
 	throws SQLException;
 
 
-	public void visitSession(Session session)
+	 void visitSession(Session session)
 	throws SQLException;
 
-	public void visitFk_ae_session(Action_entry action_entry, Session session)
+	void visitFk_ae_session(Action_entry action_entry, Session session)
 	throws SQLException;
 
 
-	public void visitLcomunica(Lcomunica lcomunica)
+	 void visitLcomunica(Lcomunica lcomunica)
 	throws SQLException;
 
 
-	public void visitLinautom(Linautom linautom)
+	 void visitLinautom(Linautom linautom)
 	throws SQLException;
 
 
-	public void visitCuota_20(Cuota_20 cuota_20)
+	 void visitCuota_20(Cuota_20 cuota_20)
 	throws SQLException;
 
 
-	public void visitOpfile(Opfile opfile)
+	 void visitOpfile(Opfile opfile)
 	throws SQLException;
 
 
-	public void visitTc2(Tc2 tc2)
+	 void visitTc2(Tc2 tc2)
 	throws SQLException;
 
-	public void visitLintc2epi_tc2(Lintc2epi lintc2epi, Tc2 tc2)
+	void visitLintc2epi_tc2(Lintc2epi lintc2epi, Tc2 tc2)
 	throws SQLException;
 
-	public void visitLintc2_tc2(Lintc2 lintc2, Tc2 tc2)
+	void visitLintc2_tc2(Lintc2 lintc2, Tc2 tc2)
 	throws SQLException;
 
 
-	public void visitTipaut(Tipaut tipaut)
+	 void visitTipaut(Tipaut tipaut)
 	throws SQLException;
 
-	public void visitRel_tra_aut(Trabajo trabajo, Tipaut tipaut)
+	void visitRel_tra_aut(Trabajo trabajo, Tipaut tipaut)
 	throws SQLException;
 
 
-	public void visitTc1(Tc1 tc1)
+	 void visitTc1(Tc1 tc1)
 	throws SQLException;
 
 
-	public void visitDelegacion(Delegacion delegacion)
+	 void visitDelegacion(Delegacion delegacion)
 	throws SQLException;
 
-	public void visitCliente_delegacion(Cliente cliente, Delegacion delegacion)
+	void visitCliente_delegacion(Cliente cliente, Delegacion delegacion)
 	throws SQLException;
 
 
-	public void visitSucursal(Sucursal sucursal)
+	 void visitSucursal(Sucursal sucursal)
 	throws SQLException;
 
-	public void visitEmprbanc_sucursal(Emprban emprban, Sucursal sucursal)
+	void visitEmprbanc_sucursal(Emprban emprban, Sucursal sucursal)
 	throws SQLException;
 
-	public void visitRel_tra_suc(Trabajo trabajo, Sucursal sucursal)
+	void visitRel_tra_suc(Trabajo trabajo, Sucursal sucursal)
 	throws SQLException;
 
-	public void visitJsucursal(Httrabajador httrabajador, Sucursal sucursal)
+	void visitJsucursal(Httrabajador httrabajador, Sucursal sucursal)
 	throws SQLException;
 
-	public void visitJautsucursal(Autonomos autonomos, Sucursal sucursal)
+	void visitJautsucursal(Autonomos autonomos, Sucursal sucursal)
 	throws SQLException;
 
-	public void visitEmprbanc_sucbic(Emprban emprban, Sucursal sucursal)
+	void visitEmprbanc_sucbic(Emprban emprban, Sucursal sucursal)
 	throws SQLException;
 
 
-	public void visitPais(Pais pais)
+	 void visitPais(Pais pais)
 	throws SQLException;
 
-	public void visitRel_com_pai(Comunidad comunidad, Pais pais)
+	void visitRel_com_pai(Comunidad comunidad, Pais pais)
 	throws SQLException;
 
-	public void visitRel_cli_pai(Cliente cliente, Pais pais)
+	void visitRel_cli_pai(Cliente cliente, Pais pais)
 	throws SQLException;
 
-	public void visitRel_emp_pai(Emprnif emprnif, Pais pais)
+	void visitRel_emp_pai(Emprnif emprnif, Pais pais)
 	throws SQLException;
 
-	public void visitRel_emp_pai2(Emprnif emprnif, Pais pais)
+	void visitRel_emp_pai2(Emprnif emprnif, Pais pais)
 	throws SQLException;
 
-	public void visitRel_per_pem(Persona persona, Pais pais)
+	void visitRel_per_pem(Persona persona, Pais pais)
 	throws SQLException;
 
-	public void visitRel_per_pna(Persona persona, Pais pais)
+	void visitRel_per_pna(Persona persona, Pais pais)
 	throws SQLException;
 
-	public void visitJpaiemi(Httrabajador httrabajador, Pais pais)
+	void visitJpaiemi(Httrabajador httrabajador, Pais pais)
 	throws SQLException;
 
 
-	public void visitConvenio(Convenio convenio)
+	 void visitConvenio(Convenio convenio)
 	throws SQLException;
 
-	public void visitRel_pga_con(Pagaext pagaext, Convenio convenio)
+	void visitRel_pga_con(Pagaext pagaext, Convenio convenio)
 	throws SQLException;
 
-	public void visitRel_niv_con(Nivel nivel, Convenio convenio)
+	void visitRel_niv_con(Nivel nivel, Convenio convenio)
 	throws SQLException;
 
-	public void visitRel_cat_con(Categoria categoria, Convenio convenio)
+	void visitRel_cat_con(Categoria categoria, Convenio convenio)
 	throws SQLException;
 
-	public void visitRel_pcn_con(Percniv percniv, Convenio convenio)
+	void visitRel_pcn_con(Percniv percniv, Convenio convenio)
 	throws SQLException;
 
-	public void visitEmpract_convenio(Empract empract, Convenio convenio)
+	void visitEmpract_convenio(Empract empract, Convenio convenio)
 	throws SQLException;
 
-	public void visitEmprctra_convenio(Emprctra emprctra, Convenio convenio)
+	void visitEmprctra_convenio(Emprctra emprctra, Convenio convenio)
 	throws SQLException;
 
-	public void visitRel_tra_con(Trabajo trabajo, Convenio convenio)
+	void visitRel_tra_con(Trabajo trabajo, Convenio convenio)
 	throws SQLException;
 
 
-	public void visitAction_denied(Action_denied action_denied)
+	 void visitAction_denied(Action_denied action_denied)
 	throws SQLException;
 
 
-	public void visitAdmon(Admon admon)
+	 void visitAdmon(Admon admon)
 	throws SQLException;
 
-	public void visitRel_emp_adm(Emprnif emprnif, Admon admon)
+	void visitRel_emp_adm(Emprnif emprnif, Admon admon)
 	throws SQLException;
 
-	public void visitImpr11x_admon(Impr11x impr11x, Admon admon)
+	void visitImpr11x_admon(Impr11x impr11x, Admon admon)
 	throws SQLException;
 
-	public void visitImpr190_admon(Impr190 impr190, Admon admon)
+	void visitImpr190_admon(Impr190 impr190, Admon admon)
 	throws SQLException;
 
 
-	public void visitLinelem(Linelem linelem)
+	 void visitLinelem(Linelem linelem)
 	throws SQLException;
 
 
-	public void visitNszmest(Nszmest nszmest)
+	 void visitNszmest(Nszmest nszmest)
 	throws SQLException;
 
 
-	public void visitCalfiniquito(Calfiniquito calfiniquito)
+	 void visitCalfiniquito(Calfiniquito calfiniquito)
 	throws SQLException;
 
 
-	public void visitCuota_31(Cuota_31 cuota_31)
+	 void visitCuota_31(Cuota_31 cuota_31)
 	throws SQLException;
 
 
-	public void visitPercepcion(Percepcion percepcion)
+	 void visitPercepcion(Percepcion percepcion)
 	throws SQLException;
 
-	public void visitRel_per_lin(Linpercepcion linpercepcion, Percepcion percepcion)
+	void visitRel_per_lin(Linpercepcion linpercepcion, Percepcion percepcion)
 	throws SQLException;
 
 
-	public void visitLinpercepcion(Linpercepcion linpercepcion)
+	 void visitLinpercepcion(Linpercepcion linpercepcion)
 	throws SQLException;
 
 
-	public void visitPerfil(Perfil perfil)
+	 void visitPerfil(Perfil perfil)
 	throws SQLException;
 
 
-	public void visitNszinci(Nszinci nszinci)
+	 void visitNszinci(Nszinci nszinci)
 	throws SQLException;
 
 
-	public void visitNszcdtr(Nszcdtr nszcdtr)
+	 void visitNszcdtr(Nszcdtr nszcdtr)
 	throws SQLException;
 
 
-	public void visitComplemento(Complemento complemento)
+	 void visitComplemento(Complemento complemento)
 	throws SQLException;
 
-	public void visitRel_pga_com(Pagaext pagaext, Complemento complemento)
+	void visitRel_pga_com(Pagaext pagaext, Complemento complemento)
 	throws SQLException;
 
-	public void visitRel_pcn_com(Percniv percniv, Complemento complemento)
+	void visitRel_pcn_com(Percniv percniv, Complemento complemento)
 	throws SQLException;
 
-	public void visitRel_pcn_cap(Percniv percniv, Complemento complemento)
+	void visitRel_pcn_cap(Percniv percniv, Complemento complemento)
 	throws SQLException;
 
-	public void visitRel_pex_com(Nominaex nominaex, Complemento complemento)
+	void visitRel_pex_com(Nominaex nominaex, Complemento complemento)
 	throws SQLException;
 
-	public void visitRel_pcp_com(Percep percep, Complemento complemento)
+	void visitRel_pcp_com(Percep percep, Complemento complemento)
 	throws SQLException;
 
-	public void visitRel_pcp_comapl(Percep percep, Complemento complemento)
+	void visitRel_pcp_comapl(Percep percep, Complemento complemento)
 	throws SQLException;
 
-	public void visitRel_fpe_com(Finipext finipext, Complemento complemento)
+	void visitRel_fpe_com(Finipext finipext, Complemento complemento)
 	throws SQLException;
 
-	public void visitFinexdf_com(Finipextdf finipextdf, Complemento complemento)
+	void visitFinexdf_com(Finipextdf finipextdf, Complemento complemento)
 	throws SQLException;
 
-	public void visitFinexnu_com(Finipextnu finipextnu, Complemento complemento)
+	void visitFinexnu_com(Finipextnu finipextnu, Complemento complemento)
 	throws SQLException;
 
-	public void visitRel_lpl_com(Linplus linplus, Complemento complemento)
+	void visitRel_lpl_com(Linplus linplus, Complemento complemento)
 	throws SQLException;
 
 
-	public void visitNszadmh(Nszadmh nszadmh)
+	 void visitNszadmh(Nszadmh nszadmh)
 	throws SQLException;
 
 
-	public void visitNszbase(Nszbase nszbase)
+	 void visitNszbase(Nszbase nszbase)
 	throws SQLException;
 
 
-	public void visitFiniquito(Finiquito finiquito)
+	 void visitFiniquito(Finiquito finiquito)
 	throws SQLException;
 
-	public void visitRel_fpe_fin(Finipext finipext, Finiquito finiquito)
+	void visitRel_fpe_fin(Finipext finipext, Finiquito finiquito)
 	throws SQLException;
 
-	public void visitRel_fii_fin(Finindem finindem, Finiquito finiquito)
+	void visitRel_fii_fin(Finindem finindem, Finiquito finiquito)
 	throws SQLException;
 
-	public void visitRel_fid_fin(Finidto finidto, Finiquito finiquito)
+	void visitRel_fid_fin(Finidto finidto, Finiquito finiquito)
 	throws SQLException;
 
 
-	public void visitAction_favorite(Action_favorite action_favorite)
+	 void visitAction_favorite(Action_favorite action_favorite)
 	throws SQLException;
 
 
-	public void visitTipocnae(Tipocnae tipocnae)
+	 void visitTipocnae(Tipocnae tipocnae)
 	throws SQLException;
 
 
-	public void visitPrcdivnom(Prcdivnom prcdivnom)
+	 void visitPrcdivnom(Prcdivnom prcdivnom)
 	throws SQLException;
 
 
-	public void visitNszilte(Nszilte nszilte)
+	 void visitNszilte(Nszilte nszilte)
 	throws SQLException;
 
 
-	public void visitNominaex(Nominaex nominaex)
+	 void visitNominaex(Nominaex nominaex)
 	throws SQLException;
 
-	public void visitNomdtoex_nominaex(Nomdtoex nomdtoex, Nominaex nominaex)
+	void visitNomdtoex_nominaex(Nomdtoex nomdtoex, Nominaex nominaex)
 	throws SQLException;
 
 
-	public void visitCuota_48(Cuota_48 cuota_48)
+	 void visitCuota_48(Cuota_48 cuota_48)
 	throws SQLException;
 
 
-	public void visitNominaitnu(Nominaitnu nominaitnu)
+	 void visitNominaitnu(Nominaitnu nominaitnu)
 	throws SQLException;
 
 
-	public void visitParteconf(Parteconf parteconf)
+	 void visitParteconf(Parteconf parteconf)
 	throws SQLException;
 
 
-	public void visitTipdoc(Tipdoc tipdoc)
+	 void visitTipdoc(Tipdoc tipdoc)
 	throws SQLException;
 
-	public void visitRel_cli_doc(Cliente cliente, Tipdoc tipdoc)
+	void visitRel_cli_doc(Cliente cliente, Tipdoc tipdoc)
 	throws SQLException;
 
-	public void visitRel_emp_doc(Emprnif emprnif, Tipdoc tipdoc)
+	void visitRel_emp_doc(Emprnif emprnif, Tipdoc tipdoc)
 	throws SQLException;
 
-	public void visitRel_emp_doc2(Emprnif emprnif, Tipdoc tipdoc)
+	void visitRel_emp_doc2(Emprnif emprnif, Tipdoc tipdoc)
 	throws SQLException;
 
-	public void visitRel_per_doc(Persona persona, Tipdoc tipdoc)
+	void visitRel_per_doc(Persona persona, Tipdoc tipdoc)
 	throws SQLException;
 
-	public void visitComunica_tipdoc(Comunica comunica, Tipdoc tipdoc)
+	void visitComunica_tipdoc(Comunica comunica, Tipdoc tipdoc)
 	throws SQLException;
 
-	public void visitJinddoc(Httrabajador httrabajador, Tipdoc tipdoc)
+	void visitJinddoc(Httrabajador httrabajador, Tipdoc tipdoc)
 	throws SQLException;
 
 
-	public void visitElemcoti(Elemcoti elemcoti)
+	 void visitElemcoti(Elemcoti elemcoti)
 	throws SQLException;
 
-	public void visitRel_lel_ele(Linelem linelem, Elemcoti elemcoti)
+	void visitRel_lel_ele(Linelem linelem, Elemcoti elemcoti)
 	throws SQLException;
 
 
-	public void visitRemesaafi(Remesaafi remesaafi)
+	 void visitRemesaafi(Remesaafi remesaafi)
 	throws SQLException;
 
 
-	public void visitImpr11x(Impr11x impr11x)
+	 void visitImpr11x(Impr11x impr11x)
 	throws SQLException;
 
 
-	public void visitNominait(Nominait nominait)
+	 void visitNominait(Nominait nominait)
 	throws SQLException;
 
 
-	public void visitHttbonificacion(Httbonificacion httbonificacion)
+	 void visitHttbonificacion(Httbonificacion httbonificacion)
 	throws SQLException;
 
 
-	public void visitPrestaciones(Prestaciones prestaciones)
+	 void visitPrestaciones(Prestaciones prestaciones)
 	throws SQLException;
 
-	public void visitRel_lpr_pre(Linprestacion linprestacion, Prestaciones prestaciones)
+	void visitRel_lpr_pre(Linprestacion linprestacion, Prestaciones prestaciones)
 	throws SQLException;
 
 
-	public void visitAutbases(Autbases autbases)
+	 void visitAutbases(Autbases autbases)
 	throws SQLException;
 
 
-	public void visitRem_cert_empr_det(Rem_cert_empr_det rem_cert_empr_det)
+	 void visitRem_cert_empr_det(Rem_cert_empr_det rem_cert_empr_det)
 	throws SQLException;
 
 
-	public void visitEmprctra(Emprctra emprctra)
+	 void visitEmprctra(Emprctra emprctra)
 	throws SQLException;
 
 
-	public void visitNszprov(Nszprov nszprov)
+	 void visitNszprov(Nszprov nszprov)
 	throws SQLException;
 
 
-	public void visitBonifica(Bonifica bonifica)
+	 void visitBonifica(Bonifica bonifica)
 	throws SQLException;
 
 
-	public void visitMinor_48(Minor_48 minor_48)
+	 void visitMinor_48(Minor_48 minor_48)
 	throws SQLException;
 
 
-	public void visitPercep(Percep percep)
+	 void visitPercep(Percep percep)
 	throws SQLException;
 
 
-	public void visitCalculo(Calculo calculo)
+	 void visitCalculo(Calculo calculo)
 	throws SQLException;
 
 
-	public void visitAction(Action action)
+	 void visitAction(Action action)
 	throws SQLException;
 
-	public void visitFk_af_action(Action_favorite action_favorite, Action action)
+	void visitFk_af_action(Action_favorite action_favorite, Action action)
 	throws SQLException;
 
-	public void visitFk_ae_action(Action_entry action_entry, Action action)
+	void visitFk_ae_action(Action_entry action_entry, Action action)
 	throws SQLException;
 
-	public void visitFk_ad_action(Action_denied action_denied, Action action)
+	void visitFk_ad_action(Action_denied action_denied, Action action)
 	throws SQLException;
 
 
-	public void visitNszdcpr(Nszdcpr nszdcpr)
+	 void visitNszdcpr(Nszdcpr nszdcpr)
 	throws SQLException;
 
 
-	public void visitNivel(Nivel nivel)
+	 void visitNivel(Nivel nivel)
 	throws SQLException;
 
-	public void visitPercniv_nivel(Percniv percniv, Nivel nivel)
+	void visitPercniv_nivel(Percniv percniv, Nivel nivel)
 	throws SQLException;
 
 
-	public void visitNszodet(Nszodet nszodet)
+	 void visitNszodet(Nszodet nszodet)
 	throws SQLException;
 
 
-	public void visitProcesos(Procesos procesos)
+	 void visitProcesos(Procesos procesos)
 	throws SQLException;
 
 
-	public void visitRemesa_parte_it(Remesa_parte_it remesa_parte_it)
+	 void visitRemesa_parte_it(Remesa_parte_it remesa_parte_it)
 	throws SQLException;
 
 
-	public void visitLinepigr(Linepigr linepigr)
+	 void visitLinepigr(Linepigr linepigr)
 	throws SQLException;
 
 
-	public void visitLin190(Lin190 lin190)
+	 void visitLin190(Lin190 lin190)
 	throws SQLException;
 
 
-	public void visitAjustes(Ajustes ajustes)
+	 void visitAjustes(Ajustes ajustes)
 	throws SQLException;
 
 
-	public void visitFinipextdf(Finipextdf finipextdf)
+	 void visitFinipextdf(Finipextdf finipextdf)
 	throws SQLException;
 
 
-	public void visitTipempr(Tipempr tipempr)
+	 void visitTipempr(Tipempr tipempr)
 	throws SQLException;
 
-	public void visitRel_cli_emp(Cliente cliente, Tipempr tipempr)
+	void visitRel_cli_emp(Cliente cliente, Tipempr tipempr)
 	throws SQLException;
 
-	public void visitRel_emp_epr(Emprnif emprnif, Tipempr tipempr)
+	void visitRel_emp_epr(Emprnif emprnif, Tipempr tipempr)
 	throws SQLException;
 
 
-	public void visitEmprlban(Emprlban emprlban)
+	 void visitEmprlban(Emprlban emprlban)
 	throws SQLException;
 
 
-	public void visitFiniquitodf(Finiquitodf finiquitodf)
+	 void visitFiniquitodf(Finiquitodf finiquitodf)
 	throws SQLException;
 
-	public void visitFinexdf_findf(Finipextdf finipextdf, Finiquitodf finiquitodf)
+	void visitFinexdf_findf(Finipextdf finipextdf, Finiquitodf finiquitodf)
 	throws SQLException;
 
-	public void visitFiniddf_findf(Finindemdf finindemdf, Finiquitodf finiquitodf)
+	void visitFiniddf_findf(Finindemdf finindemdf, Finiquitodf finiquitodf)
 	throws SQLException;
 
-	public void visitFindtodf_findf(Finidtodf finidtodf, Finiquitodf finiquitodf)
+	void visitFindtodf_findf(Finidtodf finidtodf, Finiquitodf finiquitodf)
 	throws SQLException;
 
 
-	public void visitNszbanc(Nszbanc nszbanc)
+	 void visitNszbanc(Nszbanc nszbanc)
 	throws SQLException;
 
 
-	public void visitLin_divisa(Lin_divisa lin_divisa)
+	 void visitLin_divisa(Lin_divisa lin_divisa)
 	throws SQLException;
 
 
-	public void visitNszempr(Nszempr nszempr)
+	 void visitNszempr(Nszempr nszempr)
 	throws SQLException;
 
 
-	public void visitLinmutua(Linmutua linmutua)
+	 void visitLinmutua(Linmutua linmutua)
 	throws SQLException;
 
 
-	public void visitProvincia(Provincia provincia)
+	 void visitProvincia(Provincia provincia)
 	throws SQLException;
 
-	public void visitRel_dlg_pro(Delegacion delegacion, Provincia provincia)
+	void visitRel_dlg_pro(Delegacion delegacion, Provincia provincia)
 	throws SQLException;
 
-	public void visitRel_cli_pro(Cliente cliente, Provincia provincia)
+	void visitRel_cli_pro(Cliente cliente, Provincia provincia)
 	throws SQLException;
 
-	public void visitRel_dom_pro(Domicilio domicilio, Provincia provincia)
+	void visitRel_dom_pro(Domicilio domicilio, Provincia provincia)
 	throws SQLException;
 
-	public void visitRel_per_prd(Persona persona, Provincia provincia)
+	void visitRel_per_prd(Persona persona, Provincia provincia)
 	throws SQLException;
 
-	public void visitRel_per_prn(Persona persona, Provincia provincia)
+	void visitRel_per_prn(Persona persona, Provincia provincia)
 	throws SQLException;
 
-	public void visitImpr11x_provincia(Impr11x impr11x, Provincia provincia)
+	void visitImpr11x_provincia(Impr11x impr11x, Provincia provincia)
 	throws SQLException;
 
-	public void visitImpr190_provincia(Impr190 impr190, Provincia provincia)
+	void visitImpr190_provincia(Impr190 impr190, Provincia provincia)
 	throws SQLException;
 
-	public void visitOpfile_provincia(Opfile opfile, Provincia provincia)
+	void visitOpfile_provincia(Opfile opfile, Provincia provincia)
 	throws SQLException;
 
-	public void visitJpronac(Httrabajador httrabajador, Provincia provincia)
+	void visitJpronac(Httrabajador httrabajador, Provincia provincia)
 	throws SQLException;
 
-	public void visitJprovincia(Httrabajador httrabajador, Provincia provincia)
+	void visitJprovincia(Httrabajador httrabajador, Provincia provincia)
 	throws SQLException;
 
-	public void visitJautprovincia(Autonomos autonomos, Provincia provincia)
+	void visitJautprovincia(Autonomos autonomos, Provincia provincia)
 	throws SQLException;
 
 
-	public void visitMinor_20(Minor_20 minor_20)
+	 void visitMinor_20(Minor_20 minor_20)
 	throws SQLException;
 
 
-	public void visitPrinters(Printers printers)
+	 void visitPrinters(Printers printers)
 	throws SQLException;
 
 
-	public void visitComunidad(Comunidad comunidad)
+	 void visitComunidad(Comunidad comunidad)
 	throws SQLException;
 
-	public void visitProvincia_comunida(Provincia provincia, Comunidad comunidad)
+	void visitProvincia_comunida(Provincia provincia, Comunidad comunidad)
 	throws SQLException;
 
 
-	public void visitNszcala(Nszcala nszcala)
+	 void visitNszcala(Nszcala nszcala)
 	throws SQLException;
 
 
-	public void visitTrabinci(Trabinci trabinci)
+	 void visitTrabinci(Trabinci trabinci)
 	throws SQLException;
 
 
-	public void visitNomdfdtoex(Nomdfdtoex nomdfdtoex)
+	 void visitNomdfdtoex(Nomdfdtoex nomdfdtoex)
 	throws SQLException;
 
 
-	public void visitApplication(Application application)
+	 void visitApplication(Application application)
 	throws SQLException;
 
-	public void visitFk_action_app(Action action, Application application)
+	void visitFk_action_app(Action action, Application application)
 	throws SQLException;
 
-	public void visitFk_application(Session session, Application application)
+	void visitFk_application(Session session, Application application)
 	throws SQLException;
 
 
-	public void visitNszboni(Nszboni nszboni)
+	 void visitNszboni(Nszboni nszboni)
 	throws SQLException;
 
 
-	public void visitNszregi(Nszregi nszregi)
+	 void visitNszregi(Nszregi nszregi)
 	throws SQLException;
 
 
-	public void visitCostes(Costes costes)
+	 void visitCostes(Costes costes)
 	throws SQLException;
 
-	public void visitLcomunica_costes(Lcomunica lcomunica, Costes costes)
+	void visitLcomunica_costes(Lcomunica lcomunica, Costes costes)
 	throws SQLException;
 
-	public void visitLbonifica_costes(Lbonifica lbonifica, Costes costes)
+	void visitLbonifica_costes(Lbonifica lbonifica, Costes costes)
 	throws SQLException;
 
 
-	public void visitPrcdivtrab(Prcdivtrab prcdivtrab)
+	 void visitPrcdivtrab(Prcdivtrab prcdivtrab)
 	throws SQLException;
 
 
-	public void visitFinidtodf(Finidtodf finidtodf)
+	 void visitFinidtodf(Finidtodf finidtodf)
 	throws SQLException;
 
 
-	public void visitDatosafi(Datosafi datosafi)
+	 void visitDatosafi(Datosafi datosafi)
 	throws SQLException;
 
 
-	public void visitEmpract(Empract empract)
+	 void visitEmpract(Empract empract)
 	throws SQLException;
 
-	public void visitEmprctra_empract(Emprctra emprctra, Empract empract)
+	void visitEmprctra_empract(Emprctra emprctra, Empract empract)
 	throws SQLException;
 
-	public void visitEmprccc_empract(Emprccc emprccc, Empract empract)
+	void visitEmprccc_empract(Emprccc emprccc, Empract empract)
 	throws SQLException;
 
-	public void visitRel_cco_act(Emprccos emprccos, Empract empract)
+	void visitRel_cco_act(Emprccos emprccos, Empract empract)
 	throws SQLException;
 
-	public void visitEmprdom_empract(Emprdom emprdom, Empract empract)
+	void visitEmprdom_empract(Emprdom emprdom, Empract empract)
 	throws SQLException;
 
-	public void visitEmprlban_empract(Emprlban emprlban, Empract empract)
+	void visitEmprlban_empract(Emprlban emprlban, Empract empract)
 	throws SQLException;
 
-	public void visitRel_epp_act(Emprper emprper, Empract empract)
+	void visitRel_epp_act(Emprper emprper, Empract empract)
 	throws SQLException;
 
-	public void visitAvisos_empract(Avisos avisos, Empract empract)
+	void visitAvisos_empract(Avisos avisos, Empract empract)
 	throws SQLException;
 
-	public void visitRel_var_act(Variaciones variaciones, Empract empract)
+	void visitRel_var_act(Variaciones variaciones, Empract empract)
 	throws SQLException;
 
-	public void visitRegidocu_empract(Regidocu regidocu, Empract empract)
+	void visitRegidocu_empract(Regidocu regidocu, Empract empract)
 	throws SQLException;
 
-	public void visitJactividad(Httrabajador httrabajador, Empract empract)
+	void visitJactividad(Httrabajador httrabajador, Empract empract)
 	throws SQLException;
 
 
-	public void visitMinor_31(Minor_31 minor_31)
+	 void visitMinor_31(Minor_31 minor_31)
 	throws SQLException;
 
 
-	public void visitFinindemnu(Finindemnu finindemnu)
+	 void visitFinindemnu(Finindemnu finindemnu)
 	throws SQLException;
 
 
-	public void visitLinvariables(Linvariables linvariables)
+	 void visitLinvariables(Linvariables linvariables)
 	throws SQLException;
 
 
-	public void visitNszcomp(Nszcomp nszcomp)
+	 void visitNszcomp(Nszcomp nszcomp)
 	throws SQLException;
 
 
-	public void visitLinirpf(Linirpf linirpf)
+	 void visitLinirpf(Linirpf linirpf)
 	throws SQLException;
 
 }

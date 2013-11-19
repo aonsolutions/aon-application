@@ -135,7 +135,6 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 							trabajo.getCdg(), trabajo.getCodcon(), trabajo.getNivel(), trabajo.getCodcat() );
 					MyContract.this.agreementCategoryId = 
 						MyContract.this.agreements.insertAgreementCategory(trabajo.getCodcon(), trabajo.getNivel(), trabajo.getCodcat());
-					
 				}
 			}
 		}
@@ -652,7 +651,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 					enum2short(ssRegimeType),
 					this.agreementCategoryId,
 					null,
-					null,
+					null, 
 					enum2short(ContractStatus.PROCESSED)
 					);
 		

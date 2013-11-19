@@ -383,7 +383,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			domain = mysqlDB.newEnterpriseDomain(
 					String.format("%s.%s", domainName, this.domainSuffix),
 					name,
-					mysqlDB.getDefaultDomain());
+					mysqlDB.getDefaultDomain(), scopeId);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} catch (InterruptedException e1) {
@@ -402,14 +402,17 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		String represantante = emprnif.getRepresentante();
 		if (represantante != null && nroDocRep != null) {
 			mysqlDB.insertRdir_staff(domain, registry, nroDocRep,
-					represantante, false, // shareholder,
+					represantante, 
+					false, // shareholder,
 					true, // representative,
 					false, // director,
 					0.00, // percent_share,
 					0, // share_number,
 					0.00, // nominal_value,
 					null, // due_date,
-					true); // representative_labor
+					true, // representative_labor
+					emprnif.getCargo()
+					); 
 		} else {
 			MysqlDB.error(
 					"emprnif[{}]: Enterprise {} {} {} without labour represantive ",

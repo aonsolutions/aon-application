@@ -20,16 +20,16 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.$table;
 
 public interface CtsqlDBVisitor {
 	
-	public void visit ( AbstractCtsqlDB ctsqlDB ) 
+	void visit ( AbstractCtsqlDB ctsqlDB ) 
 	throws SQLException;
 	
 #foreach($table in $tables)
 
-	public void visit$table($table $table.name)
+	 void visit$table($table $table.name)
 	throws SQLException;
 
 #foreach ($child in $table.childs)
-	public void visit${child}($child.table $child.table.name, $table $table.name)
+	void visit${child}($child.table $child.table.name, $table $table.name)
 	throws SQLException;
 
 #end	

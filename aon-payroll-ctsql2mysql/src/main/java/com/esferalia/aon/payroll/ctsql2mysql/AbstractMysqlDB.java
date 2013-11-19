@@ -1897,6 +1897,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer domain; 
 		protected Integer invoice_detail; 
 		protected Short tax_type; 
+		protected Double base; 
 		protected Double percentage; 
 		protected Double surcharge; 
 		protected Double quota; 
@@ -1914,7 +1915,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( invoice_taxStmt != null ) {
 				invoice_taxStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -1923,7 +1924,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			invoice_taxStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO invoice_tax (id,domain,invoice_detail,tax_type,percentage,surcharge,quota,surcharge_quota,vat_deduction_type,withholding_type,deductible_quota)"  
+				"INSERT INTO invoice_tax (id,domain,invoice_detail,tax_type,base,percentage,surcharge,quota,surcharge_quota,vat_deduction_type,withholding_type,deductible_quota)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			invoice_taxStmtSize = size;
@@ -1948,6 +1949,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoice_taxStmt.setNull(offset++, -6);
 			else
 				invoice_taxStmt.setShort(offset++, invoice_tax.tax_type);
+			if ( invoice_tax.base == null )
+				invoice_taxStmt.setNull(offset++, 8);
+			else
+				invoice_taxStmt.setDouble(offset++, invoice_tax.base);
 			if ( invoice_tax.percentage == null )
 				invoice_taxStmt.setNull(offset++, 8);
 			else
@@ -2036,6 +2041,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param invoice_detail Identificador del Detalle de la Factura
 	 * @param tax_type Tipo de Impuesto del Detalle de la Factura
+	 * @param base Base Imponible de Impuesto del Detalle de la Factura
 	 * @param percentage Porcentaje de Impuesto del Detalle de la Factura
 	 * @param surcharge Porcentaje del recargo de equivalencia del Detalle de la Factura
 	 * @param quota Cuota de Impuesto del Detalle de la Factura
@@ -2045,7 +2051,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param deductible_quota Cuota deducible
 	 * @throws SQLException
 	*/
-	protected void insertInvoice_tax(Integer id, Integer domain, Integer invoice_detail, Short tax_type, Double percentage, Double surcharge, Double quota, Double surcharge_quota, Short vat_deduction_type, Short withholding_type, Double deductible_quota)
+	protected void insertInvoice_tax(Integer id, Integer domain, Integer invoice_detail, Short tax_type, Double base, Double percentage, Double surcharge, Double quota, Double surcharge_quota, Short vat_deduction_type, Short withholding_type, Double deductible_quota)
 	throws SQLException {
 
 		Invoice_tax invoice_tax_ = new Invoice_tax();
@@ -2053,6 +2059,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_tax_.domain = domain;
 		invoice_tax_.invoice_detail = invoice_detail;
 		invoice_tax_.tax_type = tax_type;
+		invoice_tax_.base = base;
 		invoice_tax_.percentage = percentage;
 		invoice_tax_.surcharge = surcharge;
 		invoice_tax_.quota = quota;
@@ -2065,7 +2072,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int invoice_taxCount = invoice_taxs.size();
 		
-		if ( 135 * invoice_taxCount >=  this.maxAllowedPacket ){
+		if ( 150 * invoice_taxCount >=  this.maxAllowedPacket ){
 			insertInvoice_tax(invoice_taxs);
 		} 
 	}
@@ -2076,6 +2083,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param domain Identificador del Dominio
 	 * @param invoice_detail Identificador del Detalle de la Factura
 	 * @param tax_type Tipo de Impuesto del Detalle de la Factura
+	 * @param base Base Imponible de Impuesto del Detalle de la Factura
 	 * @param percentage Porcentaje de Impuesto del Detalle de la Factura
 	 * @param surcharge Porcentaje del recargo de equivalencia del Detalle de la Factura
 	 * @param quota Cuota de Impuesto del Detalle de la Factura
@@ -2086,7 +2094,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice_tax(Integer domain, Integer invoice_detail, Short tax_type, Double percentage, Double surcharge, Double quota, Double surcharge_quota, Short vat_deduction_type, Short withholding_type, Double deductible_quota)
+	public int insertInvoice_tax(Integer domain, Integer invoice_detail, Short tax_type, Double base, Double percentage, Double surcharge, Double quota, Double surcharge_quota, Short vat_deduction_type, Short withholding_type, Double deductible_quota)
 	throws SQLException {
 		int id = nextInvoice_taxId();
 
@@ -2095,6 +2103,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_tax_.domain = domain;
 		invoice_tax_.invoice_detail = invoice_detail;
 		invoice_tax_.tax_type = tax_type;
+		invoice_tax_.base = base;
 		invoice_tax_.percentage = percentage;
 		invoice_tax_.surcharge = surcharge;
 		invoice_tax_.quota = quota;
@@ -2107,7 +2116,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int invoice_taxCount = invoice_taxs.size();
 		
-		if ( 135 * invoice_taxCount >=  this.maxAllowedPacket ){
+		if ( 150 * invoice_taxCount >=  this.maxAllowedPacket ){
 			insertInvoice_tax(invoice_taxs);
 			invoice_taxs.clear();
 		} 
@@ -4367,6 +4376,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer registry; 
 		protected Integer domain; 
 		protected Boolean withholding; 
+		protected Boolean withholding_farmer; 
 		protected Short transaction; 
 		protected Short status; 
 		protected Integer scope; 
@@ -4382,7 +4392,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( supplierStmt != null ) {
 				supplierStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -4391,7 +4401,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			supplierStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO supplier (registry,domain,withholding,transaction,status,scope,purchase_valuated,account)"  
+				"INSERT INTO supplier (registry,domain,withholding,withholding_farmer,transaction,status,scope,purchase_valuated,account)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			supplierStmtSize = size;
@@ -4412,6 +4422,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				supplierStmt.setNull(offset++, -7);
 			else
 				supplierStmt.setBoolean(offset++, supplier.withholding);
+			if ( supplier.withholding_farmer == null )
+				supplierStmt.setNull(offset++, -7);
+			else
+				supplierStmt.setBoolean(offset++, supplier.withholding_farmer);
 			if ( supplier.transaction == null )
 				supplierStmt.setNull(offset++, -6);
 			else
@@ -4461,6 +4475,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param registry Registro del Proveedor
 	 * @param domain Identificador del Dominio
 	 * @param withholding Indica si el Proveedor aplica retencion de impuestos
+	 * @param withholding_farmer Indica si el Proveedor pertenece al Regimen Especial de Agricultura y Pesca
 	 * @param transaction Tipo de transacciones del Proveedor
 	 * @param status Estado del Proveedor
 	 * @param scope Identificador del Ambito
@@ -4468,13 +4483,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param account Identificador de la Cuenta Contable
 	 * @throws SQLException
 	*/
-	protected void insertSupplier(Integer registry, Integer domain, Boolean withholding, Short transaction, Short status, Integer scope, Boolean purchase_valuated, Integer account)
+	protected void insertSupplier(Integer registry, Integer domain, Boolean withholding, Boolean withholding_farmer, Short transaction, Short status, Integer scope, Boolean purchase_valuated, Integer account)
 	throws SQLException {
 
 		Supplier supplier_ = new Supplier();
 		supplier_.registry = registry;
 		supplier_.domain = domain;
 		supplier_.withholding = withholding;
+		supplier_.withholding_farmer = withholding_farmer;
 		supplier_.transaction = transaction;
 		supplier_.status = status;
 		supplier_.scope = scope;
@@ -7945,6 +7961,202 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 210 * contract_dataCount >=  this.maxAllowedPacket ){
 			insertContract_data(contract_datas);
 			contract_datas.clear();
+		} 
+		return id;
+	}
+
+
+	private int prepaymentStmtSize = 0;
+
+	private int prepaymentInserted = 0;
+
+	private List<Prepayment> prepayments = 
+		new LinkedList<Prepayment>();
+
+	private PreparedStatement prepaymentStmt = null;
+
+	public static class Prepayment {
+		protected Integer id; 
+		protected Integer domain; 
+		protected Integer creditor; 
+		protected Integer customer; 
+		protected Integer finance; 
+		protected Short collect; 
+		protected Integer collect_id; 
+	}
+	
+	protected void insertPrepayment( List<Prepayment> prepayments )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = prepayments.size();
+		if ( prepaymentStmtSize != size ) {
+			if ( prepaymentStmt != null ) {
+				prepaymentStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			prepaymentStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO prepayment (id,domain,creditor,customer,finance,collect,collect_id)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			prepaymentStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Prepayment prepayment : prepayments) {
+			if ( prepayment.id == null )
+				prepaymentStmt.setNull(offset++, 4);
+			else
+				prepaymentStmt.setInt(offset++, prepayment.id);
+			if ( prepayment.domain == null )
+				prepaymentStmt.setNull(offset++, 4);
+			else
+				prepaymentStmt.setInt(offset++, prepayment.domain);
+			if ( prepayment.creditor == null )
+				prepaymentStmt.setNull(offset++, 4);
+			else
+				prepaymentStmt.setInt(offset++, prepayment.creditor);
+			if ( prepayment.customer == null )
+				prepaymentStmt.setNull(offset++, 4);
+			else
+				prepaymentStmt.setInt(offset++, prepayment.customer);
+			if ( prepayment.finance == null )
+				prepaymentStmt.setNull(offset++, 4);
+			else
+				prepaymentStmt.setInt(offset++, prepayment.finance);
+			if ( prepayment.collect == null )
+				prepaymentStmt.setNull(offset++, -6);
+			else
+				prepaymentStmt.setShort(offset++, prepayment.collect);
+			if ( prepayment.collect_id == null )
+				prepaymentStmt.setNull(offset++, 4);
+			else
+				prepaymentStmt.setInt(offset++, prepayment.collect_id);
+		}
+		prepaymentStmt.executeUpdate();
+		prepayments.clear();
+		prepaymentInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Prepayments in {} milliseconds.", size, prepaymentInserted, elapsed );		
+	}
+		
+		private int prepaymentId = -1;
+		
+		private void initPrepaymentId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `prepayment`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.prepaymentId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextPrepaymentId() {
+			return ++this.prepaymentId;
+		} 
+
+		public void setPrepaymentId(Integer prepaymentId) {
+			this.prepaymentId = prepaymentId;
+		} 
+	
+	protected void flushPrepayment( )
+	throws SQLException {
+		flushPrepayment(false);
+	}	
+
+	private void flushPrepayment( boolean close )
+	throws SQLException {
+		if ( ! prepayments.isEmpty() )
+			insertPrepayment(prepayments);
+		if ( close && prepaymentStmt != null )
+			prepaymentStmt.close();
+	}	
+
+	/**
+	 * Prepayment
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param creditor Identificador del Acreedor
+	 * @param customer Identificador del Cliente
+	 * @param finance Identificador del Vencimiento
+	 * @param collect Localizacion del cobro del Suplido
+	 * @param collect_id Identificador del cobro del Suplido
+	 * @throws SQLException
+	*/
+	protected void insertPrepayment(Integer id, Integer domain, Integer creditor, Integer customer, Integer finance, Short collect, Integer collect_id)
+	throws SQLException {
+
+		Prepayment prepayment_ = new Prepayment();
+		prepayment_.id = id;
+		prepayment_.domain = domain;
+		prepayment_.creditor = creditor;
+		prepayment_.customer = customer;
+		prepayment_.finance = finance;
+		prepayment_.collect = collect;
+		prepayment_.collect_id = collect_id;
+
+		prepayments.add(prepayment_);
+		
+		int prepaymentCount = prepayments.size();
+		
+		if ( 63 * prepaymentCount >=  this.maxAllowedPacket ){
+			insertPrepayment(prepayments);
+		} 
+	}
+
+
+	/**
+	 * Prepayment
+	 * @param domain Identificador del Dominio
+	 * @param creditor Identificador del Acreedor
+	 * @param customer Identificador del Cliente
+	 * @param finance Identificador del Vencimiento
+	 * @param collect Localizacion del cobro del Suplido
+	 * @param collect_id Identificador del cobro del Suplido
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertPrepayment(Integer domain, Integer creditor, Integer customer, Integer finance, Short collect, Integer collect_id)
+	throws SQLException {
+		int id = nextPrepaymentId();
+
+		Prepayment prepayment_ = new Prepayment();
+		prepayment_.id = id;
+		prepayment_.domain = domain;
+		prepayment_.creditor = creditor;
+		prepayment_.customer = customer;
+		prepayment_.finance = finance;
+		prepayment_.collect = collect;
+		prepayment_.collect_id = collect_id;
+
+		prepayments.add(prepayment_);
+		
+		int prepaymentCount = prepayments.size();
+		
+		if ( 63 * prepaymentCount >=  this.maxAllowedPacket ){
+			insertPrepayment(prepayments);
+			prepayments.clear();
 		} 
 		return id;
 	}
@@ -11709,6 +11921,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 		protected Integer parent; 
 		protected Short type; 
+		protected Integer scope; 
 		protected String subDomainSuffix; 
 		protected Boolean enableHeredity; 
 		protected Boolean domainManagement; 
@@ -11733,7 +11946,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( domainStmt != null ) {
 				domainStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -11742,7 +11955,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			domainStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO domain (id,name,description,parent,type,subDomainSuffix,enableHeredity,domainManagement,disableDomainManagement,maxDocumentSize,maxTotalDocumentSize,maxDefinedUsers,active,owner,creation_user,creation_date,modification_user,modification_date,expirationDate)"  
+				"INSERT INTO domain (id,name,description,parent,type,scope,subDomainSuffix,enableHeredity,domainManagement,disableDomainManagement,maxDocumentSize,maxTotalDocumentSize,maxDefinedUsers,active,owner,creation_user,creation_date,modification_user,modification_date,expirationDate)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			domainStmtSize = size;
@@ -11771,6 +11984,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				domainStmt.setNull(offset++, -6);
 			else
 				domainStmt.setShort(offset++, domain.type);
+			if ( domain.scope == null )
+				domainStmt.setNull(offset++, 4);
+			else
+				domainStmt.setInt(offset++, domain.scope);
 			if ( domain.subDomainSuffix == null )
 				domainStmt.setNull(offset++, 12);
 			else
@@ -11888,6 +12105,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion del Dominio
 	 * @param parent Identificador del Dominio padre
 	 * @param type Tipo de Dominio
+	 * @param scope Identificador del Ambito
 	 * @param subDomainSuffix Sufijo de los Dominio Hijo
 	 * @param enableHeredity Indica si el Dominio tiene deshabilitado la herencia de registros o no
 	 * @param domainManagement Indica si el Dominio tiene capacidad de MultiDominio o no
@@ -11904,7 +12122,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param expirationDate Fecha de Expiracion del Dominio
 	 * @throws SQLException
 	*/
-	protected void insertDomain(Integer id, String name, String description, Integer parent, Short type, String subDomainSuffix, Boolean enableHeredity, Boolean domainManagement, Boolean disableDomainManagement, Integer maxDocumentSize, Integer maxTotalDocumentSize, Integer maxDefinedUsers, Boolean active, String owner, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date, Date expirationDate)
+	protected void insertDomain(Integer id, String name, String description, Integer parent, Short type, Integer scope, String subDomainSuffix, Boolean enableHeredity, Boolean domainManagement, Boolean disableDomainManagement, Integer maxDocumentSize, Integer maxTotalDocumentSize, Integer maxDefinedUsers, Boolean active, String owner, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date, Date expirationDate)
 	throws SQLException {
 
 		Domain domain_ = new Domain();
@@ -11913,6 +12131,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		domain_.description = description;
 		domain_.parent = parent;
 		domain_.type = type;
+		domain_.scope = scope;
 		domain_.subDomainSuffix = subDomainSuffix;
 		domain_.enableHeredity = enableHeredity;
 		domain_.domainManagement = domainManagement;
@@ -11932,7 +12151,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int domainCount = domains.size();
 		
-		if ( 834 * domainCount >=  this.maxAllowedPacket ){
+		if ( 844 * domainCount >=  this.maxAllowedPacket ){
 			insertDomain(domains);
 		} 
 	}
@@ -11944,6 +12163,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param description Descripcion del Dominio
 	 * @param parent Identificador del Dominio padre
 	 * @param type Tipo de Dominio
+	 * @param scope Identificador del Ambito
 	 * @param subDomainSuffix Sufijo de los Dominio Hijo
 	 * @param enableHeredity Indica si el Dominio tiene deshabilitado la herencia de registros o no
 	 * @param domainManagement Indica si el Dominio tiene capacidad de MultiDominio o no
@@ -11961,7 +12181,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertDomain(String name, String description, Integer parent, Short type, String subDomainSuffix, Boolean enableHeredity, Boolean domainManagement, Boolean disableDomainManagement, Integer maxDocumentSize, Integer maxTotalDocumentSize, Integer maxDefinedUsers, Boolean active, String owner, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date, Date expirationDate)
+	public int insertDomain(String name, String description, Integer parent, Short type, Integer scope, String subDomainSuffix, Boolean enableHeredity, Boolean domainManagement, Boolean disableDomainManagement, Integer maxDocumentSize, Integer maxTotalDocumentSize, Integer maxDefinedUsers, Boolean active, String owner, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date, Date expirationDate)
 	throws SQLException {
 		int id = nextDomainId();
 
@@ -11971,6 +12191,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		domain_.description = description;
 		domain_.parent = parent;
 		domain_.type = type;
+		domain_.scope = scope;
 		domain_.subDomainSuffix = subDomainSuffix;
 		domain_.enableHeredity = enableHeredity;
 		domain_.domainManagement = domainManagement;
@@ -11990,7 +12211,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int domainCount = domains.size();
 		
-		if ( 834 * domainCount >=  this.maxAllowedPacket ){
+		if ( 844 * domainCount >=  this.maxAllowedPacket ){
 			insertDomain(domains);
 			domains.clear();
 		} 
@@ -49680,6 +49901,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer scope; 
 		protected Boolean advance; 
 		protected Boolean payroll; 
+		protected Boolean prepayment; 
 		protected Integer finance_group; 
 	}
 	
@@ -49691,7 +49913,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( financeStmt != null ) {
 				financeStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -49700,7 +49922,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			financeStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO finance (id,domain,payment,registry,rdocument,rdocument_type,rdocument_country,rname,amount,expenses,concept,invoice,due_date,pay_method,bank,bank_account,status,security_level,remarks,scope,advance,payroll,finance_group)"  
+				"INSERT INTO finance (id,domain,payment,registry,rdocument,rdocument_type,rdocument_country,rname,amount,expenses,concept,invoice,due_date,pay_method,bank,bank_account,status,security_level,remarks,scope,advance,payroll,prepayment,finance_group)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			financeStmtSize = size;
@@ -49797,6 +50019,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				financeStmt.setNull(offset++, -7);
 			else
 				financeStmt.setBoolean(offset++, finance.payroll);
+			if ( finance.prepayment == null )
+				financeStmt.setNull(offset++, -7);
+			else
+				financeStmt.setBoolean(offset++, finance.prepayment);
 			if ( finance.finance_group == null )
 				financeStmt.setNull(offset++, 4);
 			else
@@ -49879,10 +50105,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param scope Ambito del Vencimiento
 	 * @param advance Indica si el Vencimiento es un anticipo
 	 * @param payroll Indica si el Vencimiento es de Nominas
+	 * @param prepayment Indica si el Vencimiento es un Suplido
 	 * @param finance_group Identificador unico del Vencimiento agrupador
 	 * @throws SQLException
 	*/
-	protected void insertFinance(Integer id, Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, String remarks, Integer scope, Boolean advance, Boolean payroll, Integer finance_group)
+	protected void insertFinance(Integer id, Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, String remarks, Integer scope, Boolean advance, Boolean payroll, Boolean prepayment, Integer finance_group)
 	throws SQLException {
 
 		Finance finance_ = new Finance();
@@ -49908,6 +50135,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		finance_.scope = scope;
 		finance_.advance = advance;
 		finance_.payroll = payroll;
+		finance_.prepayment = prepayment;
 		finance_.finance_group = finance_group;
 
 		finances.add(finance_);
@@ -49943,11 +50171,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param scope Ambito del Vencimiento
 	 * @param advance Indica si el Vencimiento es un anticipo
 	 * @param payroll Indica si el Vencimiento es de Nominas
+	 * @param prepayment Indica si el Vencimiento es un Suplido
 	 * @param finance_group Identificador unico del Vencimiento agrupador
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertFinance(Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, String remarks, Integer scope, Boolean advance, Boolean payroll, Integer finance_group)
+	public int insertFinance(Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, String remarks, Integer scope, Boolean advance, Boolean payroll, Boolean prepayment, Integer finance_group)
 	throws SQLException {
 		int id = nextFinanceId();
 
@@ -49974,6 +50203,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		finance_.scope = scope;
 		finance_.advance = advance;
 		finance_.payroll = payroll;
+		finance_.prepayment = prepayment;
 		finance_.finance_group = finance_group;
 
 		finances.add(finance_);
@@ -50907,6 +51137,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short type; 
 		protected Boolean surcharge; 
 		protected Boolean withholding; 
+		protected Boolean withholding_farmer; 
 		protected String comments; 
 		protected String remarks; 
 		protected Boolean investment; 
@@ -50937,7 +51168,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( invoiceStmt != null ) {
 				invoiceStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -50946,7 +51177,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			invoiceStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO invoice (id,domain,project,series,number,reference_code,registry,rdocument,rdocument_type,rdocument_country,rname,raddress,issue_date,tax_date,security_level,status,type,surcharge,withholding,comments,remarks,investment,transaction,signed,scope,service,rectification_type,rectification_invoice,advance,pos_shift,seller,taxable_base,vat_quota,retention_quota,total,creation_user,creation_date,modification_user,modification_date)"  
+				"INSERT INTO invoice (id,domain,project,series,number,reference_code,registry,rdocument,rdocument_type,rdocument_country,rname,raddress,issue_date,tax_date,security_level,status,type,surcharge,withholding,withholding_farmer,comments,remarks,investment,transaction,signed,scope,service,rectification_type,rectification_invoice,advance,pos_shift,seller,taxable_base,vat_quota,retention_quota,total,creation_user,creation_date,modification_user,modification_date)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			invoiceStmtSize = size;
@@ -51031,6 +51262,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoiceStmt.setNull(offset++, -7);
 			else
 				invoiceStmt.setBoolean(offset++, invoice.withholding);
+			if ( invoice.withholding_farmer == null )
+				invoiceStmt.setNull(offset++, -7);
+			else
+				invoiceStmt.setBoolean(offset++, invoice.withholding_farmer);
 			if ( invoice.comments == null )
 				invoiceStmt.setNull(offset++, -1);
 			else
@@ -51186,6 +51421,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param type Tipo de Factura (Compra o Venta)
 	 * @param surcharge Indica si la Factura tiene recargo de equivalencia
 	 * @param withholding Indica si la Factura aplica retencion de impuestos
+	 * @param withholding_farmer Indica si la Factura aplica retencion de Regimen Especial de Agricultura y Pesca
 	 * @param comments Comentarios de la Factura
 	 * @param remarks Observaciones de la Factura
 	 * @param investment Indica si la Factura es una inversion
@@ -51208,7 +51444,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param modification_date Fecha de modificacion
 	 * @throws SQLException
 	*/
-	protected void insertInvoice(Integer id, Integer domain, Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Integer pos_shift, Integer seller, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	protected void insertInvoice(Integer id, Integer domain, Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean surcharge, Boolean withholding, Boolean withholding_farmer, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Integer pos_shift, Integer seller, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
 	throws SQLException {
 
 		Invoice invoice_ = new Invoice();
@@ -51231,6 +51467,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_.type = type;
 		invoice_.surcharge = surcharge;
 		invoice_.withholding = withholding;
+		invoice_.withholding_farmer = withholding_farmer;
 		invoice_.comments = comments;
 		invoice_.remarks = remarks;
 		invoice_.investment = investment;
@@ -51282,6 +51519,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param type Tipo de Factura (Compra o Venta)
 	 * @param surcharge Indica si la Factura tiene recargo de equivalencia
 	 * @param withholding Indica si la Factura aplica retencion de impuestos
+	 * @param withholding_farmer Indica si la Factura aplica retencion de Regimen Especial de Agricultura y Pesca
 	 * @param comments Comentarios de la Factura
 	 * @param remarks Observaciones de la Factura
 	 * @param investment Indica si la Factura es una inversion
@@ -51305,7 +51543,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice(Integer domain, Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Integer pos_shift, Integer seller, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	public int insertInvoice(Integer domain, Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean surcharge, Boolean withholding, Boolean withholding_farmer, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Integer pos_shift, Integer seller, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
 	throws SQLException {
 		int id = nextInvoiceId();
 
@@ -51329,6 +51567,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_.type = type;
 		invoice_.surcharge = surcharge;
 		invoice_.withholding = withholding;
+		invoice_.withholding_farmer = withholding_farmer;
 		invoice_.comments = comments;
 		invoice_.remarks = remarks;
 		invoice_.investment = investment;
@@ -51591,6 +51830,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer source_id; 
 		protected Double taxable_base; 
 		protected Double taxes; 
+		protected Boolean prepayment; 
 		protected Integer seller; 
 		protected Integer workplace; 
 		protected Integer warehouse; 
@@ -51604,7 +51844,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( invoice_detailStmt != null ) {
 				invoice_detailStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -51613,7 +51853,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			invoice_detailStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO invoice_detail (id,domain,invoice,project,line,item,description,quantity,price,discount_expr,source,source_id,taxable_base,taxes,seller,workplace,warehouse)"  
+				"INSERT INTO invoice_detail (id,domain,invoice,project,line,item,description,quantity,price,discount_expr,source,source_id,taxable_base,taxes,prepayment,seller,workplace,warehouse)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			invoice_detailStmtSize = size;
@@ -51678,6 +51918,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoice_detailStmt.setNull(offset++, 8);
 			else
 				invoice_detailStmt.setDouble(offset++, invoice_detail.taxes);
+			if ( invoice_detail.prepayment == null )
+				invoice_detailStmt.setNull(offset++, -7);
+			else
+				invoice_detailStmt.setBoolean(offset++, invoice_detail.prepayment);
 			if ( invoice_detail.seller == null )
 				invoice_detailStmt.setNull(offset++, 4);
 			else
@@ -51760,12 +52004,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param source_id Identificador del Origen del Detalle de la Factura
 	 * @param taxable_base Base Imponible del Detalle de Factura
 	 * @param taxes Tasas del Detalle de Factura
+	 * @param prepayment Indica si el Detalle de Factura es un Suplido
 	 * @param seller Identificador de Agente Comercial
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @param warehouse Identificador del Almacen
 	 * @throws SQLException
 	*/
-	protected void insertInvoice_detail(Integer id, Integer domain, Integer invoice, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Integer seller, Integer workplace, Integer warehouse)
+	protected void insertInvoice_detail(Integer id, Integer domain, Integer invoice, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Boolean prepayment, Integer seller, Integer workplace, Integer warehouse)
 	throws SQLException {
 
 		Invoice_detail invoice_detail_ = new Invoice_detail();
@@ -51783,6 +52028,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_detail_.source_id = source_id;
 		invoice_detail_.taxable_base = taxable_base;
 		invoice_detail_.taxes = taxes;
+		invoice_detail_.prepayment = prepayment;
 		invoice_detail_.seller = seller;
 		invoice_detail_.workplace = workplace;
 		invoice_detail_.warehouse = warehouse;
@@ -51812,13 +52058,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param source_id Identificador del Origen del Detalle de la Factura
 	 * @param taxable_base Base Imponible del Detalle de Factura
 	 * @param taxes Tasas del Detalle de Factura
+	 * @param prepayment Indica si el Detalle de Factura es un Suplido
 	 * @param seller Identificador de Agente Comercial
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @param warehouse Identificador del Almacen
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice_detail(Integer domain, Integer invoice, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Integer seller, Integer workplace, Integer warehouse)
+	public int insertInvoice_detail(Integer domain, Integer invoice, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Boolean prepayment, Integer seller, Integer workplace, Integer warehouse)
 	throws SQLException {
 		int id = nextInvoice_detailId();
 
@@ -51837,6 +52084,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_detail_.source_id = source_id;
 		invoice_detail_.taxable_base = taxable_base;
 		invoice_detail_.taxes = taxes;
+		invoice_detail_.prepayment = prepayment;
 		invoice_detail_.seller = seller;
 		invoice_detail_.workplace = workplace;
 		invoice_detail_.warehouse = warehouse;
@@ -62579,6 +62827,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double nominal_value; 
 		protected Date due_date; 
 		protected Boolean representative_labor; 
+		protected String charge_description; 
 	}
 	
 	protected void insertRdir_staff( List<Rdir_staff> rdir_staffs )
@@ -62589,7 +62838,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( rdir_staffStmt != null ) {
 				rdir_staffStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -62598,7 +62847,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			rdir_staffStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO rdir_staff (id,domain,registry,document,name,shareholder,representative,director,percent_share,share_number,nominal_value,due_date,representative_labor)"  
+				"INSERT INTO rdir_staff (id,domain,registry,document,name,shareholder,representative,director,percent_share,share_number,nominal_value,due_date,representative_labor,charge_description)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			rdir_staffStmtSize = size;
@@ -62659,6 +62908,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				rdir_staffStmt.setNull(offset++, -7);
 			else
 				rdir_staffStmt.setBoolean(offset++, rdir_staff.representative_labor);
+			if ( rdir_staff.charge_description == null )
+				rdir_staffStmt.setNull(offset++, 12);
+			else
+				rdir_staffStmt.setString(offset++, rdir_staff.charge_description);
 		}
 		rdir_staffStmt.executeUpdate();
 		rdir_staffs.clear();
@@ -62728,9 +62981,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param nominal_value Valor Nominal
 	 * @param due_date Fecha de vencimiento del cargo
 	 * @param representative_labor Indica si el Directivo es representante laboral
+	 * @param charge_description Descripcion del cargo de Directivo
 	 * @throws SQLException
 	*/
-	protected void insertRdir_staff(Integer id, Integer domain, Integer registry, String document, String name, Boolean shareholder, Boolean representative, Boolean director, Double percent_share, Integer share_number, Double nominal_value, Date due_date, Boolean representative_labor)
+	protected void insertRdir_staff(Integer id, Integer domain, Integer registry, String document, String name, Boolean shareholder, Boolean representative, Boolean director, Double percent_share, Integer share_number, Double nominal_value, Date due_date, Boolean representative_labor, String charge_description)
 	throws SQLException {
 
 		Rdir_staff rdir_staff_ = new Rdir_staff();
@@ -62747,12 +63001,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		rdir_staff_.nominal_value = nominal_value;
 		rdir_staff_.due_date = due_date;
 		rdir_staff_.representative_labor = representative_labor;
+		rdir_staff_.charge_description = charge_description;
 
 		rdir_staffs.add(rdir_staff_);
 		
 		int rdir_staffCount = rdir_staffs.size();
 		
-		if ( 231 * rdir_staffCount >=  this.maxAllowedPacket ){
+		if ( 295 * rdir_staffCount >=  this.maxAllowedPacket ){
 			insertRdir_staff(rdir_staffs);
 		} 
 	}
@@ -62772,10 +63027,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param nominal_value Valor Nominal
 	 * @param due_date Fecha de vencimiento del cargo
 	 * @param representative_labor Indica si el Directivo es representante laboral
+	 * @param charge_description Descripcion del cargo de Directivo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertRdir_staff(Integer domain, Integer registry, String document, String name, Boolean shareholder, Boolean representative, Boolean director, Double percent_share, Integer share_number, Double nominal_value, Date due_date, Boolean representative_labor)
+	public int insertRdir_staff(Integer domain, Integer registry, String document, String name, Boolean shareholder, Boolean representative, Boolean director, Double percent_share, Integer share_number, Double nominal_value, Date due_date, Boolean representative_labor, String charge_description)
 	throws SQLException {
 		int id = nextRdir_staffId();
 
@@ -62793,12 +63049,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		rdir_staff_.nominal_value = nominal_value;
 		rdir_staff_.due_date = due_date;
 		rdir_staff_.representative_labor = representative_labor;
+		rdir_staff_.charge_description = charge_description;
 
 		rdir_staffs.add(rdir_staff_);
 		
 		int rdir_staffCount = rdir_staffs.size();
 		
-		if ( 231 * rdir_staffCount >=  this.maxAllowedPacket ){
+		if ( 295 * rdir_staffCount >=  this.maxAllowedPacket ){
 			insertRdir_staff(rdir_staffs);
 			rdir_staffs.clear();
 		} 
@@ -67067,6 +67324,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushWeb_info_style(true);
 		flushSalary_payment(true);
 		flushContract_data(true);
+		flushPrepayment(true);
 		flushEnterprise_data(true);
 		flushFs_renting_detail(true);
 		flushMk_action(true);
@@ -67481,6 +67739,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initSalary_paymentId();
 		initMaxAllowedPacket();
 		initContract_dataId();
+		initMaxAllowedPacket();
+		initPrepaymentId();
 		initMaxAllowedPacket();
 		initEnterprise_dataId();
 		initMaxAllowedPacket();
@@ -68109,6 +68369,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initSalary_paymentId();
 		flushContract_data();
 		initContract_dataId();
+		flushPrepayment();
+		initPrepaymentId();
 		flushEnterprise_data();
 		initEnterprise_dataId();
 		flushFs_renting_detail();

@@ -789,7 +789,7 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 
 	static final String PROFILES[] = { "Administrador" };
 
-	public Integer newEnterpriseDomain(String name, String description, Integer parent)
+	public Integer newEnterpriseDomain(String name, String description, Integer parent, Integer scope)
 			throws IOException, InterruptedException, SQLException {
 
 		DomainType type = DomainType.ENTERPRISE;
@@ -804,7 +804,7 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		boolean active = true;
 
 		Integer domain = insertDomain(name, description, parent,
-				enum2short(type), subDomainSuffix, userManagement,
+				enum2short(type), scope, subDomainSuffix, userManagement,
 				domainManagement, disableDomainManagement, maxDocumentSize,
 				maxTotalDocumentSize, maxDefinedUsers, active, owner, owner,
 				new Timestamp(System.currentTimeMillis()), null, null, null);
@@ -825,7 +825,7 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		return domain;
 	}
 
-	public Integer newConsultancyDomain(String name, String user, String passwd)
+	public Integer newConsultancyDomain(String name, String user, String passwd, Integer scope)
 			throws IOException, InterruptedException, SQLException,
 			AonSQLException {
 
@@ -843,7 +843,7 @@ public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 		boolean active = true;
 
 		Integer domain = insertDomain(name, description, parent,
-				enum2short(type), subDomainSuffix, userManagement,
+				enum2short(type), scope, subDomainSuffix, userManagement,
 				domainManagement, disableDomainManagement, maxDocumentSize,
 				maxTotalDocumentSize, maxDefinedUsers, active, owner, owner,
 				new Timestamp(System.currentTimeMillis()), null, null, null);

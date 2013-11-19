@@ -351,7 +351,7 @@ public class Ctsql2Mysql {
 			InterruptedException, SQLException, AonSQLException {
 
 		return mysqlDB.newConsultancyDomain(domainName, domainUser,
-				domainPasswd);
+				domainPasswd, null /* TODO : scope ? */);
 	}
 
 	public boolean drop() {

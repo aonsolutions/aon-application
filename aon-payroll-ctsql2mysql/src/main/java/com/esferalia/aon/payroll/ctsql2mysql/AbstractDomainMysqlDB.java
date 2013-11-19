@@ -638,6 +638,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param id Identificador unico del Impuesto de la Factura
 	 * @param invoice_detail Identificador del Detalle de la Factura
 	 * @param tax_type Tipo de Impuesto del Detalle de la Factura
+	 * @param base Base Imponible de Impuesto del Detalle de la Factura
 	 * @param percentage Porcentaje de Impuesto del Detalle de la Factura
 	 * @param surcharge Porcentaje del recargo de equivalencia del Detalle de la Factura
 	 * @param quota Cuota de Impuesto del Detalle de la Factura
@@ -648,10 +649,10 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice_tax(Integer invoice_detail, Short tax_type, Double percentage, Double surcharge, Double quota, Double surcharge_quota, Short vat_deduction_type, Short withholding_type, Double deductible_quota)
+	public int insertInvoice_tax(Integer invoice_detail, Short tax_type, Double base, Double percentage, Double surcharge, Double quota, Double surcharge_quota, Short vat_deduction_type, Short withholding_type, Double deductible_quota)
 	throws SQLException {
 		Integer domain = getDomainForInvoice_tax( invoice_detail);
-		Integer id =  super.insertInvoice_tax( domain != null ? domain : getDefaultDomain(), invoice_detail, tax_type, percentage, surcharge, quota, surcharge_quota, vat_deduction_type, withholding_type, deductible_quota );
+		Integer id =  super.insertInvoice_tax( domain != null ? domain : getDefaultDomain(), invoice_detail, tax_type, base, percentage, surcharge, quota, surcharge_quota, vat_deduction_type, withholding_type, deductible_quota );
 		if ( domain != null ) { 
 			invoice_taxDomains.put(id, domain);
 		}
@@ -664,6 +665,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param domain Identificador del Dominio
 	 * @param invoice_detail Identificador del Detalle de la Factura
 	 * @param tax_type Tipo de Impuesto del Detalle de la Factura
+	 * @param base Base Imponible de Impuesto del Detalle de la Factura
 	 * @param percentage Porcentaje de Impuesto del Detalle de la Factura
 	 * @param surcharge Porcentaje del recargo de equivalencia del Detalle de la Factura
 	 * @param quota Cuota de Impuesto del Detalle de la Factura
@@ -674,9 +676,9 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice_tax(Integer domain, Integer invoice_detail, Short tax_type, Double percentage, Double surcharge, Double quota, Double surcharge_quota, Short vat_deduction_type, Short withholding_type, Double deductible_quota)
+	public int insertInvoice_tax(Integer domain, Integer invoice_detail, Short tax_type, Double base, Double percentage, Double surcharge, Double quota, Double surcharge_quota, Short vat_deduction_type, Short withholding_type, Double deductible_quota)
 	throws SQLException {
-		Integer id =  super.insertInvoice_tax(domain, invoice_detail, tax_type, percentage, surcharge, quota, surcharge_quota, vat_deduction_type, withholding_type, deductible_quota);
+		Integer id =  super.insertInvoice_tax(domain, invoice_detail, tax_type, base, percentage, surcharge, quota, surcharge_quota, vat_deduction_type, withholding_type, deductible_quota);
 		invoice_taxDomains.put(id, domain );
 		return id;
 	}
@@ -1305,6 +1307,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * Supplier
 	 * @param registry Registro del Proveedor
 	 * @param withholding Indica si el Proveedor aplica retencion de impuestos
+	 * @param withholding_farmer Indica si el Proveedor pertenece al Regimen Especial de Agricultura y Pesca
 	 * @param transaction Tipo de transacciones del Proveedor
 	 * @param status Estado del Proveedor
 	 * @param scope Identificador del Ambito
@@ -1312,10 +1315,10 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param account Identificador de la Cuenta Contable
 	 * @throws SQLException
 	*/
-	public void insertSupplier(Integer registry, Boolean withholding, Short transaction, Short status, Integer scope, Boolean purchase_valuated, Integer account)
+	public void insertSupplier(Integer registry, Boolean withholding, Boolean withholding_farmer, Short transaction, Short status, Integer scope, Boolean purchase_valuated, Integer account)
 	throws SQLException {
 		Integer domain = getDomainForSupplier( account , registry , scope);
-		 super.insertSupplier( registry, domain != null ? domain : getDefaultDomain(), withholding, transaction, status, scope, purchase_valuated, account );
+		 super.insertSupplier( registry, domain != null ? domain : getDefaultDomain(), withholding, withholding_farmer, transaction, status, scope, purchase_valuated, account );
 		if ( domain != null ) { 
 			supplierDomains.put(registry, domain);
 		}
@@ -1326,6 +1329,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param registry Registro del Proveedor
 	 * @param domain Identificador del Dominio
 	 * @param withholding Indica si el Proveedor aplica retencion de impuestos
+	 * @param withholding_farmer Indica si el Proveedor pertenece al Regimen Especial de Agricultura y Pesca
 	 * @param transaction Tipo de transacciones del Proveedor
 	 * @param status Estado del Proveedor
 	 * @param scope Identificador del Ambito
@@ -1333,9 +1337,9 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param account Identificador de la Cuenta Contable
 	 * @throws SQLException
 	*/
-	public void insertSupplier(Integer registry, Integer domain, Boolean withholding, Short transaction, Short status, Integer scope, Boolean purchase_valuated, Integer account)
+	public void insertSupplier(Integer registry, Integer domain, Boolean withholding, Boolean withholding_farmer, Short transaction, Short status, Integer scope, Boolean purchase_valuated, Integer account)
 	throws SQLException {
-		 super.insertSupplier(registry, domain, withholding, transaction, status, scope, purchase_valuated, account);
+		 super.insertSupplier(registry, domain, withholding, withholding_farmer, transaction, status, scope, purchase_valuated, account);
 		supplierDomains.put(registry, domain );
 			}
 
@@ -2397,6 +2401,71 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	throws SQLException {
 		Integer id =  super.insertContract_data(domain, name, contract, expression, start_date, end_date);
 		contract_dataDomains.put(id, domain );
+		return id;
+	}
+
+	
+	private Map<Integer,Integer> prepaymentDomains = new HashMap<Integer,Integer>();
+
+	protected Integer getDomainForPrepaymentPk(Integer id){
+		return prepaymentDomains.get(id);
+	}
+	
+	/**
+	 * Prepayment
+	 * @param creditor Identificador del Acreedor
+	 * @param customer Identificador del Cliente
+	 * @param finance Identificador del Vencimiento
+	 * @returns domain's ID
+	*/
+	protected Integer getDomainForPrepayment( Integer creditor , Integer customer , Integer finance){
+		Integer domain = null;
+			if ( ( domain = getDomainForCreditorPk( creditor ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForCustomerPk( customer ) ) != null )
+				return domain;
+			if ( ( domain = getDomainForFinancePk( finance ) ) != null )
+				return domain;
+		return domain;
+	}
+
+	/**
+	 * Prepayment
+	 * @param id Identificador unico
+	 * @param creditor Identificador del Acreedor
+	 * @param customer Identificador del Cliente
+	 * @param finance Identificador del Vencimiento
+	 * @param collect Localizacion del cobro del Suplido
+	 * @param collect_id Identificador del cobro del Suplido
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertPrepayment(Integer creditor, Integer customer, Integer finance, Short collect, Integer collect_id)
+	throws SQLException {
+		Integer domain = getDomainForPrepayment( creditor , customer , finance);
+		Integer id =  super.insertPrepayment( domain != null ? domain : getDefaultDomain(), creditor, customer, finance, collect, collect_id );
+		if ( domain != null ) { 
+			prepaymentDomains.put(id, domain);
+		}
+		return id;
+	}
+
+	/**
+	 * Prepayment
+	 * @param id Identificador unico
+	 * @param domain Identificador del Dominio
+	 * @param creditor Identificador del Acreedor
+	 * @param customer Identificador del Cliente
+	 * @param finance Identificador del Vencimiento
+	 * @param collect Localizacion del cobro del Suplido
+	 * @param collect_id Identificador del cobro del Suplido
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertPrepayment(Integer domain, Integer creditor, Integer customer, Integer finance, Short collect, Integer collect_id)
+	throws SQLException {
+		Integer id =  super.insertPrepayment(domain, creditor, customer, finance, collect, collect_id);
+		prepaymentDomains.put(id, domain );
 		return id;
 	}
 
@@ -14843,14 +14912,15 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param scope Ambito del Vencimiento
 	 * @param advance Indica si el Vencimiento es un anticipo
 	 * @param payroll Indica si el Vencimiento es de Nominas
+	 * @param prepayment Indica si el Vencimiento es un Suplido
 	 * @param finance_group Identificador unico del Vencimiento agrupador
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertFinance(Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, String remarks, Integer scope, Boolean advance, Boolean payroll, Integer finance_group)
+	public int insertFinance(Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, String remarks, Integer scope, Boolean advance, Boolean payroll, Boolean prepayment, Integer finance_group)
 	throws SQLException {
 		Integer domain = getDomainForFinance( bank , finance_group , invoice , pay_method , registry , scope);
-		Integer id =  super.insertFinance( domain != null ? domain : getDefaultDomain(), payment, registry, rdocument, rdocument_type, rdocument_country, rname, amount, expenses, concept, invoice, due_date, pay_method, bank, bank_account, status, security_level, remarks, scope, advance, payroll, finance_group );
+		Integer id =  super.insertFinance( domain != null ? domain : getDefaultDomain(), payment, registry, rdocument, rdocument_type, rdocument_country, rname, amount, expenses, concept, invoice, due_date, pay_method, bank, bank_account, status, security_level, remarks, scope, advance, payroll, prepayment, finance_group );
 		if ( domain != null ) { 
 			financeDomains.put(id, domain);
 		}
@@ -14881,13 +14951,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param scope Ambito del Vencimiento
 	 * @param advance Indica si el Vencimiento es un anticipo
 	 * @param payroll Indica si el Vencimiento es de Nominas
+	 * @param prepayment Indica si el Vencimiento es un Suplido
 	 * @param finance_group Identificador unico del Vencimiento agrupador
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertFinance(Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, String remarks, Integer scope, Boolean advance, Boolean payroll, Integer finance_group)
+	public int insertFinance(Integer domain, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, String remarks, Integer scope, Boolean advance, Boolean payroll, Boolean prepayment, Integer finance_group)
 	throws SQLException {
-		Integer id =  super.insertFinance(domain, payment, registry, rdocument, rdocument_type, rdocument_country, rname, amount, expenses, concept, invoice, due_date, pay_method, bank, bank_account, status, security_level, remarks, scope, advance, payroll, finance_group);
+		Integer id =  super.insertFinance(domain, payment, registry, rdocument, rdocument_type, rdocument_country, rname, amount, expenses, concept, invoice, due_date, pay_method, bank, bank_account, status, security_level, remarks, scope, advance, payroll, prepayment, finance_group);
 		financeDomains.put(id, domain );
 		return id;
 	}
@@ -15218,6 +15289,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param type Tipo de Factura (Compra o Venta)
 	 * @param surcharge Indica si la Factura tiene recargo de equivalencia
 	 * @param withholding Indica si la Factura aplica retencion de impuestos
+	 * @param withholding_farmer Indica si la Factura aplica retencion de Regimen Especial de Agricultura y Pesca
 	 * @param comments Comentarios de la Factura
 	 * @param remarks Observaciones de la Factura
 	 * @param investment Indica si la Factura es una inversion
@@ -15241,10 +15313,10 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice(Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Integer pos_shift, Integer seller, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	public int insertInvoice(Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean surcharge, Boolean withholding, Boolean withholding_farmer, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Integer pos_shift, Integer seller, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
 	throws SQLException {
 		Integer domain = getDomainForInvoice( rectification_invoice , pos_shift , project , raddress , registry , scope , seller);
-		Integer id =  super.insertInvoice( domain != null ? domain : getDefaultDomain(), project, series, number, reference_code, registry, rdocument, rdocument_type, rdocument_country, rname, raddress, issue_date, tax_date, security_level, status, type, surcharge, withholding, comments, remarks, investment, transaction, signed, scope, service, rectification_type, rectification_invoice, advance, pos_shift, seller, taxable_base, vat_quota, retention_quota, total, creation_user, creation_date, modification_user, modification_date );
+		Integer id =  super.insertInvoice( domain != null ? domain : getDefaultDomain(), project, series, number, reference_code, registry, rdocument, rdocument_type, rdocument_country, rname, raddress, issue_date, tax_date, security_level, status, type, surcharge, withholding, withholding_farmer, comments, remarks, investment, transaction, signed, scope, service, rectification_type, rectification_invoice, advance, pos_shift, seller, taxable_base, vat_quota, retention_quota, total, creation_user, creation_date, modification_user, modification_date );
 		if ( domain != null ) { 
 			invoiceDomains.put(id, domain);
 		}
@@ -15272,6 +15344,7 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param type Tipo de Factura (Compra o Venta)
 	 * @param surcharge Indica si la Factura tiene recargo de equivalencia
 	 * @param withholding Indica si la Factura aplica retencion de impuestos
+	 * @param withholding_farmer Indica si la Factura aplica retencion de Regimen Especial de Agricultura y Pesca
 	 * @param comments Comentarios de la Factura
 	 * @param remarks Observaciones de la Factura
 	 * @param investment Indica si la Factura es una inversion
@@ -15295,9 +15368,9 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice(Integer domain, Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean surcharge, Boolean withholding, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Integer pos_shift, Integer seller, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
+	public int insertInvoice(Integer domain, Integer project, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean surcharge, Boolean withholding, Boolean withholding_farmer, String comments, String remarks, Boolean investment, Short transaction, Boolean signed, Integer scope, Boolean service, Short rectification_type, Integer rectification_invoice, Boolean advance, Integer pos_shift, Integer seller, Double taxable_base, Double vat_quota, Double retention_quota, Double total, String creation_user, Timestamp creation_date, String modification_user, Timestamp modification_date)
 	throws SQLException {
-		Integer id =  super.insertInvoice(domain, project, series, number, reference_code, registry, rdocument, rdocument_type, rdocument_country, rname, raddress, issue_date, tax_date, security_level, status, type, surcharge, withholding, comments, remarks, investment, transaction, signed, scope, service, rectification_type, rectification_invoice, advance, pos_shift, seller, taxable_base, vat_quota, retention_quota, total, creation_user, creation_date, modification_user, modification_date);
+		Integer id =  super.insertInvoice(domain, project, series, number, reference_code, registry, rdocument, rdocument_type, rdocument_country, rname, raddress, issue_date, tax_date, security_level, status, type, surcharge, withholding, withholding_farmer, comments, remarks, investment, transaction, signed, scope, service, rectification_type, rectification_invoice, advance, pos_shift, seller, taxable_base, vat_quota, retention_quota, total, creation_user, creation_date, modification_user, modification_date);
 		invoiceDomains.put(id, domain );
 		return id;
 	}
@@ -15412,16 +15485,17 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param source_id Identificador del Origen del Detalle de la Factura
 	 * @param taxable_base Base Imponible del Detalle de Factura
 	 * @param taxes Tasas del Detalle de Factura
+	 * @param prepayment Indica si el Detalle de Factura es un Suplido
 	 * @param seller Identificador de Agente Comercial
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @param warehouse Identificador del Almacen
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice_detail(Integer invoice, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Integer seller, Integer workplace, Integer warehouse)
+	public int insertInvoice_detail(Integer invoice, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Boolean prepayment, Integer seller, Integer workplace, Integer warehouse)
 	throws SQLException {
 		Integer domain = getDomainForInvoice_detail( invoice , item , project , seller , warehouse , workplace);
-		Integer id =  super.insertInvoice_detail( domain != null ? domain : getDefaultDomain(), invoice, project, line, item, description, quantity, price, discount_expr, source, source_id, taxable_base, taxes, seller, workplace, warehouse );
+		Integer id =  super.insertInvoice_detail( domain != null ? domain : getDefaultDomain(), invoice, project, line, item, description, quantity, price, discount_expr, source, source_id, taxable_base, taxes, prepayment, seller, workplace, warehouse );
 		if ( domain != null ) { 
 			invoice_detailDomains.put(id, domain);
 		}
@@ -15444,15 +15518,16 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param source_id Identificador del Origen del Detalle de la Factura
 	 * @param taxable_base Base Imponible del Detalle de Factura
 	 * @param taxes Tasas del Detalle de Factura
+	 * @param prepayment Indica si el Detalle de Factura es un Suplido
 	 * @param seller Identificador de Agente Comercial
 	 * @param workplace Identificador del Centro de Trabajo
 	 * @param warehouse Identificador del Almacen
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice_detail(Integer domain, Integer invoice, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Integer seller, Integer workplace, Integer warehouse)
+	public int insertInvoice_detail(Integer domain, Integer invoice, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Boolean prepayment, Integer seller, Integer workplace, Integer warehouse)
 	throws SQLException {
-		Integer id =  super.insertInvoice_detail(domain, invoice, project, line, item, description, quantity, price, discount_expr, source, source_id, taxable_base, taxes, seller, workplace, warehouse);
+		Integer id =  super.insertInvoice_detail(domain, invoice, project, line, item, description, quantity, price, discount_expr, source, source_id, taxable_base, taxes, prepayment, seller, workplace, warehouse);
 		invoice_detailDomains.put(id, domain );
 		return id;
 	}
@@ -18695,13 +18770,14 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param nominal_value Valor Nominal
 	 * @param due_date Fecha de vencimiento del cargo
 	 * @param representative_labor Indica si el Directivo es representante laboral
+	 * @param charge_description Descripcion del cargo de Directivo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertRdir_staff(Integer registry, String document, String name, Boolean shareholder, Boolean representative, Boolean director, Double percent_share, Integer share_number, Double nominal_value, Date due_date, Boolean representative_labor)
+	public int insertRdir_staff(Integer registry, String document, String name, Boolean shareholder, Boolean representative, Boolean director, Double percent_share, Integer share_number, Double nominal_value, Date due_date, Boolean representative_labor, String charge_description)
 	throws SQLException {
 		Integer domain = getDomainForRdir_staff( registry);
-		Integer id =  super.insertRdir_staff( domain != null ? domain : getDefaultDomain(), registry, document, name, shareholder, representative, director, percent_share, share_number, nominal_value, due_date, representative_labor );
+		Integer id =  super.insertRdir_staff( domain != null ? domain : getDefaultDomain(), registry, document, name, shareholder, representative, director, percent_share, share_number, nominal_value, due_date, representative_labor, charge_description );
 		if ( domain != null ) { 
 			rdir_staffDomains.put(id, domain);
 		}
@@ -18723,12 +18799,13 @@ public abstract class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param nominal_value Valor Nominal
 	 * @param due_date Fecha de vencimiento del cargo
 	 * @param representative_labor Indica si el Directivo es representante laboral
+	 * @param charge_description Descripcion del cargo de Directivo
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertRdir_staff(Integer domain, Integer registry, String document, String name, Boolean shareholder, Boolean representative, Boolean director, Double percent_share, Integer share_number, Double nominal_value, Date due_date, Boolean representative_labor)
+	public int insertRdir_staff(Integer domain, Integer registry, String document, String name, Boolean shareholder, Boolean representative, Boolean director, Double percent_share, Integer share_number, Double nominal_value, Date due_date, Boolean representative_labor, String charge_description)
 	throws SQLException {
-		Integer id =  super.insertRdir_staff(domain, registry, document, name, shareholder, representative, director, percent_share, share_number, nominal_value, due_date, representative_labor);
+		Integer id =  super.insertRdir_staff(domain, registry, document, name, shareholder, representative, director, percent_share, share_number, nominal_value, due_date, representative_labor, charge_description);
 		rdir_staffDomains.put(id, domain );
 		return id;
 	}
