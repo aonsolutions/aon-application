@@ -45,9 +45,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	private String filter;
 	private String modelFilter;
 	private String domainURL;
+	private Integer pageLimit;
 	
 	public DomainSwitcher() {
 		try {
+			setPageLimit(15);
 			super.setDomainId( initializeDomain());
 		} catch (Throwable th) {
 			super.setDomainId(1);
@@ -295,6 +297,14 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		Query query = HibernateUtil.getSession(sfn).createQuery("SELECT d.type FROM Domain d WHERE d.id = ?");
 		query.setInteger(0, domainId);
 		return (DomainType) query.uniqueResult();
+	}
+
+	public Integer getPageLimit() {
+		return pageLimit;
+	}
+
+	public void setPageLimit(Integer pageLimit) {
+		this.pageLimit = pageLimit;
 	}
 	
 }
