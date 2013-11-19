@@ -285,7 +285,9 @@
 										<aon:commandLink id="registryAddInfo-hotel"
 											action="registryAddInfo_search-hotel"
 											actionListener="#{registryAddInfo.onEditSearch}"
-											value="#{bundle.pms_registry_add_info_module}" />						
+											value="#{bundle.pms_registry_add_info_module}">						
+											<aon:actionListener method="#{registryAddInfo.setCustomerMode}" />
+										</aon:commandLink>
 									</aon:div>
 								</c:if>
 							</aon:div>

@@ -16,11 +16,32 @@
 					template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 					<ui:param name="toolbarTitle" value="#{bundle.pms_registry_add_info_module}" />
 					<ui:param name="controller" value="#{registryAddInfo}" />
+					<ui:param name="resetButtonReRender" value="registryAddInfoList" />
+					<ui:define name="additionalToolbarContent">
+<!--
+						<aon:htmlCommandLink id="registryAddInfo-excel-report" value="&#160;" 
+							target="_new" rendered="#{!registryAddInfo.new and registryAddInfo.rowCount > 0}"
+							disabled="#{registryAddInfo.to != null}"
+							action="#{report.onExecute}"
+							accesskey="#{bundle.aon_key_print}"
+							styleClass="aon-finding-toolbar-item aon-icon-excel">
+							<f:param name="reportKey" value="registryAddInfoReport" />
+							<f:param name="outputFormat" value="MS Excel" />
+						</aon:htmlCommandLink>
+-->
+					</ui:define>
 				</ui:decorate>
 
 				<aon:div styleClass="aon-scroll-area">
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 						<ui:param name="controller" value="#{registryAddInfo}" />
+						<ui:param name="rowSelectorReRender" value="registryAddInfoList" />
+						<ui:param name="resetButtonReRender" value="registryAddInfoList" />
+						<ui:param name="newSaveButtonReRender" value="registryAddInfoList" />
+						<ui:param name="saveButtonReRender" value="registryAddInfoList" />
+						<ui:param name="newCancelButtonReRender" value="registryAddInfoList" />
+						<ui:param name="cancelButtonReRender" value="registryAddInfoList" />
+						<ui:param name="removeButtonReRender" value="registryAddInfoList" />
 						<ui:define name="columns">
 
 							<aon:column	alias="RegistryAddInfo.registry.name" 
@@ -38,6 +59,7 @@
 											<ui:param name="idRequired" value="#{true}" />						
 											<ui:param name="skipLabel" value="#{true}" />
 											<ui:param name="skipNewButton" value="#{true}" />
+											<ui:param name="skipGoToButton" value="#{true}" />
 											<ui:param name="skipSuggestText" value="#{false}" />
 										</ui:include>
 									</aon:div>
@@ -51,7 +73,7 @@
 								</f:facet>
 								<aon:outputText value="#{to.attribute}" />
 								<f:facet name="footer">
-									<aon:selectOneMenu id="RegistryAddInfo_attribute-New" required="#{true}"
+									<aon:selectOneMenu id="RegistryAddInfo_attribute" required="#{true}"
 										rendered="#{formNew}" value="#{registryAddInfo.to.attribute}">
 										<f:selectItems value="#{registryAddInfo.addInfoAttributes}" />
 									</aon:selectOneMenu>
