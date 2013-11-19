@@ -211,9 +211,7 @@ condrestart() {
 
 case "$1" in
   sync)
-  	stop
   	sync
-	start
 	;;
   start)
 	start
