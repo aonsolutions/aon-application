@@ -366,6 +366,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		}
 		
 		int duplicates = domains.containsKey(domainName) ? domains.get(domainName) : 0;
+		domains.put(domainName, duplicates+1);
 		if ( duplicates > 0){
 			if ( domainName.length() == MaxLength) {
 				domainName = domainName.substring(0, MaxLength-3);
@@ -376,7 +377,6 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 					emprnif.getCdg(), domainName);
 			
 		}
-		domains.put(domainName, duplicates+1);
 		
 		Integer domain;
 		try {
