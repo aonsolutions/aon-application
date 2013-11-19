@@ -1,10 +1,7 @@
 package com.code.aon.ui.marketing.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.RSS_PUBLISH_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.RSS_PUBLISH_OK;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static com.code.aon.ui.config.controller.ConfigConstants.PUBLISH_PARAMETER;
-import static com.code.aon.ui.marketing.servlet.RSSServlet.SERVLET_PATH;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -38,10 +35,12 @@ import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.marketing.News;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.PublishProperties;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.controller.PublishParameterController;
 import com.code.aon.ui.config.util.FTPUtil;
+import com.code.aon.ui.marketing.servlet.RSSServlet;
 import com.code.aon.ui.util.AonUtil;
 
 public class RSSController {
@@ -85,7 +84,7 @@ public class RSSController {
 		String url = null;
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		try {
-			url = ds.getDomainURL() + SERVLET_PATH + getRSSFileName();
+			url = ds.getDomainURL() + RSSServlet.SERVLET_PATH + getRSSFileName();
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}		
@@ -95,10 +94,10 @@ public class RSSController {
 	private String getRSSFileName() {
 		StringBuffer url = new StringBuffer();
 		url.append(RSS_PREFFIX);
-		if ( (category != null) && (category.getId() != null) ) {
-			url.append("-").append(category.getId());
+		if ( category!=null && category.getId()!=null ) {
+			url.append('-').append(category.getId());
 		}
-		url.append(".").append(MimeType.MIME_XML.getExtension());
+		url.append('.').append(MimeType.MIME_XML.getExtension());
 		return url.toString();
 	}
 
@@ -125,7 +124,7 @@ public class RSSController {
 	}
 	
 	private static String getImageURL( RegistryAttachment ra, String urlPreffix ) {
-		if ( (ra != null) && (ra.getId() != null) ) {
+		if ( ra!=null && ra.getId()!=null ) {
 			return urlPreffix + ra.getDownloadURL();
 		}
 		return null;
@@ -227,14 +226,14 @@ public class RSSController {
 			if ( ftp.isConnected() ) {
 				String path = ftp.getFTPPath(destination, name);
 				if ( ftp.upload(in, length, path) ) {
-					log.info( AonUtil.getMessage(RSS_PUBLISH_OK) );		
+					log.info( AonUtil.getMessage(ICommonMessages.RSS_PUBLISH_OK) );		
 				} else {
-					log.error( AonUtil.getMessage(RSS_PUBLISH_ERROR) );
+					log.error( AonUtil.getMessage(ICommonMessages.RSS_PUBLISH_ERROR) );
 				}
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
-			log.error( AonUtil.getMessage(RSS_PUBLISH_ERROR) );
+			log.error( AonUtil.getMessage(ICommonMessages.RSS_PUBLISH_ERROR) );
 		} finally {
 			ftp.close();
 		}

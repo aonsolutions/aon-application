@@ -110,7 +110,7 @@ public class OfferSearchListener extends ControllerSearchListener {
 			String status = getController().resolveAlias(IEntityAlias.OFFER_STATUS);
 			addEnumToCriteria(criteria, status, getOfferStatuses());
 		}
-		if ((getProject() != null) && (getProject().getId() != null)) {
+		if ( getProject()!=null && getProject().getId()!=null ) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.OFFER_PROJECT_ID), getProject().getId());			
 		}
 	}	

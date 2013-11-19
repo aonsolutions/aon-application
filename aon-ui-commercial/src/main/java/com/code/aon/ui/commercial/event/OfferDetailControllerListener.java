@@ -40,7 +40,7 @@ public class OfferDetailControllerListener extends ControllerAdapter {
 		OfferDetailController controller = (OfferDetailController)event.getController();
 		OfferDetail offerDetail = (OfferDetail)controller.getTo();
 
-		controller.setLongDescription((offerDetail.getDescription().length() > 64) ? true : false);
+		controller.setLongDescription( offerDetail.getDescription().length()>64 ? true : false);
 	}
 
 	private	Integer calculateNextLine(Offer offer) throws ManagerBeanException {

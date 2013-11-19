@@ -40,11 +40,11 @@ public class ProjectCommercialSearchListener extends ProjectSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria(criteria);
-		if ((getTarget() != null) && (getTarget().getId() != null)) {
+		if ( getTarget()!=null && getTarget().getId()!=null ) {
 			String alias = getFieldName(IEntityAlias.PROJECT_COMMERCIAL_TARGET_ID);
 			criteria.addEqualExpression(alias, getTarget().getId());			
 		}
-		if ((getSeller() != null) && (getSeller().getId() != null)) {
+		if ( getSeller()!=null && getSeller().getId()!=null ) {
 			String alias = getFieldName(IEntityAlias.PROJECT_COMMERCIAL_SELLER_ID);
 			criteria.addEqualExpression(alias, getSeller().getId());			
 		}

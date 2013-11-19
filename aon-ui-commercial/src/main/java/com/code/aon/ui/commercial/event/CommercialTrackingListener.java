@@ -48,7 +48,7 @@ public class CommercialTrackingListener extends ControllerAdapter {
 			collections.refreshActivities();
 			updatePreviousAction( controller, ct );
 			controller.setNext( ct.getNext() );
-			boolean check = (ct.getOffer().getId() !=null); 
+			boolean check = ct.getOffer().getId()!=null; 
 			controller.setOfferChecked(check);
 			controller.setLaunchSurvey(false);
 			updateClosed(controller);
@@ -107,7 +107,7 @@ public class CommercialTrackingListener extends ControllerAdapter {
 	private void updateProbability( CommercialTrackingController controller ) throws ManagerBeanException {
 		CommercialTracking ct = (CommercialTracking) controller.getTo();
 		Integer probability = ct.getActivity().getProbability();
-		if ( (probability != null) && (probability > 0) ) {
+		if ( probability!=null && probability>0 ) {
 			ct.getProject().setProbability(probability);
 			BeanManager.getManagerBean(ProjectCommercial.class).update(ct.getProject());
 		}
@@ -132,8 +132,8 @@ public class CommercialTrackingListener extends ControllerAdapter {
 	
 	private boolean isLaunchSurvey( CommercialTrackingController controller ) {
 		CommercialTracking ct = (CommercialTracking) controller.getTo();
-		return (ct.getStatus() == CommercialTrackingStatus.CLOSED) &&
-			(ct.getActivity().getSurvey() != null) && (ct.getActivity().getSurvey().getId() != null);		
+		return ct.getStatus()==CommercialTrackingStatus.CLOSED &&
+			ct.getActivity().getSurvey()!=null && ct.getActivity().getSurvey().getId()!=null;		
 	}
 	
 	

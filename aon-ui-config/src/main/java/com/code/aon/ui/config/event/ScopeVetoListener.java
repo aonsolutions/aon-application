@@ -33,8 +33,9 @@ public class ScopeVetoListener extends ControllerAdapter {
 				Scope scope = (Scope)scopeLst.get(0);
 				IScopable scopable = (IScopable)event.getController().getTo();
 				scopable.setScope(scope);
+			} else {
+				throw new ControllerListenerException("No scope defined.");
 			}
-			else throw new ControllerListenerException("No scope defined.");
 
 		}
 		catch (ManagerBeanException mbe) {

@@ -63,8 +63,6 @@ public class TaskInfo {
 			setExpiredPendingGroupTasks(count);
 		} else if (!userTask && !expired && status == TaskStatus.PENDING) {
 			setPendingGroupTasks(count);
-		} else {
-			// Se ignora. No aparece en pantalla.
 		}
 	}
 }

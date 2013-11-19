@@ -19,6 +19,10 @@ import com.code.aon.ui.util.AonUtil;
 public class HtmlGenerator {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HtmlGenerator.class.getName());
+
+	private static final String TABLE_COLUMN_START = "<tr><td>";
+
+	private static final String TABLE_COLUMN_END = "</td></tr>";
 	
 	private StringBuffer sb;
 	
@@ -43,7 +47,7 @@ public class HtmlGenerator {
 	
 	private void addTitle( News news, Template template ) {
 		sb.append("<p align=\"left\" style=\"font-size:18px;font-weight:bold");
-		if ( (template != null) && ! StringUtils.isEmpty(template.getTitleColor()) ) {
+		if ( template!=null && !StringUtils.isEmpty(template.getTitleColor()) ) {
 			sb.append(";color:");
 			sb.append(template.getTitleColor());
 		}
@@ -65,7 +69,7 @@ public class HtmlGenerator {
 	}
 	
 	private String getImageURL( RegistryAttachment ra ) {
-		if ( (ra != null) && (ra.getId() != null) ) {
+		if ( ra!=null && ra.getId()!=null ) {
 			return urlPreffix + ra.getDownloadURL();
 		}
 		return null;
@@ -73,14 +77,14 @@ public class HtmlGenerator {
 	
 	private void addFullWidthImage( News news, Template template ) {
 		addTitle(news, template);
-		sb.append("</td></tr>");
+		sb.append(TABLE_COLUMN_END);
 		String url = getImageURL(news.getRegistryAttachment());
 		if ( url != null ) {
-			sb.append("<tr><td>");
+			sb.append(TABLE_COLUMN_START);
 			addImage(url);
-			sb.append("</td></tr>");					
+			sb.append(TABLE_COLUMN_END);					
 		}
-		sb.append("<tr><td>");
+		sb.append(TABLE_COLUMN_START);
 		addContent(news);
 	}
 
@@ -88,12 +92,12 @@ public class HtmlGenerator {
 		addTitle(news, template);
 		String url = getImageURL(news.getRegistryAttachment());
 		if ( url != null ) {
-			sb.append("<table  align=\"left\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tbody>");
-			sb.append("<tr><td>");
+			sb.append("<table  align=\"left\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tbody>" +			
+					TABLE_COLUMN_START);
 			addImage(url);
-			sb.append("</td><td width=\"15\"/></tr>");
-			sb.append("<tr><td width=\"15\" height=\"10\"></tr>");
-			sb.append("</tbody></table>");
+			sb.append("</td><td width=\"15\"/></tr>" +
+					"<tr><td width=\"15\" height=\"10\"></tr>" +
+					"</tbody></table>");
 		}
 		addContent(news);
 	}
@@ -102,12 +106,12 @@ public class HtmlGenerator {
 		addTitle(news, template);
 		String url = getImageURL(news.getRegistryAttachment());
 		if ( url != null ) {
-			sb.append("<table  align=\"right\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tbody>");
-			sb.append("<tr><td width=\"15\"/><td>");
+			sb.append("<table  align=\"right\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tbody>"
+						+ "<tr><td width=\"15\"/><td>");
 			addImage(url);
-			sb.append("</td></tr>");
-			sb.append("<tr><td width=\"15\" height=\"10\"></tr>");
-			sb.append("</tbody></table>");
+			sb.append(TABLE_COLUMN_END +
+					"<tr><td width=\"15\" height=\"10\"></tr>" +
+					"</tbody></table>");
 		}
 		addContent(news);
 	}
@@ -125,6 +129,8 @@ public class HtmlGenerator {
 			case RIGHT_ALIGNED_IMAGE:
 				addRightAlignedImage(news, template);
 				break;
+			case ALTERNATE_ALIGNED_IMAGE:
+				break;
 		}
 		String content = this.sb.toString();
 		this.sb = currentContent;
@@ -141,14 +147,13 @@ public class HtmlGenerator {
 	
 	private void addContent( Template template, String content, boolean addBottomPadding ) {
 		sb.append("<table cellspacing=\"0\" cellpadding=\"0\" border=\"0");
-		if ( (template != null) && ! StringUtils.isEmpty(template.getWidth()) ) {
+		if ( template != null && !StringUtils.isEmpty(template.getWidth()) ) {
 			sb.append("\" style=\"width: ");
 			sb.append(template.getWidth());			
 		}
-		sb.append("\"><tbody>");
-		sb.append("<tr><td>");		
+		sb.append("\"><tbody><tr><td>");		
 		sb.append( content );
-		sb.append("</td></tr>");		
+		sb.append(TABLE_COLUMN_END);		
 		if ( addBottomPadding ) {
 			sb.append("<tr><td height=\"10\"></td></tr>");	
 		}

@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -60,8 +61,6 @@ public class UpdateDomain extends HttpServlet {
     private static final String SP_DOMAIN_USER = "--domain-user=";
     private static final String SP_DOMAIN_PASSWORD = "--domain-password=";
 
-	
-	private static final String RESPONSE_FORMAT = "response_format";
 	
 	private static final String DEPLOYED_OPTION_TAG = "option";
 	private static final String DEPLOYED_URL_PROPERTY = "hibernate.connection.url"; 
@@ -171,7 +170,7 @@ public class UpdateDomain extends HttpServlet {
 			while ((line = stdError.readLine()) != null) {
 				response.getWriter().println(parseLine(line));
 			}
-			int exitVal = p.waitFor();
+			p.waitFor();
 			response.getWriter().println("</body></html>");
 			response.getWriter().flush();
 		} catch (Exception e) {
@@ -276,13 +275,13 @@ public class UpdateDomain extends HttpServlet {
 			return new String[]{database,suffix};
 			
 		} finally {
-			if (userStmt != null) {try {userStmt.close();} catch (SQLException e) {}}
-			if (userRs != null) {try {userRs.close();} catch (SQLException e) {}}
-			if (domainStmt != null) {try {domainStmt.close();} catch (SQLException e) {}}
-			if (domainRs != null) {try {domainRs.close();} catch (SQLException e) {}}
-			if (stmt != null) {try {stmt.close();} catch (SQLException e) {}}
-			if (rs != null) {try {rs.close();} catch (SQLException e) {}}
-			if (c != null) {try {c.close();} catch (SQLException e) {}}
+			DbUtils.closeQuietly(userStmt);
+			DbUtils.closeQuietly(userRs);
+			DbUtils.closeQuietly(domainStmt);
+			DbUtils.closeQuietly(domainRs);
+			DbUtils.closeQuietly(stmt);
+			DbUtils.closeQuietly(rs);
+			DbUtils.closeQuietly(c);
 		}
 	}
 

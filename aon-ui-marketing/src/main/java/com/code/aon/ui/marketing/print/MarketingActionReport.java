@@ -1,14 +1,8 @@
 package com.code.aon.ui.marketing.print;
 
 import static com.code.aon.ui.common.ICommonMessages.ACTION_EXPORT;
-import static com.code.aon.ui.common.ICommonMessages.COMMENT;
-import static com.code.aon.ui.common.ICommonMessages.COMPANY_DOCUMENT;
 import static com.code.aon.ui.common.ICommonMessages.ID;
-import static com.code.aon.ui.common.ICommonMessages.LOGIN_USER;
 import static com.code.aon.ui.common.ICommonMessages.QUESTION;
-import static com.code.aon.ui.common.ICommonMessages.STATUS;
-import static com.code.aon.ui.common.ICommonMessages.SURVEY;
-import static com.code.aon.ui.common.ICommonMessages.TARGET;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME;
 
 import java.io.File;
@@ -51,6 +45,7 @@ import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Question;
 import com.code.aon.registry.enumeration.QuestionType;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -139,13 +134,13 @@ public class MarketingActionReport {
             
             row = sheet.createRow(1);
             HSSFCellUtil.createCell(row, 0, AonUtil.getMessage(ID), headerCellStyle);
-            HSSFCellUtil.createCell(row, 1, AonUtil.getMessage(COMPANY_DOCUMENT), headerCellStyle);
-            HSSFCellUtil.createCell(row, 2, AonUtil.getMessage(TARGET), headerCellStyle);
-            HSSFCellUtil.createCell(row, 3, AonUtil.getMessage(COMMENT), headerCellStyle);
-            HSSFCellUtil.createCell(row, 4, AonUtil.getMessage(LOGIN_USER), headerCellStyle);
-            HSSFCellUtil.createCell(row, 5, AonUtil.getMessage(STATUS), headerCellStyle);
+            HSSFCellUtil.createCell(row, 1, AonUtil.getMessage(ICommonMessages.COMPANY_DOCUMENT), headerCellStyle);
+            HSSFCellUtil.createCell(row, 2, AonUtil.getMessage(ICommonMessages.TARGET), headerCellStyle);
+            HSSFCellUtil.createCell(row, 3, AonUtil.getMessage(ICommonMessages.COMMENT), headerCellStyle);
+            HSSFCellUtil.createCell(row, 4, AonUtil.getMessage(ICommonMessages.LOGIN_USER), headerCellStyle);
+            HSSFCellUtil.createCell(row, 5, AonUtil.getMessage(ICommonMessages.STATUS), headerCellStyle);
             HSSFCellUtil.createCell(row, 6, AonUtil.getMessage(ID), headerCellStyle);
-            HSSFCellUtil.createCell(row, 7, AonUtil.getMessage(SURVEY), headerCellStyle);
+            HSSFCellUtil.createCell(row, 7, AonUtil.getMessage(ICommonMessages.SURVEY), headerCellStyle);
 
 			cellIdx = 8;
 			for (Question q : getSurveyQuestionList()) {
@@ -251,7 +246,7 @@ public class MarketingActionReport {
 		for( ITransferObject to : bean.getList(criteria) ) {
 			SurveyResponseDetail srd = (SurveyResponseDetail) to;
 			Target target = srd.getSurveyResponse().getTarget();
-			if ( (at == null) || (! at.getTarget().equals(target)) || (! srd.getSurveyResponse().equals(sr)) ) {
+			if ( at == null || !at.getTarget().equals(target) || !srd.getSurveyResponse().equals(sr) ) {
 				Criteria _criteria = new Criteria();
 				_criteria.addEqualExpression(atBean.getFieldName(IEntityAlias.ACTION_TARGET_TARGET_ID), target.getId());
 				_criteria.addEqualExpression(atBean.getFieldName(IEntityAlias.ACTION_TARGET_ACTION_ID), action.getId());

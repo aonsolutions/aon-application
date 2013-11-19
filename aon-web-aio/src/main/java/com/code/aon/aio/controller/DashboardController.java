@@ -13,6 +13,9 @@ import java.util.Locale;
 
 import javax.faces.event.ActionEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -36,6 +39,10 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DashboardController {
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(DashboardController.class);
+
+	private static final String WHERE = " WHERE ";
+
 	private List<DashboardMessage> messages;
 	private DashboardEntry[] periodEntriesCount;
 	private List<DashboardFiscalStatus> fiscalStatus;
@@ -49,14 +56,14 @@ public class DashboardController {
 			try {
 				accountingPeriod = AccountingPeriodUtil.getDefaultPeriod();
 			} catch (ManagerBeanException e) {
-				// nada
+				LOGGER.debug(e.getMessage(), e);
 			}
 			if (accountingPeriod == null) {
 				try {
 					AccountingUtil au = new AccountingUtil();
 					accountingPeriod = au.obtainPeriod(new Date());
 				} catch (ManagerBeanException e1) {
-					// nada
+					LOGGER.debug(e1.getMessage(), e1);
 				}
 			}
 			if (accountingPeriod == null) {
@@ -67,6 +74,7 @@ public class DashboardController {
 						accountingPeriod = (com.code.aon.accounting.Period) list.get(0);
 					}
 				} catch (ManagerBeanException e) {
+					LOGGER.debug(e.getMessage(), e);
 				}
 			}
 		}
@@ -92,7 +100,7 @@ public class DashboardController {
 			try {
 				fiscalYear = Integer.parseInt(defYear);
 			} catch (NumberFormatException e) {
-				//Nada
+				LOGGER.debug(e.getMessage(), e);
 			}
 			if (fiscalYear == null) {
 				fiscalYear = CommonUtil.getYear(new Date());
@@ -128,7 +136,7 @@ public class DashboardController {
 				String select = "SELECT " + " COUNT(*)"
 						+ ", MONTH(ae.entry_date)"
 						+ " FROM account_entry ae"
-						+ " WHERE " + DomainManager.getSQLWhereClause("ae.domain")
+						+ WHERE + DomainManager.getSQLWhereClause("ae.domain")
 						+ " AND ae.account_period = ?"
 						+ " GROUP BY MONTH(ae.entry_date)";
 				c = DatabaseUtil.getConnection(AonUtil.getDomainName());
@@ -162,23 +170,23 @@ public class DashboardController {
 			String select =
 				"SELECT fm.model,fm.period,ELT(fm.status  + 1,0,1,1,1)"
 					+" FROM fs_model fm"
-					+" WHERE " + DomainManager.getSQLWhereClause("fm.domain")
+					+WHERE + DomainManager.getSQLWhereClause("fm.domain")
 					+" AND fm.year = ?"
 				+" UNION " 
 				+"SELECT '303',vat.period,ELT(vatdec.status + 1,1,1)"
 					+" FROM fs_vat vat,fs_vat_declaration vatdec"
-					+" WHERE " + DomainManager.getSQLWhereClause("vat.domain")
+					+WHERE + DomainManager.getSQLWhereClause("vat.domain")
 					+" AND vatdec.fs_vat = vat.id"
 					+" AND vat.year = ?"
 				+" UNION " 
 				+"SELECT '349',m349.period,ELT(m349.status + 1,0,1)"
 					+" FROM fs_mod349 m349"
-					+" WHERE " + DomainManager.getSQLWhereClause("m349.domain")
+					+WHERE + DomainManager.getSQLWhereClause("m349.domain")
 					+" AND m349.year = ?"
 				+" UNION " 
 				+"SELECT '347',16,ELT(m347.status + 1,0,1)"
 					+" FROM fs_mod347 m347"
-					+" WHERE " + DomainManager.getSQLWhereClause("m347.domain")
+					+WHERE + DomainManager.getSQLWhereClause("m347.domain")
 					+" AND m347.year = (? - 1)";
 			PreparedStatement ps = null;
 			ResultSet rs = null;
@@ -296,7 +304,7 @@ public class DashboardController {
 						+" FROM invoice_tax it"
 						+" INNER JOIN invoice_detail id ON it.invoice_detail = id.id"
 						+" INNER JOIN invoice i ON id.invoice = i.id"
-						+" WHERE " + DomainManager.getSQLWhereClause("it.domain")
+						+WHERE + DomainManager.getSQLWhereClause("it.domain")
 						+" AND it.tax_type = 2"
 						+" AND i.issue_date BETWEEN ? AND ?"
 						+" GROUP BY it.withholding_type";
@@ -342,7 +350,7 @@ public class DashboardController {
 	private Collection<DashboardMessage> getIntracommunitaryInvoices(Connection c) {
 		String select = "SELECT count(i.id)"
 				+" FROM invoice i"
-				+" WHERE " + DomainManager.getSQLWhereClause("i.domain")
+				+WHERE + DomainManager.getSQLWhereClause("i.domain")
 				+" AND i.transaction = 1"
 				+" AND i.issue_date BETWEEN ? AND ?";
 		PreparedStatement ps = null;
@@ -376,7 +384,7 @@ public class DashboardController {
 	private Collection<DashboardMessage> getInvestmentInvoices(Connection c) {
 		String select = "SELECT count(i.id)"
 				+" FROM invoice i"
-				+" WHERE " + DomainManager.getSQLWhereClause("i.domain")
+				+WHERE + DomainManager.getSQLWhereClause("i.domain")
 				+" AND i.issue_date BETWEEN ? AND ?"
 				+" AND i.investment = 1"
 				+" AND i.id NOT IN (SELECT invoice FROM amortization_invoice)";

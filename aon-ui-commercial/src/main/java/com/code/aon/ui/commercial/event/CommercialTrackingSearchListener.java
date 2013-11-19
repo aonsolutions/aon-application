@@ -42,11 +42,11 @@ public class CommercialTrackingSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
-		if ( (getSeller() != null) && (getSeller().getId() != null) ) {
+		if ( getSeller()!=null && getSeller().getId()!=null ) {
 			String alias = getFieldName(IEntityAlias.COMMERCIAL_TRACKING_SELLER_ID);
 			criteria.addEqualExpression(alias, getSeller().getId());			
 		}
-		if ( (getProject() != null) && (getProject().getId() != null) ) {
+		if ( getProject()!=null && getProject().getId()!=null ) {
 			String alias = getFieldName(IEntityAlias.COMMERCIAL_TRACKING_PROJECT_ID);
 			criteria.addEqualExpression(alias, getProject().getId());			
 		}

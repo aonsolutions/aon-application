@@ -56,11 +56,11 @@ public class CampaignActionTargetSearchListener extends LinesControllerListener 
 			if (! StringUtils.isEmpty(to.getComments()) ) {
 				controller.addExpression(criteria, IEntityAlias.ACTION_TARGET_COMMENTS, to.getComments());
 			}
-			if ( (to.getTarget() != null) && (to.getTarget().getId() != null) ) {
+			if ( to.getTarget()!=null && to.getTarget().getId()!=null ) {
 				String alias = controller.getFieldName(IEntityAlias.ACTION_TARGET_TARGET_ID);
 				criteria.addEqualExpression(alias, to.getTarget().getId());			
 			}
-			if ( (to.getUser() != null) && (to.getUser().getId() != null) ) {
+			if ( to.getUser()!=null && to.getUser().getId() != null ) {
 				String alias = controller.getFieldName(IEntityAlias.ACTION_TARGET_USER_ID);
 				criteria.addEqualExpression(alias, to.getUser().getId());			
 			}

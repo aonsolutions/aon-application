@@ -11,17 +11,20 @@ public class NoticeInfo {
     
 
     public void add(NoticeType noticeType, int count) {
-        if (noticeType == NoticeType.CALL) {
-        	setCallCount(count);	
-        } else if (noticeType == NoticeType.VISIT) {
-        	setVisitCount(count);
-        } else if (noticeType == NoticeType.MESSAGE) {
-        	setMessageCount(count);
-        } else if (noticeType == NoticeType.COMMUNICATION) {
-        	setCommunicationCount(count);
-        } else {
-        	// ignore.
-        }
+    	switch ( noticeType ) {
+    		case CALL:
+    			setCallCount(count);
+    			break;
+    		case VISIT:
+    			setVisitCount(count);
+    			break;
+    		case MESSAGE:
+    			setMessageCount(count);
+    			break;
+    		case COMMUNICATION:
+    			setCommunicationCount(count);
+    			break;
+    	}
     }
 
 

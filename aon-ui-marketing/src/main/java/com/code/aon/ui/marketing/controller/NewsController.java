@@ -48,7 +48,7 @@ public class NewsController extends BasicController {
 	}
 
 	public static void initController(MessageController controller, News news) {
-		boolean hasTemplate = (news.getTemplate() != null) && (news.getTemplate().getId() != null);
+		boolean hasTemplate = news.getTemplate()!=null && news.getTemplate().getId()!=null;
 		HtmlGenerator hg = new HtmlGenerator();
 		if (news.getType() == NewsType.MESSAGE) {
 			if ( hasTemplate ) {
@@ -58,7 +58,7 @@ public class NewsController extends BasicController {
 				controller.updateMessageBody(news.getContent());
 			}
 			IAttachment attach = news.getRegistryAttachment();
-			if ((attach != null) && (attach.getId() != null)) {
+			if ( attach!=null && attach.getId()!=null ) {
 				AonFile aonFile = getAonFile(attach);
 				if (aonFile != null) {
 					controller.addAttachment(aonFile);
@@ -106,7 +106,7 @@ public class NewsController extends BasicController {
 		StringBuffer url = new StringBuffer();
 		url.append( urlPreffix ).append( SERVLET_PATH ).append( NEWS_PREFFIX );
 		url.append( news.getId().toString() );
-		url.append(".").append( MimeType.MIME_HTML.getExtension() );
+		url.append('.').append( MimeType.MIME_HTML.getExtension() );
 		return url.toString();
 	}
 	

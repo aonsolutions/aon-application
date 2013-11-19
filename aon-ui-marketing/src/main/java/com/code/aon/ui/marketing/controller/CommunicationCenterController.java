@@ -1,10 +1,6 @@
 package com.code.aon.ui.marketing.controller;
 
 import static com.code.aon.ui.commercial.controller.ICommercialConstants.COMMERCIAL_TRACKING_CONTROLLER_NAME;
-import static com.code.aon.ui.commercial.controller.ICommercialConstants.PROJECT_COMMERCIAL_CONTROLLER_NAME;
-import static com.code.aon.ui.commercial.controller.ICommercialConstants.PROJECT_COMMERCIAL_LOOKUP_NAME;
-import static com.code.aon.ui.commercial.controller.ICommercialConstants.PROJECT_COMMERCIAL_SEARCH_CONTROLLER_NAME;
-import static com.code.aon.ui.commercial.controller.ICommercialConstants.TARGET_CONTROLLER_NAME;
 import static com.code.aon.ui.groupware.controller.IGroupWareConstants.ALARM_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
@@ -64,6 +60,7 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.QuestionType;
 import com.code.aon.ui.commercial.controller.CommercialTrackingController;
+import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.commercial.controller.ProjectCommercialController;
 import com.code.aon.ui.commercial.event.ProjectCommercialSearchListener;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -184,7 +181,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 			IManagerBean maBean = BeanManager.getManagerBean(MarketingAction.class);
 			this.action = (MarketingAction) maBean.createNewTo();
 		}
-		this.actionSelected = (this.action.getId() != null);
+		this.actionSelected = this.action.getId()!=null;
 	}
 
 	public Survey getSurvey() {
@@ -198,7 +195,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 			IManagerBean surveyBean = BeanManager.getManagerBean(Survey.class);
 			this.survey = (Survey) surveyBean.createNewTo();
 		}
-		this.surveySelected = (this.survey.getId() != null);
+		this.surveySelected = this.survey.getId()!=null;
 	}
 	
 	public News getNews() {
@@ -212,7 +209,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 			IManagerBean newsBean = BeanManager.getManagerBean(News.class);
 			this.news = (News) newsBean.createNewTo();
 		}
-		this.newsSelected = (this.news.getId() != null);
+		this.newsSelected = this.news.getId()!=null;
 	}
 
 	public Newsletter getNewsletter() {
@@ -226,7 +223,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 			IManagerBean bean = BeanManager.getManagerBean(Newsletter.class);
 			this.newsletter = (Newsletter) bean.createNewTo();
 		}
-		this.newsletterSelected = (this.newsletter.getId() != null);
+		this.newsletterSelected = this.newsletter.getId()!=null;
 	}
 
 	public Target getTarget() {
@@ -240,7 +237,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 			IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
 			this.target = (Target) targetBean.createNewTo();
 		}
-		this.targetSelected = (this.target.getId() != null);
+		this.targetSelected = this.target.getId()!=null;
 	}
 	
 	public ActionTarget getActionTarget() {
@@ -295,13 +292,13 @@ public class CommunicationCenterController implements IMarketingConstants {
 			}
 			if (! StringUtils.isEmpty(mainAddress.getAddress2()) ) {
 				if ( sb.length() > 0 ) {
-					sb.append( " " );
+					sb.append( ' ' );
 				}
 				sb.append( mainAddress.getAddress2() );
 			}
 			if (! StringUtils.isEmpty(mainAddress.getAddress3()) ) {
 				if ( sb.length() > 0 ) {
-					sb.append( " " );
+					sb.append( ' ' );
 				}
 				sb.append( mainAddress.getAddress3() );
 			}
@@ -374,7 +371,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 
 	public void onStartSurveyResponse( ActionEvent event ) throws ManagerBeanException {
 		this.surveyResponse = new SurveyResponse();
-		if ( (this.action != null) && (this.action.getId() != null) ) {
+		if ( this.action!=null && this.action.getId()!=null ) {
 			this.surveyResponse.setAction( this.action );
 		}
 		this.surveyResponse.setSurvey( this.survey );
@@ -424,7 +421,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		} else {
 			setSurvey(null);
 		}
-		if ( (type == ActionMediaType.PHONE) || (type == ActionMediaType.EMAIL) ) {		
+		if ( type==ActionMediaType.PHONE || type==ActionMediaType.EMAIL ) {		
 			setNews( action.getNews() );
 		} else {
 			setNews( null );
@@ -639,7 +636,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 
 	public void onActionLookupChange(LookupChangeEvent event) {
 		init();
-		this.actionSelected = (event.getNewValue() != null);	
+		this.actionSelected = event.getNewValue()!=null;	
 		if (this.actionSelected) {
 			MarketingAction action = (MarketingAction) event.getNewValue();
 			try {				
@@ -886,7 +883,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 
 	public void onTargetBackActionListener( ActionEvent event ) throws ManagerBeanException {
-		IController controller = FormUtil.getController(TARGET_CONTROLLER_NAME);
+		IController controller = FormUtil.getController(ICommercialConstants.TARGET_CONTROLLER_NAME);
 		Target _target = (Target) controller.getTo();
 		setTarget( _target );
 		initTarget( _target );
@@ -936,7 +933,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 
 	public void onNewCommercialTracking( ActionEvent event ) throws ManagerBeanException {
-		ProjectCommercialController pcc = (ProjectCommercialController) AonUtil.getRegisteredBean(PROJECT_COMMERCIAL_CONTROLLER_NAME);
+		ProjectCommercialController pcc = (ProjectCommercialController) AonUtil.getRegisteredBean(ICommercialConstants.PROJECT_COMMERCIAL_CONTROLLER_NAME);
 		pcc.setShowNewTrackingWindow(true);
 		CommercialTrackingController ctc = (CommercialTrackingController) AonUtil.getRegisteredBean(COMMERCIAL_TRACKING_CONTROLLER_NAME);
 		ctc.onReset(event);
@@ -947,13 +944,13 @@ public class CommunicationCenterController implements IMarketingConstants {
 			this.projectCommercialListener = new ControllerAdapter() {
 				@Override
 				public void afterEditSearch(ControllerEvent event) throws ControllerListenerException {
-					ProjectCommercialSearchListener pcsl = (ProjectCommercialSearchListener) AonUtil.getRegisteredBean(PROJECT_COMMERCIAL_SEARCH_CONTROLLER_NAME);
+					ProjectCommercialSearchListener pcsl = (ProjectCommercialSearchListener) AonUtil.getRegisteredBean(ICommercialConstants.PROJECT_COMMERCIAL_SEARCH_CONTROLLER_NAME);
 					pcsl.setTarget(getTarget());
 				}
 
 				@Override
 				public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-					RichLookupBean lookup = (RichLookupBean) AonUtil.getRegisteredBean(PROJECT_COMMERCIAL_LOOKUP_NAME);
+					RichLookupBean lookup = (RichLookupBean) AonUtil.getRegisteredBean(ICommercialConstants.PROJECT_COMMERCIAL_LOOKUP_NAME);
 					ProjectCommercial pc = (ProjectCommercial) lookup.getTo();
 					pc.setStatusDate(new Date());
 					pc.setSource(ProjectSource.CALL_CENTER);

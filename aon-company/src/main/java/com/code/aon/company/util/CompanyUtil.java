@@ -1,5 +1,7 @@
 package com.code.aon.company.util;
 
+import java.util.List;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -24,9 +26,9 @@ public class CompanyUtil {
 	    		Criteria criteria = new Criteria();
 	    		criteria.addEqualExpression(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), company.getId());
 	    		criteria.addEqualExpression(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
-	    		for (ITransferObject itr : registryAddressBean.getList(criteria)) {
-	    			companyGeoZone = ((RegistryAddress)itr).getGeozone();
-	    			break;
+	    		List<ITransferObject> list = registryAddressBean.getList(criteria);
+	    		if (! list.isEmpty() ) {
+	    			companyGeoZone = ((RegistryAddress)list.get(0)).getGeozone();	    			
 	    		}
 			}
 		}

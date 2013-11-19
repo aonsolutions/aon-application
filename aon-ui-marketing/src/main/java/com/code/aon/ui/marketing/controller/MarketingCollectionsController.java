@@ -49,6 +49,9 @@ public class MarketingCollectionsController {
 						SelectItem item = new SelectItem(mediaType, name);
 						actionMediaTypes.add(item);
 						break;
+					case SMS:
+					case FAX:
+						break;
 				}
 			}
 		}

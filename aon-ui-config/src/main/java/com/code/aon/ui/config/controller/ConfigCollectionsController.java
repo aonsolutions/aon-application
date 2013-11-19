@@ -270,8 +270,8 @@ public class ConfigCollectionsController {
 		List<SelectItem> series = new LinkedList<SelectItem>();
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(typeAlias), new Boolean(true));
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(seriesBean.getFieldName(typeAlias), Boolean.TRUE);
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), Boolean.TRUE);
 		if (!AonUtil.getRoleManager().isConfidentiality()) {
 			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		}

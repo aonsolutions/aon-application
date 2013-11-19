@@ -41,10 +41,8 @@ public class UserUtils {
 		if ( passwordExpired == null ) {
 			passwordExpired = Boolean.FALSE;
 			User user = getLoggedUser();
-			if ( user != null ) {
-				if ( user.getPasswordExpiration() != null ) {
-					passwordExpired = new Date().after(user.getPasswordExpiration());
-				}
+			if ( user!=null && user.getPasswordExpiration()!=null ) {
+				passwordExpired = new Date().after(user.getPasswordExpiration());
 			}		
 		}
 		return passwordExpired;
@@ -130,12 +128,25 @@ public class UserUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Integer> getCurrentUserScopeIds(User user) throws ManagerBeanException {
-		IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), user.getId());
-		Projection projection = Projection.property(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_ID));
-		return userScopeBean.getList(new ProjectionList(projection), criteria);
+	private List<Integer> getCurrentUserScopeIds(User user) {
+		List<Integer> scopes = null;
+		try {		
+			if (DomainManager.isParentDomainUserInChildDomain()) {
+				IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
+				Criteria criteria = new Criteria();
+				Projection projection = Projection.property(scopeBean.getFieldName(IEntityAlias.SCOPE_ID));
+				scopes = scopeBean.getList(new ProjectionList(projection), criteria);
+			} else {	
+				IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), user.getId());
+				Projection projection = Projection.property(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_ID));
+				scopes = userScopeBean.getList(new ProjectionList(projection), criteria);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error( "Error scopes related with the user" + getLoggedUser().getLogin(), e);
+		}		
+		return scopes;
 	}
 
 	public void addScopeFilterToCriteria(Criteria criteria, String alias) throws ManagerBeanException {
@@ -153,13 +164,13 @@ public class UserUtils {
 		}
 	}	
 
-	public Expression getNullableScopeExpression( String resolvedAlias ) throws ManagerBeanException {
+	public Expression getNullableScopeExpression( String resolvedAlias ) {
 		User user = UserUtils.getInstance().getLoggedUser();
 		String nullAlias = StringUtils.substringBeforeLast(resolvedAlias, ".");
 		Expression exp = ExpressionUtilities.getNullExpression(nullAlias);
 		if (user != null) {
 			List<Integer> list = getCurrentUserScopeIds(user);
-			if (! list.isEmpty() ) {
+			if (list!= null && !list.isEmpty() ) {
 				String ljAlias = getLeftJoinAlias(resolvedAlias);
 				Expression scopeExp = ExpressionUtilities.getInExpression(ljAlias, list);
 				exp = ExpressionUtilities.getOrExpression(exp, scopeExp);					

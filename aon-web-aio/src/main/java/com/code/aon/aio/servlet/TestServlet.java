@@ -50,7 +50,7 @@ public class TestServlet extends HttpServlet {
 			DatabaseUtil.closeQuietly(c);
 			DatabaseUtil.closeQuietly(rs);
 			DatabaseUtil.closeQuietly(ps);
-			LOGGER.info("TestServlet: ("+domainId+") response time : " + ((new Date()).getTime() - start.getTime()) + "Ms.");
+			LOGGER.info("TestServlet: ("+domainId+") response time : " + (new Date().getTime() - start.getTime()) + "Ms.");
 		}
 		
 	}

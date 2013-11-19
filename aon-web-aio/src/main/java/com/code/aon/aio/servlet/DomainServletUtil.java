@@ -18,6 +18,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -255,13 +256,13 @@ public class DomainServletUtil implements IDomainServletConstants{
 				domainStmt.close();
 			}
 		} finally {
-			if (userStmt != null) {try {userStmt.close();} catch (SQLException e) {}}
-			if (userRs != null) {try {userRs.close();} catch (SQLException e) {}}
-			if (domainStmt != null) {try {domainStmt.close();} catch (SQLException e) {}}
-			if (domainRs != null) {try {domainRs.close();} catch (SQLException e) {}}
-			if (stmt != null) {try {stmt.close();} catch (SQLException e) {}}
-			if (rs != null) {try {rs.close();} catch (SQLException e) {}}
-			if (c != null) {try {c.close();} catch (SQLException e) {}}
+			DbUtils.closeQuietly(userStmt);
+			DbUtils.closeQuietly(userRs);
+			DbUtils.closeQuietly(domainStmt);
+			DbUtils.closeQuietly(domainRs);
+			DbUtils.closeQuietly(stmt);
+			DbUtils.closeQuietly(rs);
+			DbUtils.closeQuietly(c);
 		}
 	}
 
@@ -353,14 +354,14 @@ public class DomainServletUtil implements IDomainServletConstants{
 			try {
 				Module.valueOf(mod.toUpperCase());
 			} catch (IllegalArgumentException e) {
-				StringBuilder buf = new StringBuilder();
+				StringBuilder buf = new StringBuilder(100);
 				buf.append("El módulo '");
 				buf.append(mod);
 				buf.append("' no es un módulo válido, debe ser uno de los siguientes:");
 				for (Module m:Module.values()) {
 					buf.append(" '");
 					buf.append(m.getName());
-					buf.append("'");
+					buf.append('\'');
 				}
 				throw new AonException( buf.toString() );
 			}

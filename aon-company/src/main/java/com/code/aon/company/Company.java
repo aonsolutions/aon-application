@@ -95,9 +95,15 @@ public class Company extends Registry implements ITaxInfo, IDomain {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
+		if (obj == null) {
+			return false;
+		}
+		if (this == obj) {
+			return true;
+		}
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
 		final Company o = (Company) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()

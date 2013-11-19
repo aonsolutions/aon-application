@@ -23,7 +23,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.enumeration.QuestionType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -88,7 +87,7 @@ public class CommercialCollectionsController {
 			for (OfferType type : OfferType.values()) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type, name);
-				if ((type != OfferType.AUDATEX) || (type == OfferType.AUDATEX && audatexEnabled)) {  
+				if ( type!=OfferType.AUDATEX || type==OfferType.AUDATEX && audatexEnabled) {  
 					offerTypes.add(item);
 				}
 			}

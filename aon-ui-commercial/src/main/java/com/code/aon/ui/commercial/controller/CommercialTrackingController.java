@@ -213,7 +213,7 @@ public class CommercialTrackingController extends BasicController {
 		CommercialTracking ct = (CommercialTracking) getTo(); 
 		if ( event.getNewValue() != null ) {
 			Seller seller = ((ProjectCommercial) event.getNewValue()).getSeller();
-			if ( (seller != null) && (seller.getId() != null) ) {
+			if ( seller!=null && seller.getId()!=null ) {
 				ct.setSeller( seller );
 			}
 		} else {

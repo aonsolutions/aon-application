@@ -1,36 +1,13 @@
 package com.code.aon.aio.controller;
 
 
-import static com.code.aon.common.enumeration.AppParam.AON_SUPPORT_ENABLED;
-import static com.code.aon.faces.controller.IRichConstants.SELECTED_MENU_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.APPLICATION_OPTION_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.CONFIGURATION_CATEGORY;
-import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_COMPANY;
-import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_SECURITY;
-import static com.code.aon.ui.audit.controller.IAuditConstants.MAIL_ACCOUNT_ACTION;
-import static com.code.aon.ui.audit.controller.IAuditConstants.OPTION_VM;
-import static com.code.aon.ui.audit.controller.IAuditConstants.SIGNATURE_ACTION;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
-import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_ABSENCE;
-import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_COURSE;
-import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_LOAN;
-import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_PERSON;
-import static com.code.aon.ui.groupware.controller.IGroupWareConstants.NOTE_CONTROLLER_NAME;
-import static com.code.aon.ui.groupware.controller.IGroupWareConstants.SHOW_LIST;
-import static com.code.aon.ui.groupware.controller.IGroupWareConstants.SHOW_PENDING;
-import static com.code.aon.ui.product.controller.IItemConstants.SHOW_SALES_PRICE;
-import static com.code.aon.ui.tas.controller.ITasConstants.SHOW_TAS_DATA;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.ConnectException;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -56,10 +33,12 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.faces.controller.IRichConstants;
 import com.code.aon.faces.controller.SelectedMenuController;
 import com.code.aon.groupware.Note;
 import com.code.aon.groupware.enumeration.AlarmSource;
@@ -81,7 +60,6 @@ import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.LocaleElement;
 import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
@@ -93,6 +71,7 @@ import com.code.aon.ui.groupware.controller.NoteController;
 import com.code.aon.ui.product.controller.IItemConstants;
 import com.code.aon.ui.purchase.controller.IPurchaseConstants;
 import com.code.aon.ui.sales.controller.ISalesConstants;
+import com.code.aon.ui.tas.controller.ITasConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -109,13 +88,11 @@ public class DesktopController {
 	private static final String NEW_COMPANY_TEMPLATE = "/com/code/aon/ui/company/facelet/company/form.xhtml";
 	private static final String PASSWORD_EXPIRED_TEMPLATE = "/com/code/aon/ui/config/facelet/changePassword/expiredPasswordContent.xhtml";
 	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
-	private static final int UPDATE_CONNECTION_TIMEOUT = 5000;
 	
     private ListDataModel recentNoteModel;
     
     private NoticeInfo noticeInfo;
     private TaskInfo taskInfo;
-    private boolean checkUpdateURL = true;
     private IOption homepagOption;
     private boolean adminDomain;
     private boolean supportEnabled;
@@ -150,48 +127,8 @@ public class DesktopController {
 		updateRecentNoteModel(principal);
 	}
  
-    public boolean isUpdatesAvailable() {
-    	boolean available = false;
-    	if ( checkUpdateURL ) {
-    		try {
-				URL url = new URL( getUpdateURL() + "/hasupdate.rpy" );
-				URLConnection connection = url.openConnection();
-				connection.setConnectTimeout(UPDATE_CONNECTION_TIMEOUT);
-				InputStream in = connection.getInputStream();
-				char result = (char) in.read();
-				in.close();
-				available = (result == '1');
-    		} catch (ConnectException e) {
-    			checkUpdateURL = false;
-    			LOGGER.debug( "Timeout getting updates available", e);
-			} catch (Throwable e) {
-				checkUpdateURL = false;
-				LOGGER.error( "Error getting updates available", e);
-			}
-    	}
-    	return available;
-    }	
- 
-	public String getUpdateApplicationURL() {
-		return getUpdateURL() + "/update.rpy";
-	}    
-    
-	private String getUpdateURL() {
-    	String server = null;
-		try {
-			server = InetAddress.getLocalHost().getCanonicalHostName();
-		} catch (UnknownHostException e) {
-			try {
-				server = InetAddress.getLocalHost().getHostAddress();
-			} catch (UnknownHostException e1) {
-				LOGGER.error( "Error getting server address", e1);
-			}
-		}
-    	return "http://" + server + ":7654";		
-	}    
-
     public void onSelectNote(ActionEvent event) throws ManagerBeanException{
-        NoteController noteController = (NoteController)FormUtil.getController(NOTE_CONTROLLER_NAME);
+        NoteController noteController = (NoteController)FormUtil.getController(IGroupWareConstants.NOTE_CONTROLLER_NAME);
         Note note = (Note)recentNoteModel.getRowData();
         Criteria criteria = new Criteria();
         try {
@@ -206,13 +143,11 @@ public class DesktopController {
     }
     
 	public boolean isHideHeaderContent() {
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
 		boolean hide = companyController.isHideHeaderContent();
-		if (! hide) {
-			if ( UserUtils.getInstance().isPasswordExpired() ) {
-				companyController.setHideHeaderContent(true);
-				return true;
-			}			
+		if (!hide && UserUtils.getInstance().isPasswordExpired() ) {
+			companyController.setHideHeaderContent(true);
+			return true;
 		}
 		return hide;			
 	}
@@ -220,50 +155,46 @@ public class DesktopController {
 	private void initGarage() {
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		if (! adc.isDeniedModule(Module.GARAGE.getName()) ) {
-			AonUtil.setBeanValue(ConfigConstants.SERIES, SHOW_TAS_DATA, Boolean.TRUE);
-			AonUtil.setBeanValue(IFinanceConstants.INCOME_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
-			AonUtil.setBeanValue(ICommercialConstants.OFFER_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
-			AonUtil.setBeanValue(IWarehouseConstants.DELIVERY_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
-			AonUtil.setBeanValue(IWarehouseConstants.INCOME_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
-			AonUtil.setBeanValue(ISalesConstants.SALES_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
-			AonUtil.setBeanValue(IPurchaseConstants.PURCHASE_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(ConfigConstants.SERIES, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(IFinanceConstants.INCOME_CONTROLLER_NAME, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(ICommercialConstants.OFFER_CONTROLLER_NAME, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(IWarehouseConstants.DELIVERY_CONTROLLER_NAME, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(IWarehouseConstants.INCOME_CONTROLLER_NAME, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(ISalesConstants.SALES_CONTROLLER_NAME, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(IPurchaseConstants.PURCHASE_CONTROLLER_NAME, ITasConstants.SHOW_TAS_DATA, Boolean.TRUE);
 		}
 	}
 
 	private void initAcademy() {
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		if (! adc.isDeniedModule(Module.ACADEMY.getName()) ) {
-			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_ABSENCE, Boolean.TRUE);
-			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_LOAN, Boolean.TRUE);
-			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_COURSE, Boolean.TRUE);
-			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_PERSON, Boolean.TRUE);
+			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, ICustomerConstants.SHOW_ABSENCE, Boolean.TRUE);
+			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, ICustomerConstants.SHOW_LOAN, Boolean.TRUE);
+			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, ICustomerConstants.SHOW_COURSE, Boolean.TRUE);
+			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, ICustomerConstants.SHOW_PERSON, Boolean.TRUE);
 		}
 	}
 
 	private void initHotel() {
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		if (! adc.isDeniedModule(Module.HOTEL.getName()) ) {
-			AonUtil.setBeanValue(IItemConstants.PRODUCT, SHOW_SALES_PRICE, Boolean.TRUE);
+			AonUtil.setBeanValue(IItemConstants.PRODUCT, IItemConstants.SHOW_SALES_PRICE, Boolean.TRUE);
 		}
 	}
 	
 	private IOption getOption( String actionName ) {
-		SelectedMenuController smc = (SelectedMenuController) AonUtil.getRegisteredBean(SELECTED_MENU_CONTROLLER_NAME);
+		SelectedMenuController smc = (SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME);
 		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		ApplicationOption option = aoc.getOptionMap().get(actionName);
-		if ( (option != null) && (option.getViewId() != null) ) {
-			if (! adc.isDenied(option) ) {
-				smc.setLastMenuAction(option.getGroup().getCategory().getAction());
-				return option;	
-			}
+		if ( option!=null && option.getViewId()!=null && !adc.isDenied(option) ) {
+			smc.setLastMenuAction(option.getGroup().getCategory().getAction());
+			return option;	
 		}
 		ApplicationCategory category = aoc.getCategory(actionName);
-		if ( category != null ) {
-			if (category.isRendered() && !adc.isDeniedModule(category.getAlias()) ) {
-				smc.setLastMenuAction(category.getAction());
-				return category;	
-			}
+		if ( category!=null && category.isRendered() && !adc.isDeniedModule(category.getAlias()) ) {
+			smc.setLastMenuAction(category.getAction());
+			return category;	
 		}
 		return null;
 	}
@@ -292,14 +223,14 @@ public class DesktopController {
 	
 	private void initAdminDomain() {
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
-		String[] categories = new String[]{CONFIGURATION_CATEGORY};
-		String[] groups = new String[]{GROUP_CONFIG_SECURITY, GROUP_CONFIG_COMPANY};
-		adc.enableOnly(categories, groups, MAIL_ACCOUNT_ACTION, SIGNATURE_ACTION);
+		String[] categories = new String[]{IAuditConstants.CONFIGURATION_CATEGORY};
+		String[] groups = new String[]{IAuditConstants.GROUP_CONFIG_SECURITY, IAuditConstants.GROUP_CONFIG_COMPANY};
+		adc.enableOnly(categories, groups, IAuditConstants.MAIL_ACCOUNT_ACTION, IAuditConstants.SIGNATURE_ACTION);
 	}
 	
 	private String getHomepage() {
 		String value = HOMEPAGE_DESKTOP;
-		if ( (this.homepagOption != null) && (!patchInitAction) ) {
+		if ( this.homepagOption!=null && !patchInitAction ) {
 			for( ActionSource as : this.homepagOption.getActionSources() ) {
 				as.execute();
 			}
@@ -332,14 +263,14 @@ public class DesktopController {
 	public String getTemplate() {
 		if ( adminDomain ) {
 			return ADMIN_TEMPLATE;
-		} else if ( (homepagOption != null) && patchInitAction ) {
+		} else if ( homepagOption!=null && patchInitAction ) {
 			return INIT_ACTION_TEMPLATE;
 		}
 		return DESKTOP_TEMPLATE;
 	}
 
 	private void initSupport() {
-		String value = AppParamUtil.getValue(AON_SUPPORT_ENABLED);
+		String value = AppParamUtil.getValue(AppParam.AON_SUPPORT_ENABLED);
 		if ( value != null ) {
 			Date date = new Date( NumberUtils.toLong(value) );
 			if ( DateUtils.isSameDay(date, new Date()) ) {
@@ -347,7 +278,7 @@ public class DesktopController {
 			}
 		}
 		if (! isSupportEnabled() ) {
-			AppParamUtil.removeParameter(AON_SUPPORT_ENABLED);
+			AppParamUtil.removeParameter(AppParam.AON_SUPPORT_ENABLED);
 		}
 	}
 	
@@ -362,12 +293,12 @@ public class DesktopController {
 	public void onEnableSupport(ActionEvent event) {
 		setSupportEnabled(true);
 		String value = String.valueOf(new Date().getTime());
-		AppParamUtil.insertParameter(AON_SUPPORT_ENABLED, value);
+		AppParamUtil.insertParameter(AppParam.AON_SUPPORT_ENABLED, value);
 	}
 
 	public void onDisableSupport(ActionEvent event) {
 		setSupportEnabled(false);
-		AppParamUtil.removeParameter(AON_SUPPORT_ENABLED);
+		AppParamUtil.removeParameter(AppParam.AON_SUPPORT_ENABLED);
 	}
 
 	public boolean isFiscalEnabled() {
@@ -475,7 +406,7 @@ public class DesktopController {
                     +" and al.alarm_date < NOW() "
                     +" group by nt.type ";
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			ps = conn.prepareStatement(select.toString(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps = conn.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 	        ps.setInt(1, AlarmSource.NOTICE.ordinal());
 	        ps.setInt(2, AlarmStatus.PENDING.ordinal());
 	        ps.setInt(3, principal.getUserId());
@@ -525,18 +456,18 @@ public class DesktopController {
 	public String getInitActionTemplate() throws IOException {
 		ApplicationOptionController aoc = (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
 		String template = aoc.getTemplate(IAuditConstants.INIT_ACTION_TEMPLATE, 
-			OPTION_VM, this.homepagOption);
+				IAuditConstants.OPTION_VM, this.homepagOption);
 		resetHomepage();
 		return template;
 	}		
 
 	private void initPortal( DomainSwitcher ds ) {
-		if ( ds.isChildDomain() && (this.homepagOption != null) ) {
+		if ( ds.isChildDomain() && this.homepagOption!=null ) {
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 			List<Module> modules = adc.getVisibleModules();
-			if ( (modules.size() == 1) && (modules.get(0) == Module.PAYROLL_PORTAL) ) {
-				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, SHOW_PENDING, Boolean.FALSE);
-				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, SHOW_LIST, Boolean.FALSE);
+			if ( modules.size()==1 && modules.get(0)==Module.PAYROLL_PORTAL ) {
+				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, IGroupWareConstants.SHOW_PENDING, Boolean.FALSE);
+				AonUtil.setBeanValue(IGroupWareConstants.ALARM_CONTROLLER_NAME, IGroupWareConstants.SHOW_LIST, Boolean.FALSE);
 				Map<String, Object> properties = AonUtil.getConfigurationController().getProperties();
 				properties.put( ICommonConstants.HIDE_MENU_HOME, Boolean.TRUE );
 				properties.put( ICommonConstants.HIDE_MENU_FAVORITE, Boolean.TRUE );

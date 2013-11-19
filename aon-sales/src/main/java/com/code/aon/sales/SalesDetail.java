@@ -28,7 +28,7 @@ public class SalesDetail extends SalesDetailDB implements ICalculable {
 	@Transient
 	public double getTransfered() {
 		double pending = getPendingQuantity();
-		transfered = (transfered > pending) ? pending : transfered;
+		transfered = transfered > pending ? pending : transfered;
 		return transfered;
 	}
 	public void setTransfered(double transfered) {

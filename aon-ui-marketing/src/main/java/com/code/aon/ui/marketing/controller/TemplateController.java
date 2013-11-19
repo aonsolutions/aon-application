@@ -49,7 +49,7 @@ public class TemplateController extends BasicController {
 	
 	public static void initController( MessageController controller, Template template, String body ) {
 		controller.setAppendSignature(false);
-		if ( (template != null) && ! StringUtils.isEmpty(template.getSubject()) ) {
+		if ( template!=null && !StringUtils.isEmpty(template.getSubject()) ) {
 			controller.setSubject(template.getSubject());	
 		}
 		controller.updateMessageBody(getMessageBody(template, body));
@@ -64,32 +64,28 @@ public class TemplateController extends BasicController {
 	}
 
 	public static void addHeader( Template template, StringBuffer sb ) {
-		boolean nullTemplate = (template == null) || (template.getId() == null);
+		boolean nullTemplate = template==null || template.getId()==null;
 		sb.append("<div style=\"text-align: center;");
 		if (! (nullTemplate || StringUtils.isEmpty(template.getBackgroundColor())) ) {
 			sb.append("background-color:");
 			sb.append(template.getBackgroundColor());	
 		}
-		sb.append("\">");
-		sb.append("<table style=\"margin: 0 auto;\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">");
-		sb.append("<tbody><tr><td align=\"center\">");		
+		sb.append("\">" +
+			"<table style=\"margin: 0 auto;\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">" +
+			"<tbody><tr><td align=\"center\">");		
 		if (! nullTemplate ) {
 			RegistryAttachment ht = template.getHeaderTemplate();
-			if ( (ht != null) && (ht.getId() != null) ) {
-				if (! ArrayUtils.isEmpty(ht.getData()) ) {
-					sb.append( new String(ht.getData()) );
-				}		
+			if ( ht != null && ht.getId()!=null && !ArrayUtils.isEmpty(ht.getData()) ) {
+				sb.append( new String(ht.getData()) );	
 			}
 		}		
 	}
 
 	public static void addFooter( Template template, StringBuffer sb ) {
-		if ( (template != null) && (template.getId() != null) ) {
+		if ( template!=null && template.getId()!=null ) {
 			RegistryAttachment ft = template.getFooterTemplate();
-			if ( (ft != null) && (ft.getId() != null) ) {
-				if (! ArrayUtils.isEmpty(ft.getData()) ) {
-					sb.append( new String(ft.getData()) );
-				}		
+			if ( ft!=null && ft.getId()!=null && !ArrayUtils.isEmpty(ft.getData()) ) {
+				sb.append( new String(ft.getData()) );	
 			}
 		}
 		sb.append("</td></tr></tbody></table></div>");		

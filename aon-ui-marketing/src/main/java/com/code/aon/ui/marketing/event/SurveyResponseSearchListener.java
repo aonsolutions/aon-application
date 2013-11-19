@@ -68,19 +68,19 @@ public class SurveyResponseSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
-		if ( (getSurvey() != null) && (getSurvey().getId() != null) ) {
+		if ( getSurvey()!=null && getSurvey().getId()!=null ) {
 			String alias = getFieldName(IEntityAlias.SURVEY_RESPONSE_SURVEY_ID);
 			criteria.addEqualExpression(alias, getSurvey().getId());			
 		}
-		if ( (getTarget() != null) && (getTarget().getId() != null) ) {
+		if ( getTarget()!=null && getTarget().getId()!=null ) {
 			String alias = getFieldName(IEntityAlias.SURVEY_RESPONSE_TARGET_ID);
 			criteria.addEqualExpression(alias, getTarget().getId());			
 		}
-		if ( (getAction() != null) && (getAction().getId() != null) ) {
+		if ( getAction()!=null && getAction().getId()!=null ) {
 			String alias = getFieldName(IEntityAlias.SURVEY_RESPONSE_ACTION_ID);
 			criteria.addEqualExpression(alias, getAction().getId());			
 		}
-		if ( (getUser() != null) && (getUser().getId() != null) ) {
+		if ( getUser()!=null && getUser().getId()!=null ) {
 			String alias = getFieldName(IEntityAlias.SURVEY_RESPONSE_USER_ID);
 			criteria.addEqualExpression(alias, getUser().getId());			
 		}

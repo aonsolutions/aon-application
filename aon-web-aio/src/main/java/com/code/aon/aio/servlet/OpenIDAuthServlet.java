@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.login.FailedLoginException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,17 +20,10 @@ import org.openid4java.message.AuthRequest;
 import org.openid4java.message.AuthSuccess;
 import org.openid4java.message.MessageException;
 import org.openid4java.message.MessageExtension;
-import org.openid4java.message.Parameter;
 import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchRequest;
 import org.openid4java.message.ax.FetchResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.openid4java.message.*;
-
-
-import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 
 public class OpenIDAuthServlet extends HttpServlet {
 	
@@ -62,23 +54,18 @@ public class OpenIDAuthServlet extends HttpServlet {
 			String pswd = "";
 	 
 			for (int i = 0; i < length; i++) {
-				pswd+=(key.charAt((int)(Math.random() * key.length())));
+				pswd+= key.charAt((int)(Math.random() * key.length()));
 			}
 	 
 			return pswd;
 		}
 	}
-	
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(OpenIDAuthServlet.class.getName());
 
 	// instantiate a ConsumerManager object
 	private static final ConsumerManager MANAGER = new ConsumerManager();
 
-	private static final String OPENID_EXT2_SCOPE = "openid.ext2.scope";
 	private static final String VERIFY = "verify";
 	private static final String ENDPOINT = "endpoint";
-	private static final String SCOPE = "&openid.ns.oauth=http://specs.openid.net/extensions/oauth/1.0&openid.oauth.consumer=www.example.com&openid.oauth.scope=https://www.googleapis.com/auth/calendar+https://www.googleapis.com/auth/drive+https://www.googleapis.com/auth/tasks";
 	
 	private static String email;
 	private static String pass;
@@ -279,8 +266,9 @@ public class OpenIDAuthServlet extends HttpServlet {
 		// extract the receiving URL from the HTTP request
 		StringBuffer receivingURL = httpReq.getRequestURL();
 		String queryString = httpReq.getQueryString();
-		if (queryString != null && queryString.length() > 0)
-			receivingURL.append("?").append(httpReq.getQueryString());
+		if (queryString != null && queryString.length() > 0) {
+			receivingURL.append('?').append(httpReq.getQueryString());
+		}
 
 		// verify the response; ConsumerManager needs to be the same
 		// (static) instance used to place the authentication request

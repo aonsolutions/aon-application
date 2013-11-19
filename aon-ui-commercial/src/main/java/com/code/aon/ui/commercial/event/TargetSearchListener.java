@@ -82,11 +82,11 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 			String status = getController().resolveAlias(IEntityAlias.TARGET_STATUS);
 			addEnumToCriteria(criteria, status, getTargetStatuses());
 		}
-		if ( (getItem() != null) && (getItem().getId() != null) ) {
+		if ( getItem()!=null && getItem().getId()!=null ) {
 			String item = getController().resolveAlias("Registry_items_item_id");
 			criteria.addEqualExpression(item, getItem().getId());			
 		}
-		if ( (getAction() != null) && (getAction().getId() != null) ) {
+		if ( getAction()!=null && getAction().getId()!=null ) {
 			addActionSubQuery(getAction(), criteria);			
 		}		
 		super.completeCriteria( criteria );

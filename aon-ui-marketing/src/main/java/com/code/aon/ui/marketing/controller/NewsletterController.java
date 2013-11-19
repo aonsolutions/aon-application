@@ -99,7 +99,7 @@ public class NewsletterController extends BasicController {
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.NEWSLETTER_DETAIL_NEWSLETTER_ID), newsletter.getId());
 			criteria.addOrder(bean.getFieldName(IEntityAlias.NEWSLETTER_DETAIL_POSITION));
 			NewsletterLayout layout = newsletter.getLayout();
-			boolean alternate = (layout == NewsletterLayout.ALTERNATE_ALIGNED_IMAGE);
+			boolean alternate = layout==NewsletterLayout.ALTERNATE_ALIGNED_IMAGE;
 			if ( newsletter.isHighlightFirst() ) {
 				layout = NewsletterLayout.FULL_WIDTH_IMAGE;
 			}

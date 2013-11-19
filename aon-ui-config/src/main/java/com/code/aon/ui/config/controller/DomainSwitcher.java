@@ -181,9 +181,9 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 				if (! scopes.isEmpty() ) {
 					sb.append( " or d.scope in (" );
 					sb.append( StringUtils.join(scopes, ",") );
-					sb.append( ")" );
+					sb.append( ')' );
 				}
-				sb.append( ")" );
+				sb.append( ')' );
 			}
 			sb.append(" ORDER BY d.description" );
 			Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(sb.toString());

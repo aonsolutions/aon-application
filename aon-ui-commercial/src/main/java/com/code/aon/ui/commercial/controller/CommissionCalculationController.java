@@ -7,6 +7,9 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.OfferDetailCommission;
 import com.code.aon.commercial.Target;
@@ -34,6 +37,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class CommissionCalculationController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CommissionCalculationController.class);
+	
 	private Seller seller;
 	private Date fromDate;
 	private Date toDate;
@@ -167,7 +172,7 @@ public class CommissionCalculationController {
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
 			} catch (DAOException daoe) {
-				String msg =  "Unable to rollback transaction!";
+				LOGGER.error("Unable to rollback transaction!", daoe);
 			}
 			String msg =  "Error calculating commissions. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);

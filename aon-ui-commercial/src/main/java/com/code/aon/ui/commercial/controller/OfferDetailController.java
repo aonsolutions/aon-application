@@ -132,13 +132,13 @@ public class OfferDetailController extends LinesController implements ICommercia
 		if (iterator.hasNext()) {
 			SalesDetail salesDetail = (SalesDetail)iterator.next();
 			info.append(AonUtil.getMessage(TRANSFERED_TO));
-			info.append(" ");
+			info.append(' ');
 			info.append(AonUtil.getMessage(INVOICE_SALES));
-			info.append(" ");
+			info.append(' ');
 			info.append(salesDetail.getSales().getReferenceCode());
 			info.append(" - ");
 			info.append(AonUtil.getMessage(LINE));
-			info.append(" ");
+			info.append(' ');
 			info.append(salesDetail.getLine());
 		}
 		return info.toString();

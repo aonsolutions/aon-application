@@ -1,26 +1,9 @@
 package com.code.aon.ui.commercial.controller;
 
 
-import static com.code.aon.ui.common.ICommonMessages.ACTIVE;
-import static com.code.aon.ui.common.ICommonMessages.ADDRESS;
-import static com.code.aon.ui.common.ICommonMessages.ALIAS;
-import static com.code.aon.ui.common.ICommonMessages.BLOCKED;
-import static com.code.aon.ui.common.ICommonMessages.CELLULAR;
-import static com.code.aon.ui.common.ICommonMessages.COMPANY_NAME;
-import static com.code.aon.ui.common.ICommonMessages.DOCUMENT;
-import static com.code.aon.ui.common.ICommonMessages.ENTITY;
-import static com.code.aon.ui.common.ICommonMessages.FAX;
-import static com.code.aon.ui.common.ICommonMessages.ID;
-import static com.code.aon.ui.common.ICommonMessages.INACTIVE;
-import static com.code.aon.ui.common.ICommonMessages.PHONE;
-import static com.code.aon.ui.common.ICommonMessages.POSTAL_CODE;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_CITY;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_EMAIL;
-import static com.code.aon.ui.common.ICommonMessages.REGISTRY_NATIONALITY;
-import static com.code.aon.ui.common.ICommonMessages.STATE;
-import static com.code.aon.ui.common.ICommonMessages.STATUS;
-import static com.code.aon.ui.common.ICommonMessages.TARGET_ADVERTISING;
-import static com.code.aon.ui.common.ICommonMessages.WEB;
+import static com.code.aon.ui.commercial.controller.ICommercialConstants.CUSTOMER_CONTROLLER_NAME;
+import static com.code.aon.ui.commercial.controller.ICommercialConstants.NAVIGATION_TARGET_FORM;
+import static com.code.aon.ui.commercial.controller.ICommercialConstants.TARGET_CONTROLLER_NAME;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -64,12 +47,13 @@ import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.sales.bridge.util.SalesBridgeUtil;
 import com.code.aon.seller.Seller;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.report.export.ReportExporter;
 import com.code.aon.ui.util.AonUtil;
 
-public class TargetController extends RegistryController implements ICommercialConstants {
+public class TargetController extends RegistryController implements ICommonMessages {
 
 	public String getAliasPreffix() {
 		return getPojoShortName();

@@ -45,12 +45,12 @@ public class Supplier extends SupplierDB implements ITaxInfo, IScopable, IRegist
 
 	@Transient
 	public boolean isVatFree() {
-		return (getTransaction() != InvoiceTransactionType.NATIONAL);
+		return getTransaction() != InvoiceTransactionType.NATIONAL;
 	}
 	
 	@Transient
 	public boolean isRetentionFree() {
-		return (getTransaction() != InvoiceTransactionType.NATIONAL && getTransaction() != InvoiceTransactionType.OTHER_ISP);
+		return getTransaction()!=InvoiceTransactionType.NATIONAL && getTransaction()!=InvoiceTransactionType.OTHER_ISP;
 	}
 	
 }

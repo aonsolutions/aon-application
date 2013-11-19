@@ -28,7 +28,7 @@ public class OfferDetailCompositeListener extends ControllerAdapter {
 					offerDetail.setDescription(composition.getDescription());
 					offerDetail.setQuantity(CommonUtil.round(quantity * composition.getQuantity(), 3));
 					offerDetail.setPrice(obtainCompositionItemPrice(offerDetail, composition, controller.getPriceStrategy()));
-					offerDetail.setDiscountExpression(obtainCompositionDiscount(offerDetail, composition));
+					offerDetail.setDiscountExpression(obtainCompositionDiscount(composition));
 					offerDetail = (OfferDetail)controller.getManagerBean().insert(offerDetail);
 				}
 			} catch (ManagerBeanException e) {
@@ -46,12 +46,10 @@ public class OfferDetailCompositeListener extends ControllerAdapter {
 		return price;
 	}
 
-	private DiscountExpression obtainCompositionDiscount(OfferDetail offerDetail, ItemComposition composition) {
+	private DiscountExpression obtainCompositionDiscount(ItemComposition composition) {
 		DiscountExpression discountExpr = new DiscountExpression("0.0");
-		if (composition.getItem().getProduct().isCompositionPrice()) {
-			if (composition.getDiscountExpression() != null) {
-				discountExpr = composition.getDiscountExpression();
-			}
+		if (composition.getItem().getProduct().isCompositionPrice() && composition.getDiscountExpression() != null) {
+			discountExpr = composition.getDiscountExpression();
 		}
 		return discountExpr;
 	}

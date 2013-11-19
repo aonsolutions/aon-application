@@ -348,7 +348,7 @@ public class OfferController extends BasicController implements ISignatureContro
 		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ID), getOffer().getId());
 		criteria.addNotNullExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_ID));
 		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.PENDING);
-		return (offerDetailBean.getCount(criteria) > 0);
+		return offerDetailBean.getCount(criteria) > 0;
 	}
 
 	public boolean isLinesSold() throws ManagerBeanException {
@@ -357,7 +357,7 @@ public class OfferController extends BasicController implements ISignatureContro
 		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ID), getOffer().getId());
 		criteria.addNotNullExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_ID));
 		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_SALE);
-		return (offerDetailBean.getCount(criteria) > 0);
+		return offerDetailBean.getCount(criteria) > 0;
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -408,8 +408,8 @@ public class OfferController extends BasicController implements ISignatureContro
 			while(iter.hasNext()){
 				RegistryAddress address = (RegistryAddress)iter.next();
 				String addressLabel = address.getFullAddress();
-				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
-				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
+				addressLabel = (addressLabel.length()>30?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
+				addressLabel = addressLabel.length()>48?addressLabel.substring(0,45)+"...":addressLabel;
 				SelectItem item = new SelectItem(address, addressLabel);
 				addresses.add(item);
 			}
@@ -430,7 +430,7 @@ public class OfferController extends BasicController implements ISignatureContro
 			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), id);
-			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), Boolean.TRUE);
 			criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));
 			Iterator<?> iterator = projectBean.getList(criteria).iterator();
 			while(iterator.hasNext()) {

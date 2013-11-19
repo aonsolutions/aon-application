@@ -83,7 +83,7 @@ public class CampaignActionTargetController extends LinesController {
 				target.setId( targetId );
 				at.setTarget( target );
 				session.insert(at);
-				if ( (++i % 1000) == 0 ) {
+				if ( ++i % 1000 == 0 ) {
 					logger.info( AonUtil.getMessage(ICommonMessages.ACTION_ADD_TARGETS_STATUS, i) );
 				}
 			}

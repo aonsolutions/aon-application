@@ -1,13 +1,5 @@
 package com.code.aon.ui.marketing.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.SEND_EMAIL_FINISH;
-import static com.code.aon.ui.common.ICommonMessages.TARGET_BULK_EMAIL_SENT;
-import static com.code.aon.ui.common.ICommonMessages.TARGET_EMAIL_SENT;
-import static com.code.aon.ui.common.ICommonMessages.TARGET_INVALID_EMAIL;
-import static com.code.aon.ui.common.ICommonMessages.TARGET_SEND_BULK_EMAIL_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.TARGET_SEND_EMAIL_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.TARGET_WITHOUT_COMMERCIAL_EMAIL;
-
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -35,6 +27,7 @@ import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
@@ -59,7 +52,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 				if ( EmailValidator.getInstance().isValid(email) ) {
 					emails.add(email);
 				} else {
-					log( TARGET_INVALID_EMAIL, true, target, email );
+					log( ICommonMessages.TARGET_INVALID_EMAIL, true, target, email );
 				}							
 			}
 			return emails;
@@ -104,7 +97,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 		for( ActionTarget actionTarget : list ) {    		
 			List<String> targetEmails = getEmails(actionTarget.getTarget());
 			if ( targetEmails.isEmpty() ) {					
-				String rawText = AonUtil.getMessage(TARGET_WITHOUT_COMMERCIAL_EMAIL);
+				String rawText = AonUtil.getMessage(ICommonMessages.TARGET_WITHOUT_COMMERCIAL_EMAIL);
 				logger.error( MessageFormat.format(rawText, actionTarget.getTarget().getRegistry().getFullName()) );				
 				actionTarget.setStatus(ActionTargetStatus.CANCEL);				
 			} else {
@@ -126,18 +119,18 @@ public class EmailCommunicationController implements IMarketingConstants {
 			}
 			updateActionTarget(actionTarget);
 		}		
-		return (status == ActionTargetStatus.SENT);
+		return status==ActionTargetStatus.SENT;
 	}
 	
 	private void logResult( List<ActionTarget> list, int offset, boolean sent) throws ManagerBeanException {
 		LogPanelController logger = LogPanelController.getInstance();
 		if ( list.size() > 1) {
 			if ( sent ) {
-				String rawText = AonUtil.getMessage(TARGET_BULK_EMAIL_SENT);
-				logger.info( MessageFormat.format(rawText, offset+1, (offset + list.size())) );
+				String rawText = AonUtil.getMessage(ICommonMessages.TARGET_BULK_EMAIL_SENT);
+				logger.info( MessageFormat.format(rawText, offset+1, offset + list.size()) );
 			} else {
-				String rawText = AonUtil.getMessage(TARGET_SEND_BULK_EMAIL_ERROR);
-				logger.error( MessageFormat.format(rawText, offset+1, (offset + list.size())) );				
+				String rawText = AonUtil.getMessage(ICommonMessages.TARGET_SEND_BULK_EMAIL_ERROR);
+				logger.error( MessageFormat.format(rawText, offset+1, offset + list.size()) );				
 			}
 		}
 	}
@@ -146,9 +139,9 @@ public class EmailCommunicationController implements IMarketingConstants {
 		if ( list.size() == 1 ) {
 			Target target = ((ActionTarget)list.get(0)).getTarget();
 			if ( status == ActionTargetStatus.SENT ) {
-				log( TARGET_EMAIL_SENT, false, target, recipients );				
+				log( ICommonMessages.TARGET_EMAIL_SENT, false, target, recipients );				
 			} else {
-				log( TARGET_SEND_EMAIL_ERROR, true, target, recipients );				
+				log( ICommonMessages.TARGET_SEND_EMAIL_ERROR, true, target, recipients );				
 			}				
 		}
 	}	
@@ -201,7 +194,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
 			messageController.finishMessage();
-			logger.info( AonUtil.getMessage(SEND_EMAIL_FINISH) );			
+			logger.info( AonUtil.getMessage(ICommonMessages.SEND_EMAIL_FINISH) );			
 		}
 		getCommunicationController().onInit(event);
     }
