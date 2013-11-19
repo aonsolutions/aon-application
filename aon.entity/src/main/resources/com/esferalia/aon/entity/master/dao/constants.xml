@@ -311,8 +311,8 @@
 		<hibernate names="id,agreement.id,calendar.id,enterpriseActivity.id,workPlace.id,workPlace.enterprise.id"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.Salary">
-		<alias     names="id,address,broadcastDate,category,commonBase,contract_id,contract_person_id,contract_workPlace_id,contract_workPlace_enterprise_id,domain,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
-		<hibernate names="id,address,broadcastDate,category,commonBase,contract.id,contract.person.id,contract.workPlace.id,contract.workPlace.enterprise.id,domain,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
+		<alias     names="id,address,chargeDate,category,commonBase,contract_id,contract_person_id,contract_workPlace_id,contract_workPlace_enterprise_id,domain,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
+		<hibernate names="id,address,chargeDate,category,commonBase,contract.id,contract.person.id,contract.workPlace.id,contract.workPlace.enterprise.id,domain,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
 	</bean>
 
 	<!-- ** AON PMS  **************************************************** -->
