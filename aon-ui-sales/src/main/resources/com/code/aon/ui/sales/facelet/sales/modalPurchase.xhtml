@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showPurchaseWindow">
 		<c:if test="#{sales.showPurchaseWindow}">
 			<rich:modalPanel id="purchaseModalPanel" minHeight="500"
-				minWidth="850" rendered="#{sales.showPurchaseWindow}"
+				minWidth="950" rendered="#{sales.showPurchaseWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -37,7 +37,6 @@
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
 								
-								
 									<h:panelGrid columns="2" cellspacing="0" cellpadding="0"
 										columnClasses="aon-finding-subtitle, aon-finding-toolbar">
 							
@@ -47,36 +46,45 @@
 										
 										<aon:div styleClass="aon-finding-toolbar-item-group">
 											<aon:commandButton id="purchase-accept"
-												rendered="#{!sales.purchaseGenerator.generated}"			
+												rendered="#{!sales.purchaseGenerator.generated}"
 												value="#{bundle.aon_generate}"
 												actionListener="#{sales.purchaseGenerator.onExecute}"
-												styleClass="aon-finding-toolbar-item aon-icon-accept">
-										
-											</aon:commandButton>
+												styleClass="aon-finding-toolbar-item aon-icon-accept" />
+												
 											<aon:commandButton id="purchase-cancel"
-												rendered="#{!sales.purchaseGenerator.generated}"			
+												rendered="#{!sales.purchaseGenerator.generated}"
 												value="#{bundle.aon_cancel}"
 												reRender="showPurchaseWindow"
 												immediate="true"
 												styleClass="aon-finding-toolbar-item aon-icon-cancel">
-												<f:setPropertyActionListener
-													target="#{sales.showPurchaseWindow}"
+												<f:setPropertyActionListener target="#{sales.showPurchaseWindow}"
 													value="#{false}" />
 											</aon:commandButton>
+											
+											<aon:div style="display:inline;float:right;margin-right:0;"
+												rendered="#{!sales.purchaseGenerator.generated}">
+												<aon:selectBooleanCheckbox id="Purchase_customer_address"
+													value="#{sales.purchaseGenerator.customerShippingAddress}" />
+												<aon:outputLabel for="Purchase_customer_address"
+													value="#{bundle.sales_purchase_send_to_customer}"
+													styleClass="aon-finding-toolbar-item-no-icon" />
+
+												<aon:outputLabel for="massiveDiscountExpr" 
+													value="#{bundle.aon_discount}: "
+													styleClass="aon-margin-left" />
+												<aon:inputText id="massiveDiscountExpr"
+													value="#{sales.purchaseGenerator.massiveDiscountExpr}" size="5" />
+												<aon:commandButton value="#{bundle.aon_apply_to_all}"
+													actionListener="#{sales.purchaseGenerator.onApplyMassiveDiscount}"
+													styleClass="aon-finding-toolbar-item aon-icon-accept" />
+											</aon:div>
 										</aon:div>
 									</h:panelGrid>
 								
 								</aon:div>
-								<aon:div styleClass="aon-scroll-area">
 
+								<aon:div>
 									<c:if test="#{!sales.purchaseGenerator.generated}">
-									<aon:panel>
-										<aon:selectBooleanCheckbox id="Purchase_customer_address"
-											value="#{sales.purchaseGenerator.customerShippingAddress}" />
-										<aon:outputLabel for="Purchase_customer_address"
-											styleClass="aon-italic aon-margin-right aon-bold"
-											value="#{bundle.sales_purchase_send_to_customer}" />
-									</aon:panel>
 									
 										<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 											<ui:param name="dataTableId" value="salesDetails" />
@@ -89,8 +97,9 @@
 										
 											<ui:define name="beginFormListContent">
 												<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
+													title="#{bundle.aon_warning_supplier_not_selected}"
 													styleClass="aon-icon-exception"
-													rendered="#{to.supplier.id==null and formList}" />
+													rendered="#{to.supplier.id==null and formList and !to.readOnly}" />
 											</ui:define>
 											
 											<ui:define name="columns">
@@ -99,14 +108,16 @@
 													<f:facet name="header">
 														<aon:outputLabel value="#{bundle.aon_line}" />
 													</f:facet>
-													<aon:outputText value="#{to.detail.line}" />
+													<aon:outputText value="#{to.detail.line}"
+														styleClass="#{to.readOnly?'aon-commandLink-disabled aon-italic':'none'}" />
 												</aon:column>
 										
 												<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 													<f:facet name="header">
 														<aon:outputLabel value="#{bundle.aon_product}" />
 													</f:facet>
-													<aon:outputText value="#{to.detail.description}">
+													<aon:outputText value="#{to.detail.description}"
+														styleClass="#{to.readOnly?'aon-commandLink-disabled aon-italic':'none'}">
 														<aon:abbreviateConverter maxWidth="64" />
 													</aon:outputText>
 												</aon:column>
@@ -116,14 +127,14 @@
 														<aon:outputLabel for="Supplier_id" value="#{bundle.aon_supplier}" />
 													</f:facet>
 	
-													<aon:outputText value="#{to.supplier.registry.name}" rendered="#{formList}" />
+													<aon:outputText value="#{to.supplier.registry.name}" rendered="#{formList and !to.readOnly}" />
 													
 													<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
 														<ui:param name="lookupTo" value="#{controller.to.supplier}" />
 														<ui:param name="lookupInputSuggestValue" value="#{lookupTo.registry.name}" />
 														<ui:param name="skipLabel" value="#{true}" />
 														<ui:param name="idRequired" value="#{true}" />						
-														<ui:param name="lookupInputTextWidth" value="100" />						
+														<ui:param name="lookupInputSuggestSize" value="40" />						
 														<ui:param name="lookupRendered" value="#{formEdit}" />						
 													</ui:include>
 												</aon:column>
@@ -133,7 +144,7 @@
 														<aon:outputLabel for="PurchaseDetail_discount" value="#{bundle.aon_discount}" />
 													</f:facet>
 													<aon:outputText value="#{to.detail.discountExpression.discountExpr}"
-														rendered="#{formList}">
+														rendered="#{formList and !to.readOnly}">
 														<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 													</aon:outputText>
 													<aon:inputText id="PurchaseDetail_discount" 

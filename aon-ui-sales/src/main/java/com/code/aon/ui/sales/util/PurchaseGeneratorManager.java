@@ -59,11 +59,21 @@ public class PurchaseGeneratorManager {
 	private DataModel model;
 	private Sales sales;
 	private TempPurchaseDetail to;
+	private String massiveDiscountExpr;
+	
 	
 	public boolean isNew() {
 		return false;
 	}
 	
+	public String getMassiveDiscountExpr() {
+		return massiveDiscountExpr;
+	}
+
+	public void setMassiveDiscountExpr(String massiveDiscountExpr) {
+		this.massiveDiscountExpr = massiveDiscountExpr;
+	}
+
 	public boolean isGenerated() {
 		return sales.isPurchaseGenerated();
 	}
@@ -78,6 +88,9 @@ public class PurchaseGeneratorManager {
 	public void onSelect(ActionEvent event) {
 		if ( this.model.isRowAvailable() ) {
 			setTo((TempPurchaseDetail) this.model.getRowData());
+			if(getTo().isReadOnly()){
+				onCancel(event);
+			}
 		}
 	}
 	
@@ -114,6 +127,7 @@ public class PurchaseGeneratorManager {
 		IManagerBean bean = BeanManager.getManagerBean(SalesDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.SALES_DETAIL_LINE));
 		return bean.getList(criteria);
 	}
 	
@@ -147,6 +161,7 @@ public class PurchaseGeneratorManager {
 			detail.setDiscountExpression(new DiscountExpression("0"));
 			temp.setDetail(detail);
 			temp.setSupplier(supplier);
+			temp.setReadOnly(detail.getQuantity()==0);
 			getTempPurchaseDetail().add(temp);
 		}
 	}
@@ -180,6 +195,18 @@ public class PurchaseGeneratorManager {
 		controller.onLoad(event, purchase.getId(), "sales_form", null);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public void onApplyMassiveDiscount (ActionEvent event) {
+		try {
+			for(TempPurchaseDetail purchaseDetail: (List<TempPurchaseDetail>)getModel().getWrappedData()){
+				purchaseDetail.getDetail().getDiscountExpression().setDiscountExpr(getMassiveDiscountExpr());
+			}
+		} catch (Exception e) {
+			AonUtil.addErrorMessage("No se ha podido aplicar el descuento.");
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+	}
+	
 	public void onExecute(ActionEvent event){
 		List<Purchase> purchaseList = null;
 		
@@ -195,12 +222,22 @@ public class PurchaseGeneratorManager {
 			// begin process 
 			purchaseList = new LinkedList<Purchase>();
 			Purchase purchase = null;
+			List<TempPurchaseDetail> readOnlyDetails = new LinkedList<TempPurchaseDetail>();
 			for(TempPurchaseDetail temp: getTempPurchaseDetail()){
-				if(purchase==null || !purchase.getSupplier().equals(temp.getSupplier())){
-					purchase = createPurchase(temp.getDetail().getSales(), temp.getSupplier());
-					purchaseList.add(purchase);
+				if(!temp.isReadOnly()){
+					if(purchase==null || !purchase.getSupplier().equals(temp.getSupplier())){
+						purchase = createPurchase(temp.getDetail().getSales(), temp.getSupplier());
+						purchaseList.add(purchase);
+					}
+					createPurchaseDetails(purchase, temp.getDetail(), temp.isReadOnly());
+				} else {
+					readOnlyDetails.add(temp);
 				}
-				createPurchaseDetails(purchase, temp.getDetail());
+			}
+			for(TempPurchaseDetail temp: readOnlyDetails){
+				for(Purchase pur: purchaseList){
+					createPurchaseDetails(pur, temp.getDetail(), temp.isReadOnly());
+				}
 			}
 			// end process 
 			HibernateUtil.commitTransaction(sessionName);
@@ -226,7 +263,8 @@ public class PurchaseGeneratorManager {
 	
 	private void beforePurchasesCreate() {
 		for(TempPurchaseDetail temp: getTempPurchaseDetail()){
-			if(temp.getSupplier()==null || temp.getSupplier().getId()==null){
+			if(!temp.isReadOnly() && (temp.getSupplier()==null || temp.getSupplier().getId()==null)){
+				AonUtil.addErrorMessage("El proveedor es obligatorio.");
 				throw new AbortProcessingException("El proveedor es obligatorio.");
 			}
 		}
@@ -238,7 +276,11 @@ public class PurchaseGeneratorManager {
 			IManagerBean bean = BeanManager.getManagerBean(Sales.class);
 			sales.setPurchaseGenerated(true);
 			StringBuffer buf = new StringBuffer();
-	    	for(Purchase purchase: purchaseList){
+			if(StringUtils.isNotBlank(sales.getRemarks())){
+				buf.append(sales.getRemarks());
+				buf.append("\n");
+			}
+			for(Purchase purchase: purchaseList){
 	    		buf.append(AonUtil.getMessage(SALES_TO_PURCHASE) + " ");
 	    		buf.append(purchase.getReferenceCode());
 	    		buf.append("\n");
@@ -272,7 +314,7 @@ public class PurchaseGeneratorManager {
 		purchase.setDocumentType(PurchaseDocumentType.NORMAL);
 		purchase.setSecurityLevel(sales.getSecurityLevel());
 		purchase.setStatus(PurchaseStatus.PENDING);
-		purchase.setComments(null);
+		purchase.setComments(sales.getComments());
 		if(StringUtils.isNotBlank(sales.getPurchaseReference())){
 			String message = AonUtil.getMessage(SALES_TO_PURCHASE);
 			purchase.setRemarks(message + ": " +  sales.getPurchaseReference());
@@ -333,21 +375,23 @@ public class PurchaseGeneratorManager {
 		return (Purchase) purchaseBean.insert(purchase);
 	}
 	
-	private void createPurchaseDetails(Purchase purchase, SalesDetail salesDetail) throws ManagerBeanException {
+	private void createPurchaseDetails(Purchase purchase, SalesDetail salesDetail, boolean readOnly) throws ManagerBeanException {
 		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 		PurchaseDetail detail = new PurchaseDetail();
 		detail.setItem(salesDetail.getItem());
 		detail.setPurchase(purchase);
-		detail.setProject(null); 
-		detail.setProposalDetail(null);
-		detail.setLine(calculateNextLine(purchase));
+		detail.setLine(salesDetail.getLine());
 		detail.setDescription(salesDetail.getDescription());
-		detail.setQuantity(salesDetail.getQuantity());
-		detail.setPrice(obtainItemPrice(purchase.getSupplier(), salesDetail.getItem()));
-		detail.setDiscountExpression(salesDetail.getDiscountExpression());
-		detail.setTaxes(salesDetail.getTaxes());
 		detail.setStatus(PurchaseDetailStatus.PENDING);
-		detail.setDelivered(0);
+		if(!readOnly){
+			detail.setProject(null); 
+			detail.setProposalDetail(null);
+			detail.setQuantity(salesDetail.getQuantity());
+			detail.setPrice(obtainItemPrice(purchase.getSupplier(), salesDetail.getItem()));
+			detail.setDiscountExpression(salesDetail.getDiscountExpression());
+			detail.setTaxes(salesDetail.getTaxes());
+			detail.setDelivered(0);
+		}
 		purchaseDetailBean.insert(detail);
 	}
 	
@@ -405,6 +449,7 @@ public class PurchaseGeneratorManager {
 	public class TempPurchaseDetail {
 		private SalesDetail detail;
 		private Supplier supplier;
+		private boolean readOnly;
 		public SalesDetail getDetail() {
 			return detail;
 		}
@@ -417,12 +462,22 @@ public class PurchaseGeneratorManager {
 		public void setSupplier(Supplier supplier) {
 			this.supplier = supplier;
 		}
+		public boolean isReadOnly() {
+			return readOnly;
+		}
+		public void setReadOnly(boolean readOnly) {
+			this.readOnly = readOnly;
+		}
 	}
 	
 	class TempPurchaseDetailComparator implements Comparator<TempPurchaseDetail> {
 
 		@Override
 		public int compare(TempPurchaseDetail o1, TempPurchaseDetail o2) {
+			if( o1.getSupplier()==null || o1.getSupplier().getId()==null 
+				|| o2.getSupplier()==null || o2.getSupplier().getId()==null){
+				return -1;
+			}
 			return o1.getSupplier().getId().compareTo(o2.getSupplier().getId());
 		}
 		
