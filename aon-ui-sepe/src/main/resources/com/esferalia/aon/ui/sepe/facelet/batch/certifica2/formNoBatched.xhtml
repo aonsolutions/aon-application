@@ -3,16 +3,18 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 	
 	
 	<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/formNoBatched.xhtml">
-		<ui:param name="controller" value="#{certifica2Batch}" />
+		
 		<ui:param name="controllerList" value="#{certifica2List}" />
 		<ui:param name="checkReRender" value="listToolBarDiv, listDataDiv" />
-		<ui:param name="enterpriseLookupDisabled" value="#{certifica2BatchDetail.model.rowCount gt 0}" />
+		<ui:param name="checkboxTooltipText" value="El trabajador ya existe en la remesa." />
+		
 		
 		<ui:define name="afterToolbarContent" >
 				<aon:div style="float:right;width:300px;">

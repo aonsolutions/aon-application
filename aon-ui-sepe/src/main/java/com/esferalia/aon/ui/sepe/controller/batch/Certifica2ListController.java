@@ -167,16 +167,46 @@ public class Certifica2ListController extends BasicController {
 	}
 	
 	public void checkValidEndDate(){
-		if( (getEndDateFrom()!=null && getEndDateFrom().after(new Date()))
-				|| (getEndDateTo()!=null && getEndDateTo().after(new Date()))){
+		if( getEndDateFrom()!=null && getEndDateFrom().after(new Date()) ){
+			setEndDateFrom(new Date());
+			AonUtil.addErrorMessage("La fecha de fin no puede ser porterior al día de hoy.");
+			throw new AbortProcessingException("La fecha de fin no puede ser porterior al día de hoy.");
+		}
+		if( getEndDateTo()!=null && getEndDateTo().after(new Date()) ){
+			setEndDateTo(new Date());
 			AonUtil.addErrorMessage("La fecha de fin no puede ser porterior al día de hoy.");
 			throw new AbortProcessingException("La fecha de fin no puede ser porterior al día de hoy.");
 		}
 	}
+	
+	public boolean isRowDisabled(){
+		try {
+			if(this.getModel().isRowAvailable()){
+				return isRowDisabled((Contract) this.getModel().getRowData());
+			}
+		} catch (ManagerBeanException e) {
+			// TODO
+		}
+		return false;
+	}
+	
+	public boolean isRowDisabled(Contract contract) throws ManagerBeanException{
+		LinesController controller = (LinesController) AonUtil.getRegisteredBean(ISepeConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
+		for(ITransferObject to: (List<ITransferObject>)controller.getModel().getWrappedData()){
+			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
+			if(detail.getContract().getPerson().getId().equals(contract.getPerson().getId())){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public void initializeModel() {
-		if( !DomainManager.isDomainManagementAvailable() || (getEnterprise()!=null && getEnterprise().getId()!=null) ){
+		BasicController controller = (BasicController) AonUtil.getRegisteredBean(ISepeConstants.CERTIFICA2_BATCH_CONTROLLER_NAME);
+		if( !DomainManager.isDomainManagementAvailable() 
+				|| (getEnterprise()!=null && getEnterprise().getId()!=null)
+				|| controller.isNew()){
 			super.initializeModel();
 		}
 	}
@@ -256,7 +286,7 @@ public class Certifica2ListController extends BasicController {
 		}
 	}
 	
-	public class RemesableContract implements Serializable {
+	public class RemesableContract implements Comparable<RemesableContract>, Serializable {
 		
 		private static final long serialVersionUID = -6700232454851910313L;
 
@@ -274,6 +304,27 @@ public class Certifica2ListController extends BasicController {
 		}
 		public void setSuspensionCause(SuspensionCause suspensionCause) {
 			this.suspensionCause = suspensionCause;
+		}
+		@Override
+		public int compareTo(RemesableContract o) {
+			if(o.getContract().getWorkPlace().getEnterprise().getId().compareTo(getContract().getWorkPlace().getEnterprise().getId())==0
+				&& o.getContract().getPerson().getId().compareTo(getContract().getPerson().getId())==0
+				&& o.getContract().getEndDate().compareTo(getContract().getEndDate())==0){
+				return 0;
+			}
+			if(o.getContract().getWorkPlace().getEnterprise().getId().compareTo(getContract().getWorkPlace().getEnterprise().getId())<=0){
+				if(o.getContract().getPerson().getId().compareTo(getContract().getPerson().getId())<=0){
+					if(o.getContract().getEndDate().compareTo(getContract().getEndDate())<=0){
+						return 1;
+					} else {
+						return -1;
+					}
+				} else {
+					return -1;
+				}
+			} else {
+				return -1;
+			}
 		}
 	}
 

@@ -30,6 +30,8 @@ public class Certifica2BatchControllerListener extends ControllerAdapter {
 		batch.setStatus(FileStatus.PENDING);
 		batch.setDate(new Date());
 		batch.setEnterprise(utils.getCurrentDomainEnterprise());
+		controller.setNewBatchWizard( null );
+		controller.getNewBatchWizard().init();
 	}
 	
 	@Override
@@ -53,6 +55,14 @@ public class Certifica2BatchControllerListener extends ControllerAdapter {
 			CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
 			certificadosController.initialize(batch);
 		}
+	}
+	
+	@Override
+	public void afterBeanReset(ControllerEvent event)
+			throws ControllerListenerException {
+		Certifica2BatchController controller = (Certifica2BatchController) this.getController();
+		controller.setNewBatchWizard( null );
+		controller.getNewBatchWizard().init();
 	}
 	
 }

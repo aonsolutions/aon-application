@@ -18,8 +18,8 @@
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="create-button" value="#{bundle.payroll_create_disk}"
 						rendered="#{!controller.new and !controller.recorded and controllerDetail.model.rowCount > 0}"
-						reRender="batchForm"
-						styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+						reRender="batchForm, #{createButtonReRender}"
+						styleClass="aon-finding-toolbar-item aon-icon-xml"
 						actionListener="#{controller.onCreateDisk}"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	

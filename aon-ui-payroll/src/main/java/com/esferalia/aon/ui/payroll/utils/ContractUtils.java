@@ -653,21 +653,24 @@ public class ContractUtils {
 			}
 		}
 		
+		loadContractBonuses(contract, params);
+		
+	}
+	
+	public void loadContractBonuses(Contract contract, ContractParams params) throws ManagerBeanException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractBonus.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_CONTRACT_ID), contract.getId());
 			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_CONTRACT_ID));
 			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				params.setBonus( (ContractBonus) list.get(0) ); 
-			}
+			params.setBonuses( list ); 
+			params.setBonusModel(null);
 		} catch (ManagerBeanException e) {
-			String msg = "Error al cargar la bonificacion del contrato";
+			String msg = "Error al cargar las bonificaciones del contrato";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		}
-		
 	}
 	
 	public void removeContractData(Contract contract, ContractParams params) throws ControllerListenerException {

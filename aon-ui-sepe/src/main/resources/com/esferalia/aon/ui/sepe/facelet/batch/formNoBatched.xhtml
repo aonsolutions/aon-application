@@ -5,6 +5,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:div id="listDataDiv">
@@ -13,31 +14,24 @@
 				styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 				value="#{bundle.aon_check_all}"
 				rendered="#{controllerList.model.rowCount > 0}"
-				actionListener="#{controllerList.checkHandler.checkAll}" reRender="listDataDiv"
+				reRender="listDataDiv"
+				actionListener="#{controllerList.checkHandler.checkAll}" 
 				onclick="Richfaces.showModalPanel('waitProccess')" 
 	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 			<aon:commandButton title="#{bundle.aon_uncheck_all}"
 				styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 				value="#{bundle.aon_uncheck_all}"
 				rendered="#{controllerList.model.rowCount > 0}"
-				actionListener="#{controllerList.checkHandler.checkNone}" reRender="listDataDiv"
+				reRender="listDataDiv"
+				actionListener="#{controllerList.checkHandler.checkNone}" 
 				onclick="Richfaces.showModalPanel('waitProccess')" 
 	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-			<!--  
-			<aon:commandButton title="#{bundle.payroll_refine_search}"
-				styleClass="aon-finding-toolbar-item aon-icon-search"
-				value="#{bundle.payroll_refine_search}"
-				actionListener="#{controller.onEditSearchList}" 
-				reRender="showListSearchWindow">
-				<f:setPropertyActionListener target="#{controllerList.checkHandler.showListSearchWindow}"
-					value="#{true}" />
-			</aon:commandButton>
-			-->
 			<aon:commandButton title="#{bundle.payroll_add_batch}"
 				styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 				value="#{bundle.payroll_add_batch}"
 				rendered="#{controllerList.checkHandler.checkedCount > 0}"
-				actionListener="#{controller.onBatchSelected}" reRender="batchForm, batchPanelTabSet"
+				reRender="batchForm, batchPanelTabSet"
+				actionListener="#{controller.onBatchSelected}" 
 				onclick="Richfaces.showModalPanel('waitProccess')" 
 	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 	     		
@@ -82,6 +76,8 @@
 				</f:facet>
 				<aon:selectBooleanCheckbox id="Included_Row_checked"
 					value="#{controllerList.checkHandler.rowChecked}"
+					disabled="#{rowCheckDisabled}"
+					title="#{rowCheckDisabled?checkboxTooltipText:''}"
 					ajaxSingle="#{true}"
 					valueChangeListener="#{controllerList.checkHandler.rowSelected}" >
 					<a4j:support event="onclick" reRender="listDataDiv, #{checkReRender}" />

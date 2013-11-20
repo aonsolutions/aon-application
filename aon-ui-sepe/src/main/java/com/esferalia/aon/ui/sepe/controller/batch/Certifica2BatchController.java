@@ -4,14 +4,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import org.apache.commons.io.IOUtils;
 
@@ -19,9 +24,12 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.Enterprise;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
@@ -33,6 +41,7 @@ import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchAttachment;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SepeBatchAttachment;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
@@ -47,12 +56,46 @@ public class Certifica2BatchController extends BasicController {
 	private CertificadosWriter certificadosWriter;
 	private FileOutput fileOutput;
 	private boolean recorded;
+	private Certifica2BatchWizard newBatchWizard;
+	
+	private List<Certifica2BatchDetail> excludeEmployeeList;
+	private boolean showExcludeEmployeeWindow;
+	
+	public List<Certifica2BatchDetail> getExcludeEmployeeList() {
+		if(excludeEmployeeList==null){
+			excludeEmployeeList = new LinkedList<Certifica2BatchDetail>();
+		}
+		return excludeEmployeeList;
+	}
+
+	public void setExcludeEmployeeList( List<Certifica2BatchDetail> excludeEmployeeList) {
+		this.excludeEmployeeList = excludeEmployeeList;
+	}
+
+	public boolean isShowExcludeEmployeeWindow() {
+		return showExcludeEmployeeWindow;
+	}
+
+	public void setShowExcludeEmployeeWindow(boolean showExcludeEmployeeWindow) {
+		this.showExcludeEmployeeWindow = showExcludeEmployeeWindow;
+	}
 	
 	private CertificadosWriter getCertificadosWriter() {
 		if (certificadosWriter == null) {
 			certificadosWriter = new CertificadosWriter();
 		}
 		return certificadosWriter;
+	}
+	
+	public Certifica2BatchWizard getNewBatchWizard() {
+		if(newBatchWizard==null){
+			newBatchWizard = new Certifica2BatchWizard();
+		}
+		return newBatchWizard;
+	}
+
+	public void setNewBatchWizard(Certifica2BatchWizard newBatchWizard) {
+		this.newBatchWizard = newBatchWizard;
 	}
 	
 	public FileOutput getFileOutput() {
@@ -72,29 +115,47 @@ public class Certifica2BatchController extends BasicController {
 	}
 
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
-        IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
+//		IManagerBean contractBean = BeanManager.getManagerBean(Contract.class);
 		IManagerBean certifica2BatchDetailBean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
 		Certifica2ListController listController = (Certifica2ListController) FormUtil.getController(ISepeConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
         checkAllSuspensionCauses(listController.getRemesableContracts(), listController.getCheckHandler().getCheckedList());
-		Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
+//		Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
 		
+		List<Contract> duplicatedList = new LinkedList<Contract>();
+		List<Integer> includedPersons = new LinkedList<Integer>();
 		for(Certifica2ListController.RemesableContract remesable: listController.getRemesableContracts().values()){
-			Certifica2BatchDetail certifica2BatchDetail = new Certifica2BatchDetail();
-			certifica2BatchDetail.setContract(remesable.getContract());
-			certifica2BatchDetail.setCertifica2Batch((Certifica2Batch) getTo());
-			certifica2BatchDetail.setSuspensionCause(remesable.getSuspensionCause());
-			certifica2BatchDetailBean.insert(certifica2BatchDetail);
+			if(includedPersons.contains(remesable.getContract().getPerson().getId())){
+				duplicatedList.add(remesable.getContract());
+			} else {
+				Certifica2BatchDetail certifica2BatchDetail = new Certifica2BatchDetail();
+				certifica2BatchDetail.setDomain(remesable.getContract().getDomain());
+				certifica2BatchDetail.setContract(remesable.getContract());
+				certifica2BatchDetail.setCertifica2Batch((Certifica2Batch) getTo());
+				certifica2BatchDetail.setSuspensionCause(remesable.getSuspensionCause());
+				certifica2BatchDetailBean.insert(certifica2BatchDetail);
+				includedPersons.add(certifica2BatchDetail.getContract().getPerson().getId());
+			}
 
-			Contract contract = (Contract) iterator.next();
+//			Contract contract = (Contract) iterator.next();
 			// TODO: include a new contract status to indicate that the contract is batched for certific@2 or not
 //			contract.setStatus(ContractStatus.BATCHED);
-			contractBean.update(contract);
+//			contractBean.update(contract);
+		}
+		if(duplicatedList.size()>0){
+			AonUtil.addErrorMessage("Se han encontrado personas duplicadas. No se incluyen en la remesa.");
+			for(Contract contract: duplicatedList){
+				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+				String period = "(" + formatter.format(contract.getStartDate());
+				period += " - ";
+				period += formatter.format(contract.getEndDate()) + ")";
+				AonUtil.addErrorMessage(contract.getPerson().getFullName() + " " + period);
+			}
 		}
         listController.getCheckHandler().clearCheckedList();
         listController.getRemesableContracts().clear();
         loadDetails();
         updateBatchEnterprise();
-        onSearchContracts(event);
+//        onSearchContracts(event);
 	}
 	
 	
@@ -172,9 +233,10 @@ public class Certifica2BatchController extends BasicController {
 		listController.clearCriteria();
 		listController.onEditSearch(event);
 		Certifica2Batch batch = (Certifica2Batch) this.getTo();
-//		SEPEUtils utils = new SEPEUtils();
+		SEPEUtils utils = new SEPEUtils();
 //		if(DomainManager.isDomainManagementAvailable() && batch!=null && !batch.getEnterprise().equals(utils.getCurrentDomainEnterprise())){
-		if(DomainManager.isDomainManagementAvailable() && batch!=null){
+		if(DomainManager.isDomainManagementAvailable() && batch!=null
+				&& !batch.getEnterprise().equals(utils.getCurrentDomainEnterprise()) ){
 			listController.init(batch.getEnterprise());
 		} else {
 			listController.init(null);
@@ -192,28 +254,34 @@ public class Certifica2BatchController extends BasicController {
 
 	public void onCreateDisk(ActionEvent event) {
 		try {
-			Certifica2Batch batch = (Certifica2Batch)getTo();
 			List<ITransferObject> detailList = getCertifica2DetailList((Certifica2Batch) this.getTo());
-			File file = getCertificadosWriter().createFile(batch, detailList);
-			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
-				Certifica2BatchAttachment attach;
-				attach = new Certifica2BatchAttachment();
-				attach.setCertifica2Batch((Certifica2Batch) getTo());
-				attach.setMimeType(MimeType.MIME_XML);
-				attach.setDescription(getCertificadosWriter().getFileName());
-				attach.setSize(null);
-				attach.setAttachmentType(SepeBatchAttachmentType.GENERATED_FILE);
-				attach.setScope(null);
-				attach.setData(data);
-				attach.setAttachDate(new Date());
-				bean.insertOrUpdate(attach);
-				setRecorded(true);
-				changeBatchStatus(FileStatus.GENERATED);
-				Certifica2BatchAttachController controller = (Certifica2BatchAttachController) FormUtil.getController("certifica2BatchAttach");
-				controller.initializeModel();
+			checkEmployeeSalaries(detailList);
+			if(!getExcludeEmployeeList().isEmpty()){
+				setShowExcludeEmployeeWindow(true);
+			} else {
+				Certifica2Batch batch = (Certifica2Batch)getTo();
+				File file = getCertificadosWriter().createFile(batch, detailList);
+				IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
+				if (file != null) {
+					FileInputStream in = new FileInputStream(file);
+					byte[] data = IOUtils.toByteArray(in);
+					Certifica2BatchAttachment attach;
+					attach = new Certifica2BatchAttachment();
+					attach.setCertifica2Batch((Certifica2Batch) getTo());
+					attach.setDomain(((Certifica2Batch) getTo()).getDomain());
+					attach.setMimeType(MimeType.MIME_XML);
+					attach.setDescription(getCertificadosWriter().getFileName());
+					attach.setSize(null);
+					attach.setAttachmentType(SepeBatchAttachmentType.GENERATED_FILE);
+					attach.setScope(null);
+					attach.setData(data);
+					attach.setAttachDate(new Date());
+					bean.insertOrUpdate(attach);
+					setRecorded(true);
+					changeBatchStatus(FileStatus.GENERATED);
+					Certifica2BatchAttachController controller = (Certifica2BatchAttachController) FormUtil.getController("certifica2BatchAttach");
+					controller.initializeModel();
+				}
 			}
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("error on generateCertifica2File ["+e.getMessage()+"]");
@@ -224,6 +292,31 @@ public class Certifica2BatchController extends BasicController {
 		}
 	}
 	
+	private void checkEmployeeSalaries(List<ITransferObject> detailList) throws ManagerBeanException {
+		excludeEmployeeList = null;
+		SEPEUtils utils = new SEPEUtils();
+		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+		Criteria criteria = null;
+		for(ITransferObject to: detailList){
+			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
+			criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), detail.getContract().getId());
+			utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SALARY_DOMAIN));
+			if(bean.getCount(criteria)<=0){
+				getExcludeEmployeeList().add(detail);
+			}
+		}
+	}
+	
+	public void onContinueExcludingEmployees(ActionEvent event) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
+		for(Certifica2BatchDetail detail: getExcludeEmployeeList()){
+			bean.remove(detail);
+		}
+		loadDetails();
+		onCreateDisk(event);
+	}
+
 	public void changeBatchStatus(FileStatus status) {
 		Certifica2Batch b = (Certifica2Batch) getTo();
 		if(b != null){
@@ -233,9 +326,11 @@ public class Certifica2BatchController extends BasicController {
 	}
 
 	private void checkDiskCreated() throws ManagerBeanException {
+		SEPEUtils utils = new SEPEUtils();
 		IManagerBean bean = BeanManager.getManagerBean(SepeBatchAttachment.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), ((Certifica2Batch)this.getTo()).getId());
+		utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_DOMAIN));
 		if(bean.getCount(criteria)>0){
 			setRecorded(true);
 		} else {
@@ -245,18 +340,18 @@ public class Certifica2BatchController extends BasicController {
 	
 	private List<ITransferObject> getCertifica2DetailList(Certifica2Batch batch) {
 		try {
+			SEPEUtils utils = new SEPEUtils();
 			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DETAIL_CERTIFICA2BATCH_ID), batch.getId());
+			utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DETAIL_DOMAIN));
 			criteria.addOrder("Certifica2BatchDetail.contract.enterpriseCCC.activity.type");
 			criteria.addOrder("Certifica2BatchDetail.contract.enterpriseCCC.ccc");
 			criteria.addOrder("Certifica2BatchDetail.contract.person.registry.document");
 			return bean.getList(criteria);
 		} catch (ManagerBeanException e) {
-			// NADA, que siga con la generacion del fichero
-			System.out.println("");
+			throw new AbortProcessingException("No se ha podido obtener la relación de empleados");
 		}
-		return null;
 	}
 	
 	
@@ -266,6 +361,223 @@ public class Certifica2BatchController extends BasicController {
 			CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
 			certificadosController.initialize(batch);
 		}
+	}
+	
+	/*
+	 * INNER CLASSES
+	 */
+	public class Certifica2BatchWizard {
+
+		private List<RemesableContract> selectedList;
+		
+		private ArrayList<Object> checks = new ArrayList<Object>();
+		
+		private DataModel selectedModel;
+		
+		public DataModel getSelectedModel() {
+			return selectedModel;
+		}
+
+		public void setSelectedModel(DataModel selectedModel) {
+			this.selectedModel = selectedModel;
+		}
+
+		public void init() {
+			Certifica2ListController listController = (Certifica2ListController) FormUtil.getController(ISepeConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
+			try {
+				listController.clearCriteria();
+			} catch (ManagerBeanException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			listController.onEditSearch(null);
+			listController.init(null);
+			listController.setEndDateFrom(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), CommonUtil.getDay(new Date())-10));
+			listController.setModel(null);
+			
+			selectedList = new LinkedList<RemesableContract>();
+			setSelectedModel(null);
+		}
+		
+		private void saveData() {
+			
+			Certifica2BatchController batchController = (Certifica2BatchController) FormUtil.getController(ISepeConstants.CERTIFICA2_BATCH_CONTROLLER_NAME);
+			
+			Enterprise enterprise = selectedList.get(0).getContract().getWorkPlace().getEnterprise();
+			Certifica2Batch batch = (Certifica2Batch) batchController.getTo();
+			batch.setEnterprise(enterprise);
+			batch.setDomain(enterprise.getDomain());
+			batch.setDate(new Date());
+			batch.setStatus(FileStatus.PENDING);
+			batchController.accept(null);
+			
+			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+			boolean mustCloseSession = HibernateUtil.mustCloseSession();
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				
+				IManagerBean detailBean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
+				Certifica2BatchDetail batchDetail = null;
+				for(RemesableContract remesable: selectedList){
+					batchDetail = new Certifica2BatchDetail();
+					batchDetail.setCertifica2Batch(batch);
+					batchDetail.setDomain(batch.getDomain());
+					batchDetail.setContract(remesable.getContract());
+					batchDetail.setSuspensionCause(remesable.getSuspensionCause());
+					detailBean.insert(batchDetail);
+				}
+				
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				AonUtil.addErrorMessage(e.getMessage());
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					String msg = "Unable to rollback transaction!";
+					throw new AbortProcessingException(msg  + daoe.getMessage());
+				}
+				String msg = "Error durante el borrado de datos. ";
+				throw new AbortProcessingException(msg  + e.getMessage());
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+				HibernateUtil.setCloseSession(mustCloseSession);
+				HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			}
+		}
+
+		public void accept(ActionEvent event){
+			if(selectedList==null || selectedList.size()<=0){
+				AonUtil.addErrorMessage("Seleccione los contratos para continuar");
+				throw new AbortProcessingException("Seleccione los contratos para continuar");
+			}
+			saveData();
+			loadDetails();
+		}
+		
+		public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
+			Certifica2ListController listController = (Certifica2ListController) FormUtil.getController(ISepeConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
+	        checkAllSuspensionCauses(listController.getRemesableContracts(), listController.getCheckHandler().getCheckedList());
+			
+			List<Contract> duplicatedList = new LinkedList<Contract>();
+			List<Integer> includedPersons = new LinkedList<Integer>();
+			for(Certifica2ListController.RemesableContract remesable: listController.getRemesableContracts().values()){
+				if(includedPersons.contains(remesable.getContract().getPerson().getId())){
+					duplicatedList.add(remesable.getContract());
+				} else {
+					selectedList.add(remesable);
+					includedPersons.add(remesable.getContract().getPerson().getId());
+				}
+
+//				Contract contract = (Contract) iterator.next();
+				// TODO: include a new contract status to indicate that the contract is batched for certific@2 or not
+//				contract.setStatus(ContractStatus.BATCHED);
+//				contractBean.update(contract);
+			}
+			if(duplicatedList.size()>0){
+				AonUtil.addErrorMessage("Se han encontrado personas duplicadas. No se incluyen en la remesa.");
+				for(Contract contract: duplicatedList){
+					SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+					String period = "(" + formatter.format(contract.getStartDate());
+					period += " - ";
+					period += formatter.format(contract.getEndDate()) + ")";
+					AonUtil.addErrorMessage(contract.getPerson().getFullName() + " " + period);
+				}
+			}
+			
+	        listController.getCheckHandler().clearCheckedList();
+	        listController.getRemesableContracts().clear();
+	        setSelectedModel(new ListDataModel(selectedList));
+		}
+
+		public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
+	        Iterator<Object> iterator = getCheckedList().iterator();
+	        while(iterator.hasNext()){
+	        	RemesableContract rc = (RemesableContract) iterator.next();
+	        	if(selectedList.contains(rc)){
+	        		selectedList.remove(rc);
+	        	}
+	        }
+	        clearCheckedList();
+	        setSelectedModel(new ListDataModel(selectedList));
+	        loadDetails();
+	        onSearchContracts(event);
+		}
+		
+		public void rowSelected(ValueChangeEvent event) {
+			if (event.getNewValue() != null) {
+				setRowChecked(((Boolean) event.getNewValue()).booleanValue());
+			}
+		}
+
+		public boolean getRowChecked() {
+			if(getSelectedModel().isRowAvailable()){
+				return checks.contains(getSelectedModel().getRowData());
+			}
+			return false;
+		}
+
+		public void setRowChecked(boolean rowChecked) {
+			if (rowChecked) {
+				if (!checks.contains(getSelectedModel().getRowData())) {
+					checks.add(getSelectedModel().getRowData());
+				}
+			} else {
+				if (checks.contains(getSelectedModel().getRowData())) {
+					checks.remove(getSelectedModel().getRowData());
+				}
+			}
+		}
+
+		public ArrayList<Object> getCheckedList() {
+			return checks;
+		}
+
+		public int getCheckedCount() {
+			return checks!=null?checks.size():0;
+		}
+
+		public void clearCheckedList() {
+			checks = new ArrayList<Object>();
+		}
+
+		public void checkAll(ActionEvent event) throws ManagerBeanException {
+			Iterator<RemesableContract> iterator = selectedList.iterator();
+			while (iterator.hasNext()) {
+				Object o = iterator.next();
+				if (!checks.contains(o)) {
+					checks.add(o);
+				}
+			}
+		}
+
+		public void checkNone(ActionEvent event) {
+			clearCheckedList();
+		}
+		
+		public boolean isRowDisabled(){
+			BasicController controller = (BasicController) AonUtil.getRegisteredBean(ISepeConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
+			try {
+				if(controller.getModel().isRowAvailable() && getSelectedModel()!=null){
+					return isRowDisabled((Contract) controller.getModel().getRowData());
+				}
+			} catch (ManagerBeanException e) {
+				// TODO
+			}
+			return false;
+		}
+		
+		public boolean isRowDisabled(Contract contract) throws ManagerBeanException{
+			for(RemesableContract remesable: (List<RemesableContract>)getSelectedModel().getWrappedData()){
+				if(remesable.getContract().getPerson().getId().equals(contract.getPerson().getId())){
+					return true;
+				}
+			}
+			return false;
+		}
+		
 	}
 	
 }

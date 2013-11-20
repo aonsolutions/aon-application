@@ -5,7 +5,6 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	xmlns:aon="http://www.code.es/aon-rich-components" >
 	
@@ -220,41 +219,6 @@
 				value="Horario de la actividad formativa" />
 			<aon:inputText id="Contract_trainingSchedule" maxlength="25" size="32"
 				value="#{contract.params.trainingSchedule}" />
-		</c:if>
-		
-		<c:if test="#{not empty contract.params.bonus.id}" >
-			<aon:outputText value="#{bundle.sepe_contrata_contract_bonus}" />
-			<aon:div>
-				<aon:outputText value="#{contract.params.bonus.fullDescription}" />
-				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.sepe_contrata_contract_bonus}" />
-					</f:facet>
-					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
-						<aon:outputText value="#{bundle.aon_description}" styleClass="aon-margin-right" />
-						<aon:outputText value="#{contract.params.bonus.fullDescription}" />
-						
-						<aon:outputText value="#{bundle.aon_period}" styleClass="aon-margin-right" />
-						<aon:div>
-							<aon:outputText value="#{bundle.aon_start_date}:" styleClass="aon-italic" />
-							<aon:outputText value="#{contract.params.bonus.startDate}" styleClass="aon-margin-left">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-							<aon:outputText value="#{bundle.aon_end_date}:" styleClass="aon-margin-left aon-italic" />
-							<aon:outputText value="#{contract.params.bonus.endDate}" styleClass="aon-margin-left">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:div>
-					</aon:panelGrid>
-				</rich:toolTip>
-				<aon:commandButton id="removeContractBonus" 
-					value="&#160;" title="#{bundle.aon_remove}" 
-					styleClass="aon-icon-commandButton aon-icon-delete"
-					actionListener="#{contract.onRemoveBonus}" 
-					reRender="contract_panel" />
-			</aon:div>
 		</c:if>
 		
 	</aon:panelGrid>

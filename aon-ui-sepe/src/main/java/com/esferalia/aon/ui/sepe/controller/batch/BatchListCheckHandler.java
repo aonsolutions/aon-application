@@ -96,10 +96,14 @@ public class BatchListCheckHandler {
 		Iterator<ITransferObject> iterator = getController().getManagerBean().getList(getController().getCriteria()).iterator();
 		while (iterator.hasNext()) {
 			Object o = iterator.next();
-			if (!checks.contains(o)) {
+			if (!checks.contains(o) && isRowCheckeable(o)) {
 				checks.add(o);
 			}
 		}
+	}
+
+	public boolean isRowCheckeable(Object o) {
+		return true;
 	}
 
 	public void checkNone(ActionEvent event) {

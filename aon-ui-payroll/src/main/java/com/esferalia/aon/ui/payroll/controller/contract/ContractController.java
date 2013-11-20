@@ -323,10 +323,8 @@ public class ContractController extends BasicController {
 	
 	public void onShowBonusWindow(ActionEvent event){
 		try {
-			if(getParams().getBonus()==null || getParams().getBonus().getId()==null){
-				getParams().setBonus((ContractBonus) BeanManager.getManagerBean(ContractBonus.class).createNewTo());
-				getParams().getBonus().setContract((Contract) this.getTo());
-			}
+			getParams().setBonus((ContractBonus) BeanManager.getManagerBean(ContractBonus.class).createNewTo());
+			getParams().getBonus().setContract((Contract) this.getTo());
 		} catch (ManagerBeanException e) {
 			String msg = "Error al mostrar la bonificacion";
 			LOGGER.error(msg,e);
@@ -340,6 +338,8 @@ public class ContractController extends BasicController {
 			if(getParams().getBonus()==null || getParams().getBonus().getId()==null){
 				IManagerBean bean = BeanManager.getManagerBean(ContractBonus.class);
 				bean.insertOrUpdate(getParams().getBonus());
+				ContractUtils utils = ContractUtils.getInstance();
+				utils.loadContractBonuses((Contract) this.getTo(), this.getParams());
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al mostrar la bonificacion";
@@ -348,14 +348,21 @@ public class ContractController extends BasicController {
 			throw new AbortProcessingException(msg, e);
 		}
 	}
-	public void onCancelBonus(ActionEvent event){
-		getParams().setBonus(null);
-	}
 
 	public void onRemoveBonus(ActionEvent event){
-		ContractUtils utils = ContractUtils.getInstance();
-		utils.removeContractBonus(getParams().getBonus());
-		getParams().setBonus(null);
+		if(getParams().getBonusModel().isRowAvailable()){
+			ContractBonus bonus = (ContractBonus) getParams().getBonusModel().getRowData(); 
+			ContractUtils utils = ContractUtils.getInstance();
+			utils.removeContractBonus(bonus);
+			try {
+				utils.loadContractBonuses((Contract) this.getTo(), this.getParams());
+			} catch (ManagerBeanException e) {
+				String msg = "Error al mostrar la bonificacion";
+				LOGGER.error(msg,e);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg, e);
+			}
+		}
 	}
 	
 	public void onShowSalaryInfoWindow(ActionEvent event){
@@ -1211,6 +1218,8 @@ public class ContractController extends BasicController {
 		private ContractWorkingDay contractWorkingDay;
 		private CNO cno;
 		private ContractBonus bonus;
+		private List<ITransferObject> bonuses;
+		private DataModel bonusModel;
 		
 		private boolean agreementSalaryCheck;
 		private boolean agreementSalary;
@@ -1362,6 +1371,21 @@ public class ContractController extends BasicController {
 		}
 		public void setBonus(ContractBonus bonus) {
 			this.bonus = bonus;
+		}
+		public List<ITransferObject> getBonuses() {
+			return bonuses;
+		}
+		public void setBonuses(List<ITransferObject> bonuses) {
+			this.bonuses = bonuses;
+		}
+		public DataModel getBonusModel() {
+			if(bonusModel==null){
+				bonusModel = new ListDataModel(getBonuses());
+			}
+			return bonusModel;
+		}
+		public void setBonusModel(DataModel bonusModel) {
+			this.bonusModel = bonusModel;
 		}
 		
 	}

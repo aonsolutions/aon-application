@@ -83,11 +83,11 @@
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 			<aon:inputText id="ContractEmbargo_amount" required="#{true}"
-				rendered="#{formEdit}" size="20"
+				rendered="#{formEdit}" size="10"
 				value="#{controller.to.amount}" maxlength="18" />
 			<f:facet name="footer">
 				<aon:inputText id="ContractEmbargo_amount-New" required="#{true}"
-					rendered="#{formNew}" size="20"
+					rendered="#{formNew}" size="10"
 					value="#{controller.to.amount}" maxlength="18" />
 			</f:facet>
 		</aon:column>
@@ -99,11 +99,11 @@
 			</f:facet>
 			<aon:outputText value="#{to.description}" rendered="#{formList}" />
 			<aon:inputText id="ContractEmbargo_description"
-				rendered="#{formEdit}" size="64"
+				rendered="#{formEdit}" size="32"
 				value="#{controller.to.description}" maxlength="64" />
 			<f:facet name="footer">
 				<aon:inputText id="ContractEmbargo_description-New"
-					rendered="#{formNew}" size="64"
+					rendered="#{formNew}" size="32"
 					value="#{controller.to.description}" maxlength="64" />
 			</f:facet>
 		</aon:column>

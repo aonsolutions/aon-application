@@ -44,10 +44,10 @@
 						<aon:column alias="Certifica2Batch.date"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.fanBatch_liquidation_period}" />
+								<aon:outputText value="#{bundle.aon_date}" />
 							</f:facet>
 							<aon:outputText value="#{to.date}">
-								<f:convertDateTime pattern="MMMMM yyyy"
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 						</aon:column>

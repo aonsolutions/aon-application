@@ -39,4 +39,17 @@ public class Certifica2BatchListCheckHandler extends BatchListCheckHandler {
 		controller.getRemesableContracts().clear();
 	}
 	
+	@Override
+	public boolean isRowCheckeable(Object o) {
+		Certifica2ListController controller = (Certifica2ListController) AonUtil.getRegisteredBean(ISepeConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
+		try {
+			if(controller.isRowDisabled((Contract) o)){
+				return false;
+			}
+		} catch (ManagerBeanException e) {
+			
+		}
+		return super.isRowCheckeable(o);
+	}
+	
 }

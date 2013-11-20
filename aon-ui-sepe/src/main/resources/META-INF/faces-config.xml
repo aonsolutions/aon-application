@@ -229,8 +229,12 @@
 	
 	<managed-bean>
 		<managed-bean-name>certifica2BatchDetailSearch</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.sepe.event.Certifica2BatchDetailSearchListener</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.event.ChildDomainSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>alias</property-name>
+			<value>Certifica2BatchDetail.domain</value>
+		</managed-property>
 	</managed-bean>
 	
 	<managed-bean>
@@ -295,6 +299,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{certificadosBatchAttachControllerListener}</value>
+				<value>#{certificadosBatchAttachSearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -303,6 +308,16 @@
 		<managed-bean-name>certificadosBatchAttachControllerListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.event.AttachmentControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>certificadosBatchAttachSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.event.ChildDomainSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>alias</property-name>
+			<value>PayrollBatchAttachment.domain</value>
+		</managed-property>
 	</managed-bean>
 	
 	<!-- ************* CERTIFICA2 BATCH LIST ***************** -->

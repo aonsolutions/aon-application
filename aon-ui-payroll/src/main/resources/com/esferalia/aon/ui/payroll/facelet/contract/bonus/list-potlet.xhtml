@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+	
+	<aon:dataTable id="contractBonusList"
+		value="#{contract.params.bonusModel}" var="bonus" 
+		columnClasses="aon-table-portlet-column, aon-icon-column"
+		styleClass="aon-width-auto aon-table-portlet">
+	
+		<aon:column>
+			<aon:div>
+				<aon:outputText value="#{bonus.fullDescription}" />
+				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.sepe_contrata_contract_bonus}" />
+					</f:facet>
+					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
+						<aon:outputText value="#{bundle.aon_description}" styleClass="aon-margin-right" />
+						<aon:outputText value="#{bonus.fullDescription}" />
+						
+						<aon:outputText value="#{bundle.aon_period}" styleClass="aon-margin-right" />
+						<aon:div>
+							<aon:outputText value="#{bundle.aon_start_date}:" styleClass="aon-italic" />
+							<aon:outputText value="#{bonus.startDate}" styleClass="aon-margin-left">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:outputText value="#{bundle.aon_end_date}:" styleClass="aon-margin-left aon-italic" />
+							<aon:outputText value="#{bonus.endDate}" styleClass="aon-margin-left">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:div>
+					</aon:panelGrid>
+				</rich:toolTip>
+			</aon:div>
+		</aon:column>			
+		<aon:column>
+			<aon:commandButton id="removeContractBonus" 
+				value="&#160;" title="#{bundle.aon_remove}" 
+				reRender="contract-panelTab"
+				actionListener="#{contract.onRemoveBonus}" 
+				styleClass="aon-icon-commandButton aon-icon-delete aon-margin-left" />
+		</aon:column>			
+	
+	</aon:dataTable>	
+	
+</ui:composition>

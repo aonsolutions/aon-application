@@ -6,89 +6,105 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core">
-	
-	<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/form.xhtml">
-		<ui:param name="toolbarTitle" value="#{bundle.sepe_certifica2Batch_module}" />
-		<ui:param name="controller" value="#{certifica2Batch}" />
-		<ui:param name="controllerDetail" value="#{certifica2BatchDetail}" />
-		<ui:param name="controllerAttach" value="#{certifica2BatchAttach}" />
-		
-		<ui:define name="moreToolbarContent" >
-			<aon:commandButton id="certificados-batch-communication"
-				value="#{bundle.sepe_certificados}"
-				rendered="#{controller.recorded}" ajaxSingle="true"
-				reRender="showCertificadosCommunicationWindow"
-				actionListener="#{certifica2Batch.onInitCertificados}"
-				styleClass="aon-finding-toolbar-item aon-icon-sepe-certificados" >
-				<f:setPropertyActionListener
-					target="#{contractCertificados.showCommunicationWindow}" value="#{true}" />
-			</aon:commandButton>
-		</ui:define>
-		
-		<ui:define name="batchContent" >
-			<aon:panelGrid id="dataTable" columns="4" style="width: 60%;"
-				columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto,
-					aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
 
-				<aon:outputLabel value="#{bundle.aon_date}" />
-				<aon:div>
-					<!--  
-					<aon:selectInputDate id="certifica2Batch_date" rendered="#{!certifica2Batch.recorded}"
-						value="#{certifica2Batch.to.date}" required="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
-					<aon:outputText value="#{certifica2Batch.to.date}" rendered="#{certifica2Batch.recorded}" >
-					-->
-					<aon:outputText value="#{certifica2Batch.to.date}" >
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-							timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>
-				</aon:div>	
-				
-				<aon:outputLabel value="#{bundle.aon_status}" />
-				<aon:outputText value="#{certifica2Batch.to.status}" />
-				
-				<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
-					<aon:outputLabel value="#{bundle.aon_company}" />
-					<aon:outputText value="#{certifica2Batch.to.enterprise.registry.fullName}" />
-	
-					<aon:outputLabel value="#{bundle.aon_signature}" />
-					<aon:outputText value="#{certifica2Batch.to.sign}" />
-				</c:if>
-				
-			</aon:panelGrid>
-		</ui:define>
-		
-		<ui:define name="batchedTabContent" >
-			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/formDetail.xhtml" />
-		</ui:define>
-		
-		<ui:define name="noBatchedTabContent" >
-			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/formNoBatched.xhtml" />
-		</ui:define>
-		
-		<ui:define name="documentTabContent" >
-			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/formDocument.xhtml" >
-				<ui:param name="controllerAttach" value="#{certifica2BatchAttach}" />
-			</ui:include>
-		</ui:define>
-		
-		<ui:define name="afterFormContent" >
-			<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
-			<aon:lookupButtonPopup lookup="#{personLookup}" />
-			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/modalSearch.xhtml">
-				<ui:param name="controller" value="#{certifica2List}" />
-				<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
-			</ui:include>
+	<c:if test="#{certifica2Batch.new}" >
+		<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/form_new.xhtml" />
+	</c:if>
+
+	<c:if test="#{!certifica2Batch.new}" >
+		<ui:decorate template="/com/esferalia/aon/ui/sepe/facelet/batch/form.xhtml">
+			<ui:param name="toolbarTitle" value="#{bundle.sepe_certifica2Batch_module}" />
+			<ui:param name="skipSaveButton" value="#{true}" />
+			<ui:param name="controller" value="#{certifica2Batch}" />
+			<ui:param name="controllerDetail" value="#{certifica2BatchDetail}" />
+			<ui:param name="controllerAttach" value="#{certifica2BatchAttach}" />
+			<ui:param name="createButtonReRender" value="showExcludeEmployeeWindow" />
 			
-			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalCommunication.xhtml" >
-				<ui:param name="controller" value="#{contractCertificados}" />
-				<ui:param name="skipBatchButton" value="#{true}" />
-				<ui:param name="skipDownloadButton" value="#{true}" />
-			</ui:include>
+			<ui:define name="moreToolbarContent" >
+				<aon:commandButton id="certificados-batch-communication"
+					value="#{bundle.sepe_certificados}"
+					rendered="#{controller.recorded}" ajaxSingle="true"
+					reRender="showCertificadosCommunicationWindow"
+					actionListener="#{certifica2Batch.onInitCertificados}"
+					styleClass="aon-finding-toolbar-item aon-icon-sepe-certificados" >
+					<f:setPropertyActionListener
+						target="#{contractCertificados.showCommunicationWindow}" value="#{true}" />
+				</aon:commandButton>
+			</ui:define>
 			
-		</ui:define>
+			<ui:define name="batchContent" >
+				<aon:panelGrid id="dataTable" columns="4" style="width: 60%;"
+					columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto,
+						aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
 	
-	</ui:decorate>
+					<aon:outputLabel value="#{bundle.aon_date}" />
+					<aon:div>
+						<!--  
+						<aon:selectInputDate id="certifica2Batch_date" rendered="#{!certifica2Batch.recorded}"
+							value="#{certifica2Batch.to.date}" required="true"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+						<aon:outputText value="#{certifica2Batch.to.date}" rendered="#{certifica2Batch.recorded}" >
+						-->
+						<aon:outputText value="#{certifica2Batch.to.date}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:div>	
+					
+					<aon:outputLabel value="#{bundle.aon_status}" />
+					<aon:outputText value="#{certifica2Batch.to.status}" />
+					
+					<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+						<aon:outputLabel value="#{bundle.aon_company}" />
+						<aon:outputText value="#{certifica2Batch.to.enterprise.registry.fullName}" />
+		
+						<aon:outputLabel value="#{bundle.aon_signature}" />
+						<aon:outputText value="#{certifica2Batch.to.sign}" />
+					</c:if>
+					
+				</aon:panelGrid>
+			</ui:define>
+			
+			<ui:define name="batchedTabContent" >
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/formDetail.xhtml" />
+			</ui:define>
+			
+			<ui:define name="noBatchedTabContent" >
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/formNoBatched.xhtml" >
+					<ui:param name="controller" value="#{certifica2Batch}" />
+					<ui:param name="enterpriseLookupDisabled" value="#{certifica2BatchDetail.model.rowCount gt 0}" />
+					<ui:param name="rowCheckDisabled" value="#{certifica2List.rowDisabled}" />
+				</ui:include>
+			</ui:define>
+			
+			<ui:define name="documentTabContent" >
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/formDocument.xhtml" >
+					<ui:param name="controllerAttach" value="#{certifica2BatchAttach}" />
+				</ui:include>
+			</ui:define>
+			
+			<ui:define name="afterFormContent" >
+				<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+				<aon:lookupButtonPopup lookup="#{personLookup}" />
+				
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/modalExcludeEmployees.xhtml" />
+				
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/modalSearch.xhtml">
+					<ui:param name="controller" value="#{certifica2List}" />
+					<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
+				</ui:include>
+				
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalCommunication.xhtml" >
+					<ui:param name="controller" value="#{contractCertificados}" />
+					<ui:param name="skipBatchButton" value="#{true}" />
+					<ui:param name="skipDownloadButton" value="#{true}" />
+				</ui:include>
+				
+			</ui:define>
+		
+		</ui:decorate>
+	</c:if>
+	
 
 </ui:composition>
