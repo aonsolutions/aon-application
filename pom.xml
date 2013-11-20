@@ -495,6 +495,23 @@
 					<sourceEncoding>ISO-8859-1</sourceEncoding>
 				</configuration>
 			</plugin>
+
+     			<plugin>
+        			<groupId>org.codehaus.mojo</groupId>
+        			<artifactId>findbugs-maven-plugin</artifactId>
+        			<version>2.5.3-SNAPSHOT</version>
+                                <executions>
+                                        <execution>
+                                                <goals>
+                                                        <goal>check</goal>
+                                                </goals>
+                                                <configuration>
+                                                        <failOnError>false</failOnError>
+                                                </configuration>
+                                        </execution>
+                                </executions>
+      			</plugin>
+
 		</plugins>
 
 		<pluginManagement>
