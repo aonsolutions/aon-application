@@ -32,8 +32,6 @@ public class SalaryPayment extends SalaryPaymentDB implements IPayment,
 
 	private static final long serialVersionUID = 1L;
 	
-	private static final boolean IREPORT = SalaryDeductionsFactory.class
-			.getResource("/hibernate.cfg.xml") != null;
 	
 	@Override
 	@Transient
@@ -99,7 +97,7 @@ public class SalaryPayment extends SalaryPaymentDB implements IPayment,
 		Salary salary = getSalary();
 		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
 		Session session = HibernateUtil.getSession(sessionName);
-		if (  session.contains(salary)  || salary.getId() == null || IREPORT ) {
+		if (  session.contains(salary)  || salary.getId() == null ) {
 			return null;
 		} 
 		else {

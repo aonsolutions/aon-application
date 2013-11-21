@@ -20,8 +20,6 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 
 public class SalaryDeductionsFactory implements IDeductionsFactory {
 
-	private static final boolean IREPORT = SalaryDeductionsFactory.class
-			.getResource("/hibernate.cfg.xml") != null;
 
 	@Override
 	public boolean accept(IDeductionsFactoryContext ctx) {
@@ -46,7 +44,7 @@ public class SalaryDeductionsFactory implements IDeductionsFactory {
 			// que nos da la obtención de colecciones tipo LAZY. En caso
 			// contrario vamos por
 			// el FrameWork.
-			if (session.contains(salary) || salary.getId() == null || IREPORT) {
+			if (session.contains(salary) || salary.getId() == null ) {
 				salaryDeductions = salary.getSalaryDeductions();
 				for (SalaryDeduction sd : salaryDeductions) {
 					manageDeductions(deductions, sd);
