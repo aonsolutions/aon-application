@@ -32,32 +32,36 @@ public class ParentDomainController {
 		domain = dm.getDomainId();
 		
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
-		String q = "SELECT d.parent FROM domain d"
-				+ " WHERE d.id = " + domain;
+		String q = "SELECT d.parent FROM domain d WHERE d.id = ?";
 		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
-		setDomain( (Integer) query.addScalar("parent", Hibernate.INTEGER).uniqueResult() );
+		query.setInteger(0, domain);
+		query.addScalar("parent", Hibernate.INTEGER);
+		setDomain( (Integer) query.uniqueResult() );
 
 		sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
 		q = "SELECT r.name FROM company c, registry r"
-				+ " WHERE c.domain = " + domain 
-				+ " AND c.registry = r.id";
+				+ " WHERE c.domain = ? AND r.domain = ?"
+				+ " AND c.registry = r.id LIMIT 1";
 		query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
-		setName( (String) query.addScalar("name", Hibernate.STRING).uniqueResult() );
+		query.setInteger(0, domain).setInteger(1, domain);
+		query.addScalar("name", Hibernate.STRING);
+		setName( (String) query.uniqueResult() );
 		
 		q = "SELECT r.value FROM company c, rmedia r"
-				+ " WHERE c.domain = " + domain 
-				+ " AND c.registry = r.registry"
-				+ " AND r.media = 1";
-		
+				+ " WHERE c.domain = ? AND r.domain = ?"
+				+ " AND c.registry = r.registry AND r.media = 1 LIMIT 1";
 		query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
-		setPhone((String) query.addScalar("value", Hibernate.STRING).uniqueResult() );
+		query.setInteger(0, domain).setInteger(1, domain);
+		query.addScalar("value", Hibernate.STRING);
+		setPhone((String) query.uniqueResult() );
 
 		q = "SELECT r.value FROM company c, rmedia r"
-				+ " WHERE c.domain = " + domain 
-				+ " AND c.registry = r.registry"
-				+ " AND r.media = 4";
+				+ " WHERE c.domain = ? AND r.domain = ?" 
+				+ " AND c.registry = r.registry AND r.media = 4 LIMIT 1";
 		query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
-		setEmail((String) query.addScalar("value", Hibernate.STRING).uniqueResult() );
+		query.setInteger(0, domain).setInteger(1, domain);
+		query.addScalar("value", Hibernate.STRING);
+		setEmail((String) query.uniqueResult() );
 		resolved = true;
 	}
 	
@@ -65,10 +69,11 @@ public class ParentDomainController {
 		if (resolved) {
 			String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
 			String q = "SELECT r.data,r.mimetype FROM company c, rattach r"
-					+ " WHERE c.domain = " + domain 
+					+ " WHERE c.domain = ? AND r.domain = ?" 
 					+ " AND c.registry = r.registry"
 					+ " AND r.type = 0";
 			SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
+			query.setInteger(0, domain).setInteger(1, domain);
 			List<?> queryList = query
 					.addScalar("data", Hibernate.BLOB)
 					.addScalar("mimetype", Hibernate.INTEGER)

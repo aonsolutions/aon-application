@@ -1,17 +1,5 @@
 package com.code.aon.ui.infoweb.controller;
 
-import static com.code.aon.common.enumeration.AppParam.WEBINFO_HOMEPAGE_ID;
-import static com.code.aon.common.enumeration.AppParam.WEBINFO_TEMPLATE_NAME;
-import static com.code.aon.ui.common.ICommonMessages.DIRECTORY_CREATION_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.DIRECTORY_NOT_FOUND;
-import static com.code.aon.ui.common.ICommonMessages.DIRECTORY_NO_READABLE;
-import static com.code.aon.ui.common.ICommonMessages.IMAGE_COPY_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.NO_PUBLISH_PARAMETERS;
-import static com.code.aon.ui.common.ICommonMessages.PAGE_WITHOUT_DETAIL;
-import static com.code.aon.ui.common.ICommonMessages.PUBLISH_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.PUBLISH_OK;
-import static com.code.aon.ui.common.ICommonMessages.WEB_GENERATED;
-import static com.code.aon.ui.common.ICommonMessages.WEB_GENERATION_ERROR;
 import static com.code.aon.ui.config.controller.ConfigConstants.PUBLISH_PARAMETER;
 
 import java.awt.Dimension;
@@ -42,6 +30,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.ImageUtil;
 import com.code.aon.common.util.MimeResolver;
@@ -62,6 +51,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.company.controller.CompanyImagesController;
 import com.code.aon.ui.config.PublishProperties;
 import com.code.aon.ui.config.controller.PublishParameterController;
@@ -103,7 +93,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	private String getTemplate() {
 		String template = DEFAULT_TEMPLATE;
 		//Obtenemos el template seleccionado
-		ApplicationParameter ap = AppParamUtil.getParameter(WEBINFO_TEMPLATE_NAME);
+		ApplicationParameter ap = AppParamUtil.getParameter(AppParam.WEBINFO_TEMPLATE_NAME);
 		if ( ap != null ) {
 			template = ap.getValue();				
 		}
@@ -117,7 +107,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	 */
 	private int getHomepage() {
 		int homepage = 0;
-		ApplicationParameter ap = AppParamUtil.getParameter(WEBINFO_HOMEPAGE_ID);
+		ApplicationParameter ap = AppParamUtil.getParameter(AppParam.WEBINFO_HOMEPAGE_ID);
 		if ( ap != null ) {
 			homepage = Integer.parseInt(ap.getValue());				
 		}
@@ -142,11 +132,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	public boolean isReadableDirectory( File directory ) {
 		if (!directory.exists()) {
-			log.error(AonUtil.getMessage(DIRECTORY_NOT_FOUND, directory));
+			log.error(AonUtil.getMessage(ICommonMessages.DIRECTORY_NOT_FOUND, directory));
 			return false;
 		}
 		if (!directory.canRead()) {
-			log.error(AonUtil.getMessage(DIRECTORY_NO_READABLE, directory));
+			log.error(AonUtil.getMessage(ICommonMessages.DIRECTORY_NO_READABLE, directory));
 			return false;
 		}		
 		return true;
@@ -157,7 +147,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		this.published = false;
 		try {
 			if ( this.publishProperties.isEmpty() ) {
-				log.error(AonUtil.getMessage(NO_PUBLISH_PARAMETERS));
+				log.error(AonUtil.getMessage(ICommonMessages.NO_PUBLISH_PARAMETERS));
 				return;
 			}
 			
@@ -175,11 +165,9 @@ public class GeneratorController extends BasicController implements VelocityCons
 			}
 			LOGGER.info( "Template directory: {}", templateDirectory );
 			File previewDirectory = PathUtil.getPreviewPath();
-			if (! previewDirectory.exists() ) {
-				if (! previewDirectory.mkdirs() ) {
-					log.error(AonUtil.getMessage(DIRECTORY_CREATION_ERROR, previewDirectory));
-					return;	
-				}
+			if (! previewDirectory.exists() && !previewDirectory.mkdirs() ) {
+				log.error(AonUtil.getMessage(ICommonMessages.DIRECTORY_CREATION_ERROR, previewDirectory));
+				return;	
 			}
 			LOGGER.info( "Preview directory: {}", previewDirectory );
 			FileUtils.cleanDirectory(previewDirectory);
@@ -234,13 +222,13 @@ public class GeneratorController extends BasicController implements VelocityCons
 			copyDirectoryToDirectory(new File(currentTemplateCssDirectory, CSSIMG_PATH), cssPreviewDirectory );
 			copyDirectoryToDirectory(new File(templateDirectory, IMAGES_PATH), previewDirectory );
 
-			log.info(AonUtil.getMessage(WEB_GENERATED));
+			log.info(AonUtil.getMessage(ICommonMessages.WEB_GENERATED));
 			
 			this.generated = upload(this.publishProperties.getPreviewPath());
 
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
-			log.error(AonUtil.getMessage(WEB_GENERATION_ERROR));
+			log.error(AonUtil.getMessage(ICommonMessages.WEB_GENERATION_ERROR));
 		} finally {
 			HibernateUtil.setCloseSession(true);
 			HibernateUtil.closeSession(HibernateUtil.getSessionFactoryName());
@@ -263,12 +251,12 @@ public class GeneratorController extends BasicController implements VelocityCons
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th );
-			log.error( AonUtil.getMessage(PUBLISH_ERROR) );
+			log.error( AonUtil.getMessage(ICommonMessages.PUBLISH_ERROR) );
 		} finally {
 			ftp.close();
 		}
 		if ( published ) {
-			log.info( AonUtil.getMessage(PUBLISH_OK) );
+			log.info( AonUtil.getMessage(ICommonMessages.PUBLISH_OK) );
 		}		
 		log.finish();
 		return published;
@@ -309,10 +297,10 @@ public class GeneratorController extends BasicController implements VelocityCons
 		wipdCriteria.addEqualExpression(wipdBean.getFieldName(IEntityAlias.WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE_ID), wip.getId());
 		List<ITransferObject> wipdList = wipdBean.getList(wipdCriteria);
 		WebInfoPageDetail wipd = new WebInfoPageDetail();
-		if (wipdList.size() > 0) {
+		if (! wipdList.isEmpty()) {
 			wipd = (WebInfoPageDetail)wipdList.get(0);
 		} else {			
-			log.warn(AonUtil.getMessage(PAGE_WITHOUT_DETAIL, wip.getName()));
+			log.warn(AonUtil.getMessage(ICommonMessages.PAGE_WITHOUT_DETAIL, wip.getName()));
 			return;
 		}
 
@@ -325,7 +313,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		if (wip.getType() == WebInfoPageType.LOCATION) {
 			//Primero miramos si el extra tiene |
 			String extra = wipd.getExtra();
-			if (extra.indexOf("|") >= 0) {
+			if (extra.indexOf('|') >= 0) {
 				int num = 0;
 				StringTokenizer st = new StringTokenizer(extra, "|");
 				while (st.hasMoreTokens()) {
@@ -374,7 +362,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		boolean primera = true;
 		boolean ultima = false;
 		for (int i = 0; i < wiprList.size(); i++) {
-			if ((i+1) == wiprList.size()) {
+			if ( i+1 == wiprList.size() ) {
 				ultima = true;
 				next_link = "";
 			} else {
@@ -482,7 +470,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				Criteria attachCriteria = new Criteria();
 				attachCriteria.addEqualExpression(attachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_ID), Integer.parseInt(style.getValue()));
 				List<ITransferObject> attachList = attachBean.getList(attachCriteria);
-				if (attachList.size() > 0) {
+				if (! attachList.isEmpty()) {
 					RegistryAttachment ra = (RegistryAttachment)attachList.get(0);
 					filename = getImageName(ra);
 				}
@@ -535,7 +523,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		attachCriteria.addEqualExpression(attachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
 		attachCriteria.addEqualExpression(attachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.LOGO);
 		List<ITransferObject> attachList = attachBean.getList(attachCriteria);
-		if (attachList.size() > 0) {
+		if (! attachList.isEmpty()) {
 			RegistryAttachment ra = (RegistryAttachment) attachList.get(0);
 			String filename = getImageName(ra, LOGO_KEY);
 			File path = new File( imagesDirectory, filename );
@@ -561,7 +549,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		Criteria webinfoCriteria = new Criteria();
 		webinfoCriteria.addEqualExpression(webinfoBean.getFieldName(IEntityAlias.WEB_INFO_COMPANY_ID), company.getId());
 		List<ITransferObject> webinfoList = webinfoBean.getList(webinfoCriteria);
-		if (webinfoList.size() > 0) {
+		if (! webinfoList.isEmpty()) {
 			WebInfo wi = (WebInfo)webinfoList.get(0);
 			String description = wi.getCommercialDescription();
 			if (! StringUtils.isBlank(description) ) {
@@ -588,11 +576,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 		List<ITransferObject> attachList = attachBean.getList(attachCriteria);
 		for (int i=0; i<attachList.size(); i++) {
 			RegistryAttachment ra = (RegistryAttachment)attachList.get(i);
-			if ( (ra.getData() != null) && (!StringUtils.isEmpty(ra.getDescription())) ) {
+			if ( ra.getData() != null && !StringUtils.isEmpty(ra.getDescription()) ) {
 				String filename = getImageName(ra);
 				File path = new File(imagesDirectory, filename);
 				if (!copyRegistryBlobToFile(ra, 200, 200, path)) {
-					log.error(AonUtil.getMessage(IMAGE_COPY_ERROR, filename)); 
+					log.error(AonUtil.getMessage(ICommonMessages.IMAGE_COPY_ERROR, filename)); 
 				}
 				ImageHandler ih = new ImageHandler(filename, getImagePageLink(ra.getDescription()), ra.getDescription());
 				all_images.add(ih);
@@ -623,6 +611,10 @@ public class GeneratorController extends BasicController implements VelocityCons
 				case FAX:
 					vu.put(FAX_KEY, m.getValue());
 					break;
+				case CELLULAR:
+				case WEB:
+				case UNKNOWN:
+					break;
 			}
 		}		
 	}
@@ -640,13 +632,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 		Iterator<RegistryAddress> addressList = company.getAddresses().iterator();
 		while (addressList.hasNext()) {
 			RegistryAddress a = (RegistryAddress)addressList.next();
-			if (defaultAddress != null && a.getId() == defaultAddress.getId()) {
-				//Nothing
-			} else {
+			if (! (defaultAddress != null && a.getId() == defaultAddress.getId()) ) {
 				addresses.add(a);
 			}
 		}
-		if (addresses.size() > 0) {
+		if (! addresses.isEmpty()) {
 			vu.put(ADDRESSES_KEY, addresses);
 		}
 		if (defaultAddress != null) {

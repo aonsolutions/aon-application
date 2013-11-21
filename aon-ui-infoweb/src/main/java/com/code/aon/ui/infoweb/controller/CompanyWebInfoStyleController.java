@@ -1,11 +1,5 @@
 package com.code.aon.ui.infoweb.controller;
 
-import static com.code.aon.common.enumeration.AppParam.WEBINFO_HOMEPAGE_ID;
-import static com.code.aon.common.enumeration.AppParam.WEBINFO_TEMPLATE_NAME;
-import static com.code.aon.ui.common.ICommonMessages.DEFAULT_VALUE;
-import static com.code.aon.ui.common.ICommonMessages.NO_STYLE_FILE_IN_TEMPLATE;
-import static com.code.aon.ui.common.ICommonMessages.NO_TEMPLATE_DIRECTORY;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +29,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.infoweb.WebInfoPage;
@@ -45,6 +40,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.infoweb.util.PathUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -85,7 +81,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 
 		File f = PathUtil.getTemplatesPath();
 		if (!f.exists()) {
-			AonUtil.addErrorMessage(NO_TEMPLATE_DIRECTORY); 
+			AonUtil.addErrorMessage(ICommonMessages.NO_TEMPLATE_DIRECTORY); 
 		} else {
 			SelectItem item = new SelectItem("","");
 			templates.add(item);
@@ -113,7 +109,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 		criteria.addOrder(pageBean.getFieldName(IEntityAlias.WEB_INFO_PAGE_POSITION));
 		List<ITransferObject> list = (List<ITransferObject>)pageBean.getList(criteria);
 		int default_id = 0;
-		SelectItem item = new SelectItem(default_id, DEFAULT_VALUE);
+		SelectItem item = new SelectItem(default_id, ICommonMessages.DEFAULT_VALUE);
 		pages.add(item);
 		for (int i = 0; i < list.size(); i++) {
 			WebInfoPage page = (WebInfoPage)list.get(i);
@@ -138,7 +134,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 				criteria.addEqualExpression(wisBean.getFieldName(IEntityAlias.WEB_INFO_STYLE_VARIABLE), var);
 				List<ITransferObject> list = wisBean.getList(criteria);
 				WebInfoStyle wis = new WebInfoStyle();
-				if (list.size() > 0) {
+				if (! list.isEmpty()) {
 					wis = (WebInfoStyle)list.get(0);
 				} else {
 					wis.setVariable(var);
@@ -159,7 +155,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 		Map<String,String> styleMap = new HashMap<String,String>();
 		File f = PathUtil.getStyleTemplate( getTemplate() );
 		if (!f.exists()) {
-			AonUtil.addErrorMessage(NO_STYLE_FILE_IN_TEMPLATE); 
+			AonUtil.addErrorMessage(ICommonMessages.NO_STYLE_FILE_IN_TEMPLATE); 
 		} else {
 			try {
 				BufferedReader br = new BufferedReader(new FileReader(f));
@@ -191,7 +187,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 			String cad = types[i];
 			int idx = line.indexOf(cad);
 			if (idx > 0) {
-				int edx = line.indexOf("}", idx);
+				int edx = line.indexOf('}', idx);
 				if (edx > 0) {
 					String var = line.substring(idx + 2, edx);
 					array.add(var);
@@ -202,17 +198,17 @@ public class CompanyWebInfoStyleController extends BasicController {
 	}
 
 	public void onChangeTemplate(ActionEvent event) {
-		AppParamUtil.insertParameter(WEBINFO_TEMPLATE_NAME, getTemplate());	
+		AppParamUtil.insertParameter(AppParam.WEBINFO_TEMPLATE_NAME, getTemplate());	
 		chargeValues();
     }
 
 	public void onChangeHomepage(ActionEvent event) {
-		AppParamUtil.insertParameter(WEBINFO_HOMEPAGE_ID, String.valueOf(getHomepage()));	
+		AppParamUtil.insertParameter(AppParam.WEBINFO_HOMEPAGE_ID, String.valueOf(getHomepage()));	
     }
 
 	public String getTemplate() {
 		if (template == null) {
-			ApplicationParameter ap = AppParamUtil.getParameter(WEBINFO_TEMPLATE_NAME);
+			ApplicationParameter ap = AppParamUtil.getParameter(AppParam.WEBINFO_TEMPLATE_NAME);
 			if ( ap != null ) {
 				template = ap.getValue();				
 				chargeValues();
@@ -225,7 +221,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 	public Integer getHomepage() {
 		if (homepage == null) {
 			homepage = 0;
-			ApplicationParameter ap = AppParamUtil.getParameter(WEBINFO_HOMEPAGE_ID);
+			ApplicationParameter ap = AppParamUtil.getParameter(AppParam.WEBINFO_HOMEPAGE_ID);
 			if ( ap != null ) {
 				homepage = Integer.parseInt(ap.getValue());				
 			}
@@ -244,7 +240,7 @@ public class CompanyWebInfoStyleController extends BasicController {
     }
 
     public String getVariableName(String text) {
-		text = text.substring(text.indexOf("_")+1);
+		text = text.substring(text.indexOf('_')+1);
 		text = text.replaceAll("_", " ");
 		return text;
     }
@@ -306,26 +302,22 @@ public class CompanyWebInfoStyleController extends BasicController {
     
     public boolean isNumber() {
     	WebInfoVariableType type = getRowVariableType();
-    	if (type == WebInfoVariableType.SIZE || type == WebInfoVariableType.BORDER) return true;
-    	else return false; 
+    	return type == WebInfoVariableType.SIZE || type == WebInfoVariableType.BORDER;
     }
 
     public boolean isColor() {
     	WebInfoVariableType type = getRowVariableType();
-    	if (type == WebInfoVariableType.COLOR || type == WebInfoVariableType.BACKGROUND_COLOR) return true;
-    	else return false; 
+    	return type == WebInfoVariableType.COLOR || type == WebInfoVariableType.BACKGROUND_COLOR;
     }
 
     public boolean isImage() {
     	WebInfoVariableType type = getRowVariableType();
-    	if (type == WebInfoVariableType.IMAGE) return true;
-    	else return false; 
+    	return type == WebInfoVariableType.IMAGE; 
     }
 
     public boolean isFont() {
     	WebInfoVariableType type = getRowVariableType();
-    	if (type == WebInfoVariableType.FONT) return true;
-    	else return false; 
+    	return type == WebInfoVariableType.FONT; 
     }
 
 	public void setTemplate(String template) {
@@ -360,10 +352,9 @@ public class CompanyWebInfoStyleController extends BasicController {
 	public List<SelectItem> getFontTypes() throws ManagerBeanException {
 		List<SelectItem> types = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		SelectItem item;;
 		for (WebInfoFontType type : WebInfoFontType.values()) {
 			String name = type.getName(locale);
-			item = new SelectItem(type.ordinal(), name);
+			SelectItem item = new SelectItem(type.ordinal(), name);
 			types.add(item);
 		}
 		return types;
@@ -378,7 +369,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rattachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_ID), new Integer(id));
 			List<ITransferObject> list = rattachBean.getList(criteria);
-			if (list.size() > 0) {
+			if (! list.isEmpty()) {
 				RegistryAttachment ra = (RegistryAttachment)list.get(0);
 				name = ra.getDescription() + "." + ra.getMimeType().getExtension();
 			}

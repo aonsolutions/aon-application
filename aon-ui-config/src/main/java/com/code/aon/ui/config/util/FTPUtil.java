@@ -20,7 +20,6 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.ILogger;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;

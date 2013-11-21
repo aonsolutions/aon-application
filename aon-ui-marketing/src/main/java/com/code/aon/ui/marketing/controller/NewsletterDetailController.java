@@ -28,7 +28,7 @@ public class NewsletterDetailController extends LinesController {
 		}catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
-		return (position != null ? position+1 : 0);
+		return position != null ? position+1 : 0;
 	}
 	
 	public void reorderObjects() throws ManagerBeanException {

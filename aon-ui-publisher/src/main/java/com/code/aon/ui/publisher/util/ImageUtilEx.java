@@ -20,7 +20,7 @@ public class ImageUtilEx {
 	
 	public static BufferedImage getBufferedImage(byte[] data, MimeType type) {
 		BufferedImage image = null;
-		if ( (type != null) && (type == MimeType.MIME_GIF) ) {
+		if ( type != null && type == MimeType.MIME_GIF ) {
 			image = SanselanUtil.getBufferedImage(data);
 		}
 		if ( image == null ) {
@@ -31,7 +31,7 @@ public class ImageUtilEx {
 	
 	public static BufferedImage getBufferedImage(File file, MimeType type) {
 		BufferedImage image = null;
-		if ( (type != null) && (type == MimeType.MIME_GIF) ) {
+		if ( type != null && type == MimeType.MIME_GIF ) {
 			image = SanselanUtil.getBufferedImage(file);
 		}
 		if ( image == null ) {
@@ -42,7 +42,7 @@ public class ImageUtilEx {
 	
 	public static boolean writeBufferedImage( BufferedImage image, MimeType type, File file ) {
 		boolean ok = false;
-		if ( (type != null) && (type == MimeType.MIME_GIF) ) {
+		if ( type != null && type == MimeType.MIME_GIF ) {
 			ok = SanselanUtil.writeBufferedImage(image, file, type);
 		}
 		if (! ok) {

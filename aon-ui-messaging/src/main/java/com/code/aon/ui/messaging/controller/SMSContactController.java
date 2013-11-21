@@ -7,6 +7,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -19,6 +21,8 @@ import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class SMSContactController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger( SMSContactController.class.getName() );
+	
 	private static final String BEAN_CONTACT = "contact";
 	
     private Criteria criteria = new Criteria();
@@ -77,6 +81,7 @@ public class SMSContactController {
             	contacts.add( sc );
             }
     	} catch (ManagerBeanException e) {
+    		LOGGER.error(e.getMessage(), e);
 		}
     	this.model = new ListDataModel( contacts );
 	}
