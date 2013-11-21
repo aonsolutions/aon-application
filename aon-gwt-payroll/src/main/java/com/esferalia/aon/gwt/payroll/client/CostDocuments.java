@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
@@ -12,16 +14,23 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class CostDocuments extends AbstractSpinnable<IDocument> implements
 		IDocument {
 
-
 	private List<Cost> costs;
+	private List<Salary.Type> types;
 	private EmployeesServiceAsync employeesService;
 
-	public CostDocuments(List<Cost> costs, EmployeesServiceAsync employeesServiceAsync) {
+	public CostDocuments(List<Cost> costs,
+			EmployeesServiceAsync employeesServiceAsync) {
+		this(costs, new ArrayList<Salary.Type>(Arrays.asList(Salary.Type
+				.values())), employeesServiceAsync);
+	}
+
+	CostDocuments(List<Cost> costs, List<Salary.Type> types,
+			EmployeesServiceAsync employeesServiceAsync) {
 		this.costs = costs;
+		this.types = types;
 		this.employeesService = employeesServiceAsync;
 		last();
 	}
-
 
 	@Override
 	public int size() {
@@ -48,31 +57,47 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements
 		Cost cost = costs.get(getCurrentIndex());
 		String printURL = URL.encode(GWT.getModuleBaseURL() + "cost/"
 				+ cost.getMonth() + "_" + cost.getYear() + "_"
-				+ cost.getEnterpriseId() + "_" + cost.getWorkplaceId()
-				+ "." + format);
+				+ cost.getEnterpriseId() + "_" + cost.getWorkplaceId() + "."
+				+ format);
 		Window.open(printURL, "_blank", null);
 	}
 
 	@Override
 	public void getAsHTML(int zoom, AsyncCallback<String> callback) {
 		Cost cost = costs.get(getCurrentIndex());
-		employeesService.getCostReceiptHTML(cost, zoom, callback);
+		employeesService.getCostReceiptHTML(cost,
+				getSalaryTypes(), zoom, callback);
 	}
 
 	@Override
 	public String[] getSupportedFormats() {
 		return new String[] { "xls" };
 	}
-	
+
 	public List<Cost> getCosts() {
 		return costs;
 	}
-	
+
+	public void addType(Salary.Type type) {
+		types.add(type);
+	}
+
+	public void removeType(Salary.Type type) {
+		types.remove(type);
+	}
+
+	public boolean containsType(Salary.Type type) {
+		return types.contains(type);
+	}
+
 	// ------------------------------------------------------ protected methods
 	
-	protected EmployeesServiceAsync getEmployeesService(){
-		return employeesService;
+	Salary.Type [] getSalaryTypes() {
+		return types.toArray(new Salary.Type[types.size()]);
 	}
 	
+	protected EmployeesServiceAsync getEmployeesService() {
+		return employeesService;
+	}
 
 }

@@ -789,12 +789,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	
 	@Override
 	public void onCostsSelected(CostDocuments docs) {
+		cost.setTitle("Costes");
 		employeeDetail.setWidget(cost);
 		cost.setCostDocuments(docs);
+		
 	}
 
 	@Override
 	public void onSalariesSelected(SalariesDocuments docs) {
+		cost.setTitle("N\u00F3minas");
 		employeeDetail.setWidget(cost);
 		cost.setCostDocuments(docs);
 	}

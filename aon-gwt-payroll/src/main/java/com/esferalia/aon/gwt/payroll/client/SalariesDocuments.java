@@ -28,7 +28,7 @@ public class SalariesDocuments extends CostDocuments {
 	@Override
 	public void getAsHTML(int zoom, AsyncCallback<String> callback) {
 		Cost cost = getCosts().get(getCurrentIndex());
-		getEmployeesService().getSalaryReceiptHTML(cost, zoom, callback);
+		getEmployeesService().getSalaryReceiptHTML(cost, getSalaryTypes(), zoom, callback);
 	}
 	
 	@Override

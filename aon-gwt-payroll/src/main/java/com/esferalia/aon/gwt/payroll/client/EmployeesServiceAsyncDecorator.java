@@ -97,17 +97,17 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
-	public void getCostReceiptHTML(Cost cost, int zoom,
+	public void getCostReceiptHTML(Cost cost, Salary.Type types [], int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getCostReceiptHTML(cost, zoom,
+		employeesServiceAsync.getCostReceiptHTML(cost, types, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
-	public void getSalaryReceiptHTML(Cost cost, int zoom,
+	public void getSalaryReceiptHTML(Cost cost, Salary.Type types [], int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getSalaryReceiptHTML(cost, zoom,
+		employeesServiceAsync.getSalaryReceiptHTML(cost, types, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
 

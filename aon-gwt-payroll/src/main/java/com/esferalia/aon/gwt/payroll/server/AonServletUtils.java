@@ -138,10 +138,13 @@ public class AonServletUtils {
 		private Date endDate;
 		private Date startDate;
 		private Criteria criteria;
+		private SalaryType types[];
 		private SalaryProvider salaryProvider;
 
 		public CalcSalaryProvider(Date startDate, Date endDate,
-				Criteria criteria, SalaryProvider salaryProvider) {
+				Criteria criteria, SalaryType types[],
+				SalaryProvider salaryProvider) {
+			this.types = types;
 			this.criteria = criteria;
 			this.endDate = endDate;
 			this.startDate = startDate;
@@ -161,6 +164,8 @@ public class AonServletUtils {
 		@Override
 		public Collection getCollection(boolean forceRefresh)
 				throws ManagerBeanException {
+			if (types.length == 0)
+				return salaryProvider.getCollection(forceRefresh);
 
 			Connection conn = null;
 			SQLContractSalaryCalculatorContext ctx = null;
@@ -177,25 +182,27 @@ public class AonServletUtils {
 				Collection salaries = salaryProvider
 						.getCollection(forceRefresh);
 				allSalaries.addAll(salaries);
+				
+				if (contains(SalaryType.SALARY)) {
+					ctx = new SQLContractSalaryCalculatorContext(conn,
+							startDate, endDate, getStartOfKnowEra(), criteria);
 
-				ctx = new SQLContractSalaryCalculatorContext(conn, startDate,
-						endDate, getStartOfKnowEra(), criteria);
+					SalaryComparator salaryComparator = new SalaryComparator();
 
-				SalaryComparator salaryComparator = new SalaryComparator();
+					while (ctx.next())
+						if (!find(salaries, ctx)) {
+							Salary salary = (Salary) calculator.calculate(ctx);
 
-				while (ctx.next())
-					if (!find(salaries, ctx)) {
-						Salary salary = (Salary) calculator.calculate(ctx);
-						
-						salary.setIssueYear(0);
-						salary.setContract(getContract(ctx.getId()));
-						
-						int index = Collections.binarySearch(allSalaries,
-								salary, salaryComparator);
-						if ( index < 0 )
-							allSalaries.add(-( index + 1 ), salary);
-					}
+							salary.setIssueYear(0);
+							salary.setContract(getContract(ctx.getId()));
 
+							int index = Collections.binarySearch(allSalaries,
+									salary, salaryComparator);
+							if (index < 0)
+								allSalaries.add(-(index + 1), salary);
+						}
+				}
+				
 				return allSalaries;
 
 			} catch (SQLException e) {
@@ -222,6 +229,13 @@ public class AonServletUtils {
 				}
 			}
 
+		}
+
+		private boolean contains(SalaryType type) {
+			for (SalaryType t : types)
+				if (t == type)
+					return true;
+			return false;
 		}
 
 		private static boolean find(Collection collection,
@@ -269,7 +283,7 @@ public class AonServletUtils {
 			SalaryType type1 = o1.getType();
 			SalaryType type2 = o2.getType();
 			return type1.compareTo(type2);
-			
+
 		}
 	}
 

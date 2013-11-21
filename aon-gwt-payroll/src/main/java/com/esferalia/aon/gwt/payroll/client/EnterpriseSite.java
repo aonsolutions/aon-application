@@ -143,12 +143,14 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
 	@Override
 	public void onCostsSelected(CostDocuments docs) {
+		cost.setTitle("Costes");
 		detailPanel.setWidget(cost);
 		cost.setCostDocuments(docs);
 	}
 	
 	@Override
 	public void onSalariesSelected(SalariesDocuments docs) {
+		cost.setTitle("N\u00F3minas");
 		detailPanel.setWidget(cost);
 		cost.setCostDocuments(docs);
 	}

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import com.esferalia.aon.gwt.payroll.shared.Constants;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
@@ -65,32 +66,26 @@ public class MainEntryPoint implements EntryPoint {
 		ImageResource agreement();
 	}
 
-	private static final String MAIN_AGREEMENT_ENTRY_POINT = "MainAgreement";
-	private static final String MAIN_CALCULATOR_ENTRY_POINT = "MainCalculator";
-	private static final String EMPLOYEE_TREE_ENTRY_POINT = "EmployeeTree";
-	private static final String ENTERPRISE_SITE_ENTRY_POINT = "EnterpriseSite";
-	private static final String ENTRY_POINT_PARAM = "entryPoint";
-
 	@Override
 	public void onModuleLoad() {
 
-		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);
+		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);
 
 		
-		if ( entryPoint.equalsIgnoreCase(ENTERPRISE_SITE_ENTRY_POINT)) {
+		if ( entryPoint.equalsIgnoreCase(Constants.ENTERPRISE_SITE_ENTRY_POINT)) {
 			EnterpriseSite enterpriseSite = new EnterpriseSite();
 			enterpriseSite.onModuleLoad();
 		}
 		
-		else if ( entryPoint.equalsIgnoreCase(EMPLOYEE_TREE_ENTRY_POINT)) {
+		else if ( entryPoint.equalsIgnoreCase(Constants.EMPLOYEE_TREE_ENTRY_POINT)) {
 			EmployeeTree employeeTree = new EmployeeTree();
 			employeeTree.onModuleLoad();
 		}
-		else if ( entryPoint.equalsIgnoreCase(MAIN_CALCULATOR_ENTRY_POINT)) {
+		else if ( entryPoint.equalsIgnoreCase(Constants.MAIN_CALCULATOR_ENTRY_POINT)) {
 			MainCalculator mainCalculator = new MainCalculator();
 			mainCalculator.onModuleLoad();
 		}
-		else if ( entryPoint.equalsIgnoreCase(MAIN_AGREEMENT_ENTRY_POINT)) {
+		else if ( entryPoint.equalsIgnoreCase(Constants.MAIN_AGREEMENT_ENTRY_POINT)) {
 			MainAgreement mainAgreement = new MainAgreement();
 			mainAgreement.onModuleLoad();
 		}

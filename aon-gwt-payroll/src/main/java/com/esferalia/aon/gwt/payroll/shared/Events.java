@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -314,6 +315,13 @@ public class Events implements Serializable {
 
 	public Set<Integer> getEmployeeIds() {
 		return eventsMap.keySet();
+	}
+
+	public Set<String> getEventNames() {
+		Set<String> eventNames = new HashSet<String>();
+		for (Map<String, List<Event>> events : eventsMap.values())
+			eventNames.addAll(events.keySet());
+		return eventNames ;
 	}
 
 	public Set<String> getEventNames(int empployeeId) {

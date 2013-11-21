@@ -439,7 +439,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getSalaryReceiptHTML(Cost cost, int zoom)
+	public String getSalaryReceiptHTML(Cost cost, Salary.Type types [], int zoom)
 			throws IllegalArgumentException {
 
 		Map<Object, Object> parameters = new HashMap<Object, Object>(
@@ -460,7 +460,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
 
-		String html = getSalaryReceiptHTML(cost, parameters);
+		String html = getSalaryReceiptHTML(cost, types, parameters);
 
 		for (Entry<Object, Object> image : images.entrySet()) {
 			String name = String.format("%s%s", imagesUri, image.getKey());
@@ -471,15 +471,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getCostReceiptHTML(Cost cost, int zoom)
+	public String getCostReceiptHTML(Cost cost, Salary.Type types [], int zoom)
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
 
 			ReportManager reportManager = new ReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
-
-			reportManager.setCollectionProvider(getSalariesProvider(cost));
+			
+			SalaryType salaryTypes [] = new SalaryType[types.length];
+			for (int i = 0; i < types.length; i++)
+				salaryTypes[i] = SalaryType.values()[types[i].ordinal()];
+			
+			reportManager.setCollectionProvider(getSalariesProvider(cost, salaryTypes));
 
 			// Really I hate this spaghetti piece of code.
 			// For pass 'month' & 'year' to a report, we
@@ -954,7 +958,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 			return SQLEvents.getEvents(conn, workplaceId, startDate, endDate,
-					offset, limit);
+					offset, limit,names);
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1085,14 +1089,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	private String getSalaryReceiptHTML(Cost cost,
-			Map<Object, Object> parameters) throws IllegalArgumentException {
+			Salary.Type types [], Map<Object, Object> parameters) throws IllegalArgumentException {
 		try {
 
 			initFacesContext();
 
 			ReportManager reportManager = new ReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
-			reportManager.setCollectionProvider(getSalariesProvider(cost));
+
+			SalaryType salaryTypes [] = new SalaryType[types.length];
+			for (int i = 0; i < types.length; i++)
+				salaryTypes[i] = SalaryType.values()[types[i].ordinal()];
+			
+			reportManager.setCollectionProvider(getSalariesProvider(cost, salaryTypes));
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -1413,7 +1422,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static ICollectionProvider getSalariesProvider(Cost cost)
+	private static ICollectionProvider getSalariesProvider(Cost cost, SalaryType types [])
 			throws ManagerBeanException {
 		IManagerBean beanManager = BeanManager
 				.getManagerBean(com.esferalia.aon.payroll.Salary.class);
@@ -1477,9 +1486,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
 		aliasCriteria.addOrder(beanManager
 				.getFieldName(IEntityAlias.SALARY_CHARGE_DATE));
+		
+		aliasCriteria.addInExpression(beanManager
+				.getFieldName(IEntityAlias.SALARY_TYPE), types);
 
 		return new AonServletUtils.CalcSalaryProvider(startDate, endDate,
-				sqlCriteria, new AonServletUtils.SalaryProvider(aliasCriteria));
+				sqlCriteria, types, new AonServletUtils.SalaryProvider(aliasCriteria));
 
 	}
 
@@ -2245,7 +2257,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				variables.remove(payment.getName());
 			}
 			// Filter ContextVariable
-			List<String> contextVariables = new LinkedList<String>();
 			for (ContextVariable ctxVar : ContextVariable.values())
 				variables.remove(ctxVar.getName());
 

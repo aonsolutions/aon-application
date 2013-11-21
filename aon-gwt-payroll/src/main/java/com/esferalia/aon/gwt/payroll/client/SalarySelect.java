@@ -180,6 +180,7 @@ public class SalarySelect extends Composite {
 				CalendarUtil.setToFirstDayOfMonth(draftEndDate);
 				Date firstDate = getFirstDropDate(draftEndDate, contractStartDate);
 				Date lastDate = getLastDropDate(draftEndDate, contractEndDate);
+				
 				Date date = CalendarUtil.copyDate(firstDate);
 				while (draftEndDate.after(date)) {
 					dateListBox.addItem(DATE_FORMAT.format(date));

@@ -42,13 +42,13 @@ public interface EmployeesService extends RemoteService {
 
 	List<Irpf> getIrpfs(Employee employee) throws IllegalArgumentException;
 
-	String getCostReceiptHTML(Cost cost, int zoom)
+	String getCostReceiptHTML(Cost cost, Salary.Type types [], int zoom)
 			throws IllegalArgumentException;
 
 	String getIrpfReceiptHTML(Irpf irpf, int zoom)
 			throws IllegalArgumentException;
 
-	String getSalaryReceiptHTML(Cost cost, int zoom)
+	String getSalaryReceiptHTML(Cost cost, Salary.Type types [], int zoom)
 			throws IllegalArgumentException;
 
 	String getSalaryReceiptHTML(Salary salary, int zoom)

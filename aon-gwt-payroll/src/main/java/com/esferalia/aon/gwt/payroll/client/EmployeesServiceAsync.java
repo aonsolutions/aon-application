@@ -45,13 +45,13 @@ public interface EmployeesServiceAsync {
 	void getIrpfs(Employee employee, AsyncCallback<List<Irpf>> callback)
 			throws IllegalArgumentException;
 
-	void getCostReceiptHTML(Cost cost, int zoom, AsyncCallback<String> callback)
+	void getCostReceiptHTML(Cost cost, Salary.Type types [], int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 
 	void getIrpfReceiptHTML(Irpf irpf, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 
-	void getSalaryReceiptHTML(Cost cost, int zoom,
+	void getSalaryReceiptHTML(Cost cost, Salary.Type types [], int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getSalaryReceiptHTML(Salary salary, int zoom,
