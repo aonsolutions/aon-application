@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.25.0
+# Version: 7.25.1
 # Created by: girazu
-# Creation Date: 06/11/2013 17:56
+# Creation Date: 20/11/2013 11:40
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -893,6 +893,7 @@ CREATE TABLE `finance` (
   `advance` tinyint(1) default '0' COMMENT 'Indica si el Vencimiento es un anticipo',
   `payroll` tinyint(1) default '0' COMMENT 'Indica si el Vencimiento es de Nominas',
   `prepayment` tinyint(1) default '0' COMMENT 'Indica si el Vencimiento es un Suplido',
+  `source_id` int(4) default NULL COMMENT 'Identificador del Origen del Vencimiento',
   `finance_group` int(4) default NULL COMMENT 'Identificador unico del Vencimiento agrupador',
   PRIMARY KEY  (`id`),
   KEY `IDX_FINANCE_SCOPE` (`scope`),
@@ -5819,6 +5820,7 @@ CREATE TABLE `project_reservation` (
   KEY `IDX_PROJECT_RESERVATION_DOMAIN` (`domain`),
   KEY `IDX_PROJECT_RESERVATION_HOTEL_RESERVATION` (`hotel_reservation`),
   KEY `IDX_PROJECT_RESERVATION_CRS_CODE` (`crs_code`),
+  KEY `IDX_PROJECT_RESERVATION_START_DATE` (`start_date`),
   CONSTRAINT `FK_PROJECT_RESERVATION_AGENCY` FOREIGN KEY (`agency`) REFERENCES `customer` (`registry`),
   CONSTRAINT `FK_PROJECT_RESERVATION_COMPANY` FOREIGN KEY (`company`) REFERENCES `customer` (`registry`),
   CONSTRAINT `FK_PROJECT_RESERVATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
@@ -7184,7 +7186,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.25.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.25.1');
 
 COMMIT;
 
