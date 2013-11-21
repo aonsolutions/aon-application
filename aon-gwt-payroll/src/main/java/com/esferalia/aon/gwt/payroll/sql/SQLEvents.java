@@ -13,19 +13,21 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
-import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Events.Event;
+import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
@@ -40,8 +42,8 @@ public class SQLEvents {
 	private static java.sql.Date MAX_DATE = new java.sql.Date(Long.MAX_VALUE);
 
 	public static Events getEvents(Connection connection, Integer workplaceId,
-			Date startDate, Date endDate, int offset, int limit)
-			throws SQLException {
+			Date startDate, Date endDate, int offset, int limit,
+			String names []) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
@@ -113,14 +115,19 @@ public class SQLEvents {
 			if (employeesIds.size() == 0)
 				return events; // Empty events.
 
+			String namesHosts = StringUtils.repeat("?", ",", names.length);
+
 			// Try to load System events ( 'data' )
 			sql = "SELECT * FROM " + SQLConstants.SYSTEM_DATA + " WHERE "
 					+ SystemDataColumns.START_DATE + " <=  ? " + " AND ( "
 					+ SystemDataColumns.END_DATE + " IS NULL  " + " OR "
-					+ SystemDataColumns.END_DATE + " >= ? ) ";
+					+ SystemDataColumns.END_DATE + " >= ? ) " + " AND "
+					+ SystemDataColumns.NAME + " IN (" + namesHosts + ")";
 			stmt = connection.prepareStatement(sql);
 			stmt.setDate(1, sqlEndDate);
 			stmt.setDate(2, sqlStartDate);
+			for (int i = 0; i < names.length; i++)
+				stmt.setString(i+3, names[i]);
 			rs = stmt.executeQuery();
 
 			ExpressionContext systemExpressionContext = new ExpressionContext();
@@ -168,16 +175,19 @@ public class SQLEvents {
 					+ ContractDataColumns.END_DATE + " IS NULL  " + " OR "
 					+ ContractDataColumns.END_DATE + " >= ? ) " + " AND "
 					+ ContractDataColumns.CONTRACT + " IN ( " + idsSqlBuffer
-					+ " ) " + " ORDER BY " + ContractDataColumns.CONTRACT
+					+ " ) " + " AND " + SystemDataColumns.NAME + " IN (" + namesHosts + ")"
+					+ " ORDER BY " + ContractDataColumns.CONTRACT
 					+ " ASC ";
 
 			stmt = connection.prepareStatement(sql);
 
 			stmt.setDate(1, sqlEndDate);
 			stmt.setDate(2, sqlStartDate);
-			for (int i = 0; i < employeesIds.size(); i++) {
+			for (int i = 0; i < employeesIds.size(); i++) 
 				stmt.setInt(i + 3, employeesIds.get(i));
-			}
+			
+			for (int i = 0; i < names.length; i++)
+				stmt.setString(i+3 + employeesIds.size(), names[i]);
 
 			rs = stmt.executeQuery();
 
@@ -216,9 +226,10 @@ public class SQLEvents {
 						if (result.getValue() == null)
 							event.setValue(null);
 						/*
-						else if (result.getValue() instanceof String)
-							event.setValue(String.format("\"%s\"",
-									result.getValue()));*/
+						 * else if (result.getValue() instanceof String)
+						 * event.setValue(String.format("\"%s\"",
+						 * result.getValue()));
+						 */
 						else
 							event.setValue(result.getValue().toString());
 
@@ -243,7 +254,8 @@ public class SQLEvents {
 
 			return events;
 
-		} finally {
+		} 
+		finally {
 			if (rs != null)
 				rs.close();
 			if (stmt != null)
@@ -258,12 +270,15 @@ public class SQLEvents {
 		if (!events.getEmployeeIds().contains(-1)) {
 			return;
 		}
+		Set<String> names = events.getEventNames(-1);
+		if ( names.size() == 0  )
+			return;
 
 		int offset = events.getEmployeeCount();
 		int workplaceId = events.getWorkplaceId();
-
+		
 		Events remain = getEvents(connection, workplaceId, startDate, endDate,
-				offset, Integer.MAX_VALUE);
+				offset, Integer.MAX_VALUE, names.toArray(new String[names.size()] ));
 
 		Map<String, List<Event>> allEvents = events.getEvents(-1);
 
@@ -273,6 +288,7 @@ public class SQLEvents {
 
 			for (Entry<String, List<Event>> entry : allEvents.entrySet()) {
 				String name = entry.getKey();
+
 				List<Event> allList = entry.getValue();
 
 				List<Event> employeeList = employeeEvents.get(entry.getKey());
@@ -322,6 +338,7 @@ public class SQLEvents {
 
 			for (Integer employeeId : events.getEmployeeIds()) {
 				for (String eventName : events.getEventNames(employeeId)) {
+					
 					List<Event> employeeEvents = events.getFinalEvents(
 							employeeId, eventName);
 					if (employeeEvents.size() == 0)
@@ -434,11 +451,10 @@ public class SQLEvents {
 					+ SQLConstants.CONTRACT + "." + ContractColumns.WORKPLACE
 					+ " = ? " + " AND ( " + SQLConstants.CONTRACT + "."
 					+ ContractColumns.END_DATE + " IS NULL " + " OR "
-					+ SQLConstants.CONTRACT + "."
-					+ ContractColumns.END_DATE + " >= ?  ) " + " AND "
-					+ SQLConstants.CONTRACT + "."
-					+ ContractColumns.START_DATE + " <= ? "
-					+ " AND ( " + SQLConstants.CONTRACT_PAYMENT + "."
+					+ SQLConstants.CONTRACT + "." + ContractColumns.END_DATE
+					+ " >= ?  ) " + " AND " + SQLConstants.CONTRACT + "."
+					+ ContractColumns.START_DATE + " <= ? " + " AND ( "
+					+ SQLConstants.CONTRACT_PAYMENT + "."
 					+ ContractPaymentColumns.END_DATE + " IS NULL " + " OR "
 					+ SQLConstants.CONTRACT_PAYMENT + "."
 					+ ContractPaymentColumns.END_DATE + " >= ?  ) " + " AND "
@@ -481,7 +497,7 @@ public class SQLEvents {
 						ContractPaymentColumns.TYPE,
 						PaymentConceptColumns.TYPE, Object.class);
 				payment.setType(getType(paymentType, Payment.Type.class));
-				
+
 				// 'month' & 'salary' only at contract's payment....
 				Integer month = getInteger(rs, ContractPaymentColumns.MONTH);
 				payment.setMonth(month != null ? month.shortValue() : null);
