@@ -205,15 +205,14 @@ public class FinanceGenerator {
 				int daysInMonth = CommonUtil.daysInMonth(paymentDate);
 				int day = (paymentDaysArray[i]>daysInMonth) ? daysInMonth : paymentDaysArray[i];
 				if (DateUtils.getFragmentInDays(paymentDate, Calendar.MONTH) <= day) {
-					paymentDate = DateUtils.setDays(paymentDate, day);
-					return paymentDate;
+					return DateUtils.setDays(paymentDate, day);
 				}
 			}
 			if (paymentDaysArray[0] != 0) {
 				paymentDate = DateUtils.addMonths(paymentDate, 1);
 				int daysInMonth = CommonUtil.daysInMonth(paymentDate);
 				int day = (paymentDaysArray[0]>daysInMonth) ? daysInMonth : paymentDaysArray[0];
-				paymentDate = DateUtils.setDays(paymentDate, day);
+				return DateUtils.setDays(paymentDate, day);
 			}
 		}
 		return paymentDate;
