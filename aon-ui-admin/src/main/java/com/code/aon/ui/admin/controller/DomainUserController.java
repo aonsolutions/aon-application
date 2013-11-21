@@ -2,11 +2,6 @@ package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
-import static com.code.aon.ui.common.ICommonMessages.ACTIVE_USERS;
-import static com.code.aon.ui.common.ICommonMessages.MAXIMUM_NUMBER_USERS;
-import static com.code.aon.ui.common.ICommonMessages.NEW_PASSWORD_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.USER_DUPLICATED;
-import static com.esferalia.aon.entity.IEntityAlias.APPLICATION_USER_PROFILE_APPLICATION_USER_ID;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -40,6 +35,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.UserApplicationInfo;
 import com.code.aon.ui.admin.util.IdCheckUtil;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -62,7 +58,7 @@ public class DomainUserController extends BasicController {
 	private List<UserApplicationInfo> applicationInfos;
 	
 	public DomainUserController() {
-		this.idCheck = new IdCheckUtil(this, IEntityAlias.USER_LOGIN, USER_DUPLICATED);
+		this.idCheck = new IdCheckUtil(this, IEntityAlias.USER_LOGIN, ICommonMessages.USER_DUPLICATED);
 		this.idCheck.setDomainAlias(IEntityAlias.USER_DOMAIN);
 	}
 	
@@ -105,7 +101,7 @@ public class DomainUserController extends BasicController {
 	
 	public void onChangePassword( ActionEvent event ) {
 		if (! StringUtils.equals(newPassword, confirmPassword)) {
-			String message = AonUtil.addErrorMessageFromBundle(NEW_PASSWORD_ERROR);
+			String message = AonUtil.addErrorMessageFromBundle(ICommonMessages.NEW_PASSWORD_ERROR);
 			throw new AbortProcessingException( message );
 		}		
 		User user = getDomainUser();
@@ -228,14 +224,14 @@ public class DomainUserController extends BasicController {
 	}
 
 	public String getActiveUsersMessage() {
-		return AonUtil.getMessage(ACTIVE_USERS, getNumberOfActiveUsers());		
+		return AonUtil.getMessage(ICommonMessages.ACTIVE_USERS, getNumberOfActiveUsers());		
 	}
 
 	public String getDetailMessage() {
 		String message = getActiveUsersMessage();
 		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		if ( dc.getDomain().getMaxDefinedUsers() != null ) {
-			message += ", " + AonUtil.getMessage(MAXIMUM_NUMBER_USERS, dc.getDomain().getMaxDefinedUsers());
+			message += ", " + AonUtil.getMessage(ICommonMessages.MAXIMUM_NUMBER_USERS, dc.getDomain().getMaxDefinedUsers());
 		}
 		return message;
 	}
@@ -257,7 +253,7 @@ public class DomainUserController extends BasicController {
 		if ( AonUtil.getRoleManager().isSysAdmin() ) {
 			return true;
 		}
-		return getDomainUser().isActive() || (!isSkipUserReset());
+		return getDomainUser().isActive() || !isSkipUserReset();
 	}	
 
 	public void initApplicationInfos( User user ) throws ManagerBeanException {
@@ -306,7 +302,7 @@ public class DomainUserController extends BasicController {
 			if ( applicationUser != null ) {
 				IManagerBean bean = BeanManager.getManagerBean(ApplicationUserProfile.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(APPLICATION_USER_PROFILE_APPLICATION_USER_ID), applicationUser);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_USER_PROFILE_APPLICATION_USER_ID), applicationUser);
 				List<ITransferObject> list = bean.getList(criteria);
 				List<String> profiles = new LinkedList<String>();
 				for( ITransferObject to : list ) {

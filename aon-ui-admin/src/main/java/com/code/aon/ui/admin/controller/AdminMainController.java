@@ -1,12 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.MAIL_ACCOUNT_ENTERPRISE_TITLE;
-import static com.code.aon.ui.common.ICommonMessages.SIGNATURE_ENTERPRISE_TITLE;
-import static com.code.aon.ui.common.ICommonMessages.USER_PASSWORD_INVALID;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_CONTACT_DB;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
 
 import java.io.File;
 import java.util.Properties;
@@ -22,8 +16,10 @@ import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.User;
 import com.code.aon.ui.admin.util.ManagerLogger;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.ContactDBController;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MailAccountDBController;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.SignatureDBController;
@@ -56,7 +52,7 @@ public class AdminMainController implements IAdminConstants {
 	public void onInit( ActionEvent event ) {
 		initDomain(event);
 		if ( AonUtil.getRoleManager().isSysAdmin() ) {
-			initSysAdmin(event);			
+			initSysAdmin();			
 		}
 	}
 	
@@ -101,15 +97,15 @@ public class AdminMainController implements IAdminConstants {
 		String amUser = getProperties().getProperty(ADVANCED_MODE_USER); 
 		String amPassword = getProperties().getProperty(ADVANCED_MODE_PASSWORD);
 		if (amUser.equals(_user) && amPassword.equals(crypted)) {
-			initSysAdmin(event);
+			initSysAdmin();
 		} else {
-			AonUtil.addErrorMessageFromBundle(USER_PASSWORD_INVALID, _user);
+			AonUtil.addErrorMessageFromBundle(ICommonMessages.USER_PASSWORD_INVALID, _user);
 		}
 		_user = null;
 		_password = null;
 	}
 	
-	private void initSysAdmin( ActionEvent event ) {
+	private void initSysAdmin() {
 		AonUtil.getRoleManager().setSysAdmin();
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 		mailConfig.setSystemAccountEditable(true);
@@ -130,26 +126,26 @@ public class AdminMainController implements IAdminConstants {
 	}
 
 	private void initSignature( User user ) throws ManagerBeanException {
-		SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
+		SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_SIGNATURE_DB);
 		signature.updateUser(user);
 		signature.onSearch(null);
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		String title = (user == null) ? AonUtil.getMessage(SIGNATURE_ENTERPRISE_TITLE) : null;
+		String title = (user == null) ? AonUtil.getMessage(ICommonMessages.SIGNATURE_ENTERPRISE_TITLE) : null;
 		mailConfig.setSignatureTitle(title);
 	}
 
 	private void initMailAccount( User user ) throws ManagerBeanException {
-		MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
+		MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MAIL_ACCOUNT_DB);
 		account.updateUser(user);
 		account.onSearch(null);		
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		String title = (user == null) ? AonUtil.getMessage(MAIL_ACCOUNT_ENTERPRISE_TITLE) : null;
+		String title = (user == null) ? AonUtil.getMessage(ICommonMessages.MAIL_ACCOUNT_ENTERPRISE_TITLE) : null;
 		mailConfig.setMailAccountTitle(title);
 		mailConfig.setSkipDefaultAccountColumn(true);
 	}
 
 	private void initContact( User user ) throws ManagerBeanException {
-		ContactDBController contact = (ContactDBController) AonUtil.getRegisteredBean(BEAN_CONTACT_DB);
+		ContactDBController contact = (ContactDBController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_CONTACT_DB);
 		contact.updateUser(user);
 		contact.onSearch(null);
 	}

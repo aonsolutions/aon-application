@@ -91,7 +91,7 @@ public class DomainApplicationProfileControllerListener extends ControllerAdapte
 		Integer applicationUser = AdminUtil.getApplicationUser(AonUtil.getAuthPrincipal());
 		if ( applicationUser != null ) {
 			List<Integer> profiles = AdminUtil.getProfiles(applicationUser);
-			if ( (profiles != null) && profiles.contains(profile.getId()) ) {
+			if ( profiles != null && profiles.contains(profile.getId()) ) {
 				getActionDeniedController().initCurrentUser();
 			}
 		}

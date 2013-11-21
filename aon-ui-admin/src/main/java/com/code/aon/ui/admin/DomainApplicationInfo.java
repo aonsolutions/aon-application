@@ -175,7 +175,7 @@ public class DomainApplicationInfo {
 		DomainApplicationInfo dai = new DomainApplicationInfo(domain, application);
 		DomainApplication da = getDomainApplication(domain, application);
 		dai.setDomainApplication(da);
-		dai.setChecked( (da != null) && da.isActive() );
+		dai.setChecked( da != null && da.isActive() );
 		List<DomainModuleInfo> modules = new LinkedList<DomainModuleInfo>();
 		if ( AON_AIO_APPLICATION.equals(applicationName) ) {
 			for( Module module : Module.values() ) {

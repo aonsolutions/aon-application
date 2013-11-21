@@ -91,7 +91,7 @@ public class DomainModuleInfo {
 	}
 	
 	private void insert( DomainApplication domainApplication ) throws ManagerBeanException {
-		if ( (this.applicationModule == null) && (domainApplication != null) ) {
+		if ( this.applicationModule == null && domainApplication != null ) {
 			DomainApplicationModule dam = new DomainApplicationModule();
 			dam.setDomainApplication( domainApplication );
 			dam.setModule(getModule());

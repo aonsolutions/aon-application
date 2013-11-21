@@ -1,12 +1,5 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.ui.common.ICommonMessages.ADMIN_BACKUP_ERROR;
-import static com.code.aon.ui.common.ICommonMessages.ADMIN_BACKUP_INFO;
-import static com.code.aon.ui.common.ICommonMessages.ADMIN_BACKUP_TABLE_FINISH;
-import static com.code.aon.ui.common.ICommonMessages.ADMIN_BACKUP_TABLE_PROGRESS;
-import static com.code.aon.ui.common.ICommonMessages.ADMIN_BACKUP_TABLE_START;
-import static com.code.aon.ui.common.ICommonMessages.BACKUP_START;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -48,6 +41,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.admin.DumpThread;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -56,11 +50,11 @@ public class BackupController implements IDumpListener {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BackupController.class);
 	
-	private final static String BACKUP_INFO = AonUtil.getMessage(ADMIN_BACKUP_INFO);
-	private final static String BACKUP_TABLE_START = AonUtil.getMessage(ADMIN_BACKUP_TABLE_START);
-	private final static String BACKUP_TABLE_PROGRESS = AonUtil.getMessage(ADMIN_BACKUP_TABLE_PROGRESS);
-	private final static String BACKUP_TABLE_FINISH = AonUtil.getMessage(ADMIN_BACKUP_TABLE_FINISH);
-	private final static String BACKUP_ERROR = AonUtil.getMessage(ADMIN_BACKUP_ERROR);
+	private final static String BACKUP_INFO = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_INFO);
+	private final static String BACKUP_TABLE_START = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_START);
+	private final static String BACKUP_TABLE_PROGRESS = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_PROGRESS);
+	private final static String BACKUP_TABLE_FINISH = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_TABLE_FINISH);
+	private final static String BACKUP_ERROR = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_ERROR);
 	
 	private Domain domain;
 	private boolean includeChildDomains;
@@ -90,7 +84,7 @@ public class BackupController implements IDumpListener {
 	}
 
 	public boolean isBackupAvailable() {
-		return (this.backupFile != null) && (this.backupFile.exists());
+		return this.backupFile != null && this.backupFile.exists();
 	}
 
 	private void cleanBackupFile() {
@@ -146,7 +140,7 @@ public class BackupController implements IDumpListener {
 	
 	public void onPrepareBackup( ActionEvent event ) {
 		resetProgress();
-		setProgressMessage(AonUtil.getMessage(BACKUP_START));
+		setProgressMessage(AonUtil.getMessage(ICommonMessages.BACKUP_START));
 		this.dumpThread = new DumpThread(this, AonUtil.getDomainName());
 		this.dumpThread .start();
 		this.enabledProgressBar = true;
@@ -209,7 +203,7 @@ public class BackupController implements IDumpListener {
 	}
 
 	public long getProgressValuePercent() {
-		if ( (this.maxProgressValue > 0) && (this.progressValue > 0) ) {
+		if ( this.maxProgressValue > 0 && this.progressValue > 0 ) {
 			double value = (this.progressValue * 100.0)/this.maxProgressValue;
 			return Math.round( value );
 		}
@@ -248,7 +242,7 @@ public class BackupController implements IDumpListener {
 	
 	@Override
 	public synchronized void dumpTable(String table, int rowCount) {
-		if ( (rowCount % 100) == 0 ) {
+		if ( rowCount%100 == 0 ) {
 			setProgressMessage( format(BACKUP_TABLE_PROGRESS, table, rowCount) );	
 		}
 	}
@@ -266,7 +260,7 @@ public class BackupController implements IDumpListener {
 	
 	public boolean isShowIncludeParentDomain() {
 		Domain parent = domain.getParent();
-		return (parent != null) && (parent.getId() != null);
+		return parent != null && parent.getId() != null;
 	}
 
 	public boolean isShowIncludeChildDomains() throws ManagerBeanException {

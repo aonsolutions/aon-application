@@ -1,11 +1,7 @@
 package com.code.aon.ui.admin.event;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.APPLICATION_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.GENERAL_SCOPE;
-import static com.code.aon.ui.admin.controller.IAdminConstants.USER_SCOPE_EX_CONTROLLER_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.USER_WORK_GROUP_EX_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 
 import java.io.Serializable;
 
@@ -33,9 +29,11 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.controller.AdminMainController;
 import com.code.aon.ui.admin.controller.DomainApplicationUserController;
 import com.code.aon.ui.admin.controller.DomainUserController;
+import com.code.aon.ui.admin.controller.IAdminConstants;
 import com.code.aon.ui.admin.controller.UserScopeController;
 import com.code.aon.ui.admin.controller.UserWorkGroupController;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
+import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -99,7 +97,7 @@ public class DomainUserControllerListener extends ControllerAdapter {
 		DomainUserController duc = (DomainUserController) event.getController();
 		Serializable id = ((User) duc.getTo()).getId();
 		try {		
-			DomainApplicationUserController dausc = (DomainApplicationUserController) AonUtil.getRegisteredBean(APPLICATION_USER_CONTROLLER_NAME);
+			DomainApplicationUserController dausc = (DomainApplicationUserController) AonUtil.getRegisteredBean(IAdminConstants.APPLICATION_USER_CONTROLLER_NAME);
 			dausc.removeApplicationUsers( IEntityAlias.APPLICATION_USER_USER_ID, id );
 			FormUtil.remove(UserScope.class, id, true, IEntityAlias.USER_SCOPE_USER_ID);
 			FormUtil.remove(UserWorkGroup.class, id, true, IEntityAlias.USER_WORK_GROUP_USER_ID);
@@ -151,18 +149,18 @@ public class DomainUserControllerListener extends ControllerAdapter {
 	}	
 
 	private void updateDeniedOptions( User user ) {
-		ActionDeniedController denied = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+		ActionDeniedController denied = (ActionDeniedController) AonUtil.getRegisteredBean(IAuditConstants.ACTION_DENIED_CONTROLLER_NAME);
 		denied.initEdit(user);
 		denied.updateActionList();
 	}	
 
 	private void updateScopes( User user ) {
-		UserScopeController usc = (UserScopeController) AonUtil.getRegisteredBean(USER_SCOPE_EX_CONTROLLER_NAME);
+		UserScopeController usc = (UserScopeController) AonUtil.getRegisteredBean(IAdminConstants.USER_SCOPE_EX_CONTROLLER_NAME);
 		usc.init(user);
 	}	
 
 	private void updateWorkGroups( User user ) {
-		UserWorkGroupController uwgc = (UserWorkGroupController) AonUtil.getRegisteredBean(USER_WORK_GROUP_EX_CONTROLLER_NAME);
+		UserWorkGroupController uwgc = (UserWorkGroupController) AonUtil.getRegisteredBean(IAdminConstants.USER_WORK_GROUP_EX_CONTROLLER_NAME);
 		uwgc.init(user);
 	}	
 	

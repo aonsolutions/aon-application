@@ -1,9 +1,5 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_HERITABLE_ID;
-import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_ID;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_NAME_DUPLICATED;
-import static com.code.aon.ui.common.ICommonMessages.INVALID_PASSWORD;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.io.IOException;
@@ -25,6 +21,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.ApplicationParameter;
@@ -44,6 +41,7 @@ import com.code.aon.master.IConstants;
 import com.code.aon.master.VersionManager;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.IController;
@@ -232,7 +230,7 @@ public class NewDomainController {
 		User user = UserUtils.getInstance().getLoggedUser();
 		String sent_passwd  = AdminUtil.encodeSHA(password);
 		if (!StringUtils.equals(user.getPassword(), sent_passwd)) {
-			String message = AonUtil.addErrorMessageFromBundle(INVALID_PASSWORD);
+			String message = AonUtil.addErrorMessageFromBundle(ICommonMessages.INVALID_PASSWORD);
 			throw new AbortProcessingException(message);
 		}			
 	}
@@ -247,7 +245,7 @@ public class NewDomainController {
 		}		
 		try {
 			if ( existsDomainName(domainFinalName) ) {
-				String message = AonUtil.addErrorMessageFromBundle(DOMAIN_NAME_DUPLICATED, domainFinalName);
+				String message = AonUtil.addErrorMessageFromBundle(ICommonMessages.DOMAIN_NAME_DUPLICATED, domainFinalName);
 				throw new AbortProcessingException(message);			
 			}			
 		} catch ( ManagerBeanException e ) {
@@ -265,7 +263,7 @@ public class NewDomainController {
 				}
 				copyCustomizeId(newDomain);
 			} else {
-				duplicateDomain(getTemplateDomain().getId(), domainFinalName);
+				duplicateDomain(domainFinalName);
 			}
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			ds.setModel(null);			
@@ -277,12 +275,12 @@ public class NewDomainController {
 	}
 	
 	private void copyCustomizeId( Integer newDomain ) {
-		String idValue = AppParamUtil.getValue(AON_CUSTOMIZE_HERITABLE_ID);
+		String idValue = AppParamUtil.getValue(AppParam.AON_CUSTOMIZE_HERITABLE_ID);
 		if (! StringUtils.isEmpty(idValue) ) {
-			ApplicationParameter ap1 = new ApplicationParameter(AON_CUSTOMIZE_ID.getValue(), idValue);
+			ApplicationParameter ap1 = new ApplicationParameter(AppParam.AON_CUSTOMIZE_ID.getValue(), idValue);
 			ap1.setDomain(newDomain);
 			AppParamUtil.insertParameter(ap1);
-			ApplicationParameter ap2 = new ApplicationParameter(AON_CUSTOMIZE_HERITABLE_ID.getValue(), idValue);
+			ApplicationParameter ap2 = new ApplicationParameter(AppParam.AON_CUSTOMIZE_HERITABLE_ID.getValue(), idValue);
 			ap2.setDomain(newDomain);
 			AppParamUtil.insertParameter(ap2);
 		}		
@@ -340,7 +338,7 @@ public class NewDomainController {
 		}
 	}
 	
-	private void duplicateDomain(Integer parent, String name) throws AonConnectionException, AonSQLException, ManagerBeanException {
+	private void duplicateDomain(String name) throws AonConnectionException, AonSQLException, ManagerBeanException {
 		Connection connection = null;
 		try {			
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
@@ -348,7 +346,7 @@ public class NewDomainController {
 			add.setDescription(getDomainDescription());
 			add.setOwner(getOwner());
 			Integer newDomainId = add.execute(getTemplateDomain().getId(), name);
-			if ( (newDomainId != null) && (parentDomain != null) ) {
+			if ( newDomainId != null && parentDomain != null ) {
 				updateDomainParent( newDomainId, parentDomain );
 			}
 		} finally {

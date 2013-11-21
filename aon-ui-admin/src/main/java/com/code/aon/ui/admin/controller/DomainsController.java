@@ -2,12 +2,6 @@ package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.NEW_DOMAIN_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.REMOVE_DOMAIN_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.CONFIGURATION_CATEGORY;
-import static com.code.aon.ui.audit.controller.IAuditConstants.ENTERPRISE_CATEGORY;
-import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_COMPANY;
-import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_CONFIG_SECURITY;
-import static com.code.aon.ui.audit.controller.IAuditConstants.GROUP_ENTERPRISE_SECURITY;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.util.LinkedList;
@@ -31,6 +25,7 @@ import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
+import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -45,7 +40,7 @@ public class DomainsController extends BasicController {
 	private boolean allDomains;
 
 	public void onChangeFilter( ActionEvent event ) {
-		if ( (!StringUtils.equals(modelFilter, filter)) ) {
+		if ( !StringUtils.equals(modelFilter, filter) ) {
 			updateModel();
 			this.modelFilter = this.filter;
 		}
@@ -88,7 +83,7 @@ public class DomainsController extends BasicController {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		ds.select(domain.getId(), domain.getDescription());
 		Domain parent = domain.getParent();
-		if ( (parent != null) && (parent.getId() != null) ) {
+		if ( parent != null && parent.getId() != null ) {
 			ds.setParentDomain(parent.getId());
 		} else {
 			ds.setParentDomain(domain.getId());
@@ -97,15 +92,15 @@ public class DomainsController extends BasicController {
 	}
 	
 	private void setConfigurationMenu() {
-		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(IAuditConstants.ACTION_DENIED_CONTROLLER_NAME);
 		String[] categories = null;
 		String[] groups = null;
 		if ( AonUtil.getRoleManager().isAdmin() ) {
-			categories = new String[]{ENTERPRISE_CATEGORY, CONFIGURATION_CATEGORY};
-			groups = new String[]{GROUP_ENTERPRISE_SECURITY, GROUP_CONFIG_SECURITY, GROUP_CONFIG_COMPANY};
+			categories = new String[]{IAuditConstants.ENTERPRISE_CATEGORY, IAuditConstants.CONFIGURATION_CATEGORY};
+			groups = new String[]{IAuditConstants.GROUP_ENTERPRISE_SECURITY, IAuditConstants.GROUP_CONFIG_SECURITY, IAuditConstants.GROUP_CONFIG_COMPANY};
 		} else {
-			categories = new String[]{CONFIGURATION_CATEGORY};
-			groups = new String[]{GROUP_CONFIG_SECURITY, GROUP_CONFIG_COMPANY};			
+			categories = new String[]{IAuditConstants.CONFIGURATION_CATEGORY};
+			groups = new String[]{IAuditConstants.GROUP_CONFIG_SECURITY, IAuditConstants.GROUP_CONFIG_COMPANY};			
 		}
 		AonUtil.getRoleManager().setSysAdmin();			
 		adc.enableOnly(categories, groups);					
@@ -140,7 +135,7 @@ public class DomainsController extends BasicController {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 		Domain domain = (Domain) bean.get(principal.getDomainId());
-		return ( domain.getType() == DomainType.ADMIN );
+		return domain.getType()==DomainType.ADMIN;
 	}
 	
 	public void onSelectChildDomain( ActionEvent event) throws ManagerBeanException {

@@ -2,9 +2,6 @@ package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.APPLICATION_PROFILE_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_APPLICATION_CONTROLLER_NAME;
-import static com.esferalia.aon.entity.IEntityAlias.PROFILE_ACTION_DENIED_PROFILE_ID;
-import static com.esferalia.aon.entity.IEntityAlias.PROFILE_MODULE_DENIED_PROFILE_ID;
-import static com.esferalia.aon.entity.IEntityAlias.PROFILE_ROLE_PROFILE_ID;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -255,9 +252,9 @@ public class ApplicationProfileController extends LinesController {
 	}
 
 	public static void removeLines( Profile profile ) throws ManagerBeanException {
-		FormUtil.remove(ProfileRole.class, profile.getId(), PROFILE_ROLE_PROFILE_ID);
-		FormUtil.remove(ProfileModuleDenied.class, profile.getId(), PROFILE_MODULE_DENIED_PROFILE_ID);
-		FormUtil.remove(ProfileActionDenied.class, profile.getId(), PROFILE_ACTION_DENIED_PROFILE_ID);		
+		FormUtil.remove(ProfileRole.class, profile.getId(), IEntityAlias.PROFILE_ROLE_PROFILE_ID);
+		FormUtil.remove(ProfileModuleDenied.class, profile.getId(), IEntityAlias.PROFILE_MODULE_DENIED_PROFILE_ID);
+		FormUtil.remove(ProfileActionDenied.class, profile.getId(), IEntityAlias.PROFILE_ACTION_DENIED_PROFILE_ID);		
 	}
 	
 }

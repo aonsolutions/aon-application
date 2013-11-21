@@ -45,10 +45,10 @@ public class DomainUserSearchListener extends ControllerSearchListener {
 
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
-		if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
+		if (getEnterprise() != null && getEnterprise().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.USER_ENTERPRISE), getEnterprise().getId());			
 		}
-		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
+		if (getRegistry() != null && getRegistry().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.USER_REGISTRY), getRegistry().getId());			
 		}
 	}

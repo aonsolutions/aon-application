@@ -84,7 +84,7 @@ public class DomainApplicationUserController extends LinesController {
 	public static List<SelectTransferObject<Profile,ApplicationUserProfile>> loadUserProfiles( DomainApplication da, ApplicationUser applicationUser ) throws ManagerBeanException {
 		List<SelectTransferObject<Profile,ApplicationUserProfile>> list = new LinkedList<SelectTransferObject<Profile,ApplicationUserProfile>>();
 		List<ApplicationUserProfile> profiles = null;
-		if ( (applicationUser != null) && (applicationUser.getId() != null) ) {
+		if ( applicationUser != null && applicationUser.getId() != null ) {
 			profiles = getApplicationUserProfiles(applicationUser, false);
 		}
 		for( ITransferObject to : UserApplicationInfo.getProfiles(da) ) {

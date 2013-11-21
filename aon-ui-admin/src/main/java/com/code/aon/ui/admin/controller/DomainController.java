@@ -1,40 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
-import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.AON_AIO_APPLICATION;
-import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
-import static com.code.aon.ui.common.ICommonMessages.ACTIVE;
-import static com.code.aon.ui.common.ICommonMessages.AUDIT_LEVEL;
-import static com.code.aon.ui.common.ICommonMessages.COMPANY_EMAIL_BODY_HEADER;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_DISPLAY_NAME;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_DOMAIN_MANAGEMENT;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_EMAIL_BODY_1;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_EMAIL_BODY_2;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_EMAIL_BODY_3;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_EMAIL_BODY_4;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_EMAIL_BODY_5;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_EMAIL_BODY_FOOTER;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_INVALID_LABEL_DASH;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_INVALID_LABEL_FORMAT;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_INVALID_LABEL_LENGTH;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_INVALID_NAME;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_INVALID_NAME_LARGE;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_INVALID_NAME_LEVEL;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_MANAGEMENT;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_MAX_DEFINED_USERS;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_MAX_TOTAL_DOCUMENT_SIZE;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_MODULES;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_NAME_DUPLICATED;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_PARENT;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_TYPE;
-import static com.code.aon.ui.common.ICommonMessages.DOMAIN_URL;
-import static com.code.aon.ui.common.ICommonMessages.MODULE_MANAGEMENT_FINANCE;
-import static com.code.aon.ui.common.ICommonMessages.NO;
-import static com.code.aon.ui.common.ICommonMessages.SUBDOMAIN_SUFFIX;
-import static com.code.aon.ui.common.ICommonMessages.WRONG_EMAIL;
-import static com.code.aon.ui.common.ICommonMessages.WRONG_EMAILS;
-import static com.code.aon.ui.common.ICommonMessages.YES;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 import static javax.faces.application.FacesMessage.SEVERITY_ERROR;
 
@@ -64,6 +30,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.validator.EmailValidator;
@@ -101,6 +68,9 @@ import com.code.aon.ui.admin.DomainModuleInfo;
 import com.code.aon.ui.admin.DomainModuleInfoManagement;
 import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
+import com.code.aon.ui.audit.controller.IAuditConstants;
+import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
@@ -169,7 +139,7 @@ public class DomainController extends BasicController {
 	private boolean showAuditInfoWindow;
 	
 	private AdminMainController getAdmin() {
-		return (AdminMainController) AonUtil.getRegisteredBean(ADMIN_CONTROLLER_NAME);
+		return (AdminMainController) AonUtil.getRegisteredBean(IAdminConstants.ADMIN_CONTROLLER_NAME);
 	}
 	
 	public Domain getDomain() {
@@ -178,7 +148,7 @@ public class DomainController extends BasicController {
 	
 	public Domain getParentDomain() {
 		Domain parent = getDomain().getParent();
-		if ( (parent != null) && (parent.getId() != null) ) {
+		if ( parent != null && parent.getId() != null ) {
 			return parent;
 		}		
 		return null;
@@ -212,7 +182,7 @@ public class DomainController extends BasicController {
 	
 	public boolean isConsultancyParent() throws ManagerBeanException {
 		Domain parent = getParentDomain();
-		return (parent != null) && (parent.getType()  == DomainType.CONSULTANCY);
+		return parent != null && parent.getType()==DomainType.CONSULTANCY;
 	}
 	
 	private List<Module> getDisabledModules() throws ManagerBeanException {
@@ -244,17 +214,17 @@ public class DomainController extends BasicController {
 	private void joinManagementTreasury() throws ManagerBeanException {
 		DomainModuleInfo management = this.aioInfo.getModuleInfo(Module.MANAGEMENT);
 		DomainModuleInfo treasury = this.aioInfo.getModuleInfo(Module.TREASURY);
-		if ( (management != null) && (treasury != null) ) {
+		if ( management != null && treasury != null ) {
 			DomainModuleInfoManagement dmim = new DomainModuleInfoManagement(management, treasury);
 			this.aioInfo.getApplicationModules().remove(management);
 			this.aioInfo.getApplicationModules().remove(treasury);
 			this.aioInfo.getApplicationModules().add(dmim);
-			dmim.setDescription(AonUtil.getMessage(MODULE_MANAGEMENT_FINANCE));				
+			dmim.setDescription(AonUtil.getMessage(ICommonMessages.MODULE_MANAGEMENT_FINANCE));				
 		}
 	}
 	
 	public boolean isShowDocumentSelection() {
-		if ( (documental != null) && (documentPortal != null) ) {
+		if ( documental != null && documentPortal != null ) {
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			return ds.isChildDomain();
 		}
@@ -262,7 +232,7 @@ public class DomainController extends BasicController {
 	}
 
 	public boolean isShowPayrollSelection() {
-		if ( (payroll != null) && (payrollPortal != null) ) {
+		if ( payroll != null && payrollPortal != null ) {
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			return ds.isChildDomain();
 		}
@@ -450,7 +420,7 @@ public class DomainController extends BasicController {
 
 	private void saveOEMDomain( AppParam appParam, Domain domain) throws ManagerBeanException {
 		String id = null;
-		if ( (domain != null) && (domain.getId() != null) ) {
+		if ( domain != null && domain.getId() != null ) {
 			IManagerBean bean = BeanManager.getManagerBean(Company.class);
 			Criteria criteria = new Criteria();
 			criteria.setSkipDomainFilter(true);
@@ -476,7 +446,7 @@ public class DomainController extends BasicController {
 			try {
 				DomainController.checkDomainName(name, 3);
 			} catch (AonException e) {
-				String message = AonUtil.getMessage(SUBDOMAIN_SUFFIX);
+				String message = AonUtil.getMessage(ICommonMessages.SUBDOMAIN_SUFFIX);
 				FacesMessage fm = new FacesMessage(message + ": " + e.getMessage());
 				fm.setSeverity(SEVERITY_ERROR);
 				throw new ValidatorException(fm);		
@@ -485,7 +455,7 @@ public class DomainController extends BasicController {
 			criteria.setSkipDomainFilter(true);
 			criteria.addEqualExpression(getFieldName(IEntityAlias.DOMAIN_NAME), name);
 			if ( getManagerBean().getCount(criteria) > 0 ) {
-				String message = AonUtil.getMessage(DOMAIN_NAME_DUPLICATED, name);
+				String message = AonUtil.getMessage(ICommonMessages.DOMAIN_NAME_DUPLICATED, name);
 				throw new ValidatorException(new FacesMessage(message));
 			}			
 		}
@@ -497,7 +467,7 @@ public class DomainController extends BasicController {
 			try {
 				DomainController.checkDomainName(name, 3);
 			} catch (AonException e) {
-				String message = AonUtil.getMessage(SUBDOMAIN_SUFFIX);
+				String message = AonUtil.getMessage(ICommonMessages.SUBDOMAIN_SUFFIX);
 				FacesMessage fm = new FacesMessage(message + ": " + e.getMessage());
 				fm.setSeverity(SEVERITY_ERROR);
 				throw new ValidatorException(fm);		
@@ -513,25 +483,25 @@ public class DomainController extends BasicController {
 					for( int i = 0; i < labels.length; i++ ) {
 						String label = labels[i];
 						if ( StringUtils.length(label) > MAX_DOMAIN_LABEL_LENGTH ) {
-							throw new AonException( AonUtil.getMessage(DOMAIN_INVALID_LABEL_LENGTH, label) );
+							throw new AonException( AonUtil.getMessage(ICommonMessages.DOMAIN_INVALID_LABEL_LENGTH, label) );
 						}
 						if ( StringUtils.startsWith(label, "-") || StringUtils.endsWith(label, "-") ) {
-							throw new AonException( AonUtil.getMessage(DOMAIN_INVALID_LABEL_DASH, label) );
+							throw new AonException( AonUtil.getMessage(ICommonMessages.DOMAIN_INVALID_LABEL_DASH, label) );
 						}
 						Pattern p = (i+1==labels.length) ? URL_TLD_PATTERN : URL_LABEL_PATTERN;
 						Matcher m = p.matcher(label);
 						if (! m.matches() ) {
-							throw new AonException( AonUtil.getMessage(DOMAIN_INVALID_LABEL_FORMAT, label) );
+							throw new AonException( AonUtil.getMessage(ICommonMessages.DOMAIN_INVALID_LABEL_FORMAT, label) );
 						}
 					}	
 				} else {
-					throw new AonException( AonUtil.getMessage(DOMAIN_INVALID_NAME_LEVEL, maxLevel) );
+					throw new AonException( AonUtil.getMessage(ICommonMessages.DOMAIN_INVALID_NAME_LEVEL, maxLevel) );
 				}
 			} else {
-				throw new AonException( AonUtil.getMessage(DOMAIN_INVALID_NAME_LARGE) );
+				throw new AonException( AonUtil.getMessage(ICommonMessages.DOMAIN_INVALID_NAME_LARGE) );
 			}
 		} else {
-			throw new AonException( AonUtil.getMessage(DOMAIN_INVALID_NAME, name) );	
+			throw new AonException( AonUtil.getMessage(ICommonMessages.DOMAIN_INVALID_NAME, name) );	
 		}
 	}
 	
@@ -664,28 +634,30 @@ public class DomainController extends BasicController {
 		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
 		body.append( "</head><body>" );
 		
-		body.append( AonUtil.getMessage(COMPANY_EMAIL_BODY_HEADER) );
-		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
-		body.append( AonUtil.getMessage(DOMAIN_EMAIL_BODY_1, loggedUser.getLoggedUserName(), di.getUrl()) );
-		body.append( AonUtil.getMessage(DOMAIN_EMAIL_BODY_2, di.getName()) );
-		if ( (di.getParent() != null) && (di.getParent().getId() != null) ) {
-			body.append( AonUtil.getMessage(DOMAIN_EMAIL_BODY_3, di.getParent().getDescription()) );
+		body.append( AonUtil.getMessage(ICommonMessages.COMPANY_EMAIL_BODY_HEADER) );
+		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(ICommonConstants.LOGGED_USER_CONTROLLER_NAME);
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_1, loggedUser.getLoggedUserName(), di.getUrl()) );
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_2, StringEscapeUtils.escapeHtml(di.getName())) );
+		if ( di.getParent() != null && di.getParent().getId() != null ) {
+			String parent = StringEscapeUtils.escapeHtml(di.getParent().getDescription());
+			body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_3, parent) );
 		}
 		Locale locale = AonUtil.getCurrentLocale();
 		String type = di.getType().getName(locale);
 		String size = FileUtils.byteCountToDisplaySize(di.getMaxTotalDocumentSize()*FileUtils.ONE_MB);
-		body.append( AonUtil.getMessage(DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
-		String multiDomain = di.isDomainManagement() ? AonUtil.getMessage(YES) : AonUtil.getMessage(NO) ;
-		body.append( AonUtil.getMessage(DOMAIN_EMAIL_BODY_5, multiDomain, di.getModules().size()) );
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
+		String multiDomain = di.isDomainManagement() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_5, multiDomain, di.getModules().size()) );
 		if (! di.getModules().isEmpty() ) {
 			body.append( "<ul>" );
 			for( Module module : di.getModules() ) {
-				body.append( "<li>" ).append( module.getName(locale) ).append( "</li>" );
+				String name = StringEscapeUtils.escapeHtml(module.getName(locale));
+				body.append( "<li>" ).append(name).append( "</li>" );
 			}
 			body.append( "</ul>" );
 		}
 		
-		body.append( AonUtil.getMessage(DOMAIN_EMAIL_BODY_FOOTER) );
+		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_FOOTER) );
 		body.append( "</body>" );
 		return body.toString();
 	}	
@@ -704,38 +676,38 @@ public class DomainController extends BasicController {
 		StringBuffer sb = new StringBuffer();
 		Locale locale = AonUtil.getCurrentLocale();	
 		if (! StringUtils.equals(di1.getName(), di2.getName()) ) {
-			diff( sb, DOMAIN_DISPLAY_NAME, di1.getName(), di2.getName() );
+			diff( sb, ICommonMessages.DOMAIN_DISPLAY_NAME, di1.getName(), di2.getName() );
 		}
 		if ( di1.getType() != di2.getType() ) {
-			diff( sb, DOMAIN_TYPE, di1.getType().getName(locale), di2.getType().getName(locale) );
+			diff( sb, ICommonMessages.DOMAIN_TYPE, di1.getType().getName(locale), di2.getType().getName(locale) );
 		}
 		if (! StringUtils.equals(di1.getUrl(), di2.getUrl()) ) {
-			diff( sb, DOMAIN_URL, di1.getUrl(), di2.getUrl() );
+			diff( sb, ICommonMessages.DOMAIN_URL, di1.getUrl(), di2.getUrl() );
 		}
 		if (! ObjectUtils.equals(di1.getParentId(), di2.getParentId()) ) {
 			String p1 = (di1.getParentId() != null) ? di1.getParent().getId() + "-" + di1.getParent().getDescription() : "null";
 			String p2 = (di2.getParentId() != null) ? di2.getParent().getId() + "-" + di2.getParent().getDescription() : "null";
-			diff( sb, DOMAIN_PARENT, p1, p2 );
+			diff( sb, ICommonMessages.DOMAIN_PARENT, p1, p2 );
 		}
 		if (! ObjectUtils.equals(di1.getNumberOfUsers(), di2.getNumberOfUsers()) ) {
-			diff( sb, DOMAIN_MAX_DEFINED_USERS, di1.getNumberOfUsers(), di2.getNumberOfUsers() );
+			diff( sb, ICommonMessages.DOMAIN_MAX_DEFINED_USERS, di1.getNumberOfUsers(), di2.getNumberOfUsers() );
 		}
 		if (! ObjectUtils.equals(di1.getMaxTotalDocumentSize(), di2.getMaxTotalDocumentSize()) ) {
-			diff( sb, DOMAIN_MAX_TOTAL_DOCUMENT_SIZE, di1.getMaxTotalDocumentSize(), di2.getMaxTotalDocumentSize() );
+			diff( sb, ICommonMessages.DOMAIN_MAX_TOTAL_DOCUMENT_SIZE, di1.getMaxTotalDocumentSize(), di2.getMaxTotalDocumentSize() );
 		}
 		if ( di1.isDomainManagement() != di2.isDomainManagement() ) {
-			diff( sb, DOMAIN_DOMAIN_MANAGEMENT, di1.isDomainManagement(), di2.isDomainManagement() );
+			diff( sb, ICommonMessages.DOMAIN_DOMAIN_MANAGEMENT, di1.isDomainManagement(), di2.isDomainManagement() );
 		}
 		if (! Arrays.equals(di1.getModuleArray(), di2.getModuleArray()) ) {
-			diff( sb, DOMAIN_MODULES, di1.getModuleList(), di2.getModuleList() );
+			diff( sb, ICommonMessages.DOMAIN_MODULES, di1.getModuleList(), di2.getModuleList() );
 		}
 		if ( di1.isActive() != di2.isActive() ) {
-			String active1 = di1.isActive() ? AonUtil.getMessage(YES) : AonUtil.getMessage(NO) ;
-			String active2 = di2.isActive() ? AonUtil.getMessage(YES) : AonUtil.getMessage(NO) ;
-			diff( AonUtil.getMessage(ACTIVE), sb, active1, active2 );
+			String active1 = di1.isActive() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
+			String active2 = di2.isActive() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
+			diff( AonUtil.getMessage(ICommonMessages.ACTIVE), sb, active1, active2 );
 		}
 		if (! ObjectUtils.equals(di1.getAuditLevel(), di2.getAuditLevel()) ) {
-			diff( AonUtil.getMessage(AUDIT_LEVEL), sb, di1.getAuditLevel().getName(locale), di2.getAuditLevel().getName(locale) );
+			diff( AonUtil.getMessage(ICommonMessages.AUDIT_LEVEL), sb, di1.getAuditLevel().getName(locale), di2.getAuditLevel().getName(locale) );
 		}
 		
 		if ( sb.length() > 0 ) {
@@ -758,13 +730,13 @@ public class DomainController extends BasicController {
 			if (! ArrayUtils.isEmpty(emails) ) {
 				LOGGER.info( "Notication emails: {}", ArrayUtils.toString(emails) );
 				EmailSender sender = getEmailSender();
-				String subject = AonUtil.getMessage(DOMAIN_MANAGEMENT);
+				String subject = AonUtil.getMessage(ICommonMessages.DOMAIN_MANAGEMENT);
 				AonMessage message = sender.createMessage(subject);
 				message.setRecipientsBcc(emails);
 				sender.addMessageContent(message, getEmailContent(di), MimeType.MIME_HTML, diffFile);
 				sender.sendMessage(message);
 			}
-			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(IAuditConstants.ACTION_DENIED_CONTROLLER_NAME);
 			adc.init();				
 		}
 		this.currentDomainInfo = di;
@@ -821,13 +793,13 @@ public class DomainController extends BasicController {
 			if (! ArrayUtils.isEmpty(addresses) ) {
 				for( InternetAddress address : addresses ) {
 					if (! EmailValidator.getInstance().isValid(address.toString()) ) {
-						String message = AonUtil.getMessage(WRONG_EMAIL, address.toString());
+						String message = AonUtil.getMessage(ICommonMessages.WRONG_EMAIL, address.toString());
 						throw new ValidatorException(new FacesMessage(SEVERITY_ERROR, message, null));
 					}
 				}
 			}
 		} catch (AddressException e) {
-			String message = AonUtil.getMessage(WRONG_EMAILS);
+			String message = AonUtil.getMessage(ICommonMessages.WRONG_EMAILS);
 			throw new ValidatorException(new FacesMessage(SEVERITY_ERROR, message, null));
 		}
 	}			

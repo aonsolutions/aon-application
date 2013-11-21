@@ -1,15 +1,5 @@
 package com.code.aon.ui.admin.event;
 
-import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_ACTIVE;
-import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_CREATION_DATE;
-import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_DESCRIPTION;
-import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_DOMAIN_MANAGEMENT;
-import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_ENABLE_HEREDITY;
-import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_MODIFICATION_DATE;
-import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_NAME;
-import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_PARENT_ID;
-import static com.esferalia.aon.entity.IEntityAlias.DOMAIN_TYPE;
-
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +19,7 @@ import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.controller.DomainPrintController;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainSearchListener extends ControllerSearchListenerEx {
 
@@ -172,26 +163,26 @@ public class DomainSearchListener extends ControllerSearchListenerEx {
 	public void completeCriteria( Criteria criteria ) throws ManagerBeanException {
 		DomainPrintController dpc = (DomainPrintController) getController();
 		if (! StringUtils.isEmpty(getName()) ) {
-			dpc.addExpression(criteria, DOMAIN_NAME, getName());
+			dpc.addExpression(criteria, IEntityAlias.DOMAIN_NAME, getName());
 		}
 		if (! StringUtils.isEmpty(getDescription()) ) {
-			dpc.addExpression(criteria, DOMAIN_DESCRIPTION, getDescription());
+			dpc.addExpression(criteria, IEntityAlias.DOMAIN_DESCRIPTION, getDescription());
 		}
 		if ( getActive() != null ) {
-			criteria.addEqualExpression( getFieldName(DOMAIN_ACTIVE), getActive());
+			criteria.addEqualExpression( getFieldName(IEntityAlias.DOMAIN_ACTIVE), getActive());
 		}
 		if ( getEnableHeredity() != null ) {
-			criteria.addEqualExpression( getFieldName(DOMAIN_ENABLE_HEREDITY), getEnableHeredity());
+			criteria.addEqualExpression( getFieldName(IEntityAlias.DOMAIN_ENABLE_HEREDITY), getEnableHeredity());
 		}
 		if ( getDomainManagement() != null ) {
-			criteria.addEqualExpression( getFieldName(DOMAIN_DOMAIN_MANAGEMENT), getDomainManagement());
+			criteria.addEqualExpression( getFieldName(IEntityAlias.DOMAIN_DOMAIN_MANAGEMENT), getDomainManagement());
 		}
-		addEnumToCriteria(criteria, getFieldName(DOMAIN_TYPE), getTypes().toArray());
-		if ((getParent() != null) && (getParent().getId() != null)) {
-			criteria.addEqualExpression( getFieldName(DOMAIN_PARENT_ID), getParent().getId());			
+		addEnumToCriteria(criteria, getFieldName(IEntityAlias.DOMAIN_TYPE), getTypes().toArray());
+		if ( getParent() != null && getParent().getId() != null) {
+			criteria.addEqualExpression( getFieldName(IEntityAlias.DOMAIN_PARENT_ID), getParent().getId());			
 		}
-		addDateRange(criteria, getFieldName(DOMAIN_CREATION_DATE), getCreationDate());
-		addDateRange(criteria, getFieldName(DOMAIN_MODIFICATION_DATE), getModificationDate());
+		addDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_CREATION_DATE), getCreationDate());
+		addDateRange(criteria, getFieldName(IEntityAlias.DOMAIN_MODIFICATION_DATE), getModificationDate());
 		setShowList(true);
 	}	
 
