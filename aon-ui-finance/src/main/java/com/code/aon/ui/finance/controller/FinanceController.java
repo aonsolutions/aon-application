@@ -7,6 +7,10 @@ import static com.code.aon.ui.common.ICommonMessages.PAYMENT_INVALID_AMOUNT_ERRO
 import static com.code.aon.ui.common.ICommonMessages.PAYMENT_NOT_MATCH_AMOUNT_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.PAYMENT_PAY_METHOD_UNDEFINED_ERROR;
 
+import java.io.StringWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,6 +27,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.Bank;
@@ -30,6 +36,7 @@ import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
@@ -39,7 +46,10 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IRegistry;
@@ -50,12 +60,14 @@ import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.finance.event.FinanceSearchListener;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class FinanceController extends FinanceListController {
 
@@ -81,44 +93,15 @@ public class FinanceController extends FinanceListController {
 	private Double totalFinanceAmount;
 	private String invoiceViewer;
 	private boolean purchase;
-	private List<?> orderedList;
 	private boolean showBankManualInput;
+	private RegistryBank registryBank;
 	private boolean showFinanceGroupWindow;
 	private boolean financeGroup;
-	private RegistryBank registryBank;
+	private boolean showFinancePayrollWindow;
+	private Month payrollMonth;
+	private int payrollYear;
+	private List<?> orderedList;
 	
-	public RegistryBank getRegistryBank() {
-		return registryBank;
-	}
-
-	public void setRegistryBank(RegistryBank registryBank) {
-		this.registryBank = registryBank;
-	}
-
-	public boolean isShowFinanceGroupWindow() {
-		return showFinanceGroupWindow;
-	}
-
-	public void setShowFinanceGroupWindow(boolean showFinanceGroupWindow) {
-		this.showFinanceGroupWindow = showFinanceGroupWindow;
-	}
-
-	public boolean isFinanceGroup() {
-		return financeGroup;
-	}
-
-	public void setFinanceGroup(boolean financeGroup) {
-		this.financeGroup = financeGroup;
-	}
-
-	public boolean isShowBankManualInput() throws ManagerBeanException {
-		return showBankManualInput;
-	}
-
-	public void setShowBankManualInput(boolean showBankManualInput) {
-		this.showBankManualInput = showBankManualInput;
-	}
-
 	public Company getCompany() {
 		if (company == null) {
 			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
@@ -295,6 +278,62 @@ public class FinanceController extends FinanceListController {
 
 	public void setPurchase(boolean purchase) {
 		this.purchase = purchase;
+	}
+
+	public boolean isShowBankManualInput() throws ManagerBeanException {
+		return showBankManualInput;
+	}
+
+	public void setShowBankManualInput(boolean showBankManualInput) {
+		this.showBankManualInput = showBankManualInput;
+	}
+
+	public RegistryBank getRegistryBank() {
+		return registryBank;
+	}
+
+	public void setRegistryBank(RegistryBank registryBank) {
+		this.registryBank = registryBank;
+	}
+
+	public boolean isShowFinanceGroupWindow() {
+		return showFinanceGroupWindow;
+	}
+
+	public void setShowFinanceGroupWindow(boolean showFinanceGroupWindow) {
+		this.showFinanceGroupWindow = showFinanceGroupWindow;
+	}
+
+	public boolean isFinanceGroup() {
+		return financeGroup;
+	}
+
+	public void setFinanceGroup(boolean financeGroup) {
+		this.financeGroup = financeGroup;
+	}
+
+	public boolean isShowFinancePayrollWindow() {
+		return showFinancePayrollWindow;
+	}
+
+	public void setShowFinancePayrollWindow(boolean showFinancePayrollWindow) {
+		this.showFinancePayrollWindow = showFinancePayrollWindow;
+	}
+
+	public Month getPayrollMonth() {
+		return payrollMonth;
+	}
+
+	public void setPayrollMonth(Month payrollMonth) {
+		this.payrollMonth = payrollMonth;
+	}
+
+	public int getPayrollYear() {
+		return payrollYear;
+	}
+
+	public void setPayrollYear(int payrollYear) {
+		this.payrollYear = payrollYear;
 	}
 
 	public void registryData(LookupChangeEvent event) throws ManagerBeanException {
@@ -846,6 +885,103 @@ public class FinanceController extends FinanceListController {
 			amount += finance.getAmount();
 		}
 		((Finance)getTo()).setAmount(amount);
+	}
+
+	public void onGeneratePayrollFinancesShow(ActionEvent event) {
+		setPayrollMonth(Month.getMonthByValue(CommonUtil.getMonth(new Date())));
+		setPayrollYear(CommonUtil.getYear(new Date()));
+		try {
+			getCriteria().addEqualExpression(getFieldName(IEntityAlias.FINANCE_ID), new Integer(0));
+			onSearch(event);
+		} catch (ManagerBeanException e) {
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
+	public void onGeneratePayrollFinances(ActionEvent event) {
+		Date fromDate = CommonUtil.getDate(getPayrollYear(), getPayrollMonth().getValue(), 1);
+		Date toDate = CommonUtil.getMonthLastDay(fromDate);
+
+		PreparedStatement statement = null;
+		Connection connection = null;
+		try {
+			Integer maxId = new Integer(0);
+			Criteria criteria = new Criteria();
+			ProjectionList projectionList = new ProjectionList(Projection.max(getFieldName(IEntityAlias.FINANCE_ID)));
+			for (Object obj : getManagerBean().getList(projectionList, criteria)) {
+				maxId = (Integer)obj;
+			}
+
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+
+			StringWriter deleteFinances = new StringWriter();
+			deleteFinances.append("DELETE FROM finance");
+			deleteFinances.append(" WHERE " + DomainManager.getSQLWhereClause("domain"));
+			deleteFinances.append(" AND status = " + FinanceStatus.PENDING.ordinal());
+			deleteFinances.append(" AND payroll = 1");
+			deleteFinances.append(" AND due_date BETWEEN ? AND ?");
+
+			statement = connection.prepareStatement(deleteFinances.toString());
+			statement.setDate(1, new java.sql.Date(fromDate.getTime()));
+			statement.setDate(2, new java.sql.Date(toDate.getTime()));
+			statement.execute();
+
+			StringWriter insertFinances = new StringWriter();
+			insertFinances.append("INSERT INTO finance (");
+			insertFinances.append("domain, payment, registry, rdocument, rdocument_type, rdocument_country, rname, amount, concept, ");
+			insertFinances.append("due_date, pay_method, bank, bank_account, status, security_level, scope, payroll, source_id)");
+			insertFinances.append(" SELECT s.domain, 1, c.person, r.document, r.document_type, r.document_country, r.name,");
+			insertFinances.append(" ROUND(s.total_liquid, 2) - ROUND(CASE WHEN SUM(f.amount) IS NULL THEN 0 ELSE SUM(f.amount) END, 2) AS total_amount,");
+			insertFinances.append(" CONCAT(" + obtainSalaryTypeCondition("s.type") + ", ' - ', DATE_FORMAT(s.issue_date, '%d/%m/%Y')),");
+			insertFinances.append(" s.charge_date, rp.pay_method, rb.bank, rb.bank_account, 0, 0, w.scope, 1, s.id");
+			insertFinances.append(" FROM registry AS r, workplace AS w");
+			insertFinances.append(" LEFT JOIN salary AS s ON " + DomainManager.getSQLWhereClause("s.domain") + " AND s.issue_date BETWEEN ? AND ?");
+			insertFinances.append(" LEFT JOIN contract AS c ON c.id = s.contract");
+			insertFinances.append(" LEFT JOIN finance AS f ON f.source_id = s.id AND f.payroll = 1");
+			insertFinances.append(" LEFT JOIN rpaymethod AS rp ON rp.registry = c.person");
+			insertFinances.append(" LEFT JOIN rbank AS rb ON rb.id = rp.rbank");
+			insertFinances.append(" WHERE r.id = c.person");
+			insertFinances.append(" AND w.id = c.workplace");
+			insertFinances.append(" GROUP BY s.id");
+			insertFinances.append(" HAVING total_amount <> 0");
+
+			statement = connection.prepareStatement(insertFinances.toString());
+			statement.setDate(1, new java.sql.Date(fromDate.getTime()));
+			statement.setDate(2, new java.sql.Date(toDate.getTime()));
+			statement.execute();
+
+			if (maxId.intValue() > 0) {
+				FinanceSearchListener searchListener = (FinanceSearchListener)AonUtil.getRegisteredBean(FINANCE_SEARCH_LISTENER_NAME);
+				searchListener.initData();
+				criteria = new Criteria();
+				criteria.addGreaterThanExpression(getFieldName(IEntityAlias.FINANCE_ID), maxId);
+				criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_PAYROLL), Boolean.TRUE);
+				setCriteria(criteria);
+				onSearch(null);
+			}
+		} catch (SQLException ex) {
+			addMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		} catch (AonConnectionException ex) {
+			addMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		} catch (ManagerBeanException ex) {
+			addMessage(ex.getMessage());
+			throw new AbortProcessingException(ex.getMessage(), ex);
+		} finally {
+			DatabaseUtil.closeQuietly(statement);
+			DatabaseUtil.closeQuietly(connection);
+		}
+	}
+
+	private String obtainSalaryTypeCondition(String fieldName) {
+		String condition = "CASE " + fieldName;
+		for (SalaryType salaryType : SalaryType.values()) {
+			condition += " WHEN " + salaryType.ordinal() + " THEN '" + salaryType.getName(AonUtil.getCurrentLocale()).toUpperCase() + "'";
+		}
+		condition += " END";
+		return condition;
 	}
 
 }

@@ -4,15 +4,29 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
 		<aon:form id="financeSearch">
 
-			<ui:include	src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{(finance.payment) ? (bundle.finance_payment_module) : (bundle.finance_charge_module)}" />
 				<ui:param name="controller" value="#{finance}" />
-			</ui:include>
+				<ui:define name="additionalToolbarContent">
+					<c:if test="#{controller.payroll}">
+						<aon:commandButton id="generateFinances-Popup"
+							value="#{bundle.aon_generate}"
+							title="#{bundle.aon_generate}"
+							styleClass="aon-finding-toolbar-item aon-icon-open-popup"
+							actionListener="#{controller.onGeneratePayrollFinancesShow}"
+							action="finance_list">
+							<f:setPropertyActionListener target="#{controller.showFinancePayrollWindow}"
+								value="#{true}" />
+						</aon:commandButton>
+					</c:if>
+				</ui:define>
+			</ui:decorate>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
@@ -27,5 +41,6 @@
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{creditorLookup}" />
 		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalPayroll.xhtml" />
 	</ui:define>
 </ui:composition>

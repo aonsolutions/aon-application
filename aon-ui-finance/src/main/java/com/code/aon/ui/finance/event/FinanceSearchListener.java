@@ -74,14 +74,19 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 
 	@Override
 	protected void init() throws ManagerBeanException {
+		initData();
+
+		FinanceStatus[] defaultFinanceStatus = {FinanceStatus.PENDING, FinanceStatus.RETURNED};
+		setFinanceStatuses(defaultFinanceStatus);
+	}
+
+	public void initData() throws ManagerBeanException {
 		super.init();
 		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
 		setRegistryBank((RegistryBank)BeanManager.getManagerBean(RegistryBank.class).createNewTo());
-		FinanceStatus[] defaultFinanceStatus = {FinanceStatus.PENDING, FinanceStatus.RETURNED};
-		setFinanceStatuses(defaultFinanceStatus);
 		setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
 	}
-	
+
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_PAYMENT), ((FinanceController)getController()).isPayment());
