@@ -14,13 +14,12 @@
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
-					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+				<h:panelGrid styleClass="aon-width-all" columns="3" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<!--
 						SALARIES 
 						 -->
-					<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
 							<aon:panelGrid id="group_main_payroll" styleClass="aon-width-all"
 								columnClasses="aon-padding"
@@ -29,19 +28,21 @@
 									<aon:outputText value="#{bundle.payroll_salary_menu_group}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_employee" action="gwt_employee_tree"
-											value="#{bundle.menu_integral}" target="gwt">
-											<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
-											<aon:actionListener method="#{enterprise.onEditSearch}" />
-										</aon:commandLink>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="contractLeave-payroll"
-											action="contractLeave_search-payroll"
-											actionListener="#{contractLeave.onEditSearch}"
-											value="#{bundle.payroll_contractLeave_module}" />
-									</aon:div>
+									<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_employee" action="gwt_employee_tree"
+												value="#{bundle.menu_integral}" target="gwt">
+												<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
+												<aon:actionListener method="#{enterprise.onEditSearch}" />
+											</aon:commandLink>
+										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="contractLeave-payroll"
+												action="contractLeave_search-payroll"
+												actionListener="#{contractLeave.onEditSearch}"
+												value="#{bundle.payroll_contractLeave_module}" />
+										</aon:div>
+									</c:if>
 									<!--
 									<aon:div styleClass="aon-direct-access-list-element">
 										<a4j:commandLink ajaxSingle="true" immediate="true"
@@ -50,40 +51,18 @@
 											style="color:red;text-decoration:line-through" />
 									</aon:div>
 									-->
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_calculator"
+											action="gwt_main_calculator"
+											value="#{bundle.menu_main_calculator}" target="gwt">
+										</aon:commandLink>
+									</aon:div>
 								</aon:div>
 
 							</aon:panelGrid>
 						</aon:panelGroup>
-					</c:if>
-					<!--
-						EMPLOYEES 
-						 -->
-					<aon:panelGroup>
-						<aon:panelGrid id="group_payroll_contrata_general"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-account-entry aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.contrata_main_menu_group}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="contract-payroll"
-											action="contract_search-payroll"
-											actionListener="#{contract.onEditSearch}"
-											value="#{bundle.payroll_contract_module}" />
-									</aon:div>
-								</c:if>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="person-payroll"
-										action="#{person.initialAction}"
-										actionListener="#{person.onEditSearch}"
-										value="#{bundle.report_room_persons}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-					</aon:panelGroup>
-
+					
+					
 					<!--
 						SS 
 						 -->
@@ -168,81 +147,44 @@
 					</aon:panelGroup>
 
 					<!--
-						HACIENDA 
+						EMPLOYEES 
 						 -->
 					<aon:panelGroup>
-						<aon:panelGrid id="group_hacienda" styleClass="aon-width-all"
-							columnClasses="aon-padding"
-							headerClass="aon-icon-aeat aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:div>
-									<h:outputLink target="_blank" value="http://www.agenciatributaria.es">
-										<aon:outputText value="#{bundle.payroll_aeat_menu_group}" />
-									</h:outputLink>
-									<h:outputLink target="_blank" value="http://www.agenciatributaria.es"
-										title="#{bundle.aon_navigate_to_official_website}">
-										<h:graphicImage
-											styleClass="aon-vertical-align-middle aon-margin-left"
-											url="#{aonResource.resolve['/images/aon-icon/aon-icon-lookup-goto.png']}" />
-									</h:outputLink>
-								</aon:div>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="irpfData-payroll"
-										action="irpfData_search-payroll"
-										actionListener="#{irpfData.onEditSearch}"
-										value="#{bundle.payroll_model_145_module}">
-										<aon:actionListener method="#{contract.onEditSearch}" />
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mod111-payroll"
-										action="mod111_search-payroll"
-										actionListener="#{mod111.onEditSearch}"
-										value="#{bundle.fiscal_model_111_module_abbr}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<a4j:commandLink ajaxSingle="true" immediate="true"
-										onclick="alert('#{bundle.aio_not_yet}');return false;"
-										value="Modelo 190/Certificados de Renta" style="color:grey;font-style:oblique;" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-					</aon:panelGroup>
-
-					<!-- 
-							GLOBALS
-						 -->
-					<aon:panelGroup>
-						<aon:panelGrid id="group_system_editable"
+						<aon:panelGrid id="group_payroll_contrata_general"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-company aon-direct-access-panel">
+							headerClass="aon-icon-account-entry aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.payroll_system}" />
+								<aon:outputText value="#{bundle.contrata_main_menu_group}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
+								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="contract-payroll"
+											action="contract_search-payroll"
+											actionListener="#{contract.onEditSearch}"
+											value="#{bundle.payroll_contract_module}" />
+									</aon:div>
+								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="systemPayment"
-										action="systemPayment_search"
-										actionListener="#{systemPayment.onEditSearch}"
-										value="#{bundle.payroll_systemPayment_module}" />
+									<aon:commandLink id="person-payroll"
+										action="#{person.initialAction}"
+										actionListener="#{person.onEditSearch}"
+										value="#{bundle.report_room_persons}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="systemDeduction"
-										action="systemDeduction_search"
-										actionListener="#{systemDeduction.onEditSearch}"
-										value="#{bundle.payroll_systemDeduction_module}" />
+								
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_agreement"
+											action="gwt_main_agreement"
+											value="#{bundle.payroll_agreement_module}" target="gwt">
+										</aon:commandLink>
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="systemData" action="systemData_grid"
-										actionListener="#{systemData.onSearch}"
-										value="#{bundle.payroll_systemData_module}" />
-								</aon:div>
+								
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
-
+				
 					<!-- 
 							SEPE
 						 -->
@@ -280,48 +222,38 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
-
-					<!--
-						CONFIG 
+					
+					<!-- 
+							GLOBALS
 						 -->
 					<aon:panelGroup>
-						<aon:panelGrid id="group_payroll_contrata_parameters"
+						<aon:panelGrid id="group_system_editable"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-config">
+							headerClass="aon-icon-company aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_configuration}" />
+								<aon:outputText value="#{bundle.payroll_system}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="enterprise-payroll"
-										action="#{enterprise.initialAction}"
-										value="#{bundle.company_data_module}">
-										<aon:actionListener method="#{enterprise.onEditSearch}" />
-									</aon:commandLink>
+									<aon:commandLink id="systemPayment"
+										action="systemPayment_search"
+										actionListener="#{systemPayment.onEditSearch}"
+										value="#{bundle.payroll_systemPayment_module}" />
 								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_agreement"
-											action="gwt_main_agreement"
-											value="#{bundle.payroll_agreement_module}" target="gwt">
-										</aon:commandLink>
-									</aon:div>
-								</aon:div>
-
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="calendar-payroll"
-										action="#{calendar.initialAction}"
-										actionListener="#{calendar.onEditSearch}"
-										value="#{bundle.calendar_menu_group}">
-										<aon:actionListener method="#{calendar.onInitialize}" />
-									</aon:commandLink>
+									<aon:commandLink id="systemDeduction"
+										action="systemDeduction_search"
+										actionListener="#{systemDeduction.onEditSearch}"
+										value="#{bundle.payroll_systemDeduction_module}" />
 								</aon:div>
-
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="systemData" action="systemData_grid"
+										actionListener="#{systemData.onSearch}"
+										value="#{bundle.payroll_systemData_module}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
-					</aon:panelGroup>
+					</aon:panelGroup>					
 
 					<!--
 						PROCESS 
@@ -334,12 +266,6 @@
 								<aon:outputText value="#{bundle.aon_processes}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_calculator"
-										action="gwt_main_calculator"
-										value="#{bundle.menu_main_calculator}" target="gwt">
-									</aon:commandLink>
-								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="fbatchPayment-payroll" 
 										action="fbatch_search-Payroll"
@@ -379,7 +305,61 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
-
+										
+					<!--
+						HACIENDA 
+						 -->
+					<aon:panelGroup>
+						<aon:panelGrid id="group_hacienda" styleClass="aon-width-all"
+							columnClasses="aon-padding"
+							headerClass="aon-icon-aeat aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:div>
+									<h:outputLink target="_blank" value="http://www.agenciatributaria.es">
+										<aon:outputText value="#{bundle.payroll_aeat_menu_group}" />
+									</h:outputLink>
+									<h:outputLink target="_blank" value="http://www.agenciatributaria.es"
+										title="#{bundle.aon_navigate_to_official_website}">
+										<h:graphicImage
+											styleClass="aon-vertical-align-middle aon-margin-left"
+											url="#{aonResource.resolve['/images/aon-icon/aon-icon-lookup-goto.png']}" />
+									</h:outputLink>
+								</aon:div>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="irpfData-payroll"
+										action="irpfData_search-payroll"
+										actionListener="#{irpfData.onEditSearch}"
+										value="#{bundle.payroll_model_145_module}">
+										<aon:actionListener method="#{contract.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="mod111-payroll"
+										action="mod111_search-payroll"
+										actionListener="#{mod111.onEditSearch}"
+										value="#{bundle.fiscal_model_111_module_abbr}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<a4j:commandLink ajaxSingle="true" immediate="true"
+										onclick="alert('#{bundle.aio_not_yet}');return false;"
+										value="Modelo 216 - Retenciones de trabajo de No Residentes" style="color:grey;font-style:oblique;" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<a4j:commandLink ajaxSingle="true" immediate="true"
+										onclick="alert('#{bundle.aio_not_yet}');return false;"
+										value="Modelo 190/Certificados de Renta" style="color:grey;font-style:oblique;" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<a4j:commandLink ajaxSingle="true" immediate="true"
+										onclick="alert('#{bundle.aio_not_yet}');return false;"
+										value="Modelo 296 - Resumen IRPF Anual de No Residentes" style="color:grey;font-style:oblique;" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+					
 					<!--
 						AUXILIARS 
 						 -->
@@ -417,6 +397,51 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
+
+					<!--
+						EMPTY 
+						 -->
+					<aon:panelGroup>
+					</aon:panelGroup>
+					<!--
+						EMPTY 
+						 -->
+					<aon:panelGroup>
+					</aon:panelGroup>
+
+					<!--
+						CONFIG 
+						 -->
+					<aon:panelGroup>
+						<aon:panelGrid id="group_payroll_contrata_parameters"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-config">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_configuration}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="enterprise-payroll"
+										action="#{enterprise.initialAction}"
+										value="#{bundle.company_data_module}">
+										<aon:actionListener method="#{enterprise.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="calendar-payroll"
+										action="#{calendar.initialAction}"
+										actionListener="#{calendar.onEditSearch}"
+										value="#{bundle.calendar_menu_group}">
+										<aon:actionListener method="#{calendar.onInitialize}" />
+									</aon:commandLink>
+								</aon:div>
+
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
+
 
 					<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 						<aon:panelGroup>
