@@ -1,11 +1,5 @@
 package com.code.aon.ui.finance.util.print;
 
-import static com.code.aon.ui.common.ICommonMessages.DECIMAL_2_PATTERN;
-import static com.code.aon.ui.common.ICommonMessages.PERCENT_PATTERN;
-import static com.code.aon.ui.common.ICommonMessages.POS_GIFT_RECEIPT;
-import static com.code.aon.ui.common.ICommonMessages.POS_RECEIPT;
-import static com.code.aon.ui.common.ICommonMessages.QUANTITY_PATTERN;
-import static com.code.aon.ui.common.ICommonMessages.TIMESTAMP_2_PATTERN;
 import static com.code.aon.ui.finance.controller.IFinanceConstants.POS_INVOICE_PARAMS_CONTROLLER_NAME;
 import static com.code.aon.ui.finance.controller.IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME;
 
@@ -51,13 +45,13 @@ public class TicketPrinter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TicketPrinter.class.getName());
 	
-	private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(AonUtil.getMessage(TIMESTAMP_2_PATTERN));
+	private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(AonUtil.getMessage(ICommonMessages.TIMESTAMP_2_PATTERN));
 	
-	private static DecimalFormat PRICE_FORMAT = new DecimalFormat(AonUtil.getMessage(DECIMAL_2_PATTERN));
+	private static DecimalFormat PRICE_FORMAT = new DecimalFormat(AonUtil.getMessage(ICommonMessages.DECIMAL_2_PATTERN));
 	
-	private static DecimalFormat QUANTITY_FORMAT = new DecimalFormat(AonUtil.getMessage(QUANTITY_PATTERN));
+	private static DecimalFormat QUANTITY_FORMAT = new DecimalFormat(AonUtil.getMessage(ICommonMessages.QUANTITY_PATTERN));
 	
-	private static DecimalFormat PERCENT_FORMAT = new DecimalFormat(AonUtil.getMessage(PERCENT_PATTERN));
+	private static DecimalFormat PERCENT_FORMAT = new DecimalFormat(AonUtil.getMessage(ICommonMessages.PERCENT_PATTERN));
 	
 	private static int MAX_PRICE_SIZE = 9;
 	
@@ -243,7 +237,7 @@ public class TicketPrinter {
 		StringBuffer sb = new StringBuffer();
 		sb.append( AonUtil.getMessage(ICommonMessages.COMPANY_DOCUMENT) ).append( ": ");
 		sb.append( company.getDocumentType().getName(AonUtil.getCurrentLocale()) ).append( ": ");
-		sb.append( company.getDocumentCountry() ).append( "-");
+		sb.append( company.getDocumentCountry() ).append('-');
 		sb.append( company.getDocument() );
 		return sb.toString();		
 	}
@@ -252,17 +246,17 @@ public class TicketPrinter {
 		StringBuffer sb = new StringBuffer();
 		
 		if (! StringUtils.isEmpty(address.getZip()) ) {
-			sb.append( address.getZip() ).append( " ");
+			sb.append( address.getZip() ).append(' ');
 		}
 		if (! StringUtils.isEmpty(address.getCity()) ) {
-			sb.append( address.getCity() ).append( " ");
+			sb.append( address.getCity() ).append(' ');
 		}
-		sb.append( "(").append(address.getGeozone().getName()).append(")");
+		sb.append('(').append(address.getGeozone().getName()).append(')');
 		return sb.toString();		
 	}
 	
 	private boolean isEmpty( RegistryMedia rm ) {
-		return (rm == null) || (rm.getId() == null) || StringUtils.isEmpty(rm.getValue());
+		return rm == null || rm.getId() == null || StringUtils.isEmpty(rm.getValue());
 	}
 
 	private String getContact( Enterprise enterprise ) throws ManagerBeanException {
@@ -284,7 +278,7 @@ public class TicketPrinter {
 	}
 	
 	private void appendSeller( StringBuffer sb, Invoice invoice ) {
-		if ( (invoice.getSeller() != null) && (invoice.getSeller().getId() != null) ) {
+		if ( invoice.getSeller()!=null && invoice.getSeller().getId()!=null ) {
 			sb.append( getCenteredLine("Le atendio: " + invoice.getSeller().getRegistry().getFullName()) );
 		}
 	}
@@ -324,7 +318,7 @@ public class TicketPrinter {
 			} else {
 				String description = StringUtils.substring(id.getDescription(), 0, getLeftColumnWidth() );
 				sb.append( StringUtils.rightPad( description, getLeftColumnWidth()) );
-				sb.append( StringUtils.leftPad( PRICE_FORMAT.format(id.getTotalSalesPrice()), (MAX_PRICE_SIZE+COLUMN_SPACE)) );
+				sb.append( StringUtils.leftPad( PRICE_FORMAT.format(id.getTotalSalesPrice()), MAX_PRICE_SIZE+COLUMN_SPACE) );
 				sb.append( LINE_FEED );
 			}
 		}
@@ -337,7 +331,7 @@ public class TicketPrinter {
 		append( sb, getBold(true) );
 		sb.append( StringUtils.leftPad("Total IVA Incluido", getLeftColumnWidth()) );
 		double price = priceStrategy.getTotalPrice(invoice, invoice);
-		sb.append( StringUtils.leftPad( PRICE_FORMAT.format(price), (MAX_PRICE_SIZE+COLUMN_SPACE)) );
+		sb.append( StringUtils.leftPad( PRICE_FORMAT.format(price), MAX_PRICE_SIZE+COLUMN_SPACE) );
 		append( sb, getBold(false) );
 		append( sb, getUnderlineOff() );
 		sb.append( LINE_FEED );
@@ -348,7 +342,7 @@ public class TicketPrinter {
 		StringBuffer sb = new StringBuffer();
 		for( Finance finance : invoice.getFinances() ) {
 			sb.append( StringUtils.leftPad( "Pagado " + finance.getPayMethod().getName(), getLeftColumnWidth()) );
-			sb.append( StringUtils.leftPad( PRICE_FORMAT.format(finance.getAmount()), (MAX_PRICE_SIZE+COLUMN_SPACE)) );
+			sb.append( StringUtils.leftPad( PRICE_FORMAT.format(finance.getAmount()), MAX_PRICE_SIZE+COLUMN_SPACE) );
 			sb.append( LINE_FEED );
 		}
 		append( sb, getUnderlineOff() );
@@ -442,10 +436,10 @@ public class TicketPrinter {
 		}
 
 		if ( gift ) {
-			String label = AonUtil.getMessage( POS_GIFT_RECEIPT);
+			String label = AonUtil.getMessage(ICommonMessages.POS_GIFT_RECEIPT);
 			sb.append( getCenteredLine(StringUtils.upperCase(label)) );	
 		} else {
-			String label = AonUtil.getMessage(POS_RECEIPT);
+			String label = AonUtil.getMessage(ICommonMessages.POS_RECEIPT);
 			sb.append( getCenteredLine(StringUtils.upperCase(label)) );				
 		}
 		sb.append( getLine(getNumberDate(invoice)) );

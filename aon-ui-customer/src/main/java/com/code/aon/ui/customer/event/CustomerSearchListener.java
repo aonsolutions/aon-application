@@ -49,7 +49,7 @@ public class CustomerSearchListener extends RegistryPayMethodSearchListener {
 			String status = getController().resolveAlias(IEntityAlias.CUSTOMER_STATUS);
 			addEnumToCriteria(criteria, status, getCustomerStatuses());
 		}
-		if ( (getItem() != null) && (getItem().getId() != null) ) {
+		if ( getItem() != null && getItem().getId() != null ) {
 			String item = getController().resolveAlias("Registry_items_item_id");
 			criteria.addEqualExpression(item, getItem().getId());			
 		}

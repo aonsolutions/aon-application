@@ -558,7 +558,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		if (statementLink.getSource() == StatementLinkSource.FINANCE_TRACKING) {
 			removeLink(statementLink, (FinanceTracking)statementLink.getSourceTo());
 		} else if (statementLink.getSource() == StatementLinkSource.FINANCE_BATCH) {
-			removeLink(statementLink, (FinanceBatch)statementLink.getSourceTo());
+			removeLink((FinanceBatch)statementLink.getSourceTo());
 		}
 
 		cancelLinkedBankStatementLinks(statementLink.getId());
@@ -627,7 +627,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		}
 	}
 
-	private void removeLink(BankStatementLink statementLink, FinanceBatch batch) throws ManagerBeanException {
+	private void removeLink(FinanceBatch batch) throws ManagerBeanException {
 		IManagerBean batchBean = BeanManager.getManagerBean(FinanceBatch.class);
 		batch.setBankStatementLink(null);
 		batch.setLines(null);

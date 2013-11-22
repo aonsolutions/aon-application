@@ -3,6 +3,9 @@ package com.code.aon.ui.dbutils.controller;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.master.VersionManager;
@@ -11,7 +14,9 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DatabaseUptodate {
 
-	String currentVersion = null;
+	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseUptodate.class.getName());
+	
+	private String currentVersion;
 	
 	private String updateCurrentVersion(String domain,VersionManager versionManager) throws AonConnectionException, AonSQLException {
 		Connection connection = null;
@@ -23,6 +28,7 @@ public class DatabaseUptodate {
 				try {
 					connection.close();
 				} catch (SQLException e) {
+					LOGGER.error(e.getMessage(), e);
 				}
 			}				
 		}
@@ -32,7 +38,7 @@ public class DatabaseUptodate {
 		try {
 			VersionManager versionManager = new VersionManager();
 			this.currentVersion = updateCurrentVersion(AonUtil.getServerName(),versionManager);
-			return (versionManager.getAvailableUpdateScripts(currentVersion) != null);
+			return versionManager.getAvailableUpdateScripts(currentVersion) != null;
 		} catch (AonSQLException e) {
 			throw new AonConnectionException(e.getMessage(),e);
 		}

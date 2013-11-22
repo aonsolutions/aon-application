@@ -196,6 +196,9 @@ public class A3Writer extends BasicExporter {
 					case EXTRACOMMUNITY:
 						result = "06";
 						break;
+					case NATIONAL:
+					case OTHER_ISP:
+						break;
 				}			
 			}
 		} else if ( isFacturaRecibida() ) {
@@ -209,6 +212,10 @@ public class A3Writer extends BasicExporter {
 					case EXTRACOMMUNITY:
 						result = "06";
 						break;			
+					case CAN_CEU_MEL:
+					case NATIONAL:
+					case OTHER_ISP:
+						break;						
 				}
 			}
 		}
@@ -265,7 +272,7 @@ public class A3Writer extends BasicExporter {
 		Arrays.fill(getLine(), 115, 172, (byte) ' ');
 	}
 	
-	private void writeDetailWithTaxes( AccountEntryDetail aed, List<TaxBreakDown> taxList, boolean last ) throws IOException {
+	private void writeDetailWithTaxes( List<TaxBreakDown> taxList, boolean last ) throws IOException {
 		boolean lineWritten = false;
 		while (! taxList.isEmpty() ) {
 			List<TaxBreakDown> list = new LinkedList<TaxBreakDown>();
@@ -317,9 +324,9 @@ public class A3Writer extends BasicExporter {
 		// Impreso
 		setString( "01", 172, 2);
 		if ( last ) {
-			writeDetailWithTaxes(aed, getTaxBreakDowns(), last);
+			writeDetailWithTaxes(getTaxBreakDowns(), last);
 		} else {
-			writeDetailWithTaxes(aed, getTaxes(aed), last);
+			writeDetailWithTaxes(getTaxes(aed), last);
 		}
 	}	
 	
@@ -339,6 +346,9 @@ public class A3Writer extends BasicExporter {
 				case CREDIT_CARD:
 				case DEBIT_CARD:
 					tipo = "GI";
+					break;
+				case CASH_BASIS:
+				case OTHER:
 					break;
 			}			
 		}

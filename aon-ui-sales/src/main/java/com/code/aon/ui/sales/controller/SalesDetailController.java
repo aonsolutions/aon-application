@@ -101,7 +101,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 	}
 
 	private boolean isEditable(SalesDetail salesDetail) throws ManagerBeanException {
-		return (salesDetail.getOfferDetail() == null || salesDetail.getOfferDetail().getId() == null);
+		return salesDetail.getOfferDetail() == null || salesDetail.getOfferDetail().getId() == null;
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
@@ -153,13 +153,13 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
 		if (salesDetail.getOfferDetail() != null && salesDetail.getOfferDetail().getId() != null) {
 			info.append(AonUtil.getMessage(ICommonMessages.SOURCE));
-			info.append(" ");
+			info.append(' ');
 			info.append(AonUtil.getMessage(ICommonMessages.INVOICE_OFFER));
-			info.append(" ");
+			info.append(' ');
 			info.append(salesDetail.getOfferDetail().getOffer().getReferenceCode());
 			info.append(" - ");
 			info.append(AonUtil.getMessage(ICommonMessages.LINE));
-			info.append(" ");
+			info.append(' ');
 			info.append(salesDetail.getOfferDetail().getLine());
 		}
 		return info.toString();
@@ -178,20 +178,20 @@ public class SalesDetailController extends LinesController implements ISalesCons
 			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
 			//info.append("<p>");
 			info.append(AonUtil.getMessage(ICommonMessages.TRANSFERED_TO));
-			info.append(" ");
+			info.append(' ');
 			info.append(AonUtil.getMessage(ICommonMessages.INVOICE_DELIVERY));
-			info.append(" ");
+			info.append(' ');
 			info.append(deliveryDetail.getDelivery().getReferenceCode());
 			info.append(" - ");
 			info.append(AonUtil.getMessage(ICommonMessages.LINE));
-			info.append(" ");
+			info.append(' ');
 			info.append(deliveryDetail.getLine());
 			if (salesDetail.getQuantity() > deliveryDetail.getQuantity()) {
 				info.append(" (");
 				info.append(formatter.format(deliveryDetail.getQuantity()));
-				info.append(" ");
+				info.append(' ');
 				info.append(AonUtil.getMessage(ICommonMessages.UNITS));
-				info.append(")");
+				info.append(')');
 			}
 			//info.append("</p>");
 		}

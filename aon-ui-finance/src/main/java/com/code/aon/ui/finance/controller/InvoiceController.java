@@ -1,7 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.finance.enumeration.InvoiceAttachmentType.INVOICE;
-import static com.code.aon.finance.enumeration.InvoiceAttachmentType.RECEIPT;
 import static com.code.aon.ui.common.ICommonMessages.CALCULATE_FINANCES_AMOUNT_ERROR_KEY;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_EXPENSE_INVOICE_WARNING;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_DUPLICATE_PURCHASE_INVOICE_WARNING;
@@ -938,11 +936,11 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	public List<SelectItem> getInvoiceAttachmentTypes() {
 		List<SelectItem> invoiceAttachmentTypes = new LinkedList<SelectItem>();
 		if (! isAttachmentAvailable() ) {
-			String name = INVOICE.getName(AonUtil.getCurrentLocale());
-			invoiceAttachmentTypes.add( new SelectItem(INVOICE, name) );
+			String name = InvoiceAttachmentType.INVOICE.getName(AonUtil.getCurrentLocale());
+			invoiceAttachmentTypes.add( new SelectItem(InvoiceAttachmentType.INVOICE, name) );
 		}
-		String name = RECEIPT.getName(AonUtil.getCurrentLocale());
-		invoiceAttachmentTypes.add( new SelectItem(RECEIPT, name) );
+		String name = InvoiceAttachmentType.RECEIPT.getName(AonUtil.getCurrentLocale());
+		invoiceAttachmentTypes.add( new SelectItem(InvoiceAttachmentType.RECEIPT, name) );
 		return invoiceAttachmentTypes;
 	}
 

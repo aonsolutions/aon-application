@@ -278,12 +278,12 @@ public class PurchaseGeneratorManager {
 			StringBuffer buf = new StringBuffer();
 			if(StringUtils.isNotBlank(sales.getRemarks())){
 				buf.append(sales.getRemarks());
-				buf.append("\n");
+				buf.append('\n');
 			}
 			for(Purchase purchase: purchaseList){
 	    		buf.append(AonUtil.getMessage(SALES_TO_PURCHASE) + " ");
 	    		buf.append(purchase.getReferenceCode());
-	    		buf.append("\n");
+	    		buf.append('\n');
 	    	}
 	    	sales.setRemarks(buf.toString());
 			bean.restoreNullSubPOJOs(sales);

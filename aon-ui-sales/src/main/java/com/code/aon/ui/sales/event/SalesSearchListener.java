@@ -96,10 +96,10 @@ public class SalesSearchListener extends RegistrySearchListener {
 			String status = getController().resolveAlias(IEntityAlias.SALES_STATUS);
 			addEnumToCriteria(criteria, status, getSalesStatuses());
 		}
-		if ((getItem() != null) && (getItem().getId() != null)) {
+		if (getItem() != null && getItem().getId() != null) {
 			criteria.addEqualExpression("Sales.lines.item.id", getItem().getId());
 		}				
-		if ((getProject() != null) && (getProject().getId() != null)) {
+		if (getProject() != null && getProject().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.SALES_PROJECT_ID), getProject().getId());			
 		}
 	}	

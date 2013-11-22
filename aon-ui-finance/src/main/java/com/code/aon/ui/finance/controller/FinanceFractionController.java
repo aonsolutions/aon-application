@@ -191,21 +191,21 @@ public class FinanceFractionController implements IFinanceConstants {
 
 	public void onAccept(ActionEvent event) {
 		if (isNew) {
-			onAddFraction(event);
+			onAddFraction();
 		} else {
-			onUpdateFraction(event);
+			onUpdateFraction();
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void onAddFraction(ActionEvent event) {
+	private void onAddFraction() {
 		((List<Finance>) getModel().getWrappedData()).add(this.currentFinance);
 		this.currentFinance = null;
 		this.setNew(false);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void onUpdateFraction(ActionEvent event){
+	private void onUpdateFraction(){
 		List<Finance> list = ((List<Finance>)getModel().getWrappedData());
 		int i = list.indexOf(this.currentFinance);
 		list.remove(i);

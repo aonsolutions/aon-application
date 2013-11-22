@@ -35,7 +35,7 @@ public class DumpController implements DBUtilsListener {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DumpController.class.getName());
 
 	private String msg = "";
-	private boolean end = false;
+	private boolean end;
 	private AonFile aonFile;
 
 	public String getMsg() {

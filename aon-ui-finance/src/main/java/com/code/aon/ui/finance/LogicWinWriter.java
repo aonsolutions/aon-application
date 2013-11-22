@@ -71,7 +71,7 @@ public class LogicWinWriter extends BasicExporter {
 	private Date getDueDate() {
 		Date date = getInvoice().getDate();
 		for( Finance finance : getInvoice().getFinances() ) {
-			if ( (finance.getDueDate() != null) && (finance.getDueDate().compareTo(date) > 0) ) {
+			if ( finance.getDueDate() != null && finance.getDueDate().compareTo(date) > 0 ) {
 				date = finance.getDueDate();
 			}
 		}
@@ -96,11 +96,17 @@ public class LogicWinWriter extends BasicExporter {
 		// Codigo Canal
 		setString(CONSTANT_000, 89, 3);
 		// Factura Registro
-		setInteger( getInvoice().getId(), 101, 8);				
+		setInteger( getInvoice().getId(), 101, 8);	
+		// L1: Porcentaje IVA
+		setStringLeftPad(CONSTANT_0, 162, 5);		
 		// L1: Porcentaje Recargo Equivalencia
 		setStringLeftPad(CONSTANT_0, 167, 5);
+		// L1: Base IVA
+		setStringLeftPad(CONSTANT_0_00, 174, 15);
 		// L1: Codigo Transaccion
 		setString(CONSTANT_01, 189, 2);
+		// L1: Cuota IVA
+		setStringLeftPad(CONSTANT_0_00, 191, 15);
 		// L1: Recargo Equivalencia
 		setStringLeftPad(CONSTANT_0_00, 206, 13);
 		// L2: Porcentaje IVA
@@ -158,42 +164,29 @@ public class LogicWinWriter extends BasicExporter {
 		setStringRightPad( getInvoice().getRegistryName(), 130, 25);		
 	}
 	
-	private void fillLine( TaxBreakDown tbd ) {
-		if ( tbd.getTaxType() == TaxType.VAT ) {
-			// Porcentaje IVA
-			setNumber( tbd.getTaxPercent(), 162, 5);
-			// Base Iva
-			setNumber( tbd.getBase(), 174, 15);
-			// Cuota IVA
-			setNumber( tbd.getTaxQuota(), 191, 15);
-		} else if ( tbd.getTaxType() == TaxType.RETENTION ) {
-			// Porcentaje Retencion
-			setNumber( tbd.getTaxPercent(), 345, 5);
-			// Base Retencion
-			setNumber( tbd.getBase(), 350, 15);
-			// Importe Retencion
-			setNumber( tbd.getTaxQuota(), 365, 15);
+	private void fillLine( TaxBreakDown tbd, int line ) {
+		// Porcentaje IVA
+		setNumber( tbd.getTaxPercent(), 100+line*62, 5);
+		// Porcentaje Recargo Equivalencia
+		if ( tbd.getSurchargePercent() != 0 ) {
+			setNumber(tbd.getSurchargePercent(), 105+line*62, 5);			
 		}
-	}
-	
-	private TaxBreakDown getFirstTaxBreakDown( TaxType type ) {
-		for( TaxBreakDown tbd : getTaxBreakDowns() ) {
-			if ( tbd.getTaxType() == type ) {
-				getTaxBreakDowns().remove(tbd);
-				return tbd;
-			}
+		// Base Iva
+		setNumber( tbd.getBase(), 112+line*62, 15);
+		// Cuota IVA
+		setNumber( tbd.getTaxQuota(), 129+line*62, 15);
+		// Recargo Equivalencia
+		if ( tbd.getSurchargeQuota() != 0 ) {
+			setNumber(tbd.getSurchargeQuota(), 144+line*62, 13);			
 		}
-		return null;
 	}
 	
 	private void writeTaxes() throws IOException {
-		TaxBreakDown vat = getFirstTaxBreakDown(TaxType.VAT);
-		if ( vat != null ) {
-			fillLine(vat);	
-		}
-		TaxBreakDown retention = getFirstTaxBreakDown(TaxType.RETENTION);
-		if ( retention != null ) {
-			fillLine(retention);	
+		int line = 1;
+		for( TaxBreakDown tbd : getTaxBreakDowns() ) {
+			if ( tbd.getTaxType() == TaxType.VAT ) {
+				fillLine(tbd, line++);
+			}
 		}
 	}	
 	

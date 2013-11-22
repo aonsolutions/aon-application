@@ -61,7 +61,7 @@ public class CustomerController extends CustomerListController implements ICusto
 
 	protected boolean isAccountSynchronizable(Customer customer) {
 		Account account = customer.getAccount();
-		return (account != null && account.getId() != null && !customer.getRegistry().getFullName().equals(account.getDescription()));
+		return account != null && account.getId() != null && !customer.getRegistry().getFullName().equals(account.getDescription());
 	}
 
 	public void onAccountSynchronize(ActionEvent event) {

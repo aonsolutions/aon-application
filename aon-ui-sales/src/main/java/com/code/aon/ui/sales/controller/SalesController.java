@@ -411,7 +411,7 @@ public class SalesController extends BasicController implements ISalesConstants 
 			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), id);
-			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), Boolean.TRUE);
 			criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));
 			Iterator<?> iterator = projectBean.getList(criteria).iterator();
 			while(iterator.hasNext()) {

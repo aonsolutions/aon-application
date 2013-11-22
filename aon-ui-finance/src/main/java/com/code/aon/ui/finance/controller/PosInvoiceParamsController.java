@@ -37,7 +37,7 @@ public class PosInvoiceParamsController {
 	}
 	
 	public boolean isPrintLogo() {
-		return new Boolean(params.get(POS_INVOICE_PRINT_LOGO).getValue()).booleanValue();
+		return Boolean.valueOf(params.get(POS_INVOICE_PRINT_LOGO).getValue()).booleanValue();
 	}
 
 	public void setPrintLogo(boolean printLogo) throws ManagerBeanException {
@@ -47,7 +47,7 @@ public class PosInvoiceParamsController {
 	}
 
 	public boolean isPrintTradename() {
-		return new Boolean(params.get(POS_INVOICE_PRINT_TRADENAME).getValue()).booleanValue();
+		return Boolean.valueOf(params.get(POS_INVOICE_PRINT_TRADENAME).getValue()).booleanValue();
 	}
 
 	public void setPrintTradename(boolean printTradename) throws ManagerBeanException {
@@ -77,7 +77,7 @@ public class PosInvoiceParamsController {
 	}
 
 	public boolean isPrintDomain() {
-		return new Boolean(params.get(POS_INVOICE_PRINT_DOMAIN).getValue()).booleanValue();
+		return Boolean.valueOf(params.get(POS_INVOICE_PRINT_DOMAIN).getValue()).booleanValue();
 	}
 
 	public void setPrintDomain(boolean printDomain) throws ManagerBeanException {

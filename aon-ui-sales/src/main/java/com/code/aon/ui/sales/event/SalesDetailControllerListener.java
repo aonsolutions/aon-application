@@ -40,7 +40,7 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 		SalesDetailController controller = (SalesDetailController)event.getController();
 		SalesDetail salesDetail = (SalesDetail)controller.getTo();
 
-		controller.setLongDescription((salesDetail.getDescription().length() > 64) ? true : false);
+		controller.setLongDescription(salesDetail.getDescription().length() > 64);
 	}
 
 	private	Integer calculateNextLine(Sales sales) throws ManagerBeanException {
