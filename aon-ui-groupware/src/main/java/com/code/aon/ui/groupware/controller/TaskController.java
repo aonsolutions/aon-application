@@ -54,7 +54,7 @@ public class TaskController extends BasicController {
 
 	public boolean isParentDomain() {
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean( ConfigConstants.DOMAIN_SWITCHER );
-		return( ds != null && !ds.isChildDomain());
+		return( ds != null && !ds.isChildDomain() && ds.isDomainManagementAvailable());
 	}
 
 	public boolean isMonitor() {

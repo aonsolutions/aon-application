@@ -384,9 +384,13 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 				String taskHolderAlias = getFieldName(IEntityAlias.TASK_TASK_HOLDER_ID);
 				Expression userExpr = ExpressionUtilities.getEqualExpression(taskHolderAlias, taskHolder.getId() );
 				Expression workGroupExpr = obtainTaskHolderWorkGroupsExpression(taskHolder, getFieldName(IEntityAlias.TASK_WORK_GROUP_ID));
-				Expression groupExpr = ExpressionUtilities.getNullExpression(taskHolderAlias);
-				workGroupExpr = ExpressionUtilities.getAndExpression(workGroupExpr, groupExpr);
-				criteria.addExpression(ExpressionUtilities.getOrExpression(userExpr, workGroupExpr));
+				if (workGroupExpr != null) {
+					Expression groupExpr = ExpressionUtilities.getNullExpression(taskHolderAlias);
+					workGroupExpr = ExpressionUtilities.getAndExpression(workGroupExpr, groupExpr);
+					criteria.addExpression(ExpressionUtilities.getOrExpression(userExpr, workGroupExpr));
+				} else {
+					criteria.addExpression(userExpr);
+				}
 			} else {
 		        AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		        if( principal.getUserId() == null){
@@ -394,11 +398,15 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		        }
 				Integer userId = principal.getUserId();
 				Expression userExpr = ExpressionUtilities.getEqualExpression("Task.taskHolder<user<id", userId );
-				Expression workGroupExpr = obtainTaskHolderWorkGroupsExpression(userId, getFieldName(IEntityAlias.TASK_WORK_GROUP_ID));  
-				Expression groupExpr = ExpressionUtilities.getNullExpression("Task.taskHolder<id");
-				workGroupExpr = ExpressionUtilities.getAndExpression(groupExpr , workGroupExpr);
+				Expression workGroupExpr = obtainTaskHolderWorkGroupsExpression(userId, getFieldName(IEntityAlias.TASK_WORK_GROUP_ID));
+				if (workGroupExpr != null) {
+					Expression groupExpr = ExpressionUtilities.getNullExpression("Task.taskHolder<id");
+					workGroupExpr = ExpressionUtilities.getAndExpression(groupExpr , workGroupExpr);
+					criteria.addExpression(ExpressionUtilities.getOrExpression(userExpr, workGroupExpr));
+				} else {
+					criteria.addExpression(userExpr);
+				}
 				
-				criteria.addExpression(ExpressionUtilities.getOrExpression(userExpr, workGroupExpr));
 			}
 			
 		} else {
