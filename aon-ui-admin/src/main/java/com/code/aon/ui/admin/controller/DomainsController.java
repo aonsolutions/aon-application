@@ -4,6 +4,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.NEW_DOMAIN_CONTRO
 import static com.code.aon.ui.admin.controller.IAdminConstants.REMOVE_DOMAIN_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
+import java.net.IDN;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -117,6 +118,15 @@ public class DomainsController extends BasicController {
 		return 0;
 	}
 
+	public String getCurrentDomainURL() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			Domain domain = (Domain) getSelectedTO();
+			String name = IDN.toASCII(domain.getName());
+			return name;
+		}
+		return null;
+	}
+	
 	public void onNewDomain( ActionEvent event) throws ManagerBeanException {
 		NewDomainController ndc = (NewDomainController) AonUtil.getRegisteredBean(NEW_DOMAIN_CONTROLLER_NAME);
 		Domain domain = (Domain) getManagerBean().get(DomainManager.getCurrentDomain());

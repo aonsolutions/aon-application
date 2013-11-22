@@ -2,6 +2,7 @@ package com.code.aon.jaas.auth.spi.db;
 
 import static com.code.aon.jaas.auth.IConstants.DEFAULT_CONTEXT_PATH;
 
+import java.net.IDN;
 import java.security.Principal;
 import java.security.acl.Group;
 import java.sql.Connection;
@@ -58,7 +59,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 		super.initialize(subject, callbackHandler, sharedState, options);
 		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
 		this.contextPath = StringUtils.defaultIfEmpty(request.getContextPath(), DEFAULT_CONTEXT_PATH);
-		this.domainName = request.getServerName();
+		this.domainName = IDN.toUnicode(request.getServerName());
 		ConnectionInfo ci = null;
 		try {
 			ci = ConnectionInfo.getDefaultConnectionInfo();

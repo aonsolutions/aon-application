@@ -5,6 +5,7 @@ import static com.code.aon.ui.common.ICommonConstants.AON_ROLE_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.CONFIGURATION_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonMessages.ERROR;
 
+import java.net.IDN;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Comparator;
@@ -233,8 +234,16 @@ public class AonUtil {
 	 * @return the server name
 	 */
 	public static String getServerName() {
-		HttpServletRequest request = HttpServletRequestValve.getHttpServletRequest();
-		return request.getServerName();
+		return getServerName(HttpServletRequestValve.getHttpServletRequest());
+	}
+
+	/**
+	 * Gets the server name.
+	 * 
+	 * @return the server name
+	 */
+	public static String getServerName(HttpServletRequest request) {
+		return IDN.toUnicode(request.getServerName());
 	}
 	
 	/**

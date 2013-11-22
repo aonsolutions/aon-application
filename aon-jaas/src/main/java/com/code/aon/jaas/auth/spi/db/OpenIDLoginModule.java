@@ -1,5 +1,6 @@
 package com.code.aon.jaas.auth.spi.db;
 
+import java.net.IDN;
 import java.security.Principal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,7 +35,7 @@ public class OpenIDLoginModule extends LoginModule {
 	public void initialize(Subject subject, CallbackHandler callbackHandler,
 			Map sharedState, Map options) {
 		super.initialize(subject, callbackHandler, sharedState, options);
-		domain = HttpServletRequestValve.getHttpServletRequest().getServerName();
+		domain = IDN.toUnicode(HttpServletRequestValve.getHttpServletRequest().getServerName());
 	}
 	
 	@Override

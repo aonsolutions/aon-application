@@ -26,6 +26,7 @@ import com.code.aon.common.BasicAttachment;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
 public class CompanyDocumentServlet extends HttpServlet {
@@ -126,10 +127,11 @@ public class CompanyDocumentServlet extends HttpServlet {
 		if ( companyLogo || (attachmentId != null) ) {		
 			Connection connection = null;
 			try {
-				connection = DatabaseUtil.getConnection(req.getServerName());
+				String domainName = AonUtil.getServerName(req);
+				connection = DatabaseUtil.getConnection(domainName);
 				if ( connection != null ) {
 					if ( companyLogo ) {
-						Integer domainId = DatabaseUtil.getDomain(connection, req.getServerName());
+						Integer domainId = DatabaseUtil.getDomain(connection, domainName);
 						Integer companyId = getCompanyId(connection, domainId);
 						attachment = getLogo(connection, domainId, companyId);
 					} else {

@@ -1,6 +1,7 @@
 <%@ page session="false" language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<%@page import="com.code.aon.ui.util.AonUtil" %>
 <%@page import="java.io.InputStream" %>
 <%@page import="java.text.MessageFormat"%>
 <%@page import="java.util.Locale"%>
@@ -16,9 +17,10 @@ try {
 	customize.initMessages(request.getLocale());
 	customize.initResources();
 	customize.initApplicationVersion(application.getResourceAsStream("META-INF/MANIFEST.MF"));
-	customize.init(request.getServerName());
+	String domainName = AonUtil.getServerName(request);
+	customize.init(domainName);
 	ResourceBundle commonBundle = ResourceBundle.getBundle("com.code.aon.common.i18n.messages", request.getLocale());
-	companyDisplay.init(request.getServerName());
+	companyDisplay.init(domainName);
 	
 %>
 

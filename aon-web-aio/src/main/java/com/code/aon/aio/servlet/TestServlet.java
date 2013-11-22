@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.ui.util.AonUtil;
 
 public class TestServlet extends HttpServlet {
 	
@@ -33,7 +34,7 @@ public class TestServlet extends HttpServlet {
 		try {
 			String host = req.getParameter("aon.domain");
 			if (host == null || "".equals(host)){
-				host = req.getServerName();
+				host = AonUtil.getServerName(req);
 			}
 			c = DatabaseUtil.getConnection(host);
 			ps = c.prepareStatement(SELECT_DOMAIN_ID, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);

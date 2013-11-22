@@ -32,6 +32,7 @@ import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.marketing.News;
 import com.code.aon.ui.marketing.controller.NewsController;
 import com.code.aon.ui.marketing.controller.RSSController;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
 public class RSSServlet extends HttpServlet {
@@ -54,7 +55,7 @@ public class RSSServlet extends HttpServlet {
 	}
 
 	private String getURLPreffix( HttpServletRequest req ) {
-		String server = req.getServerName();
+		String server = AonUtil.getServerName(req);
 		String context = req.getContextPath(); 
 		return "http://" + server + context;
 	}
@@ -79,7 +80,7 @@ public class RSSServlet extends HttpServlet {
 		Connection c = null;
 		try {
 			Session session = HibernateUtil.getSession(sessionName);
-			String domainName = req.getServerName(); 
+			String domainName = AonUtil.getServerName(req); 
 			c =  DatabaseUtil.getConnection(domainName);
 			Integer domainId = DatabaseUtil.getDomain(c,domainName);
 			Integer channelId = getChannelId(value);
@@ -106,7 +107,7 @@ public class RSSServlet extends HttpServlet {
 		Connection c = null;
 		try {
 			Session session = HibernateUtil.getSession(sessionName);
-			String domainName = req.getServerName(); 
+			String domainName = AonUtil.getServerName(req); 
 			c =  DatabaseUtil.getConnection(domainName);
 			Integer domainId = DatabaseUtil.getDomain(c,domainName);
 			News news = getNews(session, domainId, newsId);

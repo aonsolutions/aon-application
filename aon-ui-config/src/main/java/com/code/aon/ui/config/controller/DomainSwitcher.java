@@ -1,6 +1,7 @@
 package com.code.aon.ui.config.controller;
 
 import java.math.BigInteger;
+import java.net.IDN;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -305,6 +306,15 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 
 	public void setPageLimit(Integer pageLimit) {
 		this.pageLimit = pageLimit;
+	}
+
+	public String getCurrentDomainURL() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			Domain domain = (Domain) getModel().getRowData();
+			String name = IDN.toASCII(domain.getName());
+			return name;
+		}
+		return null;
 	}
 	
 }
