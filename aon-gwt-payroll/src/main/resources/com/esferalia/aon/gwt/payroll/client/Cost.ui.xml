@@ -13,6 +13,10 @@
 			margin-right: auto;
 			margin-bottom: 15px;
 		}
+		.toolBar-checkBox input {
+			vertical-align: middle;
+		}
+		
 	</ui:style>
 	<ui:import field="com.esferalia.aon.gwt.payroll.shared.Salary.Type.*" />
 	<g:DockLayoutPanel unit="PX">
@@ -65,7 +69,21 @@
 									styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" />
 								<g:ListBox ui:field='dateListBox' styleName='' />
 								<!-- g:ListBox ui:field='endDateBox' styleName='' / -->
-							</g:HTMLPanel>
+								
+								<g:CheckBox ui:field='salaryCheckBox'
+									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+									text="{SALARY.getDescription}" checked="false" />
+								<g:CheckBox ui:field='extraCheckBox'
+									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+									text="{EXTRA.getDescription}" checked="false" />
+								<g:CheckBox ui:field='settleCheckBox'
+									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+									text="{SETTLE.getDescription}" checked="false" />
+								<g:CheckBox ui:field='delayCheckBox'
+									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+									text="{DELAY.getDescription}" checked="false" />
+									
+								</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>

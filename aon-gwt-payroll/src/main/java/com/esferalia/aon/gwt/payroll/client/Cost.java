@@ -11,6 +11,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -19,6 +21,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -58,18 +61,40 @@ public class Cost extends ResizeComposite {
 		@Override
 		public void execute() {
 			try {
-			if ( !costDocuments.containsType(type) ){ 
-				costDocuments.addType(type);
-				setCheckedStyle(menuItem, true);
-			}
-			else { 
-				costDocuments.removeType(type);
-				setCheckedStyle(menuItem, false);
-			}
-			getAsHTML();
-			} catch ( Exception e ) {
+				if (!costDocuments.containsType(type)) {
+					costDocuments.addType(type);
+					setCheckedStyle(menuItem, true);
+				} else {
+					costDocuments.removeType(type);
+					setCheckedStyle(menuItem, false);
+				}
+				getAsHTML();
+			} catch (Exception e) {
 				Window.alert(e.getMessage());
 			}
+		}
+
+	}
+
+	private class TypeValueChangeHandler implements ValueChangeHandler<Boolean> {
+
+		private Salary.Type type;
+		private CheckBox checkBox;
+
+		private TypeValueChangeHandler(CheckBox checkBox, Salary.Type type) {
+			this.type = type;
+			this.checkBox = checkBox;
+			this.checkBox.addValueChangeHandler(this);
+		}
+
+		@Override
+		public void onValueChange(ValueChangeEvent<Boolean> event) {
+			if (!costDocuments.containsType(type)) {
+				costDocuments.addType(type);
+			} else {
+				costDocuments.removeType(type);
+			}
+			getAsHTML();
 		}
 
 	}
@@ -102,15 +127,20 @@ public class Cost extends ResizeComposite {
 	MenuItem delayMenuItem;
 
 	@UiField
+	CheckBox salaryCheckBox;
+	@UiField
+	CheckBox extraCheckBox;
+	@UiField
+	CheckBox settleCheckBox;
+	@UiField
+	CheckBox delayCheckBox;
+
+	@UiField
 	ListBox dateListBox;
 
 	@UiField
 	Label titleLabel;
 
-	TypeCommand salaryMenuCmd;
-	TypeCommand extraMenuCmd;
-	TypeCommand settleMenuCmd;
-	TypeCommand delayMenuCmd;
 
 	private int zoom = DEFAULT_ZOOM;
 
@@ -179,10 +209,15 @@ public class Cost extends ResizeComposite {
 			}
 		});
 
-		salaryMenuCmd = new TypeCommand(salaryMenuItem, Salary.Type.SALARY);
-		extraMenuCmd = new TypeCommand(extraMenuItem, Salary.Type.EXTRA);
-		settleMenuCmd = new TypeCommand(settleMenuItem, Salary.Type.SETTLE);
-		delayMenuCmd = new TypeCommand(delayMenuItem, Salary.Type.DELAY);
+		new TypeCommand(salaryMenuItem, Salary.Type.SALARY);
+		new TypeCommand(extraMenuItem, Salary.Type.EXTRA);
+		new TypeCommand(settleMenuItem, Salary.Type.SETTLE);
+		new TypeCommand(delayMenuItem, Salary.Type.DELAY);
+		
+		new TypeValueChangeHandler(salaryCheckBox, Salary.Type.SALARY);
+		new TypeValueChangeHandler(extraCheckBox, Salary.Type.EXTRA);
+		new TypeValueChangeHandler(settleCheckBox, Salary.Type.SETTLE);
+		new TypeValueChangeHandler(delayCheckBox, Salary.Type.DELAY);
 
 	}
 
@@ -206,6 +241,8 @@ public class Cost extends ResizeComposite {
 			@Override
 			public void onSuccess(String html) {
 				container.setHTML(html);
+				syncTypeCheckBoxes();
+				syncTypeMenuItems();
 			}
 
 			@Override
@@ -218,7 +255,6 @@ public class Cost extends ResizeComposite {
 
 	private void onCostDocumentsChanged() {
 		getAsHTML();
-		syncTypeMenuItems();
 		syncFormatsButtons();
 		syncCostDateListBox();
 	}
@@ -228,7 +264,6 @@ public class Cost extends ResizeComposite {
 		costDocuments.setCurrentIndex(selected);
 		getAsHTML();
 	}
-
 
 	private void syncCostDateListBox() {
 		dateListBox.clear();
@@ -241,10 +276,21 @@ public class Cost extends ResizeComposite {
 	}
 
 	private void syncTypeMenuItems() {
-		setCheckedStyle(salaryMenuItem, costDocuments.containsType(Salary.Type.SALARY));
-		setCheckedStyle(extraMenuItem, costDocuments.containsType(Salary.Type.EXTRA));
-		setCheckedStyle(settleMenuItem, costDocuments.containsType(Salary.Type.SETTLE));
-		setCheckedStyle(delayMenuItem, costDocuments.containsType(Salary.Type.DELAY));
+		setCheckedStyle(salaryMenuItem,
+				costDocuments.containsType(Salary.Type.SALARY));
+		setCheckedStyle(extraMenuItem,
+				costDocuments.containsType(Salary.Type.EXTRA));
+		setCheckedStyle(settleMenuItem,
+				costDocuments.containsType(Salary.Type.SETTLE));
+		setCheckedStyle(delayMenuItem,
+				costDocuments.containsType(Salary.Type.DELAY));
+	}
+
+	private void syncTypeCheckBoxes() {
+		salaryCheckBox.setValue(costDocuments.containsType(Salary.Type.SALARY), false);;
+		extraCheckBox.setValue(costDocuments.containsType(Salary.Type.EXTRA), false);;
+		settleCheckBox.setValue(costDocuments.containsType(Salary.Type.SETTLE), false);;
+		delayCheckBox.setValue(costDocuments.containsType(Salary.Type.DELAY), false);;
 	}
 
 	private void syncFormatsButtons() {

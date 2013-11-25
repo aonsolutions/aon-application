@@ -69,16 +69,22 @@
 
 									<aon:outputLabel for="WorkPlace_address_id"
 										value="#{bundle.aon_address}" />
-									<aon:selectOneMenu id="WorkPlace_address_id"
-										value="#{payrollWorkPlace.to.workPlace.address}"
-										required="true">
-										<c:if test="#{showEnterpriseData}">
-											<f:selectItems value="#{enterprise.addresses}" />
-										</c:if>
-										<c:if test="#{!showEnterpriseData}">
-											<f:selectItems value="#{companyCollections.companyAddresses}" />
-										</c:if>
-									</aon:selectOneMenu>
+									<c:if test="#{edit}">
+										<aon:selectOneMenu id="WorkPlace_address_id"
+											value="#{payrollWorkPlace.to.workPlace.address}"
+											required="true">
+											<c:if test="#{showEnterpriseData}">
+												<f:selectItems value="#{enterprise.addresses}" />
+											</c:if>
+											<c:if test="#{!showEnterpriseData}">
+												<f:selectItems value="#{companyCollections.companyAddresses}" />
+											</c:if>
+										</aon:selectOneMenu>
+									</c:if>
+									<c:if test="#{!edit}">
+										<aon:inputText id="WorkPlace_fulladdress"
+											value="#{payrollWorkPlace.to.workPlace.address.fullAddress}" />
+									</c:if>
 
 									<aon:outputText for="WorkPlace_economicAgreement"
 										value="#{bundle.config_administration}" />
@@ -99,47 +105,47 @@
 						</aon:div>
 					</aon:div>
 
-
-					<aon:div styleClass="aon-group">
-						<aon:div styleClass="aon-group-title">
-							<aon:outputText
-								value="#{bundle.company_workplace_payroll_data}" />
-						</aon:div>
-						<aon:div styleClass="aon-group-body">
-							<aon:div styleClass="aon-group-body-internal">
-								<aon:panelGrid columns="2" styleClass="aon-width-all">
-
-									<ui:include
-										src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml">
-										<ui:param name="lookupTo"
-											value="#{payrollWorkPlace.to.calendar}" />
-										<ui:param name="skipNewButton" value="#{true}" />
-										<ui:param name="lookupInputSuggestSize" value="40" />
-										<ui:param name="lookupSuffix" value="-PayrollWorkPlace" />
-									</ui:include>
-
-									<ui:include
-										src="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml">
-										<ui:param name="lookupTo"
-											value="#{payrollWorkPlace.to.agreement}" />
-										<ui:param name="lookupSuffix" value="_workplace" />
-										<ui:param name="skipNewButton" value="#{true}" />
-										<ui:param name="lookupInputSuggestSize" value="40" />
-									</ui:include>
-
-									<aon:outputLabel for="PayrollWorkPlace_enterpriseActivity"
-										value="#{bundle.aon_activity}" />
-									<aon:selectOneMenu id="PayrollWorkPlace_enterpriseActivity"
-										value="#{payrollWorkPlace.to.enterpriseActivity}">
-										<f:selectItem itemLabel="-" value="#{null}" />
-										<f:selectItems value="#{enterprisePayroll.activities}" />
-									</aon:selectOneMenu>
-
-								</aon:panelGrid>
+					<c:if test="#{edit}">
+						<aon:div styleClass="aon-group">
+							<aon:div styleClass="aon-group-title">
+								<aon:outputText
+									value="#{bundle.company_workplace_payroll_data}" />
+							</aon:div>
+							<aon:div styleClass="aon-group-body">
+								<aon:div styleClass="aon-group-body-internal">
+									<aon:panelGrid columns="2" styleClass="aon-width-all">
+	
+										<ui:include
+											src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml">
+											<ui:param name="lookupTo"
+												value="#{payrollWorkPlace.to.calendar}" />
+											<ui:param name="skipNewButton" value="#{true}" />
+											<ui:param name="lookupInputSuggestSize" value="40" />
+											<ui:param name="lookupSuffix" value="-PayrollWorkPlace" />
+										</ui:include>
+	
+										<ui:include
+											src="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml">
+											<ui:param name="lookupTo"
+												value="#{payrollWorkPlace.to.agreement}" />
+											<ui:param name="lookupSuffix" value="_workplace" />
+											<ui:param name="skipNewButton" value="#{true}" />
+											<ui:param name="lookupInputSuggestSize" value="40" />
+										</ui:include>
+	
+										<aon:outputLabel for="PayrollWorkPlace_enterpriseActivity"
+											value="#{bundle.aon_activity}" />
+										<aon:selectOneMenu id="PayrollWorkPlace_enterpriseActivity"
+											value="#{payrollWorkPlace.to.enterpriseActivity}">
+											<f:selectItem itemLabel="-" value="#{null}" />
+											<f:selectItems value="#{enterprisePayroll.activities}" />
+										</aon:selectOneMenu>
+	
+									</aon:panelGrid>
+								</aon:div>
 							</aon:div>
 						</aon:div>
-					</aon:div>
-
+					</c:if>
 
 				</aon:panelGrid>
 
