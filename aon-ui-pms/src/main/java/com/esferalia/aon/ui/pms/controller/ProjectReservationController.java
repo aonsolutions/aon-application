@@ -42,7 +42,6 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.finance.controller.SaleInvoiceController;
 import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
@@ -1001,9 +1000,21 @@ public class ProjectReservationController extends BasicController implements IPm
 		((ProjectReservationDivert)divertController.getTo()).setProjectReservation((ProjectReservation)this.getTo());
 	}
 
+	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
+		if (getInvoiceModel().isRowAvailable()) {
+			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+			invoiceController.onLoad(event, ((Invoice)getInvoiceModel().getRowData()).getId(), RESERVATION_FORM_NAME, RESERVATION_CONTROLLER_NAME + ".refreshInvoices");
+		}
+	}
+
+	public void refreshInvoices(ActionEvent event) {
+		setInvoiceModel(null);
+		getInvoiceModel();
+	}
+
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
 		if (getInvoiceModel().isRowAvailable()) {
-			SaleInvoiceController invoiceController = (SaleInvoiceController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 			invoiceController.load(event, ((Invoice)getInvoiceModel().getRowData()).getId());
 		}
 	}

@@ -53,17 +53,6 @@
 		<aon:outputText value="#{bundle.aon_reservation}" rendered="#{!to.service and !to.advance}" />
 		<aon:outputText value="#{bundle.finance_service}" rendered="#{to.service}" />
 		<aon:outputText value="#{bundle.finance_money_advance}" rendered="#{to.advance}" />
-		<c:if test="#{showGoToReservation}">
-			<aon:commandLink id="reservationLink" immediate="true"
-				styleClass="aon-button-goto"
-				style="padding-right: 20px;" 
-				value="&#160;"  
-				rendered="#{!to.service}" 
-				actionListener="#{controller.onLoadReservation}"
-				action="reservation_form"
-				reRender="aonContent">
-			</aon:commandLink>
-		</c:if>
 	</aon:column>
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
@@ -99,15 +88,6 @@
 		</aon:outputText>
 	</aon:column>
 
-	<c:if test="#{showFinanceStatus}">
-		<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
-			<f:facet name="header">
-				<aon:outputText value="#{bundle.finance_checking_finance_status_abbrv}" />
-			</f:facet>
-			<aon:outputText value="#{to.invoiceFinanceStatus}"/>
-		</aon:column>
-	</c:if>
-
 	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_total}" />
@@ -141,16 +121,25 @@
 					value="#{true}" />
 			</aon:commandButton>
 		</c:if>
-		<aon:htmlCommandLink id="reservationInvoice-report" target="_blank"
-			styleClass="aon-icon-pdf"
-			value="&#160;&#160;&#160;&#160;&#160;&#160;" 
-			title="#{bundle.aon_report}"
-			actionListener="#{controller.onPrintInvoice}"
-			action="#{saleInvoiceSigner.onReport}">
-			<f:param name="reportKey" value="#{company.saleInvoiceTemplateValue}" />
-			<f:setPropertyActionListener target="#{saleInvoiceSigner.reportKey}"
-				value="#{company.saleInvoiceTemplateValue}" />
-		</aon:htmlCommandLink>
+		<c:if test="#{showInvoiceLink and aonRole.financeOperator}">
+			<aon:commandLink id="reservationInvoice-link" immediate="true"
+				styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
+				value="&#160;" title="#{bundle.aon_go}"
+				actionListener="#{controller.onLoadInvoice}"
+				action="saleInvoice_form" />
+		</c:if>
+		<c:if test="#{!showInvoiceLink or !aonRole.financeOperator}">
+			<aon:htmlCommandLink id="reservationInvoice-report" target="_blank"
+				styleClass="aon-icon-pdf"
+				value="&#160;&#160;&#160;&#160;&#160;&#160;" 
+				title="#{bundle.aon_report}"
+				actionListener="#{controller.onPrintInvoice}"
+				action="#{saleInvoiceSigner.onReport}">
+				<f:param name="reportKey" value="#{company.saleInvoiceTemplateValue}" />
+				<f:setPropertyActionListener target="#{saleInvoiceSigner.reportKey}"
+					value="#{company.saleInvoiceTemplateValue}" />
+			</aon:htmlCommandLink>
+		</c:if>
 	</aon:column>
 
 </ui:composition>
