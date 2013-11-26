@@ -172,16 +172,14 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
      * @param i
      */
     private void ensureIndex(int i) {
-    	if ( i != -1 ) {
-    		if ( (page == null) ||
-    			( (i < page.getStart()) || (i >= page.getStartOfNextPage()) ) ) {
-    			int start = 0;
-    			if ( dataProvider.getPageLimit() > 0 ) {
-        	    	int pageNumber = i / dataProvider.getPageLimit();
-        	    	start = pageNumber * dataProvider.getPageLimit();    				
-    			}
-    	        this.page = getPage(start, dataProvider.getPageLimit());
-    		}
+    	if ( i != -1 &&
+    		(page==null || i<page.getStart() || i>=page.getStartOfNextPage()) ) {
+			int start = 0;
+			if ( dataProvider.getPageLimit() > 0 ) {
+    	    	int pageNumber = i / dataProvider.getPageLimit();
+    	    	start = pageNumber * dataProvider.getPageLimit();    				
+			}
+	        this.page = getPage(start, dataProvider.getPageLimit());
     	}
     }
 
@@ -215,7 +213,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 	public void update( int start, int limit ) throws ManagerBeanException {
 		this.rowCount = dataProvider.getRowCount();
 		this.page = getPage(start, limit);
-		this._rowIndex = (this.rowCount > 0) ? start : -1;		
+		this._rowIndex = this.rowCount>0 ? start : -1;		
     }
 	
 	/**
@@ -313,7 +311,7 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 		}
 		if (! this.page.isEmpty() ) {
 			for( int i = 0, currentIndex = this.page.getStart(); i < this.page.getSize(); i++ ) {
-				visitor.process(context, new Integer(currentIndex++), argument);
+				visitor.process(context, Integer.valueOf(currentIndex++), argument);
 			}
 		}
 	}

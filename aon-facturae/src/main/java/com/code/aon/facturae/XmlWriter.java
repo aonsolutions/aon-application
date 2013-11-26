@@ -17,7 +17,7 @@ public class XmlWriter extends XMLWriter {
 		String encoding = format.getEncoding();
 
 		if (!format.isSuppressDeclaration()) {
-			if (encoding.equals("UTF8")) {
+			if ("UTF8".equals(encoding)) {
 				writer.write("<?xml version=\"1.0\"");
 
 				if (!format.isOmitEncoding()) {

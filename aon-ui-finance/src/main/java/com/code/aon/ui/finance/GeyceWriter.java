@@ -113,7 +113,6 @@ public class GeyceWriter extends BasicExporter {
 			result = "ND";
 		} else if ( vdt == VatDeductionType.NON_TAXABLE) {
 			result = "OE";
-		} else {
 		}
 		return result;
 	}
@@ -225,7 +224,7 @@ public class GeyceWriter extends BasicExporter {
 	}	
 	
 	private String shortCuentaCode( String cuenta ) {
-		if ( StringUtils.endsWith(cuenta, "0") && (!ArrayUtils.contains(ACCOUNT_CODES, cuenta)) ) {
+		if ( StringUtils.endsWith(cuenta, "0") && !ArrayUtils.contains(ACCOUNT_CODES, cuenta) ) {
 			return StringUtils.substringBeforeLast(cuenta, "0");
 		}
 		return cuenta;
@@ -235,7 +234,7 @@ public class GeyceWriter extends BasicExporter {
 		String cuenta = shortCuentaCode(StringUtils.substring(code, 0, 4));
 		cuenta = shortCuentaCode(cuenta);
 		String subCuenta = StringUtils.trimToNull(StringUtils.substring(code, 4));
-		if ( NumberUtils.isDigits(subCuenta) && (NumberUtils.toInt(subCuenta) == 0) ) {
+		if ( NumberUtils.isDigits(subCuenta) && NumberUtils.toInt(subCuenta)==0 ) {
 			subCuenta = "00";
 		}
 		return new String[]{cuenta, subCuenta};

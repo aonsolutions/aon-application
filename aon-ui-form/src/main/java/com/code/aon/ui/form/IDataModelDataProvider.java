@@ -19,7 +19,7 @@ public interface IDataModelDataProvider {
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	public int getRowCount() throws ManagerBeanException;
+	int getRowCount() throws ManagerBeanException;
 	
     /**
      * Search the list of ITransferObject conditioned by the criteria and the row interval delimited by parameters start and count.

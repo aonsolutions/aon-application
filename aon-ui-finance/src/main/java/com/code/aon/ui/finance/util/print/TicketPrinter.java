@@ -16,6 +16,8 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
@@ -496,8 +498,8 @@ public class TicketPrinter {
 			HibernateUtil.startSession(sessionFactoryName);
 			HibernateUtil.beginTransaction(sessionFactoryName);
 
-			HibernateUtil.getSession(sessionFactoryName).refresh(invoice);
-			ticket = getTicket(invoice, gift);
+			IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
+			ticket = getTicket((Invoice) bean.get(invoice.getId()), gift);
 
 			HibernateUtil.commitTransaction(sessionFactoryName);
 			HibernateUtil.closeSession(sessionFactoryName);

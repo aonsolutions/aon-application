@@ -21,8 +21,9 @@ public class ControllerListenerSupport {
 		if (listeners == null) {
 			listeners = new LinkedList<IControllerListener>();
 		}
-		if (!listeners.contains(l))
-			listeners.add(l);
+		if (!listeners.contains(l)) {
+			listeners.add(l);	
+		}
 	}
 
 	/**

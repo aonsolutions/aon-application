@@ -63,7 +63,7 @@ public class AbstractPojoController {
 	 */
 	public void setPojo(String bean) {
 		this.pojo = bean;
-		this.heritable = calculateHeritable(bean);
+		this.heritable = calculateHeritable();
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class AbstractPojoController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private boolean calculateHeritable( String pojo ) {
+	private boolean calculateHeritable() {
 		try {
 			Class<? extends ITransferObject> pojoClass = (Class<? extends ITransferObject>) Class.forName( getPojo() );
 			return pojoClass.isAnnotationPresent(Heritable.class);

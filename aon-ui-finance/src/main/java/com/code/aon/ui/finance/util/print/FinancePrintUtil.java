@@ -31,7 +31,9 @@ public class FinancePrintUtil {
 			Number2Text numero;
 			String num = String.valueOf(CommonUtil.round(amount, 2));
 			String decimalChar = ".";
-			if (num.lastIndexOf(",") != -1) decimalChar = ",";
+			if (num.lastIndexOf(',') != -1) {
+				decimalChar = ",";
+			}
 			if (num.lastIndexOf(decimalChar) != -1){
 				String str1 = num.substring(0,num.lastIndexOf(decimalChar));
 				String str2 = num.substring(num.lastIndexOf(decimalChar)+1);

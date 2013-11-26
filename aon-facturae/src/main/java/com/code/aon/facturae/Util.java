@@ -54,8 +54,7 @@ public class Util {
 				}
 			}			
 		}
-		String pc = StringUtils.leftPad( sb.toString(), 5, '0' );
-		return pc;
+		return StringUtils.leftPad( sb.toString(), 5, '0' );
 	}
 
 	public static String toTextMax20Type( String value ) {

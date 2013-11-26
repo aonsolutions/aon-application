@@ -358,7 +358,7 @@ public class FacturaeWriter {
 	
 	private WorkPlace getWorkPlace() {
 		for( InvoiceDetail id : invoice.getLines() ) {
-			if ( (id.getWorkPlace() != null) && (id.getWorkPlace().getId() != null) ) {
+			if ( id.getWorkPlace()!=null && id.getWorkPlace().getId() != null ) {
 				return id.getWorkPlace();
 			}
 		}
@@ -458,7 +458,7 @@ public class FacturaeWriter {
 		tax.setTaxTypeCode(RETENTION_TAX_TYPE_CODE);
 		tax.setTaxRate( tbd.getTaxPercent() );
 		tax.setTaxableBase( Util.getAmount(tbd.getBase()) );
-		if( lineTax && (tbd.getTaxQuota() == 0) ) {
+		if( lineTax && tbd.getTaxQuota() == 0 ) {
 			double quota = CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100);
 			tax.setTaxAmount( Util.getAmount(quota) );
 		} else {
@@ -478,7 +478,7 @@ public class FacturaeWriter {
 		taxOutput.setTaxTypeCode( code != null ? code.getValue() : TaxTypeCode.IVA.getValue() );
 		taxOutput.setTaxRate( tbd.getTaxPercent() );
 		taxOutput.setTaxableBase( Util.getAmount(tbd.getBase()) );
-		if( lineTax && (tbd.getTaxQuota() == 0) ) {
+		if( lineTax && tbd.getTaxQuota()==0 ) {
 			double quota = CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100);
 			taxOutput.setTaxAmount( Util.getAmount(quota) );
 		} else {
@@ -684,8 +684,8 @@ public class FacturaeWriter {
 		HibernateUtil.setCloseSession(false);
 		HibernateUtil.setBeginTransaction(false);
 		try {
-			HibernateUtil.getSession(sessionFactoryName).refresh(invoice);
-			init( invoice );
+			IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
+			init( (Invoice) bean.get(invoice.getId()) );
 			Facturae facturae = getFacturae();  	
 			MarshallerUtil marshallerUtil32 = MarshallerUtil.getInstance(FacturaeVersion.FACTURAE_32);
 			marshallerUtil32.marshal( facturae, fileName );		

@@ -91,7 +91,7 @@ public class AplifisaWriter extends BasicExporter {
 	private TaxBreakDown getTaxBreakDown( AccountEntryDetail aed ) {
 		double amount = (aed.getCredit() != 0) ? aed.getCredit() : aed.getDebit();
 		for( TaxBreakDown tbd : getTaxBreakDowns() ) {
-			if ( (tbd.getTaxQuota() == amount) && (tbd.getTaxType() == TaxType.VAT) ) {
+			if ( tbd.getTaxQuota()==amount && tbd.getTaxType()==TaxType.VAT ) {
 				return tbd;
 			}
 		}

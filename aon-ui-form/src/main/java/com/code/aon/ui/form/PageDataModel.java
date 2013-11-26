@@ -186,7 +186,7 @@ public class PageDataModel extends DataModel implements Serializable {
 	public void setWrappedData(Object data) {
         List<ITransferObject> list = (List<ITransferObject>) data;
 		page.setList(list);
-        int rowIndex = (page.getList() != null && page.getSize() > 0) ? 0 : -1;
+        int rowIndex = page.getList() != null && page.getSize() > 0 ? 0 : -1;
         setRowIndex(rowIndex);
     }
 
@@ -209,11 +209,11 @@ public class PageDataModel extends DataModel implements Serializable {
     protected int ensureIndex(int i) {
         int start = page != null ? page.getStart() : -1;
         int offset = i - start;
-        if(i != -1 && offset < 0)
+        if(i != -1 && offset < 0) {
             offset = backward(i);
-        else
-	        if(page == null || offset >= limit)
-	            offset = forward(i);
+        } else if (page == null || offset >= limit) {
+        	offset = forward(i);	
+        }
         return offset;
     }
 
@@ -224,7 +224,7 @@ public class PageDataModel extends DataModel implements Serializable {
      * @return new index
      */
     protected int backward(int i) {
-        int start = Math.max((i), 0);
+        int start = Math.max(i, 0);
         page = getPage(start, limit);
         return i - start;
     }

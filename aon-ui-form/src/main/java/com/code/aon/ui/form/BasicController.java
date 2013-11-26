@@ -30,7 +30,6 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.hibernate.TypeResolver;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomain;
@@ -388,7 +387,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 */
 	public boolean isInLast() throws ManagerBeanException {
 		int count = getModel().getRowCount();
-		return (count > 0) && ((count - 1) == getSelectedIndex());
+		return count>0 && (count - 1)==getSelectedIndex();
 	}
 
 	@Override
@@ -652,7 +651,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			try {
 				getModel().setRowIndex(getSelectedIndex() - 1);
 			} catch (ManagerBeanException e) {
-				LOGGER.error(">>>> onSelectFirst exception: ", e);
+				LOGGER.error(">>>> onSelectPrevious exception: ", e);
 				addMessage(e.getMessage());
 				throw new AbortProcessingException(e.getMessage(), e);
 			}
@@ -669,7 +668,7 @@ public class BasicController extends AbstractPojoController implements IControll
 		try {
 			DataModel model = getModel();
 			int index = getSelectedIndex();
-			if ((index != -1) && (index < (model.getRowCount() - 1))) {
+			if ( index!=-1 && index<(model.getRowCount() - 1) ) {
 				getModel().setRowIndex(index + 1);
 				select(event);
 			}
@@ -687,7 +686,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 */
 	public void onSelectLast(ActionEvent event) {
 		try {
-			if ((getModel().getRowCount() > 0) && (!isInLast())) {
+			if ( getModel().getRowCount()>0 && !isInLast() ) {
 				getModel().setRowIndex(getModel().getRowCount() - 1);
 				select(event);
 			}
@@ -740,7 +739,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	private boolean isOnlyTextExpression( Expression expression, String fieldName ) {
 		if ( expression instanceof RelationalExpression ) {
 			RelationalExpression re = (RelationalExpression) expression;
-			if ( (re.getType() == RelationalType.EQUAL) &&  
+			if ( re.getType()==RelationalType.EQUAL &&  
 				(re.getLeftExpression() instanceof IdentExpression) &&
 				(re.getRightExpression() instanceof ConstantExpression) ) {
 				TypeResolver typeResolver = new TypeResolver(getPojo());
@@ -1094,7 +1093,7 @@ public class BasicController extends AbstractPojoController implements IControll
 
 	private void restoreState() throws ManagerBeanException {
 		if (this.saveState) {
-			if ((this.savedToId != null) && (getSelectedIndex() != -1)) {
+			if (this.savedToId != null && getSelectedIndex()!=-1) {
 				setTo( getManagerBean().get(this.savedToId) );
 				setRowData( getTo() );
 			}
@@ -1250,7 +1249,6 @@ public class BasicController extends AbstractPojoController implements IControll
 		if (getSelectedIndex() != -1) {
 			setRowData(getTo());
 		}
-		HibernateUtil.getSession(HibernateUtil.getSessionFactoryName()).refresh(getTo());
 	}
 	
 	/**
@@ -1344,7 +1342,7 @@ public class BasicController extends AbstractPojoController implements IControll
 				getModel().setRowIndex(0);
 				select(null);
 				return formAction();
-			} else if ( (getPageLimit()==-1) || (getRowCount()<getPageLimit()) ) {
+			} else if ( getPageLimit()==-1 || getRowCount()<getPageLimit() ) {
 				return listAction();
 			} else {
 				return searchAction();

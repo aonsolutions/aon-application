@@ -97,7 +97,7 @@ public class Page implements Serializable {
 	 * @return true, if is empty
 	 */
 	public boolean isEmpty() {
-		return (objects == null) || (getSize() == 0);
+		return objects==null || getSize()==0;
 	}
 
     /**

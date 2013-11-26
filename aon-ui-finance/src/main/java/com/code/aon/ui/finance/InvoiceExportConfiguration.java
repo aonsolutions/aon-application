@@ -118,7 +118,7 @@ public class InvoiceExportConfiguration {
 	public InvoiceExportType obtainType() {
 		InvoiceExportType type = null;
 		Integer ordinal = AppParamUtil.getValueAsInteger(AppParam.AON_INVOICE_EXPORT_TYE);
-		if ( (ordinal!= null) && (ordinal < InvoiceExportType.values().length) ) {
+		if ( ordinal!=null && ordinal<InvoiceExportType.values().length ) {
 			type = InvoiceExportType.values()[ordinal];
 		}
 		return type;

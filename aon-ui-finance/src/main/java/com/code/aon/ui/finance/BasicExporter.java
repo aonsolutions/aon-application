@@ -140,7 +140,7 @@ public abstract class BasicExporter {
 	
 	protected Enterprise getEnterprise() {
 		for( InvoiceDetail id : getInvoice().getLines() ) {
-			if ( (id.getWorkPlace() != null) && (id.getWorkPlace().getId() != null) ) {
+			if ( id.getWorkPlace()!=null && id.getWorkPlace().getId()!=null ) {
 				return id.getWorkPlace().getEnterprise();
 			}
 		}
@@ -149,7 +149,7 @@ public abstract class BasicExporter {
 	
 	private boolean isRelated( AccountEntryDetail aed, TaxBreakDown tbd ) {
 		double amount = (aed.getCredit() != 0) ? aed.getCredit() : aed.getDebit();
-		return (amount == tbd.getBase());
+		return amount == tbd.getBase();
 	}
 	
 	protected List<TaxBreakDown> getTaxes( AccountEntryDetail aed ) {
@@ -167,8 +167,8 @@ public abstract class BasicExporter {
 		TaxBreakDown relatedTax = null;
 		if (! taxList.isEmpty() ) {
 			for( TaxBreakDown tbd : taxList ) {
-				if ( (tbd.getBase() == tax.getBase()) &&
-						(tbd.getTaxType() != tax.getTaxType()) ) {
+				if ( tbd.getBase()==tax.getBase() &&
+						tbd.getTaxType()!=tax.getTaxType() ) {
 					relatedTax = tbd;
 					break;
 				}

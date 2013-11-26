@@ -68,7 +68,7 @@ public class PmsUtil {
 	private void init( Invoice invoice ) {
 		if (! invoice.isService() ) {
 			Project project = invoice.getProject();
-			if ( (project != null) && (project.getId() != null) ) {
+			if ( project!=null && project.getId()!=null ) {
 				try {
 					IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);
 					Criteria criteria = new Criteria();

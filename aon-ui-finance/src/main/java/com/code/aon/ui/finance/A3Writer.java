@@ -110,16 +110,17 @@ public class A3Writer extends BasicExporter {
 	}
 	
 	private boolean isAbono() {
-		return (getInvoice().getRectificationType() == RectificationType.NORMAL_RECTIFIER) ||
-				(getInvoice().getRectificationType() == RectificationType.SPECIAL_RECTIFIER);		
+		return getInvoice().getRectificationType() == RectificationType.NORMAL_RECTIFIER ||
+				getInvoice().getRectificationType() == RectificationType.SPECIAL_RECTIFIER;		
 	}
 	
 	private boolean isFacturaEmitida() {
-		return (getInvoice().getType() == InvoiceType.SALES);
+		return getInvoice().getType() == InvoiceType.SALES;
 	}
 
 	private boolean isFacturaRecibida() {
-		return (getInvoice().getType() == InvoiceType.PURCHASE) || (getInvoice().getType() == InvoiceType.EXPENSES);
+		return getInvoice().getType()==InvoiceType.PURCHASE ||
+				getInvoice().getType()==InvoiceType.EXPENSES;
 	}
 	
 	private void fillHeader( AccountEntryDetail aed ) {
@@ -243,7 +244,7 @@ public class A3Writer extends BasicExporter {
 				retentionPercent = tbd.getTaxPercent();
 				retentionIncluded = true;
 			}
-			if ( (tbd.getSurchargeQuota() != 0) || (tbd.getSurchargePercent() != 0) ) {
+			if ( tbd.getSurchargeQuota()!=0 || tbd.getSurchargePercent() != 0 ) {
 				surchargeQuota = tbd.getSurchargeQuota();
 				surchargePercent = tbd.getSurchargePercent();
 			}
@@ -252,7 +253,7 @@ public class A3Writer extends BasicExporter {
 		setPercent( taxPercent, 115 );
 		// Cuota de IVA
 		setNumber( taxQuota, 120, 14 );
-		if ( (surchargeQuota != 0) || (surchargePercent != 0) ) {
+		if ( surchargeQuota!=0 || surchargePercent!=0 ) {
 			// Porcentaje de Recargo
 			setPercent( surchargePercent, 134 );
 			// Cuota de Recargo
@@ -496,19 +497,17 @@ public class A3Writer extends BasicExporter {
 	
 	private String getSiglasViaPublica( StreetType type ) {
 		String value = "CL";
-		if ( type != null ) {
-			if ( ArrayUtils.contains(VALID_STREET_TYPES, type) ) {
-				if ( type == StreetType.CT ) {
-					value = "CR";
-				} else if ( type == StreetType.CU ) {
-					value = "CT";
-				} else if ( type == StreetType.PZ ) {
-					value = "PA";
-				} else if ( type == StreetType.PN ) {
-					value = "PR";
-				} else {
-					value = type.getValue();
-				}
+		if ( type != null && ArrayUtils.contains(VALID_STREET_TYPES, type) ) {
+			if ( type == StreetType.CT ) {
+				value = "CR";
+			} else if ( type == StreetType.CU ) {
+				value = "CT";
+			} else if ( type == StreetType.PZ ) {
+				value = "PA";
+			} else if ( type == StreetType.PN ) {
+				value = "PR";
+			} else {
+				value = type.getValue();
 			}
 		}
 		return value;
