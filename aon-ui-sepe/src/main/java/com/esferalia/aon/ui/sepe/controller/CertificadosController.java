@@ -40,6 +40,7 @@ import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.ui.sepe.file.CertificadosWriter;
 import com.esferalia.aon.ui.sepe.utils.CertificadosCommunicator;
+import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
 public class CertificadosController implements ISepeHandler{
@@ -345,6 +346,8 @@ public class CertificadosController implements ISepeHandler{
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), getBatch().getId());
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), type);
+				SEPEUtils utils = new SEPEUtils();
+				utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_DOMAIN));
 				List<ITransferObject> list = bean.getList(criteria);
 				if(!list.isEmpty()){
 					return (IAttachment) list.get(0);
