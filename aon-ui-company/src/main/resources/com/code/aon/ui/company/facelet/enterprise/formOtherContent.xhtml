@@ -19,8 +19,8 @@
 		</c:if>
 	</c:if>
 
-	<aon:outputText value="#{bundle.purchase_workplace}" />
-	<aon:div>
+	<aon:outputLabel for="Enterprise_workplace_description" value="#{bundle.purchase_workplace}" />
+	<aon:div  id="Enterprise_workplace_description">
 		<aon:outputText value="#{enterprise.workplace.description}" />
 		<c:if test="#{enterprise.workplace.economicAgreement != null}" >
 			<aon:outputText value=" (" />
