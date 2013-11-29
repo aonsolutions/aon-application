@@ -240,11 +240,12 @@ public class AccountEntryInvoiceWriter {
 					throw new ManagerBeanException("El gasto \"" + invoiceDetail.getDescription() + "\" no tiene cuenta contable asociada.");
 				}
 			}
-			if (invoiceDetail.isPrepayment()) {
-				account = obtainPrepaymentDefaultAccount();
-			}
 			if (account == null) {
-				account = (invoice.isSales()) ? obtainSalesDefaultAccount() : obtainPurchaseDefaultAccount();
+				if (invoiceDetail.isPrepayment()) {
+					account = obtainPrepaymentDefaultAccount();
+				} else {
+					account = (invoice.isSales()) ? obtainSalesDefaultAccount() : obtainPurchaseDefaultAccount();
+				}
 			}
 			double base = invoiceDetail.getTaxableBase();
 			base += (basesPerAccount.containsKey(account)) ? basesPerAccount.get(account).doubleValue() : 0;
