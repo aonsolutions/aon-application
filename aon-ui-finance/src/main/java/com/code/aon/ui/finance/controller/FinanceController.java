@@ -936,7 +936,7 @@ public class FinanceController extends FinanceListController {
 			insertFinances.append(" CONCAT(" + obtainSalaryTypeCondition("s.type") + ", ' - ', DATE_FORMAT(s.issue_date, '%d/%m/%Y')),");
 			insertFinances.append(" s.charge_date, rp.pay_method, rb.bank, rb.bank_account, 0, 0, w.scope, 1, s.id");
 			insertFinances.append(" FROM registry AS r, workplace AS w");
-			insertFinances.append(" LEFT JOIN salary AS s ON " + DomainManager.getSQLWhereClause("s.domain") + " AND s.issue_date BETWEEN ? AND ?");
+			insertFinances.append(" LEFT JOIN salary AS s ON " + DomainManager.getSQLWhereClause("s.domain") + " AND s.charge_date BETWEEN ? AND ?");
 			insertFinances.append(" LEFT JOIN contract AS c ON c.id = s.contract");
 			insertFinances.append(" LEFT JOIN finance AS f ON f.source_id = s.id AND f.payroll = 1");
 			insertFinances.append(" LEFT JOIN rpaymethod AS rp ON rp.registry = c.person");
