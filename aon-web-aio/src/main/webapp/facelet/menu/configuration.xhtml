@@ -290,18 +290,16 @@
 											action="bank-configuration"
 											value="#{bundle.aon_banks}" />
 									</aon:div>
-									<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="bankConcept"
-												action="bankConcept" 
-												value="#{bundle.finance_bank_concept_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="series-configuration" 
-												action="series-configuration" 
-												value="#{bundle.config_series_module}" />
-										</aon:div>								
-									</c:if>	
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="bankConcept"
+											action="bankConcept" 
+											value="#{bundle.finance_bank_concept_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="series-configuration" 
+											action="series-configuration" 
+											value="#{bundle.config_series_module}" />
+									</aon:div>								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="tax-configuration" 
 											action="tax_list-configuration" 
