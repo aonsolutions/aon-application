@@ -4106,8 +4106,8 @@ INSERT INTO `profile` VALUES
 /* aon-aio */
   (71,'Administrador',28,null),
   (72,'Gestion',28,null),  
-  (73,'Invitado',28,null);  
-  
+  (73,'Invitado',28,null),
+  (74,'Portal Laboral',28,null);
 /*
  	**TODO** 	
   	Solo se estan cargando los roles que tiene cada perfil de la aplicación
@@ -4130,7 +4130,9 @@ INSERT INTO `profile_role` VALUES
   (10,null,72,227),
   (11,null,72,229),
   (12,null,72,230),  
-  (13,null,72,232),  
+  (13,null,72,232),
+  (20,null,74,218),
+  (21,null,74,234),
 /*
   aon-aio (Invitado): Guest
 */
@@ -4144,7 +4146,10 @@ INSERT INTO `profile_role` VALUES
 */
   (19,null,32,118);
   
-  
+
+INSERT INTO `profile_module_denied` (`profile`,`module`) VALUES (74, 18); 
+
+
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS=1;

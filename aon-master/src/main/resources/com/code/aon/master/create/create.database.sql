@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.25.1
+# Version: 7.25.2
 # Created by: girazu
-# Creation Date: 20/11/2013 11:40
+# Creation Date: 02/12/2013 18:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -5705,7 +5705,7 @@ CREATE TABLE `profile_action_denied` (
 
 CREATE TABLE `profile_module_denied` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) default NULL COMMENT 'Identificador del Dominio',
   `profile` int(4) NOT NULL COMMENT 'Identificador del Perfil',
   `module` tinyint(2) NOT NULL COMMENT 'Modulo Inhabilitado para el Perfil',
   PRIMARY KEY  (`id`),
@@ -7186,7 +7186,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.25.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.25.2');
 
 COMMIT;
 
