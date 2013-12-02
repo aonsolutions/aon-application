@@ -14,7 +14,7 @@
 		<div><label for="telephone" class="form-label" size="25">Tel&eacute;fono de contacto:</label></div>
 		<div><input id="telephone" size="25" name="mail_Telefono" type="text" class="form-input"/></div>
 
-		<div><label for="from" class="form-label" size="25">Correo electrónico:</label></div>
+		<div><label for="from" class="form-label" size="25">Correo electr&oacute;nico:</label></div>
 		<div><input id="from" size="25" name="from" type="text" class="form-input"/></div>
 
 		<div><label for="question" class="form-label">Consulta:</label></div>

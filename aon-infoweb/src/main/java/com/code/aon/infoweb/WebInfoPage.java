@@ -8,6 +8,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.code.aon.infoweb.enumeration.WebInfoPageType;
 import com.esferalia.aon.entity.master.WebInfoPageDB;
 
@@ -49,5 +51,10 @@ public class WebInfoPage extends WebInfoPageDB {
 		if (getType()== WebInfoPageType.LOCATION) return true;
 		return false;
     }
-	
+
+    @Transient
+	public String getEscapedName() {
+    	return StringEscapeUtils.escapeHtml(getName());
+    }
+    
 }

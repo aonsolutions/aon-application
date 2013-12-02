@@ -142,7 +142,7 @@ function authMail($php_from, $php_namefrom, $php_to, $php_nameto, $php_subject, 
         return($php_logArray);
 }
 
-//VALIDAMOS LOS E-MAILS RECIBIDOS ESTE SI ES VÁLIDO
+//VALIDAMOS LOS E-MAILS RECIBIDOS ESTE SI ES VALIDO
 function validar_mail(&$php_email){
         $php_error_email = "";
         $php_email=trim($php_email);
@@ -174,7 +174,7 @@ function ValidarCabecera($campo){
 
         //Comprobamos que entre los datos no se encuentre alguna de
         //las cadenas del array. Si se encuentra alguna cadena se
-        //dirige a una página de Forbidden
+        //dirige a una pagina de Forbidden
         foreach($badHeads as $valor){
                 if(strpos(strtolower($campo), strtolower($valor)) !== false){
                         header("HTTP/1.0 403 Forbidden");

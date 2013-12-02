@@ -402,10 +402,9 @@ public class GeneratorController extends BasicController implements VelocityCons
 	}
 	
 	private void generatePage(String template, WebInfoPage wip) {
-		String name = wip.getName();
-		vu.put(PAGENAME_KEY, name);
+		vu.put(PAGENAME_KEY, wip.getEscapedName());
 		vu.put(CONTENT_KEY, template);
-		String fileName = (wip.getId() != homepage) ? getPageName(name) : INDEX_HTML;
+		String fileName = (wip.getId() != homepage) ? getPageName(wip.getName()) : INDEX_HTML;
 		vu.generate( fileName );
 	}
 
@@ -697,8 +696,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 	}
 	
 	private MenuOptionHandler getMenuOptionHandler( WebInfoPage wip ) {
-		String label = wip.getName();
-		String link = getPageLink(label);
+		String label = wip.getEscapedName();
+		String link = getPageLink(wip.getName());
 		return new MenuOptionHandler(label, link);		
 	}
 
@@ -714,7 +713,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		if (! isGenerateDefaultPage() ) {			
 			WebInfoPage wip = (WebInfoPage) wimBean.get(homepage);
 			if ( wip != null ) {
-				indexMenu.setLabel(wip.getName());
+				indexMenu.setLabel(wip.getEscapedName());
 			}
 		}
 		menu.add(indexMenu);
