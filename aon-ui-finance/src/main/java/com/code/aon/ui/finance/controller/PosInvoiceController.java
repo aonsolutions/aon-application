@@ -198,7 +198,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	}
 
 	public List<ProductTag> getProductTags() {
-		if (productTags == null && getPosShift().getPos().isBarRestaurant()) {
+		if (productTags == null && getPosShift().getPos().isTouchScreen()) {
 			productTags = new LinkedList<ProductTag>();
 			try {
 				IManagerBean posCatalogueBean = BeanManager.getManagerBean(PosCatalogue.class);
@@ -241,7 +241,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	}
 
 	public List<Tag> getTags() {
-		if (tags == null && getPosShift().getPos().isBarRestaurant()) {
+		if (tags == null && getPosShift().getPos().isTouchScreen()) {
 			tags = new LinkedList<Tag>();
 			for (ProductTag productTag : getProductTags()) {
 				if (!tags.contains(productTag.getTag())) {
@@ -294,7 +294,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	}
 
 	public List<Tag> getPagedTags() {
-		if (pagedTags == null && getPosShift().getPos().isBarRestaurant()) {
+		if (pagedTags == null && getPosShift().getPos().isTouchScreen()) {
 			int tagsLimit = getTagsLimit();
 			if (getTagsCount() < tagsLimit) {
 				pagedTags = getTags().subList(0, getTagsCount());
@@ -340,7 +340,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	}
 
 	public List<Product> getPagedSelectedProducts() {
-		if (pagedSelectedProducts == null && selectedProducts != null && getPosShift().getPos().isBarRestaurant()) {
+		if (pagedSelectedProducts == null && selectedProducts != null && getPosShift().getPos().isTouchScreen()) {
 			int posLimit = getPosShift().getPos().getLimit();
 			if (getSelectedProductsCount() < posLimit) {
 				pagedSelectedProducts = getSelectedProducts().subList(0, getSelectedProductsCount());
@@ -379,7 +379,6 @@ public class PosInvoiceController extends SaleInvoiceController {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)FormUtil.getController(getInvoiceDetailControllerName()).getTo();
 		invoiceDetail.setItem(item);
 		invoiceDetail.setDescription(item.getFullName());
-		invoiceDetail.setQuantity(1);
 		invoiceDetail.setPrice(item.getPrice());
 		FormUtil.getController(getInvoiceDetailControllerName()).onAccept(event);
 	}

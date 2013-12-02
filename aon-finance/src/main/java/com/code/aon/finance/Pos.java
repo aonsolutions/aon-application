@@ -18,12 +18,12 @@ public class Pos extends PosDB {
 	}
 
 	@Transient
-	public boolean isShop() {
-		return PosDisplayMode.SHOP == getDisplayMode();
+	public boolean isStandard() {
+		return PosDisplayMode.STANDARD == getDisplayMode();
 	}
 	@Transient
-	public boolean isBarRestaurant() {
-		return PosDisplayMode.BAR_RESTAURANT == getDisplayMode();
+	public boolean isTouchScreen() {
+		return PosDisplayMode.TOUCHSCREEN == getDisplayMode();
 	}
 
 	@Transient

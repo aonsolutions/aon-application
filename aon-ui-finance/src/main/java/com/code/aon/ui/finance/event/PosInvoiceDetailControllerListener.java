@@ -32,6 +32,7 @@ public class PosInvoiceDetailControllerListener extends InvoiceDetailControllerL
 		super.afterBeanCreated(event);
 
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
+		invoiceDetail.setQuantity(1);
 		invoiceDetail.setTaxDataInDetail(true);
 	}
 

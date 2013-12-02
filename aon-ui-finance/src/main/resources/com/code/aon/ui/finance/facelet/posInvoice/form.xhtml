@@ -151,15 +151,15 @@
 						</aon:panelGrid>
 
 						<aon:div id="PosInvoiceDetailWizard" styleClass="aon-margin-bottom">
-							<c:if test="#{posInvoice.posShift.pos.shop}">
-								<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formWizardShop.xhtml">
+							<c:if test="#{posInvoice.posShift.pos.standard}">
+								<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formWizardStandard.xhtml">
 									<ui:param name="invoiceController" value="#{posInvoice}" />
 									<ui:param name="detailController" value="#{posInvoiceDetail}" />
 									<ui:param name="financeController" value="#{posInvoiceFinance}" />
 								</ui:include>
 							</c:if>
-							<c:if test="#{posInvoice.posShift.pos.barRestaurant}">
-								<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formWizardRestaurant.xhtml">
+							<c:if test="#{posInvoice.posShift.pos.touchScreen}">
+								<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formWizardTouchscreen.xhtml">
 									<ui:param name="invoiceController" value="#{posInvoice}" />
 									<ui:param name="detailController" value="#{posInvoiceDetail}" />
 									<ui:param name="financeController" value="#{posInvoiceFinance}" />
@@ -300,6 +300,13 @@
 								accesskey="9" />
 
 						</aon:panelGrid>
+
+						<c:if test="#{posInvoice.posShift.pos.touchScreen}">
+							<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formQuantity.xhtml">
+								<ui:param name="invoiceController" value="#{posInvoice}" />
+								<ui:param name="detailController" value="#{posInvoiceDetail}" />
+							</ui:include>
+						</c:if>
 
 						<c:if test="#{!posInvoice.new and posInvoiceDetail.rowCount > 0}">
 							<ui:include	src="/com/code/aon/ui/finance/facelet/posInvoice/formTotal.xhtml">

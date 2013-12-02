@@ -3,7 +3,6 @@ package com.code.aon.common.enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-
 public enum Country implements IResourceable, IStringEnum {
 
 	AF("AF","AFG",004),
@@ -262,7 +261,6 @@ public enum Country implements IResourceable, IStringEnum {
 		this.iso3 = iso3;
 		this.isoNum = isoNum;
 	}
-	
 	
 	public String getValue() {
 		return value;

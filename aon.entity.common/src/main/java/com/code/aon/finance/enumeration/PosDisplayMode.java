@@ -7,8 +7,8 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum PosDisplayMode implements IResourceable {
 
-	SHOP,
-    BAR_RESTAURANT;
+	STANDARD,
+    TOUCHSCREEN;
     
     /**
      * Message key prefix. 

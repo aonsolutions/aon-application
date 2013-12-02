@@ -78,20 +78,20 @@
 						</aon:selectOneMenu>
 						<aon:outputLabel for="Pos_numRows" value="#{bundle.aon_rows}"
 							styleClass="aon-margin-left aon-margin-right aon-italic"
-							rendered="#{pos.to.barRestaurant}" />
+							rendered="#{pos.to.touchScreen}" />
 						<aon:inputText id="Pos_numRows" 
 							value="#{pos.to.numRows}" 
 							size="1" maxlength="1" required="true"
-							rendered="#{pos.to.barRestaurant}">
+							rendered="#{pos.to.touchScreen}">
 							<f:validateDoubleRange minimum="3" />
 						</aon:inputText>
 						<aon:outputLabel for="Pos_numCols" value="#{bundle.aon_columns}"
 							styleClass="aon-margin-left aon-margin-right aon-italic"
-							rendered="#{pos.to.barRestaurant}" />
+							rendered="#{pos.to.touchScreen}" />
 						<aon:inputText id="Pos_numCols" 
 							value="#{pos.to.numCols}" 
 							size="1" maxlength="1" required="true"
-							rendered="#{pos.to.barRestaurant}">
+							rendered="#{pos.to.touchScreen}">
 							<f:validateDoubleRange minimum="3" />
 						</aon:inputText>
 					</aon:div>
@@ -105,7 +105,7 @@
 
 				</aon:panelGrid>
 
-				<c:if test="#{!pos.new and pos.to.barRestaurant}">
+				<c:if test="#{!pos.new and pos.to.touchScreen}">
 					<aon:div styleClass="aon-group">
 						<aon:div styleClass="aon-group-title">
 							<aon:outputText value="#{bundle.product_catalogue_module}"/>
