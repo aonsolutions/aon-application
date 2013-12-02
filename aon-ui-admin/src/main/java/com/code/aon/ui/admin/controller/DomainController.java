@@ -643,7 +643,7 @@ public class DomainController extends BasicController {
 			body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_3, parent) );
 		}
 		Locale locale = AonUtil.getCurrentLocale();
-		String type = di.getType().getName(locale);
+		String type = StringEscapeUtils.escapeHtml(di.getType().getName(locale));
 		String size = FileUtils.byteCountToDisplaySize(di.getMaxTotalDocumentSize()*FileUtils.ONE_MB);
 		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
 		String multiDomain = di.isDomainManagement() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
