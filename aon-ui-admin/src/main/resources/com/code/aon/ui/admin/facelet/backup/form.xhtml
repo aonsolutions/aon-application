@@ -33,19 +33,23 @@
 			</ui:decorate>	
 						
 			<aon:div id="backupContent" styleClass="aon-scroll-area">
-
-				<c:if test="#{!backup.backupAvailable}">						
+		
+				<c:if test="#{!backup.backupAvailable}">
+				
+					<aon:div styleClass="aon-note aon-margin-bottom">
+						<aon:div styleClass="aon-note-internal">
+							<aon:panelGroup>
+								<aon:outputText value="#{bundle.admin_backup_message1}" />
+								<br/>
+								<aon:outputText value="#{bundle.admin_backup_message2}" />
+							</aon:panelGroup>
+						</aon:div>
+					</aon:div>	
+										
 					<aon:panelGrid columns="2">
 	
-						<c:if test="#{backup.showIncludeChildDomains}">						
-							<aon:outputLabel value="#{bundle.admin_domain_childs}" 
-								for="Backup_childDomains"/>
-							<aon:selectBooleanCheckbox id="Backup_childDomains"
-								value="#{backup.includeChildDomains}" />								
-						</c:if>
-	
 						<c:if test="#{backup.showIncludeParentDomain}">						
-							<aon:outputLabel value="#{bundle.admin_domain_parent}" 
+							<aon:outputLabel value="#{bundle.admin_backup_include_parent}" 
 								for="Backup_parentDomain"/>
 							<aon:selectBooleanCheckbox id="Backup_parentDomain"
 								value="#{backup.includeParentDomain}" />								

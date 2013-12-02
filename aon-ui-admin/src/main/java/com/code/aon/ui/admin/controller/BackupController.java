@@ -37,14 +37,10 @@ import com.code.aon.config.Domain;
 import com.code.aon.dbutils.AonDomainDump;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.dbutils.IDumpListener;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
-import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.admin.DumpThread;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
-import com.esferalia.aon.entity.IEntityAlias;
 
 public class BackupController implements IDumpListener {
 
@@ -57,7 +53,6 @@ public class BackupController implements IDumpListener {
 	private final static String BACKUP_ERROR = AonUtil.getMessage(ICommonMessages.ADMIN_BACKUP_ERROR);
 	
 	private Domain domain;
-	private boolean includeChildDomains;
 	private boolean includeParentDomain;
 	private File backupFile;
 	private DumpThread dumpThread;
@@ -66,14 +61,6 @@ public class BackupController implements IDumpListener {
 	private String progressMessage;
 	private boolean enabledProgressBar;
 	private Locale locale = AonUtil.getCurrentLocale();
-	
-	public boolean isIncludeChildDomains() {
-		return includeChildDomains;
-	}
-
-	public void setIncludeChildDomains(boolean includeChildDomains) {
-		this.includeChildDomains = includeChildDomains;
-	}
 	
 	public boolean isIncludeParentDomain() {
 		return includeParentDomain;
@@ -95,7 +82,6 @@ public class BackupController implements IDumpListener {
 	}
 	
 	public void onInit( ActionEvent event ) {
-		setIncludeChildDomains(false);
 		setIncludeParentDomain(false);
 		cleanBackupFile();
 		resetProgress();
@@ -107,7 +93,6 @@ public class BackupController implements IDumpListener {
 		}			
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Integer[] getDomains() throws ManagerBeanException {
 		List<Integer> domains = new LinkedList<Integer>();
 		domains.add(this.domain.getId());
@@ -115,13 +100,6 @@ public class BackupController implements IDumpListener {
 			if (this.domain.isEnableHeredity() || isIncludeParentDomain()) {
 				domains.add(domain.getParent().getId());
 			}
-		} else if ( domain.isDomainManagement() && isIncludeChildDomains() ) {
-			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_PARENT_ID), this.domain.getId());
-			String idAlias = bean.getFieldName(IEntityAlias.DOMAIN_ID);
-			ProjectionList pl = new ProjectionList(Projection.property(idAlias));
-			domains.addAll( bean.getList(pl, criteria) );
 		}
 		return domains.toArray(new Integer[domains.size()]);
 	}
@@ -261,14 +239,6 @@ public class BackupController implements IDumpListener {
 	public boolean isShowIncludeParentDomain() {
 		Domain parent = domain.getParent();
 		return parent != null && parent.getId() != null;
-	}
-
-	public boolean isShowIncludeChildDomains() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
-		Criteria criteria = new Criteria();
-		criteria.setSkipDomainFilter(true);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_PARENT_ID), domain.getId());
-		return bean.getCount(criteria) > 0;
 	}
 	
 }
