@@ -97,7 +97,7 @@ public class ReportUtils {
 				registryId);
 		criteria.addEqualExpression(beanManager
 				.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE),
-				type.ordinal());
+				type);
 		List<?> list =  beanManager.getList(criteria);
 		
 		return list == null || list.isEmpty()? null : (RegistryAttachment) list.get(0);
