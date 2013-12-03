@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:form id="globalConfigPayrollParametersForm">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{bundle.payroll_default_params_module}" />
+			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+			<ui:define name="toolbarContent">
+				<aon:commandButton id="enterprise-save"
+					value="#{bundle.aon_save}"
+					accesskey="#{bundle.aon_key_save}"
+					styleClass="aon-finding-toolbar-item aon-icon-accept"
+					onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;">
+					<aon:actionListener method="#{enterprise.accept}" />
+					<c:if test="#{aonRole.config and (!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable)}">
+						<aon:actionListener method="#{payrollAppParams.onAccept}" />
+						<aon:actionListener method="#{sepeAppParams.onAccept}" />
+					</c:if>
+				</aon:commandButton>					
+			</ui:define>				
+		</ui:decorate>
+	
+		<aon:div styleClass="aon-scroll-area">	
+			<aon:div styleClass="aon-margin-bottom">
+				<aon:panelGrid  columns="2" style="width:100%;margin-bottom: 2em;">	
+					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formOtherContent.xhtml" />
+					
+					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formParamsContent.xhtml" />
+				</aon:panelGrid>
+			</aon:div>
+
+			<c:if test="#{aonRole.config and (!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable)}">
+				<ui:include
+					src="/com/esferalia/aon/ui/sepe/facelet/params/form_content.xhtml" />
+			</c:if>
+		</aon:div>
+	</aon:form>
+	<aon:lookupButtonPopup lookup="#{agreementLookup}" />
+	<aon:lookupButtonPopup lookup="#{calendarLookup}" />
+	<aon:lookupButtonPopup lookup="#{paymentConceptLookup}" />
+	<aon:lookupButtonPopup lookup="#{trainingCenterLookup}" />
+
+</ui:composition>

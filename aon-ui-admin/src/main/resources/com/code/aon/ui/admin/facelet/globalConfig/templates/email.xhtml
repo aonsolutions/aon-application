@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:form id="globalConfigEmailForm">
+		<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{bundle.aon_email}" />
+			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+		</ui:include>
+	
+		<aon:div styleClass="aon-scroll-area">	
+	
+			<aon:panel>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.webmail_mailAccount}" />
+				</f:facet>
+				<ui:include src="/com/code/aon/ui/webmail/facelet/mailAccount/grid.xhtml" >
+					<ui:param name="controller" value="#{mailConfig.mailAccount}" />
+				</ui:include>						
+			</aon:panel>
+			<aon:div style="margin-top:2em;" />
+			<aon:panel>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.webmail_signature}" />
+				</f:facet>
+				<ui:include src="/com/code/aon/ui/webmail/facelet/signature/grid.xhtml" >
+					<ui:param name="controller" value="#{mailConfig.signature}" />
+				</ui:include>						
+			</aon:panel>
+	
+		</aon:div>
+	</aon:form>
+
+</ui:composition>
