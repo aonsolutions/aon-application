@@ -1,17 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j">
-<body>
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/com/code/aon/ui/admin/facelet/globalConfig/configLayout.xhtml">
 
-<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
-
-	<ui:define name="content">
+	<ui:define name="configContent">
 
 		<aon:form id="sessionForm">
 
@@ -82,6 +78,3 @@
 		</aon:form>
 	</ui:define>
 </ui:composition>
-
-</body>
-</html>

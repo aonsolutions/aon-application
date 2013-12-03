@@ -38,11 +38,6 @@ public class MailAccount extends MailAccountDB implements IMailAccount {
 	public void setISignature(ISignature signature) {
 		setSignature( (Signature) signature );
 	}
-	
-	@Transient
-	public boolean isDefault() {
-		return StringUtils.equalsIgnoreCase(DEFAULT_MAIL_ACCOUNT_NAME, getName());
-	}	
 
 	@Override
 	@Transient

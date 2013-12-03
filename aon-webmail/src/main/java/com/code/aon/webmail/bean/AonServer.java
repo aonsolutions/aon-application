@@ -333,8 +333,7 @@ public class AonServer implements IMailConstants {
 			if (!getRoot().getFolder(getDraftFolderName()).exists()){
 				createAonFolder(null, getDraftFolderName(), HOLDS_MESSAGES);
 			}
-			if ( (account.isDefault() || !StringUtils.isEmpty(account.getSpamFolder()))
-				&& !getRoot().getFolder(getSpamFolderName()).exists() ) {
+			if (!getRoot().getFolder(getSpamFolderName()).exists()) {
 				createAonFolder(null, getSpamFolderName(), HOLDS_MESSAGES);
 			}			
 		}

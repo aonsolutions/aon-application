@@ -49,7 +49,12 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.admin_modules_denied}" />
 						</f:facet>
-						<aon:outputText value="#{controller.moduleDeniedList}"/>
+						<c:if test="#{controller.beanName == 'applicationProfile'}">
+							<aon:outputText value="#{domainApplication.systemModuleDeniedList}"/>
+						</c:if>
+						<c:if test="#{controller.beanName == 'domainApplicationProfile'}">
+							<aon:outputText value="#{domainApplication.moduleDeniedList}"/>
+						</c:if>
 					</aon:column>
 				</c:if>
 		

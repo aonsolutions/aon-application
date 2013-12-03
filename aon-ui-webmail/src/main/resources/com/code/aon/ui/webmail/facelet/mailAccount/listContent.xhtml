@@ -50,20 +50,6 @@
 					<aon:outputText value="#{to.signature.name}" />
 				</aon:column>
 
-				<aon:column styleClass="aon-editDataTable-textColumn">
-					<f:facet name="header">
-						<aon:outputText
-							value="#{bundle.webmail_mailAccount_type}" />
-					</f:facet>
-					<aon:outputText
-						value="#{bundle.webmail_mailAccount_user_account}"
-						rendered="#{mailConfig.currentMailAccountEditable}">
-					</aon:outputText>
-					<aon:outputText
-						value="#{bundle.webmail_mailAccount_system_account}"
-						rendered="#{!mailConfig.currentMailAccountEditable}" />
-				</aon:column>
-
 				<c:if test="#{!mailConfig.skipDefaultAccountColumn}">	
 					<aon:column styleClass="aon-editDataTable-iconColumn">
 						<f:facet name="header">
@@ -112,7 +98,7 @@
 
 	</aon:div>
 	
-	<c:if test="#{aonConfiguration.bean.webmail.connect}">
+	<c:if test="#{mailConfig.connectable}">
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</c:if>
 

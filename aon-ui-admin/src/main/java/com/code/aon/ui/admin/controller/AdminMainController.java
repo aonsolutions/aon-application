@@ -51,9 +51,6 @@ public class AdminMainController implements IAdminConstants {
 	
 	public void onInit( ActionEvent event ) {
 		initDomain(event);
-		if ( AonUtil.getRoleManager().isSysAdmin() ) {
-			initSysAdmin();			
-		}
 	}
 	
 	public Properties getProperties() {
@@ -97,7 +94,7 @@ public class AdminMainController implements IAdminConstants {
 		String amUser = getProperties().getProperty(ADVANCED_MODE_USER); 
 		String amPassword = getProperties().getProperty(ADVANCED_MODE_PASSWORD);
 		if (amUser.equals(_user) && amPassword.equals(crypted)) {
-			initSysAdmin();
+			AonUtil.getRoleManager().setSysAdmin();
 		} else {
 			AonUtil.addErrorMessageFromBundle(ICommonMessages.USER_PASSWORD_INVALID, _user);
 		}
@@ -105,12 +102,6 @@ public class AdminMainController implements IAdminConstants {
 		_password = null;
 	}
 	
-	private void initSysAdmin() {
-		AonUtil.getRoleManager().setSysAdmin();
-		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		mailConfig.setSystemAccountEditable(true);
-	}
-
 	private void initDomain( ActionEvent event ) {
 		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		try {

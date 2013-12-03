@@ -9,41 +9,39 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.controller.DomainSwitcher;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
-public class IdCheckUtil {
+public class UserIdCheckUtil {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(IdCheckUtil.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserIdCheckUtil.class);
 
-	private IController controller;
+	private IManagerBean bean;
 	
 	private String alias;
 	
 	private String domainAlias;
 	
-	private String duplicateMessage;
-	
 	private String oldValue;
 	
-	public IdCheckUtil( IController controller, String alias, String duplicateMessage ) {
-		this.controller = controller;
-		this.alias = alias;
-		this.duplicateMessage = duplicateMessage;
-	}
-
-	public String getDomainAlias() {
-		return domainAlias;
-	}
-
-	public void setDomainAlias(String domainAlias) {
-		this.domainAlias = domainAlias;
+	public UserIdCheckUtil() {
+		try {
+			this.bean = BeanManager.getManagerBean(User.class);
+			this.alias = bean.getFieldName(IEntityAlias.USER_LOGIN);
+			this.domainAlias = bean.getFieldName(IEntityAlias.USER_DOMAIN);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 
 	public String getOldValue() {
@@ -68,17 +66,16 @@ public class IdCheckUtil {
 		Criteria criteria = new Criteria();
 		if ( domainAlias != null ) {
 			criteria.setSkipDomainFilter(true);
-			String field = controller.getFieldName(domainAlias);
-			Expression expr1 = ExpressionUtilities.getEqualExpression(field, DomainManager.getCurrentDomain());
+			Expression expr1 = ExpressionUtilities.getEqualExpression(domainAlias, DomainManager.getCurrentDomain());
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			if (! ds.isParentDomain() ) {
-				Expression expr2 = ExpressionUtilities.getEqualExpression(field, ds.getParentDomain());
+				Expression expr2 = ExpressionUtilities.getEqualExpression(domainAlias, ds.getParentDomain());
 				expr1 = ExpressionUtilities.getOrExpression(expr1, expr2);
 			}			
 			criteria.addExpression(expr1);
 		}
-		criteria.addEqualExpression(controller.getFieldName(alias), newValue);
-		return controller.getManagerBean().getCount(criteria) > 0;
+		criteria.addEqualExpression(alias, newValue);
+		return bean.getCount(criteria) > 0;
 	}
 	
 	private boolean isDuplicated( String newValue ) throws ManagerBeanException {
@@ -93,7 +90,7 @@ public class IdCheckUtil {
 	}		
 	
 	private String getDuplicatedMessage( String newValue ) {
-		return AonUtil.getMessage(duplicateMessage, newValue);
+		return AonUtil.getMessage(ICommonMessages.USER_DUPLICATED, newValue);
 	}
 	
 }

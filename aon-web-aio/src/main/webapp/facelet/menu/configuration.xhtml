@@ -55,20 +55,20 @@
 									<aon:outputText value="#{bundle.company_data_module}"/>
 								</f:facet>					
 								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="company" 
-											action="company"
-											actionListener="#{company.onLoad}"
-											value="#{bundle.company_data_module}" />
-									</aon:div>
-									<c:if test="#{companyCustomize.show}">
+									<c:if test="#{aonRole.admin}">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="companyCustomize" 
-												action="companyCustomize"
-												actionListener="#{companyCustomize.onInit}"
-												value="#{bundle.aon_oem}" />
+											<aon:commandLink id="globalConfiguration" 
+												action="globalConfig_form"
+												actionListener="#{globalConfig.onInit}"
+												value="#{bundle.admin_global_configuration}" />
 										</aon:div>
-									</c:if>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="dump"
+												action="backup_form"
+												actionListener="#{backup.onInit}"
+												value="#{bundle.admin_backup}" />
+										</aon:div>
+									</c:if>									
 									<c:if test="#{domainSwitcher.type == 'HOTEL' and aonRole.purchaseOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="hotel" 
@@ -80,25 +80,7 @@
 												action="department_grid" 
 												value="#{bundle.company_department_module}" />
 										</aon:div>
-									</c:if>																	
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="mailAccountEnterprise"
-											action="mailAccount_list-enterprise"
-											actionListener="#{adminMain.onInitMailAccount}"
-											value="#{bundle.admin_mailAccount_enterprise}" />						
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="signatureEnterprise"
-											action="signature_list-enterprise"
-											actionListener="#{adminMain.onInitSignature}"
-											value="#{bundle.admin_signature_enterprise}" />
-									</aon:div>								
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="dump"
-											action="backup_form"
-											actionListener="#{backup.onInit}"
-											value="#{bundle.admin_backup}" />
-									</aon:div>
+									</c:if>
 									<c:if test="#{aonRole.sysAdmin}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="applicationParameter"
@@ -182,87 +164,7 @@
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
-
-						<c:if test="#{aonRole.admin}">
-							<aon:panelGrid id="group_configuration_security"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-security aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_security}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<c:if test="#{aonRole.sysAdmin or (aonRole.admin and !domainSwitcher.disableDomainManagement)}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="adminDomain"
-												action="adminDomain_form"
-												actionListener="#{adminMain.onInit}"
-												value="#{bundle.admin_domain_management}" >
-												<aon:actionListener method="#{adminDomain.onInit}" />
-											</aon:commandLink>
-										</aon:div>
-									</c:if>								
-									<c:if test="#{auditSession.showAudit}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="auditSession"
-												action="auditSession_search"
-												actionListener="#{auditSession.onInit}"
-												value="#{bundle.aon_audit}" >
-												<aon:actionListener method="#{auditSession.onEditSearch}" />
-											</aon:commandLink>
-										</aon:div>
-									</c:if>								
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="domainUsers"
-											action="domainUser_list"
-											actionListener="#{adminMain.onInit}"
-											value="#{bundle.admin_users}" >
-											<aon:actionListener method="#{domainUser.onSearch}" />
-										</aon:commandLink>						
-									</aon:div>
-									<c:if test="#{domainSwitcher.parentDomainUserInChildDomain or (aonRole.sysAdmin and domainSwitcher.childDomain)}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="overloadUsers"
-												action="userOverload_list"
-												actionListener="#{adminMain.onInit}"
-												value="#{bundle.admin_overload_users}" >
-												<aon:actionListener method="#{userOverload.onSearch}" />
-											</aon:commandLink>						
-										</aon:div>
-									</c:if>
-									<c:if test="#{aonRole.sysAdmin}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="domainApplications"
-												action="domainApplication_list"
-												actionListener="#{adminMain.onInit}"
-												value="#{bundle.audit_applications_module}" >
-												<aon:actionListener method="#{domainApplication.onSearch}" />
-											</aon:commandLink>						
-										</aon:div>
-									</c:if>									
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="profiles"
-											action="domainApplicationProfile_list"
-											actionListener="#{adminMain.onInit}"
-											value="#{bundle.admin_profiles}" >
-											<aon:actionListener method="#{domainApplicationProfile.onInit}" />
-										</aon:commandLink>						
-									</aon:div>									
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="scope"
-											action="scope_list"
-											actionListener="#{scope.onSearch}"
-											value="#{bundle.config_scopes}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="workGroup"
-											action="workgroup_list-utilities"
-											actionListener="#{workGroup.onSearch}"
-											value="#{bundle.config_workgroup_module}" />
-									</aon:div>
-								</aon:div>
-							</aon:panelGrid>
-						</c:if>
-					</aon:panelGroup>
+					</aon:panelGroup>					
 
 					<aon:panelGroup>
 						<c:if test="#{aonRole.config}">												
@@ -366,37 +268,7 @@
 						</c:if>
 								
 						<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
-							<c:if test="#{aonRole.config}">												
-								<aon:panelGrid id="group_main_parameters"
-									styleClass="aon-width-all" columnClasses="aon-padding"
-									headerClass="aon-direct-access-panel aon-icon-config">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_main_parameters}" />
-									</f:facet>
-									<aon:div styleClass="aon-direct-access-list">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="defaultParams-configuration" 
-												action="accountingDefaultParams-configuration"
-												actionListener="#{accAppParams.onLoad}"
-												value="#{bundle.accounting_default_params_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="fiscalParams-configuration" 
-												action="fiscalParams-configuration"
-												actionListener="#{fiscalParams.onLoad}"
-												value="#{bundle.fiscal_parameters_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="payrollParams-configuration" 
-												action="payrollDefaultParams-configuration"
-												actionListener="#{payrollAppParams.onLoad}"
-												value="#{bundle.payroll_default_params_module}" >
-												<f:setPropertyActionListener target="#{payrollAppParams.skipPayrollData}" value="#{false}" />
-											</aon:commandLink>
-										</aon:div>
-									</aon:div>
-								</aon:panelGrid>
-								
+							<c:if test="#{aonRole.config}">										
 								<aon:panelGrid id="group_utilities"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-icon-accounting aon-direct-access-panel">

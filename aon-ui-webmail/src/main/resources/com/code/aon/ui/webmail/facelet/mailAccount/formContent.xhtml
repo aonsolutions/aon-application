@@ -25,7 +25,6 @@
 				<aon:outputLabel for="MailAccount_name"
 					value="#{bundle.aon_name}" />
 				<aon:inputText id="MailAccount_name"
-					disabled="#{!mailConfig.mailAccountEditable}"
 					validator="#{controller.idCheck}"
 					size="60" maxlength="45" required="true"
 					value="#{controller.to.name}" />
@@ -33,7 +32,6 @@
 				<aon:outputLabel for="MailAccount_email"
 					value="#{bundle.aon_email}" />
 				<aon:inputText id="MailAccount_email"
-					disabled="#{!mailConfig.mailAccountEditable}"
 					size="60" maxlength="256" required="true"
 					value="#{controller.to.email}" />
 					
@@ -82,20 +80,17 @@
 						value="#{bundle.webmail_mailAccount_incomingHost}" />
 					<aon:inputText id="MailAccount_incomingHost"
 						size="60" maxlength="256"
-						disabled="#{!mailConfig.mailAccountEditable}"
 						value="#{controller.to.incomingHost}" />
 	
 					<aon:outputLabel for="MailAccount_incomingPort"
 						value="#{bundle.webmail_mailAccount_incomingPort}" />
 					<aon:inputText id="MailAccount_incomingPort"
 						size="10" maxlength="10"
-						disabled="#{!mailConfig.mailAccountEditable}"
 						value="#{controller.to.incomingPort}" />
 	
 					<aon:outputLabel for="MailAccount_incomingSecurity"
 						value="#{bundle.webmail_mailAccount_connectionSecurity}" />
 					<aon:selectOneMenu id="MailAccount_incomingSecurity"
-						disabled="#{!mailConfig.mailAccountEditable}" 
 						value="#{controller.to.incomingSecurity}">
 						<f:selectItems value="#{mailConfig.connectionSecurities}" />
 					</aon:selectOneMenu>						
@@ -114,27 +109,23 @@
 				<aon:outputLabel for="MailAccount_outgoingVerification"
 					value="#{bundle.webmail_mailAccount_outgoingVerification}" />
                 <aon:selectBooleanCheckbox id="MailAccount_outgoingVerification"
-					disabled="#{!mailConfig.mailAccountEditable}"
 					value="#{controller.to.outgoingVerification}"/>
 
 				<aon:outputLabel for="MailAccount_outgoingHost"
 					value="#{bundle.webmail_mailAccount_outgoingHost}" />
 				<aon:inputText id="MailAccount_outgoingHost"
 					size="60" maxlength="256"
-					disabled="#{!mailConfig.mailAccountEditable}"
 					value="#{controller.to.outgoingHost}" />
 
 				<aon:outputLabel for="MailAccount_outgoingPort"
 					value="#{bundle.webmail_mailAccount_outgoingPort}" />
 				<aon:inputText id="MailAccount_outgoingPort"
 					size="10" maxlength="10"
-					disabled="#{!mailConfig.mailAccountEditable}"
 					value="#{controller.to.outgoingPort}" />
 
 				<aon:outputLabel for="MailAccount_outgoingSecurity"
 					value="#{bundle.webmail_mailAccount_connectionSecurity}" />
 				<aon:selectOneMenu id="MailAccount_outgoingSecurity"
-					disabled="#{!mailConfig.mailAccountEditable}" 
 					value="#{controller.to.outgoingSecurity}">
 					<f:selectItems value="#{mailConfig.connectionSecurities}" />
 				</aon:selectOneMenu>						
@@ -143,14 +134,12 @@
 					value="#{bundle.aon_login_user}" />
 				<aon:inputText id="MailAccount_mailUsername"
 					size="60" maxlength="256"
-					disabled="#{!mailConfig.mailAccountEditable}"
 					value="#{controller.to.mailUsername}" />
 
 				<aon:outputLabel for="MailAccount_password"
 					value="#{bundle.aon_login_passwd}" />
 				<aon:inputSecret id="MailAccount_password" redisplay="true"
 					size="60" maxlength="128"
-					disabled="#{!mailConfig.mailAccountEditable}"
 					value="#{controller.to.passwordString}" />							
 					
 			</aon:panelGrid>

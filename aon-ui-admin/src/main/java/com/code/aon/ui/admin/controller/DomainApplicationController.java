@@ -148,5 +148,23 @@ public class DomainApplicationController extends BasicController {
 		IController controller = FormUtil.getController(DOMAIN_APPLICATION_PROFILE_CONTROLLER_NAME);
 		return getRoleList(controller);
 	}
+
+	private String getModuleDeniedList( IController controller ) throws ManagerBeanException {
+		if ( controller.getModel().isRowAvailable() ) {
+			Profile profile = (Profile) controller.getModel().getRowData();
+			return ApplicationProfileController.getModuleDeniedList(profile);
+		}
+		return null;
+	}	
+	
+	public String getSystemModuleDeniedList() throws ManagerBeanException {
+		IController controller = FormUtil.getController(APPLICATION_PROFILE_CONTROLLER_NAME);
+		return getModuleDeniedList(controller);
+	}
+	
+	public String getModuleDeniedList() throws ManagerBeanException {
+		IController controller = FormUtil.getController(DOMAIN_APPLICATION_PROFILE_CONTROLLER_NAME);
+		return getModuleDeniedList(controller);
+	}
 	
 }

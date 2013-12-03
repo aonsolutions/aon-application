@@ -5,9 +5,9 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	template="/com/code/aon/ui/admin/facelet/globalConfig/configLayout.xhtml">
 
-	<ui:define name="content">
+	<ui:define name="configContent">
 
 		<aon:form id="domainUserForm">
 
@@ -36,13 +36,13 @@
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:panelGrid id="dataTable" columns="4"
+				<aon:panelGrid columns="4"
 					columnClasses="aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto,
 						aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel for="User_login"
 						value="#{bundle.aon_login}" />
-					<h:panelGrid>
+					<h:panelGrid styleClass="aon-nomargin">
 						<aon:inputText id="User_login"
 							size="20" maxlength="16" required="true" 
 							validator="#{domainUser.idCheck}"
@@ -51,32 +51,19 @@
 							styleClass="aon-margin-left"
 							rendered="#{domainUser.new}" />							
 					</h:panelGrid>
-						
-					<aon:outputLabel for="User_name"
-						value="#{bundle.aon_name}" />
-					<aon:inputText id="User_name"
-						size="64" maxlength="64" required="true" 
-						value="#{domainUser.to.name}" />
-												
-					<aon:outputText for="User_locale"
-						value="#{bundle.aon_locale}"/>
-					<aon:selectOneMenu id="User_locale" 
-						value="#{domainUser.to.locale}" >
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{aonConfiguration.localeList}" />
-					</aon:selectOneMenu>					
-											
+					
 					<aon:outputLabel for="User_active"
 						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="User_active"
 						disabled="#{!domainUser.userActivable}" 
 						value="#{domainUser.to.active}" />
-												
-					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{domainUserSearch.enterprise}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-					</ui:include>
 						
+					<aon:outputLabel for="User_name"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="User_name"
+						size="55" maxlength="64" required="true" 
+						value="#{domainUser.to.name}" />
+											
 					<aon:outputText for="User_pageLimit"
 						value="#{bundle.aon_row_number}"/>
 					<aon:selectOneMenu id="User_pageLimit" 
@@ -85,13 +72,13 @@
 						<f:selectItems value="#{commonCollections.pageLimits}" />
 					</aon:selectOneMenu>
 
-					<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
-						<ui:param name="lookupBean" value="#{registryLookup}" />
-						<ui:param name="lookupTo" value="#{domainUserSearch.registry}" />
-						<ui:param name="lookupLabel" value="#{bundle.aon_entity}"/>
-						<ui:param name="skipGoToButton" value="#{true}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-					</ui:include>
+					<aon:outputText for="User_locale"
+						value="#{bundle.aon_locale}"/>
+					<aon:selectOneMenu id="User_locale" 
+						value="#{domainUser.to.locale}" >
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{aonConfiguration.localeList}" />
+					</aon:selectOneMenu>					
 
 					<aon:outputText for="User_linesPageLimit"
 						value="#{bundle.aon_row_number_lines}"/>
@@ -128,6 +115,28 @@
 					</c:if>								
 				
 				</aon:panelGrid>
+				
+				<c:if test="#{aonRole.sysAdmin}" >
+					<aon:div styleClass="aon-margin-top">
+						<aon:panelGrid columns="2"
+							columnClasses="aon-panelGrid-odd aon-width-140, aon-panelGrid-even aon-width-auto">
+		
+							<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
+								<ui:param name="lookupBean" value="#{registryLookup}" />
+								<ui:param name="lookupTo" value="#{domainUserSearch.registry}" />
+								<ui:param name="lookupLabel" value="#{bundle.aon_entity}"/>
+								<ui:param name="skipGoToButton" value="#{true}" />
+								<ui:param name="skipNewButton" value="#{true}" />
+							</ui:include>
+							
+							<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{domainUserSearch.enterprise}" />
+								<ui:param name="skipNewButton" value="#{true}" />
+							</ui:include>					
+									
+						</aon:panelGrid>
+					</aon:div>
+				</c:if>
 
 				<c:if test="#{!domainUser.new}" >
                     
@@ -181,9 +190,9 @@
 			</aon:div>
 		</aon:form>
 
-		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
-		<aon:lookupButtonPopup lookup="#{registryLookup}" />
 		<c:if test="#{aonRole.sysAdmin}" >
+			<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+			<aon:lookupButtonPopup lookup="#{registryLookup}" />
 			<ui:include src="/com/code/aon/ui/admin/facelet/domainUser/changePassword.xhtml" />
 		</c:if>
 		<ui:include src="/com/code/aon/ui/config/facelet/changePassword/passwordChanged.xhtml" />

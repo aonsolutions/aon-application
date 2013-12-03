@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/com/code/aon/ui/admin/facelet/globalConfig/configLayout.xhtml">
+
+	<ui:define name="configContent">
+
+		<aon:form id="portalAccessForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{bundle.admin_global_payroll_portal}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="portalAccess-save"
+						value="#{bundle.aon_save}"
+						accesskey="#{bundle.aon_key_save}"
+						actionListener="#{portalAccess.accept}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept" />
+					<aon:confirmButton id="portalAccess-remove"
+						title="#{bundle.aon_key_remove_accelerator}"
+						value="#{bundle.aon_remove}" reRender="aonContent"
+						rendered="#{portalAccess.user.id != null}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmAction="portalAccess_form"
+						confirmActionListener="#{portalAccess.onRemove}"
+						accesskey="#{bundle.aon_key_remove}" />
+				</ui:define>				
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2">
+				
+					<aon:outputLabel for="User_login"
+						value="#{bundle.aon_login}" />
+					<aon:inputText id="User_login"
+						required="true" size="20" maxlength="16" 
+						validator="#{portalAccess.idCheck}"
+						value="#{portalAccess.user.login}" />
+						
+					<aon:outputLabel for="User_name"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="User_name"
+						size="55" maxlength="64" required="true" 
+						value="#{portalAccess.user.name}" />		
+						
+					<aon:outputLabel for="User_Password"
+						value="#{bundle.aon_login_passwd}" />
+					<aon:inputSecret id="User_Password"
+						required="true" size="20" maxlength="16"
+						value="#{portalAccess.newPassword}">
+						<f:validateLength minimum="4" />
+					</aon:inputSecret>
+
+					<aon:outputLabel for="User_ConfirmPassword"
+						value="#{bundle.config_user_confirm_password}" />
+					<aon:inputSecret id="User_ConfirmPassword"
+						required="true" size="20" maxlength="16"
+						value="#{portalAccess.confirmPassword}" >
+						<f:validateLength minimum="4" />
+					</aon:inputSecret>
+				
+					<aon:outputLabel for="User_active"
+						value="#{bundle.aon_active}" />
+					<aon:selectBooleanCheckbox id="User_active"
+						value="#{portalAccess.user.active}" />
+					
+				</aon:panelGrid>
+								
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+</ui:composition>

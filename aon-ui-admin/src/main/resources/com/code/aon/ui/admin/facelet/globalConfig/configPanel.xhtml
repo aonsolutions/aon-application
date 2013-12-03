@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:form id="globalConfigPanelForm">
+		<rich:panelBar id="configPanelBar"
+			selectedPanel="#{globalConfig.selectedPanel}"
+			styleClass="aon-portlet" width="250" 
+			headerClass="aon-panelBar-title">
+			<aon:componentGroup
+				family="javax.faces.Command"
+				method="#{globalConfig.highlightSelectedOption}">		
+				<rich:panelBarItem id="general"
+					label="#{bundle.admin_global_panel_general}">
+					<aon:div styleClass="aon-direct-access-list">
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="company" 
+								reRender="configPanelBar,configContent"
+								action="globalConfig_form"
+								value="#{bundle.company_data_module}" />
+						</aon:div>
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="banks" 
+								reRender="configPanelBar,configContent"
+								action="globalConfig_form"
+								actionListener="#{companyRbank.onCancel}"
+								value="#{bundle.registry_banks_module}">
+								<aon:actionListener method="#{companyRPayMethod.onCancel}" />
+							</aon:commandLink>
+						</aon:div>
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="addresses"
+								reRender="configPanelBar,configContent" 
+								action="globalConfig_form"
+								actionListener="#{companyAddress.onCancel}"
+								value="#{bundle.registry_addresses}" />
+						</aon:div>
+						<c:if test="#{!(actionDenied.moduleEnabled['payroll'] and aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData)}">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="workplaces" 
+									reRender="configPanelBar,configContent"
+									action="globalConfig_form"
+									actionListener="#{companyWorkPlace.onCancel}"
+									value="#{bundle.company_workplaces}" />
+							</aon:div>
+						</c:if>
+						<c:if test="#{actionDenied.moduleEnabled['payroll'] and aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData}">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="payrollWorkplaces" 
+									reRender="configPanelBar,configContent"
+									action="globalConfig_form"
+									actionListener="#{globalConfig.onInitEnterprise}"
+									value="#{bundle.company_workplaces}">
+									<aon:actionListener method="#{companyWorkPlace.onCancel}" />
+									<aon:actionListener method="#{enterpriseActivity.onCancel}" />
+								</aon:commandLink>
+							</aon:div>
+						</c:if>
+						<c:if test="#{aonConfiguration.bean.company.showDigitalCertificate}">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="digitalCertificates" 
+									reRender="configPanelBar,configContent"
+									action="globalConfig_form"
+									actionListener="#{companyCertificate.onCancel}"
+									value="#{bundle.registry_digital_certificates}" />
+							</aon:div>
+						</c:if>
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="recordData" 
+								reRender="configPanelBar,configContent"
+								action="globalConfig_form"
+								actionListener="#{companyRecordData.onCancel}"
+								value="#{bundle.registry_rd_module}" />
+						</aon:div>
+						<c:if test="#{aonConfiguration.bean.company.showDirStaff}">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="representatives" 
+									reRender="configPanelBar,configContent"
+									action="globalConfig_form"
+									actionListener="#{companyDirStaff.onCancel}"
+									value="#{bundle.admin_global_mercantile_representatives}" />
+							</aon:div>
+						</c:if>						
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="email"
+								reRender="configPanelBar,configContent"
+								action="globalConfig_form"
+								actionListener="#{adminMain.onInitMailAccount}"
+								value="#{bundle.aon_email}" >
+								<aon:actionListener method="#{adminMain.onInitSignature}" />
+							</aon:commandLink>
+						</aon:div>
+						<c:if test="#{companyCustomize.show}">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="companyCustomize" 
+									action="companyCustomize"
+									actionListener="#{companyCustomize.onInit}"
+									value="#{bundle.aon_oem}" />
+							</aon:div>
+						</c:if>						
+					</aon:div>
+				</rich:panelBarItem>
+				<rich:panelBarItem id="parameters"
+					label="#{bundle.admin_global_panel_parameters}">
+					<aon:div styleClass="aon-direct-access-list">
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="printParameters" 
+								reRender="configPanelBar,configContent"
+								action="globalConfig_form"
+								value="#{bundle.admin_global_print_parameters}" />
+						</aon:div>
+						<c:if test="#{actionDenied.moduleEnabled['pos']}">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="posParameters" 
+									reRender="configPanelBar,configContent"
+									action="globalConfig_form"
+									actionListener="#{posInvoiceParams.onInit}"
+									value="#{bundle.finance_posInvoice_params}" />
+							</aon:div>
+						</c:if>
+						<c:if test="#{aonRole.config and (!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable)}">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="fiscalParams"
+									reRender="configPanelBar,configContent"
+									action="globalConfig_form" 
+									actionListener="#{fiscalParams.onLoad}"
+									value="#{bundle.fiscal_parameters_module}" />
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="accountingParams"
+									reRender="configPanelBar,configContent"
+									action="globalConfig_form" 
+									actionListener="#{accAppParams.onLoad}"
+									value="#{bundle.accounting_default_params_module}" />
+							</aon:div>
+						</c:if>
+						<c:if test="#{actionDenied.moduleEnabled['payroll'] and aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData}">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="payrollParameters" 
+									reRender="configPanelBar,configContent"
+									action="globalConfig_form"
+									actionListener="#{globalConfig.onInitEnterprise}"
+									value="#{bundle.payroll_default_params_module}">
+									<aon:actionListener method="#{payrollAppParams.onLoad}" />
+								</aon:commandLink>
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="contractParameters" 
+									reRender="configPanelBar,configContent"
+									action="globalConfig_form"
+									actionListener="#{globalConfig.onInitEnterprise}"
+									value="#{bundle.admin_global_contract_parameters}">
+									<aon:actionListener method="#{enterpriseClauses.onCancel}" />
+								</aon:commandLink>
+							</aon:div>						
+						</c:if>
+					</aon:div>			
+				</rich:panelBarItem>
+				<rich:panelBarItem id="security"
+					label="#{bundle.admin_global_panel_security}">
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="domainUsers"
+							action="domainUser_list"
+							actionListener="#{adminMain.onInit}"
+							value="#{bundle.admin_users}" >
+							<aon:actionListener method="#{domainUser.onSearch}" />
+						</aon:commandLink>						
+					</aon:div>					
+					<c:if test="#{domainSwitcher.parentDomainUserInChildDomain or (aonRole.sysAdmin and domainSwitcher.childDomain)}">
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="overloadUsers"
+								action="userOverload_list"
+								actionListener="#{adminMain.onInit}"
+								value="#{bundle.admin_overload_users}" >
+								<aon:actionListener method="#{userOverload.onSearch}" />
+							</aon:commandLink>						
+						</aon:div>
+					</c:if>					
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="workGroups"
+							reRender="configPanelBar,configContent"
+							action="globalConfig_form"
+							actionListener="#{workGroup.onSearch}"
+							value="#{bundle.config_workgroup_module}" />
+					</aon:div>					
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="profiles"
+							action="domainApplicationProfile_list"
+							actionListener="#{adminMain.onInit}"
+							value="#{bundle.admin_profiles}" >
+							<aon:actionListener method="#{domainApplicationProfile.onInit}" />
+						</aon:commandLink>						
+					</aon:div>														
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="scopes"
+							reRender="configPanelBar,configContent"
+							action="globalConfig_form"
+							actionListener="#{scope.onSearch}"
+							value="#{bundle.config_scopes}" />
+					</aon:div>
+					<c:if test="#{auditSession.showAudit}">
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="auditSession"
+								action="auditSession_search"
+								actionListener="#{auditSession.onInit}"
+								value="#{bundle.aon_audit}" >
+								<aon:actionListener method="#{auditSession.onEditSearch}" />
+							</aon:commandLink>
+						</aon:div>
+					</c:if>
+					<c:if test="#{aonRole.sysAdmin}">
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="domainApplications"
+								action="domainApplication_list"
+								actionListener="#{adminMain.onInit}"
+								value="#{bundle.audit_applications_module}" >
+								<aon:actionListener method="#{domainApplication.onSearch}" />
+							</aon:commandLink>						
+						</aon:div>
+					</c:if>																		
+				</rich:panelBarItem>
+				<rich:panelBarItem id="booking"
+					label="#{bundle.admin_global_panel_booking}">
+					<c:if test="#{aonRole.sysAdmin or (!domainSwitcher.disableDomainManagement)}">
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="adminDomain"
+								action="adminDomain_form"
+								actionListener="#{adminMain.onInit}"
+								value="#{bundle.admin_domain_management}" >
+								<aon:actionListener method="#{adminDomain.onInit}" />							
+							</aon:commandLink>
+						</aon:div>
+					</c:if>
+					<c:if test="#{domainSwitcher.childDomain}">
+						<c:if test="#{actionDenied.moduleEnabled['payroll'] and aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData}">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="portalAccess"
+									action="portalAccess_form"
+									actionListener="#{portalAccess.onInit}"
+									value="#{bundle.admin_global_payroll_portal}" >
+								</aon:commandLink>						
+							</aon:div>
+						</c:if>
+					</c:if>													
+				</rich:panelBarItem>
+			</aon:componentGroup>
+		</rich:panelBar>
+	</aon:form>
+
+</ui:composition>

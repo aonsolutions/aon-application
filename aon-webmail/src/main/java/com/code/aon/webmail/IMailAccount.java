@@ -7,8 +7,6 @@ import com.code.aon.webmail.enumeration.ConnectionSecurity;
 
 public interface IMailAccount extends ITransferObject {
 
-	String DEFAULT_MAIL_ACCOUNT_NAME = "default";
-	
 	String getName();
 	
 	String getEmail();
@@ -44,8 +42,6 @@ public interface IMailAccount extends ITransferObject {
 	String getSpamFolder();
 
 	String getTrashFolder();
-	
-	boolean isDefault();
 	
 	boolean isDefaultAccount();
 	

@@ -3,6 +3,7 @@ package com.code.aon.ui.admin.controller;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.admin.ApplicationUserProfile;
+import com.code.aon.audit.ActionDenied;
+import com.code.aon.audit.ActionEntry;
+import com.code.aon.audit.ActionFavorite;
+import com.code.aon.audit.Session;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,14 +36,24 @@ import com.code.aon.config.UserScope;
 import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.enumeration.WorkGroupStatus;
+import com.code.aon.groupware.Alarm;
+import com.code.aon.groupware.Favorite;
+import com.code.aon.groupware.FavoriteCategory;
+import com.code.aon.groupware.Note;
+import com.code.aon.groupware.Notice;
+import com.code.aon.groupware.TaskHolder;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.UserApplicationInfo;
-import com.code.aon.ui.admin.util.IdCheckUtil;
+import com.code.aon.ui.admin.util.UserIdCheckUtil;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.db.Contact;
+import com.code.aon.webmail.db.MailAccount;
+import com.code.aon.webmail.db.Signature;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainUserController extends BasicController {
@@ -53,13 +68,12 @@ public class DomainUserController extends BasicController {
 
 	private String selectedTab;
 	
-	private IdCheckUtil idCheck;
+	private UserIdCheckUtil idCheck;
 	
 	private List<UserApplicationInfo> applicationInfos;
 	
 	public DomainUserController() {
-		this.idCheck = new IdCheckUtil(this, IEntityAlias.USER_LOGIN, ICommonMessages.USER_DUPLICATED);
-		this.idCheck.setDomainAlias(IEntityAlias.USER_DOMAIN);
+		this.idCheck = new UserIdCheckUtil();
 	}
 	
 	public String getSelectedTab() {
@@ -70,11 +84,11 @@ public class DomainUserController extends BasicController {
 		this.selectedTab = selectedTab;
 	}
 
-	public IdCheckUtil getIdCheck() {
+	public UserIdCheckUtil getIdCheck() {
 		return idCheck;
 	}
 
-	public void setIdCheck(IdCheckUtil idCheck) {
+	public void setIdCheck(UserIdCheckUtil idCheck) {
 		this.idCheck = idCheck;
 	}
 
@@ -216,6 +230,7 @@ public class DomainUserController extends BasicController {
 			Criteria criteria = new Criteria();
 			String alias = bean.getFieldName(IEntityAlias.USER_ACTIVE);
 			criteria.addEqualExpression(alias, Boolean.TRUE);
+			criteria.addNullExpression(bean.getFieldName(IEntityAlias.USER_ENTERPRISE));
 			return bean.getCount(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -313,5 +328,36 @@ public class DomainUserController extends BasicController {
 		}
 		return null;
 	}	
+	
+	public void removeUserReferences( Serializable id ) throws ManagerBeanException {
+		DomainApplicationUserController dausc = (DomainApplicationUserController) AonUtil.getRegisteredBean(IAdminConstants.APPLICATION_USER_CONTROLLER_NAME);
+		dausc.removeApplicationUsers( IEntityAlias.APPLICATION_USER_USER_ID, id );
+		FormUtil.remove(UserScope.class, id, true, IEntityAlias.USER_SCOPE_USER_ID);
+		FormUtil.remove(UserWorkGroup.class, id, true, IEntityAlias.USER_WORK_GROUP_USER_ID);
+		FormUtil.remove(ActionDenied.class, id, true, IEntityAlias.ACTION_DENIED_USER_ID);
+		FormUtil.remove(ActionFavorite.class, id, true, IEntityAlias.ACTION_FAVORITE_USER_ID);
+		FormUtil.remove(Contact.class, id, true, IEntityAlias.CONTACT_USER_ID);
+		FormUtil.remove(MailAccount.class, id, true, IEntityAlias.MAIL_ACCOUNT_USER_ID);
+		FormUtil.remove(Signature.class, id, true, IEntityAlias.SIGNATURE_USER_ID);
+		FormUtil.remove(ActionEntry.class, id, true, IEntityAlias.ACTION_ENTRY_SESSION_USER_ID);
+		FormUtil.remove(Session.class, id, true, IEntityAlias.SESSION_USER_ID);
+		FormUtil.remove(Alarm.class, id, true, IEntityAlias.ALARM_USER_ID);
+		FormUtil.remove(Favorite.class, id, true, IEntityAlias.FAVORITE_USER_ID);
+		FormUtil.remove(FavoriteCategory.class, id, true, IEntityAlias.FAVORITE_CATEGORY_USER_ID);
+		FormUtil.remove(Note.class, id, true, IEntityAlias.NOTE_OWNER_ID);
+		FormUtil.remove(Notice.class, id, true, IEntityAlias.NOTICE_SENDER_ID, IEntityAlias.NOTICE_RECIPIENT_ID);
+		resetTaskHolder(id);		
+	}
+
+	private void resetTaskHolder( Serializable id ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(TaskHolder.class);
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_USER_ID), id);
+		for( ITransferObject to : bean.getList(criteria) ) {
+			((TaskHolder) to).setUser(null);
+			bean.update(to);
+		}
+	}
 	
 }

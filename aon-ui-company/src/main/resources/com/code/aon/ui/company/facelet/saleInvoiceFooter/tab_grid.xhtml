@@ -8,6 +8,8 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
+	<aon:valueParam name="footerInputTextAreaSize" default="150" />
+
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 		<ui:param name="toolbarTitle" value="#{bundle.company_saleInvoice_footer_text}" />
 		<ui:param name="toolbarDescription" value="#{bundle.aon_edit}" />
@@ -30,10 +32,11 @@
 	
 	<aon:div id="tab_content" styleClass="aon-scroll-area">
 		
-		<aon:panelGrid  columns="2" style="width:100%">
+		<aon:panelGrid  columns="2" styleClass="aon-width-all">
 			<aon:outputLabel for="SaleInvoice_footer_text"
 				value="#{bundle.company_invoice_footer_text}" />
-			<aon:inputTextarea id="SaleInvoice_footer_text" cols="150" rows="6"
+			<aon:inputTextarea id="SaleInvoice_footer_text"
+				cols="#{footerInputTextAreaSize}" rows="6"
 				value="#{companySaleInvoiceFooter.text}"/>
 				
 		</aon:panelGrid>

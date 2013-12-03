@@ -496,6 +496,24 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>			
 
+	<!-- ************* GLOBAL CONFIGURATION ***************** -->
+	<managed-bean>
+		<managed-bean-name>globalConfig</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.admin.controller.GlobalConfigurationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>			
+
+	<!-- ************* PORTAL ACCESS ***************** -->
+	<managed-bean>
+		<managed-bean-name>portalAccess</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.admin.controller.PortalAccessController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>			
+
 	<!-- =================== Main ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -593,6 +611,22 @@
 		<navigation-case>
 			<from-outcome>backup_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/admin/facelet/backup/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Global Configuration ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>globalConfig_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/globalConfig/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Portal Access ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>portalAccess_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/portalAccess/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

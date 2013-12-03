@@ -3,9 +3,10 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/com/code/aon/ui/admin/facelet/globalConfig/configLayout.xhtml">
 
-	<ui:define name="content">
+	<ui:define name="configContent">
 
 		<aon:form id="domainSearch">
 
@@ -38,18 +39,20 @@
 						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 					</aon:selectOneMenu>
 
-					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{domainUserSearch.enterprise}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-					</ui:include>
-								
-					<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
-						<ui:param name="lookupBean" value="#{registryLookup}" />
-						<ui:param name="lookupTo" value="#{domainUserSearch.registry}" />
-						<ui:param name="lookupLabel" value="#{bundle.aon_entity}"/>
-						<ui:param name="skipGoToButton" value="#{true}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-					</ui:include>
+					<c:if test="#{aonRole.sysAdmin}" >
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{domainUserSearch.enterprise}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
+									
+						<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
+							<ui:param name="lookupBean" value="#{registryLookup}" />
+							<ui:param name="lookupTo" value="#{domainUserSearch.registry}" />
+							<ui:param name="lookupLabel" value="#{bundle.aon_entity}"/>
+							<ui:param name="skipGoToButton" value="#{true}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
+					</c:if>
 								
 				</ui:define>
 			</ui:decorate>

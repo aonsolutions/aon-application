@@ -17,6 +17,8 @@ public interface IAdminConstants {
 	String DOMAINS_CONTROLLER_NAME = "domains";
 	String NEW_DOMAIN_CONTROLLER_NAME = "adminNewDomain";
 	String REMOVE_DOMAIN_CONTROLLER_NAME = "adminRemoveDomain";
+	String GLOBAL_CONFIG_CONTROLLER_NAME = "globalConfig";
+	String PORTAL_ACCESS_CONTROLLER_NAME = "portalAccess";
 	
 	// Properties
 	String ADVANCED_MODE_USER = "advancedMode_user";

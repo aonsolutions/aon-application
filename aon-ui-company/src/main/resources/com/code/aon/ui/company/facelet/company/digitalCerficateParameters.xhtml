@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j" >
+
+	<c:if test="#{aonConfiguration.bean.company.showEInvoice}">
+		<aon:outputLabel for="Company_EInvoice"
+			value="#{bundle.company_eInvoice}" />
+		<aon:selectBooleanCheckbox id="Company_EInvoice"
+			reRender="companyOtherData" ajaxSingle="false"
+			value="#{company.to.EInvoice}" />
+
+		<aon:outputLabel for="Company_smartCard"
+			rendered="#{company.to.EInvoice}"
+			value="#{bundle.company_smartCard}" />
+		<aon:selectBooleanCheckbox id="Company_smartCard"
+			rendered="#{company.to.EInvoice}"
+			value="#{company.smartCard}" />
+	</c:if>		
+
+</ui:composition>

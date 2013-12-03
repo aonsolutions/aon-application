@@ -11,6 +11,7 @@ import com.code.aon.registry.Registry;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainUserSearchListener extends ControllerSearchListener {
@@ -50,6 +51,9 @@ public class DomainUserSearchListener extends ControllerSearchListener {
 		}
 		if (getRegistry() != null && getRegistry().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.USER_REGISTRY), getRegistry().getId());			
+		}
+		if (! AonUtil.getRoleManager().isSysAdmin() ) {
+			criteria.addNullExpression(getFieldName(IEntityAlias.USER_ENTERPRISE));
 		}
 	}
 	

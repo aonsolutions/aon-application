@@ -51,8 +51,6 @@ public class MailConfigController {
 	
 	private boolean showMailAccountList;
 
-	private boolean systemAccountEditable;
-
 	private TreeNode<AonFolder> rootNode;
 	
 	private String selectedFolder;
@@ -112,14 +110,6 @@ public class MailConfigController {
 		this.mailAccount = mailAccount;
 	}
 	
-	public boolean isSystemAccountEditable() {
-		return systemAccountEditable;
-	}
-
-	public void setSystemAccountEditable(boolean systemAccountEditable) {
-		this.systemAccountEditable = systemAccountEditable;
-	}
-	
 	public boolean isRichTextEnabled() {
 		return richTextEnabled;
 	}
@@ -135,14 +125,6 @@ public class MailConfigController {
 		return null;
 	}
 	
-	public boolean isCurrentMailAccountEditable() throws ManagerBeanException {
-		IMailAccount account = getSelectMailAccount();
-		if ( account != null ) {
-			return isSystemAccountEditable() || !getSelectMailAccount().isDefault();
-		}
-		return false;
-	}
-	
 	public boolean isActiveMailAccount() throws ManagerBeanException {
 		IMailAccount account = getSelectMailAccount();
 		if ( account != null ) {
@@ -154,21 +136,10 @@ public class MailConfigController {
 		return false;
 	}
 	
-	public boolean isMailAccountEditable() {
-		IMailAccount account = (IMailAccount) getMailAccount().getTo();
-		if ( account.isDefault() ) {
-			return isSystemAccountEditable();
-		}
-		return true;
-	}
-	
 	public boolean isMailAccountRemovable() {
 		IMailAccount account = (IMailAccount) getMailAccount().getTo();
 		if ( account.isEnterpriseAccount() ) {
 			return true;
-		}
-		if ( account.isDefault() ) {
-			return false;
 		}
 		if ( isConnectable() ) {
 			WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
@@ -377,13 +348,11 @@ public class MailConfigController {
 			if ( connectDomainAccounts || !ma.isEnterpriseAccount() ) {
 				if ( ma.isDefaultAccount() ) {
 					return ma;
-				} else if ( ma.isDefault() ) {
-					defaultAccount = ma;
 				}
 				list.add(ma);
 			}
 		}
-		if ( defaultAccount==null && !list.isEmpty() ) {
+		if ( !list.isEmpty() ) {
 			defaultAccount = list.get(0);
 		}
 		return defaultAccount;
