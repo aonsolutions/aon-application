@@ -1782,7 +1782,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		PreparedStatement stmt = null;
 
 		try {
-			String allCol = "ALL";
+			String allCol = "ALLL";
 			String yearCol = "YEAR";
 			String monthCol = "MONTH";
 			String showCol = "VISIBLES";
