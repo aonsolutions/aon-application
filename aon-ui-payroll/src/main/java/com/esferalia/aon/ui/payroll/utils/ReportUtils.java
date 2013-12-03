@@ -15,7 +15,15 @@ import net.sf.jasperreports.engine.JRRenderable;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.SalaryDeduction;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 
 public class ReportUtils {
 
@@ -79,6 +87,24 @@ public class ReportUtils {
 		return JRImageRenderer.getInstance(rattach.getData());
 	}
 
+	public static RegistryAttachment getRAttach(Integer registryId,
+			RegistryAttachmentType type) throws ManagerBeanException {
+		IManagerBean beanManager = BeanManager
+				.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(beanManager
+				.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID),
+				registryId);
+		criteria.addEqualExpression(beanManager
+				.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE),
+				type.ordinal());
+		List<?> list =  beanManager.getList(criteria);
+		
+		return list == null || list.isEmpty()? null : (RegistryAttachment) list.get(0);
+	}
+
+	// ------------------------------------------------------------------------
+
 	private static boolean contains(Object values[], Object value) {
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] == value)
@@ -97,22 +123,22 @@ public class ReportUtils {
 		int days = 1;
 
 		for (int i = 1900; i < calendar.get(Calendar.YEAR); start.set(
-				Calendar.YEAR, ++i)) 
+				Calendar.YEAR, ++i))
 			days += start.getActualMaximum(Calendar.DAY_OF_YEAR);
 
-		for (int i = Calendar.JANUARY; i < calendar.get(Calendar.MONTH); start.set(
-				Calendar.MONTH, ++i)) 
+		for (int i = Calendar.JANUARY; i < calendar.get(Calendar.MONTH); start
+				.set(Calendar.MONTH, ++i))
 			days += start.getActualMaximum(Calendar.DAY_OF_MONTH);
-		
-		days += calendar.get(Calendar.DAY_OF_MONTH) ;
-		
+
+		days += calendar.get(Calendar.DAY_OF_MONTH);
+
 		return days;
 	}
-	
+
 	public static String ifEmpty(String a, String b) {
 		return a == null || a.isEmpty() ? b : a;
 	}
-	
+
 	private static class ChainedComparator<T> implements Comparator<T> {
 
 		private Comparator<T> simpleComparators[];
