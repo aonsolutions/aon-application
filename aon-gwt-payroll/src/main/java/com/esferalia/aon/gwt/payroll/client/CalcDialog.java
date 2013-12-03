@@ -22,8 +22,6 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 
 
 	private static final Binder binder = GWT.create(Binder.class);
-	private static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
-			.getFormat(PredefinedFormat.YEAR_MONTH);
 
 	@UiField
 	CheckBox saveCheckBox;
@@ -38,8 +36,6 @@ public class CalcDialog<T extends HasId<?>> extends SelectDialog<T> {
 
 		setCaption("Calcular...");
 		setWidget(binder.createAndBindUi(this));
-
-		monthListBox.setDateTimeFormat(MONTH_FORMAT);
 
 	}
 

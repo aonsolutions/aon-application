@@ -71,6 +71,8 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
+import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SalaryFilter;
+import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SiteFilter;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -439,7 +441,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getSalaryReceiptHTML(Cost cost, Salary.Type types [], int zoom)
+	public String getSalaryReceiptHTML(Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException {
 
 		Map<Object, Object> parameters = new HashMap<Object, Object>(
@@ -471,19 +473,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String getCostReceiptHTML(Cost cost, Salary.Type types [], int zoom)
+	public String getCostReceiptHTML(Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
 
 			ReportManager reportManager = new ReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
-			
-			SalaryType salaryTypes [] = new SalaryType[types.length];
+
+			SalaryType salaryTypes[] = new SalaryType[types.length];
 			for (int i = 0; i < types.length; i++)
 				salaryTypes[i] = SalaryType.values()[types[i].ordinal()];
-			
-			reportManager.setCollectionProvider(getSalariesProvider(cost, salaryTypes));
+
+			reportManager.setCollectionProvider(getSalariesProvider(cost,
+					salaryTypes));
 
 			// Really I hate this spaghetti piece of code.
 			// For pass 'month' & 'year' to a report, we
@@ -640,7 +643,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
-			calculate(agreementDraft);
+			calculate(agreementDraft, getDomainID(), getParentDomainID());
 			return agreementDraft;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -958,7 +961,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 			return SQLEvents.getEvents(conn, workplaceId, startDate, endDate,
-					offset, limit,names);
+					offset, limit, names);
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1068,7 +1071,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			reportManager.setOutputFormat(OutputFormat.HTML);
 			reportManager
 					.setCollectionProvider(new AonServletUtils.SalaryProvider(
-							criteria));
+							criteria, null));
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -1088,8 +1091,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private String getSalaryReceiptHTML(Cost cost,
-			Salary.Type types [], Map<Object, Object> parameters) throws IllegalArgumentException {
+	private String getSalaryReceiptHTML(Cost cost, Salary.Type types[],
+			Map<Object, Object> parameters) throws IllegalArgumentException {
 		try {
 
 			initFacesContext();
@@ -1097,11 +1100,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ReportManager reportManager = new ReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
 
-			SalaryType salaryTypes [] = new SalaryType[types.length];
+			SalaryType salaryTypes[] = new SalaryType[types.length];
 			for (int i = 0; i < types.length; i++)
 				salaryTypes[i] = SalaryType.values()[types[i].ordinal()];
-			
-			reportManager.setCollectionProvider(getSalariesProvider(cost, salaryTypes));
+
+			reportManager.setCollectionProvider(getSalariesProvider(cost,
+					salaryTypes));
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -1422,9 +1426,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static ICollectionProvider getSalariesProvider(Cost cost, SalaryType types [])
+	private ICollectionProvider getSalariesProvider(Cost cost,
+			SalaryType types[]) throws ManagerBeanException {
+		boolean asEnterpriseSite = isAtEnterpriseSite();
+		boolean calc = !isAtEnterpriseSite();
+		SalaryFilter filter = asEnterpriseSite ? new SiteFilter() : null;
+		return getSalariesProvider(cost, types, filter, calc);
+	}
+
+	protected static ICollectionProvider getSalariesProvider(Cost cost,
+			SalaryType types[], SalaryFilter filter, boolean calc)
 			throws ManagerBeanException {
-		IManagerBean beanManager = BeanManager
+		IManagerBean salaryBeanManager = BeanManager
 				.getManagerBean(com.esferalia.aon.payroll.Salary.class);
 
 		Criteria sqlCriteria = new Criteria();
@@ -1450,7 +1463,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			sqlCriteria.addEqualExpression(WORKPLACE + "."
 					+ WorkplaceColumns.ID, cost.getWorkplaceId());
 
-			aliasCriteria.addEqualExpression(beanManager
+			aliasCriteria.addEqualExpression(salaryBeanManager
 					.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID),
 					cost.getWorkplaceId());
 		} else {
@@ -1458,7 +1471,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					+ EnterpriseColumns.REGISTRY, cost.getEnterpriseId());
 			aliasCriteria
 					.addEqualExpression(
-							beanManager
+							salaryBeanManager
 									.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID),
 							cost.getEnterpriseId());
 		}
@@ -1476,22 +1489,26 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		sqlCriteria.addOrder(SQLContractSalaryCalculatorContext.PERSON_REGISTRY
 				+ "." + RegistryColumns.NAME);
 
-		aliasCriteria.addBetweenExpression(
-				beanManager.getFieldName(IEntityAlias.SALARY_CHARGE_DATE),
-				startDate, endDate);
+		aliasCriteria
+				.addBetweenExpression(salaryBeanManager
+						.getFieldName(IEntityAlias.SALARY_CHARGE_DATE),
+						startDate, endDate);
 
-		aliasCriteria.addOrder(beanManager
+		aliasCriteria.addOrder(salaryBeanManager
 				.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
-		aliasCriteria.addOrder(beanManager
+		aliasCriteria.addOrder(salaryBeanManager
 				.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
-		aliasCriteria.addOrder(beanManager
+		aliasCriteria.addOrder(salaryBeanManager
 				.getFieldName(IEntityAlias.SALARY_CHARGE_DATE));
-		
-		aliasCriteria.addInExpression(beanManager
-				.getFieldName(IEntityAlias.SALARY_TYPE), types);
 
-		return new AonServletUtils.CalcSalaryProvider(startDate, endDate,
-				sqlCriteria, types, new AonServletUtils.SalaryProvider(aliasCriteria));
+		aliasCriteria
+				.addInExpression(salaryBeanManager
+						.getFieldName(IEntityAlias.SALARY_TYPE), types);
+
+		return calc ? new AonServletUtils.CalcSalaryProvider(startDate,
+				endDate, sqlCriteria, types,
+				new AonServletUtils.SalaryProvider(aliasCriteria, filter))
+				: new AonServletUtils.SalaryProvider(aliasCriteria, filter);
 
 	}
 
@@ -1765,73 +1782,42 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		PreparedStatement stmt = null;
 
 		try {
+			String allCol = "ALL";
 			String yearCol = "YEAR";
 			String monthCol = "MONTH";
+			String showCol = "VISIBLES";
+			String extrasCol = "EXTRAS";
+			String delaysCol = "DELAYS";
+			String settlesCol = "SETTLES";
+			String salariesCol = "SALARIES";
+			String contractsCol = "CONTRACTS";
 
 			// We asume that one enterprise one domain. This way SELECT it's
 			// more clear.
-			String sql = "SELECT" + " MONTH("
-					+ SALARY
-					+ "."
-					+ SalaryColumns.CHARGE_DATE
-					+ ") "
-					+ monthCol
-					+ ", YEAR("
-					+ SALARY
-					+ "."
-					+ SalaryColumns.CHARGE_DATE
-					+ ") "
-					+ yearCol
+			//@formatter:off
+			String sql = "SELECT" 
+						+ " MONTH("+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol
+					+ ", YEAR(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol
+					+ ", COUNT(*) AS " + allCol 
+					+ ",(COUNT( IF(" + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.EXPRESSION + " <= UTC_DATE(),1,NULL))"
+					+" +  COUNT( IF(" + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.ID + " IS NULL,1,NULL))) AS " + showCol
+					+ ",(SELECT COUNT(*)"
+						+ " FROM " + CONTRACT 
+						+ " WHERE " + ContractColumns.DOMAIN + " = " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN 
+						+ " AND " + CONTRACT + "." + ContractColumns.START_DATE + " <= LAST_DAY(CHARGE_DATE) "
+						+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE + " IS NULL"
+						+ " OR " + CONTRACT + "." + ContractColumns.END_DATE + " >=  DATE_FORMAT(CHARGE_DATE, '%Y-%m-01') )) AS " + contractsCol
 
-					+ ", MIN("
-					+ SALARY
-					+ "."
-					+ SalaryColumns.CHARGE_DATE
-					+ ") AS CHARGE_DATE"
-					+ ", COUNT(*) AS SALARIES "
-					+ ",(COUNT( IF("
-					+ SQLConstants.SALARY_DATA
-					+ "."
-					+ SalaryDataColumns.EXPRESSION
-					+ " <= UTC_DATE(),1,NULL)) +  COUNT( IF("
-					+ SQLConstants.SALARY_DATA
-					+ "."
-					+ SalaryDataColumns.ID
-					+ " IS NULL,1,NULL))) AS VISIBLES"
-					+ ",(SELECT COUNT(*) FROM "
-					+ CONTRACT
-					+ " WHERE "
-					+ ContractColumns.DOMAIN
-					+ " = "
-					+ ENTERPRISE
-					+ "."
-					+ EnterpriseColumns.DOMAIN
-					+ " AND "
-					+ CONTRACT
-					+ "."
-					+ ContractColumns.START_DATE
-					+ " <= LAST_DAY(CHARGE_DATE) "
-					+ " AND ( "
-					+ CONTRACT
-					+ "."
-					+ ContractColumns.END_DATE
-					+ " IS NULL OR "
-					+ CONTRACT
-					+ "."
-					+ ContractColumns.END_DATE
-					+ " >=  DATE_FORMAT(CHARGE_DATE, '%Y-%m-01') )) AS CONTRACTS"
-
-					+ " FROM " + ENTERPRISE + ", " + SALARY + " LEFT JOIN "
-					+ SQLConstants.SALARY_DATA + " ON ( " + SQLConstants.SALARY
-					+ "." + SalaryColumns.ID + " = " + SQLConstants.SALARY_DATA
-					+ "." + SalaryDataColumns.SALARY + " AND "
-					+ SQLConstants.SALARY_DATA + "." + SalaryDataColumns.NAME
-					+ " =  ? " + ")" + " WHERE " + ENTERPRISE + "."
-					+ EnterpriseColumns.DOMAIN + " = " + SALARY + "."
-					+ SalaryColumns.DOMAIN + " AND " + ENTERPRISE + "."
-					+ EnterpriseColumns.REGISTRY + " = ? " + " GROUP BY 1, 2"
-					+ " HAVING SALARIES = VISIBLES AND SALARIES >= CONTRACTS"
+					+ " FROM " + ENTERPRISE + ", " + SALARY 
+					+ " LEFT JOIN " + SQLConstants.SALARY_DATA 
+						+ " ON ( " + SQLConstants.SALARY + "." + SalaryColumns.ID + " = " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.SALARY 
+						+ " AND " + SQLConstants.SALARY_DATA + "." + SalaryDataColumns.NAME + " =  ? " + ")" 
+					+ " WHERE " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SALARY + "." + SalaryColumns.DOMAIN 
+					+ " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = ? " 
+					+ " GROUP BY 1, 2"
+					+ " HAVING SALARIES >= 1" 
 					+ " ORDER BY 2 , 1 ASC ";
+			//@formatter:on
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setString(1, ContextVariable.ENTERPRISE_SITE_DATE.getName());
@@ -1923,7 +1909,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			String yearCol = "YEAR";
 			String monthCol = "MONTH";
-
+			//@formatter:off
 			String sql = "SELECT" + " MONTH("
 					+ SALARY
 					+ "."
@@ -1990,8 +1976,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					+ WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
 					+ " GROUP BY 1, 2"
 
-					+ " HAVING SALARIES = VISIBLES AND SALARIES >= CONTRACTS"
+					+ " HAVING SALARIES >= 1"
 					+ " ORDER BY 2 , 1 ASC ";
+			//@formatter:on
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setString(1, ContextVariable.ENTERPRISE_SITE_DATE.getName());
@@ -2290,10 +2277,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static void calculate(AgreementDraft draft) throws SQLException {
+	private static void calculate(AgreementDraft draft, Integer domainId,
+			Integer parentDomainId) throws SQLException {
 		Connection connection = null;
 		try {
 			connection = getConnection();
+
+			Set<Date> datesWithChanges = parentDomainId == null ? SQLAgreementDraft
+					.getDatesWithChanges(connection, draft.getId(), domainId)
+					: SQLAgreementDraft.getDatesWithChanges(connection,
+							draft.getId(), domainId, parentDomainId);
 
 			Set<Payment> dbPayments = SQLAgreementDraft.getPayments(connection,
 					draft.getId(), draft.getStartDate(), draft.getEndDate());
@@ -2358,7 +2351,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			draft.setPayments(payments);
 			draft.setSalaryTable(salaryTable);
 			draft.setCategoriesMap(categories);
-
+			draft.setDatesWithChanges(datesWithChanges);
 		} finally {
 			if (connection != null)
 				connection.close();

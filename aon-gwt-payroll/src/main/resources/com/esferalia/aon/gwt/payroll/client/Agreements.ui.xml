@@ -3,6 +3,9 @@
 
 
 	<ui:style>
+		.newButton {
+			float: right;
+		}
 		@sprite .viewButton {
 			float: right;
 			gwt-image: 'view';
@@ -17,9 +20,10 @@
 
 	<ui:image field='view' src='view.png' />
 	<ui:image field='collapseall' src='collapseall.png' />
-	
-	<ui:with type="com.esferalia.aon.gwt.payroll.client.MetaData.Resources" field="res"/>
-	
+
+	<ui:with type="com.esferalia.aon.gwt.payroll.client.MetaData.Resources"
+		field="res" />
+
 	<g:DockLayoutPanel unit='PX'>
 		<g:north size='26'>
 			<g:FlowPanel styleName="gwt-MenuBar-horizontal" ui:field="buttonBar">
@@ -27,6 +31,8 @@
 					ui:field="viewButton"></g:Button>
 				<g:Button styleName="gwt-MenuItem {style.collpaseAllButton}"
 					ui:field="collapseAllButton"></g:Button>
+				<g:Button ui:field='newButton'
+					styleName='aon-editDataTable-button aon-icon-reset {style.newButton}' />
 			</g:FlowPanel>
 		</g:north>
 

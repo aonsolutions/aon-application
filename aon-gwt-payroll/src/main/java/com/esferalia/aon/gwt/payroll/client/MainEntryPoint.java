@@ -64,6 +64,9 @@ public class MainEntryPoint implements EntryPoint {
 	
 		@Source("agreement.png")
 		ImageResource agreement();
+
+		@Source("month_changed.png")
+		ImageResource month_changed();
 	}
 
 	@Override

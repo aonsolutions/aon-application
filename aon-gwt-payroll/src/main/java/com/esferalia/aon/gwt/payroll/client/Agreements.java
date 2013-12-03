@@ -2,9 +2,14 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import java_cup.sym;
 
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
@@ -36,12 +41,16 @@ public class Agreements extends ResizeComposite {
 	interface Binder extends UiBinder<Widget, Agreements> {
 	}
 
-	private static final Binder binder = GWT.create(Binder.class);
+	private static final Binder BINDER = GWT.create(Binder.class);
+
+	private static int newsIdCounter = -1;
 
 	@UiField
 	Tree tree;
 	@UiField
 	ScrollPanel scrollPanel;
+	@UiField
+	Button newButton;
 	@UiField
 	Button viewButton;
 	@UiField
@@ -56,7 +65,7 @@ public class Agreements extends ResizeComposite {
 	public Agreements() {
 		images = GWT.create(Images.class);
 		listeners = new LinkedList<Listener>();
-		initWidget(binder.createAndBindUi(this));
+		initWidget(BINDER.createAndBindUi(this));
 
 		// Create a remote service proxy to talk to the server-side Enterprises
 		// service.
@@ -76,33 +85,27 @@ public class Agreements extends ResizeComposite {
 
 					@Override
 					public void onSuccess(List<Agreement> agreements) {
-						int item2Select  = -1 ;
+						int item2Select = -1;
 						for (int i = 0; i < agreements.size(); i++) {
-							Agreement agreement  = agreements.get(i);
-							String description = agreement.getDescription();
-							if (agreement.isRedefined()) { 
-								description = "*" + description;
-							}
 
-							TreeItem treeItem = new TreeItem(imageItemSafeHtml(
-									images.agreement(), description));
-							treeItem.setUserObject(agreement);
+							Agreement agreement = agreements.get(i);
+							addAgreementItem(agreement);
 
 							if (agreement.isRedefined()) {
-								if ( item2Select == -1 ) item2Select = i;
-								treeItem.addStyleName("gwt-TreeItem-highlight");
+								if (item2Select == -1)
+									item2Select = i;
 							}
-							if ( agreement.hasEmployees() ){
-								if ( item2Select == -1 ) item2Select = i;
-								treeItem.addStyleName("gwt-TreeItem-highlight");
+							if (agreement.hasEmployees()) {
+								if (item2Select == -1)
+									item2Select = i;
 							}
-
-							tree.addItem(treeItem);
 
 						}
 						// Select the first one.
 						if (tree.getItemCount() > 0)
-							tree.setSelectedItem(tree.getItem(Math.max(item2Select, 0)), true);
+							tree.setSelectedItem(
+									tree.getItem(Math.max(item2Select, 0)),
+									true);
 					}
 
 				});
@@ -118,6 +121,12 @@ public class Agreements extends ResizeComposite {
 
 	// -------------------------------------------------------------- UiHandlers
 
+	@UiHandler("newButton")
+	void onNewButtonClicked(ClickEvent event) {
+		Agreement agreement = newAgreement();
+		tree.setSelectedItem(addAgreementItem(agreement));
+	}
+
 	@UiHandler("tree")
 	void onTreeItemSelected(SelectionEvent<TreeItem> event) {
 		TreeItem selectedItem = event.getSelectedItem();
@@ -128,9 +137,40 @@ public class Agreements extends ResizeComposite {
 
 	// --------------------------------------------------------- Private methods
 
+	private TreeItem addAgreementItem(Agreement agreement) {
+		String description = agreement.getDescription();
+		if (agreement.isRedefined()) {
+			description = "*" + description;
+		}
+
+		TreeItem treeItem = new TreeItem(imageItemSafeHtml(images.agreement(),
+				description));
+		treeItem.setUserObject(agreement);
+
+		if (agreement.isRedefined()) {
+			treeItem.addStyleName("gwt-TreeItem-highlight");
+		}
+		if (agreement.hasEmployees()) {
+			treeItem.addStyleName("gwt-TreeItem-highlight");
+		}
+
+		tree.addItem(treeItem);
+
+		return treeItem;
+
+	}
+
 	private void fireAgreementSelected(Agreement agreement) {
 		for (Listener listener : listeners)
 			listener.onAgreementSelected(agreement);
+	}
+
+	private static synchronized Agreement newAgreement() {
+		Agreement agreement = new Agreement();
+		int newId = newsIdCounter--;
+		agreement.setId(newId);
+		agreement.setDescription("CONVENIO NO GUARDADO " + -newId);
+		return agreement;
 	}
 
 	/**
@@ -140,7 +180,8 @@ public class Agreements extends ResizeComposite {
 			String title) {
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
-		builder.appendEscaped(" " + title);
+		if ( title != null )
+			builder.appendEscaped(" " + title);
 		return builder.toSafeHtml();
 	}
 

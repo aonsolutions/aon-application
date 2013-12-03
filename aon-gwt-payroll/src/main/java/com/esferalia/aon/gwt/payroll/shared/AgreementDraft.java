@@ -113,6 +113,8 @@ public class AgreementDraft extends Agreement {
 
 	private Date startDate;
 	private Date endDate;
+	
+	private Set<Date> datesWithChanges;
 
 	// TODO : Must this be at 'Agreement'?
 	private Set<Payment> payments;
@@ -181,6 +183,14 @@ public class AgreementDraft extends Agreement {
 
 	public void setSalaryTable(SalaryTable salaryTable) {
 		this.salaryTable = salaryTable;
+	}
+	
+	public Set<Date> getDatesWithChanges() {
+		return datesWithChanges;
+	}
+	
+	public void setDatesWithChanges(Set<Date> datesWithChanges) {
+		this.datesWithChanges = datesWithChanges;
 	}
 	
 	public Map<Integer, Set<String>> getCategoriesMap() {

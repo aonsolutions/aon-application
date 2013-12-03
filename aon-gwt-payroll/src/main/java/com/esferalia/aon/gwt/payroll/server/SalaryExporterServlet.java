@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
@@ -27,6 +28,12 @@ import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.gwt.payroll.bean.GWT;
+import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SalaryFilter;
+import com.esferalia.aon.gwt.payroll.server.AonServletUtils.SiteFilter;
+import com.esferalia.aon.gwt.payroll.shared.Constants;
+import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 
 @SuppressWarnings("serial")
 public class SalaryExporterServlet extends HttpServlet {
@@ -58,7 +65,8 @@ public class SalaryExporterServlet extends HttpServlet {
 			ReportManager reportManager = new ReportManager();
 			OutputFormat outputFormat = getOutputFormat(extension);
 			reportManager.setOutputFormat(outputFormat);
-			reportManager.setCollectionProvider(new AonServletUtils.SalaryProvider(criteria));
+			
+			reportManager.setCollectionProvider(new AonServletUtils.SalaryProvider(criteria, new SiteFilter()));
 			
 			
 			MimeType mimeType = MimeType.getByExtension(extension);
@@ -145,6 +153,15 @@ public class SalaryExporterServlet extends HttpServlet {
 			criteria.addOrder(beanManager.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
 		}
 		return criteria;
+	}
+
+
+	private static String getEntryPoint(HttpServletRequest request){
+		return ((GWT) request.getSession().getAttribute("gwt")).getEntryPoint();
+	}
+
+	private static boolean isAtEnterpriseSite( HttpServletRequest request){
+		return Constants.ENTERPRISE_SITE_ENTRY_POINT.equals(getEntryPoint(request));
 	}
 	
 }

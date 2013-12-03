@@ -46,15 +46,15 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 			DATE_FORMAT_PATTERN);
 	private static final Pattern HOURS_PATTERN = Pattern.compile("\"(.*)\"");
 
-	static class StringFormattable implements Formattable{
+	static class StringFormattable implements Formattable {
 		private String str;
-		
+
 		@Override
 		public void formatTo(Formatter formatter, int flags, int width,
 				int precision) {
-		}		
+		}
 	}
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -95,12 +95,11 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		PrintWriter printOut = null;
-		Connection conn  = null;
-		
+		Connection conn = null;
 
 		try {
 			conn = AonServletUtils.getConnection();
-
+			//@formatter:off
 			String sql = "SELECT" + " " 
 					+ SQLConstants.WORKPLACE + "." + WorkplaceColumns.ID + ", "
 					+ SQLConstants.CONTRACT + "." + ContractColumns.ID + ", "
@@ -136,10 +135,10 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 					+ " OR DPT." + ContractDataColumns.END_DATE + " >= " + SQLConstants.CONTRACT_DATA + "." + ContractDataColumns.START_DATE +  ")"
 					+ " AND " + SQLConstants.WORKPLACE + "." + WorkplaceColumns.ID + " IN ( " + "?" + StringUtils.repeat(",?", workplaces.length - 1) + ")"
 					+ " ORDER BY 1,2,3";
+			//@formatter:on
 
-			
 			System.out.println(sql);
-			
+
 			stmt = conn.prepareStatement(sql);
 
 			stmt.setString(1, "FTE");
@@ -159,15 +158,15 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 
 				String hotel = rs.getString(SQLConstants.WORKPLACE + "."
 						+ WorkplaceColumns.DESCRIPTION);
-				
+
 				String section = rs.getString("DPT."
 						+ ContractDataColumns.EXPRESSION);
-				if ( section != null ) {
+				if (section != null) {
 					Matcher matcher = HOURS_PATTERN.matcher(section);
-					if (matcher.matches()) 
+					if (matcher.matches())
 						section = matcher.group(1);
 				}
-				
+
 				String category = rs.getString(SQLConstants.CONTRACT + "."
 						+ ContractColumns.DESCRIPTION);
 
@@ -195,12 +194,12 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 
 				String fte = rs.getString(SQLConstants.CONTRACT_DATA + "."
 						+ ContractDataColumns.EXPRESSION);
-				
+
 				Matcher matcher = HOURS_PATTERN.matcher(fte);
-				if ( ! matcher.matches() )
+				if (!matcher.matches())
 					continue;
-				
-				int hours = Integer.parseInt(matcher.group(1));	
+
+				int hours = Integer.parseInt(matcher.group(1));
 
 				for (Pair<Date, Integer> day : days) {
 
@@ -210,17 +209,10 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 					printOut.printf("%2$s%1$c" + "%3$s%1$c" + "%4$s%1$c"
 							+ "%5$d%1$c" + "%6$td/%6$tm/%6$tY%1$c" + "%7$s%1$c"
 							+ "%8$s%1$c" + "%9$d%1$c" + "%10$d%1$c" + "%11$f"
-							+ "\r\n", DEFAULT_SEP, 
-							hotel != null ? hotel : "", 
-							section != null ? section : "", 
-							category != null ? category : "",
-							week, 
-							date, 
-							fullName, 
-							"SI", 
-							hours, 
-							1, 
-							(float)(hours / 8.00)  );
+							+ "\r\n", DEFAULT_SEP, hotel != null ? hotel : "",
+							section != null ? section : "",
+							category != null ? category : "", week, date,
+							fullName, "SI", hours, 1, (float) (hours / 8.00));
 
 				}
 
@@ -236,11 +228,13 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 		}
 	}
 
-	private void doCTRL(Date startDate, Date endDate, int workplaces[], Writer out) throws SQLException{
+	private void doCTRL(Date startDate, Date endDate, int workplaces[],
+			Writer out) throws SQLException {
 
 	}
 
-	private void doA3(Date startDate, Date endDate, int workplaces[], Writer out) throws SQLException{
+	private void doA3(Date startDate, Date endDate, int workplaces[], Writer out)
+			throws SQLException {
 
 	}
 
@@ -279,9 +273,9 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 			Date date = calendar.getTime();
 			int week = calendar.get(Calendar.WEEK_OF_YEAR);
 			// For us week starts at MONDAY...
-			if ( calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY )
-				week =- 1;
-			
+			if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+				week = -1;
+
 			days.add(new Pair<Date, Integer>(date, week));
 
 			calendar.add(Calendar.DAY_OF_MONTH, 1);
@@ -296,17 +290,17 @@ public class ReportServlet extends HttpServlet implements ReportConstants {
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 	}
-	
-	private static void printSessionNames (HttpSession session){
+
+	private static void printSessionNames(HttpSession session) {
 		Enumeration<String> attrs = session.getAttributeNames();
-		
-		while ( attrs.hasMoreElements() ) {
+
+		while (attrs.hasMoreElements()) {
 			String name = attrs.nextElement();
-			Object attr =  session.getAttribute(name);
-			System.out.printf(" %s = %s\r\n", name, attr != null ? attr.getClass().getName(): "NULL");
+			Object attr = session.getAttribute(name);
+			System.out.printf(" %s = %s\r\n", name, attr != null ? attr
+					.getClass().getName() : "NULL");
 		}
-		
+
 	}
-	
 
 }

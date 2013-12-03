@@ -8,6 +8,10 @@
     text-align: left;
 }
 
+.aon-black {
+	color: black;
+}
+
 @sprite .aon-icon-ine {
 	gwt-image: "ine" ; 
 }
@@ -35,5 +39,16 @@
 .aon-dataTable .selected {
     border: 1px solid #D3C061;
     background: none repeat scroll 0 0 #FFFADC;
+}
+
+.aon-comboBoxPopup {
+	background-color: #FBEDB6;
+	border: solid #808080 1px;
+	border-top: 0px;
+	box-shadow: 2px 2px 2px #888888;
+}
+
+@sprite .aon-icon-month-changed {
+	gwt-image: "month_changed"
 }
 

@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-
 import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -130,108 +129,18 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
+			//@formatter:off
 			stmt = connection.prepareStatement("SELECT "
-					+ SQLConstants.AGREEMENT + "." + AgreementColumns.ID + ", "
-					+ SQLConstants.AGREEMENT + "."
-					+ AgreementColumns.DESCRIPTION + " ," + "COUNT("
-					+ SQLConstants.CONTRACT + "." + ContractColumns.ID
-					+ " ) + COUNT(" + "EMPLOYEE." + ContractColumns.ID + ") AS EMPLOYEES "
-					+ " ," 
-					+ "COUNT(" + SQLConstants.AGREEMENT_DATA + "."
-					+ AgreementDataColumns.ID + ") + COUNT("
-					+ SQLConstants.AGREEMENT_PAYMENT + "."
-					+ AgreementPaymentColumns.ID + ") + COUNT("
-					+ SQLConstants.AGREEMENT_EXTRA + "."
-					+ AgreementExtraColumns.ID + ") + COUNT("
-					+ SQLConstants.AGREEMENT_LEVEL + "."
-					+ AgreementLevelColumns.ID + ") + COUNT("
-					+ SQLConstants.AGREEMENT_LEVEL_DATA + "."
-					+ AgreementLevelDataColumns.ID + ") + COUNT("
-					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
-					+ AgreementLevelCategoryColumns.ID + ") AS REDEFINED "
-
-					+ " FROM " + SQLConstants.AGREEMENT + " LEFT JOIN "
-					+ SQLConstants.AGREEMENT_LEVEL + " ON ("
-					+ SQLConstants.AGREEMENT + "." + AgreementColumns.ID
-					+ " = " + SQLConstants.AGREEMENT_LEVEL + "."
-					+ AgreementLevelColumns.AGREEMENT + " AND "
-					+ SQLConstants.AGREEMENT_LEVEL + "."
-					+ AgreementLevelColumns.DOMAIN + " = ? )" + " LEFT JOIN "
-					+ SQLConstants.AGREEMENT_LEVEL_DATA + " ON ( "
-					+ SQLConstants.AGREEMENT_LEVEL + ".id = "
-					+ SQLConstants.AGREEMENT_LEVEL_DATA + "."
-					+ AgreementLevelDataColumns.AGREEMENT_LEVEL + " AND "
-					+ SQLConstants.AGREEMENT_LEVEL_DATA + "."
-					+ AgreementLevelDataColumns.DOMAIN + " = ? )"
-					+ " LEFT JOIN " + SQLConstants.AGREEMENT_LEVEL_CATEGORY
-					+ " ON ( " + SQLConstants.AGREEMENT_LEVEL + ".id = "
-					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
-					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " AND "
-					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
-					+ AgreementLevelCategoryColumns.DOMAIN + " = ? )"
-					+ " LEFT JOIN " + SQLConstants.CONTRACT + " ON (  "
-					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + ".id = "
-					+ SQLConstants.CONTRACT + "."
-					+ ContractColumns.AGREEMENT_LEVEL_CATEGORY + " AND "
-					+ SQLConstants.CONTRACT + "." + ContractColumns.DOMAIN
-					+ " = ? )" + " LEFT JOIN " + SQLConstants.AGREEMENT_DATA
-					+ " ON (" + SQLConstants.AGREEMENT + "."
-					+ AgreementColumns.ID + " = " + SQLConstants.AGREEMENT_DATA
-					+ "." + AgreementDataColumns.AGREEMENT + " AND "
-					+ SQLConstants.AGREEMENT_DATA + "."
-					+ AgreementDataColumns.DOMAIN + " = ? )" + " LEFT JOIN "
-					+ SQLConstants.AGREEMENT_PAYMENT + " ON ("
-					+ SQLConstants.AGREEMENT + "." + AgreementColumns.ID
-					+ " = " + SQLConstants.AGREEMENT_PAYMENT + "."
-					+ AgreementPaymentColumns.AGREEMENT + " AND "
-					+ SQLConstants.AGREEMENT_PAYMENT + "."
-					+ AgreementPaymentColumns.DOMAIN + " = ? )" + " LEFT JOIN "
-					+ SQLConstants.AGREEMENT_EXTRA + " ON ("
-					+ SQLConstants.AGREEMENT + "." + AgreementColumns.ID
-					+ " = " + SQLConstants.AGREEMENT_EXTRA + "."
-					+ AgreementExtraColumns.AGREEMENT + " AND "
-					+ SQLConstants.AGREEMENT_EXTRA + "."
-					+ AgreementExtraColumns.DOMAIN + " = ? )"
-					+ " LEFT JOIN " + SQLConstants.AGREEMENT_LEVEL
-					+ " AS LEVEL ON (" + SQLConstants.AGREEMENT + "."
-					+ AgreementColumns.ID + " = LEVEL."
-					+ AgreementLevelColumns.AGREEMENT + " AND LEVEL."
-					+ AgreementLevelColumns.DOMAIN + " = "
-					+ SQLConstants.AGREEMENT + "." + AgreementColumns.DOMAIN
-					+ " )" + " LEFT JOIN "
-					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY
-					+ " AS CATEGORY ON (" + "LEVEL." + AgreementLevelColumns.ID
-					+ " = CATEGORY."
-					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL
-					+ " AND CATEGORY." + AgreementLevelColumns.DOMAIN + " = "
-					+ SQLConstants.AGREEMENT + "." + AgreementColumns.DOMAIN
-					+ " )" + " LEFT JOIN " + SQLConstants.CONTRACT
-					+ " AS EMPLOYEE ON (" + "CATEGORY."
-					+ AgreementLevelCategoryColumns.ID + " = EMPLOYEE."
-					+ ContractColumns.AGREEMENT_LEVEL_CATEGORY
-					+ " AND EMPLOYEE." + ContractColumns.DOMAIN + " = ? )"
-
-					+ " WHERE " + SQLConstants.AGREEMENT + "."
-					+ AgreementColumns.DOMAIN + " IN (? "
-					+ (parentDomainID != null ? ",?" : "") + ")" + " GROUP BY "
-					+ SQLConstants.AGREEMENT + "." + AgreementColumns.ID + ", "
-					+ SQLConstants.AGREEMENT + "."
-					+ AgreementColumns.DESCRIPTION 
-					+ " ORDER BY "
-					+ SQLConstants.AGREEMENT + "."
-					+ AgreementColumns.DESCRIPTION 
+					+ SQLConstants.AGREEMENT + "." + AgreementColumns.ID 
+					+ ", " + SQLConstants.AGREEMENT + "." + AgreementColumns.DESCRIPTION 
+					+ " FROM " + SQLConstants.AGREEMENT 
+					+ " WHERE " + SQLConstants.AGREEMENT + "." + AgreementColumns.DOMAIN + " IN ( ? " + (parentDomainID != null ? ",?" : "") + ")" 
+					+ " ORDER BY " + SQLConstants.AGREEMENT + "." + AgreementColumns.DESCRIPTION 
 					// + " LIMIT ?, ?"
 					);
+			//@formatter:on
 
 			int i = 1;
-			stmt.setInt(i++, domainID); // AgreementLevel
-			stmt.setInt(i++, domainID); // AgreementLevelData
-			stmt.setInt(i++, domainID); // AgreementLevelCategory
-			stmt.setInt(i++, domainID); // Contract
-			stmt.setInt(i++, domainID); // AgreementData
-			stmt.setInt(i++, domainID); // AgreementPayment
-			stmt.setInt(i++, domainID); // AgreementExtra
-			stmt.setInt(i++, domainID); // Contract / Employee
 
 			stmt.setInt(i++, domainID);
 			if (parentDomainID != null)
@@ -248,11 +157,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 						+ AgreementColumns.ID)); // Not NULL
 				agreement.setDescription(rs.getString(SQLConstants.AGREEMENT
 						+ "." + AgreementColumns.DESCRIPTION));
-
-				agreement.setEmployees(rs.getInt("EMPLOYEEs"));
-
-				agreement.setRedefined(rs.getInt("REDEFINED"));
-
+				//agreement.setEmployees(rs.getInt("EMPLOYEEs"));
+				//agreement.setRedefined(rs.getInt("REDEFINED"));
 				agreements.add(agreement);
 			}
 

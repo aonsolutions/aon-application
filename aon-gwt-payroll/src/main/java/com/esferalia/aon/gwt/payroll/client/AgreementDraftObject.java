@@ -211,6 +211,10 @@ public class AgreementDraftObject implements IContextProvider {
 				|| !isDraftPeriodSet(getDraftStartDate(), getDraftEndDate(),
 						agreementDraft);
 	}
+	
+	public Set<Date> getDatesWithChanges() {
+		return agreementDraft.getDatesWithChanges();
+	}
 
 	// ------------------------------------------
 	// Undo & Redo Support

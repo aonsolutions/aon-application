@@ -145,7 +145,14 @@
 		.toolBar-checkBox input {
 			vertical-align: middle;
 		}
+		
+		.monthListBox-item {
+			padding-left : 16px;
+		}
 
+		.monthListBox-old {
+			
+		}
 	</ui:style>
 
 	<ui:image field='fx' src='fx.png' />
@@ -185,8 +192,7 @@
 								<g:Button ui:field='redoButton'
 									styleName="aon-finding-toolbar-item {style.redoButton}" enabled="false" />
 								<g:ListBox ui:field='datesListBox'>
-									<g:item value="{ONLY_THIS_MONTH}">S&oacute;lo
-										este mes
+									<g:item value="{ONLY_THIS_MONTH}">S&oacute;lo este mes
 									</g:item>
 									<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
 									<g:item value="{CUSTOM}">Personalizado...</g:item>
@@ -194,6 +200,7 @@
 								<g:CheckBox ui:field='changesCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
 									text="Cambios" checked="true" visible="false" />
+								<employee:MonthListBox ui:field="draftMonthListBox" oldStyles="{style.monthListBox-old}" monthStyles="{style.monthListBox-item}" highLightStyles="aon-bold aon-black aon-icon-month-changed {style.monthListBox-item}" />
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>

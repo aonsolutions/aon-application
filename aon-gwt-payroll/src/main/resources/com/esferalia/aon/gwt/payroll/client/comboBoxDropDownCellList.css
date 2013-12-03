@@ -1,0 +1,37 @@
+cellListWidget {
+  
+}
+
+.cellListEvenItem,
+.cellListOddItem {
+	cursor: pointer;
+}
+
+.cellListEvenItem:hover,
+.cellListOddItem:hover {
+  	color: white;
+	background: #4a90d9;
+	
+}
+
+
+.cellListSelectedItem {
+	color: white;
+	height: auto;
+	overflow: visible;
+	background-image: none;
+	background-color: #4a90d9;
+}
+
+.cellListKeyboardSelectedItem {
+  	color: white;
+	background: #4a90d9;
+}
+
+cellListWidget:hover .cellListSelectedItem {
+	color: inherit;
+	height: auto;
+	overflow: visible;
+	background-color: inherit;
+	
+}

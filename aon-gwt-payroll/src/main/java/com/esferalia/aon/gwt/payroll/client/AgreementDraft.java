@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -9,10 +10,11 @@ import java.util.TreeSet;
 
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
+import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.HasDescription;
+import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.LevelComparator;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
-import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -22,6 +24,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -42,6 +45,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -390,6 +394,9 @@ public class AgreementDraft extends ResizeComposite implements
 	TextBox descriptionTextBox;
 
 	@UiField
+	MonthListBox draftMonthListBox;
+
+	@UiField
 	ScrollPanel salaryTableScrollPane;
 
 	// Stuff for a properly built salary table.
@@ -438,7 +445,10 @@ public class AgreementDraft extends ResizeComposite implements
 		this.agreementDraftObject.calculate(this);
 		enableUndoRedoButtons();
 		this.agreementDraftObject.addListener(undoListener);
-		descriptionTextBox.setText(this.agreementDraftObject.getDescription());
+		// TODO: When null it will be desirable warn user.
+		String description = this.agreementDraftObject.getDescription();
+		descriptionTextBox.setText(description == null ? "" : description);
+
 	}
 
 	@Override
@@ -449,6 +459,10 @@ public class AgreementDraft extends ResizeComposite implements
 
 	@Override
 	public void onCalculateSucces(AgreementDraftObject object) {
+
+		draftMonthListBox.setHighLightMonths(agreementDraftObject
+				.getDatesWithChanges());
+		draftMonthListBox.setSelectedMonth(agreementDraftObject.getStartDate());
 
 		loadAvailablePayments();
 
@@ -502,6 +516,14 @@ public class AgreementDraft extends ResizeComposite implements
 		moveSalaryTableFrozenColsAndRows();
 	}
 
+	@UiHandler("draftMonthListBox")
+	void onDraftMonthListBoxChanged(ChangeEvent event) {
+		Date month = draftMonthListBox.getSelectedMonth();
+		agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(month));
+		agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
+		calculate();
+	}
+
 	// ------------------------------------------
 	//
 	// ------------------------------------------
@@ -514,8 +536,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 		int row = paymentsTable.getRowCount();
 
-		SortedSet<Payment> payments = new TreeSet<Payment>(
-				new ItemComparator());
+		SortedSet<Payment> payments = new TreeSet<Payment>(new ItemComparator());
 		payments.addAll(agreementDraftObject.getPayments());
 		for (Payment payment : payments) {
 			dumpPayment(payment, row++);
@@ -567,16 +588,14 @@ public class AgreementDraft extends ResizeComposite implements
 
 		int row = 1;
 		for (Level level : levels) {
-			if (level.getId() == 0) {
-				salaryTable.setText(row, 0, level.getDescription());
-			} else {
-				TextBox descriptionTextBox = new TextBox();
-				descriptionTextBox.setText(level.getDescription());
-				descriptionTextBox.setVisibleLength(5);
-				salaryTable.setWidget(row, 0, descriptionTextBox);
-				LevelEditor editor = new LevelEditor(level);
-				editor.setDescriptionTextBox(descriptionTextBox);
-			}
+
+			TextBox descriptionTextBox = new TextBox();
+			descriptionTextBox.setText(level.getDescription());
+			descriptionTextBox.setVisibleLength(5);
+			hide(descriptionTextBox, level.getId() == 0);
+			salaryTable.setWidget(row, 0, descriptionTextBox);
+			LevelEditor editor = new LevelEditor(level);
+			editor.setDescriptionTextBox(descriptionTextBox);
 
 			cellFormatter.addStyleName(row, 0, AON.AON_BOLD);
 
@@ -605,20 +624,16 @@ public class AgreementDraft extends ResizeComposite implements
 				col++;
 			}
 
-			if (level.getId() == 0) {
-				salaryTable.insertCell(row, col++);
-				salaryTable.insertCell(row, col++);
-			} else {
-				dumpCategories(row, col++,
-						agreementDraftObject.getCategories(level));
+			Widget categoriesWidget = dumpCategories(row, col++,
+					agreementDraftObject.getCategories(level));
+			hide(categoriesWidget, level.getId() == 0);
 
-				Button deleteButton = new Button();
-				deleteButton.setStyleName(AON.AON_ICON_DELETE);
-				deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+			Button deleteButton = new Button();
+			deleteButton.setStyleName(AON.AON_ICON_DELETE);
+			deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+			hide(deleteButton, level.getId() == 0);
 
-				salaryTable.setWidget(row, col++, deleteButton);
-
-			}
+			salaryTable.setWidget(row, col++, deleteButton);
 
 			row++;
 		}
@@ -626,10 +641,14 @@ public class AgreementDraft extends ResizeComposite implements
 		// Set max width...
 		int offsetWidth = 1;
 		offsetWidth += cellFormatter.getElement(0, 0).getOffsetWidth();
-		offsetWidth += cellFormatter.getElement(0, 1).getOffsetWidth()
-				* (SALARY_TABLE_COLS - 1);
+
+		// Asume that each column have 1.5 width of level column that has an
+		// input with size 5
+		offsetWidth += offsetWidth * 1.5 * (SALARY_TABLE_COLS - 1);
+
 		offsetWidth += cellFormatter.getElement(0,
 				salaryTable.getCellCount(0) - 1).getOffsetWidth();
+
 		salaryTableScrollPane.setWidth(offsetWidth + "px");
 
 	}
@@ -757,7 +776,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 	}
 
-	private void dumpCategories(int row, int col, Set<String> categories) {
+	private Widget dumpCategories(int row, int col, Set<String> categories) {
 
 		TextBox categoriesTextBox = new TextBox();
 		if (categories != null)
@@ -768,12 +787,13 @@ public class AgreementDraft extends ResizeComposite implements
 				.setProperty("minWidth", VARIABLE_TEXTBOX_SIZE * 2, Unit.EM);
 		salaryTable.setWidget(row, col, categoriesTextBox);
 
+		return categoriesTextBox;
 	}
 
 	private void insertNewLevelRow(int row) {
 
 		TextBox descriptionTextBox = new TextBox();
-		descriptionTextBox.getElement().getStyle().setWidth(90, Unit.PCT);
+		descriptionTextBox.setVisibleLength(5);
 		salaryTable.setWidget(row, 0, descriptionTextBox);
 
 		int cols = salaryTable.getCellCount(row - 1);
@@ -1005,18 +1025,19 @@ public class AgreementDraft extends ResizeComposite implements
 	private void ensureChangesVisible() {
 		// shows first level changed row.
 		if (!changedLevelsRows.isEmpty()) {
-			ensureVisibleTopImpl(salaryTableScrollPane.getElement(), salaryTable
-					.getRowFormatter().getElement(changedLevelsRows.get(0)));
+			ensureVisibleTopImpl(
+					salaryTableScrollPane.getElement(),
+					salaryTable.getRowFormatter().getElement(
+							changedLevelsRows.get(0)));
 		}
 		// shows first variable changed column.
 		if (!changedVariablesCols.isEmpty()) {
-			ensureVisibleLeftImpl(salaryTableScrollPane.getElement(), salaryTable
-					.getCellFormatter().getElement(0,
+			ensureVisibleLeftImpl(
+					salaryTableScrollPane.getElement(),
+					salaryTable.getCellFormatter().getElement(0,
 							changedVariablesCols.get(0)));
 		}
 	}
-	
-	
 
 	// ------------------------------------------
 	//
@@ -1260,13 +1281,25 @@ public class AgreementDraft extends ResizeComposite implements
 
 		return realOffsetLeft;
 	}
-	
+
 	private static void ensureVisibleTopImpl(Element scroll, Element e) {
-		scroll.setScrollTop(getRealOffsetTop(scroll, e) - scroll.getOffsetHeight()/2);
+		scroll.setScrollTop(getRealOffsetTop(scroll, e)
+				- scroll.getOffsetHeight() / 2);
 	}
 
 	private static void ensureVisibleLeftImpl(Element scroll, Element e) {
-		scroll.setScrollLeft(getRealOffsetLeft(scroll, e) - scroll.getOffsetWidth()/2);
+		scroll.setScrollLeft(getRealOffsetLeft(scroll, e)
+				- scroll.getOffsetWidth() / 2);
+	}
+
+	/*
+	 * Hides an element, but it will still take up the same space as before. The
+	 * element will be hidden, but still affect the layout.
+	 */
+	private static void hide(Widget widget, boolean hide) {
+		if (hide) {
+			widget.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		}
 	}
 
 }

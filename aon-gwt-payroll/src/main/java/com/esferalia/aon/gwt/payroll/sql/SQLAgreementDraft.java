@@ -10,8 +10,12 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
@@ -23,6 +27,7 @@ import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
@@ -280,6 +285,79 @@ public class SQLAgreementDraft {
 				stmt.close();
 		}
 
+	}
+
+	public static Set<Date> getDatesWithChanges(Connection connection,
+			int agreementId, Integer... domainIds) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+
+			String in = StringUtils.repeat("?", ",", domainIds.length);
+
+			Set<Date> months = new HashSet();
+
+			//@formatter:off
+			stmt = connection.prepareStatement(
+					"SELECT " + AgreementPaymentColumns.START_DATE 
+					+ " FROM " + SQLConstants.AGREEMENT_PAYMENT 
+					+ " WHERE "  + AgreementPaymentColumns.AGREEMENT + " = ? " 
+					+ " AND " + AgreementPaymentColumns.DOMAIN + " IN ( "+ in +" )" 
+					+ " GROUP BY 1");
+			//@formatter:on
+			stmt.setInt(1, agreementId);
+			for (int i = 0; i < domainIds.length; i++)
+				stmt.setInt(2 + i, domainIds[i]);
+			rs = stmt.executeQuery();
+			while (rs.next())
+				months.add(rs.getDate(AgreementPaymentColumns.START_DATE));
+			rs.close();
+			stmt.close();
+
+			//@formatter:off
+			stmt = connection.prepareStatement(
+					"SELECT " + AgreementDataColumns.START_DATE 
+					+ " FROM " + SQLConstants.AGREEMENT_DATA
+					+ " WHERE "  + AgreementDataColumns.AGREEMENT + " = ? " 
+					+ " AND " + AgreementDataColumns.DOMAIN + " IN ( "+ in +" )" 
+					+ " GROUP BY 1");
+			//@formatter:on
+			stmt.setInt(1, agreementId);
+			for (int i = 0; i < domainIds.length; i++)
+				stmt.setInt(2 + i, domainIds[i]);
+			rs = stmt.executeQuery();
+			while (rs.next())
+				months.add(rs.getDate(AgreementDataColumns.START_DATE));
+			rs.close();
+			stmt.close();
+
+			//@formatter:off
+			stmt = connection.prepareStatement(
+					"SELECT " + AgreementLevelDataColumns.START_DATE 
+					+ " FROM " + SQLConstants.AGREEMENT_LEVEL 
+					+ " LEFT JOIN " + SQLConstants.AGREEMENT_LEVEL_DATA 
+						+ " ON ( " +  SQLConstants.AGREEMENT_LEVEL_DATA + "." + AgreementLevelDataColumns.AGREEMENT_LEVEL + " = " + SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.ID + ")" 
+					+ " WHERE "  + AgreementLevelColumns.AGREEMENT + " = ? " 
+					+ " AND " + SQLConstants.AGREEMENT_LEVEL_DATA + "." + AgreementLevelDataColumns.DOMAIN + " IN ( " + in + " )" 
+					+ " GROUP BY 1");
+			//@formatter:on
+			stmt.setInt(1, agreementId);
+			for (int i = 0; i < domainIds.length; i++)
+				stmt.setInt(2 + i, domainIds[i]);
+			rs = stmt.executeQuery();
+			while (rs.next())
+				months.add(rs.getDate(AgreementLevelDataColumns.START_DATE));
+			rs.close();
+			stmt.close();
+
+			return months;
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
 	}
 
 	public static void save(Connection conn, AgreementDraft draft,

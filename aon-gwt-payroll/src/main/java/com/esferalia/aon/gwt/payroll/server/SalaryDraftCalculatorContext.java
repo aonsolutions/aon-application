@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractPayment;
+import com.esferalia.aon.payroll.calculator.CompositeCollection;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.DelegateContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
@@ -88,7 +89,7 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 		}
 	}
 
-	static class DraftCompositePayments extends CompositePayments implements
+	private static class DraftCompositePayments extends CompositePayments implements
 			Predicate {
 
 		public DraftCompositePayments(Collection<IContractPayment>... payments) {
@@ -104,7 +105,7 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 		@Override
 		@SuppressWarnings("unchecked")
 		public Iterator<IContractPayment> iterator() {
-			return new FilterIterator(super.iterator(), this);		
+			return new FilterIterator(super.iterator(), this);
 		}
 		
 		// ---------------------------------------------------------- Predicate
@@ -210,8 +211,8 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 	@Override
 	public Collection<IContractPayment> getContractPayments()
 			throws AonException {
-		return new DraftCompositePayments(getDraftPayments(),
-				super.getContractPayments());
+			return new DraftCompositePayments(getDraftPayments(),
+									super.getContractPayments());
 	}
 
 	protected SalaryDraft getDraft() {

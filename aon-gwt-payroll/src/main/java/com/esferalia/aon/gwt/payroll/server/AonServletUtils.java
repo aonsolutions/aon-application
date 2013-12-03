@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.faces.FactoryFinder;
 import javax.faces.component.UIViewRoot;
@@ -49,8 +50,10 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AppParamColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseDataColumns;
@@ -67,6 +70,38 @@ public class AonServletUtils {
 		byte[] bytes;
 		MimeType mimeType;
 
+	}
+
+	public interface SalaryFilter {
+		boolean accept(Salary salary);
+	}
+
+	public static class SiteFilter implements SalaryFilter {
+
+		private static String ENTERPRISE_SITE_DATE = ContextVariable.ENTERPRISE_SITE_DATE
+				.toString();
+
+		private String utcDate;
+
+		public SiteFilter() {
+			this(new Date());
+		}
+
+		public SiteFilter(Date date) {
+			utcDate = String.format("%1$tY%1$tm%1$td", date);
+		}
+
+		@Override
+		public boolean accept(Salary salary) {
+			Set<SalaryData>  datas = salary.getSalaryDatas();
+			for (SalaryData salaryData : datas) {
+				if ( ENTERPRISE_SITE_DATE.equals(salaryData.getName())){
+					String expression = salaryData.getExpression();
+					return expression != null && expression.compareTo(utcDate)<= 0;
+				}
+			}
+			return true;
+		}
 	}
 
 	protected static class CompositeProvider implements ICollectionProvider {
@@ -106,8 +141,10 @@ public class AonServletUtils {
 				.getLogger(SalaryProvider.class);
 
 		private Criteria criteria;
+		private SalaryFilter filter;
 
-		public SalaryProvider(Criteria criteria) {
+		public SalaryProvider(Criteria criteria, SalaryFilter filter) {
+			this.filter = filter;
 			this.criteria = criteria;
 		}
 
@@ -126,8 +163,22 @@ public class AonServletUtils {
 				throws ManagerBeanException {
 			IManagerBean beanManager = BeanManager
 					.getManagerBean(com.esferalia.aon.payroll.Salary.class);
-			return beanManager.getList(criteria);
+			List<?> list = beanManager.getList(criteria);
+			if (filter == null)
+				return list;
+			else
+				return filter(list);
 		}
+
+		private Collection filter(Collection collection) {
+			List<Salary> salaries = new ArrayList<Salary>(collection.size());
+			for (Object salary : collection) {
+				if (filter.accept((Salary) salary))
+					salaries.add((Salary) salary);
+			}
+			return salaries;
+		}
+
 	}
 
 	protected static class CalcSalaryProvider implements ICollectionProvider {
@@ -182,7 +233,7 @@ public class AonServletUtils {
 				Collection salaries = salaryProvider
 						.getCollection(forceRefresh);
 				allSalaries.addAll(salaries);
-				
+
 				if (contains(SalaryType.SALARY)) {
 					ctx = new SQLContractSalaryCalculatorContext(conn,
 							startDate, endDate, getStartOfKnowEra(), criteria);
@@ -202,7 +253,7 @@ public class AonServletUtils {
 								allSalaries.add(-(index + 1), salary);
 						}
 				}
-				
+
 				return allSalaries;
 
 			} catch (SQLException e) {
@@ -543,7 +594,7 @@ public class AonServletUtils {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(getStartOfKnowEra().getYear());
+		System.out.println(String.format("%1$tY%1$tm%1$td", new Date()));
 	}
 
 }

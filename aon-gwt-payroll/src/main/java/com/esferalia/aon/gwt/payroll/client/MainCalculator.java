@@ -36,8 +36,6 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 	private static DateTimeFormat DATE_FORMAT = DateTimeFormat
 			.getFormat(CalculateService.DATE_FORMAT_PATTERN);
 
-	private static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
-			.getFormat(PredefinedFormat.YEAR_MONTH);
 
 	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
 
@@ -83,8 +81,6 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);
-
-		monthListBox.setDateTimeFormat(MONTH_FORMAT);
 
 		// Create a remote service proxy to talk to the server-side Enterprises
 		// service.
