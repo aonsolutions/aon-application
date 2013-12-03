@@ -146,10 +146,10 @@
 		<initialValueExpression><![CDATA[ReportUtils.first( $F{salary}.getContract().getPerson().getRegistry().getAddresses(), "addressType", AddressType.MAIN)]]></initialValueExpression>
 	</variable>
 	<variable name="signature" class="com.code.aon.registry.RegistryAttachment">
-		<variableExpression><![CDATA[ReportUtils.first( $F{salary}.getContract().getWorkPlace().getEnterprise().getDocuments(), "registryAttachmentType", RegistryAttachmentType.SIGNATURE)]]></variableExpression>
+		<variableExpression><![CDATA[ReportUtils.getRAttach( $F{salary}.getContract().getWorkPlace().getEnterprise().getId(), RegistryAttachmentType.SIGNATURE)]]></variableExpression>
 	</variable>
 	<variable name="logo" class="com.code.aon.registry.RegistryAttachment" resetType="Page">
-		<initialValueExpression><![CDATA[ReportUtils.first( $F{salary}.getContract().getWorkPlace().getEnterprise().getDocuments(), "registryAttachmentType", RegistryAttachmentType.LOGO)]]></initialValueExpression>
+		<initialValueExpression><![CDATA[ReportUtils.getRAttach( $F{salary}.getContract().getWorkPlace().getEnterprise().getId(), RegistryAttachmentType.LOGO)]]></initialValueExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>

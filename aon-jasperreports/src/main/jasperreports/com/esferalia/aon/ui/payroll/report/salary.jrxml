@@ -82,7 +82,7 @@
 		<variableExpression><![CDATA[$V{supplements}.size() <= 6 ? 6 - Math.max(1, $V{supplements}.size()) : 23]]></variableExpression>
 	</variable>
 	<variable name="signature" class="com.code.aon.registry.RegistryAttachment">
-		<variableExpression><![CDATA[ReportUtils.first( $F{salary}.getContract().getWorkPlace().getEnterprise().getDocuments(), "registryAttachmentType", RegistryAttachmentType.SIGNATURE)]]></variableExpression>
+		<variableExpression><![CDATA[ReportUtils.getRAttach( $F{salary}.getContract().getWorkPlace().getEnterprise().getId(), RegistryAttachmentType.SIGNATURE)]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
