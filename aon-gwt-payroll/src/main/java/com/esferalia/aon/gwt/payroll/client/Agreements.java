@@ -2,10 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import java_cup.sym;
 
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
