@@ -1815,7 +1815,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					+ " WHERE " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SALARY + "." + SalaryColumns.DOMAIN 
 					+ " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = ? " 
 					+ " GROUP BY 1, 2"
-					+ " HAVING SALARIES >= 1" 
+					+ " HAVING " +allCol +" >= 1" 
 					+ " ORDER BY 2 , 1 ASC ";
 			//@formatter:on
 
