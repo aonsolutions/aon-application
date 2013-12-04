@@ -273,7 +273,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	}
 
 	public int getTagsNumCols() {
-		double cols = getTagsCount() / getPosShift().getPos().getNumRows();
+		double cols = (double)getTagsCount() / (double)getPosShift().getPos().getNumRows();
 		return (cols > 2) ? 3 : ((cols > 1) ? 2 : 1);
 	}
 
@@ -296,7 +296,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	public List<Tag> getPagedTags() {
 		if (pagedTags == null && getPosShift().getPos().isTouchScreen()) {
 			int tagsLimit = getTagsLimit();
-			if (getTagsCount() < tagsLimit) {
+			if (getTagsCount() <= tagsLimit) {
 				pagedTags = getTags().subList(0, getTagsCount());
 			} else {
 				int fromIndex = (getTagPage() == 1) ? 0 : tagsLimit * (getTagPage() - 1) - (2 * (getTagPage() - 1) - 1);
@@ -342,7 +342,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 	public List<Product> getPagedSelectedProducts() {
 		if (pagedSelectedProducts == null && selectedProducts != null && getPosShift().getPos().isTouchScreen()) {
 			int posLimit = getPosShift().getPos().getLimit();
-			if (getSelectedProductsCount() < posLimit) {
+			if (getSelectedProductsCount() <= posLimit) {
 				pagedSelectedProducts = getSelectedProducts().subList(0, getSelectedProductsCount());
 			} else {
 				int fromIndex = (getSelectedProductPage() == 1) ? 0 : posLimit * (getSelectedProductPage() - 1) - (2 * (getSelectedProductPage() - 1) - 1);
