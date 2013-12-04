@@ -393,13 +393,6 @@ public class AonServletUtils {
 		return fileName.substring(0, fileName.lastIndexOf('.'));
 	}
 
-	public static Integer getEnterpriseID() {
-		EnterpriseController controller = (EnterpriseController) AonUtil
-				.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
-		controller.initialAction();
-		Enterprise enterprise = (Enterprise) controller.getTo();
-		return enterprise.getId();
-	}
 
 	public static void initFacesContext(ServletContext context,
 			HttpServletRequest request, HttpServletResponse response) {

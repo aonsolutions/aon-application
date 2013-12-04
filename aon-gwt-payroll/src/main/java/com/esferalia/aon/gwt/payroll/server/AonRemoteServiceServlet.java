@@ -47,35 +47,7 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 	Integer getPersonID() {
 		return null;
 	}
-
-	Integer getEnterpriseID() {
-		EnterpriseController controller = (EnterpriseController) AonUtil
-				.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
-		controller.initialAction();
-		Enterprise enterprise = (Enterprise) controller.getTo();
-		return enterprise.getId();
-	}
-
-	int [] getEnterpriseIDs() throws ManagerBeanException {
-		
-		IManagerBean beanManager = BeanManager
-				.getManagerBean(com.code.aon.company.Enterprise.class);
-
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				beanManager.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN),
-				getDomainID() );
-
-		List<ITransferObject> tos = beanManager.getList(criteria);
-		
-		int ids [] = new int [tos.size()];
-		for (int i = 0 ; i < tos.size(); i++) {
-			ids[i] = ((Enterprise) tos.get(i)).getId();
-		}
-		
-		return ids;
-
-	}
+	
 	
 	String getEntryPoint(){
 		return ((GWT) getSession().getAttribute("gwt")).getEntryPoint();
@@ -85,11 +57,6 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		return Constants.ENTERPRISE_SITE_ENTRY_POINT.equals(getEntryPoint());
 	}
 
-	Integer getDomainID() {
-		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil
-				.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
-		return domainSwitcher.getDomainId();
-	}
 	
 	Integer getParentDomainID() {
 		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil
@@ -221,5 +188,55 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		
 		
 	}
+	// ------------------------------------------------------------------------
+
+	protected static Integer getDomainID() {
+		DomainSwitcher domainSwitcher = (DomainSwitcher)AonUtil
+				.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+		return domainSwitcher.getDomainId();
+	}
+
+	/*
+	 * We assume here that one domain one enterprise. 
+	 */
+	protected static Integer getEnterpriseID() throws ManagerBeanException {
+		IManagerBean beanManager = BeanManager
+				.getManagerBean(com.code.aon.company.Enterprise.class);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				beanManager.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN),
+				getDomainID() );
+
+		List<ITransferObject> tos = beanManager.getList(criteria);
+		
+		if( tos == null || tos.isEmpty() )
+			return null;
+		
+		return ((Enterprise) tos.get(0)).getId();
+		
+	}
+
+	protected static int [] getEnterpriseIDs() throws ManagerBeanException {
+		
+		IManagerBean beanManager = BeanManager
+				.getManagerBean(com.code.aon.company.Enterprise.class);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				beanManager.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN),
+				getDomainID() );
+
+		List<ITransferObject> tos = beanManager.getList(criteria);
+		
+		int ids [] = new int [tos.size()];
+		for (int i = 0 ; i < tos.size(); i++) {
+			ids[i] = ((Enterprise) tos.get(i)).getId();
+		}
+		
+		return ids;
+
+	}
+	
 
 }

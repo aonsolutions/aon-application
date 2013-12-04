@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.gwt.payroll.client.DocumentsService;
@@ -39,6 +39,8 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 			connection = getConnection();
 			return getRegistryDocuments(registryID, connection);
 		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (ManagerBeanException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
 			if ( connection != null ) {

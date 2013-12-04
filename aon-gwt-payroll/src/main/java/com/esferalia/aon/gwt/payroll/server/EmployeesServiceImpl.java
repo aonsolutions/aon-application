@@ -242,11 +242,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				return isAtEnterpriseSite() ? getSiteSalaries(conn,
 						employee.getId()) : getSalaries(conn, employee.getId());
 			} else {
-				Integer personId = getPersonID();
-				Integer enterpriseId = getEnterpriseID();
-				Date maxChargeDate = Calendar.getInstance().getTime();
-				return getSalaries(conn, enterpriseId, personId, maxChargeDate);
-			} // EmployeeSite Not implemented yet.
+				throw new IllegalArgumentException("EmployeeSite Not implemented yet");
+			} 
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -764,7 +761,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			reportManager.setCollectionProvider(provider);
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
+			
 			String salaryReport = getSalaryReport();
+			
 			reportManager.execute(reportOut, salaryReport);
 
 			byte reportByteArray[] = reportOut.toByteArray();
@@ -1029,16 +1028,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	// -------------------------------------------------------- Private methods
-
+	
+	@Deprecated 
 	private String getSalaryReport() throws ReportException {
-		int enterpriseId = getEnterpriseID();
 		Connection conn = null;
 		try {
 			conn = getConnection();
+			int enterpriseId = getEnterpriseID();
 			return AonServletUtils.getSalaryReport(conn, enterpriseId);
 		} catch (SQLException e) {
 			throw new ReportException(e.getLocalizedMessage());
-		} finally {
+		} catch ( ManagerBeanException e ){
+			throw new ReportException(e.getLocalizedMessage());
+		}finally {
 			if (conn != null) {
 				try {
 					conn.close();
