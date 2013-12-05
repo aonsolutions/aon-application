@@ -10,7 +10,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-
+	
 		<aon:form id="templatesForm">
 	
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
@@ -41,27 +41,22 @@
 				</h:panelGrid>
 		
 				<aon:div id="variables" styleClass="aon-margin-top">
-					<aon:div layout="none" rendered="#{webPageStyle.templateSelected}">
+					<aon:div rendered="#{webPageStyle.templateSelected}">
 					
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 							<ui:param name="controller" value="#{webPageStyle}" />
-							<ui:param name="skipResetButton" value="true" />
-							<ui:param name="skipRemoveButton" value="true" />
+							<ui:param name="skipSelectRow" value="#{true}" />
+							<ui:param name="skipRemoveButton" value="#{true}" />
 							<ui:define name="columns">
 
 								<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
 									<f:facet name="header">
 										<aon:outputText value="&#160;"/>
 									</f:facet>
-									<aon:graphicImage value="/images/#{webPageStyle.iconByType}" style="margin:2px"/>
-									<f:facet name="footer">
-										<aon:div>
-											<aon:outputText value="&#160;"/>
-										</aon:div>
-									</f:facet>
+									<aon:graphicImage value="#{aonResource.resolve['/images/aon-infoweb/']}#{webPageStyle.iconByType}" style="margin:2px"/>					
 								</aon:column>
 					
-								<aon:column style="aon-editDataTable-textColumn aon-width-300">
+								<aon:column styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.infoweb_sytle_variable}" />
 									</f:facet>
@@ -71,25 +66,21 @@
 									<aon:div rendered="#{to == webPageStyle.to}" >
 										<aon:outputText value="#{webPageStyle.toVariableName}" />
 									</aon:div>
-									<f:facet name="footer">
-										<aon:div>
-											<aon:outputText value="&#160;"/>
-										</aon:div>
-									</f:facet>
 								</aon:column>
 					
-								<aon:column style="aon-editDataTable-textColumn">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.aon_value}" />
 									</f:facet>
 									<aon:div rendered="#{to!=webPageStyle.to}">
 										<aon:div value="&#160;" style="width:64px;height:17px;border:1px black solid;background-color:#{to.value}" rendered="#{webPageStyle.color}" />
-										<aon:outputText value="#{webPageStyle.fontName}" rendered="#{webPageStyle.font}" style="font-family:#{webPageStyle.fontType};font-size:15px"/>
+										<aon:outputText value="#{webPageStyle.fontType.name}" rendered="#{webPageStyle.font}" style="font-family:#{webPageStyle.fontType.value};font-size:15px"/>
 										<aon:outputText value="#{to.value}" rendered="#{webPageStyle.number}"/>
 										<aon:outputText value="#{webPageStyle.rattachName}" rendered="#{webPageStyle.image}" />
 									</aon:div>
-									<aon:div id="div_rgb" rendered="#{to==webPageStyle.to}">
-										<aon:inputText id="rgb2" value="#{webPageStyle.to.value}" onfocus="showColorPicker(this);" size="10" maxlength="7" rendered="#{webPageStyle.color}"/>
+									<aon:div rendered="#{to==webPageStyle.to}">
+										<rich:colorPicker id="WebInfoPageResource_color" rendered="#{webPageStyle.color}"
+											value="#{webPageStyle.to.value}" colorMode="hex" />										
 										<aon:selectOneMenu id="WebInfoPageResource_font" value="#{webPageStyle.to.value}" rendered="#{webPageStyle.font}" >
 											<f:selectItems value="#{webPageStyle.fontTypes}" />
 										</aon:selectOneMenu>
@@ -98,11 +89,6 @@
 											<f:selectItems value="#{webPageStyle.images}" />
 										</aon:selectOneMenu>
 									</aon:div>
-									<f:facet name="footer">
-										<aon:div>
-											<aon:outputText value="&#160;"/>
-										</aon:div>
-									</f:facet>
 								</aon:column>
 							</ui:define>
 						</ui:decorate>				

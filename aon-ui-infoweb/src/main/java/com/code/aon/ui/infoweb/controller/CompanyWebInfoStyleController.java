@@ -22,6 +22,7 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -381,48 +382,18 @@ public class CompanyWebInfoStyleController extends BasicController {
 		return name;
 	}
 
-	public String getFontName() {
+	public WebInfoFontType getFontType() {
+		WebInfoFontType type = WebInfoFontType.VERDANA;
 		WebInfoStyle style = (WebInfoStyle)this.model.getRowData();
 		try {
-			if (Integer.parseInt(style.getValue()) == WebInfoFontType.ARIAL.ordinal()) {
-				return WebInfoFontType.ARIAL.getName();
+			if ( NumberUtils.isDigits(style.getValue())) {
+				int index = Integer.parseInt(style.getValue());
+				type = WebInfoFontType.values()[index];
 			}
-			if (Integer.parseInt(style.getValue()) == WebInfoFontType.TIMES.ordinal()) {
-				return WebInfoFontType.TIMES.getName();
-			}
-			if (Integer.parseInt(style.getValue()) == WebInfoFontType.TREBUCHET.ordinal()) {
-				return WebInfoFontType.TREBUCHET.getName();
-			}
-			if (Integer.parseInt(style.getValue()) == WebInfoFontType.VERDANA.ordinal()) {
-				return WebInfoFontType.VERDANA.getName();
-			}
-
 		} catch (NumberFormatException e) {
 			LOGGER.error( e.getMessage(), e );
 		}
-		return "Sin tipo";
-	}
-
-	public String getFontType() {
-		WebInfoStyle style = (WebInfoStyle)this.model.getRowData();
-		try {
-			if (Integer.parseInt(style.getValue()) == WebInfoFontType.ARIAL.ordinal()) {
-				return WebInfoFontType.ARIAL.getValue();
-			}
-			if (Integer.parseInt(style.getValue()) == WebInfoFontType.TIMES.ordinal()) {
-				return WebInfoFontType.TIMES.getValue();
-			}
-			if (Integer.parseInt(style.getValue()) == WebInfoFontType.TREBUCHET.ordinal()) {
-				return WebInfoFontType.TREBUCHET.getValue();
-			}
-			if (Integer.parseInt(style.getValue()) == WebInfoFontType.VERDANA.ordinal()) {
-				return WebInfoFontType.VERDANA.getValue();
-			}
-
-		} catch (NumberFormatException e) {
-			LOGGER.error( e.getMessage(), e );
-		}
-		return "Verdana";
+		return type;
 	}
 
 	public void onLoad( ActionEvent event ) {
