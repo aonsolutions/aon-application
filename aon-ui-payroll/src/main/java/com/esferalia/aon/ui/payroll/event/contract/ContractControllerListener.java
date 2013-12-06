@@ -20,6 +20,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractClausesController;
@@ -38,9 +39,15 @@ public class ContractControllerListener extends ControllerAdapter{
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
 		Contract contract = (Contract) controller.getTo();
-		contract.setSepeStatus(ContractStatus.PENDING);
-		contract.setSsStatus(ContractStatus.PENDING);
-		contract.setRegimeType(contract.getEnterpriseCCC()!=null?contract.getEnterpriseCCC().getActivity().getType():null);
+		if(controller.isRetaQuote()){
+			contract.setRegimeType(SSRegimeType.SELF_EMPLOYED);
+			contract.setEnterpriseCCC(null);
+			contract.setActivity(null);
+		} else {
+			contract.setSepeStatus(ContractStatus.PENDING);
+			contract.setSsStatus(ContractStatus.PENDING);
+			contract.setRegimeType(contract.getEnterpriseCCC()!=null?contract.getEnterpriseCCC().getActivity().getType():null);
+		}
 	}
 	
 	@Override
@@ -48,7 +55,13 @@ public class ContractControllerListener extends ControllerAdapter{
 			throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
 		Contract contract = (Contract) controller.getTo();
-		contract.setRegimeType(contract.getEnterpriseCCC()!=null?contract.getEnterpriseCCC().getActivity().getType():null);
+		if(controller.isRetaQuote()){
+			contract.setRegimeType(SSRegimeType.SELF_EMPLOYED);
+			contract.setEnterpriseCCC(null);
+			contract.setActivity(null);
+		} else {
+			contract.setRegimeType(contract.getEnterpriseCCC()!=null?contract.getEnterpriseCCC().getActivity().getType():null);
+		}
 	}
 
 	@Override
@@ -71,23 +84,30 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
 		
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-		contrataController.initialize((Contract) controller.getTo());
-		contrataController.onContrataDataShow(null);
-
-		CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
-		certificadosController.initialize((Contract) controller.getTo());
-
-		ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean("contractClauses");
-		clausesController.onAdditionalClausesShow(null);
-		
-		try {
-			ContractUtils utils = ContractUtils.getInstance();
-			utils.loadContractData((Contract) controller.getTo(), controller.getParams());
-			controller.setAgreement(utils.obtainAgreement((Contract) controller.getTo()));
-		} catch (ManagerBeanException e) {
-			String msg = "Error loading contract data";
-			LOGGER.error(msg);
+		Contract contract = (Contract) controller.getTo();
+		if( (contract.getActivity()==null || contract.getActivity().getId()==null) 
+				&& (contract.getEnterpriseCCC()==null || contract.getEnterpriseCCC().getId()==null) ){
+			controller.setRetaQuote(true);
+		} else {
+			controller.setRetaQuote(false);
+			ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+			contrataController.initialize((Contract) controller.getTo());
+			contrataController.onContrataDataShow(null);
+			
+			CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
+			certificadosController.initialize((Contract) controller.getTo());
+			
+			ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean("contractClauses");
+			clausesController.onAdditionalClausesShow(null);
+			
+			try {
+				ContractUtils utils = ContractUtils.getInstance();
+				utils.loadContractData((Contract) controller.getTo(), controller.getParams());
+				controller.setAgreement(utils.obtainAgreement((Contract) controller.getTo()));
+			} catch (ManagerBeanException e) {
+				String msg = "Error loading contract data";
+				LOGGER.error(msg);
+			}
 		}
 		
 	}
@@ -103,6 +123,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setActivities(null);
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
+		controller.setRetaQuote(false);
 		contract.setStartDate(new Date());
 		contract.setSeniorityDate(contract.getStartDate());
 		try {

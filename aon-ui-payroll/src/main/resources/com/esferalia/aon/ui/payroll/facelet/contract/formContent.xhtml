@@ -17,6 +17,13 @@
 				<ui:param name="idRequired" value="#{true}" />
 				<ui:param name="lookupDisabled" value="#{false}" />
 			</ui:include>
+			
+			<aon:outputLabel for="contract-retaQuote" 
+				value="Cotizacion R.E.T.A." />
+			<aon:selectBooleanCheckbox id="contract-retaQuote"
+				value="#{contract.retaQuote}" >
+				<a4j:support event="onclick" reRender="contract_panel" ajaxSingle="#{true}" />
+			</aon:selectBooleanCheckbox>	
 		</c:if>
 
 		<aon:outputLabel for="workPlace" 
@@ -28,6 +35,7 @@
 			<a4j:support event="onchange" actionListener="#{contract.onWorkPlaceChanged}" ajaxSingle="true" reRender="contract_panel" />
 		</aon:selectOneMenu>
 		
+<c:if test="#{!contract.retaQuote}">
 		<aon:outputLabel for="enterpriseActivities" value="#{bundle.aon_activity}" 
 			style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:selectOneMenu id="enterpriseActivities" 
@@ -79,6 +87,7 @@
 				<f:selectItems value="#{contract.contractModel}" />
 			</aon:selectOneMenu>
 		</aon:div>
+</c:if>
 		
 		<aon:outputLabel for="Contract_startDate" value="#{bundle.aon_start_date}" />
 		<aon:div>
@@ -155,6 +164,7 @@
 				</aon:panelGroup>
 			</aon:panelGrid>
 		
+<c:if test="#{!contract.retaQuote}">
 			<aon:outputLabel for="quote_group"
 				value="#{bundle.payroll_contract_quote_group}" />
 			<aon:selectOneMenu id="quote_group"  
@@ -170,8 +180,10 @@
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.occupationTypes}" />
 			</aon:selectOneMenu>
+</c:if>
 		</c:if>
-		
+
+<c:if test="#{!contract.retaQuote}">
 		<c:if test="#{!contract.trainingContract}" >
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.params.cno}" />
@@ -220,6 +232,7 @@
 			<aon:inputText id="Contract_trainingSchedule" maxlength="25" size="32"
 				value="#{contract.params.trainingSchedule}" />
 		</c:if>
+</c:if>		
 		
 	</aon:panelGrid>
 

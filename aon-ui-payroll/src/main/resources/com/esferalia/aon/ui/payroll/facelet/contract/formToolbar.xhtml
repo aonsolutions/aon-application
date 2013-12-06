@@ -34,7 +34,8 @@
 -->		
 		
 		<ui:define name="moreMenuContent">
-			
+
+<c:if test="#{!contract.retaQuote}">
 			<aon:menuItem id="document-issue" 
 				value="#{bundle.payroll_contract_generate_document}"
 				rendered="#{!contract.new}"
@@ -159,6 +160,7 @@
 						target="#{contractCertificados.showCommunicationWindow}" value="#{true}" />
 				</aon:menuItem>
 			</c:if>
+</c:if>			
 			
 			<c:if test="#{actionDenied.moduleEnabled['payroll']}">
 				<rich:menuSeparator id="payrollSeparator" />

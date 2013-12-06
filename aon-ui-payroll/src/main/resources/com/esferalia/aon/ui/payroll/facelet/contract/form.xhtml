@@ -32,6 +32,11 @@
 							value="#{contract.to.sepeStatus}" />
 							
 					</aon:panelGrid>
+					
+					<aon:panel style="width:875px;" rendered="#{contract.retaQuote}">
+						<aon:outputText value="Cotizacion R.E.T.A."
+							styleClass="aon-bold" />
+					</aon:panel>
 				
 					<aon:panelTabSet id="contract-panelTab" selectedTab="#{contract.selectedTab}" 
 						switchType="ajax" immediate="true">
@@ -59,7 +64,7 @@
 								</aon:panel>
 							</c:if>
 						</aon:panelTab>
-
+<c:if test="#{!contract.retaQuote}">
 						<aon:panelTab id="contrataData" label="#{bundle.sepe_contrata_contract_specific_data}">
 							<c:if test="#{contractContrata.enabledContrataEdition}">
 								<aon:div style="width:850px;">
@@ -79,6 +84,7 @@
 									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/additionalClauses/form.xhtml" />
 							</aon:panelTab>
 						</c:if>
+</c:if>
 
 						<aon:panelTab id="attachData"  
 							label="#{bundle.aon_documents}">

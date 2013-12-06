@@ -104,13 +104,19 @@ public class ContractController extends BasicController {
 	private boolean showContractBonusWindow;
 	private boolean showContractSalaryInfoWindow;
 	
-	
+	private boolean retaQuote;
 	
 	public SalaryInfoHandler getSalaryInfoHandler() {
 		return salaryInfoHandler;
 	}
 	public void setSalaryInfoHandler(SalaryInfoHandler salaryInfoHandler) {
 		this.salaryInfoHandler = salaryInfoHandler;
+	}
+	public boolean isRetaQuote() {
+		return retaQuote;
+	}
+	public void setRetaQuote(boolean retaQuote) {
+		this.retaQuote = retaQuote;
 	}
 	public ContractParams getParams() {
 		if(params==null){
