@@ -118,6 +118,18 @@ public class ContractController extends BasicController {
 	public void setRetaQuote(boolean retaQuote) {
 		this.retaQuote = retaQuote;
 	}
+	public boolean isRowContractRetaQuote() {
+		try {
+			Contract contract = (Contract) getModel().getRowData();
+			if( contract!=null && (contract.getActivity()==null || contract.getActivity().getId()==null) 
+					&& (contract.getEnterpriseCCC()==null || contract.getEnterpriseCCC().getId()==null) ){
+				return true;
+			}
+		} catch (ManagerBeanException e) {
+			return false;
+		}
+		return false;
+	}
 	public ContractParams getParams() {
 		if(params==null){
 			params = new ContractParams();

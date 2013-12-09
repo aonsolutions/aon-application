@@ -19,7 +19,7 @@
 			</ui:include>
 			
 			<aon:outputLabel for="contract-retaQuote" 
-				value="Cotizacion R.E.T.A." />
+				value="Cotización R.E.T.A." />
 			<aon:selectBooleanCheckbox id="contract-retaQuote"
 				value="#{contract.retaQuote}" >
 				<a4j:support event="onclick" reRender="contract_panel" ajaxSingle="#{true}" />
@@ -61,9 +61,11 @@
 				rendered="#{not (fn:length(contract.activities) > 0)}"
 				value=" (#{contract.to.enterpriseCCC.fullCcc})" />
 		</aon:div>
+</c:if>
 		
 		<aon:outputLabel for="Contract_contractCode"
-			value="#{bundle.payroll_contract_contract_code}" />
+			value="#{bundle.payroll_contract_contract_type}" />
+<c:if test="#{!contract.retaQuote}">
 		<aon:selectOneMenu id="Contract_contractCode" required="true" 
 			rendered="#{contract.new or !contract.unsuportedContract}"
 			value="#{contract.params.contractCode}">
@@ -76,7 +78,13 @@
 			<aon:outputText value=" - " />
 			<aon:outputText value="#{contract.params.contractCode}" />
 		</aon:panelGroup>
+</c:if>
+		<aon:div rendered="#{contract.retaQuote}">
+			<aon:outputText value="R.E.T.A. - Régimen especial de trabajadores autónomos"
+				styleClass="aon-bold" />
+		</aon:div>
 		
+<c:if test="#{!contract.retaQuote}">
 		<aon:outputLabel for="Contract_contractModel"
 			value="#{bundle.payroll_contract_contract_model}" />
 		<aon:div id="Contract_contractModelDiv">
