@@ -2,8 +2,8 @@
 
 	
 <br />
-<b>$!company.getName()</b> -
-<b>d.</b><i> $!address.getAddress() $!address.getAddress2() $!add.getAddress3() - $!address.getZip() - $!address.getCity() - $!address.getGeozone().getName()</i> -
+<b>$!company_name</b> -
+<b>d.</b><i> $!address.getFullAddress() - $!address.getZip() - $esc.html($!address.getCity()) - $!address.getGeozone().getName()</i> -
 <b>t.</b> $!phone - <b>e.</b> <a href="mailto:$!email">$!email</a>
 </br>
 

@@ -1,7 +1,7 @@
 <div class="footer">
 	<div class="left_footer">
-		<div class="copiesferalia"><br> $!company.getName() 
-$!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.getZip() $!address.getCity() $!address.getGeozone().getName() 
+		<div class="copiesferalia"><br> $!company_name 
+$!address.getFullAddress() $!address.getZip() $esc.html($!address.getCity()) $!address.getGeozone().getName() 
 $!phone <a href="mailto:$!email">$!email</a></br></div>
 	</div>
 

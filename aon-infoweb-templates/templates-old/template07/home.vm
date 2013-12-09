@@ -2,19 +2,19 @@
 			<table cellpadding="10" cellspacing="5" border="0">
 <tr>
 	<td valign="top" width="180">
-		<p align="justify"><strong>$!company.getName()</strong></p>
+		<p align="justify"><strong>$!company_name</strong></p>
 		
-<br>$!address.getAddress() $!address.getAddress2() $!add.getAddress3()</br> 
+<br>$esc.html($!address.getFullAddress())</br> 
 	 #if ($address.getZip()&& !$address.getZip().toString().trim().equals(""))
-		<br>C.P. $!address.getZip()</br>
+		<br>C.P. $esc.html($!address.getZip())</br>
 	 #end
 
 	 #if ($address.getCity()&& !$address.getCity().toString().trim().equals(""))
-		<br>$!address.getCity()</br>
+		<br>$esc.html($!address.getCity())</br>
 	 #end
 
 	 #if ($address.getGeozone().getName()&& !$address.getGeozone().getName().toString().trim().equals(""))
-		<br>( $!address.getGeozone().getName() )</br>
+		<br>( $esc.html($!address.getGeozone().getName()) )</br>
 	 #end
 
 	 #if ($phone && !$phone.toString().trim().equals(""))

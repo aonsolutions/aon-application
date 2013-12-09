@@ -1,8 +1,6 @@
 
-<!--<h1 >$generic.getTitle()</h1>-->
-
 <div id="content">	
-<div align="right"><h1>$pagename</h1></div>
+<div align="right"><h3>$pagename</h3></div>
 <p></p>
 <table>
   <tr>

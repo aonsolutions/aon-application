@@ -14,7 +14,7 @@ h1 { font-size:16pt;
 	text-align: left; 
 	margin: 0 0 0.7em 0; 
 	padding: 0 0 0.2em 0;
-	color:${color_color_texto_slogan};
+	color:${color_color_texto_titulo};
 }
 	
 h1 sup { 
@@ -32,7 +32,8 @@ h3{
 	text-align: right; 
 	margin: 0 0 0.7em 0; 
 	padding: 0 0 0.2em 0;
-	color:${color_color_texto_titulo};}
+	color:${color_color_texto_titulo};
+}
 	
 a { 
 	font-weight: bold; 
@@ -199,4 +200,9 @@ a.thumb object {
 	font-size: 9px;
 	color:${color_color_texto_pie};
 	text-decoration:underline;
+}
+.slogan {
+	color: ${color_color_texto_slogan};
+	font-size:1.17em;
+	text-align:right;
 }

@@ -2,11 +2,11 @@
 			<table cellpadding="15" cellspacing="15" border="0" id="content">
 <tr>
 	<td style="text-align: left;" width="30%">
-		<p><strong>$!company.getName() </strong></p>
+		<p><strong>$!company_name </strong></p>
 		<!-- <p>Pintor Vicente Abreu 7 Bajo  </p>
 		<p>01008 Vitoria (ALAVA)</p> -->
 
-$!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.getZip() $!address.getCity() $!address.getGeozone().getName()
+$esc.html($!address.getFullAddress()) $esc.html($!address.getZip()) $esc.html($!address.getCity()) $esc.html($!address.getGeozone().getName())
 
 		<p>Tel: $!phone</p>
 

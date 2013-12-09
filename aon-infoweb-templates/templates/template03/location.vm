@@ -2,19 +2,19 @@
 	<table cellpadding="10" cellspacing="5" border="0">
 		<tr>
 			<td valign=top width="220">
-			<p align="justify"><strong>$!company.getName()</strong></p>
-			<br>$!address.getAddress() $!address.getAddress2() $!add.getAddress3()</br> 
+			<p align="justify"><strong>$!company_name</strong></p>
+			<br>$esc.html($!address.getFullAddress())</br> 
 
 				 #if ($address.getZip()&& !$address.getZip().toString().trim().equals(""))
-		<br>C.P. $!address.getZip()</br>
+		<br>C.P. $esc.html($!address.getZip())</br>
 	 #end
 
 	 #if ($address.getCity()&& !$address.getCity().toString().trim().equals(""))
-		<br>$!address.getCity()</br>
+		<br>$esc.html($!address.getCity())</br>
 	 #end
 
 	 #if ($address.getGeozone().getName()&& !$address.getGeozone().getName().toString().trim().equals(""))
-		<br>( $!address.getGeozone().getName() )</br>
+		<br>( $esc.html($!address.getGeozone().getName()) )</br>
 	 #end
 
 	 #if ($phone && !$phone.toString().trim().equals(""))
@@ -29,11 +29,11 @@
 			
 			<td valign=top>
 			#if ($coords.toString().trim().equals(""))
-				<iframe frameborder="0" width="320px" height="200px" src="http://www.aonsolutions.es/maps/index.php?dir=$!address.getAddress() $!address.getAddress2() $!address.getAddress3() $!address.getZip() $!address.getCity() $!address.getGeozone().getName() SPAIN"></iframe>
+				<iframe frameborder="0" width="320px" height="200px" src="http://www.aonsolutions.es/maps/index.php?dir=$!address.getFullAddress() $!address.getZip() $!address.getCity() $!address.getGeozone().getName() SPAIN"></iframe>
 			#else
 				<iframe frameborder="0" width="320px" height="200px" src="http://www.aonsolutions.es/maps/index.php?coords=$!coords"></iframe>
 			#end
-			<br><a href="http://maps.google.com/maps?f=q&source=s_q&hl=es&geocode=&q=$!address.getAddress() $!address.getAddress2(),$!address.getCity() ,$!address.getGeozone().getName()&sll=$!coords&sspn=0.00634,0.013947&ie=UTF8&ll=$!coords&spn=0.006159,0.013947&z=17&iwloc=A" target="_blank">Ver en Google Maps</a>
+			<br><a href="http://maps.google.com/maps?f=q&source=s_q&hl=es&geocode=&q=$!address.getFullAddress(),$!address.getCity() ,$!address.getGeozone().getName()&sll=$!coords&sspn=0.00634,0.013947&ie=UTF8&ll=$!coords&spn=0.006159,0.013947&z=17&iwloc=A" target="_blank">Ver en Google Maps</a>
  			</td>
 		</tr>
 		<tr>
@@ -68,16 +68,16 @@
 		<tr>
 			<td>
 				<div class="title"></div>
-				<p>$!add.getAddress() $!add.getAddress2() $!add.getAddress3()</p>
-				<p>$!add.getZip() $!add.getCity() ($!add.getGeozone().getName())</p>
+				<p>$esc.html($!add.getFullAddress())</p>
+				<p>$esc.html($!add.getZip()) $esc.html($!add.getCity()) ($esc.html($!add.getGeozone().getName()))</p>				
 			</td>
 			<td>
 				#if ($coords.toString().trim().equals(""))
-					<iframe frameborder="0" width="320px" height="200px" src="http://www.aonsolutions.es/maps/index.php?dir=$!add.getAddress() $!add.getAddress2() $!add.getAddress3() $!add.getZip() $!add.getCity() $!add.getGeozone().getName() SPAIN"></iframe>
+					<iframe frameborder="0" width="320px" height="200px" src="http://www.aonsolutions.es/maps/index.php?dir=$!add.getFullAddress() $!add.getZip() $!add.getCity() $!add.getGeozone().getName() SPAIN"></iframe>
 				#else
 					<iframe frameborder="0" width="320px" height="200px" src="http://www.aonsolutions.es/maps/index.php?coords=$!coords"></iframe>
 				#end
-			       <br><a href="http://maps.google.com/maps?f=q&source=s_q&hl=es&geocode=&q=$!add.getAddress() $!add.getAddress2(),$!add.getCity() ,$!add.getGeozone().getName()&sspn=0.00634,0.013947&ie=UTF8&spn=0.006159,0.013947&z=17&iwloc=A" target="_blank">Ver en Google Maps</a>
+			       <br><a href="http://maps.google.com/maps?f=q&source=s_q&hl=es&geocode=&q=$!add.getFullAddress(),$!add.getCity() ,$!add.getGeozone().getName()&sspn=0.00634,0.013947&ie=UTF8&spn=0.006159,0.013947&z=17&iwloc=A" target="_blank">Ver en Google Maps</a>
 
  			</td>
 		</tr>

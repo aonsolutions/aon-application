@@ -1,6 +1,6 @@
 <div id="ft">
-	<div class="copiesferalia"><br> $!company.getName() 
-$!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.getZip() $!address.getCity() $!address.getGeozone().getName() 
+	<div class="copiesferalia"><br> $!company_name 
+$esc.html($!address.getFullAddress()) $esc.html($!address.getZip()) $esc.html($!address.getCity()) $esc.html($!address.getGeozone().getName()) 
 $!phone <a href="mailto:$!email">$!email</a></br>
 
 <!--<br>Desarrollado con aon Solutions<sup>&reg;</sup>

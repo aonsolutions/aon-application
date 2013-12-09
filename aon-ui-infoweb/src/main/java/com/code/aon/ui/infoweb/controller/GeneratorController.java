@@ -22,6 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.velocity.tools.generic.EscapeTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,6 +154,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			
 			HibernateUtil.setCloseSession(false);
 			vu = new VelocityUtil();
+			vu.put("esc", new EscapeTool());
 			//Añadimos al contexto todo lo necesario para las paginas
 			
 			String template = getTemplate();
@@ -308,7 +310,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		if (wip.getType() != WebInfoPageType.LOCATION) {
 			template = "generic" + wipd.getLayout().ordinal() + ".vm";
 		}
-		vu.put(TITLE_KEY, wipd.getTitle());
+		vu.put(TITLE_KEY, wipd.getEscapedTtle());
 		vu.put(TEXT_KEY, wipd.getContent());
 		if (wip.getType() == WebInfoPageType.LOCATION) {
 			//Primero miramos si el extra tiene |
@@ -544,6 +546,10 @@ public class GeneratorController extends BasicController implements VelocityCons
 		 * 		}
 		 */		
 		LOGGER.info( "Adding WebInfo attributes to the context" );
+		String name = company.getName();
+		if (! StringUtils.isBlank(name) ) {
+			vu.put(COMPANY_NAME_KEY, StringEscapeUtils.escapeHtml(name));
+		}
 		IManagerBean webinfoBean = BeanManager.getManagerBean(WebInfo.class);
 		Criteria webinfoCriteria = new Criteria();
 		webinfoCriteria.addEqualExpression(webinfoBean.getFieldName(IEntityAlias.WEB_INFO_COMPANY_ID), company.getId());
@@ -556,11 +562,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 			}
 			String slogan = wi.getSlogan();
 			if (! StringUtils.isBlank(slogan) ) {
-				vu.put(SLOGAN_KEY, slogan);
+				vu.put(SLOGAN_KEY, StringEscapeUtils.escapeHtml(slogan));
 			}
 			String schedule = wi.getSchedule();
 			if (! StringUtils.isBlank(schedule) ) {
-				vu.put(SCHEDULE_KEY, schedule);
+				vu.put(SCHEDULE_KEY, StringEscapeUtils.escapeHtml(schedule));
 			}
 		}		
 	}

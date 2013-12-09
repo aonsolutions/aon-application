@@ -2,8 +2,8 @@
 			<table cellpadding="15" cellspacing="15" border="0">
 <tr>
 	<td style="text-align: left;" width="30%">
-		<div class="title2"><p>$!company.getName() </p></div><p></p>
-$!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.getZip() $!address.getCity() $!address.getGeozone().getName()
+		<div class="title2"><p>$!company_name </p></div><p></p>
+$esc.html($!address.getFullAddress()) $esc.html($!address.getZip()) $esc.html($!address.getCity()) $esc.html($!address.getGeozone().getName())
 		<p>Tel: $!phone</p>
 
 	 #if ($fax && !$fax.toString().trim().equals(""))

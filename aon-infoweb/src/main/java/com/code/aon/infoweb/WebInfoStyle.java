@@ -2,6 +2,10 @@ package com.code.aon.infoweb;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 
 import com.esferalia.aon.entity.master.WebInfoStyleDB;
 
@@ -10,5 +14,14 @@ import com.esferalia.aon.entity.master.WebInfoStyleDB;
 public class WebInfoStyle extends WebInfoStyleDB {
 	
 	private static final long serialVersionUID = 1L;
+	
+    @Transient
+	public String getName() {
+    	String text = getVariable();
+    	text = StringUtils.substringAfter(text, "_");
+    	text = StringUtils.substringAfter(text, "_");
+    	text = StringUtils.replace(text, "_", " ");
+		return WordUtils.capitalizeFully(text);
+    }		
 	
 }

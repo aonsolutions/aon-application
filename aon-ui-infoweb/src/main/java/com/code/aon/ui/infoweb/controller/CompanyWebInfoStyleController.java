@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -106,7 +108,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 		List<SelectItem> pages = new LinkedList<SelectItem>();
 		IManagerBean pageBean = BeanManager.getManagerBean(WebInfoPage.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(pageBean.getFieldName(IEntityAlias.WEB_INFO_PAGE_ACTIVE), true);
+		criteria.addEqualExpression(pageBean.getFieldName(IEntityAlias.WEB_INFO_PAGE_ACTIVE), Boolean.TRUE);
 		criteria.addOrder(pageBean.getFieldName(IEntityAlias.WEB_INFO_PAGE_POSITION));
 		List<ITransferObject> list = (List<ITransferObject>)pageBean.getList(criteria);
 		int default_id = 0;
@@ -121,9 +123,21 @@ public class CompanyWebInfoStyleController extends BasicController {
 		}
 		return pages;
 	}
+	
+    private void sortVariables( List<WebInfoStyle> list ) {
+    	Comparator<WebInfoStyle> comparator = new Comparator<WebInfoStyle>() {
 
-	public void chargeValues() {
-		List<ITransferObject> vars = new ArrayList<ITransferObject>();
+			@Override
+			public int compare(WebInfoStyle wis1, WebInfoStyle wis2) {
+				return wis1.getName().compareTo(wis2.getName());
+			}
+    		
+		};
+    	Collections.sort( list, comparator );
+    }
+
+	private void chargeValues() {
+		List<WebInfoStyle> vars = new ArrayList<WebInfoStyle>();
 		Map<String,String> varMap = parseTemplateStyle();
 
 		try {
@@ -146,6 +160,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 				}
 				vars.add(wis);
 			}
+			sortVariables(vars);
 			model = new ListDataModel(vars);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
@@ -171,7 +186,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 			    	}
 			    	line = br.readLine();
 			    }
-			
+			    br.close();
 			} catch (FileNotFoundException e) {
 				LOGGER.error( e.getMessage(), e );
 			} catch (IOException e) {
@@ -232,20 +247,14 @@ public class CompanyWebInfoStyleController extends BasicController {
 	
 	public String getToVariableName() {
 		WebInfoStyle style = (WebInfoStyle)getTo();
-		return getVariableName(style.getVariable());
+		return style.getName();
 	}
 	
     public String getRowVariableName() {
 		WebInfoStyle style = (WebInfoStyle)this.model.getRowData();
-		return getVariableName(style.getVariable());
+		return style.getName();
     }
 
-    public String getVariableName(String text) {
-		text = text.substring(text.indexOf('_')+1);
-		text = text.replaceAll("_", " ");
-		return text;
-    }
-    
     public WebInfoVariableType getRowVariableType() {
     	try {
 	    	if ( getModel().isRowAvailable() ) {

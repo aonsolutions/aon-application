@@ -1,16 +1,16 @@
 <div id="footer">
-	<div class="copiesferalia"><br> <b>$!company.getName()</b> - 
-<b>d.</b><i>$!address.getAddress() $!address.getAddress2() $!add.getAddress3() 
+	<div class="copiesferalia"><br> <b>$!company_name</b> - 
+<b>d.</b><i>$esc.html($!address.getFullAddress()) 
 	 #if ($address.getZip()&& !$address.getZip().toString().trim().equals(""))
-		- $!address.getZip()
+		- $esc.html($!address.getZip())
 	 #end
 
 	 #if ($address.getCity()&& !$address.getCity().toString().trim().equals(""))
-		 $!address.getCity()
+		 $esc.html($!address.getCity())
 	 #end
 
 	 #if ($address.getGeozone().getName()&& !$address.getGeozone().getName().toString().trim().equals(""))
-		( $!address.getGeozone().getName() )
+		( $esc.html($!address.getGeozone().getName()) )
 	 #end
 </i>
 	 #if ($phone && !$phone.toString().trim().equals(""))

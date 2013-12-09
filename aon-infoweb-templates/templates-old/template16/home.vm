@@ -3,9 +3,9 @@
 			<table cellpadding="10" cellspacing="0" border="0">
 <tr>
 	<td>
-		<h2>$!company.getName() </h2>
+		<h2>$!company_name </h2>
 
-$!address.getAddress() $!address.getAddress2() $!add.getAddress3() $!address.getZip() $!address.getCity() $!address.getGeozone().getName()
+$esc.html($!address.getFullAddress()) $esc.html($!address.getZip()) $esc.html($!address.getCity()) $esc.html($!address.getGeozone().getName())
 
 
 		<p>Tel: $!phone</p>

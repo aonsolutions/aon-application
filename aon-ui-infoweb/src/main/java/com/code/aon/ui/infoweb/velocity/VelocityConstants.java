@@ -51,7 +51,8 @@ public interface VelocityConstants {
 	TITLE_KEY					= "title",
 	CONTENT_KEY					= "content",
 	COMPANY_KEY					= "company",
-	CURRENT_YEAR_KEY			= "currentYear";
+	CURRENT_YEAR_KEY			= "currentYear",
+	COMPANY_NAME_KEY			= "company_name";
 
 	//TEMPLATES
 	String INDEX_TEMPLATE		= "index.vm";	

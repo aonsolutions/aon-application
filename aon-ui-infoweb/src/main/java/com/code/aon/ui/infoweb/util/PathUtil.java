@@ -2,10 +2,21 @@ package com.code.aon.ui.infoweb.util;
 
 import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Domain;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class PathUtil implements VelocityConstants {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(PathUtil.class.getName());
 
 	public static File getTemplatesPath() {
 		return new File( TEMPLATE_PATH );
@@ -30,9 +41,21 @@ public class PathUtil implements VelocityConstants {
 	public static File getTempPath() {
 		return new File( TMP_PATH );
 	}
+
+	private static String getDomainName() {
+		DomainSwitcher dw = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+			Domain domain = (Domain) bean.get(dw.getDomainId());
+			return domain.getName();
+		} catch ( ManagerBeanException e ) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return AonUtil.getAuthPrincipal().getDomain();
+	}
 	
 	public static File getPreviewPath() {
-		String domain = AonUtil.getAuthPrincipal().getDomain();
+		String domain = getDomainName();
 		return new File( getTempPath(), PREVIEW_PREFIX + domain );
 	}
 	

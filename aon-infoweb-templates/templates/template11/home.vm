@@ -2,11 +2,11 @@
 			<table cellpadding="10" cellspacing="0" border="0" class="info">
 <tr>
 	<td width="320">
-		<p><strong>$!company.getName()</strong></p>
+		<p><strong>$!company_name</strong></p>
 
-<br>$!address.getAddress() $!address.getAddress2() $!add.getAddress3() </br>
-<br>$!address.getZip()  </br>
-<br>$!address.getCity()   ($!address.getGeozone().getName())</br>
+<br>$esc.html($!address.getFullAddress()) </br>
+<br>$esc.html($!address.getZip())  </br>
+<br>$esc.html($!address.getCity())   ($esc.html($!address.getGeozone().getName()))</br>
 
 
 		<p>Tel: $!phone</p>
