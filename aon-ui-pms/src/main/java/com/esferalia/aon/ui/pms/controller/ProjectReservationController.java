@@ -290,7 +290,7 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public boolean isEarlyCheckOut() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)getTo();
-		if (reservation.isInvoiced()) {
+		if (reservation.isInvoiced() && !reservation.isNoShow()) {
 			IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
 			Criteria criteria = new Criteria();
 			String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID);
