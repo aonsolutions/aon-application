@@ -155,10 +155,13 @@ public class DomainController extends BasicController {
 	}
 
 	public void onInit( ActionEvent event ) {
-		initDomainApplication();
 		getAdmin().resetTermsOfServiceAccepted();
 		try {
-			select(event, getDomain().getId());			
+			select(event, DomainManager.getCurrentDomain());
+			initDomainApplication();
+			initApplicationInfos();
+			initOEM();
+			updateDocumental();			
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				

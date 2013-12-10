@@ -7,11 +7,7 @@ import java.util.Properties;
 
 import javax.faces.event.ActionEvent;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.User;
@@ -25,8 +21,6 @@ import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.SignatureDBController;
 
 public class AdminMainController implements IAdminConstants {
-	
-	private final static Logger LOGGER = LoggerFactory.getLogger(AdminMainController.class);
 	
 	public static final String PROPERTIES_PATH = "/com/code/aon/ui/admin/";
 	
@@ -47,10 +41,6 @@ public class AdminMainController implements IAdminConstants {
 	public AdminMainController() {
 		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
 		this.logger = new ManagerLogger( this.properties.getProperty(NOTIFICATION_EMAIL) );
-	}
-	
-	public void onInit( ActionEvent event ) {
-		initDomain(event);
 	}
 	
 	public Properties getProperties() {
@@ -102,20 +92,6 @@ public class AdminMainController implements IAdminConstants {
 		_password = null;
 	}
 	
-	private void initDomain( ActionEvent event ) {
-		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-		try {
-			if ( controller.getTo() == null ) {
-				controller.select(event, DomainManager.getCurrentDomain());	
-			}
-			controller.initApplicationInfos();
-			controller.initOEM();
-			controller.updateDocumental();
-		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
-		}				
-	}
-
 	private void initSignature( User user ) throws ManagerBeanException {
 		SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_SIGNATURE_DB);
 		signature.updateUser(user);

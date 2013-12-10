@@ -114,11 +114,8 @@ public class PortalAccessController implements IAdminConstants {
 				throw new AbortProcessingException( message );
 			}		
 	        this.user.setPassword( AdminUtil.encodeSHA(newPassword) );
-	        this.user.setPasswordExpiration( DateUtils.addDays(new Date(), 180) );			
-			this.user.setInitAction(PAYROLL_PORTAL_OPTION);
-			this.user.setEnterprise(getEnterpriseId());
-			IManagerBean bean = BeanManager.getManagerBean(User.class);
-			bean.insertOrUpdate(this.user);
+	        this.user.setPasswordExpiration( DateUtils.addDays(new Date(), 180) );
+	        updateUser();
 			DomainApplication domainApplication = getDomainApplication();
 			if ( domainApplication != null ) {
 				ApplicationUser appUser = ensureApplicationUser(user, domainApplication);	
@@ -130,6 +127,13 @@ public class PortalAccessController implements IAdminConstants {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		getIdCheck().setOldValue( getUser().getLogin() );
+	}
+	
+	private void updateUser() throws ManagerBeanException {
+		this.user.setInitAction(PAYROLL_PORTAL_OPTION);
+		this.user.setEnterprise(getEnterpriseId());
+		IManagerBean bean = BeanManager.getManagerBean(User.class);
+		bean.insertOrUpdate(this.user);
 	}
 	
 	public void onRemove(ActionEvent event) {
@@ -219,8 +223,7 @@ public class PortalAccessController implements IAdminConstants {
 			ApplicationUserProfile aup = (ApplicationUserProfile) to;
 			if ( aup.getProfile().equals(payrollPortalProfile) ) {
 				profileExists = true;
-			} else {
-				bean.remove(aup);
+				break;
 			}
 		}
 		if (! profileExists) {
@@ -230,5 +233,16 @@ public class PortalAccessController implements IAdminConstants {
 			bean.insert(aup);
 		}
 	}
+
+	public void onResetPassword( ActionEvent event ) {
+		try {
+			DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_USER_CONTROLLER_NAME);
+			duc.resetPassword( user );
+			updateUser();
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("Error cambiando la contraseña" );
+		}		
+	}	
 	
 }

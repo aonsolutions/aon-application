@@ -20,7 +20,7 @@
 					<aon:commandButton id="resetPassword"
 						value="#{bundle.admin_reset_password}"
 						actionListener="#{domainUser.onResetPassword}" immediate="true"
-						rendered="#{!domainUser.new}" reRender="passwordChangedWindow"
+						rendered="#{!domainUser.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-utilities">
 						<aon:actionListener method="#{saveActionListener}" />
 					</aon:commandButton>				

@@ -35,6 +35,16 @@ public class LinesController extends BasicController {
 
 	/** cascade delete. */
 	private boolean cascadeDelete;
+	
+	private boolean lazyInitialization;
+	
+	public boolean isLazyInitialization() {
+		return lazyInitialization;
+	}
+
+	public void setLazyInitialization(boolean lazyInitialization) {
+		this.lazyInitialization = lazyInitialization;
+	}
 
 	@Override
 	protected int getDefaultPageLimit() {

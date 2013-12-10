@@ -31,6 +31,12 @@
 						confirmAction="portalAccess_form"
 						confirmActionListener="#{portalAccess.onRemove}"
 						accesskey="#{bundle.aon_key_remove}" />
+					<aon:commandButton id="resetPassword"
+						value="#{bundle.admin_reset_password}"
+						action="portalAccess_form"
+						actionListener="#{portalAccess.onResetPassword}" immediate="true"
+						rendered="#{portalAccess.user.id != null}"
+						styleClass="aon-finding-toolbar-item aon-icon-utilities" />						
 				</ui:define>				
 			</ui:decorate>
 

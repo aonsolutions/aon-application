@@ -63,7 +63,8 @@
 											action="companyImages" 
 											actionListener="#{companyWebInfo.onInit}"
 											value="#{bundle.company_images_module}">
-											<aon:actionListener method="#{companyImages.onCancel}" />
+											<aon:actionListener method="#{companyImages.onEditSearch}" />
+											<aon:actionListener method="#{companyImages.onSearch}" />
 										</aon:commandLink>
 									</aon:div>
 								</c:if>

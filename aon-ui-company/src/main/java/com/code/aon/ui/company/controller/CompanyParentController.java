@@ -376,7 +376,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	/**
 	 * On load.
 	 */
-	private void onLoad( boolean activeListeners ) {
+	public void onLoad( boolean activeListeners ) {
 		try {
 			if ( activeListeners && (listenerClasses != null) ) {
 				addListeners(listenerClasses);
@@ -777,24 +777,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	public void setCustomReportTemplate(boolean customReportTemplate) {
 		this.customReportTemplate = customReportTemplate;
 	}
-
-	/**
-	 * Gets the child bean.
-	 * 
-	 * @return the child bean
-	 */
-	public String getChildBean() {
-		return ICompanyConstants.COMPANY_ADDRESS_CONTROLLER_NAME;
-	}
-
-	/**
-	 * Gets the master field name.
-	 * 
-	 * @return the master field name
-	 */
-	public String getMasterFieldName(){
-		return IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID;
-	}
 	
 	public void setHideHeaderContent( boolean value ) {
 		ConfigurationController cc = AonUtil.getConfigurationController();
@@ -807,14 +789,6 @@ public class CompanyParentController extends BasicController implements ICompany
 			}			
 		}
 	}
-
-	public boolean isHideHeaderContent() {
-		if ( getTo() == null ) {
-			this.onLoad(false);
-		}
-		setHideHeaderContent(isNew());
-		return isNew();
-	}	
 
 	public boolean obtainPrintHeader() throws ManagerBeanException { 
 		return AppParamUtil.getValueAsBoolean(APP_PRINT_HEADER_PARAM);

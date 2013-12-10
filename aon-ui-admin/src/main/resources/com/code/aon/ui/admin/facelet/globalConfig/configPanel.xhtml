@@ -23,7 +23,7 @@
 							<aon:commandLink id="company" 
 								reRender="configPanelBar,configContent"
 								action="globalConfig_form"
-								value="#{bundle.company_data_module}" />
+								value="#{bundle.admin_global_general_data}" />
 						</aon:div>
 						<aon:div styleClass="aon-direct-access-list-element">
 							<aon:commandLink id="banks" 
@@ -113,7 +113,7 @@
 							<aon:commandLink id="printParameters" 
 								reRender="configPanelBar,configContent"
 								action="globalConfig_form"
-								value="#{bundle.admin_global_print_parameters}" />
+								value="#{bundle.admin_global_print_parameters_short}" />
 						</aon:div>
 						<c:if test="#{actionDenied.moduleEnabled['pos']}">
 							<aon:div styleClass="aon-direct-access-list-element">
@@ -121,7 +121,7 @@
 									reRender="configPanelBar,configContent"
 									action="globalConfig_form"
 									actionListener="#{posInvoiceParams.onInit}"
-									value="#{bundle.finance_posInvoice_params}" />
+									value="#{bundle.admin_global_finance_parameters_short}" />
 							</aon:div>
 						</c:if>
 						<c:if test="#{aonRole.config and (!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable)}">
@@ -130,14 +130,14 @@
 									reRender="configPanelBar,configContent"
 									action="globalConfig_form" 
 									actionListener="#{fiscalParams.onLoad}"
-									value="#{bundle.fiscal_parameters_module}" />
+									value="#{bundle.admin_global_fiscal_parameters_short}" />
 							</aon:div>
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="accountingParams"
 									reRender="configPanelBar,configContent"
 									action="globalConfig_form" 
 									actionListener="#{accAppParams.onLoad}"
-									value="#{bundle.accounting_default_params_module}" />
+									value="#{bundle.admin_global_accounting_parameters_short}" />
 							</aon:div>
 						</c:if>
 						<c:if test="#{actionDenied.moduleEnabled['payroll'] and aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData}">
@@ -146,7 +146,7 @@
 									reRender="configPanelBar,configContent"
 									action="globalConfig_form"
 									actionListener="#{globalConfig.onInitEnterprise}"
-									value="#{bundle.payroll_default_params_module}">
+									value="#{bundle.admin_global_payroll_parameters_short}">
 									<aon:actionListener method="#{payrollAppParams.onLoad}" />
 								</aon:commandLink>
 							</aon:div>
@@ -155,7 +155,7 @@
 									reRender="configPanelBar,configContent"
 									action="globalConfig_form"
 									actionListener="#{globalConfig.onInitEnterprise}"
-									value="#{bundle.admin_global_contract_parameters}">
+									value="#{bundle.admin_global_contract_parameters_short}">
 									<aon:actionListener method="#{enterpriseClauses.onCancel}" />
 								</aon:commandLink>
 							</aon:div>						
@@ -167,8 +167,9 @@
 					<aon:div styleClass="aon-direct-access-list-element">
 						<aon:commandLink id="domainUsers"
 							action="domainUser_list"
-							actionListener="#{adminMain.onInit}"
+							actionListener="#{globalConfig.onInitDomain}"
 							value="#{bundle.admin_users}" >
+							<aon:actionListener method="#{domainUser.onEditSearch}" />
 							<aon:actionListener method="#{domainUser.onSearch}" />
 						</aon:commandLink>						
 					</aon:div>					
@@ -176,8 +177,9 @@
 						<aon:div styleClass="aon-direct-access-list-element">
 							<aon:commandLink id="overloadUsers"
 								action="userOverload_list"
-								actionListener="#{adminMain.onInit}"
+								actionListener="#{globalConfig.onInitDomain}"
 								value="#{bundle.admin_overload_users}" >
+								<aon:actionListener method="#{userOverload.onEditSearch}" />
 								<aon:actionListener method="#{userOverload.onSearch}" />
 							</aon:commandLink>						
 						</aon:div>
@@ -192,7 +194,7 @@
 					<aon:div styleClass="aon-direct-access-list-element">
 						<aon:commandLink id="profiles"
 							action="domainApplicationProfile_list"
-							actionListener="#{adminMain.onInit}"
+							actionListener="#{globalConfig.onInitDomain}"
 							value="#{bundle.admin_profiles}" >
 							<aon:actionListener method="#{domainApplicationProfile.onInit}" />
 						</aon:commandLink>						
@@ -218,7 +220,7 @@
 						<aon:div styleClass="aon-direct-access-list-element">
 							<aon:commandLink id="domainApplications"
 								action="domainApplication_list"
-								actionListener="#{adminMain.onInit}"
+								actionListener="#{globalConfig.onInitDomain}"
 								value="#{bundle.audit_applications_module}" >
 								<aon:actionListener method="#{domainApplication.onSearch}" />
 							</aon:commandLink>						
@@ -231,14 +233,12 @@
 						<aon:div styleClass="aon-direct-access-list-element">
 							<aon:commandLink id="adminDomain"
 								action="adminDomain_form"
-								actionListener="#{adminMain.onInit}"
-								value="#{bundle.admin_domain_management}" >
-								<aon:actionListener method="#{adminDomain.onInit}" />							
-							</aon:commandLink>
+								actionListener="#{adminDomain.onInit}"
+								value="#{bundle.admin_domain_management}" />
 						</aon:div>
 					</c:if>
-					<c:if test="#{domainSwitcher.childDomain}">
-						<c:if test="#{actionDenied.moduleEnabled['payroll'] and aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData}">
+					<c:if test="#{domainSwitcher.parentDomainUserInChildDomain and globalConfig.payrollPortalRegistered}">
+						<c:if test="#{aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="portalAccess"
 									action="portalAccess_form"

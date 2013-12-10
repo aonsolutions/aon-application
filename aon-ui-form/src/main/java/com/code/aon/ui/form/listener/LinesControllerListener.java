@@ -11,7 +11,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
  * It handles the relation between master and child controllers.
  */
 public class LinesControllerListener extends MasterControllerListener {
-
+	
 	private boolean simultaneousEdition;
 
 	/**
@@ -31,9 +31,13 @@ public class LinesControllerListener extends MasterControllerListener {
 		return (LinesController) getDetailController();
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.listener.MasterControllerListener#afterBeanAdded(com.code.aon.ui.form.event.ControllerEvent)
-	 */
+	@Override
+	protected void initDetailModel( boolean reset ) {
+		if (! reset && !getLinesController().isLazyInitialization()) {
+			super.initDetailModel(reset);	
+		}
+	}
+
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		updateDetailCriteria( event.getController(), false );
@@ -53,9 +57,6 @@ public class LinesControllerListener extends MasterControllerListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.listener.MasterControllerListener#afterBeanCreated(com.code.aon.ui.form.event.ControllerEvent)
-	 */
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		getLinesController().initModel();
@@ -66,18 +67,12 @@ public class LinesControllerListener extends MasterControllerListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.listener.MasterControllerListener#afterBeanSelected(com.code.aon.ui.form.event.ControllerEvent)
-	 */
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		getLinesController().initModel();
 		super.afterBeanSelected(event);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanRemoved(com.code.aon.ui.form.event.ControllerEvent)
-	 */
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		try {		

@@ -22,7 +22,10 @@
 							value="#{bundle.aon_save}" reRender="aonHeader,aonContent"
 							action="home" actionListener="#{company.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}" />
+							accesskey="#{bundle.aon_key_save}" >
+							<f:setPropertyActionListener target="#{company.hideHeaderContent}"
+								value="#{false}" />
+						</aon:commandButton>
 					</c:if>
 					<c:if test="#{!company.new}" >
 						<aon:commandButton id="save"

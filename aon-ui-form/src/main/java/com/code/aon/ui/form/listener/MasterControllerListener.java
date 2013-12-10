@@ -112,6 +112,10 @@ public class MasterControllerListener extends ControllerAdapter {
 	private void initDetailModel(IController master, boolean reset)
 			throws ControllerListenerException {
 		updateDetailCriteria(master, reset);
+		initDetailModel(reset);
+	}
+	
+	protected void initDetailModel( boolean reset ) {
 		getDetailController().initializeModel();
 	}
 

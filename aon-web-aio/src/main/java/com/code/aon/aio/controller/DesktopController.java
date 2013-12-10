@@ -141,16 +141,6 @@ public class DesktopController {
             throw new ManagerBeanException("Error obtaining note with id=" + note.getId(), e);
         }
     }
-    
-	public boolean isHideHeaderContent() {
-		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
-		boolean hide = companyController.isHideHeaderContent();
-		if (!hide && UserUtils.getInstance().isPasswordExpired() ) {
-			companyController.setHideHeaderContent(true);
-			return true;
-		}
-		return hide;			
-	}
  	
 	private void initGarage() {
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
@@ -240,10 +230,9 @@ public class DesktopController {
 		return value;
 	}
 	
-	private boolean hasCompany() {
-		CompanyController company = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+	private boolean hasCompany(CompanyController controller) {
 		try {
-			return company.getModel().getRowCount() > 0;
+			return controller.getModel().getRowCount() > 0;
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -251,10 +240,14 @@ public class DesktopController {
 	}
 	
 	public String getViewId() {
-		if ( !hasCompany() ) {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+		if ( !hasCompany(controller) ) {
+			controller.onLoad(false);
+			controller.setHideHeaderContent(true);
 			return NEW_COMPANY_TEMPLATE;
 		}
 		if ( UserUtils.getInstance().isPasswordExpired() ) {
+			controller.setHideHeaderContent(true);
 			return PASSWORD_EXPIRED_TEMPLATE;
 		}
 		return getHomepage();

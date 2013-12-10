@@ -16,9 +16,12 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Company;
 import com.code.aon.faces.component.util.FaceletUtil;
+import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -94,6 +97,17 @@ public class GlobalConfigurationController {
 		}
 	}
 
+	public void onInitDomain( ActionEvent event ) {
+		DomainController controller = (DomainController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_CONTROLLER_NAME);
+		try {
+			if ( controller.getTo() == null ) {
+				controller.select(event, DomainManager.getCurrentDomain());	
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}				
+	}
+	
 	public String getTemplate() {
 		return template;
 	}
@@ -117,6 +131,18 @@ public class GlobalConfigurationController {
 
 	public void setSelectedPanel(String selectedPanel) {
 		this.selectedPanel = selectedPanel;
+	}
+
+
+	public boolean isPayrollPortalRegistered() {
+		Integer domainId = DomainManager.getCurrentDomain();
+		Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
+		try {
+			return AuditManager.hasModule(domainId, appId, Module.PAYROLL_PORTAL);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}					
+		return false;
 	}
 	
 }

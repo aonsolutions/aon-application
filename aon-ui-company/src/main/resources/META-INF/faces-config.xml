@@ -135,6 +135,10 @@
 			<value>companyAddress</value>
 		</managed-property>
 		<managed-property>
+			<property-name>lazyInitialization</property-name>
+			<value>true</value>
+		</managed-property>						
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -216,6 +220,10 @@
 			<value>companyWorkPlace</value>
 		</managed-property>
 		<managed-property>
+			<property-name>lazyInitialization</property-name>
+			<value>true</value>
+		</managed-property>						
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -279,6 +287,10 @@
 			<value>companyRbank</value>
 		</managed-property>
 		<managed-property>
+			<property-name>lazyInitialization</property-name>
+			<value>true</value>
+		</managed-property>				
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -341,7 +353,11 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>companyRPayMethod</value>
-		</managed-property>		
+		</managed-property>
+		<managed-property>
+			<property-name>lazyInitialization</property-name>
+			<value>true</value>
+		</managed-property>						
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -380,6 +396,10 @@
 			<property-name>beanName</property-name>
 			<value>companyRecordData</value>
 		</managed-property>
+		<managed-property>
+			<property-name>lazyInitialization</property-name>
+			<value>true</value>
+		</managed-property>								
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -463,6 +483,10 @@
 			<property-name>type</property-name>
 			<value>#{registryCollections.registryAttachmentTypes[4].value}</value>
 		</managed-property>
+		<managed-property>
+			<property-name>lazyInitialization</property-name>
+			<value>true</value>
+		</managed-property>										
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -558,6 +582,10 @@
 			<property-name>skipHeredity</property-name>
 			<value>#{true}</value>
 		</managed-property>
+		<managed-property>
+			<property-name>lazyInitialization</property-name>
+			<value>true</value>
+		</managed-property>												
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -724,6 +752,10 @@
 			<value>#{registryCollections.registryAttachmentTypes[1].value}</value>
 		</managed-property>		
 		<managed-property>
+			<property-name>lazyInitialization</property-name>
+			<value>true</value>
+		</managed-property>								
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -784,9 +816,13 @@
 			<value>companyDirStaff</value>
 		</managed-property>
 		<managed-property>
+			<property-name>lazyInitialization</property-name>
+			<value>true</value>
+		</managed-property>										
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
-		</managed-property>
+		</managed-property>		
 		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>company</value>
