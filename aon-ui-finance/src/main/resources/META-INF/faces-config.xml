@@ -985,6 +985,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{invoiceRemoverSearch}</value>
+				<value>#{invoiceScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1027,6 +1028,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{invoicePrintSearch}</value>
+				<value>#{invoiceScopeListener}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>
@@ -1270,6 +1272,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{invoiceSignerSearch}</value>
+				<value>#{invoiceScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1312,6 +1315,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{saleInvoiceRecorderSearch}</value>
+				<value>#{invoiceScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1358,6 +1362,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{purchaseInvoiceRecorderSearch}</value>
+				<value>#{invoiceScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1404,6 +1409,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{expenseInvoiceRecorderSearch}</value>
+				<value>#{invoiceScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1450,6 +1456,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{undeductibleInvoiceRecorderSearch}</value>
+				<value>#{invoiceScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1494,7 +1501,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{saleInvoiceSearch}</value>
-				<value>#{saleInvoiceScopeListener}</value>
+				<value>#{invoiceScopeListener}</value>
 				<value>#{saleInvoiceControllerListener}</value>
 				<value>#{saleInvoiceHeaderControllerListener}</value>
 				<value>#{saleInvoiceAddressListener}</value>
@@ -1518,7 +1525,7 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>saleInvoiceScopeListener</managed-bean-name>
+		<managed-bean-name>invoiceScopeListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
@@ -1943,7 +1950,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{purchaseInvoiceSearch}</value>
-				<value>#{purchaseInvoiceScopeListener}</value>
+				<value>#{invoiceScopeListener}</value>
 				<value>#{purchaseInvoiceControllerListener}</value>
 				<value>#{purchaseInvoiceAddressListener}</value>
 				<value>#{purchaseInvoiceDetailListener}</value>
@@ -1965,16 +1972,6 @@
 		</managed-property>		
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>purchaseInvoiceScopeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>aliasName</property-name>
-			<value>Invoice_scope_id</value>
-		</managed-property>
-	</managed-bean>
-	
 	<managed-bean>
 		<managed-bean-name>purchaseInvoiceControllerListener</managed-bean-name>
 		<managed-bean-class>
@@ -2373,7 +2370,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{expenseInvoiceSearch}</value>
-				<value>#{expenseInvoiceScopeListener}</value>
+				<value>#{invoiceScopeListener}</value>
 				<value>#{expenseInvoiceControllerListener}</value>
 				<value>#{expenseInvoiceAddressListener}</value>
 				<value>#{expenseInvoiceDetailListener}</value>
@@ -2395,16 +2392,6 @@
 		</managed-property>		
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>expenseInvoiceScopeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>aliasName</property-name>
-			<value>Invoice_scope_id</value>
-		</managed-property>
-	</managed-bean>
-	
 	<managed-bean>
 		<managed-bean-name>expenseInvoiceControllerListener</managed-bean-name>
 		<managed-bean-class>
@@ -2811,7 +2798,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{undeductibleInvoiceSearch}</value>
-				<value>#{undeductibleInvoiceScopeListener}</value>
+				<value>#{invoiceScopeListener}</value>
 				<value>#{undeductibleInvoiceControllerListener}</value>
 				<value>#{undeductibleInvoiceAddressListener}</value>
 				<value>#{undeductibleInvoiceDetailListener}</value>
@@ -2833,16 +2820,6 @@
 		</managed-property>		
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>undeductibleInvoiceScopeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>aliasName</property-name>
-			<value>Invoice_scope_id</value>
-		</managed-property>
-	</managed-bean>
-	
 	<managed-bean>
 		<managed-bean-name>undeductibleInvoiceControllerListener</managed-bean-name>
 		<managed-bean-class>
@@ -3241,7 +3218,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{posInvoiceSearch}</value>
-				<value>#{posInvoiceScopeListener}</value>
+				<value>#{invoiceScopeListener}</value>
 				<value>#{posInvoiceControllerListener}</value>
 				<value>#{posInvoiceHeaderControllerListener}</value>
 				<value>#{posInvoiceAddressListener}</value>
@@ -3263,16 +3240,6 @@
 		</managed-property>		
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>posInvoiceScopeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>aliasName</property-name>
-			<value>Invoice_scope_id</value>
-		</managed-property>
-	</managed-bean>
-	
 	<managed-bean>
 		<managed-bean-name>posInvoiceControllerListener</managed-bean-name>
 		<managed-bean-class>
@@ -4076,6 +4043,13 @@
 			<property-name>defaultOrder</property-name>
 			<value>Invoice_issueDate desc,Invoice_referenceCode desc</value>
 		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{invoiceScopeListener}</value>
+			</list-entries>
+		</managed-property>		
 	</managed-bean>
 
 	<!-- ========================================================== -->

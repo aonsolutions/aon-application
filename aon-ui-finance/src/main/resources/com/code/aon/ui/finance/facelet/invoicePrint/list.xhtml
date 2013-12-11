@@ -50,88 +50,88 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="invoicePrintData" value="#{invoicePrint.model}" sortMode="multi"
-					var="to" rows="20" rendered="#{invoicePrint.model.rowCount > 0}">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{invoicePrint}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:define name="columns">
 
-
-					<aon:column alias="Invoice.issueDate"
-						styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_date}" />
-						</f:facet>
-						<aon:outputText value="#{to.issueDate}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column alias="Invoice.referenceCode"
-						styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_invoice_number}" />
-						</f:facet>
-						<aon:outputText value="#{to.referenceCode}" />
-					</aon:column>
-
-					<aon:column alias="Invoice.series, Invoice.number"
-						styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_document_number}" />
-						</f:facet>
-						<aon:outputText value="#{to.documentNumber}" />
-					</aon:column>
-
-					<aon:column alias="Invoice.registryName"
-						styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_customer}" />
-						</f:facet>
-						<aon:outputText value="#{to.registryName}" />
-					</aon:column>
-
-					<aon:column alias="Invoice.registryDocument"
-						styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_company_document}" />
-						</f:facet>
-						<aon:outputText value="#{to.registryDocument}" />
-					</aon:column>
-
-					<aon:column alias="Invoice.status"
-						styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_status}" />
-						</f:facet>
-						<aon:outputText value="#{to.status}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-numberColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_total}" />
-						</f:facet>
-						<aon:outputText value="#{invoicePrint.invoiceTotalPrice}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</aon:column>
-
-					<c:if test="#{company.EInvoice}">					
-						<aon:column alias="Invoice.signed"
+						<aon:column alias="Invoice.issueDate"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_signature}" />
+								<aon:outputText value="#{bundle.aon_date}" />
 							</f:facet>
-							<aon:outputText value="&#160;" rendered="#{to.signed}"
-								title="#{bundle.sign_signed}"
-								styleClass="aon-icon aon-icon-signed" />
-							<aon:outputText value="&#160;" rendered="#{!to.signed}"
-								title="#{bundle.sign_sign_pending}"
-								styleClass="aon-icon aon-icon-unsigned" />
+							<aon:outputText value="#{to.issueDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
 						</aon:column>
-					</c:if>
-
-				</aon:dataTable>
-
-				<aon:dataScroller2 for="invoicePrintData" showNote="true" />
+	
+						<aon:column alias="Invoice.referenceCode"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_invoice_number}" />
+							</f:facet>
+							<aon:outputText value="#{to.referenceCode}" />
+						</aon:column>
+	
+						<aon:column alias="Invoice.series, Invoice.number"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_document_number}" />
+							</f:facet>
+							<aon:outputText value="#{to.documentNumber}" />
+						</aon:column>
+	
+						<aon:column alias="Invoice.registryName"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_customer}" />
+							</f:facet>
+							<aon:outputText value="#{to.registryName}" />
+						</aon:column>
+	
+						<aon:column alias="Invoice.registryDocument"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_document}" />
+							</f:facet>
+							<aon:outputText value="#{to.registryDocument}" />
+						</aon:column>
+	
+						<aon:column alias="Invoice.status"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_total}" />
+							</f:facet>
+							<aon:outputText value="#{invoicePrint.invoiceTotalPrice}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<c:if test="#{company.EInvoice}">					
+							<aon:column alias="Invoice.signed"
+								styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_signature}" />
+								</f:facet>
+								<aon:outputText value="&#160;" rendered="#{to.signed}"
+									title="#{bundle.sign_signed}"
+									styleClass="aon-icon aon-icon-signed" />
+								<aon:outputText value="&#160;" rendered="#{!to.signed}"
+									title="#{bundle.sign_sign_pending}"
+									styleClass="aon-icon aon-icon-unsigned" />
+							</aon:column>
+						</c:if>
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
 			
 		</aon:form>
