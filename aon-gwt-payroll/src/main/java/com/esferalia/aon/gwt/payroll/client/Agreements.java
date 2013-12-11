@@ -28,7 +28,25 @@ public class Agreements extends ResizeComposite {
 
 	interface Images extends ClientBundle {
 		ImageResource agreement();
+		ImageResource agreement_warn();
+		ImageResource agreement_error();
+		ImageResource agreement_changed();
+		ImageResource agreement_changed_warn();
+		ImageResource agreement_changed_error();
+		
 	}
+	private static final Images IMAGES = GWT.create(Images.class);
+
+	private static final ImageResource RESOURCES [][][] = {
+		{
+		 {IMAGES.agreement(), IMAGES.agreement_warn()},
+		 {IMAGES.agreement_error(), IMAGES.agreement_error()}
+		}, 
+		{
+		 {IMAGES.agreement_changed(), IMAGES.agreement_changed_warn()},
+		 {IMAGES.agreement_changed_error(), IMAGES.agreement_changed_error()}
+		}  
+	};
 
 	interface Listener {
 		void onAgreementSelected(Agreement agreement);
@@ -52,14 +70,12 @@ public class Agreements extends ResizeComposite {
 	@UiField
 	Button collapseAllButton;
 
-	private Images images;
 
 	private List<Listener> listeners;
 
 	private EnterprisesServiceAsync enterprisesService;
 
 	public Agreements() {
-		images = GWT.create(Images.class);
 		listeners = new LinkedList<Listener>();
 		initWidget(BINDER.createAndBindUi(this));
 
@@ -114,6 +130,7 @@ public class Agreements extends ResizeComposite {
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
+	
 
 	// -------------------------------------------------------------- UiHandlers
 
@@ -131,6 +148,14 @@ public class Agreements extends ResizeComposite {
 
 	}
 
+	// -------------------------------------------------------- Protected methods
+
+	TreeItem getSelectedItem(){
+		return tree.getSelectedItem();
+	}
+	
+	
+
 	// --------------------------------------------------------- Private methods
 
 	private TreeItem addAgreementItem(Agreement agreement) {
@@ -139,7 +164,7 @@ public class Agreements extends ResizeComposite {
 			description = "*" + description;
 		}
 
-		TreeItem treeItem = new TreeItem(imageItemSafeHtml(images.agreement(),
+		TreeItem treeItem = new TreeItem(imageItemSafeHtml(getImageResource(agreement),
 				description));
 		treeItem.setUserObject(agreement);
 
@@ -160,6 +185,20 @@ public class Agreements extends ResizeComposite {
 		for (Listener listener : listeners)
 			listener.onAgreementSelected(agreement);
 	}
+	
+	
+	
+	/**
+	 * Generates SafeHtml for a tree item with an attached icon.
+	 */
+	static SafeHtml imageItemSafeHtml(ImageResource imageProto,
+			String title) {
+		SafeHtmlBuilder builder = new SafeHtmlBuilder();
+		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
+		if ( title != null )
+			builder.appendEscaped(" " + title);
+		return builder.toSafeHtml();
+	}
 
 	private static synchronized Agreement newAgreement() {
 		Agreement agreement = new Agreement();
@@ -169,16 +208,13 @@ public class Agreements extends ResizeComposite {
 		return agreement;
 	}
 
-	/**
-	 * Generates SageHtml for a tree item with an attached icon.
-	 */
-	private static SafeHtml imageItemSafeHtml(ImageResource imageProto,
-			String title) {
-		SafeHtmlBuilder builder = new SafeHtmlBuilder();
-		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
-		if ( title != null )
-			builder.appendEscaped(" " + title);
-		return builder.toSafeHtml();
+
+	private static ImageResource getImageResource(Agreement agreement){
+		return RESOURCES[0][0][agreement.hasLevelsWithoutCategories()?1:0];
+	}
+
+	public static ImageResource getImageResource(boolean changes, boolean errors, boolean warns){
+		return RESOURCES[changes?1:0][errors?1:0][warns?1:0];
 	}
 
 }

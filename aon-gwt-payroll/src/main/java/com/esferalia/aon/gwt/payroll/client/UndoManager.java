@@ -43,6 +43,7 @@ public class UndoManager<T extends Undoable> {
 	public void discardAll() {
 		undoStack.clear();
 		redoStack.clear();
+		fireOnChange();
 	}
 	
 	public void add(T undoable) {

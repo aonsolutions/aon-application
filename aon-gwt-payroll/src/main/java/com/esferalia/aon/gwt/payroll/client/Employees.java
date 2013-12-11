@@ -307,7 +307,7 @@ public class Employees extends ResizeComposite implements
 
 			if (extended && (agreement != null)) {
 
-				TreeItem agreementItem = addImageItem(workplaceItem,
+				final TreeItem agreementItem = addImageItem(workplaceItem,
 						agreement.getDescription(), images.agreement());
 
 				AgreementDraft agreementDraft = new AgreementDraft();
@@ -315,8 +315,19 @@ public class Employees extends ResizeComposite implements
 				agreementDraft.setDescription(agreement.getDescription());
 				agreementDraft.setStartDate(DateUtils.getFirstDayOfMonth());
 				agreementDraft.setEndDate(DateUtils.getLastDayOfMonth());
-				AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
+				final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
 						agreementDraft, employeesService);
+
+				agreementDraftObject.addListener(new UndoManager.Listener() {
+					@Override
+					public void onChange(UndoManager undoManager) {
+						ImageResource resource = agreementDraftObject.canUndo() ? 
+								images.agreement_changed() : images.agreement();
+						agreementItem.setHTML(imageItemHTML(resource,
+								agreementDraftObject.getDescription()));
+					}
+				});
+
 				agreementItem.setUserObject(agreementDraftObject);
 			} // TODO: extended ? Yes I'm know , it's awful.
 		}
@@ -548,7 +559,7 @@ public class Employees extends ResizeComposite implements
 							CostDocuments costDocuments = new CostDocuments(
 									costs, employeesService);
 							costsItem.setUserObject(costDocuments);
-							
+
 							SalariesDocuments salariesDocuments = new SalariesDocuments(
 									costs, employeesService);
 							salariesItem.setUserObject(salariesDocuments);

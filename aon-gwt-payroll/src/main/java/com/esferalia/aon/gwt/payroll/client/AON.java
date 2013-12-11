@@ -64,6 +64,8 @@ public class AON {
 	public static final String AON_ICON_EMPLOYEE = "aon-icon-employee";
 	public static final String AON_ICON_ROW_SELECTOR = "aon-icon-rowSelector";
 	public static final String AON_ICON_EXCEPTION = "aon-icon-exception";
+	public static final String AON_ICON_WARN = "aon-icon-warn";
+	public static final String AON_ICON_ERRORWARNING = "aon-icon-errorwarning";
 	public static final String GWT_HORIZONTAL_PANEL = "gwt-HorizontalPanel";
 	public static final String AON_ICON_TASK_START= "aon-icon-task-start";
 	public static final String AON_ICON_CMD_BUTTON= "aon-icon-commandButton";
@@ -73,6 +75,8 @@ public class AON {
 	public static final String AON_ICON_CONFIG= "aon-icon-config";
 	public static final String AON_ICON_CLEAN = "aon-lookupButton-clear";
 	public static final String AON_NO_MARGIN = "aon-no-margin";
+	public static final String AON_INPUT_REQUIRED = "aon-input-required";
+	public static final String AON_PADDING_LEFT = "aon-padding-left";
 	 
 	
 	public static final NumberFormat CURRENCY_FORMAT = NumberFormat

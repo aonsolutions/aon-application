@@ -25,9 +25,18 @@ public class DateUtils {
 		return date;
 	}
 
+	public static Date addYears2Date(Date date, int years) {
+		CalendarUtil.addMonthsToDate(date, years * 12);
+		return date;
+	}
+
 	public static Date addMonths2Date(Date date, int months) {
 		CalendarUtil.addMonthsToDate(date, months);
 		return date;
+	}
+
+	public static Date getFirstDayOfYear() {
+		return getFirstDayOfMonth(new Date());
 	}
 
 	public static Date getFirstDayOfMonth() {
@@ -36,6 +45,10 @@ public class DateUtils {
 
 	public static Date getLastDayOfMonth() {
 		return getLastDayOfMonth(new Date());
+	}
+
+	public static int getYears(Date a, Date b) {
+		return (a.getYear() - b.getYear());
 	}
 
 	public static int getMonths(Date a, Date b) {
@@ -83,7 +96,7 @@ public class DateUtils {
 	}
 
 	public static Date getFirstDayOfWorkWeek(Date date) {
-		Date firstDayOfWeek = resetTime(date);
+		Date firstDayOfWeek = newDateOnly(date);
 		int dayOfWeek = firstDayOfWeek.getDay();
 		// Remember : 0 for Sunday and 6 for Saturday
 		if (dayOfWeek == 0) {
@@ -94,7 +107,7 @@ public class DateUtils {
 	}
 
 	public static Date getLastDayOfWorkWeek(Date date) {
-		Date lastDayOfWeek = resetTime(date);
+		Date lastDayOfWeek = newDateOnly(date);
 		int dayOfWeek = lastDayOfWeek.getDay();
 		// Remember : 0 for Sunday and 6 for Saturday
 		if (dayOfWeek == 0) {
@@ -108,22 +121,33 @@ public class DateUtils {
 		Date firstDayOfYear = CalendarUtil.copyDate(date);
 		CalendarUtil.addMonthsToDate(firstDayOfYear, -1 * date.getMonth());
 		CalendarUtil.setToFirstDayOfMonth(firstDayOfYear);
-		return firstDayOfYear;
+		return newDateOnly(firstDayOfYear);
+	}
+
+	public static Date getLastDayOfYear(Date date) {
+		Date lastDayOfYear = CalendarUtil.copyDate(date);
+		addYears2Date(lastDayOfYear, 1);
+		CalendarUtil.addMonthsToDate(lastDayOfYear, -1 * date.getMonth());
+		CalendarUtil.setToFirstDayOfMonth(lastDayOfYear);
+		CalendarUtil.addDaysToDate(lastDayOfYear, -1);
+		return newDateOnly(lastDayOfYear);
 	}
 
 	public static Date getFirstDayOfMonth(Date date) {
-		Date firstDayOfMonth = CalendarUtil.copyDate(date);
-		CalendarUtil.setToFirstDayOfMonth(firstDayOfMonth);
+		Date firstDayOfMonth = newDateOnly(date);
+		firstDayOfMonth.setDate(1);
 		return firstDayOfMonth;
 	}
 
 	public static Date getLastDayOfMonth(Date date) {
-		Date firstDayOfNextMonth = CalendarUtil.copyDate(date);
+		Date firstDayOfNextMonth = newDateOnly(date);
+		
 		CalendarUtil.addMonthsToDate(firstDayOfNextMonth, 1);
-		CalendarUtil.setToFirstDayOfMonth(firstDayOfNextMonth);
+		
+		firstDayOfNextMonth.setDate(1);
 
-		Date firstDayOfMonth = CalendarUtil.copyDate(date);
-		CalendarUtil.setToFirstDayOfMonth(firstDayOfMonth);
+		Date firstDayOfMonth = newDateOnly(date);
+		firstDayOfMonth.setDate(1);
 
 		int monthDays = CalendarUtil.getDaysBetween(firstDayOfMonth,
 				firstDayOfNextMonth);
@@ -134,10 +158,8 @@ public class DateUtils {
 		return lastDayOfMonth;
 	}
 
-	public static Date resetTime(Date date) {
-		long time = date.getTime();
-		long milliseconds = time % (24 * 60 * 60 * 1000);
-		return new Date(time - milliseconds);
+	public static Date newDateOnly(Date date) {
+		return new Date(date.getYear(), date.getMonth(), date.getDate());
 	}
 
 	public static boolean equals(Date d1, Date d2) {
@@ -162,6 +184,10 @@ public class DateUtils {
 	public static Date toUTC(Date date) {
 		return new Date ( Date.UTC(date.getYear(), date.getMonth(), date.getDate(),
 				0, 0, 0));
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(newDateOnly(new Date()));
 	}
 
 }

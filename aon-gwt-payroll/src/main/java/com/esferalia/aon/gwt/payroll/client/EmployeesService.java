@@ -60,7 +60,7 @@ public interface EmployeesService extends RemoteService {
 	SalaryDraft saveSalary(SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
-	void saveAgreementDraft(AgreementDraft agreementDraft)
+	AgreementDraft saveAgreementDraft(AgreementDraft agreementDraft)
 			throws IllegalArgumentException;
 
 	ContextDescriptor getContext(SalaryDraft salaryDraft)

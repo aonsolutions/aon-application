@@ -58,11 +58,14 @@ public interface Images extends ClientBundle, Tree.Resources {
 	
 	ImageResource agreement();
 	
+	ImageResource agreement_changed();
+
 	ImageResource payment();
 	
 	ImageResource deduction();
 	
 	ImageResource segsocial();
 	
+	ImageResource warn();
 	
 }

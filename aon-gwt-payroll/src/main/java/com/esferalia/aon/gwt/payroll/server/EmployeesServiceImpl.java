@@ -86,6 +86,7 @@ import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
 import com.esferalia.aon.gwt.payroll.shared.Events;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfData;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfRegularization;
@@ -165,6 +166,8 @@ import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
 public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		EmployeesService {
 
+	public static final String REMOVE = "REMOVE()";
+
 	private static final Map<Object, Object> JR_HTML_EXPORTER_PARAMS = new HashMap<Object, Object>() {
 		{
 			put(JRHtmlExporterParameter.HTML_HEADER, "<div class='page' >");
@@ -242,8 +245,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				return isAtEnterpriseSite() ? getSiteSalaries(conn,
 						employee.getId()) : getSalaries(conn, employee.getId());
 			} else {
-				throw new IllegalArgumentException("EmployeeSite Not implemented yet");
-			} 
+				throw new IllegalArgumentException(
+						"EmployeeSite Not implemented yet");
+			}
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -651,7 +655,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public void saveAgreementDraft(AgreementDraft agreementDraft)
+	public AgreementDraft saveAgreementDraft(AgreementDraft agreementDraft)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
@@ -661,7 +665,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			SQLAgreementDraft.save(conn, agreementDraft, getDomainID(),
 					getParentDomainID());
 			commit(conn);
-		} catch (SQLException e) {
+			return agreementDraft;
+		} catch (Exception e) {
 			rollback(conn);
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -761,9 +766,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			reportManager.setCollectionProvider(provider);
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			
+
 			String salaryReport = getSalaryReport();
-			
+
 			reportManager.execute(reportOut, salaryReport);
 
 			byte reportByteArray[] = reportOut.toByteArray();
@@ -1028,8 +1033,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	// -------------------------------------------------------- Private methods
-	
-	@Deprecated 
+
+	@Deprecated
 	private String getSalaryReport() throws ReportException {
 		Connection conn = null;
 		try {
@@ -1038,9 +1043,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return AonServletUtils.getSalaryReport(conn, enterpriseId);
 		} catch (SQLException e) {
 			throw new ReportException(e.getLocalizedMessage());
-		} catch ( ManagerBeanException e ){
+		} catch (ManagerBeanException e) {
 			throw new ReportException(e.getLocalizedMessage());
-		}finally {
+		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
@@ -2230,7 +2235,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			for (Payment payment : payments) {
 
-				if (StringUtils.equals("REMOVE()", payment.getExpression()))
+				if (StringUtils.equals(REMOVE, payment.getExpression()))
 					continue;
 
 				Set<String> paymentVars = ExpressionContext
@@ -2293,14 +2298,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Set<Payment> dbPayments = SQLAgreementDraft.getPayments(connection,
 					draft.getId(), draft.getStartDate(), draft.getEndDate());
 
-			Collection<Payment> allPayments = new CompositeItems<Payment>(
+			Collection<Payment> payments = new CompositeItems<Payment>(
 					draft.getDraftPayments(), dbPayments);
+
 			Set<String> variables = new HashSet<String>();
 
-			Set<Payment> payments = new HashSet<Payment>();
-			for (Payment payment : allPayments) {
+			Set<Payment> allPayments = new HashSet<Payment>();
+			for (Payment payment : payments) {
 
-				if (StringUtils.equals("REMOVE()", payment.getExpression()))
+				if (StringUtils.equals(REMOVE, payment.getExpression()))
 					continue;
 
 				variables.addAll(ExpressionContext.getVariableSet(
@@ -2308,7 +2314,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						payment.getQuoteExpression()));
 				variables.remove(payment.getName());
 
-				payments.add(payment);
+				allPayments.add(payment);
 			}
 
 			// Filter ContextVariable
@@ -2332,27 +2338,57 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			Set<Level> dbLevels = SQLAgreementDraft.getLevels(connection,
 					draft.getId());
-			Set<Level> draftLevels = draft.getDraftLevels();
 
-			Set<Level> levels = new HashSet<Level>(draftLevels);
-			levels.addAll(dbLevels);
+			Set<Level> allLevels = new HashSet<Level>(dbLevels);
 
-			Map<Integer, Set<String>> categories = SQLAgreementDraft
+			for (Level draftLevel : draft.getDraftLevels()) {
+				if (!StringUtils.equals(REMOVE, draftLevel.getDescription()))
+					allLevels.add(draftLevel);
+				else
+					allLevels.remove(draftLevel);
+			}
+
+			Set<Extra> dbExtras = SQLAgreementDraft.getExtras(connection,
+					draft.getId());
+
+			Set<Extra> allExtras = new HashSet<Extra>(dbExtras);
+
+			for (Extra draftExtra : draft.getDraftExtras()) {
+				if (!StringUtils.equals(REMOVE, draftExtra.getIssueDate()))
+					allExtras.add(draftExtra);
+				else
+					allExtras.remove(draftExtra);
+			}
+
+			Map<Integer, Set<String>> dbCategories = SQLAgreementDraft
 					.getCategories(connection, draft.getId());
+
+			Map<Integer, Set<String>> allCategories = new HashMap<Integer, Set<String>>(
+					dbCategories);
+
+			Map<Integer, Set<String>> draftCategories = draft
+					.getDraftCategories();
+			allCategories.putAll(draftCategories);
 
 			Level agreementData = new Level();
 			agreementData.setId(0);
-			levels.add(agreementData);
+			allLevels.add(agreementData);
 
-			SalaryTable salaryTable = SQLAgreementDraft.getSalaryTable(
+			SalaryTable dbSalaryTable = SQLAgreementDraft.getSalaryTable(
 					connection, draft.getId(), draft.getStartDate(),
 					draft.getEndDate());
+			SalaryTable allSalaryTable  = new SalaryTable(dbSalaryTable);
+			allSalaryTable.putAll(draft.getDraftSalaryTable());
+			
+			
+			draft.setLevels(allLevels);
+			draft.setExtras(allExtras);
+			draft.setVariables(variables); //* No draft
+			draft.setPayments(allPayments);
+			draft.setSalaryTable(allSalaryTable);
+			draft.setCategoriesMap(allCategories);
+			
 
-			draft.setLevels(levels);
-			draft.setVariables(variables);
-			draft.setPayments(payments);
-			draft.setSalaryTable(salaryTable);
-			draft.setCategoriesMap(categories);
 			draft.setDatesWithChanges(datesWithChanges);
 		} finally {
 			if (connection != null)

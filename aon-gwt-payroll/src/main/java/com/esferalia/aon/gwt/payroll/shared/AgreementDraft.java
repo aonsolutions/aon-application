@@ -2,11 +2,19 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.AbstractSet;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class AgreementDraft extends Agreement {
 
@@ -39,7 +47,7 @@ public class AgreementDraft extends Agreement {
 		
 		@Override
 		public boolean equals(Object obj) {
-			return obj instanceof Level && id == ((Level) obj).id;
+			return obj instanceof Level && id.equals(((Level) obj).id);
 		}
 
 	}
@@ -50,7 +58,7 @@ public class AgreementDraft extends Agreement {
 
 			int level;
 			String var;
-
+			
 			@Override
 			public boolean equals(Object obj) {
 				return obj instanceof Key && level == ((Key) obj).level
@@ -61,6 +69,8 @@ public class AgreementDraft extends Agreement {
 			public int hashCode() {
 				return level * 31 + var.hashCode();
 			}
+			
+			
 
 			private static Key make(int level, String var) {
 				Key key = new Key();
@@ -71,18 +81,43 @@ public class AgreementDraft extends Agreement {
 
 		}
 
-		private Map<Key, Variable> map = new HashMap<Key, Variable>();;
+		private Map<Key, Variable> map ;
+		
+		public SalaryTable() {
+			map = new HashMap<Key, Variable>();
+		}
+
+		public SalaryTable(SalaryTable salaryTable) {
+			map = new HashMap<Key, Variable>(salaryTable.map);
+		}
 
 		public int size() {
 			return map.size();
 		}
+		
+		public void clear() {
+			map.clear();
+		}
 
-		public void put(int level, Variable var) {
-			map.put(Key.make(level, var.name), var);
+		public void putAll(SalaryTable salaryTable) {
+			map.putAll(salaryTable.map);
+		}
+
+		public Variable put(int level, Variable var) {
+			return map.put(Key.make(level, var.name), var);
 		}
 
 		public Variable get(int level, String var) {
 			return map.get(Key.make(level, var));
+		}
+		
+		public Collection<Variable> getVariables(int level) {
+			List<Variable> vars = new LinkedList<Variable>();
+			for (Entry<Key, Variable> entry : map.entrySet()) {
+				if ( entry.getKey().level == level ) 
+					vars.add(entry.getValue());
+			}
+			return vars;
 		}
 
 		
@@ -114,7 +149,12 @@ public class AgreementDraft extends Agreement {
 	private Date startDate;
 	private Date endDate;
 	
+	private boolean hasChanges;
+	
 	private Set<Date> datesWithChanges;
+
+	private Set<Extra> extras;
+	private Map<Integer, Extra> draftExtras;
 
 	// TODO : Must this be at 'Agreement'?
 	private Set<Payment> payments;
@@ -129,12 +169,16 @@ public class AgreementDraft extends Agreement {
 	private SalaryTable draftSalaryTable;
 	
 	private Map<Integer,Set<String>> categories;
+	private Map<Integer,Set<String>> draftCategories;
 	
 
 	public AgreementDraft() {
+		hasChanges = false;
 		draftSalaryTable = new SalaryTable();
+		draftExtras = new HashMap<Integer,Extra>();
 		draftLevels = new HashMap<Integer, Level>();
 		draftPayments = new HashMap<Integer,Payment>();
+		draftCategories = new HashMap<Integer, Set<String>>();
 	}
 
 	public Date getStartDate() {
@@ -151,6 +195,14 @@ public class AgreementDraft extends Agreement {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+	
+	public Set<Extra> getExtras() {
+		return extras;
+	}
+	
+	public void setExtras(Set<Extra> extras) {
+		this.extras = extras;
 	}
 
 	public Set<Payment> getPayments() {
@@ -205,6 +257,18 @@ public class AgreementDraft extends Agreement {
 		return new HasIdSet<Level>(draftLevels);
 	}
 	
+	public Set<Extra> getDraftExtras() {
+		return new HasIdSet<Extra>(draftExtras);
+	}
+
+	public Extra addDraftExtra(Extra extra) {
+		return draftExtras.put(extra.getId(), extra);
+	}
+
+	public void removeDraftExtra(Extra extra) {
+		draftExtras.remove(extra.getId());
+	}
+
 	public Level addDraftLevel(Level level) {
 		return draftLevels.put(level.getId(), level);
 	}
@@ -229,14 +293,44 @@ public class AgreementDraft extends Agreement {
 		return draftSalaryTable;
 	}
 	
-	public void addDraftVariable(Level level, Variable var) {
-		draftSalaryTable.put(level.getId(), var);
+	public Variable addDraftVariable(Level level, Variable var) {
+		return draftSalaryTable.put(level.getId(), var);
 	}
 	
+	public Set<String> addDraftCategories(Level level, Set<String> categories){
+				
+		return draftCategories.put(level.getId(), categories);
+	}
+	
+	public Map<Integer, Set<String>> getDraftCategories() {
+		return draftCategories;
+	}
+	
+	
+	public void clearDrafts(){
+		draftLevels.clear();
+		draftExtras.clear();
+		draftPayments.clear();
+		draftSalaryTable.clear();
+		draftCategories.clear();
+	}
+
 	public boolean hasDrafts(){
 		return  (draftLevels.size() > 0) ||
+				(draftExtras.size() > 0) ||
 				(draftPayments.size() > 0) ||
-				(draftSalaryTable.size() > 0 );
+				(draftSalaryTable.size() > 0 ) ||
+				(draftCategories.size() > 0);
 	}
+	
+	public boolean hasChanges() {
+		return hasChanges;
+	}
+	
+	public void setHasChanges(boolean hasChanges) {
+		this.hasChanges = hasChanges;
+	}
+	
+	
 	
 }

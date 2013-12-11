@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -26,12 +28,17 @@ public class AgreementDraftObject implements IContextProvider {
 
 	public static Date NULL_DATE = new Date() {
 	};
-	
+
 	static interface CalculateCallback {
 		void onCalculateFailure(Throwable throwable);
 
 		void onCalculateSucces(AgreementDraftObject object);
 
+	}
+
+	static class LevelVariable {
+		private Level level;
+		private Variable variable;
 	}
 
 	abstract private class UndoableEdit<T> implements Undoable {
@@ -60,6 +67,24 @@ public class AgreementDraftObject implements IContextProvider {
 		abstract void addDraft(T t);
 
 		abstract void removeDraft(T t);
+	}
+
+	private class UndoableExtraEdit extends UndoableEdit<Extra> {
+
+		public UndoableExtraEdit(Extra oldT, Extra newT) {
+			super(oldT, newT);
+		}
+
+		@Override
+		void addDraft(Extra t) {
+			agreementDraft.addDraftExtra(t);
+		}
+
+		@Override
+		void removeDraft(Extra t) {
+			agreementDraft.removeDraftExtra(t);
+		}
+
 	}
 
 	private class UndoableLevelEdit extends UndoableEdit<Level> {
@@ -98,10 +123,78 @@ public class AgreementDraftObject implements IContextProvider {
 
 	}
 
+	private class UndoableDescriptionEdit implements Undoable {
+
+		private String newDescription, oldDescription;
+
+		public UndoableDescriptionEdit(String oldDescription,
+				String newDescription) {
+			this.newDescription = newDescription;
+			this.oldDescription = oldDescription;
+
+		}
+
+		@Override
+		public void redo() {
+			agreementDraft.setDescription(newDescription);
+		}
+
+		@Override
+		public void undo() {
+			agreementDraft.setDescription(oldDescription);
+		}
+
+	}
+
+	private class UndoableLevelVariableEdit extends UndoableEdit<Variable> {
+
+		private Level level;
+
+		public UndoableLevelVariableEdit(Level level, Variable oldVariable,
+				Variable newVariable) {
+			super(oldVariable, newVariable);
+			this.level = level;
+		}
+
+		@Override
+		void addDraft(Variable var) {
+			agreementDraft.addDraftVariable(level, var);
+		}
+
+		@Override
+		void removeDraft(Variable var) {
+			agreementDraft.addDraftVariable(level, var);
+		}
+	}
+
+	private class UndoableLevelCategoryEdit extends UndoableEdit<Set<String>> {
+
+		private Level level;
+
+		public UndoableLevelCategoryEdit(Level level, Set<String> oldCategories,
+				Set<String> newCategories) {
+			super(oldCategories, newCategories);
+			this.level = level;
+		}
+
+		@Override
+		void addDraft(Set<String> categories) {
+			agreementDraft.addDraftCategories(level, categories);
+		}
+
+		@Override
+		void removeDraft(Set<String> categories) {
+			agreementDraft.addDraftCategories(level, categories);
+		}
+
+	}
+
+
 	private Date draftEndDate;
 	private Date draftStartDate;
 
 	private int nextDraftLevelId = 0;
+	private int nextDraftExtraId = 0;
 	private int nextDraftPaymentId = 0;
 	private AgreementDraft agreementDraft;
 	private AgreementDraft oldAgreementDraft;
@@ -118,18 +211,26 @@ public class AgreementDraftObject implements IContextProvider {
 
 	public Level newLevel() {
 		Level level = new Level();
-		level.setId(--nextDraftPaymentId);
+		level.setId(--nextDraftLevelId);
 		return level;
+
+	}
+
+	public Extra newDraftExtra() {
+		Extra extra = new Extra();
+		extra.setId(--nextDraftExtraId);
+		return extra;
 
 	}
 
 	public Payment newDraftPayment() {
 		Payment payment = new Payment();
-		payment.setId(--nextDraftLevelId);
+		payment.setId(--nextDraftPaymentId);
 		return payment;
 
 	}
-
+	
+	
 	public Date getDraftEndDate() {
 		return draftEndDate == null ? agreementDraft.getEndDate()
 				: (draftEndDate == NULL_DATE ? null : draftEndDate);
@@ -149,7 +250,6 @@ public class AgreementDraftObject implements IContextProvider {
 		this.draftEndDate = draftEndDate;
 	}
 
-
 	// ------------------------------------------
 	// AgreeementDraft delegates
 	// ------------------------------------------
@@ -166,10 +266,6 @@ public class AgreementDraftObject implements IContextProvider {
 		return agreementDraft.getDescription();
 	}
 
-	public void setDescription(String description) {
-		agreementDraft.setDescription(description);
-	}
-
 	public Date getStartDate() {
 		return agreementDraft.getStartDate();
 	}
@@ -184,6 +280,10 @@ public class AgreementDraftObject implements IContextProvider {
 
 	public void setEndDate(Date endDate) {
 		agreementDraft.setEndDate(endDate);
+	}
+
+	public Set<Extra> getExtras() {
+		return agreementDraft.getExtras();
 	}
 
 	public Set<Payment> getPayments() {
@@ -207,17 +307,28 @@ public class AgreementDraftObject implements IContextProvider {
 	}
 
 	public boolean hasDrafts() {
-		return agreementDraft.hasDrafts()
-				|| !isDraftPeriodSet(getDraftStartDate(), getDraftEndDate(),
-						agreementDraft);
+		return agreementDraft.hasDrafts();
+		// || !isDraftPeriodSet(getDraftStartDate(),
+		// getDraftEndDate(),agreementDraft);
 	}
-	
+
 	public Set<Date> getDatesWithChanges() {
 		return agreementDraft.getDatesWithChanges();
 	}
 
 	// ------------------------------------------
 	// Undo & Redo Support
+
+	public void setDescription(String description) {
+		String old = agreementDraft.getDescription();
+		agreementDraft.setDescription(description);
+		undoManager.add(new UndoableDescriptionEdit(old, description));
+	}
+
+	public void addDraftExtra(Extra extra) {
+		Extra oldExtra = agreementDraft.addDraftExtra(extra);
+		undoManager.add(new UndoableExtraEdit(oldExtra, extra));
+	}
 
 	public void addDraftPayment(Payment payment) {
 		Payment oldPayment = agreementDraft.addDraftPayment(payment);
@@ -230,7 +341,14 @@ public class AgreementDraftObject implements IContextProvider {
 	}
 
 	public void addDraftVariable(Level level, Variable var) {
-		agreementDraft.addDraftVariable(level, var);
+		Variable old = agreementDraft.addDraftVariable(level, var);
+		undoManager.add(new UndoableLevelVariableEdit(level, old, var));
+	}
+
+	public void addDraftCategories(Level level, String str) {
+		Set<String> set = split(str);
+		Set<String> old = agreementDraft.addDraftCategories(level, set);
+		undoManager.add(new UndoableLevelCategoryEdit(level, old , set));
 	}
 
 	// ------------------------------------------
@@ -271,30 +389,17 @@ public class AgreementDraftObject implements IContextProvider {
 
 	public void save(final CalculateCallback callback) {
 
-
 		employeesServiceAsync.saveAgreementDraft(agreementDraft,
-				new AsyncCallback<Void>() {
+				new AsyncCallback<AgreementDraft>() {
 
 					@Override
-					public void onSuccess(Void result) {
-
-
+					public void onSuccess(AgreementDraft savedAgreementDraft) {
+						oldAgreementDraft = agreementDraft;
+						agreementDraft = savedAgreementDraft;
 						undoManager.discardAll();
+						agreementDraft.clearDrafts();
 
-						employeesServiceAsync.calculateAgreementDraft(agreementDraft,
-								new AsyncCallback<AgreementDraft>() {
-
-									@Override
-									public void onSuccess(AgreementDraft result) {
-										AgreementDraftObject.this.agreementDraft= result;
-										callback.onCalculateSucces(AgreementDraftObject.this);
-									}
-
-									@Override
-									public void onFailure(Throwable caught) {
-										callback.onCalculateFailure(caught);
-									}
-								});
+						calculate(callback);
 
 					}
 
@@ -328,8 +433,16 @@ public class AgreementDraftObject implements IContextProvider {
 	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {
 		employeesServiceAsync.getAvailablePayments(Integer.MIN_VALUE, callback);
 	}
+	
+	public boolean hasErrors() {
+		return false;
+	}
 
-
+	public boolean hasWarnings() {
+		return agreementDraft.hasLevelsWithoutCategories();
+	}
+	
+	
 	// ------------------------------------------
 	//
 	// ------------------------------------------
@@ -348,9 +461,9 @@ public class AgreementDraftObject implements IContextProvider {
 	// ------------------------------------------
 
 	Set<Level> getChangedLevels() {
-		if (oldAgreementDraft == null || oldAgreementDraft.getLevels() == null )
+		if (oldAgreementDraft == null || oldAgreementDraft.getLevels() == null)
 			return Collections.emptySet();
-		
+
 		Set<Level> changed = new HashSet<Level>();
 		Map<Integer, Level> oldLevels = toMap(oldAgreementDraft.getLevels());
 		for (Level newLevel : agreementDraft.getLevels()) {
@@ -365,7 +478,8 @@ public class AgreementDraftObject implements IContextProvider {
 	}
 
 	Set<String> getChangedVariables() {
-		if (oldAgreementDraft == null || oldAgreementDraft.getVariables() == null)
+		if (oldAgreementDraft == null
+				|| oldAgreementDraft.getVariables() == null)
 			return Collections.emptySet();
 		Set<String> changed = new HashSet<String>(agreementDraft.getVariables());
 		changed.removeAll(oldAgreementDraft.getVariables());
@@ -379,9 +493,9 @@ public class AgreementDraftObject implements IContextProvider {
 		}
 		return map;
 	}
-	
-	// -------------------------------------------------- TODO: Common factor ? 
-	
+
+	// -------------------------------------------------- TODO: Common factor ?
+
 	private static <T> boolean sameDate(Date d1, Date d2) {
 		if (d1 == d2)
 			return true;
@@ -410,5 +524,13 @@ public class AgreementDraftObject implements IContextProvider {
 		}
 		return true;
 	}
-
+	
+	private Set<String> split(String str){
+		LinkedHashSet<String> categories = new LinkedHashSet<String>();
+		for (String  category : str.split("\\W*,\\W*")) {
+			if ( category.length() > 0 )
+				categories.add(category);
+		}
+		return categories;
+	}
 }

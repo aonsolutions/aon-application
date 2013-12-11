@@ -12,6 +12,14 @@
 	color: black;
 }
 
+.aon-padding-left {
+	padding-left:16px;	
+}
+
+@sprite .aon-icon-warn {
+	gwt-image: "warn" ; 
+}
+
 @sprite .aon-icon-ine {
 	gwt-image: "ine" ; 
 }

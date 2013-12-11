@@ -4,31 +4,31 @@ import java.io.Serializable;
 
 public class Agreement implements Serializable, HasId<Integer> {
 
-	private int 			id;
-	private String 			description;
-	
-	private int 			redefined;		
-	private int 			employees;		
+	private int id;
+	private String description;
 
+	private int redefined;
+	private int employees;
 	
-	
+	//private boolean extraWithOutPayment;
+	private boolean levelsWithoutCategories;
+
 	@Override
 	public Integer getId() {
 		return id;
 	}
-	
+
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
 
 	public boolean hasEmployees() {
 		return employees > 0;
@@ -37,9 +37,9 @@ public class Agreement implements Serializable, HasId<Integer> {
 	public void setEmployees(int employees) {
 		this.employees = employees;
 	}
-	
+
 	public boolean isRedefined() {
-		return redefined > 0 ;
+		return redefined > 0;
 	}
 
 	public void setRedefined(int redefined) {
@@ -47,4 +47,15 @@ public class Agreement implements Serializable, HasId<Integer> {
 	}
 	
 	
+	public boolean hasLevelsWithoutCategories() {
+		return levelsWithoutCategories;
+	}
+
+	public void setLevelsWithoutCategories(boolean levelWithoutCategories) {
+		this.levelsWithoutCategories = levelWithoutCategories;
+	}
+
+	
+
+
 }

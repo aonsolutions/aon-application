@@ -10,6 +10,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementDataColumns;
@@ -123,16 +124,27 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private List<Agreement> getAgreements(Connection connection, int offset,
-			int limit, Integer domainID, Integer parentDomainID)
+	private static String LEVELS_WITHOUT_CATEGORIES = "LEVELS_WO";
+
+	private static List<Agreement> getAgreements(Connection connection,
+			int offset, int limit, Integer domainID, Integer parentDomainID)
 			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
+
 			//@formatter:off
 			stmt = connection.prepareStatement("SELECT "
 					+ SQLConstants.AGREEMENT + "." + AgreementColumns.ID 
 					+ ", " + SQLConstants.AGREEMENT + "." + AgreementColumns.DESCRIPTION 
+					+ ", ( SELECT count(*)"
+						+ " FROM " + SQLConstants.AGREEMENT_LEVEL 
+						+ " WHERE " + SQLConstants.AGREEMENT_LEVEL +"."+ AgreementLevelColumns.AGREEMENT + " = " + SQLConstants.AGREEMENT +"."+ AgreementColumns.ID 
+						+ " AND " + SQLConstants.AGREEMENT_LEVEL +"."+ AgreementLevelColumns.ID + " NOT IN"
+							+ " ( SELECT " + AgreementLevelCategoryColumns.AGREEMENT_LEVEL 
+							+ " FROM " + SQLConstants.AGREEMENT_LEVEL_CATEGORY 
+							+ " WHERE " + AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " = " + SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.ID + "))"
+					+ " AS " + LEVELS_WITHOUT_CATEGORIES
 					+ " FROM " + SQLConstants.AGREEMENT 
 					+ " WHERE " + SQLConstants.AGREEMENT + "." + AgreementColumns.DOMAIN + " IN ( ? " + (parentDomainID != null ? ",?" : "") + ")" 
 					+ " ORDER BY " + SQLConstants.AGREEMENT + "." + AgreementColumns.DESCRIPTION 
@@ -157,8 +169,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 						+ AgreementColumns.ID)); // Not NULL
 				agreement.setDescription(rs.getString(SQLConstants.AGREEMENT
 						+ "." + AgreementColumns.DESCRIPTION));
-				//agreement.setEmployees(rs.getInt("EMPLOYEEs"));
-				//agreement.setRedefined(rs.getInt("REDEFINED"));
+				agreement.setLevelsWithoutCategories(rs
+						.getInt(LEVELS_WITHOUT_CATEGORIES) > 0);
+				// agreement.setEmployees(rs.getInt("EMPLOYEEs"));
+				// agreement.setRedefined(rs.getInt("REDEFINED"));
 				agreements.add(agreement);
 			}
 

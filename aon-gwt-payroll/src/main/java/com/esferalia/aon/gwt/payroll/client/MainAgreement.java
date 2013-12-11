@@ -11,13 +11,43 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainAgreement extends MainEntryPoint implements Listener {
 
-	interface GWTResources extends ClientBundle {
+	static class DraftObjectListener implements UndoManager.Listener {
+
+		
+		
+
+		private TreeItem treeItem;
+		private AgreementDraftObject draftObject;
+
+		public DraftObjectListener(TreeItem treeItem,
+				AgreementDraftObject draftObject) {
+			this.treeItem = treeItem;
+			this.draftObject = draftObject;
+		}
+
+		@Override
+		public void onChange(UndoManager undoManager) {
+			
+			
+			ImageResource resource = Agreements.getImageResource(draftObject.canUndo(),
+					draftObject.hasErrors(), draftObject.hasWarnings());
+			treeItem.setHTML(Agreements.imageItemSafeHtml(resource,
+					draftObject.getDescription()));
+		}
+		
+	}
+
+	static interface GWTResources extends ClientBundle {
 		@Source("agreement.png")
 		ImageResource agreement();
+
+		@Source("agreement_changed.png")
+		ImageResource agreement_changed();
 	}
 
 	static interface Binder extends UiBinder<Widget, MainAgreement> {
@@ -79,6 +109,12 @@ public class MainAgreement extends MainEntryPoint implements Listener {
 			agreementDraftObject = new AgreementDraftObject(agreementDraft,
 					employeesServiceAsync);
 			agreementDrafts.put(agreement.getId(), agreementDraftObject);
+
+			TreeItem treeItem = agreements.getSelectedItem();
+
+			agreementDraftObject.addListener(new DraftObjectListener(treeItem,
+					agreementDraftObject));
+
 		} // end-if: Not exists, create it then...
 
 		agreementDraft.setAgreementDraftObject(agreementDraftObject);

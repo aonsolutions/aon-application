@@ -161,7 +161,7 @@
 	<ui:image field='warn' src='warn.png' />
 	<ui:image field='pdfPreview' src='pdfPreview.png' />
 
-	<ui:import field="com.esferalia.aon.gwt.payroll.client.SalaryDraft.*" />
+	<ui:import field="com.esferalia.aon.gwt.payroll.client.AgreementDraft.*" />
 
 	<g:DockLayoutPanel unit="PX">
 		<g:north size="72">
@@ -184,7 +184,6 @@
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='acceptButton'
 									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
-								<g:ListBox ui:field="dateListBox" visible="false" />
 								<g:Button ui:field="fxButton"
 									styleName='aon-finding-toolbar-item {style.fxButton}' enabled="false" />
 								<g:Button ui:field="undoButton"
@@ -205,8 +204,7 @@
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
-
-			</g:FlowPanel>
+		</g:FlowPanel>
 
 		</g:north>
 		<g:center>
@@ -240,7 +238,10 @@
 							visible="false" />
 						<g:FlexTable ui:field="paymentsTable"
 							styleName="aon-dataTable {style.edit-rows}" />
+						<g:HTML styleName="{style.vertical-space}" />
 
+						<g:FlexTable ui:field="extrasTable"
+							styleName="aon-dataTable {style.edit-rows}" />
 						<g:HTML styleName="{style.vertical-space}" />
 
 					</g:VerticalPanel>

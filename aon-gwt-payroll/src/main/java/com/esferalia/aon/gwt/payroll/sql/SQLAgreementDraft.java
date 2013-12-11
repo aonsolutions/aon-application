@@ -7,10 +7,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,12 +22,15 @@ import org.apache.commons.lang.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
+import com.esferalia.aon.gwt.payroll.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
@@ -33,8 +38,22 @@ import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
+import com.esferalia.aon.salary.expression.Period;
 
 public class SQLAgreementDraft {
+
+	private static class DBVariable extends StringVariable {
+		private Integer id;
+
+		public Integer getId() {
+			return id;
+		}
+
+		public void setId(Integer id) {
+			this.id = id;
+		}
+
+	}
 
 	public static Set<Payment> getPayments(Connection connection,
 			int agreementId, Date startDate, Date endDate) throws SQLException {
@@ -241,21 +260,25 @@ public class SQLAgreementDraft {
 
 	}
 
+	/*
+	 * Returns level categories. The categories are returned in the order in
+	 * which categories were inserted into the Database.
+	 */
 	public static Map<Integer, Set<String>> getCategories(
 			Connection connection, int agreementId) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-
-			stmt = connection.prepareStatement("SELECT * " + " FROM "
-					+ SQLConstants.AGREEMENT_LEVEL + " ,"
-					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + " WHERE "
-					+ SQLConstants.AGREEMENT_LEVEL + "."
-					+ AgreementLevelColumns.AGREEMENT + "= ? " + " AND ("
-					+ SQLConstants.AGREEMENT_LEVEL + "."
-					+ AgreementLevelColumns.ID + " =  "
-					+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
-					+ AgreementLevelCategoryColumns.AGREEMENT_LEVEL + ")");
+			//@formatter:off
+			stmt = connection.prepareStatement(
+					"SELECT * " 
+					+ " FROM " + SQLConstants.AGREEMENT_LEVEL 
+					+ " ," + SQLConstants.AGREEMENT_LEVEL_CATEGORY 
+					+ " WHERE " + SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.AGREEMENT + "= ? " 
+					+ " AND (" + SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.ID 
+					+ " =  " + SQLConstants.AGREEMENT_LEVEL_CATEGORY + "." + AgreementLevelCategoryColumns.AGREEMENT_LEVEL + ")"
+					+ " ORDER BY " + SQLConstants.AGREEMENT_LEVEL_CATEGORY + "." + AgreementLevelCategoryColumns.ID);
+			//@formatter:on
 
 			stmt.setInt(1, agreementId);
 
@@ -268,8 +291,8 @@ public class SQLAgreementDraft {
 						+ "." + AgreementLevelCategoryColumns.AGREEMENT_LEVEL);
 				Set<String> categories = categoriesMap.get(level);
 				if (categories == null) {
-					categoriesMap
-							.put(level, categories = new HashSet<String>());
+					categoriesMap.put(level,
+							categories = new LinkedHashSet<String>());
 				}
 				categories.add(rs
 						.getString(SQLConstants.AGREEMENT_LEVEL_CATEGORY + "."
@@ -295,7 +318,7 @@ public class SQLAgreementDraft {
 
 			String in = StringUtils.repeat("?", ",", domainIds.length);
 
-			Set<Date> months = new HashSet();
+			Set<Date> months = new HashSet<Date>();
 
 			//@formatter:off
 			stmt = connection.prepareStatement(
@@ -360,17 +383,1249 @@ public class SQLAgreementDraft {
 		}
 	}
 
+	public static Set<Extra> getExtras(Connection connection, int agreementId)
+			throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+
+			stmt = connection.prepareStatement("SELECT * " + " FROM "
+					+ SQLConstants.AGREEMENT_EXTRA + " WHERE "
+					+ AgreementExtraColumns.AGREEMENT + " = ? ");
+
+			stmt.setInt(1, agreementId);
+
+			rs = stmt.executeQuery();
+
+			Set<Extra> extras = new HashSet<Extra>();
+
+			while (rs.next()) {
+				Extra extra = new Extra();
+				extra.setId(rs.getInt(AgreementExtraColumns.ID));
+				extra.setPaymentId(rs
+						.getInt(AgreementExtraColumns.AGREEMENT_PAYMENT));
+				extra.setStartDate(rs
+						.getString(AgreementExtraColumns.START_DATE));
+				extra.setEndDate(rs.getString(AgreementExtraColumns.END_DATE));
+				extra.setIssueDate(rs
+						.getString(AgreementExtraColumns.ISSUE_DATE));
+				extras.add(extra);
+			}
+
+			return extras;
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
 	public static void save(Connection conn, AgreementDraft draft,
 			Integer domain, Integer parentDomain) throws SQLException {
 
-		Set<Level> levels = draft.getLevels();
-		Set<String> vars = draft.getVariables();
-		SalaryTable salaryTable = draft.getSalaryTable();
+		if (draft.getId() < 0)
+			insert(conn, draft, domain, parentDomain);
+		else
+			update(conn, draft, domain, parentDomain);
+	}
 
-		for (Level level : levels) {
-			for (String var : vars) {
-				Variable variable = salaryTable.get(level.getId(), var);
+	public static void insert(Connection conn, AgreementDraft draft,
+			Integer domainId, Integer parentDomain) throws SQLException {
+
+		int agreementId = insertAgreement(conn, domainId, draft);
+		draft.setId(agreementId);
+
+		SalaryTable salaryTable = draft.getDraftSalaryTable();
+
+		for (Variable variable : salaryTable.getVariables(0)){
+			variable.setStartDate(draft.getStartDate());
+			variable.setEndDate(draft.getEndDate());
+			insertData(conn, domainId, draft.getId(), variable);
+		}
+
+		Map<Integer, Set<String>> categoriesMap = draft.getDraftCategories();
+
+		for (Level level : draft.getDraftLevels()) {
+			insertLevel(conn, domainId, draft.getId(), level);
+		}
+
+		for (Level level : draft.getLevels()) {
+			int levelId = level.getId();
+			if (levelId == 0) 
+				continue;
+
+			// Salary Table
+			for (Variable variable : salaryTable.getVariables(levelId))
+				insertLevelData(conn, domainId, levelId, variable);
+			// Categories
+			Set<String> categories = categoriesMap.get(levelId);
+			updateCategories(conn, domainId, levelId, categories);
+		}
+
+		for (Payment payment : draft.getPayments()) {
+			if (!isRemove(payment))
+				insertPayment(conn, domainId, draft.getId(), payment);
+
+		}
+
+		for (Extra extra : draft.getExtras()) {
+			if (isRemove(extra)) {
+				insertExtra(conn, domainId, draft.getId(), extra);
 			}
+		}
+	}
+
+	public static void update(Connection conn, AgreementDraft draft,
+			Integer domainId, Integer parentDomain) throws SQLException {
+
+		updateAgreement(conn, domainId, draft);
+
+		Set<Level> draftLevels = draft.getDraftLevels();
+		SalaryTable salaryTable = draft.getDraftSalaryTable();
+		Map<Integer, Set<String>> categoriesMap = draft.getDraftCategories();
+
+		for (Level level : draftLevels) {
+
+			if (isRemove(level)) {
+				removeLevel(conn, level.getId());
+				continue;
+			}
+
+			int dbId = level.getId();
+			int draftId = level.getId();
+
+			if (dbId < 0)
+				dbId = insertLevel(conn, domainId, draft.getId(), level);
+			else
+				updateLevel(conn, domainId, draft.getId(), level);
+
+			for (Variable variable : salaryTable.getVariables(draftId)) {
+				variable.setStartDate(draft.getStartDate());
+				variable.setEndDate(draft.getEndDate());
+				updateLevelData(conn, domainId, dbId, variable);
+			}
+
+			if (categoriesMap.containsKey(draftId)){
+				updateCategories(conn, domainId, dbId,
+						categoriesMap.get(draftId));
+			}
+		}
+
+		for (Variable variable : salaryTable.getVariables(0)){
+			variable.setStartDate(draft.getStartDate());
+			variable.setEndDate(draft.getEndDate());
+			updateData(conn, domainId, draft.getId(), variable);
+		}
+
+		for (Level level : draft.getLevels()) {
+
+			int levelId = level.getId();
+
+			if (levelId == 0)
+				continue;
+
+			if (draftLevels.contains(level))
+				continue;
+
+			for (Variable variable : salaryTable.getVariables(levelId)) {
+				variable.setStartDate(draft.getStartDate());
+				variable.setEndDate(draft.getEndDate());
+				updateLevelData(conn, domainId, levelId, variable);
+			}
+
+			if (categoriesMap.containsKey(levelId))
+				updateCategories(conn, domainId, levelId,
+						categoriesMap.get(levelId));
+		}
+
+		for (Payment payment : draft.getDraftPayments()) {
+			payment.setStartDate(draft.getStartDate());
+			payment.setEndDate(draft.getEndDate());
+			if (payment.getId() < 0) {
+				if (!isRemove(payment))
+					insertPayment(conn, domainId, draft.getId(), payment);
+			} else {
+				if (!isRemove(payment)){
+					updatePayment(conn, domainId, draft.getId(), payment);
+				} else {
+					removePayment(conn, domainId, draft.getId(), payment);
+				}
+			}
+
+		}
+
+		for (Extra extra : draft.getDraftExtras()) {
+			if (extra.getId() < 0) {
+				if (!isRemove(extra)) {
+					insertExtra(conn, domainId, draft.getId(), extra);
+				}
+			} else {
+				if (!isRemove(extra)) {
+					updateExtra(conn, domainId, draft.getId(), extra);
+				} else {
+					removeExtra(conn, extra.getId());
+				}
+			}
+
+		}
+	}
+
+	private static int insertAgreement(Connection conn, Integer domainId,
+			AgreementDraft draft) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"INSERT INTO " + SQLConstants.AGREEMENT 
+					+ " ( " + AgreementColumns.DOMAIN + ", " + AgreementColumns.DESCRIPTION + ")"
+					+ " VALUES ( ?,?)", 
+					new String[] { AgreementColumns.ID });
+			//@formatter:on
+			stmt.setInt(1, domainId);
+			stmt.setString(2, draft.getDescription());
+			stmt.executeUpdate();
+			rs = stmt.getGeneratedKeys();
+			rs.next();
+			return rs.getInt(1);
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static void updateAgreement(Connection conn, Integer domainId,
+			AgreementDraft draft) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"UPDATE " + SQLConstants.AGREEMENT
+					+ " SET " + AgreementColumns.DESCRIPTION + " = ? "
+					+ " WHERE " + AgreementColumns.ID + " = ? ");
+			//@formatter:on
+			stmt.setString(1, draft.getDescription());
+			stmt.setInt(2, draft.getId());
+			stmt.executeUpdate();
+			stmt.close();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static void insertExtra(Connection conn, Integer domainId,
+			Integer agreementId, Extra extra) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"INSERT INTO " 
+					+ SQLConstants.AGREEMENT_EXTRA + " ( "
+					+ AgreementExtraColumns.DOMAIN + ", "
+					+ AgreementExtraColumns.AGREEMENT + ", "
+					+ AgreementExtraColumns.START_DATE + ", "
+					+ AgreementExtraColumns.END_DATE + ", "
+					+ AgreementExtraColumns.ISSUE_DATE + ", "
+					+ AgreementExtraColumns.AGREEMENT_PAYMENT + ")"
+					+ " VALUES (?,?,?,?,?,?)",
+					new String[] { AgreementExtraColumns.ID });
+			//@formatter:on
+			stmt.setInt(1, domainId);
+			stmt.setInt(2, agreementId);
+			stmt.setString(3, extra.getStartDate());
+			stmt.setString(4, extra.getEndDate());
+			stmt.setString(5, extra.getIssueDate());
+			Integer paymentId = extra.getPaymentId();
+			if (paymentId != null)
+				stmt.setInt(6, extra.getPaymentId());
+			else
+				stmt.setNull(6, Types.INTEGER);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void updateExtra(Connection conn, Integer domainId,
+			Integer agreementId, Extra extra) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"UPDATE " +SQLConstants.AGREEMENT_EXTRA 
+					+" SET " + AgreementExtraColumns.START_DATE+ " = ? ,"
+					+ AgreementExtraColumns.END_DATE+ " = ? ,"
+					+ AgreementExtraColumns.ISSUE_DATE+ " = ? ,"
+					+ AgreementExtraColumns.AGREEMENT_PAYMENT + " = ?"
+					+ " WHERE " + AgreementExtraColumns.ID + " = ? ");
+			//@formatter:on
+			stmt.setString(1, extra.getStartDate());
+			stmt.setString(2, extra.getEndDate());
+			stmt.setString(3, extra.getIssueDate());
+			Integer paymentId = extra.getPaymentId();
+			if (paymentId != null)
+				stmt.setInt(4, extra.getPaymentId());
+			else
+				stmt.setNull(4, Types.INTEGER);
+			stmt.setInt(5, extra.getId());
+			stmt.executeUpdate();
+			stmt.close();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void removeExtra(Connection conn, Integer extraId)
+			throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"DELETE FROM " +SQLConstants.AGREEMENT_EXTRA 
+					+ " WHERE " + AgreementExtraColumns.ID + " = ? ");
+			//@formatter:on
+			stmt.setInt(1, extraId);
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static int insertLevel(Connection conn, Integer domainId,
+			Integer agreementId, Level level) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"INSERT INTO " 
+					+ SQLConstants.AGREEMENT_LEVEL + " ( "
+					+ AgreementLevelColumns.DOMAIN + ", "
+					+ AgreementLevelColumns.AGREEMENT + ", "
+					+ AgreementLevelColumns.DESCRIPTION + ")"
+					+ " VALUES (?,?,?)",
+					new String[] { AgreementLevelColumns.ID });
+			//@formatter:on
+			stmt.setInt(1, domainId);
+			stmt.setInt(2, agreementId);
+			stmt.setString(3, level.getDescription());
+			stmt.executeUpdate();
+			rs = stmt.getGeneratedKeys();
+			rs.next();
+			return rs.getInt(1);
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void insertData(Connection conn, Integer domainId,
+			Integer agreementId, Variable variable) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"INSERT INTO " 
+					+ SQLConstants.AGREEMENT_DATA + " ( "
+					+ AgreementDataColumns.DOMAIN 
+					+ ", " + AgreementDataColumns.AGREEMENT 
+					+ ", " + AgreementDataColumns.NAME 
+					+ ", " + AgreementDataColumns.EXPRESSION  
+					+ ", " + AgreementDataColumns.START_DATE  
+					+ ", " + AgreementDataColumns.END_DATE  
+					+ ")"
+					+ " VALUES (?,?,?,?,?,?)",
+					new String[] { AgreementLevelDataColumns.ID });
+			//@formatter:on
+			stmt.setInt(1, domainId);
+			stmt.setInt(2, agreementId);
+			stmt.setString(3, variable.getName());
+			stmt.setString(4, variable.getExpression());
+			stmt.setDate(5,
+					new java.sql.Date(variable.getStartDate().getTime()));
+			Date endDate = variable.getEndDate();
+			if (endDate != null)
+				stmt.setDate(6, new java.sql.Date(endDate.getTime()));
+			else
+				stmt.setNull(6, Types.DATE);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void insertLevelData(Connection conn, Integer domainId,
+			Integer levelId, Variable variable) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"INSERT INTO " 
+					+ SQLConstants.AGREEMENT_LEVEL_DATA + " ( "
+					+ AgreementLevelDataColumns.DOMAIN 
+					+ ", " + AgreementLevelDataColumns.AGREEMENT_LEVEL 
+					+ ", " + AgreementLevelDataColumns.NAME 
+					+ ", " + AgreementLevelDataColumns.EXPRESSION  
+					+ ", " + AgreementLevelDataColumns.START_DATE  
+					+ ", " + AgreementLevelDataColumns.END_DATE  
+					+ ")"
+					+ " VALUES (?,?,?,?,?,?)",
+					new String[] { AgreementLevelDataColumns.ID });
+			//@formatter:on
+			stmt.setInt(1, domainId);
+			stmt.setInt(2, levelId);
+			stmt.setString(3, variable.getName());
+			stmt.setString(4, variable.getExpression());
+			stmt.setDate(5,
+					new java.sql.Date(variable.getStartDate().getTime()));
+			Date endDate = variable.getEndDate();
+			if (endDate != null)
+				stmt.setDate(6, new java.sql.Date(endDate.getTime()));
+			else
+				stmt.setNull(6, Types.DATE);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void updateData(Connection conn, Integer domainId,
+			Integer agreementId, Variable variable) throws SQLException {
+
+		String name = variable.getName();
+		List<DBVariable> dbVariables = getDBData(conn, agreementId, variable);
+
+		Period period = new Period(variable.getStartDate(),
+				variable.getEndDate());
+
+		for (DBVariable dbVariable : dbVariables) {
+			Period dbPeriod = new Period(dbVariable.getStartDate(),
+					dbVariable.getEndDate());
+			List<Period> subs = dbPeriod.sub(period);
+
+			if (subs.size() == 0) {
+				// New data overrides completely previous data. .
+				removeData(conn, dbVariable.getId());
+				return;
+			}
+
+			Period first = subs.get(0);
+			if (first.equals(dbPeriod)) {
+				// New data doesn't override previous data. }
+			}
+
+			// Update previous payment with new limits.
+			updateData(conn, dbVariable.getId(), first);
+
+			if (subs.size() > 1)
+				copyData(conn, dbVariable.getId(), subs.get(1));
+
+		}
+
+		insertData(conn, domainId, agreementId, variable);
+
+	}
+
+	private static void updateLevelData(Connection conn, Integer domainId,
+			Integer levelId, Variable variable) throws SQLException {
+
+		List<DBVariable> dbVariables = getDBLevelData(conn, levelId, variable);
+
+		Period period = new Period(variable.getStartDate(),
+				variable.getEndDate());
+
+		for (DBVariable dbVariable : dbVariables) {
+			Period dbPeriod = new Period(dbVariable.getStartDate(),
+					dbVariable.getEndDate());
+			List<Period> subs = dbPeriod.sub(period);
+
+			if (subs.size() == 0) {
+				// New data overrides completely previous data. .
+				removeLevelData(conn, dbVariable.getId());
+				continue;
+			}
+
+			Period first = subs.get(0);
+			if (first.equals(dbPeriod)) {
+				// New data doesn't override previous data. }
+			}
+
+			// Update previous payment with new limits.
+			updateLevelData(conn, dbVariable.getId(), first);
+
+			if (subs.size() > 1)
+				copyLevelData(conn, dbVariable.getId(), subs.get(1));
+
+		}
+		String expression = variable.getExpression();
+		if (StringUtils.isNotEmpty(expression))
+			insertLevelData(conn, domainId, levelId, variable);
+
+	}
+
+	private static void updateLevel(Connection conn, Integer domainId,
+			Integer agreementId, Level level) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"UPDATE " + SQLConstants.AGREEMENT_LEVEL
+					+" SET " + AgreementLevelColumns.DESCRIPTION + " = ? "
+					+ " WHERE " + AgreementLevelColumns.ID + " = ? ");
+			//@formatter:on
+			stmt.setString(1, level.getDescription());
+			stmt.setInt(2, agreementId);
+			stmt.executeUpdate();
+			stmt.close();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void removeLevel(Connection conn, int levelId)
+			throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"DELETE FROM " + SQLConstants.AGREEMENT_LEVEL_CATEGORY
+					+ " WHERE " + AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " = ? ");
+			//@formatter:on
+			stmt.setInt(1, levelId);
+			stmt.executeUpdate();
+			stmt.close();
+
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"DELETE FROM " + SQLConstants.AGREEMENT_LEVEL_DATA
+					+ " WHERE " + AgreementLevelDataColumns.AGREEMENT_LEVEL + " = ? ");
+			//@formatter:on
+			stmt.setInt(1, levelId);
+			stmt.executeUpdate();
+			stmt.close();
+
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"DELETE FROM " + SQLConstants.AGREEMENT_LEVEL
+					+ " WHERE " + AgreementLevelColumns.ID + " = ? ");
+			//@formatter:on
+			stmt.setInt(1, levelId);
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void insertPayment(Connection conn, Integer domainId,
+			Integer agreementId, Payment payment) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"INSERT INTO " 
+					+ SQLConstants.AGREEMENT_PAYMENT + " ( "
+					+ AgreementPaymentColumns.DOMAIN + ", "
+					+ AgreementPaymentColumns.AGREEMENT + ", "
+					
+					+ AgreementPaymentColumns.PAYMENT_CONCEPT + ", "
+					+ AgreementPaymentColumns.TYPE +", "
+					+ AgreementPaymentColumns.DESCRIPTION +", "
+					+ AgreementPaymentColumns.EXPRESSION + ", "
+					+ AgreementPaymentColumns.IRPF_EXPRESSION + ", "
+					+ AgreementPaymentColumns.QUOTE_EXPRESSION + ", "
+					
+					+ AgreementPaymentColumns.MONTH + ", "
+					+ AgreementPaymentColumns.SALARY_TYPE + ", "
+					+ AgreementPaymentColumns.START_DATE + ", "
+					+ AgreementPaymentColumns.END_DATE 
+					+ ")"
+					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+					new String[] { AgreementPaymentColumns.ID });
+			//@formatter:on
+			stmt.setInt(1, domainId);
+			stmt.setInt(2, agreementId);
+
+			Integer conceptId = payment.getConceptId();
+			if (conceptId != null)
+				stmt.setInt(3, conceptId);
+			else
+				stmt.setNull(3, Types.INTEGER);
+
+			Payment.Type type = payment.getType();
+			if (type != null)
+				stmt.setInt(4, type.ordinal());
+			else
+				stmt.setNull(4, Types.SMALLINT);
+
+			stmt.setString(5, payment.getDescription());
+			stmt.setString(6, payment.getExpression());
+			stmt.setString(7, payment.getIrpfExpression());
+			stmt.setString(8, payment.getQuoteExpression());
+
+			Short month = payment.getMonth();
+			if (month != null)
+				stmt.setShort(9, month);
+			else
+				stmt.setNull(9, Types.SMALLINT);
+
+			Salary.Type salaryType = payment.getSalaryType();
+			if (salaryType != null)
+				stmt.setInt(10, salaryType.ordinal());
+			else
+				stmt.setNull(10, Types.SMALLINT);
+
+			stmt.setDate(11,
+					new java.sql.Date(payment.getStartDate().getTime()));
+			Date endDate = payment.getStartDate();
+			if (endDate != null)
+				stmt.setDate(12, new java.sql.Date(payment.getStartDate()
+						.getTime()));
+			else
+				stmt.setNull(12, Types.DATE);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void updatePayment(Connection conn, Integer domainId,
+			Integer agreementId, Payment payment) throws SQLException {
+
+		Period dbPeriod = getPaymentDBPeriod(conn, payment.getId());
+
+		Period newPeriod = new Period(payment.getStartDate(),
+				payment.getEndDate());
+
+		List<Period> subPeriods = dbPeriod.sub(newPeriod);
+
+		if (subPeriods.size() == 0) {
+			// New payment overrides completely previous payment. So we need
+			// only a single SQL UPADTE with new values.
+			updatePayment(conn, payment);
+			return;
+		}
+
+		Period firstPeriod = subPeriods.get(0);
+		if (firstPeriod.equals(dbPeriod)) {
+			// New payment doesn't override previous payment. So we need only
+			// a single SQL INSERT with new values.
+			insertPayment(conn, domainId, agreementId, payment);
+			return;
+		}
+
+		// Update previous payment with new limits.
+		updatePayment(conn, payment.getId(), firstPeriod);
+		// Insert new payment.
+		insertPayment(conn, domainId, agreementId, payment);
+
+		if (subPeriods.size() > 1)
+			copyPayment(conn, payment.getId(), subPeriods.get(1));
+
+	}
+
+	private static void removePayment(Connection conn, Integer domainId,
+			Integer agreementId, Payment payment) throws SQLException {
+
+		Period dbPeriod = getPaymentDBPeriod(conn, payment.getId());
+
+		Period newPeriod = new Period(payment.getStartDate(),
+				payment.getEndDate());
+
+		List<Period> subPeriods = dbPeriod.sub(newPeriod);
+
+		if (subPeriods.size() == 0) {
+			// New payment overrides completely previous payment. So delete it.
+			removePayment(conn, payment.getId());
+			return;
+		}
+
+		Period firstPeriod = subPeriods.get(0);
+		if (firstPeriod.equals(dbPeriod)) {
+			// New payment doesn't override previous payment. So nothing to do.
+			return;
+		}
+
+		// Update previous payment with new limits.
+		updatePayment(conn, payment.getId(), firstPeriod);
+
+		if (subPeriods.size() > 1)
+			copyPayment(conn, payment.getId(), subPeriods.get(1));
+
+	}
+
+	private static Period getPaymentDBPeriod(Connection conn, Integer paymentId)
+			throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement("SELECT " 
+			+ AgreementPaymentColumns.START_DATE
+			+ ", " + AgreementPaymentColumns.END_DATE
+			+ " FROM " + SQLConstants.AGREEMENT_PAYMENT 
+			+ " WHERE " + AgreementPaymentColumns.ID + " = ? "
+			);
+			//@formatter:on
+
+			stmt.setInt(1, paymentId);
+
+			rs = stmt.executeQuery();
+
+			if (!rs.next())
+				return null;
+
+			return new Period(rs.getDate(AgreementPaymentColumns.START_DATE),
+					rs.getDate(AgreementPaymentColumns.END_DATE));
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static List<DBVariable> getDBData(Connection conn, int agreementId,
+			Variable variable) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			Date endDate = variable.getEndDate();
+			//@formatter:off
+			stmt = conn.prepareStatement("SELECT *"
+			+ " FROM " + SQLConstants.AGREEMENT_DATA 
+			+ " WHERE " + AgreementDataColumns.AGREEMENT + " = ? "
+			+ " AND " + AgreementDataColumns.NAME + " = ?  "
+			+ " AND ( " + AgreementDataColumns.END_DATE + " >= ?  "
+			+ " OR  " + AgreementDataColumns.END_DATE +  " IS NULL )" 
+			+ ( endDate != null ? " AND " +  AgreementDataColumns.START_DATE  + " <= ? " : "" ));
+			//@formatter:on
+
+			stmt.setInt(1, agreementId);
+			stmt.setString(2, variable.getName());
+			stmt.setDate(3,
+					new java.sql.Date(variable.getStartDate().getTime()));
+			if (endDate != null)
+				stmt.setDate(4, new java.sql.Date(endDate.getTime()));
+
+			rs = stmt.executeQuery();
+
+			List<DBVariable> variables = new ArrayList<DBVariable>();
+			while (rs.next()) {
+				DBVariable dbVar = new DBVariable();
+				dbVar.setId(rs.getInt(AgreementLevelDataColumns.ID));
+				dbVar.setName(rs.getString(AgreementLevelDataColumns.NAME));
+				dbVar.setExpression(rs
+						.getString(AgreementLevelDataColumns.EXPRESSION));
+				dbVar.setStartDate(rs
+						.getDate(AgreementLevelDataColumns.START_DATE));
+				dbVar.setEndDate(rs.getDate(AgreementLevelDataColumns.END_DATE));
+				variables.add(dbVar);
+			}
+			return variables;
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static List<DBVariable> getDBLevelData(Connection conn,
+			int levelId, Variable variable) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			Date endDate = variable.getEndDate();
+			//@formatter:off
+			stmt = conn.prepareStatement("SELECT *"
+			+ " FROM " + SQLConstants.AGREEMENT_LEVEL_DATA 
+			+ " WHERE " + AgreementLevelDataColumns.AGREEMENT_LEVEL + " = ? "
+			+ " AND " + AgreementLevelDataColumns.NAME + " = ?  "
+			+ " AND ( " + AgreementLevelDataColumns.END_DATE + " >= ?  "
+			+ " OR  " + AgreementLevelDataColumns.END_DATE +  " IS NULL )" 
+			+ ( endDate != null ? " AND " +  AgreementLevelDataColumns.START_DATE  + " <= ? " : "" ));
+			//@formatter:on
+
+			stmt.setInt(1, levelId);
+			stmt.setString(2, variable.getName());
+			stmt.setDate(3,
+					new java.sql.Date(variable.getStartDate().getTime()));
+			if (endDate != null)
+				stmt.setDate(4, new java.sql.Date(endDate.getTime()));
+
+			rs = stmt.executeQuery();
+
+			List<DBVariable> variables = new ArrayList<DBVariable>();
+			while (rs.next()) {
+				DBVariable dbVar = new DBVariable();
+				dbVar.setId(rs.getInt(AgreementLevelDataColumns.ID));
+				dbVar.setName(rs.getString(AgreementLevelDataColumns.NAME));
+				dbVar.setExpression(rs
+						.getString(AgreementLevelDataColumns.EXPRESSION));
+				dbVar.setStartDate(rs
+						.getDate(AgreementLevelDataColumns.START_DATE));
+				dbVar.setEndDate(rs.getDate(AgreementLevelDataColumns.END_DATE));
+				variables.add(dbVar);
+			}
+			return variables;
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void updatePayment(Connection conn, Payment payment)
+			throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement("UPDATE " + SQLConstants.AGREEMENT_PAYMENT 
+					+ " SET " + AgreementPaymentColumns.START_DATE + " = ?"
+					+ " ," + AgreementPaymentColumns.END_DATE + " = ?"
+					+ " ," + AgreementPaymentColumns.MONTH + " = ?"
+					+ " ," + AgreementPaymentColumns.TYPE+ " = ?"
+					+ " ," + AgreementPaymentColumns.SALARY_TYPE+ " = ?"
+					+ " ," + AgreementPaymentColumns.DESCRIPTION + " = ?"
+					+ " ," + AgreementPaymentColumns.EXPRESSION + " = ?"
+					+ " ," + AgreementPaymentColumns.IRPF_EXPRESSION + " = ?"
+					+ " ," + AgreementPaymentColumns.QUOTE_EXPRESSION + " = ?"
+					+ " WHERE " + AgreementPaymentColumns.ID + "= ? "
+					);
+			//@formatter:on
+
+			stmt.setDate(1, new java.sql.Date(payment.getStartDate().getTime()));
+			Date endDate = payment.getEndDate();
+			if (endDate != null)
+				stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+			else
+				stmt.setNull(2, Types.DATE);
+
+			if (payment.getMonth() != null)
+				stmt.setShort(3, payment.getMonth());
+			else
+				stmt.setNull(3, Types.SMALLINT);
+
+			if (payment.getType() != null)
+				stmt.setInt(4, payment.getType().ordinal());
+			else
+				stmt.setNull(4, Types.INTEGER);
+
+			if (payment.getSalaryType() != null)
+				stmt.setInt(5, payment.getSalaryType().ordinal());
+			else
+				stmt.setNull(5, Types.INTEGER);
+
+			stmt.setString(6, payment.getDescription());
+			stmt.setString(7, payment.getExpression());
+			stmt.setString(8, payment.getIrpfExpression());
+			stmt.setString(9, payment.getQuoteExpression());
+
+			stmt.setInt(10, payment.getId());
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void updatePayment(Connection conn, Integer paymentId,
+			Period period) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement("UPDATE " + SQLConstants.AGREEMENT_PAYMENT 
+					+ " SET " + AgreementPaymentColumns.START_DATE + " = ?"
+					+ " ," + AgreementPaymentColumns.END_DATE + " = ?"
+					+ " WHERE " + AgreementPaymentColumns.ID + "= ? "
+					);
+			//@formatter:on
+
+			stmt.setDate(1, new java.sql.Date(period.getStart().getTime()));
+			Date endDate = period.getEnd();
+			if (endDate != null)
+				stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+			else
+				stmt.setNull(2, Types.DATE);
+
+			stmt.setInt(3, paymentId);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void removePayment(Connection conn, Integer paymentId)
+			throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement("DELETE FROM " + SQLConstants.AGREEMENT_PAYMENT 
+					+ " WHERE " + AgreementPaymentColumns.ID + "= ? " );
+			//@formatter:on
+
+			stmt.setInt(1, paymentId);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void copyPayment(Connection conn, Integer paymentId,
+			Period period) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"INSERT INTO " 
+					+ SQLConstants.AGREEMENT_PAYMENT + " ( "
+					+ AgreementPaymentColumns.DOMAIN + ", "
+					+ AgreementPaymentColumns.AGREEMENT + ", "
+					
+					+ AgreementPaymentColumns.PAYMENT_CONCEPT + ", "
+					+ AgreementPaymentColumns.TYPE +", "
+					+ AgreementPaymentColumns.DESCRIPTION +", "
+					+ AgreementPaymentColumns.EXPRESSION + ", "
+					+ AgreementPaymentColumns.IRPF_EXPRESSION + ", "
+					+ AgreementPaymentColumns.QUOTE_EXPRESSION + ", "
+					
+					+ AgreementPaymentColumns.MONTH + ", "
+					+ AgreementPaymentColumns.SALARY_TYPE + ", "
+					+ AgreementPaymentColumns.START_DATE + ", "
+					+ AgreementPaymentColumns.END_DATE 
+					+ ")"
+					+ " ( SELECT " + AgreementPaymentColumns.DOMAIN 
+					+ ", " + AgreementPaymentColumns.AGREEMENT 
+
+					+ ", " + AgreementPaymentColumns.PAYMENT_CONCEPT 
+					+ ", " + AgreementPaymentColumns.TYPE 
+					+ ", " + AgreementPaymentColumns.DESCRIPTION 
+					+ ", " + AgreementPaymentColumns.EXPRESSION 
+					+ ", " + AgreementPaymentColumns.IRPF_EXPRESSION 
+					+ ", " + AgreementPaymentColumns.QUOTE_EXPRESSION 
+
+					+ ", " + AgreementPaymentColumns.MONTH 
+					+ ", " + AgreementPaymentColumns.SALARY_TYPE
+					+ ",  ? "
+					+ ",  ? "
+					+ " WHERE " + AgreementPaymentColumns.ID + " = ? "
+					+")",
+					new String[] { AgreementPaymentColumns.ID });
+			//@formatter:on
+			stmt.setDate(1, new java.sql.Date(period.getStart().getTime()));
+
+			Date endDate = period.getEnd();
+			if (endDate != null)
+				stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+			else
+				stmt.setNull(2, Types.DATE);
+
+			stmt.setInt(3, paymentId);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void updateCategories(Connection conn, Integer domainId,
+			Integer levelId, Set<String> categories) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"DELETE FROM " + SQLConstants.AGREEMENT_LEVEL_CATEGORY
+					+ " WHERE " + AgreementLevelCategoryColumns.AGREEMENT_LEVEL + " = ? ");
+			//@formatter:on
+			stmt.setInt(1, levelId);
+			stmt.executeUpdate();
+			stmt.close();
+
+			if (categories == null || categories.isEmpty())
+				return;
+
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"INSERT INTO " + SQLConstants.AGREEMENT_LEVEL_CATEGORY
+					+ "( " + AgreementLevelCategoryColumns.DOMAIN 
+					+ " , " +  AgreementLevelCategoryColumns.AGREEMENT_LEVEL 
+					+ " , " +  AgreementLevelCategoryColumns.DESCRIPTION + ") " 
+					+ " VALUES (?, ?, ?) ");
+			//@formatter:on
+
+			for (String category : categories) {
+				stmt.setInt(1, domainId);
+				stmt.setInt(2, levelId);
+				stmt.setString(3, category);
+				stmt.executeUpdate();
+			}
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static void removeData(Connection conn, Integer dataId)
+			throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement("DELETE FROM " + SQLConstants.AGREEMENT_DATA 
+					+ " WHERE " + AgreementDataColumns.ID + "= ? "
+					);
+			//@formatter:on
+
+			stmt.setInt(1, dataId);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void removeLevelData(Connection conn, Integer dataId)
+			throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement("DELETE FROM " + SQLConstants.AGREEMENT_LEVEL_DATA 
+					+ " WHERE " + AgreementLevelDataColumns.ID + "= ? "
+					);
+			//@formatter:on
+
+			stmt.setInt(1, dataId);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void copyData(Connection conn, Integer dataId, Period period)
+			throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"INSERT INTO " 
+					+ SQLConstants.AGREEMENT_DATA + " ( "
+					+ AgreementDataColumns.DOMAIN + ", "
+					+ AgreementDataColumns.AGREEMENT + ", "
+					
+					+ AgreementDataColumns.NAME + ", "
+					+ AgreementDataColumns.EXPRESSION + ", "
+
+					+ AgreementDataColumns.START_DATE + ", "
+					+ AgreementDataColumns.END_DATE 
+					+ ")"
+					+ " ( SELECT " + AgreementDataColumns.DOMAIN 
+					+ ", " + AgreementDataColumns.AGREEMENT
+
+					+ ", " + AgreementDataColumns.NAME 
+					+ ", " + AgreementDataColumns.EXPRESSION 
+					+ ",  ? "
+					+ ",  ? "
+					+ " WHERE " + AgreementDataColumns.ID + " = ? "
+					+")",
+					new String[] { AgreementDataColumns.ID });
+			//@formatter:on
+			stmt.setDate(1, new java.sql.Date(period.getStart().getTime()));
+
+			Date endDate = period.getEnd();
+			if (endDate != null)
+				stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+			else
+				stmt.setNull(2, Types.DATE);
+
+			stmt.setInt(3, dataId);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void copyLevelData(Connection conn, Integer dataId,
+			Period period) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement(
+					"INSERT INTO " 
+					+ SQLConstants.AGREEMENT_LEVEL_DATA + " ( "
+					+ AgreementLevelDataColumns.DOMAIN + ", "
+					+ AgreementLevelDataColumns.AGREEMENT_LEVEL + ", "
+					
+					+ AgreementLevelDataColumns.NAME + ", "
+					+ AgreementLevelDataColumns.EXPRESSION + ", "
+
+					+ AgreementLevelDataColumns.START_DATE + ", "
+					+ AgreementLevelDataColumns.END_DATE 
+					+ ")"
+					+ " ( SELECT " + AgreementLevelDataColumns.DOMAIN 
+					+ ", " + AgreementLevelDataColumns.AGREEMENT_LEVEL 
+
+					+ ", " + AgreementLevelDataColumns.NAME 
+					+ ", " + AgreementLevelDataColumns.EXPRESSION 
+					+ ",  ? "
+					+ ",  ? "
+					+ " WHERE " + AgreementLevelDataColumns.ID + " = ? "
+					+")",
+					new String[] { AgreementLevelDataColumns.ID });
+			//@formatter:on
+			stmt.setDate(1, new java.sql.Date(period.getStart().getTime()));
+
+			Date endDate = period.getEnd();
+			if (endDate != null)
+				stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+			else
+				stmt.setNull(2, Types.DATE);
+
+			stmt.setInt(3, dataId);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void updateData(Connection conn, Integer dataId,
+			Period period) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement("UPDATE " + SQLConstants.AGREEMENT_DATA 
+					+ " SET " + AgreementDataColumns.START_DATE + " = ? "
+					+ ", " + AgreementDataColumns.END_DATE + " = ? "
+					+ " WHERE " + AgreementDataColumns.ID + "= ? "
+					);
+			//@formatter:on
+
+			stmt.setDate(1, new java.sql.Date(period.getStart().getTime()));
+			Date endDate = period.getEnd();
+			if (endDate != null)
+				stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+			else
+				stmt.setNull(2, Types.DATE);
+
+			stmt.setInt(3, dataId);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+
+	private static void updateLevelData(Connection conn, Integer dataId,
+			Period period) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = conn.prepareStatement("UPDATE " + SQLConstants.AGREEMENT_LEVEL_DATA 
+					+ " SET " + AgreementLevelDataColumns.START_DATE + " = ? "
+					+ ", " + AgreementLevelDataColumns.END_DATE + " = ? "
+					+ " WHERE " + AgreementLevelDataColumns.ID + "= ? "
+					);
+			//@formatter:on
+
+			stmt.setDate(1, new java.sql.Date(period.getStart().getTime()));
+			Date endDate = period.getEnd();
+			if (endDate != null)
+				stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+			else
+				stmt.setNull(2, Types.DATE);
+
+			stmt.setInt(3, dataId);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
 		}
 
 	}
@@ -380,5 +1635,17 @@ public class SQLAgreementDraft {
 		return SQLUtils.get(rs, toType, SQLConstants.AGREEMENT_PAYMENT + "."
 				+ paymentColumn, SQLConstants.PAYMENT_CONCEPT + "."
 				+ conceptColumn);
+	}
+
+	private static boolean isRemove(Extra extra) {
+		return StringUtils.equals("REMOVE()", extra.getIssueDate());
+	}
+
+	private static boolean isRemove(Level level) {
+		return StringUtils.equals("REMOVE()", level.getDescription());
+	}
+
+	private static boolean isRemove(Payment payment) {
+		return StringUtils.equals("REMOVE()", payment.getExpression());
 	}
 }

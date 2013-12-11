@@ -61,7 +61,7 @@ public interface EmployeesServiceAsync {
 			throws IllegalArgumentException;
 
 	void saveAgreementDraft(AgreementDraft agreementDraft,
-			AsyncCallback<Void> callback) throws IllegalArgumentException;
+			AsyncCallback<AgreementDraft> callback) throws IllegalArgumentException;
 
 	void saveSalary(SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
