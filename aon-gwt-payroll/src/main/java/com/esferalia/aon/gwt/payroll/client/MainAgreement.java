@@ -32,8 +32,6 @@ public class MainAgreement extends MainEntryPoint implements Listener {
 
 		@Override
 		public void onChange(UndoManager undoManager) {
-			
-			
 			ImageResource resource = Agreements.getImageResource(draftObject.canUndo(),
 					draftObject.hasErrors(), draftObject.hasWarnings());
 			treeItem.setHTML(Agreements.imageItemSafeHtml(resource,

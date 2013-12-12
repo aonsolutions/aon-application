@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.sql;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getInteger;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getType;
 
+import static com.esferalia.aon.gwt.payroll.shared.AgreementDraft.isRemove;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,7 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
-import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -40,8 +41,10 @@ import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.salary.expression.Period;
 
+
 public class SQLAgreementDraft {
 
+	@SuppressWarnings("serial")
 	private static class DBVariable extends StringVariable {
 		private Integer id;
 
@@ -441,37 +444,30 @@ public class SQLAgreementDraft {
 		SalaryTable salaryTable = draft.getDraftSalaryTable();
 
 		for (Variable variable : salaryTable.getVariables(0)){
-			variable.setStartDate(draft.getStartDate());
-			variable.setEndDate(draft.getEndDate());
 			insertData(conn, domainId, draft.getId(), variable);
 		}
 
 		Map<Integer, Set<String>> categoriesMap = draft.getDraftCategories();
 
 		for (Level level : draft.getDraftLevels()) {
-			insertLevel(conn, domainId, draft.getId(), level);
-		}
-
-		for (Level level : draft.getLevels()) {
-			int levelId = level.getId();
-			if (levelId == 0) 
-				continue;
+			int levelId = insertLevel(conn, domainId, draft.getId(), level);
 
 			// Salary Table
 			for (Variable variable : salaryTable.getVariables(levelId))
 				insertLevelData(conn, domainId, levelId, variable);
 			// Categories
-			Set<String> categories = categoriesMap.get(levelId);
+			Set<String> categories = categoriesMap.get(level.getId());
 			updateCategories(conn, domainId, levelId, categories);
 		}
 
-		for (Payment payment : draft.getPayments()) {
+
+		for (Payment payment : draft.getDraftPayments()) {
 			if (!isRemove(payment))
 				insertPayment(conn, domainId, draft.getId(), payment);
 
 		}
 
-		for (Extra extra : draft.getExtras()) {
+		for (Extra extra : draft.getDraftExtras()) {
 			if (isRemove(extra)) {
 				insertExtra(conn, domainId, draft.getId(), extra);
 			}
@@ -503,8 +499,6 @@ public class SQLAgreementDraft {
 				updateLevel(conn, domainId, draft.getId(), level);
 
 			for (Variable variable : salaryTable.getVariables(draftId)) {
-				variable.setStartDate(draft.getStartDate());
-				variable.setEndDate(draft.getEndDate());
 				updateLevelData(conn, domainId, dbId, variable);
 			}
 
@@ -515,8 +509,6 @@ public class SQLAgreementDraft {
 		}
 
 		for (Variable variable : salaryTable.getVariables(0)){
-			variable.setStartDate(draft.getStartDate());
-			variable.setEndDate(draft.getEndDate());
 			updateData(conn, domainId, draft.getId(), variable);
 		}
 
@@ -531,8 +523,6 @@ public class SQLAgreementDraft {
 				continue;
 
 			for (Variable variable : salaryTable.getVariables(levelId)) {
-				variable.setStartDate(draft.getStartDate());
-				variable.setEndDate(draft.getEndDate());
 				updateLevelData(conn, domainId, levelId, variable);
 			}
 
@@ -542,8 +532,6 @@ public class SQLAgreementDraft {
 		}
 
 		for (Payment payment : draft.getDraftPayments()) {
-			payment.setStartDate(draft.getStartDate());
-			payment.setEndDate(draft.getEndDate());
 			if (payment.getId() < 0) {
 				if (!isRemove(payment))
 					insertPayment(conn, domainId, draft.getId(), payment);
@@ -784,8 +772,9 @@ public class SQLAgreementDraft {
 
 	}
 
-	private static void insertLevelData(Connection conn, Integer domainId,
+	private static int insertLevelData(Connection conn, Integer domainId,
 			Integer levelId, Variable variable) throws SQLException {
+		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
 
@@ -814,10 +803,15 @@ public class SQLAgreementDraft {
 				stmt.setDate(6, new java.sql.Date(endDate.getTime()));
 			else
 				stmt.setNull(6, Types.DATE);
-
 			stmt.executeUpdate();
 
+			rs = stmt.getGeneratedKeys();
+			rs.next();
+			return rs.getInt(1);
+
 		} finally {
+			if (rs != null)
+				rs.close();
 			if (stmt != null)
 				stmt.close();
 		}
@@ -827,7 +821,6 @@ public class SQLAgreementDraft {
 	private static void updateData(Connection conn, Integer domainId,
 			Integer agreementId, Variable variable) throws SQLException {
 
-		String name = variable.getName();
 		List<DBVariable> dbVariables = getDBData(conn, agreementId, variable);
 
 		Period period = new Period(variable.getStartDate(),
@@ -841,7 +834,7 @@ public class SQLAgreementDraft {
 			if (subs.size() == 0) {
 				// New data overrides completely previous data. .
 				removeData(conn, dbVariable.getId());
-				return;
+				continue;
 			}
 
 			Period first = subs.get(0);
@@ -856,8 +849,10 @@ public class SQLAgreementDraft {
 				copyData(conn, dbVariable.getId(), subs.get(1));
 
 		}
-
-		insertData(conn, domainId, agreementId, variable);
+		// Inserts if not empty (""), not null and not whitespace only
+		if ( StringUtils.isNotBlank(variable.getExpression())){
+			insertData(conn, domainId, agreementId, variable);
+		}
 
 	}
 
@@ -892,9 +887,10 @@ public class SQLAgreementDraft {
 				copyLevelData(conn, dbVariable.getId(), subs.get(1));
 
 		}
-		String expression = variable.getExpression();
-		if (StringUtils.isNotEmpty(expression))
+		// Inserts if not empty (""), not null and not whitespace only
+		if (StringUtils.isNotBlank((variable.getExpression()))){
 			insertLevelData(conn, domainId, levelId, variable);
+		}
 
 	}
 
@@ -1018,7 +1014,7 @@ public class SQLAgreementDraft {
 
 			stmt.setDate(11,
 					new java.sql.Date(payment.getStartDate().getTime()));
-			Date endDate = payment.getStartDate();
+			Date endDate = payment.getEndDate();
 			if (endDate != null)
 				stmt.setDate(12, new java.sql.Date(payment.getStartDate()
 						.getTime()));
@@ -1500,6 +1496,7 @@ public class SQLAgreementDraft {
 					+ ", " + AgreementDataColumns.EXPRESSION 
 					+ ",  ? "
 					+ ",  ? "
+					+ " FROM " + SQLConstants.AGREEMENT_DATA
 					+ " WHERE " + AgreementDataColumns.ID + " = ? "
 					+")",
 					new String[] { AgreementDataColumns.ID });
@@ -1547,6 +1544,7 @@ public class SQLAgreementDraft {
 					+ ", " + AgreementLevelDataColumns.EXPRESSION 
 					+ ",  ? "
 					+ ",  ? "
+					+ " FROM " + SQLConstants.AGREEMENT_LEVEL_DATA
 					+ " WHERE " + AgreementLevelDataColumns.ID + " = ? "
 					+")",
 					new String[] { AgreementLevelDataColumns.ID });
@@ -1637,15 +1635,4 @@ public class SQLAgreementDraft {
 				+ conceptColumn);
 	}
 
-	private static boolean isRemove(Extra extra) {
-		return StringUtils.equals("REMOVE()", extra.getIssueDate());
-	}
-
-	private static boolean isRemove(Level level) {
-		return StringUtils.equals("REMOVE()", level.getDescription());
-	}
-
-	private static boolean isRemove(Payment payment) {
-		return StringUtils.equals("REMOVE()", payment.getExpression());
-	}
 }

@@ -76,6 +76,7 @@ public class AgreementDraft extends ResizeComposite implements
 	static int VARIABLE_TEXTBOX_SIZE = 10;
 
 	public static final String CUSTOM = "CUSTOM";
+	public static final String ONLY_THIS_YEAR = "ONLY_THIS_YEAR";
 	public static final String ONLY_THIS_MONTH = "ONLY_THIS_MONTH";
 	public static final String FROM_THIS_MONTH = "FROM_THIS_MONTH";
 
@@ -368,9 +369,7 @@ public class AgreementDraft extends ResizeComposite implements
 			button.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					payment.setExpression("REMOVE()"); // TODO: "REMOVE()" There
-														// must be a constant
-														// for this.
+					payment.setExpression("REMOVE()"); 
 					AgreementDraft.this.agreementDraftObject
 							.addDraftPayment(payment);
 					AgreementDraft.this.calculate();
@@ -397,6 +396,9 @@ public class AgreementDraft extends ResizeComposite implements
 				public void onChange(ChangeEvent event) {
 					payment.setSalaryType(PaymentEditor.this.salaryTypeListBox
 							.getSelected());
+					AgreementDraft.this.agreementDraftObject
+							.addDraftPayment(payment);
+					AgreementDraft.this.calculate();
 				}
 			});
 		}
@@ -646,6 +648,8 @@ public class AgreementDraft extends ResizeComposite implements
 		} else if (ONLY_THIS_MONTH.equals(value)) {
 			agreementDraftObject.setDraftPeriod(null, null);
 		} else if (FROM_THIS_MONTH.equals(value)) {
+			agreementDraftObject.setDraftPeriod(null);
+		} else if (ONLY_THIS_YEAR.equals(value)) {
 			agreementDraftObject.setDraftPeriod(null);
 		}
 

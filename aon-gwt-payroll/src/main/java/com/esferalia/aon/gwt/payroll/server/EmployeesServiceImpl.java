@@ -2387,9 +2387,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			draft.setPayments(allPayments);
 			draft.setSalaryTable(allSalaryTable);
 			draft.setCategoriesMap(allCategories);
-			
-
 			draft.setDatesWithChanges(datesWithChanges);
+			
 		} finally {
 			if (connection != null)
 				connection.close();

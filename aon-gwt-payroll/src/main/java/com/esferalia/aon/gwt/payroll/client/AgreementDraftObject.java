@@ -26,8 +26,7 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class AgreementDraftObject implements IContextProvider {
 
-	public static Date NULL_DATE = new Date() {
-	};
+	public static Date NULL_DATE = new Date() ;
 
 	static interface CalculateCallback {
 		void onCalculateFailure(Throwable throwable);
@@ -36,10 +35,6 @@ public class AgreementDraftObject implements IContextProvider {
 
 	}
 
-	static class LevelVariable {
-		private Level level;
-		private Variable variable;
-	}
 
 	abstract private class UndoableEdit<T> implements Undoable {
 
@@ -388,7 +383,10 @@ public class AgreementDraftObject implements IContextProvider {
 	// ------------------------------------------
 
 	public void save(final CalculateCallback callback) {
-
+		
+		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), agreementDraft);
+		// TODO: Clean Database data.
+		
 		employeesServiceAsync.saveAgreementDraft(agreementDraft,
 				new AsyncCallback<AgreementDraft>() {
 
@@ -435,7 +433,7 @@ public class AgreementDraftObject implements IContextProvider {
 	}
 	
 	public boolean hasErrors() {
-		return false;
+		return agreementDraft.hasExtrasWithoutDates();
 	}
 
 	public boolean hasWarnings() {
@@ -506,13 +504,6 @@ public class AgreementDraftObject implements IContextProvider {
 		return CalendarUtil.isSameDate(d1, d2);
 	}
 
-	private static boolean isDraftPeriodSet(Date draftStartDate,
-			Date draftEndDate, AgreementDraft draft) {
-		if (!isStartAndEndDatesSet(draftStartDate, draftEndDate,
-				draft.getDraftPayments()))
-			return false;
-		return true;
-	}
 
 	private static <T extends HasStartAndEndDate> boolean isStartAndEndDatesSet(
 			Date draftStartDate, Date draftEndDate, Collection<T> items) {
@@ -533,4 +524,21 @@ public class AgreementDraftObject implements IContextProvider {
 		}
 		return categories;
 	}
+
+	private static void setDraftPeriod(Date draftStartDate, Date draftEndDate,
+			AgreementDraft draft) {
+		setStartAndEndDates(draftStartDate, draftEndDate,
+				draft.getDraftPayments());
+		setStartAndEndDates(draftStartDate, draftEndDate,
+				draft.getDraftSalaryTable().getAllVariables());
+	}
+
+	private static <T extends HasStartAndEndDate> void setStartAndEndDates(
+			Date draftStartDate, Date draftEndDate, Collection<T> items) {
+		for (T item : items) {
+			item.setStartDate(draftStartDate);
+			item.setEndDate(draftEndDate);
+		}
+	}
+	
 }
