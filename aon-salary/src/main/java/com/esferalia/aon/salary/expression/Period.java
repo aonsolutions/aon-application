@@ -1,6 +1,7 @@
 package com.esferalia.aon.salary.expression;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -116,6 +117,12 @@ public class Period implements Comparable<Period>{
 		return startComp != 0 ? startComp : compare(this.end, p.end);
 	}
     
+	@Override
+	public boolean equals(Object obj) {
+		Period other = (Period) obj;
+		return compare ( start, other.start ) == 0 && 
+				compare ( end, other.end ) == 0;
+	}	
     
     
 	public static 	List<Period> intersect(List<Period> a, List<Period> b ){
@@ -151,13 +158,30 @@ public class Period implements Comparable<Period>{
 		
 		return periods;
 	}
+
+	public static List<Period> sub(Period period, List<Period> periods) {
+
+		if (periods.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		List<Period> subs = period.sub(periods.get(0));
+
+		if (periods.size() == 1) {
+			return subs;
+		}
+
+		List<Period> diff = new LinkedList<Period>();
+
+		List<Period> remain = periods.subList(1, periods.size());
+
+		for (Period sub : subs) {
+			diff.addAll(sub(sub, remain));
+		}
+
+		return diff;
+	}
 	
-	@Override
-	public boolean equals(Object obj) {
-		Period other = (Period) obj;
-		return compare ( start, other.start ) == 0 && 
-				compare ( end, other.end ) == 0;
-	}	
 
     
     private static int compareEnds(Period a, Period b ) {
