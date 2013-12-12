@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Events;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
@@ -87,6 +88,14 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		AON.start();
 		employeesServiceAsync.getIrpfs(employee,
 				new AsyncCallbackWrapper<List<Irpf>>(callback));
+	}
+
+	@Override
+	public void getExtras(Employee employee, AsyncCallback<List<Extra>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getExtras(employee,
+				new AsyncCallbackWrapper<List<Extra>>(callback));
 	}
 
 	@Override

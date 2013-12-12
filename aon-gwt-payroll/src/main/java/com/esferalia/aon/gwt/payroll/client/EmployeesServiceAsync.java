@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Events;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
@@ -43,6 +44,9 @@ public interface EmployeesServiceAsync {
 			throws IllegalArgumentException;
 
 	void getIrpfs(Employee employee, AsyncCallback<List<Irpf>> callback)
+			throws IllegalArgumentException;
+
+	void getExtras(Employee employee, AsyncCallback<List<Extra>> callback)
 			throws IllegalArgumentException;
 
 	void getCostReceiptHTML(Cost cost, Salary.Type types [], int zoom, AsyncCallback<String> callback)
