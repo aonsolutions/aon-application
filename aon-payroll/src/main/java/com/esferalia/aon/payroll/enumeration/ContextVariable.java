@@ -168,7 +168,9 @@ public enum ContextVariable implements IResourceable{
 	IT_START("INICIO_IT", VariableType.DATE),
 
 	PROFESSION("PROFESION", VariableType.STRING),
-	ENTERPRISE_SITE_DATE("VISIONADOE", VariableType.DATE);
+	ENTERPRISE_SITE_DATE("VISIONADOE", VariableType.DATE),
+	
+	PAYMENT("_P", VariableType.DOUBLE)
 	;
 	
 	public static final String ALL = "_P";
