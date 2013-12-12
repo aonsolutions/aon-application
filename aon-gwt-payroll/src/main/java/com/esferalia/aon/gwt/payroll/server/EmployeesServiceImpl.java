@@ -117,6 +117,9 @@ import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseActivityColumns;
@@ -269,6 +272,27 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			initFacesContext();
 			conn = getConnection();
 			return getIrpfOutcomes(conn, employee.getId());
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
+	@Override
+	public List<Extra> getExtras(Employee employee)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+			return getExtras(conn, employee.getId());
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {
@@ -668,6 +692,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return agreementDraft;
 		} catch (Exception e) {
 			rollback(conn);
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		} finally {
 			enableAutoCommit(conn);
@@ -1672,6 +1697,57 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				rs.close();
 			}
 		}
+	}
+
+	private static List<Extra> getExtras(Connection connection,
+			Integer contractId) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+
+		try {
+			//@formatter:off
+			String sql = "SELECT * " 
+					+ " FROM " + CONTRACT
+					+ " INNER JOIN " + SQLConstants.AGREEMENT_LEVEL_CATEGORY
+						+ "ON (" + CONTRACT + "." + ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = " 
+						+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + "." + AgreementLevelCategoryColumns.ID + ")" 
+					+ " INNER JOIN " + SQLConstants.AGREEMENT_LEVEL
+						+ "ON (" + SQLConstants.AGREEMENT_LEVEL_CATEGORY + "." + AgreementLevelCategoryColumns.AGREEMENT_LEVEL+ " = " 
+						+ SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.ID + ")" 
+					+ " INNER JOIN " + SQLConstants.AGREEMENT_EXTRA
+						+ "ON (" + SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.AGREEMENT + " = " 
+						+ SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.AGREEMENT + ")"
+					+ " WHERE " + CONTRACT + "." + ContractColumns.ID + " = ? "
+						;
+			//@formatter:on
+
+			stmt = connection.prepareStatement(sql);
+			
+			stmt.setInt(1, contractId);
+			
+			rs = stmt.executeQuery();
+			List<Extra> extras = new LinkedList<Extra>();
+			while ( rs.next() ){
+				Extra extra = new Extra();
+				extra.setId(rs.getInt(AgreementExtraColumns.ID));
+				extra.setPaymentId(rs.getInt(AgreementExtraColumns.AGREEMENT_PAYMENT));
+				extra.setStartDate(rs.getString(AgreementExtraColumns.START_DATE));
+				extra.setStartDate(rs.getString(AgreementExtraColumns.END_DATE));
+				extra.setEndDate(rs.getString(AgreementExtraColumns.ISSUE_DATE));
+				extras.add(extra);
+			}
+			
+			return extras;
+
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				rs.close();
+			}
+		}
+		
 	}
 
 	private static List<Employee> getEmployees(Connection connection,
