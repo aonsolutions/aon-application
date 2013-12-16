@@ -610,8 +610,9 @@ public class PaymentCardSettleController {
 		finance.setInvoice(targetFinance.getInvoice());
 		finance.setDueDate(targetFinance.getDueDate());
 		finance.setPayMethod(getFractionPayMethod());
-		finance.setBank(targetFinance.getBank());
 		finance.setBankAccount(targetFinance.getBankAccount());
+		finance.setBankAlias(targetFinance.getBankAlias());
+		finance.setBic(targetFinance.getBic());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setSecurityLevel(targetFinance.getSecurityLevel());
 		finance.setScope(targetFinance.getScope());
