@@ -464,5 +464,5 @@ public interface ICommonMessages {
 	String SIGNATURE_USED = "webmail_signature_used";	
 	String MAIL_ACCOUNT_DUPLICATED = "webmail_mailAccount_duplicated";
 	String SEND_EMAIL_FINISH = "webmail_send_email_finish";	
-	
+
 }
