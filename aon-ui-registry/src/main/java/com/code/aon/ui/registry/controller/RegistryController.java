@@ -256,7 +256,7 @@ public class RegistryController extends BasicController {
 			}
 		}
 	}
-	
+
 	public void onDetailReport(ActionEvent event){
 		Class<?> pojoClass = null;
 		try {

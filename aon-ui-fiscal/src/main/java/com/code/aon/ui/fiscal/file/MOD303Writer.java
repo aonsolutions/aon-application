@@ -82,11 +82,8 @@ public class MOD303Writer {
 			declaration.setPeriod(vatTaxDeclaration.getVatTax().getPeriod().getName(admon));
 			if (vatTaxDeclaration.getRegistryBank() != null && vatTaxDeclaration.getRegistryBank().getBankAccount() != null) {
 				BankAccount ba = vatTaxDeclaration.getRegistryBank().getBankAccount();
-				declaration.setCcc1(ba.getEntity());
-				declaration.setCcc2(ba.getOffice());
-				declaration.setCcc3(ba.getControl());
-				declaration.setCcc4(ba.getAccount());
-				declaration.setBankName(vatTaxDeclaration.getRegistryBank().getBank().getName());
+				declaration.setCcc(ba.getBban());
+				declaration.setBankName(vatTaxDeclaration.getRegistryBank().getBankAlias());
 			}
 			Company company = getCompany(vatTaxDeclaration.getDomain());
 			declaration.setPerson(company.getRegistry().getType() == RegistryType.NATURAL 
@@ -348,16 +345,10 @@ public class MOD303Writer {
 		if ( dec.getRegistryBank() != null && dec.getRegistryBank().getId() != null && dec.getRegistryBank().getBankAccount() != null) {
 			BankAccount bankAccount = dec.getRegistryBank().getBankAccount();
 			if (dec.getDeposit() > 0) {
-				declaration.setDepositBankEntity(bankAccount.getEntity());
-				declaration.setDepositBankOffice(bankAccount.getOffice());
-				declaration.setDepositBankControl(bankAccount.getControl());
-				declaration.setDepositBankAccount(bankAccount.getAccount());
+				declaration.setDepositBankAccount(bankAccount.getBban());
 			}
 			if (dec.getPayBack() > 0) {
-				declaration.setPayBackBankEntity(bankAccount.getEntity());
-				declaration.setPayBackBankOffice(bankAccount.getOffice());
-				declaration.setPayBackBankControl(bankAccount.getControl());
-				declaration.setPayBackBankAccount(bankAccount.getAccount());
+				declaration.setPayBackBankAccount(bankAccount.getBban());
 			}
 		}
 		

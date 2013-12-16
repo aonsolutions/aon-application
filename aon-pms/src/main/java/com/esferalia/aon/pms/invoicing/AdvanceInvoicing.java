@@ -178,13 +178,15 @@ public class AdvanceInvoicing {
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setPayMethod(advanceInvoiceTo.getPayMethod());
 		if (advanceInvoiceTo.getRegistryBank() != null) {
-			finance.setBank(advanceInvoiceTo.getRegistryBank().getBank());
 			finance.setBankAccount(advanceInvoiceTo.getRegistryBank().getBankAccount());
+			finance.setBankAlias(advanceInvoiceTo.getRegistryBank().getBankAlias());
+			finance.setBic(advanceInvoiceTo.getRegistryBank().getBic());
 		} else if (advanceInvoiceTo.getPayMethod().getType() == PayMethodType.NEGOTIABLE_DOCUMENT) {
 			RegistryBank rBank = getRegistryBank(invoice.getRegistry());
 			if (rBank != null) {
-				finance.setBank(rBank.getBank());
 				finance.setBankAccount(rBank.getBankAccount());
+				finance.setBankAlias(rBank.getBankAlias());
+				finance.setBic(rBank.getBic());
 			}
 		}
 		finance.setAmount(advanceAmount);

@@ -177,8 +177,9 @@ public class NoShowInvoicing {
 				noShowInvoiceTo.setPayMethod(finance.getPayMethod());
 				if (finance.getBankAccount() != null && StringUtils.isNotEmpty(finance.getBankAccount().toString())) {
 					RegistryBank registryBank = new RegistryBank();
-					registryBank.setBank(finance.getBank());
 					registryBank.setBankAccount(finance.getBankAccount());
+					registryBank.setBankAlias(finance.getBankAlias());
+					registryBank.setBic(finance.getBic());
 					noShowInvoiceTo.setRegistryBank(registryBank);
 				}
 			}
@@ -226,13 +227,15 @@ public class NoShowInvoicing {
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setPayMethod(noShowInvoiceTo.getPayMethod());
 		if (noShowInvoiceTo.getRegistryBank() != null) {
-			finance.setBank(noShowInvoiceTo.getRegistryBank().getBank());
 			finance.setBankAccount(noShowInvoiceTo.getRegistryBank().getBankAccount());
+			finance.setBankAlias(noShowInvoiceTo.getRegistryBank().getBankAlias());
+			finance.setBic(noShowInvoiceTo.getRegistryBank().getBic());
 		} else if (noShowInvoiceTo.getPayMethod().getType() == PayMethodType.NEGOTIABLE_DOCUMENT) {
 			RegistryBank rBank = getRegistryBank(invoice.getRegistry());
 			if (rBank != null) {
-				finance.setBank(rBank.getBank());
 				finance.setBankAccount(rBank.getBankAccount());
+				finance.setBankAlias(rBank.getBankAlias());
+				finance.setBic(rBank.getBic());
 			}
 		}
 		finance.setAmount(noShowAmount);

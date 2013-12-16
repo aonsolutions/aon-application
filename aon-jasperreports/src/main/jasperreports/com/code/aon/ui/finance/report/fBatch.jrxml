@@ -171,7 +171,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="false" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryBank}.getBank().getName() + " - " +$F{registryBank}.getBankAccount().toString()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryBank}.getBankAlias() + " - " +$F{registryBank}.getBankAccount().toString()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-24" x="405" y="0" width="150" height="16"/>

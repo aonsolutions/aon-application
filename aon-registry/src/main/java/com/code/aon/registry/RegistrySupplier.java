@@ -21,6 +21,10 @@ public class RegistrySupplier extends RegistrySupplierDB implements IBankAccount
 
     private int[] paymentDaysArray;
 
+    public RegistrySupplier() {
+    	setNumberOfPayments(1);
+    }
+
     public void setPaymentDays(String paymentDays) {
         super.setPaymentDays(paymentDays);
         StringTokenizer strTknzr = new StringTokenizer(getPaymentDays(),DELIM);

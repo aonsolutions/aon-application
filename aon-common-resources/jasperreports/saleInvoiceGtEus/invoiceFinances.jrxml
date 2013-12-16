@@ -3,14 +3,15 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="149"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
-	<field name="bank" class="com.code.aon.config.Bank"/>
 	<field name="bankAccount" class="com.code.aon.config.BankAccount"/>
+	<field name="bankAlias" class="java.lang.String"/>
+	<field name="bic" class="java.lang.String"/>
 	<field name="dueDate" class="java.util.Date"/>
 	<field name="amount" class="java.lang.Double"/>
 	<field name="negotiableDocument" class="java.lang.Boolean"/>
@@ -36,10 +37,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Ordaintze era / " + $R{finance_payMethod}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Ordaintze era / " + $R{finance_payMethod}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-7" mode="Opaque" x="160" y="0" width="180" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-7" mode="Opaque" x="160" y="0" width="150" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -49,10 +50,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Bankua / " + $R{aon_bank}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Bankua / " + $R{aon_bank}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-8" mode="Opaque" x="340" y="0" width="120" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-8" mode="Opaque" x="310" y="0" width="150" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -62,7 +63,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Banku kontua / " + $R{aon_bank_account}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Banku kontua / " + $R{aon_bank_account}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-9" mode="Opaque" x="0" y="0" width="60" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -75,7 +76,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Data / " + $R{aon_date}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Data / " + $R{aon_date}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-10" mode="Opaque" x="460" y="0" width="75" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -88,7 +89,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Kopurua / " + $R{aon_amount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Kopurua / " + $R{aon_amount}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -105,10 +106,10 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{payMethod}.getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{payMethod}.getName()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-2" x="160" y="0" width="180" height="14"/>
+				<reportElement key="textField-2" x="160" y="0" width="150" height="14"/>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -118,10 +119,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{bank}.getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{bankAlias}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-3" x="340" y="0" width="120" height="14"/>
+				<reportElement key="textField-3" x="310" y="0" width="150" height="14"/>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -131,8 +132,8 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{bankAccount}!=null && !$F{bankAccount}.toString().isEmpty())?
-($F{negotiableDocument}?$F{bankAccount}.getMaskedBankAccount():$F{bankAccount}.toString()):
+				<textFieldExpression><![CDATA[($F{bankAccount}!=null && !$F{bankAccount}.toString().isEmpty())?
+($F{negotiableDocument}?$F{bankAccount}.getMaskedIban():$F{bankAccount}.toString()):
 ("")]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
@@ -146,7 +147,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{dueDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{dueDate}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-5" x="460" y="0" width="65" height="14"/>
@@ -159,7 +160,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-5" x="525" y="0" width="10" height="14"/>
@@ -172,7 +173,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["€"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["€"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

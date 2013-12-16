@@ -51,10 +51,7 @@ public class Declaration {
 	private String toDeduct;
 	private Double compensate;
 	private String comments;
-	private String ccc1;
-	private String ccc2;
-	private String ccc3;
-	private String ccc4;
+	private String ccc;
 	
 	private String epi1;
 	private String epi2;
@@ -301,29 +298,11 @@ public class Declaration {
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
-	public String getCcc1() {
-		return ccc1;
+	public String getCcc() {
+		return ccc;
 	}
-	public void setCcc1(String ccc1) {
-		this.ccc1 = ccc1;
-	}
-	public String getCcc2() {
-		return ccc2;
-	}
-	public void setCcc2(String ccc2) {
-		this.ccc2 = ccc2;
-	}
-	public String getCcc3() {
-		return ccc3;
-	}
-	public void setCcc3(String ccc3) {
-		this.ccc3 = ccc3;
-	}
-	public String getCcc4() {
-		return ccc4;
-	}
-	public void setCcc4(String ccc4) {
-		this.ccc4 = ccc4;
+	public void setCcc(String ccc) {
+		this.ccc = ccc;
 	}
 	public String getEpi1() {
 		return epi1;

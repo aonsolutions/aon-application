@@ -190,7 +190,7 @@
 									rendered="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
 									required="true" size="7" />
 								<aon:commandButton value="&#160;"
-									title="#{bundle.finance_invoice_find_next_number}"
+									title="#{bundle.aon_bank_data}"
 									styleClass="aon-finding-toolbar-item aon-icon-ambito aon-finding-toolbar-item-no-border"
 		 							style="aon-margin-left aon-margin-right" 
 									rendered="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
@@ -510,7 +510,6 @@
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
-		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAddress.xhtml">

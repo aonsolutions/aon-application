@@ -5,7 +5,6 @@ import java.util.Iterator;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.person.Person;
@@ -36,9 +35,6 @@ public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 				if (getRegistryBank() == null) {
 					pm.setRegistryBank( new RegistryBank() );	
 				}
-				if (getRegistryBank().getBank() == null) {
-					pm.getRegistryBank().setBank( new Bank() );
-				}
 				if (getRegistryBank().getBankAccount() == null) {
 					pm.getRegistryBank().setBankAccount( new BankAccount() );
 				}
@@ -48,7 +44,6 @@ public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 				getRegistryPayMethod().setPayment(new PayMethod());
 				getRegistryPayMethod().setRegistryBank( new RegistryBank() );
 				getRegistryBank().setRegistry(person.getRegistry());
-				getRegistryBank().setBank( new Bank() );
 				getRegistryBank().setBankAccount( new BankAccount() );
 			}
 		} catch (ManagerBeanException e) {

@@ -322,9 +322,6 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
-		<c:if test="#{aonConfiguration.bean.customer.showSupplier or aonConfiguration.bean.customer.showFinanceData}">
-			<aon:lookupButtonPopup lookup="#{bankLookup}" />
-		</c:if>
 		<c:if test="#{!customer.new}">
 			<c:if test="#{aonRole.accountingOperator}">
 				<aon:lookupButtonPopup lookup="#{accountLookup}" />

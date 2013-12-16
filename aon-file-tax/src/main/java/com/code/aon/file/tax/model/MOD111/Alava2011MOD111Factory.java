@@ -118,10 +118,10 @@ public class Alava2011MOD111Factory implements IMOD111Factory {
 		datos.addElement(DATO).addAttribute(NOMBRE,MODELO_ATT).addAttribute(VALOR, declaration.getPeriod().contains("T")?MODEL_110:MODEL_111);
 		datos.addElement(DATO).addAttribute(NOMBRE,EJERCICIO).addAttribute(VALOR, declaration.getYear().toString());
 		datos.addElement(DATO).addAttribute(NOMBRE,RESULTADO).addAttribute(VALOR, formatNumber( declaration.getResult() ));
-		datos.addElement(DATO).addAttribute(NOMBRE,CCC1).addAttribute(VALOR, declaration.getCcc1());
-		datos.addElement(DATO).addAttribute(NOMBRE,CCC2).addAttribute(VALOR, declaration.getCcc2());
-		datos.addElement(DATO).addAttribute(NOMBRE,CCC3).addAttribute(VALOR, declaration.getCcc3());
-		datos.addElement(DATO).addAttribute(NOMBRE,CCC4).addAttribute(VALOR, declaration.getCcc4());
+		datos.addElement(DATO).addAttribute(NOMBRE,CCC1).addAttribute(VALOR, StringUtils.substring(declaration.getCcc(), 0, 4));
+		datos.addElement(DATO).addAttribute(NOMBRE,CCC2).addAttribute(VALOR, StringUtils.substring(declaration.getCcc(), 4, 8));
+		datos.addElement(DATO).addAttribute(NOMBRE,CCC3).addAttribute(VALOR, StringUtils.substring(declaration.getCcc(), 8, 10));
+		datos.addElement(DATO).addAttribute(NOMBRE,CCC4).addAttribute(VALOR, StringUtils.substring(declaration.getCcc(), 10, 20));
 	}
 	
 	private String formatNumber(Double number) {

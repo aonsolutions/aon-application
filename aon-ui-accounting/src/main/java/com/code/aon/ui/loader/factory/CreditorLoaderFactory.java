@@ -53,7 +53,7 @@ public class CreditorLoaderFactory extends RegistryLoaderFactory implements ILoa
 			,new Column(ACR,"email"							,2,64	,false	,null)
 			,new Column(ACR,"web"							,2,64	,false	,null)
 			,new Column(ACR,"banco"							,2,64	,false	,null)
-			,new Column(ACR,"cuentaBanco"					,2,23	,false	,null)
+			,new Column(ACR,"cuentaBanco"					,2,34	,false	,null)
 			,new Column(ACR,"formaPago"						,2,32	,false	,null)
 			,new Column(ACR,"numeroVtos"					,0,6	,false	,null)
 			,new Column(ACR,"diasAlPrimerVto"				,0,6	,false	,null)

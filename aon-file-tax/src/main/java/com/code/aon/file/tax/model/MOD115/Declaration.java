@@ -48,10 +48,7 @@ public class Declaration {
 
 	private String payInCash;
 	private String payInAccount;
-	private String ccc1;
-	private String ccc2;
-	private String ccc3;
-	private String ccc4;
+	private String ccc;
 	
 	private Map<String,Double> boxes = new HashMap<String, Double>();
 
@@ -271,29 +268,11 @@ public class Declaration {
 	public void setPayInAccount(String payInAccount) {
 		this.payInAccount = payInAccount;
 	}
-	public String getCcc1() {
-		return ccc1;
+	public String getCcc() {
+		return ccc;
 	}
-	public void setCcc1(String ccc1) {
-		this.ccc1 = ccc1;
-	}
-	public String getCcc2() {
-		return ccc2;
-	}
-	public void setCcc2(String ccc2) {
-		this.ccc2 = ccc2;
-	}
-	public String getCcc3() {
-		return ccc3;
-	}
-	public void setCcc3(String ccc3) {
-		this.ccc3 = ccc3;
-	}
-	public String getCcc4() {
-		return ccc4;
-	}
-	public void setCcc4(String ccc4) {
-		this.ccc4 = ccc4;
+	public void setCcc(String ccc) {
+		this.ccc = ccc;
 	}
 	public Map<String, Double> getBoxes() {
 		return boxes;

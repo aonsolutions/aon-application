@@ -22,9 +22,9 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.util.BankUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
@@ -462,8 +462,13 @@ public class SalesController extends BasicController implements ISalesConstants 
 		to.setDaysToFirstPayment(0);
 		to.setDaysBetweenPayments(0);
 		to.setPaymentDays("");
-		to.setBank(new Bank());
 		to.setBankAccount(new BankAccount());
+		to.setBankAlias(null);
+		to.setBic(null);
+	}
+
+	public void onBankAccountData(ActionEvent event) {
+		BankUtil.fillBankAccountData((Sales)getTo());
 	}
 
 	public void sellerData(LookupChangeEvent event) {

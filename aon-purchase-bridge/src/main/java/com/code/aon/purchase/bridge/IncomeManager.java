@@ -52,8 +52,9 @@ public class IncomeManager {
 		income.setDaysToFirstPayment(purchase.getDaysToFirstPayment());
 		income.setDaysBetweenPayments(purchase.getDaysBetweenPayments());
 		income.setPaymentDays(purchase.getPaymentDays());
-		income.setBank(purchase.getBank());
 		income.setBankAccount(purchase.getBankAccount());
+		income.setBankAlias(purchase.getBankAlias());
+		income.setBic(purchase.getBic());
 
 		IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
 		return (Income)incomeBean.insert(income);

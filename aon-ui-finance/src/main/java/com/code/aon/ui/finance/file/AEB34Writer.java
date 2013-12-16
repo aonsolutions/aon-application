@@ -54,7 +54,7 @@ public class AEB34Writer implements IFinanceConstants {
 		orderer.setCity(company.getDefaultAddress().getCity());
 
 		Account account = new Account();
-		account.parse(fBatch.getRegistryBank().getBankAccount().getValue());
+		account.parse(fBatch.getRegistryBank().getBankAccount().getBban());
 
 		Master master = new Master();
 		master.setOrderer(orderer);
@@ -95,7 +95,7 @@ public class AEB34Writer implements IFinanceConstants {
 		}
 
 		Account account = new Account();
-		account.parse(finance.getBankAccount().getValue());
+		account.parse(finance.getBankAccount().getBban());
 
 		Detail detail = (finance.getPayMethod().getType() == PayMethodType.BANK_TRANSFER) ? new Transfer() : new Check();
 		detail.setReceiver(receiver);

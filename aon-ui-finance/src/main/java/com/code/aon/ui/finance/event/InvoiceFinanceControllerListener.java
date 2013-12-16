@@ -5,7 +5,6 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.finance.Finance;
@@ -44,8 +43,9 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 
 			RegistryPayMethod rPayMethod = finance.getRegistry().getPayMethod();
 			finance.setPayMethod((rPayMethod==null) ? new PayMethod() : rPayMethod.getPayment());
-			finance.setBank((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new Bank() : rPayMethod.getBank());
 			finance.setBankAccount((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new BankAccount() : rPayMethod.getBankAccount());
+			finance.setBankAlias((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBankAlias());
+			finance.setBic((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBic());
 
 			financeController.setRegistryBank((rPayMethod==null) ? null : rPayMethod.getRegistryBank());
 			financeController.setShowBankManualInput(false);
@@ -60,16 +60,16 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 		Finance finance = (Finance)financeController.getTo();
 		try {
 			financeController.setRegistryBank(null);
-			if (StringUtils.isNotEmpty(finance.getBankAccount().getValue())) {
+			if (StringUtils.isNotEmpty(finance.getBankAccount().getIban())) {
 				for (SelectItem selectItem : financeController.getAllBanks()) {
 					RegistryBank rBank = (RegistryBank)selectItem.getValue();
-					if (finance.getBankAccount().getValue().equals(rBank.getBankAccount().getValue())) {
+					if (finance.getBankAccount().getIban().equals(rBank.getBankAccount().getIban())) {
 						financeController.setRegistryBank(rBank);
 						break;
 					}
 				}
 			}
-			financeController.setShowBankManualInput(financeController.getRegistryBank() == null && StringUtils.isNotEmpty(finance.getBankAccount().getValue()));
+			financeController.setShowBankManualInput(financeController.getRegistryBank() == null && StringUtils.isNotEmpty(finance.getBankAccount().getIban()));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}

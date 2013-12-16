@@ -117,10 +117,10 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 		datos.addElement(DATO).addAttribute(NOMBRE,MODELO_ATT).addAttribute(VALOR, MODEL);
 		datos.addElement(DATO).addAttribute(NOMBRE,EJERCICIO).addAttribute(VALOR, declaration.getYear().toString());
 		datos.addElement(DATO).addAttribute(NOMBRE,RESULTADO).addAttribute(VALOR, formatNumber( declaration.getResult() ));
-		datos.addElement(DATO).addAttribute(NOMBRE,CCC1).addAttribute(VALOR, declaration.getCcc1());
-		datos.addElement(DATO).addAttribute(NOMBRE,CCC2).addAttribute(VALOR, declaration.getCcc2());
-		datos.addElement(DATO).addAttribute(NOMBRE,CCC3).addAttribute(VALOR, declaration.getCcc3());
-		datos.addElement(DATO).addAttribute(NOMBRE,CCC4).addAttribute(VALOR, declaration.getCcc4());
+		datos.addElement(DATO).addAttribute(NOMBRE,CCC1).addAttribute(VALOR, StringUtils.substring(declaration.getCcc(), 0, 4));
+		datos.addElement(DATO).addAttribute(NOMBRE,CCC2).addAttribute(VALOR, StringUtils.substring(declaration.getCcc(), 4, 8));
+		datos.addElement(DATO).addAttribute(NOMBRE,CCC3).addAttribute(VALOR, StringUtils.substring(declaration.getCcc(), 8, 10));
+		datos.addElement(DATO).addAttribute(NOMBRE,CCC4).addAttribute(VALOR, StringUtils.substring(declaration.getCcc(), 10, 20));
 	}
 	
 	private String formatNumber(Double number) {
@@ -247,31 +247,19 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 		addClave(mod,81,declaration.getPayBack());
 		addClave(mod,82,declaration.getCompensate());
 		if (declaration.getDeposit() > 0) {
-			if (StringUtils.isNotBlank( declaration.getDepositBankEntity())) {
-				mod.addElement(CLAVE).addAttribute(NUMERO,"301").addAttribute(VALOR, declaration.getDepositBankEntity() );	
-			}
-			if (StringUtils.isNotBlank( declaration.getDepositBankOffice())) {
-				mod.addElement(CLAVE).addAttribute(NUMERO,"302").addAttribute(VALOR, declaration.getDepositBankOffice() );	
-			}
-			if (StringUtils.isNotBlank( declaration.getDepositBankControl())) {
-				mod.addElement(CLAVE).addAttribute(NUMERO,"303").addAttribute(VALOR, declaration.getDepositBankControl() );	
-			}
 			if (StringUtils.isNotBlank( declaration.getDepositBankAccount())) {
-				mod.addElement(CLAVE).addAttribute(NUMERO,"304").addAttribute(VALOR, declaration.getDepositBankAccount() );	
+				mod.addElement(CLAVE).addAttribute(NUMERO,"301").addAttribute(VALOR, StringUtils.substring(declaration.getDepositBankAccount(), 0, 4));	
+				mod.addElement(CLAVE).addAttribute(NUMERO,"302").addAttribute(VALOR, StringUtils.substring(declaration.getDepositBankAccount(), 4, 8));	
+				mod.addElement(CLAVE).addAttribute(NUMERO,"303").addAttribute(VALOR, StringUtils.substring(declaration.getDepositBankAccount(), 8, 10));	
+				mod.addElement(CLAVE).addAttribute(NUMERO,"304").addAttribute(VALOR, StringUtils.substring(declaration.getDepositBankAccount(), 10, 20));	
 			}
 		}
 		if (declaration.getPayBack() > 0) {
-			if (StringUtils.isNotBlank( declaration.getPayBackBankEntity())) {
-				mod.addElement(CLAVE).addAttribute(NUMERO,"301").addAttribute(VALOR, declaration.getPayBackBankEntity() );	
-			}
-			if (StringUtils.isNotBlank( declaration.getPayBackBankOffice())) {
-				mod.addElement(CLAVE).addAttribute(NUMERO,"302").addAttribute(VALOR, declaration.getPayBackBankOffice() );	
-			}
-			if (StringUtils.isNotBlank( declaration.getPayBackBankControl())) {
-				mod.addElement(CLAVE).addAttribute(NUMERO,"303").addAttribute(VALOR, declaration.getPayBackBankControl() );	
-			}
 			if (StringUtils.isNotBlank( declaration.getPayBackBankAccount())) {
-				mod.addElement(CLAVE).addAttribute(NUMERO,"304").addAttribute(VALOR, declaration.getPayBackBankAccount() );	
+				mod.addElement(CLAVE).addAttribute(NUMERO,"301").addAttribute(VALOR, StringUtils.substring(declaration.getPayBackBankAccount(), 0, 4));	
+				mod.addElement(CLAVE).addAttribute(NUMERO,"302").addAttribute(VALOR, StringUtils.substring(declaration.getPayBackBankAccount(), 4, 8));	
+				mod.addElement(CLAVE).addAttribute(NUMERO,"303").addAttribute(VALOR, StringUtils.substring(declaration.getPayBackBankAccount(), 8, 10));	
+				mod.addElement(CLAVE).addAttribute(NUMERO,"304").addAttribute(VALOR, StringUtils.substring(declaration.getPayBackBankAccount(), 10, 20));	
 			}
 		}
 	}

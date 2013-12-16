@@ -53,7 +53,7 @@ public class SupplierLoaderFactory extends RegistryLoaderFactory implements ILoa
 		,new Column(PRO,"email"							,2,64	,false	,null)
 		,new Column(PRO,"web"							,2,64	,false	,null)
 		,new Column(PRO,"banco"							,2,64	,false	,null)
-		,new Column(PRO,"cuentaBanco"					,2,23	,false	,null)
+		,new Column(PRO,"cuentaBanco"					,2,34	,false	,null)
 		,new Column(PRO,"formaPago"						,2,32	,false	,null)
 		,new Column(PRO,"numeroVtos"					,0,6	,false	,null)
 		,new Column(PRO,"diasAlPrimerVto"				,0,6	,false	,null)

@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.25.2
+# Version: 7.26.0
 # Created by: girazu
-# Creation Date: 02/12/2013 18:50
+# Creation Date: 05/12/2013 11:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -466,20 +466,6 @@ CREATE TABLE `account_entry` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Asientos Contables';
 
 #
-# Structure for the `bank` table : 
-#
-
-CREATE TABLE `bank` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Entidad Bancaria',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Entidad Bancaria',
-  `code` varchar(4) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo de la Entidad Bancaria',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_BANK_DOMAIN` (`domain`),
-  CONSTRAINT `FK_BANK_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Entidades Bancarias';
-
-#
 # Structure for the `rbank` table : 
 #
 
@@ -487,19 +473,17 @@ CREATE TABLE `rbank` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Bancaria de la Persona o Empresa',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `registry` int(4) NOT NULL default '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
-  `bank` int(4) NOT NULL default '0' COMMENT 'Identificador de la Entidad Bancaria',
-  `bank_account` char(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de Cuenta Bancaria de la Persona o Empresa',
+  `bank_account` char(34) collate latin1_spanish_ci NOT NULL COMMENT 'IBAN - Numero de Cuenta Bancaria Internacional',
+  `bic` char(11) collate latin1_spanish_ci default NULL COMMENT 'BIC - Codigo Identificador del Banco',
   `sufix` char(3) collate latin1_spanish_ci default NULL COMMENT 'Sufijo de Cuenta Bancaria para Remesas',
-  `alias` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Alias de la Cuenta Bancaria',
+  `alias` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Alias de la Cuenta Bancaria',
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si la Cuenta Bancaria esta activa o no',
   `account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable',
   PRIMARY KEY  (`id`),
   KEY `IDX_RBANK_REGISTRY` (`registry`),
-  KEY `IDX_RBANK_BANK` (`bank`),
   KEY `IDX_RBANK_DOMAIN` (`domain`),
   KEY `IDX_RBANK_ACCOUNT` (`account`),
   CONSTRAINT `FK_RBANK_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_RBANK_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_RBANK_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RBANK_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos de Cuentas Bancarias de Personas o Empresas';
@@ -884,8 +868,9 @@ CREATE TABLE `finance` (
   `invoice` int(4) default NULL COMMENT 'Identificador de la Factura',
   `due_date` date default NULL COMMENT 'Fecha de Vencimiento',
   `pay_method` int(4) default NULL COMMENT 'Identificador de la Forma de Pago',
-  `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria del Vencimiento',
-  `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria del Vencimiento',
+  `bank_account` varchar(34) collate latin1_spanish_ci default NULL COMMENT 'IBAN - Numero de Cuenta Bancaria Internacional',
+  `bank_alias` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Alias del Banco',
+  `bic` varchar(11) collate latin1_spanish_ci default NULL COMMENT 'BIC - Codigo Identificador del Banco',
   `status` tinyint(2) default '0' COMMENT 'Estado del Vencimiento',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Vencimiento',
   `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones del Vencimiento',
@@ -900,11 +885,9 @@ CREATE TABLE `finance` (
   KEY `IDX_FINANCE_DUE_DATE` (`due_date`),
   KEY `IDX_FINANCE_REGISTRY` (`registry`),
   KEY `IDX_FINANCE_PAY_METHOD` (`pay_method`),
-  KEY `IDX_FINANCE_BANK` (`bank`),
   KEY `IDX_FINANCE_INVOICE` (`invoice`),
   KEY `IDX_FINANCE_DOMAIN` (`domain`),
   KEY `IDX_FINANCE_FINANCE` (`finance_group`),
-  CONSTRAINT `FK_FINANCE_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_FINANCE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_FINANCE_FINANCE` FOREIGN KEY (`finance_group`) REFERENCES `finance` (`id`),
   CONSTRAINT `FK_FINANCE_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
@@ -2462,8 +2445,9 @@ CREATE TABLE `offer` (
   `days_to_first_pymnt` smallint(2) default '0' COMMENT 'Dias al primer Vencimiento',
   `days_between_pymnts` smallint(2) default '0' COMMENT 'Dias entre Vencimientos',
   `pymnt_days` varchar(8) collate latin1_spanish_ci default '0' COMMENT 'Dias de pago',
-  `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
-  `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
+  `bank_account` varchar(34) collate latin1_spanish_ci default NULL COMMENT 'IBAN - Numero de Cuenta Bancaria Internacional',
+  `bank_alias` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Alias del Banco',
+  `bic` varchar(11) collate latin1_spanish_ci default NULL COMMENT 'BIC - Codigo Identificador del Banco',
   `signed` tinyint(1) default '0' COMMENT 'Indica si el Presupuesto esta firmada electronicamente',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios del Presupuesto',
   `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones del Presupuesto',
@@ -2471,7 +2455,6 @@ CREATE TABLE `offer` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_OFFER_DOMAIN_SERIES_NUMBER_VERSION` (`domain`,`series`,`number`,`version`),
   KEY `IDX_OFFER_SCOPE` (`scope`),
-  KEY `IDX_OFFER_BANK` (`bank`),
   KEY `IDX_OFFER_SUPPLIER` (`supplier`),
   KEY `IDX_OFFER_RADDRESS` (`address`),
   KEY `IDX_OFFER_PROJECT` (`project`),
@@ -2482,7 +2465,6 @@ CREATE TABLE `offer` (
   KEY `IDX_OFFER_WORKPLACE` (`workplace`),
   KEY `IDX_OFFER_TARIFF` (`tariff`),
   KEY `IDX_OFFER_DOMAIN` (`domain`),
-  CONSTRAINT `FK_OFFER_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_OFFER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_OFFER_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `FK_OFFER_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
@@ -3302,8 +3284,9 @@ CREATE TABLE `delivery` (
   `days_to_first_pymnt` smallint(2) default '0' COMMENT 'Dias al primer Vencimiento',
   `days_between_pymnts` smallint(2) default '0' COMMENT 'Dias entre Vencimientos',
   `pymnt_days` varchar(8) collate latin1_spanish_ci default '0' COMMENT 'Dias de pago',
-  `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
-  `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
+  `bank_account` varchar(34) collate latin1_spanish_ci default NULL COMMENT 'IBAN - Numero de Cuenta Bancaria Internacional',
+  `bank_alias` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Alias del Banco',
+  `bic` varchar(11) collate latin1_spanish_ci default NULL COMMENT 'BIC - Codigo Identificador del Banco',
   `carrier` int(4) default NULL COMMENT 'Identificador de la agencia de transporte',
   `number_plate` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Numero de matricula',
   `driver` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Nombre del conductor',
@@ -3325,7 +3308,6 @@ CREATE TABLE `delivery` (
   UNIQUE KEY `IDX_UNQ_DELIVERY_DOMAIN_SERIES_NUMBER` (`domain`,`series`,`number`),
   KEY `IDX_DELIVERY_WORKPLACE` (`workplace`),
   KEY `IDX_DELIVERY_SCOPE` (`scope`),
-  KEY `IDX_DELIVERY_BANK` (`bank`),
   KEY `IDX_DELIVERY_PROJECT` (`project`),
   KEY `IDX_DELIVERY_ISSUE_TIME` (`issue_time`),
   KEY `IDX_DELIVERY_CUSTOMER` (`customer`),
@@ -3333,7 +3315,6 @@ CREATE TABLE `delivery` (
   KEY `IDX_DELIVERY_PAY_METHOD` (`pay_method`),
   KEY `IDX_DELIVERY_DOMAIN` (`domain`),
   KEY `IDX_DELIVERY_CARRIER` (`carrier`),
-  CONSTRAINT `FK_DELIVERY_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_DELIVERY_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`),
   CONSTRAINT `FK_DELIVERY_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
   CONSTRAINT `FK_DELIVERY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
@@ -3396,8 +3377,9 @@ CREATE TABLE `sales` (
   `days_to_first_pymnt` smallint(2) default '0' COMMENT 'Dias al primer Vencimiento',
   `days_between_pymnts` smallint(2) default '0' COMMENT 'Dias entre Vencimientos',
   `pymnt_days` varchar(8) collate latin1_spanish_ci default '0' COMMENT 'Dias de pago',
-  `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
-  `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
+  `bank_account` varchar(34) collate latin1_spanish_ci default NULL COMMENT 'IBAN - Numero de Cuenta Bancaria Internacional',
+  `bank_alias` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Alias del Banco',
+  `bic` varchar(11) collate latin1_spanish_ci default NULL COMMENT 'BIC - Codigo Identificador del Banco',
   `purchase_generated` tinyint(1) NOT NULL default '0' COMMENT 'Indica si se han generado los Pedidos de Compra derivados',
   `carrier` int(4) default NULL COMMENT 'Identificador de la Agencia de Transporte',
   `shipping_alternative_address` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Primera parte de la Direccion de entrega',
@@ -3411,7 +3393,6 @@ CREATE TABLE `sales` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_SALES_DOMAIN_SERIES_NUMBER` (`domain`,`series`,`number`),
   KEY `IDX_SALES_SCOPE` (`scope`),
-  KEY `IDX_SALES_BANK` (`bank`),
   KEY `IDX_SALES_PROJECT` (`project`),
   KEY `IDX_SALES_ISSUE_DATE` (`issue_date`),
   KEY `IDX_SALES_SELLER` (`seller`),
@@ -3421,7 +3402,6 @@ CREATE TABLE `sales` (
   KEY `IDX_SALES_WORKPLACE` (`workplace`),
   KEY `IDX_SALES_DOMAIN` (`domain`),
   KEY `IDX_SALES_CARRIER` (`carrier`),
-  CONSTRAINT `FK_SALES_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_SALES_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`),
   CONSTRAINT `FK_SALES_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
   CONSTRAINT `FK_SALES_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
@@ -4268,19 +4248,18 @@ CREATE TABLE `income` (
   `days_to_first_pymnt` smallint(2) default '0' COMMENT 'Dias al primer Vencimiento',
   `days_between_pymnts` smallint(2) default '0' COMMENT 'Dias entre Vencimientos',
   `pymnt_days` varchar(8) collate latin1_spanish_ci default '0' COMMENT 'Dias de pago',
-  `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
-  `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
+  `bank_account` varchar(34) collate latin1_spanish_ci default NULL COMMENT 'IBAN - Numero de Cuenta Bancaria Internacional',
+  `bank_alias` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Alias del Banco',
+  `bic` varchar(11) collate latin1_spanish_ci default NULL COMMENT 'BIC - Codigo Identificador del Banco',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_INCOME_DOMAIN_SUPPLIER_REFERENCE_CODE` (`domain`,`supplier`,`reference_code`),
   KEY `IDX_INCOME_WORKPLACE` (`workplace`),
   KEY `IDX_INCOME_SCOPE` (`scope`),
-  KEY `IDX_INCOME_BANK` (`bank`),
   KEY `IDX_INCOME_PROJECT` (`project`),
   KEY `IDX_INCOME_SUPPLIER` (`supplier`),
   KEY `IDX_INCOME_RADDRESS` (`address`),
   KEY `IDX_INCOME_PAY_METHOD` (`pay_method`),
   KEY `IDX_INCOME_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INCOME_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_INCOME_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_INCOME_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `FK_INCOME_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
@@ -4371,8 +4350,9 @@ CREATE TABLE `purchase` (
   `days_to_first_pymnt` smallint(2) default '0' COMMENT 'Dias al primer Vencimiento',
   `days_between_pymnts` smallint(2) default '0' COMMENT 'Dias entre Vencimientos',
   `pymnt_days` varchar(8) collate latin1_spanish_ci default '0' COMMENT 'Dias de pago',
-  `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
-  `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
+  `bank_account` varchar(34) collate latin1_spanish_ci default NULL COMMENT 'IBAN - Numero de Cuenta Bancaria Internacional',
+  `bank_alias` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Alias del Banco',
+  `bic` varchar(11) collate latin1_spanish_ci default NULL COMMENT 'BIC - Codigo Identificador del Banco',
   `email_communication` tinyint(1) NOT NULL default '0' COMMENT 'Indica si se ha comunicado a traves de email',
   `carrier` int(4) default NULL COMMENT 'Identificador de la Agencia de Transporte',
   `shipping_alternative_address` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Primera parte de la Direccion de entrega',
@@ -4386,7 +4366,6 @@ CREATE TABLE `purchase` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_PURCHASE_DOMAIN_SUPPLIER_SERIES_NUMBER` (`domain`,`supplier`,`series`,`number`),
   KEY `IDX_PURCHASE_SCOPE` (`scope`),
-  KEY `IDX_PURCHASE_BANK` (`bank`),
   KEY `IDX_PURCHASE_PROJECT` (`project`),
   KEY `IDX_PURCHASE_SUPPLIER` (`supplier`),
   KEY `IDX_PURCHASE_PAY_METHOD` (`pay_method`),
@@ -4394,7 +4373,6 @@ CREATE TABLE `purchase` (
   KEY `IDX_PURCHASE_DOMAIN` (`domain`),
   KEY `IDX_PURCHASE_RADDRESS` (`address`),
   KEY `IDX_PURCHASE_CARRIER` (`carrier`),
-  CONSTRAINT `FK_PURCHASE_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_PURCHASE_CARRIER` FOREIGN KEY (`carrier`) REFERENCES `carrier` (`registry`),
   CONSTRAINT `FK_PURCHASE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PURCHASE_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
@@ -6505,21 +6483,20 @@ CREATE TABLE `rsupplier` (
   `days_to_first_pymnt` smallint(2) default '0' COMMENT 'Dias al primer Vencimiento',
   `days_between_pymnts` smallint(2) default '0' COMMENT 'Dias entre Vencimientos',
   `pymnt_days` varchar(8) collate latin1_spanish_ci default '0' COMMENT 'Dias de pago',
-  `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
-  `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
+  `bank_account` varchar(34) collate latin1_spanish_ci default NULL COMMENT 'IBAN - Numero de Cuenta Bancaria Internacional',
+  `bank_alias` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Alias del Banco',
+  `bic` varchar(11) collate latin1_spanish_ci default NULL COMMENT 'BIC - Codigo Identificador del Banco',
   PRIMARY KEY  (`id`),
-  KEY `IDX_RSUPPLIER_BANK` (`bank`),
   KEY `IDX_RSUPPLIER_DOMAIN` (`domain`),
   KEY `IDX_RSUPPLIER_PAY_METHOD` (`pay_method`),
   KEY `IDX_RSUPPLIER_REGISTRY` (`registry`),
   KEY `IDX_RSUPPLIER_SUPPLIER` (`supplier`),
   KEY `IDX_RSUPPLIER_TARIFF` (`tariff`),
-  CONSTRAINT `FK_RSUPPLIER_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
-  CONSTRAINT `FK_RSUPPLIER_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_RSUPPLIER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RSUPPLIER_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `FK_RSUPPLIER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
-  CONSTRAINT `FK_RSUPPLIER_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`)
+  CONSTRAINT `FK_RSUPPLIER_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
+  CONSTRAINT `FK_RSUPPLIER_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Proveedores relacionados con Personas o Empresas';
 
 #
@@ -7186,7 +7163,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.25.2');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.26.0');
 
 COMMIT;
 

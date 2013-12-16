@@ -103,8 +103,9 @@ public class SalesManager {
 		sales.setDaysToFirstPayment(offer.getDaysToFirstPayment());
 		sales.setDaysBetweenPayments(offer.getDaysBetweenPayments());
 		sales.setPaymentDays(offer.getPaymentDays());
-		sales.setBank(offer.getBank());
 		sales.setBankAccount(offer.getBankAccount());
+		sales.setBankAlias(offer.getBankAlias());
+		sales.setBic(offer.getBic());
 
 		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
 		return (Sales)salesBean.insert(sales);

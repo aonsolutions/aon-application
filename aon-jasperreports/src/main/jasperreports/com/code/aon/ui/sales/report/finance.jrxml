@@ -21,8 +21,9 @@ where finance.`invoice` = $P{invoiceId}]]>
 	<field name="dueDate" class="java.util.Date"/>
 	<field name="amount" class="java.lang.Double"/>
 	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
-	<field name="bank" class="com.code.aon.config.Bank"/>
 	<field name="formattedBankAccount" class="java.lang.String"/>
+	<field name="bankAlias" class="java.lang.String"/>
+	<field name="bic" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -153,7 +154,7 @@ where finance.`invoice` = $P{invoiceId}]]>
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{bank}.getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{bankAlias}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-10" x="239" y="0" width="174" height="10"/>

@@ -49,7 +49,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
@@ -59,6 +58,7 @@ import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.config.enumeration.WithholdingType;
+import com.code.aon.config.util.BankUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
@@ -108,8 +108,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private DataModel finances;
 	private InvoiceEntryDetail currentDetail;
 	private Finance currentFinance;
+	private boolean showBankManualInput;
 	private RegistryBank currentBank;
-	private SelectItem emptyBank;
 	private Company company;
 	private String onGenerateKey;
 	private AccountingUtil accountingUtil;
@@ -244,6 +244,14 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		this.currentFinance = currentFinance;
 	}
 
+	public boolean isShowBankManualInput() throws ManagerBeanException {
+		return showBankManualInput;
+	}
+
+	public void setShowBankManualInput(boolean showBankManualInput) {
+		this.showBankManualInput = showBankManualInput;
+	}
+
 	public RegistryBank getCurrentBank() {
 		return currentBank;
 	}
@@ -251,7 +259,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	public void setCurrentBank(RegistryBank currentBank) {
 		if (currentBank == null) {
 			currentBank = new RegistryBank();
-			currentBank.setBank(new Bank());
 			currentBank.setBankAccount(new BankAccount());
 		}
 		this.currentBank = currentBank;
@@ -260,17 +267,15 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		try {
 			if (currentFinance == null) {
 				setCurrentBank(null);
-			} else if (currentFinance.getBank() == null || currentFinance.getBank().getId() == null) {
-				setCurrentBank(null);
 			} else {
-				String ccc1 = currentFinance.getBankAccount().getValue();
+				String ccc1 = currentFinance.getBankAccount().getIban();
 				List<SelectItem> banks = getAllBanks();
 				boolean found = false;
 				for (SelectItem item : banks) {
 					RegistryBank rBank = (RegistryBank) item.getValue();
 					BankAccount ba = rBank.getBankAccount();
 					if (ba != null) {
-						String ccc2 = ba.getValue();
+						String ccc2 = ba.getIban();
 						if (StringUtils.equals(ccc1, ccc2)) {
 							setCurrentBank(rBank);
 							found = true;
@@ -711,9 +716,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			invoice = mergeInvoice(invoice);
 			getCurrentFinance().setInvoice(invoice);
 			getFinanceGenerator().initializeFinanceData(getCurrentFinance(), obtainInitialAmount());
-			if (getCurrentFinance().getBank() == null) {
-				getCurrentFinance().setBank(new Bank());
-			}
 			if (getCurrentFinance().getBankAccount() == null) {
 				getCurrentFinance().setBankAccount(new BankAccount());
 			}
@@ -1259,9 +1261,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			if (finance.getId() == null) {
 				finance.setFinanceStatus(FinanceStatus.PENDING);
 			}
-			if (finance.getBank() != null && finance.getBank().getId() == null) {
-				finance.setBank(null);
-			}
 			if (finance.getPayMethod() != null && finance.getPayMethod().getId() == null) {
 				finance.setPayMethod(null);
 			}
@@ -1445,26 +1444,21 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		PayMethod oldPay = (PayMethod) event.getOldValue();
 		PayMethod newPay = (PayMethod) event.getNewValue();
 		if (oldPay == null || newPay == null || oldPay.getType() != newPay.getType()) {
-			currentFinance.setBank(new Bank());
 			currentFinance.setBankAccount(new BankAccount());
-		}
-	}
-
-	public void onBankChanged(LookupChangeEvent event) {
-		currentFinance.setBankAccount(new BankAccount());
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			Bank bank = (Bank) event.getNewValue();
-			currentFinance.getBankAccount().setEntity(bank.getCode());
+			currentFinance.setBankAlias(null);
+			currentFinance.setBic(null);
 		}
 	}
 
 	public void onRBankChanged(ValueChangeEvent event) {
-		currentFinance.setBank(new Bank());
 		currentFinance.setBankAccount(new BankAccount());
+		currentFinance.setBankAlias(null);
+		currentFinance.setBic(null);
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			RegistryBank rbank = (RegistryBank) event.getNewValue();
-			currentFinance.setBank(rbank.getBank());
 			currentFinance.setBankAccount(rbank.getBankAccount());
+			currentFinance.setBankAlias(rbank.getBankAlias());
+			currentFinance.setBic(rbank.getBic());
 		}
 	}
 
@@ -1495,7 +1489,13 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		}
 		return new LinkedList<SelectItem>();
 	}
-
+	public int getActiveBanksCount() throws ManagerBeanException {
+		return getActiveBanks().size();
+	}
+	public int getAllBanksCount() throws ManagerBeanException {
+		return getAllBanks().size();
+	}
+	
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		String series = (String) event.getNewValue();
 		seriesChanged(series);
@@ -1786,71 +1786,10 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		return ((isSales() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || (!isSales() && pm.getType() == PayMethodType.BANK_TRANSFER));	
 	}
 
-	 
-	
-	public boolean isBankCreationEnabled() {
-		try {
-			Finance f = getCurrentFinance();
-			if (f == null)
-				return false;
-			PayMethod pm = f.getPayMethod();
-			if (pm == null)
-				return false;
-			if (!useRegistryBanks(pm))
-				return false;
-			if (f.getBank() == null)
-				return false;
-			if (f.getBankAccount() == null)
-				return false;
-			if (!f.getBankAccount().isValid())
-				return false;
-			String ccc1 = f.getBankAccount().getValue(); 
-			List<SelectItem> banks = getAllBanks();
-			for (SelectItem item: banks) {
-				RegistryBank rBank = (RegistryBank) item.getValue();
-				BankAccount ba = rBank.getBankAccount();
-				if (ba != null) {
-					String ccc2 = ba.getValue(); 
-					if (StringUtils.equals(ccc1, ccc2)) {
-						return false;
-					}
-				}
-			}
-		} catch (ManagerBeanException e) {
-			return false;
-		}
-		return true;
+	public void onBankAccountData(ActionEvent event) {
+		BankUtil.fillBankAccountData(getCurrentFinance());
 	}
-	
-	public SelectItem getEmptyBank() {
-		if (emptyBank == null ) {
-			RegistryBank e = new RegistryBank();
-			e.setBank(new Bank());
-			e.setBankAccount(new BankAccount());
-			emptyBank = new SelectItem(e,"--" );
-		}
-		return emptyBank;
-	}
-	
-	public void onAddRBank(ActionEvent event) {
-		try {
-			IManagerBean rbankBean = BeanManager.getManagerBean(RegistryBank.class);
-			RegistryBank rbank = new RegistryBank();
-			rbank.setRegistry(getHeader().getRegistry());
-			rbank.setBank(getCurrentFinance().getBank());
-			rbank.setBankAccount(getCurrentFinance().getBankAccount());
-			rbank = (RegistryBank) rbankBean.insert(rbank);
-			setCurrentBank(rbank);
-			AonUtil.addInfoMessage("Banco añadido correctamente.");
-		} catch (ManagerBeanException e) {
-			String msg = "Se produjo un error inesperado al intentar agregar el banco.";
-			LOGGER.warn(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
-		
-	}
-	
+
 	public boolean isTaxDateEquals() {
 		if (getHeader() != null) {
 			return ObjectUtils.equals(getHeader().getDate(), getHeader().getTaxDate());

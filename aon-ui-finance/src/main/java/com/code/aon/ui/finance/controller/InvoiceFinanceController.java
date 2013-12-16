@@ -13,16 +13,15 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.config.util.BankUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
@@ -97,35 +96,28 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		if (oldPayMethod == null || newPayMethod == null || oldPayMethod.getType() != newPayMethod.getType()) {
 			Finance finance = (Finance) getTo();
 			finance.setPayMethod(newPayMethod);
-			finance.setBank(new Bank());
 			finance.setBankAccount(new BankAccount());
+			finance.setBankAlias(null);
+			finance.setBic(null);
 
 			setRegistryBank(null);
 			setShowBankManualInput(false);
 		}
 	}
 
-	public void onBankChanged(LookupChangeEvent event) {
-		Finance finance = (Finance) getTo();
-		finance.setBankAccount(new BankAccount());
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			Bank bank = (Bank) event.getNewValue();
-			finance.setBank(bank);
-			finance.getBankAccount().setEntity(bank.getCode());
-		}
-	}
-	
 	public void onRBankChanged(ValueChangeEvent event) {
 		Finance finance = (Finance) getTo();
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			RegistryBank rbank = (RegistryBank) event.getNewValue();
-			finance.setBank(rbank.getBank());
 			finance.setBankAccount(rbank.getBankAccount());
+			finance.setBankAlias(rbank.getBankAlias());
+			finance.setBic(rbank.getBic());
 
 			setRegistryBank(rbank);
 		} else {
-			finance.setBank(new Bank());
 			finance.setBankAccount(new BankAccount());
+			finance.setBankAlias(null);
+			finance.setBic(null);
 
 			setRegistryBank(null);
 		}
@@ -171,25 +163,30 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 
 	public void onBankManualInput(ActionEvent event) throws ManagerBeanException {
 		Finance finance = (Finance) getTo();
-		finance.setBank(new Bank());
 		finance.setBankAccount(new BankAccount());
+		finance.setBankAlias(null);
+		finance.setBic(null);
 
 		setRegistryBank(null);
 	}
 
+	public void onBankAccountData(ActionEvent event) {
+		BankUtil.fillBankAccountData((Finance)getTo());
+	}
+
 	public boolean isBankCreationEnabled() throws ManagerBeanException {
 		Finance finance = (Finance) getTo();
-		if (finance == null || finance.getPayMethod() == null || finance.getBank() == null || finance.getBankAccount() == null)
+		if (finance == null || finance.getPayMethod() == null || finance.getBankAccount() == null)
 			return false;
 		if (!useRegistryBanks(finance.getInvoice().getType() == InvoiceType.SALES, finance.getPayMethod().getType()))
 			return false;
-		if (!finance.getBankAccount().isValid())
+		if (!finance.getBankAccount().isValidBankAccount())
 			return false;
 
 		for (SelectItem item : getAllBanks()) {
 			RegistryBank rBank = (RegistryBank)item.getValue();
 			BankAccount bankAccount = rBank.getBankAccount();
-			if (bankAccount != null && StringUtils.equals(finance.getBankAccount().getValue(), bankAccount.getValue())) {
+			if (bankAccount != null && StringUtils.equals(finance.getBankAccount().getIban(), bankAccount.getIban())) {
 				return false;
 			}
 		}
@@ -202,8 +199,9 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		RegistryBank rBank = new RegistryBank();
 		rBank.setRegistry(finance.getInvoice().getRegistry());
-		rBank.setBank(finance.getBank());
 		rBank.setBankAccount(finance.getBankAccount());
+		rBank.setBankAlias(finance.getBankAlias());
+		rBank.setBic(finance.getBic());
 		rBank.setActive(true);
 		rBank = (RegistryBank)rBankBean.insert(rBank);
 		setRegistryBank(rBank);

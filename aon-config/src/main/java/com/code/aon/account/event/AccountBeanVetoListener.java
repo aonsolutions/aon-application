@@ -78,7 +78,6 @@ public class AccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 					childCriteria.setSkipDomainFilter(true);
 					List<ITransferObject> accounts =  accountBean.getList(childCriteria);
 					if (accounts != null && accounts.size() > 0) {
-						Account duplicate = (Account) accounts.get(0);
 						throw new ManagerBeanVetoListenerException("No se puede crear la cuenta (" + to.getFullDescription() 
 								+ ") porque ya existe una cuenta con el mismo código "
 								+ " en el dominio '"+child.getName()+" " + child.getDescription() +"'");	

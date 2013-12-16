@@ -90,7 +90,7 @@ public class Bizkaia2012MOD303Factory implements IMOD303Factory {
 				for (Declaration declaration : declarations) {
 					properties.put(DECLARATION, declaration);
 					createLine(HEADER,properties);
-					if (StringUtils.isNotBlank(declaration.getCcc1())) {
+					if (StringUtils.isNotBlank(declaration.getCcc())) {
 						createLine(BANK_DATA,properties);	
 					}
 					createLine(DEPONENT,properties);

@@ -322,13 +322,14 @@ public class PurchaseGeneratorManager {
 		purchase.setEmailCommunication(false);
 		purchase.setConfidential(sales.isConfidential());
 		
-		purchase.setBank(null);
 		purchase.setPayMethod(null);
+		purchase.setBankAccount(null);
+		purchase.setBankAlias(null);
+		purchase.setBic(null);
 		purchase.setNumberOfPayments(1);
 		purchase.setDaysToFirstPayment(0);
 		purchase.setDaysBetweenPayments(0);
 		purchase.setPaymentDays("");
-		purchase.setBankAccount(null);
 
 		if(isCustomerShippingAddress()){
 			if(isShippingDataDefined(sales)){

@@ -14,10 +14,7 @@ public class Declaration {
 	private boolean complementary;
 	private boolean taxRefundRegistry;
 	private String bankName;
-	private String ccc1;
-	private String ccc2;
-	private String ccc3;
-	private String ccc4;
+	private String ccc;
 	
 	private boolean generalProrataApplied;
 	private boolean specialProrataApplied;
@@ -107,13 +104,7 @@ public class Declaration {
 	private double previousDeposit;
 	private double totalDebt;
 	private boolean withoutActivity;
-	private String depositBankEntity;
-	private String depositBankOffice;
-	private String depositBankControl;
 	private String depositBankAccount;
-	private String payBackBankEntity;
-	private String payBackBankOffice;
-	private String payBackBankControl;
 	private String payBackBankAccount;
 	
 	private Map<String,Breakdown> innerAssetPurchases = new TreeMap<String, Breakdown>();
@@ -348,29 +339,11 @@ public class Declaration {
 	public void setBankName(String bankName) {
 		this.bankName = bankName;
 	}
-	public String getCcc1() {
-		return ccc1;
+	public String getCcc() {
+		return ccc;
 	}
-	public void setCcc1(String ccc1) {
-		this.ccc1 = ccc1;
-	}
-	public String getCcc2() {
-		return ccc2;
-	}
-	public void setCcc2(String ccc2) {
-		this.ccc2 = ccc2;
-	}
-	public String getCcc3() {
-		return ccc3;
-	}
-	public void setCcc3(String ccc3) {
-		this.ccc3 = ccc3;
-	}
-	public String getCcc4() {
-		return ccc4;
-	}
-	public void setCcc4(String ccc4) {
-		this.ccc4 = ccc4;
+	public void setCcc(String ccc) {
+		this.ccc = ccc;
 	}
 	public boolean isGeneralProrataApplied() {
 		return generalProrataApplied;
@@ -760,24 +733,6 @@ public class Declaration {
 		return isWithoutActivity()?"1":" ";
 	}
 	
-	public String getDepositBankEntity() {
-		return depositBankEntity;
-	}
-	public void setDepositBankEntity(String depositBankEntity) {
-		this.depositBankEntity = depositBankEntity;
-	}
-	public String getDepositBankOffice() {
-		return depositBankOffice;
-	}
-	public void setDepositBankOffice(String depositBankOffice) {
-		this.depositBankOffice = depositBankOffice;
-	}
-	public String getDepositBankControl() {
-		return depositBankControl;
-	}
-	public void setDepositBankControl(String depositBankControl) {
-		this.depositBankControl = depositBankControl;
-	}
 	public String getDepositBankAccount() {
 		return depositBankAccount;
 	}
@@ -785,24 +740,6 @@ public class Declaration {
 		this.depositBankAccount = depositBankAccount;
 	}
 
-	public String getPayBackBankEntity() {
-		return payBackBankEntity;
-	}
-	public void setPayBackBankEntity(String payBackBankEntity) {
-		this.payBackBankEntity = payBackBankEntity;
-	}
-	public String getPayBackBankOffice() {
-		return payBackBankOffice;
-	}
-	public void setPayBackBankOffice(String payBackBankOffice) {
-		this.payBackBankOffice = payBackBankOffice;
-	}
-	public String getPayBackBankControl() {
-		return payBackBankControl;
-	}
-	public void setPayBackBankControl(String payBackBankControl) {
-		this.payBackBankControl = payBackBankControl;
-	}
 	public String getPayBackBankAccount() {
 		return payBackBankAccount;
 	}
@@ -908,10 +845,7 @@ public class Declaration {
 	public void changeInvalidCharacters() {
 		setPeriod(changeInvalidCharacters(getPeriod()));
 		setBankName(changeInvalidCharacters(getBankName()));
-		setCcc1(changeInvalidCharacters(getCcc1()));	
-		setCcc2(changeInvalidCharacters(getCcc2()));
-		setCcc3(changeInvalidCharacters(getCcc3()));
-		setCcc4(changeInvalidCharacters(getCcc4()));
+		setCcc(changeInvalidCharacters(getCcc()));	
 		setDocument(changeInvalidCharacters(getDocument()));
 		setName(changeInvalidCharacters(getName()));
 		setSurname(changeInvalidCharacters(getSurname()));
@@ -924,13 +858,7 @@ public class Declaration {
 		setFax(changeInvalidCharacters(getFax()));
 		setEmail(changeInvalidCharacters(getEmail()));
 		setTodayMonth(changeInvalidCharacters(getTodayMonth()));
-		setDepositBankEntity(changeInvalidCharacters(getDepositBankEntity()));
-		setDepositBankOffice(changeInvalidCharacters(getDepositBankOffice()));
-		setDepositBankControl(changeInvalidCharacters(getDepositBankControl()));
 		setDepositBankAccount(changeInvalidCharacters(getDepositBankAccount()));
-		setPayBackBankEntity(changeInvalidCharacters(getPayBackBankEntity()));
-		setPayBackBankOffice(changeInvalidCharacters(getPayBackBankOffice()));
-		setPayBackBankControl(changeInvalidCharacters(getPayBackBankControl()));
 		setPayBackBankAccount(changeInvalidCharacters(getPayBackBankAccount()));
 	}
 	

@@ -23,10 +23,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.config.util.BankUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
@@ -371,8 +371,13 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		to.setDaysToFirstPayment(0);
 		to.setDaysBetweenPayments(0);
 		to.setPaymentDays("");
-		to.setBank(new Bank());
 		to.setBankAccount(new BankAccount());
+		to.setBankAlias(null);
+		to.setBic(null);
+	}
+
+	public void onBankAccountData(ActionEvent event) {
+		BankUtil.fillBankAccountData((Delivery)getTo());
 	}
 
 	public void onWorkPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {

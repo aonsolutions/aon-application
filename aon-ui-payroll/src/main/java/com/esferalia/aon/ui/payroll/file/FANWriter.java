@@ -2304,7 +2304,7 @@ public class FANWriter {
 //		C Cargo en Cuenta
 //		V Pago electrónico
 		mpg.setSolicitudModalidadPago("C");
-		mpg.setCondigoCuentaCliente(bank.getBankAccount().getValue());
+		mpg.setCondigoCuentaCliente(bank.getBankAccount().getBban());
 		mpg.setTipoIdentificadorTitular("1");
 		mpg.setIdentificadorTitular(autoComplete(dirStaff.getDocument(), 14, "0", true));
 		mpg.setNombreTitular(dirStaff.getName());

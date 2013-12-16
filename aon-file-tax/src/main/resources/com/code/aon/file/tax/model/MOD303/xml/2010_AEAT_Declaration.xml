@@ -68,16 +68,10 @@
 	<field name="compensate" value="bean" bean="Declaration" property="compensate" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="withoutActivity" value="bean" bean="Declaration" property="withoutActivityNumber" format="Numeric" pattern="9" />
 	<field name="payBack" value="bean" bean="Declaration" property="payBack" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="payBackBankEntity" value="bean" bean="Declaration" property="payBackBankEntity" format="AlphaNumeric" pattern="X(4)" />
-	<field name="payBackBankOffice" value="bean" bean="Declaration" property="payBackBankOffice" format="AlphaNumeric" pattern="X(4)" />
-	<field name="payBackBankControl" value="bean" bean="Declaration" property="payBackBankControl" format="AlphaNumeric" pattern="X(2)" />
-	<field name="payBackBankAccount" value="bean" bean="Declaration" property="payBackBankAccount" format="AlphaNumeric" pattern="X(10)" />
+	<field name="payBackBankAccount" value="bean" bean="Declaration" property="payBackBankAccount" format="AlphaNumeric" pattern="X(20)" />
 	<field name="free4" value="0" format="Alphabetic" pattern="X" />
 	<field name="deposit" value="bean" bean="Declaration" property="deposit" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="depositBankEntity" value="bean" bean="Declaration" property="depositBankEntity" format="AlphaNumeric" pattern="X(4)" />
-	<field name="depositBankOffice" value="bean" bean="Declaration" property="depositBankOffice" format="AlphaNumeric" pattern="X(4)" />
-	<field name="depositBankControl" value="bean" bean="Declaration" property="depositBankControl" format="AlphaNumeric" pattern="X(2)" />
-	<field name="depositBankAccount" value="bean" bean="Declaration" property="depositBankAccount" format="AlphaNumeric" pattern="X(10)" />
+	<field name="depositBankAccount" value="bean" bean="Declaration" property="depositBankAccount" format="AlphaNumeric" pattern="X(20)" />
 	<field name="complementary" value="bean" bean="Declaration" property="complementaryNumber" format="Numeric" pattern="9(1)" />
 	<field name="free5" value="             " format="Alphabetic" pattern="X(13)" />
 	<field name="free6" value=" " format="Alphabetic" pattern="X(432)" />

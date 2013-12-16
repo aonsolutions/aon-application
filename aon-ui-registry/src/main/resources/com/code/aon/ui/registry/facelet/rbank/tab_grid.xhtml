@@ -7,73 +7,102 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<ui:decorate
-		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 
 		<ui:define name="columns">
-			<aon:column styleClass="aon-nowrap aon-editDataTable-textColumn aon-width-auto" >
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel for="Bank_id" value="#{bundle.aon_bank}" />
-				</f:facet>
-				<aon:outputText value="#{to.bank.name}" rendered="#{formList}" />
-				<ui:include src="lookup.xhtml" >
-					<ui:param name="lookupTo" value="#{controller.to.bank}" />
-					<ui:param name="lookupRendered" value="#{formEdit}" />
-				</ui:include>
-				<f:facet name="footer" >
-					<ui:include src="lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{controller.to.bank}" />
-						<ui:param name="lookupRendered" value="#{formNew}" />
-						<ui:param name="lookupSuffix" value="-New" />
-					</ui:include>
-				</f:facet>				
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150" >
-				<f:facet name="header">
-					<aon:outputLabel for="RegistryBank_alias" value="#{bundle.aon_alias}" />
-				</f:facet>
-				<aon:outputText value="#{to.alias}" rendered="#{formList}" />
-				<aon:inputText id="RegistryBank_alias"
-					value="#{to.alias}" rendered="#{formEdit}"
-					size="15" maxlength="16" />
-				<f:facet name="footer">
-					<aon:inputText id="RegistryBank_alias-New"
-						value="#{controller.to.alias}" rendered="#{formNew}"
-						size="15" maxlength="16" />
-				</f:facet>
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_bank_account}" />
+					<aon:outputLabel for="#{controller.beanName}_BankAccount_country" value="#{bundle.aon_iban}" />
 				</f:facet>
 				<aon:outputText value="#{to.bankAccount}" rendered="#{formList}" />
 				<ui:include src="bankAccount.xhtml">
 					<ui:param name="bankAccountTo" value="#{controller.to.bankAccount}" />
 					<ui:param name="renderBankAccount" value="#{formEdit}" />
+					<ui:param name="bankAccountPrefix" value="#{controller.beanName}" />
 				</ui:include>
+				<c:if test="#{!skipBankDataButton}">
+					<aon:commandButton id="bankAccountData" value="&#160;"
+						title="#{bundle.aon_bank_data}"
+						styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
+						rendered="#{formEdit}"
+						actionListener="#{controller.onBankAccountData}"
+						reRender="RegistryBank_alias,RegistryBank_bic" ajaxSingle="true">
+					</aon:commandButton>
+				</c:if>
 				<f:facet name="footer">
-					<ui:include src="bankAccount.xhtml">
-						<ui:param name="bankAccountTo" value="#{controller.to.bankAccount}" />
-						<ui:param name="renderBankAccount" value="#{formNew}" />
-					</ui:include>
+					<aon:div>
+						<ui:include src="bankAccount.xhtml">
+							<ui:param name="bankAccountTo" value="#{controller.to.bankAccount}" />
+							<ui:param name="renderBankAccount" value="#{formNew}" />
+							<ui:param name="bankAccountPrefix" value="#{controller.beanName}" />
+							<ui:param name="bankAccountSuffix" value="-New" />
+						</ui:include>
+						<c:if test="#{!skipBankDataButton}">
+							<aon:commandButton id="bankAccountData-New" value="&#160;"
+								title="#{bundle.aon_bank_data}"
+								styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
+								rendered="#{formNew}"
+								actionListener="#{controller.onBankAccountData}"
+								reRender="RegistryBank_alias-New,RegistryBank_bic-New" ajaxSingle="true">
+							</aon:commandButton>
+						</c:if>
+					</aon:div>															
+				</f:facet>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-180" >
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryBank_alias" value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.alias}" rendered="#{formList}" />
+				<aon:inputText id="RegistryBank_alias"
+					value="#{to.alias}" 
+					size="25" maxlength="25" required="#{true}"
+					rendered="#{formEdit}" />
+				<f:facet name="footer">
+					<aon:inputText id="RegistryBank_alias-New"
+						value="#{controller.to.alias}" 
+						size="25" maxlength="25" required="#{true}"
+						rendered="#{formNew}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-110">
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryBank_bic" value="#{bundle.aon_bic}" />
+				</f:facet>
+				<aon:outputText value="#{to.bic}" rendered="#{formList}" />
+				<aon:inputText id="RegistryBank_bic"
+					value="#{to.bic}" 
+					size="12" maxlength="11" 
+					rendered="#{formEdit}">
+					<f:validateLength minimum="11" maximum="11" />
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:inputText id="RegistryBank_bic-New"
+						value="#{controller.to.bic}"
+						size="12" maxlength="11" 
+						rendered="#{formNew}">
+						<f:validateLength minimum="11" maximum="11" />
+					</aon:inputText>
 				</f:facet>
 			</aon:column>
 			
 			<c:if test="#{showSuffix}">
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 					<f:facet name="header">
 						<aon:outputLabel for="RegistryBank_suffix" value="#{bundle.config_bank_sufix}" />
 					</f:facet>
 					<aon:outputText value="#{to.sufix}" rendered="#{formList}" />
 					<aon:inputText id="RegistryBank_suffix"
-						value="#{to.sufix}" rendered="#{formEdit}"
-						size="5" maxlength="3" />
+						value="#{to.sufix}"
+						size="3" maxlength="3" 
+						rendered="#{formEdit}" />
 					<f:facet name="footer">
 						<aon:inputText id="RegistryBank_suffix-New"
-							value="#{controller.to.sufix}" rendered="#{formNew}"
-							size="5" maxlength="3" />
+							value="#{controller.to.sufix}"
+							size="3" maxlength="3" 
+							rendered="#{formNew}" />
 					</f:facet>
 				</aon:column>
 				
@@ -106,19 +135,21 @@
 				</c:if>
 			</c:if>
 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
 				<f:facet name="header">
 					<aon:outputLabel for="RegistryBank_active" value="#{bundle.aon_active}" />
 				</f:facet>
-				<aon:outputText rendered="#{formList}"
-					value="&#160;"
+				<aon:outputText value="&#160;"
 					styleClass="#{to.active?'aon-icon-checked':'aon-icon-check'}" 
-					style="padding-left: 20px;background-position: 5px 2px;" />
+					style="padding-left: 20px;background-position: 5px 2px;"
+					rendered="#{formList}" />
 				<aon:selectBooleanCheckbox id="RegistryBank_active"
-					rendered="#{formEdit}" value="#{to.active}" />
+					value="#{to.active}"
+					rendered="#{formEdit}" />
 				<f:facet name="footer">
 					<aon:selectBooleanCheckbox id="RegistryBank_active-New"
-						rendered="#{formNew}" value="#{controller.to.active}">
+						value="#{controller.to.active}"
+						rendered="#{formNew}">
 					</aon:selectBooleanCheckbox>
 				</f:facet>
 			</aon:column>

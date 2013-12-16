@@ -33,7 +33,6 @@
     	<mapping class="com.code.aon.company.Enterprise"/>
     	<mapping class="com.code.aon.company.WorkPlace"/>
     	<mapping class="com.code.aon.config.ApplicationParameter"/>
-    	<mapping class="com.code.aon.config.Bank"/>
     	<mapping class="com.code.aon.config.CommissionType"/>
     	<mapping class="com.code.aon.config.Domain"/>
     	<mapping class="com.code.aon.config.PayMethod"/>

@@ -1,6 +1,5 @@
 package com.code.aon.ui.purchase.controller;
 
-
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_RETURNED_IN_MSG;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_RETURN_OVER_MSG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
@@ -30,9 +29,9 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.util.BankUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Finance;
@@ -437,8 +436,13 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		to.setDaysToFirstPayment(0);
 		to.setDaysBetweenPayments(0);
 		to.setPaymentDays("");
-		to.setBank(new Bank());
 		to.setBankAccount(new BankAccount());
+		to.setBankAlias(null);
+		to.setBic(null);
+	}
+
+	public void onBankAccountData(ActionEvent event) {
+		BankUtil.fillBankAccountData((Purchase)getTo());
 	}
 
 	public double getTaxableBase(){

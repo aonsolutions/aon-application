@@ -88,8 +88,9 @@ public class DeliveryManager {
 		delivery.setDaysToFirstPayment(sales.getDaysToFirstPayment());
 		delivery.setDaysBetweenPayments(sales.getDaysBetweenPayments());
 		delivery.setPaymentDays(sales.getPaymentDays());
-		delivery.setBank(sales.getBank());
 		delivery.setBankAccount(sales.getBankAccount());
+		delivery.setBankAlias(sales.getBankAlias());
+		delivery.setBic(sales.getBic());
 		
 		delivery.setCarrier(sales.getCarrier());
 		delivery.setShippingPeriod(sales.getShippingPeriod());

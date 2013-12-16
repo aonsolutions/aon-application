@@ -54,7 +54,7 @@ public class TargetLoaderFactory extends RegistryLoaderFactory implements ILoade
 			,new Column(CLP,"email"							,2,64	,false	,null)
 			,new Column(CLP,"web"							,2,64	,false	,null)
 			,new Column(CLP,"banco"							,2,64	,false	,null)
-			,new Column(CLP,"cuentaBanco"					,2,23	,false	,null)
+			,new Column(CLP,"cuentaBanco"					,2,34	,false	,null)
 			,new Column(CLP,"formaPago"						,2,32	,false	,null)
 			,new Column(CLP,"numeroVtos"					,0,6	,false	,null)
 			,new Column(CLP,"diasAlPrimerVto"				,0,6	,false	,null)

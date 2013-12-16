@@ -222,7 +222,9 @@ public interface ICommonMessages {
 	String FTP_ERROR_CHANGE_DIRECTORY = "config_ftp_error_change_directory";
 	String FTP_ERROR_CREATE_DIRECTORY = "config_ftp_error_create_directory";
 	String FTP_ERROR_CREATE_FILE = "config_ftp_error_create_file";
-	String CONFIG_INVALID_BANK_ACCOUNT = "config_invalid_bank_account";
+	String CONFIG_INCORRECT_IBAN = "config_incorrect_iban";
+	String CONFIG_INCORRECT_IBAN_LENGTH = "config_incorrect_iban_length";
+	String CONFIG_INCORRECT_BANK_ACCOUNT = "config_incorrect_bank_account";
 	String CONFIG_INVALID_START_DATE = "config_invalid_startDate";
 	String CONFIG_INVALID_END_DATE = "config_invalid_endDate";
 	String CONFIG_DATE_OVERLAP = "config_date_overlap";

@@ -67,13 +67,13 @@ public class AEB58Writer implements IFinanceConstants {
 		presenter.setSufix(companyRBank.getSufix());
 		presenter.setMakeDate(fBatch.getIssueDate());
 		presenter.setName(company.getName());
-		presenter.setEntity(companyRBank.getBankAccount().getEntity());
-		presenter.setOffice(companyRBank.getBankAccount().getOffice());
+		presenter.setEntity(companyRBank.getBankAccount().getBban1());
+		presenter.setOffice(companyRBank.getBankAccount().getBban2());
 		lot.setPresenter(presenter);
 
 		Orderer orderer = new Orderer();
 		Account companyAccount = new Account();
-		companyAccount.parse(companyRBank.getBankAccount().getValue());
+		companyAccount.parse(companyRBank.getBankAccount().getBban());
 		orderer.setAccount(companyAccount);
 		orderer.setCode(company.getDocument());
 		orderer.setName(company.getName());
@@ -105,7 +105,7 @@ public class AEB58Writer implements IFinanceConstants {
 		individual.setAmount(new Double(finance.getTotalAmount()));
 		Account ccc = new Account();
 		if (finance.getBankAccount() != null && !finance.getBankAccount().equals("")) {
-            ccc.parse(finance.getBankAccount().getValue());
+            ccc.parse(finance.getBankAccount().getBban());
             individual.setAccount(ccc);
         }
 		individual.setConcept(obtainConcept(finance));

@@ -119,8 +119,9 @@ public class FinanceFractionController implements IFinanceConstants {
 		finance.setInvoice(targetFinance.getInvoice());
 		finance.setDueDate(targetFinance.getDueDate());
 		finance.setPayMethod(targetFinance.getPayMethod());
-		finance.setBank(targetFinance.getBank());
 		finance.setBankAccount(targetFinance.getBankAccount());
+		finance.setBankAlias(targetFinance.getBankAlias());
+		finance.setBic(targetFinance.getBic());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setSecurityLevel(targetFinance.getSecurityLevel());
 		finance.setScope(targetFinance.getScope());
@@ -135,7 +136,6 @@ public class FinanceFractionController implements IFinanceConstants {
 			List<Finance> list = (List<Finance>) getModel().getWrappedData();
 			Finance finance = list.get(0);
 			targetFinance.setAmount(finance.getAmount());
-			targetFinance.setBank((targetFinance.getBank().getId() == null) ? null : targetFinance.getBank());
 			targetFinance.setInvoice((targetFinance.getInvoice().getId() == null) ? null : targetFinance.getInvoice());
 			targetFinance.setPayMethod((targetFinance.getPayMethod().getId() == null) ? null : targetFinance.getPayMethod());
 			targetFinance.setFinanceGroup(targetFinance.getFinanceGroup().getId() == null ? null : targetFinance.getFinanceGroup());
@@ -146,7 +146,6 @@ public class FinanceFractionController implements IFinanceConstants {
 
 			for(int i=1; i<list.size(); i++) {
 				finance = (Finance)list.get(i);
-				finance.setBank((finance.getBank().getId() == null) ? null : finance.getBank());
 				finance.setInvoice((finance.getInvoice().getId() == null) ? null : finance.getInvoice());
 				finance.setPayMethod((finance.getPayMethod().getId() == null) ? null : finance.getPayMethod());
 				finance.setFinanceGroup(null);

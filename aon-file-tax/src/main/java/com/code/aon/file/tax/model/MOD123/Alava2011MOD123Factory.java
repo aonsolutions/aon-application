@@ -8,6 +8,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
@@ -115,10 +116,10 @@ public class Alava2011MOD123Factory implements IMOD123Factory {
 		datos.addElement(DATO).addAttribute(NOMBRE,MODELO_ATT).addAttribute(VALOR, MODEL);
 		datos.addElement(DATO).addAttribute(NOMBRE,EJERCICIO).addAttribute(VALOR, declaration.getYear().toString());
 		datos.addElement(DATO).addAttribute(NOMBRE,RESULTADO).addAttribute(VALOR, formatNumber( declaration.getResult() ));
-		datos.addElement(DATO).addAttribute(NOMBRE,CCC1).addAttribute(VALOR, declaration.getCcc1());
-		datos.addElement(DATO).addAttribute(NOMBRE,CCC2).addAttribute(VALOR, declaration.getCcc2());
-		datos.addElement(DATO).addAttribute(NOMBRE,CCC3).addAttribute(VALOR, declaration.getCcc3());
-		datos.addElement(DATO).addAttribute(NOMBRE,CCC4).addAttribute(VALOR, declaration.getCcc4());
+		datos.addElement(DATO).addAttribute(NOMBRE,CCC1).addAttribute(VALOR, StringUtils.substring(declaration.getCcc(), 0, 4));
+		datos.addElement(DATO).addAttribute(NOMBRE,CCC2).addAttribute(VALOR, StringUtils.substring(declaration.getCcc(), 4, 8));
+		datos.addElement(DATO).addAttribute(NOMBRE,CCC3).addAttribute(VALOR, StringUtils.substring(declaration.getCcc(), 8, 10));
+		datos.addElement(DATO).addAttribute(NOMBRE,CCC4).addAttribute(VALOR, StringUtils.substring(declaration.getCcc(), 10, 20));
 	}
 	
 	private String formatNumber(Double number) {

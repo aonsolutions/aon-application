@@ -366,8 +366,9 @@ public abstract class FiscalModelController extends BasicController {
 		if (finance.getPayMethod().getType() == PayMethodType.CASH_BASIS) {
 
 		} else if (finance.getPayMethod().getType() == PayMethodType.NEGOTIABLE_DOCUMENT) {
-			finance.setBank(getRegistryBank().getBank());
 			finance.setBankAccount(getRegistryBank().getBankAccount());
+			finance.setBankAlias(getRegistryBank().getBankAlias());
+			finance.setBic(getRegistryBank().getBic());
 		}
 		IManagerBean bean = BeanManager.getManagerBean(Finance.class);
 		bean.restoreNullSubPOJOs(finance);

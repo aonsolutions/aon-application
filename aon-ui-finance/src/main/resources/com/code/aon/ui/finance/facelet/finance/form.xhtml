@@ -329,36 +329,21 @@
 						required="true" size="10"
 						ajaxSingle="true" reRender="Finance_total" />
 
-					<aon:outputLabel for="Bank_idFinance"
-						value="#{bundle.aon_bank}" />
+					<aon:outputLabel value="#{bundle.aon_iban}" />
 					<aon:div id="Finance_bankAccount_panel" styleClass="aon-nowrap">
 						<aon:panelGroup id="Finance_bankAccount" rendered="#{finance.showBankManualInput}">
-							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
-								<ui:param name="lookupTo" value="#{finance.to.bank}" />
-								<ui:param name="lookupSuffix" value="Finance"/>
-								<ui:param name="lookupDisabled" value="#{!finance.pending and !finance.returned}" />
-								<ui:param name="lookupReRender" value="Finance_bankAccount" />
-								<aon:methodParam name="lookupChangeListener"
-									value="#{finance.onBankChanged}" type="lookupChangeListener" />
-							</ui:include>								
-							<aon:inputText id="Finance_bankAccount_office"
-								value="#{finance.to.bankAccount.office}"
-								disabled="#{!finance.pending and !finance.returned}" size="3" maxlength="4">
-								<f:validateLength minimum="4" maximum="4" />
-								<a4j:support event="onchange" reRender="createBankContainer" />
-							</aon:inputText>
-							<aon:inputText id="Finance_bankAccount_control"
-								value="#{finance.to.bankAccount.control}"
-								disabled="#{!finance.pending and !finance.returned}" size="1" maxlength="2">
-								<f:validateLength minimum="2" maximum="2" />
-								<a4j:support event="onchange" reRender="createBankContainer" />
-							</aon:inputText>
-							<aon:inputText id="Finance_bankAccount_account"
-								value="#{finance.to.bankAccount.account}"
-								disabled="#{!finance.pending and !finance.returned}" size="10" maxlength="10">
-								<f:validateLength minimum="10" maximum="10" />
-								<a4j:support event="onchange" reRender="createBankContainer" />
-							</aon:inputText>
+							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
+								<ui:param name="bankAccountTo" value="#{finance.to.bankAccount}" />
+								<ui:param name="bankAccountPrefix" value="Finance" />
+								<ui:param name="bankAccountDisabled" value="#{!finance.pending and !finance.returned}" />
+							</ui:include>
+							<aon:commandButton id="bankAccountData" value="&#160;"
+								title="#{bundle.aon_bank_data}"
+								styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
+								rendered="#{finance.showBankManualInput and (finance.pending or finance.returned)}"  
+								actionListener="#{finance.onBankAccountData}"
+								reRender="Finance_bankAlias,Finance_bic" ajaxSingle="true">
+							</aon:commandButton>
 							<aon:commandLink id="bankAccount_hide_manualInput" ajaxSingle="true"
 								rendered="#{finance.showBankManualInput and (finance.pending or finance.returned)}"  
 								reRender="Finance_bankAccount_panel"
@@ -368,29 +353,44 @@
 									value="#{false}" />
 							</aon:commandLink>
 						</aon:panelGroup>
-						<aon:outputLabel for="Finance_registryBank_id"
-							value="&#160;" rendered="#{!finance.showBankManualInput}" />
-						<aon:selectOneMenu id="Finance_registryBank_id"
-							rendered="#{!finance.showBankManualInput}"
-							value="#{finance.registryBank}" reRender="Finance_bankAccount"
-							valueChangeListener="#{finance.onRegistryBankChanged}"
-							disabled="#{!finance.pending and !finance.returned}">
-							<f:selectItem itemLabel="-" value="#{null}" />
-							<c:if test="#{!finance.new}">
-								<f:selectItems value="#{finance.allBanks}" />
-							</c:if>
-							<c:if test="#{finance.new}">
-								<f:selectItems value="#{finance.activeBanks}" />
-							</c:if>
-						</aon:selectOneMenu>
-						<aon:commandLink id="bankAccount_show_manualInput" ajaxSingle="true"
-							rendered="#{!finance.showBankManualInput and (finance.pending or finance.returned)}"  
-							reRender="Finance_bankAccount_panel"
-							styleClass="aon-icon-edit-add aon-margin-left" style="padding-right: 20px;padding-top: 0px;"
-							value="&#160;" title="#{bundle.aon_edit}" >
-							<f:setPropertyActionListener target="#{finance.showBankManualInput}"
-								value="#{true}" />
-						</aon:commandLink>
+						<aon:div styleClass="aon-italic">
+							<aon:div style="margin-top:2px; font-size:0.9em;" rendered="#{finance.showBankManualInput}">
+								<aon:outputLabel for="Finance_bankAlias" styleClass="aon-margin-right"
+									value="#{bundle.aon_bank}" />
+								<aon:inputText id="Finance_bankAlias"
+									value="#{finance.to.bankAlias}" 
+									required="true" size="25" maxlength="25" />
+								<aon:outputLabel for="Finance_bic" styleClass="aon-margin-left aon-margin-right"
+									value="#{bundle.aon_bic}" />
+								<aon:inputText id="Finance_bic"
+									value="#{finance.to.bic}" 
+									size="12" maxlength="11">
+									<f:validateLength minimum="11" maximum="11" />
+								</aon:inputText>
+							</aon:div>
+
+							<aon:selectOneMenu id="Finance_registryBank_id"
+								rendered="#{!finance.showBankManualInput}"
+								value="#{finance.registryBank}" reRender="Finance_bankAccount"
+								valueChangeListener="#{finance.onRegistryBankChanged}"
+								disabled="#{!finance.pending and !finance.returned}">
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<c:if test="#{!finance.new}">
+									<f:selectItems value="#{finance.allBanks}" />
+								</c:if>
+								<c:if test="#{finance.new}">
+									<f:selectItems value="#{finance.activeBanks}" />
+								</c:if>
+							</aon:selectOneMenu>
+							<aon:commandLink id="bankAccount_show_manualInput" ajaxSingle="true"
+								rendered="#{!finance.showBankManualInput and (finance.pending or finance.returned)}"  
+								reRender="Finance_bankAccount_panel"
+								styleClass="aon-icon-edit-add aon-margin-left" style="padding-right: 20px;padding-top: 0px;"
+								value="&#160;" title="#{bundle.aon_edit}" >
+								<f:setPropertyActionListener target="#{finance.showBankManualInput}"
+									value="#{true}" />
+							</aon:commandLink>
+						</aon:div>
 					</aon:div>
 					
 					<aon:outputLabel for="Finance_total"
@@ -515,7 +515,6 @@
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{creditorLookup}" />
 		<aon:lookupButtonPopup lookup="#{personLookup}" />
-		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalPayment.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalReturn.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalGroup.xhtml" >

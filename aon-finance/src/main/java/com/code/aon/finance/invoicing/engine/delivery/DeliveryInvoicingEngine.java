@@ -142,13 +142,6 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 											}
 										}
 										if (retValue == 0) {
-											if (delivery1.getBank() == null || delivery2.getBank() == null) {
-												retValue = (delivery1.getBank() != null) ? 1 : (delivery2.getBank() != null) ? -1 : 0;
-											} else {
-												retValue =  delivery1.getBank().getId().compareTo(delivery2.getBank().getId());
-											}
-										}
-										if (retValue == 0) {
 											if (delivery1.getBankAccount() == null || delivery2.getBankAccount() == null) {
 												retValue = (delivery1.getBankAccount() != null) ? 1 : (delivery2.getBankAccount() != null) ? -1 : 0;
 											} else {
@@ -291,9 +284,6 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		}
 		if (delivery.getPayMethod() != null || previousDelivery.getPayMethod() != null) {
 			if (!ObjectUtils.equals(delivery.getPayMethod(), previousDelivery.getPayMethod())) {
-				return true;
-			}
-			if (!ObjectUtils.equals(delivery.getBank(), previousDelivery.getBank())) {
 				return true;
 			}
 			if (!ObjectUtils.equals(delivery.getBankAccount(), previousDelivery.getBankAccount())) {

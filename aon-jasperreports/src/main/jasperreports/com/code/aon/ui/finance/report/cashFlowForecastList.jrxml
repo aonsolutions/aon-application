@@ -369,11 +369,11 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registryBank}.getBank().getName().length()>30?$F{registryBank}.getBank().getName().substring(0, 30):$F{registryBank}.getBank().getName()
+				<textFieldExpression><![CDATA[$F{registryBank}.getBankAlias()
 +"["+
-$F{registryBank}.getBankAccount().getValue().substring(0, 4)
+$F{registryBank}.getBankAccount().getCountry().getValue() + "**" + $F{registryBank}.getBankAccount().getBban1()
 +"..."+
-$F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankAccount().getValue().length()-4, $F{registryBank}.getBankAccount().getValue().length())
+$F{registryBank}.getBankAccount().getIban().substring($F{registryBank}.getBankAccount().getIban().length()-4, $F{registryBank}.getBankAccount().getIban().length())
 +"]"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">

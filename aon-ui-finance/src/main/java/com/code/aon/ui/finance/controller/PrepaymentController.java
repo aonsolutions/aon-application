@@ -14,10 +14,10 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.config.util.BankUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.finance.Creditor;
@@ -108,8 +108,9 @@ public class PrepaymentController extends BasicController implements IFinanceCon
 			Finance finance = prepayment.getFinance();
 			RegistryPayMethod rPayMethod = creditor.getRegistry().getPayMethod();
 			finance.setPayMethod((rPayMethod==null) ? new PayMethod() : rPayMethod.getPayment());
-			finance.setBank((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new Bank() : rPayMethod.getBank());
 			finance.setBankAccount((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? new BankAccount() : rPayMethod.getBankAccount());
+			finance.setBankAlias((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBankAlias());
+			finance.setBic((rPayMethod==null || rPayMethod.getRegistryBank()==null) ? null : rPayMethod.getBic());
 
 			setRegistryBank((rPayMethod==null) ? null : rPayMethod.getRegistryBank());
 			setShowBankManualInput(false);
@@ -125,8 +126,9 @@ public class PrepaymentController extends BasicController implements IFinanceCon
 		if (oldPayMethod == null || newPayMethod == null || oldPayMethod.getType() != newPayMethod.getType()) {
 			Finance finance = ((Prepayment)getTo()).getFinance();
 			finance.setPayMethod(newPayMethod);
-			finance.setBank(new Bank());
 			finance.setBankAccount(new BankAccount());
+			finance.setBankAlias(null);
+			finance.setBic(null);
 
 			setRegistryBank(null);
 			setShowBankManualInput(false);
@@ -165,13 +167,15 @@ public class PrepaymentController extends BasicController implements IFinanceCon
 		Finance finance = ((Prepayment)getTo()).getFinance();
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			RegistryBank rbank = (RegistryBank) event.getNewValue();
-			finance.setBank(rbank.getBank());
 			finance.setBankAccount(rbank.getBankAccount());
+			finance.setBankAlias(rbank.getBankAlias());
+			finance.setBic(rbank.getBic());
 
 			setRegistryBank(rbank);
 		} else {
-			finance.setBank(new Bank());
 			finance.setBankAccount(new BankAccount());
+			finance.setBankAlias(null);
+			finance.setBic(null);
 
 			setRegistryBank(null);
 		}
@@ -179,20 +183,15 @@ public class PrepaymentController extends BasicController implements IFinanceCon
 
 	public void onBankManualInput(ActionEvent event) throws ManagerBeanException {
 		Finance finance = ((Prepayment)getTo()).getFinance();
-		finance.setBank(new Bank());
 		finance.setBankAccount(new BankAccount());
+		finance.setBankAlias(null);
+		finance.setBic(null);
 
 		setRegistryBank(null);
 	}
 
-	public void onBankChanged(LookupChangeEvent event) {
-		Finance finance = ((Prepayment)getTo()).getFinance();
-		finance.setBankAccount(new BankAccount());
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			Bank bank = (Bank) event.getNewValue();
-			finance.setBank(bank);
-			finance.getBankAccount().setEntity(bank.getCode());
-		}
+	public void onBankAccountData(ActionEvent event) {
+		BankUtil.fillBankAccountData(((Prepayment)getTo()).getFinance());
 	}
 
 	public void onCustomerChanged(LookupChangeEvent event) throws ManagerBeanException {

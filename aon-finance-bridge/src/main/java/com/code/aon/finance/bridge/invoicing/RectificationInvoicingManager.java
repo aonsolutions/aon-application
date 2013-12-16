@@ -178,8 +178,9 @@ public class RectificationInvoicingManager {
 			rectifierFinance.setConcept(rectifier.getDocumentNumber()); 
 			rectifierFinance.setDueDate(rectifier.getIssueDate());
 			rectifierFinance.setPayMethod(finance.getPayMethod());
-			rectifierFinance.setBank(finance.getBank());
 			rectifierFinance.setBankAccount(finance.getBankAccount());
+			rectifierFinance.setBankAlias(finance.getBankAlias());
+			rectifierFinance.setBic(finance.getBic());
 			rectifierFinance.setFinanceStatus(FinanceStatus.PENDING);
 			rectifierFinance.setSecurityLevel(finance.getSecurityLevel());
 			rectifierFinance.setScope(finance.getScope());

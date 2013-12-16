@@ -216,7 +216,7 @@ public class CashFlowForecastReport {
 			RegistryBank rbank = (RegistryBank) item.getValue();
 			CashFlowBank bank = new CashFlowBank();
 			bank.setId(rbank.getId());
-			String alias = StringUtils.abbreviate(rbank.getBank().getName(), 15) + " " +rbank.getBankAccount().getAccount();
+			String alias = StringUtils.abbreviate(rbank.getBankAlias(), 15) + " " +rbank.getBankAccount().getIban();
 			bank.setDescription( alias );
 			bank.setAccount(rbank.getBankAccount().toString());
 			bank.setEnabled(rbank.isActive());
@@ -503,7 +503,7 @@ public class CashFlowForecastReport {
 			cfr.setType(finance.isPayment()?"Pg.":"Cb.");
 			cfr.setPayment( finance.isPayment() );
 			cfr.setMap( new HashMap<Integer, CashFlowBank>());
-			cfr.setBankDescription( finance.getBank() != null?finance.getBank().getName()+"["+ finance.getBankAccount()+ "]" :NO_BANK);
+			cfr.setBankDescription( !StringUtils.isBlank(finance.getBankDescription())?finance.getBankDescription():NO_BANK );
 			CashFlowBank cfb = new CashFlowBank();
 			cfb.setId(getRegistryBank(finance));
 			cfb.setBalance(0.0 );
@@ -528,7 +528,7 @@ public class CashFlowForecastReport {
 	}
 
 	private int getRegistryBank(Finance finance) {
-		if (finance.getBank() == null || finance.getBankAccount() == null) {
+		if (finance.getBankAccount() == null) {
 			return Integer.MIN_VALUE;	
 		}
 		for ( CashFlowBank bank: getBankList() ) {
@@ -555,7 +555,7 @@ public class CashFlowForecastReport {
 			cfr.setDescription( finance.getDocumentNumber() + " [" + finance.getRegistryName()+ "]" );
 			cfr.setPayment( finance.isPayment() );
 			cfr.setMap( new HashMap<Integer, CashFlowBank>());
-			cfr.setBankDescription( finance.getBank() != null?finance.getBank().getName()+"["+ finance.getBankAccount()+ "]" :NO_BANK);
+			cfr.setBankDescription( !StringUtils.isBlank(finance.getBankDescription())?finance.getBankDescription():NO_BANK );
 			CashFlowBank cfb = new CashFlowBank();
 			cfb.setId(getRegistryBank(finance));
 			cfb.setDescription(null);

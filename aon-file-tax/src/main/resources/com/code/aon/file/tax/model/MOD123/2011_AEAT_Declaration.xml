@@ -21,10 +21,7 @@
 	<field name="c13"       value="bean"  bean="Declaration"    property="boxes(123-13)"      format="DefNumeric"    pattern="S9(10)V99" />
 	<field name="payAmount" value="bean"  bean="Declaration"    property="boxes(123-13)"      format="DefNumeric"    pattern="S9(10)V99" />
 	<field name="payment"   value="bean"  bean="Declaration"    property="payment"            format="AlphaNumeric"  pattern="X(1)" />
-	<field name="ccc1"      value="bean"  bean="Declaration"    property="ccc1"               format="AlphaNumeric"  pattern="X(4)" />
-	<field name="ccc2"      value="bean"  bean="Declaration"    property="ccc2"               format="AlphaNumeric"  pattern="X(4)" />
-	<field name="ccc3"      value="bean"  bean="Declaration"    property="ccc3"               format="AlphaNumeric"  pattern="X(2)" />
-	<field name="ccc4"      value="bean"  bean="Declaration"    property="ccc4"               format="AlphaNumeric"  pattern="X(10)" />
+	<field name="ccc"       value="bean"  bean="Declaration"    property="ccc"                format="AlphaNumeric"  pattern="X(20)" />
 	<field name="compCode"  value="bean"  bean="Declaration"    property="complementaryCode"  format="AlphaNumeric"  pattern="X(16)" />
 	<field name="compPrev"  value="bean"  bean="Declaration"    property="replacedNumber"     format="AlphaNumeric"  pattern="X(13)" />
 	<field name="conPerson" value="bean"  bean="Declaration"    property="contactPerson"      format="AlphaNumeric"  pattern="X(100)" />

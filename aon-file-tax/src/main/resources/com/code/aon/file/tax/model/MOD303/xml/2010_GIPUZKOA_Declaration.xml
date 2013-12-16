@@ -7,10 +7,7 @@
 	<field name="model" value="bean" bean="Declaration" property="gipuzkoaModel" format="AlphaNumeric" pattern="X(3)" />
 	<field name="period" value="bean" bean="Declaration" property="period" format="AlphaNumeric" pattern="X(2)" />
 	<field name="free0" value="01" format="Alphabetic" pattern="X(2)" />
-	<field name="depositBankEntity" value="bean" bean="Declaration" property="depositBankEntity" format="Numeric" pattern="9(4)" />
-	<field name="depositBankOffice" value="bean" bean="Declaration" property="depositBankOffice" format="Numeric" pattern="9(4)" />
-	<field name="depositBankControl" value="bean" bean="Declaration" property="depositBankControl" format="Numeric" pattern="9(2)" />
-	<field name="depositBankAccount" value="bean" bean="Declaration" property="depositBankAccount" format="Numeric" pattern="9(10)" />
+	<field name="depositBankAccount" value="bean" bean="Declaration" property="depositBankAccount" format="AlphaNumeric" pattern="X(20)" />
 	<field name="withoutActivity" value="bean" bean="Declaration" property="withoutActivityString" format="AlphaNumeric" pattern="X" />
 	<field name="baseOutputVat21" value="bean" bean="Declaration" property="outputVat(21.0).taxableBase" format="StandardNumeric" pattern="S9(12)V99" />
 	<field name="quotaOutputVat21" value="bean" bean="Declaration" property="outputVat(21.0).quota" format="StandardNumeric" pattern="S9(11)V99" />

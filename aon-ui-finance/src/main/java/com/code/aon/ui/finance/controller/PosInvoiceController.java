@@ -222,7 +222,10 @@ public class PosInvoiceController extends SaleInvoiceController {
 							criteria = new Criteria();
 							criteria.addEqualExpression(productTagBean.getFieldName(IEntityAlias.PRODUCT_TAG_PRODUCT_ID), catalogueItem.getItem().getProduct().getId());
 							for (ITransferObject itt : productTagBean.getList(criteria)) {
-								productTags.add((ProductTag)itt);
+								ProductTag productTag = (ProductTag)itt;
+								if (!productTags.contains(productTag)) {
+									productTags.add(productTag);
+								}
 							}
 						}
 					}

@@ -13,7 +13,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.IPayMethod;
 import com.code.aon.config.PayMethod;
@@ -53,8 +52,9 @@ public class FinanceGenerator {
 		if (rPayMethod != null) {
 			rBank = rPayMethod.getRegistryBank();
 			if (rBank != null) {
-				finance.setBank(rBank.getBank());
 				finance.setBankAccount(rBank.getBankAccount());
+				finance.setBankAlias(rBank.getBankAlias());
+				finance.setBic(rBank.getBic());
 			}
 			finance.setPayMethod(rPayMethod.getPayment());
 		}
@@ -72,18 +72,18 @@ public class FinanceGenerator {
 		Date date = invoice.getIssueDate();
 		if ((rPayMethod == null) || (rPayMethod.getNumberOfPayments() == 1)) {
 			date = (rPayMethod==null) ? date : calculatePaymentDate(rPayMethod.getDaysToFirstPayment(), rPayMethod.getPaymentDaysArray(), date);
-			financeList.add(createFinance(invoice, date, (rPayMethod==null) ? null : rPayMethod.getPayment(), totalPrice, rBank));
+			financeList.add(createFinance(invoice, date, (rPayMethod==null) ? null : rPayMethod.getPayment(), rBank, totalPrice));
 		} else {
 			double paymentPrice = CommonUtil.round((totalPrice / rPayMethod.getNumberOfPayments()));
 			date = calculatePaymentDate(rPayMethod.getDaysToFirstPayment(), rPayMethod.getPaymentDaysArray(), date);
-			financeList.add(createFinance(invoice, date, rPayMethod.getPayment(), paymentPrice,rBank));
+			financeList.add(createFinance(invoice, date, rPayMethod.getPayment(), rBank, paymentPrice));
 			for(int i=2; i<=rPayMethod.getNumberOfPayments()-1; i++) {
 				date = calculatePaymentDate(rPayMethod.getDaysBetweenPayments(), rPayMethod.getPaymentDaysArray(), date);
-				financeList.add(createFinance(invoice, date, rPayMethod.getPayment(), paymentPrice,rBank));
+				financeList.add(createFinance(invoice, date, rPayMethod.getPayment(), rBank, paymentPrice));
 			}
 			paymentPrice = CommonUtil.round(totalPrice - (paymentPrice * (rPayMethod.getNumberOfPayments() - 1)));
 			date = calculatePaymentDate(rPayMethod.getDaysBetweenPayments(), rPayMethod.getPaymentDaysArray(), date);
-			financeList.add(createFinance(invoice, date, rPayMethod.getPayment(), paymentPrice,rBank));
+			financeList.add(createFinance(invoice, date, rPayMethod.getPayment(), rBank, paymentPrice));
 		}
 		if (insert) {
 			insertFinances(financeList);
@@ -96,18 +96,18 @@ public class FinanceGenerator {
 		Date date = invoice.getIssueDate();
 		if ((payMethod == null) || (payMethod.getNumberOfPayments() == 1)) {
 			date = (payMethod == null) ? date : calculatePaymentDate(payMethod.getDaysToFirstPayment(), payMethod.getPaymentDaysArray(), date);
-			financeList.add(createFinance(invoice, date, (payMethod==null) ? null : payMethod.getPayment(), totalPrice, payMethod.getBank(), payMethod.getBankAccount()));
+			financeList.add(createFinance(invoice, date, payMethod, totalPrice));
 		} else {
 			double paymentPrice = CommonUtil.round((totalPrice / payMethod.getNumberOfPayments()));
 			date = calculatePaymentDate(payMethod.getDaysToFirstPayment(), payMethod.getPaymentDaysArray(), date);
-			financeList.add(createFinance(invoice, date, payMethod.getPayment(), paymentPrice, payMethod.getBank(), payMethod.getBankAccount()));
+			financeList.add(createFinance(invoice, date, payMethod, paymentPrice));
 			for(int i=2; i<=payMethod.getNumberOfPayments()-1; i++) {
 				date = calculatePaymentDate(payMethod.getDaysBetweenPayments(), payMethod.getPaymentDaysArray(), date);
-				financeList.add(createFinance(invoice, date, payMethod.getPayment(), paymentPrice,payMethod.getBank(), payMethod.getBankAccount()));
+				financeList.add(createFinance(invoice, date, payMethod, paymentPrice));
 			}
 			paymentPrice = CommonUtil.round(totalPrice - (paymentPrice * (payMethod.getNumberOfPayments() - 1)));
 			date = calculatePaymentDate(payMethod.getDaysBetweenPayments(), payMethod.getPaymentDaysArray(), date);
-			financeList.add(createFinance(invoice, date, payMethod.getPayment(), paymentPrice, payMethod.getBank(), payMethod.getBankAccount()));
+			financeList.add(createFinance(invoice, date, payMethod, paymentPrice));
 		}
 		if (insert) {
 			insertFinances(financeList);
@@ -130,8 +130,8 @@ public class FinanceGenerator {
 		newFinance.setInvoice(finance.getInvoice());
 		newFinance.setDueDate(finance.getDueDate());
 		newFinance.setPayMethod(finance.getPayMethod());
-		newFinance.setBank(finance.getBank());
 		newFinance.setBankAccount(finance.getBankAccount());
+		newFinance.setBic(finance.getBic());
 		newFinance.setFinanceStatus(FinanceStatus.PENDING);
 		newFinance.setSecurityLevel(finance.getSecurityLevel());
 		newFinance.setScope(finance.getScope());
@@ -164,13 +164,22 @@ public class FinanceGenerator {
 		return null;
 	}
 
-	private Finance createFinance(Invoice invoice, Date date, PayMethod payMethod, double totalPrice, RegistryBank rBank) {
-		Bank bank = (rBank==null) ? null : rBank.getBank();
+	private Finance createFinance(Invoice invoice, Date date, PayMethod payMethod, RegistryBank rBank, double totalPrice) {
 		BankAccount bankAccount = (rBank==null) ? null : rBank.getBankAccount();
-		return createFinance(invoice, date, payMethod, totalPrice, bank, bankAccount);
+		String bankAlias = (rBank==null) ? null : rBank.getBankAlias();
+		String bic = (rBank==null) ? null : rBank.getBic();
+		return createFinance(invoice, date, payMethod, totalPrice, bankAccount, bankAlias, bic);
 	}
 
-	public Finance createFinance(Invoice invoice, Date date, PayMethod payMethod, double totalPrice, Bank bank, BankAccount bankAccount) {
+	private Finance createFinance(Invoice invoice, Date date, IPayMethod pMethod, double totalPrice) {
+		PayMethod payMethod = (pMethod==null) ? null : pMethod.getPayment();
+		BankAccount bankAccount = (pMethod==null) ? null : pMethod.getBankAccount();
+		String bankAlias = (pMethod==null) ? null : pMethod.getBankAlias();
+		String bic = (pMethod==null) ? null : pMethod.getBic();
+		return createFinance(invoice, date, payMethod, totalPrice, bankAccount, bankAlias, bic);
+	}
+
+	public Finance createFinance(Invoice invoice, Date date, PayMethod payMethod, double totalPrice, BankAccount bankAccount, String bankAlias, String bic) {
 		Finance finance = new Finance();
 		finance.setPayment(!invoice.getType().equals(InvoiceType.SALES));
 		finance.setRegistry(invoice.getRegistry());
@@ -183,8 +192,9 @@ public class FinanceGenerator {
 		finance.setInvoice(invoice);
 		finance.setDueDate(date);
 		finance.setPayMethod(payMethod);
-		finance.setBank(bank);
 		finance.setBankAccount(bankAccount);
+		finance.setBankAlias(bankAlias);
+		finance.setBic(bic);
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setSecurityLevel(invoice.getSecurityLevel());
 		finance.setScope(invoice.getScope());

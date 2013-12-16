@@ -1,6 +1,5 @@
 package com.code.aon.ui.loader.factory;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Bank;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.geozone.GeoZone;
@@ -108,23 +107,35 @@ public class RegistryLoaderFactory {
 		RegistryBank rbank = new RegistryBank();
 		rbank.setRegistry(registry);
 		BankAccount bankAccount = new BankAccount();
-		String[] ccc = StringUtils.split(loaded.getCuentaBanco(),".");
-		if (ccc.length != 4) {
-			throw new ManagerBeanException("El CCC del cliente "+ loaded.getRazonSocial() +" no es correcto ("+loaded.getCuentaBanco()+")");
-		}
-		bankAccount.setEntity(ccc[0]);
-		bankAccount.setOffice(ccc[1]);
-		bankAccount.setControl(ccc[2]);
-		bankAccount.setAccount(ccc[3]);
-		if (bankAccount.isValid()) {
-			Bank bank = getLoaderUtils().ensureBank(ccc[0], loaded.getBanco() );
-			rbank.setBank(bank);
-			rbank.setBankAccount(bankAccount);
-			return (RegistryBank) bean.insert(rbank);		
+		String ccc = StringUtils.replace(loaded.getCuentaBanco(), ".", "");
+		if (Country.valueOf(StringUtils.substring(ccc, 0, 2)) != null) {
+			bankAccount.setCountry(Country.valueOf(StringUtils.substring(ccc, 0, 2)));
+			bankAccount.setCheck(StringUtils.substring(ccc, 2, 4));
+			bankAccount.setBban1(StringUtils.substring(ccc, 4, 8));
+			bankAccount.setBban2(StringUtils.substring(ccc, 8, 12));
+			bankAccount.setBban3(StringUtils.substring(ccc, 12, 16));
+			bankAccount.setBban4(StringUtils.substring(ccc, 16, 20));
+			bankAccount.setBban5(StringUtils.substring(ccc, 20, 24));
+			bankAccount.setBban6(StringUtils.substring(ccc, 24, 28));
+			bankAccount.setBban7(StringUtils.substring(ccc, 28, 32));
+			bankAccount.setBban8(StringUtils.substring(ccc, 32, 34));
+			if (!bankAccount.isValidIban()) {
+				throw new ManagerBeanException("IBAN de " + loaded.getRazonSocial() + " incorrecto ("+loaded.getCuentaBanco()+")");
+			}
 		} else {
-			engine.log("WARNING. La cuenta de banco " + bankAccount.toString() + " no es válida.");
+			bankAccount.setCountry(Country.ES);
+			bankAccount.setBban1(StringUtils.substring(ccc, 0, 4));
+			bankAccount.setBban2(StringUtils.substring(ccc, 4, 8));
+			bankAccount.setBban3(StringUtils.substring(ccc, 8, 12));
+			bankAccount.setBban4(StringUtils.substring(ccc, 12, 16));
+			bankAccount.setBban5(StringUtils.substring(ccc, 16, 20));
+			if (!bankAccount.isValidBban()) {
+				throw new ManagerBeanException("CCC de "+ loaded.getRazonSocial() + " incorrecto ("+loaded.getCuentaBanco()+")");
+			}
+			bankAccount.setCheck(bankAccount.calculateIbanControlDigit());
 		}
-		return null;
+		rbank.setBankAccount(bankAccount);
+		return (RegistryBank) bean.insert(rbank);		
 	}
 
 	public void insertRegistryPayMethod(LoaderParams params,Registry registry,RegistryBank rbank,LoadedRegistry loaded) throws ManagerBeanException {

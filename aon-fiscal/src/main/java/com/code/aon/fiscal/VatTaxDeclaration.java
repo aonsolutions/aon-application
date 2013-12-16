@@ -4,8 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
@@ -56,15 +54,15 @@ public class VatTaxDeclaration extends VatTaxDeclarationDB {
 	@Transient
 	public String getBankAccount() {
 		if (getRegistryBank() != null && getRegistryBank().getBankAccount() != null ) {
-			return getRegistryBank().getBankAccount().getMaskedBankAccount();
+			return getRegistryBank().getBankAccount().getMaskedIban();
 		}
 		return null;
 	}
 	
 	@Transient
 	public String getBank() {
-		if (getRegistryBank() != null && getRegistryBank().getBank() != null ) {
-			return StringUtils.abbreviate(getRegistryBank().getBank().getName(), 50);
+		if (getRegistryBank() != null) {
+			return getRegistryBank().getAlias();
 		}
 		return null;
 	}

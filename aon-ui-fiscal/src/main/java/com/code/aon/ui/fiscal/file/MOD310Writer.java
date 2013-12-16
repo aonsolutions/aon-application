@@ -164,10 +164,7 @@ public class MOD310Writer implements IFinanceConstants{
 			declaration.setCompensate( CommonUtil.round(d* (-1)));
 		} else {
 			declaration.setDeclarationType("I");
-			declaration.setCcc1("");
-			declaration.setCcc2("");
-			declaration.setCcc3("");
-			declaration.setCcc4("");
+			declaration.setCcc("");
 			Finance finance = fiscalModel.getFinance();
 			if (finance != null) {
 				if (finance.getPayMethod() != null) {
@@ -176,10 +173,7 @@ public class MOD310Writer implements IFinanceConstants{
 							throw new ManagerBeanException("Si la forma de pago no es efectivo, el banco no puede estar vacio.");
 						}
 						declaration.setPayment("3");
-						declaration.setCcc1(finance.getBankAccount().getEntity());
-						declaration.setCcc2(finance.getBankAccount().getOffice());
-						declaration.setCcc3(finance.getBankAccount().getControl());
-						declaration.setCcc4(finance.getBankAccount().getAccount());
+						declaration.setCcc(finance.getBankAccount().getBban());
 						declaration.setDeclarationType("U");
 					} else {
 						declaration.setPayment("1");

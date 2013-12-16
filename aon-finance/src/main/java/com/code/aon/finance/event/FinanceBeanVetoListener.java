@@ -12,7 +12,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
-import com.code.aon.config.BankAccount;
+import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.customer.Customer;
@@ -64,23 +64,6 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		if (!finance.isEmptyInvoice()) {
 	        finance.setConcept(finance.getInvoice().getDocumentNumber()); 
 		}
-		BankAccount bankAccount = finance.getBankAccount();
-		if (bankAccount != null) {
-			if (StringUtils.isWhitespace(bankAccount.getOffice())) bankAccount.setOffice(null);
-			if (StringUtils.isWhitespace(bankAccount.getEntity())) bankAccount.setEntity(null);
-			if (StringUtils.isWhitespace(bankAccount.getControl())) bankAccount.setControl(null);
-			if (StringUtils.isWhitespace(bankAccount.getAccount())) bankAccount.setAccount(null);
-			if ((bankAccount.getOffice() != null ||
-				bankAccount.getEntity() != null ||
-				bankAccount.getControl() != null ||
-				bankAccount.getAccount() != null) &&
-				!bankAccount.isValid()) {
-				throw new ManagerBeanVetoListenerException("La cuenta bancaria del vencimiento no es válida. Los digitos de control no coinciden.");
-			}
-		}
-		if (finance.getBank() != null && finance.getBank().getId() == null) {
-			finance.setBank(null);
-		}
 		if (finance.getSecurityLevel() == null) {
 			if (!finance.isEmptyInvoice()) {
 				finance.setSecurityLevel(finance.getInvoice().getSecurityLevel());
@@ -101,6 +84,25 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 			if (finance.getScope() == null || finance.getScope().getId() == null) {
 				throw new ManagerBeanVetoListenerException("No es posible encontrar un Ambito valido para el Vencimiento.");
+			}
+		}
+		checkBankAccount(finance);
+	}
+
+	public static void checkBankAccount(IBankAccountContainer bac) throws ManagerBeanVetoListenerException {
+		if (StringUtils.isEmpty(bac.getBankAccount().getBban())) {
+			bac.setBankAccount(null);
+			bac.setBankAlias(null);
+			bac.setBic(null);
+		}
+
+		if (bac.getBankAccount() != null && !bac.getBankAccount().isValidBankAccount()) {
+			if (!bac.getBankAccount().isValidIbanLength()) {
+				throw new ManagerBeanVetoListenerException("Longitud de IBAN incorrecta.");
+			} else if (!bac.getBankAccount().isValidBban()) {
+				throw new ManagerBeanVetoListenerException("Cuenta Bancaria incorrecta.");
+			} else {
+				throw new ManagerBeanVetoListenerException("IBAN incorrecto.");
 			}
 		}
 	}

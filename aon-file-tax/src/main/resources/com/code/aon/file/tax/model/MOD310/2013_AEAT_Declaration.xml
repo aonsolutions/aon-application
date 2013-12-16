@@ -49,10 +49,7 @@
 	<field name="comments"  value="bean"  bean="Declaration"    property="comments"           format="AlphaNumeric"  pattern="X(350)" />
 	<field name="deposit"   value="bean"  bean="Declaration"    property="deposit"            format="DefNumeric"    pattern="S9(10)V99" />
 	<field name="payment"   value="bean"  bean="Declaration"    property="payment"            format="AlphaNumeric"  pattern="X(1)" />
-	<field name="ccc1"      value="bean"  bean="Declaration"    property="ccc1"               format="AlphaNumeric"  pattern="X(4)" />
-	<field name="ccc2"      value="bean"  bean="Declaration"    property="ccc2"               format="AlphaNumeric"  pattern="X(4)" />
-	<field name="ccc3"      value="bean"  bean="Declaration"    property="ccc3"               format="AlphaNumeric"  pattern="X(2)" />
-	<field name="ccc4"      value="bean"  bean="Declaration"    property="ccc4"               format="AlphaNumeric"  pattern="X(10)" />
+	<field name="ccc"       value="bean"  bean="Declaration"    property="ccc"                format="AlphaNumeric"  pattern="X(20)" />
 	<field name="town"      value="bean"  bean="Declaration"    property="town"               format="AlphaNumeric"  pattern="X(20)" />
 	<field name="curDay"    value="bean"  bean="Declaration"    property="currentDay"         format="Numeric"       pattern="9(2)" />
 	<field name="curMonth"  value="bean"  bean="Declaration"    property="currentLetterMonth" format="AlphaNumeric"  pattern="X(10)" />

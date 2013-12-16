@@ -1,14 +1,15 @@
 package com.code.aon.ui.registry.controller.event;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.config.util.BankUtil;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryPayMethod;
@@ -70,9 +71,8 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 	}
 
 	private void resetRegistryBank() {
-		this.registryPayMethod.setRegistryBank(new RegistryBank());
-		this.registryPayMethod.getRegistryBank().setBank(new Bank());
-		this.registryPayMethod.getRegistryBank().setBankAccount(new BankAccount());		
+		setRegistryBank(new RegistryBank());
+		getRegistryBank().setBankAccount(new BankAccount());
 	}
 
 	public void checkRegistryBank() throws ControllerListenerException {
@@ -140,4 +140,8 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 		return (registryPayMethod.getPayment() != null) && (registryPayMethod.getPayment().getType() == PayMethodType.CASH_BASIS);
 	}
 	
+	public void onBankAccountData(ActionEvent event) {
+		BankUtil.fillBankAccountData(getRegistryBank());
+	}
+
 }

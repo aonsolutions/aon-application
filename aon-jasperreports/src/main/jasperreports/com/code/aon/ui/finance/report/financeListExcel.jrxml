@@ -20,8 +20,9 @@
 	<field name="financeStatus" class="com.code.aon.finance.enumeration.FinanceStatus"/>
 	<field name="amount" class="java.lang.Double"/>
 	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
-	<field name="bank" class="com.code.aon.config.Bank"/>
 	<field name="bankAccount" class="com.code.aon.config.BankAccount"/>
+	<field name="bankAlias" class="java.lang.String"/>
+	<field name="bic" class="java.lang.String"/>
 	<field name="registryDocument" class="java.lang.String"/>
 	<variable name="totalAmount" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
@@ -270,7 +271,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{bankAccount}.getValue().substring(0,4)+"..."+$F{bankAccount}.getValue().substring($F{bankAccount}.getValue().length()-3,$F{bankAccount}.getValue().length())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{bankAccount}.getCountry().getValue()+"**"+$F{bankAccount}.getBban1()+"..."+$F{bankAccount}.getIban().substring($F{bankAccount}.getIban().length()-4,$F{bankAccount}.getIban().length())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-8" x="257" y="0" width="81" height="12"/>

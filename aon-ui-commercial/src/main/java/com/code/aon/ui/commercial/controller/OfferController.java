@@ -31,10 +31,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.config.util.BankUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Invoice;
@@ -504,8 +504,13 @@ public class OfferController extends BasicController implements ISignatureContro
 		to.setDaysToFirstPayment(0);
 		to.setDaysBetweenPayments(0);
 		to.setPaymentDays("");
-		to.setBank(new Bank());
 		to.setBankAccount(new BankAccount());
+		to.setBankAlias(null);
+		to.setBic(null);
+	}
+
+	public void onBankAccountData(ActionEvent event) {
+		BankUtil.fillBankAccountData(getOffer());
 	}
 
 	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {
@@ -526,8 +531,9 @@ public class OfferController extends BasicController implements ISignatureContro
 				offer.setDaysToFirstPayment(registrySupplier.getDaysToFirstPayment());
 				offer.setDaysBetweenPayments(registrySupplier.getDaysBetweenPayments());
 				offer.setPaymentDays(registrySupplier.getPaymentDays());
-				offer.setBank(registrySupplier.getBank());
 				offer.setBankAccount(registrySupplier.getBankAccount());
+				offer.setBankAlias(registrySupplier.getBankAlias());
+				offer.setBic(registrySupplier.getBic());
 				setDefaultPayMethod(false);
 			}
 		}

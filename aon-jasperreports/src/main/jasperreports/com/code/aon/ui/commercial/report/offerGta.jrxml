@@ -76,8 +76,9 @@
 	<field name="comments" class="java.lang.String"/>
 	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
 	<field name="numberOfPayments" class="java.lang.Integer"/>
-	<field name="bank" class="com.code.aon.config.Bank"/>
 	<field name="bankAccount" class="com.code.aon.config.BankAccount"/>
+	<field name="bankAlias" class="java.lang.String"/>
+	<field name="bic" class="java.lang.String"/>
 	<field name="normal" class="java.lang.Boolean"/>
 	<field name="proforma" class="java.lang.Boolean"/>
 	<field name="dealership" class="java.lang.Boolean"/>
@@ -482,7 +483,7 @@
 				<textFieldExpression><![CDATA[$R{finance_checking}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-1" positionType="Float" x="176" y="224" width="230" height="12">
+				<reportElement key="textField-1" positionType="Float" x="176" y="224" width="160" height="12">
 					<printWhenExpression><![CDATA[($P{targetPayMethod}!=null || $F{payMethod}!=null)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -494,10 +495,10 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ?$P{targetPayMethod}.getBank().getName():$F{bank}.getName() )]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ?$P{targetPayMethod}.getBankAlias():$F{bankAlias})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-6" positionType="Float" mode="Opaque" x="176" y="211" width="229" height="12" forecolor="#FFFFFF" backcolor="#999999">
+				<reportElement key="textField-6" positionType="Float" mode="Opaque" x="176" y="211" width="160" height="12" forecolor="#FFFFFF" backcolor="#999999">
 					<printWhenExpression><![CDATA[($P{targetPayMethod}!=null || $F{payMethod}!=null)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -512,7 +513,7 @@
 				<textFieldExpression><![CDATA[$R{aon_bank}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-1" positionType="Float" x="406" y="224" width="121" height="12">
+				<reportElement key="textField-1" positionType="Float" x="336" y="224" width="191" height="12">
 					<printWhenExpression><![CDATA[($P{targetPayMethod}!=null || $F{payMethod}!=null)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -524,10 +525,10 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ?$P{targetPayMethod}.getBankAccount().getEntity()+" "+$P{targetPayMethod}.getBankAccount().getOffice()+" "+$P{targetPayMethod}.getBankAccount().getControl()+" "+ $P{targetPayMethod}.getBankAccount().getAccount():$F{bankAccount}.getEntity()+" "+$F{bankAccount}.getOffice()+" "+$F{bankAccount}.getControl()+" "+ $F{bankAccount}.getAccount() )]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ?$P{targetPayMethod}.getBankAccount().toString():$F{bankAccount}.toString())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-6" positionType="Float" mode="Opaque" x="406" y="211" width="121" height="12" forecolor="#FFFFFF" backcolor="#999999">
+				<reportElement key="textField-6" positionType="Float" mode="Opaque" x="336" y="211" width="191" height="12" forecolor="#FFFFFF" backcolor="#999999">
 					<printWhenExpression><![CDATA[($P{targetPayMethod}!=null || $F{payMethod}!=null)]]></printWhenExpression>
 				</reportElement>
 				<box>

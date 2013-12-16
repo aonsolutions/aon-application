@@ -149,10 +149,7 @@ public class MOD115Writer implements IFinanceConstants{
 			declaration.setDeclarationType("I");
 			declaration.setPayInCash("X");
 			declaration.setPayInAccount(" ");
-			declaration.setCcc1("");
-			declaration.setCcc2("");
-			declaration.setCcc3("");
-			declaration.setCcc4("");
+			declaration.setCcc("");
 			Finance finance = fiscalModel.getFinance();
 			if (finance != null) {
 				if (finance.getPayMethod() != null) {
@@ -163,10 +160,7 @@ public class MOD115Writer implements IFinanceConstants{
 						}
 						declaration.setPayInCash(" ");
 						declaration.setPayInAccount("D");
-						declaration.setCcc1(finance.getBankAccount().getEntity());
-						declaration.setCcc2(finance.getBankAccount().getOffice());
-						declaration.setCcc3(finance.getBankAccount().getControl());
-						declaration.setCcc4(finance.getBankAccount().getAccount());
+						declaration.setCcc(finance.getBankAccount().getBban());
 						declaration.setDeclarationType("U");
 					}
 				}

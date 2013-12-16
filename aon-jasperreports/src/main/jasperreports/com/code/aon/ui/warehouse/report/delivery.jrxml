@@ -30,7 +30,6 @@
 	<field name="registryAddress" class="com.code.aon.registry.IAddress"/>
 	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
 	<field name="lines" class="java.util.Set"/>
-	<field name="bank" class="com.code.aon.config.Bank"/>
 	<field name="bankAccount" class="com.code.aon.config.BankAccount"/>
 	<field name="numberOfPayments" class="java.lang.Integer"/>
 	<field name="issueTime" class="java.util.Date"/>

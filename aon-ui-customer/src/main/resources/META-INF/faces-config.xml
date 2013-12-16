@@ -241,7 +241,7 @@
 
 	<managed-bean>
 		<managed-bean-name>customerRbank</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryBankLinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -963,7 +963,7 @@
 	<!-- **************** CUSTOMER SUPPLIER  *************** -->
 	<managed-bean>
 		<managed-bean-name>customerSupplier</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>		
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistrySupplierLinesController</managed-bean-class>		
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>

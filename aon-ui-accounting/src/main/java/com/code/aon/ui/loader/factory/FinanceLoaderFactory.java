@@ -10,8 +10,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Bank;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.config.BankAccount;
+import com.code.aon.config.util.BankUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
@@ -45,7 +46,7 @@ public class FinanceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(VTO,"concepto"						,2,64	,false	,null)
 		,new Column(VTO,"fechaVto"						,3,32	,true	,null)
 		,new Column(VTO,"formaPago"						,2,32	,false	,null)
-		,new Column(VTO,"cuentaBanco"					,2,23	,false	,null)
+		,new Column(VTO,"cuentaBanco"					,2,34	,false	,null)
 		,new Column(VTO,"cuenta"						,2,9	,false	,null)
 	};
 
@@ -182,20 +183,40 @@ public class FinanceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		}
 		if (StringUtils.isNotBlank(loaded.getCuentaBanco())) {
 			BankAccount bankAccount = new BankAccount();
-			String[] ccc = StringUtils.split(loaded.getCuentaBanco(),".");
-			if (ccc.length != 4) {
-				throw new ManagerBeanException("El CCC del cliente "+ loaded.getRazonSocial() +" no es correcto ("+loaded.getCuentaBanco()+")");
-			}
-			bankAccount.setEntity(ccc[0]);
-			bankAccount.setOffice(ccc[1]);
-			bankAccount.setControl(ccc[2]);
-			bankAccount.setAccount(ccc[3]);
-			if (bankAccount.isValid()) {
-				finance.setBankAccount(bankAccount);
-				Bank bank = getLoaderUtils().ensureBank(ccc[0],null );
-				finance.setBank(bank);
+			String ccc = StringUtils.replace(loaded.getCuentaBanco(), ".", "");
+			if (Country.valueOf(StringUtils.substring(ccc, 0, 2)) != null) {
+				bankAccount.setCountry(Country.valueOf(StringUtils.substring(ccc, 0, 2)));
+				bankAccount.setCheck(StringUtils.substring(ccc, 2, 4));
+				bankAccount.setBban1(StringUtils.substring(ccc, 4, 8));
+				bankAccount.setBban2(StringUtils.substring(ccc, 8, 12));
+				bankAccount.setBban3(StringUtils.substring(ccc, 12, 16));
+				bankAccount.setBban4(StringUtils.substring(ccc, 16, 20));
+				bankAccount.setBban5(StringUtils.substring(ccc, 20, 24));
+				bankAccount.setBban6(StringUtils.substring(ccc, 24, 28));
+				bankAccount.setBban7(StringUtils.substring(ccc, 28, 32));
+				bankAccount.setBban8(StringUtils.substring(ccc, 32, 34));
+				if (!bankAccount.isValidIban()) {
+					engine.log("WARNING. IBAN de " + loaded.getRazonSocial() + " incorrecto ("+loaded.getCuentaBanco()+")");
+					bankAccount = null;
+				}
 			} else {
-				engine.log("WARNING. La cuenta de banco " + bankAccount.toString() + " no es válida.");
+				bankAccount.setCountry(Country.ES);
+				bankAccount.setBban1(StringUtils.substring(ccc, 0, 4));
+				bankAccount.setBban2(StringUtils.substring(ccc, 4, 8));
+				bankAccount.setBban3(StringUtils.substring(ccc, 8, 12));
+				bankAccount.setBban4(StringUtils.substring(ccc, 12, 16));
+				bankAccount.setBban5(StringUtils.substring(ccc, 16, 20));
+				if (!bankAccount.isValidBban()) {
+					engine.log("WARNING. CCC de "+ loaded.getRazonSocial() + " incorrecto ("+loaded.getCuentaBanco()+")");
+					bankAccount = null;
+				} else {
+					bankAccount.setCheck(bankAccount.calculateIbanControlDigit());
+				}
+			}
+
+			if (bankAccount != null) {
+				finance.setBankAccount(bankAccount);
+				BankUtil.fillBankAccountData(finance);
 			}
 		}
 		finance.setPayment(loaded.getPago()==1);

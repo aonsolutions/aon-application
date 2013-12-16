@@ -138,13 +138,6 @@
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 				</aon:div>
 				
-				<aon:outputLabel for="Bank_id"
-					value="#{bundle.aon_bank}" />
-				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
-					<ui:param name="lookupTo" value="#{searchController.bank}" />
-					<ui:param name="skipNewButton" value="#{true}" />
-				</ui:include>
-
 				<aon:outputLabel for="Invoice_finances_amount"
 					value="#{bundle.aon_amount}" />
 				<aon:inputText id="Invoice_finances_amount"

@@ -13,7 +13,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Bank;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.PayMethodType;
@@ -36,23 +35,6 @@ public class LoaderUtils {
 			accountingUtil = new AccountingUtil();
 		}
 		return accountingUtil;
-	}
-
-	public Bank ensureBank(String bankCode, String banco) throws ManagerBeanException {
-		IManagerBean bankBean = BeanManager.getManagerBean(Bank.class);
-		Criteria c = new Criteria();
-		c.addEqualExpression(bankBean.getFieldName( IEntityAlias.BANK_CODE) , bankCode);
-		List<ITransferObject> list = bankBean.getList(c);
-		if (list != null && list.size() > 0) {
-			return (Bank) list.get(0);	
-		} 
-		if (StringUtils.isNotBlank(banco)) {
-			Bank bank = new Bank();
-			bank.setCode(bankCode);
-			bank.setName(banco);
-			return (Bank) bankBean.insert(bank);
-		}
-		return null;
 	}
 
 	public PayMethod ensurePayMethod(String formaPago) throws ManagerBeanException {

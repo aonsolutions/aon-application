@@ -76,7 +76,7 @@ public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		,new Column(FRA_CTB,"cuentaIrpf"		,2,9	,false	,null)
 		,new Column(FRA_CTB,"fechaVto"			,3,10	,false	,null)
 		,new Column(FRA_CTB,"formaPago"			,2,32	,false	,null)
-		,new Column(FRA_CTB,"cuentaBanco"		,2,23	,false	,null)
+		,new Column(FRA_CTB,"cuentaBanco"		,2,34	,false	,null)
 	};
 	
 	private ILoaderEngine engine;

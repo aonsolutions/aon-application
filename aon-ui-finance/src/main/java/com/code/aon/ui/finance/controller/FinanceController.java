@@ -31,11 +31,11 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.config.util.BankUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatchDetail;
@@ -363,31 +363,24 @@ public class FinanceController extends FinanceListController {
 		PayMethod newPay = (PayMethod) event.getNewValue();
 		if (oldPay == null || newPay == null || oldPay.getType() != newPay.getType()) {
 			Finance finance = (Finance)getTo();
-			finance.setBank(new Bank());
 			finance.setBankAccount(new BankAccount());
+			finance.setBankAlias(null);
+			finance.setBic(null);
 			setShowBankManualInput(false);
 		}
 	}
 
-	public void onBankChanged(LookupChangeEvent event) {
-		Finance finance = (Finance)getTo();
-		finance.setBankAccount(new BankAccount());
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			Bank bank = (Bank) event.getNewValue();
-			finance.setBank(bank);			
-			finance.getBankAccount().setEntity(bank.getCode());			
-		}
-	}
-	
 	public void onRegistryBankChanged(ValueChangeEvent event) {
 		Finance finance = (Finance)getTo();
 		if (event.getNewValue() != null) {
 			RegistryBank rb = (RegistryBank) event.getNewValue();
-			finance.setBank(rb.getBank());
 			finance.setBankAccount(rb.getBankAccount());
+			finance.setBankAlias(rb.getBic());
+			finance.setBic(rb.getBic());
 		} else {
-			finance.setBank(null);
 			finance.setBankAccount(null);
+			finance.setBankAlias(null);
+			finance.setBic(null);
 		}
 	}
 
@@ -425,6 +418,10 @@ public class FinanceController extends FinanceListController {
 		return getAllBanks().size();
 	}
 	
+	public void onBankAccountData(ActionEvent event) {
+		BankUtil.fillBankAccountData((Finance)getTo());
+	}
+
 	public boolean isPending() {
     	return ((Finance)this.getTo()).isPending();
     }
@@ -462,7 +459,7 @@ public class FinanceController extends FinanceListController {
 		setPaymentDate(finance.getDueDate());
 		setPaymentAmount(finance.getTotalAmount());
 		if (finance.getPayMethod().getType() != PayMethodType.CASH_BASIS && finance.getPayMethod().getType() != PayMethodType.OTHER) {
-			setPaymentRegistryBank(obtainPaymentRegistryBank(getCompany(), finance.getBank(), finance.getBankAccount()));
+			setPaymentRegistryBank(obtainPaymentRegistryBank(getCompany(), finance.getBankAccount()));
 			setPaymentPayMethodTypeDetail(null);
 		} else {
 			setPaymentRegistryBank(null);
@@ -471,15 +468,12 @@ public class FinanceController extends FinanceListController {
 		setPaymentRecordable(AonUtil.getRoleManager().isAccountingOperator());
 	}
 
-	private RegistryBank obtainPaymentRegistryBank(Registry registry, Bank bank, BankAccount bankAccount) throws ManagerBeanException {
+	private RegistryBank obtainPaymentRegistryBank(Registry registry, BankAccount bankAccount) throws ManagerBeanException {
 		IManagerBean registryBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(registryBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
-		if (bank != null && bank.getId() != null) {
-			criteria.addEqualExpression(registryBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_BANK_ID), bank.getId());
-		}
-		if (bankAccount != null && bankAccount.getValue() != null) {
-			criteria.addEqualExpression(registryBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_BANK_ACCOUNT), bankAccount);
+		if (bankAccount != null && bankAccount.getIban() != null) {
+			criteria.addEqualExpression(registryBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_BANK_ACCOUNT), bankAccount.getIban());
 		}
 		Iterator<ITransferObject> iterator = registryBankBean.getList(criteria, 0, 1).iterator();
 		if (iterator.hasNext()) {
@@ -515,7 +509,6 @@ public class FinanceController extends FinanceListController {
 	}
 
 	private RegistryBank obtainReturnRegistryBank(Registry registry, Finance finance) throws ManagerBeanException {
-		Bank bank = finance.getBank();
 		BankAccount bankAccount = finance.getBankAccount();
 		IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 		Criteria criteria = new Criteria();
@@ -524,10 +517,9 @@ public class FinanceController extends FinanceListController {
 		Iterator<?> iterator = fBatchDetailBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
-			bank = detail.getFinanceBatch().getRegistryBank().getBank();
 			bankAccount = detail.getFinanceBatch().getRegistryBank().getBankAccount();
 		}
-		return obtainPaymentRegistryBank(registry, bank, bankAccount);
+		return obtainPaymentRegistryBank(registry, bankAccount);
 	}
 
 	private PayMethodTypeDetail obtainPayMethodTypeDetail(PayMethodType type) throws ManagerBeanException {
@@ -712,7 +704,7 @@ public class FinanceController extends FinanceListController {
 	public void onOrderFinanceListByBank(ActionEvent event) throws ManagerBeanException {
 		Criteria criteria = getCriteria();
 		criteria.setOrderByList(null);
-		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_BANK_ID));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_BANK_ACCOUNT));
 		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_DUE_DATE));
 		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_INVOICE_REFERENCE_CODE));
 		orderedList=getManagerBean().getList(criteria);

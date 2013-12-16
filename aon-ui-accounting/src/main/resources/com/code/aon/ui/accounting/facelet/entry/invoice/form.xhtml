@@ -278,7 +278,7 @@
 						</h:panelGrid>
 
 						<aon:outputText for="Registry_document"
-							value="#{bundle.aon_company_document}sccc" />
+							value="#{bundle.aon_company_document}" />
 						<aon:div id="documentPanel">
 							<aon:selectOneMenu id="Registry_document_type" 
 								disabled="#{invoiceEntry.newDetail}"
@@ -520,7 +520,6 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{accountLookup}" />
-		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{creditorLookup}" />

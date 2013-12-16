@@ -40,40 +40,22 @@
 	</aon:selectOneMenu>
 
 	<aon:div rendered="#{invoiceController.financeGenerationMode == 1}">
-		<aon:outputLabel for="Bank_id-Invoice" value="#{bundle.aon_bank}" />
-		<aon:outputText value=" - #{bundle.aon_bank_account}" />
+		<aon:outputLabel value="#{bundle.aon_iban}" />
 	</aon:div>
 	<aon:div id="InvoiceFinance_bankAccount_div" styleClass="aon-nowrap" rendered="#{invoiceController.financeGenerationMode == 1}">
 		<aon:panelGroup id="InvoiceFinance_bankAccount" rendered="#{financeController.showBankManualInput}">
-			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
-				<ui:param name="lookupTo" value="#{financeController.to.bank}" />
-				<ui:param name="skipLabel" value="#{true}" />
-				<ui:param name="lookupSuffix" value="-Invoice" />
-				<ui:param name="lookupReRender" value="InvoiceFinance_bankAccount" />
-				<aon:methodParam name="lookupChangeListener"
-					value="#{financeController.onBankChanged}" type="lookupChangeListener" />
-			</ui:include>								
-			<aon:inputText id="BankAccount_office"
-				value="#{financeController.to.bankAccount.office}"
-				size="3" maxlength="4">
-				<f:validateLength minimum="4" maximum="4" />
-				<a4j:support event="onchange"
-					reRender="CreateBank_panel" ajaxSingle="true" />
-			</aon:inputText>
-			<aon:inputText id="BankAccount_control"
-				value="#{financeController.to.bankAccount.control}"
-				size="1" maxlength="2">
-				<f:validateLength minimum="2" maximum="2" />
-				<a4j:support event="onchange"
-					reRender="CreateBank_panel" ajaxSingle="true" />
-			</aon:inputText>
-			<aon:inputText id="BankAccount_account"
-				value="#{financeController.to.bankAccount.account}"
-				size="8" maxlength="10">
-				<f:validateLength minimum="10" maximum="10" />
-				<a4j:support event="onchange" 
-					reRender="CreateBank_panel" ajaxSingle="true" />
-			</aon:inputText>
+			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
+				<ui:param name="bankAccountTo" value="#{financeController.to.bankAccount}" />
+				<ui:param name="bankAccountPrefix" value="#{invoiceController.beanName}" />
+				<ui:param name="bankAccountSuffix" value="-Invoice" />
+				<ui:param name="bankAccountReRender" value="CreateBank_panel" />
+			</ui:include>
+			<aon:commandButton id="bankAccountData" value="&#160;"
+				title="#{bundle.aon_bank_data}"
+				styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
+				actionListener="#{financeController.onBankAccountData}"
+				reRender="Finance_bankAlias,Finance_bic" ajaxSingle="true">
+			</aon:commandButton>
 			<aon:panelGroup id="CreateBank_panel">
 				<aon:commandButton id="CreateBank"
 					value="&#160;" title="#{bundle.config_bank_creation} #{invoiceController.to.registryName}"
@@ -94,6 +76,21 @@
 			</aon:commandLink>
 		</aon:panelGroup>
 		<aon:div>
+			<aon:div style="margin-top:2px;" rendered="#{financeController.showBankManualInput}">
+				<aon:outputLabel for="Finance_bankAlias" styleClass="aon-margin-right"
+					value="#{bundle.aon_bank}" />
+				<aon:inputText id="Finance_bankAlias"
+					value="#{financeController.to.bankAlias}" 
+					required="true" size="25" maxlength="25" />
+				<aon:outputLabel for="Finance_bic" styleClass="aon-margin-left aon-margin-right"
+					value="#{bundle.aon_bic}" />
+				<aon:inputText id="Finance_bic"
+					value="#{financeController.to.bic}" 
+					size="12" maxlength="11">
+					<f:validateLength minimum="11" maximum="11" />
+				</aon:inputText>
+			</aon:div>
+
 			<aon:selectOneMenu id="Finance_registryBank"
 				value="#{financeController.registryBank}"
 				rendered="#{!financeController.showBankManualInput}"

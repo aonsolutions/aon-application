@@ -55,7 +55,7 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 			,new Column(CLI,"email"							,2,64	,false	,null)
 			,new Column(CLI,"web"							,2,64	,false	,null)
 			,new Column(CLI,"banco"							,2,64	,false	,null)
-			,new Column(CLI,"cuentaBanco"					,2,23	,false	,null)
+			,new Column(CLI,"cuentaBanco"					,2,34	,false	,null)
 			,new Column(CLI,"formaPago"						,2,32	,false	,null)
 			,new Column(CLI,"numeroVtos"					,0,6	,false	,null)
 			,new Column(CLI,"diasAlPrimerVto"				,0,6	,false	,null)

@@ -30,8 +30,9 @@
 	<field name="shippingAddress" class="com.code.aon.registry.IAddress"/>
 	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
 	<field name="lines" class="java.util.Set"/>
-	<field name="bank" class="com.code.aon.config.Bank"/>
 	<field name="bankAccount" class="com.code.aon.config.BankAccount"/>
+	<field name="bankAlias" class="java.lang.String"/>
+	<field name="bic" class="java.lang.String"/>
 	<field name="numberOfPayments" class="java.lang.Integer"/>
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="scope" class="com.code.aon.config.Scope"/>
@@ -425,7 +426,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getBank().getName():$F{bank}.getName())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getBankAlias():$F{bankAlias})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-118" positionType="Float" x="224" y="332" width="82" height="23"/>
@@ -453,7 +454,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getBankAccount().getEntity()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getOffice()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getControl()+" . "+$F{customer}.getRegistry().getPayMethod().getBankAccount().getAccount() :$F{bankAccount}.getEntity()+" . "+$F{bankAccount}.getOffice()+" . "+$F{bankAccount}.getControl()+" . "+ $F{bankAccount}.getAccount() )]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{customer}.getRegistry().getPayMethod().getBankAccount().toString():$F{bankAccount}.toString())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-119" positionType="Float" x="70" y="355" width="149" height="23"/>

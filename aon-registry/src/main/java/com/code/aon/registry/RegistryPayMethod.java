@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.IPayMethod;
 import com.esferalia.aon.entity.master.RegistryPayMethodDB;
@@ -17,9 +16,8 @@ public class RegistryPayMethod extends RegistryPayMethodDB implements IPayMethod
 
 	private static final long serialVersionUID = 1L;
 
-    private int[] paymentDaysArray;
-    /** The DELIM. */
     private final String DELIM = " ";
+    private int[] paymentDaysArray;
     
     public void setPaymentDays(String paymentDays) {
         super.setPaymentDays(paymentDays);
@@ -36,17 +34,19 @@ public class RegistryPayMethod extends RegistryPayMethodDB implements IPayMethod
     	return paymentDaysArray;
     }
 
-	@Override
 	@Transient
-	public Bank getBank() {
-		return getRegistryBank()==null?null:getRegistryBank().getBank();
-	}
-
-	@Transient
-	@Override
 	public BankAccount getBankAccount() {
 		return getRegistryBank()==null?null:getRegistryBank().getBankAccount();
 	}
 
-	
+	@Transient
+	public String getBankAlias() {
+		return getRegistryBank()==null?null:getRegistryBank().getBankAlias();
+	}
+
+	@Transient
+	public String getBic() {
+		return getRegistryBank()==null?null:getRegistryBank().getBic();
+	}
+
 }

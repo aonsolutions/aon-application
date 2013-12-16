@@ -35,10 +35,7 @@
 	<field name="payInCash" value="bean"  bean="Declaration"    property="payInCash"          format="AlphaNumeric"  pattern="X(1)" />
 	<field name="payInAcco" value="bean"  bean="Declaration"    property="payInAccount"       format="AlphaNumeric"  pattern="X(1)" />
 	<field name="payAmount" value="bean"  bean="Declaration"    property="boxes(115-08)"      format="DefNumeric"    pattern="S9(10)V99" />
-	<field name="ccc1"      value="bean"  bean="Declaration"    property="ccc1"               format="AlphaNumeric"  pattern="X(4)" />
-	<field name="ccc2"      value="bean"  bean="Declaration"    property="ccc2"               format="AlphaNumeric"  pattern="X(4)" />
-	<field name="ccc3"      value="bean"  bean="Declaration"    property="ccc3"               format="AlphaNumeric"  pattern="X(2)" />
-	<field name="ccc4"      value="bean"  bean="Declaration"    property="ccc4"               format="AlphaNumeric"  pattern="X(10)" />
+	<field name="ccc"       value="bean"  bean="Declaration"    property="ccc"                format="AlphaNumeric"  pattern="X(20)" />
 	<field name="curDay"    value="bean"  bean="Declaration"    property="currentDay"         format="Numeric"       pattern="9(2)" />
 	<field name="curMonth"  value="bean"  bean="Declaration"    property="currentLetterMonth" format="AlphaNumeric"  pattern="X(10)" />
 	<field name="curYear"   value="bean"  bean="Declaration"    property="currentYear"        format="Numeric"       pattern="9(4)" />

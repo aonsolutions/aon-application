@@ -65,7 +65,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["[" + $F{registryBank}.getBankAccount().getMaskedBankAccount() + "]"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["[" + $F{registryBank}.getBankAccount().getMaskedIban() + "]"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-55" x="213" y="3" width="237" height="14"/>
@@ -78,7 +78,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registryBank}.getBank().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{registryBank}.getBankAlias()]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

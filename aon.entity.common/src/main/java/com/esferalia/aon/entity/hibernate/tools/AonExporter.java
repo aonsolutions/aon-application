@@ -259,7 +259,6 @@ public class AonExporter extends GenericExporter{
 		map.put("Application","com.code.aon.config.Application");
 		map.put("ApplicationParameter","com.code.aon.config.ApplicationParameter");
 		map.put("ApplicationUser","com.code.aon.config.ApplicationUser");		
-		map.put("Bank","com.code.aon.config.Bank");
 		map.put("CNAE","com.code.aon.config.CNAE");
 		map.put("CNAE2009","com.code.aon.config.CNAE2009");
 		map.put("CNAE2009Rate","com.code.aon.config.CNAE2009Rate");

@@ -38,10 +38,7 @@
 	<field name="c28"       value="bean"  bean="Declaration"    property="boxes(111-CT-28)"   format="DefNumeric"    pattern="S9(14)V99" />
 	<field name="c29"       value="bean"  bean="Declaration"    property="boxes(111-CT-29)"   format="DefNumeric"    pattern="S9(14)V99" />
 	<field name="c30"       value="bean"  bean="Declaration"    property="boxes(111-CT-30)"   format="DefNumeric"    pattern="S9(14)V99" />
-	<field name="ccc1"      value="bean"  bean="Declaration"    property="ccc1"               format="AlphaNumeric"  pattern="X(4)" />
-	<field name="ccc2"      value="bean"  bean="Declaration"    property="ccc2"               format="AlphaNumeric"  pattern="X(4)" />
-	<field name="ccc3"      value="bean"  bean="Declaration"    property="ccc3"               format="AlphaNumeric"  pattern="X(2)" />
-	<field name="ccc4"      value="bean"  bean="Declaration"    property="ccc4"               format="AlphaNumeric"  pattern="X(10)" />
+	<field name="ccc"      	value="bean"  bean="Declaration"    property="ccc"         		  format="AlphaNumeric"  pattern="X(20)" />
 	<field name="compl"     value="bean"  bean="Declaration"    property="complementaryStr"   format="AlphaNumeric"  pattern="X(1)" />
 	<field name="compPrev"  value="bean"  bean="Declaration"    property="replacedNumber"     format="AlphaNumeric"  pattern="X(13)" />
 	<field name="free1"     value=" "                                                         format="Alphabetic"    pattern="X(16)"     />

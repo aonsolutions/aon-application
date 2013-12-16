@@ -1,7 +1,6 @@
 package com.code.aon.ui.fiscal.controller;
 
 import com.code.aon.config.enumeration.InvoiceTransactionType;
-import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.enumeration.InvoiceType;
 
 public class InvoiceReportParamsDetail {

@@ -443,8 +443,8 @@ public class A3Writer extends BasicExporter {
 		// Estado
 		setString( getEstado(finance), 69, 2);
 		// C.C.C. (Cuenta Bancaria)
-		if ( finance.getBank() != null ) {
-			setStringRightPad(finance.getBankAccount().getValue(), 93, 20);
+		if ( finance.getBankAccount() != null && finance.getBankAccount().isValidBankAccount()) {
+			setStringRightPad(finance.getBankAccount().getBban(), 93, 20);
 		}
 		writeLine();
 	}
@@ -600,7 +600,7 @@ public class A3Writer extends BasicExporter {
 		// Nombre / Razon Social
 		setStringRightPad( getInvoice().getRegistry().getName(), 87, 30);
 		// C.C.C. (Cuenta Bancaria)
-		setStringRightPad(rbank.getBankAccount().getValue(), 117, 20);
+		setStringRightPad(rbank.getBankAccount().getBban(), 117, 20);
 		// Cuenta por Omision
 		setString( "S", 182, 1);		
 

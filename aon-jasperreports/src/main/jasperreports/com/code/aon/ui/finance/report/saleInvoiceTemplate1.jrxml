@@ -38,8 +38,9 @@
 	</subDataset>
 	<subDataset name="finances">
 		<field name="payMethod" class="com.code.aon.config.PayMethod"/>
-		<field name="bank" class="com.code.aon.config.Bank"/>
 		<field name="bankAccount" class="com.code.aon.config.BankAccount"/>
+		<field name="bankAlias" class="java.lang.String"/>
+		<field name="bic" class="java.lang.String"/>
 		<field name="dueDate" class="java.util.Date"/>
 		<field name="amount" class="java.lang.Double"/>
 		<field name="negotiableDocument" class="java.lang.Boolean"/>
@@ -666,7 +667,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 									<font size="10"/>
 								</textElement>
 								<textFieldExpression><![CDATA[($F{bankAccount}!=null && !$F{bankAccount}.toString().isEmpty())?
-($F{negotiableDocument}?$F{bankAccount}.getMaskedBankAccount():$F{bankAccount}.toString()):
+($F{negotiableDocument}?$F{bankAccount}.getMaskedIban():$F{bankAccount}.toString()):
 ("")]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>

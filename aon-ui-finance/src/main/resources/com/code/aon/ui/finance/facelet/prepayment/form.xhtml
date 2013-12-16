@@ -102,43 +102,21 @@
 										<aon:outputText	value="#{prepayment.to.finance.payMethod.name}"
 											rendered="#{prepayment.paymentReadOnly}" />
 
-										<aon:div>
-											<aon:outputLabel for="Bank_id" value="#{bundle.aon_bank}" />
-											<aon:outputText value=" - #{bundle.aon_bank_account}" />
-										</aon:div>
+										<aon:outputLabel value="#{bundle.aon_iban}" />
 										<aon:div id="Prepayment_finance_bankAccount_div" styleClass="aon-nowrap"
 											rendered="#{!prepayment.paymentReadOnly}">
 											<aon:panelGroup id="Prepayment_finance_bankAccount" rendered="#{prepayment.showBankManualInput}">
-												<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
-													<ui:param name="lookupTo" value="#{prepayment.to.finance.bank}" />
- 													<ui:param name="lookupInputSuggestSize" value="32" />
-													<ui:param name="skipLabel" value="#{true}" />
-													<ui:param name="lookupReRender" value="Prepayment_finance_bankAccount" />
-													<aon:methodParam name="lookupChangeListener"
-														value="#{prepayment.onBankChanged}" type="lookupChangeListener" />
-												</ui:include>								
-												<aon:inputText id="BankAccount_office"
-													value="#{prepayment.to.finance.bankAccount.office}"
-													size="3" maxlength="4">
-													<f:validateLength minimum="4" maximum="4" />
-													<a4j:support event="onchange"
-														reRender="CreateBank_panel" ajaxSingle="true" />
-												</aon:inputText>
-												<aon:inputText id="BankAccount_control"
-													value="#{prepayment.to.finance.bankAccount.control}"
-													size="1" maxlength="2">
-													<f:validateLength minimum="2" maximum="2" />
-													<a4j:support event="onchange"
-														reRender="CreateBank_panel" ajaxSingle="true" />
-												</aon:inputText>
-												<aon:inputText id="BankAccount_account"
-													value="#{prepayment.to.finance.bankAccount.account}"
-													size="8" maxlength="10">
-													<f:validateLength minimum="10" maximum="10" />
-													<a4j:support event="onchange" 
-														reRender="CreateBank_panel" ajaxSingle="true" />
-												</aon:inputText>
-												<aon:commandLink id="BankAccount_hide_bank_manual"
+												<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
+													<ui:param name="bankAccountTo" value="#{prepayment.to.finance.bankAccount}" />
+													<ui:param name="bankAccountPrefix" value="Prepayment" />
+												</ui:include>
+												<aon:commandButton id="bankAccountData" value="&#160;"
+													title="#{bundle.aon_bank_data}"
+													styleClass="aon-icon-commandButton aon-icon-ambito aon-margin-left" style="margin-top: 2px;"
+													actionListener="#{prepayment.onBankAccountData}"
+													reRender="Prepayment_bankAlias,Prepayment_bic" ajaxSingle="true">
+												</aon:commandButton>
+ 												<aon:commandLink id="BankAccount_hide_bank_manual"
 													styleClass="aon-icon-edit-end-simple" style="margin-left: 5px; padding-right: 12px;"
 													value="&#160;" title="#{bundle.aon_cancel} #{bundle.aon_editing}"
 													rendered="#{prepayment.showBankManualInput}"  
@@ -149,6 +127,21 @@
 												</aon:commandLink>
 											</aon:panelGroup>
 											<aon:div>
+												<aon:div style="margin-top:2px;" rendered="#{prepayment.showBankManualInput}">
+													<aon:outputLabel for="Prepayment_bankAlias" styleClass="aon-margin-right"
+														value="#{bundle.aon_bank}" />
+													<aon:inputText id="Prepayment_bankAlias"
+														value="#{prepayment.to.finance.bankAlias}" 
+														required="true" size="25" maxlength="25" />
+													<aon:outputLabel for="Prepayment_bic" styleClass="aon-margin-left aon-margin-right"
+														value="#{bundle.aon_bic}" />
+													<aon:inputText id="Prepayment_bic"
+														value="#{prepayment.to.finance.bic}" 
+														size="12" maxlength="11">
+														<f:validateLength minimum="11" maximum="11" />
+													</aon:inputText>
+												</aon:div>
+
 												<aon:selectOneMenu id="Prepayment_registryBank"
 													value="#{prepayment.registryBank}"
 													rendered="#{!prepayment.showBankManualInput}"
@@ -374,7 +367,6 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{creditorLookup}" />
-		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{invoicingGroupLookup}" />
 		

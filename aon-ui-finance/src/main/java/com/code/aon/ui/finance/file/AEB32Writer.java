@@ -45,8 +45,8 @@ public class AEB32Writer implements IFinanceConstants {
 	public FileOutput createAEB32(Company company, FinanceBatch fBatch, Collection fbatchDetailCollection) throws ManagerBeanException {
 		Lot lot = new Lot();
 		RegistryBank companyRBank = fBatch.getRegistryBank();
-		lot.setEntity(new Integer(companyRBank.getBankAccount().getEntity()));
-		lot.setOffice(new Integer(companyRBank.getBankAccount().getOffice()));
+		lot.setEntity(new Integer(companyRBank.getBankAccount().getBban1()));
+		lot.setOffice(new Integer(companyRBank.getBankAccount().getBban2()));
 		lot.setFileDate(new Date());
 		lot.setFileNumber(new Integer(1));
 
@@ -54,13 +54,13 @@ public class AEB32Writer implements IFinanceConstants {
 		delivery.setDeliveyNumber(fBatch.getId());
 		delivery.setGiverCode(company.getDocument());
 		Account ccc1 = new Account();
-		ccc1.parse(companyRBank.getBankAccount().getValue());
+		ccc1.parse(companyRBank.getBankAccount().getBban());
 		delivery.setNotPayedAccount(ccc1);
 		Account ccc2 = new Account();
-		ccc2.parse(companyRBank.getBankAccount().getValue());
+		ccc2.parse(companyRBank.getBankAccount().getBban());
 		delivery.setOweAccount(ccc2);
 		Account ccc3 = new Account();
-		ccc3.parse(companyRBank.getBankAccount().getValue());
+		ccc3.parse(companyRBank.getBankAccount().getBban());
 		delivery.setPaymentAccount(ccc3);
 		delivery.setTruncatedEffects(new Integer(1));
 
@@ -87,7 +87,7 @@ public class AEB32Writer implements IFinanceConstants {
 	private Individual createIndividual(Company company, Finance finance, Date expiryDate) throws ManagerBeanException {
 		Individual individual = new Individual();
 		Account ccc = new Account();
-		ccc.parse(finance.getBankAccount().getValue());
+		ccc.parse(finance.getBankAccount().getBban());
 		individual.setAccount(ccc);
 		individual.setAceptedCode(new Integer(2));
 		individual.setAditionalData(finance.getId().toString());

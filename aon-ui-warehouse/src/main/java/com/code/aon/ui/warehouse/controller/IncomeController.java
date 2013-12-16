@@ -14,9 +14,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.util.BankUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.IncomeInvoicingManager;
@@ -306,8 +306,13 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		to.setDaysToFirstPayment(0);
 		to.setDaysBetweenPayments(0);
 		to.setPaymentDays("");
-		to.setBank(new Bank());
 		to.setBankAccount(new BankAccount());
+		to.setBankAlias(null);
+		to.setBic(null);
+	}
+
+	public void onBankAccountData(ActionEvent event) {
+		BankUtil.fillBankAccountData((Income)getTo());
 	}
 
 	public void onWorkPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {

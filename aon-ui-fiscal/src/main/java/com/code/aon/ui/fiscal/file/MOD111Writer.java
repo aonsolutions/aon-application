@@ -111,10 +111,7 @@ public class MOD111Writer implements IFinanceConstants{
 		
 		declaration.setPayInCash("X");
 		declaration.setPayInAccount(" ");
-		declaration.setCcc1("");
-		declaration.setCcc2("");
-		declaration.setCcc3("");
-		declaration.setCcc4("");
+		declaration.setCcc("");
 		Finance finance = fiscalModel.getFinance();
 		if (finance != null) {
 			if (finance.getPayMethod() != null) {
@@ -124,10 +121,7 @@ public class MOD111Writer implements IFinanceConstants{
 					if (finance.getBankAccount() == null) {
 						throw new ManagerBeanException("Si la forma de pago no es efectivo, el banco no puede estar vacio.");
 					}
-					declaration.setCcc1(finance.getBankAccount().getEntity());
-					declaration.setCcc2(finance.getBankAccount().getOffice());
-					declaration.setCcc3(finance.getBankAccount().getControl());
-					declaration.setCcc4(finance.getBankAccount().getAccount());
+					declaration.setCcc(finance.getBankAccount().getBban());
 				}
 			}
 		}
@@ -169,7 +163,7 @@ public class MOD111Writer implements IFinanceConstants{
 		if (d <= 0) {
 			declaration.setDeclarationType("N");
 		} else {
-			if (StringUtils.isNotBlank(declaration.getCcc1())) {
+			if (StringUtils.isNotBlank(declaration.getCcc())) {
 				declaration.setDeclarationType("U");
 			} 
 		}

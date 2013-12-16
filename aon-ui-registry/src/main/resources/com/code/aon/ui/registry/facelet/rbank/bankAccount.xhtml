@@ -2,28 +2,100 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:valueParam name="renderBankAccount" default="#{true}" />
 
-	<aon:div rendered="#{renderBankAccount}" >
-		<aon:inputText label="#{bundle.config_bank_code}"
-			value="#{bankAccountTo.office}" required="true"
-			size="4" maxlength="4">
-			<f:validateLength minimum="4" maximum="4" />
-		</aon:inputText>
-		<aon:inputText label="#{bundle.config_bank_control}"
-			value="#{bankAccountTo.control}" required="true"
-			size="2" maxlength="2">
+	<aon:panelGroup id="#{bankAccountPrefix}_BankAccountDiv#{bankAccountSuffix}" styleClass="aon-vertical-align-top"
+		rendered="#{renderBankAccount}">
+		<aon:selectOneMenu id="#{bankAccountPrefix}_BankAccount_country#{bankAccountSuffix}"
+			styleClass="aon-vertical-align-middle"
+			value="#{bankAccountTo.country}" required="true"
+			disabled="#{bankAccountDisabled}">
+			<f:selectItems value="#{commonCollections.countryCodes}" />
+			<a4j:support event="onchange" focus="#{bankAccountPrefix}_BankAccount_check#{bankAccountSuffix}"
+				reRender="#{bankAccountPrefix}_BankAccountDiv#{bankAccountSuffix}"
+				ajaxSingle="true" />
+		</aon:selectOneMenu>
+		<aon:inputText id="#{bankAccountPrefix}_BankAccount_check#{bankAccountSuffix}"
+			label="#{bundle.config_iban_check_digits}"
+			value="#{bankAccountTo.check}"
+			styleClass="aon-inputText aon-width-20 aon-vertical-align-middle"
+			size="1" maxlength="2"
+			disabled="#{bankAccountDisabled}"
+			ajaxSingle="true">
 			<f:validateLength minimum="2" maximum="2" />
+			<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
 		</aon:inputText>
-		<aon:inputText label="#{bundle.aon_bank_account}"
-			value="#{bankAccountTo.account}" required="true"
-			size="10" maxlength="10">
-			<f:validateLength minimum="10" maximum="10" />
+		<aon:inputText value="#{bankAccountTo.bban1}"
+			label="#{bundle.aon_iban}"
+			styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+			size="3" maxlength="4"
+			disabled="#{bankAccountDisabled}"
+			ajaxSingle="true">
+			<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
 		</aon:inputText>
-	</aon:div>
+		<aon:inputText value="#{bankAccountTo.bban2}"
+			styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+			size="3" maxlength="4"
+			disabled="#{bankAccountDisabled}"
+			ajaxSingle="true">
+			<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+		</aon:inputText>
+		<aon:inputText value="#{bankAccountTo.bban3}"
+			styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+			size="3" maxlength="4"
+			disabled="#{bankAccountDisabled}"
+			ajaxSingle="true">
+			<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+		</aon:inputText>
+		<c:if test="#{bankAccountTo.ibanLength > 16}">
+			<aon:inputText value="#{bankAccountTo.bban4}"
+				styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+				size="3" maxlength="4"
+				disabled="#{bankAccountDisabled}"
+				ajaxSingle="true">
+				<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+			</aon:inputText>
+		</c:if>
+		<c:if test="#{bankAccountTo.ibanLength > 20}">
+			<aon:inputText value="#{bankAccountTo.bban5}"
+				styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+				size="3" maxlength="4"
+				disabled="#{bankAccountDisabled}"
+				ajaxSingle="true">
+				<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+			</aon:inputText>
+		</c:if>
+		<c:if test="#{bankAccountTo.ibanLength > 24}">
+			<aon:inputText value="#{bankAccountTo.bban6}"
+				styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+				size="3" maxlength="4"
+				ajaxSingle="true">
+				<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+			</aon:inputText>
+		</c:if>
+		<c:if test="#{bankAccountTo.ibanLength > 28}">
+			<aon:inputText value="#{bankAccountTo.bban7}"
+				styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+				size="3" maxlength="4"
+				disabled="#{bankAccountDisabled}"
+				ajaxSingle="true">
+				<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+			</aon:inputText>
+		</c:if>
+		<c:if test="#{bankAccountTo.ibanLength > 32}">
+			<aon:inputText value="#{bankAccountTo.bban8}"
+				styleClass="aon-inputText aon-width-40 aon-vertical-align-middle"
+				size="1" maxlength="2"
+				disabled="#{bankAccountDisabled}"
+				ajaxSingle="true">
+				<a4j:support event="onchange" reRender="#{bankAccountReRender}" ajaxSingle="true" />
+			</aon:inputText>
+		</c:if>
+	</aon:panelGroup>
 					
 </ui:composition>

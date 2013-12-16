@@ -1,6 +1,5 @@
 package com.code.aon.finance;
 
-
 import java.util.Date;
 import java.util.List;
 
@@ -39,25 +38,6 @@ public class Finance extends FinanceDB implements IBankAccountContainer, IScopab
 		setDueDate(new Date());
 	}
     
-	@Transient
-	public List<ITransferObject> getGroupedList() {
-		try {
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_GROUP_ID), getId());
-			criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_DUE_DATE));
-	        return financeBean.getList(criteria);
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining grouped finance list", e);
-		}
-		return null;
-	}
-
-	@Transient
-	public double getTotalAmount(){
-		return getAmount() + getExpenses();
-	}
-	
 	@Transient
 	public RegistryDocument getRegistryFullDocument() {
 		if (registryFullDocument == null) {
@@ -130,16 +110,40 @@ public class Finance extends FinanceDB implements IBankAccountContainer, IScopab
 	@Transient
 	public String getBankDescription() {
 		StringBuilder sb = new StringBuilder();
-		if (getBank() != null && !StringUtils.isEmpty(getBank().getName()))  {
-			sb.append(StringUtils.abbreviate(getBank().getName(), 30));
+		if (!StringUtils.isBlank(getBankAlias())) {
+			sb.append(getBankAlias());
 			sb.append(" ");
 		}
-		if (getBankAccount() != null) {
+		if (getBankAccount() != null && !StringUtils.isBlank(getBankAccount().getBban())) {
 			sb.append("[");
 			sb.append(getBankAccount().toString());
 			sb.append("]");
 		}
+		if (!StringUtils.isBlank(getBic())) {
+			sb.append("- [");
+			sb.append(getBic());
+			sb.append("]");
+		}
 		return sb.toString(); 
+	}
+
+	@Transient
+	public double getTotalAmount(){
+		return getAmount() + getExpenses();
+	}
+	
+	@Transient
+	public List<ITransferObject> getGroupedList() {
+		try {
+			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_GROUP_ID), getId());
+			criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_DUE_DATE));
+	        return financeBean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining grouped finance list", e);
+		}
+		return null;
 	}
 
 }

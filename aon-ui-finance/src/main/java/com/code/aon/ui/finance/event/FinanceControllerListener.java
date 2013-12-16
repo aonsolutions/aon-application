@@ -81,15 +81,15 @@ public class FinanceControllerListener extends ControllerAdapter {
 		Finance finance = (Finance) controller.getTo(); 
 		controller.setPayment(finance.isPayment());
 		controller.setPayroll(finance.isPayroll());
-		controller.setShowBankManualInput(finance.getBank()!=null && finance.getBank().getId()!=null);
+		controller.setShowBankManualInput(StringUtils.isNotEmpty(finance.getBankAccount().getIban()));
 		controller.setRegistryBank(null);
 		try {
-			if (StringUtils.isNotEmpty(finance.getBankAccount().getValue())) {
+			if (StringUtils.isNotEmpty(finance.getBankAccount().getIban())) {
 				for (SelectItem item : controller.getAllBanks()) {
 					RegistryBank rBank = (RegistryBank)item.getValue();
 					BankAccount bankAccount = rBank.getBankAccount();
 					if (bankAccount!= null) {
-						if (StringUtils.equals(finance.getBankAccount().getValue(), bankAccount.getValue())) {
+						if (StringUtils.equals(finance.getBankAccount().getIban(), bankAccount.getIban())) {
 							controller.setRegistryBank(rBank);
 							break;
 						}
@@ -122,7 +122,7 @@ public class FinanceControllerListener extends ControllerAdapter {
 	public void afterBeanUpdated(ControllerEvent event)	throws ControllerListenerException {
 		FinanceController controller = (FinanceController)event.getController();
 		Finance finance = (Finance) controller.getTo(); 
-		controller.setShowBankManualInput(finance.getBank()!=null && finance.getBank().getId()!=null);
+		controller.setShowBankManualInput(StringUtils.isNotEmpty(finance.getBankAccount().getIban()));
 	}
 	
 	@Override
