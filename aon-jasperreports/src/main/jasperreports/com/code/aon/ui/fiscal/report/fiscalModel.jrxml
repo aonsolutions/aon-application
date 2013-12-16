@@ -149,7 +149,7 @@ $P{declaration}.getHeader().getFinance().getId() != null]]></printWhenExpression
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{declaration}.getHeader().getFinance().getBank().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{declaration}.getHeader().getFinance().getBankAlias()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="455" y="104" width="79" height="14"/>
@@ -214,7 +214,7 @@ $P{declaration}.getHeader().getFinance().getId() != null]]></printWhenExpression
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{declaration}.getHeader().getFinance().getBankAccount()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{declaration}.getHeader().getFinance().getBankAccount().toString()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-16" mode="Opaque" x="369" y="91" width="81" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
