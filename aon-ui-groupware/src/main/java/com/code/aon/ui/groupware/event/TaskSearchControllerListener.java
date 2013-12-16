@@ -466,6 +466,10 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		loadPriorityCriteria(criteria);
 		if (!childDomain) {
 			criteria.setSkipDomainFilter(true);	
+			Expression exp1 = ExpressionUtilities.getEqualExpression("Task.domain.id", ds.getDomainId());
+			Expression exp2 = ExpressionUtilities.getEqualExpression("Task.domain.parent", ds.getDomainId());
+            Expression orExp = ExpressionUtilities.getOrExpression(exp1, exp2);
+            criteria.addExpression(orExp);
 		}
 	}
 
