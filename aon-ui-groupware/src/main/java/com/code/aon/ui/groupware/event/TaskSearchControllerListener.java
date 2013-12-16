@@ -14,6 +14,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Domain;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.groupware.Process;
 import com.code.aon.groupware.ProcessDetail;
@@ -27,6 +28,8 @@ import com.code.aon.project.ActivityType;
 import com.code.aon.project.Project;
 import com.code.aon.project.ProjectType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -466,14 +469,25 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		loadPriorityCriteria(criteria);
 		if (!childDomain) {
 			criteria.setSkipDomainFilter(true);	
-			Expression exp1 = ExpressionUtilities.getEqualExpression("Task.domain.id", ds.getDomainId());
-			Expression exp2 = ExpressionUtilities.getEqualExpression("Task.domain.parent", ds.getDomainId());
-            Expression orExp = ExpressionUtilities.getOrExpression(exp1, exp2);
-            criteria.addExpression(orExp);
+            criteria.addInExpression("Task.domain", getManagedDomains(ds));
 		}
 	}
 
-    private Expression obtainTaskHolderWorkGroupsExpression(TaskHolder taskHolder, String alias) throws ManagerBeanException {
+	@SuppressWarnings("unchecked")
+	private List<Integer> getManagedDomains(DomainSwitcher ds) throws ManagerBeanException {
+		List<Integer> domains = new LinkedList<Integer>();
+		if (ds.isParentDomain()) {
+			IManagerBean domainBean = BeanManager.getManagerBean(Domain.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(domainBean.getFieldName(IEntityAlias.DOMAIN_PARENT_ID), ds.getDomainId());
+			Projection projection = Projection.property(domainBean.getFieldName(IEntityAlias.DOMAIN_ID));
+			domains = domainBean.getList(new ProjectionList(projection), criteria);
+		}
+		domains.add(ds.getDomainId());
+		return domains;
+	}
+
+	private Expression obtainTaskHolderWorkGroupsExpression(TaskHolder taskHolder, String alias) throws ManagerBeanException {
         Expression expression = null;
         IManagerBean bean = BeanManager.getManagerBean(TaskHolderWorkgroup.class);
         Criteria criteria = new Criteria();
