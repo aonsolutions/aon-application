@@ -606,7 +606,7 @@ $P{company}.getDocument()]]></textFieldExpression>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{company}.getRegistry().getPayMethod().getBankAccount().getEntity()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{company}.getRegistry().getPayMethod().getBankAccount().getBban().substring(0,4)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="167" y="204" width="84" height="15"/>
@@ -619,7 +619,7 @@ $P{company}.getDocument()]]></textFieldExpression>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{company}.getPayMethod().getBankAccount().getOffice()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{company}.getPayMethod().getBankAccount().getBban().substring(4,8)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="251" y="204" width="66" height="15"/>
@@ -632,7 +632,7 @@ $P{company}.getDocument()]]></textFieldExpression>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{company}.getPayMethod().getBankAccount().getControl()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{company}.getPayMethod().getBankAccount().getBban().substring(8,10)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="317" y="204" width="125" height="15"/>
@@ -645,7 +645,7 @@ $P{company}.getDocument()]]></textFieldExpression>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{company}.getPayMethod().getBankAccount().getAccount()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{company}.getPayMethod().getBankAccount().getBban().substring(10,20)]]></textFieldExpression>
 			</textField>
 			<image scaleImage="RetainShape" hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
 				<reportElement key="image-1" positionType="Float" mode="Opaque" x="180" y="647" width="180" height="75" forecolor="#000000" backcolor="#FFFFFF">
