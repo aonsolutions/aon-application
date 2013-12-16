@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.2100000000000002"/>
-	<property name="ireport.x" value="61"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -155,7 +155,7 @@
 		<band height="17" splitType="Stretch">
 			<printWhenExpression><![CDATA[new Boolean($P{printHeaders}.booleanValue() || (!$P{printHeaders}.booleanValue() && $V{PAGE_NUMBER}.intValue()==1))]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-4" mode="Opaque" x="183" y="2" width="238" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-4" mode="Opaque" x="183" y="2" width="230" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -168,7 +168,7 @@
 				<textFieldExpression><![CDATA[($P{payment}.booleanValue()==true?$R{aon_creditor}:$R{finance_debtor})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-15" mode="Opaque" x="438" y="2" width="31" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-15" mode="Opaque" x="430" y="2" width="31" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -181,7 +181,7 @@
 				<textFieldExpression><![CDATA[$R{finance_payMethod_abrv}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-6" mode="Opaque" x="421" y="2" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-6" mode="Opaque" x="413" y="2" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -207,7 +207,7 @@
 				<textFieldExpression><![CDATA[$R{aon_amount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-15" mode="Opaque" x="469" y="2" width="45" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-15" mode="Opaque" x="461" y="2" width="53" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -263,7 +263,7 @@
 	<detail>
 		<band height="12" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-10" x="421" y="0" width="17" height="12"/>
+				<reportElement key="textField-10" x="413" y="0" width="17" height="12"/>
 				<box>
 					<topPen lineStyle="Solid"/>
 				</box>
@@ -316,7 +316,7 @@
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-16" x="438" y="0" width="31" height="12"/>
+				<reportElement key="textField-16" x="430" y="0" width="31" height="12"/>
 				<box>
 					<topPen lineStyle="Solid"/>
 				</box>
@@ -326,7 +326,7 @@
 				<textFieldExpression><![CDATA[$F{payMethod}.getName().length()<=6? $F{payMethod}.getName():$F{payMethod}.getName().substring(0,6)]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-16" x="469" y="0" width="45" height="12"/>
+				<reportElement key="textField-16" x="461" y="0" width="53" height="12"/>
 				<box>
 					<topPen lineStyle="Solid"/>
 				</box>
@@ -336,14 +336,14 @@
 				<textFieldExpression><![CDATA[$F{bankAccount}.getCountry().getValue()+"**"+$F{bankAccount}.getBban1()+"..."+$F{bankAccount}.getIban().substring($F{bankAccount}.getIban().length()-4,$F{bankAccount}.getIban().length())]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-12" x="183" y="0" width="238" height="12"/>
+				<reportElement key="textField-12" x="183" y="0" width="230" height="12"/>
 				<box>
 					<topPen lineStyle="Solid"/>
 				</box>
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registry}.getId() + " " + $F{registryName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{registryName}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

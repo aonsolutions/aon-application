@@ -35,7 +35,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_debtor}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{finance_debtor}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-11" mode="Opaque" x="140" y="0" width="80" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -48,7 +48,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_document_number}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_document_number}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-13" mode="Opaque" x="0" y="0" width="60" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -61,7 +61,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-11" mode="Opaque" x="60" y="0" width="80" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -74,7 +74,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_invoice}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{finance_invoice}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -91,7 +91,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{dueDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{dueDate}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-12" x="140" y="0" width="80" height="11"/>
@@ -104,7 +104,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{documentNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{documentNumber}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-1" x="220" y="0" width="315" height="11"/>
@@ -117,7 +117,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{registry}.getId() + " " + $F{registryName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{registryName}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-12" x="60" y="0" width="80" height="11"/>
@@ -130,7 +130,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{referenceCode}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{referenceCode}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
