@@ -428,7 +428,7 @@ public class SQLAgreementDraft {
 
 	public static void save(Connection conn, AgreementDraft draft,
 			Integer domain, Integer parentDomain) throws SQLException {
-
+		
 		if (draft.getId() < 0)
 			insert(conn, draft, domain, parentDomain);
 		else

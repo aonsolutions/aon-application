@@ -181,7 +181,7 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		// Do not let the scrollable take tab focus.
 		dropDownScrollPanel.getElement().setTabIndex(-1);
 
-		dropDownPopupPanel.setStyleName("aon-comboBoxPopup");
+		dropDownPopupPanel.addStyleName("aon-comboBoxPopup");
 
 		super.insertItem("", null, "", 0);
 
@@ -216,6 +216,10 @@ public class ComboBox<T> extends ListBox implements HasData<T> {
 		dropDownselectionModel.setSelected(t, selected);
 	}
 
+	public void setSelected(int index, boolean selected) {
+		T t = dropDownCellList.getVisibleItem(index);
+		dropDownselectionModel.setSelected(t, selected);
+	}
 	// -------------------------------------------------------- HasData methods
 
 	@Override

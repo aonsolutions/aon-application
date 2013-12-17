@@ -12,6 +12,7 @@ import java.util.Map;
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasDeduction;
 import com.esferalia.aon.gwt.payroll.shared.HasPayment;
 import com.esferalia.aon.gwt.payroll.shared.Item;
@@ -925,7 +926,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	public void setSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
 		showDraft();
-		// this.salaryDraftObject = salaryDraftObject;
+		this.salaryDraftObject = salaryDraftObject;
 		onChangedSalaryDraftObject(salaryDraftObject);
 	}
 
@@ -1094,12 +1095,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		salaryDraftObject.calculate(this);
 
 		syncDatesListBox();
-
+		syncSalarySelect();
+		
 		// Sync undo & redo controls
 		salaryDraftObject.addUndoManagerListener(this);
 		redoButton.setEnabled(salaryDraftObject.canRedo());
 		undoButton.setEnabled(salaryDraftObject.canUndo());
 		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
+		
 
 	}
 
@@ -1329,6 +1332,18 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		salaryDraftObject.emitSalary(this);
 	}
 
+	private void syncSalarySelect() {
+		salaryDraftObject.getExtras(new AsyncCallback<List<Extra>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+			@Override
+			public void onSuccess(List<Extra> extras) {
+				salarySelect.setExtras(extras);
+			}
+		});
+	}
+	
 	private void syncDatesListBox() {
 
 		Date draftStartDate = salaryDraftObject.getDraftStartDate();

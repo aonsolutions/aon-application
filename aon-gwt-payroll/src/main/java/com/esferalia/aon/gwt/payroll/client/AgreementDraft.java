@@ -45,12 +45,14 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -76,6 +78,7 @@ public class AgreementDraft extends ResizeComposite implements
 	static int VARIABLE_TEXTBOX_SIZE = 10;
 
 	public static final String CUSTOM = "CUSTOM";
+	public static final String ALWAYS = "ALWAYS";
 	public static final String ONLY_THIS_YEAR = "ONLY_THIS_YEAR";
 	public static final String ONLY_THIS_MONTH = "ONLY_THIS_MONTH";
 	public static final String FROM_THIS_MONTH = "FROM_THIS_MONTH";
@@ -220,7 +223,7 @@ public class AgreementDraft extends ResizeComposite implements
 				@Override
 				public void onChange(ChangeEvent event) {
 					String value = listBox.getValue(listBox.getSelectedIndex());
-					extra.setPaymentId(Integer.valueOf(value));
+					extra.setPaymentId(value == null? null : Integer.valueOf(value));
 					AgreementDraft.this.agreementDraftObject
 							.addDraftExtra(extra);
 					AgreementDraft.this.calculate();
@@ -277,8 +280,8 @@ public class AgreementDraft extends ResizeComposite implements
 					String text = event.getValue();
 					AgreementDraft.this.agreementDraftObject
 							.addDraftCategories(level, text);
-					// TODO: really need to go server side. 
-					AgreementDraft.this.calculate(); 
+					// TODO: really need to go server side.
+					AgreementDraft.this.calculate();
 				}
 			});
 		}
@@ -369,7 +372,7 @@ public class AgreementDraft extends ResizeComposite implements
 			button.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					payment.setExpression("REMOVE()"); 
+					payment.setExpression("REMOVE()");
 					AgreementDraft.this.agreementDraftObject
 							.addDraftPayment(payment);
 					AgreementDraft.this.calculate();
@@ -578,7 +581,6 @@ public class AgreementDraft extends ResizeComposite implements
 
 		setDescription();
 
-		syncDatesListBox();
 	}
 
 	@Override
@@ -589,11 +591,11 @@ public class AgreementDraft extends ResizeComposite implements
 
 	@Override
 	public void onCalculateSucces(AgreementDraftObject object) {
-		
-		
+
 		draftMonthListBox.setHighLightMonths(agreementDraftObject
 				.getDatesWithChanges());
 		draftMonthListBox.setSelectedMonth(agreementDraftObject.getStartDate());
+		syncDatesListBox();
 
 		loadAvailablePayments();
 
@@ -612,7 +614,6 @@ public class AgreementDraft extends ResizeComposite implements
 		SortedSet<Payment> extraPayments = getAvailableExtraPayments();
 		dumpExtras(extraPayments);
 		insertNewExtraRow(extrasTable.getRowCount(), extraPayments);
-		
 
 	}
 
@@ -643,14 +644,17 @@ public class AgreementDraft extends ResizeComposite implements
 		String value = datesListBox.getValue(index);
 
 		if (CUSTOM.equals(value)) {
-			// periodDialog.center();
-			// periodDialog.show();
-		} else if (ONLY_THIS_MONTH.equals(value)) {
-			agreementDraftObject.setDraftPeriod(null, null);
+		} else if (ALWAYS.equals(value)) {
+			agreementDraftObject.setDraftPeriod(getFirstDateWithChanges());
 		} else if (FROM_THIS_MONTH.equals(value)) {
 			agreementDraftObject.setDraftPeriod(null);
 		} else if (ONLY_THIS_YEAR.equals(value)) {
-			agreementDraftObject.setDraftPeriod(null);
+			Date month = draftMonthListBox.getSelected();
+			Date firstDayOfYear = DateUtils.getFirstDayOfYear(month);
+			Date lastDayOfYear = DateUtils.getLastDayOfYear(month);
+			agreementDraftObject.setDraftPeriod(firstDayOfYear, lastDayOfYear);
+		} else if (ONLY_THIS_MONTH.equals(value)) {
+			agreementDraftObject.setDraftPeriod(null, null);
 		}
 
 	}
@@ -919,30 +923,77 @@ public class AgreementDraft extends ResizeComposite implements
 		Date draftStartDate = agreementDraftObject.getDraftStartDate();
 		Date draftEndDate = agreementDraftObject.getDraftEndDate();
 
-		Date date = agreementDraftObject.getStartDate();
-		Date firstDayOfMonth = DateUtils.getFirstDayOfMonth(date);
+		Date startDate = agreementDraftObject.getStartDate();
+		
+		// clear selection.
+		datesListBox.setSelectedIndex(-1);
+		
+		int alwaysIndex = 0;
 
-		if (DateUtils.equals(draftStartDate, firstDayOfMonth)) {
-			if (draftEndDate == null) {
-				datesListBox.setSelectedIndex(1);
-				return;
-			}
-			Date lastDayOfMonth = DateUtils.getLastDayOfMonth(date);
-			if (DateUtils.equals(draftEndDate, lastDayOfMonth)) {
-				datesListBox.setSelectedIndex(0);
-				return;
+		for (int i = 0; i < datesListBox.getItemCount(); i++) {
+			String value = datesListBox.getValue(i);
+			String text = datesListBox.getItemText(i);
+			text = text.replaceAll(" \\([^\\)]*\\)", "");
+			if (ALWAYS.equals(value)) {
+				alwaysIndex = i;
+				DateTimeFormat format = DateTimeFormat
+						.getFormat(PredefinedFormat.YEAR_MONTH_NUM_DAY);
+				Date alwaysDate = getFirstDateWithChanges();
+				datesListBox.setItemText(i,
+						text + " ( " + format.format(alwaysDate) + "... )");
+				if (alwaysDate.equals(draftStartDate) && draftEndDate == null){
+					datesListBox.setSelectedIndex(i);
+				}
+
+			} else if (ONLY_THIS_YEAR.equals(value)) {
+				DateTimeFormat format = DateTimeFormat
+						.getFormat(PredefinedFormat.YEAR);
+				datesListBox.setItemText(i,
+						text + " ( " + format.format(startDate) + " )");
+				if (DateUtils.isFirstDayOfYear(draftStartDate)
+						&& DateUtils.isLastDayOfYear(draftEndDate)) {
+					datesListBox.setSelectedIndex(i);
+				}
+
+			} else if (FROM_THIS_MONTH.equals(value)) {
+				DateTimeFormat format = DateTimeFormat
+						.getFormat(PredefinedFormat.YEAR_MONTH_NUM);
+				datesListBox.setItemText(i,
+						text + " ( " + format.format(startDate) + "... )");
+				if (draftStartDate.equals(startDate) && draftEndDate == null) {
+					datesListBox.setSelectedIndex(i);
+				}
 			}
 		}
+		//Window.alert(datesListBox.getSelectedIndex() + " " + draftStartDate + "..." + ( draftEndDate == null ? "" : draftEndDate ));
 
+		if ( datesListBox.getSelectedIndex() == -1 ){
+			datesListBox.setSelectedIndex(alwaysIndex);
+			agreementDraftObject.setDraftPeriod(getFirstDateWithChanges());
+		}
+
+	}
+
+	private Date getFirstDateWithChanges() {
+		Date firstDateWithChanges = agreementDraftObject.getStartDate();
+		Set<Date> datesWithChanges = agreementDraftObject.getDatesWithChanges();
+		if ( datesWithChanges == null )
+			return DateUtils.copyDateOnly(firstDateWithChanges);
+		
+		for (Date date : datesWithChanges ) {
+			if (date.before(firstDateWithChanges))
+				firstDateWithChanges = date;
+		}
+		return DateUtils.copyDateOnly(firstDateWithChanges);
 	}
 
 	// ------------------------------------------------------------------------
 	//
 	// ------------------------------------------------------------------------
 
-	// ------------------------------------------
+	// ------------------------------------------------------------------------
 	//
-	// ------------------------------------------
+	// ------------------------------------------------------------------------
 
 	private void clearSalaryTable() {
 		for (int i = salaryTable.getRowCount() - 1; i >= 0; i--)
@@ -998,14 +1049,14 @@ public class AgreementDraft extends ResizeComposite implements
 
 	private Widget dumpCategories(int row, int col, Level level,
 			Set<String> categories) {
-		
+
 		String text = null;
 		TextBox categoriesTextBox = new TextBox();
-		if (categories != null ) {
+		if (categories != null) {
 			text = reduce(categories, ", ");
 			categoriesTextBox.setText(text);
-		} 
-		if ( text == null || text.isEmpty() ) {
+		}
+		if (text == null || text.isEmpty()) {
 			categoriesTextBox.addStyleName(AON.AON_ICON_WARN);
 			categoriesTextBox.addStyleName(AON.AON_PADDING_LEFT);
 			categoriesTextBox
@@ -1108,11 +1159,14 @@ public class AgreementDraft extends ResizeComposite implements
 		extrasTable.setWidget(row, 3, issueDateBox);
 
 		ListBox paymentListBox = new ListBox();
-
+		paymentListBox.addItem("-", (String)null);
+		
 		Payment extraPayment = getExtraPayment(extra);
-		if (extraPayment != null)
+		if (extraPayment != null){
 			paymentListBox.addItem(extraPayment.getDescription(),
 					String.valueOf(extraPayment.getId()));
+			paymentListBox.setSelectedIndex(1);
+		}
 
 		for (Payment payment : availablePayments) {
 			paymentListBox.addItem(payment.getDescription(),
@@ -1507,12 +1561,35 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private Date parseExtraDate(String text) {
+		return parseExtraDate(text,
+				CalendarUtil.copyDate(agreementDraftObject.getStartDate()));
+	}
+
+	private String formatExtraDate(Date extraDate) {
+		return formatExtraDate(extraDate, agreementDraftObject.getStartDate());
+	}
+
+	// ------------------------------------------------------------------------
+
+	protected static String formatExtraDate(Date extraDate, Date date) {
+
+		DateTimeFormat format = DateTimeFormat.getFormat("d/M");
+		String text = format.format(extraDate);
+
+		int years = DateUtils.getYears(extraDate, date);
+
+		if (years == 0)
+			return text;
+		else
+			return text + " " + String.valueOf(years);
+	}
+
+	protected static Date parseExtraDate(String text, Date date) {
 
 		if (text == null)
 			throw new EmptyStringException();
 
 		DateTimeFormat format = DateTimeFormat.getFormat("d/M");
-		Date date = CalendarUtil.copyDate(agreementDraftObject.getStartDate());
 
 		int start = -1;
 		while (++start < text.length() && Character.isSpace(text.charAt(start)))
@@ -1523,7 +1600,8 @@ public class AgreementDraft extends ResizeComposite implements
 		try {
 			start += format.parse(text, start, date);
 		} catch (Throwable t) {
-			throw new DateTimeFormatException();
+			throw new DateTimeFormatException("'" + text + "/" + start
+					+ "' it's not a valid extra date");
 		}
 
 		while (++start < text.length() && Character.isSpace(text.charAt(start)))
@@ -1539,22 +1617,9 @@ public class AgreementDraft extends ResizeComposite implements
 			int years = Integer.valueOf(text.substring(start, end + 1));
 			return DateUtils.addYears2Date(date, years);
 		} catch (Throwable t) {
-			throw new DateTimeFormatException();
+			throw new DateTimeFormatException("'" + text + "/" + start
+					+ "' it's not a valid extra date");
 		}
-	}
-
-	private String formatExtraDate(Date date) {
-
-		DateTimeFormat format = DateTimeFormat.getFormat("d/M");
-		String text = format.format(date);
-
-		int years = DateUtils.getYears(date,
-				agreementDraftObject.getStartDate());
-
-		if (years == 0)
-			return text;
-		else
-			return text + " " + String.valueOf(years);
 	}
 
 	// ------------------------------------------------------------------------
@@ -1570,9 +1635,9 @@ public class AgreementDraft extends ResizeComposite implements
 		for (String string : set) {
 			if (buffer.length() > 0)
 				buffer.append(sep);
-			if ( string == null )
+			if (string == null)
 				continue;
-			
+
 			buffer.append(string.trim());
 		}
 		return buffer.toString();

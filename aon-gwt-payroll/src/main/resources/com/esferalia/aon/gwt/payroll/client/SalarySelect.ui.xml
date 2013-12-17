@@ -1,11 +1,12 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client' >
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client' >
 
 	<g:HTMLPanel  tag="span">
 		<g:ListBox ui:field="typeListBox"/>
-		<g:ListBox ui:field="dateListBox"/>
+		<aon:MonthListBox ui:field="monthListBox"/>
+		<aon:DateListBox ui:field="dateListBox" visible="false"/>
 	</g:HTMLPanel>
 
 </ui:UiBinder> 

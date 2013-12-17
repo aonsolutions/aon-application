@@ -212,7 +212,7 @@ public class SalaryDraft extends SalaryPreview {
 			((NumberVariable) var).value = (Number) value;
 		} else {
 			var = new StringVariable();
-			((StringVariable) var).value = value.toString();
+			((StringVariable) var).value = value == null ? null : value.toString();
 		}
 		var.setName( name );
 		var.setStartDate (startDate);

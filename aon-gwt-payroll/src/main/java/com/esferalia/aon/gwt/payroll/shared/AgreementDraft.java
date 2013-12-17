@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 
 public class AgreementDraft extends Agreement {
 
@@ -77,6 +77,25 @@ public class AgreementDraft extends Agreement {
 
 		}
 
+		public static class Entry implements Serializable {
+			int level;
+			Variable variable;
+
+			public Entry(int level, Variable variable) {
+				this.level = level;
+				this.variable = variable;
+			}
+
+			public int getLevel() {
+				return level;
+			}
+
+			public Variable getVariable() {
+				return variable;
+			}
+
+		}
+
 		private Map<Key, Variable> map;
 
 		public SalaryTable() {
@@ -106,18 +125,42 @@ public class AgreementDraft extends Agreement {
 		public Variable get(int level, String var) {
 			return map.get(Key.make(level, var));
 		}
+		
+		public boolean contains(int level, String var) {
+			return map.containsKey(Key.make(level, var));
+		}
 
 		public Collection<Variable> getVariables(int level) {
 			List<Variable> vars = new LinkedList<Variable>();
-			for (Entry<Key, Variable> entry : map.entrySet()) {
+			for (Map.Entry<Key, Variable> entry : map.entrySet()) {
 				if (entry.getKey().level == level)
 					vars.add(entry.getValue());
 			}
 			return vars;
 		}
 
+		public Set<Integer> getAllLevels() {
+			Set<Key> keys = map.keySet();
+			Set<Integer> levels = new HashSet<Integer>();
+			for (Key key : keys)
+				levels.add(key.level);
+			return levels;
+		}
+
 		public Collection<Variable> getAllVariables() {
 			return map.values();
+		}
+
+		public Collection<Entry> getEntries() {
+			List<Entry> entries = new ArrayList<Entry>();
+			for (Map.Entry<Key, Variable> entry : map.entrySet()) {
+				Variable variable = entry.getValue();
+				if ( variable == null)
+					continue;
+				int level = entry.getKey().level;
+				entries.add(new Entry(level, variable));
+			}
+			return entries;
 		}
 
 	}
@@ -288,6 +331,10 @@ public class AgreementDraft extends Agreement {
 		return draftSalaryTable;
 	}
 
+	public Variable addDraftVariable(int levelId, Variable var) {
+		return draftSalaryTable.put(levelId, var);
+	}
+
 	public Variable addDraftVariable(Level level, Variable var) {
 		return draftSalaryTable.put(level.getId(), var);
 	}
@@ -325,7 +372,7 @@ public class AgreementDraft extends Agreement {
 
 	public boolean hasExtrasWithoutDates() {
 		for (Extra extra : getAllExtras()) {
-			if ( !isRemove(extra) && !hasDates(extra)){
+			if (!isRemove(extra) && !hasDates(extra)) {
 				return true;
 			}
 		}
@@ -339,13 +386,20 @@ public class AgreementDraft extends Agreement {
 			return true;
 
 		for (Level level : getAllLevels()) {
-			if ( !isRemove(level) && !hasCategories(level) )
+			if (!isRemove(level) && !hasCategories(level))
 				return true;
 		}
-		
+
 		return false;
 	}
 
+	public boolean isDraftPayment(Payment payment) {
+		return draftPayments.containsKey(payment.getId());
+	}
+
+	public boolean isDraftVariable(int level, String var) {
+		return salaryTable.contains(level, var);
+	}
 	// ------------------------------------------------------------------------
 
 	public static boolean isRemove(Extra extra) {
@@ -362,6 +416,7 @@ public class AgreementDraft extends Agreement {
 
 	// ------------------------------------------------------------------------
 
+	// ------------------------------------------------------------------------
 	private Set<Extra> getAllExtras() {
 		Set<Extra> all = new HashSet<Extra>(draftExtras.values());
 		all.addAll(extras);
@@ -373,31 +428,30 @@ public class AgreementDraft extends Agreement {
 		all.addAll(levels);
 		return all;
 	}
-	
-	private boolean hasDates(Extra extra){
-		
-		if ( StringUtils.isBlank(extra.getStartDate()))
+
+	private boolean hasDates(Extra extra) {
+
+		if (StringUtils.isBlank(extra.getStartDate()))
 			return false;
-		if ( StringUtils.isBlank(extra.getEndDate()))
+		if (StringUtils.isBlank(extra.getEndDate()))
 			return false;
-		if ( StringUtils.isBlank(extra.getIssueDate()))
+		if (StringUtils.isBlank(extra.getIssueDate()))
 			return false;
-		
+
 		return true;
 	}
-	
+
 	private boolean hasCategories(Level level) {
 		Set<String> set = getCategories(level);
 		return set != null && set.size() > 0;
 	}
 
-	private Set<String> getCategories(Level level){
+	private Set<String> getCategories(Level level) {
 		int levelId = level.getId();
-		if ( draftCategories.containsKey(levelId) )
+		if (draftCategories.containsKey(levelId))
 			return draftCategories.get(levelId);
-		else 
+		else
 			return categories.get(levelId);
 	}
-	
 
 }

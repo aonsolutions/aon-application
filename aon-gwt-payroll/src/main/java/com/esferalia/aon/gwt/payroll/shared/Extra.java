@@ -66,8 +66,4 @@ public class Extra implements Serializable, HasId<Integer> {
 		return id != null ? id : super.hashCode();
 	}
 	
-	public static void main(String[] args) {
-		System.out.println("01/011".replaceAll("\\s", ""));
-		//System.out.println(Integer.parseInt("-1         "));
-	}
 }

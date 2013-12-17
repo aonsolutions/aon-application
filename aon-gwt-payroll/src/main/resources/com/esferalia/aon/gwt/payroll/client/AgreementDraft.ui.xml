@@ -191,10 +191,9 @@
 								<g:Button ui:field='redoButton'
 									styleName="aon-finding-toolbar-item {style.redoButton}" enabled="false" />
 								<g:ListBox ui:field='datesListBox'>
-									<g:item value="{ONLY_THIS_MONTH}">S&oacute;lo este mes
-									</g:item>
+									<g:item value="{ALWAYS}">Para todo</g:item>
 									<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
-									<g:item value="{CUSTOM}">Personalizado...</g:item>
+									<g:item value="{ONLY_THIS_YEAR}">S&oacute;lo este a&ntilde;o</g:item>
 								</g:ListBox>
 								<g:CheckBox ui:field='changesCheck'
 									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'

@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
@@ -138,6 +139,11 @@ public class SalaryDraftObject implements IContextProvider{
 		employeesServiceAsync.eval(expression, salaryDraft, callback);
 	}
 	
+	public void getExtras(AsyncCallback<List<Extra>> callback)
+			throws IllegalArgumentException {
+		employeesServiceAsync.getExtras(getEmployee(), callback);
+	}
+
 	public void save(final CalculateCallback callback) {
 
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
@@ -219,6 +225,9 @@ public class SalaryDraftObject implements IContextProvider{
 					}
 				});
 	}
+	
+	
+
 
 	public void redo() {
 		undoManager.redo();

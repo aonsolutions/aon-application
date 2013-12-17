@@ -109,7 +109,9 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
@@ -690,10 +692,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					getParentDomainID());
 			commit(conn);
 			return agreementDraft;
-		} catch (Exception e) {
+		} catch (Throwable t) {
 			rollback(conn);
-			e.printStackTrace();
-			throw new IllegalArgumentException(e);
+			t.printStackTrace();
+			throw new IllegalArgumentException(t);
 		} finally {
 			enableAutoCommit(conn);
 			if (conn != null) {
@@ -1709,13 +1711,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			String sql = "SELECT * " 
 					+ " FROM " + CONTRACT
 					+ " INNER JOIN " + SQLConstants.AGREEMENT_LEVEL_CATEGORY
-						+ "ON (" + CONTRACT + "." + ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = " 
+						+ " ON (" + CONTRACT + "." + ContractColumns.AGREEMENT_LEVEL_CATEGORY + " = " 
 						+ SQLConstants.AGREEMENT_LEVEL_CATEGORY + "." + AgreementLevelCategoryColumns.ID + ")" 
 					+ " INNER JOIN " + SQLConstants.AGREEMENT_LEVEL
-						+ "ON (" + SQLConstants.AGREEMENT_LEVEL_CATEGORY + "." + AgreementLevelCategoryColumns.AGREEMENT_LEVEL+ " = " 
+						+ " ON (" + SQLConstants.AGREEMENT_LEVEL_CATEGORY + "." + AgreementLevelCategoryColumns.AGREEMENT_LEVEL+ " = " 
 						+ SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.ID + ")" 
 					+ " INNER JOIN " + SQLConstants.AGREEMENT_EXTRA
-						+ "ON (" + SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.AGREEMENT + " = " 
+						+ " ON (" + SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.AGREEMENT + " = " 
 						+ SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.AGREEMENT + ")"
 					+ " WHERE " + CONTRACT + "." + ContractColumns.ID + " = ? "
 						;
@@ -1729,11 +1731,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			List<Extra> extras = new LinkedList<Extra>();
 			while ( rs.next() ){
 				Extra extra = new Extra();
-				extra.setId(rs.getInt(AgreementExtraColumns.ID));
-				extra.setPaymentId(rs.getInt(AgreementExtraColumns.AGREEMENT_PAYMENT));
-				extra.setStartDate(rs.getString(AgreementExtraColumns.START_DATE));
-				extra.setStartDate(rs.getString(AgreementExtraColumns.END_DATE));
-				extra.setEndDate(rs.getString(AgreementExtraColumns.ISSUE_DATE));
+				extra.setId(rs.getInt(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.ID));
+				extra.setPaymentId(rs.getInt(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.AGREEMENT_PAYMENT));
+				extra.setStartDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.START_DATE));
+				extra.setEndDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.END_DATE));
+				extra.setIssueDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.ISSUE_DATE));
 				extras.add(extra);
 			}
 			
@@ -2940,8 +2942,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					@Override
 					public IContractSalaryCalculatorContext visitExtra(
 							SalaryType salaryType) {
-						// TODO Auto-generated method stub
-						return null;
+						try {
+							return getExtraCalculatorContextImpl(conn, draft,
+									listener);
+						} catch (SQLException e) {
+							throw new IllegalArgumentException(e);
+						} catch (ExpressionException e) {
+							throw new ExpressionExceptionWrapper(e);
+						}
 					}
 
 					@Override
@@ -3098,6 +3106,27 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				}
 			}
 		};
+
+		ctx.setListener(listener);
+		ctx.next();
+
+		SalaryDraftCalculatorContext<IContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<IContractSalaryCalculatorContext>(
+				draft, ctx);
+		draftCtx.setListener(listener);
+		return draftCtx;
+	}
+
+	private static IContractSalaryCalculatorContext getExtraCalculatorContextImpl(
+			final Connection conn, final SalaryDraft draft,
+			IContractSalaryCalculatorContext.IListener listener)
+			throws ExpressionException, SQLException {
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
+				draft.getEmployee().getId());
+		
+		SQLContractExtraCalculatorContext ctx = new SQLContractExtraCalculatorContext(conn, 
+				draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(), criteria);
 
 		ctx.setListener(listener);
 		ctx.next();

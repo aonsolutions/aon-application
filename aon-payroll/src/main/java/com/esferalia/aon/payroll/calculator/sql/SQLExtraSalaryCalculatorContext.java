@@ -11,8 +11,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
@@ -66,6 +69,13 @@ public class SQLExtraSalaryCalculatorContext implements
 		initExtrasResultSet();
 	}
 	
+	public SQLExtraSalaryCalculatorContext(Connection connection,
+			Date issueDate, 
+			Criteria criteria) 
+	throws SQLException {
+		this(connection, getYear(issueDate), getMonth(issueDate), issueDate, issueDate, criteria);
+	}
+
 	@Override
 	public void close() throws SQLException {
 		if (this.ctx != null)
@@ -278,4 +288,17 @@ public class SQLExtraSalaryCalculatorContext implements
 		ctx.setListener(listener);
 	}
 	
+	// ------------------------------------------------------------------------
+	
+	private static Month getMonth(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return Month.getMonthByValue(calendar.get(Calendar.MONTH));
+	}
+
+	private static int getYear(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar.get(Calendar.YEAR);
+	}
 }

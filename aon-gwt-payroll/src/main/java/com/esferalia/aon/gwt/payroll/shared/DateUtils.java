@@ -25,6 +25,11 @@ public class DateUtils {
 		return date;
 	}
 
+	public static Date addDays2Date(Date date, int days) {
+		date.setDate(date.getDate() + days);
+		return date;
+	}
+
 	public static Date addYears2Date(Date date, int years) {
 		CalendarUtil.addMonthsToDate(date, years * 12);
 		return date;
@@ -84,19 +89,15 @@ public class DateUtils {
 	}
 
 	public static Date getPrevDay(Date date) {
-		Date nextDay = CalendarUtil.copyDate(date);
-		CalendarUtil.addDaysToDate(nextDay, -1);
-		return nextDay;
+		return new Date(date.getYear(), date.getMonth(), date.getDate() - 1);
 	}
 
 	public static Date getNextDay(Date date) {
-		Date nextDay = CalendarUtil.copyDate(date);
-		CalendarUtil.addDaysToDate(nextDay, 1);
-		return nextDay;
+		return new Date(date.getYear(), date.getMonth(), date.getDate() + 1);
 	}
 
 	public static Date getFirstDayOfWorkWeek(Date date) {
-		Date firstDayOfWeek = newDateOnly(date);
+		Date firstDayOfWeek = copyDateOnly(date);
 		int dayOfWeek = firstDayOfWeek.getDay();
 		// Remember : 0 for Sunday and 6 for Saturday
 		if (dayOfWeek == 0) {
@@ -107,7 +108,7 @@ public class DateUtils {
 	}
 
 	public static Date getLastDayOfWorkWeek(Date date) {
-		Date lastDayOfWeek = newDateOnly(date);
+		Date lastDayOfWeek = copyDateOnly(date);
 		int dayOfWeek = lastDayOfWeek.getDay();
 		// Remember : 0 for Sunday and 6 for Saturday
 		if (dayOfWeek == 0) {
@@ -118,48 +119,42 @@ public class DateUtils {
 	}
 
 	public static Date getFirstDayOfYear(Date date) {
-		Date firstDayOfYear = CalendarUtil.copyDate(date);
-		CalendarUtil.addMonthsToDate(firstDayOfYear, -1 * date.getMonth());
-		CalendarUtil.setToFirstDayOfMonth(firstDayOfYear);
-		return newDateOnly(firstDayOfYear);
+		return new Date(date.getYear(), 0, 1);
 	}
 
 	public static Date getLastDayOfYear(Date date) {
-		Date lastDayOfYear = CalendarUtil.copyDate(date);
-		addYears2Date(lastDayOfYear, 1);
-		CalendarUtil.addMonthsToDate(lastDayOfYear, -1 * date.getMonth());
-		CalendarUtil.setToFirstDayOfMonth(lastDayOfYear);
-		CalendarUtil.addDaysToDate(lastDayOfYear, -1);
-		return newDateOnly(lastDayOfYear);
+		return new Date(date.getYear(), 11, 31);
 	}
 
 	public static Date getFirstDayOfMonth(Date date) {
-		Date firstDayOfMonth = newDateOnly(date);
-		firstDayOfMonth.setDate(1);
-		return firstDayOfMonth;
+		return new Date(date.getYear(), date.getMonth(), 1);
 	}
 
 	public static Date getLastDayOfMonth(Date date) {
-		Date firstDayOfNextMonth = newDateOnly(date);
-		
-		CalendarUtil.addMonthsToDate(firstDayOfNextMonth, 1);
-		
-		firstDayOfNextMonth.setDate(1);
-
-		Date firstDayOfMonth = newDateOnly(date);
-		firstDayOfMonth.setDate(1);
-
-		int monthDays = CalendarUtil.getDaysBetween(firstDayOfMonth,
-				firstDayOfNextMonth);
-
-		Date lastDayOfMonth = firstDayOfMonth;
-		CalendarUtil.addDaysToDate(lastDayOfMonth, monthDays - 1);
-
-		return lastDayOfMonth;
+		return new Date(date.getYear(), date.getMonth() + 1, 0);
 	}
 
-	public static Date newDateOnly(Date date) {
+	public static Date copyDateOnly(Date date) {
 		return new Date(date.getYear(), date.getMonth(), date.getDate());
+	}
+
+	public static boolean isFirstDayOfYear(Date date) {
+
+		return date != null && date.getMonth() == 0 && date.getDate() == 1;
+	}
+
+	public static boolean isLastDayOfYear(Date date) {
+		return date != null && date.getMonth() == 11 && date.getDate() == 31;
+	}
+
+	public static int getDaysBetween(Date start, Date finish) {
+		Date a = copyDateOnly(start);
+		Date b = copyDateOnly(finish);
+		// Convert the dates to the same time
+		long aTime = a.getTime();
+		long bTime = b.getTime();
+
+		return (int) ((bTime - aTime) / (24 * 60 * 60 * 1000));
 	}
 
 	public static boolean equals(Date d1, Date d2) {
@@ -173,21 +168,29 @@ public class DateUtils {
 		return CalendarUtil.isSameDate(d1, d2);
 	}
 
-	public static int compare(Date date0, Date date1) {
-		return ((date0.getYear() - date1.getYear()) * 372)
-				+ ((date0.getMonth() - date1.getMonth()) * 31) + // max = 11 *
-																	// 31
-				(date0.getDate() - date1.getDate()); // max = 30
+	public static int compare(Date d0, Date d1) {
+		if ( d0 == d1 )
+			return 0;
+		if ( d0 == null)
+			return 1;
+		if ( d1 == null)
+			return -1;
+		
+
+		return ((d0.getYear() - d1.getYear()) * 372)
+				+ ((d0.getMonth() - d1.getMonth()) * 31) + // max = 11*31
+				(d0.getDate() - d1.getDate()); // max = 30
 
 	}
 
 	public static Date toUTC(Date date) {
-		return new Date ( Date.UTC(date.getYear(), date.getMonth(), date.getDate(),
-				0, 0, 0));
+		return new Date(Date.UTC(date.getYear(), date.getMonth(),
+				date.getDate(), 0, 0, 0));
 	}
-	
+
 	public static void main(String[] args) {
-		System.out.println(newDateOnly(new Date()));
+		System.out.println("Para siempre ( shksjdhfjshdkf )".replaceAll(
+				" \\([^\\)]*\\)", ""));
 	}
 
 }

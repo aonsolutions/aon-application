@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -14,7 +15,9 @@ import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
@@ -26,7 +29,7 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class AgreementDraftObject implements IContextProvider {
 
-	public static Date NULL_DATE = new Date() ;
+	public static Date NULL_DATE = new Date();
 
 	static interface CalculateCallback {
 		void onCalculateFailure(Throwable throwable);
@@ -34,7 +37,6 @@ public class AgreementDraftObject implements IContextProvider {
 		void onCalculateSucces(AgreementDraftObject object);
 
 	}
-
 
 	abstract private class UndoableEdit<T> implements Undoable {
 
@@ -166,8 +168,8 @@ public class AgreementDraftObject implements IContextProvider {
 
 		private Level level;
 
-		public UndoableLevelCategoryEdit(Level level, Set<String> oldCategories,
-				Set<String> newCategories) {
+		public UndoableLevelCategoryEdit(Level level,
+				Set<String> oldCategories, Set<String> newCategories) {
 			super(oldCategories, newCategories);
 			this.level = level;
 		}
@@ -183,7 +185,6 @@ public class AgreementDraftObject implements IContextProvider {
 		}
 
 	}
-
 
 	private Date draftEndDate;
 	private Date draftStartDate;
@@ -224,16 +225,24 @@ public class AgreementDraftObject implements IContextProvider {
 		return payment;
 
 	}
-	
-	
+
 	public Date getDraftEndDate() {
-		return draftEndDate == null ? agreementDraft.getEndDate()
-				: (draftEndDate == NULL_DATE ? null : draftEndDate);
+		if (draftEndDate == null)
+			return agreementDraft.getEndDate();
+		if (draftEndDate == NULL_DATE)
+			return null;
+		if (DateUtils.isLastDayOfYear(draftEndDate))
+			return DateUtils.getLastDayOfYear(agreementDraft.getEndDate());
+		return draftEndDate;
+
 	}
 
 	public Date getDraftStartDate() {
-		return draftStartDate == null ? agreementDraft.getStartDate()
-				: draftStartDate;
+		if (draftStartDate == null)
+			return agreementDraft.getStartDate();
+		if (DateUtils.isFirstDayOfYear(draftStartDate))
+			return DateUtils.getFirstDayOfYear(agreementDraft.getStartDate());
+		return draftStartDate;
 	}
 
 	public void setDraftPeriod(Date draftStartDate) {
@@ -343,7 +352,7 @@ public class AgreementDraftObject implements IContextProvider {
 	public void addDraftCategories(Level level, String str) {
 		Set<String> set = split(str);
 		Set<String> old = agreementDraft.addDraftCategories(level, set);
-		undoManager.add(new UndoableLevelCategoryEdit(level, old , set));
+		undoManager.add(new UndoableLevelCategoryEdit(level, old, set));
 	}
 
 	// ------------------------------------------
@@ -383,10 +392,10 @@ public class AgreementDraftObject implements IContextProvider {
 	// ------------------------------------------
 
 	public void save(final CalculateCallback callback) {
-		
+
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), agreementDraft);
 		// TODO: Clean Database data.
-		
+
 		employeesServiceAsync.saveAgreementDraft(agreementDraft,
 				new AsyncCallback<AgreementDraft>() {
 
@@ -431,7 +440,7 @@ public class AgreementDraftObject implements IContextProvider {
 	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {
 		employeesServiceAsync.getAvailablePayments(Integer.MIN_VALUE, callback);
 	}
-	
+
 	public boolean hasErrors() {
 		return agreementDraft.hasExtrasWithoutDates();
 	}
@@ -439,8 +448,7 @@ public class AgreementDraftObject implements IContextProvider {
 	public boolean hasWarnings() {
 		return agreementDraft.hasLevelsWithoutCategories();
 	}
-	
-	
+
 	// ------------------------------------------
 	//
 	// ------------------------------------------
@@ -504,7 +512,6 @@ public class AgreementDraftObject implements IContextProvider {
 		return CalendarUtil.isSameDate(d1, d2);
 	}
 
-
 	private static <T extends HasStartAndEndDate> boolean isStartAndEndDatesSet(
 			Date draftStartDate, Date draftEndDate, Collection<T> items) {
 		for (T item : items) {
@@ -515,11 +522,11 @@ public class AgreementDraftObject implements IContextProvider {
 		}
 		return true;
 	}
-	
-	private Set<String> split(String str){
+
+	private Set<String> split(String str) {
 		LinkedHashSet<String> categories = new LinkedHashSet<String>();
-		for (String  category : str.split("\\W*,\\W*")) {
-			if ( category.length() > 0 )
+		for (String category : str.split("\\W*,\\W*")) {
+			if (category.length() > 0)
 				categories.add(category);
 		}
 		return categories;
@@ -527,10 +534,13 @@ public class AgreementDraftObject implements IContextProvider {
 
 	private static void setDraftPeriod(Date draftStartDate, Date draftEndDate,
 			AgreementDraft draft) {
+
 		setStartAndEndDates(draftStartDate, draftEndDate,
 				draft.getDraftPayments());
-		setStartAndEndDates(draftStartDate, draftEndDate,
-				draft.getDraftSalaryTable().getAllVariables());
+		setStartAndEndDates(draftStartDate, draftEndDate, draft
+				.getDraftSalaryTable().getAllVariables());
+		
+		setDateDrafts(draftStartDate, draftEndDate, draft);
 	}
 
 	private static <T extends HasStartAndEndDate> void setStartAndEndDates(
@@ -540,5 +550,41 @@ public class AgreementDraftObject implements IContextProvider {
 			item.setEndDate(draftEndDate);
 		}
 	}
-	
+
+	private static void setDateDrafts(
+			Date draftStartDate, Date draftEndDate, AgreementDraft draft) {
+		for (Payment payment : draft.getPayments()) {
+			
+			if ( draft.isDraftPayment(payment))
+				continue;
+			if (DateUtils.compare(payment.getStartDate(), draftStartDate) <= 0
+					&& DateUtils.compare(payment.getEndDate(), draftEndDate) >= 0)
+				continue;
+			
+			payment.setStartDate(draftStartDate);
+			payment.setEndDate(draftEndDate);
+			draft.addDraftPayment(payment);
+
+		}
+
+		Collection<SalaryTable.Entry> entries = draft.getSalaryTable().getEntries();
+		for (SalaryTable.Entry entry: entries) {
+			
+			int level = entry.getLevel();
+			Variable variable = entry.getVariable();
+			
+			if ( draft.isDraftVariable(level, variable.getName()))
+				continue;
+			
+			if (DateUtils.compare(variable.getStartDate(), draftStartDate) <= 0
+					&& DateUtils.compare(variable.getEndDate(), draftEndDate) >= 0)
+				continue;
+				
+			variable.setStartDate(draftStartDate);
+			variable.setEndDate(draftEndDate);
+			
+			draft.addDraftVariable(level, variable);
+		}
+	}
+
 }

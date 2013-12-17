@@ -68,7 +68,6 @@ public class MonthListBox extends ComboBox<Date> {
 	private static class MonthFormatSafeHtmlRenderer extends
 			AbstractFormatSafeHtmlRenderer<Date> {
 
-
 		private String oldStyles = "";
 		private String monthStyles = "";
 		private String highLightStyles = "";
@@ -81,10 +80,12 @@ public class MonthListBox extends ComboBox<Date> {
 
 		@Override
 		public SafeHtml render(Date month) {
-			if ( highLightMonths.contains(month) )
-				return template.span(highLightStyles, SafeHtmlUtils.fromString(getFormat().format(month)));
-			
-			return template.span(monthStyles, SafeHtmlUtils.fromString(getFormat().format(month)));
+			if (highLightMonths.contains(month))
+				return template.span(highLightStyles,
+						SafeHtmlUtils.fromString(getFormat().format(month)));
+
+			return template.span(monthStyles,
+					SafeHtmlUtils.fromString(getFormat().format(month)));
 		}
 
 	}
@@ -130,7 +131,7 @@ public class MonthListBox extends ComboBox<Date> {
 	public void setFirstMonth(Date firstMonth) {
 		this.firstMonth = DateUtils.getFirstDayOfMonth(firstMonth);
 	}
-	
+
 	public void setOldStyles(String oldStyles) {
 		((MonthFormatSafeHtmlRenderer) getFormatSafeHtmlRenderer()).oldStyles = oldStyles;
 	}
@@ -142,12 +143,12 @@ public class MonthListBox extends ComboBox<Date> {
 	public void setHighLightStyles(String highLightStyles) {
 		((MonthFormatSafeHtmlRenderer) getFormatSafeHtmlRenderer()).highLightStyles = highLightStyles;
 	}
-	
-	
+
 	public void setHighLightMonths(Set<Date> highLightMonths) {
 		((MonthFormatSafeHtmlRenderer) getFormatSafeHtmlRenderer()).highLightMonths = new HashSet<Date>();
 		for (Date date : highLightMonths) {
-			((MonthFormatSafeHtmlRenderer) getFormatSafeHtmlRenderer()).highLightMonths.add(DateUtils.getFirstDayOfMonth(date));
+			((MonthFormatSafeHtmlRenderer) getFormatSafeHtmlRenderer()).highLightMonths
+					.add(DateUtils.getFirstDayOfMonth(date));
 		}
 	}
 
