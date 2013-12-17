@@ -8,6 +8,8 @@ import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.ProposalDetailStatus;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
+import com.code.aon.purchase.enumeration.PurchaseDocumentType;
+import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -28,6 +30,18 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 				throw new ControllerListenerException(e.getMessage(), e);
 			}
 		}
+	}
+	
+	@Override
+	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		checkQuantities();
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		checkQuantities();
 	}
 	
 	@Override
@@ -65,6 +79,17 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 		ProposalDetail pd = (ProposalDetail) proposalDetailBean.get(proposalDetail.getId());
 		pd.setStatus(ProposalDetailStatus.PENDING);
 		proposalDetailBean.update(pd);
+	}
+	
+	private void checkQuantities() throws ControllerListenerException {
+		Purchase purchase = (Purchase) ((LinesController)this.getController()).getMasterController().getTo();
+		PurchaseDetail purchaseDetail = (PurchaseDetail) this.getController().getTo();
+		if (purchaseDetail.getQuantity() < 0 && purchase.getDocumentType()!=PurchaseDocumentType.ITEM_RETURN) {
+			throw new ControllerListenerException("La Cantidad del Pedido no puede ser negativa.");
+		}
+		if (purchaseDetail.getQuantity() > 0 && purchase.getDocumentType()==PurchaseDocumentType.ITEM_RETURN) {
+			throw new ControllerListenerException("La Cantidad a devolver del Pedido no puede ser positiva.");
+		}
 	}
 
 }
