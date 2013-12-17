@@ -333,7 +333,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{bankAccount}.getCountry().getValue()+"**"+$F{bankAccount}.getBban1()+"..."+$F{bankAccount}.getIban().substring($F{bankAccount}.getIban().length()-4,$F{bankAccount}.getIban().length())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{bankAccount}.getCountry().getValue()+"*"+$F{bankAccount}.getBban1()+"..."+$F{bankAccount}.getIban().substring($F{bankAccount}.getIban().length()-4,$F{bankAccount}.getIban().length())]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-12" x="183" y="0" width="230" height="12"/>

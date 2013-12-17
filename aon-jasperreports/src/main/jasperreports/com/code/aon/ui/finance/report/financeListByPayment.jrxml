@@ -295,7 +295,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{bankAccount}.getCountry().getValue()+"**"+$F{bankAccount}.getBban1()+"..."+$F{bankAccount}.getIban().substring($F{bankAccount}.getIban().length()-4,$F{bankAccount}.getIban().length())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{bankAccount}.getCountry().getValue()+"*"+$F{bankAccount}.getBban1()+"..."+$F{bankAccount}.getIban().substring($F{bankAccount}.getIban().length()-4,$F{bankAccount}.getIban().length())]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-16" x="430" y="0" width="31" height="12"/>
