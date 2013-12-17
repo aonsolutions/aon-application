@@ -18,13 +18,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
-import com.code.aon.finance.Invoice;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.StreetType;
@@ -63,6 +62,11 @@ public class GeyceWriter extends BasicExporter {
 		this.outGycPlan = new ByteArrayOutputStream();
 		this.exportedAccounts = new HashSet<String>();
 	}
+	
+	@Override
+	public InvoiceExportType getType() {
+		return InvoiceExportType.GEYCE;
+	}	
 
 	@Override
 	protected boolean isSkipAccount(Account account) {
@@ -72,12 +76,6 @@ public class GeyceWriter extends BasicExporter {
 	@Override
 	public String getFileName() {
 		return "geyce.zip";
-	}
-
-	@Override
-	public void init(Invoice invoice) throws ManagerBeanException, IOException {
-		super.init(invoice);
-		writeGycPlan();
 	}
 
 	private void setNumber( double value, int offset, int maxLength ) {
@@ -96,7 +94,7 @@ public class GeyceWriter extends BasicExporter {
 		String result = "IN";
 		VatDeductionType vdt = getVatDeductionType();
 		if ( vdt == VatDeductionType.WITH_RIGHT ) {
-			switch ( getInvoice().getTransaction() ) {
+			switch ( getTransaction() ) {
 				case INTRACOMMUNITY:
 					result = "EN";
 					break;
@@ -117,21 +115,21 @@ public class GeyceWriter extends BasicExporter {
 		return result;
 	}
 	
-	private void initLine() {
+	private void initLine( AccountEntry accountEntry ) {
 		setLine( new byte[GYCCON_SIZE] );
 		Arrays.fill(getLine(), (byte) ' ');
 		// Codigo de Empresa
 		setStringLeftPad( getConfiguration().getEnterpriseCode(), 0, 6);
 		// Fecha asiento
-		setDate(getAccountEntry().getEntryDate(), 6);
+		setDate(accountEntry.getEntryDate(), 6);
 		// Contador de Numero de asiento
-		setStringLeftPad( getJournal().toString(), 14, 6);		
+		setStringLeftPad( getJournal(accountEntry).toString(), 14, 6);		
 		// Numero de Diario Contable
-		setStringLeftPad( getConfiguration().getJournal(getInvoice().getType()), 24, 2);		
+		setStringLeftPad( getConfiguration().getJournal(getInvoiceType()), 24, 2);		
 		// Numero de Factura
-		setStringRightPad( getInvoice().getId().toString(), 26, 7);
+		setStringRightPad( getMainId().toString(), 26, 7);
 		// Descripcion de la Factura
-		setStringRightPad( getInvoice().getReferenceCode(), 33, 30);
+		setStringRightPad( getReferenceCode(), 33, 30);
 		// Acumula 347 S/N
 		setString("S", 90, 1);
 		// Acumula 349 S/N
@@ -139,21 +137,23 @@ public class GeyceWriter extends BasicExporter {
 		// Indica si IVA o IGIC
 		setString("I", 92, 1);
 		// Repercutido o Soportado
-		if ( getInvoice().getType() == InvoiceType.SALES ) {
+		if ( isSales() ) {
 			setString("R", 93, 1);
 		} else {
 			setString("S", 93, 1);
 		}
 		// Fecha documento IVA
-		setDate(getInvoice().getTaxDate(), 95);
+		setDate(getTaxDate(), 95);
 		// Tipo de Operación
 		setString(getTipoDeOperacion(), 103, 2);
 		// Operaciones Especificas
 		setString("RG", 105, 2);
 		// Descripcion
-		setStringRightPad( getInvoice().getRegistryName(), 107, 30);
+		setStringRightPad( getRegistryName(), 107, 30);
 		// NIF/CIF
-		setStringRightPad( getInvoice().getRegistryDocument(), 137, 15);
+		if ( getRegistryDocument() != null ) {
+			setStringRightPad( getRegistryDocument().getDocument(), 137, 15);	
+		}
 		// Tipo de Moneda 
 		setString("E", 215, 1);
 	}
@@ -266,11 +266,13 @@ public class GeyceWriter extends BasicExporter {
 		setStringRightPad( cuenta[1], 10, 10);
 		if ( registry ) {
 			// Descripcion
-			setStringRightPad(getInvoice().getRegistryName(), 20, 30);
+			setStringRightPad(getRegistryName(), 20, 30);
 			// NIF
-			setStringLeftPad(getInvoice().getRegistryDocument(), 50, 15);
+			if ( getRegistryDocument() != null ) {
+				setStringLeftPad(getRegistryDocument().getDocument(), 50, 15);	
+			}
 			try {
-				RegistryAddress address = getInvoice().getRegistry().getDefaultAddress();
+				RegistryAddress address = getRegistry().getDefaultAddress();
 				if ( address != null ) {
 					// Siglas
 					setStringLeftPad(getSiglasViaPublica(address.getStreetType()), 65, 2);				
@@ -327,13 +329,15 @@ public class GeyceWriter extends BasicExporter {
 	}	
 	
 	@Override
-	public void write() throws IOException, ManagerBeanException {
-		initLine();
+	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
+		writeGycPlan();		
+		initLine( accountEntry );
 		writeRegistryDetail();
 		while (! getDetails().isEmpty() ) {
 			writeNewLine();
 			writeDetail();
 		}
+		writeNewLine();
 	}
 
 	@Override

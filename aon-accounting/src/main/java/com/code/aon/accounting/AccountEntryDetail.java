@@ -4,12 +4,13 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.account.IAccount;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.entity.master.AccountEntryDetailDB;
 
 @Entity
 @Table(name="account_entry_detail")
-public class AccountEntryDetail extends AccountEntryDetailDB {
+public class AccountEntryDetail extends AccountEntryDetailDB implements IAccount {
 
 	private static final long serialVersionUID = 1L;
 

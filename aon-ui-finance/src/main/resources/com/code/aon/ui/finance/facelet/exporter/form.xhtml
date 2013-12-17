@@ -11,24 +11,24 @@
 
 	<ui:define name="content">
 
-		<aon:form id="invoiceExporterForm">
+		<aon:form id="exporterForm">
 			
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{bundle.finance_invoiceExport_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.finance_exporter}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_configuration}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="#{toolbarID}-save"
 						title="#{bundle.aon_key_save_accelerator}"
 						value="#{bundle.aon_save}"
-						actionListener="#{invoiceExporter.onSaveConfiguration}"
+						actionListener="#{exporter.onSaveConfiguration}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}" />
 					<aon:commandButton id="#{toolbarID}-back"
 						title="#{bundle.aon_key_cancel_accelerator}"
 						value="#{bundle.aon_back}"
-						rendered="#{invoiceExporter.configuration.configured}" immediate="true"
+						rendered="#{exporter.configuration.configured}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						action="#{invoiceExporter.backAction}"
+						action="#{exporter.backAction}"
 						accesskey="#{bundle.aon_key_cancel}" />				
 				</ui:define>
 			</ui:decorate>
@@ -37,48 +37,48 @@
 			
 				<aon:panelGrid columns="2">
 
-					<aon:outputLabel for="InvoiceExporter_type"
+					<aon:outputLabel for="Exporter_type"
 						value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="InvoiceExporter_type"
-						value="#{invoiceExporter.configuration.type}" required="true"
-						reRender="invoiceExporterForm" ajaxSingle="false">
+					<aon:selectOneMenu id="Exporter_type"
+						value="#{exporter.configuration.type}" required="true"
+						reRender="exporterForm">
 						<f:selectItem itemLabel=" - " itemValue="#{null}" />
 						<f:selectItems value="#{financeCollections.invoiceExportTypes}" />
 					</aon:selectOneMenu>
 
-					<c:if test="#{(invoiceExporter.configuration.type == 'A3') or (invoiceExporter.configuration.type == 'GEYCE')}">
-						<aon:outputLabel for="InvoiceExporter_enterpriseCode"
+					<c:if test="#{(exporter.configuration.type == 'A3') or (exporter.configuration.type == 'GEYCE')}">
+						<aon:outputLabel for="Exporter_enterpriseCode"
 							value="#{bundle.aon_company_id}" />
-						<aon:inputText id="InvoiceExporter_enterpriseCode"
-							value="#{invoiceExporter.configuration.enterpriseCode}"
-							size="10" maxlength="#{invoiceExporter.configuration.enterpriseCodeLength}"
+						<aon:inputText id="Exporter_enterpriseCode"
+							value="#{exporter.configuration.enterpriseCode}"
+							size="10" maxlength="#{exporter.configuration.enterpriseCodeLength}"
 							required="true" />
 					</c:if> 
 	
-					<c:if test="#{invoiceExporter.configuration.type == 'GEYCE'}">
+					<c:if test="#{exporter.configuration.type == 'GEYCE'}">
 						<aon:outputLabel for="Geyce_journal_general"
 							value="#{bundle.finance_journal_general}" />
 						<aon:inputText id="Geyce_journal_general"
 							size="2" maxlength="2" required="true"
-							value="#{invoiceExporter.configuration.generalJournal}" />
-
-						<aon:outputLabel for="Geyce_journal_purchases"
-							value="#{bundle.finance_journal_purchases}" />
-						<aon:inputText id="Geyce_journal_purchases"
-							size="2" maxlength="2"
-							value="#{invoiceExporter.configuration.purchaseJournal}" />
+							value="#{exporter.configuration.generalJournal}" />
 
 						<aon:outputLabel for="Geyce_journal_sales"
 							value="#{bundle.finance_journal_sales}" />
 						<aon:inputText id="Geyce_journal_sales"
 							size="2" maxlength="2"
-							value="#{invoiceExporter.configuration.salesJournal}" />
+							value="#{exporter.configuration.salesJournal}" />
 							
+						<aon:outputLabel for="Geyce_journal_purchases"
+							value="#{bundle.finance_journal_purchases}" />
+						<aon:inputText id="Geyce_journal_purchases"
+							size="2" maxlength="2"
+							value="#{exporter.configuration.purchaseJournal}" />
+
 						<aon:outputLabel for="Geyce_journal_expenses"
 							value="#{bundle.finance_journal_expenses}" />
 						<aon:inputText id="Geyce_journal_expenses"
 							size="2" maxlength="2"
-							value="#{invoiceExporter.configuration.expensesJournal}" />
+							value="#{exporter.configuration.expensesJournal}" />
 							
 					</c:if>												
 						

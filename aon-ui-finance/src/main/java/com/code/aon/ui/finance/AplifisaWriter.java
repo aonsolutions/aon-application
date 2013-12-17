@@ -18,11 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.TaxType;
-import com.code.aon.finance.Invoice;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.registry.RegistryAddress;
 
@@ -48,6 +48,11 @@ public class AplifisaWriter extends BasicExporter {
 	}
 
 	@Override
+	public InvoiceExportType getType() {
+		return InvoiceExportType.APLIFISA;
+	}
+	
+	@Override
 	public String getFileName() {
 		return "aplifisa.zip";
 	}
@@ -57,12 +62,6 @@ public class AplifisaWriter extends BasicExporter {
 		return false;
 	}
 	
-	@Override
-	public void init(Invoice invoice) throws ManagerBeanException, IOException {
-		super.init(invoice);
-		writeAccounts();
-	}
-
 	private void appendNewLine( CharArrayWriter writer ) throws IOException {
 		if ( writer.size() > 0 ) {
 			writer.write("\r\n");
@@ -98,19 +97,19 @@ public class AplifisaWriter extends BasicExporter {
 		return null;
 	}
 	
-	private void appendEntryDetail( AccountEntryDetail aed ) {
+	private void appendEntryDetail( AccountEntry accountEntry, AccountEntryDetail aed ) {
 		StringBuffer sb = new StringBuffer();
 		
 		// Numero Asiento
-		appendNumber( sb, getJournal(), 12);
+		appendNumber( sb, getJournal(accountEntry), 12);
 		// Fecha
-		appendDate(sb, getAccountEntry().getEntryDate());
+		appendDate(sb, accountEntry.getEntryDate());
 		// Subcuenta
 		appendString(sb, aed.getAccount().getCode(), 12);
 		// Concepto
 		String concept = aed.getConcept();
 		if ( StringUtils.isEmpty(concept) ) {
-			concept = getInvoice().getReferenceCode();
+			concept = getReferenceCode();
 		}
 		appendString(sb, concept, 40);
 		// Debe
@@ -123,7 +122,7 @@ public class AplifisaWriter extends BasicExporter {
 			// Contra
 			appendString(sb, (aed.getBalancingAccount() != null) ? aed.getBalancingAccount().getCode() : null, 12);	
 			// Factura
-			appendString(sb, getInvoice().getId().toString(), 15);
+			appendString(sb, getMainId().toString(), 15);
 			TaxBreakDown tbd = getTaxBreakDown(aed);
 			if ( tbd != null ) {
 				// Base Imponible
@@ -143,15 +142,17 @@ public class AplifisaWriter extends BasicExporter {
 	}
 	
 	@Override
-	public void write() throws IOException, ManagerBeanException {
+	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
+		writeAccounts();
 		appendNewLine(this.writer);
-		appendEntryDetail( getRegistryDetail() );
+		appendEntryDetail( accountEntry, getRegistryDetail() );
 		while (! getDetails().isEmpty() ) {
 			appendNewLine(this.writer);
 			AccountEntryDetail aed = getDetails().get(0);
 			getDetails().remove(0);
-			appendEntryDetail( aed );
+			appendEntryDetail( accountEntry, aed );
 		}
+		writeNewLine();
 	}
 
 	private void writeAccounts() throws IOException {
@@ -182,9 +183,13 @@ public class AplifisaWriter extends BasicExporter {
 		
 		if ( registry ) {
 			// CIF
-			appendString(sb, getInvoice().getRegistryDocument(), 16);
+			if ( getRegistryDocument() != null ) {
+				appendString(sb, getRegistryDocument().getDocument(), 16);	
+			} else {
+				sb.append(FIELD_SEPARATOR);
+			}
 			try {
-				RegistryAddress address = getInvoice().getRegistry().getDefaultAddress();
+				RegistryAddress address = getRegistry().getDefaultAddress();
 				if ( address != null ) {
 					// Direccion			
 					appendString(sb, address.getFullAddress(), 50);

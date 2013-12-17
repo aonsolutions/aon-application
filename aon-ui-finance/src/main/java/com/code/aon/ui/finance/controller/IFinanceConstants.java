@@ -110,5 +110,7 @@ public interface IFinanceConstants {
 	String AMORTIZATION_FORM_VIEW = "amortization_form";
 
 	String POS_DEFAULT_CUSTOMER_ID = "POS_CUSTOMER_ID";
+	
+	String EXPORTER_CONTROLLER_NAME = "exporter";
 
 }

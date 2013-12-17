@@ -6,12 +6,13 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.account.IAccount;
 import com.code.aon.config.IBankAccountContainer;
 import com.esferalia.aon.entity.master.RegistryBankDB;
 
 @Entity
 @Table(name="rbank")
-public class RegistryBank extends RegistryBankDB implements IBankAccountContainer {
+public class RegistryBank extends RegistryBankDB implements IBankAccountContainer, IAccount {
 
 	private static final long serialVersionUID = 1L;
 

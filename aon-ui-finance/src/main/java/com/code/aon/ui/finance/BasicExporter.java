@@ -10,10 +10,13 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.IAccount;
+import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
@@ -22,21 +25,29 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryDocument;
 import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public abstract class BasicExporter {
 	
+	public static final String NEW_LINE = "\r\n";
+
 	private static final String[] SKIP_ACCOUNTS = new String[] { "477", "472", "473", "4751" };
 	
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
@@ -49,7 +60,7 @@ public abstract class BasicExporter {
 	
 	private Invoice invoice;
 	
-	private AccountEntry accountEntry;
+	private List<AccountEntry> accountEntries;
 	
 	private List<TaxBreakDown> taxBreakDowns;
 	
@@ -57,32 +68,230 @@ public abstract class BasicExporter {
 	
 	private List<AccountEntryDetail> details;
 	
+	private String referenceCode;
+	
+	private Date date;
+	
+	private Date dueDate;
+	
+	private Date taxDate;
+	
+	private Integer mainId;
+	
+	private Registry registry;
+	
+	private IAccount entity;
+	
+	private RegistryDocument registryDocument;
+	
+	private String registryName;
+	
+	private InvoiceType invoiceType;
+	
+	private InvoiceTransactionType transaction;
+	
+	private RectificationType rectificationType; 
+	
+	private boolean investment;
+	
+	private boolean withFinances;
+	
 	public BasicExporter( InvoiceExportConfiguration configuration ) {
 		this.out = new ByteArrayOutputStream();
 		this.configuration = configuration;
 	}
 
 	public void init( Invoice invoice ) throws ManagerBeanException, IOException {
-		this.invoice = invoice;
-		this.accountEntry = obtainAccountEntry();
+		initBasic(invoice);
+		this.accountEntries = obtainAccountEntries(invoice);
 		this.taxBreakDowns = obtainTaxBreakDowns();		
-		this.details = obtainDetails();
-		this.registryDetail = obtainRegistryDetail();
-		if ( this.out.size() > 0 ) {
-			writeNewLine();
+	}
+	
+	public void init( Finance finance ) throws ManagerBeanException, IOException {
+		initBasic(finance);
+		this.accountEntries = obtainAccountEntries(finance);
+		this.taxBreakDowns = Collections.emptyList();		
+	}	
+
+	private Date getDueDate( Invoice invoice ) {
+		Date date = invoice.getDate();
+		for( Finance finance : invoice.getFinances() ) {
+			if ( finance.getDueDate() != null && finance.getDueDate().compareTo(date) > 0 ) {
+				date = finance.getDueDate();
+			}
 		}
+		return date;
+	}
+		
+	private RegistryDocument getRegistryDocument( Invoice invoice ) {
+		RegistryDocument rd = null;
+		if (! StringUtils.isBlank(invoice.getRegistryDocument()) ) {
+			rd = new RegistryDocument();
+			rd.setDocument(getInvoice().getRegistryDocument());
+			rd.setType(getInvoice().getRegistryDocumentType());
+			rd.setCountry(getInvoice().getRegistryDocumentCountry());
+		} else if (! StringUtils.isBlank(getInvoice().getRegistry().getDocument()) ) {
+			rd = getInvoice().getRegistry().getRegistryDocument(); 
+		}
+		return rd; 
+	}	
+	
+	private boolean isSupplier( Registry registry ) throws ManagerBeanException {
+		IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
+		return supplierBean.get(registry.getId()) != null;		
+	}
+	
+	private void initBasic( Invoice invoice ) throws ManagerBeanException {
+		this.invoice = invoice;
+		this.mainId = invoice.getId();
+		this.referenceCode = invoice.getReferenceCode();
+		this.date = invoice.getDate();
+		this.dueDate = getDueDate(invoice);
+		this.taxDate = invoice.getTaxDate();
+		this.registry = invoice.getRegistry();
+		this.invoiceType = invoice.getType();
+		this.entity = getEntity(registry);
+		this.registryDocument = getRegistryDocument(invoice);
+		this.registryName = invoice.getRegistryName();
+		this.transaction = invoice.getTransaction();
+		this.investment = invoice.isInvestment();
+		this.rectificationType = invoice.getRectificationType();
+		this.withFinances = true;
+	}
+	
+	private void initBasic( Finance finance ) throws ManagerBeanException {
+		if ( finance.getInvoice() != null ) {
+			initBasic( finance.getInvoice() );
+		} else {
+			this.mainId = finance.getId();
+		}
+		if (! StringUtils.isBlank(this.referenceCode) ) {
+			this.referenceCode = finance.getDocumentNumber();
+		}
+		if ( this.date == null ) {
+			this.date = finance.getDueDate();	
+		}
+		if ( finance.getDueDate() != null ) {
+			this.dueDate = finance.getDueDate();
+		}
+		if ( this.taxDate == null ) {
+			this.taxDate = this.date;
+		}
+		if (! StringUtils.isBlank(finance.getRegistryDocument()) ) {
+			this.registryDocument = finance.getRegistryFullDocument();
+		}
+		if (! StringUtils.isBlank(finance.getRegistryName()) ) {
+			this.registryName = finance.getRegistryName();
+		}
+		if ( finance.getRegistry() != null ) {
+			this.registry = finance.getRegistry();
+		}
+		if ( finance.isPayment() ) {
+			this.invoiceType = isSupplier(this.registry) ? InvoiceType.PURCHASE : InvoiceType.EXPENSES;
+		} else {
+			this.invoiceType = InvoiceType.SALES;
+		}
+		if ( this.entity == null ) {
+			this.entity = getEntity(this.registry);
+		}
+		if ( transaction == null ) { 
+			this.transaction = ((ITaxInfo) this.entity).getTransaction();
+		}
+		if ( this.rectificationType == null ) {
+			this.rectificationType = RectificationType.NONE;
+		}
+		this.investment = false;
+		this.withFinances = false;
+	}
+	
+	public Integer getMainId() {
+		return mainId;
 	}
 
-	private AccountEntry obtainAccountEntry() throws ManagerBeanException {
+	public String getReferenceCode() {
+		return referenceCode;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+	
+	public Date getDueDate() {
+		return dueDate;
+	}
+	
+	public Date getTaxDate() {
+		return taxDate;
+	}
+
+	public Registry getRegistry() {
+		return registry;
+	}
+
+	public RegistryDocument getRegistryDocument() {
+		return registryDocument;
+	}
+
+	public String getRegistryName() {
+		return registryName;
+	}
+	
+	public boolean isSales() {
+		return this.invoiceType == InvoiceType.SALES;
+	}
+	
+	public InvoiceType getInvoiceType() {
+		return this.invoiceType;
+	}
+	
+	public InvoiceTransactionType getTransaction() {
+		return this.transaction;
+	}
+	
+	public RectificationType getRectificationType() {
+		return rectificationType;
+	}
+
+	public boolean isInvestment() {
+		return this.investment;
+	}	
+	
+	public Set<Finance> getFinances() {
+		if ( withFinances ) {
+			return invoice.getFinances();
+		}
+		return Collections.emptySet();
+	}
+
+	private List<AccountEntry> obtainAccountEntries( Invoice invoice ) throws ManagerBeanException {
+		List<AccountEntry> entries = new LinkedList<AccountEntry>();
 		IManagerBean bean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_INVOICE_INVOICE_ID), invoice.getId());
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
-			AccountEntryInvoice aei = (AccountEntryInvoice) list.get(0);
-			return aei.getAccountEntry();
+			for( ITransferObject to : list ) {
+				AccountEntryInvoice aei = (AccountEntryInvoice) to;
+				entries.add(aei.getAccountEntry());
+			}
 		}
-		return null;
+		return entries;
+	}
+
+	private List<AccountEntry> obtainAccountEntries( Finance finance ) throws ManagerBeanException {
+		List<AccountEntry> entries = new LinkedList<AccountEntry>();
+		IManagerBean bean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
+		Criteria criteria = new Criteria();
+		String alias = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID);
+		criteria.addEqualExpression(alias, finance.getId());
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			for( ITransferObject to : list ) {
+				AccountEntryFinanceTracking aeft = (AccountEntryFinanceTracking) to;
+				entries.add(aeft.getAccountEntry());
+			}
+		}
+		return entries;
 	}
 	
 	protected VatDeductionType getVatDeductionType() {
@@ -103,9 +312,9 @@ public abstract class BasicExporter {
 		return false;
 	}	
 	
-	private List<AccountEntryDetail> obtainDetails() {
+	private List<AccountEntryDetail> obtainDetails( AccountEntry accountEntry ) {
 		List<AccountEntryDetail> list = new LinkedList<AccountEntryDetail>();
-		for( AccountEntryDetail aed : getAccountEntry().getDetail() ) {
+		for( AccountEntryDetail aed : accountEntry.getDetail() ) {
 			if (! isSkipAccount(aed.getAccount()) ) {
 				list.add(aed);
 			}
@@ -194,37 +403,27 @@ public abstract class BasicExporter {
 		return tax;
 	}		
 		
-	private Account getRegistryAccount() throws ManagerBeanException {
-		Account account = null;
-		Registry registry = getInvoice().getRegistry();
-		switch ( getInvoice().getType() ) {
+	private IAccount getEntity( Registry registry ) throws ManagerBeanException {
+		IAccount entity = null;
+		switch ( getInvoiceType() ) {
 			case SALES:
 				IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
-				Customer customer = (Customer) customerBean.get(registry.getId());
-				if ( customer != null ) {
-					account = customer.getAccount();
-				}
+				entity = (Customer) customerBean.get(registry.getId());
 				break;
 			case PURCHASE:
 				IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
-				Supplier supplier = (Supplier) supplierBean.get(registry.getId());
-				if ( supplier != null ) {
-					account = supplier.getAccount();
-				}
+				entity = (Supplier) supplierBean.get(registry.getId());
 				break;
 			default:
 				IManagerBean creditorBean = BeanManager.getManagerBean(Creditor.class);
-				Creditor creditor = (Creditor) creditorBean.get(registry.getId());
-				if ( creditor != null ) {
-					account = creditor.getAccount();
-				}
+				entity = (Creditor) creditorBean.get(registry.getId());
 		}
-		return account;
+		return entity;
 	}
 	
-	protected AccountEntryDetail obtainRegistryDetail() throws ManagerBeanException {
+	protected AccountEntryDetail obtainRegistryDetail(IAccount entity) throws ManagerBeanException {
 		AccountEntryDetail detail = null;
-		Account registryAccount = getRegistryAccount();
+		Account registryAccount = entity.getAccount();
 		if ( registryAccount != null ) {
 			for( AccountEntryDetail aed : getDetails() ) {
 				if ( aed.getAccount() == registryAccount ) {
@@ -281,7 +480,7 @@ public abstract class BasicExporter {
 	
 	
 	protected void writeNewLine( OutputStream out ) throws IOException {
-		out.write("\r\n".getBytes());
+		out.write(NEW_LINE.getBytes());
 	}
 	
 	public InvoiceExportConfiguration getConfiguration() {
@@ -292,8 +491,8 @@ public abstract class BasicExporter {
 		return invoice;
 	}
 
-	protected AccountEntry getAccountEntry() {
-		return accountEntry;
+	private List<AccountEntry> getAccountEntries() {
+		return accountEntries;
 	}
 
 	protected List<TaxBreakDown> getTaxBreakDowns() {
@@ -320,15 +519,25 @@ public abstract class BasicExporter {
 		return null;
 	}
 	
-	protected Integer getJournal() {
-		if ( getAccountEntry().getJournal() != null ) {
-			return getAccountEntry().getJournal();
+	protected Integer getJournal( AccountEntry accountEntry ) {
+		if ( accountEntry.getJournal() != null ) {
+			return accountEntry.getJournal();
 		}
-		return getAccountEntry().getId();
+		return accountEntry.getId();
 	}
 	
-	public abstract void write() throws IOException, ManagerBeanException;
+	public void write() throws IOException, ManagerBeanException {
+		for( AccountEntry accountEntry : getAccountEntries() ) {
+			this.details = obtainDetails(accountEntry);
+			this.registryDetail = obtainRegistryDetail(entity);
+			write(accountEntry);
+		}			
+	}
+	
+	public abstract void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException;
 	
 	public abstract Map<String,byte[]> getDataMap();
+	
+	public abstract InvoiceExportType getType();
 	
 }

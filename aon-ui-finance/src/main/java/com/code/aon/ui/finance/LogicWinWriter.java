@@ -12,12 +12,11 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.code.aon.account.Account;
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.TaxType;
-import com.code.aon.finance.Finance;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.TaxBreakDown;
 
 public class LogicWinWriter extends BasicExporter {
@@ -37,6 +36,11 @@ public class LogicWinWriter extends BasicExporter {
 	public LogicWinWriter(InvoiceExportConfiguration configuration) {
 		super(configuration);
 	}
+	
+	@Override
+	public InvoiceExportType getType() {
+		return InvoiceExportType.LOGIC_WIN;
+	}	
 
 	@Override
 	protected boolean isSkipAccount(Account account) {
@@ -60,35 +64,25 @@ public class LogicWinWriter extends BasicExporter {
 	
 	private Integer getPeriod() {
 		Integer period = 1;
-		if ( getInvoice().getDate() != null ) {
+		if ( getDate() != null ) {
 			Calendar cal = Calendar.getInstance();
-			cal.setTime(getInvoice().getDate());
+			cal.setTime(getDate());
 			period = cal.get(Calendar.MONTH) + 1;
 		}
 		return period;
 	}
 	
-	private Date getDueDate() {
-		Date date = getInvoice().getDate();
-		for( Finance finance : getInvoice().getFinances() ) {
-			if ( finance.getDueDate() != null && finance.getDueDate().compareTo(date) > 0 ) {
-				date = finance.getDueDate();
-			}
-		}
-		return date;
-	}
-	
-	private void initLine() {
+	private void initLine( AccountEntry accountEntry ) {
 		setLine( new byte[REGISTRY_SIZE] );
 		Arrays.fill(getLine(), (byte) ' ');
 		// Periodo (mes 00)
 		setInteger( getPeriod(), 19, 2);
 		// Asiento
-		setInteger( getJournal(), 21, 5);
+		setInteger( getJournal(accountEntry), 21, 5);
 		// Documento
-		setInteger( getInvoice().getId(), 26, 8);		
+		setInteger( getMainId(), 26, 8);		
 		// Fecha 
-		setDate(getInvoice().getDate(), 59);		
+		setDate(getDate(), 59);		
 		// Vencimiento Fecha 
 		setDate(getDueDate(), 65);		
 		// Codigo Diario
@@ -96,7 +90,7 @@ public class LogicWinWriter extends BasicExporter {
 		// Codigo Canal
 		setString(CONSTANT_000, 89, 3);
 		// Factura Registro
-		setInteger( getInvoice().getId(), 101, 8);	
+		setInteger( getMainId(), 101, 8);	
 		// L1: Porcentaje IVA
 		setStringLeftPad(CONSTANT_0, 162, 5);		
 		// L1: Porcentaje Recargo Equivalencia
@@ -159,9 +153,11 @@ public class LogicWinWriter extends BasicExporter {
 		// Cuenta Cliente Proveedor
 		setStringLeftPad(getRegistryDetail().getAccount().getCode(), 110, 9);
 		// NIF Cliente Proveedor
-		setStringLeftPad( getInvoice().getRegistryDocument(), 119, 11);
+		if ( getRegistryDocument() != null ) {
+			setStringLeftPad( getRegistryDocument().getDocument(), 119, 11);	
+		}
 		// Descripcion
-		setStringRightPad( getInvoice().getRegistryName(), 130, 25);		
+		setStringRightPad( getRegistryName(), 130, 25);		
 	}
 	
 	private void fillLine( TaxBreakDown tbd, int line ) {
@@ -194,7 +190,7 @@ public class LogicWinWriter extends BasicExporter {
 		AccountEntryDetail aed = getRegistryDetail();
 		fillLine(aed);
 		// IndicadorIvaRepSop (R) repercutido (S) soportado
-		if ( getInvoice().getType() == InvoiceType.SALES ) {
+		if ( isSales() ) {
 			setString("R", 109, 1);
 		} else {
 			setString("S", 109, 1);
@@ -205,14 +201,15 @@ public class LogicWinWriter extends BasicExporter {
 	}
 	
 	@Override
-	public void write() throws IOException, ManagerBeanException {
-		initLine();
+	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
+		initLine( accountEntry );
 		writeRegistryDetail();
 		while (! getDetails().isEmpty() ) {
 			writeNewLine();
 			fillLine(getNextDetail());
 			writeLine();
 		}
+		writeNewLine();
 	}
 
 	@Override

@@ -15,6 +15,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -53,6 +54,11 @@ public class A3Writer extends BasicExporter {
 		super(configuration);
 	}
 	
+	@Override
+	public InvoiceExportType getType() {
+		return InvoiceExportType.A3;
+	}
+
 	private void setNumber( double value, int offset, int maxLength ) {
 		double _value = CommonUtil.round(value);
 		String pattern = StringUtils.leftPad("0.00", maxLength-1, "0");
@@ -106,27 +112,27 @@ public class A3Writer extends BasicExporter {
 		// Indicador de Generado (N)
 		setString("N", 253, 1);
 		// Retorno de carro
-		setString("\r\n", 254, 2);
+		setString(BasicExporter.NEW_LINE, 254, 2);
 	}
 	
 	private boolean isAbono() {
-		return getInvoice().getRectificationType() == RectificationType.NORMAL_RECTIFIER ||
-				getInvoice().getRectificationType() == RectificationType.SPECIAL_RECTIFIER;		
+		return getRectificationType() == RectificationType.NORMAL_RECTIFIER ||
+				getRectificationType() == RectificationType.SPECIAL_RECTIFIER;		
 	}
 	
 	private boolean isFacturaEmitida() {
-		return getInvoice().getType() == InvoiceType.SALES;
+		return isSales();
 	}
 
 	private boolean isFacturaRecibida() {
-		return getInvoice().getType()==InvoiceType.PURCHASE ||
-				getInvoice().getType()==InvoiceType.EXPENSES;
+		return getInvoiceType()==InvoiceType.PURCHASE ||
+				getInvoiceType()==InvoiceType.EXPENSES;
 	}
 	
-	private void fillHeader( AccountEntryDetail aed ) {
+	private void fillHeader( AccountEntry accountEntry, AccountEntryDetail aed ) {
 		initLine();
 		// Fecha del apunte
-		setDate(getAccountEntry().getEntryDate(), 6);
+		setDate(accountEntry.getEntryDate(), 6);
 		// Tipo de Registro
 		if ( isAbono() ) {
 			setInteger( 2, 14, 1);
@@ -137,17 +143,17 @@ public class A3Writer extends BasicExporter {
 		setAccountAndDescription(aed.getAccount());
 		// Tipo de factura
 		setInteger(2, 57, 1);
-		if ( getInvoice().isInvestment() ) {
+		if ( isInvestment() ) {
 			setInteger(3, 57, 1);
-		} else if ( getInvoice().getType() == InvoiceType.SALES ) {
+		} else if ( isSales() ) {
 			setInteger(1, 57, 1);
 		}
 		// Numero de Factura o Documento
-		setStringRightPad( getInvoice().getId().toString(), 58, 10);
+		setStringRightPad( getMainId().toString(), 58, 10);
 		// Linea de apunte (I)
 		setString( "I", 68, 1);
 		// Descripcion del apunte
-		setStringRightPad( getInvoice().getReferenceCode(), 69, 30);
+		setStringRightPad( getReferenceCode(), 69, 30);
 		// Importe
 		double amount = (aed.getCredit() != 0) ? aed.getCredit() : aed.getDebit();
 		setNumber( amount, 99, 14);
@@ -187,7 +193,7 @@ public class A3Writer extends BasicExporter {
 			} else if ( vdt == VatDeductionType.NON_TAXABLE) {
 				result = "07";
 			} else {
-				switch ( getInvoice().getTransaction() ) {
+				switch ( getTransaction() ) {
 					case INTRACOMMUNITY:
 						result = "03";
 						break;
@@ -206,7 +212,7 @@ public class A3Writer extends BasicExporter {
 			if ( vdt != VatDeductionType.WITH_RIGHT) {
 				result = "07";
 			} else {
-				switch ( getInvoice().getTransaction() ) {
+				switch ( getTransaction() ) {
 					case INTRACOMMUNITY:
 						result = "03";
 						break;
@@ -302,11 +308,11 @@ public class A3Writer extends BasicExporter {
 		}
 	}
 	
-	private void writeDetail( AccountEntryDetail aed ) throws IOException {
+	private void writeDetail( AccountEntry accountEntry, AccountEntryDetail aed ) throws IOException {
 		initLine();
 		boolean last = getDetails().isEmpty();
 		// Fecha del apunte
-		setDate(getAccountEntry().getEntryDate(), 6);
+		setDate(accountEntry.getEntryDate(), 6);
 		// Tipo de Registro
 		setInteger( 9, 14, 1);
 		// Cuenta - Descripción de la cuenta 
@@ -314,7 +320,7 @@ public class A3Writer extends BasicExporter {
 		// Tipo de importe (C o A)
 		setString( getTipoDeImporte(aed), 57, 1);
 		// Numero de Factura o Documento
-		setStringLeftPad( getInvoice().getId().toString(), 58, 10);
+		setStringLeftPad( getMainId().toString(), 58, 10);
 		// Linea de apunte (M o U)
 		setString( last ? "U" : "M", 68, 1);		
 		// Subtipo de factura (01 a 07)
@@ -412,13 +418,13 @@ public class A3Writer extends BasicExporter {
 		// Tipo de Vencimiento (C o P)
 		setString( finance.isPayment() ? "P" : "C", 57, 1);
 		// Numero de Factura o Documento
-		setStringRightPad( getInvoice().getId().toString(), 58, 10);
+		setStringRightPad( getMainId().toString(), 58, 10);
 		// Descripcion del vencimiento
 		setStringRightPad(finance.getRemarks(), 69, 30);
 		// Importe del vencimiento
 		setNumber( finance.getAmount(), 99, 14);
 		// Fecha de Factura
-		setDate(getInvoice().getDate(), 113);
+		setDate(getDate(), 113);
 		// Cuenta de tesoreria
 		Account account = getTreasuryAccount(finance);
 		if ( account != null ) {
@@ -447,19 +453,6 @@ public class A3Writer extends BasicExporter {
 			setStringRightPad(finance.getBankAccount().getBban(), 93, 20);
 		}
 		writeLine();
-	}
-	
-	private RegistryDocument getRegistryDocument() {
-		RegistryDocument rd = null;
-		if (! StringUtils.isBlank(getInvoice().getRegistryDocument()) ) {
-			rd = new RegistryDocument();
-			rd.setDocument(getInvoice().getRegistryDocument());
-			rd.setType(getInvoice().getRegistryDocumentType());
-			rd.setCountry(getInvoice().getRegistryDocumentCountry());
-		} else if (! StringUtils.isBlank(getInvoice().getRegistry().getDocument()) ) {
-			rd = getInvoice().getRegistry().getRegistryDocument(); 
-		}
-		return rd; 
 	}
 	
 	private String getNIF( RegistryDocument rd ) {
@@ -531,7 +524,7 @@ public class A3Writer extends BasicExporter {
 	private void writeRegistry() throws IOException, ManagerBeanException {
 		initLine();
 		// Fecha de Alta
-		setDate(getInvoice().getDate(), 6);
+		setDate(getDate(), 6);
 		// Tipo de Registro
 		setString( "C", 14, 1);		
 		// Cuenta - Descripción de la cuenta 
@@ -546,25 +539,25 @@ public class A3Writer extends BasicExporter {
 			setStringRightPad( getNIF(rd), 77, 14);
 		}
 		
-		RegistryAddress address = getInvoice().getRegistry().getDefaultAddress();
+		RegistryAddress address = getRegistry().getDefaultAddress();
 		if ( address != null ) {
 			fillAddress( address );
 		}
 		// Telefono
-		RegistryMedia phone = getInvoice().getRegistry().getPhone();
+		RegistryMedia phone = getRegistry().getPhone();
 		if ( phone == null ) {
-			phone = getInvoice().getRegistry().getCellular();
+			phone = getRegistry().getCellular();
 		}
 		if ( phone != null ) {
 			setStringRightPad( phone.getValue(), 177, 12);
 		}
 		// Fax
-		RegistryMedia fax = getInvoice().getRegistry().getFax();
+		RegistryMedia fax = getRegistry().getFax();
 		if ( fax != null ) {
 			setStringRightPad( fax.getValue(), 193, 12);
 		}
 		// E-mail
-		RegistryMedia email = getInvoice().getRegistry().getEmail();
+		RegistryMedia email = getRegistry().getEmail();
 		if ( email != null ) {
 			setStringRightPad( email.getValue(), 205, 30);
 		}
@@ -579,7 +572,7 @@ public class A3Writer extends BasicExporter {
 	private RegistryBank getRegistryBank() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), getInvoice().getRegistry().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), getRegistry().getId());
 		List<ITransferObject> list = bean.getList(criteria);
 		if ( !list.isEmpty() ) {
 			return (RegistryBank) list.get(0); 
@@ -598,7 +591,7 @@ public class A3Writer extends BasicExporter {
 			setStringRightPad( getNIF(rd), 73, 14);
 		}
 		// Nombre / Razon Social
-		setStringRightPad( getInvoice().getRegistry().getName(), 87, 30);
+		setStringRightPad(getRegistry().getName(), 87, 30);
 		// C.C.C. (Cuenta Bancaria)
 		setStringRightPad(rbank.getBankAccount().getBban(), 117, 20);
 		// Cuenta por Omision
@@ -608,15 +601,15 @@ public class A3Writer extends BasicExporter {
 	}
 	
 	@Override
-	public void write() throws IOException, ManagerBeanException {
-		fillHeader(getRegistryDetail());
+	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
+		fillHeader(accountEntry, getRegistryDetail());
 		writeLine();
 		while (! getDetails().isEmpty() ) {
 			AccountEntryDetail aed = getDetails().get(0);
 			getDetails().remove(0);
-			writeDetail(aed);
+			writeDetail(accountEntry, aed);
 		}
-		for( Finance finance : getInvoice().getFinances() ) {
+		for( Finance finance : getFinances() ) {
 			writeFinance(finance);
 		}
 		writeRegistry();

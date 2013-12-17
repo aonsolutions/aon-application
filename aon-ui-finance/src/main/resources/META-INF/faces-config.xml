@@ -4024,6 +4024,15 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************* EXPORTER CONTROLLER ***************** -->
+	<managed-bean>
+		<managed-bean-name>exporter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.ExporterController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************* INVOICE EXPORTER ***************** -->
 	<managed-bean>
 		<managed-bean-name>invoiceExporter</managed-bean-name>
@@ -4051,6 +4060,38 @@
 			</list-entries>
 		</managed-property>		
 	</managed-bean>
+
+	<!-- ************* FINANCE EXPORTER ***************** -->
+	<managed-bean>
+		<managed-bean-name>financeExporter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.FinanceExporterController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Finance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>financeExporter</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Finance_dueDate,Finance_invoice_referenceCode,Finance_concept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{financeSearch}</value>
+				<value>#{financeScopeListener}</value>
+			</list-entries>
+		</managed-property>						
+	</managed-bean>
+	
 
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUP =========================== -->
@@ -4573,11 +4614,11 @@
 	    </navigation-case>
 	</navigation-rule>
 
-	<!-- =================== Invoice Exporter ========================== -->
+	<!-- =================== Exporter ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>invoiceExporter_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/invoiceExporter/form.xhtml</to-view-id>
+			<from-outcome>exporter_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/exporter/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>invoiceExporter_list</from-outcome>
@@ -4586,6 +4627,14 @@
 		<navigation-case>
 			<from-outcome>invoiceExporter_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/finance/facelet/invoiceExporter/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>financeExporter_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/financeExporter/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>financeExporter_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/financeExporter/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>   
 

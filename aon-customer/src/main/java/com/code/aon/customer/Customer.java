@@ -9,6 +9,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.account.IAccount;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.customer.enumeration.CustomerStatus;
@@ -22,7 +23,7 @@ import com.esferalia.aon.entity.master.CustomerDB;
 
 @Entity
 @Table(name="customer")
-public class Customer extends CustomerDB implements ITaxInfo,IScopable,IRegistry{
+public class Customer extends CustomerDB implements ITaxInfo,IScopable,IRegistry,IAccount{
 	
 	private static final long serialVersionUID = 1L;
 

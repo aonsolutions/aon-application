@@ -280,9 +280,23 @@
 										<c:if test="#{aonRole.accountingOperator}">
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="invoiceExporter"
-													action="#{invoiceExporter.initialAction}"
-													actionListener="#{invoiceExporter.onInit}"
-													value="#{bundle.finance_invoiceExport_module}" />
+													action="#{exporter.initialAction}"
+													actionListener="#{exporter.onInit}"
+													value="#{bundle.finance_invoiceExport_module}">
+													<aon:actionListener method="#{invoiceExporter.onEditSearch}" />
+													<f:setPropertyActionListener value="invoiceExporter_search"
+														target="#{exporter.backAction}" />
+												</aon:commandLink>
+											</aon:div>										
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="financeExporter"
+													action="#{exporter.initialAction}"
+													actionListener="#{exporter.onInit}"
+													value="#{bundle.finance_account_export_module}">
+													<aon:actionListener method="#{financeExporter.onEditSearch}" />
+													<f:setPropertyActionListener value="financeExporter_search"
+														target="#{exporter.backAction}" />
+												</aon:commandLink>
 											</aon:div>										
 										</c:if>
 									</aon:div>

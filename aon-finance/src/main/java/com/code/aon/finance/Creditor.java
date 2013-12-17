@@ -9,6 +9,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.account.IAccount;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.CreditorStatus;
@@ -19,7 +20,7 @@ import com.esferalia.aon.entity.master.CreditorDB;
 
 @Entity
 @Table(name="creditor")
-public class Creditor extends CreditorDB implements ITaxInfo, IScopable, IRegistry {
+public class Creditor extends CreditorDB implements ITaxInfo, IScopable, IRegistry, IAccount {
 	
 	private static final long serialVersionUID = 1L;
 

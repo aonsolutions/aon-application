@@ -69,7 +69,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
-public class FinanceController extends FinanceListController {
+public class FinanceController extends FinanceListController implements IFinanceController {
 
 	private Company company;
 	private boolean payment;

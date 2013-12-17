@@ -289,7 +289,12 @@ public interface ICommonMessages {
 	String FINANCE_INVOICE_RECORD_ERROR = "finance_invoice_record_error";
 	String FINANCE_INVOICE_EXPORT = "finance_invoice_export";
 	String FINANCE_INVOICE_EXPORT_ERROR = "finance_invoice_export_error";
-	String FINANCE_INVOICES_EXPORT_ERROR = "finance_invoices_export";
+	String FINANCE_INVOICES_EXPORT_ERROR = "finance_invoices_export_error";
+	String FINANCE_PAYMENT_EXPORT = "finance_payment_export";
+	String FINANCE_CHARGE_EXPORT = "finance_charge_export";
+	String FINANCE_PAYMENT_EXPORT_ERROR = "finance_payment_export_error";
+	String FINANCE_CHARGE_EXPORT_ERROR = "finance_charge_export_error";
+	String FINANCE_FINANCES_EXPORT_ERROR = "finance_finances_export_error";
 	
 	String FISCAL_RESULT = "fiscal_result";
 	

@@ -24,22 +24,22 @@ public class InvoiceExportConfiguration {
 	public InvoiceExportConfiguration() {
 		this.type = obtainType();
 		if ( this.type != null ) {
-			this.enterpriseCode = AppParamUtil.getValue(AppParam.AON_INVOICE_EXPORT_ENTERPRISE_ID);
-			this.generalJournal = AppParamUtil.getValue(AppParam.AON_INVOICE_EXPORT_JOURNAL);
-			this.salesJournal = AppParamUtil.getValue(AppParam.AON_INVOICE_EXPORT_JOURNAL_SALES);
-			this.purchaseJournal = AppParamUtil.getValue(AppParam.AON_INVOICE_EXPORT_JOURNAL_PURCHASE);
-			this.expensesJournal = AppParamUtil.getValue(AppParam.AON_INVOICE_EXPORT_JOURNAL_EXPENSES);
+			this.enterpriseCode = AppParamUtil.getValue(AppParam.AON_EXPORT_ENTERPRISE_ID);
+			this.generalJournal = AppParamUtil.getValue(AppParam.AON_EXPORT_JOURNAL);
+			this.salesJournal = AppParamUtil.getValue(AppParam.AON_EXPORT_JOURNAL_SALES);
+			this.purchaseJournal = AppParamUtil.getValue(AppParam.AON_EXPORT_JOURNAL_PURCHASE);
+			this.expensesJournal = AppParamUtil.getValue(AppParam.AON_EXPORT_JOURNAL_EXPENSES);
 		}
 	}
 	
 	public void save() {
 		String value = String.valueOf(getType().ordinal()); 
-		AppParamUtil.insertParameter(AppParam.AON_INVOICE_EXPORT_TYE, value);
-		AppParamUtil.insertParameter(AppParam.AON_INVOICE_EXPORT_ENTERPRISE_ID, this.enterpriseCode);
-		AppParamUtil.insertParameter(AppParam.AON_INVOICE_EXPORT_JOURNAL, this.generalJournal);
-		AppParamUtil.insertParameter(AppParam.AON_INVOICE_EXPORT_JOURNAL_SALES, this.salesJournal);
-		AppParamUtil.insertParameter(AppParam.AON_INVOICE_EXPORT_JOURNAL_PURCHASE, this.purchaseJournal);
-		AppParamUtil.insertParameter(AppParam.AON_INVOICE_EXPORT_JOURNAL_EXPENSES, this.expensesJournal);		
+		AppParamUtil.insertParameter(AppParam.AON_EXPORT_TYE, value);
+		AppParamUtil.insertParameter(AppParam.AON_EXPORT_ENTERPRISE_ID, this.enterpriseCode);
+		AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL, this.generalJournal);
+		AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL_SALES, this.salesJournal);
+		AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL_PURCHASE, this.purchaseJournal);
+		AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL_EXPENSES, this.expensesJournal);		
 	}
 	
 	public boolean isConfigured() {
@@ -97,7 +97,7 @@ public class InvoiceExportConfiguration {
 	}
 
 	public String getJournal( InvoiceType type ) {
-		String journal = this.generalJournal;
+		String journal = null;
 		switch ( type ) {
 			case SALES:
 				journal = this.salesJournal;
@@ -112,12 +112,15 @@ public class InvoiceExportConfiguration {
 				journal = this.generalJournal;
 				break;
 		}
+		if ( StringUtils.isBlank(journal) ) {
+			journal = this.generalJournal;
+		}
 		return journal;
 	}
 	
 	public InvoiceExportType obtainType() {
 		InvoiceExportType type = null;
-		Integer ordinal = AppParamUtil.getValueAsInteger(AppParam.AON_INVOICE_EXPORT_TYE);
+		Integer ordinal = AppParamUtil.getValueAsInteger(AppParam.AON_EXPORT_TYE);
 		if ( ordinal!=null && ordinal<InvoiceExportType.values().length ) {
 			type = InvoiceExportType.values()[ordinal];
 		}

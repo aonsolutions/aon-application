@@ -21,7 +21,7 @@
 				
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="startDownloadExport"
-						value="#{bundle.webmail_download}: #{invoiceExporter.configuration.type}"
+						value="#{bundle.webmail_download}: #{exporter.configuration.type}"
 						styleClass="aon-finding-toolbar-item aon-icon-mail-save" 
 						disabled="#{empty invoiceExporter.checkList}" reRender="invoiceExporterToolbar,invoiceDataDiv"
 						actionListener="#{invoiceExporter.onStart}" >
@@ -30,8 +30,9 @@
 					<aon:commandButton id="configurationExport"
 						value="#{bundle.aon_configuration}"
 						styleClass="aon-finding-toolbar-item aon-icon-config"
-						action="invoiceExporter_form"
-						actionListener="#{invoiceExporter.onEditConfiguration}" >
+						action="exporter_form">
+						<f:setPropertyActionListener value="financeExporter_list"
+							target="#{exporter.backAction}" />						
 					</aon:commandButton>
 				</ui:define>				
 				
@@ -156,16 +157,16 @@
 			</aon:div>
 		</aon:form>
 
-		<aon:methodParam name="closeLogPanelAtionListener" value="#{invoiceExporter.onFinish}" type="actionListener" />
+		<aon:methodParam name="closeLogPanelAtionListener" value="#{exporter.onFinish}" type="actionListener" />
 		<ui:decorate template="/com/code/aon/faces/logPanel/modal.xhtml" >
 			<ui:param name="logPanelTitle" value="#{bundle.finance_invoiceExport_module}" />			
 			<ui:param name="pollInterval" value="5000" /> 
 			<ui:define name="additionalLogPanelContent">
-				<c:if test="#{invoiceExporter.finished}">
+				<c:if test="#{exporter.finished}">
 					<aon:div styleClass="aon-margin-bottom">
 						<aon:htmlCommandLink id="downloadExport"
 							value="#{bundle.aon_fileupload_download}" target="_blank"
-							actionListener="#{invoiceExporter.onDownload}"
+							actionListener="#{exporter.onDownload}"
 							style="border: none;"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save" >
 							<rich:componentControl for="logPanel" operation="hide" event="onclick" />
