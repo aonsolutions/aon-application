@@ -243,7 +243,8 @@
 	</table>
 	
 	<table name="certifica2_batch_detail">
-		<column name="suspension_cause_code" property="suspensionCause" type="com.esferalia.aon.payroll.enumeration.SuspensionCause"/>
+		<column name="suspension_cause_code" property="suspensionCause" type="com.esferalia.aon.payroll.enumeration.SuspensionCause" />
+		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
 
 	<table name="cnae" class="com.esferalia.aon.entity.master.CNAE" />
@@ -333,6 +334,10 @@
 	<table name="contract_batch">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
+	
+	<table name="contract_batch_detail">
+		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
+	</table>
 
 	<table name="contract_calendar_event">
 		<column name="type" type="com.esferalia.aon.payroll.enumeration.ContractCalendarEventType"/>
@@ -370,6 +375,10 @@
 	
 	<table name="contrata_batch">
 		<column name="type" type="com.esferalia.aon.payroll.enumeration.ContrataFileType"/>
+		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
+	</table>
+	
+	<table name="contrata_batch_detail">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
 
