@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.26.0
+# Version: 7.26.1
 # Created by: girazu
-# Creation Date: 05/12/2013 11:50
+# Creation Date: 17/12/2013 13:20
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2113,9 +2113,14 @@ CREATE TABLE `certifica2_batch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del certificado de empresa de la remesa',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `enterprise` int(4) NOT NULL COMMENT 'Identificador unico del certificado de empresa de la empresa',
-  `date` date NOT NULL COMMENT 'Fecha de la ultima remesa en la que fue incluido',
-  `status` int(4) default NULL COMMENT 'Estado del certificado correspondiente a la ultima respuesta',
-  `sign` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Estado del certificado correspondiente a la ultima respuesta',
+  `date` datetime default NULL COMMENT 'Fecha de la remesa',
+  `status` int(4) default NULL COMMENT 'Estado de la remesa',
+  `sign` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Huella digital obtenida de la respuesta',
+  `communication_id` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Identificador resultante de la comunicacion',
+  `income_file` mediumblob COMMENT 'Archivo respuesta en binario',
+  `income_file_date` datetime default NULL COMMENT 'Fecha de respuesta',
+  `outcome_file` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `outcome_file_date` datetime default NULL COMMENT 'Fecha de creacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_CERTIFICA2_BATCH_ENTERPRISE` (`enterprise`),
   KEY `IDX_CERTIFICA2_BATCH_DOMAIN` (`domain`),
@@ -2258,6 +2263,7 @@ CREATE TABLE `certifica2_batch_detail` (
   `certifica2_batch` int(4) NOT NULL COMMENT 'Identificador unico del certificado de empresa',
   `contract` int(4) NOT NULL COMMENT 'Identificador unico del contrato de empleado',
   `suspension_cause_code` varchar(2) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo causa suspension',
+  `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado de la linea de la remesa',
   PRIMARY KEY  (`id`),
   KEY `IDX_CERTIFICA2_BATCH_DETAIL_CERTIFICA2_BATCH` (`certifica2_batch`),
   KEY `IDX_CERTIFICA2_BATCH_DETAIL_CONTRACT` (`contract`),
@@ -2686,7 +2692,7 @@ CREATE TABLE `contract_attach` (
   `type` tinyint(2) default NULL COMMENT 'Tipo de Archivo Adjunto',
   `scope` int(4) default NULL COMMENT 'Ambito del Archivo Adjunto',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Archivo Adjunto',
-  `attach_date` date default NULL COMMENT 'Fecha del Archivo Adjunto',
+  `attach_date` datetime default NULL COMMENT 'Fecha del Archivo Adjunto',
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTRACT_ATTACH_CONTRACT` (`contract`),
   KEY `IDX_CONTRACT_ATTACH_SCOPE` (`scope`),
@@ -2703,12 +2709,14 @@ CREATE TABLE `contract_attach` (
 CREATE TABLE `contract_batch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la remesa de contratos',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `date` date NOT NULL COMMENT 'Fecha de la ultima remesa en la que fue incluido',
-  `red_notify_date` date default NULL COMMENT 'Fecha de notificacion al sistema red',
-  `red_notify_id` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Identificador de la notificacion',
-  `red_response_date` date default NULL COMMENT 'Fecha de respuesta del sistema red',
+  `date` datetime default NULL COMMENT 'Fecha de creacion',
+  `outcome_file_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `communication_id` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Identificador resultante de la comunicacion',
+  `income_file_date` datetime default NULL COMMENT 'Fecha de respuesta',
   `red_response_id` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Identificador de la respuesta',
   `status` tinyint(2) NOT NULL default '0' COMMENT 'Indica el estado de la remesa',
+  `outcome_file` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `income_file` mediumblob COMMENT 'Archivo respuesta en binario',
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTRACT_BATCH_DOMAIN` (`domain`),
   CONSTRAINT `FK_CONTRACT_BATCH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -2723,6 +2731,7 @@ CREATE TABLE `contract_batch_detail` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `contract_batch` int(4) NOT NULL COMMENT 'Identificador unico de la remesa de contratos',
   `contract` int(4) NOT NULL COMMENT 'Identificador unico del contrato',
+  `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado de la linea de la remesa',
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTRACT_BATCH_DETAIL_CONTRACT_BATCH` (`contract_batch`),
   KEY `IDX_CONTRACT_BATCH_DETAIL_CONTRACT` (`contract`),
@@ -2854,6 +2863,29 @@ CREATE TABLE `contract_embargo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Embargos';
 
 #
+# Structure for the `contract_info` table : 
+#
+
+CREATE TABLE `contract_info` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `contract` int(4) default NULL COMMENT 'Identificador del Contrato',
+  `name` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Expresion',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
+  `end_date` date default NULL COMMENT 'Fecha de finalizacion',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_CONTRACT_INFO_CONTRACT` (`contract`),
+  KEY `IDX_CONTRACT_INFO_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CONTRACT_INFO_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
+  CONSTRAINT `FK_CONTRACT_INFO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion temporal del Contrato';
+
+#
 # Structure for the `contract_leave` table : 
 #
 
@@ -2938,6 +2970,11 @@ CREATE TABLE `contrata_batch` (
   `date` datetime default NULL COMMENT 'Fecha de la Remesa',
   `status` tinyint(2) NOT NULL default '0' COMMENT 'Indica el estado de la Remesa',
   `type` tinyint(2) default '0' COMMENT 'Tipo de remesa a comunicar al SEPE',
+  `communication_id` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Identificador resultante de la comunicacion',
+  `outcome_file` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `outcome_file_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `income_file` mediumblob COMMENT 'Archivo respuesta en binario',
+  `income_file_date` datetime default NULL COMMENT 'Fecha de respuesta',
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTRATA_BATCH_DOMAIN` (`domain`),
   CONSTRAINT `FK_CONTRATA_BATCH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -2952,6 +2989,7 @@ CREATE TABLE `contrata_batch_detail` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `contrata_batch` int(4) NOT NULL COMMENT 'Identificador de la Remesa',
   `contract` int(4) NOT NULL COMMENT 'Identificador del Contrato',
+  `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado de la linea de la remesa',
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTRATA_BATCH_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_CONTRATA_BATCH_DETAIL_CONTRACT` (`contract`),
@@ -3564,9 +3602,14 @@ CREATE TABLE `evaluation_observation` (
 CREATE TABLE `fan_batch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la remesa',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `date` date NOT NULL COMMENT 'Fecha de la ultima remesa en la que fue incluido',
+  `date` datetime default NULL COMMENT 'Fecha de creacion',
   `status` tinyint(2) NOT NULL default '0' COMMENT 'Indica el estado de la remesa',
   `liquidation_type` tinyint(2) NOT NULL default '0' COMMENT 'Indica el tipo de liquidacion',
+  `communication_id` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Identificador resultante de la comunicacion',
+  `income_file` mediumblob COMMENT 'Archivo respuesta en binario',
+  `income_file_date` datetime default NULL COMMENT 'Fecha de respuesta',
+  `outcome_file` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `outcome_file_date` datetime default NULL COMMENT 'Fecha de creacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_FAN_BATCH_DOMAIN` (`domain`),
   CONSTRAINT `FK_FAN_BATCH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -4931,6 +4974,11 @@ CREATE TABLE `leave_batch` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `date` datetime default NULL COMMENT 'Fecha de la Remesa',
   `status` tinyint(2) NOT NULL default '0' COMMENT 'Indica el estado de la remesa',
+  `communication_id` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Identificador resultante de la comunicacion',
+  `income_file` mediumblob COMMENT 'Archivo respuesta en binario',
+  `income_file_date` datetime default NULL COMMENT 'Fecha de respuesta',
+  `outcome_file` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `outcome_file_date` datetime default NULL COMMENT 'Fecha de creacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_LEAVE_BATCH_DOMAIN` (`domain`),
   CONSTRAINT `FK_LEAVE_BATCH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -7163,7 +7211,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.26.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.26.1');
 
 COMMIT;
 
