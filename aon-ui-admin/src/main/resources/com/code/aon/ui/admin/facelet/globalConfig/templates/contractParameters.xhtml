@@ -8,13 +8,13 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:form id="globalConfigContractClausesForm">
+	<aon:form id="globalConfigContractParametersForm">
 	
 		<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 			<ui:param name="toolbarTitle" value="#{bundle.admin_global_contract_parameters}" />
 			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 		</ui:include>
-	
+	 
 		<aon:div styleClass="aon-scroll-area">	
 	
 			<aon:panel>
@@ -37,7 +37,23 @@
 						<ui:param name="controller" value="#{enterpriseClauses}" />
 					</ui:include>
 				</aon:div>
-			</aon:panel>	
+			</aon:panel>
+			
+<!-- COMING SOON ... -->
+<!-- 
+			<c:if test="#{aonRole.config and (!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable)}">
+				<aon:panel>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.payroll_contractDocument_default_values}" />
+					</f:facet>
+					<aon:div styleClass="aon-scroll-area">
+						<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contractInfo/grid.xhtml" >
+							<ui:param name="controller" value="#{contractCommonValues}" />
+						</ui:include>
+					</aon:div>
+				</aon:panel>	
+			</c:if>
+-->
 	
 		</aon:div>
 	</aon:form>

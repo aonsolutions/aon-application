@@ -53,9 +53,9 @@ public class ContrataProrrogasHandler implements IContrataHandler {
 
 	@Override
 	public void initialize(Contract contract){
-		SEPEUtils utils = new SEPEUtils();
+		SEPEUtils utils = SEPEUtils.getInstance();
 		this.contract = contract;
-		this.contractCode = ContractCode.getContractCodeByValue( utils.getContractDataMap(this.contract).get(ContextVariable.TC2.getName()) );
+		this.contractCode = ContractCode.getContractCodeByValue( utils.getContractDataMap(this.contract, false).get(ContextVariable.TC2.getName()) );
 	}
 	
 	@Override

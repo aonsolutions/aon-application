@@ -33,6 +33,16 @@
 	
 	<aon:column styleClass="aon-editDataTable-dateColumn">
 		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_start_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.startDate}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+	</aon:column>
+	
+	<aon:column styleClass="aon-editDataTable-dateColumn">
+		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_end_date}" />
 		</f:facet>
 		<aon:outputText value="#{to.endDate}" >
@@ -43,18 +53,11 @@
 	
 	<aon:column styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_status}" />
-		</f:facet>
-		<aon:outputText value="#{to.sepeStatus}" />		
-	</aon:column>
-	
-	<aon:column styleClass="aon-editDataTable-textColumn">
-		<f:facet name="header">
 			<aon:outputText value="#{bundle.certifica2Batch_suspension_cause}" />
 		</f:facet>
-	    <aon:outputText rendered="#{!controllerList.checkHandler.rowChecked}" value="&#160;" />
-		<rich:inplaceSelect rendered="#{controllerList.checkHandler.rowChecked}" 
-		 	id="suspensionCause" 
+	    <aon:outputText rendered="#{!controllerList.checkHandler.rowChecked}" value="#{controllerList.rowSuspensionCause}" />
+	    <rich:inplaceSelect rendered="#{controllerList.checkHandler.rowChecked}" 
+		 	id="contract-suspensionCause"
 		 	value="#{controllerList.rowSuspensionCause}"
 		 	listHeight="300px" listWidth="300px"
 		 	viewClass="aon-highlight" 

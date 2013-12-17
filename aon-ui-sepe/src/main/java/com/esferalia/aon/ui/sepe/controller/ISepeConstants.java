@@ -26,6 +26,7 @@ public interface ISepeConstants {
 	String CONTRATA_LIST_CONTROLLER_NAME = "contrataList";
 	
 	String EXTENSION_CONTRATA_CONTROLLER_NAME = "extensionContrata";
+	String TRANSFORM_CONTRATA_CONTROLLER_NAME = "transformContrata";
 	
 	String SEPE_APP_PARAMS_CONTROLLER_NAME = "sepeAppParams";
 
@@ -34,23 +35,50 @@ public interface ISepeConstants {
 	// OTHER
 	// ************************************************************
 	public static final String[] AVAILABLE_CONTRACT_CODE_COMMUNICATION = {
-	 "100", "150",  
-	 "100", "200", 
-	 "401", "402", "410", "501", "502", "510", "540",
-	 "410", "510", 
-	 "420", "520", 
-	 "421", 
-	 "430", "530",
-	};
+		// INDEF. TC
+		"100", "150",
+//		"130",
+		// INDEF. TP
+		"200",
+//		"230", "250",
+		// FIJO DISCONT.
+//		"300", "330", "350",
+		// TEMP. TC
+		"401", "402", "410", "420", "421", "430",
+//		"441", "450", "452"
+		// TEMP. TP
+		"501", "502", "510", "520", "530", "540",
+//		"541", "550", "552" 		
+		// OTROS 
+//		"970", "980", "990"
+		};
 	
 	public static final String[] AVAILABLE_TRANSFORM_CODE_COMMUNICATION = {
-//	"109", 139",
-//	"189", 209",
-//	"239", 289",
-//	"309", 389",
-	};
+		// INDEF. TC
+		"109", "139", "189",
+		// INDEF. TP
+		"209", "239", "289",
+		// FIJO DISCONT.
+		"309", "339", "389",
+		};
 	
-	public static final ContrataFileType[] AVAILABLE_CONTRATA_FILE_TYPES = {ContrataFileType.CONTRACT};
+	public static final ContrataFileType[] AVAILABLE_CONTRATA_FILE_TYPES = {
+		ContrataFileType.CONTRACT, 
+//		ContrataFileType.EXTENSION, 
+//		ContrataFileType.TRANSFORMATION,
+//		ContrataFileType.INDEFINITE_CALL,
+//		ContrataFileType.BASIC_COPY,
+//		ContrataFileType.GROUP_CONTRACT,
+//		ContrataFileType.ADDITIONAL_HOURS,
+//		ContrataFileType.OFFICE_CONTRACT,
+//		ContrataFileType.LEARNING_ANNEX,
+		// CORRECCIONES
+//		ContrataFileType.CORRECTION_CONTRACT,
+//		ContrataFileType.CORRECTION_EXTENSION,
+//		ContrataFileType.CORRECTION_TRANSFORMATION,
+//		ContrataFileType.CORRECTION_INDEFINITE_CALL,
+//		ContrataFileType.CORRECTION_ADDITIONAL_HOURS,
+		};
 	
 
 }

@@ -583,8 +583,6 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		
 		if (data.getVariable() == ContextVariable.CNO) {
 			loadCno(data.getExpression());
-		} else if (data.getVariable() == ContextVariable.TRAINING_CENTER) {
-			loadTrainingCenter(data.getExpression());
 		} else if (data.getVariable() == ContextVariable.TC2) {
 			setContractCode(ContractCode.getContractCodeByValue(data.getExpression()));
 		} else if (data.getVariable() == ContextVariable.CATEGORY) {
@@ -617,8 +615,6 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 		if(!getData().isEnableExpressionEditor()){
 			if(getData().getVariable()==ContextVariable.CNO){
 				getData().setExpression("\""+String.valueOf(getCno().getCode())+"\"");
-			}else if(getData().getVariable()==ContextVariable.TRAINING_CENTER){
-				getData().setExpression("\""+String.valueOf(getTrainingCenter().getId())+"\"");
 			}else if(getData().getVariable()==ContextVariable.TC2){
 				getData().setExpression("\""+getContractCode().getValue()+"\"");
 			}else if(getData().getVariable()==ContextVariable.CATEGORY){
@@ -779,9 +775,6 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 			}else if(getVariable()==ContextVariable.CNO){
 				loadCno(getExpression());
 				setExpressionValue( getCno()==null );
-			}else if(getVariable()==ContextVariable.TRAINING_CENTER){
-				loadTrainingCenter(getExpression());
-				setExpressionValue( getTrainingCenter()==null );
 			}else if(getVariable()==ContextVariable.TC2 && ContractCode.getContractCodeByValue(getExpression())==null ){
 				setExpressionValue(true);
 			}else if(getVariable()==ContextVariable.CATEGORY){
@@ -851,21 +844,7 @@ public abstract class AbstractVariableHandler implements IVariableFilter{
 				} catch (ManagerBeanException e) {
 					// do nothing ...
 				}
-			} else if(getName().equals(ContextVariable.TRAINING_CENTER.getName())){
-				try {
-					TrainingCenter tc = null;
-					IManagerBean bean = BeanManager.getManagerBean(TrainingCenter.class);
-					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_CENTER_ID), Integer.parseInt(handleLookupExpression(getExpression())) );
-					List<ITransferObject> list = bean.getList(criteria);
-					if( !list.isEmpty() ){
-						tc = (TrainingCenter) list.get(0);
-						return tc.getCode() + " - " + tc.getRegistry().getFullName();
-					}
-				} catch (ManagerBeanException e) {
-					// do nothing ...
-				}
-			} 
+			}
 			return getExpression();
 		}
 		

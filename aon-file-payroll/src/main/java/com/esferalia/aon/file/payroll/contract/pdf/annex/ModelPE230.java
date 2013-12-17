@@ -26,6 +26,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentEx
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -168,14 +169,14 @@ public class ModelPE230 extends AbstractAnnexModel {
 	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		this.contract = contract;
 		try {
-			Map<String, String>  map = getContractDataMap(contract);
+			Map<String, String> map = getContractDataMap(contract);
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
 			
 			readPdfFields(reader);
 			
 			super.loadPdfCommonFields(contract);
 			
-			trainingCourse = obtainTrainingCourse(map.get(ContextVariable.TRAINING_COURSE.getName()));
+			trainingCourse = obtainTrainingCourse(map.get(ContractVariable.TRAINING_COURSE.getValue()));
 			
 			if(trainingCourse != null){
 				// HEADER FIELDS
@@ -247,22 +248,22 @@ public class ModelPE230 extends AbstractAnnexModel {
 			
 			// CONTRACT FIELDS
 			try {
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_1).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(0, 1));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_2).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(1, 2));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_3).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(2, 3));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_4).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(3, 4));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_5).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(4, 5));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_6).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(5, 6));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_7).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(6, 7));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_8).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(7, 8));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_9).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(8, 9));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_10).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(9, 10));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_11).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(10, 11));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_12).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(11, 12));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_13).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(12, 13));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_14).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(13, 14));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_15).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(14, 15));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_16).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()).substring(15, 16));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_1).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(0, 1));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_2).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(1, 2));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_3).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(2, 3));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_4).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(3, 4));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_5).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(4, 5));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_6).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(5, 6));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_7).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(6, 7));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_8).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(7, 8));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_9).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(8, 9));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_10).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(9, 10));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_11).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(10, 11));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_12).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(11, 12));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_13).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(12, 13));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_14).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(13, 14));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_15).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(14, 15));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_16).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(15, 16));
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
@@ -388,7 +389,7 @@ public class ModelPE230 extends AbstractAnnexModel {
 				} else if(trainingCourse.getModality()==TrainingModality.MIX){
 					getPdfFieldsMap().get(PE230_TRAINING_COURSE_MIXED).setValue("true");
 				}
-				ContractData trainingCourseData = obtainContractData(contract, ContextVariable.TRAINING_COURSE.getName());
+				ContractData trainingCourseData = obtainContractData(contract, ContractVariable.TRAINING_COURSE.getValue());
 				if(trainingCourseData.getStartDate()!=null){
 					getPdfFieldsMap().get(PE230_TRAINING_COURSE_START_DATE).setValue(formatter.format(trainingCourseData.getStartDate()));
 				}
@@ -396,7 +397,7 @@ public class ModelPE230 extends AbstractAnnexModel {
 					getPdfFieldsMap().get(PE230_TRAINING_COURSE_END_DATE).setValue(formatter.format(trainingCourseData.getEndDate()));
 				}
 			}
-			getPdfFieldsMap().get(PE230_TRAINING_COURSE_SCHEDULE).setValue(map.get(ContextVariable.TRAINING_SCHEDULE.getName()));
+			getPdfFieldsMap().get(PE230_TRAINING_COURSE_SCHEDULE).setValue(map.get(ContractVariable.TRAINING_SCHEDULE.getValue()));
 			if(contrataParams!=null){
 				
 				Integer durationInMonths = getMonthsBetweenDates(contract.getStartDate(), contract.getEndDate());

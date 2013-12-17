@@ -18,6 +18,7 @@ import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -95,7 +96,7 @@ public class Extension extends AbstractContractExtension {
 			getPdfFieldsMap().get(PE191_SEPE_TOWN).setValue(contract.getWorkPlace().getAddress().getCity());
 			getPdfFieldsMap().get(PE191_CONTRACT_REGULATION_DATE).setValue(null);
 			
-			getPdfFieldsMap().get(PE191_CONTRACT_SEPE_ID).setValue(map.get(ContextVariable.SEPE_CONTRACT_ID.getName()));
+			getPdfFieldsMap().get(PE191_CONTRACT_SEPE_ID).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()));
 			
 //			Integer totalDurationInMonths = contractDurationInMonths + extensionDurationInMonths;
 //			getPdfFieldsMap().get(PE191_TOTAL_DURATION1).setValue(totalDurationInMonths!=null?totalDurationInMonths.toString():null);

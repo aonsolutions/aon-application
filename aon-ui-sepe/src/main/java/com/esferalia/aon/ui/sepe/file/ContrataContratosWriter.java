@@ -114,7 +114,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 	
 	public IContratoType createFile(IContratoType contratoType, ContrataContratoParams params) throws ManagerBeanException{
 		writeContratosMainData(contratoType, params);
-		String code = getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
+		String code = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
 		if (code.equals(ContractCode.C100.getValue())) {
 			return createContract100(contratoType, params);
 		} else if (code.equals(ContractCode.C130.getValue())) {
@@ -881,7 +881,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 	 * @throws ManagerBeanException
 	 */
 	private DATOSGENERALESCONTRATOTYPE createDatosGeneralesContrato(ContrataContratoParams params) throws ManagerBeanException {
-		String tc2 = getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
+		String tc2 = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
 		DATOSGENERALESCONTRATOTYPE datos = factory.createDATOSGENERALESCONTRATOTYPE();
 		datos.setFECHAINICIO(getFormatedDate(getContract().getStartDate()));
 		if( getContract().getEndDate()==null 
@@ -914,7 +914,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		if(params.isDisabilityData()){
 			datos.setINDDISCAPACIDAD(params.getIndDiscapacidad()!=null?params.getIndDiscapacidad().getCode():null);
 		}
-		String cno = getContractDataMap(getContract()).get(ContextVariable.CNO.getName());
+		String cno = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.CNO.getName());
 		if(StringUtils.isEmpty(cno)){
 //			AonUtil.addErrorMessage("El trabajador no tiene definido el código de ocupacion (CNO).");
 		} else {
@@ -932,7 +932,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 			datos.setOTRASLEGISLACIONES(params.getOtrasLegislaciones()!=null?params.getOtrasLegislaciones().getCode():null);
 		}
 		if(tc2.equals("430") || (tc2.equals("530") && !datos.getINDDISCAPACIDAD().equals("C") ) ){
-			String subsidized = getContractDataMap(getContract()).get(ContextVariable.SUBSIDIZED.getName());
+			String subsidized = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.SUBSIDIZED.getName());
 			datos.setTEMPORALMINUSVBONIFICADO(Boolean.parseBoolean(subsidized)?"S":"N");
 		}
 		
@@ -943,7 +943,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		if(tc2.equals("421") 
 				&& getContract().getStartDate().after(formationStart.getTime()) 
 				&& getContract().getStartDate().before(formationEnd.getTime())){
-			String subsidized = getContractDataMap(getContract()).get(ContextVariable.SUBSIDIZED.getName());
+			String subsidized = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.SUBSIDIZED.getName());
 			datos.setFORMACIONBONIFICADO(Boolean.parseBoolean(subsidized)?"S":"N");
 		}
 		if(params.isCanpaignData()){
@@ -1419,7 +1419,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 	 */
 	private DATOSCONTRATOTIEMPOPARCIALTYPE createDatosContratoTiempoParcial(ContrataContratoParams params) {
 		// TODO
-		String tc2 = getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
+		String tc2 = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
 		DATOSCONTRATOTIEMPOPARCIALTYPE datos = factory.createDATOSCONTRATOTIEMPOPARCIALTYPE();
 		datos.setACTIVIDADSINFECHACIERTA(params.getActividadSinFechaCierta());
 		datos.setCOLECTIVOEDAD(params.getColectivoEdad()!=null?params.getColectivoEdad().getCode():null);
@@ -1556,7 +1556,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 					datos.setCODIGOCOLECTIVOBONIF(params.getColectivoBonificacion().getCode());
 				}
 			}
-			String tc2 = getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
+			String tc2 = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
 			if( tc2.equals("150") || tc2.equals("250") || tc2.equals("350") ){
 				if(params.getIndEmpleadAutonomo()!=null){
 					datos.setINDICEMPLEADAUTONOMO(params.getIndEmpleadAutonomo()?"1":"2");
@@ -2016,18 +2016,18 @@ public class ContrataContratosWriter implements IContrataWriter{
 	 * ***************************************
 	 * ***************************************
 	 */
-	private Map<String, String> contractDataMap;
-	
-	protected Map<String, String> getContractDataMap(Contract contract) {
-		if(contractDataMap==null){
-			SEPEUtils utils = new SEPEUtils();
-			contractDataMap = utils.getContractDataMap(contract);
-		}
-		return contractDataMap;
-	}
-	protected Map<String, String> getContractDataMap() {
-		return contractDataMap;
-	}
+//	private Map<String, String> contractDataMap;
+//	
+//	protected Map<String, String> getContractDataMap(Contract contract) {
+//		if(contractDataMap==null){
+//			SEPEUtils utils = new SEPEUtils();
+//			contractDataMap = utils.getContractDataMap(contract);
+//		}
+//		return contractDataMap;
+//	}
+//	protected Map<String, String> getContractDataMap() {
+//		return contractDataMap;
+//	}
 	
 	private String getFormatedDate(Date date){
 		String pattern = "yyyyMMdd";

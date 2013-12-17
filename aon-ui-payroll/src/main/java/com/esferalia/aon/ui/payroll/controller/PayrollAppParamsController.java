@@ -23,26 +23,16 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 
 public class PayrollAppParamsController{
 
-	public final static String SETTLE_VACATION_CONCEPT = "PAY_settle_vacation_concept_PAY";
-	public final static String SETTLE_NOTICE_DAY_CONCEPT = "PAY_settle_noticeDay_concept_PAY";
-	public final static String SETTLE_COMPENSATION_CONCEPT = "PAY_settle_compens_concept_PAY";
-	
 	public final static String DEFAULT_CONTRACT_CODE = "PAY_default_contractCode_PAY";
 	public final static String DEFAULT_TRAINING_CENTER = "PAY_default_trainingCenter_PAY";
 
 	public final static String AVAILABLE_NEW_CONTRACT_CODES = "PAY_available_contract_codes_PAY";
 
-	
-	private PaymentConcept settleVacationConcept;
-	private PaymentConcept settleNoticeDayConcept;
-	private PaymentConcept settleCompensationConcept;
-	
 	private TrainingCenter defaultTrainingCenter;
 	
 	private List<ContractCode> availableNewContracts;
@@ -101,84 +91,6 @@ public class PayrollAppParamsController{
 
 	public void setSkipPayrollData(boolean skipPayrollData) {
 		this.skipPayrollData = skipPayrollData;
-	}
-	
-	public PaymentConcept getSettleVacationConcept() {
-		if(settleVacationConcept==null){
-			initSettleVacationConcept();
-		}
-		return settleVacationConcept;
-	}
-	
-	public void setSettleVacationConcept(PaymentConcept settleVacationConcept) {
-		this.settleVacationConcept = settleVacationConcept;
-	}
-
-	private void initSettleVacationConcept() {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
-			if(getParameter(SETTLE_VACATION_CONCEPT).getValue()!=null){
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(getParameter(SETTLE_VACATION_CONCEPT).getValue()));
-				setSettleVacationConcept((PaymentConcept) bean.getList(criteria).get(0));
-			} else {
-				setSettleVacationConcept((PaymentConcept) bean.createNewTo());
-			}
-		} catch (ManagerBeanException e) {
-			// NADA
-		}
-	}
-	
-	public PaymentConcept getSettleNoticeDayConcept() {
-		if(settleNoticeDayConcept==null){
-			initSettleNoticeDayConcept();
-		}
-		return settleNoticeDayConcept;
-	}
-	
-	public void setSettleNoticeDayConcept(PaymentConcept settleNoticeDayConcept) {
-		this.settleNoticeDayConcept = settleNoticeDayConcept;
-	}
-	
-	private void initSettleNoticeDayConcept() {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
-			if(getParameter(SETTLE_NOTICE_DAY_CONCEPT).getValue()!=null){
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(getParameter(SETTLE_NOTICE_DAY_CONCEPT).getValue()));
-				setSettleNoticeDayConcept((PaymentConcept) bean.getList(criteria).get(0));
-			} else {
-				setSettleNoticeDayConcept((PaymentConcept) bean.createNewTo());
-			}
-		} catch (ManagerBeanException e) {
-			// NADA
-		}
-	}
-	
-	public PaymentConcept getSettleCompensationConcept() {
-		if(settleCompensationConcept==null){
-			initSettleCompensationConcept();
-		}
-		return settleCompensationConcept;
-	}
-	
-	public void setSettleCompensationConcept(PaymentConcept settleCompensationConcept) {
-		this.settleCompensationConcept = settleCompensationConcept;
-	}
-	
-	private void initSettleCompensationConcept() {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
-			if(getParameter(SETTLE_COMPENSATION_CONCEPT).getValue()!=null){
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(getParameter(SETTLE_COMPENSATION_CONCEPT).getValue()));
-				setSettleCompensationConcept((PaymentConcept) bean.getList(criteria).get(0));
-			} else {
-				setSettleCompensationConcept((PaymentConcept) bean.createNewTo());
-			}
-		} catch (ManagerBeanException e) {
-			// NADA
-		}
 	}
 
 	public TrainingCenter getDefaultTrainingCenter() {
@@ -257,10 +169,6 @@ public class PayrollAppParamsController{
 	}
 
 	public void loadParameters() throws ManagerBeanException{
-		setSettleVacationConcept(null);
-		setSettleNoticeDayConcept(null);
-		setSettleCompensationConcept(null);
-
 		setDefaultTrainingCenter(null);
 		
 		parameters = new TreeMap<String, ApplicationParameter>();
@@ -291,17 +199,6 @@ public class PayrollAppParamsController{
 	}
 	
 	private void beforeBeanUpdate() throws ManagerBeanException {
-		// SETTLE PARAMS
-		if(getSettleVacationConcept()!=null && getSettleVacationConcept().getCode()!=null){
-			getParameter(SETTLE_VACATION_CONCEPT).setValue(getSettleVacationConcept().getId().toString());
-		}
-		if(getSettleNoticeDayConcept()!=null && getSettleNoticeDayConcept().getCode()!=null){
-			getParameter(SETTLE_NOTICE_DAY_CONCEPT).setValue(getSettleNoticeDayConcept().getId().toString());
-		}
-		if(getSettleCompensationConcept()!=null && getSettleCompensationConcept().getCode()!=null){
-			getParameter(SETTLE_COMPENSATION_CONCEPT).setValue(getSettleCompensationConcept().getId().toString());
-		}
-
 		// SALARY PRINT PARAMS
 		if( StringUtils.isNotBlank(getParameter(ICompanyConstants.REPORT_SALARY_PARAM).getValue()) ){
 			getParameter(ICompanyConstants.REPORT_SALARY_DRAFT_PARAM).setValue(getDraftTemplateName());

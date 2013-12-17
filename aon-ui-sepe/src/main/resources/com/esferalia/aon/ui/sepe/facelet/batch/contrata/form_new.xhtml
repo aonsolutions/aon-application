@@ -12,44 +12,44 @@
 	<ui:define name="content"> 
 		<aon:form id="batchForm">
 
-			<aon:methodParam name="saveActionListener" value="#{certifica2Batch.newBatchWizard.accept}" type="actionListener" />
+			<aon:methodParam name="saveActionListener" value="#{contrataBatch.newBatchWizard.accept}" type="actionListener" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{bundle.sepe_certifica2Batch_module}" />
+				<ui:param name="toolbarTitle" value="#{bundle.sepe_contrataBatch_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
-				<ui:param name="controller" value="#{certifica2Batch}" />
+				<ui:param name="controller" value="#{contrataBatch}" />
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 			
 				<aon:panelTabSet id="batchPanelTabSet" rendered="#{!controller.new}">
-					<c:if test="#{certifica2Batch.newBatchWizard.selectedModel.rowCount > 0}" >
+					<c:if test="#{contrataBatch.newBatchWizard.selectedModel.rowCount > 0}" >
 						<aon:panelTab id="batchedTab" label="#{bundle.finance_checked}">
 							<aon:div id="detailDataDiv">
 								<aon:div id="detailToolBarDiv" styleClass="aon-toolbar" >
 									<aon:commandButton title="#{bundle.aon_check_all}"
 										styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 										value="#{bundle.aon_check_all}"
-										actionListener="#{certifica2Batch.newBatchWizard.checkAll}" reRender="detailDataDiv"
+										actionListener="#{contrataBatch.newBatchWizard.checkAll}" reRender="detailDataDiv"
 										onclick="Richfaces.showModalPanel('waitProccess')" 
 							     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 									<aon:commandButton title="#{bundle.aon_uncheck_all}"
 										styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 										value="#{bundle.aon_uncheck_all}"
-										actionListener="#{certifica2Batch.newBatchWizard.checkNone}" reRender="detailDataDiv"
+										actionListener="#{contrataBatch.newBatchWizard.checkNone}" reRender="detailDataDiv"
 										onclick="Richfaces.showModalPanel('waitProccess')" 
 							     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 									<aon:commandButton title="#{bundle.payroll_remove_batch}"
 										styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
 										value="#{bundle.payroll_remove_batch}"
-										rendered="#{certifica2Batch.newBatchWizard.checkedCount > 0}"
-										actionListener="#{certifica2Batch.newBatchWizard.onRemoveSelected}" reRender="batchForm, batchPanelTabSet"
+										rendered="#{contrataBatch.newBatchWizard.checkedCount > 0}"
+										actionListener="#{contrataBatch.newBatchWizard.onRemoveSelected}" reRender="batchForm, batchPanelTabSet"
 										onclick="Richfaces.showModalPanel('waitProccess')" 
 							     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 								</aon:div>
 							
-								<aon:dataTable id="batchDetailData" value="#{certifica2Batch.newBatchWizard.selectedModel}"
-									var="to" rows="20" rendered="#{certifica2Batch.newBatchWizard.selectedModel.rowCount > 0}" >
+								<aon:dataTable id="batchDetailData" value="#{contrataBatch.newBatchWizard.selectedModel}"
+									var="to" rows="20" rendered="#{contrataBatch.newBatchWizard.selectedModel.rowCount > 0}" >
 									
 									<aon:rowSelector id="batchDetail-select" toggleOnClick="#{false}"/>
 									
@@ -60,13 +60,13 @@
 											<aon:outputText value="&#160;" />
 										</f:facet>
 										<aon:selectBooleanCheckbox id="Included_Row_checked"
-											value="#{certifica2Batch.newBatchWizard.rowChecked}"
-											valueChangeListener="#{certifica2Batch.newBatchWizard.rowSelected}" >
+											value="#{contrataBatch.newBatchWizard.rowChecked}"
+											valueChangeListener="#{contrataBatch.newBatchWizard.rowSelected}" >
 											<a4j:support event="onclick" reRender="detailDataDiv, #{checkReRender}" />
 										</aon:selectBooleanCheckbox>
 									</aon:column>
 									
-									<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/contractColumns.xhtml" />
+									<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/contrata/contractColumns.xhtml" />
 									
 								</aon:dataTable>
 								<aon:dataScroller2 for="batchDetailData" showNote="true" />
@@ -75,10 +75,8 @@
 						</aon:panelTab>
 					</c:if>
 					<aon:panelTab id="noBatchedTab" label="#{bundle.aon_pending}">
-						<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/certifica2/formNoBatched.xhtml" >
-							<ui:param name="controller" value="#{certifica2Batch.newBatchWizard}" />
-							<ui:param name="enterpriseLookupDisabled" value="#{certifica2Batch.newBatchWizard.selectedModel.rowCount > 0}" />
-							<ui:param name="rowCheckDisabled" value="#{certifica2Batch.newBatchWizard.rowDisabled}" />
+						<ui:include src="/com/esferalia/aon/ui/sepe/facelet/batch/contrata/formNoBatched.xhtml" >
+							<ui:param name="controller" value="#{contrataBatch.newBatchWizard}" />
 						</ui:include>
 					</aon:panelTab>
 				</aon:panelTabSet>

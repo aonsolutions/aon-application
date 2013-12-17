@@ -80,7 +80,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	}
 	
 	public ITransformacionType createFile(ITransformacionType transformacionType, ContrataContratoParams params) throws ManagerBeanException{
-		String code = getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
+		String code = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
 		if (code.equals(ContractCode.C109.getValue())) {
 			return createTransformacion109(transformacionType, params);
 		} else if (code.equals(ContractCode.C139.getValue())) {
@@ -495,7 +495,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 			// TODO obtain previous contract endDate
 			datos.setFECHATERMINOREAL(null);
 		}
-		String cno = getContractDataMap(getContract()).get(ContextVariable.CNO.getName());
+		String cno = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.CNO.getName());
 		if(StringUtils.isEmpty(cno)){
 			AonUtil.addErrorMessage("El trabajador no tiene definido el código de ocupacion (CNO).");
 		} else {
@@ -765,18 +765,18 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * ***************************************
 	 * ***************************************
 	 */
-	private Map<String, String> contractDataMap;
-	
-	protected Map<String, String> getContractDataMap(Contract contract) {
-		if(contractDataMap==null){
-			SEPEUtils utils = new SEPEUtils();
-			contractDataMap = utils.getContractDataMap(contract);
-		}
-		return contractDataMap;
-	}
-	protected Map<String, String> getContractDataMap() {
-		return contractDataMap;
-	}
+//	private Map<String, String> contractDataMap;
+//	
+//	protected Map<String, String> getContractDataMap(Contract contract) {
+//		if(contractDataMap==null){
+//			SEPEUtils utils = new SEPEUtils();
+//			contractDataMap = utils.getContractDataMap(contract);
+//		}
+//		return contractDataMap;
+//	}
+//	protected Map<String, String> getContractDataMap() {
+//		return contractDataMap;
+//	}
 	
 	private String getEnterpriseCCC(Enterprise enterprise) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);

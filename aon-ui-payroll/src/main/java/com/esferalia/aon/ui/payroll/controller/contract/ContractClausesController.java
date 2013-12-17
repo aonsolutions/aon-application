@@ -29,7 +29,8 @@ import com.esferalia.aon.file.payroll.contract.pdf.clauses.Clauses;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.ContractInfo;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
@@ -40,15 +41,24 @@ public class ContractClausesController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractClausesController.class.getName());
 
-	private ContractData enterpriseClausesData;
+	private ContractInfo enterpriseClausesInfo;
 	
 	private boolean useEnterpriseClauses;
 	
-	private RegistryAttachment selectedClause;
+	private RegistryAttachment selectedEnterpriseClause;
 
-	private String additionalClauses;
+	private String customClauses;
 
+	private boolean showContractClausesWindow;
 	
+	public boolean isShowContractClausesWindow() {
+		return showContractClausesWindow;
+	}
+
+	public void setShowContractClausesWindow(boolean showContractClausesWindow) {
+		this.showContractClausesWindow = showContractClausesWindow;
+	}
+
 	public boolean isUseEnterpriseClauses() {
 		return useEnterpriseClauses;
 	}
@@ -57,22 +67,22 @@ public class ContractClausesController {
 		this.useEnterpriseClauses = useEnterpriseClauses;
 	}
 
-	public RegistryAttachment getSelectedClause() {
-		return selectedClause;
+	public RegistryAttachment getSelectedEnterpriseClause() {
+		return selectedEnterpriseClause;
 	}
 
-	public void setSelectedClause(RegistryAttachment selectedClause) {
-		this.selectedClause = selectedClause;
+	public void setSelectedEnterpriseClause(RegistryAttachment selectedEnterpriseClause) {
+		this.selectedEnterpriseClause = selectedEnterpriseClause;
+	}
+	
+	public String getCustomClauses() {
+		return customClauses;
 	}
 
-	public String getAdditionalClauses() {
-		return additionalClauses;
+	public void setCustomClauses(String customClauses) {
+		this.customClauses = customClauses;
 	}
-	
-	public void setAdditionalClauses(String additionalClauses) {
-		this.additionalClauses = additionalClauses;
-	}
-	
+
 	public boolean isExistEnterpriseClauses() throws ManagerBeanException{
 		return obtainEnterpriseClausesCount()>0;
 	}
@@ -96,11 +106,12 @@ public class ContractClausesController {
 	}
 	
 	public IAttachment getContractClauses(){
-//		initialize();
 		try{
-			if( isUseEnterpriseClauses() ){
-				return (IAttachment) obtainEnterpriseClausesList(Integer.parseInt(enterpriseClausesData.getExpression())).get(0);
-			} else if( StringUtils.isNotBlank(getAdditionalClauses()) ){
+			if( isExistEnterpriseClauses() && enterpriseClausesInfo!=null && StringUtils.isNumeric(enterpriseClausesInfo.getExpression()) ){
+				if(enterpriseClausesInfo!=null && !StringUtils.equalsIgnoreCase(enterpriseClausesInfo.getExpression(), Boolean.FALSE.toString())){
+					return (IAttachment) obtainEnterpriseClausesList(Integer.parseInt(enterpriseClausesInfo.getExpression())).get(0);
+				}
+			} else if( StringUtils.isNotBlank(getCustomClauses()) ){
 				IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getContract().getId());
@@ -120,24 +131,24 @@ public class ContractClausesController {
 	
 	private void reset() {
 		setUseEnterpriseClauses(false);
-		setSelectedClause(null);
-		setAdditionalClauses(null);
+		setSelectedEnterpriseClause(null);
+		setCustomClauses(null);
 	}
 	
-	private void initialize() {
+	public void initialize() {
 		reset();
 		try {
-			enterpriseClausesData = obtainClausesContractData();
-			loadContractClauses();
+			enterpriseClausesInfo = obtainClausesContractInfo();
+			loadContractCustomClauses();
 			
-			if( StringUtils.isBlank(getAdditionalClauses()) && (enterpriseClausesData==null || StringUtils.isBlank(enterpriseClausesData.getExpression())) ){
+			if( StringUtils.isBlank(getCustomClauses()) && (enterpriseClausesInfo==null || StringUtils.isBlank(enterpriseClausesInfo.getExpression())) ){
 				setUseEnterpriseClauses(false);
-			} else if( isExistEnterpriseClauses() && enterpriseClausesData!=null && StringUtils.isNumeric(enterpriseClausesData.getExpression()) ){
+			} else if( isExistEnterpriseClauses() && enterpriseClausesInfo!=null && StringUtils.isNumeric(enterpriseClausesInfo.getExpression()) ){
 				setUseEnterpriseClauses(true);
-				setSelectedClause((RegistryAttachment) obtainEnterpriseClausesList(Integer.parseInt(enterpriseClausesData.getExpression())).get(0));
+				setSelectedEnterpriseClause((RegistryAttachment) obtainEnterpriseClausesList(Integer.parseInt(enterpriseClausesInfo.getExpression())).get(0));
 			} else {
 				setUseEnterpriseClauses(false);
-				setSelectedClause(null);
+				setSelectedEnterpriseClause(null);
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -146,22 +157,22 @@ public class ContractClausesController {
 		}
 	}
 	
-	private ContractData obtainClausesContractData() throws ManagerBeanException {
-		SEPEUtils utils = new SEPEUtils();
-		ContractData data = utils.getContractDataMap(getContract(), getContract().getStartDate(), null).get(ContextVariable.ENTERPRISE_CLAUSES.getName());
-		if( data!=null && data.getId()!=null ){
-			return data;
+	private ContractInfo obtainClausesContractInfo() throws ManagerBeanException {
+		SEPEUtils utils = SEPEUtils.getInstance();
+		ContractInfo info = utils.getContractInfoMap(getContract(), getContract().getStartDate(), null).get(ContractVariable.ENTERPRISE_CLAUSES.getValue());
+		if( info!=null && info.getId()!=null ){
+			return info;
 		}
 		return null;
 	}
 	
-	private void loadContractClauses() throws ManagerBeanException {
+	private void loadContractCustomClauses() throws ManagerBeanException {
 		try {
 			ContractPdfController pdfDocument = (ContractPdfController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_PDF_CONTROLLER_NAME);
 			pdfDocument.setDocumentType(ContractAttachmentType.CONTRACT_CLAUSES);
 			pdfDocument.loadDocument(false);
 			if(!pdfDocument.isNew()){
-				setAdditionalClauses(pdfDocument.getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(Clauses.CLAUSES_CONTENT).getValue());
+				setCustomClauses(pdfDocument.getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(Clauses.CLAUSES_CONTENT).getValue());
 			}
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -203,17 +214,27 @@ public class ContractClausesController {
 		initialize();
 	}
 	
+	public void accept(ActionEvent event) {
+		accept();
+		initialize();
+		ContractController contract = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
+		contract.setSelectedTab(ContractController.ADDITIONAL_CLAUSES_TAB_NAME);
+	}
+	
 	public void accept() {
 		try {
 			if( isUseEnterpriseClauses() ){
-				if(getSelectedClause()==null){
+				if(getSelectedEnterpriseClause()==null){
+					AonUtil.addErrorMessage("Seleccione de la lista las clausulas adicionales del contrato");
 					throw new AbortProcessingException("Seleccione de la lista las clausulas adicionales del contrato");
 				}
-				saveContractDataEnterpriseClauses(getSelectedClause().getId().toString());
+				saveContractInfoEnterpriseClauses(getSelectedEnterpriseClause().getId().toString());
 			} else {
-				saveContractDataEnterpriseClauses(Boolean.FALSE.toString());
-				if( StringUtils.isNotBlank(getAdditionalClauses()) ){
+				saveContractInfoEnterpriseClauses(Boolean.FALSE.toString());
+				if( StringUtils.isNotBlank(getCustomClauses()) ){
 					generateAdditionalClauseDocument();
+				} else {
+					removeContractCustomClauses();
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -229,7 +250,7 @@ public class ContractClausesController {
 			pdfDocument.setDocumentType(ContractAttachmentType.CONTRACT_CLAUSES);
 			pdfDocument.loadDocument(false);
 			pdfDocument.getContractPdfWriter().buildPdf(false);
-			pdfDocument.getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(Clauses.CLAUSES_CONTENT).setValue(getAdditionalClauses());
+			pdfDocument.getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(Clauses.CLAUSES_CONTENT).setValue(getCustomClauses());
 			pdfDocument.saveDocument();
 		} catch (Exception e){
 			LOGGER.error(e.getMessage(), e);
@@ -238,21 +259,38 @@ public class ContractClausesController {
 		}
 	}
 	
-	public void saveContractDataEnterpriseClauses(String value) throws ManagerBeanException {
-		if(enterpriseClausesData==null){
-			enterpriseClausesData = new ContractData();
-			enterpriseClausesData.setContract(getContract());
-			enterpriseClausesData.setName(ContextVariable.ENTERPRISE_CLAUSES.getName());
-			enterpriseClausesData.setStartDate(new Date());
-			enterpriseClausesData.setEndDate(null);
+	public void saveContractInfoEnterpriseClauses(String value) throws ManagerBeanException {
+		if(enterpriseClausesInfo==null){
+			enterpriseClausesInfo = new ContractInfo();
+			enterpriseClausesInfo.setContract(getContract());
+			enterpriseClausesInfo.setName(ContractVariable.ENTERPRISE_CLAUSES.getValue());
+			enterpriseClausesInfo.setStartDate(new Date());
+			enterpriseClausesInfo.setEndDate(null);
 		}
-		enterpriseClausesData.setExpression(value);
-		BeanManager.getManagerBean(ContractData.class).insertOrUpdate(enterpriseClausesData);
+		enterpriseClausesInfo.setExpression(value);
+		BeanManager.getManagerBean(ContractInfo.class).insertOrUpdate(enterpriseClausesInfo);
 	}
 	
 	public void removeContractEnterpriseClauses() throws ManagerBeanException {
-		if(enterpriseClausesData!=null && enterpriseClausesData.getId()!=null){
-			BeanManager.getManagerBean(ContractData.class).remove(enterpriseClausesData);
+		if(enterpriseClausesInfo!=null && enterpriseClausesInfo.getId()!=null){
+			BeanManager.getManagerBean(ContractData.class).remove(enterpriseClausesInfo);
+		}
+	}
+
+	public void removeContractCustomClauses() throws ManagerBeanException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), getContract().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.CONTRACT_CLAUSES);
+			List<ITransferObject> list = bean.getList(criteria);
+			ContractAttachment attach = null;
+			if(!list.isEmpty()){
+				attach = (ContractAttachment) list.get(0);
+				BeanManager.getManagerBean(ContractAttachment.class).remove(attach.getId());
+			}
+		} catch (Exception e) {
+			AonUtil.addErrorMessage("No se han podido borrar las clausulas personalizadas.");
 		}
 	}
 

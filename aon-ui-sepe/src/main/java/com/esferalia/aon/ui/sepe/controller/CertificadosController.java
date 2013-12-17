@@ -217,12 +217,12 @@ public class CertificadosController implements ISepeHandler{
 		setContract(null);
 		setBatch(null);
 		newBatch = false;
-		setSuspensionCause(null);
-		setShowLoginWindow(false);
-		setCommunicator(null);
-		setGeneratedFile(null);
-		setCommunicationIdFile(null);
-		setResponseFile(null);
+		suspensionCause = null;
+		showLoginWindow = false;
+		communicator = null;
+		generatedFile = null;
+		communicationIdFile = null;
+		responseFile = null;
 	}
 	
 	
@@ -299,7 +299,7 @@ public class CertificadosController implements ISepeHandler{
 			Certifica2BatchDetail detail = new Certifica2BatchDetail();
 			detail.setCertifica2Batch(batch);
 			detail.setContract(getContract());
-			detail.setSuspensionCause(getSuspensionCause());
+//			detail.setSuspensionCause(getSuspensionCause());
 			bean.insert(detail);
 		} catch (ManagerBeanException e) {
 			String msg = "No se ha podido incluir el contrato en la remesa";
@@ -346,7 +346,7 @@ public class CertificadosController implements ISepeHandler{
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), getBatch().getId());
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), type);
-				SEPEUtils utils = new SEPEUtils();
+				SEPEUtils utils = SEPEUtils.getInstance();
 				utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_DOMAIN));
 				List<ITransferObject> list = bean.getList(criteria);
 				if(!list.isEmpty()){
@@ -369,7 +369,7 @@ public class CertificadosController implements ISepeHandler{
 		batch.setEnterprise(contract.getWorkPlace().getEnterprise());
 		Certifica2BatchDetail detail = new Certifica2BatchDetail();
 		detail.setContract(contract);
-		detail.setSuspensionCause(getSuspensionCause());
+//		detail.setSuspensionCause(getSuspensionCause());
 		list.add(detail);
 		try {
 			File file = writer.createFile(batch, list);

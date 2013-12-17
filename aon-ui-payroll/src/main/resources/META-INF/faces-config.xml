@@ -1325,18 +1325,6 @@
 					<value>[NULL]</value>
 				</map-entry>
 				<map-entry>
-					<key>PAY_settle_vacation_concept_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
-					<key>PAY_settle_noticeDay_concept_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
-					<key>PAY_settle_compens_concept_PAY</key>
-					<value>[NULL]</value>
-				</map-entry>
-				<map-entry>
 					<key>PAY_default_contractCode_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
@@ -1613,6 +1601,55 @@
 		<managed-bean-name>contractLoader</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.ContractLoaderController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- **** CONTRACT INFO **** -->
+	<managed-bean>
+		<managed-bean-name>contractCommonValues</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.ContractInfoController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>commonInfo</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.ContractInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ContractInfo_name</value>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>contractDocumentInfo</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.ContractInfoController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.ContractInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractDocumentInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ContractInfo_name</value>
+		</managed-property>
 	</managed-bean>
 	
 	<!--

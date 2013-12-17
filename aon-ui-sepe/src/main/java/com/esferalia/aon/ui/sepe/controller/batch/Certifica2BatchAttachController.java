@@ -23,7 +23,6 @@ public class Certifica2BatchAttachController extends SEPEBatchAttachController {
 			Certifica2BatchController batchController = (Certifica2BatchController) FormUtil.getController(ISepeConstants.CERTIFICA2_BATCH_CONTROLLER_NAME);
 			batchController.changeBatchStatus(FileStatus.PENDING);
 			batchController.setRecorded(false);
-			batchController.setRecorded(false);
 		}
 		super.onRemove(event);
 	}

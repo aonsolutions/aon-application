@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showTransformContrataWindow">
+		<c:if test="#{transformContrata.showTransformContrataWindow}">
+			<rich:modalPanel id="transformContrataModalPanel" minHeight="550"
+				minWidth="850" showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="Transformación " />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showTransformContrataWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{transformContrata.showTransformContrataWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="transformContrataModalForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<aon:div styleClass="aon-toolbar">
+										<aon:commandButton id="transformContrataSave"
+											value="#{bundle.aon_accept}"
+											reRender="showTransformContrataWindow"
+											actionListener="#{transformContrata.onContrataAccept}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept">
+											<f:setPropertyActionListener
+												target="#{transformContrata.showTransformContrataWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+										<aon:commandButton id="transformContrataCancel"
+											value="#{bundle.aon_cancel}" immediate="true"
+											reRender="showTransformContrataWindow"
+											styleClass="aon-finding-toolbar-item aon-icon-cancel">
+											<f:setPropertyActionListener
+												target="#{transformContrata.showTransformContrataWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+									</aon:div>
+									
+									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									
+										<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/form_content.xhtml" />
+										
+									<!--  
+										<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" >
+											<ui:param name="controller" value="#{transformContrata}" />
+											<ui:param name="isContractTransform" value="#{true}" />
+										</ui:include>
+									-->
+
+									</aon:div>
+									
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+				
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+</ui:composition>

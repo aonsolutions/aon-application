@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
 	xmlns:aon="http://www.code.es/aon-rich-components" >
 	
@@ -19,9 +20,9 @@
 			</ui:include>
 			
 			<aon:outputLabel for="contract-retaQuote" 
-				value="Cotización R.E.T.A." />
+				value="#{bundle.payroll_contract_reta_quote}" />
 			<aon:selectBooleanCheckbox id="contract-retaQuote"
-				value="#{contract.retaQuote}" >
+				value="#{contract.params.retaQuote}" >
 				<a4j:support event="onclick" reRender="contract_panel" ajaxSingle="#{true}" />
 			</aon:selectBooleanCheckbox>	
 		</c:if>
@@ -35,7 +36,7 @@
 			<a4j:support event="onchange" actionListener="#{contract.onWorkPlaceChanged}" ajaxSingle="true" reRender="contract_panel" />
 		</aon:selectOneMenu>
 		
-<c:if test="#{!contract.retaQuote}">
+<c:if test="#{!contract.params.retaQuote}">
 		<aon:outputLabel for="enterpriseActivities" value="#{bundle.aon_activity}" 
 			style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 		<aon:selectOneMenu id="enterpriseActivities" 
@@ -65,7 +66,7 @@
 		
 		<aon:outputLabel for="Contract_contractCode"
 			value="#{bundle.payroll_contract_contract_type}" />
-<c:if test="#{!contract.retaQuote}">
+<c:if test="#{!contract.params.retaQuote}">
 		<aon:selectOneMenu id="Contract_contractCode" required="true" 
 			rendered="#{contract.new or !contract.unsuportedContract}"
 			value="#{contract.params.contractCode}">
@@ -79,12 +80,11 @@
 			<aon:outputText value="#{contract.params.contractCode}" />
 		</aon:panelGroup>
 </c:if>
-		<aon:div rendered="#{contract.retaQuote}">
-			<aon:outputText value="R.E.T.A. - Régimen especial de trabajadores autónomos"
-				styleClass="aon-bold" />
+		<aon:div rendered="#{contract.params.retaQuote}">
+			<aon:outputText value="#{bundle.payroll_contract_reta}" />
 		</aon:div>
 		
-<c:if test="#{!contract.retaQuote}">
+<c:if test="#{!contract.params.retaQuote}">
 		<aon:outputLabel for="Contract_contractModel"
 			value="#{bundle.payroll_contract_contract_model}" />
 		<aon:div id="Contract_contractModelDiv">
@@ -100,13 +100,15 @@
 		<aon:outputLabel for="Contract_startDate" value="#{bundle.aon_start_date}" />
 		<aon:div>
 			<aon:selectInputDate id="Contract_startDate" 
-				value="#{contract.to.startDate}" required="true" 
+				value="#{contract.to.startDate}" required="true"
+				valueChangeListener="#{contract.onChangeStartDate}" 
 				inputSize="10" renderAsPopup="true" enableManualInput="true"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}">
 				<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true" />
 				<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true" />
 			</aon:selectInputDate>
+<c:if test="#{!contract.params.retaQuote}">
 			<aon:outputLabel for="Contract_seniorityDate" 
 				styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
 				value="#{bundle.payroll_salary_seniority_date2}" />
@@ -124,17 +126,30 @@
 					styleClass="aon-icon-info"
 					rendered="#{contract.to.seniorityDateDifferent}" />
 			</aon:panelGroup>
+</c:if>
 		</aon:div>
 		
 		<aon:outputLabel for="Contract_endDate" value="#{bundle.aon_end_date}" />
-		<aon:selectInputDate id="Contract_endDate" 
-			required="#{false}"
-			value="#{contract.to.endDate}"
-			inputSize="10" renderAsPopup="true" enableManualInput="true"
-			timeZone="#{timeZoneController.timeZone}"
-			popupDateFormat="#{bundle.aon_date_pattern}">
-		</aon:selectInputDate>
+		<aon:div>
+			<aon:selectInputDate id="Contract_endDate" 
+				required="#{false}"
+				value="#{contract.to.endDate}"
+				inputSize="10" renderAsPopup="true" enableManualInput="true"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}">
+			</aon:selectInputDate>
+		</aon:div>
 		
+<c:if test="#{contract.params.retaQuote}">
+		<aon:outputLabel for="agreementLevelCategory-alias" 
+			value="#{bundle.payroll_contract_charge}" />
+		<aon:inputText id="agreementLevelCategory-alias" 
+			size="60" maxlength="64"
+			value="#{contract.to.categoryDescription}" />
+</c:if>
+
+
+<c:if test="#{!contract.params.retaQuote}">
 		<c:if test="#{actionDenied.moduleEnabled['payroll']}">
 			<aon:outputLabel  
 				value="#{bundle.payroll_agreementLevel_category_level}" />
@@ -167,12 +182,12 @@
 					</aon:selectOneMenu>
 					<aon:outputLabel for="agreementLevelCategory-alias" styleClass="aon-margin-left aon-margin-right" 
 						value="#{bundle.payroll_display_as}" />
-					<aon:inputText id="agreementLevelCategory-alias" maxlength="64"
+					<aon:inputText id="agreementLevelCategory-alias" 
+						size="32" maxlength="64"
 						value="#{contract.to.categoryDescription}" />
 				</aon:panelGroup>
 			</aon:panelGrid>
 		
-<c:if test="#{!contract.retaQuote}">
 			<aon:outputLabel for="quote_group"
 				value="#{bundle.payroll_contract_quote_group}" />
 			<aon:selectOneMenu id="quote_group"  
@@ -188,10 +203,9 @@
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.occupationTypes}" />
 			</aon:selectOneMenu>
-</c:if>
+
 		</c:if>
 
-<c:if test="#{!contract.retaQuote}">
 		<c:if test="#{!contract.trainingContract}" >
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.params.cno}" />

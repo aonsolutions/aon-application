@@ -1,6 +1,5 @@
 package com.esferalia.aon.ui.sepe.controller.batch;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,15 +38,16 @@ public class Certifica2ListController extends BasicController {
 	
 	private Enterprise enterprise;
 	private Person person;
-	private Certifica2BatchListCheckHandler checkHandler;
 	private Date endDateFrom;
 	private Date endDateTo;
 	
-	private Map<Integer, RemesableContract> remesableContracts = new HashMap<Integer, RemesableContract>();
-	
 	private SuspensionCause suspensionCauseForAll;
-	
 
+	private Certifica2BatchListCheckHandler checkHandler;
+	
+	private Map<Integer, Certifica2BatchDetail> batchDetailList = new HashMap<Integer, Certifica2BatchDetail>();
+
+	
 	public boolean isSearchPanelExpanded() {
 		return searchPanelExpanded;
 	}
@@ -72,48 +72,6 @@ public class Certifica2ListController extends BasicController {
 		this.endDateTo = endDateTo;
 	}
 
-	public Map<Integer, RemesableContract> getRemesableContracts() {
-		return remesableContracts;
-	}
-
-	public SuspensionCause getRowSuspensionCause() {
-		try {
-			(((Contract)getModel().getRowData())).getId();
-			if( remesableContracts.containsKey(getRowContract().getId()) ){
-				return remesableContracts.get( getRowContract().getId() ).getSuspensionCause();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> error on getRowChecked: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
-		return null;
-	}
-
-	public void setRowSuspensionCause(SuspensionCause suspensionCause) {
-		try {
-			if ( suspensionCause!=null ) {
-				if ( !remesableContracts.containsKey(getRowContract().getId()) ) {
-					RemesableContract remesable = new RemesableContract();
-					remesable.setContract(getRowContract());
-					remesable.setSuspensionCause(suspensionCause);
-					remesableContracts.put( getRowContract().getId(), remesable );
-				}
-			} else {
-				if ( remesableContracts.containsKey(getRowContract().getId()) ) {
-					remesableContracts.remove( getRowContract().getId() );
-				}
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> error on setRowRemesableContract: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
-	}
-	private Contract getRowContract() throws ManagerBeanException{
-		return (Contract) getModel().getRowData();
-	}
-	
 	public SuspensionCause getSuspensionCauseForAll() {
 		return suspensionCauseForAll;
 	}
@@ -147,6 +105,51 @@ public class Certifica2ListController extends BasicController {
 
 	public void setPerson(Person person) {
 		this.person = person;
+	}
+	
+	public Map<Integer, Certifica2BatchDetail> getBatchDetailList() {
+		return batchDetailList;
+	}
+
+	public SuspensionCause getRowSuspensionCause() {
+		try {
+			(((Contract)getModel().getRowData())).getId();
+			if( batchDetailList.containsKey(getRowContract().getId()) ){
+				return batchDetailList.get( getRowContract().getId() ).getSuspensionCause();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> error on getRowChecked: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		return null;
+	}
+
+	public void setRowSuspensionCause(SuspensionCause suspensionCause) {
+		try {
+			if ( suspensionCause!=null ) {
+				if ( !batchDetailList.containsKey(getRowContract().getId()) ) {
+					Certifica2BatchDetail detail = new Certifica2BatchDetail();
+					detail.setContract(getRowContract());
+					detail.setSuspensionCause(suspensionCause);
+					batchDetailList.put( getRowContract().getId(), detail );
+				} else {
+					batchDetailList.get( getRowContract().getId() ).setSuspensionCause(suspensionCause);
+				}
+			} else {
+				if ( batchDetailList.containsKey(getRowContract().getId()) ) {
+					batchDetailList.get( getRowContract().getId() ).setSuspensionCause(null);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> error on setRowRemesableContract: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+	private Contract getRowContract() throws ManagerBeanException{
+		return (Contract) getModel().getRowData();
 	}
 	
 	public void init(Enterprise enterprise){
@@ -185,14 +188,15 @@ public class Certifica2ListController extends BasicController {
 				return isRowDisabled((Contract) this.getModel().getRowData());
 			}
 		} catch (ManagerBeanException e) {
-			// TODO
+			// nada
 		}
 		return false;
 	}
 	
 	public boolean isRowDisabled(Contract contract) throws ManagerBeanException{
 		LinesController controller = (LinesController) AonUtil.getRegisteredBean(ISepeConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
-		for(ITransferObject to: (List<ITransferObject>)controller.getModel().getWrappedData()){
+		// TODO: obtain complete list, not only list of the PageDataModel
+		for(ITransferObject to: (List<ITransferObject>)controller.getWrappedList()){
 			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
 			if(detail.getContract().getPerson().getId().equals(contract.getPerson().getId())){
 				return true;
@@ -215,11 +219,10 @@ public class Certifica2ListController extends BasicController {
 	public void onSearch(ActionEvent event) {
 		checkValidEndDate();
 		getCheckHandler().clearCheckedList();
-		remesableContracts = new HashMap<Integer, RemesableContract>();
 		setSuspensionCauseForAll(null);
 		try {
 			this.setCriteria( new Criteria() );
-			SEPEUtils utils = new SEPEUtils();
+			SEPEUtils utils = SEPEUtils.getInstance();
 			if(getPerson()!=null && getPerson().getId()!=null){
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_PERSON_ID), getPerson().getId());
 			}
@@ -243,7 +246,7 @@ public class Certifica2ListController extends BasicController {
 			LinesController controller = (LinesController) AonUtil.getRegisteredBean(ISepeConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
 			// ******************************
 			// FIXME: this code is temporary, while the contract certificate status is not defined
-			for(ITransferObject to: (List<ITransferObject>)controller.getModel().getWrappedData()){
+			for(ITransferObject to: (List<ITransferObject>)controller.getWrappedList()){
 				Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
 				getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_ID), detail.getContract().getId());
 			}
@@ -270,62 +273,23 @@ public class Certifica2ListController extends BasicController {
 	}
 	
 	private void applyAllSuspensionCause(SuspensionCause suspensionCause) {
-		for(Object o: getCheckHandler().getCheckedList()){
-			Contract contract = (Contract) o;
-			if ( suspensionCause!=null ) {
-				if ( !remesableContracts.containsKey(contract.getId()) ) {
-					RemesableContract remesable = new RemesableContract();
-					remesable.setContract(contract);
-					remesable.setSuspensionCause(suspensionCause);
-					remesableContracts.put( contract.getId(), remesable );
-				}
-				if ( remesableContracts.containsKey(contract.getId()) ) {
-					remesableContracts.get( contract.getId() ).setSuspensionCause(suspensionCause);
-				}
-			} 
+		for(Integer id: batchDetailList.keySet()){
+			((Certifica2BatchDetail)batchDetailList.get(id)).setSuspensionCause(suspensionCause);
 		}
 	}
 	
-	public class RemesableContract implements Comparable<RemesableContract>, Serializable {
-		
-		private static final long serialVersionUID = -6700232454851910313L;
-
-		private Contract contract;
-		private SuspensionCause suspensionCause;
-		
-		public Contract getContract() {
-			return contract;
+	public void checkAllSuspensionCauses() {
+        boolean incomplete = false;
+		for(Integer id: batchDetailList.keySet()){
+			if( ((Certifica2BatchDetail)batchDetailList.get(id)).getSuspensionCause()==null ){
+	    		incomplete = true;
+	    	}
 		}
-		public void setContract(Contract contract) {
-			this.contract = contract;
-		}
-		public SuspensionCause getSuspensionCause() {
-			return suspensionCause;
-		}
-		public void setSuspensionCause(SuspensionCause suspensionCause) {
-			this.suspensionCause = suspensionCause;
-		}
-		@Override
-		public int compareTo(RemesableContract o) {
-			if(o.getContract().getWorkPlace().getEnterprise().getId().compareTo(getContract().getWorkPlace().getEnterprise().getId())==0
-				&& o.getContract().getPerson().getId().compareTo(getContract().getPerson().getId())==0
-				&& o.getContract().getEndDate().compareTo(getContract().getEndDate())==0){
-				return 0;
-			}
-			if(o.getContract().getWorkPlace().getEnterprise().getId().compareTo(getContract().getWorkPlace().getEnterprise().getId())<=0){
-				if(o.getContract().getPerson().getId().compareTo(getContract().getPerson().getId())<=0){
-					if(o.getContract().getEndDate().compareTo(getContract().getEndDate())<=0){
-						return 1;
-					} else {
-						return -1;
-					}
-				} else {
-					return -1;
-				}
-			} else {
-				return -1;
-			}
+		if(incomplete){
+			String message = "Debe seleccionar la causa de suspension de los empleados seleccionados.";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
 		}
 	}
-
+	
 }

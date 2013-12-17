@@ -42,12 +42,15 @@ public class CertificadosCodeTablesWriter {
 	final static String TABLES_ENUM_NAME = "CertificadosCodeTables";
 	
 	
+	/* 
+	 * SOURCE: http://www.sepe.es/contenido/prestaciones/empresa/pdf/ManualCertificadoDeEmpresa.pdf
+	 */
 	final static String DCODEDTC_TABLE_DESCRIPTION = "";
 	final static String DCSPCPTC_TABLE_DESCRIPTION = "";
-	final static String DGRCOTTC_TABLE_DESCRIPTION = "Grupo de cotización";
+	final static String DGRCOTTC_TABLE_DESCRIPTION = "Grupos de cotización";
 	final static String DSTEMCTC_TABLE_DESCRIPTION = "";
 	final static String SACECOTC_TABLE_DESCRIPTION = "";
-	final static String TAICLAOC_TABLE_DESCRIPTION = "Códigos de ocupación, profesiones";
+	final static String TAICLAOC_TABLE_DESCRIPTION = "Códigos de ocupaciones, profesiones";
 	final static String TCGPROVI_TABLE_DESCRIPTION = "";
 	final static String TCHRGCOT_TABLE_DESCRIPTION = "";
 	final static String Terrores_TABLE_DESCRIPTION = "Códigos de errores";
@@ -60,8 +63,7 @@ public class CertificadosCodeTablesWriter {
 	final static String TMJMINSS_TABLE_DESCRIPTION = "Códigos de la mineria del carbón";
 	final static String TMPORCRD_TABLE_DESCRIPTION = "Causas de porcentaje de reducción de jornada";
 	final static String TMQTDIST_TABLE_DESCRIPTION = "Distribución de jornadas (regular o irregular) para los contratos a tiempo parcial";
-	final static String TNWTPCOM_TABLE_DESCRIPTION = "";
-
+	final static String TNWTPCOM_TABLE_DESCRIPTION = "Códigos de contrato";
 	
 	private static int tablesCount;
 	

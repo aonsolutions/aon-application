@@ -27,6 +27,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
@@ -34,17 +35,20 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
-import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.ContractInfo;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.ContrataBatch;
 import com.esferalia.aon.payroll.ContrataBatchAttachment;
-import com.esferalia.aon.payroll.ContrataBatchDetail;
 import com.esferalia.aon.payroll.SepeBatchAttachment;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
+//import com.esferalia.aon.payroll.ContrataBatchAttachment;
+import com.esferalia.aon.payroll.ContrataBatchDetail;
+//import com.esferalia.aon.payroll.SepeBatchAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
+//import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
 import com.esferalia.aon.sepe.api.contrata.contratos.FICHEROCONTRATOS;
 import com.esferalia.aon.sepe.api.contrata.contratos.RESPUESTACONTRATOTYPE;
 import com.esferalia.aon.ui.sepe.controller.handler.ContrataContratosHandler;
@@ -61,14 +65,15 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContrataController.class.getName());
 	
 	private boolean contratoFile;
-	private boolean transformacionFile;
 	private boolean prorrogaFile;
+	private boolean transformacionFile;
 	
 	private boolean showBatchWindow;
 	private boolean showCommunicationWindow;
 	private boolean showLoginWindow;
 	private boolean enabledContrataEdition;
 	private boolean showExtensionContrataWindow;
+	private boolean showTransformContrataWindow;
 	
 	private boolean newBatch;
 	
@@ -83,6 +88,12 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	private ContrataBatch batch;
 	
 
+	public boolean isShowTransformContrataWindow() {
+		return showTransformContrataWindow;
+	}
+	public void setShowTransformContrataWindow(boolean showTransformContrataWindow) {
+		this.showTransformContrataWindow = showTransformContrataWindow;
+	}
 	public boolean isShowExtensionContrataWindow() {
 		return showExtensionContrataWindow;
 	}
@@ -292,11 +303,11 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 
 	private void reset(){
 		setShowLoginWindow(false);
-		setHandler(null);
-		setCommunicator(null);
-		setGeneratedFile(null);
-		setCommunicationIdFile(null);
-		setResponseFile(null);
+		handler = null;
+		communicator = null;
+		generatedFile = null;
+		communicationIdFile = null;
+		responseFile = null;
 		batch = null;
 		newBatch = false;
 	}
@@ -661,14 +672,14 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 					try {
 						if(!respuestaContratos.getIDCONTRATO().equals(WRONG_CONTRACT_ID)){
 							Contract contract = isBatchView()?obtainContract(respuestaContratos):getContract();
-							IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-							ContractData data = new ContractData();
-							data.setContract(contract);
-							data.setStartDate(contract.getStartDate());
-							data.setEndDate(contract.getEndDate());
-							data.setName( ContextVariable.SEPE_CONTRACT_ID.getName() );
-							data.setExpression("\"" + respuestaContratos.getIDCONTRATO() + "\"");
-							bean.insert(data);
+							IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+							ContractInfo info = new ContractInfo();
+							info.setContract(contract);
+							info.setStartDate(contract.getStartDate());
+							info.setEndDate(contract.getEndDate());
+							info.setName( ContractVariable.SEPE_CONTRACT_ID.getValue() );
+							info.setExpression("\"" + respuestaContratos.getIDCONTRATO() + "\"");
+							bean.insert(info);
 						}
 					} catch (ManagerBeanException e) {
 						String msg = "Error al grabar el ID de contrato obtenido del SEPE. (" +e.getMessage() + ")";

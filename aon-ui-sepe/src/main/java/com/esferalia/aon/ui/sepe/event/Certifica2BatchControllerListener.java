@@ -34,13 +34,12 @@ public class Certifica2BatchControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-		SEPEUtils utils = new SEPEUtils();
 		Certifica2BatchController controller = (Certifica2BatchController) this.getController();
 		controller.setRecorded(false);
 		Certifica2Batch batch = (Certifica2Batch) controller.getTo();
 		batch.setStatus(FileStatus.PENDING);
 		batch.setDate(new Date());
-		batch.setEnterprise(utils.getCurrentDomainEnterprise());
+		batch.setEnterprise(SEPEUtils.getInstance().getCurrentDomainEnterprise());
 		controller.setNewBatchWizard( null );
 		controller.getNewBatchWizard().init();
 	}
@@ -69,14 +68,6 @@ public class Certifica2BatchControllerListener extends ControllerAdapter {
 	}
 	
 	@Override
-	public void afterBeanReset(ControllerEvent event)
-			throws ControllerListenerException {
-		Certifica2BatchController controller = (Certifica2BatchController) this.getController();
-		controller.setNewBatchWizard( null );
-		controller.getNewBatchWizard().init();
-	}
-	
-	@Override
 	public void beforeBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
 		removeLines(event);
@@ -97,8 +88,7 @@ public class Certifica2BatchControllerListener extends ControllerAdapter {
 			IManagerBean bean = BeanManager.getManagerBean(SepeBatchAttachment.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_SOURCE_BATCH), batch.getId());
-			SEPEUtils utils = new SEPEUtils();
-			utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_DOMAIN));
+			SEPEUtils.getInstance().completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SEPE_BATCH_ATTACHMENT_DOMAIN));
 			for(ITransferObject to: bean.getList(criteria)){
 				bean.remove(to);
 			}
@@ -106,8 +96,7 @@ public class Certifica2BatchControllerListener extends ControllerAdapter {
 			bean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
 			criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DETAIL_CERTIFICA2BATCH_ID), batch.getId());
-			utils = new SEPEUtils();
-			utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DETAIL_DOMAIN));
+			SEPEUtils.getInstance().completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DETAIL_DOMAIN));
 			for(ITransferObject to: bean.getList(criteria)){
 				bean.remove(to);
 			}

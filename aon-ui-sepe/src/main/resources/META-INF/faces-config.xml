@@ -46,6 +46,17 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- ************ EXTENSION XML EDITION - CONTRATA ************** -->
+	<managed-bean>
+		<managed-bean-name>transformContrata</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.sepe.controller.ContrataController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>transformacionFile</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************ CERTIFICADOS - COMMUNICATION ************** -->
 	<managed-bean>
 		<managed-bean-name>contractCertificados</managed-bean-name>

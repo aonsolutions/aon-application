@@ -65,7 +65,7 @@ public class ContrataContratosHandler implements IContrataHandler{
 	
 	@Override
 	public void initialize(Contract contract){
-		SEPEUtils utils = new SEPEUtils();
+		SEPEUtils utils = SEPEUtils.getInstance();
 		this.contract = contract;
 		this.contractCode = ContractCode.getContractCodeByValue( utils.getContractDataMap(getContract()).get(ContextVariable.TC2.getName()) );
 	}

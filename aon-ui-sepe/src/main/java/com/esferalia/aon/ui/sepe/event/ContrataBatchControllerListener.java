@@ -28,6 +28,8 @@ public class ContrataBatchControllerListener extends ControllerAdapter {
 		ContrataBatch batch = (ContrataBatch) controller.getTo();
 		batch.setDate(new Date());
 		batch.setStatus(FileStatus.PENDING);
+		controller.setNewBatchWizard( null );
+		controller.getNewBatchWizard().init();
 	}
 	
 	@Override

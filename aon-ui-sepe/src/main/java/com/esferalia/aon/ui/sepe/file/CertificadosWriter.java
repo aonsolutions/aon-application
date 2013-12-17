@@ -257,7 +257,7 @@ public class CertificadosWriter {
 	 * @return
 	 */
 	private TRABAJADORTYPE createTrabajadorType(Certifica2BatchDetail batchDetail) {
-		SEPEUtils utils = new SEPEUtils();
+		SEPEUtils utils = SEPEUtils.getInstance();
 		
 		TRABAJADORTYPE o = new TRABAJADORTYPE();
 		
@@ -325,7 +325,7 @@ public class CertificadosWriter {
 	private DISTRIBUCIONJORNADASTYPE createDistribucionJornadasType(Certifica2BatchDetail batchDetail){
 		final String IRREGULAR_VALUE = "2";
 		final String REGULAR_VALUE = "1";
-		SEPEUtils utils = new SEPEUtils();
+		SEPEUtils utils = SEPEUtils.getInstance();
 		
 		DISTRIBUCIONJORNADASTYPE o = new DISTRIBUCIONJORNADASTYPE();
 		PERIODODISTRIBUCIONJORNADASTYPE periodo = null;
@@ -358,7 +358,7 @@ public class CertificadosWriter {
 	}
 	
 	private List<Period> getPeriodList(Contract contract) {
-		SEPEUtils utils = new SEPEUtils();
+		SEPEUtils utils = SEPEUtils.getInstance();
 		List<Period> list = null;
 		for(ContractData cd: utils.getContractDataMap(contract, null, null).values()){
 			if(cd.getName().equals(ContextVariable.WEEK_DAYS.getName()) || cd.getName().equals(ContextVariable.CONTRACT_DAYS.getName())){
@@ -548,7 +548,7 @@ public class CertificadosWriter {
 	 */
 	private TRABAJADORTYPE.DatosVacacionesCotizadas createVacacionesCotizadasType(Contract contract){
 		TRABAJADORTYPE.DatosVacacionesCotizadas o = null;
-		SEPEUtils utils = new SEPEUtils();
+		SEPEUtils utils = SEPEUtils.getInstance();
 		try {
 			List<ISalary> settleList = getSalaries(contract, null, null, SalaryType.SETTLE);
 			String noHolidays = utils.getContractDataMap(contract).get(ContextVariable.NO_HOLIDAYS.getName());
@@ -1037,7 +1037,7 @@ public class CertificadosWriter {
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
 			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE));
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-			SEPEUtils utils = new SEPEUtils();
+			SEPEUtils utils = SEPEUtils.getInstance();
 			utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DOMAIN));
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
@@ -1050,9 +1050,9 @@ public class CertificadosWriter {
 	}
 	
 	private boolean isFulltimeContract(Certifica2BatchDetail detail) {
-		SEPEUtils utils = new SEPEUtils();
-		String fullTime = utils.getContractDataMap(detail.getContract()).get(ContextVariable.FULL_TIME.getName());
-		String tc2 = utils.getContractDataMap(detail.getContract()).get(ContextVariable.TC2.getName());
+		SEPEUtils utils = SEPEUtils.getInstance();
+		String fullTime = utils.getContractDataMap(detail.getContract(), true, true).get(ContextVariable.FULL_TIME.getName());
+		String tc2 = utils.getContractDataMap(detail.getContract(), true, true).get(ContextVariable.TC2.getName());
 		if(fullTime==null || new Boolean(fullTime)){
 			if(tc2.startsWith("1") || tc2.startsWith("4")){ 
 				return true;
@@ -1062,13 +1062,13 @@ public class CertificadosWriter {
 	}
 	
 	private boolean isIrregular(Contract contract, Period p) {
-		SEPEUtils utils = new SEPEUtils();
+		SEPEUtils utils = SEPEUtils.getInstance();
 		ContractData cd = utils.getContractDataMap(contract, p.getStart(), p.getEnd()).get(ContextVariable.IRREGULAR.getName());
 		return (cd!=null && new Boolean(cd.getExpression()));
 	}
 	
 	private Double getDelayBaseAmount(List<ISalary> delayList, Date startDate, Date endDate, ContextVariable baseName) {
-		SEPEUtils utils = new SEPEUtils();
+		SEPEUtils utils = SEPEUtils.getInstance();
 		try {
 			Double amount = 0.0;
 			if(baseName!=null){
@@ -1092,7 +1092,7 @@ public class CertificadosWriter {
 	}
 	
 	public List<ISalary> getSalaries(Contract contract, Date startDate, Date endDate, SalaryType type) throws ManagerBeanException {
-		SEPEUtils utils = new SEPEUtils();
+		SEPEUtils utils = SEPEUtils.getInstance();
 		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());

@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import com.esferalia.aon.payroll.enumeration.ContractModel;
+
 public interface IPayrollConstants {
 	
 	String ZERO_VALUE = "0";
@@ -59,7 +61,6 @@ public interface IPayrollConstants {
 	String SALARY_REMOVER_CONTROLLER = "salaryRemover";
 	String SALARY_TEST_LAUNCHER_NAME = "salaryTestLauncher";
 	String IRPF_TEST_LAUNCHER_NAME = "irpfTestLauncher";
-	String SETTLE_CONTROLLER_NAME = "settle";
 	String SALARY_EXPENSE_CONTROLLER_NAME = "salaryExpense";
 	String TRAINING_CENTER_CONTROLLER_NAME = "trainingCenter";
 
@@ -92,5 +93,19 @@ public interface IPayrollConstants {
 	String SALARY_TESTER_LAUNCHER_FORM = "salaryTestLauncher_form";
 	String IRPF_TESTER_LAUNCHER_FORM = "irpfTestLauncher_form";
 	
-		
+	// ************************************************************
+	// OTHER
+	// ************************************************************
+	public static final ContractModel[] AVAILABLE_CONTRACT_MODEL = {
+		ContractModel.PE151,
+		ContractModel.PE170,
+		ContractModel.PE176,
+		ContractModel.PE177,
+		ContractModel.PE179,
+		ContractModel.PE183,
+		ContractModel.PE187,
+		ContractModel.PE226,
+	};
+	
+	
 }

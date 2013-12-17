@@ -1,12 +1,20 @@
 package com.esferalia.aon.ui.sepe.controller.handler;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.AonFile;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
+import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -51,9 +59,12 @@ public class ContrataTransformacionesHandler implements IContrataHandler {
 	
 	@Override
 	public void initialize(Contract contract){
-		SEPEUtils utils = new SEPEUtils();
+		SEPEUtils utils = SEPEUtils.getInstance();
 		this.contract = contract;
-		this.contractCode = ContractCode.getContractCodeByValue( utils.getContractDataMap(this.contract).get(ContextVariable.TC2.getName()) );
+		this.contractCode = ContractCode.getContractCodeByValue( utils.getContractDataMap(this.contract, false).get(ContextVariable.TC2.getName()) );
+		getParams().setFechaInicio(contract.getEndDate());
+//		getParams().setFechaTerminoReal(fechaTerminoReal);
+		getParams().setCno(obtainCno(utils.getContractDataMap(this.contract, false).get(ContextVariable.CNO.getName())));
 	}
 	
 	@Override
@@ -71,6 +82,23 @@ public class ContrataTransformacionesHandler implements IContrataHandler {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+	}
+	
+	private CNO obtainCno(String expression) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(CNO.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CNO_CODE), expression);
+			List<ITransferObject> list = bean.getList(criteria);
+			if( !list.isEmpty() ){
+				return (CNO) list.get(0);
+			} else {
+				return (CNO) bean.createNewTo();
+			}
+		} catch (ManagerBeanException e) {
+			// do nothing ...
+		}
+		return null;
 	}
 		
 }

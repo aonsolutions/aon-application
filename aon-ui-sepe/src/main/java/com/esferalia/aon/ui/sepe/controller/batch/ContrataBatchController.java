@@ -3,18 +3,26 @@ package com.esferalia.aon.ui.sepe.controller.batch;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
@@ -37,7 +45,19 @@ public class ContrataBatchController extends BasicController {
 	
 	private FileOutput fileOutput;
 	private boolean recorded;
+	private ContrataBatchNewWizard newBatchWizard;
 	
+	public ContrataBatchNewWizard getNewBatchWizard() {
+		if(newBatchWizard==null){
+			newBatchWizard = new ContrataBatchNewWizard();
+		}
+		return newBatchWizard;
+	}
+
+	public void setNewBatchWizard(ContrataBatchNewWizard newBatchWizard) {
+		this.newBatchWizard = newBatchWizard;
+	}
+
 	public FileOutput getFileOutput() {
 		return fileOutput;
 	}
@@ -56,6 +76,7 @@ public class ContrataBatchController extends BasicController {
 	
 	public void onInit(ActionEvent event) {
 		try {
+			onSearchContracts(event);
 			checkDiskCreated();
 			if(!isRecorded()){
 				ContrataListController list = (ContrataListController) FormUtil.getController(ISepeConstants.CONTRATA_LIST_CONTROLLER_NAME);
@@ -84,8 +105,9 @@ public class ContrataBatchController extends BasicController {
 	}
 	
 	public void onEditSearchList(ActionEvent event) throws ManagerBeanException {
-		ContrataListController list = (ContrataListController) FormUtil.getController(ISepeConstants.CONTRATA_LIST_CONTROLLER_NAME);
-		list.onEditSearch(event);
+		ContrataListController listController = (ContrataListController) FormUtil.getController(ISepeConstants.CONTRATA_LIST_CONTROLLER_NAME);
+		listController.onEditSearch(event);
+		listController.init();
 	}
 	
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
@@ -97,6 +119,7 @@ public class ContrataBatchController extends BasicController {
             ContrataBatchDetail contrataBatchDetail = new ContrataBatchDetail();
 			contrataBatchDetail.setContract(contract);
 			contrataBatchDetail.setContrataBatch((ContrataBatch) getTo());
+			contrataBatchDetail.setStatus(FileStatus.PENDING);
 			contrataBatchDetailBean.insert(contrataBatchDetail);
         }
         listController.getCheckHandler().clearCheckedList();
@@ -123,8 +146,9 @@ public class ContrataBatchController extends BasicController {
     }
 	
 	public void onSearchContracts(ActionEvent event) {
-		ContrataListController list = (ContrataListController) FormUtil.getController(ISepeConstants.CONTRATA_LIST_CONTROLLER_NAME);
-		list.onSearch(event);
+		ContrataListController listController = (ContrataListController) FormUtil.getController(ISepeConstants.CONTRATA_LIST_CONTROLLER_NAME);
+		listController.init();
+		listController.onSearch(event);
 	}
 	
 	public void onCreateDisk(ActionEvent event) {
@@ -201,6 +225,180 @@ public class ContrataBatchController extends BasicController {
 			AonUtil.addErrorMessage(msg);
 		}
 		return null;
+	}
+	
+	/*
+	 * INNER CLASSES
+	 */
+	public class ContrataBatchNewWizard {
+
+		private List<ContrataBatchDetail> selectedList;
+		
+		private ArrayList<Object> checks = new ArrayList<Object>();
+		
+		private DataModel selectedModel;
+		
+		public DataModel getSelectedModel() {
+			return selectedModel;
+		}
+
+		public void setSelectedModel(DataModel selectedModel) {
+			this.selectedModel = selectedModel;
+		}
+
+		public void init() {
+			ContrataListController listController = (ContrataListController) FormUtil.getController(ISepeConstants.CONTRATA_LIST_CONTROLLER_NAME);
+			try {
+				listController.clearCriteria();
+			} catch (ManagerBeanException e) {
+				// nada
+			}
+			listController.onEditSearch(null);
+			listController.init();
+			listController.setStartDateFrom(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), CommonUtil.getDay(new Date())-10));
+			listController.setModel(null);
+			
+			selectedList = new LinkedList<ContrataBatchDetail>();
+			setSelectedModel(null);
+		}
+		
+		private void saveData() {
+			ContrataBatchController batchController = (ContrataBatchController) FormUtil.getController(ISepeConstants.CONTRATA_BATCH_CONTROLLER_NAME);
+			ContrataBatch batch = (ContrataBatch) batchController.getTo();
+			
+			// TODO
+//			if(DomainManager.isDomainManagementAvailable()){
+//			} else {
+//				batch.setDomain( SEPEUtils.getInstance().getCurrentDomainEnterprise().getDomain() );
+//			}
+			
+			batch.setDate(new Date());
+			batch.setStatus(FileStatus.PENDING);
+			batchController.accept(null);
+			
+			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+			boolean mustCloseSession = HibernateUtil.mustCloseSession();
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				
+				IManagerBean detailBean = BeanManager.getManagerBean(ContrataBatchDetail.class);
+				IManagerBean contratBean = BeanManager.getManagerBean(Contract.class);
+				for(ContrataBatchDetail detail: selectedList){
+					detail.setContrataBatch(batch);
+					detail.setDomain(batch.getDomain());
+					detail.setStatus(FileStatus.PENDING);
+					detailBean.insert(detail);
+					contratBean.update(detail.getContract());
+				}
+				
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				AonUtil.addErrorMessage(e.getMessage());
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					String msg = "Unable to rollback transaction!";
+					throw new AbortProcessingException(msg  + daoe.getMessage());
+				}
+				String msg = "Error durante el borrado de datos. ";
+				throw new AbortProcessingException(msg  + e.getMessage());
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+				HibernateUtil.setCloseSession(mustCloseSession);
+				HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			}
+		}
+
+		public void accept(ActionEvent event){
+			if(selectedList==null || selectedList.size()<=0){
+				AonUtil.addErrorMessage("Seleccione los contratos para continuar");
+				throw new AbortProcessingException("Seleccione los contratos para continuar");
+			}
+			saveData();
+			loadDetails();
+		}
+		
+		public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
+			ContrataListController listController = (ContrataListController) FormUtil.getController(ISepeConstants.CONTRATA_LIST_CONTROLLER_NAME);
+			Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
+	        while (iterator.hasNext()) {
+	        	Contract contract = (Contract) iterator.next();
+				ContrataBatchDetail detail = new ContrataBatchDetail();
+				detail.setContract(contract);
+				selectedList.add(detail);
+			}
+	        listController.getCheckHandler().clearCheckedList();
+	        setSelectedModel(new ListDataModel(selectedList));
+		}
+
+		public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
+	        Iterator<Object> iterator = getCheckedList().iterator();
+	        while(iterator.hasNext()){
+	        	ContrataBatchDetail detail = (ContrataBatchDetail) iterator.next();
+	        	if(selectedList.contains(detail)){
+	        		selectedList.remove(detail);
+	        	}
+	        }
+	        clearCheckedList();
+	        setSelectedModel(new ListDataModel(selectedList));
+	        loadDetails();
+	        onSearchContracts(event);
+		}
+		
+		public void rowSelected(ValueChangeEvent event) {
+			if (event.getNewValue() != null) {
+				setRowChecked(((Boolean) event.getNewValue()).booleanValue());
+			}
+		}
+
+		public boolean getRowChecked() {
+			if(getSelectedModel().isRowAvailable()){
+				return checks.contains(getSelectedModel().getRowData());
+			}
+			return false;
+		}
+
+		public void setRowChecked(boolean rowChecked) {
+			if (rowChecked) {
+				if (!checks.contains(getSelectedModel().getRowData())) {
+					checks.add(getSelectedModel().getRowData());
+				}
+			} else {
+				if (checks.contains(getSelectedModel().getRowData())) {
+					checks.remove(getSelectedModel().getRowData());
+				}
+			}
+		}
+
+		public ArrayList<Object> getCheckedList() {
+			return checks;
+		}
+
+		public int getCheckedCount() {
+			return checks!=null?checks.size():0;
+		}
+
+		public void clearCheckedList() {
+			checks = new ArrayList<Object>();
+		}
+
+		public void checkAll(ActionEvent event) throws ManagerBeanException {
+			Iterator<ContrataBatchDetail> iterator = selectedList.iterator();
+			while (iterator.hasNext()) {
+				Object o = iterator.next();
+				if (!checks.contains(o)) {
+					checks.add(o);
+				}
+			}
+		}
+
+		public void checkNone(ActionEvent event) {
+			clearCheckedList();
+		}
+		
 	}
 	
 

@@ -27,9 +27,8 @@
 			</f:facet>
 			<aon:outputText value="#{contract.contractCode}"
 				rendered="#{!contract.rowContractRetaQuote}" />
-			<aon:outputText value="R.E.T.A. - Régimen especial de trabajadores autónomos"
-				rendered="#{contract.rowContractRetaQuote}"
-				styleClass="aon-bold" />
+			<aon:outputText value="#{bundle.payroll_contract_reta}"
+				rendered="#{contract.rowContractRetaQuote}" />
 		</aon:column>
 	</c:if>
 

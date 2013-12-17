@@ -19,7 +19,7 @@
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;">
 					<aon:actionListener method="#{enterprise.accept}" />
-					<c:if test="#{aonRole.config and (!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable)}">
+					<c:if test="#{aonRole.config}">
 						<aon:actionListener method="#{payrollAppParams.onAccept}" />
 						<aon:actionListener method="#{sepeAppParams.onAccept}" />
 					</c:if>
@@ -36,9 +36,8 @@
 				</aon:panelGrid>
 			</aon:div>
 
-			<c:if test="#{aonRole.config and (!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable)}">
-				<ui:include
-					src="/com/esferalia/aon/ui/sepe/facelet/params/form_content.xhtml" />
+			<c:if test="#{aonRole.config}">
+				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/params/form_content.xhtml" />
 			</c:if>
 		</aon:div>
 	</aon:form>

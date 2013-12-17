@@ -54,6 +54,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -330,7 +331,7 @@ public class ContractPdfController {
 		}
 		ContrataController contrata = (ContrataController) AonUtil.getRegisteredBean("contractContrata");
 		contrata.onContrataDataShow(null);
-		if(contrata.getGeneratedFile()!=null && contrata.getGeneratedFile().getId()!=null){
+		if(contrata.getGeneratedFile()!=null && contrata.getGeneratedFile().getData()!=null){
 			setContrataParams(contrata.getHandler().getParams());
 		} else {
 			setContrataParams(null);
@@ -380,11 +381,11 @@ public class ContractPdfController {
 		ContractController contractController = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
 		ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
 		if(attachType==ContractAttachmentType.CONTRACT_DOC_DRAFT){
-			if(StringUtils.isNotBlank(clausesController.getAdditionalClauses()) && getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.ADDITIONAL_CLAUSES)!=null){
-				if(clausesController.getAdditionalClauses().length()>50){
-					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.ADDITIONAL_CLAUSES).setValue("Segun anexo adjunto");
+			if(StringUtils.isNotBlank(clausesController.getCustomClauses()) && getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.FieldName.ADDITIONAL_CLAUSES.getName())!=null){
+				if(clausesController.getCustomClauses().length()>50){
+					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.FieldName.ADDITIONAL_CLAUSES.getName()).setValue("Segun anexo adjunto");
 				} else {
-					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.ADDITIONAL_CLAUSES).setValue(clausesController.getAdditionalClauses());
+					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.FieldName.ADDITIONAL_CLAUSES.getName()).setValue(clausesController.getCustomClauses());
 				}
 			}
 			if(contractController.getParams().getContractCode()==ContractCode.C421){
@@ -393,7 +394,7 @@ public class ContractPdfController {
 		} else if(attachType==ContractAttachmentType.TRAINING_ANNEX_II) {
 			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("horario").setValue(contractController.getParams().getTrainingSchedule());
 		} else if(attachType==ContractAttachmentType.CONTRACT_CLAUSES) {
-			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(Clauses.CLAUSES_CONTENT).setValue(clausesController.getAdditionalClauses());
+			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(Clauses.CLAUSES_CONTENT).setValue(clausesController.getCustomClauses());
 		}
 	}
 	
@@ -533,7 +534,7 @@ public class ContractPdfController {
 			availableDocumentList.add(item);
 			item = new SelectItem(ContractAttachmentType.BASIC_COPY_DRAFT, ContractAttachmentType.BASIC_COPY_DRAFT.getName(AonUtil.getCurrentLocale()));
 			availableDocumentList.add(item);
-			if( utils.isTrainingContract(getContract()) && utils.getContractDataMap(getContract()).get(ContextVariable.TRAINING_COURSE.getName())!=null ){
+			if( utils.isTrainingContract(getContract()) && utils.getContractInfoMap(getContract()).get(ContractVariable.TRAINING_COURSE.getValue())!=null ){
 				item = new SelectItem(ContractAttachmentType.TRAINING_ANNEX_II, ContractAttachmentType.TRAINING_ANNEX_II.getName(AonUtil.getCurrentLocale()));
 				availableDocumentList.add(item);
 				item = new SelectItem(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT, ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT.getName(AonUtil.getCurrentLocale()));
@@ -618,7 +619,7 @@ public class ContractPdfController {
 			}
 		}
 		
-		if( utils.isTrainingContract(getContract()) && utils.getContractDataMap(getContract()).get(ContextVariable.TRAINING_COURSE.getName())!=null ){
+		if( utils.isTrainingContract(getContract()) && utils.getContractInfoMap(getContract()).get(ContractVariable.TRAINING_COURSE.getValue())!=null ){
 			// Acuerdo actividad formativa, Anexo II del contrato de formacion (421)
 			if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.TRAINING_ANNEX_II)){
 				try {

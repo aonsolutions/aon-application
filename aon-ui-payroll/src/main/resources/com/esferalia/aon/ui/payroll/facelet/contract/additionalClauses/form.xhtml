@@ -5,8 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich">
+	xmlns:a4j="http://richfaces.org/a4j">
 	
 	<aon:div id="clausesContent" style="width:850px;">
 		
@@ -17,17 +16,29 @@
 			</aon:selectBooleanCheckbox>
 			<aon:outputLabel for="Enterprise_contractClauses" styleClass="aon-margin-right"
 				value="#{bundle.payroll_contract_additional_clauses_enterprise}" />
-			<aon:selectOneMenu value="#{contractClauses.selectedClause}"
-				disabled="#{!contractClauses.useEnterpriseClauses}" >
-				<f:selectItems value="#{contractClauses.clausesList}" />
-			</aon:selectOneMenu>
 		</aon:panel>
 		 
 		<aon:div>
-			<aon:inputTextarea 
-				rendered="#{!contractClauses.useEnterpriseClauses}" 
-				value="#{contractClauses.additionalClauses}"
-				cols="138" rows="30"/>
+			<c:if test="#{!contractClauses.useEnterpriseClauses}">
+				<aon:panel>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.payroll_contract_custom_clauses}" />
+					</f:facet>
+					<aon:inputTextarea 
+						rendered="#{!contractClauses.useEnterpriseClauses}" 
+						value="#{contractClauses.customClauses}"
+						cols="145" rows="30"/>
+				</aon:panel>
+			</c:if>
+			<c:if test="#{contractClauses.useEnterpriseClauses}">
+				<aon:panelGrid columns="2" styleClass="aon-width-all" >
+					<aon:outputLabel value="#{bundle.aon_document}" />
+					<aon:selectOneMenu value="#{contractClauses.selectedEnterpriseClause}"
+						disabled="#{!contractClauses.useEnterpriseClauses}" >
+						<f:selectItems value="#{contractClauses.clausesList}" />
+					</aon:selectOneMenu>
+				</aon:panelGrid>
+			</c:if>
 		</aon:div>
 		
 	</aon:div>

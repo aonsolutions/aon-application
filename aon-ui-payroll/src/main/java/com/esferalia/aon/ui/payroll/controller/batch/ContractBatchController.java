@@ -76,6 +76,7 @@ public class ContractBatchController extends BasicController {
             ContractBatchDetail contractBatchDetail = new ContractBatchDetail();
 			contractBatchDetail.setContract(contract);
 			contractBatchDetail.setContractBatch((ContractBatch) getTo());
+			contractBatchDetail.setStatus(FileStatus.PENDING);
 			contractBatchDetailBean.insert(contractBatchDetail);
         }
         listController.getCheckHandler().clearCheckedList();

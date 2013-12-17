@@ -24,29 +24,40 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
 
 public class SEPEUtils {
+	
+	private static SEPEUtils instance;
+	
+	private SEPEUtils(){
+	}
+	
+	public static SEPEUtils getInstance(){
+		if(instance == null){
+			instance = new SEPEUtils();
+		}
+		return instance;
+	}
 
 	public Map<String, String> getContractDataMap(Contract contract) {
+		return getContractDataMap(contract, true, false);
+	}
+
+	public Map<String, String> getContractDataMap(Contract contract, boolean allowDuplicates) {
+		return getContractDataMap(contract, true, allowDuplicates);
+	}
+	
+	public Map<String, String> getContractDataMap(Contract contract, boolean allowDuplicates, boolean includeChildDomainData) {
 		Map<String, String> map = new HashMap<String, String>();
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
-			Expression endDateExp = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
-			if(contract.getEndDate()!=null){
-				Expression exp = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
-				endDateExp = ExpressionUtilities.getOrExpression(exp, endDateExp);
-			} else {
-				criteria.addExpression(endDateExp);
-			}
-			completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CONTRACT_DATA_DOMAIN));
-			for(ITransferObject to: bean.getList(criteria)){
+			for(ITransferObject to: getContractDataList(contract, contract.getStartDate(), contract.getEndDate(), includeChildDomainData)){
 				ContractData data = (ContractData) to;
-				map.put(data.getName(), data.getExpression()!=null?data.getExpression().replace('"', ' ').trim():"");
+				if(allowDuplicates || !map.containsKey(data.getName())){
+					map.put(data.getName(), data.getExpression()!=null?data.getExpression().replace('"', ' ').trim():"");
+				}
 			}
 		} catch (ManagerBeanException e) {
 			// NADA, se devuelve un mapa vacio
@@ -58,17 +69,7 @@ public class SEPEUtils {
 	public Map<String, ContractData> getContractDataMap(Contract contract, Date startDate, Date endDate) {
 		Map<String, ContractData> map = new HashMap<String, ContractData>();
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			if(startDate!=null){
-				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), startDate);
-			}
-			if(endDate!=null){
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), endDate);
-			}
-			completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CONTRACT_DATA_DOMAIN));
-			for(ITransferObject to: bean.getList(criteria)){
+			for(ITransferObject to: getContractDataList(contract, startDate, endDate, false)){
 				ContractData data = (ContractData) to;
 				if(data.getExpression()!=null){
 					map.put(data.getName(), data);
@@ -78,6 +79,83 @@ public class SEPEUtils {
 			// NADA, que siga generando el fichero
 		}
 		return map;
+	}
+
+	private List<ITransferObject> getContractDataList(Contract contract, Date startDate, Date endDate, boolean includeChildDomains) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+		if(startDate!=null){
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), startDate);
+		}
+		Expression endDateExp = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+		if(endDate!=null){
+			Expression exp = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), endDate);
+			endDateExp = ExpressionUtilities.getOrExpression(exp, endDateExp);
+		} else {
+			criteria.addExpression(endDateExp);
+		}
+		if(includeChildDomains){
+			completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CONTRACT_DATA_DOMAIN));
+		}
+		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), false);
+		return bean.getList(criteria);
+	}
+	
+	public Map<String, String> getContractInfoMap(Contract contract) {
+		return getContractInfoMap(contract, true, false);
+	}
+	
+	public Map<String, String> getContractInfoMap(Contract contract, boolean allowDuplicates, boolean includeChildDomains) {
+		Map<String, String> map = new HashMap<String, String>();
+		try {
+			for(ITransferObject to: getContractInfoList(contract, contract.getStartDate(), contract.getEndDate(), includeChildDomains)){
+				ContractInfo info = (ContractInfo) to;
+				if(allowDuplicates || !map.containsKey(info.getName())){
+					map.put(info.getName(), info.getExpression()!=null?info.getExpression().replace('"', ' ').trim():"");
+				}
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, se devuelve un mapa vacio
+			return map;
+		}
+		return map;
+	}
+	
+	public Map<String, ContractInfo> getContractInfoMap(Contract contract, Date startDate, Date endDate) {
+		Map<String, ContractInfo> map = new HashMap<String, ContractInfo>();
+		try {
+			for(ITransferObject to: getContractInfoList(contract, startDate, endDate, false)){
+				ContractInfo info = (ContractInfo) to;
+				if(info.getExpression()!=null){
+					map.put(info.getName(), info);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, que siga generando el fichero
+		}
+		return map;
+	}
+	
+	private List<ITransferObject> getContractInfoList(Contract contract, Date startDate, Date endDate, boolean includeChildDomains) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId());
+		if(startDate!=null){
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE), startDate);
+		}
+		Expression endDateExp = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_END_DATE));
+		if(endDate!=null){
+			Expression exp = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_END_DATE), endDate);
+			endDateExp = ExpressionUtilities.getOrExpression(exp, endDateExp);
+		} else {
+			criteria.addExpression(endDateExp);
+		}
+		if(includeChildDomains){
+			completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CONTRACT_INFO_DOMAIN));
+		}
+		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE), false);
+		return bean.getList(criteria);
 	}
 	
 	public List<SalaryData> getSalaryDataList(Salary salary, Date startDate, Date endDate, String name) throws ManagerBeanException {

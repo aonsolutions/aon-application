@@ -78,7 +78,7 @@ public class ContrataWriter implements IContrataWriter{
 			throw new AbortProcessingException(msg);
 		}
 
-		SEPEUtils utils = new SEPEUtils();
+		SEPEUtils utils = SEPEUtils.getInstance();
 		Map<String, String> map = utils.getContractDataMap(contract);
 		
 		String code = map.get(ContextVariable.TC2.getName());
@@ -148,18 +148,18 @@ public class ContrataWriter implements IContrataWriter{
 	 * ***************************************
 	 * ***************************************
 	 */
-	private Map<String, String> contractDataMap;
+//	private Map<String, String> contractDataMap;
 	
-	protected Map<String, String> getContractDataMap(Contract contract) {
-		if(contractDataMap==null){
-			SEPEUtils utils = new SEPEUtils();
-			contractDataMap = utils.getContractDataMap(contract);
-		}
-		return contractDataMap;
-	}
-	protected Map<String, String> getContractDataMap() {
-		return contractDataMap;
-	}
+//	protected Map<String, String> getContractDataMap(Contract contract) {
+//		if(contractDataMap==null){
+//			SEPEUtils utils = new SEPEUtils();
+//			contractDataMap = utils.getContractDataMap(contract);
+//		}
+//		return contractDataMap;
+//	}
+//	protected Map<String, String> getContractDataMap() {
+//		return contractDataMap;
+//	}
 	
 	private String getFormatedDate(Date date){
 		String pattern = "yyyyMMdd";

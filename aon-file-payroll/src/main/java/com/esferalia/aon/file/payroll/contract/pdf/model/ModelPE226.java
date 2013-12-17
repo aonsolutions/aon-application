@@ -26,6 +26,7 @@ import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -197,7 +198,7 @@ public class ModelPE226 extends AbstractContractModel {
 			getPdfFieldsMap().get(PE226_EMPLOYEE_OPT3).setValue("");
 			
 			Map<String, String>  map = getContractDataMap(contract);
-			TrainingCourse trainingCourse = obtainTrainingCourse(map.get(ContextVariable.TRAINING_COURSE.getName()));
+			TrainingCourse trainingCourse = obtainTrainingCourse(map.get(ContractVariable.TRAINING_COURSE.getValue()));
 			
 			if(trainingCourse!=null){
 				getPdfFieldsMap().get(PE226_EMPLOYEE_PROFFESION).setValue(trainingCourse.getOccupationName());
@@ -236,7 +237,7 @@ public class ModelPE226 extends AbstractContractModel {
 				if(pw!=null && pw.getAgreement()!=null){
 					getPdfFieldsMap().get(PE226_COLLECTIVE_AGREEMENT).setValue(pw.getAgreement().getDescription());
 				}				
-				getPdfFieldsMap().get(PE226_JOURNAL_HORUS).setValue(map.get(ContextVariable.WORK_SCHEDULE.getName()));
+				getPdfFieldsMap().get(PE226_JOURNAL_HORUS).setValue(map.get(ContractVariable.WORK_SCHEDULE.getValue()));
 				Integer durationInMonths = getMonthsBetweenDates(contract.getStartDate(), contract.getEndDate());
 				getPdfFieldsMap().get(PE226_CONTRACT_DURATION).setValue(durationInMonths!=null?durationInMonths+" meses":"");
 				dateFormatter.applyPattern("dd/MM/yyyy");

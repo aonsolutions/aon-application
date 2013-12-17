@@ -45,8 +45,7 @@ public class ChildDomainSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria)
 			throws ManagerBeanException, ExpressionException {
-		SEPEUtils utils = new SEPEUtils();
-		utils.completeChildDomainCriteria(criteria, alias, false);
+		SEPEUtils.getInstance().completeChildDomainCriteria(criteria, alias, false);
 	}
 
 

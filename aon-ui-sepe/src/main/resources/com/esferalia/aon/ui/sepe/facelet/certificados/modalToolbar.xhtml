@@ -55,23 +55,28 @@
 	 				oncomplete="Richfaces.hideModalPanel('waitProccess')"
 					styleClass="aon-finding-toolbar-item aon-icon-update" />
 					
-				<c:if test="#{!skipDownloadButton}">
-					<aon:dropDownMenu value="#{bundle.aon_more2}"
-					 	style="display:inline-block;font-size:0.8em;margin-right:4px;" >
-			            <f:facet name="label">
-							<aon:panelGroup>
-								<aon:outputText value="#{bundle.aon_more2}" /> 
-								<aon:graphicImage style="vertical-align:middle;"
-			                     	value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
-							</aon:panelGroup>
-			            </f:facet>			
-						<aon:menuItem iconClass="aon-icon-mail-save">
+				<aon:dropDownMenu value="#{bundle.aon_more2}"
+				 	style="display:inline-block;font-size:0.8em;margin-right:4px;" >
+		            <f:facet name="label">
+						<aon:panelGroup>
+							<aon:outputText value="#{bundle.aon_more2}" /> 
+							<aon:graphicImage style="vertical-align:middle;"
+		                     	value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
+						</aon:panelGroup>
+		            </f:facet>			
+						<aon:menuItem iconClass="aon-icon-file-download">
 							<aon:htmlCommandLink id="sepeXmldownload" 
-								value="XML" target="_blank"
+								value="#{bundle.aon_fileupload_download} XML" target="_blank"
 								actionListener="#{controller.onDownloadSepeXml}" />
 			     		</aon:menuItem>
-					</aon:dropDownMenu>			
-				</c:if>
+					<c:if test="#{!skipDownloadButton}">
+					</c:if>
+					<aon:menuItem iconClass="aon-icon-file-upload">
+						<aon:htmlCommandLink id="sepeXmlupload" 
+							value="#{bundle.aon_file_upload} XML" target="_blank"
+							actionListener="#{controller.onDownloadSepeXml}" />
+		     		</aon:menuItem>
+				</aon:dropDownMenu>			
 				
 			</c:if>
 			

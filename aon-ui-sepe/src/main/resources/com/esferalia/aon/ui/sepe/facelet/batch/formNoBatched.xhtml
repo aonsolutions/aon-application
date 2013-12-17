@@ -53,7 +53,7 @@
 							<ui:param name="skipNewButton" value="#{true}" />
 							<ui:param name="skipGoToButton" value="#{true}" />
 							<ui:param name="lookupDisabled" value="#{enterpriseLookupDisabled}" />
-							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="idRequired" value="#{enterpriseLookupRequired}" />
 						</ui:include>
 					</c:if>
 				
@@ -80,7 +80,7 @@
 					title="#{rowCheckDisabled?checkboxTooltipText:''}"
 					ajaxSingle="#{true}"
 					valueChangeListener="#{controllerList.checkHandler.rowSelected}" >
-					<a4j:support event="onclick" reRender="listDataDiv, #{checkReRender}" />
+					<a4j:support event="onclick" reRender="listDataDiv, #{checkReRender}" ajaxSingle="#{true}" />
 				</aon:selectBooleanCheckbox>
 			</aon:column>
 			

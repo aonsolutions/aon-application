@@ -344,18 +344,18 @@ public class ContrataProrrogasWriter implements IContrataWriter {
 	 * ***************************************
 	 * ***************************************
 	 */
-	private Map<String, String> contractDataMap;
-	
-	protected Map<String, String> getContractDataMap(Contract contract) {
-		if(contractDataMap==null){
-			SEPEUtils utils = new SEPEUtils();
-			contractDataMap = utils.getContractDataMap(contract);
-		}
-		return contractDataMap;
-	}
-	protected Map<String, String> getContractDataMap() {
-		return contractDataMap;
-	}
+//	private Map<String, String> contractDataMap;
+//	
+//	protected Map<String, String> getContractDataMap(Contract contract) {
+//		if(contractDataMap==null){
+//			SEPEUtils utils = new SEPEUtils();
+//			contractDataMap = utils.getContractDataMap(contract);
+//		}
+//		return contractDataMap;
+//	}
+//	protected Map<String, String> getContractDataMap() {
+//		return contractDataMap;
+//	}
 	
 	private String getEnterpriseCCC(Enterprise enterprise) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);

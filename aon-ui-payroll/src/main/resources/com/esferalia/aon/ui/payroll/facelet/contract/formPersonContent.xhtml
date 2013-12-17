@@ -16,14 +16,22 @@
 			<ui:param name="goToBackActionListener" value="contract.onPersonBack"/>
 		</ui:include>
 		
+		
 		<aon:outputText value="#{bundle.aon_document}" />
-		<aon:inputText disabled="#{true}" size="12"
-			value="#{contract.to.person.registry.document}"/>
+		<aon:div>
+			<aon:inputText disabled="#{true}" size="12"
+				value="#{contract.to.person.registry.document}"/>
+			<!-- ONLY FOR DEVELOPMENT  
+			<aon:outputText value="&#160;(" />
+			<aon:outputText value="#{contract.to.id}" />
+			<aon:outputText value=")" />
+			-->
+		</aon:div>
 		
 		<aon:outputText value="#{bundle.registry_person_birthDate}" />
 		<aon:div>
 			<aon:selectInputDate disabled="#{true}" 
-				value="#{contract.to.person.birthDate}" 
+				value="#{contract.to.person.birthDate}"
 				inputSize="10" 
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}" />

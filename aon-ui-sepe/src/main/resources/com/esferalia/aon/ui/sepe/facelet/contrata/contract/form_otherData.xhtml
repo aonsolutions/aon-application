@@ -19,41 +19,41 @@
 			columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even aon-width-auto">
 			
 			<aon:outputLabel for="nivelFormativo"
-				rendered="#{contractContrata.handler.showNivelFormativo}" 
+				rendered="#{controller.handler.showNivelFormativo}" 
 				value="#{bundle.sepe_contrata_contract_nivel_formativo}" />
 			<aon:selectOneMenu id="nivelFormativo"
-				rendered="#{contractContrata.handler.showNivelFormativo}" 
+				rendered="#{controller.handler.showNivelFormativo}" 
 				required="true" 
-				value="#{contractContrata.params.nivelFormativo}" >
+				value="#{controller.params.nivelFormativo}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contrataCollections.TBONVFORCodeList}" />
 				<a4j:support event="onchange" reRender="otherDataPanel" ajaxSingle="true" />
 			</aon:selectOneMenu>
 
 			<aon:outputLabel for="titulacionAcademica"
-				rendered="#{contractContrata.handler.showTitulacionAcademica}" 
+				rendered="#{controller.handler.showTitulacionAcademica}" 
 				value="#{bundle.sepe_contrata_contract_titulacion_academica}" />
 			<aon:selectOneMenu id="titulacionAcademica"
-				rendered="#{contractContrata.handler.showTitulacionAcademica}" 
-				required="#{contractContrata.handler.titulacionAcademicaRequired}" 
-				value="#{contractContrata.params.titulacionAcademica}" >
+				rendered="#{controller.handler.showTitulacionAcademica}" 
+				required="#{controller.handler.titulacionAcademicaRequired}" 
+				value="#{controller.params.titulacionAcademica}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{contractContrata.handler.qualificationsNames}" />
+				<f:selectItems value="#{controller.handler.qualificationsNames}" />
 			</aon:selectOneMenu>
-			
+		
 			<aon:outputLabel for="certificadoProfesionalidad" 
-				rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
+				rendered="#{controller.handler.showCertificadoProfesionalidad}"
 				value="#{bundle.sepe_contrata_contract_certificado_profesionalidad}" />
 			<aon:selectBooleanCheckbox id="certificadoProfesionalidad" 
-				required="#{contractContrata.handler.certificadoProfesionalidadRequired}"  
-				rendered="#{contractContrata.handler.showCertificadoProfesionalidad}"
-				value="#{contractContrata.params.indCertifProfesionalidad}" />
+				required="#{controller.handler.certificadoProfesionalidadRequired}"  
+				rendered="#{controller.handler.showCertificadoProfesionalidad}"
+				value="#{controller.params.indCertifProfesionalidad}" />
 					
 			<aon:outputLabel for="basicCopySignatureType" 
 				value="#{bundle.sepe_contrata_contract_basicCopySignatureType}" />
 			<aon:selectOneMenu id="basicCopySignatureType"
 				required="true"
-				value="#{contractContrata.params.tipoFirmaCopiaBasica}" >
+				value="#{controller.params.tipoFirmaCopiaBasica}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contrataCollections.TERFIRCBCodeList}" />
 			</aon:selectOneMenu>
@@ -61,54 +61,54 @@
 			<aon:outputLabel for="basicCopyComments" 
 				value="#{bundle.sepe_contrata_contract_basicCopyComments}" />
 			<aon:inputTextarea id="basicCopyComments"
-				value="#{contractContrata.params.textoCopiaBasica}"
+				value="#{controller.params.textoCopiaBasica}"
 				cols="120" rows="5"/>
 						
 			<aon:outputLabel for="enterpriseFreeUse" 
 				value="#{bundle.sepe_contrata_usoLibreEmpresa}" />
 			<aon:inputText id="enterpriseFreeUse"
-				value="#{contractContrata.params.usoLibreEmpresa}" maxlength="30" size="55" >
+				value="#{controller.params.usoLibreEmpresa}" maxlength="30" size="55" >
 				<f:validateLength maximum="30" />
 			</aon:inputText>
 			
 			<aon:outputLabel for="workingDayType" 
-				rendered="#{contractContrata.handler.showTipoJornada}"
+				rendered="#{controller.handler.showTipoJornada}"
 				value="#{bundle.sepe_contrata_contract_working_day_type}" />
 			<aon:selectOneMenu id="workingDayType"
 				required="true"
-				disabled="#{!contractContrata.handler.availableTipoJornada}"
-				rendered="#{contractContrata.handler.showTipoJornada}"
-				value="#{contractContrata.params.tipoJornada}" >
+				disabled="#{!controller.handler.availableTipoJornada}"
+				rendered="#{controller.handler.showTipoJornada}"
+				value="#{controller.params.tipoJornada}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contrataCollections.TEQPTIEMCodeList}" />
 			</aon:selectOneMenu>
 			
 			<aon:outputLabel 
-				rendered="#{contractContrata.handler.showHorasMinutosJornada}"
+				rendered="#{controller.handler.showHorasMinutosJornada}"
 				value="#{bundle.sepe_contrata_contract_working_day_duration}" />
-			<aon:div rendered="#{contractContrata.handler.showHorasMinutosJornada}">
+			<aon:div rendered="#{controller.handler.showHorasMinutosJornada}">
 				<aon:outputLabel for="workingDayHours" styleClass="aon-italic aon-margin-right"
 					value="#{bundle.sepe_hours}:" />
 				<aon:inputText id="workingDayHours" size="4" maxlength="4"
-					value="#{contractContrata.params.horasJornada}"/>
+					value="#{controller.params.horasJornada}"/>
 				<aon:outputLabel for="workingDayMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
 					value="#{bundle.sepe_minutes}:" />
 				<aon:inputText id="workingDayMinutes" size="2" maxlength="2"
-					value="#{contractContrata.params.minutosJornada}"/>
+					value="#{controller.params.minutosJornada}"/>
 			</aon:div>
 
 			<aon:outputLabel 
-				rendered="#{contractContrata.handler.showHorasMinutosConvenio}"
+				rendered="#{controller.handler.showHorasMinutosConvenio}"
 				value="#{bundle.sepe_contrata_contract_agreement_hours}" />
-			<aon:div rendered="#{contractContrata.handler.showHorasMinutosConvenio}">
+			<aon:div rendered="#{controller.handler.showHorasMinutosConvenio}">
 				<aon:outputLabel for="agreementHours" styleClass="aon-italic aon-margin-right"
 					value="#{bundle.sepe_hours}:" />
 				<aon:inputText id="agreementHours" size="4" maxlength="4"
-					value="#{contractContrata.params.horasConvenio}"/>
+					value="#{controller.params.horasConvenio}"/>
 				<aon:outputLabel for="agreementMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
 					value="#{bundle.sepe_minutes}:" />
 				<aon:inputText id="agreementMinutes" size="2" maxlength="2"
-					value="#{contractContrata.params.minutosConvenio}"/>
+					value="#{controller.params.minutosConvenio}"/>
 			</aon:div>
 		</aon:panelGrid>
 			
@@ -117,69 +117,69 @@
 			columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even aon-width-auto">
 			
 			<aon:outputLabel for="formationReceived" 
-				rendered="#{contractContrata.handler.showIndicFormacionTeorica}"
+				rendered="#{controller.handler.showIndicFormacionTeorica}"
 				value="#{bundle.sepe_contrata_contract_formation_received}" />
 			<aon:selectOneRadio id="formationReceived"
-				rendered="#{contractContrata.handler.showIndicFormacionTeorica}"
-				value="#{contractContrata.params.indicFormacionTeorica}" >
+				rendered="#{controller.handler.showIndicFormacionTeorica}"
+				value="#{controller.params.indicFormacionTeorica}" >
 				<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="S" />
 				<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="N" />
 				<a4j:support event="onclick" reRender="otherDataPanel2" ajaxSingle="true" />
 			</aon:selectOneRadio>
 
 			<aon:outputLabel for="formationDuration" 
-				rendered="#{contractContrata.handler.showHorasMinutosFormacion}"
+				rendered="#{controller.handler.showHorasMinutosFormacion}"
 				value="#{bundle.sepe_contrata_contract_formation_hours}" />
 			<aon:div id="formationDuration"
-				rendered="#{contractContrata.handler.showHorasMinutosFormacion}" >
+				rendered="#{controller.handler.showHorasMinutosFormacion}" >
 				<aon:outputLabel for="formationHours" styleClass="aon-italic aon-margin-right"
 					value="#{bundle.sepe_hours}:" />
 				<aon:inputText id="formationHours" size="4" maxlength="4"
-					disabled="#{contractContrata.params.indicFormacionTeorica=='S'}" 
-					value="#{contractContrata.params.horasFormacion}">
+					disabled="#{controller.params.indicFormacionTeorica=='S'}" 
+					value="#{controller.params.horasFormacion}">
 					<a4j:support event="onblur" reRender="formationWorkingDaysPercent, otherDataPanel2" />
 				</aon:inputText>
 				<aon:outputLabel for="formationMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
 					value="#{bundle.sepe_minutes}:" />
 				<aon:inputText id="formationMinutes" size="2" maxlength="2"
-					disabled="#{contractContrata.params.indicFormacionTeorica=='S'}" 
-					value="#{contractContrata.params.minutosFormacion}">
+					disabled="#{controller.params.indicFormacionTeorica=='S'}" 
+					value="#{controller.params.minutosFormacion}">
 					<a4j:support event="onblur" reRender="formationWorkingDaysPercent, otherDataPanel2" />
 				</aon:inputText>
 				<aon:div id="formationWorkingDaysPercent" style="display:inline;"
-					rendered="#{not empty contractContrata.params.horasFormacion and not empty contractContrata.params.horasJornada}">
+					rendered="#{not empty controller.params.horasFormacion and not empty controller.params.horasJornada}">
 					<aon:outputText styleClass="aon-italic aon-margin-left"
-						value="#{contractContrata.params.horasFormacion*100/contractContrata.params.horasJornada}" />
+						value="#{controller.params.horasFormacion*100/controller.params.horasJornada}" />
 					<aon:outputText styleClass="aon-italic aon-margin-left"
 						value="% de la jornada" />
 				</aon:div>
 			</aon:div>
 			
 			<aon:outputLabel for="ageCollective" 
-				rendered="#{contractContrata.handler.showColectivoEdad}"
+				rendered="#{controller.handler.showColectivoEdad}"
 				value="#{bundle.sepe_contrata_contract_age_collective}" />
 			<aon:selectOneMenu id="ageCollective"
-				rendered="#{contractContrata.handler.showColectivoEdad}"
-				value="#{contractContrata.params.colectivoEdad}" >
+				rendered="#{controller.handler.showColectivoEdad}"
+				value="#{controller.params.colectivoEdad}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contrataCollections.THPCOLFOCodeList}" />
 			</aon:selectOneMenu>
 			
 			<aon:outputLabel for="retirementPercent"
-				rendered="#{contractContrata.handler.showPorcentajeJubilacionParcial}"
+				rendered="#{controller.handler.showPorcentajeJubilacionParcial}"
 				value="#{bundle.sepe_contrata_contract_retirement_percent}" />
 			<aon:inputText id="retirementPercent" size="6" maxLenght="5"
-				rendered="#{contractContrata.handler.showPorcentajeJubilacionParcial}"
-				value="#{contractContrata.params.porcentajeJubilacionParcial}">
+				rendered="#{controller.handler.showPorcentajeJubilacionParcial}"
+				value="#{controller.params.porcentajeJubilacionParcial}">
 				<f:validateDoubleRange minimum="25.00" maximum="85.00" />
 			</aon:inputText>
 			
 			<aon:outputText 
-				rendered="#{contractContrata.handler.showFijoDiscontinuoPeriodico}"
+				rendered="#{controller.handler.showFijoDiscontinuoPeriodico}"
 				value="&#160;" />
-			<aon:div rendered="#{contractContrata.handler.showFijoDiscontinuoPeriodico}">
+			<aon:div rendered="#{controller.handler.showFijoDiscontinuoPeriodico}">
 				<aon:selectBooleanCheckbox id="periodicallyDiscontinuous" 
-					value="#{contractContrata.params.fijoDiscontinuoPeriodico}" />
+					value="#{controller.params.fijoDiscontinuoPeriodico}" />
 				<aon:outputLabel for="periodicallyDiscontinuous"
 					value="#{bundle.sepe_contrata_contract_periodically_discontinuous}" />
 			</aon:div>

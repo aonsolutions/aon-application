@@ -1,7 +1,5 @@
 package com.esferalia.aon.ui.payroll.utils;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,8 +17,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
@@ -33,6 +29,8 @@ import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractEmbargo;
+import com.esferalia.aon.payroll.ContractInfo;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.ContractPayment;
@@ -46,6 +44,7 @@ import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractParams;
+import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 
 public class ContractUtils {
@@ -304,15 +303,45 @@ public class ContractUtils {
 			String msg = "Error al grabar si el contrato se acoge a la reduccion de cuotas a la S.S. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+		
+		insertContractInfo(contract, params);
+		
+	}
+	
+	public void insertContractInfo(Contract contract, ContractParams params) {
+		IManagerBean bean;
+		ContractInfo info;
+		try {
+			bean = BeanManager.getManagerBean(ContractData.class);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
+			throw new AbortProcessingException(msg,e);
+		}
+		
+		try {
+			if(params.isRetaQuote()){
+				info = new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.SELF_EMPLOYED.getValue() );
+				info.setExpression(Boolean.TRUE.toString());
+				bean.insert(info);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el centro de formacion. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
+		
 		try {
 			if(params.getTrainingCenter()!=null && params.getTrainingCenter().getId()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.TRAINING_CENTER.getName() );
-				data.setExpression("\"" + params.getTrainingCenter().getId() + "\"");
-				bean.insert(data);
+				info = new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.TRAINING_CENTER.getValue() );
+				info.setExpression("\"" + params.getTrainingCenter().getId() + "\"");
+				bean.insert(info);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el centro de formacion. (" +e.getMessage() + ")";
@@ -320,13 +349,13 @@ public class ContractUtils {
 		}
 		try {
 			if(params.getTrainingCourse()!=null && params.getTrainingCourse().getId()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(params.getTrainingStartDate());
-				data.setEndDate(params.getTrainingEndDate());
-				data.setName( ContextVariable.TRAINING_COURSE.getName() );
-				data.setExpression("\"" + params.getTrainingCourse().getId() + "\"");
-				bean.insert(data);
+				info = new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(params.getTrainingStartDate());
+				info.setEndDate(params.getTrainingEndDate());
+				info.setName( ContractVariable.TRAINING_COURSE.getValue() );
+				info.setExpression("\"" + params.getTrainingCourse().getId() + "\"");
+				bean.insert(info);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el curso de formacion. (" +e.getMessage() + ")";
@@ -334,13 +363,13 @@ public class ContractUtils {
 		}
 		try {
 			if(StringUtils.isNotBlank(params.getWorkSchedule())){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.WORK_SCHEDULE.getName() );
-				data.setExpression("\"" + params.getWorkSchedule() + "\"");
-				bean.insert(data);
+				info = new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.WORK_SCHEDULE.getValue() );
+				info.setExpression("\"" + params.getWorkSchedule() + "\"");
+				bean.insert(info);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el horario laboral. (" +e.getMessage() + ")";
@@ -348,13 +377,13 @@ public class ContractUtils {
 		}
 		try {
 			if(StringUtils.isNotBlank(params.getTrainingSchedule())){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.TRAINING_SCHEDULE.getName() );
-				data.setExpression("\"" + params.getTrainingSchedule() + "\"");
-				bean.insert(data);
+				info = new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.TRAINING_SCHEDULE.getValue() );
+				info.setExpression("\"" + params.getTrainingSchedule() + "\"");
+				bean.insert(info);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el horario lectivo. (" +e.getMessage() + ")";
@@ -486,7 +515,7 @@ public class ContractUtils {
 			String msg = "Error al grabar el codigo TC2. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
-		// TODO: updates availabla form contract transformations?
+		// TODO: updates available form contract transformations?
 //		try {
 //			ContractData tc2Data = obtainContractData(contract, ContextVariable.TC2.getName());
 //			if(params.getContractTransformCode()!=null){
@@ -525,19 +554,34 @@ public class ContractUtils {
 			String msg = "Error al grabar si el contrato se acoge a la reduccion de cuotas a la S.S. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+		
+		updateContractInfo(contract, params);
+		
+	}
+	
+	public void updateContractInfo(Contract contract, ContractParams params) throws ControllerListenerException {
+		ContractInfo info;
+		IManagerBean bean;
 		try {
-			ContractData trainingCenterData = obtainContractData(contract, ContextVariable.TRAINING_CENTER.getName());
+			bean = BeanManager.getManagerBean(ContractInfo.class);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
+			throw new AbortProcessingException(msg,e);
+		}
+		
+		try {
+			ContractInfo trainingCenterInfo = obtainContractInfo(contract, ContractVariable.TRAINING_CENTER.getValue());
 			if(params.getTrainingCenter()!=null && params.getTrainingCenter().getId()!=null){
-				data = trainingCenterData!=null?trainingCenterData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.TRAINING_CENTER.getName() );
-				data.setExpression("\"" + params.getTrainingCenter().getId() + "\"");
-				bean.insertOrUpdate(data);
+				info = trainingCenterInfo!=null?trainingCenterInfo:new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.TRAINING_CENTER.getValue() );
+				info.setExpression("\"" + params.getTrainingCenter().getId() + "\"");
+				bean.insertOrUpdate(info);
 			} else {
-				if(trainingCenterData != null){
-					bean.remove(trainingCenterData);
+				if(trainingCenterInfo != null){
+					bean.remove(trainingCenterInfo);
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -545,18 +589,18 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		try {
-			ContractData trainingCourseData = obtainContractData(contract, ContextVariable.TRAINING_COURSE.getName());
+			ContractInfo trainingCourseInfo = obtainContractInfo(contract, ContractVariable.TRAINING_COURSE.getValue());
 			if(params.getTrainingCourse()!=null && params.getTrainingCourse().getId()!=null){
-				data = trainingCourseData!=null?trainingCourseData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(params.getTrainingStartDate());
-				data.setEndDate(params.getTrainingEndDate());
-				data.setName( ContextVariable.TRAINING_COURSE.getName() );
-				data.setExpression("\"" + params.getTrainingCourse().getId() + "\"");
-				bean.insertOrUpdate(data);
+				info = trainingCourseInfo!=null?trainingCourseInfo:new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(params.getTrainingStartDate());
+				info.setEndDate(params.getTrainingEndDate());
+				info.setName( ContractVariable.TRAINING_COURSE.getValue() );
+				info.setExpression("\"" + params.getTrainingCourse().getId() + "\"");
+				bean.insertOrUpdate(info);
 			} else {
-				if(trainingCourseData != null){
-					bean.remove(trainingCourseData);
+				if(trainingCourseInfo != null){
+					bean.remove(trainingCourseInfo);
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -564,18 +608,18 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		try {
-			ContractData workScheduleData = obtainContractData(contract, ContextVariable.WORK_SCHEDULE.getName());
+			ContractInfo workScheduleInfo = obtainContractInfo(contract, ContractVariable.WORK_SCHEDULE.getValue());
 			if(StringUtils.isNotBlank(params.getWorkSchedule())){
-				data = workScheduleData!=null?workScheduleData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.WORK_SCHEDULE.getName() );
-				data.setExpression("\"" + params.getWorkSchedule() + "\"");
-				bean.insertOrUpdate(data);
+				info = workScheduleInfo!=null?workScheduleInfo:new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.WORK_SCHEDULE.getValue() );
+				info.setExpression("\"" + params.getWorkSchedule() + "\"");
+				bean.insertOrUpdate(info);
 			} else {
-				if(workScheduleData != null){
-					bean.remove(workScheduleData);
+				if(workScheduleInfo != null){
+					bean.remove(workScheduleInfo);
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -583,18 +627,18 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		try {
-			ContractData trainingScheduleData = obtainContractData(contract, ContextVariable.TRAINING_SCHEDULE.getName());
+			ContractInfo trainingScheduleInfo = obtainContractInfo(contract, ContractVariable.TRAINING_SCHEDULE.getValue());
 			if(StringUtils.isNotBlank(params.getTrainingSchedule())){
-				data = trainingScheduleData!=null?trainingScheduleData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.TRAINING_SCHEDULE.getName() );
-				data.setExpression("\"" + params.getTrainingSchedule() + "\"");
-				bean.insertOrUpdate(data);
+				info = trainingScheduleInfo!=null?trainingScheduleInfo:new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.TRAINING_SCHEDULE.getValue() );
+				info.setExpression("\"" + params.getTrainingSchedule() + "\"");
+				bean.insertOrUpdate(info);
 			} else {
-				if(trainingScheduleData != null){
-					bean.remove(trainingScheduleData);
+				if(trainingScheduleInfo != null){
+					bean.remove(trainingScheduleInfo);
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -605,8 +649,6 @@ public class ContractUtils {
 	
 	public void loadContractData(Contract contract, ContractParams params) throws ManagerBeanException {
 		Map<String, String> map = getContractDataMap(contract);
-		
-		
 		if(map.get(ContextVariable.IRPF_PERCENT.getName())!=null){
 			params.setIrpf(Double.parseDouble(map.get(ContextVariable.IRPF_PERCENT.getName())));
 		}
@@ -631,30 +673,38 @@ public class ContractUtils {
 		if(map.get(ContextVariable.SUBSIDIZED.getName())!=null){
 			params.setSubsidized(new Boolean(map.get(ContextVariable.SUBSIDIZED.getName())));
 		}
+
+		loadContractInfo(contract, params);
+		loadContractBonuses(contract, params);
+		
+	}
+	public void loadContractInfo(Contract contract, ContractParams params) throws ManagerBeanException {
+		Map<String, String> map = getContractInfoMap(contract);
+		
+		if(map.get(ContractVariable.SELF_EMPLOYED.getValue())!=null){
+			params.setRetaQuote(new Boolean(map.get(ContractVariable.SELF_EMPLOYED.getValue())));
+		} 
 		if(isTrainingContract(contract)){
-			if(map.get(ContextVariable.TRAINING_CENTER.getName())!=null){
-				params.setTrainingCenter(obtainTrainingCenter(map.get(ContextVariable.TRAINING_CENTER.getName())));
+			if(map.get(ContractVariable.TRAINING_CENTER.getValue())!=null){
+				params.setTrainingCenter(obtainTrainingCenter(map.get(ContractVariable.TRAINING_CENTER.getValue())));
 			} else {
 				params.setTrainingCenter((TrainingCenter) BeanManager.getManagerBean(TrainingCenter.class).createNewTo());
 			}
-			if(map.get(ContextVariable.TRAINING_COURSE.getName())!=null){
-				params.setTrainingCourse(obtainTrainingCourse(map.get(ContextVariable.TRAINING_COURSE.getName())));
-				ContractData data = obtainContractData(contract, ContextVariable.TRAINING_COURSE.getName());
-				params.setTrainingStartDate(data.getStartDate());
-				params.setTrainingEndDate(data.getEndDate());
+			if(map.get(ContractVariable.TRAINING_COURSE.getValue())!=null){
+				params.setTrainingCourse(obtainTrainingCourse(map.get(ContractVariable.TRAINING_COURSE.getValue())));
+				ContractInfo info = obtainContractInfo(contract, ContractVariable.TRAINING_COURSE.getValue());
+				params.setTrainingStartDate(info.getStartDate());
+				params.setTrainingEndDate(info.getEndDate());
 			} else {
 				params.setTrainingCourse((TrainingCourse) BeanManager.getManagerBean(TrainingCourse.class).createNewTo());
 			}
-			if(map.get(ContextVariable.WORK_SCHEDULE.getName())!=null){
-				params.setWorkSchedule(map.get(ContextVariable.WORK_SCHEDULE.getName()));
+			if(map.get(ContractVariable.WORK_SCHEDULE.getValue())!=null){
+				params.setWorkSchedule(map.get(ContractVariable.WORK_SCHEDULE.getValue()));
 			}
-			if(map.get(ContextVariable.TRAINING_SCHEDULE.getName())!=null){
-				params.setTrainingSchedule(map.get(ContextVariable.TRAINING_SCHEDULE.getName()));
+			if(map.get(ContractVariable.TRAINING_SCHEDULE.getValue())!=null){
+				params.setTrainingSchedule(map.get(ContractVariable.TRAINING_SCHEDULE.getValue()));
 			}
 		}
-		
-		loadContractBonuses(contract, params);
-		
 	}
 	
 	public void loadContractBonuses(Contract contract, ContractParams params) throws ManagerBeanException {
@@ -749,6 +799,22 @@ public class ContractUtils {
 		}
 		return null;
 	}
+
+	private ContractInfo obtainContractInfo(Contract contract, String name) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId() );
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), name );
+			List<ITransferObject> list = bean.getList(criteria);
+			if( !list.isEmpty() ){
+				return (ContractInfo) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			// do nothing ...
+		}
+		return null;
+	}
 	
 	private CNO obtainCno(String expression) {
 		try {
@@ -804,58 +870,118 @@ public class ContractUtils {
 		return map.get(ContextVariable.TC2.getName())!=null && ContractCode.getContractCodeByValue(map.get(ContextVariable.TC2.getName()))==ContractCode.C421;
 	}
 	
+	
 	public Map<String, String> getContractDataMap(Contract contract) {
-		Map<String, String> map = new HashMap<String, String>();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
-			Expression endDateExp = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
-			if(contract.getEndDate()!=null){
-//				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
-				Expression exp = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
-				endDateExp = ExpressionUtilities.getOrExpression(exp, endDateExp);
-			} else {
-//				criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
-				criteria.addExpression(endDateExp);
-			}
-			for(ITransferObject to: bean.getList(criteria)){
-				ContractData data = (ContractData) to;
-				if( StringUtils.isNotEmpty(data.getName()) && StringUtils.isNotEmpty(data.getExpression()) ){
-					map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
-				}
-			}
-		} catch (ManagerBeanException e) {
-			// NADA, se devuelve un mapa vacio
-			return map;
-		}
-		return map;
+		return SEPEUtils.getInstance().getContractDataMap(contract);
+	}
+
+	public Map<String, String> getContractInfoMap(Contract contract) {
+		return SEPEUtils.getInstance().getContractInfoMap(contract);
 	}
 	
-	public Map<String, ContractData> getContractDataMap(Contract contract, Date startDate, Date endDate) {
-		Map<String, ContractData> map = new HashMap<String, ContractData>();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			if(startDate!=null){
-				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), startDate);
-			}
-			if(endDate!=null){
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), endDate);
-			}
-			for(ITransferObject to: bean.getList(criteria)){
-				ContractData data = (ContractData) to;
-				if(data.getExpression()!=null){
-					map.put(data.getName(), data);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			// NADA, que siga generando el fichero
-		}
-		return map;
-	}
+//	public Map<String, String> getContractDataMap(Contract contract) {
+//		Map<String, String> map = new HashMap<String, String>();
+//		try {
+//			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
+//			Expression endDateExp = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+//			if(contract.getEndDate()!=null){
+//				Expression exp = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
+//				endDateExp = ExpressionUtilities.getOrExpression(exp, endDateExp);
+//			} else {
+//				criteria.addExpression(endDateExp);
+//			}
+//			for(ITransferObject to: bean.getList(criteria)){
+//				ContractData data = (ContractData) to;
+//				if( StringUtils.isNotEmpty(data.getName()) && StringUtils.isNotEmpty(data.getExpression()) ){
+//					map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
+//				}
+//			}
+//		} catch (ManagerBeanException e) {
+//			// NADA, se devuelve un mapa vacio
+//			return map;
+//		}
+//		return map;
+//	}
+//	
+//	public Map<String, ContractData> getContractDataMap(Contract contract, Date startDate, Date endDate) {
+//		Map<String, ContractData> map = new HashMap<String, ContractData>();
+//		try {
+//			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+//			if(startDate!=null){
+//				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), startDate);
+//			}
+//			if(endDate!=null){
+//				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), endDate);
+//			}
+//			for(ITransferObject to: bean.getList(criteria)){
+//				ContractData data = (ContractData) to;
+//				if(data.getExpression()!=null){
+//					map.put(data.getName(), data);
+//				}
+//			}
+//		} catch (ManagerBeanException e) {
+//			// NADA, que siga generando el fichero
+//		}
+//		return map;
+//	}
+//	
+//	public Map<String, String> getContractInfoMap(Contract contract) {
+//		Map<String, String> map = new HashMap<String, String>();
+//		try {
+//			IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId());
+//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE), contract.getStartDate());
+//			Expression endDateExp = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_END_DATE));
+//			if(contract.getEndDate()!=null){
+////				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
+//				Expression exp = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_END_DATE), contract.getEndDate());
+//				endDateExp = ExpressionUtilities.getOrExpression(exp, endDateExp);
+//			} else {
+////				criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+//				criteria.addExpression(endDateExp);
+//			}
+//			for(ITransferObject to: bean.getList(criteria)){
+//				ContractData data = (ContractData) to;
+//				if( StringUtils.isNotEmpty(data.getName()) && StringUtils.isNotEmpty(data.getExpression()) ){
+//					map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
+//				}
+//			}
+//		} catch (ManagerBeanException e) {
+//			// NADA, se devuelve un mapa vacio
+//			return map;
+//		}
+//		return map;
+//	}
+//	
+//	public Map<String, ContractInfo> getContractInfoMap(Contract contract, Date startDate, Date endDate) {
+//		Map<String, ContractInfo> map = new HashMap<String, ContractInfo>();
+//		try {
+//			IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId());
+//			if(startDate!=null){
+//				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE), startDate);
+//			}
+//			if(endDate!=null){
+//				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_END_DATE), endDate);
+//			}
+//			for(ITransferObject to: bean.getList(criteria)){
+//				ContractInfo info = (ContractInfo) to;
+//				if(info.getExpression()!=null){
+//					map.put(info.getName(), info);
+//				}
+//			}
+//		} catch (ManagerBeanException e) {
+//			// NADA, que siga generando el fichero
+//		}
+//		return map;
+//	}
 	
 	
 }

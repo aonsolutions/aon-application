@@ -40,8 +40,7 @@ public class Certifica2BatchSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria)
 			throws ManagerBeanException, ExpressionException {
-		SEPEUtils utils = new SEPEUtils();
-		utils.completeChildDomainCriteria(criteria, "Certifica2Batch.domain", false);
+		SEPEUtils.getInstance().completeChildDomainCriteria(criteria, "Certifica2Batch.domain", false);
 		if(getEnterprise()!=null && getEnterprise().getId()!=null){
 			criteria.addEqualExpression(getFieldName(IEntityAlias.CERTIFICA2BATCH_ENTERPRISE_ID), getEnterprise().getId());
 		}

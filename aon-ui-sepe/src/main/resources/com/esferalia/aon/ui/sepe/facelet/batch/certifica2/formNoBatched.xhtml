@@ -14,11 +14,12 @@
 		<ui:param name="controllerList" value="#{certifica2List}" />
 		<ui:param name="checkReRender" value="listToolBarDiv, listDataDiv" />
 		<ui:param name="checkboxTooltipText" value="El trabajador ya existe en la remesa." />
+		<ui:param name="enterpriseLookupRequired" value="#{true}" />
 		
 		
 		<ui:define name="afterToolbarContent" >
 				<aon:div style="float:right;width:300px;">
-					<rich:inplaceSelect id="suspensionCauseApplyAll" 
+					<rich:inplaceSelect id="massiveSuspensionCause" 
 						rendered="#{certifica2List.checkHandler.checkedCount gt 0}" 
 					 	value="#{certifica2List.suspensionCauseForAll}"
 					 	listHeight="300px" listWidth="300px" 
@@ -28,7 +29,7 @@
 					</rich:inplaceSelect>
 				</aon:div>
 			<aon:div style="float:right;">
-				<aon:commandButton id="apply"
+				<aon:commandButton id="apply-massiveSuspensionCause"
 					disabled="#{certifica2List.checkHandler.checkedCount le 0}"
 					value="#{bundle.payroll_apply_to_all}"
 					styleClass="aon-icon-commandButton aon-icon-accept aon-margin-left" >

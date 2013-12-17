@@ -35,7 +35,7 @@
 		
 		<ui:define name="moreMenuContent">
 
-<c:if test="#{!contract.retaQuote}">
+<c:if test="#{!contract.params.retaQuote}">
 			<aon:menuItem id="document-issue" 
 				value="#{bundle.payroll_contract_generate_document}"
 				rendered="#{!contract.new}"
@@ -44,6 +44,16 @@
 				iconClass="aon-icon-new-page">
 				<f:setPropertyActionListener
 					target="#{contractPdf.showDocumentGenerationWindow}" value="#{true}" />
+ 			</aon:menuItem>
+
+			<aon:menuItem id="contract-additionalClauses" 
+				value="#{bundle.payroll_contract_additional_clauses}"
+				rendered="#{empty contractClauses.contractClauses}"
+				reRender="showContractClausesWindow"
+				actionListener="#{contractClauses.onAdditionalClausesShow}"
+				iconClass="aon-icon-edit-add-simple">
+				<f:setPropertyActionListener
+					target="#{contractClauses.showContractClausesWindow}" value="#{true}" />
  			</aon:menuItem>
 			
 			<c:if test="#{sepeAppParams.developmentMode}">
@@ -117,7 +127,7 @@
 			<rich:menuSeparator id="documentsSeparator" />
 			
 			<aon:menuItem id="document-extension" 
-				value="Prorroga"
+				value="Prorrogar"
 				rendered="#{contract.extensibleContract}"
 				disabled="#{empty contract.to.endDate}"
 				reRender="showExtensionContrataWindow"
@@ -127,16 +137,17 @@
 					target="#{extensionContrata.showExtensionContrataWindow}" value="#{true}" />
 			</aon:menuItem>
 			<aon:menuItem id="document-transform" 
-				value="Transformacion"
+				value="Transformar a ind."
 				rendered="#{contract.transformableContract}"
-				reRender="showExtensionContrataWindow"
-				actionListener="#{contract.onContrataExtensionShow}"
+				reRender="showTransformContrataWindow"
+				actionListener="#{contract.onContrataTransformShow}"
 				iconClass="aon-icon-copy" >
 				<f:setPropertyActionListener
-					target="#{extensionContrata.showExtensionContrataWindow}" value="#{true}" />
+					target="#{transformContrata.showTransformContrataWindow}" value="#{true}" />
 			</aon:menuItem>
 			
-			<rich:menuSeparator id="actionsSeparator" />
+			<rich:menuSeparator id="actionsSeparator"
+				rendered="#{contract.extensibleContract or contract.transformableContract}" />
 			
 			<aon:menuItem id="contrata-communication-log"
 				value="#{bundle.aon_module_contrata}"
@@ -181,10 +192,10 @@
 						target="#{contract.showContractEmbargoWindow}" value="#{true}" />
 				</aon:menuItem>
 				<aon:menuItem id="contract-salary-info" 
-					value="Datos de calculo"
+					value="Datos de cálculo"
 					reRender="showContractSalaryInfoWindow"
 					actionListener="#{contract.onShowSalaryInfoWindow}"
-					iconClass="aon-icon-copy" >
+					iconClass="aon-icon-tree" >
 					<f:setPropertyActionListener
 						target="#{contract.showContractSalaryInfoWindow}" value="#{true}" />
 				</aon:menuItem>				

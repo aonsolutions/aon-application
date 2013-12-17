@@ -39,13 +39,6 @@
 	
 					<aon:outputLabel value="#{bundle.aon_date}" />
 					<aon:div>
-						<!--  
-						<aon:selectInputDate id="certifica2Batch_date" rendered="#{!certifica2Batch.recorded}"
-							value="#{certifica2Batch.to.date}" required="true"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-						<aon:outputText value="#{certifica2Batch.to.date}" rendered="#{certifica2Batch.recorded}" >
-						-->
 						<aon:outputText value="#{certifica2Batch.to.date}" >
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
@@ -95,6 +88,7 @@
 					<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
 				</ui:include>
 				
+				<!-- SEPE ONLINE COMMUNICATION -->
 				<ui:include src="/com/esferalia/aon/ui/sepe/facelet/certificados/modalCommunication.xhtml" >
 					<ui:param name="controller" value="#{contractCertificados}" />
 					<ui:param name="skipBatchButton" value="#{true}" />

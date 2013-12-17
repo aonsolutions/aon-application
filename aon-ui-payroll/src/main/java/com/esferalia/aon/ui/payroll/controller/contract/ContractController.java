@@ -46,6 +46,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelData;
@@ -56,6 +57,8 @@ import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
+import com.esferalia.aon.payroll.ContractInfo;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.ContrataBatchDetail;
 import com.esferalia.aon.payroll.EnterpriseActivity;
@@ -89,6 +92,8 @@ public class ContractController extends BasicController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractController.class.getName());
 	
+	final static String ADDITIONAL_CLAUSES_TAB_NAME = "additionalClausesData";
+	
 	private Enterprise enterprise;
 	private List<SelectItem> workPlaces;
 	private List<SelectItem> enterpriseCCCs;
@@ -104,32 +109,59 @@ public class ContractController extends BasicController {
 	private boolean showContractBonusWindow;
 	private boolean showContractSalaryInfoWindow;
 	
-	private boolean retaQuote;
-	
 	public SalaryInfoHandler getSalaryInfoHandler() {
 		return salaryInfoHandler;
 	}
 	public void setSalaryInfoHandler(SalaryInfoHandler salaryInfoHandler) {
 		this.salaryInfoHandler = salaryInfoHandler;
 	}
-	public boolean isRetaQuote() {
-		return retaQuote;
-	}
-	public void setRetaQuote(boolean retaQuote) {
-		this.retaQuote = retaQuote;
-	}
 	public boolean isRowContractRetaQuote() {
 		try {
-			Contract contract = (Contract) getModel().getRowData();
-			if( contract!=null && (contract.getActivity()==null || contract.getActivity().getId()==null) 
-					&& (contract.getEnterpriseCCC()==null || contract.getEnterpriseCCC().getId()==null) ){
-				return true;
+			if(this.getModel().isRowAvailable()){
+				Contract contract = (Contract) getModel().getRowData();
+				IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), ContractVariable.SELF_EMPLOYED.getValue());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE), false);
+				List<ITransferObject> list = bean.getList(criteria);
+				if(!list.isEmpty()){
+					String value = ((ContractInfo)list.get(0)).getExpression().replaceAll("\"", "");
+					return new Boolean( value );
+				}
 			}
 		} catch (ManagerBeanException e) {
-			return false;
+			LOGGER.error(">>>> getContractCode exception: ",e);
+			AonUtil.addErrorMessage("Se ha producido un error al obtener el código de contrato. ");
+			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		return false;
 	}
+	
+	public String getContractCode(){
+		try {
+			if(this.getModel().isRowAvailable()){
+				Contract contract = (Contract) getModel().getRowData();
+				IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.TC2.getName());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), false);
+				List<ITransferObject> list = bean.getList(criteria);
+				if(!list.isEmpty()){
+					String code = ((ContractData)list.get(0)).getExpression().replaceAll("\"", "");
+					ContractCode contractCode = ContractCode.getContractCodeByValue(code);
+					return contractCode!=null?code + " - " + contractCode.getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()):"";
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> getContractCode exception: ",e);
+			AonUtil.addErrorMessage("Se ha producido un error al obtener el código de contrato. ");
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		return null;
+	}
+	
 	public ContractParams getParams() {
 		if(params==null){
 			params = new ContractParams();
@@ -259,17 +291,13 @@ public class ContractController extends BasicController {
 	}
 	
 	public boolean isExtensibleContract(){
-		// TODO: what contracts are extensible?
 		String contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
-		String[] codes = {"421"};
-		return ArrayUtils.contains(codes, contractCode) ;
+		return StringUtils.startsWith(contractCode, "4") || StringUtils.startsWith(contractCode, "5");
 	}
 
 	public boolean isTransformableContract(){
-		// TODO: what contracts are transformable?
 		String contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
-		String[] codes = {""};
-		return ArrayUtils.contains(codes, contractCode) ;
+		return StringUtils.startsWith(contractCode, "4") || StringUtils.startsWith(contractCode, "5");
 	}
 
 	public boolean isTransformedContract(){
@@ -314,23 +342,7 @@ public class ContractController extends BasicController {
 	public String getSepeCommunicationId(){
 		if(this.getTo()!=null){
 			ContractUtils utils = ContractUtils.getInstance();
-			return utils.getContractDataMap((Contract) getTo()).get(ContextVariable.SEPE_CONTRACT_ID.getName());
-		}
-		return null;
-	}
-
-	public String getContractCode(){
-		try {
-			if(this.getModel().isRowAvailable()){
-				ContractUtils utils = ContractUtils.getInstance();
-				String code = utils.getContractDataMap((Contract) getModel().getRowData()).get(ContextVariable.TC2.getName());
-				ContractCode contractCode = ContractCode.getContractCodeByValue(code);
-				return contractCode!=null?code + " - " + contractCode.getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()):"";
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> getContractCode exception: ",e);
-			AonUtil.addErrorMessage("Se ha producido un error al obtener el código de contrato. ");
-			throw new AbortProcessingException(e.getMessage(), e);
+			return utils.getContractInfoMap((Contract) getTo()).get(ContractVariable.SEPE_CONTRACT_ID.getValue());
 		}
 		return null;
 	}
@@ -597,6 +609,11 @@ public class ContractController extends BasicController {
 			contract.setCategoryDescription(desc);
 		}
 	}
+
+	public void onChangeStartDate(ValueChangeEvent event){
+		Contract contract = (Contract) this.getTo();
+		contract.setSeniorityDate( (Date)event.getNewValue() );
+	}
 	
 	public boolean isTrainingContract(){
 		ContractUtils utils = ContractUtils.getInstance();
@@ -605,14 +622,14 @@ public class ContractController extends BasicController {
 
 	public boolean isTrainingCenterDefined(){
 		ContractUtils utils = ContractUtils.getInstance();
-		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
-		return map.get(ContextVariable.TRAINING_CENTER.getName())!=null;
+		Map<String, String> map = utils.getContractInfoMap((Contract) this.getTo());
+		return map.get(ContractVariable.TRAINING_CENTER.getValue())!=null;
 	}
 
 	public boolean isTrainingCourseDefined(){
 		ContractUtils utils = ContractUtils.getInstance();
-		Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
-		return map.get(ContextVariable.TRAINING_COURSE.getName())!=null;
+		Map<String, String> map = utils.getContractInfoMap((Contract) this.getTo());
+		return map.get(ContractVariable.TRAINING_COURSE.getValue())!=null;
 	}
 	
 	public List<SelectItem> getTrainingCenters(){
@@ -736,6 +753,14 @@ public class ContractController extends BasicController {
 	public void onContrataExtensionShow(ActionEvent event){
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.EXTENSION_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize((Contract) this.getTo());
+		ContrataProrrogaParams params = (ContrataProrrogaParams) contrataController.getParams();
+		params.setFechaInicio(((Contract) this.getTo()).getEndDate());
+		contrataController.onContrataDataShow(event);
+	}
+
+	public void onContrataTransformShow(ActionEvent event){
+		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+		contrataController.initialize((Contract) this.getTo());
 		contrataController.onContrataDataShow(event);
 	}
 	
@@ -835,9 +860,9 @@ public class ContractController extends BasicController {
 		TrainingCenterController tcController = (TrainingCenterController) AonUtil.getRegisteredBean(IPayrollConstants.TRAINING_CENTER_CONTROLLER_NAME);
 		try {
 			ContractUtils utils = ContractUtils.getInstance();
-			Map<String, String> map = utils.getContractDataMap((Contract) this.getTo());
-			if(map.get(ContextVariable.TRAINING_COURSE.getName())!=null){
-				String courseId = map.get(ContextVariable.TRAINING_COURSE.getName());
+			Map<String, String> map = utils.getContractInfoMap((Contract) this.getTo());
+			if(map.get(ContractVariable.TRAINING_COURSE.getValue())!=null){
+				String courseId = map.get(ContractVariable.TRAINING_COURSE.getValue());
 				TrainingCourse course = (TrainingCourse) BeanManager.getManagerBean(TrainingCourse.class).get(Integer.parseInt(courseId));
 				tcController.select(null, course.getTrainingCenter().getId());
 			}
@@ -1147,14 +1172,16 @@ public class ContractController extends BasicController {
 		}
 		public void loadPaymentTracking(Contract contract){
 			try {
-				IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
-				criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_ID), getSelectedPayment().getId());
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_PAYMENT_CONCEPT_ID), getSelectedPayment().getPaymentConcept().getId());
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), getSelectedPayment().getStartDate());
-				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), false);
-				paymentTracking = bean.getList(criteria);
+				if(getSelectedPayment().getPaymentConcept()!=null && getSelectedPayment().getPaymentConcept().getId()!=null){
+					IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
+					criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_ID), getSelectedPayment().getId());
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_PAYMENT_CONCEPT_ID), getSelectedPayment().getPaymentConcept().getId());
+					criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), getSelectedPayment().getStartDate());
+					criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), false);
+					paymentTracking = bean.getList(criteria);
+				}
 			} catch (ManagerBeanException e) {
 				AonUtil.addErrorMessage("No se han podido cargar correctamente los devengos");
 			}
@@ -1223,6 +1250,7 @@ public class ContractController extends BasicController {
 // ************************************
 // ************************************
 	public class ContractParams {
+		private boolean retaQuote;
 		private ContractOption contractOption;
 		private ContractType contractType;
 		private ContractModelCode contractModelCode;
@@ -1405,6 +1433,13 @@ public class ContractController extends BasicController {
 		public void setBonusModel(DataModel bonusModel) {
 			this.bonusModel = bonusModel;
 		}
+		public boolean isRetaQuote() {
+			return retaQuote;
+		}
+		public void setRetaQuote(boolean retaQuote) {
+			this.retaQuote = retaQuote;
+		}
+		
 		
 	}
 	

@@ -59,11 +59,13 @@
 								</aon:panel>
 							</c:if>
 						</aon:panelTab>
-<c:if test="#{!contract.retaQuote}">
+<c:if test="#{!contract.params.retaQuote}">
 						<aon:panelTab id="contrataData" label="#{bundle.sepe_contrata_contract_specific_data}">
 							<c:if test="#{contractContrata.enabledContrataEdition}">
 								<aon:div style="width:850px;">
-									<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" />
+									<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" >
+										<ui:param name="controller" value="#{contractContrata}" />
+									</ui:include>
 									<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_specificData.xhtml" />
 								</aon:div>		
 							</c:if>
@@ -73,10 +75,17 @@
 							</c:if>
 						</aon:panelTab>
 
-						<c:if test="#{not empty contract.to.model}">
+						<aon:panelTab id="documentOtherData" label="#{bundle.aon_addInfo}">
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contractInfo/grid.xhtml" >
+								<ui:param name="controller" value="#{contractDocumentInfo}" />
+								<ui:param name="showContractFieldsColumn" value="#{true}" />
+							</ui:include>
+						</aon:panelTab>
+						
+						<c:if test="#{not empty contractClauses.contractClauses}">
 							<aon:panelTab id="additionalClausesData" label="#{bundle.payroll_contract_additional_clauses}"
 								actionListener="#{contractClauses.onAdditionalClausesShow}">
-									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/additionalClauses/form.xhtml" />
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/additionalClauses/form.xhtml" />
 							</aon:panelTab>
 						</c:if>
 </c:if>
@@ -110,8 +119,12 @@
 			<ui:param name="reRender" value="contract-panelTab" />
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/salaryInfo/modalSalaryInfo.xhtml" />
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/additionalClauses/modalClauses.xhtml" >
+			<ui:param name="saveReRender" value="contractForm" />
+		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/modalGeneration.xhtml" />
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/extension/modalExtension.xhtml" />
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/modalTransform.xhtml" />
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >
 			<ui:param name="controller" value="#{contractContrata}" />
 		</ui:include>

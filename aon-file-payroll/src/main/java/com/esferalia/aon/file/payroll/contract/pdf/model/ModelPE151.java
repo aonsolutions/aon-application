@@ -18,56 +18,6 @@ import com.lowagie.text.pdf.PdfReader;
 
 public class ModelPE151 extends AbstractContractModel {
 	
-	
-	/*
-	 * Contract page 1
-	 */
-	final static String PE151_TC2_100 = "tipocontrato_100";
-	final static String PE151_TC2_150 = "tipocontrato_150";
-	final static String PE151_LEGAL_REPRESENTATIVE_NAME = "Texto65";
-	final static String PE151_LEGAL_REPRESENTATIVE_NIF = "Texto66";
-	final static String PE151_LEGAL_REPRESENTATIVE_CHARGE = "Texto67";
-	final static String PE151_ART4_RDL_3_2012_YES = "Casilla de verificación78464";
-	final static String PE151_ART4_RDL_3_2012_NO = "Casilla de verificación71016430";
-	final static String PE151_PROFESSION = "profetraba";
-	final static String PE151_CATEGORY = "catetraba";
-	final static String PE151_FUNCTION = "funciontraba";
-	final static String PE151_WORKPLACE_FULL_ADDRESS = "calletrab";
-	final static String PE151_CONTRACT_START_DATE = "fechaini";
-	final static String PE151_JOURNAL_HOURS = "horasjorna1";
-	final static String PE151_START_TIME = "horainicio";
-	final static String PE151_END_TIME = "horafin";
-	
-	/*
-	 * Contract page 2
-	 */
-	final static String PE151_SALARY = "retribu";
-	final static String PE151_SALARY_PERIOD = "perioretri";
-	final static String PE151_SALARY_CONCEPT = "concepsala";
-	final static String PE151_HOLIDAYS = "vacaciones";
-	final static String PE151_RELIEF_YES = "Casilla de verificación7";
-	final static String PE151_RELIEF_NO = "Casilla de verificación8";
-	final static String PE151_ART4_RDL_3_2012_BT_16_30_UNEMPLOYED = "Casilla de verificación11";
-	final static String PE151_ART4_RDL_3_2012_BT_16_30_YOUNG = "Casilla de verificación9";
-	final static String PE151_ART4_RDL_3_2012_BT_16_30_WOMAN = "Casilla de verificación10";
-	final static String PE151_ART4_RDL_3_2012_GT_45_UNEMPLOYED = "Casilla de verificación13";
-	final static String PE151_ART4_RDL_3_2012_GT_45 = "Casilla de verificación12";
-	final static String PE151_ART4_RDL_3_2012_GT_45_WOMAN = "Casilla de verificación14";
-	final static String PE151_UNEMPLOYED_WITH_3_BENEFIT = "Casilla de verificación15";
-	final static String PE151_FIRST_EMPLOYEE_LT_30 = "Casilla de verificación16";
-	final static String PE151_AGREEMENT_COLLECTIVE = "convcole";
-	final static String PE151_SEPE_MUNICIPALITY = "oecomu";
-	final static String PE151_ADDITIONAL_CLAUSES = "T25";
-	
-	// OVERRIDES FIELDS
-	final String ENTERPRISE_COUNTRY1 = "Texto1pas1";
-	final String ENTERPRISE_MUNICIPALITY1 = "Texto2mun1";
-	final String WORKPLACE_COUNTRY1 = "Texto34";
-	final String WORKPLACE_MUNICIPALITY1 = "Texto38";
-	final String EMPLOYEE_COUNTRY1 = "Texto51";
-	final String EMPLOYEE_ADDRESS_MUNICIPALITY1 = "Texto55";
-	final String EMPLOYEE_ADDRESS_COUNTRY1 = "Texto61";
-	
 	public final static String MODEL_NAME = "PE151";
 	
 	public ModelPE151(){
@@ -86,9 +36,9 @@ public class ModelPE151 extends AbstractContractModel {
 			readPdfFields(reader);
 			
 			if(code == ContractCode.C100){
-				getPdfFieldsMap().get(PE151_TC2_100).setValue("true");
+				getPdfFieldsMap().get(PE151FieldName.TC2_100.getName()).setValue("true");
 			} else if(code == ContractCode.C150){
-				getPdfFieldsMap().get(PE151_TC2_150).setValue("true");
+				getPdfFieldsMap().get(PE151FieldName.TC2_150.getName()).setValue("true");
 			} else {
 				throw new UnsupportedContractDocumentException("El modelo de contrato seleccionado es incorrecto");
 			}
@@ -101,7 +51,7 @@ public class ModelPE151 extends AbstractContractModel {
 			 * must normalize pdf files of contract models 
 			 */
 			try {	
-				getPdfFieldsMap().get(ENTERPRISE_COUNTRY1).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(getLocale()));
+				getPdfFieldsMap().get(PE151FieldName.ENTERPRISE_COUNTRY1.getName()).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(getLocale()));
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
@@ -111,14 +61,14 @@ public class ModelPE151 extends AbstractContractModel {
 			try {
 				RegistryAddress address = contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress();
 				ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
-				getPdfFieldsMap().get(ENTERPRISE_MUNICIPALITY1).setValue(bundle.getString(address.getMunicipalityCode()));
+				getPdfFieldsMap().get(PE151FieldName.ENTERPRISE_MUNICIPALITY1.getName()).setValue(bundle.getString(address.getMunicipalityCode()));
 			} catch (NullPointerException npe) {
 				// do nothing
 			}
 			
 			try {
 				GeoZone country = obtainCountry(contract.getWorkPlace().getAddress().getGeozone());
-				getPdfFieldsMap().get(WORKPLACE_COUNTRY1).setValue(country.getName());
+				getPdfFieldsMap().get(PE151FieldName.WORKPLACE_COUNTRY1.getName()).setValue(country.getName());
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
@@ -127,25 +77,25 @@ public class ModelPE151 extends AbstractContractModel {
 			try {
 				RegistryAddress address = contract.getWorkPlace().getAddress();
 				ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
-				getPdfFieldsMap().get(WORKPLACE_MUNICIPALITY1).setValue(bundle.getString(address.getMunicipalityCode()));
+				getPdfFieldsMap().get(PE151FieldName.WORKPLACE_MUNICIPALITY1.getName()).setValue(bundle.getString(address.getMunicipalityCode()));
 			} catch (NullPointerException npe) {
 				// do nothing
 			}
 			try {
-				getPdfFieldsMap().get(EMPLOYEE_COUNTRY1).setValue(String.valueOf(contract.getPerson().getRegistry().getNationality().getName(getLocale())));
+				getPdfFieldsMap().get(PE151FieldName.EMPLOYEE_COUNTRY1.getName()).setValue(String.valueOf(contract.getPerson().getRegistry().getNationality().getName(getLocale())));
 			} catch (NullPointerException npe) {
 				// do nothing
 			}
 			try {
 				RegistryAddress address = contract.getPerson().getRegistry().getDefaultAddress();
 				ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
-				getPdfFieldsMap().get(EMPLOYEE_ADDRESS_MUNICIPALITY1).setValue(bundle.getString(address.getMunicipalityCode()));
+				getPdfFieldsMap().get(PE151FieldName.EMPLOYEE_ADDRESS_MUNICIPALITY1.getName()).setValue(bundle.getString(address.getMunicipalityCode()));
 			} catch (NullPointerException npe) {
 				// do nothing
 			}
 			try {
 				GeoZone country = obtainCountry(contract.getPerson().getRegistry().getDefaultAddress().getGeozone());
-				getPdfFieldsMap().get(EMPLOYEE_ADDRESS_COUNTRY1).setValue(country.getName());
+				getPdfFieldsMap().get(PE151FieldName.EMPLOYEE_ADDRESS_COUNTRY1.getName()).setValue(country.getName());
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
@@ -159,44 +109,44 @@ public class ModelPE151 extends AbstractContractModel {
 			/*
 			 * Contract page 1
 			 */
-			getPdfFieldsMap().get(PE151_LEGAL_REPRESENTATIVE_NAME).setValue(null);
-			getPdfFieldsMap().get(PE151_LEGAL_REPRESENTATIVE_NIF).setValue(null);
-			getPdfFieldsMap().get(PE151_LEGAL_REPRESENTATIVE_CHARGE).setValue(null);
-			getPdfFieldsMap().get(PE151_ART4_RDL_3_2012_YES).setValue(null);
-			getPdfFieldsMap().get(PE151_ART4_RDL_3_2012_NO).setValue(null);
-			getPdfFieldsMap().get(PE151_PROFESSION).setValue(null);
-			getPdfFieldsMap().get(PE151_CATEGORY).setValue(null);
-			getPdfFieldsMap().get(PE151_FUNCTION).setValue(null);
-			getPdfFieldsMap().get(PE151_WORKPLACE_FULL_ADDRESS).setValue(contract.getWorkPlace().getAddress().getFullAddress() + ", " + contract.getWorkPlace().getAddress().getCity());
+			getPdfFieldsMap().get(PE151FieldName.LEGAL_REPRESENTATIVE_NAME.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.LEGAL_REPRESENTATIVE_NIF.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.LEGAL_REPRESENTATIVE_CHARGE.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.ART4_RDL_3_2012_YES.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.ART4_RDL_3_2012_NO.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.PROFESSION.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.CATEGORY.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.FUNCTION.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.WORKPLACE_FULL_ADDRESS.getName()).setValue(contract.getWorkPlace().getAddress().getFullAddress() + ", " + contract.getWorkPlace().getAddress().getCity());
 			dateFormatter.applyPattern("dd/MM/yyyy");
-			getPdfFieldsMap().get(PE151_CONTRACT_START_DATE).setValue(dateFormatter.format(contract.getStartDate()));
-			getPdfFieldsMap().get(PE151_JOURNAL_HOURS).setValue(null);
-			getPdfFieldsMap().get(PE151_START_TIME).setValue(null);
-			getPdfFieldsMap().get(PE151_END_TIME).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.CONTRACT_START_DATE.getName()).setValue(dateFormatter.format(contract.getStartDate()));
+			getPdfFieldsMap().get(PE151FieldName.JOURNAL_HOURS.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.START_TIME.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.END_TIME.getName()).setValue(null);
 			
 			/*
 			 * Contract page 2
 			 */
-			getPdfFieldsMap().get(PE151_SALARY).setValue("Según convenio");
-			getPdfFieldsMap().get(PE151_SALARY_PERIOD).setValue(null);
-			getPdfFieldsMap().get(PE151_SALARY_CONCEPT).setValue(null);
-			getPdfFieldsMap().get(PE151_HOLIDAYS).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.SALARY.getName()).setValue("Según convenio");
+			getPdfFieldsMap().get(PE151FieldName.SALARY_PERIOD.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.SALARY_CONCEPT.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.HOLIDAYS.getName()).setValue(null);
 			if(params!=null && params.isReliefData()){
-				getPdfFieldsMap().get(PE151_RELIEF_YES).setValue("true");
+				getPdfFieldsMap().get(PE151FieldName.RELIEF_YES.getName()).setValue("true");
 			} else {
-				getPdfFieldsMap().get(PE151_RELIEF_NO).setValue("true");
+				getPdfFieldsMap().get(PE151FieldName.RELIEF_NO.getName()).setValue("true");
 			}
-			getPdfFieldsMap().get(PE151_ART4_RDL_3_2012_BT_16_30_UNEMPLOYED).setValue(null);
-			getPdfFieldsMap().get(PE151_ART4_RDL_3_2012_BT_16_30_YOUNG).setValue(null);
-			getPdfFieldsMap().get(PE151_ART4_RDL_3_2012_BT_16_30_WOMAN).setValue(null);
-			getPdfFieldsMap().get(PE151_ART4_RDL_3_2012_GT_45_UNEMPLOYED).setValue(null);
-			getPdfFieldsMap().get(PE151_ART4_RDL_3_2012_GT_45).setValue(null);
-			getPdfFieldsMap().get(PE151_ART4_RDL_3_2012_GT_45_WOMAN).setValue(null);
-			getPdfFieldsMap().get(PE151_UNEMPLOYED_WITH_3_BENEFIT).setValue(null);
-			getPdfFieldsMap().get(PE151_FIRST_EMPLOYEE_LT_30).setValue(null);
-			getPdfFieldsMap().get(PE151_AGREEMENT_COLLECTIVE).setValue(null);
-			getPdfFieldsMap().get(PE151_SEPE_MUNICIPALITY).setValue(null);
-			getPdfFieldsMap().get(PE151_ADDITIONAL_CLAUSES).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.ART4_RDL_3_2012_BT_16_30_UNEMPLOYED.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.ART4_RDL_3_2012_BT_16_30_YOUNG.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.ART4_RDL_3_2012_BT_16_30_WOMAN.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.ART4_RDL_3_2012_GT_45_UNEMPLOYED.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.ART4_RDL_3_2012_GT_45.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.ART4_RDL_3_2012_GT_45_WOMAN.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.UNEMPLOYED_WITH_3_BENEFIT.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.FIRST_EMPLOYEE_LT_30.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.AGREEMENT_COLLECTIVE.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.SEPE_MUNICIPALITY.getName()).setValue(null);
+			getPdfFieldsMap().get(PE151FieldName.ADDITIONAL_CLAUSES.getName()).setValue(null);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -207,6 +157,80 @@ public class ModelPE151 extends AbstractContractModel {
 		}
 	}
 
+	/*
+	 * INNER CLASSES
+	 */
+	public enum PE151FieldName implements IContractFieldName{
+		/*
+		 * Contract page 1
+		 */
+		TC2_100("tipocontrato_100",Boolean.FALSE),
+		TC2_150("tipocontrato_150",Boolean.FALSE),
+		LEGAL_REPRESENTATIVE_NAME("Texto65",Boolean.FALSE),
+		LEGAL_REPRESENTATIVE_NIF("Texto66",Boolean.FALSE),
+		LEGAL_REPRESENTATIVE_CHARGE("Texto67",Boolean.FALSE),
+		ART4_RDL_3_2012_YES("Casilla de verificación78464",Boolean.FALSE),
+		ART4_RDL_3_2012_NO("Casilla de verificación71016430",Boolean.FALSE),
+		PROFESSION("profetraba",Boolean.FALSE),
+		CATEGORY("catetraba",Boolean.FALSE),
+		FUNCTION("funciontraba",Boolean.FALSE),
+		WORKPLACE_FULL_ADDRESS("calletrab",Boolean.FALSE),
+		CONTRACT_START_DATE("fechaini",Boolean.FALSE),
+		JOURNAL_HOURS("horasjorna1",Boolean.FALSE),
+		START_TIME("horainicio",Boolean.FALSE),
+		END_TIME("horafin",Boolean.FALSE),
+		
+		/*
+		 * Contract page 2
+		 */
+		SALARY("retribu",Boolean.FALSE),
+		SALARY_PERIOD("perioretri",Boolean.FALSE),
+		SALARY_CONCEPT("concepsala",Boolean.FALSE),
+		HOLIDAYS("vacaciones",Boolean.TRUE),
+		RELIEF_YES("Casilla de verificación7",Boolean.FALSE),
+		RELIEF_NO("Casilla de verificación8",Boolean.FALSE),
+		ART4_RDL_3_2012_BT_16_30_UNEMPLOYED("Casilla de verificación11",Boolean.FALSE),
+		ART4_RDL_3_2012_BT_16_30_YOUNG("Casilla de verificación9",Boolean.FALSE),
+		ART4_RDL_3_2012_BT_16_30_WOMAN("Casilla de verificación10",Boolean.FALSE),
+		ART4_RDL_3_2012_GT_45_UNEMPLOYED("Casilla de verificación13",Boolean.FALSE),
+		ART4_RDL_3_2012_GT_45("Casilla de verificación12",Boolean.FALSE),
+		ART4_RDL_3_2012_GT_45_WOMAN("Casilla de verificación14",Boolean.FALSE),
+		UNEMPLOYED_WITH_3_BENEFIT("Casilla de verificación15",Boolean.FALSE),
+		FIRST_EMPLOYEE_LT_30("Casilla de verificación16",Boolean.FALSE),
+		AGREEMENT_COLLECTIVE("convcole",Boolean.FALSE),
+		SEPE_MUNICIPALITY("oecomu",Boolean.FALSE),
+		ADDITIONAL_CLAUSES("T25",Boolean.FALSE),
+		
+		// OVERRIDES FIELDS
+		ENTERPRISE_COUNTRY1("Texto1pas1",Boolean.FALSE),
+		ENTERPRISE_MUNICIPALITY1("Texto2mun1",Boolean.FALSE),
+		WORKPLACE_COUNTRY1("Texto34",Boolean.FALSE),
+		WORKPLACE_MUNICIPALITY1("Texto38",Boolean.FALSE),
+		EMPLOYEE_COUNTRY1("Texto51",Boolean.FALSE),
+		EMPLOYEE_ADDRESS_MUNICIPALITY1("Texto55",Boolean.FALSE),
+		EMPLOYEE_ADDRESS_COUNTRY1("Texto61",Boolean.FALSE),
+		;
+		
+		private String name;
+		private boolean overridable;
+		
+		private PE151FieldName(String name, boolean overridable) {
+			this.name = name;
+			this.overridable = overridable;
+		}
+		
+		public String getName(){
+			return name;
+		}
+		public boolean isOverridable(){
+			return overridable;
+		}
+
+		@Override
+		public String getValue() {
+			return name;
+		}
+	}
 	
 }
 	

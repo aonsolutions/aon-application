@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:define name="columns">
+			
+			<c:if test="#{showContractFieldsColumn}">
+				<aon:column alias="ContractInfo.name"
+					styleClass="aon-editDataTable-textColumn aon-width-100">
+					<f:facet name="header">
+						<aon:outputLabel for="ContractInfo_name"
+							value="#{bundle.aon_name}" />
+					</f:facet>
+					<aon:outputText value="#{to.name}" rendered="#{formList}" />
+					<aon:selectOneMenu id="ContractInfo_name" required="true"
+						rendered="#{formEdit}"
+						value="#{controller.to.name}" >
+						<f:selectItem itemLabel=" - " value="#{null}" />
+						<f:selectItems value="#{controller.fieldNames}" />
+					</aon:selectOneMenu>
+					<f:facet name="footer">
+						<aon:selectOneMenu id="ContractInfo_name-New" required="true"
+							rendered="#{formNew}"
+							value="#{controller.to.name}" >
+							<f:selectItem itemLabel=" - " value="#{null}" />
+							<f:selectItems value="#{controller.fieldNames}" />
+						</aon:selectOneMenu>
+					</f:facet>
+				</aon:column>
+			</c:if>
+			<c:if test="#{!showContractFieldsColumn}">
+				<aon:column alias="ContractInfo.name"
+					styleClass="aon-editDataTable-textColumn aon-width-100">
+					<f:facet name="header">
+						<aon:outputLabel for="ContractInfo_name"
+							value="#{bundle.aon_name}" />
+					</f:facet>
+					<aon:outputText value="#{to.name}" rendered="#{formList}" />
+					<aon:inputText id="ContractInfo_name" required="true"
+						rendered="#{formEdit}" size="24"
+						value="#{controller.to.name}" maxlength="32" />
+					<f:facet name="footer">
+						<aon:inputText id="ContractInfo_name-New" required="true"
+							rendered="#{formNew}" size="24"
+							value="#{controller.to.name}" maxlength="32" />
+					</f:facet>
+				</aon:column>
+			</c:if>
+			
+			<aon:column alias="ContractInfo.expression"
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractInfo_expression"
+						value="#{bundle.aon_value}" />
+				</f:facet>
+				<aon:outputText value="#{to.expression}"
+					rendered="#{formList}" />
+				<aon:inputText id="ContractInfo_expression" required="true"
+					rendered="#{formEdit}" size="64"
+					value="#{controller.to.expression}" maxlength="128" />
+				<f:facet name="footer">
+					<aon:inputText id="ContractInfo_expression-New" required="true"
+						rendered="#{formNew}" size="64"
+						value="#{controller.to.expression}" maxlength="128" />
+				</f:facet>
+			</aon:column>
+			
+			<aon:column alias="ContractInfo.startDate"
+				styleClass="aon-editDataTable-dateColumn aon-width-150">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractInfo_startDate" value="#{bundle.aon_start_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.startDate}" rendered="#{formList}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="ContractInfo_startDate" rendered="#{formEdit}"
+					required="#{true}"
+					value="#{controller.to.startDate}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}"/>
+				<f:facet name="footer">
+					<aon:selectInputDate id="ContractInfo_startDate-New" rendered="#{formNew}"
+						required="#{true}"
+						value="#{controller.to.startDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column alias="ContractInfo.endDate"
+				styleClass="aon-editDataTable-dateColumn aon-width-150">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractInfo_endDate" value="#{bundle.aon_end_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.endDate}" rendered="#{formList}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="ContractInfo_endDate" rendered="#{formEdit}"
+					value="#{controller.to.endDate}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}"/>
+				<f:facet name="footer">
+					<aon:selectInputDate id="ContractInfo_endDate-New" rendered="#{formNew}"
+						value="#{controller.to.endDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</f:facet>
+			</aon:column>
+			
+		</ui:define>
+	</ui:decorate>
+	
+</ui:composition>

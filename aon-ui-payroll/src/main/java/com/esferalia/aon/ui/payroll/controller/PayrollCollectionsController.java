@@ -247,6 +247,9 @@ public class PayrollCollectionsController {
 			for (ContractCode code : codes) {
 				if( ArrayUtils.contains(ISepeConstants.AVAILABLE_TRANSFORM_CODE_COMMUNICATION, code.getValue()) ){
 					String name = code.getValue() +" - "+ code.getName(locale);
+					if(StringUtils.contains(name,", TRANSFORMACIÓN CONTRATO TEMPORAL")){
+						name = StringUtils.replace(name, ", TRANSFORMACIÓN CONTRATO TEMPORAL", "");
+					}
 					SelectItem item = new SelectItem(code, name);
 					contractTransformCodes.add(item);
 				}
