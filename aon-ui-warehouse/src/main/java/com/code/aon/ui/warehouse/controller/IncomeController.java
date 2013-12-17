@@ -31,6 +31,7 @@ import com.code.aon.purchase.bridge.IncomeManager;
 import com.code.aon.purchase.bridge.PurchaseTransferManager;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
@@ -380,6 +381,20 @@ public class IncomeController extends BasicController implements IWarehouseConst
 
 	public double getIncomeTotalPrice(Income income) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(income, income.getSupplier());
+	}
+	
+	public double getTotalDetailQuantity(){
+		try {
+			IManagerBean detailBean = BeanManager.getManagerBean(IncomeDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), ((Income)this.getTo()).getId());
+			Projection projection = Projection.sum(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_QUANTITY));
+			Object value = detailBean.getUniqueResult(projection, criteria);
+			return (value != null) ? ((Double)value) : 0;
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Se ha producido un error al obtener la cantidad total de unidades");
+		}
+		return 0;
 	}
 
 	public void onPurchaseTransferShow(ActionEvent event) throws ManagerBeanException {

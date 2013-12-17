@@ -144,10 +144,16 @@
 					reRender="IncomeDetail_amount" 
 					required="true" size="5" />
 				<f:facet name="footer">
-					<aon:inputText id="IncomeDetail_quantity-New" 
-						value="#{controller.to.quantity}" rendered="#{formNew}" 
-						reRender="IncomeDetail_amount-New" 
-						required="true" size="5" />
+					<aon:div style="text-align:right;">
+						<aon:inputText id="IncomeDetail_quantity-New" 
+							value="#{controller.to.quantity}" rendered="#{formNew}" 
+							reRender="IncomeDetail_amount-New" 
+							required="true" size="5" />
+						<aon:outputText id="Income_totalDetailQuantity" 
+							value="#{income.totalDetailQuantity}" rendered="#{!formNew}">
+							<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+						</aon:outputText>
+					</aon:div>
 				</f:facet>
 			</aon:column>
 	

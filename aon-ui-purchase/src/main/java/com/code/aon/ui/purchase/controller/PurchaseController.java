@@ -52,6 +52,7 @@ import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.purchase.util.IEmailControllerListener;
 import com.code.aon.purchase.util.IEmailable;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.supplier.Supplier;
@@ -460,6 +461,20 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 
 	public double getPurchaseTotalPrice(Purchase purchase) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(purchase, purchase.getSupplier());
+	}
+	
+	public double getTotalDetailQuantity(){
+		try {
+			IManagerBean detailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), ((Purchase)this.getTo()).getId());
+			Projection projection = Projection.sum(detailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_QUANTITY));
+			Object value = detailBean.getUniqueResult(projection, criteria);
+			return (value != null) ? ((Double)value) : 0;
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Se ha producido un error al obtener la cantidad total de unidades");
+		}
+		return 0;
 	}
 
 	public void onPending(ActionEvent event) {

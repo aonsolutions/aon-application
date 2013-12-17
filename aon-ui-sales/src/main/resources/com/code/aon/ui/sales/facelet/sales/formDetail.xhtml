@@ -172,11 +172,17 @@
 					reRender="SalesDetail_pendingQuantity,SalesDetail_price,SalesDetail_discount,SalesDetail_amount" 
 					required="true" size="5" focus="SalesDetail_price" />
 				<f:facet name="footer">
-					<aon:inputText id="SalesDetail_quantity-New" 
-						value="#{controller.to.quantity}" rendered="#{formNew}" 
-						valueChangeListener="#{controller.onQuantityChanged}" 
-						reRender="SalesDetail_price-New,SalesDetail_discount-New,SalesDetail_amount-New" 
-						required="true" size="5" focus="SalesDetail_price-New" />
+					<aon:div style="text-align:right;">
+						<aon:inputText id="SalesDetail_quantity-New" 
+							value="#{controller.to.quantity}" rendered="#{formNew}" 
+							valueChangeListener="#{controller.onQuantityChanged}" 
+							reRender="SalesDetail_price-New,SalesDetail_discount-New,SalesDetail_amount-New" 
+							required="true" size="5" focus="SalesDetail_price-New" />
+						<aon:outputText id="Sales_totalDetailQuantity" 
+							value="#{sales.totalDetailQuantity}" rendered="#{!formNew}">
+							<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+						</aon:outputText>
+					</aon:div>
 				</f:facet>
 			</aon:column>
 

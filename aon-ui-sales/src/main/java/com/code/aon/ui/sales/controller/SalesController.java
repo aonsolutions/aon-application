@@ -38,6 +38,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.sales.Sales;
@@ -493,6 +494,20 @@ public class SalesController extends BasicController implements ISalesConstants 
 	
 	public double getSalesTotalPrice(Sales sales) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(sales, sales.getCustomer());
+	}
+	
+	public double getTotalDetailQuantity(){
+		try {
+			IManagerBean detailBean = BeanManager.getManagerBean(SalesDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), ((Sales)this.getTo()).getId());
+			Projection projection = Projection.sum(detailBean.getFieldName(IEntityAlias.SALES_DETAIL_QUANTITY));
+			Object value = detailBean.getUniqueResult(projection, criteria);
+			return (value != null) ? ((Double)value) : 0;
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Se ha producido un error al obtener la cantidad total de unidades");
+		}
+		return 0;
 	}
 
 	public void onPending(ActionEvent event) {

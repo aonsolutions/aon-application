@@ -40,6 +40,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
@@ -445,6 +446,20 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 	
 	private double getDeliveryTotalPrice(Delivery delivery) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(delivery, delivery.getCustomer());
+	}
+	
+	public double getTotalDetailQuantity(){
+		try {
+			IManagerBean detailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), ((Delivery)this.getTo()).getId());
+			Projection projection = Projection.sum(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_QUANTITY));
+			Object value = detailBean.getUniqueResult(projection, criteria);
+			return (value != null) ? ((Double)value) : 0;
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Se ha producido un error al obtener la cantidad total de unidades");
+		}
+		return 0;
 	}
 
 	public void onSalesTransferShow(ActionEvent event) throws ManagerBeanException {
