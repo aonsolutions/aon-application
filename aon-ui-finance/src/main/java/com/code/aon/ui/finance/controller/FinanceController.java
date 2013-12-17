@@ -375,7 +375,7 @@ public class FinanceController extends FinanceListController implements IFinance
 		if (event.getNewValue() != null) {
 			RegistryBank rb = (RegistryBank) event.getNewValue();
 			finance.setBankAccount(rb.getBankAccount());
-			finance.setBankAlias(rb.getBic());
+			finance.setBankAlias(rb.getBankAlias());
 			finance.setBic(rb.getBic());
 		} else {
 			finance.setBankAccount(null);

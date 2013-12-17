@@ -90,7 +90,7 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	}
 
 	public static void checkBankAccount(IBankAccountContainer bac) throws ManagerBeanVetoListenerException {
-		if (StringUtils.isEmpty(bac.getBankAccount().getBban())) {
+		if (bac.getBankAccount() == null || StringUtils.isEmpty(bac.getBankAccount().getBban())) {
 			bac.setBankAccount(null);
 			bac.setBankAlias(null);
 			bac.setBic(null);

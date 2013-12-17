@@ -81,21 +81,22 @@ public class FinanceControllerListener extends ControllerAdapter {
 		Finance finance = (Finance) controller.getTo(); 
 		controller.setPayment(finance.isPayment());
 		controller.setPayroll(finance.isPayroll());
-		controller.setShowBankManualInput(StringUtils.isNotEmpty(finance.getBankAccount().getIban()));
 		controller.setRegistryBank(null);
 		try {
-			if (StringUtils.isNotEmpty(finance.getBankAccount().getIban())) {
+			if (StringUtils.isNotEmpty(finance.getBankAccount().getBban())) {
 				for (SelectItem item : controller.getAllBanks()) {
 					RegistryBank rBank = (RegistryBank)item.getValue();
 					BankAccount bankAccount = rBank.getBankAccount();
 					if (bankAccount!= null) {
 						if (StringUtils.equals(finance.getBankAccount().getIban(), bankAccount.getIban())) {
 							controller.setRegistryBank(rBank);
+							controller.setShowBankManualInput(false);
 							break;
 						}
 					}
 				}
 			}
+			controller.setShowBankManualInput(controller.getRegistryBank() == null && !StringUtils.isEmpty(finance.getBankAccount().getBban()));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -116,13 +117,6 @@ public class FinanceControllerListener extends ControllerAdapter {
 		if (controller.isFinanceGroup()) {
 			updateGroupedFinances(event, (Finance) controller.getTo());
 		}
-	}
-	
-	@Override
-	public void afterBeanUpdated(ControllerEvent event)	throws ControllerListenerException {
-		FinanceController controller = (FinanceController)event.getController();
-		Finance finance = (Finance) controller.getTo(); 
-		controller.setShowBankManualInput(StringUtils.isNotEmpty(finance.getBankAccount().getIban()));
 	}
 	
 	@Override
