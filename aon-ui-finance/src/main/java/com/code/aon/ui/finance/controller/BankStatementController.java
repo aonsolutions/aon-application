@@ -554,7 +554,7 @@ public class BankStatementController extends BasicController implements IFinance
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), getRegistryBank().getRegistry().getId());
-		String bankAcc = line.substring(2, 10) + "__" + line.substring(10, 20);
+		String bankAcc = "ES__" + line.substring(2, 10) + "__" + line.substring(10, 20);
 		criteria.addExpression(ExpressionUtilities.getLikeExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_BANK_ACCOUNT), bankAcc));
 		Iterator<?> iterator = rBankBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
