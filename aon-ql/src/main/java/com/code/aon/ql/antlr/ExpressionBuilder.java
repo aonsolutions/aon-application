@@ -157,7 +157,7 @@ public class ExpressionBuilder extends antlr.TreeParser implements QLTokenTypes 
 
 				r = factory.newCostantExpression(literalLTE.getText());
 				expression = factory.newRelationalExpression(l, r,
-						RelationalType.LESS_THAN);
+						RelationalType.LESS_THAN_OR_EQUAL);
 
 				break;
 			}
@@ -173,7 +173,7 @@ public class ExpressionBuilder extends antlr.TreeParser implements QLTokenTypes 
 
 				r = factory.newCostantExpression(literalGTE.getText());
 				expression = factory.newRelationalExpression(l, r,
-						RelationalType.GREATER_THAN);
+						RelationalType.GREATER_THAN_OR_EQUAL);
 
 				break;
 			}

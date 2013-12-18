@@ -7,7 +7,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<rich:modalPanel id="searchHelp" height="360" width="320">
+	<rich:modalPanel id="searchHelp" height="380" width="320">
 
 		<f:facet name="header">
 			<aon:div styleClass="aon-popupWindow-title">
@@ -36,6 +36,9 @@
 		</aon:div>
 
 		<aon:panelGrid columns="2">
+
+			<aon:outputText value="#{bundle.aon_meta_igual}" />
+			<aon:outputText value="#{bundle.aon_meta_igual_description}" />
 
 			<aon:outputText value="#{bundle.aon_meta_mayor}" />
 			<aon:outputText value="#{bundle.aon_meta_mayor_description}" />

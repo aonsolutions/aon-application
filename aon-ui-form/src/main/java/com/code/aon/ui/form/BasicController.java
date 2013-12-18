@@ -760,11 +760,15 @@ public class BasicController extends AbstractPojoController implements IControll
 	public void addExpression( Criteria criteria, String id, String value ) throws ManagerBeanException {
 		String fieldName = resolveAlias(id); 
 		try {
-			Expression exp = ExpressionUtilities.getExpression(value, fieldName);
-			if ( isOnlyTextExpression(exp, fieldName) ) {
-				updateTextExpression(exp);
+			if (value.charAt(0) == '=') {
+				criteria.addExpression(ExpressionUtilities.getExpression(value.substring(1), fieldName));
+			} else {
+				Expression exp = ExpressionUtilities.getExpression(value, fieldName);
+				if ( isOnlyTextExpression(exp, fieldName) ) {
+					updateTextExpression(exp);
+				}
+				criteria.addExpression(exp);
 			}
-			criteria.addExpression(exp);
 		} catch (ExpressionException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}

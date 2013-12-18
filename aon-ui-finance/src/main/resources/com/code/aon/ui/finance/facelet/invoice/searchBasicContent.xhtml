@@ -6,16 +6,10 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{searchController.sales}">
-		<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
-	</c:if>
-
 	<aon:outputLabel for="Invoice_referenceCode"
-		value="#{bundle.aon_invoice_number}"
-		rendered="#{!searchController.sales}" />
+		value="#{bundle.aon_invoice_number}" />
 	<aon:inputText id="Invoice_referenceCode"
 		valueChangeListener="#{controller.addExpression}"
-		rendered="#{!searchController.sales}"
 		size="25" maxlength="25" />
 
 	<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
@@ -72,22 +66,15 @@
 		<aon:outputLabel for="Invoice_series-Document" rendered="#{searchController.undeductible}"
 			styleClass="aon-form-date-label aon-margin-right" value="G-" />
 
-		<aon:inputText id="Invoice_referenceCode-Document"
-			valueChangeListener="#{controller.addExpression}"
-			rendered="#{searchController.sales}"
-			size="20" maxlength="25" />
 		<aon:inputText id="Invoice_series-Document"
 			onblur="toUpperCase(this);"
 			valueChangeListener="#{controller.addExpression}"
-			rendered="#{!searchController.sales}" 
-			size="5" maxlength="5" />
+			size="6" maxlength="5" />
 		<aon:outputLabel for="Invoice_number-Document"
-			styleClass="aon-form-date-label aon-margin-right" value="-"
-			rendered="#{!searchController.sales}"  />
+			styleClass="aon-form-date-label aon-margin-right" value="-" />
 		<aon:inputText id="Invoice_number-Document"
 			valueChangeListener="#{controller.addExpression}"
-			rendered="#{!searchController.sales}" 
-			size="6" />
+			size="8" />
 	</aon:div>
 
 	<aon:outputLabel value="#{bundle.stat_total}" />
