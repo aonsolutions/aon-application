@@ -161,6 +161,7 @@ public class ContractControllerListener extends ControllerAdapter{
 			utils.updateContractData((Contract) controller.getTo(), controller.getParams());
 			updateContrataData();
 			updateAdditionalClauses();
+			updateContractInfo();
 		}
 	}
 	
@@ -180,6 +181,11 @@ public class ContractControllerListener extends ControllerAdapter{
 	private void updateAdditionalClauses() {
 		ContractClausesController controller = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
 		controller.accept();
+	}
+	
+	private void updateContractInfo() {
+		ContractInfoController controller = (ContractInfoController) AonUtil.getRegisteredBean("contractDocumentInfo");
+		controller.saveContractFields();
 	}
 	
 }

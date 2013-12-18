@@ -13,54 +13,6 @@ import com.lowagie.text.pdf.PdfReader;
 
 public class ModelPE176 extends AbstractContractModel {
 	
-	/*
-	 * Contract page 1
-	 */
-	final static String PE176_TC2_420 = "tiempocompleto";
-	final static String PE176_TC2_520 = "tiempoparcial";
-	final static String PE176_LEGAL_REPRESENTATIVE_NAME = "nomreptra";
-	final static String PE176_LEGAL_REPRESENTATIVE_NIF = "dnireptra";
-	final static String PE176_LEGAL_REPRESENTATIVE_CHARGE = "calireptra";
-	final static String PE176_PROFFESION_TITLE = "titulprac";
-	final static String PE176_PROFFESION_TITLE_DATE = "fechatit";
-	final static String PE176_HANDICAP_PERSON1 = "ubicact";
-	final static String PE176_HANDICAP_PERSON2 = "Texto2";
-	final static String PE176_RDL_63_2006_RESEARCH_FORMATION = "tiempoc";
-	final static String PE176_PROFESSION = "profetraba";
-	final static String PE176_CATEGORY = "catetraba";
-	final static String PE176_WORKPLACE_FULL_ADDRESS = "ubitrab";
-	final static String PE176_WORKPLACE_FULL_ADDRESS_MORE = "calletrab";
-	
-	/*
-	 * Contract page 2
-	 */
-	final static String PE176_FULL_TIME = "sel_jorn1";
-	final static String PE176_FULL_TIME_WEEK_HOURS = "horasjorna1";
-	final static String PE176_FULL_TIME_FROM_TIME = "horainicio";
-	final static String PE176_FULL_TIME_TO_TIME = "horafin";
-	final static String PE176_PARTIALLY_TIME = "sel_jorn2";
-	final static String PE176_PARTIALLY_TIME_HOURS = "horasjorna2";
-	final static String PE176_PARTIALLY_TIME_DAYLY = "tipojorntp1";
-	final static String PE176_PARTIALLY_TIME_WEEKLY = "tipojorntp2";
-	final static String PE176_PARTIALLY_TIME_MONTHLY = "tipojorntp3";
-	final static String PE176_PARTIALLY_TIME_YEARLY = "tipojorntp4";
-	final static String PE176_COMPARABLE_FULL_TIME = "Casilla de verificación161";
-	final static String PE176_AGREEMENT_COLLECTIVE_FULL_TIME = "Casilla de verificación171";
-	final static String PE176_LEGAL_MAX = "Casilla de verificación181";
-	final static String PE176_JOB_TIME_DISTRIBUTION1 = "horatraba1";
-	final static String PE176_JOB_TIME_DISTRIBUTION2 = "horatraba2";
-	final static String PE176_TOTAL_DURATION = "totaldura";
-	final static String PE176_START_DATE = "fechaini";
-	final static String PE176_END_DATE = "fechafin";
-	final static String PE176_TRIAL_DURATION = "peridoprue";
-	final static String PE176_SALARY_AMOUNT = "retribu";
-	final static String PE176_SALARY_PERIOD = "perioretri";
-	final static String PE176_SALARY_CONCEPT = "concepsala";
-	final static String PE176_HOLIDAYS = "vacaciones";
-	final static String PE176_AGREEMENT_COLLECTIVE = "convcole";
-	final static String PE176_SEPE_MUNICIPALITY = "oecomu";
-	final static String PE176_ADDITIONAL_CLAUSES = "clausadici";
-	
 	public final static String MODEL_NAME = "PE176";
 	
 	public ModelPE176(){
@@ -76,9 +28,9 @@ public class ModelPE176 extends AbstractContractModel {
 			readPdfFields(reader);
 			
 			if(code == ContractCode.C420){
-				getPdfFieldsMap().get(PE176_TC2_420).setValue("true");
+				getPdfFieldsMap().get(PE176FieldName.TC2_420.getValue()).setValue("true");
 			} else if(code == ContractCode.C520){
-				getPdfFieldsMap().get(PE176_TC2_520).setValue("true");
+				getPdfFieldsMap().get(PE176FieldName.TC2_520.getValue()).setValue("true");
 			} else {
 				throw new UnsupportedContractDocumentException("El modelo de contrato seleccionado es incorrecto");
 			}
@@ -88,48 +40,48 @@ public class ModelPE176 extends AbstractContractModel {
 			/*
 			 * Contract page 1
 			 */
-			getPdfFieldsMap().get( PE176_LEGAL_REPRESENTATIVE_NAME).setValue(null);
-			getPdfFieldsMap().get( PE176_LEGAL_REPRESENTATIVE_NIF).setValue(null);
-			getPdfFieldsMap().get( PE176_LEGAL_REPRESENTATIVE_CHARGE).setValue(null);
-			getPdfFieldsMap().get( PE176_PROFFESION_TITLE).setValue(null);
-			getPdfFieldsMap().get( PE176_PROFFESION_TITLE_DATE).setValue(null);
-			getPdfFieldsMap().get( PE176_HANDICAP_PERSON1).setValue(null);
-			getPdfFieldsMap().get( PE176_HANDICAP_PERSON2).setValue(null);
-			getPdfFieldsMap().get( PE176_RDL_63_2006_RESEARCH_FORMATION).setValue(null);
-			getPdfFieldsMap().get( PE176_PROFESSION).setValue(null);
-			getPdfFieldsMap().get( PE176_CATEGORY).setValue(null);
-			getPdfFieldsMap().get( PE176_WORKPLACE_FULL_ADDRESS).setValue(null);
-			getPdfFieldsMap().get( PE176_WORKPLACE_FULL_ADDRESS_MORE).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.LEGAL_REPRESENTATIVE_NAME.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.LEGAL_REPRESENTATIVE_NIF.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.LEGAL_REPRESENTATIVE_CHARGE.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.PROFFESION_TITLE.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.PROFFESION_TITLE_DATE.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.HANDICAP_PERSON1.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.HANDICAP_PERSON2.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.RDL_63_2006_RESEARCH_FORMATION.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.PROFESSION.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.CATEGORY.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.WORKPLACE_FULL_ADDRESS.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.WORKPLACE_FULL_ADDRESS_MORE.getValue()).setValue(null);
 			
 			/*
 			 * Contract page 2
 			 */
-			getPdfFieldsMap().get( PE176_FULL_TIME).setValue(null);
-			getPdfFieldsMap().get( PE176_FULL_TIME_WEEK_HOURS).setValue(null);
-			getPdfFieldsMap().get( PE176_FULL_TIME_FROM_TIME).setValue(null);
-			getPdfFieldsMap().get( PE176_FULL_TIME_TO_TIME).setValue(null);
-			getPdfFieldsMap().get( PE176_PARTIALLY_TIME).setValue(null);
-			getPdfFieldsMap().get( PE176_PARTIALLY_TIME_HOURS).setValue(null);
-			getPdfFieldsMap().get( PE176_PARTIALLY_TIME_DAYLY).setValue(null);
-			getPdfFieldsMap().get( PE176_PARTIALLY_TIME_WEEKLY).setValue(null);
-			getPdfFieldsMap().get( PE176_PARTIALLY_TIME_MONTHLY).setValue(null);
-			getPdfFieldsMap().get( PE176_PARTIALLY_TIME_YEARLY).setValue(null);
-			getPdfFieldsMap().get( PE176_COMPARABLE_FULL_TIME).setValue(null);
-			getPdfFieldsMap().get( PE176_AGREEMENT_COLLECTIVE_FULL_TIME).setValue(null);
-			getPdfFieldsMap().get( PE176_LEGAL_MAX).setValue(null);
-			getPdfFieldsMap().get( PE176_JOB_TIME_DISTRIBUTION1).setValue(null);
-			getPdfFieldsMap().get( PE176_JOB_TIME_DISTRIBUTION2).setValue(null);
-			getPdfFieldsMap().get( PE176_TOTAL_DURATION).setValue(null);
-			getPdfFieldsMap().get( PE176_START_DATE).setValue(null);
-			getPdfFieldsMap().get( PE176_END_DATE).setValue(null);
-			getPdfFieldsMap().get( PE176_TRIAL_DURATION).setValue(null);
-			getPdfFieldsMap().get( PE176_SALARY_AMOUNT).setValue(null);
-			getPdfFieldsMap().get( PE176_SALARY_PERIOD).setValue(null);
-			getPdfFieldsMap().get( PE176_SALARY_CONCEPT).setValue(null);
-			getPdfFieldsMap().get( PE176_HOLIDAYS).setValue(null);
-			getPdfFieldsMap().get( PE176_AGREEMENT_COLLECTIVE).setValue(null);
-			getPdfFieldsMap().get( PE176_SEPE_MUNICIPALITY).setValue(null);
-			getPdfFieldsMap().get( PE176_ADDITIONAL_CLAUSES).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.FULL_TIME.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.FULL_TIME_WEEK_HOURS.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.FULL_TIME_FROM_TIME.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.FULL_TIME_TO_TIME.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.PARTIALLY_TIME.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.PARTIALLY_TIME_HOURS.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.PARTIALLY_TIME_DAYLY.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.PARTIALLY_TIME_WEEKLY.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.PARTIALLY_TIME_MONTHLY.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.PARTIALLY_TIME_YEARLY.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.COMPARABLE_FULL_TIME.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.AGREEMENT_COLLECTIVE_FULL_TIME.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.LEGAL_MAX.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.JOB_TIME_DISTRIBUTION1.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.JOB_TIME_DISTRIBUTION2.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.TOTAL_DURATION.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.START_DATE.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.END_DATE.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.TRIAL_DURATION.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.SALARY_AMOUNT.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.SALARY_PERIOD.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.SALARY_CONCEPT.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.HOLIDAYS.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.AGREEMENT_COLLECTIVE.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.SEPE_MUNICIPALITY.getValue()).setValue(null);
+			getPdfFieldsMap().get( PE176FieldName.ADDITIONAL_CLAUSES.getValue()).setValue(null);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -141,6 +93,77 @@ public class ModelPE176 extends AbstractContractModel {
 		
 	}
 	
+
+	/*
+	 * INNER CLASSES
+	 */
+	public enum PE176FieldName implements IContractFieldName{
+		/*
+		 * Contract page 1
+		 */
+		TC2_420("tiempocompleto",Boolean.FALSE),
+		TC2_520("tiempoparcial",Boolean.FALSE),
+		LEGAL_REPRESENTATIVE_NAME("nomreptra",Boolean.FALSE),
+		LEGAL_REPRESENTATIVE_NIF("dnireptra",Boolean.FALSE),
+		LEGAL_REPRESENTATIVE_CHARGE("calireptra",Boolean.FALSE),
+		PROFFESION_TITLE("titulprac",Boolean.FALSE),
+		PROFFESION_TITLE_DATE("fechatit",Boolean.FALSE),
+		HANDICAP_PERSON1("ubicact",Boolean.FALSE),
+		HANDICAP_PERSON2("Texto2",Boolean.FALSE),
+		RDL_63_2006_RESEARCH_FORMATION("tiempoc",Boolean.FALSE),
+		PROFESSION("profetraba",Boolean.FALSE),
+		CATEGORY("catetraba",Boolean.FALSE),
+		WORKPLACE_FULL_ADDRESS("ubitrab",Boolean.FALSE),
+		WORKPLACE_FULL_ADDRESS_MORE("calletrab",Boolean.FALSE),
+		
+		/*
+		 * Contract page 2
+		 */
+		FULL_TIME("sel_jorn1",Boolean.FALSE),
+		FULL_TIME_WEEK_HOURS("horasjorna1",Boolean.TRUE),
+		FULL_TIME_FROM_TIME("horainicio",Boolean.TRUE),
+		FULL_TIME_TO_TIME("horafin",Boolean.TRUE),
+		PARTIALLY_TIME("sel_jorn2",Boolean.FALSE),
+		PARTIALLY_TIME_HOURS("horasjorna2",Boolean.FALSE),
+		PARTIALLY_TIME_DAYLY("tipojorntp1",Boolean.FALSE),
+		PARTIALLY_TIME_WEEKLY("tipojorntp2",Boolean.FALSE),
+		PARTIALLY_TIME_MONTHLY("tipojorntp3",Boolean.FALSE),
+		PARTIALLY_TIME_YEARLY("tipojorntp4",Boolean.FALSE),
+		COMPARABLE_FULL_TIME("Casilla de verificación161",Boolean.FALSE),
+		AGREEMENT_COLLECTIVE_FULL_TIME("Casilla de verificación171",Boolean.FALSE),
+		LEGAL_MAX("Casilla de verificación181",Boolean.FALSE),
+		JOB_TIME_DISTRIBUTION1("horatraba1",Boolean.FALSE),
+		JOB_TIME_DISTRIBUTION2("horatraba2",Boolean.FALSE),
+		TOTAL_DURATION("totaldura",Boolean.FALSE),
+		START_DATE("fechaini",Boolean.FALSE),
+		END_DATE("fechafin",Boolean.FALSE),
+		TRIAL_DURATION("peridoprue",Boolean.TRUE),
+		SALARY_AMOUNT("retribu",Boolean.TRUE),
+		SALARY_PERIOD("perioretri",Boolean.FALSE),
+		SALARY_CONCEPT("concepsala",Boolean.TRUE),
+		HOLIDAYS("vacaciones",Boolean.FALSE),
+		AGREEMENT_COLLECTIVE("convcole",Boolean.FALSE),
+		SEPE_MUNICIPALITY("oecomu",Boolean.TRUE),
+		ADDITIONAL_CLAUSES("clausadici",Boolean.FALSE),
+		;
+		
+		private String value;
+		private boolean overridable;
+		
+		private PE176FieldName(String value, boolean overridable) {
+			this.value = value;
+			this.overridable = overridable;
+		}
+		
+		@Override
+		public boolean isOverridable(){
+			return overridable;
+		}
+		@Override
+		public String getValue() {
+			return value;
+		}
+	}
 }
 	
 	

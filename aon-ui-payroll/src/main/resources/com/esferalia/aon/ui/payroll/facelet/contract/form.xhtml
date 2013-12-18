@@ -75,11 +75,13 @@
 							</c:if>
 						</aon:panelTab>
 
-						<aon:panelTab id="documentOtherData" label="#{bundle.aon_addInfo}">
-							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contractInfo/grid.xhtml" >
-								<ui:param name="controller" value="#{contractDocumentInfo}" />
-								<ui:param name="showContractFieldsColumn" value="#{true}" />
-							</ui:include>
+						<aon:panelTab id="documentOtherData" label="#{bundle.aon_addInfo}"
+							actionListener="#{contractDocumentInfo.onLoadContractFields}" >
+							<aon:div style="width:850px;">
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contractInfo/form.xhtml" >
+									<ui:param name="controller" value="#{contractDocumentInfo}" />
+								</ui:include>
+							</aon:div>
 						</aon:panelTab>
 						
 						<c:if test="#{not empty contractClauses.contractClauses}">
