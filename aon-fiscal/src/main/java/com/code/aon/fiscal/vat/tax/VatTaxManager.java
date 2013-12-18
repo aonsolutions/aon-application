@@ -62,7 +62,9 @@ public class VatTaxManager {
 			VatTaxDetailComparator comparator = new VatTaxDetailComparator();
 			Collections.sort(list, comparator);
 			calculate(list);
-			fillDeclared(params,list);		
+			if (params.getPeriod() != Period.YEAR) {
+				fillDeclared(params,list);
+			}
 		}
 		Collections.sort(list, new VatTaxDetailComparator());
 		list = decorate(params,list);		

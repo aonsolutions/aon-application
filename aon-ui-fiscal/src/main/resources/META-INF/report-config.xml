@@ -80,10 +80,15 @@
 			<param id="declarations" value="#{vatTax.getDeclarations}" />
 		</params>
 		<nested-report report="vatTaxDeclarationReport"/>
+		<nested-report report="vatTaxDeclarationYearReport"/>
 	</report>
 	<report id="vatTaxDeclarationReport" description="Cartas de pago de la Declaracion de IVA">
-		<template path="/com/code/aon/ui/fiscal/report/vatTax_declaraction.jasper"/>
+		<template path="/com/code/aon/ui/fiscal/report/vatTax_declaration.jasper"/>
 	</report>
+	<report id="vatTaxDeclarationYearReport" description="Cartas de pago de la Declaracion de IVA ANUAL">
+		<template path="/com/code/aon/ui/fiscal/report/vatTax_declaration_year.jasper"/>
+	</report>
+	
 	
 	<!--  *********  Declaracion del modelo 111  ********* -->
 	<report id="mod111Report" description="Declaracion del modelo 111">

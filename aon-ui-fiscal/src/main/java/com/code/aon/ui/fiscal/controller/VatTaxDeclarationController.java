@@ -29,8 +29,10 @@ import com.code.aon.file.tax.model.MOD303.MOD303Format;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
+import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
+import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
@@ -80,7 +82,7 @@ public class VatTaxDeclarationController extends LinesController {
 				dec.setPayBack(t);
 			}
 		}
-		
+
 		dec.setTotalTaxDebt( CommonUtil.round( t + dec.getExtraCharge() + dec.getDelayInterest()
 				- dec.getPreviousDeposit() - dec.getPreviousPayBack() )); 
 	}
@@ -121,6 +123,9 @@ public class VatTaxDeclarationController extends LinesController {
 		VatTax previousVatTax = getPreviousVatTax(vatTax);
 		if (previousVatTax == null) {
 			Administration adm = master.getFiscalParams().getDefaultAdministration();
+			if (adm == null) {
+				adm = Administration.COMMON_TERRITORY;
+			}
 			createDeclaration(vatTax,adm,100.0,null);
 		} else {
 			duplicateDeclaration(vatTax,previousVatTax);
@@ -145,10 +150,10 @@ public class VatTaxDeclarationController extends LinesController {
 		dec.setAdministration(adm);
 		dec.setPercent(percent);
 		dec.setStatus( VatTaxDeclarationStatus.PENDING );
+		fillYearPreviousData(vatTax,dec);
 		if (vatTax.isAnual()) {
 			fillPreviousData(vatTax,dec);
 		} else {
-			fillYearPreviousData(vatTax,dec);
 		}
 		calculate(dec);
 		accept(null);
@@ -157,9 +162,14 @@ public class VatTaxDeclarationController extends LinesController {
 
 	private void fillYearPreviousData(VatTax vatTax, VatTaxDeclaration dec) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		criteria.addExpression( ExpressionUtilities.getNotEqualExpression(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId()));
-		criteria.addEqualExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_YEAR), vatTax.getYear());
-		criteria.addLessThanExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), vatTax.getPeriod());
+		criteria.addNotEqualExpression(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId());
+		if (!vatTax.isAnual()) { 
+			criteria.addEqualExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_YEAR), vatTax.getYear());
+			criteria.addLessThanExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), vatTax.getPeriod());
+		} else {
+			criteria.addEqualExpression(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_YEAR), (vatTax.getYear() -1));
+			criteria.addEqualExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), Period.YEAR );
+		}
 		criteria.addEqualExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_ADMINISTRATION), dec.getAdministration());
 		criteria.addOrder( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), false);
 		criteria.addOrder( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_REPLACEMENT), false);
@@ -174,22 +184,22 @@ public class VatTaxDeclarationController extends LinesController {
 	
 	private void fillPreviousData(VatTax vatTax,VatTaxDeclaration dec) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		criteria.addExpression( ExpressionUtilities.getNotEqualExpression(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId()));
+		criteria.addNotEqualExpression(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId());
 		criteria.addEqualExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_YEAR), vatTax.getYear());
-		criteria.addEqualExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), vatTax.getPeriod());
+		criteria.addLessThanExpression(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), vatTax.getPeriod());
 		criteria.addEqualExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_ADMINISTRATION), dec.getAdministration());
 		criteria.addOrder( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_NUMBER), false);
 		criteria.addOrder( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_REPLACEMENT), false);
 		List<ITransferObject> list = getManagerBean().getList(criteria);
 		double pd = 0.0;
 		double pp = 0.0;
-		if (list != null && list.size() > 0){
-			VatTaxDeclaration vtd = (VatTaxDeclaration) list .get(0);
-			pd = vtd.getDeposit();
-			pp = vtd.getPayBack();
+		for (ITransferObject to : list ) {
+			VatTaxDeclaration vtd = (VatTaxDeclaration) to;
+			pd = CommonUtil.round( pd + vtd.getDeposit() );
+			pp = CommonUtil.round( pp + vtd.getPayBack() );
 		}
-		dec.setPreviousDeposit(pd);
-		dec.setPreviousPayBack(pp);
+		dec.setDoneDeposits(pd);
+		dec.setDoneRefunds(pp);
 	}
 
 	private VatTax getPreviousVatTax(VatTax vatTax) throws ManagerBeanException {
@@ -197,6 +207,7 @@ public class VatTaxDeclarationController extends LinesController {
 		Criteria criteria = new Criteria();
 		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_ID), vatTax.getId());
 		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_YEAR), vatTax.getYear());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_STATUS), VatTaxStatus.FINISHED);
 		criteria.addOrder(bean.getFieldName(IEntityAlias.VAT_TAX_YEAR), false);
 		criteria.addOrder(bean.getFieldName(IEntityAlias.VAT_TAX_PERIOD), false);
 		List<ITransferObject> list = bean.getList(criteria);
