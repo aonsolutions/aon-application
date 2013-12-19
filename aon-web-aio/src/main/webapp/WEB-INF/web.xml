@@ -191,7 +191,7 @@
 
 	<servlet>
 		<servlet-name>Mod180 File download</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Model180File</servlet-class>
+		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod180File</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Mod180 File download</servlet-name>
@@ -200,7 +200,7 @@
 	
 	<servlet>
 		<servlet-name>Mod180 File Print</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Model180Print</servlet-class>
+		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod180Print</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Mod180 File Print</servlet-name>
@@ -209,7 +209,7 @@
 
 	<servlet>
 		<servlet-name>Mod190 File download</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Model190File</servlet-class>
+		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod190File</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Mod190 File download</servlet-name>
@@ -218,7 +218,7 @@
 	
 	<servlet>
 		<servlet-name>Mod190 File Print</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Model190Print</servlet-class>
+		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod190Print</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Mod190 File Print</servlet-name>
