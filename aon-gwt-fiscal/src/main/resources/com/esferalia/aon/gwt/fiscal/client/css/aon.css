@@ -1,0 +1,75 @@
+.aon-text-center {
+	text-align: center;
+}
+.aon-text-left {
+	text-align: left;
+}
+.aon-text-right {
+	text-align: right;
+}
+
+.aon-editDataTable-iconColumn {
+	padding: 0;
+	width: 14px;
+	text-align: center;
+}
+
+.aon-editDataTable-textColumn {
+	text-align: left;
+}
+
+.aon-editDataTable-numberColumn {
+	text-align: right;
+}
+
+.aon-textBox-error {
+	border: 1px solid red !important;
+}
+@sprite .aon-list-data {
+	gwt-image: "aonListData";
+	background-position:   left 6px;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-color: transparent;
+    border-bottom: 1px solid #DDDDDD;
+    cursor: pointer;
+    font-size: 0.9em;
+    padding-left: 15px;
+    white-space: nowrap;	
+}
+@sprite .aon-icon-enterprise {
+	gwt-image: "aonIconEnterprise";
+}
+
+@sprite .aon-table-row-link {
+	gwt-image: "aonIconRowSelector";
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: center left;
+	background-attachment: scroll;
+	margin: 0;
+	padding: 0 0 0 14px;
+}
+
+@sprite .aon-timer {
+	gwt-image: "aonTimer";
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: 10px center;
+	background-attachment: scroll;
+	height: 150px;
+	width: 250px;
+	padding-left: 160px;
+	padding-top: 20px;
+	font-weight: bold;
+	vertical-align: middle;
+	color: #003399;
+	border: solid #003399 1px;
+}
+@sprite .aon-icon-aeat{
+	gwt-image: "aonAeat";
+	background-color: transparent;
+	background-attachment: scroll;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
