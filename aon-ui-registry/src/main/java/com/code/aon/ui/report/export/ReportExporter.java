@@ -11,15 +11,6 @@ import com.code.aon.report.ReportException;
 public class ReportExporter {
 
 	public static final int EXCEL = 0;
-	private IExporterCallBack callBack;
-	
-	public ReportExporter() {
-		
-	}
-
-	public ReportExporter(IExporterCallBack callBack) {
-		this.callBack = callBack;	
-	}
 	
 	public void run2Excel(PreparedStatement ps, OutputStream out) throws ReportException {
 		run(ps, out, EXCEL);
@@ -53,17 +44,16 @@ public class ReportExporter {
 			if (type == 0) {
 				exporter = new ExcelReportExporter();	
 			}
-			exporter.setCallBack(callBack);
-			exporter.startExport(out);
-			exporter.exportHeader(out,metadata);
+			exporter.startExport(IReportExporter.DEFAULT_NAME);
+			exporter.exportHeader(metadata);
 			while (rs.next()) {
-				exporter.startLine(out);
+				exporter.startLine();
 				for (int i = 1; i < (metadata.getCount() + 1); i++) {
 					Object data = rs.getObject(i);
 					ReportColumnMetadata columnMetadata = metadata.getColumns().get((i-1));
-					exporter.exportColumn(out,columnMetadata,data);		
+					exporter.exportColumn(columnMetadata,data);		
 				}
-				exporter.endLine(out);
+				exporter.endLine();
 			}
 			exporter.endExport(out);
 		} catch (SQLException e) {

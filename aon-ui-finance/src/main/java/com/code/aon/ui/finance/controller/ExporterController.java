@@ -25,6 +25,7 @@ import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ui.finance.A3Writer;
 import com.code.aon.ui.finance.AplifisaWriter;
 import com.code.aon.ui.finance.BasicExporter;
+import com.code.aon.ui.finance.ExcelWriter;
 import com.code.aon.ui.finance.GeyceWriter;
 import com.code.aon.ui.finance.InvoiceExportConfiguration;
 import com.code.aon.ui.finance.LogicWinWriter;
@@ -99,6 +100,9 @@ public class ExporterController {
 				break;
 			case LOGIC_WIN:
 				exporter = new LogicWinWriter(this.configuration);
+				break;
+			case EXCEL:
+				exporter = new ExcelWriter(this.configuration);
 				break;
 		}
 		this.fileName = exporter.getFileName();

@@ -36,10 +36,12 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
+import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryDocument;
 import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -60,6 +62,8 @@ public abstract class BasicExporter {
 	
 	private Invoice invoice;
 	
+	private Finance finance;
+	
 	private List<AccountEntry> accountEntries;
 	
 	private List<TaxBreakDown> taxBreakDowns;
@@ -70,6 +74,8 @@ public abstract class BasicExporter {
 	
 	private String referenceCode;
 	
+	private String documentNumber;
+	
 	private Date date;
 	
 	private Date dueDate;
@@ -79,6 +85,8 @@ public abstract class BasicExporter {
 	private Integer mainId;
 	
 	private Registry registry;
+	
+	private RegistryAddress registryAddress;
 	
 	private IAccount entity;
 	
@@ -94,7 +102,9 @@ public abstract class BasicExporter {
 	
 	private boolean investment;
 	
-	private boolean withFinances;
+	private IPriceStrategy priceStrategy;
+	
+	private double total;
 	
 	public BasicExporter( InvoiceExportConfiguration configuration ) {
 		this.out = new ByteArrayOutputStream();
@@ -141,14 +151,26 @@ public abstract class BasicExporter {
 		return supplierBean.get(registry.getId()) != null;		
 	}
 	
+	private double getInvoiceTotalPrice(Invoice invoice) {
+		if (InvoiceType.UNDEDUCTIBLE == invoice.getType()) {
+			return getPriceStrategy().getTaxableBase(invoice);
+		}
+		return getPriceStrategy().getTotalPrice(invoice, invoice);
+	}	
+	
 	private void initBasic( Invoice invoice ) throws ManagerBeanException {
 		this.invoice = invoice;
 		this.mainId = invoice.getId();
 		this.referenceCode = invoice.getReferenceCode();
+		this.documentNumber = invoice.getDocumentNumber();
 		this.date = invoice.getDate();
 		this.dueDate = getDueDate(invoice);
 		this.taxDate = invoice.getTaxDate();
 		this.registry = invoice.getRegistry();
+		this.registryAddress = invoice.getRegistryAddress();
+		if ( this.registryAddress == null ) {
+			this.registryAddress = this.registry.getDefaultAddress();
+		}
 		this.invoiceType = invoice.getType();
 		this.entity = getEntity(registry);
 		this.registryDocument = getRegistryDocument(invoice);
@@ -156,10 +178,11 @@ public abstract class BasicExporter {
 		this.transaction = invoice.getTransaction();
 		this.investment = invoice.isInvestment();
 		this.rectificationType = invoice.getRectificationType();
-		this.withFinances = true;
+		this.total = getInvoiceTotalPrice(invoice);
 	}
 	
 	private void initBasic( Finance finance ) throws ManagerBeanException {
+		this.finance = finance;
 		if ( finance.getInvoice() != null ) {
 			initBasic( finance.getInvoice() );
 		} else {
@@ -200,8 +223,9 @@ public abstract class BasicExporter {
 		if ( this.rectificationType == null ) {
 			this.rectificationType = RectificationType.NONE;
 		}
+		this.documentNumber = finance.getConcept();
+		this.total = finance.getTotalAmount();
 		this.investment = false;
-		this.withFinances = false;
 	}
 	
 	public Integer getMainId() {
@@ -210,6 +234,10 @@ public abstract class BasicExporter {
 
 	public String getReferenceCode() {
 		return referenceCode;
+	}
+	
+	public String getDocumentNumber() {
+		return documentNumber;
 	}
 
 	public Date getDate() {
@@ -226,6 +254,10 @@ public abstract class BasicExporter {
 
 	public Registry getRegistry() {
 		return registry;
+	}
+
+	public RegistryAddress getRegistryAddress() {
+		return registryAddress;
 	}
 
 	public RegistryDocument getRegistryDocument() {
@@ -256,8 +288,16 @@ public abstract class BasicExporter {
 		return this.investment;
 	}	
 	
+	public double getTotal() {
+		return total;
+	}
+	
+	public Finance getFinance() {
+		return finance;
+	}
+
 	public Set<Finance> getFinances() {
-		if ( withFinances ) {
+		if ( finance == null ) {
 			return invoice.getFinances();
 		}
 		return Collections.emptySet();
@@ -331,9 +371,15 @@ public abstract class BasicExporter {
 		return list;
 	}
 	
+	public IPriceStrategy getPriceStrategy() {
+		if (priceStrategy == null) {
+			priceStrategy = new InvoicePriceStrategy();
+		}
+		return priceStrategy;
+	}	
+	
 	private List<TaxBreakDown> obtainTaxBreakDowns() {
-		InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();		
-		List<TaxBreakDown> list = priceStrategy.getTaxBreakDowns(invoice, invoice);
+		List<TaxBreakDown> list = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
 		Comparator<TaxBreakDown> comparator = new Comparator<TaxBreakDown>() {
 
 			@Override
@@ -468,6 +514,10 @@ public abstract class BasicExporter {
 
 	protected void setLine(byte[] line) {
 		this.line = line;
+	}
+	
+	protected OutputStream getOutputStream() {
+		return this.out;
 	}
 	
 	protected void writeLine() throws IOException {

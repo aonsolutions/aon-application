@@ -50,6 +50,7 @@ public class InvoiceExportConfiguration {
 					return !StringUtils.isEmpty(this.enterpriseCode);
 				case APLIFISA:
 				case LOGIC_WIN:
+				case EXCEL:
 					return true;
 			}
 		}

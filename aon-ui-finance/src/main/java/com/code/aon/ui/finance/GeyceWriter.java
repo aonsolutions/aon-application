@@ -14,8 +14,6 @@ import java.util.Set;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
@@ -30,8 +28,6 @@ import com.code.aon.registry.enumeration.StreetType;
 
 public class GeyceWriter extends BasicExporter {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(GeyceWriter.class.getName());
-
 	private static final String[] ACCOUNT_CODES = new String[] {
 		"100", "1030", "1040", "110", "1110", "1140", "120", "130", "1340", "1370", "140", 
 			"150", "160", "170", "180", "190",
@@ -271,24 +267,20 @@ public class GeyceWriter extends BasicExporter {
 			if ( getRegistryDocument() != null ) {
 				setStringLeftPad(getRegistryDocument().getDocument(), 50, 15);	
 			}
-			try {
-				RegistryAddress address = getRegistry().getDefaultAddress();
-				if ( address != null ) {
-					// Siglas
-					setStringLeftPad(getSiglasViaPublica(address.getStreetType()), 65, 2);				
-					// Calle			
-					setStringRightPad(address.getAddress(), 67, 30);
-					// Numero		
-					setStringLeftPad( address.getNumber(), 97, 5);
-					// Codigo Postal		
-					setStringRightPad( address.getZip(), 102, 5);
-					// Municipio		
-					setStringRightPad( address.getCity(), 107, 30);
-					// Codigo de Provincia		
-					setStringLeftPad( StringUtils.substring(address.getZip(), 0, 2), 137, 2);	
-				}
-			} catch (ManagerBeanException e) {
-				LOGGER.error( "Error obtaining registry address", e ); 
+			RegistryAddress address = getRegistryAddress();
+			if ( address != null ) {
+				// Siglas
+				setStringLeftPad(getSiglasViaPublica(address.getStreetType()), 65, 2);				
+				// Calle			
+				setStringRightPad(address.getAddress(), 67, 30);
+				// Numero		
+				setStringLeftPad( address.getNumber(), 97, 5);
+				// Codigo Postal		
+				setStringRightPad( address.getZip(), 102, 5);
+				// Municipio		
+				setStringRightPad( address.getCity(), 107, 30);
+				// Codigo de Provincia		
+				setStringLeftPad( StringUtils.substring(address.getZip(), 0, 2), 137, 2);	
 			}
 			// Se lista 347 S/N
 			setString("S", 139, 1);

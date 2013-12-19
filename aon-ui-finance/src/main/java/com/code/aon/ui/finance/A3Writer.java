@@ -518,7 +518,9 @@ public class A3Writer extends BasicExporter {
 		// Codigo Postal		
 		setStringLeftPad( address.getZip(), 154, 5);
 		// Provincia		
-		setStringRightPad( address.getGeozone().getName(), 159, 15);
+		if ( address.getGeozone() != null ) {
+			setStringRightPad( address.getGeozone().getName(), 159, 15);	
+		}
 	}
 	
 	private void writeRegistry() throws IOException, ManagerBeanException {
@@ -539,9 +541,8 @@ public class A3Writer extends BasicExporter {
 			setStringRightPad( getNIF(rd), 77, 14);
 		}
 		
-		RegistryAddress address = getRegistry().getDefaultAddress();
-		if ( address != null ) {
-			fillAddress( address );
+		if ( getRegistryAddress() != null ) {
+			fillAddress( getRegistryAddress() );
 		}
 		// Telefono
 		RegistryMedia phone = getRegistry().getPhone();
@@ -605,8 +606,7 @@ public class A3Writer extends BasicExporter {
 		fillHeader(accountEntry, getRegistryDetail());
 		writeLine();
 		while (! getDetails().isEmpty() ) {
-			AccountEntryDetail aed = getDetails().get(0);
-			getDetails().remove(0);
+			AccountEntryDetail aed = getNextDetail();
 			writeDetail(accountEntry, aed);
 		}
 		for( Finance finance : getFinances() ) {

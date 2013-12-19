@@ -1,6 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
@@ -8,22 +9,34 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Finance;
+import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.enumeration.FinanceStatus;
+import com.code.aon.finance.enumeration.FinanceTrackingType;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.finance.BasicExporter;
 import com.code.aon.ui.finance.event.FinanceSearchListener;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceExporterController extends BasicController implements IFinanceController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FinanceExporterController.class.getName());
 	
 	private boolean payment;
+	
+	private AccountEntryFinanceWriter writer;
 	
 	public boolean isPayment() {
 		return payment;
@@ -68,6 +81,51 @@ public class FinanceExporterController extends BasicController implements IFinan
 		}		
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private List<FinanceTracking> getRecordableFinanceTrackings( Finance finance ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(FinanceTracking.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FINANCE_TRACKING_RECORDED), Boolean.FALSE);
+		criteria.addNullExpression(bean.getFieldName(IEntityAlias.FINANCE_TRACKING_BANK_STATEMENT_LINK));
+		String typeAlias = bean.getFieldName(IEntityAlias.FINANCE_TRACKING_TYPE);
+		Expression expr1 = ExpressionUtilities.getEqualExpression(typeAlias, FinanceTrackingType.PAID);
+		Expression expr2 = ExpressionUtilities.getEqualExpression(typeAlias, FinanceTrackingType.RETURNED);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		return (List) bean.getList(criteria);
+	}
+	
+	public AccountEntryFinanceWriter getWriter() {
+		if (writer == null) {
+			writer = new AccountEntryFinanceWriter();
+		}
+		return writer;
+	}
+	
+	private void recordFinanceTracking( String sessionName, FinanceTracking financeTracking ) {
+		LogPanelController log = LogPanelController.getInstance();
+		String id = financeTracking.getFinance().getDocumentNumber() + " - " + financeTracking.getDescription();
+		try {
+			String key = financeTracking.getFinance().isPayment() ? ICommonMessages.FINANCE_PAYMENT_RECORD : ICommonMessages.FINANCE_CHARGE_RECORD;
+			log.info(AonUtil.getMessage(key, id) );
+			HibernateUtil.beginTransaction(sessionName);
+			getWriter().recordFinanceTracking(financeTracking);
+			HibernateUtil.getSession(sessionName).merge(financeTracking);
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);			
+		} catch (Throwable e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				LOGGER.error(e.getMessage(), e);
+			}			
+			String key = financeTracking.getFinance().isPayment() ? ICommonMessages.FINANCE_PAYMENT_RECORD_ERROR : ICommonMessages.FINANCE_CHARGE_RECORD_ERROR;
+			String msg = AonUtil.getMessage(key, id, e.getMessage());
+			LOGGER.error(msg, e);
+			log.error(msg);
+		}			
+	}	
+	
 	private void obtainData( BasicExporter exporter ) {
 		LogPanelController log = LogPanelController.getInstance();
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
@@ -77,6 +135,14 @@ public class FinanceExporterController extends BasicController implements IFinan
 		HibernateUtil.setBeginTransaction(false);
 		try {
 			Session session = HibernateUtil.getSession(sessionName);
+			for( Serializable id : getCheckList() ) {
+				Finance finance = (Finance) session.get(Finance.class, id);
+				for( FinanceTracking financeTracking : getRecordableFinanceTrackings(finance) ) {
+					recordFinanceTracking(sessionName, financeTracking);
+				}
+			}
+			HibernateUtil.closeSession(sessionName);
+			session = HibernateUtil.getSession(sessionName);
 			for( Serializable id : getCheckList() ) {
 				Finance finance = (Finance) session.get(Finance.class, id);
 				exportFinance(exporter, finance);

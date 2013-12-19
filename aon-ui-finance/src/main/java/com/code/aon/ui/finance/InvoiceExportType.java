@@ -1,24 +1,22 @@
 package com.code.aon.ui.finance;
 
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EXPORT_A3;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EXPORT_APLIFISA;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EXPORT_GEYCE;
-import static com.code.aon.ui.common.ICommonMessages.FINANCE_INVOICE_EXPORT_LOGIC_WIN;
-
 import java.util.Locale;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.util.AonUtil;
 
 public enum InvoiceExportType implements IResourceable {
 	
-	GEYCE(FINANCE_INVOICE_EXPORT_GEYCE),
+	GEYCE(ICommonMessages.FINANCE_INVOICE_EXPORT_GEYCE),
 	
-	A3(FINANCE_INVOICE_EXPORT_A3),
+	A3(ICommonMessages.FINANCE_INVOICE_EXPORT_A3),
 	
-	APLIFISA(FINANCE_INVOICE_EXPORT_APLIFISA),
+	APLIFISA(ICommonMessages.FINANCE_INVOICE_EXPORT_APLIFISA),
 	
-	LOGIC_WIN(FINANCE_INVOICE_EXPORT_LOGIC_WIN);
+	LOGIC_WIN(ICommonMessages.FINANCE_INVOICE_EXPORT_LOGIC_WIN),
+	
+	EXCEL(ICommonMessages.FINANCE_INVOICE_EXPORT_EXCEL);
 
 	private String label;
 	

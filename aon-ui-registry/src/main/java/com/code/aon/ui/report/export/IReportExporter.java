@@ -7,13 +7,13 @@ import com.code.aon.report.ReportException;
 
 public interface IReportExporter {
 
-	void setCallBack(IExporterCallBack callBack);
+	String DEFAULT_NAME = "Listado";
 	
-	void startExport(OutputStream out) throws ReportException;
-	void startLine(OutputStream out) throws ReportException;
-	void endLine(OutputStream out) throws ReportException;
+	void startExport(String name) throws ReportException;
+	void startLine() throws ReportException;
+	void endLine() throws ReportException;
 	void endExport(OutputStream out) throws ReportException;
 
-	void exportHeader(OutputStream out,ReportMetadata metadata) throws ReportException;
-	void exportColumn(OutputStream out,ReportColumnMetadata column, Object data) throws ReportException;
+	void exportHeader(ReportMetadata metadata) throws ReportException;
+	void exportColumn(ReportColumnMetadata column, Object data) throws ReportException;
 }

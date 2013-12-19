@@ -14,8 +14,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
@@ -28,8 +26,6 @@ import com.code.aon.registry.RegistryAddress;
 
 public class AplifisaWriter extends BasicExporter {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AplifisaWriter.class.getName());
-	
 	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 	
 	private static final String FIELD_SEPARATOR = "#";
@@ -188,20 +184,16 @@ public class AplifisaWriter extends BasicExporter {
 			} else {
 				sb.append(FIELD_SEPARATOR);
 			}
-			try {
-				RegistryAddress address = getRegistry().getDefaultAddress();
-				if ( address != null ) {
-					// Direccion			
-					appendString(sb, address.getFullAddress(), 50);
-					// Codigo Postal		
-					appendString(sb, address.getZip(), 5);
-					// Poblacion		
-					appendString(sb, address.getCity(), 40);
-					// Provincia					
-					appendString(sb, (address.getGeozone() != null)?address.getGeozone().getName():null, 40);
-				}
-			} catch (ManagerBeanException e) {
-				LOGGER.error( "Error obtaining registry address", e ); 
+			RegistryAddress address = getRegistryAddress();
+			if ( getRegistryAddress() != null ) {
+				// Direccion			
+				appendString(sb, address.getFullAddress(), 50);
+				// Codigo Postal		
+				appendString(sb, address.getZip(), 5);
+				// Poblacion		
+				appendString(sb, address.getCity(), 40);
+				// Provincia					
+				appendString(sb, (address.getGeozone() != null)?address.getGeozone().getName():null, 40);
 			}
 		}
 
