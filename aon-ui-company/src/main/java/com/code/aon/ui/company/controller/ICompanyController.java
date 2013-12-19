@@ -44,6 +44,9 @@ public interface ICompanyController extends IController {
 	Scope getScope();
 	void setScope(Scope scope);	
 	
+	boolean isActive();
+	void setActive(boolean active);
+	
 	boolean obtainPrintHeader() throws ManagerBeanException;
 	boolean obtainPrintRecordData() throws ManagerBeanException;
 	SaleInvoiceTemplate obtainSaleInvoiceTemplate() throws ManagerBeanException;

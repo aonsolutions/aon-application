@@ -47,6 +47,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	private String modelFilter;
 	private String domainURL;
 	private Integer pageLimit;
+	private boolean showInactive;
 	
 	public DomainSwitcher() {
 		try {
@@ -167,25 +168,32 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		return scopes;
 	}
 	
+	private String getDomainWhere() {
+		StringBuffer sb = new StringBuffer();
+		sb.append( " WHERE d.parent = ").append( getParentDomain() );
+		sb.append( " AND (d.expirationDate is null OR d.expirationDate > NOW())");
+		if (! isShowInactive() ) {
+			sb.append( " AND d.active = 1" );
+		}			
+		if (! isAdminDomain() ) {
+			sb.append( " AND (d.scope is null" );
+			List<Integer> scopes = getUserScopes();
+			if (! scopes.isEmpty() ) {
+				sb.append( " or d.scope in (" );
+				sb.append( StringUtils.join(scopes, ",") );
+				sb.append( ')' );
+			}
+			sb.append( ')' );
+		}		
+		return sb.toString();
+	}
+	
 	private void initializeModel() {
 		List<Domain> domains = new LinkedList<Domain>();
 		if (getParentDomain() != null) {
 			String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
-			StringBuffer sb = new StringBuffer(
-					"SELECT d FROM Domain d"
-					+ " WHERE d.parent = " + getParentDomain() 
-					+ " AND d.active = 1"
-					+ " AND (d.expirationDate is null OR d.expirationDate > NOW())" );
-			if (! isAdminDomain() ) {
-				sb.append( " AND (d.scope is null" );
-				List<Integer> scopes = getUserScopes();
-				if (! scopes.isEmpty() ) {
-					sb.append( " or d.scope in (" );
-					sb.append( StringUtils.join(scopes, ",") );
-					sb.append( ')' );
-				}
-				sb.append( ')' );
-			}
+			StringBuffer sb = new StringBuffer( "SELECT d FROM Domain d" );
+			sb.append(getDomainWhere());
 			sb.append(" ORDER BY d.description" );
 			Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(sb.toString());
 			List<?> queryList = query.list();
@@ -205,11 +213,9 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	public int getDomainCount() {
 		if (getParentDomain() != null) {
 			String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
-			String q = "SELECT count(d.id) FROM domain d"
-					+ " WHERE d.parent = " +  getParentDomain()
-					+ " AND (d.expirationDate is null OR d.expirationDate > NOW())"
-					+ " AND d.active = 1";
-			SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
+			StringBuffer sb = new StringBuffer( "SELECT count(d.id) FROM domain d" );
+			sb.append(getDomainWhere());
+			SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(sb.toString());
 			BigInteger count = (BigInteger) query.uniqueResult();
 			return count.intValue();	
 		}
@@ -242,6 +248,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		}
 		this.onEditSearch(null);
 		this.domainURL = null;
+		setShowInactive(false);
 		System.gc();
 	}
 
@@ -315,6 +322,18 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 			return name;
 		}
 		return null;
+	}
+
+	public boolean isShowInactive() {
+		return showInactive;
+	}
+
+	public void setShowInactive(boolean showInactive) {
+		this.showInactive = showInactive;
+	}
+
+	public void onChangeShowInactive( ActionEvent event ) {
+		setModel(null);
 	}
 	
 }

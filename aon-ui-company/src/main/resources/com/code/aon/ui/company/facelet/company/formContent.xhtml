@@ -29,6 +29,12 @@
 				</aon:selectOneMenu>		
 			</c:if>													
 		</c:if>										
+		<c:if test="#{domainSwitcher.parentDomainUserInChildDomain and !company.new}">
+			<aon:outputLabel for="Domain_active"
+				value="#{bundle.aon_active}" />
+			<aon:selectBooleanCheckbox id="Domain_active"
+				value="#{company.active}" />										
+		</c:if>
 		
 	</aon:panelGrid>
 

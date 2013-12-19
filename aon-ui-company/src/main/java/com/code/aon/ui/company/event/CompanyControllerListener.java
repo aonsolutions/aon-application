@@ -38,7 +38,7 @@ public class CompanyControllerListener extends ControllerAdapter {
 			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
 			company.setName( domain.getDescription() );
 			company.setAlias( StringUtils.upperCase( StringUtils.substringBefore(domain.getName(), ".")) );
-			c.setScope(getDomainScope());
+			initDomainValues(c);
 		} catch (ManagerBeanException e) {
 			// Nada, no se inicializan los datos.
 			
@@ -94,7 +94,7 @@ public class CompanyControllerListener extends ControllerAdapter {
 			c.setEmail(email);				
 			c.setWeb(web);
 			
-			c.setScope(getDomainScope());
+			initDomainValues(c);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -122,7 +122,7 @@ public class CompanyControllerListener extends ControllerAdapter {
 				saveRegistryAddress(c.getMainAddress());
 			}
 			
-			updateDomainScope(c.getScope());
+			updateDomainValues(c);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -163,7 +163,7 @@ public class CompanyControllerListener extends ControllerAdapter {
 				insertWorkPlace(c.getMainAddress(), enterprise);
 			}
 			
-			updateDomainScope(c.getScope());
+			updateDomainValues(c);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
@@ -205,20 +205,21 @@ public class CompanyControllerListener extends ControllerAdapter {
 		bean.insert(workPlace);
 	}
 	
-	private Scope getDomainScope() throws ManagerBeanException {
+	private void initDomainValues( ICompanyController controller ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 		Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
 		if ( domain != null ) {
-			return domain.getScope();
+			controller.setScope(domain.getScope());
+			controller.setActive(domain.isActive());
 		}
-		return null;
 	}
 
-	private void updateDomainScope( Scope scope ) throws ManagerBeanException {
+	private void updateDomainValues( ICompanyController controller ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 		Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
 		if ( domain != null ) {
-			domain.setScope(scope);
+			domain.setScope(controller.getScope());
+			domain.setActive(controller.isActive());
 			bean.update(domain);
 		}
 	}

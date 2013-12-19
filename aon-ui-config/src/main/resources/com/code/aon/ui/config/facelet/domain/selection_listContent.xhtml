@@ -11,7 +11,7 @@
 		
 	<aon:div styleClass="aon-padding-bottom">
 		<aon:outputText styleClass="aon-italic aon-margin-right aon-bold" value="#{bundle.aon_filter}:"/>
-		<aon:inputText id="domainFilter" size="80" value="#{domainSwitcher.filter}">
+		<aon:inputText id="domainFilter" size="70" value="#{domainSwitcher.filter}">
 			<a4j:support 
 				event="onkeyup"
 				reRender="domainSwitcherTableContainer"
@@ -21,6 +21,21 @@
 				ignoreDupResponses="true"
 				limitToList="true"/>
 		</aon:inputText>
+		<aon:outputLabel for="Domains_showInactive"
+			style="margin-left:3em;" styleClass="aon-italic aon-bold aon-margin-right" 
+			value="#{bundle.admin_domain_show_inactive}" />
+		<aon:selectBooleanCheckbox id="Domains_showInactive"
+			value="#{domainSwitcher.showInactive}" >
+			<a4j:support 
+				event="onclick"
+				reRender="domainSwitcherTableContainer"
+				eventsQueue="domainSwitcherFilterKeyUp"
+				actionListener="#{domainSwitcher.onChangeShowInactive}"
+				requestDelay="500"
+				ajaxSingle="true"
+				ignoreDupResponses="true"
+				limitToList="true"/>						
+		</aon:selectBooleanCheckbox>															
 	</aon:div>
 
 	<aon:div id="domainSwitcherTableContainer" styleClass="aon-width-all">

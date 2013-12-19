@@ -136,6 +136,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	private Scope scope;
 	
+	private boolean active;
+	
     public CompanyParentController() {
     	this.listenerClasses = new LinkedList<IControllerListener>();
     }
@@ -890,6 +892,14 @@ public class CompanyParentController extends BasicController implements ICompany
 
 	public void setScope(Scope scope) {
 		this.scope = scope;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public List<SelectItem> getDomainScopes() {

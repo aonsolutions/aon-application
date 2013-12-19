@@ -15,7 +15,8 @@
 				<aon:div styleClass="aon-portlet-title-buttons" style="width:40px;border-left:0;">
 					<aon:commandLink id="serachDomainDesktop" 
 						title="#{bundle.admin_domain_list}"
-						value="&#160;" styleClass="aon-icon-portlet aon-icon-category aon-margin-right" 
+						value="&#160;" style="padding-top:2px;padding-bottom:2px;"
+						styleClass="aon-icon-portlet aon-icon-category aon-margin-right" 
 						actionListener="#{domainPrint.onEditSearch}"
 						action="domainPrint_search">
 						<aon:actionListener method="#{domainPrint.onSearch}" />
@@ -23,7 +24,8 @@
 					<c:if test="#{aonRole.admin}">
 						<aon:commandLink id="newDomainDesktop" 
 							title="#{bundle.admin_new_domain}"
-							value="&#160;" styleClass="aon-icon-portlet aon-icon-new" 
+							value="&#160;" style="padding-top:2px;padding-bottom:2px;"
+							styleClass="aon-icon-portlet aon-icon-new" 
 							actionListener="#{domains.onNewDomain}"
 							action="newDomain_form"/>
 					</c:if> 
@@ -79,7 +81,7 @@
 								<aon:outputText value="#{to.description}" />
 							</aon:column>
 							<c:if test="#{domains.allDomains}">
-								<aon:column styleClass="aon-editDataTable-textColumn"
+								<aon:column styleClass="aon-editDataTable-textColumn  aon-nowrap"
 									alias="Domain.parent&lt;description" >
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.admin_domain_parent}" />
@@ -87,7 +89,7 @@
 									<aon:outputText value="#{to.parent.description}" />
 								</aon:column>
 							</c:if>
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-80"
 								alias="Domain.type" >
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.admin_domain_type}" />
@@ -110,7 +112,7 @@
 								<aon:outputText value="&#160;"
 									styleClass="aon-icon #{(to.domainManagement)?'aon-icon-checked':'aon-icon-check'}" />							
 							</aon:column>									
-							<aon:column styleClass="aon-editDataTable-textColumn  aon-nowrap aon-width-200"
+							<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-200"
 								alias="Domain.name" >
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.admin_domain_url}" />
