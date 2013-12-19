@@ -25,8 +25,13 @@
 	<!--  ************** -->
 	<table-filter match-name="instructor" exclude="true" />
 	<table-filter match-name="enterprise_agreement" exclude="true" />
-    <table-filter match-name="fs_renting" exclude="true" />
+    	<table-filter match-name="fs_renting" exclude="true" />
 	<table-filter match-name="fs_renting_detail" exclude="true" />
+    <table-filter match-name="fs_model180" exclude="true" />
+	<table-filter match-name="fs_model180_detail" exclude="true" />
+    <table-filter match-name="fs_model190" exclude="true" />
+	<table-filter match-name="fs_model190_detail" exclude="true" />
+
 		
 	<!--  *********************************** -->
 	<!--  TABLAS VALIDAS QUE NO LEVANTAN POJO -->
