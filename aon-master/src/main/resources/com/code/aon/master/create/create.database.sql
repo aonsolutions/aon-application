@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.26.1
+# Version: 7.26.2
 # Created by: girazu
-# Creation Date: 17/12/2013 13:20
+# Creation Date: 19/12/2013 09:40
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -792,6 +792,7 @@ CREATE TABLE `invoice` (
   `surcharge` tinyint(1) default '0' COMMENT 'Indica si la Factura tiene recargo de equivalencia',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si la Factura aplica retencion de impuestos',
   `withholding_farmer` tinyint(1) default '0' COMMENT 'Indica si la Factura aplica retencion de Regimen Especial de Agricultura y Pesca',
+  `vat_accrual_payment` tinyint(1) default '0' COMMENT 'Indica si la Factura se incluye en el Regimen Especial de Criterio de Caja',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Factura',
   `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones de la Factura',
   `investment` tinyint(1) default '0' COMMENT 'Indica si la Factura es una inversion',
@@ -871,6 +872,7 @@ CREATE TABLE `finance` (
   `bank_account` varchar(34) collate latin1_spanish_ci default NULL COMMENT 'IBAN - Numero de Cuenta Bancaria Internacional',
   `bank_alias` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Alias del Banco',
   `bic` varchar(11) collate latin1_spanish_ci default NULL COMMENT 'BIC - Codigo Identificador del Banco',
+  `cheque_number` varchar(24) collate latin1_spanish_ci default NULL COMMENT 'Numero de cheque',
   `status` tinyint(2) default '0' COMMENT 'Estado del Vencimiento',
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad del Vencimiento',
   `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones del Vencimiento',
@@ -2095,14 +2097,17 @@ CREATE TABLE `category` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Categoria',
   `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de la Categoria',
+  `scope` int(4) default NULL COMMENT 'Identificador del Ambito',
   `description` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Descripcion de la Categoria',
   `url` varchar(256) collate latin1_spanish_ci default NULL COMMENT 'Url de la Categoria',
   `rattach` int(4) default NULL COMMENT 'Identificador del Archivo Adjunto',
   PRIMARY KEY  (`id`),
   KEY `IDX_CATEGORY_DOMAIN` (`domain`),
   KEY `IDX_CATEGORY_RATTACH` (`rattach`),
+  KEY `IDX_CATEGORY_SCOPE` (`scope`),
   CONSTRAINT `FK_CATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_CATEGORY_RATTACH` FOREIGN KEY (`rattach`) REFERENCES `rattach` (`id`)
+  CONSTRAINT `FK_CATEGORY_RATTACH` FOREIGN KEY (`rattach`) REFERENCES `rattach` (`id`),
+  CONSTRAINT `FK_CATEGORY_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias';
 
 #
@@ -2408,6 +2413,7 @@ CREATE TABLE `supplier` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si el Proveedor aplica retencion de impuestos',
   `withholding_farmer` tinyint(1) default '0' COMMENT 'Indica si el Proveedor pertenece al Regimen Especial de Agricultura y Pesca',
+  `vat_accrual_payment` tinyint(1) default '0' COMMENT 'Indica si el Proveedor esta acogido al Regimen Especial de Criterio de Caja',
   `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Proveedor',
   `status` tinyint(2) default NULL COMMENT 'Estado del Proveedor',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
@@ -2600,6 +2606,7 @@ CREATE TABLE `company` (
   `active` tinyint(1) default '0' COMMENT 'Indica si la Compañia es activa o inactiva',
   `surcharge` tinyint(1) default '0' COMMENT 'Indica si la Compañia tiene de recargo de equivalencia',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si la Compañia aplica retencion de impuestos',
+  `vat_accrual_payment` tinyint(1) default '0' COMMENT 'Indica si la Compañia esta acogida al Regimen Especial de Criterio de Caja',
   `e_invoice` tinyint(1) default '0' COMMENT 'Indica si la Compañia desea emitir Facturas electronicas',
   PRIMARY KEY  (`registry`),
   UNIQUE KEY `IDX_UNQ_COMPANY_DOMAIN` (`domain`),
@@ -3148,6 +3155,7 @@ CREATE TABLE `creditor` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Acreedor',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si el Acreedor aplica retencion de impuestos',
+  `vat_accrual_payment` tinyint(1) default '0' COMMENT 'Indica si el Acreedor esta acogido al Regimen Especial de Criterio de Caja',
   `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Acreedor',
   `status` tinyint(2) default NULL COMMENT 'Estado del Acreedor',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
@@ -3941,6 +3949,155 @@ CREATE TABLE `fs_model` (
   CONSTRAINT `FK_FS_MODEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_FS_MODEL_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones Fiscales';
+
+#
+# Structure for the `fs_model180` table : 
+#
+
+CREATE TABLE `fs_model180` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
+  `year` int(4) NOT NULL COMMENT 'Ejercicio de la Declaracion',
+  `administration` tinyint(2) NOT NULL COMMENT 'Administracion',
+  `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado de la Declaracion',
+  `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad',
+  `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF',
+  `name` varchar(45) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
+  `contact_person` varchar(100) collate latin1_spanish_ci default NULL COMMENT 'Persona de Contacto',
+  `contact_phone` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'Telf. Fijo de Contacto',
+  `complementary` tinyint(1) NOT NULL default '0' COMMENT 'Declaracion complementaria',
+  `replacement` tinyint(1) NOT NULL default '0' COMMENT 'Declaracion sustitutiva',
+  `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
+  `receipt` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de Declaracion',
+  `replaced_receipt` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de declaracion sustituida',
+  `receiver_count_total` int(4) NOT NULL default '0' COMMENT 'Numero total de perceptores',
+  `receipt_total` double(15,3) NOT NULL default '0.000' COMMENT 'Importe declarado',
+  `retention_total` double(15,3) NOT NULL default '0.000' COMMENT 'Importe declarado',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_FS_MODEL180_DOMAIN` (`domain`),
+  KEY `IDX_FS_MODEL180_ENTERPRISE` (`enterprise`),
+  CONSTRAINT `FK_FS_MODEL180_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_FS_MODEL180_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones 180';
+
+#
+# Structure for the `fs_model180_detail` table : 
+#
+
+CREATE TABLE `fs_model180_detail` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `fs_model180` int(4) NOT NULL COMMENT 'Identificador del modelo 180',
+  `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF Perceptor',
+  `name` varchar(40) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
+  `representative_document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF Representante',
+  `province` int(4) NOT NULL default '0' COMMENT 'Provincia',
+  `inKind` tinyint(1) NOT NULL COMMENT 'Percepcion en especie',
+  `perception` double(15,3) NOT NULL default '0.000',
+  `percentage` double(15,3) default '0.000' COMMENT 'Porcentaje de retencion',
+  `retention` double(15,3) NOT NULL default '0.000',
+  `accrual_year` int(4) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_FS_MODEL180_DETAIL_DOMAIN` (`domain`),
+  KEY `IDX_FS_MODEL180_DETAIL_FS_MODEL180` (`fs_model180`),
+  CONSTRAINT `FK_FS_MODEL180_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_FS_MODEL180_DETAIL_FS_MODEL180` FOREIGN KEY (`fs_model180`) REFERENCES `fs_model180` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Declaraciones 180';
+
+#
+# Structure for the `fs_model190` table : 
+#
+
+CREATE TABLE `fs_model190` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
+  `year` int(4) NOT NULL COMMENT 'Ejercicio de la Declaracion',
+  `administration` tinyint(2) NOT NULL COMMENT 'Administracion',
+  `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado de la Declaracion',
+  `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad',
+  `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF',
+  `name` varchar(45) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
+  `contact_person` varchar(100) collate latin1_spanish_ci default NULL COMMENT 'Persona de Contacto',
+  `contact_phone` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'Telf. Fijo de Contacto',
+  `complementary` tinyint(1) NOT NULL default '0' COMMENT 'Declaracion complementaria',
+  `replacement` tinyint(1) NOT NULL default '0' COMMENT 'Declaracion sustitutiva',
+  `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
+  `receipt` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de Declaracion',
+  `replaced_receipt` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de declaracion sustituida',
+  `receiver_count_total` int(4) NOT NULL default '0' COMMENT 'Numero total de perceptores',
+  `receipt_total` double(15,3) NOT NULL default '0.000' COMMENT 'Importe declarado',
+  `retention_total` double(15,3) NOT NULL default '0.000' COMMENT 'Importe declarado',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_FS_MODEL190_DOMAIN` (`domain`),
+  KEY `IDX_FS_MODEL190_ENTERPRISE` (`enterprise`),
+  CONSTRAINT `FK_FS_MODEL190_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_FS_MODEL190_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones 190';
+
+#
+# Structure for the `fs_model190_detail` table : 
+#
+
+CREATE TABLE `fs_model190_detail` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `fs_model190` int(4) NOT NULL COMMENT 'Identificador del modelo 190',
+  `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF Perceptor',
+  `name` varchar(40) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
+  `representative_document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF Representante',
+  `province` int(4) NOT NULL default '0' COMMENT 'Provincia',
+  `key` varchar(1) collate latin1_spanish_ci NOT NULL COMMENT 'Clave Percepcion',
+  `subkey` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Subclave Percepcion',
+  `perception` double(15,3) NOT NULL default '0.000',
+  `retention` double(15,3) NOT NULL default '0.000',
+  `in_kind_perception` double(15,3) NOT NULL default '0.000',
+  `in_kind_deposit` double(15,3) NOT NULL default '0.000',
+  `in_kind_output_deposit` double(15,3) NOT NULL default '0.000',
+  `accrual_year` int(4) NOT NULL default '0',
+  `ceuta_melilla` tinyint(1) NOT NULL default '0' COMMENT 'Los datos anteriores corresponden a rendimientos obtenidos en Ceuta o Melilla',
+  `birth_year` int(4) NOT NULL default '0',
+  `family_situation` tinyint(2) NOT NULL default '0' COMMENT 'Situacion familiar',
+  `spouse_document` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de Documento del conyuge',
+  `disability` tinyint(2) NOT NULL default '0' COMMENT 'Grado de discapacidad',
+  `contract` tinyint(2) NOT NULL default '0' COMMENT 'Contrato o relacion',
+  `labour_prolongation` tinyint(1) default '0' COMMENT 'Prolongacion de la actividad laboral',
+  `geographic_mobility` tinyint(1) default '0' COMMENT 'Movilidad geografica',
+  `applicable_reduction` double(15,3) default NULL COMMENT 'Reducciones aplicables',
+  `deducible_expenses` double(15,3) default NULL COMMENT 'Gastos deducibles ',
+  `spousal_support` double(15,3) default NULL COMMENT 'Pension compensatoria a favor del cónyuge.',
+  `food_annuity` double(15,3) default NULL COMMENT 'Anualidades por alimentos en favor de los hijos.',
+  `less_than_3_descendent` tinyint(1) default '0',
+  `less_than_3_descendent_ratio` tinyint(1) default '0',
+  `other_descendent` tinyint(1) default '0',
+  `other_descendent_ratio` tinyint(1) default '0',
+  `disability_descendent_33` tinyint(1) default '0',
+  `disability_descendent_33_ratio` tinyint(1) default '0',
+  `disability_descendent_dependence` tinyint(1) default '0',
+  `disability_descendent_dependence_ratio` tinyint(1) default '0',
+  `disability_descendent_65` tinyint(1) default '0',
+  `disability_descendent_65_ratio` tinyint(1) default '0',
+  `less_than_75_ascendant` tinyint(1) default '0',
+  `less_than_75_ascendant_ratio` tinyint(1) default '0',
+  `ascendant` tinyint(1) default '0',
+  `ascendant_ratio` tinyint(1) default '0',
+  `disability_ascendant_33` tinyint(1) default '0',
+  `disability_ascendant_33_ratio` tinyint(1) default '0',
+  `disability_ascendant_dependence` tinyint(1) default '0',
+  `disability_ascendant_dependence_ratio` tinyint(1) default '0',
+  `disability_ascendant_65` tinyint(1) default '0',
+  `disability_ascendant_65_Ratio` tinyint(1) default '0',
+  `first_child_calculation` tinyint(1) default '0',
+  `second_child_calculation` tinyint(1) default '0',
+  `third_child_calculation` tinyint(1) default '0',
+  `home_loan_communnication` tinyint(1) default '0',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_FS_MODEL190_DETAIL_DOMAIN` (`domain`),
+  KEY `IDX_FS_MODEL190_DETAIL_FS_MODEL190` (`fs_model190`),
+  CONSTRAINT `FK_FS_MODEL190_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_FS_MODEL190_DETAIL_FS_MODEL190` FOREIGN KEY (`fs_model190`) REFERENCES `fs_model190` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Declaraciones 190';
 
 #
 # Structure for the `fs_model_detail` table : 
@@ -5247,6 +5404,7 @@ CREATE TABLE `newsletter` (
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   `highlightFirst` tinyint(1) default '0' COMMENT 'Indica si el Boletin destaca la primera noticia o no',
   `template` int(4) default NULL COMMENT 'Identificador de la Plantilla de Marketing',
+  `newsSeparator` tinyint(1) default '0' COMMENT 'Indica si el Boletin incluye un separador entre noticias',
   PRIMARY KEY  (`id`),
   KEY `IDX_NEWSLETTER_DOMAIN` (`domain`),
   KEY `IDX_NEWSLETTER_SCOPE` (`scope`),
@@ -7211,7 +7369,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.26.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.26.2');
 
 COMMIT;
 
