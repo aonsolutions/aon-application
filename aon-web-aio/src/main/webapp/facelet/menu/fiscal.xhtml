@@ -34,6 +34,28 @@
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
+						
+						<aon:panelGrid id="group_fiscal_year_irpf"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-renameFolder aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="Declaraciones informativas"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_mod190"
+										action="gwt_mod190" 
+										value="Modelo 190 - BETA">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_mod180"
+										action="gwt_mod180" 
+										value="Modelo 180  - BETA" >
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
 
 						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 							<aon:panelGrid id="group_fiscal_modules_module"

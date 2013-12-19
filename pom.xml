@@ -131,6 +131,7 @@
 
 		<!-- GWT MODULES -->
 		<module>aon-gwt-payroll</module>
+		<module>aon-gwt-fiscal</module>
 
 		<!-- GENERATED -->
 		<module>aon-audabridge-api</module>
