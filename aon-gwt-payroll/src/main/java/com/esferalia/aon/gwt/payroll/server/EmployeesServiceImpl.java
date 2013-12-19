@@ -111,6 +111,7 @@ import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -536,8 +537,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 																			 * to
 																			 * int
 																			 */);
+			Map<Object, Object> images = new HashMap<Object, Object>();
+			parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images);
+
+			String imagesUri = String.format("jasper_image/salary/%d/%d/%d/%d/",
+					cost.getMonth(), cost.getYear(), cost.getWorkplaceId(),
+					cost.getEnterpriseId());
+
+			parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
+
 			reportManager.execute(out, IPayrollConstants.COST_REPORT,
 					parameters);
+
+			for (Entry<Object, Object> image : images.entrySet()) {
+				String name = String.format("%s%s", imagesUri, image.getKey());
+				JasperImageServlet.saveImage(name, (byte[]) image.getValue());
+			}
 
 			return out.toString();
 
@@ -2935,8 +2950,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					@Override
 					public IContractSalaryCalculatorContext visitSettle(
 							SalaryType salaryType) {
-						// TODO Auto-generated method stub
-						return null;
+						try {
+							return getSettleCalculatorContextImpl(conn, draft,
+									listener);
+						} catch (SQLException e) {
+							throw new IllegalArgumentException(e);
+						} catch (ExpressionException e) {
+							throw new ExpressionExceptionWrapper(e);
+						}
 					}
 
 					@Override
@@ -3106,6 +3127,27 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				}
 			}
 		};
+
+		ctx.setListener(listener);
+		ctx.next();
+
+		SalaryDraftCalculatorContext<IContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<IContractSalaryCalculatorContext>(
+				draft, ctx);
+		draftCtx.setListener(listener);
+		return draftCtx;
+	}
+
+	private static IContractSalaryCalculatorContext getSettleCalculatorContextImpl(
+			final Connection conn, final SalaryDraft draft,
+			IContractSalaryCalculatorContext.IListener listener)
+			throws ExpressionException, SQLException {
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
+				draft.getEmployee().getId());
+		
+		SQLContractSettleCalculatorContext ctx = new SQLContractSettleCalculatorContext(conn, 
+				draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(), criteria);
 
 		ctx.setListener(listener);
 		ctx.next();
