@@ -266,7 +266,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 		<band height="19" splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="50" splitType="Stretch">
+		<band height="52" splitType="Stretch">
 			<componentElement>
 				<reportElement uuid="2d09337e-8e71-44d5-8e16-cc00fec2d3a9" key="head_table" x="0" y="0" width="802" height="50"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
@@ -282,11 +282,11 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 						</datasetParameter>
 						<dataSourceExpression><![CDATA[new JRMapArrayDataSource(Collections.singleton(Collections.singletonMap("salary",$F{salary})).toArray())]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="100" uuid="7153cfe5-e021-4287-8ff1-2182cbeeb4c7">
+					<jr:column width="75" uuid="7153cfe5-e021-4287-8ff1-2182cbeeb4c7">
 						<printWhenExpression><![CDATA[$V{logo} != null]]></printWhenExpression>
 						<jr:detailCell height="50" rowSpan="1">
 							<image>
-								<reportElement uuid="d40e37b6-0cc7-421c-9297-6b6b8b0fad25" positionType="Float" x="0" y="0" width="100" height="50">
+								<reportElement uuid="d40e37b6-0cc7-421c-9297-6b6b8b0fad25" positionType="Float" x="0" y="0" width="75" height="50">
 									<printWhenExpression><![CDATA[$P{logo} != null]]></printWhenExpression>
 								</reportElement>
 								<imageExpression><![CDATA[new java.io.ByteArrayInputStream($P{logo}.getData())]]></imageExpression>
