@@ -44,6 +44,18 @@ public class HtmlGenerator {
 	public HtmlGenerator() {
 		this( getURLPreffix() );
 	}
+
+	public void addSeparator( Template template ) {
+		sb.append("<hr");
+		if ( template!=null && !StringUtils.isEmpty(template.getTitleColor()) ) {
+			sb.append(" style=\"color:");
+			sb.append(template.getTitleColor());
+			sb.append(";background-color:");
+			sb.append(template.getTitleColor());
+			sb.append(";\"");
+		}
+		sb.append(" size=\"5\"/>");		
+	}
 	
 	private void addTitle( News news, Template template ) {
 		sb.append("<p align=\"left\" style=\"font-size:18px;font-weight:bold");

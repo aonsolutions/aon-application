@@ -104,8 +104,9 @@ public class NewsletterController extends BasicController {
 				layout = NewsletterLayout.FULL_WIDTH_IMAGE;
 			}
 			HtmlGenerator hg = new HtmlGenerator(sb);
-			for( ITransferObject to : bean.getList(criteria) ) {
-				NewsletterDetail nd = (NewsletterDetail) to;
+			List<ITransferObject> list = bean.getList(criteria);
+			for( int i = 0; i < list.size(); i++ ) {
+				NewsletterDetail nd = (NewsletterDetail) list.get(i);
 				hg.addNews(newsletter.getTemplate(), nd.getNews(), layout, true);
 				if ( alternate ) {
 					if ( layout == NewsletterLayout.LEFT_ALIGNED_IMAGE) {
@@ -115,6 +116,9 @@ public class NewsletterController extends BasicController {
 					}
 				} else {
 					layout = newsletter.getLayout();
+				}
+				if ( newsletter.isNewsSeparator() && (i+1 < list.size()) ) {
+					hg.addSeparator(newsletter.getTemplate());
 				}
 			}
 		} catch ( ManagerBeanException e ) {

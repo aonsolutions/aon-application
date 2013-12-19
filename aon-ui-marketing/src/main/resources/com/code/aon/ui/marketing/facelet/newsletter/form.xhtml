@@ -66,6 +66,11 @@
 						<f:selectItems value="#{marketingCollections.newsletterLayouts}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="Newsletter_newsSeparator"
+						value="#{bundle.marketing_newsletter_newsSeparator}" />
+					<aon:selectBooleanCheckbox id="Newsletter_newsSeparator" 
+						value="#{newsletter.to.newsSeparator}" />
+
 					<aon:outputLabel for="Newsletter_highlightFirst"
 						value="#{bundle.marketing_newsletter_highlightFirst}" />
 					<aon:selectBooleanCheckbox id="Newsletter_highlightFirst" 
