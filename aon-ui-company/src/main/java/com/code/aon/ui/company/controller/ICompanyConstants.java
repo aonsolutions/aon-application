@@ -85,6 +85,8 @@ public interface ICompanyConstants {
 	String SALARY_DRAFT = "salaryDraft";
 	
 	String REPORT_SALARY_PARAM = "PAY_REPORT_salary_PAY";
+
+	String REPORT_SETTLEMENT_PARAM = "PAY_SETTLEMENT_salary_PAY";
 	
 	String REPORT_SALARY_DRAFT_PARAM = "PAY_REPORT_salaryDraft_PAY";
 
