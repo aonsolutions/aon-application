@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import net.sf.jasperreports.engine.JRImageRenderer;
 import net.sf.jasperreports.engine.JRRenderable;
@@ -20,10 +21,10 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.payroll.SalaryDeduction;
-import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.ibm.icu.text.RuleBasedNumberFormat;
 
 public class ReportUtils {
 
@@ -95,14 +96,67 @@ public class ReportUtils {
 		criteria.addEqualExpression(beanManager
 				.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID),
 				registryId);
-		criteria.addEqualExpression(beanManager
-				.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE),
+		criteria.addEqualExpression(
+				beanManager
+						.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE),
 				type);
-		List<?> list =  beanManager.getList(criteria);
-		
-		return list == null || list.isEmpty()? null : (RegistryAttachment) list.get(0);
+		List<?> list = beanManager.getList(criteria);
+
+		return list == null || list.isEmpty() ? null
+				: (RegistryAttachment) list.get(0);
 	}
 
+	public static List<RegistryDirStaff> getRepresentativesLabor(Integer registryId) 
+	
+			throws ManagerBeanException {
+		IManagerBean beanManager = BeanManager
+				.getManagerBean(RegistryDirStaff.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(beanManager
+				.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID),
+				registryId);
+		criteria.addEqualExpression(
+				beanManager
+						.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REPRESENTATIVE_LABOR),
+				Boolean.TRUE);
+		List<?> list = beanManager.getList(criteria);
+
+		return (List<RegistryDirStaff>) list ;
+
+	}
+
+	
+	public static String spellout(Locale locale, int integer) {
+		return new RuleBasedNumberFormat(locale, RuleBasedNumberFormat.SPELLOUT)
+				.format(integer);
+	}
+
+	public static String spellout(Locale locale, double d) {
+		return spellout(locale, d, 2);
+	}
+
+	public static String spellout(Locale locale, double d, int precision) {
+		StringBuffer buffer = new StringBuffer();
+		long integral = (long) Math.floor(d);
+		long fractional = (long) Math.floor((d - integral)
+				* Math.pow(10, precision));
+		RuleBasedNumberFormat format = new RuleBasedNumberFormat(locale,
+				RuleBasedNumberFormat.SPELLOUT);
+		buffer.append(format.format(integral));
+		if ( fractional > 0  ) { 
+			buffer.append(" con ");
+			buffer.append(format.format(fractional));
+		}
+
+		return buffer.toString();
+	}
+	
+	public static String toUpperCase(String str){
+		return str != null ? str.toUpperCase() : null;
+	}
+	
+	
+	
 	// ------------------------------------------------------------------------
 
 	private static boolean contains(Object values[], Object value) {
@@ -159,9 +213,6 @@ public class ReportUtils {
 	}
 
 	public static void main(String[] args) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(2008, 0, 1);
-		System.out.println(toExcelNumberFormat(calendar.getTime()));
+		System.out.println(spellout(new Locale("es_ES"), 5495.00010, 5));
 	}
-
 }

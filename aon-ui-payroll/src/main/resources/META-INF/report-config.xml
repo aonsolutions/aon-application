@@ -57,6 +57,13 @@
 		</params>
 	</report>
 
+	<report id="settlement" description="Default settlement report ">
+		<template path="/com/esferalia/aon/ui/payroll/report/settlement.kasper" />
+		<collection provider="#{salary}" forceRefresh="true" />
+		<params>
+		</params>
+	</report>
+
 	<report id="salaryList" description="Salary List report ">
 		<template path="/com/esferalia/aon/ui/payroll/report/salary.jasper" />
 		<bean key="com.esferalia.aon.payroll.Salary" />
