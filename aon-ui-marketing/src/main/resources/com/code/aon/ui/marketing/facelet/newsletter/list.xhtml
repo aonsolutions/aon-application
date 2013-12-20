@@ -29,7 +29,7 @@
 					
 						<ui:include
 							src="/com/code/aon/ui/marketing/facelet/newsletter/listBasic.xhtml" />
-							
+
 						<aon:column styleClass="aon-editDataTable-textColumn"
 							alias="Newsletter.layout" >
 							<f:facet name="header">
@@ -38,6 +38,14 @@
 							<aon:outputText value="#{to.layout}"/>
 						</aon:column>
 
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-140"
+							alias="Newsletter.scope.description">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_scope}" />
+							</f:facet>
+							<aon:outputText value="#{to.scope.description}" />
+						</aon:column>													
+							
 	 					<aon:column styleClass="aon-editDataTable-iconColumn"
 	 						alias="Newsletter.active" >
 							<f:facet name="header">

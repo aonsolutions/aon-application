@@ -19,7 +19,9 @@
 				<ui:param name="controller" value="#{news}" />
 				<ui:define name="searchContent">
 					
-					<ui:include src="/com/code/aon/ui/marketing/facelet/news/searchBasicContent.xhtml" />
+					<ui:include src="/com/code/aon/ui/marketing/facelet/news/searchBasicContent.xhtml">
+						<ui:param name="searchController" value="#{scopeSearch}" />
+					</ui:include>
 
 				</ui:define>
 			

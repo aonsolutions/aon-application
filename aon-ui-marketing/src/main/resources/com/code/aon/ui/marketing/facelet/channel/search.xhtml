@@ -32,7 +32,11 @@
 					<aon:outputLabel for="Category_url"
 						value="#{bundle.marketing_news_url}" />
 					<aon:inputText id="Category_url" size="80"
-						valueChangeListener="#{controller.addExpression}" />			
+						valueChangeListener="#{controller.addExpression}" />	
+						
+					<ui:include src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" >
+						<ui:param name="searchController" value="#{scopeSearch}" />
+					</ui:include>						
 
 				</ui:define>
 			

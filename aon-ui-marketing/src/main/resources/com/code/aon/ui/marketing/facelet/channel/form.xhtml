@@ -36,6 +36,14 @@
 						<f:validateLength  maximum="1024"/>
 					</aon:inputTextarea>						
 
+					<aon:outputLabel for="Category_scope"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Category_scope" 
+						value="#{channel.to.scope}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="Category_url"
 						value="#{bundle.marketing_news_url}" />
 					<aon:inputText id="Category_url" required="true"

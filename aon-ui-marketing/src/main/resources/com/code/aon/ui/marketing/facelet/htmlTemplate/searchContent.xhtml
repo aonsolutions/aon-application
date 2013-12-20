@@ -8,21 +8,16 @@
 
 	<c:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>
+		<ui:param name="searchController" value="#{scopeSearch}" />
 	</c:if>
 					
 	<aon:outputLabel for="RegistryAttachment_description"
 		value="#{bundle.aon_name}" />
-	<aon:inputText id="RegistryAttachment_description" size="80"
+	<aon:inputText id="RegistryAttachment_description" size="60"
 		valueChangeListener="#{controller.addExpression}" />
 
-	<aon:outputLabel for="RegistryAttachment_scope_id"
-		value="#{bundle.aon_scope}" />
-	<aon:selectOneMenu id="RegistryAttachment_scope_id"
-		value="#{configCollections.scope}"
-		valueChangeListener="#{controller.addIdEqualExpression}" >
-		<f:selectItem itemLabel="-" value="#{null}" />
-		<f:selectItems value="#{configCollections.currentUserScopes}" />
-	</aon:selectOneMenu>						
+	<ui:include
+		src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" />		
 	
 	<aon:outputLabel for="RegistryAttachment_attachDate-From"
 		value="#{bundle.aon_date}" />

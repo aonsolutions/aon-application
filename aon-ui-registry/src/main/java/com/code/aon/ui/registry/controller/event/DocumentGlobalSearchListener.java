@@ -63,8 +63,8 @@ public class DocumentGlobalSearchListener extends CorporateIdentitySearchListene
 	}
 
 	@Override
-	protected void reset() throws ManagerBeanException {
-		super.reset();
+	protected void init() throws ManagerBeanException {
+		super.init();
 		setDomain((Domain)BeanManager.getManagerBean(Domain.class).createNewTo());		
 	}
 

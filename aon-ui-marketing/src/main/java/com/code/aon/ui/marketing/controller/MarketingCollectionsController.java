@@ -1,6 +1,5 @@
 package com.code.aon.ui.marketing.controller;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -9,14 +8,17 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.enumeration.ActionMediaType;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.marketing.enumeration.NewsType;
 import com.code.aon.marketing.enumeration.NewsletterLayout;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.enumeration.CategoryType;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -81,10 +83,11 @@ public class MarketingCollectionsController {
 		IManagerBean categoryBean = BeanManager.getManagerBean(Category.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(categoryBean.getFieldName(IEntityAlias.CATEGORY_TYPE), CategoryType.ARTICLE);
+		Expression exp = UserUtils.getInstance().getNullableScopeExpression(categoryBean.getFieldName(IEntityAlias.CATEGORY_SCOPE_ID));
+		criteria.addExpression(exp);
 		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.CATEGORY_NAME));
-		Iterator<?> iter = categoryBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			Category category = (Category) iter.next();
+		for( ITransferObject to : categoryBean.getList(criteria) ) {
+			Category category = (Category) to;
 			SelectItem item = new SelectItem(category, category.getName());
 			channels.add(item);
 		}

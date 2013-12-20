@@ -19,7 +19,9 @@
 				<ui:define name="searchContent">
 					
 					<ui:include
-						src="/com/code/aon/ui/marketing/facelet/htmlTemplate/searchContent.xhtml" />
+						src="/com/code/aon/ui/marketing/facelet/htmlTemplate/searchContent.xhtml" >
+						<ui:param name="searchController" value="#{scopeSearch}" />
+					</ui:include>
 					
 				</ui:define>
 			

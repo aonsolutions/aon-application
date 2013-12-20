@@ -31,11 +31,6 @@
 			
 				<aon:panelGrid columns="2">
 
-					<aon:outputLabel for="News_id"
-						rendered="#{!news.new}" value="#{bundle.aon_id}" />
-					<aon:inputText id="News_id" value="#{news.to.id}" required="true"
-						rendered="#{!news.new}" size="15" disabled="true" />
-
 					<aon:outputLabel for="News_title"
 						value="#{(news.to.type  == 'NEWS')?bundle.aon_title:bundle.aon_subject}" />
 					<aon:inputText id="News_title" required="true"

@@ -17,6 +17,7 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:param name="controller" value="#{newsletter}" />
+				<ui:param name="searchController" value="#{scopeSearch}" />				
 				<ui:define name="searchContent">
 					
 					<aon:outputLabel for="Newsletter_name"
@@ -52,6 +53,9 @@
 							popupDateFormat="#{bundle.aon_date_pattern}">
 						</aon:selectInputDate>
 					</aon:div>													
+												
+					<ui:include
+						src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" />		
 												
 					<aon:outputLabel for="Newsletter_layout"
 						value="#{bundle.marketing_newsletter_layout}" />

@@ -61,6 +61,7 @@
 				</value-class>
 				<value>#{surveyScopeListener}</value>
 				<value>#{surveyQuestionListener}</value>
+				<value>#{scopeSearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -149,6 +150,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{surveyScopeListener}</value>
+				<value>#{scopeSearch}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>	
@@ -720,6 +722,8 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{channelControllerListener}</value>
+				<value>#{channelScopeListener}</value>
+				<value>#{scopeSearch}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>
@@ -731,6 +735,16 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>channelScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Channel_scope_id</value>
+		</managed-property>
+	</managed-bean>		
 	
 	<!-- ************ NEWS ************** -->
 	<managed-bean>
@@ -760,6 +774,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{newsScopeListener}</value>
+				<value>#{scopeSearch}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>
@@ -812,6 +827,14 @@
 			<property-name>searchPagePath</property-name>
 			<value>/com/code/aon/ui/marketing/facelet/news/searchBasicContent.xhtml</value>
 		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{newsScopeListener}</value>
+				<value>#{scopeSearch}</value>
+			</list-entries>
+		</managed-property>				
 	</managed-bean>	
 
 	<!-- ************ NEWSLETTER ************** -->
@@ -845,6 +868,7 @@
 				</value-class>
 				<value>#{newsletterDetailChildListener}</value>
 				<value>#{newsletterScopeListener}</value>
+				<value>#{scopeSearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -966,6 +990,13 @@
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/marketing/facelet/newsletter/listBasic.xhtml</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{newsScopeListener}</value>
+			</list-entries>
+		</managed-property>						
 	</managed-bean>	
 
 	<!-- ************ RSS Controller ************** -->
@@ -1029,7 +1060,7 @@
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{htmlTemplateControllerListener}</value> 
 				<value>#{htmlTemplateScopeListener}</value>
-				<value>#{corporateIdentitySearch}</value>
+				<value>#{scopeSearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1112,6 +1143,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{htmlTemplateScopeListener}</value>
+				<value>#{scopeSearch}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>

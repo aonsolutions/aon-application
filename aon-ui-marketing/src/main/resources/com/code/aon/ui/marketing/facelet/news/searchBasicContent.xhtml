@@ -8,6 +8,7 @@
 
 	<c:if test="#{lookup != null}">
 		<ui:param name="controller" value="#{lookup}"/>
+		<ui:param name="searchController" value="#{scopeSearch}" />
 	</c:if>
 					
 	<aon:outputLabel for="News_title"
@@ -23,6 +24,9 @@
 		<f:selectItem itemLabel="-" value="#{null}"/>
 		<f:selectItems value="#{marketingCollections.newsTypes}" />
 	</aon:selectOneMenu>		
+			
+	<ui:include
+		src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" />		
 			
 	<aon:outputLabel for="News_category_id"
 		value="#{bundle.aon_category}" />

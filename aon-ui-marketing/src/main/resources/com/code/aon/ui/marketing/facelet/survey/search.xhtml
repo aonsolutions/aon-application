@@ -17,6 +17,7 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:param name="controller" value="#{survey}" />
+				<ui:param name="searchController" value="#{scopeSearch}" />
 				<ui:define name="searchContent">
 					
 					<aon:outputLabel for="Survey_id"
@@ -29,14 +30,8 @@
 					<aon:inputText id="Survey_description" size="60"
 						valueChangeListener="#{survey.addExpression}" />
 						
-					<aon:outputLabel for="Survey_scope_id"
-						value="#{bundle.aon_scope}" />
-					<aon:selectOneMenu id="Survey_scope_id"
-						value="#{configCollections.scope}"
-						valueChangeListener="#{controller.addIdEqualExpression}" >
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{configCollections.currentUserScopes}" />
-					</aon:selectOneMenu>						
+					<ui:include
+						src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" />		
 				
 					<aon:outputLabel for="Survey_active"				
 						value="#{bundle.aon_status}"/>					
