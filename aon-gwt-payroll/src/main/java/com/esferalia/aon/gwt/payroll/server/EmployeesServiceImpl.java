@@ -809,7 +809,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
 
-			String salaryReport = getSalaryReport();
+			String salaryReport = getSalaryReport(toSalaryType(draft.getType()));
 
 			reportManager.execute(reportOut, salaryReport);
 
@@ -1077,12 +1077,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	// -------------------------------------------------------- Private methods
 
 	@Deprecated
-	private String getSalaryReport() throws ReportException {
+	private String getSalaryReport(SalaryType salaryType) throws ReportException {
 		Connection conn = null;
 		try {
 			conn = getConnection();
 			int enterpriseId = getEnterpriseID();
-			return AonServletUtils.getSalaryReport(conn, enterpriseId);
+			return AonServletUtils.getSalaryReport(conn, enterpriseId, salaryType);
 		} catch (SQLException e) {
 			throw new ReportException(e.getLocalizedMessage());
 		} catch (ManagerBeanException e) {
@@ -1104,7 +1104,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			initFacesContext();
 
-			String salaryReport = getSalaryReport();
+			String salaryReport = getSalaryReport(toSalaryType(salary.getType()));
 
 			IManagerBean beanManager = BeanManager
 					.getManagerBean(com.esferalia.aon.payroll.Salary.class);
@@ -1157,8 +1157,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					salaryTypes));
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-			String salaryReport = getSalaryReport();
+			// TODO: SalaryType???????
+			String salaryReport = getSalaryReport(SalaryType.SALARY); 
 			reportManager.execute(out, salaryReport, parameters);
 
 			return out.toString();
@@ -1211,7 +1211,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-			String salaryReport = getSalaryReport();
+			String salaryReport = getSalaryReport(toSalaryType(draft.getType()));
 			reportManager.execute(out, salaryReport, parameters);
 
 			return out.toString();
@@ -1259,7 +1259,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-			String salaryReport = getSalaryReport();
+			String salaryReport = getSalaryReport(toSalaryType(draft.getType()));
 			reportManager.execute(out, salaryReport, parameters);
 
 			return out.toString();
@@ -3565,6 +3565,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 		return buff.toString();
+	}
+
+	private static SalaryType toSalaryType(Salary.Type type) {
+		return type != null ? SalaryType.values()[type.ordinal()] : null;
 	}
 
 }

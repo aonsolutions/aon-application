@@ -53,6 +53,8 @@ public interface Images extends ClientBundle, Tree.Resources {
 	
 	ImageResource blank();
 
+	ImageResource clipboard();
+
 	@Source("noimage.png")
 	ImageResource treeLeaf();
 	

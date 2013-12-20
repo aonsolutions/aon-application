@@ -70,6 +70,9 @@ public class MainEntryPoint implements EntryPoint {
 
 		@Source("warn.png")
 		ImageResource warn();
+
+		@Source("clipboard.png")
+		ImageResource clipboard();
 	}
 
 	@Override

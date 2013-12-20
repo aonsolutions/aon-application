@@ -44,6 +44,10 @@
 	gwt-image: "agreement" ; 
 }
 
+@sprite .aon-icon-clipboard {
+	gwt-image: "clipboard" ; 
+}
+
 .aon-dataTable .selected {
     border: 1px solid #D3C061;
     background: none repeat scroll 0 0 #FFFADC;

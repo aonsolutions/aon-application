@@ -75,7 +75,8 @@ public class SalaryExporterServlet extends HttpServlet {
 			OutputStream os = resp.getOutputStream();
 			
 			int enterpriseId = AonRemoteServiceServlet.getEnterpriseID();
-			String salaryReport = AonServletUtils.getSalaryReport(enterpriseId); 
+			// TODO : SalaryType????
+			String salaryReport = AonServletUtils.getSalaryReport(enterpriseId, SalaryType.SALARY); 
 			
 			reportManager.execute(os, salaryReport);
 			

@@ -39,11 +39,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.company.Enterprise;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -60,6 +58,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
@@ -93,11 +92,12 @@ public class AonServletUtils {
 
 		@Override
 		public boolean accept(Salary salary) {
-			Set<SalaryData>  datas = salary.getSalaryDatas();
+			Set<SalaryData> datas = salary.getSalaryDatas();
 			for (SalaryData salaryData : datas) {
-				if ( ENTERPRISE_SITE_DATE.equals(salaryData.getName())){
+				if (ENTERPRISE_SITE_DATE.equals(salaryData.getName())) {
 					String expression = salaryData.getExpression();
-					return expression != null && expression.compareTo(utcDate)<= 0;
+					return expression != null
+							&& expression.compareTo(utcDate) <= 0;
 				}
 			}
 			return true;
@@ -393,7 +393,6 @@ public class AonServletUtils {
 		return fileName.substring(0, fileName.lastIndexOf('.'));
 	}
 
-
 	public static void initFacesContext(ServletContext context,
 			HttpServletRequest request, HttpServletResponse response) {
 
@@ -432,12 +431,12 @@ public class AonServletUtils {
 		}
 	}
 
-	protected static String getSalaryReport(Integer enterpriseID)
-			throws SQLException {
+	protected static String getSalaryReport(Integer enterpriseID,
+			String report, String def) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = getConnection();
-			return getSalaryReport(conn, enterpriseID);
+			return getSalaryReport(conn, report, def, enterpriseID);
 		} finally {
 			if (conn != null) {
 				conn.close();
@@ -445,8 +444,66 @@ public class AonServletUtils {
 		}
 	}
 
+	protected static String getSalaryReport(final Integer enterpriseID,
+			SalaryType salaryType) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			return getSalaryReport(conn, enterpriseID, salaryType);
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		
+	}
+
+	protected static String getSalaryReport(final Connection conn, final Integer enterpriseID,
+			SalaryType salaryType) throws SQLException {
+		return salaryType.accept(new SalaryTypeVisitor<String>() {
+
+			@Override
+			public String visitSalary(SalaryType salaryType) {
+				try {
+					return getSalaryReport(conn,
+							ICompanyConstants.REPORT_SALARY_PARAM,
+							IPayrollConstants.DEFAULT_SALARY_TEMPLATE, enterpriseID);
+				} catch (SQLException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			@Override
+			public String visitExtra(SalaryType salaryType) {
+				return visitSalary(salaryType);
+			}
+
+			@Override
+			public String visitSettle(SalaryType salaryType) {
+				try {
+					return getSalaryReport(conn,
+							ICompanyConstants.REPORT_SETTLEMENT_PARAM,
+							IPayrollConstants.DEFAULT_SETTLEMENT_TEMPLATE,enterpriseID);
+				} catch (SQLException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			@Override
+			public String visitDelay(SalaryType salaryType) {
+				return visitSalary(salaryType);
+			}
+
+			@Override
+			public String visitNotEnjoyedVacations(SalaryType salaryType) {
+				return visitSalary(salaryType);
+			}
+		});
+	}
+
 	protected static String getSalaryReport(Connection connection,
-			Integer enterpriseID) throws SQLException {
+			String report, String def, Integer enterpriseID)
+			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 
@@ -457,17 +514,18 @@ public class AonServletUtils {
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, enterpriseID);
-			stmt.setString(2, ICompanyConstants.REPORT_SALARY_PARAM);
+			stmt.setString(2, report);
 			rs = stmt.executeQuery();
 
 			if (!rs.next()) {
-				return getDefaultSalaryReport(connection, enterpriseID);
+				return getDefaultSalaryReport(connection, report, def,
+						enterpriseID);
 			}
 
 			String expression = rs.getString(EnterpriseDataColumns.EXPRESSION);
 
 			return expression != null ? expression : getDefaultSalaryReport(
-					connection, enterpriseID);
+					connection, report, def, enterpriseID);
 
 		} finally {
 			if (rs != null) {
@@ -481,7 +539,8 @@ public class AonServletUtils {
 	}
 
 	protected static String getDefaultSalaryReport(Connection connection,
-			Integer enterpriseID) throws SQLException {
+			String report, String def, Integer enterpriseID)
+			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 
@@ -490,17 +549,16 @@ public class AonServletUtils {
 					+ AppParamColumns.NAME + " = ? ";
 
 			stmt = connection.prepareStatement(sql);
-			stmt.setString(1, ICompanyConstants.REPORT_SALARY_PARAM);
+			stmt.setString(1, report);
 			rs = stmt.executeQuery();
 
 			if (!rs.next()) {
-				return IPayrollConstants.DEFAULT_SALARY_TEMPLATE;
+				return def;
 			}
 
 			String value = rs.getString(AppParamColumns.VALUE);
 
-			return value != null ? value
-					: IPayrollConstants.DEFAULT_SALARY_TEMPLATE;
+			return value != null ? value : def;
 
 		} finally {
 			if (rs != null) {

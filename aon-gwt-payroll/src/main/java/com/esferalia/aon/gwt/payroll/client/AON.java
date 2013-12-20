@@ -56,6 +56,8 @@ public class AON {
 	public static final String AON_TEXT_CENTER = "aon-text-center";
 	public static final String AON_ICON_RESET = "aon-icon-reset";
 	public static final String AON_EDIT_DATA_TABLE_BUTTON = "aon-editDataTable-button";
+	public static final String AON_ICON_COPY = "aon-icon-copy";
+	public static final String AON_ICON_CLIPBOARD = "aon-icon-clipboard";
 	public static final String AON_ICON_DELETE = "aon-icon-delete";
 	public static final String AON_ICON_CANCEL = "aon-icon-cancel";
 	public static final String AON_ICON_ACCEPT = "aon-icon-accept";

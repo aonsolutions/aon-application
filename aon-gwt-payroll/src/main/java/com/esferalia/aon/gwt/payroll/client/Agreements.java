@@ -5,7 +5,11 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
@@ -18,6 +22,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Tree;
@@ -28,25 +33,29 @@ public class Agreements extends ResizeComposite {
 
 	interface Images extends ClientBundle {
 		ImageResource agreement();
+
 		ImageResource agreement_warn();
+
 		ImageResource agreement_error();
+
 		ImageResource agreement_changed();
+
 		ImageResource agreement_changed_warn();
+
 		ImageResource agreement_changed_error();
-		
+
 	}
+
 	private static final Images IMAGES = GWT.create(Images.class);
 
-	private static final ImageResource RESOURCES [][][] = {
-		{
-		 {IMAGES.agreement(), IMAGES.agreement_warn()},
-		 {IMAGES.agreement_error(), IMAGES.agreement_error()}
-		}, 
-		{
-		 {IMAGES.agreement_changed(), IMAGES.agreement_changed_warn()},
-		 {IMAGES.agreement_changed_error(), IMAGES.agreement_changed_error()}
-		}  
-	};
+	private static final ImageResource RESOURCES[][][] = {
+			{ { IMAGES.agreement(), IMAGES.agreement_warn() },
+					{ IMAGES.agreement_error(), IMAGES.agreement_error() } },
+			{
+					{ IMAGES.agreement_changed(),
+							IMAGES.agreement_changed_warn() },
+					{ IMAGES.agreement_changed_error(),
+							IMAGES.agreement_changed_error() } } };
 
 	interface Listener {
 		void onAgreementSelected(Agreement agreement);
@@ -69,10 +78,9 @@ public class Agreements extends ResizeComposite {
 	Button viewButton;
 	@UiField
 	Button collapseAllButton;
-
-
+	
+	
 	private List<Listener> listeners;
-
 	private EnterprisesServiceAsync enterprisesService;
 
 	public Agreements() {
@@ -121,6 +129,7 @@ public class Agreements extends ResizeComposite {
 					}
 
 				});
+		initContextMenu();
 	}
 
 	public void addListener(Listener listener) {
@@ -130,9 +139,9 @@ public class Agreements extends ResizeComposite {
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
-	
 
-	// -------------------------------------------------------------- UiHandlers
+
+	// ------------------------------------------------------------- UiHandlers
 
 	@UiHandler("newButton")
 	void onNewButtonClicked(ClickEvent event) {
@@ -148,15 +157,14 @@ public class Agreements extends ResizeComposite {
 
 	}
 
-	// -------------------------------------------------------- Protected methods
+	// -------------------------------------------------------------- Protected
+	// methods
 
-	TreeItem getSelectedItem(){
+	TreeItem getSelectedItem() {
 		return tree.getSelectedItem();
 	}
-	
-	
 
-	// --------------------------------------------------------- Private methods
+	// -------------------------------------------------------- Private methods
 
 	private TreeItem addAgreementItem(Agreement agreement) {
 		String description = agreement.getDescription();
@@ -164,8 +172,8 @@ public class Agreements extends ResizeComposite {
 			description = "*" + description;
 		}
 
-		TreeItem treeItem = new TreeItem(imageItemSafeHtml(getImageResource(agreement),
-				description));
+		TreeItem treeItem = new TreeItem(imageItemSafeHtml(
+				getImageResource(agreement), description));
 		treeItem.setUserObject(agreement);
 
 		if (agreement.isRedefined()) {
@@ -185,20 +193,127 @@ public class Agreements extends ResizeComposite {
 		for (Listener listener : listeners)
 			listener.onAgreementSelected(agreement);
 	}
+
+	private Agreement getSelectedAgreement() {
+		TreeItem selectedItem = tree.getSelectedItem();
+		return selectedItem != null ? (Agreement) selectedItem.getUserObject()
+				: null;
+	}
+
+	private void initContextMenu () {
+		
+		
+		class AgreementContextMenu extends ContextMenu {
+
+			ScheduledCommand newCommand = new ScheduledCommand(){
+				public void execute() {
+					Agreement agreement = Agreements.newAgreement();
+					Agreements.this.tree.setSelectedItem(addAgreementItem(agreement));
+				};
+			};
+			ScheduledCommand copyCommand = new ScheduledCommand(){
+				public void execute() {
+				};
+			};
+			ScheduledCommand pasteCommand = new ScheduledCommand(){
+				public void execute() {
+				};
+			};
+			ScheduledCommand deleteCommand = new ScheduledCommand(){
+				public void execute() {
+					deleteAgreement(getSelectedAgreement());
+				};
+			};
+			
+			private MenuItem pasteItem;
+			private MenuItem deleteItem;
+
+			public AgreementContextMenu() {
+
+				addItem("Nuevo", newCommand, AON.AON_ICON_RESET,
+						AON.AON_ICON_CMD_BUTTON);
+				addSeparator();
+				addItem("Copiar", copyCommand ,
+						AON.AON_ICON_COPY, AON.AON_ICON_CMD_BUTTON);
+				pasteItem = addItem("Pegar", pasteCommand ,
+						AON.AON_ICON_CLIPBOARD, AON.AON_ICON_CMD_BUTTON);
+				pasteItem.setEnabled(false);
+				deleteItem = addItem("Borrar", deleteCommand ,
+						AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+				deleteItem.setEnabled(false);
+
+			}
+			
+			@Override
+			public void show() {
+				sync();
+				super.show();
+			}
+			
+			private void sync(){
+				Agreement agreement = Agreements.this.getSelectedAgreement();
+				deleteItem.setEnabled(agreement.canDelete());
+			}
+			
+		};
+		
+		final AgreementContextMenu contextMenu = new AgreementContextMenu();
+		
+		ContextMenuHandler contextMenuHandler = new  ContextMenuHandler(){
+			@Override
+			public void onContextMenu(ContextMenuEvent event) {
+				// stop the browser from opening the context menu
+				event.preventDefault();
+				event.stopPropagation();
+
+				NativeEvent nativeEvent = event.getNativeEvent();
+				contextMenu.setPopupPosition(nativeEvent.getClientX(),
+						nativeEvent.getClientY());
+				contextMenu.show();
+			}
+			
+		};
+		
+		tree.addDomHandler(contextMenuHandler, ContextMenuEvent.getType());
+		
+		
+	}
 	
+	private void deleteAgreement(Agreement agreement) {
+		deleteTreeItem(getSelectedItem());
+	}
+
+	private void deleteTreeItem(TreeItem treeItem) {
+		tree.removeItem(treeItem);
+	}
+
+	private Agreement pasteAgreement(Agreement agreement) {
+		return null;
+	}
+
+	// ------------------------------------------------------------------------
+	public static ImageResource getImageResource(boolean changes,
+			boolean errors, boolean warns) {
+		return RESOURCES[changes ? 1 : 0][errors ? 1 : 0][warns ? 1 : 0];
+	}
 	
-	
+	// ------------------------------------------------------------------------
+
 	/**
 	 * Generates SafeHtml for a tree item with an attached icon.
 	 */
-	static SafeHtml imageItemSafeHtml(ImageResource imageProto,
-			String title) {
+	static SafeHtml imageItemSafeHtml(ImageResource imageProto, String title) {
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
-		if ( title != null )
+		if (title != null)
 			builder.appendEscaped(" " + title);
 		return builder.toSafeHtml();
 	}
+
+	// ------------------------------------------------------------------------
+	
+	
+
 
 	private static synchronized Agreement newAgreement() {
 		Agreement agreement = new Agreement();
@@ -208,13 +323,9 @@ public class Agreements extends ResizeComposite {
 		return agreement;
 	}
 
-
-	private static ImageResource getImageResource(Agreement agreement){
-		return RESOURCES[0][0][agreement.hasLevelsWithoutCategories()?1:0];
+ 	private static ImageResource getImageResource(Agreement agreement) {
+		return RESOURCES[0][0][agreement.hasLevelsWithoutCategories() ? 1 : 0];
 	}
 
-	public static ImageResource getImageResource(boolean changes, boolean errors, boolean warns){
-		return RESOURCES[changes?1:0][errors?1:0][warns?1:0];
-	}
 
 }

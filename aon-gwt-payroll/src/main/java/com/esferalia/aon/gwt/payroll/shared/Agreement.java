@@ -54,7 +54,16 @@ public class Agreement implements Serializable, HasId<Integer> {
 	public void setLevelsWithoutCategories(boolean levelWithoutCategories) {
 		this.levelsWithoutCategories = levelWithoutCategories;
 	}
+	
+	// ----------------------------------------------------------------------
 
+	public boolean isSaved(){
+		return id > 0;
+	}
+
+	public boolean canDelete(){
+		return !isSaved();
+	}
 	
 
 

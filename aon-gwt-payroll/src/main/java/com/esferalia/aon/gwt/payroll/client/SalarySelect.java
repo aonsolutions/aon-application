@@ -357,7 +357,7 @@ public class SalarySelect extends Composite {
 				final Date endDate = SalarySelect.this.salaryPreview
 						.getEndDate();
 
-				int index = getIndexOfSette(endDate);
+				int index = getIndexOfSettle(endDate);
 
 				int length = dateListBox.getPageSize();
 				int start = Math.max(0, index - length / 2);
@@ -430,7 +430,8 @@ public class SalarySelect extends Composite {
 		List<Date> dates = new ArrayList<Date>(length);
 
 		Date date = DateUtils.copyDateOnly(new Date());
-		for (DateUtils.addDays2Date(date, start); contractEndDate.after(date); DateUtils
+		for (DateUtils.addDays2Date(date, start); dates.size() < length
+				&& DateUtils.compare(date, contractEndDate) <= 0; DateUtils
 				.addDays2Date(date, 1)) {
 			dates.add(DateUtils.copyDateOnly(date));
 		}
@@ -514,7 +515,7 @@ public class SalarySelect extends Composite {
 
 	}
 
-	private int getIndexOfSette(Date date) {
+	private int getIndexOfSettle(Date date) {
 		return DateUtils.getDaysBetween(new Date(), date);
 
 	}

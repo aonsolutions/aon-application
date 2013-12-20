@@ -184,6 +184,8 @@
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='acceptButton'
 									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
+								<g:Button ui:field='deleteButton'
+									styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR" enabled="false"/>
 								<g:Button ui:field="fxButton"
 									styleName='aon-finding-toolbar-item {style.fxButton}' enabled="false" />
 								<g:Button ui:field="undoButton"
