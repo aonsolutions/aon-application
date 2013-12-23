@@ -21,9 +21,18 @@
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
 		</aon:selectOneMenu>
 
-		<aon:outputLabel for="Creditor_withholding"	value="#{bundle.aon_retention}" />
-		<aon:selectBooleanCheckbox id="Creditor_withholding"
-			value="#{controller.to.withholding}" />
+		<aon:outputText value="#{bundle.customer_taxes}" />
+		<aon:div>
+			<aon:selectBooleanCheckbox id="Creditor_vatAccrualPayment"
+				value="#{controller.to.vatAccrualPayment}" />
+			<aon:outputLabel for="Creditor_vatAccrualPayment" styleClass="aon-italic"
+				value="#{bundle.aon_vat_accrual_payment}" />
+
+			<aon:selectBooleanCheckbox id="Creditor_withholding" styleClass="aon-margin-left"
+				value="#{controller.to.withholding}" />
+			<aon:outputLabel for="Creditor_withholding" styleClass="aon-italic"
+				value="#{bundle.aon_retention}" />
+		</aon:div>
 	</c:if>
 
 </ui:composition>

@@ -31,6 +31,7 @@ public class Company extends Registry implements ITaxInfo, IDomain {
 	private boolean active;    
     private boolean surcharge;
     private boolean withholding;
+    private boolean vatAccrualPayment;
     private boolean eInvoice;
     
 	@Column(name="domain", nullable=false)
@@ -63,6 +64,14 @@ public class Company extends Registry implements ITaxInfo, IDomain {
 	}
 	public void setWithholding(boolean withholding) {
 		this.withholding = withholding;
+	}
+	
+	@Column(name="vat_accrual_payment", nullable=true)
+	public boolean isVatAccrualPayment() {
+		return vatAccrualPayment;
+	}
+	public void setVatAccrualPayment(boolean vatAccrualPayment) {
+		this.vatAccrualPayment = vatAccrualPayment;
 	}
 	
 	@Column(name="e_invoice", nullable=true)

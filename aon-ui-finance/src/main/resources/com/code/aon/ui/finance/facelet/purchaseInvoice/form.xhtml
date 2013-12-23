@@ -408,7 +408,7 @@
 					columnClasses="aon-panelGrid-odd aon-width-140,
 						aon-panelGrid-even aon-width-auto">
 
-					<aon:div rendered="#{!empty purchaseInvoice.to.comments}">
+					<aon:div rendered="#{!empty purchaseInvoice.to.comments or purchaseInvoice.to.vatAccrualPayment}">
 						<aon:outputLabel for="Invoice_comments"
 							value="#{bundle.aon_comment}" />
 						<aon:div>
@@ -416,10 +416,16 @@
 								value="(#{bundle.aon_comment_description})" />
 						</aon:div>
 					</aon:div>
-					<aon:inputTextarea id="Invoice_comments" cols="145" rows="2"
-						value="#{purchaseInvoice.to.comments}"
-						rendered="#{!empty purchaseInvoice.to.comments}"
-						disabled="#{purchaseInvoice.readOnly}" />
+					<aon:div rendered="#{!empty purchaseInvoice.to.comments or purchaseInvoice.to.vatAccrualPayment}">
+						<aon:inputTextarea id="Invoice_comments" cols="145" rows="2"
+							value="#{purchaseInvoice.to.comments}"
+							rendered="#{!empty purchaseInvoice.to.comments}"
+							disabled="#{purchaseInvoice.readOnly}" />
+						<aon:div rendered="#{purchaseInvoice.to.vatAccrualPayment}">
+							<aon:outputText styleClass="aon-bold aon-label-info"
+								 value="#{bundle.finance_invoice_vat_accrual_payment_message}" />
+						</aon:div>
+					</aon:div>
 
 					<aon:div rendered="#{!empty purchaseInvoice.to.remarks}">
 						<aon:outputLabel for="Invoice_remarks"

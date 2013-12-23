@@ -46,14 +46,14 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice) evt.getTo();
 		checkInvoice(invoice);
-		if (invoice.getType() == InvoiceType.SALES) {
+		if (invoice.isSales()) {
 			checkNumber(invoice);
 			String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
 			if (!StringUtils.isEmpty(invoice.getSeries())) {
 				referenceCode = invoice.getSeries() + "/" + referenceCode;
 			}
 			invoice.setReferenceCode(referenceCode);
-		} else if (invoice.getType() == InvoiceType.PURCHASE || invoice.getType() == InvoiceType.EXPENSES) {
+		} else if (invoice.isPurchase() || invoice.isExpense()) {
 			invoice.setSeries(Integer.toString(CommonUtil.getYear(invoice.getIssueDate())));
 			if (invoice.getNumber() == 0) {
 				Criteria criteria = new Criteria();
@@ -61,7 +61,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				criteria.addNotEqualExpression("invoice.type", InvoiceType.UNDEDUCTIBLE.ordinal());
 				invoice.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Invoice", criteria));
 			}
-		} else if (invoice.getType() == InvoiceType.UNDEDUCTIBLE) {
+		} else if (invoice.isUndeductible()) {
 			invoice.setSeries(Integer.toString(CommonUtil.getYear(invoice.getIssueDate())));
 			if (invoice.getNumber() == 0) {
 				Criteria criteria = new Criteria();
@@ -94,7 +94,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		Invoice invoice = (Invoice) evt.getTo();
 		if (invoice.isUpdateEnabled()) {
 			checkInvoice(invoice);
-			if (invoice.getType() == InvoiceType.SALES) {
+			if (invoice.isSales()) {
 				checkNumber(invoice);
 				String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
 				if (!StringUtils.isEmpty(invoice.getSeries())) {
@@ -210,13 +210,12 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	}
 
 	private void fillDefaultTaxInfo(Invoice invoice) throws ManagerBeanVetoListenerException {
-		InvoiceType type = invoice.getType();
 		try {
 			Company company = getCompany();
 			IManagerBean bean;
-			if (type == InvoiceType.SALES) {
+			if (invoice.isSales()) {
 				bean = BeanManager.getManagerBean(Customer.class);
-			} else if (type == InvoiceType.PURCHASE) {
+			} else if (invoice.isPurchase()) {
 				bean = BeanManager.getManagerBean(Supplier.class);
 			} else {
 				bean = BeanManager.getManagerBean(Creditor.class);
@@ -224,9 +223,10 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			ITaxInfo taxInfo = (ITaxInfo)bean.get(invoice.getRegistry().getId());
 
 			invoice.setTransaction(taxInfo.getTransaction());
-			invoice.setSurcharge((type == InvoiceType.SALES) ? taxInfo.isSurcharge() : (type == InvoiceType.PURCHASE) ? company.isSurcharge() : false);
-			invoice.setWithholding((type == InvoiceType.SALES) ? company.isWithholding() && taxInfo.isWithholding() : taxInfo.isWithholding());
-			invoice.setWithholdingFarmer((type == InvoiceType.SALES) ? company.isWithholdingFarmer() && taxInfo.isWithholding() : taxInfo.isWithholdingFarmer());
+			invoice.setSurcharge((invoice.isSales()) ? taxInfo.isSurcharge() : (invoice.isPurchase()) ? company.isSurcharge() : false);
+			invoice.setWithholding((invoice.isSales()) ? company.isWithholding() && taxInfo.isWithholding() : taxInfo.isWithholding());
+			invoice.setWithholdingFarmer((invoice.isSales()) ? company.isWithholdingFarmer() && taxInfo.isWithholding() : taxInfo.isWithholdingFarmer());
+			invoice.setVatAccrualPayment((invoice.isUndeductible() && invoice.isNational()) ? company.isVatAccrualPayment() || taxInfo.isVatAccrualPayment() : false);
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}

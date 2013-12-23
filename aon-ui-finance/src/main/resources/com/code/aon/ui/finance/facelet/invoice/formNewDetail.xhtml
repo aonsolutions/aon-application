@@ -12,7 +12,7 @@
 	<c:if test="#{invoiceController.to.sales or invoiceController.to.purchase}">
 		<aon:outputLabel for="Item_id" value="#{bundle.aon_product}" />
 	</c:if>
-	<c:if test="#{invoiceController.to.expense or invoiceController.to.undeductibleExpense}">
+	<c:if test="#{invoiceController.to.expense or invoiceController.to.undeductible}">
 		<aon:outputLabel for="Item_id" value="#{bundle.aon_concept}" />
 	</c:if>
 	<aon:div>
@@ -28,7 +28,7 @@
 					value="#{detailController.onItemChanged}" type="lookupChangeListener" />
 			</ui:include>
 		</c:if>
-		<c:if test="#{invoiceController.to.expense or invoiceController.to.undeductibleExpense}">
+		<c:if test="#{invoiceController.to.expense or invoiceController.to.undeductible}">
 			<ui:include src="/com/code/aon/ui/product/facelet/expenseItem/lookup.xhtml">
 				<ui:param name="lookupTo" value="#{detailController.to.item}" />
 				<ui:param name="idRequired" value="#{true}" />

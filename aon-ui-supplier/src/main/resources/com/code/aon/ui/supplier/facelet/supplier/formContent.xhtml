@@ -21,18 +21,26 @@
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
 		</aon:selectOneMenu>
 
-		<aon:outputLabel for="Supplier_withholding" value="#{bundle.aon_retention}" />
+		<aon:outputText value="#{bundle.customer_taxes}" />
 		<aon:div>
-			<aon:selectBooleanCheckbox id="Supplier_withholding" styleClass="aon-margin-right" 
-				value="#{controller.to.withholding}"
-				valueChangeListener="#{controller.onWithholdingChanged}"
-				reRender="Supplier_withholdingFarmer" />
-			<aon:outputLabel for="Supplier_withholdingFarmer" styleClass="aon-italic aon-margin-left"
-				value="#{bundle.registry_agrarian_special_regime}" />
-			<aon:selectBooleanCheckbox id="Supplier_withholdingFarmer" styleClass="aon-padding-left"
+			<aon:selectBooleanCheckbox id="Supplier_vatAccrualPayment"
+				value="#{controller.to.vatAccrualPayment}" />
+			<aon:outputLabel for="Supplier_vatAccrualPayment" styleClass="aon-italic"
+				value="#{bundle.aon_vat_accrual_payment}" />
+
+			<aon:selectBooleanCheckbox id="Supplier_withholdingFarmer" styleClass="aon-margin-left"
 				value="#{controller.to.withholdingFarmer}"
 				valueChangeListener="#{controller.onWithholdingFarmerChanged}"
 				reRender="Supplier_withholding" />
+			<aon:outputLabel for="Supplier_withholdingFarmer" styleClass="aon-italic"
+				value="#{bundle.registry_agrarian_special_regime_abbrv}" />
+
+			<aon:selectBooleanCheckbox id="Supplier_withholding" styleClass="aon-margin-left" 
+				value="#{controller.to.withholding}"
+				valueChangeListener="#{controller.onWithholdingChanged}"
+				reRender="Supplier_withholdingFarmer" />
+			<aon:outputLabel for="Supplier_withholding" styleClass="aon-italic"
+				value="#{bundle.aon_retention}" />
 		</aon:div>
 	</c:if>
 

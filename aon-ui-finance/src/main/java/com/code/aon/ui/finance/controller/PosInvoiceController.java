@@ -652,6 +652,7 @@ public class PosInvoiceController extends SaleInvoiceController {
 			returnInvoice.setType(InvoiceType.SALES);
 			returnInvoice.setSurcharge(invoice.isSurcharge());
 			returnInvoice.setWithholding(invoice.isWithholding());
+			returnInvoice.setVatAccrualPayment(invoice.isVatAccrualPayment());
 			returnInvoice.setTransaction(invoice.getTransaction());
 			returnInvoice.setPosShift(invoice.getPosShift());
 			returnInvoice.setSeller(getSeller());

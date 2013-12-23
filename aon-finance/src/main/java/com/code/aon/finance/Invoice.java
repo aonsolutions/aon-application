@@ -266,7 +266,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		return getType() == InvoiceType.EXPENSES;
 	}
 	@Transient
-	public boolean isUndeductibleExpense() {
+	public boolean isUndeductible() {
 		return getType() == InvoiceType.UNDEDUCTIBLE;
 	}
 	@Transient

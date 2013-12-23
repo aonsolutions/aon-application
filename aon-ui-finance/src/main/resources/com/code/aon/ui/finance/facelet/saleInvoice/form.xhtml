@@ -445,7 +445,7 @@
 					columnClasses="aon-panelGrid-odd aon-width-140,
 						aon-panelGrid-even aon-width-auto">
 
-					<aon:div rendered="#{!empty saleInvoice.to.comments or saleInvoice.rectifier or saleInvoice.rectified}">
+					<aon:div rendered="#{!empty saleInvoice.to.comments or saleInvoice.to.vatAccrualPayment or saleInvoice.rectifier or saleInvoice.rectified}">
 						<aon:outputLabel for="Invoice_comments"
 							value="#{bundle.aon_comment}" />
 						<aon:div>
@@ -453,11 +453,15 @@
 								value="(#{bundle.aon_comment_description})" />
 						</aon:div>
 					</aon:div>
-					<aon:div rendered="#{!empty saleInvoice.to.comments or saleInvoice.rectifier or saleInvoice.rectified}">
+					<aon:div rendered="#{!empty saleInvoice.to.comments or saleInvoice.to.vatAccrualPayment or saleInvoice.rectifier or saleInvoice.rectified}">
 						<aon:inputTextarea id="Invoice_comments" cols="145" rows="2"
 							value="#{saleInvoice.to.comments}"
 							rendered="#{!empty saleInvoice.to.comments}"
 							disabled="#{saleInvoice.readOnly}" />
+						<aon:div rendered="#{saleInvoice.to.vatAccrualPayment}">
+							<aon:outputText styleClass="aon-bold aon-label-info"
+								 value="#{bundle.finance_invoice_vat_accrual_payment_message}" />
+						</aon:div>
 						<aon:div rendered="#{saleInvoice.rectifier}">
 							<aon:outputFormat styleClass="aon-bold aon-label-error"
 								 value="#{bundle.finance_invoice_rectifier_message2}">

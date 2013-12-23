@@ -142,7 +142,7 @@ public class AccountEntryInvoiceWriter {
 		} else if (invoice.isExpense()) {
 			accountEntryType = AccountEntryType.EXPENSE_INVOICE;
 			account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
-		} else if (invoice.isUndeductibleExpense()) {
+		} else if (invoice.isUndeductible()) {
 			accountEntryType = AccountEntryType.EXPENSES;
 			account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
 		}

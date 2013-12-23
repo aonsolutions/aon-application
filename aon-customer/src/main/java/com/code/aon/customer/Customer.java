@@ -86,6 +86,11 @@ public class Customer extends CustomerDB implements ITaxInfo,IScopable,IRegistry
 	}
 	
 	@Transient
+	public boolean isVatAccrualPayment() {
+		return false;
+	}
+	
+	@Transient
 	public boolean isVatFree() {
 		return (getTransaction() != InvoiceTransactionType.NATIONAL);
 	}

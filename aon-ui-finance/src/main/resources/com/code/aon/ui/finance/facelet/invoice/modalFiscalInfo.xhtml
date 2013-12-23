@@ -75,18 +75,21 @@
 												<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
 											</aon:selectOneMenu>
 											
-											<aon:outputText value="&#160;" />
+											<aon:outputText value="#{bundle.asset_feature_module}" />
 											<aon:div>
 												<aon:selectBooleanCheckbox id="Invoice_service" value="#{invoiceController.to.service}" />
-												<aon:outputLabel for="Invoice_service" value="#{bundle.finance_service_invoice}" />
-											</aon:div>
-											
-											<aon:outputText value="&#160;" />
-											<aon:div>
+												<aon:outputLabel for="Invoice_service" styleClass="aon-italic aon-margin-right"
+													value="#{bundle.finance_service_invoice}" />
+
 												<aon:selectBooleanCheckbox id="Invoice_investment"
 													value="#{invoiceController.to.investment}"/>
 												<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
 													value="#{bundle.invoice_investment}"/>
+
+												<aon:selectBooleanCheckbox id="Invoice_vatAccrualPayment"
+													value="#{invoiceController.to.vatAccrualPayment}"/>
+												<aon:outputLabel for="Invoice_vatAccrualPayment" styleClass="aon-italic aon-margin-right"
+													value="#{bundle.aon_vat_accrual_payment}"/>
 											</aon:div>
 										</aon:panelGrid>
 											

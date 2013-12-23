@@ -6,13 +6,18 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j" >
 
+	<aon:outputLabel for="Company_vat_accrual_payment"
+		value="#{bundle.registry_accrual_payment_special_regime}" />
+	<aon:selectBooleanCheckbox id="Company_vat_accrual_payment"
+		value="#{company.to.vatAccrualPayment}" />
+
 	<aon:outputLabel for="Company_surcharge"
-		value="#{bundle.aon_surcharge}" />
+		value="#{bundle.registry_surcharge_special_regime}" />
 	<aon:selectBooleanCheckbox id="Company_surcharge"
 		value="#{company.to.surcharge}" />
 
 	<aon:outputLabel for="Company_withholding"
-		value="#{bundle.aon_retention}" />
+		value="#{bundle.registry_withholding_regime}" />
 	<aon:selectBooleanCheckbox id="Company_withholding"
 		value="#{company.to.withholding}" />
 
