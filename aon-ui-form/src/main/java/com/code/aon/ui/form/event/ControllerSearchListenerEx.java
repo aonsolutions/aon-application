@@ -8,9 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.IController;
 
 /**
@@ -97,26 +95,11 @@ public class ControllerSearchListenerEx extends ControllerAdapter {
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	/*protected void addEnumToCriteria( Criteria criteria, String alias, Object[] values ) throws ManagerBeanException {
+	protected void addEnumToCriteria( Criteria criteria, String alias, Object[] values ) throws ManagerBeanException {
+		values = ArrayUtils.removeElement(values, null);
 		if (! ArrayUtils.isEmpty(values) ) {
 			criteria.addInExpression(alias, Arrays.asList(values));
 		}
-	}*/	
-
-	protected void addEnumToCriteria( Criteria criteria, String alias, Object[] values ) throws ManagerBeanException {
-		Expression expToAdd = null;
-		for( Object value : values ) {
-			if ( value != null ) {
-				if ( expToAdd == null ) {
-					expToAdd = ExpressionUtilities.getEqualExpression(alias, value);				
-				} else {
-					Expression exp  = ExpressionUtilities.getEqualExpression(alias, value);
-					expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
-				}
-			}
-		}
-		if ( expToAdd != null ) {
-			criteria.addExpression(expToAdd);
-		}
 	}	
+
 }
