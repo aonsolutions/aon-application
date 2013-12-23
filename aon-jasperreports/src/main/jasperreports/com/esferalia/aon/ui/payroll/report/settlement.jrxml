@@ -10,14 +10,14 @@
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
 	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
 	<import value="com.esferalia.aon.salary.enumeration.SalaryType"/>
-	<style name="label" vAlign="Middle" isBlankWhenNull="true" fontSize="8">
+	<style name="label" vAlign="Middle" isBlankWhenNull="true" fontSize="10">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$F{salary}.getIssueYear() == 0]]></conditionExpression>
 			<style forecolor="#808080"/>
 		</conditionalStyle>
 	</style>
 	<style name="text" style="label" vAlign="Top"/>
-	<style name="title" style="label" fontSize="9" isBold="true"/>
+	<style name="title" style="label" fontSize="11" isBold="true"/>
 	<style name="head" style="title" isBold="false"/>
 	<style name="amount" style="label" hAlign="Right"/>
 	<style name="box" style="label">
@@ -154,9 +154,9 @@
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="222">
+		<band height="234">
 			<frame>
-				<reportElement uuid="66e0eeda-58dc-4e4c-b07b-620ce3556dd1" x="0" y="0" width="555" height="222"/>
+				<reportElement uuid="66e0eeda-58dc-4e4c-b07b-620ce3556dd1" x="0" y="0" width="555" height="234"/>
 				<image scaleImage="RetainShape" isUsingCache="true" onErrorType="Blank">
 					<reportElement uuid="f3ccbbff-1a15-46c0-89ff-dbcca485f8f6" x="9" y="15" width="249" height="51">
 						<printWhenExpression><![CDATA[$V{logo} != null]]></printWhenExpression>
@@ -165,67 +165,73 @@
 					<imageExpression><![CDATA[new java.io.ByteArrayInputStream($V{logo}.getData())]]></imageExpression>
 				</image>
 				<staticText>
-					<reportElement uuid="33b28cc7-1ad5-4e88-b887-dd23d018cc0b" style="title" x="9" y="78" width="543" height="12"/>
-					<textElement/>
-					<text><![CDATA[FINIQUITO a favor de trabajador:]]></text>
+					<reportElement uuid="33b28cc7-1ad5-4e88-b887-dd23d018cc0b" style="title" x="9" y="78" width="543" height="13"/>
+					<textElement>
+						<font size="11"/>
+					</textElement>
+					<text><![CDATA[- FINIQUITO a favor del trabajador:]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="4753c01c-eafe-45a9-adbc-d7d992db4da8" style="head" mode="Opaque" x="9" y="102" width="362" height="12"/>
+					<reportElement uuid="4753c01c-eafe-45a9-adbc-d7d992db4da8" style="head" mode="Opaque" x="9" y="104" width="362" height="13"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{salary}.getEmployeeName()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="7c17ec4a-586f-47ca-885a-c318adbcf55d" style="title" x="9" y="126" width="543" height="12"/>
+					<reportElement uuid="7c17ec4a-586f-47ca-885a-c318adbcf55d" style="title" x="9" y="130" width="543" height="13"/>
 					<textElement/>
 					<text><![CDATA[que causa baja en la empresa:]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="c18c5e44-5aed-43cf-8697-9e98a41e8713" style="head" x="9" y="150" width="362" height="12"/>
+					<reportElement uuid="c18c5e44-5aed-43cf-8697-9e98a41e8713" style="head" x="9" y="156" width="362" height="13"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{salary}.getEnterpriseName()]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy">
-					<reportElement uuid="e3afd333-0f15-4e13-8dfd-54c1eb8dac43" style="head" x="63" y="174" width="60" height="12"/>
-					<textElement textAlignment="Center"/>
+					<reportElement uuid="e3afd333-0f15-4e13-8dfd-54c1eb8dac43" style="head" x="68" y="182" width="65" height="13"/>
+					<textElement textAlignment="Left"/>
 					<textFieldExpression><![CDATA[$F{salary}.getChargeDate()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="53d93bed-2051-4e0a-9344-301fae4ca515" style="title" x="9" y="198" width="543" height="12"/>
+					<reportElement uuid="53d93bed-2051-4e0a-9344-301fae4ca515" style="title" x="9" y="208" width="543" height="13"/>
 					<textElement/>
 					<text><![CDATA[según el siguiente desglose:]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="0d59c989-c024-43fb-9a7a-ec250994fcb7" style="title" mode="Opaque" x="371" y="102" width="30" height="12"/>
-					<textElement/>
-					<textFieldExpression><![CDATA["N.I.F:"]]></textFieldExpression>
+					<reportElement uuid="0d59c989-c024-43fb-9a7a-ec250994fcb7" style="title" mode="Opaque" x="371" y="104" width="50" height="13"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA["N.I.F.:"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="1432aaab-6eee-4ca4-a8e1-2153c73785ec" style="title" mode="Opaque" x="371" y="150" width="30" height="12"/>
-					<textElement/>
-					<textFieldExpression><![CDATA["N.I.F:"]]></textFieldExpression>
+					<reportElement uuid="1432aaab-6eee-4ca4-a8e1-2153c73785ec" style="title" mode="Opaque" x="371" y="156" width="50" height="13"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA["N.I.F.:"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="0702fd80-ca7d-498e-acc7-6e1bcf1d4ca7" style="head" mode="Opaque" x="401" y="102" width="151" height="12"/>
+					<reportElement uuid="0702fd80-ca7d-498e-acc7-6e1bcf1d4ca7" style="head" mode="Opaque" x="421" y="104" width="131" height="13"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{salary}.getEmployeeDocument()]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="92cb2f8d-add4-40f7-8aad-2b74ec5d4e13" style="head" mode="Opaque" x="401" y="150" width="151" height="12"/>
+					<reportElement uuid="92cb2f8d-add4-40f7-8aad-2b74ec5d4e13" style="head" mode="Opaque" x="421" y="156" width="131" height="13"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{salary}.getEnterpriseDocument()]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement uuid="3d767d04-3d52-4a2b-a5a9-7ddf60cbbef6" style="title" x="9" y="174" width="54" height="12"/>
+					<reportElement uuid="3d767d04-3d52-4a2b-a5a9-7ddf60cbbef6" style="title" x="9" y="182" width="59" height="13"/>
 					<textElement/>
 					<text><![CDATA[con fecha]]></text>
 				</staticText>
 				<staticText>
-					<reportElement uuid="e8d1d44a-e6f7-4018-b586-efeb0d899bf7" style="title" x="122" y="174" width="25" height="12"/>
+					<reportElement uuid="e8d1d44a-e6f7-4018-b586-efeb0d899bf7" style="title" x="132" y="182" width="25" height="13">
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Center"/>
 					<text><![CDATA[por]]></text>
 				</staticText>
 				<textField>
-					<reportElement uuid="6989cbf6-b734-4fba-89eb-d98346557bcd" style="head" x="147" y="174" width="405" height="12"/>
+					<reportElement uuid="6989cbf6-b734-4fba-89eb-d98346557bcd" style="head" x="157" y="182" width="395" height="13">
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
+					</reportElement>
 					<textElement textAlignment="Left"/>
 					<textFieldExpression><![CDATA["DESPIDO ART. 52. C E. T."]]></textFieldExpression>
 				</textField>
@@ -233,15 +239,15 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="394">
+		<band height="344">
 			<frame>
-				<reportElement uuid="7ab49451-a98b-4037-9141-8b323ad54fca" x="0" y="0" width="555" height="394"/>
+				<reportElement uuid="7ab49451-a98b-4037-9141-8b323ad54fca" x="0" y="0" width="555" height="344"/>
 				<box>
 					<topPen lineWidth="0.0"/>
 					<bottomPen lineWidth="0.0"/>
 				</box>
 				<componentElement>
-					<reportElement uuid="31881d56-5862-436c-bb07-35ad608e6c36" key="payment_table" x="27" y="0" width="525" height="36"/>
+					<reportElement uuid="31881d56-5862-436c-bb07-35ad608e6c36" key="payment_table" x="27" y="0" width="525" height="39"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
 						<datasetRun subDataset="payment" uuid="8852367a-d100-4658-9acb-002a2f494024">
 							<datasetParameter name="total">
@@ -250,46 +256,54 @@
 							<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($V{payments})]]></dataSourceExpression>
 						</datasetRun>
 						<jr:column width="344" uuid="39001d03-2e0c-44b3-98fc-8865a0cad41a">
-							<jr:tableFooter height="24" rowSpan="1">
+							<jr:tableFooter height="26" rowSpan="1">
 								<staticText>
-									<reportElement uuid="1495d82c-2a01-4914-b338-368110ccdcf2" style="text_TF" x="0" y="12" width="344" height="12"/>
-									<textElement/>
+									<reportElement uuid="1495d82c-2a01-4914-b338-368110ccdcf2" style="text_TF" x="0" y="13" width="344" height="13"/>
+									<textElement>
+										<font size="11"/>
+									</textElement>
 									<text><![CDATA[TOTAL]]></text>
 								</staticText>
 							</jr:tableFooter>
-							<jr:columnHeader height="12" rowSpan="1">
+							<jr:columnHeader height="13" rowSpan="1">
 								<staticText>
-									<reportElement uuid="19045fec-122c-4d70-886c-17d2d9956b4e" style="title_CH" x="0" y="0" width="344" height="12"/>
-									<textElement/>
+									<reportElement uuid="19045fec-122c-4d70-886c-17d2d9956b4e" style="title_CH" x="0" y="0" width="344" height="13"/>
+									<textElement>
+										<font size="11"/>
+									</textElement>
 									<text><![CDATA[CONCEPTO]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell height="12" rowSpan="1">
+							<jr:detailCell height="13" rowSpan="1">
 								<textField isBlankWhenNull="true">
-									<reportElement uuid="76664943-7993-4501-97f1-0846f68cae60" style="text_TD" x="0" y="0" width="344" height="12"/>
+									<reportElement uuid="76664943-7993-4501-97f1-0846f68cae60" style="text_TD" x="0" y="0" width="344" height="13"/>
 									<textElement/>
 									<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="181" uuid="ba00bd5a-ba2a-434c-b929-465c1d9daa4c">
-							<jr:tableFooter height="24" rowSpan="1">
+							<jr:tableFooter height="26" rowSpan="1">
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement uuid="db394e7a-d505-41f0-8a83-95496bb6c9fd" style="amount_TF" x="0" y="12" width="181" height="12"/>
-									<textElement/>
+									<reportElement uuid="db394e7a-d505-41f0-8a83-95496bb6c9fd" style="amount_TF" x="0" y="13" width="181" height="13"/>
+									<textElement>
+										<font size="11"/>
+									</textElement>
 									<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
 								</textField>
 							</jr:tableFooter>
-							<jr:columnHeader height="12" rowSpan="1">
+							<jr:columnHeader height="13" rowSpan="1">
 								<staticText>
-									<reportElement uuid="1433aa9e-7877-4ad6-9081-0b1777f6b56d" style="title_CH" x="0" y="0" width="181" height="12"/>
-									<textElement textAlignment="Right"/>
+									<reportElement uuid="1433aa9e-7877-4ad6-9081-0b1777f6b56d" style="title_CH" x="0" y="0" width="181" height="13"/>
+									<textElement textAlignment="Right">
+										<font size="11"/>
+									</textElement>
 									<text><![CDATA[IMPORTE]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell height="12" rowSpan="1">
+							<jr:detailCell height="13" rowSpan="1">
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement uuid="bdd6ab58-5e69-4b19-98a0-aa2e88f4b702" style="amount_TD" x="0" y="0" width="181" height="12"/>
+									<reportElement uuid="bdd6ab58-5e69-4b19-98a0-aa2e88f4b702" style="amount_TD" x="0" y="0" width="181" height="13"/>
 									<textElement/>
 									<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 								</textField>
@@ -298,7 +312,7 @@
 					</jr:table>
 				</componentElement>
 				<componentElement>
-					<reportElement uuid="a18d5b57-432c-468e-b946-8e91bb4bfecc" key="payment_table" positionType="Float" x="27" y="60" width="525" height="36"/>
+					<reportElement uuid="a18d5b57-432c-468e-b946-8e91bb4bfecc" key="payment_table" positionType="Float" x="27" y="65" width="525" height="39"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
 						<datasetRun subDataset="deduction" uuid="e9cb0f9a-d144-4f75-b11f-b77c67152def">
 							<datasetParameter name="total">
@@ -313,73 +327,81 @@
 							<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($V{deductions})]]></dataSourceExpression>
 						</datasetRun>
 						<jr:column width="284" uuid="ac8b8fb5-0326-422b-95e2-a14a87164d58">
-							<jr:tableFooter height="24" rowSpan="1">
+							<jr:tableFooter height="26" rowSpan="1">
 								<staticText>
-									<reportElement uuid="0aa301f9-3682-41ed-a767-989231c6377f" style="text_TF" x="0" y="12" width="284" height="12"/>
-									<textElement/>
+									<reportElement uuid="0aa301f9-3682-41ed-a767-989231c6377f" style="text_TF" x="0" y="13" width="284" height="13"/>
+									<textElement>
+										<font size="11"/>
+									</textElement>
 									<text><![CDATA[TOTAL]]></text>
 								</staticText>
 							</jr:tableFooter>
-							<jr:columnHeader height="12" rowSpan="1">
+							<jr:columnHeader height="13" rowSpan="1">
 								<staticText>
-									<reportElement uuid="31781492-d2c8-4714-bf82-0ef830a880d5" style="title_CH" x="0" y="0" width="284" height="12"/>
+									<reportElement uuid="31781492-d2c8-4714-bf82-0ef830a880d5" style="title_CH" x="0" y="0" width="284" height="13"/>
 									<textElement/>
 									<text><![CDATA[DEDUCCIONES :]]></text>
 								</staticText>
 							</jr:columnHeader>
-							<jr:detailCell height="12" rowSpan="1">
+							<jr:detailCell height="13" rowSpan="1">
 								<textField isBlankWhenNull="true">
-									<reportElement uuid="88899c7c-825b-47c0-be1d-b587ab9cfccc" style="text_TD" x="0" y="0" width="284" height="12"/>
+									<reportElement uuid="88899c7c-825b-47c0-be1d-b587ab9cfccc" style="text_TD" x="0" y="0" width="284" height="13"/>
 									<textElement/>
 									<textFieldExpression><![CDATA[( ($F{type}.isSsDeduction() || ($F{type}.isTaxDeduction() ) ? $F{type}.getName( $P{REPORT_LOCALE} ) : $F{description} ) )]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="60" uuid="90ac625c-be8c-4b81-ba40-1175c1721bf3">
-							<jr:tableFooter height="24" rowSpan="1">
+							<jr:tableFooter height="26" rowSpan="1">
 								<staticText>
-									<reportElement uuid="fa49b28b-fe22-4cd1-bd94-053b58aec9a0" style="text_TF" x="0" y="12" width="60" height="12"/>
-									<textElement/>
+									<reportElement uuid="fa49b28b-fe22-4cd1-bd94-053b58aec9a0" style="text_TF" x="0" y="13" width="60" height="13"/>
+									<textElement>
+										<font size="11"/>
+									</textElement>
 									<text><![CDATA[]]></text>
 								</staticText>
 							</jr:tableFooter>
-							<jr:columnHeader height="12" rowSpan="1"/>
-							<jr:detailCell height="12" rowSpan="1">
+							<jr:columnHeader height="13" rowSpan="1"/>
+							<jr:detailCell height="13" rowSpan="1">
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement uuid="cd4a3c69-29fc-4415-b01c-0b6a46c81289" style="amount_TD" x="0" y="0" width="60" height="12"/>
+									<reportElement uuid="cd4a3c69-29fc-4415-b01c-0b6a46c81289" style="amount_TD" x="0" y="0" width="60" height="13"/>
 									<textElement/>
 									<textFieldExpression><![CDATA[($F{type}.isSsDeduction() ? ($P{cgcBase}) : ( $F{type}.isTaxDeduction() ?  $P{irpfBase} : "" ) )]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="60" uuid="8ab86812-394d-40ce-8410-5e26e146d977">
-							<jr:tableFooter height="24" rowSpan="1">
+							<jr:tableFooter height="26" rowSpan="1">
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement uuid="77de3973-063b-4c2a-a6c0-bfbd6d2a1684" style="amount_TF" x="0" y="12" width="60" height="12"/>
-									<textElement/>
+									<reportElement uuid="77de3973-063b-4c2a-a6c0-bfbd6d2a1684" style="amount_TF" x="0" y="13" width="60" height="13"/>
+									<textElement>
+										<font size="11"/>
+									</textElement>
 								</textField>
 							</jr:tableFooter>
-							<jr:columnHeader height="12" rowSpan="1"/>
-							<jr:detailCell height="12" rowSpan="1">
+							<jr:columnHeader height="13" rowSpan="1"/>
+							<jr:detailCell height="13" rowSpan="1">
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement uuid="6c1c912e-d033-4a93-8ac3-d62316f9817b" style="amount_TD" x="0" y="0" width="60" height="12"/>
+									<reportElement uuid="6c1c912e-d033-4a93-8ac3-d62316f9817b" style="amount_TD" x="0" y="0" width="60" height="13"/>
 									<textElement/>
 									<textFieldExpression><![CDATA[(($F{type}.isSsDeduction() || $F{type}.isTaxDeduction() ) ?  $F{description} : "" )]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
 						<jr:column width="121" uuid="6addc3af-111e-4200-9144-538c7f6e157e">
-							<jr:tableFooter height="24" rowSpan="1">
+							<jr:tableFooter height="26" rowSpan="1">
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement uuid="5c2e7f7a-b3da-4e92-a485-b25070b161b4" style="amount_TF" x="0" y="12" width="121" height="12"/>
-									<textElement/>
+									<reportElement uuid="5c2e7f7a-b3da-4e92-a485-b25070b161b4" style="amount_TF" x="0" y="13" width="121" height="13"/>
+									<textElement>
+										<font size="11"/>
+									</textElement>
 									<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
 								</textField>
 							</jr:tableFooter>
-							<jr:columnHeader height="12" rowSpan="1"/>
-							<jr:detailCell height="12" rowSpan="1">
+							<jr:columnHeader height="13" rowSpan="1"/>
+							<jr:detailCell height="13" rowSpan="1">
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement uuid="4aea9ff0-1c7d-47d2-8b49-3ff0be0a5443" style="amount_TD" x="0" y="0" width="121" height="12"/>
+									<reportElement uuid="4aea9ff0-1c7d-47d2-8b49-3ff0be0a5443" style="amount_TD" x="0" y="0" width="121" height="13"/>
 									<textElement/>
 									<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 								</textField>
@@ -388,7 +410,7 @@
 					</jr:table>
 				</componentElement>
 				<componentElement>
-					<reportElement uuid="2b590d28-3cf0-423e-b639-bbe517908462" key="payment_table" positionType="Float" x="27" y="120" width="525" height="12"/>
+					<reportElement uuid="2b590d28-3cf0-423e-b639-bbe517908462" key="payment_table" positionType="Float" x="27" y="130" width="525" height="15"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
 						<datasetRun subDataset="payment" uuid="c5ee0725-6d10-4c2d-bc8e-a1761343ebe7">
 							<datasetParameter name="total">
@@ -397,20 +419,24 @@
 							<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($V{payments})]]></dataSourceExpression>
 						</datasetRun>
 						<jr:column width="344" uuid="7dee8f8e-264d-4af3-9239-e7a4a5f3b1c4">
-							<jr:tableFooter height="13" rowSpan="1">
+							<jr:tableFooter height="15" rowSpan="1">
 								<staticText>
-									<reportElement uuid="29cf8583-d5d7-44a8-852d-ea296e3a1705" style="text_TF" x="0" y="0" width="344" height="12"/>
-									<textElement/>
+									<reportElement uuid="29cf8583-d5d7-44a8-852d-ea296e3a1705" style="text_TF" x="0" y="0" width="344" height="15"/>
+									<textElement>
+										<font size="11"/>
+									</textElement>
 									<text><![CDATA[LÍQUIDO]]></text>
 								</staticText>
 							</jr:tableFooter>
 							<jr:detailCell height="0" rowSpan="1"/>
 						</jr:column>
 						<jr:column width="181" uuid="a3e69f93-9c89-4659-a8eb-14105db25b94">
-							<jr:tableFooter height="13" rowSpan="1">
+							<jr:tableFooter height="15" rowSpan="1">
 								<textField pattern="#,##0.00" isBlankWhenNull="true">
-									<reportElement uuid="40d23022-61cf-4e42-84a4-29c869b5f6e1" style="amount_TF" x="0" y="0" width="181" height="12"/>
-									<textElement/>
+									<reportElement uuid="40d23022-61cf-4e42-84a4-29c869b5f6e1" style="amount_TF" x="0" y="0" width="181" height="15"/>
+									<textElement>
+										<font size="11"/>
+									</textElement>
 									<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
 								</textField>
 							</jr:tableFooter>
@@ -420,8 +446,10 @@
 				</componentElement>
 				<elementGroup>
 					<textField>
-						<reportElement uuid="f8ac9f23-2609-4793-891b-4a04eb3afa14" style="label" positionType="Float" x="9" y="243" width="543" height="12"/>
-						<textElement textAlignment="Right"/>
+						<reportElement uuid="f8ac9f23-2609-4793-891b-4a04eb3afa14" style="label" positionType="Float" x="9" y="279" width="543" height="13"/>
+						<textElement textAlignment="Right">
+							<font size="11"/>
+						</textElement>
 						<textFieldExpression><![CDATA["En " + ReportUtils.toUpperCase($F{salary}.getContract().getWorkPlace().getAddress().getProvince()) + ",a "
 + ( new java.text.MessageFormat("{0,date,d}",$P{REPORT_LOCALE})).format( new Object [] {$F{salary}.getChargeDate()}, new StringBuffer(), null).toString()
 + " de "
@@ -430,37 +458,41 @@
 + ( new java.text.MessageFormat("{0,date,yyyy}",$P{REPORT_LOCALE})).format( new Object [] {$F{salary}.getChargeDate()}, new StringBuffer(), null).toString()]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement uuid="d2d14e4f-06f6-4b8e-9862-214e0e466249" style="text" positionType="Float" x="9" y="195" width="543" height="48"/>
+						<reportElement uuid="d2d14e4f-06f6-4b8e-9862-214e0e466249" style="text" positionType="Float" x="9" y="214" width="543" height="52"/>
 						<textElement>
 							<paragraph lineSpacing="1_1_2"/>
 						</textElement>
-						<text><![CDATA[como saldo a mi favor, segun liquidacion precedente, considerandome totalmenete remunerado hasta el dia de fecha que causo baja sin tener derecho a ninguna reclamacion posterior, y dando por finiquitado mi contrato con la citada Empresa.]]></text>
+						<text><![CDATA[como saldo a mi favor, segun liquidación precedente, considerandome totalmente remunerado hasta el día de fecha que causo baja sin tener derecho a ninguna reclamación posterior, y dando por finiquitado mi contrato con la citada Empresa.]]></text>
 					</staticText>
 					<staticText>
-						<reportElement uuid="cd99edba-6cad-410b-ba62-9343c45d7fec" style="label" positionType="Float" x="9" y="267" width="543" height="12">
+						<reportElement uuid="cd99edba-6cad-410b-ba62-9343c45d7fec" style="label" positionType="Float" x="9" y="305" width="543" height="13">
 							<printWhenExpression><![CDATA[$V{representativesLabor} == null || $V{representativesLabor}.isEmpty()]]></printWhenExpression>
 						</reportElement>
-						<textElement/>
+						<textElement>
+							<font size="11"/>
+						</textElement>
 						<text><![CDATA[NO EXISTE REPRESENTACIÓN LEGAL DE LOS TRABAJADORES]]></text>
 					</staticText>
 					<staticText>
-						<reportElement uuid="314bc5c6-11f8-40cc-81dc-119ed254667d" style="label" positionType="Float" x="9" y="165" width="543" height="12"/>
+						<reportElement uuid="314bc5c6-11f8-40cc-81dc-119ed254667d" style="label" positionType="Float" x="9" y="182" width="543" height="13"/>
 						<textElement/>
-						<text><![CDATA[He recibido la cantidad de EUROS:]]></text>
+						<text><![CDATA[- He recibido la cantidad de EUROS:]]></text>
 					</staticText>
 					<textField>
-						<reportElement uuid="c939a7ab-cb18-43ba-8845-f3590cc4df25" style="label" positionType="Float" x="9" y="180" width="543" height="12"/>
+						<reportElement uuid="c939a7ab-cb18-43ba-8845-f3590cc4df25" style="label" positionType="Float" x="9" y="198" width="543" height="13"/>
 						<textElement/>
-						<textFieldExpression><![CDATA[ReportUtils.toUpperCase(ReportUtils.spellout($P{REPORT_LOCALE}, $F{salary}.getTotalLiquid(),2)) + " CENTIMOS"]]></textFieldExpression>
+						<textFieldExpression><![CDATA[ReportUtils.toUpperCase(ReportUtils.spellout($P{REPORT_LOCALE}, $F{salary}.getTotalLiquid(),2)) + " CENTIMOS .-"]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement uuid="51534b00-8081-4abe-b95d-92fc7aa98b74" style="label" positionType="Float" x="9" y="289" width="268" height="12"/>
-						<textElement textAlignment="Right"/>
+						<reportElement uuid="51534b00-8081-4abe-b95d-92fc7aa98b74" style="label" positionType="Float" x="9" y="331" width="268" height="13"/>
+						<textElement textAlignment="Right">
+							<font size="11"/>
+						</textElement>
 						<text><![CDATA[RECIBÍ:]]></text>
 					</staticText>
 				</elementGroup>
 				<staticText>
-					<reportElement uuid="f27f8c59-9345-4673-8104-b1315d724ea9" style="title" positionType="Float" x="9" y="153" width="543" height="12"/>
+					<reportElement uuid="f27f8c59-9345-4673-8104-b1315d724ea9" style="title" positionType="Float" x="9" y="169" width="543" height="13"/>
 					<textElement textAlignment="Center"/>
 					<text><![CDATA[-- o --]]></text>
 				</staticText>
