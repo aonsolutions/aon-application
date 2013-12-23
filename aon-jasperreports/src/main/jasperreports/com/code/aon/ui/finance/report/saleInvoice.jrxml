@@ -584,7 +584,7 @@
 				<textFieldExpression><![CDATA[$R{aon_total_to_pay}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="0" y="131" width="535" height="14" forecolor="#FFFFFF" backcolor="#FF9966">
+				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="0" y="131" width="535" height="14" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#FF9966">
 					<printWhenExpression><![CDATA[$F{vatAccrualPayment}]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
