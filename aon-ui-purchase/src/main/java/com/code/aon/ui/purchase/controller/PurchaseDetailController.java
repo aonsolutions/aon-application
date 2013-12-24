@@ -20,6 +20,7 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
@@ -109,6 +110,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
+		Purchase purchase = (Purchase)this.getMasterController().getTo();
 		PurchaseDetail purchaseDetail = (PurchaseDetail)getTo();
 		double price = 0;
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
@@ -116,7 +118,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 			purchaseDetail.setItem(item);
 			purchaseDetail.setDescription(item.getFullName());
 			if (purchaseDetail.getQuantity() == 0) {
-				purchaseDetail.setQuantity(1);
+				purchaseDetail.setQuantity(purchase.isItemReturn()?-1:1);
 			}
 
 			price = item.getPurchasePrice();

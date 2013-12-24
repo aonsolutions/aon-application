@@ -85,10 +85,10 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 		Purchase purchase = (Purchase) ((LinesController)this.getController()).getMasterController().getTo();
 		PurchaseDetail purchaseDetail = (PurchaseDetail) this.getController().getTo();
 		if (purchaseDetail.getQuantity() < 0 && purchase.getDocumentType()!=PurchaseDocumentType.ITEM_RETURN) {
-			throw new ControllerListenerException("La Cantidad del Pedido no puede ser negativa.");
+			throw new ControllerListenerException("La cantidad no puede ser negativa.");
 		}
 		if (purchaseDetail.getQuantity() > 0 && purchase.getDocumentType()==PurchaseDocumentType.ITEM_RETURN) {
-			throw new ControllerListenerException("La Cantidad a devolver del Pedido no puede ser positiva.");
+			throw new ControllerListenerException("La cantidad a devolver no puede ser positiva.");
 		}
 	}
 
