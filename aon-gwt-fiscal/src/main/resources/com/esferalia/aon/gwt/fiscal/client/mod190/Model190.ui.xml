@@ -342,7 +342,7 @@
 													<g:Label text="{msg.familySituation}" />
 												</td>
 												<td>
-													<g:ListBox width="30px" ui:field="familySituation" />
+													<g:ListBox width="40px" ui:field="familySituation" />
 												</td>
 												<td class="{style.perceptor-label}">
 													<g:Label text="{msg.spouseDocument}" />
@@ -354,13 +354,13 @@
 													<g:Label text="{msg.disability}" />
 												</td>
 												<td>
-													<g:ListBox width="30px" ui:field="disability" />
+													<g:ListBox width="40px" ui:field="disability" />
 												</td>
 												<td class="{style.perceptor-label}">
 													<g:Label text="{msg.contract}" />
 												</td>
 												<td>
-													<g:ListBox width="30px" ui:field="contract" />
+													<g:ListBox width="40px" ui:field="contract" />
 												</td>
 											</tr>
 										</table>
@@ -482,13 +482,13 @@
 													<g:Label text="{msg.first3Calculation}" />
 												</td>
 												<td>
-													<g:ListBox width="30px" ui:field="firstChildCalculation" />
+													<g:ListBox width="40px" ui:field="firstChildCalculation" />
 												</td>
 												<td>
-													<g:ListBox width="30px" ui:field="secondChildCalculation" />
+													<g:ListBox width="40px" ui:field="secondChildCalculation" />
 												</td>
 												<td>
-													<g:ListBox width="30px" ui:field="thirdChildCalculation" />
+													<g:ListBox width="40px" ui:field="thirdChildCalculation" />
 												</td>
 											</tr>
 										</table>

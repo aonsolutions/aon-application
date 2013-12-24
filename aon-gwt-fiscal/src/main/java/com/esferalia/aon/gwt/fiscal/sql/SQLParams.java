@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.code.aon.pool.AonConnectionException;
-import com.code.aon.pool.AonDataSource;
 import com.esferalia.aon.gwt.fiscal.shared.AonSQLException;
 import com.esferalia.aon.gwt.fiscal.shared.Company;
 import com.esferalia.aon.gwt.fiscal.shared.Domain;

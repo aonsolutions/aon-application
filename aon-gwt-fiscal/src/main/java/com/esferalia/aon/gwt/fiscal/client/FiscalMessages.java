@@ -28,6 +28,10 @@ public interface FiscalMessages extends Messages {
 	
 	@DefaultMessage("Modelo 180")
 	String mod180();
+
+	@DefaultMessage("Modelo 390")
+	String mod390();
+
 	//  ---------------------------------------------------------------- Errores
 	@DefaultMessage("Valor num\u00E9rico no correcto ({0}) ")
 	String numericValueError(String value);
@@ -113,6 +117,12 @@ public interface FiscalMessages extends Messages {
 	
 	@DefaultMessage("Procesando su orden. Por favor, espere")
 	String processing();
+
+	@DefaultMessage("SI")
+	String yes();
+
+	@DefaultMessage("NO")
+	String no();
 
 	//  ---------------------------------------------------------Common Messages
 	@DefaultMessage("No se han encontrado datos")
@@ -310,7 +320,7 @@ public interface FiscalMessages extends Messages {
 	@DefaultMessage("Resto")
 	String remainder();
 
-	@DefaultMessage("Cómputo de los tres primeros")
+	@DefaultMessage("C\u00F3mputo de los tres primeros")
 	String first3Calculation();
 	
 	@DefaultMessage("Hijos o descendientes con discapacidad")
@@ -345,6 +355,68 @@ public interface FiscalMessages extends Messages {
 	
 	@DefaultMessage("3\u00BA")
 	String third();
+
+	//  -------------------------------------------------------------- Model 190
+
+	@DefaultMessage("Sujeto Pasivo")
+	String pasiveSubject();
+
+	@DefaultMessage("Devengo")
+	String accrual();
+
+	@DefaultMessage("Datos estad\u00EDsticos")
+	String stadisticalData();
+	
+	@DefaultMessage("Datos del representante")
+	String representativeData();
+	
+	@DefaultMessage("Operaciones realizadas en R\u00E9gimen general")
+	String generalRegimeOperations();
+	
+	@DefaultMessage("Operaciones realizadas en R\u00E9gimen simplificado")
+	String simplifiedRegimeOperations();
+	
+	@DefaultMessage("Resultado liquidaci\u00F3n anual")
+	String annualLiquidationResult();
+	
+	@DefaultMessage("Tributaci\u00F3n por raz\u00F3n de Territorio")
+	String taxByTerritory();
+	
+	@DefaultMessage("Resultado de  las liquidaciones")
+	String liquidationsResult();
+
+	@DefaultMessage("Vol\u00FAmen de operaciones")
+	String operationsVolume();
+
+	@DefaultMessage("Operaciones espec\u00EDficas")
+	String specificOperations();
+
+	@DefaultMessage("Prorratas")
+	String prorrata();
+	
+	@DefaultMessage("Actividades con reg\u00EDmenes de deducci\u00F3n diferenciados")
+	String difActivitiesRegime();
+
+	@DefaultMessage("Registro de devoluci\u00F3n mensual en alg\u00FAn per\u00EDodo del ejercicio")
+	String taxRefund();
+	
+	@DefaultMessage("R\u00E9gimen especial del grupo de entidades en alg\u00FAn per\u00EDodo del ejercicio")
+	String specialGroupRegime();
+	
+	@DefaultMessage("N\u00BA Grupo")
+	String groupNumber();
+	
+	@DefaultMessage("Dependiente")
+	String groupDependent();
+	
+	@DefaultMessage("Tipo r\u00E9gimen especial aplicable: Art. 163 sexies.cinco")
+	String groupRegimeType();
+	
+	@DefaultMessage("NIF entidad dominante")
+	String groupDocument();
+	
+	@DefaultMessage("\u00BFLa autoliquidaci\u00F3n del \u00FAltimo per\u00EDodo corresponde al r\u00E9gimen especial del grupo de entidades?")
+	String groupDeclarations();
 	
 	//  -----------------------------------------------------------Enum Messages	
 	@DefaultMessage("----------")

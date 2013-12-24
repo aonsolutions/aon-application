@@ -36,7 +36,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -82,10 +81,6 @@ public class Model180 extends MainEntryPoint {
 	private static final Model180Binder MODEL_180_BINDER = GWT
 			.create(Model180Binder.class);
 
-	public static final NumberFormat INTEGER_FORMAT = NumberFormat
-			.getFormat("#,##0.00");
-	public static final FiscalMessages FISCAL_MESSAGES = (FiscalMessages) GWT
-			.create(FiscalMessages.class);
 
 	private Mod180 mod180;
 	private FiscalServiceAsync mod180Service;
@@ -273,7 +268,7 @@ public class Model180 extends MainEntryPoint {
 				return mod180.getName();
 			}
 		};
-		table.addColumn(nameColumn, FISCAL_MESSAGES.name());
+		table.addColumn(nameColumn, MSG.name());
 		table.setColumnWidth(nameColumn, 100, Unit.PCT);
 	}
 
@@ -284,7 +279,7 @@ public class Model180 extends MainEntryPoint {
 				return mod180.getDocument();
 			}
 		};
-		table.addColumn(documentColumn, FISCAL_MESSAGES.document());
+		table.addColumn(documentColumn, MSG.document());
 		table.setColumnWidth(documentColumn, 150, Unit.PX);
 	}
 
@@ -297,7 +292,7 @@ public class Model180 extends MainEntryPoint {
 						: AON_RESOURCES.aonIconCheck();
 			}
 		};
-		table.addColumn(replacementColumn, FISCAL_MESSAGES.replacement());
+		table.addColumn(replacementColumn, MSG.replacement());
 		replacementColumn.setCellStyleNames(AON_RESOURCES.css()
 				.aonDataTableIconColumn());
 		table.setColumnWidth(replacementColumn, 100, Unit.PX);
@@ -310,7 +305,7 @@ public class Model180 extends MainEntryPoint {
 				return Integer.toString(mod180.getYear());
 			}
 		};
-		table.addColumn(yearColumn, FISCAL_MESSAGES.fiscalYear());
+		table.addColumn(yearColumn, MSG.fiscalYear());
 		yearColumn.setCellStyleNames(AON_RESOURCES.css().aonTextCenter());
 		table.setColumnWidth(yearColumn, 100, Unit.PX);
 	}
@@ -422,7 +417,7 @@ public class Model180 extends MainEntryPoint {
 			if (value.isDirty() || value.isDeleted()) {
 				sb.appendHtmlConstant("'>");
 			}
-			String newLabel = FISCAL_MESSAGES.newPerceptor() + " ("
+			String newLabel = MSG.newPerceptor() + " ("
 					+ (value.getId() * (-1)) + ")";
 			sb.appendEscaped(AonUtil.isEmpty(value.getName()) ? newLabel
 					: value.getName());
@@ -519,7 +514,7 @@ public class Model180 extends MainEntryPoint {
 		}
 
 		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(FISCAL_MESSAGES.processing());
+		Label label = new Label(MSG.processing());
 		label.addStyleName(AON_RESOURCES.css().aonTimer());
 		popup.add(label);
 		popup.setGlassEnabled(true);

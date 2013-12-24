@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.fiscal.shared.Mod180Receiver;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Detail;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver;
+import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -41,10 +42,7 @@ public interface FiscalServiceAsync {
 			AsyncCallback<ArrayList<Mod190Detail>> callback);
 
 	void getMod190Detail(Integer id, AsyncCallback<Mod190Receiver> callback);
-
-	void generateMod190File(Integer id, int year, int administration,
-			AsyncCallback<String> asyncCallback);
-
+	
 	// ---------------------------------------------------------------MODELO 180
 	void deleteMod180(Mod180 mod180, AsyncCallback<Void> callback);
 
@@ -62,7 +60,13 @@ public interface FiscalServiceAsync {
 
 	void getMod180Detail(Integer id, AsyncCallback<Mod180Receiver> callback);
 
-	void generateMod180File(Integer id, int year, int administration,
-			AsyncCallback<String> asyncCallback);
+	// ---------------------------------------------------------------MODELO 390
+	void getMod390(Integer id, AsyncCallback<Mod390> callback);
+	
+	void getMod390s(int domain, AsyncCallback<ArrayList<Mod390>> callback);
+	
+	void saveMod390(Mod390 mod390, AsyncCallback<Mod390> callback);
+
+	void deleteMod390(Mod390 mod390, AsyncCallback<Void> callback);
 }
 

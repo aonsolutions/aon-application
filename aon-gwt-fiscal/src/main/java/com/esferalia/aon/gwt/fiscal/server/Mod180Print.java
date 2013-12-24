@@ -107,7 +107,7 @@ public class Mod180Print extends HttpServlet {
 				"&EJF=2013" + 
 				"&MOD=180";
 		
-		String request = "https://www6.aeat.es/l/zi22zilk0022";
+		String request = "https://www2.agenciatributaria.gob.es/l/zi22zilk0022";
 
 		URL url = new URL(request);
 

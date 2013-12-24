@@ -6,21 +6,12 @@ import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.enableAutoComm
 import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.rollback;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.code.aon.file.format.output.FileOutput;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.server.file.MOD180Writer;
-import com.esferalia.aon.gwt.fiscal.server.file.MOD190Writer;
 import com.esferalia.aon.gwt.fiscal.shared.AonSQLException;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalParameters;
@@ -30,12 +21,13 @@ import com.esferalia.aon.gwt.fiscal.shared.Mod180Receiver;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Detail;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver;
+import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.sql.SQLEnterprise;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod180;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod190;
+import com.esferalia.aon.gwt.fiscal.sql.SQLMod390;
 import com.esferalia.aon.gwt.fiscal.sql.SQLParams;
 import com.esferalia.aon.gwt.fiscal.sql.SQLUtils;
-import com.google.gwt.user.server.Base64Utils;
 
 /**
  * The server side implementation of the RPC service.
@@ -247,32 +239,6 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	@Override
-	public String generateMod190File(Integer id, int year, int administration)
-			throws AonSQLException {
-		Connection conn = null;
-		try {
-			conn = getConnection();
-			disableAutoCommit(conn);
-			MOD190Writer writer = new MOD190Writer();
-			FileOutput fileoutput = writer.createMOD190(conn, id, year, administration);
-			commit(conn);
-			
-			FileInputStream in = new FileInputStream(fileoutput.getFile());
-			StringWriter out = new StringWriter();
-			encodeURIComponent("application/octet-stream", in, out);
-			return out.toString();
-		} catch (AonSQLException e) {
-			rollback(conn);
-			throw e;
-		} catch (Throwable e) {
-			rollback(conn);
-			throw new AonSQLException(e);
-		} finally {
-			enableAutoCommit(conn);
-			SQLUtils.closeQuietly(conn);
-		}
-	}
 
 	// ---------------------------------------------------------------MODELO 180
 	@Override
@@ -429,21 +395,18 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	// ---------------------------------------------------------------MODELO 390
+	
 	@Override
-	public String generateMod180File(Integer id, int year, int administration)
-			throws AonSQLException {
+	public Mod390 getMod390(Integer id) throws AonSQLException {
 		Connection conn = null;
+		Mod390 mod390 = null;
 		try {
 			conn = getConnection();
 			disableAutoCommit(conn);
-			MOD180Writer writer = new MOD180Writer();
-			FileOutput fileoutput = writer.createMOD180(conn, id, year, administration);
+			mod390 = SQLMod390.getById(id, conn);
 			commit(conn);
-			
-			FileInputStream in = new FileInputStream(fileoutput.getFile());
-			StringWriter out = new StringWriter();
-			encodeURIComponent("application/octet-stream", in, out);
-			return out.toString();
+			return mod390;
 		} catch (AonSQLException e) {
 			rollback(conn);
 			throw e;
@@ -455,24 +418,68 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements
 			SQLUtils.closeQuietly(conn);
 		}
 	}
-	static void encodeURIComponent(String mime, InputStream is, Writer writer ) 
-	throws IOException {
-		// data:[<MIME-type>][;charset=<encoding>][;base64],<data>
-		writer.write("data:");
-		writer.write(mime);
-		writer.write(";base64,");
-		int read = 0; 
-		byte buffer [] = new byte [3 * 50];
-		while ( ( read = is.read(buffer) ) > 0 ) {
-			byte data [] = Arrays.copyOfRange(buffer, 0, read);
-			
-			String safe = Base64Utils.toBase64(data);
-			String base64 = safe.replace('$', '+');
-			base64 = base64.replace('_', '/');
-			
-			writer.write(base64);
+
+	@Override
+	public ArrayList<Mod390> getMod390s(int domain)
+			throws AonSQLException {
+		Connection conn = null;
+		ArrayList<Mod390> list = null;
+		try {
+			conn = getConnection();
+			disableAutoCommit(conn);
+			list = SQLMod390.getByDomain(domain, conn);
+			commit(conn);
+			return list;
+		} catch (AonSQLException e) {
+			rollback(conn);
+			throw e;
+		} catch (Throwable e) {
+			rollback(conn);
+			throw new AonSQLException(e);
+		} finally {
+			enableAutoCommit(conn);
+			SQLUtils.closeQuietly(conn);
 		}
-		
-		
+	}
+	
+	@Override
+	public Mod390 saveMod390(Mod390 mod390) throws AonSQLException {
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			disableAutoCommit(conn);
+			Mod390 ret = SQLMod390.save(conn, mod390);
+			commit(conn);
+			return ret;
+		} catch (AonSQLException e) {
+			rollback(conn);
+			throw e;
+		} catch (Throwable e) {
+			rollback(conn);
+			throw new AonSQLException(e);
+		} finally {
+			enableAutoCommit(conn);
+			SQLUtils.closeQuietly(conn);
+		}
+	}
+	
+	@Override
+	public void deleteMod390(Mod390 mod390) throws AonSQLException {
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			disableAutoCommit(conn);
+			SQLMod390.delete(conn, mod390);
+			commit(conn);
+		} catch (AonSQLException e) {
+			rollback(conn);
+			throw e;
+		} catch (Throwable e) {
+			rollback(conn);
+			throw new AonSQLException(e);
+		} finally {
+			enableAutoCommit(conn);
+			SQLUtils.closeQuietly(conn);
+		}
 	}
 }
