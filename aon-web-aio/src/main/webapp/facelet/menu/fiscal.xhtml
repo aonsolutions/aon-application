@@ -19,44 +19,75 @@
 
 					<aon:panelGroup>
 
-						<aon:panelGrid id="group_fiscal_fiscal_batch"
+						<c:if test="#{domainSwitcher.domainManagementAvailable}">
+							<aon:panelGrid id="group_fiscal_fiscal_batch"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-renameFolder aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.registry_batch_document}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="fiscalBatch"
+											action="fiscalBatch_search"
+											actionListener="#{fiscalBatch.onEditSearch}"
+											value="#{bundle.registry_batch_document}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+
+						<aon:panelGrid id="group_fiscal_vat_tax_statement"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-renameFolder aon-direct-access-panel">
+							headerClass="aon-icon-invoice aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.registry_batch_document}"/>
+								<aon:outputText value="#{bundle.fiscal_vat_tax_module2}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
+								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="vatTax" 
+											action="vatTax_search"
+											actionListener="#{vatTax.onEditSearch}"
+											value="#{bundle.fiscal_model_303_module}">
+											<aon:outputText value=" / Mod. 390 - Haciendas forales." />
+										</aon:commandLink>
+									</aon:div>
+								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="fiscalBatch"
-										action="fiscalBatch_search"
-										actionListener="#{fiscalBatch.onEditSearch}"
-										value="#{bundle.registry_batch_document}" />
+									<aon:commandLink id="gwt_mod390"
+										disabled="true"
+										action="gwt_mod390"
+										value="Mod. 390 - AEAT Resumen Anual I.V.A.">
+										<!-- 
+										<aon:outputText value="Beta." style="background-color: yellow;"/>
+										 -->
+										<aon:outputText value=" (Enero 2014)"/>
+									</aon:commandLink>
 								</aon:div>
+								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mod_340_report" 
+											action="mod340_search"
+											actionListener="#{mod340.onReset}"
+											value="#{bundle.fiscal_model_340_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mod347_report" 
+											action="mod347_list"
+											actionListener="#{mod347.onEditSearch}"
+											value="#{bundle.fiscal_mod347_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mod349_report" 
+											action="mod349_list"
+											actionListener="#{mod349.onEditSearch}" 
+											value="#{bundle.fiscal_model_349_module}" />
+									</aon:div>
+								</c:if>																
 							</aon:div>
 						</aon:panelGrid>
 						
-						<aon:panelGrid id="group_fiscal_year_irpf"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-renameFolder aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="Declaraciones informativas"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_mod190"
-										action="gwt_mod190" 
-										value="Modelo 190 - BETA">
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_mod180"
-										action="gwt_mod180" 
-										value="Modelo 180  - BETA" >
-									</aon:commandLink>
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-
 						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 							<aon:panelGrid id="group_fiscal_modules_module"
 								styleClass="aon-width-all" columnClasses="aon-padding"
@@ -85,61 +116,46 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
+						</c:if>
 						
-						
-							<aon:panelGrid id="group_fiscal_vat_tax_statement"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-invoice aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.fiscal_vat_tax_module2}"/>
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="vatTax" 
-											action="vatTax_search"
-											actionListener="#{vatTax.onEditSearch}"
-											value="#{bundle.fiscal_model_303_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="mod_340_report" 
-											action="mod340_search"
-											actionListener="#{mod340.onReset}"
-											value="#{bundle.fiscal_model_340_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="mod347_report" 
-											action="mod347_list"
-											actionListener="#{mod347.onEditSearch}"
-											value="#{bundle.fiscal_mod347_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="mod349_report" 
-											action="mod349_list"
-											actionListener="#{mod349.onEditSearch}" 
-											value="#{bundle.fiscal_model_349_module}" />
-									</aon:div>																
-								</aon:div>
-							</aon:panelGrid>
-	
-							<aon:panelGrid id="group_fiscal_retention_tax_statement"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-payroll aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.fiscal_retention_tax_module}"/>
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="mod111-fiscal" 
-											action="mod111_search-fiscal"
-											actionListener="#{mod111.onEditSearch}"
-											value="#{bundle.fiscal_model_111_module}" />
-									</aon:div>
+						<aon:panelGrid id="group_fiscal_retention_tax_statement"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-payroll aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.fiscal_retention_tax_module}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="mod115" 
 											action="mod115_search"
 											actionListener="#{mod115.onEditSearch}"
 											value="#{bundle.fiscal_model_115_module}" />
 									</aon:div>
+								</c:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_mod180"
+										action="gwt_mod180"
+										value=" Mod. 180 - Resumen anual de retenciones por alquileres ">
+										<aon:outputText value="(Beta)" style="background-color: yellow;"/>
+									</aon:commandLink>
+								</aon:div>
+								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mod111-fiscal" 
+											action="mod111_search-fiscal"
+											actionListener="#{mod111.onEditSearch}"
+											value="#{bundle.fiscal_model_111_module}" />
+									</aon:div>
+								</c:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_mod190"
+										action="gwt_mod190"
+										value=" Mod. 190 - Resumen anual de retenciones e ingresos a cuenta ">
+										<aon:outputText value="(Beta)" style="background-color: yellow;"/>
+									</aon:commandLink>
+								</aon:div>
+								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="mod123" 
 											action="mod123_search"
@@ -152,25 +168,9 @@
 											actionListener="#{mod130.onEditSearch}"
 											value="#{bundle.fiscal_model_130_module}" />
 									</aon:div>
-								</aon:div>
-							</aon:panelGrid>	
-
-
-							<aon:panelGrid id="group_fiscal_sociedades"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-balance aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.fiscal_corporation_module}"/>
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<a4j:commandLink ajaxSingle="true" immediate="true"
-											onclick="alert('#{bundle.aio_not_yet}');return false;" 
-											value="#{bundle.fiscal_model_200_module}"/>
-									</aon:div>																
-								</aon:div>
-							</aon:panelGrid>
-						</c:if>
+								</c:if>
+							</aon:div>
+						</aon:panelGrid>	
 					</aon:panelGroup>
 					
 					<aon:panelGroup>
@@ -208,36 +208,6 @@
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
-
-						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-							<aon:panelGrid id="group_fiscal_configuration"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-config aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_configuration}"/>
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="accPeriod-fiscal" 
-											action="accPeriod-fiscal"
-											actionListener="#{accPeriod.onSearch}"
-											value="#{bundle.accounting_period_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="defaultParams-fiscal" 
-											action="accountingDefaultParams-fiscal"
-											actionListener="#{accAppParams.onLoad}"
-											value="#{bundle.accounting_default_params_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="fiscalParams"
-											action="fiscalParams"
-											actionListener="#{fiscalParams.onLoad}"
-											value="#{bundle.fiscal_parameters_module}" />
-									</aon:div>
-								</aon:div>
-							</aon:panelGrid>
-						</c:if>								
 	
 						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 							<aon:panelGrid id="group_fiscal_mercantile_registry"
@@ -327,30 +297,30 @@
 											actionListener="#{financeTrackingEntry.onReset}"
 											value="#{bundle.accounting_entry_finance_tracking_module}" />
 									</aon:div>								
-								</aon:div>
-							</aon:panelGrid>
-	
-							<aon:panelGrid id="group_data_sync"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-refresh aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.fiscal_data_sync}"/>
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="accountExporter"
-											action="accountExporter_form"
-											value="#{bundle.account_exporter_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="accountImporter"
-											action="accountImporter_form"
-											actionListener="#{accountImporter.onInitialize}"
-											value="#{bundle.account_importer_module}" />
+										<aon:commandLink id="accPeriod-fiscal" 
+											action="accPeriod-fiscal"
+											actionListener="#{accPeriod.onSearch}"
+											value="#{bundle.accounting_period_module}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
+						
+						<aon:panelGrid id="group_fiscal_sociedades"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-balance aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.fiscal_corporation_module}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<a4j:commandLink ajaxSingle="true" immediate="true"
+										onclick="alert('#{bundle.aio_not_yet}');return false;" 
+										value="#{bundle.fiscal_model_200_module}"/>
+								</aon:div>																
+							</aon:div>
+						</aon:panelGrid>
 					</aon:panelGroup>
 
 				</h:panelGrid>
