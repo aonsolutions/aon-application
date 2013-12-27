@@ -23,17 +23,15 @@
 		</aon:outputText>
 	</aon:column>
 
-	<c:if test="#{!finance.payroll}">
-		<aon:column alias="Finance.invoice&lt;referenceCode"
-			styleClass="aon-editDataTable-textColumn">
-			<f:facet name="header">
-				<aon:outputText value="#{bundle.finance_invoice}" />
-			</f:facet>
-			<aon:outputText value="#{to.referenceCode}" />
-		</aon:column>
-	</c:if>
+	<aon:column alias="Finance.invoice&lt;referenceCode"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_document_number}" />
+		</f:facet>
+		<aon:outputText value="#{(to.invoice != null) ? to.referenceCode : to.concept}" />
+	</aon:column>
 
-	<aon:column alias="Finance.invoice.issueDate"
+	<aon:column alias="Finance.invoice&lt;issueDate"
 		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.finance_invoice_date_abbrv}" />
