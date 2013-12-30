@@ -308,7 +308,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{payMethod}.getName().length()<=6? $F{payMethod}.getName():$F{payMethod}.getName().substring(0,6)]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-8" x="137" y="0" width="43" height="12"/>
 				<box>
 					<topPen lineStyle="Solid"/>
