@@ -268,14 +268,14 @@ public class CertificadosWriter {
 		String secondSurname = batchDetail.getContract().getPerson().getSecondSurname();
 		o.setApellido2(StringUtils.isBlank(secondSurname)?null:secondSurname);
 		o.setNumSS(batchDetail.getContract().getPerson().getSocialSecurityNumber());
-		String quoteGroup = utils.getContractDataMap(batchDetail.getContract()).get(ContextVariable.QUOTE_GROUP.getName());
+		String quoteGroup = utils.getContractDataMap(batchDetail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.QUOTE_GROUP.getName());
 		o.setGrupoCotizacion(quoteGroup!=null?quoteGroup:null);
-		String tc2 = utils.getContractDataMap(batchDetail.getContract()).get(ContextVariable.TC2.getName());
+		String tc2 = utils.getContractDataMap(batchDetail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.TC2.getName());
 		o.setTipoContrato(tc2);
 		o.setDuracionContrato(completeLength(differenceBetweenDates(batchDetail.getContract().getStartDate(), batchDetail.getContract().getEndDate()).toString(),5,false));
 		o.setIndicadorDuracionContrato(null);
 
-		String occupation = utils.getContractDataMap(batchDetail.getContract()).get(ContextVariable.CNO.getName());
+		String occupation = utils.getContractDataMap(batchDetail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.CNO.getName());
 		o.setCodProfesion(completeLength(occupation,7, true));
 		o.setCargoPublicoSindical(null);
 		
@@ -335,7 +335,7 @@ public class CertificadosWriter {
 		if(existingPeriods!=null){
 			for (Period p : getPeriodList(batchDetail.getContract())) {
 				
-				Map<String, ContractData> map = utils.getContractDataMap(batchDetail.getContract(), p.getStart(), p.getEnd());
+				Map<String, ContractData> map = utils.getContractDataMap(batchDetail.getContract(), p.getStart(), p.getEnd(), Boolean.TRUE);
 				
 				ContractData diasTp = map.get(ContextVariable.CONTRACT_DAYS.getName());
 				ContractData diasSemanaTp = map.get(ContextVariable.WEEK_DAYS.getName());
@@ -360,7 +360,7 @@ public class CertificadosWriter {
 	private List<Period> getPeriodList(Contract contract) {
 		SEPEUtils utils = SEPEUtils.getInstance();
 		List<Period> list = null;
-		for(ContractData cd: utils.getContractDataMap(contract, null, null).values()){
+		for(ContractData cd: utils.getContractDataMap(contract, null, null, Boolean.TRUE).values()){
 			if(cd.getName().equals(ContextVariable.WEEK_DAYS.getName()) || cd.getName().equals(ContextVariable.CONTRACT_DAYS.getName())){
 				Period period = new Period(cd.getStartDate(), cd.getEndDate());
 				if(list==null){
@@ -551,7 +551,7 @@ public class CertificadosWriter {
 		SEPEUtils utils = SEPEUtils.getInstance();
 		try {
 			List<ISalary> settleList = getSalaries(contract, null, null, SalaryType.SETTLE);
-			String noHolidays = utils.getContractDataMap(contract).get(ContextVariable.NO_HOLIDAYS.getName());
+			String noHolidays = utils.getContractDataMap(contract, Boolean.TRUE, Boolean.TRUE).get(ContextVariable.NO_HOLIDAYS.getName());
 			for(ISalary settle: settleList){
 				if(settle!=null && noHolidays!=null && noHolidays!="0"){
 					o = new TRABAJADORTYPE.DatosVacacionesCotizadas();
@@ -1051,8 +1051,8 @@ public class CertificadosWriter {
 	
 	private boolean isFulltimeContract(Certifica2BatchDetail detail) {
 		SEPEUtils utils = SEPEUtils.getInstance();
-		String fullTime = utils.getContractDataMap(detail.getContract(), true, true).get(ContextVariable.FULL_TIME.getName());
-		String tc2 = utils.getContractDataMap(detail.getContract(), true, true).get(ContextVariable.TC2.getName());
+		String fullTime = utils.getContractDataMap(detail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.FULL_TIME.getName());
+		String tc2 = utils.getContractDataMap(detail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.TC2.getName());
 		if(fullTime==null || new Boolean(fullTime)){
 			if(tc2.startsWith("1") || tc2.startsWith("4")){ 
 				return true;
@@ -1063,7 +1063,7 @@ public class CertificadosWriter {
 	
 	private boolean isIrregular(Contract contract, Period p) {
 		SEPEUtils utils = SEPEUtils.getInstance();
-		ContractData cd = utils.getContractDataMap(contract, p.getStart(), p.getEnd()).get(ContextVariable.IRREGULAR.getName());
+		ContractData cd = utils.getContractDataMap(contract, p.getStart(), p.getEnd(), Boolean.TRUE).get(ContextVariable.IRREGULAR.getName());
 		return (cd!=null && new Boolean(cd.getExpression()));
 	}
 	
