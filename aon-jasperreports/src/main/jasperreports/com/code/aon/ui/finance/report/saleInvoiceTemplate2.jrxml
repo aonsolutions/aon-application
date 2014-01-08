@@ -529,7 +529,7 @@
 				<textFieldExpression><![CDATA[$R{aon_project} + ":"]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-4" positionType="FixRelativeToBottom" x="71" y="116" width="408" height="42" isRemoveLineWhenBlank="true">
+				<reportElement key="subreport-4" positionType="Float" x="71" y="116" width="408" height="42" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{prepaymentTotal}!=null]]></printWhenExpression>
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
@@ -537,7 +537,7 @@
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoicePrepayments")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-43" positionType="FixRelativeToBottom" mode="Opaque" x="479" y="116" width="75" height="14" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#000000">
+				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="479" y="116" width="75" height="14" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#000000">
 					<printWhenExpression><![CDATA[$V{prepaymentTotal}!=null]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
@@ -552,7 +552,7 @@
 				<textFieldExpression><![CDATA[$R{aon_total_to_pay}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-44" positionType="FixRelativeToBottom" x="541" y="131" width="13" height="14" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-44" positionType="Float" x="541" y="131" width="13" height="14" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{prepaymentTotal}!=null]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
@@ -567,7 +567,7 @@
 				<textFieldExpression><![CDATA["€"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-44" positionType="FixRelativeToBottom" x="479" y="131" width="62" height="14" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-44" positionType="Float" x="479" y="131" width="62" height="14" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$V{prepaymentTotal}!=null]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
