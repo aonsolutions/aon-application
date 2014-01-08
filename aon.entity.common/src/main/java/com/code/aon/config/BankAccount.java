@@ -170,7 +170,7 @@ public class BankAccount implements Serializable {
 		if (StringUtils.isNotBlank(bban)) {
 			sb.append(getCountry().getValue());
 			sb.append(getCheck());
-			sb.append(getBban1());
+			sb.append("." + getBban1());
 			for (int i=4; i<bban.length(); i=i+4) {
 				if (StringUtils.isNotBlank(StringUtils.substring(bban, i+4, i+8))) {
 					sb.append(".****");
