@@ -50,7 +50,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_iban} + "/" + $R{aon_bic} + "/" + $R{aon_bank}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_bank_account}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-9" mode="Opaque" x="0" y="0" width="50" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -108,8 +108,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[(($F{bankAccount}!=null && !$F{bankAccount}.toString().isEmpty())?
     ($F{negotiableDocument}?$F{bankAccount}.getMaskedIban():$F{bankAccount}.toString()):
-    (" ")) +
-(($F{bic}!=null && !$F{bic}.isEmpty())?($F{bic}):(" ")) +
+    ("")) + " " +
+(($F{bic}!=null && !$F{bic}.isEmpty())?("["+$F{bic}+"]"):("")) + " " +
 ($F{bankAlias})]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">

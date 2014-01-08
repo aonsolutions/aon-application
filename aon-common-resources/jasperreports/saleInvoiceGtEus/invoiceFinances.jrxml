@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="149"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -50,7 +50,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_iban} + "/" + $R{aon_bic} + "/" + "Bankua / " + $R{aon_bank}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Banku kontua / " + $R{aon_bank_account}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-9" mode="Opaque" x="0" y="0" width="60" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -108,8 +108,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[(($F{bankAccount}!=null && !$F{bankAccount}.toString().isEmpty())?
     ($F{negotiableDocument}?$F{bankAccount}.getMaskedIban():$F{bankAccount}.toString()):
-    (" ")) +
-(($F{bic}!=null && !$F{bic}.isEmpty())?($F{bic}):(" ")) +
+    ("")) + " " +
+(($F{bic}!=null && !$F{bic}.isEmpty())?("["+$F{bic}+"]"):("")) + " " +
 ($F{bankAlias})]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">

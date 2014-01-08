@@ -110,19 +110,17 @@ public class Finance extends FinanceDB implements IBankAccountContainer, IScopab
 	@Transient
 	public String getBankDescription() {
 		StringBuilder sb = new StringBuilder();
-		if (!StringUtils.isBlank(getBankAlias())) {
-			sb.append(getBankAlias());
+		if (getBankAccount() != null && !StringUtils.isBlank(getBankAccount().getBban())) {
+			sb.append(getBankAccount().toString());
 			sb.append(" ");
 		}
-		if (getBankAccount() != null && !StringUtils.isBlank(getBankAccount().getBban())) {
-			sb.append("[");
-			sb.append(getBankAccount().toString());
-			sb.append("]");
-		}
 		if (!StringUtils.isBlank(getBic())) {
-			sb.append("- [");
+			sb.append("[");
 			sb.append(getBic());
-			sb.append("]");
+			sb.append("] ");
+		}
+		if (!StringUtils.isBlank(getBankAlias())) {
+			sb.append(getBankAlias());
 		}
 		return sb.toString(); 
 	}
