@@ -15,7 +15,7 @@
 	<aon:column alias="Finance.dueDate"
 		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_date}" />
+			<aon:outputText value="#{bundle.finance_finance_date_abbrv}" />
 		</f:facet>
 		<aon:outputText value="#{to.dueDate}">
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -23,22 +23,23 @@
 		</aon:outputText>
 	</aon:column>
 
-	<c:if test="#{!finance.payroll}">
-		<aon:column alias="Finance.invoice&lt;referenceCode"
-			styleClass="aon-editDataTable-textColumn">
-			<f:facet name="header">
-				<aon:outputText value="#{bundle.finance_invoice}" />
-			</f:facet>
-			<aon:outputText value="#{to.referenceCode}" />
-		</aon:column>
-	</c:if>
-
-	<aon:column alias="Finance.concept"
+	<aon:column alias="Finance.invoice&lt;referenceCode"
 		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_document_number}" />
 		</f:facet>
-		<aon:outputText value="#{to.concept}" />
+		<aon:outputText value="#{(to.invoice != null) ? to.referenceCode : to.concept}" />
+	</aon:column>
+
+	<aon:column alias="Finance.invoice&lt;issueDate"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.finance_invoice_date_abbrv}" />
+		</f:facet>
+		<aon:outputText value="#{to.invoice.issueDate}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
 	</aon:column>
 
 	<aon:column alias="Finance.registryName"

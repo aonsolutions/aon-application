@@ -926,7 +926,7 @@ public class FinanceController extends FinanceListController implements IFinance
 			insertFinances.append(" SELECT s.domain, 1, c.person, r.document, r.document_type, r.document_country, r.name,");
 			insertFinances.append(" ROUND(s.total_liquid, 2) - ROUND(CASE WHEN SUM(f.amount) IS NULL THEN 0 ELSE SUM(f.amount) END, 2) AS total_amount,");
 			insertFinances.append(" CONCAT(" + obtainSalaryTypeCondition("s.type") + ", ' - ', DATE_FORMAT(s.issue_date, '%d/%m/%Y')),");
-			insertFinances.append(" s.charge_date, rp.pay_method, rb.bank_account, rb.bank_alias, rb.bic, 0, 0, w.scope, 1, s.id");
+			insertFinances.append(" s.charge_date, rp.pay_method, rb.bank_account, rb.alias, rb.bic, 0, 0, w.scope, 1, s.id");
 			insertFinances.append(" FROM registry AS r, workplace AS w");
 			insertFinances.append(" LEFT JOIN salary AS s ON " + DomainManager.getSQLWhereClause("s.domain") + " AND s.charge_date BETWEEN ? AND ?");
 			insertFinances.append(" LEFT JOIN contract AS c ON c.id = s.contract");

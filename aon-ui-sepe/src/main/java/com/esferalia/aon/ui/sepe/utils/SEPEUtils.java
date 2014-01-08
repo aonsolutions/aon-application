@@ -67,9 +67,13 @@ public class SEPEUtils {
 	}
 	
 	public Map<String, ContractData> getContractDataMap(Contract contract, Date startDate, Date endDate) {
+		return getContractDataMap(contract, startDate, endDate, false);
+	}
+
+	public Map<String, ContractData> getContractDataMap(Contract contract, Date startDate, Date endDate, boolean includeChildDomains) {
 		Map<String, ContractData> map = new HashMap<String, ContractData>();
 		try {
-			for(ITransferObject to: getContractDataList(contract, startDate, endDate, false)){
+			for(ITransferObject to: getContractDataList(contract, startDate, endDate, includeChildDomains)){
 				ContractData data = (ContractData) to;
 				if(data.getExpression()!=null){
 					map.put(data.getName(), data);

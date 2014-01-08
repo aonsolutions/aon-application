@@ -33,19 +33,17 @@ public class RegistryBank extends RegistryBankDB implements IBankAccountContaine
 	@Transient
 	public String getFullName() {
 		StringBuffer sb = new StringBuffer();
-		if (!StringUtils.isBlank(getAlias())) {
-			sb.append(getAlias());	
+		if (getBankAccount() != null && !StringUtils.isBlank(getBankAccount().getBban())) {
+			sb.append(getBankAccount().toString());
 			sb.append(" ");
 		}
-		if (getBankAccount() != null && !StringUtils.isBlank(getBankAccount().getBban())) {
-			sb.append("[");
-			sb.append(getBankAccount().toString());
-			sb.append("]");
-		}
 		if (!StringUtils.isBlank(getBic())) {
-			sb.append("- [");
+			sb.append("[");
 			sb.append(getBic());
-			sb.append("]");
+			sb.append("] ");
+		}
+		if (!StringUtils.isBlank(getAlias())) {
+			sb.append(getAlias());	
 		}
 		return sb.toString(); 
 	}
