@@ -106,11 +106,9 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[(($F{bankAccount}!=null && !$F{bankAccount}.toString().isEmpty())?
-    ($F{negotiableDocument}?$F{bankAccount}.getMaskedIban():$F{bankAccount}.toString()):
-    ("")) + " " +
-(($F{bic}!=null && !$F{bic}.isEmpty())?("["+$F{bic}+"]"):("")) + " " +
-($F{bankAlias})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[(($F{bankAccount}!=null && !$F{bankAccount}.toString().isEmpty())?($F{negotiableDocument}?$F{bankAccount}.getMaskedIban():$F{bankAccount}.toString()):("")) + " "
++ (($F{bic}!=null && !$F{bic}.isEmpty())?("["+$F{bic}+"]"):("")) + " "
++ (($F{bankAlias}!=null && !$F{bankAlias}.isEmpty())?($F{bankAlias}):(""))]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-4" x="0" y="0" width="50" height="14"/>
