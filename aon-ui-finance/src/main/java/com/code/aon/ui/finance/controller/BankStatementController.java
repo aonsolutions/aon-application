@@ -257,7 +257,7 @@ public class BankStatementController extends BasicController implements IFinance
 		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
 			BankStatement statement = (BankStatement)ito;
 			if (statement.getStatus() == StatementStatus.PENDING) {
-				bankStatementChecks.add(statement);
+				setBankStatementRowChecked(statement, true);
 			}
 		}
 	}
@@ -267,7 +267,7 @@ public class BankStatementController extends BasicController implements IFinance
 		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
 			BankStatement statement = (BankStatement)ito;
 			if (statement.getStatus() == StatementStatus.CHECKED) {
-				bankStatementChecks.add(statement);
+				setBankStatementRowChecked(statement, true);
 			}
 		}
 	}
@@ -277,7 +277,7 @@ public class BankStatementController extends BasicController implements IFinance
 		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
 			BankStatement statement = (BankStatement)ito;
 			if (statement.getStatus() == StatementStatus.CHECKED && statement.getReliability() == StatementReliability.VERY_HIGH) {
-				bankStatementChecks.add(statement);
+				setBankStatementRowChecked(statement, true);
 			}
 		}
 	}
@@ -287,7 +287,7 @@ public class BankStatementController extends BasicController implements IFinance
 		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
 			BankStatement statement = (BankStatement)ito;
 			if (statement.getStatus() == StatementStatus.CHECKED && statement.getReliability() == StatementReliability.HIGH) {
-				bankStatementChecks.add(statement);
+				setBankStatementRowChecked(statement, true);
 			}
 		}
 	}
@@ -298,7 +298,7 @@ public class BankStatementController extends BasicController implements IFinance
 			BankStatement statement = (BankStatement)ito;
 			if (statement.getStatus() == StatementStatus.CHECKED) {
 				if (statement.getReliability() == StatementReliability.MEDIUM || statement.getReliability() == StatementReliability.LOW) {
-					bankStatementChecks.add(statement);
+					setBankStatementRowChecked(statement, true);
 				}
 			}
 		}
@@ -309,7 +309,7 @@ public class BankStatementController extends BasicController implements IFinance
 		for (ITransferObject ito : getManagerBean().getList(getCriteria())) {
 			BankStatement statement = (BankStatement)ito;
 			if (statement.getStatus() == StatementStatus.RECORDED) {
-				bankStatementChecks.add(statement);
+				setBankStatementRowChecked(statement, true);
 			}
 		}
 	}
@@ -320,7 +320,7 @@ public class BankStatementController extends BasicController implements IFinance
 		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			BankStatement statement = (BankStatement)iterator.next();
-			bankStatementChecks.add(statement);
+			setBankStatementRowChecked(statement, true);
 		}
 	}
 
