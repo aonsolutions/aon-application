@@ -542,6 +542,8 @@ public class BankStatementController extends BasicController implements IFinance
 				bankStatement = importAeb43Data(line, lotNumber);
 			} else if (lineType.equals("23")) {
 				importAeb43Concept(line, bankStatement);
+			} else if (lineType.equals("88")) {
+				break;
 			}
 			line = reader.readLine();
 		}
