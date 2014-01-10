@@ -378,7 +378,9 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 			}
 			
 			try {
-				loadContrataData(getGeneratedFile());
+				if(isEnabledContrataEdition()){
+					loadContrataData(getGeneratedFile());
+				}
 			} catch (ManagerBeanException e) {
 				String msg = "No se han podido obtener los datos de Contrat@ previamente guardados.";
 				LOGGER.error(msg, e);

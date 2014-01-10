@@ -62,7 +62,7 @@
 					iconClass="aon-menuGroup-styleClass">
 					<aon:menuItem id="documentDraft-edition" 
 						action="contractPdfEdition_form" ajaxSingle="true"
-						rendered="#{not empty contract.to.model and not contract.existSignedContractDocument}"
+						rendered="#{not empty contract.params.contractModelOption and not contract.existSignedContractDocument}"
 						value="Contrato"
 						title="Edicion manual del documento del contrato"
 						iconClass="aon-icon-page" >
@@ -74,7 +74,7 @@
 					</aon:menuItem>
 					<aon:menuItem id="basicCopyDraft-edition"
 						action="contractPdfEdition_form" ajaxSingle="true" 
-						rendered="#{not empty contract.to.model and not contract.existSignedBasicCopyDocument}"
+						rendered="#{not empty contract.params.contractModelOption and not contract.existSignedBasicCopyDocument}"
 						value="Copia Basica"
 						title="Edicion manual del documento de la copia basica"
 						iconClass="aon-icon-page" >

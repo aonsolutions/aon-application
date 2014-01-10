@@ -21,6 +21,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel.ModelOption;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
@@ -389,6 +390,20 @@ public class ContractUtils {
 			String msg = "Error al grabar el horario lectivo. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+		try {
+			if(params.getContractModelOption()!=null){
+				info = new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.CONTRACT_MODEL_OPTION.getValue() );
+				info.setExpression("\"" + params.getContractModelOption() + "\"");
+				bean.insert(info);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el modelo del contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
 	}
 	
 	public void updateContractData(Contract contract, ContractParams params) throws ControllerListenerException {
@@ -645,6 +660,25 @@ public class ContractUtils {
 			String msg = "Error al grabar el horario lectivo. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+		try {
+			ContractInfo contractModelOption = obtainContractInfo(contract, ContractVariable.CONTRACT_MODEL_OPTION.getValue());
+			if(params.getContractModelOption()!=null){
+				info = contractModelOption!=null?contractModelOption:new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.CONTRACT_MODEL_OPTION.getValue() );
+				info.setExpression("\"" + params.getContractModelOption() + "\"");
+				bean.insertOrUpdate(info);
+			} else {
+				if(contractModelOption != null){
+					bean.remove(contractModelOption);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el modelo del contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
 	}
 	
 	public void loadContractData(Contract contract, ContractParams params) throws ManagerBeanException {
@@ -684,6 +718,10 @@ public class ContractUtils {
 		if(map.get(ContractVariable.SELF_EMPLOYED.getValue())!=null){
 			params.setRetaQuote(new Boolean(map.get(ContractVariable.SELF_EMPLOYED.getValue())));
 		} 
+		if(map.get(ContractVariable.CONTRACT_MODEL_OPTION.getValue())!=null){
+			String ordinal = (map.get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
+			params.setContractModelOption(ModelOption.valueOf(ordinal));
+		}
 		if(isTrainingContract(contract)){
 			if(map.get(ContractVariable.TRAINING_CENTER.getValue())!=null){
 				params.setTrainingCenter(obtainTrainingCenter(map.get(ContractVariable.TRAINING_CENTER.getValue())));

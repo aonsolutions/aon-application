@@ -37,65 +37,6 @@ import com.lowagie.text.pdf.PdfReader;
 
 public class ModelPE226 extends AbstractContractModel {
 	
-	/*
-	 * Contract page 1
-	 */
-	final static String PE226_QUOTE_BONUS = "si_bonif_cuota";
-	final static String PE226_QUOTE_NO_BONUS = "no_bonif_cuota";
-	final static String PE226_REPRESENTATIVE_NAME = "nomreptra";
-	final static String PE226_REPRESENTATIVE_DOCUMENT = "dnireptra";
-	final static String PE226_REPRESENTATIVE_FUNCTION = "calireptra";
-	final static String PE226_QUOTE_BONUS_YES = "verificacion123";
-	final static String PE226_QUOTE_BONUS_NO = "verificacion1234";
-	final static String PE226_EMPLOYEE_OPT1 = "entre16y30";
-	final static String PE226_EMPLOYEE_OPT2 = "trabdiscap";
-	final static String PE226_EMPLOYEE_OPT3 = "alumproy";
-	final static String PE226_EMPLOYEE_PROFFESION = "profetraba";
-	final static String PE226_EMPLOYEE_CATEGORY = "catetraba";
-	final static String PE226_CNO1 = "cno1";
-	final static String PE226_CNO2 = "cno2";
-	final static String PE226_CNO3 = "cno3";
-	final static String PE226_CNO4 = "cno4";
-	final static String PE226_WORKPLACE_ADDRESS = "calletrab";
-	
-	/*
-	 * Contract page 2
-	 */
-	final static String PE226_YEAR_1_JOURNAL = "año1";
-	final static String PE226_YEAR_2_3_JOURNAL = "año2y3";
-	final static String PE226_TOTAL_HOURS = "trabefec";
-	final static String PE226_JOURNAL_PERCENT = "porcforma";
-	final static String PE226_COLLECTIVE_AGREEMENT = "convcole";
-	final static String PE226_COLLECTIVE_AGREEMENT1 = "convcole1";
-	final static String PE226_JOURNAL_HORUS = "jornhoraefec";
-	final static String PE226_CONTRACT_DURATION = "totaldura";
-	final static String PE226_START_DATE = "fechaini";
-	final static String PE226_END_DATE = "fechafin";
-	final static String PE226_TEST_PERIOD = "periodoprue";
-	final static String PE226_SALARY = "retribu";
-	final static String PE226_SALARY_PERIOD = "perioretri";
-	final static String PE226_VACATIONS = "vacaciones";
-	final static String PE226_REDUCCTION_75 = "porc_75_250";
-	final static String PE226_REDUCTION_100 = "porc_100_249";
-	final static String PE226_COLLECTIVE_AGREEMENT2 = "convcole2";
-	final static String PE226_SEPE_TOWN1 = "munisepe1";
-	final static String PE226_SEPE_TOWN2 = "munisepe2";
-	final static String PE226_SIGN_TOWN = "munifirma";
-	final static String PE226_MORE_CLAUSE = "clausadici";
-	final static String PE226_SIGN_DAY = "diafirma";
-	final static String PE226_SIGN_MONTH = "mesfirma";
-	final static String PE226_SIGN_YEAR = "añofirma";
-	
-	/*
-	 * fileds with different labels
-	 */
-	final String ENTERPRISE_COUNTRY1 = "Texto1pais1";
-	final String ENTERPRISE_MUNICIPALITY1 = "Texto2muni1";
-	final String WORKPLACE_COUNTRY1 = "Texto3pais2";
-	final String WORKPLACE_MUNICIPALITY1 = "Texto4muni2";
-	final String EMPLOYEE_ADDRESS_MUNICIPALITY1 = "Texto6muni3";
-	final String EMPLOYEE_ADDRESS_COUNTRY1 = "Texto7pais3";
-	
 	public final static String MODEL_NAME = "PE226";
 	
 	public ModelPE226(){
@@ -116,9 +57,9 @@ public class ModelPE226 extends AbstractContractModel {
 			if(code == ContractCode.C421){
 				if( isQuoteBonus(contract)!=null ){
 					if( isQuoteBonus(contract) ){
-						getPdfFieldsMap().get(PE226_QUOTE_BONUS).setValue("true");
+						getPdfFieldsMap().get(PE226FieldName.QUOTE_BONUS.getValue()).setValue("true");
 					} else if( !isQuoteBonus(contract) ){
-						getPdfFieldsMap().get(PE226_QUOTE_NO_BONUS).setValue("true");
+						getPdfFieldsMap().get(PE226FieldName.QUOTE_NO_BONUS.getValue()).setValue("true");
 					}
 				}
 			} else {
@@ -133,7 +74,7 @@ public class ModelPE226 extends AbstractContractModel {
 			 * must normalize pdf files of contract models 
 			 */
 			try {	
-				getPdfFieldsMap().get(ENTERPRISE_COUNTRY1).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(getLocale()));
+				getPdfFieldsMap().get(PE226FieldName.ENTERPRISE_COUNTRY1.getValue()).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(getLocale()));
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
@@ -143,14 +84,14 @@ public class ModelPE226 extends AbstractContractModel {
 			try {
 				RegistryAddress address = contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress();
 				ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
-				getPdfFieldsMap().get(ENTERPRISE_MUNICIPALITY1).setValue(bundle.getString(address.getMunicipalityCode()));
+				getPdfFieldsMap().get(PE226FieldName.ENTERPRISE_MUNICIPALITY1.getValue()).setValue(bundle.getString(address.getMunicipalityCode()));
 			} catch (NullPointerException npe) {
 				// do nothing
 			}
 			
 			try {
 				GeoZone country = obtainCountry(contract.getWorkPlace().getAddress().getGeozone());
-				getPdfFieldsMap().get(WORKPLACE_COUNTRY1).setValue(country.getName());
+				getPdfFieldsMap().get(PE226FieldName.WORKPLACE_COUNTRY1.getValue()).setValue(country.getName());
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
@@ -159,20 +100,20 @@ public class ModelPE226 extends AbstractContractModel {
 			try {
 				RegistryAddress address = contract.getWorkPlace().getAddress();
 				ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
-				getPdfFieldsMap().get(WORKPLACE_MUNICIPALITY1).setValue(bundle.getString(address.getMunicipalityCode()));
+				getPdfFieldsMap().get(PE226FieldName.WORKPLACE_MUNICIPALITY1.getValue()).setValue(bundle.getString(address.getMunicipalityCode()));
 			} catch (NullPointerException npe) {
 				// do nothing
 			}
 			try {
 				RegistryAddress address = contract.getPerson().getRegistry().getDefaultAddress();
 				ResourceBundle bundle = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.municipalities");
-				getPdfFieldsMap().get(EMPLOYEE_ADDRESS_MUNICIPALITY1).setValue(bundle.getString(address.getMunicipalityCode()));
+				getPdfFieldsMap().get(PE226FieldName.EMPLOYEE_ADDRESS_MUNICIPALITY1.getValue()).setValue(bundle.getString(address.getMunicipalityCode()));
 			} catch (NullPointerException npe) {
 				// do nothing
 			}
 			try {
 				GeoZone country = obtainCountry(contract.getPerson().getRegistry().getDefaultAddress().getGeozone());
-				getPdfFieldsMap().get(EMPLOYEE_ADDRESS_COUNTRY1).setValue(country.getName());
+				getPdfFieldsMap().get(PE226FieldName.EMPLOYEE_ADDRESS_COUNTRY1.getValue()).setValue(country.getName());
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
@@ -183,37 +124,37 @@ public class ModelPE226 extends AbstractContractModel {
 			 */
 			
 			
-			getPdfFieldsMap().get(PE226_REPRESENTATIVE_NAME).setValue("");
-			getPdfFieldsMap().get(PE226_REPRESENTATIVE_DOCUMENT).setValue("");
-			getPdfFieldsMap().get(PE226_REPRESENTATIVE_FUNCTION).setValue("");
+			getPdfFieldsMap().get(PE226FieldName.REPRESENTATIVE_NAME.getValue()).setValue("");
+			getPdfFieldsMap().get(PE226FieldName.REPRESENTATIVE_DOCUMENT.getValue()).setValue("");
+			getPdfFieldsMap().get(PE226FieldName.REPRESENTATIVE_FUNCTION.getValue()).setValue("");
 			if( isQuoteBonus(contract)!=null ){
 				if( isQuoteBonus(contract) ){
-					getPdfFieldsMap().get(PE226_QUOTE_BONUS_YES).setValue("true");
+					getPdfFieldsMap().get(PE226FieldName.QUOTE_BONUS_YES.getValue()).setValue("true");
 				} else if( !isQuoteBonus(contract) ){
-					getPdfFieldsMap().get(PE226_QUOTE_BONUS_NO).setValue("true");
+					getPdfFieldsMap().get(PE226FieldName.QUOTE_BONUS_NO.getValue()).setValue("true");
 				}
 			}
-			getPdfFieldsMap().get(PE226_EMPLOYEE_OPT1).setValue("");
-			getPdfFieldsMap().get(PE226_EMPLOYEE_OPT2).setValue("");
-			getPdfFieldsMap().get(PE226_EMPLOYEE_OPT3).setValue("");
+			getPdfFieldsMap().get(PE226FieldName.EMPLOYEE_OPT1.getValue()).setValue("");
+			getPdfFieldsMap().get(PE226FieldName.EMPLOYEE_OPT2.getValue()).setValue("");
+			getPdfFieldsMap().get(PE226FieldName.EMPLOYEE_OPT3.getValue()).setValue("");
 			
 			Map<String, String>  map = getContractDataMap(contract);
 			TrainingCourse trainingCourse = obtainTrainingCourse(map.get(ContractVariable.TRAINING_COURSE.getValue()));
 			
 			if(trainingCourse!=null){
-				getPdfFieldsMap().get(PE226_EMPLOYEE_PROFFESION).setValue(trainingCourse.getOccupationName());
-				getPdfFieldsMap().get(PE226_EMPLOYEE_CATEGORY).setValue(trainingCourse.getOccupationName());
+				getPdfFieldsMap().get(PE226FieldName.EMPLOYEE_PROFFESION.getValue()).setValue(trainingCourse.getOccupationName());
+				getPdfFieldsMap().get(PE226FieldName.EMPLOYEE_CATEGORY.getValue()).setValue(trainingCourse.getOccupationName());
 				
 				String cno = trainingCourse.getCNO().getCode();
 				if( !StringUtils.isEmpty(cno) ){
-					getPdfFieldsMap().get(PE226_CNO1).setValue(cno.substring(0, 1));
-					getPdfFieldsMap().get(PE226_CNO2).setValue(cno.substring(1, 2));
-					getPdfFieldsMap().get(PE226_CNO3).setValue(cno.substring(2, 3));
-					getPdfFieldsMap().get(PE226_CNO4).setValue(cno.substring(3, 4));
+					getPdfFieldsMap().get(PE226FieldName.CNO1.getValue()).setValue(cno.substring(0, 1));
+					getPdfFieldsMap().get(PE226FieldName.CNO2.getValue()).setValue(cno.substring(1, 2));
+					getPdfFieldsMap().get(PE226FieldName.CNO3.getValue()).setValue(cno.substring(2, 3));
+					getPdfFieldsMap().get(PE226FieldName.CNO4.getValue()).setValue(cno.substring(3, 4));
 				}
 			}
 			
-			getPdfFieldsMap().get(PE226_WORKPLACE_ADDRESS).setValue(contract.getWorkPlace().getAddress().getFullAddress()+", "+contract.getWorkPlace().getAddress().getGeozone().getName());
+			getPdfFieldsMap().get(PE226FieldName.WORKPLACE_ADDRESS.getValue()).setValue(contract.getWorkPlace().getAddress().getFullAddress()+", "+contract.getWorkPlace().getAddress().getGeozone().getName());
 			
 			/*
 			 * PAGE 2
@@ -221,49 +162,49 @@ public class ModelPE226 extends AbstractContractModel {
 			if(contrataParams!=null){
 				SimpleDateFormat dateFormatter = new SimpleDateFormat();
 				if(params.getHorasJornada()!=null){
-					getPdfFieldsMap().get(PE226_YEAR_1_JOURNAL).setValue(String.valueOf(Integer.parseInt(params.getHorasJornada())));
-					getPdfFieldsMap().get(PE226_YEAR_2_3_JOURNAL).setValue(""); 
+					getPdfFieldsMap().get(PE226FieldName.YEAR_1_JOURNAL.getValue()).setValue(String.valueOf(Integer.parseInt(params.getHorasJornada())));
+					getPdfFieldsMap().get(PE226FieldName.YEAR_2_3_JOURNAL.getValue()).setValue(""); 
 					if(params.getHorasFormacion()!=null){
 						Integer horasJornada = Integer.parseInt(params.getHorasJornada());
 						Integer horasFormacion = Integer.parseInt(params.getHorasFormacion());
-						getPdfFieldsMap().get(PE226_TOTAL_HOURS).setValue(String.valueOf(horasJornada - horasFormacion));
+						getPdfFieldsMap().get(PE226FieldName.TOTAL_HOURS.getValue()).setValue(String.valueOf(horasJornada - horasFormacion));
 						if(horasJornada!=null && horasJornada!=0){
-							getPdfFieldsMap().get(PE226_JOURNAL_PERCENT).setValue(String.valueOf(100-(horasFormacion*100/horasJornada)));
+							getPdfFieldsMap().get(PE226FieldName.JOURNAL_PERCENT.getValue()).setValue(String.valueOf(100-(horasFormacion*100/horasJornada)));
 						}
 					}
 				}
 				
 				PayrollWorkPlace pw = obtainPayrollWorkPlace(contract.getWorkPlace());
 				if(pw!=null && pw.getAgreement()!=null){
-					getPdfFieldsMap().get(PE226_COLLECTIVE_AGREEMENT).setValue(pw.getAgreement().getDescription());
+					getPdfFieldsMap().get(PE226FieldName.COLLECTIVE_AGREEMENT.getValue()).setValue(pw.getAgreement().getDescription());
 				}				
-				getPdfFieldsMap().get(PE226_JOURNAL_HORUS).setValue(map.get(ContractVariable.WORK_SCHEDULE.getValue()));
+				getPdfFieldsMap().get(PE226FieldName.JOURNAL_HORUS.getValue()).setValue(map.get(ContractVariable.WORK_SCHEDULE.getValue()));
 				Integer durationInMonths = getMonthsBetweenDates(contract.getStartDate(), contract.getEndDate());
-				getPdfFieldsMap().get(PE226_CONTRACT_DURATION).setValue(durationInMonths!=null?durationInMonths+" meses":"");
+				getPdfFieldsMap().get(PE226FieldName.CONTRACT_DURATION.getValue()).setValue(durationInMonths!=null?durationInMonths+" meses":"");
 				dateFormatter.applyPattern("dd/MM/yyyy");
-				getPdfFieldsMap().get(PE226_START_DATE).setValue(dateFormatter.format(contract.getStartDate()));
+				getPdfFieldsMap().get(PE226FieldName.START_DATE.getValue()).setValue(dateFormatter.format(contract.getStartDate()));
 				if(contract.getEndDate()!=null){
-					getPdfFieldsMap().get(PE226_END_DATE).setValue(dateFormatter.format(contract.getEndDate()));
+					getPdfFieldsMap().get(PE226FieldName.END_DATE.getValue()).setValue(dateFormatter.format(contract.getEndDate()));
 				}
-				getPdfFieldsMap().get(PE226_TEST_PERIOD).setValue("Según convenio");
-				getPdfFieldsMap().get(PE226_SALARY).setValue("Según convenio");
-				getPdfFieldsMap().get(PE226_SALARY_PERIOD).setValue("mensuales");
-				getPdfFieldsMap().get(PE226_VACATIONS).setValue("Según convenio");
+				getPdfFieldsMap().get(PE226FieldName.TEST_PERIOD.getValue()).setValue("Según convenio");
+				getPdfFieldsMap().get(PE226FieldName.SALARY.getValue()).setValue("Según convenio");
+				getPdfFieldsMap().get(PE226FieldName.SALARY_PERIOD.getValue()).setValue("mensuales");
+				getPdfFieldsMap().get(PE226FieldName.VACATIONS.getValue()).setValue("Según convenio");
 				if( params.getPorcentajeReduccion()!=null){
 					if( params.getPorcentajeReduccion().equals("75") ){
-						getPdfFieldsMap().get(PE226_REDUCCTION_75).setValue("true");
+						getPdfFieldsMap().get(PE226FieldName.REDUCCTION_75.getValue()).setValue("true");
 					} else if( params.getPorcentajeReduccion().equals("100") ){
-						getPdfFieldsMap().get(PE226_REDUCTION_100).setValue("true");
+						getPdfFieldsMap().get(PE226FieldName.REDUCTION_100.getValue()).setValue("true");
 					}
 				}
 				if(pw!=null && pw.getAgreement()!=null){
-					getPdfFieldsMap().get(PE226_COLLECTIVE_AGREEMENT1).setValue(pw.getAgreement().getDescription());
-					getPdfFieldsMap().get(PE226_COLLECTIVE_AGREEMENT2).setValue("");
+					getPdfFieldsMap().get(PE226FieldName.COLLECTIVE_AGREEMENT1.getValue()).setValue(pw.getAgreement().getDescription());
+					getPdfFieldsMap().get(PE226FieldName.COLLECTIVE_AGREEMENT2.getValue()).setValue("");
 				}
-				getPdfFieldsMap().get(PE226_MORE_CLAUSE).setValue("");
+				getPdfFieldsMap().get(PE226FieldName.MORE_CLAUSE.getValue()).setValue("");
 
-				getPdfFieldsMap().get(PE226_SEPE_TOWN1).setValue(contract.getWorkPlace().getAddress().getCity());
-				getPdfFieldsMap().get(PE226_SEPE_TOWN2).setValue(contract.getWorkPlace().getAddress().getCity());
+				getPdfFieldsMap().get(PE226FieldName.SEPE_TOWN1.getValue()).setValue(contract.getWorkPlace().getAddress().getCity());
+				getPdfFieldsMap().get(PE226FieldName.SEPE_TOWN2.getValue()).setValue(contract.getWorkPlace().getAddress().getCity());
 			}
 			
 		} catch (IOException e) {
@@ -340,6 +281,91 @@ public class ModelPE226 extends AbstractContractModel {
 			// do nothing ...
 		}
 		return null;
+	}
+	
+	/*
+	 * INNER CLASSES
+	 */
+	public enum PE226FieldName implements IContractFieldName{
+		
+		/*
+		 * Contract page 1
+		 */
+		QUOTE_BONUS("si_bonif_cuota",Boolean.FALSE),
+		QUOTE_NO_BONUS("no_bonif_cuota",Boolean.FALSE),
+		REPRESENTATIVE_NAME("nomreptra",Boolean.FALSE),
+		REPRESENTATIVE_DOCUMENT("dnireptra",Boolean.FALSE),
+		REPRESENTATIVE_FUNCTION("calireptra",Boolean.FALSE),
+		QUOTE_BONUS_YES("verificacion123",Boolean.FALSE),
+		QUOTE_BONUS_NO("verificacion1234",Boolean.FALSE),
+		EMPLOYEE_OPT1("entre16y30",Boolean.FALSE),
+		EMPLOYEE_OPT2("trabdiscap",Boolean.FALSE),
+		EMPLOYEE_OPT3("alumproy",Boolean.FALSE),
+		EMPLOYEE_PROFFESION("profetraba",Boolean.FALSE),
+		EMPLOYEE_CATEGORY("catetraba",Boolean.FALSE),
+		CNO1("cno1",Boolean.FALSE),
+		CNO2("cno2",Boolean.FALSE),
+		CNO3("cno3",Boolean.FALSE),
+		CNO4("cno4",Boolean.FALSE),
+		WORKPLACE_ADDRESS("calletrab",Boolean.FALSE),
+		
+		/*
+		 * Contract page 2
+		 */
+		YEAR_1_JOURNAL("año1",Boolean.FALSE),
+		YEAR_2_3_JOURNAL("año2y3",Boolean.FALSE),
+		TOTAL_HOURS("trabefec",Boolean.FALSE),
+		JOURNAL_PERCENT("porcforma",Boolean.FALSE),
+		COLLECTIVE_AGREEMENT("convcole",Boolean.FALSE),
+		COLLECTIVE_AGREEMENT1("convcole1",Boolean.FALSE),
+		JOURNAL_HORUS("jornhoraefec",Boolean.FALSE),
+		CONTRACT_DURATION("totaldura",Boolean.FALSE),
+		START_DATE("fechaini",Boolean.FALSE),
+		END_DATE("fechafin",Boolean.FALSE),
+		TEST_PERIOD("periodoprue",Boolean.FALSE),
+		SALARY("retribu",Boolean.FALSE),
+		SALARY_PERIOD("perioretri",Boolean.FALSE),
+		VACATIONS("vacaciones",Boolean.FALSE),
+		REDUCCTION_75("porc_75_250",Boolean.FALSE),
+		REDUCTION_100("porc_100_249",Boolean.FALSE),
+		COLLECTIVE_AGREEMENT2("convcole2",Boolean.FALSE),
+		SEPE_TOWN1("munisepe1",Boolean.FALSE),
+		SEPE_TOWN2("munisepe2",Boolean.FALSE),
+		SIGN_TOWN("munifirma",Boolean.FALSE),
+		MORE_CLAUSE("clausadici",Boolean.FALSE),
+		SIGN_DAY("diafirma",Boolean.FALSE),
+		SIGN_MONTH("mesfirma",Boolean.FALSE),
+		SIGN_YEAR("añofirma",Boolean.FALSE),
+		
+		
+		/*
+		 * fileds with different labels
+		 */
+		ENTERPRISE_COUNTRY1("Texto1pais1",Boolean.FALSE),
+		ENTERPRISE_MUNICIPALITY1("Texto2muni1",Boolean.FALSE),
+		WORKPLACE_COUNTRY1("Texto3pais2",Boolean.FALSE),
+		WORKPLACE_MUNICIPALITY1("Texto4muni2",Boolean.FALSE),
+		EMPLOYEE_ADDRESS_MUNICIPALITY1("Texto6muni3",Boolean.FALSE),
+		EMPLOYEE_ADDRESS_COUNTRY1("Texto7pais3",Boolean.FALSE),
+		
+		;
+		
+		private String value;
+		private boolean overridable;
+		
+		private PE226FieldName(String value, boolean overridable) {
+			this.value = value;
+			this.overridable = overridable;
+		}
+		
+		@Override
+		public boolean isOverridable(){
+			return overridable;
+		}
+		@Override
+		public String getValue() {
+			return value;
+		}
 	}
 	
 }

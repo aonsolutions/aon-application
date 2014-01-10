@@ -46,6 +46,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel.ModelOption;
 import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
@@ -72,7 +73,6 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractDuration;
-import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
@@ -311,29 +311,51 @@ public class ContractController extends BasicController {
 		return contractCode!=null && (isTransformedContract() || !ArrayUtils.contains(ISepeConstants.AVAILABLE_CONTRACT_CODE_COMMUNICATION, contractCode));
 	}
 	
-	public List<SelectItem> getContractModel() {
-		ContractModel[] availableModels = {ContractModel.PE151, ContractModel.PE170, 
-				ContractModel.PE176, ContractModel.PE177, ContractModel.PE179, 
-				ContractModel.PE183, ContractModel.PE187, ContractModel.PE226};
+//	public List<SelectItem> getContractModel() {
+//		ContractModel[] availableModels = IPayrollConstants.AVAILABLE_CONTRACT_MODEL; 
+//		List<SelectItem> list = new LinkedList<SelectItem>();
+//		if(getParams().getContractCode()!=null){
+//			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+//			List<ContractModel> modelList = new LinkedList<ContractModel>();
+//			for( ContractModel model: ContractModel.values() ) {
+//				for( ContractType type : ContractType.values() ) {
+//					if( type.getModel()==model 
+//							&& ArrayUtils.contains(availableModels, model)
+//							&& ArrayUtils.contains(type.getCodes(), getParams().getContractCode())
+//							&& !ArrayUtils.contains(modelList.toArray(), model) ){
+//						modelList.add(model);
+//					}
+//				}
+//			}
+//			for( ContractModel model: modelList ) {
+//				String name = model.getName(locale);
+//				name = name.length()>80?name.substring(0, 79):name;
+//				SelectItem item = new SelectItem(model, model.name() + " - " + name);
+//				list.add(item);
+//			}
+//		}
+//		return list;
+//	}
+
+	public List<?> getContractModel() {
+		ModelOption[] availableModels = IPayrollConstants.AVAILABLE_CONTRACT_MODEL_OPTIONS; 
 		List<SelectItem> list = new LinkedList<SelectItem>();
+//		List<SelectItemGroup> list = new LinkedList<SelectItemGroup>();
 		if(getParams().getContractCode()!=null){
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			List<ContractModel> modelList = new LinkedList<ContractModel>();
-			for( ContractModel model: ContractModel.values() ) {
-				for( ContractType type : ContractType.values() ) {
-					if( type.getModel()==model 
-							&& ArrayUtils.contains(availableModels, model)
-							&& ArrayUtils.contains(type.getCodes(), getParams().getContractCode())
-							&& !ArrayUtils.contains(modelList.toArray(), model) ){
-						modelList.add(model);
-					}
+			for(ModelOption opt: availableModels){
+//				List<SelectItem> subList = new ArrayList<SelectItem>();
+				if( ArrayUtils.contains(opt.getCodes(), getParams().getContractCode()) ){
+					SelectItem item = new SelectItem(opt, opt.getName(locale));
+//					subList.add(item);
+					list.add(item);
 				}
-			}
-			for( ContractModel model: modelList ) {
-				String name = model.getName(locale);
-				name = name.length()>80?name.substring(0, 79):name;
-				SelectItem item = new SelectItem(model, model.name() + " - " + name);
-				list.add(item);
+				
+//				if(!subList.isEmpty()){
+//					SelectItemGroup group = new SelectItemGroup(getAbbreviatedSelectItemLabel(type.getName(locale), NAME_LENGHT_100), type.getName(locale), false, subList.toArray(new SelectItem[0]));
+//					group.setValue(type);
+//					list.add(group);
+//				}
 			}
 		}
 		return list;
@@ -1277,6 +1299,7 @@ public class ContractController extends BasicController {
 		private Date trainingEndDate;
 		private String workSchedule;
 		private String trainingSchedule;
+		private ModelOption contractModelOption;
 		
 		public boolean isAgreementSalaryCheck() {
 			return agreementSalaryCheck;
@@ -1338,6 +1361,13 @@ public class ContractController extends BasicController {
 		}
 		public void setTrainingSchedule(String trainingSchedule) {
 			this.trainingSchedule = trainingSchedule;
+		}
+		
+		public ModelOption getContractModelOption() {
+			return contractModelOption;
+		}
+		public void setContractModelOption(ModelOption contractModelOption) {
+			this.contractModelOption = contractModelOption;
 		}
 		public Double getIrpf() {
 			return irpf;

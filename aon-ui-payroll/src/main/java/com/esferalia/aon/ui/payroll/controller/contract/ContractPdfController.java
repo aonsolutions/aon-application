@@ -51,6 +51,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
 import com.esferalia.aon.file.payroll.contract.pdf.clauses.Clauses;
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
 import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel;
+import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel.ModelOption;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
@@ -58,9 +59,6 @@ import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.ContractModel;
-import com.esferalia.aon.payroll.enumeration.ContractOption;
-import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.ContractPdfWriter;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
@@ -85,9 +83,8 @@ public class ContractPdfController {
 	private Contract contract;
 	private ContractPdfWriter contractPdfWriter;
 	private String imageUrl;
-	private ContractOption contractOption;
-	private ContractType contractType;
-	private ContractModel contractModel;
+//	private String contractModel;
+	private ModelOption modelOption;
 	private ContractCode code;
 	private ContractAttachment contractPdfDraft;	
 	private String backAction;
@@ -166,32 +163,18 @@ public class ContractPdfController {
 	public void setContractPdfWriter(ContractPdfWriter contractPdfWriter) {
 		this.contractPdfWriter = contractPdfWriter;
 	}
-	public ContractModel getContractModel() {
-		return contractModel;
-	}
-	public void setContractModel(ContractModel contractModel) {
-		this.contractModel = contractModel;
-	}
 	public ContractCode getCode() {
 		return code;
 	}
+	
+	public ModelOption getModelOption() {
+		return modelOption;
+	}
+	public void setModelOption(ModelOption modelOption) {
+		this.modelOption = modelOption;
+	}
 	public void setCode(ContractCode code) {
 		this.code = code;
-	}
-	public ContractOption getContractOption() {
-		return contractOption;
-	}
-	public void setContractOption(ContractOption contractOption) {
-		this.contractOption = contractOption;
-	}
-	public ContractType getContractType() {
-		return contractType;
-	}
-	public void setContractType(ContractType contractType) {
-		this.contractType = contractType;
-		if(contractType!=null){
-			setContractModel(contractType.getModel());
-		}
 	}
 	public Contract getContract() {
 		return contract;
@@ -261,7 +244,7 @@ public class ContractPdfController {
 		builder.append(IMAGE_URL_PREFIX0);
 		builder.append(IMAGE_URL_PREFIX1);
 		if(getDocumentType()==ContractAttachmentType.CONTRACT_DOC_DRAFT){
-			builder.append(getContractModel());
+			builder.append(getModelOption().getPdfModel());
 		} else if(getDocumentType()==ContractAttachmentType.BASIC_COPY_DRAFT){
 			builder.append(BasicCopy.BASIC_COPY_NAME);
 		} else if(getDocumentType()==ContractAttachmentType.TRAINING_ANNEX_II){
@@ -280,6 +263,8 @@ public class ContractPdfController {
 	public void beforeDocumentShow() {
 		ContractUtils utils = ContractUtils.getInstance();
 		String tc2 = utils.getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
+//		String model = utils.getContractInfoMap(getContract()).get(ContractVariable.CONTRACT_MODEL.getValue());
+		String option = utils.getContractInfoMap(getContract()).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue());
 		String indefinite = utils.getContractDataMap(getContract()).get(ContextVariable.INDEFINITE.getName());
 		String fullTime = utils.getContractDataMap(getContract()).get(ContextVariable.FULL_TIME.getName());
 		if( getDocumentType()==ContractAttachmentType.CONTRACT_DOC_DRAFT && tc2!=null ){
@@ -290,7 +275,13 @@ public class ContractPdfController {
 				
 			}
 			setCode(ContractCode.getContractCodeByValue(tc2));
-			setContractModel(getContract().getModel());
+			
+			if(StringUtils.isNotBlank(option)){
+				setModelOption(ModelOption.valueOf(option));
+			} else {
+				setModelOption(null);
+			}	
+//			setContractModel(model);
 		} else if( getDocumentType()==ContractAttachmentType.TRAINING_ANNEX_II ){
 			
 		}
@@ -323,7 +314,7 @@ public class ContractPdfController {
 			throw new AbortProcessingException(msg);
 		}
 		beforeDocumentShow();
-		if(getDocumentType()==ContractAttachmentType.CONTRACT_DOC_DRAFT && getContractModel()==null){
+		if(getDocumentType()==ContractAttachmentType.CONTRACT_DOC_DRAFT && getModelOption()==null){
 			String msg = "Modelo de contrato no reconocido.";
 			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
@@ -342,7 +333,7 @@ public class ContractPdfController {
 	private void loadPdfDocument(boolean forceRefresh) throws UnsupportedContractDocumentException, IOException{
 		if(getDocumentType()==ContractAttachmentType.CONTRACT_DOC_DRAFT){
 			if(forceRefresh || getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
-				getContractPdfWriter().loadNewPdf(getContractModel(), getContract(), getContrataParams());
+				getContractPdfWriter().loadNewPdf(getModelOption().getPdfModel(), getContract(), getContrataParams());
 				completeNewPdfFields(ContractAttachmentType.CONTRACT_DOC_DRAFT);
 			} else {
 				getContractPdfWriter().loadExistingPdf(getContractPdfDraft(), getContract());
@@ -381,16 +372,16 @@ public class ContractPdfController {
 		ContractController contractController = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
 		ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
 		if(attachType==ContractAttachmentType.CONTRACT_DOC_DRAFT){
-			if(StringUtils.isNotBlank(clausesController.getCustomClauses()) && getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.FieldName.ADDITIONAL_CLAUSES.getValue())!=null){
-				if(clausesController.getCustomClauses().length()>50){
-					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.FieldName.ADDITIONAL_CLAUSES.getValue()).setValue("Segun anexo adjunto");
-				} else {
-					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.FieldName.ADDITIONAL_CLAUSES.getValue()).setValue(clausesController.getCustomClauses());
-				}
-			}
-			if(contractController.getParams().getContractCode()==ContractCode.C421){
-				getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("jornhoraefec").setValue(contractController.getParams().getWorkSchedule());
-			}
+//			if(StringUtils.isNotBlank(clausesController.getCustomClauses()) && getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.FieldName.ADDITIONAL_CLAUSES.getValue())!=null){
+//				if(clausesController.getCustomClauses().length()>50){
+//					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.FieldName.ADDITIONAL_CLAUSES.getValue()).setValue("Segun anexo adjunto");
+//				} else {
+//					getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.FieldName.ADDITIONAL_CLAUSES.getValue()).setValue(clausesController.getCustomClauses());
+//				}
+//			}
+//			if(contractController.getParams().getContractCode()==ContractCode.C421){
+//				getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("jornhoraefec").setValue(contractController.getParams().getWorkSchedule());
+//			}
 		} else if(attachType==ContractAttachmentType.TRAINING_ANNEX_II) {
 			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("horario").setValue(contractController.getParams().getTrainingSchedule());
 		} else if(attachType==ContractAttachmentType.CONTRACT_CLAUSES) {
@@ -401,7 +392,7 @@ public class ContractPdfController {
 	private void createPdfThumbnail() throws IOException, UnsupportedContractDocumentException{
 		String fileName = "";
 		if(getDocumentType()==ContractAttachmentType.CONTRACT_DOC_DRAFT){
-			fileName = getContractModel()+".pdf"; 
+			fileName = getModelOption().getPdfModel()+".pdf"; 
 		} else if(getDocumentType()==ContractAttachmentType.BASIC_COPY_DRAFT){
 			fileName = BasicCopy.BASIC_COPY_NAME+".pdf"; 
 		} else if(getDocumentType()==ContractAttachmentType.TRAINING_ANNEX_II){

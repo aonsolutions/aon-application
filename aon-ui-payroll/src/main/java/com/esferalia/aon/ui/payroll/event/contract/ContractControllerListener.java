@@ -159,7 +159,9 @@ public class ContractControllerListener extends ControllerAdapter{
 		if(!controller.getParams().isRetaQuote()){
 			ContractUtils utils = ContractUtils.getInstance();
 			utils.updateContractData((Contract) controller.getTo(), controller.getParams());
-			updateContrataData();
+			if(!controller.isTransformedContract()){
+				updateContrataData();
+			}
 			updateAdditionalClauses();
 			updateContractInfo();
 		}

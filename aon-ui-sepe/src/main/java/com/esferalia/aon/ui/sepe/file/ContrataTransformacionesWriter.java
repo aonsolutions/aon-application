@@ -19,7 +19,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
+import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseCCC;
@@ -79,7 +79,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 		return null;
 	}
 	
-	public ITransformacionType createFile(ITransformacionType transformacionType, ContrataContratoParams params) throws ManagerBeanException{
+	public ITransformacionType createFile(ITransformacionType transformacionType, ContrataTransformacionesParams params) throws ManagerBeanException{
 		String code = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
 		if (code.equals(ContractCode.C109.getValue())) {
 			return createTransformacion109(transformacionType, params);
@@ -104,7 +104,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	}
 	
 	
-	private ITransformacionType createTransformacion109(ITransformacionType transformacionType, ContrataContratoParams params) throws ManagerBeanException{
+	private ITransformacionType createTransformacion109(ITransformacionType transformacionType, ContrataTransformacionesParams params) throws ManagerBeanException{
 		TRANSFORMACION109TYPE type = (TRANSFORMACION109TYPE) transformacionType;
 		type.setDATOSEMPRESA(createDatosEmpresa(params));
 		type.setDATOSCONTRATO(createDatosContrato(params));
@@ -117,7 +117,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 		type.setDATOSUSOLIBREEMPRESA(createDatosUsoLibreEmpresa(params));
 		return type;
 	}
-	private ITransformacionType createTransformacion139(ITransformacionType transformacionType, ContrataContratoParams params) throws ManagerBeanException{
+	private ITransformacionType createTransformacion139(ITransformacionType transformacionType, ContrataTransformacionesParams params) throws ManagerBeanException{
 		TRANSFORMACION139TYPE type = (TRANSFORMACION139TYPE) transformacionType;
 		type.setDATOSEMPRESA(createDatosEmpresa(params));
 		type.setDATOSCONTRATO(createDatosContrato(params));
@@ -130,7 +130,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 		type.setDATOSUSOLIBREEMPRESA(createDatosUsoLibreEmpresa(params));
 		return type;
 	}
-	private ITransformacionType createTransformacion189(ITransformacionType transformacionType, ContrataContratoParams params) throws ManagerBeanException{
+	private ITransformacionType createTransformacion189(ITransformacionType transformacionType, ContrataTransformacionesParams params) throws ManagerBeanException{
 		TRANSFORMACION189TYPE type = (TRANSFORMACION189TYPE) transformacionType;
 		type.setDATOSADICIONALESTRANSFORMACION(createDatosAdicionalesTransformacion(params));
 		type.setDATOSANEXOCONTRATORELEVO(createDatosAnexoContratoRelevo(params));
@@ -142,7 +142,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 		type.setDATOSUSOLIBREEMPRESA(createDatosUsoLibreEmpresa(params));
 		return type;
 	}
-	private ITransformacionType createTransformacion209(ITransformacionType transformacionType, ContrataContratoParams params) throws ManagerBeanException{
+	private ITransformacionType createTransformacion209(ITransformacionType transformacionType, ContrataTransformacionesParams params) throws ManagerBeanException{
 		TRANSFORMACION209TYPE type = (TRANSFORMACION209TYPE) transformacionType;
 		type.setDATOSEMPRESA(createDatosEmpresa(params));
 		type.setDATOSCONTRATO(createDatosContrato(params));
@@ -156,7 +156,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 		type.setDATOSUSOLIBREEMPRESA(createDatosUsoLibreEmpresa(params));
 		return type;
 	}
-	private ITransformacionType createTransformacion239(ITransformacionType transformacionType, ContrataContratoParams params) throws ManagerBeanException{
+	private ITransformacionType createTransformacion239(ITransformacionType transformacionType, ContrataTransformacionesParams params) throws ManagerBeanException{
 		TRANSFORMACION239TYPE type = (TRANSFORMACION239TYPE) transformacionType;
 		type.setDATOSEMPRESA(createDatosEmpresa(params));
 		type.setDATOSCONTRATO(createDatosContrato(params));
@@ -170,7 +170,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 		type.setDATOSUSOLIBREEMPRESA(createDatosUsoLibreEmpresa(params));
 		return type;
 	}
-	private ITransformacionType createTransformacion289(ITransformacionType transformacionType, ContrataContratoParams params) throws ManagerBeanException{
+	private ITransformacionType createTransformacion289(ITransformacionType transformacionType, ContrataTransformacionesParams params) throws ManagerBeanException{
 		TRANSFORMACION289TYPE type = (TRANSFORMACION289TYPE) transformacionType;
 		type.setDATOSEMPRESA(createDatosEmpresa(params));
 		type.setDATOSCONTRATO(createDatosContrato(params));
@@ -183,7 +183,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 		type.setDATOSUSOLIBREEMPRESA(createDatosUsoLibreEmpresa(params));
 		return null;
 	}
-	private ITransformacionType createTransformacion309(ITransformacionType transformacionType, ContrataContratoParams params) throws ManagerBeanException{
+	private ITransformacionType createTransformacion309(ITransformacionType transformacionType, ContrataTransformacionesParams params) throws ManagerBeanException{
 		TRANSFORMACION309TYPE type = (TRANSFORMACION309TYPE) transformacionType;
 		type.setDATOSEMPRESA(createDatosEmpresa(params));
 		type.setDATOSCONTRATO(createDatosContrato(params));
@@ -202,7 +202,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 //		
 //		return null;
 //	}
-	private ITransformacionType createTransformacion389(ITransformacionType transformacionType, ContrataContratoParams params) throws ManagerBeanException{
+	private ITransformacionType createTransformacion389(ITransformacionType transformacionType, ContrataTransformacionesParams params) throws ManagerBeanException{
 		TRANSFORMACION389TYPE type = (TRANSFORMACION389TYPE) transformacionType;
 		type.setDATOSEMPRESA(createDatosEmpresa(params));
 		type.setDATOSCONTRATO(createDatosContrato(params));
@@ -234,7 +234,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @param params
 	 * @return
 	 */
-	private DATOSANEXOCONTRATORELEVOTYPE createDatosAnexoContratoRelevo(ContrataContratoParams params) {
+	private DATOSANEXOCONTRATORELEVOTYPE createDatosAnexoContratoRelevo(ContrataTransformacionesParams params) {
 		if(params.isReliefData()){
 			DATOSANEXOCONTRATORELEVOTYPE datos = factory.createDATOSANEXOCONTRATORELEVOTYPE();
 			datos.setNOMBREAPELLIDOS(createNombreApellidos(params.getReliefPerson()));
@@ -295,7 +295,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @param params
 	 * @return
 	 */
-	private DATOSCOMUNICACOPIABASICATYPE createDatosComunicacionCopiaBasica(ContrataContratoParams params) {
+	private DATOSCOMUNICACOPIABASICATYPE createDatosComunicacionCopiaBasica(ContrataTransformacionesParams params) {
 		DATOSCOMUNICACOPIABASICATYPE datos = factory.createDATOSCOMUNICACOPIABASICATYPE();
 		datos.setDOMICCENTROTRABAJO(getContract().getWorkPlace().getAddress().getFullAddress());
 		datos.setTEXTOCOPIABASICA(params.getTextoCopiaBasica());
@@ -334,7 +334,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @return
 	 * @throws ManagerBeanException
 	 */
-	private DATOSEMPRESATYPE createDatosEmpresa(ContrataContratoParams params) throws ManagerBeanException {
+	private DATOSEMPRESATYPE createDatosEmpresa(ContrataTransformacionesParams params) throws ManagerBeanException {
 		DATOSEMPRESATYPE datos = factory.createDATOSEMPRESATYPE();
 		datos.setCIFNIFEMPRESA(createCifNif(getContract().getWorkPlace().getEnterprise().getRegistry().getDocument()));
 		datos.setCODIGOCUENTACOTIZACION(completeLength(getEnterpriseCCC(getContract().getWorkPlace().getEnterprise()),15,"0",false));
@@ -384,12 +384,12 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @param ContrataContratoParams
 	 * @return
 	 */
-	private DATOSMEDIDASFOMENTOTYPE createDatosMedidasFomento(ContrataContratoParams ContrataContratoParams) {
+	private DATOSMEDIDASFOMENTOTYPE createDatosMedidasFomento(ContrataTransformacionesParams params) {
 		// TODO 
 		DATOSMEDIDASFOMENTOTYPE datos = factory.createDATOSMEDIDASFOMENTOTYPE();
-		datos.setINDCOSTEDESPIDO(ContrataContratoParams.isIndCosteDespido()?"1":"2");
-		if(ContrataContratoParams.isIndCosteDespido()){
-			datos.setCODIGOCOLECTIVODESPIDO(ContrataContratoParams.getCodigoColectivoDespido()!=null?ContrataContratoParams.getCodigoColectivoDespido().getCode():null);
+		datos.setINDCOSTEDESPIDO(params.isIndCosteDespido()?"1":"2");
+		if(params.isIndCosteDespido()){
+			datos.setCODIGOCOLECTIVODESPIDO(params.getCodigoColectivoDespido()!=null?params.getCodigoColectivoDespido().getCode():null);
 		} else {
 			datos.setCODIGOCOLECTIVODESPIDO(null);
 		}
@@ -415,7 +415,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @param params
 	 * @return
 	 */
-	private DATOSUSOLIBREEMPRESATYPE createDatosUsoLibreEmpresa(ContrataContratoParams params) {
+	private DATOSUSOLIBREEMPRESATYPE createDatosUsoLibreEmpresa(ContrataTransformacionesParams params) {
 		if(params.getUsoLibreEmpresa()!=null){
 			DATOSUSOLIBREEMPRESATYPE datos = factory.createDATOSUSOLIBREEMPRESATYPE();
 			datos.setUSOLIBREEMPRESA(params.getUsoLibreEmpresa());
@@ -484,7 +484,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	</xsd:complexType>
 	 * @return
 	 */
-	private DATOSGENERALESTRANSFORMACIONTYPE createDatosGeneralesTransformacion(ContrataContratoParams params) {
+	private DATOSGENERALESTRANSFORMACIONTYPE createDatosGeneralesTransformacion(ContrataTransformacionesParams params) {
 		DATOSGENERALESTRANSFORMACIONTYPE datos = factory.createDATOSGENERALESTRANSFORMACIONTYPE();
 		datos.setFECHAINICIO(getFormatedDate(getContract().getStartDate()));
 		// TODO
@@ -547,7 +547,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	</xsd:complexType>
 	 * @return
 	 */
-	private DATOSCONTRATOTYPE createDatosContrato(ContrataContratoParams params) {
+	private DATOSCONTRATOTYPE createDatosContrato(ContrataTransformacionesParams params) {
 		DATOSCONTRATOTYPE datos = factory.createDATOSCONTRATOTYPE();
 		datos.setCLAVECONTRATO(null);
 		if(datos.getCLAVECONTRATO()==null){
@@ -605,7 +605,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @param params
 	 * @return
 	 */
-	private DATOSADICIONALESTRANSFORMACIONTYPE createDatosAdicionalesTransformacion(ContrataContratoParams params) {
+	private DATOSADICIONALESTRANSFORMACIONTYPE createDatosAdicionalesTransformacion(ContrataTransformacionesParams params) {
 		DATOSADICIONALESTRANSFORMACIONTYPE datos = factory.createDATOSADICIONALESTRANSFORMACIONTYPE();
 		datos.setINDDISCAPACIDAD(params.getIndDiscapacidad()!=null?params.getIndDiscapacidad().getCode():null);
 		// TODO
@@ -664,7 +664,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @param ContrataContratoParams
 	 * @return
 	 */
-	private DATOSBONIFICACIONTYPE createDatosBonificacion(ContrataContratoParams ContrataContratoParams) {
+	private DATOSBONIFICACIONTYPE createDatosBonificacion(ContrataTransformacionesParams ContrataContratoParams) {
 		// TODO
 		DATOSBONIFICACIONTYPE datos = factory.createDATOSBONIFICACIONTYPE();
 		datos.setCODIGOCOLECTIVOBONIF("00");
@@ -745,7 +745,7 @@ public class ContrataTransformacionesWriter implements IContrataWriter {
 	 * @param params
 	 * @return
 	 */
-	private DATOSCONTRATOTIEMPOPARCIALTYPE createDatosContratoTiempoParcial(ContrataContratoParams params) {
+	private DATOSCONTRATOTIEMPOPARCIALTYPE createDatosContratoTiempoParcial(ContrataTransformacionesParams params) {
 		// TODO
 		DATOSCONTRATOTIEMPOPARCIALTYPE datos = factory.createDATOSCONTRATOTIEMPOPARCIALTYPE();		
 		datos.setTIPOJORNADA(params.getTipoJornada().getCode());

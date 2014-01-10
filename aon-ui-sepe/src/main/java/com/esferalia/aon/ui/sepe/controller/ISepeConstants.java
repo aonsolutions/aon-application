@@ -42,7 +42,7 @@ public interface ISepeConstants {
 		"200",
 //		"230", "250",
 		// FIJO DISCONT.
-//		"300", "330", "350",
+//		"300","330", "350",
 		// TEMP. TC
 		"401", "402", "410", "420", "421", "430",
 //		"441", "450", "452"
@@ -55,11 +55,13 @@ public interface ISepeConstants {
 	
 	public static final String[] AVAILABLE_TRANSFORM_CODE_COMMUNICATION = {
 		// INDEF. TC
-		"109", "139", "189",
+		"189",
+//		"109", "139", 
 		// INDEF. TP
-		"209", "239", "289",
+		"289",
+//		"209", "239", 
 		// FIJO DISCONT.
-		"309", "339", "389",
+//		"309", "339", "389",
 		};
 	
 	public static final ContrataFileType[] AVAILABLE_CONTRATA_FILE_TYPES = {

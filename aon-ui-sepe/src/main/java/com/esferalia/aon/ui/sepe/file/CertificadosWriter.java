@@ -333,7 +333,7 @@ public class CertificadosWriter {
 		List<Period> existingPeriods = getPeriodList(batchDetail.getContract());
 		
 		if(existingPeriods!=null){
-			for (Period p : getPeriodList(batchDetail.getContract())) {
+			for (Period p : existingPeriods) {
 				
 				Map<String, ContractData> map = utils.getContractDataMap(batchDetail.getContract(), p.getStart(), p.getEnd(), Boolean.TRUE);
 				
@@ -362,7 +362,9 @@ public class CertificadosWriter {
 		List<Period> list = null;
 		for(ContractData cd: utils.getContractDataMap(contract, null, null, Boolean.TRUE).values()){
 			if(cd.getName().equals(ContextVariable.WEEK_DAYS.getName()) || cd.getName().equals(ContextVariable.CONTRACT_DAYS.getName())){
-				Period period = new Period(cd.getStartDate(), cd.getEndDate());
+				Date startDate = cd.getStartDate();
+				Date endDate = cd.getEndDate();
+				Period period = new Period(startDate, endDate!=null?endDate:contract.getEndDate());
 				if(list==null){
 					list = new LinkedList<Period>();
 					list.add(period);

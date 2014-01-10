@@ -9,7 +9,7 @@
 	
 	<a4j:repeat var="to" value="#{controller.contractFieldList}">
 		<aon:panelGrid columns="2" styleClass="aon-width-all"
-			columnClasses="aon-panelGrid-odd aon-width-200, aon-panelGrid-even aon-width-auto" >
+			columnClasses="aon-panelGrid-odd aon-width-300, aon-panelGrid-even aon-width-auto" >
 		
 			<aon:outputText value="#{to.name}" />
 			<aon:inputText value="#{to.expression}" maxlength="128" size="64" />

@@ -84,7 +84,7 @@ public class ModelPE170 extends AbstractContractModel {
 					getPdfFieldsMap().get(PE170FieldName.PARTIALLY_TIME_YEARLY.getValue()).setValue("true");
 				}
 
-				// TODO: what is needed for these partielly time options?
+				// TODO: what is needed for these partially time options?
 				getPdfFieldsMap().get(PE170FieldName.COMPARABLE_FULL_TIME.getValue()).setValue(null);
 				getPdfFieldsMap().get(PE170FieldName.AGREEMENT_COLLECTIVE_FULL_TIME.getValue()).setValue(null);
 				getPdfFieldsMap().get(PE170FieldName.LEGAL_MAX.getValue()).setValue(null);
@@ -119,18 +119,8 @@ public class ModelPE170 extends AbstractContractModel {
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PE170FieldName.SALARY_AMOUNT.toString()))){
 				getPdfFieldsMap().get(PE170FieldName.SALARY_AMOUNT.getValue()).setValue(getContractInfoMap(contract).get(PE170FieldName.SALARY_AMOUNT.toString()));
 			}
-			if(code == ContractCode.C100){
-				getPdfFieldsMap().get(PE170FieldName.SALARY_PERIOD.getValue()).setValue("mensuales");
-			} else if(code == ContractCode.C200){	
-				if(contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_D){
-					getPdfFieldsMap().get(PE170FieldName.SALARY_PERIOD.getValue()).setValue("diarios");
-				} else if(contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_S){
-					getPdfFieldsMap().get(PE170FieldName.SALARY_PERIOD.getValue()).setValue("semanales");
-				} else if(contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_M){
-					getPdfFieldsMap().get(PE170FieldName.SALARY_PERIOD.getValue()).setValue("mensuales");
-				} else if(contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_A){
-					getPdfFieldsMap().get(PE170FieldName.SALARY_PERIOD.getValue()).setValue("anuales");
-				}
+			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PE170FieldName.SALARY_PERIOD.toString()))){
+				getPdfFieldsMap().get( PE170FieldName.SALARY_PERIOD.getValue()).setValue(getContractInfoMap(contract).get(PE170FieldName.SALARY_PERIOD.toString()));
 			}
 			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(PE170FieldName.SALARY_CONCEPT.toString()))){
 				getPdfFieldsMap().get(PE170FieldName.SALARY_CONCEPT.getValue()).setValue(getContractInfoMap(contract).get(PE170FieldName.SALARY_CONCEPT.toString()));
@@ -200,7 +190,7 @@ public class ModelPE170 extends AbstractContractModel {
 		RELIEF_CONTRACT_YES("sel_ctorel1",Boolean.FALSE),
 		RELIEF_CONTRACT_NO("sel_ctorel2",Boolean.FALSE),
 		SALARY_AMOUNT("retribu",Boolean.TRUE),
-		SALARY_PERIOD("perioretri",Boolean.FALSE),
+		SALARY_PERIOD("perioretri",Boolean.TRUE),
 		SALARY_CONCEPT("concepsala",Boolean.TRUE),
 		HOLIDAYS("vacaciones",Boolean.TRUE),
 		AGREEMENT_COLLECTIVE("convcole",Boolean.FALSE),

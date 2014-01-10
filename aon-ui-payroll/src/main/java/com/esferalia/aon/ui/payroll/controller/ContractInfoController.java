@@ -128,15 +128,15 @@ public class ContractInfoController extends BasicController {
 			} else if(getContractModel().toString().equals(ModelPE176.MODEL_NAME)){
 				fields = ModelPE176.PE176FieldName.values();
 			} else if(getContractModel().toString().equals(ModelPE177.MODEL_NAME)){
-//				fields = ModelPE177.PE177FieldName.values();
+				fields = ModelPE177.PE177FieldName.values();
 			} else if(getContractModel().toString().equals(ModelPE179.MODEL_NAME)){
-//				fields = ModelPE179.PE179FieldName.values();
+				fields = ModelPE179.PE179FieldName.values();
 			} else if(getContractModel().toString().equals(ModelPE183.MODEL_NAME)){
-//				fields = ModelPE183.PE183FieldName.values();
+				fields = ModelPE183.PE183FieldName.values();
 			} else if(getContractModel().toString().equals(ModelPE187.MODEL_NAME)){
-//				fields = ModelPE187.PE187FieldName.values();
+				fields = ModelPE187.PE187FieldName.values();
 			} else if(getContractModel().toString().equals(ModelPE226.MODEL_NAME)){
-//				fields = ModelPE226.PE226FieldName.values();
+				fields = ModelPE226.PE226FieldName.values();
 			}
 			if(fields != null){
 				for(IContractFieldName field: fields){
@@ -200,8 +200,10 @@ public class ContractInfoController extends BasicController {
 	
 	public void saveContractFields(){
 		try {
-			for(ContractField field: contractFieldList){
-				this.getManagerBean().insertOrUpdate(field.getContractInfo());
+			if(contractFieldList!=null){
+				for(ContractField field: contractFieldList){
+					this.getManagerBean().insertOrUpdate(field.getContractInfo());
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("No se han podido guardar los datos correctamente.",e);
@@ -220,7 +222,7 @@ public class ContractInfoController extends BasicController {
 			try {
 				label = AonUtil.getMessage("payroll_contract_document_"+this.contractInfo.getName());
 			} catch (Exception e) {
-			label = this.contractInfo.getName();
+				label = this.contractInfo.getName();
 			}
 			return label;
 		}

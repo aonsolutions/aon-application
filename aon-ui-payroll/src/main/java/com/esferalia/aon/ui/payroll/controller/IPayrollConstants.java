@@ -1,6 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller;
 
-import com.esferalia.aon.payroll.enumeration.ContractModel;
+import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel.ModelOption;
 
 public interface IPayrollConstants {
 	
@@ -97,16 +97,61 @@ public interface IPayrollConstants {
 	// ************************************************************
 	// OTHER
 	// ************************************************************
-	public static final ContractModel[] AVAILABLE_CONTRACT_MODEL = {
-		ContractModel.PE151,
-		ContractModel.PE170,
-		ContractModel.PE176,
-		ContractModel.PE177,
-		ContractModel.PE179,
-		ContractModel.PE183,
-		ContractModel.PE187,
-		ContractModel.PE226,
+//	public static final ContractModel[] AVAILABLE_CONTRACT_MODEL = {
+//		ContractModel.PE151,
+//		ContractModel.PE170,
+//		ContractModel.PE176,
+//		ContractModel.PE177,
+//		ContractModel.PE179,
+//		ContractModel.PE183,
+//		ContractModel.PE187,
+//		ContractModel.PE226,
+//	};
+	public static final ModelOption[] AVAILABLE_CONTRACT_MODEL_OPTIONS = {
+		ModelOption.LEARNING_OPT1,
+//		ModelOption.LEARNING_OPT2,
+//		ModelOption.LEARNING_OPT3,
+//		ModelOption.LEARNING_OPT4,
+//		ModelOption.PRACTICE_OPT1,
+//		ModelOption.PRACTICE_OPT2,
+//		ModelOption.PRACTICE_OPT3,
+//		ModelOption.PRACTICE_OPT4,
+//		ModelOption.PRACTICE_OPT5,
+		ModelOption.TEMPORARY_OPT1,
+		ModelOption.TEMPORARY_OPT2,
+//		ModelOption.TEMPORARY_OPT3,
+//		ModelOption.TEMPORARY_OPT4,
+//		ModelOption.TEMPORARY_OPT5,
+//		ModelOption.TEMPORARY_OPT6,
+//		ModelOption.TEMPORARY_OPT7,
+//		ModelOption.TEMPORARY_OPT8,
+//		ModelOption.TEMPORARY_OPT9,
+//		ModelOption.TEMPORARY_OPT10,
+//		ModelOption.TEMPORARY_OPT11,
+		ModelOption.TEMPORARY_OPT12,
+//		ModelOption.TEMPORARY_OPT13,
+//		ModelOption.TEMPORARY_OPT14,
+//		ModelOption.TEMPORARY_OPT15,
+//		ModelOption.TEMPORARY_OPT16,
+//		ModelOption.TEMPORARY_OPT17,
+//		ModelOption.TEMPORARY_OPT18,
+		ModelOption.INDEFINITE_OPT1,
+//		ModelOption.INDEFINITE_OPT2,
+//		ModelOption.INDEFINITE_OPT3,
+//		ModelOption.INDEFINITE_OPT4,
+		ModelOption.INDEFINITE_OPT5,
+		ModelOption.INDEFINITE_OPT6,
+		ModelOption.INDEFINITE_OPT7,
+//		ModelOption.INDEFINITE_OPT8,
+//		ModelOption.INDEFINITE_OPT9,
+//		ModelOption.INDEFINITE_OPT10,
+//		ModelOption.INDEFINITE_OPT11,
+//		ModelOption.INDEFINITE_OPT12,
+//		ModelOption.INDEFINITE_OPT13,
+//		ModelOption.INDEFINITE_OPT14,
+//		ModelOption.INDEFINITE_OPT15,
+//		ModelOption.INDEFINITE_OPT16,
+//		ModelOption.INDEFINITE_OPT17, // TRANSFORMATION CODES
 	};
-	
 	
 }

@@ -2,8 +2,13 @@ package com.esferalia.aon.file.payroll.contrata;
 
 import java.util.Date;
 
+import com.code.aon.person.Person;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.contrata.TEJINDIS;
+import com.esferalia.aon.payroll.enumeration.contrata.TEOCOLDE;
+import com.esferalia.aon.payroll.enumeration.contrata.TEQPTIEM;
+import com.esferalia.aon.payroll.enumeration.contrata.TERFIRCB;
 import com.esferalia.aon.sepe.api.contract.model.ITransformacionType;
 
 
@@ -72,7 +77,7 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //	/* 
 //	 * datos de contrata 
 //	 */
-//	private String usoLibreEmpresa;
+	private String usoLibreEmpresa;
 //	private String timeType;
 //	private boolean theoryTraining;
 //	private String ageGroup;
@@ -87,12 +92,12 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //	private String actuation;
 //	private Double financialYear;
 //
-//	private boolean indCosteDespido;
-//	private TEOCOLDE codigoColectivoDespido;
+	private boolean indCosteDespido;
+	private TEOCOLDE codigoColectivoDespido;
 //
 //	// DATOS_GENERALESCONTRATOTYPE
 //	private String offer;
-//	private TEJINDIS indDiscapacidad;
+	private TEJINDIS indDiscapacidad;
 //	private TELCOLBO colectivoBonificacion;
 //	private Boolean indEmpleadAutonomo;
 //	private THYDISLE otrasLegislaciones;
@@ -104,8 +109,8 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //	private TESCETCO codigoEtCoTe;
 //	
 //	// DATOSCOMUNICACOPIABASICATYPE
-//	private TERFIRCB tipoFirmaCopiaBasica;
-//	private String textoCopiaBasica;
+	private TERFIRCB tipoFirmaCopiaBasica;
+	private String textoCopiaBasica;
 //
 //	// DATOSETTTYPE
 //	private String ettCif;
@@ -115,7 +120,7 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //	
 //	// CONTRATO RELEVO
 //	private TEYTRELE tipoTrabajadorRelevo;
-//	private Person reliefPerson;
+	private Person reliefPerson;
 //	
 //	// DATOSCONTRATOEXTRANJEROTYPE
 //	private String employmentCharacter;
@@ -126,7 +131,7 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //	///////////////////////////////////////////////////
 //	private boolean employmentProgramData;
 //	private boolean ettData;
-//	private boolean reliefData;
+	private boolean reliefData;
 //	private boolean offerData;
 //	private boolean schoolWorkshopData;
 //	private boolean disabilityData;
@@ -141,7 +146,7 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //
 //	private boolean showEmploymentProgramData;
 //	private boolean showEttData;
-//	private boolean showReliefData;
+	private boolean showReliefData;
 //	private boolean showOfferData;
 //	private boolean showSchoolWorkshopData;
 //	private boolean showDisabilityData;
@@ -180,12 +185,12 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //	public void setShowEttData(boolean showEttData) {
 //		this.showEttData = showEttData;
 //	}
-//	public boolean isShowReliefData() {
-//		return showReliefData;
-//	}
-//	public void setShowReliefData(boolean showReliefData) {
-//		this.showReliefData = showReliefData;
-//	}
+	public boolean isShowReliefData() {
+		return showReliefData;
+	}
+	public void setShowReliefData(boolean showReliefData) {
+		this.showReliefData = showReliefData;
+	}
 //	public boolean isShowOfferData() {
 //		return showOfferData;
 //	}
@@ -258,12 +263,12 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //	public void setEttData(boolean ettData) {
 //		this.ettData = ettData;
 //	}
-//	public boolean isReliefData() {
-//		return reliefData;
-//	}
-//	public void setReliefData(boolean reliefData) {
-//		this.reliefData = reliefData;
-//	}
+	public boolean isReliefData() {
+		return reliefData;
+	}
+	public void setReliefData(boolean reliefData) {
+		this.reliefData = reliefData;
+	}
 //	public boolean isOfferData() {
 //		return offerData;
 //	}
@@ -330,12 +335,12 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //	public void setNivelFormativo(TBONVFOR nivelFormativo) {
 //		this.nivelFormativo = nivelFormativo;
 //	}
-//	public TEJINDIS getIndDiscapacidad() {
-//		return indDiscapacidad;
-//	}
-//	public void setIndDiscapacidad(TEJINDIS indDiscapacidad) {
-//		this.indDiscapacidad = indDiscapacidad;
-//	}
+	public TEJINDIS getIndDiscapacidad() {
+		return indDiscapacidad;
+	}
+	public void setIndDiscapacidad(TEJINDIS indDiscapacidad) {
+		this.indDiscapacidad = indDiscapacidad;
+	}
 //	public TELCOLBO getColectivoBonificacion() {
 //		return colectivoBonificacion;
 //	}
@@ -434,15 +439,15 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //	public void setTipoTrabajadorRelevo(TEYTRELE tipoTrabajadorRelevo) {
 //		this.tipoTrabajadorRelevo = tipoTrabajadorRelevo;
 //	}
-//	public Person getReliefPerson() {
-//		if(reliefPerson==null){
-//			reliefPerson = new Person();
-//		}
-//		return reliefPerson;
-//	}
-//	public void setReliefPerson(Person reliefPerson) {
-//		this.reliefPerson = reliefPerson;
-//	}
+	public Person getReliefPerson() {
+		if(reliefPerson==null){
+			reliefPerson = new Person();
+		}
+		return reliefPerson;
+	}
+	public void setReliefPerson(Person reliefPerson) {
+		this.reliefPerson = reliefPerson;
+	}
 //	
 //	public String getEmploymentCharacter() {
 //		return employmentCharacter;
@@ -456,24 +461,24 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //	public void setAnexEmploymentYear(String anexEmploymentYear) {
 //		this.anexEmploymentYear = anexEmploymentYear;
 //	}
-//	public TEOCOLDE getCodigoColectivoDespido() {
-//		return codigoColectivoDespido;
-//	}
-//	public void setCodigoColectivoDespido(TEOCOLDE codigoColectivoDespido) {
-//		this.codigoColectivoDespido = codigoColectivoDespido;
-//	}
-//	public boolean isIndCosteDespido() {
-//		return indCosteDespido;
-//	}
-//	public void setIndCosteDespido(boolean indCosteDespido) {
-//		this.indCosteDespido = indCosteDespido;
-//	}
-//	public String getUsoLibreEmpresa() {
-//		return usoLibreEmpresa;
-//	}
-//	public void setUsoLibreEmpresa(String usoLibreEmpresa) {
-//		this.usoLibreEmpresa = usoLibreEmpresa;
-//	}
+	public TEOCOLDE getCodigoColectivoDespido() {
+		return codigoColectivoDespido;
+	}
+	public void setCodigoColectivoDespido(TEOCOLDE codigoColectivoDespido) {
+		this.codigoColectivoDespido = codigoColectivoDespido;
+	}
+	public boolean isIndCosteDespido() {
+		return indCosteDespido;
+	}
+	public void setIndCosteDespido(boolean indCosteDespido) {
+		this.indCosteDespido = indCosteDespido;
+	}
+	public String getUsoLibreEmpresa() {
+		return usoLibreEmpresa;
+	}
+	public void setUsoLibreEmpresa(String usoLibreEmpresa) {
+		this.usoLibreEmpresa = usoLibreEmpresa;
+	}
 //	public String getTimeType() {
 //		return timeType;
 //	}
@@ -552,18 +557,18 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //	public void setFinancialYear(Double financialYear) {
 //		this.financialYear = financialYear;
 //	}
-//	public TERFIRCB getTipoFirmaCopiaBasica() {
-//		return tipoFirmaCopiaBasica;
-//	}
-//	public void setTipoFirmaCopiaBasica(TERFIRCB tipoFirmaCopiaBasica) {
-//		this.tipoFirmaCopiaBasica = tipoFirmaCopiaBasica;
-//	}
-//	public String getTextoCopiaBasica() {
-//		return textoCopiaBasica;
-//	}
-//	public void setTextoCopiaBasica(String textoCopiaBasica) {
-//		this.textoCopiaBasica = textoCopiaBasica;
-//	}
+	public TERFIRCB getTipoFirmaCopiaBasica() {
+		return tipoFirmaCopiaBasica;
+	}
+	public void setTipoFirmaCopiaBasica(TERFIRCB tipoFirmaCopiaBasica) {
+		this.tipoFirmaCopiaBasica = tipoFirmaCopiaBasica;
+	}
+	public String getTextoCopiaBasica() {
+		return textoCopiaBasica;
+	}
+	public void setTextoCopiaBasica(String textoCopiaBasica) {
+		this.textoCopiaBasica = textoCopiaBasica;
+	}
 //	public String getEttCif() {
 //		return ettCif;
 //	}
@@ -610,18 +615,18 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //	private String grupoCotizacionCorporacionLocal;
 //	
 //	// DATOSCONTRATOTIEMPOPARCIALTYPE
-//	private TEQPTIEM tipoJornada;
-//	private String horasJornada;
-//	private String minutosJornada;
-//	private String horasConvenio;
-//	private String minutosConvenio;
+	private TEQPTIEM tipoJornada;
+	private String horasJornada;
+	private String minutosJornada;
+	private String horasConvenio;
+	private String minutosConvenio;
 //	private String horasFormacion;
 //	private String minutosFormacion;
 //	private String indicFormacionTeorica;
 //	private THPCOLFO colectivoEdad;
 //	private String porcentajeJubilacionParcial;
-//	private String actividadSinFechaCierta;
-//	private Boolean fijoDiscontinuoPeriodico;
+	private String actividadSinFechaCierta;
+	private Boolean fijoDiscontinuoPeriodico;
 //	private String porcJornadaPactada;
 //	private String horasAnualesTiempoCompleto;
 //	
@@ -684,36 +689,36 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //			String grupoCotizacionCorporacionLocal) {
 //		this.grupoCotizacionCorporacionLocal = grupoCotizacionCorporacionLocal;
 //	}
-//	public TEQPTIEM getTipoJornada() {
-//		return tipoJornada;
-//	}
-//	public void setTipoJornada(TEQPTIEM tipoJornada) {
-//		this.tipoJornada = tipoJornada;
-//	}
-//	public String getHorasJornada() {
-//		return horasJornada;
-//	}
-//	public void setHorasJornada(String horasJornada) {
-//		this.horasJornada = horasJornada;
-//	}
-//	public String getMinutosJornada() {
-//		return minutosJornada;
-//	}
-//	public void setMinutosJornada(String minutosJornada) {
-//		this.minutosJornada = minutosJornada;
-//	}
-//	public String getHorasConvenio() {
-//		return horasConvenio;
-//	}
-//	public void setHorasConvenio(String horasConvenio) {
-//		this.horasConvenio = horasConvenio;
-//	}
-//	public String getMinutosConvenio() {
-//		return minutosConvenio;
-//	}
-//	public void setMinutosConvenio(String minutosConvenio) {
-//		this.minutosConvenio = minutosConvenio;
-//	}
+	public TEQPTIEM getTipoJornada() {
+		return tipoJornada;
+	}
+	public void setTipoJornada(TEQPTIEM tipoJornada) {
+		this.tipoJornada = tipoJornada;
+	}
+	public String getHorasJornada() {
+		return horasJornada;
+	}
+	public void setHorasJornada(String horasJornada) {
+		this.horasJornada = horasJornada;
+	}
+	public String getMinutosJornada() {
+		return minutosJornada;
+	}
+	public void setMinutosJornada(String minutosJornada) {
+		this.minutosJornada = minutosJornada;
+	}
+	public String getHorasConvenio() {
+		return horasConvenio;
+	}
+	public void setHorasConvenio(String horasConvenio) {
+		this.horasConvenio = horasConvenio;
+	}
+	public String getMinutosConvenio() {
+		return minutosConvenio;
+	}
+	public void setMinutosConvenio(String minutosConvenio) {
+		this.minutosConvenio = minutosConvenio;
+	}
 //	public String getHorasFormacion() {
 //		return horasFormacion;
 //	}
@@ -744,18 +749,18 @@ public class ContrataTransformacionesParams implements IContrataParams{
 //	public void setPorcentajeJubilacionParcial(String porcentajeJubilacionParcial) {
 //		this.porcentajeJubilacionParcial = porcentajeJubilacionParcial;
 //	}
-//	public String getActividadSinFechaCierta() {
-//		return actividadSinFechaCierta;
-//	}
-//	public void setActividadSinFechaCierta(String actividadSinFechaCierta) {
-//		this.actividadSinFechaCierta = actividadSinFechaCierta;
-//	}
-//	public Boolean getFijoDiscontinuoPeriodico() {
-//		return fijoDiscontinuoPeriodico;
-//	}
-//	public void setFijoDiscontinuoPeriodico(Boolean fijoDiscontinuoPeriodico) {
-//		this.fijoDiscontinuoPeriodico = fijoDiscontinuoPeriodico;
-//	}
+	public String getActividadSinFechaCierta() {
+		return actividadSinFechaCierta;
+	}
+	public void setActividadSinFechaCierta(String actividadSinFechaCierta) {
+		this.actividadSinFechaCierta = actividadSinFechaCierta;
+	}
+	public Boolean getFijoDiscontinuoPeriodico() {
+		return fijoDiscontinuoPeriodico;
+	}
+	public void setFijoDiscontinuoPeriodico(Boolean fijoDiscontinuoPeriodico) {
+		this.fijoDiscontinuoPeriodico = fijoDiscontinuoPeriodico;
+	}
 //	public String getPorcJornadaPactada() {
 //		return porcJornadaPactada;
 //	}

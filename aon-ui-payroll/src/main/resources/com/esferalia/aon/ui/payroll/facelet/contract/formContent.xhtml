@@ -90,7 +90,7 @@
 		<aon:div id="Contract_contractModelDiv">
 			<aon:selectOneMenu id="Contract_contractModel" 
 				disabled="#{contract.params.contractTransformCode!=null}"
-				value="#{contract.to.model}">
+				value="#{contract.params.contractModelOption}">
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contract.contractModel}" />
 			</aon:selectOneMenu>
@@ -140,16 +140,6 @@
 			</aon:selectInputDate>
 		</aon:div>
 		
-<c:if test="#{contract.params.retaQuote}">
-		<aon:outputLabel for="agreementLevelCategory-alias" 
-			value="#{bundle.payroll_contract_charge}" />
-		<aon:inputText id="agreementLevelCategory-alias" 
-			size="60" maxlength="64"
-			value="#{contract.to.categoryDescription}" />
-</c:if>
-
-
-<c:if test="#{!contract.params.retaQuote}">
 		<c:if test="#{actionDenied.moduleEnabled['payroll']}">
 			<aon:outputLabel  
 				value="#{bundle.payroll_agreementLevel_category_level}" />
@@ -188,6 +178,7 @@
 				</aon:panelGroup>
 			</aon:panelGrid>
 		
+<c:if test="#{!contract.params.retaQuote}">
 			<aon:outputLabel for="quote_group"
 				value="#{bundle.payroll_contract_quote_group}" />
 			<aon:selectOneMenu id="quote_group"  
@@ -203,9 +194,11 @@
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.occupationTypes}" />
 			</aon:selectOneMenu>
+</c:if>
 
 		</c:if>
-
+		
+<c:if test="#{!contract.params.retaQuote}">
 		<c:if test="#{!contract.trainingContract}" >
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.params.cno}" />

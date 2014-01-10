@@ -8,7 +8,7 @@ public class RZS {
 	private String indicador;
 	private String tipoAlfabeticoEmpresario;
 	private String razonSocial;
-//	private String autorizacion;
+	private String autorizacion;
 	
 	public String getIndicador() {
 		return indicador;
@@ -28,12 +28,12 @@ public class RZS {
 	public void setRazonSocial(String razonSocial) {
 		this.razonSocial = razonSocial;
 	}
-//	public String getAutorizacion() {
-//		return autorizacion;
-//	}
-//	public void setAutorizacion(String autorizacion) {
-//		this.autorizacion = autorizacion;
-//	}
+	public String getAutorizacion() {
+		return autorizacion;
+	}
+	public void setAutorizacion(String autorizacion) {
+		this.autorizacion = autorizacion;
+	}
 	
 	
 }

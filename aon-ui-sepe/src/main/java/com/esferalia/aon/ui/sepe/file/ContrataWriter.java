@@ -18,6 +18,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.ContrataFactory;
 import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
+import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -104,7 +105,7 @@ public class ContrataWriter implements IContrataWriter{
 			modelPath = writer.CONTRATA_CONTRATOS_MODEL_PATH;
 		} else if( isTransformacionFile() ) {
 			ContrataTransformacionesWriter writer = new ContrataTransformacionesWriter(contract); 
-			ITransformacionType transformacionType = writer.createFile(factory.createTransformacionesType(code), (ContrataContratoParams) params);
+			ITransformacionType transformacionType = writer.createFile(factory.createTransformacionesType(code), (ContrataTransformacionesParams) params);
 			transformaciones = writer.getFactory().createTRANSFORMACIONES();
 			transformaciones.getTRANSFORMACION109AndTRANSFORMACION139AndTRANSFORMACION189().add(transformacionType);
 			modelPath = writer.CONTRATA_TRANSFORMACIONES_MODEL_PATH;

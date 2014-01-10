@@ -25,6 +25,7 @@ public enum ContractCode implements IResourceable, IStringEnum {
 	C300("300", null),
 	C309("309", null),
 	C330("330", null),
+	C339("339", null),
 	C350("350", null),
 	C389("389", null),
 	
