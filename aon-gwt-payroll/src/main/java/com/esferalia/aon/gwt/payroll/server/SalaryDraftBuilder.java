@@ -47,7 +47,6 @@ import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
-import com.google.gwt.thirdparty.javascript.jscomp.Scope.Var;
 
 public class SalaryDraftBuilder implements ISalaryBuilder,
 		ContractSalaryCalculator.IListener, IContractSalaryCalculatorContext.IListener {
