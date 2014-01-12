@@ -1,0 +1,160 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+
+	<ui:Style>
+	.form {
+		padding: 10px;
+	}
+	
+	.label {
+		margin-top: 10x;
+		font-weight: bold;
+		padding: 1px 0.5em;
+		white-space: nowrap;
+		background-color: #F2F2F2;
+	}
+	
+	.labeltop {
+		margin-top: 10x;
+		font-weight: bold;
+		padding: 1px 0.5em;
+		vertical-align: top;
+		white-space: nowrap;
+		background-color: #F2F2F2;
+	}
+	
+	.field {
+		padding: 1px 0.5em;
+	}
+	
+	.buttons {
+		padding-top: 10px;
+		text-align: right;
+	}
+	
+	.info {
+		
+	}
+	
+	.warn {
+		
+	}
+	
+	.error {
+		
+	}
+	
+	.messages {
+		padding-left: 0.5em;
+		padding-bottom: 10px;
+	}
+	
+	.form textarea {
+		resize: none;
+	}
+	
+	@sprite .fxButton {
+		margin: 0px;
+		padding: 0px;
+		border: 0px;
+		cursor: pointer;
+		gwt-image: 'fx';
+		background-position: left center;
+	}
+	
+	@sprite .undoButton {
+		margin: 0px;
+		padding: 0px;
+		border: 0px;
+		cursor: pointer;
+		gwt-image: 'undo';
+		background-position: left center;
+	}
+	</ui:Style>
+
+	<ui:image field='fx' src='fx.png' />
+	<ui:image field='undo' src='undo.png' />
+	<ui:image field='redo' src='redo.png' />
+
+
+	<g:HTMLPanel styleName="{style.form}">
+
+
+		<g:Grid width="100%" ui:field="mainGrid">
+			<g:row>
+				<g:customCell styleName="{style.label}">
+					<g:Label>Concepto</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+						styleName="aon-width-all">
+						<g:cell >
+							<g:SuggestBox ui:field="conceptSuggestBox"
+								styleName="aon-width-all aon-inputText" />
+						</g:cell>
+						<g:cell >
+							<g:Label styleName="aon-margin-left" ui:field="conceptDescriptionLabel"
+								visible="false" />
+						</g:cell>
+					</g:HorizontalPanel>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.label}">
+					<g:Label>Tipo</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<g:HorizontalPanel styleName="aon-width">
+						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+							styleName="aon-width-all">
+							<g:ListBox ui:field="typeListBox" />
+							<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
+								<g:Button ui:field="resetTypeButton" styleName="aon-lookupButton-clear "
+									visible="false" />
+							</g:cell>
+						</g:HorizontalPanel>
+					</g:HorizontalPanel>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.label}">
+					<g:Label>Descripci&oacute;n
+					</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+						styleName="aon-width-all">
+						<g:SuggestBox ui:field="descriptionSuggestBox"
+							styleName="aon-width-all aon-inputText" />
+						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
+							<g:Button ui:field="resetDescriptionButton" styleName="aon-lookupButton-clear"
+								visible="false" />
+						</g:cell>
+					</g:HorizontalPanel>
+				</g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.label}">
+					<g:Label>Importe</g:Label>
+				</g:customCell>
+				<g:customCell styleName="{style.field}">
+					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+						styleName="aon-width-all">
+						<g:TextBox ui:field="deductionTextBox" styleName="aon-width-all aon-inputText" />
+						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
+							<g:Button ui:field="fxDeductionButton" styleName="{style.fxButton}" />
+						</g:cell>
+						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
+							<g:Button ui:field="resetDeductionButton" styleName="aon-lookupButton-clear"
+								visible="false" />
+						</g:cell>
+					</g:HorizontalPanel>
+				</g:customCell>
+			</g:row>
+		</g:Grid>
+
+	</g:HTMLPanel>
+
+
+</ui:UiBinder>

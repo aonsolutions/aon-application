@@ -38,7 +38,7 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 			// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
 			// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
 			// el FrameWork.
-			if (  session.contains(salary)  || salary.getId() == null ) {
+			if (  session.contains(salary)  || salary.getId() == null) {
 				salaryPayments = salary.getSalaryPayments();
 				for(SalaryPayment sp: salaryPayments){
 					managePayment(payments,sp);

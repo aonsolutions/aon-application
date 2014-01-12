@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
+import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
@@ -30,12 +31,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.InvocationException;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -52,17 +51,6 @@ public class Payment extends ResizeComposite {
 	private static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.MONTH);
 
-	private static boolean equalsExpressions(String s1, String s2) {
-		if (s1 == s2)
-			return true;
-		if (s1 == null)
-			return false;
-		if (s2 == null)
-			return false;
-
-		return s1.trim().equals(s2.trim());
-	}
-
 	interface Binder extends UiBinder<Widget, Payment> {
 
 	}
@@ -74,7 +62,7 @@ public class Payment extends ResizeComposite {
 
 		private String result;
 		private String expression;
-		
+
 		private ExpressionTextBox parent;
 		private ExpressionTextBox childs[];
 
@@ -100,6 +88,9 @@ public class Payment extends ResizeComposite {
 		public void onFailure(Throwable caught) {
 			// Convenient way to find out which exception was thrown.
 			result = null;
+
+			setText(expression);
+
 			try {
 				throw caught;
 			} catch (InvocationException e) {
@@ -113,6 +104,7 @@ public class Payment extends ResizeComposite {
 			} catch (Throwable e) {
 				// last resort -- a very unexpected exception
 			}
+			
 		}
 
 		@Override
@@ -128,14 +120,14 @@ public class Payment extends ResizeComposite {
 		void setExpression(String newExpression) {
 			setExpression(newExpression, false);
 		}
-		
+
 		void setExpression(String newExpression, boolean fire) {
 			boolean changed = changed(newExpression);
 			this.expression = newExpression;
 			if (changed) {
-				eval( fire );
+				eval(fire);
 			} else {
-				setText(result);				
+				setText(result);
 			}
 		}
 
@@ -145,9 +137,9 @@ public class Payment extends ResizeComposite {
 
 		void eval(boolean fire) {
 			contextProvider.eval(getParentExpression() + expression, this);
-			if ( fire ){
+			if (fire) {
 				for (ExpressionTextBox child : childs) {
-					child.eval( fire);
+					child.eval(fire);
 				}
 			}
 		}
@@ -162,23 +154,24 @@ public class Payment extends ResizeComposite {
 
 			return !expression.trim().equals(newExpression.trim());
 		}
-		
-		String getParentExpression(){
-			
-			if ( parent == null )
+
+		String getParentExpression() {
+
+			if (parent == null)
 				return "";
-			
+
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("_P = ");
 			String expr = parent.getExpression();
-			buffer.append( StringUtils.isEmpty(expr) ? "0.00" : expr);
+			buffer.append(StringUtils.isEmpty(expr) ? "0.00" : expr);
 			buffer.append(";");
-			if ( concept != null ) 
+			if (concept != null)
 				buffer.append(concept.getName() + " = _P;");
 			return buffer.toString();
 		}
 
 	}
+
 	@UiField
 	Grid mainGrid;
 
@@ -200,7 +193,7 @@ public class Payment extends ResizeComposite {
 	Button resetDescriptionButton;
 
 	@UiField(provided = true)
-	TextBox paymentTextBox;
+	ExpressionTextBox paymentTextBox;
 	@UiField
 	Button resetPaymentButton;
 	@UiField
@@ -208,48 +201,28 @@ public class Payment extends ResizeComposite {
 	@UiField
 	Button resetTaxButton;
 	@UiField
-	Button resetCustomTaxButton;
-	@UiField
 	ListBox quoteListBox;
 	@UiField
 	Button resetQuoteButton;
 	@UiField
-	Button resetCustomQuoteButton;
-	@UiField
 	ListBox monthListBox;
 
 	@UiField
-	DeckPanel taxPanel;
-	@UiField
-	DeckPanel quotePanel;
-
-	@UiField
-	Panel listTaxPanel;
-	@UiField
-	Panel customTaxPanel;
-	@UiField
 	Button fxTaxButton;
 	@UiField(provided = true)
-	TextBox taxTextBox;
-	@UiField
-	Button undoTaxButton;
+	ExpressionTextBox taxTextBox;
 
-	@UiField
-	Panel listQuotePanel;
-	@UiField
-	Panel customQuotePanel;
 	@UiField
 	Button fxQuoteButton;
 	@UiField(provided = true)
-	TextBox quoteTextBox;
-	@UiField
-	Button undoQuoteButton;
+	ExpressionTextBox quoteTextBox;
 
 	private NumberFormat numberFormat;
 	private IContextProvider contextProvider;
 
 	private MultiWordSuggestOracle conceptSuggestOracle;
 	private MultiWordSuggestOracle descriptionSuggestOracle;
+	private MultiWordSuggestOracle expressionSuggestOracle;
 	private com.esferalia.aon.gwt.payroll.shared.Payment concept;
 
 	public Payment() {
@@ -258,8 +231,6 @@ public class Payment extends ResizeComposite {
 		initTypeListBox();
 		initReceiptListBox();
 		initMonthListBox();
-		initTaxPanel();
-		initQuotePanel();
 		showReceipt(false);
 	}
 
@@ -290,36 +261,34 @@ public class Payment extends ResizeComposite {
 	}
 
 	public void setPaymentExpression(String payment) {
-		((ExpressionTextBox) paymentTextBox).setExpression(payment);
+		paymentTextBox.setExpression(payment);
 		showOrHideResetPaymentButton();
 	}
 
 	public String getIrpfExpression() {
 		String selected = getValueSelected(taxListBox);
-		return getExpression(selected,
-				((ExpressionTextBox) taxTextBox).expression);
+		return getExpression(selected, taxTextBox.expression);
 
 	}
 
 	public void setIrpfExpression(String expression) {
 		String listValue = getListValue(expression);
 		selectByValue(taxListBox, listValue);
-		((ExpressionTextBox) taxTextBox).setExpression(getExpression(listValue,
-				expression));
+		onTaxListBoxChange(null);
+		taxTextBox.setExpression(getExpression(listValue, expression));
 		showOrHideResetTaxButton();
 	}
 
 	public String getQuoteExpression() {
 		String selected = getValueSelected(quoteListBox);
-		return getExpression(selected,
-				((ExpressionTextBox) quoteTextBox).expression);
+		return getExpression(selected, quoteTextBox.expression);
 	}
 
 	public void setQuoteExpression(String expression) {
 		String listValue = getListValue(expression);
 		selectByValue(quoteListBox, listValue);
-		((ExpressionTextBox) quoteTextBox).setExpression(getExpression(
-				listValue, expression));
+		onQuoteListBoxChange(null);
+		quoteTextBox.setExpression(getExpression(listValue, expression));
 		showOrHideResetQuoteButton();
 	}
 
@@ -372,6 +341,11 @@ public class Payment extends ResizeComposite {
 
 	public void setContextProvider(IContextProvider contextProvider) {
 		this.contextProvider = contextProvider;
+		loadExpressionSuggestOracle();
+	}
+
+	public void setName(String name) {
+		conceptSuggestBox.setText(name);
 	}
 
 	// ------------------------------------------
@@ -381,41 +355,18 @@ public class Payment extends ResizeComposite {
 	@UiHandler("taxListBox")
 	void onTaxListBoxChange(ChangeEvent event) {
 		String tax = getValueSelected(taxListBox);
-		if (tax.equals(CUSTOM)) {
-			showCustomTaxPanel(); /* Really don't changed anything. */
-		} else {
-			((ExpressionTextBox) taxTextBox).setExpression(getExpression(tax,
-					null /* Not 'CUSTOM' */));
-			showOrHideResetTaxButton();
-		}
-
+		enableCustomTax(tax.equals(CUSTOM));
+		taxTextBox.setExpression(getExpression(tax, taxTextBox.expression));
+		showOrHideResetTaxButton();
 	}
 
 	@UiHandler("quoteListBox")
 	void onQuoteListBoxChange(ChangeEvent event) {
 		String quote = getValueSelected(quoteListBox);
-		if (quote.equals(CUSTOM)) {
-			showCustomQuotePanel(); /* Really don't changed anything. */
-		} else {
-			((ExpressionTextBox) quoteTextBox).setExpression(getExpression(
-					quote, null /* Not 'CUSTOM' */));
-			showOrHideResetQuoteButton();
-		}
-	}
-
-	@UiHandler("undoTaxButton")
-	void onUndoTaxButtonClick(ClickEvent event) {
-		selectByValue(taxListBox,
-				getListValue(((ExpressionTextBox) taxTextBox).getExpression()));
-		showListTaxPanel();
-	}
-
-	@UiHandler("undoQuoteButton")
-	void onUndoQuoteButtonClick(ClickEvent event) {
-		selectByValue(
-				quoteListBox,
-				getListValue(((ExpressionTextBox) quoteTextBox).getExpression()));
-		showListQuotePanel();
+		enableCustomQuote(quote.equals(CUSTOM));
+		quoteTextBox
+				.setExpression(getExpression(quote, quoteTextBox.expression));
+		showOrHideResetQuoteButton();
 	}
 
 	@UiHandler("descriptionSuggestBox")
@@ -443,7 +394,7 @@ public class Payment extends ResizeComposite {
 		showOrHideResetTaxButton();
 	}
 
-	@UiHandler({ "resetTaxButton", "resetCustomTaxButton" })
+	@UiHandler({ "resetTaxButton" })
 	void onResetTaxButtonClick(ClickEvent event) {
 		setIrpfExpression(concept.getIrpfExpression());
 	}
@@ -454,7 +405,7 @@ public class Payment extends ResizeComposite {
 
 	}
 
-	@UiHandler({ "resetQuoteButton", "resetCustomQuoteButton" })
+	@UiHandler({ "resetQuoteButton" })
 	void onResetQuoteButtonClick(ClickEvent event) {
 		setQuoteExpression(concept.getQuoteExpression());
 	}
@@ -471,29 +422,22 @@ public class Payment extends ResizeComposite {
 
 	@UiHandler("fxPaymentButton")
 	void onFxPaymentButtonClick(ClickEvent event) {
-		showFxDialog((ExpressionTextBox)paymentTextBox);
+		showFxDialog((ExpressionTextBox) paymentTextBox);
 	}
 
 	@UiHandler("fxTaxButton")
 	void onFxTaxButtonClick(ClickEvent event) {
-		showFxDialog((ExpressionTextBox)taxTextBox);
+		showFxDialog((ExpressionTextBox) taxTextBox);
 	}
 
 	@UiHandler("fxQuoteButton")
 	void onFxQuoteButtonClick(ClickEvent event) {
-		showFxDialog((ExpressionTextBox)quoteTextBox);
+		showFxDialog((ExpressionTextBox) quoteTextBox);
 	}
 
 	// ------------------------------------------
 	// Private members
 	// ------------------------------------------
-	private void initTaxPanel() {
-		showListTaxPanel();
-	}
-
-	private void initQuotePanel() {
-		showListQuotePanel();
-	}
 
 	@SuppressWarnings("deprecation")
 	private void initMonthListBox() {
@@ -532,6 +476,7 @@ public class Payment extends ResizeComposite {
 		conceptSuggestBox = new SuggestBox(conceptSuggestOracle);
 		descriptionSuggestBox = new SuggestBox(descriptionSuggestOracle);
 
+		expressionSuggestOracle = new MultiWordSuggestOracle();
 	}
 
 	private String getListValue(String expression) {
@@ -541,8 +486,6 @@ public class Payment extends ResizeComposite {
 			return ALL;
 		if (expression.equals("_P"))
 			return ALL;
-		if (expression.equals("EXCESO_IPREM()"))
-			return IPREM;
 		if (expression.equals(getPaymentExpression())) // TODO:
 			return ALL;
 
@@ -614,22 +557,6 @@ public class Payment extends ResizeComposite {
 		}
 	}
 
-	private void showListTaxPanel() {
-		taxPanel.showWidget(taxPanel.getWidgetIndex(listTaxPanel));
-	}
-
-	private void showListQuotePanel() {
-		quotePanel.showWidget(quotePanel.getWidgetIndex(listQuotePanel));
-	}
-
-	private void showCustomTaxPanel() {
-		taxPanel.showWidget(taxPanel.getWidgetIndex(customTaxPanel));
-	}
-
-	private void showCustomQuotePanel() {
-		quotePanel.showWidget(quotePanel.getWidgetIndex(customQuotePanel));
-	}
-
 	private String getValueSelected(ListBox listBox) {
 		return listBox.getValue(listBox.getSelectedIndex());
 	}
@@ -645,7 +572,6 @@ public class Payment extends ResizeComposite {
 						getMyExpression(concept.getIrpfExpression()),
 						getIrpfExpression());
 		resetTaxButton.setVisible(visible);
-		resetCustomTaxButton.setVisible(visible);
 	}
 
 	private void showOrHideResetQuoteButton() {
@@ -654,7 +580,6 @@ public class Payment extends ResizeComposite {
 						getMyExpression(concept.getQuoteExpression()),
 						getQuoteExpression());
 		resetQuoteButton.setVisible(visible);
-		resetCustomQuoteButton.setVisible(visible);
 	}
 
 	private void showOrHideResetDescriptionButton() {
@@ -668,12 +593,42 @@ public class Payment extends ResizeComposite {
 				&& !StringUtils.equals(concept.getExpression(),
 						((ExpressionTextBox) paymentTextBox).expression));
 	}
-	
-	private void showReceipt( boolean show) {
+
+	private void showReceipt(boolean show) {
 		Element el = mainGrid.getRowFormatter().getElement(1);
-		if ( show ) 
+		if (show)
 			el.getStyle().clearDisplay();
 		else
 			el.getStyle().setDisplay(Display.NONE);
+	}
+
+	private void enableCustomTax(boolean enabled) {
+		taxTextBox.setEnabled(enabled);
+		fxTaxButton.setVisible(enabled);
+	}
+
+	private void enableCustomQuote(boolean enabled) {
+		quoteTextBox.setEnabled(enabled);
+		fxQuoteButton.setVisible(enabled);
+	}
+
+	private void loadExpressionSuggestOracle() {
+		
+		expressionSuggestOracle.clear();
+		
+		class ContextCallback implements AsyncCallback<ContextDescriptor> {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onSuccess(ContextDescriptor descriptor) {
+				expressionSuggestOracle.addAll(descriptor.getVariables());
+			}
+		}
+		;
+		contextProvider.getContext(new ContextCallback());
 	}
 }

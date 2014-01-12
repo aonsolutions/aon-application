@@ -460,11 +460,11 @@ public class SQLAgreementDraft {
 			updateCategories(conn, domainId, levelId, categories);
 		}
 
-
+		
 		for (Payment payment : draft.getDraftPayments()) {
 			if (!isRemove(payment))
-				insertPayment(conn, domainId, draft.getId(), payment);
-
+				// Warning, we update payment id, it's a potential risk.
+				payment.setId(insertPayment(conn, domainId, draft.getId(), payment));
 		}
 
 		for (Extra extra : draft.getDraftExtras()) {
@@ -534,7 +534,8 @@ public class SQLAgreementDraft {
 		for (Payment payment : draft.getDraftPayments()) {
 			if (payment.getId() < 0) {
 				if (!isRemove(payment))
-					insertPayment(conn, domainId, draft.getId(), payment);
+					// Warning, we update payment id, it's a potential risk.
+					payment.setId(insertPayment(conn, domainId, draft.getId(), payment));
 			} else {
 				if (!isRemove(payment)){
 					updatePayment(conn, domainId, draft.getId(), payment);
@@ -953,8 +954,9 @@ public class SQLAgreementDraft {
 
 	}
 
-	private static void insertPayment(Connection conn, Integer domainId,
+	private static int insertPayment(Connection conn, Integer domainId,
 			Integer agreementId, Payment payment) throws SQLException {
+		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
 
@@ -1023,7 +1025,13 @@ public class SQLAgreementDraft {
 
 			stmt.executeUpdate();
 
+			rs = stmt.getGeneratedKeys();
+			rs.next();
+			return rs.getInt(1);
+
 		} finally {
+			if (rs != null)
+				rs.close();
 			if (stmt != null)
 				stmt.close();
 		}

@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.MissingResourceException;
 import java.util.Set;
 
 import javax.faces.context.FacesContext;
@@ -112,7 +113,6 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContex
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
@@ -540,8 +540,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Map<Object, Object> images = new HashMap<Object, Object>();
 			parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images);
 
-			String imagesUri = String.format("jasper_image/salary/%d/%d/%d/%d/",
-					cost.getMonth(), cost.getYear(), cost.getWorkplaceId(),
+			String imagesUri = String.format(
+					"jasper_image/salary/%d/%d/%d/%d/", cost.getMonth(),
+					cost.getYear(), cost.getWorkplaceId(),
 					cost.getEnterpriseId());
 
 			parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
@@ -947,10 +948,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			List<Payment> paymentConcepts = getPaymentConcepts(conn, domainId,
 					getParentDomainID());
-			List<Payment> employeePayments = getEmployeePayments(conn,
-					employeeId);
-			List<Payment> enterprisePayments = getEnterprisePayments(conn,
-					domainId);
+			List<Payment> employeePayments = Collections.emptyList();
+			/* getEmployeePayments(conn, employeeId); */
+			List<Payment> enterprisePayments = Collections.emptyList();
+			/* getEnterprisePayments(conn, domainId); */
 
 			List<Payment> payments = new ArrayList<Payment>(
 					paymentConcepts.size() + employeePayments.size()
@@ -1077,12 +1078,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	// -------------------------------------------------------- Private methods
 
 	@Deprecated
-	private String getSalaryReport(SalaryType salaryType) throws ReportException {
+	private String getSalaryReport(SalaryType salaryType)
+			throws ReportException {
 		Connection conn = null;
 		try {
 			conn = getConnection();
 			int enterpriseId = getEnterpriseID();
-			return AonServletUtils.getSalaryReport(conn, enterpriseId, salaryType);
+			return AonServletUtils.getSalaryReport(conn, enterpriseId,
+					salaryType);
 		} catch (SQLException e) {
 			throw new ReportException(e.getLocalizedMessage());
 		} catch (ManagerBeanException e) {
@@ -1158,7 +1161,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			// TODO: SalaryType???????
-			String salaryReport = getSalaryReport(SalaryType.SALARY); 
+			String salaryReport = getSalaryReport(SalaryType.SALARY);
 			reportManager.execute(out, salaryReport, parameters);
 
 			return out.toString();
@@ -1739,21 +1742,26 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			//@formatter:on
 
 			stmt = connection.prepareStatement(sql);
-			
+
 			stmt.setInt(1, contractId);
-			
+
 			rs = stmt.executeQuery();
 			List<Extra> extras = new LinkedList<Extra>();
-			while ( rs.next() ){
+			while (rs.next()) {
 				Extra extra = new Extra();
-				extra.setId(rs.getInt(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.ID));
-				extra.setPaymentId(rs.getInt(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.AGREEMENT_PAYMENT));
-				extra.setStartDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.START_DATE));
-				extra.setEndDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.END_DATE));
-				extra.setIssueDate(rs.getString(SQLConstants.AGREEMENT_EXTRA + "." + AgreementExtraColumns.ISSUE_DATE));
+				extra.setId(rs.getInt(SQLConstants.AGREEMENT_EXTRA + "."
+						+ AgreementExtraColumns.ID));
+				extra.setPaymentId(rs.getInt(SQLConstants.AGREEMENT_EXTRA + "."
+						+ AgreementExtraColumns.AGREEMENT_PAYMENT));
+				extra.setStartDate(rs.getString(SQLConstants.AGREEMENT_EXTRA
+						+ "." + AgreementExtraColumns.START_DATE));
+				extra.setEndDate(rs.getString(SQLConstants.AGREEMENT_EXTRA
+						+ "." + AgreementExtraColumns.END_DATE));
+				extra.setIssueDate(rs.getString(SQLConstants.AGREEMENT_EXTRA
+						+ "." + AgreementExtraColumns.ISSUE_DATE));
 				extras.add(extra);
 			}
-			
+
 			return extras;
 
 		} finally {
@@ -1764,7 +1772,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				rs.close();
 			}
 		}
-		
+
 	}
 
 	private static List<Employee> getEmployees(Connection connection,
@@ -1886,10 +1894,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			String yearCol = "YEAR";
 			String monthCol = "MONTH";
 			String showCol = "VISIBLES";
-			String extrasCol = "EXTRAS";
-			String delaysCol = "DELAYS";
-			String settlesCol = "SETTLES";
-			String salariesCol = "SALARIES";
 			String contractsCol = "CONTRACTS";
 
 			// We asume that one enterprise one domain. This way SELECT it's
@@ -2470,18 +2474,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			SalaryTable dbSalaryTable = SQLAgreementDraft.getSalaryTable(
 					connection, draft.getId(), draft.getStartDate(),
 					draft.getEndDate());
-			SalaryTable allSalaryTable  = new SalaryTable(dbSalaryTable);
+			SalaryTable allSalaryTable = new SalaryTable(dbSalaryTable);
 			allSalaryTable.putAll(draft.getDraftSalaryTable());
-			
-			
+
 			draft.setLevels(allLevels);
 			draft.setExtras(allExtras);
-			draft.setVariables(variables); //* No draft
+			draft.setVariables(variables); // * No draft
 			draft.setPayments(allPayments);
 			draft.setSalaryTable(allSalaryTable);
 			draft.setCategoriesMap(allCategories);
 			draft.setDatesWithChanges(datesWithChanges);
-			
+
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -2673,7 +2676,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 						.getVariableByName(varName);
 
 				if (ctxVar != null) {
-					description = ctxVar.getDescription(new Locale("es", "ES"));
+					try {
+						description = ctxVar.getDescription(new Locale("es",
+								"ES"));
+					} catch (MissingResourceException e) {
+					}
 					if (description != null)
 						description = String.format(description, start, end);
 				}
@@ -3145,9 +3152,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
 				draft.getEmployee().getId());
-		
-		SQLContractSettleCalculatorContext ctx = new SQLContractSettleCalculatorContext(conn, 
-				draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(), criteria);
+
+		SQLContractSettleCalculatorContext ctx = new SQLContractSettleCalculatorContext(
+				conn, draft.getStartDate(), draft.getEndDate(),
+				draft.getIssueDate(), criteria);
 
 		ctx.setListener(listener);
 		ctx.next();
@@ -3166,9 +3174,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
 				draft.getEmployee().getId());
-		
-		SQLContractExtraCalculatorContext ctx = new SQLContractExtraCalculatorContext(conn, 
-				draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(), criteria);
+
+		SQLContractExtraCalculatorContext ctx = new SQLContractExtraCalculatorContext(
+				conn, draft.getStartDate(), draft.getEndDate(),
+				draft.getIssueDate(), criteria);
 
 		ctx.setListener(listener);
 		ctx.next();

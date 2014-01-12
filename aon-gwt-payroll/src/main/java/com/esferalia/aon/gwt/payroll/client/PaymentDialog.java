@@ -4,13 +4,18 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PaymentDialog extends CustomDialog {
-
+	
+	interface Callback {
+		void onAccept(PaymentDialog dialog);
+	}
 	
 	interface Binder extends UiBinder<Widget, PaymentDialog> {
 
@@ -20,6 +25,8 @@ public class PaymentDialog extends CustomDialog {
 	
 	@UiField 
 	Payment payment;
+	
+	private Callback cb;
 	
 	public PaymentDialog() {
 		setCaption("Percepci\u00f3n");
@@ -103,5 +110,28 @@ public class PaymentDialog extends CustomDialog {
 		payment.setNumberFormat(numberFormat);
 	}
 	
+	public void show(Callback cb) {
+		this.cb = cb;
+		super.show();
+	}
+	
+	// ------------------------------------------------------------------------
+	//
+	// ------------------------------------------------------------------------
+	
+	@UiHandler("cancelButton")
+	void onCancelButtonClick(ClickEvent clickEvent) {
+		hide();
+	}
+	
+	@UiHandler("acceptButton")
+	void onAcceptButtonClick(ClickEvent clickEvent) {
+		hide();
+		cb.onAccept(this);
+	}
+	
+	// ------------------------------------------------------------------------
+	//
+	// ------------------------------------------------------------------------
 	
 }

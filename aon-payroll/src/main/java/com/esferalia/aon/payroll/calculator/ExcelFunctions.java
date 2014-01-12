@@ -1,7 +1,5 @@
 package com.esferalia.aon.payroll.calculator;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
 import java.util.Date;
 
@@ -13,12 +11,6 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 public class ExcelFunctions {
     
 	
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface Variable {
-		ContextVariable value();
-	}
-	
-
 	// ------------------------------------------
 	// Relational
 	// ------------------------------------------

@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import java.util.HashMap;
+import java.util.Map;
 
 public class Deduction extends Item<Deduction.Type> {
 
@@ -7,7 +9,25 @@ public class Deduction extends Item<Deduction.Type> {
 		COMMON_CONTINGENCY, PROFESSIONAL_CONTINGENCY, UNEMPLOYMENT, JOB_TRAINING, STRUCTURAL_OVERTIME, NON_STRUCTURAL_OVERTIME, IRPF, ADVANCE_PAYMENT, IN_KIND, OTHER, FOGASA // TODO:
 		;
 
-	}
+		public String getDescription() {
+			return DESCRIPTIONS.get(this);
+		}
 
+		static Map<Type, String> DESCRIPTIONS = new HashMap<Type, String>() {
+			{
+				put(COMMON_CONTINGENCY, "Contingencias Comunes");
+				put(PROFESSIONAL_CONTINGENCY, "Contingencias Profesionale");
+				put(UNEMPLOYMENT, "Desempleo");
+				put(JOB_TRAINING, "Formaci\u00f3n");
+				put(STRUCTURAL_OVERTIME, "Horas Extras Estructurales");
+				put(NON_STRUCTURAL_OVERTIME, "Horas Extras No Estructurales");
+				put(IRPF, "I.R.P.F");
+				put(ADVANCE_PAYMENT, "Anticipo");
+				put(IN_KIND, "Valor de productos en especie");
+				put(OTHER, "Otras deducciones");
+				put(FOGASA, "FOGASA");
+			}
+		};
+	}
 
 }

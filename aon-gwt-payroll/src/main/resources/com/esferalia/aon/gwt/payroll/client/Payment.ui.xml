@@ -1,77 +1,76 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:es3='urn:import:com.google.gwt.user.client.ui'
-	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
 
 	<ui:Style>
-		.form {
-			padding: 10px;
-		}
+	.form {
+		padding: 10px;
+	}
+	
+	.label {
+		margin-top: 10x;
+		font-weight: bold;
+		padding: 1px 0.5em;
+		white-space: nowrap;
+		background-color: #F2F2F2;
+	}
+	
+	.labeltop {
+		margin-top: 10x;
+		font-weight: bold;
+		padding: 1px 0.5em;
+		vertical-align: top;
+		white-space: nowrap;
+		background-color: #F2F2F2;
+	}
+	
+	.field {
+		padding: 1px 0.5em;
+	}
+	
+	.buttons {
+		padding-top: 10px;
+		text-align: right;
+	}
+	
+	.info {
 		
-		.label {
-			margin-top: 10x;
-			font-weight: bold;
-			padding: 1px 0.5em;
-			white-space: nowrap;
-			background-color: #F2F2F2;
-		}
+	}
+	
+	.warn {
 		
-		.labeltop {
-			margin-top: 10x;
-			font-weight: bold;
-			padding: 1px 0.5em;
-			vertical-align: top;
-			white-space: nowrap;
-			background-color: #F2F2F2;
-		}
+	}
+	
+	.error {
 		
-		.field {
-			padding: 1px 0.5em;
-		}
-		
-		.buttons {
-			padding-top: 10px;
-			text-align: right;
-		}
-		
-		.info {
-			
-		}
-		
-		.warn {
-			
-		}
-		
-		.error {
-			
-		}
-		
-		.messages {
-			padding-left: 0.5em;
-			padding-bottom: 10px;
-		}
-		
-		.form textarea {
-			resize: none;
-		}
-		
-		@sprite .fxButton {
-			margin: 0px;
-			padding: 0px;
-			border: 0px;
-			cursor: pointer;
-			gwt-image: 'fx';
-			background-position: left center;
-		}
-		
-		@sprite .undoButton {
-			margin: 0px;
-			padding: 0px;
-			border: 0px;
-			cursor: pointer;
-			gwt-image: 'undo';
-			background-position: left center;
-		}
+	}
+	
+	.messages {
+		padding-left: 0.5em;
+		padding-bottom: 10px;
+	}
+	
+	.form textarea {
+		resize: none;
+	}
+	
+	@sprite .fxButton {
+		margin: 0px;
+		padding: 0px;
+		border: 0px;
+		cursor: pointer;
+		gwt-image: 'fx';
+		background-position: left center;
+	}
+	
+	@sprite .undoButton {
+		margin: 0px;
+		padding: 0px;
+		border: 0px;
+		cursor: pointer;
+		gwt-image: 'undo';
+		background-position: left center;
+	}
 	</ui:Style>
 
 	<ui:image field='fx' src='fx.png' />
@@ -90,21 +89,25 @@
 					<g:Label>Concepto</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
-					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
-						<g:SuggestBox ui:field="conceptSuggestBox" />
-						<g:Label>&nbsp;
-						</g:Label>
-						<g:Label ui:field="conceptDescriptionLabel" visible="false" />
+					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+						styleName="aon-width-all">
+						<g:cell >
+							<g:SuggestBox ui:field="conceptSuggestBox"
+								styleName="aon-width-all aon-inputText" />
+						</g:cell>
+						<g:cell >
+							<g:Label styleName="aon-margin-left" ui:field="conceptDescriptionLabel"
+								visible="false" />
+						</g:cell>
 					</g:HorizontalPanel>
 				</g:customCell>
 			</g:row>
 			<g:row>
-				<g:customCell styleName="{style.label}" >
+				<g:customCell styleName="{style.label}">
 					<g:Label>Recibo</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
-					<g:ListBox ui:field="receiptListBox">
-					</g:ListBox>
+					<g:ListBox ui:field="receiptListBox" />
 				</g:customCell>
 			</g:row>
 			<g:row>
@@ -112,10 +115,15 @@
 					<g:Label>Tipo</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
-					<g:HorizontalPanel>
-						<g:ListBox ui:field="typeListBox" />
-						<g:Button ui:field="resetTypeButton" styleName="aon-lookupButton-clear "
-							visible="false" />
+					<g:HorizontalPanel styleName="aon-width">
+						<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+							styleName="aon-width-all">
+							<g:ListBox ui:field="typeListBox" />
+							<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
+								<g:Button ui:field="resetTypeButton" styleName="aon-lookupButton-clear "
+									visible="false" />
+							</g:cell>
+						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:customCell>
 			</g:row>
@@ -125,11 +133,11 @@
 					</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
-					<g:HorizontalPanel width="100%">
-						<g:SuggestBox width="100%" ui:field="descriptionSuggestBox" />
-						<g:Label>&nbsp;
-						</g:Label>
-						<g:cell width="16px">
+					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+						styleName="aon-width-all">
+						<g:SuggestBox ui:field="descriptionSuggestBox"
+							styleName="aon-width-all aon-inputText" />
+						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
 							<g:Button ui:field="resetDescriptionButton" styleName="aon-lookupButton-clear"
 								visible="false" />
 						</g:cell>
@@ -142,14 +150,12 @@
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
 					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
-						width="100%">
-						<g:TextBox ui:field="paymentTextBox" width="100%" />
-						<g:Label>&nbsp;
-						</g:Label>
-						<g:cell width="16px">
+						styleName="aon-width-all">
+						<g:TextBox ui:field="paymentTextBox" styleName="aon-width-all aon-inputText" />
+						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
 							<g:Button ui:field="fxPaymentButton" styleName="{style.fxButton}" />
 						</g:cell>
-						<g:cell width="16px">
+						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
 							<g:Button ui:field="resetPaymentButton" styleName="aon-lookupButton-clear"
 								visible="false" />
 						</g:cell>
@@ -161,34 +167,22 @@
 					<g:Label>Tributa</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
-					<g:DeckPanel ui:field="taxPanel">
-						<g:HorizontalPanel ui:field="listTaxPanel"
-							width="auto">
-							<g:ListBox ui:field="taxListBox" width="auto">
-								<g:item value="{ALL}">Todo</g:item>
-								<g:item value="{NONE}">Nada</g:item>
-								<g:item value="{CUSTOM}">Manual...</g:item>
-							</g:ListBox>
+					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+						styleName="aon-width-all">
+						<g:ListBox ui:field="taxListBox">
+							<g:item value="{ALL}">Importe &Iacute;ntegro</g:item>
+							<g:item value="{NONE}">Exento</g:item>
+							<g:item value="{CUSTOM}">Personalizado...</g:item>
+						</g:ListBox>
+						<g:TextBox ui:field="taxTextBox" styleName="aon-width-all aon-inputText" />
+						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
+							<g:Button ui:field="fxTaxButton" styleName="{style.fxButton}" />
+						</g:cell>
+						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
 							<g:Button ui:field="resetTaxButton" styleName="aon-lookupButton-clear"
 								visible="false" />
-						</g:HorizontalPanel>
-						<g:HorizontalPanel width="100%" ui:field="customTaxPanel"
-							verticalAlignment="ALIGN_MIDDLE">
-							<g:TextBox ui:field="taxTextBox" width="100%" />
-							<g:Label>&nbsp;
-							</g:Label>
-							<g:cell width="16px">
-								<g:Button ui:field="fxTaxButton" styleName="{style.fxButton}" />
-							</g:cell>
-							<g:cell width="16px">
-								<g:Button ui:field="undoTaxButton" styleName=" {style.undoButton}" />
-							</g:cell>
-							<g:cell width="16px">
-								<g:Button ui:field="resetCustomTaxButton" styleName="aon-lookupButton-clear"
-									visible="false" />
-							</g:cell>
-						</g:HorizontalPanel>
-					</g:DeckPanel>
+						</g:cell>
+					</g:HorizontalPanel>
 				</g:customCell>
 			</g:row>
 			<g:row>
@@ -196,39 +190,23 @@
 					<g:Label>Cotiza</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
-					<g:DeckPanel ui:field="quotePanel">
-						<g:HorizontalPanel ui:field="listQuotePanel"
-							width="auto">
-							<g:ListBox ui:field="quoteListBox" width="auto">
-								<g:item value="{ALL}">Todo</g:item>
-								<g:item value="{NONE}">Nada</g:item>
-								<g:item value="{IPREM}">Exceso en su conjuto del 20% del
-									IPREM
-									mensual</g:item>
-								<g:item value="{CUSTOM}">Manual...</g:item>
-							</g:ListBox>
+					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
+						styleName="aon-width-all">
+						<g:ListBox ui:field="quoteListBox">
+							<g:item value="{ALL}">Importe &Iacute;ntegro</g:item>
+							<g:item value="{NONE}">Exento</g:item>
+							<g:item value="{CUSTOM}">Personalizado...</g:item>
+						</g:ListBox>
+						<g:TextBox ui:field="quoteTextBox" styleName="aon-width-all aon-inputText" />
+						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
+							<g:Button ui:field="fxQuoteButton"
+								styleName="aon-editDataTable-button {style.fxButton}" />
+						</g:cell>
+						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
 							<g:Button ui:field="resetQuoteButton" styleName="aon-lookupButton-clear"
 								visible="false" />
-						</g:HorizontalPanel>
-						<g:HorizontalPanel width="100%" ui:field="customQuotePanel"
-							verticalAlignment="ALIGN_MIDDLE">
-							<g:TextBox ui:field="quoteTextBox" width="100%" />
-							<g:Label>&nbsp;
-							</g:Label>
-							<g:cell width="16px">
-								<g:Button ui:field="fxQuoteButton"
-									styleName="aon-editDataTable-button {style.fxButton}" />
-							</g:cell>
-							<g:cell width="16px">
-								<g:Button ui:field="undoQuoteButton"
-									styleName="aon-editDataTable-button {style.undoButton}" />
-							</g:cell>
-							<g:cell width="16px">
-								<g:Button ui:field="resetCustomQuoteButton" styleName="aon-lookupButton-clear"
-									visible="false" />
-							</g:cell>
-						</g:HorizontalPanel>
-					</g:DeckPanel>
+						</g:cell>
+					</g:HorizontalPanel>
 				</g:customCell>
 			</g:row>
 			<g:row>
@@ -236,8 +214,7 @@
 					<g:Label>Mes</g:Label>
 				</g:customCell>
 				<g:customCell styleName="{style.field}">
-					<g:ListBox ui:field="monthListBox">
-					</g:ListBox>
+					<g:ListBox ui:field="monthListBox" />
 				</g:customCell>
 			</g:row>
 		</g:Grid>

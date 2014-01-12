@@ -156,6 +156,20 @@ public enum ContextVariable implements IResourceable{
 	INTEGER("ENTERO", VariableType.INTEGER ),
 	QUOTIENT("COCIENTE", VariableType.INTEGER ),
 	DAYS("DIAS", VariableType.INTEGER ),
+
+	// AON's
+	YEAR("AÑO", VariableType.UNKNOWN ),
+	TWO("BIENIO", VariableType.UNKNOWN ),
+	THREE("TRIENIO", VariableType.UNKNOWN ),
+	FOUR("CUATRIENIO", VariableType.UNKNOWN ),
+	FIVE("QUINQUENIO", VariableType.UNKNOWN ),
+	SIX("SEXENIO", VariableType.UNKNOWN ),
+	SEVEN("SEPTENIO", VariableType.UNKNOWN ),
+	
+	OLD("ANTIGÜEDAD", VariableType.DOUBLE ),
+	OLDD("ANTIGUEDAD", VariableType.DOUBLE ),
+	EXCESS("EXCESO", VariableType.DOUBLE ),
+	ASSURED_IT("GARANTIZADO_IT", VariableType.DOUBLE ),
 	
 	IT_START("INICIO_IT", VariableType.DATE),
 

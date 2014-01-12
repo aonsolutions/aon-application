@@ -128,7 +128,9 @@ public class SalaryDraftObject implements IContextProvider{
 		this.undoManager = new UndoManager<UndoableEdit<?>>();
 	}
 	
-
+	// ------------------------------------------------------------------------
+	// IContextProvider methods
+	// ------------------------------------------------------------------------
 	@Override
 	public void getContext( AsyncCallback<ContextDescriptor> callback ) {
 		employeesServiceAsync.getContext(salaryDraft, callback);

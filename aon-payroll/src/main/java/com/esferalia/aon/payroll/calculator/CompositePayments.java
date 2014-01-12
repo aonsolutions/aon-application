@@ -24,7 +24,7 @@ public class CompositePayments extends CompositeCollection<IContractPayment> {
 	
 	@Override
 	public Iterator<IContractPayment> iterator() {
-		return super.iterator(); //return new PaymentsIterator(super.iterator());
+		return new PaymentsIterator(super.iterator());
 	}
 
 	private static class PaymentsIterator implements Iterator<IContractPayment> {
