@@ -11,4 +11,6 @@ public class UndefinedPaymentVariable extends UndefinedVariable implements HasPa
 	public void setPayment(Payment payment) {
 		this.payment = payment;
 	}
+	
+	
 }

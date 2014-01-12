@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -18,10 +17,13 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -449,18 +451,30 @@ public class AgreementDraftObject implements IContextProvider {
 		return agreementDraft.hasLevelsWithoutCategories();
 	}
 
-	// ------------------------------------------
+	// ------------------------------------------------------------------------
 	//
-	// ------------------------------------------
+	// ------------------------------------------------------------------------
+	private SalaryDraft newFakeSalaryDraft(){
+		SalaryDraft salaryDraft = new SalaryDraft();
+		Employee employee = new Employee();
+		employee.setId(-1); // Fake
+		salaryDraft.setEmployee(employee);
+		salaryDraft.setType(Type.SALARY);
+		
+		return salaryDraft;
+	}
+
 	@Override
 	public void getContext(AsyncCallback<ContextDescriptor> callback) {
-		// employeesServiceAsync.getContext(salaryDraft, callback);
+		
+		employeesServiceAsync.getContext(newFakeSalaryDraft(), callback);
 	}
 
 	@Override
 	public void eval(String expression, AsyncCallback<Double> callback) {
-		// employeesServiceAsync.eval(expression, salaryDraft, callback)
+		employeesServiceAsync.eval(expression, newFakeSalaryDraft(), callback);
 	}
+	
 
 	// ------------------------------------------
 	// Differences

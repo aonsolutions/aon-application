@@ -108,6 +108,9 @@ public class SalaryPreview extends ResizeComposite {
 
 	}
 
+	private void syncTypeListBox() {
+	}
+	
 	private void syncStartDateBox() {
 		
 		dateListBox.clear();
@@ -172,7 +175,7 @@ public class SalaryPreview extends ResizeComposite {
 
 	private void initSalaryTypeListBox() {
 		salaryTypeListBox.addItem("Nomina", Salary.Type.SALARY.name());
-
+		/*
 		salaryTypeListBox.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -184,7 +187,7 @@ public class SalaryPreview extends ResizeComposite {
 				previewDocument.getSalaryPreview().setType(type);
 				getAsHTML();
 			}
-		});
+		});*/
 	}
 
 

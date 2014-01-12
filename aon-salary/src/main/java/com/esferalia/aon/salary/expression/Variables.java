@@ -344,9 +344,10 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		super.finalize();
 	}
 
-	// ------------------------------------------
-
-	private List<ITimedVariable<?>> get(String var) {
+	// ------------------------------------------------------------------------
+	//
+	// ------------------------------------------------------------------------
+	protected List<ITimedVariable<?>> get(String var) {
 		List<ITimedVariable<?>> values = vars.get(var);
 		if (values == null && notFoundHandler != null) {
 			values = notFoundHandler.get(var);
@@ -354,6 +355,9 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		return values;
 	}
 
+	// ------------------------------------------------------------------------
+	//
+	// ------------------------------------------------------------------------
 	private void traceRemove(String name, ITimedVariable<?> cur,
 			ITimedVariable<?> old) {
 		System.out

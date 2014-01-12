@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.payroll.client.SalaryDraftObject.CalculateCallback;
@@ -323,15 +324,28 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	class PaymentChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers>
-			extends ItemChangeHandler<T, Payment> {
+			extends ItemChangeHandler<T, Payment> implements PaymentDialog.Callback {
 
 		public PaymentChangeHandler(Payment payment) {
 			super(payment);
 		}
+		
+		// --------------------------------------------------------------------
+		@Override
+		public void onAccept(PaymentDialog dialog) {
+			item.setType(dialog.getType());
+			item.setMonth(dialog.getMonth());
+			item.setDescription(dialog.getDescription());
+			item.setExpression(dialog.getPaymentExpression());
+			item.setIrpfExpression(dialog.getIrpfExpression());
+			item.setQuoteExpression(dialog.getQuoteExpression());
+			salaryDraftObject.addDraftPayment(item);
+			salaryDraftObject.calculate(SalaryDraft.this);
+			
+		}
 
 		@Override
 		void onEdit() {
-			// TODO Auto-generated method stub
 			PaymentDialog paymentDialog = new PaymentDialog();
 			paymentDialog.setNumberFormat(AON.CURRENCY_FORMAT);
 			paymentDialog.setContextProvider(salaryDraftObject);
@@ -344,16 +358,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			paymentDialog.setIrpfExpression(item.getIrpfExpression());
 			paymentDialog.setQuoteExpression(item.getQuoteExpression());
 
-			int width = paymentDialog.getOffsetWidth();
-			// paymentDialog.setWidth(Math.max(Window.getClientWidth() * 6 / 10,
-			// width ) + "px");
 			paymentDialog.center();
-			paymentDialog.show();
+			paymentDialog.show(this);
 		}
 
 		@Override
 		void onDescriptionChange(Payment payment, String description) {
-
 			payment.setScope(Scope.SALARY);
 			payment.setDescription(description);
 			salaryDraftObject.addDraftPayment(payment);
@@ -380,12 +390,29 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	class DeductionChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers>
-			extends ItemChangeHandler<T, Deduction> {
+			extends ItemChangeHandler<T, Deduction> implements DeductionDialog.Callback {
+
+		// --------------------------------------------------------------------
+		@Override
+		public void onAccept(DeductionDialog dialog) {
+			item.setType(dialog.getType());
+			item.setDescription(dialog.getDescription());
+			item.setExpression(dialog.getDeductionExpression());
+			salaryDraftObject.addDraftDeduction(item);
+			salaryDraftObject.calculate(SalaryDraft.this);
+			
+		}
 
 		@Override
 		void onEdit() {
-			// TODO Auto-generated method stub
-
+			DeductionDialog deductionDialog = new DeductionDialog();
+			deductionDialog.setType(item.getType());
+			deductionDialog.setContextProvider(salaryDraftObject);
+			deductionDialog.setDescription(item.getDescription());
+			deductionDialog.setDeductionExpression(item.getExpression());
+			
+			deductionDialog.center();
+			deductionDialog.show(this);
 		}
 
 		public DeductionChangeHandler(Deduction deduction) {
@@ -419,7 +446,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		MultiWordSuggestOracle oracle;
 
 		Map<String, T> itemsConceptsMap;
-		
 
 		public void setDescriptionBox(SuggestBox descriptionBox) {
 			this.descriptionBox = descriptionBox;
@@ -1096,13 +1122,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		syncDatesListBox();
 		syncSalarySelect();
-		
+
 		// Sync undo & redo controls
 		salaryDraftObject.addUndoManagerListener(this);
 		redoButton.setEnabled(salaryDraftObject.canRedo());
 		undoButton.setEnabled(salaryDraftObject.canUndo());
 		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
-		
 
 	}
 
@@ -1202,22 +1227,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		insertBlankPaymentRow();
 		insertBlankPaymentRow();
 
-		List<Variable> context = salaryDraftObject.getContext();
-		int added = 0;
+		List<Variable> context = new ArrayList<Variable>(
+				salaryDraftObject.getContext());
 		for (Scope step : SCOPE_STEPS) {
-			if (added == context.size()) {
+			if (context.size() == 0) {
 				break;
 			}
 			if (step.compareTo(scope) < 0) {
 				break;
 			}
-			/*
-			 * if (context.get(added).getScope().compareTo(step) < 0) {
-			 * continue; }
-			 */
-			List<Variable> subContext = context.subList(added, context.size());
 			boolean show = scope.compareTo(Scope.CONTRACT) >= 0;
-			added += dumpContext(subContext, step, show);
+			dumpContext(context, step, show);
 		}
 
 		List<Event> events = salaryDraftObject.getEvents();
@@ -1337,13 +1357,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			@Override
 			public void onFailure(Throwable caught) {
 			}
+
 			@Override
 			public void onSuccess(List<Extra> extras) {
 				salarySelect.setExtras(extras);
 			}
 		});
 	}
-	
+
 	private void syncDatesListBox() {
 
 		Date draftStartDate = salaryDraftObject.getDraftStartDate();
@@ -1711,7 +1732,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private <I extends Item> void dumpItem(I item, int row,
 			String iconStyleName, ItemChangeHandler<TextBox, I> handler,
 			boolean isDeduction) {
-		
+
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
 		editButton.setStyleName(iconStyleName);
@@ -1886,24 +1907,34 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
-	private int dumpContext(List<Variable> context, Scope to, boolean show) {
+	/*
+	 * 
+	 * @param context
+	 * 
+	 * @param to
+	 * 
+	 * @param show
+	 */
+	private void dumpContext(List<Variable> context, Scope toScope, boolean show) {
 		int cols = 3;
 
-		int count = contextTable.getRowCount() * cols; // getCellCount(contextTable);
+		int count = contextTable.getRowCount() * cols;
+		ListIterator<Variable> iterator = context.listIterator();
+		while (iterator.hasNext()) {
 
-		int i = 0;
-
-		for (; i < context.size(); i++) {
-
-			Variable variable = context.get(i);
-
-			Scope scope = variable.getScope();
-			if (scope.compareTo(to) < 0) {
-				break;
-			}
+			Variable variable = iterator.next();
 
 			if (skipVariable(variable)) {
+				iterator.remove();
 				continue;
+			}
+
+			Scope varScope = variable.getScope();
+			if (varScope.compareTo(toScope) < 0) {
+				if (!(variable instanceof UndefinedVariable)
+						|| variable.isImpicit()) {
+					continue;
+				}
 			}
 
 			HTMLPanel htmlPanel = new HTMLPanel("");
@@ -1934,7 +1965,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 						styles[1]);
 
 				valuePanel.add(itemButton);
-				itemButton.setValue(show, true);
+				// only show payments of variables at 'to' scope... 
+				itemButton.setValue(show && (varScope.compareTo(toScope) >= 0), true);
 			} else if (variable instanceof UndefinedDeductionVariable) {
 				String styles[] = eventStyles.get(Event.Type.WARNING);
 
@@ -1946,10 +1978,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				itemButton.setValue(show, true);
 			}
 
-			if (variable.getScope().compareTo(Scope.AGREEMENT) > 0
+			if (varScope.compareTo(Scope.AGREEMENT) > 0
 					&& variable.isDefinedAt(Scope.AGREEMENT))
 				valuePanel.add(getAgreementVarButton(variable));
-			if (variable.getScope().compareTo(Scope.APPLICATION) > 0
+			
+			if (varScope.compareTo(Scope.APPLICATION) > 0
 					&& (variable.isDefinedAt(Scope.SYSTEM) || variable
 							.isDefinedAt(Scope.APPLICATION)))
 				valuePanel.add(getSystemVarButton(variable));
@@ -1968,76 +2001,79 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			contextTable.getColumnFormatter().setWidth(col, (100 / cols) + "%");
 
 			count++;
+
+			iterator.remove();
+
 		}
 
-		if (i < context.size()) {
-			Variable variable = context.get(i);
+		if (context.isEmpty())
+			return;
+		
 
-			final Scope scope = variable.getScope();
-			final List<Variable> remainContext = context.subList(i,
-					context.size());
+		Variable variable = context.get(0);
 
-			Panel expandPanel = new HorizontalPanel();
-			expandPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
-			final Label expandLabel = new Label(
-					((SalaryDraft.this.scope.compareTo(scope) <= 0) ? "Ocultar"
-							: "Mostrar")
-							+ " variables del "
-							+ SCOPE_DESCRIPTIONS.get(scope));
-			expandPanel.add(expandLabel);
-			final Button expandButton = new Button();
-			expandButton.setStyleName(style.expandAllButton());
-			expandButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-			expandPanel.add(expandButton);
+		final Scope varScope = variable.getScope();
+		final List<Variable> remainContext = new ArrayList<Variable>(context);
 
-			HTMLPanel htmlPanel = new HTMLPanel("");
-			HTML blank = new HTML("&nbsp;");
-			blank.setStyleName(style.cellLabel());
-			htmlPanel.add(blank);
-			htmlPanel.add(expandPanel);
+		Panel expandPanel = new HorizontalPanel();
+		expandPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
+		final Label expandLabel = new Label(
+				((SalaryDraft.this.scope.compareTo(varScope) <= 0) ? "Ocultar"
+						: "Mostrar")
+						+ " variables del "
+						+ SCOPE_DESCRIPTIONS.get(varScope));
+		expandPanel.add(expandLabel);
+		final Button expandButton = new Button();
+		expandButton.setStyleName(style.expandAllButton());
+		expandButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		expandPanel.add(expandButton);
 
-			final int row = count / cols;
-			final int col = count % cols;
+		HTMLPanel htmlPanel = new HTMLPanel("");
+		HTML blank = new HTML("&nbsp;");
+		blank.setStyleName(style.cellLabel());
+		htmlPanel.add(blank);
+		htmlPanel.add(expandPanel);
 
-			expandButton.addClickHandler(new ClickHandler() {
+		final int row = count / cols;
+		final int col = count % cols;
 
-				@Override
-				public void onClick(ClickEvent event) {
-					if (SalaryDraft.this.scope.compareTo(scope) <= 0)
-						collapse();
-					else
-						expand();
-				}
+		expandButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if (SalaryDraft.this.scope.compareTo(varScope) <= 0)
+					collapse();
+				else
+					expand();
+			}
 
-				private void expand() {
-					dumpContext(remainContext, scope, false);
-					expandButton.removeStyleName(style.expandAllButton());
-					expandButton.setStyleName(style.collapseAllButton(), true);
-					expandLabel.setText("Ocultar variables del "
-							+ SCOPE_DESCRIPTIONS.get(scope));
-					SalaryDraft.this.scope = scope;
-				}
+			private void expand() {
+				List<Variable> context = new ArrayList<Variable>(remainContext );
+				dumpContext(context , varScope, false);
+				expandButton.removeStyleName(style.expandAllButton());
+				expandButton.setStyleName(style.collapseAllButton(), true);
+				expandLabel.setText("Ocultar variables del "
+						+ SCOPE_DESCRIPTIONS.get(varScope));
+				SalaryDraft.this.scope = varScope;
+			}
 
-				private void collapse() {
-					for (int i = contextTable.getRowCount() - 1; i > row; i--)
-						contextTable.removeRow(i);
-					for (int i = contextTable.getCellCount(row) - 1; i > col; i--)
-						contextTable.removeCell(row, i);
+			private void collapse() {
+				for (int i = contextTable.getRowCount() - 1; i > row; i--)
+					contextTable.removeRow(i);
+				for (int i = contextTable.getCellCount(row) - 1; i > col; i--)
+					contextTable.removeCell(row, i);
 
-					expandButton.removeStyleName(style.collapseAllButton());
-					expandButton.setStyleName(style.expandAllButton(), true);
-					expandLabel.setText("Mostrar variables del "
-							+ SCOPE_DESCRIPTIONS.get(scope));
-					SalaryDraft.this.scope = Scope.values()[SalaryDraft.this.scope
-							.ordinal() + 1];
-				}
+				expandButton.removeStyleName(style.collapseAllButton());
+				expandButton.setStyleName(style.expandAllButton(), true);
+				expandLabel.setText("Mostrar variables del "
+						+ SCOPE_DESCRIPTIONS.get(varScope));
+				SalaryDraft.this.scope = Scope.values()[SalaryDraft.this.scope
+						.ordinal() + 1];
+			}
 
-			});
+		});
 
-			contextTable.setWidget(row, col, htmlPanel);
-		}
-
-		return i;
+		contextTable.setWidget(row, col, htmlPanel);
 	}
 
 	private void print() {
@@ -2372,5 +2408,5 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		return false;
 	}
-	
+
 }

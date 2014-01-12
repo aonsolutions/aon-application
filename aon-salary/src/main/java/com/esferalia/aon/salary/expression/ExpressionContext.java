@@ -28,6 +28,10 @@ import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 
 public class ExpressionContext {
 
+	public abstract static class MacroException extends ExpressionException {
+		public abstract String doMacro(String expr);
+	}
+
 	public static final String REMOVE_VARIABLE = "REMOVE_VARIABLE()";
 	private static final String REMOVE_VARIABLE_STUB = "REMOVE_VARIABLE";
 
@@ -298,31 +302,14 @@ public class ExpressionContext {
 		if (script == null) {
 			return Collections.emptyList();
 		}
-
 		Set<String> inputs = getVariables(script);
 		List<PeriodMap> bindingsList = variables
 				.getBindings(inputs, start, end);
-		List<ITimedResult<T>> values = new LinkedList<ITimedResult<T>>();
-		for (PeriodMap bindings : bindingsList) {
-			try {
-				T value = MVEL.eval(script, bindings, toType);
-				values.add(new TimedResult<T>(value, bindings.getPeriod(),
-						bindings.getRead()));
-			} catch (PropertyAccessException e) {
-				throwExpressionException(e);
-				throw new UndefinedVariablesException(getUndefinedProperty(e,
-						bindings));
-			} /*
-			 * catch (RemoveVariableError e) { throw new
-			 * UndefinedVariablesException(e.getName()); }
-			 */catch (UnresolveablePropertyException e) {
-				throw new UndefinedVariablesException(e.getName());
-			} catch (ExpressionExceptionWrapper e) {
-				throw e.getExpressionException();
-			}
+		try {
+			return eval(script, bindingsList, toType);
+		} catch (MacroException e) {
+			return eval(e.doMacro(script), bindingsList, toType);
 		}
-
-		return values;
 	}
 
 	public String evalTemplate(String template, Date start, Date end) {
@@ -356,18 +343,51 @@ public class ExpressionContext {
 
 	}
 
-	// ------------------------------------------
+	public List<ITimedVariable<?>> getTimedVariables(String var) {
+		return variables.get(var);
+	}
+
+	// ------------------------------------------------------------------------
 	//
-	// ------------------------------------------
+	// ------------------------------------------------------------------------
 	@Override
 	protected void finalize() throws Throwable {
 		clear();
 		super.finalize();
 	}
 
-	// ------------------------------------------
+	// ------------------------------------------------------------------------
 	//
-	// ------------------------------------------
+	// ------------------------------------------------------------------------
+	private <T> List<ITimedResult<T>> eval(String script,
+			List<PeriodMap> bindingsList, Class<T> toType)
+			throws ExpressionException {
+		if (script == null) {
+			return Collections.emptyList();
+		}
+		List<ITimedResult<T>> values = new LinkedList<ITimedResult<T>>();
+		for (PeriodMap bindings : bindingsList) {
+			try {
+				T value = MVEL.eval(script, bindings, toType);
+				values.add(new TimedResult<T>(value, bindings.getPeriod(),
+						bindings.getRead()));
+			} catch (PropertyAccessException e) {
+				throwExpressionException(e);
+				throw new UndefinedVariablesException(getUndefinedProperty(e,
+						bindings));
+			} /*
+			 * catch (RemoveVariableError e) { throw new
+			 * UndefinedVariablesException(e.getName()); }
+			 */catch (UnresolveablePropertyException e) {
+				throw new UndefinedVariablesException(e.getName());
+			} catch (ExpressionExceptionWrapper e) {
+				throw e.getExpressionException();
+			}
+		}
+
+		return values;
+	}
+
 	private void initImplicitVariables() {
 		try {
 			if (!isDef(REMOVE_VARIABLE_STUB)) {
@@ -389,6 +409,9 @@ public class ExpressionContext {
 		}
 	}
 
+	// ------------------------------------------------------------------------
+	//
+	// ------------------------------------------------------------------------
 	public static Set<String> getVariableSet(String script) {
 		ParserContext ctx = new ParserContext();
 		MVEL.analysisCompile(script, ctx);
@@ -419,48 +442,6 @@ public class ExpressionContext {
 			if (!Character.isJavaIdentifierPart(string.charAt(i)))
 				return false;
 		return true;
-	}
-
-	public static void main(String[] args) throws Exception {
-		String expression = "X = 'HOLA' ? 10 / J : 100.00  ";
-		ParserContext ctx = new ParserContext();
-		try {
-			MVEL.analysisCompile(expression, ctx);
-			for (Map.Entry<String, Class> var : ctx.getVariables().entrySet())
-				System.out.println(var.getKey() + " = " + var.getValue());
-			if (ctx.getErrorList() != null)
-				for (ErrorDetail err : ctx.getErrorList())
-					System.out.println(err.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		for (String var : ctx.getIndexedVariables())
-			System.out.println("Indexed Variable : " + var);
-		for (String var : ctx.getIndexedVarNames())
-			System.out.println("Indexed Variable : " + var);
-		for (Map.Entry<String, Class> var : ctx.getVariables().entrySet())
-			System.out.println("Variable : " + var.getKey() + " = "
-					+ var.getValue());
-		for (Map.Entry<String, Class> var : ctx.getInputs().entrySet())
-			System.out.println("Input : " + var.getKey() + " = "
-					+ var.getValue());
-		if (ctx.getErrorList() != null)
-			for (ErrorDetail err : ctx.getErrorList())
-				System.out.println(err.getMessage());
-		System.out.println("LineCount : " + ctx.getLineCount());
-		System.out.println("LineOffset : " + ctx.getLineOffset());
-		System.out.println("LastLineLabel : " + ctx.getLastLineLabel());
-
-		try {
-			Map<String, Object> vars = new HashMap<String, Object>();
-			for (Map.Entry<String, Class> var : ctx.getInputs().entrySet())
-				vars.put(var.getKey(), false);
-			System.out.println(MVEL.eval(expression, vars));
-		} catch (Exception e) {
-			System.out.println(e.getClass().getName());
-			e.printStackTrace();
-		}
-
 	}
 
 }

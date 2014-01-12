@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -800,6 +801,7 @@ public class Employees extends ResizeComposite implements
 				salaryPreview.setStartDate(startDate);
 				salaryPreview.setEndDate(endDate);
 				salaryPreview.setIssueDate(issueDate);
+				salaryPreview.setType(Salary.Type.SALARY);
 
 				SalaryPreviewDocument salaryPreviewDocument = new SalaryPreviewDocument(
 						salaryPreview, employeesService);

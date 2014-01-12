@@ -9,19 +9,21 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
-import com.esferalia.aon.payroll.AgreementLevel;
+import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementDataColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.DeductionConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.DomainColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 
 /**
@@ -30,7 +32,32 @@ import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 @SuppressWarnings("serial")
 public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		EnterprisesService {
-
+	
+	@Override
+	public ContextDescriptor getContext() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	@Override
+	public void saveBonusConcept(Bonus bonus) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void savePaymentConcept(Payment payment) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void saveDeductionConcept(Deduction deduction) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Override
 	public List<Enterprise> getEnterprises(int offset, int limit) {
 		Connection connection = null;
@@ -62,6 +89,81 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainID = getParentDomainID();
 
 			return getAgreements(connection, offset, limit, domainID,
+					parentDomainID);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
+	@Override
+	public List<Bonus> getBonusConcepts(int offset, int limit) {
+		Connection connection = null;
+		try {
+			initFacesContext();
+			connection = AonServletUtils.getConnection();
+			Integer domainID = getDomainID();
+			Integer parentDomainID = getParentDomainID();
+
+			return getBonusConcepts(connection, offset, limit, domainID,
+					parentDomainID);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
+	@Override
+	public List<Deduction> getDeductionConcepts(int offset, int limit) {
+		Connection connection = null;
+		try {
+			initFacesContext();
+			connection = AonServletUtils.getConnection();
+			Integer domainID = getDomainID();
+			Integer parentDomainID = getParentDomainID();
+
+			return getDeductionConcepts(connection, offset, limit, domainID,
+					parentDomainID);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
+	@Override
+	public List<Payment> getPaymentConcepts(int offset, int limit) {
+		Connection connection = null;
+		try {
+			initFacesContext();
+			connection = AonServletUtils.getConnection();
+			Integer domainID = getDomainID();
+			Integer parentDomainID = getParentDomainID();
+
+			return getPaymentConcepts(connection, offset, limit, domainID,
 					parentDomainID);
 
 		} catch (SQLException e) {
@@ -183,9 +285,165 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				rs.close();
 			if (stmt != null)
 				stmt.close();
-
 		}
 
+	}
+
+	private List<Bonus> getBonusConcepts(Connection connection, int offset,
+			int limit, Integer domainID, Integer parentDomainID)
+			throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("SELECT *" + 
+					" FROM " + SQLConstants.BONUS_CONCEPT+ 
+					" WHERE " + BonusConceptColumns.DOMAIN + " =  ? " + 
+					" OR " + BonusConceptColumns.DOMAIN + " = ? " + 
+					(parentDomainID != null ? " OR " + BonusConceptColumns.DOMAIN + " = ? " : "") +
+					" ORDER BY " + BonusConceptColumns.DESCRIPTION 
+					);
+			//@formatter:on
+
+			stmt.setInt(1, domainID);
+			stmt.setInt(2, 0);
+			if (parentDomainID != null)
+				stmt.setInt(3, parentDomainID);
+
+			List<Bonus> bonuses = new LinkedList<Bonus>();
+
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				Bonus bonus = new Bonus();
+
+				bonus.setId(rs.getInt(BonusConceptColumns.ID)); // not null
+				bonus.setDescription(rs
+						.getString(BonusConceptColumns.DESCRIPTION));
+				bonus.setExpression(rs
+						.getString(BonusConceptColumns.EXPRESSION));
+				bonus.setType(SQLUtils.getType(
+						rs.getObject(BonusConceptColumns.TYPE),
+						Bonus.Type.class));
+
+				bonuses.add(bonus);
+
+			}
+
+			return bonuses;
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private List<Payment> getPaymentConcepts(Connection connection, int offset,
+			int limit, Integer domainID, Integer parentDomainID)
+			throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("SELECT *" + 
+					" FROM " + SQLConstants.PAYMENT_CONCEPT + 
+					" WHERE " + PaymentConceptColumns.DOMAIN + " =  ? " + 
+					" OR " + PaymentConceptColumns.DOMAIN + " = ? " + 
+					(parentDomainID != null ? " OR " + PaymentConceptColumns.DOMAIN + " = ? " : "") + 
+					" ORDER BY " + PaymentConceptColumns.DESCRIPTION 
+					);
+			//@formatter:on
+
+			stmt.setInt(1, domainID);
+			stmt.setInt(2, 0);
+			if (parentDomainID != null)
+				stmt.setInt(3, parentDomainID);
+
+			List<Payment> payments = new LinkedList<Payment>();
+
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				Payment payment = new Payment();
+
+				payment.setId(rs.getInt(PaymentConceptColumns.ID)); // not null
+				payment.setName(rs.getString(PaymentConceptColumns.CODE));
+				payment.setDescription(rs
+						.getString(PaymentConceptColumns.DESCRIPTION));
+				payment.setExpression(rs
+						.getString(PaymentConceptColumns.EXPRESSION));
+				payment.setIrpfExpression(rs
+						.getString(PaymentConceptColumns.IRPF_EXPRESSION));
+				payment.setQuoteExpression(rs
+						.getString(PaymentConceptColumns.QUOTE_EXPRESSION));
+				payment.setType(SQLUtils.getType(
+						rs.getObject(PaymentConceptColumns.TYPE),
+						Payment.Type.class));
+
+				payments.add(payment);
+
+			}
+
+			return payments;
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private List<Deduction> getDeductionConcepts(Connection connection,
+			int offset, int limit, Integer domainID, Integer parentDomainID)
+			throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("SELECT *" + 
+					" FROM " + SQLConstants.DEDUCTION_CONCEPT+ 
+					" WHERE " + DeductionConceptColumns.DOMAIN + " =  ? " + 
+					" OR " + DeductionConceptColumns.DOMAIN + " = ? " + 
+					(parentDomainID != null ? " OR " + DeductionConceptColumns.DOMAIN + " = ? " : "") +
+					" ORDER BY " + DeductionConceptColumns.DESCRIPTION 
+					);
+			//@formatter:on
+
+			stmt.setInt(1, domainID);
+			stmt.setInt(2, 0);
+			if (parentDomainID != null)
+				stmt.setInt(3, parentDomainID);
+
+			List<Deduction> deductions = new LinkedList<Deduction>();
+
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				Deduction deduction = new Deduction();
+
+				deduction.setId(rs.getInt(DeductionConceptColumns.ID)); // not
+																		// null
+				deduction.setName(rs.getString(DeductionConceptColumns.CODE));
+				deduction.setDescription(rs
+						.getString(DeductionConceptColumns.DESCRIPTION));
+				deduction.setExpression(rs
+						.getString(DeductionConceptColumns.EXPRESSION));
+				deduction.setType(SQLUtils.getType(
+						rs.getObject(DeductionConceptColumns.TYPE),
+						Deduction.Type.class));
+
+				deductions.add(deduction);
+
+			}
+
+			return deductions;
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
 	}
 
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client' >
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client' >
 
 	<ui:Style  >
 	
@@ -13,7 +13,7 @@
 		<table class="aon-width-all aon-height-all" >
 			<tr>
 				<td>
-					<a:Payment ui:field="payment"/>
+					<aon:Deduction ui:field="deduction"/>
 				</td>
 			</tr>
 

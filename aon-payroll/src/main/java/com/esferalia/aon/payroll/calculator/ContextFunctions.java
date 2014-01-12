@@ -9,205 +9,519 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.WARNING;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 
-import org.mvel2.MVEL;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.RemoveException;
 
 public class ContextFunctions {
 
+	private static final String _OLD = "_OLD";
 	private static final String MONTHS_IMPL = "MESESIMPL";
+	
+	public static enum Years {
+		ONE(1),
+		TWO(2),
+		THREE(3),
+		FOUR(4),
+		FIVE(5),
+		SIX(6),
+		SEVEN(7);
+		
+		private int years;
+		
+		private Years(int years) {
+			this.years = years;
+		}
+		
+		public int getYears() {
+			return years;
+		}
+	}
+	
+	public static enum Guaranteed {
+		BR,
+		NET,
+		RAW;
+		
+		
+	}
+	
 
-
-	public static void remove() throws RemoveException{
-		throw new RemoveException();		
+	public static void remove() throws RemoveException {
+		throw new RemoveException();
 	}
 
-	public static void isDef(String name, String msg, ExpressionContext context) throws CheckException{
-		if ( !context.isDef(name) ) {
+	public static Double excess(Double amount, ExpressionContext context) {
+		List<ITimedVariable<?>> vars = context
+				.getTimedVariables(ContextVariable.ALL);
+		if (vars == null || vars.isEmpty())
+			return 0.00;
+		ITimedVariable<?> var = vars.get(0);
+		Double all = (Double) var.getValue(var.getPeriod());
+		return Math.max(all - amount, 0.00);
+	}
+
+	public static void isDef(String name, String msg, ExpressionContext context)
+			throws CheckException {
+		if (!context.isDef(name)) {
 			throw new InvalidVariables(msg, name);
 		}
 	}
 
-	public static void check(boolean condition, String msg) throws CheckException{
-		if ( !condition ) {
+	public static void check(boolean condition, String msg)
+			throws CheckException {
+		if (!condition) {
 			throw new CheckException(msg);
 		}
 	}
 
-	public static void checkVar(String name, boolean condition, String msg) throws CheckException{
-		if ( !condition ) {
-			throw new InvalidVariables(msg, name );
+	public static void checkVar(String name, boolean condition, String msg)
+			throws CheckException {
+		if (!condition) {
+			throw new InvalidVariables(msg, name);
 		}
 	}
 
-	public static void warning(String msg) throws CheckException{
-		throw new CheckException(msg);		
+	public static void warning(String msg) throws CheckException {
+		throw new CheckException(msg);
 	}
 
-	
-	public static int getMonths(Date start, Date end , double days){
+	public static int getMonths(Date start, Date end, double days) {
 		Calendar startCalendar = Calendar.getInstance();
 		startCalendar.setTime(start);
-		
+
 		Calendar endCalendar = Calendar.getInstance();
 		endCalendar.setTime(end);
-		
+
 		int months = 0;
-	
-		while ( days > 0 && ( startCalendar.compareTo(endCalendar) <= 0 ) ){
+
+		while (days > 0 && (startCalendar.compareTo(endCalendar) <= 0)) {
 			days -= CommonUtil.daysInMonth(startCalendar.getTime());
 			startCalendar.add(Calendar.MONTH, 1);
 			months++;
 		}
-		
-		return months ;
+
+		return months;
 	}
 	
+	// ------------------------------------------------------------------------
+	// ANIGÜEDAD
+	// ------------------------------------------------------------------------
+
+	public static Double old(ExpressionContext context, Double amount,
+			Years years) {
+		double seniority = getDouble(context, ContextVariable.SENIORITY);
+		return amount * (int)(seniority / years.getYears());
+	}
+
+	public static Double seniority( Double amount,
+			Years years) throws MacroException {
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(",
+						ContextVariable.OLD), String.format("%s\\(%s,", _OLD,
+						ContextVariable.CONTEXT));
+			}
+		};
+	}
+
+	public static Double old(ExpressionContext context, Double amount,
+			Integer... years) {
+		double seniority = getDouble(context, ContextVariable.SENIORITY);
+		double old = 0;
+		for (int year : years) {
+			if (seniority >= year) {
+				old += amount;
+			}
+		}
+		return old;
+	}
+
+	public static Double seniority() throws MacroException {
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(",
+						ContextVariable.OLD), String.format("%s\\(%s,", _OLD,
+						ContextVariable.CONTEXT));
+			}
+		};
+	}
+
+	public static Double seniority(Double amount, Integer year1)
+			throws MacroException {
+		return seniority();
+	}
+
+	public static Double old(ExpressionContext context, Double amount,
+			Integer year1) {
+		return old(context, amount, new Integer[] { year1 });
+	}
+
+	public static Double seniority(Double amount, Integer year1, Integer year2)
+			throws MacroException {
+		return seniority();
+	}
+
+	public static Double old(ExpressionContext context, Double amount,
+			Integer year1, Integer year2) {
+		return old(context, amount, new Integer[] { year1, year2 });
+	}
+
+	public static Double seniority(Double amount, Integer year1, Integer year2,
+			Integer year3) throws MacroException {
+		return seniority();
+	}
+
+	public static Double old(ExpressionContext context, Double amount,
+			Integer year1, Integer year2, Integer year3) {
+		return old(context, amount, new Integer[] { year1, year2, year3 });
+	}
+
+	public static Double seniority(Double amount, Integer year1, Integer year2,
+			Integer year3, Integer year4) throws MacroException {
+		return seniority();
+	}
+
+	public static Double old(ExpressionContext context, Double amount,
+			Integer year1, Integer year2, Integer year3, Integer year4) {
+		return old(context, amount,
+				new Integer[] { year1, year2, year3, year4 });
+	}
+
+	public static Double seniority(Double amount, Integer year1, Integer year2,
+			Integer year3, Integer year4, Integer year5) throws MacroException {
+		return seniority();
+	}
+
+	public static Double old(ExpressionContext context, Double amount,
+			Integer year1, Integer year2, Integer year3, Integer year4,
+			Integer year5) {
+		return old(context, amount, new Integer[] { year1, year2, year3, year4,
+				year5 });
+	}
+
+	public static Double seniority(Double amount, Integer year1, Integer year2,
+			Integer year3, Integer year4, Integer year5, Integer year6)
+			throws MacroException {
+		return seniority();
+	}
+
+	public static Double old(ExpressionContext context, Double amount,
+			Integer year1, Integer year2, Integer year3, Integer year4,
+			Integer year5, Integer year6) {
+		return old(context, amount, new Integer[] { year1, year2, year3, year4,
+				year5, year6 });
+	}
+
+	public static Double seniority(Double amount, Integer year1, Integer year2,
+			Integer year3, Integer year4, Integer year5, Integer year6,
+			Integer year7) throws MacroException {
+		return seniority();
+	}
+
+	public static Double old(ExpressionContext context, Double amount,
+			Integer year1, Integer year2, Integer year3, Integer year4,
+			Integer year5, Integer year6, Integer year7) {
+		return old(context, amount, new Integer[] { year1, year2, year3, year4,
+				year5, year6, year7 });
+	}
+
+	public static Double seniority(Double amount, Integer year1, Integer year2,
+			Integer year3, Integer year4, Integer year5, Integer year6,
+			Integer year7, Integer year8) throws MacroException {
+		return seniority();
+	}
+
+	public static Double old(ExpressionContext context, Double amount,
+			Integer year1, Integer year2, Integer year3, Integer year4,
+			Integer year5, Integer year6, Integer year7, Integer year8) {
+		return old(context, amount, new Integer[] { year1, year2, year3, year4,
+				year5, year6, year7, year8 });
+	}
+
+	public static Double seniority(Double amount, Integer year1, Integer year2,
+			Integer year3, Integer year4, Integer year5, Integer year6,
+			Integer year7, Integer year8, Integer year9) throws MacroException {
+		return seniority();
+	}
+
+	public static Double old(ExpressionContext context, Double amount,
+			Integer year1, Integer year2, Integer year3, Integer year4,
+			Integer year5, Integer year6, Integer year7, Integer year8,
+			Integer year9) {
+		return old(context, amount, new Integer[] { year1, year2, year3, year4,
+				year5, year6, year7, year8, year9 });
+	}
+
+	public static Double seniority(Double amount, Integer year1, Integer year2,
+			Integer year3, Integer year4, Integer year5, Integer year6,
+			Integer year7, Integer year8, Integer year9, Integer year10)
+			throws MacroException {
+		return seniority();
+	}
+
+	public static Double old(ExpressionContext context, Double amount,
+			Integer year1, Integer year2, Integer year3, Integer year4,
+			Integer year5, Integer year6, Integer year7, Integer year8,
+			Integer year9, Integer year10) {
+		return old(context, amount, new Integer[] { year1, year2, year3, year4,
+				year5, year6, year7, year8, year9, year10 });
+	}
+
+	public static Double seniority(Double amount, Integer year1, Integer year2,
+			Integer year3, Integer year4, Integer year5, Integer year6,
+			Integer year7, Integer year8, Integer year9, Integer year10, Integer year11)
+			throws MacroException {
+		return seniority();
+	}
+
+	public static Double old(ExpressionContext context, Double amount,
+			Integer year1, Integer year2, Integer year3, Integer year4,
+			Integer year5, Integer year6, Integer year7, Integer year8,
+			Integer year9, Integer year10, Integer year11) {
+		return old(context, amount, new Integer[] { year1, year2, year3, year4,
+				year5, year6, year7, year8, year9, year10, year11 });
+	}
 	
-	private static void loadRemoveFunction(ExpressionContext context, Date startDate, Date endDate) throws ExpressionException {
+	// ------------------------------------------------------------------------
+	// Guaranteed 
+	// ------------------------------------------------------------------------
+	public static Double guaranteed(ExpressionContext context, Double amount,
+			int start, int end, LeaveType ...types) {
+		return null;
+	}
+	
+	public static Double guaranteed(ExpressionContext context, Guaranteed gtzdo,
+			int start, int end, LeaveType ...types) {
+		return null;
+	}
+	
+
+	// ------------------------------------------------------------------------
+	// Private methods
+	// ------------------------------------------------------------------------
+
+	private static <T> T getVariable(ExpressionContext context,
+			ContextVariable var) {
+		List<ITimedVariable<?>> variables = context.getTimedVariables(var
+				.getName());
+		if (variables == null || variables.isEmpty())
+			return null;
+		ITimedVariable<?> variable = variables.get(0);
+		return (T) variable.getValue(variable.getPeriod());
+	}
+
+	private static double getDouble(ExpressionContext context,
+			ContextVariable var) {
+		Number value = getVariable(context, var);
+		return value == null ? 0.00 : value.doubleValue();
+	}
+
+	// ------------------------------------------------------------------------
+	// Private Static methods (library)
+	// ------------------------------------------------------------------------
+	private static void loadRemoveFunction(ExpressionContext context,
+			Date startDate, Date endDate) throws ExpressionException {
 		try {
-			Method remove =  ContextFunctions.class.getMethod(
-					"remove");
-			
+			Method remove = ContextFunctions.class.getMethod("remove");
+
 			MethodStub removeStub = new MethodStub(remove);
-			
-			context.addVariable( ContextVariable.REMOVE, removeStub, startDate, endDate);
-			
+
+			context.addVariable(ContextVariable.REMOVE, removeStub, startDate,
+					endDate);
+
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		
+		}
+
 	}
-	
-	private static void loadMonthsFunction(ExpressionContext context, Date startDate, Date endDate) throws ExpressionException {
+
+	private static void loadMonthsFunction(ExpressionContext context,
+			Date startDate, Date endDate) throws ExpressionException {
 		try {
-			
-			Method months =  ContextFunctions.class.getMethod(
-					"getMonths", 
-					Date.class, 
-					Date.class, 
-					double.class);
-			
+
+			Method months = ContextFunctions.class.getMethod("getMonths",
+					Date.class, Date.class, double.class);
+
 			MethodStub monthsStub = new MethodStub(months);
-			
-			context.addVariable( MONTHS_IMPL , monthsStub, startDate, endDate);
-			
-			String functionScript =  
-					String.format("%s = def (days) { %s(%s, %s, days) };", 
-							MONTHS,
-							MONTHS_IMPL, 
-							START, 
-							END  );
-			
+
+			context.addVariable(MONTHS_IMPL, monthsStub, startDate, endDate);
+
+			String functionScript = String.format(
+					"%s = def (days) { %s(%s, %s, days) };", MONTHS,
+					MONTHS_IMPL, START, END);
+
 			context.eval(functionScript, startDate, endDate);
-			
-		} catch ( SecurityException e) {
-		} catch( NoSuchMethodException e ){
+
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
 		}
 	}
-	
-	private static void loadWarnFunction(ExpressionContext context, Date startDate, Date endDate) throws ExpressionException {
+
+	private static void loadWarnFunction(ExpressionContext context,
+			Date startDate, Date endDate) throws ExpressionException {
 
 		// WARNING function
 		try {
-			Method warning =  ContextFunctions.class.getMethod(
-					"warning", 
+			Method warning = ContextFunctions.class.getMethod("warning",
 					String.class);
-			
+
 			MethodStub warningStub = new MethodStub(warning);
-			
-			context.addVariable( WARNING , warningStub, startDate, endDate);
-		} catch ( SecurityException e) {
-		} catch( NoSuchMethodException e ){
+
+			context.addVariable(WARNING, warningStub, startDate, endDate);
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
 		}
 	}
 
-	private static void loadCheckFunction(ExpressionContext context, Date startDate, Date endDate) throws ExpressionException {
+	private static void loadCheckFunction(ExpressionContext context,
+			Date startDate, Date endDate) throws ExpressionException {
 
 		// WARNING function
 		try {
-			Method check =  ContextFunctions.class.getMethod(
-					"check", 
-					boolean.class, 
-					String.class);
-			
+			Method check = ContextFunctions.class.getMethod("check",
+					boolean.class, String.class);
+
 			MethodStub warningStub = new MethodStub(check);
-			
-			context.addVariable( CHECK , warningStub, startDate, endDate);
-		} catch ( SecurityException e) {
-		} catch( NoSuchMethodException e ){
+
+			context.addVariable(CHECK, warningStub, startDate, endDate);
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
 		}
 	}
 
-	private static void loadCheckVarFunction(ExpressionContext context, Date startDate, Date endDate) throws ExpressionException {
+	private static void loadCheckVarFunction(ExpressionContext context,
+			Date startDate, Date endDate) throws ExpressionException {
 
 		// WARNING function
 		try {
-			Method checkVar =  ContextFunctions.class.getMethod(
-					"checkVar", 
-					String.class,
-					boolean.class, 
-					String.class);
-			
+			Method checkVar = ContextFunctions.class.getMethod("checkVar",
+					String.class, boolean.class, String.class);
+
 			MethodStub warningStub = new MethodStub(checkVar);
-			
-			context.addVariable( ContextVariable.CHECK_VAR , warningStub, startDate, endDate);
-		} catch ( SecurityException e) {
-		} catch( NoSuchMethodException e ){
+
+			context.addVariable(ContextVariable.CHECK_VAR, warningStub,
+					startDate, endDate);
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
 		}
 	}
 
-	private static void loadIsDefFunction(ExpressionContext context, Date startDate, Date endDate) throws ExpressionException {
-
+	private static void loadIsDefFunction(ExpressionContext context,
+			Date startDate, Date endDate) throws ExpressionException {
 		try {
-			
-			Method isDef =  ContextFunctions.class.getMethod(
-					"isDef", 
-					String.class,
-					String.class, 
-					ExpressionContext.class);
-			
-			MethodStub isDefStub = new MethodStub(isDef);
-			
-			context.addVariable( "ISDEF" , isDefStub, startDate, endDate);
-		
-			String functionScript =  
-					String.format("%s = def(variable, msg) { ISDEF(variable, msg, %s) };", 
-							ContextVariable.ISDEF, 
-							ContextVariable.CONTEXT);
-			
-			context.eval(functionScript, startDate, endDate);
-		
-		} catch ( SecurityException e) {
-		} catch( NoSuchMethodException e ){
-		}
+			Method isDef = ContextFunctions.class.getMethod("isDef",
+					String.class, String.class, ExpressionContext.class);
 
+			MethodStub isDefStub = new MethodStub(isDef);
+			context.addVariable("ISDEF", isDefStub, startDate, endDate);
+			String functionScript = String.format(
+					"%s = def(variable, msg) { ISDEF(variable, msg, %s) };",
+					ContextVariable.ISDEF, ContextVariable.CONTEXT);
+
+			context.eval(functionScript, startDate, endDate);
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		}
 	}
 
-	public static void loadFunctions(ExpressionContext context, Date startDate, Date endDate) throws ExpressionException {
+	private static void loadExcessFunction(ExpressionContext context,
+			Date startDate, Date endDate) throws ExpressionException {
+		try {
+			Method isDef = ContextFunctions.class.getMethod("excess",
+					Double.class, ExpressionContext.class);
+			MethodStub excessStub = new MethodStub(isDef);
+			context.addVariable("_EXCESS", excessStub, startDate, endDate);
+			String functionScript = String.format(
+					"%s = def(amount){ _EXCESS(amount, %s) };",
+					ContextVariable.EXCESS, ContextVariable.CONTEXT);
+			context.eval(functionScript, startDate, endDate);
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+		}
+	}
+
+	private static void loadSeniorityFunction(ExpressionContext context,
+			Date startDate, Date endDate) throws ExpressionException {
+		try {
+			context.addVariable(ContextVariable.YEAR, Years.ONE, startDate,
+					endDate);
+			context.addVariable(ContextVariable.TWO, Years.TWO, startDate,
+					endDate);
+			context.addVariable(ContextVariable.THREE, Years.THREE, startDate,
+					endDate);
+			context.addVariable(ContextVariable.FOUR, Years.FOUR, startDate,
+					endDate);
+			context.addVariable(ContextVariable.FIVE, Years.FIVE, startDate,
+					endDate);
+			context.addVariable(ContextVariable.SIX, Years.SIX, startDate,
+					endDate);
+			context.addVariable(ContextVariable.SEVEN, Years.SEVEN, startDate,
+					endDate);
+
+			Method old = ContextFunctions.class.getMethod("old",
+					ExpressionContext.class, Double.class, Integer.class);
+			MethodStub oldStub = new MethodStub(old);
+			context.addVariable(_OLD, oldStub, startDate, endDate);
+
+			Method seniority = ContextFunctions.class.getMethod("seniority");
+			MethodStub seniorStub = new MethodStub(seniority);
+			context.addVariable(ContextVariable.OLD, seniorStub, startDate,
+					endDate);
+
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static void loadFunctions(ExpressionContext context, Date startDate,
+			Date endDate) throws ExpressionException {
 		loadCheckFunction(context, startDate, endDate);
 		loadCheckVarFunction(context, startDate, endDate);
 		loadWarnFunction(context, startDate, endDate);
 		loadMonthsFunction(context, startDate, endDate);
 		loadIsDefFunction(context, startDate, endDate);
 		loadRemoveFunction(context, startDate, endDate);
+		loadExcessFunction(context, startDate, endDate);
+		loadSeniorityFunction(context, startDate, endDate);
 	}
-	
-	
-	public static void main(String[] args) {
-		System.out.println( MVEL.eval("HOLA=12346; VALIDAR = def (variable) { return isdef variable ? variable : NULL; }; VALIDAR(HELLO);", new HashMap<String,Object>()));
+
+	public static void main(String[] args) throws ExpressionException {
+		ExpressionContext ctx = new ExpressionContext();
+		Date date = new Date();
+		ctx.addVariable("IMPORTE_ANTIGUEDAD", 24.69, date, date);
+		ctx.addVariable(ContextVariable.CONTEXT, ctx, date, date);
+		ctx.addVariable(ContextVariable.SENIORITY, 30, date, date);
+		loadSeniorityFunction(ctx, date, date);
+		System.out.println(ctx.eval("ANTIGÜEDAD(IMPORTE_ANTIGUEDAD,QUINQUENIO);",
+				date, date).get(0).getValue());
+		System.out.println(ctx.eval("ANTIGÜEDAD(24.69,SEXENIO);",
+				date, date).get(0).getValue());
+		System.out.println(ctx.eval("ANTIGÜEDAD(24.69 ,3,6,9,12,15,18,21,24,27,30);",
+				date, date).get(0).getValue());
+		/*System.out.println(ctx.eval("GARANTIZADO(BASE_REGULADORA,1);",
+		date, date).get(0).getValue());*/
 	}
+
 }

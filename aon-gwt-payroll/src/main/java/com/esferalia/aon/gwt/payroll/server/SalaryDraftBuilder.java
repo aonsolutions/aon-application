@@ -47,6 +47,7 @@ import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.google.gwt.thirdparty.javascript.jscomp.Scope.Var;
 
 public class SalaryDraftBuilder implements ISalaryBuilder,
 		ContractSalaryCalculator.IListener, IContractSalaryCalculatorContext.IListener {
@@ -463,9 +464,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 			RemovedExpressionVariable<?> var) {
 
 		UndefinedPaymentVariable undefVar = new UndefinedPaymentVariable();
-
 		undefVar.setName(var.getName());
-		undefVar.setImplicit(false);
+		undefVar.setImplicit(isImplicit(var.getName()));
 		undefVar.setEndDate(var.getPeriod().getEnd());
 		undefVar.setStartDate(var.getPeriod().getStart());
 		undefVar.setScope(getScope(var.getExpression().getScope()));
@@ -493,7 +493,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		UndefinedPaymentVariable undefVar = new UndefinedPaymentVariable();
 
 		undefVar.setName(variableName);
-		undefVar.setImplicit(false);
+		undefVar.setImplicit(isImplicit(variableName));
 		undefVar.setEndDate(contractPayment.getEndDate());
 		undefVar.setStartDate(contractPayment.getStartDate());
 		undefVar.setScope(getScope(contractPayment.getScope()));
@@ -523,7 +523,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		UndefinedDeductionVariable undefVar = new UndefinedDeductionVariable();
 
 		undefVar.setName(var.getName());
-		undefVar.setImplicit(false);
+		undefVar.setImplicit(isImplicit(var.getName()));
 		undefVar.setEndDate(var.getPeriod().getEnd());
 		undefVar.setStartDate(var.getPeriod().getStart());
 		undefVar.setScope(getScope(var.getExpression().getScope()));
@@ -541,7 +541,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		UndefinedDeductionVariable undefVar = new UndefinedDeductionVariable();
 
 		undefVar.setName(variableName);
-		undefVar.setImplicit(false);
+		undefVar.setImplicit(isImplicit(variableName));
 		undefVar.setEndDate(contractDeduction.getEndDate());
 		undefVar.setStartDate(contractDeduction.getStartDate());
 		undefVar.setScope(getScope(contractDeduction.getScope()));
@@ -592,9 +592,9 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		UndefinedVariable undefVar = new UndefinedVariable();
 
 		undefVar.setName(variableName);
-		undefVar.setImplicit(false);
 		undefVar.setEndDate(start);
 		undefVar.setStartDate(end);
+		undefVar.setImplicit(isImplicit(variableName));
 		undefVar.setScope(getScope(expression.getScope()));
 		
 		salaryDraft.addUndefinedVariable(undefVar);
@@ -675,6 +675,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		return payment;
 	}
 	
+	// ------------------------------------------------------------------------
 
 	private Short getMonth(Month month) {
 		return month == null ? null : (short) month.getValue();
@@ -720,6 +721,15 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		}
 
 		return fullMatchDbItems.size()> 0 ? fullMatchDbItems : nameMatchDbItems;
+	}
+	
+	private static boolean isImplicit(String name){
+		ContextVariable var = ContextVariable.getVariableByName(name);
+		if( var != null )
+			return true;
+		// TODO : Very, very ugly...
+		return name.matches(String.format("%s_\\d+_\\d+", ContextVariable.COMMON_DISEASE_DAYS)) ||
+				name.matches(String.format("%s_\\d+_\\d+", ContextVariable.OCCUPATIONAL_DISEASE_DAYS));
 	}
 
 }

@@ -12,12 +12,15 @@ import com.esferalia.aon.gwt.payroll.client.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
-import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.gps.ReportConstants;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -37,7 +40,6 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -689,6 +691,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private SalaryPreview salaryPreview;
 	private EventsDraft eventsDraft;
 	private AgreementDraft agreementDraft;
+	private PaymentEditor paymentEditor;
+	private DeductionEditor deductionEditor;
 
 	private ResultsPanel resultsPanel;
 	
@@ -734,6 +738,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		salaryDraft = new SalaryDraft();
 		salaryPreview = new SalaryPreview();
 		agreementDraft = new AgreementDraft();
+		paymentEditor = new PaymentEditor();
+		deductionEditor = new DeductionEditor();
 
 		resultsPanel = new ResultsPanel();
 
@@ -869,22 +875,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	// ---------------------------------------------- MetaData.Listener methods
 	
 	@Override
-	public void onBonusConceptsSelected() {
-		employeeDetail.setWidget(jsf);
-		jsf.bonusConceptsSelected();
+	public void onBonusConceptSelected(Bonus bonus) {
 	}
 	
 	@Override
-	public void onDeductionConceptsSelected() {
-		employeeDetail.setWidget(jsf);
-		jsf.deductionConceptsSelected();
+	public void onPaymentConceptSelected(Payment payment) {
+		paymentEditor.setPayment(payment);
+		employeeDetail.setWidget(paymentEditor);
+	}
+
+	@Override
+	public void onDeductionConceptSelected(Deduction deduction) {
+		deductionEditor.setDeduction(deduction);
+		employeeDetail.setWidget(deductionEditor);
 	}
 	
-	@Override
-	public void onPaymentConceptsSelected() {
-		employeeDetail.setWidget(jsf);
-		jsf.paymentConceptsSelected();
-	}
 
 	// ------------------------------------------------------- UiHandler methods
 

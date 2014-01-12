@@ -10,7 +10,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
+import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
+import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.DateTimeFormatException;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmptyStringException;
@@ -52,7 +54,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -223,7 +224,8 @@ public class AgreementDraft extends ResizeComposite implements
 				@Override
 				public void onChange(ChangeEvent event) {
 					String value = listBox.getValue(listBox.getSelectedIndex());
-					extra.setPaymentId(value == null? null : Integer.valueOf(value));
+					extra.setPaymentId(value == null ? null : Integer
+							.valueOf(value));
 					AgreementDraft.this.agreementDraftObject
 							.addDraftExtra(extra);
 					AgreementDraft.this.calculate();
@@ -344,9 +346,13 @@ public class AgreementDraft extends ResizeComposite implements
 			return null;
 		}
 
-		void setEditButton(HasClickHandlers button) {
-			button.addClickHandler(new ClickHandler() {
+		// --------------------------------------------------------------------
+		//
+		// --------------------------------------------------------------------
 
+		void setEditButton(HasClickHandlers button) {
+
+			class EditHandler implements ClickHandler, PaymentDialog.Callback {
 				@Override
 				public void onClick(ClickEvent event) {
 					PaymentDialog dialog = new PaymentDialog();
@@ -362,10 +368,32 @@ public class AgreementDraft extends ResizeComposite implements
 					dialog.setPaymentExpression(payment.getExpression()); //
 					dialog.setIrpfExpression(payment.getIrpfExpression());
 					dialog.setQuoteExpression(payment.getQuoteExpression());
+					dialog.setContextProvider(agreementDraftObject);
 
-					dialog.show();
+					dialog.show(this);
 				}
-			});
+
+				// ------------------------------------------------------------
+				// PaymentDialog.Callback methods.
+				// ------------------------------------------------------------
+				@Override
+				public void onAccept(PaymentDialog dialog) {
+					payment.setType(dialog.getType());
+					payment.setMonth(dialog.getMonth());
+					payment.setDescription(dialog.getDescription());
+					payment.setExpression(dialog.getPaymentExpression());
+					payment.setIrpfExpression(dialog.getIrpfExpression());
+					payment.setQuoteExpression(dialog.getQuoteExpression());
+					
+					AgreementDraft.this.agreementDraftObject
+							.addDraftPayment(payment);
+					AgreementDraft.this.calculate();
+				}
+
+
+			}
+
+			button.addClickHandler(new EditHandler());
 		}
 
 		void setDeleteButton(HasClickHandlers button) {
@@ -924,10 +952,10 @@ public class AgreementDraft extends ResizeComposite implements
 		Date draftEndDate = agreementDraftObject.getDraftEndDate();
 
 		Date startDate = agreementDraftObject.getStartDate();
-		
+
 		// clear selection.
 		datesListBox.setSelectedIndex(-1);
-		
+
 		int alwaysIndex = 0;
 
 		for (int i = 0; i < datesListBox.getItemCount(); i++) {
@@ -941,7 +969,7 @@ public class AgreementDraft extends ResizeComposite implements
 				Date alwaysDate = getFirstDateWithChanges();
 				datesListBox.setItemText(i,
 						text + " ( " + format.format(alwaysDate) + "... )");
-				if (alwaysDate.equals(draftStartDate) && draftEndDate == null){
+				if (alwaysDate.equals(draftStartDate) && draftEndDate == null) {
 					datesListBox.setSelectedIndex(i);
 				}
 
@@ -965,9 +993,10 @@ public class AgreementDraft extends ResizeComposite implements
 				}
 			}
 		}
-		//Window.alert(datesListBox.getSelectedIndex() + " " + draftStartDate + "..." + ( draftEndDate == null ? "" : draftEndDate ));
+		// Window.alert(datesListBox.getSelectedIndex() + " " + draftStartDate +
+		// "..." + ( draftEndDate == null ? "" : draftEndDate ));
 
-		if ( datesListBox.getSelectedIndex() == -1 ){
+		if (datesListBox.getSelectedIndex() == -1) {
 			datesListBox.setSelectedIndex(alwaysIndex);
 			agreementDraftObject.setDraftPeriod(getFirstDateWithChanges());
 		}
@@ -977,10 +1006,10 @@ public class AgreementDraft extends ResizeComposite implements
 	private Date getFirstDateWithChanges() {
 		Date firstDateWithChanges = agreementDraftObject.getStartDate();
 		Set<Date> datesWithChanges = agreementDraftObject.getDatesWithChanges();
-		if ( datesWithChanges == null )
+		if (datesWithChanges == null)
 			return DateUtils.copyDateOnly(firstDateWithChanges);
-		
-		for (Date date : datesWithChanges ) {
+
+		for (Date date : datesWithChanges) {
 			if (date.before(firstDateWithChanges))
 				firstDateWithChanges = date;
 		}
@@ -1159,10 +1188,10 @@ public class AgreementDraft extends ResizeComposite implements
 		extrasTable.setWidget(row, 3, issueDateBox);
 
 		ListBox paymentListBox = new ListBox();
-		paymentListBox.addItem("-", (String)null);
-		
+		paymentListBox.addItem("-", (String) null);
+
 		Payment extraPayment = getExtraPayment(extra);
-		if (extraPayment != null){
+		if (extraPayment != null) {
 			paymentListBox.addItem(extraPayment.getDescription(),
 					String.valueOf(extraPayment.getId()));
 			paymentListBox.setSelectedIndex(1);
@@ -1321,9 +1350,9 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.insertCell(row, 5);
 
 		formatPaymentRow(row);
-
-		PaymentEditor paymentEditor = new PaymentEditor(
-				agreementDraftObject.newDraftPayment());
+		Payment payment = agreementDraftObject.newDraftPayment();
+		payment.setSalaryType(Salary.Type.SALARY);
+		PaymentEditor paymentEditor = new PaymentEditor(payment);
 		paymentEditor.setEditButton(newButton);
 		paymentEditor.setExpressionTextBox(expressionBox);
 		paymentEditor.setSalaryTypeListBox(salaryTypeListBox);
