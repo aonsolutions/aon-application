@@ -27,7 +27,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.util.AonFile;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
@@ -39,16 +38,13 @@ import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.ContrataBatch;
 import com.esferalia.aon.payroll.ContrataBatchAttachment;
-import com.esferalia.aon.payroll.SepeBatchAttachment;
-//import com.esferalia.aon.payroll.ContrataBatchAttachment;
 import com.esferalia.aon.payroll.ContrataBatchDetail;
-//import com.esferalia.aon.payroll.SepeBatchAttachment;
+import com.esferalia.aon.payroll.SepeBatchAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContrataFileType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
-//import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
 import com.esferalia.aon.sepe.api.contrata.contratos.FICHEROCONTRATOS;
 import com.esferalia.aon.sepe.api.contrata.contratos.RESPUESTACONTRATOTYPE;
 import com.esferalia.aon.ui.sepe.controller.handler.ContrataContratosHandler;
@@ -440,16 +436,16 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 		try {
 			SEPEFileUtils.validateContrataXmlPattern(is, schema, contractCode);
 		} catch (SAXException saxe) {
-			String msg = "Error validación de Contrat@. Formato no correcto o ausencia de datos de contrato.";
+			String msg = "Error validación de Contrat@ (Formato no correcto o ausencia de datos)";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(saxe.getMessage() );
 			throw new AbortProcessingException(msg, saxe);
 		} catch (IOException ioe) {
-			String msg = "Error de lectura al validar los datos a comunicar a Contrat@";
+			String msg = "Error de I/O al validar los datos";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, ioe);
 		} catch (Exception e) {
-			String msg = "Error general al validar los datos a comunicar a Contrat@";
+			String msg = "Error general al validar los datos";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		}

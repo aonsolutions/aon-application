@@ -179,9 +179,9 @@ public class CertificadosWriter {
 				cargo = "Apoderado";
 			}
 			o.setCIFNIF(dirStaff.getDocument());
-			o.setNombre(nombre);
-			o.setApellido1(ap1);
-			o.setApellido2(ap2);
+			o.setNombre(createNombreSimpleType(nombre));
+			o.setApellido1(createApellidoSimpleType(ap1));
+			o.setApellido2(StringUtils.isBlank(ap2)?null:ap2);
 			o.setCargo(cargo);
 		}
 		return o;
@@ -258,24 +258,25 @@ public class CertificadosWriter {
 	 */
 	private TRABAJADORTYPE createTrabajadorType(Certifica2BatchDetail batchDetail) {
 		SEPEUtils utils = SEPEUtils.getInstance();
-		
+		String name = batchDetail.getContract().getPerson().getName();
+		String surname1 = batchDetail.getContract().getPerson().getFirstSurname();
+		String surname2 = batchDetail.getContract().getPerson().getSecondSurname();
+		String quoteGroup = utils.getContractDataMap(batchDetail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.QUOTE_GROUP.getName());
+		String tc2 = utils.getContractDataMap(batchDetail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.TC2.getName());
+		String occupation = utils.getContractDataMap(batchDetail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.CNO.getName());
+
 		TRABAJADORTYPE o = new TRABAJADORTYPE();
 		
 		o.setDNINIE(batchDetail.getContract().getPerson().getRegistry().getDocument());
-		String name = batchDetail.getContract().getPerson().getName();
-		o.setNombre(name.length()>9?name.substring(0, 8):name);
-		o.setApellido1(batchDetail.getContract().getPerson().getFirstSurname());
-		String secondSurname = batchDetail.getContract().getPerson().getSecondSurname();
-		o.setApellido2(StringUtils.isBlank(secondSurname)?null:secondSurname);
+		o.setNombre(createNombreSimpleType(name));
+		o.setApellido1(createApellidoSimpleType(surname1));
+		o.setApellido2(StringUtils.isBlank(surname2)?null:createApellidoSimpleType(surname2));
 		o.setNumSS(batchDetail.getContract().getPerson().getSocialSecurityNumber());
-		String quoteGroup = utils.getContractDataMap(batchDetail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.QUOTE_GROUP.getName());
 		o.setGrupoCotizacion(quoteGroup!=null?quoteGroup:null);
-		String tc2 = utils.getContractDataMap(batchDetail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.TC2.getName());
 		o.setTipoContrato(tc2);
 		o.setDuracionContrato(completeLength(differenceBetweenDates(batchDetail.getContract().getStartDate(), batchDetail.getContract().getEndDate()).toString(),5,false));
 		o.setIndicadorDuracionContrato(null);
 
-		String occupation = utils.getContractDataMap(batchDetail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.CNO.getName());
 		o.setCodProfesion(completeLength(occupation,7, true));
 		o.setCargoPublicoSindical(null);
 		
@@ -534,8 +535,6 @@ public class CertificadosWriter {
 	}
 	
 	/**
-	<xsd:complexType name="VACACIONES_COTIZADAS_TYPE"/>
-	
 	<xsd:extension base="VACACIONES_COTIZADAS_TYPE">
 		<xsd:sequence>
 			<xsd:element name="NumDiasCotizados" type="N3_BASICTYPE"/>
@@ -578,8 +577,6 @@ public class CertificadosWriter {
 	}
 	
 	/**
-	<xsd:complexType name="VACACIONES_COTIZADAS_REA_TYPE"/>
-	
 	<xsd:extension base="VACACIONES_COTIZADAS_REA_TYPE">
 		<xsd:sequence>
 			<xsd:element name="GrupoCotizacion" type="N2_BASICTYPE" minOccurs="0"/>
@@ -648,8 +645,11 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createNombreSimpleType(){
-		return null;
+	private String createNombreSimpleType(String value){
+		if(StringUtils.isNotBlank(value) && StringUtils.length(value)>14 ){
+			return StringUtils.substring(value, 0, 14);
+		}
+		return value;
 	}
 	
 	/**
@@ -661,8 +661,11 @@ public class CertificadosWriter {
 	 * 
 	 * @return
 	 */
-	private String createApellidoSimpleType(){
-		return null;
+	private String createApellidoSimpleType(String value){
+		if(StringUtils.isNotBlank(value) && StringUtils.length(value)>14 ){
+			return StringUtils.substring(value, 0, 19);
+		}
+		return value;
 	}
 
 	/**

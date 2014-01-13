@@ -39,7 +39,18 @@ public class SEPEFileUtils {
 	
 	public final static String PRORROGAS_SCHEMA_FILE_NAME = "EsquemaProrrogas50.xsd";
 	
+	public final static String CERTIFICADOS_SCHEMA_FILE_NAME = "CertificadoEmpresa.xsd";
 	
+	
+	public static void validateCertificadosXmlPattern(InputStream xmlStream, String SCHEMA) throws IOException, SAXException {
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		URL[] urls = Classpath.search(cl, "META-INF/schema", SCHEMA);
+		
+		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		Schema schema = sf.newSchema(urls[0]);
+		validateXmlPattern(xmlStream, schema);
+	}
+
 	public static void validateContrataXmlPattern(File xmlFile, String SCHEMA, String contractCode) throws IOException, SAXException {
 		validateContrataXmlPattern(new FileInputStream(xmlFile), SCHEMA, contractCode);
 	}
@@ -54,14 +65,10 @@ public class SEPEFileUtils {
 			schemaFile = getSchemaFile(SCHEMA, urls[0], contractCode);
 			if (StringUtils.isBlank(contractCode)) {
 				Schema schema = sf.newSchema(urls[0]);
-				StreamSource source = new StreamSource(xmlStream);
-				Validator validator = schema.newValidator();
-				validator.validate(source);
+				validateXmlPattern(xmlStream, schema);
 			} else if( schemaFile!=null ){
 				Schema schema = sf.newSchema(schemaFile);
-				StreamSource source = new StreamSource(xmlStream);
-				Validator validator = schema.newValidator();
-				validator.validate(source);
+				validateXmlPattern(xmlStream, schema);
 			} else {
 				AonUtil.addErrorMessage("No se ha podido validar el fichero.");
 				AonUtil.addErrorMessage("Imposible obtener el esquema (XSD) de validación.");
@@ -69,6 +76,12 @@ public class SEPEFileUtils {
 		} finally {
 			FileUtils.deleteQuietly(schemaFile);
 		}
+	}
+
+	public static void validateXmlPattern(InputStream xmlStream, Schema schema) throws IOException, SAXException {
+		StreamSource source = new StreamSource(xmlStream);
+		Validator validator = schema.newValidator();
+		validator.validate(source);
 	}
 	
 	private static File getSchemaFile(String schema, URL url, String contractCode) {

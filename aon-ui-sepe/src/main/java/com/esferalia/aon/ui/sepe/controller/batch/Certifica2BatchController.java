@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +19,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.io.IOUtils;
+import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -47,6 +49,7 @@ import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
 import com.esferalia.aon.ui.sepe.controller.CertificadosController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.file.CertificadosWriter;
+import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class Certifica2BatchController extends BasicController {
@@ -236,6 +239,9 @@ public class Certifica2BatchController extends BasicController {
 			} else {
 				Certifica2Batch batch = (Certifica2Batch)getTo();
 				File file = getCertificadosWriter().createFile(batch, detailList);
+				
+				validateCertificadosFile(file);
+				
 				IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
 				if (file != null) {
 					FileInputStream in = new FileInputStream(file);
@@ -267,6 +273,27 @@ public class Certifica2BatchController extends BasicController {
 		}
 	}
 	
+	private void validateCertificadosFile(File file) {
+		try {
+			InputStream is = new FileInputStream(file);
+			String schema = null;
+			schema = SEPEFileUtils.CERTIFICADOS_SCHEMA_FILE_NAME;
+			SEPEFileUtils.validateCertificadosXmlPattern(is, schema);
+		} catch (SAXException saxe) {
+			String msg = "Error validación de Certific@2 (Formato no correcto o ausencia de datos)";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(saxe.getMessage() );
+		} catch (IOException ioe) {
+			String msg = "Error de I/O al validar los datos";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(ioe.getMessage() );
+		} catch (Exception e) {
+			String msg = "Error general al validar los datos";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage() );
+		}
+	}
+
 	private void checkEmployeeSalaries(List<ITransferObject> detailList) throws ManagerBeanException {
 		excludeEmployeeList = null;
 		SEPEUtils utils = SEPEUtils.getInstance();
