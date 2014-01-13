@@ -455,13 +455,18 @@ public class AgreementDraftObject implements IContextProvider {
 	//
 	// ------------------------------------------------------------------------
 	private SalaryDraft newFakeSalaryDraft(){
-		SalaryDraft salaryDraft = new SalaryDraft();
-		Employee employee = new Employee();
-		employee.setId(-1); // Fake
-		salaryDraft.setEmployee(employee);
-		salaryDraft.setType(Type.SALARY);
+		SalaryDraft draft = new SalaryDraft();
 		
-		return salaryDraft;
+		draft.setStartDate(DateUtils.getFirstDayOfMonth());
+		draft.setEndDate(DateUtils.getLastDayOfMonth());
+		draft.setIssueDate(draft.getEndDate());
+		draft.setChargeDate(draft.getEndDate());
+		Employee employee = new Employee();
+		employee.setId(-1);
+		draft.setEmployee(employee);
+		draft.setType(Type.SALARY);
+		
+		return draft;
 	}
 
 	@Override
@@ -472,7 +477,7 @@ public class AgreementDraftObject implements IContextProvider {
 
 	@Override
 	public void eval(String expression, AsyncCallback<Double> callback) {
-		employeesServiceAsync.eval(expression, newFakeSalaryDraft(), callback);
+		//employeesServiceAsync.eval(expression, newFakeSalaryDraft(), callback);
 	}
 	
 

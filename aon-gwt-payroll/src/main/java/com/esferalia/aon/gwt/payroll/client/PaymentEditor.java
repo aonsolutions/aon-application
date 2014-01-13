@@ -1,9 +1,12 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
+import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -18,16 +21,15 @@ public class PaymentEditor extends ResizeComposite {
 	@UiField 
 	com.esferalia.aon.gwt.payroll.client.Payment paymentUI;
 	
-	private Payment payment;
 	private EnterprisesServiceAsync enterprisesService;
 
 	public PaymentEditor() {
 		initWidget(binder.createAndBindUi(this));
 		initEnterprisesService();
+		initContextProvider();
 	}
 	
 	public void setPayment(Payment payment) {
-		this.payment = payment;
 		dumpPayment(payment);
 	}
 	
@@ -55,6 +57,19 @@ public class PaymentEditor extends ResizeComposite {
 	
 	private void initContextProvider() {
 		
+		class ContextProvider implements IContextProvider{
+			@Override
+			public void eval(String expression, AsyncCallback<Double> callback) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void getContext(AsyncCallback<ContextDescriptor> callback) {
+				PaymentEditor.this.enterprisesService.getContext(callback);
+			}
+		}
+		
+		paymentUI.setContextProvider(new ContextProvider());
 	}
 	
 	

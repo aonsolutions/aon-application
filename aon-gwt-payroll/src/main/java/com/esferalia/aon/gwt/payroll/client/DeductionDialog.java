@@ -41,11 +41,11 @@ public class DeductionDialog extends CustomDialog {
 
 
 	public String getDeductionExpression() {
-		return deduction.getDeductionExpression();
+		return deduction.getExpression();
 	}
 
 	public void setDeductionExpression(String expression) {
-		deduction.setDeductionExpression(expression);
+		deduction.setExpression(expression);
 	}
 
 	public com.esferalia.aon.gwt.payroll.shared.Deduction.Type getType() {

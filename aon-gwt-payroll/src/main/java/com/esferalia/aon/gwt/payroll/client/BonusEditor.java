@@ -1,8 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
-import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -10,40 +10,40 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DeductionEditor extends ResizeComposite {
+public class BonusEditor extends ResizeComposite {
 	
-	interface Binder extends UiBinder<Widget, DeductionEditor> {
+	interface Binder extends UiBinder<Widget, BonusEditor> {
 
 	}
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	
 	@UiField 
-	com.esferalia.aon.gwt.payroll.client.Deduction deductionUI;
+	com.esferalia.aon.gwt.payroll.client.Bonus bonusUI;
 	
 	private EnterprisesServiceAsync enterprisesService;
 	
-	public DeductionEditor() {
+	public BonusEditor() {
 		initWidget(binder.createAndBindUi(this));
 		initEnterprisesService();
 		initContextProvider();
 	}
 	
-	public void setDeduction(Deduction deduction) {
-		dumpDeduction(deduction);
-		
+	public void setBonus(Bonus bonus) {
+		dumpBonus(bonus);
 	}
 	
 	// ------------------------------------------------------------------------
 	
 	// ------------------------------------------------------------------------ 
 	
-	private void dumpDeduction(Deduction deduction) {
-		deductionUI.setName(deduction.getName());
-		deductionUI.setType(deduction.getType());
-		deductionUI.setDescription(deduction.getDescription());
-		deductionUI.setExpression(deduction.getExpression());
+	private void dumpBonus(Bonus bonus) {
+		bonusUI.setName(bonus.getName());
+		bonusUI.setType(bonus.getType());
+		bonusUI.setDescription(bonus.getDescription());
+		bonusUI.setExpression(bonus.getExpression());
 	}
+	
 	
 	private void initEnterprisesService() {
 		// Create a remote service proxy to talk to the server-side Enterprises
@@ -64,11 +64,11 @@ public class DeductionEditor extends ResizeComposite {
 			
 			@Override
 			public void getContext(AsyncCallback<ContextDescriptor> callback) {
-				DeductionEditor.this.enterprisesService.getContext(callback);
+				BonusEditor.this.enterprisesService.getContext(callback);
 			}
 		}
 		
-		deductionUI.setContextProvider(new ContextProvider());
+		bonusUI.setContextProvider(new ContextProvider());
 	}
 	
 	

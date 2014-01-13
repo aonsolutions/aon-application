@@ -61,7 +61,7 @@
 		<g:center>
 
 			<g:ScrollPanel styleName="{style.editor}">
-				<g:VerticalPanel styleName="{style.document}">
+				<g:VerticalPanel styleName="{style.document} aon-width-all">
 					<a:Payment ui:field="paymentUI" />
 				</g:VerticalPanel>
 			</g:ScrollPanel>

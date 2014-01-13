@@ -691,6 +691,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private SalaryPreview salaryPreview;
 	private EventsDraft eventsDraft;
 	private AgreementDraft agreementDraft;
+	private BonusEditor bonusEditor;
 	private PaymentEditor paymentEditor;
 	private DeductionEditor deductionEditor;
 
@@ -738,6 +739,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		salaryDraft = new SalaryDraft();
 		salaryPreview = new SalaryPreview();
 		agreementDraft = new AgreementDraft();
+		bonusEditor = new BonusEditor();
 		paymentEditor = new PaymentEditor();
 		deductionEditor = new DeductionEditor();
 
@@ -876,6 +878,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	
 	@Override
 	public void onBonusConceptSelected(Bonus bonus) {
+		bonusEditor.setBonus(bonus);
+		employeeDetail.setWidget(bonusEditor);
 	}
 	
 	@Override

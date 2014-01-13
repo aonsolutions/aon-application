@@ -94,8 +94,7 @@
 								styleName="aon-width-all aon-inputText" />
 						</g:cell>
 						<g:cell >
-							<g:Label styleName="aon-margin-left" ui:field="conceptDescriptionLabel"
-								visible="false" />
+							<g:Label styleName="aon-margin-left" ui:field="conceptDescriptionLabel"/>
 						</g:cell>
 					</g:HorizontalPanel>
 				</g:customCell>
@@ -141,12 +140,12 @@
 				<g:customCell styleName="{style.field}">
 					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
 						styleName="aon-width-all">
-						<g:TextBox ui:field="deductionTextBox" styleName="aon-width-all aon-inputText" />
+						<g:TextBox ui:field="expressionTextBox" styleName="aon-width-all aon-inputText" />
 						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
-							<g:Button ui:field="fxDeductionButton" styleName="{style.fxButton}" />
+							<g:Button ui:field="fxExpressionButton" styleName="{style.fxButton}" />
 						</g:cell>
 						<g:cell horizontalAlignment="ALIGN_RIGHT" width="24px">
-							<g:Button ui:field="resetDeductionButton" styleName="aon-lookupButton-clear"
+							<g:Button ui:field="resetExpressionButton" styleName="aon-lookupButton-clear"
 								visible="false" />
 						</g:cell>
 					</g:HorizontalPanel>
