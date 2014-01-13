@@ -31,7 +31,7 @@
 					<g:HorizontalPanel>
 						<g:HTMLPanel styleName="aon-finding-title">
 							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText">Deducciones</g:Label>
+								<g:Label styleName="aon-outputText">Bonificaciones</g:Label>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-subtitle">
@@ -62,7 +62,7 @@
 
 			<g:ScrollPanel styleName="{style.editor}">
 				<g:VerticalPanel styleName="{style.document} aon-width-all">
-					<aon:Deduction ui:field="deductionUI" />
+					<aon:Bonus ui:field="bonusUI" />
 				</g:VerticalPanel>
 			</g:ScrollPanel>
 

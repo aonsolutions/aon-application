@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,9 +12,13 @@ import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
@@ -35,8 +40,19 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	
 	@Override
 	public ContextDescriptor getContext() {
-		// TODO Auto-generated method stub
-		return null;
+		SalaryDraft draft = new SalaryDraft();
+		
+		draft.setStartDate(DateUtils.getFirstDayOfMonth());
+		draft.setEndDate(DateUtils.getLastDayOfMonth());
+		draft.setIssueDate(draft.getEndDate());
+		draft.setChargeDate(draft.getEndDate());
+		Employee employee = new Employee();
+		employee.setId(-1);
+		draft.setEmployee(employee);
+		draft.setType(Type.SALARY);
+		
+		
+		return EmployeesServiceImpl.getDraftContext(draft);
 	}
 	
 	

@@ -2639,18 +2639,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private static ContextDescriptor getDraftContext(SalaryDraft draft) {
+	protected static ContextDescriptor getDraftContext(SalaryDraft draft) {
 		Connection conn = null;
 		try {
 			conn = getConnection();
 
-			ISalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(
+			IContractSalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(
 					conn, draft, null);
-			ExpressionContext expressionContext = calculatorCtx
-					.getExpressionContext();
+			
+			ExpressionContext expressionContext = notNull( calculatorCtx
+					.getExpressionContext(), calculatorCtx.getSystemExpressionContext() );
 
-			Date start = calculatorCtx.getStartDate();
-			Date end = calculatorCtx.getEndDate();
+			Date start = notNull(calculatorCtx.getStartDate(), draft.getStartDate() ) ;
+			
+			Date end = notNull(calculatorCtx.getEndDate(), draft.getEndDate());
 
 			ContextDescriptor contextDescriptor = new ContextDescriptor();
 
@@ -3578,6 +3580,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	private static SalaryType toSalaryType(Salary.Type type) {
 		return type != null ? SalaryType.values()[type.ordinal()] : null;
+	}
+	
+	private static <T> T notNull(T...ts){
+		for (T t : ts) {
+			if ( t != null) 
+				return t;
+		}
+		return null;
 	}
 
 }

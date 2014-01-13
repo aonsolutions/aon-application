@@ -54,6 +54,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -356,10 +357,8 @@ public class AgreementDraft extends ResizeComposite implements
 				@Override
 				public void onClick(ClickEvent event) {
 					PaymentDialog dialog = new PaymentDialog();
-					dialog.center();
-
 					dialog.setNumberFormat(AON.CURRENCY_FORMAT);
-					dialog.setConcept(getConcept());
+					dialog.setConcept(PaymentEditor.this.getConcept());
 					dialog.setContextProvider(agreementDraftObject);
 					dialog.setMonth(payment.getMonth());
 					dialog.setType(payment.getType());
@@ -368,8 +367,8 @@ public class AgreementDraft extends ResizeComposite implements
 					dialog.setPaymentExpression(payment.getExpression()); //
 					dialog.setIrpfExpression(payment.getIrpfExpression());
 					dialog.setQuoteExpression(payment.getQuoteExpression());
-					dialog.setContextProvider(agreementDraftObject);
 
+					dialog.center();
 					dialog.show(this);
 				}
 

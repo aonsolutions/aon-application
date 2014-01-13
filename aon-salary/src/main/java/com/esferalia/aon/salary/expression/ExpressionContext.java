@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 import org.mvel2.ErrorDetail;
 import org.mvel2.MVEL;
@@ -199,11 +200,12 @@ public class ExpressionContext {
 			int offset = start + 1;
 			int len = end - offset + 1;
 			property = new String(expr, offset, len);
-		} while (bindings.containsKey(property));
+		} while ( !isJavaIdentifier(property) || bindings.containsKey(property));
 
 		return property;
 	}
 
+	
 	private Variables variables;
 
 	public ExpressionContext() {

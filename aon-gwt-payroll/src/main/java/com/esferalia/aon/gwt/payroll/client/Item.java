@@ -160,12 +160,12 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 	Button resetDescriptionButton;
 
 	@UiField(provided = true)
-	ExpressionTextBox deductionTextBox;
+	ExpressionTextBox expressionTextBox;
 	@UiField
-	Button resetDeductionButton;
+	Button resetExpressionButton;
 
 	@UiField
-	Button fxDeductionButton;
+	Button fxExpressionButton;
 
 	private NumberFormat numberFormat;
 	private IContextProvider contextProvider;
@@ -202,12 +202,12 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 		showOrHideResetDescriptionButton();
 	}
 
-	public String getDeductionExpression() {
-		return ((ExpressionTextBox) deductionTextBox).getExpression();
+	public String getExpression() {
+		return ((ExpressionTextBox) expressionTextBox).getExpression();
 	}
 
-	public void setDeductionExpression(String deduction) {
-		deductionTextBox.setExpression(deduction);
+	public void setExpression(String deduction) {
+		expressionTextBox.setExpression(deduction);
 		showOrHideResetPaymentButton();
 	}
 
@@ -300,17 +300,17 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 				Item.this.setDescription(concept.getDescription());
 			}
 		});
-		deductionTextBox.addBlurHandler(new BlurHandler() {
+		expressionTextBox.addBlurHandler(new BlurHandler() {
 
 			@Override
 			public void onBlur(BlurEvent event) {
 				Item.this.showOrHideResetPaymentButton();
 			}
 		});
-		resetDeductionButton.addClickHandler(new ClickHandler() {
+		resetExpressionButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Item.this.setDeductionExpression(concept.getExpression());
+				Item.this.setExpression(concept.getExpression());
 			}
 		});
 		resetTypeButton.addClickHandler(new ClickHandler() {
@@ -326,11 +326,11 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 				Item.this.showOrHideResetTypeButton();
 			}
 		});
-		fxDeductionButton.addClickHandler(new ClickHandler() {
+		fxExpressionButton.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				Item.this.showFxDialog((ExpressionTextBox) deductionTextBox);
+				Item.this.showFxDialog((ExpressionTextBox) expressionTextBox);
 			}
 		});
 	}
@@ -339,7 +339,7 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 
 	private void initProvided() {
 
-		deductionTextBox = new ExpressionTextBox(); // TODO : UiBinder
+		expressionTextBox = new ExpressionTextBox(); // TODO : UiBinder
 
 		conceptSuggestOracle = new MultiWordSuggestOracle();
 		descriptionSuggestOracle = new MultiWordSuggestOracle();
@@ -390,9 +390,9 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 	}
 
 	private void showOrHideResetPaymentButton() {
-		resetDeductionButton.setVisible(concept != null
+		resetExpressionButton.setVisible(concept != null
 				&& !StringUtils.equals(concept.getExpression(),
-						((ExpressionTextBox) deductionTextBox).expression));
+						((ExpressionTextBox) expressionTextBox).expression));
 	}
 
 }

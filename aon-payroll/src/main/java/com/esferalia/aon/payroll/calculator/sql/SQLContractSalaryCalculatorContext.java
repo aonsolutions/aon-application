@@ -928,7 +928,7 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 		if (this.agreementContextFactory != null) {
 			this.agreementContextFactory.close();
-			this.agreementContextFactory = null;
+			//this.agreementContextFactory = null;
 		}
 		if (this.agreementExpressionContexts != null) {
 			this.agreementExpressionContexts.clear();
@@ -1018,6 +1018,7 @@ public class SQLContractSalaryCalculatorContext implements
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
+		this.agreementContextFactory = null;
 	}
 
 	protected Integer getAgreement() {

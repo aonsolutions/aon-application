@@ -3,11 +3,17 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
@@ -21,6 +27,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Tree;
@@ -125,6 +132,8 @@ public class MetaData extends ResizeComposite {
 		Object userObject = selectedItem.getUserObject();
 		if ( userObject == null )
 			return;
+		else if ( userObject instanceof Bonus )
+			onBonusConceptTreeItemSelected((Bonus) userObject ); 
 		else if ( userObject instanceof Payment) // null
 			onPaymentConceptTreeItemSelected((Payment) userObject);
 		else if ( userObject instanceof Deduction )
@@ -222,7 +231,58 @@ public class MetaData extends ResizeComposite {
 		for (Listener listener : listeners)
 			listener.onPaymentConceptSelected(payment);
 	}
+	
+	private void initContextMenu () {
+		
+		
+		class TypeContextMenu extends ContextMenu {
+			ScheduledCommand newCommand = new ScheduledCommand(){
+				public void execute() {
+				};
+			};
+			
 
+			public TypeContextMenu() {
+				addItem("Nuevo", newCommand, AON.AON_ICON_RESET,
+						AON.AON_ICON_CMD_BUTTON);
+			}
+		};
+		
+		final TypeContextMenu contextMenu = new TypeContextMenu();
+		
+		ContextMenuHandler contextMenuHandler = new  ContextMenuHandler(){
+			@Override
+			public void onContextMenu(ContextMenuEvent event) {
+				// stop the browser from opening the context menu
+				event.preventDefault();
+				event.stopPropagation();
+
+				NativeEvent nativeEvent = event.getNativeEvent();
+				
+				TreeItem item = tree.getSelectedItem();
+				Object userObject = item.getUserObject();
+				// TODO : I know that's so ugly and not Object oriented. But
+				// it's much more clear than anything else. I promise
+				// to change ( even improve ) it soon.
+				if ( userObject instanceof Enterprise) {
+					
+				}
+
+				contextMenu.setPopupPosition(nativeEvent.getClientX(),
+						nativeEvent.getClientY());
+
+				contextMenu.show();
+			}
+			
+		};
+		
+		tree.addDomHandler(contextMenuHandler, ContextMenuEvent.getType());
+		
+		
+	}
+
+	// ------------------------------------------------------------------------
+	
 	private static SafeHtml imageItemSafeHtml(ImageResource imageProto,
 			Item<?> item) {
 		StringBuffer str = new StringBuffer(item.getDescription());
