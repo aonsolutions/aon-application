@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.26.2
+# Version: 7.27.0
 # Created by: girazu
-# Creation Date: 19/12/2013 09:40
+# Creation Date: 14/01/2014 13:55
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2789,6 +2789,25 @@ CREATE TABLE `contract_calendar_event` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Incidencias de calendario en Contratos';
 
 #
+# Structure for the `contract_clause` table : 
+#
+
+CREATE TABLE `contract_clause` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `contract` int(4) default NULL COMMENT 'Identificador del Contrato',
+  `line` smallint(2) default '1' COMMENT 'Numero de linea de la Clausula del Contrato',
+  `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Titulo de la Clausula de Contrato',
+  `description` text collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Clausula de Contrato',
+  `general` tinyint(1) default '0' COMMENT 'Indica si la Clausula es particular o general',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_CONTRACT_CLAUSE_CONTRACT` (`contract`),
+  KEY `IDX_CONTRACT_CLAUSE_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CONTRACT_CLAUSE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CONTRACT_CLAUSE_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clausulas de contrato';
+
+#
 # Structure for the `contract_data` table : 
 #
 
@@ -4535,6 +4554,7 @@ CREATE TABLE `purchase` (
   `supplier` int(4) NOT NULL default '0' COMMENT 'Identificador del Proveedor',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie del Pedido',
   `number` int(4) NOT NULL default '0' COMMENT 'Numero del Pedido',
+  `purchase_reference` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Codigo de referencia del Pedido de Compra',
   `address` int(4) default NULL COMMENT 'Identificador de la Direccion del Proveedor',
   `discount_expr` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descuentos del Pedido',
   `issue_date` date default NULL COMMENT 'Fecha de emision del Pedido',
@@ -6153,16 +6173,13 @@ CREATE TABLE `project_reservation_service_detail` (
   `quantity` double(15,2) default '0.00' COMMENT 'Cantidad',
   `price` double(15,4) default '0.0000' COMMENT 'Precio',
   `taxable_base` double(15,4) default '0.0000' COMMENT 'Base imponible',
-  `invoice_detail` int(4) default NULL COMMENT 'Identificador de la Linea de Factura',
   PRIMARY KEY  (`id`),
   KEY `IDX_PROJECT_RESERVATION_SERVICE_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_PRJ_RESERVATION_SERVICE_DETAIL_PRJ_RESERVATION_SERVICE` (`project_reservation_service`),
   KEY `IDX_PRJ_RESERVATION_SERVICE_DETAIL_PRJ_RESERVATION_ROOM_DETAIL` (`project_reservation_room_detail`),
-  KEY `IDX_PROJECT_RESERVATION_SERVICE_DETAIL_INVOICE_DETAIL` (`invoice_detail`),
   CONSTRAINT `FK_PRJ_RESERVATION_SERVICE_DETAIL_PRJ_RESERVATION_ROOM_DETAIL` FOREIGN KEY (`project_reservation_room_detail`) REFERENCES `project_reservation_room_detail` (`id`),
   CONSTRAINT `FK_PRJ_RESERVATION_SERVICE_DETAIL_PRJ_RESERVATION_SERVICE` FOREIGN KEY (`project_reservation_service`) REFERENCES `project_reservation_service` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_SERVICE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_SERVICE_DETAIL_INVOICE_DETAIL` FOREIGN KEY (`invoice_detail`) REFERENCES `invoice_detail` (`id`)
+  CONSTRAINT `FK_PROJECT_RESERVATION_SERVICE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Servicio por Reserva';
 
 #
@@ -7369,7 +7386,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.26.2');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.27.0');
 
 COMMIT;
 
