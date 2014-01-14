@@ -45,8 +45,6 @@
 									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
 								<g:Button ui:field='deleteButton'
 									styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR" />
-								<g:Button ui:field='newButton'
-									styleName='aon-finding-toolbar-item aon-icon-reset' text="NUEVO" />
 								<!-- <g:Button ui:field="undoButton" styleName='aon-finding-toolbar-item 
 									{style.undoButton}' enabled="false" /> <g:Button ui:field='redoButton' styleName="aon-finding-toolbar-item 
 									{style.redoButton}" enabled="false" /> -->

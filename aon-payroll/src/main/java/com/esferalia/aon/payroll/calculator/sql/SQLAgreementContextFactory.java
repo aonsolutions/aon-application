@@ -37,7 +37,8 @@ public class SQLAgreementContextFactory
 		+" FROM `system_data`"
 		+" WHERE start_date <= ? "
 		+" AND ( end_date IS NULL "
-		+" OR end_date >= ? )";
+		+" OR end_date >= ? )" 
+		+" AND domain = ? " ;
 	
 	private static final String AGREEMENT_DATA_SQL = 
 			"SELECT * " 
@@ -253,6 +254,7 @@ public class SQLAgreementContextFactory
 				connection.prepareStatement(SYSTEM_DATA_SQL);
 			stmt.setDate(1, new java.sql.Date( endDate.getTime() ));
 			stmt.setDate(2, new java.sql.Date( startDate.getTime() ));
+			stmt.setInt(3, SQLPayrollConstants.DOMAIN_ZERO);
 			rs = stmt.executeQuery();
 			while ( rs.next() ) {
 				ExpressionImpl expr = 

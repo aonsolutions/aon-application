@@ -70,4 +70,6 @@ public interface Images extends ClientBundle, Tree.Resources {
 	
 	ImageResource warn();
 	
+	ImageResource changed();
+	
 }

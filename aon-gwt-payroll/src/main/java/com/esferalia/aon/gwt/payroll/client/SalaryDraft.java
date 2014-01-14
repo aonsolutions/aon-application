@@ -334,6 +334,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		// --------------------------------------------------------------------
 		@Override
 		public void onAccept(PaymentDialog dialog) {
+			item.setScope(Scope.SALARY);
 			item.setType(dialog.getType());
 			item.setMonth(dialog.getMonth());
 			item.setDescription(dialog.getDescription());
@@ -397,6 +398,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		// --------------------------------------------------------------------
 		@Override
 		public void onAccept(DeductionDialog dialog) {
+			item.setScope(Scope.SALARY);
 			item.setType(dialog.getType());
 			item.setDescription(dialog.getDescription());
 			item.setExpression(dialog.getDeductionExpression());
@@ -562,9 +564,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	class NewDeductionHandler extends NewItemHandler<Deduction> implements
 			DeductionDialog.Callback {
-				
+
 		// ------------------------------------------- NewItemHandler<Deduction>
-		
+
 		@Override
 		protected void onEdit() {
 			// TODO Auto-generated method stub
@@ -601,7 +603,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			salaryDraftObject.addDraftDeduction(deduction);
 		}
 
-		// ------------------------------------------- DeductionDialog.Callback 
+		// ------------------------------------------- DeductionDialog.Callback
 
 		@Override
 		public void onAccept(DeductionDialog dialog) {
@@ -865,6 +867,9 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		@ClassName("cell-warn")
 		String cellWarn();
+
+		@ClassName("cell-changed")
+		String cellChanged();
 
 		@ClassName("text-ok")
 		String textOk();
@@ -1670,9 +1675,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			if (!displayNow(payment))
 				continue;
 
-			// dumpPayment(deduction, tr++, AON.AON_ICON_ROW_SELECTOR);
 			if (payment.getAmount() != null) {
-				dumpItem(payment, row++, AON.AON_ICON_ROW_SELECTOR,
+				dumpItem(payment, row++, getIconRowStyle(payment),
 						new PaymentChangeHandler<TextBox>(payment));
 			} else {
 				String styles[] = eventStyles.get(Event.Type.ERROR);
@@ -1737,7 +1741,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	private void insertNewDeductionRow() {
 		int row = paymentsTable.getRowCount();
 		NewDeductionHandler newDeductionHandler = new NewDeductionHandler();
-		
+
 		Button newButton = new Button();
 		newButton.setStyleName(AON.AON_ICON_RESET); // clear gwt-Button
 		newButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
@@ -1797,7 +1801,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				}
 			} else {
 				if (deduction.getAmount() != null)
-					dumpItem(deduction, row++, AON.AON_ICON_ROW_SELECTOR,
+					dumpItem(deduction, row++, getIconRowStyle(deduction),
 							new DeductionChangeHandler<TextBox>(deduction),
 							true);
 				else {
@@ -1877,6 +1881,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		handler.setDeleteButton(deleteButton);
 
 		formatRow(row);
+
+		if (item.getScope() == Scope.SALARY) {
+			paymentsTable.getRowFormatter().addStyleName(row,
+					AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
+			paymentsTable.getRowFormatter().addStyleName(row - 1,
+					AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
+		} // highlight dirty, not saved items.
 	}
 
 	private <I extends Item> void dumpDbItem(I item, int row,
@@ -1932,6 +1943,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 
 		formatRow(row);
+
+		if (item.getScope() == Scope.SALARY) {
+			paymentsTable.getRowFormatter().addStyleName(row,
+					AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
+			paymentsTable.getRowFormatter().addStyleName(row - 1,
+					AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
+		} // highlight dirty, not saved items.
 
 		addDbWidget(new VisibilityImpl(paymentsTable.getRowFormatter()
 				.getElement(row)));
@@ -2088,6 +2106,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 							: AON.AON_DATA_TABLE_ROW_EVEN);
 
 			contextTable.getColumnFormatter().setWidth(col, (100 / cols) + "%");
+
+			if (variable.getScope() == Scope.SALARY) {
+				contextTable.getCellFormatter().addStyleName(row, col,
+						AON.AON_DATA_TABLE_CELL_HIGHLIGHT);
+				if (row > 0)
+					contextTable.getCellFormatter().addStyleName(row - 1, col,
+							AON.AON_DATA_TABLE_CELL_HIGHLIGHT_TOP);
+			} // highlight dirty, not saved variables.
 
 			count++;
 
@@ -2274,16 +2300,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private Label getLabel(Variable variable) {
 		String text = variable.getName();
-
-		if (variable.getScope() == Scope.SALARY) {
-			text = "*" + text;
-		}
-
 		Label label = new Label(text);
 
 		label.setStyleName(style.cellLabel());
 		if (variable instanceof UndefinedVariable) {
 			label.setStyleName(style.cellWarn(), true);
+		} else if (variable.getScope() == Scope.SALARY) {
+			label.setStyleName(style.cellChanged(), true);
 		}
 
 		return label;
@@ -2497,4 +2520,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		return false;
 	}
 
+	private String getIconRowStyle(Item item) {
+		return item.getScope() == Scope.SALARY ? AON.AON_ICON_ROW_SELECTOR_CHANGED : AON.AON_ICON_ROW_SELECTOR;
+	}
 }

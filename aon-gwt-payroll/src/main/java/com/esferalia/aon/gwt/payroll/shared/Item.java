@@ -8,8 +8,8 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 		HasId<Integer>, Serializable {
 
-	Integer id;
 	T type;
+	Integer id;
 	Short month;
 	Scope scope;
 	Date startDate;
@@ -21,6 +21,10 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 	Salary.Type salaryType;
 	Double dbAmount;
 	Integer conceptId;
+	
+	
+	Integer domainId;
+	
 	
 
 	public Integer getId() {
@@ -47,6 +51,14 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 		this.name = name;
 	}
 
+	public Integer getDomainId() {
+		return domainId;
+	}
+	
+	public void setDomainId(Integer domainId) {
+		this.domainId = domainId;
+	}
+	
 	public Short getMonth() {
 		return month;
 	}

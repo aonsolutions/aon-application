@@ -2439,10 +2439,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Set<Level> allLevels = new HashSet<Level>(dbLevels);
 
 			for (Level draftLevel : draft.getDraftLevels()) {
+				allLevels.remove(draftLevel);
 				if (!StringUtils.equals(REMOVE, draftLevel.getDescription()))
 					allLevels.add(draftLevel);
-				else
-					allLevels.remove(draftLevel);
 			}
 
 			Set<Extra> dbExtras = SQLAgreementDraft.getExtras(connection,
@@ -2451,10 +2450,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Set<Extra> allExtras = new HashSet<Extra>(dbExtras);
 
 			for (Extra draftExtra : draft.getDraftExtras()) {
+				allExtras.remove(draftExtra);
 				if (!StringUtils.equals(REMOVE, draftExtra.getIssueDate()))
 					allExtras.add(draftExtra);
-				else
-					allExtras.remove(draftExtra);
 			}
 
 			Map<Integer, Set<String>> dbCategories = SQLAgreementDraft

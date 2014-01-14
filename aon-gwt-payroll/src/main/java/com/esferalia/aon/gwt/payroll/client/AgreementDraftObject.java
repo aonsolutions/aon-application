@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
@@ -321,6 +322,26 @@ public class AgreementDraftObject implements IContextProvider {
 	public Set<Date> getDatesWithChanges() {
 		return agreementDraft.getDatesWithChanges();
 	}
+	
+	public boolean isDraftLevel(Level level){
+		return agreementDraft.getDraftLevels().contains(level);
+	}
+	
+	public boolean isDraftExtra(Extra extra){
+		return agreementDraft.getDraftExtras().contains(extra);
+	}
+
+	public boolean isDraftPayment(Payment payment){
+		return agreementDraft.getDraftPayments().contains(payment);
+	}
+
+	public boolean isDraftVariable(Level level, Variable variable){
+		return agreementDraft.getDraftSalaryTable().contains(level.getId(), variable.getName());
+	}
+
+	public boolean isDraftCategories(Level level){
+		return agreementDraft.getDraftCategories().containsKey(level.getId());
+	}
 
 	// ------------------------------------------
 	// Undo & Redo Support
@@ -477,7 +498,7 @@ public class AgreementDraftObject implements IContextProvider {
 
 	@Override
 	public void eval(String expression, AsyncCallback<Double> callback) {
-		//employeesServiceAsync.eval(expression, newFakeSalaryDraft(), callback);
+		employeesServiceAsync.eval(expression, newFakeSalaryDraft(), callback);
 	}
 	
 

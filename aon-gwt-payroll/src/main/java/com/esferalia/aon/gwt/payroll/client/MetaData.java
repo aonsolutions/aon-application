@@ -3,15 +3,14 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
-import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -24,10 +23,13 @@ import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Tree;
@@ -92,6 +94,9 @@ public class MetaData extends ResizeComposite {
 	Tree tree;
 	@UiField
 	ScrollPanel scrollPanel;
+
+	@UiField
+	Button newButton;
 	@UiField
 	Button viewButton;
 	@UiField
@@ -104,6 +109,7 @@ public class MetaData extends ResizeComposite {
 	@UiField
 	TreeItem deductionConceptsTreeItem;
 
+	private PopupPanel newPopup;
 	private List<Listener> listeners;
 	private EnterprisesServiceAsync enterprisesService;
 
@@ -114,6 +120,8 @@ public class MetaData extends ResizeComposite {
 		addBonusConcepts();
 		addPaymentConcepts();
 		addDeductionConcepts();
+		initNewPopupMenu();
+		initContextMenu();
 	}
 
 	public void addListener(Listener listener) {
@@ -130,14 +138,28 @@ public class MetaData extends ResizeComposite {
 	void onTreeItemSelected(SelectionEvent<TreeItem> event) {
 		TreeItem selectedItem = event.getSelectedItem();
 		Object userObject = selectedItem.getUserObject();
-		if ( userObject == null )
+		if (userObject == null)
 			return;
-		else if ( userObject instanceof Bonus )
-			onBonusConceptTreeItemSelected((Bonus) userObject ); 
-		else if ( userObject instanceof Payment) // null
+		else if (userObject instanceof Bonus)
+			onBonusConceptTreeItemSelected((Bonus) userObject);
+		else if (userObject instanceof Payment) // null
 			onPaymentConceptTreeItemSelected((Payment) userObject);
-		else if ( userObject instanceof Deduction )
-			onDeductionConceptTreeItemSelected((Deduction) userObject ); 
+		else if (userObject instanceof Deduction)
+			onDeductionConceptTreeItemSelected((Deduction) userObject);
+	}
+
+	@UiHandler("newButton")
+	void onNewButtonClicked(ClickEvent event) {
+		int left = newButton.getAbsoluteLeft();
+		int top = newButton.getAbsoluteTop() + newButton.getOffsetHeight();
+		newPopup.setPopupPosition(left, top);
+		newPopup.show();
+
+	}
+
+	@UiHandler("collapseAllButton")
+	void onColapseAllButtonClicked(ClickEvent event) {
+
 	}
 
 	// -------------------------------------------------------- Private methods
@@ -152,10 +174,7 @@ public class MetaData extends ResizeComposite {
 			@Override
 			public void onSuccess(List<Payment> result) {
 				for (Payment payment : result) {
-					TreeItem item = new TreeItem(imageItemSafeHtml(
-							Resources.IMAGES.payment(), payment));
-					item.setUserObject(payment);
-					paymentConceptsTreeItem.addItem(item);
+					addPaymentConceptItem(payment);
 				}
 			}
 
@@ -174,20 +193,17 @@ public class MetaData extends ResizeComposite {
 			@Override
 			public void onSuccess(List<Bonus> result) {
 				for (Bonus bonus : result) {
-					TreeItem item = new TreeItem(imageItemSafeHtml(
-							Resources.IMAGES.segsocial(), bonus));
-					item.setUserObject(bonus);
-					bonusConceptsTreeItem.addItem(item);
+					addBonusConceptItem(bonus);
 				}
 			}
 
 		}
-		enterprisesService.getBonusConcepts(0, -1,
-				new BonusConceptsCallback());
+		enterprisesService.getBonusConcepts(0, -1, new BonusConceptsCallback());
 	}
 
 	private void addDeductionConcepts() {
-		class DeductionConceptsCallback implements AsyncCallback<List<Deduction>> {
+		class DeductionConceptsCallback implements
+				AsyncCallback<List<Deduction>> {
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
@@ -196,10 +212,7 @@ public class MetaData extends ResizeComposite {
 			@Override
 			public void onSuccess(List<Deduction> result) {
 				for (Deduction deduction : result) {
-					TreeItem item = new TreeItem(imageItemSafeHtml(
-							Resources.IMAGES.deduction(), deduction));
-					item.setUserObject(deduction);
-					deductionConceptsTreeItem.addItem(item);
+					addDeductionConceptItem(deduction);
 				}
 			}
 
@@ -231,24 +244,61 @@ public class MetaData extends ResizeComposite {
 		for (Listener listener : listeners)
 			listener.onPaymentConceptSelected(payment);
 	}
-	
-	private void initContextMenu () {
-		
-		
-		class TypeContextMenu extends ContextMenu {
+
+	private void initContextMenu() {
+
+		class AgreementContextMenu extends ContextMenu {
+
 			ScheduledCommand newCommand = new ScheduledCommand(){
 				public void execute() {
 				};
 			};
+			ScheduledCommand copyCommand = new ScheduledCommand(){
+				public void execute() {
+				};
+			};
+			ScheduledCommand pasteCommand = new ScheduledCommand(){
+				public void execute() {
+				};
+			};
+			ScheduledCommand deleteCommand = new ScheduledCommand(){
+				public void execute() {
+				};
+			};
 			
+			private MenuItem copyItem;
+			private MenuItem pasteItem;
+			private MenuItem deleteItem;
 
-			public TypeContextMenu() {
+			public AgreementContextMenu() {
+
 				addItem("Nuevo", newCommand, AON.AON_ICON_RESET,
 						AON.AON_ICON_CMD_BUTTON);
+				addSeparator();
+				copyItem = addItem("Copiar", copyCommand ,
+						AON.AON_ICON_COPY, AON.AON_ICON_CMD_BUTTON);
+				copyItem.setEnabled(false);
+				pasteItem = addItem("Pegar", pasteCommand ,
+						AON.AON_ICON_CLIPBOARD, AON.AON_ICON_CMD_BUTTON);
+				pasteItem.setEnabled(false);
+				deleteItem = addItem("Borrar", deleteCommand ,
+						AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+				deleteItem.setEnabled(false);
+
 			}
+			
+			@Override
+			public void show() {
+				sync();
+				super.show();
+			}
+			
+			private void sync(){
+			}
+			
 		};
 		
-		final TypeContextMenu contextMenu = new TypeContextMenu();
+		final AgreementContextMenu contextMenu = new AgreementContextMenu();
 		
 		ContextMenuHandler contextMenuHandler = new  ContextMenuHandler(){
 			@Override
@@ -258,45 +308,124 @@ public class MetaData extends ResizeComposite {
 				event.stopPropagation();
 
 				NativeEvent nativeEvent = event.getNativeEvent();
-				
-				TreeItem item = tree.getSelectedItem();
-				Object userObject = item.getUserObject();
-				// TODO : I know that's so ugly and not Object oriented. But
-				// it's much more clear than anything else. I promise
-				// to change ( even improve ) it soon.
-				if ( userObject instanceof Enterprise) {
-					
-				}
-
 				contextMenu.setPopupPosition(nativeEvent.getClientX(),
 						nativeEvent.getClientY());
-
 				contextMenu.show();
 			}
 			
 		};
 		
 		tree.addDomHandler(contextMenuHandler, ContextMenuEvent.getType());
-		
-		
+
+	}
+
+	private void initNewPopupMenu() {
+
+		newPopup = new PopupPanel();
+
+		MenuBar menuBar = new MenuBar(true);
+
+		MenuItem newPaymentConceptMenuItem = new MenuItem("Devengo", new Command() {
+			@Override
+			public void execute() {
+				Payment payment = newPaymentConcept();
+				TreeItem item = addPaymentConceptItem(payment);
+				tree.setSelectedItem(item, true );
+				newPopup.hide();
+			}
+		});
+		menuBar.addItem(newPaymentConceptMenuItem);
+
+		MenuItem newDeductionConceptMenuItem = new MenuItem("Deducci\u00f3",
+				new Command() {
+					@Override
+					public void execute() {
+						Deduction deduction = newDeductionConcept();
+						TreeItem item = addDeductionConceptItem(deduction);
+						tree.setSelectedItem(item, true);
+						newPopup.hide();
+					}
+				});
+		menuBar.addItem(newDeductionConceptMenuItem);
+
+		MenuItem newBonusConceptMenuItem = new MenuItem("Bonificaci\u00f3",
+				new Command() {
+					@Override
+					public void execute() {
+						Bonus bonus = newBonusConcept();
+						TreeItem item = addBonusConceptItem(bonus);
+						tree.setSelectedItem(item, true);
+						newPopup.hide();
+					}
+				});
+		menuBar.addItem(newBonusConceptMenuItem);
+
+		newPopup.add(menuBar);
+		newPopup.setStyleName("gwt-MenuBarPopup");
+		newPopup.setAutoHideEnabled(true);
+
+	}
+
+	private TreeItem addBonusConceptItem(Bonus bonus) {
+		TreeItem item = new TreeItem(imageItemSafeHtml(
+				Resources.IMAGES.segsocial(), bonus));
+		item.setUserObject(bonus);
+		bonusConceptsTreeItem.addItem(item);
+		return item;
+	}
+
+	private TreeItem addPaymentConceptItem(Payment payment) {
+		TreeItem item = new TreeItem(imageItemSafeHtml(
+				Resources.IMAGES.payment(), payment));
+		item.setUserObject(payment);
+		paymentConceptsTreeItem.addItem(item);
+		return item;
+	}
+
+	private TreeItem addDeductionConceptItem(Deduction deduction) {
+		TreeItem item = new TreeItem(imageItemSafeHtml(
+				Resources.IMAGES.deduction(), deduction));
+		item.setUserObject(deduction);
+		deductionConceptsTreeItem.addItem(item);
+		return item;
 	}
 
 	// ------------------------------------------------------------------------
-	
+
+	private static synchronized Deduction newDeductionConcept() {
+		Deduction deduction = new Deduction();
+		deduction.setDescription("DEDUCCI\u00d3N NO GUARDADA");
+		return deduction;
+	}
+
+	private static synchronized Bonus newBonusConcept() {
+		Bonus bonus = new Bonus();
+		bonus.setDescription("BONIFICACI\u00d3N NO GUARDADA");
+		return bonus;
+	}
+
+	private static synchronized Payment newPaymentConcept() {
+		Payment payment = new Payment();
+		payment.setDescription("DEVENGO NO GUARDADO");
+		payment.setIrpfExpression("_P");
+		payment.setQuoteExpression("_P");
+		return payment;
+	}
+
 	private static SafeHtml imageItemSafeHtml(ImageResource imageProto,
 			Item<?> item) {
 		StringBuffer str = new StringBuffer(item.getDescription());
-		if ( str.length() > 0 )
-			str.append(" ("+ item.getName() + ")");
+		if (str.length() > 0)
+			str.append(" (" + item.getName() + ")");
 		else
 			str.append(item.getName());
-		
-		return imageItemSafeHtml(imageProto, str.toString() );
+
+		return imageItemSafeHtml(imageProto, str.toString());
 	}
 
 	private static SafeHtml imageItemSafeHtml(ImageResource imageProto,
 			Bonus bonus) {
-		return imageItemSafeHtml(imageProto, bonus.getDescription() );
+		return imageItemSafeHtml(imageProto, bonus.getDescription());
 	}
 
 	/**

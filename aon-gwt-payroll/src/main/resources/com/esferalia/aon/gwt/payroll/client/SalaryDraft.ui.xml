@@ -87,6 +87,13 @@
 			padding-left: 14px;
 		}
 
+		@sprite .cell-changed {
+			width: auto; 
+			height: auto;
+			gwt-image: 'changed';
+			padding-left: 14px;
+		}
+
 		.span-cell-table {
 			width: 100%;
 			border-collapse: collapse !important;
@@ -151,6 +158,7 @@
 	<ui:image field='redo' src='redo.png' />
 	<ui:image field='undo' src='undo.png' />
 	<ui:image field='warn' src='warn.png' />
+	<ui:image field='changed' src='changed.png' />
 	<ui:image field='expandall' src='expandall.png' />
 	<ui:image field='collapseall' src='collapseall.png' />
 	<ui:image field='pdfPreview' src='pdfPreview.png' />

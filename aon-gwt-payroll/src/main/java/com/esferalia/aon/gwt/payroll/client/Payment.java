@@ -104,7 +104,7 @@ public class Payment extends ResizeComposite {
 			} catch (Throwable e) {
 				// last resort -- a very unexpected exception
 			}
-			
+
 		}
 
 		@Override
@@ -344,8 +344,31 @@ public class Payment extends ResizeComposite {
 		loadExpressionSuggestOracle();
 	}
 
+	public String getName(){
+		return conceptSuggestBox.getText();
+	}
+
 	public void setName(String name) {
 		conceptSuggestBox.setText(name);
+	}
+	
+
+	public void showMonth(boolean show) {
+		Element el = mainGrid.getRowFormatter().getElement(
+				mainGrid.getRowCount() - 1);
+		if (show)
+			el.getStyle().clearDisplay();
+		else
+			el.getStyle().setDisplay(Display.NONE);
+	}
+
+	public void showReceipt(boolean show) {
+
+		Element el = mainGrid.getRowFormatter().getElement(1);
+		if (show)
+			el.getStyle().clearDisplay();
+		else
+			el.getStyle().setDisplay(Display.NONE);
 	}
 
 	// ------------------------------------------
@@ -482,11 +505,13 @@ public class Payment extends ResizeComposite {
 	private String getListValue(String expression) {
 		if (StringUtils.isEmpty(expression))
 			return NONE;
+		if (StringUtils.equals(getName(), expression))
+			return ALL;
 		if (concept != null && expression.equals(concept.getName()))
 			return ALL;
-		if (expression.equals("_P"))
+		if ("_P".equals(expression))
 			return ALL;
-		if (expression.equals(getPaymentExpression())) // TODO:
+		if (StringUtils.equals(getPaymentExpression(), expression))// TODO:
 			return ALL;
 
 		try {
@@ -594,14 +619,6 @@ public class Payment extends ResizeComposite {
 						((ExpressionTextBox) paymentTextBox).expression));
 	}
 
-	private void showReceipt(boolean show) {
-		Element el = mainGrid.getRowFormatter().getElement(1);
-		if (show)
-			el.getStyle().clearDisplay();
-		else
-			el.getStyle().setDisplay(Display.NONE);
-	}
-
 	private void enableCustomTax(boolean enabled) {
 		taxTextBox.setEnabled(enabled);
 		fxTaxButton.setVisible(enabled);
@@ -613,9 +630,9 @@ public class Payment extends ResizeComposite {
 	}
 
 	private void loadExpressionSuggestOracle() {
-		
+
 		expressionSuggestOracle.clear();
-		
+
 		class ContextCallback implements AsyncCallback<ContextDescriptor> {
 			@Override
 			public void onFailure(Throwable caught) {

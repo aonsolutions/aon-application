@@ -7,8 +7,9 @@ public class Deduction extends
 
 	@Override
 	public Type getType() {
-		return Type.valueOf(Type.class,
-				typeListBox.getValue(typeListBox.getSelectedIndex()));
+		int index = typeListBox.getSelectedIndex();
+		return index == 0 ? null : Type.valueOf(Type.class,
+				typeListBox.getValue(index));
 	}
 	
 	// A bit suboptimal.
@@ -24,6 +25,7 @@ public class Deduction extends
 
 	@Override
 	protected void initTypeListBox() {
+		typeListBox.addItem("-");
 		addType(Type.ADVANCE_PAYMENT);
 		addType(Type.IN_KIND);
 		addType(Type.OTHER);

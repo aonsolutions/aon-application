@@ -15,9 +15,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface EnterprisesServiceAsync {
 	void getContext(AsyncCallback<ContextDescriptor> callback);
-	void saveBonusConcept(Bonus bonus, AsyncCallback<Void> callback);
-	void savePaymentConcept(Payment payment, AsyncCallback<Void> callback);
-	void saveDeductionConcept(Deduction deduction, AsyncCallback<Void> callback);
+	void saveBonusConcept(Bonus bonus, AsyncCallback<Bonus> callback);
+	void savePaymentConcept(Payment payment, AsyncCallback<Payment> callback);
+	void saveDeductionConcept(Deduction deduction, AsyncCallback<Deduction> callback);
+	void deleteBonusConcept(Bonus bonus, AsyncCallback<Void> callback);
+	void deletePaymentConcept(Payment payment, AsyncCallback<Void> callback);
+	void deleteDeductionConcept(Deduction deduction, AsyncCallback<Void> callback);
 	void getAgreements(int offset , int limit, AsyncCallback<List<Agreement>> callback);
 	void getEnterprises(int offset , int limit, AsyncCallback<List<Enterprise>> callback);
 	void getBonusConcepts(int offset , int limit, AsyncCallback<List<Bonus>> callback);
