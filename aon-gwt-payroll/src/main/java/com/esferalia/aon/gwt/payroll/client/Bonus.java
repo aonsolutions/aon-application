@@ -7,21 +7,23 @@ public class Bonus extends
 
 	@Override
 	public Type getType() {
-		return Type.valueOf(Type.class,
-				typeListBox.getValue(typeListBox.getSelectedIndex()));
+		int index = typeListBox.getSelectedIndex();
+		return index == 0 ? null : Type.valueOf(Type.class,
+				typeListBox.getValue(index));
 	}
-	
+
 	// A bit suboptimal.
 	@Override
 	public void setType(Type type) {
-		typeListBox.setSelectedIndex(type.ordinal());
+		typeListBox.setSelectedIndex(type == null ? 0 : type.ordinal() + 1);
 	}
 
 	@Override
 	protected void initTypeListBox() {
-		for (Type  type : Type.class.getEnumConstants())
-			typeListBox.insertItem(type.getDescription(), type.name(), type.ordinal());
+		typeListBox.insertItem("-", 0);
+		for (Type type : Type.class.getEnumConstants())
+			typeListBox.insertItem(type.getDescription(), type.name(),
+					type.ordinal() + 1);
 	}
-
 
 }

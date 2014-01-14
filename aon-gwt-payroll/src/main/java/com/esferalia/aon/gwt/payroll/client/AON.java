@@ -50,6 +50,10 @@ public class AON {
 	
 	public static final String AON_DATA_TABLE_ROW_EVEN = "aon-dataTable-row-even";
 	public static final String AON_DATA_TABLE_ROW_ODD = "aon-dataTable-row-odd";
+	public static final String AON_DATA_TABLE_ROW_HIGHLIGHT = "aon-dataTable-row-highlight";
+	public static final String AON_DATA_TABLE_ROW_HIGHLIGHT_TOP = "aon-dataTable-row-highlight-top";
+	public static final String AON_DATA_TABLE_CELL_HIGHLIGHT = "aon-dataTable-cell-highlight";
+	public static final String AON_DATA_TABLE_CELL_HIGHLIGHT_TOP = "aon-dataTable-cell-highlight-top";
 	public static final String AON_BOLD = "aon-bold";
 	public static final String AON_WIDTH_ALL = "aon-width-all";
 	public static final String AON_TEXT_RIGHT = "aon-text-right";
@@ -57,6 +61,7 @@ public class AON {
 	public static final String AON_ICON_RESET = "aon-icon-reset";
 	public static final String AON_EDIT_DATA_TABLE_BUTTON = "aon-editDataTable-button";
 	public static final String AON_ICON_COPY = "aon-icon-copy";
+	public static final String AON_ICON_CHANGED = "aon-icon-changed";
 	public static final String AON_ICON_CLIPBOARD = "aon-icon-clipboard";
 	public static final String AON_ICON_DELETE = "aon-icon-delete";
 	public static final String AON_ICON_CANCEL = "aon-icon-cancel";
@@ -65,6 +70,7 @@ public class AON {
 	public static final String AON_ICON_WORKPLACE = "aon-icon-workplace";
 	public static final String AON_ICON_EMPLOYEE = "aon-icon-employee";
 	public static final String AON_ICON_ROW_SELECTOR = "aon-icon-rowSelector";
+	public static final String AON_ICON_ROW_SELECTOR_CHANGED = "aon-icon-rowSelector-Changed";
 	public static final String AON_ICON_EXCEPTION = "aon-icon-exception";
 	public static final String AON_ICON_WARN = "aon-icon-warn";
 	public static final String AON_ICON_ERRORWARNING = "aon-icon-errorwarning";

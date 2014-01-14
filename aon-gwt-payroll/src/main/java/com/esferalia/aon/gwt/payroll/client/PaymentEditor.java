@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -27,6 +28,7 @@ public class PaymentEditor extends ResizeComposite {
 		initWidget(binder.createAndBindUi(this));
 		initEnterprisesService();
 		initContextProvider();
+		paymentUI.showMonth(false);
 	}
 	
 	public void setPayment(Payment payment) {
@@ -60,7 +62,7 @@ public class PaymentEditor extends ResizeComposite {
 		class ContextProvider implements IContextProvider{
 			@Override
 			public void eval(String expression, AsyncCallback<Double> callback) {
-				// TODO Auto-generated method stub
+				callback.onFailure(new EvalException());
 			}
 			
 			@Override

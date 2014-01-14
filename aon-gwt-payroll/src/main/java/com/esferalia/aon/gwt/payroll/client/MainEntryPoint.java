@@ -71,8 +71,14 @@ public class MainEntryPoint implements EntryPoint {
 		@Source("warn.png")
 		ImageResource warn();
 
+		@Source("changed.png")
+		ImageResource changed();
+
 		@Source("clipboard.png")
 		ImageResource clipboard();
+
+		ImageResource aon_icon_row_changed();
+		
 	}
 
 	@Override

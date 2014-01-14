@@ -19,11 +19,17 @@ public interface EnterprisesService extends RemoteService {
 	
 	ContextDescriptor getContext();
 
-	void saveBonusConcept(Bonus bonus);
+	Bonus saveBonusConcept(Bonus bonus);
 
-	void savePaymentConcept(Payment payment);
+	Payment savePaymentConcept(Payment payment);
 
-	void saveDeductionConcept(Deduction deduction);
+	Deduction saveDeductionConcept(Deduction deduction);
+
+	void deleteBonusConcept(Bonus bonus);
+
+	void deletePaymentConcept(Payment payment);
+
+	void deleteDeductionConcept(Deduction deduction);
 
 	List<Agreement> getAgreements(int offset, int limit) ;
 

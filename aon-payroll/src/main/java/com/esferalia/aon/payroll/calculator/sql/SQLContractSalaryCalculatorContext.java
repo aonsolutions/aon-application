@@ -239,7 +239,8 @@ public class SQLContractSalaryCalculatorContext implements
 
 	private static final String SYSTEM_COST_SQL = "SELECT *"
 			+ " FROM system_cost" + " WHERE start_date <= ? "
-			+ " AND ( end_date IS NULL" + " OR end_date >= ? )";
+			+ " AND ( end_date IS NULL" + " OR end_date >= ? )"
+			+ " AND system_cost.domain = ? ";
 
 	private static final String SYSTEM_DEDUCTION_SQL = "SELECT *"
 			+ ", "
@@ -251,7 +252,8 @@ public class SQLContractSalaryCalculatorContext implements
 												// puede ser NULL
 			+ "	ON deduction_concept = deduction_concept.id"
 			+ " WHERE start_date <= ? " + " AND ( end_date IS NULL"
-			+ " OR end_date >= ? )";
+			+ " OR end_date >= ? )"
+			+ " AND system_deduction.domain = ? ";
 
 	private static final String SYSTEM_PAYMENT_SQL = "SELECT *"
 			+ ", "
@@ -264,7 +266,8 @@ public class SQLContractSalaryCalculatorContext implements
 											// ser NULL
 			+ "	ON payment_concept = payment_concept.id"
 			+ " WHERE start_date <= ? " + " AND ( end_date IS NULL"
-			+ " OR end_date >= ? )";
+			+ " OR end_date >= ? )" 
+			+ " AND "+SQLContractPayment.PAYMENT_ALIAS+".domain = ? ";
 
 	private static final String CDATA_SQL = "SELECT * " + " FROM contract_data"
 			+ " WHERE contract = ? " + "AND start_date <= ? "
@@ -1996,6 +1999,7 @@ public class SQLContractSalaryCalculatorContext implements
 					this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);
 			stmt.setDate(2, sqlStartDate);
+			stmt.setInt(3,SQLPayrollConstants.DOMAIN_ZERO);
 			rs = stmt.executeQuery();
 			systemCosts = SQLCollections.costsCollection(rs);
 		} finally {
@@ -2016,6 +2020,7 @@ public class SQLContractSalaryCalculatorContext implements
 					this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);
 			stmt.setDate(2, sqlStartDate);
+			stmt.setInt(3,SQLPayrollConstants.DOMAIN_ZERO);
 			rs = stmt.executeQuery();
 			systemDeductions = SQLCollections.deductionsCollection(rs);
 		} finally {
@@ -2039,6 +2044,7 @@ public class SQLContractSalaryCalculatorContext implements
 					this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);
 			stmt.setDate(2, sqlStartDate);
+			stmt.setInt(3,SQLPayrollConstants.DOMAIN_ZERO);
 			rs = stmt.executeQuery();
 			systemPayments = SQLCollections.paymentsCollection(rs);
 		} finally {

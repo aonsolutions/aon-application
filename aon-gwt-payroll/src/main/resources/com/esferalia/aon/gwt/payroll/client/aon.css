@@ -16,6 +16,12 @@
 	padding-left:16px;	
 }
 
+@sprite .aon-icon-changed {
+	width: auto;
+	height: auto;
+	gwt-image: "changed" ; 
+}
+
 @sprite .aon-icon-warn {
 	gwt-image: "warn" ; 
 }
@@ -48,6 +54,10 @@
 	gwt-image: "clipboard" ; 
 }
 
+@sprite .aon-icon-rowSelector-Changed {
+	gwt-image: "aon_icon_row_changed" ; 
+}
+
 .aon-dataTable .selected {
     border: 1px solid #D3C061;
     background: none repeat scroll 0 0 #FFFADC;
@@ -64,3 +74,26 @@
 	gwt-image: "month_changed"
 }
 
+
+.aon-dataTable-cell-highlight {
+	background: #fffadc;
+	border-color: #d3c061 !important;
+}
+
+.aon-dataTable-cell-highlight-top {
+	border-bottom-color: #d3c061 !important;
+}
+
+.aon-dataTable-row-highlight {
+	background: #fffadc;
+}
+.aon-dataTable-row-highlight td {
+	border-color: #d3c061;
+}
+
+.aon-dataTable-row-highlight-top {
+}
+
+.aon-dataTable-row-highlight-top td {
+	border-bottom-color: #d3c061;
+}

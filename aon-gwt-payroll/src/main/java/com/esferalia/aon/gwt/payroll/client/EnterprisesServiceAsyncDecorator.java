@@ -35,21 +35,39 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
-	public void saveBonusConcept(Bonus bonus, AsyncCallback<Void> callback) {
+	public void saveBonusConcept(Bonus bonus, AsyncCallback<Bonus> callback) {
 		AON.start();
-		enterprisesServiceAsync.saveBonusConcept(bonus, new AsyncCallbackWrapper<Void>(callback));
+		enterprisesServiceAsync.saveBonusConcept(bonus, new AsyncCallbackWrapper<Bonus>(callback));
 	}
 	
 	@Override
-	public void savePaymentConcept(Payment payment, AsyncCallback<Void> callback) {
+	public void savePaymentConcept(Payment payment, AsyncCallback<Payment> callback) {
 		AON.start();
-		enterprisesServiceAsync.savePaymentConcept(payment, new AsyncCallbackWrapper<Void>(callback));
+		enterprisesServiceAsync.savePaymentConcept(payment, new AsyncCallbackWrapper<Payment>(callback));
 	}
 
 	@Override
-	public void saveDeductionConcept(Deduction deduction, AsyncCallback<Void> callback) {
+	public void deleteDeductionConcept(Deduction deduction, AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.saveDeductionConcept(deduction, new AsyncCallbackWrapper<Void>(callback));
+		enterprisesServiceAsync.deleteDeductionConcept(deduction, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void deleteBonusConcept(Bonus bonus, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.deleteBonusConcept(bonus, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	@Override
+	public void deletePaymentConcept(Payment payment, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.deletePaymentConcept(payment, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void saveDeductionConcept(Deduction deduction, AsyncCallback<Deduction> callback) {
+		AON.start();
+		enterprisesServiceAsync.saveDeductionConcept(deduction, new AsyncCallbackWrapper<Deduction>(callback));
 	}
 
 	@Override

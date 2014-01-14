@@ -36,6 +36,9 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		@Source("warn.png")
 		ImageResource warn();
 
+		@Source("changed.png")
+		ImageResource changed();
+
 		@Source("aon-menuBar.png")
 		ImageResource menuBar();
 

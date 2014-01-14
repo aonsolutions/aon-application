@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
+import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
@@ -30,6 +32,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.DomainColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 
 /**
  * The server side implementation of the RPC service.
@@ -37,11 +40,11 @@ import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 @SuppressWarnings("serial")
 public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		EnterprisesService {
-	
+
 	@Override
 	public ContextDescriptor getContext() {
 		SalaryDraft draft = new SalaryDraft();
-		
+
 		draft.setStartDate(DateUtils.getFirstDayOfMonth());
 		draft.setEndDate(DateUtils.getLastDayOfMonth());
 		draft.setIssueDate(draft.getEndDate());
@@ -50,30 +53,48 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		employee.setId(-1);
 		draft.setEmployee(employee);
 		draft.setType(Type.SALARY);
-		
-		
+
 		return EmployeesServiceImpl.getDraftContext(draft);
 	}
-	
-	
+
 	@Override
-	public void saveBonusConcept(Bonus bonus) {
+	public Bonus saveBonusConcept(Bonus bonus) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
-	
+
 	@Override
-	public void savePaymentConcept(Payment payment) {
+	public Payment savePaymentConcept(Payment payment) {
 		// TODO Auto-generated method stub
-		
+		return null;
+
 	}
-	
+
 	@Override
-	public void saveDeductionConcept(Deduction deduction) {
+	public Deduction saveDeductionConcept(Deduction deduction) {
 		// TODO Auto-generated method stub
-		
+		return null;
+
 	}
-	
+
+	@Override
+	public void deleteBonusConcept(Bonus bonus) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void deleteDeductionConcept(Deduction deduction) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void deletePaymentConcept(Payment payment) {
+		// TODO Auto-generated method stub
+
+	}
+
 	@Override
 	public List<Enterprise> getEnterprises(int offset, int limit) {
 		Connection connection = null;
@@ -197,7 +218,117 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	// --------------------------------------------------------- Private methods
 
-	private List<Enterprise> getEnterprises(Connection connection,
+	private static  Payment updatePaymentConcept(Connection connection, Payment payment)
+			throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("UPDATE "
+					+ SQLConstants.PAYMENT_CONCEPT + " SET "
+					+ PaymentConceptColumns.CODE + " = ? "
+					+ PaymentConceptColumns.TYPE + " = ? "
+					+ PaymentConceptColumns.DESCRIPTION + " = ? "
+					+ PaymentConceptColumns.EXPRESSION + " = ? "
+					+ PaymentConceptColumns.IRPF_EXPRESSION + " = ? "
+					+ PaymentConceptColumns.QUOTE_EXPRESSION + " = ? "
+					+ " WHERE " + PaymentConceptColumns.ID + " = ? "
+					);
+			//@formatter:on
+			
+			stmt.setString(1, payment.getName());
+			
+			Payment.Type type = payment.getType();
+			if ( type != null )
+				stmt.setInt(2, type.ordinal());
+			else
+				stmt.setNull(2, Types.INTEGER);
+				
+			stmt.setString(3, payment.getDescription());
+			stmt.setString(4, payment.getExpression());
+			stmt.setString(5, payment.getIrpfExpression());
+			stmt.setString(6, payment.getQuoteExpression());
+
+			stmt.setInt(7, payment.getId());
+			
+			return payment;
+		
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static  Deduction updateDeductionConcept(Connection connection, Deduction deduction)
+			throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("UPDATE "
+					+ SQLConstants.DEDUCTION_CONCEPT + " SET "
+					+ DeductionConceptColumns.CODE + " = ? "
+					+ DeductionConceptColumns.TYPE + " = ? "
+					+ DeductionConceptColumns.DESCRIPTION + " = ? "
+					+ DeductionConceptColumns.EXPRESSION + " = ? "
+					+ " WHERE " + DeductionConceptColumns.ID + " = ? "
+					);
+			//@formatter:on
+			
+			stmt.setString(1, deduction.getName());
+			
+			Deduction.Type type = deduction.getType();
+			if ( type != null )
+				stmt.setInt(2, type.ordinal());
+			else
+				stmt.setNull(2, Types.INTEGER);
+				
+			stmt.setString(3, deduction.getDescription());
+			stmt.setString(4, deduction.getExpression());
+			
+			stmt.setInt(5, deduction.getId());
+
+			return deduction;
+		
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static  Bonus updateBonusConcept(Connection connection, Bonus bonus)
+			throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("UPDATE "
+					+ SQLConstants.BONUS_CONCEPT + " SET "
+					+ BonusConceptColumns.TYPE + " = ? "
+					+ BonusConceptColumns.DESCRIPTION + " = ? "
+					+ BonusConceptColumns.EXPRESSION + " = ? "
+					+ " WHERE " + BonusConceptColumns.ID + " = ? "
+					);
+			//@formatter:on
+			
+			
+			Bonus.Type type = bonus.getType();
+			if ( type != null )
+				stmt.setInt(1, type.ordinal());
+			else
+				stmt.setNull(1, Types.INTEGER);
+				
+			stmt.setString(2, bonus.getDescription());
+			stmt.setString(3, bonus.getExpression());
+			
+			stmt.setInt(4, bonus.getId());
+
+			return bonus;
+		
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static List<Enterprise> getEnterprises(Connection connection,
 			int domainId, int offset, int limit) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
@@ -305,7 +436,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private List<Bonus> getBonusConcepts(Connection connection, int offset,
+	private static  List<Bonus> getBonusConcepts(Connection connection, int offset,
 			int limit, Integer domainID, Integer parentDomainID)
 			throws SQLException {
 		ResultSet rs = null;
@@ -322,7 +453,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			//@formatter:on
 
 			stmt.setInt(1, domainID);
-			stmt.setInt(2, 0);
+			stmt.setInt(2, SQLPayrollConstants.DOMAIN_ZERO);
 			if (parentDomainID != null)
 				stmt.setInt(3, parentDomainID);
 
@@ -333,6 +464,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Bonus bonus = new Bonus();
 
 				bonus.setId(rs.getInt(BonusConceptColumns.ID)); // not null
+				bonus.setDomainId(rs.getInt(BonusConceptColumns.DOMAIN));
 				bonus.setDescription(rs
 						.getString(BonusConceptColumns.DESCRIPTION));
 				bonus.setExpression(rs
@@ -355,7 +487,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private List<Payment> getPaymentConcepts(Connection connection, int offset,
+	private static  List<Payment> getPaymentConcepts(Connection connection, int offset,
 			int limit, Integer domainID, Integer parentDomainID)
 			throws SQLException {
 		ResultSet rs = null;
@@ -372,7 +504,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			//@formatter:on
 
 			stmt.setInt(1, domainID);
-			stmt.setInt(2, 0);
+			stmt.setInt(2, SQLPayrollConstants.DOMAIN_ZERO);
 			if (parentDomainID != null)
 				stmt.setInt(3, parentDomainID);
 
@@ -382,7 +514,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			while (rs.next()) {
 				Payment payment = new Payment();
 
-				payment.setId(rs.getInt(PaymentConceptColumns.ID)); // not null
+				payment.setId(rs.getInt(PaymentConceptColumns.ID));
+				payment.setDomainId(rs.getInt(PaymentConceptColumns.DOMAIN));
 				payment.setName(rs.getString(PaymentConceptColumns.CODE));
 				payment.setDescription(rs
 						.getString(PaymentConceptColumns.DESCRIPTION));
@@ -410,7 +543,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private List<Deduction> getDeductionConcepts(Connection connection,
+	private static  List<Deduction> getDeductionConcepts(Connection connection,
 			int offset, int limit, Integer domainID, Integer parentDomainID)
 			throws SQLException {
 		ResultSet rs = null;
@@ -427,7 +560,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			//@formatter:on
 
 			stmt.setInt(1, domainID);
-			stmt.setInt(2, 0);
+			stmt.setInt(2, SQLPayrollConstants.DOMAIN_ZERO);
 			if (parentDomainID != null)
 				stmt.setInt(3, parentDomainID);
 
@@ -437,8 +570,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			while (rs.next()) {
 				Deduction deduction = new Deduction();
 
-				deduction.setId(rs.getInt(DeductionConceptColumns.ID)); // not
-																		// null
+				deduction.setId(rs.getInt(DeductionConceptColumns.ID));
+				deduction
+						.setDomainId(rs.getInt(DeductionConceptColumns.DOMAIN));
 				deduction.setName(rs.getString(DeductionConceptColumns.CODE));
 				deduction.setDescription(rs
 						.getString(DeductionConceptColumns.DESCRIPTION));

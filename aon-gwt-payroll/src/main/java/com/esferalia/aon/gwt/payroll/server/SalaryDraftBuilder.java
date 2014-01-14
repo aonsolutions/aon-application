@@ -667,6 +667,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		payment.setStartDate(contractPayment.getStartDate());
 		payment.setEndDate(contractPayment.getEndDate());
 		payment.setExpression(contractPayment.getExpression());
+		payment.setScope(getScope(contractPayment.getScope()));
 		payment.setDescription(contractPayment.getDescription());
 		payment.setIrpfExpression(contractPayment.getIrpfExpression());
 		payment.setQuoteExpression(contractPayment.getQuoteExpression());

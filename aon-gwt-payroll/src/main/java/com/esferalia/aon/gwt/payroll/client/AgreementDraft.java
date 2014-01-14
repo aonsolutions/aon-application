@@ -12,12 +12,14 @@ import java.util.TreeSet;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.DateTimeFormatException;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmptyStringException;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasDescription;
+import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.LevelComparator;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -321,6 +323,7 @@ public class AgreementDraft extends ResizeComposite implements
 					// TODO: Check syntax????
 					AgreementDraft.this.agreementDraftObject.addDraftVariable(
 							level, var);
+					AgreementDraft.this.calculate();
 				}
 			});
 		}
@@ -383,12 +386,11 @@ public class AgreementDraft extends ResizeComposite implements
 					payment.setExpression(dialog.getPaymentExpression());
 					payment.setIrpfExpression(dialog.getIrpfExpression());
 					payment.setQuoteExpression(dialog.getQuoteExpression());
-					
+
 					AgreementDraft.this.agreementDraftObject
 							.addDraftPayment(payment);
 					AgreementDraft.this.calculate();
 				}
-
 
 			}
 
@@ -415,6 +417,9 @@ public class AgreementDraft extends ResizeComposite implements
 				public void onChange(ChangeEvent event) {
 					payment.setType(PaymentEditor.this.typeListBox
 							.getSelected());
+					AgreementDraft.this.agreementDraftObject
+							.addDraftPayment(payment);
+					AgreementDraft.this.calculate();
 				}
 			});
 		}
@@ -465,6 +470,10 @@ public class AgreementDraft extends ResizeComposite implements
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
 					payment.setDescription(event.getValue());
+					AgreementDraft.this.agreementDraftObject
+							.addDraftPayment(payment);
+					AgreementDraft.this.calculate();
+
 				}
 			});
 		}
@@ -831,6 +840,7 @@ public class AgreementDraft extends ResizeComposite implements
 				if (changedVariables.contains(var)) {
 					cellFormatter.addStyleName(row, col, style.highlight());
 				}
+
 				col++;
 			}
 
@@ -849,6 +859,13 @@ public class AgreementDraft extends ResizeComposite implements
 			hide(deleteButton, level.getId() == 0);
 
 			salaryTable.setWidget(row, col++, deleteButton);
+
+			if (isDraftLevel(level)) {
+				salaryTable.getRowFormatter().addStyleName(row,
+						AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
+				salaryTable.getRowFormatter().addStyleName(row - 1,
+						AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
+			}
 
 			row++;
 		}
@@ -1059,6 +1076,15 @@ public class AgreementDraft extends ResizeComposite implements
 
 		VariableEditor variableEditor = new VariableEditor(level, var);
 		variableEditor.setExpressionTextBox(expressionTextBox);
+
+		if (isDraftVariable(level, var)) {
+			salaryTable.getCellFormatter().addStyleName(row, col,
+					AON.AON_DATA_TABLE_CELL_HIGHLIGHT);
+			if (row > 0)
+				salaryTable.getCellFormatter().addStyleName(row - 1, col,
+						AON.AON_DATA_TABLE_CELL_HIGHLIGHT_TOP);
+			expressionTextBox.addStyleName(AON.AON_ICON_CHANGED);
+		}
 	}
 
 	private void dumpUndefVariable(int row, int col, Level level, String name) {
@@ -1080,16 +1106,30 @@ public class AgreementDraft extends ResizeComposite implements
 
 		String text = null;
 		TextBox categoriesTextBox = new TextBox();
+		
 		if (categories != null) {
 			text = reduce(categories, ", ");
 			categoriesTextBox.setText(text);
 		}
-		if (text == null || text.isEmpty()) {
+		
+		if (StringUtils.isBlank(text)) {
 			categoriesTextBox.addStyleName(AON.AON_ICON_WARN);
 			categoriesTextBox.addStyleName(AON.AON_PADDING_LEFT);
 			categoriesTextBox
 					.setTitle("Defina al menos una categoria."
 							+ " Recuerde que los empleados se asocian a categorias no a niveles retributivos.");
+		} 
+
+		if (isDraftCategories(level)) {
+			salaryTable.getCellFormatter().addStyleName(row, col,
+					AON.AON_DATA_TABLE_CELL_HIGHLIGHT);
+			if (row > 0)
+				salaryTable.getCellFormatter().addStyleName(row - 1, col,
+						AON.AON_DATA_TABLE_CELL_HIGHLIGHT_TOP);
+			if ( !StringUtils.isBlank(text) ){
+				categoriesTextBox.addStyleName(AON.AON_ICON_CHANGED);
+				categoriesTextBox.addStyleName(AON.AON_PADDING_LEFT);
+			}
 		}
 
 		categoriesTextBox.getElement().getStyle().setWidth(98, Unit.PCT);
@@ -1122,7 +1162,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
-		editButton.setStyleName(AON.AON_ICON_ROW_SELECTOR);
+		editButton.setStyleName(getIconRowStyle(extra));
 		editButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		extrasTable.setWidget(row, 0, editButton);
 
@@ -1218,13 +1258,21 @@ public class AgreementDraft extends ResizeComposite implements
 		editor.setIssueDateBox(issueDateBox);
 		editor.setPaymentListBox(paymentListBox);
 		editor.setDeleteButton(deleteButton);
+
+		if (isDraftExtra(extra)) {
+			extrasTable.getRowFormatter().addStyleName(row,
+					AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
+			extrasTable.getRowFormatter().addStyleName(row - 1,
+					AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
+		}
+
 	}
 
 	private void dumpPayment(Payment payment, int row) {
 
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
-		editButton.setStyleName(AON.AON_ICON_ROW_SELECTOR);
+		editButton.setStyleName(getIconRowStyle(payment));
 		editButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		paymentsTable.setWidget(row, 0, editButton);
 
@@ -1264,6 +1312,13 @@ public class AgreementDraft extends ResizeComposite implements
 		changeHandler.setDescriptionTextBox(descriptionBox);
 		changeHandler.setSalaryTypeListBox(salaryTypeListBox);
 		changeHandler.setPaymentTypeListBox(paymentTypeListBox);
+
+		if (isDraftPayment(payment)) {
+			paymentsTable.getRowFormatter().addStyleName(row,
+					AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
+			paymentsTable.getRowFormatter().addStyleName(row - 1,
+					AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
+		}
 	}
 
 	private void insertNewExtraRow(int row, SortedSet<Payment> payments) {
@@ -1650,6 +1705,33 @@ public class AgreementDraft extends ResizeComposite implements
 		}
 	}
 
+	private boolean isDraftLevel(Level level) {
+		return agreementDraftObject.isDraftLevel(level);
+	}
+
+	private boolean isDraftExtra(Extra extra) {
+		return agreementDraftObject.isDraftExtra(extra);
+	}
+
+	private boolean isDraftPayment(Payment payment) {
+		return agreementDraftObject.isDraftPayment(payment);
+	}
+
+	private boolean isDraftVariable(Level level, Variable variable) {
+		return agreementDraftObject.isDraftVariable(level, variable);
+	}
+
+	private boolean isDraftCategories(Level level) {
+		return agreementDraftObject.isDraftCategories(level);
+	}
+
+	private String getIconRowStyle(Extra extra) {
+		return isDraftExtra(extra) ? AON.AON_ICON_ROW_SELECTOR_CHANGED : AON.AON_ICON_ROW_SELECTOR;
+	}
+
+	private String getIconRowStyle(Payment payment ) {
+		return isDraftPayment(payment) ? AON.AON_ICON_ROW_SELECTOR_CHANGED : AON.AON_ICON_ROW_SELECTOR;
+	}
 	// ------------------------------------------------------------------------
 
 	private static Element clear(Element el) {
