@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.faces.controller.LogPanelController;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.finance.A3Writer;
 import com.code.aon.ui.finance.AplifisaWriter;
 import com.code.aon.ui.finance.BasicExporter;
@@ -35,8 +36,6 @@ import com.code.aon.ui.util.DownloadUtil;
 public class ExporterController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExporterController.class.getName());
-
-	private static final String EXPORTER_FORM = "exporter_form";
 	
 	private InvoiceExportConfiguration configuration;
 	
@@ -66,7 +65,8 @@ public class ExporterController {
 
 	public String initialAction() {
 		if (! this.configuration.isConfigured() ) {
-			return EXPORTER_FORM;
+			AonUtil.addErrorMessageFromBundle(ICommonMessages.FINANCE_EXPORTER_NOT_CONFIG);
+			return null;
 		}
 		return this.backAction;
 	}
@@ -75,10 +75,14 @@ public class ExporterController {
 		return backAction;
 	}		
 
-	public void onInit( ActionEvent event ) {
+	public void onConfig( ActionEvent event ) {
 		this.configuration = new InvoiceExportConfiguration();
+	}
+	
+	public void onInit( ActionEvent event ) {
 		this.finished = false;
 		this.exporter = null;
+		this.configuration = new InvoiceExportConfiguration();
 	}
 	
 	public void onSaveConfiguration( ActionEvent event ) {
@@ -163,6 +167,10 @@ public class ExporterController {
 		File zipFile = getZipFile(dataMap);
 		InputStream in = new BufferedInputStream(new FileInputStream(zipFile));
         DownloadUtil.downloadAttachment(this.fileName, MimeType.MIME_ZIP, in, zipFile.length() );
+	}
+
+	public void onTypeChanged( ActionEvent event ) {
+    	getConfiguration().initAccountSize();
 	}
 	
 }

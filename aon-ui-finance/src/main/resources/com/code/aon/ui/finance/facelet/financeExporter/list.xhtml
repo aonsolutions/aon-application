@@ -27,13 +27,6 @@
 						actionListener="#{financeExporter.onStart}" >
 						<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
 					</aon:commandButton>
-					<aon:commandButton id="configurationExport"
-						value="#{bundle.aon_configuration}"
-						styleClass="aon-finding-toolbar-item aon-icon-config"
-						action="exporter_form">
-						<f:setPropertyActionListener value="financeExporter_list"
-							target="#{exporter.backAction}" />						
-					</aon:commandButton>
 				</ui:define>				
 				
 			</ui:decorate>

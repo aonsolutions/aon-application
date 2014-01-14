@@ -21,6 +21,8 @@ public class InvoiceExportConfiguration {
 
 	private InvoiceExportType type;
 	
+	private Integer accountSize;
+	
 	public InvoiceExportConfiguration() {
 		this.type = obtainType();
 		if ( this.type != null ) {
@@ -29,17 +31,30 @@ public class InvoiceExportConfiguration {
 			this.salesJournal = AppParamUtil.getValue(AppParam.AON_EXPORT_JOURNAL_SALES);
 			this.purchaseJournal = AppParamUtil.getValue(AppParam.AON_EXPORT_JOURNAL_PURCHASE);
 			this.expensesJournal = AppParamUtil.getValue(AppParam.AON_EXPORT_JOURNAL_EXPENSES);
+			this.accountSize = AppParamUtil.getValueAsInteger(AppParam.AON_EXPORT_ACCOUNT_SIZE);
+			initAccountSize();
 		}
+	}
+	
+	public void initAccountSize() {
+		if (this.accountSize == null) {
+			if (this.type == InvoiceExportType.A3) {
+				this.accountSize = 12;
+			} else if (this.type == InvoiceExportType.EXCEL) {
+				this.accountSize = 9;
+			}
+		}		
 	}
 	
 	public void save() {
 		String value = String.valueOf(getType().ordinal()); 
-		AppParamUtil.insertParameter(AppParam.AON_EXPORT_TYE, value);
+		AppParamUtil.insertParameter(AppParam.AON_EXPORT_TYPE, value);
 		AppParamUtil.insertParameter(AppParam.AON_EXPORT_ENTERPRISE_ID, this.enterpriseCode);
 		AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL, this.generalJournal);
 		AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL_SALES, this.salesJournal);
 		AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL_PURCHASE, this.purchaseJournal);
 		AppParamUtil.insertParameter(AppParam.AON_EXPORT_JOURNAL_EXPENSES, this.expensesJournal);		
+		AppParamUtil.insertParameter(AppParam.AON_EXPORT_ACCOUNT_SIZE, this.accountSize);
 	}
 	
 	public boolean isConfigured() {
@@ -96,6 +111,14 @@ public class InvoiceExportConfiguration {
 	public void setSalesJournal(String salesJournal) {
 		this.salesJournal = salesJournal;
 	}
+	
+	public Integer getAccountSize() {
+		return accountSize;
+	}
+
+	public void setAccountSize(Integer accountSize) {
+		this.accountSize = accountSize;
+	}
 
 	public String getJournal( InvoiceType type ) {
 		String journal = null;
@@ -121,7 +144,7 @@ public class InvoiceExportConfiguration {
 	
 	public InvoiceExportType obtainType() {
 		InvoiceExportType type = null;
-		Integer ordinal = AppParamUtil.getValueAsInteger(AppParam.AON_EXPORT_TYE);
+		Integer ordinal = AppParamUtil.getValueAsInteger(AppParam.AON_EXPORT_TYPE);
 		if ( ordinal!=null && ordinal<InvoiceExportType.values().length ) {
 			type = InvoiceExportType.values()[ordinal];
 		}
@@ -148,6 +171,7 @@ public class InvoiceExportConfiguration {
 					break;
 				case APLIFISA:
 				case LOGIC_WIN:
+				case EXCEL:
 					length = 0;
 					break;
 			}

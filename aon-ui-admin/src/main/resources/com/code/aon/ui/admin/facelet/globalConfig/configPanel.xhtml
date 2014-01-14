@@ -139,6 +139,13 @@
 									actionListener="#{accAppParams.onLoad}"
 									value="#{bundle.admin_global_accounting_parameters_short}" />
 							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="conectaParams"
+									reRender="configPanelBar,configContent"
+									action="globalConfig_form" 
+									actionListener="#{exporter.onConfig}"
+									value="#{bundle.finance_conecta_module}" />
+							</aon:div>
 						</c:if>
 						<c:if test="#{actionDenied.moduleEnabled['payroll'] and aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData}">
 							<aon:div styleClass="aon-direct-access-list-element">

@@ -4617,10 +4617,6 @@
 	<!-- =================== Exporter ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>exporter_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/finance/facelet/exporter/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>invoiceExporter_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/finance/facelet/invoiceExporter/list.xhtml</to-view-id>
 		</navigation-case>

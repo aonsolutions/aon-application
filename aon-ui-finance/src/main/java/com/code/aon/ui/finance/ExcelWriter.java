@@ -136,6 +136,17 @@ public class ExcelWriter extends BasicExporter {
 		}
 	}	
 	
+	private String getAccountCode( Account account ) {
+		String cuenta = StringUtils.substring(account.getCode(), 0, 4);
+		String subCuenta = StringUtils.substring(account.getCode(), 4);
+		int length = StringUtils.length(subCuenta);
+		if ( length > 5 ) {
+			subCuenta = StringUtils.substring(subCuenta, length-5, length);	
+		}
+		subCuenta = StringUtils.leftPad(subCuenta, getConfiguration().getAccountSize()-4, '0');
+		return cuenta + subCuenta;
+	}
+	
 	private void addDetail( AccountEntry accountEntry, AccountEntryDetail aed ) {
 		Locale locale = AonUtil.getCurrentLocale();
 		addStringCell( accountEntry.getType().getName(locale) );
@@ -147,13 +158,13 @@ public class ExcelWriter extends BasicExporter {
 			this.exporter.addCell();
 		}				
 		addDateCell( accountEntry.getEntryDate() );
-		addStringCell( aed.getAccount().getCode() );
+		addStringCell( getAccountCode(aed.getAccount()) );
 		addStringCell( aed.getAccount().getDescription() );
 		addStringCell( aed.getConcept() );
 		this.exporter.addDecimalCell( aed.getDebit() );
 		this.exporter.addDecimalCell( aed.getCredit() );
 		if ( aed.getBalancingAccount() != null ) {
-			addStringCell( aed.getBalancingAccount().getCode() );
+			addStringCell( getAccountCode(aed.getBalancingAccount()) );
 		} else {
 			this.exporter.addCell();
 		}		

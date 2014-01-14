@@ -84,12 +84,12 @@ public class A3Writer extends BasicExporter {
 		String cuenta = StringUtils.substring(account.getCode(), 0, 4);
 		String subCuenta = StringUtils.substring(account.getCode(), 4);
 		int length = StringUtils.length(subCuenta);
-		if ( length > 4 ) {
-			subCuenta = StringUtils.substring(subCuenta, length-4, length);	
+		if ( length > 5 ) {
+			subCuenta = StringUtils.substring(subCuenta, length-5, length);	
 		}
-		subCuenta = StringUtils.leftPad(subCuenta, 4, '0');
+		subCuenta = StringUtils.leftPad(subCuenta, getConfiguration().getAccountSize()-4, '0');
 		// Cuenta
-		String code = StringUtils.rightPad(cuenta + subCuenta, 12, '0'); 
+		String code = StringUtils.rightPad(cuenta + subCuenta, 12, ' '); 
 		setString( code, offset, 12);
 	}
 

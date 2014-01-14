@@ -63,7 +63,11 @@ public class AppParamUtil {
     }	
 
 	public static ApplicationParameter insertParameter( AppParam appParam, boolean value ) {
-		return insertParameter(appParam, new Boolean(value).toString());
+		return insertParameter(appParam, Boolean.valueOf(value).toString());
+    }	
+
+	public static ApplicationParameter insertParameter( AppParam appParam, int value ) {
+		return insertParameter(appParam, Integer.valueOf(value).toString());
     }	
 	
 	public static boolean removeParameter( AppParam appParam ) {
