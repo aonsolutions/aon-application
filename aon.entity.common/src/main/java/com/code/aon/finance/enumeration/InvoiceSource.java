@@ -39,7 +39,10 @@ public enum InvoiceSource implements IResourceable {
     DIRECT_INVOICE,
 
     /** OFFER. Facturacion de un presupuesto */
-    OFFER;
+    OFFER,
+
+    /** RESERVATION. Facturacion de una reserva PMS */
+    RESERVATION;
 
 
     /** Message key prefix. */

@@ -119,7 +119,8 @@ public class PenalizationInvoicing implements IReservationConstants {
 			invoiceDetail.setQuantity(reservationServiceDetail.getQuantity() * (-1));
 			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 			invoiceDetail.setPrice(reservationServiceDetail.getPrice());
-			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+			invoiceDetail.setSource(InvoiceSource.RESERVATION);
+			invoiceDetail.setSourceId(reservationServiceDetail.getId());
 			invoiceDetail.setTaxableBase(reservationServiceDetail.getTaxableBase() * (-1));
 			invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
 			invoiceDetail.getInvoice().setUpdateEnabled(line == reservationServiceDetailList.size());

@@ -124,8 +124,8 @@ public class RectificationInvoicingManager {
 			rectifierDetail.setQuantity((invoice.isSpecialRectifier()) ? 0.0 : CommonUtil.round(0 - invoiceDetail.getQuantity(), 3));
 			rectifierDetail.setPrice((invoice.isSpecialRectifier()) ? 0.0 : invoiceDetail.getPrice());
 			rectifierDetail.setDiscountExpression((invoice.isSpecialRectifier()) ? new DiscountExpression("0.0") : invoiceDetail.getDiscountExpression());
-			rectifierDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-			rectifierDetail.setSourceId(null);
+			rectifierDetail.setSource((invoiceDetail.getSource() == InvoiceSource.RESERVATION) ? invoiceDetail.getSource() : InvoiceSource.DIRECT_INVOICE);
+			rectifierDetail.setSourceId((invoiceDetail.getSource() == InvoiceSource.RESERVATION) ? invoiceDetail.getSourceId() : null);
 			rectifierDetail.setTaxableBase(getPriceStrategy().getBasePrice(rectifierDetail));
 			rectifierDetail.setWorkPlace(invoiceDetail.getWorkPlace());
 			rectifierDetail.setTaxDataInDetail(true);

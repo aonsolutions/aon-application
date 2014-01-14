@@ -31,7 +31,7 @@
 	<table-filter match-name="fs_model180_detail" exclude="true" />
     <table-filter match-name="fs_model190" exclude="true" />
 	<table-filter match-name="fs_model190_detail" exclude="true" />
-
+	<table-filter match-name="contract_clause" exclude="true" />
 		
 	<!--  *********************************** -->
 	<!--  TABLAS VALIDAS QUE NO LEVANTAN POJO -->

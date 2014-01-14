@@ -332,7 +332,8 @@ public class ReservationInvoicing implements IReservationConstants {
 			invoiceDetail.setQuantity(reservationServiceDetail.getQuantity());
 			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 			invoiceDetail.setPrice(reservationServiceDetail.getPrice());
-			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+			invoiceDetail.setSource(InvoiceSource.RESERVATION);
+			invoiceDetail.setSourceId(reservationServiceDetail.getId());
 			invoiceDetail.setTaxableBase(reservationServiceDetail.getTaxableBase());
 			invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
 			if (isVatGap) {
@@ -424,6 +425,17 @@ public class ReservationInvoicing implements IReservationConstants {
 
 			Date date = service.getFromDate();
 			while (date.compareTo(service.getToDate()) <= 0) {
+				ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
+				if (reservation != null) {
+					reservationServiceDetail.setProjectReservationService(reservationService);
+					reservationServiceDetail.setProjectReservationRoomDetail(obtainRoomDetailByDate(reservationInvoiceTo.getRoom(), date));
+					reservationServiceDetail.setEffectiveDate(date);
+					reservationServiceDetail.setQuantity(service.getQuantity());
+					reservationServiceDetail.setPrice(strategy.getUnitPrice(reservationServiceDetail, date, reservationInvoiceTo.getHotel().getCustomer().getTariff()));
+					reservationServiceDetail.setTaxableBase(strategy.getBasePrice(reservationServiceDetail));
+					reservationServiceDetail = (ProjectReservationServiceDetail)reservationServiceDetailBean.insert(reservationServiceDetail);
+				}
+
 				InvoiceDetail invoiceDetail = new InvoiceDetail();
 				invoiceDetail.setInvoice(invoice);
 				invoiceDetail.setProject((reservation!=null) ? reservation.getProject() : null);
@@ -433,23 +445,12 @@ public class ReservationInvoicing implements IReservationConstants {
 				invoiceDetail.setQuantity(service.getQuantity());
 				invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 				invoiceDetail.setPrice(strategy.getUnitPrice(invoiceDetail, date, reservationInvoiceTo.getHotel().getCustomer().getTariff()));
-				invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+				invoiceDetail.setSource((reservation != null) ? InvoiceSource.RESERVATION : InvoiceSource.DIRECT_INVOICE);
+				invoiceDetail.setSourceId((reservation != null) ? reservationServiceDetail.getId() : null);
 				invoiceDetail.setTaxableBase(strategy.getBasePrice(invoiceDetail));
 				invoiceDetail.setWorkPlace(reservationInvoiceTo.getHotel().getWorkPlace());
 				invoiceDetail.getInvoice().setUpdateEnabled(service.equals(reservationInvoiceTo.getLastService()));
 				invoiceDetailBean.insert(invoiceDetail);
-
-				if (reservation != null) {
-					ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
-					reservationServiceDetail.setProjectReservationService(reservationService);
-					reservationServiceDetail.setProjectReservationRoomDetail(obtainRoomDetailByDate(reservationInvoiceTo.getRoom(), date));
-					reservationServiceDetail.setEffectiveDate(date);
-					reservationServiceDetail.setQuantity(invoiceDetail.getQuantity());
-					reservationServiceDetail.setPrice(invoiceDetail.getPrice());
-					reservationServiceDetail.setTaxableBase(invoiceDetail.getTaxableBase());
-					reservationServiceDetail.setInvoiceDetail(invoiceDetail);
-					reservationServiceDetailBean.insert(reservationServiceDetail);
-				}
 
 				date = DateUtils.addDays(date, 1);
 			}
@@ -560,17 +561,12 @@ public class ReservationInvoicing implements IReservationConstants {
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		for (ITransferObject ito : invoice.getDetailList()) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
-			Criteria criteria = new Criteria();
-			String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_INVOICE_DETAIL_ID);
-			criteria.addEqualExpression(alias, invoiceDetail.getId());
-			alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
-			criteria.addEqualExpression(alias, true);
-			for (ITransferObject itr : reservationServiceDetailBean.getList(criteria)) {
-				ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)itr;
+    		ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)reservationServiceDetailBean.get(invoiceDetail.getSourceId());
+    		if (reservationServiceDetail != null && reservationServiceDetail.getProjectReservationService().isExtra()) {
+        		reservationServiceDetailBean.remove(reservationServiceDetail);
 				if (!servicesToRemove.contains(reservationServiceDetail.getProjectReservationService())) {
 					servicesToRemove.add(reservationServiceDetail.getProjectReservationService());
 				}
-				reservationServiceDetailBean.remove(reservationServiceDetail);
 			}
 		}
 
@@ -640,8 +636,6 @@ public class ReservationInvoicing implements IReservationConstants {
 			InvoiceDetail duplicateDetail = invoiceDetail;
 			duplicateDetail.setId(null);
 			duplicateDetail.setInvoice(duplicate);
-			duplicateDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-			duplicateDetail.setSourceId(null);
 			duplicateDetail.setSkipServiceProcess(true);
 			duplicateDetail.setUpdateEnabled(false);
 			duplicateDetail.getInvoice().setUpdateEnabled(false);
