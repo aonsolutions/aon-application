@@ -662,7 +662,7 @@ public class CertificadosWriter {
 	 * @return
 	 */
 	private String createApellidoSimpleType(String value){
-		if(StringUtils.isNotBlank(value) && StringUtils.length(value)>14 ){
+		if(StringUtils.isNotBlank(value) && StringUtils.length(value)>19 ){
 			return StringUtils.substring(value, 0, 19);
 		}
 		return value;
@@ -1056,12 +1056,12 @@ public class CertificadosWriter {
 	
 	private boolean isFulltimeContract(Certifica2BatchDetail detail) {
 		SEPEUtils utils = SEPEUtils.getInstance();
-		String fullTime = utils.getContractDataMap(detail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.FULL_TIME.getName());
 		String tc2 = utils.getContractDataMap(detail.getContract(), Boolean.TRUE, Boolean.TRUE).get(ContextVariable.TC2.getName());
-		if(fullTime==null || new Boolean(fullTime)){
-			if(tc2.startsWith("1") || tc2.startsWith("4")){ 
-				return true;
-			} 
+		if(tc2.startsWith("1") || tc2.startsWith("4")){ 
+			return true;
+		}
+		if(tc2.startsWith("2") || tc2.startsWith("5")){
+			return false;
 		}
 		return false;
 	}
