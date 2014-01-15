@@ -38,6 +38,8 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 	private boolean skipServiceProcess;
 	private double vatPercent;
 	private double vatQuota;
+	private double surchargePercent;
+	private double surchargeQuota;
 	private double retentionPercent;
 	private double retentionQuota;
 
@@ -100,6 +102,22 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 	}
 
 	@Transient
+	public double getSurchargePercent() {
+		return surchargePercent;
+	}
+	public void setSurchargePercent(double surchargePercent) {
+		this.surchargePercent = CommonUtil.round(surchargePercent);
+	}
+
+	@Transient
+	public double getSurchargeQuota() {
+		return surchargeQuota;
+	}
+	public void setSurchargeQuota(double surchargeQuota) {
+		this.surchargeQuota = CommonUtil.round(surchargeQuota);
+	}
+
+	@Transient
 	public double getRetentionPercent() {
 		return retentionPercent;
 	}
@@ -147,6 +165,8 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 			if (taxBreakDown.isVat()) {
 				setVatPercent(taxBreakDown.getTaxPercent());
 				setVatQuota(taxBreakDown.getTaxQuota());
+				setSurchargePercent(taxBreakDown.getSurchargePercent());
+				setSurchargeQuota(taxBreakDown.getSurchargeQuota());
 			} else if (taxBreakDown.isRetention()) {
 				setRetentionPercent(taxBreakDown.getTaxPercent());
 				setRetentionQuota(taxBreakDown.getTaxQuota());
@@ -159,7 +179,7 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 		if (getVatQuota() == 0 && getRetentionQuota() == 0) {
 			fillTaxDataInDetail();
 		}
-		return CommonUtil.round(getPrice() * (1 + getVatPercent() / 100 - getRetentionPercent() / 100));
+		return CommonUtil.round(getPrice() * (1 + getVatPercent() / 100 + getSurchargePercent() / 100 - getRetentionPercent() / 100));
 	}
 
 	@Transient
@@ -167,7 +187,7 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 		if (getVatQuota() == 0 && getRetentionQuota() == 0) {
 			fillTaxDataInDetail();
 		}
-		return CommonUtil.round(getTaxableBase() + getVatQuota() - getRetentionQuota());
+		return CommonUtil.round(getTaxableBase() + getVatQuota() + getSurchargeQuota() - getRetentionQuota());
 	}
 
 	@Transient

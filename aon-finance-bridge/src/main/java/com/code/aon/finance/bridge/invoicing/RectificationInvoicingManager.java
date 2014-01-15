@@ -134,14 +134,20 @@ public class RectificationInvoicingManager {
 			if (invoiceVatTax != null) {
 				if (invoice.isSpecialRectifier()) {
 					double quota = invoiceVatTax.getQuota();
+					double surchargeQuota = invoiceVatTax.getSurchargeQuota();
 					if (quota == 0) {
 						quota = CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceVatTax.getPercentage() / 100); 
+						surchargeQuota = CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceVatTax.getSurcharge() / 100); 
 					}
 					rectifierDetail.setVatPercent(invoiceVatTax.getPercentage());
 					rectifierDetail.setVatQuota(CommonUtil.round(quota * percent * (-1) / 100));
+					rectifierDetail.setSurchargePercent(invoiceVatTax.getSurcharge());
+					rectifierDetail.setSurchargeQuota(CommonUtil.round(surchargeQuota * percent * (-1) / 100));
 				} else {
 					rectifierDetail.setVatPercent(invoiceVatTax.getPercentage());
 					rectifierDetail.setVatQuota(CommonUtil.round(invoiceVatTax.getQuota() * (-1)));
+					rectifierDetail.setSurchargePercent(invoiceVatTax.getSurcharge());
+					rectifierDetail.setSurchargeQuota(CommonUtil.round(invoiceVatTax.getSurchargeQuota() * (-1)));
 				}
 			}
 			InvoiceTax invoiceRetentionTax = obtainInvoiceTax(invoiceDetail, TaxType.RETENTION);

@@ -159,8 +159,9 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		invoiceTax.setVatDeductionType(tax.getVatDeductionType());
 		invoiceTax.setWithholdingType(tax.getWithholdingType());
 		double percentage = 0.0;
-		double surcharge = 0.0;
 		double quota = 0.0;
+		double surcharge = 0.0;
+		double surchargeQuota = 0.0;
 
 		Invoice invoice = (!invoiceDetail.getInvoice().isRectifier()) ? invoiceDetail.getInvoice() : invoiceDetail.getInvoice().getRectificationInvoice();
 		if (invoice.isNational() || !invoice.isSales()) {
@@ -177,6 +178,8 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			if (invoiceDetail.isTaxDataInDetail()) {
 				percentage = (tax.isVat()) ? invoiceDetail.getVatPercent() : invoiceDetail.getRetentionPercent();
 				quota = (tax.isVat()) ? invoiceDetail.getVatQuota() : invoiceDetail.getRetentionQuota();
+				surcharge = (tax.isVat()) ? invoiceDetail.getSurchargePercent() : 0;
+				surchargeQuota = (tax.isVat()) ? invoiceDetail.getSurchargeQuota() : 0;
 			} else {
 				if (invoice.getIssueDate().before(tax.getStartDate())) {
 					tax = obtainTax(tax.getId(), invoice.getIssueDate());
@@ -188,8 +191,9 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			}
 		}
 		invoiceTax.setPercentage(percentage);
-		invoiceTax.setSurcharge(surcharge);
 		invoiceTax.setQuota(quota);
+		invoiceTax.setSurcharge(surcharge);
+		invoiceTax.setSurchargeQuota(surchargeQuota);
 
 		return invoiceTax;
 	}
