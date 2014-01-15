@@ -5,6 +5,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -19,30 +20,94 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{stock}" />
+				<ui:param name="searchController" value="#{stockSearch}" />
 				<ui:param name="skipAfterSearch" value="#{true}" />
 
 				<ui:define name="searchContent">
-					<aon:outputLabel for="Stock_warehouse_id" value="#{bundle.aon_module_warehouse}" />
-					<aon:selectOneMenu id="Stock_warehouse_id"
-						value="#{warehouseCollections.warehouse}"
-						valueChangeListener="#{stock.addIdEqualExpression}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{warehouseCollections.warehouses}" />
-					</aon:selectOneMenu>
 				
-					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{stockSearch.item}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-					</ui:include>
+					<aon:outputText value="" />
+					<aon:div styleClass="aon-width-650">
+				
+						<aon:panelCollapsible expanded="true" label="#{bundle.aon_general}">
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 
-					<aon:outputLabel for="Stock_quantity" value="#{bundle.aon_quantity}" />
-					<aon:inputText id="Stock_quantity" size="10"
-						valueChangeListener="#{stock.addExpression}" />				
+								<aon:outputLabel for="Stock_warehouse_id" value="#{bundle.aon_module_warehouse}" />
+								<aon:selectOneMenu id="Stock_warehouse_id"
+									value="#{warehouseCollections.warehouse}"
+									valueChangeListener="#{stock.addIdEqualExpression}">
+									<f:selectItem itemLabel="-" value="#{null}"/>
+									<f:selectItems value="#{warehouseCollections.warehouses}" />
+								</aon:selectOneMenu>
+							
+								<aon:outputLabel for="Stock_quantity" value="#{bundle.aon_quantity}" />
+								<aon:inputText id="Stock_quantity" size="10"
+									valueChangeListener="#{stock.addExpression}" />				
+
+							</aon:panelGrid>
+						</aon:panelCollapsible>					
+									
+						<aon:panelCollapsible expanded="true" label="#{bundle.aon_product}" >
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+
+								<aon:outputLabel for="Stock_item_product_code"
+									value="#{bundle.aon_id}" />
+								<aon:inputText id="Stock_item_product_code" size="25"
+									valueChangeListener="#{controller.addExpression}"
+									onblur="toUpperCase(this);" />
+							
+								<aon:outputLabel for="Stock_item_product_name"
+									value="#{bundle.aon_name}" />
+								<aon:inputText id="Stock_item_product_name" size="50"
+									valueChangeListener="#{controller.addExpression}" />
+							
+								<aon:outputLabel for="Stock_item_product_category_id"
+									value="#{bundle.aon_category}" />
+								<aon:selectOneMenu id="Stock_item_product_category_id"
+									value="#{searchController.category}">
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{productCollections.categories}" />
+								</aon:selectOneMenu>
+								
+								<ui:include 
+									src="/com/code/aon/ui/config/facelet/tag/input.xhtml" />
+								
+								<c:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
+									<aon:outputLabel for="Stock_item_product_brand_id"
+										value="#{bundle.tas_make}" />
+									<aon:selectOneMenu id="Stock_item_product_brand_id"
+										value="#{productCollections.brand}"
+										valueChangeListener="#{controller.addIdEqualExpression}">
+										<f:selectItem itemLabel="-" value="#{null}" />
+										<f:selectItems value="#{productCollections.brands}" />
+									</aon:selectOneMenu>
+								</c:if>
+														
+								<aon:outputText for="Stock_item_product_status"
+									value="#{bundle.aon_status}"/>
+								<aon:selectManyCheckbox id="Stock_item_product_status"
+									value="#{searchController.statuses}">
+									<f:selectItems value="#{productCollections.productStatuses}"/>
+								</aon:selectManyCheckbox>				
+							
+								<c:if test="#{aonConfiguration.bean.product.showType}">
+									<aon:outputLabel for="Stock_item_product_type"
+										value="#{bundle.aon_type}" />
+									<aon:selectManyCheckbox id="Stock_item_product_type"
+										value="#{searchController.types}">
+										<f:selectItems value="#{productCollections.noExpenseProductTypes}" />
+									</aon:selectManyCheckbox>
+								</c:if>	
+
+
+							</aon:panelGrid>
+						</aon:panelCollapsible>
+								
+					</aon:div>				
 				
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+
 	</ui:define>
 	
 </ui:composition>
