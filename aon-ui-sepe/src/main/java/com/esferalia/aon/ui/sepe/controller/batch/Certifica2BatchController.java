@@ -280,7 +280,7 @@ public class Certifica2BatchController extends BasicController {
 			schema = SEPEFileUtils.CERTIFICADOS_SCHEMA_FILE_NAME;
 			SEPEFileUtils.validateCertificadosXmlPattern(is, schema);
 		} catch (SAXException saxe) {
-			String msg = "Error validación de Certific@2 (Formato no correcto o ausencia de datos)";
+			String msg = "Error de validación de Certific@2: ausencia de datos o formato no correcto";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(saxe.getMessage() );
 		} catch (IOException ioe) {

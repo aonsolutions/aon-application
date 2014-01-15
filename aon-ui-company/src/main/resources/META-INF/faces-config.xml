@@ -910,7 +910,7 @@
 				<value>#{enterpriseWorkPlaceChildListener}</value>
 				<value>#{enterpriseAddInfoListener}</value>
 				<value>#{enterpriseRAttachChildListener}</value>		
-				<value>#{enterpriseClausesChildListener}</value>		
+				<value>#{enterpriseClauseChildListener}</value>		
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -1164,9 +1164,9 @@
 	
 	<!-- **** ENTERPRISE CONTRACT CLAUSES **** --> 
 	<managed-bean>
-		<managed-bean-name>enterpriseClauses</managed-bean-name>
+		<managed-bean-name>enterpriseClause</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.registry.controller.RegistryAttachController
+			com.esferalia.aon.ui.payroll.controller.contract.ContractClauseController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -1175,15 +1175,15 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.registry.RegistryAttachment</value>
+			<value>com.esferalia.aon.payroll.ContractClause</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>enterpriseClauses</value>
+			<value>enterpriseClause</value>
 		</managed-property>
 		<managed-property>
-			<property-name>type</property-name>
-			<value>#{registryCollections.registryAttachmentTypes[11].value}</value>
+			<property-name>enterpriseClause</property-name>
+			<value>#{true}</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -1195,43 +1195,35 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
+			<value>ContractClause_line,ContractClause_general</value>
 		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>id</key>
-					<value>registry.id</value>
+					<key>domain</key>
+					<value>domain</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>				
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{enterpriseRAttachControllerListener}</value> 
-				<value>#{enterpriseRAttachScopeListener}</value>
-			</list-entries>
-		</managed-property>
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>enterpriseClausesChildListener</managed-bean-name>
+		<managed-bean-name>enterpriseClauseChildListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.form.listener.LinesControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
-			<value>enterpriseClauses</value>
+			<value>enterpriseClause</value>
 		</managed-property>
 		<managed-property>
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>RegistryAttachment_registry_id</key>
-					<value>id</value>
+					<key>ContractClause_domain</key>
+					<value>domain</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>

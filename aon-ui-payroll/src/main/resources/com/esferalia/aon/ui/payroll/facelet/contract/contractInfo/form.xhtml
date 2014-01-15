@@ -7,6 +7,13 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
+	
+	<c:if test="#{empty contract.params.contractModelOption}">
+		<aon:div style="border:1px #000 solid; text-align:center; padding:10px; color:blue;">
+			<aon:outputText value="Seleccione la modalidad del contrato para poder introducir los datos" />
+		</aon:div>
+	</c:if>
+	
 	<a4j:repeat var="to" value="#{controller.contractFieldList}">
 		<aon:panelGrid columns="2" styleClass="aon-width-all"
 			columnClasses="aon-panelGrid-odd aon-width-300, aon-panelGrid-even aon-width-auto" >

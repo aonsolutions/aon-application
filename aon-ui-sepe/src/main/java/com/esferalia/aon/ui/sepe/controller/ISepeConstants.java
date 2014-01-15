@@ -39,8 +39,8 @@ public interface ISepeConstants {
 		"100", "150",
 //		"130",
 		// INDEF. TP
-		"200",
-//		"230", "250",
+		"200","250",
+//		"230",
 		// FIJO DISCONT.
 //		"300","330", "350",
 		// TEMP. TC

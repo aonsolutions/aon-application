@@ -1,11 +1,14 @@
 package com.esferalia.aon.ui.payroll.utils;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +19,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -363,34 +368,6 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		try {
-			if(StringUtils.isNotBlank(params.getWorkSchedule())){
-				info = new ContractInfo();
-				info.setContract(contract);
-				info.setStartDate(contract.getStartDate());
-				info.setEndDate(contract.getEndDate());
-				info.setName( ContractVariable.WORK_SCHEDULE.getValue() );
-				info.setExpression("\"" + params.getWorkSchedule() + "\"");
-				bean.insert(info);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el horario laboral. (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
-		}
-		try {
-			if(StringUtils.isNotBlank(params.getTrainingSchedule())){
-				info = new ContractInfo();
-				info.setContract(contract);
-				info.setStartDate(contract.getStartDate());
-				info.setEndDate(contract.getEndDate());
-				info.setName( ContractVariable.TRAINING_SCHEDULE.getValue() );
-				info.setExpression("\"" + params.getTrainingSchedule() + "\"");
-				bean.insert(info);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el horario lectivo. (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
-		}
-		try {
 			if(params.getContractModelOption()!=null){
 				info = new ContractInfo();
 				info.setContract(contract);
@@ -623,44 +600,6 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		try {
-			ContractInfo workScheduleInfo = obtainContractInfo(contract, ContractVariable.WORK_SCHEDULE.getValue());
-			if(StringUtils.isNotBlank(params.getWorkSchedule())){
-				info = workScheduleInfo!=null?workScheduleInfo:new ContractInfo();
-				info.setContract(contract);
-				info.setStartDate(contract.getStartDate());
-				info.setEndDate(contract.getEndDate());
-				info.setName( ContractVariable.WORK_SCHEDULE.getValue() );
-				info.setExpression("\"" + params.getWorkSchedule() + "\"");
-				bean.insertOrUpdate(info);
-			} else {
-				if(workScheduleInfo != null){
-					bean.remove(workScheduleInfo);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el horario laboral. (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
-		}
-		try {
-			ContractInfo trainingScheduleInfo = obtainContractInfo(contract, ContractVariable.TRAINING_SCHEDULE.getValue());
-			if(StringUtils.isNotBlank(params.getTrainingSchedule())){
-				info = trainingScheduleInfo!=null?trainingScheduleInfo:new ContractInfo();
-				info.setContract(contract);
-				info.setStartDate(contract.getStartDate());
-				info.setEndDate(contract.getEndDate());
-				info.setName( ContractVariable.TRAINING_SCHEDULE.getValue() );
-				info.setExpression("\"" + params.getTrainingSchedule() + "\"");
-				bean.insertOrUpdate(info);
-			} else {
-				if(trainingScheduleInfo != null){
-					bean.remove(trainingScheduleInfo);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el horario lectivo. (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
-		}
-		try {
 			ContractInfo contractModelOption = obtainContractInfo(contract, ContractVariable.CONTRACT_MODEL_OPTION.getValue());
 			if(params.getContractModelOption()!=null){
 				info = contractModelOption!=null?contractModelOption:new ContractInfo();
@@ -707,11 +646,8 @@ public class ContractUtils {
 		if(map.get(ContextVariable.SUBSIDIZED.getName())!=null){
 			params.setSubsidized(new Boolean(map.get(ContextVariable.SUBSIDIZED.getName())));
 		}
-
-		loadContractInfo(contract, params);
-		loadContractBonuses(contract, params);
-		
 	}
+	
 	public void loadContractInfo(Contract contract, ContractParams params) throws ManagerBeanException {
 		Map<String, String> map = getContractInfoMap(contract);
 		
@@ -722,7 +658,7 @@ public class ContractUtils {
 			String ordinal = (map.get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
 			params.setContractModelOption(ModelOption.valueOf(ordinal));
 		}
-		if(isTrainingContract(contract)){
+		if(isTrainingContract(contract, params)){
 			if(map.get(ContractVariable.TRAINING_CENTER.getValue())!=null){
 				params.setTrainingCenter(obtainTrainingCenter(map.get(ContractVariable.TRAINING_CENTER.getValue())));
 			} else {
@@ -735,12 +671,6 @@ public class ContractUtils {
 				params.setTrainingEndDate(info.getEndDate());
 			} else {
 				params.setTrainingCourse((TrainingCourse) BeanManager.getManagerBean(TrainingCourse.class).createNewTo());
-			}
-			if(map.get(ContractVariable.WORK_SCHEDULE.getValue())!=null){
-				params.setWorkSchedule(map.get(ContractVariable.WORK_SCHEDULE.getValue()));
-			}
-			if(map.get(ContractVariable.TRAINING_SCHEDULE.getValue())!=null){
-				params.setTrainingSchedule(map.get(ContractVariable.TRAINING_SCHEDULE.getValue()));
 			}
 		}
 	}
@@ -771,7 +701,23 @@ public class ContractUtils {
 				bean.remove(data);
 				
 			}
-			removeContractBonus(params.getBonus());
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible eliminar los datos de contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+
+	public void removeContractInfo(Contract contract, ContractParams params) throws ControllerListenerException {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId());
+			for(ITransferObject to: bean.getList(criteria)){
+				ContractInfo data = (ContractInfo) to;
+				bean.remove(data);
+				
+			}
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible eliminar los datos de contrato. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
@@ -903,11 +849,16 @@ public class ContractUtils {
 		return null;
 	}
 	
-	public boolean isTrainingContract(Contract contract){
-		Map<String, String> map = getContractDataMap(contract);
-		return map.get(ContextVariable.TC2.getName())!=null && ContractCode.getContractCodeByValue(map.get(ContextVariable.TC2.getName()))==ContractCode.C421;
+	public boolean isTrainingContract(Contract contract, ContractCode contractCode){
+		return contractCode!=null && contractCode==ContractCode.C421;
 	}
-	
+	public boolean isTrainingContract(Contract contract, ContractParams params){
+		String contractCode = null;
+		if(params.getContractCode()!=null){
+			contractCode = params.getContractCode().getValue();
+		}
+		return contractCode!=null && ContractCode.getContractCodeByValue(contractCode)==ContractCode.C421;
+	}
 	
 	public Map<String, String> getContractDataMap(Contract contract) {
 		return SEPEUtils.getInstance().getContractDataMap(contract);
@@ -917,109 +868,39 @@ public class ContractUtils {
 		return SEPEUtils.getInstance().getContractInfoMap(contract);
 	}
 	
-//	public Map<String, String> getContractDataMap(Contract contract) {
-//		Map<String, String> map = new HashMap<String, String>();
-//		try {
-//			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
-//			Expression endDateExp = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
-//			if(contract.getEndDate()!=null){
-//				Expression exp = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
-//				endDateExp = ExpressionUtilities.getOrExpression(exp, endDateExp);
-//			} else {
-//				criteria.addExpression(endDateExp);
-//			}
-//			for(ITransferObject to: bean.getList(criteria)){
-//				ContractData data = (ContractData) to;
-//				if( StringUtils.isNotEmpty(data.getName()) && StringUtils.isNotEmpty(data.getExpression()) ){
-//					map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
-//				}
-//			}
-//		} catch (ManagerBeanException e) {
-//			// NADA, se devuelve un mapa vacio
-//			return map;
-//		}
-//		return map;
-//	}
-//	
-//	public Map<String, ContractData> getContractDataMap(Contract contract, Date startDate, Date endDate) {
-//		Map<String, ContractData> map = new HashMap<String, ContractData>();
-//		try {
-//			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-//			if(startDate!=null){
-//				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), startDate);
-//			}
-//			if(endDate!=null){
-//				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), endDate);
-//			}
-//			for(ITransferObject to: bean.getList(criteria)){
-//				ContractData data = (ContractData) to;
-//				if(data.getExpression()!=null){
-//					map.put(data.getName(), data);
-//				}
-//			}
-//		} catch (ManagerBeanException e) {
-//			// NADA, que siga generando el fichero
-//		}
-//		return map;
-//	}
-//	
-//	public Map<String, String> getContractInfoMap(Contract contract) {
-//		Map<String, String> map = new HashMap<String, String>();
-//		try {
-//			IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId());
-//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE), contract.getStartDate());
-//			Expression endDateExp = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_END_DATE));
-//			if(contract.getEndDate()!=null){
-////				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
-//				Expression exp = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_END_DATE), contract.getEndDate());
-//				endDateExp = ExpressionUtilities.getOrExpression(exp, endDateExp);
-//			} else {
-////				criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
-//				criteria.addExpression(endDateExp);
-//			}
-//			for(ITransferObject to: bean.getList(criteria)){
-//				ContractData data = (ContractData) to;
-//				if( StringUtils.isNotEmpty(data.getName()) && StringUtils.isNotEmpty(data.getExpression()) ){
-//					map.put(data.getName(), data.getExpression().replace('"', ' ').trim());
-//				}
-//			}
-//		} catch (ManagerBeanException e) {
-//			// NADA, se devuelve un mapa vacio
-//			return map;
-//		}
-//		return map;
-//	}
-//	
-//	public Map<String, ContractInfo> getContractInfoMap(Contract contract, Date startDate, Date endDate) {
-//		Map<String, ContractInfo> map = new HashMap<String, ContractInfo>();
-//		try {
-//			IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId());
-//			if(startDate!=null){
-//				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE), startDate);
-//			}
-//			if(endDate!=null){
-//				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_END_DATE), endDate);
-//			}
-//			for(ITransferObject to: bean.getList(criteria)){
-//				ContractInfo info = (ContractInfo) to;
-//				if(info.getExpression()!=null){
-//					map.put(info.getName(), info);
-//				}
-//			}
-//		} catch (ManagerBeanException e) {
-//			// NADA, que siga generando el fichero
-//		}
-//		return map;
-//	}
-	
+	public String getDataCurrentValue(Contract contract, String valueName) {
+		return getContractCurrentValue(contract, "contract_data", valueName);
+	}
+	public String getInfoCurrentValue(Contract contract, String valueName) {
+		return getContractCurrentValue(contract, "contract_info", valueName);
+	}
+	private String getContractCurrentValue(Contract contract, String tableName, String valueName) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT expression"
+			+ " FROM " + tableName
+			+ " WHERE contract = " + contract.getId()
+			+ " AND name = '" + valueName + "'"
+			+ " ORDER BY start_date DESC";
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				String value = rs.getString(1);
+				return value.replaceAll("\"", "");
+			}
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return null;
+	}
 	
 }

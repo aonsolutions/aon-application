@@ -25,8 +25,8 @@ import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentEx
 import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -48,7 +48,6 @@ public class LearningModel extends AbstractContractModel {
 	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		
 		try {			
-			
 			setReader(new PdfReader(getContractModelUrl(documentName+".pdf")));
 			String range = "1-3";
 			ModelOption modelOption = ModelOption.valueOf(getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
@@ -57,7 +56,6 @@ public class LearningModel extends AbstractContractModel {
 			readPdfFields();
 			
 			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams;
-			
 			SimpleDateFormat dateFormatter = new SimpleDateFormat();
 			
 			// print all field keys of the pdf document
@@ -293,8 +291,12 @@ public class LearningModel extends AbstractContractModel {
 				setPdfFieldValue(LearningCommonFieldName.JOURNAL_COLLECTIVE_AGREEMENT.getValue(), pw.getAgreement().getDescription());
 			}
 			
-			setPdfFieldValue(LearningCommonFieldName.EFFECTIVE_JOURNAL_CALENDAR.getValue(),getContractDataMap(contract).get(ContractVariable.WORK_SCHEDULE.getValue()));
-			setPdfFieldValue(LearningCommonFieldName.FORMATION_JOURNAL_CALENDAR2.getValue(),getContractDataMap(contract).get(ContractVariable.TRAINING_SCHEDULE.getValue()));
+			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(LearningCommonFieldName.HORARIO_LABORAL.toString()))){
+				setPdfFieldValue(LearningCommonFieldName.HORARIO_LABORAL.getValue(),getContractInfoMap(contract).get(ContractVariable.WORK_SCHEDULE.getValue()));
+			}
+			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(LearningCommonFieldName.HORARIO_LECTIVO.toString()))){
+				setPdfFieldValue(LearningCommonFieldName.HORARIO_LECTIVO2.getValue(),getContractInfoMap(contract).get(ContractVariable.TRAINING_SCHEDULE.getValue()));
+			}
 
 			Integer durationInMonths = getMonthsBetweenDates(contract.getStartDate(), contract.getEndDate());
 			setPdfFieldValue(LearningCommonFieldName.CONTRACT_DURATION.getValue(), durationInMonths!=null?durationInMonths+" meses":"");
@@ -303,12 +305,12 @@ public class LearningModel extends AbstractContractModel {
 			if(contract.getEndDate()!=null){
 				setPdfFieldValue(LearningCommonFieldName.END_DATE.getValue(), dateFormatter.format(contract.getEndDate()));
 			}
-			setPdfFieldValue(LearningCommonFieldName.TEST_PERIOD.getValue(), "Según convenio");
-			setPdfFieldValue(LearningCommonFieldName.TEST_PERIOD_INCREASE.getValue(), null);
+			setPdfFieldValue(LearningCommonFieldName.TRIAL_DURATION.getValue(), "Según convenio");
+			setPdfFieldValue(LearningCommonFieldName.TRIAL_DURATION_INCREASE.getValue(), null);
 			
-			setPdfFieldValue(LearningCommonFieldName.SALARY.getValue(), "Según convenio");
+			setPdfFieldValue(LearningCommonFieldName.SALARY_AMOUNT.getValue(), "Según convenio");
 			setPdfFieldValue(LearningCommonFieldName.SALARY_PERIOD.getValue(), "mensuales");
-			setPdfFieldValue(LearningCommonFieldName.VACATIONS.getValue(), "Según convenio");
+			setPdfFieldValue(LearningCommonFieldName.HOLIDAYS.getValue(), "Según convenio");
 			
 			setPdfFieldValue(LearningCommonFieldName.ANNEX_I_CHECK.getValue(), null);
 			setPdfFieldValue(LearningCommonFieldName.ANNEX_II_CHECK.getValue(), "true");
@@ -803,34 +805,37 @@ public class LearningModel extends AbstractContractModel {
 		TOTAL_HOURS("Texto36",Boolean.FALSE),
 		JOURNAL_PERCENT("Texto37",Boolean.FALSE),
 		JOURNAL_COLLECTIVE_AGREEMENT("Texto38",Boolean.FALSE),
-		EFFECTIVE_JOURNAL_CALENDAR("Texto39",Boolean.FALSE),
-		FORMATION_JOURNAL_CALENDAR1("Texto40",Boolean.FALSE),
-		FORMATION_JOURNAL_CALENDAR2("Texto41",Boolean.FALSE),
+//		EFFECTIVE_JOURNAL_SCHEDULE("Texto39",Boolean.TRUE),
+		HORARIO_LABORAL("Texto39",Boolean.TRUE),
+//		FORMATION_JOURNAL_SCHEDULE("Texto40",Boolean.TRUE),
+		HORARIO_LECTIVO("Texto40",Boolean.TRUE),
+//		FORMATION_JOURNAL_SCHEDULE2("Texto41",Boolean.FALSE),
+		HORARIO_LECTIVO2("Texto41",Boolean.FALSE),
 		
 		CONTRACT_DURATION("Texto42",Boolean.FALSE),
 		START_DATE("Texto43",Boolean.FALSE),
 		END_DATE("Texto44",Boolean.FALSE),
-		TEST_PERIOD("Texto45",Boolean.TRUE),
-		TEST_PERIOD_INCREASE("Casilla de verificación46",Boolean.TRUE),
+		TRIAL_DURATION("Texto45",Boolean.TRUE),
+		TRIAL_DURATION_INCREASE("Casilla de verificación46",Boolean.FALSE),
 		
-		SALARY("Texto47",Boolean.TRUE),
+		SALARY_AMOUNT("Texto47",Boolean.TRUE),
 		SALARY_PERIOD("Texto48",Boolean.TRUE),
 		
-		VACATIONS("Texto49",Boolean.TRUE),
+		HOLIDAYS("Texto49",Boolean.TRUE),
 		
-		ANNEX_I_CHECK("Casilla de verificación59",Boolean.TRUE),
-		ANNEX_II_CHECK("Casilla de verificación60",Boolean.TRUE),
+		ANNEX_I_CHECK("Casilla de verificación59",Boolean.FALSE),
+		ANNEX_II_CHECK("Casilla de verificación60",Boolean.FALSE),
 		
 		COLLECTIVE_AGREEMENT("Texto54g",Boolean.FALSE),
 		
 		SEPE_TOWN_FOR_CONTRACT_START("Texto51",Boolean.FALSE),
 		SEPE_TOWN_FOR_CONTRACT_END("Texto52",Boolean.FALSE),
 		
-		// SPECIFIC fields: because its length is defined forward
+		// SPECIFIC fields: because its length, it is defined forward
 		
-		// ANEX I fields: because its length is defined forward
+		// ANEX I fields: because its length, it is defined forward
 		
-		// ANEX II fields: because its length is defined forward
+		// ANEX II fields: because its length, it is defined forward
 		
 		SIGN_TOWN("Texto74",Boolean.FALSE),
 		SIGN_DAY("Texto75",Boolean.FALSE),

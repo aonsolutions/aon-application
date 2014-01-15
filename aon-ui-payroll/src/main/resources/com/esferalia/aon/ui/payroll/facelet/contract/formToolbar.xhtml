@@ -154,7 +154,7 @@
 				disabled="#{contractContrata.new or !contractContrata.communicationAvailable}"
 				rendered="#{true}" ajaxSingle="true"
 				reRender="showContrataCommunicationWindow"
-				actionListener="#{contract.onContrataWindowShow}"
+				actionListener="#{contractContrata.onContrataDataShow}"
 				iconClass="aon-icon-sepe-contrata" >
 				<f:setPropertyActionListener
 					target="#{contractContrata.showCommunicationWindow}" value="#{true}" />

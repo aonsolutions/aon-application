@@ -237,6 +237,7 @@
 		<mapping class="com.esferalia.aon.payroll.ContractBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.ContractBonus"/>
 		<mapping class="com.esferalia.aon.payroll.ContractCalendarEvent"/>
+		<mapping class="com.esferalia.aon.payroll.ContractClause"/>
 		<mapping class="com.esferalia.aon.payroll.ContractData"/>
 		<mapping class="com.esferalia.aon.payroll.ContractDeduction"/>
 		<mapping class="com.esferalia.aon.payroll.ContractEmbargo"/>

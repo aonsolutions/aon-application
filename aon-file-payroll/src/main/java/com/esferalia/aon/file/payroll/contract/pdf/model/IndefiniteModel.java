@@ -435,14 +435,11 @@ public class IndefiniteModel extends AbstractContractModel {
 					} else {
 						setPdfFieldValue(IndefiniteOptionFieldName.OPT17_PARTIALLY_TIME_QUOTE_BONUS_NO.getValue(),"true");
 					}
-				} else if(code == ContractCode.C309 
-//						|| code == ContractCode.C339 
-						|| code == ContractCode.C389){
-//					if(code == ContractCode.C339){
-//						setPdfFieldValue(IndefiniteOptionFieldName.OPT17_DISCONTINUOUS_TIME.getValue(),"true");
-//						setPdfFieldValue(IndefiniteOptionFieldName.OPT17_TC2_339.getValue(),"true");
-//					} else 
-						if(code == ContractCode.C309){
+				} else if(code == ContractCode.C309 || code == ContractCode.C339 || code == ContractCode.C389){
+					if(code == ContractCode.C339){
+						setPdfFieldValue(IndefiniteOptionFieldName.OPT17_DISCONTINUOUS_TIME.getValue(),"true");
+						setPdfFieldValue(IndefiniteOptionFieldName.OPT17_TC2_339.getValue(),"true");
+					} else if(code == ContractCode.C309){
 						setPdfFieldValue(IndefiniteOptionFieldName.OPT17_DISCONTINUOUS_TIME.getValue(),"true");
 						setPdfFieldValue(IndefiniteOptionFieldName.OPT17_TC2_309.getValue(),"true");
 					} else if(code == ContractCode.C389){

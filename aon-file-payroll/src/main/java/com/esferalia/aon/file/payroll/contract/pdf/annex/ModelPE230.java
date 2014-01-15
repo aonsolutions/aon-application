@@ -26,6 +26,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentEx
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -43,119 +44,119 @@ import com.lowagie.text.pdf.PdfStamper;
 public class ModelPE230 extends AbstractAnnexModel {
 	
 	// HEADER FIELDS
-	final static String PE230_CP_NO = "m1";
-	final static String PE230_CP_YES = "m2";
-	final static String PE230_FP_NO = "m3";
-	final static String PE230_FP_YES = "m4";
-	final static String PE230_CENTER_AVAILABLE_NO = "m5";
-	final static String PE230_CENTER_AVAILABLE_YES = "m6";
+	public final static String PE230_CP_NO = "m1";
+	public final static String PE230_CP_YES = "m2";
+	public final static String PE230_FP_NO = "m3";
+	public final static String PE230_FP_YES = "m4";
+	public final static String PE230_CENTER_AVAILABLE_NO = "m5";
+	public final static String PE230_CENTER_AVAILABLE_YES = "m6";
 
-	final static String PE230_CP_NAME = "certificado profesionalidad";
-	final static String PE230_FP_TITLE = "titulo fp";
+	public final static String PE230_CP_NAME = "certificado profesionalidad";
+	public final static String PE230_FP_TITLE = "titulo fp";
 	
 	// ENTERPRISE FIELDS
-	final static String PE230_ENTERPRISE_NAME = "razon social";
-	final static String PE230_ENTERPRISE_CIF = "cif";
+	public final static String PE230_ENTERPRISE_NAME = "razon social";
+	public final static String PE230_ENTERPRISE_CIF = "cif";
 	
-	final static String PE230_ENTERPRISE_DIR_STAFF_NAME = "persona";
-	final static String PE230_ENTERPRISE_DIR_STAFF_NIF = "cif 2";
-	final static String PE230_ENTERPRISE_DIR_STAFF_CHARGE = "cargo";
+	public final static String PE230_ENTERPRISE_DIR_STAFF_NAME = "persona";
+	public final static String PE230_ENTERPRISE_DIR_STAFF_NIF = "cif 2";
+	public final static String PE230_ENTERPRISE_DIR_STAFF_CHARGE = "cargo";
 	
-	final static String PE230_ENTERPRISE_PHONE_1 = "1";
-	final static String PE230_ENTERPRISE_PHONE_2 = "2";
-	final static String PE230_ENTERPRISE_PHONE_3 = "3";
-	final static String PE230_ENTERPRISE_PHONE_4 = "4";
-	final static String PE230_ENTERPRISE_PHONE_5 = "5";
-	final static String PE230_ENTERPRISE_PHONE_6 = "6";
-	final static String PE230_ENTERPRISE_PHONE_7 = "7";
-	final static String PE230_ENTERPRISE_PHONE_8 = "8";
-	final static String PE230_ENTERPRISE_PHONE_9 = "9";
-	final static String PE230_ENTERPRISE_EMAIL = "correo electronico";
+	public final static String PE230_ENTERPRISE_PHONE_1 = "1";
+	public final static String PE230_ENTERPRISE_PHONE_2 = "2";
+	public final static String PE230_ENTERPRISE_PHONE_3 = "3";
+	public final static String PE230_ENTERPRISE_PHONE_4 = "4";
+	public final static String PE230_ENTERPRISE_PHONE_5 = "5";
+	public final static String PE230_ENTERPRISE_PHONE_6 = "6";
+	public final static String PE230_ENTERPRISE_PHONE_7 = "7";
+	public final static String PE230_ENTERPRISE_PHONE_8 = "8";
+	public final static String PE230_ENTERPRISE_PHONE_9 = "9";
+	public final static String PE230_ENTERPRISE_EMAIL = "correo electronico";
 	
 	// EMPLOYEE FIELDS
-	final static String PE230_EMPLOYEE_NAME = "persona 2";
-	final static String PE230_EMPLOYEE_NIF = "cif_trabajador";
+	public final static String PE230_EMPLOYEE_NAME = "persona 2";
+	public final static String PE230_EMPLOYEE_NIF = "cif_trabajador";
 
 	// CONTRACT FIELDS
-	final static String PE230_CONTRACT_ID_NUMBER_1 = "c1";
-	final static String PE230_CONTRACT_ID_NUMBER_2 = "c2";
-	final static String PE230_CONTRACT_ID_NUMBER_3 = "c3";
-	final static String PE230_CONTRACT_ID_NUMBER_4 = "c4";
-	final static String PE230_CONTRACT_ID_NUMBER_5 = "c5";
-	final static String PE230_CONTRACT_ID_NUMBER_6 = "c6";
-	final static String PE230_CONTRACT_ID_NUMBER_7 = "c7";
-	final static String PE230_CONTRACT_ID_NUMBER_8 = "c8";
-	final static String PE230_CONTRACT_ID_NUMBER_9 = "c9";
-	final static String PE230_CONTRACT_ID_NUMBER_10 = "c10";
-	final static String PE230_CONTRACT_ID_NUMBER_11 = "c11";
-	final static String PE230_CONTRACT_ID_NUMBER_12 = "c12";
-	final static String PE230_CONTRACT_ID_NUMBER_13 = "c13";
-	final static String PE230_CONTRACT_ID_NUMBER_14 = "c14";
-	final static String PE230_CONTRACT_ID_NUMBER_15 = "c15";
-	final static String PE230_CONTRACT_ID_NUMBER_16 = "c16";
+	public final static String PE230_CONTRACT_ID_NUMBER_1 = "c1";
+	public final static String PE230_CONTRACT_ID_NUMBER_2 = "c2";
+	public final static String PE230_CONTRACT_ID_NUMBER_3 = "c3";
+	public final static String PE230_CONTRACT_ID_NUMBER_4 = "c4";
+	public final static String PE230_CONTRACT_ID_NUMBER_5 = "c5";
+	public final static String PE230_CONTRACT_ID_NUMBER_6 = "c6";
+	public final static String PE230_CONTRACT_ID_NUMBER_7 = "c7";
+	public final static String PE230_CONTRACT_ID_NUMBER_8 = "c8";
+	public final static String PE230_CONTRACT_ID_NUMBER_9 = "c9";
+	public final static String PE230_CONTRACT_ID_NUMBER_10 = "c10";
+	public final static String PE230_CONTRACT_ID_NUMBER_11 = "c11";
+	public final static String PE230_CONTRACT_ID_NUMBER_12 = "c12";
+	public final static String PE230_CONTRACT_ID_NUMBER_13 = "c13";
+	public final static String PE230_CONTRACT_ID_NUMBER_14 = "c14";
+	public final static String PE230_CONTRACT_ID_NUMBER_15 = "c15";
+	public final static String PE230_CONTRACT_ID_NUMBER_16 = "c16";
 	
-	final static String PE230_CONTRACT_START_DATE = "fecha";
-	final static String PE230_CONTRACT_END_DATE = "fecha fin";
+	public final static String PE230_CONTRACT_START_DATE = "fecha";
+	public final static String PE230_CONTRACT_END_DATE = "fecha fin";
 	
-	final static String PE230_CONTRACT_OCCUPATION = "puesto trabajo";
+	public final static String PE230_CONTRACT_OCCUPATION = "puesto trabajo";
 	
-	final static String PE230_CONTRACT_CNO_1 = "n1";
-	final static String PE230_CONTRACT_CNO_2 = "n2";
-	final static String PE230_CONTRACT_CNO_3 = "n3";
-	final static String PE230_CONTRACT_CNO_4 = "n4";
-	final static String PE230_CONTRACT_CNO_5 = "n5";
-	final static String PE230_CONTRACT_CNO_6 = "n6";
-	final static String PE230_CONTRACT_CNO_7 = "n7";
-	final static String PE230_CONTRACT_CNO_8 = "n8";
+	public final static String PE230_CONTRACT_CNO_1 = "n1";
+	public final static String PE230_CONTRACT_CNO_2 = "n2";
+	public final static String PE230_CONTRACT_CNO_3 = "n3";
+	public final static String PE230_CONTRACT_CNO_4 = "n4";
+	public final static String PE230_CONTRACT_CNO_5 = "n5";
+	public final static String PE230_CONTRACT_CNO_6 = "n6";
+	public final static String PE230_CONTRACT_CNO_7 = "n7";
+	public final static String PE230_CONTRACT_CNO_8 = "n8";
 	
 	// TRAINING CENTER FIELDS
-	final static String PE230_TRAINING_CENTER_CODE = "numce";
-	final static String PE230_TRAINING_CENTER_DIR_STAFF_NAME = "persona 3";
-	final static String PE230_TRAINING_CENTER_DIR_STAFF_NIF = "cif 3";
-	final static String PE230_TRAINING_CENTER_DIR_STAFF_CHARGE = "cargo 2";
-	final static String PE230_TRAINING_CENTER_NAME = "centro formativo";
-	final static String PE230_TRAINING_CENTER_NIF = "cif 4";
-	final static String PE230_TRAINING_CENTER_ADDRESS = "direccion 2";
-	final static String PE230_TRAINING_CENTER_ZIP_1 = "p1";
-	final static String PE230_TRAINING_CENTER_ZIP_2 = "p2";
-	final static String PE230_TRAINING_CENTER_ZIP_3 = "p3";
-	final static String PE230_TRAINING_CENTER_ZIP_4 = "p4";
-	final static String PE230_TRAINING_CENTER_ZIP_5 = "p5";
-	final static String PE230_TRAINING_CENTER_TOWN = "municipio";
-	final static String PE230_TRAINING_CENTER_PROVINCE = "provincia";
-	final static String PE230_TRAINING_CENTER_PHONE_1 = "l1";
-	final static String PE230_TRAINING_CENTER_PHONE_2 = "l2";
-	final static String PE230_TRAINING_CENTER_PHONE_3 = "l3";
-	final static String PE230_TRAINING_CENTER_PHONE_4 = "l4";
-	final static String PE230_TRAINING_CENTER_PHONE_5 = "l5";
-	final static String PE230_TRAINING_CENTER_PHONE_6 = "l6";
-	final static String PE230_TRAINING_CENTER_PHONE_7 = "l7";
-	final static String PE230_TRAINING_CENTER_PHONE_8 = "l8";
-	final static String PE230_TRAINING_CENTER_PHONE_9 = "l9";
-	final static String PE230_TRAINING_CENTER_EMAIL = "correo electronico 2";
+	public final static String PE230_TRAINING_CENTER_CODE = "numce";
+	public final static String PE230_TRAINING_CENTER_DIR_STAFF_NAME = "persona 3";
+	public final static String PE230_TRAINING_CENTER_DIR_STAFF_NIF = "cif 3";
+	public final static String PE230_TRAINING_CENTER_DIR_STAFF_CHARGE = "cargo 2";
+	public final static String PE230_TRAINING_CENTER_NAME = "centro formativo";
+	public final static String PE230_TRAINING_CENTER_NIF = "cif 4";
+	public final static String PE230_TRAINING_CENTER_ADDRESS = "direccion 2";
+	public final static String PE230_TRAINING_CENTER_ZIP_1 = "p1";
+	public final static String PE230_TRAINING_CENTER_ZIP_2 = "p2";
+	public final static String PE230_TRAINING_CENTER_ZIP_3 = "p3";
+	public final static String PE230_TRAINING_CENTER_ZIP_4 = "p4";
+	public final static String PE230_TRAINING_CENTER_ZIP_5 = "p5";
+	public final static String PE230_TRAINING_CENTER_TOWN = "municipio";
+	public final static String PE230_TRAINING_CENTER_PROVINCE = "provincia";
+	public final static String PE230_TRAINING_CENTER_PHONE_1 = "l1";
+	public final static String PE230_TRAINING_CENTER_PHONE_2 = "l2";
+	public final static String PE230_TRAINING_CENTER_PHONE_3 = "l3";
+	public final static String PE230_TRAINING_CENTER_PHONE_4 = "l4";
+	public final static String PE230_TRAINING_CENTER_PHONE_5 = "l5";
+	public final static String PE230_TRAINING_CENTER_PHONE_6 = "l6";
+	public final static String PE230_TRAINING_CENTER_PHONE_7 = "l7";
+	public final static String PE230_TRAINING_CENTER_PHONE_8 = "l8";
+	public final static String PE230_TRAINING_CENTER_PHONE_9 = "l9";
+	public final static String PE230_TRAINING_CENTER_EMAIL = "correo electronico 2";
 	
 	// TRAINING COURSE FIELDS
-	final static String PE230_TRAINING_COURSE_CLASSROOM = "m7";
-	final static String PE230_TRAINING_COURSE_DISTANCE = "m8";
-	final static String PE230_TRAINING_COURSE_PHONE_LEARNING = "m9";
-	final static String PE230_TRAINING_COURSE_MIXED = "m10";
-	final static String PE230_TRAINING_COURSE_START_DATE = "fecha incio";
-	final static String PE230_TRAINING_COURSE_END_DATE = "fecha final";
-	final static String PE230_TRAINING_COURSE_SCHEDULE = "horario";
-	final static String PE230_TRAINING_COURSE_FIRST_YEAR_MAIN_HOURS = "a1";
-	final static String PE230_TRAINING_COURSE_FIRST_YEAR_COMPLEMENTARY_HOURS = "a2";
-	final static String PE230_TRAINING_COURSE_NEXT_YEAR_MAIN_HOURS = "a3";
-	final static String PE230_TRAINING_COURSE_NEXT_YEAR_COMPLEMENTARY_HOURS = "a4";
+	public final static String PE230_TRAINING_COURSE_CLASSROOM = "m7";
+	public final static String PE230_TRAINING_COURSE_DISTANCE = "m8";
+	public final static String PE230_TRAINING_COURSE_PHONE_LEARNING = "m9";
+	public final static String PE230_TRAINING_COURSE_MIXED = "m10";
+	public final static String PE230_TRAINING_COURSE_START_DATE = "fecha incio";
+	public final static String PE230_TRAINING_COURSE_END_DATE = "fecha final";
+	public final static String PE230_TRAINING_COURSE_SCHEDULE = "horario";
+	public final static String PE230_TRAINING_COURSE_FIRST_YEAR_MAIN_HOURS = "a1";
+	public final static String PE230_TRAINING_COURSE_FIRST_YEAR_COMPLEMENTARY_HOURS = "a2";
+	public final static String PE230_TRAINING_COURSE_NEXT_YEAR_MAIN_HOURS = "a3";
+	public final static String PE230_TRAINING_COURSE_NEXT_YEAR_COMPLEMENTARY_HOURS = "a4";
 
 	// FOORTER FIELDS
-	final static String PE230_SIGNATURE_PLACE = "lugar";
-	final static String PE230_SIGNATURE_DAY = "dia";
-	final static String PE230_SIGNATURE_MONTH = "mes";
-	final static String PE230_SIGNATURE_YEAR = "año";
-	final static String PE230_SIGNATURE_EMPLOYEE = "firma1";
-	final static String PE230_SIGNATURE_EMPLOYEE_DIR_STAFF = "firma2";
-	final static String PE230_SIGNATURE_ENTERPRISE_DIR_STAFF = "firma3";
-	final static String PE230_SIGNATURE_TRAINING_CENTER_DIR_STAFF = "firma4";
+	public final static String PE230_SIGNATURE_PLACE = "lugar";
+	public final static String PE230_SIGNATURE_DAY = "dia";
+	public final static String PE230_SIGNATURE_MONTH = "mes";
+	public final static String PE230_SIGNATURE_YEAR = "año";
+	public final static String PE230_SIGNATURE_EMPLOYEE = "firma1";
+	public final static String PE230_SIGNATURE_EMPLOYEE_DIR_STAFF = "firma2";
+	public final static String PE230_SIGNATURE_ENTERPRISE_DIR_STAFF = "firma3";
+	public final static String PE230_SIGNATURE_TRAINING_CENTER_DIR_STAFF = "firma4";
 	
 	public final static String MODEL_NAME = "PE230";
 	
@@ -169,14 +170,15 @@ public class ModelPE230 extends AbstractAnnexModel {
 	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		this.contract = contract;
 		try {
-			Map<String, String> map = getContractDataMap(contract);
+			Map<String, String> dataMap = getContractDataMap(contract);
+			Map<String, String> infoMap = getContractInfoMap(contract);
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
 			
 			readPdfFields(reader);
 			
 			super.loadPdfCommonFields(contract);
 			
-			trainingCourse = obtainTrainingCourse(map.get(ContractVariable.TRAINING_COURSE.getValue()));
+			trainingCourse = obtainTrainingCourse(infoMap.get(ContractVariable.TRAINING_COURSE.getValue()));
 			
 			if(trainingCourse != null){
 				// HEADER FIELDS
@@ -248,22 +250,22 @@ public class ModelPE230 extends AbstractAnnexModel {
 			
 			// CONTRACT FIELDS
 			try {
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_1).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(0, 1));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_2).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(1, 2));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_3).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(2, 3));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_4).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(3, 4));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_5).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(4, 5));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_6).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(5, 6));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_7).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(6, 7));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_8).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(7, 8));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_9).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(8, 9));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_10).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(9, 10));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_11).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(10, 11));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_12).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(11, 12));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_13).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(12, 13));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_14).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(13, 14));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_15).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(14, 15));
-				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_16).setValue(map.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(15, 16));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_1).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(0, 1));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_2).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(1, 2));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_3).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(2, 3));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_4).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(3, 4));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_5).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(4, 5));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_6).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(5, 6));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_7).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(6, 7));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_8).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(7, 8));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_9).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(8, 9));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_10).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(9, 10));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_11).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(10, 11));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_12).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(11, 12));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_13).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(12, 13));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_14).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(13, 14));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_15).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(14, 15));
+				getPdfFieldsMap().get(PE230_CONTRACT_ID_NUMBER_16).setValue(infoMap.get(ContractVariable.SEPE_CONTRACT_ID.getValue()).substring(15, 16));
 			} catch (StringIndexOutOfBoundsException aie) {
 				// do nothing
 			} catch (NullPointerException npe) {
@@ -279,7 +281,7 @@ public class ModelPE230 extends AbstractAnnexModel {
 			}
 			if(trainingCourse != null){
 				getPdfFieldsMap().get(PE230_CONTRACT_OCCUPATION).setValue(trainingCourse.getOccupationName());
-				String cno = map.get(ContextVariable.CNO.getName());
+				String cno = dataMap.get(ContextVariable.CNO.getName());
 				if( !StringUtils.isEmpty(cno) ){
 					getPdfFieldsMap().get(PE230_CONTRACT_CNO_1).setValue(cno.substring(0, 1));
 					getPdfFieldsMap().get(PE230_CONTRACT_CNO_2).setValue(cno.substring(1, 2));
@@ -389,15 +391,15 @@ public class ModelPE230 extends AbstractAnnexModel {
 				} else if(trainingCourse.getModality()==TrainingModality.MIX){
 					getPdfFieldsMap().get(PE230_TRAINING_COURSE_MIXED).setValue("true");
 				}
-				ContractData trainingCourseData = obtainContractData(contract, ContractVariable.TRAINING_COURSE.getValue());
-				if(trainingCourseData.getStartDate()!=null){
-					getPdfFieldsMap().get(PE230_TRAINING_COURSE_START_DATE).setValue(formatter.format(trainingCourseData.getStartDate()));
+				ContractInfo trainingCourseInfo = obtainContractInfo(contract, ContractVariable.TRAINING_COURSE.getValue());
+				if(trainingCourseInfo.getStartDate()!=null){
+					getPdfFieldsMap().get(PE230_TRAINING_COURSE_START_DATE).setValue(formatter.format(trainingCourseInfo.getStartDate()));
 				}
-				if(trainingCourseData.getEndDate()!=null){
-					getPdfFieldsMap().get(PE230_TRAINING_COURSE_END_DATE).setValue(formatter.format(trainingCourseData.getEndDate()));
+				if(trainingCourseInfo.getEndDate()!=null){
+					getPdfFieldsMap().get(PE230_TRAINING_COURSE_END_DATE).setValue(formatter.format(trainingCourseInfo.getEndDate()));
 				}
 			}
-			getPdfFieldsMap().get(PE230_TRAINING_COURSE_SCHEDULE).setValue(map.get(ContractVariable.TRAINING_SCHEDULE.getValue()));
+			getPdfFieldsMap().get(PE230_TRAINING_COURSE_SCHEDULE).setValue(infoMap.get(ContractVariable.TRAINING_SCHEDULE.getValue()));
 			if(contrataParams!=null){
 				
 				Integer durationInMonths = getMonthsBetweenDates(contract.getStartDate(), contract.getEndDate());
@@ -539,6 +541,23 @@ public class ModelPE230 extends AbstractAnnexModel {
 		return map;
 	}
 	
+	public Map<String, String> getContractInfoMap(Contract contract) {
+		Map<String, String> map = new HashMap<String, String>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId());
+			for(ITransferObject to: bean.getList(criteria)){
+				ContractInfo info = (ContractInfo) to;
+				map.put(info.getName(), info.getExpression()!=null?info.getExpression().replace('"', ' ').trim():null);
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, se devuelve un mapa vacio
+			return map;
+		}
+		return map;
+	}
+	
 	private ContractData obtainContractData(Contract contract, String name) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
@@ -548,6 +567,22 @@ public class ModelPE230 extends AbstractAnnexModel {
 			List<ITransferObject> list = bean.getList(criteria);
 			if( !list.isEmpty() ){
 				return (ContractData) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			// do nothing ...
+		}
+		return null;
+	}
+	
+	private ContractInfo obtainContractInfo(Contract contract, String name) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId() );
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), name );
+			List<ITransferObject> list = bean.getList(criteria);
+			if( !list.isEmpty() ){
+				return (ContractInfo) list.get(0);
 			}
 		} catch (ManagerBeanException e) {
 			// do nothing ...

@@ -25,18 +25,17 @@
 				<aon:div ajaxRendered="true" layout="none">
 					<ui:decorate
 						template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
-						<ui:param name="controller" value="#{enterpriseClauses}" />
+						<ui:param name="controller" value="#{enterpriseClause}" />
 						<ui:param name="innerToolbar" value="#{true}" />
 						<ui:param name="skipToolbarTitle" value="true" />
 						<ui:param name="skipToolbarDescription" value="true" />
 					</ui:decorate>
 				</aon:div>				
+	
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/additionalClauses/form.xhtml" >
+					<ui:param name="controller" value="#{enterpriseClause}" />
+				</ui:include>
 				
-				<aon:div styleClass="aon-scroll-area">
-					<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
-						<ui:param name="controller" value="#{enterpriseClauses}" />
-					</ui:include>
-				</aon:div>
 			</aon:panel>
 			
 <!-- COMING SOON ... -->

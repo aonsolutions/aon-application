@@ -2,21 +2,27 @@ package com.esferalia.aon.ui.payroll.event.contract;
 
 
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.person.Person;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractClause;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContractModelCode;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
@@ -24,7 +30,6 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.ui.payroll.controller.ContractInfoController;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
-import com.esferalia.aon.ui.payroll.controller.contract.ContractClausesController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
@@ -71,43 +76,48 @@ public class ContractControllerListener extends ControllerAdapter{
 		ContractController controller = (ContractController) this.getController();
 		ContractUtils utils = ContractUtils.getInstance();
 		utils.removeContractData((Contract) controller.getTo(), controller.getParams());
+		utils.removeContractInfo((Contract) controller.getTo(), controller.getParams());
 		utils.removeContractLines(event);
+	}
+	
+	@Override
+	public void beforeBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		ContractController controller = (ContractController) this.getController();
+		controller.setSelectedTab(null);
 	}
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
-		controller.setSelectedTab(null);
 		controller.setEnterprise(((Contract) controller.getTo()).getWorkPlace().getEnterprise());
 		controller.setWorkPlaces(null);
 		controller.setActivities(null);
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
-		
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-		contrataController.initialize((Contract) controller.getTo());
-		contrataController.onContrataDataShow(null);
-		
-		CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
-		certificadosController.initialize((Contract) controller.getTo());
-		
-		ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean("contractClauses");
-		clausesController.onAdditionalClausesShow(null);
+		controller.setContractUtils(null);
 		
 		try {
-			ContractUtils utils = ContractUtils.getInstance();
-			utils.loadContractData((Contract) controller.getTo(), controller.getParams());
-			controller.setAgreement(utils.obtainAgreement((Contract) controller.getTo()));
+			controller.getContractUtils().loadContractData((Contract) controller.getTo(), controller.getParams());
+			controller.getContractUtils().loadContractInfo((Contract) controller.getTo(), controller.getParams());
+			controller.getContractUtils().loadContractBonuses((Contract) controller.getTo(), controller.getParams());
 		} catch (ManagerBeanException e) {
 			String msg = "Error loading contract data";
 			LOGGER.error(msg);
 		}
+		controller.setAgreement(controller.getContractUtils().obtainAgreement((Contract) controller.getTo()));
+
+		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
+		contrataController.initialize((Contract) controller.getTo());
+		
+		CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
+		certificadosController.initialize((Contract) controller.getTo());
+		
 		ContractInfoController infoController = (ContractInfoController) AonUtil.getRegisteredBean("contractDocumentInfo");
 		infoController.setContract((Contract) controller.getTo());
 		infoController.onEditSearch(null);
 		infoController.initializeModel();
-		
 	}
 
 	@Override
@@ -121,6 +131,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setActivities(null);
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
+		controller.setImportEnterpriseClauses(true);
 		contract.setStartDate(new Date());
 		contract.setSeniorityDate(contract.getStartDate());
 		try {
@@ -148,8 +159,26 @@ public class ContractControllerListener extends ControllerAdapter{
 			ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 			contrataController.initialize((Contract) controller.getTo());
 			contrataController.onContrataDataShow(null);
-			ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean("contractClauses");
-			clausesController.onAdditionalClausesShow(null);
+		}
+		if(controller.isImportEnterpriseClauses()){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ContractClause.class);
+				Criteria criteria = new Criteria();
+				criteria.addNullExpression("ContractClause.contract");
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_CLAUSE_GENERAL), true);
+				List<ITransferObject> list = bean.getList(criteria);
+				for(ITransferObject to: list){
+					ContractClause enterpriseClause = (ContractClause) to;
+					ContractClause clause = new ContractClause();
+					clause.setContract((Contract) controller.getTo());
+					clause.setDescription(enterpriseClause.getDescription());
+					clause.setLine(enterpriseClause.getLine());
+					clause.setName(enterpriseClause.getName());
+					bean.insert(clause);
+				}
+			} catch (ManagerBeanException e) {
+				AonUtil.addErrorMessage("No se han podido importar las cláusulas generales.");
+			}
 		}
 	}
 
@@ -162,7 +191,6 @@ public class ContractControllerListener extends ControllerAdapter{
 			if(!controller.isTransformedContract()){
 				updateContrataData();
 			}
-			updateAdditionalClauses();
 			updateContractInfo();
 		}
 	}
@@ -178,11 +206,6 @@ public class ContractControllerListener extends ControllerAdapter{
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 		contrataController.getHandler().initialize((Contract) this.getController().getTo());
 		contrataController.onContrataAccept(null);
-	}
-	
-	private void updateAdditionalClauses() {
-		ContractClausesController controller = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
-		controller.accept();
 	}
 	
 	private void updateContractInfo() {

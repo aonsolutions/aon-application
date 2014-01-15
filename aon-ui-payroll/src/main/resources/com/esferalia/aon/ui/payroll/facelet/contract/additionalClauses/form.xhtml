@@ -5,42 +5,85 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 	
-	<aon:div id="clausesContent" style="width:850px;">
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:define name="columns">
 		
-		<aon:panel rendered="#{contractClauses.existEnterpriseClauses}">
-			<aon:selectBooleanCheckbox id="Enterprise_contractClauses"
-				value="#{contractClauses.useEnterpriseClauses}" >
-				<a4j:support event="onclick" reRender="clausesContent" />
-			</aon:selectBooleanCheckbox>
-			<aon:outputLabel for="Enterprise_contractClauses" styleClass="aon-margin-right"
-				value="#{bundle.payroll_contract_additional_clauses_enterprise}" />
-		</aon:panel>
-		 
-		<aon:div>
-			<c:if test="#{!contractClauses.useEnterpriseClauses}">
-				<aon:panel>
+			<c:if test="#{controller.enterpriseClause}">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
 					<f:facet name="header">
-						<aon:outputText value="#{bundle.payroll_contract_custom_clauses}" />
+						<aon:outputLabel for="ContractClauses_general"
+							value="#{bundle.aon_general}" />
 					</f:facet>
-					<aon:inputTextarea 
-						rendered="#{!contractClauses.useEnterpriseClauses}" 
-						value="#{contractClauses.customClauses}"
-						cols="145" rows="30"/>
-				</aon:panel>
+					<aon:outputText rendered="#{formList}" value="&#160;"
+						styleClass="#{(to.general)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" />
+					<aon:selectBooleanCheckbox id="ContractClauses_general" 
+						rendered="#{formEdit}" value="#{controller.to.general}"
+						ajaxSingle="true" />	
+					<f:facet name="footer">
+						<aon:selectBooleanCheckbox id="ContractClause_particular-New" 
+							rendered="#{formNew}" value="#{controller.to.general}"
+							ajaxSingle="true" />	
+					</f:facet>
+				</aon:column>
 			</c:if>
-			<c:if test="#{contractClauses.useEnterpriseClauses}">
-				<aon:panelGrid columns="2" styleClass="aon-width-all" >
-					<aon:outputLabel value="#{bundle.aon_document}" />
-					<aon:selectOneMenu value="#{contractClauses.selectedEnterpriseClause}"
-						disabled="#{!contractClauses.useEnterpriseClauses}" >
-						<f:selectItems value="#{contractClauses.clausesList}" />
-					</aon:selectOneMenu>
-				</aon:panelGrid>
-			</c:if>
-		</aon:div>
-		
-	</aon:div>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel value="#{bundle.aon_line}" /> 
+				</f:facet>
+				<aon:outputText value="#{to.line}" rendered="#{formList}" />
+				<aon:inputText id="ContractClauses_line"
+					value="#{controller.to.line}" rendered="#{formEdit}"
+					required="true" size="1" maxlength="3" />
+				<f:facet name="footer">
+					<aon:inputText id="ContractClauses_line-New"
+						value="#{controller.to.line}" rendered="#{formNew}"
+						required="true" size="1" maxlength="3" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-300">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractClauses_name" value="#{bundle.aon_name}" />
+				</f:facet>
+				<aon:outputText value="#{to.name}" rendered="#{formList}" />
+				<aon:inputText id="ContractClauses_name"
+					value="#{controller.to.name}" rendered="#{formEdit}"
+					required="true" size="16" maxlength="64" />
+				<f:facet name="footer" >
+					<aon:inputText id="ContractClauses_name-New"
+						value="#{controller.to.name}" rendered="#{formNew}"
+						required="true" size="16" maxlength="64" />
+				</f:facet>						
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractClauses_description"
+						value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:div rendered="#{formList}" >
+					<aon:outputText value="#{to.description}" >
+						<aon:abbreviateConverter maxWidth="80" />
+					</aon:outputText>
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+						<aon:outputText value="#{to.description}" />
+					</rich:toolTip>
+				</aon:div>
+				<aon:inputTextarea id="ContractClauses_description" required="true"
+					rendered="#{formEdit}" rows="4" cols="100"
+					value="#{controller.to.description}"  />
+				<f:facet name="footer">
+					<aon:inputTextarea id="ContractClauses_description-New" required="true"
+						rendered="#{formNew}" rows="4" cols="100"
+						value="#{controller.to.description}"  />
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
 	
 </ui:composition>

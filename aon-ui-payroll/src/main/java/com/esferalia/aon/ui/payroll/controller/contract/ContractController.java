@@ -3,6 +3,10 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -34,6 +38,8 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -54,19 +60,14 @@ import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
-import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
-import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.ContractPayment;
-import com.esferalia.aon.payroll.ContrataBatchDetail;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
-import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
-import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.TrainingCenter;
 import com.esferalia.aon.payroll.TrainingCourse;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -101,9 +102,12 @@ public class ContractController extends BasicController {
 	private Agreement agreement;
 	
 	private ContractParams params;
+	private ContractUtils contractUtils;
 
 	private SalaryInfoHandler salaryInfoHandler;
 
+	private boolean importEnterpriseClauses;
+	
 	private boolean showNewContractModal;
 	private boolean showContractEmbargoWindow;
 	private boolean showContractBonusWindow;
@@ -117,49 +121,35 @@ public class ContractController extends BasicController {
 	}
 	public boolean isRowContractRetaQuote() {
 		try {
-			if(this.getModel().isRowAvailable()){
-				Contract contract = (Contract) getModel().getRowData();
-				IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId());
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), ContractVariable.SELF_EMPLOYED.getValue());
-				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE), false);
-				List<ITransferObject> list = bean.getList(criteria);
-				if(!list.isEmpty()){
-					String value = ((ContractInfo)list.get(0)).getExpression().replaceAll("\"", "");
-					return new Boolean( value );
-				}
-			}
+			Contract contract = (Contract) getModel().getRowData();
+			String value = getContractUtils().getInfoCurrentValue(contract, ContractVariable.SELF_EMPLOYED.getValue());
+			return new Boolean( value );
 		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> getContractCode exception: ",e);
-			AonUtil.addErrorMessage("Se ha producido un error al obtener el código de contrato. ");
-			throw new AbortProcessingException(e.getMessage(), e);
+			// nothing
 		}
 		return false;
 	}
 	
-	public String getContractCode(){
+	public String getRowContractCode(){
 		try {
-			if(this.getModel().isRowAvailable()){
-				Contract contract = (Contract) getModel().getRowData();
-				IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.TC2.getName());
-				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), false);
-				List<ITransferObject> list = bean.getList(criteria);
-				if(!list.isEmpty()){
-					String code = ((ContractData)list.get(0)).getExpression().replaceAll("\"", "");
-					ContractCode contractCode = ContractCode.getContractCodeByValue(code);
-					return contractCode!=null?code + " - " + contractCode.getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()):"";
-				}
-			}
+			Contract contract = (Contract) getModel().getRowData();
+			String code = getContractUtils().getDataCurrentValue(contract, ContextVariable.TC2.getName());
+			ContractCode contractCode = ContractCode.getContractCodeByValue(code);
+			return contractCode!=null?code + " - " + contractCode.getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()):"";
 		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> getContractCode exception: ",e);
-			AonUtil.addErrorMessage("Se ha producido un error al obtener el código de contrato. ");
-			throw new AbortProcessingException(e.getMessage(), e);
+			// nothing
 		}
 		return null;
+	}
+	
+	public ContractUtils getContractUtils() {
+		if(contractUtils==null){
+			contractUtils = ContractUtils.getInstance();
+		}
+		return contractUtils;
+	}
+	public void setContractUtils(ContractUtils contractUtils) {
+		this.contractUtils = contractUtils;
 	}
 	
 	public ContractParams getParams() {
@@ -172,6 +162,12 @@ public class ContractController extends BasicController {
 		this.params = params;
 	}
 	
+	public boolean isImportEnterpriseClauses() {
+		return importEnterpriseClauses;
+	}
+	public void setImportEnterpriseClauses(boolean importEnterpriseClauses) {
+		this.importEnterpriseClauses = importEnterpriseClauses;
+	}
 	public boolean isShowNewContractModal() {
 		return showNewContractModal;
 	}
@@ -241,39 +237,43 @@ public class ContractController extends BasicController {
 	}
 	
 	public boolean isRemovable(){
+		Connection conn = null;
+		PreparedStatement ps = null;
 		try {
-			// SALARY
-			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), ((Contract)this.getTo()).getId());
-			if (bean.getCount(criteria)>0) return false;
-			// AFI BATCH
-			bean = BeanManager.getManagerBean(ContractBatchDetail.class);
-			criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_BATCH_DETAIL_CONTRACT_ID), ((Contract)this.getTo()).getId());
-			if (bean.getCount(criteria)>0) return false;
-			// CONTRATA BATCH
-			bean = BeanManager.getManagerBean(ContrataBatchDetail.class);
-			criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRATA_BATCH_DETAIL_CONTRACT_ID), ((Contract)this.getTo()).getId());
-			if (bean.getCount(criteria)>0) return false;
-			// LEAVE BATCH
-			bean = BeanManager.getManagerBean(LeaveBatchDetail.class);
-			criteria = new Criteria();
-			criteria.addEqualExpression("LeaveBatchDetail.contractLeaveDetail.contractLeave.contract.id", ((Contract)this.getTo()).getId());
-			if (bean.getCount(criteria)>0) return false;
-		} catch (ManagerBeanException e) {
-			return false;
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Contract contract = (Contract) this.getTo();
+			String salarySelect = "SELECT count(*) FROM salary WHERE contract = " + contract.getId();
+			ps = conn.prepareStatement(salarySelect);
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+			if (rs.getInt(1)>0) return false;
+			String afiSelect = "SELECT count(*) FROM contract_batch_detail WHERE contract = " + contract.getId();
+			ps = conn.prepareStatement(afiSelect);
+			rs = ps.executeQuery();
+			rs.next();
+			if (rs.getInt(1)>0) return false;
+			String contrataSelect = "SELECT count(*) FROM contrata_batch_detail WHERE contract = " + contract.getId();
+			ps = conn.prepareStatement(contrataSelect);
+			rs = ps.executeQuery();
+			rs.next();
+			if (rs.getInt(1)>0) return false;
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
 		}
 		return true;
 	}
 	
 	public boolean isEndDateRequired(){
 		String contractCode = null;
-		if(this.isNew() && this.getParams()!=null && this.getParams().getContractCode()!=null){
+		if(this.getParams().getContractCode()!=null){
 			contractCode = this.getParams().getContractCode().getValue();
-		} else {
-			contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
 		}
 		String[] codes = {"402", "420", "421", "430", "441", "452", "502", "520", "530", "541", "552", "970"};
 		return ArrayUtils.contains(codes, contractCode) ;
@@ -281,92 +281,78 @@ public class ContractController extends BasicController {
 	
 	public boolean isEndDateOptional(){
 		String contractCode = null;
-		if(this.isNew() && this.getParams()!=null && this.getParams().getContractCode()!=null){
+		if(this.getParams().getContractCode()!=null){
 			contractCode = this.getParams().getContractCode().getValue();
-		} else {
-			contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
 		}
 		String[] codes = {"401", "403", "410", "501", "503", "510", "540", "980", "990"};
 		return ArrayUtils.contains(codes, contractCode) ;
 	}
 	
 	public boolean isExtensibleContract(){
-		String contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
+		String contractCode = null;
+		if(this.getParams().getContractCode()!=null){
+			contractCode = this.getParams().getContractCode().getValue();
+		}
 		return StringUtils.startsWith(contractCode, "4") || StringUtils.startsWith(contractCode, "5");
 	}
 
 	public boolean isTransformableContract(){
-		String contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
+		String contractCode = null;
+		if(this.getParams().getContractCode()!=null){
+			contractCode = this.getParams().getContractCode().getValue();
+		}
 		return StringUtils.startsWith(contractCode, "4") || StringUtils.startsWith(contractCode, "5");
 	}
 
 	public boolean isTransformedContract(){
-		String contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
+		String contractCode = null;
+		if(this.getParams().getContractCode()!=null){
+			contractCode = this.getParams().getContractCode().getValue();
+		}
 		String[] codes = {"109","139","189","209","239","289","309","339","389"};
 		return ArrayUtils.contains(codes, contractCode) ;
 	}
 
 	public boolean isUnsuportedContract(){
-		String contractCode = ContractUtils.getInstance().getContractDataMap((Contract) this.getTo()).get(ContextVariable.TC2.getName());
+		String contractCode = null;
+		if(this.getParams().getContractCode()!=null){
+			contractCode = this.getParams().getContractCode().getValue();
+		}
 		return contractCode!=null && (isTransformedContract() || !ArrayUtils.contains(ISepeConstants.AVAILABLE_CONTRACT_CODE_COMMUNICATION, contractCode));
 	}
 	
-//	public List<SelectItem> getContractModel() {
-//		ContractModel[] availableModels = IPayrollConstants.AVAILABLE_CONTRACT_MODEL; 
-//		List<SelectItem> list = new LinkedList<SelectItem>();
-//		if(getParams().getContractCode()!=null){
-//			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-//			List<ContractModel> modelList = new LinkedList<ContractModel>();
-//			for( ContractModel model: ContractModel.values() ) {
-//				for( ContractType type : ContractType.values() ) {
-//					if( type.getModel()==model 
-//							&& ArrayUtils.contains(availableModels, model)
-//							&& ArrayUtils.contains(type.getCodes(), getParams().getContractCode())
-//							&& !ArrayUtils.contains(modelList.toArray(), model) ){
-//						modelList.add(model);
-//					}
-//				}
-//			}
-//			for( ContractModel model: modelList ) {
-//				String name = model.getName(locale);
-//				name = name.length()>80?name.substring(0, 79):name;
-//				SelectItem item = new SelectItem(model, model.name() + " - " + name);
-//				list.add(item);
-//			}
-//		}
-//		return list;
-//	}
+	public boolean isTrainingContract(){
+		return getContractUtils().isTrainingContract((Contract) this.getTo(), this.getParams());
+	}
 
+	public boolean isTrainingCenterDefined(){
+		Map<String, String> map = getContractUtils().getContractInfoMap((Contract) this.getTo());
+		return map.get(ContractVariable.TRAINING_CENTER.getValue())!=null;
+	}
+
+	public boolean isTrainingCourseDefined(){
+		Map<String, String> map = getContractUtils().getContractInfoMap((Contract) this.getTo());
+		return map.get(ContractVariable.TRAINING_COURSE.getValue())!=null;
+	}
+	
 	public List<?> getContractModel() {
 		ModelOption[] availableModels = IPayrollConstants.AVAILABLE_CONTRACT_MODEL_OPTIONS; 
 		List<SelectItem> list = new LinkedList<SelectItem>();
-//		List<SelectItemGroup> list = new LinkedList<SelectItemGroup>();
 		if(getParams().getContractCode()!=null){
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			for(ModelOption opt: availableModels){
-//				List<SelectItem> subList = new ArrayList<SelectItem>();
 				if( ArrayUtils.contains(opt.getCodes(), getParams().getContractCode()) ){
 					SelectItem item = new SelectItem(opt, opt.getName(locale));
-//					subList.add(item);
 					list.add(item);
 				}
-				
-//				if(!subList.isEmpty()){
-//					SelectItemGroup group = new SelectItemGroup(getAbbreviatedSelectItemLabel(type.getName(locale), NAME_LENGHT_100), type.getName(locale), false, subList.toArray(new SelectItem[0]));
-//					group.setValue(type);
-//					list.add(group);
-//				}
 			}
 		}
 		return list;
 	}
 	
 	public String getSepeCommunicationId(){
-		if(this.getTo()!=null){
-			ContractUtils utils = ContractUtils.getInstance();
-			return utils.getContractInfoMap((Contract) getTo()).get(ContractVariable.SEPE_CONTRACT_ID.getValue());
-		}
-		return null;
+		Map<String, String> map = getContractUtils().getContractInfoMap((Contract) this.getTo());
+		return map.get(ContractVariable.SEPE_CONTRACT_ID.getValue());
 	}
 		
 	public void onShowNewContractModal(ActionEvent event) {
@@ -390,8 +376,7 @@ public class ContractController extends BasicController {
 			if(getParams().getBonus()==null || getParams().getBonus().getId()==null){
 				IManagerBean bean = BeanManager.getManagerBean(ContractBonus.class);
 				bean.insertOrUpdate(getParams().getBonus());
-				ContractUtils utils = ContractUtils.getInstance();
-				utils.loadContractBonuses((Contract) this.getTo(), this.getParams());
+				getContractUtils().loadContractBonuses((Contract) this.getTo(), this.getParams());
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al mostrar la bonificacion";
@@ -404,10 +389,9 @@ public class ContractController extends BasicController {
 	public void onRemoveBonus(ActionEvent event){
 		if(getParams().getBonusModel().isRowAvailable()){
 			ContractBonus bonus = (ContractBonus) getParams().getBonusModel().getRowData(); 
-			ContractUtils utils = ContractUtils.getInstance();
-			utils.removeContractBonus(bonus);
+			getContractUtils().removeContractBonus(bonus);
 			try {
-				utils.loadContractBonuses((Contract) this.getTo(), this.getParams());
+				getContractUtils().loadContractBonuses((Contract) this.getTo(), this.getParams());
 			} catch (ManagerBeanException e) {
 				String msg = "Error al mostrar la bonificacion";
 				LOGGER.error(msg,e);
@@ -637,23 +621,6 @@ public class ContractController extends BasicController {
 		contract.setSeniorityDate( (Date)event.getNewValue() );
 	}
 	
-	public boolean isTrainingContract(){
-		ContractUtils utils = ContractUtils.getInstance();
-		return utils.isTrainingContract((Contract) this.getTo());
-	}
-
-	public boolean isTrainingCenterDefined(){
-		ContractUtils utils = ContractUtils.getInstance();
-		Map<String, String> map = utils.getContractInfoMap((Contract) this.getTo());
-		return map.get(ContractVariable.TRAINING_CENTER.getValue())!=null;
-	}
-
-	public boolean isTrainingCourseDefined(){
-		ContractUtils utils = ContractUtils.getInstance();
-		Map<String, String> map = utils.getContractInfoMap((Contract) this.getTo());
-		return map.get(ContractVariable.TRAINING_COURSE.getValue())!=null;
-	}
-	
 	public List<SelectItem> getTrainingCenters(){
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		CNO cno = getParams().getCno();
@@ -786,16 +753,6 @@ public class ContractController extends BasicController {
 		contrataController.onContrataDataShow(event);
 	}
 	
-	public void onContrataWindowShow(ActionEvent event){
-		manageContrataData();
-	}
-	
-	private void manageContrataData() {
-		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
-		contrataController.getHandler().initialize((Contract) this.getTo());
-		contrataController.onContrataAccept(null);
-		contrataController.validateContrataData();
-	}
 
 //	 * ************************************
 //	 * 			DOWNLOAD & UPLOAD METHODS		
@@ -881,8 +838,7 @@ public class ContractController extends BasicController {
 	public String onTrainingCenterDirectDebitReport() throws ManagerBeanException{
 		TrainingCenterController tcController = (TrainingCenterController) AonUtil.getRegisteredBean(IPayrollConstants.TRAINING_CENTER_CONTROLLER_NAME);
 		try {
-			ContractUtils utils = ContractUtils.getInstance();
-			Map<String, String> map = utils.getContractInfoMap((Contract) this.getTo());
+			Map<String, String> map = getContractUtils().getContractInfoMap((Contract) this.getTo());
 			if(map.get(ContractVariable.TRAINING_COURSE.getValue())!=null){
 				String courseId = map.get(ContractVariable.TRAINING_COURSE.getValue());
 				TrainingCourse course = (TrainingCourse) BeanManager.getManagerBean(TrainingCourse.class).get(Integer.parseInt(courseId));
@@ -1297,8 +1253,6 @@ public class ContractController extends BasicController {
 		private TrainingCourse trainingCourse;
 		private Date trainingStartDate;
 		private Date trainingEndDate;
-		private String workSchedule;
-		private String trainingSchedule;
 		private ModelOption contractModelOption;
 		
 		public boolean isAgreementSalaryCheck() {
@@ -1349,18 +1303,6 @@ public class ContractController extends BasicController {
 		}
 		public void setTrainingEndDate(Date trainingEndDate) {
 			this.trainingEndDate = trainingEndDate;
-		}
-		public String getWorkSchedule() {
-			return workSchedule;
-		}
-		public void setWorkSchedule(String workSchedule) {
-			this.workSchedule = workSchedule;
-		}
-		public String getTrainingSchedule() {
-			return trainingSchedule;
-		}
-		public void setTrainingSchedule(String trainingSchedule) {
-			this.trainingSchedule = trainingSchedule;
 		}
 		
 		public ModelOption getContractModelOption() {

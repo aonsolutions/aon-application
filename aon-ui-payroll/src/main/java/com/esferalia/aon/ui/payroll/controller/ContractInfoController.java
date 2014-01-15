@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,17 +18,16 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel.IContractFieldName;
-import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE151;
-import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE170;
-import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE176;
-import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE177;
-import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE179;
-import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE183;
-import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE187;
-import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE226;
+import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel.ModelOption;
+import com.esferalia.aon.file.payroll.contract.pdf.model.IndefiniteModel;
+import com.esferalia.aon.file.payroll.contract.pdf.model.LearningModel;
+import com.esferalia.aon.file.payroll.contract.pdf.model.PracticeModel;
+import com.esferalia.aon.file.payroll.contract.pdf.model.TemporaryModel;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractInfo;
+import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
+import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 
 public class ContractInfoController extends BasicController {
 	
@@ -79,29 +79,6 @@ public class ContractInfoController extends BasicController {
 		}
 		super.initializeModel();
 	}
-	
-//	@Override
-//	public void accept(ActionEvent event) {
-//		if(isCommonInfo()){
-//			((ContractInfo)this.getTo()).setContract(null);
-//		}
-//		if(getContract()!=null && getContract().getId()!=null){
-//			((ContractInfo)this.getTo()).setContract(getContract());
-//		}
-//		super.accept(event);
-//	}
-	
-	
-//	public List<SelectItem> getFieldNames(){
-//		List<SelectItem> list = new LinkedList<SelectItem>();
-//		for(IContractFieldName fn: getOverridableFields()){
-//			if(fn.isOverridable()){
-//				SelectItem item = new SelectItem(fn, fn.toString());
-//				list.add(item);
-//			}
-//		}
-//		return list;
-//	}
 
 	private List<String> getOverridableFieldNames(){
 		List<String> list = new LinkedList<String>();
@@ -118,25 +95,22 @@ public class ContractInfoController extends BasicController {
 	
 	private List<IContractFieldName> getOverridableFields(){
 		List<IContractFieldName> list = new LinkedList<IContractFieldName>();
-		if(getContract()!=null && getContract().getModel()!=null){
-			setContractModel(getContract().getModel());
+		String contractModelOption = ContractUtils.getInstance().getInfoCurrentValue(contract, ContractVariable.CONTRACT_MODEL_OPTION.getValue());
+		if(getContract()!=null && StringUtils.isNotBlank(contractModelOption)){
+			String contractModel = ModelOption.valueOf(contractModelOption).getPdfModel();
 			IContractFieldName[] fields = null;
-			if(getContractModel().toString().equals(ModelPE151.MODEL_NAME)){
-				fields = ModelPE151.PE151FieldName.values();
-			} else if(getContractModel().toString().equals(ModelPE170.MODEL_NAME)){
-				fields = ModelPE170.PE170FieldName.values();
-			} else if(getContractModel().toString().equals(ModelPE176.MODEL_NAME)){
-				fields = ModelPE176.PE176FieldName.values();
-			} else if(getContractModel().toString().equals(ModelPE177.MODEL_NAME)){
-				fields = ModelPE177.PE177FieldName.values();
-			} else if(getContractModel().toString().equals(ModelPE179.MODEL_NAME)){
-				fields = ModelPE179.PE179FieldName.values();
-			} else if(getContractModel().toString().equals(ModelPE183.MODEL_NAME)){
-				fields = ModelPE183.PE183FieldName.values();
-			} else if(getContractModel().toString().equals(ModelPE187.MODEL_NAME)){
-				fields = ModelPE187.PE187FieldName.values();
-			} else if(getContractModel().toString().equals(ModelPE226.MODEL_NAME)){
-				fields = ModelPE226.PE226FieldName.values();
+			if(IndefiniteModel.MODEL_NAME.equals(contractModel)){
+				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) IndefiniteModel.IndefiniteCommonFieldName.values());
+//				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) IndefiniteModel.IndefiniteOptionFieldName.values());
+			} else if(TemporaryModel.MODEL_NAME.equals(contractModel)){
+				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) TemporaryModel.TemporaryCommonFieldName.values());
+//				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) TemporaryModel.TemporaryOptionFieldName.values());
+			} else if(LearningModel.MODEL_NAME.equals(contractModel)){
+				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) LearningModel.LearningCommonFieldName.values());
+//				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) LearningModel.LearningOptionFieldName.values());
+			} else if(PracticeModel.MODEL_NAME.equals(contractModel)){
+				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) PracticeModel.PracticeCommonFieldName.values());
+//				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) PracticeModel.PracticeOptionFieldName.values());
 			}
 			if(fields != null){
 				for(IContractFieldName field: fields){
@@ -173,6 +147,7 @@ public class ContractInfoController extends BasicController {
 			List<ITransferObject> list = this.getManagerBean().getList(criteria);
 			if(!list.isEmpty()){
 				contractInfo = (ContractInfo) list.get(0); 
+				contractInfo.setExpression(contractInfo.getExpression().replace("\"", ""));
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> Unable to load contract document fields from contract_info ",e);
@@ -189,7 +164,7 @@ public class ContractInfoController extends BasicController {
 	}
 	
 	public void onLoadContractFields(ActionEvent event){
-		Contract contract = (Contract) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER).getTo();
+		contract = (Contract) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER).getTo();
 		contractFieldList = new LinkedList<ContractField>();
 		for(IContractFieldName fn: getOverridableFields()){
 			ContractField field = new ContractField();

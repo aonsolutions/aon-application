@@ -645,8 +645,7 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		 */
 		INDEFINITE_OPT17(ContractPdfModel.INDEFINITE, 20, ContractCode.C109, ContractCode.C139, ContractCode.C189,
 			ContractCode.C209, ContractCode.C239, ContractCode.C289,
-			ContractCode.C309, //ContractCode.C339, 
-			ContractCode.C389),
+			ContractCode.C309, ContractCode.C339, ContractCode.C389),
 		
 		/**
 		 * FORMACIÓN Y APRENDIZAJE ( ORDINARIO ). ( pág.4 )

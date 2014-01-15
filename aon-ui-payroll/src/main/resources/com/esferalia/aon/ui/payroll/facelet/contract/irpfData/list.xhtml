@@ -27,54 +27,10 @@
 					<ui:param name="controller" value="#{contract}" />
 					
 					<ui:define name="columns">
-						
-						<aon:column alias="Contract.person.registry.surname,Contract.person.registry.name"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_name}" />
-							</f:facet>
-							<aon:outputText value="#{to.person.registry.fullName}" />
-						</aon:column>
-						
-						<c:if test="#{!skipContractCodeColumn}">
-							<aon:column 
-								styleClass="aon-editDataTable-textColumn aon-width-auto">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.payroll_contract_contract_code}" />
-								</f:facet>
-								<aon:outputText value="#{contract.contractCode}"/>
-							</aon:column>
-						</c:if>
-						
-						<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_company}" />
-							</f:facet>
-							<aon:outputText value="#{to.workPlace.enterprise.registry.fullName}" />
-						</aon:column>
-						
-						<aon:column alias="Contract.startDate"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_start_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.startDate}" style="margin-left: 5px;">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
-						
-						<aon:column alias="Contract.endDate"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_end_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.endDate}" style="margin-left: 5px;">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
+					
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/listBasic.xhtml" >
+							<ui:param name="skipEnterpriseColumn" value="true" />
+						</ui:include>
 						
 					</ui:define>
 				</ui:decorate>

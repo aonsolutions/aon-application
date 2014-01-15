@@ -240,7 +240,12 @@ public class ContractPdfController {
 	}
 	
 	public String getImageUrl() {
-		StringBuilder builder = new StringBuilder(getDocumentPage().toString());
+		StringBuilder builder = null;
+		if(getDocumentPage()<=3){
+			builder = new StringBuilder(getDocumentPage().toString());
+		} else {
+			builder = new StringBuilder(getModelOption().getPageNumber().toString());
+		}
 		builder.append(IMAGE_URL_PREFIX0);
 		builder.append(IMAGE_URL_PREFIX1);
 		if(getDocumentType()==ContractAttachmentType.CONTRACT_DOC_DRAFT){
@@ -291,7 +296,7 @@ public class ContractPdfController {
 		setZoomFactor(2);
 		setDocumentPage(1);
 		try {
-			loadDocument(false);
+			loadDocument(true);
 			createPdfThumbnail();
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -369,8 +374,8 @@ public class ContractPdfController {
 	}
 	
 	private void completeNewPdfFields(ContractAttachmentType attachType) {
-		ContractController contractController = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
-		ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
+		ContractUtils utils = ContractUtils.getInstance();
+//		ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
 		if(attachType==ContractAttachmentType.CONTRACT_DOC_DRAFT){
 //			if(StringUtils.isNotBlank(clausesController.getCustomClauses()) && getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(AbstractContractModel.FieldName.ADDITIONAL_CLAUSES.getValue())!=null){
 //				if(clausesController.getCustomClauses().length()>50){
@@ -383,9 +388,10 @@ public class ContractPdfController {
 //				getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("jornhoraefec").setValue(contractController.getParams().getWorkSchedule());
 //			}
 		} else if(attachType==ContractAttachmentType.TRAINING_ANNEX_II) {
-			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get("horario").setValue(contractController.getParams().getTrainingSchedule());
+			String workSchedule = utils.getContractInfoMap(getContract()).get(ContractVariable.TRAINING_SCHEDULE.getValue());
+			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(ModelPE230.PE230_TRAINING_COURSE_SCHEDULE).setValue(workSchedule);
 		} else if(attachType==ContractAttachmentType.CONTRACT_CLAUSES) {
-			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(Clauses.CLAUSES_CONTENT).setValue(clausesController.getCustomClauses());
+//			getContractPdfWriter().getPdfDocument().getPdfFieldsMap().get(Clauses.CLAUSES_CONTENT).setValue(clausesController.getCustomClauses());
 		}
 	}
 	
@@ -401,7 +407,11 @@ public class ContractPdfController {
 			fileName = Extension.EXTENSION_NAME+".pdf"; 
 		}
 		URL url = getContractPdfWriter().getContractDocumentUrl(fileName);
-		PdfUtils.createPdfWallpaper(url, getDocumentPage(), getDocumentWidth().intValue(), getDocumentHeight().intValue());
+		if(getDocumentPage()<=3){
+			PdfUtils.createPdfWallpaper(url, getDocumentPage(), getDocumentWidth().intValue(), getDocumentHeight().intValue());
+		} else {
+			PdfUtils.createPdfWallpaper(url, getModelOption().getPageNumber(), getDocumentWidth().intValue(), getDocumentHeight().intValue());
+		}
 	}
 	
 	public void onChangeZoomFactor( ActionEvent event ) throws IOException, UnsupportedContractDocumentException {
@@ -525,7 +535,7 @@ public class ContractPdfController {
 			availableDocumentList.add(item);
 			item = new SelectItem(ContractAttachmentType.BASIC_COPY_DRAFT, ContractAttachmentType.BASIC_COPY_DRAFT.getName(AonUtil.getCurrentLocale()));
 			availableDocumentList.add(item);
-			if( utils.isTrainingContract(getContract()) && utils.getContractInfoMap(getContract()).get(ContractVariable.TRAINING_COURSE.getValue())!=null ){
+			if( utils.isTrainingContract(getContract(), getCode()) && utils.getContractInfoMap(getContract()).get(ContractVariable.TRAINING_COURSE.getValue())!=null ){
 				item = new SelectItem(ContractAttachmentType.TRAINING_ANNEX_II, ContractAttachmentType.TRAINING_ANNEX_II.getName(AonUtil.getCurrentLocale()));
 				availableDocumentList.add(item);
 				item = new SelectItem(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT, ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT.getName(AonUtil.getCurrentLocale()));
@@ -561,7 +571,8 @@ public class ContractPdfController {
 		// Documento del contrato
 		if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.CONTRACT_DOC_DRAFT)){
 			try {
-				IAttachment clausesAttach = obtainContractClauses();
+//				IAttachment clausesAttach = obtainContractClauses();
+				IAttachment clausesAttach = null;
 				setDocumentType(ContractAttachmentType.CONTRACT_DOC_DRAFT);
 				loadDocument(true);
 				if(clausesAttach!=null){
@@ -610,7 +621,7 @@ public class ContractPdfController {
 			}
 		}
 		
-		if( utils.isTrainingContract(getContract()) && utils.getContractInfoMap(getContract()).get(ContractVariable.TRAINING_COURSE.getValue())!=null ){
+		if( utils.isTrainingContract(getContract(), getCode()) && utils.getContractInfoMap(getContract()).get(ContractVariable.TRAINING_COURSE.getValue())!=null ){
 			// Acuerdo actividad formativa, Anexo II del contrato de formacion (421)
 			if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.TRAINING_ANNEX_II)){
 				try {
@@ -646,11 +657,11 @@ public class ContractPdfController {
 		
 	}
 	
-	private IAttachment obtainContractClauses() throws UnsupportedContractDocumentException, IOException {
-		ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
-		IAttachment clausesAttach = clausesController.getContractClauses();
-		return clausesAttach;
-	}
+//	private IAttachment obtainContractClauses() throws UnsupportedContractDocumentException, IOException {
+//		ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
+//		IAttachment clausesAttach = clausesController.getContractClauses();
+//		return clausesAttach;
+//	}
 	
 	private List<IAttachment> getGeneratedAttach(){
 		List<IAttachment> list = new LinkedList<IAttachment>();
