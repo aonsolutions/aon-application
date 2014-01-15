@@ -31,7 +31,6 @@
 	<table-filter match-name="fs_model180_detail" exclude="true" />
     <table-filter match-name="fs_model190" exclude="true" />
 	<table-filter match-name="fs_model190_detail" exclude="true" />
-	<table-filter match-name="contract_clause" exclude="true" />
 		
 	<!--  *********************************** -->
 	<!--  TABLAS VALIDAS QUE NO LEVANTAN POJO -->
@@ -346,6 +345,11 @@
 
 	<table name="contract_calendar_event">
 		<column name="type" type="com.esferalia.aon.payroll.enumeration.ContractCalendarEventType"/>
+	</table>
+	
+	<table name="contract_clause">
+		<column name="line" type="int" />
+		<column name="description" type="text" />
 	</table>
 
 	<table name="contract_deduction">
