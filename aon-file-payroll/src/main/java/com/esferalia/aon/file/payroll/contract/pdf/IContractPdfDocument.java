@@ -14,9 +14,9 @@ public interface IContractPdfDocument {
 	
 	public byte[] buildPdf(boolean readOnly);
 
-	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException;
-	
 	public void loadPdfFields(ContractAttachment contractPdfDraft);
+	
+	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException;
 	
 	public Collection<ContractPdfField> getPdfFields();
 	

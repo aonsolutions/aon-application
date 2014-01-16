@@ -31,7 +31,7 @@ public class IndefiniteModel extends AbstractContractModel {
 	}
 	
 	@Override
-	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		
 		try {
 			setReader(new PdfReader(getContractModelUrl(documentName+".pdf")));

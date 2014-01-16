@@ -29,7 +29,7 @@ public class ModelPE229 extends AbstractAnnexModel {
 		super.documentName = MODEL_NAME;
 	}
 	
-	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
 		try {
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));

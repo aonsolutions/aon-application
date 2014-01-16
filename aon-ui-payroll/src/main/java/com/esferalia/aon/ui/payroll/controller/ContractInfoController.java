@@ -10,6 +10,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -27,6 +29,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 
 public class ContractInfoController extends BasicController {
@@ -37,9 +40,16 @@ public class ContractInfoController extends BasicController {
 
 	private boolean commonInfo;
 	
-	private Contract contract;
-	
 	private ContractModel contractModel;
+	
+	private List<ContractField> contractFieldList;
+	
+	public List<ContractField> getContractFieldList() {
+		return contractFieldList;
+	}
+	public void setContractFieldList(List<ContractField> contractFieldList) {
+		this.contractFieldList = contractFieldList;
+	}
 
 	
 	public boolean isCommonInfo() {
@@ -47,12 +57,6 @@ public class ContractInfoController extends BasicController {
 	}
 	public void setCommonInfo(boolean commonInfo) {
 		this.commonInfo = commonInfo;
-	}
-	public Contract getContract() {
-		return contract;
-	}
-	public void setContract(Contract contract) {
-		this.contract = contract;
 	}
 	public ContractModel getContractModel() {
 		return contractModel;
@@ -66,11 +70,11 @@ public class ContractInfoController extends BasicController {
 		try {
 			if(isCommonInfo()){
 				this.getCriteria().addNullExpression("ContractInfo.contract");
-			}
-			if(getContract()!=null && getContract().getId()!=null){
-				this.getCriteria().addEqualExpression(this.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), getContract().getId());
+			} else {
+				Contract contract = (Contract) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER).getTo();
+				this.getCriteria().addEqualExpression(this.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId());
 				if(this.getBeanName().equals(CONTRACT_FIELDS_CONTROLLER)){
-					this.getCriteria().addInExpression(this.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), getOverridableFieldNames());
+					this.getCriteria().addInExpression(this.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), getOverridableFieldNames(contract));
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -80,9 +84,9 @@ public class ContractInfoController extends BasicController {
 		super.initializeModel();
 	}
 
-	private List<String> getOverridableFieldNames(){
+	private List<String> getOverridableFieldNames(Contract contract){
 		List<String> list = new LinkedList<String>();
-		for(IContractFieldName fn: getOverridableFields()){
+		for(IContractFieldName fn: getOverridableFields(contract)){
 			if(fn.isOverridable()){
 				list.add(fn.toString());
 			}
@@ -93,10 +97,10 @@ public class ContractInfoController extends BasicController {
 		return list;
 	}
 	
-	private List<IContractFieldName> getOverridableFields(){
+	private List<IContractFieldName> getOverridableFields(Contract contract){
 		List<IContractFieldName> list = new LinkedList<IContractFieldName>();
 		String contractModelOption = ContractUtils.getInstance().getInfoCurrentValue(contract, ContractVariable.CONTRACT_MODEL_OPTION.getValue());
-		if(getContract()!=null && StringUtils.isNotBlank(contractModelOption)){
+		if(contract!=null && StringUtils.isNotBlank(contractModelOption)){
 			String contractModel = ModelOption.valueOf(contractModelOption).getPdfModel();
 			IContractFieldName[] fields = null;
 			if(IndefiniteModel.MODEL_NAME.equals(contractModel)){
@@ -126,28 +130,22 @@ public class ContractInfoController extends BasicController {
 	/*
 	 * Contract especific field functions
 	 */
-	private List<ContractField> contractFieldList;
 	
-	public List<ContractField> getContractFieldList() {
-		return contractFieldList;
-	}
-	public void setContractFieldList(List<ContractField> contractFieldList) {
-		this.contractFieldList = contractFieldList;
-	}
-
 	public ContractInfo obtainContractField(Contract contract, IContractFieldName fieldName){
 		ContractInfo contractInfo  = null;
 		try {
 			Criteria criteria = new Criteria(); 
 			criteria.addEqualExpression(this.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId());
 			if(this.getBeanName().equals(CONTRACT_FIELDS_CONTROLLER)){
-				criteria.addInExpression(this.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), getOverridableFieldNames());
+				criteria.addInExpression(this.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), getOverridableFieldNames(contract));
 			}
 			criteria.addEqualExpression(this.getFieldName(IEntityAlias.CONTRACT_INFO_NAME), fieldName.toString());
 			List<ITransferObject> list = this.getManagerBean().getList(criteria);
 			if(!list.isEmpty()){
 				contractInfo = (ContractInfo) list.get(0); 
-				contractInfo.setExpression(contractInfo.getExpression().replace("\"", ""));
+				if(StringUtils.isNotBlank(contractInfo.getExpression())){
+					contractInfo.setExpression(contractInfo.getExpression().replace("\"", ""));
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> Unable to load contract document fields from contract_info ",e);
@@ -164,9 +162,9 @@ public class ContractInfoController extends BasicController {
 	}
 	
 	public void onLoadContractFields(ActionEvent event){
-		contract = (Contract) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER).getTo();
 		contractFieldList = new LinkedList<ContractField>();
-		for(IContractFieldName fn: getOverridableFields()){
+		Contract contract = (Contract) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER).getTo();
+		for(IContractFieldName fn: getOverridableFields(contract)){
 			ContractField field = new ContractField();
 			field.setContractInfo(obtainContractField(contract, fn));
 			contractFieldList.add(field);
@@ -184,6 +182,26 @@ public class ContractInfoController extends BasicController {
 			LOGGER.error("No se han podido guardar los datos correctamente.",e);
 			AonUtil.addErrorMessage("No se han podido guardar los datos correctamente.");
 			AonUtil.addErrorMessage(e.getMessage());
+		}
+	}
+	
+	public void onSaveContractModel(ActionEvent event) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
+		ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		Contract contract = (Contract) controller.getTo();
+		try {
+			if(controller.getParams().getContractModelOption()!=null){
+				ContractInfo info = new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.CONTRACT_MODEL_OPTION.getValue() );
+				info.setExpression("\"" + controller.getParams().getContractModelOption() + "\"");
+				bean.insert(info);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el modelo del contrato. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
 		}
 	}
 	

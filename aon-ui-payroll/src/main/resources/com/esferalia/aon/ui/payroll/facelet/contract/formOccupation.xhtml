@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+	
+	<aon:panelGrid columns="2" id="cno_panel" styleClass="aon-width-all"
+		columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
+		
+		<c:if test="#{!contract.trainingContract}" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.params.cno}" />
+				<ui:param name="idRequired" value="#{true}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+				<ui:param name="lookupDisabled" value="#{false}" />
+				<ui:param name="lookupReRender" value="Contract_categoryDescription, trainingCenter, trainingCourse" />
+			</ui:include>
+		</c:if>
+		
+		<c:if test="#{contract.trainingContract}" >
+			<aon:outputLabel for="contract_subsidized" value="#{bundle.payroll_contract_subsidized}" />
+			<aon:selectBooleanCheckbox id="contract_subsidized" value="#{contract.params.subsidized}" />
+		
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/trainingCenter/course/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.params.trainingCourse}" />
+				<ui:param name="idRequired" value="#{true}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+			</ui:include>
+			
+			<aon:outputText value="#{bundle.payroll_trainingCourse_trainingCalendar}" />
+			<aon:div>
+				<aon:outputLabel for="trainingStartDate" 
+					styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
+					value="#{bundle.aon_start_date}" />
+				<aon:selectInputDate id="trainingStartDate" 
+					value="#{contract.params.trainingStartDate}" required="#{contract.params.trainingCourse.id!=null}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+				<aon:outputLabel for="trainingEndDate" 
+					styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" 
+					value="#{bundle.aon_end_date}" />
+				<aon:selectInputDate id="trainingEndDate"
+					value="#{contract.params.trainingEndDate}" required="#{contract.params.trainingCourse.id!=null}"  
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+			</aon:div>
+		</c:if>
+		
+	</aon:panelGrid>
+
+</ui:composition>

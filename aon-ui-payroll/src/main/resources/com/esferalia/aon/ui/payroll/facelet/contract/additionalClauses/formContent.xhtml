@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+	
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:define name="columns">
+		
+			<c:if test="#{controller.enterpriseClause}">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
+					<f:facet name="header">
+						<aon:outputLabel for="ContractClause_general"
+							value="#{bundle.aon_general}" />
+					</f:facet>
+					<aon:outputText rendered="#{formList}" value="&#160;"
+						styleClass="#{(to.general)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" />
+					<aon:selectBooleanCheckbox id="ContractClause_general" 
+						rendered="#{formEdit}" value="#{controller.to.general}"
+						valueChangeListener="#{controller.onTypeChanged}"
+						reRender="ContractClause_line" ajaxSingle="true" />	
+					<f:facet name="footer">
+						<aon:selectBooleanCheckbox id="ContractClause_general-New" 
+							rendered="#{formNew}" value="#{controller.to.general}"
+							valueChangeListener="#{controller.onTypeChanged}"
+							reRender="ContractClause_line-New" ajaxSingle="true" />	
+					</f:facet>
+				</aon:column>
+			</c:if>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputLabel for="ContractClause_line"
+						value="#{bundle.aon_line}" /> 
+				</f:facet>
+				<aon:outputText value="#{to.line}" rendered="#{formList}" />
+				<aon:inputText id="ContractClause_line"
+					value="#{controller.to.line}" rendered="#{formEdit}"
+					required="true" size="1" maxlength="3" />
+				<f:facet name="footer">
+					<aon:inputText id="ContractClause_line-New"
+						value="#{controller.to.line}" rendered="#{formNew}"
+						required="true" size="1" maxlength="3" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-300">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractClause_name" 
+						value="#{bundle.aon_name}" />
+				</f:facet>
+				<aon:outputText value="#{to.name}" rendered="#{formList}" />
+				<aon:inputText id="ContractClause_name"
+					value="#{controller.to.name}" rendered="#{formEdit}"
+					required="true" size="16" maxlength="64" />
+				<f:facet name="footer" >
+					<aon:panelGroup styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
+						<c:if test="#{!controller.enterpriseClause}">
+							<aon:commandButton ajaxSingle="#{true}"
+								styleClass="aon-editDataTable-button aon-icon-lookup" 
+								actionListener="#{controller.onShowAvailableClauses}" 
+								reRender="showAvailableClauses" />
+						</c:if>
+						<aon:inputText id="ContractClause_name-New"
+							value="#{controller.to.name}" rendered="#{formNew}"
+							required="true" size="16" maxlength="64" />
+					</aon:panelGroup>
+				</f:facet>						
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractClause_description"
+						value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:div rendered="#{formList}" >
+					<aon:outputText value="#{to.description}" >
+						<aon:abbreviateConverter maxWidth="80" />
+					</aon:outputText>
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+						<aon:outputText value="#{to.description}" />
+					</rich:toolTip>
+				</aon:div>
+				<aon:panelGroup styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
+					<aon:inputTextarea id="ContractClause_description" required="true"
+						value="#{controller.to.description}"
+						cols="95" rows="#{!controller.longDescription?4:12}" />
+					<aon:commandButton ajaxSingle="#{true}"
+						styleClass="aon-editDataTable-button aon-icon-edit-end aon-margin-top" 
+						actionListener="#{controller.onShortDescription}" 
+						reRender="ContractClause_description"
+						rendered="#{controller.longDescription}" />
+					<aon:commandButton ajaxSingle="#{true}"
+						styleClass="aon-editDataTable-button aon-icon-edit-add aon-margin-top" 
+						actionListener="#{controller.onLongDescription}" 
+						reRender="ContractClause_description"
+						rendered="#{!controller.longDescription}" />
+				</aon:panelGroup>
+				<f:facet name="footer">
+					<aon:panelGroup styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
+						<aon:inputTextarea id="ContractClause_description-New" required="true"
+							value="#{controller.to.description}" 
+							cols="95" rows="#{!controller.longDescription?4:12}" />
+						<aon:commandButton ajaxSingle="#{true}"
+							styleClass="aon-editDataTable-button aon-icon-edit-end" 
+							value="&#160;&#160;&#160;&#160;"
+							actionListener="#{controller.onShortDescription}" 
+							reRender="ContractClause_description-New"
+							rendered="#{controller.longDescription}" />
+						<aon:commandButton ajaxSingle="#{true}"
+							styleClass="aon-editDataTable-button aon-icon-edit-add" 
+							value="&#160;&#160;&#160;&#160;"
+							actionListener="#{controller.onLongDescription}" 
+							reRender="ContractClause_description-New"
+							rendered="#{!controller.longDescription}" />
+					</aon:panelGroup>
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+	
+</ui:composition>

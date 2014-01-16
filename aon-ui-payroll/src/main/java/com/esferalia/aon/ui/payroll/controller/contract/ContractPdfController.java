@@ -50,8 +50,8 @@ import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
 import com.esferalia.aon.file.payroll.contract.pdf.clauses.Clauses;
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
-import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel.ModelOption;
+import com.esferalia.aon.file.payroll.contract.pdf.model.ClausulasModel;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
@@ -365,10 +365,10 @@ public class ContractPdfController {
 			}
 		} else if(getDocumentType()==ContractAttachmentType.CONTRACT_CLAUSES){
 			if(forceRefresh || getContractPdfDraft()==null || getContractPdfDraft().getId()==null){
-				getContractPdfWriter().loadNewPdf(Clauses.CLAUSES_NAME, getContract(), getContrataParams());
+				getContractPdfWriter().loadNewPdf(ClausulasModel.MODEL_NAME, getContract(), getContrataParams());
 				completeNewPdfFields(ContractAttachmentType.CONTRACT_CLAUSES);
 			} else {
-				getContractPdfWriter().loadExistingPdf(Clauses.CLAUSES_NAME, getContractPdfDraft());
+				getContractPdfWriter().loadExistingPdf(ClausulasModel.MODEL_NAME, getContractPdfDraft());
 			}
 		}
 	}
@@ -571,31 +571,42 @@ public class ContractPdfController {
 		// Documento del contrato
 		if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.CONTRACT_DOC_DRAFT)){
 			try {
-//				IAttachment clausesAttach = obtainContractClauses();
-				IAttachment clausesAttach = null;
 				setDocumentType(ContractAttachmentType.CONTRACT_DOC_DRAFT);
 				loadDocument(true);
-				if(clausesAttach!=null){
-					List<IAttachment> list = new LinkedList<IAttachment>();
-					ContractAttachment attach = new ContractAttachment();
-					attach.setData(getContractPdfWriter().buildPdf(true));
-					list.add(attach);
-					list.add(clausesAttach);
-					generatedMap.put(ContractAttachmentType.CONTRACT_DOC_DRAFT, PdfUtils.mergePdf(list));
-				} else {
-					generatedMap.put(ContractAttachmentType.CONTRACT_DOC_DRAFT, getContractPdfWriter().buildPdf(true));
-				}
+				generatedMap.put(ContractAttachmentType.CONTRACT_DOC_DRAFT, getContractPdfWriter().buildPdf(true));
 			} catch (IOException e) {
 				LOGGER.error(e.getMessage(), e);
-				AonUtil.addErrorMessage("No se ha podido generar el documento del contrato");
+				AonUtil.addErrorMessage("No se ha podido generar el contrato");
 				AonUtil.addErrorMessage(e.getMessage());
 			} catch (UnsupportedContractDocumentException e) {
 				LOGGER.error(e.getMessage(), e);
-				AonUtil.addErrorMessage("No se ha podido generar el documento del contrato");
+				AonUtil.addErrorMessage("No se ha podido generar el contrato");
 				AonUtil.addErrorMessage(e.getMessage());
 			} catch (Exception e){
 				LOGGER.error(e.getMessage(), e);
-				AonUtil.addErrorMessage("No se ha podido generar el documento del contrato");
+				AonUtil.addErrorMessage("No se ha podido generar el contrato");
+				AonUtil.addErrorMessage(e.getMessage());
+			}
+		}
+
+		// Documento de las clausulas
+		if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.CONTRACT_DOC_DRAFT) 
+				&& generatedMap.containsKey(ContractAttachmentType.CONTRACT_DOC_DRAFT)){
+			try {
+				setDocumentType(ContractAttachmentType.CONTRACT_CLAUSES);
+				loadDocument(true);
+				generatedMap.put(ContractAttachmentType.CONTRACT_CLAUSES, getContractPdfWriter().buildPdf(true));
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar el documento de clausulas");
+				AonUtil.addErrorMessage(e.getMessage());
+			} catch (UnsupportedContractDocumentException e) {
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar el documento de clausulas");
+				AonUtil.addErrorMessage(e.getMessage());
+			} catch (Exception e){
+				LOGGER.error(e.getMessage(), e);
+				AonUtil.addErrorMessage("No se ha podido generar el documento de clausulas");
 				AonUtil.addErrorMessage(e.getMessage());
 			}
 		}
@@ -608,15 +619,15 @@ public class ContractPdfController {
 				generatedMap.put(ContractAttachmentType.BASIC_COPY_DRAFT, getContractPdfWriter().buildPdf(true));
 			} catch (IOException e) {
 				LOGGER.error(e.getMessage(), e);
-				AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
+				AonUtil.addErrorMessage("No se ha podido generar la copia basica");
 				AonUtil.addErrorMessage(e.getMessage());
 			} catch (UnsupportedContractDocumentException e) {
 				LOGGER.error(e.getMessage(), e);
-				AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
+				AonUtil.addErrorMessage("No se ha podido generar la copia basica");
 				AonUtil.addErrorMessage(e.getMessage());
 			} catch (Exception e){
 				LOGGER.error(e.getMessage(), e);
-				AonUtil.addErrorMessage("No se ha podido generar el documento de la copia basica");
+				AonUtil.addErrorMessage("No se ha podido generar la copia basica");
 				AonUtil.addErrorMessage(e.getMessage());
 			}
 		}
@@ -630,15 +641,15 @@ public class ContractPdfController {
 					generatedMap.put(ContractAttachmentType.TRAINING_ANNEX_II, getContractPdfWriter().buildPdf(true));
 				} catch (IOException e) {
 					LOGGER.error(e.getMessage(), e);
-					AonUtil.addErrorMessage("No se ha podido generar el documento del anexo II");
+					AonUtil.addErrorMessage("No se ha podido generar el anexo II");
 					AonUtil.addErrorMessage(e.getMessage());
 				} catch (UnsupportedContractDocumentException e) {
 					LOGGER.error(e.getMessage(), e);
-					AonUtil.addErrorMessage("No se ha podido generar el documento del anexo II");
+					AonUtil.addErrorMessage("No se ha podido generar el anexo II");
 					AonUtil.addErrorMessage(e.getMessage());
 				} catch (Exception e){
 					LOGGER.error(e.getMessage(), e);
-					AonUtil.addErrorMessage("No se ha podido generar el documento del anexo II");
+					AonUtil.addErrorMessage("No se ha podido generar el anexo II");
 					AonUtil.addErrorMessage(e.getMessage());
 				}
 			}
@@ -649,19 +660,13 @@ public class ContractPdfController {
 					generatedMap.put(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT, getReport(IPayrollConstants.TRAINING_DIRECT_DEBIT_REPORT_KEY));
 				} catch (ReportException e) {
 					LOGGER.error(e.getMessage(), e);
-					AonUtil.addErrorMessage("No se ha podido generar el documento de la domiciliacion bancaria");
+					AonUtil.addErrorMessage("No se ha podido generar la domiciliacion bancaria");
 					AonUtil.addErrorMessage(e.getMessage());
 				}
 			}
 		}
 		
 	}
-	
-//	private IAttachment obtainContractClauses() throws UnsupportedContractDocumentException, IOException {
-//		ContractClausesController clausesController = (ContractClausesController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CLAUSES_CONTROLLER);
-//		IAttachment clausesAttach = clausesController.getContractClauses();
-//		return clausesAttach;
-//	}
 	
 	private List<IAttachment> getGeneratedAttach(){
 		List<IAttachment> list = new LinkedList<IAttachment>();

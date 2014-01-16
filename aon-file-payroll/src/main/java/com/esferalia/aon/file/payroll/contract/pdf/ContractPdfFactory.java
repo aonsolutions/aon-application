@@ -7,6 +7,7 @@ import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
 import com.esferalia.aon.file.payroll.contract.pdf.clauses.Clauses;
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
+import com.esferalia.aon.file.payroll.contract.pdf.model.ClausulasModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.IndefiniteModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.LearningModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE151;
@@ -26,6 +27,23 @@ public class ContractPdfFactory {
 	
 	public IContractPdfDocument createContractDocument(String document) {
 		// CONTRACT DOCUMENT
+		if (document.equals(LearningModel.MODEL_NAME)) {
+			return new LearningModel();
+		} else if (document.equals(PracticeModel.MODEL_NAME)) {
+			return new PracticeModel();
+		} else if (document.equals(TemporaryModel.MODEL_NAME)) {
+			return new TemporaryModel();
+		} else if (document.equals(IndefiniteModel.MODEL_NAME)) {
+			return new IndefiniteModel();
+		}		
+		// CLAUSES DOCUMENT
+		if (document.equals(ClausulasModel.MODEL_NAME)) {
+			return new ClausulasModel();
+		} 
+		
+		
+		
+		// CONTRACT DOCUMENT
 //		if (document.equals(ModelPE151.MODEL_NAME)) {
 //			return new ModelPE151();
 //		} else if (document.equals(ModelPE170.MODEL_NAME)) {
@@ -43,20 +61,6 @@ public class ContractPdfFactory {
 //		} else if (document.equals(ModelPE226.MODEL_NAME)) {
 //			return new ModelPE226();
 //		}
-		if (document.equals(LearningModel.MODEL_NAME)) {
-			return new LearningModel();
-		} else if (document.equals(PracticeModel.MODEL_NAME)) {
-			return new PracticeModel();
-		} else if (document.equals(TemporaryModel.MODEL_NAME)) {
-			return new TemporaryModel();
-		} else if (document.equals(IndefiniteModel.MODEL_NAME)) {
-			return new IndefiniteModel();
-		}
-		
-		
-		
-		
-		
 		// BASIC COPY DOCUMENT
 		if (document.equals(BasicCopy.BASIC_COPY_NAME)) {
 			return new BasicCopy();
@@ -71,10 +75,10 @@ public class ContractPdfFactory {
 		if (document.equals(Extension.EXTENSION_NAME)) {
 			return new Extension();
 		} 
-		// CLAUSES DOCUMENT
-		if (document.equals(Clauses.CLAUSES_NAME)) {
-			return new Clauses();
-		} 
+//		// CLAUSES DOCUMENT
+//		if (document.equals(Clauses.CLAUSES_NAME)) {
+//			return new Clauses();
+//		} 
 		return null;
 	}
 	

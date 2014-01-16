@@ -20,7 +20,7 @@ public class Clauses extends AbstractContractClauses {
 		super.documentName = CLAUSES_NAME;
 	}
 	
-	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
 		
 		try {

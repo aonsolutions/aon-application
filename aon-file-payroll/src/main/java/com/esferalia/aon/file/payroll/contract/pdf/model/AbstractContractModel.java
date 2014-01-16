@@ -1,61 +1,39 @@
 package com.esferalia.aon.file.payroll.contract.pdf.model;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.common.enumeration.IStringEnum;
 import com.code.aon.common.util.Classpath;
-import com.code.aon.geozone.GeoTree;
 import com.code.aon.geozone.GeoZone;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryDirStaff;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
 import com.esferalia.aon.file.payroll.contract.pdf.IContractPdfDocument;
-import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
+import com.esferalia.aon.file.payroll.contract.pdf.PdfModelHandler;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
-import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.ContractInfo;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.AcroFields;
-import com.lowagie.text.pdf.PdfDictionary;
-import com.lowagie.text.pdf.PdfName;
-import com.lowagie.text.pdf.PdfNumber;
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
 
 
 public abstract class AbstractContractModel implements IContractPdfDocument {
 	
 	public final static String CONTRACT_DOCUMENT_PATH = "com/esferalia/aon/file/payroll/contract/modelPdf/";
+	public final static String CONTRACT_CLAUSES_PATH = "com/esferalia/aon/file/payroll/contract/clausesPdf/";
 	
-	private PdfReader reader;
-	private Double documentWidth;
-	private Double documentHeight;
-	private Integer numberOfDocumentPages;
-	private Map<String, ContractPdfField> pdfFieldsMap;
+	private PdfModelHandler handler;
+	
 	protected String documentName;
+	
 	private Locale locale;
 	
 	public Locale getLocale() {
@@ -71,150 +49,79 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		return getPdfFieldsMap().values();
 	}
 	
-	public Map<String, ContractPdfField> getPdfFieldsMap() {
-		if(pdfFieldsMap==null){
-			pdfFieldsMap = new HashMap<String, ContractPdfField>();
-		}
-		return pdfFieldsMap;
-	}
-	
-	public void setPdfFieldsMap(Map<String, ContractPdfField> pdfFieldsMap) {
-		this.pdfFieldsMap = pdfFieldsMap;
-	}
-	
 	@Override
-	public Double getDocumentWidth() {
-		return documentWidth;
+	public Map<String, ContractPdfField> getPdfFieldsMap() {
+		return getHandler().getPdfFieldsMap();
+	}
+	
+	public PdfModelHandler getHandler() {
+		if(handler==null){
+			handler = new PdfModelHandler();
+		}
+		return handler;
 	}
 
+	@Override
+	public Double getDocumentWidth() {
+		return getHandler().getDocumentWidth();
+	}
+	
 	public void setDocumentWidth(Double documentWidth) {
-		this.documentWidth = documentWidth;
+		getHandler().setDocumentWidth(documentWidth);
 	}
 
 	@Override
 	public Double getDocumentHeight() {
-		return documentHeight;
+		return getHandler().getDocumentHeight();
 	}
 
 	public void setDocumentHeight(Double documentHeight) {
-		this.documentHeight = documentHeight;
+		getHandler().setDocumentHeight(documentHeight);
 	}
 
 	@Override
 	public Integer getNumberOfDocumentPages() {
-		return numberOfDocumentPages;
+		return getHandler().getNumberOfDocumentPages();
 	}
 	
 	public void setNumberOfDocumentPages(Integer numberOfDocumentPages) {
-		this.numberOfDocumentPages = numberOfDocumentPages;
+		getHandler().setNumberOfDocumentPages(numberOfDocumentPages);
 	}
 	
 	public PdfReader getReader() {
-		return reader;
+		return getHandler().getReader();
 	}
 
 	public void setReader(PdfReader reader) {
-		this.reader = reader;
+		getHandler().setReader(reader);
 	}
 
 	@Override
 	public String getDocumentPath(){
-		return CONTRACT_DOCUMENT_PATH;
-	}
-	
-	private String getPagesRange(PdfReader reader){
-		return "1-3,4";
+		// CONTRACT DOCUMENT
+		if (documentName.equals(LearningModel.MODEL_NAME) || documentName.equals(PracticeModel.MODEL_NAME)
+			 || documentName.equals(TemporaryModel.MODEL_NAME) || documentName.equals(IndefiniteModel.MODEL_NAME)) {
+			return CONTRACT_DOCUMENT_PATH;
+		}		
+		// CLAUSES DOCUMENT
+		if (documentName.equals(ClausulasModel.MODEL_NAME)) {
+			return CONTRACT_CLAUSES_PATH;
+		} 
+		return null;
 	}
 	
 	@Override
 	public byte[] buildPdf(boolean readOnly) {
-		try {
-			
-//			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
-//			reader.selectPages(getPagesRange(reader));
-			setDocumentWidth((double)reader.getPageSize(1).getWidth());
-			setDocumentHeight((double)reader.getPageSize(1).getHeight());
-			setNumberOfDocumentPages(reader.getNumberOfPages());
-			
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-			PdfStamper stamp = new PdfStamper(reader, baos);
-			
-			AcroFields form = stamp.getAcroFields();
-			
-			String checkValue = null;
-			for (Iterator<?> it = getPdfFields().iterator(); it.hasNext();) {
-				ContractPdfField field = (ContractPdfField) it.next();
-				if(field.getType()==AcroFields.FIELD_TYPE_CHECKBOX){
-					if(checkValue==null){
-						checkValue = form.getAppearanceStates(field.getLabel())[0];
-					}
-					form.setField(field.getLabel(), field.getValue().equals("true")?checkValue:"");
-				} else {
-					form.setField(field.getLabel(), field.getValue());
-				}
-			}
-			
-			stamp.setFormFlattening(readOnly);
-			stamp.close();
-			reader.close();
-			return baos.toByteArray();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+		return getHandler().buildPdf(readOnly);
 	}
 
-	public abstract void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException;
-
 	public void loadPdfFields(ContractAttachment contractPdfDraft) {
-		try {
-			PdfReader reader = new PdfReader(contractPdfDraft.getData());
-//			reader.selectPages(getPagesRange(reader));
-			setDocumentWidth((double)reader.getPageSize(1).getWidth());
-			setDocumentHeight((double)reader.getPageSize(1).getHeight());
-			setNumberOfDocumentPages(reader.getNumberOfPages());
-			
-			AcroFields form = reader.getAcroFields();
-			HashMap<?,?> fields = form.getFields();
-			String key;
-			ContractPdfField field;
-			for (Iterator<?> it = fields.keySet().iterator(); it.hasNext();) {
-				key = (String) it.next();
-				field = new ContractPdfField();
-				if(form.getFieldType(key)==AcroFields.FIELD_TYPE_CHECKBOX){
-					field.setType(AcroFields.FIELD_TYPE_CHECKBOX);
-					field.setValue(form.getField(key).equals(form.getAppearanceStates(key)[0])?"true":"false");
-				} else if(form.getFieldType(key)==AcroFields.FIELD_TYPE_TEXT){
-					field.setType(AcroFields.FIELD_TYPE_TEXT);
-					field.setValue(form.getField(key));
-				} else {
-					field.setType(AcroFields.FIELD_TYPE_NONE);;
-				}
-				Float f = form.getFieldPositions(key)[0];
-				field.setPage(f.intValue());
-				field.setLabel(key);
-				field.setBottomCoordinates(getBottomCoordinates(form, key));
-				field.setLeftCoordinates(getLeftCoordinates(form, key));
-				field.setWidth(getInputTextWidth(form, key));
-				field.setHeight(getInputTextHeight(form, key));
-				field.setZoomFactor(2);
-				if(field.getType()!=null){
-					getPdfFieldsMap().put(key, field);
-				}
-			}
-			reader.close();
-		} catch (IOException e) {
-			String msg = "No se ha podido cargar todos los datos del contrato en el documento.";
-		}
+		getHandler().loadPdfFields(contractPdfDraft);
 	}
 	
 	protected URL getContractModelUrl(String file) throws IOException {
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		URL[] urls = Classpath.search(cl, CONTRACT_DOCUMENT_PATH, file);
+		URL[] urls = Classpath.search(cl, getDocumentPath(), file);
 		return urls[0];
 	}
 	
@@ -222,53 +129,11 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		readPdfFields();
 	}
 	protected void readPdfFields() throws IOException{
-//		reader.selectPages(getPagesRange(reader));
-		setDocumentWidth((double)reader.getPageSize(1).getWidth());
-		setDocumentHeight((double)reader.getPageSize(1).getHeight());
-		setNumberOfDocumentPages(reader.getNumberOfPages());
-		
-		AcroFields form = reader.getAcroFields();
-		HashMap<?,?> fields = form.getFields();
-		String key;
-		ContractPdfField field;
-		for (Iterator<?> it = fields.keySet().iterator(); it.hasNext();) {
-			key = (String) it.next();
-			field = new ContractPdfField();
-			if(form.getFieldType(key)==AcroFields.FIELD_TYPE_CHECKBOX){
-					field.setType(AcroFields.FIELD_TYPE_CHECKBOX);
-					field.setValue(form.getField(key).equals(form.getAppearanceStates(key)[0])?"true":"false");
-			} else if(form.getFieldType(key)==AcroFields.FIELD_TYPE_TEXT){
-					field.setType(AcroFields.FIELD_TYPE_TEXT);
-					field.setValue(form.getField(key));
-			} else {
-				field.setType(AcroFields.FIELD_TYPE_NONE);;
-			}
-			Float f = form.getFieldPositions(key)[0];
-			field.setPage(f.intValue());
-			field.setLabel(key);
-			field.setBottomCoordinates(getBottomCoordinates(form, key));
-			field.setLeftCoordinates(getLeftCoordinates(form, key));
-			field.setWidth(getInputTextWidth(form, key));
-			field.setHeight(getInputTextHeight(form, key));
-			field.setZoomFactor(2);
-			PdfDictionary mergedField = form.getFieldItem( key ).getMerged( 0 );
-			PdfNumber maxLengthNumber = mergedField.getAsNumber( PdfName.MAXLEN );
-			if (maxLengthNumber != null) {
-			  field.setMaxLength(maxLengthNumber.intValue());
-			}
-			if(field.getType()!=null){
-				getPdfFieldsMap().put(key, field);
-			}
-		}
-		reader.close();
+		getHandler().readPdfFields();
 	}
 	
 	protected void setPdfFieldValue(String name, String value){
-		try {
-			getPdfFieldsMap().get(name).setValue(value);
-		} catch (NullPointerException npe) {
-			// do nothing
-		}
+		getHandler().setPdfFieldValue(name, value);
 	}
 	
 	public void loadPdfCommonFields(Contract contract, IContrataParams contrataParams) throws ManagerBeanException{
@@ -453,108 +318,27 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 	
 
 	protected RegistryDirStaff obtainRegistryDirStaff(Contract contract) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), contract.getWorkPlace().getEnterprise().getRegistry().getId());
-		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
-		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
-			return (RegistryDirStaff) list.get(0);
-		}
-		return null;
+		return getHandler().obtainRegistryDirStaff(contract);
 	}
 	
 	protected RegistryDirStaff obtainRegistryDirStaff(Registry registry) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), registry.getId());
-		Expression exp1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
-		Expression exp2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE));
-		criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
-		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
-			return (RegistryDirStaff) list.get(0);
-		}
-		return null;
+		return getHandler().obtainRegistryDirStaff(registry);
 	}
 	
 	protected GeoZone obtainCountry(GeoZone geoZone) throws ManagerBeanException {
-		IManagerBean geoTreeBean = BeanManager.getManagerBean(GeoTree.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(geoTreeBean.getFieldName(IEntityAlias.GEO_TREE_CHILD_ID), geoZone.getId());
-		Iterator<ITransferObject> iter = geoTreeBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			GeoTree geoTree = (GeoTree)iter.next();
-			return geoTree.getParent();
-		}
-		return null;
+		return getHandler().obtainCountry(geoZone);
 	}
 
 	protected Country obtainCountryByValue(GeoZone country) {
-		for( Country c : Country.values() ) {
-    		if ( c.getValue().equals(country.getCode()) ) {
-    			return c;
-    		}
-    	}
-    	return null;
+		return getHandler().obtainCountryByValue(country);
 	}
 	
 	public Map<String, String> getContractDataMap(Contract contract) {
-		Map<String, String> map = new HashMap<String, String>();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
-			if(contract.getEndDate()!=null){
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
-			} else {
-				criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
-			}
-			for(ITransferObject to: bean.getList(criteria)){
-				ContractData data = (ContractData) to;
-				map.put(data.getName(), data.getExpression()!=null?data.getExpression().replace('"', ' ').trim():null);
-			}
-		} catch (ManagerBeanException e) {
-			// NADA, se devuelve un mapa vacio
-			return map;
-		}
-		return map;
+		return getHandler().getContractDataMap(contract);
 	}
 	
 	public Map<String, String> getContractInfoMap(Contract contract) {
-		Map<String, String> map = new HashMap<String, String>();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractInfo.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_CONTRACT_ID), contract.getId());
-			for(ITransferObject to: bean.getList(criteria)){
-				ContractInfo info = (ContractInfo) to;
-				map.put(info.getName(), info.getExpression()!=null?info.getExpression().replace('"', ' ').trim():null);
-			}
-		} catch (ManagerBeanException e) {
-			// NADA, se devuelve un mapa vacio
-			return map;
-		}
-		return map;
-	}
-	
-
-	/*
-	 * [page, llx, lly, urx, ury]
-	 */
-	private String getBottomCoordinates(AcroFields form, String key){
-		return Float.toString(form.getFieldPositions(key)[2]);
-	}
-	private String getLeftCoordinates(AcroFields form, String key){
-		return Float.toString(form.getFieldPositions(key)[1]);
-	}
-	private String getInputTextWidth(AcroFields form, String key){
-		Float f = form.getFieldPositions(key)[3]-form.getFieldPositions(key)[1];
-		return String.valueOf(f.intValue());
-	}
-	private String getInputTextHeight(AcroFields form, String key){
-		return Float.toString(form.getFieldPositions(key)[4]-form.getFieldPositions(key)[2]);
+		return getHandler().getContractInfoMap(contract);
 	}
 	
 	

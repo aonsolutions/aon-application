@@ -90,7 +90,7 @@ public class ContractPdfWriter {
 		ContractUtils utils = ContractUtils.getInstance();
 		String tc2 = utils.getContractDataMap(contract).get(ContextVariable.TC2.getName());
 		pdfDocument.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
-		pdfDocument.loadPdfFields(ContractCode.getContractCodeByValue(tc2), contract, contrataParams);
+		pdfDocument.loadPdfFieldValues(ContractCode.getContractCodeByValue(tc2), contract, contrataParams);
 	}
 
 	public void loadExistingPdf(ContractAttachment contractPdfDraft, Contract contract) throws UnsupportedContractDocumentException {

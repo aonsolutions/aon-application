@@ -106,8 +106,6 @@ public class ContractController extends BasicController {
 
 	private SalaryInfoHandler salaryInfoHandler;
 
-	private boolean importEnterpriseClauses;
-	
 	private boolean showNewContractModal;
 	private boolean showContractEmbargoWindow;
 	private boolean showContractBonusWindow;
@@ -162,12 +160,6 @@ public class ContractController extends BasicController {
 		this.params = params;
 	}
 	
-	public boolean isImportEnterpriseClauses() {
-		return importEnterpriseClauses;
-	}
-	public void setImportEnterpriseClauses(boolean importEnterpriseClauses) {
-		this.importEnterpriseClauses = importEnterpriseClauses;
-	}
 	public boolean isShowNewContractModal() {
 		return showNewContractModal;
 	}

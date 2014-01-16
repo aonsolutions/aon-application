@@ -45,16 +45,6 @@
 				<f:setPropertyActionListener
 					target="#{contractPdf.showDocumentGenerationWindow}" value="#{true}" />
  			</aon:menuItem>
-
-			<aon:menuItem id="contract-additionalClauses" 
-				value="#{bundle.payroll_contract_additional_clauses}"
-				rendered="#{empty contractClauses.contractClauses}"
-				reRender="showContractClausesWindow"
-				actionListener="#{contractClauses.onAdditionalClausesShow}"
-				iconClass="aon-icon-edit-add-simple">
-				<f:setPropertyActionListener
-					target="#{contractClauses.showContractClausesWindow}" value="#{true}" />
- 			</aon:menuItem>
 			
 			<c:if test="#{sepeAppParams.developmentMode}">
 				<rich:menuGroup 

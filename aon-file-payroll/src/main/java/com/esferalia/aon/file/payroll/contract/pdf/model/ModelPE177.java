@@ -25,7 +25,7 @@ public class ModelPE177 extends AbstractContractModel {
 	}
 	
 	@Override
-	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
 		try {
 			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));

@@ -318,7 +318,7 @@ public class ContractUtils {
 		IManagerBean bean;
 		ContractInfo info;
 		try {
-			bean = BeanManager.getManagerBean(ContractData.class);
+			bean = BeanManager.getManagerBean(ContractInfo.class);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
 			throw new AbortProcessingException(msg,e);

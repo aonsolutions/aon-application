@@ -21,7 +21,7 @@ public class BasicCopy extends AbstractContractBasicCopy {
 		super.documentName = BASIC_COPY_NAME;
 	}
 	
-	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		// TODO
 	
 		

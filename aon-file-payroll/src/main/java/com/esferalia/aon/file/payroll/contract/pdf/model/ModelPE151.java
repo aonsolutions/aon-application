@@ -27,7 +27,7 @@ public class ModelPE151 extends AbstractContractModel {
 	}
 	
 	@Override
-	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		ContrataContratoParams params = (ContrataContratoParams) contrataParams;
 		
 		// TODO

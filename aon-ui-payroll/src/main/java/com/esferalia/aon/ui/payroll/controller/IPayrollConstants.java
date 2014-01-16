@@ -21,6 +21,7 @@ public interface IPayrollConstants {
 	String CONTRACT_BATCH_CONTROLLER_NAME = "contractBatch";
 	String CONTRACT_BATCH_DETAIL_CONTROLLER_NAME = "contractBatchDetail";
 	String CONTRACT_CLAUSES_CONTROLLER = "contractClauses";
+	String CONTRACT_CLAUSE_CONTROLLER = "contractClause";
 	String CONTRACT_LIST_CONTROLLER_NAME = "contractList";
 	String CONTRACT_BONUS_CONTROLLER = "contractBonus";
 	String CONTRACT_EMBARGO_CONTROLLER = "contractEmbargo";

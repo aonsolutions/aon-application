@@ -44,6 +44,7 @@ public class ContractControllerListener extends ControllerAdapter{
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
+		controller.setSelectedTab(null);
 		Contract contract = (Contract) controller.getTo();
 		if(controller.getParams().isRetaQuote()){
 			contract.setRegimeType(SSRegimeType.SELF_EMPLOYED);
@@ -114,10 +115,9 @@ public class ContractControllerListener extends ControllerAdapter{
 		CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
 		certificadosController.initialize((Contract) controller.getTo());
 		
-		ContractInfoController infoController = (ContractInfoController) AonUtil.getRegisteredBean("contractDocumentInfo");
-		infoController.setContract((Contract) controller.getTo());
-		infoController.onEditSearch(null);
-		infoController.initializeModel();
+//		ContractInfoController infoController = (ContractInfoController) AonUtil.getRegisteredBean("contractDocumentInfo");
+//		infoController.initialize((Contract) controller.getTo());
+
 	}
 
 	@Override
@@ -131,7 +131,6 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setActivities(null);
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
-		controller.setImportEnterpriseClauses(true);
 		contract.setStartDate(new Date());
 		contract.setSeniorityDate(contract.getStartDate());
 		try {
@@ -159,29 +158,10 @@ public class ContractControllerListener extends ControllerAdapter{
 			ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 			contrataController.initialize((Contract) controller.getTo());
 			contrataController.onContrataDataShow(null);
-		}
-		if(controller.isImportEnterpriseClauses()){
-			try {
-				IManagerBean bean = BeanManager.getManagerBean(ContractClause.class);
-				Criteria criteria = new Criteria();
-				criteria.addNullExpression("ContractClause.contract");
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_CLAUSE_GENERAL), true);
-				List<ITransferObject> list = bean.getList(criteria);
-				for(ITransferObject to: list){
-					ContractClause enterpriseClause = (ContractClause) to;
-					ContractClause clause = new ContractClause();
-					clause.setContract((Contract) controller.getTo());
-					clause.setDescription(enterpriseClause.getDescription());
-					clause.setLine(enterpriseClause.getLine());
-					clause.setName(enterpriseClause.getName());
-					bean.insert(clause);
-				}
-			} catch (ManagerBeanException e) {
-				AonUtil.addErrorMessage("No se han podido importar las cláusulas generales.");
-			}
+			importContractClauses((Contract)controller.getTo());
 		}
 	}
-
+	
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
@@ -211,6 +191,27 @@ public class ContractControllerListener extends ControllerAdapter{
 	private void updateContractInfo() {
 		ContractInfoController controller = (ContractInfoController) AonUtil.getRegisteredBean("contractDocumentInfo");
 		controller.saveContractFields();
+	}
+	
+	private void importContractClauses(Contract contract) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractClause.class);
+			Criteria criteria = new Criteria();
+			criteria.addNullExpression("ContractClause.contract");
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_CLAUSE_GENERAL), true);
+			List<ITransferObject> list = bean.getList(criteria);
+			for(ITransferObject to: list){
+				ContractClause enterpriseClause = (ContractClause) to;
+				ContractClause clause = new ContractClause();
+				clause.setContract(contract);
+				clause.setDescription(enterpriseClause.getDescription());
+				clause.setLine(enterpriseClause.getLine());
+				clause.setName(enterpriseClause.getName());
+				bean.insert(clause);
+			}
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("No se han podido importar las cláusulas generales.");
+		}
 	}
 	
 }

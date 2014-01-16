@@ -167,7 +167,7 @@ public class ModelPE230 extends AbstractAnnexModel {
 		super.documentName = MODEL_NAME;
 	}
 	
-	public void loadPdfFields(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
+	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
 		this.contract = contract;
 		try {
 			Map<String, String> dataMap = getContractDataMap(contract);
