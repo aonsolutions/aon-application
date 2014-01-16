@@ -1380,15 +1380,6 @@ INSERT INTO `balance_detail` (`domain`,`balance`,`code`,`description`,`accounts`
 	(@Domain,@Balance5,'','','',16,0,0,1,0,0),
 	(@Domain,@Balance5,'D','TOTAL DE INGRESOS Y GASTOS RECONOCIDOS (A+B+C)','A,B,C',17,1,1,1,0,0);
 	
-INSERT INTO `deduction_concept` (`domain`,`code`,`description`,`type`,`description_decorable`,`expression`) VALUES 
-  (@Domain,'CGC','4.70 %',0,1,'BASE_CGC * 4.70/100'),
-  (@Domain,'CGP','(BASE_CGP/CGP*100)+\'%\'',1,0,NULL),
-  (@Domain,'DESMP','@{PORCENTAJE_DESMPL} %',2,1,'( TIEMPO_COMPLETO && ASIMILADO_REGIMEN_GRAL ) ? 0 : BASE_CGP * (PORCENTAJE_DESMPL=(INDEFINIDO ? 1.55 : 1.60 ))/100'),
-  (@Domain,'FP','0.10 %',3,1,'BASE_CGP * 0.10/100'),
-  (@Domain,'NESTR','2.00 %',4,1,'BASE_ESTR * 2.00/100'),
-  (@Domain,'ESTR','4.70 %',5,1,'BASE_NESTR * 4.70/100'),
-  (@Domain,'IRPF','@{PORCENTAJE_IRPF} %',6,1,'BASE_IRPF * PORCENTAJE_IRPF/100');
-
 INSERT INTO `geozone` (`domain`,`name`,`code`,`system`) VALUES 
   (@Domain,'ARABA/ALAVA','01',1),
   (@Domain,'ALBACETE','02',1),
@@ -1508,75 +1499,11 @@ INSERT INTO `pay_method` (`domain`,`name`,`type`) VALUES
   (@Domain,'CHEQUE',4),
   (@Domain,'TRANSFERENCIA',5);
 
-INSERT INTO `payment_concept` (`domain`,`code`,`description`,`type`,`description_decorable`,`expression`,`irpf_expression`,`quote_expression`) VALUES 
-  (@Domain,'ECEMP','PREST. IT A CARGO DE LA EMPRESA',7,1,'DIAS_ENFERMEDAD_COMUN_4_15 * BASE_REGULADORA * 0.60','ECEMP','( COTIZACION_IT == \"MENSUAL\" ? 30 - ( DIAS_MES - DIAS_ENFERMEDAD_COMUN) : DIAS_ENFERMEDAD_COMUN ) * BASE_REGULADORA'),
-  (@Domain,'ECSS','PREST. IT A CARGO DEL INSS',7,1,'DIAS_ENFERMEDAD_COMUN_16_20 * BASE_REGULADORA * 0.60 + DIAS_ENFERMEDAD_COMUN_21 * BASE_REGULADORA * 0.75','ECSS',NULL),
-  (@Domain,'MTNAD','PREST. MATERNIDAD Y/O R.E',7,1,'0','0','( COTIZACION_IT == \"MENSUAL\" ? 30 - ( DIAS_MES - DIAS_MATERNIDAD) : DIAS_MATERNIDAD ) * BASE_REGULADORA'),
-  (@Domain,'ATEP','PREST. A.T. y E.P. ',7,1,'DIAS_ENFERMEDAD_PROFESIONAL * BASE_REGULADORA * 0.75','ATEP','( COTIZACION_IT == \"MENSUAL\" ? 30 - ( DIAS_MES - DIAS_ENFERMEDAD_PROFESIONAL) : DIAS_ENFERMEDAD_PROFESIONAL ) * BASE_REGULADORA'),
-  (@Domain,'GTZDO','GARANTIZADO EMPRESA SITUACION I.T.',1,1,'GARANTIZADO*DIAS_GARANTIZADOS/DIAS_MES>TOTAL_PRESTACIONES_IT?GARANTIZADO*DIAS_GARANTIZADOS/DIAS_MES-TOTAL_PRESTACIONES_IT:0.00','GTZDO',NULL),
-  (@Domain,'FIVAC','Vacaciones no disfrutadas',1,1,'DIAS_VACACIONES_NO_DISFRUTADAS * IMPORTE_DIA_VACACIONES','FIVAC','FIVAC'),
-  (@Domain,'INDEM','Indemnización',6,1,'IMPORTE_INDEMNIZACION','0.00','0.00');
-
 INSERT INTO `pcategory` (`domain`,`name`) VALUES 
   (@Domain,'GENERICA');
 
 INSERT INTO `scope` (`domain`,`description`) VALUES 
   (@Domain,'GENERAL');
-
-INSERT INTO `system_cost` (`domain`,`start_date`,`end_date`,`description`,`expression`,`type`,`code`) VALUES 
-  (@Domain,'2010-01-01',NULL,'23.60 %','( BASE_CGC_E=( BASE_CGC + ( isdef BASE_MTNAD ? BASE_MTNAD : 0.00 ) ) ) * 23.60/100',0,'CGC_E'),
-  (@Domain,'2010-01-01',NULL,'12.00 %','BASE_ESTR * 12.00/100',4,'EXTR_E'),
-  (@Domain,'2010-01-01',NULL,'23.60 %','BASE_NESTR * 23.60/100',5,'NEXTR_E'),
-  (@Domain,'2010-01-01',NULL,'@{PORCENTAJE_IT} %','( BASE_CGP_E=( BASE_CGP + ( isdef BASE_MTNAD ? BASE_MTNAD : 0.00 ) ) ) * (PORCENTAJE_IT=( isdef OCUPACION ? OCUPACION_IT[OCUPACION] : TARIFA_IT))/100',1,'IT_E'),
-  (@Domain,'2010-01-01',NULL,'@{PORCENTAJE_IMS} %','BASE_CGP_E * (PORCENTAJE_IMS=( isdef OCUPACION ? OCUPACION_IMS[OCUPACION] : TARIFA_IMS))/100',1,'IMS_E'),
-  (@Domain,'2010-01-01',NULL,'@{PORCENTAJE_DESMPL_E} %','BASE_CGP_E * (PORCENTAJE_DESMPL_E=(INDEFINIDO ? 5.50 : (TIEMPO_COMPLETO ? 6.70 : 7.70)))/100',2,'DESMPL_E'),
-  (@Domain,'2010-01-01',NULL,'0.20 %','BASE_CGP_E * 0.20/100',10,'FOGASA_E'),
-  (@Domain,'2010-01-01',NULL,'0.60 %','BASE_CGP_E * 0.60/100',3,'FP_E'),
-  (@Domain,'2010-01-01',NULL,'36.00 %','CONTRATO_CORTA_DURACION ? ( CGC_E * 36.00 / 100 ) : 0.00',0,'CGC_E_TEMP'),
-  (@Domain,'1970-01-01',NULL,'PREST. IT A CARGO DEL INSS','isdef ECSS ? -ECSS : 0.00',7,'ECSS_E'),
-  (@Domain,'1970-01-01',NULL,'PREST. A.T y E.P','isdef ATEP ? -ATEP : 0.00',7,'ATEP_E');
-
-INSERT INTO `system_data` (`domain`,`name`,`expression`,`start_date`,`end_date`,`read_only`,`comments`) VALUES 
-  (@Domain,'BASE_CGC_MIN','[	\"01\":\"TIEMPO_COMPLETO ? 1031.70 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.22 * HORAS_NOMINA\", \"02\":\"TIEMPO_COMPLETO ? 855.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 5.16 * HORAS_NOMINA\", \"03\":\"TIEMPO_COMPLETO ? 744.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.49 * HORAS_NOMINA\", \"04\":\"TIEMPO_COMPLETO ? 738.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.45 * HORAS_NOMINA\", \"05\":\"TIEMPO_COMPLETO ? 738.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.45 * HORAS_NOMINA\", \"06\":\"TIEMPO_COMPLETO ? 738.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.45 * HORAS_NOMINA\", \"07\":\"TIEMPO_COMPLETO ? 738.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.45 * HORAS_NOMINA\", \"08\":\"TIEMPO_COMPLETO ? 24.63 * DIAS_NOMINA : 4.45 * HORAS_NOMINA\", \"09\":\"TIEMPO_COMPLETO ? 24.63 * DIAS_NOMINA : 4.45 * HORAS_NOMINA\", \"10\":\"TIEMPO_COMPLETO ? 24.63 * DIAS_NOMINA : 4.45 * HORAS_NOMINA\", \"11\":\"TIEMPO_COMPLETO ? 24.63 * DIAS_NOMINA : 4.45 * HORAS_NOMINA\"]','2010-01-01','2010-12-31',1,'Bases minimas'),
-  (@Domain,'BASE_CGC_MAX','[	\"01\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) \", \"02\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"03\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"04\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"05\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"06\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"07\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"08\": \"106.60 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\", \"09\": \"106.60 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\", \"10\": \"106.60 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\", \"11\": \"106.60 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\"]','2010-01-01','2010-12-31',1,'Bases maximas'),
-  (@Domain,'IPREM','516.90','2008-01-01','2008-12-31',1,'Indicador Público de Renta de Efectos Múltiples (IPREM) '),
-  (@Domain,'IPREM','527.24','2009-01-01','2009-12-31',1,'Indicador Público de Renta de Efectos Múltiples (IPREM) '),
-  (@Domain,'IPREM','532.51','2010-01-01',NULL,1,'Indicador Público de Renta de Efectos Múltiples (IPREM) '),
-  (@Domain,'COTIZACION_IT','\"MENSUAL\"','2010-01-01',NULL,0,'Prorrateo de la cotización por incapacidad temporal'),
-  (@Domain,'BASE_CGC_MIN','[\"01\": \"TIEMPO_COMPLETO ? 1045.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.30 * HORAS_NOMINA\", \"02\": \"TIEMPO_COMPLETO ? 867.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 5.22 * HORAS_NOMINA\", \"03\": \"TIEMPO_COMPLETO ? 754.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.55 * HORAS_NOMINA\", \"04\": \"TIEMPO_COMPLETO ? 748.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.51 * HORAS_NOMINA\", \"05\": \"TIEMPO_COMPLETO ? 748.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.51 * HORAS_NOMINA\", \"06\": \"TIEMPO_COMPLETO ? 748.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.51 * HORAS_NOMINA \", \"07\": \"TIEMPO_COMPLETO ? 748.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.51 * HORAS_NOMINA\", \"08\": \"TIEMPO_COMPLETO ? 24.94 * DIAS_NOMINA : 4.51 * HORAS_NOMINA\", \"09\": \"TIEMPO_COMPLETO ? 24.94 * DIAS_NOMINA : 4.51 * HORAS_NOMINA\", \"10\": \"TIEMPO_COMPLETO ? 24.94 * DIAS_NOMINA : 4.51 * HORAS_NOMINA\", \"11\": \"TIEMPO_COMPLETO ? 24.94 * DIAS_NOMINA : 4.51 * HORAS_NOMINA\"]','2011-01-01',NULL,1,'Bases mínimas'),
-  (@Domain,'BASE_CGC_MAX','[\"01\": \"3230.10 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"02\": \"3230.10 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"03\": \"3230.10 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"04\": \"3230.10 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"05\": \"3230.10 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"06\": \"3230.10 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"07\": \"3230.10 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"08\": \"107.67 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\", \"09\": \"107.67 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\", \"10\": \"107.67 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\", \"11\": \"107.67 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\"]','2011-01-01','2012-12-31',1,'Bases máximas'),
-  (@Domain,'BASE_CGP_MAX','\"3198.10 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\"','2010-01-01','2010-12-31',0,'Tope Mínimo de cotización para Accidentes de Trabajo y Enfermedades Profesionales'),
-  (@Domain,'BASE_CGP_MIN','\"TIEMPO_COMPLETO ? 738.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.45 * HORAS_NOMINA\"','2010-01-01','2010-12-31',0,'Tope Máximo de cotización para Accidentes de Trabajo y Enfermedades Profesionales'),
-  (@Domain,'BASE_CGP_MAX','\"3230.10 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\"','2011-01-01','2012-12-31',0,'Tope Mínimo de cotización para Accidentes de Trabajo y Enfermedades Profesionales'),
-  (@Domain,'BASE_CGP_MIN','\"TIEMPO_COMPLETO ? 748.20 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.51 * HORAS_NOMINA \"','2011-01-01',NULL,0,'Tope Máximo de cotización para Accidentes de Trabajo y Enfermedades Profesionales'),
-  (@Domain,'BASE_CGC_MAX','[\"01\": \"3262.50 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"02\": \"3262.50 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"03\": \"3262.50 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"04\": \"3262.50 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"05\": \"3262.50 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"06\": \"3262.50 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"07\": \"3262.50 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"08\": \"108.75 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\", \"09\": \"108.75 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\", \"10\": \"108.75 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\", \"11\": \"108.75 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\"]','2013-01-01',NULL,1,'Bases máximas'),
-  (@Domain,'BASE_CGP_MAX','\"3262.50 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\"','2013-01-01',NULL,0,'Tope Máximo de cotización para Accidentes de Trabajo y Enfermedades Profesionales'),
-  (@Domain,'INGRESO_AC_EMPRESA','false','1979-01-01',NULL,0,'Ingreso a cuenta a cargo de la empresa'),
-  (@Domain,'SMI','633.30','2010-01-01',NULL,0,'Salario mínimo interprofesional'),
-  (@Domain,'SMI','641.40','2011-01-01',NULL,0,'Salario mínimo interprofesional'),
-  (@Domain,'SMI','645.30','2013-01-01',NULL,0,'Salario mínimo interprofesional'),
-  (@Domain,'MAX_EMBARGABLE','\"((TOTAL_LIQUIDO > SMI) ? ( TOTAL_LIQUIDO - SMI ) * 0.30 : 0.00) + ((TOTAL_LIQUIDO > 2 * SMI) ? ( TOTAL_LIQUIDO - 2 * SMI ) * 0.20 : 0.00) + ((TOTAL_LIQUIDO > 3 * SMI) ? ( TOTAL_LIQUIDO - 3 * SMI ) * 0.10 : 0.00) + ((TOTAL_LIQUIDO > 4 * SMI) ? ( TOTAL_LIQUIDO - 4 * SMI ) * 0.15 : 0.00) + ((TOTAL_LIQUIDO > 5 * SMI) ? ( TOTAL_LIQUIDO - 5 * SMI ) * 0.15 : 0.00) - EMBARGADO\"','2000-01-01',NULL,0,'Máximo embargable'),
-  (@Domain,'BASE_IPREM','0.00','2000-01-01',NULL,1,'Base para los conceptos exentos de cotizacion (IPREM) '),
-  (@Domain,'BIPREM','0.00','2000-01-01',NULL,1,'Base para los conceptos exentos de cotizacion (IPREM) '),
-  (@Domain,'OCUPACION_IT',' [\"a\": 0.65, \"b\": 1.00, \"d\": 3.35, \"e\": 1.80, \"f\": 3.35, \"g\": 2.10, \"h\": 1.40]','2010-01-01',NULL,1,'Tarifas de primas para I.T'),
-  (@Domain,'OCUPACION_IMS',' [\"a\": 0.35, \"b\": 1.00, \"d\": 3.35, \"e\": 1.50, \"f\": 3.35, \"g\": 1.50, \"h\": 2.20]','2010-01-01',NULL,1,'Tarifas de primas para I.M.S');
-
-INSERT INTO `system_deduction` (`domain`,`type`,`deduction_concept`,`description`,`description_decorable`,`expression`,`start_date`,`end_date`,`month`) VALUES 
-  (@Domain,0,(SELECT id FROM deduction_concept WHERE code = 'CGC' and domain = @Domain),NULL,1,NULL,'2010-01-01',NULL,NULL),
-  (@Domain,2,(SELECT id FROM deduction_concept WHERE code = 'DESMP' and domain = @Domain),NULL,1,NULL,'2010-01-01',NULL,NULL),
-  (@Domain,3,(SELECT id FROM deduction_concept WHERE code = 'FP' and domain = @Domain),NULL,1,NULL,'2010-01-01',NULL,NULL),
-  (@Domain,4,(SELECT id FROM deduction_concept WHERE code = 'NESTR' and domain = @Domain),NULL,1,NULL,'2010-01-01',NULL,NULL),
-  (@Domain,5,(SELECT id FROM deduction_concept WHERE code = 'ESTR' and domain = @Domain),NULL,1,NULL,'2010-01-01',NULL,NULL),
-  (@Domain,6,(SELECT id FROM deduction_concept WHERE code = 'IRPF' and domain = @Domain),NULL,1,NULL,'2010-01-01',NULL,NULL);
-
-INSERT INTO `system_payment` (`domain`,`type`,`payment_concept`,`description`,`description_decorable`,`expression`,`irpf_expression`,`quote_expression`,`start_date`,`month`,`end_date`,`salary_type`) VALUES 
-  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'ECEMP' and domain = @Domain),NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
-  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'ECSS' and domain = @Domain),NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
-  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'MTNAD' and domain = @Domain),NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
-  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'ATEP' and domain = @Domain),NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
-  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'GTZDO' and domain = @Domain),NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
-  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'FIVAC' and domain = @Domain),NULL,1,NULL,NULL,NULL,'1970-01-01',NULL,NULL,2),
-  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'INDEM' and domain = @Domain),NULL,1,NULL,NULL,NULL,'1970-01-01',NULL,NULL,2);
 
 INSERT INTO `tax` (`domain`,`name`,`tax_type`,`percentage`,`surcharge`,`start_date`,`vat_deduction_type`,`withholding_type`) VALUES 
   (@Domain,'GENERAL',1,21.000,5.200,'2012-09-01',0,0),
