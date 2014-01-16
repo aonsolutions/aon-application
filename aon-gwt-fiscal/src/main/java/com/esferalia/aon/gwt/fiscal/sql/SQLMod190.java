@@ -41,6 +41,7 @@ public class SQLMod190 {
 	private static String SELECT_INVOICE = "SELECT "
 			+ SQLConstants.INVOICE + "." + InvoiceColumns.RDOCUMENT + ","
 			+ SQLConstants.INVOICE + "." + InvoiceColumns.RNAME + ","
+			+ SQLConstants.INVOICE_TAX + "." + InvoiceTaxColumns.WITHHOLDING_TYPE + " " + InvoiceTaxColumns.WITHHOLDING_TYPE +","
 			+ " MIN( " + SQLConstants.INVOICE + "." + InvoiceColumns.REGISTRY + ") " + InvoiceColumns.REGISTRY+ ","
 			+ " SUM( " + SQLConstants.INVOICE_TAX + "." + InvoiceTaxColumns.BASE + ") " + InvoiceTaxColumns.BASE + ","
 			+ " SUM(IF( " + SQLConstants.INVOICE_TAX + "." + InvoiceTaxColumns.QUOTA + "!= 0," 
@@ -60,12 +61,13 @@ public class SQLMod190 {
 			+" AND "+ SQLConstants.INVOICE + "." + InvoiceColumns.TYPE +" != 1 "
 			// IRPF
 			+" AND "+ SQLConstants.INVOICE_TAX + "." + InvoiceTaxColumns.TAX_TYPE + " = 2" 
-			// IRPF de profesionales
-			+" AND "+ SQLConstants.INVOICE_TAX + "." + InvoiceTaxColumns.WITHHOLDING_TYPE + " = 0"
+			// IRPF de profesionales, agricultores y transportistas
+			+" AND "+ SQLConstants.INVOICE_TAX + "." + InvoiceTaxColumns.WITHHOLDING_TYPE + " IN (0,3,4)"
 			+" AND "+ SQLConstants.INVOICE + "." + InvoiceColumns.ISSUE_DATE +" BETWEEN ? AND ?"
 			+" GROUP BY "
 				+ SQLConstants.INVOICE + "." + InvoiceColumns.RDOCUMENT + ","
-				+ SQLConstants.INVOICE + "." + InvoiceColumns.RNAME;
+				+ SQLConstants.INVOICE + "." + InvoiceColumns.RNAME + ","
+				+ SQLConstants.INVOICE_TAX + "." + InvoiceTaxColumns.WITHHOLDING_TYPE;
 	
 	private static String GEOZONE_SELECT = "SELECT "
 		+ SQLConstants.GEOZONE + "." + GeozoneColumns.CODE + " " + GeozoneColumns.CODE
@@ -921,8 +923,21 @@ public class SQLMod190 {
 				detail.setMod190(mod190.getId());
 				detail.setDocument(invoiceRs.getString(InvoiceColumns.RDOCUMENT));
 				detail.setName(invoiceRs.getString(InvoiceColumns.RNAME));
-				detail.setKey("G");
-				detail.setSubKey("01");
+				int withholding = invoiceRs.getInt(InvoiceTaxColumns.WITHHOLDING_TYPE);
+				if (withholding == 0) {				/** PROFESIONALES - PROFESSIONAL*/
+					detail.setKey("G");
+					detail.setSubKey("01");
+				} else if (withholding == 1) {		/** ARRENDAMIENTO - RENTING*/
+					// Ignore for 190 --> 180
+				} else if (withholding == 2) {		/** CAPITAL MOBILIARIO - MOVABLE_CAPITAL*/
+					// Ignore for 190 --> 184
+				} else if (withholding == 3) {		/** AGRICULTOR - FARMER*/
+					detail.setKey("H");
+					detail.setSubKey("01");
+				} else if (withholding == 4) {		/** TRANSPORTISTAS Y ASIMILADOS - TRANSPORT_OPERATOR*/
+					detail.setKey("H");
+					detail.setSubKey("04");
+				}
 				detail.setPerception(invoiceRs.getDouble(InvoiceTaxColumns.BASE));
 				detail.setRetention(invoiceRs.getDouble(InvoiceTaxColumns.QUOTA));
 				int registryId = invoiceRs.getInt(InvoiceColumns.REGISTRY);
@@ -965,6 +980,9 @@ public class SQLMod190 {
 			throws SQLException {
 		SQLUtils.setInt(insertStmt, 1, perceptor.getDomain());
 		SQLUtils.setInt(insertStmt, 2, perceptor.getMod190());
+		if (perceptor.getDocument() != null && perceptor.getDocument().length() > 9) {
+			perceptor.setDocument( perceptor.getDocument().substring(0, 8) );
+		}
 		SQLUtils.setString(insertStmt, 3, perceptor.getDocument());
 		SQLUtils.setString(insertStmt, 4, perceptor.getName());
 		SQLUtils.setString(insertStmt, 5, perceptor.getRepresentativeDocument());
