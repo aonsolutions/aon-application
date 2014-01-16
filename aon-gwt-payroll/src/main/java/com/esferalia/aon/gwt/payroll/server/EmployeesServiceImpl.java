@@ -29,6 +29,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -1341,12 +1342,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			String sql = "SELECT " + PAYMENT_CONCEPT + ".* " + " FROM "
 					+ PAYMENT_CONCEPT + " WHERE "
-					+ PaymentConceptColumns.DOMAIN + " =  ? " + " OR "
-					+ PaymentConceptColumns.DOMAIN + " =  ? ";
+					+ PaymentConceptColumns.DOMAIN + " IN ( ?, ?, ? )" ;
 
 			stmt = connection.prepareStatement(sql);
-			stmt.setInt(1, domainId);
-			stmt.setInt(2, parentDomainId != null ? parentDomainId : 0);
+			stmt.setInt(1, 0);
+			stmt.setInt(2, domainId);
+			
+			if ( parentDomainId != null )
+				stmt.setInt(3, parentDomainId);
+			else 
+				stmt.setNull(3, Types.INTEGER);
+			
 			rs = stmt.executeQuery();
 
 			List<Payment> paymentConcepts = new LinkedList<Payment>();

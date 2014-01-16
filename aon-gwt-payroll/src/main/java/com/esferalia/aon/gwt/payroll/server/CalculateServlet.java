@@ -22,6 +22,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.RelationalExpression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
+import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.IListener;
@@ -30,6 +31,7 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
@@ -39,6 +41,8 @@ import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
+
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 public class CalculateServlet extends HttpServlet implements CalculateService {
 
@@ -233,6 +237,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			Date startDate = getStartDate(req);
 			Date endDate = getEndDate(req);
 			Date issueDate = getIssueDate(req);
+			Date checkDate = getCheckDate(req);
 
 			listener.onInfo("Calculando n&oacute;minas para el periodo de liquidaci&oacute;n : <span class='aon-input-required'>"
 					+ DATE_FORMAT.format(startDate)
@@ -254,6 +259,16 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			if (save) {
 				salaryBuilder = new SQLSalaryBuilder(connection);
 				((SQLSalaryBuilder) salaryBuilder).begin();
+			} else if (checkDate != null) {
+				salaryBuilder = new SQLSalaryBuilderTester(connection);
+				((SQLSalaryBuilderTester) salaryBuilder)
+						.setTestEndDate(new java.sql.Date(DateUtils
+								.getLastDayOfMonth(checkDate).getTime()));
+				((SQLSalaryBuilderTester) salaryBuilder)
+						.setTestStartDate(new java.sql.Date(DateUtils
+								.getFirstDayOfMonth(checkDate).getTime()));
+				((SQLSalaryBuilderTester) salaryBuilder)
+						.setTestTotalLiquid(true);
 			} else {
 				salaryBuilder = new SalaryBuilder();
 			}
@@ -262,22 +277,31 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 			calculator.setSalaryBuilder(salaryBuilder);
 			calculator.setListener(listener);
-
 			while (sqlContractSalaryCalculatorContext.next()) {
 				try {
 					ISalary salary = calculator
 							.calculate(sqlContractSalaryCalculatorContext);
 					int employeeId = sqlContractSalaryCalculatorContext.getId();
-					listener.onDebug(String
-							.format("Calculada n&oacute;mina de <a class='aon-icon-employee aon-iCon aon-link aon-input-required' onclick='showEmployee(%d)' >&nbsp;%s</a>."
-									+ " L&iacute;quido total a percibir <a class='aon-icon-draft aon-iCon aon-link aon-input-required' onclick='showSalaryDraft(%d,\"%s\",\"%s\")' >&nbsp;%s</a>",
-									employeeId, salary.getEmployeeName(),
-									employeeId, DATE_FORMAT.format(startDate),
-									DATE_FORMAT.format(endDate),
-									CURRENCY_FORMAT.format(salary
-											.getTotalLiquid())));
+					if (checkDate == null)
+						listener.onDebug(String
+								.format("Calculada n&oacute;mina de <a class='aon-icon-employee aon-iCon aon-link aon-input-required' onclick='showEmployee(%d)' >&nbsp;%s</a>."
+										+ " L&iacute;quido total a percibir <a class='aon-icon-draft aon-iCon aon-link aon-input-required' onclick='showSalaryDraft(%d,\"%s\",\"%s\")' >&nbsp;%s</a>",
+										employeeId, escapeHtml(salary
+												.getEmployeeName()),
+										employeeId, DATE_FORMAT
+												.format(startDate), DATE_FORMAT
+												.format(endDate),
+										CURRENCY_FORMAT.format(salary
+												.getTotalLiquid())));
 					writer.flush();
+
 					salaries++;
+				} catch (Error e) {
+					listener.onError(String
+							.format("<a class='aon-icon-employee aon-iCon aon-link aon-input-required' onclick='showEmployee(%d)' >&nbsp;%s</a>. %s",
+									sqlContractSalaryCalculatorContext.getId(),
+									escapeHtml(sqlContractSalaryCalculatorContext
+											.getEmployeeName()), e.getMessage()));
 				} catch (Exception e) {
 					listener.onError(e.getMessage());
 				}
@@ -335,6 +359,11 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 	private static Date getIssueDate(HttpServletRequest request)
 			throws ParseException {
 		return getDate(request, ISSUE_DATE);
+	}
+
+	private static Date getCheckDate(HttpServletRequest request)
+			throws ParseException {
+		return getDate(request, CHECK_DATE);
 	}
 
 	private static Date getDate(HttpServletRequest request, String name)

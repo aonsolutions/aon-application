@@ -53,6 +53,8 @@ public class MainAgreement extends MainEntryPoint implements Listener {
 
 	private static final Binder binder = GWT.create(Binder.class);
 
+	/*@UiField
+	MetaData metaData;*/
 	@UiField
 	Agreements agreements;
 

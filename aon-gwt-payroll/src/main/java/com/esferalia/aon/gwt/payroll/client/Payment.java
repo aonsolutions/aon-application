@@ -256,11 +256,11 @@ public class Payment extends ResizeComposite {
 		showOrHideResetDescriptionButton();
 	}
 
-	public String getPaymentExpression() {
+	public String getExpression() {
 		return ((ExpressionTextBox) paymentTextBox).getExpression();
 	}
 
-	public void setPaymentExpression(String payment) {
+	public void setExpression(String payment) {
 		paymentTextBox.setExpression(payment);
 		showOrHideResetPaymentButton();
 	}
@@ -409,7 +409,7 @@ public class Payment extends ResizeComposite {
 
 	@UiHandler("resetPaymentButton")
 	void onResetPaymentButtonClick(ClickEvent event) {
-		setPaymentExpression(concept.getExpression());
+		setExpression(concept.getExpression());
 	}
 
 	@UiHandler("taxTextBox")
@@ -511,7 +511,7 @@ public class Payment extends ResizeComposite {
 			return ALL;
 		if ("_P".equals(expression))
 			return ALL;
-		if (StringUtils.equals(getPaymentExpression(), expression))// TODO:
+		if (StringUtils.equals(getExpression(), expression))// TODO:
 			return ALL;
 
 		try {

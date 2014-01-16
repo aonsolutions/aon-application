@@ -80,6 +80,9 @@ public class AON {
 	public static final String AON_ICON_TIME= "aon-icon-time";
 	public static final String AON_ICON_EXCEL= "aon-icon-excel";
 	public static final String AON_ICON_AGREEMENT= "aon-icon-agreement";
+	public static final String AON_ICON_PAYMENT= "aon-icon-payment";
+	public static final String AON_ICON_DEDUCTION= "aon-icon-deduction";
+	public static final String AON_ICON_BONUS= "aon-icon-segsocial";
 	public static final String AON_ICON_CONFIG= "aon-icon-config";
 	public static final String AON_ICON_CLEAN = "aon-lookupButton-clear";
 	public static final String AON_NO_MARGIN = "aon-no-margin";

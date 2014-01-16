@@ -5,6 +5,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -40,5 +41,7 @@ public interface EnterprisesService extends RemoteService {
 	List<Payment> getPaymentConcepts(int offset, int limit) ;
 
 	List<Deduction> getDeductionConcepts(int offset, int limit) ;
+	
+	List<Cost> getEnterprisesCosts(List<Integer> enterpriseIds); 
 	
 }

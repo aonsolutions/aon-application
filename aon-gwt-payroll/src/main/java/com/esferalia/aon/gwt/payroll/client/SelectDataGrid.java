@@ -6,16 +6,24 @@ import com.esferalia.aon.gwt.payroll.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.HasName;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
+import com.google.gwt.view.client.HasRows;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 
 public class SelectDataGrid<T extends HasId<?> & HasName<String>> extends
 		CustomDataGrid<T> {
-	
-	
+
+	/**
+	 * The default increment size.
+	 */
+	private static final int DEFAULT_INCREMENT = 20;
 
 	public SelectDataGrid() {
 		super(new ProvidesKey<T>() {
@@ -34,6 +42,17 @@ public class SelectDataGrid<T extends HasId<?> & HasName<String>> extends
 		addColumn(checkColumn, checkHeader);
 		setColumnWidth(checkColumn, "40px");
 
+		addHandlers2ScrollPanel(getScrollPanel(), DEFAULT_INCREMENT);
+
+	}
+
+	public void setNameLabel(String nameLabel) {
+		Column<T, String> textColumn = newTextColumn();
+		addColumn(textColumn, nameLabel);
+	}
+
+	public boolean isAnySelected() {
+		return isAllSelected() || getSelectedItems().size() > 0;
 	}
 
 	public boolean isAllSelected() {
@@ -41,12 +60,11 @@ public class SelectDataGrid<T extends HasId<?> & HasName<String>> extends
 	}
 
 	public Set<T> getSelectedItems() {
-		return ((MultiSelectionModel<T>) getSelectionModel()).getSelectedSet();
+		return getMultiSelectionModel().getSelectedSet();
 	}
 
-	public void setNameLabel(String nameLabel) {
-		Column<T, String> textColumn = newTextColumn();
-		addColumn(textColumn, nameLabel);
+	public MultiSelectionModel<T> getMultiSelectionModel() {
+		return ((MultiSelectionModel<T>) getSelectionModel());
 	}
 
 	// --------------------------------------------------------- Private methods
@@ -77,7 +95,8 @@ public class SelectDataGrid<T extends HasId<?> & HasName<String>> extends
 	 * Checkbox header. This table will uses a checkbox header for select all.
 	 */
 	private Header<Boolean> newCheckHeader() {
-		Header<Boolean> header = new Header<Boolean>(new CheckboxCell(true,true)) {
+		Header<Boolean> header = new Header<Boolean>(new CheckboxCell(true,
+				true)) {
 			@Override
 			public Boolean getValue() {
 				return getVisibleItemCount() == ((MultiSelectionModel<?>) getSelectionModel())
@@ -93,6 +112,40 @@ public class SelectDataGrid<T extends HasId<?> & HasName<String>> extends
 			}
 		});
 		return header;
+	}
+
+	private void addHandlers2ScrollPanel(final ScrollPanel scrollPanel,
+			final int incrementSize) {
+
+		class ScrollPanelHandlers implements ScrollHandler {
+
+			/**
+			 * The last scroll position.
+			 */
+			private int lastScrollPos = 0;
+
+			@Override
+			public void onScroll(ScrollEvent event) {
+				// If scrolling up, ignore the event.
+				int oldScrollPos = lastScrollPos;
+				lastScrollPos = scrollPanel.getVerticalScrollPosition();
+				if (oldScrollPos >= lastScrollPos) {
+					return;
+				}
+
+				int maxScrollTop = scrollPanel
+						.getMaximumVerticalScrollPosition();
+				if (lastScrollPos >= maxScrollTop) {
+					// We are near the end, so increase the page size.
+					int newPageSize = SelectDataGrid.this.getVisibleRange()
+							.getLength() + incrementSize;
+					SelectDataGrid.this.setVisibleRange(0, newPageSize);
+				}
+
+			}
+		}
+		;
+		scrollPanel.addScrollHandler(new ScrollPanelHandlers());
 	}
 
 }

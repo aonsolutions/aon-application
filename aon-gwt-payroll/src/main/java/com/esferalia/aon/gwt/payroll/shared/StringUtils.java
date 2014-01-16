@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import java.util.Collection;
+
 
 
 
@@ -113,6 +115,19 @@ public class StringUtils {
 		StringBuffer buffer = new StringBuffer();
 		for ( int i= 0; i < times ; i++ )
 			buffer.append(str);
+		return buffer.toString();
+	}
+
+	public static String reduce(Collection<String> collection, String sep) {
+		StringBuffer buffer = new StringBuffer();
+		for (String string : collection) {
+			if (buffer.length() > 0)
+				buffer.append(sep);
+			if (string == null)
+				continue;
+	
+			buffer.append(string.trim());
+		}
 		return buffer.toString();
 	}		
 }

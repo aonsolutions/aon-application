@@ -77,7 +77,14 @@ public class MainEntryPoint implements EntryPoint {
 		@Source("clipboard.png")
 		ImageResource clipboard();
 
-		ImageResource aon_icon_row_changed();
+		ImageResource payment();
+
+		ImageResource deduction();
+
+		ImageResource segsocial();
+		
+		ImageResource aon_icon_row_changed(); // TODO: change this name?
+
 		
 	}
 
@@ -95,6 +102,10 @@ public class MainEntryPoint implements EntryPoint {
 		else if ( entryPoint.equalsIgnoreCase(Constants.EMPLOYEE_TREE_ENTRY_POINT)) {
 			EmployeeTree employeeTree = new EmployeeTree();
 			employeeTree.onModuleLoad();
+		}
+		else if ( entryPoint.equalsIgnoreCase(Constants.MAIN_SYSTEM_ENTRY_POINT)) {
+			MainSystem mainSystem = new MainSystem();
+			mainSystem.onModuleLoad();
 		}
 		else if ( entryPoint.equalsIgnoreCase(Constants.MAIN_CALCULATOR_ENTRY_POINT)) {
 			MainCalculator mainCalculator = new MainCalculator();

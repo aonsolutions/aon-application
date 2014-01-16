@@ -1,11 +1,23 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import com.esferalia.aon.gwt.payroll.client.ComboBox.Format;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
+import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.gwt.payroll.shared.Salary.TypeVisitor;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.http.client.URL;
@@ -17,16 +29,22 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
+import com.sun.star.beans.GetDirectPropertyTolerantResult;
 
 public class MainCalculator extends MainEntryPoint implements CalculateService {
+
+	private static DateTimeFormat MONTH_DATE_TIME_FORMAT = DateTimeFormat
+			.getFormat(PredefinedFormat.YEAR_MONTH);
 
 	static interface Binder extends UiBinder<Widget, MainCalculator> {
 	}
@@ -35,7 +53,6 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 	private static DateTimeFormat DATE_FORMAT = DateTimeFormat
 			.getFormat(CalculateService.DATE_FORMAT_PATTERN);
-
 
 	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
 
@@ -50,20 +67,18 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 	@UiField
 	MonthListBox monthListBox;
-
 	@UiField
-	CheckBox saveCheckBox;
-	@UiField
-	CheckBox compareCheckBox;
+	ListBox dbMonthListBox;
 
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
-
 
 	@UiField
 	SelectDataGrid<Enterprise> enterpriseDataGrid;
 
 	private EnterprisesServiceAsync enterprisesService;
+
+	private List<Cost> costs;
 
 	@Override
 	public void onModuleLoad() {
@@ -74,7 +89,7 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		GWT.<MainEntryPoint.AonResources> create(
 				MainEntryPoint.AonResources.class).css().ensureInjected();
 
-		// Create the UI defined in Employee.ui.xml.
+		// Create the UI defined in MainCalculator.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
 
 		// Add the outer panel to the RootLayoutPanel, so that it will be
@@ -89,36 +104,10 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		enterprisesService = new EnterprisesServiceAsyncDecorator(
 				gwtEnterprisesService);
 
-		// It's a bit tricky, you're free to change, but look it it's pretty
-		// isn't it.
-		(new AsyncDataProvider<Enterprise>() {
-			// called when the table requests a new range of data. You can push
-			// data back to the displays using.
-			@Override
-			protected void onRangeChanged(HasData<Enterprise> display) {
-				// Get the new range.
-				final Range range = display.getVisibleRange();
-				// Query the data asynchronously.
-				enterprisesService.getEnterprises(range.getStart(),
-						range.getLength(),
-						new AsyncCallback<List<Enterprise>>() {
+		initAsyncEnterprisesProvider();
+		initEnterprisesSelectionHandler();
 
-							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub
-							}
-
-							@Override
-							public void onSuccess(List<Enterprise> result) {
-								// Push the data to the displays.
-								// AsyncDataProvider will only update
-								// displays that are within range of the data.
-								updateRowData(range.getStart(), result);
-							}
-						});
-			}
-		}).addDataDisplay(enterpriseDataGrid);
-
+		clearDbMonthsListBox();
 		monthListBox.setSelectedMonth(new Date());
 	}
 
@@ -128,7 +117,7 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 	void onCalcButtonClicked(ClickEvent click) {
 		resultsPanel.clear();
 		calculate();
-		if ( !isResultsPanelVisible() ) 
+		if (!isResultsPanelVisible())
 			showResultsPanel();
 	}
 
@@ -145,14 +134,16 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		requestDataBuffer.append("&" + ISSUE_DATE + "="
 				+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
 
-		for (Enterprise enterprise : enterpriseDataGrid.getSelectedItems())
-			requestDataBuffer.append("&" + ENPERPRISES + "="
-					+ enterprise.getId());
-		
-		if ( saveCheckBox.getValue() )
-			requestDataBuffer.append("&" + SAVE );
-		if ( compareCheckBox.getValue() )
-			requestDataBuffer.append("&" + COMPARE );
+		Date checkMonth = getCheckMonth();
+		if (checkMonth != null)
+			requestDataBuffer.append("&" + CHECK_DATE + "="
+					+ DATE_FORMAT.format(checkMonth));
+
+		for (int enterpriseId : getSelectedEnterprisesIds())
+			requestDataBuffer.append("&" + ENPERPRISES + "=" + enterpriseId);
+
+		// requestDataBuffer.append("&" + SAVE );
+		// requestDataBuffer.append("&" + COMPARE );
 
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open("POST", CALC_URL);
@@ -175,23 +166,200 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 					resultsPanel.addHTML(html);
 					loaded = text.length();
 				}
-				
+
 			}
 		});
-		
 
 		xhr.send(requestDataBuffer.toString());
 
 	}
-	
+
 	private void showResultsPanel() {
-		splitLayoutPanel.setWidgetSize(
-				footPanel, Window.getClientHeight() / 4);
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
 	}
-	
+
 	private boolean isResultsPanelVisible() {
 		return splitLayoutPanel.getWidgetSize(footPanel) > 0;
 	}
-	
 
+	private void initAsyncEnterprisesProvider() {
+		// It's a bit tricky, you're free to change, but look it it's pretty
+		// isn't it.
+		(new AsyncDataProvider<Enterprise>() {
+			// called when the table requests a new range of data. You can push
+			// data back to the displays using.
+			@Override
+			protected void onRangeChanged(HasData<Enterprise> display) {
+				// Get the new range.
+				final Range range = display.getVisibleRange();
+				// Query the data asynchronously.
+				enterprisesService.getEnterprises(range.getStart(),
+						range.getLength(),
+						new AsyncCallback<List<Enterprise>>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								// TODO Auto-generated method stub
+							}
+
+							@Override
+							public void onSuccess(List<Enterprise> enterprises) {
+								// Push the data to the displays.
+								// AsyncDataProvider will only update
+								// displays that are within range of the data.
+								updateRowData(range.getStart(), enterprises);
+							}
+						});
+			}
+		}).addDataDisplay(enterpriseDataGrid);
+
+	}
+
+	private void onSelectionChange() {
+
+		List<Integer> enterpriseIds = getSelectedEnterprisesIds();
+
+		calcButton.setEnabled(enterpriseIds != null);
+
+		if (enterpriseIds == null) {
+			calcButton.setEnabled(false);
+			Set<Date> dbMonths = Collections.emptySet();
+			monthListBox.setHighLightMonths(dbMonths);
+
+			clearDbMonthsListBox();
+
+		} else {
+			calcButton.setEnabled(true);
+
+			enterprisesService.getEnterprisesCosts(enterpriseIds,
+					new AsyncCallback<List<Cost>>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Auto-generated method stub
+							dbMonthListBox.clear();
+						}
+
+						@Override
+						public void onSuccess(List<Cost> costs) {
+							syncDbMonthsListBox(costs);
+							SortedSet<Date> dbMonthsSet = getMonthsSet(costs,
+									Salary.Type.SALARY);
+							monthListBox.setHighLightMonths(dbMonthsSet);
+							monthListBox.setSelectedMonth(monthListBox
+									.getSelectedMonth());
+							monthListBox.setSelectedMonth(monthListBox
+									.getSelectedMonth());
+
+						}
+					});
+		}
+
+	}
+
+	private void clearDbMonthsListBox() {
+		dbMonthListBox.clear();
+		dbMonthListBox.addItem(
+				"No existen n\u00f3minas para las empresas seleccionadas", "");
+		dbMonthListBox.setSelectedIndex(0);
+
+	}
+
+	private void syncDbMonthsListBox(List<Cost> costs) {
+		this.costs = costs;
+		dbMonthListBox.clear();
+		dbMonthListBox.addItem("Ninguna", "");
+		for (Cost cost : costs) {
+			dbMonthListBox.addItem(MONTH_DATE_TIME_FORMAT
+					.format(getMonth(cost))
+					+ " ( "
+					+ cost.getSalariesCount()
+					+ " ) ");
+		}
+		dbMonthListBox.setSelectedIndex(0);
+	}
+
+	private Date getCheckMonth() {
+		int index = dbMonthListBox.getSelectedIndex();
+		return index == 0 ? null : getMonth(costs.get(index - 1));
+	}
+
+	private void initEnterprisesSelectionHandler() {
+
+		MultiSelectionModel<Enterprise> model = enterpriseDataGrid
+				.getMultiSelectionModel();
+		model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				MainCalculator.this.onSelectionChange();
+			}
+		});
+	}
+
+	private List<Integer> getSelectedEnterprisesIds() {
+		if (!enterpriseDataGrid.isAnySelected())
+			return null;
+		if (enterpriseDataGrid.isAllSelected())
+			return Collections.emptyList();
+
+		Set<Enterprise> enterprises = enterpriseDataGrid.getSelectedItems();
+		List<Integer> enterpriseIds = new ArrayList<Integer>();
+		for (Enterprise enterprise : enterprises)
+			enterpriseIds.add(enterprise.getId());
+		return enterpriseIds;
+	}
+
+	private static Date getMonth(Cost cost) {
+		return new Date(cost.getYear() - 1900, cost.getMonth() - 1, 0);
+	}
+
+	private static SortedSet<Date> getMonthsSet(Collection<Cost> costs,
+			Salary.Type... types) {
+		SortedSet<Date> months = new TreeSet<Date>();
+		for (Cost cost : costs) {
+			if (getCount(cost, types) > 0)
+				months.add(getMonth(cost));
+		}
+		return months;
+	}
+
+	private static int getCount(Cost cost, Salary.Type... types) {
+		int count = 0;
+		for (Type type : types)
+			count += getCount(cost, type);
+		return count;
+	}
+
+	private static int getCount(final Cost cost, Salary.Type type) {
+
+		return type.accept(new TypeVisitor<Integer>() {
+
+			@Override
+			public Integer visitSalary(Type type) {
+				return cost.getSalariesCount();
+			}
+
+			@Override
+			public Integer visitExtra(Type type) {
+				return cost.getExtrasCount();
+			}
+
+			@Override
+			public Integer visitSettle(Type type) {
+				return cost.getSettlesCount();
+			}
+
+			@Override
+			public Integer visitDelay(Type type) {
+				return cost.getDelaysCount();
+			}
+
+			@Override
+			public Integer visitNotEnjoyedVacations(Type type) {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+		});
+	}
 }

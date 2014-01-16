@@ -8,6 +8,8 @@ import com.esferalia.aon.gwt.payroll.shared.EvalSyntaxErrorException;
 import com.esferalia.aon.gwt.payroll.shared.EvalWarning;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -245,45 +247,46 @@ public abstract class Item<T extends Enum<?>> extends ResizeComposite {
 		this.contextProvider = contextProvider;
 	}
 
+	public void showName(boolean show) {
+		Element el = mainGrid.getRowFormatter().getElement(0);
+		if (show)
+			el.getStyle().clearDisplay();
+		else
+			el.getStyle().setDisplay(Display.NONE);
+	}
+	
+	public void addStyleName(String style){
+		mainGrid.addStyleName(style);
+	}
+
 	// ------------------------------------------
 	// UiHandlers
 	// ------------------------------------------
 	/*
-	@UiHandler("descriptionSuggestBox")
-	void onDescriptionSuggestBoxChange(ValueChangeEvent<String> event) {
-		showOrHideResetDescriptionButton();
-	}
-
-	@UiHandler("resetDescriptionButton")
-	void onResetDescriptionButtonClick(ClickEvent event) {
-		setDescription(concept.getDescription());
-	}
-
-	@UiHandler("deductionTextBox")
-	void onPaymentTextBoxChange(BlurEvent event) {
-		showOrHideResetPaymentButton();
-	}
-
-	@UiHandler("resetDeductionButton")
-	void onResetPaymentButtonClick(ClickEvent event) {
-		setDeductionExpression(concept.getExpression());
-	}
-
-	@UiHandler("typeListBox")
-	void onTypeListBoxChange(ChangeEvent event) {
-		showOrHideResetTypeButton();
-	}
-
-	@UiHandler("resetTypeButton")
-	void onResetTypeButtonClick(ClickEvent event) {
-		setType(concept.getType());
-	}
-
-	@UiHandler("fxDeductionButton")
-	void onFxPaymentButtonClick(ClickEvent event) {
-		showFxDialog((ExpressionTextBox) deductionTextBox);
-	}
-	*/
+	 * @UiHandler("descriptionSuggestBox") void
+	 * onDescriptionSuggestBoxChange(ValueChangeEvent<String> event) {
+	 * showOrHideResetDescriptionButton(); }
+	 * 
+	 * @UiHandler("resetDescriptionButton") void
+	 * onResetDescriptionButtonClick(ClickEvent event) {
+	 * setDescription(concept.getDescription()); }
+	 * 
+	 * @UiHandler("deductionTextBox") void onPaymentTextBoxChange(BlurEvent
+	 * event) { showOrHideResetPaymentButton(); }
+	 * 
+	 * @UiHandler("resetDeductionButton") void
+	 * onResetPaymentButtonClick(ClickEvent event) {
+	 * setDeductionExpression(concept.getExpression()); }
+	 * 
+	 * @UiHandler("typeListBox") void onTypeListBoxChange(ChangeEvent event) {
+	 * showOrHideResetTypeButton(); }
+	 * 
+	 * @UiHandler("resetTypeButton") void onResetTypeButtonClick(ClickEvent
+	 * event) { setType(concept.getType()); }
+	 * 
+	 * @UiHandler("fxDeductionButton") void onFxPaymentButtonClick(ClickEvent
+	 * event) { showFxDialog((ExpressionTextBox) deductionTextBox); }
+	 */
 	protected abstract void initTypeListBox();
 
 	protected void initUiHandlers() {

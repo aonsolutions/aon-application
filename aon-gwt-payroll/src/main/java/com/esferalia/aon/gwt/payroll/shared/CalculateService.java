@@ -4,12 +4,13 @@ package com.esferalia.aon.gwt.payroll.shared;
 public interface CalculateService {
 	
 	static String SAVE = "save";
-	static String COMPARE = "compare";
 
 	static String END_DATE = "endDate";
 	static String START_DATE = "startDate";
 	static String ISSUE_DATE = "issueDate";
 	
+	static String CHECK_DATE = "checkDate";
+
 	static String EMPLOYEES = "employees";
 	static String WORKPLACES = "workplaces";
 	static String ENPERPRISES = "enterprises";

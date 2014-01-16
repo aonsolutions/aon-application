@@ -115,36 +115,43 @@
 					</aon:panelGroup>
 
 					<!--
-						CONCEPTS 
+						AUXILIARS 
 						 -->
 					<aon:panelGroup>
-						<aon:panelGrid id="group_config_editable"
+						<aon:panelGrid id="group_payroll_contrata_auxiliaries"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-offer aon-direct-access-panel">
+							headerClass="aon-icon-utilities aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.accounting_concepts}" />
+								<aon:outputText value="#{bundle.aon_auxiliaries}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="paymentConcept"
-										action="paymentConcept_search"
-										actionListener="#{paymentConcept.onEditSearch}"
-										value="#{bundle.payroll_paymentConcept_module}" />
+									<aon:commandLink id="trainingCenter-payroll"
+										action="trainingCenter_list-payroll"
+										value="#{bundle.payroll_trainingCenter_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="deductionConcept"
-										action="deductionConcept_search"
-										actionListener="#{deductionConcept.onEditSearch}"
-										value="#{bundle.payroll_deductionConcept_module}" />
+									<aon:commandLink id="contractMode-payroll"
+										action="contractOption_list-payroll"
+										actionListener="#{contractModel.onReset}"
+										value="#{bundle.payroll_contract_mode_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="bonusConcept" action="bonusConcept_search"
-										actionListener="#{bonusConcept.onEditSearch}"
-										value="#{bundle.payroll_bonusConcept_module}" />
+									<aon:commandLink id="sepeTables-payroll"
+										action="sepeTables_list-payroll"
+										actionListener="#{sepeTables.onInit}"
+										value="#{bundle.sepe_sepeTables_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="geozoneIrpf-payroll"
+										action="geozoneIrpf_search-payroll" 
+										actionListener="#{geozoneIrpf.onInitialize}" 
+										value="#{bundle.payroll_geozoneIrpf_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
+
 
 					<!--
 						EMPLOYEES 
@@ -223,37 +230,36 @@
 						</aon:panelGrid>
 					</aon:panelGroup>
 					
-					<!-- 
-							GLOBALS
+					<!--
+						CONFIG 
 						 -->
 					<aon:panelGroup>
-						<aon:panelGrid id="group_system_editable"
+						<aon:panelGrid id="group_payroll_contrata_parameters"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-company aon-direct-access-panel">
+							headerClass="aon-direct-access-panel aon-icon-config">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.payroll_system}" />
+								<aon:outputText value="#{bundle.aon_configuration}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
+
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="systemPayment"
-										action="systemPayment_search"
-										actionListener="#{systemPayment.onEditSearch}"
-										value="#{bundle.payroll_systemPayment_module}" />
+									<aon:commandLink id="gwt_main_system" action="gwt_main_system"
+										value="#{bundle.payroll_system}" target="gwt">
+									</aon:commandLink>
 								</aon:div>
+
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="systemDeduction"
-										action="systemDeduction_search"
-										actionListener="#{systemDeduction.onEditSearch}"
-										value="#{bundle.payroll_systemDeduction_module}" />
+									<aon:commandLink id="calendar-payroll"
+										action="#{calendar.initialAction}"
+										actionListener="#{calendar.onEditSearch}"
+										value="#{bundle.calendar_menu_group}">
+										<aon:actionListener method="#{calendar.onInitialize}" />
+									</aon:commandLink>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="systemData" action="systemData_grid"
-										actionListener="#{systemData.onSearch}"
-										value="#{bundle.payroll_systemData_module}" />
-								</aon:div>
+
 							</aon:div>
 						</aon:panelGrid>
-					</aon:panelGroup>					
+					</aon:panelGroup>
 
 					<!--
 						PROCESS 
@@ -362,44 +368,6 @@
 					</aon:panelGroup>
 					
 					<!--
-						AUXILIARS 
-						 -->
-					<aon:panelGroup>
-						<aon:panelGrid id="group_payroll_contrata_auxiliaries"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-utilities aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_auxiliaries}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="trainingCenter-payroll"
-										action="trainingCenter_list-payroll"
-										value="#{bundle.payroll_trainingCenter_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="contractMode-payroll"
-										action="contractOption_list-payroll"
-										actionListener="#{contractModel.onReset}"
-										value="#{bundle.payroll_contract_mode_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="sepeTables-payroll"
-										action="sepeTables_list-payroll"
-										actionListener="#{sepeTables.onInit}"
-										value="#{bundle.sepe_sepeTables_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="geozoneIrpf-payroll"
-										action="geozoneIrpf_search-payroll" 
-										actionListener="#{geozoneIrpf.onInitialize}" 
-										value="#{bundle.payroll_geozoneIrpf_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-					</aon:panelGroup>
-
-					<!--
 						EMPTY 
 						 -->
 					<aon:panelGroup>
@@ -410,38 +378,6 @@
 					<aon:panelGroup>
 					</aon:panelGroup>
 
-					<!--
-						CONFIG 
-						 -->
-					<aon:panelGroup>
-						<aon:panelGrid id="group_payroll_contrata_parameters"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-config">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_configuration}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="enterprise-payroll"
-										action="#{enterprise.initialAction}"
-										value="#{bundle.company_data_module}">
-										<aon:actionListener method="#{enterprise.onEditSearch}" />
-									</aon:commandLink>
-								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="calendar-payroll"
-										action="#{calendar.initialAction}"
-										actionListener="#{calendar.onEditSearch}"
-										value="#{bundle.calendar_menu_group}">
-										<aon:actionListener method="#{calendar.onInitialize}" />
-									</aon:commandLink>
-								</aon:div>
-
-							</aon:div>
-						</aon:panelGrid>
-					</aon:panelGroup>
 
 
 					<c:if test="#{!domainSwitcher.domainManagementAvailable}">

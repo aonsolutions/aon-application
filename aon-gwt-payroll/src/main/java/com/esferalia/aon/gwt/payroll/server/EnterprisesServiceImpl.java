@@ -1,11 +1,14 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
+import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Date;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,11 +16,14 @@ import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
@@ -26,13 +32,20 @@ import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractBonusColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.DeductionConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.DomainColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
-import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 
 /**
  * The server side implementation of the RPC service.
@@ -59,40 +72,176 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	@Override
 	public Bonus saveBonusConcept(Bonus bonus) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		try {
+			initFacesContext();
+			connection = AonServletUtils.getConnection();
+
+			Integer domainID = getDomainID();
+
+			if (bonus.getId() != null && domainID.equals(bonus.getDomainId())) {
+				updateBonusConcept(connection, bonus);
+			} else {
+				int bonusID = insertBonusConcept(connection, bonus, domainID);
+				if (bonus.getId() != null) {
+					updateBonuses(connection, domainID, bonus.getId(), bonusID);
+				} // end if: Update all bonuses of this domain that references
+					// old concept.
+				bonus.setId(bonusID);
+				bonus.setDomainId(domainID);
+			}
+
+			return bonus;
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
 	}
 
 	@Override
 	public Payment savePaymentConcept(Payment payment) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		try {
+			initFacesContext();
+			connection = AonServletUtils.getConnection();
 
+			Integer domainID = getDomainID();
+
+			if (payment.getId() != null
+					&& domainID.equals(payment.getDomainId())) {
+				updatePaymentConcept(connection, payment);
+			} else {
+				int paymentID = insertPaymentConcept(connection, payment,
+						domainID);
+				if (payment.getId() != null) {
+					updatePayments(connection, domainID, payment.getId(),
+							paymentID);
+				} // end if: Update all payments of this domain that references
+					// old concept.
+				payment.setId(paymentID);
+				payment.setDomainId(domainID);
+			}
+
+			return payment;
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
 	}
 
 	@Override
 	public Deduction saveDeductionConcept(Deduction deduction) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		try {
+			initFacesContext();
+			connection = AonServletUtils.getConnection();
 
+			Integer domainID = getDomainID();
+
+			if (deduction.getId() != null
+					&& domainID.equals(deduction.getDomainId())) {
+				updateDeductionConcept(connection, deduction);
+			} else {
+				int deductionID = insertDeductionConcept(connection, deduction,
+						domainID);
+				if (deduction.getId() != null) {
+					updateDeductions(connection, domainID, deduction.getId(),
+							deductionID);
+				} // end if: Update all deductions of this domain that
+					// references old concept.
+				deduction.setId(deductionID);
+				deduction.setDomainId(domainID);
+			}
+
+			return deduction;
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
 	}
 
 	@Override
 	public void deleteBonusConcept(Bonus bonus) {
-		// TODO Auto-generated method stub
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection();
 
+			deleteBonusConcept(connection, bonus);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
 	}
 
 	@Override
 	public void deleteDeductionConcept(Deduction deduction) {
-		// TODO Auto-generated method stub
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection();
 
+			deleteDeductionConcept(connection, deduction);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
 	}
 
 	@Override
 	public void deletePaymentConcept(Payment payment) {
-		// TODO Auto-generated method stub
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection();
 
+			deletePaymentConcept(connection, payment);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
 	}
 
 	@Override
@@ -216,10 +365,50 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
+	public List<Cost> getEnterprisesCosts(List<Integer> enterpriseIds) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection();
+
+			return getEnterpriseCosts(connection, enterpriseIds);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+
 	// --------------------------------------------------------- Private methods
 
-	private static  Payment updatePaymentConcept(Connection connection, Payment payment)
-			throws SQLException {
+	private static void deletePaymentConcept(Connection connection,
+			Payment payment) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("DELETE "
+					+ " WHERE " + PaymentConceptColumns.ID + " = ? "
+					);
+			//@formatter:on
+
+			stmt.setInt(1, payment.getId());
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static void updatePaymentConcept(Connection connection,
+			Payment payment) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
 			//@formatter:off
@@ -234,32 +423,155 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ " WHERE " + PaymentConceptColumns.ID + " = ? "
 					);
 			//@formatter:on
-			
+
 			stmt.setString(1, payment.getName());
-			
+
 			Payment.Type type = payment.getType();
-			if ( type != null )
+			if (type != null)
 				stmt.setInt(2, type.ordinal());
 			else
 				stmt.setNull(2, Types.INTEGER);
-				
+
 			stmt.setString(3, payment.getDescription());
 			stmt.setString(4, payment.getExpression());
 			stmt.setString(5, payment.getIrpfExpression());
 			stmt.setString(6, payment.getQuoteExpression());
 
 			stmt.setInt(7, payment.getId());
-			
-			return payment;
-		
+
+			stmt.executeUpdate();
+
 		} finally {
 			if (stmt != null)
 				stmt.close();
 		}
 	}
 
-	private static  Deduction updateDeductionConcept(Connection connection, Deduction deduction)
-			throws SQLException {
+	private static int insertPaymentConcept(Connection connection,
+			Payment payment, Integer domainId) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("INSERT INTO "
+					+ SQLConstants.PAYMENT_CONCEPT + " ( "
+					+ PaymentConceptColumns.CODE + ", "
+					+ PaymentConceptColumns.TYPE + ", "
+					+ PaymentConceptColumns.DESCRIPTION + ", "
+					+ PaymentConceptColumns.EXPRESSION + ", "
+					+ PaymentConceptColumns.IRPF_EXPRESSION + ", "
+					+ PaymentConceptColumns.QUOTE_EXPRESSION + ", "
+					+ PaymentConceptColumns.DOMAIN 
+					+ " VALUES ( ?,?,?,?,?,?,? ) "
+					, new String[] { PaymentConceptColumns.ID } );
+			//@formatter:on
+
+			stmt.setString(1, payment.getName());
+
+			Payment.Type type = payment.getType();
+			if (type != null)
+				stmt.setInt(2, type.ordinal());
+			else
+				stmt.setNull(2, Types.INTEGER);
+
+			stmt.setString(3, payment.getDescription());
+			stmt.setString(4, payment.getExpression());
+			stmt.setString(5, payment.getIrpfExpression());
+			stmt.setString(6, payment.getQuoteExpression());
+
+			stmt.setInt(7, domainId);
+
+			stmt.executeUpdate();
+
+			rs = stmt.getGeneratedKeys();
+			rs.next();
+			return rs.getInt(1);
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static void updatePayments(Connection connection, Integer domainID,
+			Integer oldConceptID, Integer newConceptID) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("UPDATE "
+					+ SQLConstants.SYSTEM_PAYMENT + " SET "
+					+ SystemPaymentColumns.PAYMENT_CONCEPT + " = ? "
+					+ " WHERE " + SystemPaymentColumns.DOMAIN + " = ? "
+					+ " AND " + SystemPaymentColumns.PAYMENT_CONCEPT + " = ? "
+					);
+			//@formatter:on
+
+			stmt.setInt(1, newConceptID);
+			stmt.setInt(2, domainID);
+			stmt.setInt(3, oldConceptID);
+
+			stmt.executeUpdate();
+			stmt.close();
+
+			//@formatter:off
+			stmt = connection.prepareStatement("UPDATE "
+					+ SQLConstants.AGREEMENT_PAYMENT + " SET "
+					+ AgreementPaymentColumns.PAYMENT_CONCEPT + " = ? "
+					+ " WHERE " + AgreementPaymentColumns.DOMAIN + " = ? "
+					+ " AND " + AgreementPaymentColumns.PAYMENT_CONCEPT + " = ? "
+					);
+			//@formatter:on
+
+			stmt.setInt(1, newConceptID);
+			stmt.setInt(2, domainID);
+			stmt.setInt(3, oldConceptID);
+
+			stmt.executeUpdate();
+			stmt.close();
+
+			//@formatter:off
+			stmt = connection.prepareStatement("UPDATE "
+					+ SQLConstants.CONTRACT_PAYMENT + " SET "
+					+ ContractPaymentColumns.PAYMENT_CONCEPT + " = ? "
+					+ " WHERE " + ContractPaymentColumns.DOMAIN + " = ? "
+					+ " AND " + ContractPaymentColumns.PAYMENT_CONCEPT + " = ? "
+					);
+			//@formatter:on
+
+			stmt.setInt(1, newConceptID);
+			stmt.setInt(2, domainID);
+			stmt.setInt(3, oldConceptID);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static void deleteDeductionConcept(Connection connection,
+			Deduction deduction) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("DELETE "
+					+ " WHERE " + DeductionConceptColumns.ID + " = ? "
+					);
+			//@formatter:on
+
+			stmt.setInt(1, deduction.getId());
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static void updateDeductionConcept(Connection connection,
+			Deduction deduction) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
 			//@formatter:off
@@ -272,29 +584,131 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ " WHERE " + DeductionConceptColumns.ID + " = ? "
 					);
 			//@formatter:on
-			
+
 			stmt.setString(1, deduction.getName());
-			
+
 			Deduction.Type type = deduction.getType();
-			if ( type != null )
+			if (type != null)
 				stmt.setInt(2, type.ordinal());
 			else
 				stmt.setNull(2, Types.INTEGER);
-				
+
 			stmt.setString(3, deduction.getDescription());
 			stmt.setString(4, deduction.getExpression());
-			
+
 			stmt.setInt(5, deduction.getId());
 
-			return deduction;
-		
+			stmt.executeUpdate();
 		} finally {
 			if (stmt != null)
 				stmt.close();
 		}
 	}
 
-	private static  Bonus updateBonusConcept(Connection connection, Bonus bonus)
+	private static int insertDeductionConcept(Connection connection,
+			Deduction deduction, Integer domainId) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("INSERT INTO "
+					+ SQLConstants.DEDUCTION_CONCEPT + " ( "
+					+ DeductionConceptColumns.CODE + ", "
+					+ DeductionConceptColumns.TYPE + ", "
+					+ DeductionConceptColumns.DESCRIPTION + ", "
+					+ DeductionConceptColumns.EXPRESSION + ", "
+					+ DeductionConceptColumns.DOMAIN 
+					+ " VALUES ( ?,?,?,?,? ) "
+					, new String[] { DeductionConceptColumns.ID } );
+			//@formatter:on
+
+			stmt.setString(1, deduction.getName());
+
+			Deduction.Type type = deduction.getType();
+			if (type != null)
+				stmt.setInt(2, type.ordinal());
+			else
+				stmt.setNull(2, Types.INTEGER);
+
+			stmt.setString(3, deduction.getDescription());
+			stmt.setString(4, deduction.getExpression());
+			stmt.setInt(5, domainId);
+
+			stmt.executeUpdate();
+
+			rs = stmt.getGeneratedKeys();
+			rs.next();
+			return rs.getInt(1);
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static void updateDeductions(Connection connection,
+			Integer domainID, Integer oldConceptID, Integer newConceptID)
+			throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("UPDATE "
+					+ SQLConstants.SYSTEM_DEDUCTION+ " SET "
+					+ SystemDeductionColumns.DEDUCTION_CONCEPT + " = ? "
+					+ " WHERE " + SystemDeductionColumns.DOMAIN + " = ? "
+					+ " AND " + SystemDeductionColumns.DEDUCTION_CONCEPT + " = ? "
+					);
+			//@formatter:on
+
+			stmt.setInt(1, newConceptID);
+			stmt.setInt(2, domainID);
+			stmt.setInt(3, oldConceptID);
+
+			stmt.executeUpdate();
+			stmt.close();
+
+			//@formatter:off
+			stmt = connection.prepareStatement("UPDATE "
+					+ SQLConstants.CONTRACT_DEDUCTION + " SET "
+					+ ContractDeductionColumns.DEDUCTION_CONCEPT + " = ? "
+					+ " WHERE " + ContractDeductionColumns.DOMAIN + " = ? "
+					+ " AND " + ContractDeductionColumns.DEDUCTION_CONCEPT + " = ? "
+					);
+			//@formatter:on
+
+			stmt.setInt(1, newConceptID);
+			stmt.setInt(2, domainID);
+			stmt.setInt(3, oldConceptID);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static void deleteBonusConcept(Connection connection, Bonus bonus)
+			throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("DELETE "
+					+ " WHERE " + BonusConceptColumns.ID + " = ? "
+					);
+			//@formatter:on
+
+			stmt.setInt(1, bonus.getId());
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static void updateBonusConcept(Connection connection, Bonus bonus)
 			throws SQLException {
 		PreparedStatement stmt = null;
 		try {
@@ -307,21 +721,82 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ " WHERE " + BonusConceptColumns.ID + " = ? "
 					);
 			//@formatter:on
-			
-			
+
 			Bonus.Type type = bonus.getType();
-			if ( type != null )
+			if (type != null)
 				stmt.setInt(1, type.ordinal());
 			else
 				stmt.setNull(1, Types.INTEGER);
-				
+
 			stmt.setString(2, bonus.getDescription());
 			stmt.setString(3, bonus.getExpression());
-			
+
 			stmt.setInt(4, bonus.getId());
 
-			return bonus;
-		
+			stmt.executeUpdate();
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static int insertBonusConcept(Connection connection, Bonus bonus,
+			Integer domainId) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("INSERT INTO "
+					+ SQLConstants.BONUS_CONCEPT + " ( "
+					+ BonusConceptColumns.TYPE + ", "
+					+ BonusConceptColumns.DESCRIPTION + ", "
+					+ BonusConceptColumns.EXPRESSION + ", "
+					+ BonusConceptColumns.DOMAIN 
+					+ " VALUES ( ?,?,?,? ) "
+					, new String[] { DeductionConceptColumns.ID } );
+			//@formatter:on
+
+			Bonus.Type type = bonus.getType();
+			if (type != null)
+				stmt.setInt(1, type.ordinal());
+			else
+				stmt.setNull(1, Types.INTEGER);
+
+			stmt.setString(2, bonus.getDescription());
+			stmt.setString(3, bonus.getExpression());
+			stmt.setInt(4, domainId);
+
+			stmt.executeUpdate();
+
+			rs = stmt.getGeneratedKeys();
+			rs.next();
+			return rs.getInt(1);
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+
+	private static void updateBonuses(Connection connection, Integer domainID,
+			Integer oldConceptID, Integer newConceptID) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			//@formatter:off
+			stmt = connection.prepareStatement("UPDATE "
+					+ SQLConstants.CONTRACT_BONUS + " SET "
+					+ ContractBonusColumns.BONUS_CONCEPT + " = ? "
+					+ " WHERE " + ContractBonusColumns.DOMAIN + " = ? "
+					+ " AND " + ContractBonusColumns.BONUS_CONCEPT + " = ? "
+					);
+			//@formatter:on
+
+			stmt.setInt(1, newConceptID);
+			stmt.setInt(2, domainID);
+			stmt.setInt(3, oldConceptID);
+
+			stmt.executeUpdate();
+
 		} finally {
 			if (stmt != null)
 				stmt.close();
@@ -333,6 +808,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
+			//@formatter:off
 			stmt = connection.prepareStatement("SELECT * FROM "
 					+ SQLConstants.ENTERPRISE + ", " + SQLConstants.REGISTRY
 					+ ", " + SQLConstants.DOMAIN + " WHERE "
@@ -343,7 +819,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					+ "." + DomainColumns.ID + " AND ( " + SQLConstants.DOMAIN
 					+ "." + DomainColumns.ID + " = ? " + " OR "
 					+ SQLConstants.DOMAIN + "." + DomainColumns.PARENT
-					+ " = ? " + ")" + " LIMIT ?, ?");
+					+ " = ? " + ")"
+					+ " ORDER BY " + SQLConstants.REGISTRY + "." + RegistryColumns.NAME
+					+ " LIMIT ?, ?");
+			//@formatter:on
+
 			stmt.setInt(1, domainId);
 			stmt.setInt(2, domainId);
 
@@ -436,8 +916,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
-	private static  List<Bonus> getBonusConcepts(Connection connection, int offset,
-			int limit, Integer domainID, Integer parentDomainID)
+	private static List<Bonus> getBonusConcepts(Connection connection,
+			int offset, int limit, Integer domainID, Integer parentDomainID)
 			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
@@ -487,8 +967,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static  List<Payment> getPaymentConcepts(Connection connection, int offset,
-			int limit, Integer domainID, Integer parentDomainID)
+	private static List<Payment> getPaymentConcepts(Connection connection,
+			int offset, int limit, Integer domainID, Integer parentDomainID)
 			throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
@@ -543,7 +1023,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static  List<Deduction> getDeductionConcepts(Connection connection,
+	private static List<Deduction> getDeductionConcepts(Connection connection,
 			int offset, int limit, Integer domainID, Integer parentDomainID)
 			throws SQLException {
 		ResultSet rs = null;
@@ -593,6 +1073,88 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				rs.close();
 			if (stmt != null)
 				stmt.close();
+		}
+	}
+
+	private static List<Cost> getEnterpriseCosts(Connection connection,
+			List<Integer> enterpriseIds) throws SQLException {
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+
+		try {
+			String yearCol = "YEAR";
+			String monthCol = "MONTH";
+			String salariesCol = "SALARIES";
+			String extrasCol = "EXTRAS";
+			String settlesCol = "SETTLES";
+			String delaysCol = "DELAYS";
+
+			;
+
+			// We asume that one enterprise one domain. This way SELECT it's
+			// more clear.
+			//@formatter:off
+			String sql = "SELECT" 
+					+ " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol 
+					+ ", YEAR(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol
+					+ ", COUNT( IF(" + SALARY + "." + SalaryColumns.TYPE + "= ? " +",1,NULL)) " +  salariesCol
+					+ ", COUNT( IF(" + SALARY + "." + SalaryColumns.TYPE + "= ? " +",1,NULL)) " +  extrasCol
+					+ ", COUNT( IF(" + SALARY + "." + SalaryColumns.TYPE + "= ? " +",1,NULL)) " +  settlesCol
+					+ ", COUNT( IF(" + SALARY + "." + SalaryColumns.TYPE + "= ? " +",1,NULL)) " +  delaysCol
+					+ " FROM " + ENTERPRISE + ", " + SALARY   
+					+ " WHERE " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SALARY + "." + SalaryColumns.DOMAIN 
+					+ ( enterpriseIds.size() == 0 ? "" : " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " IN ( " + StringUtils.reduce(Collections.nCopies(enterpriseIds.size(), "?"), ", ") + " )")
+					+ " GROUP BY 1, 2" + " ORDER BY 2 , 1 ASC ";
+			//@formatter:on
+
+			stmt = connection.prepareStatement(sql);
+			int parameterIndex = 1;
+			stmt.setInt(parameterIndex++, SalaryType.SALARY.ordinal());
+			stmt.setInt(parameterIndex++, SalaryType.EXTRA.ordinal());
+			stmt.setInt(parameterIndex++, SalaryType.SETTLE.ordinal());
+			stmt.setInt(parameterIndex++, SalaryType.DELAY.ordinal());
+
+			for (Integer enterpriseId : enterpriseIds) {
+				stmt.setInt(parameterIndex++, enterpriseId);
+			}
+
+			rs = stmt.executeQuery();
+
+			List<Cost> costs = new LinkedList<Cost>();
+			while (rs.next()) {
+
+				int month = rs.getInt(monthCol);
+				// MySQL MONTH(date) function returns the month for date,
+				// in the range 1 to 12 for January to December, or 0 for
+				// dates such as '0000-00-00' or '2008-00-00' that have a zero
+				// month part.
+				if (month == 0) {
+					continue;
+				}
+
+				Cost cost = new Cost();
+				int year = rs.getInt(yearCol);
+
+				cost.setYear(year);
+				cost.setMonth(month - 1);
+				cost.setSalariesCount(rs.getInt(salariesCol));
+				cost.setExtrasCount(rs.getInt(extrasCol));
+				cost.setSettlesCount(rs.getInt(settlesCol));
+				cost.setDelaysCount(rs.getInt(delaysCol));
+
+				costs.add(cost);
+			}
+
+			return costs;
+
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				stmt.close();
+			}
 		}
 	}
 

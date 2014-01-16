@@ -16,6 +16,7 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.view.client.AbstractDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -87,7 +88,6 @@ public class MonthListBox extends ComboBox<Date> {
 			return template.span(monthStyles,
 					SafeHtmlUtils.fromString(getFormat().format(month)));
 		}
-
 	}
 
 	private Date lastMonth;
@@ -154,7 +154,7 @@ public class MonthListBox extends ComboBox<Date> {
 
 	// ------------------------------------------------------------------------
 
-	private List<Date> getMonths(int start, int length) {
+	protected List<Date> getMonths(int start, int length) {
 		List<Date> months = new ArrayList<Date>(length);
 		for (int i = 0; i < length; i++) {
 			months.add(getMonth(start + i));
@@ -162,12 +162,14 @@ public class MonthListBox extends ComboBox<Date> {
 		return months;
 	}
 
-	private Date getMonth(int index) {
+	protected Date getMonth(int index) {
 		return DateUtils.addMonths2Date(CalendarUtil.copyDate(firstMonth),
 				index);
 	}
 
-	private int getIndex(Date month) {
+	protected int getIndex(Date month) {
 		return DateUtils.getMonths(month, firstMonth);
 	}
+
+	// ------------------------------------------------------------------------
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -23,6 +24,7 @@ public interface EnterprisesServiceAsync {
 	void deleteDeductionConcept(Deduction deduction, AsyncCallback<Void> callback);
 	void getAgreements(int offset , int limit, AsyncCallback<List<Agreement>> callback);
 	void getEnterprises(int offset , int limit, AsyncCallback<List<Enterprise>> callback);
+	void getEnterprisesCosts(List<Integer> enterpriseIds, AsyncCallback<List<Cost>> callback);
 	void getBonusConcepts(int offset , int limit, AsyncCallback<List<Bonus>> callback);
 	void getPaymentConcepts(int offset , int limit, AsyncCallback<List<Payment>> callback);
 	void getDeductionConcepts(int offset , int limit, AsyncCallback<List<Deduction>> callback);

@@ -43,7 +43,7 @@
 
 			<g:StackLayoutPanel unit='EM'>
 
-				<g:stack ui:field="configStack">
+				<g:stack ui:field="agreementStack">
 					<g:header size='3'>
 						<div class='{style.stackHeader}'>
 							<div class='{style.configIcon}' />
@@ -52,6 +52,17 @@
 					</g:header>
 					<aon:Agreements ui:field='agreements' />
 				</g:stack>
+				<!--  
+				<g:stack ui:field="configStack">
+					<g:header size='3'>									
+						<div class='{style.stackHeader}'>
+							<div class='{style.configIcon}' />
+							CONFIGURACION
+						</div>
+					</g:header>
+					<aon:MetaData ui:field='metaData' />
+				</g:stack>
+				-->
 
 			</g:StackLayoutPanel>
 

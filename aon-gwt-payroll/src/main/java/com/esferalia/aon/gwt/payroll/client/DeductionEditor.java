@@ -5,8 +5,10 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
@@ -35,8 +37,16 @@ public class DeductionEditor extends ResizeComposite {
 		
 	}
 	
-	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------- UIHandlers
+	@UiHandler("acceptButton")
+	public void onAcceptClick(ClickEvent event){
+		
+	}
 	
+	@UiHandler("deleteButton")
+	public void onDeleteClick(ClickEvent event){
+		
+	}
 	// ------------------------------------------------------------------------ 
 	
 	private void dumpDeduction(Deduction deduction) {

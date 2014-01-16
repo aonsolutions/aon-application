@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 
 import com.code.aon.common.util.CommonUtil;
@@ -10,13 +11,15 @@ import com.esferalia.aon.payroll.sql.SQLReader.SalaryReader;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
+
 public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 
 	
 	private ISalaryBuilderListener listener;
 	private static final String FORMAT = "[%s]: %s - %s";
-	private static final String NO_SALARY_FORMAT  ="No hay nómina que calcular para: '%s' [%s,%s]";
-	private static final String TOTAL_LIQUID  ="Líquido Total a Percibir";
+	private static final String NO_SALARY_FORMAT  ="No hay n&oacute;mina para [%s]: %s - %s (%s...%s)";
+	private static final String TOTAL_LIQUID  ="L&iacute;quido Total a Percibir";
 	private static final String TOTAL_ENTERPRISE  ="Cuota de empresa";
 	
 	private boolean testTotalLiquid;
@@ -28,6 +31,9 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 	private int contractCount;
 	private int salaryCount;
 	private int rightTestedsalariesCount;
+	
+	private Date testEndDate = null; 
+	private Date testStartDate = null; 
 
 	AbstractSQL.ISalary dbSalary = null;
 	
@@ -36,6 +42,14 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 		testTotalLiquid = false;
 		testEnterpriseCost = false;
 		
+	}
+	
+	public void setTestEndDate(Date testDate) {
+		this.testEndDate = testDate;
+	}
+	
+	public void setTestStartDate(Date testStartDate) {
+		this.testStartDate = testStartDate;
 	}
 	
 	public AbstractSQL.ISalary getSalaryDraft()  {
@@ -72,14 +86,15 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 			if (listener != null && listener.isDebugEnabled()) {
 				String msg = String.format(FORMAT, 
 						salary.getEmployeeDocument(),
-						salary.getEnterpriseName(),
-						salary.getEmployeeName());
-				listener.onDebug(msg);
+						escapeHtml(salary.getEnterpriseName()),
+						escapeHtml(salary.getEmployeeName())
+						);
+				//listener.onDebug(msg);
 			}
 			
 			SalaryReader salaryReader = sqlReader.newSalaryReader();
-			salaryReader.setStartDate(salary.getStartDate());
-			salaryReader.setEndDate(salary.getEndDate());
+			salaryReader.setStartDate(getStartDate());
+			salaryReader.setEndDate(getEndDate());
 			salaryReader.setContract(salary.getContract());
 			salaryReader.setType(salary.getType());
 			
@@ -88,6 +103,8 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 			if ( dbSalary == null ) {
 				String msg = String.format(NO_SALARY_FORMAT, 
 						salary.getEmployeeDocument(),
+						escapeHtml(salary.getEnterpriseName()),
+						escapeHtml(salary.getEmployeeName()),
 						salary.getStartDate(),
 						salary.getEndDate());
 				onWarning(msg);
@@ -137,6 +154,15 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 	
 	
 	
+	// ------------------------------------------------------------------------
+	
+	private Date getEndDate() {
+		return testEndDate == null ? salary.getEndDate() : testEndDate;
+	}
+	
+	private Date getStartDate() {
+		return testStartDate == null ? salary.getStartDate() : testStartDate;
+	}
 
 	public static class UnExpectedValue extends Error{
 		
@@ -164,7 +190,7 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 	}
 
 	private static String format(String message, double expected, double actual) {
-			return String.format("%s diferente. En la nómina '%.2f', en el borrador '%.2f'", 
+			return String.format("%s diferente. En la n&oacute;mina '%.2f', en el borrador '%.2f'", 
 					message, CommonUtil.round(expected), CommonUtil.round(actual));
 	}
 	

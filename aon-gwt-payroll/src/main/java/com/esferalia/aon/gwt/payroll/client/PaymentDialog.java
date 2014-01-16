@@ -47,11 +47,11 @@ public class PaymentDialog extends CustomDialog {
 	}
 
 	public String getPaymentExpression() {
-		return payment.getPaymentExpression();
+		return payment.getExpression();
 	}
 
 	public void setPaymentExpression(String expression) {
-		payment.setPaymentExpression(expression);
+		payment.setExpression(expression);
 	}
 
 	public com.esferalia.aon.gwt.payroll.shared.Payment.Type getType() {

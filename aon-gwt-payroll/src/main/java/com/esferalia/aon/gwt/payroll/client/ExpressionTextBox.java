@@ -14,4 +14,11 @@ public class ExpressionTextBox extends TextBox {
 		// TODO Auto-generated constructor stub
 	}
 
+	
+	
+	// ------------------------------------------------------------------------
+	
+	private void initListeners(){
+		
+	}
 }

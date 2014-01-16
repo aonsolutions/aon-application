@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
@@ -60,6 +61,10 @@ public class MetaData extends ResizeComposite {
 	interface Templates extends SafeHtmlTemplates {
 		@SafeHtmlTemplates.Template("<img src=\"{0}\"/>")
 		SafeHtml img(SafeUri uri);
+
+		@SafeHtmlTemplates.Template("<span class=\"{0} aon-icon-commandButton\">{1}</span>")
+		SafeHtml menuItem(String style, String text);
+
 	}
 
 	public static class Resources {
@@ -249,23 +254,23 @@ public class MetaData extends ResizeComposite {
 
 		class AgreementContextMenu extends ContextMenu {
 
-			ScheduledCommand newCommand = new ScheduledCommand(){
+			ScheduledCommand newCommand = new ScheduledCommand() {
 				public void execute() {
 				};
 			};
-			ScheduledCommand copyCommand = new ScheduledCommand(){
+			ScheduledCommand copyCommand = new ScheduledCommand() {
 				public void execute() {
 				};
 			};
-			ScheduledCommand pasteCommand = new ScheduledCommand(){
+			ScheduledCommand pasteCommand = new ScheduledCommand() {
 				public void execute() {
 				};
 			};
-			ScheduledCommand deleteCommand = new ScheduledCommand(){
+			ScheduledCommand deleteCommand = new ScheduledCommand() {
 				public void execute() {
 				};
 			};
-			
+
 			private MenuItem copyItem;
 			private MenuItem pasteItem;
 			private MenuItem deleteItem;
@@ -275,32 +280,33 @@ public class MetaData extends ResizeComposite {
 				addItem("Nuevo", newCommand, AON.AON_ICON_RESET,
 						AON.AON_ICON_CMD_BUTTON);
 				addSeparator();
-				copyItem = addItem("Copiar", copyCommand ,
-						AON.AON_ICON_COPY, AON.AON_ICON_CMD_BUTTON);
+				copyItem = addItem("Copiar", copyCommand, AON.AON_ICON_COPY,
+						AON.AON_ICON_CMD_BUTTON);
 				copyItem.setEnabled(false);
-				pasteItem = addItem("Pegar", pasteCommand ,
+				pasteItem = addItem("Pegar", pasteCommand,
 						AON.AON_ICON_CLIPBOARD, AON.AON_ICON_CMD_BUTTON);
 				pasteItem.setEnabled(false);
-				deleteItem = addItem("Borrar", deleteCommand ,
+				deleteItem = addItem("Borrar", deleteCommand,
 						AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
 				deleteItem.setEnabled(false);
 
 			}
-			
+
 			@Override
 			public void show() {
 				sync();
 				super.show();
 			}
-			
-			private void sync(){
+
+			private void sync() {
 			}
-			
-		};
-		
+
+		}
+		;
+
 		final AgreementContextMenu contextMenu = new AgreementContextMenu();
-		
-		ContextMenuHandler contextMenuHandler = new  ContextMenuHandler(){
+
+		ContextMenuHandler contextMenuHandler = new ContextMenuHandler() {
 			@Override
 			public void onContextMenu(ContextMenuEvent event) {
 				// stop the browser from opening the context menu
@@ -312,9 +318,9 @@ public class MetaData extends ResizeComposite {
 						nativeEvent.getClientY());
 				contextMenu.show();
 			}
-			
+
 		};
-		
+
 		tree.addDomHandler(contextMenuHandler, ContextMenuEvent.getType());
 
 	}
@@ -325,36 +331,40 @@ public class MetaData extends ResizeComposite {
 
 		MenuBar menuBar = new MenuBar(true);
 
-		MenuItem newPaymentConceptMenuItem = new MenuItem("Devengo", new Command() {
-			@Override
-			public void execute() {
-				Payment payment = newPaymentConcept();
-				TreeItem item = addPaymentConceptItem(payment);
-				tree.setSelectedItem(item, true );
-				newPopup.hide();
-			}
-		});
+		MenuItem newPaymentConceptMenuItem = new MenuItem(
+				Resources.TEMPLATES.menuItem(AON.AON_ICON_PAYMENT, "Devengo"),
+				new Command() {
+					@Override
+					public void execute() {
+						Payment payment = newPaymentConcept();
+						TreeItem item = addPaymentConceptItem(payment);
+						setSelectedItem(item, true);
+						newPopup.hide();
+					}
+				});
 		menuBar.addItem(newPaymentConceptMenuItem);
 
-		MenuItem newDeductionConceptMenuItem = new MenuItem("Deducci\u00f3",
-				new Command() {
+		MenuItem newDeductionConceptMenuItem = new MenuItem(
+				Resources.TEMPLATES.menuItem(AON.AON_ICON_DEDUCTION,
+						"Deducci\u00f3n"), new Command() {
 					@Override
 					public void execute() {
 						Deduction deduction = newDeductionConcept();
 						TreeItem item = addDeductionConceptItem(deduction);
-						tree.setSelectedItem(item, true);
+						setSelectedItem(item, true);
 						newPopup.hide();
 					}
 				});
 		menuBar.addItem(newDeductionConceptMenuItem);
 
-		MenuItem newBonusConceptMenuItem = new MenuItem("Bonificaci\u00f3",
-				new Command() {
+		MenuItem newBonusConceptMenuItem = new MenuItem(
+				Resources.TEMPLATES.menuItem(AON.AON_ICON_BONUS,
+						"Bonificaci\u00f3n"), new Command() {
 					@Override
 					public void execute() {
 						Bonus bonus = newBonusConcept();
 						TreeItem item = addBonusConceptItem(bonus);
-						tree.setSelectedItem(item, true);
+						setSelectedItem(item, true);
 						newPopup.hide();
 					}
 				});
@@ -365,6 +375,12 @@ public class MetaData extends ResizeComposite {
 		newPopup.setAutoHideEnabled(true);
 
 	}
+
+	private void setSelectedItem(TreeItem item, boolean fireEvents) {
+		item.getParentItem().setState(true);
+		tree.setSelectedItem(item, fireEvents);
+	}
+
 
 	private TreeItem addBonusConceptItem(Bonus bonus) {
 		TreeItem item = new TreeItem(imageItemSafeHtml(
@@ -389,7 +405,7 @@ public class MetaData extends ResizeComposite {
 		deductionConceptsTreeItem.addItem(item);
 		return item;
 	}
-
+	
 	// ------------------------------------------------------------------------
 
 	private static synchronized Deduction newDeductionConcept() {
@@ -415,9 +431,12 @@ public class MetaData extends ResizeComposite {
 	private static SafeHtml imageItemSafeHtml(ImageResource imageProto,
 			Item<?> item) {
 		StringBuffer str = new StringBuffer(item.getDescription());
-		if (str.length() > 0)
+		
+		if ( StringUtils.isBlank(item.getName()))
+			;
+		else if (str.length() > 0)
 			str.append(" (" + item.getName() + ")");
-		else
+		else 
 			str.append(item.getName());
 
 		return imageItemSafeHtml(imageProto, str.toString());

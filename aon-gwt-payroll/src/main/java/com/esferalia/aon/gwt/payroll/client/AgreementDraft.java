@@ -1108,7 +1108,7 @@ public class AgreementDraft extends ResizeComposite implements
 		TextBox categoriesTextBox = new TextBox();
 		
 		if (categories != null) {
-			text = reduce(categories, ", ");
+			text = StringUtils.reduce(categories, ", ");
 			categoriesTextBox.setText(text);
 		}
 		
@@ -1738,19 +1738,6 @@ public class AgreementDraft extends ResizeComposite implements
 		if (el != null)
 			el.removeFromParent();
 		return null;
-	}
-
-	private static String reduce(Set<String> set, String sep) {
-		StringBuffer buffer = new StringBuffer();
-		for (String string : set) {
-			if (buffer.length() > 0)
-				buffer.append(sep);
-			if (string == null)
-				continue;
-
-			buffer.append(string.trim());
-		}
-		return buffer.toString();
 	}
 
 	private static Element cloneTR(Element tr) {

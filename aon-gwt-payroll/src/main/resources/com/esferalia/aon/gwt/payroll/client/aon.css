@@ -50,6 +50,18 @@
 	gwt-image: "agreement" ; 
 }
 
+@sprite .aon-icon-deduction {
+	gwt-image: "deduction" ; 
+}
+
+@sprite .aon-icon-payment {
+	gwt-image: "payment" ; 
+}
+
+@sprite .aon-icon-segsocial {
+	gwt-image: "segsocial" ; 
+}
+
 @sprite .aon-icon-clipboard {
 	gwt-image: "clipboard" ; 
 }

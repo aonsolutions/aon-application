@@ -44,7 +44,7 @@ public class SalaryDeductionsFactory implements IDeductionsFactory {
 			// que nos da la obtención de colecciones tipo LAZY. En caso
 			// contrario vamos por
 			// el FrameWork.
-			if (true /*session.contains(salary) || salary.getId() == null*/ ) {
+			if (session.contains(salary) || salary.getId() == null) {
 				salaryDeductions = salary.getSalaryDeductions();
 				for (SalaryDeduction sd : salaryDeductions) {
 					manageDeductions(deductions, sd);

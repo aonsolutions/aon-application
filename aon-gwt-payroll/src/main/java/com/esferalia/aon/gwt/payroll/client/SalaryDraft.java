@@ -1320,10 +1320,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		List<Variable> context = new ArrayList<Variable>(
 				salaryDraftObject.getContext());
-		for (Scope step : SCOPE_STEPS) {
-			if (context.size() == 0) {
-				break;
-			}
+		
+		//for (Scope step : SCOPE_STEPS) {
+		while(!context.isEmpty()){
+			Scope step = context.get(0).getScope();
 			if (step.compareTo(scope) < 0) {
 				break;
 			}

@@ -5,9 +5,13 @@
 
 
 	<ui:style>
-		.options-scroll-panel > div {
-			height: 99%;
-		}
+	.monthListBox-item {
+		padding-left: 16px;
+	}
+	
+	.options-scroll-panel>div {
+		height: 99%;
+	}
 	</ui:style>
 
 
@@ -15,8 +19,8 @@
 
 
 		<g:center>
-			<g:ScrollPanel styleName="aon-scroll-area {style.options-scroll-panel}" >
-				
+			<g:ScrollPanel styleName="aon-scroll-area {style.options-scroll-panel}">
+
 				<g:HTMLPanel styleName="aon-panelGrid-search aon-height-all">
 					<div class="aon-panelGrid-search-info ">
 						<span class="aon-panelGrid-search-info-internal">Introduzca los parámetros de cálculo:</span>
@@ -29,7 +33,7 @@
 					<table class="aon-panelGrid" style="height:90%">
 						<tr>
 							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel" text="Tipo" />
+								<g:Label styleName="aon-outputLabel">Tipo</g:Label>
 							</td>
 							<td class="aon-panelGrid-even">
 								<g:ListBox>
@@ -39,25 +43,30 @@
 						</tr>
 						<tr>
 							<td class="aon-panelGrid-odd">
-								<g:Label styleName="aon-outputLabel" text="Mes" />
+								<g:Label styleName="aon-outputLabel">Mes</g:Label>
 							</td>
 							<td class="aon-panelGrid-even">
 								<aon:MonthListBox styleName="aon-selectOneMenu"
-									ui:field="monthListBox" />
+									ui:field="monthListBox" monthStyles="{style.monthListBox-item}"
+									highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}" />
 							</td>
 						</tr>
 						<tr>
 							<td class="aon-panelGrid-odd">
+								<g:Label styleName="aon-outputLabel">Guardar</g:Label>
 							</td>
-							<td class="aon-panelGrid-even" >
-								<g:CheckBox ui:field="saveCheckBox" >Guardar</g:CheckBox>
+							<td class="aon-panelGrid-even">
+								<g:RadioButton name="saveRadioButton">Si</g:RadioButton>
+								<g:RadioButton name="saveRadioButton">No</g:RadioButton>
 							</td>
 						</tr>
 						<tr>
 							<td class="aon-panelGrid-odd">
+								<g:Label styleName="aon-outputLabel">Comparar con</g:Label>
 							</td>
-							<td class="aon-panelGrid-even " >
-								<g:CheckBox ui:field="compareCheckBox" enabled="false" >Comparar con n&oacute;minas guardadas</g:CheckBox>
+							<td class="aon-panelGrid-even ">
+								<g:ListBox styleName="aon-selectOneMenu"
+									ui:field="dbMonthListBox" />
 							</td>
 						</tr>
 						<tr>
@@ -65,15 +74,16 @@
 								<span class="aon-outputText"></span>
 							</td>
 							<td class="aon-panelGrid-even">
-								<g:Button ui:field="calcButton">Calcular</g:Button>
+								<g:Button ui:field="calcButton" enabled="false">Calcular</g:Button>
 							</td>
 						</tr>
 						<tr style="height:90%;">
 							<td class="aon-panelGrid-odd aon-height-all ">
-								<g:Label styleName="aon-outputLabel" text="Empresas" />
+								<g:Label styleName="aon-outputLabel">&nbsp;</g:Label>
 							</td>
-							<td class="aon-panelGrid-even aon-width-all aon-height-all" >
-								<aon:SelectDataGrid  nameLabel="Empresa" ui:field="enterpriseDataGrid" styleName="aon-width-all aon-height-all" />
+							<td class="aon-panelGrid-even aon-width-all aon-height-all">
+								<aon:SelectDataGrid nameLabel="Empresa"
+									ui:field="enterpriseDataGrid" styleName="aon-width-all aon-height-all" />
 							</td>
 						</tr>
 					</table>
@@ -92,7 +102,7 @@
 						<g:header>
 							<span class="aon-icon-time aon-icon-commandButton">Resultados</span>
 						</g:header>
-						<aon:ResultsPanel ui:field="resultsPanel"/>
+						<aon:ResultsPanel ui:field="resultsPanel" />
 					</g:tab>
 				</g:TabLayoutPanel>
 			</aon:MinimizePanel>
