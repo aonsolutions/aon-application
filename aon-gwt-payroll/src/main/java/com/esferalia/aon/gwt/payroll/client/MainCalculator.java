@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,7 +9,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import com.esferalia.aon.gwt.payroll.client.ComboBox.Format;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
@@ -39,7 +37,6 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
-import com.sun.star.beans.GetDirectPropertyTolerantResult;
 
 public class MainCalculator extends MainEntryPoint implements CalculateService {
 
