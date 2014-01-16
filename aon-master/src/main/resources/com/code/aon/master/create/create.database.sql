@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.27.0
+# Version: 7.27.1
 # Created by: girazu
-# Creation Date: 14/01/2014 13:55
+# Creation Date: 14/01/2014 17:35
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1328,6 +1328,225 @@ CREATE TABLE `alarm` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Alarmas';
 
 #
+# Structure for the `brand` table : 
+#
+
+CREATE TABLE `brand` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Marca Comercial',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Marca Comercial',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_BRAND_DOMAIN` (`domain`),
+  CONSTRAINT `FK_BRAND_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Marcas Comerciales';
+
+#
+# Structure for the `pcategory` table : 
+#
+
+CREATE TABLE `pcategory` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Categoria',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Categoria',
+  `detail` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre del detalle de los Articulos',
+  `detail2` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre del detalle 2 de los Articulos',
+  `detail3` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre del detalle 3 de los Articulos',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_PCATEGORY_DOMAIN` (`domain`),
+  CONSTRAINT `FK_PCATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias de Productos';
+
+#
+# Structure for the `tax` table : 
+#
+
+CREATE TABLE `tax` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Impuesto',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` varchar(30) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Impuesto',
+  `tax_type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Impuesto',
+  `percentage` double(15,3) NOT NULL default '0.000' COMMENT 'Porcentaje de recargo actual',
+  `surcharge` double(15,3) default '0.000' COMMENT 'Porcentaje de recargo de equivalencia actual',
+  `start_date` date default NULL COMMENT 'Fecha de inicio de vigencia',
+  `vat_deduction_type` tinyint(2) default '0' COMMENT 'Tipo de deduccion del IVA',
+  `withholding_type` tinyint(2) default '0' COMMENT 'Tipo de retencion',
+  `sales_account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable de Ventas',
+  `purchase_account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable de Compras',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_TAX_DOMAIN` (`domain`),
+  KEY `IDX_TAX_ACCOUNT_SALES` (`sales_account`),
+  KEY `IDX_TAX_ACCOUNT_PURCHASE` (`purchase_account`),
+  CONSTRAINT `FK_TAX_ACCOUNT_PURCHASE` FOREIGN KEY (`purchase_account`) REFERENCES `account` (`id`),
+  CONSTRAINT `FK_TAX_ACCOUNT_SALES` FOREIGN KEY (`sales_account`) REFERENCES `account` (`id`),
+  CONSTRAINT `FK_TAX_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos';
+
+#
+# Structure for the `product` table : 
+#
+
+CREATE TABLE `product` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Producto',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Producto',
+  `code` varchar(15) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del Producto',
+  `brand` int(4) default NULL COMMENT 'Marca Comercial del Producto',
+  `category` int(4) default NULL COMMENT 'Categoria del Producto',
+  `inventoriable` tinyint(1) default NULL COMMENT 'Indica si el Producto es inventariable',
+  `status` tinyint(2) default '0' COMMENT 'Estado del Producto',
+  `vat` int(4) default NULL COMMENT 'IVA del Producto',
+  `retention` int(4) default NULL COMMENT 'Retencion del Producto',
+  `type` tinyint(2) default NULL COMMENT 'Tipo de Producto',
+  `composition` tinyint(1) default '0' COMMENT 'Indica si el Producto es una Composicion',
+  `composition_price` tinyint(1) default '0' COMMENT 'Indica si el Precio lo determina la Composicion',
+  `sales_account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable de Ventas',
+  `purchase_account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable de Compras',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `IDX_PRODUCT_DOMAIN_CODE` (`domain`,`code`),
+  KEY `IDX_PRODUCT_NAME` (`name`),
+  KEY `IDX_PRODUCT_TAX_RETENTION` (`retention`),
+  KEY `IDX_PRODUCT_PCATEGORY` (`category`),
+  KEY `IDX_PRODUCT_BRAND` (`brand`),
+  KEY `IDX_PRODUCT_TAX_VAT` (`vat`),
+  KEY `IDX_PRODUCT_DOMAIN` (`domain`),
+  KEY `IDX_PRODUCT_ACCOUNT_SALES` (`sales_account`),
+  KEY `IDX_PRODUCT_ACCOUNT_PURCHASE` (`purchase_account`),
+  CONSTRAINT `FK_PRODUCT_ACCOUNT_PURCHASE` FOREIGN KEY (`purchase_account`) REFERENCES `account` (`id`),
+  CONSTRAINT `FK_PRODUCT_ACCOUNT_SALES` FOREIGN KEY (`sales_account`) REFERENCES `account` (`id`),
+  CONSTRAINT `FK_PRODUCT_BRAND` FOREIGN KEY (`brand`) REFERENCES `brand` (`id`),
+  CONSTRAINT `FK_PRODUCT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_PRODUCT_PCATEGORY` FOREIGN KEY (`category`) REFERENCES `pcategory` (`id`),
+  CONSTRAINT `FK_PRODUCT_TAX_RETENTION` FOREIGN KEY (`retention`) REFERENCES `tax` (`id`),
+  CONSTRAINT `FK_PRODUCT_TAX_VAT` FOREIGN KEY (`vat`) REFERENCES `tax` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Productos';
+
+#
+# Structure for the `item` table : 
+#
+
+CREATE TABLE `item` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Articulo',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `product` int(4) NOT NULL default '0' COMMENT 'Identificador del Producto',
+  `detail` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Detalle del Articulo',
+  `detail2` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Detalle 2 del Articulo',
+  `detail3` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Detalle 3 del Articulo',
+  `description` text collate latin1_spanish_ci COMMENT 'Descripcion del Articulo',
+  `price` double default '0' COMMENT 'Precio del Articulo',
+  `status` tinyint(2) default '0' COMMENT 'Estado del Articulo',
+  `expenses_percent` double default '0' COMMENT 'Gastos porcentuales del Articulo',
+  `expenses_fixed` double default '0' COMMENT 'Gastos fijos del Articulo',
+  `profit_percent` double default '0' COMMENT 'Porcentaje de beneficio del Articulo',
+  `purchase_price` double default '0' COMMENT 'Precio de compra del Articulo',
+  `internet` tinyint(1) default '0' COMMENT 'Visible en internet',
+  `barcode` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Codigo de barras del Articulo',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `IDX_ITEM_DOMAIN_BARCODE` (`domain`,`barcode`),
+  KEY `IDX_ITEM_PRODUCT` (`product`),
+  KEY `IDX_ITEM_DOMAIN` (`domain`),
+  CONSTRAINT `FK_ITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ITEM_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos';
+
+#
+# Structure for the `catalogue` table : 
+#
+
+CREATE TABLE `catalogue` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Catalogo',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio del Catalogo',
+  `end_date` date default NULL COMMENT 'Fecha de fin del Catalogo',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_CATALOGUE_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CATALOGUE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Catalogos';
+
+#
+# Structure for the `hotel` table : 
+#
+
+CREATE TABLE `hotel` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `code` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del Hotel',
+  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
+  `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
+  `phone` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Telefono del Hotel',
+  `fax` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Fax del Hotel',
+  `email` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Email del Hotel',
+  `web` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Web del Hotel',
+  `service_catalogue` int(4) default NULL COMMENT 'Identificador del Catalogo de Servicios',
+  `item_advance` int(4) default NULL COMMENT 'Identificador del Producto para anticipos',
+  `item_no_show` int(4) default NULL COMMENT 'Identificador del Producto para no-show',
+  `item_penalty` int(4) default NULL COMMENT 'Identificador del Producto para penalizaciones',
+  `sheet_changing` tinyint(2) default NULL COMMENT 'Dias entre cambio de sabanas',
+  `active` tinyint(1) default '1' COMMENT 'Indica si el Hotel esta activo o no',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `IDX_UNQ_HOTEL_CODE` (`code`),
+  KEY `IDX_HOTEL_SCOPE` (`scope`),
+  KEY `IDX_HOTEL_WORKPLACE` (`workplace`),
+  KEY `IDX_HOTEL_DOMAIN` (`domain`),
+  KEY `IDX_HOTEL_SERVICE_CATALOGUE` (`service_catalogue`),
+  KEY `IDX_HOTEL_ITEM_ADVANCE` (`item_advance`),
+  KEY `IDX_HOTEL_ITEM_NO_SHOW` (`item_no_show`),
+  KEY `IDX_HOTEL_ITEM_PENALTY` (`item_penalty`),
+  CONSTRAINT `FK_HOTEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_HOTEL_ITEM_ADVANCE` FOREIGN KEY (`item_advance`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_HOTEL_ITEM_NO_SHOW` FOREIGN KEY (`item_no_show`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_HOTEL_ITEM_PENALTY` FOREIGN KEY (`item_penalty`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_HOTEL_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
+  CONSTRAINT `FK_HOTEL_SERVICE_CATALOGUE` FOREIGN KEY (`service_catalogue`) REFERENCES `catalogue` (`id`),
+  CONSTRAINT `FK_HOTEL_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Hoteles';
+
+#
+# Structure for the `allotment` table : 
+#
+
+CREATE TABLE `allotment` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel',
+  `agency` int(4) NOT NULL COMMENT 'Identificador de la agencia de viajes',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio del Cupo',
+  `end_date` date NOT NULL COMMENT 'Fecha de fin del Cupo',
+  `quantity` int(4) default '0' COMMENT 'Cupo de Habitaciones',
+  `remarks` text collate latin1_spanish_ci COMMENT 'Comentarios',
+  `active` tinyint(1) NOT NULL COMMENT 'Indica si el Cupo esta activo o no',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_ALLOTMENT_DOMAIN` (`domain`),
+  KEY `IDX_ALLOTMENT_HOTEL` (`hotel`),
+  KEY `IDX_ALLOTMENT_AGENCY` (`agency`),
+  CONSTRAINT `FK_ALLOTMENT_AGENCY` FOREIGN KEY (`agency`) REFERENCES `customer` (`registry`),
+  CONSTRAINT `FK_ALLOTMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ALLOTMENT_HOTEL` FOREIGN KEY (`hotel`) REFERENCES `hotel` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cupos de seguridad';
+
+#
+# Structure for the `allotment_item` table : 
+#
+
+CREATE TABLE `allotment_item` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `allotment` int(4) NOT NULL COMMENT 'Identificador del Cupo de seguridad',
+  `item` int(4) NOT NULL COMMENT 'Identificador del Tipo de Habitacion',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_ALLOTMENT_ITEM_DOMAIN` (`domain`),
+  KEY `IDX_ALLOTMENT_ITEM_ALLOTMENT` (`allotment`),
+  KEY `IDX_ALLOTMENT_ITEM_ITEM` (`item`),
+  CONSTRAINT `FK_ALLOTMENT_ITEM_ALLOTMENT` FOREIGN KEY (`allotment`) REFERENCES `allotment` (`id`),
+  CONSTRAINT `FK_ALLOTMENT_ITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ALLOTMENT_ITEM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Habitacion por Cupo';
+
+#
 # Structure for the `alumn_loan` table : 
 #
 
@@ -1698,19 +1917,6 @@ CREATE TABLE `bonus_concept` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de bonficaciones y/o reducciones';
 
 #
-# Structure for the `brand` table : 
-#
-
-CREATE TABLE `brand` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Marca Comercial',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Marca Comercial',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_BRAND_DOMAIN` (`domain`),
-  CONSTRAINT `FK_BRAND_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Marcas Comerciales';
-
-#
 # Structure for the `calendar_holiday` table : 
 #
 
@@ -1898,37 +2104,6 @@ CREATE TABLE `cashflow_forecast` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Prevision de tesoreria';
 
 #
-# Structure for the `catalogue` table : 
-#
-
-CREATE TABLE `catalogue` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Catalogo',
-  `start_date` date NOT NULL COMMENT 'Fecha de inicio del Catalogo',
-  `end_date` date default NULL COMMENT 'Fecha de fin del Catalogo',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_CATALOGUE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CATALOGUE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Catalogos';
-
-#
-# Structure for the `pcategory` table : 
-#
-
-CREATE TABLE `pcategory` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Categoria',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Categoria',
-  `detail` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre del detalle de los Articulos',
-  `detail2` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre del detalle 2 de los Articulos',
-  `detail3` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre del detalle 3 de los Articulos',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_PCATEGORY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PCATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias de Productos';
-
-#
 # Structure for the `catalogue_category` table : 
 #
 
@@ -1947,98 +2122,6 @@ CREATE TABLE `catalogue_category` (
   CONSTRAINT `FK_CATALOGUE_CATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CATALOGUE_CATEGORY_PCATEGORY` FOREIGN KEY (`category`) REFERENCES `pcategory` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias del Catalogo';
-
-#
-# Structure for the `tax` table : 
-#
-
-CREATE TABLE `tax` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Impuesto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(30) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Impuesto',
-  `tax_type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Impuesto',
-  `percentage` double(15,3) NOT NULL default '0.000' COMMENT 'Porcentaje de recargo actual',
-  `surcharge` double(15,3) default '0.000' COMMENT 'Porcentaje de recargo de equivalencia actual',
-  `start_date` date default NULL COMMENT 'Fecha de inicio de vigencia',
-  `vat_deduction_type` tinyint(2) default '0' COMMENT 'Tipo de deduccion del IVA',
-  `withholding_type` tinyint(2) default '0' COMMENT 'Tipo de retencion',
-  `sales_account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable de Ventas',
-  `purchase_account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable de Compras',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_TAX_DOMAIN` (`domain`),
-  KEY `IDX_TAX_ACCOUNT_SALES` (`sales_account`),
-  KEY `IDX_TAX_ACCOUNT_PURCHASE` (`purchase_account`),
-  CONSTRAINT `FK_TAX_ACCOUNT_PURCHASE` FOREIGN KEY (`purchase_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_TAX_ACCOUNT_SALES` FOREIGN KEY (`sales_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_TAX_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos';
-
-#
-# Structure for the `product` table : 
-#
-
-CREATE TABLE `product` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Producto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Producto',
-  `code` varchar(15) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del Producto',
-  `brand` int(4) default NULL COMMENT 'Marca Comercial del Producto',
-  `category` int(4) default NULL COMMENT 'Categoria del Producto',
-  `inventoriable` tinyint(1) default NULL COMMENT 'Indica si el Producto es inventariable',
-  `status` tinyint(2) default '0' COMMENT 'Estado del Producto',
-  `vat` int(4) default NULL COMMENT 'IVA del Producto',
-  `retention` int(4) default NULL COMMENT 'Retencion del Producto',
-  `type` tinyint(2) default NULL COMMENT 'Tipo de Producto',
-  `composition` tinyint(1) default '0' COMMENT 'Indica si el Producto es una Composicion',
-  `composition_price` tinyint(1) default '0' COMMENT 'Indica si el Precio lo determina la Composicion',
-  `sales_account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable de Ventas',
-  `purchase_account` int(4) default NULL COMMENT 'Identificador de la Cuenta Contable de Compras',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_PRODUCT_DOMAIN_CODE` (`domain`,`code`),
-  KEY `IDX_PRODUCT_NAME` (`name`),
-  KEY `IDX_PRODUCT_TAX_RETENTION` (`retention`),
-  KEY `IDX_PRODUCT_PCATEGORY` (`category`),
-  KEY `IDX_PRODUCT_BRAND` (`brand`),
-  KEY `IDX_PRODUCT_TAX_VAT` (`vat`),
-  KEY `IDX_PRODUCT_DOMAIN` (`domain`),
-  KEY `IDX_PRODUCT_ACCOUNT_SALES` (`sales_account`),
-  KEY `IDX_PRODUCT_ACCOUNT_PURCHASE` (`purchase_account`),
-  CONSTRAINT `FK_PRODUCT_ACCOUNT_PURCHASE` FOREIGN KEY (`purchase_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_PRODUCT_ACCOUNT_SALES` FOREIGN KEY (`sales_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_PRODUCT_BRAND` FOREIGN KEY (`brand`) REFERENCES `brand` (`id`),
-  CONSTRAINT `FK_PRODUCT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PRODUCT_PCATEGORY` FOREIGN KEY (`category`) REFERENCES `pcategory` (`id`),
-  CONSTRAINT `FK_PRODUCT_TAX_RETENTION` FOREIGN KEY (`retention`) REFERENCES `tax` (`id`),
-  CONSTRAINT `FK_PRODUCT_TAX_VAT` FOREIGN KEY (`vat`) REFERENCES `tax` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Productos';
-
-#
-# Structure for the `item` table : 
-#
-
-CREATE TABLE `item` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Articulo',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `product` int(4) NOT NULL default '0' COMMENT 'Identificador del Producto',
-  `detail` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Detalle del Articulo',
-  `detail2` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Detalle 2 del Articulo',
-  `detail3` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Detalle 3 del Articulo',
-  `description` text collate latin1_spanish_ci COMMENT 'Descripcion del Articulo',
-  `price` double default '0' COMMENT 'Precio del Articulo',
-  `status` tinyint(2) default '0' COMMENT 'Estado del Articulo',
-  `expenses_percent` double default '0' COMMENT 'Gastos porcentuales del Articulo',
-  `expenses_fixed` double default '0' COMMENT 'Gastos fijos del Articulo',
-  `profit_percent` double default '0' COMMENT 'Porcentaje de beneficio del Articulo',
-  `purchase_price` double default '0' COMMENT 'Precio de compra del Articulo',
-  `internet` tinyint(1) default '0' COMMENT 'Visible en internet',
-  `barcode` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Codigo de barras del Articulo',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_ITEM_DOMAIN_BARCODE` (`domain`,`barcode`),
-  KEY `IDX_ITEM_PRODUCT` (`product`),
-  KEY `IDX_ITEM_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_ITEM_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos';
 
 #
 # Structure for the `catalogue_item` table : 
@@ -4119,6 +4202,34 @@ CREATE TABLE `fs_model190_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Declaraciones 190';
 
 #
+# Structure for the `fs_model390` table : 
+#
+
+CREATE TABLE `fs_model390` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
+  `year` int(4) NOT NULL COMMENT 'Ejercicio de la Declaracion',
+  `administration` tinyint(2) NOT NULL COMMENT 'Administracion',
+  `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado de la Declaracion',
+  `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad',
+  `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF',
+  `name` varchar(45) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
+  `complementary` tinyint(1) NOT NULL default '0' COMMENT 'Declaracion complementaria',
+  `replacement` tinyint(1) NOT NULL default '0' COMMENT 'Declaracion sustitutiva',
+  `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
+  `receipt` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de Declaracion',
+  `replaced_receipt` varchar(13) collate latin1_spanish_ci default NULL COMMENT 'Numero de Declaracion sustituida',
+  `model` text collate latin1_spanish_ci COMMENT 'Modelo XML de la Declaracion',
+  `response` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Respuesta AEAT',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_FS_MODEL390_DOMAIN` (`domain`),
+  KEY `IDX_FS_MODEL390_ENTERPRISE` (`enterprise`),
+  CONSTRAINT `FK_FS_MODEL390_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_FS_MODEL390_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaraciones 390';
+
+#
 # Structure for the `fs_model_detail` table : 
 #
 
@@ -4386,44 +4497,6 @@ CREATE TABLE `holiday_detail` (
   CONSTRAINT `FK_HOLIDAY_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_HOLIDAY_DETAIL_HOLIDAY` FOREIGN KEY (`holiday`) REFERENCES `holiday` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de Festividades';
-
-#
-# Structure for the `hotel` table : 
-#
-
-CREATE TABLE `hotel` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `code` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del Hotel',
-  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
-  `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
-  `phone` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Telefono del Hotel',
-  `fax` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Fax del Hotel',
-  `email` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Email del Hotel',
-  `web` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Web del Hotel',
-  `service_catalogue` int(4) default NULL COMMENT 'Identificador del Catalogo de Servicios',
-  `item_advance` int(4) default NULL COMMENT 'Identificador del Producto para anticipos',
-  `item_no_show` int(4) default NULL COMMENT 'Identificador del Producto para no-show',
-  `item_penalty` int(4) default NULL COMMENT 'Identificador del Producto para penalizaciones',
-  `sheet_changing` tinyint(2) default NULL COMMENT 'Dias entre cambio de sabanas',
-  `active` tinyint(1) default '1' COMMENT 'Indica si el Hotel esta activo o no',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_UNQ_HOTEL_CODE` (`code`),
-  KEY `IDX_HOTEL_SCOPE` (`scope`),
-  KEY `IDX_HOTEL_WORKPLACE` (`workplace`),
-  KEY `IDX_HOTEL_DOMAIN` (`domain`),
-  KEY `IDX_HOTEL_SERVICE_CATALOGUE` (`service_catalogue`),
-  KEY `IDX_HOTEL_ITEM_ADVANCE` (`item_advance`),
-  KEY `IDX_HOTEL_ITEM_NO_SHOW` (`item_no_show`),
-  KEY `IDX_HOTEL_ITEM_PENALTY` (`item_penalty`),
-  CONSTRAINT `FK_HOTEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_HOTEL_ITEM_ADVANCE` FOREIGN KEY (`item_advance`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_HOTEL_ITEM_NO_SHOW` FOREIGN KEY (`item_no_show`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_HOTEL_ITEM_PENALTY` FOREIGN KEY (`item_penalty`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_HOTEL_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
-  CONSTRAINT `FK_HOTEL_SERVICE_CATALOGUE` FOREIGN KEY (`service_catalogue`) REFERENCES `catalogue` (`id`),
-  CONSTRAINT `FK_HOTEL_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Hoteles';
 
 #
 # Structure for the `iattach` table : 
@@ -6956,6 +7029,47 @@ CREATE TABLE `stock` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Stocks de Almacenes';
 
 #
+# Structure for the `stop_sales` table : 
+#
+
+CREATE TABLE `stop_sales` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio del Paro',
+  `end_date` date NOT NULL COMMENT 'Fecha de fin del Paro',
+  `remarks` text collate latin1_spanish_ci COMMENT 'Comentarios',
+  `active` tinyint(1) NOT NULL COMMENT 'Indica si el Paro esta activo o no',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_STOP_SALES_DOMAIN` (`domain`),
+  KEY `IDX_STOP_SALES_HOTEL` (`hotel`),
+  CONSTRAINT `FK_STOP_SALES_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_STOP_SALES_HOTEL` FOREIGN KEY (`hotel`) REFERENCES `hotel` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Paros de venta';
+
+#
+# Structure for the `stop_sales_item` table : 
+#
+
+CREATE TABLE `stop_sales_item` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `stop_sales` int(4) NOT NULL COMMENT 'Identificador del Paro de ventas',
+  `item` int(4) NOT NULL COMMENT 'Identificador del Tipo de Habitacion',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_STOP_SALES_ITEM_DOMAIN` (`domain`),
+  KEY `IDX_STOP_SALES_ITEM_STOP_SALES` (`stop_sales`),
+  KEY `IDX_STOP_SALES_ITEM_ITEM` (`item`),
+  CONSTRAINT `FK_STOP_SALES_ITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_STOP_SALES_ITEM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_STOP_SALES_ITEM_STOP_SALES` FOREIGN KEY (`stop_sales`) REFERENCES `stop_sales` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Habitacion por Paro';
+
+#
 # Structure for the `survey_question` table : 
 #
 
@@ -7386,7 +7500,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.27.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.27.1');
 
 COMMIT;
 
