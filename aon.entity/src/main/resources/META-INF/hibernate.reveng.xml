@@ -25,20 +25,27 @@
 	<!--  ************** -->
 	<table-filter match-name="instructor" exclude="true" />
 	<table-filter match-name="enterprise_agreement" exclude="true" />
-    	<table-filter match-name="fs_renting" exclude="true" />
+    <table-filter match-name="fs_renting" exclude="true" />
 	<table-filter match-name="fs_renting_detail" exclude="true" />
-    <table-filter match-name="fs_model180" exclude="true" />
-	<table-filter match-name="fs_model180_detail" exclude="true" />
-    <table-filter match-name="fs_model190" exclude="true" />
-	<table-filter match-name="fs_model190_detail" exclude="true" />
+	
+	<!--  ****************************** -->
+	<!--  TABLAS EXCLUIDAS TEMPORALMENTE -->
+	<!--  ****************************** -->
+	<table-filter match-name="allotment" exclude="true" />
+	<table-filter match-name="allotment_item" exclude="true" />
+	<table-filter match-name="stop_sales" exclude="true" />
+	<table-filter match-name="stop_sales_item" exclude="true" />
 		
 	<!--  *********************************** -->
 	<!--  TABLAS VALIDAS QUE NO LEVANTAN POJO -->
 	<!--  *********************************** -->
 	<table-filter match-name="db_version" exclude="true" />
-	<!--  PAYROLL -->
-	<!--table-filter match-name="salary_data" exclude="true" /-->
-	
+
+    <table-filter match-name="fs_model180" exclude="true" />
+	<table-filter match-name="fs_model180_detail" exclude="true" />
+    <table-filter match-name="fs_model190" exclude="true" />
+	<table-filter match-name="fs_model190_detail" exclude="true" />
+	<table-filter match-name="fs_model390" exclude="true" />
 	
 	<!--  ***************** -->
 	<!--  MAPPING DE TABLAS -->
