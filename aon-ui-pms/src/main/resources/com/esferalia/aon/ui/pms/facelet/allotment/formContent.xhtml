@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:panelGrid columns="2" 	
+		columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-500">
+
+		<aon:outputLabel for="Allotment_hotel_id" value="#{bundle.aon_module_hotel}" />
+		<aon:outputText	value="#{allotment.to.hotel.workPlace.description}" styleClass="aon-bold"
+			rendered="#{!allotment.new}" />
+		<aon:selectOneMenu id="Allotment_hotel_id" value="#{allotment.to.hotel}" 
+			rendered="#{allotment.new}" required="true"
+			valueChangeListener="#{allotment.onHotelChanged}" 
+			reRender="AllotmentItemDiv" ajaxSingle="true">
+			<c:if test="#{allotment.new}">
+				<f:selectItem itemLabel="-" value="#{null}"/>
+			</c:if>
+			<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+		</aon:selectOneMenu>
+
+		<aon:outputLabel for="Allotment_agency" value="#{bundle.report_agency}" />
+		<aon:outputText value="#{allotment.to.agency.registry.fullName}" styleClass="aon-bold" 
+			rendered="#{!allotment.new}"  />
+		<aon:selectOneMenu id="Allotment_agency" value="#{allotment.to.agency}" 
+			required="true" styleClass="aon-width-350"
+			rendered="#{allotment.new}">
+			<c:if test="#{allotment.new}">
+				<f:selectItem itemLabel="-" value="#{null}"/>
+			</c:if>
+			<f:selectItems value="#{pmsCollections.agencies}" />
+		</aon:selectOneMenu>
+
+		<aon:outputLabel for="Allotment_startDate" value="#{bundle.aon_start_date}" />
+		<aon:selectInputDate id="Allotment_startDate" value="#{allotment.to.startDate}" 
+			required="true"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="Allotment_endDate" value="#{bundle.aon_end_date}" />
+		<aon:selectInputDate id="Allotment_endDate" value="#{allotment.to.endDate}" 
+			required="true"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="Allotment_quantity" value="#{bundle.pms_allotment}" />
+		<aon:inputText id="Allotment_quantity" value="#{allotment.to.quantity}"
+			size="3" maxlength="4" required="true"
+			ajaxSingle="true" />
+
+		<aon:outputLabel value="#{bundle.report_rooms}" />
+		<aon:div id="AllotmentItemDiv">
+			<a4j:region>
+				<a4j:repeat value="#{allotment.items}" rowKeyVar="allotmentItemIdx" var="allotmentItem">
+					<aon:div styleClass="#{(allotmentItemIdx != 0)?'aon-padding-top':''}">
+						<aon:panelGrid columns="2" 	
+							columnClasses="aon-width-300,aon-width-auto">
+							<aon:outputText	value="#{allotment.items[allotmentItemIdx].product.code} - #{allotment.items[allotmentItemIdx].product.name}" 
+								styleClass="aon-bold" />
+							<aon:commandButton id="AllotmentItem-remove"
+								styleClass="aon-finding-toolbar-item aon-search-minus"
+								value="&#160;" immediate="true"
+								actionListener="#{allotment.onRemoveItem}"
+								reRender="AllotmentItemDiv">
+								<f:param name="allotmentItemIdx" value="#{allotmentItemIdx}" />
+							</aon:commandButton>
+						</aon:panelGrid>
+					</aon:div>						
+				</a4j:repeat>
+			</a4j:region>
+			<aon:panelGrid columns="2"
+				columnClasses="aon-width-300,aon-width-auto"
+				rendered="#{allotment.to.hotel != null and allotment.to.hotel.id != null}">
+				<aon:selectOneMenu id="Allotment_item" value="#{allotment.item}"
+					styleClass="aon-width-300"
+					valueChangeListener="#{allotment.onItemChanged}" 
+					reRender="AllotmentItemDiv">
+					<f:selectItem itemLabel="#{(allotment.itemsSize > 0)?'-':bundle.aon_common_all}" value="#{null}"/>
+					<f:selectItems value="#{allotment.hotelRoomItems}" />
+				</aon:selectOneMenu>
+				<aon:commandButton id="AllotmentItem-add"
+					styleClass="aon-finding-toolbar-item aon-search-add"
+					value="&#160;" immediate="true"
+					rendered="#{allotment.item != null}"
+					actionListener="#{allotment.onAddItem}"
+					reRender="AllotmentItemDiv" />
+			</aon:panelGrid>
+		</aon:div>			
+
+		<aon:outputLabel for="Allotment_remarks" value="#{bundle.aon_remark}" />
+		<aon:inputTextarea id="Allotment_remarks" value="#{allotment.to.remarks}"
+ 			cols="66" rows="4"
+			ajaxSingle="true" />
+
+		<aon:outputLabel for="Allotment_active" value="#{bundle.aon_status}" />
+		<aon:selectOneRadio id="Allotment_active" value="#{allotment.to.active}">
+			<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="false" />
+		</aon:selectOneRadio>				
+
+	</aon:panelGrid>
+
+ </ui:composition>

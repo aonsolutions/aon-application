@@ -247,6 +247,12 @@
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="allotment" 
+										action="allotment_search"
+										actionListener="#{allotment.onEditSearch}"
+										value="#{bundle.pms_allotment_module}"/>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="roomBooking" 
 										action="roomBooking_search"
 										actionListener="#{roomBooking.onInit}"

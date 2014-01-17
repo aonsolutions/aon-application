@@ -312,6 +312,14 @@
 	</bean>
 
 	<!-- ** AON PMS  **************************************************** -->
+	<bean class="com.esferalia.aon.pms.Allotment" sqlName="allotment">
+		<alias names="id,domain,hotel_id,hotel_scope_id,agency_id,startDate,endDate,quantity,active,creationUser,creationDate,modificationUser,modificationDate"/>
+		<hibernate names="id,domain,hotel.id,hotel.scope.id,agency.id,startDate,endDate,quantity,active,creationUser,creationDate,modificationUser,modificationDate"/>
+	</bean>
+	<bean class="com.esferalia.aon.pms.AllotmentItem" sqlName="allotment_item">
+		<alias names="id,domain,allotment_id,allotment_hotel_id,allotment_agency_id,allotment_startDate,allotment_endDate,item_id"/>
+		<hibernate names="id,domain,allotment.id,allotment.hotel.id,allotment.agency.id,allotment.startDate,allotment.endDate,item.id"/>
+	</bean>
 	<bean class="com.esferalia.aon.pms.Hotel" sqlName="hotel">
 		<alias names="id,domain,code,scope_id,workPlace_id,workPlace_description,phone,fax,email,web,customer_id,serviceCatalogue_id,active,itemAdvance_id,itemNoshow_id,itemPenalty_id"/>
 		<hibernate names="id,domain,code,scope.id,workPlace.id,workPlace.description,phone,fax,email,web,customer.id,serviceCatalogue.id,active,itemAdvance.id,itemNoshow.id,itemPenalty.id"/>

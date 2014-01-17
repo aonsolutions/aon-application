@@ -3,14 +3,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-	<!-- ************ COLLECTION **************** -->
+	<!-- ************ COLLECTION **************************** -->
 	<managed-bean>
 		<managed-bean-name>pmsCollections</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.PmsCollectionsController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************* HOTEL ***************** -->
+	<!-- ************* HOTEL ******************************** -->
 	<managed-bean>
 		<managed-bean-name>hotel</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.HotelController</managed-bean-class>
@@ -102,7 +102,7 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ************* ROOM ***************** -->
+	<!-- ************* ROOM ********************************* -->
 	<managed-bean>
 		<managed-bean-name>room</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.RoomController</managed-bean-class>
@@ -174,7 +174,7 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ********** ROOM FEATURE ********** -->
+	<!-- ************* ROOM FEATURE ************************* -->
 	<managed-bean>
 		<managed-bean-name>roomFeature</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
@@ -210,7 +210,7 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ************* RESERVATION REQUEST ***************** -->
+	<!-- ************* RESERVATION REQUEST ****************** -->
 	<managed-bean>
 		<managed-bean-name>reservationRequest</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationRequestController</managed-bean-class>
@@ -300,7 +300,7 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- ************* RESERVATION REQUEST GUEST ***************** -->
+	<!-- ************* RESERVATION REQUEST GUEST ************ -->
 	<managed-bean>
 		<managed-bean-name>reservationRequestGuest</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationRequestGuestController</managed-bean-class>
@@ -353,7 +353,7 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************* RESERVATION REQUEST ROOM ***************** -->
+	<!-- ************* RESERVATION REQUEST ROOM ************* -->
 	<managed-bean>
 		<managed-bean-name>reservationRequestRoom</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationRequestRoomController</managed-bean-class>
@@ -406,7 +406,7 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************* RESERVATION ***************** -->
+	<!-- ************* RESERVATION ************************** -->
 	<managed-bean>
 		<managed-bean-name>reservation</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ProjectReservationController</managed-bean-class>
@@ -508,7 +508,7 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ************* RESERVATION GUEST ***************** -->
+	<!-- ************* RESERVATION GUEST ******************** -->
 	<managed-bean>
 		<managed-bean-name>reservationGuest</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ProjectReservationGuestController</managed-bean-class>
@@ -565,7 +565,7 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************* RESERVATION ROOM ***************** -->
+	<!-- ************* RESERVATION ROOM ********************* -->
 	<managed-bean>
 		<managed-bean-name>reservationRoom</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ProjectReservationRoomController</managed-bean-class>
@@ -622,7 +622,7 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************* RESERVATION SERVICE ***************** -->
+	<!-- ************* RESERVATION SERVICE ****************** -->
 	<managed-bean>
 		<managed-bean-name>reservationService</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ProjectReservationServiceController</managed-bean-class>
@@ -680,7 +680,7 @@
 	</managed-bean>
 	
 	
-	<!--  **** RESERVATION ATTACHMENT **** --> 
+	<!--  ************ RESERVATION ATTACHMENT *************** --> 
 	<managed-bean>
 		<managed-bean-name>reservationAttach</managed-bean-name>
 		<managed-bean-class>
@@ -758,7 +758,7 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ********** RACK ********** -->
+	<!-- ************* RACK ********************************* -->
 	<managed-bean>
 		<managed-bean-name>rack</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.RackController</managed-bean-class>
@@ -790,14 +790,14 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
-	<!-- ********** ROOM AVAILABILITY ********** -->
+	<!-- ************* ROOM AVAILABILITY ******************** -->
 	<managed-bean>
 		<managed-bean-name>roomAvailability</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.RoomAvailabilityController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************* SERVICE INVOICE ***************** -->
+	<!-- ************* SERVICE INVOICE ********************** -->
 	<managed-bean>
 		<managed-bean-name>serviceInvoice</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ServiceInvoiceController</managed-bean-class>
@@ -846,7 +846,7 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ************* ADVANCE INVOICE ***************** -->
+	<!-- ************* ADVANCE INVOICE ********************** -->
 	<managed-bean>
 		<managed-bean-name>advanceInvoice</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.AdvanceInvoiceController</managed-bean-class>
@@ -878,7 +878,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
-	<!-- ************* NOSHOW INVOICE ***************** -->
+	<!-- ************* NOSHOW INVOICE *********************** -->
 	<managed-bean>
 		<managed-bean-name>noShowInvoice</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.NoShowInvoiceController</managed-bean-class>
@@ -910,70 +910,127 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
-	<!-- ************* EARLY CHECK-OUT INVOICE ***************** -->
+	<!-- ************* EARLY CHECK-OUT INVOICE *************** -->
 	<managed-bean>
 		<managed-bean-name>earlyCheckOut</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.EarlyCheckOutController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ********** PMS INVOICE PRINTER ********** -->
+	<!-- ************* ALLOTMENT ***************************** -->
+	<managed-bean>
+		<managed-bean-name>allotment</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.AllotmentController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.pms.Allotment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>allotment</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Allotment_startDate desc,Allotment_endDate desc</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{allotmentSearch}</value>
+				<value>#{allotmentScopeListener}</value>
+				<value>#{allotmentControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>allotmentSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.AllotmentSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>allotmentScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Allotment_hotel_scope_id</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>allotmentControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.AllotmentControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+
+
+
+
+
+
+
+	<!-- ************* PMS INVOICE PRINTER ****************** -->
 	<managed-bean>
 		<managed-bean-name>pmsInvoicePrinter</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.print.PmsInvoicePrinter</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************* RESERVATION INPUT OUTPUT ***************** -->
+	<!-- ************* RESERVATION INPUT OUTPUT ************* -->
 	<managed-bean>
 		<managed-bean-name>reservationIO</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationInOutController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************* GEVERNESS - WORK PLANNING ***************** -->
+	<!-- ************* GEVERNESS - WORK PLANNING ************ -->
 	<managed-bean>
 		<managed-bean-name>workPlanning</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.WorkPlanningController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>		
 	
-	<!-- ************* BOARD LIST ***************** -->
+	<!-- ************* BOARD LIST *************************** -->
 	<managed-bean>
 		<managed-bean-name>boardList</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.BoardListController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>		
 	
-	<!-- ************* BOARD BOOKING ***************** -->
+	<!-- ************* BOARD BOOKING ************************ -->
 	<managed-bean>
 		<managed-bean-name>boardBooking</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.BoardBookingController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
 	
-	<!-- ************* ROOM BOOKING ***************** -->
+	<!-- ************* ROOM BOOKING ************************* -->
 	<managed-bean>
 		<managed-bean-name>roomBooking</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.RoomBookingController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
 	
-	<!-- ************* EMPTY ROOM ***************** -->
+	<!-- ************* EMPTY ROOM *************************** -->
 	<managed-bean>
 		<managed-bean-name>emptyRoom</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.EmptyRoomController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
 	
-	<!-- ************* HOTEL GUESTS ***************** -->
+	<!-- ************* HOTEL GUESTS ************************* -->
 	<managed-bean>
 		<managed-bean-name>hotelGuest</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.HotelGuestController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>		
 	
-	<!-- ************* DIVERT ***************** -->
+	<!-- ************* DIVERT ******************************* -->
 	<managed-bean>
 		<managed-bean-name>divert</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.DivertController</managed-bean-class>
@@ -1012,7 +1069,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
-	<!-- ************* DIVERT RECEPTION ***************** -->
+	<!-- ************* DIVERT RECEPTION ********************* -->
 	<managed-bean>
 		<managed-bean-name>divertReception</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.DivertReceptionController</managed-bean-class>
@@ -1051,18 +1108,14 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
-	<!-- ************* PAYMENT CARD SETTLE ***************** -->
+	<!-- ************* PAYMENT CARD SETTLE ****************** -->
 	<managed-bean>
 		<managed-bean-name>paymentCardSettle</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.PaymentCardSettleController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- **************************************** -->
-	<!-- ********** OPTIONAL LISTENERS ********** -->
-	<!-- **************************************** -->
-	
-	<!-- ************* PURCHASE PMS PRINT EMAIL ***************** -->
+	<!-- ************* PURCHASE PMS PRINT EMAIL ************* -->
 	<managed-bean>
 		<managed-bean-name>purchasePrintEmailListener</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.event.PurchaseEmailListener</managed-bean-class>
@@ -1072,7 +1125,8 @@
 			<value>purchasePrint</value>
 		</managed-property>
 	</managed-bean>
-	<!-- ************* PURCHASE PMS EMAIL ***************** -->
+
+	<!-- ************* PURCHASE PMS EMAIL ******************* -->
 	<managed-bean>
 		<managed-bean-name>purchaseEmailListener</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.event.PurchaseEmailListener</managed-bean-class>
@@ -1083,11 +1137,11 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ******************************** -->
-	<!-- ********** LOOKUP ************** -->
-	<!-- ******************************** -->
+	<!-- **************************************************** -->
+	<!-- ************* LOOKUP ******************************* -->
+	<!-- **************************************************** -->
 	
-	<!-- ************ RESERVATION LOOKUP ************** -->
+	<!-- ************* RESERVATION LOOKUP ******************* -->
 	<managed-bean>
 		<managed-bean-name>reservationLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
@@ -1126,11 +1180,11 @@
 	</managed-bean>
 	
 	
-	<!-- ******************************** -->
-	<!-- ********** NAVIGATION ********** -->
-	<!-- ******************************** -->
+	<!-- **************************************************** -->
+	<!-- ************* NAVIGATION *************************** -->
+	<!-- **************************************************** -->
 
-  	<!-- =================== Hotel ================= -->
+  	<!-- ============= Hotel ================================ -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>hotel_list</from-outcome>
@@ -1142,7 +1196,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-  	<!-- =================== Room ================= -->
+  	<!-- ============= Room ================================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>room_search</from-outcome>
@@ -1158,7 +1212,7 @@
 		</navigation-case>
 	</navigation-rule>  
 
-  	<!-- =================== Reservation Request ================= -->
+  	<!-- ============= Reservation Request ================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>reservationRequest_list</from-outcome>
@@ -1174,7 +1228,7 @@
 		</navigation-case>
 	</navigation-rule>  
 
-  	<!-- =================== Reservation ================= -->
+  	<!-- ============= Reservation ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>reservation_list</from-outcome>
@@ -1190,7 +1244,7 @@
 		</navigation-case>
 	</navigation-rule>  
 
-  	<!-- =================== Rack ================= -->
+  	<!-- ============= Rack ================================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>rack_search</from-outcome>
@@ -1202,7 +1256,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-  	<!-- =================== Service Invoice ================= -->
+  	<!-- ============= Service Invoice ====================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>serviceInvoice_list</from-outcome>
@@ -1218,7 +1272,7 @@
 		</navigation-case>
 	</navigation-rule>  
 
-  	<!-- =================== Advance Invoice ================= -->
+  	<!-- ============= Advance Invoice ====================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>advanceInvoice_list</from-outcome>
@@ -1230,7 +1284,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-  	<!-- =================== NoShow Invoice ================= -->
+  	<!-- ============= NoShow Invoice ======================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>noShowInvoice_list</from-outcome>
@@ -1242,7 +1296,23 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!-- =================== Reservation Input - Output ================= -->
+  	<!-- ============= Allotment ============================ -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>allotment_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/allotment/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>allotment_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/allotment/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>allotment_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/allotment/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>  
+
+	<!-- ============= Reservation Input - Output =========== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>reservationIO_search</from-outcome>
@@ -1254,7 +1324,7 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	<!-- =================== Governess - Work Planning ================= -->
+	<!-- ============= Governess - Work Planning ============ -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>workPlanning_search</from-outcome>
@@ -1266,7 +1336,7 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	<!-- =================== Board list ================= -->
+	<!-- ============= Board list =========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>boardList_search</from-outcome>
@@ -1278,7 +1348,7 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	<!-- =================== Board Booking ================= -->
+	<!-- ============= Board Booking ======================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>boardBooking_search</from-outcome>
@@ -1290,7 +1360,7 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	<!-- =================== Room Booking ================= -->
+	<!-- ============= Room Booking ========================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>roomBooking_search</from-outcome>
@@ -1302,7 +1372,7 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	<!-- =================== Empty Room  ================= -->
+	<!-- ============= Empty Room  ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>emptyRoom_search</from-outcome>
@@ -1314,7 +1384,7 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	<!-- =================== Hotel Guest ================= -->
+	<!-- ============= Hotel Guest ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>hotelGuest_search</from-outcome>
@@ -1326,7 +1396,7 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	<!-- =================== Divert ================= -->
+	<!-- ============= Divert =============================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>divert_search</from-outcome>
@@ -1346,7 +1416,7 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	<!-- =================== Divert Reception ================= -->
+	<!-- ============= Divert Reception ===================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>divertReception_search</from-outcome>
@@ -1362,7 +1432,7 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	<!-- =================== Payment Card Application ================= -->
+	<!-- ============= Payment Card Settle ================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>paymentCardSettle_search</from-outcome>

@@ -28,14 +28,6 @@
     <table-filter match-name="fs_renting" exclude="true" />
 	<table-filter match-name="fs_renting_detail" exclude="true" />
 	
-	<!--  ****************************** -->
-	<!--  TABLAS EXCLUIDAS TEMPORALMENTE -->
-	<!--  ****************************** -->
-	<table-filter match-name="allotment" exclude="true" />
-	<table-filter match-name="allotment_item" exclude="true" />
-	<table-filter match-name="stop_sales" exclude="true" />
-	<table-filter match-name="stop_sales_item" exclude="true" />
-		
 	<!--  *********************************** -->
 	<!--  TABLAS VALIDAS QUE NO LEVANTAN POJO -->
 	<!--  *********************************** -->
@@ -120,6 +112,13 @@
 		<column name="priority" type="com.code.aon.groupware.enumeration.Priority"/>
 	</table>
 
+	<table name="allotment">
+		<column name="remarks" type="text"/>
+		<foreign-key constraint-name="FK_ALLOTMENT_AGENCY">
+			<many-to-one property="agency" />
+		</foreign-key>
+	</table>
+	
 	<table name="amortization">
 		<column name="fee_period" type="com.code.aon.accounting.enumeration.AmortizationPeriod"/>
 		<column name="amount" type="java.lang.Double"/>
@@ -1487,6 +1486,10 @@
 
 	<table name="stock">
 		<column name="quantity" type="java.lang.Double"/>
+	</table>
+	
+	<table name="stop_sales">
+		<column name="remarks" type="text"/>
 	</table>
 	
 	<table name="supplier">

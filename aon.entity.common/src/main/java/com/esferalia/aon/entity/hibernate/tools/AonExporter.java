@@ -462,6 +462,8 @@ public class AonExporter extends GenericExporter{
 		map.put("ProjectType","com.code.aon.project.ProjectType");
 
 		//AON-PMS
+        map.put("Allotment","com.esferalia.aon.pms.Allotment");
+        map.put("AllotmentItem","com.esferalia.aon.pms.AllotmentItem");
         map.put("Hotel","com.esferalia.aon.pms.Hotel");
         map.put("ProjectReservation","com.esferalia.aon.pms.ProjectReservation");
         map.put("ProjectReservationDivert","com.esferalia.aon.pms.ProjectReservationDivert");
@@ -474,6 +476,8 @@ public class AonExporter extends GenericExporter{
         map.put("ReservationRequestGuest","com.esferalia.aon.pms.ReservationRequestGuest");
         map.put("ReservationRequestRoom","com.esferalia.aon.pms.ReservationRequestRoom");
         map.put("Room","com.esferalia.aon.pms.Room");
+        map.put("StopSales","com.esferalia.aon.pms.StopSales");
+        map.put("StopSalesItem","com.esferalia.aon.pms.StopSalesItem");
         
 		//AON-PURCHASE  
         map.put("Proposal","com.code.aon.purchase.Proposal");

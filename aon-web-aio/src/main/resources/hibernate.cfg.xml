@@ -281,6 +281,8 @@
 		<mapping class="com.esferalia.aon.payroll.TrainingCourse"/>
 
 		<!-- AON-PMS Mapping files -->	
+		<mapping class="com.esferalia.aon.pms.Allotment"/>
+		<mapping class="com.esferalia.aon.pms.AllotmentItem"/>
 		<mapping class="com.esferalia.aon.pms.Hotel"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationDivert"/>
@@ -293,6 +295,8 @@
 		<mapping class="com.esferalia.aon.pms.ReservationRequestGuest"/>
 		<mapping class="com.esferalia.aon.pms.ReservationRequestRoom"/>
 		<mapping class="com.esferalia.aon.pms.Room"/>
+		<mapping class="com.esferalia.aon.pms.StopSales"/>
+		<mapping class="com.esferalia.aon.pms.StopSalesItem"/>
 
 		<!-- AON-PROJECT Mapping files -->  
 		<mapping class="com.code.aon.project.ActivityType"/>

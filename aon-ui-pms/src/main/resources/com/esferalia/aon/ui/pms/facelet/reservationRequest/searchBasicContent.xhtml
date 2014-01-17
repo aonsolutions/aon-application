@@ -73,12 +73,6 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 
-	<aon:outputLabel for="ReservationRequest_remarks" 
-		value="#{bundle.aon_remark}" />
-	<aon:inputText id="ReservationRequest_remarks"
-		valueChangeListener="#{controller.addExpression}"
-		size="64" />
-
 	<c:if test="#{aonRole.commercialOperator}">
 		<aon:outputLabel for="ReservationRequest_agency" 
 			value="#{bundle.report_agency}" />
@@ -89,6 +83,12 @@
 			<f:selectItems value="#{pmsCollections.agencies}" />
 		</aon:selectOneMenu>
 	</c:if>
+
+	<aon:outputLabel for="ReservationRequest_remarks" 
+		value="#{bundle.aon_remark}" />
+	<aon:inputText id="ReservationRequest_remarks"
+		valueChangeListener="#{controller.addExpression}"
+		size="64" />
 
 	<aon:outputLabel for="ReservationRequest_active" value="#{bundle.aon_status}" />
 	<aon:selectOneRadio id="ReservationRequest_active"

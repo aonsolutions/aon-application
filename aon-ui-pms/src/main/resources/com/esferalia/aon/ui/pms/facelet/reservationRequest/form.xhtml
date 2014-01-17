@@ -16,8 +16,9 @@
 				<ui:param name="skipRemoveButton" value="#{!reservationRequest.to.active}" />
 				<ui:define name="beforeSpinToolbarContent">				
 					<aon:commandButton id="audit-info"
-						value="#{bundle.aon_audit}"
 						styleClass="aon-finding-toolbar-item aon-icon-audit"
+						value="#{bundle.aon_audit}"
+						rendered="#{!reservationRequest.new}"
 						reRender="showAuditInfoWindow">
 						<f:setPropertyActionListener target="#{reservationRequest.showAuditInfoWindow}"
 							value="#{true}" />							
