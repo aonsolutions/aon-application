@@ -4,7 +4,7 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 
 public interface AonResources extends ClientBundle {
-		
+	
 	@Source("aon.css")
 	AonCSS css();
 
@@ -28,5 +28,6 @@ public interface AonResources extends ClientBundle {
 	
 	@Source("../images/aon-aeat.png")
 	ImageResource aonAeat();
+
 }
 

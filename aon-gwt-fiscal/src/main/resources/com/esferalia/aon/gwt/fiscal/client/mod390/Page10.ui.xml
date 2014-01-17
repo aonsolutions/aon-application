@@ -1,0 +1,200 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'>
+
+	<ui:with type="com.esferalia.aon.gwt.fiscal.client.FiscalMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.fiscal.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+	<ui:style>
+		.table {
+			width: 90%;
+			border-collapse: collapse;
+		}
+		.table td:first-child {
+			border-bottom:#ccc 1px solid;
+			padding-left: 5px;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<g:Label text="{msg.operationsVolume}" styleName="{aonResources.css.aonPageHeader}"/>
+
+		<table class="{style.table}">
+			<colgroup>
+				<col style="width: auto;" />
+				<col style="width: 40px;" />
+				<col style="width: 120px;"/>
+			</colgroup>
+			<tr>
+				<td>
+					<g:Label text="{msg.box99Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="99" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box99"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.box103Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="103" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box103"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.box104Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="104" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box104"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.box105Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="105" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box105"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.box110Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="110" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box110"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.box112Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="112" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box112"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.box100Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="100" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box100"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.box101Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="101" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box101"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.box102Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="102" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box102"/>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<g:Label text="{msg.box227Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="227" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box227"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.box228Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="228" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box228"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.box106Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="106" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box106"/>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.box107Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="107" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box107"/>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<g:Label text="{msg.box108Msg}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="108" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box108"/>
+				</td>
+			</tr>
+			
+		</table>
+	</g:HTMLPanel>
+	
+</ui:UiBinder>

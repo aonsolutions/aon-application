@@ -60,6 +60,9 @@ public class EnterpriseSuggestBox extends ResizeComposite implements
 	public TextBox getName() {
 		return name;
 	}
+	public SuggestBox getDocument() {
+		return document;
+	}
 
 	public EnterpriseSuggestBox() {
 		aonResources.css().ensureInjected();

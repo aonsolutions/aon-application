@@ -3,31 +3,40 @@ package com.esferalia.aon.gwt.fiscal.shared;
 import java.io.Serializable;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class Activity implements Serializable, IsSerializable{
 
-	private String activity;
-	private String activityKey;
-	private String activityEpigraph;
+	public static final ProvidesKey<Activity> PROVIDES_KEY = new ProvidesKey<Activity>() {
+		@Override
+		public Object getKey(Activity activity) {
+			return activity == null ? null : activity.getEpigraph();
+		}
+	};
+
+	private String description;
+	private String key;
+	private String epigraph;
 	
-	public String getActivity() {
-		return activity;
+	public String getDescription() {
+		return description;
 	}
-	public void setActivity(String activity) {
-		this.activity = activity;
+	public void setDescription(String description) {
+		this.description = description;
 	}
-	public String getActivityKey() {
-		return activityKey;
+	public String getKey() {
+		return key;
 	}
-	public void setActivityKey(String activityKey) {
-		this.activityKey = activityKey;
+	public void setKey(String key) {
+		this.key = key;
 	}
-	public String getActivityEpigraph() {
-		return activityEpigraph;
+	public String getEpigraph() {
+		return epigraph;
 	}
-	public void setActivityEpigraph(String activityEpigraph) {
-		this.activityEpigraph = activityEpigraph;
+	public void setEpigraph(String epigraph) {
+		this.epigraph = epigraph;
 	}
+	
 
 }

@@ -1,3 +1,23 @@
+.aon-dataTable{
+	width:100%;		
+	font-family:arial,verdana, "sans serif";
+	border:#ccc 1px solid;
+	border-collapse:collapse;
+}
+
+.aon-dataTable td{
+	padding-top:1px;
+	padding-bottom:1px;
+	padding-left:0.5em;
+	padding-right:0.5em;	
+	border:#ccc 1px solid;
+}
+.aon-margin-top{
+	margin-top: 1em;
+}
+.aon-bold {
+	font-weight: bold;
+}
 .aon-text-center {
 	text-align: center;
 }
@@ -6,6 +26,30 @@
 }
 .aon-text-right {
 	text-align: right;
+}
+.aon-vertical-align-middle{
+	vertical-align: middle;
+}
+.aon-simple-border {
+	border: solid #CCC 1px;
+}
+.aon-background-disabled {
+	background-color: #EEE;
+}
+.aon-font-small {
+	font-size: 0.8em;
+}
+.aon-padding-left {
+	padding-left: 1em;
+}
+.aon-padding-right{
+	padding-right: 1em;
+}
+.aon-border-bottom  {
+	border-bottom: solid #999 1px;
+}
+.aon-padding2 {
+	padding: 2px;
 }
 
 .aon-editDataTable-iconColumn {
@@ -72,4 +116,22 @@
 	background-attachment: scroll;
 	background-repeat: no-repeat;
 	background-position: center left;
+}
+
+.aon-icon-commandButton{
+	padding:0 0 0 16px;
+	text-align:left;
+	border:0px;
+	width:auto;
+   	overflow:visible;
+   	cursor:pointer;   	
+}
+
+.aon-page-header {
+	background-color: #999;
+	color: white;
+	font-weight: bold;
+	font-size: 1.2em;
+	padding-left: 25px;
+	margin-bottom: 10px;
 }

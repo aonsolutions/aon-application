@@ -1,20 +1,14 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'
-	xmlns:m190='urn:import:com.esferalia.aon.gwt.fiscal.client.mod190'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'
+	xmlns:m390='urn:import:com.esferalia.aon.gwt.fiscal.client.mod390'
 	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
 
-	<ui:with type="com.esferalia.aon.gwt.fiscal.client.FiscalMessages"
-		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.fiscal.client.FiscalMessages" field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.fiscal.client.css.AonResources" field="aonResources"></ui:with>
 
 	<ui:style>
-		.inner-label {
-			font-style: italic;
-			margin-left: 5px;
-			margin-right: 5px;
-			display: inline;
-		}
-		
 		.linkPanel {
 			padding: 0px 0px 1.5em 1.5em;
 		}
@@ -49,19 +43,6 @@
 			padding-right: 20px;
 			padding-left: 5px;
 		}
-		.pageHeader {
-			background-color: #999;
-			color: white;
-			font-weight: bold;
-			font-size: 1.2em;
-			padding-left: 25px;
-			margin-bottom: 10px;
-		}
-		.pageElement {
-			margin-top: 10px;
-			border: solid #CCC 1px;
-			padding: 2px;
-		}
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel">
@@ -89,8 +70,10 @@
 								styleName='aon-finding-toolbar-item aon-icon-cancel' text="{msg.cancelAction}" />
 							<g:Button ui:field='deleteButton'
 								styleName='aon-finding-toolbar-item aon-icon-delete' text="{msg.deleteAction}" />
+							<!-- 
 							<g:Button ui:field='printButton'
 								styleName='aon-finding-toolbar-item aon-icon-printer' text="{msg.printViaAeat}" />
+							-->
 							<g:Button ui:field='generateFileButton'
 								styleName='aon-finding-toolbar-item aon-icon-aeat' text="{msg.generateFile}" />
 							<g:Anchor ui:field="download" visible="false"/>							
@@ -146,6 +129,17 @@
 					<g:west size="200">
 						<g:ScrollPanel styleName="{style.linkPanel}">
 							<g:FlowPanel styleName="{style.linkContainer}">
+								<g:FocusPanel ui:field='linkPage0' styleName="{style.linkItem}">
+									<g:FlowPanel>
+										<g:FlowPanel styleName="{style.linkNumber}">
+											<g:Label text="0" />
+										</g:FlowPanel>
+										<g:FlowPanel styleName="{style.linkDescription}">
+											<g:Label text="{msg.deponentData}" />
+										</g:FlowPanel>
+									</g:FlowPanel>
+								</g:FocusPanel>
+
 								<g:FocusPanel ui:field='linkPage1' styleName="{style.linkItem}">
 									<g:FlowPanel>
 										<g:FlowPanel styleName="{style.linkNumber}">
@@ -283,59 +277,44 @@
 					<g:center>
 						<g:ScrollPanel styleName="aon-scroll-area">
 							<g:DeckPanel ui:field="pagesPanel">
-								<g:FlowPanel ui:field="panel1">
-									<g:HTMLPanel>
-										<g:Label text="{msg.pasiveSubject}" styleName="{style.pageHeader}" />
-										
-										<div class="{style.pageElement}">
-											<g:CheckBox ui:field="taxRefund" text="{msg.taxRefund}" />
-										</div>
-										<div class="{style.pageElement}">
-											<g:CheckBox ui:field="specialGroupRegime" text="{msg.specialGroupRegime}" />
-											<div style="margin-left: 15px; padding-left: 5px; padding-right: 5px">
-												<g:Label text="{msg.groupNumber}" styleName="{style.inner-label}" />
-												<g:TextBox maxLength="5" visibleLength="5" ui:field="groupNumber"/>
-												<g:CheckBox ui:field="groupDependent" text="{msg.groupDependent}" />
-											</div>
-										</div>
-										<div class="{style.pageElement}">
-											<g:CheckBox ui:field="groupDeclarations" text="{msg.groupDeclarations}" />
-										</div>
-									</g:HTMLPanel>
+								<g:FlowPanel ui:field="panel0">
+									<m390:Page0 ui:field="page0"/>
 								</g:FlowPanel>
-																		
+								<g:FlowPanel ui:field="panel1">
+									<m390:Page1 ui:field="page1"/>
+								</g:FlowPanel>
 								<g:FlowPanel ui:field="panel3">
-									<g:Label text="{msg.stadisticalData}" styleName="{style.pageHeader}"/>
+									<m390:Page3 ui:field="page3"/>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="panel4">
-									<g:Label text="{msg.representativeData}" styleName="{style.pageHeader}"/>
+									<m390:Page4 ui:field="page4"/>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="panel5">
-									<g:Label text="{msg.generalRegimeOperations}" styleName="{style.pageHeader}"/>
+									<m390:Page5 ui:field="page5"/>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="panel6">
-									<g:Label text="{msg.simplifiedRegimeOperations}" styleName="{style.pageHeader}"/>
+									<m390:Page6 ui:field="page6"/>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="panel7">
-									<g:Label text="{msg.annualLiquidationResult}" styleName="{style.pageHeader}"/>
+									<m390:Page7 ui:field="page7"/>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="panel8">
-									<g:Label text="{msg.taxByTerritory}" styleName="{style.pageHeader}"/>
+									<m390:Page8 ui:field="page8"/>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="panel9">
-									<g:Label text="{msg.liquidationsResult}" styleName="{style.pageHeader}"/>
+									<m390:Page9 ui:field="page9"/>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="panel10">
-									<g:Label text="{msg.operationsVolume}" styleName="{style.pageHeader}"/>
+									<m390:Page10 ui:field="page10"/>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="panel11">
-									<g:Label text="{msg.specificOperations}" styleName="{style.pageHeader}"/>
+									<m390:Page11 ui:field="page11"/>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="panel12">
-									<g:Label text="{msg.prorrata}" styleName="{style.pageHeader}"/>
+									<m390:Page12 ui:field="page12"/>
 								</g:FlowPanel>
 								<g:FlowPanel ui:field="panel13">
-									<g:Label text="{msg.difActivitiesRegime}" styleName="{style.pageHeader}"/>
+									<m390:Page13 ui:field="page13"/>
 								</g:FlowPanel>
 							</g:DeckPanel>
 						</g:ScrollPanel>

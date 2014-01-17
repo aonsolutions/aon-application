@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.shared;
 
 import java.io.Serializable;
+import java.util.Map;
 
+import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Mod390DetailKey;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -15,10 +17,13 @@ public class Mod390 implements Serializable, IsSerializable {
 		}
 	};
 
+	private static final String LEGAL_ENTITY_PATTERN = "^[0-9|X|Y|Z].*";
+
 	private Integer id;
 	private int domain;
 	private int enterprise;
 	private int year;
+	private int administration;
 	private boolean confidential;
 	private boolean replacement;
 	private String receipt;
@@ -36,11 +41,11 @@ public class Mod390 implements Serializable, IsSerializable {
 	private boolean insolvencyDeclarations;
 	private boolean taxRefund;
 	private boolean specialGroupRegime; 
-	private Integer groupNumber; 
+	private String groupNumber; 
 	private boolean groupDependent; 
 	private boolean groupRegimeType; 
 	private String groupDocument;
-	private boolean groupDeclarations; 
+	private boolean groupDeclarations;
 		
 	
 	private Activity mainActivity;
@@ -58,6 +63,49 @@ public class Mod390 implements Serializable, IsSerializable {
 	private LegalRepresentative legalRepr1; 
 	private LegalRepresentative legalRepr2; 
 	private LegalRepresentative legalRepr3;
+	
+	private Map<Mod390DetailKey,Mod390Detail> generalRegime;
+	
+	private double box84;
+	private double box85;
+	private double box86;
+	private double box87;
+	private double box88;
+	private double box89;
+	private double box90;
+	private double box91;
+	private double box92;
+	private double box93;
+	private double box94;
+	private double box95;
+	private double box96;
+	private double box524;
+	private double box97;
+	private double box98;
+	private double box525;
+	private double box526;
+	private double box99;
+	private double box103;
+	private double box104;
+	private double box105;
+	private double box110;
+	private double box112;
+	private double box100;
+	private double box101;
+	private double box102;
+	private double box227;
+	private double box228;
+	private double box106;
+	private double box107;
+	private double box108;
+	private double box230;
+	private double box109;
+	private double box231;
+	private double box232;
+	private double box111;
+	private double box113;
+	private double box523;
+
 	public Integer getId() {
 		return id;
 	}
@@ -81,6 +129,12 @@ public class Mod390 implements Serializable, IsSerializable {
 	}
 	public void setYear(int year) {
 		this.year = year;
+	}
+	public int getAdministration() {
+		return administration;
+	}
+	public void setAdministration(int administration) {
+		this.administration = administration;
 	}
 	public boolean isConfidential() {
 		return confidential;
@@ -111,6 +165,9 @@ public class Mod390 implements Serializable, IsSerializable {
 	}
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+	public boolean isLegalEntity() {
+		return !AonUtil.isEmpty(document) && !document.matches(LEGAL_ENTITY_PATTERN);
 	}
 	public String getDocument() {
 		return document;
@@ -160,10 +217,10 @@ public class Mod390 implements Serializable, IsSerializable {
 	public void setSpecialGroupRegime(boolean specialGroupRegime) {
 		this.specialGroupRegime = specialGroupRegime;
 	}
-	public Integer getGroupNumber() {
+	public String getGroupNumber() {
 		return groupNumber;
 	}
-	public void setGroupNumber(Integer groupNumber) {
+	public void setGroupNumber(String groupNumber) {
 		this.groupNumber = groupNumber;
 	}
 	public boolean isGroupDependent() {
@@ -268,6 +325,245 @@ public class Mod390 implements Serializable, IsSerializable {
 	public void setLegalRepr3(LegalRepresentative legalRepr3) {
 		this.legalRepr3 = legalRepr3;
 	}
-	
+	public Map<Mod390DetailKey, Mod390Detail> getGeneralRegime() {
+		return generalRegime;
+	}
+	public void setGeneralRegime(Map<Mod390DetailKey, Mod390Detail> generalRegime) {
+		this.generalRegime = generalRegime;
+	}
+	public double getBox84() {
+		return box84;
+	}
+	public void setBox84(double box84) {
+		this.box84 = box84;
+	}
+	public double getBox85() {
+		return box85;
+	}
+	public void setBox85(double box85) {
+		this.box85 = box85;
+	}
+	public double getBox86() {
+		return box86;
+	}
+	public void setBox86(double box86) {
+		this.box86 = box86;
+	}
+	public double getBox87() {
+		return box87;
+	}
+	public void setBox87(double box87) {
+		this.box87 = box87;
+	}
+	public double getBox88() {
+		return box88;
+	}
+	public void setBox88(double box88) {
+		this.box88 = box88;
+	}
+	public double getBox89() {
+		return box89;
+	}
+	public void setBox89(double box89) {
+		this.box89 = box89;
+	}
+	public double getBox90() {
+		return box90;
+	}
+	public void setBox90(double box90) {
+		this.box90 = box90;
+	}
+	public double getBox91() {
+		return box91;
+	}
+	public void setBox91(double box91) {
+		this.box91 = box91;
+	}
+	public double getBox92() {
+		return box92;
+	}
+	public void setBox92(double box92) {
+		this.box92 = box92;
+	}
+	public double getBox93() {
+		return box93;
+	}
+	public void setBox93(double box93) {
+		this.box93 = box93;
+	}
+	public double getBox94() {
+		return box94;
+	}
+	public void setBox94(double box94) {
+		this.box94 = box94;
+	}
+	public double getBox95() {
+		return box95;
+	}
+	public void setBox95(double box95) {
+		this.box95 = box95;
+	}
+	public double getBox96() {
+		return box96;
+	}
+	public void setBox96(double box96) {
+		this.box96 = box96;
+	}
+	public double getBox524() {
+		return box524;
+	}
+	public void setBox524(double box524) {
+		this.box524 = box524;
+	}
+	public double getBox97() {
+		return box97;
+	}
+	public void setBox97(double box97) {
+		this.box97 = box97;
+	}
+	public double getBox98() {
+		return box98;
+	}
+	public void setBox98(double box98) {
+		this.box98 = box98;
+	}
+	public double getBox525() {
+		return box525;
+	}
+	public void setBox525(double box525) {
+		this.box525 = box525;
+	}
+	public double getBox526() {
+		return box526;
+	}
+	public void setBox526(double box526) {
+		this.box526 = box526;
+	}
+	public double getBox99() {
+		return box99;
+	}
+	public void setBox99(double box99) {
+		this.box99 = box99;
+	}
+	public double getBox103() {
+		return box103;
+	}
+	public void setBox103(double box103) {
+		this.box103 = box103;
+	}
+	public double getBox104() {
+		return box104;
+	}
+	public void setBox104(double box104) {
+		this.box104 = box104;
+	}
+	public double getBox105() {
+		return box105;
+	}
+	public void setBox105(double box105) {
+		this.box105 = box105;
+	}
+	public double getBox110() {
+		return box110;
+	}
+	public void setBox110(double box110) {
+		this.box110 = box110;
+	}
+	public double getBox112() {
+		return box112;
+	}
+	public void setBox112(double box112) {
+		this.box112 = box112;
+	}
+	public double getBox100() {
+		return box100;
+	}
+	public void setBox100(double box100) {
+		this.box100 = box100;
+	}
+	public double getBox101() {
+		return box101;
+	}
+	public void setBox101(double box101) {
+		this.box101 = box101;
+	}
+	public double getBox102() {
+		return box102;
+	}
+	public void setBox102(double box102) {
+		this.box102 = box102;
+	}
+	public double getBox227() {
+		return box227;
+	}
+	public void setBox227(double box227) {
+		this.box227 = box227;
+	}
+	public double getBox228() {
+		return box228;
+	}
+	public void setBox228(double box228) {
+		this.box228 = box228;
+	}
+	public double getBox106() {
+		return box106;
+	}
+	public void setBox106(double box106) {
+		this.box106 = box106;
+	}
+	public double getBox107() {
+		return box107;
+	}
+	public void setBox107(double box107) {
+		this.box107 = box107;
+	}
+	public double getBox108() {
+		return box108;
+	}
+	public void setBox108(double box108) {
+		this.box108 = box108;
+	}
+	public double getBox230() {
+		return box230;
+	}
+	public void setBox230(double box230) {
+		this.box230 = box230;
+	}
+	public double getBox109() {
+		return box109;
+	}
+	public void setBox109(double box109) {
+		this.box109 = box109;
+	}
+	public double getBox231() {
+		return box231;
+	}
+	public void setBox231(double box231) {
+		this.box231 = box231;
+	}
+	public double getBox232() {
+		return box232;
+	}
+	public void setBox232(double box232) {
+		this.box232 = box232;
+	}
+	public double getBox111() {
+		return box111;
+	}
+	public void setBox111(double box111) {
+		this.box111 = box111;
+	}
+	public double getBox113() {
+		return box113;
+	}
+	public void setBox113(double box113) {
+		this.box113 = box113;
+	}
+	public double getBox523() {
+		return box523;
+	}
+	public void setBox523(double box523) {
+		this.box523 = box523;
+	}
 }
 

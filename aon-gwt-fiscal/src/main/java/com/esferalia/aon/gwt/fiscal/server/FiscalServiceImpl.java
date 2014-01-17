@@ -12,6 +12,13 @@ import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
+import com.esferalia.aon.gwt.fiscal.server.Activities.Type1Activities;
+import com.esferalia.aon.gwt.fiscal.server.Activities.Type2Activities;
+import com.esferalia.aon.gwt.fiscal.server.Activities.Type3Activities;
+import com.esferalia.aon.gwt.fiscal.server.Activities.Type4Activities;
+import com.esferalia.aon.gwt.fiscal.server.Activities.Type7Activities;
+import com.esferalia.aon.gwt.fiscal.server.Activities.TypeActivity;
+import com.esferalia.aon.gwt.fiscal.shared.Activity;
 import com.esferalia.aon.gwt.fiscal.shared.AonSQLException;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalParameters;
@@ -21,7 +28,9 @@ import com.esferalia.aon.gwt.fiscal.shared.Mod180Receiver;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Detail;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver;
+import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
+import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
 import com.esferalia.aon.gwt.fiscal.sql.SQLEnterprise;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod180;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod190;
@@ -84,6 +93,35 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	// -------------------------------------------------------------- ACTIVITIES
+	@Override
+	public ArrayList<Activity> getActivities(int activityGroup) throws AonSQLException {
+		ArrayList<Activity> list = new ArrayList<Activity>();
+		TypeActivity[] types = null;
+		if (activityGroup == 0) {
+			types = Type1Activities.values();
+		} if (activityGroup == 1) {
+			types = Type2Activities.values();
+		} if (activityGroup == 2) {
+			types = Type3Activities.values();
+		} if (activityGroup == 3) {
+			types = Type4Activities.values();
+		} if (activityGroup == 6) {
+			types = Type7Activities.values();
+		}
+		if (types == null) {
+			throw new AonSQLException("Grupo de actividad no soportado " + activityGroup );
+		}
+		Activity a;
+		for (TypeActivity type : types) {
+			a = new Activity();
+			a.setEpigraph(type.getEpigraph());
+			a.setDescription(type.getLiteral());
+			list.add(a);
+		}
+		return list;
+	}
+	
 	// ---------------------------------------------------------------MODELO 190
 	@Override
 	public void deleteMod190(Mod190 mod190) throws AonSQLException {
@@ -396,7 +434,52 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	// ---------------------------------------------------------------MODELO 390
+	@Override
+	public ArrayList<Mod390Detail> getMod390Details(int domain, Integer year)
+			throws AonSQLException {
+		Connection conn = null;
+		ArrayList<Mod390Detail> list = new ArrayList<Mod390Detail>();
+		try {
+			conn = getConnection();
+			disableAutoCommit(conn);
+			list = SQLMod390.getMod390Details(domain,year,conn);
+			commit(conn);
+			return list;
+		} catch (AonSQLException e) {
+			rollback(conn);
+			throw e;
+		} catch (Throwable e) {
+			rollback(conn);
+			throw new AonSQLException(e);
+		} finally {
+			enableAutoCommit(conn);
+			SQLUtils.closeQuietly(conn);
+		}
+	}
 	
+	@Override
+	public Mod303Results getMod303Results(int domain, int year)
+			throws AonSQLException {
+		Connection conn = null;
+		Mod303Results result = new Mod303Results();
+		try {
+			conn = getConnection();
+			disableAutoCommit(conn);
+			result = SQLMod390.getMod303Results(domain,year,conn);
+			commit(conn);
+			return result;
+		} catch (AonSQLException e) {
+			rollback(conn);
+			throw e;
+		} catch (Throwable e) {
+			rollback(conn);
+			throw new AonSQLException(e);
+		} finally {
+			enableAutoCommit(conn);
+			SQLUtils.closeQuietly(conn);
+		}
+	}
+
 	@Override
 	public Mod390 getMod390(Integer id) throws AonSQLException {
 		Connection conn = null;

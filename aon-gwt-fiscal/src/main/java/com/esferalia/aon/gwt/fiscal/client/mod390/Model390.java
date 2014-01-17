@@ -14,11 +14,13 @@ import com.esferalia.aon.gwt.fiscal.client.css.AonResources;
 import com.esferalia.aon.gwt.fiscal.client.css.GWTResources;
 import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.gwt.fiscal.shared.AonUtil;
+import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Administration;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.resources.client.ImageResource;
@@ -63,14 +65,18 @@ public class Model390 extends MainEntryPoint {
 	private Mod390 mod390;
 	private FiscalServiceAsync fiscalService;
 	private final static FiscalMessages MSG = GWT.create(FiscalMessages.class);
-	private final static AonResources RESOURCES = GWT
-			.create(AonResources.class);
+	private final static AonResources RESOURCES = GWT.create(AonResources.class);
 
 	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
 	DeckPanel pagesPanel;
 	
+	@UiField
+	Panel panel0;
+	@UiField
+	FocusPanel linkPage0;
+
 	@UiField
 	Panel panel1;
 	@UiField
@@ -158,8 +164,8 @@ public class Model390 extends MainEntryPoint {
 	Button cancelButton;
 	@UiField
 	Button generateFileButton;
-	@UiField
-	Button printButton;
+//	@UiField
+//	Button printButton;
 
 	@UiField
 	TextBox year;
@@ -171,20 +177,60 @@ public class Model390 extends MainEntryPoint {
 	TextBox replacedReceipt;
 
 	FormPanel diskForm;
-	Hidden mod190Hidden;
+	Hidden mod390Hidden;
 	
-	
+	// PAGE 0
+	@UiField
+	Page0 page0;
+
 	// PAGE 1
 	@UiField
-	CheckBox taxRefund;
+	Page1 page1;
+
+	// PAGE 3
 	@UiField
-	CheckBox specialGroupRegime;
+	Page3 page3;
+	
+	// PAGE 4
 	@UiField
-	TextBox groupNumber;
+	Page4 page4;
+
+	// PAGE 5
 	@UiField
-	CheckBox groupDependent;
+	Page5 page5;
+
+	// PAGE 6
 	@UiField
-	CheckBox groupDeclarations;
+	Page6 page6;
+
+	// PAGE 7
+	@UiField
+	Page7 page7;
+
+	// PAGE 8
+	@UiField
+	Page8 page8;
+
+	// PAGE 
+	@UiField
+	Page9 page9;
+
+	// PAGE 10
+	@UiField
+	Page10 page10;
+
+	// PAGE 11
+	@UiField
+	Page11 page11;
+
+	// PAGE 12
+	@UiField
+	Page12 page12;
+
+	// PAGE 13
+	@UiField
+	Page13 page13;
+
 	
 	@Override
 	public void onModuleLoad() {
@@ -212,7 +258,7 @@ public class Model390 extends MainEntryPoint {
 		model.addSelectionChangeHandler(new Mod390SelectionHandler());
 		table.setSelectionModel(model);
 		table.setEmptyTableWidget(new HTML(MSG.noData()));
-
+		
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
 
@@ -220,8 +266,8 @@ public class Model390 extends MainEntryPoint {
 
 		diskForm = new FormPanel("_blank");
 		diskForm.setMethod(FormPanel.METHOD_POST);
-		mod190Hidden = new Hidden("mod190");
-		diskForm.add(mod190Hidden);
+		mod390Hidden = new Hidden("mod390");
+		diskForm.add(mod390Hidden);
 		formContainer.add(diskForm);
 
 		// Add the outer panel to the RootLayoutPanel, so that it will be
@@ -231,6 +277,13 @@ public class Model390 extends MainEntryPoint {
 
 		// http://code.google.com/p/google-web-toolkit/issues/detail?id=6889
 		deckPanel.onResize();
+		
+		page5.setPage10(page10);
+		page7.setPage5(page5);
+		page8.setPage5(page5);
+		
+		// HABILITAR
+		
 	}
 
 	public static native int getCurrentDomain()
@@ -339,12 +392,21 @@ public class Model390 extends MainEntryPoint {
 		replacement.setValue(m390.isReplacement());
 		replacedReceipt.setValue(m390.getReplacedReceipt());
 		
-		taxRefund.setValue(m390.isTaxRefund());
-		specialGroupRegime.setValue(m390.isSpecialGroupRegime(),true);
-		groupNumber.setValue(m390.getGroupNumber()==null?null:Integer.toString(m390.getGroupNumber()));
-		groupDependent.setValue(m390.isGroupDependent());
-		onClickSpecialGroupRegime(null);
-		groupDeclarations.setValue(m390.isGroupDeclarations());
+		page0.setValue(m390);
+		
+		page1.setValue(m390);
+		page3.setValue(m390);
+		page4.setValue(m390);
+		page5.setValue(m390);
+		page6.setValue(m390);
+		page7.setValue(m390);
+		page8.setValue(m390);
+		page9.setValue(m390);
+		page10.setValue(m390);
+		page11.setValue(m390);
+		page12.setValue(m390);
+		page13.setValue(m390);
+		
 		
 		
 		// Toolbar states
@@ -353,7 +415,7 @@ public class Model390 extends MainEntryPoint {
 		cancelButton.setVisible(table.getRowCount() > 0);
 		saveButton.setVisible(true);
 		generateFileButton.setVisible(mod390.getId() != null);
-		printButton.setVisible(mod390.getId() != null);
+//		printButton.setVisible(mod390.getId() != null);
 
 	}
 
@@ -374,7 +436,7 @@ public class Model390 extends MainEntryPoint {
 							deleteButton.setVisible(false);
 							newButton.setVisible(true);
 							generateFileButton.setVisible(false);
-							printButton.setVisible(false);
+//							printButton.setVisible(false);
 						}
 					}
 
@@ -399,7 +461,7 @@ public class Model390 extends MainEntryPoint {
 		label.addStyleName("aon-icon");
 		messagesPanel.add(label);
 	}
-
+	
 	@UiHandler("saveButton")
 	void onAcceptButtonClick(ClickEvent event) {
 		if (AonUtil.isEmpty(year.getValue())) {
@@ -415,7 +477,7 @@ public class Model390 extends MainEntryPoint {
 		popup.setAnimationEnabled(true);
 		popup.center();
 
-		populateMod190();
+		populateMod390();
 		fiscalService.saveMod390(this.mod390, new AsyncCallback<Mod390>() {
 			@Override
 			public void onSuccess(Mod390 result) {
@@ -468,8 +530,6 @@ public class Model390 extends MainEntryPoint {
 						mod390.setName(params.getName());
 						mod390.setYear(params.getDefaultYear() != null ? params
 								.getDefaultYear() : 2013);
-						mod390.setContactPhone(params.getContactPhone());
-						
 						select(mod390);
 
 						int i = deckPanel.getWidgetIndex(formPanel);
@@ -503,12 +563,34 @@ public class Model390 extends MainEntryPoint {
 		mod390.setDomain(domain);
 		enterprise = enterpriseSuggest.getEnterpriseId();
 		mod390.setEnterprise(enterprise);
+		mod390.setDocument(enterpriseSuggest.getDocument().getValue());
 		mod390.setName(enterpriseSuggest.getName().getValue());
 		year.selectAll();
 		year.setFocus(true);
+		page0.setValue(mod390);
+		try {
+			int y = Integer.parseInt(year.getValue());
+			page5.initialize(domain, y );
+			page9.initialize(domain, y );
+		} catch (NumberFormatException e) {
+			// nothing
+		}
 	}
 
-	private void populateMod190() {
+	@UiHandler("year")
+	void onChangeYear(ChangeEvent event) {
+		if (Window.confirm("El ejercicio ha cambiado, desea recalcular los datos?")) {
+			if (domain != 0) {
+				try {
+					page5.initialize(domain, Integer.parseInt(year.getValue()) );
+				} catch (NumberFormatException e) {
+					// nothing
+				}
+			}
+		};
+	}
+	
+	private void populateMod390() {
 		try {
 			mod390.setYear(Integer.parseInt(year.getValue()));
 		} catch (NumberFormatException e) {
@@ -518,6 +600,28 @@ public class Model390 extends MainEntryPoint {
 		mod390.setEnterprise(enterprise);
 		mod390.setDocument(enterpriseSuggest.getValue());
 		mod390.setName(enterpriseSuggest.getName().getValue());
+		mod390.setYear(Integer.parseInt(year.getValue()));
+		mod390.setAdministration(Administration.COMMON_TERRITORY.ordinal());
+		mod390.setConfidential(false);
+		mod390.setReplacement(replacement.getValue());
+		mod390.setReplacedReceipt(replacedReceipt.getValue());
+		mod390.setComments(null);
+		
+		// Populate Pages
+		page0.populate(mod390);
+		page1.populate(mod390);
+		page3.populate(mod390);
+		page4.populate(mod390);
+		page5.populate(mod390);
+		page6.populate(mod390);
+		page7.populate(mod390);
+		page8.populate(mod390);
+		page9.populate(mod390);
+		page10.populate(mod390);
+		page11.populate(mod390);
+		page12.populate(mod390);
+		page13.populate(mod390);
+		
 	}
 
 	// -------------------------------------------------------------- UiHandler
@@ -526,27 +630,34 @@ public class Model390 extends MainEntryPoint {
 	void onGenerateFileButtonClick(ClickEvent event) {
 		diskForm.setAction(GWT.getHostPageBaseURL()
 				+ "/aon_gwt_fiscal/Model390File");
-		mod190Hidden.setValue(String.valueOf(mod390.getId()));
+		mod390Hidden.setValue(String.valueOf(mod390.getId()));
 		diskForm.submit();
 	}
 
-	@UiHandler("printButton")
-	void onPrintButtonClick(ClickEvent event) {
-		diskForm.setAction(GWT.getHostPageBaseURL()
-				+ "/aon_gwt_fiscal/Model390Print");
-		mod190Hidden.setValue(String.valueOf(mod390.getId()));
-		diskForm.submit();
-	}
+//	@UiHandler("printButton")
+//	void onPrintButtonClick(ClickEvent event) {
+//		diskForm.setAction(GWT.getHostPageBaseURL()
+//				+ "/aon_gwt_fiscal/Model390Print");
+//		mod390Hidden.setValue(String.valueOf(mod390.getId()));
+//		diskForm.submit();
+//	}
 
 	private void clearLinks() {
-		Panel[] panels = new Panel[] { linkPage1, linkPage3, linkPage4,
-				linkPage5, linkPage6, linkPage7, linkPage8, linkPage9,
-				linkPage10, linkPage11, linkPage12, linkPage13 };
+		Panel[] panels = new Panel[] { linkPage0, linkPage1, linkPage3, 
+				linkPage4,  linkPage5, linkPage6, linkPage7, linkPage8, 
+				linkPage9,  linkPage10, linkPage11, linkPage12, linkPage13 };
 		for (Panel p : panels) {
 			p.getElement().getStyle().setBackgroundColor("");
 			p.getElement().getStyle().setColor("");
 		}
 		
+	}
+
+	@UiHandler("linkPage0")
+	void onLinkPage0(ClickEvent event) {
+		clearLinks();
+		applySelectedStyle(linkPage0);
+		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel0));
 	}
 
 	@UiHandler("linkPage1")
@@ -562,6 +673,9 @@ public class Model390 extends MainEntryPoint {
 		applySelectedStyle(linkPage3);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel3));
 	}
+	
+	
+	
 	@UiHandler("linkPage4")
 	void onLinkPage4(ClickEvent event) {
 		clearLinks();
@@ -585,12 +699,14 @@ public class Model390 extends MainEntryPoint {
 		clearLinks();
 		applySelectedStyle(linkPage7);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel7));
+		page7.refresh();
 	}
 	@UiHandler("linkPage8")
 	void onLinkPage8(ClickEvent event) {
 		clearLinks();
 		applySelectedStyle(linkPage8);
 		pagesPanel.showWidget(pagesPanel.getWidgetIndex(panel8));
+		page8.refresh();
 	}
 	@UiHandler("linkPage9")
 	void onLinkPage9(ClickEvent event) {
@@ -626,15 +742,4 @@ public class Model390 extends MainEntryPoint {
 		panel.getElement().getStyle().setBackgroundColor("#999");
 		panel.getElement().getStyle().setColor("white");
 	}
-	
-	@UiHandler("specialGroupRegime")
-	void onClickSpecialGroupRegime(ClickEvent event) {
-		groupNumber.setEnabled(specialGroupRegime.getValue());
-		groupDependent.setEnabled(specialGroupRegime.getValue());
-		if (!specialGroupRegime.getValue()) {
-			groupNumber.setValue(null);
-			groupDependent.setValue(false);
-		}
-	}
-	
 }

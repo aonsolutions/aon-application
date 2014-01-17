@@ -1,0 +1,53 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:with type="com.esferalia.aon.gwt.fiscal.client.FiscalMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.fiscal.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+	<ui:style>
+	.inner-label {
+		font-style: italic;
+		margin-left: 5px;
+		margin-right: 5px;
+		display: inline;
+	}
+	
+	.pageElement {
+		margin-top: 10px;
+		border: solid #CCC 1px;
+		padding: 2px;
+	}
+	</ui:style>
+
+	<g:HTMLPanel>
+		<g:Label text="{msg.pasiveSubject}" styleName="{aonResources.css.aonPageHeader}" />
+
+		<div class="{style.pageElement}">
+			<g:CheckBox ui:field="insolvencyDeclarations" text="{msg.insolvencyDeclarations}" />
+		</div>
+		<div class="{style.pageElement}">
+			<g:CheckBox ui:field="taxRefund" text="{msg.taxRefund}" />
+		</div>
+		<div class="{style.pageElement}">
+			<g:CheckBox ui:field="specialGroupRegime" text="{msg.specialGroupRegime}" />
+			<div style="margin-left: 15px; padding-left: 5px; padding-right: 5px">
+				<g:Label text="{msg.groupNumber}" styleName="{style.inner-label}" />
+				<g:TextBox maxLength="5" visibleLength="5" ui:field="groupNumber" />
+				<g:CheckBox ui:field="groupDependent" text="{msg.groupDependent}" />
+			</div>
+			<div style="margin-left: 15px; padding-left: 5px; padding-right: 5px">
+				<g:CheckBox ui:field="groupRegimeType" text="{msg.groupRegimeType}" />
+				<g:Label text="{msg.groupDocument}" styleName="{style.inner-label}" />
+				<aon:DocumentTextBox ui:field="groupDocument"/>
+			</div>
+			<div style="margin-left: 15px; padding-left: 5px; padding-right: 5px">
+				<g:CheckBox ui:field="groupDeclarations" text="{msg.groupDeclarations}" />
+			</div>
+		</div>
+	</g:HTMLPanel>
+
+</ui:UiBinder>

@@ -225,6 +225,23 @@
 		<url-pattern>/aon_gwt_fiscal/Model190Print</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>Mod390 File download</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod390File</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Mod390 File download</servlet-name>
+		<url-pattern>/aon_gwt_fiscal/Model390File</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>Mod390 File Print</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.fiscal.server.Mod390Print</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Mod390 File Print</servlet-name>
+		<url-pattern>/aon_gwt_fiscal/Model390Print</url-pattern>
+	</servlet-mapping>
 	<!-- JSF STANDARD CONFIGURATION -->
 	<context-param>
 		<description>State saving method: "client" or "server" (= default) See
@@ -491,6 +508,10 @@
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
 			<url-pattern>*.jsp</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>facelet</web-resource-name>
+			<url-pattern>/aon_gwt_fiscal/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>User</role-name>

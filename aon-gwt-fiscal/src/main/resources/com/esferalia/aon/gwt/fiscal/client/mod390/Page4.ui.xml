@@ -1,0 +1,198 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:with type="com.esferalia.aon.gwt.fiscal.client.FiscalMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.fiscal.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+	<ui:style>
+	.inner-label {
+		font-style: italic;
+		margin-left: 5px;
+		margin-right: 5px;
+		display: inline;
+	}
+	
+	.pageElement {
+		margin-top: 10px;
+		border: solid #CCC 1px;
+		padding: 2px;
+	}
+	</ui:style>
+
+	<g:HTMLPanel>
+		<g:Label text="{msg.representativeData}" styleName="{aonResources.css.aonPageHeader}"/>
+
+		
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td colspan="2">
+					<g:Label text="{msg.nonLegalEntities}" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="{msg.representativeData}" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="{msg.name}" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<aon:DocumentTextBox ui:field="rdocument" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="42" maxLength="40" ui:field="rname" />
+				</td>
+			</tr>
+		</table>
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td>
+					<g:Label text="{msg.streetType}" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="{msg.streetName}" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="{msg.streetNumber}" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="{msg.streetStair}" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="{msg.streetFloor}" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="{msg.streetDoor}" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="{msg.phone}" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:TextBox visibleLength="4" maxLength="4" ui:field="rstreetType" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="30" maxLength="30" ui:field="rstreetName" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="5" maxLength="5" ui:field="rstreetNumber" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="3" maxLength="3" ui:field="rstreetStair" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="3" maxLength="3" ui:field="rstreetFloor" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="3" maxLength="3" ui:field="rstreetDoor" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="9" maxLength="9" ui:field="rphone" />
+				</td>
+			</tr>
+		</table>
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<tr>
+				<td>
+					<g:Label text="{msg.town}"  styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="{msg.province}" styleName="{style.inner-label}"/>
+				</td>
+				<td>
+					<g:Label text="{msg.zip}" styleName="{style.inner-label}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:TextBox visibleLength="30" maxLength="30" ui:field="rtown" />
+				</td>
+				<td>
+					<aon:ProvinceListBox ui:field="rprovince" />
+				</td>
+				<td>
+					<g:TextBox visibleLength="5" maxLength="5" ui:field="rzip" />
+				</td>
+			</tr>
+		</table>
+		
+		<table style="margin-top: 10px;" class="{aonResources.css.aonDataTable}">
+			<colgroup>
+				<col style="width:16%;"/>
+				<col style="width:28%;"/>
+				<col style="width:28%;"/>
+				<col style="width:28%;"/>
+			</colgroup>
+			<tr>
+				<td colspan="4">
+					<g:Label text="{msg.legalEntities}" styleName="{aonResources.css.aonPageHeader}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="D."/>
+				</td>
+				<td>
+					<g:TextBox ui:field="name1" visibleLength="15" maxLength="40" tabIndex="100"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="name2" visibleLength="15" maxLength="40" tabIndex="200"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="name3" visibleLength="15" maxLength="40" tabIndex="300"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="NIF"/>
+				</td>
+				<td>
+					<aon:DocumentTextBox ui:field="document1" tabIndex="101"/>
+				</td>
+				<td>
+					<aon:DocumentTextBox ui:field="document2" tabIndex="201"/>
+				</td>
+				<td>
+					<aon:DocumentTextBox ui:field="document3" tabIndex="301"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="{msg.registrationDate}" />
+				</td>
+				<td>
+					<aon:DateBoxEx ui:field="notaryDate1" tabIndex="102"/>
+				</td>
+				<td>
+					<aon:DateBoxEx ui:field="notaryDate2" tabIndex="202"/>
+				</td>
+				<td>
+					<aon:DateBoxEx ui:field="notaryDate3" tabIndex="302"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label text="{msg.notary}"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="notary1" visibleLength="20" maxLength="20" tabIndex="103"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="notary2" visibleLength="20" maxLength="20" tabIndex="203"/>
+				</td>
+				<td>
+					<g:TextBox ui:field="notary3" visibleLength="20" maxLength="20" tabIndex="303"/>
+				</td>
+			</tr>
+		</table>
+		
+	</g:HTMLPanel>
+
+</ui:UiBinder>

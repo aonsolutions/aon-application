@@ -1,0 +1,146 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'>
+
+	<ui:with type="com.esferalia.aon.gwt.fiscal.client.FiscalMessages"
+		field="msg"></ui:with>
+	<ui:with type="com.esferalia.aon.gwt.fiscal.client.css.AonResources"
+		field="aonResources"></ui:with>
+
+	<ui:style>
+		.table {
+			width: 90%;
+			border-collapse: collapse;
+		}
+		.table td:first-child {
+			border-bottom:#ccc 1px solid;
+			padding-left: 5px;
+		}
+	</ui:style>
+
+	<g:HTMLPanel>
+		<g:Label text="{msg.taxByTerritory}" styleName="{aonResources.css.aonPageHeader}"/>
+
+		<table class="{style.table}">
+			<colgroup>
+				<col style="width: auto;" />
+				<col style="width: 40px;" />
+				<col style="width: 120px;"/>
+			</colgroup>
+			<tr>
+				<td>
+					<g:Label text="{msg.resultSum}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="84"  styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box84" />
+				</td>
+			</tr>
+
+			<tr>
+				<td class="{aonResources.css.aonTextRight}">
+					<g:Label text="{msg.commonTerritory}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="87"  styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box87" />
+					<span>%</span>
+				</td>
+			</tr>
+			
+
+			<tr>
+				<td class="{aonResources.css.aonTextRight}">
+					<g:Label text="{msg.alava}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="88"  styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box88" />
+					<span>%</span>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="{aonResources.css.aonTextRight}">
+					<g:Label text="{msg.gipuzkoa}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="89"  styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box89" />
+					<span>%</span>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="{aonResources.css.aonTextRight}">
+					<g:Label text="{msg.bizkaia}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="90"  styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box90" />
+					<span>%</span>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="{aonResources.css.aonTextRight}">
+					<g:Label text="{msg.navarra}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="91"  styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box91" />
+					<span>%</span>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.commonTerritoryResult}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="92"  styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box92" />
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.commonTerritoryQuotaCompensation}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="93"  styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box93" />
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<g:Label text="{msg.commonTerritoryDeclarationResult}" />
+				</td>
+				<td class="{aonResources.css.aonTextCenter}">
+					<g:Label text="94"  styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+				</td>
+				<td>
+					<aon:DoubleTextBox ui:field="box94" />
+				</td>
+			</tr>
+		</table>
+	</g:HTMLPanel>
+	
+</ui:UiBinder>

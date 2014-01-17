@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.widget;
 
 
 import com.esferalia.aon.gwt.fiscal.client.FiscalMessages;
-import com.esferalia.aon.gwt.fiscal.client.FiscalEnum.Administration;
+import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Administration;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ListBox;
 

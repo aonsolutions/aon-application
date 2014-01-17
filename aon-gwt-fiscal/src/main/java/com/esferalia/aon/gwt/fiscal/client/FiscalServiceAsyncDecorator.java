@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 
 import java.util.ArrayList;
 
+import com.esferalia.aon.gwt.fiscal.shared.Activity;
 import com.esferalia.aon.gwt.fiscal.shared.Enterprise;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalParameters;
 import com.esferalia.aon.gwt.fiscal.shared.Mod180;
@@ -10,7 +11,9 @@ import com.esferalia.aon.gwt.fiscal.shared.Mod180Receiver;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Detail;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver;
+import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
+import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
@@ -37,6 +40,15 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fiscalServiceAsync.getEnterprises(domain, query,
 				new AsyncCallbackWrapper<ArrayList<Enterprise>>(callback));
+	}
+
+	// -------------------------------------------------------------- ACTIVITIES
+	@Override
+	public void getActivities(int activityGroup,
+			AsyncCallback<ArrayList<Activity>> callback) {
+		AON.start();
+		fiscalServiceAsync.getActivities(activityGroup,
+				new AsyncCallbackWrapper<ArrayList<Activity>>(callback));
 	}
 
 	// ---------------------------------------------------------------MODELO 190
@@ -85,7 +97,8 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	}
 
 	@Override
-	public void getMod190Detail(Integer id, AsyncCallback<Mod190Receiver> callback) {
+	public void getMod190Detail(Integer id,
+			AsyncCallback<Mod190Receiver> callback) {
 		AON.start();
 		fiscalServiceAsync.getMod190Detail(id,
 				new AsyncCallbackWrapper<Mod190Receiver>(callback));
@@ -137,20 +150,37 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	}
 
 	@Override
-	public void getMod180Detail(Integer id, AsyncCallback<Mod180Receiver> callback) {
+	public void getMod180Detail(Integer id,
+			AsyncCallback<Mod180Receiver> callback) {
 		AON.start();
 		fiscalServiceAsync.getMod180Detail(id,
 				new AsyncCallbackWrapper<Mod180Receiver>(callback));
 	}
-	
+
 	// ---------------------------------------------------------------MODELO 390
+	@Override
+	public void getMod390Details(int domain, Integer year,
+			AsyncCallback<ArrayList<Mod390Detail>> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod390Details(domain, year,
+				new AsyncCallbackWrapper<ArrayList<Mod390Detail>>(callback));
+	}
+	
+	@Override
+	public void getMod303Results(int domain, int year,
+			AsyncCallback<Mod303Results> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod303Results(domain, year,
+				new AsyncCallbackWrapper<Mod303Results>(callback));
+	}
+
 	@Override
 	public void getMod390(Integer id, AsyncCallback<Mod390> callback) {
 		AON.start();
 		fiscalServiceAsync.getMod390(id, new AsyncCallbackWrapper<Mod390>(
 				callback));
 	}
-	
+
 	@Override
 	public void getMod390s(int domain, AsyncCallback<ArrayList<Mod390>> callback) {
 		AON.start();
@@ -164,11 +194,12 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		fiscalServiceAsync.saveMod390(mod390, new AsyncCallbackWrapper<Mod390>(
 				callback));
 	}
-	
+
 	@Override
 	public void deleteMod390(Mod390 mod390, AsyncCallback<Void> callback) {
 		AON.start();
 		fiscalServiceAsync.deleteMod390(mod390, new AsyncCallbackWrapper<Void>(
 				callback));
 	}
+
 }
