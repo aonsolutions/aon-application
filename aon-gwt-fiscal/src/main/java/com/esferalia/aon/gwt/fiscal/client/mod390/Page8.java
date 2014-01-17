@@ -92,6 +92,11 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 		}
 		refresh();
 	}
+	
+	@UiHandler("box93")
+	void onChangeBox93 (ChangeEvent event) {
+		refresh();
+	}
 
 	public void refresh() {
 		double d = page5.getQuotaMap().get(Mod390DetailKey.K37).getDoubleValue();

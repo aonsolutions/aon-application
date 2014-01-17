@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.sql;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1012,33 +1013,33 @@ public class SQLMod390 {
 
 	private static OpEspecificas getOpEspecificas(Mod390 mod390) {
 		OpEspecificas op = new OpEspecificas();
-		op.setAdqInterioresExentas(new BigDecimal(mod390.getBox230()));
-		op.setAdqIntracomunitariasExentas(new BigDecimal(mod390.getBox109()));
-		op.setImportacionesExentas(new BigDecimal(mod390.getBox231()));
-		op.setBasesIVASoportadoNoDeducible(new BigDecimal(mod390.getBox232()));
-		op.setOpSujetas(new BigDecimal(mod390.getBox111()));
-		op.setEntregasInteriores(new BigDecimal(mod390.getBox113()));
-		op.setServInversionSP(new BigDecimal(mod390.getBox523()));
+		op.setAdqInterioresExentas(ensureBigDecimal(mod390.getBox230()));
+		op.setAdqIntracomunitariasExentas(ensureBigDecimal(mod390.getBox109()));
+		op.setImportacionesExentas(ensureBigDecimal(mod390.getBox231()));
+		op.setBasesIVASoportadoNoDeducible(ensureBigDecimal(mod390.getBox232()));
+		op.setOpSujetas(ensureBigDecimal(mod390.getBox111()));
+		op.setEntregasInteriores(ensureBigDecimal(mod390.getBox113()));
+		op.setServInversionSP(ensureBigDecimal(mod390.getBox523()));
 		return op;
 	}
 
 
 	private static VolOperaciones getVolOperaciones(Mod390 mod390) {
 		VolOperaciones vol = new VolOperaciones();
-		vol.setOpRegGeneral(new BigDecimal(mod390.getBox99()));
-		vol.setEntregasIntracomunitariasExentas(new BigDecimal(mod390.getBox103()));
-		vol.setExportacionesExentasConDrchoDeduccion(new BigDecimal(mod390.getBox104()));
-		vol.setOpExentasSinDrchoDeduccion(new BigDecimal(mod390.getBox105()));
-		vol.setOpNoSujetas(new BigDecimal(mod390.getBox110()));
-		vol.setEntregasBienesInstalacionOtrosEM(new BigDecimal(mod390.getBox112()));
-		vol.setOpRegSimplificado(new BigDecimal(mod390.getBox100()));
-		vol.setOpRegEspAgricPescGanad(new BigDecimal(mod390.getBox101()));
-		vol.setOpRegEspRecEquivalencia(new BigDecimal(mod390.getBox102()));
-		vol.setOpRegEspBienesUsados(new BigDecimal(mod390.getBox227()));
-		vol.setOpRegEspAgViajes(new BigDecimal(mod390.getBox228()));
-		vol.setEntregasBienesInmuebles(new BigDecimal(mod390.getBox106()));
-		vol.setEntregasBienesInversion(new BigDecimal(mod390.getBox107()));
-		vol.setTotalVolOp(new BigDecimal(mod390.getBox108()));
+		vol.setOpRegGeneral(ensureBigDecimal(mod390.getBox99()));
+		vol.setEntregasIntracomunitariasExentas(ensureBigDecimal(mod390.getBox103()));
+		vol.setExportacionesExentasConDrchoDeduccion(ensureBigDecimal(mod390.getBox104()));
+		vol.setOpExentasSinDrchoDeduccion(ensureBigDecimal(mod390.getBox105()));
+		vol.setOpNoSujetas(ensureBigDecimal(mod390.getBox110()));
+		vol.setEntregasBienesInstalacionOtrosEM(ensureBigDecimal(mod390.getBox112()));
+		vol.setOpRegSimplificado(ensureBigDecimal(mod390.getBox100()));
+		vol.setOpRegEspAgricPescGanad(ensureBigDecimal(mod390.getBox101()));
+		vol.setOpRegEspRecEquivalencia(ensureBigDecimal(mod390.getBox102()));
+		vol.setOpRegEspBienesUsados(ensureBigDecimal(mod390.getBox227()));
+		vol.setOpRegEspAgViajes(ensureBigDecimal(mod390.getBox228()));
+		vol.setEntregasBienesInmuebles(ensureBigDecimal(mod390.getBox106()));
+		vol.setEntregasBienesInversion(ensureBigDecimal(mod390.getBox107()));
+		vol.setTotalVolOp(ensureBigDecimal(mod390.getBox108()));
 		return vol;
 	}
 
@@ -1047,18 +1048,18 @@ public class SQLMod390 {
 		ResLiquidaciones res = new ResLiquidaciones();
         
 		PerNoRegGrupos perNoRegGrupos = new PerNoRegGrupos();
-		perNoRegGrupos.setTotIngresosIVA(new BigDecimal(mod390.getBox95()));
-		perNoRegGrupos.setTotDevIVASPRegDevMensual(new BigDecimal(mod390.getBox96()));
+		perNoRegGrupos.setTotIngresosIVA(ensureBigDecimal(mod390.getBox95()));
+		perNoRegGrupos.setTotDevIVASPRegDevMensual(ensureBigDecimal(mod390.getBox96()));
 		// ???????????????
         // AEATIVA2013 .ResLiquidaciones.PerNoRegGrupos.ExclusionBaja exclusionBaja;
-        perNoRegGrupos.setTotDevAdqElemTrans(new BigDecimal(mod390.getBox524()));
-        perNoRegGrupos.setImporteACompensarUltimoPeriodo(new BigDecimal(mod390.getBox97()));
-        perNoRegGrupos.setImporteADevolverUltimoPeriodo(new BigDecimal(mod390.getBox98()));
+        perNoRegGrupos.setTotDevAdqElemTrans(ensureBigDecimal(mod390.getBox524()));
+        perNoRegGrupos.setImporteACompensarUltimoPeriodo(ensureBigDecimal(mod390.getBox97()));
+        perNoRegGrupos.setImporteADevolverUltimoPeriodo(ensureBigDecimal(mod390.getBox98()));
         res.setPerNoRegGrupos(perNoRegGrupos);
         
         PerSiRegGrupos perSiRegGrupos = new PerSiRegGrupos();
-        perSiRegGrupos.setTotResulPositivos322(new BigDecimal(mod390.getBox525()));
-        perSiRegGrupos.setTotResulNegativos322(new BigDecimal(mod390.getBox526()));
+        perSiRegGrupos.setTotResulPositivos322(ensureBigDecimal(mod390.getBox525()));
+        perSiRegGrupos.setTotResulNegativos322(ensureBigDecimal(mod390.getBox526()));
         res.setPerSiRegGrupos(perSiRegGrupos);
 		return res;
 	}
@@ -1066,24 +1067,24 @@ public class SQLMod390 {
 
 	private static Administraciones getAdministraciones(Mod390 mod390) {
 		Administraciones adm = new Administraciones();
-		adm.setComun(new BigDecimal(mod390.getBox87()));
-		adm.setArabaAlava(new BigDecimal(mod390.getBox88()));
-		adm.setGipuzkoa(new BigDecimal(mod390.getBox89()));
-		adm.setBizkaia(new BigDecimal(mod390.getBox90()));
-		adm.setNavarra(new BigDecimal(mod390.getBox91()));
-		adm.setSumResultados(new BigDecimal(mod390.getBox84()));
-		adm.setResTerrComun(new BigDecimal(mod390.getBox92()));
-		adm.setComCuotasEjercicioAnteriorTerrComun(new BigDecimal(mod390.getBox93()));
-		adm.setResLiqAnualTerrComun(new BigDecimal(mod390.getBox94()));
+		adm.setComun(ensureBigDecimal(mod390.getBox87()));
+		adm.setArabaAlava(ensureBigDecimal(mod390.getBox88()));
+		adm.setGipuzkoa(ensureBigDecimal(mod390.getBox89()));
+		adm.setBizkaia(ensureBigDecimal(mod390.getBox90()));
+		adm.setNavarra(ensureBigDecimal(mod390.getBox91()));
+		adm.setSumResultados(ensureBigDecimal(mod390.getBox84()));
+		adm.setResTerrComun(ensureBigDecimal(mod390.getBox92()));
+		adm.setComCuotasEjercicioAnteriorTerrComun(ensureBigDecimal(mod390.getBox93()));
+		adm.setResLiqAnualTerrComun(ensureBigDecimal(mod390.getBox94()));
 		return adm;
 	}
 
 
 	private static LiqAnual getLiqAnual(Mod390 mod390) {
 		LiqAnual liq = new LiqAnual();
-		liq.setSumResultados(new BigDecimal(mod390.getBox84()) );
-		liq.setCompCuotasEjercicioAnterior(new BigDecimal(mod390.getBox85()));
-		liq.setResLiquidacion(new BigDecimal(mod390.getBox86()));
+		liq.setSumResultados(ensureBigDecimal(mod390.getBox84()) );
+		liq.setCompCuotasEjercicioAnterior(ensureBigDecimal(mod390.getBox85()));
+		liq.setResLiquidacion(ensureBigDecimal(mod390.getBox86()));
         return liq;
 	}
 
@@ -1122,7 +1123,7 @@ public class SQLMod390 {
 		BigDecimal op = null;
 		Mod390Detail detail = getKey(mod390,Mod390DetailKey.K36);
 		if (detail != null) {
-			op = new BigDecimal(detail.getQuota());
+			op = ensureBigDecimal(detail.getQuota());
 		}
 		return op;
 	}
@@ -1132,7 +1133,7 @@ public class SQLMod390 {
 		BigDecimal op = null;
 		Mod390Detail detail = getKey(mod390,Mod390DetailKey.K35);
 		if (detail != null) {
-			op = new BigDecimal(detail.getQuota());
+			op = ensureBigDecimal(detail.getQuota());
 		}
 		return op;
 	}
@@ -1142,7 +1143,7 @@ public class SQLMod390 {
 		BigDecimal op = null;
 		Mod390Detail detail = getKey(mod390,Mod390DetailKey.K34);
 		if (detail != null) {
-			op = new BigDecimal(detail.getQuota());
+			op = ensureBigDecimal(detail.getQuota());
 		}
 		return op;
 	}
@@ -1303,7 +1304,7 @@ public class SQLMod390 {
 		Mod390Detail detail = getKey(mod390,Mod390DetailKey.K12);
 		BigDecimal totalCuotasIVA = null; 
 		if (detail != null) {
-			totalCuotasIVA = new BigDecimal(detail.getQuota()); 			
+			totalCuotasIVA = ensureBigDecimal(detail.getQuota()); 			
 		}
 		return totalCuotasIVA;
 	}
@@ -1439,8 +1440,8 @@ public class SQLMod390 {
 		TipoBaseImponibleYCuota tipo = null;
 		if (detail!= null && (detail.getTaxableBase() != 0 || detail.getQuota() != 0)) {
 			tipo = new TipoBaseImponibleYCuota();
-			tipo.setBI(new BigDecimal(detail.getTaxableBase()));
-			tipo.setCuota(new BigDecimal(detail.getQuota()));
+			tipo.setBI(ensureBigDecimal(detail.getTaxableBase()));
+			tipo.setCuota(ensureBigDecimal(detail.getQuota()));
 		}
 		return tipo;
 	}
@@ -1939,6 +1940,10 @@ public class SQLMod390 {
 
 	private static double ensureBigDecimal(BigDecimal bigDecimal) {
 		return bigDecimal==null?0.0:bigDecimal.doubleValue();
+	}
+	private static BigDecimal ensureBigDecimal(double d) {
+		return new BigDecimal(Double.toString(d)).setScale(2,RoundingMode.HALF_UP);
+		//return new BigDecimal(AonUtil.round(d));
 	}
 
 
