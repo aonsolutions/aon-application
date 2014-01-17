@@ -531,12 +531,16 @@ public class Model390 extends MainEntryPoint {
 						mod390.setYear(params.getDefaultYear() != null ? params
 								.getDefaultYear() : 2013);
 						select(mod390);
-
+						
+						page0.setValue(mod390);
+						initializePages();
 						int i = deckPanel.getWidgetIndex(formPanel);
 						deckPanel.showWidget(i);
 						i = pagesPanel.getWidgetIndex(panel1);
 						pagesPanel.showWidget(i);
 						
+						year.selectAll();
+						year.setFocus(true);
 					}
 
 					@Override
@@ -547,6 +551,16 @@ public class Model390 extends MainEntryPoint {
 					}
 				});
 
+	}
+
+	private void initializePages() {
+		try {
+			int y = Integer.parseInt(year.getValue());
+			page5.initialize(domain, y );
+			page9.initialize(domain, y );
+		} catch (NumberFormatException e) {
+			// nothing
+		}
 	}
 
 	@UiHandler("cancelButton")
@@ -568,13 +582,7 @@ public class Model390 extends MainEntryPoint {
 		year.selectAll();
 		year.setFocus(true);
 		page0.setValue(mod390);
-		try {
-			int y = Integer.parseInt(year.getValue());
-			page5.initialize(domain, y );
-			page9.initialize(domain, y );
-		} catch (NumberFormatException e) {
-			// nothing
-		}
+		initializePages();
 	}
 
 	@UiHandler("year")

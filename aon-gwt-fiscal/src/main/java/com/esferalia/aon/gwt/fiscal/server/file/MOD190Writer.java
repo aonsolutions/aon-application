@@ -95,6 +95,9 @@ public class MOD190Writer {
 			Integer mod190, MOD190Format format) throws AonSQLException {
 		ArrayList<com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver> list = SQLMod190
 				.getReceiversByMod190(mod190, conn);
+		int c01 = 0;
+		double c02 = 0.0;
+		double c03 = 0.0;
 		for (com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver det : list) {
 			Receiver receiver = new Receiver();
 
@@ -178,7 +181,13 @@ public class MOD190Writer {
 					.getThirdChildCalculation());
 
 			deponent.getReceivers().add(receiver);
+			++c01;
+			c02 = c02  + det.getPerception();
+			c03 = c03  + det.getRetention();
 		}
+		deponent.setC001(c01);
+		deponent.setC002(c02);
+		deponent.setC003(c03);
 	}
 
 }

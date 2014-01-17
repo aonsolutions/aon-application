@@ -984,6 +984,9 @@ public class SQLMod190 {
 			perceptor.setDocument( perceptor.getDocument().substring(0, 8) );
 		}
 		SQLUtils.setString(insertStmt, 3, perceptor.getDocument());
+		if (perceptor.getName() != null && perceptor.getName().length() > 40) {
+			perceptor.setName( perceptor.getName().substring(0, 39) );
+		}
 		SQLUtils.setString(insertStmt, 4, perceptor.getName());
 		SQLUtils.setString(insertStmt, 5, perceptor.getRepresentativeDocument());
 		SQLUtils.setInt(insertStmt, 6, perceptor.getProvince());
