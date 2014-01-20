@@ -72,7 +72,9 @@ public class Page9 extends ResizeComposite implements RequiresResize {
 						box95.setValue(result.getDepositSum());
 						box96.setValue(result.getPaybackSum());
 						box97.setValue(result.getLastPeriodCompensateResult());
-						box98.setValue(result.getLastPeriodPaybackResult());
+						if (result.getPaybackSum() == 0 && result.getLastPeriodCompensateResult() == 0) {
+							box98.setValue(result.getLastPeriodPaybackResult());
+						}
 					}
 
 					@Override

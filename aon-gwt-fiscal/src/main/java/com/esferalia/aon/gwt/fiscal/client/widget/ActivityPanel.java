@@ -48,7 +48,7 @@ import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
-public class ActivityPanel extends DialogBox {
+public class ActivityPanel extends CustomDialog {
 
 	public interface SelectionCallBack {
 		void onSelect(Activity activity);
@@ -80,8 +80,8 @@ public class ActivityPanel extends DialogBox {
 	@UiField(provided = true)
 	CellTable<Activity> table;
 
-	HTML close = new HTML("[X]");
-	HTML title = new HTML(MSG.activitySelection());
+//	HTML close = new HTML("[X]");
+//	HTML title = new HTML(MSG.activitySelection());
 
 	private Activity selected;
 
@@ -102,23 +102,26 @@ public class ActivityPanel extends DialogBox {
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 		setModal(true);
-		// setWidth("550px");
-		// setHeight("500px");
+		setWidth("550px");
+		setHeight("500px");
+		
+		
+		setCaption(MSG.activitySelection());
 
-		HorizontalPanel captionPanel = new HorizontalPanel();
-		captionPanel.getElement().getStyle().setPadding(3, Unit.PX);
-		captionPanel.getElement().getStyle().setBackgroundColor("#DDD");
-		captionPanel.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-		Element td = getCellElement(0, 1);
-		DOM.removeChild(td, (Element) td.getFirstChildElement());
-		DOM.appendChild(td, captionPanel.getElement());
-		captionPanel.getElement().getStyle().setWidth(100, Unit.PCT);
-		captionPanel.add(title);
-		title.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		close.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
-		close.getElement().getStyle().setPaddingRight(10, Unit.PX);
-		close.getElement().getStyle().setCursor(Cursor.POINTER);
-		captionPanel.add(close);
+//		HorizontalPanel captionPanel = new HorizontalPanel();
+//		captionPanel.getElement().getStyle().setPadding(3, Unit.PX);
+//		captionPanel.getElement().getStyle().setBackgroundColor("#DDD");
+//		captionPanel.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+//		Element td = getCellElement(0, 1);
+//		DOM.removeChild(td, (Element) td.getFirstChildElement());
+//		DOM.appendChild(td, captionPanel.getElement());
+//		captionPanel.getElement().getStyle().setWidth(100, Unit.PCT);
+//		captionPanel.add(title);
+//		title.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+//		close.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+//		close.getElement().getStyle().setPaddingRight(10, Unit.PX);
+//		close.getElement().getStyle().setCursor(Cursor.POINTER);
+//		captionPanel.add(close);
 
 		AON_RESOURCES.css().ensureInjected();
 		CellTable.Resources tableStyle = GWT.create(AonCellTable.class);
@@ -163,24 +166,29 @@ public class ActivityPanel extends DialogBox {
 	}
 
 	@Override
-	protected void onPreviewNativeEvent(NativePreviewEvent event) {
-		super.onPreviewNativeEvent(event);
-		if (!event.isCanceled()) {
-			if (event.getTypeInt() == Event.ONCLICK && isCloseEvent(event)) {
-				this.hide();
-				callback.onClose();
-			} else if (event.getTypeInt() == Event.ONKEYDOWN
-					&& event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
-				this.hide();
-				callback.onClose();
-			}
-		}
+	public void onClose() {
+		this.hide();
+		callback.onClose();
 	}
-
-	private boolean isCloseEvent(NativePreviewEvent event) {
-		NativeEvent ev = event.getNativeEvent();
-		return ev.getEventTarget().equals(close.getElement());
-	}
+	
+//	@Override
+//	protected void onPreviewNativeEvent(NativePreviewEvent event) {
+//		super.onPreviewNativeEvent(event);
+//		if (!event.isCanceled()) {
+//			if (event.getTypeInt() == Event.ONCLICK && isCloseEvent(event)) {
+//				this.hide();
+//				callback.onClose();
+//			} else if (event.getTypeInt() == Event.ONKEYDOWN
+//					&& event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
+//				this.hide();
+//				callback.onClose();
+//			}
+//		}
+//	}
+//	private boolean isCloseEvent(NativePreviewEvent event) {
+//		NativeEvent ev = event.getNativeEvent();
+//		return ev.getEventTarget().equals(close.getElement());
+//	}
 
 	private void addSelectorColumn() {
 		final Column<Activity, ImageResource> selectorColumn = new Column<Activity, ImageResource>(

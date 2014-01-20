@@ -23,8 +23,8 @@ public interface FiscalEnum {
 	}
 
 	public enum ActivityGroup implements Serializable, IsSerializable{
-		GROUP1("A"), GROUP2("B"), GROUP3("B"), GROUP4("C"), GROUP5("D"), GROUP6(
-				"E"), GROUP7("F");
+		GROUP1("1"), GROUP2("2"), GROUP3("2"), GROUP4("3"), GROUP5("4"), GROUP6(
+				"5"), GROUP7("6");
 
 		String key;
 

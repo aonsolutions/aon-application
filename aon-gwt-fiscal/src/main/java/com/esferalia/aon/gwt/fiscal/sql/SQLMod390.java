@@ -969,20 +969,22 @@ public class SQLMod390 {
 		if ( mod390.isLegalEntity() ) {
 			TipoPersonaJuridica tpj = new TipoPersonaJuridica();
 			TipoIdentificacionPersonaJuridica tipj = new TipoIdentificacionPersonaJuridica();
-			tipj.setNIF(mod390.getDocument());
-			tipj.setRazonSocial(mod390.getName());
+			tipj.setNIF(toUppercase(mod390.getDocument()));
+			tipj.setRazonSocial(toUppercase(mod390.getName()));
 			tpj.setIdentPersJuridica(tipj);
 			datIdent.setPersJuridica(tpj);
 		} else {
 			TipoIdentificacionPersonaFisica tipf = new TipoIdentificacionPersonaFisica();
 			tipf.setNIF(mod390.getDocument());
-			tipf.setNombre(mod390.getName());
-			tipf.setApe1(mod390.getFirstSurname());
-			tipf.setApe2(mod390.getSecondSurname());;
+			tipf.setNombre(toUppercase(mod390.getName()));
+			tipf.setApe1(toUppercase(mod390.getFirstSurname()));
+			tipf.setApe2(toUppercase(mod390.getSecondSurname()));;
 			tp.setIdent(tipf);
 			datIdent.setPersFisica(tp);
 		}
-		datIdent.setTelefono(mod390.getContactPhone());
+		if (AonUtil.isNotEmpty(mod390.getContactPhone())) {
+			datIdent.setTelefono(mod390.getContactPhone());
+		}
 		iva.setDatIdent(datIdent);
 		
 		iva.setDevengo(getDevengo(mod390));
@@ -993,8 +995,12 @@ public class SQLMod390 {
 		// TODO
 		// iva.setRegSimplificado(null);
 		
-		iva.setLiqAnual(getLiqAnual(mod390));
-		iva.setAdministraciones(getAdministraciones(mod390));
+		Administraciones adm = getAdministraciones(mod390);
+		if (adm == null) {
+			iva.setLiqAnual(getLiqAnual(mod390));
+		} else {
+			iva.setAdministraciones(adm);
+		}
 		iva.setResLiquidaciones(getResLiquidaciones(mod390));
 		iva.setVolOperaciones(getVolOperaciones(mod390));
 		iva.setOpEspecificas(getOpEspecificas(mod390));
@@ -1011,34 +1017,79 @@ public class SQLMod390 {
 		return iva;
 	}
 
+	private static String toUppercase(String data) {
+		return data==null?null:data.toUpperCase();
+	}
+
+
 	private static OpEspecificas getOpEspecificas(Mod390 mod390) {
 		OpEspecificas op = new OpEspecificas();
-		op.setAdqInterioresExentas(ensureBigDecimal(mod390.getBox230()));
-		op.setAdqIntracomunitariasExentas(ensureBigDecimal(mod390.getBox109()));
-		op.setImportacionesExentas(ensureBigDecimal(mod390.getBox231()));
-		op.setBasesIVASoportadoNoDeducible(ensureBigDecimal(mod390.getBox232()));
-		op.setOpSujetas(ensureBigDecimal(mod390.getBox111()));
-		op.setEntregasInteriores(ensureBigDecimal(mod390.getBox113()));
-		op.setServInversionSP(ensureBigDecimal(mod390.getBox523()));
+		if (mod390.getBox230()>0) {
+			op.setAdqInterioresExentas(ensureBigDecimal(mod390.getBox230()));
+		}
+		if (mod390.getBox109()>0) {
+			op.setAdqIntracomunitariasExentas(ensureBigDecimal(mod390.getBox109()));
+		}
+		if (mod390.getBox231()>0) {
+			op.setImportacionesExentas(ensureBigDecimal(mod390.getBox231()));
+		}
+		if (mod390.getBox232()>0) {
+			op.setBasesIVASoportadoNoDeducible(ensureBigDecimal(mod390.getBox232()));
+		}
+		if (mod390.getBox111()>0) {
+			op.setOpSujetas(ensureBigDecimal(mod390.getBox111()));
+		}
+		if (mod390.getBox113()>0) {
+			op.setEntregasInteriores(ensureBigDecimal(mod390.getBox113()));
+		}
+		if (mod390.getBox523()>0) {
+			op.setServInversionSP(ensureBigDecimal(mod390.getBox523()));
+		}
 		return op;
 	}
 
 
 	private static VolOperaciones getVolOperaciones(Mod390 mod390) {
 		VolOperaciones vol = new VolOperaciones();
-		vol.setOpRegGeneral(ensureBigDecimal(mod390.getBox99()));
-		vol.setEntregasIntracomunitariasExentas(ensureBigDecimal(mod390.getBox103()));
-		vol.setExportacionesExentasConDrchoDeduccion(ensureBigDecimal(mod390.getBox104()));
-		vol.setOpExentasSinDrchoDeduccion(ensureBigDecimal(mod390.getBox105()));
-		vol.setOpNoSujetas(ensureBigDecimal(mod390.getBox110()));
-		vol.setEntregasBienesInstalacionOtrosEM(ensureBigDecimal(mod390.getBox112()));
-		vol.setOpRegSimplificado(ensureBigDecimal(mod390.getBox100()));
-		vol.setOpRegEspAgricPescGanad(ensureBigDecimal(mod390.getBox101()));
-		vol.setOpRegEspRecEquivalencia(ensureBigDecimal(mod390.getBox102()));
-		vol.setOpRegEspBienesUsados(ensureBigDecimal(mod390.getBox227()));
-		vol.setOpRegEspAgViajes(ensureBigDecimal(mod390.getBox228()));
-		vol.setEntregasBienesInmuebles(ensureBigDecimal(mod390.getBox106()));
-		vol.setEntregasBienesInversion(ensureBigDecimal(mod390.getBox107()));
+		if (mod390.getBox99()>0) {
+			vol.setOpRegGeneral(ensureBigDecimal(mod390.getBox99()));
+		}
+		if (mod390.getBox103()>0) {
+			vol.setEntregasIntracomunitariasExentas(ensureBigDecimal(mod390.getBox103()));
+		}
+		if (mod390.getBox104()>0) {
+			vol.setExportacionesExentasConDrchoDeduccion(ensureBigDecimal(mod390.getBox104()));
+		}
+		if (mod390.getBox105()>0) {
+			vol.setOpExentasSinDrchoDeduccion(ensureBigDecimal(mod390.getBox105()));
+		}
+		if (mod390.getBox110()>0) {
+			vol.setOpNoSujetas(ensureBigDecimal(mod390.getBox110()));
+		}
+		if (mod390.getBox112()>0) {
+			vol.setEntregasBienesInstalacionOtrosEM(ensureBigDecimal(mod390.getBox112()));
+		}
+		if (mod390.getBox100()>0) {
+			vol.setOpRegSimplificado(ensureBigDecimal(mod390.getBox100()));
+		}
+		if (mod390.getBox101()>0) {
+			vol.setOpRegEspAgricPescGanad(ensureBigDecimal(mod390.getBox101()));
+		}
+		if (mod390.getBox102()>0) {
+			vol.setOpRegEspRecEquivalencia(ensureBigDecimal(mod390.getBox102()));
+		}
+		if (mod390.getBox227()>0) {
+			vol.setOpRegEspBienesUsados(ensureBigDecimal(mod390.getBox227()));
+		}
+		if (mod390.getBox228()>0) {
+			vol.setOpRegEspAgViajes(ensureBigDecimal(mod390.getBox228()));
+		}
+		if (mod390.getBox106()>0) {
+			vol.setEntregasBienesInmuebles(ensureBigDecimal(mod390.getBox106()));
+		}
+		if (mod390.getBox107()>0) {
+			vol.setEntregasBienesInversion(ensureBigDecimal(mod390.getBox107()));
+		}
 		vol.setTotalVolOp(ensureBigDecimal(mod390.getBox108()));
 		return vol;
 	}
@@ -1048,42 +1099,69 @@ public class SQLMod390 {
 		ResLiquidaciones res = new ResLiquidaciones();
         
 		PerNoRegGrupos perNoRegGrupos = new PerNoRegGrupos();
-		perNoRegGrupos.setTotIngresosIVA(ensureBigDecimal(mod390.getBox95()));
-		perNoRegGrupos.setTotDevIVASPRegDevMensual(ensureBigDecimal(mod390.getBox96()));
+		if (mod390.getBox95() != 0) {
+			perNoRegGrupos.setTotIngresosIVA(ensureBigDecimal(mod390.getBox95()));
+		}
+		if (mod390.getBox96() != 0) {
+			perNoRegGrupos.setTotDevIVASPRegDevMensual(ensureBigDecimal(mod390.getBox96()));
+		}
 		// ???????????????
         // AEATIVA2013 .ResLiquidaciones.PerNoRegGrupos.ExclusionBaja exclusionBaja;
-        perNoRegGrupos.setTotDevAdqElemTrans(ensureBigDecimal(mod390.getBox524()));
-        perNoRegGrupos.setImporteACompensarUltimoPeriodo(ensureBigDecimal(mod390.getBox97()));
-        perNoRegGrupos.setImporteADevolverUltimoPeriodo(ensureBigDecimal(mod390.getBox98()));
+		if (mod390.getBox524() != 0) {
+			perNoRegGrupos.setTotDevAdqElemTrans(ensureBigDecimal(mod390.getBox524()));
+		}
+		if (mod390.getBox97() != 0) {
+			perNoRegGrupos.setImporteACompensarUltimoPeriodo(ensureBigDecimal(mod390.getBox97()));
+		}
+		if (mod390.getBox98() != 0) {
+			perNoRegGrupos.setImporteADevolverUltimoPeriodo(ensureBigDecimal(mod390.getBox98()));
+		}
         res.setPerNoRegGrupos(perNoRegGrupos);
         
         PerSiRegGrupos perSiRegGrupos = new PerSiRegGrupos();
-        perSiRegGrupos.setTotResulPositivos322(ensureBigDecimal(mod390.getBox525()));
-        perSiRegGrupos.setTotResulNegativos322(ensureBigDecimal(mod390.getBox526()));
+		if (mod390.getBox525() != 0) {
+			perSiRegGrupos.setTotResulPositivos322(ensureBigDecimal(mod390.getBox525()));
+		}
+		if (mod390.getBox526() != 0) {
+			perSiRegGrupos.setTotResulNegativos322(ensureBigDecimal(mod390.getBox526()));
+		}
         res.setPerSiRegGrupos(perSiRegGrupos);
 		return res;
 	}
 
 
 	private static Administraciones getAdministraciones(Mod390 mod390) {
-		Administraciones adm = new Administraciones();
-		adm.setComun(ensureBigDecimal(mod390.getBox87()));
-		adm.setArabaAlava(ensureBigDecimal(mod390.getBox88()));
-		adm.setGipuzkoa(ensureBigDecimal(mod390.getBox89()));
-		adm.setBizkaia(ensureBigDecimal(mod390.getBox90()));
-		adm.setNavarra(ensureBigDecimal(mod390.getBox91()));
-		adm.setSumResultados(ensureBigDecimal(mod390.getBox84()));
-		adm.setResTerrComun(ensureBigDecimal(mod390.getBox92()));
-		adm.setComCuotasEjercicioAnteriorTerrComun(ensureBigDecimal(mod390.getBox93()));
-		adm.setResLiqAnualTerrComun(ensureBigDecimal(mod390.getBox94()));
-		return adm;
+		if (mod390.getBox87() > 0.0 && mod390.getBox87() < 100.0) {
+			Administraciones adm = new Administraciones();
+			adm.setComun(ensureBigDecimal(mod390.getBox87()));
+			if (mod390.getBox88()>0) {
+				adm.setArabaAlava(ensureBigDecimal(mod390.getBox88()));
+			}
+			if (mod390.getBox89()>0) {
+				adm.setGipuzkoa(ensureBigDecimal(mod390.getBox89()));
+			}
+			if (mod390.getBox90()>0) {
+				adm.setBizkaia(ensureBigDecimal(mod390.getBox90()));
+			}
+			if (mod390.getBox91()>0) {
+				adm.setNavarra(ensureBigDecimal(mod390.getBox91()));
+			}
+			adm.setSumResultados(ensureBigDecimal(mod390.getBox84()));
+			adm.setResTerrComun(ensureBigDecimal(mod390.getBox92()));
+			adm.setComCuotasEjercicioAnteriorTerrComun(ensureBigDecimal(mod390.getBox93()));
+			adm.setResLiqAnualTerrComun(ensureBigDecimal(mod390.getBox94()));
+			return adm;
+		}
+		return null;
 	}
 
 
 	private static LiqAnual getLiqAnual(Mod390 mod390) {
 		LiqAnual liq = new LiqAnual();
 		liq.setSumResultados(ensureBigDecimal(mod390.getBox84()) );
-		liq.setCompCuotasEjercicioAnterior(ensureBigDecimal(mod390.getBox85()));
+		if (mod390.getBox85() > 0) {
+			liq.setCompCuotasEjercicioAnterior(ensureBigDecimal(mod390.getBox85()));
+		}
 		liq.setResLiquidacion(ensureBigDecimal(mod390.getBox86()));
         return liq;
 	}
@@ -1150,16 +1228,24 @@ public class SQLMod390 {
 
 
 	private static RectifDeducciones getRectifDeducciones(Mod390 mod390) {
-		RectifDeducciones op = new RectifDeducciones();
-		op.setTipoX(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K33)));
-		return op;
+		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K33));
+		if (tipo != null) {
+			RectifDeducciones op = new RectifDeducciones();
+			op.setTipoX(tipo);
+			return op;
+		}
+		return null;
 	}
 
 
 	private static ComRegAgricGanadPesca getComRegAgricGanadPesca(Mod390 mod390) {
-		ComRegAgricGanadPesca op = new ComRegAgricGanadPesca();
-		op.setTipoX(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K32)));
-		return op;
+		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K32));
+		if (tipo != null) {
+			ComRegAgricGanadPesca op = new ComRegAgricGanadPesca();
+			op.setTipoX(tipo);
+			return op;
+		}
+		return null;
 	}
 
 
@@ -1172,6 +1258,7 @@ public class SQLMod390 {
 		op.setTipo16(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K30_16)));
 		op.setTipo18(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K30_18)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K30_21)));
+		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K31)));
 		return op;
 	}
 
@@ -1185,6 +1272,7 @@ public class SQLMod390 {
 		op.setTipo16(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K28_16)));
 		op.setTipo18(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K28_18)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K28_21)));
+		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K29)));
 		return op;
 	}
 
@@ -1198,6 +1286,7 @@ public class SQLMod390 {
 		op.setTipo16(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K26_16)));
 		op.setTipo18(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K26_18)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K26_21)));
+		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K27)));
 		return op;
 	}
 
@@ -1211,6 +1300,7 @@ public class SQLMod390 {
 		op.setTipo16(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K24_16)));
 		op.setTipo18(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K24_18)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K24_21)));
+		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K25)));
 		return op;
 	}
 
@@ -1224,6 +1314,7 @@ public class SQLMod390 {
 		op.setTipo16(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K22_16)));
 		op.setTipo18(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K22_18)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K22_21)));
+		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K23)));
 		return op;
 	}
 
@@ -1237,6 +1328,7 @@ public class SQLMod390 {
 		op.setTipo16(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K20_16)));
 		op.setTipo18(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K20_18)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K20_21)));
+		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K21)));
 		return op;
 	}
 
@@ -1250,6 +1342,7 @@ public class SQLMod390 {
 		op.setTipo16(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K18_16)));
 		op.setTipo18(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K18_18)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K18_21)));
+		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K19)));
 		return op;
 	}
 
@@ -1263,6 +1356,7 @@ public class SQLMod390 {
 		op.setTipo16(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K16_16)));
 		op.setTipo18(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K16_18)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K16_21)));
+		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K17)));
 		return op;
 	}
 
@@ -1276,6 +1370,7 @@ public class SQLMod390 {
 		op.setTipo16(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K14_16)));
 		op.setTipo18(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K14_18)));
 		op.setTipo21(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K14_21)));
+		op.setTotal(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K15)));
 		return op;
 	}
 
@@ -1301,7 +1396,7 @@ public class SQLMod390 {
 
 
 	private static BigDecimal getTotalCuotasIVA(Mod390 mod390) {
-		Mod390Detail detail = getKey(mod390,Mod390DetailKey.K12);
+		Mod390Detail detail = getKey(mod390,Mod390DetailKey.K13);
 		BigDecimal totalCuotasIVA = null; 
 		if (detail != null) {
 			totalCuotasIVA = ensureBigDecimal(detail.getQuota()); 			
@@ -1311,16 +1406,24 @@ public class SQLMod390 {
 
 
 	private static ModRecargoEquivalenciaConcursoAcreedores getModRecargoEquivalenciaConcursoAcreedores(Mod390 mod390) {
-		ModRecargoEquivalenciaConcursoAcreedores modRecargoEquivalenciaConcursoAcreedores = new ModRecargoEquivalenciaConcursoAcreedores();
-		modRecargoEquivalenciaConcursoAcreedores.setTipoX(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K12)));
-		return modRecargoEquivalenciaConcursoAcreedores;
+		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K12));
+		if (tipo != null) {
+			ModRecargoEquivalenciaConcursoAcreedores modRecargoEquivalenciaConcursoAcreedores = new ModRecargoEquivalenciaConcursoAcreedores();
+			modRecargoEquivalenciaConcursoAcreedores.setTipoX(tipo);
+			return modRecargoEquivalenciaConcursoAcreedores;
+		}
+		return null;
 	}
 
 
 	private static ModRecargoEquivalencia getModRecargoEquivalencia(Mod390 mod390) {
-		ModRecargoEquivalencia modRecargoEquivalencia = new ModRecargoEquivalencia();
-		modRecargoEquivalencia.setTipoX(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K11)));
-		return modRecargoEquivalencia;
+		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K11));
+		if (tipo != null) {
+			ModRecargoEquivalencia modRecargoEquivalencia = new ModRecargoEquivalencia();
+			modRecargoEquivalencia.setTipoX(tipo);
+			return modRecargoEquivalencia;
+		}
+		return null;
 	}
 
 
@@ -1345,16 +1448,24 @@ public class SQLMod390 {
 
 	private static ModBasesyCuotasConcursoAcreedores getModBasesyCuotasConcursoAcreedores(
 			Mod390 mod390) {
-		ModBasesyCuotasConcursoAcreedores modBases = new ModBasesyCuotasConcursoAcreedores();
-		modBases.setTipoX(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K08)));
-		return modBases;
+		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K08));
+		if (tipo != null) {
+			ModBasesyCuotasConcursoAcreedores modBases = new ModBasesyCuotasConcursoAcreedores();
+			modBases.setTipoX(tipo);
+			return modBases;
+		}
+		return null;
 	}
 
 
 	private static ModBasesyCuotas getModBasesyCuotas(Mod390 mod390) {
-		ModBasesyCuotas modBasesyCuotas = new ModBasesyCuotas();
-		modBasesyCuotas.setTipoX(getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K07)));
-		return modBasesyCuotas;
+		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod390DetailKey.K07));
+		if (tipo != null) {
+			ModBasesyCuotas modBasesyCuotas = new ModBasesyCuotas();
+			modBasesyCuotas.setTipoX(tipo);
+			return modBasesyCuotas;
+		}
+		return null;
 	}
 
 
@@ -1437,11 +1548,13 @@ public class SQLMod390 {
 
 
 	private static TipoBaseImponibleYCuota getTipoBaseImponibleYCuota(Mod390Detail detail) {
-		TipoBaseImponibleYCuota tipo = null;
+		TipoBaseImponibleYCuota tipo = new TipoBaseImponibleYCuota();
 		if (detail!= null && (detail.getTaxableBase() != 0 || detail.getQuota() != 0)) {
-			tipo = new TipoBaseImponibleYCuota();
 			tipo.setBI(ensureBigDecimal(detail.getTaxableBase()));
 			tipo.setCuota(ensureBigDecimal(detail.getQuota()));
+		} else {
+			tipo.setBI(ensureBigDecimal(0));
+			tipo.setCuota(ensureBigDecimal(0));
 		}
 		return tipo;
 	}
@@ -1531,21 +1644,54 @@ public class SQLMod390 {
 			trf = new TipoRepresentanteFisica();
 			TipoIdentificacionPersonaJuridica tipf = new TipoIdentificacionPersonaJuridica();
 			tipf.setNIF(address.getRdocument());
-			tipf.setRazonSocial(address.getRname());
+			tipf.setRazonSocial(toUppercase(address.getRname()));
 			trf.setIdent(tipf);
 			TipoDomicilio domicilio = new TipoDomicilio();
-			domicilio.setViaPublica(address.getRstreetName());
-			domicilio.setSG(address.getRstreetType());
-			domicilio.setNum(address.getRstreetNumber());
-			domicilio.setEsc(address.getRstreetStair());
-			domicilio.setPiso(address.getRstreetFloor());
-			domicilio.setPuerta(address.getRstreetDoor());
-			domicilio.setTelefono(address.getRphone());
-			domicilio.setCPostal(address.getRzip());
-			domicilio.setMunicipio(address.getRtown());
-			domicilio.setCPostal(address.getRzip());
-			domicilio.setCodProv(Integer.toString(address.getRprovince()));
-			trf.setDomicilio(domicilio);
+			boolean something = false;
+			if (AonUtil.isNotEmpty(address.getRstreetName())) {
+				domicilio.setViaPublica(toUppercase(address.getRstreetName()));
+				something = true;
+			}
+			if (AonUtil.isNotEmpty(address.getRstreetType())) { 
+				domicilio.setSG(toUppercase(address.getRstreetType()));
+				something = true;
+			}
+			if (AonUtil.isNotEmpty(address.getRstreetNumber())) {
+				domicilio.setNum(toUppercase(address.getRstreetNumber()));
+				something = true;
+			}
+			if (AonUtil.isNotEmpty(address.getRstreetStair())) {
+				domicilio.setEsc(toUppercase(address.getRstreetStair()));
+				something = true;
+			}
+			if (AonUtil.isNotEmpty(address.getRstreetFloor())) {
+				domicilio.setPiso(toUppercase(address.getRstreetFloor()));
+				something = true;
+			}
+			if (AonUtil.isNotEmpty(address.getRstreetDoor())) {
+				domicilio.setPuerta(toUppercase(address.getRstreetDoor()));
+				something = true;
+			}
+			if (AonUtil.isNotEmpty(address.getRphone())) {
+				domicilio.setTelefono(toUppercase(address.getRphone()));
+				something = true;
+			}
+			if (AonUtil.isNotEmpty(address.getRzip())) {
+				domicilio.setCPostal(toUppercase(address.getRzip()));
+				something = true;
+			}
+			if (AonUtil.isNotEmpty(address.getRtown())) {
+				domicilio.setMunicipio(toUppercase(address.getRtown()));
+				something = true;
+			}
+			if (address.getRprovince() != 0) {
+				domicilio.setCodProv(Integer.toString(address.getRprovince()));
+				something = true;
+			}
+			if (something) {
+				trf.setDomicilio(domicilio);
+				something = true;
+			}
 		}
 		return trf;
 	}
@@ -1560,9 +1706,9 @@ public class SQLMod390 {
 		for (LegalRepresentative lr : lrs) {
 			if (lr != null) {
 				TipoRepresentanteJuridica trj = new TipoRepresentanteJuridica();
-				trj.setNIF(lr.getDocument());
-				trj.setNombre(lr.getName());
-				trj.setNotaria(lr.getNotary());
+				trj.setNIF(toUppercase(lr.getDocument()));
+				trj.setNombre(toUppercase(lr.getName()));
+				trj.setNotaria(toUppercase(lr.getNotary()));
 				trj.setFechaPoder(lr.getNotaryDate());
 				list.add(trj);
 			}
@@ -1859,25 +2005,26 @@ public class SQLMod390 {
 				}
 			}
 		}
-		
-		LiqAnual liq = iva.getLiqAnual();
-		if (liq != null) {
-			mod390.setBox84( ensureBigDecimal(liq.getSumResultados()) );
-			mod390.setBox85( ensureBigDecimal(liq.getCompCuotasEjercicioAnterior()) );
-			mod390.setBox86( ensureBigDecimal(liq.getResLiquidacion()) );
-		}
-	
 		Administraciones adm = iva.getAdministraciones();
-		if (adm != null) {
-			mod390.setBox87( ensureBigDecimal(adm.getComun()) );
-			mod390.setBox88( ensureBigDecimal(adm.getArabaAlava()) );
-			mod390.setBox89( ensureBigDecimal(adm.getGipuzkoa()) );
-			mod390.setBox90( ensureBigDecimal(adm.getBizkaia()) );
-			mod390.setBox91( ensureBigDecimal(adm.getNavarra()) );
-			mod390.setBox84( ensureBigDecimal(adm.getSumResultados()) );
-			mod390.setBox92( ensureBigDecimal(adm.getResTerrComun()) );
-			mod390.setBox93( ensureBigDecimal(adm.getComCuotasEjercicioAnteriorTerrComun()) );
-			mod390.setBox94( ensureBigDecimal(adm.getResLiqAnualTerrComun()) );
+		if (adm == null) {
+			LiqAnual liq = iva.getLiqAnual();
+			if (liq != null) {
+				mod390.setBox84( ensureBigDecimal(liq.getSumResultados()) );
+				mod390.setBox85( ensureBigDecimal(liq.getCompCuotasEjercicioAnterior()) );
+				mod390.setBox86( ensureBigDecimal(liq.getResLiquidacion()) );
+			}
+		} else {
+			if (adm != null) {
+				mod390.setBox87( ensureBigDecimal(adm.getComun()) );
+				mod390.setBox88( ensureBigDecimal(adm.getArabaAlava()) );
+				mod390.setBox89( ensureBigDecimal(adm.getGipuzkoa()) );
+				mod390.setBox90( ensureBigDecimal(adm.getBizkaia()) );
+				mod390.setBox91( ensureBigDecimal(adm.getNavarra()) );
+				mod390.setBox84( ensureBigDecimal(adm.getSumResultados()) );
+				mod390.setBox92( ensureBigDecimal(adm.getResTerrComun()) );
+				mod390.setBox93( ensureBigDecimal(adm.getComCuotasEjercicioAnteriorTerrComun()) );
+				mod390.setBox94( ensureBigDecimal(adm.getResLiqAnualTerrComun()) );
+			}
 		}
 		ResLiquidaciones res = iva.getResLiquidaciones();
 		if (res != null) {

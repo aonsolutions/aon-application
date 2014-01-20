@@ -70,10 +70,10 @@
 								styleName='aon-finding-toolbar-item aon-icon-cancel' text="{msg.cancelAction}" />
 							<g:Button ui:field='deleteButton'
 								styleName='aon-finding-toolbar-item aon-icon-delete' text="{msg.deleteAction}" />
-							<!-- 
+<!-- 
 							<g:Button ui:field='printButton'
 								styleName='aon-finding-toolbar-item aon-icon-printer' text="{msg.printViaAeat}" />
-							-->
+ -->
 							<g:Button ui:field='generateFileButton'
 								styleName='aon-finding-toolbar-item aon-icon-aeat' text="{msg.generateFile}" />
 							<g:Anchor ui:field="download" visible="false"/>							

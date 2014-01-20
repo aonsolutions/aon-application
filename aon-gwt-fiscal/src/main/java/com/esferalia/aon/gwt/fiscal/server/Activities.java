@@ -1230,8 +1230,8 @@ public interface Activities  {
 	}	
 	
 	public enum Type4Activities implements TypeActivity {
-// TODO
-		E4_0000 (4,"0000","SUJETOS PASIVOS SIN ACTIVIDAD",null)
+		 E4_8612 (4,"8612","ALQUILER LOCALES INDUSTRIALES Y GARAJES",null)
+		,E4_862  (4,"862" ,"ALQUILER INMUEBLES RUSTICOS",null)
 		;
 	
 		private int activityType;
