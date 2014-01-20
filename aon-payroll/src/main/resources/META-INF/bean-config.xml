@@ -18,5 +18,11 @@
 	        <vetoListener>com.esferalia.aon.payroll.event.AgreementLevelVetoableBeanListener</vetoListener>
 		</vetoListeners>
 	</bean>
+	<bean description="">
+		<pojo>com.esferalia.aon.payroll.ContractClause</pojo>
+		<listeners>
+	        <listener>com.esferalia.aon.payroll.event.ContractClauseBeanListener</listener>
+		</listeners>
+	</bean>
 
 </bean-config>

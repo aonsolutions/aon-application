@@ -35,12 +35,14 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		updateFinalBases(event);
+		checkDates((ContractLeave) event.getController().getTo());
 	}
 	
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		updateFinalBases(event);
+		checkDates((ContractLeave) event.getController().getTo());
 	}
 	
 	@Override
@@ -88,6 +90,16 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 		ContractLeaveController controller = (ContractLeaveController) event.getController();
 		controller.setLeave(obtainDetail((ContractLeave) controller.getTo(),LeaveReportType.LEAVE));
 		controller.setDischarge(obtainDetail((ContractLeave) controller.getTo(),LeaveReportType.DISCHARGE));
+	}
+	
+	private void checkDates(ContractLeave contractLeave) throws ControllerListenerException {
+		Date endDate = contractLeave.getEndDate();
+		Date startDate = contractLeave.getStartDate();
+		if(endDate!=null && endDate.before(startDate)){
+			endDate = null;
+//			AonUtil.addErrorMessage("La fecha de alta no puede ser anterior a la fecha de baja");
+			throw new ControllerListenerException("La fecha de alta no puede ser anterior a la fecha de baja");
+		}
 	}
 	
 	private void updateFinalBases(ControllerEvent event) {

@@ -72,7 +72,7 @@
 				</aon:panelGroup>
 				<f:facet name="footer">
 					<aon:panelGroup id="EnterpriseCCC_SSNumberPanel-New" rendered="#{formNew}">
-						<aon:outputText value="#{controller.to.activity.quoteRegimeCode}" />
+						<aon:outputText value="#{enterpriseActivity.to.quoteRegimeCode}" />
 						<aon:inputText id="EnterpriseCCC_ccc-New" value="#{controller.to.ccc}"
 							required="true" maxlength="11" size="12" >
 							<f:validateLength minimum="1" maximum="11" />

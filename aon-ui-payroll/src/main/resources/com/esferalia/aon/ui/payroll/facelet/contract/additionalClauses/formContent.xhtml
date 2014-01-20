@@ -56,6 +56,7 @@
 				<aon:outputText value="#{to.name}" rendered="#{formList}" />
 				<aon:inputText id="ContractClause_name"
 					value="#{controller.to.name}" rendered="#{formEdit}"
+					reRender="ContractClause_name"
 					required="true" size="16" maxlength="64" />
 				<f:facet name="footer" >
 					<aon:panelGroup styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
@@ -67,9 +68,10 @@
 						</c:if>
 						<aon:inputText id="ContractClause_name-New"
 							value="#{controller.to.name}" rendered="#{formNew}"
+							reRender="ContractClause_name-New"
 							required="true" size="16" maxlength="64" />
 					</aon:panelGroup>
-				</f:facet>						
+				</f:facet>
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn">
@@ -85,17 +87,18 @@
 						<aon:outputText value="#{to.description}" />
 					</rich:toolTip>
 				</aon:div>
-				<aon:panelGroup styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
+					<aon:panelGroup styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<aon:inputTextarea id="ContractClause_description" required="true"
-						value="#{controller.to.description}"
+						value="#{controller.to.description}" 
+						reRender="ContractClause_description"
 						cols="95" rows="#{!controller.longDescription?4:12}" />
 					<aon:commandButton ajaxSingle="#{true}"
-						styleClass="aon-editDataTable-button aon-icon-edit-end aon-margin-top" 
+						styleClass="aon-editDataTable-button aon-icon-edit-end" 
 						actionListener="#{controller.onShortDescription}" 
 						reRender="ContractClause_description"
 						rendered="#{controller.longDescription}" />
 					<aon:commandButton ajaxSingle="#{true}"
-						styleClass="aon-editDataTable-button aon-icon-edit-add aon-margin-top" 
+						styleClass="aon-editDataTable-button aon-icon-edit-add" 
 						actionListener="#{controller.onLongDescription}" 
 						reRender="ContractClause_description"
 						rendered="#{!controller.longDescription}" />
@@ -104,16 +107,15 @@
 					<aon:panelGroup styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 						<aon:inputTextarea id="ContractClause_description-New" required="true"
 							value="#{controller.to.description}" 
+							reRender="ContractClause_description-New"
 							cols="95" rows="#{!controller.longDescription?4:12}" />
 						<aon:commandButton ajaxSingle="#{true}"
 							styleClass="aon-editDataTable-button aon-icon-edit-end" 
-							value="&#160;&#160;&#160;&#160;"
 							actionListener="#{controller.onShortDescription}" 
 							reRender="ContractClause_description-New"
 							rendered="#{controller.longDescription}" />
 						<aon:commandButton ajaxSingle="#{true}"
 							styleClass="aon-editDataTable-button aon-icon-edit-add" 
-							value="&#160;&#160;&#160;&#160;"
 							actionListener="#{controller.onLongDescription}" 
 							reRender="ContractClause_description-New"
 							rendered="#{!controller.longDescription}" />

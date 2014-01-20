@@ -38,7 +38,7 @@
 									<aon:div id="showAvailableClausesModalContent" style="width:710px;">
 		
 										<aon:dataTable value="#{contractClause.availableClausesModel}" var="to" >
-											<aon:rowSelector actionListener="#{contractClause.onSaveSelectedClause}"/>
+											<aon:rowSelector actionListener="#{contractClause.onSelectAvailableClause}"/>
 											<aon:column>
 												<f:facet name="header">
 													<aon:outputText value="#{bundle.aon_name}" />

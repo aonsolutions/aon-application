@@ -21,28 +21,21 @@
 					
 					<aon:rowSelector id="contractCodelList-select" toggleOnClick="#{false}" />
 					
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
+					<aon:column styleClass="aon-editDataTable-iconColumn aon-width-50">
 						<aon:htmlCommandLink styleClass="aon-icon-pdf" style="padding-left: 15px;" 
+							title="#{bundle.download_file}"
 							target="_blank" value="&#160;"
 							rendered="#{contractModel.pdfEnabled}"
 							actionListener="#{contractModel.onDownloadContract}">
 						</aon:htmlCommandLink>
 					</aon:column>
 
-<!--  
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
-						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.value.name}"  />
-					</aon:column>
--->
 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 						<f:facet name="header">
 							<aon:outputLabel 
 								value="#{bundle.aon_description}" />
 						</f:facet>
-						<aon:outputText value="#{to.label}"/>
+						<aon:outputText value="#{to}"/>
 					</aon:column>
 					
 				</aon:dataTable>

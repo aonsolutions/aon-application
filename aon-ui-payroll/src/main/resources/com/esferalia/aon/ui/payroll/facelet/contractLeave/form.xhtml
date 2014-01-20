@@ -213,6 +213,7 @@
 							value="#{bundle.payroll_leaveBatch_discharge_date}" />
 						<aon:selectInputDate id="ContractLeave_endDate"  
 							value="#{contractLeave.to.endDate}"
+							reRender="dischargePanel"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" >
 							<a4j:support event="onchanged" reRender="dischargePanel" />

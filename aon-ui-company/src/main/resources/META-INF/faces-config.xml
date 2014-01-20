@@ -910,7 +910,6 @@
 				<value>#{enterpriseWorkPlaceChildListener}</value>
 				<value>#{enterpriseAddInfoListener}</value>
 				<value>#{enterpriseRAttachChildListener}</value>		
-				<value>#{enterpriseClauseChildListener}</value>		
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -1166,7 +1165,7 @@
 	<managed-bean>
 		<managed-bean-name>enterpriseClause</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.contract.ContractClauseController
+			com.esferalia.aon.ui.payroll.controller.contract.EnterpriseClauseController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -1182,30 +1181,9 @@
 			<value>enterpriseClause</value>
 		</managed-property>
 		<managed-property>
-			<property-name>enterpriseClause</property-name>
-			<value>#{true}</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>enterprise</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ContractClause_line,ContractClause_general</value>
+			<value>ContractClause_general desc,ContractClause_line</value>
 		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>domain</key>
-					<value>domain</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -1214,27 +1192,6 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>enterpriseClauseChildListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>enterpriseClause</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>ContractClause_domain</key>
-					<value>domain</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>	
 	
 	<!-- ************* DEPARTMENT ***************** -->
 	<managed-bean>

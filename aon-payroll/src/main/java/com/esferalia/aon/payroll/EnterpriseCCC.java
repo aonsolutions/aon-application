@@ -37,11 +37,9 @@ public class EnterpriseCCC extends EnterpriseCCCDB {
 	private String getValidSSNumber(String ssNumber) throws IllegalArgumentException {
 		Integer iDC = null;
 		Integer iDCTemp = null;
-		Integer iPos = null;
 		String sNumSegSocialTemp = null; 
 		String sTempNumOriginal = null;
-		
-	    if (ssNumber.length() > 12 || ssNumber.length() == 0) {
+		if (ssNumber.length() != 11) {
 	        throw new IllegalArgumentException("La longitud no es correcta.");
 	    }
 	    if (ssNumber.matches("[^0-9]")) {
@@ -49,23 +47,12 @@ public class EnterpriseCCC extends EnterpriseCCCDB {
 	    }
 	    iDCTemp = Integer.parseInt( ssNumber.substring(ssNumber.length()-2, ssNumber.length()) );
 	    sTempNumOriginal = ssNumber.substring(0, ssNumber.length()-2);
-	    switch(ssNumber.length()) {
-	        case 11: // Número de Empresa
-	        	sNumSegSocialTemp = ssNumber.substring(0, 2) + ssNumber.substring(2, 9);
-	            break;                        
-	        case 12: // Número de Trabajador
-	            iPos = Integer.parseInt( (ssNumber.substring(2,3)) );
-	            if (iPos == 0) {
-	            	sNumSegSocialTemp = ssNumber.substring(0, 2) + ssNumber.substring(3, 10);
-	            } else {
-	                sNumSegSocialTemp = ssNumber.substring(0, 2) + ssNumber.substring(2, 10);
-	            }
-	            break;
-	        default:
-	        	ssNumber = null;
-        }	        
-	    iDC = (int) ( Long.parseLong(sNumSegSocialTemp) - ( (Long.parseLong(sNumSegSocialTemp) / 97) * 97 ) );
-	    
+	    if (ssNumber.charAt(2)=='0') {
+	    	sNumSegSocialTemp = ssNumber.substring(0, 2) + ssNumber.substring(3, 9);
+	    } else {
+	    	sNumSegSocialTemp = ssNumber.substring(0, 9);
+	    }
+	    iDC = Integer.parseInt(sNumSegSocialTemp) % 97;
 	    if (iDC == iDCTemp) {
 	        return "";
 	    } else {
