@@ -184,8 +184,9 @@ public class FinanceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		if (StringUtils.isNotBlank(loaded.getCuentaBanco())) {
 			BankAccount bankAccount = new BankAccount();
 			String ccc = StringUtils.replace(loaded.getCuentaBanco(), ".", "");
-			if (Country.valueOf(StringUtils.substring(ccc, 0, 2)) != null) {
-				bankAccount.setCountry(Country.valueOf(StringUtils.substring(ccc, 0, 2)));
+			String country = StringUtils.substring(ccc, 0, 2);
+			if (!StringUtils.isNumeric(country)) {
+				bankAccount.setCountry(Country.valueOf(country));
 				bankAccount.setCheck(StringUtils.substring(ccc, 2, 4));
 				bankAccount.setBban1(StringUtils.substring(ccc, 4, 8));
 				bankAccount.setBban2(StringUtils.substring(ccc, 8, 12));
