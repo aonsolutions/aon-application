@@ -135,7 +135,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 		cf.setWidth(3, "80px");
 		cf.setWidth(4, "40px");
 		cf.setWidth(5, "140px");
-		cf.setWidth(6, "auto");
+		
 		
 		FlexCellFormatter fmt = table.getFlexCellFormatter();
 		
