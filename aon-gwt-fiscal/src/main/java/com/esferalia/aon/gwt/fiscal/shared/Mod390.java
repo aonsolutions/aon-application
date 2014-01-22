@@ -7,6 +7,10 @@ import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Mod390DetailKey;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
+/**
+ * @author ecastellano
+ *
+ */
 @SuppressWarnings("serial")
 public class Mod390 implements Serializable, IsSerializable {
 
@@ -22,6 +26,7 @@ public class Mod390 implements Serializable, IsSerializable {
 	private Integer id;
 	private int domain;
 	private int enterprise;
+	private String enterpriseName;
 	private int year;
 	private int administration;
 	private boolean confidential;
@@ -123,6 +128,12 @@ public class Mod390 implements Serializable, IsSerializable {
 	}
 	public void setEnterprise(int enterprise) {
 		this.enterprise = enterprise;
+	}
+	public String getEnterpriseName() {
+		return enterpriseName;
+	}
+	public void setEnterpriseName(String enterpriseName) {
+		this.enterpriseName = enterpriseName;
 	}
 	public int getYear() {
 		return year;

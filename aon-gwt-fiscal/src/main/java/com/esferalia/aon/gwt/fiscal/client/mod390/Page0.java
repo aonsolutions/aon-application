@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 import com.esferalia.aon.gwt.fiscal.client.css.AonResources;
 import com.esferalia.aon.gwt.fiscal.client.css.GWTResources;
 import com.esferalia.aon.gwt.fiscal.client.widget.DocumentTextBox;
+import com.esferalia.aon.gwt.fiscal.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -59,6 +60,8 @@ public class Page0 extends ResizeComposite {
 			name.setMaxLength(15);
 			firstSurname.setValue(m390.getFirstSurname());
 			secondSurname.setValue(m390.getSecondSurname());
+			firstSurname.setEnabled(true);
+			secondSurname.setEnabled(true);
 		}
 		phone.setValue(m390.getContactPhone());
 	}
@@ -69,5 +72,5 @@ public class Page0 extends ResizeComposite {
 		mod390.setSecondSurname(secondSurname.getValue());
 		mod390.setContactPhone(phone.getValue());
 	}
-	
+
 }

@@ -254,7 +254,7 @@ public class SQLMod390 {
 			SQLUtils.setInt(stmt, 5, 0);
 			SQLUtils.setInt(stmt, 6, mod390.isConfidential() ? 1 : 0);
 			SQLUtils.setString(stmt, 7, mod390.getDocument());
-			SQLUtils.setString(stmt, 8, mod390.getName());
+			SQLUtils.setString(stmt, 8, mod390.getEnterpriseName());
 			SQLUtils.setInt(stmt, 9, 0);
 			SQLUtils.setInt(stmt, 10,mod390.isReplacement() ? 1 : 0);
 			SQLUtils.setString(stmt, 11, mod390.getComments());
@@ -296,7 +296,7 @@ public class SQLMod390 {
 			SQLUtils.setInt(insertStmt, 5, 0);
 			SQLUtils.setInt(insertStmt, 6, mod390.isConfidential() ? 1 : 0);
 			SQLUtils.setString(insertStmt, 7, mod390.getDocument());
-			SQLUtils.setString(insertStmt, 8, mod390.getName());
+			SQLUtils.setString(insertStmt, 8, mod390.getEnterpriseName());
 			SQLUtils.setInt(insertStmt, 9, 0);
 			SQLUtils.setInt(insertStmt, 10,mod390.isReplacement() ? 1 : 0);
 			SQLUtils.setString(insertStmt, 11, mod390.getComments());
@@ -348,7 +348,7 @@ public class SQLMod390 {
 				mod390.setDomain(rs.getInt(FsModel390Columns.DOMAIN));
 				mod390.setEnterprise(rs.getInt(FsModel390Columns.ENTERPRISE));  
 				mod390.setDocument(rs.getString(FsModel390Columns.DOCUMENT));
-				mod390.setName(rs.getString(FsModel390Columns.NAME)); 
+				mod390.setEnterpriseName(rs.getString(FsModel390Columns.NAME)); 
 				mod390.setReceipt(rs.getString(FsModel390Columns.RECEIPT));
 				mod390.setReplacement(rs.getBoolean(FsModel390Columns.REPLACEMENT));
 				mod390.setReplacedReceipt(rs.getString(FsModel390Columns.REPLACED_RECEIPT));  
@@ -385,7 +385,7 @@ public class SQLMod390 {
 				mod390.setReplacedReceipt(rs.getString(FsModel390Columns.REPLACED_RECEIPT));
 				mod390.setComments(rs.getString(FsModel390Columns.COMMENTS));
 				mod390.setDocument(rs.getString(FsModel390Columns.DOCUMENT));
-				mod390.setName(rs.getString(FsModel390Columns.NAME));
+				mod390.setEnterpriseName(rs.getString(FsModel390Columns.NAME));
 				
 				String model =  rs.getString(FsModel390Columns.MODEL);
 				StringReader reader = new StringReader(model);
@@ -915,6 +915,7 @@ public class SQLMod390 {
 		String VAT_TAX_DECLARATION_SELECT = 
 			"SELECT "  
 				+SQLConstants.FS_VAT +"." + FsVatColumns.PERIOD +" "+FsVatColumns.PERIOD + ","  
+				+SQLConstants.FS_VAT +"." + FsVatColumns.TAX_REFUND_REGISTRY +" "+FsVatColumns.TAX_REFUND_REGISTRY + ","
 				+SQLConstants.FS_VAT_DECLARATION +"." + FsVatDeclarationColumns.DEPOSIT+" "+FsVatDeclarationColumns.DEPOSIT + ","  
 				+SQLConstants.FS_VAT_DECLARATION+"."+FsVatDeclarationColumns.PAY_BACK+" "+FsVatDeclarationColumns.PAY_BACK + ","
 				+SQLConstants.FS_VAT_DECLARATION+"."+FsVatDeclarationColumns.COMPENSATE+" "+FsVatDeclarationColumns.COMPENSATE
@@ -937,14 +938,40 @@ public class SQLMod390 {
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				Period period = Period.values()[rs.getInt(FsVatColumns.PERIOD)];
+				boolean taxRefundRegistry = rs.getBoolean(FsVatColumns.TAX_REFUND_REGISTRY);
 				double deposit = rs.getDouble(FsVatDeclarationColumns.DEPOSIT);
 				double payBack = rs.getDouble(FsVatDeclarationColumns.PAY_BACK);
 				mod303Results.setDepositSum(AonUtil.round(mod303Results.getDepositSum() + deposit));
-				mod303Results.setPaybackSum(AonUtil.round(mod303Results.getPaybackSum() + payBack));
+				if ( taxRefundRegistry ) {
+					mod303Results.setPaybackSum(AonUtil.round(mod303Results.getPaybackSum() + payBack));
+				}
 				// Last Period
 				if (period == Period.M12 || period == Period.T4) {
 					mod303Results.setLastPeriodPaybackResult(payBack);
 					mod303Results.setLastPeriodCompensateResult(rs.getDouble(FsVatDeclarationColumns.COMPENSATE));
+					// CASILLA 98 A devolver: si el resultado de la última
+					// autoliquidación fue a devolver, consignará en
+					// esta casilla el importe de la misma.
+					// Si ha consignado alguna cantidad en las casillas 96 ó 97
+					// no cumplimente la 98. No
+					// obstante, en el supuesto de sujetos pasivos que durante
+					// algún período del ejercicio
+					// hayan estado inscritos en el Registros de devolución
+					// mensual y no permanezcan en él en
+					// el último período, por haber sido excluidos o haber
+					// solicitado la baja obligatoria en el
+					// mismo, si el resultado de la última autoliquidación del
+					// ejercicio es a compensar o a
+					// devolver, consignará los importes correspondientes en las
+					// casilla 96 (importe de las
+					// devoluciones solicitadas durante los períodos que estuvo
+					// inscrito en el registro de
+					// devolución mensual) y en las casillas 97 o 98, según haya
+					// solicitado compensación o
+					// devolución en el último período del ejercicio.
+					if ( taxRefundRegistry ) {
+						mod303Results.setLastPeriodPaybackResult(0);	
+					}
 				}
 			}
 			return mod303Results;
@@ -1722,8 +1749,13 @@ public class SQLMod390 {
 		if ( !mod390.isLegalEntity() ) {
 			TipoPersonaFisica tpf = datIdent.getPersFisica();
 			TipoIdentificacionPersonaFisica tipf = tpf.getIdent();
+			mod390.setName(tipf.getNombre());
 			mod390.setFirstSurname(tipf.getApe1());
 			mod390.setSecondSurname(tipf.getApe2());
+		} else {
+			TipoPersonaJuridica tpj = datIdent.getPersJuridica();
+			TipoIdentificacionPersonaJuridica tipj = tpj.getIdentPersJuridica();
+			mod390.setName(tipj.getRazonSocial());
 		}
 		mod390.setContactPhone(datIdent.getTelefono());
 		
