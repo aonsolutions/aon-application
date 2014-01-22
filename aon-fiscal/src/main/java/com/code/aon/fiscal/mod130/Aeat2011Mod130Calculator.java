@@ -5,7 +5,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.fiscal.enumeration.Mod130Key;
 import com.code.aon.fiscal.model.FiscalModelDetailCalculator;
-import com.code.aon.registry.enumeration.TaxRegime;
 
 public class Aeat2011Mod130Calculator extends FiscalModelDetailCalculator implements IMod130Calculator {
 
@@ -22,18 +21,10 @@ public class Aeat2011Mod130Calculator extends FiscalModelDetailCalculator implem
 		calculateDetails(mod130.getDetails());
 		double c01 = mod130.getDetail( Mod130Key.C01 ).getAmount();
 		double c02 = mod130.getDetail( Mod130Key.C02 ).getAmount();
-		
 		double c03 = CommonUtil.round(c01 - c02);
-		TaxRegime taxRegime = mod130.getTaxRegime();
-		if (c03 > 0 && taxRegime == TaxRegime.EDS) {
-			double tmpC03 = CommonUtil.round(c03 - (c02 * 5 / 100) );
-			if (c03 != tmpC03) {
-				c03 = tmpC03;	
-			}
-		}
 		
-		//double c03 = mod130.getDetail( Mod130Key.C03 ).getAmount();
 		mod130.getDetail( Mod130Key.C03 ).setAmount( c03 );
+		
 		double c04 =  c03>0?CommonUtil.round(c03 * 20 / 100):0;
 		mod130.getDetail( Mod130Key.C04 ).setAmount( c04 );
 		double c05 = mod130.getDetail( Mod130Key.C05 ).getAmount();
