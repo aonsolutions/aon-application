@@ -28,6 +28,10 @@ public class Account {
 	 * Control digit
 	 */
 	private String ccc_dc;
+	
+	private String bic;
+	
+	private String iban;
 
 	/**
 	 * @return the ccc_a
@@ -87,6 +91,22 @@ public class Account {
 	 */
 	public void setCcc_o(String ccc_o) {
 		this.ccc_o = ccc_o;
+	}
+
+	public String getBic() {
+		return bic;
+	}
+
+	public void setBic(String bic) {
+		this.bic = bic;
+	}
+	
+	public String getIban() {
+		return iban;
+	}
+
+	public void setIban(String iban) {
+		this.iban = iban;
 	}
 
 	/**

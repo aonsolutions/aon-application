@@ -42,6 +42,12 @@ public class Orderer {
 	 * Procedure
 	 */
 	private Integer procedure;
+	
+	private Address address;
+	
+	private boolean organisation;
+	
+	private String id;	
 
 	public int numRegs = 0;
 	
@@ -197,6 +203,30 @@ public class Orderer {
 	 */
 	public void setNumRegs(int numRegs) {
 		this.numRegs = numRegs;
+	}
+	
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+	
+	public boolean isOrganisation() {
+		return organisation;
+	}
+
+	public void setOrganisation(boolean organisation) {
+		this.organisation = organisation;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	/* (non-Javadoc)

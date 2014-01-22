@@ -27,7 +27,6 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
-import com.code.aon.geozone.GeoTree;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
@@ -178,36 +177,6 @@ public class FacturaeWriter {
 		return overseasAddress;
 	}
 	
-	private GeoTree getGeoTree( GeoZone geozone ) throws ManagerBeanException {
-		IManagerBean rMediaBean = BeanManager.getManagerBean(GeoTree.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.GEO_TREE_CHILD_ID), geozone.getId());
-		List<ITransferObject> list = rMediaBean.getList(criteria);
-		if (! list.isEmpty() ) {
-			return (GeoTree) list.get(0);
-		}
-		return null;
-	}
-	
-	private GeoZone getGeoZoneCountry( GeoZone gz ) throws ManagerBeanException {
-		if ( gz != null ) {
-			GeoZone geozone = gz;
-			while ( geozone != null ) {
-				GeoTree geoTree = getGeoTree(geozone);
-				if ( geoTree != null ) {
-					if ( geoTree.getParent() == null ) {
-						return geozone;
-					} else {
-						geozone = geoTree.getParent();
-					}
-				} else {
-					break;		
-				}
-			}
-		}
-		return null;		
-	}
-	
 	private CountryType getCountryType( String code ) {
 		for( CountryType country : CountryType.values() ) {
 			if ( StringUtils.equalsIgnoreCase(code, country.value()) ) {
@@ -219,20 +188,22 @@ public class FacturaeWriter {
 	
 	private CountryType getCountry( GeoZone gz ) throws ManagerBeanException {
 		CountryType country = null;
-		GeoZone geozone = getGeoZoneCountry(gz);
-		if ( geozone != null ) {
-			String name = geozone.getName();
-			if (! StringUtils.isEmpty(geozone.getCode()) ) {
-				country = getCountryType(geozone.getCode());
-			}
-			if ( country == null ) {
-				for( Locale aLocale : Locale.getAvailableLocales() ) {
-					if ( StringUtils.equalsIgnoreCase(name, aLocale.getDisplayCountry(this.locale)) ) {
-						country = getCountryType(aLocale.getISO3Country());
-						break;
-					}
-				}				
-			}
+		if ( gz != null ) {
+			GeoZone geozone = gz.getGeoZoneCountry();
+			if ( geozone != null ) {
+				String name = geozone.getName();
+				if (! StringUtils.isEmpty(geozone.getCode()) ) {
+					country = getCountryType(geozone.getCode());
+				}
+				if ( country == null ) {
+					for( Locale aLocale : Locale.getAvailableLocales() ) {
+						if ( StringUtils.equalsIgnoreCase(name, aLocale.getDisplayCountry(this.locale)) ) {
+							country = getCountryType(aLocale.getISO3Country());
+							break;
+						}
+					}				
+				}
+			}			
 		}
 		return (country != null) ? country : CountryType.ESP;
 	}

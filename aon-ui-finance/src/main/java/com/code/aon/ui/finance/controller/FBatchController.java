@@ -56,6 +56,7 @@ import com.code.aon.ui.finance.file.AEB19Writer;
 import com.code.aon.ui.finance.file.AEB32Writer;
 import com.code.aon.ui.finance.file.AEB34Writer;
 import com.code.aon.ui.finance.file.AEB58Writer;
+import com.code.aon.ui.finance.file.SEPA19_14CoreXmlWriter;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -70,6 +71,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	private boolean payment;
 	private boolean payroll;
 	private FileOutput aebOutput;
+	private MimeType mimeType;
 	private Date recordDate;
 	private boolean showFbatchRecordWindow;
 	private AccountEntryFinanceWriter writer;
@@ -396,22 +398,24 @@ public class FBatchController extends BasicController implements ICollectionProv
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
     	FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
+    	this.mimeType = MimeType.MIME_TXT;
         Collection<?> fbatchDetailCollection = obtainDetailsCollection(fbatch);
         if ((fbatch.getFinanceBatchType() == FinanceBatchType.AEB_19) || (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_19_D)) {
 			AEB19Writer aeb19Writer = new AEB19Writer();
 			aebOutput = aeb19Writer.createAEB19(getCompany(), fbatch, fbatchDetailCollection);
-		}
-		else if (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_32) {
+		} else if (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_32) {
 			AEB32Writer aeb32Writer = new AEB32Writer();
 			aebOutput = aeb32Writer.createAEB32(getCompany(), fbatch, fbatchDetailCollection);
-		}
-		else if (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_34 || fbatch.getFinanceBatchType() == FinanceBatchType.AEB_34_N) {
+		} else if (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_34 || fbatch.getFinanceBatchType() == FinanceBatchType.AEB_34_N) {
 			AEB34Writer aeb34Writer = new AEB34Writer();
 			aebOutput = aeb34Writer.createAEB34(getCompany(), fbatch, fbatchDetailCollection);
-		}
-		else if ((fbatch.getFinanceBatchType() == FinanceBatchType.AEB_58) || (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_58_D)) {
+		} else if ((fbatch.getFinanceBatchType() == FinanceBatchType.AEB_58) || (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_58_D)) {
 			AEB58Writer aeb58Writer = new AEB58Writer();
 			aebOutput = aeb58Writer.createAEB58(getCompany(), fbatch, fbatchDetailCollection);
+		} else if (fbatch.getFinanceBatchType() == FinanceBatchType.SEPA_19_14_CORE_XML) {
+			this.mimeType = MimeType.MIME_XML;
+			SEPA19_14CoreXmlWriter sepaWriter = new SEPA19_14CoreXmlWriter();
+			aebOutput = sepaWriter.createXml(getCompany(), fbatch, fbatchDetailCollection);
 		}
 
         if (aebOutput != null) {
@@ -451,8 +455,8 @@ public class FBatchController extends BasicController implements ICollectionProv
 	        fileName += "-" + ((FinanceBatch)this.getTo()).getDescription();
 	        fileName = ((aebOutput.getErrors().size()>0) ? "ERROR-" : "") + fileName;
 
-	        response.setContentType(MimeType.MIME_TXT.getName());
-	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\"");
+	        response.setContentType(this.mimeType.getName());
+	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "." + this.mimeType.getExtension() +"\"");
 
 	        ServletOutputStream output = response.getOutputStream();
 	        InputStream input = new FileInputStream(aebOutput.getFile());

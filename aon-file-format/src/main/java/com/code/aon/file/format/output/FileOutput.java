@@ -3,11 +3,14 @@ package com.code.aon.file.format.output;
 import java.io.File;
 import java.util.List;
 
+import javax.activation.MimeType;
+
 public class FileOutput {
 
 	private List<Exception> errors;
 	private File file;
 	private byte[] content;
+	private MimeType mimeType;
 
 	public List<Exception> getErrors() {
 		return errors;
@@ -32,5 +35,12 @@ public class FileOutput {
 		this.content = content;
 	}
 
+	public MimeType getMimeType() {
+		return mimeType;
+	}
+
+	public void setMimeType(MimeType mimeType) {
+		this.mimeType = mimeType;
+	}
 	
 }

@@ -11,6 +11,8 @@ public class Lot {
 	
 	private int numRegs = 0;
 	
+	private String id;
+	
 	/**
 	 * Orderers
 	 */
@@ -108,6 +110,14 @@ public class Lot {
 		this.numRegs = numRegs;
 	}
 	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public static int RESUMED = 0;
 	
 	public static int EXTENDED = 1;

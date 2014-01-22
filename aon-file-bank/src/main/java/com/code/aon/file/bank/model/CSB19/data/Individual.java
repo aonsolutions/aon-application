@@ -18,6 +18,11 @@ public class Individual {
 	private String accountUserAddress;
 	private String accountUserAddress2;
 	private Integer accountUserPCode;
+	private Address address;
+	private boolean organisation;
+	private String document;
+	private String documentType;
+	
 	/**
 	 * Concepts
 	 */
@@ -180,6 +185,39 @@ public class Individual {
 		this.accountUserPCode = accountUserPCode;
 	}
 
+	public Address getAddress() {
+		return address;
+	}
+	
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public boolean isOrganisation() {
+		return organisation;
+	}
+
+	public void setOrganisation(boolean organisation) {
+		this.organisation = organisation;
+	}
+
+	
+	public String getDocument() {
+		return document;
+	}
+
+	public void setDocument(String document) {
+		this.document = document;
+	}
+
+	public String getDocumentType() {
+		return documentType;
+	}
+	
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

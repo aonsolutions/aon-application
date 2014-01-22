@@ -40,7 +40,12 @@ public class Presenter {
 	 * The office that receives the file
 	 */
 	private String office;
-
+	
+	private String id;
+	
+	private String iban;
+	
+	private String bic;
 
 	/**
 	 * Returns the code
@@ -148,6 +153,30 @@ public class Presenter {
 	 */
 	public void setSufix(String sufix) {
 		this.sufix = sufix;
+	}
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public String getIban() {
+		return iban;
+	}
+
+	public void setIban(String iban) {
+		this.iban = iban;
+	}
+
+	public String getBic() {
+		return bic;
+	}
+
+	public void setBic(String bic) {
+		this.bic = bic;
 	}
 
 	/* (non-Javadoc)
