@@ -95,6 +95,19 @@
 				style="#{(key.total)?(key.level==0?'font-weight: bold':'font-style:italic'):''};">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
+			<aon:commandButton 
+				value="&#160;"
+				title="Cuota Derivada"
+				ajaxSingle="true"
+				rendered="#{controller.declaration.map[key].activity}"
+				reRender="activityContainer"
+				actionListener="#{controller.onShowActivities}"
+				style="margin-left: 5px;"
+				styleClass="aon-icon-commandButton aon-icon-index">
+				<f:param 
+					name="key"
+					value="#{key}"/>
+			</aon:commandButton>
 		</aon:div>
 	</aon:column>
 

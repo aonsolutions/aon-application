@@ -88,5 +88,4 @@ public class Page1 extends ResizeComposite {
 		mod390.setGroupDocument( groupDocument.getValue());
 		mod390.setGroupDeclarations( groupDeclarations.getValue());
 	}
-
 }

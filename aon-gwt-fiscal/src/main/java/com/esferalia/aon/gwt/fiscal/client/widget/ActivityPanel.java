@@ -102,26 +102,7 @@ public class ActivityPanel extends CustomDialog {
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
 		setModal(true);
-		setWidth("550px");
-		setHeight("500px");
-		
-		
 		setCaption(MSG.activitySelection());
-
-//		HorizontalPanel captionPanel = new HorizontalPanel();
-//		captionPanel.getElement().getStyle().setPadding(3, Unit.PX);
-//		captionPanel.getElement().getStyle().setBackgroundColor("#DDD");
-//		captionPanel.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-//		Element td = getCellElement(0, 1);
-//		DOM.removeChild(td, (Element) td.getFirstChildElement());
-//		DOM.appendChild(td, captionPanel.getElement());
-//		captionPanel.getElement().getStyle().setWidth(100, Unit.PCT);
-//		captionPanel.add(title);
-//		title.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-//		close.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
-//		close.getElement().getStyle().setPaddingRight(10, Unit.PX);
-//		close.getElement().getStyle().setCursor(Cursor.POINTER);
-//		captionPanel.add(close);
 
 		AON_RESOURCES.css().ensureInjected();
 		CellTable.Resources tableStyle = GWT.create(AonCellTable.class);
@@ -139,8 +120,6 @@ public class ActivityPanel extends CustomDialog {
 		table.setSelectionModel(model);
 		table.setEmptyTableWidget(new HTML(MSG.noData()));
 
-		// Create a remote service proxy to talk to the server-side Employees
-		// service.
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		activityGroup = new ListBox();

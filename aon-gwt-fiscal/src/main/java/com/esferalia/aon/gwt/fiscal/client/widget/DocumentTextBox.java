@@ -42,7 +42,7 @@ public class DocumentTextBox extends TextBox {
 		'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E' };
 	private static final char[] NIF_LETTERS = { 'J', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I' };
 	
-	private static boolean isValid(String value) {
+	public static boolean isValid(String value) {
 		if (value == null || value.length() == 0) {
 			return false;
 		}

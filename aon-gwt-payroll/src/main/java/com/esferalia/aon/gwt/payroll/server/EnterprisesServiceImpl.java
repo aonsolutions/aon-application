@@ -979,7 +979,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					" WHERE " + PaymentConceptColumns.DOMAIN + " =  ? " + 
 					" OR " + PaymentConceptColumns.DOMAIN + " = ? " + 
 					(parentDomainID != null ? " OR " + PaymentConceptColumns.DOMAIN + " = ? " : "") + 
-					" ORDER BY " + PaymentConceptColumns.DESCRIPTION 
+					" ORDER BY " + PaymentConceptColumns.TYPE 
+					//+ ", " +  PaymentConceptColumns.DESCRIPTION 
 					);
 			//@formatter:on
 
@@ -1156,6 +1157,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				stmt.close();
 			}
 		}
+	}
+	
+	public static void main(String[] args) {
+		System.out.println("Salario Base ( @{SALARIO_HORA} € x @{HORAS} horas )".replaceAll("@\\{([^\\}]*)\\}", ""));
 	}
 
 }

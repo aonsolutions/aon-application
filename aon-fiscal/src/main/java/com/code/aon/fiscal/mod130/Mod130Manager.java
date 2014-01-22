@@ -193,6 +193,13 @@ public class Mod130Manager extends FiscalModelManager {
 			sc = sp.getSummaryCollection(conn,params,false);
 			//double c02 = sc.getUnpaidBalance();
 			double c02 = CommonUtil.round(sc.getOpeningDebit() + sc.getDebit() - sc.getOpeningCredit() - sc.getCredit());
+			
+			double c03 = CommonUtil.round(c01 - c02);
+			TaxRegime taxRegime = searchTaxRegime(conn);
+			mod130.setTaxRegime(taxRegime);
+			if (c03 > 0 && taxRegime == TaxRegime.EDS) {
+				c02 = CommonUtil.round(c02 + (c03 * 5 / 100));
+			}
 			mod130.ensureDetail(Mod130Key.C02).addAccumulatedAmount(c02);
 	
 			
@@ -203,14 +210,8 @@ public class Mod130Manager extends FiscalModelManager {
 			// neto, excluido este concepto. No obstante, no resultará de aplicación dicho 
 			// porcentaje de deducción cuando el contribuyente opte por la aplicación de la 
 			// reducción prevista en el artículo 26 de este Reglamento.
-
-			double c03 = CommonUtil.round(c01 - c02);
-			TaxRegime taxRegime = searchTaxRegime(conn);
-			mod130.setTaxRegime(taxRegime);
-			if (c03 > 0 && taxRegime == TaxRegime.EDS) {
-				c03 = CommonUtil.round(c03 - (c02 * 5 / 100) );
-			}
-			mod130.ensureDetail(Mod130Key.C03).addAccumulatedAmount(c03);
+			c03 = CommonUtil.round(c01 - c02);
+			mod130.ensureDetail(Mod130Key.C03).setAccumulatedAmount(c03);
 			
 	//		 ------------------------------------------------------------------------
 	

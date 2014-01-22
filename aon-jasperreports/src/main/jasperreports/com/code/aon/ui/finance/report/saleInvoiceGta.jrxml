@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.2100000000000009"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="60"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -36,6 +36,7 @@
 	<field name="project" class="com.code.aon.project.Project"/>
 	<field name="lines" class="java.util.Set"/>
 	<field name="finances" class="java.util.Set"/>
+	<field name="vatAccrualPayment" class="java.lang.Boolean"/>
 	<variable name="registryPhone" class="com.code.aon.registry.RegistryMedia">
 		<variableExpression><![CDATA[$F{registry}.getPhone()]]></variableExpression>
 	</variable>
@@ -229,7 +230,7 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="259" splitType="Stretch">
+		<band height="273" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-34" x="274" y="0" width="246" height="16"/>
 				<box>
@@ -304,7 +305,7 @@
 				<textFieldExpression><![CDATA[$P{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-2" positionType="Float" x="160" y="187" width="245" height="14">
+				<reportElement key="subreport-2" positionType="Float" x="160" y="201" width="245" height="14">
 					<printWhenExpression><![CDATA[new Boolean($F{lines}.size()>0)]]></printWhenExpression>
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
@@ -312,7 +313,7 @@
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceTaxBreakDownGta")]]></subreportExpression>
 			</subreport>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-1" positionType="Float" x="0" y="152" width="535" height="29"/>
+				<reportElement key="subreport-1" positionType="Float" x="0" y="166" width="535" height="29"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, true))]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetailGta")]]></subreportExpression>
@@ -357,7 +358,7 @@
 				<textFieldExpression><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-3" positionType="Float" x="0" y="224" width="535" height="29">
+				<reportElement key="subreport-3" positionType="Float" x="0" y="238" width="535" height="29">
 					<printWhenExpression><![CDATA[new Boolean($F{finances}.size() > 0)]]></printWhenExpression>
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
@@ -365,7 +366,7 @@
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceFinances")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="460" y="187" width="75" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="460" y="201" width="75" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -378,7 +379,7 @@
 				<textFieldExpression><![CDATA[$R{invoice_total}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-44" positionType="Float" x="460" y="201" width="62" height="14"/>
+				<reportElement key="textField-44" positionType="Float" x="460" y="215" width="62" height="14"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -436,7 +437,7 @@
 				<textFieldExpression><![CDATA[$R{aon_company_document} + ": " + $P{company}.getDocument()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-44" positionType="Float" x="522" y="201" width="13" height="14"/>
+				<reportElement key="textField-44" positionType="Float" x="522" y="215" width="13" height="14"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -507,6 +508,21 @@
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{tas_projectTas} + ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="2" y="149" width="531" height="14" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#FF9966">
+					<printWhenExpression><![CDATA[$F{vatAccrualPayment}]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{finance_invoice_vat_accrual_payment_message}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -259,6 +259,9 @@ public class FiscalCollectionsController {
 	public FiscalModelType getModel310() {
 		return FiscalModelType.M310;
 	}
+	public FiscalModelType getModel311() {
+		return FiscalModelType.M311;
+	}
 	public FiscalModelType getModel131() {
 		return FiscalModelType.M131;
 	}

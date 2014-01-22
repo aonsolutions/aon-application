@@ -224,5 +224,14 @@ public class Mod310 implements IFiscalDeclaration {
 	public boolean isCompensate() {
 		return (getResult() < 0);
 	}
+
+	@Override
+	public boolean isPayback() {
+		return false;
+	}
+	@Override
+	public boolean isPaybackDeclarationAvailable() {
+		return false;
+	}
 	
 }

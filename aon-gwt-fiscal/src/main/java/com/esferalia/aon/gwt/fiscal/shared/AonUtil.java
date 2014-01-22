@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class AonUtil {
+	public static final String EMPTY = "";
+			
 	public static double round(double value) {
 		return AonUtil.round(value,2);
 	}
@@ -21,4 +23,42 @@ public class AonUtil {
 		return !isEmpty(str);
 	}
 
+	public static boolean contains(String str, char searchChar) {
+		if (isEmpty(str)) {
+			return false;
+		}
+		return str.indexOf(searchChar) >= 0;
+	}
+
+	public static String trim(String str) {
+		return str == null ? null : str.trim();
+	}
+
+	public static String substringBefore(String str, String separator) {
+		if (isEmpty(str) || separator == null) {
+			return str;
+		}
+		if (separator.length() == 0) {
+			return EMPTY;
+		}
+		int pos = str.indexOf(separator);
+		if (pos == -1) {
+			return str;
+		}
+		return str.substring(0, pos);
+	}
+
+	public static String substringAfter(String str, String separator) {
+		if (isEmpty(str)) {
+			return str;
+		}
+		if (separator == null) {
+			return EMPTY;
+		}
+		int pos = str.indexOf(separator);
+		if (pos == -1) {
+			return EMPTY;
+		}
+		return str.substring(pos + separator.length());
+	}
 }

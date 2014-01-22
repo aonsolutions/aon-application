@@ -254,42 +254,42 @@ public class Page3 extends ResizeComposite {
 	}
 
 	public void populate(Mod390 mod390) {
-		if (!AonUtil.isEmpty( mainActivityEpigraph.getText() ) ) {
+		if (!AonUtil.isEmpty( mainActivityKey.getText() ) ) {
 			Activity mainActivity = new Activity();	
 			mainActivity.setKey(mainActivityKey.getText());
 			mainActivity.setDescription(mainActivityDescription.getText());
 			mainActivity.setEpigraph(mainActivityEpigraph.getText());
 			mod390.setMainActivity(mainActivity);
 		}
-		if (!AonUtil.isEmpty( activity1Epigraph.getText() ) ) {
+		if (!AonUtil.isEmpty( activity1Key.getText() ) ) {
 			Activity activity = new Activity();	
 			activity.setKey(activity1Key.getText());
 			activity.setDescription(activity1Description.getText());
 			activity.setEpigraph(activity1Epigraph.getText());
 			mod390.setActivity1(activity);
 		}
-		if (!AonUtil.isEmpty( activity2Epigraph.getText() ) ) {
+		if (!AonUtil.isEmpty( activity2Key.getText() ) ) {
 			Activity activity = new Activity();	
 			activity.setKey(activity2Key.getText());
 			activity.setDescription(activity2Description.getText());
 			activity.setEpigraph(activity2Epigraph.getText());
 			mod390.setActivity2(activity);
 		}
-		if (!AonUtil.isEmpty( activity3Epigraph.getText() ) ) {
+		if (!AonUtil.isEmpty( activity3Key.getText() ) ) {
 			Activity activity = new Activity();	
 			activity.setKey(activity3Key.getText());
 			activity.setDescription(activity3Description.getText());
 			activity.setEpigraph(activity3Epigraph.getText());
 			mod390.setActivity3(activity);
 		}
-		if (!AonUtil.isEmpty( activity4Epigraph.getText() ) ) {
+		if (!AonUtil.isEmpty( activity4Key.getText() ) ) {
 			Activity activity = new Activity();	
 			activity.setKey(activity4Key.getText());
 			activity.setDescription(activity4Description.getText());
 			activity.setEpigraph(activity4Epigraph.getText());
 			mod390.setActivity4(activity);
 		}
-		if (!AonUtil.isEmpty( activity5Epigraph.getText() ) ) {
+		if (!AonUtil.isEmpty( activity5Key.getText() ) ) {
 			Activity activity = new Activity();	
 			activity.setKey(activity5Key.getText());
 			activity.setDescription(activity5Description.getText());

@@ -14,9 +14,6 @@
 			margin-right: 5px;
 			display: inline;
 		}
-		.divPanel{
-			margin-top: 10px;
-		}
 	</ui:style>
 	<g:DockLayoutPanel unit="PX" width="550px" height="500px">
 		<g:north size="30">
@@ -29,10 +26,10 @@
 		</g:north>
 		<g:center>
 			<g:DeckLayoutPanel ui:field="deckPanel">
-				<g:ScrollPanel ui:field="tablePanel" styleName="{style.divPanel}">
+				<g:ScrollPanel ui:field="tablePanel">
 					<cell:CellTable ui:field="table" width="100%"/>
 				</g:ScrollPanel>
-				<g:HTMLPanel ui:field="descriptionPanel" styleName="{style.divPanel}">
+				<g:HTMLPanel ui:field="descriptionPanel">
 					<g:Label text="{msg.activityDescription}" styleName="{style.inner-label}"/>
 					<g:TextBox ui:field="description" maxLength="40" visibleLength="40" />
 					<div style="margin-top: 10px; text-align: center;">

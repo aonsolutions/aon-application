@@ -381,7 +381,6 @@ public class MetaData extends ResizeComposite {
 		tree.setSelectedItem(item, fireEvents);
 	}
 
-
 	private TreeItem addBonusConceptItem(Bonus bonus) {
 		TreeItem item = new TreeItem(imageItemSafeHtml(
 				Resources.IMAGES.segsocial(), bonus));
@@ -405,7 +404,7 @@ public class MetaData extends ResizeComposite {
 		deductionConceptsTreeItem.addItem(item);
 		return item;
 	}
-	
+
 	// ------------------------------------------------------------------------
 
 	private static synchronized Deduction newDeductionConcept() {
@@ -430,13 +429,17 @@ public class MetaData extends ResizeComposite {
 
 	private static SafeHtml imageItemSafeHtml(ImageResource imageProto,
 			Item<?> item) {
-		StringBuffer str = new StringBuffer(item.getDescription());
-		
-		if ( StringUtils.isBlank(item.getName()))
+		String description = item.getDescription();
+		description = description != null ? description.replaceAll(
+				"@\\{([^\\}]*)\\}", "") : "";
+
+		StringBuffer str = new StringBuffer(description);
+
+		if (StringUtils.isBlank(item.getName()))
 			;
 		else if (str.length() > 0)
 			str.append(" (" + item.getName() + ")");
-		else 
+		else
 			str.append(item.getName());
 
 		return imageItemSafeHtml(imageProto, str.toString());
