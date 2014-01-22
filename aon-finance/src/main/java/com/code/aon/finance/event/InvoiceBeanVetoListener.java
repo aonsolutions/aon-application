@@ -226,7 +226,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			invoice.setSurcharge((invoice.isSales()) ? taxInfo.isSurcharge() : (invoice.isPurchase()) ? company.isSurcharge() : false);
 			invoice.setWithholding((invoice.isSales()) ? company.isWithholding() && taxInfo.isWithholding() : taxInfo.isWithholding());
 			invoice.setWithholdingFarmer((invoice.isSales()) ? company.isWithholdingFarmer() && taxInfo.isWithholding() : taxInfo.isWithholdingFarmer());
-			invoice.setVatAccrualPayment((invoice.isUndeductible() && invoice.isNational()) ? company.isVatAccrualPayment() || taxInfo.isVatAccrualPayment() : false);
+			invoice.setVatAccrualPayment((isVatAccrualPaymentAvailable(invoice)) ? company.isVatAccrualPayment() || taxInfo.isVatAccrualPayment() : false);
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}
@@ -238,6 +238,11 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			return (Company)ito;
 		}
 		return null;
+	}
+
+	private boolean isVatAccrualPaymentAvailable(Invoice invoice) {
+		Date controlDate = CommonUtil.getDate(2014, 0, 1);
+		return !invoice.isUndeductible() && invoice.isNational() && !invoice.getIssueDate().before(controlDate);
 	}
 
 	private boolean isRemovable(Invoice invoice) throws ManagerBeanException {
