@@ -41,6 +41,7 @@ import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
@@ -690,11 +691,11 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 				: Scope.SYSTEM;
 	}
 
-	private Payment.Type getPaymentType(PaymentType type) {
+	private static Payment.Type getPaymentType(PaymentType type) {
 		return type != null ? Payment.Type.values()[type.ordinal()] : null;
 	}
 
-	private Salary.Type getSalaryType(SalaryType type) {
+	private static Salary.Type getSalaryType(SalaryType type) {
 		return type != null ? Salary.Type.values()[type.ordinal()] : null;
 	}
 
@@ -708,9 +709,13 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 				new LinkedList<T>();
 
 		String name = item.getName();
+		Enum<?> type = item.getType();
 		String description = item.getDescription();
 		for (T dbPayment : dbItems) {
 			if (!StringUtils.equals(name, dbPayment.getName())) {
+				continue;
+			}
+			if ( StringUtils.isBlank(name) &&  !equals(type, dbPayment.getType() )){
 				continue;
 			}
 			nameMatchDbItems.add(dbPayment);
@@ -721,6 +726,17 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		}
 
 		return fullMatchDbItems.size()> 0 ? fullMatchDbItems : nameMatchDbItems;
+	}
+	
+	private static boolean equals(Enum<?> type1, Enum<?> type2 ){
+		if ( type1 == type2)
+			return true;
+		if ( type1 == null )
+			return false;
+		if ( type2 == null )
+			return false;
+		
+		return  type1.ordinal() == type2.ordinal() ;
 	}
 	
 	private static boolean isImplicit(String name){
