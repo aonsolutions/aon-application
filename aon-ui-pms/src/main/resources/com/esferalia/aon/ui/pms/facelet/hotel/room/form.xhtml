@@ -22,21 +22,25 @@
 
 				<aon:panelGrid id="roomTable" columns="2" width="100%">
 					
-					<aon:outputLabel value="#{bundle.aon_module_hotel}" />
-					<aon:selectOneMenu 
-						value="#{room.to.hotel}" >
+					<aon:outputLabel for="Room_hotel" value="#{bundle.aon_module_hotel}" />
+					<aon:selectOneMenu id="Room_hotel" value="#{room.to.hotel}" >
 						<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 					</aon:selectOneMenu>
 					
-					<aon:outputLabel value="#{bundle.aon_type}" />
-					<aon:selectOneMenu 
-						value="#{room.to.item}" >
+					<aon:outputLabel for="Room_item" value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="Room_item" value="#{room.to.item}" >
 						<f:selectItems value="#{pmsCollections.roomItems}" />
 					</aon:selectOneMenu>
 					
-					<aon:outputLabel for="room_name" value="#{bundle.aon_number}" />
-					<aon:inputText id="room_name" value="#{room.to.asset.name}" 
+					<aon:outputLabel for="Room_name" value="#{bundle.aon_number}" />
+					<aon:inputText id="Room_name" value="#{room.to.asset.name}" 
 						size="5" maxlength="5" required="true" />
+
+					<aon:outputLabel for="Room_active" value="#{bundle.aon_status}" />
+					<aon:selectOneRadio id="Room_active" value="#{room.to.active}" required="true">
+						<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}" />
+					</aon:selectOneRadio>
 
 				</aon:panelGrid>
 				

@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.27.1
+# Version: 7.28.0
 # Created by: girazu
-# Creation Date: 14/01/2014 17:35
+# Creation Date: 22/01/2014 16:05
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -6632,6 +6632,7 @@ CREATE TABLE `room` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel',
   `item` int(4) NOT NULL COMMENT 'Identificador del Producto',
+  `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si la Habitacion esta activa o no',
   PRIMARY KEY  (`asset`),
   KEY `IDX_ROOM_DOMAIN` (`domain`),
   KEY `IDX_ROOM_HOTEL` (`hotel`),
@@ -7500,7 +7501,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.27.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.28.0');
 
 COMMIT;
 

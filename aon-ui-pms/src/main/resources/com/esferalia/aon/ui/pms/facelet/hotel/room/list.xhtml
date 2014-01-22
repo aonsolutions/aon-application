@@ -45,7 +45,7 @@
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 					<ui:param name="controller" value="#{room}" />
-					<ui:param name="skipSelectButton" value="#{!aonRole.admin}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
 					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
  					<ui:define name="columns">
 						<ui:include src="/com/esferalia/aon/ui/pms/facelet/hotel/room/list_content.xhtml" />

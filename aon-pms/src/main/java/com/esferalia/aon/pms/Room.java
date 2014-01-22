@@ -21,6 +21,10 @@ public class Room extends RoomDB implements IAsset{
 
 	private Set<AssetFeature> features = new HashSet<AssetFeature>();
 
+	public Room() {
+		setActive(true);
+	}
+
 	@OneToMany(mappedBy = "asset", cascade={CascadeType.REMOVE})
 	@OrderBy()
 	public Set<AssetFeature> getFeatures() {

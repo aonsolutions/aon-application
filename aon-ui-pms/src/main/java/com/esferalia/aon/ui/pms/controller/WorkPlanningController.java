@@ -118,6 +118,7 @@ public class WorkPlanningController implements ICollectionProvider {
 		Criteria criteria = new Criteria();
 		if(getHotel()!=null && getHotel().getId()!=null){
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), getHotel().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ROOM_ACTIVE), Boolean.TRUE);
 			criteria.addOrder(bean.getFieldName(IEntityAlias.ROOM_ASSET_NAME));
 		}
 		List<ITransferObject> list = bean.getList(criteria);

@@ -53,7 +53,6 @@ import com.esferalia.aon.pms.ProjectReservationDivert;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
-import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
@@ -62,6 +61,7 @@ import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.reservation.ReservationRequestManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.ProjectReservationPermission;
+import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ProjectReservationController extends BasicController implements IPmsConstants {
 
@@ -371,31 +371,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
-		ProjectReservation reservation = (ProjectReservation)getTo();
-		if (reservation.getHotel() != null && reservation.getHotel().getId() != null) {
-			return getHotelRoomItems(reservation.getHotel());
-		}
-		PmsCollectionsController collectionsController = (PmsCollectionsController)AonUtil.getRegisteredBean(COLLECTIONS_CONTROLLER_NAME);
-		return collectionsController.getRoomItems();
-	}
-
-	private List<SelectItem> getHotelRoomItems(Hotel hotel) throws ManagerBeanException {
-		List<SelectItem> roomItems = new LinkedList<SelectItem>();
-		List<Integer> items = new LinkedList<Integer>();
-		IManagerBean roomBean = BeanManager.getManagerBean(Room.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), hotel.getId());
-		criteria.addOrder(roomBean.getFieldName(IEntityAlias.ROOM_ITEM_PRODUCT_NAME));
-		for (ITransferObject ito : roomBean.getList(criteria)) {
-			Item item = ((Room)ito).getItem();
-			if (!items.contains(item.getId())) {
-				items.add(item.getId());
-
-				SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
-				roomItems.add(roomItem);
-			}
-		}
-		return roomItems;
+		return PmsUtils.getRoomItems(((ProjectReservation)getTo()).getHotel());
 	}
 
 	public void onStartDateChanged(ActionEvent event) {

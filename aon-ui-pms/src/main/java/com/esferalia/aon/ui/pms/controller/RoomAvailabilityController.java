@@ -102,6 +102,7 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), reservationRoom.getProjectReservation().getHotel().getId());
 		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_ITEM_ID), reservationRoom.getItem().getId());
+		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_ACTIVE), Boolean.TRUE);
 		if (roomBean.getCount(criteria) > 0) {
 			return reservationRoom.getItem();
 		}
@@ -110,6 +111,7 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 
 	private List<?> obtainAvailableRoomList() {
 		String whereClause = "WHERE " + DomainManager.getSQLWhereClause("Room.domain");
+		whereClause += " AND Room.active = 1";
 		if (getFilterParams().getHotel() != null && getFilterParams().getHotel().getId() != null) {
 			whereClause += " AND Room.hotel = " + getFilterParams().getHotel().getId();
 		} else {

@@ -109,6 +109,7 @@ public class EmptyRoomController implements ICollectionProvider {
 		IManagerBean bean = BeanManager.getManagerBean(Room.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), getHotel().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ROOM_ACTIVE), Boolean.TRUE);
 		criteria.addOrder(bean.getFieldName(IEntityAlias.ROOM_ASSET_NAME));
 		return bean.getList(criteria);
 	}

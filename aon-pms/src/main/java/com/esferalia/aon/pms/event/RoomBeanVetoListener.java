@@ -46,6 +46,7 @@ public class RoomBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), room.getHotel().getId());
 		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_ASSET_NAME), room.getAsset().getName());
+		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_ACTIVE), Boolean.TRUE);
 		return (roomBean.getCount(criteria) == 0);
 	}
 

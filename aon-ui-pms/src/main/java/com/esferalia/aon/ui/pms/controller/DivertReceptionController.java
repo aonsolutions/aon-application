@@ -20,7 +20,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -35,6 +34,7 @@ import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
+import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class DivertReceptionController extends BasicController {
 	
@@ -251,31 +251,7 @@ public class DivertReceptionController extends BasicController {
 	
 	
 	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
-		List<Integer> items = new LinkedList<Integer>();
-		IManagerBean roomBean = BeanManager.getManagerBean(Room.class);
-		Criteria criteria = new Criteria();
-		ProjectReservationDivert divert = (ProjectReservationDivert) getTo();
-		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), divert.getDivertHotel().getId());
-		for (ITransferObject ito : roomBean.getList(criteria)) {
-			Room room = (Room)ito;
-			if (!items.contains(room.getItem().getId())) {
-				items.add(room.getItem().getId());
-			}
-		}
-
-		List<SelectItem> roomItems = new LinkedList<SelectItem>();
-		if (items.size() > 0) {
-			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-			criteria = new Criteria();
-			criteria.addExpression(ExpressionUtilities.getInExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), items));
-			criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
-			for (ITransferObject ito : itemBean.getList(criteria)) {
-				Item item = (Item)ito;
-				SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
-				roomItems.add(roomItem);
-			}
-		}
-		return roomItems;
+		return PmsUtils.getHotelRoomItems(((ProjectReservationDivert)getTo()).getDivertHotel());
 	}
 	
 	public List<Room> getAvailableRoomList() throws ManagerBeanException {
