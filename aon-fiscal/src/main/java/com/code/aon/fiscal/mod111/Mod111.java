@@ -160,4 +160,12 @@ public class Mod111 implements IFiscalDeclaration {
 		return false;
 	}
 	
+	@Override
+	public boolean isPayback() {
+		return false;
+	}
+	@Override
+	public boolean isPaybackDeclarationAvailable() {
+		return false;
+	}
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.FiscalActivity;
 import com.code.aon.fiscal.FiscalActivityInfo;
@@ -117,9 +118,12 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 	private FiscalActivityInfo getVatInfoKey( FiscalActivityInfoKey key ) {
 		return getKey(getFAC().getVatInfoList(), key );
 	}
+	private FiscalActivityInfo getM311InfoKey( FiscalActivityInfoKey key ) {
+		return getKey(getFAC().getM311List(), key );
+	}
 
 	@Override
-	public void changeVatModule(FiscalActivityInfo info) {
+	public void changeVatModule(FiscalActivityInfo info) throws AonException {
 		for (FiscalActivityInfo irpfInfo : getFAC().getIrpfModulesList() ) {
 			if ( info.getInfoKey() == irpfInfo.getInfoKey() ) {
 				irpfInfo.setDoubleValue( info.getDoubleValue() );
@@ -129,7 +133,7 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 	}
 	
 	@Override
-	public void changeDetailModule(FiscalActivityInfo info) {
+	public void changeDetailModule(FiscalActivityInfo info) throws AonException {
 		FiscalActivityInfo intoToDetail = getFAC().getInfoToDetail();
 		calculateDetail(intoToDetail, getFAC().getModulesDetailList() );
 		changeIrpfModule( intoToDetail );
@@ -313,7 +317,7 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 	}
 
 	@Override
-	public void changeIrpfModule(FiscalActivityInfo info) {
+	public void changeIrpfModule(FiscalActivityInfo info) throws AonException {
 		// Para el caso especial del personal asalariado.
 		// Las claves M01 y M02 de IRPF se suman a la M26 de IVA.
 		if (info.getInfoKey() == FiscalActivityInfoKey.M01 || info.getInfoKey() == FiscalActivityInfoKey.M02) {
@@ -337,12 +341,15 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 	}
 	
 	@Override
-	public void calculate( ) {
+	public void calculate( ) throws AonException {
 		if (getFAC().getIrpfModulesList() != null && getFAC().getIrpfModulesList().size() > 0) {
 			calculateIrpf( );
 		}
 		if (getFAC().getVatModulesList() != null && getFAC().getVatModulesList().size() > 0) {
 			calculateVat( );
+		}
+		if (getFAC().getM311List() != null && getFAC().getM311List().size() > 0) {
+			calculateM311();
 		}
 	}
 
@@ -740,9 +747,9 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 		// actividades en un 20 por ciento.
 		double i12 = 0.0;
 		// Si en 2013 realiza la actividad en LORCA, seleccione:
-		double a13 = getActivityInfoKey(FiscalActivityInfoKey.A13).getDoubleValue();
+		double a13 = getActivityInfoKey(FiscalActivityInfoKey.A11).getDoubleValue();
 		if (CommonUtil.round(a13) != 0.0) {
-			i12 = CommonUtil.round(i11 - (i11 * 20 / 100)); 	
+			i12 = CommonUtil.round(i11 * 20 / 100); 	
 		}
 		getIrpfInfoKey(FiscalActivityInfoKey.I12).setDoubleValue(i12);
 		
@@ -802,9 +809,9 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 		//  actividades en el año 2013.
 		double v03 = 0.0;
 		// Si en 2013 realiza la actividad en LORCA, seleccione:
-		double a13 = getActivityInfoKey(FiscalActivityInfoKey.A13).getDoubleValue();
+		double a13 = getActivityInfoKey(FiscalActivityInfoKey.A11).getDoubleValue();
 		if (CommonUtil.round(a13) != 0.0) {
-			v03 = CommonUtil.round(v02 - (v02 * 20 / 100)); 	
+			v03 = CommonUtil.round(v02 * 20 / 100); 	
 		}
 		getVatInfoKey(FiscalActivityInfoKey.V03).setDoubleValue(v03);
 		
@@ -841,5 +848,68 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 	@Override
 	public FiscalActivityInfoKey[] getDetailedKeys(FiscalActivityInfoKey key) {
 		return DETAIL_MODULES.get(key);
+	}
+
+	@Override
+	public void calculateM311() throws AonException {
+		FiscalActivityInfo info = getVatInfoKey(FiscalActivityInfoKey.V04);
+		double x00 = info.getDoubleValue();
+
+		getM311InfoKey(FiscalActivityInfoKey.X00).setDoubleValue(x00);
+		
+		double x01 = getM311InfoKey(FiscalActivityInfoKey.X01).getDoubleValue();
+		double x02 = getM311InfoKey(FiscalActivityInfoKey.X02).getDoubleValue();
+		
+		double x03 = CommonUtil.round(x00 * 1 / 100);
+		getM311InfoKey(FiscalActivityInfoKey.X03).setDoubleValue(x03);
+		
+		double a11 = getActivityInfoKey(FiscalActivityInfoKey.A11).getDoubleValue();
+		double x04 = 0; 
+		if (CommonUtil.round(a11) != 0.0) {
+			x04 = CommonUtil.round(x00 * 20 / 100); 	
+		}
+		getM311InfoKey(FiscalActivityInfoKey.X04).setDoubleValue(x04);
+
+		
+		double x05 = CommonUtil.round(x01 + x02 + x03);
+		getM311InfoKey(FiscalActivityInfoKey.X05).setDoubleValue(x05);
+		
+		// *****************************************
+		// Indice corrector de Temporada
+		// *****************************************
+		double a03 = getActivityInfoKey(FiscalActivityInfoKey.A03).getDoubleValue();
+		double x06 = 0.0;
+		if (CommonUtil.round(a03) > 0.0 && CommonUtil.round(a03) <=60.0) {
+			x06 = 1.5;
+		} else if (CommonUtil.round(a03) > 60.0 && CommonUtil.round(a03) <= 120.0) {
+			x06 = 1.35;
+		} else if (CommonUtil.round(a03) > 120.0 && CommonUtil.round(a03) <= 180.0) {
+			x06 = 1.25;
+		}
+		getM311InfoKey(FiscalActivityInfoKey.X06).setDoubleValue(x06);
+		
+		double x07 = CommonUtil.round(x00 - x05 - x04);
+		if (x06 > 0) {
+			x07 = CommonUtil.round(x07 * x06);	
+		}
+		getM311InfoKey(FiscalActivityInfoKey.X07).setDoubleValue(x07);
+		
+		
+		FiscalActivity fa = getFAC().getFiscalActivity();
+		Modules modules = new Modules();
+		double x08 = modules.getCuotaMin(fa.getEpigraph());
+		getM311InfoKey(FiscalActivityInfoKey.X08).setDoubleValue(x08);
+		
+		double x09 = getM311InfoKey(FiscalActivityInfoKey.X09).getDoubleValue();
+		double x10 = CommonUtil.round(((x00 - x04)* x08 / 100));
+		if (x06 > 0) {
+			x10 = CommonUtil.round(x10 * x06);	
+		}
+		x10 = CommonUtil.round(x10 + x09);
+		getM311InfoKey(FiscalActivityInfoKey.X10).setDoubleValue(x10);
+		
+		double x11 = (x10>x07)?x10:x07; 
+		getM311InfoKey(FiscalActivityInfoKey.X11).setDoubleValue(x11);
+		
 	}
 }

@@ -97,6 +97,11 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 				info.setType( FiscalActivityInfoType.VAT_INFO);
 				bean.insert(info);
 			}
+			for (FiscalActivityInfo info : c.getM311List()) {
+				info.setFiscalActivity(fa);
+				info.setType( FiscalActivityInfoType.M311_DETAIL);
+				bean.insert(info);
+			}
 			for (List<FiscalActivityInfo> list : c.getModulesDetailMap().values()) {
 				for (FiscalActivityInfo info : list) {
 					info.setFiscalActivity(fa);
@@ -129,6 +134,13 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 			for (FiscalActivityInfo info : c.getVatInfoList()) {
 				bean.update(info);
 			}
+			for (FiscalActivityInfo info : c.getM311List()) {
+				if (info.getId() == null) {
+					bean.insert(info);	
+				} else {
+					bean.update(info);	
+				}
+			}
 			for (List<FiscalActivityInfo> list : c.getModulesDetailMap().values()) {
 				for (FiscalActivityInfo info : list) {
 					bean.update(info);
@@ -159,6 +171,11 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 			for (FiscalActivityInfo info : c.getIrpfInfoList()) {
 				bean.remove(info);
 			}
+			for (FiscalActivityInfo info : c.getM311List()) {
+				if (info.getId() != null) {
+					bean.remove(info);
+				}
+			}
 			for (List<FiscalActivityInfo> list : c.getModulesDetailMap().values()) {
 				for (FiscalActivityInfo info : list) {
 					bean.remove(info);
@@ -181,35 +198,45 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 	}
 
 	private void loadActivityInfo(FiscalActivityController c) throws ManagerBeanException {
-		FiscalActivity fa = (FiscalActivity) c.getTo();
-		IManagerBean bean = BeanManager.getManagerBean(FiscalActivityInfo.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_INFO_FISCAL_ACTIVITY_ID), fa.getId());
-		criteria.addOrder( bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_INFO_ID ));
-		List<ITransferObject> list = bean.getList(criteria);
-		for (ITransferObject to :  list ) {
-			FiscalActivityInfo info = (FiscalActivityInfo) to;
-			if (info.getType() == FiscalActivityInfoType.INFO ) {
-				c.getActivityInfoList().add(info);
-			} else if (info.getType() == FiscalActivityInfoType.VAT_MODULE ) {
-				c.getVatModulesList().add(info);					
-			} else if (info.getType() == FiscalActivityInfoType.VAT_INFO) {
-				c.getVatInfoList().add(info);
-			} else if (info.getType() == FiscalActivityInfoType.IRPF_MODULE) {
-				c.getIrpfModulesList().add(info);
-			} else if (info.getType() == FiscalActivityInfoType.IRPF_INFO) {
-				c.getIrpfInfoList().add(info);
-			} else if (info.getType() == FiscalActivityInfoType.MODULE_DETAIL) {
-				FiscalActivityInfoKey parentKey = info.getInfoKey().getParentKey();
-				List<FiscalActivityInfo> detailList = c.getModulesDetailMap().get(parentKey);
-				if (detailList == null) {
-					detailList = new LinkedList<FiscalActivityInfo>();
-					c.getModulesDetailMap().put(parentKey,detailList);
+		try {
+			FiscalActivity fa = (FiscalActivity) c.getTo();
+			IManagerBean bean = BeanManager.getManagerBean(FiscalActivityInfo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_INFO_FISCAL_ACTIVITY_ID), fa.getId());
+			criteria.addOrder( bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_INFO_ID ));
+			List<ITransferObject> list = bean.getList(criteria);
+			for (ITransferObject to :  list ) {
+				FiscalActivityInfo info = (FiscalActivityInfo) to;
+				if (info.getType() == FiscalActivityInfoType.INFO ) {
+					c.getActivityInfoList().add(info);
+				} else if (info.getType() == FiscalActivityInfoType.VAT_MODULE ) {
+					c.getVatModulesList().add(info);					
+				} else if (info.getType() == FiscalActivityInfoType.VAT_INFO) {
+					c.getVatInfoList().add(info);
+				} else if (info.getType() == FiscalActivityInfoType.IRPF_MODULE) {
+					c.getIrpfModulesList().add(info);
+				} else if (info.getType() == FiscalActivityInfoType.IRPF_INFO) {
+					c.getIrpfInfoList().add(info);
+				} else if (info.getType() == FiscalActivityInfoType.M311_DETAIL) {
+					c.getM311List().add(info);
+				} else if (info.getType() == FiscalActivityInfoType.MODULE_DETAIL) {
+					FiscalActivityInfoKey parentKey = info.getInfoKey().getParentKey();
+					List<FiscalActivityInfo> detailList = c.getModulesDetailMap().get(parentKey);
+					if (detailList == null) {
+						detailList = new LinkedList<FiscalActivityInfo>();
+						c.getModulesDetailMap().put(parentKey,detailList);
+					}
+					detailList.add(info);
 				}
-				detailList.add(info);
 			}
+			if (c.getM311List() == null || c.getM311List().size() == 0 ) {
+				c.fillM311(fa);
+				c.calculateM311();
+			}
+			c.fillInfoChoices();
+		} catch (AonException e) {
+			throw new ManagerBeanException(e.getMessage(),e);
 		}
-		c.fillInfoChoices();
 	}
 
 	private void validate(FiscalActivityInfoKey infoKey, Object v, FiscalActivityController c) throws AonException {

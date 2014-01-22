@@ -150,13 +150,15 @@
 								,aon-panelGrid-even aon-width-300">
 				
 					<aon:outputText value="#{bundle.fiscal_deposit}"
-						rendered="#{!controller.declaration.toDeduct and !controller.declaration.negative and !controller.declaration.compensate}" />
+						rendered="#{!controller.declaration.toDeduct and !controller.declaration.negative and !controller.declaration.compensate and !controller.declaration.payback}" />
 					<aon:outputText value="#{bundle.fiscal_deduct}" 
 						rendered="#{controller.declaration.toDeduct}" />
 					<aon:outputText value="#{bundle.fiscal_negative}" 
 						rendered="#{controller.declaration.negative}" />
 					<aon:outputText value="#{bundle.fiscal_compensate}" 
 						rendered="#{controller.declaration.compensate}" />
+					<aon:outputText value="#{bundle.fiscal_pay_back}" 
+						rendered="#{controller.declaration.payback}" />
 					
 					<aon:div>
 						<aon:commandLink
@@ -288,4 +290,6 @@
 		<ui:param name="auditableController" value="#{controller}" />
 	</ui:include>
 	<aon:lookupButtonPopup lookup="#{creditorLookup}" />
+	
+	<ui:insert name="afterAll" />
 </ui:composition>

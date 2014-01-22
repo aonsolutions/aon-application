@@ -158,4 +158,12 @@ public class Mod115 implements IFiscalDeclaration {
 	public boolean isCompensate() {
 		return false;
 	}
+	@Override
+	public boolean isPayback() {
+		return false;
+	}
+	@Override
+	public boolean isPaybackDeclarationAvailable() {
+		return false;
+	}
 }

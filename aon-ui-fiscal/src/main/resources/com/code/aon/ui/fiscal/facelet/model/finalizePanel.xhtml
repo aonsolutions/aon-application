@@ -39,44 +39,94 @@
 							</aon:div>
 						</aon:div>
 						<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-							<aon:panelGrid id="finalizeGrid" columns="2" style="width: 100%;"
-									columnClasses="aon-panelGrid-odd aon-width-140
-												,aon-panelGrid-even aon-width-auto">
-												
-								<aon:outputLabel for="Creditor_id" value="#{bundle.aon_creditor}"/>
-								<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
-									<ui:param name="lookupTo" value="#{controller.to.finance.registry}" />
-									<ui:param name="lookupForRegistry" value="#{true}" />
-									<ui:param name="skipLabel" value="#{true}" />
-									<ui:param name="idRequired" value="#{true}" />						
-								</ui:include>
-								
-								<aon:outputText value="#{bundle.aon_amount}" />
-								<aon:outputText id="Finance_total" styleClass="aon-bold"
-									value="#{controller.declaration.result}" size="15">
-									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-								</aon:outputText>									
+							<c:if test="#{!controller.to.model311 or controller.declaration.result &gt; 0}">
+								<aon:panelGrid id="finalizeGrid" columns="2" style="width: 100%;"
+										columnClasses="aon-panelGrid-odd aon-width-140
+													,aon-panelGrid-even aon-width-auto">
 													
-								<aon:outputLabel for="Finance_payMethod_id"
-									value="#{bundle.finance_payMethod}" />
-								<aon:selectOneMenu id="Finance_payMethod_id" required="true"
-									reRender="finalizeGrid" ajaxSingle="true"
-									value="#{controller.to.finance.payMethod}">
-									<f:selectItem itemLabel="-" value="#{null}" />
-									<f:selectItems value="#{fiscalCollections.modelPayMethods}" />
-								</aon:selectOneMenu>
+									<aon:outputLabel for="Creditor_id" value="#{bundle.aon_creditor}"/>
+									<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
+										<ui:param name="lookupTo" value="#{controller.to.finance.registry}" />
+										<ui:param name="lookupForRegistry" value="#{true}" />
+										<ui:param name="skipLabel" value="#{true}" />
+										<ui:param name="idRequired" value="#{true}" />						
+									</ui:include>
+									
+									<aon:outputText value="#{bundle.aon_amount}" />
+									<aon:outputText id="Finance_total" styleClass="aon-bold"
+										value="#{controller.declaration.result}" size="15">
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>									
+														
+									<aon:outputLabel for="Finance_payMethod_id"
+										value="#{bundle.finance_payMethod}" />
+									<aon:selectOneMenu id="Finance_payMethod_id" required="true"
+										reRender="finalizeGrid" ajaxSingle="true"
+										value="#{controller.to.finance.payMethod}">
+										<f:selectItem itemLabel="-" value="#{null}" />
+										<f:selectItems value="#{fiscalCollections.modelPayMethods}" />
+									</aon:selectOneMenu>
+									
+									<aon:outputLabel for="Bank_idFinance"
+										rendered="#{controller.bankAccountVisible}"
+										value="#{bundle.aon_bank}" />
+									<aon:selectOneMenu id="Bank_idFinance"
+										rendered="#{controller.bankAccountVisible}"
+										value="#{controller.registryBank}">
+										<f:selectItem itemLabel="-" value="#{null}" />
+										<f:selectItems value="#{controller.activeBanks}" />
+									</aon:selectOneMenu>
+								</aon:panelGrid>
+							</c:if>
+							<c:if test="#{controller.to.model311 and controller.declaration.result &lt; 0}">
+							
+								<aon:selectBooleanCheckbox id="m311_payback"
+									value="#{controller.payBack}" ajaxSingle="true"
+									reRender="finalizeForm"/>
+								<aon:outputLabel for="m311_payback"
+									style="margin-left: 1em;" 
+									value="Marque si desea devoluci&#243;n, en caso contrario la declaraci&#243;n ser&#225; a compensar."/>
 								
-								<aon:outputLabel for="Bank_idFinance"
-									rendered="#{controller.bankAccountVisible}"
-									value="#{bundle.aon_bank}" />
-								<aon:selectOneMenu id="Bank_idFinance"
-									rendered="#{controller.bankAccountVisible}"
-									value="#{controller.registryBank}">
-									<f:selectItem itemLabel="-" value="#{null}" />
-									<f:selectItems value="#{controller.activeBanks}" />
-								</aon:selectOneMenu>
-								
-							</aon:panelGrid>
+								<c:if test="#{controller.payBack}">
+									<aon:panelGrid id="finalizeGrid2" columns="2" style="width: 100%;"
+											columnClasses="aon-panelGrid-odd aon-width-140
+														,aon-panelGrid-even aon-width-auto">
+														
+										<aon:outputLabel for="Creditor_id" value="#{bundle.aon_creditor}"/>
+										<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
+											<ui:param name="lookupTo" value="#{controller.to.finance.registry}" />
+											<ui:param name="lookupForRegistry" value="#{true}" />
+											<ui:param name="skipLabel" value="#{true}" />
+											<ui:param name="idRequired" value="#{true}" />						
+										</ui:include>
+										
+										<aon:outputText value="#{bundle.aon_amount}" />
+										<aon:outputText id="Finance_total2" styleClass="aon-bold"
+											value="#{controller.declaration.result}" size="15">
+											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+										</aon:outputText>									
+															
+										<aon:outputLabel for="Finance_payMethod_id"
+											value="#{bundle.finance_payMethod}" />
+										<aon:selectOneMenu id="Finance_payMethod_id2" required="true"
+											reRender="finalizeGrid" ajaxSingle="true"
+											value="#{controller.to.finance.payMethod}">
+											<f:selectItem itemLabel="-" value="#{null}" />
+											<f:selectItems value="#{fiscalCollections.modelPayMethods}" />
+										</aon:selectOneMenu>
+										
+										<aon:outputLabel for="Bank_idFinance"
+											rendered="#{controller.bankAccountVisible}"
+											value="#{bundle.aon_bank}" />
+										<aon:selectOneMenu id="Bank_idFinance2"
+											rendered="#{controller.bankAccountVisible}"
+											value="#{controller.registryBank}">
+											<f:selectItem itemLabel="-" value="#{null}" />
+											<f:selectItems value="#{controller.activeBanks}" />
+										</aon:selectOneMenu>
+									</aon:panelGrid>
+								</c:if>
+							</c:if>
 						</aon:div>
 					</aon:div>
 					</aon:form>

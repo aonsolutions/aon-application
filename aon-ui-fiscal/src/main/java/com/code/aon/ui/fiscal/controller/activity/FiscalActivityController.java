@@ -62,6 +62,8 @@ public class FiscalActivityController extends BasicController implements IFiscal
 	private List<FiscalActivityInfo> irpfInfoList;
 	private DataModel irpfInfo;
 	
+	private List<FiscalActivityInfo> m311List;
+	private DataModel m311Model;
 
 	private IModuleCalculator calculator;
 
@@ -127,6 +129,28 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		this.vatModules = vatModules;
 	}
 	
+	@Override
+	public List<FiscalActivityInfo> getM311List() {
+		if (m311List == null) {
+			setM311List( new LinkedList<FiscalActivityInfo>() );
+		}
+		return m311List;
+	}
+
+	public void setM311List(List<FiscalActivityInfo> m311List) {
+		this.m311List = m311List;
+	}
+
+	public DataModel getM311Model() {
+		if (m311Model == null) {
+			setM311Model( new ListDataModel( getM311List()) );
+		}
+		return m311Model;
+	}
+	public void setM311Model(DataModel m311Model) {
+		this.m311Model = m311Model;
+	}
+
 	@Override
 	public List<FiscalActivityInfo> getIrpfModulesList() {
 		if (irpfModulesList == null) {
@@ -341,6 +365,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 			fillInfo( fa );
 			fillVatModules(fa, epigrafe );
 			fillIrpfModules(fa, epigrafe );
+			fillM311( fa );
 			fillInfoChoices();
 		}
 	}
@@ -392,6 +417,21 @@ public class FiscalActivityController extends BasicController implements IFiscal
 			String msg = "Imposible recuperar los módulos IVA";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
+		}
+	}
+
+	public void fillM311(FiscalActivity fa) {
+		setM311List(null);
+		setM311Model(null);
+		for ( FiscalActivityInfoKey key : FiscalActivityInfoKey.values() ) {
+			if (key.getType() == FiscalActivityInfoType.M311_DETAIL) {
+				FiscalActivityInfo info = new FiscalActivityInfo();
+				info.setFiscalActivity(fa);
+				info.setInfoKey(key);
+				info.setValue(key.getDefaultValue());
+				info.setType(FiscalActivityInfoType.M311_DETAIL);
+				getM311List().add(info);
+			}
 		}
 	}
 
@@ -448,6 +488,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		fillInfoChoices( getIrpfModulesList() );
 		fillInfoChoices( getVatInfoList() );
 		fillInfoChoices( getVatModulesList() );
+		fillInfoChoices( getM311List() );
 	}
 
 	private void fillInfoChoices(List<FiscalActivityInfo> infos) {
@@ -481,24 +522,63 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		return null;
 	}
 	
-	public void onChangeInfo(ActionEvent event) {
-		calculate();
+	public void onChangeInfo(ActionEvent event)  {
+		try {
+			calculate();
+		} catch (AonException e) {
+			String msg = "Imposible recuperar los módulos IVA";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 	
 	public void onChangeVatModule(ActionEvent event) {
-		FiscalActivityInfo info = (FiscalActivityInfo) getVatModules().getRowData();
-		getCalculator().changeVatModule( info );
+		try {
+			FiscalActivityInfo info = (FiscalActivityInfo) getVatModules().getRowData();
+			getCalculator().changeVatModule( info );
+		} catch (AonException e) {
+			String msg = "Error en el cálculo";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 	public void onChangeIrpfModule(ActionEvent event) {
-		FiscalActivityInfo info = (FiscalActivityInfo) getIrpfModules().getRowData();
-		getCalculator().changeIrpfModule( info );
+		try {
+			FiscalActivityInfo info = (FiscalActivityInfo) getIrpfModules().getRowData();
+			getCalculator().changeIrpfModule( info );
+		} catch (AonException e) {
+			String msg = "Error en el cálculo";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+	public void onChangeM311(ActionEvent event) {
+		try {
+			getCalculator().calculateM311();
+		} catch (AonException e) {
+			String msg = "Error en el cálculo";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 	public void onChangeIrpfInfo(ActionEvent event) {
-		getCalculator().calculate();
+		try {
+			getCalculator().calculate();
+		} catch (AonException e) {
+			String msg = "Error en el cálculo";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 	public void onChangeDetailModule(ActionEvent event) {
-		FiscalActivityInfo info = (FiscalActivityInfo) getModulesDetailModel().getRowData();
-		getCalculator().changeDetailModule( info );
+		try {
+			FiscalActivityInfo info = (FiscalActivityInfo) getModulesDetailModel().getRowData();
+			getCalculator().changeDetailModule( info );
+		} catch (AonException e) {
+			String msg = "Error en el cálculo";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 
 	public void initialize() {
@@ -514,6 +594,8 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		setIrpfModules(null);
 		setVatInfoList(null);
 		setVatInfo(null);
+		setM311List(null);
+		setM311Model(null);
 		setIrpfInfoList(null);
 		setIrpfInfo(null);
 		setModulesDetailMap(null);
@@ -522,9 +604,14 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		setSelectedTab("InfoTab");
 	}
 
-	private void calculate() {
+	private void calculate() throws AonException {
 		calculateVat();
 		calculateIrpf();
+		calculateM311();
+	}
+
+	public void calculateM311() throws AonException {
+		getCalculator().calculateM311();
 	}
 
 	private void calculateIrpf() {
@@ -535,7 +622,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 		getCalculator().calculateVat();
 	}
 	
-	private IModuleCalculator getCalculator() {
+	public IModuleCalculator getCalculator() {
 		if (calculator == null) {
 			// TODO factory
 			calculator = new Aeat2012ModuleCalculator( this  ); 

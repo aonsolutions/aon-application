@@ -13,6 +13,7 @@ import com.code.aon.fiscal.enumeration.Mod123Key;
 import com.code.aon.fiscal.enumeration.Mod130Key;
 import com.code.aon.fiscal.enumeration.Mod131Key;
 import com.code.aon.fiscal.enumeration.Mod310Key;
+import com.code.aon.fiscal.enumeration.Mod311Key;
 import com.esferalia.aon.entity.master.FiscalModelDetailDB;
 
 @Entity
@@ -36,7 +37,17 @@ public class FiscalModelDetail extends FiscalModelDetailDB {
 	public void addAmount(double amount) {
 		setAmount( CommonUtil.round(getAmount()) + amount);
 	}
-	
+	@Transient
+	public boolean isActivity(){ 
+		if (getFiscalModel() != null && getFiscalModel().getModel() != null ) {
+			if (getFiscalModel().getModel() == FiscalModelType.M311) {
+				Mod311Key key = (Mod311Key) getKey(); 
+				return (key != null && key.getValue().startsWith(Mod311Key.ACTIVITIES_PREFIX));
+			}
+			return false;
+		}
+		return false;
+	}
 	@Transient
 	public IFiscalModelKey getKey() {
 		if (getFiscalModel() != null && getFiscalModel().getModel() != null ) {
@@ -54,6 +65,8 @@ public class FiscalModelDetail extends FiscalModelDetailDB {
 				return Mod131Key.getKeyWithValue( getType() );	
 			} else if (getFiscalModel().getModel() == FiscalModelType.M310) {
 				return Mod310Key.getKeyWithValue( getType() );	
+			} else if (getFiscalModel().getModel() == FiscalModelType.M311) {
+				return Mod311Key.getKeyWithValue( getType() );	
 			}
 		}
 		return null;

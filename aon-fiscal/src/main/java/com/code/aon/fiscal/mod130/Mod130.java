@@ -177,4 +177,12 @@ public class Mod130 implements IFiscalDeclaration {
 		return false;
 	}
 	
+	@Override
+	public boolean isPayback() {
+		return false;
+	}
+	@Override
+	public boolean isPaybackDeclarationAvailable() {
+		return false;
+	}
 }

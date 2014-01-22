@@ -621,6 +621,50 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- **************** MODEL 311  *************** -->
+	<managed-bean>
+		<managed-bean-name>mod311</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.mod311.Mod311Controller</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.fiscal.FiscalModel</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>mod311</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>FiscalModel_model</key>
+					<value>#{fiscalCollections.model311}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FiscalModel_year desc,FiscalModel_period desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{mod311ControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>mod311ControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.mod311.Mod311ControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 	<!-- **************** MODEL 131  *************** -->
 	<managed-bean>
 		<managed-bean-name>mod131</managed-bean-name>
@@ -939,6 +983,22 @@
 		<navigation-case>
 			<from-outcome>mod310_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod310/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== MODEL 311 ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mod311_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod311/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mod311_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod311/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mod311_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/mod311/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

@@ -24,6 +24,12 @@ public class Modules {
 			+ " WHERE EPIGRAFE.SECTOR = ? "
 			+ " AND EPIGRAFE.SECTOR = SECTOR.ID "; 
 	
+	private static String SELECT_CUOTAMIN = "SELECT" 
+ 			+ " SECTOR.CUOTAMIN"
+			+ " FROM EPIGRAFE, SECTOR"
+			+ " WHERE EPIGRAFE.EPIGRAFE = ? "
+			+ " AND EPIGRAFE.SECTOR = SECTOR.ID "; 
+
 	private static String SELECT_SECTORS = "SELECT " 
 			+"ID"
 			+",PERIOD"
@@ -122,6 +128,30 @@ public class Modules {
 		}
 	}
 	
+	public Double getCuotaMin(String epigrafe) throws AonException {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			stmt = conn.prepareStatement(SELECT_CUOTAMIN);
+			stmt.setString(1,epigrafe);
+			rs = stmt.executeQuery();
+			if (rs.next()) {
+				return rs.getDouble(1);
+			}
+			return 0.0;
+		} catch (ClassNotFoundException e) {
+			throw new AonException(e.getMessage(),e);
+		} catch (SQLException e) {
+			throw new AonException(e.getMessage(),e);
+		} finally {
+			DbUtils.closeQuietly(rs);
+			DbUtils.closeQuietly(stmt);
+			DbUtils.closeQuietly(conn);
+		}
+	}
+
 	public List<Sector> getSectors(boolean farmer) throws AonException {
 		return getSectors(null,farmer);
 	}

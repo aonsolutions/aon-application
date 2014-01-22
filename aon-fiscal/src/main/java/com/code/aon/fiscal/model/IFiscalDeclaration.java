@@ -35,11 +35,13 @@ public interface IFiscalDeclaration {
 	
 	boolean isDeclarationNegativeAvailable();
 	boolean isToDeductDeclarationAvailable();
+	boolean isPaybackDeclarationAvailable();
 	boolean isWithoutActivityDeclarationAvailable();
 	boolean isCompensateDeclarationAvailable();
-	public boolean isNegative();
-	public boolean isToDeduct();
-	public boolean isCompensate();
+	boolean isNegative();
+	boolean isToDeduct();
+	boolean isCompensate();
+	boolean isPayback();
 	
 	
 }

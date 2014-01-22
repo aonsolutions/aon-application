@@ -210,6 +210,19 @@ public enum FiscalActivityInfoKey implements IResourceable, IStringEnum {
 	V04 ("V04",FiscalActivityInfoType.VAT_INFO,2012,9999,false,Double.class,false,true ,false,"0",null,null),
 	V05 ("V05",FiscalActivityInfoType.VAT_INFO,2012,9999,false,Double.class,false,true ,false,"0",null,null),
 	V06 ("V06",FiscalActivityInfoType.VAT_INFO,2012,9999,false,Double.class,false,true ,false,"0",null,null),
+	
+	X00 ("X00",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
+	X01 ("X01",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,false ,false,"0",null,null),
+	X02 ("X02",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,false ,false,"0",null,null),
+	X03 ("X03",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null), 
+	X04 ("X04",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
+	X05 ("X05",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
+	X06 ("X06",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
+	X07 ("X07",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
+	X08 ("X08",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
+	X09 ("X09",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,false ,false,"0",null,null),
+	X10 ("X10",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
+	X11 ("X11",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
 	;
 	
 	public static final String MODULE_PREFIX = "M";

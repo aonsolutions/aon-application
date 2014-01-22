@@ -14,6 +14,7 @@ public interface IFiscalActivityContainer {
 	List<FiscalActivityInfo> getVatModulesList();
 	List<FiscalActivityInfo> getVatInfoList();
 	List<FiscalActivityInfo>  getModulesDetailList();
+	List<FiscalActivityInfo>  getM311List();
 	FiscalActivityInfo getInfoToDetail();
 	
 }

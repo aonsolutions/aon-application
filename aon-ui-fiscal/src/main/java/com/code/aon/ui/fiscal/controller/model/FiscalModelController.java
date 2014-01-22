@@ -294,6 +294,7 @@ public abstract class FiscalModelController extends BasicController {
 			finish(to, event);
 			onHideFinalizePanel(event);
 		} catch (Exception e) {
+			e.printStackTrace();
 			String msg = "No se pueden finalizar la declaración."
 					+ e.getMessage();
 			AonUtil.addErrorMessage(msg);
@@ -312,7 +313,7 @@ public abstract class FiscalModelController extends BasicController {
 		return c.getActiveCompanyBanks();
 	}
 
-	private boolean mustCreateFinance(FiscalModel to) {
+	protected boolean mustCreateFinance(FiscalModel to) {
 		if (getDeclaration().isWithoutActivityDeclarationAvailable()
 				&& to.isWithoutActivity()) {
 			return false;
@@ -497,7 +498,7 @@ public abstract class FiscalModelController extends BasicController {
 					bean.getFieldName(IEntityAlias.FISCAL_ACTIVITY_YEAR), year);
 			int count = bean.getCount(criteria);
 			if (count == 0) {
-				AonUtil.addErrorMessage("No se ha realizado la introducción de los datos previos de actividades, necesarios para la confección del impuesto.");
+				AonUtil.addErrorMessage("No se ha realizado la introducción de los datos previos de actividades, necesarios para la confección del impuesto del ejercicio " + year +".");
 			}
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());

@@ -12,7 +12,8 @@ public enum FiscalModelType implements IResourceable, IStringEnum {
 	M123("123"), 
 	M130("130"),
 	M310("310"),
-	M131("131");
+	M131("131"),
+	M311("311");
 
 	private String key;
 
