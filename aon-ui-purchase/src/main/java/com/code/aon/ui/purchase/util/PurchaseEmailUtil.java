@@ -6,6 +6,7 @@ import static com.code.aon.ui.common.ICommonMessages.PURCHASE_EMAIL_SUBJECT;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_SEND_EMAIL;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_SEND_EMAIL_ERROR;
 import static com.code.aon.ui.common.ICommonMessages.PURCHASE_WITHOUT_EMAIL;
+import static com.code.aon.ui.common.ICommonMessages.SALES_PURCHASE_REFERENCE;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -19,6 +20,7 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +89,12 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 	
 	public String getEmailSubject( Purchase purchase ) {
 		String message = AonUtil.getMessage(PURCHASE_EMAIL_SUBJECT);
-		return MessageFormat.format(message, purchase.getReferenceCode() );
+		String msgContent = purchase.getReferenceCode();
+		if( StringUtils.isNotBlank(purchase.getPurchaseReference()) ){
+			msgContent += " ("+AonUtil.getMessage(SALES_PURCHASE_REFERENCE)+": ";
+			msgContent += purchase.getPurchaseReference()+")";
+		}
+		return MessageFormat.format(message, msgContent);
 	}
 	
 	public String getEmailBody( Purchase purchase ) throws UnsupportedEncodingException {

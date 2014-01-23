@@ -309,6 +309,7 @@ public class PurchaseGeneratorManager {
 		purchase.setWorkPlace(sales.getWorkPlace());
 		purchase.setSeries(sales.getSeries());
 		purchase.setNumber(obtainSeriesMaxNumber(sales.getSeries()));
+		purchase.setPurchaseReference(sales.getPurchaseReference());
 		purchase.setDiscountExpression(sales.getDiscountExpression());
 		purchase.setIssueDate(new Date());
 		purchase.setDocumentType(PurchaseDocumentType.NORMAL);
