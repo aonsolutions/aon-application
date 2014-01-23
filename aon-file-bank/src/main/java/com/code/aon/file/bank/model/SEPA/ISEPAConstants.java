@@ -6,7 +6,9 @@ public interface ISEPAConstants {
 
 	String XMLNS_ATTRIBUTE = "xmlns";
 
-	String XMLNS_SEPA_14_14_CORE_VALUE = "urn:iso:std:iso:20022:tech:xsd:pain.008.001.02";
+	String XMLNS_SEPA_19_14_CORE_VALUE = "urn:iso:std:iso:20022:tech:xsd:pain.008.001.02";
+	
+	String XMLNS_SEPA_34_14_VALUE = "urn:iso:std:iso:20022:tech:xsd:pain.001.001.03";
 	
 	String XMLNS_XSI_ATTRIBUTE = "xmlns:xsi";
 
@@ -17,6 +19,8 @@ public interface ISEPAConstants {
 	String LOCAL_INSTRUMENT_CODE_CORE_VALUE = "CORE";
 
 	String CUSTOMER_DIRECT_DEBIT_INITIATION = "CstmrDrctDbtInitn";
+	
+	String CUSTOMER_CREDIT_TRANSFER_INITIATION = "CstmrCdtTrfInitn";
 
 	String INITIATING_PARTY = "InitgPty";
 
@@ -28,7 +32,9 @@ public interface ISEPAConstants {
 
 	String CREDITOR_AGENT = "CdtrAgt";
 
-	String PAYMENT_METHOD_VALUE = "DD";
+	String PAYMENT_METHOD_DD_VALUE = "DD";
+	
+	String PAYMENT_METHOD_TRF_VALUE = "TRF";
 
 	String BATCH_BOOKING = "BtchBookg";
 
@@ -45,6 +51,8 @@ public interface ISEPAConstants {
 	String CREDITOR = "Cdtr";
 
 	String LOCAL_INSTRUMENT = "LclInstrm";
+	
+	String CATEGORY_PURPOSE = "CtgyPurp";
 
 	String SERVICE_LEVEL = "SvcLvl";
 
@@ -57,6 +65,8 @@ public interface ISEPAConstants {
 	String FALSE_VALUE = "false";	
 
 	String REQUEST_COLLECTION_DATE = "ReqdColltnDt";
+	
+	String REQUEST_EXECUTION_DATE = "ReqdExctnDt";
 
 	String ADDRESS_LINE = "AdrLine";
 
@@ -81,14 +91,18 @@ public interface ISEPAConstants {
 	String CURRENCY_EUR_VALUE = "EUR";
 
 	String CURRENCY_ATTRIBUTE = "Ccy";
-
+	
 	String INSTRUCTED_AMOUNT = "InstdAmt";
+
+	String AMOUNT = "Amt";
 
 	String END_TO_END_IDENTIFICATION = "EndToEndId";
 
 	String PAYMENT_IDENTIFICATION = "PmtId";
 
 	String DIRECT_DEBIT_TRANSACTION_INFORMATION = "DrctDbtTxInf";
+	
+	String CREDIT_TRANSFER_TRANSACTION_INFORMATION = "CdtTrfTxInf";
 	
 	String DIRECT_DEBIT_TRANSACTION = "DrctDbtTx";
 	

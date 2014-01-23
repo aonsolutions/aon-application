@@ -3,9 +3,11 @@ package com.code.aon.file.bank.model.CSB19.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.code.aon.file.bank.model.SEPA.Address;
+import com.code.aon.file.bank.model.SEPA.Entity;
 import com.code.aon.file.format.core.Account;
 
-public class Individual {
+public class Individual implements Entity {
 
 	private String referenceCode;
 	private String name;
@@ -18,7 +20,7 @@ public class Individual {
 	private String accountUserAddress;
 	private String accountUserAddress2;
 	private Integer accountUserPCode;
-	private Address address;
+	private Address SEPAAddress;
 	private boolean organisation;
 	private String document;
 	private String documentType;
@@ -185,14 +187,16 @@ public class Individual {
 		this.accountUserPCode = accountUserPCode;
 	}
 
-	public Address getAddress() {
-		return address;
-	}
-	
-	public void setAddress(Address address) {
-		this.address = address;
+	@Override
+	public Address getSEPAAddress() {
+		return SEPAAddress;
 	}
 
+	public void setSEPAAddress(Address sEPAAddress) {
+		SEPAAddress = sEPAAddress;
+	}
+
+	@Override
 	public boolean isOrganisation() {
 		return organisation;
 	}
@@ -200,8 +204,8 @@ public class Individual {
 	public void setOrganisation(boolean organisation) {
 		this.organisation = organisation;
 	}
-
 	
+	@Override
 	public String getDocument() {
 		return document;
 	}
@@ -210,6 +214,7 @@ public class Individual {
 		this.document = document;
 	}
 
+	@Override
 	public String getDocumentType() {
 		return documentType;
 	}

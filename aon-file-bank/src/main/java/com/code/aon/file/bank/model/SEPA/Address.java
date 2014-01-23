@@ -1,4 +1,4 @@
-package com.code.aon.file.bank.model.CSB19.data;
+package com.code.aon.file.bank.model.SEPA;
 
 public class Address {
 	

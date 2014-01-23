@@ -2,28 +2,21 @@ package com.code.aon.ui.finance.file;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.Company;
-import com.code.aon.config.BankAccount;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.file.bank.model.CSB19.CSB19;
-import com.code.aon.file.bank.model.CSB19.data.Address;
 import com.code.aon.file.bank.model.CSB19.data.Individual;
 import com.code.aon.file.bank.model.CSB19.data.Lot;
 import com.code.aon.file.bank.model.CSB19.data.Orderer;
@@ -39,7 +32,6 @@ import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
-import com.code.aon.geozone.GeoZone;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
@@ -55,14 +47,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB19Writer implements IFinanceConstants {
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public FileOutput createAEB19(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
 		return createAEB19(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public Lot getLot(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
+	public Lot getLot(Company company, FinanceBatch fbatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		Lot lot = new Lot();
 		if (fbatch.getFinanceBatchType().equals(FinanceBatchType.AEB_19)) {
 			lot.setType(Lot.RESUMED);
@@ -78,11 +69,7 @@ public class AEB19Writer implements IFinanceConstants {
 		presenter.setName(company.getName());
 		presenter.setEntity(companyRBank.getBankAccount().getBban1());
 		presenter.setOffice(companyRBank.getBankAccount().getBban2());
-		presenter.setIban(companyRBank.getBankAccount().getIban());
-		presenter.setBic(companyRBank.getBic());
-		presenter.setId(createId(company, fbatch, false));
 		lot.setPresenter(presenter);
-		lot.setId(createId(company, fbatch, true));
 
 		Orderer orderer = new Orderer();
 		Account companyAccount = new Account();
@@ -94,24 +81,18 @@ public class AEB19Writer implements IFinanceConstants {
 		orderer.setProcedure(new Integer(1));
 		orderer.setStartDate(fbatch.getIssueDate());
 		orderer.setSufix(companyRBank.getSufix());
-		orderer.setId(createIdentification(company.getDocumentCountry(), company.getDocument()));
 		orderer.setOrganisation(company.getRegistry().getType()==RegistryType.LEGAL);
-		IAddress address = obtainRegistryAddress(company.getId());
-		orderer.setAddress(getAddress(address));
 
-		Iterator iterator = fbatchDetailCollection.iterator();
-		while (iterator.hasNext()) {
-			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
+		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Individual individual  = createIndividual(fBatchDetail.getFinance(), lot.getType());
-			orderer.addIndividual(individual);
+			orderer.addIndividual(individual);			
 		}
 		lot.addOrderer(orderer);		
 		return lot;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public FileOutput createAEB19(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
-		Lot lot = getLot(company, fbatch, fbatchDetailCollection);
+	public FileOutput createAEB19(Company company, FinanceBatch fbatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
+		Lot lot = getLot(company, fbatch, fbatchDetails);
 
 		try {
 			File file = File.createTempFile("AEB19_", ".txt");
@@ -130,16 +111,12 @@ public class AEB19Writer implements IFinanceConstants {
 		individual.setAmount(new Double(finance.getTotalAmount()));
 		Account detailAccount = new Account();
 		detailAccount.parse(finance.getBankAccount().getBban());
-		detailAccount.setBic(finance.getBic());
-		detailAccount.setIban(finance.getBankAccount().getIban());
 		individual.setAccount(detailAccount);
 		individual.setConcept(obtainConcept(finance));
 		individual.setInternalCode(finance.getId().toString());
 		individual.setName(finance.getRegistryName());
 		individual.setReferenceCode(finance.getRegistry().getId().toString());
 		individual.setReturnCode(finance.getRegistry().getId().toString());
-		individual.setOrganisation(finance.getRegistry().getType()==RegistryType.LEGAL);
-		individual.setDocument(finance.getRegistryDocument());
 		Locale locale = AonUtil.getCurrentLocale();
 		individual.setDocumentType(finance.getRegistryDocumentType().getName(locale));
 		IAddress iAddress = obtainInvoiceAddress(finance.getInvoice(), finance.getRegistry());
@@ -152,7 +129,6 @@ public class AEB19Writer implements IFinanceConstants {
 			} catch (NumberFormatException e) {
 				individual.setAccountUserPCode(new Integer(0));
 			}
-			individual.setAddress(getAddress(iAddress));
 		}
 		if (lotType == Lot.EXTENDED) {
 			addExtendedData(individual, finance.getInvoice());
@@ -247,7 +223,7 @@ public class AEB19Writer implements IFinanceConstants {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private IAddress obtainInvoiceAddress(Invoice invoice, Registry registry) throws ManagerBeanException {
+	public static IAddress obtainInvoiceAddress(Invoice invoice, Registry registry) throws ManagerBeanException {
 		if (invoice != null && invoice.getId() != null) {
 			IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
 			Criteria criteria = new Criteria();
@@ -261,7 +237,7 @@ public class AEB19Writer implements IFinanceConstants {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private IAddress obtainRegistryAddress(Integer registryId) throws ManagerBeanException {
+	private static IAddress obtainRegistryAddress(Integer registryId) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), registryId);
@@ -272,53 +248,4 @@ public class AEB19Writer implements IFinanceConstants {
 		return null;
 	}
 
-	private Address getAddress( IAddress iAddress ) {
-		Address result = new Address();
-		if ( iAddress.getGeozone() != null ) {
-			GeoZone country = iAddress.getGeozone().getGeoZoneCountry();
-			if ( country != null ) {
-				result.setCountry(country.getCode());	
-			}
-		}
-		StringBuffer sb = new StringBuffer();
-		sb.append(iAddress.getFullAddress());
-		if (! StringUtils.isEmpty(iAddress.getZip()) ) {
-			sb.append(" ").append(iAddress.getZip());
-		}
-		String location = iAddress.getLocation();
-		if (! StringUtils.isEmpty(location) ) {
-			sb.append(" ").append(location);
-		}
-		result.setAddressLine(sb.toString());
-		return result;
-	}
-	
-	private String getDateString( Date date ) {
-		TimeZone tz = TimeZone.getTimeZone("UTC");
-		DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-		df.setTimeZone(tz);	
-		return df.format(date);		
-	}
-	
-	private String createId( Company company, FinanceBatch fbatch, boolean includeId ) {
-		StringBuffer sb = new StringBuffer();
-		sb.append('A').append(StringUtils.leftPad(fbatch.getId().toString(), 10 ,'0'));
-		sb.append(getDateString(fbatch.getIssueDate()));
-		String value = null;
-		if ( includeId ) {
-			value = company.getId().toString();
-		} else{
-			value = company.getDocument();
-		}
-		sb.append(StringUtils.leftPad(value, 10 ,'0'));
-		return sb.toString();
-	}
-
-	private String createIdentification( Country country, String document ) {
-		BankAccount ba = new BankAccount();
-		ba.setCountry(country);
-		ba.setBban1(document);
-		String controlDigit = ba.calculateIbanControlDigit();
-		return country.getValue() + controlDigit + StringUtils.leftPad(document, 12 ,'0');
-	}
 }

@@ -2,6 +2,8 @@ package com.code.aon.file.bank.model.CSB19.data;
 
 import java.util.Date;
 
+import com.code.aon.file.format.core.Account;
+
 /**
  * The presenter
  * 
@@ -43,10 +45,8 @@ public class Presenter {
 	
 	private String id;
 	
-	private String iban;
+	private Account account;
 	
-	private String bic;
-
 	/**
 	 * Returns the code
 	 * 
@@ -163,22 +163,20 @@ public class Presenter {
 		this.id = id;
 	}
 	
-	public String getIban() {
-		return iban;
+	/**
+	 * @return the account
+	 */
+	public Account getAccount() {
+		return account;
 	}
 
-	public void setIban(String iban) {
-		this.iban = iban;
+	/**
+	 * @param account the acount to set
+	 */
+	public void setAccount(Account account) {
+		this.account = account;
 	}
-
-	public String getBic() {
-		return bic;
-	}
-
-	public void setBic(String bic) {
-		this.bic = bic;
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

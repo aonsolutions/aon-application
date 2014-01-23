@@ -9,6 +9,7 @@ public abstract class Detail {
 	private String mode;
 	private double amount;
 	private String concept;
+	private String categoryPurposeCode;
 
 	public abstract String getType();
 
@@ -60,6 +61,14 @@ public abstract class Detail {
 		return null;
 	}
 	
+	public String getCategoryPurposeCode() {
+		return categoryPurposeCode;
+	}
+
+	public void setCategoryPurposeCode(String categoryPurposeCode) {
+		this.categoryPurposeCode = categoryPurposeCode;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

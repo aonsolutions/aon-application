@@ -1,11 +1,17 @@
 package com.code.aon.file.bank.model.CSB34.data;
 
-public class Orderer{
+import com.code.aon.file.bank.model.SEPA.Address;
+import com.code.aon.file.bank.model.SEPA.Entity;
+
+public class Orderer implements Entity {
 	
 	private String code;
 	private String name;
 	private String address;
 	private String city;
+	private String id;
+	private String document;
+	private Address SEPAAddress;
 
 	public String getCode() {
 		return code;
@@ -35,4 +41,36 @@ public class Orderer{
 		this.city = city;
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getDocument() {
+		return document;
+	}
+
+	public void setDocument(String document) {
+		this.document = document;
+	}
+
+	public String getDocumentType() {
+		return null;
+	}
+
+	public boolean isOrganisation() {
+		return true;
+	}
+
+	public Address getSEPAAddress() {
+		return SEPAAddress;
+	}
+
+	public void setSEPAAddress(Address sEPAAddress) {
+		SEPAAddress = sEPAAddress;
+	}
+	
 }

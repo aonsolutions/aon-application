@@ -6,7 +6,6 @@ import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_UNRECORD_ERRO
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -57,6 +56,7 @@ import com.code.aon.ui.finance.file.AEB32Writer;
 import com.code.aon.ui.finance.file.AEB34Writer;
 import com.code.aon.ui.finance.file.AEB58Writer;
 import com.code.aon.ui.finance.file.SEPA19_14CoreXmlWriter;
+import com.code.aon.ui.finance.file.SEPA34_14XmlWriter;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -399,7 +399,7 @@ public class FBatchController extends BasicController implements ICollectionProv
     	FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
     	this.mimeType = MimeType.MIME_TXT;
-        Collection<?> fbatchDetailCollection = obtainDetailsCollection(fbatch);
+    	List<FinanceBatchDetail> fbatchDetailCollection = obtainDetailsCollection(fbatch);
         if ((fbatch.getFinanceBatchType() == FinanceBatchType.AEB_19) || (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_19_D)) {
 			AEB19Writer aeb19Writer = new AEB19Writer();
 			aebOutput = aeb19Writer.createAEB19(getCompany(), fbatch, fbatchDetailCollection);
@@ -416,6 +416,10 @@ public class FBatchController extends BasicController implements ICollectionProv
 			this.mimeType = MimeType.MIME_XML;
 			SEPA19_14CoreXmlWriter sepaWriter = new SEPA19_14CoreXmlWriter();
 			aebOutput = sepaWriter.createXml(getCompany(), fbatch, fbatchDetailCollection);
+		} else if (fbatch.getFinanceBatchType() == FinanceBatchType.SEPA_34_14_XML) {
+			this.mimeType = MimeType.MIME_XML;
+			SEPA34_14XmlWriter sepaWriter = new SEPA34_14XmlWriter();
+			aebOutput = sepaWriter.createXml(getCompany(), fbatch, fbatchDetailCollection);
 		}
 
         if (aebOutput != null) {
@@ -428,7 +432,8 @@ public class FBatchController extends BasicController implements ICollectionProv
         }
 	}
 
-	private Collection<?> obtainDetailsCollection(FinanceBatch fbatch) {
+	@SuppressWarnings("unchecked")
+	private List<FinanceBatchDetail> obtainDetailsCollection(FinanceBatch fbatch) {
 		String select = "select fbatchDetail " +
     					"from FinanceBatchDetail as fbatchDetail " +
     					"where fbatchDetail.financeBatch.id = " + fbatch.getId() + " " +

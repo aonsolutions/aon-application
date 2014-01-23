@@ -2,7 +2,6 @@ package com.code.aon.ui.finance.file;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,14 +38,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB34Writer implements IFinanceConstants {
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public FileOutput createAEB34(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
 		return createAEB34(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public FileOutput createAEB34(Company company, FinanceBatch fBatch, Collection fbatchDetailCollection) throws ManagerBeanException {
+	public Master getMaster(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		Orderer orderer = new Orderer();
 		orderer.setCode(StringUtils.leftPad(company.getDocument(), 10));
 		orderer.setName(company.getName());
@@ -63,13 +61,15 @@ public class AEB34Writer implements IFinanceConstants {
 		master.setOrderDate(fBatch.getIssueDate());
 		master.setDetail("0");
 
-		Iterator iterator = fbatchDetailCollection.iterator();
-		while (iterator.hasNext()) {
-			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
+		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
 			Detail detail = createDetail(fBatchDetail.getFinance());
 			master.addReceiver(detail);
 		}
+		return master;
+	}
 
+	public FileOutput createAEB34(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
+		Master master = getMaster(company, fBatch, fbatchDetails);
 		try {
 			File file = File.createTempFile("AEB34_", ".txt");
 			FileFiller csb34 = new CSB34(master, file.getAbsolutePath());
@@ -107,7 +107,7 @@ public class AEB34Writer implements IFinanceConstants {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private IAddress obtainInvoiceAddress(Invoice invoice, Registry registry) throws ManagerBeanException {
+	public static IAddress obtainInvoiceAddress(Invoice invoice, Registry registry) throws ManagerBeanException {
 		if (invoice != null && invoice.getId() != null) {
 			IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
 			Criteria criteria = new Criteria();
@@ -121,7 +121,7 @@ public class AEB34Writer implements IFinanceConstants {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private IAddress obtainRegistryAddress(Integer registryId) throws ManagerBeanException {
+	public static IAddress obtainRegistryAddress(Integer registryId) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), registryId);

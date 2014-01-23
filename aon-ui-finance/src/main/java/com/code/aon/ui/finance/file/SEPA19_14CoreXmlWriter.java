@@ -2,22 +2,35 @@ package com.code.aon.ui.finance.file;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
+import com.code.aon.file.bank.model.CSB19.data.Individual;
 import com.code.aon.file.bank.model.CSB19.data.Lot;
+import com.code.aon.file.bank.model.CSB19.data.Orderer;
+import com.code.aon.file.bank.model.CSB19.data.Presenter;
+import com.code.aon.file.bank.model.SEPA.Address;
 import com.code.aon.file.bank.model.SEPA.SEPA19_14CoreXml;
+import com.code.aon.file.format.core.Account;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
+import com.code.aon.finance.FinanceBatchDetail;
+import com.code.aon.registry.IAddress;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.ui.util.AonUtil;
 
 public class SEPA19_14CoreXmlWriter {
 
-	@SuppressWarnings("rawtypes")
-	public FileOutput createXml(Company company, FinanceBatch fBatch, Collection fbatchDetailCollection) throws ManagerBeanException {
+	public FileOutput createXml(Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails) throws ManagerBeanException {
 		AEB19Writer aeb19Writer = new AEB19Writer();
-		Lot lot = aeb19Writer.getLot(company, fBatch, fbatchDetailCollection);
+		Lot lot = aeb19Writer.getLot(company, fBatch, fbatchDetails);
+		updateLot(lot, company, fBatch, fbatchDetails);
 		try {
 			File file = File.createTempFile("SEPA19_14_CORE_", ".xml");
 			FileFiller sepa1914 = new SEPA19_14CoreXml(lot, file);
@@ -27,6 +40,41 @@ public class SEPA19_14CoreXmlWriter {
 			return output;
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
+		}
+	}
+
+	private void updateLot( Lot lot, Company company, FinanceBatch fBatch, List<FinanceBatchDetail> fbatchDetails ) throws ManagerBeanException {
+		lot.setId(SEPA34_14XmlWriter.createId(company, fBatch, true));
+		
+		Presenter presenter = lot.getPresenter();
+		presenter.setId(SEPA34_14XmlWriter.createId(company, fBatch, false));
+		RegistryBank companyRBank = fBatch.getRegistryBank();
+		Account account = new Account();
+		account.setIban(companyRBank.getBankAccount().getIban());
+		account.setBic(companyRBank.getBic());
+		presenter.setAccount(account);
+		
+		Orderer orderer = lot.getOrderer();
+		String id = SEPA34_14XmlWriter.createIdentification(company.getDocumentCountry(), company.getDocument());
+		orderer.setId(id);
+		Address address = SEPA34_14XmlWriter.getAddress(company.getDefaultAddress());
+		orderer.setSEPAAddress(address);		
+		
+		Locale locale = AonUtil.getCurrentLocale();
+		Iterator<Individual> ii = orderer.getIndividualsIterator();
+		for( FinanceBatchDetail fBatchDetail : fbatchDetails ) {
+			Finance finance = fBatchDetail.getFinance();
+			Individual individual = ii.next();
+			individual.setOrganisation(finance.getRegistry().getType()==RegistryType.LEGAL);
+			individual.setDocument(finance.getRegistryDocument());		
+			individual.setDocumentType(finance.getRegistryDocumentType().getName(locale));
+			Account detailAccount = individual.getAccount();
+			detailAccount.setBic(finance.getBic());
+			detailAccount.setIban(finance.getBankAccount().getIban());
+			IAddress iAddress = AEB19Writer.obtainInvoiceAddress(finance.getInvoice(), finance.getRegistry());
+			if (iAddress != null) {
+				individual.setSEPAAddress(SEPA34_14XmlWriter.getAddress(iAddress));
+			}
 		}
 	}
 	

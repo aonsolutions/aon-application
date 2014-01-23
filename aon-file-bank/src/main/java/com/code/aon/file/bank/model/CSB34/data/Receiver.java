@@ -1,6 +1,9 @@
 package com.code.aon.file.bank.model.CSB34.data;
 
-public class Receiver{
+import com.code.aon.file.bank.model.SEPA.Address;
+import com.code.aon.file.bank.model.SEPA.Entity;
+
+public class Receiver implements Entity {
 	
 	private String code;
 	private String name;
@@ -8,6 +11,10 @@ public class Receiver{
 	private String zip;
 	private String city;
 	private String province;
+	private String referenceCode; 
+	private Address SEPAAddress;
+	private boolean organisation;
+	private String documentType;
 
 	public String getCode() {
 		return code;
@@ -67,4 +74,49 @@ public class Receiver{
 		this.province = province;
 	}
 
+	/**
+	 * @return the referenceCode
+	 */
+	public String getReferenceCode() {
+		return referenceCode;
+	}
+	/**
+	 * @param referenceCode the referenceCode to set
+	 */
+	public void setReferenceCode(String referenceCode) {
+		this.referenceCode = referenceCode;
+	}
+
+	@Override
+	public String getDocument() {
+		return getCode();
+	}
+
+	@Override
+	public Address getSEPAAddress() {
+		return SEPAAddress;
+	}
+
+	public void setSEPAAddress(Address sEPAAddress) {
+		SEPAAddress = sEPAAddress;
+	}
+
+	@Override
+	public boolean isOrganisation() {
+		return organisation;
+	}
+
+	public void setOrganisation(boolean organisation) {
+		this.organisation = organisation;
+	}
+
+	@Override
+	public String getDocumentType() {
+		return documentType;
+	}
+	
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
+	}
+	
 }

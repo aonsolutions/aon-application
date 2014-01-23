@@ -18,6 +18,8 @@ public class Master {
 	private int num010;
 	private int numreg;
 	private ArrayList<Detail> receivers = new ArrayList<Detail>();
+	private String id;
+	private String companyId;
 
 	public Orderer getOrderer() {
 		return orderer;
@@ -85,10 +87,29 @@ public class Master {
 	public void addReceiver(Detail receiver){
 		this.receivers.add(receiver);
 	}
+	
 	public Iterator<Detail> getReceiversIterator(){
 		return this.receivers.iterator();
 	}
+	
+	public ArrayList<Detail> getReceivers() {
+		return receivers;
+	}
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public String getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

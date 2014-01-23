@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
+import com.code.aon.file.bank.model.SEPA.Address;
+import com.code.aon.file.bank.model.SEPA.Entity;
 import com.code.aon.file.format.core.Account;
 
 /**
@@ -12,7 +14,7 @@ import com.code.aon.file.format.core.Account;
  * @since 1.0
  *
  */
-public class Orderer {
+public class Orderer implements Entity {
 
 	/**
 	 * Code 
@@ -43,7 +45,7 @@ public class Orderer {
 	 */
 	private Integer procedure;
 	
-	private Address address;
+	private Address SEPAAddress;
 	
 	private boolean organisation;
 	
@@ -205,12 +207,12 @@ public class Orderer {
 		this.numRegs = numRegs;
 	}
 	
-	public Address getAddress() {
-		return address;
+	public Address getSEPAAddress() {
+		return SEPAAddress;
 	}
 
-	public void setAddress(Address address) {
-		this.address = address;
+	public void setSEPAAddress(Address sEPAAddress) {
+		SEPAAddress = sEPAAddress;
 	}
 	
 	public boolean isOrganisation() {
@@ -242,6 +244,16 @@ public class Orderer {
 		description += "ACCOUNT "+account.getCcc()+"; ";
 		description += "PROC "+procedure+"; ";
 		return description;
+	}
+
+	@Override
+	public String getDocument() {
+		return getCode();
+	}
+
+	@Override
+	public String getDocumentType() {
+		return null;
 	}
 	
 }

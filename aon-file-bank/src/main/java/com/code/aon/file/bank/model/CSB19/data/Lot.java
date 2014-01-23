@@ -117,6 +117,10 @@ public class Lot {
 	public void setId(String id) {
 		this.id = id;
 	}
+	
+	public Orderer getOrderer() {
+		return getOrderersIterator().next();
+	}	
 
 	public static int RESUMED = 0;
 	
