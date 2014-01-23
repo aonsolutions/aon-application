@@ -6,7 +6,6 @@ import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.enableAutoComm
 import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.rollback;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 
@@ -15,8 +14,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.fiscal.shared.AonSQLException;
@@ -53,10 +50,10 @@ public class Mod390File extends HttpServlet {
 			}
 			String fileName = "Mod390" + "_" + mod390.getYear() + "_" + sb.toString();
 			if (content != null) {
-				ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes());
 				resp.setContentType(MimeType.MIME_XML.getName());
+				resp.setCharacterEncoding("ISO-8859-1");
 				resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xml\";");
-				IOUtils.copy(in, resp.getOutputStream());
+				resp.getWriter().print(content);
 			}
 			resp.flushBuffer();
 		} catch (AonSQLException e) {

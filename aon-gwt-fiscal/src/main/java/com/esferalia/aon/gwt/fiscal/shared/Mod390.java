@@ -71,6 +71,26 @@ public class Mod390 implements Serializable, IsSerializable {
 	
 	private Map<Mod390DetailKey,Mod390Detail> generalRegime;
 	
+	private SimpliedRegimeActivity simpRegime1;
+	private SimpliedRegimeActivity simpRegime2;
+	
+	private FarmerRegimeActivity farmerRegime1;
+	private FarmerRegimeActivity farmerRegime2;
+	private FarmerRegimeActivity farmerRegime3;
+	private FarmerRegimeActivity farmerRegime4;
+	private FarmerRegimeActivity farmerRegime5;
+	
+	private double box74;
+	private double box75;
+	private double box76;
+	private double box77;
+	private double box78;
+	private double box79;
+	private double box80;
+	private double box81;
+	private double box82;
+	private double box83;
+	
 	private double box84;
 	private double box85;
 	private double box86;
@@ -341,6 +361,108 @@ public class Mod390 implements Serializable, IsSerializable {
 	}
 	public void setGeneralRegime(Map<Mod390DetailKey, Mod390Detail> generalRegime) {
 		this.generalRegime = generalRegime;
+	}
+	public SimpliedRegimeActivity getSimpRegime1() {
+		return simpRegime1;
+	}
+	public void setSimpRegime1(SimpliedRegimeActivity simpRegime1) {
+		this.simpRegime1 = simpRegime1;
+	}
+	public SimpliedRegimeActivity getSimpRegime2() {
+		return simpRegime2;
+	}
+	public void setSimpRegime2(SimpliedRegimeActivity simpRegime2) {
+		this.simpRegime2 = simpRegime2;
+	}
+	public FarmerRegimeActivity getFarmerRegime1() {
+		return farmerRegime1;
+	}
+	public void setFarmerRegime1(FarmerRegimeActivity farmerRegime1) {
+		this.farmerRegime1 = farmerRegime1;
+	}
+	public FarmerRegimeActivity getFarmerRegime2() {
+		return farmerRegime2;
+	}
+	public void setFarmerRegime2(FarmerRegimeActivity farmerRegime2) {
+		this.farmerRegime2 = farmerRegime2;
+	}
+	public FarmerRegimeActivity getFarmerRegime3() {
+		return farmerRegime3;
+	}
+	public void setFarmerRegime3(FarmerRegimeActivity farmerRegime3) {
+		this.farmerRegime3 = farmerRegime3;
+	}
+	public FarmerRegimeActivity getFarmerRegime4() {
+		return farmerRegime4;
+	}
+	public void setFarmerRegime4(FarmerRegimeActivity farmerRegime4) {
+		this.farmerRegime4 = farmerRegime4;
+	}
+	public FarmerRegimeActivity getFarmerRegime5() {
+		return farmerRegime5;
+	}
+	public void setFarmerRegime5(FarmerRegimeActivity farmerRegime5) {
+		this.farmerRegime5 = farmerRegime5;
+	}
+	public double getBox74() {
+		return box74;
+	}
+	public void setBox74(double box74) {
+		this.box74 = box74;
+	}
+	public double getBox75() {
+		return box75;
+	}
+	public void setBox75(double box75) {
+		this.box75 = box75;
+	}
+	public double getBox76() {
+		return box76;
+	}
+	public void setBox76(double box76) {
+		this.box76 = box76;
+	}
+	public double getBox77() {
+		return box77;
+	}
+	public void setBox77(double box77) {
+		this.box77 = box77;
+	}
+	public double getBox78() {
+		return box78;
+	}
+	public void setBox78(double box78) {
+		this.box78 = box78;
+	}
+	public double getBox79() {
+		return box79;
+	}
+	public void setBox79(double box79) {
+		this.box79 = box79;
+	}
+	public double getBox80() {
+		return box80;
+	}
+	public void setBox80(double box80) {
+		this.box80 = box80;
+	}
+	public double getBox81() {
+		return box81;
+	}
+	public void setBox81(double box81) {
+		this.box81 = box81;
+	}
+	public double getBox82() {
+		return box82;
+	}
+	public void setBox82(double box82) {
+		this.box82 = box82;
+	}
+	public double getBox83() {
+		return box83;
+	}
+	public void setBox83(double box83) {
+		this.box83 = box83;
 	}
 	public double getBox84() {
 		return box84;

@@ -465,7 +465,10 @@ public class Model390 extends MainEntryPoint {
 	
 	@UiHandler("saveButton")
 	void onAcceptButtonClick(ClickEvent event) {
-		
+		accept(new AcceptAsyncCallback());
+	}
+
+	private void accept(AcceptAsyncCallback callback) {
 		final PopupPanel popup = new PopupPanel(false, true);
 		Label label = new Label(MSG.processing());
 		label.addStyleName(RESOURCES.css().aonTimer());
@@ -473,32 +476,39 @@ public class Model390 extends MainEntryPoint {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
+		callback.setPopup(popup);
 		try {
 			populateMod390();
 			validate(this.mod390);
-			
-			fiscalService.saveMod390(this.mod390, new AsyncCallback<Mod390>() {
-				@Override
-				public void onSuccess(Mod390 result) {
-					select(result);
-					popup.hide();
-					cleanErrorMessage();
-				}
-
-				@Override
-				public void onFailure(Throwable caught) {
-					popup.hide();
-					addErrorMessage(MSG.unableToSaveMod190(caught.getMessage()));
-				}
-			});
-
+			fiscalService.saveMod390(this.mod390, callback);
 		} catch (IllegalArgumentException e) {
 			popup.hide();
 			DialogMessages.alertErrorWidget(e.getMessage()).center();
 		}
-		
 	}
 
+	private class AcceptAsyncCallback implements AsyncCallback<Mod390> {
+		PopupPanel popup;
+		
+		public void setPopup(PopupPanel popup) {
+			this.popup = popup;
+		}
+
+		@Override
+		public void onSuccess(Mod390 result) {
+			select(result);
+			popup.hide();
+			cleanErrorMessage();
+		}
+
+		@Override
+		public void onFailure(Throwable caught) {
+			popup.hide();
+			addErrorMessage(MSG.unableToSaveMod190(caught.getMessage()));
+		}
+		
+	}
+	
 	private void validate(Mod390 m390) {
 		if (AonUtil.isEmpty(year.getValue())) {
 			throw new IllegalArgumentException(MSG.requiredField(MSG.fiscalYear()));
@@ -536,6 +546,22 @@ public class Model390 extends MainEntryPoint {
 			}
 			if (!DocumentTextBox.isValid(m390.getAddress().getRdocument())) {
 				throw new IllegalArgumentException("El NIF/DNI del representante no es correcto. (Apartado 4)");
+			}
+		} else {
+			if (m390.getLegalRepr1() != null) {
+				if (!DocumentTextBox.isValid(m390.getLegalRepr1().getDocument())) {
+					throw new IllegalArgumentException("El NIF del primer representante para personas jurídicas no es correcto. (Apartado 4)");
+				}
+			}
+			if (m390.getLegalRepr2() != null) {
+				if (!DocumentTextBox.isValid(m390.getLegalRepr2().getDocument())) {
+					throw new IllegalArgumentException("El NIF del segundo representante para personas jurídicas no es correcto. (Apartado 4)");
+				}
+			}
+			if (m390.getLegalRepr3() != null) {
+				if (!DocumentTextBox.isValid(m390.getLegalRepr3().getDocument())) {
+					throw new IllegalArgumentException("El NIF del tercer representante para personas jurídicas no es correcto. (Apartado 4)");
+				}
 			}
 		}
 	}
@@ -708,12 +734,15 @@ public class Model390 extends MainEntryPoint {
 
 	@UiHandler("generateFileButton")
 	void onGenerateFileButtonClick(ClickEvent event) {
-		
+		Window.alert("Se va a proceder a la generaci\u00F3n del fichero.\n"
+				+ " Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n"
+				+ " El fichero se genera a partir de los datos guardados.");
 		diskForm.setAction(GWT.getHostPageBaseURL()
 				+ "/aon_gwt_fiscal/Model390File");
 		mod390Hidden.setValue(String.valueOf(mod390.getId()));
 		diskForm.submit();
 	}
+	
 
 //	@UiHandler("printButton")
 //	void onPrintButtonClick(ClickEvent event) {

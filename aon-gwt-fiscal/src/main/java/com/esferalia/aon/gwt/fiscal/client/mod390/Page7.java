@@ -54,14 +54,14 @@ public class Page7 extends ResizeComposite implements RequiresResize {
 	void onChangeBox85 (ChangeEvent event) {
 		double b84 = box84.getDoubleValue();
 		double b85 = box85.getDoubleValue();
-		box86.setValue(AonUtil.round(b84 + b85));
+		box86.setValue(AonUtil.round(b84 - b85));
 	}
 	
 	public void refresh() {
 		double d = page5.getQuotaMap().get(Mod390DetailKey.K37).getDoubleValue();
 		box84.setValue(d);
 		double b85 = box85.getDoubleValue();
-		box86.setValue(AonUtil.round(d + b85));
+		box86.setValue(AonUtil.round(d - b85));
 	}
 	public void setValue(Mod390 m390) {
 		box84.setValue(m390.getBox84());

@@ -3,12 +3,15 @@ package com.esferalia.aon.gwt.fiscal.client.mod390;
 import com.esferalia.aon.gwt.fiscal.client.css.AonResources;
 import com.esferalia.aon.gwt.fiscal.client.css.GWTResources;
 import com.esferalia.aon.gwt.fiscal.client.widget.DoubleTextBox;
+import com.esferalia.aon.gwt.fiscal.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Mod390DetailKey;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
@@ -141,4 +144,87 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 		mod390.setBox107(box107.getDoubleValue());
 		mod390.setBox108(box108.getDoubleValue());
 	}
+	
+	@UiHandler("box99")
+	void onChangeBox99(ChangeEvent event) {
+		refresh();
+	}
+	
+	@UiHandler("box103")
+	void onChangeBox103(ChangeEvent event) {
+		refresh();
+	}
+	
+	@UiHandler("box104")
+	void onChangeBox104(ChangeEvent event) {
+		refresh();
+	}
+	
+	@UiHandler("box105")
+	void onChangeBox105(ChangeEvent event) {
+		refresh();
+	}
+	
+	@UiHandler("box110")
+	void onChangeBox110(ChangeEvent event) {
+		refresh();
+	}
+	
+	@UiHandler("box112")
+	void onChangeBox112(ChangeEvent event) {
+		refresh();
+	}
+	
+	@UiHandler("box100")
+	void onChangeBox100(ChangeEvent event) {
+		refresh();
+	}
+	
+	@UiHandler("box101")
+	void onChangeBox101(ChangeEvent event) {
+		refresh();
+	}
+	
+	@UiHandler("box102")
+	void onChangeBox102(ChangeEvent event) {
+		refresh();
+	}
+	
+	@UiHandler("box227")
+	void onChangeBox227(ChangeEvent event) {
+		refresh();
+	}
+	
+	@UiHandler("box228")
+	void onChangeBox228(ChangeEvent event) {
+		refresh();
+	}
+	
+	@UiHandler("box106")
+	void onChangeBox106(ChangeEvent event) {
+		refresh();
+	}
+	
+	@UiHandler("box107")
+	void onChangeBox107(ChangeEvent event) {
+		refresh();
+	}
+
+	private void refresh() {
+		box108.setValue( 
+				AonUtil.round(box99.getDoubleValue()
+					+box103.getDoubleValue()
+					+box104.getDoubleValue()
+					+box105.getDoubleValue()
+					+box110.getDoubleValue()
+					+box112.getDoubleValue()
+					+box100.getDoubleValue()
+					+box101.getDoubleValue()
+					+box102.getDoubleValue()
+					+box227.getDoubleValue()
+					+box228.getDoubleValue()
+					-box106.getDoubleValue()
+					-box107.getDoubleValue()));
+	}
+	
 }

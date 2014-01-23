@@ -34,6 +34,8 @@ public class Page3 extends ResizeComposite {
 	@UiField
 	Button mainActivityButton;
 	@UiField
+	Button mainActivityDeleteButton;
+	@UiField
 	Label mainActivityDescription;
 	@UiField
 	Label mainActivityKey;
@@ -42,6 +44,8 @@ public class Page3 extends ResizeComposite {
 	
 	@UiField
 	Button activity1Button;
+	@UiField
+	Button activity1DeleteButton;
 	@UiField
 	Label activity1Description;
 	@UiField
@@ -52,6 +56,8 @@ public class Page3 extends ResizeComposite {
 	@UiField
 	Button activity2Button;
 	@UiField
+	Button activity2DeleteButton;
+	@UiField
 	Label activity2Description;
 	@UiField
 	Label activity2Key;
@@ -60,6 +66,8 @@ public class Page3 extends ResizeComposite {
 
 	@UiField
 	Button activity3Button;
+	@UiField
+	Button activity3DeleteButton;
 	@UiField
 	Label activity3Description;
 	@UiField
@@ -70,6 +78,8 @@ public class Page3 extends ResizeComposite {
 	@UiField
 	Button activity4Button;
 	@UiField
+	Button activity4DeleteButton;
+	@UiField
 	Label activity4Description;
 	@UiField
 	Label activity4Key;
@@ -78,6 +88,8 @@ public class Page3 extends ResizeComposite {
 
 	@UiField
 	Button activity5Button;
+	@UiField
+	Button activity5DeleteButton;
 	@UiField
 	Label activity5Description;
 	@UiField
@@ -216,6 +228,42 @@ public class Page3 extends ResizeComposite {
 		activityPanel.center();
 		activityPanel.show();
 	}
+	@UiHandler("mainActivityDeleteButton")
+	void onMainActivityDeleteButtonClick(ClickEvent event) {
+		mainActivityDescription.setText(null);	
+		mainActivityKey.setText(null);
+		mainActivityEpigraph.setText(null);
+	}
+	@UiHandler("activity1DeleteButton")
+	void onActivity1DeleteButtonClick(ClickEvent event) {
+		activity1Description.setText(null);	
+		activity1Key.setText(null);
+		activity1Epigraph.setText(null);
+	}
+	@UiHandler("activity2DeleteButton")
+	void onActivity2DeleteButtonClick(ClickEvent event) {
+		activity2Description.setText(null);	
+		activity2Key.setText(null);
+		activity2Epigraph.setText(null);
+	}
+	@UiHandler("activity3DeleteButton")
+	void onActivity3DeleteButtonClick(ClickEvent event) {
+		activity3Description.setText(null);	
+		activity3Key.setText(null);
+		activity3Epigraph.setText(null);
+	}
+	@UiHandler("activity4DeleteButton")
+	void onActivity4DeleteButtonClick(ClickEvent event) {
+		activity4Description.setText(null);	
+		activity4Key.setText(null);
+		activity4Epigraph.setText(null);
+	}
+	@UiHandler("activity5DeleteButton")
+	void onActivity5DeleteButtonClick(ClickEvent event) {
+		activity5Description.setText(null);	
+		activity5Key.setText(null);
+		activity5Epigraph.setText(null);
+	}
 
 	public void setValue(Mod390 m390) {
 		if (m390.getMainActivity() != null) {
@@ -255,47 +303,65 @@ public class Page3 extends ResizeComposite {
 
 	public void populate(Mod390 mod390) {
 		if (!AonUtil.isEmpty( mainActivityKey.getText() ) ) {
-			Activity mainActivity = new Activity();	
+			Activity mainActivity = new Activity();
 			mainActivity.setKey(mainActivityKey.getText());
 			mainActivity.setDescription(mainActivityDescription.getText());
 			mainActivity.setEpigraph(mainActivityEpigraph.getText());
 			mod390.setMainActivity(mainActivity);
+		} else {
+			mod390.setMainActivity(null);
 		}
+		
 		if (!AonUtil.isEmpty( activity1Key.getText() ) ) {
-			Activity activity = new Activity();	
-			activity.setKey(activity1Key.getText());
-			activity.setDescription(activity1Description.getText());
-			activity.setEpigraph(activity1Epigraph.getText());
-			mod390.setActivity1(activity);
+			Activity activity1 = new Activity();	
+			activity1.setKey(activity1Key.getText());
+			activity1.setDescription(activity1Description.getText());
+			activity1.setEpigraph(activity1Epigraph.getText());
+			mod390.setActivity1(activity1);
+		} else {
+			mod390.setActivity1(null);
 		}
+		
 		if (!AonUtil.isEmpty( activity2Key.getText() ) ) {
-			Activity activity = new Activity();	
-			activity.setKey(activity2Key.getText());
-			activity.setDescription(activity2Description.getText());
-			activity.setEpigraph(activity2Epigraph.getText());
-			mod390.setActivity2(activity);
+			Activity activity2 = new Activity();	
+			activity2.setKey(activity2Key.getText());
+			activity2.setDescription(activity2Description.getText());
+			activity2.setEpigraph(activity2Epigraph.getText());
+			mod390.setActivity2(activity2);
+		} else {
+			mod390.setActivity2(null);
 		}
+		
 		if (!AonUtil.isEmpty( activity3Key.getText() ) ) {
-			Activity activity = new Activity();	
-			activity.setKey(activity3Key.getText());
-			activity.setDescription(activity3Description.getText());
-			activity.setEpigraph(activity3Epigraph.getText());
-			mod390.setActivity3(activity);
+			Activity activity3 = new Activity();	
+			activity3.setKey(activity3Key.getText());
+			activity3.setDescription(activity3Description.getText());
+			activity3.setEpigraph(activity3Epigraph.getText());
+			mod390.setActivity3(activity3);
+		} else {
+			mod390.setActivity3(null);
 		}
+		
 		if (!AonUtil.isEmpty( activity4Key.getText() ) ) {
-			Activity activity = new Activity();	
-			activity.setKey(activity4Key.getText());
-			activity.setDescription(activity4Description.getText());
-			activity.setEpigraph(activity4Epigraph.getText());
-			mod390.setActivity4(activity);
+			Activity activity4 = new Activity();	
+			activity4.setKey(activity4Key.getText());
+			activity4.setDescription(activity4Description.getText());
+			activity4.setEpigraph(activity4Epigraph.getText());
+			mod390.setActivity4(activity4);
+		} else {
+			mod390.setActivity4(null);
 		}
+		
 		if (!AonUtil.isEmpty( activity5Key.getText() ) ) {
-			Activity activity = new Activity();	
-			activity.setKey(activity5Key.getText());
-			activity.setDescription(activity5Description.getText());
-			activity.setEpigraph(activity5Epigraph.getText());
-			mod390.setActivity5(activity);
+			Activity activity5 = new Activity();	
+			activity5.setKey(activity5Key.getText());
+			activity5.setDescription(activity5Description.getText());
+			activity5.setEpigraph(activity5Epigraph.getText());
+			mod390.setActivity5(activity5);
+		} else {
+			mod390.setActivity5(null);
 		}
+		
 		mod390.setMod347(mod347.getValue());
 		mod390.setMergedDeclarationDocument(mergedDeclarationDocument.getValue());
 		mod390.setMergedDeclarationName(mergedDeclarationName.getValue());
