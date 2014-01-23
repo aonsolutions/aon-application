@@ -519,6 +519,10 @@ public class Model390 extends MainEntryPoint {
 			if (AonUtil.isEmpty(m390.getSecondSurname())) {
 				throw new IllegalArgumentException("Para personas f\u00EDsicas, el segundo apellido es obligatorio (Apartado 0)");	
 			}
+		} else {
+			if (AonUtil.isEmpty(m390.getName())) {
+				throw new IllegalArgumentException("No se ha indicado el nombre del declarante. (Apartado 0)");	
+			}
 		}
 		if (m390.getMainActivity() == null || AonUtil.isEmpty(m390.getMainActivity().getKey()) ) {
 			throw new IllegalArgumentException("No se ha indicado actividad principal (Apartado 3)");
@@ -569,9 +573,21 @@ public class Model390 extends MainEntryPoint {
 						mod390.setEnterprise(params.getCompany());
 						mod390.setDomain(getCurrentDomain());
 						mod390.setDocument(params.getDocument());
-						mod390.setName(params.getName());
+						mod390.setEnterpriseName(params.getName());
 						mod390.setYear(params.getDefaultYear() != null ? params
 								.getDefaultYear() : 2013);
+						if (mod390.isLegalEntity()) {
+							mod390.setName(mod390.getEnterpriseName());	
+						} else {
+							String tmpName = mod390.getEnterpriseName();
+							if (AonUtil.contains(tmpName, ',')) {
+								mod390.setName(AonUtil.trim(AonUtil.substringAfter(tmpName, ",")));
+								mod390.setFirstSurname(AonUtil.trim(AonUtil.substringBefore(tmpName, ",")));
+							} else {
+								mod390.setName(AonUtil.trim(AonUtil.substringBefore(tmpName, " ")));
+								mod390.setFirstSurname(AonUtil.trim(AonUtil.substringAfter(tmpName, " ")));
+							}
+						}
 						select(mod390);
 						
 						page0.setValue(mod390);
