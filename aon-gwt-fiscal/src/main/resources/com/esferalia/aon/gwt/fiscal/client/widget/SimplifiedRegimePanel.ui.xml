@@ -1,0 +1,43 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:aon='urn:import:com.esferalia.aon.gwt.fiscal.client.widget'
+	xmlns:cell='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:with type="com.esferalia.aon.gwt.fiscal.client.FiscalMessages"
+		field="msg"></ui:with>
+
+	<ui:style>
+	
+	</ui:style>
+
+	<g:FlowPanel>
+		<g:Label ui:field="title"/>
+
+		<g:TextBox ui:field="epigrafe" />
+		<aon:DoubleTextBox ui:field="unit1" />
+		<aon:DoubleTextBox ui:field="amount1" />
+		<aon:DoubleTextBox ui:field="unit2" />
+		<aon:DoubleTextBox ui:field="amount2" />
+		<aon:DoubleTextBox ui:field="unit3" />
+		<aon:DoubleTextBox ui:field="amount3" />
+		<aon:DoubleTextBox ui:field="unit4" />
+		<aon:DoubleTextBox ui:field="amount4" />
+		<aon:DoubleTextBox ui:field="unit5" />
+		<aon:DoubleTextBox ui:field="amount5" />
+		<aon:DoubleTextBox ui:field="unit6" />
+		<aon:DoubleTextBox ui:field="amount6" />
+		<aon:DoubleTextBox ui:field="unit7" />
+		<aon:DoubleTextBox ui:field="amount7" />
+		<aon:DoubleTextBox ui:field="cuotaDevengada" />
+		<aon:DoubleTextBox ui:field="lorca2013" />
+		<aon:DoubleTextBox ui:field="cuotaSoportada" />
+		<aon:DoubleTextBox ui:field="indiceCorrector" />
+		<aon:DoubleTextBox ui:field="resultado" />
+		<aon:DoubleTextBox ui:field="porcCuotaMinima" />
+		<aon:DoubleTextBox ui:field="devCuotaSopOtrosPaises" />
+		<aon:DoubleTextBox ui:field="cuotaMinima" />
+		<aon:DoubleTextBox ui:field="cuotaRegSimplificado" />
+
+	</g:FlowPanel>
+
+</ui:UiBinder>

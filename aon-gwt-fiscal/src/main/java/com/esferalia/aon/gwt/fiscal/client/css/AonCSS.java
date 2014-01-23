@@ -8,6 +8,9 @@ public interface AonCSS extends  CssResource {
 	
 	@ClassName("aon-table-row-link")
 	String aonTableRowLink();
+	
+	@ClassName("aon-icon-trash")
+	String aonIconTrash();
 
 	@ClassName("aon-editDataTable-iconColumn")
     String aonDataTableIconColumn();

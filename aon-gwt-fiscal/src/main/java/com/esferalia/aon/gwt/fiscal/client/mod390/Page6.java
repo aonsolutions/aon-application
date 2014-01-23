@@ -19,6 +19,13 @@ public class Page6 extends ResizeComposite implements RequiresResize {
 
 	private static final AonResources RESOURCES = GWT
 			.create(AonResources.class);
+/*	
+	@UiField
+	SimplifiedRegimePanel activity1;
+
+	@UiField
+	SimplifiedRegimePanel activity2;
+*/
 	
 	public Page6() {
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();

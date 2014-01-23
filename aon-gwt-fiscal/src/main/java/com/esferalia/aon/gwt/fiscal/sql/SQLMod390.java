@@ -265,6 +265,7 @@ public class SQLMod390 {
 			StringWriter writer = new StringWriter();
 			JAXBContext context = JAXBContext.newInstance(AEATIVA2013.class);				
 			Marshaller um = context.createMarshaller();
+			um.setProperty("jaxb.encoding", "ISO-8859-1");
 			um.marshal(iva,writer);
 			SQLUtils.setString(stmt, 14, writer.toString());
 			SQLUtils.setInt(stmt, 15, mod390.getId());
@@ -307,6 +308,7 @@ public class SQLMod390 {
 			StringWriter writer = new StringWriter();
 			JAXBContext context = JAXBContext.newInstance(AEATIVA2013.class);				
 			Marshaller um = context.createMarshaller();
+			um.setProperty("jaxb.encoding", "ISO-8859-1");
 			um.marshal(iva,writer);
 			SQLUtils.setString(insertStmt, 14, writer.toString());
 			
@@ -391,6 +393,7 @@ public class SQLMod390 {
 				StringReader reader = new StringReader(model);
 				JAXBContext context = JAXBContext.newInstance(AEATIVA2013.class);				
 				Unmarshaller um = context.createUnmarshaller();
+				//um.setProperty("jaxb.encoding", "ISO-8859-1");
 				AEATIVA2013 iva = (AEATIVA2013) um.unmarshal(reader);
 				populate(mod390, iva);
 			}
@@ -992,7 +995,7 @@ public class SQLMod390 {
 		iva.setIdDoc(tipoDoc);
 		
 		DatIdent datIdent = new DatIdent();
-		TipoPersonaFisica tp = new TipoPersonaFisica();
+		
 		if ( mod390.isLegalEntity() ) {
 			TipoPersonaJuridica tpj = new TipoPersonaJuridica();
 			TipoIdentificacionPersonaJuridica tipj = new TipoIdentificacionPersonaJuridica();
@@ -1001,6 +1004,7 @@ public class SQLMod390 {
 			tpj.setIdentPersJuridica(tipj);
 			datIdent.setPersJuridica(tpj);
 		} else {
+			TipoPersonaFisica tp = new TipoPersonaFisica();
 			TipoIdentificacionPersonaFisica tipf = new TipoIdentificacionPersonaFisica();
 			tipf.setNIF(mod390.getDocument());
 			tipf.setNombre(toUppercase(mod390.getName()));
@@ -1016,8 +1020,11 @@ public class SQLMod390 {
 		
 		iva.setDevengo(getDevengo(mod390));
 		iva.setDatEstadisticos(getStatisticalData(mod390));
-		iva.setRepresentanteFisica( getRepresentanteFisica(mod390) );	
-		iva.getRepresentanteJuridica().addAll( getRepresentanteJuridica(mod390) );
+		if ( mod390.isLegalEntity() ) {
+			iva.getRepresentanteJuridica().addAll( getRepresentanteJuridica(mod390) );
+		} else {
+			iva.setRepresentanteFisica( getRepresentanteFisica(mod390) );
+		}
 		iva.setRegGeneral(getRegGeneral(mod390));
 		// TODO
 		// iva.setRegSimplificado(null);
@@ -2151,5 +2158,6 @@ public class SQLMod390 {
 		}
 		
 	}
+	
 }
  

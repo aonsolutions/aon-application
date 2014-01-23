@@ -632,6 +632,14 @@ public interface FiscalMessages extends Messages {
 			+ "per\u00EDodo corresponde al r\u00E9gimen especial del "
 			+ "grupo de entidades?")
 	String groupDeclarations();
+	
+	@DefaultMessage("S\u00F3lo para sujetos pasivos que tributen exclusivamente "
+			+ "a la Administraci\u00F3n del Estado. Si tributa a varias "
+			+ "Administraciones (Pa\u00EDs Vasco o Navarra) no rellene este apartado.")
+	String page7HelpText();
+	
+	@DefaultMessage("S\u00F3lo para sujetos pasivos que tributan a varias Administraciones")
+	String page8HelpText();
 
 	// -----------------------------------------------------------Enum Messages
 	@DefaultMessage("----------")

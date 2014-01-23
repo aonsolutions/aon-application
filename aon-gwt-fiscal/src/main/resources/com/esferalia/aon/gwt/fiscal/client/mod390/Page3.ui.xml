@@ -30,15 +30,16 @@
 				<col style="width: 50px;" class="{aonResources.css.aonTextCenter}" />
 				<col style="width: 100px;" class="{aonResources.css.aonTextCenter}" />
 				<col style="width: auto;" />
+				<col style="width: 20px;" />
 			</colgroup>
 			<tr>
-				<td colspan="4">
+				<td colspan="5">
 					<g:Label text="{msg.activities}" styleName="{aonResources.css.aonBold}" />
 					<g:Label text="{msg.activitiesNote}" />
 				</td>
 			</tr>
 			<tr>
-				<td colspan="4">
+				<td colspan="5">
 					<g:Label text="{msg.mainActivity}" />
 				</td>
 			</tr>
@@ -53,6 +54,8 @@
 				</td>
 				<td>
 					<g:Label text="{msg.description}" />
+				</td>
+				<td>
 				</td>
 			</tr>
 
@@ -70,10 +73,14 @@
 				<td>
 					<g:Label ui:field='mainActivityDescription' />
 				</td>
+				<td>
+					<g:Button ui:field='mainActivityDeleteButton'
+						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconTrash}" />
+				</td>
 			</tr>
 
 			<tr>
-				<td colspan="4">
+				<td colspan="5">
 					<g:Label text="{msg.otherActivities}" />
 				</td>
 			</tr>
@@ -92,6 +99,10 @@
 				<td>
 					<g:Label ui:field='activity1Description' />
 				</td>
+				<td>
+					<g:Button ui:field='activity1DeleteButton'
+						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconTrash}" />
+				</td>
 			</tr>
 
 			<tr style="font-weight: bold;">
@@ -107,6 +118,10 @@
 				</td>
 				<td>
 					<g:Label ui:field='activity2Description' />
+				</td>
+				<td>
+					<g:Button ui:field='activity2DeleteButton'
+						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconTrash}" />
 				</td>
 			</tr>
 
@@ -124,6 +139,10 @@
 				<td>
 					<g:Label ui:field='activity3Description' />
 				</td>
+				<td>
+					<g:Button ui:field='activity3DeleteButton'
+						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconTrash}" />
+				</td>
 			</tr>
 
 			<tr style="font-weight: bold;">
@@ -140,6 +159,10 @@
 				<td>
 					<g:Label ui:field='activity4Description' />
 				</td>
+				<td>
+					<g:Button ui:field='activity4DeleteButton'
+						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconTrash}" />
+				</td>
 			</tr>
 
 			<tr style="font-weight: bold;">
@@ -155,6 +178,10 @@
 				</td>
 				<td>
 					<g:Label ui:field='activity5Description' />
+				</td>
+				<td>
+					<g:Button ui:field='activity5DeleteButton'
+						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconTrash}" />
 				</td>
 			</tr>
 		</table>
