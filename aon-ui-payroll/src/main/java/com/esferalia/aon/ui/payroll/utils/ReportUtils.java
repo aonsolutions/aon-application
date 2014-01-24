@@ -96,7 +96,7 @@ public class ReportUtils {
 				list.add(t);
 			}
 		}
-		Comparator<T> comparator = new BeanComparator(property);
+		Comparator<T> comparator = new BeanComparator(property,ComparableComparator.INSTANCE);
 		Collections.sort(list, comparator);
 		return list;
 	}
