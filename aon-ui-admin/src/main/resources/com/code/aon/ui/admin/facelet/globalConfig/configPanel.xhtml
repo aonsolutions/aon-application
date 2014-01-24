@@ -167,6 +167,15 @@
 								</aon:commandLink>
 							</aon:div>						
 						</c:if>
+						<c:if test="#{actionDenied.moduleEnabled['marketing'] || actionDenied.moduleEnabled['infoweb']}">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="publishParameters" 
+									reRender="configPanelBar,configContent"
+									action="globalConfig_form"
+									actionListener="#{publishParameter.onInit}"
+									value="#{bundle.infoweb_publish_group}" />
+							</aon:div>
+						</c:if>						
 					</aon:div>			
 				</rich:panelBarItem>
 				<rich:panelBarItem id="security"

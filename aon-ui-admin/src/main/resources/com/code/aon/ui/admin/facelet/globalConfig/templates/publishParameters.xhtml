@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:form id="globalConfigPrintParametersForm">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{bundle.config_publish_parameters_module}" />
+			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+			<ui:define name="toolbarContent">
+				<aon:commandButton id="save"
+					value="#{bundle.aon_save}"
+					actionListener="#{publishParameter.accept}"
+					styleClass="aon-finding-toolbar-item aon-icon-accept"
+					accesskey="#{bundle.aon_key_save}" />
+			</ui:define>				
+		</ui:decorate>
+	
+		<aon:div styleClass="aon-scroll-area">
+		
+			<aon:panelGrid columns="2">			
+				<aon:outputLabel for="FtpServer"
+					value="#{bundle.config_ftp_server}" />
+				<aon:inputText id="FtpServer" value="#{publishParameter.to.ftpServer}"
+					size="60" required="true" />
+			
+				<aon:outputLabel for="FtpUser"
+					value="#{bundle.aon_login}" />
+				<aon:inputText id="FtpUser" value="#{publishParameter.to.ftpUser}"
+					size="20" required="true" />
+			
+				<aon:outputLabel for="FtpPassword"
+					value="#{bundle.aon_login_passwd}" />
+				<aon:inputText id="FtpPassword" value="#{publishParameter.to.ftpPassword}"
+					size="20" required="true" />
+
+				<aon:outputLabel for="PublishPath"
+					value="#{bundle.config_publish_path}" />
+				<aon:inputText id="PublishPath" value="#{publishParameter.to.publishPath}"
+					size="60" required="true" />
+			</aon:panelGrid>
+
+			<c:if test="#{actionDenied.moduleEnabled['infoweb']}">
+
+				<aon:panel>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_module_infoweb}" />
+					</f:facet>
+					<aon:panelGrid columns="2">
+
+						<aon:outputLabel for="PreviewPath"
+							value="#{bundle.config_preview_path}" />
+						<aon:inputText id="PreviewPath" value="#{publishParameter.to.previewPath}"
+							size="60" required="true" />
+					
+						<aon:outputLabel for="PreviewURL"
+							value="#{bundle.config_preview_url}" />
+						<aon:inputText id="PreviewURL" value="#{publishParameter.to.previewURL}"
+							size="60" required="true" />
+					
+						<aon:outputLabel for="PublishURL"
+							value="#{bundle.config_pubish_url}" />
+						<aon:inputText id="PublishURL" value="#{publishParameter.to.publishURL}"
+							size="60" required="true" />
+					
+					</aon:panelGrid>
+				</aon:panel>
+
+			</c:if>
+
+		</aon:div>
+
+	</aon:form>
+
+</ui:composition>

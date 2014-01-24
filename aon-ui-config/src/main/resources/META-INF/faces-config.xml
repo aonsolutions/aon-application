@@ -808,13 +808,6 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	<!-- =================== PUBLISH PARAMETER ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>publishParameter</from-outcome>
-			<to-view-id>/com/code/aon/ui/config/facelet/publishParameter/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>	
 	<!-- ========== Asignacion de cuentas a tipos de formas de pago ========== -->
 	<navigation-rule>
 	    <navigation-case>

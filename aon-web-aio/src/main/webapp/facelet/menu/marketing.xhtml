@@ -62,14 +62,6 @@
 										value="#{bundle.marketing_newsletter_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="publishParameter-marketing" 
-										action="publishParameter-marketing" 
-										actionListener="#{publishParameter.onInit}"
-										value="#{bundle.config_publish_parameters_module}" >
-										<f:setPropertyActionListener target="#{publishParameter.showOnlyFTP}" value="#{true}" />
-									</aon:commandLink>
-								</aon:div>								
-								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="rss" action="rss_form"
 										actionListener="#{rss.onInit}"
 										value="#{bundle.marketing_news_rss}" />
