@@ -59,7 +59,7 @@ public class ReportUtils {
 		List<T> list = new LinkedList<T>(collection);
 		Comparator<T> comparators[] = new Comparator[properties.length];
 		for (int i = 0; i < properties.length; i++) {
-			comparators[i] = new BeanComparator(properties[i]);
+			comparators[i] = new BeanComparator(properties[i],ComparableComparator.INSTANCE);
 
 		}
 		Comparator<T> comparator = new ChainedComparator<T>(comparators);
