@@ -15,6 +15,7 @@ import net.sf.jasperreports.engine.JRRenderable;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.hibernate.util.ComparableComparator;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -28,10 +29,27 @@ import com.ibm.icu.text.RuleBasedNumberFormat;
 
 public class ReportUtils {
 
+	public static class ComparableComparator implements Comparator {
+
+		public int compare(Object x, Object y) {
+			if ( x == y )
+				return 0;
+			if ( x == null )
+				return 1;
+			if ( y == null )
+				return -1;
+			return ( (Comparable) x ).compareTo(y);
+		}
+		
+		public static final Comparator INSTANCE = new ComparableComparator();
+
+	}
+
+	
 	public static final <T> List<T> sort(Collection<T> collection,
 			String property) {
 		List<T> list = new LinkedList<T>(collection);
-		Comparator<T> comparator = new BeanComparator(property);
+		Comparator<T> comparator = new BeanComparator(property,ComparableComparator.INSTANCE);
 		Collections.sort(list, comparator);
 		return list;
 	}
