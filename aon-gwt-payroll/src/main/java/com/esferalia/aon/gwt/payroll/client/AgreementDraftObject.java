@@ -305,6 +305,10 @@ public class AgreementDraftObject implements IContextProvider {
 		return agreementDraft.getVariables();
 	}
 
+	public Variable getVariable(String var) {
+		return agreementDraft.getSalaryTable().get(0, var);
+	}
+
 	public Variable getVariable(Level level, String var) {
 		return agreementDraft.getSalaryTable().get(level.getId(), var);
 	}

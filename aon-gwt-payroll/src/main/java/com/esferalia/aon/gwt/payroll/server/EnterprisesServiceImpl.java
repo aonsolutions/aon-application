@@ -1159,8 +1159,5 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
-	public static void main(String[] args) {
-		System.out.println("Salario Base ( @{SALARIO_HORA} € x @{HORAS} horas )".replaceAll("@\\{([^\\}]*)\\}", ""));
-	}
 
 }

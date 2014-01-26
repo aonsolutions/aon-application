@@ -1321,14 +1321,16 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		List<Variable> context = new ArrayList<Variable>(
 				salaryDraftObject.getContext());
 		
+		boolean show = scope.compareTo(Scope.CONTRACT) >= 0;
 		//for (Scope step : SCOPE_STEPS) {
 		while(!context.isEmpty()){
 			Scope step = context.get(0).getScope();
-			if (step.compareTo(scope) < 0) {
+			if (step.compareTo(scope) <= 0) {
+				dumpContext(context, scope, show);
 				break;
+			} else {
+				dumpContext(context, step, show);
 			}
-			boolean show = scope.compareTo(Scope.CONTRACT) >= 0;
-			dumpContext(context, step, show);
 		}
 
 		List<Event> events = salaryDraftObject.getEvents();
@@ -2021,7 +2023,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	 * 
 	 * @param show
 	 */
-	private void dumpContext(List<Variable> context, Scope toScope, boolean show) {
+	private void dumpContext(List<Variable> context, Scope to, boolean show) {
 		int cols = 3;
 
 		int count = contextTable.getRowCount() * cols;
@@ -2035,8 +2037,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				continue;
 			}
 
-			Scope varScope = variable.getScope();
-			if (varScope.compareTo(toScope) < 0) {
+			Scope scope = variable.getScope();
+			if (scope.compareTo(to) < 0) {
 				if (!(variable instanceof UndefinedVariable)
 						|| variable.isImpicit()) {
 					continue;
@@ -2072,7 +2074,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 				valuePanel.add(itemButton);
 				// only show payments of variables at 'to' scope...
-				itemButton.setValue(show && (varScope.compareTo(toScope) >= 0),
+				itemButton.setValue(show && (scope.compareTo(to) >= 0),
 						true);
 			} else if (variable instanceof UndefinedDeductionVariable) {
 				String styles[] = eventStyles.get(Event.Type.WARNING);
@@ -2085,11 +2087,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				itemButton.setValue(show, true);
 			}
 
-			if (varScope.compareTo(Scope.AGREEMENT) > 0
+			if (scope.compareTo(Scope.AGREEMENT) > 0
 					&& variable.isDefinedAt(Scope.AGREEMENT))
 				valuePanel.add(getAgreementVarButton(variable));
 
-			if (varScope.compareTo(Scope.APPLICATION) > 0
+			if (scope.compareTo(Scope.APPLICATION) > 0
 					&& (variable.isDefinedAt(Scope.SYSTEM) || variable
 							.isDefinedAt(Scope.APPLICATION)))
 				valuePanel.add(getSystemVarButton(variable));

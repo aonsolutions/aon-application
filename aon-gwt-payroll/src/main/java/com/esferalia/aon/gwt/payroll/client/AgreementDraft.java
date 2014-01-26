@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.xml.bind.helpers.DefaultValidationEventHandler;
+
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
@@ -827,6 +829,7 @@ public class AgreementDraft extends ResizeComposite implements
 		}
 
 		row = 1;
+
 		for (Level level : levels) {
 			col = 1;
 			for (String var : variables) {
@@ -835,7 +838,9 @@ public class AgreementDraft extends ResizeComposite implements
 				if (variable != null) {
 					dumpVariable(row, col, level, variable);
 				} else {
-					dumpUndefVariable(row, col, level, var);
+					Variable defaultVariable = agreementDraftObject
+							.getVariable(var);
+					dumpUndefVariable(row, col, level, var, defaultVariable);
 				}
 				if (changedVariables.contains(var)) {
 					cellFormatter.addStyleName(row, col, style.highlight());
@@ -1087,7 +1092,8 @@ public class AgreementDraft extends ResizeComposite implements
 		}
 	}
 
-	private void dumpUndefVariable(int row, int col, Level level, String name) {
+	private void dumpUndefVariable(int row, int col, Level level, String name,
+			Variable defaultVariable) {
 
 		TextBox expressionTextBox = new TextBox();
 		// yes we assume all variables are numeric.
@@ -1098,7 +1104,9 @@ public class AgreementDraft extends ResizeComposite implements
 		Variable variable = new StringVariable();
 		variable.setName(name);
 		VariableEditor variableEditor = new VariableEditor(level, variable);
+
 		variableEditor.setExpressionTextBox(expressionTextBox);
+
 	}
 
 	private Widget dumpCategories(int row, int col, Level level,
@@ -1106,19 +1114,19 @@ public class AgreementDraft extends ResizeComposite implements
 
 		String text = null;
 		TextBox categoriesTextBox = new TextBox();
-		
+
 		if (categories != null) {
 			text = StringUtils.reduce(categories, ", ");
 			categoriesTextBox.setText(text);
 		}
-		
+
 		if (StringUtils.isBlank(text)) {
 			categoriesTextBox.addStyleName(AON.AON_ICON_WARN);
 			categoriesTextBox.addStyleName(AON.AON_PADDING_LEFT);
 			categoriesTextBox
 					.setTitle("Defina al menos una categoria."
 							+ " Recuerde que los empleados se asocian a categorias no a niveles retributivos.");
-		} 
+		}
 
 		if (isDraftCategories(level)) {
 			salaryTable.getCellFormatter().addStyleName(row, col,
@@ -1126,7 +1134,7 @@ public class AgreementDraft extends ResizeComposite implements
 			if (row > 0)
 				salaryTable.getCellFormatter().addStyleName(row - 1, col,
 						AON.AON_DATA_TABLE_CELL_HIGHLIGHT_TOP);
-			if ( !StringUtils.isBlank(text) ){
+			if (!StringUtils.isBlank(text)) {
 				categoriesTextBox.addStyleName(AON.AON_ICON_CHANGED);
 				categoriesTextBox.addStyleName(AON.AON_PADDING_LEFT);
 			}
@@ -1726,12 +1734,15 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private String getIconRowStyle(Extra extra) {
-		return isDraftExtra(extra) ? AON.AON_ICON_ROW_SELECTOR_CHANGED : AON.AON_ICON_ROW_SELECTOR;
+		return isDraftExtra(extra) ? AON.AON_ICON_ROW_SELECTOR_CHANGED
+				: AON.AON_ICON_ROW_SELECTOR;
 	}
 
-	private String getIconRowStyle(Payment payment ) {
-		return isDraftPayment(payment) ? AON.AON_ICON_ROW_SELECTOR_CHANGED : AON.AON_ICON_ROW_SELECTOR;
+	private String getIconRowStyle(Payment payment) {
+		return isDraftPayment(payment) ? AON.AON_ICON_ROW_SELECTOR_CHANGED
+				: AON.AON_ICON_ROW_SELECTOR;
 	}
+
 	// ------------------------------------------------------------------------
 
 	private static Element clear(Element el) {

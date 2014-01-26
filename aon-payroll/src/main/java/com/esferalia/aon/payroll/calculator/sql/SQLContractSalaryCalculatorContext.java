@@ -549,8 +549,8 @@ public class SQLContractSalaryCalculatorContext implements
 		this.agreementPayments = new LRUCache<Integer, Collection<IContractPayment>>(
 				CACHE_SIZE, agreementPaymentsFactory);
 
-		agreementContextFactory = new SQLAgreementContextFactory(this,
-				this.startDate, this.endDate);
+		agreementContextFactory = new SQLAgreementContextFactory(connection,
+				this.startDate, this.endDate, order);
 		this.agreementExpressionContexts = new LRUCache<AgreementContextKey, ExpressionContext>(
 				CACHE_SIZE, agreementContextFactory);
 		this.leaveLoader = new SQLContractLeaveLoader(this.startDate,

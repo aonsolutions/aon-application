@@ -14,9 +14,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
-import org.mvel2.ErrorDetail;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.mvel2.PropertyAccessException;
@@ -31,6 +29,20 @@ public class ExpressionContext {
 
 	public abstract static class MacroException extends ExpressionException {
 		public abstract String doMacro(String expr);
+	}
+
+	public static class DeferredException extends MacroException {
+
+		public static final DeferredException EXCEPTION = new DeferredException();
+
+		private DeferredException() {
+			// Exists only to defeat instantiation.
+		}
+
+		@Override
+		public String doMacro(String expr) {
+			return expr;
+		}
 	}
 
 	public static final String REMOVE_VARIABLE = "REMOVE_VARIABLE()";
@@ -63,6 +75,30 @@ public class ExpressionContext {
 		public RemovedExpressionVariable<?> getVariable() {
 			return var;
 		}
+	}
+
+	public static class DeferredExpressionVariable<T> extends
+			ExpressionVariable<T> implements ITimedResult<T> {
+
+		public DeferredExpressionVariable(Period p,
+				IExpression expression) {
+			super(null, p, expression);
+		}
+		public DeferredExpressionVariable(Date start, Date end,
+				IExpression expression) {
+			this( new Period(start, end), expression);
+		}
+
+		@Override
+		public T getValue() {
+			throw new ExpressionExceptionWrapper(DeferredException.EXCEPTION);
+		}
+
+		@Override
+		public Map<String, ITimedVariable<?>> getContext() {
+			return Collections.emptyMap();
+		}
+
 	}
 
 	public static class RemovedExpressionVariable<T> extends
@@ -200,12 +236,11 @@ public class ExpressionContext {
 			int offset = start + 1;
 			int len = end - offset + 1;
 			property = new String(expr, offset, len);
-		} while ( !isJavaIdentifier(property) || bindings.containsKey(property));
+		} while (!isJavaIdentifier(property) || bindings.containsKey(property));
 
 		return property;
 	}
 
-	
 	private Variables variables;
 
 	public ExpressionContext() {
