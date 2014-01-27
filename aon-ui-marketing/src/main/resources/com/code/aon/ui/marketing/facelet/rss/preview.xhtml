@@ -33,6 +33,30 @@
 						<f:selectItems value="#{marketingCollections.channels}" />
 					</aon:selectOneMenu>												
 
+					<aon:outputLabel for="RSS_numberOfNews"
+						value="#{bundle.marketing_rss_news_number}" />
+					<aon:selectOneMenu id="RSS_numberOfNews" 
+						reRender="RSS_previewURL"
+						value="#{rss.numberOfNews}">
+						<f:selectItem itemLabel="1" itemValue="#{1}"/>
+						<f:selectItem itemLabel="5" itemValue="#{5}"/>												
+						<f:selectItem itemLabel="10" itemValue="#{10}"/>
+						<f:selectItem itemLabel="15" itemValue="#{15}"/>
+						<f:selectItem itemLabel="20" itemValue="#{20}"/>
+						<f:selectItem itemLabel="25" itemValue="#{25}"/>
+						<f:selectItem itemLabel="#{bundle.marketing_rss_all}" value="#{null}"/>
+					</aon:selectOneMenu>												
+						
+					<aon:outputLabel for="RSS_date"
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate id="RSS_date" inputSize="16"
+						reRender="RSS_previewURL"
+						value="#{rss.date}" timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_timestamp2_pattern}">
+						<a4j:support event="onchanged" ajaxSingle="true"
+							reRender="RSS_previewURL" />						
+					</aon:selectInputDate>								
+
 					<aon:outputText value="#{bundle.favorite_url}" />
 					<aon:outputLink id="RSS_previewURL"
 						target="_blank" value="#{rss.previewURL}" >

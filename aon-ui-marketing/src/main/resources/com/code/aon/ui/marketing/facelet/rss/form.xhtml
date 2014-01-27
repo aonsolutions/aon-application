@@ -39,7 +39,16 @@
 						value="#{rss.category}">
 						<f:selectItem itemLabel="#{bundle.marketing_channel_all}" value="#{null}"/>
 						<f:selectItems value="#{marketingCollections.channels}" />
-					</aon:selectOneMenu>												
+					</aon:selectOneMenu>				
+					
+					<aon:outputLabel for="RSS_date"
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate id="RSS_date" inputSize="16"
+						value="#{rss.date}" timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_timestamp2_pattern}">
+						<a4j:support event="onchanged" ajaxSingle="true"
+							reRender="RSS_downloadURL" />						
+					</aon:selectInputDate>								
 
 					<aon:outputText value="#{bundle.aon_document_download_url}" />
 					<aon:outputLink id="RSS_downloadURL"

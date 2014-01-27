@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,6 +44,10 @@ public class RSSServlet extends HttpServlet {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(RSSServlet.class.getName());
 	
+	public static final String LIMIT_PARAMETER = "limit";
+	
+	public static final String DATE_PARAMETER = "date";
+	
 	public static final String SERVLET_PATH = "/aonFeed/";
 
 	private void finishDownload( HttpServletResponse response, OutputStream out ) {
@@ -75,6 +80,15 @@ public class RSSServlet extends HttpServlet {
 		}
 		return null;
 	}
+
+	private Date getDateParameter( HttpServletRequest req ) {
+		String value = req.getParameter(DATE_PARAMETER);
+		if (! StringUtils.isEmpty(value) && NumberUtils.isNumber(value) ) {
+			return new Date(NumberUtils.toLong(value));
+		}
+		return null;
+	}
+	
 	
 	private byte[] getRSSData( HttpServletRequest req, String value ) {
 		byte[] data = null;
@@ -86,7 +100,8 @@ public class RSSServlet extends HttpServlet {
 			c =  DatabaseUtil.getConnection(domainName);
 			Integer domainId = DatabaseUtil.getDomain(c,domainName);
 			Integer channelId = getChannelId(value, RSSController.RSS_REGEX);
-			data = RSSController.getRSS(session, domainId, channelId, getURLPreffix(req));
+			Date date = getDateParameter(req);
+			data = RSSController.getRSS(session, domainId, channelId, getURLPreffix(req), date);
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error getting rss", th );
 		} finally {
@@ -180,7 +195,9 @@ public class RSSServlet extends HttpServlet {
 			if (! channels.isEmpty() ) {
 				res.setContentType( MimeType.MIME_HTML.getName() );
 				PrintWriter writer = res.getWriter();
-				String html = RSSController.getPreviewHtml(value, getURLPreffix(req), channels);
+				String limit = req.getParameter(LIMIT_PARAMETER);
+				Date date = getDateParameter(req);
+				String html = RSSController.getPreviewHtml(value, getURLPreffix(req), channels, limit, date);
 				writer.write(html);
 				writer.flush();
 				writer.close();

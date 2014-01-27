@@ -56,7 +56,8 @@ public class RSSController {
 	public static final String RSS_REGEX = RSS_PREFFIX + "-(\\d+)\\." + MimeType.MIME_XML.getExtension();
 
 	public static final String PREVIEW_PREFFIX = "preview";
-	public static final String PREVIEW_REGEX = PREVIEW_PREFFIX + "-(\\d+)\\." + MimeType.MIME_HTML.getExtension();
+	public static final String PREVIEW_LAST_PREFFIX = "previewLast";
+	public static final String PREVIEW_REGEX = "\\w+-(\\d+)\\." + MimeType.MIME_HTML.getExtension();
 	public static final String PREVIEW_PATH = "/com/code/aon/ui/marketing/facelet/rss/preview/";
 
 	public static final String CHANNEL_PARAMETER = "channel";
@@ -81,6 +82,10 @@ public class RSSController {
 	
 	private LogPanelController log = LogPanelController.getInstance();
 	
+	private Long numberOfNews;
+	
+	private Date date;
+	
 	public Category getCategory() {
 		return category;
 	}
@@ -89,9 +94,26 @@ public class RSSController {
 		this.category = category;
 	}
 	
-	public String getDownloadURL() {
-		return getURL(RSS_PREFFIX, category, MimeType.MIME_XML);
+	private String createDownloadURL( String preffix, Category category, MimeType mimeType ) {
+		boolean addSeparator = false; 
+		String url = getURL(preffix, category, mimeType);
+		if ( this.numberOfNews != null ) {
+			url += "?" + RSSServlet.LIMIT_PARAMETER +  "=" + this.numberOfNews;
+			addSeparator = true;
+		}
+		if ( this.date != null ) {
+			url += (addSeparator ? "&" : "?" )+ RSSServlet.DATE_PARAMETER +  "=" + this.date.getTime();
+		}
+		return url;		
 	}
+	
+	public String getDownloadURL() {
+		return createDownloadURL(RSS_PREFFIX, category, MimeType.MIME_XML);
+	}
+	
+	public String getPreviewURL() {
+		return createDownloadURL(RSSController.PREVIEW_PREFFIX, category, MimeType.MIME_HTML);
+	}	
 
 	private byte[] getRSS() throws IOException {
 		Document document = null;
@@ -101,7 +123,7 @@ public class RSSController {
 			session = HibernateUtil.getSession(sfn);
 			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			Integer channelId = ( category != null ) ? category.getId() : null;
-			document = createDocument(session, ds.getDomainId(), channelId, ds.getDomainURL());			
+			document = createDocument(session, ds.getDomainId(), channelId, ds.getDomainURL(), null);			
 		} catch ( Throwable e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
@@ -150,7 +172,7 @@ public class RSSController {
 		return item;
 	}
 	
-	private static Document createDocument( Session session, Integer domainId, Integer channelId, String urlPreffix ) {
+	private static Document createDocument( Session session, Integer domainId, Integer channelId, String urlPreffix, Date date ) {
 		 Document document = DocumentHelper.createDocument();
 		 Element root = document.addElement( RSS_ELEMENT );
 		 root.addAttribute("version", "2.0");
@@ -162,12 +184,12 @@ public class RSSController {
 		 if ( channelId != null ) {
 			 criteria.add(Restrictions.eq("category.id", channelId));
 		 }
-		 Date now = new Date();
+		 Date referenceDate = (date == null) ? new Date() : date;
 		 Criterion initDateExpr1 = Restrictions.isNull("initDate");
-		 Criterion initDateExpr2 = Restrictions.le("initDate", now);
+		 Criterion initDateExpr2 = Restrictions.le("initDate", referenceDate);
 		 criteria.add(Restrictions.or(initDateExpr1, initDateExpr2));
 		 Criterion endDateExpr1 = Restrictions.isNull("endDate");
-		 Criterion endDateExpr2 = Restrictions.ge("endDate", now);
+		 Criterion endDateExpr2 = Restrictions.ge("endDate", referenceDate);
 		 criteria.add(Restrictions.or(endDateExpr1, endDateExpr2));
 
 		 Map<Integer,Element> channels = new HashMap<Integer, Element>();
@@ -192,13 +214,15 @@ public class RSSController {
 		return sw.toString().getBytes(format.getEncoding());		
 	}
 	
-	public static byte[] getRSS( Session session, Integer domainId, Integer channelId, String urlPreffix ) throws IOException {
-		Document document = createDocument(session, domainId, channelId, urlPreffix);
+	public static byte[] getRSS( Session session, Integer domainId, Integer channelId, String urlPreffix, Date date ) throws IOException {
+		Document document = createDocument(session, domainId, channelId, urlPreffix, date);
 		return getData(document);		
 	}
 	
 	public void onInit(ActionEvent event) {
 		setCategory(null);
+		setDate(null);
+		setNumberOfNews(null);
 		PublishParameterController ppc = (PublishParameterController) AonUtil.getRegisteredBean(PUBLISH_PARAMETER);
 		this.publishProperties = ppc.getPublishProperties();
 	}		
@@ -257,17 +281,19 @@ public class RSSController {
 		url.append('.').append(mimeType.getExtension());
 		return url.toString();
 	}
-	
-	public String getPreviewURL() {
-		return getURL(RSSController.PREVIEW_PREFFIX, category, MimeType.MIME_HTML);		
-	}
 
-	public static String getPreviewHtml( String value, String urlPreffix, List<Category> channels ) {
+	public static String getPreviewHtml( String value, String urlPreffix, List<Category> channels, String limit, Date date ) {
 		try {
 			String template = StringUtils.substringBefore(FilenameUtils.getBaseName(value), "-");
 			VelocityHelper velocityHelper = new VelocityHelper();
 			velocityHelper.init( PREVIEW_PATH );
 			TemplateHelper th = velocityHelper.getTemplateHelper();
+			if ( date != null ) {
+				th.putInContext("URLSuffix", "?date="+date.getTime());
+			}
+			if (! StringUtils.isEmpty(limit) ) {
+				th.putInContext("parameters", "limit:" + limit);
+			}
 			th.putInContext("channelURL", urlPreffix + RSSServlet.SERVLET_PATH);
 			th.putInContext("channels", channels);
 			return th.processTemplate(template);
@@ -276,5 +302,23 @@ public class RSSController {
 		}		
 		return null;
 	}
+
+	public Long getNumberOfNews() {
+		return numberOfNews;
+	}
+
+	public void setNumberOfNews(Long numberOfNews) {
+		this.numberOfNews = numberOfNews;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	
+	
 	
 }
