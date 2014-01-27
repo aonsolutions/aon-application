@@ -205,7 +205,12 @@ public class ContractInfoController extends BasicController {
 		try {
 			if(contractFieldList!=null){
 				for(ContractField field: contractFieldList){
-					this.getManagerBean().insertOrUpdate(field.getContractInfo());
+					if(StringUtils.isNotBlank(field.getContractInfo().getExpression())
+							&& !StringUtils.equalsIgnoreCase(field.getContractInfo().getExpression(), "false")){
+						this.getManagerBean().insertOrUpdate(field.getContractInfo());
+					} else if(field.getContractInfo().getId()!=null){
+						this.getManagerBean().remove(field.getContractInfo());
+					}
 				}
 			}
 		} catch (ManagerBeanException e) {

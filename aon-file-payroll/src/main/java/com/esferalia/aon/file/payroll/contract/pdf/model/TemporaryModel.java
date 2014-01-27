@@ -18,6 +18,7 @@ import com.esferalia.aon.file.payroll.contrata.ContrataContratoParams;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractInfo.ContractVariable;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.contrata.TEIINTER;
 import com.esferalia.aon.payroll.enumeration.contrata.TEQPTIEM;
@@ -236,7 +237,7 @@ public class TemporaryModel extends AbstractContractModel {
 				setPdfFieldValue(TemporaryCommonField.EMPLOYEE_CONTRACT_DISTANCE_ADDR.getValue(), getContractInfoMap(contract).get(TemporaryCommonField.EMPLOYEE_CONTRACT_DISTANCE_ADDR.toString()));
 			}
 			
-			if(code == ContractCode.C401 || code == ContractCode.C402 || code == ContractCode.C410){
+			if(code.getValue().startsWith("1") || code.getValue().startsWith("4")){
 				setPdfFieldValue(TemporaryCommonField.FULL_TIME.getValue(), "true");
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(TemporaryCommonField.FULL_TIME_WEEK_HOURS.toString()))){
 					setPdfFieldValue(TemporaryCommonField.FULL_TIME_WEEK_HOURS.getValue(), getContractInfoMap(contract).get(TemporaryCommonField.FULL_TIME_WEEK_HOURS.toString()));
@@ -247,9 +248,12 @@ public class TemporaryModel extends AbstractContractModel {
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(TemporaryCommonField.FULL_TIME_END_TIME.toString()))){
 					setPdfFieldValue(TemporaryCommonField.FULL_TIME_END_TIME.getValue(), getContractInfoMap(contract).get(TemporaryCommonField.FULL_TIME_END_TIME.toString()));
 				}
-			} else if(code == ContractCode.C501 || code == ContractCode.C502 | code == ContractCode.C510 || code == ContractCode.C540){
+			} else if(code.getValue().startsWith("2") || code.getValue().startsWith("5")){
 				setPdfFieldValue(TemporaryCommonField.PARTIALLY_TIME.getValue(), "true");
-				if(contrata!=null){
+				if(StringUtils.isNotBlank(getContractDataMap(contract).get(ContextVariable.WEEK_HOURS.toString()))){
+					setPdfFieldValue(TemporaryCommonField.PARTIALLY_TIME_HOURS.getValue(), String.valueOf(Integer.parseInt(getContractDataMap(contract).get(ContextVariable.WEEK_HOURS.toString()))));
+					setPdfFieldValue(TemporaryCommonField.PARTIALLY_TIME_WEEKLY.getValue(), "true");
+				} else if(contrata!=null){
 					if(contrata.getHorasJornada()!=null){
 						setPdfFieldValue(TemporaryCommonField.PARTIALLY_TIME_HOURS.getValue(), String.valueOf(Integer.parseInt(contrata.getHorasJornada())));
 					}

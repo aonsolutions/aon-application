@@ -324,7 +324,7 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		
-		insertContractInfo(contract, params);
+//		insertContractInfo(contract, params);
 		
 	}
 	
@@ -562,7 +562,7 @@ public class ContractUtils {
 		}
 		try {
 			ContractData weekHoursData = obtainContractData(contract, ContextVariable.WEEK_HOURS.getName());
-			if(params.getSubsidized()!=null){
+			if(params.getWeekHours()!=null){
 				data = weekHoursData!=null?weekHoursData:new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
@@ -580,7 +580,7 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		
-		updateContractInfo(contract, params);
+//		updateContractInfo(contract, params);
 		
 	}
 	
