@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="rssPreviewForm">
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{bundle.marketing_preview_online}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
+			</ui:include>			
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:panelGrid columns="2">
+
+					<aon:outputLabel for="RSS_category"
+						value="#{bundle.marketing_news_channel}" />
+					<aon:selectOneMenu id="RSS_category" 
+						reRender="RSS_previewURL"
+						value="#{rss.category}">
+						<f:selectItem itemLabel="#{bundle.marketing_channel_all}" value="#{null}"/>
+						<f:selectItems value="#{marketingCollections.channels}" />
+					</aon:selectOneMenu>												
+
+					<aon:outputText value="#{bundle.favorite_url}" />
+					<aon:outputLink id="RSS_previewURL"
+						target="_blank" value="#{rss.previewURL}" >
+						<aon:outputText value="#{rss.previewURL}" />
+				    </aon:outputLink>
+						
+				</aon:panelGrid>
+			
+			</aon:div>
+			
+		</aon:form>
+		<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+			<ui:param name="logPanelTitle" value="#{bundle.publisher_publish}" />
+		</ui:include>		
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

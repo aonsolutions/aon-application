@@ -1,13 +1,12 @@
 package com.code.aon.ui.marketing.servlet;
 
-import static com.code.aon.ui.marketing.controller.RSSController.RSS_PREFFIX;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,8 +27,11 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.MimeResolver;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.marketing.News;
+import com.code.aon.registry.Category;
+import com.code.aon.registry.enumeration.CategoryType;
 import com.code.aon.ui.marketing.controller.NewsController;
 import com.code.aon.ui.marketing.controller.RSSController;
 import com.code.aon.ui.util.AonUtil;
@@ -60,9 +62,9 @@ public class RSSServlet extends HttpServlet {
 		return "http://" + server + context;
 	}
 	
-	private Integer getChannelId( String value ) {
+	private Integer getChannelId( String value, String regEx ) {
 		if (! StringUtils.isEmpty(value) ) {
-			Pattern pattern = Pattern.compile(RSSController.RSS_REGEX);
+			Pattern pattern = Pattern.compile(regEx);
 			Matcher matcher = pattern.matcher(value);
 			if ( matcher.find() ) {
 				String idValue = matcher.group(1);
@@ -83,7 +85,7 @@ public class RSSServlet extends HttpServlet {
 			String domainName = AonUtil.getServerName(req); 
 			c =  DatabaseUtil.getConnection(domainName);
 			Integer domainId = DatabaseUtil.getDomain(c,domainName);
-			Integer channelId = getChannelId(value);
+			Integer channelId = getChannelId(value, RSSController.RSS_REGEX);
 			data = RSSController.getRSS(session, domainId, channelId, getURLPreffix(req));
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error getting rss", th );
@@ -101,6 +103,18 @@ public class RSSServlet extends HttpServlet {
 		criteria.add(Restrictions.eq("id", newsId));
 		return (News) criteria.uniqueResult();		
 	}
+
+	@SuppressWarnings("unchecked")
+	private List<Category> getChannels( Session session, Integer domainId, Integer categoryId ) {
+		Criteria criteria = session.createCriteria(Category.class);
+		criteria.add(Restrictions.eq("domain", domainId));
+		if ( categoryId != null ) {
+			criteria.add(Restrictions.eq("id", categoryId));
+		} else {
+			criteria.add(Restrictions.eq("type", CategoryType.ARTICLE));			
+		}
+		return criteria.list();		
+	}	
 	
 	private void writeNewsHtml( HttpServletRequest req, HttpServletResponse res, Integer newsId ) {
 		String sessionName = HibernateUtil.getSessionFactoryName(News.class.getName());
@@ -116,7 +130,7 @@ public class RSSServlet extends HttpServlet {
 				PrintWriter writer = res.getWriter();
 				NewsController.writeHtml(news, getURLPreffix(req), writer);
 				writer.flush();
-				writer.close();					
+				writer.close();				
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error getting rss", th );
@@ -140,6 +154,45 @@ public class RSSServlet extends HttpServlet {
 		return null;
 	}
 	
+	private byte[] getPreviewData( String value ) {
+		byte[] data = null;
+		try {
+			String path = RSSController.PREVIEW_PATH + value;
+			InputStream in = this.getClass().getResourceAsStream(path);
+			data = IOUtils.toByteArray(in);
+			IOUtils.closeQuietly(in);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return data;
+	}
+	
+	private void writePreviewHtml( HttpServletRequest req, HttpServletResponse res, String value ) {
+		String sessionName = HibernateUtil.getSessionFactoryName(News.class.getName());
+		Connection c = null;
+		try {
+			Session session = HibernateUtil.getSession(sessionName);
+			String domainName = AonUtil.getServerName(req); 
+			c =  DatabaseUtil.getConnection(domainName);
+			Integer domainId = DatabaseUtil.getDomain(c,domainName);
+			Integer channelId = getChannelId(value, RSSController.PREVIEW_REGEX);
+			List<Category> channels = getChannels(session, domainId, channelId);
+			if (! channels.isEmpty() ) {
+				res.setContentType( MimeType.MIME_HTML.getName() );
+				PrintWriter writer = res.getWriter();
+				String html = RSSController.getPreviewHtml(value, getURLPreffix(req), channels);
+				writer.write(html);
+				writer.flush();
+				writer.close();
+			}
+		} catch ( Throwable th ) {
+			LOGGER.error( "Error getting rss", th );
+		} finally {
+			DatabaseUtil.closeQuietly(c);
+			HibernateUtil.closeSession(sessionName);
+		}
+	}
+	
 	/**
 	 * Retrieves the required RegistryAttachment from the database
 	 * 
@@ -154,17 +207,29 @@ public class RSSServlet extends HttpServlet {
 		try {
 			String uri = StringUtils.substringBefore(req.getRequestURI(), ";");
 			String value = StringUtils.substringAfterLast(uri, "/");
-			if ( StringUtils.startsWith(value, RSS_PREFFIX) ) {
+			if ( StringUtils.startsWith(value, RSSController.RSS_PREFFIX) ) {
 				byte[] data = getRSSData(req, value);
 				if (! ArrayUtils.isEmpty(data) ) {
 					out = DownloadUtil.initDownload(res, value, MimeType.MIME_RSS, data.length);
 					InputStream in = new ByteArrayInputStream(data);
 					IOUtils.copyLarge(in, out);
 				}
-			} else {
+			} else if ( StringUtils.startsWith(value, NewsController.NEWS_PREFFIX) ) {
 				Integer newsId = getNewsId(value);
 				if ( newsId != null ) {
 					writeNewsHtml( req, res, newsId );
+				}
+			} else if ( StringUtils.startsWith(value, RSSController.PREVIEW_PREFFIX) ) {
+				MimeType type = MimeResolver.getMimeTypeByExtension(value);
+				if ( type == MimeType.MIME_HTML) {
+					writePreviewHtml(req, res, value);
+				} else {
+					byte[] data = getPreviewData(value);
+					if (! ArrayUtils.isEmpty(data) ) {
+						out = DownloadUtil.initDownload(res, value, type, data.length);
+						InputStream in = new ByteArrayInputStream(data);
+						IOUtils.copyLarge(in, out);
+					}
 				}
 			}
 		} catch (Throwable th) {

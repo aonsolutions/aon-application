@@ -154,6 +154,11 @@
 										actionListener="#{rss.onInit}"
 										value="#{bundle.marketing_rss_publish}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="previewRSS" action="rss_preview"
+										actionListener="#{rss.onInit}"
+										value="#{bundle.marketing_preview_online}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>			
 					</aon:panelGroup>		

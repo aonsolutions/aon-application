@@ -1152,6 +1152,10 @@
 			<from-outcome>rss_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/marketing/facelet/rss/form.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>rss_preview</from-outcome>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/rss/preview.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>				
 
 	<!-- =================== Channel ================= -->	

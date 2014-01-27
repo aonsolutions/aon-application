@@ -10,12 +10,15 @@ import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -28,8 +31,11 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.velocity.TemplateHelper;
+import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.marketing.News;
 import com.code.aon.registry.Category;
@@ -39,6 +45,7 @@ import com.code.aon.ui.config.PublishProperties;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.controller.PublishParameterController;
 import com.code.aon.ui.config.util.FTPUtil;
+import com.code.aon.ui.marketing.servlet.RSSServlet;
 import com.code.aon.ui.util.AonUtil;
 
 public class RSSController {
@@ -47,7 +54,11 @@ public class RSSController {
 	
 	public static final String RSS_PREFFIX = "rss";
 	public static final String RSS_REGEX = RSS_PREFFIX + "-(\\d+)\\." + MimeType.MIME_XML.getExtension();
-	
+
+	public static final String PREVIEW_PREFFIX = "preview";
+	public static final String PREVIEW_REGEX = PREVIEW_PREFFIX + "-(\\d+)\\." + MimeType.MIME_HTML.getExtension();
+	public static final String PREVIEW_PATH = "/com/code/aon/ui/marketing/facelet/rss/preview/";
+
 	public static final String CHANNEL_PARAMETER = "channel";
 	
 	private static final String DESCRIPTION_ELEMENT = "description";
@@ -79,7 +90,7 @@ public class RSSController {
 	}
 	
 	public String getDownloadURL() {
-		return ChannelController.getURL(category);
+		return getURL(RSS_PREFFIX, category, MimeType.MIME_XML);
 	}
 
 	private byte[] getRSS() throws IOException {
@@ -196,7 +207,7 @@ public class RSSController {
 		byte[] data = getRSS();
 		if (! ArrayUtils.isEmpty(data) ) {
 			InputStream in = new ByteArrayInputStream(data);
-			String fileName = ChannelController.getRSSFileName(category);
+			String fileName = getRSSFileName(RSS_PREFFIX, category, MimeType.MIME_XML);
 			upload(this.publishProperties.getPublishPath(), fileName, in, data.length);			
 		}
 	}	
@@ -220,6 +231,50 @@ public class RSSController {
 			ftp.close();
 		}
 		log.finish();
+	}
+	
+	private static String getServletURLPreffix() {
+		String url = null;
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		try {
+			url = ds.getDomainURL() + RSSServlet.SERVLET_PATH;
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}		
+		return url;		
+	}
+
+	public static String getURL( String preffix, Category category, MimeType mimeType ) {
+		return getServletURLPreffix() + getRSSFileName(preffix, category, mimeType);
+	}
+		
+	private static String getRSSFileName( String preffix, Category category, MimeType mimeType ) {
+		StringBuffer url = new StringBuffer();
+		url.append(preffix);
+		if ( category!=null && category.getId()!=null ) {
+			url.append('-').append(category.getId());
+		}
+		url.append('.').append(mimeType.getExtension());
+		return url.toString();
+	}
+	
+	public String getPreviewURL() {
+		return getURL(RSSController.PREVIEW_PREFFIX, category, MimeType.MIME_HTML);		
+	}
+
+	public static String getPreviewHtml( String value, String urlPreffix, List<Category> channels ) {
+		try {
+			String template = StringUtils.substringBefore(FilenameUtils.getBaseName(value), "-");
+			VelocityHelper velocityHelper = new VelocityHelper();
+			velocityHelper.init( PREVIEW_PATH );
+			TemplateHelper th = velocityHelper.getTemplateHelper();
+			th.putInContext("channelURL", urlPreffix + RSSServlet.SERVLET_PATH);
+			th.putInContext("channels", channels);
+			return th.processTemplate(template);
+		} catch (Throwable e) {
+			LOGGER.error( e.getMessage(), e);
+		}		
+		return null;
 	}
 	
 }
