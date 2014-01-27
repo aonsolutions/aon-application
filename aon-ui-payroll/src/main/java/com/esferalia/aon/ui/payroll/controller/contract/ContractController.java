@@ -52,7 +52,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel.ModelOption;
+import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
@@ -280,6 +280,14 @@ public class ContractController extends BasicController {
 		return ArrayUtils.contains(codes, contractCode) ;
 	}
 	
+	public boolean isPartiallyTimeContract(){
+		String contractCode = null;
+		if(this.getParams().getContractCode()!=null){
+			contractCode = this.getParams().getContractCode().getValue();
+		}
+		return StringUtils.startsWith(contractCode, "2") || StringUtils.startsWith(contractCode, "5");
+	}
+	
 	public boolean isExtensibleContract(){
 		String contractCode = null;
 		if(this.getParams().getContractCode()!=null){
@@ -327,14 +335,72 @@ public class ContractController extends BasicController {
 		return map.get(ContractVariable.TRAINING_COURSE.getValue())!=null;
 	}
 	
+	public String getSsStatus(){
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Contract contract = (Contract) this.getTo();
+			String ssIdSelect = "SELECT expression FROM contract_info WHERE contract = " + contract.getId() + " AND name like '" + ContractVariable.SS_CONTRACT_ID.getValue()+"'";
+			ps = conn.prepareStatement(ssIdSelect);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) return "Alta en S.S. ("+rs.getString(1)+")";
+			String afiSelect = "SELECT count(*) FROM contract_batch_detail WHERE contract = " + contract.getId();
+			ps = conn.prepareStatement(afiSelect);
+			rs = ps.executeQuery();
+			rs.next();
+			if (rs.getInt(1)>0) return "Incluido en mensaje AFI";
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return null;
+	}
+	
+	public String getSepeStatus(){
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Contract contract = (Contract) this.getTo();
+			String sepeIdSelect = "SELECT expression FROM contract_info WHERE contract = " + contract.getId() + " AND name like '" + ContractVariable.SEPE_CONTRACT_ID.getValue()+"'";
+			ps = conn.prepareStatement(sepeIdSelect);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) return "Alta en SEPE ("+rs.getString(1)+")";
+			String contrataSelect = "SELECT count(*) FROM contrata_batch_detail WHERE contract = " + contract.getId();
+			ps = conn.prepareStatement(contrataSelect);
+			rs = ps.executeQuery();
+			rs.next();
+			if (rs.getInt(1)>0) return "Incluido en notificacion Contrat@";
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return null;
+	}
+	
 	public List<?> getContractModel() {
 		ModelOption[] availableModels = IPayrollConstants.AVAILABLE_CONTRACT_MODEL_OPTIONS; 
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		if(getParams().getContractCode()!=null){
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			for(ModelOption opt: availableModels){
+			for(ModelOption opt: ModelOption.values()){
 				if( ArrayUtils.contains(opt.getCodes(), getParams().getContractCode()) ){
-					SelectItem item = new SelectItem(opt, opt.getName(locale));
+					String label = ArrayUtils.contains(availableModels, opt)?"":"* ";
+					label += opt.getName(locale);
+					SelectItem item = new SelectItem(opt, label);
 					list.add(item);
 				}
 			}
@@ -1246,6 +1312,7 @@ public class ContractController extends BasicController {
 		private Date trainingStartDate;
 		private Date trainingEndDate;
 		private ModelOption contractModelOption;
+		private Integer weekHours;
 		
 		public boolean isAgreementSalaryCheck() {
 			return agreementSalaryCheck;
@@ -1402,6 +1469,12 @@ public class ContractController extends BasicController {
 		}
 		public void setRetaQuote(boolean retaQuote) {
 			this.retaQuote = retaQuote;
+		}
+		public Integer getWeekHours() {
+			return weekHours;
+		}
+		public void setWeekHours(Integer weekHours) {
+			this.weekHours = weekHours;
 		}
 		
 		

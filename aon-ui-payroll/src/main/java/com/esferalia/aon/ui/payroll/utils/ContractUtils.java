@@ -26,7 +26,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel.ModelOption;
+import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
@@ -309,6 +309,20 @@ public class ContractUtils {
 			String msg = "Error al grabar si el contrato se acoge a la reduccion de cuotas a la S.S. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+		try {
+			if(params.getWeekHours()!=null){
+				data = new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.WEEK_HOURS.getName() );
+				data.setExpression(params.getWeekHours().toString());
+				bean.insert(data);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar las horas semanales del contrato (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
 		
 		insertContractInfo(contract, params);
 		
@@ -546,6 +560,25 @@ public class ContractUtils {
 			String msg = "Error al grabar si el contrato se acoge a la reduccion de cuotas a la S.S. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+		try {
+			ContractData weekHoursData = obtainContractData(contract, ContextVariable.WEEK_HOURS.getName());
+			if(params.getSubsidized()!=null){
+				data = weekHoursData!=null?weekHoursData:new ContractData();
+				data.setContract(contract);
+				data.setStartDate(contract.getStartDate());
+				data.setEndDate(contract.getEndDate());
+				data.setName( ContextVariable.WEEK_HOURS.getName() );
+				data.setExpression(params.getWeekHours().toString());
+				bean.insertOrUpdate(data);
+			} else {
+				if(weekHoursData != null){
+					bean.remove(weekHoursData);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar las horas semanales del contrato (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
 		
 		updateContractInfo(contract, params);
 		
@@ -645,6 +678,9 @@ public class ContractUtils {
 		}
 		if(map.get(ContextVariable.SUBSIDIZED.getName())!=null){
 			params.setSubsidized(new Boolean(map.get(ContextVariable.SUBSIDIZED.getName())));
+		}
+		if(map.get(ContextVariable.WEEK_HOURS.getName())!=null){
+			params.setWeekHours(Integer.parseInt(map.get(ContextVariable.WEEK_HOURS.getName())));
 		}
 	}
 	

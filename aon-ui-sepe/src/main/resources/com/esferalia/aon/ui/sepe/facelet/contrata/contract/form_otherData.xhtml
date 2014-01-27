@@ -71,31 +71,33 @@
 				<f:validateLength maximum="30" />
 			</aon:inputText>
 			
-			<aon:outputLabel for="workingDayType" 
-				rendered="#{controller.handler.showTipoJornada}"
-				value="#{bundle.sepe_contrata_contract_working_day_type}" />
-			<aon:selectOneMenu id="workingDayType"
-				required="true"
-				disabled="#{!controller.handler.availableTipoJornada}"
-				rendered="#{controller.handler.showTipoJornada}"
-				value="#{controller.params.tipoJornada}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{contrataCollections.TEQPTIEMCodeList}" />
-			</aon:selectOneMenu>
-			
-			<aon:outputLabel 
-				rendered="#{controller.handler.showHorasMinutosJornada}"
-				value="#{bundle.sepe_contrata_contract_working_day_duration}" />
-			<aon:div rendered="#{controller.handler.showHorasMinutosJornada}">
-				<aon:outputLabel for="workingDayHours" styleClass="aon-italic aon-margin-right"
-					value="#{bundle.sepe_hours}:" />
-				<aon:inputText id="workingDayHours" size="4" maxlength="4"
-					value="#{controller.params.horasJornada}"/>
-				<aon:outputLabel for="workingDayMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{bundle.sepe_minutes}:" />
-				<aon:inputText id="workingDayMinutes" size="2" maxlength="2"
-					value="#{controller.params.minutosJornada}"/>
-			</aon:div>
+			<c:if test="#{contract.trainingContract}" >
+				<aon:outputLabel for="workingDayType" 
+					rendered="#{controller.handler.showTipoJornada}"
+					value="#{bundle.sepe_contrata_contract_working_day_type}" />
+				<aon:selectOneMenu id="workingDayType"
+					required="true"
+					disabled="#{!controller.handler.availableTipoJornada}"
+					rendered="#{controller.handler.showTipoJornada}"
+					value="#{controller.params.tipoJornada}" >
+					<f:selectItem itemLabel="-" value="#{null}" />
+					<f:selectItems value="#{contrataCollections.TEQPTIEMCodeList}" />
+				</aon:selectOneMenu>
+				
+				<aon:outputLabel 
+					rendered="#{controller.handler.showHorasMinutosJornada}"
+					value="#{bundle.sepe_contrata_contract_working_day_duration}" />
+				<aon:div rendered="#{controller.handler.showHorasMinutosJornada}">
+					<aon:outputLabel for="workingDayHours" styleClass="aon-italic aon-margin-right"
+						value="#{bundle.sepe_hours}:" />
+					<aon:inputText id="workingDayHours" size="4" maxlength="4"
+						value="#{controller.params.horasJornada}"/>
+					<aon:outputLabel for="workingDayMinutes" styleClass="aon-italic aon-margin-left aon-margin-right"
+						value="#{bundle.sepe_minutes}:" />
+					<aon:inputText id="workingDayMinutes" size="2" maxlength="2"
+						value="#{controller.params.minutosJornada}"/>
+				</aon:div>
+			</c:if>
 
 			<aon:outputLabel 
 				rendered="#{controller.handler.showHorasMinutosConvenio}"
