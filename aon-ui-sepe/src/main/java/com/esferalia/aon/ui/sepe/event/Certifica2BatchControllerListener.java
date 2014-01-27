@@ -11,6 +11,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -23,6 +24,7 @@ import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.ui.sepe.controller.CertificadosController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.controller.batch.Certifica2BatchController;
+import com.esferalia.aon.ui.sepe.controller.batch.Certifica2ListController;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 /**
@@ -42,6 +44,8 @@ public class Certifica2BatchControllerListener extends ControllerAdapter {
 		batch.setEnterprise(SEPEUtils.getInstance().getCurrentDomainEnterprise());
 		controller.setNewBatchWizard( null );
 		controller.getNewBatchWizard().init();
+		Certifica2ListController list = (Certifica2ListController) FormUtil.getController(ISepeConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
+		list.setSearchPanelExpanded(true);
 	}
 	
 	@Override
@@ -51,7 +55,7 @@ public class Certifica2BatchControllerListener extends ControllerAdapter {
 		try {
 			controller.onSearchContracts(null);
 		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("error on onAccept ["+e.getMessage()+"]");
+			AonUtil.addErrorMessage("No se ha podido recargar la lista de contratos");
 		}
 	}
 	

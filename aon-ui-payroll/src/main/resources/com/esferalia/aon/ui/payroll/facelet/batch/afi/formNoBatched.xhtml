@@ -8,8 +8,14 @@
 	
 	
 	<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/formNoBatched.xhtml">
-		<ui:param name="controller" value="#{contractBatch}" />
 		<ui:param name="controllerList" value="#{contractList}" />
+		
+		<ui:define name="searchContent" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/afi/search_content.xhtml" >
+				<ui:param name="controller" value="#{contractList}" />
+				<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
+			</ui:include>
+		</ui:define>
 		
 		<ui:define name="listDataColumns" >
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/afi/listColumns.xhtml" />

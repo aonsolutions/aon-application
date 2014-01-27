@@ -336,58 +336,58 @@ public class ContractController extends BasicController {
 	}
 	
 	public String getSsStatus(){
-//		Connection conn = null;
-//		PreparedStatement ps = null;
-//		try {
-//			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-//			Contract contract = (Contract) this.getTo();
-//			String ssIdSelect = "SELECT expression FROM contract_info WHERE contract = " + contract.getId() + " AND name like '" + ContractVariable.SS_CONTRACT_ID.getValue()+"'";
-//			ps = conn.prepareStatement(ssIdSelect);
-//			ResultSet rs = ps.executeQuery();
-//			if (rs.next()) return "Alta en S.S. ("+rs.getString(1)+")";
-//			String afiSelect = "SELECT count(*) FROM contract_batch_detail WHERE contract = " + contract.getId();
-//			ps = conn.prepareStatement(afiSelect);
-//			rs = ps.executeQuery();
-//			rs.next();
-//			if (rs.getInt(1)>0) return "Incluido en mensaje AFI";
-//		} catch (SQLException e) {
-//			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
-//			AonUtil.addErrorMessage(msg);
-//		} catch (AonConnectionException e) {
-//			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
-//			AonUtil.addErrorMessage(msg);
-//		} finally {
-//			DatabaseUtil.closeQuietly(ps);
-//			DatabaseUtil.closeQuietly(conn);
-//		}
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Contract contract = (Contract) this.getTo();
+			String ssIdSelect = "SELECT expression FROM contract_info WHERE contract = " + contract.getId() + " AND name like '" + ContractVariable.SS_CONTRACT_ID.getValue()+"'";
+			ps = conn.prepareStatement(ssIdSelect);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) return "Alta en S.S. ("+rs.getString(1)+")";
+			String afiSelect = "SELECT count(*) FROM contract_batch_detail WHERE contract = " + contract.getId();
+			ps = conn.prepareStatement(afiSelect);
+			rs = ps.executeQuery();
+			rs.next();
+			if (rs.getInt(1)>0) return "Incluido en mensaje AFI";
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
 		return null;
 	}
 	
 	public String getSepeStatus(){
-//		Connection conn = null;
-//		PreparedStatement ps = null;
-//		try {
-//			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
-//			Contract contract = (Contract) this.getTo();
-//			String sepeIdSelect = "SELECT expression FROM contract_info WHERE contract = " + contract.getId() + " AND name like '" + ContractVariable.SEPE_CONTRACT_ID.getValue()+"'";
-//			ps = conn.prepareStatement(sepeIdSelect);
-//			ResultSet rs = ps.executeQuery();
-//			if (rs.next()) return "Alta en SEPE ("+rs.getString(1)+")";
-//			String contrataSelect = "SELECT count(*) FROM contrata_batch_detail WHERE contract = " + contract.getId();
-//			ps = conn.prepareStatement(contrataSelect);
-//			rs = ps.executeQuery();
-//			rs.next();
-//			if (rs.getInt(1)>0) return "Incluido en notificacion Contrat@";
-//		} catch (SQLException e) {
-//			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
-//			AonUtil.addErrorMessage(msg);
-//		} catch (AonConnectionException e) {
-//			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
-//			AonUtil.addErrorMessage(msg);
-//		} finally {
-//			DatabaseUtil.closeQuietly(ps);
-//			DatabaseUtil.closeQuietly(conn);
-//		}
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Contract contract = (Contract) this.getTo();
+			String sepeIdSelect = "SELECT expression FROM contract_info WHERE contract = " + contract.getId() + " AND name like '" + ContractVariable.SEPE_CONTRACT_ID.getValue()+"'";
+			ps = conn.prepareStatement(sepeIdSelect);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) return "Alta en SEPE ("+rs.getString(1)+")";
+			String contrataSelect = "SELECT count(*) FROM contrata_batch_detail WHERE contract = " + contract.getId();
+			ps = conn.prepareStatement(contrataSelect);
+			rs = ps.executeQuery();
+			rs.next();
+			if (rs.getInt(1)>0) return "Incluido en notificacion Contrat@";
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener el dato requerido. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
 		return null;
 	}
 	

@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
@@ -18,11 +16,9 @@ import com.esferalia.aon.payroll.Contract;
 
 public class PayrollEmailUtil extends CompanyEmailUtil {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(PayrollEmailUtil.class.getName());
-	
 	public void initMessageController( MessageController messageController, Contract contract, List<IAttachment> attachList, boolean facturae ) throws ManagerBeanException, IOException{
 		String[] emails = getEmails(contract.getWorkPlace().getEnterprise().getRegistry());
-		initMessageController(messageController, emails, null);
+		initMessageController(messageController, emails, "");
 		messageController.setSubject( getEmailSubject(contract) );
 		for(IAttachment attach: attachList){
 			messageController.addAttachment( getAttachFile(attach) );
@@ -30,7 +26,7 @@ public class PayrollEmailUtil extends CompanyEmailUtil {
 	}	
 	
 	public String getEmailSubject( Contract contract ) {
-		return "Documentos asociados al contrato ("+contract.getPerson().getFullName()+")";
+		return "Nuevo contrato laboral ("+contract.getPerson().getFullName()+")";
 	}
 	
 	public AonFile getAttachFile( IAttachment attach ) throws IOException {

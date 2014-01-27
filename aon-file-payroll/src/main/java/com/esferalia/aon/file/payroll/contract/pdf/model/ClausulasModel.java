@@ -10,6 +10,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.payroll.contract.pdf.IContractFieldName;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
@@ -29,19 +30,9 @@ public class ClausulasModel extends AbstractContractModel {
 	
 	@Override
 	public void loadPdfFieldValues(ContractCode code, Contract contract, IContrataParams contrataParams) throws UnsupportedContractDocumentException{
-		
-		// TODO
 		try {
 			setReader(new PdfReader(getContractModelUrl(documentName+".pdf")));
-//			String range = "1-3";
-//			ModelOption modelOption = ModelOption.valueOf(getContractInfoMap(contract).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
-//			range += ","+modelOption.getPageNumber();
-//			getReader().selectPages(range);
 			readPdfFields();
-			
-//			ContrataContratoParams contrata = (ContrataContratoParams) contrataParams;
-			
-//			super.loadPdfCommonFields(contract, contrataParams);
 			
 			setPdfFieldValue(ClausesCommonFieldName.CONTENT.getValue(), obtainClausesContent(contract));
 
@@ -53,14 +44,11 @@ public class ClausulasModel extends AbstractContractModel {
 			setPdfFieldValue(ClausesCommonFieldName.SIGN_MONTH.getValue(),dateFormatter.format(contract.getStartDate()));
 			dateFormatter.applyPattern("yy");
 			setPdfFieldValue(ClausesCommonFieldName.SIGN_YEAR.getValue(),dateFormatter.format(contract.getStartDate()));
-
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// do nothing
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// do nothing
 		}
 	}
 
@@ -96,28 +84,36 @@ public class ClausulasModel extends AbstractContractModel {
 		/*
 		 * Page 1
 		 */
-		CONTENT("Texto209",Boolean.FALSE),
-		SIGN_TOWN("munifirma",Boolean.FALSE),
-		SIGN_DAY("diafirma",Boolean.FALSE),
-		SIGN_MONTH("mesfirma",Boolean.FALSE),
-		SIGN_YEAR("añofirma",Boolean.FALSE),
+		CONTENT("Texto209"),
+		SIGN_TOWN("munifirma"),
+		SIGN_DAY("diafirma"),
+		SIGN_MONTH("mesfirma"),
+		SIGN_YEAR("añofirma"),
 		;
 		
 		private String value;
-		private boolean overridable;
 		
-		private ClausesCommonFieldName(String value, boolean overridable) {
+		private ClausesCommonFieldName(String value) {
 			this.value = value;
-			this.overridable = overridable;
 		}
 		
 		@Override
 		public boolean isOverridable(){
-			return overridable;
+			return false;
+		}
+		@Override
+		public boolean isCheck(){
+			return false;
 		}
 		@Override
 		public String getValue() {
 			return value;
+		}
+
+		@Override
+		public IContractFieldName[] getCompositeValues() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 	

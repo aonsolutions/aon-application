@@ -469,7 +469,6 @@ public class Certifica2BatchController extends BasicController {
 				if(includedPersons.contains(contract.getPerson().getId())){
 					duplicatedList.add(contract);
 				} else {
-//					Certifica2BatchDetail detail = new Certifica2BatchDetail();
 					detail.setContract(contract);
 					detail.setStatus(FileStatus.PENDING);
 					selectedList.add(detail);

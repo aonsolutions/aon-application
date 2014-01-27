@@ -225,11 +225,12 @@ public class PayrollCollectionsController {
 	
 	public List<SelectItem> getContractCodes() {
 		if (contractCodes == null) {
+			String[] TRANSFORM_CODES = {"189", "109", "139", "289", "209", "239", "309", "339", "389"};
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			contractCodes = new LinkedList<SelectItem>();
 			ContractCode[] codes = ContractCode.values();
 			for (ContractCode code : codes) {
-				if( ArrayUtils.contains(ISepeConstants.AVAILABLE_CONTRACT_CODE_COMMUNICATION, code.getValue()) ){
+				if( !ArrayUtils.contains(TRANSFORM_CODES, code.getValue()) ){
 					String name = code.getValue() +" - "+ code.getName(locale);
 					SelectItem item = new SelectItem(code, name);
 					contractCodes.add(item);

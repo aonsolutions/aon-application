@@ -24,6 +24,7 @@
 						
 						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formPersonContent.xhtml" />
 						
+						<!--  
 						<aon:outputLabel value="#{bundle.payroll_contract_sepe_communicationId}" />
 						<aon:outputText disabled="#{true}"
 							value="#{contract.sepeCommunicationId}" />
@@ -31,6 +32,22 @@
 						<aon:outputLabel value="#{bundle.payroll_contract_sepe_status}" />
 						<aon:outputText disabled="#{true}"
 							value="#{contract.to.sepeStatus}" />
+						-->
+						
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="&#160;" />
+						
+						<aon:outputText value="#{bundle.aon_status}" />
+						<aon:div>
+							<aon:outputText rendered="#{contract.ssStatus!=null}"
+								value="&#160;"
+								title="#{contract.ssStatus}"
+								styleClass="aon-icon-winsuite aon-padding-left aon-padding-right aon-margin-right" />
+							<aon:outputText rendered="#{contract.sepeStatus!=null}"
+								value="&#160;"
+								title="#{contract.sepeStatus}"
+								styleClass="aon-icon-sepe aon-padding-left aon-padding-right aon-margin-right" />
+						</aon:div>
 							
 					</aon:panelGrid>
 				

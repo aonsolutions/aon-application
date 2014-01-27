@@ -30,6 +30,9 @@ public class ContrataBatchControllerListener extends ControllerAdapter {
 		batch.setStatus(FileStatus.PENDING);
 		controller.setNewBatchWizard( null );
 		controller.getNewBatchWizard().init();
+		ContrataListController list = (ContrataListController) FormUtil.getController(ISepeConstants.CONTRATA_LIST_CONTROLLER_NAME);
+		list.setSearchPanelExpanded(true);
+		controller.onSearchContracts(null);
 	}
 	
 	@Override

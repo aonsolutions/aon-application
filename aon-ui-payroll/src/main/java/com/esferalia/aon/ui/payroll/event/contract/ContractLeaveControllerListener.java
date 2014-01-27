@@ -97,7 +97,6 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 		Date startDate = contractLeave.getStartDate();
 		if(endDate!=null && endDate.before(startDate)){
 			endDate = null;
-//			AonUtil.addErrorMessage("La fecha de alta no puede ser anterior a la fecha de baja");
 			throw new ControllerListenerException("La fecha de alta no puede ser anterior a la fecha de baja");
 		}
 	}

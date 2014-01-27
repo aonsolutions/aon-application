@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -224,24 +223,6 @@ public class ContractLeaveController extends BasicController {
 	public void onContractChange(LookupChangeEvent event){
 		calculateBases( (ContractLeave) this.getTo(), (Contract)event.getNewValue() );
 	}
-//	public void onEndDateChanged(ValueChangeEvent event){
-//		Date endDate = (Date) event.getNewValue();
-//		Date startDate = ((ContractLeave)this.getTo()).getStartDate();
-//		if(endDate!=null && endDate.before(startDate)){
-//			endDate = null;
-//			AonUtil.addErrorMessage("La fecha de alta no puede ser anterior a la fecha de baja");
-//			throw new AbortProcessingException("La fecha de alta no puede ser anterior a la fecha de baja");
-//		}
-//	}
-//	public void onChangeEndDate(ActionEvent event){
-//		Date endDate = ((ContractLeave)this.getTo()).getEndDate();
-//		Date startDate = ((ContractLeave)this.getTo()).getStartDate();
-//		if(endDate!=null && endDate.before(startDate)){
-//			endDate = null;
-//			AonUtil.addErrorMessage("La fecha de alta no puede ser anterior a la fecha de baja");
-//			throw new AbortProcessingException("La fecha de alta no puede ser anterior a la fecha de baja");
-//		}
-//	}
 	public void onStartDateChange(ActionEvent event){
 		ContractLeave leave = (ContractLeave) this.getTo();
 		if(leave!=null){

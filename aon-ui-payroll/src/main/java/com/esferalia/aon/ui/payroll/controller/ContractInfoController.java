@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +19,16 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel.IContractFieldName;
-import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel.ModelOption;
+import com.esferalia.aon.file.payroll.contract.pdf.IContractFieldName;
+import com.esferalia.aon.file.payroll.contract.pdf.IndefiniteCommonField;
+import com.esferalia.aon.file.payroll.contract.pdf.IndefiniteOptionField;
+import com.esferalia.aon.file.payroll.contract.pdf.LearningCommonField;
+import com.esferalia.aon.file.payroll.contract.pdf.LearningOptionField;
+import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
+import com.esferalia.aon.file.payroll.contract.pdf.PracticeCommonField;
+import com.esferalia.aon.file.payroll.contract.pdf.PracticeOptionField;
+import com.esferalia.aon.file.payroll.contract.pdf.TemporaryCommonField;
+import com.esferalia.aon.file.payroll.contract.pdf.TemporaryOptionField;
 import com.esferalia.aon.file.payroll.contract.pdf.model.IndefiniteModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.LearningModel;
 import com.esferalia.aon.file.payroll.contract.pdf.model.PracticeModel;
@@ -43,6 +51,8 @@ public class ContractInfoController extends BasicController {
 	private ContractModel contractModel;
 	
 	private List<ContractField> contractFieldList;
+	
+	private List<String> overridableFieldList;
 	
 	public List<ContractField> getContractFieldList() {
 		return contractFieldList;
@@ -67,6 +77,7 @@ public class ContractInfoController extends BasicController {
 	
 	@Override
 	public void initializeModel() {
+		overridableFieldList = null;
 		try {
 			if(isCommonInfo()){
 				this.getCriteria().addNullExpression("ContractInfo.contract");
@@ -85,46 +96,63 @@ public class ContractInfoController extends BasicController {
 	}
 
 	private List<String> getOverridableFieldNames(Contract contract){
-		List<String> list = new LinkedList<String>();
-		for(IContractFieldName fn: getOverridableFields(contract)){
-			if(fn.isOverridable()){
-				list.add(fn.toString());
+		if(overridableFieldList == null){
+			overridableFieldList = new LinkedList<String>();
+			for(IContractFieldName fn: getOverridableFields(contract)){
+				if(fn.isOverridable()){
+					overridableFieldList.add(fn.toString());
+				}
+			}
+			if(overridableFieldList.isEmpty()){
+				overridableFieldList.add("");
 			}
 		}
-		if(list.isEmpty()){
-			list.add("");
-		}
-		return list;
+		return overridableFieldList;
 	}
 	
 	private List<IContractFieldName> getOverridableFields(Contract contract){
 		List<IContractFieldName> list = new LinkedList<IContractFieldName>();
 		String contractModelOption = ContractUtils.getInstance().getInfoCurrentValue(contract, ContractVariable.CONTRACT_MODEL_OPTION.getValue());
 		if(contract!=null && StringUtils.isNotBlank(contractModelOption)){
+			String option = contractModelOption.substring(contractModelOption.lastIndexOf("_")+1, contractModelOption.length()); 
 			String contractModel = ModelOption.valueOf(contractModelOption).getPdfModel();
-			IContractFieldName[] fields = null;
 			if(IndefiniteModel.MODEL_NAME.equals(contractModel)){
-				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) IndefiniteModel.IndefiniteCommonFieldName.values());
-//				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) IndefiniteModel.IndefiniteOptionFieldName.values());
+				addAllCommonFields(list, IndefiniteCommonField.values());
+				addAllOptionFields(list, IndefiniteOptionField.values(), option);
 			} else if(TemporaryModel.MODEL_NAME.equals(contractModel)){
-				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) TemporaryModel.TemporaryCommonFieldName.values());
-//				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) TemporaryModel.TemporaryOptionFieldName.values());
+				addAllCommonFields(list, TemporaryCommonField.values());
+				addAllOptionFields(list, TemporaryOptionField.values(), option);
 			} else if(LearningModel.MODEL_NAME.equals(contractModel)){
-				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) LearningModel.LearningCommonFieldName.values());
-//				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) LearningModel.LearningOptionFieldName.values());
+				addAllCommonFields(list, LearningCommonField.values());
+				addAllOptionFields(list, LearningOptionField.values(), option);
 			} else if(PracticeModel.MODEL_NAME.equals(contractModel)){
-				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) PracticeModel.PracticeCommonFieldName.values());
-//				fields = (IContractFieldName[]) ArrayUtils.addAll(fields, (IContractFieldName[]) PracticeModel.PracticeOptionFieldName.values());
-			}
-			if(fields != null){
-				for(IContractFieldName field: fields){
-					if(field.isOverridable()){
-						list.add(field);
-					}
-				}
+				addAllCommonFields(list, PracticeCommonField.values());
+				addAllOptionFields(list, PracticeOptionField.values(), option);
 			}
 		}
 		return list;
+	}
+	private void addAllCommonFields(List<IContractFieldName> list , IContractFieldName[] fieldNameValues){
+		for(IContractFieldName field: fieldNameValues){
+			if(field.isOverridable()){
+				if(field.toString().length()>32){
+					LOGGER.error(" ######## ContractInfo ########  COMMON FIELD NAME TOO LONG -> " + field.toString());
+				} else {
+					list.add(field);
+				}
+			}
+		}
+	}
+	private void addAllOptionFields(List<IContractFieldName> list , IContractFieldName[] fieldNameValues, String option){
+		for(IContractFieldName field: fieldNameValues){
+			if(field.toString().substring(0, field.toString().indexOf("_")).equals(option) && field.isOverridable()){
+				if(field.toString().length()>32){
+					LOGGER.error(" ######## ContractInfo ########  OPTION FIELD NAME TOO LONG -> " + field.toString());
+				} else {
+					list.add(field);
+				}
+			}
+		}
 	}
 	
 	/*
@@ -162,11 +190,13 @@ public class ContractInfoController extends BasicController {
 	}
 	
 	public void onLoadContractFields(ActionEvent event){
+		overridableFieldList = null;
 		contractFieldList = new LinkedList<ContractField>();
 		Contract contract = (Contract) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER).getTo();
 		for(IContractFieldName fn: getOverridableFields(contract)){
 			ContractField field = new ContractField();
 			field.setContractInfo(obtainContractField(contract, fn));
+			field.setFieldName(fn);
 			contractFieldList.add(field);
 		}
 	}
@@ -209,15 +239,11 @@ public class ContractInfoController extends BasicController {
 	 * INNER CLASSES
 	 */
 	public class ContractField {
+		private final String MESSAGE_PREFIX = "payroll_contract_document_";
 		private ContractInfo contractInfo;
+		private IContractFieldName fieldName;
 		public String getName() {
-			String label = null;
-			try {
-				label = AonUtil.getMessage("payroll_contract_document_"+this.contractInfo.getName());
-			} catch (Exception e) {
-				label = this.contractInfo.getName();
-			}
-			return label;
+			return getMessage(this.contractInfo.getName());
 		}
 		public ContractInfo getContractInfo() {
 			return contractInfo;
@@ -225,11 +251,38 @@ public class ContractInfoController extends BasicController {
 		public void setContractInfo(ContractInfo contractInfo) {
 			this.contractInfo = contractInfo;
 		}
+		public IContractFieldName getFieldName() {
+			return fieldName;
+		}
+		public void setFieldName(IContractFieldName fieldName) {
+			this.fieldName = fieldName;
+		}
 		public String getExpression(){
 			return this.contractInfo.getExpression();
 		}
 		public void setExpression(String expression){
 			this.contractInfo.setExpression(expression);
+		}
+		public boolean isCheck(){
+			return fieldName!=null && fieldName.isCheck();
+		}
+		public boolean isComposite(){
+			return fieldName!=null && fieldName.getCompositeValues()!=null && fieldName.getCompositeValues().length>0;
+		}
+		public List<SelectItem> getCompositeList(){
+			List<SelectItem> list = new LinkedList<SelectItem>();
+			for(IContractFieldName field: fieldName.getCompositeValues()){
+				list.add(new SelectItem(field, getMessage(field.toString())));
+			}
+			return list;
+		}
+		public String getMessage(String key){
+			try {
+				return  AonUtil.getMessage(MESSAGE_PREFIX + key);
+			} catch (Exception e) {
+				LOGGER.error(" ######## ContractInfo ########  NO MESSAGE WAS DEFINED FOR FIELD NAME -> " + key);
+				return key;
+			}
 		}
 	}
 	

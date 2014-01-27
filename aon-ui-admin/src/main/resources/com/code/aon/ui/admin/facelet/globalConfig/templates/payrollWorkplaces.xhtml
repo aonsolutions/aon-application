@@ -35,11 +35,9 @@
 					<aon:outputText value="#{bundle.aon_activities}" />
 				</f:facet>
 				
-				<aon:div styleClass="aon-scroll-area">
-					<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/enterpriseActivity/gridContent.xhtml" >
-						<ui:param name="controller" value="#{enterpriseActivity}" />
-					</ui:include>
-				</aon:div>
+				<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/enterpriseActivity/gridContent.xhtml" >
+					<ui:param name="controller" value="#{enterpriseActivity}" />
+				</ui:include>
 			</aon:panel>	
 	
 		</aon:div>

@@ -44,6 +44,14 @@
 				<aon:outputText styleClass="aon-margin-left" value="#{bundle.aon_page}:" />
 				<aon:div styleClass="aon-spin-control" >
 					<aon:div styleClass="aon-spin-control-element"> 
+						<aon:commandButton id="contractDetail-first"  
+							ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+							disabled="#{contractPdf.firstDocumentPage}"
+							reRender="#{toolbarReRender}"
+							styleClass="aon-dataScroller-button #{contractPdf.firstDocumentPage?'aon-dataScroller-button-first-disabled':'aon-dataScroller-button-first'}"
+							actionListener="#{contractPdf.onFirstDocumentPage}" />
+					</aon:div>
+					<aon:div styleClass="aon-spin-control-element"> 
 						<aon:commandButton id="contractDetail-prev"  
 							ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
 							disabled="#{contractPdf.firstDocumentPage}"
@@ -65,9 +73,18 @@
 							styleClass="aon-dataScroller-button #{contractPdf.lastDocumentPage?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}"
 							actionListener="#{contractPdf.onNextDocumentPage}" />				
 					</aon:div>
+					<aon:div styleClass="aon-spin-control-element"> 
+						<aon:commandButton id="contractDetail-last" 
+							ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+							disabled="#{contractPdf.lastDocumentPage}"
+							reRender="#{toolbarReRender}"
+							styleClass="aon-dataScroller-button #{contractPdf.lastDocumentPage?'aon-dataScroller-button-last-disabled':'aon-dataScroller-button-last'}"
+							actionListener="#{contractPdf.onLastDocumentPage}" />				
+					</aon:div>
 				</aon:div>
 	
 				<aon:outputText styleClass="aon-margin-left" value="#{bundle.aon_size}:" />
+				<!--  
 				<aon:div styleClass="aon-spin-control" 
 					style="display:inline-block; border:#000 1px solid;">
 					<rich:inputNumberSlider maxValue="4" step="1"
@@ -84,6 +101,44 @@
 			            <a4j:support event="onchange" reRender="#{toolbarReRender}"
 			            	actionListener="#{contractPdf.onChangeZoomFactor}" />
 			       </rich:inputNumberSlider>
+				</aon:div>
+				-->
+				<aon:div style="display:inline-block;">
+					<aon:commandButton id="zoom-1" value="25%"
+						ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+						reRender="#{toolbarReRender}"
+						style="#{(contractPdf.zoomFactor == 1)?('color:grey;'):('')}font-size:0.8em;"
+						styleClass="aon-commandButton" >
+						<f:setPropertyActionListener target="#{contractPdf.zoomFactor}" value="#{1}" />
+						<aon:actionListener method="#{contractPdf.onChangeZoomFactor}" />
+					</aon:commandButton>
+					<aon:commandButton id="zoom-2" value="50%"
+						ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+						reRender="#{toolbarReRender}"
+						style="#{(contractPdf.zoomFactor == 2)?('color:grey;'):('')}font-size:0.8em;"
+						styleClass="aon-commandButton margin-left"
+						actionListener="#{contractPdf.onChangeZoomFactor}" >
+						<f:setPropertyActionListener target="#{contractPdf.zoomFactor}" value="#{2}" />
+						<aon:actionListener method="#{contractPdf.onChangeZoomFactor}" />
+					</aon:commandButton>
+					<aon:commandButton id="zoom-3" value="75%"
+						ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+						reRender="#{toolbarReRender}"
+						style="#{(contractPdf.zoomFactor == 3)?('color:grey;'):('')}font-size:0.8em;"
+						styleClass="aon-commandButton margin-left"
+						actionListener="#{contractPdf.onChangeZoomFactor}" >
+						<f:setPropertyActionListener target="#{contractPdf.zoomFactor}" value="#{3}" />
+						<aon:actionListener method="#{contractPdf.onChangeZoomFactor}" />
+					</aon:commandButton>
+					<aon:commandButton id="zoom-4" value="100%"
+						ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
+						reRender="#{toolbarReRender}"
+						style="#{(contractPdf.zoomFactor == 4)?('color:grey;'):('')}font-size:0.8em;"
+						styleClass="aon-commandButton margin-left"
+						actionListener="#{contractPdf.onChangeZoomFactor}" >
+						<f:setPropertyActionListener target="#{contractPdf.zoomFactor}" value="#{4}" />
+						<aon:actionListener method="#{contractPdf.onChangeZoomFactor}" />
+					</aon:commandButton>
 				</aon:div>
 			</aon:div>
 			

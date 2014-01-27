@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -923,7 +922,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		if(params.isOfferData()){
 			datos.setIDOFERTA(completeLength(params.getOffer(), 17, ZERO_VALUE, false));
 		}
-		if( tc2.equals("403") || tc2.equals("503") ){
+		if( params.isEmploymentProgramData()){
 			datos.setCODIGOPROGRAMAEMPLEO(params.getCodigoProgramaEmpleo()!=null?params.getCodigoProgramaEmpleo().getCode():null);
 		}
 		datos.setNACIONALIDADCT(completeLength(getContract().getWorkPlace().getAddress().getRegistry().getNationality().getIsoNum(),3,ZERO_VALUE,false));
@@ -1890,7 +1889,9 @@ public class ContrataContratosWriter implements IContrataWriter{
 	private DATOSCONTRATOINTERINIDADTYPE createDatosContratoInterinidad(ContrataContratoParams params) {
 		if(params.isInterimData()){
 			DATOSCONTRATOINTERINIDADTYPE datos = new DATOSCONTRATOINTERINIDADTYPE();
-			datos.setCAUSAINTERINIDAD(params.getCausaInterinidad().getCode());
+			if(params.getCausaInterinidad()!=null){
+				datos.setCAUSAINTERINIDAD(params.getCausaInterinidad().getCode());
+			}
 			return datos;
 		}
 		return null;
