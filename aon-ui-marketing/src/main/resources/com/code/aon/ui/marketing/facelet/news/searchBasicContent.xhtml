@@ -15,15 +15,6 @@
 		value="#{bundle.aon_title}" />
 	<aon:inputText id="News_title" size="80"
 		valueChangeListener="#{controller.addExpression}" />
-		
-	<aon:outputLabel for="News_type"
-		value="#{bundle.aon_type}" />
-	<aon:selectOneMenu id="News_type"
-		converter="aon.EnumConverter"
-		valueChangeListener="#{controller.addEqualExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItems value="#{marketingCollections.newsTypes}" />
-	</aon:selectOneMenu>		
 			
 	<ui:include
 		src="/com/code/aon/ui/config/facelet/scope/searchContent.xhtml" />		

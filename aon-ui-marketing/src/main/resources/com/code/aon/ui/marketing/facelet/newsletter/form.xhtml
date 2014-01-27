@@ -18,7 +18,7 @@
 				<ui:define name="beforeSpinToolbarContent" >
 					<aon:commandButton id="sendEmail"
 						reRender="showNewMessageWindow" immediate="true"
-						value="#{bundle.webmail_send}"
+						value="#{bundle.webmail_send}" rendered="#{!newsletter.new}"
 						actionListener="#{newsletter.onSendEmail}"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2" />	
 				</ui:define>								

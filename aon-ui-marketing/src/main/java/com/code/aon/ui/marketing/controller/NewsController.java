@@ -21,6 +21,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.marketing.News;
 import com.code.aon.marketing.enumeration.NewsType;
+import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -36,6 +37,8 @@ public class NewsController extends BasicController {
 	public static final String NEWS_PREFFIX = "news-";
 	
 	public static final String NEWS_REGEX = NEWS_PREFFIX + "(\\d+)\\." + MimeType.MIME_HTML.getExtension();
+	
+	private NewsType type;
 	
 	public void onSendEmail(ActionEvent event) {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
@@ -122,6 +125,34 @@ public class NewsController extends BasicController {
 		writer.println(content);
 		writer.println("</body>");
 		writer.println("</html>");
+	}
+	
+	@Override
+	public void onReset(ActionEvent event) {
+		super.onReset(event);
+		News news = (News) getTo();
+		news.setType(this.type);
+	}
+
+	public void onSetTypeMessage( ActionEvent event ) {
+		setType(NewsType.MESSAGE);
+	}
+
+	public void onSetTypeNews( ActionEvent event ) {
+		setType(NewsType.NEWS);
+	}
+	
+	public NewsType getType() {
+		return type;
+	}
+
+	public void setType(NewsType type) {
+		this.type = type;
+	}
+	
+	public String getLabel() {
+		String key = type == NewsType.MESSAGE ? ICommonMessages.MESSAGES : ICommonMessages.MARKETING_NEWSS;
+		return AonUtil.getMessage(key);
 	}
 	
 }

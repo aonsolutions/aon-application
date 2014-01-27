@@ -16,12 +16,12 @@
 		<aon:form id="newsForm">
 			
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >		
-				<ui:param name="toolbarTitle" value="#{bundle.marketing_news_module}" />
+				<ui:param name="toolbarTitle" value="#{news.label}" />
 				<ui:param name="controller" value="#{news}" />
 				<ui:define name="beforeSpinToolbarContent" >
 					<aon:commandButton id="sendEmail"
 						reRender="showNewMessageWindow" immediate="true"
-						value="#{bundle.webmail_send}"
+						value="#{bundle.webmail_send}" rendered="#{!news.new}"
 						actionListener="#{news.onSendEmail}"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2" />	
 				</ui:define>				
@@ -35,14 +35,6 @@
 						value="#{(news.to.type  == 'NEWS')?bundle.aon_title:bundle.aon_subject}" />
 					<aon:inputText id="News_title" required="true"
 						value="#{news.to.title}" size="60" maxlength="128" />
-						
-					<aon:outputLabel for="News_type"
-						value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="News_type" required="true"
-						process="News_title,News_scope_id,News_initDate,News_active,News_content,Template_id"
-						value="#{news.to.type}" reRender="newsForm">
-						<f:selectItems value="#{marketingCollections.newsTypes}" />
-					</aon:selectOneMenu>		
 						
 					<c:if test="#{news.to.type  == 'NEWS'}" >						
 						<aon:outputLabel for="News_category"

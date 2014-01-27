@@ -23,7 +23,7 @@
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-general">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_master_tables}" />
+									<aon:outputText value="#{bundle.aon_contacts}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -35,62 +35,6 @@
 								</aon:div>							
 							</aon:panelGrid>
 						</c:if>
-						
-						<aon:panelGrid id="group_marketing_news"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-report aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.marketing_news_module}" />
-							</f:facet>							
-							<aon:div styleClass="aon-direct-access-list">	
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="channel" 
-										action="channel_list"
-										actionListener="#{channel.onSearch}" 
-										value="#{bundle.marketing_channel_module}"/>	
-								</aon:div>							
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="news"
-										action="news_list"
-										actionListener="#{news.onSearch}"
-										value="#{bundle.marketing_news_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="newsletter"
-										action="newsletter_list"
-										actionListener="#{newsletter.onSearch}"
-										value="#{bundle.marketing_newsletter_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="rss" action="rss_form"
-										actionListener="#{rss.onInit}"
-										value="#{bundle.marketing_news_rss}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-						
-					
-						<aon:panelGrid id="group_marketing_marketing"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-marketing aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_module_marketing}" />
-							</f:facet>							
-							<aon:div styleClass="aon-direct-access-list">	
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="marketingCampaign"
-										action="marketingCampaign_list"
-										actionListener="#{marketingCampaign.onSearch}"
-										value="#{bundle.marketing_campaign_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="communicationCenter"
-										action="communicationCenter"
-										actionListener="#{communicationCenter.onInit}"
-										value="#{bundle.commercial_communication_center_module}" />										
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
 					</aon:panelGroup>
 					
 					<aon:panelGroup>
@@ -111,12 +55,6 @@
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="surveyResponse"
-											action="surveyResponse_list"
-											actionListener="#{surveyResponse.onSearch}"
-											value="#{bundle.marketing_survey_response_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="survey"
 											action="survey_list"
 											actionListener="#{survey.onEditSearch}" 
@@ -126,12 +64,107 @@
 									</aon:div>								
 								</aon:div>
 							</aon:panelGrid>
+						</c:if>
+					</aon:panelGroup>						
+						
+					<aon:panelGroup>						
+						<aon:panelGrid id="group_marketing_news"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-report aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.marketing_news_module}" />
+							</f:facet>							
+							<aon:div styleClass="aon-direct-access-list">	
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="news_messages"
+										action="news_list-messages"
+										actionListener="#{news.onSetTypeMessage}"
+										value="#{bundle.aon_messages}">
+										<aon:actionListener method="#{news.onEditSearch}" />
+										<aon:actionListener method="#{news.onSearch}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="news_news"
+										action="news_list-news"
+										actionListener="#{news.onSetTypeNews}"
+										value="#{bundle.marketing_newss}">
+										<aon:actionListener method="#{news.onEditSearch}" />
+										<aon:actionListener method="#{news.onSearch}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="newsletter"
+										action="newsletter_list"
+										actionListener="#{newsletter.onSearch}"
+										value="#{bundle.marketing_newsletter_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>						
 
+					<aon:panelGroup>
+						<aon:panelGrid id="group_marketing_communications"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-marketing">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.marketing_communications}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">	
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="marketingCampaign"
+										action="marketingCampaign_list"
+										actionListener="#{marketingCampaign.onSearch}"
+										value="#{bundle.marketing_campaign_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="communicationCenter"
+										action="communicationCenter"
+										actionListener="#{communicationCenter.onInit}"
+										value="#{bundle.commercial_communication_center_module}" />										
+								</aon:div>
+								<c:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="surveyResponse"
+											action="surveyResponse_list"
+											actionListener="#{surveyResponse.onSearch}"
+											value="#{bundle.marketing_survey_response_module}" />
+									</aon:div>
+								</c:if>
+							</aon:div>								
+						</aon:panelGrid>
+					</aon:panelGroup>				
+					
+					<aon:panelGroup>
+						<aon:panelGrid id="group_marketing_rss"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-payroll aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.marketing_news_rss}" />
+							</f:facet>							
+							<aon:div styleClass="aon-direct-access-list">	
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="channel" 
+										action="channel_list"
+										actionListener="#{channel.onSearch}" 
+										value="#{bundle.marketing_channel_module}"/>	
+								</aon:div>							
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="rss" action="rss_form"
+										actionListener="#{rss.onInit}"
+										value="#{bundle.marketing_rss_publish}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>			
+					</aon:panelGroup>		
+						
+					<aon:panelGroup>							
+						<c:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_marketing_templates"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-mail">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.marketing_template_module}" />
+									<aon:outputText value="#{bundle.aon_templates}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -160,7 +193,6 @@
 								</aon:div>							
 							</aon:panelGrid>
 						</c:if>
-
 					</aon:panelGroup>													
 					
 				</h:panelGrid>

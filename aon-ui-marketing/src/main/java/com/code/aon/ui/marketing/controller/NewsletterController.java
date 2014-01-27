@@ -128,19 +128,7 @@ public class NewsletterController extends BasicController {
 
 	public IControllerListener getNewsFilter() {
 		if ( this.newsFilter == null ) {
-			this.newsFilter = new ControllerAdapter() {
-				@Override
-				public void beforeModelInitialized(ControllerEvent event)
-						throws ControllerListenerException {
-					IController controller = event.getController();
-					try {					
-						Criteria criteria = controller.getCriteria();
-						criteria.addEqualExpression(controller.getFieldName(IEntityAlias.NEWS_TYPE), NewsType.NEWS);
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering news", e);
-					}
-				}
-			};
+			this.newsFilter = new NewsFilter(NewsType.NEWS);
 		}
 		return this.newsFilter;
 	}

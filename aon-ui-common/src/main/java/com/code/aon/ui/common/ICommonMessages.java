@@ -61,6 +61,7 @@ public interface ICommonMessages {
 	String LOGIN_ERROR_DEFAULT = "aon_login_error_default";
 	String LOGIN_USER = "aon_login_user";
 	String MENU = "aon_menu";
+	String MESSAGES = "aon_messages";
 	String MODULE_ACCOUNTING = "aon_module_accounting";	
 	String MODULE_COMMERCIAL = "aon_module_commercial";
 	String MODULE_DOCUMENT = "aon_module_document";
@@ -363,6 +364,7 @@ public interface ICommonMessages {
 	String ACTION_ADD_TARGETS_START = "marketing_action_addTargets_start";
 	String ACTION_ADD_TARGETS_STATUS = "marketing_action_addTargets_status";
 	String ACTION_ADD_TARGETS_FINISH = "marketing_action_addTargets_finish";
+	String MARKETING_NEWSS = "marketing_newss";
 	
 	String SALARY_EMAIL_SUBJECT = "payroll_email_subject";
 	String SALARY_EMAIL_BODY_HEADER = "payroll_email_subject_header";
