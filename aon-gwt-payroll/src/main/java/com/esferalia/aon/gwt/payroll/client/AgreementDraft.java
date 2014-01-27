@@ -9,19 +9,13 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.xml.bind.helpers.DefaultValidationEventHandler;
-
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
-import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.Level;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
-import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.DateTimeFormatException;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmptyStringException;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasDescription;
-import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.LevelComparator;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -58,7 +52,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -305,10 +298,11 @@ public class AgreementDraft extends ResizeComposite implements
 			this.level = level;
 		}
 
-		void setExpressionTextBox(TextBox textBox) {
+		void setExpressionTextBox(final TextBox textBox) {
 			textBox.addFocusHandler(new FocusHandler() {
 				@Override
 				public void onFocus(FocusEvent event) {
+					textBox.setText(var.getExpression());
 					AgreementDraft.this.fxButton.setEnabled(true);
 				}
 			});
@@ -486,9 +480,10 @@ public class AgreementDraft extends ResizeComposite implements
 
 						@Override
 						public void onSelection(SelectionEvent<Suggestion> event) {
-							String description = event.getSelectedItem()
-									.getReplacementString();
-							Payment concept = getPayment(description);
+
+							Suggestion suggestion = event.getSelectedItem();
+							Payment concept = getPayment(suggestion
+									.getReplacementString());
 							if (concept == null)
 								return;
 
@@ -959,9 +954,10 @@ public class AgreementDraft extends ResizeComposite implements
 				});
 	}
 
-	private Payment getPayment(String description) {
+	private Payment getPayment(String suggestionString) {
 		for (Payment payment : availablePaymens) {
-			if (StringUtils.equals(description, payment.getDescription()))
+			if (StringUtils.equals(suggestionString,
+					getSuggestionString(payment)))
 				return payment;
 		}
 		return null;
@@ -1075,7 +1071,11 @@ public class AgreementDraft extends ResizeComposite implements
 		// yes we assume all variables are numeric.
 		expressionTextBox.addStyleName(AON.AON_TEXT_RIGHT);
 		expressionTextBox.setVisibleLength(VARIABLE_TEXTBOX_SIZE);
-		expressionTextBox.setText(var.getExpression());
+
+		Object value = var.getValue();
+		String expression = value == null ? var.getExpression() : value
+				.toString();
+		expressionTextBox.setText(expression);
 
 		salaryTable.setWidget(row, col, expressionTextBox);
 
@@ -1952,7 +1952,7 @@ public class AgreementDraft extends ResizeComposite implements
 	private static String getSuggestionString(Payment payment) {
 		StringBuffer suggestion = new StringBuffer(payment.getDescription());
 		if (!StringUtils.isEmpty(payment.getName()))
-			suggestion.append("(").append(payment.getName()).append(")");
+			suggestion.append(" (").append(payment.getName()).append(")");
 		return suggestion.toString();
 	}
 

@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.HasDeduction;
 import com.esferalia.aon.gwt.payroll.shared.HasPayment;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
+import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
@@ -27,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -1320,10 +1322,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		List<Variable> context = new ArrayList<Variable>(
 				salaryDraftObject.getContext());
-		
+
 		boolean show = scope.compareTo(Scope.CONTRACT) >= 0;
-		//for (Scope step : SCOPE_STEPS) {
-		while(!context.isEmpty()){
+		// for (Scope step : SCOPE_STEPS) {
+		while (!context.isEmpty()) {
 			Scope step = context.get(0).getScope();
 			if (step.compareTo(scope) <= 0) {
 				dumpContext(context, scope, show);
@@ -1794,12 +1796,16 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			String description = DEDUCTION_DESCRIPTIONS
 					.get(deduction.getType());
 			if (description != null) {
+
 				if (deduction.getAmount() != null) {
-					dumpSystemDeduction(deduction, description, row++);
+					Double percent = getPercent(deduction, salaryDraftObject);
+					dumpSystemDeduction(deduction, percent, description, row++);
 				} else {
+					Double dbPercent = getDbPercent(deduction,
+							salaryDraftObject);
 					String styles[] = eventStyles.get(Event.Type.ERROR);
-					dumpDbSystemDeduction(deduction, description, row++,
-							styles[0], styles[1]);
+					dumpDbSystemDeduction(deduction, dbPercent, description,
+							row++, styles[0], styles[1]);
 				}
 			} else {
 				if (deduction.getAmount() != null)
@@ -1957,13 +1963,23 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				.getElement(row)));
 	}
 
+	private void dumpSystemDeduction(Deduction deduction, Double percent,
+			String description, int row) {
+		Widget percentageWidget = newPercentWidget(deduction, percent);
+		dumpSystemDeduction(deduction, description, row, percentageWidget);
+	}
+
 	private void dumpSystemDeduction(Deduction deduction, String description,
-			int row) {
+			int row, Widget percentageWidget) {
 
 		paymentsTable.setHTML(row, 0, "&nbsp;");
-		paymentsTable.setText(row, 1, deduction.getDescription());
+
+		paymentsTable.setWidget(row, 1, percentageWidget);
+		/* paymentsTable.setText(row, 1, deduction.getDescription()); */
+
 		paymentsTable.getCellFormatter().addStyleName(row, 0,
 				AON.AON_TEXT_CENTER);
+
 		paymentsTable.setHTML(row, 2, description);
 
 		HorizontalPanel amountsPanel = new HorizontalPanel();
@@ -1996,9 +2012,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		formatRow(row);
 	}
 
-	private void dumpDbSystemDeduction(Deduction deduction, String description,
-			int row, String iconStyleName, String textStyleName) {
-		dumpSystemDeduction(deduction, description, row);
+	private void dumpDbSystemDeduction(Deduction deduction, Double percent,
+			String description, int row, String iconStyleName,
+			String textStyleName) {
+		dumpSystemDeduction(deduction, percent, description, row);
 
 		// first cell for edit other stuff buttons.
 		Button iconButton = new Button();
@@ -2074,8 +2091,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 				valuePanel.add(itemButton);
 				// only show payments of variables at 'to' scope...
-				itemButton.setValue(show && (scope.compareTo(to) >= 0),
-						true);
+				itemButton.setValue(show && (scope.compareTo(to) >= 0), true);
 			} else if (variable instanceof UndefinedDeductionVariable) {
 				String styles[] = eventStyles.get(Event.Type.WARNING);
 
@@ -2270,15 +2286,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				irpfPreviewHTML.setHTML(caught.getMessage());
 			}
 		});
-	}
-
-	private String format(Double amount) {
-		return amount == null ? null : AON.CURRENCY_FORMAT.format((double) Math
-				.round(amount * 1000.00) / 1000.00);
-	}
-
-	private Double parse(String str) {
-		return str == null ? 0.00 : AON.CURRENCY_FORMAT.parse(str);
 	}
 
 	private void setDbStyleName(Label l2, HasText l1) {
@@ -2523,6 +2530,117 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private String getIconRowStyle(Item item) {
-		return item.getScope() == Scope.SALARY ? AON.AON_ICON_ROW_SELECTOR_CHANGED : AON.AON_ICON_ROW_SELECTOR;
+		return item.getScope() == Scope.SALARY ? AON.AON_ICON_ROW_SELECTOR_CHANGED
+				: AON.AON_ICON_ROW_SELECTOR;
+	}
+
+	private Widget newPercentWidget(Deduction deduction, Double percent) {
+		switch (deduction.getType()) {
+		case IRPF:
+			return newIrpfPercentBox(deduction, percent);
+		default:
+			return newPercentLabel(deduction, percent);
+		}
+	}
+
+	private Widget newIrpfPercentBox(final Deduction irpf, final Double percent) {
+
+		final TextBox irpfPercentTexTBox = new TextBox();
+		class IrpfPercentHandler implements FocusHandler, ChangeHandler {
+
+			// -------------------------------------------------- Focus Handler
+			@Override
+			public void onFocus(FocusEvent event) {
+				irpfPercentTexTBox.setText(format(percent));
+			}
+
+			// ------------------------------------------------- Change Handler
+			@Override
+			public void onChange(ChangeEvent event) {
+
+				StringVariable var = new StringVariable();
+				var.setImplicit(false);
+				var.setScope(Scope.SALARY); // DRAFT
+
+				var.setName("PORCENTAJE_IRPF");
+
+				var.setEndDate(salaryDraftObject.getEndDate());
+				var.setStartDate(salaryDraftObject.getStartDate());
+
+				String value = irpfPercentTexTBox.getValue();
+				var.setExpression(StringUtils.isEmpty(value) ? "REMOVE_VARIABLE()"
+						: value);
+
+				salaryDraftObject.addDraftVariable(var);
+				salaryDraftObject.calculate(SalaryDraft.this);
+			}
+
+			// ----------------------------------------------------------------
+
+		}
+		;
+		irpfPercentTexTBox.setVisibleLength(5);
+		irpfPercentTexTBox.setText(format( Double.isNaN(percent) ? 0.00 : percent) + " %");
+		IrpfPercentHandler irpfPercentHandler = new IrpfPercentHandler();
+		irpfPercentTexTBox.addFocusHandler(irpfPercentHandler);
+		irpfPercentTexTBox.addChangeHandler(irpfPercentHandler);
+
+		return irpfPercentTexTBox;
+	}
+
+	// ------------------------------------------------------- Static 'Library'
+
+	private static String format(Double amount) {
+		return amount == null ? null : AON.CURRENCY_FORMAT.format((double) Math
+				.round(amount * 1000.00) / 1000.00);
+	}
+
+	private static Double parse(String str) {
+		return str == null ? 0.00 : AON.CURRENCY_FORMAT.parse(str);
+	}
+
+	private static Widget newPercentLabel(Deduction deduction, Double percent) {
+		InlineLabel percentageLabel = new InlineLabel();
+		if (Double.isNaN(percent))
+			percentageLabel.setText(deduction.getDescription());
+		else
+			percentageLabel.setText(format(percent) + " %");
+		// padding-left : 5px, to align vertically with IRPF Widget.
+		percentageLabel.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		return percentageLabel;
+	}
+
+	private static Double getDbPercent(Deduction deduction,
+			SalaryDraftObject draftObject) {
+		return getPercent(deduction.getType(), deduction.getDbAmount(),
+				draftObject.getDbIrpfBase(), draftObject.getDbCgcBase(),
+				draftObject.getDbHExtraBase(), draftObject.getDbNonHExtraBase());
+	}
+
+	private static Double getPercent(Deduction deduction,
+			SalaryDraftObject draftObject) {
+		return getPercent(deduction.getType(), deduction.getAmount(),
+				draftObject.getIrpfBase(), draftObject.getCgcBase(),
+				draftObject.gethExtraBase(), draftObject.getNonHExtraBase());
+	}
+
+	private static Double getPercent(Deduction.Type type, Double amount,
+			Double irpfBase, Double cgcBase, Double hExtraBase,
+			Double nonHExtraBase) {
+
+		switch (type) {
+		case IRPF:
+			return amount / irpfBase * 100;
+		case JOB_TRAINING:
+		case UNEMPLOYMENT:
+		case COMMON_CONTINGENCY:
+			return amount / cgcBase * 100;
+		case STRUCTURAL_OVERTIME:
+			return amount / hExtraBase * 100;
+		case NON_STRUCTURAL_OVERTIME:
+			return amount / nonHExtraBase * 100;
+		default:
+			throw new IllegalArgumentException();
+		}
 	}
 }

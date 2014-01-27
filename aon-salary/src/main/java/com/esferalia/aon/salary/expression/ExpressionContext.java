@@ -216,9 +216,21 @@ public class ExpressionContext {
 		}
 	}
 
+	private static String getUndefinedProperty(PropertyAccessException e) {
+		for (Throwable parent = e.getCause(); parent != null; parent = parent.getCause()) {
+			if (parent instanceof UnresolveablePropertyException)
+				return ((UnresolveablePropertyException) parent).getName();
+		}
+		return null;
+	}
+
 	private static String getUndefinedProperty(PropertyAccessException e,
 			PeriodMap bindings) {
-		String property = null;
+		
+		
+		String property = getUndefinedProperty(e);
+		if ( property !=  null ) 
+			return property;
 
 		char expr[] = e.getExpr();
 		int end = e.getCursor();
@@ -236,7 +248,8 @@ public class ExpressionContext {
 			int offset = start + 1;
 			int len = end - offset + 1;
 			property = new String(expr, offset, len);
-		} while (!isJavaIdentifier(property) || bindings.containsKey(property));
+		} while (!isJavaIdentifier(property) || 
+				bindings.containsKey(property));
 
 		return property;
 	}

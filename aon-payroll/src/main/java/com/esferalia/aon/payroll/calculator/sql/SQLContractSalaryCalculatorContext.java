@@ -69,6 +69,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
+import org.mvel2.UnresolveablePropertyException;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
@@ -252,8 +253,7 @@ public class SQLContractSalaryCalculatorContext implements
 												// puede ser NULL
 			+ "	ON deduction_concept = deduction_concept.id"
 			+ " WHERE start_date <= ? " + " AND ( end_date IS NULL"
-			+ " OR end_date >= ? )"
-			+ " AND system_deduction.domain = ? ";
+			+ " OR end_date >= ? )" + " AND system_deduction.domain = ? ";
 
 	private static final String SYSTEM_PAYMENT_SQL = "SELECT *"
 			+ ", "
@@ -266,8 +266,8 @@ public class SQLContractSalaryCalculatorContext implements
 											// ser NULL
 			+ "	ON payment_concept = payment_concept.id"
 			+ " WHERE start_date <= ? " + " AND ( end_date IS NULL"
-			+ " OR end_date >= ? )" 
-			+ " AND "+SQLContractPayment.PAYMENT_ALIAS+".domain = ? ";
+			+ " OR end_date >= ? )" + " AND "
+			+ SQLContractPayment.PAYMENT_ALIAS + ".domain = ? ";
 
 	private static final String CDATA_SQL = "SELECT * " + " FROM contract_data"
 			+ " WHERE contract = ? " + "AND start_date <= ? "
@@ -931,7 +931,7 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 		if (this.agreementContextFactory != null) {
 			this.agreementContextFactory.close();
-			//this.agreementContextFactory = null;
+			// this.agreementContextFactory = null;
 		}
 		if (this.agreementExpressionContexts != null) {
 			this.agreementExpressionContexts.clear();
@@ -1127,13 +1127,16 @@ public class SQLContractSalaryCalculatorContext implements
 
 	public Object br(Date startDate) throws ExpressionException, SQLException,
 			SalaryException {
-		
-		ISalary salary = getDbSalary(connection, startDate, SalaryType.SALARY, getId());
+
+		ISalary salary = getDbSalary(connection, startDate, SalaryType.SALARY,
+				getId());
 		if (salary == null)
-			salary = getSalary(connection, startDate, SalaryType.SALARY, getId());
+			salary = getSalary(connection, startDate, SalaryType.SALARY,
+					getId());
 		if (salary == null)
-			throw new  ExpressionException(); // TODO: Alert somebody that we can't calculate proper BR.
-		
+			throw new ExpressionException(); // TODO: Alert somebody that we
+												// can't calculate proper BR.
+
 		int days = salary.getTimeUnits();
 		return salary.getCommonBase() / days;
 	}
@@ -1310,6 +1313,7 @@ public class SQLContractSalaryCalculatorContext implements
 		IIrpfCalculatorContext irpfCalculatorContext = getIrpfCalculatorContext(
 				connection, startDate, endYear, contractCriteria);
 		double irpf = IrpfCalculator.calculate(irpfCalculatorContext);
+
 		return irpf;
 	}
 
@@ -1580,12 +1584,6 @@ public class SQLContractSalaryCalculatorContext implements
 
 		Period period = new Period(startDate, endDate);
 
-		LazyTimedVariable<Double> irpf = new LazyTimedVariable<Double>() {
-			@Override
-			public Double create() {
-				return getIrpf();
-			}
-		};
 
 		LazyTimedVariable<Double> extraDays = new LazyTimedVariable<Double>() {
 			@Override
@@ -1641,6 +1639,18 @@ public class SQLContractSalaryCalculatorContext implements
 			public Double getValue(Period p) {
 				return (double) leaveLoader.getCommonDiseaseDays(p)
 						+ (double) leaveLoader.getProfessionalDiseaseDays(p);
+			}
+		};
+
+		LazyTimedVariable<Double> irpf = new LazyTimedVariable<Double>() {
+			@Override
+			public Double create() {
+				try {
+					return getIrpf();
+				} catch (Throwable t) {
+					// TODO : Sure?
+					return 0.00;
+				}
 			}
 		};
 
@@ -1976,7 +1986,8 @@ public class SQLContractSalaryCalculatorContext implements
 
 	}
 
-	private void loadContractLeave(ExpressionContext ctx) throws SQLException, ExpressionException {
+	private void loadContractLeave(ExpressionContext ctx) throws SQLException,
+			ExpressionException {
 		ResultSet rs = null;
 		try {
 			cleaveStmt.setInt(1, getId());
@@ -1999,7 +2010,7 @@ public class SQLContractSalaryCalculatorContext implements
 					this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);
 			stmt.setDate(2, sqlStartDate);
-			stmt.setInt(3,SQLPayrollConstants.DOMAIN_ZERO);
+			stmt.setInt(3, SQLPayrollConstants.DOMAIN_ZERO);
 			rs = stmt.executeQuery();
 			systemCosts = SQLCollections.costsCollection(rs);
 		} finally {
@@ -2020,7 +2031,7 @@ public class SQLContractSalaryCalculatorContext implements
 					this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);
 			stmt.setDate(2, sqlStartDate);
-			stmt.setInt(3,SQLPayrollConstants.DOMAIN_ZERO);
+			stmt.setInt(3, SQLPayrollConstants.DOMAIN_ZERO);
 			rs = stmt.executeQuery();
 			systemDeductions = SQLCollections.deductionsCollection(rs);
 		} finally {
@@ -2044,7 +2055,7 @@ public class SQLContractSalaryCalculatorContext implements
 					this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);
 			stmt.setDate(2, sqlStartDate);
-			stmt.setInt(3,SQLPayrollConstants.DOMAIN_ZERO);
+			stmt.setInt(3, SQLPayrollConstants.DOMAIN_ZERO);
 			rs = stmt.executeQuery();
 			systemPayments = SQLCollections.paymentsCollection(rs);
 		} finally {
@@ -2078,39 +2089,40 @@ public class SQLContractSalaryCalculatorContext implements
 	}
 
 	protected static ISalary getSalary(Connection connection, Date date,
-			SalaryType type , Integer contractID ) throws SQLException, ExpressionException, SalaryException {
+			SalaryType type, Integer contractID) throws SQLException,
+			ExpressionException, SalaryException {
 		Date startDate = CommonUtil.getMonthFirstDay(date);
 
 		Calendar endCalendar = Calendar.getInstance();
 		endCalendar.setTime(date);
 		endCalendar.add(Calendar.DAY_OF_MONTH, -1);
 		Date endDate = endCalendar.getTime();
-		
+
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, contractID);
-		SQLContractSalaryCalculatorContext ctx = 
-				new SQLContractSalaryCalculatorContext(connection, startDate , endDate, endDate, criteria );
-		if ( !ctx.next() ) 
+		criteria.addEqualExpression(SQLConstants.CONTRACT + "."
+				+ ContractColumns.ID, contractID);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		if (!ctx.next())
 			return null;
-		
+
 		SalaryBuilder salaryBuilder = new SalaryBuilder();
 		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
 		calculator.setSalaryBuilder(salaryBuilder);
 		return calculator.calculate(ctx);
-		
+
 	}
 
 	protected static ISalary getDbSalary(Connection connection, Date date,
-			SalaryType type, Integer contractID ) throws SQLException {
+			SalaryType type, Integer contractID) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
 			stmt = connection.prepareStatement("SELECT * " + " FROM "
-					+ SQLConstants.SALARY 
-					+ " WHERE "  + SalaryColumns.CONTRACT + "= ? " 
-					+ " AND "+ SalaryColumns.TYPE + "= ? " 
-					+ " AND " + SalaryColumns.START_DATE + " <= ? "
-					+ " AND " + SalaryColumns.END_DATE + " >= ? ");
+					+ SQLConstants.SALARY + " WHERE " + SalaryColumns.CONTRACT
+					+ "= ? " + " AND " + SalaryColumns.TYPE + "= ? " + " AND "
+					+ SalaryColumns.START_DATE + " <= ? " + " AND "
+					+ SalaryColumns.END_DATE + " >= ? ");
 
 			stmt.setInt(1, contractID);
 			stmt.setInt(2, type.ordinal());
