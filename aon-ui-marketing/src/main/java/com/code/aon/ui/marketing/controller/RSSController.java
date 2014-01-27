@@ -28,7 +28,6 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.faces.controller.LogPanelController;
@@ -40,7 +39,6 @@ import com.code.aon.ui.config.PublishProperties;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.controller.PublishParameterController;
 import com.code.aon.ui.config.util.FTPUtil;
-import com.code.aon.ui.marketing.servlet.RSSServlet;
 import com.code.aon.ui.util.AonUtil;
 
 public class RSSController {
@@ -81,24 +79,7 @@ public class RSSController {
 	}
 	
 	public String getDownloadURL() {
-		String url = null;
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		try {
-			url = ds.getDomainURL() + RSSServlet.SERVLET_PATH + getRSSFileName();
-		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
-		}		
-		return url;
-	}
-	
-	private String getRSSFileName() {
-		StringBuffer url = new StringBuffer();
-		url.append(RSS_PREFFIX);
-		if ( category!=null && category.getId()!=null ) {
-			url.append('-').append(category.getId());
-		}
-		url.append('.').append(MimeType.MIME_XML.getExtension());
-		return url.toString();
+		return ChannelController.getURL(category);
 	}
 
 	private byte[] getRSS() throws IOException {
@@ -215,7 +196,8 @@ public class RSSController {
 		byte[] data = getRSS();
 		if (! ArrayUtils.isEmpty(data) ) {
 			InputStream in = new ByteArrayInputStream(data);
-			upload(this.publishProperties.getPublishPath(), getRSSFileName(), in, data.length);			
+			String fileName = ChannelController.getRSSFileName(category);
+			upload(this.publishProperties.getPublishPath(), fileName, in, data.length);			
 		}
 	}	
 	

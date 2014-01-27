@@ -689,7 +689,7 @@
 	<managed-bean>
 		<managed-bean-name>channel</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
+			com.code.aon.ui.marketing.controller.ChannelController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -721,19 +721,10 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{channelControllerListener}</value>
 				<value>#{channelScopeListener}</value>
 				<value>#{scopeSearch}</value>
 			</list-entries>
 		</managed-property>		
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>channelControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.marketing.event.ChannelControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>

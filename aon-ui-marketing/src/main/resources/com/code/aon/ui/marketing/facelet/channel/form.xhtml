@@ -52,7 +52,14 @@
 					<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/lookupImage.xhtml" >
 						<ui:param name="lookupTo" value="#{channel.to.registryAttachment}" />
 						<ui:param name="lookupControllerListener" value="#{newsletter.imageFilter}" />
-					</ui:include>													
+					</ui:include>		
+					
+					<c:if test="#{!channel.new}" >
+						<aon:outputText value="#{bundle.aon_document_download_url}" />
+						<aon:outputLink target="_blank" value="#{channel.downloadURL}" >
+							<aon:outputText value="#{channel.downloadURL}" />
+					    </aon:outputLink>
+					</c:if>
 						
 				</aon:panelGrid>
 
