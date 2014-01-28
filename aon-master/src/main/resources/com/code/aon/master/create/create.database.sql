@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.28.0
+# Version: 7.28.1
 # Created by: girazu
-# Creation Date: 22/01/2014 16:05
+# Creation Date: 28/01/2014 10:45
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1915,6 +1915,117 @@ CREATE TABLE `bonus_concept` (
   KEY `IDX_BONUS_CONCEPT_DOMAIN` (`domain`),
   CONSTRAINT `FK_BONUS_CONCEPT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de bonficaciones y/o reducciones';
+
+#
+# Structure for the `project_reservation` table : 
+#
+
+CREATE TABLE `project_reservation` (
+  `project` int(4) NOT NULL COMMENT 'Identificador del Proyecto',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel de Produccion',
+  `hotel_reservation` int(4) NOT NULL COMMENT 'Identificador del Hotel de la Reserva',
+  `code` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Localizador de la Reserva',
+  `start_date` date NOT NULL COMMENT 'Fecha de entrada',
+  `start_time` datetime NOT NULL COMMENT 'Hora de entrada',
+  `end_date` date NOT NULL COMMENT 'Fecha de salida',
+  `end_time` datetime NOT NULL COMMENT 'Hora de salida',
+  `seller` int(4) default NULL COMMENT 'Identificador del canal de venta',
+  `agency` int(4) default NULL COMMENT 'Identificador de la agencia de viajes',
+  `agency_commission_percent` double(5,2) default '0.00' COMMENT 'Porcentaje de comision de la agencia',
+  `agency_commission_amount` double(15,2) default '0.00' COMMENT 'Importe de comision de la agencia',
+  `agency_rebate` tinyint(1) NOT NULL COMMENT 'Indica si la agencia trabaja en modo descuento o no',
+  `company` int(4) default NULL COMMENT 'Identificador de la empresa',
+  `discount_percent` double(5,2) default '0.00' COMMENT 'Porcentaje de descuento',
+  `discount_amount` double(15,2) default '0.00' COMMENT 'Importe de descuento',
+  `booking_holder` tinyint(2) NOT NULL COMMENT 'Titular de la Reserva',
+  `taxable_base` double(15,2) default '0.00' COMMENT 'Base imponible',
+  `vat_quota` double(15,2) default '0.00' COMMENT 'Cuota de IVA',
+  `other_tax_quota` double(15,2) default '0.00' COMMENT 'Cuota de otros Impuestos',
+  `total` double(15,2) default '0.00' COMMENT 'Importe Total',
+  `comments` text collate latin1_spanish_ci COMMENT 'Comentarios',
+  `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones',
+  `source` tinyint(2) NOT NULL default '0' COMMENT 'Origen de la Reserva',
+  `crs_code` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo de la Reserva en el CRS',
+  `advance` double(15,2) NOT NULL default '0.00' COMMENT 'Anticipo',
+  `advance_invoiced` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el anticipo esta Facturado',
+  `check_status` tinyint(2) NOT NULL COMMENT 'Estado de registro en el Hotel',
+  `status` tinyint(2) NOT NULL COMMENT 'Estado de la Reserva',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
+  PRIMARY KEY  (`project`),
+  KEY `IDX_PROJECT_RESERVATION_CODE` (`code`),
+  KEY `IDX_PROJECT_RESERVATION_HOTEL` (`hotel`),
+  KEY `IDX_PROJECT_RESERVATION_SELLER` (`seller`),
+  KEY `IDX_PROJECT_RESERVATION_AGENCY` (`agency`),
+  KEY `IDX_PROJECT_RESERVATION_COMPANY` (`company`),
+  KEY `IDX_PROJECT_RESERVATION_DOMAIN` (`domain`),
+  KEY `IDX_PROJECT_RESERVATION_HOTEL_RESERVATION` (`hotel_reservation`),
+  KEY `IDX_PROJECT_RESERVATION_CRS_CODE` (`crs_code`),
+  KEY `IDX_PROJECT_RESERVATION_START_DATE` (`start_date`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_AGENCY` FOREIGN KEY (`agency`) REFERENCES `customer` (`registry`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_COMPANY` FOREIGN KEY (`company`) REFERENCES `customer` (`registry`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_HOTEL` FOREIGN KEY (`hotel`) REFERENCES `hotel` (`id`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_HOTEL_RESERVATION` FOREIGN KEY (`hotel_reservation`) REFERENCES `hotel` (`id`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Reservas de Hotel';
+
+#
+# Structure for the `project_reservation_room` table : 
+#
+
+CREATE TABLE `project_reservation_room` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `project_reservation` int(4) NOT NULL COMMENT 'Identificador de la Reserva',
+  `room_index` tinyint(2) NOT NULL COMMENT 'Numero de Habitacion',
+  `room_code` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo de Habitacion en origen',
+  `item` int(4) NOT NULL COMMENT 'Identificador del Tipo de Habitacion',
+  `tariff` int(4) default NULL COMMENT 'Identificador de la Tarifa',
+  `adults` smallint(2) default '0' COMMENT 'Numero de adultos',
+  `children` smallint(2) default '0' COMMENT 'Numero de niños',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION` (`project_reservation`),
+  KEY `IDX_PROJECT_RESERVATION_ROOM_ITEM` (`item`),
+  KEY `IDX_PROJECT_RESERVATION_ROOM_DOMAIN` (`domain`),
+  KEY `IDX_PROJECT_RESERVATION_ROOM_TARIFF` (`tariff`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION` FOREIGN KEY (`project_reservation`) REFERENCES `project_reservation` (`project`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Habitaciones por Reserva';
+
+#
+# Structure for the `booking` table : 
+#
+
+CREATE TABLE `booking` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `project_reservation_room` int(4) NOT NULL COMMENT 'Identificador de la Habitacion de la Reserva',
+  `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel',
+  `agency` int(4) default NULL COMMENT 'Identificador de la Agencia',
+  `item` int(4) NOT NULL COMMENT 'Identificador del Producto',
+  `stay_date` date NOT NULL COMMENT 'Fecha de estancia',
+  `stay_type` tinyint(2) NOT NULL default '0' COMMENT 'Indica si es una entrada, una salida o una permanencia',
+  `guests` int(4) NOT NULL default '0' COMMENT 'Numero de Huespedes',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `IDX_UNQ_BOOKING_ROOM_DATE` (`project_reservation_room`,`stay_date`,`stay_type`),
+  KEY `IDX_BOOKING_DOMAIN` (`domain`),
+  KEY `IDX_BOOKING_PROJECT_RESERVATION_ROOM` (`project_reservation_room`),
+  KEY `IDX_BOOKING_HOTEL` (`hotel`),
+  KEY `IDX_BOOKING_AGENCY` (`agency`),
+  KEY `IDX_BOOKING_ITEM` (`item`),
+  CONSTRAINT `FK_BOOKING_AGENCY` FOREIGN KEY (`agency`) REFERENCES `customer` (`registry`),
+  CONSTRAINT `FK_BOOKING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_BOOKING_HOTEL` FOREIGN KEY (`hotel`) REFERENCES `hotel` (`id`),
+  CONSTRAINT `FK_BOOKING_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_BOOKING_PROJECT_RESERVATION_ROOM` FOREIGN KEY (`project_reservation_room`) REFERENCES `project_reservation_room` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Booking de Hoteles';
 
 #
 # Structure for the `calendar_holiday` table : 
@@ -6050,64 +6161,6 @@ CREATE TABLE `project_attach` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Proyectos';
 
 #
-# Structure for the `project_reservation` table : 
-#
-
-CREATE TABLE `project_reservation` (
-  `project` int(4) NOT NULL COMMENT 'Identificador del Proyecto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel de Produccion',
-  `hotel_reservation` int(4) NOT NULL COMMENT 'Identificador del Hotel de la Reserva',
-  `code` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Localizador de la Reserva',
-  `start_date` date NOT NULL COMMENT 'Fecha de entrada',
-  `start_time` datetime NOT NULL COMMENT 'Hora de entrada',
-  `end_date` date NOT NULL COMMENT 'Fecha de salida',
-  `end_time` datetime NOT NULL COMMENT 'Hora de salida',
-  `seller` int(4) default NULL COMMENT 'Identificador del canal de venta',
-  `agency` int(4) default NULL COMMENT 'Identificador de la agencia de viajes',
-  `agency_commission_percent` double(5,2) default '0.00' COMMENT 'Porcentaje de comision de la agencia',
-  `agency_commission_amount` double(15,2) default '0.00' COMMENT 'Importe de comision de la agencia',
-  `agency_rebate` tinyint(1) NOT NULL COMMENT 'Indica si la agencia trabaja en modo descuento o no',
-  `company` int(4) default NULL COMMENT 'Identificador de la empresa',
-  `discount_percent` double(5,2) default '0.00' COMMENT 'Porcentaje de descuento',
-  `discount_amount` double(15,2) default '0.00' COMMENT 'Importe de descuento',
-  `booking_holder` tinyint(2) NOT NULL COMMENT 'Titular de la Reserva',
-  `taxable_base` double(15,2) default '0.00' COMMENT 'Base imponible',
-  `vat_quota` double(15,2) default '0.00' COMMENT 'Cuota de IVA',
-  `other_tax_quota` double(15,2) default '0.00' COMMENT 'Cuota de otros Impuestos',
-  `total` double(15,2) default '0.00' COMMENT 'Importe Total',
-  `comments` text collate latin1_spanish_ci COMMENT 'Comentarios',
-  `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones',
-  `source` tinyint(2) NOT NULL default '0' COMMENT 'Origen de la Reserva',
-  `crs_code` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo de la Reserva en el CRS',
-  `advance` double(15,2) NOT NULL default '0.00' COMMENT 'Anticipo',
-  `advance_invoiced` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el anticipo esta Facturado',
-  `check_status` tinyint(2) NOT NULL COMMENT 'Estado de registro en el Hotel',
-  `status` tinyint(2) NOT NULL COMMENT 'Estado de la Reserva',
-  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
-  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
-  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
-  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
-  PRIMARY KEY  (`project`),
-  KEY `IDX_PROJECT_RESERVATION_CODE` (`code`),
-  KEY `IDX_PROJECT_RESERVATION_HOTEL` (`hotel`),
-  KEY `IDX_PROJECT_RESERVATION_SELLER` (`seller`),
-  KEY `IDX_PROJECT_RESERVATION_AGENCY` (`agency`),
-  KEY `IDX_PROJECT_RESERVATION_COMPANY` (`company`),
-  KEY `IDX_PROJECT_RESERVATION_DOMAIN` (`domain`),
-  KEY `IDX_PROJECT_RESERVATION_HOTEL_RESERVATION` (`hotel_reservation`),
-  KEY `IDX_PROJECT_RESERVATION_CRS_CODE` (`crs_code`),
-  KEY `IDX_PROJECT_RESERVATION_START_DATE` (`start_date`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_AGENCY` FOREIGN KEY (`agency`) REFERENCES `customer` (`registry`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_COMPANY` FOREIGN KEY (`company`) REFERENCES `customer` (`registry`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_HOTEL` FOREIGN KEY (`hotel`) REFERENCES `hotel` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_HOTEL_RESERVATION` FOREIGN KEY (`hotel_reservation`) REFERENCES `hotel` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Reservas de Hotel';
-
-#
 # Structure for the `project_reservation_divert` table : 
 #
 
@@ -6165,31 +6218,6 @@ CREATE TABLE `project_reservation_guest` (
   CONSTRAINT `FK_PROJECT_RESERVATION_GUEST_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION` FOREIGN KEY (`project_reservation`) REFERENCES `project_reservation` (`project`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Huespedes por Reserva';
-
-#
-# Structure for the `project_reservation_room` table : 
-#
-
-CREATE TABLE `project_reservation_room` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `project_reservation` int(4) NOT NULL COMMENT 'Identificador de la Reserva',
-  `room_index` tinyint(2) NOT NULL COMMENT 'Numero de Habitacion',
-  `room_code` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo de Habitacion en origen',
-  `item` int(4) NOT NULL COMMENT 'Identificador del Tipo de Habitacion',
-  `tariff` int(4) default NULL COMMENT 'Identificador de la Tarifa',
-  `adults` smallint(2) default '0' COMMENT 'Numero de adultos',
-  `children` smallint(2) default '0' COMMENT 'Numero de niños',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION` (`project_reservation`),
-  KEY `IDX_PROJECT_RESERVATION_ROOM_ITEM` (`item`),
-  KEY `IDX_PROJECT_RESERVATION_ROOM_DOMAIN` (`domain`),
-  KEY `IDX_PROJECT_RESERVATION_ROOM_TARIFF` (`tariff`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION` FOREIGN KEY (`project_reservation`) REFERENCES `project_reservation` (`project`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Habitaciones por Reserva';
 
 #
 # Structure for the `project_reservation_room_detail` table : 
@@ -7501,7 +7529,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.28.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.28.1');
 
 COMMIT;
 
