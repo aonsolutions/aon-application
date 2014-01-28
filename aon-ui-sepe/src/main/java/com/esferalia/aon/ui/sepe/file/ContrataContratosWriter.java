@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -23,6 +22,7 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.contrata.TCHRGCOT;
 import com.esferalia.aon.payroll.enumeration.contrata.TEJINDIS;
+import com.esferalia.aon.payroll.enumeration.contrata.TEQPTIEM;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contrata.contratos.CIFNIFTYPE;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATO100TYPE;
@@ -923,7 +923,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		if(params.isOfferData()){
 			datos.setIDOFERTA(completeLength(params.getOffer(), 17, ZERO_VALUE, false));
 		}
-		if( tc2.equals("403") || tc2.equals("503") ){
+		if( params.isEmploymentProgramData()){
 			datos.setCODIGOPROGRAMAEMPLEO(params.getCodigoProgramaEmpleo()!=null?params.getCodigoProgramaEmpleo().getCode():null);
 		}
 		datos.setNACIONALIDADCT(completeLength(getContract().getWorkPlace().getAddress().getRegistry().getNationality().getIsoNum(),3,ZERO_VALUE,false));
@@ -1428,8 +1428,12 @@ public class ContrataContratosWriter implements IContrataWriter{
 		}
 		datos.setHORASANUALESTIEMPOCOMPLETO(params.getHorasAnualesTiempoCompleto());
 		String duracionconvenio = (params.getHorasConvenio()==null?"":completeLength(params.getHorasConvenio(), 4, "0", false))+(params.getMinutosConvenio()==null?"":completeLength(params.getMinutosConvenio(), 2, "0", false));
-		String duracionjornada = (params.getHorasJornada()==null?"":completeLength(params.getHorasJornada(), 4, "0", false))+(params.getMinutosJornada()==null?"":completeLength(params.getMinutosJornada(), 2, "0", false));
 		String duracionformacion = (params.getHorasFormacion()==null?"":completeLength(params.getHorasFormacion(), 4, "0", false))+(params.getMinutosFormacion()==null?"":completeLength(params.getMinutosFormacion(), 2, "0", false));
+		String duracionjornada = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.WEEK_HOURS.getName());
+		duracionjornada = (duracionjornada==null?"":completeLength(duracionjornada, 4, "0", false))+(completeLength("", 2, "0", false));
+		if(StringUtils.isBlank(duracionjornada)){
+			duracionjornada = (params.getHorasJornada()==null?"":completeLength(params.getHorasJornada(), 4, "0", false))+(params.getMinutosJornada()==null?"":completeLength(params.getMinutosJornada(), 2, "0", false));
+		}
 		datos.setHORASCONVENIO(duracionconvenio.isEmpty()?null:completeLength(duracionconvenio, 6, "0", false));
 		datos.setHORASFORMACION(duracionformacion.isEmpty()?null:completeLength(duracionformacion, 6, "0", false));
 		datos.setHORASJORNADA(duracionjornada.isEmpty()?null:completeLength(duracionjornada, 6, "0", false));
@@ -1440,7 +1444,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		
 		datos.setPORCENTAJEJUBILACIONPARCIAL(params.getPorcentajeJubilacionParcial());
 		datos.setPORCJORNADAPACTADA(params.getPorcJornadaPactada());
-		datos.setTIPOJORNADA(params.getTipoJornada()!=null?params.getTipoJornada().getCode():null);
+		datos.setTIPOJORNADA(params.getTipoJornada()!=null?params.getTipoJornada().getCode():TEQPTIEM.TEQPTIEM_S.getCode());
 		return datos;
 	}
 	/**
@@ -1890,7 +1894,9 @@ public class ContrataContratosWriter implements IContrataWriter{
 	private DATOSCONTRATOINTERINIDADTYPE createDatosContratoInterinidad(ContrataContratoParams params) {
 		if(params.isInterimData()){
 			DATOSCONTRATOINTERINIDADTYPE datos = new DATOSCONTRATOINTERINIDADTYPE();
-			datos.setCAUSAINTERINIDAD(params.getCausaInterinidad().getCode());
+			if(params.getCausaInterinidad()!=null){
+				datos.setCAUSAINTERINIDAD(params.getCausaInterinidad().getCode());
+			}
 			return datos;
 		}
 		return null;

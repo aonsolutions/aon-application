@@ -99,6 +99,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
@@ -110,9 +111,11 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -1342,17 +1345,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			String sql = "SELECT " + PAYMENT_CONCEPT + ".* " + " FROM "
 					+ PAYMENT_CONCEPT + " WHERE "
-					+ PaymentConceptColumns.DOMAIN + " IN ( ?, ?, ? )" ;
+					+ PaymentConceptColumns.DOMAIN + " IN ( ?, ?, ? )";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, 0);
 			stmt.setInt(2, domainId);
-			
-			if ( parentDomainId != null )
+
+			if (parentDomainId != null)
 				stmt.setInt(3, parentDomainId);
-			else 
+			else
 				stmt.setNull(3, Types.INTEGER);
-			
+
 			rs = stmt.executeQuery();
 
 			List<Payment> paymentConcepts = new LinkedList<Payment>();
@@ -2489,6 +2492,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			draft.setCategoriesMap(allCategories);
 			draft.setDatesWithChanges(datesWithChanges);
 
+			eval(draft.getId(), allSalaryTable, draft.getStartDate(),
+					draft.getEndDate());
+
 		} finally {
 			if (connection != null)
 				connection.close();
@@ -2650,12 +2656,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			IContractSalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(
 					conn, draft, null);
-			
-			ExpressionContext expressionContext = notNull( calculatorCtx
-					.getExpressionContext(), calculatorCtx.getSystemExpressionContext() );
 
-			Date start = notNull(calculatorCtx.getStartDate(), draft.getStartDate() ) ;
-			
+			ExpressionContext expressionContext = notNull(
+					calculatorCtx.getExpressionContext(),
+					calculatorCtx.getSystemExpressionContext());
+
+			Date start = notNull(calculatorCtx.getStartDate(),
+					draft.getStartDate());
+
 			Date end = notNull(calculatorCtx.getEndDate(), draft.getEndDate());
 
 			ContextDescriptor contextDescriptor = new ContextDescriptor();
@@ -3465,6 +3473,58 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	private static void eval(int agreementId, SalaryTable salaryTable,
+			Date start, Date end) {
+		// try to resolve some variables. Here we go.
+		Connection conn = null;
+		try {
+
+			conn = getConnection();
+
+			SQLAgreementContextFactory factory = new SQLAgreementContextFactory(
+					conn, start, end, ISQLContractSalaryCalculatorContext.NEWER);
+
+			for (int level : salaryTable.getAllLevels()) {
+
+				AgreementContextKey agreementContextKey = new AgreementContextKey(
+						agreementId, level);
+				ExpressionContext ctx = factory.create(agreementContextKey);
+				LinkedList<Variable> vars = new LinkedList<Variable>(
+						salaryTable.getVariables(level));
+				int errors = 0;
+				while (errors < vars.size()) {
+					Variable var = vars.pop();
+					try {
+						List<ITimedResult<Object>> results = ctx.eval(
+								var.getExpression(), start, end);
+						errors = 0;
+						for (ITimedResult<Object> result : results) {
+							var.setValue(result.getValue());
+							ctx.addVariable(var.getName(), result);
+							System.out.println(var.getName() + " = "+ var.getValue());
+						}
+					} catch (UndefinedVariablesException e) {
+						vars.add(var);
+						errors++;
+					} catch (ExpressionException e) {
+						errors++;
+						// Nothing to do... Only report this error. This will be
+						// very hepfull.
+					}
+				}
+			}
+
+		} catch (Throwable e) {
+		} finally {
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			;
+		}
+	}
+
 	private static void deleteSalaries(Connection conn, int... ids)
 			throws SQLException {
 		PreparedStatement dataStmt = null;
@@ -3585,10 +3645,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	private static SalaryType toSalaryType(Salary.Type type) {
 		return type != null ? SalaryType.values()[type.ordinal()] : null;
 	}
-	
-	private static <T> T notNull(T...ts){
+
+	private static <T> T notNull(T... ts) {
 		for (T t : ts) {
-			if ( t != null) 
+			if (t != null)
 				return t;
 		}
 		return null;

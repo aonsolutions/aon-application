@@ -214,6 +214,12 @@
 	</managed-bean>
 
 	<managed-bean>
+		<managed-bean-name>personChildDomainSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.PersonChildDomainSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>personForm</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.registry.controller.event.PersonFormListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
@@ -620,7 +626,7 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{personSearch}</value>
+				<value>#{personChildDomainSearch}</value>
 				<value>#{personForm}</value>
 				<value>#{personPayMethodForm}</value>
 				<value>#{personControllerListener}</value>

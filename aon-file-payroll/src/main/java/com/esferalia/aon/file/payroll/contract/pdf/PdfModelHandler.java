@@ -90,21 +90,9 @@ public class PdfModelHandler {
 	public void setReader(PdfReader reader) {
 		this.reader = reader;
 	}
-
-//	@Override
-//	public String getDocumentPath(){
-//		return CONTRACT_DOCUMENT_PATH;
-//	}
-	
-//	private String getPagesRange(PdfReader reader){
-//		return "1-3,4";
-//	}
 	
 	public byte[] buildPdf(boolean readOnly) {
 		try {
-			
-//			PdfReader reader = new PdfReader(getContractModelUrl(documentName+".pdf"));
-//			reader.selectPages(getPagesRange(reader));
 			setDocumentWidth((double)reader.getPageSize(1).getWidth());
 			setDocumentHeight((double)reader.getPageSize(1).getHeight());
 			setNumberOfDocumentPages(reader.getNumberOfPages());
@@ -132,11 +120,9 @@ public class PdfModelHandler {
 			reader.close();
 			return baos.toByteArray();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// do nothing
 		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// do nothing
 		}
 		return null;
 	}
@@ -144,7 +130,6 @@ public class PdfModelHandler {
 	public void loadPdfFields(ContractAttachment contractPdfDraft) {
 		try {
 			PdfReader reader = new PdfReader(contractPdfDraft.getData());
-//			reader.selectPages(getPagesRange(reader));
 			setDocumentWidth((double)reader.getPageSize(1).getWidth());
 			setDocumentHeight((double)reader.getPageSize(1).getHeight());
 			setNumberOfDocumentPages(reader.getNumberOfPages());
@@ -179,13 +164,12 @@ public class PdfModelHandler {
 			}
 			reader.close();
 		} catch (IOException e) {
-			String msg = "No se ha podido cargar todos los datos del contrato en el documento.";
+			// do nothing
 		}
 	}
 	
 	
 	public void readPdfFields() throws IOException{
-//		reader.selectPages(getPagesRange(reader));
 		setDocumentWidth((double)reader.getPageSize(1).getWidth());
 		setDocumentHeight((double)reader.getPageSize(1).getHeight());
 		setNumberOfDocumentPages(reader.getNumberOfPages());
@@ -233,7 +217,6 @@ public class PdfModelHandler {
 			// do nothing
 		}
 	}
-	
 	
 
 	public RegistryDirStaff obtainRegistryDirStaff(Contract contract) throws ManagerBeanException {

@@ -31,10 +31,19 @@
 		<c:if test="#{not empty contract.params.contractModelOption}">
 			<a4j:repeat var="to" value="#{controller.contractFieldList}">
 				<aon:panelGrid columns="2" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-odd aon-width-300, aon-panelGrid-even aon-width-auto" >
+					columnClasses="aon-panelGrid-odd aon-width-350, aon-panelGrid-even aon-width-auto" >
 				
 					<aon:outputText value="#{to.name}" />
-					<aon:inputText value="#{to.expression}" maxlength="128" size="64" />
+					<aon:inputText value="#{to.expression}"
+						maxlength="128" size="64"
+						rendered="#{!to.check}" />
+					<aon:selectBooleanCheckbox value="#{to.expression}"
+						rendered="#{to.check and !to.composite}" />
+					<aon:selectOneMenu value="#{to.expression}"
+						rendered="#{to.check and to.composite}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{to.compositeList}" />
+					</aon:selectOneMenu>
 					
 				</aon:panelGrid>
 			</a4j:repeat>

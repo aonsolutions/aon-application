@@ -160,9 +160,11 @@ public class ContrataListController extends BasicController {
 			LinesController controller = (LinesController) AonUtil.getRegisteredBean(ISepeConstants.CONTRATA_BATCH_DETAIL_CONTROLLER_NAME);
 			// ******************************
 			// FIXME: this code is temporary, while the contract contrata status is not defined
-			for(ITransferObject to: (List<ITransferObject>)controller.getModel().getWrappedData()){
-				ContrataBatchDetail detail = (ContrataBatchDetail) to;
-				getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_ID), detail.getContract().getId());
+			if(controller.getModel()!=null){
+				for(ITransferObject to: (List<ITransferObject>)controller.getModel().getWrappedData()){
+					ContrataBatchDetail detail = (ContrataBatchDetail) to;
+					getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_ID), detail.getContract().getId());
+				}
 			}
 			
 			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_REGISTRY_NAME));

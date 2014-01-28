@@ -74,6 +74,8 @@ public abstract class Variable implements HasStartAndEndDate, Serializable {
 
 	public abstract Object getValue();
 
+	public abstract void setValue(Object value);
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

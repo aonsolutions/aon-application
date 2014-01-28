@@ -43,7 +43,7 @@ public abstract class AbstractItemSuggestionDisplay<T extends Item<?>> extends
 			htmlBuilder.appendHtmlConstant("</span>");
 
 			mySuggestions.add(new MultiWordSuggestOracle.MultiWordSuggestion(
-					item.getDescription(), htmlBuilder.toSafeHtml().asString()));
+					replacementString, htmlBuilder.toSafeHtml().asString()));
 		}
 
 		super.showSuggestions(suggestBox, mySuggestions, isDisplayStringHTML,

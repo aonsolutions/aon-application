@@ -45,12 +45,11 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.SecurityInfo;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfField;
+import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.file.payroll.contract.pdf.UnsupportedContractDocumentException;
 import com.esferalia.aon.file.payroll.contract.pdf.annex.ModelPE230;
 import com.esferalia.aon.file.payroll.contract.pdf.basicCopy.BasicCopy;
-import com.esferalia.aon.file.payroll.contract.pdf.clauses.Clauses;
 import com.esferalia.aon.file.payroll.contract.pdf.extension.Extension;
-import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel.ModelOption;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ClausulasModel;
 import com.esferalia.aon.file.payroll.contrata.IContrataParams;
 import com.esferalia.aon.payroll.Contract;
@@ -83,7 +82,6 @@ public class ContractPdfController {
 	private Contract contract;
 	private ContractPdfWriter contractPdfWriter;
 	private String imageUrl;
-//	private String contractModel;
 	private ModelOption modelOption;
 	private ContractCode code;
 	private ContractAttachment contractPdfDraft;	
@@ -166,15 +164,15 @@ public class ContractPdfController {
 	public ContractCode getCode() {
 		return code;
 	}
+	public void setCode(ContractCode code) {
+		this.code = code;
+	}
 	
 	public ModelOption getModelOption() {
 		return modelOption;
 	}
 	public void setModelOption(ModelOption modelOption) {
 		this.modelOption = modelOption;
-	}
-	public void setCode(ContractCode code) {
-		this.code = code;
 	}
 	public Contract getContract() {
 		return contract;
@@ -268,10 +266,15 @@ public class ContractPdfController {
 	public void beforeDocumentShow() {
 		ContractUtils utils = ContractUtils.getInstance();
 		String tc2 = utils.getContractDataMap(getContract()).get(ContextVariable.TC2.getName());
-//		String model = utils.getContractInfoMap(getContract()).get(ContractVariable.CONTRACT_MODEL.getValue());
 		String option = utils.getContractInfoMap(getContract()).get(ContractVariable.CONTRACT_MODEL_OPTION.getValue());
 		String indefinite = utils.getContractDataMap(getContract()).get(ContextVariable.INDEFINITE.getName());
 		String fullTime = utils.getContractDataMap(getContract()).get(ContextVariable.FULL_TIME.getName());
+		setCode(ContractCode.getContractCodeByValue(tc2));
+		if(StringUtils.isNotBlank(option)){
+			setModelOption(ModelOption.valueOf(option));
+		} else {
+			setModelOption(null);
+		}	
 		if( getDocumentType()==ContractAttachmentType.CONTRACT_DOC_DRAFT && tc2!=null ){
 			if(new Boolean(indefinite)){
 				
@@ -279,14 +282,6 @@ public class ContractPdfController {
 			if(new Boolean(fullTime)){
 				
 			}
-			setCode(ContractCode.getContractCodeByValue(tc2));
-			
-			if(StringUtils.isNotBlank(option)){
-				setModelOption(ModelOption.valueOf(option));
-			} else {
-				setModelOption(null);
-			}	
-//			setContractModel(model);
 		} else if( getDocumentType()==ContractAttachmentType.TRAINING_ANNEX_II ){
 			
 		}
@@ -415,10 +410,10 @@ public class ContractPdfController {
 	}
 	
 	public void onChangeZoomFactor( ActionEvent event ) throws IOException, UnsupportedContractDocumentException {
-		createPdfThumbnail();
 		for(ContractPdfField field: getContractPdfWriter().getContractPdfFields()){
 			field.setZoomFactor(getZoomFactor());
 		}
+		createPdfThumbnail();
 	}
 	public void onNextDocumentPage( ActionEvent event ) throws IOException, UnsupportedContractDocumentException {
 		setDocumentPage(getDocumentPage()+1);
@@ -426,6 +421,14 @@ public class ContractPdfController {
 	}
 	public void onPreviousDocumentPage( ActionEvent event ) throws IOException, UnsupportedContractDocumentException {
 		setDocumentPage(getDocumentPage()-1);
+		createPdfThumbnail();
+	}
+	public void onFirstDocumentPage( ActionEvent event ) throws IOException, UnsupportedContractDocumentException {
+		setDocumentPage(1);
+		createPdfThumbnail();
+	}
+	public void onLastDocumentPage( ActionEvent event ) throws IOException, UnsupportedContractDocumentException {
+		setDocumentPage(getNumberOfDocumentPages());
 		createPdfThumbnail();
 	}
 	public boolean isFirstDocumentPage() {
@@ -510,7 +513,7 @@ public class ContractPdfController {
 	
 	private ContractAttachmentType[] selectedDocuments;
 
-	private Map<ContractAttachmentType, byte[]> generatedMap;
+	private Map<ContractAttachmentType, byte[]> generatedDocumentMap;
 	
 	public ContractAttachmentType[] getSelectedDocuments() {
 		return selectedDocuments;
@@ -520,11 +523,15 @@ public class ContractPdfController {
 	}
 
 	public boolean isGeneratonFinished(){
-		return generatedMap!=null && generatedMap.size()>0;
+		return generatedDocumentMap!=null && generatedDocumentMap.size()>0;
 	}
 	
 	public int getAvailableDocumentCount(){
 		return getAvailableDocumentList().size();
+	}
+	
+	public boolean isGenerationAvailable(){
+		return ArrayUtils.contains(IPayrollConstants.AVAILABLE_CONTRACT_MODEL_OPTIONS, modelOption);
 	}
 	
 	public List<SelectItem> getAvailableDocumentList(){
@@ -547,9 +554,10 @@ public class ContractPdfController {
 	
 	public void onDocumentGenerationShow(ActionEvent event){
 		initialize(false);
+		beforeDocumentShow();
 		availableDocumentList = null;
-		generatedMap = null;
-		selectedDocuments = (null);
+		generatedDocumentMap = null;
+		selectedDocuments = null;
 		selectAllDocuments();
 	}
 	
@@ -566,14 +574,14 @@ public class ContractPdfController {
 	public void generateDocument(){
 		ContractUtils utils = ContractUtils.getInstance();
 		
-		generatedMap = new HashMap<ContractAttachmentType, byte[]>();
+		generatedDocumentMap = new HashMap<ContractAttachmentType, byte[]>();
 		
 		// Documento del contrato
 		if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.CONTRACT_DOC_DRAFT)){
 			try {
 				setDocumentType(ContractAttachmentType.CONTRACT_DOC_DRAFT);
 				loadDocument(true);
-				generatedMap.put(ContractAttachmentType.CONTRACT_DOC_DRAFT, getContractPdfWriter().buildPdf(true));
+				generatedDocumentMap.put(ContractAttachmentType.CONTRACT_DOC_DRAFT, getContractPdfWriter().buildPdf(true));
 			} catch (IOException e) {
 				LOGGER.error(e.getMessage(), e);
 				AonUtil.addErrorMessage("No se ha podido generar el contrato");
@@ -591,11 +599,11 @@ public class ContractPdfController {
 
 		// Documento de las clausulas
 		if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.CONTRACT_DOC_DRAFT) 
-				&& generatedMap.containsKey(ContractAttachmentType.CONTRACT_DOC_DRAFT)){
+				&& generatedDocumentMap.containsKey(ContractAttachmentType.CONTRACT_DOC_DRAFT)){
 			try {
 				setDocumentType(ContractAttachmentType.CONTRACT_CLAUSES);
 				loadDocument(true);
-				generatedMap.put(ContractAttachmentType.CONTRACT_CLAUSES, getContractPdfWriter().buildPdf(true));
+				generatedDocumentMap.put(ContractAttachmentType.CONTRACT_CLAUSES, getContractPdfWriter().buildPdf(true));
 			} catch (IOException e) {
 				LOGGER.error(e.getMessage(), e);
 				AonUtil.addErrorMessage("No se ha podido generar el documento de clausulas");
@@ -616,7 +624,7 @@ public class ContractPdfController {
 			try {
 				setDocumentType(ContractAttachmentType.BASIC_COPY_DRAFT);
 				loadDocument(true);
-				generatedMap.put(ContractAttachmentType.BASIC_COPY_DRAFT, getContractPdfWriter().buildPdf(true));
+				generatedDocumentMap.put(ContractAttachmentType.BASIC_COPY_DRAFT, getContractPdfWriter().buildPdf(true));
 			} catch (IOException e) {
 				LOGGER.error(e.getMessage(), e);
 				AonUtil.addErrorMessage("No se ha podido generar la copia basica");
@@ -638,7 +646,7 @@ public class ContractPdfController {
 				try {
 					setDocumentType(ContractAttachmentType.TRAINING_ANNEX_II);
 					loadDocument(true);
-					generatedMap.put(ContractAttachmentType.TRAINING_ANNEX_II, getContractPdfWriter().buildPdf(true));
+					generatedDocumentMap.put(ContractAttachmentType.TRAINING_ANNEX_II, getContractPdfWriter().buildPdf(true));
 				} catch (IOException e) {
 					LOGGER.error(e.getMessage(), e);
 					AonUtil.addErrorMessage("No se ha podido generar el anexo II");
@@ -657,7 +665,7 @@ public class ContractPdfController {
 			// Domiciliacion bancaria del contrato de formacion (421)
 			if(ArrayUtils.contains(selectedDocuments, ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT)){
 				try {
-					generatedMap.put(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT, getReport(IPayrollConstants.TRAINING_DIRECT_DEBIT_REPORT_KEY));
+					generatedDocumentMap.put(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT, getReport(IPayrollConstants.TRAINING_DIRECT_DEBIT_REPORT_KEY));
 				} catch (ReportException e) {
 					LOGGER.error(e.getMessage(), e);
 					AonUtil.addErrorMessage("No se ha podido generar la domiciliacion bancaria");
@@ -669,13 +677,21 @@ public class ContractPdfController {
 	}
 	
 	private List<IAttachment> getGeneratedAttach(){
+		List<ContractAttachmentType> types = new LinkedList<ContractAttachmentType>();
 		List<IAttachment> list = new LinkedList<IAttachment>();
-		for(ContractAttachmentType type: generatedMap.keySet()){
-			ContractAttachment attach = new ContractAttachment();
-			attach.setAttachmentType(type);
-			attach.setDescription(type.getName(AonUtil.getCurrentLocale()));
-			attach.setData(generatedMap.get(type));
-			list.add(attach);
+		types.add(ContractAttachmentType.CONTRACT_DOC_DRAFT);
+		types.add(ContractAttachmentType.CONTRACT_CLAUSES);
+		types.add(ContractAttachmentType.BASIC_COPY_DRAFT);
+		types.add(ContractAttachmentType.TRAINING_ANNEX_II);
+		types.add(ContractAttachmentType.TRAINING_CENTER_DIRECT_DEBIT);
+		for(ContractAttachmentType type: types){
+			if(generatedDocumentMap.containsKey(type)){
+				ContractAttachment attach = new ContractAttachment();
+				attach.setAttachmentType(type);
+				attach.setDescription(type.getName(AonUtil.getCurrentLocale()));
+				attach.setData(generatedDocumentMap.get(type));
+				list.add(attach);
+			}
 		}
 		return list;
 	}

@@ -68,13 +68,13 @@
 			value="#{bundle.payroll_contract_contract_type}" />
 		<aon:div rendered="#{!contract.params.retaQuote}">
 			<aon:selectOneMenu id="Contract_contractCode" required="true" 
-				rendered="#{contract.new or !contract.unsuportedContract}"
+				rendered="#{contract.new or !contract.transformedContract}"
 				value="#{contract.params.contractCode}">
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.contractCodes}" />
 				<a4j:support event="onchange" reRender="Contract_contractModelDiv" ajaxSingle="#{true}" />
 			</aon:selectOneMenu>
-			<aon:panelGroup rendered="#{!contract.new and contract.unsuportedContract}">
+			<aon:panelGroup rendered="#{!contract.new and contract.transformedContract}">
 				<aon:outputText value="#{contract.params.contractCode.value}" />
 				<aon:outputText value=" - " />
 				<aon:outputText value="#{contract.params.contractCode}" />
@@ -194,6 +194,20 @@
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{payrollCollections.occupationTypes}" />
 				</aon:selectOneMenu>
+				
+				<aon:outputLabel for="workingWeekHours"
+					rendered="#{contract.partiallyTimeContract}"
+					value="#{bundle.sepe_contrata_contract_working_day_duration}" />
+				<aon:div rendered="#{contract.partiallyTimeContract}">
+					<aon:inputText id="workingWeekHours"
+						size="2" maxlength="4"
+						required="#{true}"
+						value="#{contract.params.weekHours}" />
+					<aon:outputText styleClass="aon-margin-left"
+						value="horas semanales" />
+					<!-- TODO: other journal type implementation -->
+				</aon:div>
+				
 			</c:if>
 
 		</c:if>

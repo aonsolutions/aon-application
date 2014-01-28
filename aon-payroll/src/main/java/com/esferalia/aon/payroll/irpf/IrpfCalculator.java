@@ -268,7 +268,6 @@ public class IrpfCalculator {
 		try {
 			modeloRetencionesXMLJaxb.calcularXML();
 		} catch (NullPointerException ignore) {
-
 		}
 
 		AEATRetencionesError2013 error2013 = modeloRetencionesXMLJaxb

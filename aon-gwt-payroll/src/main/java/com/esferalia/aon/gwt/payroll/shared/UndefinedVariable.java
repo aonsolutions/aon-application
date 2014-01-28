@@ -7,4 +7,10 @@ public class UndefinedVariable extends Variable {
 		return null;
 	}
 	
+	@Override
+	public void setValue(Object value) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

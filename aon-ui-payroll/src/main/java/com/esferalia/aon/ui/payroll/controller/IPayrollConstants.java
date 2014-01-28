@@ -1,6 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller;
 
-import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel.ModelOption;
+import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 
 public interface IPayrollConstants {
 	
@@ -98,16 +98,6 @@ public interface IPayrollConstants {
 	// ************************************************************
 	// OTHER
 	// ************************************************************
-//	public static final ContractModel[] AVAILABLE_CONTRACT_MODEL = {
-//		ContractModel.PE151,
-//		ContractModel.PE170,
-//		ContractModel.PE176,
-//		ContractModel.PE177,
-//		ContractModel.PE179,
-//		ContractModel.PE183,
-//		ContractModel.PE187,
-//		ContractModel.PE226,
-//	};
 	public static final ModelOption[] AVAILABLE_CONTRACT_MODEL_OPTIONS = {
 		ModelOption.LEARNING_OPT1,
 //		ModelOption.LEARNING_OPT2,
@@ -120,18 +110,18 @@ public interface IPayrollConstants {
 //		ModelOption.PRACTICE_OPT5,
 		ModelOption.TEMPORARY_OPT1,
 		ModelOption.TEMPORARY_OPT2,
-//		ModelOption.TEMPORARY_OPT3,
+		ModelOption.TEMPORARY_OPT3,
 //		ModelOption.TEMPORARY_OPT4,
 //		ModelOption.TEMPORARY_OPT5,
 //		ModelOption.TEMPORARY_OPT6,
 //		ModelOption.TEMPORARY_OPT7,
-//		ModelOption.TEMPORARY_OPT8,
+		ModelOption.TEMPORARY_OPT8,
 //		ModelOption.TEMPORARY_OPT9,
 //		ModelOption.TEMPORARY_OPT10,
-//		ModelOption.TEMPORARY_OPT11,
+		ModelOption.TEMPORARY_OPT11,
 		ModelOption.TEMPORARY_OPT12,
 //		ModelOption.TEMPORARY_OPT13,
-//		ModelOption.TEMPORARY_OPT14,
+		ModelOption.TEMPORARY_OPT14,
 //		ModelOption.TEMPORARY_OPT15,
 //		ModelOption.TEMPORARY_OPT16,
 //		ModelOption.TEMPORARY_OPT17,

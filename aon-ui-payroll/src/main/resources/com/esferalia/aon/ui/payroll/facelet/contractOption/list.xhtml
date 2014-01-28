@@ -5,6 +5,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -19,7 +20,9 @@
 			
 				<aon:dataTable id="contractModelList" value="#{contractModel.model}" var="to">
 					
-					<aon:rowSelector id="contractCodelList-select" toggleOnClick="#{false}" />
+					<aon:rowSelector id="contractCodelList-select"  
+						reRender="contractModelList"
+						actionListener="#{contractModel.onSelectModel}" />
 					
 					<aon:column styleClass="aon-editDataTable-iconColumn aon-width-50">
 						<aon:htmlCommandLink styleClass="aon-icon-pdf" style="padding-left: 15px;" 
@@ -37,6 +40,17 @@
 						</f:facet>
 						<aon:outputText value="#{to}"/>
 					</aon:column>
+					
+					<rich:subTable rendered="#{contractModel.selectedModel == to}"
+						style="background-color: #FBEDB6;"
+						value="#{contractModel.optionModel}"
+						var="option" >
+						<aon:column styleClass="aon-editDataTable-iconColumn aon-width-auto" style="background-color: #FBEDB6;">
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="background-color: #FBEDB6;">
+							<aon:outputText value="#{option}" />
+						</aon:column>
+					</rich:subTable>
 					
 				</aon:dataTable>
 			</aon:div>

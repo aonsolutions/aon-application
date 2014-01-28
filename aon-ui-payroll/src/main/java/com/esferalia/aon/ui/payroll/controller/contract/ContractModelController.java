@@ -18,22 +18,35 @@ import org.apache.commons.io.IOUtils;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.Classpath;
+import com.esferalia.aon.file.payroll.contract.pdf.ContractPdfModel;
+import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.file.payroll.contract.pdf.model.AbstractContractModel;
+import com.esferalia.aon.file.payroll.contract.pdf.model.IndefiniteModel;
+import com.esferalia.aon.file.payroll.contract.pdf.model.LearningModel;
+import com.esferalia.aon.file.payroll.contract.pdf.model.PracticeModel;
+import com.esferalia.aon.file.payroll.contract.pdf.model.TemporaryModel;
 
 public class ContractModelController {
 
 	private DataModel model;
+	private DataModel optionModel;
+	
+	private ContractPdfModel selectedModel;
+	
+	public ContractPdfModel getSelectedModel() {
+		return selectedModel;
+	}
+	
+	public void setSelectedModel(ContractPdfModel selectedModel) {
+		this.selectedModel = selectedModel;
+	}
 
 	public DataModel getModel() {
 		if (model == null) {
-			List<String> list = new LinkedList<String>();
-		    list.add("Indefinido");
-		    list.add("Temporal");
-		    list.add("Formación");
-		    list.add("Prácticas");		
-			list.add("PE200 - Pacto de horas complementarias");
-			list.add("PE192 - Comunicación de llamamiento a la actividad de los trabajadores fijos discontinuos");
-			list.add("PE191 - Comunicación de prórroga de contrato de trabajo");
+			List<ContractPdfModel> list = new LinkedList<ContractPdfModel>();
+			for(ContractPdfModel model: ContractPdfModel.values()){
+				list.add(model);
+			}
 			model = new ListDataModel( list ); 
 			 
 		}
@@ -44,12 +57,31 @@ public class ContractModelController {
 		this.model = model;
 	}
 	
+	public DataModel getOptionModel() {
+		return optionModel;
+	}
+
+	public void setOptionModel(DataModel optionModel) {
+		this.optionModel = optionModel;
+	}
+
 	public void onReset(ActionEvent event) {
 		setModel(null);
 	}
 	
+	public void onSelectModel(ActionEvent event ) {
+		setSelectedModel((ContractPdfModel) getModel().getRowData());
+		List<ModelOption> list = new LinkedList<ModelOption>();
+		for(ModelOption option: ModelOption.values()){
+			if(getPdfModel(option.getPdfModel())==getSelectedModel()){
+				list.add(option);
+			}
+		}
+		optionModel = new ListDataModel( list );
+	}
+	
 	public boolean isPdfEnabled() {
-		String name = (String) getModel().getRowData();
+		String name = getPdfName((ContractPdfModel) getModel().getRowData());
 		try {
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
 			URL[] urls = Classpath.search(cl, AbstractContractModel.CONTRACT_DOCUMENT_PATH, name + ".pdf");
@@ -60,13 +92,44 @@ public class ContractModelController {
 		}
 	}
 	
+	private String getPdfName(ContractPdfModel model){
+		if(ContractPdfModel.INDEFINITE==model){
+			return IndefiniteModel.MODEL_NAME;
+		} else if(ContractPdfModel.LEARNING==model){
+			return LearningModel.MODEL_NAME;
+		} else if(ContractPdfModel.PRACTICE==model){
+			return PracticeModel.MODEL_NAME;
+		} else if(ContractPdfModel.TEMPORARY==model){
+			return TemporaryModel.MODEL_NAME;
+		} else if(ContractPdfModel.PE200==model){
+			return null;
+		} else if(ContractPdfModel.PE192==model){
+			return null;
+		} else if(ContractPdfModel.PE191==model){
+			return null;
+		}
+		return null;
+	}
+	private ContractPdfModel getPdfModel(String name){
+		if(IndefiniteModel.MODEL_NAME.equals(name)){
+			return ContractPdfModel.INDEFINITE;
+		} else if(TemporaryModel.MODEL_NAME.equals(name)){
+			return ContractPdfModel.TEMPORARY;
+		} else if(PracticeModel.MODEL_NAME.equals(name)){
+			return ContractPdfModel.PRACTICE;
+		} else if(LearningModel.MODEL_NAME.equals(name)){
+			return ContractPdfModel.LEARNING;
+		}
+		return null;
+	}
+	
 	public void onDownloadContract(ActionEvent event ) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
 		BufferedInputStream buf = null;
 		ServletOutputStream stream = null;
 		try {
-			String name = (String) getModel().getRowData();
+			String name = getPdfName((ContractPdfModel) getModel().getRowData());
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
 			URL[] urls = Classpath.search(cl, AbstractContractModel.CONTRACT_DOCUMENT_PATH, name + ".pdf");
 			URL url = urls[0];
