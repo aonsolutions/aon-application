@@ -40,23 +40,23 @@
 
 			<aon:div styleClass="aon-scroll-area">
 			
-				<aon:panel>
-					<aon:outputText value="#{bundle.aon_module_hotel}:" styleClass="aon-bold" />
-					<aon:outputText styleClass="aon-margin-left "
-						value="#{(roomBooking.hotel!=null)?(roomBooking.hotel.workPlace.description):('-')}"/>
+				<aon:panel styleClass="aon-panelGrid-search aon-margin-bottom">
+					<aon:outputText value="#{bundle.aon_module_hotel}:" styleClass="aon-italic" />
+					<aon:outputText styleClass="aon-margin-left aon-bold"
+						value="#{(roomBooking.hotel!=null and roomBooking.hotel.id!=null) ? (roomBooking.hotel.workPlace.description) : ('-')}"/>
 
-					<aon:outputText value="#{bundle.report_agency}:" styleClass="aon-bold aon-margin-left"/>
-					<aon:outputText styleClass="aon-margin-left"
-						value="#{(roomBooking.agency!=null and roomBooking.agency.id!=null)?(roomBooking.agency.registry.fullName):('-')}"/>
+					<aon:outputText value="#{bundle.report_agency}:" styleClass="aon-margin-left aon-italic"/>
+					<aon:outputText styleClass="aon-margin-left aon-bold"
+						value="#{(roomBooking.agency!=null and roomBooking.agency.id!=null) ? (roomBooking.agency.registry.fullName) : ('-')}"/>
 
-					<aon:outputText value="#{bundle.pms_room_type}:" styleClass="aon-bold aon-margin-left"/>
+					<aon:outputText value="#{bundle.pms_room_type}:" styleClass="aon-margin-left aon-italic"/>
 					<aon:div style="display: inline;">
-						<aon:outputText styleClass="aon-margin-left"
-							rendered="#{(roomBooking.item!=null and roomBooking.item.id!=null)}"
-							value="#{roomBooking.item.product.code} - #{roomBooking.item.product.name}"/>
-						<aon:outputText styleClass="aon-margin-left"
-							rendered="#{roomBooking.item==null or roomBooking.item.id==null}"
-							value=" - "/>
+						<aon:outputText styleClass="aon-margin-left aon-bold"
+							value="#{roomBooking.item.product.code} - #{roomBooking.item.product.name}"
+							rendered="#{(roomBooking.item!=null and roomBooking.item.id!=null)}" />
+						<aon:outputText styleClass="aon-margin-left aon-bold"
+							value="-"
+							rendered="#{roomBooking.item==null or roomBooking.item.id==null}" />
 					</aon:div>
 				</aon:panel>
 			
