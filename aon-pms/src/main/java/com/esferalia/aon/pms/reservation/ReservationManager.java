@@ -1,5 +1,6 @@
 package com.esferalia.aon.pms.reservation;
 
+import java.sql.Connection;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
@@ -55,6 +57,7 @@ import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationSource;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.pms.sql.SQLBooking;
 
 public class ReservationManager implements IReservationConstants {
 
@@ -264,7 +267,7 @@ public class ReservationManager implements IReservationConstants {
 			createReservationGuest(reservationType, reservation);
 			createReservationRoom(reservationType, reservation);
 			createReservationService(reservationType, reservation);
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			String actionType = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), ACTION, TYPE);
 			if (actionType.equals(ADD_RESERVATION)) {
 				try {
@@ -357,7 +360,6 @@ public class ReservationManager implements IReservationConstants {
 	private void createReservationRoom(HotelReservationType reservationType, ProjectReservation reservation) throws ManagerBeanException, ReservationException {
 		roomServicesMap = new HashMap<String, List<Integer>>();
 		int totalPax = 0;
-		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		for (int i=0; i<reservationType.getRoomStays().sizeOfRoomStayArray(); i++) {
 			RoomStay stay = reservationType.getRoomStays().getRoomStayArray(i);
 			if (stay.getRoomTypes() != null && stay.getRoomTypes().sizeOfRoomTypeArray() > 0) {
@@ -380,19 +382,9 @@ public class ReservationManager implements IReservationConstants {
 				int adults = totalAdults / roomUnits;
 				int children = totalChildren / roomUnits;
 				for (int j=0; j<roomUnits; j++) {
-					ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
-					reservationRoom.setProjectReservation(reservation);
-					reservationRoom.setDomain(getReservationUtils().getDomain());
-					reservationRoom.setRoomIndex(stay.getIndexNumber());
-					reservationRoom.setRoomCode(stay.getRoomTypes().getRoomTypeArray(0).getRoomTypeCode());
-					reservationRoom.setItem(getReservationUtils().obtainRoomItem(reservation, stay.getRoomTypes().getRoomTypeArray(0)));
-					if (stay.getRatePlans() != null && stay.getRatePlans().sizeOfRatePlanArray() > 0) {
-						reservationRoom.setRatePlan(stay.getRatePlans().getRatePlanArray(0).getRatePlanCode());
-						reservationRoom.setTariff(getReservationUtils().obtainRoomTariff(reservation, stay.getRatePlans().getRatePlanArray(0)));
-					}
-					reservationRoom.setAdults((j==0) ? totalAdults - (adults * (roomUnits - 1)) : adults);
-					reservationRoom.setChildren((j==0) ? totalChildren - (children * (roomUnits - 1)) : children);
-					reservationRoom = (ProjectReservationRoom)reservationRoomBean.insert(reservationRoom);
+					int roomAdults = (j==0) ? totalAdults - (adults * (roomUnits - 1)) : adults;
+					int roomChildren = (j==0) ? totalChildren - (children * (roomUnits - 1)) : children;
+					ProjectReservationRoom reservationRoom = insertReservationRoom(reservation, stay, roomAdults, roomChildren);
 
 					if (stay.getServiceRPHs() != null) {
 						for (int k=0; k<stay.getServiceRPHs().sizeOfServiceRPHArray(); k++) {
@@ -464,6 +456,33 @@ public class ReservationManager implements IReservationConstants {
 
 	private boolean isServiceDateValid(Date serviceDate, Date reservationEndDate) {
 		return !DateUtils.isSameDay(serviceDate, reservationEndDate) && serviceDate.before(reservationEndDate);
+	}
+
+	private ProjectReservationRoom insertReservationRoom(ProjectReservation reservation, RoomStay stay, int adults, int children) 
+			throws ManagerBeanException, ReservationException {
+		ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
+		reservationRoom.setProjectReservation(reservation);
+		reservationRoom.setDomain(getReservationUtils().getDomain());
+		reservationRoom.setRoomIndex(stay.getIndexNumber());
+		reservationRoom.setRoomCode(stay.getRoomTypes().getRoomTypeArray(0).getRoomTypeCode());
+		reservationRoom.setItem(getReservationUtils().obtainRoomItem(reservation, stay.getRoomTypes().getRoomTypeArray(0)));
+		if (stay.getRatePlans() != null && stay.getRatePlans().sizeOfRatePlanArray() > 0) {
+			reservationRoom.setRatePlan(stay.getRatePlans().getRatePlanArray(0).getRatePlanCode());
+			reservationRoom.setTariff(getReservationUtils().obtainRoomTariff(reservation, stay.getRatePlans().getRatePlanArray(0)));
+		}
+		reservationRoom.setAdults(adults);
+		reservationRoom.setChildren(children);
+		reservationRoom = (ProjectReservationRoom)BeanManager.getManagerBean(ProjectReservationRoom.class).insert(reservationRoom);
+
+		Connection connection = null;
+		try {
+			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(reservation.getDomain()));
+			SQLBooking.insert(connection, reservationRoom);
+		} catch (Throwable ex) {
+			throw new ReservationException("Unknown error: " + ex.getMessage(), reservation.getCrsCode(), 1);
+		}
+
+		return reservationRoom;
 	}
 
 	private ProjectReservationService insertReservationService(ProjectReservation reservation, Service service, Item item) throws ManagerBeanException {
@@ -549,13 +568,22 @@ public class ReservationManager implements IReservationConstants {
 		}
 	}
 
-	private void removeReservationRoom(ProjectReservation reservation) throws ManagerBeanException {
-		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
-		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
-			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
-			reservationRoomBean.remove(reservationRoom);
+	private void removeReservationRoom(ProjectReservation reservation) throws ManagerBeanException, ReservationException {
+		Connection connection = null;
+		try {
+			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(reservation.getDomain()));
+			IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
+			for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
+				ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
+				SQLBooking.delete(connection, reservationRoom);
+				reservationRoomBean.remove(reservationRoom);
+			}
+		} catch (ManagerBeanException ex) {
+			throw ex;
+		} catch (Throwable ex) {
+			throw new ReservationException("Unknown error: " + ex.getMessage(), reservation.getCrsCode(), 1);
 		}
 	}
 
@@ -597,10 +625,20 @@ public class ReservationManager implements IReservationConstants {
 		}
 	}
 
-	private void cancelReservation(ProjectReservation reservation) throws ManagerBeanException {
-		reservation.setStatus(ReservationStatus.CANCELLED);
-		reservation.setModificationDate(new Date());
-		BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
+	private void cancelReservation(ProjectReservation reservation) throws ManagerBeanException, ReservationException {
+		Connection connection = null;
+		try {
+			reservation.setStatus(ReservationStatus.CANCELLED);
+			reservation.setModificationDate(new Date());
+			BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
+
+			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(reservation.getDomain()));
+			SQLBooking.delete(connection, reservation);
+		} catch (ManagerBeanException ex) {
+			throw ex;
+		} catch (Throwable ex) {
+			throw new ReservationException("Unknown error: " + ex.getMessage(), reservation.getCrsCode(), 1);
+		}
 	}
 
 	private String findReservationId(ResGlobalInfoType resGlobalInfoType, String source) {
