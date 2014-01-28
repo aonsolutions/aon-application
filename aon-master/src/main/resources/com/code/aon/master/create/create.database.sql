@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.28.1
+# Version: 7.28.2
 # Created by: girazu
-# Creation Date: 28/01/2014 10:45
+# Creation Date: 28/01/2014 17:00
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -165,6 +165,7 @@ CREATE TABLE `tariff` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `code` varchar(8) collate latin1_spanish_ci default NULL COMMENT 'Codigo de la Tarifa',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Tarifa',
+  `discount` double(6,2) default '0.00' COMMENT 'Descuento general de la Tarifa',
   PRIMARY KEY  (`id`),
   KEY `IDX_TARIFF_DOMAIN` (`domain`),
   CONSTRAINT `FK_TARIFF_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
@@ -1547,6 +1548,24 @@ CREATE TABLE `allotment_item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Habitacion por Cupo';
 
 #
+# Structure for the `allotment_tariff` table : 
+#
+
+CREATE TABLE `allotment_tariff` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `allotment` int(4) NOT NULL COMMENT 'Identificador del Cupo de seguridad',
+  `tariff` int(4) NOT NULL COMMENT 'Identificador de la Tarifa',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_ALLOTMENT_TARIFF_DOMAIN` (`domain`),
+  KEY `IDX_ALLOTMENT_TARIFF_ALLOTMENT` (`allotment`),
+  KEY `IDX_ALLOTMENT_TARIFF_TARIFF` (`tariff`),
+  CONSTRAINT `FK_ALLOTMENT_TARIFF_ALLOTMENT` FOREIGN KEY (`allotment`) REFERENCES `allotment` (`id`),
+  CONSTRAINT `FK_ALLOTMENT_TARIFF_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ALLOTMENT_TARIFF_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas por Cupo';
+
+#
 # Structure for the `alumn_loan` table : 
 #
 
@@ -1985,6 +2004,7 @@ CREATE TABLE `project_reservation_room` (
   `room_index` tinyint(2) NOT NULL COMMENT 'Numero de Habitacion',
   `room_code` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo de Habitacion en origen',
   `item` int(4) NOT NULL COMMENT 'Identificador del Tipo de Habitacion',
+  `rate_plan` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo de Tarifa en origen',
   `tariff` int(4) default NULL COMMENT 'Identificador de la Tarifa',
   `adults` smallint(2) default '0' COMMENT 'Numero de adultos',
   `children` smallint(2) default '0' COMMENT 'Numero de niños',
@@ -7247,6 +7267,24 @@ CREATE TABLE `system_payment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
 
 #
+# Structure for the `tariff_addinfo` table : 
+#
+
+CREATE TABLE `tariff_addinfo` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `tariff` int(4) NOT NULL COMMENT 'Identificador de la Tarifa',
+  `attribute` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Atributo adicional',
+  `value` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Valor del atributo adicional',
+  `value_date` date NOT NULL COMMENT 'Fecha del valor del atributo',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_TARIFF_ADDINFO_DOMAIN` (`domain`),
+  KEY `IDX_TARIFF_ADDINFO_TARIFF` (`tariff`),
+  CONSTRAINT `FK_TARIFF_ADDINFO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_TARIFF_ADDINFO_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion adicional de la Tarifa';
+
+#
 # Structure for the `tariff_catalogue` table : 
 #
 
@@ -7529,7 +7567,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.28.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.28.2');
 
 COMMIT;
 
