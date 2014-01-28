@@ -68,17 +68,25 @@
 			value="#{bundle.payroll_contract_contract_type}" />
 		<aon:div rendered="#{!contract.params.retaQuote}">
 			<aon:selectOneMenu id="Contract_contractCode" required="true" 
+				value="#{contract.params.contractCode}">
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.allContractCodes}" />
+				<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
+			</aon:selectOneMenu>
+		<!--  
+			<aon:selectOneMenu id="Contract_contractCode" required="true" 
 				rendered="#{contract.new or !contract.transformedContract}"
 				value="#{contract.params.contractCode}">
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.contractCodes}" />
-				<a4j:support event="onchange" reRender="Contract_contractModelDiv" ajaxSingle="#{true}" />
+				<a4j:support event="onchange" reRender="contract_panel" ajaxSingle="#{true}" />
 			</aon:selectOneMenu>
 			<aon:panelGroup rendered="#{!contract.new and contract.transformedContract}">
 				<aon:outputText value="#{contract.params.contractCode.value}" />
 				<aon:outputText value=" - " />
 				<aon:outputText value="#{contract.params.contractCode}" />
 			</aon:panelGroup>
+		-->
 		</aon:div>
 		<aon:div rendered="#{contract.params.retaQuote}">
 			<aon:outputText value="#{bundle.payroll_contract_reta}" />
@@ -200,11 +208,14 @@
 					value="#{bundle.sepe_contrata_contract_working_day_duration}" />
 				<aon:div rendered="#{contract.partiallyTimeContract}">
 					<aon:inputText id="workingWeekHours"
-						size="2" maxlength="4"
+						size="2" maxlength="5"
 						required="#{true}"
-						value="#{contract.params.weekHours}" />
+						value="#{contract.params.weekHours}" >
+						<f:validateDoubleRange minimum="0" maximum="39.00" />
+					</aon:inputText>
 					<aon:outputText styleClass="aon-margin-left"
-						value="horas semanales" />
+						value="horas semanales" >
+					</aon:outputText>
 					<!-- TODO: other journal type implementation -->
 				</aon:div>
 				

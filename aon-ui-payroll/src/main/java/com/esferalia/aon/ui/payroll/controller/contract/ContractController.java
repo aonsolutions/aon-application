@@ -1312,7 +1312,7 @@ public class ContractController extends BasicController {
 		private Date trainingStartDate;
 		private Date trainingEndDate;
 		private ModelOption contractModelOption;
-		private Integer weekHours;
+		private Double weekHours;
 		
 		public boolean isAgreementSalaryCheck() {
 			return agreementSalaryCheck;
@@ -1470,10 +1470,10 @@ public class ContractController extends BasicController {
 		public void setRetaQuote(boolean retaQuote) {
 			this.retaQuote = retaQuote;
 		}
-		public Integer getWeekHours() {
+		public Double getWeekHours() {
 			return weekHours;
 		}
-		public void setWeekHours(Integer weekHours) {
+		public void setWeekHours(Double weekHours) {
 			this.weekHours = weekHours;
 		}
 		

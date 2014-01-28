@@ -18,14 +18,27 @@
 			</aon:div>
 		</aon:column>
 	</c:if>
-			
+	
 	<aon:column alias="FanBatchDetail.ccc.ccc"
 		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.company_enterprise_ccc}" />
 		</f:facet>
 		<aon:div styleClass="aon-nowrap">
-			<aon:outputText value="#{to.ccc.ccc}"/>
+			<aon:outputText value="#{to.ccc.fullCcc}"/>
+			<aon:outputText value="&#160;("/>
+			<aon:outputText value="#{to.ccc.activity.type}"/>
+			<aon:outputText value=")"/>
+		</aon:div>
+	</aon:column>
+	
+	<aon:column alias="FanBatchDetail.ccc.type"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_type}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.ccc.type}"/>
 		</aon:div>
 	</aon:column>
 
