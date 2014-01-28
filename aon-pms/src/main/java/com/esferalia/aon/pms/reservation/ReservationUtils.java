@@ -29,6 +29,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Tariff;
+import com.code.aon.config.TariffAddInfo;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.customer.Customer;
@@ -761,20 +762,25 @@ public class ReservationUtils implements IReservationConstants {
 	}
 
 	public Tariff obtainRoomTariff(ProjectReservation reservation, RatePlanType ratePlan) throws ManagerBeanException, ReservationException {
-		Tariff tariff = obtainTariff(ratePlan.getRatePlanCode());
-		if (tariff != null) {
-			return tariff;
+		TariffAddInfo tariffAddInfo = obtainTariffAddInfo(null, TARIFF_ALIAS, ratePlan.getRatePlanCode());
+		if (tariffAddInfo != null) {
+			return tariffAddInfo.getTariff();
 		} else {
-			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_TARIFF);
-			for (ITransferObject ito : appParamBean.getList(criteria)) {
-				tariff = obtainTariff(((ApplicationParameter)ito).getValue());
-				if (tariff != null) {
-					reservation.setRemarks("TARIFA DESCONOCIDA [" + ratePlan.getRatePlanCode() + "]\n" + reservation.getRemarks());
-					reservation.setStatus(ReservationStatus.BLOCKED);
-
-					return tariff;
+			Tariff tariff = obtainTariff(ratePlan.getRatePlanCode());
+			if (tariff != null) {
+				return tariff;
+			} else {
+				IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_TARIFF);
+				for (ITransferObject ito : appParamBean.getList(criteria)) {
+					tariff = obtainTariff(((ApplicationParameter)ito).getValue());
+					if (tariff != null) {
+						reservation.setRemarks("TARIFA DESCONOCIDA [" + ratePlan.getRatePlanCode() + "]\n" + reservation.getRemarks());
+						reservation.setStatus(ReservationStatus.BLOCKED);
+	
+						return tariff;
+					}
 				}
 			}
 		}
@@ -789,6 +795,22 @@ public class ReservationUtils implements IReservationConstants {
 			return (Tariff)ito;
 		}
 
+		return null;
+	}
+
+	private TariffAddInfo obtainTariffAddInfo(Tariff tariff, String attribute, String value) throws ManagerBeanException {
+		IManagerBean tariffAddInfoBean = BeanManager.getManagerBean(TariffAddInfo.class);
+		Criteria criteria = new Criteria();
+		if (tariff != null) {
+			criteria.addEqualExpression(tariffAddInfoBean.getFieldName(IEntityAlias.TARIFF_ADD_INFO_TARIFF_ID), tariff.getId());
+		}
+		if (StringUtils.isNotEmpty(value)) {
+			criteria.addEqualExpression(tariffAddInfoBean.getFieldName(IEntityAlias.TARIFF_ADD_INFO_VALUE), value);
+		}
+		criteria.addEqualExpression(tariffAddInfoBean.getFieldName(IEntityAlias.TARIFF_ADD_INFO_ATTRIBUTE), attribute);
+		for (ITransferObject ito : tariffAddInfoBean.getList(criteria)) {
+			return (TariffAddInfo)ito;
+		}
 		return null;
 	}
 

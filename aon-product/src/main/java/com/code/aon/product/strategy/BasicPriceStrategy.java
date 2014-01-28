@@ -88,6 +88,8 @@ public class BasicPriceStrategy implements IPriceStrategy {
 					ItemTariff itemTariff = (ItemTariff)itr;
 					return itemTariff.getPrice();
 				}
+
+				calc.getDiscountExpression().setDiscountExpr(Double.toString(tariff.getDiscount()));
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error obtaining unitPrice for tariff = " + tariff.getName(), e);

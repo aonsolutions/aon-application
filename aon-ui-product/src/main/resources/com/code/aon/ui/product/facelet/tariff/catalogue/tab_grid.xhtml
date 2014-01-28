@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{tariffCatalogue}" />
+
+		<ui:define name="columns">
+			<aon:column alias="TariffCatalogue.catalogue.name" 
+				styleClass="aon-editDataTable-textColumn aon-width-150">
+				<f:facet name="header">
+					<aon:outputLabel for="TariffCatalogue_catalogue" value="#{bundle.product_catalogueItem_catalogue}" />
+				</f:facet>
+				<aon:outputText value="#{to.catalogue.name}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="TariffCatalogue_catalogue"
+					value="#{controller.to.catalogue}" rendered="#{formEdit}"
+					required="true"
+					valueChangeListener="#{controller.onCatalogueChanged}"
+					reRender="TariffCatalogue_catalogue_startDate,TariffCatalogue_catalogue_endDate">
+					<f:selectItems value="#{productCollections.catalogues}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="TariffCatalogue_catalogue-New"
+						value="#{controller.to.catalogue}" rendered="#{formNew}"
+						required="true"
+						valueChangeListener="#{controller.onCatalogueChanged}"
+						reRender="TariffCatalogue_catalogue_startDate-New,TariffCatalogue_catalogue_endDate-New">
+						<f:selectItems value="#{productCollections.catalogues}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+			<aon:column alias="TariffCatalogue.catalogue.startDate" 
+				styleClass="aon-editDataTable-textColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="TariffCatalogue_catalogue_startDate" value="#{bundle.aon_date_from}" />
+				</f:facet>
+				<aon:outputText id="TariffCatalogue_catalogue_startDate"
+					value="#{to.catalogue.startDate}"
+					rendered="#{formList or formEdit}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<f:facet name="footer">
+					<aon:outputText id="TariffCatalogue_catalogue_startDate-New"
+						value="#{controller.to.catalogue.startDate}"
+						rendered="#{formNew}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</f:facet>
+			</aon:column>
+
+			<aon:column alias="TariffCatalogue.catalogue.endDate"
+				styleClass="aon-editDataTable-textColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="TariffCatalogue_catalogue_endDate" value="#{bundle.aon_date_to}" />
+				</f:facet>
+				<aon:outputText id="TariffCatalogue_catalogue_endDate"
+					value="#{to.catalogue.endDate}"
+					rendered="#{formList or formEdit}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<f:facet name="footer">
+					<aon:outputText id="TariffCatalogue_catalogue_endDate-New"
+						value="#{controller.to.catalogue.endDate}"
+						rendered="#{formNew}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+</ui:composition>

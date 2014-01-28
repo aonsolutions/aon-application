@@ -51,6 +51,7 @@ public interface IReservationConstants {
 	String SERVICE_TYPE_ROOM = "H";
 
 	String ROOM_ALIAS = "ALIAS";
+	String TARIFF_ALIAS = "ALIAS";
 	String SERVICE_ALIAS = "ALIAS";
 	String SERVICE_BREAKDOWN = "SERVICE_BREAKDOWN";
 

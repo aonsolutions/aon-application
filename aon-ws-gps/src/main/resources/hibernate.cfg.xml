@@ -39,6 +39,7 @@
     	<mapping class="com.code.aon.config.Scope"/>
         <mapping class="com.code.aon.config.Tag"/>
     	<mapping class="com.code.aon.config.Tariff"/>
+		<mapping class="com.code.aon.config.TariffAddInfo"/>
     	<mapping class="com.code.aon.config.Tax"/>
     	<mapping class="com.code.aon.config.TaxDetail"/>
     	<mapping class="com.code.aon.customer.Customer"/>

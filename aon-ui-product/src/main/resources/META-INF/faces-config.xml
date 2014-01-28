@@ -759,6 +759,13 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ****** ITEM CATALOGUE REPORT ****** -->
+	<managed-bean>
+		<managed-bean-name>itemCatalogueReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ItemCatalogueReportController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************ ITEM INFO ************* -->
 	<managed-bean>
 		<managed-bean-name>itemInfo</managed-bean-name>
@@ -1144,11 +1151,11 @@
 			<value>true</value>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ****** TARIFF ****** -->
 	<managed-bean>
 		<managed-bean-name>tariff</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.product.controller.TariffController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1173,6 +1180,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{tariffCatalogueChildListener}</value>
+				<value>#{tariffAddInfoListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1193,6 +1201,25 @@
 				<map-entry>
 					<key>TariffCatalogue_tariff_id</key>
                     <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>tariffAddInfoListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>tariffAddInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>TariffAddInfo_tariff_id</key>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -1257,13 +1284,42 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ****** ITEM CATALOGUE REPORT ****** -->
+	<!-- ************ TARIFF ADDINFO ************** -->
 	<managed-bean>
-		<managed-bean-name>itemCatalogueReport</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.product.controller.ItemCatalogueReportController</managed-bean-class>
+		<managed-bean-name>tariffAddInfo</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.TariffAddInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tariffAddInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>TariffAddInfo_attribute,TariffAddInfo_value</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>tariff</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>tariff.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
 	</managed-bean>
-	
+
    	<!-- ************* NAVIGATION RULES ***************** -->
 	<navigation-rule>
 	    <navigation-case>

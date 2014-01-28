@@ -271,6 +271,7 @@ public class AonExporter extends GenericExporter{
 		map.put("Scope","com.code.aon.config.Scope");
 		map.put("Tag","com.code.aon.config.Tag");
 		map.put("Tariff","com.code.aon.config.Tariff");
+		map.put("TariffAddInfo","com.code.aon.config.TariffAddInfo");
 		map.put("Tax","com.code.aon.config.Tax");
 		map.put("TaxDetail","com.code.aon.config.TaxDetail");
 		map.put("User","com.code.aon.config.User");

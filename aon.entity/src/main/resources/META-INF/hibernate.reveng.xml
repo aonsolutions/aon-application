@@ -33,6 +33,7 @@
 	<!--  *********************************** -->
 	<table-filter match-name="db_version" exclude="true" />
 
+    <table-filter match-name="allotment_tariff" exclude="true" />
     <table-filter match-name="booking" exclude="true" />
     <table-filter match-name="fs_model180" exclude="true" />
 	<table-filter match-name="fs_model180_detail" exclude="true" />
@@ -1562,6 +1563,8 @@
 		<column name="advertising" type="com.code.aon.commercial.enumeration.Advertising"/>
 		<column name="transaction" type="com.code.aon.config.enumeration.InvoiceTransactionType"/>
 	</table>
+	
+	<table name="tariff_addinfo" class="com.esferalia.aon.entity.master.TariffAddInfo" />
 	
 	<table name="task">
 		<column name="comments" type="text" />
