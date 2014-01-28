@@ -246,12 +246,14 @@
 								<aon:outputText value="#{bundle.report_occupation}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="allotment" 
-										action="allotment_search"
-										actionListener="#{allotment.onEditSearch}"
-										value="#{bundle.pms_allotment_module}"/>
-								</aon:div>
+								<c:if test="#{aonRole.commercialOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="allotment" 
+											action="allotment_search"
+											actionListener="#{allotment.onEditSearch}"
+											value="#{bundle.pms_allotment_module}"/>
+									</aon:div>
+								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="roomBooking" 
 										action="roomBooking_search"
@@ -294,6 +296,14 @@
 											value="#{bundle.pms_registry_add_info_module}">						
 											<aon:actionListener method="#{registryAddInfo.setCustomerMode}" />
 										</aon:commandLink>
+									</aon:div>
+								</c:if>
+								<c:if test="#{aonRole.admin}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="regenerateBooking"
+											action="regenerateBooking"
+											actionListener="#{bookingRegenerator.onEditSearch}"
+											value="#{bundle.pms_regenerate_booking_module}" />
 									</aon:div>
 								</c:if>
 							</aon:div>

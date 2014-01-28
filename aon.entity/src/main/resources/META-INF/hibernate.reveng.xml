@@ -33,6 +33,7 @@
 	<!--  *********************************** -->
 	<table-filter match-name="db_version" exclude="true" />
 
+    <table-filter match-name="booking" exclude="true" />
     <table-filter match-name="fs_model180" exclude="true" />
 	<table-filter match-name="fs_model180_detail" exclude="true" />
     <table-filter match-name="fs_model190" exclude="true" />

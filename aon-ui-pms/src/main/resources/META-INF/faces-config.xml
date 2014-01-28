@@ -967,13 +967,6 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
-
-
-
-
-
-
-
 	<!-- ************* PMS INVOICE PRINTER ****************** -->
 	<managed-bean>
 		<managed-bean-name>pmsInvoicePrinter</managed-bean-name>
@@ -1115,6 +1108,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ********** BOOKING REGENERATOR CONTROLLER ********** -->
+	<managed-bean>
+		<managed-bean-name>bookingRegenerator</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.BookingRegeneratorController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* PURCHASE PMS PRINT EMAIL ************* -->
 	<managed-bean>
 		<managed-bean-name>purchasePrintEmailListener</managed-bean-name>
@@ -1444,4 +1444,12 @@
 		</navigation-case>
 	</navigation-rule> 
 	
+	<!-- ============= Regenerate Booking =================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>regenerateBooking</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/util/regenerateBooking.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 </faces-config>

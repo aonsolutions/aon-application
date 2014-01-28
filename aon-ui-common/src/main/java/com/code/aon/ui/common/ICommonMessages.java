@@ -387,6 +387,11 @@ public interface ICommonMessages {
 	String PMS_DAMAGES = "pms_damages";	
 	String PMS_EARLY_CHECK_OUT = "pms_early_check_out";	
 
+	String PMS_REGENERATE_BOOKING_CLEAN = "pms_regenerate_booking_clean";
+	String PMS_REGENERATE_BOOKING_INFO = "pms_regenerate_booking_info";
+	String PMS_REGENERATE_BOOKING_PROCESS_END = "pms_regenerate_booking_process_end";
+	String PMS_REGENERATE_BOOKING_PROCESS_START = "pms_regenerate_booking_process_start";
+
 	String PRODUCT_DOCUMENT_MAX_SIZE_ERROR = "product_document_max_size_error";
 	String PRODUCT_CATALOGUE_DATES_ERROR = "product_catalogue_dates_error";
 	String PRODUCT_DEFINED_FOR_TARIFF_ERROR = "product_defined_for_tariff_error";

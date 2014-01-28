@@ -52,6 +52,14 @@ public class PmsUtils implements IPmsConstants {
 		return roomItems;
 	}
 
+	public static String getHotelName(int hotelId) throws ManagerBeanException {
+		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ID), hotelId);
+		List<ITransferObject> hotelList = hotelBean.getList(criteria);
+		return !hotelList.isEmpty() ? ((Hotel)hotelList.get(0)).getWorkPlace().getDescription() : null;
+	}
+
 	public static boolean isAgencyUser() throws ManagerBeanException {
 		IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
 		Criteria criteria = new Criteria();

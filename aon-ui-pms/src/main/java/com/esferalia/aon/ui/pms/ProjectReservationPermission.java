@@ -131,8 +131,8 @@ public class ProjectReservationPermission {
 		return isMyScope();
 	}
 
-	public boolean isShowMoreMenuAllowed() {
-		return (!reservation.isCancelled() || !reservation.isNoShow()) && (reservation.isActive() || !reservation.isCheckOut()) && isMyScope();
+	public boolean isShowMoreMenuAllowed() throws ManagerBeanException {
+		return (!reservation.isCancelled() || (!reservation.isNoShow() && isNoShowAllowed())) && (reservation.isActive() || !reservation.isCheckOut()) && isMyScope();
 	}
 
 	public boolean isCheckInAllowed() throws ManagerBeanException {

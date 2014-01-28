@@ -11,14 +11,13 @@
 	<ui:define name="content">
 
 		<aon:form id="roomBookingSearch">
-			
+
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.report_booking_list}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_search}" />
 			</ui:decorate>
-			
+
 			<aon:div styleClass="aon-scroll-area">
-			
 				<aon:div styleClass="aon-panelGrid-search">
 					<aon:div styleClass="aon-panelGrid-search-info">
 						<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
@@ -26,47 +25,53 @@
 						<aon:panelGrid columns="2"  style="width:100%;"
 							columnClasses="aon-panelGrid-odd aon-width-50, 
 							aon-panelGrid-even aon-width-auto">
-					
+
 							<aon:outputLabel for="RoomBooking_hotel_id"
 								value="#{bundle.aon_module_hotel}" />
 							<aon:selectOneMenu id="RoomBooking_hotel_id"
 								value="#{roomBooking.hotel}" >
-								<f:selectItem itemLabel="#{bundle.aon_check_all}" itemValue="null" />
+								<f:selectItem itemLabel="-" itemValue="null" />
 								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-								<a4j:support event="onchange" reRender="Room_item_id" ignoreDupResponses="true" />
-								<a4j:support event="oninputchanged" reRender="Room_item_id" ignoreDupResponses="true" />	
+								<a4j:support event="onchange" reRender="RoomBooking_item_id" ignoreDupResponses="true" />
+								<a4j:support event="oninputchanged" reRender="RoomBooking_item_id" ignoreDupResponses="true" />	
 							</aon:selectOneMenu>
-							
-							<aon:outputLabel for="Room_item_id"
+
+							<aon:outputLabel for="RoomBooking_item_id"
 								value="#{bundle.pms_room_type}" />
-							<aon:selectOneMenu id="Room_item_id"
+							<aon:selectOneMenu id="RoomBooking_item_id"
 								value="#{roomBooking.item}" >
-								<f:selectItem itemLabel=" - " itemValue="#{null}" />
+								<f:selectItem itemLabel="-" itemValue="#{null}" />
 								<f:selectItems value="#{roomBooking.hotelRoomItems}" />
 							</aon:selectOneMenu>
-							
-							<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
-								<ui:param name="lookupTo" value="#{roomBooking.agency}" />
-								<ui:param name="lookupLabel" value="#{bundle.report_agency}" />
-								<ui:param name="skipNewButton" value="#{true}" />
-							</ui:include>
-						
-							<aon:outputLabel for="RoomBooking_startDate"
-								value="#{bundle.aon_date_from}" />
-							<aon:selectInputDate id="RoomBooking_startDate"
-								required="true"	
-								value="#{roomBooking.fromDate}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"/>
-								
-							<aon:outputLabel for="RoomBooking_endDate"
-								value="#{bundle.aon_date_to}" />
-							<aon:selectInputDate id="RoomBooking_endDate"
-								required="true"	
-								value="#{roomBooking.toDate}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"/>
-								
+
+							<aon:outputLabel for="RoomBooking_agency" 
+								value="#{bundle.report_agency}" />
+							<aon:selectOneMenu id="RoomBooking_agency" 
+								value="#{roomBooking.agency}"
+								styleClass="aon-width-350">
+								<f:selectItem itemLabel="-" value="#{null}" />		
+								<f:selectItems value="#{pmsCollections.agencies}" />
+							</aon:selectOneMenu>
+
+							<aon:outputText value="#{bundle.aon_date}" />
+							<aon:div>
+								<aon:outputLabel for="RoomBooking_startDate"
+									styleClass="aon-italic aon-margin-right" 
+									value="#{bundle.aon_date_from}" />
+								<aon:selectInputDate id="RoomBooking_startDate"
+									value="#{roomBooking.fromDate}" required="true"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+								<aon:outputLabel for="RoomBooking_endDate"
+									styleClass="aon-italic aon-margin-right" 
+									value="#{bundle.aon_date_to}" />
+								<aon:selectInputDate id="RoomBooking_endDate"
+									value="#{roomBooking.toDate}" required="true"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
+							</aon:div>
+
 							<aon:outputText value="&#160;" />
 							<aon:commandButton id="search" ignoreDupResponses="true"
 								value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
@@ -82,8 +87,6 @@
 			</aon:div>
 			
 		</aon:form>
-		
-		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		

@@ -47,6 +47,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectReservation.class.getName());
 	private boolean forceCalculateTotals;
+	private boolean forceRefreshBooking;
 	private double vatPercent;
 	private Set<ProjectReservationGuest> guests = new HashSet<ProjectReservationGuest>();
 	private Set<ProjectReservationRoom> rooms = new HashSet<ProjectReservationRoom>();
@@ -56,6 +57,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		setCheckStatus(ReservationCheckStatus.NO_CHECK);
 		setStatus(ReservationStatus.ACTIVE);
 		setForceCalculateTotals(false);
+		setForceRefreshBooking(false);
 	}
 
 	@Transient
@@ -64,6 +66,14 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setForceCalculateTotals(boolean forceCalculateTotals) {
 		this.forceCalculateTotals = forceCalculateTotals;
+	}
+
+	@Transient
+	public boolean isForceRefreshBooking() {
+		return forceRefreshBooking;
+	}
+	public void setForceRefreshBooking(boolean forceRefreshBooking) {
+		this.forceRefreshBooking = forceRefreshBooking;
 	}
 
 	@Transient

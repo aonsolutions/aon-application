@@ -114,6 +114,8 @@ public class ReservationRequestRoomController extends LinesController implements
 				requestController.setSkipResetAvailabilityMap(false);
 
 				getAvailableRoomStayMap().remove(requestRoom.getId());
+
+				manager.processNewReservation(requestRoom);
 			}
 		}
 	}

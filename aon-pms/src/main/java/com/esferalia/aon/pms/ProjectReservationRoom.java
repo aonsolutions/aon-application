@@ -18,9 +18,22 @@ public class ProjectReservationRoom extends ProjectReservationRoomDB {
 
 	private static final long serialVersionUID = 1L;
 
+	private boolean forceRefreshBooking;
 	private boolean showRoomDetail;
 	private String roomNumber;
 	private String firstRoomNumber;
+
+	public ProjectReservationRoom() {
+		setForceRefreshBooking(false);
+	}
+
+	@Transient
+	public boolean isForceRefreshBooking() {
+		return forceRefreshBooking;
+	}
+	public void setForceRefreshBooking(boolean forceRefreshBooking) {
+		this.forceRefreshBooking = forceRefreshBooking;
+	}
 
 	@Transient
 	public boolean isShowRoomDetail() {

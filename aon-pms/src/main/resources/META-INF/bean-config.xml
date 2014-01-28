@@ -8,6 +8,9 @@
 
 	<bean description="">
 		<pojo>com.esferalia.aon.pms.ProjectReservation</pojo>
+		<listeners>
+	        <listener>com.esferalia.aon.pms.event.ProjectReservationBeanListener</listener>
+		</listeners>
 		<vetoListeners>
 	        <vetoListener>com.esferalia.aon.pms.event.ProjectReservationBeanVetoListener</vetoListener>
 		</vetoListeners>
@@ -25,6 +28,9 @@
 
 	<bean description="">
 		<pojo>com.esferalia.aon.pms.ProjectReservationRoom</pojo>
+		<listeners>
+	        <listener>com.esferalia.aon.pms.event.ProjectReservationRoomBeanListener</listener>
+		</listeners>
 		<vetoListeners>
 	        <vetoListener>com.esferalia.aon.pms.event.ProjectReservationRoomBeanVetoListener</vetoListener>
 		</vetoListeners>

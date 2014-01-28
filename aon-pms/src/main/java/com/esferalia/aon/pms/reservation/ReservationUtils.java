@@ -132,7 +132,12 @@ public class ReservationUtils implements IReservationConstants {
     	return StringUtils.abbreviate(dates + (guest == null ? "" : " " + guest) + (code == null ? "" : " (" + reservation.getCode() + ")"), 64);
     }
 
-	public Map<Tax, Double> getReservationServicesTaxableBases(Integer reservationId, Date fromDate, Date toDate) throws ManagerBeanException {
+    private void updateBooking(ProjectReservationRoom reservationRoom) throws ManagerBeanException {
+    	reservationRoom.setForceRefreshBooking(true);
+    	BeanManager.getManagerBean(ProjectReservationRoom.class).update(reservationRoom);
+    }
+
+    public Map<Tax, Double> getReservationServicesTaxableBases(Integer reservationId, Date fromDate, Date toDate) throws ManagerBeanException {
 		Map<Tax, Double> reservationBases = new HashMap<Tax, Double>();
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		Criteria criteria = new Criteria();
@@ -206,6 +211,7 @@ public class ReservationUtils implements IReservationConstants {
 			}
 			effectiveDate = DateUtils.addDays(effectiveDate, 1);
 		}
+		updateBooking(reservationRoom);
     }
 
     public void updateProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, Date fromDate, Date toDate, Room room) throws ManagerBeanException {
@@ -222,6 +228,7 @@ public class ReservationUtils implements IReservationConstants {
     		assetActivity.setAsset(room.getAsset());
     		assetActivityBean.update(assetActivity);
     	}
+		updateBooking(reservationRoom);
     }
 
 	public void removeProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, boolean removeService, Date effectiveDate) throws ManagerBeanException {
@@ -254,6 +261,7 @@ public class ReservationUtils implements IReservationConstants {
 				assetActivityBean.remove(reservationRoomDetail.getAssetActivity());
 			}
 		}
+		updateBooking(reservationRoom);
 	}
 
 	public boolean isPendingRoomAssignation(ProjectReservation reservation) throws ManagerBeanException {
@@ -275,7 +283,7 @@ public class ReservationUtils implements IReservationConstants {
 		return pendingRooms;
 	}
 
-    public void insertProjectReservationServiceDetails(ProjectReservationService reservationService, Date fromDate, Date toDate, double quantity, double price, 
+	public void insertProjectReservationServiceDetails(ProjectReservationService reservationService, Date fromDate, Date toDate, double quantity, double price, 
     													ProjectReservationRoom reservationRoom, IPriceStrategy strategy) throws ManagerBeanException {
     	IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
     	Date effectiveDate = fromDate;
