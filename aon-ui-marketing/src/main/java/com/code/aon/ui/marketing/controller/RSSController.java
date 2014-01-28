@@ -19,6 +19,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.velocity.tools.generic.EscapeTool;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -27,6 +28,7 @@ import org.dom4j.io.XMLWriter;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,11 +58,14 @@ public class RSSController {
 	public static final String RSS_REGEX = RSS_PREFFIX + "-(\\d+)\\." + MimeType.MIME_XML.getExtension();
 
 	public static final String PREVIEW_PREFFIX = "preview";
-	public static final String PREVIEW_LAST_PREFFIX = "previewLast";
 	public static final String PREVIEW_REGEX = "\\w+-(\\d+)\\." + MimeType.MIME_HTML.getExtension();
 	public static final String PREVIEW_PATH = "/com/code/aon/ui/marketing/facelet/rss/preview/";
 
-	public static final String CHANNEL_PARAMETER = "channel";
+	private static final String ESC_TOOL_PARAMETER = "esc";
+	private static final String PARAMETERS_PARAMETER = "parameters";
+	private static final String URL_SUFFIX_PARAMETER = "URLSuffix";
+	private static final String CHANNEL_URL_PARAMETER = "channelURL";
+	private static final String CHANNELS_PARAMETER = "channels";
 	
 	private static final String DESCRIPTION_ELEMENT = "description";
 	private static final String LINK_ELEMENT = "link";
@@ -191,6 +196,7 @@ public class RSSController {
 		 Criterion endDateExpr1 = Restrictions.isNull("endDate");
 		 Criterion endDateExpr2 = Restrictions.ge("endDate", referenceDate);
 		 criteria.add(Restrictions.or(endDateExpr1, endDateExpr2));
+		 criteria.addOrder( Order.desc("initDate") );
 
 		 Map<Integer,Element> channels = new HashMap<Integer, Element>();
 		 for( Object to : criteria.list() ) {
@@ -288,14 +294,15 @@ public class RSSController {
 			VelocityHelper velocityHelper = new VelocityHelper();
 			velocityHelper.init( PREVIEW_PATH );
 			TemplateHelper th = velocityHelper.getTemplateHelper();
+			th.putInContext(ESC_TOOL_PARAMETER, new EscapeTool());
 			if ( date != null ) {
-				th.putInContext("URLSuffix", "?date="+date.getTime());
+				th.putInContext(URL_SUFFIX_PARAMETER, "?" + RSSServlet.DATE_PARAMETER + "="+date.getTime());
 			}
 			if (! StringUtils.isEmpty(limit) ) {
-				th.putInContext("parameters", "limit:" + limit);
+				th.putInContext(PARAMETERS_PARAMETER, "limit:" + limit);
 			}
-			th.putInContext("channelURL", urlPreffix + RSSServlet.SERVLET_PATH);
-			th.putInContext("channels", channels);
+			th.putInContext(CHANNEL_URL_PARAMETER, urlPreffix + RSSServlet.SERVLET_PATH);
+			th.putInContext(CHANNELS_PARAMETER, channels);
 			return th.processTemplate(template);
 		} catch (Throwable e) {
 			LOGGER.error( e.getMessage(), e);
@@ -317,8 +324,6 @@ public class RSSController {
 
 	public void setDate(Date date) {
 		this.date = date;
-	}
-	
-	
+	}	
 	
 }

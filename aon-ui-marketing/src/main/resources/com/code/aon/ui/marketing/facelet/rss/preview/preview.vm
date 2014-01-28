@@ -40,7 +40,7 @@ $(document).ready(function() {
 	<b>Canales RSS</b>
 	<select id="menu">
 	#foreach($channel in $channels)
-		<option value="${channelURL}rss-${channel.id}.xml$!{URLSuffix}">${channel.name}</option>
+		<option value="${channelURL}rss-${channel.id}.xml$!{URLSuffix}">$esc.html(${channel.name})</option>
 	#end
 	</select>
 	<br>
