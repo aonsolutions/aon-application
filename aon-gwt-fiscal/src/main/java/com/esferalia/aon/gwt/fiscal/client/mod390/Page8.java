@@ -27,6 +27,7 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 			.create(AonResources.class);
 	
 	Page5 page5;
+	Page6 page6;
 	
 	@UiField
 	DoubleTextBox box84;
@@ -81,6 +82,9 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 	public void setPage5(Page5 page5) {
 		this.page5 = page5;
 	}
+	public void setPage6(Page6 page6) {
+		this.page6 = page6;
+	}
 
 	@UiHandler("box87")
 	void onChangeBox87 (ChangeEvent event) {
@@ -99,9 +103,12 @@ public class Page8 extends ResizeComposite implements RequiresResize {
 	}
 
 	public void refresh() {
-		double d = page5.getQuotaMap().get(Mod390DetailKey.K37).getDoubleValue();
-		box84.setValue(d);
-		box92.setValue(AonUtil.round(d * box87.getDoubleValue() / 100));
+		double k37 = page5.getQuotaMap().get(Mod390DetailKey.K37).getDoubleValue();
+		double box83 = page6.getBox83();
+		double bx84 = AonUtil.round(k37 + box83);
+		box84.setValue(bx84);
+		
+		box92.setValue(AonUtil.round(bx84 * box87.getDoubleValue() / 100));
 		box94.setValue(AonUtil.round(box92.getDoubleValue() - box93.getDoubleValue()));
 	}
 

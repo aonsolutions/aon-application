@@ -251,7 +251,7 @@ public class TemporaryModel extends AbstractContractModel {
 			} else if(code.getValue().startsWith("2") || code.getValue().startsWith("5")){
 				setPdfFieldValue(TemporaryCommonField.PARTIALLY_TIME.getValue(), "true");
 				if(StringUtils.isNotBlank(getContractDataMap(contract).get(ContextVariable.WEEK_HOURS.toString()))){
-					setPdfFieldValue(TemporaryCommonField.PARTIALLY_TIME_HOURS.getValue(), String.valueOf(Integer.parseInt(getContractDataMap(contract).get(ContextVariable.WEEK_HOURS.toString()))));
+					setPdfFieldValue(TemporaryCommonField.PARTIALLY_TIME_HOURS.getValue(), getContractDataMap(contract).get(ContextVariable.WEEK_HOURS.toString()));
 					setPdfFieldValue(TemporaryCommonField.PARTIALLY_TIME_WEEKLY.getValue(), "true");
 				} else if(contrata!=null){
 					if(contrata.getHorasJornada()!=null){

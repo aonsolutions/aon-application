@@ -244,7 +244,7 @@ public class ContractLeaveController extends BasicController {
 			ISalary salary = PayrollUtils.getInstance().getBeforeDateSalary(contract, leave.getStartDate());
 			if(salary==null){
 				try{
-					salary = PayrollUtils.getInstance().calculateSalary(contract, leave.getStartDate());
+//					salary = PayrollUtils.getInstance().calculateSalary(contract, leave.getStartDate());
 				} catch(Exception e){
 					// no se carga ninguna base
 					salary = null;

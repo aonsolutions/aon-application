@@ -13,6 +13,7 @@ public class FarmerRegimeActivity implements Serializable, IsSerializable {
     protected double accrualQuota;
     protected double inputQuotas;
     protected double quota;
+    
 	public String getCodigo() {
 		return codigo;
 	}

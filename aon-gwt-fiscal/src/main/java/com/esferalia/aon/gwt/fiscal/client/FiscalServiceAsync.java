@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.fiscal.shared.Mod190;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Detail;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver;
 import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
+import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -73,6 +74,9 @@ public interface FiscalServiceAsync {
 
 	void getMod303Results(int domain, int year,
 			AsyncCallback<Mod303Results> asyncCallback);
+
+	void getMod311Results(int domain, int year,
+			AsyncCallback<ArrayList<Mod311Results>> asyncCallback);
 
 	void getMod390(Integer id, AsyncCallback<Mod390> callback);
 

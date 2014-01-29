@@ -90,7 +90,7 @@
 				<aon:outputText value="#{bundle.fiscal_vatTax_to_declare}" />
 			</c:if>
 		</f:facet>
-		<aon:div rendered="#{!key.title}">
+		<aon:div rendered="#{!key.title}" styleClass="aon-nowrap">
 			<aon:outputText value="#{controller.declaration.map[key].amount}"
 				style="#{(key.total)?(key.level==0?'font-weight: bold':'font-style:italic'):''};">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

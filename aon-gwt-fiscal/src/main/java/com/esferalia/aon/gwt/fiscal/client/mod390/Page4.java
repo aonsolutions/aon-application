@@ -104,6 +104,19 @@ public class Page4 extends ResizeComposite {
 			rtown.setValue(m390.getAddress().getRtown());
 			rprovince.setSelectedIndex(m390.getAddress().getRprovince());
 			rzip.setValue(m390.getAddress().getRzip());
+		} else {
+			rdocument.setValue(null);
+			rname.setValue(null);
+			rstreetType.setValue(null);
+			rstreetName.setValue(null);
+			rstreetNumber.setValue(null);
+			rstreetStair.setValue(null);
+			rstreetFloor.setValue(null);
+			rstreetDoor.setValue(null);
+			rphone.setValue(null);
+			rtown.setValue(null);
+			rprovince.setSelectedIndex(0);
+			rzip.setValue(null);
 		}
 		if (m390.getLegalRepr1() != null) {
 			name1.setValue(m390.getLegalRepr1().getName());
@@ -111,6 +124,11 @@ public class Page4 extends ResizeComposite {
 			notary1.setValue(m390.getLegalRepr1().getNotary());
 			Date date = notaryDate1.getFormat().parse(notaryDate1, m390.getLegalRepr1().getNotaryDate(), false);
 			notaryDate1.setValue(date);
+		} else {
+			name1.setValue(null);
+			document1.setValue(null);
+			notary1.setValue(null);
+			notaryDate1.setValue(null);
 		}
 		if (m390.getLegalRepr2() != null) {
 			name2.setValue(m390.getLegalRepr2().getName());
@@ -118,6 +136,11 @@ public class Page4 extends ResizeComposite {
 			notary2.setValue(m390.getLegalRepr2().getNotary());
 			Date date = notaryDate2.getFormat().parse(notaryDate2, m390.getLegalRepr2().getNotaryDate(), false);
 			notaryDate2.setValue(date);
+		} else {
+			name2.setValue(null);
+			document2.setValue(null);
+			notary2.setValue(null);
+			notaryDate2.setValue(null);
 		}
 		if (m390.getLegalRepr3() != null) {
 			name3.setValue(m390.getLegalRepr3().getName());
@@ -125,6 +148,11 @@ public class Page4 extends ResizeComposite {
 			notary3.setValue(m390.getLegalRepr3().getNotary());
 			Date date = notaryDate3.getFormat().parse(notaryDate3, m390.getLegalRepr3().getNotaryDate(), false);
 			notaryDate3.setValue(date);
+		} else {
+			name3.setValue(null);
+			document3.setValue(null);
+			notary3.setValue(null);
+			notaryDate3.setValue(null);
 		}
 	}
 

@@ -25,7 +25,20 @@
 			<aon:outputText value="#{bundle.company_enterprise_ccc}" />
 		</f:facet>
 		<aon:div styleClass="aon-nowrap">
-			<aon:outputText value="#{to.ccc}"/>
+			<aon:outputText value="#{to.fullCcc}"/>
+			<aon:outputText value="&#160;("/>
+			<aon:outputText value="#{to.activity.type}"/>
+			<aon:outputText value=")"/>
+		</aon:div>
+	</aon:column>
+
+	<aon:column alias="EnterpriseCCC.type"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_type}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.type}"/>
 		</aon:div>
 	</aon:column>
 

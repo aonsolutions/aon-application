@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content"> 
+		<aon:form id="batchForm">
+
+			<aon:methodParam name="saveActionListener" value="#{fanBatch.newBatchWizard.accept}" type="actionListener" />
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_fanBatchWizard_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
+				<ui:param name="controller" value="#{fanBatch}" />
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:panelTabSet id="batchPanelTabSet" rendered="#{!controller.new}">
+					<c:if test="#{fanBatch.newBatchWizard.selectedModel.rowCount > 0}" >
+						<aon:panelTab id="batchedTab" label="#{bundle.finance_checked}">
+							<aon:div id="detailDataDiv">
+								<aon:div id="detailToolBarDiv" styleClass="aon-toolbar" >
+									<aon:commandButton title="#{bundle.aon_check_all}"
+										styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+										value="#{bundle.aon_check_all}"
+										actionListener="#{fanBatch.newBatchWizard.checkAll}" reRender="detailDataDiv"
+										onclick="Richfaces.showModalPanel('waitProccess')" 
+							     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+									<aon:commandButton title="#{bundle.aon_uncheck_all}"
+										styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+										value="#{bundle.aon_uncheck_all}"
+										actionListener="#{fanBatch.newBatchWizard.checkNone}" reRender="detailDataDiv"
+										onclick="Richfaces.showModalPanel('waitProccess')" 
+							     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+									<aon:commandButton title="#{bundle.payroll_remove_batch}"
+										styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
+										value="#{bundle.payroll_remove_batch}"
+										rendered="#{fanBatch.newBatchWizard.checkedCount > 0}"
+										actionListener="#{fanBatch.newBatchWizard.onRemoveSelected}" reRender="batchForm, batchPanelTabSet"
+										onclick="Richfaces.showModalPanel('waitProccess')" 
+							     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+								</aon:div>
+							
+								<aon:dataTable id="batchDetailData" value="#{fanBatch.newBatchWizard.selectedModel}"
+									var="to" rows="20" rendered="#{fanBatch.newBatchWizard.selectedModel.rowCount > 0}" >
+									
+									<aon:rowSelector id="batchDetail-select" toggleOnClick="#{false}"/>
+									
+									<ui:param name="showEnterpriseColumn" value="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}" />
+									
+									<aon:column styleClass="aon-editDataTable-iconColumn">
+										<f:facet name="header">
+											<aon:outputText value="&#160;" />
+										</f:facet>
+										<aon:selectBooleanCheckbox id="Included_Row_checked"
+											value="#{fanBatch.newBatchWizard.rowChecked}"
+											valueChangeListener="#{fanBatch.newBatchWizard.rowSelected}" >
+											<a4j:support event="onclick" reRender="detailDataDiv, #{checkReRender}" />
+										</aon:selectBooleanCheckbox>
+									</aon:column>
+									
+									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/fan/cccColumns.xhtml" />
+									
+								</aon:dataTable>
+								<aon:dataScroller2 for="batchDetailData" showNote="true" />
+							</aon:div>
+							
+						</aon:panelTab>
+					</c:if>
+					<aon:panelTab id="noBatchedTab" label="#{bundle.aon_pending}">
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/fan/formNoBatched.xhtml" >
+							<ui:param name="controller" value="#{fanBatch.newBatchWizard}" />
+							<ui:param name="rowCheckDisabled" value="#{fanBatch.newBatchWizard.rowDisabled}" />
+						</ui:include>
+					</aon:panelTab>
+				</aon:panelTabSet>
+
+			</aon:div>
+
+		</aon:form>
+
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		
+	</ui:define>
+</ui:composition>

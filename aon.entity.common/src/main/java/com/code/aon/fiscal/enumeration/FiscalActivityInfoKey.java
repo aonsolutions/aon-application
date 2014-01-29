@@ -223,6 +223,15 @@ public enum FiscalActivityInfoKey implements IResourceable, IStringEnum {
 	X09 ("X09",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,false ,false,"0",null,null),
 	X10 ("X10",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
 	X11 ("X11",FiscalActivityInfoType.M311_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
+	
+	Y01 ("Y01",FiscalActivityInfoType.M311_FARMER_DETAIL,2012,9999,false,Double.class,true,false ,false,"0",null,null),
+	Y02 ("Y02",FiscalActivityInfoType.M311_FARMER_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
+	Y03 ("Y03",FiscalActivityInfoType.M311_FARMER_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null), 
+	Y04 ("Y04",FiscalActivityInfoType.M311_FARMER_DETAIL,2012,9999,false,Double.class,true,false ,false,"0",null,null),
+	Y05 ("Y05",FiscalActivityInfoType.M311_FARMER_DETAIL,2012,9999,false,Double.class,true,false ,false,"0",null,null),
+	Y06 ("Y06",FiscalActivityInfoType.M311_FARMER_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
+	Y07 ("Y07",FiscalActivityInfoType.M311_FARMER_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
+	Y08 ("Y08",FiscalActivityInfoType.M311_FARMER_DETAIL,2012,9999,false,Double.class,true,true  ,false,"0",null,null),
 	;
 	
 	public static final String MODULE_PREFIX = "M";
@@ -327,7 +336,9 @@ public enum FiscalActivityInfoKey implements IResourceable, IStringEnum {
 	public FiscalActivityInfoKeyEntry[] getValues() {
 		return values;
 	}
-	
+	public boolean isRounded() {
+		return (this != FiscalActivityInfoKey.Y02);
+	}
 	public boolean isChoice() {
 		boolean ret = (getValues() != null && getValues().length > 0); 
 		return ret;

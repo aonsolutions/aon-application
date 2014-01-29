@@ -99,7 +99,7 @@ public class FiscalActivityControllerListener extends ControllerAdapter {
 			}
 			for (FiscalActivityInfo info : c.getM311List()) {
 				info.setFiscalActivity(fa);
-				info.setType( FiscalActivityInfoType.M311_DETAIL);
+				info.setType( info.getInfoKey().getType());
 				bean.insert(info);
 			}
 			for (List<FiscalActivityInfo> list : c.getModulesDetailMap().values()) {

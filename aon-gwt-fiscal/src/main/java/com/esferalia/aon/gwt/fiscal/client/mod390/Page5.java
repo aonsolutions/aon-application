@@ -76,13 +76,14 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 		this.page10 = page10;
 	}
 	
-	public void initialize(int domain, int year) {
+	public void initialize(int domain, int year, Mod390 mod390) {
 		this.domain = domain;
 		this.year = year;
-		initializeList();
+		initializeList(mod390);
+		populate(mod390);
 	}
 
-	private void initializeList() {
+	private void initializeList(final Mod390 mod390) {
 		map = new HashMap<Mod390DetailKey,Mod390Detail>();
 		final PopupPanel popup = new PopupPanel(false, true);
 		Label label = new Label(MSG.processing());
@@ -97,7 +98,14 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 					public void onSuccess(ArrayList<Mod390Detail> result) {
 						for (Mod390Detail detail : result) {
 							if (detail.getKey().isPage5Key()) {
-								map.put(detail.getKey(),detail);
+								if (!mod390.isSimplifiedRegime() ) {
+									map.put(detail.getKey(),detail);
+								} else {
+									detail.setPercent(0);
+									detail.setQuota(0);
+									detail.setTaxableBase(0);
+									map.put(detail.getKey(),detail);
+								}
 							}
 							if (detail.getKey().isPage10Key()) {
 								page10.fillBox( detail );

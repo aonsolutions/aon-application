@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.fiscal.shared.Mod190;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Detail;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver;
 import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
+import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -172,6 +173,14 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 		AON.start();
 		fiscalServiceAsync.getMod303Results(domain, year,
 				new AsyncCallbackWrapper<Mod303Results>(callback));
+	}
+
+	@Override
+	public void getMod311Results(int domain, int year,
+			AsyncCallback<ArrayList<Mod311Results>> callback) {
+		AON.start();
+		fiscalServiceAsync.getMod311Results(domain, year,
+				new AsyncCallbackWrapper<ArrayList<Mod311Results>>(callback));
 	}
 
 	@Override

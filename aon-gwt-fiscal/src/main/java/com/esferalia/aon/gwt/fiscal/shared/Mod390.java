@@ -374,6 +374,17 @@ public class Mod390 implements Serializable, IsSerializable {
 	public void setSimpRegime2(SimpliedRegimeActivity simpRegime2) {
 		this.simpRegime2 = simpRegime2;
 	}
+	public boolean isSimplifiedRegime() {
+		return (
+				(getSimpRegime1() != null && !AonUtil.isEmpty(getSimpRegime1().getEpigrafe()))
+			||  (getSimpRegime2() != null && !AonUtil.isEmpty(getSimpRegime2().getEpigrafe()))
+			||  (getFarmerRegime1() != null && !AonUtil.isEmpty(getFarmerRegime1().getCodigo()))
+			||  (getFarmerRegime2() != null && !AonUtil.isEmpty(getFarmerRegime2().getCodigo()))
+			||  (getFarmerRegime3() != null && !AonUtil.isEmpty(getFarmerRegime3().getCodigo()))
+			||  (getFarmerRegime4() != null && !AonUtil.isEmpty(getFarmerRegime4().getCodigo()))
+			||  (getFarmerRegime5() != null && !AonUtil.isEmpty(getFarmerRegime5().getCodigo()))
+				); 
+	}
 	public FarmerRegimeActivity getFarmerRegime1() {
 		return farmerRegime1;
 	}

@@ -37,6 +37,7 @@ public interface IPayrollConstants {
 	String ENTERPRISE_ACTIVITY_CONTROLLER = "enterpriseActivity";
 	String ENTERPRISE_CCC_CONTROLLER = "enterpriseCCC";
 	String ENTERPRISE_TREE_CONTROLLER = "enterpriseTree";
+	String FAN_BATCH_ATTACH_CONTROLLER_NAME = "fanBatchAttach";
 	String FAN_BATCH_DETAIL_CONTROLLER_NAME = "fanBatchDetail";
 	String FAN_BATCH_CONTROLLER_NAME = "fanBatch";
 	String FAN_LIST_CONTROLLER_NAME = "fanList";

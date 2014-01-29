@@ -1430,7 +1430,12 @@ public class ContrataContratosWriter implements IContrataWriter{
 		String duracionconvenio = (params.getHorasConvenio()==null?"":completeLength(params.getHorasConvenio(), 4, "0", false))+(params.getMinutosConvenio()==null?"":completeLength(params.getMinutosConvenio(), 2, "0", false));
 		String duracionformacion = (params.getHorasFormacion()==null?"":completeLength(params.getHorasFormacion(), 4, "0", false))+(params.getMinutosFormacion()==null?"":completeLength(params.getMinutosFormacion(), 2, "0", false));
 		String duracionjornada = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.WEEK_HOURS.getName());
-		duracionjornada = (duracionjornada==null?"":completeLength(duracionjornada, 4, "0", false))+(completeLength("", 2, "0", false));
+		Double _duracionjornada = Double.parseDouble(duracionjornada);
+//		String duracionjornadaHours = Integer.toString(_duracionjornada.intValue());
+//		String duracionjornadaMins = Double.toString(CommonUtil.round(_duracionjornada,2));
+//		Double _duracionjornadaMins = _duracionjornada - _duracionjornada.intValue();
+//		duracionjornadaMins = 60/_duracionjornadaMins;
+		duracionjornada = (duracionjornada==null?"":completeLength(getHours(_duracionjornada), 4, "0", false))+(completeLength(getMinutes(_duracionjornada), 2, "0", false));
 		if(StringUtils.isBlank(duracionjornada)){
 			duracionjornada = (params.getHorasJornada()==null?"":completeLength(params.getHorasJornada(), 4, "0", false))+(params.getMinutosJornada()==null?"":completeLength(params.getMinutosJornada(), 2, "0", false));
 		}
@@ -2022,18 +2027,15 @@ public class ContrataContratosWriter implements IContrataWriter{
 	 * ***************************************
 	 * ***************************************
 	 */
-//	private Map<String, String> contractDataMap;
-//	
-//	protected Map<String, String> getContractDataMap(Contract contract) {
-//		if(contractDataMap==null){
-//			SEPEUtils utils = new SEPEUtils();
-//			contractDataMap = utils.getContractDataMap(contract);
-//		}
-//		return contractDataMap;
-//	}
-//	protected Map<String, String> getContractDataMap() {
-//		return contractDataMap;
-//	}
+	
+	private Integer getHours(Double value){
+		return value.intValue();
+	}
+
+	private Integer getMinutes(Double value){
+		Double fraction = value - (int)(CommonUtil.round(value, 2));
+		return (int)(60*fraction);
+	}
 	
 	private String getFormatedDate(Date date){
 		String pattern = "yyyyMMdd";

@@ -17,6 +17,8 @@ import com.esferalia.aon.gwt.fiscal.client.widget.EnterpriseSuggestBox;
 import com.esferalia.aon.gwt.fiscal.shared.AonUtil;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Administration;
 import com.esferalia.aon.gwt.fiscal.shared.FiscalParameters;
+import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
+import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.google.gwt.cell.client.ImageResourceCell;
 import com.google.gwt.core.client.GWT;
@@ -54,7 +56,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
-
 public class Model390 extends MainEntryPoint {
 
 	interface Model390Binder extends UiBinder<Widget, Model390> {
@@ -68,6 +69,9 @@ public class Model390 extends MainEntryPoint {
 	private final static FiscalMessages MSG = GWT.create(FiscalMessages.class);
 	private final static AonResources RESOURCES = GWT.create(AonResources.class);
 
+	@UiField
+	Label simplifiedRegime;
+	
 	@UiField
 	DeckLayoutPanel deckPanel;
 	@UiField
@@ -281,7 +285,9 @@ public class Model390 extends MainEntryPoint {
 		
 		page5.setPage10(page10);
 		page7.setPage5(page5);
+		page7.setPage6(page6);
 		page8.setPage5(page5);
+		page8.setPage6(page6);
 		
 		// HABILITAR
 		
@@ -418,6 +424,7 @@ public class Model390 extends MainEntryPoint {
 		generateFileButton.setVisible(mod390.getId() != null);
 //		printButton.setVisible(mod390.getId() != null);
 
+		simplifiedRegime.setVisible(mod390.isSimplifiedRegime());
 	}
 
 	@UiHandler("table")
@@ -617,7 +624,7 @@ public class Model390 extends MainEntryPoint {
 						select(mod390);
 						
 						page0.setValue(mod390);
-						initializePages();
+						initializePages(mod390);
 						int i = deckPanel.getWidgetIndex(formPanel);
 						deckPanel.showWidget(i);
 						i = pagesPanel.getWidgetIndex(panel1);
@@ -637,14 +644,67 @@ public class Model390 extends MainEntryPoint {
 
 	}
 
-	private void initializePages() {
+	private void initializePages(final Mod390 mod390) {
 		try {
-			int y = Integer.parseInt(year.getValue());
-			page5.initialize(domain, y );
-			page9.initialize(domain, y );
+			final int y = Integer.parseInt(year.getValue());
+			fiscalService.getMod311Results(domain, y, new AsyncCallback<ArrayList<Mod311Results>>() {
+				@Override
+				public void onSuccess(ArrayList<Mod311Results> result) {
+					int a = 0;
+					int f = 0;
+					for (Mod311Results re : result) {
+						if (re.isFarmer()) {
+							if (f >= 0 && f <=4) {
+								page6.setFarmerValue(f, re );
+								f++;
+							}
+						} else {
+							if (a == 0) {
+								page6.getActivity1().setValue( re );
+								a++;
+							} else if (a == 1) {
+								page6.getActivity2().setValue( re );
+								a++;
+							}
+						}
+					}
+
+					page6.refresh();
+					page6.populate(mod390);
+					page5.initialize(domain, y ,mod390);
+					initializeMod303Values(domain, y ,mod390);
+					simplifiedRegime.setVisible(mod390.isSimplifiedRegime());
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					DialogMessages.alertErrorWidget(MSG
+							.unableToFindMod190Detail(caught.getMessage()));
+				}
+			});
+			
 		} catch (NumberFormatException e) {
 			// nothing
 		}
+	}
+
+	private void initializeMod303Values(int domain, int year, final Mod390 mod390) {
+		fiscalService.getMod303Results(domain, year,
+				new AsyncCallback<Mod303Results>() {
+					@Override
+					public void onSuccess(Mod303Results result) {
+						page9.setValue(result);
+						page9.populate(mod390);
+						page10.setValue(result);
+						page10.populate(mod390);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						DialogMessages.alertErrorWidget(MSG
+								.unableToFindMod190Detail(caught.getMessage()));
+					}
+				});
 	}
 
 	@UiHandler("cancelButton")
@@ -680,7 +740,7 @@ public class Model390 extends MainEntryPoint {
 		year.selectAll();
 		year.setFocus(true);
 		page0.setValue(mod390);
-		initializePages();
+		initializePages(mod390);
 	}
 
 	@UiHandler("year")
@@ -688,7 +748,7 @@ public class Model390 extends MainEntryPoint {
 		if (Window.confirm("El ejercicio ha cambiado, desea recalcular los datos?")) {
 			if (domain != 0) {
 				try {
-					page5.initialize(domain, Integer.parseInt(year.getValue()) );
+					page5.initialize(domain, Integer.parseInt(year.getValue()), mod390 );
 				} catch (NumberFormatException e) {
 					// nothing
 				}

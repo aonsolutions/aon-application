@@ -4,9 +4,10 @@ import com.esferalia.aon.gwt.fiscal.client.css.AonResources;
 import com.esferalia.aon.gwt.fiscal.client.css.GWTResources;
 import com.esferalia.aon.gwt.fiscal.client.widget.DoubleTextBox;
 import com.esferalia.aon.gwt.fiscal.shared.AonUtil;
+import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Mod390DetailKey;
+import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
-import com.esferalia.aon.gwt.fiscal.shared.FiscalEnum.Mod390DetailKey;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -225,6 +226,17 @@ public class Page10 extends ResizeComposite implements RequiresResize {
 					+box228.getDoubleValue()
 					-box106.getDoubleValue()
 					-box107.getDoubleValue()));
+	}
+
+	public void setValue(Mod303Results result) {
+		box99.setValue(result.getNationalSales());
+		box102.setValue(result.getReSales());
+		box103.setValue(result.getIntracommunitarySales());
+		box104.setValue(result.getExtracommunitarySales());
+		box105.setValue(result.getWithoutRightSales());
+		box107.setValue(result.getInvestmentSales());
+		box110.setValue(result.getISPSales());
+		refresh();
 	}
 	
 }

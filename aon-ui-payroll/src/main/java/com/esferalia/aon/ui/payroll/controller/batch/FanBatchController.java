@@ -4,12 +4,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import org.apache.commons.io.IOUtils;
 
@@ -17,6 +22,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.form.BasicController;
@@ -39,12 +46,24 @@ public class FanBatchController extends BasicController {
 	private FANWriter fanWriter;
 	private FileOutput fileOutput;
 	private boolean recorded;
+	private FanBatchNewWizard newBatchWizard;
 
 	private FANWriter getFANWriter() {
 		if (fanWriter == null) {
 			fanWriter = new FANWriter();
 		}
 		return fanWriter;
+	}
+	
+	public FanBatchNewWizard getNewBatchWizard() {
+		if(newBatchWizard==null){
+			newBatchWizard = new FanBatchNewWizard();
+		}
+		return newBatchWizard;
+	}
+
+	public void setNewBatchWizard(FanBatchNewWizard newBatchWizard) {
+		this.newBatchWizard = newBatchWizard;
 	}
 	
 	public FileOutput getFileOutput() {
@@ -113,17 +132,17 @@ public class FanBatchController extends BasicController {
 		onInit(event);
 	}
 	
-	@Override
-	public void onAccept(ActionEvent event) {
-		try {
-			FanBatch b = (FanBatch) getTo();
-			b.setStatus(FileStatus.PENDING);
-			super.onAccept(event);
-			onSearchCCCs(event);
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("error on onAccept ["+e.getMessage()+"]");
-		}
-	}
+//	@Override
+//	public void onAccept(ActionEvent event) {
+//		try {
+//			FanBatch b = (FanBatch) getTo();
+//			b.setStatus(FileStatus.PENDING);
+//			super.onAccept(event);
+//			onSearchCCCs(event);
+//		} catch (ManagerBeanException e) {
+//			AonUtil.addErrorMessage("error on onAccept ["+e.getMessage()+"]");
+//		}
+//	}
 	
 	public void onInit(ActionEvent event) {
 		try {
@@ -187,7 +206,7 @@ public class FanBatchController extends BasicController {
 	}
 
 	private void checkDiskCreated() throws ManagerBeanException {
-		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.FAN_BATCH_DETAIL_CONTROLLER_NAME);
+		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.FAN_BATCH_ATTACH_CONTROLLER_NAME);
 		if(controller.getRowCount()>0){
 			setRecorded(true);
 		} else {
@@ -203,6 +222,170 @@ public class FanBatchController extends BasicController {
 			list.add(detail.getCcc());
 		}
 		return list;
+	}
+	
+	/*
+	 * INNER CLASSES
+	 */
+	public class FanBatchNewWizard {
+
+		private List<FanBatchDetail> selectedList;
+		
+		private ArrayList<Object> checks = new ArrayList<Object>();
+		
+		private DataModel selectedModel;
+		
+		public DataModel getSelectedModel() {
+			return selectedModel;
+		}
+
+		public void setSelectedModel(DataModel selectedModel) {
+			this.selectedModel = selectedModel;
+		}
+
+		public void init() {
+			FanListController listController = (FanListController) FormUtil.getController(IPayrollConstants.FAN_LIST_CONTROLLER_NAME);
+			try {
+				listController.clearCriteria();
+			} catch (ManagerBeanException e) {
+				// nada
+			}
+			listController.onEditSearch(null);
+			listController.init();
+			listController.setModel(null);
+			
+			selectedList = new LinkedList<FanBatchDetail>();
+			setSelectedModel(null);
+		}
+		
+		private void saveData() {
+			FanBatchController batchController = (FanBatchController) FormUtil.getController(IPayrollConstants.FAN_BATCH_CONTROLLER_NAME);
+			FanBatch batch = (FanBatch) batchController.getTo();
+			
+			batch.setDate(new Date());
+			batch.setStatus(FileStatus.PENDING);
+			batchController.accept(null);
+			
+			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+			boolean mustCloseSession = HibernateUtil.mustCloseSession();
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				
+				IManagerBean detailBean = BeanManager.getManagerBean(FanBatchDetail.class);
+				for(FanBatchDetail detail: selectedList){
+					detail.setFanBatch(batch);
+					detail.setDomain(batch.getDomain());
+					detailBean.insert(detail);
+				}
+				
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				AonUtil.addErrorMessage(e.getMessage());
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					String msg = "Unable to rollback transaction!";
+					throw new AbortProcessingException(msg  + daoe.getMessage());
+				}
+				String msg = "Error durante el borrado de datos. ";
+				throw new AbortProcessingException(msg  + e.getMessage());
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+				HibernateUtil.setCloseSession(mustCloseSession);
+				HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			}
+		}
+
+		public void accept(ActionEvent event){
+			if(selectedList==null || selectedList.size()<=0){
+				AonUtil.addErrorMessage("Seleccione los ccc para continuar");
+				throw new AbortProcessingException("Seleccione los ccc para continuar");
+			}
+			saveData();
+			loadDetails();
+		}
+		
+		public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
+	        FanListController listController = (FanListController) FormUtil.getController(IPayrollConstants.FAN_LIST_CONTROLLER_NAME);
+			Iterator<Object> iterator = listController.getCheckHandler().getCheckedList().iterator();
+	        while (iterator.hasNext()) {
+	        	EnterpriseCCC ccc = (EnterpriseCCC) iterator.next();
+				FanBatchDetail detail = new FanBatchDetail();
+				detail.setCcc(ccc);
+				selectedList.add(detail);
+			}
+	        listController.getCheckHandler().clearCheckedList();
+	        setSelectedModel(new ListDataModel(selectedList));
+		}
+
+		public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
+	        Iterator<Object> iterator = getCheckedList().iterator();
+	        while(iterator.hasNext()){
+	        	FanBatchDetail detail = (FanBatchDetail) iterator.next();
+	        	if(selectedList.contains(detail)){
+	        		selectedList.remove(detail);
+	        	}
+	        }
+	        clearCheckedList();
+	        setSelectedModel(new ListDataModel(selectedList));
+	        loadDetails();
+	        onSearchCCCs(event);
+		}
+		
+		public void rowSelected(ValueChangeEvent event) {
+			if (event.getNewValue() != null) {
+				setRowChecked(((Boolean) event.getNewValue()).booleanValue());
+			}
+		}
+
+		public boolean getRowChecked() {
+			if(getSelectedModel().isRowAvailable()){
+				return checks.contains(getSelectedModel().getRowData());
+			}
+			return false;
+		}
+
+		public void setRowChecked(boolean rowChecked) {
+			if (rowChecked) {
+				if (!checks.contains(getSelectedModel().getRowData())) {
+					checks.add(getSelectedModel().getRowData());
+				}
+			} else {
+				if (checks.contains(getSelectedModel().getRowData())) {
+					checks.remove(getSelectedModel().getRowData());
+				}
+			}
+		}
+
+		public ArrayList<Object> getCheckedList() {
+			return checks;
+		}
+
+		public int getCheckedCount() {
+			return checks!=null?checks.size():0;
+		}
+
+		public void clearCheckedList() {
+			checks = new ArrayList<Object>();
+		}
+
+		public void checkAll(ActionEvent event) throws ManagerBeanException {
+			Iterator<FanBatchDetail> iterator = selectedList.iterator();
+			while (iterator.hasNext()) {
+				Object o = iterator.next();
+				if (!checks.contains(o)) {
+					checks.add(o);
+				}
+			}
+		}
+
+		public void checkNone(ActionEvent event) {
+			clearCheckedList();
+		}
+		
 	}
 
 }

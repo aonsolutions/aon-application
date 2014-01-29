@@ -98,7 +98,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
 		controller.setContractUtils(null);
-		
+		controller.setAgreement(controller.getContractUtils().obtainAgreement((Contract) controller.getTo()));
 		try {
 			controller.getContractUtils().loadContractData((Contract) controller.getTo(), controller.getParams());
 			controller.getContractUtils().loadContractInfo((Contract) controller.getTo(), controller.getParams());
@@ -107,17 +107,11 @@ public class ContractControllerListener extends ControllerAdapter{
 			String msg = "Error loading contract data";
 			LOGGER.error(msg);
 		}
-		controller.setAgreement(controller.getContractUtils().obtainAgreement((Contract) controller.getTo()));
 
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize((Contract) controller.getTo());
-		
 		CertificadosController certificadosController = (CertificadosController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CERTIFICADOS_CONTROLLER_NAME);
 		certificadosController.initialize((Contract) controller.getTo());
-		
-//		ContractInfoController infoController = (ContractInfoController) AonUtil.getRegisteredBean("contractDocumentInfo");
-//		infoController.initialize((Contract) controller.getTo());
-
 	}
 
 	@Override
@@ -155,6 +149,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		if(!controller.getParams().isRetaQuote()){
 			ContractUtils utils = ContractUtils.getInstance();
 			utils.insertContractData((Contract) controller.getTo(), controller.getParams());
+			utils.insertContractInfo((Contract) controller.getTo(), controller.getParams());
 			ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 			contrataController.initialize((Contract) controller.getTo());
 			contrataController.onContrataDataShow(null);
@@ -168,10 +163,11 @@ public class ContractControllerListener extends ControllerAdapter{
 		if(!controller.getParams().isRetaQuote()){
 			ContractUtils utils = ContractUtils.getInstance();
 			utils.updateContractData((Contract) controller.getTo(), controller.getParams());
+			utils.updateContractInfo((Contract) controller.getTo(), controller.getParams());
 			if(!controller.isTransformedContract()){
 				updateContrataData();
 			}
-			updateContractInfo();
+			updateContractDocumentFields();
 		}
 	}
 	
@@ -188,7 +184,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		contrataController.onContrataAccept(null);
 	}
 	
-	private void updateContractInfo() {
+	private void updateContractDocumentFields() {
 		ContractInfoController controller = (ContractInfoController) AonUtil.getRegisteredBean("contractDocumentInfo");
 		controller.saveContractFields();
 	}

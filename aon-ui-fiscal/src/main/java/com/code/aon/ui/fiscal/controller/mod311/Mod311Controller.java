@@ -12,15 +12,21 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.accounting.summary.SummaryCollection;
+import com.code.aon.accounting.summary.SummaryProvider;
+import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.file.tax.model.MOD311.MOD311Format;
+import com.code.aon.fiscal.FiscalActivity;
 import com.code.aon.fiscal.FiscalActivityInfo;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.enumeration.FiscalActivityInfoKey;
+import com.code.aon.fiscal.enumeration.FiscalModelStatus;
 import com.code.aon.fiscal.enumeration.FiscalModelType;
 import com.code.aon.fiscal.enumeration.Mod311Key;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
@@ -153,28 +159,74 @@ public class Mod311Controller extends FiscalModelController {
 			controller.onSelect(null);
 			
 			List<FiscalActivityInfo> list = controller.getM311List();
-			double value = 0;
-			FiscalActivityInfo inf = null;
-			for (FiscalActivityInfo info : list ) {
-				if (info.getInfoKey() == FiscalActivityInfoKey.X01) {
-					value  = info.getDoubleValue();
-					inf = info;
-					break;
+			FiscalActivity fa = controller.getFiscalActivity();
+			if (!fa.isFarmer()) {
+				double value = 0;
+				FiscalActivityInfo inf = null;
+				for (FiscalActivityInfo info : list ) {
+					if (info.getInfoKey() == FiscalActivityInfoKey.X01) {
+						value  = info.getDoubleValue();
+						inf = info;
+						break;
+					}
 				}
-			}
-			if (value == 0) {
-				int year = getDeclaration().getHeader().getYear();
-				Date fromDate = getDeclaration().getHeader().getPeriod().getStartDate( year );
-				Date toDate = getDeclaration().getHeader().getPeriod().getDueDate( year );
-				VatTaxManager taxManager = new VatTaxManager(AonUtil.getDomainName());
-				List<VatTaxDetail> vatDetails = taxManager.getVatTax(fromDate, toDate );
-				double x02 = 0;
-				for (VatTaxDetail vatDetail : vatDetails) {
-					if (vatDetail.getKey() == VatTaxKey.CP || vatDetail.getKey() == VatTaxKey.GT ) {
-						x02 = x02 + vatDetail.getQuotaAccumulated(); 
-					}					
+				if (value == 0) {
+					int year = getDeclaration().getHeader().getYear();
+					Date fromDate = getDeclaration().getHeader().getPeriod().getStartDate( year );
+					Date toDate = getDeclaration().getHeader().getPeriod().getDueDate( year );
+					VatTaxManager taxManager = new VatTaxManager(AonUtil.getDomainName());
+					List<VatTaxDetail> vatDetails = taxManager.getVatTax(fromDate, toDate );
+					double x02 = 0;
+					for (VatTaxDetail vatDetail : vatDetails) {
+						if (vatDetail.getKey() == VatTaxKey.CP || vatDetail.getKey() == VatTaxKey.GT ) {
+							x02 = x02 + vatDetail.getQuotaAccumulated(); 
+						}					
+					}
+					inf.setDoubleValue(x02);
+					controller.onChangeM311(event);				
 				}
-				inf.setDoubleValue(x02);
+			} else {
+				double y01Value = 0;
+				double y04Value = 0;
+				FiscalActivityInfo y01Info = null;
+				FiscalActivityInfo y04Info = null;
+				for (FiscalActivityInfo info : list ) {
+					if (info.getInfoKey() == FiscalActivityInfoKey.Y04) {
+						y04Value  = info.getDoubleValue();
+						y04Info = info;
+					}
+					if (info.getInfoKey() == FiscalActivityInfoKey.Y01) {
+						y01Value  = info.getDoubleValue();
+						y01Info = info;
+					}
+				}
+				if (y01Value == 0 && y04Value == 0) {
+					int year = getDeclaration().getHeader().getYear();
+					Date fromDate = CommonUtil.getYearFirstDay(year);
+					Date toDate = CommonUtil.getYearLastDay(year);
+					if (y01Value == 0) {
+						SummaryProvider sp = new SummaryProvider();
+						SummaryProviderParameters params = new SummaryProviderParameters(AonUtil.getDomainName());
+						params.setAccountExpression( "7*" );
+						params.setAccountLevel(5);
+						params.setFromDate(fromDate);
+						params.setToDate(toDate);
+						SummaryCollection sc = sp.getSummaryCollection(params,false);
+						double y01 = CommonUtil.round(sc.getOpeningCredit() + sc.getCredit() - sc.getOpeningDebit() - sc.getDebit());
+						y01Info.setDoubleValue(y01);
+					}
+					if (y04Value == 0) {
+						VatTaxManager taxManager = new VatTaxManager(AonUtil.getDomainName());
+						List<VatTaxDetail> vatDetails = taxManager.getVatTax(fromDate, toDate );
+						double y04 = 0;
+						for (VatTaxDetail vatDetail : vatDetails) {
+							if (vatDetail.getKey() == VatTaxKey.CP || vatDetail.getKey() == VatTaxKey.GT ) {
+								y04 = y04 + vatDetail.getQuotaAccumulated(); 
+							}					
+						}
+						y04Info.setDoubleValue(y04);
+					}
+				}
 				controller.onChangeM311(event);				
 			}
 		} catch (ManagerBeanException e) {
@@ -187,20 +239,31 @@ public class Mod311Controller extends FiscalModelController {
 	}
 	
 	public void onAcceptActivity(ActionEvent event) {
-		try { 
-			FiscalActivityController controller = (FiscalActivityController) AonUtil.getRegisteredBean("fiscalActivity");
-			controller.accept(event);
-			List<FiscalActivityInfo> list = controller.getM311List();
-			double value = 0;
-			for (FiscalActivityInfo info : list ) {
-				if (info.getInfoKey() == FiscalActivityInfoKey.X11) {
-					value  = info.getDoubleValue();
+		try {
+			if ( getDeclaration().getHeader().getStatus() == FiscalModelStatus.PENDING) {
+				FiscalActivityController controller = (FiscalActivityController) AonUtil.getRegisteredBean("fiscalActivity");
+				controller.accept(event);
+				List<FiscalActivityInfo> list = controller.getM311List();
+				double value = 0;
+				FiscalActivity fa = controller.getFiscalActivity();
+				if (!fa.isFarmer()) {
+					for (FiscalActivityInfo info : list ) {
+						if (info.getInfoKey() == FiscalActivityInfoKey.X11) {
+							value  = info.getDoubleValue();
+						}
+					}
+				} else {
+					for (FiscalActivityInfo info : list ) {
+						if (info.getInfoKey() == FiscalActivityInfoKey.Y08) {
+							value  = info.getDoubleValue();
+						}
+					}
 				}
+				FiscalModelDetail detail = getDeclaration().getDetail(getSelectedKey());
+				detail.setAccumulatedAmount(value);
+				getDeclaration().calculate();
 			}
-			FiscalModelDetail detail = getDeclaration().getDetail(getSelectedKey());
-			detail.setAccumulatedAmount(value);
 			onHideActivityPanel(event);
-			getDeclaration().calculate();
 		} catch (Throwable e) {
 			AonUtil.addErrorMessage(e.getMessage()); 
 			throw new AbortProcessingException(e.getMessage(),e);

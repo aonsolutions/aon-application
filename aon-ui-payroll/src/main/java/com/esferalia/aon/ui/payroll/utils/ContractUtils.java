@@ -324,8 +324,6 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		
-//		insertContractInfo(contract, params);
-		
 	}
 	
 	public void insertContractInfo(Contract contract, ContractParams params) {
@@ -580,8 +578,6 @@ public class ContractUtils {
 			AonUtil.addErrorMessage(msg);
 		}
 		
-//		updateContractInfo(contract, params);
-		
 	}
 	
 	public void updateContractInfo(Contract contract, ContractParams params) throws ControllerListenerException {
@@ -680,7 +676,7 @@ public class ContractUtils {
 			params.setSubsidized(new Boolean(map.get(ContextVariable.SUBSIDIZED.getName())));
 		}
 		if(map.get(ContextVariable.WEEK_HOURS.getName())!=null){
-			params.setWeekHours(Integer.parseInt(map.get(ContextVariable.WEEK_HOURS.getName())));
+			params.setWeekHours(Double.parseDouble(map.get(ContextVariable.WEEK_HOURS.getName())));
 		}
 	}
 	

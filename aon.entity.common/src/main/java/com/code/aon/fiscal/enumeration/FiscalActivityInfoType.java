@@ -9,6 +9,7 @@ public enum FiscalActivityInfoType {
 	IRPF_INFO,
 	MODULE_DETAIL,
 	M311_DETAIL,
+	M311_FARMER_DETAIL,
 	
 	// Valido sólo en el enumerado FiscalActivityInfoKey,
 	// puesto que los modulos pueden ser tanto de IVA como de IRPF.

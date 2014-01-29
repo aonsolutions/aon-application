@@ -223,6 +223,20 @@ public class PayrollCollectionsController {
 		return contractOptions;
 	}
 	
+	public List<SelectItem> getAllContractCodes() {
+		if (contractCodes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			contractCodes = new LinkedList<SelectItem>();
+			ContractCode[] codes = ContractCode.values();
+			for (ContractCode code : codes) {
+				String name = code.getValue() +" - "+ code.getName(locale);
+				SelectItem item = new SelectItem(code, name);
+				contractCodes.add(item);
+			}
+		}
+		return contractCodes;
+	}
+	
 	public List<SelectItem> getContractCodes() {
 		if (contractCodes == null) {
 			String[] TRANSFORM_CODES = {"189", "109", "139", "289", "209", "239", "309", "339", "389"};

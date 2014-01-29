@@ -166,17 +166,14 @@ public class ContrataContratosHandler implements IContrataHandler{
 				|| getContractCode() == ContractCode.C552
 				// transformaciones
 				|| getContractCode() == ContractCode.C389
-//				|| getContractCode() == ContractCode.C339
+				|| getContractCode() == ContractCode.C339
 				|| getContractCode() == ContractCode.C309
 				|| getContractCode() == ContractCode.C289
 				|| getContractCode() == ContractCode.C239
 				|| getContractCode() == ContractCode.C209;
 	}
 	public boolean isAvailableTipoJornada() {
-		if( getContractCode()==ContractCode.C300 || getContractCode()==ContractCode.C330 || getContractCode()==ContractCode.C350){
-			return false;
-		}
-		return true;
+		return getContractCode()!=ContractCode.C300 && getContractCode()!=ContractCode.C330 && getContractCode()!=ContractCode.C350;
 	}
 
 	/**

@@ -8,8 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;

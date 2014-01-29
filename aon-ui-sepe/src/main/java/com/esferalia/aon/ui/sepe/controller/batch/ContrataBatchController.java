@@ -266,12 +266,6 @@ public class ContrataBatchController extends BasicController {
 			ContrataBatchController batchController = (ContrataBatchController) FormUtil.getController(ISepeConstants.CONTRATA_BATCH_CONTROLLER_NAME);
 			ContrataBatch batch = (ContrataBatch) batchController.getTo();
 			
-			// TODO
-//			if(DomainManager.isDomainManagementAvailable()){
-//			} else {
-//				batch.setDomain( SEPEUtils.getInstance().getCurrentDomainEnterprise().getDomain() );
-//			}
-			
 			batch.setDate(new Date());
 			batch.setStatus(FileStatus.PENDING);
 			batchController.accept(null);

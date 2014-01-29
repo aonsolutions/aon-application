@@ -135,7 +135,7 @@
 						</aon:panelTab>
 					</c:if>
 					
-					<c:if test="#{fiscalActivity.vatModules.rowCount > 0}">
+					<c:if test="#{fiscalActivity.m311Model.rowCount > 0}">
 						<aon:panelTab id="m311Tab" label="#{bundle.fiscal_vat_modules_311}">
 							<ui:include src="/com/code/aon/ui/fiscal/facelet/activity/m311.xhtml" />		
 						</aon:panelTab>
