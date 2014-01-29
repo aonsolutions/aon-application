@@ -55,18 +55,21 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
 	}
 
 	private boolean isRefreshBookingNeeded(ProjectReservation reservation) {
+		Integer agency = (reservation.getAgency() != null && reservation.getAgency().getId() != null) ? reservation.getAgency().getId() : null;
 		String stmt = "SELECT 1" +
 						" FROM project_reservation as project_reservation" +
     					" WHERE project_reservation.project = :project" +
-    					" AND project_reservation.hotel = :hotel" + 
-    					" AND project_reservation.agency = :agency" +
+    					" AND project_reservation.hotel = :hotel" +
+    					" AND project_reservation.agency " + ((agency != null) ? "= :agency" : "IS NULL") +
     					" AND project_reservation.start_date = :start_date" + 
     					" AND project_reservation.end_date = :end_date";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		SQLQuery query = session.createSQLQuery(stmt);
 		query.setInteger("project", reservation.getId());
 		query.setInteger("hotel", reservation.getHotel().getId());
-		query.setInteger("agency", reservation.getAgency().getId());
+		if (agency != null) {
+			query.setInteger("agency", agency);
+		}
 		query.setDate("start_date", reservation.getStartDate());
 		query.setDate("end_date", reservation.getEndDate());
         return query.list().isEmpty();
