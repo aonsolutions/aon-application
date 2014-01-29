@@ -47,7 +47,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.thirdparty.javascript.jscomp.graph.GraphColoring.Color;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -342,11 +341,11 @@ public class AgreementDraft extends ResizeComposite implements
 					reset.cancel();
 
 					String value = event.getValue();
-					
+
 					if (!StringUtils.isBlank(value)) {
-						value= "REMOVE()";
+						value = "REMOVE()";
 					}
-					
+
 					var.setExpression(event.getValue());
 					// TODO: Check syntax????
 					AgreementDraft.this.agreementDraftObject.addDraftVariable(
