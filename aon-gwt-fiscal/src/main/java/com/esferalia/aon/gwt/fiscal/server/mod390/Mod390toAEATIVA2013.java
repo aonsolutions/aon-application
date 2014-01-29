@@ -452,7 +452,17 @@ public class Mod390toAEATIVA2013 {
 		regGeneral.setBaseImponibleyCuota(bases);
 		Deducciones ded = getDeducciones(mod390); 
 		regGeneral.setDeducciones(ded);
+		regGeneral.setResRegGeneral(getResRegGeneral(mod390));
 		return regGeneral;
+	}
+	
+	private static String getResRegGeneral(Mod390 mod390) {
+		Mod390Detail detail = getKey(mod390,Mod390DetailKey.K37);
+		String total = null;
+		if (detail != null) {
+			total = Double.toString( AonUtil.round(detail.getQuota()) ); 			
+		}
+		return total;
 	}
 
 

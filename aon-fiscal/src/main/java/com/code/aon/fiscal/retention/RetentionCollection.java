@@ -29,8 +29,8 @@ public class RetentionCollection {
 			conn = DatabaseUtil.getConnection(params.getDomainName());
 
 			StringWriter stmt = new StringWriter();
-			stmt.append("SELECT it.withholding_type,it.percentage,SUM(id.taxable_base)");
-			stmt.append(" ,SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) RET ");
+			stmt.append("SELECT it.withholding_type,it.percentage,SUM(it.base)");
+			stmt.append(" ,SUM( IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ) ) RET ");
 			stmt.append(" FROM invoice_tax it ");
 			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
@@ -118,8 +118,8 @@ public class RetentionCollection {
 
 			StringWriter stmt = new StringWriter();
 			stmt.append(" SELECT i.type,i.transaction,i.investment,i.tax_date,i.issue_date,i.reference_code,i.series,i.number,i.rdocument,i.rname ");
-			stmt.append("  ,it.percentage,SUM(id.taxable_base) ");
-			stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) IVA");
+			stmt.append("  ,it.percentage,SUM(it.base) ");
+			stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ) ) IVA");
 			stmt.append("  ,it.withholding_type ");
 			stmt.append("  FROM invoice_tax it ");
 			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
@@ -243,8 +243,8 @@ public class RetentionCollection {
 			conn = DatabaseUtil.getConnection(params.getDomainName());
 
 			StringWriter stmt = new StringWriter();
-			stmt.append(" SELECT i.rdocument,i.rname,SUM(id.taxable_base) ");
-			stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) IVA");
+			stmt.append(" SELECT i.rdocument,i.rname,SUM(it.base) ");
+			stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ) ) IVA");
 			stmt.append("  FROM invoice_tax it ");
 			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
 			stmt.append("  INNER JOIN invoice i ON (id.invoice = i.id) ");

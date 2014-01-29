@@ -80,7 +80,6 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 		this.domain = domain;
 		this.year = year;
 		initializeList(mod390);
-		populate(mod390);
 	}
 
 	private void initializeList(final Mod390 mod390) {
@@ -114,6 +113,7 @@ public class Page5 extends ResizeComposite implements RequiresResize {
 						initializeTable();
 						calculate();
 						popup.hide();
+						populate(mod390);
 					}
 
 					@Override

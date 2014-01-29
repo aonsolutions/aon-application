@@ -131,4 +131,9 @@ public class StringUtils {
 		return buffer.toString();
 	}		
 	
+	public static void main(String[] args) {
+		System.out.println("           SISTEMA    ".matches("\\s*SISTEMA\\s*"));
+		System.out.println("           SISTEMA ( \"HOLA'  )   ".matches("\\s*SISTEMA\\s*\\(\\s*('HOLA'|\"HOLA\")\\s*\\)\\s*"));
+	}
+	
 }

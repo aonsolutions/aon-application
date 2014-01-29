@@ -11,8 +11,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class AgreementDraft extends Agreement {
 
@@ -139,9 +140,9 @@ public class AgreementDraft extends Agreement {
 			return vars;
 		}
 
-		public Set<Integer> getAllLevels() {
+		public SortedSet<Integer> getAllLevels() {
 			Set<Key> keys = map.keySet();
-			Set<Integer> levels = new HashSet<Integer>();
+			SortedSet<Integer> levels = new TreeSet<Integer>();
 			for (Key key : keys)
 				levels.add(key.level);
 			return levels;

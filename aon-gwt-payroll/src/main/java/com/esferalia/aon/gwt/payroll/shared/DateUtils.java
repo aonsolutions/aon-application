@@ -188,9 +188,6 @@ public class DateUtils {
 				date.getDate(), 0, 0, 0));
 	}
 
-	public static void main(String[] args) {
-		System.out.println("Para siempre ( shksjdhfjshdkf )".replaceAll(
-				" \\([^\\)]*\\)", ""));
-	}
+	
 
 }

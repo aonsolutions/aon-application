@@ -47,11 +47,13 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.thirdparty.javascript.jscomp.graph.GraphColoring.Color;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -293,28 +295,58 @@ public class AgreementDraft extends ResizeComposite implements
 		Level level;
 		Variable var;
 
+		String color;
+		TextBox expressionBox;
+
+		Timer reset = new Timer() {
+			@Override
+			public void run() {
+				Object value = var.getValue();
+				if (value == null)
+					return;
+				String text = value.toString();
+				if (StringUtils.isBlank(text))
+					return;
+				expressionBox.setText(text);
+			}
+		};
+
 		VariableEditor(Level level, Variable var) {
 			this.var = var;
 			this.level = level;
 		}
 
-		void setExpressionTextBox(final TextBox textBox) {
-			textBox.addFocusHandler(new FocusHandler() {
+		void setExpressionTextBox(TextBox textBox) {
+			this.expressionBox = textBox;
+			expressionBox.addFocusHandler(new FocusHandler() {
 				@Override
 				public void onFocus(FocusEvent event) {
-					textBox.setText(var.getExpression());
+					expressionBox.setText(var.getExpression());
 					AgreementDraft.this.fxButton.setEnabled(true);
+
+					color = expressionBox.getElement().getStyle().getColor();
+					expressionBox.getElement().getStyle().clearColor();
 				}
 			});
 			textBox.addBlurHandler(new BlurHandler() {
 				@Override
 				public void onBlur(BlurEvent event) {
 					AgreementDraft.this.fxButton.setEnabled(false);
+					expressionBox.getElement().getStyle().setColor(color);
+					reset.schedule(100);
 				}
 			});
 			textBox.addValueChangeHandler(new ValueChangeHandler<String>() {
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
+					reset.cancel();
+
+					String value = event.getValue();
+					
+					if (!StringUtils.isBlank(value)) {
+						value= "REMOVE()";
+					}
+					
 					var.setExpression(event.getValue());
 					// TODO: Check syntax????
 					AgreementDraft.this.agreementDraftObject.addDraftVariable(
@@ -833,9 +865,7 @@ public class AgreementDraft extends ResizeComposite implements
 				if (variable != null) {
 					dumpVariable(row, col, level, variable);
 				} else {
-					Variable defaultVariable = agreementDraftObject
-							.getVariable(var);
-					dumpUndefVariable(row, col, level, var, defaultVariable);
+					dumpUndefVariable(row, col, level, var);
 				}
 				if (changedVariables.contains(var)) {
 					cellFormatter.addStyleName(row, col, style.highlight());
@@ -1068,9 +1098,10 @@ public class AgreementDraft extends ResizeComposite implements
 	private void dumpVariable(int row, int col, Level level, Variable var) {
 
 		TextBox expressionTextBox = new TextBox();
-		// yes we assume all variables are numeric.
 		expressionTextBox.addStyleName(AON.AON_TEXT_RIGHT);
-		expressionTextBox.setVisibleLength(VARIABLE_TEXTBOX_SIZE);
+		if (var.isImpicit())
+			expressionTextBox.getElement().getStyle().setColor("gray");
+		expressionTextBox.getElement().getStyle().setWidth(96, Unit.PCT);
 
 		Object value = var.getValue();
 		String expression = value == null ? var.getExpression() : value
@@ -1092,13 +1123,13 @@ public class AgreementDraft extends ResizeComposite implements
 		}
 	}
 
-	private void dumpUndefVariable(int row, int col, Level level, String name,
-			Variable defaultVariable) {
+	private void dumpUndefVariable(int row, int col, Level level, String name) {
 
 		TextBox expressionTextBox = new TextBox();
 		// yes we assume all variables are numeric.
 		expressionTextBox.addStyleName(AON.AON_TEXT_RIGHT);
-		expressionTextBox.setVisibleLength(VARIABLE_TEXTBOX_SIZE);
+		// expressionTextBox.setVisibleLength(VARIABLE_TEXTBOX_SIZE);
+		expressionTextBox.getElement().getStyle().setWidth(96, Unit.PCT);
 		salaryTable.setWidget(row, col, expressionTextBox);
 
 		Variable variable = new StringVariable();
@@ -1157,8 +1188,13 @@ public class AgreementDraft extends ResizeComposite implements
 		descriptionTextBox.setVisibleLength(5);
 		salaryTable.setWidget(row, 0, descriptionTextBox);
 
+		int col;
 		int cols = salaryTable.getCellCount(row - 1);
-		for (int col = 1; col < cols; col++)
+		for (col = 1; col < cols - 2; col++)
+			salaryTable.setWidget(row, col,
+					newHiddenTextBox(VARIABLE_TEXTBOX_SIZE));
+
+		for (; col < cols; col++)
 			salaryTable.insertCell(row, col);
 
 		LevelEditor editor = new LevelEditor(agreementDraftObject.newLevel());
@@ -1992,6 +2028,13 @@ public class AgreementDraft extends ResizeComposite implements
 		if (hide) {
 			widget.getElement().getStyle().setVisibility(Visibility.HIDDEN);
 		}
+	}
+
+	private Widget newHiddenTextBox(int size) {
+		TextBox textBox = new TextBox();
+		textBox.setVisibleLength(size);
+		textBox.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		return textBox;
 	}
 
 }

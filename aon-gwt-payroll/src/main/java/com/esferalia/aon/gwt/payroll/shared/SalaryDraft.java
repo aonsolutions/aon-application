@@ -88,6 +88,7 @@ public class SalaryDraft extends SalaryPreview {
 
 	private Double cgcBase;
 	private Double dbGgcBase;
+	private Double rawCgcBase;
 	private Double cgpBase;
 	private Double dbGgpBase;
 	private Double irpfBase;
@@ -375,7 +376,15 @@ public class SalaryDraft extends SalaryPreview {
 	public void setDbGgcBase(Double dbGgcBase) {
 		this.dbGgcBase = dbGgcBase;
 	}
-
+	
+	public Double getRawCgcBase() {
+		return rawCgcBase;
+	}
+	
+	public void setRawCgcBase(Double rawCgcBase) {
+		this.rawCgcBase = rawCgcBase;
+	}
+	
 	public Double getDbGgpBase() {
 		return dbGgpBase;
 	}
@@ -383,7 +392,7 @@ public class SalaryDraft extends SalaryPreview {
 	public void setDbGgpBase(Double dbGgpBase) {
 		this.dbGgpBase = dbGgpBase;
 	}
-
+	
 	public Double getDbIrpfBase() {
 		return dbIrpfBase;
 	}

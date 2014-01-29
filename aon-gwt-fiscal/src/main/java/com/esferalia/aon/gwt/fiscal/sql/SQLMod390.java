@@ -1276,6 +1276,16 @@ public class SQLMod390 {
 				if (d.getSumDeducciones() != null) {
 					put(mod390,Mod390DetailKey.K36,d.getSumDeducciones());
 				}
+				
+			}
+			String res = iva.getRegGeneral().getResRegGeneral();
+			if (!AonUtil.isEmpty(res)) {
+				try {
+					double val = Double.parseDouble(res); 
+					put(mod390,Mod390DetailKey.K37, new BigDecimal(val) );
+				} catch (NumberFormatException e) {
+					// Nothing
+				}
 			}
 		}
 		RegSimplificado reg = iva.getRegSimplificado();

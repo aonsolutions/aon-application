@@ -124,8 +124,13 @@ public class SQLAgreementContextFactory implements
 		}
 	};
 
+
 	public ExpressionContext getSystemExpressionContext() {
 		return systemExpressionContext;
+	}
+	
+	public ExpressionContext getAgreementDataContext(int agreementId){
+		return agreementDataCache.get(agreementId);
 	}
 
 	// ------------------------------------------
@@ -163,9 +168,6 @@ public class SQLAgreementContextFactory implements
 		}
 	}
 
-	private ExpressionContext getAgreementCtx(Integer agreementLevelId) {
-		return systemExpressionContext;
-	}
 
 	private void initAgreementStmt(Connection connection, Date startDate,
 			Date endDate, OrderByList orderByList) throws SQLException {
