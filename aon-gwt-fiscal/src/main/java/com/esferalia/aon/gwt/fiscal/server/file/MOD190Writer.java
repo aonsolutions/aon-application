@@ -180,8 +180,8 @@ public class MOD190Writer {
 
 			deponent.getReceivers().add(receiver);
 			++c01;
-			c02 = c02  + det.getPerception();
-			c03 = c03  + det.getRetention();
+			c02 = c02  + (det.getPerception() + det.getInKindPerception());
+			c03 = c03  + (det.getRetention() + det.getInKindDeposit());
 		}
 		deponent.setC001(c01);
 		deponent.setC002(c02);
