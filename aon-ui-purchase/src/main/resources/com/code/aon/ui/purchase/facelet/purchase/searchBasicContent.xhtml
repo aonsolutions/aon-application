@@ -33,6 +33,13 @@
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
+	
+	<aon:outputLabel for="Purchase_purchaseReference"
+		value="#{bundle.sales_purchase_reference}" />
+	<aon:inputText id="Purchase_purchaseReference"
+		valueChangeListener="#{controller.addExpression}"
+		size="30">
+	</aon:inputText>
 							
 	<aon:outputLabel for="Purchase_documentType"
 		value="#{bundle.aon_type}" />
