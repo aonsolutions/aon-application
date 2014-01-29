@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.util.ArrayList;
 
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
@@ -180,8 +181,8 @@ public class MOD190Writer {
 
 			deponent.getReceivers().add(receiver);
 			++c01;
-			c02 = c02  + (det.getPerception() + det.getInKindPerception());
-			c03 = c03  + (det.getRetention() + det.getInKindDeposit());
+			c02 = CommonUtil.round(c02  + CommonUtil.round(det.getPerception() + det.getInKindPerception()));
+			c03 = CommonUtil.round(c03  + CommonUtil.round(det.getRetention() + det.getInKindDeposit()));
 		}
 		deponent.setC001(c01);
 		deponent.setC002(c02);
