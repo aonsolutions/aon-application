@@ -26,6 +26,10 @@
 	gwt-image: "warn" ; 
 }
 
+@sprite .aon-icon-aet {
+	gwt-image: "aet" ; 
+}
+
 @sprite .aon-icon-ine {
 	gwt-image: "ine" ; 
 }

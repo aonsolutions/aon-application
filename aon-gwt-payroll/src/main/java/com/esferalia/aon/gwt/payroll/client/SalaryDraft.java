@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -18,7 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.HasDeduction;
 import com.esferalia.aon.gwt.payroll.shared.HasPayment;
 import com.esferalia.aon.gwt.payroll.shared.Item;
 import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
-import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
+import com.esferalia.aon.gwt.payroll.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Event;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
@@ -28,11 +29,11 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -56,6 +57,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.HasDirection.Direction;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -140,11 +142,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 	};
 
-	private Scope SCOPE_STEPS[] = { Scope.CONTRACT, Scope.AGREEMENT,
-			Scope.SYSTEM };
+	private List<Scope> SCOPE_STEPS = Arrays.asList(Scope.CONTRACT,
+			Scope.AGREEMENT, Scope.SYSTEM);
+
+	private static final String PORCENTAJE_IRPF = "PORCENTAJE_IRPF";
 
 	private static String[] SKIP_VARIABLES = { "CONVENIO", "SISTEMA", "NETO",
-			"ANTICIPO_ATRASOS" };
+			"ANTICIPO_ATRASOS", PORCENTAJE_IRPF };
 
 	static class VisibilityImpl implements HasVisibility {
 
@@ -1095,18 +1099,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		Payment draftPayment = new Payment();
 
-		String str = totalLiquidLabel.getValue();
+		String expression = totalLiquidLabel.getValue();
 
-		Double liquid = null;
-		try {
-			liquid = Double.parseDouble(str);
-		} catch (NumberFormatException e) {
-			liquid = parse(str);
-		} catch (NullPointerException e) {
-			liquid = 0.00;
-		}
-
-		draftPayment.setExpression("NETO(" + liquid + ")");
+		draftPayment
+				.setExpression("NETO("
+						+ (StringUtils.isBlank(expression) ? "0.00"
+								: expression) + ")");
 		draftPayment.setScope(Scope.SALARY);
 		draftPayment.setName("NETO");
 		draftPayment.setIrpfExpression("_P");
@@ -1117,7 +1115,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			draftPayment.setDescription(totalLiquidPayment.getDescription());
 
 		} else {
-			draftPayment.setDescription("SUPLEMENTO NETO");
+			draftPayment.setDescription("Suplemento Neto");
 		}
 
 		draftPayment.setEndDate(salaryDraftObject.getEndDate());
@@ -1131,6 +1129,26 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		totalLiquidPayment = draftPayment;
 
+	}
+
+	@UiHandler("totalLiquidLabel")
+	void onLiquidBlur(BlurEvent event) {
+		try {
+			String value = totalLiquidLabel.getValue();
+			totalLiquidLabel.setText(format(StringUtils.isBlank(value) ? 0
+					: Double.valueOf(value)));
+		} catch (Exception e) {
+			totalLiquidLabel
+					.setText(format(salaryDraftObject.getTotalLiquid()));
+		}
+	}
+
+	@UiHandler("totalLiquidLabel")
+	void onLiquidFocus(FocusEvent event) {
+		Double liquid = salaryDraftObject.getTotalLiquid();
+		totalLiquidLabel
+				.setText(String.valueOf(NumberUtils.isNotValid(liquid) ? 0.00
+						: round(liquid)));
 	}
 
 	private void setDbVisible(boolean visible) {
@@ -1323,16 +1341,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		List<Variable> context = new ArrayList<Variable>(
 				salaryDraftObject.getContext());
 
+		Scope nextScope = null;
 		boolean show = scope.compareTo(Scope.CONTRACT) >= 0;
-		// for (Scope step : SCOPE_STEPS) {
-		while (!context.isEmpty()) {
-			Scope step = context.get(0).getScope();
-			if (step.compareTo(scope) <= 0) {
-				dumpContext(context, scope, show);
+
+		for (Scope step : SCOPE_STEPS) {
+			nextScope = dumpContext(context, step, show, nextScope);
+			if (step.compareTo(scope) <= 0)
 				break;
-			} else {
-				dumpContext(context, step, show);
-			}
 		}
 
 		List<Event> events = salaryDraftObject.getEvents();
@@ -1965,8 +1980,33 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private void dumpSystemDeduction(Deduction deduction, Double percent,
 			String description, int row) {
-		Widget percentageWidget = newPercentWidget(deduction, percent);
-		dumpSystemDeduction(deduction, description, row, percentageWidget);
+		Widget percentWidget = newPercentWidget(deduction, percent);
+
+		dumpSystemDeduction(deduction, description, row, percentWidget);
+
+		Variable percentVariable = getPercentVariable(deduction.getType());
+		if (percentVariable == null)
+			return;
+
+		if (percentVariable instanceof UndefinedDeductionVariable) {
+			Label warnLabel = new InlineHTML("&nbsp;");
+			warnLabel.addStyleName(style.cellWarn());
+			paymentsTable.setWidget(row, 0, warnLabel);
+			return;
+		}
+
+		if (percentVariable.getScope() != Scope.SALARY)
+			return;
+
+		for (int col : new int[] { 0, 1 }) {
+			paymentsTable.getCellFormatter().addStyleName(row, col,
+					AON.AON_DATA_TABLE_CELL_HIGHLIGHT);
+			paymentsTable.getCellFormatter().addStyleName(row - 1, col,
+					AON.AON_DATA_TABLE_CELL_HIGHLIGHT_TOP);
+		}
+		Label changedLabel = new InlineHTML("&nbsp;");
+		changedLabel.addStyleName(style.cellChanged());
+		paymentsTable.setWidget(row, 0, changedLabel);
 	}
 
 	private void dumpSystemDeduction(Deduction deduction, String description,
@@ -2010,6 +2050,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		paymentsTable.getFlexCellFormatter().setColSpan(row, 4, 2);
 
 		formatRow(row);
+
 	}
 
 	private void dumpDbSystemDeduction(Deduction deduction, Double percent,
@@ -2040,10 +2081,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	 * 
 	 * @param show
 	 */
-	private void dumpContext(List<Variable> context, Scope to, boolean show) {
-		int cols = 3;
+	private Scope dumpContext(List<Variable> context, Scope toScope,
+			boolean show, Scope lastScope) {
+		final int cols = 3;
 
 		int count = contextTable.getRowCount() * cols;
+
 		ListIterator<Variable> iterator = context.listIterator();
 		while (iterator.hasNext()) {
 
@@ -2055,68 +2098,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			}
 
 			Scope scope = variable.getScope();
-			if (scope.compareTo(to) < 0) {
+			if (scope.compareTo(toScope) < 0) {
 				if (!(variable instanceof UndefinedVariable)
 						|| variable.isImpicit()) {
 					continue;
 				}
 			}
 
-			HTMLPanel htmlPanel = new HTMLPanel("");
-
-			VariableChangeHandler<TextBox> variableChangeHandler = new VariableChangeHandler<TextBox>(
-					variable);
-
-			Label label = getLabel(variable);
-			htmlPanel.add(label);
-			variableChangeHandler.setLabel(label);
-
-			Panel valuePanel = new HorizontalPanel();
-			valuePanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
-
-			TextBox variableTextBox = new TextBox();
-			variableChangeHandler.setUiObject(variableTextBox);
-			valuePanel.add(variableTextBox);
-
-			valuePanel.add(new InlineHTML("&nbsp;"));
-
-			if (!(variable instanceof UndefinedVariable)) {
-				valuePanel.add(getDeleteButton(variable));
-			} else if (variable instanceof UndefinedPaymentVariable) {
-				String styles[] = eventStyles.get(Event.Type.WARNING);
-
-				StyleToggleButton itemButton = getPaymentButton(
-						(UndefinedPaymentVariable) variable, styles[0],
-						styles[1]);
-
-				valuePanel.add(itemButton);
-				// only show payments of variables at 'to' scope...
-				itemButton.setValue(show && (scope.compareTo(to) >= 0), true);
-			} else if (variable instanceof UndefinedDeductionVariable) {
-				String styles[] = eventStyles.get(Event.Type.WARNING);
-
-				StyleToggleButton itemButton = getDeductionButton(
-						(UndefinedDeductionVariable) variable, styles[0],
-						styles[1]);
-
-				valuePanel.add(itemButton);
-				itemButton.setValue(show, true);
-			}
-
-			if (scope.compareTo(Scope.AGREEMENT) > 0
-					&& variable.isDefinedAt(Scope.AGREEMENT))
-				valuePanel.add(getAgreementVarButton(variable));
-
-			if (scope.compareTo(Scope.APPLICATION) > 0
-					&& (variable.isDefinedAt(Scope.SYSTEM) || variable
-							.isDefinedAt(Scope.APPLICATION)))
-				valuePanel.add(getSystemVarButton(variable));
-
-			htmlPanel.add(valuePanel);
-
+			Widget variableWidget = getVariableWidget(variable, toScope, show);
 			int row = count / cols;
 			int col = count % cols;
-			contextTable.setWidget(row, col, htmlPanel);
+			contextTable.setWidget(row, col, variableWidget);
 
 			contextTable.getRowFormatter().addStyleName(
 					row,
@@ -2134,31 +2126,113 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			} // highlight dirty, not saved variables.
 
 			count++;
-
 			iterator.remove();
 
 		}
 
-		if (context.isEmpty())
-			return;
+		int row = count / cols;
+		int col = count % cols;
+
+		if (context.isEmpty()) {
+			if (row == 0 && col == 0)
+				return null;
+			for (; col < cols; col++)
+				contextTable.addCell(row);
+			return null;
+		}
 
 		Variable variable = context.get(0);
+		final Scope nextScope = variable.getScope();
 
-		final Scope varScope = variable.getScope();
+		if (lastScope == nextScope)
+			return lastScope;
+
 		final List<Variable> remainContext = new ArrayList<Variable>(context);
+
+		Widget expandWidget = getContextExpandWidget(nextScope, row, col,
+				remainContext);
+
+		contextTable.setWidget(row, col, expandWidget);
+		contextTable.getFlexCellFormatter().setColSpan(row, col, cols - col);
+
+		return nextScope;
+
+	}
+
+	private Widget getVariableWidget(final Variable variable, Scope scope,
+			boolean show) {
+		HTMLPanel htmlPanel = new HTMLPanel("");
+
+		VariableChangeHandler<TextBox> variableChangeHandler = new VariableChangeHandler<TextBox>(
+				variable);
+
+		Label label = getLabel(variable);
+		htmlPanel.add(label);
+		variableChangeHandler.setLabel(label);
+
+		Panel valuePanel = new HorizontalPanel();
+		valuePanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
+
+		TextBox variableTextBox = new TextBox();
+		variableChangeHandler.setUiObject(variableTextBox);
+		valuePanel.add(variableTextBox);
+
+		valuePanel.add(new InlineHTML("&nbsp;"));
+
+		if (!(variable instanceof UndefinedVariable)) {
+			valuePanel.add(getDeleteButton(variable));
+		} else if (variable instanceof UndefinedPaymentVariable) {
+			String styles[] = eventStyles.get(Event.Type.WARNING);
+
+			StyleToggleButton itemButton = getPaymentButton(
+					(UndefinedPaymentVariable) variable, styles[0], styles[1]);
+
+			valuePanel.add(itemButton);
+			// only show payments of variables at 'to' scope...
+			itemButton.setValue(show && (scope.compareTo(scope) >= 0), true);
+		} else if (variable instanceof UndefinedDeductionVariable) {
+			String styles[] = eventStyles.get(Event.Type.WARNING);
+
+			StyleToggleButton itemButton = getDeductionButton(
+					(UndefinedDeductionVariable) variable, styles[0], styles[1]);
+
+			valuePanel.add(itemButton);
+			itemButton.setValue(show, true);
+		}
+
+		if (scope.compareTo(Scope.AGREEMENT) > 0
+				&& variable.isDefinedAt(Scope.AGREEMENT))
+			valuePanel.add(getAgreementVarButton(variable));
+
+		if (scope.compareTo(Scope.APPLICATION) > 0
+				&& (variable.isDefinedAt(Scope.SYSTEM) || variable
+						.isDefinedAt(Scope.APPLICATION)))
+			valuePanel.add(getSystemVarButton(variable));
+
+		htmlPanel.add(valuePanel);
+
+		return htmlPanel;
+	}
+
+	private Widget getContextExpandWidget(final Scope expandScope,
+			final int row, final int col, final List<Variable> context) {
 
 		Panel expandPanel = new HorizontalPanel();
 		expandPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
-		final Label expandLabel = new Label(
-				((SalaryDraft.this.scope.compareTo(varScope) <= 0) ? "Ocultar"
-						: "Mostrar")
-						+ " variables del "
-						+ SCOPE_DESCRIPTIONS.get(varScope));
+		boolean collapse = (SalaryDraft.this.scope.compareTo(expandScope) <= 0);
+		final Label expandLabel = new Label((collapse ? "Ocultar" : "Mostrar")
+				+ " variables del " + SCOPE_DESCRIPTIONS.get(expandScope));
 		expandPanel.add(expandLabel);
 		final Button expandButton = new Button();
-		expandButton.setStyleName(style.expandAllButton());
+		expandButton.setStyleName(collapse ? style.collapseAllButton() : style
+				.expandAllButton());
 		expandButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		expandPanel.add(expandButton);
+		// this code, is for make this row's height equal to rows with variables
+		TextBox hiddenTextBox = new TextBox();
+		hiddenTextBox.setVisibleLength(1);
+		hiddenTextBox.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+		expandPanel.add(hiddenTextBox);
 
 		HTMLPanel htmlPanel = new HTMLPanel("");
 		HTML blank = new HTML("&nbsp;");
@@ -2166,27 +2240,24 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		htmlPanel.add(blank);
 		htmlPanel.add(expandPanel);
 
-		final int row = count / cols;
-		final int col = count % cols;
-
 		expandButton.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				if (SalaryDraft.this.scope.compareTo(varScope) <= 0)
+				if (SalaryDraft.this.scope.compareTo(expandScope) <= 0)
 					collapse();
 				else
 					expand();
 			}
 
 			private void expand() {
-				List<Variable> context = new ArrayList<Variable>(remainContext);
-				dumpContext(context, varScope, false);
+				List<Variable> contextCopy = new ArrayList<Variable>(context);
+				dumpContext(contextCopy, expandScope, false, null);
 				expandButton.removeStyleName(style.expandAllButton());
 				expandButton.setStyleName(style.collapseAllButton(), true);
 				expandLabel.setText("Ocultar variables del "
-						+ SCOPE_DESCRIPTIONS.get(varScope));
-				SalaryDraft.this.scope = varScope;
+						+ SCOPE_DESCRIPTIONS.get(expandScope));
+				SalaryDraft.this.scope = expandScope;
 			}
 
 			private void collapse() {
@@ -2198,14 +2269,15 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				expandButton.removeStyleName(style.collapseAllButton());
 				expandButton.setStyleName(style.expandAllButton(), true);
 				expandLabel.setText("Mostrar variables del "
-						+ SCOPE_DESCRIPTIONS.get(varScope));
-				SalaryDraft.this.scope = Scope.values()[SalaryDraft.this.scope
-						.ordinal() + 1];
+						+ SCOPE_DESCRIPTIONS.get(expandScope));
+				SalaryDraft.this.scope = SCOPE_STEPS.get(SCOPE_STEPS
+						.indexOf(expandScope) - 1);
+
 			}
 
 		});
 
-		contextTable.setWidget(row, col, htmlPanel);
+		return htmlPanel;
 	}
 
 	private void print() {
@@ -2322,8 +2394,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private Button getSystemVarButton(Variable variable) {
+		return getSystemVarButton(variable, AON.AON_ICON_AET);
+	}
+
+	private Button getSystemVarButton(Variable variable, String iconStyle) {
 		Button sysButton = new Button();
-		sysButton.setStyleName(AON.AON_ICON_CONFIG);
+		sysButton.setStyleName(iconStyle);
 		sysButton.setStyleName(AON.AON_NO_MARGIN, true);
 		sysButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		sysButton.addClickHandler(new AbstractVarHandler(variable) {
@@ -2534,6 +2610,16 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				: AON.AON_ICON_ROW_SELECTOR;
 	}
 
+	private Variable getPercentVariable(Deduction.Type type) {
+
+		switch (type) {
+		case IRPF:
+			return getContextVariable(PORCENTAJE_IRPF);
+		default:
+			return null;
+		}
+	}
+
 	private Widget newPercentWidget(Deduction deduction, Double percent) {
 		switch (deduction.getType()) {
 		case IRPF:
@@ -2543,30 +2629,57 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 	}
 
+	private Variable getContextVariable(String name) {
+		List<Variable> ctx = salaryDraftObject.getContext();
+		for (Variable var : ctx)
+			if (StringUtils.equals(var.getName(), PORCENTAJE_IRPF))
+				return var;
+		return null;
+	}
+
+	private StringVariable newStringVariable(String name) {
+		StringVariable var = new StringVariable();
+		var.setName(name);
+		var.setImplicit(false);
+		var.setScope(Scope.SALARY); // DRAFT
+		var.setEndDate(salaryDraftObject.getEndDate());
+		var.setStartDate(salaryDraftObject.getStartDate());
+		return var;
+	}
+
 	private Widget newIrpfPercentBox(final Deduction irpf, final Double percent) {
 
 		final TextBox irpfPercentTexTBox = new TextBox();
-		class IrpfPercentHandler implements FocusHandler, ChangeHandler {
+
+		class IrpfPercentHandler implements FocusHandler, BlurHandler,
+				ChangeHandler {
 
 			// -------------------------------------------------- Focus Handler
 			@Override
 			public void onFocus(FocusEvent event) {
-				irpfPercentTexTBox.setText(format(percent));
+				Variable irpfPercent = SalaryDraft.this
+						.getContextVariable(PORCENTAJE_IRPF);
+				if (irpfPercent != null)
+					irpfPercentTexTBox.setText(irpfPercent.getExpression());
+				else
+					irpfPercentTexTBox.setText(String.valueOf(NumberUtils
+							.isValid(percent) ? 0.00 : percent));
+			}
+
+			// --------------------------------------------------- Blur Handler
+
+			@Override
+			public void onBlur(BlurEvent event) {
+				irpfPercentTexTBox.setText(formatPercent(NumberUtils
+						.isNotValid(percent) ? 0.00 : percent));
 			}
 
 			// ------------------------------------------------- Change Handler
 			@Override
 			public void onChange(ChangeEvent event) {
 
-				StringVariable var = new StringVariable();
-				var.setImplicit(false);
-				var.setScope(Scope.SALARY); // DRAFT
-
-				var.setName("PORCENTAJE_IRPF");
-
-				var.setEndDate(salaryDraftObject.getEndDate());
-				var.setStartDate(salaryDraftObject.getStartDate());
-
+				StringVariable var = SalaryDraft.this
+						.newStringVariable(PORCENTAJE_IRPF);
 				String value = irpfPercentTexTBox.getValue();
 				var.setExpression(StringUtils.isEmpty(value) ? "REMOVE_VARIABLE()"
 						: value);
@@ -2580,31 +2693,72 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 		;
 		irpfPercentTexTBox.setVisibleLength(5);
-		irpfPercentTexTBox.setText(format( Double.isNaN(percent) ? 0.00 : percent) + " %");
+		irpfPercentTexTBox.setText(formatPercent(NumberUtils
+				.isNotValid(percent) ? 0.00 : percent));
 		IrpfPercentHandler irpfPercentHandler = new IrpfPercentHandler();
 		irpfPercentTexTBox.addFocusHandler(irpfPercentHandler);
 		irpfPercentTexTBox.addChangeHandler(irpfPercentHandler);
 
-		return irpfPercentTexTBox;
+		Panel irpfPercentPanel = new HorizontalPanel();
+		irpfPercentPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
+		irpfPercentPanel.add(irpfPercentTexTBox);
+		Variable irpfPercentVar = getContextVariable(PORCENTAJE_IRPF);
+		if (irpfPercentVar == null) {
+			irpfPercentVar = newStringVariable(PORCENTAJE_IRPF);
+		}
+
+		if (isSystemVariable(irpfPercentVar)) {
+			Button aeatButton = getSystemVarButton(irpfPercentVar,
+					AON.AON_ICON_AET);
+			aeatButton.setEnabled(false);
+			irpfPercentPanel.add(aeatButton);
+		} else {
+			irpfPercentPanel.add(getSystemVarButton(irpfPercentVar,
+					AON.AON_ICON_CONFIG));
+		}
+
+		return irpfPercentPanel;
 	}
 
 	// ------------------------------------------------------- Static 'Library'
 
+	private static double round(Double number) {
+		return (double) Math.round(number * 1000.00) / 1000.00;
+	}
+
 	private static String format(Double amount) {
-		return amount == null ? null : AON.CURRENCY_FORMAT.format((double) Math
-				.round(amount * 1000.00) / 1000.00);
+		return NumberUtils.isNotValid(amount) ? null : AON.CURRENCY_FORMAT
+				.format(round(amount));
 	}
 
 	private static Double parse(String str) {
 		return str == null ? 0.00 : AON.CURRENCY_FORMAT.parse(str);
 	}
 
+	private static String formatPercent(Double amount) {
+		return format(amount) + " %";
+	}
+
+	private static String _toMVELExpression(String str) {
+		StringBuffer buffer = new StringBuffer();
+		int inOutPos[] = { 0 };
+		while (inOutPos[0] < str.length()) {
+			try {
+				buffer.append(AON.CURRENCY_FORMAT.parse(str, inOutPos));
+			} catch (NumberFormatException e) {
+				// works inOutPos[0] is a left value
+				buffer.append(str.charAt(inOutPos[0]++));
+			}
+		}
+		return buffer.toString();
+	}
+
 	private static Widget newPercentLabel(Deduction deduction, Double percent) {
 		InlineLabel percentageLabel = new InlineLabel();
-		if (Double.isNaN(percent))
+		if (NumberUtils.isNotValid(percent))
 			percentageLabel.setText(deduction.getDescription());
 		else
-			percentageLabel.setText(format(percent) + " %");
+			percentageLabel.setText(formatPercent(percent));
 		// padding-left : 5px, to align vertically with IRPF Widget.
 		percentageLabel.getElement().getStyle().setPaddingLeft(5, Unit.PX);
 		return percentageLabel;
@@ -2642,5 +2796,21 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		default:
 			throw new IllegalArgumentException();
 		}
+	}
+
+	private static boolean isSystemVariable(Variable var) {
+		if (var.getScope() == Scope.SYSTEM)
+			return true;
+
+		String expression = var.getExpression();
+
+		if (StringUtils.isBlank(expression))
+			return false;
+
+		String name = var.getName();
+
+		return expression.matches("\\s*SISTEMA\\s*\\(\\s*('" + name + "'|\""
+				+ name + "\")\\s*\\)\\s*");
+
 	}
 }

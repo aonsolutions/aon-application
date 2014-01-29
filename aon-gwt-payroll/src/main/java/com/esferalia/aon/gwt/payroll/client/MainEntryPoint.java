@@ -52,6 +52,8 @@ public class MainEntryPoint implements EntryPoint {
 	
 		@Source("salaries.png")
 		ImageResource salaries();
+
+		ImageResource aet();
 	
 		@Source("ine.png")
 		ImageResource ine();
