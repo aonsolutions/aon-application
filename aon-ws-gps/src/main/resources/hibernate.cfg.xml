@@ -33,6 +33,7 @@
     	<mapping class="com.code.aon.company.Enterprise"/>
     	<mapping class="com.code.aon.company.WorkPlace"/>
     	<mapping class="com.code.aon.config.ApplicationParameter"/>
+    	<mapping class="com.code.aon.config.Catalogue"/>
     	<mapping class="com.code.aon.config.CommissionType"/>
     	<mapping class="com.code.aon.config.Domain"/>
     	<mapping class="com.code.aon.config.PayMethod"/>
@@ -55,7 +56,6 @@
     	<mapping class="com.code.aon.finance.PosShiftCount"/>
     	<mapping class="com.code.aon.geozone.GeoZone"/>
     	<mapping class="com.code.aon.product.Brand"/>
-    	<mapping class="com.code.aon.product.Catalogue"/>
     	<mapping class="com.code.aon.product.CatalogueCategory"/>
     	<mapping class="com.code.aon.product.CatalogueItem"/>
     	<mapping class="com.code.aon.product.Item"/>

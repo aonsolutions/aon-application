@@ -1,4 +1,4 @@
-package com.code.aon.ui.product.controller;
+package com.code.aon.ui.config.controller;
 
 import com.code.aon.ui.form.BasicController;
 

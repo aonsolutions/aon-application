@@ -12,7 +12,7 @@
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<field name="item" class="com.code.aon.product.Item"/>
-	<field name="catalogue" class="com.code.aon.product.Catalogue"/>
+	<field name="catalogue" class="com.code.aon.config.Catalogue"/>
 	<field name="quantity" class="java.lang.Double"/>
 	<field name="price" class="java.lang.Double"/>
 	<field name="discount" class="java.lang.Double"/>

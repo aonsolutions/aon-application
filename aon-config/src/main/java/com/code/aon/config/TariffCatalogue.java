@@ -1,0 +1,14 @@
+package com.code.aon.config;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import com.esferalia.aon.entity.master.TariffCatalogueDB;
+
+@Entity
+@Table(name="tariff_catalogue")
+public class TariffCatalogue extends TariffCatalogueDB {
+
+	private static final long serialVersionUID = 1L;
+
+}

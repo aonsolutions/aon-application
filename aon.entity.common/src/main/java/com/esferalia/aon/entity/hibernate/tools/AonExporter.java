@@ -259,6 +259,7 @@ public class AonExporter extends GenericExporter{
 		map.put("Application","com.code.aon.config.Application");
 		map.put("ApplicationParameter","com.code.aon.config.ApplicationParameter");
 		map.put("ApplicationUser","com.code.aon.config.ApplicationUser");		
+		map.put("Catalogue","com.code.aon.config.Catalogue");
 		map.put("CNAE","com.code.aon.config.CNAE");
 		map.put("CNAE2009","com.code.aon.config.CNAE2009");
 		map.put("CNAE2009Rate","com.code.aon.config.CNAE2009Rate");
@@ -272,6 +273,7 @@ public class AonExporter extends GenericExporter{
 		map.put("Tag","com.code.aon.config.Tag");
 		map.put("Tariff","com.code.aon.config.Tariff");
 		map.put("TariffAddInfo","com.code.aon.config.TariffAddInfo");
+		map.put("TariffCatalogue","com.code.aon.config.TariffCatalogue");
 		map.put("Tax","com.code.aon.config.Tax");
 		map.put("TaxDetail","com.code.aon.config.TaxDetail");
 		map.put("User","com.code.aon.config.User");
@@ -440,7 +442,6 @@ public class AonExporter extends GenericExporter{
 
 		//AON PRODUCT 
 		map.put("Brand","com.code.aon.product.Brand");
-		map.put("Catalogue","com.code.aon.product.Catalogue");
 		map.put("CatalogueCategory","com.code.aon.product.CatalogueCategory");
 		map.put("CatalogueItem","com.code.aon.product.CatalogueItem");
 		map.put("Item","com.code.aon.product.Item");
@@ -453,7 +454,6 @@ public class AonExporter extends GenericExporter{
 		map.put("Product","com.code.aon.product.Product");
 		map.put("ProductCategory","com.code.aon.product.ProductCategory");
 		map.put("ProductTag","com.code.aon.product.ProductTag");
-		map.put("TariffCatalogue","com.code.aon.product.TariffCatalogue");
 
 		//AON PROJECT 
 		map.put("ActivityType","com.code.aon.project.ActivityType");

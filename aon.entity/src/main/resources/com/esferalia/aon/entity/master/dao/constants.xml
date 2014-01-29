@@ -122,6 +122,11 @@
 		<hibernate names="active,domain,domainApplication.id,id,user.id,user.domain"/>
 	</bean>
 
+	<bean class="com.code.aon.config.TariffCatalogue" sqlName="tariff_catalogue">
+		<alias names="id,tariff_id,catalogue_id,catalogue_name,catalogue_startDate,catalogue_endDate" />
+		<hibernate names="id,tariff.id,catalogue.id,catalogue.name,catalogue.startDate,catalogue.endDate" />
+	</bean>
+	
 	<bean class="com.code.aon.config.UserWorkGroup">
 		<alias names="id,user_id,workGroup_id,user_name,workGroup_description"/>
 		<hibernate names="id,user.id,workGroup.id,user.name,workGroup.description"/>
@@ -392,11 +397,6 @@
 		<hibernate names="id,product.id,product.name,tag.id,tag.name" />
 	</bean>
 
-	<bean class="com.code.aon.product.TariffCatalogue" sqlName="tariff_catalogue">
-		<alias names="id,tariff_id,catalogue_id,catalogue_name,catalogue_startDate,catalogue_endDate" />
-		<hibernate names="id,tariff.id,catalogue.id,catalogue.name,catalogue.startDate,catalogue.endDate" />
-	</bean>
-	
 	<!-- ** AON PROJECT  **************************************************** -->
 	<bean class="com.code.aon.project.ActivityType" sqlName="activity_type">
 		<alias names="id,description,projectType_id,active" />

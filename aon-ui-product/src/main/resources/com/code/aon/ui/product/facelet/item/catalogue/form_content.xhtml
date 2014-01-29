@@ -12,7 +12,7 @@
 		valueChangeListener="#{controller.onCatalogueChanged}"
 		reRender="ItemCatalogue_catalogue_startDate,ItemCatalogue_catalogue_endDate"
 		focus="ItemCatalogue_quantity">
-		<f:selectItems value="#{productCollections.catalogues}" />
+		<f:selectItems value="#{configCollections.catalogues}" />
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ItemCatalogue_catalogue_startDate" value="#{bundle.aon_date_from}" />

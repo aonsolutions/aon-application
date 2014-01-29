@@ -1,9 +1,9 @@
-package com.code.aon.ui.product.controller;
+package com.code.aon.ui.config.controller;
 
 import javax.faces.event.ValueChangeEvent;
 
-import com.code.aon.product.Catalogue;
-import com.code.aon.product.TariffCatalogue;
+import com.code.aon.config.Catalogue;
+import com.code.aon.config.TariffCatalogue;
 import com.code.aon.ui.form.LinesController;
 
 public class TariffCatalogueController extends LinesController {

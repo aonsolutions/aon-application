@@ -12,12 +12,14 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.Catalogue;
 import com.code.aon.config.CommissionType;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tariff;
+import com.code.aon.config.TariffAddInfo;
 import com.code.aon.config.Tax;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.enumeration.Administration;
@@ -30,6 +32,8 @@ import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -471,4 +475,31 @@ public class ConfigCollectionsController {
 		}
 		return payMethodTypeForDetails;
 	}
+
+	public List<String> getAddInfoAttributes() throws ManagerBeanException{
+    	List<String> addInfos = new LinkedList<String>();
+    	IManagerBean addInfoBean = BeanManager.getManagerBean(TariffAddInfo.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addOrder(addInfoBean.getFieldName(IEntityAlias.TARIFF_ADD_INFO_ATTRIBUTE));
+		Projection projection = Projection.group(addInfoBean.getFieldName(IEntityAlias.TARIFF_ADD_INFO_ATTRIBUTE));
+		for (Object ito : addInfoBean.getList(new ProjectionList(projection), criteria)) {
+    		String addInfo = (String)ito;
+    		addInfos.add(addInfo);
+    	}
+    	return addInfos;
+    }
+
+	public List<SelectItem> getCatalogues() throws ManagerBeanException {
+		List<SelectItem> catalogues = new LinkedList<SelectItem>();
+		IManagerBean catalogueBean = BeanManager.getManagerBean(Catalogue.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(catalogueBean.getFieldName(IEntityAlias.CATALOGUE_NAME));
+		for (ITransferObject ito : catalogueBean.getList(criteria)) {
+			Catalogue catalogue = (Catalogue)ito;
+			SelectItem item = new SelectItem(catalogue,catalogue.getName());
+			catalogues.add(item);
+		}
+		return catalogues;
+	}
+
 }

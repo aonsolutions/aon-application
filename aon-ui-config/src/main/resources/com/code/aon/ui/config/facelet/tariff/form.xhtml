@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="tariffForm">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{bundle.product_tariff_module2}" />
+				<ui:param name="controller" value="#{tariff}" />
+				<ui:param name="skipSearchButton" value="true" />
+				<ui:param name="showMoreMenu" value="#{!tariff.new}" />
+				<ui:define name="moreMenuContent">
+					<aon:menuItem id="catalogue-button"
+						value="#{bundle.product_catalogue_module}"
+						reRender="showNewCatalogueWindow"
+						iconClass="aon-icon-catalogue"
+						actionListener="#{tariffCatalogue.onReset}">
+						<f:setPropertyActionListener target="#{tariff.showNewCatalogueWindow}" value="#{true}" />							
+					</aon:menuItem>
+					<aon:menuItem id="addInfo-button"
+						value="#{bundle.aon_addInfo}"
+						reRender="showNewAddInfoWindow"
+						iconClass="aon-icon-addinfo"
+						actionListener="#{tariffAddInfo.onReset}">
+						<f:setPropertyActionListener target="#{tariff.showNewAddInfoWindow}" value="#{true}" />							
+					</aon:menuItem>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div id="tariffDiv" styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2" styleClass="aon-width-500">
+
+					<aon:outputLabel for="Tariff_code" value="#{bundle.aon_id}" />
+					<aon:inputText id="Tariff_code" 
+						value="#{tariff.to.code}" required="#{true}"
+						size="5" maxlength="8" />
+
+					<aon:outputLabel for="Tariff_name" value="#{bundle.aon_description}" />
+					<aon:inputText id="Tariff_name" 
+						value="#{tariff.to.name}" required="#{true}"
+						size="40" maxlength="32" />
+
+					<aon:outputLabel for="Tariff_discount" value="% #{bundle.aon_discount}" />
+					<aon:inputText id="Tariff_discount"
+						value="#{tariff.to.discount}" required="#{true}"
+						size="7" maxlength="6">
+						<f:validateDoubleRange />
+					</aon:inputText>
+
+				</aon:panelGrid>
+
+				<c:if test="#{!tariff.new}">
+					<aon:panelTabSet selectedTab="#{tariff.selectedTab}">
+						<c:if test="#{tariffCatalogue.model.rowCount > 0}">
+							<aon:panelTab id="tariffCataloguePanelTab"
+								label="#{bundle.product_catalogue_module}">
+								<ui:include	src="/com/code/aon/ui/config/facelet/tariff/catalogue/tab_grid.xhtml">
+									<ui:param name="controller" value="#{tariffCatalogue}" />
+									<ui:param name="removeButtonReRender" value="tariffDiv" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+
+						<c:if test="#{tariffAddInfo.model.rowCount > 0}">
+							<aon:panelTab id="addInfoPanelTab"
+								label="#{bundle.aon_addInfo}">
+								<ui:include	src="/com/code/aon/ui/config/facelet/tariff/addinfo/tab_grid.xhtml">
+									<ui:param name="controller" value="#{tariffAddInfo}" />
+									<ui:param name="removeButtonReRender" value="tariffDiv" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+					</aon:panelTabSet>
+				</c:if>
+			</aon:div>
+		</aon:form>
+
+		<ui:include src="/com/code/aon/ui/config/facelet/tariff/catalogue/newCatalogueModal.xhtml">
+			<ui:param name="controller" value="#{tariff}" />
+			<ui:param name="catalogueController" value="#{tariffCatalogue}" />
+			<ui:param name="modalReRender" value="tariffDiv" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/config/facelet/tariff/addinfo/newAddInfoModal.xhtml">
+			<ui:param name="controller" value="#{tariff}" />
+			<ui:param name="addInfoController" value="#{tariffAddInfo}" />
+			<ui:param name="modalReRender" value="tariffDiv" />
+		</ui:include>
+
+	</ui:define>
+</ui:composition>

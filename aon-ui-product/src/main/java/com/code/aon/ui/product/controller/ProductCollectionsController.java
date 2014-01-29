@@ -13,7 +13,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.product.Brand;
-import com.code.aon.product.Catalogue;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemAddInfo;
 import com.code.aon.product.ProductCategory;
@@ -141,19 +140,6 @@ public class ProductCollectionsController {
 			categories.add(item);
 		}
 		return categories;
-	}
-
-	public List<SelectItem> getCatalogues() throws ManagerBeanException {
-		List<SelectItem> catalogues = new LinkedList<SelectItem>();
-		IManagerBean catalogueBean = BeanManager.getManagerBean(Catalogue.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(catalogueBean.getFieldName(IEntityAlias.CATALOGUE_NAME));
-		for (ITransferObject ito : catalogueBean.getList(criteria)) {
-			Catalogue catalogue = (Catalogue)ito;
-			SelectItem item = new SelectItem(catalogue,catalogue.getName());
-			catalogues.add(item);
-		}
-		return catalogues;
 	}
 
 	public List<SelectItem> getExpenseItems() throws ManagerBeanException {
