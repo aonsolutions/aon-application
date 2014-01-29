@@ -16,6 +16,7 @@ import java.sql.Types;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +39,7 @@ public class AonDomainDump implements Constants {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AonDomainDump.class);
 	
 	private Map<String,TableInfo> tables;
+	private Map<String,TableDumpInfo> dumpInfos;
 	private Connection connection;
 	private Integer[] domains;
 	private BufferedWriter writer;
@@ -47,6 +49,7 @@ public class AonDomainDump implements Constants {
 	public AonDomainDump(Connection connection) throws AonSQLException {
 		this.connection = connection;
 		this.tables = new TableUtil().resolveTables(connection);
+		this.dumpInfos = new LinkedHashMap<String, TableDumpInfo>();
 	}
 	
 	public IDumpListener getListener() {
@@ -84,7 +87,7 @@ public class AonDomainDump implements Constants {
 		}
 	}
 	
-	public void execute(Integer[] domains, Writer writer ) throws AonSQLException {
+	public void execute(Integer[] domains, Writer writer) throws AonSQLException {
 		try {
 			this.domains = domains;
 			this.writer = new BufferedWriter(writer);
@@ -166,51 +169,75 @@ public class AonDomainDump implements Constants {
 	}
 	
 	private void dump(TableInfo t) throws AonSQLException, IOException {
+		TableDumpInfo dumpInfo = dumpInfos.get(t.getName());
+		if (dumpInfo == null) {
+			dumpInfo = new TableDumpInfo();
+			dumpInfos.put(t.getName(), dumpInfo);
+			if ( t.getCyclicColumn() != null ) {
+				dumpInfo.setEnd(false);
+				if ( t.getCyclicColumn().isNullable() ) {
+					dumpProccess(t, dumpInfo, t.getCyclicColumn().getName() + IS_NULL);					
+				}
+				dump(t.getCyclicColumn().getFtTable());
+				dumpInfo.setEnd(true);
+				dumpProccess(t, dumpInfo, t.getCyclicColumn().getName() + IS_NOT_NULL);
+			} else {
+				dumpProccess(t, dumpInfo, null);	
+			}
+		}
+	}
+	
+	private void dumpProccess(TableInfo t, TableDumpInfo dumpInfo, String where) throws AonSQLException, IOException {
 		PreparedStatement select = null;
 		ResultSet rs = null;
-		int rows = 0;
 		try {
-			if ( this.listener != null ) {
+			if ( (this.listener != null) && dumpInfo.isBegin() ) {
 				this.listener.startDumpTable(t.getName());
 			}						
 			writeLine("");
-			String sentence = t.getSelectStatement(t.getDomains(connection, domains));
+			String sentence = t.getSelectStatement(t.getDomains(connection, domains), where);
 			select = connection.prepareStatement(sentence,t.getColumnNames());
 			rs = select.executeQuery();
 			if ( rs.next() ) {
-				if ( t.isRecursive() ) {
-					writeLine( t.getSetVariableStatement() );	
-				}				
-				writeLine( t.getInsertStatementBegin(t.getPkColumn().isFkColummn()) );
-				boolean firstInsert = true;
+				if ( dumpInfo.isFirstInsert() ) {
+					if ( t.isRecursive() ) {
+						writeLine( t.getSetVariableStatement() );	
+					}				
+					writeLine( t.getInsertStatementBegin(t.getPkColumn().isFkColummn()) );
+				} else {
+					writeLine( t.getInsertStatementBegin(true) );
+				}
 				boolean moreRows = false;
 				do {
-					rows++;
-					moreRows = dump(rs,t,firstInsert);
-					if ( firstInsert ) {
+					moreRows = dump(rs,t,dumpInfo.isFirstInsert());
+					if ( dumpInfo.isFirstInsert() ) {
 						writeLine( t.getSetVariableStatement(this.lastId) );
 						if ( moreRows ) {
-							writeLine( t.getInsertStatementBegin(true) );
-							firstInsert = false;							
+							writeLine( t.getInsertStatementBegin(true) );					
 						}
 					}
+					dumpInfo.incRows();					
 					if ( this.listener != null ) {
-						this.listener.dumpTable(t.getName(), rows);
+						this.listener.dumpTable(t.getName(), dumpInfo.getRows());
 					}											
 				} while (moreRows);				
-				LOGGER.info( "Table {}, TOTAL {} rows inserted",t.getName(), rows);
-				writeLine( t.getUpdateAutoIncrementStatement() );
-			} else {
-				writeLine("# Table " + t.getName() + " is empty");
-				LOGGER.info( "Table {} is empty", t.getName() );
+			}
+			if ( dumpInfo.isEnd() ) {
+				if ( dumpInfo.getRows() > 0 ) {
+					LOGGER.info( "Table {}, TOTAL {} rows inserted",t.getName(), dumpInfo.getRows());
+					writeLine( t.getUpdateAutoIncrementStatement() );					
+				} else {
+					writeLine("# Table " + t.getName() + " is empty");
+					LOGGER.info( "Table {} is empty", t.getName() );					
+				}
 			}
 		} catch (SQLException e) {
 			throw new AonSQLException("Error volcando la tabla " + t.getName(), e);
 		} finally {
 			DbUtils.closeQuietly(rs);
 			DbUtils.closeQuietly(select);
-			if ( this.listener != null ) {
-				this.listener.endDumpTable(t.getName(), rows);
+			if ( (this.listener != null) && dumpInfo.isEnd() ) {
+				this.listener.endDumpTable(t.getName(), dumpInfo.getRows());
 			}			
 		}			
 	}

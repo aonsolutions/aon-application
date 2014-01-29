@@ -30,6 +30,7 @@ public class TableInfo implements Constants {
 	private Integer baseId;
 	private boolean forceHeredity;
 	private TableInfoListener listener;
+	private ColumnInfo cyclicColumn;
 	
 	public TableInfo(String name, DatabaseMetaData metaData) {
 		this.name = name;
@@ -48,8 +49,9 @@ public class TableInfo implements Constants {
 			while (rs.next()) {
 				String columnName = rs.getString(COLUMN_NAME);
 				boolean autoIncrement = YES_VALUE.equals(rs.getString(IS_AUTOINCREMENT));
+				boolean nullable = YES_VALUE.equals(rs.getString(IS_NULLABLE));
 				int type = rs.getInt(DATA_TYPE);
-				columns.add( new ColumnInfo(columnName, type, autoIncrement) );
+				columns.add( new ColumnInfo(columnName, type, autoIncrement, nullable) );
 				if ( autoIncrement ) {
 					setAutoincrementPK(true);
 				} else {
@@ -210,6 +212,10 @@ public class TableInfo implements Constants {
 	}
 	
 	public String getSelectStatement( Integer[] domains ) {
+		return getSelectStatement(domains, null);
+	}
+	
+	public String getSelectStatement( Integer[] domains, String where ) {
 		StringBuffer buf = new StringBuffer();
 		buf.append("SELECT * FROM ");
 		buf.append(getName());
@@ -226,6 +232,9 @@ public class TableInfo implements Constants {
 			buf.append(" IN (");
 			buf.append( StringUtils.join(domains, ",") );
 			buf.append( ")" );
+		}
+		if ( where != null ) {
+			buf.append(" AND ").append(where);
 		}
 		buf.append( " order by ");
 		buf.append( getPkColumn().getName() );
@@ -316,6 +325,14 @@ public class TableInfo implements Constants {
 
 	public void setListener(TableInfoListener listener) {
 		this.listener = listener;
+	}
+
+	public ColumnInfo getCyclicColumn() {
+		return cyclicColumn;
+	}
+
+	public void setCyclicColumn(ColumnInfo cyclicColumn) {
+		this.cyclicColumn = cyclicColumn;
 	}
 	
 }

@@ -34,6 +34,19 @@ public class AonDomainRemove implements Constants {
 			DbUtils.closeQuietly(s);
 		}
 	}
+
+	private int executeUpdate( String statement ) {
+		Statement s = null;
+		try {
+	        s = connection.createStatement();
+	        return s.executeUpdate(statement);			
+		} catch (SQLException e) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			DbUtils.closeQuietly(s);
+		}
+		return 0;
+	}
 	
 	private void deleteFromTables( Integer domain ) {
 		QueryRunner run = new QueryRunner();
@@ -45,7 +58,10 @@ public class AonDomainRemove implements Constants {
 					"WHERE T.TABLE_SCHEMA = ? AND T.COLUMN_NAME = ?", h, dataBaseName, DOMAIN_COLUMN_NAME);
 			if ( result != null ) {
 				for( String table : result ) {
-					executeStatement( "DELETE FROM " + table + " WHERE domain = " + domain );
+					int rows = executeUpdate( "DELETE FROM " + table + " WHERE domain = " + domain );
+					if ( rows > 0 ) {
+						LOGGER.info("Deleting {} table {} rows", table, rows);	
+					}
 				}
 			}
 		} catch (Throwable e) {
@@ -62,7 +78,8 @@ public class AonDomainRemove implements Constants {
             
             deleteFromTables(domain);
             
-            executeStatement( "DELETE FROM domain WHERE id = " + domain );
+            int rows = executeUpdate( "DELETE FROM domain WHERE id = " + domain );
+            LOGGER.info("Deleting DOMAIN table {} rows", rows);
             
             connection.commit();
 

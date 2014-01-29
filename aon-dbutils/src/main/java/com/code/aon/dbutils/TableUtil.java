@@ -208,6 +208,70 @@ public class TableUtil implements Constants {
 			}
 			air.setFkTables(fkTables);
 		}
+		resolveCyclicReferences();
+	}
+	
+	private boolean isCyclicReference( TableInfo ti, ColumnInfo ci ) {
+		if ( ci.isFkColummn() ) {
+			TableInfo ti2 = ci.getFtTable();
+			if ( ti2!=null && !ti.equals(ti2) ) {
+				for( ColumnInfo ci2 : ti2.getColumns() ) {
+					if ( ci2.isFkColummn() && ti.equals(ci2.getFtTable()) ) {
+						return true;
+					}
+				}
+			}
+		}		
+		return false;
+	}
+	
+	private void resolveCyclicReferences() {
+		Map<String,TableInfo> newMap = new LinkedHashMap<String, TableInfo>();		
+		for( TableInfo ti : tables.values() ) {
+			newMap.put(ti.getName(), ti);
+			for( ColumnInfo ci : ti.getColumns() ) {
+				if ( isCyclicReference(ti, ci) ) {
+					ti.setCyclicColumn(ci);
+					if (! ci.isNullable() ) {
+						newMap.remove(ti.getName());
+					} else if (! newMap.containsKey(ci.getFtTable().getName()) ) {
+						newMap.put(ci.getFtTable().getName(), ci.getFtTable());			
+					}
+				}
+			}
+		}
+		this.tables = newMap;
+	}
+	
+	private void dumpTablesInfo() {
+		StringBuffer sb = new StringBuffer();
+		int i=0;
+		for( TableInfo ti : tables.values() ) {
+			sb.append(++i).append( "-").append(ti.getName()).append("\r\n");
+			int n=0;
+			for( ColumnInfo ci : ti.getColumns() ) {
+				sb.append('\t').append(++n).append('-').append(ci.getName());
+				sb.append(' ').append(ci.getSqlTypeName());
+				if ( ci.isAutoIncrement() ) {
+					sb.append(" AUTOINCREMENT");
+				}
+				if ( ci.isPrimaryKey() ) {
+					sb.append(" PK");
+				}
+				if ( ci.isNullable() ) {
+					sb.append(" NULLABLE");
+				}
+				if ( ci.equals(ti.getCyclicColumn()) ) {
+					sb.append(" CYCLIC");
+				}
+				if ( ci.isFkColummn() ) {
+					sb.append(" -> ").append(ci.getFkTableName());
+				}
+				sb.append("\r\n");				
+			}
+			sb.append("\r\n");
+		}	
+		LOGGER.info(sb.toString());				
 	}
 	
 	public Map<String,TableInfo> resolveTables( Connection connection ) throws AonSQLException {

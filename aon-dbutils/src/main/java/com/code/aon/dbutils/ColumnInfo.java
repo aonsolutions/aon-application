@@ -1,6 +1,6 @@
 package com.code.aon.dbutils;
 
-
+import java.sql.Types;
 
 public class ColumnInfo implements Constants {
 
@@ -10,11 +10,18 @@ public class ColumnInfo implements Constants {
 	private boolean primaryKey;
 	private String fkTableName;
 	private TableInfo ftTable;
-	
-	public ColumnInfo(String name, int type, boolean autoIncrement) {
+	private boolean nullable;
+
+	public ColumnInfo(String name, int type, boolean autoIncrement,
+			boolean nullable) {
 		this.name = name;
 		this.type = type;
 		this.autoIncrement = autoIncrement;
+		this.nullable = nullable;
+	}
+
+	public boolean isNullable() {
+		return nullable;
 	}
 
 	public boolean isAutoIncrement() {
@@ -52,13 +59,91 @@ public class ColumnInfo implements Constants {
 	public boolean isFkColummn() {
 		return this.fkTableName != null;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
 
 	public int getType() {
 		return type;
+	}
+
+	public String getSqlTypeName() {
+		switch (type) {
+			case Types.BIT:
+				return "BIT";
+			case Types.TINYINT:
+				return "TINYINT";
+			case Types.SMALLINT:
+				return "SMALLINT";
+			case Types.INTEGER:
+				return "INTEGER";
+			case Types.BIGINT:
+				return "BIGINT";
+			case Types.FLOAT:
+				return "FLOAT";
+			case Types.REAL:
+				return "REAL";
+			case Types.DOUBLE:
+				return "DOUBLE";
+			case Types.NUMERIC:
+				return "NUMERIC";
+			case Types.DECIMAL:
+				return "DECIMAL";
+			case Types.CHAR:
+				return "CHAR";
+			case Types.VARCHAR:
+				return "VARCHAR";
+			case Types.LONGVARCHAR:
+				return "LONGVARCHAR";
+			case Types.DATE:
+				return "DATE";
+			case Types.TIME:
+				return "TIME";
+			case Types.TIMESTAMP:
+				return "TIMESTAMP";
+			case Types.BINARY:
+				return "BINARY";
+			case Types.VARBINARY:
+				return "VARBINARY";
+			case Types.LONGVARBINARY:
+				return "LONGVARBINARY";
+			case Types.NULL:
+				return "NULL";
+			case Types.OTHER:
+				return "OTHER";
+			case Types.JAVA_OBJECT:
+				return "JAVA_OBJECT";
+			case Types.DISTINCT:
+				return "DISTINCT";
+			case Types.STRUCT:
+				return "STRUCT";
+			case Types.ARRAY:
+				return "ARRAY";
+			case Types.BLOB:
+				return "BLOB";
+			case Types.CLOB:
+				return "CLOB";
+			case Types.REF:
+				return "REF";
+			case Types.DATALINK:
+				return "DATALINK";
+			case Types.BOOLEAN:
+				return "BOOLEAN";
+			case Types.ROWID:
+				return "ROWID";
+			case Types.NCHAR:
+				return "NCHAR";
+			case Types.NVARCHAR:
+				return "NVARCHAR";
+			case Types.LONGNVARCHAR:
+				return "LONGNVARCHAR";
+			case Types.NCLOB:
+				return "NCLOB";
+			case Types.SQLXML:
+				return "SQLXML";
+		}
+		return "?";
 	}
 
 	public boolean isActionReference() {
@@ -68,5 +153,5 @@ public class ColumnInfo implements Constants {
 	public boolean isProfileReference() {
 		return PROFILE_TABLE_NAME.equals(fkTableName);
 	}
-	
+
 }
