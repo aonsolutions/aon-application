@@ -99,6 +99,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
+import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
@@ -3484,34 +3485,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			SQLAgreementContextFactory factory = new SQLAgreementContextFactory(
 					conn, start, end, ISQLContractSalaryCalculatorContext.NEWER);
 
+			LinkedList<Variable> defVars = new LinkedList<Variable>(
+					salaryTable.getVariables(0));
+
 			for (int level : salaryTable.getAllLevels()) {
 
-				AgreementContextKey agreementContextKey = new AgreementContextKey(
+				AgreementContextKey levelKey = new AgreementContextKey(
 						agreementId, level);
-				ExpressionContext ctx = factory.create(agreementContextKey);
-				LinkedList<Variable> vars = new LinkedList<Variable>(
+				ExpressionContext levelCtx = factory.create(levelKey);
+
+				
+				for (Variable defVar : defVars)
+					if( !salaryTable.contains(level, defVar.getName()))
+							salaryTable.put(level, copy(defVar));
+
+				LinkedList<Variable> levelVars = new LinkedList<Variable>(
 						salaryTable.getVariables(level));
-				int errors = 0;
-				while (errors < vars.size()) {
-					Variable var = vars.pop();
-					try {
-						List<ITimedResult<Object>> results = ctx.eval(
-								var.getExpression(), start, end);
-						errors = 0;
-						for (ITimedResult<Object> result : results) {
-							var.setValue(result.getValue());
-							ctx.addVariable(var.getName(), result);
-							System.out.println(var.getName() + " = "+ var.getValue());
-						}
-					} catch (UndefinedVariablesException e) {
-						vars.add(var);
-						errors++;
-					} catch (ExpressionException e) {
-						errors++;
-						// Nothing to do... Only report this error. This will be
-						// very hepfull.
-					}
-				}
+				
+				eval(levelCtx, levelVars, start, end);
 			}
 
 		} catch (Throwable e) {
@@ -3522,6 +3513,43 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				} catch (SQLException e) {
 				}
 			;
+		}
+	}
+	
+	private static Variable copy(Variable var) {
+		Variable copy = new StringVariable();
+		copy.setImplicit(true);
+		copy.setName(var.getName());
+		copy.setScope(var.getScope());
+		copy.setEndDate(var.getEndDate());
+		copy.setStartDate(var.getStartDate());
+		copy.setExpression(var.getExpression());
+		return copy;
+	}
+	
+
+	private static void eval(ExpressionContext ctx, LinkedList<Variable> vars,
+			Date start, Date end) {
+		int errors = 0;
+		while (errors < vars.size()) {
+			Variable var = vars.pop();
+			try {
+				List<ITimedResult<Object>> results = ctx.eval(
+						var.getExpression(), start, end);
+				errors = 0;
+				for (ITimedResult<Object> result : results) {
+					var.setValue(result.getValue());
+					ctx.addVariable(var.getName(), result);
+					//System.out.println(var.getName() + " = " + var.getValue());
+				}
+			} catch (UndefinedVariablesException e) {
+				vars.add(var);
+				errors++;
+			} catch (ExpressionException e) {
+				errors++;
+				// Nothing to do... Only report this error. This will be
+				// very hepfull.
+			}
 		}
 	}
 

@@ -365,9 +365,10 @@
 											<g:Label styleName="{style.cell-label}">IMPORTE TOTAL
 												DEVENGOS</g:Label>
 											<g:HTMLPanel tag="div" styleName="aon-text-center">
-												<e:ValueInlineHTML changeDisplayStyleName="{style.value-changed}"
-													ui:field="totalPaymentsLabel">&nbsp; </e:ValueInlineHTML>
-												<g:InlineHTML ui:field="dbTotalPaymentsLabel"
+												<!-- e:ValueInlineHTML changeDisplayStyleName="{style.value-changed}"
+													ui:field="totalPaymentsLabel">&nbsp; </e:ValueInlineHTML-->
+												<e:ValueTextBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
+														changeDisplayStyleName="{style.value-changed}" ui:field="totalPaymentsLabel">&nbsp; </e:ValueTextBox>												<g:InlineHTML ui:field="dbTotalPaymentsLabel"
 													visible="false" />
 											</g:HTMLPanel>
 										</g:HTMLPanel>
@@ -525,7 +526,7 @@
 												<g:Label styleName="{style.cell-label}">LIQUIDO A
 													PERCIBIR (A-B)</g:Label>
 												<g:HTMLPanel tag="div" styleName="aon-text-center">
-													<e:ValueTextBox styleName="gwt-TextBox aon-nopadding aon-text-center" visibleLength="9"
+													<e:ValueTextBox styleName="gwt-TextBox aon-nopadding aon-nomargin aon-text-center" visibleLength="9"
 														changeDisplayStyleName="{style.value-changed}" ui:field="totalLiquidLabel">&nbsp; </e:ValueTextBox>
 													<g:InlineHTML ui:field="dbTotalLiquidLabel"
 														visible="false" />

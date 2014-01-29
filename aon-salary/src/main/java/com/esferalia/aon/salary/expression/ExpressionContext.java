@@ -31,18 +31,10 @@ public class ExpressionContext {
 		public abstract String doMacro(String expr);
 	}
 
-	public static class DeferredException extends MacroException {
+	public abstract static class DeferredException extends ExpressionException {
 
-		public static final DeferredException EXCEPTION = new DeferredException();
+		public abstract void eval(ExpressionContext context);
 
-		private DeferredException() {
-			// Exists only to defeat instantiation.
-		}
-
-		@Override
-		public String doMacro(String expr) {
-			return expr;
-		}
 	}
 
 	public static final String REMOVE_VARIABLE = "REMOVE_VARIABLE()";
@@ -77,21 +69,54 @@ public class ExpressionContext {
 		}
 	}
 
+	public static class DeferredExpressionException extends DeferredException {
+
+		private Date end;
+		private Date start;
+		private IExpression expression;
+
+		public DeferredExpressionException(IExpression expression, Period p) {
+			this(expression, p.getStart(), p.getEnd());
+		}
+
+		public DeferredExpressionException(IExpression expression, Date start,
+				Date end) {
+			this.end = end;
+			this.start = start;
+			this.expression = expression;
+		}
+
+		@Override
+		public void eval(ExpressionContext context) {
+			try {
+				List<ITimedResult<Object>> results = context.eval(
+						expression.getExpression(), start, end);
+				for (ITimedResult<Object> result : results)
+					context.addVariable(expression.getName(), result);
+			} catch (ExpressionException e) {
+				throw new ExpressionExceptionWrapper(e);
+			}
+		}
+	}
+
 	public static class DeferredExpressionVariable<T> extends
 			ExpressionVariable<T> implements ITimedResult<T> {
 
-		public DeferredExpressionVariable(Period p,
-				IExpression expression) {
+		public DeferredExpressionVariable(Period p, IExpression expression) {
 			super(null, p, expression);
 		}
+
 		public DeferredExpressionVariable(Date start, Date end,
 				IExpression expression) {
-			this( new Period(start, end), expression);
+			this(new Period(start, end), expression);
 		}
 
 		@Override
 		public T getValue() {
-			throw new ExpressionExceptionWrapper(DeferredException.EXCEPTION);
+			Period period = getPeriod();
+			IExpression expression = getExpression();
+			throw new ExpressionExceptionWrapper(
+					new DeferredExpressionException(expression, period));
 		}
 
 		@Override
@@ -217,7 +242,8 @@ public class ExpressionContext {
 	}
 
 	private static String getUndefinedProperty(PropertyAccessException e) {
-		for (Throwable parent = e.getCause(); parent != null; parent = parent.getCause()) {
+		for (Throwable parent = e.getCause(); parent != null; parent = parent
+				.getCause()) {
 			if (parent instanceof UnresolveablePropertyException)
 				return ((UnresolveablePropertyException) parent).getName();
 		}
@@ -226,10 +252,9 @@ public class ExpressionContext {
 
 	private static String getUndefinedProperty(PropertyAccessException e,
 			PeriodMap bindings) {
-		
-		
+
 		String property = getUndefinedProperty(e);
-		if ( property !=  null ) 
+		if (property != null)
 			return property;
 
 		char expr[] = e.getExpr();
@@ -248,8 +273,7 @@ public class ExpressionContext {
 			int offset = start + 1;
 			int len = end - offset + 1;
 			property = new String(expr, offset, len);
-		} while (!isJavaIdentifier(property) || 
-				bindings.containsKey(property));
+		} while (!isJavaIdentifier(property) || bindings.containsKey(property));
 
 		return property;
 	}
@@ -359,6 +383,9 @@ public class ExpressionContext {
 			return eval(script, bindingsList, toType);
 		} catch (MacroException e) {
 			return eval(e.doMacro(script), bindingsList, toType);
+		} catch (DeferredException e) {
+			e.eval(this);
+			return eval(script, start, end, toType);
 		}
 	}
 

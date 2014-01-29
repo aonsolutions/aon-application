@@ -280,7 +280,7 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 
 	@Override
 	public void setRawCgcBase(Double rawCgcBase) {
-		// TODO Auto-generated method stub
+		salaryDraft.setRawCgcBase(rawCgcBase);
 
 	}
 

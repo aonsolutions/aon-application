@@ -1270,10 +1270,21 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				.getDbTotalPayment()));
 		setDbStyleName(dbTotalPaymentsLabel, totalPaymentsLabel);
 
-		cgcBaseLabel.setText(format(salaryDraftObject.getCgcBase()),
-				displayChanges);
+		Double cgcBase = salaryDraftObject.getCgcBase();
+		cgcBaseLabel.setText(format(cgcBase), displayChanges);
 		dbCgcBaseLabel.setText(format(salaryDraftObject.getDbCgcBase()));
 		setDbStyleName(dbCgcBaseLabel, cgcBaseLabel);
+		Double rawCgcBase = salaryDraftObject.getRawCgcBase();
+		
+		if (cgcBase != null && !cgcBase.equals(rawCgcBase)) {
+			cgcBaseLabel.addStyleName(AON.AON_ICON_WARN);
+			cgcBaseLabel.addStyleName(AON.AON_PADDING_LEFT);
+			cgcBaseLabel.setTitle("La Base por Contingecias Comunes "
+					+ format(rawCgcBase) + "\u20A0 ha sido "
+					+ (rawCgcBase > cgcBase ? "limitada al m\u00e1ximo permitido"
+							: "ampliada al m\u00ednimo obligatorio"));
+		}
+
 		cgpBaseLabel.setText(format(salaryDraftObject.getCgpBase()),
 				displayChanges);
 		dbCgpBaseLabel.setText(format(salaryDraftObject.getDbCgpBase()));
@@ -2696,6 +2707,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		irpfPercentTexTBox.setText(formatPercent(NumberUtils
 				.isNotValid(percent) ? 0.00 : percent));
 		IrpfPercentHandler irpfPercentHandler = new IrpfPercentHandler();
+		irpfPercentTexTBox.addBlurHandler(irpfPercentHandler);
 		irpfPercentTexTBox.addFocusHandler(irpfPercentHandler);
 		irpfPercentTexTBox.addChangeHandler(irpfPercentHandler);
 
