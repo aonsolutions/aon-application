@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<aon:outputLabel for="TariffCatalogue_catalogue" value="#{bundle.product_catalogueItem_catalogue}" />
+	<aon:selectOneMenu id="TariffCatalogue_catalogue"
+		value="#{controller.to.catalogue}" required="true"
+		valueChangeListener="#{controller.onCatalogueChanged}"
+		reRender="TariffCatalogue_catalogue_startDate,TariffCatalogue_catalogue_endDate">
+		<f:selectItems value="#{configCollections.catalogues}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="TariffCatalogue_catalogue_startDate" value="#{bundle.aon_date_from}" />
+	<aon:outputText id="TariffCatalogue_catalogue_startDate"
+		value="#{controller.to.catalogue.startDate}">
+		<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+			timeZone="#{timeZoneController.timeZoneId}" />
+	</aon:outputText>
+
+	<aon:outputLabel for="TariffCatalogue_catalogue_endDate" value="#{bundle.aon_date_to}" />
+	<aon:outputText id="TariffCatalogue_catalogue_endDate"
+		value="#{controller.to.catalogue.endDate}">
+		<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+			timeZone="#{timeZoneController.timeZoneId}" />
+	</aon:outputText>
+
+</ui:composition>
