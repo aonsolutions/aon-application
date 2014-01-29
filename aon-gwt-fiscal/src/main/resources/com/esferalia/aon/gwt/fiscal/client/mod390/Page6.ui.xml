@@ -8,20 +8,233 @@
 		field="aonResources"></ui:with>
 
 	<ui:style>
-	.inner-label {
-		font-size: 1.5em;
-		color: red;
-		margin-left: 5px;
-		margin-right: 5px;
-		padding: 10px;
-		border: solid red 1px;
-		text-align: center;
-	}
+		.table {
+			width: 90%;
+			border-collapse: collapse;
+		}
+		.table td:first-child {
+			border-bottom:#ccc 1px solid;
+			padding-left: 5px;
+		}
 	</ui:style>
-	<g:FlowPanel>
+	<g:VerticalPanel>
 		<g:Label text="{msg.simplifiedRegimeOperations}" styleName="{aonResources.css.aonPageHeader}"/>
-
-		<g:Label text="No implementado." styleName="{style.inner-label}"/>
-	</g:FlowPanel>
+		
+		<g:HTMLPanel>
+			<table class="{style.table}" style="width: 100%;">
+				<tr>
+					<td colspan="4">
+						<table>
+							<colgroup>
+								<col style="width: 50%;" />
+								<col style="width: 50%;" />
+							</colgroup>
+							<tr>
+								<td>
+									<aon:SimplifiedRegimePanel ui:field="activity1"/>
+								</td>
+								<td>
+									<aon:SimplifiedRegimePanel ui:field="activity2"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<g:Label text="{msg.farmerActivity}" styleName="{aonResources.css.aonPageHeader}"/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<table>
+							<tr>
+								<td><g:Label text="{msg.code}"/></td>
+								<td><g:Label text="{msg.f02Msg}"/></td>
+								<td><g:Label text="{msg.f03Msg}"/></td>
+								<td><g:Label text="{msg.f04Msg}"/></td>
+								<td><g:Label text="{msg.f05Msg}"/></td>
+								<td><g:Label text="{msg.page6J}"/></td>
+							</tr>
+							<tr>
+								<td><g:TextBox ui:field="f01A"/></td>
+								<td><aon:DoubleTextBox ui:field="f01B"/></td>
+								<td><aon:DoubleTextBox ui:field="f01C"/></td>
+								<td><aon:DoubleTextBox ui:field="f01D"/></td>
+								<td><aon:DoubleTextBox ui:field="f01E"/></td>
+								<td><aon:DoubleTextBox ui:field="f01K"/></td>
+							</tr>
+							<tr>
+								<td><g:TextBox ui:field="f02A"/></td>
+								<td><aon:DoubleTextBox ui:field="f02B"/></td>
+								<td><aon:DoubleTextBox ui:field="f02C"/></td>
+								<td><aon:DoubleTextBox ui:field="f02D"/></td>
+								<td><aon:DoubleTextBox ui:field="f02E"/></td>
+								<td><aon:DoubleTextBox ui:field="f02K"/></td>
+							</tr>
+							<tr>
+								<td><g:TextBox ui:field="f03A"/></td>
+								<td><aon:DoubleTextBox ui:field="f03B"/></td>
+								<td><aon:DoubleTextBox ui:field="f03C"/></td>
+								<td><aon:DoubleTextBox ui:field="f03D"/></td>
+								<td><aon:DoubleTextBox ui:field="f03E"/></td>
+								<td><aon:DoubleTextBox ui:field="f03K"/></td>
+							</tr>
+							<tr>
+								<td><g:TextBox ui:field="f04A"/></td>
+								<td><aon:DoubleTextBox ui:field="f04B"/></td>
+								<td><aon:DoubleTextBox ui:field="f04C"/></td>
+								<td><aon:DoubleTextBox ui:field="f04D"/></td>
+								<td><aon:DoubleTextBox ui:field="f04E"/></td>
+								<td><aon:DoubleTextBox ui:field="f04K"/></td>
+							</tr>
+							<tr>
+								<td><g:TextBox ui:field="f05A"/></td>
+								<td><aon:DoubleTextBox ui:field="f05B"/></td>
+								<td><aon:DoubleTextBox ui:field="f05C"/></td>
+								<td><aon:DoubleTextBox ui:field="f05D"/></td>
+								<td><aon:DoubleTextBox ui:field="f05E"/></td>
+								<td><aon:DoubleTextBox ui:field="f05K"/></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			
+				<tr>
+					<td colspan="3">
+						<g:Label text="IVA devengado" styleName="{aonResources.css.aonPageHeader}"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label text="{msg.box74Msg}"/>
+					</td>
+					<td class="{aonResources.css.aonTextCenter}">
+						<g:Label text="74" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+					</td>
+					<td>
+						<aon:DoubleTextBox ui:field="box74"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label text="{msg.box75Msg}"/>
+					</td>
+					<td class="{aonResources.css.aonTextCenter}">
+						<g:Label text="75" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+					</td>
+					<td>
+						<aon:DoubleTextBox ui:field="box75"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label text="{msg.box76Msg}"/>
+					</td>
+					<td class="{aonResources.css.aonTextCenter}">
+						<g:Label text="76" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+					</td>
+					<td>
+						<aon:DoubleTextBox ui:field="box76"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label text="{msg.box77Msg}"/>
+					</td>
+					<td class="{aonResources.css.aonTextCenter}">
+						<g:Label text="77" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+					</td>
+					<td>
+						<aon:DoubleTextBox ui:field="box77"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label text="{msg.box78Msg}"/>
+					</td>
+					<td class="{aonResources.css.aonTextCenter}">
+						<g:Label text="78" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+					</td>
+					<td>
+						<aon:DoubleTextBox ui:field="box78"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label text="{msg.box79Msg}"/>
+					</td>
+					<td class="{aonResources.css.aonTextCenter}">
+						<g:Label text="79" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+					</td>
+					<td>
+						<aon:DoubleTextBox ui:field="box79"/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<g:Label text="IVA deducible" styleName="{aonResources.css.aonPageHeader}"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label text="{msg.box80Msg}"/>
+					</td>
+					<td class="{aonResources.css.aonTextCenter}">
+						<g:Label text="80" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+					</td>
+					<td>
+						<aon:DoubleTextBox ui:field="box80"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label text="{msg.box81Msg}"/>
+					</td>
+					<td class="{aonResources.css.aonTextCenter}">
+						<g:Label text="81" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+					</td>
+					<td>
+						<aon:DoubleTextBox ui:field="box81"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label text="{msg.box82Msg}"/>
+					</td>
+					<td class="{aonResources.css.aonTextCenter}">
+						<g:Label text="82" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+					</td>
+					<td>
+						<aon:DoubleTextBox ui:field="box82"/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<g:Label text="&#160;" styleName="{aonResources.css.aonPageHeader}"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label text="{msg.box83Msg}"/>
+					</td>
+					<td class="{aonResources.css.aonTextCenter}">
+						<g:Label text="83" styleName="{aonResources.css.aonSimpleBorder} {aonResources.css.aonFontSmall} {aonResources.css.aonPadding2}" />
+					</td>
+					<td>
+						<aon:DoubleTextBox ui:field="box83"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label text="&#160;"/>
+					</td>
+					<td>
+						<g:Label text="&#160;"/>
+					</td>
+				</tr>
+			</table>
+		</g:HTMLPanel>
+	</g:VerticalPanel>
 	
 </ui:UiBinder>

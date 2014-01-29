@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.fiscal.shared.Mod190;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Detail;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver;
 import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
+import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
 import com.esferalia.aon.gwt.fiscal.sql.SQLEnterprise;
@@ -466,6 +467,29 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements
 			conn = getConnection();
 			disableAutoCommit(conn);
 			result = SQLMod390.getMod303Results(domain,year,conn);
+			commit(conn);
+			return result;
+		} catch (AonSQLException e) {
+			rollback(conn);
+			throw e;
+		} catch (Throwable e) {
+			rollback(conn);
+			throw new AonSQLException(e);
+		} finally {
+			enableAutoCommit(conn);
+			SQLUtils.closeQuietly(conn);
+		}
+	}
+
+	@Override
+	public ArrayList<Mod311Results> getMod311Results(int domain, int year)
+			throws AonSQLException {
+		Connection conn = null;
+		ArrayList<Mod311Results> result = new ArrayList<Mod311Results>();
+		try {
+			conn = getConnection();
+			disableAutoCommit(conn);
+			result = SQLMod390.getMod311Results(domain,year,conn);
 			commit(conn);
 			return result;
 		} catch (AonSQLException e) {

@@ -851,9 +851,73 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 	}
 
 	@Override
+	public void calculateFarmerM311() throws AonException {
+		FiscalActivityInfo y01Info = getM311InfoKey(FiscalActivityInfoKey.Y01);
+		double y01= y01Info==null?0:y01Info.getDoubleValue();
+		
+		FiscalActivity fa = getFAC().getFiscalActivity();
+		double y02 = 0;
+		if ("01".equals(fa.getEpigraph())) {
+			y02 = 0.10; 
+		} else if ("02".equals(fa.getEpigraph())) {
+			y02 = 0.04;
+		} else if ("03".equals(fa.getEpigraph())) {
+			y02 = 0.10;
+		} else if ("04".equals(fa.getEpigraph())) {
+			y02 = 0.10;
+		} else if ("05".equals(fa.getEpigraph())) {
+			y02 = 0.10;
+		} else if ("06".equals(fa.getEpigraph())) {
+			y02 = 0.06625;
+		} else if ("07".equals(fa.getEpigraph())) {
+			y02 = 0.07;
+		} else if ("08".equals(fa.getEpigraph())) {
+			y02 = 0.10;
+		} else if ("09".equals(fa.getEpigraph())) {
+			y02 = 0.21;
+		} else if ("10".equals(fa.getEpigraph())) {
+			y02 = 0.04;
+		} else if ("11".equals(fa.getEpigraph())) {
+			y02 = 0.07625; 
+		} else if ("12".equals(fa.getEpigraph())) {
+			y02 = 0.21;
+		} else if ("13".equals(fa.getEpigraph())) {
+			y02 = 0.21;
+		} else if ("14".equals(fa.getEpigraph())) {
+			y02 = 0.07;
+		} else if ("15".equals(fa.getEpigraph())) {
+			y02 = 0.26750;
+		} else if ("16".equals(fa.getEpigraph())) {
+			y02 = 0.26750;
+		} else if ("17".equals(fa.getEpigraph())) {
+			y02 = 0.19625;
+		}
+		getM311InfoKey(FiscalActivityInfoKey.Y02).setDoubleValue(y02);
+		
+		double y03 = CommonUtil.round(y01 * y02);
+		getM311InfoKey(FiscalActivityInfoKey.Y03).setDoubleValue(y03);
+		
+		FiscalActivityInfo y04Info = getM311InfoKey(FiscalActivityInfoKey.Y04);
+		double y04= y04Info==null?0:y04Info.getDoubleValue();
+
+		FiscalActivityInfo y05Info = getM311InfoKey(FiscalActivityInfoKey.Y05);
+		double y05= y05Info==null?0:y05Info.getDoubleValue();
+
+		double y06 = CommonUtil.round(y03 * 1 / 100);
+		getM311InfoKey(FiscalActivityInfoKey.Y06).setDoubleValue(y06);
+		
+		double y07 = CommonUtil.round(y04 + y05 +y06);
+		getM311InfoKey(FiscalActivityInfoKey.Y07).setDoubleValue(y07);
+		
+		double y08 = CommonUtil.round(y03 - y07);
+		getM311InfoKey(FiscalActivityInfoKey.Y08).setDoubleValue(y08);
+	}
+	
+	@Override
 	public void calculateM311() throws AonException {
-		FiscalActivityInfo info = getVatInfoKey(FiscalActivityInfoKey.V04);
-		double x00 = info.getDoubleValue();
+		FiscalActivityInfo v04 = getVatInfoKey(FiscalActivityInfoKey.V04);
+		
+		double x00 = v04==null?0:v04.getDoubleValue();
 
 		getM311InfoKey(FiscalActivityInfoKey.X00).setDoubleValue(x00);
 		
@@ -863,7 +927,8 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 		double x03 = CommonUtil.round(x00 * 1 / 100);
 		getM311InfoKey(FiscalActivityInfoKey.X03).setDoubleValue(x03);
 		
-		double a11 = getActivityInfoKey(FiscalActivityInfoKey.A11).getDoubleValue();
+		FiscalActivityInfo a11Info = getActivityInfoKey(FiscalActivityInfoKey.A11);
+		double a11 = a11Info==null?0:a11Info.getDoubleValue();
 		double x04 = 0; 
 		if (CommonUtil.round(a11) != 0.0) {
 			x04 = CommonUtil.round(x00 * 20 / 100); 	
@@ -877,7 +942,8 @@ public class Aeat2012ModuleCalculator implements IModuleCalculator {
 		// *****************************************
 		// Indice corrector de Temporada
 		// *****************************************
-		double a03 = getActivityInfoKey(FiscalActivityInfoKey.A03).getDoubleValue();
+		FiscalActivityInfo a03Info = getActivityInfoKey(FiscalActivityInfoKey.A03);
+		double a03 = a03Info==null?0:a03Info.getDoubleValue();
 		double x06 = 0.0;
 		if (CommonUtil.round(a03) > 0.0 && CommonUtil.round(a03) <=60.0) {
 			x06 = 1.5;

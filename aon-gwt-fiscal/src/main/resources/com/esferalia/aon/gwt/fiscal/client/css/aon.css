@@ -81,6 +81,9 @@
     padding-left: 15px;
     white-space: nowrap;	
 }
+@sprite .aon-icon-delete {
+	gwt-image: "aonIconDelete";
+}
 @sprite .aon-icon-enterprise {
 	gwt-image: "aonIconEnterprise";
 }

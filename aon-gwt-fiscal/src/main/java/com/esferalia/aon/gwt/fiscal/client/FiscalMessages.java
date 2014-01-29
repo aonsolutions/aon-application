@@ -107,6 +107,9 @@ public interface FiscalMessages extends Messages {
 	@DefaultMessage("Aceptar")
 	String accept();
 
+	@DefaultMessage("C\u00F3digo")
+	String code();
+
 	@DefaultMessage("Generar fichero")
 	String generateFile();
 
@@ -224,6 +227,9 @@ public interface FiscalMessages extends Messages {
 
 	@DefaultMessage("Porcentaje")
 	String percent();
+
+	@DefaultMessage("Importe")
+	String amount();
 
 	@DefaultMessage("Actividad")
 	String activity();
@@ -471,9 +477,84 @@ public interface FiscalMessages extends Messages {
 	@DefaultMessage("IVA DEVENGADO")
 	String outputVat();
 	
+	@DefaultMessage("R\u00E9gimen Simplificado")
+	String simplifiedRegime();
+
 	@DefaultMessage("Operaciones realizadas en R\u00E9gimen simplificado")
 	String simplifiedRegimeOperations();
 
+	@DefaultMessage("N\u00BA Unidades de m\u00F3dulo")
+	String moduleUnits();
+
+	@DefaultMessage("M\u00F3dulo")
+	String module();
+
+	@DefaultMessage("Cuota devengada operaciones corrientes")
+	String page6C();
+
+	@DefaultMessage("Cuotas soportadas operaciones corrientes")
+	String page6D();
+
+	@DefaultMessage("\u00CDndice corrector")
+	String page6E();
+
+	@DefaultMessage("RESULTADO")
+	String page6F();
+
+	@DefaultMessage("Porcentaje cuota m\u00EDnima")
+	String page6G();
+	
+	@DefaultMessage("Devoluci\u00F3n cuotas soportadas otros paises")
+	String page6H();
+	
+	@DefaultMessage("Cuota m\u00EDnima")
+	String page6I();
+
+	@DefaultMessage("Cuota derivada r\u00E9gimen simplificado")
+	String page6J();
+	
+	@DefaultMessage("Actividades agr\u00EDcolas, ganaderas y forestales")
+	String farmerActivity();
+	
+	@DefaultMessage("Volumen Ingresos")
+	String f02Msg();
+	@DefaultMessage("\u00CDndice Cuota")
+	String f03Msg();
+	@DefaultMessage("Cuota Devengada")
+	String f04Msg();
+	@DefaultMessage("Cuotas soportadas")
+	String f05Msg();
+
+	@DefaultMessage("Suma de cuotas derivadas r\u00E9gimen simplificado (Actividades no agr\u00EDcolas)")
+	String box74Msg();
+	
+	@DefaultMessage("Suma de cuotas derivadas r\u00E9gimen simplificado (Actividades agr\u00EDcolas)")
+	String box75Msg();
+	
+	@DefaultMessage("IVA devengado en adquisiciones intracomunitarias de bienes")
+	String box76Msg();
+	
+	@DefaultMessage("IVA devengado por inversi\u00F3n de sujeto pasivo (adquisiciones intracomunitarias de servicios y otros supuestos)")
+	String box77Msg();
+	
+	@DefaultMessage("IVA devengado en entregas de activos fijos")
+	String box78Msg();
+	
+	@DefaultMessage("TOTAL CUOTA RESULTANTE")
+	String box79Msg();
+
+	@DefaultMessage("IVA soportado en adquisici\u00F3n de activos fijos")
+	String box80Msg();
+	
+	@DefaultMessage("Regularizaci\u00F3n de bienes de inversi\u00F3n")
+	String box81Msg();
+	
+	@DefaultMessage("Suma de deducciones")
+	String box82Msg();
+	
+	@DefaultMessage("Resultado del r\u00E9gimen simplificado")
+	String box83Msg();
+	
 	@DefaultMessage("Resultado liquidaci\u00F3n anual")
 	String annualLiquidationResult();
 	

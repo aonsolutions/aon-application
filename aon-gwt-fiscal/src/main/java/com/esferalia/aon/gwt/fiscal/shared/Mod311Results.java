@@ -5,33 +5,42 @@ import java.io.Serializable;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class SimpliedRegimeActivity implements Serializable, IsSerializable {
-
-    private String epigrafe;
-    private double unit1;
-    private double amount1;
-    private double unit2;
-    private double amount2;
-    private int    moduleIndex3;
-    private double unit3;
-    private double amount3;
-    private double unit4;
-    private double amount4;
-    private double unit5;
-    private double amount5;
-    private double unit6;
-    private double amount6;
-    private double unit7;
-    private double amount7;
-    private double boxC;
-    private double boxD;
-    private double boxE;
-    private double boxF;
-    private double boxG;
-    private double boxH;
-    private double boxI;
-    private double boxJ;
-    
+public class Mod311Results implements Serializable, IsSerializable {
+	
+    String epigrafe;
+    double unit1;
+    double amount1;
+    double unit2;
+    double amount2;
+    double unit3;
+    double amount3;
+    double unit4;
+    double amount4;
+    double unit5;
+    double amount5;
+    double unit6;
+    double amount6;
+    double unit7;
+    double amount7;
+    double boxC;
+    double boxD;
+	double boxE;
+	double boxF;
+	double boxG;
+	double boxH;
+	double boxI;
+	double boxJ;
+	
+	boolean farmer;
+	
+    protected String codigo;
+    protected double incomes;
+    protected double quotaIndex;
+    protected double accrualQuota;
+    protected double inputQuotas;
+    protected double quota;
+	
+	
 	public String getEpigrafe() {
 		return epigrafe;
 	}
@@ -61,12 +70,6 @@ public class SimpliedRegimeActivity implements Serializable, IsSerializable {
 	}
 	public void setAmount2(double amount2) {
 		this.amount2 = amount2;
-	}
-	public int getModuleIndex3() {
-		return moduleIndex3;
-	}
-	public void setModuleIndex3(int moduleIndex3) {
-		this.moduleIndex3 = moduleIndex3;
 	}
 	public double getUnit3() {
 		return unit3;
@@ -176,5 +179,48 @@ public class SimpliedRegimeActivity implements Serializable, IsSerializable {
 	public void setBoxJ(double boxJ) {
 		this.boxJ = boxJ;
 	}
-    
+	public boolean isFarmer() {
+		return farmer;
+	}
+	public void setFarmer(boolean farmer) {
+		this.farmer = farmer;
+	}
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+	public double getIncomes() {
+		return incomes;
+	}
+	public void setIncomes(double incomes) {
+		this.incomes = incomes;
+	}
+	public double getQuotaIndex() {
+		return quotaIndex;
+	}
+	public void setQuotaIndex(double quotaIndex) {
+		this.quotaIndex = quotaIndex;
+	}
+	public double getAccrualQuota() {
+		return accrualQuota;
+	}
+	public void setAccrualQuota(double accrualQuota) {
+		this.accrualQuota = accrualQuota;
+	}
+	public double getInputQuotas() {
+		return inputQuotas;
+	}
+	public void setInputQuotas(double inputQuotas) {
+		this.inputQuotas = inputQuotas;
+	}
+	public double getQuota() {
+		return quota;
+	}
+	public void setQuota(double quota) {
+		this.quota = quota;
+	}
+
+	
 }

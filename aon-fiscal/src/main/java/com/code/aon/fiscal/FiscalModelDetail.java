@@ -42,7 +42,12 @@ public class FiscalModelDetail extends FiscalModelDetailDB {
 		if (getFiscalModel() != null && getFiscalModel().getModel() != null ) {
 			if (getFiscalModel().getModel() == FiscalModelType.M311) {
 				Mod311Key key = (Mod311Key) getKey(); 
-				return (key != null && key.getValue().startsWith(Mod311Key.ACTIVITIES_PREFIX));
+				return (key != null &&
+						(
+						key.getValue().startsWith(Mod311Key.ACTIVITIES_PREFIX)
+						|| key.getValue().startsWith(Mod311Key.FARMING_ACTIVITIES_PREFIX)
+						)
+						);
 			}
 			return false;
 		}

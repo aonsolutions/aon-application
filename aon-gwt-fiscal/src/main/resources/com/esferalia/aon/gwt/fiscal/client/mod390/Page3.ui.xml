@@ -75,7 +75,7 @@
 				</td>
 				<td>
 					<g:Button ui:field='mainActivityDeleteButton'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconTrash}" />
+						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconDelete}" />
 				</td>
 			</tr>
 
@@ -101,7 +101,7 @@
 				</td>
 				<td>
 					<g:Button ui:field='activity1DeleteButton'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconTrash}" />
+						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconDelete}" />
 				</td>
 			</tr>
 
@@ -121,7 +121,7 @@
 				</td>
 				<td>
 					<g:Button ui:field='activity2DeleteButton'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconTrash}" />
+						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconDelete}" />
 				</td>
 			</tr>
 
@@ -141,7 +141,7 @@
 				</td>
 				<td>
 					<g:Button ui:field='activity3DeleteButton'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconTrash}" />
+						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconDelete}" />
 				</td>
 			</tr>
 
@@ -161,7 +161,7 @@
 				</td>
 				<td>
 					<g:Button ui:field='activity4DeleteButton'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconTrash}" />
+						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconDelete}" />
 				</td>
 			</tr>
 
@@ -181,7 +181,7 @@
 				</td>
 				<td>
 					<g:Button ui:field='activity5DeleteButton'
-						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconTrash}" />
+						styleName="{aonResources.css.aonIconButton} {aonResources.css.aonIconDelete}" />
 				</td>
 			</tr>
 		</table>

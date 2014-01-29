@@ -365,9 +365,9 @@ public class FiscalActivityController extends BasicController implements IFiscal
 			fillInfo( fa );
 			fillVatModules(fa, epigrafe );
 			fillIrpfModules(fa, epigrafe );
-			fillM311( fa );
 			fillInfoChoices();
-		}
+		} 
+		fillM311( fa );
 	}
 
 	private void fillInfo(FiscalActivity fa) {
@@ -423,14 +423,27 @@ public class FiscalActivityController extends BasicController implements IFiscal
 	public void fillM311(FiscalActivity fa) {
 		setM311List(null);
 		setM311Model(null);
-		for ( FiscalActivityInfoKey key : FiscalActivityInfoKey.values() ) {
-			if (key.getType() == FiscalActivityInfoType.M311_DETAIL) {
-				FiscalActivityInfo info = new FiscalActivityInfo();
-				info.setFiscalActivity(fa);
-				info.setInfoKey(key);
-				info.setValue(key.getDefaultValue());
-				info.setType(FiscalActivityInfoType.M311_DETAIL);
-				getM311List().add(info);
+		if (!fa.isFarmer()) {
+			for ( FiscalActivityInfoKey key : FiscalActivityInfoKey.values() ) {
+				if (key.getType() == FiscalActivityInfoType.M311_DETAIL) {
+					FiscalActivityInfo info = new FiscalActivityInfo();
+					info.setFiscalActivity(fa);
+					info.setInfoKey(key);
+					info.setValue(key.getDefaultValue());
+					info.setType(FiscalActivityInfoType.M311_DETAIL);
+					getM311List().add(info);
+				}
+			}
+		} else {
+			for ( FiscalActivityInfoKey key : FiscalActivityInfoKey.values() ) {
+				if (key.getType() == FiscalActivityInfoType.M311_FARMER_DETAIL) {
+					FiscalActivityInfo info = new FiscalActivityInfo();
+					info.setFiscalActivity(fa);
+					info.setInfoKey(key);
+					info.setValue(key.getDefaultValue());
+					info.setType(FiscalActivityInfoType.M311_FARMER_DETAIL);
+					getM311List().add(info);
+				}
 			}
 		}
 	}
@@ -554,7 +567,7 @@ public class FiscalActivityController extends BasicController implements IFiscal
 	}
 	public void onChangeM311(ActionEvent event) {
 		try {
-			getCalculator().calculateM311();
+			calculateM311();
 		} catch (AonException e) {
 			String msg = "Error en el cálculo";
 			AonUtil.addErrorMessage(msg);
@@ -611,7 +624,12 @@ public class FiscalActivityController extends BasicController implements IFiscal
 	}
 
 	public void calculateM311() throws AonException {
-		getCalculator().calculateM311();
+		FiscalActivity fa =  getFiscalActivity();
+		if (fa.isFarmer()) {
+			getCalculator().calculateFarmerM311();
+		} else {
+			getCalculator().calculateM311();
+		}
 	}
 
 	private void calculateIrpf() {

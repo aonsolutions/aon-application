@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.fiscal.shared.Mod190;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Detail;
 import com.esferalia.aon.gwt.fiscal.shared.Mod190Receiver;
 import com.esferalia.aon.gwt.fiscal.shared.Mod303Results;
+import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390Detail;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -74,6 +75,8 @@ public interface FiscalService extends RemoteService {
 	
 	Mod303Results getMod303Results(int domain, int year) throws AonSQLException;
 	
+	ArrayList<Mod311Results> getMod311Results(int domain, int year) throws AonSQLException;
+
 	Mod390 getMod390(Integer id) throws AonSQLException;
 
 	ArrayList<Mod390> getMod390s(int domain) throws AonSQLException;

@@ -6,11 +6,8 @@ import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.enableAutoComm
 import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.fiscal.server.AonServletUtils.rollback;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
@@ -37,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
-import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.fiscal.shared.AonSQLException;
 import com.esferalia.aon.gwt.fiscal.shared.Mod390;
 import com.esferalia.aon.gwt.fiscal.sql.SQLMod390;
@@ -74,7 +70,7 @@ public class Mod390Print extends HttpServlet {
 			String fileName = "Mod190" + "_" + mod390.getYear() + "_"
 					+ sb.toString();
 
-			//downloadPDF(req, resp, fileName, content.getBytes());
+			downloadPDF(req, resp, fileName, content.getBytes());
 
 		} catch (AonSQLException e) {
 			rollback(conn);
@@ -91,35 +87,29 @@ public class Mod390Print extends HttpServlet {
 	}
 
 	private void downloadPDF(HttpServletRequest req, HttpServletResponse resp,
-			String fileName, byte[] content) throws IOException, KeyManagementException, NoSuchAlgorithmException {
-		
-		FileReader fis = new FileReader("/tmp/Mod390_2013_INELCO2001SL.390");
+			String fileName, byte[] content) throws IOException,
+			KeyManagementException, NoSuchAlgorithmException {
+
+		FileReader fis = new FileReader("/tmp/Mod390_2013_MARIALUISA.390");
 		byte[] o = IOUtils.toByteArray(fis, "ISO-8859-1");
 		String encodedFile0 = URLEncoder.encode(new String(o), "ISO-8859-1");
-		
+
 		String fileString = new String(content);
 		fileString = fileString.replace("\n", "");
 		fileString = fileString.replace("\r", "");
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
-		String urlParameters = 
-				"HID=INF3390A" + 
-				"&IDI=ES" +
-				"&LEV=000000000000" +
+		String urlParameters = "HID=INF3390A" + "&IDI=ES"
+				+ "&LEV=000000000000"
+				+
 				// TODO MAL!!
-				"&F01="	+ encodedFile0 + 
-				"&ANA=INE" + 
-				"&XFI=" + encodedFile + 
-				"&FIN=" + 
-				"&MOD=390" +
-				"&PRG=PTLINK1N" +
-				"&EJF=2013"; 
-		
+				"&F01=" + encodedFile0 + "&ANA=INE" + "&XFI=" + encodedFile
+				+ "&FIN=" + "&MOD=390" + "&PRG=PTLINK1N" + "&EJF=2013";
+
 		// PRODUCCION
-		// String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
-		
-		// PRUEBAS
-		String request = "https://www6.aeat.es/es13/l/zi21zilk0021";
+		String request = "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
+
+		// PRUEBAS String request = "https://www6.aeat.es/es13/l/zi21zilk0021";
 
 		URL url = new URL(request);
 
@@ -132,6 +122,7 @@ public class Mod390Print extends HttpServlet {
 		HttpsURLConnection connection = (HttpsURLConnection) url
 				.openConnection();
 		connection.setHostnameVerifier(new HostnameVerifier() {
+
 			@Override
 			public boolean verify(String arg0, SSLSession arg1) {
 				return true;
@@ -154,13 +145,15 @@ public class Mod390Print extends HttpServlet {
 		wr.close();
 
 		DataInputStream input = new DataInputStream(connection.getInputStream());
-		
-//		resp.setContentType(MimeType.MIME_PDF.getName());
-//		resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".pdf\";");
+
+		// resp.setContentType(MimeType.MIME_PDF.getName()); //
+		resp.setHeader("Content-disposition", "attachment; filename=\""
+				+ fileName + ".pdf\";");
 		IOUtils.copy(input, resp.getOutputStream());
 		resp.flushBuffer();
 		connection.disconnect();
 	}
+
 	private static class DefaultTrustManager implements X509TrustManager {
 
 		@Override
@@ -178,5 +171,4 @@ public class Mod390Print extends HttpServlet {
 			return null;
 		}
 	}
-
 }

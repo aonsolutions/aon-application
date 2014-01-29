@@ -31,8 +31,12 @@
 				</aon:inputText>
 					
 				<aon:outputText  value="#{info.doubleValue}"
-					rendered="#{info.calculated}">
+					rendered="#{info.calculated and info.rounded}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />					
+				</aon:outputText>
+
+				<aon:outputText  value="#{info.doubleValue}"
+					rendered="#{info.calculated and !info.rounded}">
 				</aon:outputText>
 			</aon:div>
 				

@@ -11,6 +11,10 @@ import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.TextBox;
 
+/**
+ * @author ecastellano
+ *
+ */
 public class DoubleTextBox extends TextBox {
 
 	private static final AonResources AON_RESOURCES = GWT.create(AonResources.class);
@@ -56,22 +60,27 @@ public class DoubleTextBox extends TextBox {
 		});
 	}
 	public void setValue(double value) {
-		setValue(value,false);
+		setValue(value,false,FMT);
 	}
-	
+	public void setValue(double value,NumberFormat formatter) {
+		setValue(value,false,formatter);	
+	}
 	public void setValue(double value,boolean fireEvents) {
+		setValue(value,fireEvents,FMT);
+	}
+	public void setValue(double value,boolean fireEvents,NumberFormat formatter) {
 		try {
-			super.setValue(FMT.format(value),fireEvents);
+			super.setValue(formatter.format(value),fireEvents);
 			removeStyleName(AON_RESOURCES.css().aonTextBoxError() );
 		} catch (NumberFormatException e) {
 			addStyleName(AON_RESOURCES.css().aonTextBoxError() );
 		}
 	}
 	
-	public double getDoubleValue() {
+	public double getDoubleValue(NumberFormat formatter) {
 		double d;
 		try {
-			d = FMT.parse(getValue());	
+			d = formatter.parse(getValue());	
 		} catch (NumberFormatException e) {
 			try {
 				d = Double.parseDouble(getValue());
@@ -80,6 +89,9 @@ public class DoubleTextBox extends TextBox {
 			}
 		}
 		return d;
+	}
+	public double getDoubleValue() {
+		return getDoubleValue(FMT);
 	}
 
 	public static boolean isEmpty(String str) {

@@ -270,31 +270,55 @@ public class Page3 extends ResizeComposite {
 			mainActivityDescription.setText(m390.getMainActivity().getDescription());	
 			mainActivityKey.setText(m390.getMainActivity().getKey());
 			mainActivityEpigraph.setText(m390.getMainActivity().getEpigraph());
+		} else {
+			mainActivityDescription.setText(null);	
+			mainActivityKey.setText(null);
+			mainActivityEpigraph.setText(null);
 		}
 		if (m390.getActivity1() != null) {
 			activity1Description.setText(m390.getActivity1().getDescription());	
 			activity1Key.setText(m390.getActivity1().getKey());
 			activity1Epigraph.setText(m390.getActivity1().getEpigraph());
+		} else {
+			activity1Description.setText(null);	
+			activity1Key.setText(null);
+			activity1Epigraph.setText(null);
 		}
 		if (m390.getActivity2() != null) {
 			activity2Description.setText(m390.getActivity2().getDescription());	
 			activity2Key.setText(m390.getActivity2().getKey());
 			activity2Epigraph.setText(m390.getActivity2().getEpigraph());
+		} else {
+			activity2Description.setText(null);	
+			activity2Key.setText(null);
+			activity2Epigraph.setText(null);
 		}
 		if (m390.getActivity3() != null) {
 			activity3Description.setText(m390.getActivity3().getDescription());	
 			activity3Key.setText(m390.getActivity3().getKey());
 			activity3Epigraph.setText(m390.getActivity3().getEpigraph());
+		} else {
+			activity3Description.setText(null);	
+			activity3Key.setText(null);
+			activity3Epigraph.setText(null);
 		}
 		if (m390.getActivity4() != null) {
 			activity4Description.setText(m390.getActivity4().getDescription());	
 			activity4Key.setText(m390.getActivity4().getKey());
 			activity4Epigraph.setText(m390.getActivity4().getEpigraph());
+		} else {
+			activity4Description.setText(null);	
+			activity4Key.setText(null);
+			activity4Epigraph.setText(null);
 		}
 		if (m390.getActivity5() != null) {
 			activity5Description.setText(m390.getActivity5().getDescription());	
 			activity5Key.setText(m390.getActivity5().getKey());
 			activity5Epigraph.setText(m390.getActivity5().getEpigraph());
+		} else {
+			activity5Description.setText(null);	
+			activity5Key.setText(null);
+			activity5Epigraph.setText(null);
 		}
 		mod347.setValue(m390.isMod347());
 		mergedDeclarationDocument.setValue(m390.getMergedDeclarationDocument());

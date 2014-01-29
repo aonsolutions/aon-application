@@ -67,4 +67,9 @@ public class FiscalActivityInfo extends FiscalActivityInfoDB {
 	public boolean isChoice() {
 		return getInfoKey() != null?getInfoKey().isChoice() : false;
 	}
+
+	@Transient
+	public boolean isRounded() {
+		return getInfoKey() != null?getInfoKey().isRounded() : false;
+	}
 }
