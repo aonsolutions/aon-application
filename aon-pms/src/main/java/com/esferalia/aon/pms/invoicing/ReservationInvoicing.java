@@ -289,11 +289,13 @@ public class ReservationInvoicing implements IReservationConstants {
 		int line = 0;
 
 		ReservationUtils reservationUtils = new ReservationUtils();
-		boolean isVatGap = false;
-		double vatGap = 0;
+		boolean isVatWrong = false;
+		double vatAmount = 0;
+		double advancedAmount = 0;
 		if (!reservationInvoiceTo.isEarlyCheckOut()) {
-			isVatGap = (reservation.isAdvanceInvoiced() || reservation.getVatQuota() != reservationUtils.getReservationCalculatedVatQuota(reservation));
-			vatGap = (isVatGap) ? reservation.getVatQuota() : 0;
+			vatAmount = reservationUtils.getReservationCalculatedVatQuota(reservation);
+			advancedAmount = reservation.getAdvancedAmount();
+			isVatWrong = (reservation.getVatQuota() != vatAmount || advancedAmount > 0);
 		}
 
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -336,16 +338,16 @@ public class ReservationInvoicing implements IReservationConstants {
 			invoiceDetail.setSourceId(reservationServiceDetail.getId());
 			invoiceDetail.setTaxableBase(reservationServiceDetail.getTaxableBase());
 			invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
-			if (isVatGap) {
+			if (isVatWrong) {
 				invoiceDetail.setTaxDataInDetail(true);
-				if (reservation.getVatQuota() != 0) {
+				if (vatAmount != 0) {
 					invoiceDetail.setVatPercent(reservationUtils.getTaxPercentage(invoiceDetail.getItem().getProduct().getVat(), invoice.getIssueDate()));
 					double vatQuota = CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceDetail.getVatPercent() / 100);
-					if (isVatGap && line == reservationServiceDetailList.size()) {
-						vatQuota = vatGap;
+					if (isVatWrong && line == reservationServiceDetailList.size()) {
+						vatQuota = vatAmount;
 					}
 					invoiceDetail.setVatQuota(vatQuota);
-					vatGap = vatGap - vatQuota;
+					vatAmount = vatAmount - vatQuota;
 				} else {
 					invoiceDetail.setVatPercent(0);
 					invoiceDetail.setVatQuota(0);
@@ -355,7 +357,13 @@ public class ReservationInvoicing implements IReservationConstants {
 			invoiceDetailBean.insert(invoiceDetail);
 		}
 
-		if (reservation.isAdvanceInvoiced() && !reservationInvoiceTo.isEarlyCheckOut()) {
+		if (isVatWrong) {
+			reservation.setTaxableBase(invoice.getTaxableBase());
+			reservation.setVatQuota(invoice.getVatQuota());
+			reservation.setTotal(invoice.getTotal());
+		}
+
+		if (advancedAmount > 0 && !reservationInvoiceTo.isEarlyCheckOut()) {
 			criteria = new Criteria();
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_PROJECT_ID), reservation.getId());
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ADVANCE), true);
