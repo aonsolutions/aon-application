@@ -27,6 +27,7 @@
 							<aon:outputLabel for="Finance_payment"
 								value="#{bundle.aon_type}" />
 							<aon:selectOneMenu id="Finance_payment"
+								reRender="financeExporterForm"
 								value="#{controller.payment}">
 								<f:selectItem itemLabel="#{bundle.finance_charge}" itemValue="#{false}" />
 								<f:selectItem itemLabel="#{bundle.finance_payment}" itemValue="#{true}" />
@@ -40,6 +41,9 @@
 			</ui:decorate>
 
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
+		<aon:lookupButtonPopup lookup="#{creditorLookup}" />
 
 	</ui:define>
 	

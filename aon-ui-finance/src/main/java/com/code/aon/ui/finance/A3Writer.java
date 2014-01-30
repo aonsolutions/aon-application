@@ -129,29 +129,44 @@ public class A3Writer extends BasicExporter {
 				getInvoiceType()==InvoiceType.EXPENSES;
 	}
 	
-	private void fillHeader( AccountEntry accountEntry, AccountEntryDetail aed ) {
+	private void fillHeader( AccountEntry accountEntry, AccountEntryDetail aed, boolean first ) {
 		initLine();
 		// Fecha del apunte
 		setDate(accountEntry.getEntryDate(), 6);
 		// Tipo de Registro
-		if ( isAbono() || (getTotal()<0) ) {
+		if ( getFinance() != null ) {
+			setInteger( 0, 14, 1);
+		} else if ( isAbono() || (getTotal()<0) ) {
 			setInteger( 2, 14, 1);
 		} else {
 			setInteger( 1, 14, 1);	
 		}
 		// Cuenta - Descripción de la cuenta 
 		setAccountAndDescription(aed.getAccount());
-		// Tipo de factura
-		setInteger(2, 57, 1);
-		if ( isInvestment() ) {
-			setInteger(3, 57, 1);
-		} else if ( isSales() ) {
-			setInteger(1, 57, 1);
+		if ( getFinance() != null ) {
+			// Tipo de importe (D/H)			
+			if ( aed.getCredit() == 0 ) {
+				setString("D", 57, 1);
+			} else {
+				setString("H", 57, 1);
+			}			
+		} else {
+			// Tipo de factura
+			setInteger(2, 57, 1);
+			if ( isInvestment() ) {
+				setInteger(3, 57, 1);
+			} else if ( isSales() ) {
+				setInteger(1, 57, 1);
+			}
 		}
 		// Numero de Factura o Documento
 		setStringRightPad( getMainId().toString(), 58, 10);
-		// Linea de apunte (I)
-		setString( "I", 68, 1);
+		// Linea de apunte (I,M,U)
+		if ( first ) {
+			setString( "I", 68, 1);	
+		} else {
+			setString( getDetails().isEmpty() ? "U" : "M", 68, 1);					
+		}
 		// Descripcion del apunte
 		setStringRightPad( getReferenceCode(), 69, 30);
 		// Importe
@@ -603,11 +618,16 @@ public class A3Writer extends BasicExporter {
 	
 	@Override
 	public void write( AccountEntry accountEntry ) throws IOException, ManagerBeanException {
-		fillHeader(accountEntry, getRegistryDetail());
+		fillHeader(accountEntry, getRegistryDetail(), true);
 		writeLine();
 		while (! getDetails().isEmpty() ) {
 			AccountEntryDetail aed = getNextDetail();
-			writeDetail(accountEntry, aed);
+			if ( getFinance() != null ) {
+				fillHeader(accountEntry, aed, false);
+				writeLine();				
+			} else {
+				writeDetail(accountEntry, aed);	
+			}
 		}
 		for( Finance finance : getFinances() ) {
 			writeFinance(finance);
