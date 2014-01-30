@@ -1275,14 +1275,16 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		dbCgcBaseLabel.setText(format(salaryDraftObject.getDbCgcBase()));
 		setDbStyleName(dbCgcBaseLabel, cgcBaseLabel);
 		Double rawCgcBase = salaryDraftObject.getRawCgcBase();
-		
+
 		if (cgcBase != null && !cgcBase.equals(rawCgcBase)) {
 			cgcBaseLabel.addStyleName(AON.AON_ICON_WARN);
 			cgcBaseLabel.addStyleName(AON.AON_PADDING_LEFT);
-			cgcBaseLabel.setTitle("La Base por Contingecias Comunes "
-					+ format(rawCgcBase) + "\u20A0 ha sido "
-					+ (rawCgcBase > cgcBase ? "limitada al m\u00e1ximo permitido"
-							: "ampliada al m\u00ednimo obligatorio"));
+			cgcBaseLabel
+					.setTitle("La Base por Contingecias Comunes "
+							+ format(rawCgcBase)
+							+ "\u20A0 ha sido "
+							+ (rawCgcBase > cgcBase ? "limitada al m\u00e1ximo permitido"
+									: "ampliada al m\u00ednimo obligatorio"));
 		}
 
 		cgpBaseLabel.setText(format(salaryDraftObject.getCgpBase()),
@@ -2617,8 +2619,16 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private String getIconRowStyle(Item item) {
-		return item.getScope() == Scope.SALARY ? AON.AON_ICON_ROW_SELECTOR_CHANGED
-				: AON.AON_ICON_ROW_SELECTOR;
+		switch (item.getScope()) {
+		case SALARY:
+			return AON.AON_ICON_ROW_SELECTOR_CHANGED;
+		case AGREEMENT:
+			return AON.AON_ICON_ROW_SELECTOR_C;
+		case SYSTEM :
+			return AON.AON_ICON_ROW_SELECTOR_S;
+		default:
+			return AON.AON_ICON_ROW_SELECTOR;
+		}
 	}
 
 	private Variable getPercentVariable(Deduction.Type type) {

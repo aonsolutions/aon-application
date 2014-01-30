@@ -4,6 +4,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 public interface CalculateService {
 	
 	static String SAVE = "save";
+	static String OVERWRITE = "overwrite";
 
 	static String END_DATE = "endDate";
 	static String START_DATE = "startDate";
