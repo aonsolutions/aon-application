@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.28.2
+# Version: 7.28.3
 # Created by: girazu
-# Creation Date: 28/01/2014 17:00
+# Creation Date: 30/01/2014 10:40
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2008,6 +2008,10 @@ CREATE TABLE `project_reservation_room` (
   `tariff` int(4) default NULL COMMENT 'Identificador de la Tarifa',
   `adults` smallint(2) default '0' COMMENT 'Numero de adultos',
   `children` smallint(2) default '0' COMMENT 'Numero de niños',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION` (`project_reservation`),
   KEY `IDX_PROJECT_RESERVATION_ROOM_ITEM` (`item`),
@@ -6272,6 +6276,10 @@ CREATE TABLE `project_reservation_service` (
   `meal_plan` tinyint(2) default '0' COMMENT 'Regimen',
   `project_reservation_room` int(4) default NULL COMMENT 'Identificador de la Habitacion de la Reserva',
   `extra` tinyint(1) NOT NULL default '0' COMMENT 'Indica si se trata de un Servicio extra',
+  `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime default NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION` (`project_reservation`),
   KEY `IDX_PROJECT_RESERVATION_SERVICE_ITEM` (`item`),
@@ -7567,7 +7575,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.28.2');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.28.3');
 
 COMMIT;
 
