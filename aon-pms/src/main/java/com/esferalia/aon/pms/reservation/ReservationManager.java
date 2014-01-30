@@ -472,6 +472,8 @@ public class ReservationManager implements IReservationConstants {
 		}
 		reservationRoom.setAdults(adults);
 		reservationRoom.setChildren(children);
+		reservationRoom.setCreationUser(CRS);
+		reservationRoom.setCreationDate(new Date());
 		reservationRoom = (ProjectReservationRoom)BeanManager.getManagerBean(ProjectReservationRoom.class).insert(reservationRoom);
 
 		Connection connection = null;
@@ -500,6 +502,8 @@ public class ReservationManager implements IReservationConstants {
 				roomList.remove(0);
 			}
 		}
+		reservationService.setCreationUser(CRS);
+		reservationService.setCreationDate(new Date());
 
 		return (ProjectReservationService)BeanManager.getManagerBean(ProjectReservationService.class).insert(reservationService);
 	}
@@ -629,6 +633,7 @@ public class ReservationManager implements IReservationConstants {
 		Connection connection = null;
 		try {
 			reservation.setStatus(ReservationStatus.CANCELLED);
+			reservation.setModificationUser(CRS);
 			reservation.setModificationDate(new Date());
 			BeanManager.getManagerBean(ProjectReservation.class).update(reservation);
 

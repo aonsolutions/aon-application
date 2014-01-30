@@ -8,13 +8,14 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ProjectReservationRoomDB;
 
 @Entity
 @Table(name="project_reservation_room")
-public class ProjectReservationRoom extends ProjectReservationRoomDB {
+public class ProjectReservationRoom extends ProjectReservationRoomDB implements IAuditable {
 
 	private static final long serialVersionUID = 1L;
 

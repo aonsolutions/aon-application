@@ -77,7 +77,6 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException("La Estancia no puede ser superior a 90 días.");
 		}
 
-		reservation.setCreationDate(new Date());
 		reservation.setStartTime(obtainDateTime(reservation.getStartDate(), controller.getStartTime()));
 		reservation.setEndTime(obtainDateTime(reservation.getEndDate(), controller.getEndTime()));
 		reservation.setHotelReservation(reservation.getHotel());
@@ -100,7 +99,6 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
 		ProjectReservation reservation = (ProjectReservation)controller.getTo();
-		reservation.setModificationDate(new Date());
 		reservation.setStartTime(obtainDateTime(reservation.getStartDate(), controller.getStartTime()));
 		reservation.setEndTime(obtainDateTime(reservation.getEndDate(), controller.getEndTime()));
 	}
