@@ -318,10 +318,12 @@
 								</aon:div>
 								<aon:inputText id="Income_bankAlias"
 									value="#{income.to.bankAlias}" 
-									disabled="#{!income.pending}" size="25" maxlength="25" />
+									disabled="#{!income.pending}" 
+									required="#{income.to.bankAccount.validIbanLength}" size="25" maxlength="25" />
 								<aon:inputText id="Income_bic"
 									value="#{income.to.bic}" 
-									disabled="#{!income.pending}" size="12" maxlength="11">
+									disabled="#{!income.pending}" 
+									required="#{income.to.bankAccount.validIbanLength}" size="12" maxlength="11">
 									<f:validateLength minimum="11" maximum="11" />
 								</aon:inputText>
 

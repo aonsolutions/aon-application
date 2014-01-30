@@ -474,10 +474,12 @@
 								</aon:div>
 								<aon:inputText id="Offer_bankAlias"
 									value="#{offer.to.bankAlias}" 
-									disabled="#{offer.readOnly}" size="25" maxlength="25" />
+									disabled="#{offer.readOnly}" 
+									required="#{offer.to.bankAccount.validIbanLength}" size="25" maxlength="25" />
 								<aon:inputText id="Offer_bic"
 									value="#{offer.to.bic}" 
-									disabled="#{offer.readOnly}" size="12" maxlength="11">
+									disabled="#{offer.readOnly}" 
+									required="#{offer.to.bankAccount.validIbanLength}" size="12" maxlength="11">
 									<f:validateLength minimum="11" maximum="11" />
 								</aon:inputText>
 
