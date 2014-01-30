@@ -70,6 +70,14 @@
 	gwt-image: "clipboard" ; 
 }
 
+@sprite .aon-icon-rowSelector-S {
+	gwt-image: "aon_icon_row_s" ; 
+}
+
+@sprite .aon-icon-rowSelector-C {
+	gwt-image: "aon_icon_row_c" ; 
+}
+
 @sprite .aon-icon-rowSelector-Changed {
 	gwt-image: "aon_icon_row_changed" ; 
 }

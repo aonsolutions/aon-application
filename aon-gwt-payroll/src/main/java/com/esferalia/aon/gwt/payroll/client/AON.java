@@ -70,6 +70,8 @@ public class AON {
 	public static final String AON_ICON_WORKPLACE = "aon-icon-workplace";
 	public static final String AON_ICON_EMPLOYEE = "aon-icon-employee";
 	public static final String AON_ICON_ROW_SELECTOR = "aon-icon-rowSelector";
+	public static final String AON_ICON_ROW_SELECTOR_S = "aon-icon-rowSelector-S";
+	public static final String AON_ICON_ROW_SELECTOR_C = "aon-icon-rowSelector-C";
 	public static final String AON_ICON_ROW_SELECTOR_CHANGED = "aon-icon-rowSelector-Changed";
 	public static final String AON_ICON_EXCEPTION = "aon-icon-exception";
 	public static final String AON_ICON_WARN = "aon-icon-warn";
