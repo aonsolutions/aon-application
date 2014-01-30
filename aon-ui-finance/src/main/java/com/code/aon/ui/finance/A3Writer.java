@@ -63,7 +63,7 @@ public class A3Writer extends BasicExporter {
 		double _value = CommonUtil.round(value);
 		String pattern = StringUtils.leftPad("0.00", maxLength-1, "0");
 		DecimalFormat df = new DecimalFormat(pattern, new DecimalFormatSymbols(Locale.ENGLISH));
-		String string = ( value<0 ? "-" : "+") + df.format(_value);
+		String string = ( value<0 ? "" : "+") + df.format(_value);
 		setString(string, offset, maxLength);
 	}
 
@@ -134,7 +134,7 @@ public class A3Writer extends BasicExporter {
 		// Fecha del apunte
 		setDate(accountEntry.getEntryDate(), 6);
 		// Tipo de Registro
-		if ( isAbono() ) {
+		if ( isAbono() || (getTotal()<0) ) {
 			setInteger( 2, 14, 1);
 		} else {
 			setInteger( 1, 14, 1);	
