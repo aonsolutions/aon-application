@@ -47,45 +47,9 @@ public class ContractLeaveController extends BasicController {
 	
 	private ContractLeaveDetail leave;
 	private ContractLeaveDetail discharge;
-	private boolean editBases;
-	private Double dailyCgcBase;
-	private Double dailyCgpBase;
-	private Double dailyRegBase;
 	
 	private IControllerListener contractFilter;
 	
-	
-	public Double getDailyCgcBase() {
-		return dailyCgcBase;
-	}
-
-	public void setDailyCgcBase(Double dailyCgcBase) {
-		this.dailyCgcBase = dailyCgcBase;
-	}
-
-	public Double getDailyCgpBase() {
-		return dailyCgpBase;
-	}
-
-	public void setDailyCgpBase(Double dailyCgpBase) {
-		this.dailyCgpBase = dailyCgpBase;
-	}
-
-	public Double getDailyRegBase() {
-		return dailyRegBase;
-	}
-
-	public void setDailyRegBase(Double dailyRegBase) {
-		this.dailyRegBase = dailyRegBase;
-	}
-
-	public boolean isEditBases() {
-		return editBases;
-	}
-
-	public void setEditBases(boolean editBases) {
-		this.editBases = editBases;
-	}
 
 	public ContractLeaveDetail getLeave() {
 		return leave;
@@ -240,6 +204,11 @@ public class ContractLeaveController extends BasicController {
 		// TODO obtener las bases del trabajador, 
 //		las de la nomina del mes anterior dividido por 30, si el trabajador tiene salario mensual; 30, 31 ó 28, 29 si tiene salario diario)
 //		el problema viene cuando no existe nomina anterior (cae de baja el primer mes)
+		
+		leave.setDailyCgcBase( 0.0 );
+		leave.setDailyCgpBase( 0.0 );
+		leave.setDailyRegBase( 0.0 );
+		
 		if(leave.getStartDate()!=null && contract!=null && contract.getId()!=null){
 			ISalary salary = PayrollUtils.getInstance().getBeforeDateSalary(contract, leave.getStartDate());
 			if(salary==null){
@@ -251,15 +220,10 @@ public class ContractLeaveController extends BasicController {
 				}
 			}
 			if(salary!=null){
-				setDailyCgcBase( CommonUtil.round(salary.getCommonBase()/salary.getTimeUnits()) );
-				setDailyCgpBase( CommonUtil.round(salary.getProfessionalBase()/salary.getTimeUnits()) );
-				setDailyRegBase( CommonUtil.round(salary.getRawCommonBase()/salary.getTimeUnits()) );
+				leave.setDailyCgcBase( CommonUtil.round(salary.getCommonBase()/salary.getTimeUnits()) );
+				leave.setDailyCgpBase( CommonUtil.round(salary.getProfessionalBase()/salary.getTimeUnits()) );
+				leave.setDailyRegBase( CommonUtil.round(salary.getRawCommonBase()/salary.getTimeUnits()) );
 			}
-		} else {
-			setDailyCgcBase( null );
-			setDailyCgpBase( null );
-			setDailyRegBase( null );
 		}
-		setEditBases(false);
 	}
 }

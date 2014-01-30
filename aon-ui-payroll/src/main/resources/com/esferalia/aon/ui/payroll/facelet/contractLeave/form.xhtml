@@ -23,6 +23,7 @@
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{contractLeave.to.contract}" />
 						<ui:param name="lookupReRender" value="ContractLeave_relapse_div,ContractLeave_bases_div" />
+						<ui:param name="lookupDisabled" value="#{contractLeaveDetail.rowCount>0}" />
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="lookupControllerListener" value="#{contractLeave.contractFilter}" />
 						<aon:methodParam name="lookupChangeListener" 
@@ -55,65 +56,33 @@
 							value="#{bundle.payroll_contractLeave_dailyCgc}:" 
 							styleClass="aon-italic" />
 						<aon:inputText id="ContractLeave_dailyCgcBase" 
-							rendered="#{contractLeave.editBases}"
+							required="#{true}"
 							value="#{contractLeave.to.dailyCgcBase}" 
 							size="5" >
 							<f:validateDoubleRange />
 						</aon:inputText>
-						<aon:outputText value="#{contractLeave.dailyCgcBase}" 
-							rendered="#{!contractLeave.editBases}" 
-							styleClass="aon-margin-left" >
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
 						
 						<aon:outputLabel for="ContractLeave_dailyCgpBase" 
 							title="#{bundle.payroll_contractLeave_dailyCgp_description}"  
 							value="#{bundle.payroll_contractLeave_dailyCgp}:"  
 							styleClass="aon-italic aon-margin-left" />
 						<aon:inputText id="ContractLeave_dailyCgpBase" 
-							rendered="#{contractLeave.editBases}"
+							required="#{true}"
 							value="#{contractLeave.to.dailyCgpBase}" 
 							size="5" >
 							<f:validateDoubleRange />
 						</aon:inputText>
-						<aon:outputText value="#{contractLeave.dailyCgpBase}" 
-							rendered="#{!contractLeave.editBases}" 
-							styleClass="aon-margin-left" >
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
 						
 						<aon:outputLabel for="ContractLeave_dailyRegBase" 
 							title="#{bundle.payroll_contractLeave_dailyReg_description}"  
 							value="#{bundle.payroll_contractLeave_dailyReg}:"  
 							styleClass="aon-italic aon-margin-left" />
 						<aon:inputText id="ContractLeave_dailyRegBase" 
-							rendered="#{contractLeave.editBases}"
+							required="#{true}"
 							value="#{contractLeave.to.dailyRegBase}" 
 							size="5" >
 							<f:validateDoubleRange />
 						</aon:inputText>
-						<aon:outputText value="#{contractLeave.dailyRegBase}"
-							rendered="#{!contractLeave.editBases}"
-							styleClass="aon-margin-left" >
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-						
-						<aon:commandButton id="editBases" value="&#160;"
-							title="#{bundle.aon_edit}"
-							rendered="#{!contractLeave.editBases}"
-							reRender="ContractLeave_bases_div"
-							styleClass="aon-editDataTable-button aon-icon-edit-add" >
-							<f:setPropertyActionListener target="#{contractLeave.editBases}" value="#{true}" />
-						</aon:commandButton>
-
-						<aon:commandButton id="editBases-refresh" value="&#160;"
-							title="#{bundle.payroll_contractLeave_bases_load_defaults}"
-							rendered="#{contractLeave.editBases}"
-							reRender="ContractLeave_bases_div"
-							actionListener="#{contractLeave.onReloadBases}"
-							styleClass="aon-editDataTable-button aon-margin-left aon-icon-refresh" >
-							<f:setPropertyActionListener target="#{contractLeave.editBases}" value="#{false}" />
-						</aon:commandButton>
 						
 						<aon:div rendered="#{!contractLeave.new}" style="display:inline;">
 							<aon:outputText value="#{bundle.payroll_leaveBatch_leave_days}: "  

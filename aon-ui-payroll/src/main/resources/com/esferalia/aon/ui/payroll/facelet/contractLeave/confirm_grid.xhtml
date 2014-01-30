@@ -9,6 +9,8 @@
 	
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 		<ui:param name="controller" value="#{contractLeaveDetail}" />
+		<ui:param name="newSaveButtonReRender" value="contractLeaveForm" />
+		<ui:param name="removeButtonReRender" value="contractLeaveForm" />
 		<ui:define name="columns">
 		
 			<aon:column alias="ContractLeaveDetail.confirmOrder" 
