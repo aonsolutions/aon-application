@@ -16,6 +16,7 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
@@ -140,6 +141,29 @@ public class PmsCollectionsController {
 			customers.add(customerItem);
 		}
 		return customers;
+	}
+
+	public List<SelectItem> getAgencyGroups() throws ManagerBeanException {
+		List<SelectItem> groups = new LinkedList<SelectItem>();
+		IManagerBean invoicingGroupBean = BeanManager.getManagerBean(InvoicingGroup.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_CUSTOMER_SCOPE_ID));
+		criteria.addOrder(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_DESCRIPTION));
+		for (ITransferObject ito : invoicingGroupBean.getList(criteria)) {
+			InvoicingGroup invoicingGroup = (InvoicingGroup)ito;
+			SelectItem groupItem = new SelectItem(invoicingGroup, invoicingGroup.getDescription());
+			groups.add(groupItem);
+		}
+		return groups;
+	}
+
+	public int getAgencyGroupsCount() throws ManagerBeanException {
+		IManagerBean invoicingGroupBean = BeanManager.getManagerBean(InvoicingGroup.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_CUSTOMER_SCOPE_ID));
+		return invoicingGroupBean.getCount(criteria);
 	}
 
 	public List<SelectItem> getSellers() throws ManagerBeanException {

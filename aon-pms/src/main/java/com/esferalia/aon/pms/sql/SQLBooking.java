@@ -18,7 +18,7 @@ import com.esferalia.aon.pms.enumeration.BookingStayType;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
-public class SQLBooking implements IBookingConstants {
+public class SQLBooking implements ISQLConstants {
 
 	public static String INSERT_BOOKING =
 			"INSERT INTO booking (" + DOMAIN + ", " + PROJECT_RESERVATION_ROOM + ", " + HOTEL + ", " + AGENCY + 
@@ -108,7 +108,7 @@ public class SQLBooking implements IBookingConstants {
 		} catch (AonSQLException e) {
 			throw e;
 		} catch (Throwable e) {
-			throw new AonSQLException(e);
+			throw new AonSQLException(e.getMessage());
 		} finally {
 			SQLUtils.closeQuietly(insertStmt);
 			SQLUtils.closeQuietly(keysRs);

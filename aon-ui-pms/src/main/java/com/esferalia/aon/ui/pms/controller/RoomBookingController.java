@@ -32,11 +32,11 @@ import com.code.aon.product.Item;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingStayType;
-import com.esferalia.aon.pms.sql.IBookingConstants;
+import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
-public class RoomBookingController implements ICollectionProvider, IBookingConstants {
+public class RoomBookingController implements ICollectionProvider, ISQLConstants {
 
 	private Hotel hotel;
 	private Item item;

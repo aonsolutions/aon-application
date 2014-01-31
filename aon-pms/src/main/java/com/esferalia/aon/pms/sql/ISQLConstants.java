@@ -1,6 +1,6 @@
 package com.esferalia.aon.pms.sql;
 
-public interface IBookingConstants {
+public interface ISQLConstants {
 
 	String DOMAIN = "domain";
 	String PROJECT_RESERVATION_ROOM = "project_reservation_room";
@@ -18,6 +18,7 @@ public interface IBookingConstants {
 
 	String START_DATE = "startDate";
 	String END_DATE = "endDate";
+	String QUANTITY = "quantity";
 	String RESERVATION_HOTEL = "reservationHotel";
 
 }

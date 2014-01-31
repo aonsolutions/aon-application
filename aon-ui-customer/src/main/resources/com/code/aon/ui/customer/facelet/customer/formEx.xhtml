@@ -88,7 +88,7 @@
 						<c:if test="#{!customer.new and customer.to.invoicingGroup.id != null}">
 							<aon:outputLabel value="#{bundle.customer_invoicingGroup}" />
 							<aon:div>
-								<aon:outputText	value="#{customer.to.invoicingGroup.customer.registry.fullName}" />
+								<aon:outputText	value="#{customer.to.invoicingGroup.description}" />
 								<c:if test="#{customer.invoicingGroupInMyScopes}">
 									<aon:commandLink id="invoicingGroup_link" immediate="true"
 										styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"

@@ -286,6 +286,7 @@
 		<!-- AON-PMS Mapping files -->	
 		<mapping class="com.esferalia.aon.pms.Allotment"/>
 		<mapping class="com.esferalia.aon.pms.AllotmentItem"/>
+		<mapping class="com.esferalia.aon.pms.AllotmentTariff"/>
 		<mapping class="com.esferalia.aon.pms.Hotel"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationDivert"/>

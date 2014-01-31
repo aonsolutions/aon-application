@@ -1,8 +1,7 @@
 package com.esferalia.aon.ui.pms.event;
 
-import java.util.List;
-
-import javax.faces.model.SelectItem;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -10,35 +9,45 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tariff;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Allotment;
 import com.esferalia.aon.pms.AllotmentItem;
+import com.esferalia.aon.pms.AllotmentTariff;
+import com.esferalia.aon.pms.sql.SQLAllotment;
+import com.esferalia.aon.pms.sql.SQLUtils;
 import com.esferalia.aon.ui.pms.controller.AllotmentController;
 import com.esferalia.aon.ui.pms.controller.IPmsConstants;
 
 public class AllotmentControllerListener extends ControllerAdapter implements IPmsConstants {
 
-	private Item[] items;
-
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		AllotmentController controller = (AllotmentController)event.getController();
+		controller.setGroup(false);
 		controller.setItems(null);
 		controller.setItem(null);
+		controller.setTariffs(null);
+		controller.setTariff(null);
 	}
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		AllotmentController controller = (AllotmentController)event.getController();
+		Allotment allotment = (Allotment)controller.getTo();
 		try {
-			obtainAllotmentItems((Allotment)controller.getTo());
-			controller.setItems(items);
+			controller.setGroup(allotment.isGroup());
+			controller.setItems(obtainAllotmentItems(allotment));
 			controller.setItem(null);
+			controller.setTariffs(obtainAllotmentTariffs(allotment));
+			controller.setTariff(null);
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -51,28 +60,18 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		if (allotment.getEndDate().before(allotment.getStartDate())) {
 			throw new ControllerListenerException("Las fechas de Inicio y Fin del Periodo son incorrectas.");
 		}
-
-		items = (Item[])ArrayUtils.removeElement(controller.getItems(), null);
-		try {
-			if (ArrayUtils.getLength(items) == 0) {
-				List<SelectItem> hotelRoomItems = controller.getHotelRoomItems();
-				for (int i=0; i<hotelRoomItems.size(); i++) {
-					items = ((Item[])ArrayUtils.add(items, hotelRoomItems.get(i).getValue()));
-				}
-			}
-		} catch(ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
+		controller.setItems((Item[])ArrayUtils.removeElement(controller.getItems(), null));
+		controller.setTariffs((Tariff[])ArrayUtils.removeElement(controller.getTariffs(), null));
 		verifyAllotmentOverlap(allotment);
 	}
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		AllotmentController controller = (AllotmentController)event.getController();
+		Allotment allotment = (Allotment)controller.getTo();
 		try {
-			insertAllotmentItems((Allotment)controller.getTo());
-			controller.setItems(items);
-			controller.setItem(null);
+			insertAllotmentItems(allotment, controller.getItems());
+			insertAllotmentTariffs(allotment, controller.getTariffs());
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -85,29 +84,20 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		if (allotment.getEndDate().before(allotment.getStartDate())) {
 			throw new ControllerListenerException("Las fechas de Inicio y Fin del Periodo son incorrectas.");
 		}
-
-		items = (Item[])ArrayUtils.removeElement(controller.getItems(), null);
-		try {
-			if (ArrayUtils.getLength(items) == 0) {
-				List<SelectItem> hotelRoomItems = controller.getHotelRoomItems();
-				for (int i=0; i<hotelRoomItems.size(); i++) {
-					items = ((Item[])ArrayUtils.add(items, hotelRoomItems.get(i).getValue()));
-				}
-			}
-		} catch(ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
+		controller.setItems((Item[])ArrayUtils.removeElement(controller.getItems(), null));
+		controller.setTariffs((Tariff[])ArrayUtils.removeElement(controller.getTariffs(), null));
 		verifyAllotmentOverlap(allotment);
 	}
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		AllotmentController controller = (AllotmentController)event.getController();
+		Allotment allotment = (Allotment)controller.getTo();
 		try {
-			removeAllotmentItems((Allotment)controller.getTo());
-			insertAllotmentItems((Allotment)controller.getTo());
-			controller.setItems(items);
-			controller.setItem(null);
+			removeAllotmentItems(allotment);
+			insertAllotmentItems(allotment, controller.getItems());
+			removeAllotmentTariffs(allotment);
+			insertAllotmentTariffs(allotment, controller.getTariffs());
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -118,55 +108,57 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		Allotment allotment = (Allotment)event.getController().getTo();
 		try {
 			removeAllotmentItems(allotment);
+			removeAllotmentTariffs(allotment);
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 
-	private void obtainAllotmentItems(Allotment allotment) throws ManagerBeanException {
-		items = null;
-		IManagerBean allotmentItemBean = BeanManager.getManagerBean(AllotmentItem.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(allotmentItemBean.getFieldName(IEntityAlias.ALLOTMENT_ITEM_ALLOTMENT_ID), allotment.getId());
-		for (ITransferObject ito : allotmentItemBean.getList(criteria)) {
+	private Item[] obtainAllotmentItems(Allotment allotment) throws ManagerBeanException {
+		Item[] items = null;
+		for (ITransferObject ito : allotment.getAllotmentItems()) {
 			AllotmentItem allotmentItem = (AllotmentItem)ito;
 			items = (Item[])ArrayUtils.add(items, allotmentItem.getItem());
 		}
+		return items;
+	}
+
+	private Tariff[] obtainAllotmentTariffs(Allotment allotment) throws ManagerBeanException {
+		Tariff[] tariffs = null;
+		for (ITransferObject ito : allotment.getAllotmentTariffs()) {
+			AllotmentTariff allotmentTariff = (AllotmentTariff)ito;
+			tariffs = (Tariff[])ArrayUtils.add(tariffs, allotmentTariff.getTariff());
+		}
+		return tariffs;
 	}
 
 	private void verifyAllotmentOverlap(Allotment allotment) throws ControllerListenerException {
+		Connection connection = null;
 		try {
-			IManagerBean allotmentItemBean = BeanManager.getManagerBean(AllotmentItem.class);
-			for (Item item : items) {
-				Criteria criteria = new Criteria();
-				if (allotment.getId() != null) {
-					criteria.addNotEqualExpression(allotmentItemBean.getFieldName(IEntityAlias.ALLOTMENT_ITEM_ALLOTMENT_ID), allotment.getId());
-				}
-				criteria.addEqualExpression(allotmentItemBean.getFieldName(IEntityAlias.ALLOTMENT_ITEM_ALLOTMENT_HOTEL_ID), allotment.getHotel().getId());
-				criteria.addEqualExpression(allotmentItemBean.getFieldName(IEntityAlias.ALLOTMENT_ITEM_ALLOTMENT_AGENCY_ID), allotment.getAgency().getId());
-				criteria.addLessThanOrEqualExpression(allotmentItemBean.getFieldName(IEntityAlias.ALLOTMENT_ITEM_ALLOTMENT_START_DATE), allotment.getEndDate());
-				criteria.addGreaterThanOrEqualExpression(allotmentItemBean.getFieldName(IEntityAlias.ALLOTMENT_ITEM_ALLOTMENT_END_DATE), allotment.getStartDate());
-				criteria.addEqualExpression(allotmentItemBean.getFieldName(IEntityAlias.ALLOTMENT_ITEM_ITEM_ID), item.getId());
-				if (allotmentItemBean.getCount(criteria) > 0) {
-					items = (Item[])ArrayUtils.removeElement(items, item);
-				}
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			if (SQLAllotment.isAllotmentOverlap(connection, allotment, null, null)) {
+				throw new ControllerListenerException("Ya existen Cupos definidos por Habitacion y Tarifa en ese Periodo.");
 			}
-
-			if (ArrayUtils.getLength(items) == 0) {
-				throw new ControllerListenerException("Ya existen Cupos definidos para las Habitaciones en ese Periodo.");
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
 			}
-		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
+		} finally {
+			SQLUtils.closeQuietly(connection);
 		}
 	}
 
-	private void insertAllotmentItems(Allotment allotment) throws ManagerBeanException {
-		IManagerBean allotmentItemBean = BeanManager.getManagerBean(AllotmentItem.class);
-		for (Item item : items) {
-			AllotmentItem allotmentItem = new AllotmentItem();
-			allotmentItem.setAllotment(allotment);
-			allotmentItem.setItem(item);
-			allotmentItemBean.insert(allotmentItem);
+	private void insertAllotmentItems(Allotment allotment, Item[] items) throws ManagerBeanException {
+		if (ArrayUtils.getLength(items) > 0) {
+			IManagerBean allotmentItemBean = BeanManager.getManagerBean(AllotmentItem.class);
+			for (Item item : items) {
+				AllotmentItem allotmentItem = new AllotmentItem();
+				allotmentItem.setAllotment(allotment);
+				allotmentItem.setItem(item);
+				allotmentItemBean.insert(allotmentItem);
+			}
 		}
 	}
 
@@ -176,6 +168,27 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		criteria.addEqualExpression(allotmentItemBean.getFieldName(IEntityAlias.ALLOTMENT_ITEM_ALLOTMENT_ID), allotment.getId());
 		for (ITransferObject ito : allotmentItemBean.getList(criteria)) {
 			allotmentItemBean.remove(ito);
+		}
+	}
+
+	private void insertAllotmentTariffs(Allotment allotment, Tariff[] tariffs) throws ManagerBeanException {
+		if (ArrayUtils.getLength(tariffs) > 0) {
+			IManagerBean allotmentTariffBean = BeanManager.getManagerBean(AllotmentTariff.class);
+			for (Tariff tariff : tariffs) {
+				AllotmentTariff allotmentTariff = new AllotmentTariff();
+				allotmentTariff.setAllotment(allotment);
+				allotmentTariff.setTariff(tariff);
+				allotmentTariffBean.insert(allotmentTariff);
+			}
+		}
+	}
+
+	private void removeAllotmentTariffs(Allotment allotment) throws ManagerBeanException {
+		IManagerBean allotmentTariffBean = BeanManager.getManagerBean(AllotmentTariff.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(allotmentTariffBean.getFieldName(IEntityAlias.ALLOTMENT_TARIFF_ALLOTMENT_ID), allotment.getId());
+		for (ITransferObject ito : allotmentTariffBean.getList(criteria)) {
+			allotmentTariffBean.remove(ito);
 		}
 	}
 

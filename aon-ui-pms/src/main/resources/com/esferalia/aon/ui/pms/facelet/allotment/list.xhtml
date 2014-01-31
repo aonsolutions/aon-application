@@ -50,12 +50,15 @@
 							<aon:outputText value="#{to.hotel.workPlace.description}" />
 						</aon:column>
 
-						<aon:column alias="Allotment.agency.registry.name"
+						<aon:column alias="Allotment.agency&lt;registry&lt;name,Allotment.agencyGroup&lt;description"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.report_agency}" />
+								<aon:outputText value="#{bundle.report_agency} / #{bundle.aon_group}" />
 							</f:facet>
-							<aon:outputText value="#{to.agency.registry.fullName}" />
+							<aon:outputText value="#{to.group ? to.agencyGroup.description : to.agency.registry.fullName}" />
+							<aon:outputText styleClass="aon-margin-left aon-icon-group"
+								value="&#160;&#160;&#160;&#160;"
+								rendered="#{to.group}" />
 						</aon:column>
 
 						<aon:column alias="Allotment.startDate"
@@ -86,6 +89,24 @@
 								<aon:outputText value="#{bundle.pms_allotment}" />
 							</f:facet>
 							<aon:outputText value="#{to.quantity}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.report_rooms}" />
+							</f:facet>
+							<aon:outputText value="#{to.roomTypeCodes}">
+								<aon:abbreviateConverter maxWidth="20" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.product_tariff_module2}" />
+							</f:facet>
+							<aon:outputText value="#{to.tariffCodes}">
+								<aon:abbreviateConverter maxWidth="20" />
+							</aon:outputText>
 						</aon:column>
 
 						<aon:column alias="Allotment.active"

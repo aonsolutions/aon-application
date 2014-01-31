@@ -33,7 +33,6 @@
 	<!--  *********************************** -->
 	<table-filter match-name="db_version" exclude="true" />
 
-    <table-filter match-name="allotment_tariff" exclude="true" />
     <table-filter match-name="booking" exclude="true" />
     <table-filter match-name="fs_model180" exclude="true" />
 	<table-filter match-name="fs_model180_detail" exclude="true" />
@@ -118,6 +117,9 @@
 		<column name="remarks" type="text"/>
 		<foreign-key constraint-name="FK_ALLOTMENT_AGENCY">
 			<many-to-one property="agency" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_ALLOTMENT_AGENCY_GROUP">
+			<many-to-one property="agencyGroup" />
 		</foreign-key>
 	</table>
 	
