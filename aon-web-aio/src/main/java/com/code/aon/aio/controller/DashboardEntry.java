@@ -1,11 +1,14 @@
 package com.code.aon.aio.controller;
 
+import java.util.List;
+
 public class DashboardEntry {
 
 	private String name;
 	private double value;
 	private String[] seriesKeys;
 	private double[] seriesValues;
+	private List<Integer> types ;
 
 	public String getName() {
 		return name;
@@ -31,4 +34,13 @@ public class DashboardEntry {
 	public void setSeriesValues(double[] seriesValues) {
 		this.seriesValues = seriesValues;
 	}
+	
+	public List<Integer> getTypes() {
+		return types;
+	}
+	
+	public void setTypes(List<Integer> types) {
+		this.types = types;
+	}
+	
 }

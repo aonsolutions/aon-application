@@ -294,6 +294,14 @@ public class DesktopController {
 		AppParamUtil.removeParameter(AppParam.AON_SUPPORT_ENABLED);
 	}
 
+	public boolean isPayrollEnabled() {
+		if ( AonUtil.getRoleManager().isPayroll() ) {
+			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			return ! adc.isDeniedModule(Module.PAYROLL.getName());
+		}
+		return false;
+	}
+
 	public boolean isFiscalEnabled() {
 		if ( AonUtil.getRoleManager().isFiscal() ) {
 			ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);

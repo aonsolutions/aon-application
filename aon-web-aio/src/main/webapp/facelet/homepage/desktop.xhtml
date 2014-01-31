@@ -55,6 +55,9 @@
 						<c:if test="#{desktop.fiscalEnabled}">
 							<ui:include	src="/facelet/homepage/portlet/fiscalDashboardPortlet.xhtml" />
 						</c:if>
+						<c:if test="#{desktop.payrollEnabled}">
+							<ui:include	src="/facelet/homepage/portlet/payrollDashboardPortlet.xhtml" />
+						</c:if>
 						<c:if test="#{!desktop.fiscalEnabled}">
 							<ui:include src="/facelet/homepage/portlet/optionFavoritePortlet.xhtml" />
 						</c:if>
