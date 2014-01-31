@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.28.3
+# Version: 7.29.0
 # Created by: girazu
-# Creation Date: 30/01/2014 10:40
+# Creation Date: 31/01/2014 12:45
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1510,7 +1510,8 @@ CREATE TABLE `allotment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel',
-  `agency` int(4) NOT NULL COMMENT 'Identificador de la agencia de viajes',
+  `agency` int(4) default NULL COMMENT 'Identificador de la agencia de viajes',
+  `agency_group` int(4) default NULL COMMENT 'Identificador del Grupo de agencias',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio del Cupo',
   `end_date` date NOT NULL COMMENT 'Fecha de fin del Cupo',
   `quantity` int(4) default '0' COMMENT 'Cupo de Habitaciones',
@@ -1524,7 +1525,9 @@ CREATE TABLE `allotment` (
   KEY `IDX_ALLOTMENT_DOMAIN` (`domain`),
   KEY `IDX_ALLOTMENT_HOTEL` (`hotel`),
   KEY `IDX_ALLOTMENT_AGENCY` (`agency`),
+  KEY `IDX_ALLOTMENT_AGENCY_GROUP` (`agency_group`),
   CONSTRAINT `FK_ALLOTMENT_AGENCY` FOREIGN KEY (`agency`) REFERENCES `customer` (`registry`),
+  CONSTRAINT `FK_ALLOTMENT_AGENCY_GROUP` FOREIGN KEY (`agency_group`) REFERENCES `invoicing_group` (`id`),
   CONSTRAINT `FK_ALLOTMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ALLOTMENT_HOTEL` FOREIGN KEY (`hotel`) REFERENCES `hotel` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cupos de seguridad';
@@ -7575,7 +7578,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.28.3');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.29.0');
 
 COMMIT;
 
