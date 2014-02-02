@@ -2493,8 +2493,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			draft.setCategoriesMap(allCategories);
 			draft.setDatesWithChanges(datesWithChanges);
 
-			eval(draft.getId(), allSalaryTable, draft.getStartDate(),
-					draft.getEndDate());
+			eval(draft.getId(), allLevels, allSalaryTable,
+					draft.getStartDate(), draft.getEndDate());
 
 		} finally {
 			if (connection != null)
@@ -3474,8 +3474,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	private static void eval(int agreementId, SalaryTable salaryTable,
-			Date start, Date end) {
+	private static void eval(int agreementId, Set<Level> levels,
+			SalaryTable salaryTable, Date start, Date end) {
 		// try to resolve some variables. Here we go.
 		Connection conn = null;
 		try {
@@ -3488,24 +3488,25 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			LinkedList<Variable> defVars = new LinkedList<Variable>(
 					salaryTable.getVariables(0));
 
-			for (int level : salaryTable.getAllLevels()) {
+			for (Level level : levels) {
 
 				AgreementContextKey levelKey = new AgreementContextKey(
-						agreementId, level);
+						agreementId, level.getId());
 				ExpressionContext levelCtx = factory.create(levelKey);
 
-				
 				for (Variable defVar : defVars)
-					if( !salaryTable.contains(level, defVar.getName()))
-							salaryTable.put(level, copy(defVar));
+					if (!salaryTable.contains(level.getId(), defVar.getName()))
+						salaryTable.put(level.getId(), copy(defVar));
 
 				LinkedList<Variable> levelVars = new LinkedList<Variable>(
-						salaryTable.getVariables(level));
-				
+						salaryTable.getVariables(level.getId()));
+
 				eval(levelCtx, levelVars, start, end);
 			}
 
 		} catch (Throwable e) {
+			System.out.println(e.getClass().getName());
+			// e.printStackTrace();
 		} finally {
 			if (conn != null)
 				try {
@@ -3515,7 +3516,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			;
 		}
 	}
-	
+
 	private static Variable copy(Variable var) {
 		Variable copy = new StringVariable();
 		copy.setImplicit(true);
@@ -3526,7 +3527,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		copy.setExpression(var.getExpression());
 		return copy;
 	}
-	
 
 	private static void eval(ExpressionContext ctx, LinkedList<Variable> vars,
 			Date start, Date end) {
@@ -3540,10 +3540,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				for (ITimedResult<Object> result : results) {
 					var.setValue(result.getValue());
 					ctx.addVariable(var.getName(), result);
-					//System.out.println(var.getName() + " = " + var.getValue());
+					// System.out.println(var.getName() + " = " +
+					// var.getValue());
 				}
 			} catch (UndefinedVariablesException e) {
 				vars.add(var);
+				errors++;
+			} catch (CompileException e) {
+				var.setValue(generateErrorMessage(e));
 				errors++;
 			} catch (ExpressionException e) {
 				errors++;
@@ -3551,6 +3555,34 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				// very hepfull.
 			}
 		}
+	}
+
+	private static String generateErrorMessage(CompileException e) {
+		char expr [] = e.getExpr();
+		int cursor = e.getCursor();
+		return String.format("Error sintactico cerca de '%s'",
+				showCodeNearError(expr, cursor));
+	}
+
+	private static CharSequence showCodeNearError(char[] expr, int cursor) {
+		if (expr == null)
+			return "???";
+
+		int end = Math.min(cursor + 10, expr.length - 1);
+		int start = Math.max(0, end - 20);
+
+		while (start < end && Character.isWhitespace(expr[start]))
+			start++;
+
+		CharSequence cs = null;
+
+		try {
+			cs = String.copyValueOf(expr, start, end - start);
+		} catch (StringIndexOutOfBoundsException e) {
+			throw e;
+		}
+
+		return cs;
 	}
 
 	private static void deleteSalaries(Connection conn, int... ids)
