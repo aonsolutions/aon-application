@@ -463,6 +463,10 @@ public class AgreementDraftObject implements IContextProvider {
 
 				});
 	}
+	
+	public void preview(AsyncCallback<String> callback) {
+		//employeesServiceAsync.getSalaryDraftReceiptHTML(salaryPreview, zoom, callback);
+	}
 
 	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {
 		employeesServiceAsync.getAvailablePayments(Integer.MIN_VALUE, callback);
