@@ -33,7 +33,7 @@ public class ExpressionContext {
 
 	public abstract static class DeferredException extends ExpressionException {
 
-		public abstract void eval(ExpressionContext context);
+		public abstract void eval(ExpressionContext context) throws ExpressionException;
 
 	}
 
@@ -87,15 +87,11 @@ public class ExpressionContext {
 		}
 
 		@Override
-		public void eval(ExpressionContext context) {
-			try {
-				List<ITimedResult<Object>> results = context.eval(
-						expression.getExpression(), start, end);
-				for (ITimedResult<Object> result : results)
-					context.addVariable(expression.getName(), result);
-			} catch (ExpressionException e) {
-				throw new ExpressionExceptionWrapper(e);
-			}
+		public void eval(ExpressionContext context) throws ExpressionException {
+			List<ITimedResult<Object>> results = context.eval(
+					expression.getExpression(), start, end);
+			for (ITimedResult<Object> result : results)
+				context.addVariable(expression.getName(), result);
 		}
 	}
 
