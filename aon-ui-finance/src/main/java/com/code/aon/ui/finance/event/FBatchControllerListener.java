@@ -11,7 +11,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
-import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.finance.controller.FBatchController;
 import com.code.aon.ui.finance.controller.FBatchDetailController;
@@ -74,7 +73,7 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
     public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
         FBatchController fBatchController = (FBatchController)event.getController();
         FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
-        if (fBatch.getFinanceBatchType() == FinanceBatchType.AEB_19 || fBatch.getFinanceBatchType() == FinanceBatchType.AEB_19_D || fBatch.getFinanceBatchType() == FinanceBatchType.SEPA_19_14_CORE_XML) {
+        if (fBatch.getFinanceBatchType().is19()) {
             try {
                 Criteria criteria = new Criteria();
                 criteria.addEqualExpression(fBatchController.getFieldName(IEntityAlias.FINANCE_BATCH_ID), fBatch.getId());

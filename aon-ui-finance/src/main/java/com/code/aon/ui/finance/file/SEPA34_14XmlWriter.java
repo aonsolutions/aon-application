@@ -120,13 +120,15 @@ public class SEPA34_14XmlWriter {
 	}
 
 	public static Address getAddress( IAddress iAddress ) {
+		String countryCode = Country.ES.getValue();
 		Address result = new Address();
 		if ( iAddress.getGeozone() != null ) {
 			GeoZone country = iAddress.getGeozone().getGeoZoneCountry();
 			if ( country != null ) {
-				result.setCountry(country.getCode());	
+				countryCode = country.getCode();	
 			}
 		}
+		result.setCountry(countryCode);
 		StringBuffer sb = new StringBuffer();
 		sb.append(iAddress.getFullAddress());
 		if (! StringUtils.isEmpty(iAddress.getZip()) ) {
@@ -142,20 +144,24 @@ public class SEPA34_14XmlWriter {
 	
 	private String getCategoryPurposeCode( Finance finance ) {
 		String code = null;
-		switch( finance.getPayMethod().getType() ) {
-			case CREDIT_CARD:
-				code = "CCRD";
-				break;
-			case DEBIT_CARD:
-				code = "DCRD";
-				break;
-			case CASH_BASIS:
-			case BANK_TRANSFER:
-			case CHEQUE:				
-			case NEGOTIABLE_DOCUMENT:
-			case OTHER:
-			default:
-				code = "CASH";
+		if ( finance.isPayroll() ) {
+			code = "SALA";
+		} else {
+			switch( finance.getPayMethod().getType() ) {
+				case CREDIT_CARD:
+					code = "CCRD";
+					break;
+				case DEBIT_CARD:
+					code = "DCRD";
+					break;
+				case CASH_BASIS:
+				case BANK_TRANSFER:
+				case CHEQUE:				
+				case NEGOTIABLE_DOCUMENT:
+				case OTHER:
+				default:
+					code = "CASH";
+			}			
 		}
 		return code;
 	}

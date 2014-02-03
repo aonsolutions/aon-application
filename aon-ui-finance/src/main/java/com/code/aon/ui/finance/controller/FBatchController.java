@@ -208,7 +208,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 			PayMethod payMethod = (PayMethod) iter.next();
 			boolean validPayMethod = true;
 			if (to.getFinanceBatchType() != (FinanceBatchType.NONE)) {
-				if (to.getFinanceBatchType() != FinanceBatchType.AEB_34 && to.getFinanceBatchType() != FinanceBatchType.AEB_34_N && to.getFinanceBatchType() != FinanceBatchType.SEPA_34_14_XML) {
+				if (!to.getFinanceBatchType().is34()) {
 					validPayMethod = (payMethod.getType() == PayMethodType.NEGOTIABLE_DOCUMENT);
 				} else {
 					validPayMethod = (payMethod.getType() == PayMethodType.CHEQUE || payMethod.getType() == PayMethodType.BANK_TRANSFER);
@@ -236,7 +236,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYROLL), isPayroll());
         if (to.getFinanceBatchType() != (FinanceBatchType.NONE)) {
             criteria.addGreaterThanExpression(financeController.getFieldName(IEntityAlias.FINANCE_AMOUNT), new Double(0));
-        	if (to.getFinanceBatchType() != FinanceBatchType.AEB_34 && to.getFinanceBatchType() != FinanceBatchType.AEB_34_N && to.getFinanceBatchType() != FinanceBatchType.SEPA_34_14_XML) {
+        	if (!to.getFinanceBatchType().is34()) {
         		String payMethodTypeAlias = financeController.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE);
         		criteria.addEqualExpression(payMethodTypeAlias, PayMethodType.NEGOTIABLE_DOCUMENT);
         	} else {
@@ -245,12 +245,12 @@ public class FBatchController extends BasicController implements ICollectionProv
                 Expression chequeExpr = ExpressionUtilities.getEqualExpression(payMethodTypeAlias, PayMethodType.CHEQUE);
                 criteria.addExpression(ExpressionUtilities.getOrExpression(transferExpr, chequeExpr));
 
-                criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYROLL), (to.getFinanceBatchType() == FinanceBatchType.AEB_34_N));
+                criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYROLL), to.getFinanceBatchType().isPayroll());
         	}
             if ((to.getFinanceBatchType() != FinanceBatchType.AEB_58) && (to.getFinanceBatchType() != FinanceBatchType.AEB_58_D)) {
             	criteria.addNotNullExpression(financeController.getFieldName(IEntityAlias.FINANCE_BANK_ACCOUNT));
             	criteria.addNotEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_BANK_ACCOUNT), new BankAccount());
-                if ((to.getFinanceBatchType() == FinanceBatchType.AEB_19) || (to.getFinanceBatchType() == FinanceBatchType.AEB_19_D) || (to.getFinanceBatchType() == FinanceBatchType.SEPA_19_14_CORE_XML)) {
+                if ( to.getFinanceBatchType().is19() ) {
                     criteria.addLessThanOrEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_DUE_DATE), to.getIssueDate());
                 }
             }
@@ -416,7 +416,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 			this.mimeType = MimeType.MIME_XML;
 			SEPA19_14CoreXmlWriter sepaWriter = new SEPA19_14CoreXmlWriter();
 			aebOutput = sepaWriter.createXml(getCompany(), fbatch, fbatchDetailCollection);
-		} else if (fbatch.getFinanceBatchType() == FinanceBatchType.SEPA_34_14_XML) {
+		} else if ((fbatch.getFinanceBatchType() == FinanceBatchType.SEPA_34_14_XML) || (fbatch.getFinanceBatchType() == FinanceBatchType.SEPA_34_14_N_XML)) {			
 			this.mimeType = MimeType.MIME_XML;
 			SEPA34_14XmlWriter sepaWriter = new SEPA34_14XmlWriter();
 			aebOutput = sepaWriter.createXml(getCompany(), fbatch, fbatchDetailCollection);
