@@ -74,7 +74,7 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
     public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
         FBatchController fBatchController = (FBatchController)event.getController();
         FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
-        if (fBatch.getFinanceBatchType() == FinanceBatchType.AEB_19 || fBatch.getFinanceBatchType() == FinanceBatchType.AEB_19_D) {
+        if (fBatch.getFinanceBatchType() == FinanceBatchType.AEB_19 || fBatch.getFinanceBatchType() == FinanceBatchType.AEB_19_D || fBatch.getFinanceBatchType() == FinanceBatchType.SEPA_19_14_CORE_XML) {
             try {
                 Criteria criteria = new Criteria();
                 criteria.addEqualExpression(fBatchController.getFieldName(IEntityAlias.FINANCE_BATCH_ID), fBatch.getId());

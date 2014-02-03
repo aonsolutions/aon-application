@@ -208,7 +208,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 			PayMethod payMethod = (PayMethod) iter.next();
 			boolean validPayMethod = true;
 			if (to.getFinanceBatchType() != (FinanceBatchType.NONE)) {
-				if (to.getFinanceBatchType() != FinanceBatchType.AEB_34 && to.getFinanceBatchType() != FinanceBatchType.AEB_34_N) {
+				if (to.getFinanceBatchType() != FinanceBatchType.AEB_34 && to.getFinanceBatchType() != FinanceBatchType.AEB_34_N && to.getFinanceBatchType() != FinanceBatchType.SEPA_34_14_XML) {
 					validPayMethod = (payMethod.getType() == PayMethodType.NEGOTIABLE_DOCUMENT);
 				} else {
 					validPayMethod = (payMethod.getType() == PayMethodType.CHEQUE || payMethod.getType() == PayMethodType.BANK_TRANSFER);
@@ -236,7 +236,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYROLL), isPayroll());
         if (to.getFinanceBatchType() != (FinanceBatchType.NONE)) {
             criteria.addGreaterThanExpression(financeController.getFieldName(IEntityAlias.FINANCE_AMOUNT), new Double(0));
-        	if (to.getFinanceBatchType() != FinanceBatchType.AEB_34 && to.getFinanceBatchType() != FinanceBatchType.AEB_34_N) {
+        	if (to.getFinanceBatchType() != FinanceBatchType.AEB_34 && to.getFinanceBatchType() != FinanceBatchType.AEB_34_N && to.getFinanceBatchType() != FinanceBatchType.SEPA_34_14_XML) {
         		String payMethodTypeAlias = financeController.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE);
         		criteria.addEqualExpression(payMethodTypeAlias, PayMethodType.NEGOTIABLE_DOCUMENT);
         	} else {
@@ -250,7 +250,7 @@ public class FBatchController extends BasicController implements ICollectionProv
             if ((to.getFinanceBatchType() != FinanceBatchType.AEB_58) && (to.getFinanceBatchType() != FinanceBatchType.AEB_58_D)) {
             	criteria.addNotNullExpression(financeController.getFieldName(IEntityAlias.FINANCE_BANK_ACCOUNT));
             	criteria.addNotEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_BANK_ACCOUNT), new BankAccount());
-                if ((to.getFinanceBatchType() == FinanceBatchType.AEB_19) || (to.getFinanceBatchType() == FinanceBatchType.AEB_19_D)) {
+                if ((to.getFinanceBatchType() == FinanceBatchType.AEB_19) || (to.getFinanceBatchType() == FinanceBatchType.AEB_19_D) || (to.getFinanceBatchType() == FinanceBatchType.SEPA_19_14_CORE_XML)) {
                     criteria.addLessThanOrEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_DUE_DATE), to.getIssueDate());
                 }
             }
