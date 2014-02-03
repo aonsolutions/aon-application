@@ -62,10 +62,11 @@
 										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
 										<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="190"/></td>
 										<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="180"/></td>
-										<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="184"/></td>
 										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
 										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
-										<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="391"/></td>
+										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
+										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
+										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
 										<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="390"/></td>
 										<td style="width: 25px; font-weight: bold;"><aon:outputText value="&#160;"/></td>
 										<td style="width: 25px; border: solid #BBB 1px; font-weight: bold;"><aon:outputText value="347"/></td>
@@ -75,10 +76,11 @@
 											<aon:outputText value="#{fs.period}"/>
 										</td>
 										<c:forEach var="fsmodel" items="#{dashboard.models}">
-											<c:if test="#{fsmodel == '130' or fsmodel == '131' or fsmodel == '349'}">
+											<c:if test="#{fsmodel == '130' or fsmodel == '131' or fsmodel == '349' or fsmodel == '310' or fsmodel == '311'}">
 												<td></td>
 											</c:if>
-											<c:if test="#{fsmodel != '130' and fsmodel != '131' and fsmodel != '349'}">
+											<c:if test="#{fsmodel != '130' and fsmodel != '131' and 
+														  fsmodel != '349' and fsmodel != '310' and fsmodel != '311'}">
 												<td style="border: solid #BBB 1px;">
 													<aon:outputText value="--"
 														rendered="#{fs.models[fsmodel] == -1}"

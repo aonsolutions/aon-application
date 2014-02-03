@@ -62,7 +62,7 @@ public class DashboardController {
 	private DashboardEntry[] contractMonthsEntriesCount;
 	private List<DashboardFiscalStatus> fiscalStatus;
 	private static String[] MODELS = new String[] { "111", "115", "123", "130",
-			"131", "310", "303", "349", "347" };
+			"131", "310", "311", "303", "349", "347" };
 
 	private com.code.aon.accounting.Period accountingPeriod;
 	private Integer fiscalYear;
@@ -231,7 +231,25 @@ public class DashboardController {
 					+ " FROM fs_mod347 m347"
 					+ WHERE
 					+ DomainManager.getSQLWhereClause("m347.domain")
-					+ " AND m347.year = (? - 1)";
+					+ " AND m347.year = (? - 1)"
+					+ " UNION "
+					+ "SELECT '115',16,1"
+					+ " FROM fs_model180 m180"
+					+ WHERE
+					+ DomainManager.getSQLWhereClause("m180.domain")
+					+ " AND m180.year = ?"
+					+ " UNION "
+					+ "SELECT '111',16,1"
+					+ " FROM fs_model190 m190"
+					+ WHERE
+					+ DomainManager.getSQLWhereClause("m190.domain")
+					+ " AND m190.year = ?"
+					+ " UNION "
+					+ "SELECT '303',16,1"
+					+ " FROM fs_model390 m390"
+					+ WHERE
+					+ DomainManager.getSQLWhereClause("m390.domain")
+					+ " AND m390.year = ?";
 			PreparedStatement ps = null;
 			ResultSet rs = null;
 			Connection c = null;
@@ -255,11 +273,16 @@ public class DashboardController {
 				ps.setInt(2, getFiscalYear());
 				ps.setInt(3, getFiscalYear());
 				ps.setInt(4, getFiscalYear());
+				ps.setInt(5, getFiscalYear());
+				ps.setInt(6, getFiscalYear());
+				ps.setInt(7, getFiscalYear());
 				rs = ps.executeQuery();
 				while (rs.next()) {
 					String model = rs.getString(1);
 					Period period = Period.values()[rs.getInt(2)];
 					int exists = rs.getInt(3);
+					
+					System.out.println( model + " -- " + rs.getInt(2));
 					if (rs.wasNull()) {
 						exists = -1;
 					}
