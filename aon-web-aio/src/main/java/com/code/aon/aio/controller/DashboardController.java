@@ -268,7 +268,6 @@ public class DashboardController {
 				c = DatabaseUtil.getConnection(AonUtil.getDomainName());
 				ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
 						ResultSet.CONCUR_READ_ONLY);
-				System.out.println(getFiscalYear());
 				ps.setInt(1, getFiscalYear());
 				ps.setInt(2, getFiscalYear());
 				ps.setInt(3, getFiscalYear());
@@ -281,8 +280,6 @@ public class DashboardController {
 					String model = rs.getString(1);
 					Period period = Period.values()[rs.getInt(2)];
 					int exists = rs.getInt(3);
-					
-					System.out.println( model + " -- " + rs.getInt(2));
 					if (rs.wasNull()) {
 						exists = -1;
 					}
