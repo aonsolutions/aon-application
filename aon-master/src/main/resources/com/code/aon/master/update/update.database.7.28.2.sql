@@ -208,14 +208,14 @@ INSERT INTO `nrbe_to_bic` VALUES
 	('9094','MEFFESBBXXX'),
 	('9096','IBRCESMMXXX');
 
-UPDATE `rbank`, `nrbe_to_bic` SET `rbank`.`bic` = `nrbe_to_bic`.`bic` WHERE `rbank`.`bic` IS NULL AND SUBSTRING(`rbank`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`rbank`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
-UPDATE `offer`, `nrbe_to_bic` SET `offer`.`bic` = `nrbe_to_bic`.`bic` WHERE `offer`.`bank_account` IS NOT NULL AND `offer`.`bic` IS NULL AND SUBSTRING(`offer`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`offer`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
-UPDATE `sales`, `nrbe_to_bic` SET `sales`.`bic` = `nrbe_to_bic`.`bic` WHERE `sales`.`bank_account` IS NOT NULL AND `sales`.`bic` IS NULL AND SUBSTRING(`sales`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`sales`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
-UPDATE `purchase`, `nrbe_to_bic` SET `purchase`.`bic` = `nrbe_to_bic`.`bic` WHERE `purchase`.`bank_account` IS NOT NULL AND `purchase`.`bic` IS NULL AND SUBSTRING(`purchase`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`purchase`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
-UPDATE `delivery`, `nrbe_to_bic` SET `delivery`.`bic` = `nrbe_to_bic`.`bic` WHERE `delivery`.`bank_account` IS NOT NULL AND `delivery`.`bic` IS NULL AND SUBSTRING(`delivery`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`delivery`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
-UPDATE `income`, `nrbe_to_bic` SET `income`.`bic` = `nrbe_to_bic`.`bic` WHERE `income`.`bank_account` IS NOT NULL AND `income`.`bic` IS NULL AND SUBSTRING(`income`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`income`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
-UPDATE `finance`, `nrbe_to_bic` SET `finance`.`bic` = `nrbe_to_bic`.`bic` WHERE `finance`.`bank_account` IS NOT NULL AND `finance`.`bic` IS NULL AND SUBSTRING(`finance`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`finance`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
-UPDATE `rsupplier`, `nrbe_to_bic` SET `rsupplier`.`bic` = `nrbe_to_bic`.`bic` WHERE `rsupplier`.`bank_account` IS NOT NULL AND `rsupplier`.`bic` IS NULL AND SUBSTRING(`rsupplier`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`rsupplier`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
+UPDATE `rbank`, `nrbe_to_bic` SET `rbank`.`bic` = `nrbe_to_bic`.`bic` WHERE (`rbank`.`bic` IS NULL OR TRIM(`rbank`.`bic`) = '') AND SUBSTRING(`rbank`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`rbank`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
+UPDATE `offer`, `nrbe_to_bic` SET `offer`.`bic` = `nrbe_to_bic`.`bic` WHERE `offer`.`bank_account` IS NOT NULL AND (`offer`.`bic` IS NULL OR TRIM(`offer`.`bic`) = '') AND SUBSTRING(`offer`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`offer`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
+UPDATE `sales`, `nrbe_to_bic` SET `sales`.`bic` = `nrbe_to_bic`.`bic` WHERE `sales`.`bank_account` IS NOT NULL AND (`sales`.`bic` IS NULL OR TRIM(`sales`.`bic`) = '') AND SUBSTRING(`sales`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`sales`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
+UPDATE `purchase`, `nrbe_to_bic` SET `purchase`.`bic` = `nrbe_to_bic`.`bic` WHERE `purchase`.`bank_account` IS NOT NULL AND (`purchase`.`bic` IS NULL OR TRIM(`purchase`.`bic`) = '') AND SUBSTRING(`purchase`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`purchase`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
+UPDATE `delivery`, `nrbe_to_bic` SET `delivery`.`bic` = `nrbe_to_bic`.`bic` WHERE `delivery`.`bank_account` IS NOT NULL AND (`delivery`.`bic` IS NULL OR TRIM(`delivery`.`bic`) = '') AND SUBSTRING(`delivery`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`delivery`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
+UPDATE `income`, `nrbe_to_bic` SET `income`.`bic` = `nrbe_to_bic`.`bic` WHERE `income`.`bank_account` IS NOT NULL AND (`income`.`bic` IS NULL OR TRIM(`income`.`bic`) = '') AND SUBSTRING(`income`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`income`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
+UPDATE `finance`, `nrbe_to_bic` SET `finance`.`bic` = `nrbe_to_bic`.`bic` WHERE `finance`.`bank_account` IS NOT NULL AND (`finance`.`bic` IS NULL OR TRIM(`finance`.`bic`) = '') AND SUBSTRING(`finance`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`finance`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
+UPDATE `rsupplier`, `nrbe_to_bic` SET `rsupplier`.`bic` = `nrbe_to_bic`.`bic` WHERE `rsupplier`.`bank_account` IS NOT NULL AND (`rsupplier`.`bic` IS NULL OR TRIM(`rsupplier`.`bic`) = '') AND SUBSTRING(`rsupplier`.`bank_account`,1,2) = 'ES' AND SUBSTRING(`rsupplier`.`bank_account`,5,4) = `nrbe_to_bic`.`nrbe`;
 
 DROP TABLE `nrbe_to_bic`;
 
