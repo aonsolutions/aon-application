@@ -22,7 +22,6 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.customer.Customer;
@@ -123,7 +122,6 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 		Connection connection = null;
 		PreparedStatement bookingStmt = null;
 		ResultSet bookingRs = null;
-		int hotelRooms = 0;
 		try {
 			initializeBookingList();
 
@@ -161,10 +159,7 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 						} else {
 							dayBooking.setRoomBlocked(rooms);
 						}
-						dayBooking.setRoomTotal(hotelRooms);
 					}
-				} else {
-					hotelRooms = rooms;
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -186,25 +181,37 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 		}
 	}
 	
-	private void initializeBookingList() throws ManagerBeanException {
+	private void initializeBookingList() throws AonSQLException {
 		setBookingList(new LinkedList<RoomBookingController.DayBooking>());
-		if (getHotel() != null && getHotel().getId()!=null) {
-			for (Date date=DateUtils.truncate(getFromDate(), Calendar.DATE); !date.after(getToDate()); date=DateUtils.addDays(date, 1)) {
-				DayBooking dayBooking = new DayBooking();
-				dayBooking.setHotel(getHotel().getWorkPlace().getDescription());
-				dayBooking.setDate(date);
-				getBookingList().add(dayBooking);
-			}
-		} else {
-			PmsCollectionsController collectionsController = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
-			for (ITransferObject ito: collectionsController.getCurrentUserHotelList()) {
+
+		Connection connection = null;
+		PreparedStatement totalStmt = null;
+		ResultSet totalRs = null;
+		try {
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			totalStmt = connection.prepareStatement(getRoomTotalSQL());
+			totalRs = totalStmt.executeQuery();
+			while (totalRs.next()) {
+				String hotel = totalRs.getString(HOTEL);
+				int rooms = totalRs.getInt(ROOMS);
 				for (Date date=DateUtils.truncate(getFromDate(), Calendar.DATE); !date.after(getToDate()); date=DateUtils.addDays(date, 1)) {
 					DayBooking dayBooking = new DayBooking();
-					dayBooking.setHotel(((Hotel)ito).getWorkPlace().getDescription());
+					dayBooking.setHotel(hotel);
 					dayBooking.setDate(date);
+					dayBooking.setRoomTotal(rooms);
 					getBookingList().add(dayBooking);
 				}
 			}
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+			throw new AonSQLException(e);
+		} finally {
+			SQLUtils.closeQuietly(totalRs);
+			SQLUtils.closeQuietly(totalStmt);
+			SQLUtils.closeQuietly(connection);
 		}
 	}
 
@@ -241,9 +248,14 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 			stmt.append(" AND R.item = " + getItem().getId());
 		}
 		stmt.append(" GROUP BY W.description, AA.date");
-		stmt.append(" UNION ");
-		stmt.append("SELECT W.description AS " + HOTEL + ", NULL AS " + STAY_DATE + ", 20 AS " + STAY_TYPE);
-		stmt.append(", COUNT(*) AS " + ROOMS + ", 0 AS " + GUESTS);
+		stmt.append(" ORDER BY " + HOTEL + "," + STAY_DATE + "," + STAY_TYPE);
+
+		return stmt.toString();
+	}
+
+	private String getRoomTotalSQL() throws ManagerBeanException {
+		StringWriter stmt = new StringWriter();
+		stmt.append("SELECT W.description AS " + HOTEL + ", COUNT(*) AS " + ROOMS);
 		stmt.append(" FROM room AS R, hotel as H, workplace AS W");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("R.domain"));
 		stmt.append(" AND R.active = 1");
@@ -254,7 +266,7 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 			stmt.append(" AND R.item = " + getItem().getId());
 		}
 		stmt.append(" GROUP BY W.description");
-		stmt.append(" ORDER BY " + HOTEL + "," + STAY_DATE + "," + STAY_TYPE);
+		stmt.append(" ORDER BY " + HOTEL);
 
 		return stmt.toString();
 	}
