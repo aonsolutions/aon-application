@@ -62,7 +62,10 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		}
 		controller.setItems((Item[])ArrayUtils.removeElement(controller.getItems(), null));
 		controller.setTariffs((Tariff[])ArrayUtils.removeElement(controller.getTariffs(), null));
-		verifyAllotmentOverlap(allotment);
+
+		if (allotment.isActive()) {
+			verifyAllotmentOverlap(allotment);
+		}
 	}
 
 	@Override
@@ -86,7 +89,10 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		}
 		controller.setItems((Item[])ArrayUtils.removeElement(controller.getItems(), null));
 		controller.setTariffs((Tariff[])ArrayUtils.removeElement(controller.getTariffs(), null));
-		verifyAllotmentOverlap(allotment);
+
+		if (allotment.isActive()) {
+			verifyAllotmentOverlap(allotment);
+		}
 	}
 
 	@Override
