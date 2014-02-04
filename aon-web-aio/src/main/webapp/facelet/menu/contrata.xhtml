@@ -100,17 +100,6 @@
 									<aon:outputText value="#{bundle.aon_configuration}"/>
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-								
-									<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="enterprise-contrata"
-												action="#{enterprise.initialAction}"
-												value="#{bundle.company_data_module}">
-												<aon:actionListener method="#{enterprise.onEditSearch}" />
-											</aon:commandLink>
-										</aon:div>
-									</c:if>
-								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sepeAppParams-contrata" 
 											action="sepeAppParams_form-contrata"

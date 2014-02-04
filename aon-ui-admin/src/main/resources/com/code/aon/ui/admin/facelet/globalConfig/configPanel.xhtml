@@ -41,7 +41,7 @@
 								actionListener="#{companyAddress.onCancel}"
 								value="#{bundle.registry_addresses}" />
 						</aon:div>
-						<c:if test="#{!(actionDenied.moduleEnabled['payroll'] and aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData)}">
+						<c:if test="#{!((actionDenied.moduleEnabled['payroll'] or actionDenied.moduleEnabled['contrata']) and aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData)}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="workplaces" 
 									reRender="configPanelBar,configContent"
@@ -50,7 +50,7 @@
 									value="#{bundle.company_workplaces}" />
 							</aon:div>
 						</c:if>
-						<c:if test="#{actionDenied.moduleEnabled['payroll'] and aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData}">
+						<c:if test="#{(actionDenied.moduleEnabled['payroll'] or actionDenied.moduleEnabled['contrata']) and aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="payrollWorkplaces" 
 									reRender="configPanelBar,configContent"
@@ -147,7 +147,7 @@
 									value="#{bundle.finance_conecta_module}" />
 							</aon:div>
 						</c:if>
-						<c:if test="#{actionDenied.moduleEnabled['payroll'] and aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData}">
+						<c:if test="#{(actionDenied.moduleEnabled['payroll'] or actionDenied.moduleEnabled['contrata']) and aonRole.payroll and aonConfiguration.bean.enterprise.showPayrollData}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="payrollParameters" 
 									reRender="configPanelBar,configContent"
