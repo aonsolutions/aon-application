@@ -75,6 +75,16 @@
 							value="#{true}" />
 					</aon:menuItem>
 				</ui:define>
+				<ui:define name="beforeSpinToolbarContent">				
+					<aon:commandButton id="audit-info"
+						styleClass="aon-finding-toolbar-item aon-icon-audit"
+						value="#{bundle.aon_audit}"
+						rendered="#{!reservation.new}"
+						reRender="showAuditInfoWindow">
+						<f:setPropertyActionListener target="#{reservation.showAuditInfoWindow}"
+							value="#{true}" />							
+					</aon:commandButton>	
+				</ui:define>				
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
@@ -135,6 +145,9 @@
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/modalConfirm.xhtml">
 			<ui:param name="controller" value="#{reservation}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/common/facelet/auditable/modalAuditInfo.xhtml">
+			<ui:param name="auditableController" value="#{reservation}" />
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalInvoice.xhtml">
 			<ui:param name="controller" value="#{reservation}" />

@@ -77,6 +77,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	private Tariff roomTariff;
 	private boolean showConfirmWindow;
 	private boolean confirmNoShow;
+	private boolean showAuditInfoWindow;
 	private boolean showInvoiceWindow;
 	private ReservationInvoiceTo reservationInvoiceTo;
 	private boolean showRectificationWindow;
@@ -211,6 +212,14 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void setConfirmNoShow(boolean confirmNoShow) {
 		this.confirmNoShow = confirmNoShow;
 	}
+
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}	
 
 	public boolean isShowInvoiceWindow() {
 		return showInvoiceWindow;
