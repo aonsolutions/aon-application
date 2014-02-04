@@ -1,0 +1,173 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>7.29-SNAPSHOT</version>
+	</parent>
+	<groupId>com.esferalia.aon</groupId>
+	<artifactId>aon.master.sql</artifactId>
+	<name>AON MASTER SQL</name>
+	<description>AON MASTER SQL</description>
+
+	<build>
+		<plugins>
+			<!-- Para poder acceder a las variables del build. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
+				</configuration>
+			</plugin>
+
+			<!-- Para añadir la carpeta de los fuentes generados como source folder. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>
+									${project.build.directory}/generated-sources/entity
+								</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+<!--
+			<plugin>
+				<groupId>com.esferalia.aon</groupId>
+				<artifactId>aon-maven-plugin</artifactId>
+				<version>${project.version}</version>
+				<executions>
+					<execution>
+						<id>create-db</id>
+						<goals>
+							<goal>create-db</goal>
+						</goals>
+						<configuration>
+							<dbName>aon_reveng_${buildNumber}</dbName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+-->
+
+			<plugin>
+
+				<!-- Specify the maven code generator plugin -->
+				<groupId>org.jooq</groupId>
+				<artifactId>jooq-codegen-maven</artifactId>
+				<version>3.1.0</version>
+
+				<!-- The plugin should hook into the generate goal -->
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<!-- Manage the plugin's dependency. In this example, we'll use a PostgreSQL 
+					database -->
+				<dependencies>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>5.0.8</version>
+					</dependency>
+				</dependencies>
+
+				<!-- Specify the plugin configuration. The configuration format is the 
+					same as for the standalone code generator -->
+				<configuration>
+
+					<!-- JDBC connection parameters -->
+					<jdbc>
+						<driver>org.gjt.mm.mysql.Driver</driver>
+						<url>jdbc:mysql://127.0.0.1:3306</url>
+						<user>dbuser</user>
+						<password>serubd2000</password>
+					</jdbc>
+					<!-- Generator parameters -->
+					<generator>
+						<name>org.jooq.util.DefaultGenerator</name>
+						<database>
+							<name>org.jooq.util.mysql.MySQLDatabase</name>
+							<includes>.*</includes>
+							<excludes></excludes>
+							<!-- 
+							<inputSchema>aon_reveng_${buildNumber}</inputSchema>
+							 -->
+							<inputSchema>aon_jooq</inputSchema>
+						</database>
+						<target>
+							<packageName>com.esferalia.aon.entity.jooq</packageName>
+							<directory>target/generated-sources/</directory>
+						</target>
+					</generator>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon-master</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq</artifactId>
+			<version>3.2.2</version>
+			<scope>compile</scope>
+		</dependency>
+			
+			
+		<!-- QUITAR   
+		-->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.24</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.pool</artifactId>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.2</version>
+			<scope>runtime</scope>
+		</dependency>
+			
+	</dependencies>
+</project>
