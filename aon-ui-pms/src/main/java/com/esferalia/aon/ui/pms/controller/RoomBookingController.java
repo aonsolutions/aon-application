@@ -306,14 +306,14 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 		private Integer guestTotal;
 
 		public DayBooking() {
-			roomCheckin=0;
-			roomCheckout=0;
-			roomBusy=0;
-			roomBlocked=0;
-			roomTotal=0;
-			guestCheckin=0;
-			guestCheckout=0;
-			guestTotal=0;
+			roomCheckin = 0;
+			roomCheckout = 0;
+			roomBusy = 0;
+			roomBlocked = 0;
+			roomTotal = 0;
+			guestCheckin = 0;
+			guestCheckout = 0;
+			guestTotal = 0;
 		}
 
 		public String getHotel() {

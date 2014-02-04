@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -64,7 +65,7 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		controller.setTariffs((Tariff[])ArrayUtils.removeElement(controller.getTariffs(), null));
 
 		if (allotment.isActive()) {
-			verifyAllotmentOverlap(allotment);
+			verifyAllotmentOverlap(allotment, StringUtils.join(controller.getItemsIds(), ","), StringUtils.join(controller.getTariffsIds(), ","));
 		}
 	}
 
@@ -91,7 +92,7 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		controller.setTariffs((Tariff[])ArrayUtils.removeElement(controller.getTariffs(), null));
 
 		if (allotment.isActive()) {
-			verifyAllotmentOverlap(allotment);
+			verifyAllotmentOverlap(allotment, StringUtils.join(controller.getItemsIds(), ","), StringUtils.join(controller.getTariffsIds(), ","));
 		}
 	}
 
@@ -138,12 +139,12 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		return tariffs;
 	}
 
-	private void verifyAllotmentOverlap(Allotment allotment) throws ControllerListenerException {
+	private void verifyAllotmentOverlap(Allotment allotment, String items, String tariffs) throws ControllerListenerException {
 		Connection connection = null;
 		try {
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			if (SQLAllotment.isAllotmentOverlap(connection, allotment, null, null)) {
-				throw new ControllerListenerException("Ya existen Cupos definidos por Habitacion y Tarifa en ese Periodo.");
+			if (SQLAllotment.isAllotmentOverlap(connection, allotment, items, tariffs)) {
+				throw new ControllerListenerException("Ya existen Cupos definidos para la Agencia con esas condiciones.");
 			}
 		} catch (Throwable e) {
 			try {

@@ -69,10 +69,16 @@ public class SQLAllotment implements ISQLConstants {
 			where.append(" AND A.id != " + allotment.getId());
 		}
 		if (allotment.getAgency() != null && allotment.getAgency().getId() != null) {
-			where.append(" AND A.agency = " + allotment.getAgency().getId());
+			where.append(" AND (A.agency = " + allotment.getAgency().getId());
+			if (allotment.getAgency().getInvoicingGroup() != null && allotment.getAgency().getInvoicingGroup().getId() != null) {
+				where.append(" OR A.agency_group = " + allotment.getAgency().getInvoicingGroup().getId());
+			}
+			where.append(")");
 		}
 		if (allotment.getAgencyGroup() != null && allotment.getAgencyGroup().getId() != null) {
-			where.append(" AND A.agency_group = " + allotment.getAgencyGroup().getId());
+			where.append(" AND (A.agency_group = " + allotment.getAgencyGroup().getId());
+			where.append(" OR A.agency IN (SELECT registry FROM customer WHERE invoicing_group = " + allotment.getAgencyGroup().getId() + ")");
+			where.append(")");
 		}
 		if (StringUtils.isNotBlank(items)) {
 			where.append(" AND (AI.item IN (" + items + ") OR AI.item IS NULL)");

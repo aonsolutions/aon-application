@@ -106,6 +106,16 @@ public class AllotmentController extends BasicController implements IPmsConstant
 		setItem((Item)event.getNewValue());
 	}
 
+	public Integer[] getItemsIds() {
+		Integer[] itemsIds = ArrayUtils.EMPTY_INTEGER_OBJECT_ARRAY;
+		if (ArrayUtils.getLength(getItems()) > 0) {
+			for (Item item : getItems()) {
+				itemsIds = (Integer[])ArrayUtils.add(itemsIds, item.getId());
+			}
+		}
+		return itemsIds;
+	}
+
 	public int getItemsSize() {
 		return ArrayUtils.getLength(getItems());
 	}
@@ -123,6 +133,16 @@ public class AllotmentController extends BasicController implements IPmsConstant
 
 	public void onTariffChanged(ValueChangeEvent event) {
 		setTariff((Tariff)event.getNewValue());
+	}
+
+	public Integer[] getTariffsIds() {
+		Integer[] tariffsIds = ArrayUtils.EMPTY_INTEGER_OBJECT_ARRAY;
+		if (ArrayUtils.getLength(getTariffs()) > 0) {
+			for (Tariff tariff : getTariffs()) {
+				tariffsIds = (Integer[])ArrayUtils.add(tariffsIds, tariff.getId());
+			}
+		}
+		return tariffsIds;
 	}
 
 	public int getTariffsSize() {
