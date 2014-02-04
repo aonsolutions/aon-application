@@ -1,52 +1,5 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ASSIMILATED;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_AGE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_START;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTEXT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.DELAY;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_PAY;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.FEMALE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.GENDER;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARANTEED;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARANTEED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.HOLIDAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMS_RATE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.INDEFINITE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_RATE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.LIQUID;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MALE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_MONTHS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_WEEKS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_MONTHS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_WEEKS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SELF;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SENIORITY;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SETTLE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SHORT_CONTRACT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SYSTEM;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_BENEFITS_IT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_WEEKS;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -130,6 +83,8 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.*;
+
 public class SQLContractSalaryCalculatorContext implements
 		IContractSalaryCalculatorContext, NotFoundHandler,
 		ISQLContractSalaryCalculatorContext {
@@ -148,6 +103,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	private static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 
+	//@formatter:off
 	private static final String MAIN_SQL = "SELECT * "
 			+ " FROM contract"
 			+ " LEFT JOIN enterprise_ccc ON (contract.enterprise_ccc = enterprise_ccc.id)"
@@ -155,36 +111,22 @@ public class SQLContractSalaryCalculatorContext implements
 			+ " LEFT JOIN agreement_level_category ON (contract.agreement_level_category = agreement_level_category.id)"
 			+ " LEFT JOIN agreement_level ON (agreement_level.id = agreement_level_category.agreement_level)"
 			+ ", person"
-			+ ", registry AS "
-			+ PERSON_REGISTRY
-			+ ", workplace"
+			+ ", registry AS " + PERSON_REGISTRY
+			+ ", workplace" 
 			+ " LEFT JOIN payroll_workplace ON (payroll_workplace.workplace = workplace.id)"
 			+ ", enterprise"
-			+ ", registry AS "
-			+ ENTERPRISE_REGISTRY
-			+ " LEFT JOIN customer ON (customer.registry = "
-			+ ENTERPRISE_REGISTRY
-			+ ".id)"
+			+ ", registry AS " + ENTERPRISE_REGISTRY
+			+ " LEFT JOIN customer ON (customer.registry = " + ENTERPRISE_REGISTRY + ".id)"
 			+ ", raddress"
-			+ " WHERE contract.person = person.registry" // INNER JOIN: person
-															// es NOT NULL
-			+ " AND person.registry = person_registry.id" // INNER JOIN:
-															// registry es NOT
-															// NULL
-			+ " AND contract.workplace = workplace.id" // INNER JOIN: workplace
-														// es NOT NULL
-			+ " AND workplace.enterprise = enterprise.registry" // INNER JOIN:
-																// enterprise es
-																// NOT NULL
-			+ " AND enterprise.registry = enterprise_registry.id" // INNER JOIN:
-																	// registry
-																	// es NOT
-																	// NULL
-			+ " AND workplace.address = raddress.id" // INNER JOIN: address es
-														// NOT NULL
+			+ " WHERE contract.person = person.registry" // INNER JOIN: person is NOT NULL
+			+ " AND person.registry = person_registry.id" // INNER JOIN: // registry is NOT NULL
+			+ " AND contract.workplace = workplace.id" // INNER JOIN: workplace is NOT NULL
+			+ " AND workplace.enterprise = enterprise.registry" // INNER JOIN: enterprise is NOT NULL
+			+ " AND enterprise.registry = enterprise_registry.id" // INNER JOIN: registry is NOT  NULL
+			+ " AND workplace.address = raddress.id" // INNER JOIN: address is NOT NULL
 			+ " AND contract.start_date <= ? "
-			+ " AND ( contract.end_date  IS NULL"
-			+ " OR contract.end_date >= ? )";
+			+ " AND ( contract.end_date  IS NULL" + " OR contract.end_date >= ? )";
+	//@formatter:on
 
 	private static final String PAYMENT_SQL = "SELECT * "
 			+ ", "
@@ -503,7 +445,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	public SQLContractSalaryCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, Date chargeDate,
-			Criteria criteria, Criteria paymentsCriteria, OrderByList order)
+			Criteria criteria, Criteria paymentsCriteria, OrderByList order, Object ...args)
 			throws SQLException, ExpressionException {
 		this.connection = connection;
 
@@ -519,7 +461,7 @@ public class SQLContractSalaryCalculatorContext implements
 		this.paymentsCriteria = paymentsCriteria;
 		this.order = order;
 
-		initResultSet();
+		initResultSet(args);
 		initPaymentStmt();
 		initDeductionStmt();
 		// initBonusStmt();
@@ -1018,6 +960,10 @@ public class SQLContractSalaryCalculatorContext implements
 
 	// ------------------------------------------------------- Protected methods
 
+	protected String getMainSql(Object ...args) {
+		return MAIN_SQL;
+	}
+
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
@@ -1029,11 +975,11 @@ public class SQLContractSalaryCalculatorContext implements
 				AgreementLevelColumns.AGREEMENT);
 		return value == null ? null : (Integer) value;
 	}
-
+	
 	// --------------------------------------------------------- Private methods
 
-	private void initResultSet() throws SQLException {
-		String sql = MAIN_SQL;
+	private void initResultSet(Object ...args) throws SQLException {
+		String sql = getMainSql(args);
 		if (this.criteria != null) {
 			sql = CriteriaUtilities.toSQLString(this.criteria, sql);
 		}
@@ -1139,6 +1085,17 @@ public class SQLContractSalaryCalculatorContext implements
 
 		int days = salary.getTimeUnits();
 		return salary.getCommonBase() / days;
+	}
+
+	public Object gross(double gross) throws ExpressionException,
+			SQLException, SalaryException {
+		return grossImpl(gross);
+	}
+
+	public Object grossImpl(double gross)
+			throws ExpressionException, SQLException, SalaryException {
+		return null;
+		//return solveGross(new PegasusSolver(accuracy), liquid);
 	}
 
 	public Object liquid(double liquid) throws ExpressionException,
@@ -1584,7 +1541,6 @@ public class SQLContractSalaryCalculatorContext implements
 
 		Period period = new Period(startDate, endDate);
 
-
 		LazyTimedVariable<Double> extraDays = new LazyTimedVariable<Double>() {
 			@Override
 			public Double create() {
@@ -1816,6 +1772,8 @@ public class SQLContractSalaryCalculatorContext implements
 		loadContractData(this.contractExpressionContext);
 		loadPersonData(this.contractExpressionContext);
 
+		loadExpression(this.contractExpressionContext, GROSS,
+				"def(x){ SELF.gross(x)};", this.startDate, this.endDate);
 		loadExpression(this.contractExpressionContext, LIQUID,
 				"def(x){ SELF.liquid(x)};", this.startDate, this.endDate);
 		loadExpression(this.contractExpressionContext, SYSTEM,

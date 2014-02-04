@@ -214,6 +214,15 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getSalaryDraftReceiptHTML(salaryPreview, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
+	
+	@Override
+	public void getAgreementDraftReceiptHTML(AgreementDraft agreementDraft,
+			int levelId, Salary.Type type, int zoom, AsyncCallback<String> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getAgreementDraftReceiptHTML(agreementDraft, levelId, type, zoom,
+				new AsyncCallbackWrapper<String>(callback));
+	}
 
 	@Override
 	public void getSalaryDraftReceipt(SalaryDraft salaryDraft, String mime,

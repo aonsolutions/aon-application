@@ -11,6 +11,7 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -116,7 +117,6 @@ public class MainAgreement extends MainEntryPoint implements Listener {
 					agreementDraftObject));
 
 		} // end-if: Not exists, create it then...
-
 		agreementDraft.setAgreementDraftObject(agreementDraftObject);
 	}
 }

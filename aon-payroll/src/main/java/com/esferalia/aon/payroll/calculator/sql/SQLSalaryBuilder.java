@@ -10,11 +10,13 @@ import com.esferalia.aon.salary.ISalaryBuilderListener;
 
 public class SQLSalaryBuilder extends  AbstractSQLSalaryBuilder {
 
+	private static final String FORMAT = "[%s]: %s - %s";
 	
-	private ISalaryBuilderListener listener;
+	private boolean overwrite ;
 	private SQLWriter sqlWriter;
 	private int insertedSalaries;
-	private static final String FORMAT = "[%s]: %s - %s";
+	private ISalaryBuilderListener listener;
+	
 	
 	public SQLSalaryBuilder(Connection connection) 
 	throws SQLException
@@ -26,6 +28,7 @@ public class SQLSalaryBuilder extends  AbstractSQLSalaryBuilder {
 	@Override
 	public ISalary getSalary() {
 		try {
+			
 			insertSalary();
 			if (listener.isDebugEnabled()) {
 				String msg = String.format(FORMAT, 
