@@ -60,14 +60,16 @@
 		<f:selectItems value="#{pmsCollections.agencies}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel for="Allotment_agencyGroup" 
-		value="#{bundle.aon_group}" />
-	<aon:selectOneMenu id="Allotment_agencyGroup" 
-		value="#{searchController.agencyGroup}"
-		styleClass="aon-width-350">
-		<f:selectItem itemLabel="-" value="#{null}" />		
-		<f:selectItems value="#{pmsCollections.agencyGroups}" />
-	</aon:selectOneMenu>
+	<c:if test="#{pmsCollections.agencyGroupsCount > 0}">
+		<aon:outputLabel for="Allotment_agencyGroup" 
+			value="#{bundle.aon_group}" />
+		<aon:selectOneMenu id="Allotment_agencyGroup" 
+			value="#{searchController.agencyGroup}"
+			styleClass="aon-width-350">
+			<f:selectItem itemLabel="-" value="#{null}" />		
+			<f:selectItems value="#{pmsCollections.agencyGroups}" />
+		</aon:selectOneMenu>
+	</c:if>
 
 	<aon:outputLabel for="Allotment_remarks" 
 		value="#{bundle.aon_remark}" />
