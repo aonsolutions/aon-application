@@ -144,7 +144,7 @@
 					valueChangeListener="#{allotment.onTariffChanged}" 
 					reRender="AllotmentTariffDiv">
 					<f:selectItem itemLabel="#{(allotment.tariffsSize > 0)?'-':bundle.aon_common_all}" value="#{null}"/>
-					<f:selectItems value="#{configCollections.tariffs}" />
+					<f:selectItems value="#{allotment.roomTariffs}" />
 				</aon:selectOneMenu>
 				<aon:commandButton id="AllotmentTariff-add"
 					styleClass="aon-finding-toolbar-item aon-search-add"

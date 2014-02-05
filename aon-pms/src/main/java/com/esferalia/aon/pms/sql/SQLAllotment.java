@@ -1,6 +1,5 @@
 package com.esferalia.aon.pms.sql;
 
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -64,7 +63,7 @@ public class SQLAllotment implements ISQLConstants {
 	}*/
 
 	private static String obtainWhereClause(Allotment allotment, String items, String tariffs) {
-		StringWriter where = new StringWriter();
+		StringBuffer where = new StringBuffer();
 		if (allotment.getId() != null) {
 			where.append(" AND A.id != " + allotment.getId());
 		}

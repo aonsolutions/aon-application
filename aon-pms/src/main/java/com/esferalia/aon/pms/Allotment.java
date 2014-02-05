@@ -1,6 +1,5 @@
 package com.esferalia.aon.pms;
 
-import java.io.StringWriter;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -42,13 +41,13 @@ public class Allotment extends AllotmentDB implements IAuditable {
 
 	@Transient
 	public String getRoomTypeCodes() throws ManagerBeanException {
-		StringWriter roomTypeCodes = new StringWriter();
+		StringBuffer roomTypeCodes = new StringBuffer();
 		for (ITransferObject ito : getAllotmentItems()) {
 			AllotmentItem allotmentItem = (AllotmentItem)ito;
 			roomTypeCodes.append(allotmentItem.getItem().getProduct().getCode());
 			roomTypeCodes.append(" ");
 		}
-		return roomTypeCodes.toString();
+		return roomTypeCodes.length() > 0 ? roomTypeCodes.toString() : "TODAS"; 
 	}
 
 	@Transient
@@ -62,13 +61,13 @@ public class Allotment extends AllotmentDB implements IAuditable {
 
 	@Transient
 	public String getTariffCodes() throws ManagerBeanException {
-		StringWriter tariffCodes = new StringWriter();
+		StringBuffer tariffCodes = new StringBuffer();
 		for (ITransferObject ito : getAllotmentTariffs()) {
 			AllotmentTariff allotmentTariff = (AllotmentTariff)ito;
 			tariffCodes.append(allotmentTariff.getTariff().getCode());
 			tariffCodes.append(" ");
 		}
-		return tariffCodes.toString();
+		return tariffCodes.length() > 0 ? tariffCodes.toString() : "TODAS";
 	}
 
 }

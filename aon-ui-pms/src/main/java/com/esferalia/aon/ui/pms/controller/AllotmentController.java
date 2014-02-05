@@ -14,6 +14,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Allotment;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
@@ -89,6 +90,15 @@ public class AllotmentController extends BasicController implements IPmsConstant
 			roomItem.setDisabled(ArrayUtils.contains(getItems(), (Item)roomItem.getValue()));
 		}
 		return roomItemList;
+	}
+
+	public List<SelectItem> getRoomTariffs() throws ManagerBeanException {
+		List<SelectItem> roomTariffList = new LinkedList<SelectItem>();
+		roomTariffList.addAll(((PmsCollectionsController)AonUtil.getRegisteredBean(COLLECTIONS_CONTROLLER_NAME)).getTariffs());
+		for (SelectItem roomTariff : roomTariffList) {
+			roomTariff.setDisabled(ArrayUtils.contains(getTariffs(), (Tariff)roomTariff.getValue()));
+		}
+		return roomTariffList;
 	}
 
 	public void onChangeHolder(ActionEvent event) {

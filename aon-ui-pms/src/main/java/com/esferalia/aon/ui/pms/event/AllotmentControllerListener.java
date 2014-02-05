@@ -61,8 +61,8 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		if (allotment.getEndDate().before(allotment.getStartDate())) {
 			throw new ControllerListenerException("Las fechas de Inicio y Fin del Periodo son incorrectas.");
 		}
-		controller.setItems((Item[])ArrayUtils.removeElement(controller.getItems(), null));
-		controller.setTariffs((Tariff[])ArrayUtils.removeElement(controller.getTariffs(), null));
+		controller.setItems(obtainSelectedItems(controller.getItems(), controller.getItem()));
+		controller.setTariffs(obtainsSelectedTariffs(controller.getTariffs(), controller.getTariff()));
 
 		if (allotment.isActive()) {
 			verifyAllotmentOverlap(allotment, StringUtils.join(controller.getItemsIds(), ","), StringUtils.join(controller.getTariffsIds(), ","));
@@ -88,8 +88,8 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		if (allotment.getEndDate().before(allotment.getStartDate())) {
 			throw new ControllerListenerException("Las fechas de Inicio y Fin del Periodo son incorrectas.");
 		}
-		controller.setItems((Item[])ArrayUtils.removeElement(controller.getItems(), null));
-		controller.setTariffs((Tariff[])ArrayUtils.removeElement(controller.getTariffs(), null));
+		controller.setItems(obtainSelectedItems(controller.getItems(), controller.getItem()));
+		controller.setTariffs(obtainsSelectedTariffs(controller.getTariffs(), controller.getTariff()));
 
 		if (allotment.isActive()) {
 			verifyAllotmentOverlap(allotment, StringUtils.join(controller.getItemsIds(), ","), StringUtils.join(controller.getTariffsIds(), ","));
@@ -137,6 +137,20 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 			tariffs = (Tariff[])ArrayUtils.add(tariffs, allotmentTariff.getTariff());
 		}
 		return tariffs;
+	}
+
+	private Item[] obtainSelectedItems(Item[] items, Item item) {
+		if (item != null && item.getId() != null && !ArrayUtils.contains(items, item)) {
+			items = (Item[])ArrayUtils.add(items, item);
+		}
+		return (Item[])ArrayUtils.removeElement(items, null);
+	}
+
+	private Tariff[] obtainsSelectedTariffs(Tariff[] tariffs, Tariff tariff) {
+		if (tariff != null && tariff.getId() != null && !ArrayUtils.contains(tariffs, tariff)) {
+			tariffs = (Tariff[])ArrayUtils.add(tariffs, tariff);
+		}
+		return (Tariff[])ArrayUtils.removeElement(tariffs, null);
 	}
 
 	private void verifyAllotmentOverlap(Allotment allotment, String items, String tariffs) throws ControllerListenerException {

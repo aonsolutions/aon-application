@@ -1,6 +1,5 @@
 package com.esferalia.aon.ui.pms.controller;
 
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -216,7 +215,7 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 	}
 
 	private String getRoomBookingSQL() throws ManagerBeanException {
-		StringWriter stmt = new StringWriter();
+		StringBuffer stmt = new StringBuffer();
 		stmt.append("SELECT W.description AS " + HOTEL + ", B.stay_date AS " + STAY_DATE + ", B.stay_type AS " + STAY_TYPE);
 		stmt.append(", COUNT(*) AS " + ROOMS + ", SUM(B.guests) AS " + GUESTS);
 		stmt.append(" FROM booking AS B, hotel AS H, workplace AS W");
@@ -254,7 +253,7 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 	}
 
 	private String getRoomTotalSQL() throws ManagerBeanException {
-		StringWriter stmt = new StringWriter();
+		StringBuffer stmt = new StringBuffer();
 		stmt.append("SELECT W.description AS " + HOTEL + ", COUNT(*) AS " + ROOMS);
 		stmt.append(" FROM room AS R, hotel as H, workplace AS W");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("R.domain"));
