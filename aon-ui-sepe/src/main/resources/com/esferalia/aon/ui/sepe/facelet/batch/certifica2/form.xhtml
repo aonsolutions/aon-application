@@ -40,7 +40,7 @@
 					<aon:outputLabel value="#{bundle.aon_date}" />
 					<aon:div>
 						<aon:outputText value="#{certifica2Batch.to.date}" >
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
 					</aon:div>	

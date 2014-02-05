@@ -129,6 +129,7 @@
 			<aon:menuItem id="document-transform" 
 				value="Transformar a ind."
 				rendered="#{contract.transformableContract}"
+				disabled="#{empty contract.to.endDate}"
 				reRender="showTransformContrataWindow"
 				actionListener="#{contract.onContrataTransformShow}"
 				iconClass="aon-icon-copy" >

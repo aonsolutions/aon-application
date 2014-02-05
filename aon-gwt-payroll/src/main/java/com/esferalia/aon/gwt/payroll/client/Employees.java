@@ -420,7 +420,7 @@ public class Employees extends ResizeComposite implements
 				final TreeItem workplaceItem = employeeItem.getParentItem();
 				Workplace workplace = (Workplace) workplaceItem.getUserObject();
 
-				int offset = workplaceItem.getChildCount() - 1;
+				int offset = workplaceItem.getChildCount() - getEmployeesOffset();
 
 				employeesService.getEmployees(workplace.getId(), getFromDate(),
 						namePattern, offset, limit,

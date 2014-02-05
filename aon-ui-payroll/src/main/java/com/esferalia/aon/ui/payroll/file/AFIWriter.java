@@ -20,6 +20,7 @@ import com.esferalia.aon.file.payroll.afi.data.FAB;
 import com.esferalia.aon.file.payroll.afi.data.RZS;
 import com.esferalia.aon.file.payroll.afi.data.TRA;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.ui.payroll.controller.batch.ContractBatchController.AFIAction;
 
 public class AFIWriter {
 	
@@ -36,7 +37,7 @@ public class AFIWriter {
 	public FileOutput createAFI(List<Contract> contractList ) throws ManagerBeanException {
 		try {
 			ETI eti = createETIRecord( contractList );
-			File file = File.createTempFile("XXXXXXXX", ".AFI");
+			File file = File.createTempFile("temp", ".AFI");
 			FileFiller afi = new AFI(eti, file.getAbsolutePath());
 			FileOutput output = new FileOutput();
 			output.setFile(file);
@@ -49,8 +50,6 @@ public class AFIWriter {
 
 	private ETI createETIRecord( List<Contract> contractList ) throws ManagerBeanException {
 		ETI eti = new ETI();
-//		IUsuario usuario = getCommonsPayrollDAO().getUsuarioActivo(loggedUser);
-//		eti.setClave(Integer.parseInt(usuario.getAutorizacion()));
 		/*
 		 Clave proporcionada por la seguridad social
 		 */
@@ -103,7 +102,7 @@ public class AFIWriter {
 		emp.setPais(pais);
 		emp.setNumero(enterprise.getRegistry().getDocument());
 		emp.setCalificador("  ");
-//		emp.setCodigoCuentaCotizacionPrincipal(ccc);
+//		emp.setCodigoCuentaCotizacionPrincipal(obtainMainCCC(ccc).getFullCcc());
 		RZS rzs = new RZS();
 		rzs.setIndicador("0");
 		/*
@@ -114,6 +113,7 @@ public class AFIWriter {
 		4 Entidad u Organismo de las Admones.Públicas
 		*/
 		rzs.setTipoAlfabeticoEmpresario("1");
+		rzs.setRazonSocial(enterprise.getRegistry().getFullName());
 		emp.setRzs(rzs);
 		for(Contract c: getContracts(enterprise, contractList)){
 			TRA tra = createTRARecord(c);
@@ -139,46 +139,35 @@ public class AFIWriter {
 
 	private FAB createFABRecord(Contract contract) throws  ManagerBeanException{
 		FAB fab = new FAB();
-		fab.setAccion("MA ");
+//		AFIAction.MA.toString();
+//		fab.setAccion("MA ");
+		fab.setAccion(AFIAction.MA.toString()+" ");
 		fab.setFechaReal(Integer.parseInt(dateFormatter.format(contract.getStartDate())));
-		/*
-		Acciones a nivel de Trabajador Se cumplimentan en el segmento FAB
-		MA Alta sucesiva
-		MB Baja
-		MG Cambio de grupo de cotización
-		ME Eliminación de movimientos previos
-		MC Cambio de contrato (tipo/coeficiente)
-		MT Cambio de ocupación
-		MD Eliminación de altas consolidadas.
-		MR Eliminación de bajas consolidadas
-		CP Consulta de movimientos previos de un afiliado
-		CH Consulta de situación del afiliado en la empresa
-		CE Informe de Situación I.T. por Contingencias Comunes
-		CD Duplicados de TA2.
-		CA Corrección del alta, régimen 0132
-		CB Corrección de la baja, régimen 0132
-		CCP Cambio de Categoría Profesional
-		CCJ Cambio de Coeficiente Reductor de la Edad Jubilación
-		MJR Mecanización de Jornadas Reales (régimen 0613)
-		MFR Modificación Fecha Real del Alta (régimen 0613)
-		ASA Anotación de periodos de situaciones adicionales de
-		afiliación
-		MSA Modificación de periodos de situaciones adicionales de
-		afiliación
-		ESA Eliminación de periodos de situaciones adicionales de
-		afiliación
-		CJR Informe de Jornadas Reales
-		ASC Alta de Subcontratación o Cesión
-		MSC Modificación de Subcontratación o Cesión
-		ESC Eliminación de Subcontratación o Cesión
-		ACT Anotación Convenio Colectivo de trabajador
-		ADT Anotación de Días Trabajados
-		EDT Eliminación de Días Trabajados
-		AMC Anotación Modalidad de cotización
-		AIT Anotación de Períodos de Incapacidad Temporal
-		MIT Modificación de Períodos de Incapacidad Temporal
-		EIT Eliminación de Períodos de Incapacidad Temporal
-		*/
+		
+		// TODO: 
+		fab.setSituacion(null);
+		fab.setGrupoCotizacion(null);
+		fab.setClaveContratoTrabajo(null);
+		fab.setCondicionDesempleado(null);
+		fab.setMujerSubrepresentada(null);
+		fab.setCoeficienteTiempoParcial(null);
+		fab.setColectivoTrabajador(null);
+		fab.setIndicadorImpresion(null);
+		fab.setCategoriaProfesional(null);
+		fab.setFechaNacimiento(null);
+		fab.setSexo(null);
+		fab.setTipoInactividad(null);
+		fab.setExclusionDesempleo(null);
+		fab.setCoeficienteActividadHuelgaParcial(null);
+		fab.setMujerReincorporada(null);
+		fab.setIncapacitadoReadmitido(null);
+		fab.setAutonomo(null);
+		fab.setGradoMinusvalia(null);
+		fab.setFechaControl(null);
+		fab.setExclusionSocialViolenciaDomestica(null);
+		fab.setRentaActivaInsercion(null);
+		fab.setCostratadasPostAlumbramiento(null);
+		
 		return fab;
 	}
 	

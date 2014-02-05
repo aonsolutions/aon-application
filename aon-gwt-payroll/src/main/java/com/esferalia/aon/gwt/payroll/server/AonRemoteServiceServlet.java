@@ -30,6 +30,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.payroll.bean.GWT;
 import com.esferalia.aon.gwt.payroll.shared.Constants;
+import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.google.gwt.user.server.Base64Utils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
@@ -217,6 +218,45 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		
 	}
 
+	/*
+	 * We assume here that one domain one enterprise. 
+	 */
+	protected static Enterprise getHEnterprise() throws ManagerBeanException {
+		IManagerBean beanManager = BeanManager
+				.getManagerBean(com.code.aon.company.Enterprise.class);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				beanManager.getFieldName(IEntityAlias.ENTERPRISE_DOMAIN),
+				getDomainID() );
+
+		List<ITransferObject> tos = beanManager.getList(criteria);
+		
+		if( tos == null || tos.isEmpty() )
+			return null;
+		
+		return ((Enterprise) tos.get(0));
+		
+	}
+	
+	protected static EnterpriseCCC getDefaultHEnterpriseCCC() throws ManagerBeanException{
+		IManagerBean beanManager = BeanManager
+				.getManagerBean(com.esferalia.aon.payroll.EnterpriseCCC.class);
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				beanManager.getFieldName(IEntityAlias.ENTERPRISE_CCC_DOMAIN),
+				getDomainID() );
+
+		List<ITransferObject> tos = beanManager.getList(criteria);
+		
+		if( tos == null || tos.isEmpty() )
+			return null;
+		
+		return ((EnterpriseCCC) tos.get(0));
+		
+	}
+	
 	protected static int [] getEnterpriseIDs() throws ManagerBeanException {
 		
 		IManagerBean beanManager = BeanManager

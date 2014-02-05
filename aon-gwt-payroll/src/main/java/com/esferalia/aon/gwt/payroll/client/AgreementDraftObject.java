@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
@@ -18,7 +19,6 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
-import com.esferalia.aon.gwt.payroll.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.HasId;
 import com.esferalia.aon.gwt.payroll.shared.HasStartAndEndDate;
@@ -323,27 +323,28 @@ public class AgreementDraftObject implements IContextProvider {
 		// getDraftEndDate(),agreementDraft);
 	}
 
-	public Set<Date> getDatesWithChanges() {
+	public SortedSet<Date> getDatesWithChanges() {
 		return agreementDraft.getDatesWithChanges();
 	}
-	
-	public boolean isDraftLevel(Level level){
+
+	public boolean isDraftLevel(Level level) {
 		return agreementDraft.getDraftLevels().contains(level);
 	}
-	
-	public boolean isDraftExtra(Extra extra){
+
+	public boolean isDraftExtra(Extra extra) {
 		return agreementDraft.getDraftExtras().contains(extra);
 	}
 
-	public boolean isDraftPayment(Payment payment){
+	public boolean isDraftPayment(Payment payment) {
 		return agreementDraft.getDraftPayments().contains(payment);
 	}
 
-	public boolean isDraftVariable(Level level, Variable variable){
-		return agreementDraft.getDraftSalaryTable().contains(level.getId(), variable.getName());
+	public boolean isDraftVariable(Level level, Variable variable) {
+		return agreementDraft.getDraftSalaryTable().contains(level.getId(),
+				variable.getName());
 	}
 
-	public boolean isDraftCategories(Level level){
+	public boolean isDraftCategories(Level level) {
 		return agreementDraft.getDraftCategories().containsKey(level.getId());
 	}
 
@@ -463,9 +464,11 @@ public class AgreementDraftObject implements IContextProvider {
 
 				});
 	}
-	
-	public void preview(AsyncCallback<String> callback) {
-		//employeesServiceAsync.getSalaryDraftReceiptHTML(salaryPreview, zoom, callback);
+
+	public void preview(int levelId,
+			com.esferalia.aon.gwt.payroll.shared.Salary.Type type, int zoom, AsyncCallback<String> callback) {
+		employeesServiceAsync.getAgreementDraftReceiptHTML(agreementDraft,
+				levelId, type, zoom, callback);
 	}
 
 	public void getPaymentConcepts(AsyncCallback<List<Payment>> callback) {
@@ -483,9 +486,9 @@ public class AgreementDraftObject implements IContextProvider {
 	// ------------------------------------------------------------------------
 	//
 	// ------------------------------------------------------------------------
-	private SalaryDraft newFakeSalaryDraft(){
+	private SalaryDraft newFakeSalaryDraft() {
 		SalaryDraft draft = new SalaryDraft();
-		
+
 		draft.setStartDate(DateUtils.getFirstDayOfMonth());
 		draft.setEndDate(DateUtils.getLastDayOfMonth());
 		draft.setIssueDate(draft.getEndDate());
@@ -494,13 +497,13 @@ public class AgreementDraftObject implements IContextProvider {
 		employee.setId(-1);
 		draft.setEmployee(employee);
 		draft.setType(Type.SALARY);
-		
+
 		return draft;
 	}
 
 	@Override
 	public void getContext(AsyncCallback<ContextDescriptor> callback) {
-		
+
 		employeesServiceAsync.getContext(newFakeSalaryDraft(), callback);
 	}
 
@@ -508,7 +511,6 @@ public class AgreementDraftObject implements IContextProvider {
 	public void eval(String expression, AsyncCallback<Double> callback) {
 		employeesServiceAsync.eval(expression, newFakeSalaryDraft(), callback);
 	}
-	
 
 	// ------------------------------------------
 	// Differences
@@ -587,7 +589,7 @@ public class AgreementDraftObject implements IContextProvider {
 				draft.getDraftPayments());
 		setStartAndEndDates(draftStartDate, draftEndDate, draft
 				.getDraftSalaryTable().getAllVariables());
-		
+
 		setDateDrafts(draftStartDate, draftEndDate, draft);
 	}
 
@@ -599,38 +601,39 @@ public class AgreementDraftObject implements IContextProvider {
 		}
 	}
 
-	private static void setDateDrafts(
-			Date draftStartDate, Date draftEndDate, AgreementDraft draft) {
+	private static void setDateDrafts(Date draftStartDate, Date draftEndDate,
+			AgreementDraft draft) {
 		for (Payment payment : draft.getPayments()) {
-			
-			if ( draft.isDraftPayment(payment))
+
+			if (draft.isDraftPayment(payment))
 				continue;
 			if (DateUtils.compare(payment.getStartDate(), draftStartDate) <= 0
 					&& DateUtils.compare(payment.getEndDate(), draftEndDate) >= 0)
 				continue;
-			
+
 			payment.setStartDate(draftStartDate);
 			payment.setEndDate(draftEndDate);
 			draft.addDraftPayment(payment);
 
 		}
 
-		Collection<SalaryTable.Entry> entries = draft.getSalaryTable().getEntries();
-		for (SalaryTable.Entry entry: entries) {
-			
+		Collection<SalaryTable.Entry> entries = draft.getSalaryTable()
+				.getEntries();
+		for (SalaryTable.Entry entry : entries) {
+
 			int level = entry.getLevel();
 			Variable variable = entry.getVariable();
-			
-			if ( draft.isDraftVariable(level, variable.getName()))
+
+			if (draft.isDraftVariable(level, variable.getName()))
 				continue;
-			
+
 			if (DateUtils.compare(variable.getStartDate(), draftStartDate) <= 0
 					&& DateUtils.compare(variable.getEndDate(), draftEndDate) >= 0)
 				continue;
-				
+
 			variable.setStartDate(draftStartDate);
 			variable.setEndDate(draftEndDate);
-			
+
 			draft.addDraftVariable(level, variable);
 		}
 	}

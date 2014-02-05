@@ -18,14 +18,14 @@
 		<aon:outputLabel for="Contract_startDate-From" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_from}:" />
 		<aon:selectInputDate id="Contract_startDate-From"
-			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			value="#{controller.startDateFrom}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	
 		<aon:outputLabel for="Contract_startDate-To" styleClass="aon-form-date-label"
 			value="#{bundle.aon_date_to}:" />
 		<aon:selectInputDate id="Contract_startDate-To"
-			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			value="#{controller.startDateTo}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>

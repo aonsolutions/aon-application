@@ -45,13 +45,13 @@ public interface EmployeesService extends RemoteService {
 
 	List<Extra> getExtras(Employee employee) throws IllegalArgumentException;
 
-	String getCostReceiptHTML(Cost cost, Salary.Type types [], int zoom)
+	String getCostReceiptHTML(Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException;
 
 	String getIrpfReceiptHTML(Irpf irpf, int zoom)
 			throws IllegalArgumentException;
 
-	String getSalaryReceiptHTML(Cost cost, Salary.Type types [], int zoom)
+	String getSalaryReceiptHTML(Cost cost, Salary.Type types[], int zoom)
 			throws IllegalArgumentException;
 
 	String getSalaryReceiptHTML(Salary salary, int zoom)
@@ -84,6 +84,9 @@ public interface EmployeesService extends RemoteService {
 	String getSalaryDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
 			throws IllegalArgumentException;
 
+	String getAgreementDraftReceiptHTML(AgreementDraft agreementDraft,
+			int levelId, Salary.Type type, int zoom) throws IllegalArgumentException;
+
 	String getIrpfDraftReceipt(SalaryDraft salaryDraft, String mime)
 			throws IllegalArgumentException;
 
@@ -110,7 +113,6 @@ public interface EmployeesService extends RemoteService {
 			Integer agreementId, Date startDate, Date endDate)
 			throws IllegalArgumentException;
 
-	void delete(Salary salaries [])
-			throws IllegalArgumentException;
+	void delete(Salary salaries[]) throws IllegalArgumentException;
 
 }

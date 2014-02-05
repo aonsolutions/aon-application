@@ -100,8 +100,8 @@ public enum IndefiniteCommonField implements IContractFieldName{
 	// FUNCTIONS
 	WORKPLACE_FULL_ADDRESS("Texto75"),
 	WORKPLACE_FULL_ADDRESS_MORE("Texto73"),
-	// DISTANCE_WORKING
-	// DISTANCE_WORKING_ADDRESS
+	EMPLOYEE_CONTRACT_DISTANCE("Casilla de verificación84opi5697710363", Boolean.TRUE, Boolean.TRUE),
+	EMPLOYEE_CONTRACT_DISTANCE_ADDR("Texto77", Boolean.TRUE),
 	
 	// DISCONTONUOUS_WORK_DESCRIPTION
 	// DISCONTONUOUS_WORK_ACTIVITY
@@ -125,15 +125,16 @@ public enum IndefiniteCommonField implements IContractFieldName{
 	PARTIALLY_TIME_WEEKLY("Casilla de verificación84236"),
 	PARTIALLY_TIME_MONTHLY("Casilla de verificación84opi"),
 	PARTIALLY_TIME_YEARLY("Casilla de verificación85"),
-	// HOURS
-	// COMPLEMENTARY_HOURS_YES
-	// COMPLEMENTARY_HOURS_NO
+	DEFAULT_JOURNAL_HOURS("Texto8678",Boolean.TRUE),
+	COMPLEMENTARY_HOURS_YES("Casilla de verificación84"),
+	COMPLEMENTARY_HOURS_NO("Casilla de verificación87"),
+	COMPLEMENTARY_HOURS(COMPLEMENTARY_HOURS_YES, COMPLEMENTARY_HOURS_NO),
 	
 	/*
 	 * Contract page 2
 	 */
 	START_DATE("Texto92"),
-	TRIAL_DURATION("Text9107",Boolean.TRUE),
+	TRIAL_DURATION("Texto9107",Boolean.TRUE),
 
 	SALARY_AMOUNT("Texto1",Boolean.TRUE),
 	SALARY_PERIOD("Texto2",Boolean.TRUE),
@@ -151,13 +152,18 @@ public enum IndefiniteCommonField implements IContractFieldName{
 	// RELIEF_CONTRACT_PARTIALLY_CONTRACT_NUMBER
 	// RELIEF_CONTRACT_PARTIALLY_CONTRACT_DATE
 	
-	SEPE_MUNICIPALITY("oecomu",Boolean.TRUE),
+	SEPE_MUNICIPALITY("Texto89",Boolean.TRUE),
 	
 	;
 	
 	private String value;
 	private boolean overridable;
 	private boolean check;
+	private IndefiniteCommonField[] compositeValues;
+	
+	private IndefiniteCommonField(IndefiniteCommonField... compositeValues) {
+		this.compositeValues = compositeValues;
+	}
 	
 	private IndefiniteCommonField(String value, boolean... values) {
 		this.value = value;
@@ -168,24 +174,22 @@ public enum IndefiniteCommonField implements IContractFieldName{
 			this.check = values[1];
 		}
 	}
-	
-	@Override
-	public boolean isOverridable(){
-		return overridable;
-	}
-	@Override
-	public boolean isCheck(){
-		return check;
-	}
+
 	@Override
 	public String getValue() {
 		return value;
 	}
-
 	@Override
-	public IContractFieldName[] getCompositeValues() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean isOverridable(){
+		return overridable || compositeValues!=null;
+	}
+	@Override
+	public boolean isCheck(){
+		return check || compositeValues!=null;
+	}
+	@Override
+	public IContractFieldName[] getCompositeValues(){
+		return compositeValues;
 	}
 		
 }

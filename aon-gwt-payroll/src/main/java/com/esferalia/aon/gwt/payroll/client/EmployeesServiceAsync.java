@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
+import com.esferalia.aon.ui.payroll.controller.agreement.AgreeementSalaryTableController;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -49,13 +50,13 @@ public interface EmployeesServiceAsync {
 	void getExtras(Employee employee, AsyncCallback<List<Extra>> callback)
 			throws IllegalArgumentException;
 
-	void getCostReceiptHTML(Cost cost, Salary.Type types [], int zoom, AsyncCallback<String> callback)
-			throws IllegalArgumentException;
+	void getCostReceiptHTML(Cost cost, Salary.Type types[], int zoom,
+			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getIrpfReceiptHTML(Irpf irpf, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 
-	void getSalaryReceiptHTML(Cost cost, Salary.Type types [], int zoom,
+	void getSalaryReceiptHTML(Cost cost, Salary.Type types[], int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getSalaryReceiptHTML(Salary salary, int zoom,
@@ -65,7 +66,8 @@ public interface EmployeesServiceAsync {
 			throws IllegalArgumentException;
 
 	void saveAgreementDraft(AgreementDraft agreementDraft,
-			AsyncCallback<AgreementDraft> callback) throws IllegalArgumentException;
+			AsyncCallback<AgreementDraft> callback)
+			throws IllegalArgumentException;
 
 	void saveSalary(SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
@@ -91,6 +93,10 @@ public interface EmployeesServiceAsync {
 
 	void getSalaryDraftReceiptHTML(SalaryDraft salaryPreview, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
+
+	void getAgreementDraftReceiptHTML(AgreementDraft agreementDraft,
+			int levelId, Salary.Type type, int zoom, AsyncCallback<String> callback)
+			throws IllegalArgumentException;
 
 	void getIrpfDraftReceipt(SalaryDraft salaryDraft, String mime,
 			AsyncCallback<String> callback) throws IllegalArgumentException;

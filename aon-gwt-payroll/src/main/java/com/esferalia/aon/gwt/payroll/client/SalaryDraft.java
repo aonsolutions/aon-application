@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
+import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -56,7 +59,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.HasDirection.Direction;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -105,20 +107,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	public static final String ONLY_THIS_MONTH = "ONLY_THIS_MONTH";
 	public static final String FROM_THIS_MONTH = "FROM_THIS_MONTH";
 
-	private static final int ZOOM_STEP = 20;
-
-	private static final int MIN_ZOOM = 50;
-	private static final int MAX_ZOOM = 200;
-	private static final int DEFAULT_ZOOM = 135;
-
 	private static final DateTimeFormat DATE_SHORT = DateTimeFormat
 			.getFormat(PredefinedFormat.DATE_SHORT);
 
 	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.YEAR_MONTH_NUM_DAY);
-
-	public static final NumberFormat PERCENT_FORMAT = NumberFormat
-			.getPercentFormat();
 
 	private static Map<Scope, String> SCOPE_DESCRIPTIONS = new HashMap<Scope, String>() {
 		{
@@ -1041,7 +1034,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		scope = Scope.CONTRACT;
 		salarySelect.addListener(this);
 		showDraft();
-		zoom = DEFAULT_ZOOM;
+		zoom = Constants.DEFAULT_ZOOM;
 		initEventsStyles(style);
 		initSalaryDb();
 		initDatesListBox();
@@ -1616,12 +1609,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			}
 		});
 
-		for (int zoom = MIN_ZOOM; zoom < DEFAULT_ZOOM; zoom += ZOOM_STEP)
-			zoomListBox.addItem(PERCENT_FORMAT.format((double) zoom / 100));
+		for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
+			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
 		int selectedIndex = zoomListBox.getItemCount();
-		for (int zoom = DEFAULT_ZOOM; zoom < MAX_ZOOM; zoom += ZOOM_STEP)
-			zoomListBox.addItem(PERCENT_FORMAT.format((double) zoom / 100));
-		zoomListBox.addItem(PERCENT_FORMAT.format((double) MAX_ZOOM / 100));
+		for (int zoom = Constants.DEFAULT_ZOOM; zoom < Constants.MAX_ZOOM; zoom += Constants.ZOOM_STEP)
+			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
+		zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) Constants.MAX_ZOOM / 100));
 		zoomListBox.setSelectedIndex(selectedIndex);
 		zoomListBox.addChangeHandler(new ChangeHandler() {
 
@@ -1629,7 +1622,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			public void onChange(ChangeEvent event) {
 				int index = SalaryDraft.this.zoomListBox.getSelectedIndex();
 				String text = SalaryDraft.this.zoomListBox.getItemText(index);
-				SalaryDraft.this.zoom = (int) (PERCENT_FORMAT.parse(text));
+				SalaryDraft.this.zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
 				getPrintPreview();
 			}
 		});
@@ -1876,6 +1869,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		TextBox descriptionBox = new TextBox();
 		descriptionBox.setText(item.getDescription());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
+		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		paymentsTable.setWidget(row, 2, descriptionBox);
 
 		TextBox amountBox = new TextBox();
@@ -1883,6 +1877,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		amountBox.setText(amount != null ? amount : item.getExpression());
 		amountBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		amountBox.addStyleName(AON.AON_TEXT_RIGHT);
+		amountBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 
 		InlineLabel dbAmountLabel = new InlineLabel();
 		dbAmountLabel.setText(format(item.getDbAmount()));
@@ -2187,6 +2182,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		valuePanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 
 		TextBox variableTextBox = new TextBox();
+		variableTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		variableChangeHandler.setUiObject(variableTextBox);
 		valuePanel.add(variableTextBox);
 

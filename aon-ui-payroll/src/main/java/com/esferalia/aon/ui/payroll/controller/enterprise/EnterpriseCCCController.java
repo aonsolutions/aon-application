@@ -39,19 +39,12 @@ public class EnterpriseCCCController extends LinesController {
 	}
 	
 	public List<SelectItem> getCCCTypes() {
-		List<CCCType> definedTypes = new LinkedList<CCCType>();
-		for(ITransferObject to: (List<ITransferObject>)this.getWrappedList()){
-			definedTypes.add(((EnterpriseCCC)to).getType());
-		}
 		List<SelectItem> cccTypes = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		EnterpriseCCC ccc = (EnterpriseCCC) this.getTo();
 		for( CCCType cccType : CCCType.values() ) {
-			if(!definedTypes.contains(cccType) || !this.isNew() && (ccc).getType().equals(cccType)){
-				String name = cccType.getName(locale);
-				SelectItem item = new SelectItem(cccType, name);
-				cccTypes.add(item);			
-			}
+			String name = cccType.getName(locale);
+			SelectItem item = new SelectItem(cccType, name);
+			cccTypes.add(item);			
 		}
 		return cccTypes;
 	}

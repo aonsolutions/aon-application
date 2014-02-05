@@ -50,15 +50,18 @@ public enum IndefiniteOptionField implements IContractFieldName {
 	OPT5_TC2_350("Casilla de verificación84opi3692369666"),
 	OPT5_BONUS_ART4_RDL3_2012_YES("Casilla de verificación84opi3692668889"),
 	OPT5_BONUS_ART4_RDL3_2012_NO("Casilla de verificación84opi698"),
+	OPT5_BONUS_ART4_RDL3_2012(OPT5_BONUS_ART4_RDL3_2012_YES, OPT5_BONUS_ART4_RDL3_2012_NO),
 	OPT5_REGISTERED_IN_EMPLOYMENT_OFFICE("Casilla de verificación84opi3pñoium"),
-	OPT5_UNEMPLOYED_BT_16_30("Casilla de verificación84opi36998756"),
+	OPT5_UNEMPLOYED_BT_16_30_CHECK("Casilla de verificación84opi36998756"),
 	OPT5_UNEMPLOYED_BT_16_30_JUNIOR("Casilla de verificación84opi3698715"),
 	OPT5_UNEMPLOYED_BT_16_30_FEMALE("Casilla de verificación84opi301258963185"),
-	OPT5_UNEMPLOYED_GT_45("Casilla de verificación84opi3987562489"),
+	OPT5_UNEMPLOYED_BT_16_30(OPT5_UNEMPLOYED_BT_16_30_JUNIOR,OPT5_UNEMPLOYED_BT_16_30_FEMALE),
+	OPT5_UNEMPLOYED_GT_45_CHECK("Casilla de verificación84opi3987562489"),
 	OPT5_UNEMPLOYED_GT_45_MALE("Casilla de verificación84opi3698888887"),
 	OPT5_UNEMPLOYED_GT_45_FEMALE("Casilla de verificación84opi3669875658"),
-	OPT5_UNEMPLOYED_WITH_3_MONTH_BENEFIT("Casilla de verificación84opi99634582"),
-	OPT5_FIRST_EMPLOYEE_AND_LT_30("Casilla de verificación84opi36926897"),
+	OPT5_UNEMPLOYED_GT_45(OPT5_UNEMPLOYED_GT_45_MALE,OPT5_UNEMPLOYED_GT_45_FEMALE),
+	OPT5_UNEMPL_WITH_3_MONTH_BENEFIT("Casilla de verificación84opi99634582", Boolean.TRUE, Boolean.TRUE),
+	OPT5_FIRST_EMPLOYEE_AND_LT_30("Casilla de verificación84opi36926897", Boolean.TRUE, Boolean.TRUE),
 //		DE UN JÓVEN POR MICROEMPRESAS Y EMPRESARIOS AUTÓNOMOS (pag.9)
 	OPT6_OPTION_CHECK("Casilla de verificación84opi987"),
 	OPT6_TC2_100("Casilla de verificación84opi37523"),
@@ -107,7 +110,7 @@ public enum IndefiniteOptionField implements IContractFieldName {
 //		OTRAS SITUACIONES (pág19)
 	OPT16_OPTION_CHECK("Casilla de verificación48"),
 //		CONVERSIÓN DE CONTRATO TEMPORAL EN CONTRATO INDEFINIDO (pag.20)
-	OPT17_OPTION_CHECK("Casilla de verificación48"),
+	OPT17_OPTION_CHECK("Casilla de verificación189"),
 	OPT17_FULL_TIME("Casilla de verificación190"),
 	OPT17_TC2_139("Casilla de verificación193"),
 	OPT17_TC2_109("Casilla de verificación1931"),
@@ -141,6 +144,11 @@ public enum IndefiniteOptionField implements IContractFieldName {
 	private String value;
 	private boolean overridable;
 	private boolean check;
+	private IndefiniteOptionField[] compositeValues;
+	
+	private IndefiniteOptionField(IndefiniteOptionField... compositeValues) {
+		this.compositeValues = compositeValues;
+	}
 	
 	private IndefiniteOptionField(String value, boolean... values) {
 		this.value = value;
@@ -153,22 +161,20 @@ public enum IndefiniteOptionField implements IContractFieldName {
 	}
 	
 	@Override
-	public boolean isOverridable(){
-		return overridable;
-	}
-	@Override
-	public boolean isCheck(){
-		return check;
-	}
-	@Override
 	public String getValue() {
 		return value;
 	}
-
 	@Override
-	public IContractFieldName[] getCompositeValues() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean isOverridable(){
+		return overridable || compositeValues!=null;
+	}
+	@Override
+	public boolean isCheck(){
+		return check || compositeValues!=null;
+	}
+	@Override
+	public IContractFieldName[] getCompositeValues(){
+		return compositeValues;
 	}
 	
 }

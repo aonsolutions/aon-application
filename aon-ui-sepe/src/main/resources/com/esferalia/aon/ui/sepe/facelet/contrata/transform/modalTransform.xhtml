@@ -37,8 +37,8 @@
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="transformContrataSave"
 											value="#{bundle.aon_accept}"
-											reRender="showTransformContrataWindow"
-											actionListener="#{transformContrata.onContrataAccept}"
+											reRender="showTransformContrataWindow, #{reRender}"
+											actionListener="#{contract.onTransformContract}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept">
 											<f:setPropertyActionListener
 												target="#{transformContrata.showTransformContrataWindow}"
@@ -58,13 +58,10 @@
 									
 										<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/form_content.xhtml" />
 										
-									<!--  
-										<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/contract/form_otherData.xhtml" >
-											<ui:param name="controller" value="#{transformContrata}" />
-											<ui:param name="isContractTransform" value="#{true}" />
-										</ui:include>
-									-->
-
+										<!--  
+										<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/form_otherData.xhtml" />
+										-->
+									
 									</aon:div>
 									
 								</aon:div>

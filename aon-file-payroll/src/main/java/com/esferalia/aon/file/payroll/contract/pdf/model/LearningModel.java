@@ -71,7 +71,7 @@ public class LearningModel extends AbstractContractModel {
 			 * Contract enterprise fields
 			 */
 			setPdfFieldValue(LearningCommonField.ENTERPRISE_CIF.getValue(),contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
-			RegistryDirStaff rDirStaff = obtainRegistryDirStaff(contract); 
+			RegistryDirStaff rDirStaff = obtainRegistryDirStaff(contract.getWorkPlace().getEnterprise().getRegistry()); 
 			try {
 				setPdfFieldValue(LearningCommonField.ENTERPRISE_DIR_STAFF_NAME.getValue(),rDirStaff.getName());
 				setPdfFieldValue(LearningCommonField.ENTERPRISE_DIR_STAFF_NIF.getValue(),rDirStaff.getDocument());
@@ -83,7 +83,7 @@ public class LearningModel extends AbstractContractModel {
 				} else if( rDirStaff.isDirector() ){
 					rDirStaddCharge = "Administrador";
 				} else if ( rDirStaff.isRepresentativeLabor() ){
-					rDirStaddCharge = "Representante laboral";
+					rDirStaddCharge = "Repr. laboral";
 				}
 				setPdfFieldValue(LearningCommonField.ENTERPRISE_DIR_STAFF_CHARGE.getValue(),rDirStaddCharge);
 			} catch (NullPointerException npe) {

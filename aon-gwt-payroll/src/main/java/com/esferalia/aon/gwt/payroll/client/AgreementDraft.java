@@ -1,5 +1,13 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.Constants.DEFAULT_ZOOM;
+import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
+import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
+import static com.esferalia.aon.gwt.payroll.client.Constants.MAX_ZOOM;
+import static com.esferalia.aon.gwt.payroll.client.Constants.MIN_ZOOM;
+import static com.esferalia.aon.gwt.payroll.client.Constants.PERCENT_FORMAT;
+import static com.esferalia.aon.gwt.payroll.client.Constants.ZOOM_STEP;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -21,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.ItemComparator;
 import com.esferalia.aon.gwt.payroll.shared.LevelComparator;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -54,15 +63,17 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -254,11 +265,11 @@ public class AgreementDraft extends ResizeComposite implements
 				}
 			});
 			paymentListBox.addBlurHandler(new BlurHandler() {
-				
+
 				@Override
 				public void onBlur(BlurEvent event) {
 					ExtraEditor editor = getNextExtraEditorFor(extra.getId());
-					if ( editor != null )
+					if (editor != null)
 						editor.startDateBox.setFocus(true);
 				}
 			});
@@ -709,7 +720,7 @@ public class AgreementDraft extends ResizeComposite implements
 	FlexTable paymentsTable;
 
 	@UiField
-	ScrollPanel mainScrollPane;
+	ScrollPanel draftScrollPane;
 
 	@UiField
 	TextBox descriptionTextBox;
@@ -719,11 +730,24 @@ public class AgreementDraft extends ResizeComposite implements
 
 	@UiField
 	ScrollPanel salaryTableScrollPane;
-	
+
 	@UiField
-	DeckPanel deckPanel;
+	DeckLayoutPanel deckPanel;
 	@UiField
-	Panel draftPanel;
+	DockLayoutPanel draftPanel;
+
+	@UiField
+	DockLayoutPanel printPreviewPanel;
+	@UiField
+	HTML printPreviewHTML;
+	@UiField
+	ListBox typeListBox;
+	@UiField
+	ListBox levelListBox;
+	@UiField
+	ListBox zoomListBox;
+	@UiField
+	MonthListBox previewMonthListBox;
 
 	// Stuff for a properly built salary table.
 	// Head, first column, and last column frozen.
@@ -812,14 +836,14 @@ public class AgreementDraft extends ResizeComposite implements
 		clearPaymentsTable();
 		paymentEditors.clear();
 		paymentEditors.addAll(dumpPayments());
-		paymentEditors.add(insertNewPaymentRow(paymentsTable
-				.getRowCount()));
-		
+		paymentEditors.add(insertNewPaymentRow(paymentsTable.getRowCount()));
+
 		clearExtrasTable();
 		SortedSet<Payment> extraPayments = getAvailableExtraPayments();
 		extraEditors.clear();
 		extraEditors.addAll(dumpExtras(extraPayments));
-		extraEditors.add(insertNewExtraRow(extrasTable.getRowCount(), extraPayments));
+		extraEditors.add(insertNewExtraRow(extrasTable.getRowCount(),
+				extraPayments));
 
 	}
 
@@ -883,7 +907,7 @@ public class AgreementDraft extends ResizeComposite implements
 		moveSalaryTableFrozenColsAndRows();
 	}
 
-	@UiHandler("mainScrollPane")
+	@UiHandler("draftScrollPane")
 	void onMainScroll(ScrollEvent event) {
 		moveSalaryTableFrozenColsAndRows();
 	}
@@ -894,6 +918,47 @@ public class AgreementDraft extends ResizeComposite implements
 		agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(month));
 		agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
 		calculate();
+	}
+
+	@UiHandler("printPreviewButton")
+	void onClickPrintPreviewButton(ClickEvent event) {
+		showPreview();
+
+		initZoomListBox();
+		initTypeListBox();
+		initLevelListBox();
+		initPreviewMonthListBox();
+
+		printPreview();
+	}
+
+	@UiHandler("closePreviewButton")
+	void onClickClosePreviewButton(ClickEvent event) {
+		showDraft();
+	}
+
+	@UiHandler({ "zoomListBox", "typeListBox", "levelListBox",})
+	void onChangePreview(ChangeEvent event) {
+		printPreview();
+	}
+
+	@UiHandler("previewMonthListBox")
+	void onPreviewMonthListBoxChanged(ChangeEvent event) {
+		Date month = previewMonthListBox.getSelectedMonth();
+		agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(month));
+		agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(month));
+		calculate( new CalculateCallback() {
+			
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+			}
+
+			@Override
+			public void onCalculateSucces(AgreementDraftObject object) {
+				printPreview();
+			}
+			
+		});
 	}
 
 	// ------------------------------------------------------------------------
@@ -1006,6 +1071,7 @@ public class AgreementDraft extends ResizeComposite implements
 		for (Level level : levels) {
 
 			TextBox descriptionTextBox = new TextBox();
+			descriptionTextBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 			descriptionTextBox.setText(level.getDescription());
 			descriptionTextBox.setVisibleLength(5);
 			hide(descriptionTextBox, level.getId() == 0);
@@ -1266,6 +1332,7 @@ public class AgreementDraft extends ResizeComposite implements
 	private void dumpVariable(int row, int col, Level level, Variable var) {
 
 		TextBox expressionTextBox = new TextBox();
+		expressionTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionTextBox.addStyleName(AON.AON_TEXT_RIGHT);
 		if (var.isImpicit())
 			expressionTextBox.getElement().getStyle().setColor("gray");
@@ -1303,6 +1370,7 @@ public class AgreementDraft extends ResizeComposite implements
 	private void dumpUndefVariable(int row, int col, Level level, String name) {
 
 		TextBox expressionTextBox = new TextBox();
+		expressionTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		// yes we assume all variables are numeric.
 		expressionTextBox.addStyleName(AON.AON_TEXT_RIGHT);
 		// expressionTextBox.setVisibleLength(VARIABLE_TEXTBOX_SIZE);
@@ -1363,6 +1431,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 		TextBox descriptionTextBox = new TextBox();
 		descriptionTextBox.setVisibleLength(5);
+		descriptionTextBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		salaryTable.setWidget(row, 0, descriptionTextBox);
 
 		int col;
@@ -1504,11 +1573,13 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.setWidget(row, 1, paymentTypeListBox);
 
 		TextBox descriptionBox = new TextBox();
+		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		descriptionBox.setText(payment.getDescription());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		paymentsTable.setWidget(row, 2, descriptionBox);
 
 		TextBox expressionBox = new TextBox();
+		expressionBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionBox.setText(payment.getExpression());
 		expressionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
@@ -1610,6 +1681,7 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.setWidget(row, 1, paymentTypeListBox);
 
 		TextBox descriptionBox = new TextBox();
+		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		SuggestBox descriptionSuggest = new SuggestBox(
 				paymentDescriptionOracle, descriptionBox,
 				paymentSuggestionDisplay);
@@ -1617,6 +1689,7 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.setWidget(row, 2, descriptionSuggest);
 
 		TextBox expressionBox = new TextBox();
+		expressionBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
 		paymentsTable.setWidget(row, 3, expressionBox);
@@ -1752,16 +1825,16 @@ public class AgreementDraft extends ResizeComposite implements
 		int horizontalScroll = salaryTableScrollPane
 				.getHorizontalScrollPosition();
 
-		int clientWidth = Math
-				.min(salaryTableScrollPane.getElement().getClientWidth(),
-						mainScrollPane.getElement().getClientWidth());
+		int clientWidth = Math.min(salaryTableScrollPane.getElement()
+				.getClientWidth(), draftScrollPane.getElement()
+				.getClientWidth());
 		int clientHeight = salaryTableScrollPane.getElement().getClientHeight();
 
 		int top = salaryTableScrollPane.getAbsoluteTop();
 		int left = salaryTableScrollPane.getAbsoluteLeft();
 
-		int clipTop = mainScrollPane.getAbsoluteTop() - top;
-		int clipLeft = mainScrollPane.getAbsoluteLeft() - left;
+		int clipTop = draftScrollPane.getAbsoluteTop() - top;
+		int clipLeft = draftScrollPane.getAbsoluteLeft() - left;
 
 		salaryTableUpperLeftCorner.getStyle().setTop(top, Unit.PX);
 		salaryTableUpperLeftCorner.getStyle().setLeft(left, Unit.PX);
@@ -1772,7 +1845,7 @@ public class AgreementDraft extends ResizeComposite implements
 		salaryTableUpperRightCorner.getStyle().setTop(top, Unit.PX);
 		left = salaryTableScrollPane.getAbsoluteLeft() + clientWidth
 				- salaryTableUpperRightCorner.getOffsetWidth()
-				+ mainScrollPane.getHorizontalScrollPosition();
+				+ draftScrollPane.getHorizontalScrollPosition();
 		salaryTableUpperRightCorner.getStyle().setLeft(left + 1, Unit.PX);
 		setClip(salaryTableUpperRightCorner.getStyle(), clipTop,
 				salaryTableUpperRightCorner.getOffsetWidth(),
@@ -1797,10 +1870,10 @@ public class AgreementDraft extends ResizeComposite implements
 		salaryTableFirstColumn.getStyle().setTop(top - 1, Unit.PX);
 
 		clipTop = verticalScroll + 1;
-		if ((top + clipTop) < mainScrollPane.getAbsoluteTop())
-			clipTop += mainScrollPane.getAbsoluteTop() - top - clipTop;
+		if ((top + clipTop) < draftScrollPane.getAbsoluteTop())
+			clipTop += draftScrollPane.getAbsoluteTop() - top - clipTop;
 
-		clipLeft = mainScrollPane.getAbsoluteLeft() - left;
+		clipLeft = draftScrollPane.getAbsoluteLeft() - left;
 		int clipBottom = verticalScroll
 				+ (clientHeight - salaryTableUpperLeftCorner.getOffsetHeight())
 				+ 1;
@@ -1810,7 +1883,7 @@ public class AgreementDraft extends ResizeComposite implements
 		salaryTableLastColumn.getStyle().setTop(top - 1, Unit.PX);
 		left = salaryTableScrollPane.getAbsoluteLeft() + clientWidth
 				- salaryTableLastColumn.getOffsetWidth()
-				+ mainScrollPane.getHorizontalScrollPosition();
+				+ draftScrollPane.getHorizontalScrollPosition();
 		salaryTableLastColumn.getStyle().setLeft(left + 1, Unit.PX);
 		setClip(salaryTableLastColumn.getStyle(), clipTop, clientWidth,
 				clipBottom, 0 /**/);
@@ -2228,11 +2301,12 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private ExtraEditor getNextExtraEditorFor(int id) {
-		for (Iterator<ExtraEditor> iterator = extraEditors.iterator(); iterator.hasNext();) {
+		for (Iterator<ExtraEditor> iterator = extraEditors.iterator(); iterator
+				.hasNext();) {
 			ExtraEditor editor = iterator.next();
-			if (id == editor.extra.getId() )  
+			if (id == editor.extra.getId())
 				return iterator.hasNext() ? iterator.next() : null;
-			
+
 		}
 		return null;
 	}
@@ -2245,17 +2319,125 @@ public class AgreementDraft extends ResizeComposite implements
 	}
 
 	private PaymentEditor getNextPaymentEditorFor(int id) {
-		for (Iterator<PaymentEditor> iterator = paymentEditors.iterator(); iterator.hasNext();) {
+		for (Iterator<PaymentEditor> iterator = paymentEditors.iterator(); iterator
+				.hasNext();) {
 			PaymentEditor editor = iterator.next();
-			if (id == editor.payment.getId() )  
+			if (id == editor.payment.getId())
 				return iterator.hasNext() ? iterator.next() : null;
-			
+
 		}
 		return null;
 	}
-	
-	private void showDraft(){
+
+	// ---------------------------------------------------------------- Preview
+	private Type getType() {
+		int index = typeListBox.getSelectedIndex();
+		String value = typeListBox.getValue(index);
+		return Type.valueOf(value);
+	}
+
+	private void initTypeListBox() {
+		typeListBox.clear();
+		typeListBox.addItem(Type.SALARY.getDescription(), Type.SALARY.name());
+		typeListBox.setSelectedIndex(0);
+	}
+
+	private int getLevelId() {
+		int index = levelListBox.getSelectedIndex();
+		String value = levelListBox.getValue(index);
+		return Integer.valueOf(value);
+
+	}
+
+	private void initLevelListBox() {
+		levelListBox.clear();
+		for (Level level : agreementDraftObject.getLevels()) {
+			if (level.getId() == 0)
+				continue;
+			String description = level.getDescription();
+			StringBuffer buffer = new StringBuffer();
+			if (!StringUtils.isBlank(description))
+				buffer.append(description);
+
+			Set<String> categories = agreementDraftObject.getCategories(level);
+			if (categories != null) {
+				for (String category : categories) {
+					if (!StringUtils.isBlank(category)) {
+						buffer.append(" " + category);
+						break;
+					}
+				}
+			}
+			levelListBox.addItem(buffer.toString(),
+					Integer.toString(level.getId()));
+		}
+
+	}
+
+	private int getZoom() {
+		int index = zoomListBox.getSelectedIndex();
+		String value = zoomListBox.getValue(index);
+		return Integer.valueOf(value);
+	}
+
+	private void initZoomListBox() {
+		if (zoomListBox.getItemCount() > 0)
+			return;
+
+		for (int zoom = MIN_ZOOM; zoom < DEFAULT_ZOOM; zoom += ZOOM_STEP)
+			zoomListBox.addItem(PERCENT_FORMAT.format((double) zoom / 100),
+					Integer.toString(zoom));
+
+		zoomListBox.addItem(PERCENT_FORMAT.format((double) DEFAULT_ZOOM / 100),
+				Integer.toString(DEFAULT_ZOOM));
+		zoomListBox.setSelectedIndex(zoomListBox.getItemCount() - 1);
+
+		for (int zoom = DEFAULT_ZOOM + ZOOM_STEP; zoom <= MAX_ZOOM; zoom += ZOOM_STEP)
+			zoomListBox.addItem(PERCENT_FORMAT.format((double) zoom / 100),
+					Integer.toString(zoom));
+	}
+
+	private void initPreviewMonthListBox() {
+		previewMonthListBox.setHighLightMonths(agreementDraftObject
+				.getDatesWithChanges());
+		previewMonthListBox.setSelectedMonth(agreementDraftObject
+				.getStartDate());
+
+	}
+
+	private void showDraft() {
 		deckPanel.showWidget(deckPanel.getWidgetIndex(draftPanel));
 	}
 
+	private void showPreview() {
+		deckPanel.showWidget(deckPanel.getWidgetIndex(printPreviewPanel));
+	}
+
+	private void printPreview() {
+		int zoom = getZoom();
+		Type type = getType();
+		int levelId = getLevelId();
+		
+		Date month = previewMonthListBox.getSelected();
+		
+		Date startDate = DateUtils.getFirstDayOfMonth();
+		Date agreementStartDate = agreementDraftObject.getStartDate();
+
+		agreementDraftObject.preview(levelId, type, zoom,
+				new AsyncCallback<String>() {
+
+					@Override
+					public void onSuccess(String html) {
+						printPreviewHTML.setHTML(html);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Almost auto-generated method stub
+						printPreviewHTML.setText(caught.getMessage());
+
+					}
+				});
+
+	}
 }

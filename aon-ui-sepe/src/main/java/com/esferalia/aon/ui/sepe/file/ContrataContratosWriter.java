@@ -7,6 +7,8 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
@@ -84,6 +86,8 @@ import com.esferalia.aon.sepe.api.contrata.contratos.ObjectFactory;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class ContrataContratosWriter implements IContrataWriter{
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContrataContratosWriter.class.getName());
 	
 	final String CONTRATA_CONTRATOS_MODEL_PATH = "com.esferalia.aon.sepe.api.contrata.contratos";
 	
@@ -1430,12 +1434,7 @@ public class ContrataContratosWriter implements IContrataWriter{
 		String duracionconvenio = (params.getHorasConvenio()==null?"":completeLength(params.getHorasConvenio(), 4, "0", false))+(params.getMinutosConvenio()==null?"":completeLength(params.getMinutosConvenio(), 2, "0", false));
 		String duracionformacion = (params.getHorasFormacion()==null?"":completeLength(params.getHorasFormacion(), 4, "0", false))+(params.getMinutosFormacion()==null?"":completeLength(params.getMinutosFormacion(), 2, "0", false));
 		String duracionjornada = SEPEUtils.getInstance().getContractDataMap(getContract()).get(ContextVariable.WEEK_HOURS.getName());
-		Double _duracionjornada = Double.parseDouble(duracionjornada);
-//		String duracionjornadaHours = Integer.toString(_duracionjornada.intValue());
-//		String duracionjornadaMins = Double.toString(CommonUtil.round(_duracionjornada,2));
-//		Double _duracionjornadaMins = _duracionjornada - _duracionjornada.intValue();
-//		duracionjornadaMins = 60/_duracionjornadaMins;
-		duracionjornada = (duracionjornada==null?"":completeLength(getHours(_duracionjornada), 4, "0", false))+(completeLength(getMinutes(_duracionjornada), 2, "0", false));
+		duracionjornada = (duracionjornada==null?"":completeLength(getHours(duracionjornada), 4, "0", false)+(completeLength(getMinutes(duracionjornada), 2, "0", false)));
 		if(StringUtils.isBlank(duracionjornada)){
 			duracionjornada = (params.getHorasJornada()==null?"":completeLength(params.getHorasJornada(), 4, "0", false))+(params.getMinutosJornada()==null?"":completeLength(params.getMinutosJornada(), 2, "0", false));
 		}
@@ -2027,14 +2026,27 @@ public class ContrataContratosWriter implements IContrataWriter{
 	 * ***************************************
 	 * ***************************************
 	 */
-	
-	private Integer getHours(Double value){
-		return value.intValue();
-	}
 
-	private Integer getMinutes(Double value){
-		Double fraction = value - (int)(CommonUtil.round(value, 2));
-		return (int)(60*fraction);
+	private Integer getHours(String value){
+		try{
+			return (int)Double.parseDouble(value);
+		} catch (Exception e) {
+			LOGGER.error("Error al obtener las horas del valor");
+			LOGGER.error(e.getMessage());
+			return null;
+		}
+	}
+	
+	private Integer getMinutes(String value){
+		try {
+			Double _value = Double.parseDouble(value);
+			Double fraction = _value - (int)(CommonUtil.round(_value, 2));
+			return (int)(60*fraction);
+		} catch (Exception e) {
+			LOGGER.error("Error al obtener los minutos del valor");
+			LOGGER.error(e.getMessage());
+			return null;
+		}
 	}
 	
 	private String getFormatedDate(Date date){

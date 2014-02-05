@@ -10,7 +10,6 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.AonFile;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
@@ -61,10 +60,10 @@ public class ContrataTransformacionesHandler implements IContrataHandler {
 	public void initialize(Contract contract){
 		SEPEUtils utils = SEPEUtils.getInstance();
 		this.contract = contract;
-		this.contractCode = ContractCode.getContractCodeByValue( utils.getContractDataMap(this.contract, false).get(ContextVariable.TC2.getName()) );
+		this.contractCode = ContractCode.getContractCodeByValue( utils.getContractDataMap(this.contract).get(ContextVariable.TC2.getName()) );
 		getParams().setFechaInicio(contract.getEndDate());
 //		getParams().setFechaTerminoReal(fechaTerminoReal);
-		getParams().setCno(obtainCno(utils.getContractDataMap(this.contract, false).get(ContextVariable.CNO.getName())));
+		getParams().setCno(obtainCno(utils.getContractDataMap(this.contract).get(ContextVariable.CNO.getName())));
 	}
 	
 	@Override

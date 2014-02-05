@@ -218,19 +218,6 @@ public class PdfModelHandler {
 		}
 	}
 	
-
-	public RegistryDirStaff obtainRegistryDirStaff(Contract contract) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), contract.getWorkPlace().getEnterprise().getRegistry().getId());
-		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
-		List<ITransferObject> list = bean.getList(criteria);
-		if(!list.isEmpty()){
-			return (RegistryDirStaff) list.get(0);
-		}
-		return null;
-	}
-	
 	public RegistryDirStaff obtainRegistryDirStaff(Registry registry) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
 		Criteria criteria = new Criteria();

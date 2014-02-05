@@ -8,7 +8,7 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<c:if test="#{showEnterpriseColumn}">		
-		<aon:column alias="Contract.workPlace.enterprise.registry.surname,Contract.workPlace.enterprise.registry.name"
+		<aon:column alias="Contract.workPlace.enterprise.registry.name"
 			styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_company}" />
@@ -19,7 +19,7 @@
 		</aon:column>
 	</c:if>
 
-	<aon:column alias="Contract.person.registry.surname,Contract.person.registry.name"
+	<aon:column alias="Contract.person.registry.name,Contract.person.firstSurname,Contract.person.secondSurname"
 		styleClass="aon-editDataTable-textColumn aon-width-width">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.registry_person}" />

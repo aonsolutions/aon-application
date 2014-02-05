@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.payroll.controller.batch;
 
+import java.util.Date;
+
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
@@ -25,6 +28,8 @@ public class ContractListController extends BasicController {
 	
 	private Person person;
 	private Enterprise enterprise;
+	private Date startDateFrom;
+	private Date startDateTo;
 	
 	private BatchListCheckHandler checkHandler;
 	
@@ -47,6 +52,22 @@ public class ContractListController extends BasicController {
 		this.checkHandler = checkHandler;
 	}
 
+	public Date getStartDateFrom() {
+		return startDateFrom;
+	}
+
+	public void setStartDateFrom(Date startDateFrom) {
+		this.startDateFrom = startDateFrom;
+	}
+
+	public Date getStartDateTo() {
+		return startDateTo;
+	}
+
+	public void setStartDateTo(Date startDateTo) {
+		this.startDateTo = startDateTo;
+	}
+
 	public Person getPerson() {
 		return person;
 	}
@@ -67,6 +88,8 @@ public class ContractListController extends BasicController {
 		try {
 			setEnterprise( (Enterprise) BeanManager.getManagerBean(Enterprise.class).createNewTo() );
 			setPerson( (Person) BeanManager.getManagerBean(Person.class).createNewTo() );
+			setStartDateFrom(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), CommonUtil.getDay(new Date())-60));
+			setStartDateTo(new Date());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> error on init ",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -93,10 +116,19 @@ public class ContractListController extends BasicController {
 				getCriteria().addInExpression(getFieldName(IEntityAlias.CONTRACT_DOMAIN), utils.getCurrentChildDomainIds());
 			}
 			
+			if(getStartDateFrom()!=null){
+				getCriteria().addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_START_DATE), getStartDateFrom());
+			}
+			if(getStartDateTo()!=null){
+				getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_START_DATE), getStartDateTo());
+			} else {
+				getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_START_DATE), new Date());
+			}
+			
 			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_REGISTRY_NAME));
+			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_PERSON_REGISTRY_NAME));
 			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_PERSON_FIRST_SURNAME));
 			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_PERSON_SECOND_SURNAME));
-			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_PERSON_REGISTRY_NAME));
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());

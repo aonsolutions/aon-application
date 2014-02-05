@@ -161,69 +161,69 @@
 	<ui:image field='warn' src='warn.png' />
 	<ui:image field='pdfPreview' src='pdfPreview.png' />
 
+	<ui:import field="com.esferalia.aon.gwt.payroll.client.Constants.*" />
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.AgreementDraft.*" />
 
-	<g:DockLayoutPanel unit="PX">
-		<g:north size="72">
+	<g:DeckLayoutPanel ui:field="deckPanel">
+		<g:DockLayoutPanel unit="PX" ui:field="draftPanel">
+			<g:north size="72">
 
-			<g:FlowPanel>
+				<g:FlowPanel>
 
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
-					<g:HorizontalPanel>
-						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText">Convenio</g:Label>
+					<g:FlowPanel styleName="aon-finding-title-toolbar">
+						<g:HorizontalPanel>
+							<g:HTMLPanel styleName="aon-finding-title">
+								<g:HTMLPanel styleName="aon-finding-title-internal">
+									<g:Label styleName="aon-outputText">Convenio</g:Label>
+								</g:HTMLPanel>
 							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-								<g:Label styleName="aon-outputText"></g:Label>
+							<g:HTMLPanel styleName="aon-finding-subtitle">
+								<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+									<g:Label styleName="aon-outputText"></g:Label>
+								</g:HTMLPanel>
 							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field='acceptButton'
-									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
-								<g:Button ui:field='deleteButton'
-									styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"
-									enabled="false" />
-								<g:Button ui:field="fxButton"
-									styleName='aon-finding-toolbar-item {style.fxButton}' enabled="false" />
-								<g:Button ui:field="undoButton"
-									styleName='aon-finding-toolbar-item {style.undoButton}'
-									enabled="false" visible="false" />
-								<g:Button ui:field='redoButton'
-									styleName="aon-finding-toolbar-item {style.redoButton}"
-									enabled="false" visible="false" />
-								<g:ListBox ui:field='datesListBox'>
-									<g:item value="{ALWAYS}">Para todo</g:item>
-									<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
-									<g:item value="{ONLY_THIS_YEAR}">S&oacute;lo este a&ntilde;o</g:item>
-								</g:ListBox>
-								<g:CheckBox ui:field='changesCheck'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="Cambios" checked="true" visible="false" />
-								<employee:MonthListBox ui:field="draftMonthListBox"
-									oldStyles="{style.monthListBox-old}" monthStyles="{style.monthListBox-item}"
-									highLightStyles="aon-bold aon-black aon-icon-month-changed {style.monthListBox-item}" />
-									
-								<g:Button ui:field='printPreviewButton'
-									styleName='aon-finding-toolbar-item {style.pdfPreviewButton}'
-									text="Vista Preliminar" visible="false"/>
-								<g:ListBox ui:field="levelListBox" visible="false"/>
+							<g:HorizontalPanel styleName="aon-finding-toolbar">
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:Button ui:field='acceptButton'
+										styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
+									<g:Button ui:field='deleteButton'
+										styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"
+										enabled="false" />
+									<g:Button ui:field="fxButton"
+										styleName='aon-finding-toolbar-item {style.fxButton}' enabled="false" />
+									<g:Button ui:field="undoButton"
+										styleName='aon-finding-toolbar-item {style.undoButton}'
+										enabled="false" visible="false" />
+									<g:Button ui:field='redoButton'
+										styleName="aon-finding-toolbar-item {style.redoButton}"
+										enabled="false" visible="false" />
+									<g:ListBox ui:field='datesListBox'>
+										<g:item value="{ALWAYS}">Para todo</g:item>
+										<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
+										<g:item value="{ONLY_THIS_YEAR}">S&oacute;lo este a&ntilde;o</g:item>
+									</g:ListBox>
+									<g:CheckBox ui:field='changesCheck'
+										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+										text="Cambios" checked="true" visible="false" />
+									<employee:MonthListBox ui:field="draftMonthListBox"
+										oldStyles="{style.monthListBox-old}" monthStyles="{style.monthListBox-item}"
+										highLightStyles="aon-bold aon-black aon-icon-month-changed {style.monthListBox-item}" />
 
-							</g:HTMLPanel>
+									<g:Button ui:field='printPreviewButton'
+										styleName='aon-finding-toolbar-item {style.pdfPreviewButton}'
+										text="Vista Preliminar" />
+
+								</g:HTMLPanel>
+							</g:HorizontalPanel>
 						</g:HorizontalPanel>
-					</g:HorizontalPanel>
+					</g:FlowPanel>
 				</g:FlowPanel>
-			</g:FlowPanel>
 
-		</g:north>
-		<g:center>
-			<g:ScrollPanel styleName="{style.editor}" ui:field="mainScrollPane">
-				<g:VerticalPanel styleName="{style.document}">
-					<g:DeckPanel ui:field="deckPanel">
-						<g:VerticalPanel ui:field="draftPanel" width="auto">
+			</g:north>
+			<g:center>
+				<g:ScrollPanel styleName="{style.editor}" ui:field="draftScrollPane">
+					<g:VerticalPanel styleName="{style.document}">
+						<g:VerticalPanel width="auto">
 
 							<g:Grid width="100%">
 								<g:row>
@@ -232,7 +232,7 @@
 										</g:Label>
 									</g:customCell>
 									<g:customCell styleName="{style.field}">
-										<g:TextBox width="100%" ui:field="descriptionTextBox"></g:TextBox>
+										<g:TextBox width="100%" ui:field="descriptionTextBox" maxLength="{DESCRIPTION_MAX_LENGTH}"/>
 									</g:customCell>
 								</g:row>
 							</g:Grid>
@@ -258,11 +258,57 @@
 							<g:HTML styleName="{style.vertical-space}" />
 
 						</g:VerticalPanel>
-						<g:HTML styleName="reset" ui:field='printPreviewHTML' wordWrap='true' />						
-					</g:DeckPanel>
-				</g:VerticalPanel>
-			</g:ScrollPanel>
-		</g:center>
-	</g:DockLayoutPanel>
+					</g:VerticalPanel>
+				</g:ScrollPanel>
+			</g:center>
+		</g:DockLayoutPanel>
+		<g:DockLayoutPanel unit="PX" ui:field="printPreviewPanel">
+			<g:north size="72">
+
+				<g:FlowPanel>
+
+					<g:FlowPanel styleName="aon-finding-title-toolbar">
+						<g:HorizontalPanel>
+							<g:HTMLPanel styleName="aon-finding-title">
+								<g:HTMLPanel styleName="aon-finding-title-internal">
+									<g:Label styleName="aon-outputText">Convenio</g:Label>
+								</g:HTMLPanel>
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-subtitle">
+								<g:HTMLPanel styleName="aon-finding-subtitle-internal">
+									<g:Label styleName="aon-outputText"></g:Label>
+								</g:HTMLPanel>
+							</g:HTMLPanel>
+							<g:HorizontalPanel styleName="aon-finding-toolbar">
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+
+									<g:ListBox ui:field="typeListBox" />
+									<employee:MonthListBox ui:field="previewMonthListBox"
+										oldStyles="{style.monthListBox-old}" monthStyles="{style.monthListBox-item}"
+										highLightStyles="aon-bold aon-black aon-icon-month-changed {style.monthListBox-item}" />
+										
+									<g:ListBox ui:field="levelListBox" />
+
+									<g:ListBox ui:field="zoomListBox" />
+									<g:Button ui:field='closePreviewButton'
+										styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
+
+								</g:HTMLPanel>
+							</g:HorizontalPanel>
+						</g:HorizontalPanel>
+					</g:FlowPanel>
+				</g:FlowPanel>
+
+			</g:north>
+			<g:center>
+				<g:ScrollPanel styleName="{style.editor}">
+					<g:VerticalPanel styleName="{style.document}">
+						<g:HTML styleName="reset" ui:field='printPreviewHTML'
+							wordWrap='true' />
+					</g:VerticalPanel>
+				</g:ScrollPanel>
+			</g:center>
+		</g:DockLayoutPanel>
+	</g:DeckLayoutPanel>
 
 </ui:UiBinder>
