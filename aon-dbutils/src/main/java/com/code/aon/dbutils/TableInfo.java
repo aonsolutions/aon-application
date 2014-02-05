@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -31,6 +32,7 @@ public class TableInfo implements Constants {
 	private boolean forceHeredity;
 	private TableInfoListener listener;
 	private ColumnInfo cyclicColumn;
+	private boolean withBlobs;
 	
 	public TableInfo(String name, DatabaseMetaData metaData) {
 		this.name = name;
@@ -57,6 +59,7 @@ public class TableInfo implements Constants {
 				} else {
 					this.insertColumnsNumber++;
 				}
+				withBlobs |= (type ==Types.LONGVARBINARY);
 			}
 			setColumns(columns.toArray(new ColumnInfo[columns.size()]));			
 		} catch (SQLException e) {
@@ -215,9 +218,32 @@ public class TableInfo implements Constants {
 		return getSelectStatement(domains, null);
 	}
 	
+	public boolean isWithBlobs() {
+		return withBlobs;
+	}
+
 	public String getSelectStatement( Integer[] domains, String where ) {
 		StringBuffer buf = new StringBuffer();
-		buf.append("SELECT * FROM ");
+		buf.append("SELECT ");
+		if ( isWithBlobs() ) {
+			for( int i = 0; i < columns.length; i++ ) {
+				ColumnInfo ci = this.columns[i];
+				if ( ci.getType() == Types.LONGVARBINARY) {
+					buf.append("CONVERT(");
+					buf.append(ci.getName());
+					buf.append(" using latin1) as ");
+					buf.append(ci.getName());
+				} else {
+					buf.append(ci.getName());
+				}
+				if (i+1 < columns.length ) {
+					buf.append(',');
+				}
+			}			
+		} else {
+			buf.append("*");	
+		}
+		buf.append(" FROM ");
 		buf.append(getName());
 		buf.append(" WHERE ");
 		if ( DOMAIN_TABLE_NAME.equals(getName()) ) {

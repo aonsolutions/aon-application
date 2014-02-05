@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -215,6 +214,8 @@ public class AonDomainDump implements Constants {
 						if ( moreRows ) {
 							writeLine( t.getInsertStatementBegin(true) );					
 						}
+					} else if ( t.isWithBlobs() && moreRows ) {
+						writeLine( t.getInsertStatementBegin(true) );
 					}
 					dumpInfo.incRows();					
 					if ( this.listener != null ) {
@@ -265,10 +266,10 @@ public class AonDomainDump implements Constants {
 				newValue = "\'" + TableUtil.escapeSql(value.toString()) + "\'";
 				break;
 			case Types.LONGVARBINARY:
-            	Blob blob = (Blob) value;
-            	int length = (int) blob.length();
-            	byte[] data = blob.getBytes( 1, length);
-            	newValue = "0x" + new String(Hex.encodeHex(data));
+				Blob blob = (Blob) value;
+				int length = (int) blob.length();
+				byte[] data = blob.getBytes( 1, length);
+            	newValue = "\'" + TableUtil.escapeSql(data) + "\'";
 				break;
 			default:
 				throw new RuntimeException( "not support: " + type );
@@ -320,7 +321,8 @@ public class AonDomainDump implements Constants {
 			}
 		}
 		boolean moreRows = rs.next();
-		writeLine( "\t (" + StringUtils.join(values, ",") + ")" + (moreRows && !firstInsert?",":";") );
+		boolean finishStatement = t.isWithBlobs() || firstInsert || !moreRows;
+		writeLine( "\t (" + StringUtils.join(values, ",") + ")" + (finishStatement?";":",") );
 		return moreRows;
 	}
 

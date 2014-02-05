@@ -28,6 +28,12 @@ public class TableUtil implements Constants {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TableUtil.class);
 
+	private static final String DATE_EMPTY_VALUE = "0000-00-00";
+
+	private static final String TIME_EMPTY_VALUE = "00:00:00";
+	
+	private static final String TIMESTAMP_EMPTY_VALUE = DATE_EMPTY_VALUE + " " + TIME_EMPTY_VALUE;	
+	
 	private static final String[] NO_MERGE_TABLES = new String[] {
 		SESSION_TABLE_NAME, ACTION_ENTRY_TABLE_NAME, DOMAIN_TABLE_NAME
 	};
@@ -359,13 +365,37 @@ public class TableUtil implements Constants {
 				}
 				break;
 			case Types.DATE:
-				value = rs.getDate(ci.getName());
+				try {
+					value = rs.getDate(ci.getName());	
+				} catch ( SQLException e ) {
+					if ( ci.isNullable() ) {
+						value = null;
+					} else {
+						value = DATE_EMPTY_VALUE;	
+					}
+				}
 				break;
 			case Types.TIME:
-				value = rs.getTime(ci.getName());
+				try {
+					value = rs.getTime(ci.getName());	
+				} catch ( SQLException e ) {
+					if ( ci.isNullable() ) {
+						value = null;
+					} else {
+						value = TIME_EMPTY_VALUE;	
+					}
+				}
 				break;
 			case Types.TIMESTAMP:
-				value = rs.getTimestamp(ci.getName());
+				try {
+					value = rs.getTimestamp(ci.getName());	
+				} catch ( SQLException e ) {
+					if ( ci.isNullable() ) {
+						value = null;
+					} else {
+						value = TIMESTAMP_EMPTY_VALUE;	
+					}
+				}
 				break;
 			case Types.CHAR:
 			case Types.VARCHAR:
@@ -381,12 +411,6 @@ public class TableUtil implements Constants {
 		return value;
 	}
 	
-    public static String escapeSql(String str) {
-        String s = StringUtils.replace(str, "'", "''");
-        s = StringUtils.replace( s, "\r", "\\r");
-        return StringUtils.replace( s, "\n", "\\n");
-    }	
-
 	public static boolean hasDomainColumn( Connection connection, String tableName ) {
 		QueryRunner run = new QueryRunner();
 		try {
@@ -424,6 +448,75 @@ public class TableUtil implements Constants {
 			LOGGER.error(e.getMessage(), e);
 		}				
 		return null;
+	}
+	
+    public static String escapeSql(String str) {
+    	StringBuffer sb = new StringBuffer();
+    	for( int i = 0; i < str.length(); i++ ) {
+    		char ch = str.charAt(i);
+    		switch (ch) {
+				case '\'':
+					sb.append("\\'");
+					break;
+    			case '\"':
+    				sb.append("\\\"");
+    				break;
+				case '\\':
+					sb.append("\\\\");
+					break;										    				
+    			case '\r':
+    				sb.append("\\r");
+    				break;    				
+    			case '\n':
+    				sb.append("\\n");
+    				break;    				
+    			case '\t':
+    				sb.append("\\t");
+    				break;    				
+				case (char) 0:
+					sb.append("\\0");
+					break;				    				
+				case (char) 0x1A:
+					sb.append("\\Z");
+					break;				    				
+    			default:
+    				sb.append(ch);
+    		}
+    	}
+        return sb.toString();
+    }	
+	
+	public static String escapeSql( byte[] data ) {
+		StringBuffer sb = new StringBuffer();
+		for( int i = 0; i < data.length; i++ ) {
+			int value = (data[i] & 0x00FF);
+			switch (value) {
+				case 0:
+					sb.append("\\0");
+					break;
+				case 0x0A:
+					sb.append("\\n");
+					break;						
+				case 0x0D:
+					sb.append("\\r");
+					break;						
+				case 0x1A:
+					sb.append("\\Z");
+					break;				
+				case (byte) '\'':
+					sb.append("\\'");
+					break;										
+				case (byte) '\"':
+					sb.append("\\\"");
+					break;										
+				case (byte) '\\':
+					sb.append("\\\\");
+					break;										
+				default:
+					sb.append( (char) value );
+			}
+		}
+		return sb.toString();
 	}
 	
 }
