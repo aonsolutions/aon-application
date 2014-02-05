@@ -132,18 +132,6 @@ public class FanBatchController extends BasicController {
 		onInit(event);
 	}
 	
-//	@Override
-//	public void onAccept(ActionEvent event) {
-//		try {
-//			FanBatch b = (FanBatch) getTo();
-//			b.setStatus(FileStatus.PENDING);
-//			super.onAccept(event);
-//			onSearchCCCs(event);
-//		} catch (ManagerBeanException e) {
-//			AonUtil.addErrorMessage("error on onAccept ["+e.getMessage()+"]");
-//		}
-//	}
-	
 	public void onInit(ActionEvent event) {
 		try {
 			onSearchCCCs(event);

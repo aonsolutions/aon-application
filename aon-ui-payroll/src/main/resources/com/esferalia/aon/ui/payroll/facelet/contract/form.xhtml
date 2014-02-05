@@ -149,7 +149,9 @@
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/modalGeneration.xhtml" />
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/extension/modalExtension.xhtml" />
-		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/modalTransform.xhtml" />
+		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/contrata/transform/modalTransform.xhtml" >
+			<ui:param name="reRender" value="contractForm" />
+		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/sepe/facelet/communication/modalCommunication.xhtml" >
 			<ui:param name="controller" value="#{contractContrata}" />
 		</ui:include>

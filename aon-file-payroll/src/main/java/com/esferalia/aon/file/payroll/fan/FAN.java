@@ -28,7 +28,7 @@ public class FAN extends AbstractFileFiller{
 	private static String ETI = "ETI";
 	private static String EMP = "EMP";
 	private static String RZS = "RZS";
-	private static String CER = "CER";
+//	private static String CER = "CER";
 	private static String EXC = "EXC";
 	private static String TRA = "TRA";
 	private static String AYN = "AYN";
@@ -85,13 +85,13 @@ public class FAN extends AbstractFileFiller{
 			int numTotal = 0;
 			String empresa = null;
 			for (EMP emp: eti.getEmpresas()) {
-				if (!ObjectUtils.equals(empresa, emp.getNumeroIdentificacion())) {
+//				if (!ObjectUtils.equals(empresa, emp.getNumeroIdentificacion())) {
 					++numEmp;
 					properties.put(EMP , emp);
 					createLine(EMP,properties);
 					++numTotal;
 					empresa = emp.getNumeroIdentificacion();
-				}
+//				}
 				if (emp.getRzs() != null) {
 					properties.put(RZS , emp.getRzs());
 					createLine(RZS,properties);

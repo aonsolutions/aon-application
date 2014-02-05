@@ -1182,7 +1182,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ContractClause_general desc,ContractClause_line</value>
+			<value>ContractClause_general desc, ContractClause_domain, ContractClause_line</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

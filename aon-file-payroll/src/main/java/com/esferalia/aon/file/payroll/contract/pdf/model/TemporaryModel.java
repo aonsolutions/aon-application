@@ -53,7 +53,7 @@ public class TemporaryModel extends AbstractContractModel {
 			 * Contract enterprise fields
 			 */
 			setPdfFieldValue(TemporaryCommonField.ENTERPRISE_CIF.getValue(),contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
-			RegistryDirStaff rDirStaff = obtainRegistryDirStaff(contract); 
+			RegistryDirStaff rDirStaff = obtainRegistryDirStaff(contract.getWorkPlace().getEnterprise().getRegistry()); 
 			try {
 				setPdfFieldValue(TemporaryCommonField.ENTERPRISE_DIR_STAFF_NAME.getValue(),rDirStaff.getName());
 				setPdfFieldValue(TemporaryCommonField.ENTERPRISE_DIR_STAFF_NIF.getValue(),rDirStaff.getDocument());
@@ -65,7 +65,7 @@ public class TemporaryModel extends AbstractContractModel {
 				} else if( rDirStaff.isDirector() ){
 					rDirStaddCharge = "Administrador";
 				} else if ( rDirStaff.isRepresentativeLabor() ){
-					rDirStaddCharge = "Representante laboral";
+					rDirStaddCharge = "Repr. laboral";
 				}
 				setPdfFieldValue(TemporaryCommonField.ENTERPRISE_DIR_STAFF_CHARGE.getValue(),rDirStaddCharge);
 			} catch (NullPointerException npe) {

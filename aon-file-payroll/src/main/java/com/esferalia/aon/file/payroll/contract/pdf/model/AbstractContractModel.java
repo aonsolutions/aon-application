@@ -136,11 +136,6 @@ public abstract class AbstractContractModel implements IContractPdfDocument {
 		
 	}
 	
-
-	protected RegistryDirStaff obtainRegistryDirStaff(Contract contract) throws ManagerBeanException {
-		return getHandler().obtainRegistryDirStaff(contract);
-	}
-	
 	protected RegistryDirStaff obtainRegistryDirStaff(Registry registry) throws ManagerBeanException {
 		return getHandler().obtainRegistryDirStaff(registry);
 	}

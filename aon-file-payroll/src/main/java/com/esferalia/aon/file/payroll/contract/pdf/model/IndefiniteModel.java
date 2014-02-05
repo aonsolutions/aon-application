@@ -51,7 +51,7 @@ public class IndefiniteModel extends AbstractContractModel {
 			 * Contract enterprise fields
 			 */
 			setPdfFieldValue(IndefiniteCommonField.ENTERPRISE_CIF.getValue(),contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
-			RegistryDirStaff rDirStaff = obtainRegistryDirStaff(contract); 
+			RegistryDirStaff rDirStaff = obtainRegistryDirStaff(contract.getWorkPlace().getEnterprise().getRegistry()); 
 			try {
 				setPdfFieldValue(IndefiniteCommonField.ENTERPRISE_DIR_STAFF_NAME.getValue(),rDirStaff.getName());
 				setPdfFieldValue(IndefiniteCommonField.ENTERPRISE_DIR_STAFF_NIF.getValue(),rDirStaff.getDocument());
@@ -63,7 +63,7 @@ public class IndefiniteModel extends AbstractContractModel {
 				} else if( rDirStaff.isDirector() ){
 					rDirStaddCharge = "Administrador";
 				} else if ( rDirStaff.isRepresentativeLabor() ){
-					rDirStaddCharge = "Representante laboral";
+					rDirStaddCharge = "Repr. laboral";
 				}
 				setPdfFieldValue(IndefiniteCommonField.ENTERPRISE_DIR_STAFF_CHARGE.getValue(),rDirStaddCharge);
 			} catch (NullPointerException npe) {
@@ -224,8 +224,13 @@ public class IndefiniteModel extends AbstractContractModel {
 			setPdfFieldValue(IndefiniteCommonField.CATEGORY.getValue(), contract.getCategoryDescription());
 			setPdfFieldValue(IndefiniteCommonField.WORKPLACE_FULL_ADDRESS.getValue(), null);
 			setPdfFieldValue(IndefiniteCommonField.WORKPLACE_FULL_ADDRESS_MORE.getValue(), contract.getWorkPlace().getAddress().getFullAddress()+", "+contract.getWorkPlace().getAddress().getLocation());
-			// setPdfFieldValue(IndefiniteCommonField.DISTANCE_WORKING.getValue(), null);
-			// setPdfFieldValue(IndefiniteCommonField.DISTANCE_WORKING_ADDRESS.getValue(), null);
+			
+			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(IndefiniteCommonField.EMPLOYEE_CONTRACT_DISTANCE.toString()))){
+				setPdfFieldValue(IndefiniteCommonField.EMPLOYEE_CONTRACT_DISTANCE.getValue(), getContractInfoMap(contract).get(IndefiniteCommonField.EMPLOYEE_CONTRACT_DISTANCE.toString()));
+			}
+			if(StringUtils.isNotBlank(getContractInfoMap(contract).get(IndefiniteCommonField.EMPLOYEE_CONTRACT_DISTANCE_ADDR.toString()))){
+				setPdfFieldValue(IndefiniteCommonField.EMPLOYEE_CONTRACT_DISTANCE_ADDR.getValue(), getContractInfoMap(contract).get(IndefiniteCommonField.EMPLOYEE_CONTRACT_DISTANCE_ADDR.toString()));
+			}
 			
 			// setPdfFieldValue(IndefiniteCommonField.DISCONTONUOUS_WORK_DESCRIPTION.getValue(), null);
 			// setPdfFieldValue(IndefiniteCommonField.DISCONTONUOUS_WORK_ACTIVITY.getValue(), null);
@@ -239,7 +244,7 @@ public class IndefiniteModel extends AbstractContractModel {
 			// setPdfFieldValue(IndefiniteCommonField.DISCONTINUOUS_AGREEMENT_COLLECTIVE_NO.getValue(), null);
 			// setPdfFieldValue(IndefiniteCommonField.**UNKNOWN**.getValue(), null);
 			
-			if(code == ContractCode.C100){
+			if(code.getValue().startsWith("1") || code.getValue().startsWith("4")){
 				setPdfFieldValue(IndefiniteCommonField.FULL_TIME.getValue(), "true");
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(IndefiniteCommonField.FULL_TIME_WEEK_HOURS.toString()))){
 					setPdfFieldValue(IndefiniteCommonField.FULL_TIME_WEEK_HOURS.getValue(), getContractInfoMap(contract).get(IndefiniteCommonField.FULL_TIME_WEEK_HOURS.toString()));
@@ -250,10 +255,17 @@ public class IndefiniteModel extends AbstractContractModel {
 				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(IndefiniteCommonField.FULL_TIME_END_TIME.toString()))){
 					setPdfFieldValue(IndefiniteCommonField.FULL_TIME_END_TIME.getValue(), getContractInfoMap(contract).get(IndefiniteCommonField.FULL_TIME_END_TIME.toString()));
 				}
-			} else if(code == ContractCode.C200){
+			} else if(code.getValue().startsWith("2") || code.getValue().startsWith("5")){
 				setPdfFieldValue(IndefiniteCommonField.PARTIALLY_TIME.getValue(), "true");
-				if(contrata!=null){
-					setPdfFieldValue(IndefiniteCommonField.PARTIALLY_TIME_HOURS.getValue(), String.valueOf(Integer.parseInt(contrata.getHorasJornada())));
+				
+				
+				if(StringUtils.isNotBlank(getContractDataMap(contract).get(ContextVariable.WEEK_HOURS.toString()))){
+					setPdfFieldValue(IndefiniteCommonField.PARTIALLY_TIME_HOURS.getValue(), getContractDataMap(contract).get(ContextVariable.WEEK_HOURS.toString()));
+					setPdfFieldValue(IndefiniteCommonField.PARTIALLY_TIME_WEEKLY.getValue(), "true");
+				} else if(contrata!=null){
+					if(contrata.getHorasJornada()!=null){
+						setPdfFieldValue(IndefiniteCommonField.PARTIALLY_TIME_HOURS.getValue(), String.valueOf(Integer.parseInt(contrata.getHorasJornada())));
+					}
 					if(contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_D){
 						setPdfFieldValue(IndefiniteCommonField.PARTIALLY_TIME_DAYLY.getValue(), "true");
 					} else if(contrata.getTipoJornada()==TEQPTIEM.TEQPTIEM_S){
@@ -264,9 +276,19 @@ public class IndefiniteModel extends AbstractContractModel {
 						setPdfFieldValue(IndefiniteCommonField.PARTIALLY_TIME_YEARLY.getValue(), "true");
 					}
 				}
-				// setPdfFieldValue(IndefiniteCommonField.HOURS.getValue(), "");
-				// setPdfFieldValue(IndefiniteCommonField.COMPLEMENTARY_HOURS_YES.getValue(), "");
-				// setPdfFieldValue(IndefiniteCommonField.COMPLEMENTARY_HOURS_NO.getValue(), "");
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(IndefiniteCommonField.DEFAULT_JOURNAL_HOURS.toString()))){
+					setPdfFieldValue(IndefiniteCommonField.DEFAULT_JOURNAL_HOURS.getValue(), getContractInfoMap(contract).get(IndefiniteCommonField.DEFAULT_JOURNAL_HOURS.toString()));
+				}
+				
+				String key = getContractInfoMap(contract).get(IndefiniteCommonField.COMPLEMENTARY_HOURS.toString());
+				if(StringUtils.isNotBlank(key)){
+					if(IndefiniteCommonField.COMPLEMENTARY_HOURS_YES.toString().equals(key)){
+						setPdfFieldValue(IndefiniteCommonField.COMPLEMENTARY_HOURS_YES.getValue(), "true");
+					} else if(IndefiniteCommonField.COMPLEMENTARY_HOURS_NO.toString().equals(key)){
+						setPdfFieldValue(IndefiniteCommonField.COMPLEMENTARY_HOURS_NO.getValue(), "true");
+					}
+				}
+				
 			}
 			
 			/*
@@ -347,18 +369,47 @@ public class IndefiniteModel extends AbstractContractModel {
 					setPdfFieldValue(IndefiniteOptionField.OPT5_DISCONTINUOUS_TIME.getValue(),"true");
 					setPdfFieldValue(IndefiniteOptionField.OPT5_TC2_350.getValue(),"true");
 				}
-				// TODO: complete this
-				setPdfFieldValue(IndefiniteOptionField.OPT5_BONUS_ART4_RDL3_2012_YES.getValue(),"");
-				setPdfFieldValue(IndefiniteOptionField.OPT5_BONUS_ART4_RDL3_2012_NO.getValue(),"");
-				setPdfFieldValue(IndefiniteOptionField.OPT5_REGISTERED_IN_EMPLOYMENT_OFFICE.getValue(),"");
-				setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPLOYED_BT_16_30.getValue(),"");
-				setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPLOYED_BT_16_30_JUNIOR.getValue(),"");
-				setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPLOYED_BT_16_30_FEMALE.getValue(),"");
-				setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPLOYED_GT_45.getValue(),"");
-				setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPLOYED_GT_45_MALE.getValue(),"");
-				setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPLOYED_GT_45_FEMALE.getValue(),"");
-				setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPLOYED_WITH_3_MONTH_BENEFIT.getValue(),"");
-				setPdfFieldValue(IndefiniteOptionField.OPT5_FIRST_EMPLOYEE_AND_LT_30.getValue(),"");
+				
+				String key = getContractInfoMap(contract).get(IndefiniteOptionField.OPT5_BONUS_ART4_RDL3_2012.toString());
+				if(StringUtils.isNotBlank(key)){
+					if(IndefiniteOptionField.OPT5_BONUS_ART4_RDL3_2012_YES.toString().equals(key)){
+						setPdfFieldValue(IndefiniteOptionField.OPT5_BONUS_ART4_RDL3_2012_YES.getValue(), "true");
+					} else if(IndefiniteOptionField.OPT5_BONUS_ART4_RDL3_2012_NO.toString().equals(key)){
+						setPdfFieldValue(IndefiniteOptionField.OPT5_BONUS_ART4_RDL3_2012_NO.getValue(), "true");
+					}
+				}
+				
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(IndefiniteOptionField.OPT5_UNEMPLOYED_BT_16_30.toString()))
+						|| StringUtils.isNotBlank(getContractInfoMap(contract).get(IndefiniteOptionField.OPT5_UNEMPLOYED_GT_45.toString())) ){
+					setPdfFieldValue(IndefiniteOptionField.OPT5_REGISTERED_IN_EMPLOYMENT_OFFICE.getValue(),"true");
+
+					key = getContractInfoMap(contract).get(IndefiniteOptionField.OPT5_UNEMPLOYED_BT_16_30.toString());
+					if(StringUtils.isNotBlank(key)){
+						setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPLOYED_BT_16_30_CHECK.getValue(),"true");
+						if(IndefiniteOptionField.OPT5_UNEMPLOYED_BT_16_30_JUNIOR.toString().equals(key)){
+							setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPLOYED_BT_16_30_JUNIOR.getValue(), "true");
+						} else if(IndefiniteOptionField.OPT5_UNEMPLOYED_BT_16_30_FEMALE.toString().equals(key)){
+							setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPLOYED_BT_16_30_FEMALE.getValue(), "true");
+						}
+					}
+
+					key = getContractInfoMap(contract).get(IndefiniteOptionField.OPT5_UNEMPLOYED_GT_45.toString());
+					if(StringUtils.isNotBlank(key)){
+						setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPLOYED_GT_45_CHECK.getValue(),"true");
+						if(IndefiniteOptionField.OPT5_UNEMPLOYED_GT_45_MALE.toString().equals(key)){
+							setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPLOYED_GT_45_MALE.getValue(), "true");
+						} else if(IndefiniteOptionField.OPT5_UNEMPLOYED_GT_45_FEMALE.toString().equals(key)){
+							setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPLOYED_GT_45_FEMALE.getValue(), "true");
+						}
+					}
+				}
+				
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(IndefiniteOptionField.OPT5_UNEMPL_WITH_3_MONTH_BENEFIT.toString()))){
+					setPdfFieldValue(IndefiniteOptionField.OPT5_UNEMPL_WITH_3_MONTH_BENEFIT.getValue(),"true");
+				}
+				if(StringUtils.isNotBlank(getContractInfoMap(contract).get(IndefiniteOptionField.OPT5_FIRST_EMPLOYEE_AND_LT_30.toString()))){
+					setPdfFieldValue(IndefiniteOptionField.OPT5_FIRST_EMPLOYEE_AND_LT_30.getValue(),"true");
+				}
 			} else if(modelOption == ModelOption.INDEFINITE_OPT6){
 				setPdfFieldValue(IndefiniteOptionField.MAIN_OPT6_CHECK.getValue(),"true");
 				setPdfFieldValue(IndefiniteOptionField.OPT6_OPTION_CHECK.getValue(),"true");

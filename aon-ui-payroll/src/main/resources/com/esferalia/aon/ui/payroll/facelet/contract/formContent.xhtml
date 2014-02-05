@@ -60,7 +60,7 @@
 					value="#{contract.to.enterpriseCCC.type}" />
 				<aon:outputText 
 					rendered="#{not (fn:length(contract.activities) > 0)}"
-					value=" (#{contract.to.enterpriseCCC.fullCcc})" />
+					value="#{contract.to.enterpriseCCC.fullCcc}" />
 			</aon:div>
 		</c:if>
 		

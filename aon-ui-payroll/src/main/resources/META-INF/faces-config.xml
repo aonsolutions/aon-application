@@ -1884,6 +1884,18 @@
 			<property-name>searchPagePath</property-name>
 			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/agreement/search.xhtml</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{agreementLookupSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>agreementLookupSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.agreement.AgreementLookupSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************ TRAINING CENTER LOOKUP ************** -->

@@ -8,11 +8,11 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-		<ui:param name="skipResetButton" value="#{!controller.newCCCLineAvailable}"/>
-
+		
 		<ui:define name="columns">
 		
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column alias="EnterpriseCCC.type"
+				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputLabel for="EnterpriseCCC_type"
 						value="#{bundle.aon_type}" />
@@ -31,7 +31,8 @@
 				</f:facet>
 			</aon:column>
 		
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column alias="EnterpriseCCC.ccc"
+				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputLabel for="EnterpriseCCC_ccc" value="#{bundle.aon_value}" />
 				</f:facet>
@@ -56,7 +57,7 @@
 						<f:validateLength minimum="1" maximum="11" />
 						<a4j:support event="onchange"
 							actionListener="#{controller.onChangeCcc}" 
-							reRender="EnterpriseCCC_SSNumberPanel, RegistryAddress_geozone" 
+							reRender="EnterpriseCCC_SSNumberPanel, EnterpriseCCC_geozone" 
 							ajaxSingle="true" />
 					</aon:inputText>
 					<aon:outputText 
@@ -78,7 +79,7 @@
 							<f:validateLength minimum="1" maximum="11" />
 							<a4j:support event="onchange"
 								actionListener="#{controller.onChangeCcc}" 
-								reRender="EnterpriseCCC_SSNumberPanel-New, RegistryAddress_geozone-New" 
+								reRender="EnterpriseCCC_SSNumberPanel-New, EnterpriseCCC_geozone-New" 
 								ajaxSingle="true" />
 						</aon:inputText>
 						<aon:outputText 
@@ -95,18 +96,19 @@
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column alias="EntepriseCCC.geozone"
+				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryAddress_geozone" value="#{bundle.aon_state}" />
+					<aon:outputLabel for="EntepriseCCC_geozone" value="#{bundle.aon_state}" />
 				</f:facet>
 				<aon:outputText value="#{to.geozone.name}"
 					rendered="#{formList}" />
-				<aon:selectOneMenu id="RegistryAddress_geozone"
+				<aon:selectOneMenu id="EnterpriseCCC_geozone"
 					value="#{controller.to.geozone}" rendered="#{formEdit}">
 					<f:selectItems value="#{geozoneCollections.geoTrees}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu id="RegistryAddress_geozone-New"
+					<aon:selectOneMenu id="EnterpriseCCC_geozone-New"
 						value="#{controller.to.geozone}" rendered="#{formNew}">
 						<f:selectItems value="#{geozoneCollections.geoTrees}" />
 					</aon:selectOneMenu>

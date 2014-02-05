@@ -54,6 +54,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.file.payroll.contrata.ContrataProrrogaParams;
+import com.esferalia.aon.file.payroll.contrata.ContrataTransformacionesParams;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelData;
@@ -88,6 +89,7 @@ import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
 import com.esferalia.aon.ui.sepe.controller.ContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
+import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 
 public class ContractController extends BasicController {
 
@@ -433,6 +435,7 @@ public class ContractController extends BasicController {
 		try {
 			if(getParams().getBonus()==null || getParams().getBonus().getId()==null){
 				IManagerBean bean = BeanManager.getManagerBean(ContractBonus.class);
+				bean.restoreNullSubPOJOs(getParams().getBonus());
 				bean.insertOrUpdate(getParams().getBonus());
 				getContractUtils().loadContractBonuses((Contract) this.getTo(), this.getParams());
 			}
@@ -488,7 +491,9 @@ public class ContractController extends BasicController {
 	}
 	
 	public void onActivityChanged( ActionEvent event ) {
-		setEnterpriseCCCs(null);
+		Contract contract = (Contract) this.getTo();
+		contract.setEnterpriseCCC(null);
+		loadEnterpriseCCCs();
 	}
 	
 	public void onWorkPlaceChanged( ActionEvent event ) {
@@ -497,7 +502,6 @@ public class ContractController extends BasicController {
 		contract.setEnterpriseCCC(null);
 		loadActivities();
 		loadEnterpriseCCCs();
-		
 		loadWorkplaceAgreement(event);
 	}
 
@@ -524,7 +528,7 @@ public class ContractController extends BasicController {
 				LOGGER.error(msg);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg,e);
-			}						
+			}
 			loadWorkplaceAgreement(null);
 		}
 	}
@@ -540,40 +544,58 @@ public class ContractController extends BasicController {
 				List<ITransferObject> pwList = pwBean.getList(criteria);
 				for(ITransferObject to: pwList){
 					PayrollWorkPlace pw = (PayrollWorkPlace) to;
-					if(pw.getEnterpriseActivity()!=null && pw.getEnterpriseActivity().getCnae2009()!=null){
+					if(pw.getEnterpriseActivity()==null || pw.getEnterpriseActivity().getId()==null){
+						IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
+						Criteria activityCriteria = new Criteria();
+						activityCriteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), contract.getWorkPlace().getEnterprise().getId());
+						for(ITransferObject activityTo: activityBean.getList(activityCriteria)){
+							EnterpriseActivity activity = (EnterpriseActivity) activityTo;
+							String name = activity.getDescription() + " - (" + activity.getCnae2009().getCode() + ") " + activity.getCnae2009().getTitle();
+							SelectItem item = new SelectItem(activity, name);
+							getActivities().add(item);
+						}
+					} else if(pw.getEnterpriseActivity()!=null && pw.getEnterpriseActivity().getCnae2009()!=null){
 						String name = pw.getEnterpriseActivity().getDescription() + " - (" + pw.getEnterpriseActivity().getCnae2009().getCode() + ") " + pw.getEnterpriseActivity().getCnae2009().getTitle();
 						SelectItem item = new SelectItem(pw.getEnterpriseActivity(), name);
 						getActivities().add(item);
 					}
 				}
-				if( !getActivities().isEmpty() && (contract.getActivity()==null || contract.getActivity().getId()==null)){
+				if( !getActivities().isEmpty() ){
 					contract.setActivity((EnterpriseActivity)getActivities().get(0).getValue());
-					BasicController controller = (BasicController) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_CCC_CONTROLLER);
-					controller.onSelectFirst(null);
-					contract.setEnterpriseCCC((EnterpriseCCC) controller.getTo());
+				} else {
+					contract.setActivity(null);
 				}
 			} catch (ManagerBeanException e) {
 				String msg = "Imposible cargar las Actividades de la empresa. (" + e.getMessage() +")";
 				LOGGER.error(msg);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg,e);
-			}						
+			}
+			loadEnterpriseCCCs();
 		}
 	}
 
 	private void loadEnterpriseCCCs() {
 		setEnterpriseCCCs( new LinkedList<SelectItem>());
 		Contract contract = (Contract) getTo();
-		if (contract.getActivity() != null && contract.getActivity().getId() != null) {
+		if ( (contract.getActivity() != null && contract.getActivity().getId() != null) 
+				|| (contract.getEnterpriseCCC()!=null && contract.getEnterpriseCCC().getId()!=null)){
 			try {
 				IManagerBean ecBean = BeanManager.getManagerBean(EnterpriseCCC.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ID), contract.getActivity().getId());
-				List<ITransferObject> ecList = ecBean.getList(criteria);
+				if(contract.getEnterpriseCCC()!=null && contract.getEnterpriseCCC().getId()!=null){
+					contract.setActivity(contract.getEnterpriseCCC().getActivity());
+					criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ID), contract.getActivity().getId());
+					criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_GEOZONE_ID), contract.getEnterpriseCCC().getGeozone().getId());
+				} else if(contract.getActivity()!=null && contract.getActivity().getId()!=null){
+					criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ID), contract.getActivity().getId());
+					criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_GEOZONE_ID), contract.getWorkPlace().getAddress().getGeozone().getId());
+				}
+				List<ITransferObject> cccList = ecBean.getList(criteria);
 				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-				for(ITransferObject to: ecList){
+				for(ITransferObject to: cccList){
 					EnterpriseCCC ccc = (EnterpriseCCC) to;
-					String name = ccc.getType().getName(locale) +" ("+ ccc.getCcc()+")";
+					String name = ccc.getType().getName(locale) +" ("+ ccc.getFullCcc()+")";
 					SelectItem item = new SelectItem(ccc, name);
 					getEnterpriseCCCs().add(item);
 				}
@@ -809,6 +831,34 @@ public class ContractController extends BasicController {
 		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
 		contrataController.initialize((Contract) this.getTo());
 		contrataController.onContrataDataShow(event);
+	}
+	
+	public void onExtendContract(ActionEvent event){
+		// TODO
+	}
+	
+	public void onTransformContract(ActionEvent event){
+		ContractData currentCodeData = SEPEUtils.getInstance().getContractDataMap((Contract)this.getTo(), null, null).get(ContextVariable.TC2.getName());
+		ContractData newCodeData = new ContractData();
+		ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.TRANSFORM_CONTRATA_CONTROLLER_NAME);
+		ContrataTransformacionesParams params = (ContrataTransformacionesParams) contrataController.getParams();
+		newCodeData.setContract(currentCodeData.getContract());
+		newCodeData.setStartDate(params.getFechaInicio());
+		newCodeData.setEndDate(params.getFechaTerminoReal());
+		newCodeData.setName(currentCodeData.getName());
+		newCodeData.setExpression("\""+params.getTransformCode().getValue()+"\"");
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			bean.insert(newCodeData);
+			ContractUtils.getInstance().loadContractData((Contract) this.getTo(), this.getParams());
+			contrataController.onContrataAccept(event);
+		} catch (ManagerBeanException e) {
+			String msg = "No se ha podido transformar el contrato. (" +e.getMessage() + ")"; 
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
+			LOGGER.error(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 	
 
