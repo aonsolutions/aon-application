@@ -138,7 +138,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		Double totalCost = fillCosts(contractSalaryCalculatorContext);
 		expressionContext.addVariable(ENTERPRISE_QUOTA, totalCost, start, end);
-		Double totalBonus = 0.00; // fillBonus(contractSalaryCalculatorContext);
+		Double totalBonus = fillBonus(contractSalaryCalculatorContext);
 
 		Double totalEnterprise = totalCost - totalBonus;
 		salaryBuilder.setTotalEnterprise(totalEnterprise);
