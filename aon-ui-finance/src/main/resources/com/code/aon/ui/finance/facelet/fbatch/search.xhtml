@@ -27,26 +27,26 @@
 					<aon:outputLabel for="FinanceBatch_id"
 						value="#{bundle.aon_id}" />
 					<aon:inputText id="FinanceBatch_id"
-						valueChangeListener="#{fbatch.addExpression}" size="10" />
+						valueChangeListener="#{controller.addExpression}" size="10" />
 							
 					<aon:outputLabel for="FinanceBatch_description"
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="FinanceBatch_description"
-						valueChangeListener="#{fbatch.addExpression}" size="40" />
+						valueChangeListener="#{controller.addExpression}" size="40" />
 							
 					<aon:outputLabel value="#{bundle.aon_date}" />
 					<aon:div>
 						<aon:outputLabel for="FinanceBatch_issueDate-From" styleClass="aon-form-date-label aon-padding-right"
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="FinanceBatch_issueDate-From"
-							valueChangeListener="#{fbatch.addGreaterThanOrEqualExpression}"
+							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 						<aon:outputLabel for="FinanceBatch_issueDate-To" styleClass="aon-form-date-label aon-padding-right"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="FinanceBatch_issueDate-To"
-							valueChangeListener="#{fbatch.addLessThanOrEqualExpression}"
+							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>							
 					</aon:div>
@@ -55,7 +55,7 @@
 						value="#{bundle.aon_bank}" />
 					<aon:selectOneMenu id="FinanceBatch_registryBank_id"
 						value="#{registryCollections.registryBank}"
-						valueChangeListener="#{fbatch.addIdEqualExpression}">
+						valueChangeListener="#{controller.addIdEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"  />
 						<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 					</aon:selectOneMenu>
@@ -63,13 +63,12 @@
 					<aon:outputLabel for="FinanceBatch_financeBatchType"
 						value="#{bundle.finance_disk_type}" />
 					<aon:selectOneMenu id="FinanceBatch_financeBatchType"
-						valueChangeListener="#{fbatch.addEqualExpression}">
-						<aon:enumConverter enum="com.code.aon.finance.enumeration.FinanceBatchType" />
+						value="#{fBatchSearch.type}" >
 						<f:selectItem itemLabel="-" itemValue=""/>
-						<c:if test="#{!fbatch.payroll}">
-							<f:selectItems value="#{(fbatch.payment)?(financeCollections.financeBatchPaymentTypes):(financeCollections.financeBatchChargeTypes)}" />
+						<c:if test="#{!controller.payroll}">
+							<f:selectItems value="#{(controller.payment)?(financeCollections.financeBatchPaymentTypes):(financeCollections.financeBatchChargeTypes)}" />
 						</c:if>
-						<c:if test="#{fbatch.payroll}">
+						<c:if test="#{controller.payroll}">
 							<f:selectItems value="#{financeCollections.financeBatchPayrollTypes}" />
 						</c:if>
 					</aon:selectOneMenu>
@@ -77,7 +76,7 @@
 					<aon:outputLabel for="FinanceBatch_financeBatchStatus"
 						value="#{bundle.aon_status}" />
 					<aon:selectOneMenu id="FinanceBatch_financeBatchStatus"
-						valueChangeListener="#{fbatch.addEqualExpression}">
+						valueChangeListener="#{controller.addEqualExpression}">
 						<aon:enumConverter enum="com.code.aon.finance.enumeration.FinanceBatchStatus" />
 						<f:selectItem itemLabel="-" itemValue=""/>
 						<f:selectItems value="#{financeCollections.financeBatchStatus}" />
