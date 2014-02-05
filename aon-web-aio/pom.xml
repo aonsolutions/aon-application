@@ -950,10 +950,10 @@
 											</mapping>
 											<mapping>
 												<directory>/etc/tomcat6/</directory>
-												<configuration>true</configuration>
 												<filemode>755</filemode>
 												<username>tomcat</username>
 												<groupname>tomcat</groupname>
+												<directoryIncluded>false</directoryIncluded>
 												<sources>
 													<source>
 														<includes>
