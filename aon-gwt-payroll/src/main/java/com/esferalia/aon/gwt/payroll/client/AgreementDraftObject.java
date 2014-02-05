@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
@@ -322,7 +323,7 @@ public class AgreementDraftObject implements IContextProvider {
 		// getDraftEndDate(),agreementDraft);
 	}
 
-	public Set<Date> getDatesWithChanges() {
+	public SortedSet<Date> getDatesWithChanges() {
 		return agreementDraft.getDatesWithChanges();
 	}
 

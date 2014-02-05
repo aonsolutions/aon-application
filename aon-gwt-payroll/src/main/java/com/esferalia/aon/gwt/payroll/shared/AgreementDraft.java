@@ -191,7 +191,7 @@ public class AgreementDraft extends Agreement {
 
 	private boolean hasChanges;
 
-	private Set<Date> datesWithChanges;
+	private SortedSet<Date> datesWithChanges;
 
 	private Set<Extra> extras;
 	private Map<Integer, Extra> draftExtras;
@@ -276,11 +276,11 @@ public class AgreementDraft extends Agreement {
 		this.salaryTable = salaryTable;
 	}
 
-	public Set<Date> getDatesWithChanges() {
+	public SortedSet<Date> getDatesWithChanges() {
 		return datesWithChanges;
 	}
 
-	public void setDatesWithChanges(Set<Date> datesWithChanges) {
+	public void setDatesWithChanges(SortedSet<Date> datesWithChanges) {
 		this.datesWithChanges = datesWithChanges;
 	}
 

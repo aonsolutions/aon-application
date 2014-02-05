@@ -77,6 +77,7 @@
 	<ui:image field='undo' src='undo.png' />
 	<ui:image field='redo' src='redo.png' />
 
+	<ui:import field="com.esferalia.aon.gwt.payroll.client.Constants.*" />
 
 	<g:HTMLPanel styleName="{style.form}">
 
@@ -140,7 +141,7 @@
 				<g:customCell styleName="{style.field}">
 					<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE"
 						styleName="aon-width-all">
-						<g:TextBox ui:field="expressionTextBox" styleName="aon-width-all aon-inputText" />
+						<g:TextBox ui:field="expressionTextBox" styleName="aon-width-all aon-inputText" maxLength="{DESCRIPTION_MAX_LENGTH}"/>
 						<g:cell horizontalAlignment="ALIGN_CENTER" width="24px">
 							<g:Button ui:field="fxExpressionButton" styleName="{style.fxButton}" />
 						</g:cell>

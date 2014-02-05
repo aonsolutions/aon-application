@@ -11,4 +11,8 @@ public interface Constants {
 	public static final NumberFormat PERCENT_FORMAT = NumberFormat
 	.getPercentFormat();
 
+	static final int NAME_MAX_LENGTH = 32;
+	static final int DESCRIPTION_MAX_LENGTH = 64;
+	static final int EXPRESSION_MAX_LENGTH = 128;
+	
 }

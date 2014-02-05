@@ -1,9 +1,8 @@
 package com.esferalia.aon.gwt.payroll.sql;
 
+import static com.esferalia.aon.gwt.payroll.shared.AgreementDraft.isRemove;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getInteger;
 import static com.esferalia.aon.gwt.payroll.sql.SQLUtils.getType;
-
-import static com.esferalia.aon.gwt.payroll.shared.AgreementDraft.isRemove;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +17,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -313,7 +314,7 @@ public class SQLAgreementDraft {
 
 	}
 
-	public static Set<Date> getDatesWithChanges(Connection connection,
+	public static SortedSet<Date> getDatesWithChanges(Connection connection,
 			int agreementId, Integer... domainIds) throws SQLException {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
@@ -321,7 +322,7 @@ public class SQLAgreementDraft {
 
 			String in = StringUtils.repeat("?", ",", domainIds.length);
 
-			Set<Date> months = new HashSet<Date>();
+			SortedSet<Date> months = new TreeSet<Date>();
 
 			//@formatter:off
 			stmt = connection.prepareStatement(

@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
+import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1866,6 +1869,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		TextBox descriptionBox = new TextBox();
 		descriptionBox.setText(item.getDescription());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
+		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		paymentsTable.setWidget(row, 2, descriptionBox);
 
 		TextBox amountBox = new TextBox();
@@ -1873,6 +1877,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		amountBox.setText(amount != null ? amount : item.getExpression());
 		amountBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		amountBox.addStyleName(AON.AON_TEXT_RIGHT);
+		amountBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 
 		InlineLabel dbAmountLabel = new InlineLabel();
 		dbAmountLabel.setText(format(item.getDbAmount()));
@@ -2177,6 +2182,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		valuePanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
 
 		TextBox variableTextBox = new TextBox();
+		variableTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		variableChangeHandler.setUiObject(variableTextBox);
 		valuePanel.add(variableTextBox);
 

@@ -161,6 +161,7 @@
 	<ui:image field='warn' src='warn.png' />
 	<ui:image field='pdfPreview' src='pdfPreview.png' />
 
+	<ui:import field="com.esferalia.aon.gwt.payroll.client.Constants.*" />
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.AgreementDraft.*" />
 
 	<g:DeckLayoutPanel ui:field="deckPanel">
@@ -231,7 +232,7 @@
 										</g:Label>
 									</g:customCell>
 									<g:customCell styleName="{style.field}">
-										<g:TextBox width="100%" ui:field="descriptionTextBox"></g:TextBox>
+										<g:TextBox width="100%" ui:field="descriptionTextBox" maxLength="{DESCRIPTION_MAX_LENGTH}"/>
 									</g:customCell>
 								</g:row>
 							</g:Grid>

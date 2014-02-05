@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Agreement implements Serializable, HasId<Integer> {
 
@@ -12,6 +13,7 @@ public class Agreement implements Serializable, HasId<Integer> {
 	
 	//private boolean extraWithOutPayment;
 	private boolean levelsWithoutCategories;
+	
 
 	@Override
 	public Integer getId() {
@@ -21,7 +23,7 @@ public class Agreement implements Serializable, HasId<Integer> {
 	public void setId(int id) {
 		this.id = id;
 	}
-
+	
 	public String getDescription() {
 		return description;
 	}

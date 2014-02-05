@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -15,6 +17,7 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
@@ -278,6 +281,19 @@ public class FxDialog extends CustomDialog {
 	@UiHandler("expressionTextArea")
 	void onExpressionKeyUp(KeyUpEvent event) {
 		evalExpression(1000);
+	}
+
+	@UiHandler("expressionTextArea")
+	void onExpressionChange(ChangeEvent event) {
+		String expression = expressionTextArea.getValue();
+		if ( StringUtils.isBlank(expression) )
+			return;
+		if ( expression.length() > EXPRESSION_MAX_LENGTH){
+			setError("F\u00f3rmula demasiado larga ( l\u00edmite " + EXPRESSION_MAX_LENGTH + " caracteres ).");
+			acceptButton.setEnabled(false);
+		}else if ( !acceptButton.isEnabled() ){
+			acceptButton.setEnabled(true);
+		}
 	}
 	
 	void evalExpression(int milliseconds) {

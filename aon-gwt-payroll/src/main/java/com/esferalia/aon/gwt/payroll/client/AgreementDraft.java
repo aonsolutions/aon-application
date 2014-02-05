@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.client.Constants.DEFAULT_ZOOM;
+import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
+import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.MAX_ZOOM;
 import static com.esferalia.aon.gwt.payroll.client.Constants.MIN_ZOOM;
 import static com.esferalia.aon.gwt.payroll.client.Constants.PERCENT_FORMAT;
@@ -1069,6 +1071,7 @@ public class AgreementDraft extends ResizeComposite implements
 		for (Level level : levels) {
 
 			TextBox descriptionTextBox = new TextBox();
+			descriptionTextBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 			descriptionTextBox.setText(level.getDescription());
 			descriptionTextBox.setVisibleLength(5);
 			hide(descriptionTextBox, level.getId() == 0);
@@ -1329,6 +1332,7 @@ public class AgreementDraft extends ResizeComposite implements
 	private void dumpVariable(int row, int col, Level level, Variable var) {
 
 		TextBox expressionTextBox = new TextBox();
+		expressionTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionTextBox.addStyleName(AON.AON_TEXT_RIGHT);
 		if (var.isImpicit())
 			expressionTextBox.getElement().getStyle().setColor("gray");
@@ -1366,6 +1370,7 @@ public class AgreementDraft extends ResizeComposite implements
 	private void dumpUndefVariable(int row, int col, Level level, String name) {
 
 		TextBox expressionTextBox = new TextBox();
+		expressionTextBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		// yes we assume all variables are numeric.
 		expressionTextBox.addStyleName(AON.AON_TEXT_RIGHT);
 		// expressionTextBox.setVisibleLength(VARIABLE_TEXTBOX_SIZE);
@@ -1426,6 +1431,7 @@ public class AgreementDraft extends ResizeComposite implements
 
 		TextBox descriptionTextBox = new TextBox();
 		descriptionTextBox.setVisibleLength(5);
+		descriptionTextBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		salaryTable.setWidget(row, 0, descriptionTextBox);
 
 		int col;
@@ -1567,11 +1573,13 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.setWidget(row, 1, paymentTypeListBox);
 
 		TextBox descriptionBox = new TextBox();
+		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		descriptionBox.setText(payment.getDescription());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		paymentsTable.setWidget(row, 2, descriptionBox);
 
 		TextBox expressionBox = new TextBox();
+		expressionBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionBox.setText(payment.getExpression());
 		expressionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
@@ -1673,6 +1681,7 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.setWidget(row, 1, paymentTypeListBox);
 
 		TextBox descriptionBox = new TextBox();
+		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		SuggestBox descriptionSuggest = new SuggestBox(
 				paymentDescriptionOracle, descriptionBox,
 				paymentSuggestionDisplay);
@@ -1680,6 +1689,7 @@ public class AgreementDraft extends ResizeComposite implements
 		paymentsTable.setWidget(row, 2, descriptionSuggest);
 
 		TextBox expressionBox = new TextBox();
+		expressionBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
 		paymentsTable.setWidget(row, 3, expressionBox);

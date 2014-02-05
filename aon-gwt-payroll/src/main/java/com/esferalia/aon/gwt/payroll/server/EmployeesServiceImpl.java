@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.faces.context.FacesContext;
 
@@ -2484,7 +2485,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = getConnection();
 
-			Set<Date> datesWithChanges = parentDomainId == null ? SQLAgreementDraft
+			SortedSet<Date> datesWithChanges = parentDomainId == null ? SQLAgreementDraft
 					.getDatesWithChanges(connection, draft.getId(), domainId)
 					: SQLAgreementDraft.getDatesWithChanges(connection,
 							draft.getId(), domainId, parentDomainId);

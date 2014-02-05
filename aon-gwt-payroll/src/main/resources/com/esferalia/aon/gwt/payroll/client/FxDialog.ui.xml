@@ -30,6 +30,7 @@
 
 	<ui:image field='x' src='x.png' />
 	<ui:image field='fx' src='fx.png' />
+	
 
 	<g:HTMLPanel styleName="aon-width-all aon-height-all">
 
@@ -127,7 +128,7 @@
 						<tr class="aon-width-all aon-height-all" >
 							<td colspan="3" class="aon-width-all aon-height-all" >
 								<g:TextArea ui:field="expressionTextArea"
-									styleName="aon-width-all aon-height-all gwt-TextArea {style.expression-TextArea}" />
+									styleName="aon-width-all aon-height-all gwt-TextArea {style.expression-TextArea}"  />
 							</td>
 						</tr>
 					</table>
