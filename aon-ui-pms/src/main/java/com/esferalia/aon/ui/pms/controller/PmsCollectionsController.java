@@ -20,11 +20,14 @@ import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.seller.Seller;
 import com.code.aon.seller.enumeration.SellerStatus;
 import com.code.aon.ui.config.util.UserUtils;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.Allotment;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
@@ -164,6 +167,49 @@ public class PmsCollectionsController {
 		criteria.addEqualExpression(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_CUSTOMER_SCOPE_ID));
 		return invoicingGroupBean.getCount(criteria);
+	}
+
+	public List<SelectItem> getAllotmentAgencies() throws ManagerBeanException {
+		List<SelectItem> customers = new LinkedList<SelectItem>();
+		IManagerBean allotmentBean = BeanManager.getManagerBean(Allotment.class);
+		Criteria criteria = new Criteria();
+		criteria.addNotNullExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_ID));
+		criteria.addEqualExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_STATUS), CustomerStatus.ACTIVE);
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_SCOPE_ID));
+		criteria.addOrder(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_REGISTRY_NAME));
+		Projection projection = Projection.group(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY));
+		for (Object obj : allotmentBean.getList(new ProjectionList(projection), criteria)) {
+			Customer customer = (Customer)obj;
+			SelectItem customerItem = new SelectItem(customer, customer.getRegistry().getFullName());
+			customers.add(customerItem);
+		}
+		return customers;
+	}
+
+	public List<SelectItem> getAllotmentAgencyGroups() throws ManagerBeanException {
+		List<SelectItem> groups = new LinkedList<SelectItem>();
+		IManagerBean allotmentBean = BeanManager.getManagerBean(Allotment.class);
+		Criteria criteria = new Criteria();
+		criteria.addNotNullExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_ID));
+		criteria.addEqualExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_CUSTOMER_SCOPE_ID));
+		criteria.addOrder(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_DESCRIPTION));
+		Projection projection = Projection.group(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP));
+		for (Object obj : allotmentBean.getList(new ProjectionList(projection), criteria)) {
+			InvoicingGroup invoicingGroup = (InvoicingGroup)obj;
+			SelectItem groupItem = new SelectItem(invoicingGroup, invoicingGroup.getDescription());
+			groups.add(groupItem);
+		}
+		return groups;
+	}
+
+	public int getAllotmentAgencyGroupsCount() throws ManagerBeanException {
+		IManagerBean allotmentBean = BeanManager.getManagerBean(Allotment.class);
+		Criteria criteria = new Criteria();
+		criteria.addNotNullExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_ID));
+		criteria.addEqualExpression(allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, allotmentBean.getFieldName(IEntityAlias.ALLOTMENT_AGENCY_GROUP_CUSTOMER_SCOPE_ID));
+		return allotmentBean.getCount(criteria);
 	}
 
 	public List<SelectItem> getSellers() throws ManagerBeanException {

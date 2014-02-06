@@ -253,6 +253,12 @@
 											actionListener="#{allotment.onEditSearch}"
 											value="#{bundle.pms_allotment_module}"/>
 									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="allotmentBooking" 
+											action="allotmentBooking_search"
+											actionListener="#{allotmentBooking.onInit}"
+											value="#{bundle.pms_allotment_booking_module}"/>
+									</aon:div>
 								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="roomBooking" 

@@ -77,12 +77,14 @@ public class ProjectReservationRoomBeanVetoListener extends ManagerBeanVetoListe
 						" FROM project_reservation_room as project_reservation_room" +
     					" WHERE project_reservation_room.id = :id" +
     					" AND project_reservation_room.item = :item" +
+    					" AND project_reservation_room.tariff = :tariff" +
     					" AND project_reservation_room.adults = :adults" +
     					" AND project_reservation_room.children = :children";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		SQLQuery query = session.createSQLQuery(stmt);
 		query.setInteger("id", reservationRoom.getId());
 		query.setInteger("item", reservationRoom.getItem().getId());
+		query.setInteger("tariff", reservationRoom.getTariff().getId());
 		query.setInteger("adults", reservationRoom.getAdults());
 		query.setInteger("children", reservationRoom.getChildren());
         return query.list().isEmpty();

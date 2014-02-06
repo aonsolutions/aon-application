@@ -318,8 +318,8 @@
 
 	<!-- ** AON PMS  **************************************************** -->
 	<bean class="com.esferalia.aon.pms.Allotment" sqlName="allotment">
-		<alias names="id,domain,hotel_id,hotel_scope_id,agency_id,agencyGroup_id,startDate,endDate,quantity,active,creationUser,creationDate,modificationUser,modificationDate"/>
-		<hibernate names="id,domain,hotel.id,hotel.scope.id,agency&lt;id,agencyGroup&lt;id,startDate,endDate,quantity,active,creationUser,creationDate,modificationUser,modificationDate"/>
+		<alias names="id,domain,hotel_id,hotel_scope_id,agency,agency_id,agency_registry_name,agency_scope_id,agency_status,agencyGroup,agencyGroup_id,agencyGroup_description,agencyGroup_customer_status,agencyGroup_customer_scope_id,startDate,endDate,quantity,active,creationUser,creationDate,modificationUser,modificationDate"/>
+		<hibernate names="id,domain,hotel.id,hotel.scope.id,agency,agency&lt;id,agency&lt;registry.name,agency&lt;scope.id,agency&lt;status,agencyGroup,agencyGroup&lt;id,agencyGroup&lt;description,agencyGroup&lt;customer.status,agencyGroup&lt;customer.scope.id,startDate,endDate,quantity,active,creationUser,creationDate,modificationUser,modificationDate"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.AllotmentItem" sqlName="allotment_item">
 		<alias names="id,domain,allotment_id,allotment_hotel_id,allotment_agency_id,allotment_startDate,allotment_endDate,item_id,item_product_code"/>

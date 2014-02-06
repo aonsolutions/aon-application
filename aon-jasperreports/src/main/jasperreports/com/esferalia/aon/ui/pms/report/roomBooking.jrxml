@@ -220,7 +220,7 @@
 					<bottomPen lineStyle="Solid"/>
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
 				</box>
-				<textElement verticalAlignment="Middle" rotation="None" markup="none">
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
@@ -368,13 +368,13 @@
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-44" mode="Opaque" x="0" y="65" width="125" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
-				<box leftPadding="2" rightPadding="2">
+				<box leftPadding="10" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#CCCCCC"/>
 				</box>
-				<textElement verticalAlignment="Middle" rotation="None" markup="none">
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>

@@ -22,8 +22,8 @@ public class SQLBooking implements ISQLConstants {
 
 	public static String INSERT_BOOKING =
 			"INSERT INTO booking (" + DOMAIN + ", " + PROJECT_RESERVATION_ROOM + ", " + HOTEL + ", " + AGENCY + 
-			", " + ITEM + ", " + STAY_DATE + ", " + STAY_TYPE + ", " + GUESTS + ") " +
-			"VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+			", " + ITEM + ", " + TARIFF + ", " + STAY_DATE + ", " + STAY_TYPE + ", " + GUESTS + ") " +
+			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	public static String DELETE_RESERVATION_BOOKING =
 			"DELETE FROM booking WHERE " + PROJECT_RESERVATION_ROOM + " IN " +
@@ -35,7 +35,8 @@ public class SQLBooking implements ISQLConstants {
 	public static String SELECT_RESERVATION_BOOKING =
 			"SELECT PR.project AS " + RESERVATION + ", PRR.id AS " + RESERVATION_ROOM + ", PRRD.id AS " + RESERVATION_ROOM_DETAIL +
 			", PRR.domain AS " + DOMAIN + ", IFNULL(R.hotel, PR.hotel) AS " + HOTEL + ", PR.agency AS " + AGENCY + ", IFNULL(R.item, PRR.item) AS " + ITEM +
-			", IFNULL(AA.date, PR.start_date) AS " + START_DATE + ", PR.end_date AS " + END_DATE + ", PRR.adults+PRR.children AS " + GUESTS +
+			", PRR.tariff AS " + TARIFF + ", IFNULL(AA.date, PR.start_date) AS " + START_DATE + ", PR.end_date AS " + END_DATE + 
+			", PRR.adults + PRR.children AS " + GUESTS +
 			" FROM project_reservation_room AS PRR" +
 			" LEFT JOIN project_reservation AS PR ON PR.project = PRR.project_reservation" +
 			" LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room = PRR.id" +
@@ -47,7 +48,8 @@ public class SQLBooking implements ISQLConstants {
 	public static String SELECT_RESERVATION_ROOM_BOOKING =
 			"SELECT PR.project AS " + RESERVATION + ", PRR.id AS " + RESERVATION_ROOM + ", PRRD.id AS " + RESERVATION_ROOM_DETAIL +
 			", PRR.domain AS " + DOMAIN + ", IFNULL(R.hotel, PR.hotel) AS " + HOTEL + ", PR.agency AS " + AGENCY + ", IFNULL(R.item, PRR.item) AS " + ITEM +
-			", IFNULL(AA.date, PR.start_date) AS " + START_DATE + ", PR.end_date AS " + END_DATE + ", PRR.adults+PRR.children AS " + GUESTS +
+			", PRR.tariff AS " + TARIFF + ", IFNULL(AA.date, PR.start_date) AS " + START_DATE + ", PR.end_date AS " + END_DATE + 
+			", PRR.adults + PRR.children AS " + GUESTS +
 			" FROM project_reservation_room AS PRR" +
 			" LEFT JOIN project_reservation AS PR ON PR.project = PRR.project_reservation" +
 			" LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room = PRR.id" +
@@ -65,8 +67,8 @@ public class SQLBooking implements ISQLConstants {
 	public static String REGENERATE_BUILD_BOOKING =
 			"SELECT PR.project AS " + RESERVATION + ", PRR.id AS " + RESERVATION_ROOM + ", PRRD.id AS " + RESERVATION_ROOM_DETAIL +
 			", PRR.domain AS " + DOMAIN + ", IFNULL(R.hotel, PR.hotel) AS " + HOTEL + ", PR.agency AS " + AGENCY + ", IFNULL(R.item, PRR.item) AS " + ITEM +
-			", IFNULL(AA.date, PR.start_date) AS " + START_DATE + ", PR.end_date AS " + END_DATE +  ", PR.hotel AS " + RESERVATION_HOTEL + 
-			", PRR.adults+PRR.children AS " + GUESTS +
+			", PRR.tariff AS " + TARIFF + ", IFNULL(AA.date, PR.start_date) AS " + START_DATE + ", PR.end_date AS " + END_DATE +  
+			", PR.hotel AS " + RESERVATION_HOTEL + ", PRR.adults + PRR.children AS " + GUESTS +
 			" FROM project_reservation_room AS PRR" +
 			" LEFT JOIN project_reservation AS PR ON PR.project = PRR.project_reservation" +
 			" LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room = PRR.id" +
@@ -92,9 +94,10 @@ public class SQLBooking implements ISQLConstants {
 			SQLUtils.setInt(insertStmt, 3, booking.getHotel());
 			SQLUtils.setInt(insertStmt, 4, booking.getAgency());
 			SQLUtils.setInt(insertStmt, 5, booking.getItem());
-			SQLUtils.setDate(insertStmt, 6, booking.getStayDate());
-			SQLUtils.setInt(insertStmt, 7, booking.getStayType().ordinal());
-			SQLUtils.setInt(insertStmt, 8, booking.getGuests());
+			SQLUtils.setInt(insertStmt, 6, booking.getTariff());
+			SQLUtils.setDate(insertStmt, 7, booking.getStayDate());
+			SQLUtils.setInt(insertStmt, 8, booking.getStayType().ordinal());
+			SQLUtils.setInt(insertStmt, 9, booking.getGuests());
 			insertStmt.execute();
 
 			if (fillKey) {
@@ -181,6 +184,7 @@ public class SQLBooking implements ISQLConstants {
 			booking.setHotel(buildRs.getInt(HOTEL));
 			booking.setAgency(buildRs.getObject(AGENCY) != null ? buildRs.getInt(AGENCY) : null);
 			booking.setItem(buildRs.getInt(ITEM));
+			booking.setTariff(buildRs.getInt(TARIFF));
 			booking.setStayDate(buildRs.getDate(START_DATE));
 			booking.setGuests(buildRs.getObject(GUESTS) != null ? buildRs.getInt(GUESTS) : 0);
 

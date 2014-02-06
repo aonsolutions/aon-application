@@ -1009,6 +1009,13 @@
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
 	
+	<!-- ************* ALLOTMENT CONTROL ******************** -->
+	<managed-bean>
+		<managed-bean-name>allotmentBooking</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.AllotmentBookingController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>				
+	</managed-bean>
+	
 	<!-- ************* EMPTY ROOM *************************** -->
 	<managed-bean>
 		<managed-bean-name>emptyRoom</managed-bean-name>
@@ -1369,6 +1376,18 @@
 		<navigation-case>
 			<from-outcome>roomBooking_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/roomBooking/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- ============= Allotment Control ==================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>allotmentBooking_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/allotmentBooking/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>allotmentBooking_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/allotmentBooking/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
 	

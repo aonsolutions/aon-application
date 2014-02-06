@@ -14,6 +14,7 @@ public class Booking implements Serializable {
 	private int hotel;
 	private Integer agency;
 	private int item;
+	private int tariff;
 	private Date stayDate;
 	private BookingStayType stayType;
 	private int guests;
@@ -64,6 +65,14 @@ public class Booking implements Serializable {
 
 	public void setItem(int item) {
 		this.item = item;
+	}
+
+	public int getTariff() {
+		return tariff;
+	}
+
+	public void setTariff(int tariff) {
+		this.tariff = tariff;
 	}
 
 	public Date getStayDate() {

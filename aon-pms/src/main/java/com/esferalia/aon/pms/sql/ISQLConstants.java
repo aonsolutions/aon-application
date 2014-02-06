@@ -7,6 +7,7 @@ public interface ISQLConstants {
 	String HOTEL = "hotel";
 	String AGENCY = "agency";
 	String ITEM = "item";
+	String TARIFF = "tariff";
 	String STAY_DATE = "stay_date";
 	String STAY_TYPE = "stay_type";
 	String ROOMS = "rooms";
@@ -18,6 +19,7 @@ public interface ISQLConstants {
 
 	String START_DATE = "startDate";
 	String END_DATE = "endDate";
+	String ALLOTMENT = "allotment";
 	String QUANTITY = "quantity";
 	String RESERVATION_HOTEL = "reservationHotel";
 
