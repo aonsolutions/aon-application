@@ -98,10 +98,15 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 	}
 
 	public void onInit(ActionEvent event) {
+		setHotel(null);
 		setItem(null);
 		setAgency(null);
-		setFromDate(new Date());
-		setToDate(new Date());
+		if (getFromDate() == null) {
+			setFromDate(new Date());
+		}
+		if (getToDate() == null) {
+			setToDate(DateUtils.addWeeks(new Date(), 2));
+		}
 	}
 	
 	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
@@ -181,7 +186,7 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 	}
 	
 	private void initializeBookingList() throws AonSQLException {
-		setBookingList(new LinkedList<RoomBookingController.DayBooking>());
+		setBookingList(new LinkedList<DayBooking>());
 
 		Connection connection = null;
 		PreparedStatement totalStmt = null;
@@ -214,6 +219,25 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 		}
 	}
 
+	private String getRoomTotalSQL() throws ManagerBeanException {
+		StringBuffer stmt = new StringBuffer();
+		stmt.append("SELECT W.description AS " + HOTEL + ", COUNT(*) AS " + ROOMS);
+		stmt.append(" FROM room AS R, hotel as H, workplace AS W");
+		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("R.domain"));
+		stmt.append(" AND R.active = 1");
+		stmt.append(" AND R.hotel = H.id");
+		stmt.append(" AND H.active = 1");
+		stmt.append(" AND H.workplace = W.id");
+		stmt.append(" AND R.hotel IN (" + getHotelIds() + ")");
+		if (getItem() != null && getItem().getId() != null) {
+			stmt.append(" AND R.item = " + getItem().getId());
+		}
+		stmt.append(" GROUP BY W.description");
+		stmt.append(" ORDER BY " + HOTEL);
+
+		return stmt.toString();
+	}
+
 	private String getRoomBookingSQL() throws ManagerBeanException {
 		StringBuffer stmt = new StringBuffer();
 		stmt.append("SELECT W.description AS " + HOTEL + ", B.stay_date AS " + STAY_DATE + ", B.stay_type AS " + STAY_TYPE);
@@ -221,6 +245,7 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 		stmt.append(" FROM booking AS B, hotel AS H, workplace AS W");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("B.domain"));
 		stmt.append(" AND B.hotel = H.id");
+		stmt.append(" AND H.active = 1");
 		stmt.append(" AND H.workplace = W.id");
 		stmt.append(" AND B.hotel IN (" + getHotelIds() + ")");
 		stmt.append(" AND B.stay_date BETWEEN ? AND ?");
@@ -237,6 +262,7 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 		stmt.append(" FROM asset_activity AS AA, room AS R, hotel as H, workplace AS W");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("R.domain"));
 		stmt.append(" AND R.hotel = H.id");
+		stmt.append(" AND H.active = 1");
 		stmt.append(" AND H.workplace = W.id");
 		stmt.append(" AND R.active = 1");
 		stmt.append(" AND R.hotel IN (" + getHotelIds() + ")");
@@ -248,24 +274,6 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 		}
 		stmt.append(" GROUP BY W.description, AA.date");
 		stmt.append(" ORDER BY " + HOTEL + "," + STAY_DATE + "," + STAY_TYPE);
-
-		return stmt.toString();
-	}
-
-	private String getRoomTotalSQL() throws ManagerBeanException {
-		StringBuffer stmt = new StringBuffer();
-		stmt.append("SELECT W.description AS " + HOTEL + ", COUNT(*) AS " + ROOMS);
-		stmt.append(" FROM room AS R, hotel as H, workplace AS W");
-		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("R.domain"));
-		stmt.append(" AND R.active = 1");
-		stmt.append(" AND R.hotel = H.id");
-		stmt.append(" AND H.workplace = W.id");
-		stmt.append(" AND R.hotel IN (" + getHotelIds() + ")");
-		if (getItem() != null && getItem().getId() != null) {
-			stmt.append(" AND R.item = " + getItem().getId());
-		}
-		stmt.append(" GROUP BY W.description");
-		stmt.append(" ORDER BY " + HOTEL);
 
 		return stmt.toString();
 	}
