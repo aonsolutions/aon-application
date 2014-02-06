@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.29.0
+# Version: 7.29.1
 # Created by: girazu
-# Creation Date: 31/01/2014 12:45
+# Creation Date: 05/02/2014 15:45
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -2008,7 +2008,7 @@ CREATE TABLE `project_reservation_room` (
   `room_code` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo de Habitacion en origen',
   `item` int(4) NOT NULL COMMENT 'Identificador del Tipo de Habitacion',
   `rate_plan` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo de Tarifa en origen',
-  `tariff` int(4) default NULL COMMENT 'Identificador de la Tarifa',
+  `tariff` int(4) NOT NULL COMMENT 'Identificador de la Tarifa',
   `adults` smallint(2) default '0' COMMENT 'Numero de adultos',
   `children` smallint(2) default '0' COMMENT 'Numero de niños',
   `creation_user` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Usuario de creacion',
@@ -2037,6 +2037,7 @@ CREATE TABLE `booking` (
   `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel',
   `agency` int(4) default NULL COMMENT 'Identificador de la Agencia',
   `item` int(4) NOT NULL COMMENT 'Identificador del Producto',
+  `tariff` int(4) NOT NULL COMMENT 'Identificador de la Tarifa',
   `stay_date` date NOT NULL COMMENT 'Fecha de estancia',
   `stay_type` tinyint(2) NOT NULL default '0' COMMENT 'Indica si es una entrada, una salida o una permanencia',
   `guests` int(4) NOT NULL default '0' COMMENT 'Numero de Huespedes',
@@ -2047,11 +2048,13 @@ CREATE TABLE `booking` (
   KEY `IDX_BOOKING_HOTEL` (`hotel`),
   KEY `IDX_BOOKING_AGENCY` (`agency`),
   KEY `IDX_BOOKING_ITEM` (`item`),
+  KEY `IDX_BOOKING_TARIFF` (`tariff`),
   CONSTRAINT `FK_BOOKING_AGENCY` FOREIGN KEY (`agency`) REFERENCES `customer` (`registry`),
   CONSTRAINT `FK_BOOKING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_BOOKING_HOTEL` FOREIGN KEY (`hotel`) REFERENCES `hotel` (`id`),
   CONSTRAINT `FK_BOOKING_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_BOOKING_PROJECT_RESERVATION_ROOM` FOREIGN KEY (`project_reservation_room`) REFERENCES `project_reservation_room` (`id`)
+  CONSTRAINT `FK_BOOKING_PROJECT_RESERVATION_ROOM` FOREIGN KEY (`project_reservation_room`) REFERENCES `project_reservation_room` (`id`),
+  CONSTRAINT `FK_BOOKING_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Booking de Hoteles';
 
 #
@@ -7578,7 +7581,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.29.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.29.1');
 
 COMMIT;
 
