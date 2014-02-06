@@ -873,6 +873,13 @@ public class CompanyParentController extends BasicController implements ICompany
 			LOGGER.warn("unable to check Document.",e);
 		}
 	}
+	
+	public void onLoadGeozone(ActionEvent event){
+		RegistryAddress address = getMainAddress();
+		if(address!=null && address.getZip()!=null) {
+			address.loadGeoZoneByZip();
+		}
+	}
 
 	public void setBasicListenerClasses(List<IControllerListener> basicListenerClasses) {
 		addListeners(basicListenerClasses);

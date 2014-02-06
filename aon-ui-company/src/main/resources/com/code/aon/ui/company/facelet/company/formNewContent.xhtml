@@ -53,39 +53,41 @@
 			valueChangeListener="#{controller.addressChanged}" maxlength="128" size="37" />
 	</aon:div>
 
-	<aon:outputLabel for="Company_address_city"
-		value="#{bundle.registry_city}" />
-	<aon:inputText id="Company_address_city"
-		value="#{controller.mainAddress.city}" maxlength="64"
-		valueChangeListener="#{controller.addressChanged}" size="30" />
-
 	<aon:outputLabel for="Company_address_zip"
 		value="#{bundle.aon_postal_code}" />
-	<aon:inputText id="Company_address_zip"
-		value="#{controller.mainAddress.zip}" maxlength="16"
-		valueChangeListener="#{controller.addressChanged}" size="16" />
-
-	<aon:outputLabel for="Company_address_geozone"
-		value="#{bundle.aon_state}" />
-	<aon:selectOneMenu id="Company_address_geozone"
-		value="#{controller.mainAddress.geozone}"
-		styleClass="aon-form-selectOneMenu-field"
-		valueChangeListener="#{controller.addressChanged}">
-		<f:selectItems value="#{geozoneCollections.geoTrees}" />
-		<a4j:support event="onchange" reRender="Company_address_municipality" ajaxSingle="true" />
-	</aon:selectOneMenu>
+	<aon:div>
+		<aon:inputText id="Company_address_zip"
+			value="#{controller.mainAddress.zip}" maxlength="16"
+			reRender="Company_address_geozone, Company_address_municipality"
+			actionListener="#{controller.onLoadGeozone}"
+			valueChangeListener="#{controller.addressChanged}" size="16" />
+		<aon:outputLabel for="Company_address_geozone" styleClass="aon-margin-left aon-italic"
+			value="#{bundle.aon_state}" />
+		<aon:selectOneMenu id="Company_address_geozone"
+			value="#{controller.mainAddress.geozone}"
+			styleClass="aon-margin-left aon-form-selectOneMenu-field"
+			valueChangeListener="#{controller.addressChanged}">
+			<f:selectItems value="#{geozoneCollections.geoTrees}" />
+			<a4j:support event="onchange" reRender="Company_address_municipality" ajaxSingle="true" />
+		</aon:selectOneMenu>
+	</aon:div>
 	
-	<c:if test="#{showMunicipality}" >
-		<aon:outputLabel for="Company_address_municipality" 
-			value="#{bundle.registry_municipality}" />
+	<aon:outputLabel for="Company_address_municipality" 
+		value="#{bundle.registry_municipality}" />
+	<aon:div>
 		<aon:selectOneMenu id="Company_address_municipality"
 			value="#{controller.mainAddress.municipalityCode}"
 			valueChangeListener="#{controller.addressChanged}">
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{controller.municipalities}" />
 		</aon:selectOneMenu>
-	</c:if>
-
+		<aon:outputLabel for="Company_address_city" styleClass="aon-margin-left aon-margin-right aon-italic"
+			value="#{bundle.registry_city}" />
+		<aon:inputText id="Company_address_city"
+			value="#{controller.mainAddress.city}" maxlength="64" 
+			valueChangeListener="#{controller.addressChanged}" size="30" />
+	</aon:div>
+	
 	<aon:outputLabel for="Company_telephone"
 		value="#{bundle.aon_phone}" />
 	<aon:inputText id="Company_telephone" value="#{controller.phone.value}"

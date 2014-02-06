@@ -34,6 +34,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.Enterprise;
@@ -87,6 +88,7 @@ import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
 import com.esferalia.aon.ui.payroll.utils.ContractUtils;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.ui.sepe.controller.ContrataController;
 import com.esferalia.aon.ui.sepe.controller.ISepeConstants;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
@@ -635,8 +637,12 @@ public class ContractController extends BasicController {
 		try {
 			Criteria criteria = new Criteria();
 			if(getAgreement()!=null && getAgreement().getId()!=null){
+				PayrollUtils utils = PayrollUtils.getInstance();
+				Integer[] ids = {0, DomainManager.getCurrentDomain(), utils.getParentDomainId()};
 				IManagerBean cBean = BeanManager.getManagerBean(AgreementLevelCategory.class);
 				criteria = new Criteria();
+				criteria.setSkipDomainFilter(true);
+				criteria.addInExpression("AgreementLevelCategory.domain", ids);
 				criteria.addEqualExpression(cBean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID), getAgreement().getId());
 				for (ITransferObject to : cBean.getList(criteria)) {
 					AgreementLevelCategory alc = (AgreementLevelCategory) to;

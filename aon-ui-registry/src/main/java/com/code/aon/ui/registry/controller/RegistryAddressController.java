@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,5 +33,13 @@ public class RegistryAddressController extends LinesController {
 		}
 		return municipalities;
 	}
+	
+	public void onLoadGeozone(ActionEvent event){
+		RegistryAddress address = (RegistryAddress) getTo();
+		if(address!=null && address.getZip()!=null) {
+			address.loadGeoZoneByZip();
+		}
+	}
+	
 
 }
