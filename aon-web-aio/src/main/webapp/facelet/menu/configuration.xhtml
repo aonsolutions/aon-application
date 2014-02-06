@@ -47,51 +47,51 @@
 							</aon:div>
 						</aon:panelGrid>
 
-						<c:if test="#{aonRole.admin or (domainSwitcher.type == 'HOTEL' and aonRole.purchaseOperator)}">
-							<aon:panelGrid id="group_config_company"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-company aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.company_data_module}"/>
-								</f:facet>					
-								<aon:div styleClass="aon-direct-access-list">
-									<c:if test="#{aonRole.admin}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="globalConfiguration" 
-												action="globalConfig_form"
-												actionListener="#{globalConfig.onInit}"
-												value="#{bundle.admin_global_configuration}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="dump"
-												action="backup_form"
-												actionListener="#{backup.onInit}"
-												value="#{bundle.admin_backup}" />
-										</aon:div>
-									</c:if>									
-									<c:if test="#{domainSwitcher.type == 'HOTEL' and aonRole.purchaseOperator}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="hotel" 
-												action="hotel_list" 
-												value="#{bundle.pms_hotel_module}" />
-										</aon:div>								
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="department" 
-												action="department_grid" 
-												value="#{bundle.company_department_module}" />
-										</aon:div>
-									</c:if>
-									<c:if test="#{aonRole.sysAdmin}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="applicationParameter"
-												action="applicationParameter_list"
-												actionListener="#{applicationParameter.onSearch}"
-												value="#{bundle.config_app_param_module}" />
-										</aon:div>
-									</c:if>																											
-								</aon:div>
-							</aon:panelGrid>
-						</c:if>
+						<aon:panelGrid id="group_config_company"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-company aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.company_data_module}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<c:if test="#{aonRole.admin or aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="globalConfiguration" 
+											action="globalConfig_form"
+											actionListener="#{globalConfig.onInit}"
+											value="#{bundle.admin_global_configuration}" />
+									</aon:div>
+								</c:if>									
+								<c:if test="#{aonRole.admin}">									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="dump"
+											action="backup_form"
+											actionListener="#{backup.onInit}"
+											value="#{bundle.admin_backup}" />
+									</aon:div>
+								</c:if>									
+								<c:if test="#{domainSwitcher.type == 'HOTEL' and aonRole.purchaseOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="hotel" 
+											action="hotel_list" 
+											value="#{bundle.pms_hotel_module}" />
+									</aon:div>								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="department" 
+											action="department_grid" 
+											value="#{bundle.company_department_module}" />
+									</aon:div>
+								</c:if>
+								<c:if test="#{aonRole.sysAdmin}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="applicationParameter"
+											action="applicationParameter_list"
+											actionListener="#{applicationParameter.onSearch}"
+											value="#{bundle.config_app_param_module}" />
+									</aon:div>
+								</c:if>																											
+							</aon:div>
+						</aon:panelGrid>
 						
 						<c:if test="#{aonRole.saleOperator or aonRole.purchaseOperator or aonRole.productOperator or aonRole.commercialOperator}">
 							<aon:panelGrid id="group_configuration_masters"
