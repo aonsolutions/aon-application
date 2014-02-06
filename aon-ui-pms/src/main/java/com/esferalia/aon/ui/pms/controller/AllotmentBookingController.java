@@ -76,9 +76,6 @@ public class AllotmentBookingController implements ICollectionProvider, ISQLCons
 	}
 
 	public Date getToDate() {
-		if (toDate.before(fromDate)) {
-			toDate = fromDate;
-		}
 		return toDate;
 	}
 	public void setToDate(Date toDate) {

@@ -74,9 +74,6 @@ public class RoomBookingController implements ICollectionProvider, ISQLConstants
 	}
 
 	public Date getToDate() {
-		if (toDate.before(fromDate)) {
-			toDate = fromDate;
-		}
 		return toDate;
 	}
 	public void setToDate(Date toDate) {
