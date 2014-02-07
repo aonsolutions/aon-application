@@ -1,16 +1,16 @@
 package com.esferalia.aon.pms.event;
 
-import org.apache.commons.lang.StringUtils;
+import java.util.List;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationService;
 
@@ -40,12 +40,14 @@ public class ProjectReservationServiceBeanVetoListener extends ManagerBeanVetoLi
 	}
 
     private	Integer calculateNextIndex(ProjectReservation reservation) throws ManagerBeanException {
-		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), reservation.getId());
-		Projection projection = Projection.max(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_SERVICE_INDEX));
-		Object value = reservationServiceBean.getUniqueResult(projection, criteria);
-		return (value != null) ? ((Integer)value) + 1 : 1;
+		String stmt = "SELECT MAX(service_index)" +
+						" FROM project_reservation_service as project_reservation_service" +
+						" WHERE project_reservation_service.project_reservation = :project";
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		SQLQuery query = session.createSQLQuery(stmt);
+		query.setInteger("project", reservation.getId());
+		List<?> list = query.list();
+		return !list.isEmpty() ? ((Byte)list.get(0)).intValue() + 1 : 1; 
 	}
 
 }
