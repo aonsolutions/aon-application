@@ -29,8 +29,8 @@ public class ProjectReservationGuestBeanVetoListener extends ManagerBeanVetoList
 
     private	Integer calculateNextIndex(ProjectReservation reservation) throws ManagerBeanException {
 		String stmt = "SELECT MAX(guest_index)" +
-				" FROM project_reservation_guest as project_reservation_guest" +
-				" WHERE project_reservation_guest.project_reservation = :project";
+						" FROM project_reservation_guest as project_reservation_guest" +
+						" WHERE project_reservation_guest.project_reservation = :project";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		SQLQuery query = session.createSQLQuery(stmt);
 		query.setInteger("project", reservation.getId());
