@@ -1,14 +1,15 @@
 package com.esferalia.aon.pms.event;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
+import java.util.List;
+
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 
@@ -27,12 +28,14 @@ public class ProjectReservationGuestBeanVetoListener extends ManagerBeanVetoList
     }
 
     private	Integer calculateNextIndex(ProjectReservation reservation) throws ManagerBeanException {
-		IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID), reservation.getId());
-		Projection projection = Projection.max(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_GUEST_INDEX));
-		Object value = reservationGuestBean.getUniqueResult(projection, criteria);
-		return (value != null) ? ((Integer)value) + 1 : 1;
+		String stmt = "SELECT MAX(guest_index)" +
+				" FROM project_reservation_guest as project_reservation_guest" +
+				" WHERE project_reservation_guest.project_reservation = :project";
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		SQLQuery query = session.createSQLQuery(stmt);
+		query.setInteger("project", reservation.getId());
+		List<?> list = query.list();
+		return !list.isEmpty() ? ((Byte)list.get(0)).intValue() + 1 : 1; 
 	}
 
 }
