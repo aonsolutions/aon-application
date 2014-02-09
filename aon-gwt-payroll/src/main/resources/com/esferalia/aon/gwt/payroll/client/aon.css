@@ -82,6 +82,10 @@
 	gwt-image: "aon_icon_row_changed" ; 
 }
 
+@sprite .rich-calendar-button {
+	gwt-image: "rich_calendar_button" ; 
+}
+
 .aon-dataTable .selected {
     border: 1px solid #D3C061;
     background: none repeat scroll 0 0 #FFFADC;
