@@ -1119,6 +1119,36 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
+	public SortedSet<Date> getChanges(Agreement agreement)
+			throws IllegalArgumentException {
+		Connection conn = null;
+		try {
+			initFacesContext();
+			conn = getConnection();
+
+			Integer domainId = getDomainID();
+			Integer parentDomainId = getParentDomainID();
+
+			return parentDomainId != null ? SQLAgreementDraft
+					.getDatesWithChanges(conn, agreement.getId(), domainId,
+							parentDomainId) : SQLAgreementDraft
+					.getDatesWithChanges(conn, agreement.getId(), domainId);
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+			releaseFacesContext();
+		}
+	}
+
 	// -------------------------------------------------------- Private methods
 
 	@Deprecated
@@ -2890,8 +2920,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ctx = getSalaryCalculatorContext(conn, draft, levelId);
 			com.esferalia.aon.payroll.Salary salary = (com.esferalia.aon.payroll.Salary) calculator
 					.calculate(ctx);
-			
-			// fill salary , ugly code 
+
+			// fill salary , ugly code
 			salary.setEmployeeDocument(StringUtils.repeat(" ", 9));
 			String levelDescription = StringUtils.repeat(" ", 2);
 			String draftDescription = StringUtils.repeat(" ", 12);
@@ -2956,9 +2986,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					EnterpriseActivity enterpriseActivity = enterpriseCCC
 							.getActivity();
 					enterprise = enterpriseActivity.getEnterprise();
-					
+
 				}
-				
+
 				salary.setEnterpriseDocument(enterprise.getRegistry()
 						.getDocument());
 				salary.setEnterpriseName(enterprise.getRegistry().getFullName());
@@ -2970,7 +3000,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				}
 				workPlace.setEnterprise(enterprise);
 				person.setRegistry(enterprise.getRegistry());
-				
 
 			} catch (ManagerBeanException e) {
 				if (!StringUtils.isBlank(draft.getDescription()))
@@ -2983,7 +3012,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			// TODO: Calendar ???
 			salary.setIssueYear(ctx.getIssueDate().getYear());
 			salary.setIssueMonth(ctx.getIssueDate().getMonth());
-			
 
 			return salary;
 		} catch (ExpressionException e) {

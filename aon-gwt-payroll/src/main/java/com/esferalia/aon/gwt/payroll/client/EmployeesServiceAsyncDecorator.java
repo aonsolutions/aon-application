@@ -6,7 +6,9 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -106,14 +108,14 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
-	public void getCostReceiptHTML(Cost cost, Salary.Type types [], int zoom,
+	public void getCostReceiptHTML(Cost cost, Salary.Type types[], int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getCostReceiptHTML(cost, types, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
 
-	public void getSalaryReceiptHTML(Cost cost, Salary.Type types [], int zoom,
+	public void getSalaryReceiptHTML(Cost cost, Salary.Type types[], int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getSalaryReceiptHTML(cost, types, zoom,
@@ -152,10 +154,11 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				new AsyncCallbackWrapper<Void>(callback));
 
 	}
-	
+
 	@Override
 	public void saveAgreementDraft(AgreementDraft agreementDraft,
-			AsyncCallback<AgreementDraft> callback) throws IllegalArgumentException {
+			AsyncCallback<AgreementDraft> callback)
+			throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.saveAgreementDraft(agreementDraft,
 				new AsyncCallbackWrapper<AgreementDraft>(callback));
@@ -214,14 +217,15 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getSalaryDraftReceiptHTML(salaryPreview, zoom,
 				new AsyncCallbackWrapper<String>(callback));
 	}
-	
+
 	@Override
 	public void getAgreementDraftReceiptHTML(AgreementDraft agreementDraft,
-			int levelId, Salary.Type type, int zoom, AsyncCallback<String> callback)
-			throws IllegalArgumentException {
+			int levelId, Salary.Type type, int zoom,
+			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getAgreementDraftReceiptHTML(agreementDraft, levelId, type, zoom,
-				new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync
+				.getAgreementDraftReceiptHTML(agreementDraft, levelId, type,
+						zoom, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
@@ -287,11 +291,21 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 				new AsyncCallbackWrapper<Map<String, String>>(callback));
 
 	}
-	
+
 	@Override
 	public void delete(Salary[] salaries, AsyncCallback<Void> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.delete(salaries,new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.delete(salaries, new AsyncCallbackWrapper<Void>(
+				callback));
+	}
+
+	@Override
+	public void getChanges(Agreement agreement,
+			AsyncCallback<SortedSet<Date>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getChanges(agreement,
+				new AsyncCallbackWrapper<SortedSet<Date>>(callback));
 	}
 }

@@ -20,6 +20,19 @@ public class SimpleContractDeduction implements IContractDeduction {
 	private Date startDate;
 	private Date endDate;
 	
+	public SimpleContractDeduction() {
+	}
+	
+	public SimpleContractDeduction(IContractDeduction contractDeduction){
+		id = contractDeduction.getId();
+		type = contractDeduction.getType();
+		name = contractDeduction.getName();
+		startDate = contractDeduction.getStartDate();
+		endDate = contractDeduction.getEndDate();
+		expression = contractDeduction.getExpression();
+		description = contractDeduction.getDescription();
+		
+	}
 	
 	@Override
 	public Integer getId() {

@@ -1,14 +1,23 @@
 package com.code.aon.registry;
 
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.annotations.Heritable;
+import com.code.aon.geozone.GeoZone;
+import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.AddressType;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.RegistryAddressDB;
 
 @Entity
@@ -59,5 +68,26 @@ public class RegistryAddress extends RegistryAddressDB implements IAddress {
     public boolean isMainAddress() {
   		return getAddressType() == AddressType.MAIN;
     }
-
+    
+    @Transient
+    public void loadGeoZoneByZip() {
+    	if(this.getId()!=null){
+    		if(StringUtils.isNotBlank(this.getZip())){
+    			try {
+    				IManagerBean bean = BeanManager.getManagerBean(GeoZone.class);
+    				Criteria criteria = new Criteria();
+    				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEO_ZONE_CODE), this.getZip().substring(0,2));
+    				List<ITransferObject> list = bean.getList(criteria);
+    				if( !list.isEmpty() ){
+    					this.setGeozone((GeoZone) list.get(0));
+    				}
+    			} catch (ManagerBeanException e) {
+    				// NADA, no se autocompleta la provincia
+    			}
+    		} else{
+    			this.setGeozone(null);
+    		}
+    	} 
+	}
+    
 }

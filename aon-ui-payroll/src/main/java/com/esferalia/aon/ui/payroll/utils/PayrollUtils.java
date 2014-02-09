@@ -1,5 +1,9 @@
 package com.esferalia.aon.ui.payroll.utils;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -18,6 +22,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Enterprise;
 import com.code.aon.config.Domain;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -291,6 +297,32 @@ public class PayrollUtils {
 				// NADA. se devuelve vacio
 			}
 		} 
+		return null;
+	}
+	
+	public Integer getParentDomainId() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT parent FROM domain WHERE id = " + DomainManager.getCurrentDomain();
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				return rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener los convenios. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener los convenios. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
 		return null;
 	}
 	

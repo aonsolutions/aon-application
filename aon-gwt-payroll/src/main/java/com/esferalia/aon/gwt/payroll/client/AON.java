@@ -90,6 +90,8 @@ public class AON {
 	public static final String AON_NO_MARGIN = "aon-no-margin";
 	public static final String AON_INPUT_REQUIRED = "aon-input-required";
 	public static final String AON_PADDING_LEFT = "aon-padding-left";
+	
+	public static final String RICH_CALENDAR_BUTTON = "rich-calendar-button";
 
 	public static final NumberFormat CURRENCY_FORMAT = NumberFormat
 			.getFormat("#,##0.00");

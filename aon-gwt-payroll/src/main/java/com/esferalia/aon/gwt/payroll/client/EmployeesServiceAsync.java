@@ -3,7 +3,9 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -128,5 +130,8 @@ public interface EmployeesServiceAsync {
 
 	void delete(Salary salaries[], AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
+	
+	void getChanges(Agreement agreement, AsyncCallback<SortedSet<Date>> callback)
+	throws IllegalArgumentException;
 
 }

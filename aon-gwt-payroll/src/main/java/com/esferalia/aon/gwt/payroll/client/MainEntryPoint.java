@@ -90,7 +90,9 @@ public class MainEntryPoint implements EntryPoint {
 		ImageResource aon_icon_row_c(); // TODO: change this name?
 
 		ImageResource aon_icon_row_changed(); // TODO: change this name?
-
+		
+		@Source("rich-calendar-button.png")
+		ImageResource rich_calendar_button(); // TODO: change this name?
 		
 	}
 

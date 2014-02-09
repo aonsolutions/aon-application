@@ -88,8 +88,7 @@
 				size="32" maxlength="12" >
 				<f:validateLength minimum="1" maximum="12" />
 				<a4j:support event="onchange"
-					actionListener="#{controller.onChangeSSNumber}" 
-					reRender="Person_SSNumberPanel, Person_address_geozone" 
+					reRender="Person_SSNumberPanel" 
 					ajaxSingle="true" />
 			</aon:inputText>
 			<aon:outputText 

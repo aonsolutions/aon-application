@@ -17,12 +17,14 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMEN
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.mvel2.CompileException;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -85,7 +87,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		public void onInvalidData(IContractBonus bonus, String variableName,
 				String message);
-
 
 	}
 
@@ -195,94 +196,16 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			Collection<IContractPayment> payments = ctx.getContractPayments();
 			for (IContractPayment contractPayment : payments) {
-
-				Date paymentStart = Period.max(contractPayment.getStartDate(),
-						start);
-				Date paymentEnd = Period.min(contractPayment.getEndDate(), end);
-				if (paymentEnd.before(paymentStart)) {
-					continue; // TODO : must be done in context ?
-				}
-
-				try {
-
-					List<ITimedResult<Double>> results = expressionContext
-							.addExpression(contractPayment, paymentStart,
-									paymentEnd, Double.class);
-
-					double total = 0.00;
-					double totalPayment = 0.00;
-
-					for (ITimedResult<Double> result : results) {
-
-						String concept = contractPayment.getName();
-						PaymentType type = contractPayment.getType();
-
-						Date amountStart = result.getPeriod().getStart();
-						Date amountEnd = result.getPeriod().getEnd();
-
-
-						Double valueDouble = result.getValue();
-						double value = valueDouble != null ? valueDouble : 0.00;
-						
-						expressionContext.addVariable(ALL, value, amountStart, amountEnd);
-
-						quoteCalculator.quote(contractPayment, paymentStart,
-						paymentEnd, value);
-
-						Double payment = taxCalculator.tax(contractPayment,
-								amountStart, amountEnd, chargeDate, value);
-
-						if (payment != 0.00) {
-							String description = null;
-							try {
-								description = expressionContext.evalTemplate(
-										contractPayment.getDescription(),
-										amountStart, amountEnd);
-								// TODO ¿ Append period to description ?
-								description = getDescriptionPeriod(description,
-										paymentStart, paymentEnd, amountStart,
-										amountEnd);
-							} catch (Exception e) {
-								// TODO : Log ???
-							}
-
-							salaryBuilder.addPayment(type, concept, payment,
-									description, contractPayment,
-									result.getContext());
-						}
-						else {
-							salaryBuilder.addZeroPayment(type, concept, contractPayment,result.getContext());
-						}
-						total += value;
-
-					}
-//					quoteCalculator.quote(contractPayment, paymentStart,
-//							paymentEnd, total);
-					
-
-				} catch (RemoveException e) {
-					// TODO: Something ??? It's really necessary...
-				} catch (InvalidVariables e) {
-					onInvalidData(contractPayment, e.getMessage(),
-							e.getVariables());
-				} catch (CheckException e) {
-					onCheckError(contractPayment, e.getMessage());
-				} catch (RemoveVariableError e) {
-					onUndefinedData(contractPayment, e.getVariable());
-				} catch (UndefinedVariablesException e) {
-					onUndefinedData(contractPayment, e.getMessage(),
-							e.getVariableNames());
-				} catch (CompileException e) {
-					onCompileError(contractPayment, e.getMessage());
-				}
+				resolvePayment(contractPayment, start, end, chargeDate,
+						expressionContext, taxCalculator, quoteCalculator);
 			}
 
-			salaryBuilder.setRemuneration(taxCalculator.getRenumeration());
-
 			double totalPayment = taxCalculator.getTotalPayment();
-			salaryBuilder.setTotalPayment(totalPayment);
 			expressionContext.addVariable(TOTAL_PAYMENT, totalPayment, start,
 					end);
+			salaryBuilder.setTotalPayment(totalPayment);
+
+			salaryBuilder.setRemuneration(taxCalculator.getRenumeration());
 
 			salaryBuilder.setItBase(quoteCalculator.getItBase());
 
@@ -338,6 +261,89 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 		}
 	}
 
+	private void resolvePayment(IContractPayment contractPayment, Date start,
+			Date end, Date chargeDate, ExpressionContext expressionContext,
+			TaxCalculator taxCalculator, QuoteCalculator quoteCalculator)
+			throws AonException {
+
+		Date paymentStart = Period.max(contractPayment.getStartDate(), start);
+		Date paymentEnd = Period.min(contractPayment.getEndDate(), end);
+		if (paymentEnd.before(paymentStart)) {
+			return; // TODO : must be done in context ?
+		}
+
+		try {
+
+			List<ITimedResult<Double>> results = expressionContext
+					.addExpression(contractPayment, paymentStart, paymentEnd,
+							Double.class);
+
+			double total = 0.00;
+			double totalPayment = 0.00;
+
+			for (ITimedResult<Double> result : results) {
+
+				String concept = contractPayment.getName();
+				PaymentType type = contractPayment.getType();
+
+				Date amountStart = result.getPeriod().getStart();
+				Date amountEnd = result.getPeriod().getEnd();
+
+				Double valueDouble = result.getValue();
+				double value = valueDouble != null ? valueDouble : 0.00;
+
+				expressionContext.addVariable(ALL, value, amountStart,
+						amountEnd);
+
+				quoteCalculator.quote(contractPayment, paymentStart,
+						paymentEnd, value);
+
+				Double payment = taxCalculator.tax(contractPayment,
+						amountStart, amountEnd, chargeDate, value);
+
+				if (payment != 0.00) {
+					String description = null;
+					try {
+						description = expressionContext.evalTemplate(
+								contractPayment.getDescription(), amountStart,
+								amountEnd);
+						// TODO ¿ Append period to description ?
+						description = getDescriptionPeriod(description,
+								paymentStart, paymentEnd, amountStart,
+								amountEnd);
+					} catch (Exception e) {
+						// TODO : Log ???
+					}
+
+					salaryBuilder.addPayment(type, concept, payment,
+							description, contractPayment, result.getContext());
+				} else {
+					salaryBuilder.addZeroPayment(type, concept,
+							contractPayment, result.getContext());
+				}
+				total += value;
+
+			}
+			// quoteCalculator.quote(contractPayment, paymentStart,
+			// paymentEnd, total);
+
+		} catch (RemoveException e) {
+			// TODO: Something ??? It's really necessary...
+		} catch (InvalidVariables e) {
+			onInvalidData(contractPayment, e.getMessage(), e.getVariables());
+		} catch (CheckException e) {
+			onCheckError(contractPayment, e.getMessage());
+		} catch (RemoveVariableError e) {
+			onUndefinedData(contractPayment, e.getVariable());
+		} catch (UndefinedVariablesException e) {
+			onUndefinedData(contractPayment, e.getMessage(),
+					e.getVariableNames());
+		} catch (CompileException e) {
+			onCompileError(contractPayment, e.getMessage());
+		}
+
+	}
+
 	public static final String DAY_FOMAT = "%s ( %te )";
 	public static final String DAY_PERIOD_FOMAT = "%s ( %te - %te )";
 	public static final String COMPLETE_PERIOD_FOMAT = "%s ( %te/%<tm - %te/%<tm )";
@@ -383,7 +389,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				if (type.isTaxDeduction()) {
 					deductionStart = ctx.getIrpfDate();
 					deductionEnd = ctx.getIrpfDate();
-					
+
 				} else {
 					deductionStart = Period.max(
 							contractDeduction.getStartDate(), start);
@@ -400,7 +406,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 					if (type.isSsDeduction()) {
 						ssContributions += deduction;
-					} else if (type.isTaxDeduction()){
+					} else if (type.isTaxDeduction()) {
 						totalIrpf += deduction;
 					}
 				} catch (RemoveException e) {
@@ -450,13 +456,13 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		for (ITimedResult<Double> result : results) {
 			Double value = result.getValue();
-			
-			if (value == null || value == 0){
+
+			if (value == null || value == 0) {
 				salaryBuilder.addZeroDeduction(type, concept, d,
 						result.getContext());
 				continue;
 			}
-			
+
 			String description = null;
 			try {
 				Period period = result.getPeriod();
@@ -801,5 +807,20 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 					p.getEnd()) + 1;
 			return value * portionDays / alldays;
 		}
+	}
+
+	private static IContractPayment copy(IContractPayment payment) {
+		ContractPayment copy = new ContractPayment();
+
+		copy.setType(payment.getType());
+		copy.setMonth(payment.getMonth());
+		copy.setStartDate(payment.getStartDate());
+		copy.setEndDate(payment.getEndDate());
+		copy.setDescription(payment.getDescription());
+		copy.setExpression(payment.getExpression());
+		copy.setIrpfExpression(payment.getIrpfExpression());
+		copy.setQuoteExpression(payment.getQuoteExpression());
+
+		return copy;
 	}
 }

@@ -42,34 +42,39 @@
 					value="#{controller.to.address3}" size="30" maxlength="128" />
 			</aon:div>
 
-			<aon:outputLabel for="RegistryAddress_zip" value="#{bundle.aon_postal_code}" styleClass="aon-italic"/>
+			<aon:outputLabel for="RegistryAddress_zip" value="#{bundle.aon_postal_code}" styleClass="aon-italic" />
 			<aon:div>
 				<aon:inputText id="RegistryAddress_zip#{sufix}"	required="true" styleClass="aon-margin-left aon-form-input-text"
+					reRender="RegistryAddress_geozone#{sufix}, RegistryAddress_municipality#{sufix}"
+					actionListener="#{controller.onLoadGeozone}"
 					value="#{controller.to.zip}" size="8" maxlength="16" />
-
-				<aon:outputLabel for="RegistryAddress_city" value="#{bundle.registry_city}" styleClass="aon-italic aon-margin-left"/>
-				<aon:inputText id="RegistryAddress_city#{sufix}" required="true" styleClass="aon-margin-left aon-form-input-text"
-					value="#{controller.to.city}" size="20" maxlength="64" />
-			</aon:div>
-			
-			<aon:outputLabel for="RegistryAddress_geozone" value="#{bundle.aon_state}" styleClass="aon-italic"/>
-			<aon:div>
+				<aon:outputLabel for="RegistryAddress_geozone" value="#{bundle.aon_state}" styleClass="aon-italic aon-margin-left"/>
 				<aon:selectOneMenu id="RegistryAddress_geozone#{sufix}"	styleClass="aon-margin-left aon-form-input-text"
 					value="#{controller.to.geozone}">
 					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{geozoneCollections.geoTrees}" />
 					<a4j:support event="onchange" reRender="RegistryAddress_municipality#{sufix}" ajaxSingle="true" />
 				</aon:selectOneMenu>
+			</aon:div>
 			
-				<c:if test="#{showMunicipality}" >
-					<aon:outputLabel for="RegistryAddress_municipality" value="#{bundle.registry_municipality}" styleClass="aon-italic aon-margin-left"/>
+			<c:if test="#{showMunicipality}">
+				<aon:outputLabel for="RegistryAddress_municipality" value="#{bundle.registry_municipality}" styleClass="aon-italic"/>
+				<aon:div>
 					<aon:selectOneMenu id="RegistryAddress_municipality#{sufix}" styleClass="aon-margin-left aon-form-input-text"
 						value="#{controller.to.municipalityCode}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{controller.municipalities}" />
 					</aon:selectOneMenu>
-				</c:if>
-			</aon:div>
+					<aon:outputLabel for="RegistryAddress_city" value="#{bundle.registry_city}" styleClass="aon-italic aon-margin-left"/>
+					<aon:inputText id="RegistryAddress_city#{sufix}" required="true" styleClass="aon-margin-left aon-form-input-text"
+						value="#{controller.to.city}" size="20" maxlength="64" />
+				</aon:div>
+			</c:if>
+			<c:if test="#{!showMunicipality}">
+				<aon:outputLabel for="RegistryAddress_city" value="#{bundle.registry_city}" styleClass="aon-italic"/>
+				<aon:inputText id="RegistryAddress_city#{sufix}" required="true" styleClass="aon-margin-left aon-form-input-text"
+					value="#{controller.to.city}" size="20" maxlength="64" />
+			</c:if>
 		</aon:panelGrid>
 	</aon:div>
 

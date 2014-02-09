@@ -497,7 +497,7 @@ public class SQLAgreementDraft {
 			if (dbId < 0)
 				dbId = insertLevel(conn, domainId, draft.getId(), level);
 			else
-				updateLevel(conn, domainId, draft.getId(), level);
+				updateLevel(conn, level);
 
 			for (Variable variable : salaryTable.getVariables(draftId)) {
 				updateLevelData(conn, domainId, dbId, variable);
@@ -896,8 +896,7 @@ public class SQLAgreementDraft {
 
 	}
 
-	private static void updateLevel(Connection conn, Integer domainId,
-			Integer agreementId, Level level) throws SQLException {
+	private static void updateLevel(Connection conn, Level level) throws SQLException {
 		PreparedStatement stmt = null;
 		try {
 			//@formatter:off
@@ -907,7 +906,7 @@ public class SQLAgreementDraft {
 					+ " WHERE " + AgreementLevelColumns.ID + " = ? ");
 			//@formatter:on
 			stmt.setString(1, level.getDescription());
-			stmt.setInt(2, agreementId);
+			stmt.setInt(2, level.getId());
 			stmt.executeUpdate();
 			stmt.close();
 

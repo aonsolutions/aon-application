@@ -111,12 +111,14 @@ public class CalendarController extends BasicController {
 				public void beforeModelInitialized(ControllerEvent event)
 						throws ControllerListenerException {
 					IController controller = event.getController();
-					Calendar c = (Calendar) getTo();
-					try {
-						String alias = controller.getFieldName(IEntityAlias.CALENDAR_ID);
-						controller.getCriteria().addNotEqualExpression(alias, c.getId());
-					} catch (ManagerBeanException e) {
-						LOGGER.error("Error filtering current calendar", e);
+					Calendar calendar = (Calendar) getTo();
+					if ( calendar!=null && calendar.getId()!=null ) {
+						try {
+							String alias = controller.getFieldName(IEntityAlias.CALENDAR_ID);
+							controller.getCriteria().addNotEqualExpression(alias, calendar.getId());
+						} catch (ManagerBeanException e) {
+							LOGGER.error("Error filtering current calendar", e);
+						}
 					}
 				}
 			};

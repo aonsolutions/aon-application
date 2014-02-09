@@ -35,31 +35,43 @@
 
 	<aon:outputLabel for="#{pojoName}_address_zip" 
 		value="#{bundle.aon_postal_code}" />
-	<aon:inputText id="#{pojoName}_address_zip" 
-		value="#{registryAddress.zip}" size="32" maxlength="16"/>
+	<aon:div>
+		<aon:inputText id="#{pojoName}_address_zip" 
+			size="32" maxlength="16"
+			value="#{registryAddress.zip}" 
+			reRender="#{pojoName}_address_geozone, #{pojoName}_address_municipality"
+			actionListener="#{controller.onLoadGeozone}" />
+		<aon:outputLabel for="#{pojoName}_address_geozone" styleClass="aon-margin-left  aon-margin-right aon-italic" 
+			value="#{bundle.aon_state}" />
+		<aon:selectOneMenu id="#{pojoName}_address_geozone"
+			value="#{registryAddress.geozone}">
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{geozoneCollections.geoTrees}" />
+			<a4j:support event="onchange" reRender="#{pojoName}_address_municipality" ajaxSingle="true" />
+		</aon:selectOneMenu>
+	</aon:div>
 		
-	<aon:outputLabel for="#{pojoName}_address_city" 
-		value="#{bundle.registry_city}" />
-	<aon:inputText id="#{pojoName}_address_city" 
-		value="#{registryAddress.city}" size="64" maxlength="64"/>
-		
-	<aon:outputLabel for="#{pojoName}_address_geozone" 
-		value="#{bundle.aon_state}" />
-	<aon:selectOneMenu id="#{pojoName}_address_geozone"
-		value="#{registryAddress.geozone}">
-		<f:selectItem itemLabel="-" value="#{null}" />
-		<f:selectItems value="#{geozoneCollections.geoTrees}" />
-		<a4j:support event="onchange" reRender="#{pojoName}_address_municipality" ajaxSingle="true" />
-	</aon:selectOneMenu>
-	
-	<c:if test="#{showMunicipality}" >
+	<c:if test="#{showMunicipality}">
 		<aon:outputLabel for="#{pojoName}_address_municipality" 
 			value="#{bundle.registry_municipality}" />
-		<aon:selectOneMenu id="#{pojoName}_address_municipality"
-			value="#{registryAddress.municipalityCode}">
-			<f:selectItem itemLabel="-" value="#{null}" />
-			<f:selectItems value="#{controller.municipalities}" />
-		</aon:selectOneMenu>
+		<aon:div>
+			<aon:selectOneMenu id="#{pojoName}_address_municipality"
+				value="#{registryAddress.municipalityCode}">
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{controller.municipalities}" />
+			</aon:selectOneMenu>
+			<aon:outputLabel for="#{pojoName}_address_city" styleClass="aon-margin-left aon-margin-right aon-italic" 
+				value="#{bundle.registry_city}" />
+			<aon:inputText id="#{pojoName}_address_city" 
+				value="#{registryAddress.city}" size="30" maxlength="64"/>
+		</aon:div>
+	</c:if>
+		
+	<c:if test="#{!showMunicipality}">
+		<aon:outputLabel for="#{pojoName}_address_city" styleClass="aon-margin-left aon-italic" 
+			value="#{bundle.registry_city}" />
+		<aon:inputText id="#{pojoName}_address_city" 
+			value="#{registryAddress.city}" size="64" maxlength="64"/>
 	</c:if>
 			
 </ui:composition>

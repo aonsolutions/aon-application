@@ -1888,14 +1888,18 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{agreementLookupSearch}</value>
+				<value>#{agreementDomainSkipListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>agreementLookupSearch</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.event.agreement.AgreementLookupSearchListener</managed-bean-class>
+		<managed-bean-name>agreementDomainSkipListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.DomainSkipLookupListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>domainAlias</property-name>
+			<value>Agreement.domain</value>
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************ TRAINING CENTER LOOKUP ************** -->

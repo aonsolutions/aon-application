@@ -93,8 +93,6 @@ public class SEPEUtils {
 			Expression exp = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), endDate);
 			endDateExp = ExpressionUtilities.getOrExpression(exp, endDateExp);
 			criteria.addExpression(endDateExp);
-		} else {
-//			criteria.addExpression(endDateExp);
 		}
 		if(includeChildDomains){
 			completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.CONTRACT_DATA_DOMAIN));
@@ -145,11 +143,10 @@ public class SEPEUtils {
 		if(startDate!=null){
 			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_START_DATE), startDate);
 		}
-		Expression endDateExp = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_END_DATE));
 		if(endDate!=null){
+			Expression endDateExp = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_END_DATE));
 			Expression exp = ExpressionUtilities.getLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_INFO_END_DATE), endDate);
 			endDateExp = ExpressionUtilities.getOrExpression(exp, endDateExp);
-		} else {
 			criteria.addExpression(endDateExp);
 		}
 		if(includeChildDomains){
