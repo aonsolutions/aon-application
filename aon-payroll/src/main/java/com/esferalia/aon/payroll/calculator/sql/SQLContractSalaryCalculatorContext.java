@@ -45,6 +45,7 @@ import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.LRUCache;
+import com.esferalia.aon.payroll.calculator.UndefinedTotalPaymentException;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -445,8 +446,8 @@ public class SQLContractSalaryCalculatorContext implements
 
 	public SQLContractSalaryCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, Date chargeDate,
-			Criteria criteria, Criteria paymentsCriteria, OrderByList order, Object ...args)
-			throws SQLException, ExpressionException {
+			Criteria criteria, Criteria paymentsCriteria, OrderByList order,
+			Object... args) throws SQLException, ExpressionException {
 		this.connection = connection;
 
 		this.startDate = new Date(DateUtils.truncate(startDate,
@@ -960,7 +961,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	// ------------------------------------------------------- Protected methods
 
-	protected String getMainSql(Object ...args) {
+	protected String getMainSql(Object... args) {
 		return MAIN_SQL;
 	}
 
@@ -975,10 +976,10 @@ public class SQLContractSalaryCalculatorContext implements
 				AgreementLevelColumns.AGREEMENT);
 		return value == null ? null : (Integer) value;
 	}
-	
+
 	// --------------------------------------------------------- Private methods
 
-	private void initResultSet(Object ...args) throws SQLException {
+	private void initResultSet(Object... args) throws SQLException {
 		String sql = getMainSql(args);
 		if (this.criteria != null) {
 			sql = CriteriaUtilities.toSQLString(this.criteria, sql);
@@ -1087,15 +1088,18 @@ public class SQLContractSalaryCalculatorContext implements
 		return salary.getCommonBase() / days;
 	}
 
-	public Object gross(double gross) throws ExpressionException,
-			SQLException, SalaryException {
+	public Object gross(double gross) throws ExpressionException, SQLException,
+			SalaryException {
 		return grossImpl(gross);
 	}
 
-	public Object grossImpl(double gross)
-			throws ExpressionException, SQLException, SalaryException {
-		return null;
-		//return solveGross(new PegasusSolver(accuracy), liquid);
+	public Object grossImpl(double gross) throws ExpressionException,
+			SQLException, SalaryException {
+		Double totalPayment = getVariable(ContextVariable.TOTAL_PAYMENT,
+				Double.class);
+		if (totalPayment == null)
+			throw new UndefinedTotalPaymentException();
+		return gross - totalPayment;
 	}
 
 	public Object liquid(double liquid) throws ExpressionException,

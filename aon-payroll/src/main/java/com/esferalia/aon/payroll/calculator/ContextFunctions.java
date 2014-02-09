@@ -7,6 +7,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WARNING;
 
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -14,49 +16,47 @@ import java.util.List;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
+import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
 
 public class ContextFunctions {
 
 	private static final String _OLD = "_OLD";
+	private static final String _GROSS = "_BRUTO";
 	private static final String MONTHS_IMPL = "MESESIMPL";
-	
+
 	public static enum Years {
-		ONE(1),
-		TWO(2),
-		THREE(3),
-		FOUR(4),
-		FIVE(5),
-		SIX(6),
-		SEVEN(7);
-		
+		ONE(1), TWO(2), THREE(3), FOUR(4), FIVE(5), SIX(6), SEVEN(7);
+
 		private int years;
-		
+
 		private Years(int years) {
 			this.years = years;
 		}
-		
+
 		public int getYears() {
 			return years;
 		}
 	}
-	
+
 	public static enum Guaranteed {
-		BR,
-		NET,
-		RAW;
-		
-		
+		BR, NET, RAW;
+
 	}
-	
 
 	public static void remove() throws RemoveException {
 		throw new RemoveException();
@@ -114,7 +114,7 @@ public class ContextFunctions {
 
 		return months;
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// ANIGÜEDAD
 	// ------------------------------------------------------------------------
@@ -122,11 +122,11 @@ public class ContextFunctions {
 	public static Double old(ExpressionContext context, Double amount,
 			Years years) {
 		double seniority = getDouble(context, ContextVariable.SENIORITY);
-		return amount * (int)(seniority / years.getYears());
+		return amount * (int) (seniority / years.getYears());
 	}
 
-	public static Double seniority( Double amount,
-			Years years) throws MacroException {
+	public static Double seniority(Double amount, Years years)
+			throws MacroException {
 		throw new MacroException() {
 			@Override
 			public String doMacro(String expr) {
@@ -283,8 +283,8 @@ public class ContextFunctions {
 
 	public static Double seniority(Double amount, Integer year1, Integer year2,
 			Integer year3, Integer year4, Integer year5, Integer year6,
-			Integer year7, Integer year8, Integer year9, Integer year10, Integer year11)
-			throws MacroException {
+			Integer year7, Integer year8, Integer year9, Integer year10,
+			Integer year11) throws MacroException {
 		return seniority();
 	}
 
@@ -295,20 +295,20 @@ public class ContextFunctions {
 		return old(context, amount, new Integer[] { year1, year2, year3, year4,
 				year5, year6, year7, year8, year9, year10, year11 });
 	}
-	
+
 	// ------------------------------------------------------------------------
-	// Guaranteed 
+	// GUARANTEED
 	// ------------------------------------------------------------------------
 	public static Double guaranteed(ExpressionContext context, Double amount,
-			int start, int end, LeaveType ...types) {
+			int start, int end, LeaveType... types) {
 		return null;
 	}
-	
-	public static Double guaranteed(ExpressionContext context, Guaranteed gtzdo,
-			int start, int end, LeaveType ...types) {
+
+	public static Double guaranteed(ExpressionContext context,
+			Guaranteed gtzdo, int start, int end, LeaveType... types) {
 		return null;
 	}
-	
+
 
 	// ------------------------------------------------------------------------
 	// Private methods
@@ -495,6 +495,7 @@ public class ContextFunctions {
 		}
 	}
 
+
 	public static void loadFunctions(ExpressionContext context, Date startDate,
 			Date endDate) throws ExpressionException {
 		loadCheckFunction(context, startDate, endDate);
@@ -507,21 +508,5 @@ public class ContextFunctions {
 		loadSeniorityFunction(context, startDate, endDate);
 	}
 
-	public static void main(String[] args) throws ExpressionException {
-		ExpressionContext ctx = new ExpressionContext();
-		Date date = new Date();
-		ctx.addVariable("IMPORTE_ANTIGUEDAD", 24.69, date, date);
-		ctx.addVariable(ContextVariable.CONTEXT, ctx, date, date);
-		ctx.addVariable(ContextVariable.SENIORITY, 30, date, date);
-		loadSeniorityFunction(ctx, date, date);
-		System.out.println(ctx.eval("ANTIGÜEDAD(IMPORTE_ANTIGUEDAD,QUINQUENIO);",
-				date, date).get(0).getValue());
-		System.out.println(ctx.eval("ANTIGÜEDAD(24.69,SEXENIO);",
-				date, date).get(0).getValue());
-		System.out.println(ctx.eval("ANTIGÜEDAD(24.69 ,3,6,9,12,15,18,21,24,27,30);",
-				date, date).get(0).getValue());
-		/*System.out.println(ctx.eval("GARANTIZADO(BASE_REGULADORA,1);",
-		date, date).get(0).getValue());*/
-	}
 
 }

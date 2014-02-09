@@ -3,7 +3,9 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -85,7 +87,8 @@ public interface EmployeesService extends RemoteService {
 			throws IllegalArgumentException;
 
 	String getAgreementDraftReceiptHTML(AgreementDraft agreementDraft,
-			int levelId, Salary.Type type, int zoom) throws IllegalArgumentException;
+			int levelId, Salary.Type type, int zoom)
+			throws IllegalArgumentException;
 
 	String getIrpfDraftReceipt(SalaryDraft salaryDraft, String mime)
 			throws IllegalArgumentException;
@@ -111,6 +114,9 @@ public interface EmployeesService extends RemoteService {
 
 	Map<String, String> getEventsVariables(Integer workplaceId,
 			Integer agreementId, Date startDate, Date endDate)
+			throws IllegalArgumentException;
+
+	SortedSet<Date> getChanges(Agreement agreement)
 			throws IllegalArgumentException;
 
 	void delete(Salary salaries[]) throws IllegalArgumentException;

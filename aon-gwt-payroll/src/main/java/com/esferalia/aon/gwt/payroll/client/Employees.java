@@ -3,12 +3,14 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.BooleanEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.EventsDraftObject.EventMetaData;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
+import com.esferalia.aon.gwt.payroll.shared.CollectionUtils;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -20,7 +22,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
-import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -319,17 +320,35 @@ public class Employees extends ResizeComposite implements
 				final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
 						agreementDraft, employeesService);
 
+				employeesService.getChanges(agreement,
+						new AsyncCallback<SortedSet<Date>>() {
+							@Override
+							public void onFailure(Throwable caught) {
+								agreementItem.setUserObject(agreementDraftObject);
+							}
+
+							public void onSuccess(SortedSet<Date> result) {
+								if (!CollectionUtils.isEmpty(result)) {
+									Date lastChange = result.last();
+									agreementDraftObject.setStartDate(DateUtils
+											.getFirstDayOfMonth(lastChange));
+									agreementDraftObject.setEndDate(DateUtils
+											.getLastDayOfMonth(lastChange));
+								}
+								agreementItem.setUserObject(agreementDraftObject);
+							};
+						});
+
 				agreementDraftObject.addListener(new UndoManager.Listener() {
 					@Override
 					public void onChange(UndoManager undoManager) {
-						ImageResource resource = agreementDraftObject.canUndo() ? 
-								images.agreement_changed() : images.agreement();
+						ImageResource resource = agreementDraftObject.canUndo() ? images
+								.agreement_changed() : images.agreement();
 						agreementItem.setHTML(imageItemHTML(resource,
 								agreementDraftObject.getDescription()));
 					}
 				});
 
-				agreementItem.setUserObject(agreementDraftObject);
 			} // TODO: extended ? Yes I'm know , it's awful.
 		}
 
@@ -420,7 +439,8 @@ public class Employees extends ResizeComposite implements
 				final TreeItem workplaceItem = employeeItem.getParentItem();
 				Workplace workplace = (Workplace) workplaceItem.getUserObject();
 
-				int offset = workplaceItem.getChildCount() - getEmployeesOffset();
+				int offset = workplaceItem.getChildCount()
+						- getEmployeesOffset();
 
 				employeesService.getEmployees(workplace.getId(), getFromDate(),
 						namePattern, offset, limit,
