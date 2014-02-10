@@ -137,7 +137,7 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.7</version>
-			<scope>runtime</scope>
+			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<artifactId>commons-logging</artifactId>
