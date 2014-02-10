@@ -427,6 +427,7 @@ public class ReservationInvoicing implements IReservationConstants {
 				reservationService.setProjectReservation(reservation);
 				reservationService.setItem(service.getItem());
 				reservationService.setDescription(service.getItem().getProduct().getName());
+				reservationService.setProjectReservationRoom(reservationInvoiceTo.getRoom().getId());
 				reservationService.setExtra(true);
 				reservationService = (ProjectReservationService)reservationServiceBean.insert(reservationService);
 			}
