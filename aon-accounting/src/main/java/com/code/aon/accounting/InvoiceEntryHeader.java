@@ -35,6 +35,7 @@ public class InvoiceEntryHeader implements ITransferObject {
 	private String referenceCode;
     private boolean surcharge;
     private boolean withholding;
+    private boolean vatAccrualPayment;
 	private Account account;
 	private Account retentionAccount;
 	private VatDeductionType vatDeductionType;
@@ -260,4 +261,11 @@ public class InvoiceEntryHeader implements ITransferObject {
 	public void setWithholding(boolean withholding) {
 		this.withholding = withholding;
 	}
+	public boolean isVatAccrualPayment() {
+		return vatAccrualPayment;
+	}
+	public void setVatAccrualPayment(boolean vatAccrualPayment) {
+		this.vatAccrualPayment = vatAccrualPayment;
+	}
+	
 }

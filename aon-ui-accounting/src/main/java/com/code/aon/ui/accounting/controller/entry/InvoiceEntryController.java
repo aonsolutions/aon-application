@@ -422,7 +422,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		getHeader().setInvestment(false);
 		getHeader().setWithholding(false);
 		getHeader().setSurcharge(false);
-		
+		getHeader().setVatAccrualPayment(false);
 		setRelatedAccounts( null );
 	}
 
@@ -1135,6 +1135,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		invoice.setInvestment(getHeader().isInvestment());
 		invoice.setTransaction(getHeader().getTransaction());
 		invoice.setWithholding(getHeader().isWithholding());
+		invoice.setVatAccrualPayment(getHeader().isVatAccrualPayment());
 		invoice.setSurcharge(getHeader().isSurcharge());
 		return invoice;
 	}
@@ -1378,18 +1379,21 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					getHeader().setWithholding(company.isWithholding() && customer.isWithholding());
 					getHeader().setSurcharge(customer.isSurcharge());
 					getHeader().setTransaction( customer.getTransaction() );
+					getHeader().setVatAccrualPayment( company.isVatAccrualPayment() );
 				} else if (isPurchase()) {
 					Supplier supplier = (Supplier) event.getNewValue();
 					getHeader().setRegistry( supplier.getRegistry());
 					getHeader().setWithholding(supplier.isWithholding());
 					getHeader().setSurcharge(company.isSurcharge());
 					getHeader().setTransaction( supplier.getTransaction() );
+					getHeader().setVatAccrualPayment(supplier.isVatAccrualPayment());
 				} else if (isExpense()) {
 					Creditor creditor = (Creditor) event.getNewValue();
 					getHeader().setRegistry(creditor.getRegistry());
 					getHeader().setWithholding(creditor.isWithholding());
 					getHeader().setSurcharge(false);
 					getHeader().setTransaction( creditor.getTransaction() );
+					getHeader().setVatAccrualPayment(creditor.isVatAccrualPayment());
 				}
 				
 				getHeader().setDocumentCountry(getHeader().getRegistry().getDocumentCountry());
@@ -1421,6 +1425,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				getHeader().setDocument(null);
 				getHeader().setName(null);
 				getHeader().setWithholding(false);
+				getHeader().setVatAccrualPayment(false);
 				getHeader().setSurcharge(false);
 				getHeader().setTransaction(InvoiceTransactionType.NATIONAL);
 				getHeader().setAccount( null );
@@ -1601,6 +1606,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			getHeader().setSecurityLevel(entry.getSecurityLevel());
 			getHeader().setRegistry(accountEntryInvoice.getInvoice().getRegistry());
 			getHeader().setWithholding(accountEntryInvoice.getInvoice().isWithholding());
+			getHeader().setVatAccrualPayment(accountEntryInvoice.getInvoice().isVatAccrualPayment());
 			getHeader().setSurcharge(accountEntryInvoice.getInvoice().isSurcharge());
 			getHeader().setInvestment(accountEntryInvoice.getInvoice().isInvestment());
 			getHeader().setTransaction(accountEntryInvoice.getInvoice().getTransaction());
