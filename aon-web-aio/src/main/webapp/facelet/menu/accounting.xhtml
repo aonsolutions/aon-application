@@ -261,6 +261,12 @@
 										value="#{bundle.fiscal_retention_report_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="invoice_report"
+										action="invoiceReport_search"
+										actionListener="#{invoiceReport.onReset}"
+										value="#{bundle.fiscal_invoice_report}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="mod347_report-accounting" 
 										action="mod347_list-accounting"
 										actionListener="#{mod347.onEditSearch}"
@@ -383,10 +389,10 @@
 										value="#{bundle.finance_invoice_integrity_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="invoice_report"
-										action="invoiceReport_search"
-										actionListener="#{invoiceReport.onReset}"
-										value="#{bundle.fiscal_invoice_report}" />
+									<aon:commandLink id="accountingFinanceChecker"
+										action="accountingFinanceChecker_search"
+										actionListener="#{accountingFinanceChecker.onStart}"
+										value="#{bundle.accounting_finance_checker_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

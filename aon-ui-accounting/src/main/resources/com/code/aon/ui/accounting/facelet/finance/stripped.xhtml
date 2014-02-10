@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="accountingFinanceCheckerForm">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{bundle.accounting_finance_checker_module}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:define name="toolbarActions">
+					<aon:methodParam name="searchActionListener" value="#{accountingFinanceChecker.onBack}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="accountingFinanceChecker_list" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="accountingFinanceCheckerData"
+					value="#{accountingFinanceChecker.strippedModel}" var="to" rows="0"
+					columnClasses="aon-editDataTable-textColumn aon-width-120,
+								   aon-editDataTable-textColumn aon-width-120,
+								   aon-editDataTable-textColumn aon-width-auto,
+								   aon-editDataTable-numberColumn aon-width-120,
+								   aon-editDataTable-numberColumn aon-width-120">
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.entryDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_document_number}" />
+						</f:facet>
+						<aon:outputText value="#{to.documentNumber}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_concept}" />
+						</f:facet>
+						<aon:outputText value="#{to.concept}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.account_debit}" />
+						</f:facet>
+						<aon:outputText value="#{to.debit}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.account_credit}" />
+						</f:facet>
+						<aon:outputText value="#{to.credit}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+					</aon:column>
+					
+				</aon:dataTable>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

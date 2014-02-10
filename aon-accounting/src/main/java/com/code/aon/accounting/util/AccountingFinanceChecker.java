@@ -1,0 +1,208 @@
+package com.code.aon.accounting.util;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.code.aon.common.AonException;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
+
+public class AccountingFinanceChecker {
+	private static final String UNION =  " UNION ";
+	
+	private static final String COMMON_SELECT_1 = 
+		"SELECT a.id,a.code"
+		+	" ,a.description "
+		+	" ,c.registry ";
+	
+	private static final String CREDIT_BALANCE = 
+		" ,ROUND( SUM(aed.credit) - SUM(aed.debit),2) ACCOUNTING_BALANCE ";
+	private static final String DEBIT_BALANCE = 
+		" ,ROUND( SUM(aed.debit) - SUM(aed.credit),2) ACCOUNTING_BALANCE ";
+
+	private String CREDITOR_SELECT = COMMON_SELECT_1 + CREDIT_BALANCE 
+			 +",IFNULL("
+			 +" (SELECT ROUND(SUM(f.amount),2)"
+		     +" 	FROM finance f"
+		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
+			 +"  WHERE f.registry = c.registry "
+			 +"  AND  ( f.status IN (0) "
+			 +"    OR ( f.status IN (2,3) AND ( "
+			 +" 	SELECT ft.type FROM finance_tracking ft "
+			 +" 		WHERE ft.finance = f.id "
+			 +"		AND ft.id > 0 AND ft.tracking_date <= ? "
+			 +" 		ORDER BY ft.id DESC LIMIT 1 ) NOT IN (0,1,3,4) ))),0) FINANCE_AMOUNT"
+			 +" FROM account_entry_detail aed "
+			 +" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
+			 +" INNER JOIN account a ON aed.account = a.id"
+			 +" INNER JOIN creditor c ON a.id = c.account"
+			 +" WHERE aed.domain = ?"
+			 +" AND ae.entry_date <= ?"
+			 +" AND a.code like ?"
+			 +" GROUP BY a.id, a.code , a.description, c.registry"
+			 +" HAVING ACCOUNTING_BALANCE <> FINANCE_AMOUNT";
+	
+	private String SUPPLIER_SELECT = COMMON_SELECT_1 + CREDIT_BALANCE 
+			 +",IFNULL("
+			 +" (SELECT ROUND(SUM(f.amount),2)"
+		     +" 	FROM finance f"
+		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
+			 +"  WHERE f.registry = c.registry "
+			 +"  AND  ( f.status IN (0) "
+			 +"    OR ( f.status IN (2,3) AND ( "
+			 +" 	SELECT ft.type FROM finance_tracking ft "
+			 +" 		WHERE ft.finance = f.id "
+			 +"		AND ft.id > 0 AND ft.tracking_date <= ? "
+			 +" 		ORDER BY ft.id DESC LIMIT 1 ) NOT IN (0,1,3,4) ))),0) FINANCE_AMOUNT"
+			 +" FROM account_entry_detail aed "
+			 +" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
+			 +" INNER JOIN account a ON aed.account = a.id"
+			 +" INNER JOIN supplier c ON a.id = c.account"
+			 +" WHERE aed.domain = ?"
+			 +" AND ae.entry_date <= ?"
+			 +" AND a.code like ?"
+			 +" GROUP BY a.id, a.code , a.description, c.registry"
+			 +" HAVING ACCOUNTING_BALANCE <> FINANCE_AMOUNT";
+
+	private String CUSTOMER_SELECT = COMMON_SELECT_1 + DEBIT_BALANCE 
+			 +",IFNULL("
+			 +" (SELECT ROUND(SUM(f.amount),2)"
+		     +" 	FROM finance f"
+		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
+			 +"  WHERE f.registry = c.registry "
+			 +"  AND  ( f.status IN (0) "
+			 +"    OR ( f.status IN (2,3) AND ( "
+			 +" 	SELECT ft.type FROM finance_tracking ft "
+			 +" 		WHERE ft.finance = f.id "
+			 +"		AND ft.id > 0 AND ft.tracking_date <= ? "
+			 +" 		ORDER BY ft.id DESC LIMIT 1 ) NOT IN (0,1,3,4) ))),0) FINANCE_AMOUNT"
+			 +" FROM account_entry_detail aed "
+			 +" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
+			 +" INNER JOIN account a ON aed.account = a.id"
+			 +" INNER JOIN customer c ON a.id = c.account"
+			 +" WHERE aed.domain = ?"
+			 +" AND ae.entry_date <= ?"
+			 +" AND a.code like ?"
+			 +" GROUP BY a.id, a.code , a.description, c.registry"
+			 +" HAVING ACCOUNTING_BALANCE <> FINANCE_AMOUNT";
+
+	private String SELECT_STRIPPED_STATEMENT =
+		"SELECT aed.document_number,aed.concept,aed.debit,aed.credit,ae.id,ae.entry_date,ae.entry_type"
+		+" FROM account a"
+		+" INNER JOIN account_entry_detail aed ON aed.account = a.id"
+		+" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
+		+" WHERE a.code = ?"
+		+"  AND aed.domain = ?"
+		+" ORDER BY aed.document_number";
+
+	
+	public List<AccountingFinanceCheck> getChecks(Connection conn,AccountingFinanceCheckerParams params) throws AonException {
+		List<AccountingFinanceCheck> list = new LinkedList<AccountingFinanceCheck>();
+		String SELECT = "";
+		if (params.isCreditorsEnabled()) {
+			SELECT = CREDITOR_SELECT;
+		}
+		if (params.isSuppliersEnabled()) {
+			SELECT = SELECT + (SELECT.length()==0?"":UNION) + SUPPLIER_SELECT;
+		}
+		if (params.isCustomersEnabled()) {
+			SELECT = SELECT + (SELECT.length()==0?"":UNION) + CUSTOMER_SELECT;
+		}
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = conn.prepareStatement(SELECT);
+			int i = 1;
+			if (params.isCreditorsEnabled()) {
+				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
+				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
+				ps.setInt(i++, params.getDomain());
+				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
+				ps.setString(i++, "410%");
+			}
+			if (params.isSuppliersEnabled()) {
+				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
+				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
+				ps.setInt(i++, params.getDomain());
+				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
+				ps.setString(i++, "400%");
+			}
+			if (params.isCustomersEnabled()) {
+				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
+				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
+				ps.setInt(i++, params.getDomain());
+				ps.setDate(i++, new java.sql.Date(params.getDeadline().getTime()));
+				ps.setString(i++, "430%");
+			}
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				AccountingFinanceCheck check = new AccountingFinanceCheck();
+				check.setAccountId( rs.getInt(1) );
+				check.setAccountCode( rs.getString(2) );
+				check.setAccountDescription( rs.getString(3) );
+				check.setRegistryId( rs.getInt(4) );
+				check.setAccBalance(rs.getDouble(5));
+				check.setFinBalance(rs.getDouble(6));
+				list.add(check);
+			}
+			rs.close();
+			ps.close();
+		} catch (SQLException e) {
+			throw new AonException(e.getMessage(),e);
+		} finally {
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			
+		}
+		return list;
+	}
+	
+	public List<StrippedStatement> getStrippedStatement(Connection conn, int domain, String account) throws AonException {
+		List<StrippedStatement> list = new LinkedList<StrippedStatement>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = conn.prepareStatement(SELECT_STRIPPED_STATEMENT);
+			ps.setString(1, account);
+			ps.setInt(2, domain);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				StrippedStatement ss = new StrippedStatement();
+				ss.setDocumentNumber(rs.getString(1));
+				ss.setConcept(rs.getString(2));
+				ss.setDebit(rs.getDouble(3));
+				ss.setCredit(rs.getDouble(4));
+				ss.setId(rs.getInt(5));				
+				ss.setEntryDate(rs.getDate(6));
+				ss.setEntryType(rs.getInt(7));
+				list.add(ss);
+			}
+			rs.close();
+			ps.close();
+		} catch (SQLException e) {
+			throw new AonException(e.getMessage(),e);
+		} finally {
+			DatabaseUtil.closeQuietly(rs);
+			DatabaseUtil.closeQuietly(ps);
+			
+		}
+		return list;
+	}
+
+	public static void main(String[] args) throws AonConnectionException, AonException {
+		Connection c = DatabaseUtil.getConnection("sig.esferalia.com");
+		AccountingFinanceCheckerParams params = new AccountingFinanceCheckerParams();
+		params.setCreditorsEnabled(true);
+		params.setCustomersEnabled(true);
+		params.setSuppliersEnabled(true);
+		params.setDeadline(new Date());
+		params.setDomain(1);
+		AccountingFinanceChecker checker = new AccountingFinanceChecker();
+		checker.getChecks(c, params);
+	}
+}

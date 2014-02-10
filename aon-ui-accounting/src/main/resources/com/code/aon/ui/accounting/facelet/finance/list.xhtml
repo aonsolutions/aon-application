@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="accountingFinanceCheckerForm">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{bundle.accounting_finance_checker_module}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:define name="toolbarActions">
+					<aon:methodParam name="searchActionListener" value="#{accountingFinanceChecker.onBack}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="accountingFinanceChecker_search" />
+				</ui:define>
+
+				<ui:define name="additionalToolbarContent">
+					<aon:htmlCommandLink id="accountingFinanceChecker-excel-report"
+						value="#{bundle.aon_report}" target="_blank" 
+						action="#{accountingFinanceChecker.onExcel}"
+						title="#{bundle.aon_listing} MS Excel"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
+						accesskey="#{bundle.aon_key_print}">
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="accountingFinanceCheckerData"
+					value="#{accountingFinanceChecker.model}" var="to" rows="0"
+					columnClasses="aon-editDataTable-textColumn aon-width-120,
+								   aon-editDataTable-textColumn aon-width-auto,
+								   aon-editDataTable-numberColumn aon-width-120,
+								   aon-editDataTable-numberColumn aon-width-120,
+								   aon-editDataTable-numberColumn aon-width-120">
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.account_account}" />
+						</f:facet>
+						<aon:commandLink id="accountStatement-search" 
+							immediate="#{true}"
+							styleClass="aon-dataTable-link"
+							actionListener="#{accountingFinanceChecker.onAccountStatement}"
+							title="#{bundle.accounting_statement_module}"
+							action="accountStatement_list">
+								<aon:outputText value="#{to.accountCode}" />
+						</aon:commandLink>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_description}" />
+						</f:facet>
+						<aon:outputText value="#{to.accountDescription}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.accounting_acc_balance}" />
+						</f:facet>
+						<aon:commandLink id="accountStatement-search2" 
+							immediate="#{true}"
+							styleClass="aon-dataTable-link"
+							actionListener="#{accountingFinanceChecker.onAccountStatement}"
+							title="#{bundle.accounting_statement_module}"
+							action="accountStatement_list">
+							<aon:outputText value="#{to.accBalance}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+						</aon:commandLink>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.accounting_fin_balance}" />
+						</f:facet>
+						<aon:commandLink id="finance-search"
+							rendered="#{to.finBalance != 0}" 
+							immediate="#{true}"
+							styleClass="aon-dataTable-link"
+							actionListener="#{accountingFinanceChecker.onFinance}"
+							title="#{bundle.finance_checking}"
+							action="finance_form">
+							<aon:outputText value="#{to.finBalance}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+						</aon:commandLink>
+						
+						<aon:outputText
+							style="margin-right: 10px;"
+							rendered="#{to.finBalance == 0}" 
+							value="#{to.finBalance}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+						
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.accounting_difference}" />
+						</f:facet>
+						<aon:commandLink id="stripped-search"
+							immediate="#{true}"
+							styleClass="aon-dataTable-link"
+							actionListener="#{accountingFinanceChecker.onStrippedStatement}"
+							action="accountingFinanceChecker_stripped">
+							<aon:outputText value="#{to.difference}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+						</aon:commandLink>
+						
+						
+					</aon:column>
+					
+				</aon:dataTable>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

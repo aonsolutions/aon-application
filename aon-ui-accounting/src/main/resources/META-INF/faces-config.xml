@@ -810,6 +810,14 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!--******** ACCOUNTING FINANCE CHECKER CONTROLLER ********************* -->
+	<managed-bean>
+		<managed-bean-name>accountingFinanceChecker</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.finance.AccountingFinanceCheckerController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+
 	<!-- ****************************************** -->
 	<!-- ******** Navigation Rules **************** -->
 	<!-- ****************************************** -->
@@ -1119,7 +1127,6 @@
 			<to-view-id>/com/code/aon/ui/accounting/facelet/aonLoader/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
 
 	<!--  **** BALANCE SHEET RESOLVER PAGES  **** -->
 	<navigation-rule>
@@ -1133,6 +1140,21 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!--  **** ACCOUNTING FINANCE CHECKER PAGES  **** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>accountingFinanceChecker_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/finance/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountingFinanceChecker_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/finance/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountingFinanceChecker_stripped</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/finance/stripped.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 	<!-- ****************************************************** -->
 	<!-- **************** DEPRECATED ************************** -->
