@@ -89,12 +89,7 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 	
 	public String getEmailSubject( Purchase purchase ) {
 		String message = AonUtil.getMessage(PURCHASE_EMAIL_SUBJECT);
-		String msgContent = purchase.getReferenceCode();
-		if( StringUtils.isNotBlank(purchase.getPurchaseReference()) ){
-			msgContent += " ("+AonUtil.getMessage(SALES_PURCHASE_REFERENCE)+": ";
-			msgContent += purchase.getPurchaseReference()+")";
-		}
-		return MessageFormat.format(message, msgContent);
+		return formatEmailSubject( purchase, message );
 	}
 	
 	public String getEmailBody( Purchase purchase ) throws UnsupportedEncodingException {
@@ -103,7 +98,12 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseCons
 	}
 	
 	private String formatEmailSubject( Purchase purchase, String message ) {
-		return MessageFormat.format(message, purchase.getReferenceCode() );
+		String msgContent = purchase.getReferenceCode();
+		if( StringUtils.isNotBlank(purchase.getPurchaseReference()) ){
+			msgContent += " ("+AonUtil.getMessage(SALES_PURCHASE_REFERENCE)+": ";
+			msgContent += purchase.getPurchaseReference()+")";
+		}
+		return MessageFormat.format(message, msgContent);
 	}
 	
 	private String formatEmailBody(  Purchase purchase, String message )  {

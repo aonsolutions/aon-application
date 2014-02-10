@@ -634,6 +634,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 							PurchaseDocumentType.ITEM_RETURN,
 							comments, returnSourcePurchase.getRemarks(),
 							returnSourcePurchase.getCarrier(),
+							returnSourcePurchase.getPurchaseReference(),
 							returnSourcePurchase.getShippingAlternativeAddress(),
 							returnSourcePurchase.getShippingAlternativeAddress2(),
 							returnSourcePurchase.getShippingAlternativeZip(),

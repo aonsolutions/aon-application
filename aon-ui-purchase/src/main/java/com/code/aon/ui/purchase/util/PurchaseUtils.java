@@ -41,7 +41,6 @@ public class PurchaseUtils {
 	 * Creates a purchase with basic data
 	 * @param supplier
 	 * @param workPlace
-	 * @param department
 	 * @param documentType
 	 * @param comments
 	 * @return
@@ -56,10 +55,8 @@ public class PurchaseUtils {
 	
 	/**
 	 * Creates a purchase with basic data and remarks
-	 * @param series
 	 * @param supplier
 	 * @param workPlace
-	 * @param department
 	 * @param documentType
 	 * @param comments
 	 * @param remarks
@@ -71,7 +68,7 @@ public class PurchaseUtils {
 			throws ManagerBeanException {
 		return createPurchase(null, supplier, workPlace, documentType,
 				comments, remarks, null, null, null, null, null, null, null,
-				null, null);
+				null, null, null);
 	}
 	
 	public Purchase createPurchase(String series, Supplier supplier,
@@ -79,7 +76,7 @@ public class PurchaseUtils {
 			String comments, String remarks) throws ManagerBeanException {
 		return createPurchase(series, supplier, workPlace, documentType,
 				comments, remarks, null, null, null, null, null, null, null,
-				null, null);
+				null, null, null);
 	}
 
 	/**
@@ -87,11 +84,11 @@ public class PurchaseUtils {
 	 * @param series
 	 * @param supplier
 	 * @param workPlace
-	 * @param department
 	 * @param documentType
 	 * @param comments
 	 * @param remarks
 	 * @param carrier
+	 * @param purchaseReference
 	 * @param shippingAlternativeAddress
 	 * @param shippingAlternativeAddress2
 	 * @param shippingAlternativeZip
@@ -105,7 +102,7 @@ public class PurchaseUtils {
 	 */
 	public Purchase createPurchase(String series, Supplier supplier,
 			WorkPlace workPlace, PurchaseDocumentType documentType,
-			String comments, String remarks, Carrier carrier,
+			String comments, String remarks, Carrier carrier, String purchaseReference,
 			String shippingAlternativeAddress,
 			String shippingAlternativeAddress2, String shippingAlternativeZip,
 			String shippingAlternativeCity, String shippingAlternativePhone,
@@ -133,6 +130,7 @@ public class PurchaseUtils {
 		pur.setScope(supplier.getScope());
 	    pur.setComments(comments);
 		pur.setRemarks(remarks);
+		pur.setPurchaseReference(purchaseReference);
 		
 		// shipment data
 		pur.setCarrier(carrier);
