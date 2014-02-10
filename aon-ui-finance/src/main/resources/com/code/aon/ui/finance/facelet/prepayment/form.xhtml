@@ -136,9 +136,8 @@
 													<aon:outputLabel for="Prepayment_bic" styleClass="aon-margin-left aon-margin-right"
 														value="#{bundle.aon_bic}" />
 													<aon:inputText id="Prepayment_bic"
-														value="#{prepayment.to.finance.bic}" 
+														value="#{prepayment.to.finance.bic}" validator="BICValidator" 
 														required="true" size="12" maxlength="11">
-														<f:validateLength minimum="11" maximum="11" />
 													</aon:inputText>
 												</aon:div>
 

@@ -30,6 +30,12 @@
 		<converter-class>com.code.aon.ui.common.converter.EmptyStringConverter</converter-class>
 	</converter>
 	
+   	<!-- ************* BIC CONVERTER ***************** -->	
+	<validator>
+		<validator-id>BICValidator</validator-id>	
+		<validator-class>com.code.aon.ui.common.validator.BICValidator</validator-class>
+	</validator>	
+	
 	<!-- ************ TIMEZONE CONTROLLER	************** -->
 	<managed-bean>
 		<managed-bean-name>timeZoneController</managed-bean-name>

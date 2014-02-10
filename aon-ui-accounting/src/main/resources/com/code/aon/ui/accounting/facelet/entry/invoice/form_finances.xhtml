@@ -137,9 +137,8 @@
 								<aon:outputLabel for="AccountFinance_bic" styleClass="aon-margin-left aon-margin-right"
 									value="#{bundle.aon_bic}" />
 								<aon:inputText id="AccountFinance_bic"
-									value="#{invoiceEntry.currentFinance.bic}" 
+									value="#{invoiceEntry.currentFinance.bic}" validator="BICValidator" 
 									required="true" size="12" maxlength="11">
-									<f:validateLength minimum="11" maximum="11" />
 								</aon:inputText>
 							</aon:div>
 
@@ -194,9 +193,8 @@
 									<aon:outputLabel for="AccountFinance_bic-New" styleClass="aon-margin-left aon-margin-right"
 										value="#{bundle.aon_bic}" />
 									<aon:inputText id="AccountFinance_bic-New"
-										value="#{invoiceEntry.currentFinance.bic}" 
+										value="#{invoiceEntry.currentFinance.bic}" validator="BICValidator" 
 										required="true" size="12" maxlength="11">
-										<f:validateLength minimum="11" maximum="11" />
 									</aon:inputText>
 								</aon:div>
 

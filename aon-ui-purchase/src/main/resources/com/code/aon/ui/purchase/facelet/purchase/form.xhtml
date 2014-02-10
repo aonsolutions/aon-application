@@ -402,10 +402,9 @@
 									disabled="#{!purchase.pending}" 
 									required="#{purchase.to.bankAccount.validIbanLength}" size="25" maxlength="25" />
 								<aon:inputText id="Purchase_bic"
-									value="#{purchase.to.bic}" 
+									value="#{purchase.to.bic}" validator="BICValidator"
 									disabled="#{!purchase.pending}" 
 									required="#{purchase.to.bankAccount.validIbanLength}" size="12" maxlength="11">
-									<f:validateLength minimum="11" maximum="11" />
 								</aon:inputText>
 
 							</aon:panelGrid>

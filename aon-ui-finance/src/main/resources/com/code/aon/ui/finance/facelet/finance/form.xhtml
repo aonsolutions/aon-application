@@ -363,9 +363,8 @@
 								<aon:outputLabel for="Finance_bic" styleClass="aon-margin-left aon-margin-right"
 									value="#{bundle.aon_bic}" />
 								<aon:inputText id="Finance_bic"
-									value="#{finance.to.bic}" 
+									value="#{finance.to.bic}" validator="BICValidator" 
 									required="true" size="12" maxlength="11">
-									<f:validateLength minimum="11" maximum="11" />
 								</aon:inputText>
 							</aon:div>
 

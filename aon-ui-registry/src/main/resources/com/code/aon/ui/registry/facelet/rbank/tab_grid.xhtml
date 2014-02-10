@@ -73,17 +73,15 @@
 				</f:facet>
 				<aon:outputText value="#{to.bic}" rendered="#{formList}" />
 				<aon:inputText id="RegistryBank_bic"
-					value="#{to.bic}" 
+					value="#{to.bic}" validator="BICValidator"
 					size="12" maxlength="11" required="#{true}"
 					rendered="#{formEdit}">
-					<f:validateLength minimum="11" maximum="11" />
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText id="RegistryBank_bic-New"
-						value="#{controller.to.bic}"
+						value="#{controller.to.bic}" validator="BICValidator"
 						size="12" maxlength="11" required="#{true}"
 						rendered="#{formNew}">
-						<f:validateLength minimum="11" maximum="11" />
 					</aon:inputText>
 				</f:facet>
 			</aon:column>

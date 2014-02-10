@@ -48,10 +48,9 @@
 						size="25" maxlength="25" required="#{true}" />
 
 					<aon:outputLabel for="RegistryBank_bic" value="#{bundle.aon_bic}" />
-					<aon:inputText id="RegistryBank_bic"
+					<aon:inputText id="RegistryBank_bic" validator="BICValidator"
 						value="#{controllerLookupListener.registryBank.bic}" 
 						size="12" maxlength="11" required="#{true}">
-						<f:validateLength minimum="11" maximum="11" />
 					</aon:inputText>
 				</c:if>			
 			</c:if>			

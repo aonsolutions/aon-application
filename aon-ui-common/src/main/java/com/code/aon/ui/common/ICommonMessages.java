@@ -14,7 +14,9 @@ public interface ICommonMessages {
 	String AON_DESCRIPTION = "aon_description";
 	String APPLICATION_TITLE = "aon_application_title";
 	String BANK = "aon_bank";
-	String BANK_ACCOUNT = "aon_bank_account";		
+	String BANK_ACCOUNT = "aon_bank_account";
+	String BIC_INVALID_FORMAT = "aon_bic_invalid_format";
+	String BIC_ONLY_8 = "aon_bic_only_8";
 	String BLOCKED = "aon_blocked";
 	String CATEGORY = "aon_category";
 	String CELLULAR = "aon_cellular";
