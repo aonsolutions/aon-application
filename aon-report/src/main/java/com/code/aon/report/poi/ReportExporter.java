@@ -1,11 +1,10 @@
-package com.code.aon.ui.report.export;
+package com.code.aon.report.poi;
 
 import java.io.OutputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.report.ReportException;
 
 public class ReportExporter {
@@ -31,7 +30,12 @@ public class ReportExporter {
 		} catch (SQLException e) {
 			throw new ReportException(e.getMessage(),e);
 		} finally {
-			DatabaseUtil.closeQuietly(rs);
+			try {
+				if (rs != null)
+					rs.close();	
+			} catch (SQLException e) {
+				
+			}
 		}
 		
 	}
@@ -43,7 +47,10 @@ public class ReportExporter {
 			IReportExporter exporter = null;
 			if (type == 0) {
 				exporter = new ExcelReportExporter();	
+			} else {
+				throw new ReportException("Tipo de listado no soportado");
 			}
+			
 			exporter.startExport(IReportExporter.DEFAULT_NAME);
 			exporter.exportHeader(metadata);
 			while (rs.next()) {

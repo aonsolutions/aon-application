@@ -1,4 +1,4 @@
-package com.code.aon.ui.report.export;
+package com.code.aon.report.poi;
 
 import java.io.OutputStream;
 
@@ -15,5 +15,5 @@ public interface IReportExporter {
 	void endExport(OutputStream out) throws ReportException;
 
 	void exportHeader(ReportMetadata metadata) throws ReportException;
-	void exportColumn(ReportColumnMetadata column, Object data) throws ReportException;
+	Object exportColumn(ReportColumnMetadata column, Object data) throws ReportException;
 }

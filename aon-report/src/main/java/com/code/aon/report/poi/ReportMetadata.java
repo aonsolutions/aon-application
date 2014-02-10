@@ -1,4 +1,4 @@
-package com.code.aon.ui.report.export;
+package com.code.aon.report.poi;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
@@ -10,11 +10,14 @@ import com.code.aon.report.ReportException;
 
 public class ReportMetadata {
 
-	private int count;
 	private List<ReportColumnMetadata> columns;
 
+	public ReportMetadata() {
+		columns = new LinkedList<ReportColumnMetadata>();
+	}
+	
 	public int getCount() {
-		return count;
+		return columns.size();
 	}
 	
 	public List<ReportColumnMetadata> getColumns() {
@@ -23,8 +26,6 @@ public class ReportMetadata {
 
 	public void initializeMetadata(PreparedStatement ps) throws ReportException {
 		try {
-			columns = new LinkedList<ReportColumnMetadata>();
-			count = 0;			
 			ResultSetMetaData rs = ps.getMetaData();
 			for (int i = 1; i < (rs.getColumnCount() + 1); i++) {
 				ReportColumnMetadata column = new ReportColumnMetadata();
@@ -34,7 +35,6 @@ public class ReportMetadata {
 				column.setLabel(rs.getColumnLabel(i));
 				column.setDisplaySize(rs.getColumnDisplaySize(i));
 				columns.add(column);
-				++count;
 			}
 		} catch (SQLException e) {
 			throw new ReportException(e.getMessage(),e);

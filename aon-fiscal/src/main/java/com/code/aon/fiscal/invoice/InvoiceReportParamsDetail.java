@@ -1,4 +1,4 @@
-package com.code.aon.ui.fiscal.controller;
+package com.code.aon.fiscal.invoice;
 
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;

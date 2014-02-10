@@ -80,8 +80,8 @@ import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.report.ReportException;
+import com.code.aon.report.poi.ReportExporter;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.report.export.ReportExporter;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.master.TargetDB;
 

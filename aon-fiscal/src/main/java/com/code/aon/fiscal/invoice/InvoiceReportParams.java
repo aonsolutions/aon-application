@@ -1,4 +1,4 @@
-package com.code.aon.ui.fiscal.controller;
+package com.code.aon.fiscal.invoice;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -12,11 +12,11 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceReportParams {
 
+	private int domain;
 	private Date date;
 	private Date fromTaxDate;
 	private Date toTaxDate;
@@ -24,9 +24,17 @@ public class InvoiceReportParams {
 	private Date toInvoiceDate;
 	private SecurityLevel securityLevel;
     private TaxType taxType;
+    private boolean accrualVatVisible;
 
 	
 	private List<InvoiceReportParamsDetail> details;
+	
+	public int getDomain() {
+		return domain;
+	}
+	public void setDomain(int domain) {
+		this.domain = domain;
+	}
 	
 	public Date getDate() {
 		return date;
@@ -84,7 +92,6 @@ public class InvoiceReportParams {
 		c.set(Calendar.DAY_OF_MONTH, 31);
 		setToTaxDate(c.getTime());
 		setToInvoiceDate(c.getTime());
-		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
 	    setTaxType(null);
 	}
 	
@@ -129,5 +136,10 @@ public class InvoiceReportParams {
 	public void setTaxType(TaxType taxType) {
 		this.taxType = taxType;
 	}
-	
+	public boolean isAccrualVatVisible() {
+		return accrualVatVisible;
+	}
+	public void setAccrualVatVisible(boolean accrualVatVisible) {
+		this.accrualVatVisible = accrualVatVisible;
+	}
 }

@@ -1,4 +1,4 @@
-package com.code.aon.ui.fiscal.controller;
+package com.code.aon.fiscal.invoice;
 
 import java.util.Date;
 

@@ -45,12 +45,12 @@ import com.code.aon.registry.RegistrySeller;
 import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.report.poi.ReportExporter;
 import com.code.aon.sales.bridge.util.SalesBridgeUtil;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.RegistryController;
-import com.code.aon.ui.report.export.ReportExporter;
 import com.code.aon.ui.util.AonUtil;
 
 public class TargetController extends RegistryController implements ICommonMessages {
@@ -219,11 +219,6 @@ public class TargetController extends RegistryController implements ICommonMessa
 			}
 			select = StringUtils.replace(select, "c.customer = 'true'", "(1 IN (SELECT 1 FROM customer WHERE registry = c.registry))");
 			select = StringUtils.replace(select, "c.customer = 'false'", "(1 NOT IN (SELECT 1 FROM customer WHERE registry = c.registry))");
-			
-			System.out.println( " ----------------------" );
-			System.out.println( select );
-			System.out.println( " ----------------------" );
-			
 			ps = conn.prepareStatement(select);
 			ReportExporter rm = new ReportExporter();
 			

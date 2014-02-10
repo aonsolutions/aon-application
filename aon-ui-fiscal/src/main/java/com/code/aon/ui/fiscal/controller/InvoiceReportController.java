@@ -19,6 +19,7 @@ import static com.code.aon.ui.common.ICommonMessages.INVOICE_TAX_TYPE;
 import static com.code.aon.ui.common.ICommonMessages.INVOICE_TRANSACTION;
 import static com.code.aon.ui.common.ICommonMessages.INVOICE_TYPE;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,11 +29,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
@@ -40,6 +46,10 @@ import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
+import com.code.aon.fiscal.invoice.InvoiceReport;
+import com.code.aon.fiscal.invoice.InvoiceReportManager;
+import com.code.aon.fiscal.invoice.InvoiceReportParams;
+import com.code.aon.fiscal.invoice.InvoiceReportParamsDetail;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.report.ReportException;
 import com.code.aon.report.dynamic.DynaElements;
@@ -63,6 +73,11 @@ public class InvoiceReportController {
 	
 	public void onReset(ActionEvent event) {
 		getParams().reset();
+		getParams().setDomain(DomainManager.getCurrentDomain());
+		getParams().setSecurityLevel(
+				AonUtil.getRoleManager().isConfidentiality()
+					?null
+					:SecurityLevel.OFFICIAL);
 	}
 	
 	public List<InvoiceReport> getInvoices() throws ManagerBeanException  {
@@ -225,8 +240,38 @@ public class InvoiceReportController {
 		}
 	}
 	
-	
 	public String onExcelReport() {
+		Connection conn = null; 
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Locale locale = AonUtil.getCurrentLocale();
+			InvoiceReportManager manager = new InvoiceReportManager();
+
+			FacesContext faces = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+			String fileName = "Listado Detallado";
+			response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
+			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xls\";");
+			ServletOutputStream output = response.getOutputStream();
+			
+			manager.excelReport(conn, getParams(), locale, output);
+			
+			response.flushBuffer();
+			faces.responseComplete();
+			return null;
+		} catch (ReportException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(conn);
+		}
+		
+	}
+	
+	public String onExcelReport1() {
 		try {
 			Locale locale = AonUtil.getCurrentLocale();
 			DynaElements dyn = new DynaElements();

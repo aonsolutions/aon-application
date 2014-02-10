@@ -1,4 +1,4 @@
-package com.code.aon.ui.report.export;
+package com.code.aon.report.poi;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,11 +18,12 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 
 import com.code.aon.report.ReportException;
-import com.code.aon.ui.common.ICommonMessages;
-import com.code.aon.ui.util.AonUtil;
 
 
 public class ExcelReportExporter implements IReportExporter {
+	private static final String DATE_PATTERN = "dd/MM/yyyy";
+	private static final String NUMBER_PATTERN = "#,##0.00";
+	public  static short DEFAULT_BACKGROUND = new HSSFColor.AUTOMATIC().getIndex();
 	
 	private HSSFWorkbook wb;
     private HSSFSheet sheet;
@@ -36,7 +37,11 @@ public class ExcelReportExporter implements IReportExporter {
     private CellStyle dateCellStyle;
     private CellStyle decimalCellStyle;
     
-	@Override
+    public HSSFCellStyle  createCellStyle() {
+    	return wb.createCellStyle();	
+    }
+    
+    @Override
 	public void exportHeader(ReportMetadata metadata) throws ReportException {
         for (int i = 1; i < (metadata.getCount() + 1); i++) {
 			ReportColumnMetadata columnMetadata = metadata.getColumns().get((i-1));
@@ -62,88 +67,111 @@ public class ExcelReportExporter implements IReportExporter {
 	}
 	
 	public HSSFCell addCell() {
-		return row.createCell(cellCount++);
+		return row.createCell(cellCount++); 
 	}
 
-	public void addStringCell( String value ) {
+	public HSSFCell addStringCell( String value ) {
 		HSSFCell cell = addCell();
 		cell.setCellValue( value );
 		cell.setCellType(Cell.CELL_TYPE_STRING);
+		return cell;
 	}
 	
-	public void addNumberCell( double number) {
+	public HSSFCell addNumberCell( double number ) {
 		HSSFCell cell = addCell();
 		cell.setCellValue( number );
 		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+		return cell;
 	}
 
 	private CellStyle getDecimalCellStyle() {
 		if ( decimalCellStyle == null ) {
 			decimalCellStyle = wb.createCellStyle();
-			String pattern = AonUtil.getMessage(ICommonMessages.DECIMAL_2_PATTERN);
-			decimalCellStyle.setDataFormat( dataFormat.getFormat(pattern) );
+			decimalCellStyle.setDataFormat( dataFormat.getFormat(NUMBER_PATTERN) );
 		}
 		return decimalCellStyle;
 	}
 	
-	public void addDecimalCell( double number) {
+	public HSSFCell addDecimalCell( double number) {
 		HSSFCell cell = addCell();
 		cell.setCellValue( number );
 		cell.setCellStyle( getDecimalCellStyle() );
 		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+		return cell;
+	}
+	public HSSFCell addEmptyDecimalCell() {
+		HSSFCell cell = addCell();
+		cell.setCellStyle( getDecimalCellStyle() );
+		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+		return cell;
 	}
 	
-	public void addBooleanCell( boolean value ) {
+	public HSSFCell addBooleanCell( boolean value ) {
 		HSSFCell cell = addCell();
 		cell.setCellValue( value );
 		cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+		return cell;
 	}
 
 	private CellStyle getDateCellStyle() {
 		if ( dateCellStyle == null ) {
 			dateCellStyle = wb.createCellStyle();
-			String pattern = AonUtil.getMessage(ICommonMessages.DATE_PATTERN);
-			dateCellStyle.setDataFormat( dataFormat.getFormat(pattern) );
+			dateCellStyle.setDataFormat( dataFormat.getFormat(DATE_PATTERN) );
 		}
 		return dateCellStyle;
 	}	
 	
-	public void addDateCell( Date value ) {
+	public HSSFCell addDateCell( Date value ) {
 		HSSFCell cell = addCell();
-		cell.setCellValue(value);
-		cell.setCellStyle(getDateCellStyle());		
+		if (value==null) {
+			cell.setCellValue("");	
+		} else {
+			cell.setCellValue(value);
+		}
+		cell.setCellStyle(getDateCellStyle());
+		return cell;
 	}
 	
+
 	@Override
-	public void exportColumn(ReportColumnMetadata column, Object data) throws ReportException {
+	public Object exportColumn(ReportColumnMetadata column, Object data) throws ReportException {
+		HSSFCell cell = null;
 		if (column.getType() == Types.VARCHAR 
 				|| column.getType() == Types.CHAR 
 				|| column.getType() == Types.LONGVARCHAR) {
-			addStringCell((String) data); 
+			cell = addStringCell((String) data); 
 		} else if (column.getType() == Types.INTEGER || column.getType() == Types.TINYINT || column.getType() == Types.SMALLINT ) {
 			double d = data==null?0.0: ((Integer) data).doubleValue();
-			addNumberCell( d );
+			cell = addNumberCell( d );
 		} else if ( column.getType() == Types.BIT) {
-			HSSFCell cell = addCell();
+			cell = addCell();
 			if (data != null) {
 				cell.setCellValue((Boolean) data);
 			}
+			
 		} else if (column.getType() == Types.DATE ) {
-			addDateCell( (Date)data );
+			cell = addDateCell( (Date)data );
 		} else if (column.getType() == Types.TIMESTAMP) {
-			HSSFCell cell = addCell();
+			cell = addCell();
 			if (data != null) {
 				Calendar c = Calendar.getInstance();
 				c.setTime( (Date) data );
 				cell.setCellValue(c);
 			}
 		} else if (column.getType() == Types.DOUBLE) {
-			addNumberCell( (Double) data );
+			if (data != null) {
+				cell = addDecimalCell( (Double) data );	
+			} else {
+				cell = addEmptyDecimalCell( );
+			}
+			
 		} else if (column.getType() == Types.LONGVARBINARY) {
-			addCell().setCellValue("BLOB");
+			cell = addCell();
+			cell.setCellValue("BLOB");
 		} else {
 			throw new ReportException(" Tipo no soportado para " + column.getName() + " (" +  column.getType() + ")");	
 		}
+		return cell;
 	}
 
 	@Override

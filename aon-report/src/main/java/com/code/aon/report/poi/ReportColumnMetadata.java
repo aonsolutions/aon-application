@@ -1,4 +1,4 @@
-package com.code.aon.ui.report.export;
+package com.code.aon.report.poi;
 
 
 public class ReportColumnMetadata {
@@ -7,6 +7,17 @@ public class ReportColumnMetadata {
 	private int type;
 	private String label;
 	private int displaySize;
+	
+	public ReportColumnMetadata() {
+		
+	}
+	public ReportColumnMetadata(String name,int type,String label,int displaySize) {
+		this.name = name;
+		this.type = type;
+		this.label = label;
+		this.displaySize = displaySize; 
+	}
+		
 	
 	public String getName() {
 		return name;

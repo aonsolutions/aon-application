@@ -34,6 +34,8 @@ import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.TaxColumn;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
+import com.code.aon.fiscal.invoice.InvoiceReportParams;
+import com.code.aon.fiscal.invoice.InvoiceReportParamsDetail;
 import com.code.aon.fiscal.vat.tax.VatTaxManager;
 import com.code.aon.fiscal.vat.tax.VatTaxParameters;
 import com.code.aon.ql.Criteria;
