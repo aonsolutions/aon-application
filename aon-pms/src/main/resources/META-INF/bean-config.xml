@@ -44,6 +44,13 @@
 	</bean>
 
 	<bean description="">
+		<pojo>com.esferalia.aon.pms.ProjectReservationServiceDetail</pojo>
+		<listeners>
+	        <listener>com.esferalia.aon.pms.event.ProjectReservationServiceDetailBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="">
 		<pojo>com.esferalia.aon.pms.Room</pojo>
 		<vetoListeners>
 	        <vetoListener>com.esferalia.aon.pms.event.RoomBeanVetoListener</vetoListener>
