@@ -1,11 +1,16 @@
 package com.esferalia.aon.ui.calendar.controller;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
@@ -16,8 +21,12 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.calendar.Holiday;
 import com.esferalia.aon.calendar.HolidayDetail;
@@ -61,6 +70,9 @@ public class CalendarHolidayDataController {
 		try {
 			bean = BeanManager.getManagerBean(HolidayDetail.class);
 			criteria = new Criteria();
+			Integer[] ids = {0, DomainManager.getCurrentDomain(), getParentDomainId()};
+			criteria.setSkipDomainFilter( true );
+			criteria.addInExpression("HolidayDetail.domain", ids);
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
 			criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
 			criteria.addOrder(bean.getFieldName(IEntityAlias.HOLIDAY_DETAIL_DATE));
@@ -69,6 +81,8 @@ public class CalendarHolidayDataController {
 			holiday = holiday.getHoliday();
 			while(holiday!=null && holiday.getId()!=null){
 				criteria = new Criteria();
+				criteria.setSkipDomainFilter( true );
+				criteria.addInExpression("HolidayDetail.domain", ids);
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
 				criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
 				criteria.addOrder(bean.getFieldName(IEntityAlias.HOLIDAY_DETAIL_DATE));
@@ -81,6 +95,31 @@ public class CalendarHolidayDataController {
 		}
 	}
 	
+	private Integer getParentDomainId() {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			String select = "SELECT parent FROM domain WHERE id = " + DomainManager.getCurrentDomain();
+			ps = conn.prepareStatement(select);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				return rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			String msg = "Se ha producido un error al obtener los convenios. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} catch (AonConnectionException e) {
+			String msg = "Se ha producido un error al obtener los convenios. ("+ e.getMessage()+")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		} finally {
+			DatabaseUtil.closeQuietly(ps);
+			DatabaseUtil.closeQuietly(conn);
+		}
+		return null;
+	}
 	
 	/*
 	 * HOLIDAY DATA

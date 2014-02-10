@@ -16,11 +16,6 @@
 				<ui:param name="toolbarTitle" value="#{bundle.calendar_menu_group}" />
 				<ui:param name="controller" value="#{calendar}" />
 				<ui:define name="beforeSpinToolbarContent">
-					<aon:commandLink id="calendar-holiday"
-						value="festivos"
-						action="#{holiday.initialAction}"
-						actionListener="#{holiday.onEditSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-calendar" />
 					<aon:htmlCommandLink id="calendarReport_list" value="#{bundle.aon_report}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						actionListener="#{calendarPrint.onLoad}"

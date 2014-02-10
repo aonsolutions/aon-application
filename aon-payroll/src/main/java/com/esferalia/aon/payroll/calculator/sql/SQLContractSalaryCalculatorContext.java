@@ -1131,6 +1131,7 @@ public class SQLContractSalaryCalculatorContext implements
 					ContractSalaryCalculator calculator = new ContractSalaryCalculator();
 					calculator.setSalaryBuilder(new SalaryBuilder());
 					ISalary salary = calculator.calculate(ctx);
+					System.out.println("solve : " + x + " = " + (liquid - salary.getTotalLiquid()));;
 					return liquid - salary.getTotalLiquid();
 				} catch (SalaryException e) {
 					throw new RuntimeException(e);

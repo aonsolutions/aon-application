@@ -74,6 +74,10 @@ public interface EmployeesServiceAsync {
 	void saveSalary(SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
 
+	void calculateIrpf(SalaryDraft salaryDraft,
+			AsyncCallback<Double> callback)
+			throws IllegalArgumentException;
+
 	void calculateSalaryDraft(SalaryDraft salaryDraft,
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;

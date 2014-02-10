@@ -32,6 +32,7 @@ public class SimpleContractPayment implements IContractPayment{
 	
 	
 	public SimpleContractPayment(IContractPayment contractPayment){
+		id = contractPayment.getId();
 		type = contractPayment.getType();
 		name = contractPayment.getName();
 		month = contractPayment.getMonth();

@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>7.28.3</version>
+		<version>7.28.4</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
@@ -11,6 +11,12 @@
 	<description>AON UI CALENDAR</description>
 	<name>AON UI CALENDAR</name>
 	<dependencies>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.pool</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.calendar</artifactId>

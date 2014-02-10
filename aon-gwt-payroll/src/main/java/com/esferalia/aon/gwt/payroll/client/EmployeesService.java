@@ -74,6 +74,9 @@ public interface EmployeesService extends RemoteService {
 	Double eval(String expression, SalaryDraft salaryDraft)
 			throws IllegalArgumentException, EvalException;
 
+	Double calculateIrpf(SalaryDraft salaryDraft)
+			throws IllegalArgumentException;
+
 	SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 

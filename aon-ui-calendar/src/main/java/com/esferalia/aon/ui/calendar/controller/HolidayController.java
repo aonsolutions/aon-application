@@ -9,14 +9,25 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.event.ControllerAdapter;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.calendar.Holiday;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class HolidayController extends BasicController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(HolidayController.class.getName());
 	
 	private Integer year;
+	private IControllerListener excludeCurrentHoliday;
 	
+	public void setExcludeCurrentHoliday(IControllerListener excludeCurrentHoliday) {
+		this.excludeCurrentHoliday = excludeCurrentHoliday;
+	}
+
 	public Integer getYear() {
 		return year;
 	}
@@ -38,6 +49,28 @@ public class HolidayController extends BasicController {
 	private void refreshLines() throws ManagerBeanException{
 		IController detail = (IController) AonUtil.getRegisteredBean(ICalendarConstants.HOLIDAY_DETAIL_CONTROLLER_NAME);
 		detail.initializeModel();
+	}
+	
+	public IControllerListener getExcludeCurrentHoliday() {
+		if ( this.excludeCurrentHoliday == null ) {
+			this.excludeCurrentHoliday = new ControllerAdapter() {
+				@Override
+				public void beforeModelInitialized(ControllerEvent event)
+						throws ControllerListenerException {
+					IController controller = event.getController();
+					Holiday holiday = (Holiday) getTo();
+					if ( holiday!=null && holiday.getId()!=null ) {
+						try {
+							String alias = controller.getFieldName(IEntityAlias.HOLIDAY_ID);
+							controller.getCriteria().addNotEqualExpression(alias, holiday.getId());
+						} catch (ManagerBeanException e) {
+							LOGGER.error("Error filtering current holiday", e);
+						}
+					}
+				}
+			};
+		}
+		return this.excludeCurrentHoliday;
 	}
 
 }

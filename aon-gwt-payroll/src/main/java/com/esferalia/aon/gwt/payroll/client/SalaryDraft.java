@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -59,13 +60,13 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.HasDirection.Direction;
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -163,14 +164,21 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
-	class VariableChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers>
-			implements FocusHandler, BlurHandler {
+	class VariableChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers & Focusable>
+			implements FocusHandler, BlurHandler, ValueChangeHandler<String> {
 
 		private T uiObject;
+		private Timer reset;
 		private Variable variable;
 
 		public VariableChangeHandler(Variable variable) {
 			this.variable = variable;
+			this.reset = new Timer() {
+				@Override
+				public void run() {
+					setValue(VariableChangeHandler.this.variable.getValue());
+				}
+			};
 		}
 
 		public void setLabel(Label label) {
@@ -201,6 +209,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			this.uiObject = uiObject;
 			this.uiObject.addBlurHandler(this);
 			this.uiObject.addFocusHandler(this);
+			this.uiObject.addValueChangeHandler(this);
 			setValue(variable.getValue());
 		}
 
@@ -213,15 +222,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		@Override
 		public void onBlur(BlurEvent event) {
-			if (!isChanged()) {
-				setValue(variable.getValue());
-			} else {
-				onValueChange();
-			}
+			reset.schedule(100);
 			fxButton.setEnabled(false);
+
 		}
 
-		private void onValueChange() {
+		@Override
+		public void onValueChange(ValueChangeEvent<String> event) {
+			reset.cancel();
 
 			String value = uiObject.getValue();
 
@@ -235,36 +243,55 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					: value);
 
 			salaryDraftObject.addDraftVariable(var);
-			salaryDraftObject.calculate(SalaryDraft.this);
+			// salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate(getNextVariableFocusCallback());
 		}
 
 		private void setValue(Object value) {
-			uiObject.setValue(value == null ? null : value.toString());
+			uiObject.setValue(value == null ? null : String.valueOf(value));
 		}
 
-		private boolean isChanged() {
-			return !StringUtils.equals(uiObject.getValue(),
-					variable.getExpression());
+		private CalculateCallback getNextVariableFocusCallback() {
+			class NextVariableFocusCallback implements CalculateCallback {
+				private String name = VariableChangeHandler.this.variable
+						.getName();
+
+				@Override
+				public void onCalculateFailure(Throwable throwable) {
+					onCalculateSucces(null);
+				}
+
+				@Override
+				public void onCalculateSucces(SalaryDraftObject object) {
+					VariableChangeHandler<?> handler = getNextVariableChangeHandler(name);
+					if (handler != null)
+						handler.uiObject.setFocus(true);
+				}
+			}
+			return new NextVariableFocusCallback();
 		}
 
 	}
 
-	abstract class ItemChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers, I extends Item> {
+	abstract class ItemChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers & Focusable, I extends Item> {
 
 		I item;
+		T expressionWidget;
+		T descriptionWidget;
 
 		public ItemChangeHandler(I item) {
 			this.item = item;
 		}
 
 		public void setDescriptionWidget(final T widget) {
-			widget.addFocusHandler(new FocusHandler() {
+			descriptionWidget = widget;
+			descriptionWidget.addFocusHandler(new FocusHandler() {
 				@Override
 				public void onFocus(FocusEvent event) {
 					// TODO :
 				}
 			});
-			widget.addBlurHandler(new BlurHandler() {
+			descriptionWidget.addBlurHandler(new BlurHandler() {
 				@Override
 				public void onBlur(BlurEvent event) {
 					if (!StringUtils.equals(widget.getValue(),
@@ -275,7 +302,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 
 		public void setExpressionWidget(final T widget) {
-			widget.addFocusHandler(new FocusHandler() {
+			expressionWidget = widget;
+			expressionWidget.addFocusHandler(new FocusHandler() {
 				@Override
 				public void onFocus(FocusEvent event) {
 					widget.setValue(item.getExpression());
@@ -283,14 +311,17 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					fxhasValue = widget;
 				}
 			});
-			widget.addBlurHandler(new BlurHandler() {
+			expressionWidget.addBlurHandler(new BlurHandler() {
 				@Override
 				public void onBlur(BlurEvent event) {
 					if (!StringUtils.equals(widget.getValue(),
-							item.getExpression()))
+							item.getExpression())){
 						onExpressionChange(item, widget.getValue());
-					else
-						widget.setValue(format(item.getAmount()));
+					}else {
+						String text = format(item.getAmount());
+						widget.setValue(text != null ? text : item
+								.getExpression());
+					}
 
 					fxButton.setEnabled(false);
 				}
@@ -320,9 +351,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		abstract void onExpressionChange(I item, String expression);
 
 		abstract void onDescriptionChange(I item, String description);
+
 	}
 
-	class PaymentChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers>
+	class PaymentChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers & Focusable>
 			extends ItemChangeHandler<T, Payment> implements
 			PaymentDialog.Callback {
 
@@ -368,7 +400,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			payment.setScope(Scope.SALARY);
 			payment.setDescription(description);
 			salaryDraftObject.addDraftPayment(payment);
-			salaryDraftObject.calculate(SalaryDraft.this);
+			// salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate(getExpressionFocusCallback());
 		}
 
 		@Override
@@ -376,7 +409,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			payment.setScope(Scope.SALARY);
 			payment.setExpression(expression);
 			salaryDraftObject.addDraftPayment(payment);
-			salaryDraftObject.calculate(SalaryDraft.this);
+			// salaryDraftObject.calculate(SalaryDraft.this);
+			SalaryDraft.this.calculate(getNextPaymentFocusCallback());
 		}
 
 		private Payment getConcept() {
@@ -388,9 +422,56 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			return null;
 		}
 
+		private CalculateCallback getNextPaymentFocusCallback() {
+
+			class NextItemFocusCallback implements CalculateCallback {
+
+				private int id = PaymentChangeHandler.this.item.getId();
+
+				@Override
+				public void onCalculateFailure(Throwable throwable) {
+				}
+
+				@Override
+				public void onCalculateSucces(SalaryDraftObject object) {
+					PaymentChangeHandler<?> handler = SalaryDraft.this
+							.getNextPaymentChangeHandlerFor(id);
+					if (handler != null)
+						handler.descriptionWidget.setFocus(true);
+					else
+						newPaymentHandler.descriptionBox.setFocus(true);
+				}
+			}
+
+			return new NextItemFocusCallback();
+		}
+
+		private CalculateCallback getExpressionFocusCallback() {
+
+			class ExpressionFocusCallback implements CalculateCallback {
+
+				private int id = PaymentChangeHandler.this.item.getId();
+
+				@Override
+				public void onCalculateFailure(Throwable throwable) {
+					onCalculateSucces(null);
+				}
+
+				@Override
+				public void onCalculateSucces(SalaryDraftObject object) {
+					PaymentChangeHandler<?> handler = SalaryDraft.this
+							.getPaymentChangeHandlerFor(id);
+					if (handler != null)
+						handler.expressionWidget.setFocus(true);
+
+				}
+			}
+
+			return new ExpressionFocusCallback();
+		}
 	}
 
-	class DeductionChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers>
+	class DeductionChangeHandler<T extends UIObject & HasValue<String> & HasAllFocusHandlers & Focusable>
 			extends ItemChangeHandler<T, Deduction> implements
 			DeductionDialog.Callback {
 
@@ -477,7 +558,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			this.descriptionBox.getValueBox().addBlurHandler(new BlurHandler() {
 				@Override
 				public void onBlur(BlurEvent event) {
-					onValueChange(NewItemHandler.this.descriptionBox);
+					String value = NewItemHandler.this.descriptionBox
+							.getValue();
+					if (!StringUtils.isBlank(value)) {
+						onValueChange(NewItemHandler.this.descriptionBox);
+					}
 				}
 			});
 			this.descriptionBox
@@ -503,7 +588,6 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					onValueChange(NewItemHandler.this.expressionBox);
 				}
 			});
-			// this.expressionBox.addValueChangeHandler(this);
 		}
 
 		protected void onValueChange(UIObject source) {
@@ -537,7 +621,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 			addDrafItem(item, expression);
 
-			salaryDraftObject.calculate(SalaryDraft.this);
+			calculate(item);
 		}
 
 		public void setNewButton(HasClickHandlers newButton) {
@@ -551,6 +635,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		protected T getItem(String description) {
 			return itemsConceptsMap.get(description);
+		}
+
+		protected void calculate(T item) {
+			salaryDraftObject.calculate(SalaryDraft.this);
 		}
 
 		protected abstract void onEdit();
@@ -647,6 +735,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 
 		@Override
+		protected void calculate(Payment payment) {
+			SalaryDraft.this.calculate(getNewPaymentFocusCallback());
+		}
+
+		@Override
 		protected void addDrafItem(Payment payment, String expression) {
 			Payment draftPayment = new Payment();
 
@@ -733,6 +826,24 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			draftPayment.setSalaryType(SalaryDraft.this.salaryDraftObject
 					.getType());
 			salaryDraftObject.addDraftPayment(draftPayment);
+		}
+
+		private CalculateCallback getNewPaymentFocusCallback() {
+
+			class NextItemFocusCallback implements CalculateCallback {
+
+				@Override
+				public void onCalculateFailure(Throwable throwable) {
+					onCalculateSucces(null);
+				}
+
+				@Override
+				public void onCalculateSucces(SalaryDraftObject object) {
+					newPaymentHandler.descriptionBox.setFocus(true);
+				}
+			}
+
+			return new NextItemFocusCallback();
 		}
 
 	}
@@ -1027,6 +1138,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private Payment totalLiquidPayment = null;
 
+	// managing the focus
+	private NewPaymentHandler newPaymentHandler;
+	private List<PaymentChangeHandler<?>> paymentChangeHandlers;
+	private List<VariableChangeHandler<?>> variableChangeHandlers;
+
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
 		initPaymentsTable();
@@ -1038,6 +1154,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		initEventsStyles(style);
 		initSalaryDb();
 		initDatesListBox();
+
 	}
 
 	public void setSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
@@ -1334,8 +1451,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		initAvailablePayments();
 		List<Payment> payments = salaryDraftObject.getPayments();
-		dumpPayments(payments);
-		insertNewPaymentRow();
+		paymentChangeHandlers = dumpPayments(payments);
+		newPaymentHandler = insertNewPaymentRow();
 		insertBlankPaymentRow();
 
 		List<Deduction> deductions = salaryDraftObject.getDeductions();
@@ -1349,6 +1466,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		Scope nextScope = null;
 		boolean show = scope.compareTo(Scope.CONTRACT) >= 0;
+
+		variableChangeHandlers = new ArrayList<VariableChangeHandler<?>>();
 
 		for (Scope step : SCOPE_STEPS) {
 			nextScope = dumpContext(context, step, show, nextScope);
@@ -1610,11 +1729,14 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		});
 
 		for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
+			zoomListBox.addItem(Constants.PERCENT_FORMAT
+					.format((double) zoom / 100));
 		int selectedIndex = zoomListBox.getItemCount();
 		for (int zoom = Constants.DEFAULT_ZOOM; zoom < Constants.MAX_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
-		zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) Constants.MAX_ZOOM / 100));
+			zoomListBox.addItem(Constants.PERCENT_FORMAT
+					.format((double) zoom / 100));
+		zoomListBox.addItem(Constants.PERCENT_FORMAT
+				.format((double) Constants.MAX_ZOOM / 100));
 		zoomListBox.setSelectedIndex(selectedIndex);
 		zoomListBox.addChangeHandler(new ChangeHandler() {
 
@@ -1622,7 +1744,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			public void onChange(ChangeEvent event) {
 				int index = SalaryDraft.this.zoomListBox.getSelectedIndex();
 				String text = SalaryDraft.this.zoomListBox.getItemText(index);
-				SalaryDraft.this.zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
+				SalaryDraft.this.zoom = (int) (Constants.PERCENT_FORMAT
+						.parse(text));
 				getPrintPreview();
 			}
 		});
@@ -1693,7 +1816,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	}
 
-	private void dumpPayments(List<Payment> payments) {
+	private List<PaymentChangeHandler<?>> dumpPayments(List<Payment> payments) {
+
+		List<PaymentChangeHandler<?>> handlers = new ArrayList<PaymentChangeHandler<?>>(
+				payments.size());
 
 		int row = paymentsTable.getRowCount();
 		for (Payment payment : payments) {
@@ -1701,14 +1827,18 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				continue;
 
 			if (payment.getAmount() != null) {
-				dumpItem(payment, row++, getIconRowStyle(payment),
-						new PaymentChangeHandler<TextBox>(payment));
+				PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(
+						payment);
+				dumpItem(payment, row++, getIconRowStyle(payment), handler);
+				handlers.add(handler);
 			} else {
 				String styles[] = eventStyles.get(Event.Type.ERROR);
 				dumpDbItem(payment, row++, styles[0], styles[1],
 						new RecoverPaymentHandler(payment), false);
 			}
 		}
+
+		return handlers;
 
 	}
 
@@ -1730,11 +1860,12 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 						: AON.AON_DATA_TABLE_ROW_EVEN);
 	}
 
-	private void insertNewPaymentRow() {
+	private NewPaymentHandler insertNewPaymentRow() {
 		int row = paymentsTable.getRowCount();
 
 		NewPaymentHandler newPaymentHandler = new NewPaymentHandler();
 		Button newButton = new Button();
+		newButton.setTabIndex(Short.MAX_VALUE);
 		newButton.setStyleName(AON.AON_ICON_RESET); // clear gwt-Button
 		newButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		newPaymentHandler.setNewButton(newButton);
@@ -1761,6 +1892,8 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		paymentsTable.setHTML(row, 5, "&nbsp;");
 
 		formatRow(row);
+
+		return newPaymentHandler;
 	}
 
 	private void insertNewDeductionRow() {
@@ -1768,6 +1901,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		NewDeductionHandler newDeductionHandler = new NewDeductionHandler();
 
 		Button newButton = new Button();
+		newButton.setTabIndex(Short.MAX_VALUE);
 		newButton.setStyleName(AON.AON_ICON_RESET); // clear gwt-Button
 		newButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		newDeductionHandler.setNewButton(newButton);
@@ -1856,6 +1990,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
+		editButton.setTabIndex(Short.MAX_VALUE);
 		editButton.setStyleName(iconStyleName);
 		editButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		handler.setEditButton(editButton);
@@ -1893,8 +2028,13 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		amountsPanel.setCellWidth(dbAmountLabel, "50%");
 		amountsPanel.setCellHorizontalAlignment(dbAmountLabel,
 				HorizontalAlignmentConstant.startOf(Direction.RTL));
-		addDbWidget(new VisibilityImpl(dbAmountLabel.getElement()
-				.getParentElement()));
+		VisibilityImpl dbWidget = new VisibilityImpl(dbAmountLabel.getElement()
+				.getParentElement());
+		
+		dbWidget.setVisible(salaryDraftObject.hasDbSalary()
+				&& dbSalaryCheck.getValue());
+		
+		addDbWidget(dbWidget);
 
 		paymentsTable.setWidget(row, isDeduction ? 4 : 3, amountsPanel);
 
@@ -1904,6 +2044,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		paymentsTable.setHTML(row, isDeduction ? 3 : 4, "&nbsp;");
 
 		Button deleteButton = new Button();
+		deleteButton.setTabIndex(Short.MAX_VALUE);
 		deleteButton.setStyleName(AON.AON_ICON_DELETE);
 		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		paymentsTable.setWidget(row, 5, deleteButton);
@@ -2189,13 +2330,15 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		valuePanel.add(new InlineHTML("&nbsp;"));
 
 		if (!(variable instanceof UndefinedVariable)) {
-			valuePanel.add(getDeleteButton(variable));
+			Button deleteButton = getDeleteButton(variable);
+			deleteButton.setTabIndex(Short.MAX_VALUE);
+			valuePanel.add(deleteButton);
 		} else if (variable instanceof UndefinedPaymentVariable) {
 			String styles[] = eventStyles.get(Event.Type.WARNING);
 
 			StyleToggleButton itemButton = getPaymentButton(
 					(UndefinedPaymentVariable) variable, styles[0], styles[1]);
-
+			itemButton.setTabIndex(Short.MAX_VALUE);
 			valuePanel.add(itemButton);
 			// only show payments of variables at 'to' scope...
 			itemButton.setValue(show && (scope.compareTo(scope) >= 0), true);
@@ -2204,21 +2347,30 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 			StyleToggleButton itemButton = getDeductionButton(
 					(UndefinedDeductionVariable) variable, styles[0], styles[1]);
+			itemButton.setTabIndex(Short.MAX_VALUE);
 
 			valuePanel.add(itemButton);
 			itemButton.setValue(show, true);
 		}
 
 		if (scope.compareTo(Scope.AGREEMENT) > 0
-				&& variable.isDefinedAt(Scope.AGREEMENT))
-			valuePanel.add(getAgreementVarButton(variable));
+				&& variable.isDefinedAt(Scope.AGREEMENT)) {
+			Button agreementVarButton = getAgreementVarButton(variable);
+			agreementVarButton.setTabIndex(Short.MAX_VALUE);
+			valuePanel.add(agreementVarButton);
+		}
 
 		if (scope.compareTo(Scope.APPLICATION) > 0
 				&& (variable.isDefinedAt(Scope.SYSTEM) || variable
-						.isDefinedAt(Scope.APPLICATION)))
-			valuePanel.add(getSystemVarButton(variable));
+						.isDefinedAt(Scope.APPLICATION))) {
+			Button systemButton = getSystemVarButton(variable);
+			systemButton.setTabIndex(Short.MAX_VALUE);
+			valuePanel.add(systemButton);
+		}
 
 		htmlPanel.add(valuePanel);
+
+		variableChangeHandlers.add(variableChangeHandler);
 
 		return htmlPanel;
 	}
@@ -2233,6 +2385,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				+ " variables del " + SCOPE_DESCRIPTIONS.get(expandScope));
 		expandPanel.add(expandLabel);
 		final Button expandButton = new Button();
+		expandButton.setTabIndex(Short.MAX_VALUE);
 		expandButton.setStyleName(collapse ? style.collapseAllButton() : style
 				.expandAllButton());
 		expandButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
@@ -2403,7 +2556,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	}
 
 	private Button getSystemVarButton(Variable variable) {
-		return getSystemVarButton(variable, AON.AON_ICON_AET);
+		return getSystemVarButton(variable, AON.AON_ICON_CONFIG);
 	}
 
 	private Button getSystemVarButton(Variable variable, String iconStyle) {
@@ -2462,6 +2615,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				} else {
 					removePayment(tr);
 					removePayment(hasPayment.getPayment());
+					removePaymentChangeHandlerFor(hasPayment.getPayment().getId());
 				}
 
 			}
@@ -2517,6 +2671,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				return;
 			}
 		}
+		
 	}
 
 	private void removeDeduction(Deduction deduction) {
@@ -2545,8 +2700,11 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		idx += 1; // We add one due to header
 
 		paymentsTable.insertRow(idx);
-		dumpItem(payment, idx, iconStyleName,
-				new PaymentChangeHandler<TextBox>(payment));
+		PaymentChangeHandler<TextBox> handler = new PaymentChangeHandler<TextBox>(
+				payment);
+		dumpItem(payment, idx, iconStyleName, handler);
+		paymentChangeHandlers.add(handler);
+
 
 		CellFormatter fomatter = paymentsTable.getCellFormatter();
 		for (int col = 0; col < paymentsTable.getCellCount(idx); col++) {
@@ -2620,7 +2778,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			return AON.AON_ICON_ROW_SELECTOR_CHANGED;
 		case AGREEMENT:
 			return AON.AON_ICON_ROW_SELECTOR_C;
-		case SYSTEM :
+		case SYSTEM:
 			return AON.AON_ICON_ROW_SELECTOR_S;
 		default:
 			return AON.AON_ICON_ROW_SELECTOR;
@@ -2736,6 +2894,77 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		}
 
 		return irpfPercentPanel;
+	}
+
+	private void calculate() {
+		salaryDraftObject.calculate(this);
+	}
+
+	private void calculate(final CalculateCallback callback) {
+		salaryDraftObject.calculate(new CalculateCallback() {
+
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+				SalaryDraft.this.onCalculateFailure(throwable);
+				callback.onCalculateFailure(throwable);
+			}
+
+			@Override
+			public void onCalculateSucces(SalaryDraftObject object) {
+				SalaryDraft.this.onCalculateSucces(object);
+				callback.onCalculateSucces(object);
+			}
+
+		});
+	}
+
+	private VariableChangeHandler<?> getVariableChangeHandlerFor(String name) {
+		for (VariableChangeHandler<?> handler : variableChangeHandlers)
+			if (StringUtils.equals(handler.variable.getName(), name))
+				return handler;
+		return null;
+	}
+
+	private VariableChangeHandler<?> getNextVariableChangeHandler(String name) {
+		for (Iterator<VariableChangeHandler<?>> iterator = variableChangeHandlers
+				.iterator(); iterator.hasNext();) {
+			VariableChangeHandler<?> handler = iterator.next();
+			if (StringUtils.equals(handler.variable.getName(), name))
+				return iterator.hasNext() ? iterator.next() : null;
+		}
+		return null;
+	}
+
+	private PaymentChangeHandler<?> getPaymentChangeHandlerFor(int id) {
+		for (PaymentChangeHandler<?> handler : paymentChangeHandlers) {
+			if (handler.item.getId() == id) {
+				return handler;
+			}
+		}
+		return null;
+	}
+
+	private PaymentChangeHandler<?> getNextPaymentChangeHandlerFor(int id) {
+		for (Iterator<PaymentChangeHandler<?>> iterator = paymentChangeHandlers
+				.iterator(); iterator.hasNext();) {
+			PaymentChangeHandler<?> handler = iterator.next();
+			if (handler.item.getId() == id) {
+				return iterator.hasNext() ? iterator.next() : null;
+			}
+		}
+		return null;
+	}
+	
+	private void removePaymentChangeHandlerFor(int id) {
+		for (ListIterator<PaymentChangeHandler<?>> iterator = paymentChangeHandlers
+				.listIterator(); iterator.hasNext();) {
+			PaymentChangeHandler<?> handler = iterator.next();
+			if (handler.item.getId() == id) {
+				iterator.remove();
+				return;
+			}
+		}
+		
 	}
 
 	// ------------------------------------------------------- Static 'Library'

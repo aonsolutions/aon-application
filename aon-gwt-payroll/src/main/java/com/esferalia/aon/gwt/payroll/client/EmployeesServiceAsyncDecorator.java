@@ -193,6 +193,14 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 	}
 
 	@Override
+	public void calculateIrpf(SalaryDraft salaryDraft,
+			AsyncCallback<Double> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.calculateIrpf(salaryDraft,
+				new AsyncCallbackWrapper<Double>(callback));
+	}
+
+	@Override
 	public void calculateSalaryDraft(SalaryDraft salaryDraft,
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException {
