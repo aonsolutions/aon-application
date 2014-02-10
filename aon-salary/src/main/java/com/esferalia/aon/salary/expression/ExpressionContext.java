@@ -269,6 +269,7 @@ public class ExpressionContext {
 			int offset = start + 1;
 			int len = end - offset + 1;
 			property = new String(expr, offset, len);
+			end = start ;
 		} while (!isJavaIdentifier(property) || bindings.containsKey(property));
 
 		return property;

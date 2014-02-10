@@ -694,6 +694,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
+	public Double calculateIrpf(SalaryDraft salaryDraft)
+			throws IllegalArgumentException {
+		try {
+			initFacesContext();
+			return 0.00;//getIrpf(salaryDraft);
+		} finally {
+			releaseFacesContext();
+		}
+
+	}
+
+	@Override
 	public SalaryDraft calculateSalaryDraft(SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		try {
