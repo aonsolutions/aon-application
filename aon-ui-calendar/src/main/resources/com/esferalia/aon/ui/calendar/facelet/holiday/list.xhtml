@@ -19,11 +19,21 @@
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{holiday}" />
 					<ui:define name="columns">
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column alias="Holiday.description"
+							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<h:outputText value="#{bundle.aon_description}"  />
 							</f:facet>
 							<aon:outputText value="#{to.description}">
+								<aon:abbreviateConverter maxWidth="50" />
+							</aon:outputText>
+						</aon:column>
+						<aon:column alias="Holiday.holiday.description"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.aon_calendar_inherit_from}" />
+							</f:facet>
+							<aon:outputText value="#{to.holiday.description}">
 								<aon:abbreviateConverter maxWidth="50" />
 							</aon:outputText>
 						</aon:column>
