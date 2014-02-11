@@ -31,7 +31,7 @@ public class AccountingFinanceChecker {
 		     +" 	FROM finance f"
 		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
 			 +"  WHERE f.registry = c.registry "
-			 +"  AND  ( f.status IN (0) "
+			 +"  AND  ( f.status IN (0,1) "
 			 +"    OR ( f.status IN (2,3) AND ( "
 			 +" 	SELECT ft.type FROM finance_tracking ft "
 			 +" 		WHERE ft.finance = f.id "
@@ -53,7 +53,7 @@ public class AccountingFinanceChecker {
 		     +" 	FROM finance f"
 		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
 			 +"  WHERE f.registry = c.registry "
-			 +"  AND  ( f.status IN (0) "
+			 +"  AND  ( f.status IN (0,1) "
 			 +"    OR ( f.status IN (2,3) AND ( "
 			 +" 	SELECT ft.type FROM finance_tracking ft "
 			 +" 		WHERE ft.finance = f.id "
@@ -75,7 +75,7 @@ public class AccountingFinanceChecker {
 		     +" 	FROM finance f"
 		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
 			 +"  WHERE f.registry = c.registry "
-			 +"  AND  ( f.status IN (0) "
+			 +"  AND  ( f.status IN (0,1) "
 			 +"    OR ( f.status IN (2,3) AND ( "
 			 +" 	SELECT ft.type FROM finance_tracking ft "
 			 +" 		WHERE ft.finance = f.id "
@@ -92,13 +92,16 @@ public class AccountingFinanceChecker {
 			 +" HAVING ACCOUNTING_BALANCE <> FINANCE_AMOUNT";
 
 	private String SELECT_STRIPPED_STATEMENT =
-		"SELECT aed.document_number,aed.concept,aed.debit,aed.credit,ae.id,ae.entry_date,ae.entry_type"
+		"SELECT IF(TRIM(aed.document_number) = '','APUNTES SIN N\u00DAMERO DE DOCUMENTO',IFNULL(aed.document_number,'APUNTES SIN N\u00DAMERO DE DOCUMENTO')) DOCUMENT"
+		+ ",ROUND(SUM(aed.debit),2) DEBIT"
+		+ ",ROUND(SUM(aed.credit),2) CREDIT"
+		+ ",IF(ROUND(SUM(aed.debit),2) - ROUND(SUM(aed.credit),2) = 0,1,0) DIFF"
 		+" FROM account a"
 		+" INNER JOIN account_entry_detail aed ON aed.account = a.id"
-		+" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
 		+" WHERE a.code = ?"
 		+"  AND aed.domain = ?"
-		+" ORDER BY aed.document_number";
+		+" GROUP BY DOCUMENT"
+		+" ORDER BY DIFF,DOCUMENT DESC";
 
 	
 	public List<AccountingFinanceCheck> getChecks(Connection conn,AccountingFinanceCheckerParams params) throws AonException {
@@ -174,12 +177,8 @@ public class AccountingFinanceChecker {
 			while (rs.next()) {
 				StrippedStatement ss = new StrippedStatement();
 				ss.setDocumentNumber(rs.getString(1));
-				ss.setConcept(rs.getString(2));
-				ss.setDebit(rs.getDouble(3));
-				ss.setCredit(rs.getDouble(4));
-				ss.setId(rs.getInt(5));				
-				ss.setEntryDate(rs.getDate(6));
-				ss.setEntryType(rs.getInt(7));
+				ss.setDebit(rs.getDouble(2));
+				ss.setCredit(rs.getDouble(3));
 				list.add(ss);
 			}
 			rs.close();

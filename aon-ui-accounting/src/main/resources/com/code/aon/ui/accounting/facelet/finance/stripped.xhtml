@@ -13,27 +13,60 @@
 
 		<aon:form id="accountingFinanceCheckerForm">
 
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{bundle.accounting_finance_checker_module}" />
 				<ui:param name="skipResetButton" value="true" />
-				<ui:define name="toolbarActions">
-					<aon:methodParam name="searchActionListener" value="#{accountingFinanceChecker.onBack}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="accountingFinanceChecker_list" />
+				<ui:param name="skipSearchButton" value="true" />
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="#{toolbarID}-search"
+						title="#{bundle.aon_key_cancel_accelerator}" immediate="true"
+						value="#{bundle.aon_back}" 
+						action="accountingFinanceChecker_list" 
+						actionListener="#{accountingFinanceChecker.onBack}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}" />
 				</ui:define>
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
+				<aon:div style="text-align:left; padding: 0px; margin: 0px;">
+					<h:panelGrid columns="2" styleClass="aon-width-all"
+						columnClasses="aon-width-250,aon-width-auto">
+						<aon:div>
+							<aon:div styleClass="aon-margin-bottom">
+								<aon:outputText styleClass="aon-italic aon-margin-right" value="#{bundle.finance_show} " />
+								<aon:commandLink value="Todo"
+									style="margin-left: 5px; text-decoration: underline;"
+									actionListener="#{accountingFinanceChecker.onStrippedStatementAll}"/>
+								<aon:commandLink value="Descruadres"
+									style="margin-left: 5px; text-decoration: underline;"
+									actionListener="#{accountingFinanceChecker.onStrippedStatementUnsettled}"/>
+								<aon:commandLink value="Cuadrados"
+									style="margin-left: 5px; text-decoration: underline;"
+									actionListener="#{accountingFinanceChecker.onStrippedStatementSettled}"/>
+							</aon:div>
+						</aon:div>
+						<aon:div>
+							<aon:outputText 
+								value="#{accountingFinanceChecker.selectedAccountCode} - #{accountingFinanceChecker.selectedAccountDescription}"
+								style="padding-left: 20px; font-size: 1.2em; font-weight: bold"/>
+						</aon:div> 
+					</h:panelGrid>
+				</aon:div>
 
 				<aon:dataTable id="accountingFinanceCheckerData"
 					value="#{accountingFinanceChecker.strippedModel}" var="to" rows="0"
 					columnClasses="aon-editDataTable-textColumn aon-width-120,
 								   aon-editDataTable-textColumn aon-width-120,
+								   aon-editDataTable-textColumn aon-width-120,
 								   aon-editDataTable-textColumn aon-width-auto,
 								   aon-editDataTable-numberColumn aon-width-120,
-								   aon-editDataTable-numberColumn aon-width-120">
-
+								   aon-editDataTable-numberColumn aon-width-120,
+								   aon-editDataTable-numberColumn aon-width-120,
+								   aon-editDataTable-iconColumn">
+<!-- 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_date}" />
@@ -46,18 +79,59 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_document_number}" />
-						</f:facet>
-						<aon:outputText value="#{to.documentNumber}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_concept}" />
 						</f:facet>
 						<aon:outputText value="#{to.concept}" />
 					</aon:column>
+ -->
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:commandLink id="stripped_invoices-search"
+							immediate="#{true}"
+							styleClass="aon-dataTable-link"
+							action="#{accountingFinanceChecker.strippedStatementShowInvoices}">
+							<aon:outputText value="#{bundle.stat_show_invoices}" 
+								style="font-style: italic; font-size: 0.9em;margin-left: 10px;"/>
+						</aon:commandLink>
+					</aon:column>
 
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:commandLink id="stripped_finances-search"
+							immediate="#{true}"
+							styleClass="aon-dataTable-link"
+							actionListener="#{accountingFinanceChecker.onStrippedStatementShowFinances}"
+							action="finance_form">
+							<aon:outputText value="#{bundle.finance_checking}" 
+								style="font-style: italic; font-size: 0.9em;margin-left: 10px;"/>
+						</aon:commandLink>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:commandLink id="stripped_entries-search"
+							immediate="#{true}"
+							styleClass="aon-dataTable-link"
+							actionListener="#{accountingFinanceChecker.onStrippedStatementShowEntries}"
+							action="accountEntry_form">
+							<aon:outputText value="#{bundle.accounting_entry_generated}" 
+								style="font-style: italic; font-size: 0.9em;margin-left: 10px;"/>
+						</aon:commandLink>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_document_number}" />
+						</f:facet>
+						<aon:outputText value="#{to.documentNumber}"/>
+					</aon:column>
+					
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.account_debit}" />
@@ -76,6 +150,32 @@
 						</aon:outputText>
 					</aon:column>
 					
+					<aon:column style="#{to.settled?'':'color:red;'}">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.accounting_difference}" />
+						</f:facet>
+						<aon:outputText value="#{to.difference}">
+							<f:convertNumber pattern="#,##0.00" />
+						</aon:outputText>
+						<f:facet name="footer">
+							<aon:div style="text-align: right">
+								<aon:outputText value="#{accountingFinanceChecker.strippedSum}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:div>
+						</f:facet>
+					</aon:column>
+					
+					<aon:column style="#{to.settled?'':'color:red;'}">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:outputText 
+							rendered="#{to.settled}" 
+							value="&#160;"  
+							styleClass="aon-icon-checked" 
+							style="padding-left: 18px; margin-top: 5px;"/>	
+					</aon:column>
 				</aon:dataTable>
 			</aon:div>
 		</aon:form>

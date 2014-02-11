@@ -2,6 +2,8 @@ package com.code.aon.accounting.util;
 
 import java.util.Date;
 
+import com.code.aon.common.util.CommonUtil;
+
 public class StrippedStatement {
 	
 	private String documentNumber;
@@ -55,4 +57,11 @@ public class StrippedStatement {
 		this.entryType = entryType;
 	}
 	
+	public double getDifference() {
+		return CommonUtil.round(getDebit() - getCredit());
+	}
+	
+	public boolean isSettled() {
+		return (getDifference() == 0);
+	}
 }
