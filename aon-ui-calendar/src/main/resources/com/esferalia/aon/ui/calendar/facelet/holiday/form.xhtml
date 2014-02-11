@@ -50,7 +50,9 @@
 					<aon:div>
 						<aon:panelTabSet id="tabPanel">
 							<aon:panelTab label="#{bundle.calendar_holidays}">
-								<ui:include src="grid.xhtml" />
+								<ui:include src="grid.xhtml" >
+									<ui:param name="skipResetButton" value="#{!controller.editableTo}" />
+								</ui:include>
 							</aon:panelTab>
 						</aon:panelTabSet>
 					</aon:div>
