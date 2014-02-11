@@ -43,8 +43,16 @@ public class HolidayDetailControllerListener extends ControllerAdapter {
 			controller.clearCriteria();
 			controller.getCriteria().addEqualExpression(this.getController().getFieldName(IEntityAlias.HOLIDAY_DETAIL_HOLIDAY_ID), masterId);
 			controller.getCriteria().addBetweenExpression(this.getController().getFieldName(IEntityAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
+			Integer[] ids = {0, DomainManager.getCurrentDomain(), getParentDomainId()};
+			controller.getCriteria().setSkipDomainFilter( true );
+			controller.getCriteria().addInExpression("HolidayDetail.domain", ids);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("error on HolidayDetailControllerListener");
+			try {
+				controller.getCriteria().setSkipDomainFilter( false );
+			} catch (ManagerBeanException e2) {
+				// nada
+			}
 		}
 	}
 	
