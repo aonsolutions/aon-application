@@ -10,22 +10,18 @@ import javax.faces.context.FacesContext;
 
 import org.ajax4jsf.component.html.HtmlAjaxCommandButton;
 
-import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
 import com.code.aon.faces.component.richfaces.lookup.ILookupConstants;
+import com.code.aon.faces.component.richfaces.lookup.ILookupWindowComponent;
 import com.code.aon.faces.controller.RichLookupBean;
 import com.code.aon.ui.form.event.IControllerListener;
 
-public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupConstants, ILookupComponent {
+public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupConstants, ILookupWindowComponent {
 
     /**
      * String constant component type
      */
     public static final String COMPONENT_TYPE =
             "com.code.aon.faces.HtmlLookupButton";
-    
-	private static final String DEFAULT_MIN_WIDTH = "500";
-	
-	private static final String DEFAULT_MIN_HEIGHT = "300";    
     
     private LookupButtonType buttonType;
     

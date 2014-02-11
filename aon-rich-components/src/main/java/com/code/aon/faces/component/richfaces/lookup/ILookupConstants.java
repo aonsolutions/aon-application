@@ -35,5 +35,8 @@ public interface ILookupConstants {
    	String NEW_STYLE_CLASS = "aon-lookupButton-new";
    	String NEW_DISABLED_STYLE_CLASS = "aon-lookupButton-new-disabled";
    	String CLEAR_STYLE_CLASS = "aon-lookupButton-clear";
-	
+    
+	String DEFAULT_MIN_WIDTH = "500";
+	String DEFAULT_MIN_HEIGHT = "300";    
+   	
 }

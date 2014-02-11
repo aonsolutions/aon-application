@@ -26,6 +26,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
+import com.code.aon.faces.component.richfaces.lookup.ILookupWindowComponent;
 import com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton;
 import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonType;
 import com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText;
@@ -496,9 +497,8 @@ public class RichLookupBean {
 	private void updateCriteria(List<JoinProperty> joinProperties) throws ManagerBeanException {
 		Criteria criteria = getController().getCriteria();
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		IManagerBean bean = getController().getManagerBean();
 		for (JoinProperty jp : joinProperties) {
-			String fieldName = bean.getFieldName(jp.getAlias());
+			String fieldName = getController().resolveAlias(jp.getAlias());
 			Object value = jp.getValue(ctx);
 			Expression expression = null;
 			if (value != null) {
@@ -567,24 +567,26 @@ public class RichLookupBean {
 	 * @throws ManagerBeanException
 	 */
 	public void lookupChanged(ActionEvent event) throws ManagerBeanException {
-		boolean resolved = false;
 		UIComponent component = event.getComponent().getParent();
 		setBindings( component );
 		onEditSearch(event);
 		List<JoinProperty> joinProperties = getJoinBindingsMap(component);
 		updateCriteria(joinProperties);
 		onSearch(event);
-		if (getModel().getRowCount() == 1) {
+		int count = getModel().getRowCount();
+		if (count == 1) {
 			getController().getModel().setRowIndex(0);
 			onSelect(event);
-			resolved = true;
 		} else {
 			onReset(event);
+			if ( count > 1) {
+				showListWindow(event, false);	
+			}
 		}
-		fireLookupChangeListener(component, resolved);
+		fireLookupChangeListener(component, count==1);
 		updateSourcePojo();
 		removeControllerListener();
-		if (! resolved) {
+		if (count==0) {
 			String message = AonUtil.addErrorMessageFromBundle(SEARCH_NO_RESULTS);
 			throw new AbortProcessingException(message);
 		}
@@ -609,15 +611,22 @@ public class RichLookupBean {
 	 * @throws ManagerBeanException
 	 */
 	public void onShowListWindow(ActionEvent event) throws ManagerBeanException {
+		showListWindow(event, true);
+	}
+
+	private void showListWindow(ActionEvent event, boolean search) throws ManagerBeanException {
 		setBindings(event.getComponent());
 		updateWindowProperties();
 		setShowWindow(true);
 		setSelectedPanel(LIST_ID);
-		getController().clearCriteria();
-		onSearch(null);
+		if ( search ) {
+			getController().clearCriteria();
+			onSearch(null);			
+		}
 		this.showSearchButtons = false;
 	}
-
+	
+	
 	/**
 	 * On show lookup search window.
 	 * 
@@ -758,12 +767,12 @@ public class RichLookupBean {
 	}
 
 	private void updateWindowProperties() {
-		if ( (this.component != null) && (this.component instanceof HtmlLookupButton) ) {
-			HtmlLookupButton lookupButton = (HtmlLookupButton) this.component;
-			this.windowTitle = lookupButton.getWindowTitle();
-			this.windowCloseFocus = lookupButton.getWindowCloseFocus();
-			this.minWidth = lookupButton.getMinWidth();
-			this.minHeight = lookupButton.getMinHeight();
+		if ( (this.component != null) && (this.component instanceof ILookupWindowComponent) ) {
+			ILookupWindowComponent lwComponent = (ILookupWindowComponent) this.component;
+			this.windowTitle = lwComponent.getWindowTitle();
+			this.windowCloseFocus = lwComponent.getWindowCloseFocus();
+			this.minWidth = lwComponent.getMinWidth();
+			this.minHeight = lwComponent.getMinHeight();
 		}
 		if ( StringUtils.isEmpty(this.windowTitle) ) {
 			this.windowTitle = DEFAULT_WINDOW_TITLE;	

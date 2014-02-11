@@ -25,12 +25,14 @@
 				required="#{idRequired}" disabled="#{lookupDisabled}"
 				size="#{lookupInputSize}" maxlength="#{lookupInputMaxLength}"  
 				onsubmit="#{lookupInputOnSubmit}" focus="#{lookupInputOnFocus}"
-				reRender="#{lookup_reRender}">
+				reRender="#{lookup_reRender}"
+				minHeight="#{searchButtonHeight}" minWidth="#{searchButtonWidth}"
+				windowTitle="#{searchButtonTitle}" >
 				<ui:insert name="lookupInputTextContent"/>
 			</aon:lookupInputText>
 		</c:if>
 		<c:if test="#{!skipGoToButtonEx}">
-			<aon:goToButton controller="#{controller}" property="#{lookupTo}"
+			<aon:goToButton controller="#{controller}" property="#{goToProperty}"
 				backAction="#{goToBackAction}"
 				backActionListener="#{goToBackActionListener}" />
 		</c:if>

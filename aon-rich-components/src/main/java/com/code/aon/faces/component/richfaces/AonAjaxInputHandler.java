@@ -34,8 +34,6 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	
 	private static final String AON_STATUS = "aonStatus";
 	
-	private TagHandler ajaxSupportHandler; 	
-	
 	private TagAttribute partialSubmit;
 	
 	private TagAttribute reRender;
@@ -72,6 +70,10 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 		return set;
 	}
 
+	protected void setReRender(TagAttribute reRender) {
+		this.reRender = reRender;
+	}
+
 	public boolean isAjaxNeeded() {
 		return ajaxNeeded;
 	}
@@ -95,7 +97,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 		return HTML.ONCHANGE_ATTR;
 	}
 	
-	protected void initAjaxSupport( List<TagAttribute> attributes ) {
+	protected void initAjaxSupport( FaceletContext ctx, List<TagAttribute> attributes ) {
 	}
 	
 	@Override
@@ -103,62 +105,60 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 			throws IOException, FacesException, ELException {
 		super.applyNextHandler(ctx, c);
 		if ( isAjaxNeeded() ) {
-			if ( this.ajaxSupportHandler == null ) {
-				List<TagAttribute> attributes = new ArrayList<TagAttribute>();
-				initAjaxSupport(attributes);
-				String event = getAjaxEvent();
-				if ( partialSubmit != null ) {
-					String value = partialSubmit.getValue(ctx);
-					if (! "true".equals(value) ) {
-						event = value;
-					}
+			List<TagAttribute> attributes = new ArrayList<TagAttribute>();
+			initAjaxSupport(ctx, attributes);
+			String event = getAjaxEvent();
+			if ( partialSubmit != null ) {
+				String value = partialSubmit.getValue(ctx);
+				if (! "true".equals(value) ) {
+					event = value;
 				}
-				attributes.add( BasicComponentConfig.newAttribute(tag, EVENT, event) );
-				String ajaxSingleValue = "true";
-				if ( ajaxSingle != null ) {
-					ajaxSingleValue = ajaxSingle.getValue();
-				}
-				attributes.add( BasicComponentConfig.newAttribute(tag, AJAX_SINGLE, ajaxSingleValue) );
-				if ( reRender != null ) {
-					String value = reRender.getValue();
-					attributes.add( BasicComponentConfig.newAttribute(tag, RERENDER, value) );
-				}
-				TagAttribute focus = getAttribute(FOCUS);
-				if ( focus != null ) {
-					String value = focus.getValue();
-					attributes.add( BasicComponentConfig.newAttribute(tag, FOCUS, value) );					
-				}
-				TagAttribute process = getAttribute(PROCESS);
-				if ( process != null ) {
-					String value = process.getValue();
-					attributes.add( BasicComponentConfig.newAttribute(tag, PROCESS, value) );					
-				}
-				TagAttribute onsubmit = getAttribute(ON_SUBMIT);
-				if ( onsubmit != null ) {
-					String value = onsubmit.getValue();
-					attributes.add( BasicComponentConfig.newAttribute(tag, ON_SUBMIT, value) );	
-				}
-				TagAttribute oncomplete = getAttribute(ON_COMPLETE);
-				if ( oncomplete != null ) {
-					String value = oncomplete.getValue();
-					attributes.add( BasicComponentConfig.newAttribute(tag, ON_COMPLETE, value) );	
-				}
-				if ( actionListener != null ) {
-					String value = actionListener.getValue();
-					attributes.add( BasicComponentConfig.newAttribute(tag, ACTION_LISTENER, value) );					
-				}
-				String statusValue = AON_STATUS;
-				TagAttribute status = getAttribute(STATUS);
-				if ( status != null ) {
-					statusValue = focus.getValue();
-				}
-				attributes.add( BasicComponentConfig.newAttribute(tag, STATUS, statusValue) );				
-				BasicComponentConfig config = new BasicComponentConfig(getConfig(), attributes );
-				config.setComponentType(SUPPORT_COMPONENT_TYPE);
-				config.setRendererType(SUPPORT_RENDERER_TYPE);
-				config.setNextHandler(FaceletUtil.LEAF_HANDLER);
-				ajaxSupportHandler = new AjaxSupportHandler(config);
 			}
+			attributes.add( BasicComponentConfig.newAttribute(tag, EVENT, event) );
+			String ajaxSingleValue = "true";
+			if ( ajaxSingle != null ) {
+				ajaxSingleValue = ajaxSingle.getValue();
+			}
+			attributes.add( BasicComponentConfig.newAttribute(tag, AJAX_SINGLE, ajaxSingleValue) );
+			if ( reRender != null ) {
+				String value = reRender.getValue();
+				attributes.add( BasicComponentConfig.newAttribute(tag, RERENDER, value) );
+			}
+			TagAttribute focus = getAttribute(FOCUS);
+			if ( focus != null ) {
+				String value = focus.getValue();
+				attributes.add( BasicComponentConfig.newAttribute(tag, FOCUS, value) );					
+			}
+			TagAttribute process = getAttribute(PROCESS);
+			if ( process != null ) {
+				String value = process.getValue();
+				attributes.add( BasicComponentConfig.newAttribute(tag, PROCESS, value) );					
+			}
+			TagAttribute onsubmit = getAttribute(ON_SUBMIT);
+			if ( onsubmit != null ) {
+				String value = onsubmit.getValue();
+				attributes.add( BasicComponentConfig.newAttribute(tag, ON_SUBMIT, value) );	
+			}
+			TagAttribute oncomplete = getAttribute(ON_COMPLETE);
+			if ( oncomplete != null ) {
+				String value = oncomplete.getValue();
+				attributes.add( BasicComponentConfig.newAttribute(tag, ON_COMPLETE, value) );	
+			}
+			if ( actionListener != null ) {
+				String value = actionListener.getValue();
+				attributes.add( BasicComponentConfig.newAttribute(tag, ACTION_LISTENER, value) );					
+			}
+			String statusValue = AON_STATUS;
+			TagAttribute status = getAttribute(STATUS);
+			if ( status != null ) {
+				statusValue = focus.getValue();
+			}
+			attributes.add( BasicComponentConfig.newAttribute(tag, STATUS, statusValue) );				
+			BasicComponentConfig config = new BasicComponentConfig(getConfig(), attributes );
+			config.setComponentType(SUPPORT_COMPONENT_TYPE);
+			config.setRendererType(SUPPORT_RENDERER_TYPE);
+			config.setNextHandler(FaceletUtil.LEAF_HANDLER);
+			TagHandler ajaxSupportHandler = new AjaxSupportHandler(config);
 			ajaxSupportHandler.apply(ctx, c);
 		}
 	}

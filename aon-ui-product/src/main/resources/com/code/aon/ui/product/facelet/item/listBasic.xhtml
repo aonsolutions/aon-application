@@ -21,12 +21,12 @@
 		<aon:outputText value="#{to.product.category.name}" />
 	</aon:column>
 
-	<aon:column alias="Item.product.name,Item.detail,Item.detail2"
+	<aon:column alias="Item.product.name,Item.detail,Item.detail2,Item.detail3"
 		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_description}" />
 		</f:facet>
-		<aon:outputText value="#{to.product.name} #{to.detail}">
+		<aon:outputText value="#{to.fullName}">
 			<c:if test="#{abbreviateName}">
 				<aon:abbreviateConverter maxWidth="40" />
 			</c:if>

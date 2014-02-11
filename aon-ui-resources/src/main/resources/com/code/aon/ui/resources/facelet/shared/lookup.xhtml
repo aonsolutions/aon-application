@@ -24,6 +24,7 @@
 		
 		<c:if test="#{!skipGoToButton}">		
 			<aon:valueParam name="goToBackActionListener" default="#{controller.beanName}#{'.onBack'}"/>
+			<aon:valueParam name="goToProperty" default="#{lookupTo}"/>
 		</c:if>
 		
 		<aon:valueParam name="searchButtonWidth" default="650"/>

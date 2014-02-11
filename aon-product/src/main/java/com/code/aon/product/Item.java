@@ -37,20 +37,32 @@ public class Item extends ItemDB implements IPriceable {
 
 	@Transient
 	public String getFullName() {
-		StringBuffer fullName = new StringBuffer();
-		if ((getProduct() != null) && (getProduct().getId() != null)) {
-			fullName.append(getProduct().getName());
-			if (StringUtils.isNotEmpty(getDetail())) {
-				fullName.append(" (").append(getDetail());
-				if (StringUtils.isNotEmpty(getDetail2())) {
-					fullName.append(" - ").append(getDetail2());
-				}
-				fullName.append(")");
-			}
+		StringBuffer sb = new StringBuffer();
+		
+		if (StringUtils.isNotEmpty(getDetail())) {
+			sb.append(getDetail());
 		}
-		return fullName.toString();
+		if (StringUtils.isNotEmpty(getDetail2())) {
+			if ( sb.length() > 0 ) {
+				sb.append("/");
+			}
+			sb.append(getDetail3());
+		}
+		if (StringUtils.isNotEmpty(getDetail3())) {
+			if ( sb.length() > 0 ) {
+				sb.append("/");
+			}
+			sb.append(getDetail3());
+		}
+		if ( sb.length() > 0 ) {
+			return getProduct().getName() + " [" + sb.toString() + "]";
+		}
+		return getProduct().getName();
 	}
 
+	public void setFullName( String value ) {
+	}
+	
     public void setPrice(double price) {
         super.setPrice(CommonUtil.round(price, 4));
     }
@@ -119,5 +131,5 @@ public class Item extends ItemDB implements IPriceable {
 	public void setSuppliers(Set<ItemSupplier> suppliers) {
 		this.suppliers = suppliers;
 	}
-
+	
 }
