@@ -38,7 +38,6 @@ import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class PmsCollectionsController {
 
-	private List<SelectItem> reservationCheckStatuses;
 	private List<SelectItem> reservationStatuses;
 	private List<SelectItem> reservationDivertStatuses;
 	private List<SelectItem> bookingHolders;
@@ -258,25 +257,19 @@ public class PmsCollectionsController {
 		return tariffs;
 	}
 	
-	public List<SelectItem> getReservationCheckStatuses() {
-		if (reservationCheckStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			reservationCheckStatuses = new LinkedList<SelectItem>();
-			for (ReservationCheckStatus status : ReservationCheckStatus.values()) {
-				String name = status.getName(locale);
-				SelectItem item = new SelectItem(status, name);
-				reservationCheckStatuses.add(item);
+	public List<SelectItem> getReservationCheckStatuses(boolean abbreviated, boolean excludeCheckOut, boolean excludeNoShow) {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		List<SelectItem> reservationCheckStatuses = new LinkedList<SelectItem>();
+		for (ReservationCheckStatus status : ReservationCheckStatus.values()) {
+			if (excludeCheckOut && status == ReservationCheckStatus.CHECK_OUT) {
+				continue;
 			}
-		}
-		return reservationCheckStatuses;
-	}
-	
-	public List<SelectItem> getAbbreviatedReservationCheckStatuses() {
-		if (reservationCheckStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			reservationCheckStatuses = new LinkedList<SelectItem>();
-			for (ReservationCheckStatus status : ReservationCheckStatus.values()) {
-				String name = status.getName(locale);
+			if (excludeNoShow && (status == ReservationCheckStatus.NO_SHOW || status == ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE)) {
+				continue;
+			}
+
+			String name = status.getName(locale);
+			if (abbreviated) {
 				if (status == ReservationCheckStatus.NO_CHECK) {
 					name = "No";
 				} else if (status == ReservationCheckStatus.CHECK_IN) {
@@ -284,11 +277,23 @@ public class PmsCollectionsController {
 				} else if (status == ReservationCheckStatus.CHECK_OUT) {
 					name = "Out";
 				} 
-				SelectItem item = new SelectItem(status, name);
-				reservationCheckStatuses.add(item);
 			}
+			SelectItem item = new SelectItem(status, name);
+			reservationCheckStatuses.add(item);
 		}
 		return reservationCheckStatuses;
+	}
+	
+	public List<SelectItem> getAbbreviatedReservationCheckStatuses() {
+		return getReservationCheckStatuses(true, false, false);
+	}
+	
+	public List<SelectItem> getAbbreviatedReservationInOutCheckStatuses() {
+		return getReservationCheckStatuses(true, false, true);
+	}
+	
+	public List<SelectItem> getAbbreviatedReservationInCheckStatuses() {
+		return getReservationCheckStatuses(true, true, true);
 	}
 	
 	public List<SelectItem> getReservationStatuses() {

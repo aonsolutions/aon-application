@@ -17,10 +17,23 @@ public interface ISQLConstants {
 	String RESERVATION_ROOM = "reservationRoom";
 	String RESERVATION_ROOM_DETAIL = "reservationRoomDetail";
 
+	String RESERVATION_HOTEL = "reservationHotel";
+	String CODE = "code";
 	String START_DATE = "startDate";
 	String END_DATE = "endDate";
+	String GUEST = "guest";
+	String HOLDER = "holder";
+	String STATUS = "status";
+	String CHECK_STATUS = "checkStatus";
+	String COMMENTS = "comments";
+	String TOTAL = "total";
+	String ROOM_NUMBER = "roomNumber";
+	String ROOM_CODE = "roomCode";
+	String ROOM_TYPE = "roomType";
+	String ADULTS = "adults";
+	String CHILDREN = "children";
+	String MEAL_PLAN = "mealPlan";
 	String ALLOTMENT = "allotment";
 	String QUANTITY = "quantity";
-	String RESERVATION_HOTEL = "reservationHotel";
 
 }

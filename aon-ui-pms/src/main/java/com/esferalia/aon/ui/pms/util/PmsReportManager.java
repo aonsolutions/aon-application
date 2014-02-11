@@ -6,11 +6,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Product;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
-import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
-import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.ui.pms.controller.IPmsConstants;
 import com.esferalia.aon.ui.pms.controller.PmsCollectionsController;
-import com.esferalia.aon.ui.pms.controller.ReservationInOutController.SortType;
 
 public class PmsReportManager {
 	
@@ -285,78 +282,6 @@ public class PmsReportManager {
 		return select;
 	}
 	
-	/* 
-	 * ************************************
-	 * ENTRADA Y SALIDA DE RESERVAS
-	 * ************************************
-	 */
-	
-	public String getReservationInOutSQL(ReservationStatus reservationStatus, Hotel hotel, boolean isCheckin, ReservationCheckStatus[] reservationCheckStatus, Integer shortOption){
-		String statusClause = "";
-		for(ReservationCheckStatus status: reservationCheckStatus){
-			if(StringUtils.isEmpty(statusClause)){
-				statusClause += " AND ( PR.check_status = " + status.ordinal();
-			} else {
-				statusClause += " OR PR.check_status = " + status.ordinal();
-			}
-		}
-		statusClause += StringUtils.isEmpty(statusClause)?"":" ) ";
-		
-		String order = " ORDER BY";
-		if(shortOption.equals(SortType.RESERVATION.ordinal())){
-			order += " PR.project";
-		} else if(shortOption.equals(SortType.GUEST.ordinal())){
-			order += " PRG.name";
-		} else if(shortOption.equals(SortType.AGENCY_AND_GUEST.ordinal())){
-			order += " AG.name, PRG.name";
-		} else if(shortOption.equals(SortType.AGENCY.ordinal())){
-			order += " AG.name";
-		} else if(shortOption.equals(SortType.ROOM_NUMBER.ordinal())){
-			order += " IF(isnull(A.name),'ZZZZZZZZ',A.name)";
-		}
-		
-//		String select = "SELECT PR.project, PRR.id, IF(isnull(A.name),'---',A.name), PRR.item, PRG.name"
-//				+ " FROM project_reservation AS PR,"
-////				+ " LEFT JOIN project_reservation_room AS PRR ON PRR.project_reservation=PR.project"
-//				+ " project_reservation_room AS PRR LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id,"
-//				+ " project_reservation_guest AS PRG,"
-//				+ " asset_activity AS AA," 
-//				+ " asset AS A,"
-//				+ " registry AS AG"
-//				
-//				+ " WHERE PRR.project_reservation=PR.project"
-//				+ " AND PRG.project_reservation=PR.project"
-//				+ " AND AA.id=PRRD.asset_activity" 
-//				+ " AND A.id=AA.asset"
-//				+ " AND AG.id = PR.agency"
-//				
-//				
-//				+ " AND PR.status <> " + reservationStatus.ordinal()
-//				+ ( hotel != null ? " AND PR.hotel = " + hotel.getId():"" )
-//				+ " AND PR."+(isCheckin ?"start_date":"end_date")+" BETWEEN :start AND :end"
-//				+ statusClause
-//				+ " GROUP BY PR.project, PRR.id"
-//				+ order
-//				;
-		String select = "SELECT PR.project, PRR.id, iF(isnull(A.name),'---',A.name), PRR.item, PRG.name"
-				+ " FROM project_reservation as PR"
-				+ " LEFT JOIN project_reservation_room AS PRR ON PRR.project_reservation=PR.project"
-				+ " LEFT JOIN project_reservation_guest AS PRG ON PRG.project_reservation=PR.project"
-				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id"
-				+ " LEFT JOIN asset_activity AS AA ON AA.id=PRRD.asset_activity" 
-				+ " LEFT JOIN asset AS A ON A.id=AA.asset"
-				+ " LEFT JOIN registry as AG on AG.id = PR.agency"
-				+ " WHERE PR.status <> " + reservationStatus.ordinal()
-				+ ( hotel != null ? " AND PR.hotel = " + hotel.getId():"" )
-				+ " AND PR."+(isCheckin ?"start_date":"end_date")+" BETWEEN :start AND :end"
-				+ statusClause
-				+ " GROUP BY PR.project, PRR.id"
-				+ order
-				;
-		
-		return select;
-	}
-
 	public String getHotelGuestsSQL(Hotel hotel) throws ManagerBeanException{
 		String select = ""
 				+ " SELECT W.description, A.name," 

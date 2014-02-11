@@ -1,235 +1,438 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.product.Item;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.dbutils.AonSQLException;
+import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
-import com.esferalia.aon.pms.ProjectReservation;
-import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
-import com.esferalia.aon.ui.pms.util.PmsReportManager;
+import com.esferalia.aon.pms.sql.ISQLConstants;
+import com.esferalia.aon.pms.sql.SQLUtils;
 
-public class ReservationInOutController implements ICollectionProvider {
-	
+public class ReservationInOutController implements ICollectionProvider, ISQLConstants, IPmsConstants {
+
 	private Hotel hotel;
 	private boolean checkin;
+	private ReservationCheckStatus[] checkStatuses;
 	private Date fromDate;
 	private Date toDate;
-	private Integer shortOption;
-	private ReservationCheckStatus[] checkStatuses;
+	private Integer sortMode;
 
+	private List<ReservationIO> reservationIOList;
 	private DataModel model;
-	private List<ListItem> list;
-	
-	
-	public ReservationCheckStatus[] getCheckStatuses() {
-		return checkStatuses;
-	}
-	public void setCheckStatuses(ReservationCheckStatus[] checkStatuses) {
-		this.checkStatuses = checkStatuses;
-	}
-	
-	public List<ListItem> getList() {
-		return list;
-	}
-	public void setList(List<ListItem> list) {
-		this.list = list;
-	}
-	public DataModel getModel() {
-		return model;
-	}
-	public void setModel(DataModel model) {
-		this.model = model;
-	}
-	public Integer getShortOption() {
-		return shortOption;
-	}
-	public void setShortOption(Integer shortOption) {
-		this.shortOption = shortOption;
-	}
+
 	public Hotel getHotel() {
 		return hotel;
 	}
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
 	}
+
 	public boolean isCheckin() {
 		return checkin;
 	}
 	public void setCheckin(boolean checkin) {
 		this.checkin = checkin;
 	}
+
+	public ReservationCheckStatus[] getCheckStatuses() {
+		return checkStatuses;
+	}
+	public void setCheckStatuses(ReservationCheckStatus[] checkStatuses) {
+		this.checkStatuses = checkStatuses;
+	}
+
 	public Date getFromDate() {
 		return fromDate;
 	}
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 	}
+
 	public Date getToDate() {
 		return toDate;
 	}
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
-	
-	public void onSelect(ActionEvent event) {
-		ProjectReservationController controller = (ProjectReservationController) AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
-		controller.setBackAction(IPmsConstants.RESERVATION_IO_LIST_NAME);
-		ListItem row = (ListItem) getModel().getRowData();
+
+	public Integer getSortMode() {
+		return sortMode;
+	}
+	public void setSortMode(Integer sortMode) {
+		this.sortMode = sortMode;
+	}
+
+	public List<ReservationIO> getReservationIOList() {
+		return reservationIOList;
+	}
+	public void setReservationIOList(List<ReservationIO> reservationIOList) {
+		this.reservationIOList = reservationIOList;
+	}
+
+	public DataModel getModel() {
+		return model;
+	}
+	public void setModel(DataModel model) {
+		this.model = model;
+	}
+
+	public void onInit(ActionEvent event) {
+		setCheckin(true);
+		setCheckStatuses(new ReservationCheckStatus[]{ReservationCheckStatus.NO_CHECK});
+		setFromDate(new Date());
+		setToDate(new Date());
+		setSortMode(0);
+	}
+
+	public void onSearch(ActionEvent event) {
 		try {
-			controller.select(event, row.getProjectReservation());
+			buildReservationIOList();
+		} catch (AonSQLException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		setModel(new ListDataModel(getReservationIOList()));
+	}
+	
+	public void buildReservationIOList() throws AonSQLException {
+		Connection connection = null;
+		PreparedStatement reservationIOStmt = null;
+		ResultSet reservationIORs = null;
+		try {
+			setReservationIOList(new LinkedList<ReservationIO>());
+
+			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			reservationIOStmt = connection.prepareStatement(getReservationIOSQL());
+			SQLUtils.setDate(reservationIOStmt, 1, getFromDate());
+			SQLUtils.setDate(reservationIOStmt, 2, getToDate());
+			SQLUtils.setInt(reservationIOStmt, 3, isCheckin() ? 0 : 1);
+			reservationIORs = reservationIOStmt.executeQuery();
+			while (reservationIORs.next()) {
+				ReservationIO reservationIO = new ReservationIO();
+				reservationIO.setReservation(reservationIORs.getInt(RESERVATION));
+				reservationIO.setCode(reservationIORs.getString(CODE));
+				reservationIO.setCheckInDate(reservationIORs.getDate(START_DATE));
+				reservationIO.setCheckOutDate(reservationIORs.getDate(END_DATE));
+				reservationIO.setCheckStatus(ReservationCheckStatus.values()[reservationIORs.getInt(CHECK_STATUS)]);
+				reservationIO.setStatus(ReservationStatus.values()[reservationIORs.getInt(STATUS)]);
+				reservationIO.setHolder(BookingHolder.values()[reservationIORs.getInt(HOLDER)]);
+				reservationIO.setGuest(reservationIORs.getString(GUEST));
+				reservationIO.setAgency(reservationIORs.getString(AGENCY));
+				reservationIO.setTotal(reservationIORs.getObject(TOTAL) != null ? reservationIORs.getDouble(TOTAL) : 0);
+				reservationIO.setComments(reservationIORs.getString(COMMENTS));
+				reservationIO.setStayDate(reservationIORs.getDate(STAY_DATE));
+				reservationIO.setAdults(reservationIORs.getObject(ADULTS) != null ? reservationIORs.getInt(ADULTS) : 0);
+				reservationIO.setChildren(reservationIORs.getObject(CHILDREN) != null ? reservationIORs.getInt(CHILDREN) : 0);
+				reservationIO.setRoomCode(reservationIORs.getString(ROOM_CODE));
+				reservationIO.setRoomType(reservationIORs.getString(ROOM_TYPE));
+				reservationIO.setRoomNumber(reservationIORs.getString(ROOM_NUMBER));
+				reservationIO.setMealPlan(reservationIORs.getString(MEAL_PLAN));
+
+				getReservationIOList().add(reservationIO);
+			}
 		} catch (ManagerBeanException e) {
-			String msg = "No se ha podido seleccionar la reserva.";
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+			throw new AonSQLException(e);
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+			throw new AonSQLException(e);
+		} finally {
+			SQLUtils.closeQuietly(reservationIORs);
+			SQLUtils.closeQuietly(reservationIOStmt);
+			SQLUtils.closeQuietly(connection);
+		}
+	}
+
+	private String getReservationIOSQL() throws ManagerBeanException {
+		StringBuffer stmt = new StringBuffer();
+		stmt.append("SELECT PR.project AS " + RESERVATION + ", PR.code AS " + CODE + ", PR.start_date AS " + START_DATE + ", PR.end_date AS " + END_DATE);
+		stmt.append(", PR.check_status AS " + CHECK_STATUS + ", PR.status AS " + STATUS + ", PR.booking_holder AS " + HOLDER + ", PR.total AS " + TOTAL);
+		stmt.append(", PR.comments AS " + COMMENTS + ", B.stay_date AS " + STAY_DATE + ", PRR.adults AS " + ADULTS + ", PRR.children AS " + CHILDREN);
+		stmt.append(", IFNULL(R.alias, R.name) AS " + AGENCY + ", P.code AS " + ROOM_CODE + ", P.name AS " + ROOM_TYPE);
+		stmt.append(", (SELECT CONCAT(PRG.name, ' ', PRG.surname) FROM project_reservation_guest AS PRG");
+		stmt.append("     WHERE PRG.project_reservation = PR.project AND guest_index = 1 LIMIT 1) AS " + GUEST);
+		stmt.append(", (SELECT A.name FROM project_reservation_room_detail AS PRRD, asset_activity AS AA, asset AS A");
+		stmt.append("     WHERE PRRD.project_reservation_room = B.project_reservation_room AND PRRD.asset_activity = AA.id");
+		stmt.append("     AND AA.date = IF (B.stay_type = 0, B.stay_date, DATE_SUB(B.stay_date, INTERVAL 1 DAY))");
+		stmt.append("     AND AA.asset = A.id LIMIT 1) AS " + ROOM_NUMBER);
+		stmt.append(", (SELECT I2.detail FROM project_reservation_service AS PRS, item AS I2");
+		stmt.append("     WHERE PRS.project_reservation = PR.project AND PRS.project_reservation_room = B.project_reservation_room");
+		stmt.append("     AND PRS.item = I2.id AND I2.detail IS NOT NULL LIMIT 1) AS " + MEAL_PLAN);
+		stmt.append(" FROM booking AS B");
+		stmt.append(" LEFT JOIN project_reservation_room AS PRR ON B.project_reservation_room = PRR.id");
+		stmt.append(" LEFT JOIN project_reservation AS PR ON PRR.project_reservation = PR.project");
+		stmt.append(" LEFT JOIN registry AS R ON PR.agency = R.id");
+		stmt.append(" LEFT JOIN item AS I ON PRR.item = I.id");
+		stmt.append(" LEFT JOIN product AS P ON I.product = P.id");
+		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("B.domain"));
+		stmt.append(" AND B.hotel IN (" + getHotelIds() + ")");
+		stmt.append(" AND B.stay_date BETWEEN ? AND ?");
+		stmt.append(" AND B.stay_type = ?");
+		if (ArrayUtils.getLength(getCheckStatuses()) > 0) {
+			stmt.append(" AND PR.check_status IN (" + getCheckStatusIds() + ")");
+		}
+		stmt.append(" ORDER BY " + getOrderByClause());
+
+		return stmt.toString();
+	}
+
+	private String getHotelIds() throws ManagerBeanException {
+		String hotelIds = "";
+		if (getHotel() != null) {
+			hotelIds = getHotel().getId().toString();
+		} else {
+			PmsCollectionsController collectionsController = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+			hotelIds = StringUtils.join(collectionsController.getCurrentUserHotelIds(), ",");
+		}
+		return hotelIds;
+	}
+
+	private String getCheckStatusIds() throws ManagerBeanException {
+		Integer[] statusIds = ArrayUtils.EMPTY_INTEGER_OBJECT_ARRAY;
+		for (ReservationCheckStatus status : getCheckStatuses()) {
+			statusIds = (Integer[])ArrayUtils.add(statusIds, status.ordinal());
+		}
+		return ArrayUtils.getLength(statusIds) > 0 ? StringUtils.join(statusIds, ",") : "";
+	}
+
+	private String getOrderByClause() {
+		switch (getSortMode()) {
+			case 1: return GUEST;
+			case 2: return AGENCY + "," + GUEST;
+			case 3: return AGENCY;
+			case 4: return "IFNULL(" + ROOM_NUMBER + ", 'z')";
+		}
+		return RESERVATION;
+	}
+
+	public void onSelect(ActionEvent event) {
+		try {
+			if (getModel().isRowAvailable()) {
+				ReservationIO reservationIO = (ReservationIO)getModel().getRowData();
+				BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(RESERVATION_CONTROLLER_NAME);
+				reservationController.onLoad(event, reservationIO.getReservation(), RESERVATION_IO_LIST_NAME, RESERVATION_IO_CONTROLLER_NAME + ".onSearch");
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "No se ha podido seleccionar la Reserva.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
 	}
-	
-	public void onInit(ActionEvent event) {
-		setShortOption(SortType.RESERVATION.ordinal());
-		setCheckin(true);
-		setFromDate(new Date());
-		setToDate(new Date());
-	}
-	
-	public void onSearch(ActionEvent event) throws ManagerBeanException{
-		String select = PmsReportManager.getInstance().getReservationInOutSQL(ReservationStatus.CANCELLED, getHotel(), isCheckin(), getCheckStatuses(), shortOption);
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		Query query = session.createSQLQuery(select);
-		query.setDate("start", new java.sql.Date(getFromDate().getTime()));
-		query.setDate("end", new java.sql.Date(getToDate().getTime()));
-		List<ListItem> list = new LinkedList<ReservationInOutController.ListItem>();
-		for(Object o: query.list()){
-			ListItem r = new ListItem();
-			r.setReservationId((Integer) (((Object[])o)[0]));
-			r.setReservationRoomId((Integer) (((Object[])o)[1]));
-			r.setItemId((Integer) (((Object[])o)[3]));
-			list.add(r);
-		}
-		setList(list);
-		setModel(new ListDataModel(getList()));
-	}
-	
-	public List<SelectItem> getAbbreviatedReservationCheckStatuses() {
-		LinkedList<SelectItem> list = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		for (ReservationCheckStatus status : ReservationCheckStatus.values()) {
-			String name = status.getName(locale);
-			if (status == ReservationCheckStatus.NO_CHECK) {
-				name = "No";
-				SelectItem item = new SelectItem(status, name);
-				list.add(item);
-			} else if (status == ReservationCheckStatus.CHECK_IN) {
-				name = "In";
-				SelectItem item = new SelectItem(status, name);
-				list.add(item);
-			} else if (status == ReservationCheckStatus.CHECK_OUT && !isCheckin()) {
-				name = "Out";
-				SelectItem item = new SelectItem(status, name);
-				list.add(item);
-			} 
-		}
-		if (isCheckin()) {
-			ReservationCheckStatus[] defaultCheckStatuses = {ReservationCheckStatus.NO_CHECK};
-			setCheckStatuses(defaultCheckStatuses);
-		} else {
-			ReservationCheckStatus[] defaultCheckStatuses = {ReservationCheckStatus.NO_CHECK, ReservationCheckStatus.CHECK_IN};
-			setCheckStatuses(defaultCheckStatuses);
-		}
-		return list;
-	}
+
 
 	@SuppressWarnings("rawtypes")
-	@Override
 	public Collection getCollection() {
-		return (Collection) getModel().getWrappedData();
+		return getReservationIOList();
 	}
-
 	@SuppressWarnings("rawtypes")
-	@Override
-	public Collection getCollection(boolean forceRefresh)
-			throws ManagerBeanException {
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 
-	/////////////////////////////////////
-	/////////////////////////////////////
-	
-	public enum SortType {
-		RESERVATION,
-		GUEST,
-		AGENCY_AND_GUEST,
-		AGENCY,
-		ROOM_NUMBER
-		;
+	/***************** RESERVATION IO *********************************/
+
+	public class ReservationIO {
+		private Integer reservation;
+		private String code;
+		private Date checkInDate;
+		private Date checkOutDate;
+		private ReservationCheckStatus checkStatus;
+		private ReservationStatus status;
+		private BookingHolder holder;
+		private String guest;
+		private String agency;
+		private Double total;
+		private String comments;
+		private Date stayDate;
+		private Integer adults;
+		private Integer children;
+		private String roomCode;
+		private String roomType;
+		private String roomNumber;
+		private String mealPlan;
+
+		public Integer getReservation() {
+			return reservation;
+		}
+		public void setReservation(Integer reservation) {
+			this.reservation = reservation;
+		}
+
+		public String getCode() {
+			return code;
+		}
+		public void setCode(String code) {
+			this.code = code;
+		}
+
+		public Date getCheckInDate() {
+			return checkInDate;
+		}
+		public void setCheckInDate(Date checkInDate) {
+			this.checkInDate = checkInDate;
+		}
+
+		public Date getCheckOutDate() {
+			return checkOutDate;
+		}
+		public void setCheckOutDate(Date checkOutDate) {
+			this.checkOutDate = checkOutDate;
+		}
+
+		public ReservationCheckStatus getCheckStatus() {
+			return checkStatus;
+		}
+		public void setCheckStatus(ReservationCheckStatus checkStatus) {
+			this.checkStatus = checkStatus;
+		}
+
+		public ReservationStatus getStatus() {
+			return status;
+		}
+		public void setStatus(ReservationStatus status) {
+			this.status = status;
+		}
+
+		public BookingHolder getHolder() {
+			return holder;
+		}
+		public void setHolder(BookingHolder holder) {
+			this.holder = holder;
+		}
+
+		public String getGuest() {
+			return guest;
+		}
+		public void setGuest(String guest) {
+			this.guest = guest;
+		}
+
+		public String getAgency() {
+			return agency;
+		}
+		public void setAgency(String agency) {
+			this.agency = agency;
+		}
+
+		public Double getTotal() {
+			return total;
+		}
+		public void setTotal(Double total) {
+			this.total = total;
+		}
+
+		public String getComments() {
+			return comments;
+		}
+		public void setComments(String comments) {
+			this.comments = comments;
+		}
+
+		public Date getStayDate() {
+			return stayDate;
+		}
+		public void setStayDate(Date stayDate) {
+			this.stayDate = stayDate;
+		}
+
+		public Integer getAdults() {
+			return adults;
+		}
+		public void setAdults(Integer adults) {
+			this.adults = adults;
+		}
+
+		public Integer getChildren() {
+			return children;
+		}
+		public void setChildren(Integer children) {
+			this.children = children;
+		}
+
+		public String getRoomCode() {
+			return roomCode;
+		}
+		public void setRoomCode(String roomCode) {
+			this.roomCode = roomCode;
+		}
+
+		public String getRoomType() {
+			return roomType;
+		}
+		public void setRoomType(String roomType) {
+			this.roomType = roomType;
+		}
+
+		public String getRoomNumber() {
+			return roomNumber;
+		}
+		public void setRoomNumber(String roomNumber) {
+			this.roomNumber = roomNumber;
+		}
+
+		public String getMealPlan() {
+			return mealPlan;
+		}
+		public void setMealPlan(String mealPlan) {
+			this.mealPlan = mealPlan;
+		}
+
+		public boolean isCheckIn() {
+			return getCheckStatus() == ReservationCheckStatus.CHECK_IN;
+		}
+		public boolean isCheckOut() {
+			return getCheckStatus() == ReservationCheckStatus.CHECK_OUT;
+		}
+		public boolean isWrongCheck() {
+			return checkin ? getCheckInDate().compareTo(getStayDate()) != 0 : getCheckOutDate().compareTo(getStayDate()) != 0;
+		}
+
+		public boolean isBlocked() {
+			return getStatus() == ReservationStatus.BLOCKED;
+		}
+		public boolean isInvoiced() {
+			return getStatus() == ReservationStatus.INVOICED;
+		}
+
+		public boolean isGuestHolder() {
+			return getHolder() == BookingHolder.GUEST;
+		}
+		public boolean isAgencyHolder() {
+			return getHolder() == BookingHolder.AGENCY;
+		}
+
+		public int getPax() {
+			return adults + children;
+		}
+
 	}
-	
-	public class ListItem {
-		private Integer itemId;
-		private Integer reservationId;
-		private Integer reservationRoomId;
-		
-		public Integer getItemId() {
-			return itemId;
-		}
-		public void setItemId(Integer itemId) {
-			this.itemId = itemId;
-		}
-		public Integer getReservationId() {
-			return reservationId;
-		}
-		public void setReservationId(Integer reservationId) {
-			this.reservationId = reservationId;
-		}
-		public Integer getReservationRoomId() {
-			return reservationRoomId;
-		}
-		public void setReservationRoomId(Integer reservationRoomId) {
-			this.reservationRoomId = reservationRoomId;
-		}
-		public Item getItem() throws ManagerBeanException{
-			if(getItemId()!=null){
-				IManagerBean bean = BeanManager.getManagerBean(Item.class);
-				return (Item) bean.get(getItemId());
-			}
-			return null;
-		}
-		public ProjectReservation getProjectReservation() throws ManagerBeanException{
-			if(getReservationId()!=null){
-				IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);
-				return (ProjectReservation) bean.get(getReservationId());
-			}
-			return null;
-		}
-		public ProjectReservationRoom getProjectReservationRoom() throws ManagerBeanException{
-			if(getReservationRoomId()!=null){
-				IManagerBean bean = BeanManager.getManagerBean(ProjectReservationRoom.class);
-				return (ProjectReservationRoom) bean.get(getReservationRoomId());
-			}
-			return null;
-		}
-		
-	}
-	
+
 }

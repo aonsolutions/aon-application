@@ -16,6 +16,7 @@ public interface IPmsConstants {
 	String PAYMENT_CARD_SETTLE_CONTROLLER_NAME = "paymentCardSettle";
 	String RACK_CONTROLLER_NAME = "rack";
 	String RACK_SEARCH_LISTENER_NAME = "rackSearch";
+	String RESERVATION_IO_CONTROLLER_NAME = "reservationIO";
 	String RESERVATION_REQUEST_CONTROLLER_NAME = "reservationRequest";
 	String RESERVATION_REQUEST_ROOM_CONTROLLER_NAME = "reservationRequestRoom";
 	String RESERVATION_CONTROLLER_NAME = "reservation";

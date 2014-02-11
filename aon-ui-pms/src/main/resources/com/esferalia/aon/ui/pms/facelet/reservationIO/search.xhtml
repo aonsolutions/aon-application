@@ -10,15 +10,13 @@
 	<ui:define name="content">
 
 		<aon:form id="reservationIOSearch">
-			
+
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.pms_reservationIO_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_search}" />
 			</ui:include>
-				
-					
+
 			<aon:div styleClass="aon-scroll-area">
-			
 				<aon:div styleClass="aon-panelGrid-search">
 					<aon:div styleClass="aon-panelGrid-search-info">
 						<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
@@ -27,92 +25,79 @@
 					<aon:panelGrid columns="2"  style="width:100%;"
 						columnClasses="aon-panelGrid-odd aon-width-50, 
 						aon-panelGrid-even aon-width-auto">
-						
-						
-						<c:if test="#{pmsCollections.currentUserHotelsCount > 0}">
-							<aon:outputLabel for="ProjectReservation_hotel_id"
-								value="#{bundle.aon_module_hotel}" />
-							<aon:selectOneMenu id="ProjectReservation_hotel_id" ajaxSingle="true"
-								value="#{reservationIO.hotel}" >
-								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-							</aon:selectOneMenu>
-						</c:if>
-					
-						<aon:outputText value="#{bundle.aon_type}"/>
-						<aon:selectOneRadio value="#{reservationIO.checkin}" ajaxSingle="true">
+
+						<aon:outputLabel for="ReservationIO_hotel_id"
+							value="#{bundle.aon_module_hotel}" />
+						<aon:selectOneMenu id="ReservationIO_hotel_id"
+							value="#{reservationIO.hotel}" >
+							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+						</aon:selectOneMenu>
+
+						<aon:outputLabel for="ReservationIO_checkin" 
+							value="#{bundle.aon_type}"/>
+						<aon:selectOneRadio id="ReservationIO_checkin" 
+							value="#{reservationIO.checkin}">
 							<f:selectItem itemLabel="#{bundle.report_checkin}" itemValue="#{true}" />
 							<f:selectItem itemLabel="#{bundle.report_checkout}" itemValue="#{false}" />
-							<a4j:support event="onclick" reRender="reservationIOSearch" ignoreDupResponses="true"  ajaxSingle="true"/>
+							<a4j:support event="onclick" reRender="ReservationIO_checkStatuses" ignoreDupResponses="true" />
 						</aon:selectOneRadio>	
-						
-						<aon:outputText value="#{bundle.pms_check}"/>
-						<aon:selectManyCheckbox value="#{reservationIO.checkStatuses}" >
-							<f:selectItems value="#{reservationIO.abbreviatedReservationCheckStatuses}"/>
+
+						<aon:outputLabel for="ReservationIO_checkStatuses" 
+							value="#{bundle.pms_check}"/>
+						<aon:selectManyCheckbox id="ReservationIO_checkStatuses"
+							value="#{reservationIO.checkStatuses}" >
+							<c:if test="#{reservationIO.checkin}">
+								<f:selectItems value="#{pmsCollections.abbreviatedReservationInCheckStatuses}"/>
+							</c:if>
+							<c:if test="#{!reservationIO.checkin}">
+								<f:selectItems value="#{pmsCollections.abbreviatedReservationInOutCheckStatuses}"/>
+							</c:if>
 						</aon:selectManyCheckbox>
-						
-						<aon:outputLabel for="ProjectReservation_startDate"
-							rendered="#{reservationIO.checkin}" 
-							value="#{bundle.report_checkin}" />
-						<aon:div id="ProjectReservation_startDate" 
-							rendered="#{reservationIO.checkin}">
-							<aon:outputLabel for="ProjectReservation_startDate-From"
-								styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-							<aon:selectInputDate id="ProjectReservation_startDate-From"	
-								required="true"
-								value="#{reservationIO.fromDate}"
+
+						<aon:outputLabel value="#{bundle.aon_date}" />
+						<aon:div>
+							<aon:outputLabel for="ReservationIO_fromDate" 
+								styleClass="aon-italic aon-margin-right" 
+								value="#{bundle.aon_date_from}" />
+							<aon:selectInputDate id="ReservationIO_fromDate"	
+								value="#{reservationIO.fromDate}" required="true"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
-							<aon:outputLabel for="ProjectReservation_startDate-To"
-								styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-							<aon:selectInputDate id="ProjectReservation_startDate-To"
-								required="true"
-								value="#{reservationIO.toDate}"
+							<aon:outputLabel for="ReservationIO_toDate"
+								styleClass="aon-italic aon-margin-right" 
+								value="#{bundle.aon_date_to}" />
+							<aon:selectInputDate id="ReservationIO_toDate"
+								value="#{reservationIO.toDate}" required="true"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 						</aon:div>
-					
-						<aon:outputLabel for="ProjectReservation_endDate" 
-							rendered="#{!reservationIO.checkin}" 
-							value="#{bundle.report_checkout}" />
-						<aon:div id="ProjectReservation_endDate" 
-							rendered="#{!reservationIO.checkin}">
-							<aon:outputLabel for="ProjectReservation_endDate-From"
-								styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-							<aon:selectInputDate id="ProjectReservation_endDate-From"
-								required="true"
-								value="#{reservationIO.fromDate}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"/>
-							<aon:outputLabel for="ProjectReservation_endDate-To"
-								styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-							<aon:selectInputDate id="ProjectReservation_endDate-To"
-								required="true"
-								value="#{reservationIO.toDate}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"/>
-						</aon:div>				
-						
-						<aon:outputText value="#{bundle.pms_order_by}"/>
-						<aon:selectOneRadio value="#{reservationIO.shortOption}" layout="pageDirection">
+
+						<aon:outputLabel for="ReservationIO_sortMode" 
+							value="#{bundle.pms_order_by}"/>
+						<aon:selectOneRadio id="ReservationIO_sortMode" 
+							value="#{reservationIO.sortMode}" layout="pageDirection">
 							<f:selectItem itemLabel="#{bundle.aon_reservation}" itemValue="0" />
 							<f:selectItem itemLabel="#{bundle.report_guest}" itemValue="1" />
 							<f:selectItem itemLabel="#{bundle.report_agency} + #{bundle.report_guest}" itemValue="2" />
 							<f:selectItem itemLabel="#{bundle.report_agency}" itemValue="3" />
 							<f:selectItem itemLabel="#{bundle.pms_room}" itemValue="4" />
 						</aon:selectOneRadio>	
-					
+
 						<aon:outputText value="&#160;" />
 						<aon:commandButton id="search" ignoreDupResponses="true"
 							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
 							action="reservationIO_list"
 							actionListener="#{reservationIO.onSearch}"
-							accesskey="#{bundle.aon_key_search}" />
-							
+							accesskey="#{bundle.aon_key_search}"
+							onclick="Richfaces.showModalPanel('waitProccess')"
+							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+
 					</aon:panelGrid>
-					
 				</aon:div>
 			</aon:div>				
 		</aon:form>
+
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		
 	</ui:define>
 </ui:composition>

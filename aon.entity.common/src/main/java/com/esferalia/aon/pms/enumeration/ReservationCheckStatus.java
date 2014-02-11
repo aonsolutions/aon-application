@@ -31,21 +31,4 @@ public enum ReservationCheckStatus implements IResourceable {
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
 
-    /**
-     * Returns a <code>String</code> with the abbreviate transalation <code>Locale</code>
-     * for the locale.
-     * 
-     * @param locale Required Locale.
-     * 
-     * @return String a <code>String</code>.
-     */
-    public String getAbbreviateName(Locale locale) {
-    	ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale);
-    	String abbr = "";
-    	for(String s: bundle.getString(MSG_KEY_PREFIX + toString()).split(SPACE)){
-    		abbr += s.substring(0,1).toUpperCase();
-    	}
-    	return abbr;
-    }
-    
 }
