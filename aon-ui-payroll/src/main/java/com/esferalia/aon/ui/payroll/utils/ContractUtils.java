@@ -719,7 +719,7 @@ public class ContractUtils {
 		} catch (ManagerBeanException e) {
 			String msg = "Error al cargar las bonificaciones del contrato";
 			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
+			AonUtil.addErrorMessage(e.toString());
 		}
 	}
 	

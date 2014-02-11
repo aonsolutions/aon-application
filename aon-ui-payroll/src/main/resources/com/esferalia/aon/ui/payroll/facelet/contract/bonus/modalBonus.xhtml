@@ -53,14 +53,13 @@
 									</aon:div>
 
 									<aon:panelGrid id="bonusModalContent" columns="2" style="width: 100%;">
-										<!--  
+								
 										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonusConcept/lookup.xhtml" >
 											<ui:param name="lookupTo" value="#{contract.params.bonus.bonusConcept}" />
 											<ui:param name="skipNewButton" value="#{true}" />
 											<ui:param name="idRequired" value="#{true}" />
 										</ui:include>
-										-->
-								
+										
 										<aon:outputLabel for="ContractBonus_startDate" value="#{bundle.aon_start_date}" />
 										<aon:selectInputDate id="ContractBonus_startDate" value="#{contract.params.bonus.startDate}" required="true"
 											timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}"/>

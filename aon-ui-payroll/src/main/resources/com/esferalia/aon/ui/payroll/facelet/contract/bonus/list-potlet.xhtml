@@ -20,8 +20,14 @@
 						<aon:outputText value="#{bundle.sepe_contrata_contract_bonus}" />
 					</f:facet>
 					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
+						<aon:outputText value="#{bundle.aon_type}" styleClass="aon-margin-right" />
+						<aon:outputText value="#{bonus.bonusConcept.type}" />
+
 						<aon:outputText value="#{bundle.aon_description}" styleClass="aon-margin-right" />
 						<aon:outputText value="#{bonus.fullDescription}" />
+
+						<aon:outputText value="#{bundle.aon_value}" styleClass="aon-margin-right" />
+						<aon:outputText value="#{bonus.expression}" />
 						
 						<aon:outputText value="#{bundle.aon_period}" styleClass="aon-margin-right" />
 						<aon:div>

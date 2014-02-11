@@ -86,6 +86,46 @@ public enum BonusType implements IResourceable {
 		public void accept(BonusTypeVisitor visitor) {
 			visitor.visitGt60(this);
 		}
+	},
+	
+	EXEMPTION_GT30_CHILD
+	{
+		@Override
+		public void accept(BonusTypeVisitor visitor) {
+			visitor.visitExemptionGt30Child(this);
+		}
+	},
+	
+	REDUCTION_RIGHT_CONTRACT
+	{
+		@Override
+		public void accept(BonusTypeVisitor visitor) {
+			visitor.visitReductionRightContract(this);
+		}
+	},
+
+	REDUCTION_COMMON_CONTINGENCY_EXCEPT_IT
+	{
+		@Override
+		public void accept(BonusTypeVisitor visitor) {
+			visitor.visitReductionCommonContingencyExceptIT(this);
+		}
+	},
+	
+	REDUCTION_FARMER_COMMON_CONTINGENCY
+	{
+		@Override
+		public void accept(BonusTypeVisitor visitor) {
+			visitor.visitReductionFarmerCommonContingency(this);
+		}
+	},
+	
+	REDUCTION_FARMER_UNEMPLOYMENT
+	{
+		@Override
+		public void accept(BonusTypeVisitor visitor) {
+			visitor.visitReductionFarmerUnemployment(this);
+		}
 	}
 	
 	;

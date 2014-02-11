@@ -422,7 +422,7 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 		}
 	}
 	
-	public void validateContrataData() {
+	public boolean validateContrataData() {
 		InputStream is = new ByteArrayInputStream(getGeneratedFile().getData());
 		String contractCode = getHandler().getContractCode().getValue();
 		String schema = null;
@@ -436,18 +436,22 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 		try {
 			SEPEFileUtils.validateContrataXmlPattern(is, schema, contractCode);
 		} catch (SAXException saxe) {
-			String msg = "Error de validación de Contrat@: ausencia de datos o formato no correcto)";
+			String msg = "Error de validación de Contrat@ (ausencia de datos o formato no correcto)";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(saxe.getMessage() );
+			return false;
 		} catch (IOException ioe) {
 			String msg = "Error de I/O al validar los datos";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(ioe.getMessage() );
+			return false;
 		} catch (Exception e) {
 			String msg = "Error general al validar los datos";
 			AonUtil.addErrorMessage(msg);
 			AonUtil.addErrorMessage(e.getMessage() );
+			return false;
 		}
+		return true;
 	}
 	
 	@Override
@@ -577,25 +581,27 @@ public class ContrataController implements IContrataHandler, ISepeHandler{
 	
 	@Override
 	public void onSendSepeFile(ActionEvent event){
-		getCommunicator().setDataCommunication(true);
-		if(!isShowLoginWindow()){
-			getCommunicator().initialize();
-		}
-		if( getCommunicator().isLoginRequired() ){
-			setShowLoginWindow(true);
-		} else {
-			getCommunicator().setDocument(new String(getGeneratedFile().getData()));
-			String result = getCommunicator().communicate();
-			if(isBatchView()){
-				saveSepeResponseFile(SepeBatchAttachmentType.COMMUNICATION_ID, result);
-			} else if(!isBatchView()){
-				saveSepeResponseFile(ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID, result);
-			} else {
-				String msg = "No se ha podido guardar la respuesta obtenida del SEPE";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
+		if( validateContrataData() ){
+			getCommunicator().setDataCommunication(true);
+			if(!isShowLoginWindow()){
+				getCommunicator().initialize();
 			}
-			setShowLoginWindow(false);
+			if( getCommunicator().isLoginRequired() ){
+				setShowLoginWindow(true);
+			} else {
+				getCommunicator().setDocument(new String(getGeneratedFile().getData()));
+				String result = getCommunicator().communicate();
+				if(isBatchView()){
+					saveSepeResponseFile(SepeBatchAttachmentType.COMMUNICATION_ID, result);
+				} else if(!isBatchView()){
+					saveSepeResponseFile(ContractAttachmentType.SEPE_CONTRACT_COMMUNICATION_ID, result);
+				} else {
+					String msg = "No se ha podido guardar la respuesta obtenida del SEPE";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+				setShowLoginWindow(false);
+			}
 		}
 	}
 	

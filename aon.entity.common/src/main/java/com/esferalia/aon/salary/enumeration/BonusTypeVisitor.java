@@ -21,5 +21,15 @@ public interface BonusTypeVisitor {
 	void visitEncouragedIndustrialSector(BonusType bonusType);
 
 	void visitGt60(BonusType bonusType);
+	
+	void visitExemptionGt30Child(BonusType bonusType);
+	
+	void visitReductionRightContract(BonusType bonusType);
+	
+	void visitReductionCommonContingencyExceptIT(BonusType bonusType);
+	
+	void visitReductionFarmerCommonContingency(BonusType bonusType);
+	
+	void visitReductionFarmerUnemployment(BonusType bonusType);
 
 }

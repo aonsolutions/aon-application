@@ -1078,7 +1078,7 @@ public class ContractController extends BasicController {
 			return null;
 		}
 		public Integer getPaymentTrackingCount(){
-			if(getPaymentModel().isRowAvailable()){
+			if(getPaymentModel()!=null && getPaymentModel().isRowAvailable()){
 				ContractPayment payment = (ContractPayment) getPaymentModel().getRowData();
 				if(payment.getPaymentConcept()!=null){
 					try {
