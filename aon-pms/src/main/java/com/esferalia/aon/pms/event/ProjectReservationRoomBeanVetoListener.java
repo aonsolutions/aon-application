@@ -67,7 +67,7 @@ public class ProjectReservationRoomBeanVetoListener extends ManagerBeanVetoListe
 		SQLQuery query = session.createSQLQuery(stmt);
 		query.setInteger("project", reservation.getId());
 		List<?> list = query.list();
-		return !list.isEmpty() ? ((Byte)list.get(0)).intValue() + 1 : 1; 
+		return !list.isEmpty() && !list.contains(null) ? ((Byte)list.get(0)).intValue() + 1 : 1; 
 	}
 
 	private boolean isRefreshBookingNeeded(ProjectReservationRoom reservationRoom) {
