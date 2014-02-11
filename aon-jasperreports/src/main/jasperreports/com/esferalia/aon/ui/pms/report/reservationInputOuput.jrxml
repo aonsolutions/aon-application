@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="629"/>
+	<property name="ireport.x" value="91"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -428,7 +428,9 @@
 				<textFieldExpression><![CDATA[$F{guest}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField-53" x="174" y="0" width="55" height="14"/>
+				<reportElement key="textField-53" x="174" y="0" width="55" height="14" forecolor="#FF0033">
+					<printWhenExpression><![CDATA[$P{checkin} && $F{checkInDate}.compareTo($F{stayDate}) != 0]]></printWhenExpression>
+				</reportElement>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -441,7 +443,9 @@
 				<textFieldExpression><![CDATA[$F{checkInDate}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField-53" x="229" y="0" width="55" height="14"/>
+				<reportElement key="textField-53" x="229" y="0" width="55" height="14">
+					<printWhenExpression><![CDATA[$P{checkin} || $F{checkOutDate}.compareTo($F{stayDate}) == 0]]></printWhenExpression>
+				</reportElement>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -573,6 +577,36 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-53" x="174" y="0" width="55" height="14">
+					<printWhenExpression><![CDATA[!$P{checkin} || $F{checkInDate}.compareTo($F{stayDate}) == 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3" rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{checkInDate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-53" x="229" y="0" width="55" height="14" forecolor="#FF0033">
+					<printWhenExpression><![CDATA[!$P{checkin} && $F{checkOutDate}.compareTo($F{stayDate}) != 0]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3" rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{checkOutDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
