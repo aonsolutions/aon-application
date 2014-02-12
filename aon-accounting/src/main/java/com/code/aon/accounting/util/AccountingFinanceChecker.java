@@ -174,7 +174,7 @@ public class AccountingFinanceChecker {
 				+" WHERE a.code = ?"
 				+"  AND aed.domain = ?"
 				+"  AND ae.entry_date <= ?"
-				+" GROUP BY DOCUMENT,FINANCE_AMOUNT"
+				+" GROUP BY DOCUMENT"
 				+" ORDER BY DIFF,DOCUMENT DESC";
 		List<StrippedStatement> list = new LinkedList<StrippedStatement>();
 		PreparedStatement ps = null;
