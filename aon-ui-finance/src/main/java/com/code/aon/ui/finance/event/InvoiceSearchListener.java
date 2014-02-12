@@ -19,6 +19,7 @@ import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
+import com.code.aon.seller.Seller;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -33,6 +34,7 @@ public class InvoiceSearchListener extends RegistrySearchListener {
     private Item item;
 	private FinanceStatus[] financeStatuses;
 	private PayMethod[] payMethods;
+	private Seller seller;
 	
 	public String getDefaultType() {
 		return defaultType;
@@ -142,6 +144,14 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		}
 		return false;
 	}
+	
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
 
 	@Override
 	protected void init() throws ManagerBeanException {
@@ -149,6 +159,7 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
 		setProject((Project)BeanManager.getManagerBean(Project.class).createNewTo());
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
 		setFinanceStatuses(new FinanceStatus[0]);
 		setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
 	}
@@ -169,6 +180,9 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		}		
 		if ((getProject() != null) && (getProject().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_PROJECT_ID), getProject().getId());			
+		}
+		if ((getSeller() != null) && (getSeller().getId() != null)) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_SELLER_ID), getSeller().getId());			
 		}
 		if ((getItem() != null) && (getItem().getId() != null)) {
 			criteria.addEqualExpression("Invoice.lines.item.id", getItem().getId());

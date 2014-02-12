@@ -20,6 +20,13 @@
 		<ui:param name="skipNewButton" value="#{true}" />
 	</ui:include>
 
+	<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{searchController.seller}" />
+		<ui:param name="lookupRendered" value="#{searchController.sales}" />
+		<ui:param name="lookupSuffix" value="Invoice" />
+		<ui:param name="skipNewButton" value="#{true}" />
+	</ui:include>
+
 	<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
 		<ui:param name="lookupTo" value="#{searchController.registry}" />
 		<ui:param name="lookupForRegistry" value="#{true}" />

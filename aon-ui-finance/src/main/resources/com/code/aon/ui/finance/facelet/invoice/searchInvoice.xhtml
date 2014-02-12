@@ -21,6 +21,7 @@
 		</aon:form>
 		<c:if test="#{searchController.sales}">
 			<aon:lookupButtonPopup lookup="#{customerLookup}" />
+			<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		</c:if>
 		<c:if test="#{searchController.purchase}">
 			<aon:lookupButtonPopup lookup="#{supplierLookup}" />		
@@ -33,5 +34,6 @@
 			<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		</c:if>
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
+		<aon:lookupButtonPopup lookup="#{registryLookup}" />
 	</ui:define>
 </ui:composition>
