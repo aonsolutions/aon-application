@@ -1,6 +1,8 @@
 package com.code.aon.ui.company.controller;
 
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_FONT_COLOR;
+import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_LOGIN_SEPARATOR;
+import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SEPARATOR;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_SUPPORT_PHONE;
 import static com.code.aon.common.enumeration.AppParam.AON_CUSTOMIZE_TITLE;
@@ -41,6 +43,10 @@ public class CompanyCustomizeController extends RegistryAttachController {
 	
 	private String supportEmail;
 	
+	private String loginSeparator;
+	
+	private String separator;
+	
 	private boolean hideTrademark;
 	
 	private boolean hideVersion;
@@ -50,6 +56,8 @@ public class CompanyCustomizeController extends RegistryAttachController {
 		setColor( AppParamUtil.getValue(AON_CUSTOMIZE_FONT_COLOR) );
 		setSupportPhone( AppParamUtil.getValue(AON_CUSTOMIZE_SUPPORT_PHONE) );
 		setSupportEmail( AppParamUtil.getValue(AON_CUSTOMIZE_SUPPORT_EMAIL) );
+		setSeparator( AppParamUtil.getValue(AON_CUSTOMIZE_SEPARATOR) );
+		setLoginSeparator( AppParamUtil.getValue(AON_CUSTOMIZE_LOGIN_SEPARATOR) );
 		setHideTrademark( AppParamUtil.getValueAsBoolean(AON_HIDE_TRADEMARK) );
 		setHideVersion( AppParamUtil.getValueAsBoolean(AON_HIDE_VERSION) );
 		onEditSearch(event);
@@ -61,6 +69,8 @@ public class CompanyCustomizeController extends RegistryAttachController {
 		AppParamUtil.insertParameter(AON_CUSTOMIZE_FONT_COLOR, getColor());
 		AppParamUtil.insertParameter(AON_CUSTOMIZE_SUPPORT_PHONE, getSupportPhone());
 		AppParamUtil.insertParameter(AON_CUSTOMIZE_SUPPORT_EMAIL, getSupportEmail());
+		AppParamUtil.insertParameter(AON_CUSTOMIZE_SEPARATOR, getSeparator());
+		AppParamUtil.insertParameter(AON_CUSTOMIZE_LOGIN_SEPARATOR, getLoginSeparator());
 		AppParamUtil.insertParameter(AON_HIDE_TRADEMARK, isHideTrademark());
 		AppParamUtil.insertParameter(AON_HIDE_VERSION, isHideVersion());
 	}
@@ -116,6 +126,22 @@ public class CompanyCustomizeController extends RegistryAttachController {
 
 	public void setHideVersion(boolean hideVersion) {
 		this.hideVersion = hideVersion;
+	}
+	
+	public String getSeparator() {
+		return separator;
+	}
+
+	public void setSeparator(String separator) {
+		this.separator = separator;
+	}
+	
+	public String getLoginSeparator() {
+		return loginSeparator;
+	}
+
+	public void setLoginSeparator(String loginSeparator) {
+		this.loginSeparator = loginSeparator;
 	}
 
 	@SuppressWarnings("unchecked")

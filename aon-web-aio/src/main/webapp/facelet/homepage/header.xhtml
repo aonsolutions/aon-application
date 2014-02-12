@@ -22,6 +22,11 @@
 					styleClass="aon-outputConnectionStatus-failed" />
 				<aon:graphicImage style="margin-left: 150px;"
 					value="#{customize.headerLogo}" />
+				<c:if test="#{customize.separator != null}">					
+					<aon:outputText value="#{customize.separator}"
+						style="#{customize.fontStyle}"
+						styleClass="aon-nowrap aon-header-domain-title"/>
+				</c:if>
 				<aon:outputText value="#{domainSwitcher.domainName}"
 					style="#{customize.fontStyle}"
 					styleClass="aon-nowrap aon-header-domain-title"/>

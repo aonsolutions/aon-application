@@ -48,6 +48,16 @@
 						value="#{bundle.aon_support_email}" />
 					<aon:inputText id="CompanyCustomize_supportEmail" onblur="toLowerCase(this);" 
 						value="#{companyCustomize.supportEmail}" maxlength="64" size="45" />
+
+					<aon:outputLabel for="CompanyCustomize_loginSeparator"
+						value="#{bundle.aon_separator_login}" />
+					<aon:inputText id="CompanyCustomize_loginSeparator"
+						value="#{companyCustomize.loginSeparator}" maxlength="64" size="10" />						
+						
+					<aon:outputLabel for="CompanyCustomize_separator"
+						value="#{bundle.aon_separator}" />
+					<aon:inputText id="CompanyCustomize_separator"
+						value="#{companyCustomize.separator}" maxlength="64" size="10" />						
 						
 					<c:if test="#{aonRole.sysAdmin}">
 						<aon:outputLabel for="CompanyCustomize_hideTrademark"

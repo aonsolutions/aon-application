@@ -106,11 +106,14 @@ try {
 							<div class="aon-login-title">
 								<img class="aon-graphicImage"
 									src="<%=customize.getLoginLogo()%>" />
-                						<c:if test="${not empty customize.applicationTitle}">
-								  <span style="<%=customize.getFontStyle()%>" class="aon-outputText">
-									  / <%=customize.getApplicationTitle()%>
-								  </span>
-						                </c:if>
+								<c:if test="${not empty customize.applicationTitle}">
+									<c:if test="${not empty customize.loginSeparator}">
+										<span style="<%=customize.getFontStyle()%>" class="aon-outputText"> <%=customize.getLoginSeparator()%> <%=customize.getApplicationTitle()%></span>
+									</c:if>
+									<c:if test="${empty customize.loginSeparator}">
+										<span style="<%=customize.getFontStyle()%>" class="aon-outputText"> / <%=customize.getApplicationTitle()%></span>
+									</c:if>
+								</c:if>
 							</div>
 
 							<div class="aon-login-box">

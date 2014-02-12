@@ -56,6 +56,10 @@ public class CustomizeBean {
 	
 	private String supportEmail;
 	
+	private String separator;
+	
+	private String loginSeparator;
+	
 	private boolean hideTrademark;
 	
 	private boolean hideVersion;
@@ -197,6 +201,8 @@ public class CustomizeBean {
 		updateApplicationTitle(connection);
 		updateSupportTelephone(connection);
 		updateSupportEmail(connection);
+		updateLoginSeparator(connection);
+		updateSeparator(connection);
 		updateFontStyle(connection);
 		updateHideTrademark(connection);
 		updateHideVersion(connection);
@@ -237,6 +243,20 @@ public class CustomizeBean {
 		String value = getValue( connection, AppParam.AON_CUSTOMIZE_SUPPORT_EMAIL);
 		if (! StringUtils.isEmpty(value) ) {
 			this.supportEmail = value;
+		}
+	}
+
+	private void updateSeparator( Connection connection ) {
+		String value = getValue( connection, AppParam.AON_CUSTOMIZE_SEPARATOR);
+		if (! StringUtils.isEmpty(value) ) {
+			this.separator = value;
+		}
+	}
+
+	private void updateLoginSeparator( Connection connection ) {
+		String value = getValue( connection, AppParam.AON_CUSTOMIZE_LOGIN_SEPARATOR);
+		if (! StringUtils.isEmpty(value) ) {
+			this.loginSeparator = value;
 		}
 	}
 	
@@ -284,6 +304,22 @@ public class CustomizeBean {
 
 	public String getSupportEmail() {
 		return supportEmail;
+	}
+
+	public String getSeparator() {
+		return separator;
+	}
+
+	public void setSeparator(String separator) {
+		this.separator = separator;
+	}
+
+	public String getLoginSeparator() {
+		return loginSeparator;
+	}
+
+	public void setLoginSeparator(String loginSeparator) {
+		this.loginSeparator = loginSeparator;
 	}
 
 	public String getFavicon() {

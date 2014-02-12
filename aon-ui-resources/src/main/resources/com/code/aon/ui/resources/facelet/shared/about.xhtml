@@ -33,10 +33,17 @@
 					<aon:div styleClass="aon-popupWindow-content">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div>
-								<aon:graphicImage value="#{customize.headerLogo}" />							
-								<aon:outputText value=" / #{customize.applicationTitle}"
-									style="#{customize.fontStyle}"
-									styleClass="aon-header-title-without-image" />							
+								<aon:graphicImage value="#{customize.headerLogo}" />	
+								<c:if test="#{customize.applicationTitle != null}" >						
+									<c:if test="#{customize.separator != null}">					
+										<aon:outputText value="#{customize.separator}"
+											style="margin-left: 5px;#{customize.fontStyle}"
+											styleClass="aon-header-title-without-image" />
+									</c:if>
+									<aon:outputText value="#{customize.applicationTitle}"
+										style="margin-left: 5px;#{customize.fontStyle}"
+										styleClass="aon-header-title-without-image" />
+								</c:if>							
 							</aon:div>
 							<h:panelGrid styleClass="aon-margin-top" columnClasses="aon-version-label">
 								<c:if test="#{customize.applicationVersion != null}" >						
