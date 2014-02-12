@@ -17,8 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.account.bridge.AccountEntryInvoice;
-import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.accounting.util.AccountingFinanceCheck;
 import com.code.aon.accounting.util.AccountingFinanceChecker;
@@ -32,7 +30,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -64,7 +61,6 @@ public class AccountingFinanceCheckerController {
 	
 	private String selectedAccountCode;
 	private String selectedAccountDescription;
-	private double strippedSum;
 	
 	private enum StrippedType {
 		ALL,
@@ -108,9 +104,6 @@ public class AccountingFinanceCheckerController {
 		this.selectedAccountDescription = selectedAccountDescription;
 	}
 	
-	public double getStrippedSum() {
-		return strippedSum;
-	}
 	public void onBack(ActionEvent event ) {
 		onSearch(event);
 	}
@@ -237,7 +230,10 @@ public class AccountingFinanceCheckerController {
 				int i = 0;
 				exporter.exportColumn(metadata.getColumns().get((i++)), check.getAccountCode() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), check.getAccountDescription() );
-				exporter.exportColumn(metadata.getColumns().get((i++)), check.getAccBalance() );
+				exporter.exportColumn(metadata.getColumns().get((i++)), check.getDebit()  );
+				exporter.exportColumn(metadata.getColumns().get((i++)), check.getCredit() );
+				exporter.exportColumn(metadata.getColumns().get((i++)), check.getDebitBalance() );
+				exporter.exportColumn(metadata.getColumns().get((i++)), check.getCreditBalance() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), check.getFinBalance() );
 				exporter.exportColumn(metadata.getColumns().get((i++)), check.getDifference() );
 				exporter.endLine();
@@ -256,10 +252,13 @@ public class AccountingFinanceCheckerController {
 	
 	private static final ReportColumnMetadata[] COLUMN_LABELS = new ReportColumnMetadata[]{
 		new ReportColumnMetadata("ACCOUNT",Types.VARCHAR,"Cuenta",10)
-		,new ReportColumnMetadata("NAME",Types.VARCHAR,"Descripción.",40)
-		,new ReportColumnMetadata("ACC_BALANCE",Types.DOUBLE,"Saldo Contable.",10)
-		,new ReportColumnMetadata("FIN_BALANCE",Types.DOUBLE,"Saldo Tesorería.",10)
-		,new ReportColumnMetadata("DIFERENCIA",Types.DOUBLE,"Diferencia.",10)};
+		,new ReportColumnMetadata("NAME",Types.VARCHAR,"Descripción.",50)
+		,new ReportColumnMetadata("DEBIT",Types.DOUBLE,"Debe.",12)
+		,new ReportColumnMetadata("CREDIT",Types.DOUBLE,"Haber.",12)
+		,new ReportColumnMetadata("DEBIT_BALANCE",Types.DOUBLE,"Saldo Deudor.",12)
+		,new ReportColumnMetadata("CREDIT_BALANCE",Types.DOUBLE,"Saldo Acreedor.",12)
+		,new ReportColumnMetadata("FIN_BALANCE",Types.DOUBLE,"Saldo Tesorería.",12)
+		,new ReportColumnMetadata("DIFERENCIA",Types.DOUBLE,"Diferencia.",12)};
 	
 	private ReportMetadata getMetadata() throws ReportException {
 
@@ -273,18 +272,18 @@ public class AccountingFinanceCheckerController {
 	public void onStrippedStatement(ActionEvent event) {
 		AccountingFinanceCheck check = (AccountingFinanceCheck) getModel().getRowData();
 		setSelectedAccountCode( check.getAccountCode() );
+		getParams().setAccountCode( check.getAccountCode() );
 		setSelectedAccountDescription( check.getAccountDescription() );
 		strippedType = StrippedType.UNSETTLED;
 		strippedStatement();
 	}
 	
 	private void strippedStatement() {
-		int domain = DomainManager.getCurrentDomain();
 		Connection c = null;
 		try {
 			c = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			List<StrippedStatement> list =  getAccountingFinanceChecker().getStrippedStatement(
-					c, domain, getSelectedAccountCode() );
+					c, getParams() );
 			if (strippedType != StrippedType.ALL) {
 				List<StrippedStatement> newList = new LinkedList<StrippedStatement>();
 				
@@ -296,10 +295,6 @@ public class AccountingFinanceCheckerController {
 					}
 				}
 				list = newList ;
-			}
-			strippedSum = 0;
-			for (StrippedStatement ss : list) {
-				strippedSum = CommonUtil.round(strippedSum + ss.getDifference());
 			}
 			strippedModel = new ListDataModel(list);					
 			
@@ -405,6 +400,17 @@ public class AccountingFinanceCheckerController {
 				series = StringUtils.substringBefore(numDoc, "/");
 				series = StringUtils.substringAfter(series, "-");
 				c.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES), series);
+			}
+			String type = StringUtils.substringBefore(numDoc, "-");
+			String alias = invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE);
+			if (StringUtils.equals(type, "E")) {
+				c.addEqualExpression(alias, InvoiceType.SALES);
+			} else if (StringUtils.equals(type, "R") && StringUtils.startsWith(getParams().getAccountCode(), "400")) {
+				c.addEqualExpression(alias, InvoiceType.PURCHASE);
+			} else if (StringUtils.equals(type, "R") && StringUtils.startsWith(getParams().getAccountCode(), "410")) {
+				c.addEqualExpression(alias, InvoiceType.EXPENSES);
+			} else if (StringUtils.equals(type, "G")) {
+				c.addEqualExpression(alias, InvoiceType.UNDEDUCTIBLE);
 			}
 			c.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_NUMBER), Integer.parseInt( number ));	 
 			List<ITransferObject> list = invoiceBean.getList(c);

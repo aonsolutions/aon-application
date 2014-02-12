@@ -18,25 +18,22 @@ public class AccountingFinanceChecker {
 	private static final String COMMON_SELECT_1 = 
 		"SELECT a.id,a.code"
 		+	" ,a.description "
-		+	" ,c.registry ";
-	
-	private static final String CREDIT_BALANCE = 
-		" ,ROUND( SUM(aed.credit) - SUM(aed.debit),2) ACCOUNTING_BALANCE ";
-	private static final String DEBIT_BALANCE = 
-		" ,ROUND( SUM(aed.debit) - SUM(aed.credit),2) ACCOUNTING_BALANCE ";
+		+	" ,c.registry "
+		+   " ,ROUND( SUM(aed.debit),2) DEBIT"
+		+   " ,ROUND( SUM(aed.credit),2) CREDIT";
 
-	private String CREDITOR_SELECT = COMMON_SELECT_1 + CREDIT_BALANCE 
+	private String CREDITOR_SELECT = COMMON_SELECT_1  
 			 +",IFNULL("
 			 +" (SELECT ROUND(SUM(f.amount),2)"
 		     +" 	FROM finance f"
 		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
 			 +"  WHERE f.registry = c.registry "
 			 +"  AND  ( f.status IN (0,1) "
-			 +"    OR ( f.status IN (2,3) AND ( "
+			 +"    OR ( f.status IN (2,3) AND ( IFNULL( ("
 			 +" 	SELECT ft.type FROM finance_tracking ft "
 			 +" 		WHERE ft.finance = f.id "
 			 +"		AND ft.id > 0 AND ft.tracking_date <= ? "
-			 +" 		ORDER BY ft.id DESC LIMIT 1 ) NOT IN (0,1,3,4) ))),0) FINANCE_AMOUNT"
+			 +" 		ORDER BY ft.id DESC LIMIT 1 ),-1) NOT IN (0,1,3,4) )))),0) FINANCE_AMOUNT"
 			 +" FROM account_entry_detail aed "
 			 +" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
 			 +" INNER JOIN account a ON aed.account = a.id"
@@ -44,21 +41,21 @@ public class AccountingFinanceChecker {
 			 +" WHERE aed.domain = ?"
 			 +" AND ae.entry_date <= ?"
 			 +" AND a.code like ?"
-			 +" GROUP BY a.id, a.code , a.description, c.registry"
-			 +" HAVING ACCOUNTING_BALANCE <> FINANCE_AMOUNT";
+			 +" GROUP BY a.id, a.code , a.description, c.registry, FINANCE_AMOUNT"
+			 +" HAVING ABS(ROUND(DEBIT - CREDIT,2)) <> FINANCE_AMOUNT";
 	
-	private String SUPPLIER_SELECT = COMMON_SELECT_1 + CREDIT_BALANCE 
+	private String SUPPLIER_SELECT = COMMON_SELECT_1  
 			 +",IFNULL("
 			 +" (SELECT ROUND(SUM(f.amount),2)"
 		     +" 	FROM finance f"
 		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
 			 +"  WHERE f.registry = c.registry "
 			 +"  AND  ( f.status IN (0,1) "
-			 +"    OR ( f.status IN (2,3) AND ( "
+			 +"    OR ( f.status IN (2,3) AND ( IFNULL( ("
 			 +" 	SELECT ft.type FROM finance_tracking ft "
 			 +" 		WHERE ft.finance = f.id "
 			 +"		AND ft.id > 0 AND ft.tracking_date <= ? "
-			 +" 		ORDER BY ft.id DESC LIMIT 1 ) NOT IN (0,1,3,4) ))),0) FINANCE_AMOUNT"
+			 +" 		ORDER BY ft.id DESC LIMIT 1 ),-1) NOT IN (0,1,3,4) )))),0) FINANCE_AMOUNT"
 			 +" FROM account_entry_detail aed "
 			 +" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
 			 +" INNER JOIN account a ON aed.account = a.id"
@@ -66,21 +63,21 @@ public class AccountingFinanceChecker {
 			 +" WHERE aed.domain = ?"
 			 +" AND ae.entry_date <= ?"
 			 +" AND a.code like ?"
-			 +" GROUP BY a.id, a.code , a.description, c.registry"
-			 +" HAVING ACCOUNTING_BALANCE <> FINANCE_AMOUNT";
+			 +" GROUP BY a.id, a.code , a.description, c.registry, FINANCE_AMOUNT"
+			 +" HAVING ABS(ROUND(DEBIT - CREDIT,2)) <> FINANCE_AMOUNT";
 
-	private String CUSTOMER_SELECT = COMMON_SELECT_1 + DEBIT_BALANCE 
+	private String CUSTOMER_SELECT = COMMON_SELECT_1   
 			 +",IFNULL("
 			 +" (SELECT ROUND(SUM(f.amount),2)"
 		     +" 	FROM finance f"
 		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
 			 +"  WHERE f.registry = c.registry "
 			 +"  AND  ( f.status IN (0,1) "
-			 +"    OR ( f.status IN (2,3) AND ( "
+			 +"    OR ( f.status IN (2,3) AND ( IFNULL( ("
 			 +" 	SELECT ft.type FROM finance_tracking ft "
 			 +" 		WHERE ft.finance = f.id "
 			 +"		AND ft.id > 0 AND ft.tracking_date <= ? "
-			 +" 		ORDER BY ft.id DESC LIMIT 1 ) NOT IN (0,1,3,4) ))),0) FINANCE_AMOUNT"
+			 +" 		ORDER BY ft.id DESC LIMIT 1 ),-1) NOT IN (0,1,3,4) )))),0) FINANCE_AMOUNT"
 			 +" FROM account_entry_detail aed "
 			 +" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
 			 +" INNER JOIN account a ON aed.account = a.id"
@@ -88,22 +85,9 @@ public class AccountingFinanceChecker {
 			 +" WHERE aed.domain = ?"
 			 +" AND ae.entry_date <= ?"
 			 +" AND a.code like ?"
-			 +" GROUP BY a.id, a.code , a.description, c.registry"
-			 +" HAVING ACCOUNTING_BALANCE <> FINANCE_AMOUNT";
+			 +" GROUP BY a.id, a.code , a.description, c.registry, FINANCE_AMOUNT"
+			 +" HAVING ABS(ROUND(CREDIT - DEBIT,2)) <> FINANCE_AMOUNT";
 
-	private String SELECT_STRIPPED_STATEMENT =
-		"SELECT IF(TRIM(aed.document_number) = '','APUNTES SIN N\u00DAMERO DE DOCUMENTO',IFNULL(aed.document_number,'APUNTES SIN N\u00DAMERO DE DOCUMENTO')) DOCUMENT"
-		+ ",ROUND(SUM(aed.debit),2) DEBIT"
-		+ ",ROUND(SUM(aed.credit),2) CREDIT"
-		+ ",IF(ROUND(SUM(aed.debit),2) - ROUND(SUM(aed.credit),2) = 0,1,0) DIFF"
-		+" FROM account a"
-		+" INNER JOIN account_entry_detail aed ON aed.account = a.id"
-		+" WHERE a.code = ?"
-		+"  AND aed.domain = ?"
-		+" GROUP BY DOCUMENT"
-		+" ORDER BY DIFF,DOCUMENT DESC";
-
-	
 	public List<AccountingFinanceCheck> getChecks(Connection conn,AccountingFinanceCheckerParams params) throws AonException {
 		List<AccountingFinanceCheck> list = new LinkedList<AccountingFinanceCheck>();
 		String SELECT = "";
@@ -149,8 +133,9 @@ public class AccountingFinanceChecker {
 				check.setAccountCode( rs.getString(2) );
 				check.setAccountDescription( rs.getString(3) );
 				check.setRegistryId( rs.getInt(4) );
-				check.setAccBalance(rs.getDouble(5));
-				check.setFinBalance(rs.getDouble(6));
+				check.setDebit(rs.getDouble(5));
+				check.setCredit(rs.getDouble(6));
+				check.setFinBalance(rs.getDouble(7));
 				list.add(check);
 			}
 			rs.close();
@@ -165,20 +150,50 @@ public class AccountingFinanceChecker {
 		return list;
 	}
 	
-	public List<StrippedStatement> getStrippedStatement(Connection conn, int domain, String account) throws AonException {
+	public List<StrippedStatement> getStrippedStatement(Connection conn, AccountingFinanceCheckerParams params ) throws AonException {
+		String SELECT_STRIPPED_STATEMENT =
+				"SELECT IF(TRIM(aed.document_number) = '','APUNTES SIN N\u00DAMERO DE DOCUMENTO',IFNULL(aed.document_number,'APUNTES SIN N\u00DAMERO DE DOCUMENTO')) DOCUMENT"
+				+ ",ROUND(SUM(aed.debit),2) DEBIT"
+				+ ",ROUND(SUM(aed.credit),2) CREDIT"
+				+ ",IF(ROUND(SUM(aed.debit),2) - ROUND(SUM(aed.credit),2) = 0,1,0) DIFF"
+				+ ",(SELECT ROUND(SUM(f.amount),2)"
+					     +" 	FROM finance f"
+					     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
+						 +"  WHERE f.domain = ?"
+						 + " AND f.concept = IF(TRIM(aed.document_number) = '','APUNTES SIN N\u00DAMERO DE DOCUMENTO'"
+						 + ",IFNULL(aed.document_number,'APUNTES SIN N\u00DAMERO DE DOCUMENTO')) "
+						 +"  AND  ( f.status IN (0,1) "
+						 +"    OR ( f.status IN (2,3) AND IFNULL( "
+						 +" 	(SELECT ft.type FROM finance_tracking ft "
+						 +" 		WHERE ft.finance = f.id "
+						 +"			AND ft.id > 0 AND ft.tracking_date <= ? "
+						 +" 		ORDER BY ft.id DESC LIMIT 1) ,-1) NOT IN (0,1,3,4) ))) FINANCE_AMOUNT "		
+				+" FROM account a"
+				+" INNER JOIN account_entry_detail aed ON aed.account = a.id"
+				+" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
+				+" WHERE a.code = ?"
+				+"  AND aed.domain = ?"
+				+"  AND ae.entry_date <= ?"
+				+" GROUP BY DOCUMENT,FINANCE_AMOUNT"
+				+" ORDER BY DIFF,DOCUMENT DESC";
 		List<StrippedStatement> list = new LinkedList<StrippedStatement>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			ps = conn.prepareStatement(SELECT_STRIPPED_STATEMENT);
-			ps.setString(1, account);
-			ps.setInt(2, domain);
+			ps.setDate(1, new java.sql.Date(params.getDeadline().getTime()));
+			ps.setInt(2, params.getDomain());
+			ps.setDate(3, new java.sql.Date(params.getDeadline().getTime()));
+			ps.setString(4, params.getAccountCode());
+			ps.setInt(5, params.getDomain());
+			ps.setDate(6, new java.sql.Date(params.getDeadline().getTime()));
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				StrippedStatement ss = new StrippedStatement();
 				ss.setDocumentNumber(rs.getString(1));
 				ss.setDebit(rs.getDouble(2));
 				ss.setCredit(rs.getDouble(3));
+				ss.setFinanceAmount(rs.getDouble(5));
 				list.add(ss);
 			}
 			rs.close();

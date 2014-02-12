@@ -9,6 +9,7 @@ public class AccountingFinanceCheckerParams {
 	private boolean creditorsEnabled;
 	private boolean suppliersEnabled;
 	private boolean customersEnabled;
+	private String accountCode;
 	
 	public int getDomain() {
 		return domain;
@@ -40,5 +41,10 @@ public class AccountingFinanceCheckerParams {
 	public void setCustomersEnabled(boolean customersEnabled) {
 		this.customersEnabled = customersEnabled;
 	}
-	
+	public String getAccountCode() {
+		return accountCode;
+	}
+	public void setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
+	}
 }

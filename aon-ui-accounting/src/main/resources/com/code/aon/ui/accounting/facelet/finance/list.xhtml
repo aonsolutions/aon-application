@@ -25,9 +25,9 @@
 
 				<ui:define name="additionalToolbarContent">
 					<aon:htmlCommandLink id="accountingFinanceChecker-excel-report"
-						value="#{bundle.aon_report}" target="_blank" 
+						value="#{bundle.account_export}" target="_blank" 
 						action="#{accountingFinanceChecker.onExcel}"
-						title="#{bundle.aon_listing} MS Excel"
+						title="#{bundle.account_export} MS Excel"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
 						accesskey="#{bundle.aon_key_print}">
 					</aon:htmlCommandLink>
@@ -39,9 +39,15 @@
 					value="#{accountingFinanceChecker.model}" var="to" rows="0"
 					columnClasses="aon-editDataTable-textColumn aon-width-120,
 								   aon-editDataTable-textColumn aon-width-auto,
-								   aon-editDataTable-numberColumn aon-width-120,
-								   aon-editDataTable-numberColumn aon-width-120,
-								   aon-editDataTable-numberColumn aon-width-120">
+								   aon-editDataTable-numberColumn aon-width-100,
+								   aon-editDataTable-numberColumn aon-width-100,
+								   aon-editDataTable-numberColumn aon-width-100,
+								   aon-editDataTable-numberColumn aon-width-100,
+								   aon-editDataTable-numberColumn aon-width-100,
+								   aon-editDataTable-numberColumn aon-width-100">
+
+					<aon:rowSelector id="accountingFinanceCheckerData-select"
+						toggleOnClick="false"/>
 
 					<aon:column>
 						<f:facet name="header">
@@ -66,19 +72,74 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.accounting_acc_balance}" />
+							<aon:outputText value="#{bundle.account_debit}" />
 						</f:facet>
-						<aon:commandLink id="accountStatement-search2" 
+						<aon:commandLink id="accountStatement_debit-search"
+							rendered="#{to.debit != 0}" 
 							immediate="#{true}"
 							styleClass="aon-dataTable-link"
 							actionListener="#{accountingFinanceChecker.onAccountStatement}"
 							title="#{bundle.accounting_statement_module}"
 							action="accountStatement_list">
-							<aon:outputText value="#{to.accBalance}">
+							<aon:outputText value="#{to.debit}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
 						</aon:commandLink>
 					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.account_credit}" />
+						</f:facet>
+						<aon:commandLink id="accountStatement_credit-search"
+							rendered="#{to.credit != 0}" 
+							immediate="#{true}"
+							styleClass="aon-dataTable-link"
+							actionListener="#{accountingFinanceChecker.onAccountStatement}"
+							title="#{bundle.accounting_statement_module}"
+							action="accountStatement_list">
+							<aon:outputText value="#{to.credit}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+						</aon:commandLink>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.account_debit_balance}" />
+						</f:facet>
+						<aon:commandLink id="accountStatement_debit_balance-search" 
+							immediate="#{true}"
+							rendered="#{to.debitBalance != 0}"
+							styleClass="aon-dataTable-link"
+							actionListener="#{accountingFinanceChecker.onAccountStatement}"
+							title="#{bundle.accounting_statement_module}"
+							action="accountStatement_list">
+							<aon:outputText value="#{to.debitBalance}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+						</aon:commandLink>
+					</aon:column>
+					
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.account_credit_balance}" />
+						</f:facet>
+						<aon:commandLink id="accountStatement_credit_balance-search" 
+							immediate="#{true}"
+							rendered="#{to.creditBalance != 0}"
+							styleClass="aon-dataTable-link"
+							actionListener="#{accountingFinanceChecker.onAccountStatement}"
+							title="#{bundle.accounting_statement_module}"
+							action="accountStatement_list">
+							<aon:outputText value="#{to.creditBalance}">
+								<f:convertNumber pattern="#,##0.00" />
+							</aon:outputText>
+						</aon:commandLink>
+					</aon:column>
+					
+					
 
 					<aon:column>
 						<f:facet name="header">
@@ -112,6 +173,7 @@
 						<aon:commandLink id="stripped-search"
 							immediate="#{true}"
 							styleClass="aon-dataTable-link"
+							title="Extracto por documento"
 							actionListener="#{accountingFinanceChecker.onStrippedStatement}"
 							action="accountingFinanceChecker_stripped">
 							<aon:outputText value="#{to.difference}">

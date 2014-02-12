@@ -10,6 +10,7 @@ public class StrippedStatement {
 	private String concept;
 	private double debit;
 	private double credit;
+	private double financeAmount;
 	private int id;
 	private Date entryDate;
 	private int entryType;
@@ -38,6 +39,12 @@ public class StrippedStatement {
 	public void setCredit(double credit) {
 		this.credit = credit;
 	}
+	public double getFinanceAmount() {
+		return financeAmount;
+	}
+	public void setFinanceAmount(double financeAmount) {
+		this.financeAmount = financeAmount;
+	}
 	public int getId() {
 		return id;
 	}
@@ -57,11 +64,16 @@ public class StrippedStatement {
 		this.entryType = entryType;
 	}
 	
-	public double getDifference() {
-		return CommonUtil.round(getDebit() - getCredit());
+	public double getDebitBalance() {
+		double d = CommonUtil.round(getDebit() - getCredit()); 
+		return d >0?d:0;
+	}
+	public double getCreditBalance() {
+		double d = CommonUtil.round(getCredit() - getDebit()); 
+		return d >0?d:0;
 	}
 	
 	public boolean isSettled() {
-		return (getDifference() == 0);
+		return (getDebitBalance() == 0 && getCreditBalance() == 0);
 	}
 }

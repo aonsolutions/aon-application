@@ -8,7 +8,8 @@ public class AccountingFinanceCheck {
 	private String accountCode;
 	private String accountDescription;
 	private int registryId;
-	private double accBalance;
+	private double debit;
+	private double credit;
 	private double finBalance;
 	
 	public int getAccountId() {
@@ -35,11 +36,17 @@ public class AccountingFinanceCheck {
 	public void setRegistryId(int registryId) {
 		this.registryId = registryId;
 	}
-	public double getAccBalance() {
-		return accBalance;
+	public double getDebit() {
+		return debit;
 	}
-	public void setAccBalance(double accBalance) {
-		this.accBalance = accBalance;
+	public void setDebit(double debit) {
+		this.debit = debit;
+	}
+	public double getCredit() {
+		return credit;
+	}
+	public void setCredit(double credit) {
+		this.credit = credit;
 	}
 	public double getFinBalance() {
 		return finBalance;
@@ -47,8 +54,16 @@ public class AccountingFinanceCheck {
 	public void setFinBalance(double finBalance) {
 		this.finBalance = finBalance;
 	}
+	public double getDebitBalance() {
+		double d = CommonUtil.round(getDebit() - getCredit()); 
+		return d >0?d:0;
+	}
+	public double getCreditBalance() {
+		double d = CommonUtil.round(getCredit() - getDebit()); 
+		return d >0?d:0;
+	}
 	public double getDifference() {
-		return CommonUtil.round(getAccBalance() - getFinBalance());
+		return CommonUtil.round((getDebitBalance()>0?getDebitBalance():getCreditBalance()) - getFinBalance());
 	}
 	
 }
