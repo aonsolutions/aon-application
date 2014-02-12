@@ -41,7 +41,7 @@ public class AccountingFinanceChecker {
 			 +" WHERE aed.domain = ?"
 			 +" AND ae.entry_date <= ?"
 			 +" AND a.code like ?"
-			 +" GROUP BY a.id, a.code , a.description, c.registry, FINANCE_AMOUNT"
+			 +" GROUP BY a.id, a.code , a.description, c.registry"
 			 +" HAVING ABS(ROUND(DEBIT - CREDIT,2)) <> FINANCE_AMOUNT";
 	
 	private String SUPPLIER_SELECT = COMMON_SELECT_1  
@@ -63,7 +63,7 @@ public class AccountingFinanceChecker {
 			 +" WHERE aed.domain = ?"
 			 +" AND ae.entry_date <= ?"
 			 +" AND a.code like ?"
-			 +" GROUP BY a.id, a.code , a.description, c.registry, FINANCE_AMOUNT"
+			 +" GROUP BY a.id, a.code , a.description, c.registry"
 			 +" HAVING ABS(ROUND(DEBIT - CREDIT,2)) <> FINANCE_AMOUNT";
 
 	private String CUSTOMER_SELECT = COMMON_SELECT_1   
@@ -85,7 +85,7 @@ public class AccountingFinanceChecker {
 			 +" WHERE aed.domain = ?"
 			 +" AND ae.entry_date <= ?"
 			 +" AND a.code like ?"
-			 +" GROUP BY a.id, a.code , a.description, c.registry, FINANCE_AMOUNT"
+			 +" GROUP BY a.id, a.code , a.description, c.registry"
 			 +" HAVING ABS(ROUND(CREDIT - DEBIT,2)) <> FINANCE_AMOUNT";
 
 	public List<AccountingFinanceCheck> getChecks(Connection conn,AccountingFinanceCheckerParams params) throws AonException {
