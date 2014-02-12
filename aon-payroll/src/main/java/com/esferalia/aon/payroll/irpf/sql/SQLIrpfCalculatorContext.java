@@ -6,11 +6,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.code.aon.common.AonException;
@@ -26,7 +29,9 @@ import com.esferalia.aon.payroll.calculator.DelegateContractSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
+import com.esferalia.aon.payroll.calculator.IContractIrpfCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -45,6 +50,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.Period;
 
 public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
@@ -198,7 +204,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	static class IrpfContractSalaryCalculatorContext
 			extends
-			DelegateContractSalaryCalculatorContext<ISQLContractSalaryCalculatorContext> {
+			DelegateContractSalaryCalculatorContext<ISQLContractSalaryCalculatorContext>
+			implements IContractIrpfCalculatorContext {
 
 		public IrpfContractSalaryCalculatorContext(
 				ISQLContractSalaryCalculatorContext ctx)
@@ -230,7 +237,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 		@Override
 		public Collection<IContractPayment> getContractPayments()
 				throws AonException {
-			return new PaymentsCollection(super.getContractPayments(),
+			return new PaymentsCollection(explode(super.getContractPayments()),
 					ctx.getSalaryType(), getMonth(ctx.getStartDate()),
 					getMonth(ctx.getEndDate()));
 		}
@@ -251,6 +258,63 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			return ctx.getDate(tableLabel, columnLabel);
 		}
 
+		private Collection<IContractPayment> explode(
+				Collection<IContractPayment> payments) {
+			List<Period> periods = getPeriods();
+			Collection<IContractPayment> exploded = new ArrayList<IContractPayment>();
+			for (IContractPayment payment : payments) {
+				/*
+				if (payment.getMonth() != null) {
+					exploded.add(new SimpleContractPayment(payment));
+					continue;
+				} // Only for one Month
+				*/
+
+				for (Period period : periods) {
+
+					Date paymentEnd = payment.getEndDate();
+					if (Period.compare(paymentEnd, period.getStart()) < 0)
+						break; // this payment has already ended.
+
+					Date paymentStart = payment.getStartDate();
+					if (Period.compare(paymentStart, period.getEnd()) > 0)
+						continue; // this payment hasn't started yet.
+
+					SimpleContractPayment copy = new SimpleContractPayment(
+							payment);
+					copy.setStartDate(Period.max(paymentStart,
+							period.getStart()));
+					// sets payment period closest to 'period'.
+					copy.setEndDate(Period.min(paymentEnd, period.getEnd()));
+
+					exploded.add(copy);
+				}
+
+			}
+			return exploded;
+		}
+
+		private List<Period> getPeriods() {
+
+			List<Period> periods = new LinkedList<Period>();
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(ctx.getStartDate());
+			Date endDate = ctx.getEndDate();
+			Date start;
+			Date end;
+			do {
+				start = calendar.getTime();
+				calendar.set(Calendar.DATE,
+						calendar.getActualMaximum(Calendar.DATE));
+				end = Period.min(calendar.getTime(), endDate);
+				periods.add(new Period(start, end));
+				calendar.add(Calendar.DATE, 1);
+
+			} while (Period.compare(end, endDate) < 0);
+
+			return periods;
+		}
 	}
 
 	class SQLAscendientes extends ResultSetIterable<Ascendiente> implements

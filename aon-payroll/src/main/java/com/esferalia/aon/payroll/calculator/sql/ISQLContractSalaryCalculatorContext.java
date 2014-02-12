@@ -1,29 +1,37 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
 
+import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
 public interface ISQLContractSalaryCalculatorContext extends
 		IContractSalaryCalculatorContext {
 
-	public int getId();
+	int getId();
 
-	public void close() throws SQLException;
+	void close() throws SQLException;
 
-	public Date getDate(String table, String column);
+	Date getDate(String table, String column);
 
-	public Integer getInt(String table, String column);
+	Integer getInt(String table, String column);
 
 	boolean next() throws SQLException, ExpressionException;
+	/*
+	ISalaryCalculatorContext getLiquidCalculatorContext(
+			Connection conn, Date startDate, Date endDate, Date issueDate,
+			Criteria criteria, final double x);
+			*/
 
 	@SuppressWarnings("serial")
-	public static final OrderByList OLDER = new OrderByList() {
+	static final OrderByList OLDER = new OrderByList() {
 		{
 			add(new Order(
 					ExpressionUtilities
@@ -36,7 +44,7 @@ public interface ISQLContractSalaryCalculatorContext extends
 	};
 
 	@SuppressWarnings("serial")
-	public static final OrderByList NEWER = new OrderByList() {
+	static final OrderByList NEWER = new OrderByList() {
 		{
 			add(new Order(
 					ExpressionUtilities

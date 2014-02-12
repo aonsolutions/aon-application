@@ -6,15 +6,16 @@ import java.util.Date;
 import com.esferalia.aon.gwt.payroll.server.SalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
 public class SQLSalaryDraftCalculatorContext extends
-		SalaryDraftCalculatorContext<ISQLContractSalaryCalculatorContext>
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>
 		implements ISQLContractSalaryCalculatorContext {
 
 	public SQLSalaryDraftCalculatorContext(SalaryDraft draft,
-			ISQLContractSalaryCalculatorContext ctx) throws ExpressionException {
+			SQLContractSalaryCalculatorContext ctx) throws ExpressionException {
 		super(draft, ctx);
 	}
 
@@ -53,5 +54,6 @@ public class SQLSalaryDraftCalculatorContext extends
 		super.loadDraftContext(getExpressionContext());
 		return next;
 	}
+	
 
 }

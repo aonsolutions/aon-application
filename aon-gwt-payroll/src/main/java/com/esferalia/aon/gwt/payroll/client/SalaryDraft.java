@@ -141,7 +141,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private static final String PORCENTAJE_IRPF = "PORCENTAJE_IRPF";
 
-	private static String[] SKIP_VARIABLES = { "CONVENIO", "SISTEMA", "NETO",
+	private static String[] SKIP_VARIABLES = { "CONVENIO", "SISTEMA", "NETO", "BRUTO",
 			"ANTICIPO_ATRASOS", PORCENTAJE_IRPF };
 
 	static class VisibilityImpl implements HasVisibility {
@@ -222,7 +222,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 		@Override
 		public void onBlur(BlurEvent event) {
-			reset.schedule(100);
+			reset.schedule(600);
 			fxButton.setEnabled(false);
 
 		}
@@ -1086,7 +1086,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 	@UiField
 	Label dbTotalPaymentLabel;
 	@UiField
-	ValueLabel totalPaymentsLabel;
+	ValueTextBox totalPaymentsLabel;
 	@UiField
 	Label dbTotalPaymentsLabel;
 	@UiField
@@ -1136,6 +1136,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 
 	private HasValue<String> fxhasValue;
 
+	private Payment totalPayments = null;
 	private Payment totalLiquidPayment = null;
 
 	// managing the focus
@@ -1261,6 +1262,63 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 						: round(liquid)));
 	}
 
+	@UiHandler("totalPaymentsLabel")
+	void onPaymentsChanges(ChangeEvent event) {
+
+		Payment draftPayment = new Payment();
+
+		String expression = totalPaymentsLabel.getValue();
+
+		draftPayment
+				.setExpression("BRUTO("
+						+ (StringUtils.isBlank(expression) ? "0.00"
+								: expression) + ")");
+		draftPayment.setScope(Scope.SALARY);
+		draftPayment.setName("BRUTO");
+		draftPayment.setIrpfExpression("_P");
+		draftPayment.setQuoteExpression("_P");
+		draftPayment.setType(Payment.Type.SALARY_SUPPLEMENTS);
+		if (totalPayments != null) {
+			draftPayment.setId(totalPayments.getId());
+			draftPayment.setDescription(totalPayments.getDescription());
+
+		} else {
+			draftPayment.setDescription("Suplemento Bruto");
+		}
+
+		draftPayment.setEndDate(salaryDraftObject.getEndDate());
+		draftPayment.setStartDate(salaryDraftObject.getStartDate());
+		draftPayment.setSalaryType(salaryDraftObject.getType());
+		// draftPayment.setMonth(deduction.getMonth());
+
+		salaryDraftObject.addDraftPayment(draftPayment);
+
+		salaryDraftObject.calculate(this);
+
+		totalPayments = draftPayment;
+
+	}
+
+	@UiHandler("totalPaymentsLabel")
+	void onPaymentsBlur(BlurEvent event) {
+		try {
+			String value = totalPaymentsLabel.getValue();
+			totalPaymentsLabel.setText(format(StringUtils.isBlank(value) ? 0
+					: Double.valueOf(value)));
+		} catch (Exception e) {
+			totalPaymentsLabel
+					.setText(format(salaryDraftObject.getTotalPayment()));
+		}
+	}
+
+	@UiHandler("totalPaymentsLabel")
+	void onPaymentsFocus(FocusEvent event) {
+		Double totalPayment = salaryDraftObject.getTotalPayment();
+		totalPaymentsLabel
+				.setText(String.valueOf(NumberUtils.isNotValid(totalPayment) ? 0.00
+						: round(totalPayment)));
+	}
+	
 	private void setDbVisible(boolean visible) {
 		dbCgcBaseLabel.setVisible(visible);
 		dbCgpBaseLabel.setVisible(visible);
@@ -2253,6 +2311,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 					continue;
 				}
 			}
+			
 
 			Widget variableWidget = getVariableWidget(variable, toScope, show);
 			int row = count / cols;
@@ -2567,7 +2626,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		sysButton.addClickHandler(new AbstractVarHandler(variable) {
 			@Override
 			String getExpression(Variable var) {
-				return "SISTEMA('" + var.getName() + "')";
+				return getSystemExpression(var);
 			}
 		});
 		return sysButton;
@@ -2581,7 +2640,7 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 		agreementButton.addClickHandler(new AbstractVarHandler(variable) {
 			@Override
 			String getExpression(Variable var) {
-				return "CONVENIO('" + var.getName() + "')";
+				return getAgreementExpression(var);
 			}
 		});
 		return agreementButton;
@@ -2889,8 +2948,10 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 			aeatButton.setEnabled(false);
 			irpfPercentPanel.add(aeatButton);
 		} else {
-			irpfPercentPanel.add(getSystemVarButton(irpfPercentVar,
-					AON.AON_ICON_CONFIG));
+			Button systemButton = getSystemVarButton(irpfPercentVar,
+					AON.AON_ICON_CONFIG);
+			systemButton.setTabIndex(Short.MAX_VALUE);
+			irpfPercentPanel.add(systemButton);
 		}
 
 		return irpfPercentPanel;
@@ -3060,4 +3121,29 @@ public class SalaryDraft extends ResizeComposite implements CalculateCallback,
 				+ name + "\")\\s*\\)\\s*");
 
 	}
+
+	private static boolean isAgreementVariable(Variable var) {
+		if (var.getScope() == Scope.AGREEMENT)
+			return true;
+
+		String expression = var.getExpression();
+
+		if (StringUtils.isBlank(expression))
+			return false;
+
+		String name = var.getName();
+
+		return expression.matches("\\s*CONVEMIO\\s*\\(\\s*('" + name + "'|\""
+				+ name + "\")\\s*\\)\\s*");
+
+	}
+	
+	private static String getSystemExpression(Variable var) {
+		return "SISTEMA('" + var.getName() + "')";
+	}
+
+	private static String getAgreementExpression(Variable var) {
+		return "CONVENIO('" + var.getName() + "')";
+	}
+	
 }

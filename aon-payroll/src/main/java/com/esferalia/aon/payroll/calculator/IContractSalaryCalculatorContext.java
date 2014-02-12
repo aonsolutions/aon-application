@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import com.code.aon.common.AonException;
+import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -14,12 +15,14 @@ public interface IContractSalaryCalculatorContext extends ISalaryCalculatorConte
 
 	public static interface IListener {
 
-		public void onUndefinedData(IExpression expression,
+		void onIrpf(IrpfOutcome irpfOutcome);
+		
+		void onUndefinedData(IExpression expression,
 				String variableName, String message, Date start, Date end);
-
 	}
 
 	public IListener getListener();
+
 	public void setListener(IListener listener);
 	
 	public SalaryType getSalaryType();

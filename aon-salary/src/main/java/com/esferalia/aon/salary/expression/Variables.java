@@ -225,8 +225,8 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		}
 
 		List<Period> periods = new LinkedList<Period>();
-		for (ITimedVariable<?> timedObject : values) {
-			periods.add(timedObject.getPeriod());
+		for (ITimedVariable<?> timedVar : values) {
+			periods.add(timedVar.getPeriod());
 		}
 
 		return periods;
