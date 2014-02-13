@@ -7,6 +7,7 @@ import org.mvel2.util.MethodStub;
 
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
 
 public class ExcelFunctions {
     
@@ -49,7 +50,7 @@ public class ExcelFunctions {
 
 	@Variable(ContextVariable.IF)
 	public static final Object If(boolean bool, Object trueValue,
-			Object falseValue) {
+			Object falseValue) throws MacroException {
 		return bool ? trueValue : falseValue;
 	}
 
@@ -105,7 +106,6 @@ public class ExcelFunctions {
 			}
 		}
 	}
-	
 	
 	
 }

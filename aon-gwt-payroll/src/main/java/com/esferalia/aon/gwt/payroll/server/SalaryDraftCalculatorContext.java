@@ -16,6 +16,7 @@ import org.apache.commons.collections.iterators.FilterIterator;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
+import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -181,6 +182,12 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 
 	protected void loadDraftContext(ExpressionContext exprCtx)
 			throws ExpressionException {
+		
+		//Date startDate = resetTime(draft.getStartDate());
+		//Date endDate = resetTime(draft.getEndDate());
+		
+		Date ctxStartDate = resetTime(ctx.getStartDate());
+		Date ctxEndDate =  resetTime(ctx.getEndDate());
 
 		List<Variable> draftData = draft.getDraftContext();
 		for (Variable variable : draftData) {
@@ -189,14 +196,21 @@ public class SalaryDraftCalculatorContext<T extends IContractSalaryCalculatorCon
 			expr.setName(name);
 			expr.setScope(ExpressionScope.SALARY);
 			expr.setExpression(variable.getExpression());
-			Date startDate = resetTime(variable.getStartDate());
-			Date endDate = resetTime(variable.getEndDate());
+			
+			Date varStartDate = resetTime(variable.getStartDate());
+			Date varEndDate = resetTime(variable.getEndDate());
+			
+			Date startDate = Period.max(ctxStartDate, varStartDate);
+			Date endDate = Period.min(ctxEndDate, varEndDate);
+			
+			exprCtx.addLazyExpression(expr, startDate, endDate);
+			/*
 			try {
 				exprCtx.addExpression(expr, startDate, endDate);
 			} catch (UndefinedVariablesException e) {
 				exprCtx.addVariable(name, new DraftDeferredExpressionVariable(
 						exprCtx, expr, startDate, endDate));
-			}
+			}*/
 		}
 
 	}

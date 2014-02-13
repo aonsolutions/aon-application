@@ -32,6 +32,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
+import com.esferalia.aon.payroll.IrpfOutcome;
+import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -942,6 +944,11 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 	}
 
+	public <T> void addVariable(String name, T t) {
+		this.contractExpressionContext.addVariable(name, t,
+				this.contractStartDate, this.contractEndDate);
+	}
+
 	public <T> T getVariable(ContextVariable var, Class<T> toType) {
 		return getVariable(var.getName(), toType);
 	}
@@ -957,6 +964,33 @@ public class SQLContractSalaryCalculatorContext implements
 
 	public Connection getConnection() {
 		return connection;
+	}
+
+	public IIrpfCalculatorContext getIrpfCalculatorContext() {
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.setTime(startDate);
+		endCalendar.set(Calendar.DAY_OF_YEAR,
+				endCalendar.getActualMaximum(Calendar.DAY_OF_YEAR));
+		Date endYear = endCalendar.getTime();
+
+		Criteria contractCriteria = new Criteria();
+		contractCriteria.addExpression(criteria.getExpression());
+		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
+				+ ContractColumns.ID, getId());
+
+		return getIrpfCalculatorContext(connection, startDate, endYear,
+				contractCriteria);
+	}
+
+	protected ISalaryCalculatorContext getLiquidCalculatorContext(final double x) {
+
+		Criteria contractCriteria = new Criteria();
+		contractCriteria.addExpression(criteria.getExpression());
+		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
+				+ ContractColumns.ID, getId());
+
+		return getLiquidCalculatorContext(connection, startDate, endDate,
+				issueDate, contractCriteria, x);
 	}
 
 	// ------------------------------------------------------- Protected methods
@@ -1099,7 +1133,20 @@ public class SQLContractSalaryCalculatorContext implements
 				Double.class);
 		if (totalPayment == null)
 			throw new UndefinedTotalPaymentException();
-		return gross - totalPayment;
+		
+		
+		Double totalGross = getVariable("__GROSS",
+				Double.class);
+		if (totalGross == null) {
+			totalGross = gross;
+		} else {
+			totalGross += gross;
+		}
+		
+		
+		addVariable("__GROSS", totalGross );
+		
+		return totalGross - totalPayment;
 	}
 
 	public Object liquid(double liquid) throws ExpressionException,
@@ -1119,8 +1166,9 @@ public class SQLContractSalaryCalculatorContext implements
 		contractCriteria.addExpression(criteria.getExpression());
 		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
 				+ ContractColumns.ID, getId());
+		System.out.println("solveLiquid(" + liquid + ")");
 
-		return solver.solve(Byte.MAX_VALUE, new UnivariateFunction() {
+		double result = solver.solve(Byte.MAX_VALUE, new UnivariateFunction() {
 
 			@Override
 			public double value(double x) {
@@ -1131,14 +1179,27 @@ public class SQLContractSalaryCalculatorContext implements
 					ContractSalaryCalculator calculator = new ContractSalaryCalculator();
 					calculator.setSalaryBuilder(new SalaryBuilder());
 					ISalary salary = calculator.calculate(ctx);
-					System.out.println("solve : " + x + " = " + (liquid - salary.getTotalLiquid()));;
+
+					// TODO: Warning a bit tricky.
+					ExpressionContext expressionCtx = SQLContractSalaryCalculatorContext.this
+							.getExpressionContext();
+					expressionCtx.addVariable(
+							ContextVariable.IRPF_PERCENT,
+							ctx.getExpressionContext().getVariable(
+									ContextVariable.IRPF_PERCENT, startDate,
+									endDate));
+					System.out.println("\t" + liquid + " - "
+							+ salary.getTotalLiquid() + "(" + x + ", "
+							+ (liquid - salary.getTotalLiquid()) + ")");
 					return liquid - salary.getTotalLiquid();
 				} catch (SalaryException e) {
 					throw new RuntimeException(e);
 				}
 			}
 
-		}, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
+		}, -3 * liquid, 3 * liquid, 0);
+
+		return result;
 	}
 
 	protected ISalaryCalculatorContext getLiquidCalculatorContext(
@@ -1274,9 +1335,13 @@ public class SQLContractSalaryCalculatorContext implements
 
 		IIrpfCalculatorContext irpfCalculatorContext = getIrpfCalculatorContext(
 				connection, startDate, endYear, contractCriteria);
-		double irpf = IrpfCalculator.calculate(irpfCalculatorContext);
 
-		return irpf;
+		IrpfOutcome irpfOutcome = IrpfCalculator
+				.calculateIrpf(irpfCalculatorContext);
+
+		onIrpf(irpfOutcome);
+
+		return irpfOutcome.getIrpfResult().getIrpf();
 	}
 
 	private long getAvailableDays(Date start, Date end) {
@@ -1383,20 +1448,19 @@ public class SQLContractSalaryCalculatorContext implements
 		return Math.max(1, Math.round(extraMonths));
 	}
 
-	private double getSalaryDays() {
-		Long availableDays = getAvailableDays(contractStartDate,
-				contractEndDate);
+	private double getSalaryDays(Date start, Date end) {
+		Long availableDays = getAvailableDays(start, end);
 		return availableDays;
 	}
 
-	private double getSalaryWeeks() {
-		double salaryDays = getSalaryDays();
+	private double getSalaryWeeks(Date start, Date end) {
+		double salaryDays = getSalaryDays(start, end);
 		double salaryWeeks = salaryDays * 52 / 365;
 		return Math.round(salaryWeeks);
 	}
 
-	private double getSalaryMonths() {
-		double salaryDays = getSalaryDays();
+	private double getSalaryMonths(Date start, Date end) {
+		double salaryDays = getSalaryDays(start, end);
 		double salaryMonths = salaryDays * 12 / 365;
 		return Math.max(1, Math.round(salaryMonths));
 	}
@@ -1553,10 +1617,10 @@ public class SQLContractSalaryCalculatorContext implements
 			}
 		};
 
-		LazyTimedVariable<Double> salaryDays = new LazyTimedVariable<Double>() {
+		ActiveTimedVariable<Double> salaryDays = new ActiveTimedVariable<Double>() {
 			@Override
-			public Double create() {
-				return getSalaryDays();
+			public Double getValue(Period p) {
+				return getSalaryDays(p.getStart(), p.getEnd());
 			}
 		};
 
@@ -1649,18 +1713,20 @@ public class SQLContractSalaryCalculatorContext implements
 				});
 
 		this.implicitExpressionContext.addVariable(SALARY_MONTHS,
-				new LazyTimedVariable<Double>() {
+				new ActiveTimedVariable<Double>() {
 					@Override
-					public Double create() {
-						return getSalaryMonths();
-					}
+					public Double getValue(Period period) {
+						return getSalaryMonths(period.getStart(),
+								period.getEnd());
+					};
 				});
 		this.implicitExpressionContext.addVariable(SALARY_WEEKS,
-				new LazyTimedVariable<Double>() {
+				new ActiveTimedVariable<Double>() {
 					@Override
-					public Double create() {
-						return getSalaryWeeks();
-					}
+					public Double getValue(Period period) {
+						return getSalaryWeeks(period.getStart(),
+								period.getEnd());
+					};
 				});
 
 		this.implicitExpressionContext.addVariable(PAY_DAYS, extraDays);
@@ -1920,6 +1986,12 @@ public class SQLContractSalaryCalculatorContext implements
 				rs.close();
 			}
 		}
+	}
+
+	protected void onIrpf(IrpfOutcome irpfOutcome) {
+		if (listener != null)
+			listener.onIrpf(irpfOutcome);
+
 	}
 
 	protected void onUndefinedData(IExpression expression, String message,

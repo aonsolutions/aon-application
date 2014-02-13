@@ -15,6 +15,10 @@ public class DelegateContractSalaryCalculatorContext<T extends IContractSalaryCa
 	protected T ctx;
 	
 	
+	public T getCtx() {
+		return ctx;
+	}
+	
 	public DelegateContractSalaryCalculatorContext(T ctx ) {
 		this.ctx = ctx;
 	}

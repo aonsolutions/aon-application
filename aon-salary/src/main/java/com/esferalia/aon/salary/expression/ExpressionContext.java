@@ -365,6 +365,11 @@ public class ExpressionContext {
 		}
 	}
 
+	public void addLazyExpression(IExpression expression,
+			Date start, Date end) throws ExpressionException {
+		addVariable(expression.getName(), new LazyExpressionVariable(this, expression, start, end));
+	}
+
 	public List<ITimedResult<Object>> eval(String script, Date start, Date end)
 			throws ExpressionException {
 		return eval(script, start, end, Object.class);

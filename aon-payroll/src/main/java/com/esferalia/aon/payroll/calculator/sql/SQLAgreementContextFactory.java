@@ -1,9 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_END;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_START;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.YEAR_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -204,7 +201,7 @@ public class SQLAgreementContextFactory implements
 		 * systemExpressionContext.addVariable(MONTH_DAYS, monthDays, startDate,
 		 * endDate);
 		 */
-		initMonthDays(systemExpressionContext, startDate, endDate);
+		initMonthVariables(systemExpressionContext, startDate, endDate);
 
 		loadSystemData(connection, startDate, endDate, systemExpressionContext);
 
@@ -218,7 +215,7 @@ public class SQLAgreementContextFactory implements
 				endDate);
 	}
 
-	private void initMonthDays(ExpressionContext ctx, Date startDate,
+	private void initMonthVariables(ExpressionContext ctx, Date startDate,
 			Date endDate) {
 
 		Calendar startCalendar = Calendar.getInstance();

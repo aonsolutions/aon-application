@@ -26,6 +26,7 @@ import com.esferalia.aon.gwt.payroll.shared.UndefinedDeductionVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedPaymentVariable;
 import com.esferalia.aon.gwt.payroll.shared.UndefinedVariable;
 import com.esferalia.aon.gwt.payroll.shared.VariableComparator;
+import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
@@ -587,6 +588,11 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 	// -------------------------------------------------------------------------
 	
 	@Override
+	public void onIrpf(IrpfOutcome irpfOutcome) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public void onUndefinedData(IExpression expression, String variableName,
 			String message, Date start, Date end) {
 		UndefinedVariable undefVar = new UndefinedVariable();
@@ -600,6 +606,8 @@ public class SalaryDraftBuilder implements ISalaryBuilder,
 		salaryDraft.addUndefinedVariable(undefVar);
 		
 	}
+	
+	
 	
 	// -------------------------------------------------------------------------
 	

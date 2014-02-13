@@ -15,11 +15,19 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_O
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 
 import com.code.aon.common.AonException;
@@ -87,6 +95,43 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		public void onInvalidData(IContractBonus bonus, String variableName,
 				String message);
+
+	}
+
+	private static class UndefPayment extends SimpleContractPayment {
+		private UndefinedVariablesException exception;
+
+		public UndefPayment(IContractPayment contractPayment,
+				UndefinedVariablesException exception) {
+			super(contractPayment);
+			this.exception = exception;
+		}
+
+		boolean isSelfUndefined() {
+			String name = getName();
+			if (name == null)
+				return false;
+
+			for (String var : exception.getVariableNames())
+				if (StringUtils.equals(var, name))
+					return true;
+
+			return false;
+		}
+
+		boolean willBeDefined(Collection<String> willbeDefined) {
+
+			for (String var : exception.getVariableNames())
+				if (!willbeDefined.contains(var))
+					return false;
+
+			return true;
+		}
+
+		void onUndefinedData(ContractSalaryCalculator calculator) {
+			calculator.onUndefinedData(this, exception.getMessage(),
+					exception.getVariableNames());
+		}
 
 	}
 
@@ -194,15 +239,73 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 			Date chargeDate = ctx.getChargeDate();
 
-			Collection<IContractPayment> payments = ctx.getContractPayments();
-			for (IContractPayment contractPayment : payments) {
-				resolvePayment(contractPayment, start, end, chargeDate,
-						expressionContext, taxCalculator, quoteCalculator);
+			Set<String> paymentsVars = new HashSet<String>();
+			LinkedList<UndefPayment> undefPayments = new LinkedList<UndefPayment>();
+			Collection<IContractPayment> contractPayments = ctx
+					.getContractPayments();
+
+			LinkedList<UndefPayment> undefTotalPayments = new LinkedList<UndefPayment>();
+
+			for (IContractPayment contractPayment : contractPayments) {
+				try {
+					resolvePayment(contractPayment, start, end, chargeDate,
+							expressionContext, taxCalculator, quoteCalculator);
+				} catch (UndefinedTotalPaymentException e) {
+					undefTotalPayments.add(new UndefPayment(contractPayment, e));
+				} catch (UndefinedContextVariablesException e) {
+					onUndefinedData(contractPayment, e.getMessage(),
+							e.getVariableNames());
+				} catch (UndefinedVariablesException e) {
+					UndefPayment undefPayment = new UndefPayment(
+							contractPayment, e);
+					if (!undefPayment.isSelfUndefined()) {
+						undefPayments.add(undefPayment);
+					} else {
+						undefPayment.onUndefinedData(this);
+					}
+				}
+				paymentsVars.add(contractPayment.getName());
 			}
 
+			for (ListIterator<UndefPayment> listIterator = undefPayments
+					.listIterator(); listIterator.hasNext();) {
+				UndefPayment undefPayment = listIterator.next();
+				if (undefPayment.willBeDefined(paymentsVars))
+					continue;
+				// clean undefined ...
+				listIterator.remove();
+				undefPayment.onUndefinedData(this);
+			}
+
+			while (undefPayments.size() > 0) {
+				UndefPayment undefPayment = undefPayments.pop();
+				try {
+					resolvePayment(undefPayment, start, end, chargeDate,
+							expressionContext, taxCalculator, quoteCalculator);
+				} catch (UndefinedVariablesException e) {
+					if (undefPayment.willBeDefined(paymentsVars))
+						undefPayments.add(undefPayment);
+					else
+						undefPayment.onUndefinedData(this);
+				}
+			}
+			
 			double totalPayment = taxCalculator.getTotalPayment();
 			expressionContext.addVariable(TOTAL_PAYMENT, totalPayment, start,
 					end);
+
+			for (UndefPayment undefTotalPayment : undefTotalPayments) {
+				try {
+					resolvePayment(undefTotalPayment, start, end, chargeDate,
+							expressionContext, taxCalculator, quoteCalculator);
+				} catch (UndefinedVariablesException e) {
+					onUndefinedData(undefTotalPayment, e.getMessage(), e.getVariableNames());
+				}
+			}
+			totalPayment = taxCalculator.getTotalPayment();
+			expressionContext.addVariable(TOTAL_PAYMENT, totalPayment, start,
+					end);
+
 			salaryBuilder.setTotalPayment(totalPayment);
 
 			salaryBuilder.setRemuneration(taxCalculator.getRenumeration());
@@ -278,9 +381,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 					.addExpression(contractPayment, paymentStart, paymentEnd,
 							Double.class);
 
-			double total = 0.00;
-			double totalPayment = 0.00;
-
 			for (ITimedResult<Double> result : results) {
 
 				String concept = contractPayment.getName();
@@ -321,7 +421,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 					salaryBuilder.addZeroPayment(type, concept,
 							contractPayment, result.getContext());
 				}
-				total += value;
 
 			}
 			// quoteCalculator.quote(contractPayment, paymentStart,
@@ -335,9 +434,12 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			onCheckError(contractPayment, e.getMessage());
 		} catch (RemoveVariableError e) {
 			onUndefinedData(contractPayment, e.getVariable());
+		} catch (UndefinedTotalPaymentException e) {
+			throw e;
 		} catch (UndefinedVariablesException e) {
-			onUndefinedData(contractPayment, e.getMessage(),
-					e.getVariableNames());
+			UndefinedContextVariablesException.throvv(e);
+			// onUndefinedData(contractPayment, e.getMessage(),
+			// e.getVariableNames());
 		} catch (CompileException e) {
 			onCompileError(contractPayment, e.getMessage());
 		}
@@ -823,4 +925,5 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 
 		return copy;
 	}
+
 }
