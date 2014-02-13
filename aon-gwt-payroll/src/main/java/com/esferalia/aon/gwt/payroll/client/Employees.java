@@ -37,6 +37,8 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
@@ -885,9 +887,12 @@ public class Employees extends ResizeComposite implements
 	/**
 	 * Generates HTML for a tree item with an attached icon.
 	 */
-	private String imageItemHTML(ImageResource imageProto, String title) {
-		return AbstractImagePrototype.create(imageProto).getHTML() + " "
-				+ title;
+	private SafeHtml imageItemHTML(ImageResource imageProto, String title) {
+		SafeHtmlBuilder builder = new SafeHtmlBuilder();
+		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml() );
+		builder.append(' ');
+		builder.appendEscaped(title);
+		return builder.toSafeHtml();
 	}
 
 	private void initViewButton() {
