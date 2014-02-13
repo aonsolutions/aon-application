@@ -29,11 +29,11 @@ public class AccountingFinanceChecker {
 		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
 			 +"  WHERE f.registry = c.registry "
 			 +"  AND  ( f.status IN (0,1) "
-			 +"    OR ( f.status IN (2,3) AND ( IFNULL( ("
+			 +"    OR ( f.status > 1 AND ("
 			 +" 	SELECT ft.type FROM finance_tracking ft "
 			 +" 		WHERE ft.finance = f.id "
-			 +"		AND ft.id > 0 AND ft.tracking_date <= ? "
-			 +" 		ORDER BY ft.id DESC LIMIT 1 ),-1) NOT IN (0,1,3,4) )))),0) FINANCE_AMOUNT"
+			 +"			AND ft.id > 0 AND ft.tracking_date <= ? "
+			 +" 		ORDER BY ft.id DESC LIMIT 1) NOT IN (1,4) ))),0) FINANCE_AMOUNT"
 			 +" FROM account_entry_detail aed "
 			 +" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
 			 +" INNER JOIN account a ON aed.account = a.id"
@@ -51,11 +51,11 @@ public class AccountingFinanceChecker {
 		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
 			 +"  WHERE f.registry = c.registry "
 			 +"  AND  ( f.status IN (0,1) "
-			 +"    OR ( f.status IN (2,3) AND ( IFNULL( ("
+			 +"    OR ( f.status > 1 AND ("
 			 +" 	SELECT ft.type FROM finance_tracking ft "
 			 +" 		WHERE ft.finance = f.id "
-			 +"		AND ft.id > 0 AND ft.tracking_date <= ? "
-			 +" 		ORDER BY ft.id DESC LIMIT 1 ),-1) NOT IN (0,1,3,4) )))),0) FINANCE_AMOUNT"
+			 +"			AND ft.id > 0 AND ft.tracking_date <= ? "
+			 +" 		ORDER BY ft.id DESC LIMIT 1) NOT IN (1,4) ))),0) FINANCE_AMOUNT"
 			 +" FROM account_entry_detail aed "
 			 +" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
 			 +" INNER JOIN account a ON aed.account = a.id"
@@ -73,11 +73,11 @@ public class AccountingFinanceChecker {
 		     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
 			 +"  WHERE f.registry = c.registry "
 			 +"  AND  ( f.status IN (0,1) "
-			 +"    OR ( f.status IN (2,3) AND ( IFNULL( ("
+			 +"    OR ( f.status > 1 AND ("
 			 +" 	SELECT ft.type FROM finance_tracking ft "
 			 +" 		WHERE ft.finance = f.id "
-			 +"		AND ft.id > 0 AND ft.tracking_date <= ? "
-			 +" 		ORDER BY ft.id DESC LIMIT 1 ),-1) NOT IN (0,1,3,4) )))),0) FINANCE_AMOUNT"
+			 +"			AND ft.id > 0 AND ft.tracking_date <= ? "
+			 +" 		ORDER BY ft.id DESC LIMIT 1) NOT IN (1,4) ))),0) FINANCE_AMOUNT"
 			 +" FROM account_entry_detail aed "
 			 +" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
 			 +" INNER JOIN account a ON aed.account = a.id"
@@ -145,14 +145,14 @@ public class AccountingFinanceChecker {
 		} finally {
 			DatabaseUtil.closeQuietly(rs);
 			DatabaseUtil.closeQuietly(ps);
-			
 		}
 		return list;
 	}
 	
 	public List<StrippedStatement> getStrippedStatement(Connection conn, AccountingFinanceCheckerParams params ) throws AonException {
+		String DEFAULT_DOCUMENT = "APUNTES SIN N\u00DAMERO DE DOCUMENTO";
 		String SELECT_STRIPPED_STATEMENT =
-				"SELECT IF(TRIM(aed.document_number) = '','APUNTES SIN N\u00DAMERO DE DOCUMENTO',IFNULL(aed.document_number,'APUNTES SIN N\u00DAMERO DE DOCUMENTO')) DOCUMENT"
+				"SELECT IF(TRIM(aed.document_number) = '','"+DEFAULT_DOCUMENT+"',IFNULL(aed.document_number,'"+DEFAULT_DOCUMENT+"')) DOCUMENT"
 				+ ",ROUND(SUM(aed.debit),2) DEBIT"
 				+ ",ROUND(SUM(aed.credit),2) CREDIT"
 				+ ",IF(ROUND(SUM(aed.debit),2) - ROUND(SUM(aed.credit),2) = 0,1,0) DIFF"
@@ -160,14 +160,15 @@ public class AccountingFinanceChecker {
 					     +" 	FROM finance f"
 					     +"  INNER JOIN invoice i ON f.invoice = i.id and i.issue_date <= ?"
 						 +"  WHERE f.domain = ?"
-						 + " AND f.concept = IF(TRIM(aed.document_number) = '','APUNTES SIN N\u00DAMERO DE DOCUMENTO'"
-						 + ",IFNULL(aed.document_number,'APUNTES SIN N\u00DAMERO DE DOCUMENTO')) "
+					     + " AND aed.document_number IS NOT NULL " 
+					     + " AND TRIM(aed.document_number) != ''"
+						 + " AND TRIM(f.concept) = TRIM(aed.document_number)"
 						 +"  AND  ( f.status IN (0,1) "
-						 +"    OR ( f.status IN (2,3) AND IFNULL( "
+						 +"    OR ( f.status > 1 AND "
 						 +" 	(SELECT ft.type FROM finance_tracking ft "
 						 +" 		WHERE ft.finance = f.id "
 						 +"			AND ft.id > 0 AND ft.tracking_date <= ? "
-						 +" 		ORDER BY ft.id DESC LIMIT 1) ,-1) NOT IN (0,1,3,4) ))) FINANCE_AMOUNT "		
+						 +" 		ORDER BY ft.id DESC LIMIT 1) NOT IN (1,2,4)))) FINANCE_AMOUNT "		
 				+" FROM account a"
 				+" INNER JOIN account_entry_detail aed ON aed.account = a.id"
 				+" INNER JOIN account_entry ae ON aed.account_entry = ae.id"
@@ -175,7 +176,7 @@ public class AccountingFinanceChecker {
 				+"  AND aed.domain = ?"
 				+"  AND ae.entry_date <= ?"
 				+" GROUP BY DOCUMENT"
-				+" ORDER BY DIFF,DOCUMENT DESC";
+				+" ORDER BY DOCUMENT DESC";
 		List<StrippedStatement> list = new LinkedList<StrippedStatement>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
