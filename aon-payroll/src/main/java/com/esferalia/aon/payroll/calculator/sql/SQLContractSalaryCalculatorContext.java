@@ -1,5 +1,54 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ASSIMILATED;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_AGE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.BONUS_START;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.BR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTEXT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DELAY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_PAY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FEMALE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.GENDER;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.GROSS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARANTEE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARANTEED;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARANTEED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.HOLIDAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMS_RATE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.INDEFINITE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_RATE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LIQUID;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MALE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_MONTHS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAY_WEEKS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_MONTHS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_WEEKS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SELF;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SENIORITY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SETTLE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SHORT_CONTRACT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SYSTEM;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_BENEFITS_IT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_WEEKS;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,7 +71,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
-import org.mvel2.UnresolveablePropertyException;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
@@ -33,7 +81,6 @@ import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.payroll.IrpfOutcome;
-import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -47,6 +94,8 @@ import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.LRUCache;
+import com.esferalia.aon.payroll.calculator.SalaryExpressionException;
+import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
 import com.esferalia.aon.payroll.calculator.UndefinedTotalPaymentException;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -86,8 +135,6 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.*;
-
 public class SQLContractSalaryCalculatorContext implements
 		IContractSalaryCalculatorContext, NotFoundHandler,
 		ISQLContractSalaryCalculatorContext {
@@ -96,7 +143,6 @@ public class SQLContractSalaryCalculatorContext implements
 	public static final String ENTERPRISE_REGISTRY = "enterprise_registry";
 
 	public static final String EMBARGO_PAID = "embargo_paid";
-
 	public static final String EMPTY = "";
 	public static final String SPACE = " ";
 	public static final String COMMA = ",";
@@ -249,6 +295,43 @@ public class SQLContractSalaryCalculatorContext implements
 		public Integer getAgreementLevelId() {
 			return getSecond();
 		};
+
+	}
+
+	static class GuarenteeException extends SalaryException {
+
+		private double guarentee;
+
+		public GuarenteeException(double guarentee) {
+			this.guarentee = guarentee;
+		}
+
+		public double getGuarentee() {
+			return guarentee;
+		}
+	}
+
+	protected class SQLNoItContractSalaryCalculatorContext extends
+			SQLContractSalaryCalculatorContext {
+
+		public SQLNoItContractSalaryCalculatorContext(Connection connection,
+				Date startDate, Date endDate, Date issueDate, Criteria criteria)
+				throws SQLException, ExpressionException {
+			super(connection, startDate, endDate, issueDate, criteria);
+			// with this, we assure no leave I.T.
+			super.leaveLoader = new SQLContractLeaveLoader(startDate, endDate) {
+				@Override
+				public void loadContractLevae(ResultSet rs,
+						ExpressionContext exprCtx) throws SQLException,
+						ExpressionException {
+				}
+			};
+		}
+
+		@Override
+		public Object guarantee(double guarentee) throws ExpressionException {
+			throw new SalaryExpressionException(new GuarenteeException(guarentee));
+		}
 
 	}
 
@@ -1133,19 +1216,16 @@ public class SQLContractSalaryCalculatorContext implements
 				Double.class);
 		if (totalPayment == null)
 			throw new UndefinedTotalPaymentException();
-		
-		
-		Double totalGross = getVariable("__GROSS",
-				Double.class);
+
+		Double totalGross = getVariable("__GROSS", Double.class);
 		if (totalGross == null) {
 			totalGross = gross;
 		} else {
 			totalGross += gross;
 		}
-		
-		
-		addVariable("__GROSS", totalGross );
-		
+
+		addVariable("__GROSS", totalGross);
+
 		return totalGross - totalPayment;
 	}
 
@@ -1158,6 +1238,38 @@ public class SQLContractSalaryCalculatorContext implements
 			throws ExpressionException, SQLException, SalaryException {
 
 		return solveLiquid(new PegasusSolver(accuracy), liquid);
+	}
+
+	public Object guarantee(double guarentee) throws ExpressionException {
+
+		if (leaveLoader.isEmpty())
+			throw new UndefinedContextVariablesException(
+					ContextVariable.LEAVE_DAYS);
+		Double totalPayment = getVariable(ContextVariable.TOTAL_PAYMENT,
+				Double.class);
+		if (totalPayment == null)
+			throw new UndefinedTotalPaymentException();
+		
+
+		final Criteria contractCriteria = new Criteria();
+		contractCriteria.addExpression(criteria.getExpression());
+		contractCriteria.addEqualExpression(SQLConstants.CONTRACT + "."
+				+ ContractColumns.ID, getId());
+
+		ISalaryCalculatorContext ctx = getNoItCalculatorContext(connection,
+				startDate, endDate, issueDate, contractCriteria);
+
+		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		
+		try {
+			calculator.calculate(ctx);
+		} catch ( GuarenteeException e){
+			return e.guarentee - totalPayment;
+		} catch (SalaryException e) {
+			throw new RuntimeException(e);
+		}
+		return 0.00;
 	}
 
 	protected double solveLiquid(UnivariateSolver solver, final double liquid) {
@@ -1200,6 +1312,22 @@ public class SQLContractSalaryCalculatorContext implements
 		}, -3 * liquid, 3 * liquid, 0);
 
 		return result;
+	}
+
+	protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
+			Connection conn, Date startDate, Date endDate, Date issueDate,
+			Criteria criteria) {
+		SQLContractSalaryCalculatorContext ctx;
+		try {
+			ctx = new SQLNoItContractSalaryCalculatorContext(conn, startDate,
+					endDate, issueDate, criteria);
+			ctx.next();
+			return ctx;
+		} catch (ExpressionException e) {
+			throw new ExpressionExceptionWrapper(e);
+		} catch (SQLException e) {
+			throw new ExpressionExceptionWrapper(new ExpressionException(e));
+		}
 	}
 
 	protected ISalaryCalculatorContext getLiquidCalculatorContext(
@@ -1851,6 +1979,8 @@ public class SQLContractSalaryCalculatorContext implements
 				"def(x){ SELF.system(x)};", this.startDate, this.endDate);
 		loadExpression(this.contractExpressionContext, AGREEMENT,
 				"def(x){ SELF.agreement(x)};", this.startDate, this.endDate);
+		loadExpression(this.contractExpressionContext, GUARANTEE,
+				"def(x){ SELF.guarantee(x)};", this.startDate, this.endDate);
 
 		if (!containsVariable(ACTUAL_DAYS)) {
 			// Los 'DIAS_EFECTIVOS' son pesados de calcular ( necesitan de

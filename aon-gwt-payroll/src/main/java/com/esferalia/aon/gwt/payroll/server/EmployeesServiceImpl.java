@@ -129,7 +129,6 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorConte
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
-import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
@@ -3401,6 +3400,26 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							new ExpressionException(e));
 				}
 			}
+			@Override
+			protected ISQLContractSalaryCalculatorContext getNoItCalculatorContext(
+					Connection conn, Date startDate, Date endDate, Date issueDate,
+					Criteria criteria) {
+				
+				ISQLContractSalaryCalculatorContext draftCtx;
+				try {
+					SQLNoItContractSalaryCalculatorContext sqlCtx = new SQLNoItContractSalaryCalculatorContext(conn, startDate,
+							endDate, issueDate, criteria);
+					draftCtx = new SQLSalaryDraftCalculatorContext(draft, sqlCtx);
+					draftCtx.next();
+					return draftCtx;
+				} catch (ExpressionException e) {
+					throw new ExpressionExceptionWrapper(e);
+				} catch (SQLException e) {
+					throw new ExpressionExceptionWrapper(new ExpressionException(e));
+				}
+
+			}
+			
 
 		}
 
