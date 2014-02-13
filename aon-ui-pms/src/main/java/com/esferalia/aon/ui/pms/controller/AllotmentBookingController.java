@@ -143,6 +143,8 @@ public class AllotmentBookingController implements ISQLConstants {
 		ResultSet bookingRs = null;
 		PreparedStatement allotmentStmt = null;
 		ResultSet allotmentRs = null;
+		PreparedStatement agencyBookingStmt = null;
+		ResultSet agencyBookingRs = null;
 		try {
 			initializeAgencyList();
 			initializeBookingList();
@@ -175,11 +177,9 @@ public class AllotmentBookingController implements ISQLConstants {
 				}
 			}
 
-			allotmentStmt = connection.prepareStatement(getRoomAllotmentSQL());
+			allotmentStmt = connection.prepareStatement(getAllotmentSQL());
 			SQLUtils.setDate(allotmentStmt, 1, getFromDate());
 			SQLUtils.setDate(allotmentStmt, 2, getToDate());
-			SQLUtils.setDate(allotmentStmt, 3, getFromDate());
-			SQLUtils.setDate(allotmentStmt, 4, getToDate());
 			allotmentRs = allotmentStmt.executeQuery();
 			while (allotmentRs.next()) {
 				String agency = allotmentRs.getString(AGENCY);
@@ -187,17 +187,6 @@ public class AllotmentBookingController implements ISQLConstants {
 				int allotment = allotmentRs.getInt(ALLOTMENT);
 				Date startDate = !allotmentRs.getDate(START_DATE).before(getFromDate()) ? allotmentRs.getDate(START_DATE) : getFromDate();
 				Date endDate = !allotmentRs.getDate(END_DATE).after(getToDate()) ? allotmentRs.getDate(END_DATE) : getToDate();
-				Date stayDate = allotmentRs.getDate(STAY_DATE);
-				int rooms = allotmentRs.getInt(ROOMS);
-
-				if (!ArrayUtils.contains(agencies, agency)) {
-					agencies = (String[])ArrayUtils.add(agencies, agency);
-				}
-
-				if (stayDate != null) {
-					startDate = DateUtils.truncate(stayDate, Calendar.DATE);
-					endDate = DateUtils.truncate(stayDate, Calendar.DATE);
-				}
 				for (Date date = DateUtils.truncate(startDate, Calendar.DATE); !date.after(endDate); date = DateUtils.addDays(date, 1)) {
 					DayBooking dayBooking = new DayBooking();
 					dayBooking.setHotel(hotel);
@@ -206,15 +195,52 @@ public class AllotmentBookingController implements ISQLConstants {
 					if (index >= 0) {
 						dayBooking = getBookingList().get(index);
 						dayBooking.setRoomAllotment(dayBooking.getRoomAllotment() + allotment);
-						dayBooking.setRoomAllotmentBusy(dayBooking.getRoomAllotmentBusy() + ((allotment > rooms) ? rooms : allotment));
 
+						if (isRequestedAgency(agency)) {
+							DayAgencyBooking dayAgencyBooking = new DayAgencyBooking();
+							if (dayBooking.getAgencyBookingMap().containsKey(agency)) {
+								dayAgencyBooking = dayBooking.getAgencyBookingMap().get(agency);
+							}
+							dayAgencyBooking.setRoomAllotment(dayAgencyBooking.getRoomAllotment() + allotment);
+							dayAgencyBooking.setRoomAvailable(dayAgencyBooking.getRoomAllotment());
+							dayBooking.getAgencyBookingMap().put(agency, dayAgencyBooking);
+						}
+					}
+				}
+
+				if (!ArrayUtils.contains(agencies, agency) && isRequestedAgency(agency)) {
+					agencies = (String[])ArrayUtils.add(agencies, agency);
+				}
+			}
+
+			agencyBookingStmt = connection.prepareStatement(getAgencyBookingSQL());
+			SQLUtils.setDate(agencyBookingStmt, 1, getFromDate());
+			SQLUtils.setDate(agencyBookingStmt, 2, getToDate());
+			SQLUtils.setDate(agencyBookingStmt, 3, getFromDate());
+			SQLUtils.setDate(agencyBookingStmt, 4, getToDate());
+			agencyBookingRs = agencyBookingStmt.executeQuery();
+			while (agencyBookingRs.next()) {
+				String agency = agencyBookingRs.getString(AGENCY);
+				String hotel = agencyBookingRs.getString(HOTEL);
+				int allotment = agencyBookingRs.getInt(ALLOTMENT);
+				Date stayDate = agencyBookingRs.getDate(STAY_DATE);
+				int rooms = agencyBookingRs.getInt(ROOMS);
+
+				DayBooking dayBooking = new DayBooking();
+				dayBooking.setHotel(hotel);
+				dayBooking.setDate(stayDate);
+				int index = getBookingList().indexOf(dayBooking);
+				if (index >= 0) {
+					dayBooking = getBookingList().get(index);
+					dayBooking.setRoomAllotmentBusy(dayBooking.getRoomAllotmentBusy() + ((allotment > rooms) ? rooms : allotment));
+
+					if (isRequestedAgency(agency)) {
 						DayAgencyBooking dayAgencyBooking = new DayAgencyBooking();
 						if (dayBooking.getAgencyBookingMap().containsKey(agency)) {
 							dayAgencyBooking = dayBooking.getAgencyBookingMap().get(agency);
 						}
-						dayAgencyBooking.setRoomAllotment(dayAgencyBooking.getRoomAllotment() + allotment);
 						dayAgencyBooking.setRoomBusy(dayAgencyBooking.getRoomBusy() + rooms);
-						dayAgencyBooking.setRoomAvailable(dayAgencyBooking.getRoomAvailable() + ((allotment > rooms) ? allotment - rooms : 0));
+						dayAgencyBooking.setRoomAvailable(dayAgencyBooking.getRoomAvailable() - ((allotment > rooms) ? rooms : allotment));
 						dayBooking.getAgencyBookingMap().put(agency, dayAgencyBooking);
 					}
 				}
@@ -232,6 +258,8 @@ public class AllotmentBookingController implements ISQLConstants {
 			}
 			throw new AonSQLException(e);
 		} finally {
+			SQLUtils.closeQuietly(agencyBookingRs);
+			SQLUtils.closeQuietly(agencyBookingStmt);
 			SQLUtils.closeQuietly(allotmentRs);
 			SQLUtils.closeQuietly(allotmentStmt);
 			SQLUtils.closeQuietly(bookingRs);
@@ -324,10 +352,29 @@ public class AllotmentBookingController implements ISQLConstants {
 		return stmt.toString();
 	}
 
-	private String getRoomAllotmentSQL() throws ManagerBeanException {
+	private String getAllotmentSQL() throws ManagerBeanException {
 		StringBuffer stmt = new StringBuffer();
-		stmt.append("SELECT IFNULL(IFNULL(R.alias, R.name), IG.description) AS " + AGENCY + ", W.description AS " + HOTEL + ", A.quantity AS " + ALLOTMENT);
-		stmt.append(", A.start_date AS " + START_DATE + ", A.end_date AS " + END_DATE + ", B.stay_date AS " + STAY_DATE + ", COUNT(DISTINCT B.id) AS " + ROOMS);
+		stmt.append("SELECT IFNULL(IFNULL(R.alias, R.name), IG.description) AS " + AGENCY + ", W.description AS " + HOTEL);
+		stmt.append(", A.quantity AS " + ALLOTMENT + ", A.start_date AS " + START_DATE + ", A.end_date AS " + END_DATE);
+		stmt.append(" FROM allotment AS A");
+		stmt.append(" LEFT JOIN hotel AS H ON A.hotel = H.id AND H.active = 1");
+		stmt.append(" LEFT JOIN workplace AS W ON H.workplace = W.id");
+		stmt.append(" LEFT JOIN registry AS R ON A.agency = R.id");
+		stmt.append(" LEFT JOIN invoicing_group AS IG ON A.agency_group = IG.id");
+		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("A.domain"));
+		stmt.append(" AND A.hotel IN (" + getHotelIds() + ")");
+		stmt.append(" AND A.end_date >= ?");
+		stmt.append(" AND A.start_date <= ?");
+		stmt.append(" AND A.active = 1");
+		stmt.append(" ORDER BY " + AGENCY + ", " + HOTEL);
+
+		return stmt.toString();
+	}
+
+	private String getAgencyBookingSQL() throws ManagerBeanException {
+		StringBuffer stmt = new StringBuffer();
+		stmt.append("SELECT IFNULL(IFNULL(R.alias, R.name), IG.description) AS " + AGENCY + ", W.description AS " + HOTEL);
+		stmt.append(", A.quantity AS " + ALLOTMENT + ", B.stay_date AS " + STAY_DATE + ", COUNT(DISTINCT B.id) AS " + ROOMS);
 		stmt.append(" FROM allotment AS A");
 		stmt.append(" LEFT JOIN hotel AS H ON A.hotel = H.id AND H.active = 1");
 		stmt.append(" LEFT JOIN workplace AS W ON H.workplace = W.id");
@@ -345,15 +392,10 @@ public class AllotmentBookingController implements ISQLConstants {
 		stmt.append("        OR B.tariff IN (SELECT tariff FROM allotment_tariff WHERE allotment = A.id))");
 		stmt.append(" WHERE" + DomainManager.getSQLWhereClause("A.domain"));
 		stmt.append(" AND A.hotel IN (" + getHotelIds() + ")");
-		if (getAgency() != null && getAgency().getId() != null) {
-			stmt.append(" AND A.agency = " + getAgency().getId());
-		}
-		if (getAgencyGroup() != null && getAgencyGroup().getId() != null) {
-			stmt.append(" AND A.agency_group = " + getAgencyGroup().getId());
-		}
 		stmt.append(" AND A.end_date >= ?");
 		stmt.append(" AND A.start_date <= ?");
 		stmt.append(" AND A.active = 1");
+		stmt.append(" AND B.stay_date IS NOT NULL");
 		stmt.append(" GROUP BY A.id, B.stay_date");
 		stmt.append(" ORDER BY " + AGENCY + ", " + HOTEL + ", " + STAY_DATE);
 
@@ -369,6 +411,19 @@ public class AllotmentBookingController implements ISQLConstants {
 			hotelIds = StringUtils.join(collectionsController.getCurrentUserHotelIds(), ",");
 		}
 		return hotelIds;
+	}
+
+	private boolean isRequestedAgency(String agency) {
+		if ((getAgency() != null && getAgency().getId() != null) || (getAgencyGroup() != null && getAgencyGroup().getId() != null)) {
+			if (getAgency() != null && getAgency().getId() != null) {
+				String alias = StringUtils.isEmpty(getAgency().getRegistry().getAlias()) ? getAgency().getRegistry().getName() : getAgency().getRegistry().getAlias();
+				return agency.equals(alias);
+			}
+			if (getAgencyGroup() != null && getAgencyGroup().getId() != null) {
+				return agency.equals(getAgencyGroup().getDescription());
+			}
+		}
+		return true;
 	}
 
 	public String onExcelReport() {
@@ -393,20 +448,21 @@ public class AllotmentBookingController implements ISQLConstants {
 				report.exportColumn(metadata.getColumns().get(3), dayBooking.getRoomFree());
 				report.exportColumn(metadata.getColumns().get(4), dayBooking.getRoomBlocked());
 				report.exportColumn(metadata.getColumns().get(5), dayBooking.getRoomTotal());
-				report.exportColumn(metadata.getColumns().get(6), dayBooking.getRoomAvailable());
-				report.exportColumn(metadata.getColumns().get(7), dayBooking.getRoomBusyPotential());
-				HSSFCell freePotentialCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(8), dayBooking.getRoomFreePotential());
+				report.exportColumn(metadata.getColumns().get(6), dayBooking.getRoomAllotment());
+				report.exportColumn(metadata.getColumns().get(7), dayBooking.getRoomAvailable());
+				report.exportColumn(metadata.getColumns().get(8), dayBooking.getRoomBusyPotential());
+				HSSFCell freePotentialCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(9), dayBooking.getRoomFreePotential());
 				if (dayBooking.getRoomFreePotential() < 0) {
 					paintCell(report, freePotentialCell, HSSFColor.RED.index);
 				}
 				for (String agency : agencies) {
 					DayAgencyBooking agencyBooking = dayBooking.getAgencyBookingMap().get(agency);
-					report.exportColumn(metadata.getColumns().get(9), (agencyBooking != null) ? agencyBooking.getRoomAllotment() : null);
-					HSSFCell busyCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(10), (agencyBooking != null) ? agencyBooking.getRoomBusy() : null);
+					report.exportColumn(metadata.getColumns().get(10), (agencyBooking != null) ? agencyBooking.getRoomAllotment() : null);
+					HSSFCell busyCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(11), (agencyBooking != null) ? agencyBooking.getRoomBusy() : null);
 					if (agencyBooking != null && agencyBooking.getRoomBusy() >= agencyBooking.getRoomAllotment()) {
 						paintCell(report, busyCell, HSSFColor.GREEN.index);
 					}
-					HSSFCell availCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(11), (agencyBooking != null) ? agencyBooking.getRoomAvailable() : null);
+					HSSFCell availCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(12), (agencyBooking != null) ? agencyBooking.getRoomAvailable() : null);
 					if (agencyBooking != null && dayBooking.getRoomFreePotential() < 0 && agencyBooking.getRoomAvailable() > 0) {
 						paintCell(report, availCell, HSSFColor.RED.index);
 					}
@@ -441,9 +497,10 @@ public class AllotmentBookingController implements ISQLConstants {
 		report.addHeaderCell("POTENCIAL", 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addHeaderCell("", 0, cellStyleBlack);
+		report.addHeaderCell("", 0, cellStyleBlack);
 		report.addMergedRegion(0, 0, 0, 1);
 		report.addMergedRegion(0, 0, 2, 5);
-		report.addMergedRegion(0, 0, 6, 8);
+		report.addMergedRegion(0, 0, 6, 9);
 
 		HSSFCellStyle cellStyleBlue = newExcelHeaderStyle(report);
 		cellFont = report.createFont();
@@ -454,7 +511,7 @@ public class AllotmentBookingController implements ISQLConstants {
 			report.addHeaderCell(agencies[i], 0, cellStyleBlue);
 			report.addHeaderCell("", 0, cellStyleBlue);
 			report.addHeaderCell("", 0, cellStyleBlue);
-			report.addMergedRegion(0, 0, 9+(i*3), 11+(i*3));
+			report.addMergedRegion(0, 0, 10+(i*3), 12+(i*3));
 		}
 
 		ReportMetadata metadata = new ReportMetadata();
@@ -464,6 +521,7 @@ public class AllotmentBookingController implements ISQLConstants {
 		metadata.getColumns().add(new ReportColumnMetadata("roomFree", Types.INTEGER, "LIBRE", 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomBlocked", Types.INTEGER, "BLOQ.", 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomTotal", Types.INTEGER, "TOTAL", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomAllotment", Types.INTEGER, "CUPO", 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomAvailable", Types.INTEGER, "DISP.", 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomBusyPotential", Types.INTEGER, "OCUP.", 30));
 		metadata.getColumns().add(new ReportColumnMetadata("roomFreePotential", Types.INTEGER, "LIBRE", 30));
