@@ -54,17 +54,17 @@ public class ExcelWriter extends BasicExporter {
 		this.exporter = new ExcelReportExporter();
 		try {
 			this.exporter.startExport(AonUtil.getMessage("aon_invoices"));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.TYPE));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.DOCUMENT_NUMBER));
-			this.exporter.addRow(AonUtil.getMessage("accounting_journal"));			
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.FINANCIAL_YEAR));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.DATE));
-			this.exporter.addRow(AonUtil.getMessage("account_account"));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.AON_DESCRIPTION));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.CONCEPT));
-			this.exporter.addRow(AonUtil.getMessage("account_debit"));
-			this.exporter.addRow(AonUtil.getMessage("account_credit"));
-			this.exporter.addRow(AonUtil.getMessage("finance_balancing_account"));			
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.TYPE));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.DOCUMENT_NUMBER));
+			this.exporter.addHeaderCell(AonUtil.getMessage("accounting_journal"));			
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.FINANCIAL_YEAR));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.DATE));
+			this.exporter.addHeaderCell(AonUtil.getMessage("account_account"));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.AON_DESCRIPTION));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.CONCEPT));
+			this.exporter.addHeaderCell(AonUtil.getMessage("account_debit"));
+			this.exporter.addHeaderCell(AonUtil.getMessage("account_credit"));
+			this.exporter.addHeaderCell(AonUtil.getMessage("finance_balancing_account"));			
 		} catch (ReportException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -73,32 +73,32 @@ public class ExcelWriter extends BasicExporter {
 	private void addInvoiceHeader() {
 		if (! this.invoiceHeaderAdded) {
 			this.financeCounter = 0;
-			this.exporter.addRow(AonUtil.getMessage("finance_invoice"));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.DATE));	
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.TOTAL));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.COMPANY_NAME));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.TYPE));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.DOCUMENT_COUNTRY));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.DOCUMENT));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.ADDRESS));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.POSTAL_CODE));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.REGISTRY_CITY));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.STATE));
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.TRANSACTION_TYPE));
-			this.exporter.addRow(AonUtil.getMessage("invoice_investment"));
-			this.exporter.addRow(AonUtil.getMessage("finance_tax_date"));			
-			this.exporter.addRow(AonUtil.getMessage(ICommonMessages.STATUS));
+			this.exporter.addHeaderCell(AonUtil.getMessage("finance_invoice"));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.DATE));	
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.TOTAL));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.COMPANY_NAME));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.TYPE));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.DOCUMENT_COUNTRY));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.DOCUMENT));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.ADDRESS));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.POSTAL_CODE));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.REGISTRY_CITY));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.STATE));
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.TRANSACTION_TYPE));
+			this.exporter.addHeaderCell(AonUtil.getMessage("invoice_investment"));
+			this.exporter.addHeaderCell(AonUtil.getMessage("finance_tax_date"));			
+			this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.STATUS));
 			for( int i = 0; i < 3; i++ ) {
-				this.exporter.addRow(AonUtil.getMessage(ICommonMessages.TAXABLE_BASE));
-				this.exporter.addRow(AonUtil.getMessage(ICommonMessages.VAT));
-				this.exporter.addRow(AonUtil.getMessage(ICommonMessages.VAT_QUOTA));
-				this.exporter.addRow(AonUtil.getMessage(ICommonMessages.SURCHARGE));
-				this.exporter.addRow(AonUtil.getMessage(ICommonMessages.SURCHARGE_QUOTA));					
+				this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.TAXABLE_BASE));
+				this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.VAT));
+				this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.VAT_QUOTA));
+				this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.SURCHARGE));
+				this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.SURCHARGE_QUOTA));					
 			}
 			for( int i = 0; i < 2; i++ ) {
-				this.exporter.addRow(AonUtil.getMessage(ICommonMessages.TAXABLE_BASE));
-				this.exporter.addRow(AonUtil.getMessage(ICommonMessages.RETENTION));
-				this.exporter.addRow(AonUtil.getMessage(ICommonMessages.RETENTION_QUOTA));
+				this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.TAXABLE_BASE));
+				this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.RETENTION));
+				this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.RETENTION_QUOTA));
 			}
 			this.invoiceHeaderAdded = true;
 		}
@@ -231,11 +231,11 @@ public class ExcelWriter extends BasicExporter {
 	
 	private void addFinanceHeader() {
 		financeCounter++;
-		this.exporter.addRow(AonUtil.getMessage("finance_finance_date"));
-		this.exporter.addRow(AonUtil.getMessage("finance_payMethod"));
-		this.exporter.addRow(AonUtil.getMessage("aon_bank_account"));
-		this.exporter.addRow(AonUtil.getMessage(ICommonMessages.STATUS));
-		this.exporter.addRow(AonUtil.getMessage("aon_amount"));
+		this.exporter.addHeaderCell(AonUtil.getMessage("finance_finance_date"));
+		this.exporter.addHeaderCell(AonUtil.getMessage("finance_payMethod"));
+		this.exporter.addHeaderCell(AonUtil.getMessage("aon_bank_account"));
+		this.exporter.addHeaderCell(AonUtil.getMessage(ICommonMessages.STATUS));
+		this.exporter.addHeaderCell(AonUtil.getMessage("aon_amount"));
 	}	
 	
 	private void addFinance( int index, Finance finance ) {

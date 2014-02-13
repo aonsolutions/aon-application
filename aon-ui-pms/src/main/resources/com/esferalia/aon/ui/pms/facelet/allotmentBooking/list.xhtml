@@ -22,6 +22,11 @@
 						action="allotmentBooking_search"
 						actionListener="#{allotmentBooking.onInit}"
 						accesskey="#{bundle.aon_key_search}" />
+					<aon:htmlCommandLink id="allotmentBooking-excel-report"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
+						value="#{bundle.aon_listing}" action="#{allotmentBooking.onExcelReport}" target="_blank">
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
 				</ui:define>
 
 			</ui:decorate>
@@ -87,28 +92,28 @@
 							</aon:outputText>
 						</aon:column>	
 
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20" style="background-color:#f2f2f2;">
 							<f:facet name="header">
 								<aon:outputText value="Ocup." />
 							</f:facet>
 							<aon:outputText value="#{to.roomBusy}" />
 						</aon:column>				
 
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20" style="background-color:#f2f2f2;">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.report_free}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomFree}" />
 						</aon:column>				
 
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20" style="background-color:#f2f2f2;">
 							<f:facet name="header">
 								<aon:outputText value="Bloq." />
 							</f:facet>
 							<aon:outputText value="#{to.roomBlocked}" />
 						</aon:column>				
 
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20" style="background-color:#f2f2f2;">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
@@ -137,15 +142,17 @@
 								value="#{to.roomFreePotential}" />
 						</aon:column>				
 
-						<c:forEach items="#{allotmentBooking.agencies}" var="agency">
-							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
-								<f:facet name="header">
+						<c:forEach items="#{allotmentBooking.agencies}" var="agency" varStatus="agencyIdx" begin="0" step="1">
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
+								style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
+ 								<f:facet name="header">
 									<aon:outputText value="CUPO" />
 								</f:facet>
 								<aon:outputText value="#{to.agencyBookingMap[agency].roomAllotment}" />
 							</aon:column>				
 
-							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
+								style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
 								<f:facet name="header">
 									<aon:outputText value="OCUP." />
 								</f:facet>
@@ -154,7 +161,8 @@
 									 />
 							</aon:column>				
 
-							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20"
+								style="#{agencyIdx.even ? 'background-color:#f2f2f2;' : ''}">
 								<f:facet name="header">
 									<aon:outputText value="DISP." />
 								</f:facet>

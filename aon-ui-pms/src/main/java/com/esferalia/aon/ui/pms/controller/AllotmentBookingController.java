@@ -1,41 +1,54 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.util.HSSFColor;
 
 import com.code.aon.asset.enumeration.ActivityStatus;
-import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.DatabaseUtil;
+import com.code.aon.report.ReportException;
+import com.code.aon.report.poi.ExcelReportExporter;
+import com.code.aon.report.poi.IReportExporter;
+import com.code.aon.report.poi.ReportColumnMetadata;
+import com.code.aon.report.poi.ReportMetadata;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingStayType;
 import com.esferalia.aon.pms.sql.ISQLConstants;
 import com.esferalia.aon.pms.sql.SQLUtils;
 
-public class AllotmentBookingController implements ICollectionProvider, ISQLConstants {
+public class AllotmentBookingController implements ISQLConstants {
 
 	private Hotel hotel;
 	private Customer agency;
@@ -306,7 +319,7 @@ public class AllotmentBookingController implements ICollectionProvider, ISQLCons
 		stmt.append(" AND AA.status <> " + ActivityStatus.BUSY.getValue());
 		stmt.append(" AND AA.date BETWEEN ? AND ?");
 		stmt.append(" GROUP BY W.description, AA.date");
-		stmt.append(" ORDER BY " + HOTEL + "," + STAY_DATE + "," + STAY_TYPE);
+		stmt.append(" ORDER BY " + HOTEL + ", " + STAY_DATE + ", " + STAY_TYPE);
 
 		return stmt.toString();
 	}
@@ -342,7 +355,7 @@ public class AllotmentBookingController implements ICollectionProvider, ISQLCons
 		stmt.append(" AND A.start_date <= ?");
 		stmt.append(" AND A.active = 1");
 		stmt.append(" GROUP BY A.id, B.stay_date");
-		stmt.append(" ORDER BY " + AGENCY + "," + HOTEL + "," + STAY_DATE);
+		stmt.append(" ORDER BY " + AGENCY + ", " + HOTEL + ", " + STAY_DATE);
 
 		return stmt.toString();
 	}
@@ -358,13 +371,130 @@ public class AllotmentBookingController implements ICollectionProvider, ISQLCons
 		return hotelIds;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public Collection getCollection() {
-		return getBookingList();
+	public String onExcelReport() {
+		FacesContext faces = FacesContext.getCurrentInstance();
+		HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+		String fileName = "Control de Cupos";
+		response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
+		response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xls\";");
+
+		ServletOutputStream output;
+		try {
+			output = response.getOutputStream();
+			ExcelReportExporter report = new ExcelReportExporter();
+			report.startExport(IReportExporter.DEFAULT_NAME);
+			ReportMetadata metadata = createExcelHeader(report);
+			report.exportHeader(metadata);
+			for (DayBooking dayBooking : getBookingList()) {
+				report.startLine();
+				report.exportColumn(metadata.getColumns().get(0), dayBooking.getHotel());
+				report.exportColumn(metadata.getColumns().get(1), dayBooking.getDate());
+				report.exportColumn(metadata.getColumns().get(2), dayBooking.getRoomBusy());
+				report.exportColumn(metadata.getColumns().get(3), dayBooking.getRoomFree());
+				report.exportColumn(metadata.getColumns().get(4), dayBooking.getRoomBlocked());
+				report.exportColumn(metadata.getColumns().get(5), dayBooking.getRoomTotal());
+				report.exportColumn(metadata.getColumns().get(6), dayBooking.getRoomAvailable());
+				report.exportColumn(metadata.getColumns().get(7), dayBooking.getRoomBusyPotential());
+				HSSFCell freePotentialCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(8), dayBooking.getRoomFreePotential());
+				if (dayBooking.getRoomFreePotential() < 0) {
+					paintCell(report, freePotentialCell, HSSFColor.RED.index);
+				}
+				for (String agency : agencies) {
+					DayAgencyBooking agencyBooking = dayBooking.getAgencyBookingMap().get(agency);
+					report.exportColumn(metadata.getColumns().get(9), (agencyBooking != null) ? agencyBooking.getRoomAllotment() : null);
+					HSSFCell busyCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(10), (agencyBooking != null) ? agencyBooking.getRoomBusy() : null);
+					if (agencyBooking != null && agencyBooking.getRoomBusy() >= agencyBooking.getRoomAllotment()) {
+						paintCell(report, busyCell, HSSFColor.GREEN.index);
+					}
+					HSSFCell availCell = (HSSFCell)report.exportColumn(metadata.getColumns().get(11), (agencyBooking != null) ? agencyBooking.getRoomAvailable() : null);
+					if (agencyBooking != null && dayBooking.getRoomFreePotential() < 0 && agencyBooking.getRoomAvailable() > 0) {
+						paintCell(report, availCell, HSSFColor.RED.index);
+					}
+				}
+				report.endLine();
+			}
+			report.autoSizeColumns();
+			report.endExport(output);
+			response.flushBuffer();
+			faces.responseComplete();
+		} catch (ReportException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		return null;
 	}
-	@SuppressWarnings("rawtypes")
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
-		return getCollection();
+
+	private ReportMetadata createExcelHeader(ExcelReportExporter report) {
+		HSSFCellStyle cellStyleBlack = newExcelHeaderStyle(report);
+		HSSFFont cellFont = report.createFont();
+	    cellFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+	    cellStyleBlack.setFont(cellFont);
+
+	    report.addHeaderRow();
+		report.addHeaderCell("", 0, cellStyleBlack);
+		report.addHeaderCell("", 0, cellStyleBlack);
+		report.addHeaderCell("REAL", 0, cellStyleBlack);
+		report.addHeaderCell("", 0, cellStyleBlack);
+		report.addHeaderCell("", 0, cellStyleBlack);
+		report.addHeaderCell("", 0, cellStyleBlack);
+		report.addHeaderCell("POTENCIAL", 0, cellStyleBlack);
+		report.addHeaderCell("", 0, cellStyleBlack);
+		report.addHeaderCell("", 0, cellStyleBlack);
+		report.addMergedRegion(0, 0, 0, 1);
+		report.addMergedRegion(0, 0, 2, 5);
+		report.addMergedRegion(0, 0, 6, 8);
+
+		HSSFCellStyle cellStyleBlue = newExcelHeaderStyle(report);
+		cellFont = report.createFont();
+	    cellFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		cellFont.setColor(HSSFColor.BLUE.index);
+	    cellStyleBlue.setFont(cellFont);
+		for (int i=0; i<agencies.length; i++) {
+			report.addHeaderCell(agencies[i], 0, cellStyleBlue);
+			report.addHeaderCell("", 0, cellStyleBlue);
+			report.addHeaderCell("", 0, cellStyleBlue);
+			report.addMergedRegion(0, 0, 9+(i*3), 11+(i*3));
+		}
+
+		ReportMetadata metadata = new ReportMetadata();
+		metadata.getColumns().add(new ReportColumnMetadata("hotel", Types.VARCHAR, "HOTEL", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("date", Types.DATE, "FECHA", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomBusy", Types.INTEGER, "OCUP.", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomFree", Types.INTEGER, "LIBRE", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomBlocked", Types.INTEGER, "BLOQ.", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomTotal", Types.INTEGER, "TOTAL", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomAvailable", Types.INTEGER, "DISP.", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomBusyPotential", Types.INTEGER, "OCUP.", 30));
+		metadata.getColumns().add(new ReportColumnMetadata("roomFreePotential", Types.INTEGER, "LIBRE", 30));
+		for (int i=0; i<agencies.length; i++) {
+			metadata.getColumns().add(new ReportColumnMetadata("agencyAllotment", Types.INTEGER, "CUPO", 30));
+			metadata.getColumns().add(new ReportColumnMetadata("agencyBusy", Types.INTEGER, "OCUP.", 30));
+			metadata.getColumns().add(new ReportColumnMetadata("agencyAvailable", Types.INTEGER, "DISP.", 30));
+		}
+		return metadata;
+	}
+
+	private HSSFCellStyle newExcelHeaderStyle(ExcelReportExporter report) {
+		HSSFCellStyle cellStyle = report.createCellStyle();
+	    cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+	    cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+	    cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+	    cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);  
+	    cellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+	    return cellStyle;
+	}
+
+	private void paintCell(ExcelReportExporter report, HSSFCell cell, short color) {
+		HSSFCellStyle cellStyle = report.createCellStyle();
+		if (cellStyle == null) {
+			cellStyle = report.createCellStyle();
+		}
+
+		HSSFFont cellFont = report.createFont();
+	    cellFont.setColor(color);
+	    cellStyle.setFont(cellFont);
+	    cell.setCellStyle(cellStyle);
 	}
 
 	/***************** DAY BOOKING *********************************/
