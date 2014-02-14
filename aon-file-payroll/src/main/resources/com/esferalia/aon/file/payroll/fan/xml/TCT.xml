@@ -2,7 +2,7 @@
 
 <register name="TCT">
 	<field name="cabecera" value="TCT" format="AlphaNumeric" pattern="X(3)" />
-	<field name="free1" value="0" format="AlphaNumeric" pattern="9(2)" />
+	<field name="free1" value="00" format="AlphaNumeric" pattern="9(2)" />
 	<field name="entidad_at_ep" value="bean" bean="TCT" property="entidadAtEp" format="AlphaNumeric" pattern="X(3)" />
 	<field name="num_trabajadores" value="bean" bean="TCT" property="numeroTrabajadores" format="Numeric" pattern="9(6)" />
 	<field name="free2" value="0" format="Numeric" pattern="9(6)" />

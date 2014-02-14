@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.ObjectUtils;
-
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
@@ -83,15 +81,11 @@ public class FAN extends AbstractFileFiller{
 			createLine(ETI,properties);
 			int numEmp = 0;
 			int numTotal = 0;
-			String empresa = null;
 			for (EMP emp: eti.getEmpresas()) {
-//				if (!ObjectUtils.equals(empresa, emp.getNumeroIdentificacion())) {
-					++numEmp;
-					properties.put(EMP , emp);
-					createLine(EMP,properties);
-					++numTotal;
-					empresa = emp.getNumeroIdentificacion();
-//				}
+				++numEmp;
+				properties.put(EMP , emp);
+				createLine(EMP,properties);
+				++numTotal;
 				if (emp.getRzs() != null) {
 					properties.put(RZS , emp.getRzs());
 					createLine(RZS,properties);

@@ -1,9 +1,9 @@
 package com.esferalia.aon.file.payroll.fan.data;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Identificacion de empresa
@@ -133,7 +133,7 @@ public class EMP {
 	
 	public Map<String, EDT> getEdt() {
 		if(edt==null){
-			edt = new TreeMap<String, EDT>();
+			edt = new LinkedHashMap<String, EDT>();
 		}
 		return edt;
 	}

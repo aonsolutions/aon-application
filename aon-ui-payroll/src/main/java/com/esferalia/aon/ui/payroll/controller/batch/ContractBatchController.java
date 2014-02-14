@@ -27,7 +27,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.IResourceable;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -171,8 +170,8 @@ public class ContractBatchController extends BasicController {
 				ContractBatchAttachment attach;
 				attach = new ContractBatchAttachment();
 				attach.setContractBatch((ContractBatch) getTo());
-				attach.setMimeType(MimeType.MIME_TXT);
-				attach.setDescription(getAFIWriter().getEti().getFichero());
+				attach.setMimeType(null);
+				attach.setDescription(getAFIWriter().getEti().getFichero()+".AFI");
 				attach.setSize(null);
 				attach.setAttachmentType(PayrollBatchAttachmentType.GENERATED_DOCUMENT);
 				attach.setScope(null);

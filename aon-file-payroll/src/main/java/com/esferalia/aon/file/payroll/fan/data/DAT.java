@@ -19,7 +19,7 @@ public class DAT {
 	private Integer indReduccionBoni;
 	private Integer grupoCotizacion;
 	private String tipoContrato;
-	private Integer claveContrato;
+	private String claveContrato;
 	private Integer epigrafeAtEp;
 	private Integer epigrafeSecundario;
 	private String ocupacion;
@@ -28,6 +28,7 @@ public class DAT {
 	private Integer indRelacion;
 	private Integer colectivoPeculiar;
 	private String infoComplementaria;
+	private String cotizacionDesempleo;
 	
 	private Map<String, EDL> edl;
 
@@ -119,11 +120,11 @@ public class DAT {
 		this.tipoContrato = tipoContrato;
 	}
 
-	public Integer getClaveContrato() {
+	public String getClaveContrato() {
 		return claveContrato;
 	}
 
-	public void setClaveContrato(Integer claveContrato) {
+	public void setClaveContrato(String claveContrato) {
 		this.claveContrato = claveContrato;
 	}
 
@@ -189,6 +190,14 @@ public class DAT {
 
 	public void setInfoComplementaria(String infoComplementaria) {
 		this.infoComplementaria = infoComplementaria;
+	}
+
+	public String getCotizacionDesempleo() {
+		return cotizacionDesempleo;
+	}
+	
+	public void setCotizacionDesempleo(String cotizacionDesempleo) {
+		this.cotizacionDesempleo = cotizacionDesempleo;
 	}
 	
 	public Map<String, EDL> getEdl() {
