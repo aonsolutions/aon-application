@@ -6,13 +6,13 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.PayMethodType;
@@ -25,17 +25,9 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class LoaderUtils {
 	
-	private AccountingUtil accountingUtil;
 	private Account outputVatAccount;
 	private Account inputVatAccount;
 	private Account retentionAccount;
-
-	private AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
 
 	public PayMethod ensurePayMethod(String formaPago) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(PayMethod.class);
@@ -96,21 +88,21 @@ public class LoaderUtils {
 	
 	public Account getOutputVatAccount() throws ManagerBeanException {
 		if (outputVatAccount == null) {
-			outputVatAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.CHARGE_VAT_ACCOUNT);
+			outputVatAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_CHARGED_VAT_ACC);
 		}
 		return outputVatAccount;
 	}
 
 	public Account getInputVatAccount() throws ManagerBeanException {
 		if (inputVatAccount == null) {
-			inputVatAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PAID_VAT_ACCOUNT);  
+			inputVatAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PAID_VAT_ACC);  
 		}
 		return inputVatAccount;
 	}
 	
 	public Account getRetentionAccount() throws ManagerBeanException {
 		if (retentionAccount == null) {
-			retentionAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PAID_RETENTION_ACCOUNT);
+			retentionAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PAID_RET_ACC);
 		}
 		return retentionAccount;
 	}

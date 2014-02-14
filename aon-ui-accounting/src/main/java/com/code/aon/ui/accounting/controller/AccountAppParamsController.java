@@ -17,6 +17,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
@@ -107,10 +108,10 @@ public class AccountAppParamsController{
 		}
 	}
 	
-	public ApplicationParameter getParameter(String key) throws ManagerBeanException {
+	public ApplicationParameter getParameter(AppParam param) throws ManagerBeanException {
 		if (parameters == null || parameters.isEmpty()) {
 			loadParameters();	
 		}
-		return parameters.get(key); 		
+		return parameters.get(param.getValue()); 		
 	}
 }

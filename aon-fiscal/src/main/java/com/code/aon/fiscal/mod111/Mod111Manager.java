@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
@@ -16,8 +15,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.config.ApplicationParameter;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.fiscal.FiscalModel;
 import com.code.aon.fiscal.FiscalModelDetail;
@@ -158,19 +158,10 @@ public class Mod111Manager extends FiscalModelManager {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME),  IDefaultAccounts.SALARY_CHARGED_RETENTION_ACCOUNT );
-			List<ITransferObject> list = bean.getList(criteria);
-			if (list != null && list.size() > 0 ) {
-				ApplicationParameter ap = (ApplicationParameter) list.get(0);
-				int retentionAccount = Integer.parseInt(ap.getValue());
-				criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME),  IDefaultAccounts.SALARY_ACCOUNT );
-				list = bean.getList(criteria);
-				if (list != null && list.size() > 0 ) {
-					ap = (ApplicationParameter) list.get(0);
-					int salaryAccount = Integer.parseInt(ap.getValue());	
+			Integer retentionAccount = AppParamUtil.getValueAsInteger(AppParam.ACC_SALARY_CHARGED_RET_ACC);
+			if ( retentionAccount != null ) {
+				Integer salaryAccount = AppParamUtil.getValueAsInteger(AppParam.ACC_DEFAULT_SALARY_ACC);
+				if ( salaryAccount != null ) {
 					ps = conn.prepareStatement(SELECT_ACCOUNT, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 					int i = 0;
 					int filled = DomainManager.fillHostVariables(ps, 1);

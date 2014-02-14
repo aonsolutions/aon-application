@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.SalaryEntry;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -20,6 +19,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.IAccountingConstants;
@@ -34,15 +34,7 @@ public class SalaryEntryController {
 
 	private SalaryEntry entry;
 	private String navigationKey;
-	private AccountingUtil accountingUtil;
 	private AccountBridgeUtil accountBridgeUtil;
-
-	private AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
 
 	private AccountBridgeUtil getAccountBridgeUtil() {
 		if (accountBridgeUtil == null) {
@@ -129,7 +121,7 @@ public class SalaryEntryController {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 
 			AccountEntryDetail detail = new AccountEntryDetail();
-			detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.SALARY_ACCOUNT));
+			detail.setAccount(AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_SALARY_ACC));
 			detail.setAccountEntry(entry);
 			detail.setBalancingAccount(null);
 			detail.setConcept(getEntry().getConcept());
@@ -138,7 +130,7 @@ public class SalaryEntryController {
 
 			if (getEntry().getAllowance() != 0) {
 				detail = new AccountEntryDetail();
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.ALLOWANCE_ACCOUNT));
+				detail.setAccount(AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_ALLOWANCE_ACC));
 				detail.setAccountEntry(entry);
 				detail.setBalancingAccount(null);
 				detail.setConcept(getEntry().getConcept());
@@ -148,7 +140,7 @@ public class SalaryEntryController {
 
 			if (getEntry().getCompensation() != 0) {
 				detail = new AccountEntryDetail();
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.COMPENSATION_ACCOUNT));
+				detail.setAccount(AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_COMPENSATION_ACC));
 				detail.setAccountEntry(entry);
 				detail.setBalancingAccount(null);
 				detail.setConcept(getEntry().getConcept());
@@ -158,7 +150,7 @@ public class SalaryEntryController {
 
 			if (getEntry().getCompanySocialInsurance() != 0) {
 				detail = new AccountEntryDetail();
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT));
+				detail.setAccount(AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_COMPANY_SOC_INS_ACC));
 				detail.setAccountEntry(entry);
 				detail.setBalancingAccount(null);
 				detail.setConcept(getEntry().getConcept());
@@ -168,7 +160,7 @@ public class SalaryEntryController {
 
 			if (getEntry().getRetention() != 0) {
 				detail = new AccountEntryDetail();
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.SALARY_CHARGED_RETENTION_ACCOUNT));
+				detail.setAccount(AccountingUtil.obtainDefaultAccount(AppParam.ACC_SALARY_CHARGED_RET_ACC));
 				detail.setAccountEntry(entry);
 				detail.setBalancingAccount(null);
 				detail.setConcept(getEntry().getConcept());
@@ -177,7 +169,7 @@ public class SalaryEntryController {
 			}
 
 			detail = new AccountEntryDetail();
-			detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.SOCIAL_INSURANCE_ACCOUNT));
+			detail.setAccount(AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_SOCIAL_INSURANCE_ACC));
 			detail.setAccountEntry(entry);
 			detail.setBalancingAccount(null);
 			detail.setConcept(getEntry().getConcept());
@@ -189,7 +181,7 @@ public class SalaryEntryController {
 			if (getEntry().getRegistryBank() != null && getEntry().getRegistryBank().getId() != null) {
 				detail.setAccount(getAccountBridgeUtil().obtainRBankAccount(getEntry().getRegistryBank()));
 			} else {
-				detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PENDING_SALARY_ACCOUNT));
+				detail.setAccount(AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PENDING_SALARY_ACC));
 			}
 			detail.setAccountEntry(entry);
 			detail.setBalancingAccount(null);

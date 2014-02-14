@@ -19,7 +19,6 @@ import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.AmortizationInvoice;
-import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
@@ -28,8 +27,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -294,9 +293,9 @@ public class AccountEntryInvoiceWriter {
 			Account pl = null;
 			if (profitLoss != 0.0) {
 				if (profitLoss > 0) {
-					pl = obtainDefaultAccount(IDefaultAccounts.ASSET_PROFIT_ACCOUNT);
+					pl = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_ASSET_PROFIT_ACC);
 				} else {
-					pl = obtainDefaultAccount(IDefaultAccounts.ASSET_LOST_ACCOUNT);
+					pl = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_ASSET_LOST_ACC);
 				}
 				basesPerAccount.put(pl , profitLoss);
 			}
@@ -331,7 +330,7 @@ public class AccountEntryInvoiceWriter {
 
 	private Account obtainSalesDefaultAccount() throws ManagerBeanException {
 		if (salesDefaultAccount == null) {
-			salesDefaultAccount = obtainDefaultAccount(IDefaultAccounts.SALES_ACCOUNT);
+			salesDefaultAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_SALES_ACC);
 		}
 		if (salesDefaultAccount == null) {
 			throw new ManagerBeanException("Revise el valor de la cuenta contable de ventas en los Parámetros Contables.");
@@ -341,7 +340,7 @@ public class AccountEntryInvoiceWriter {
 	
 	private Account obtainPurchaseDefaultAccount() throws ManagerBeanException {
 		if (purchaseDefaultAccount == null) {
-			purchaseDefaultAccount = obtainDefaultAccount(IDefaultAccounts.PURCHASE_ACCOUNT);
+			purchaseDefaultAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PURCHASE_ACC);
 		}
 		if (purchaseDefaultAccount == null) {
 			throw new ManagerBeanException("Revise el valor de la cuenta contable de compras en los Parámetros Contables.");
@@ -351,27 +350,9 @@ public class AccountEntryInvoiceWriter {
 
 	private Account obtainPrepaymentDefaultAccount() throws ManagerBeanException {
 		if (prepaymentDefaultAccount == null) {
-			prepaymentDefaultAccount = obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
+			prepaymentDefaultAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PREPAYMENT_ACC);
 		}
 		return prepaymentDefaultAccount;
-	}
-
-	private Account obtainDefaultAccount(String paramName) throws ManagerBeanException {
-		IManagerBean appParamsBean = BeanManager.getManagerBean(ApplicationParameter.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(appParamsBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), paramName);
-		List<ITransferObject> list = appParamsBean.getList(criteria);
-		if (list != null && list.size() > 0) {
-			ApplicationParameter param = (ApplicationParameter) list.get(0);
-			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			try {
-				Integer accountId = Integer.parseInt(param.getValue());	
-				return (Account) accountBean.get(accountId);
-			} catch (NumberFormatException e) {
-				throw new ManagerBeanException("Revise el valor de la cuenta contable en los Parámetros Contables.");
-			}
-		}
-		return null;
 	}
 
 	public String obtainConcept(String prefix, Invoice invoice) {

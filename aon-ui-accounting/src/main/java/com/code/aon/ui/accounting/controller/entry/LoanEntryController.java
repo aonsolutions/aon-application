@@ -12,7 +12,6 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
@@ -23,6 +22,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.IAccountingConstants;
@@ -38,15 +38,8 @@ public class LoanEntryController  {
 	private Period period;
 	private Loan loan;
 	private String navigationKey;
-	private AccountingUtil accountingUtil;
 	private AccountBridgeUtil accountBridgeUtil;
 
-	private AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
 	private AccountBridgeUtil getAccountBridgeUtil() {
 		if (accountBridgeUtil == null) {
 			accountBridgeUtil = new AccountBridgeUtil();
@@ -165,7 +158,7 @@ public class LoanEntryController  {
 		accountEntryDetailBean.insert(detail);
 		// Tercer Apunte
 		detail = new AccountEntryDetail();
-		detail.setAccount(getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT));;
+		detail.setAccount(AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_FINAN_EXPENSES_ACC));
 		detail.setAccountEntry(entry);
 		detail.setConcept(getLoan().getDescription());
 		detail.setDebit(getLoan().getExpenses());

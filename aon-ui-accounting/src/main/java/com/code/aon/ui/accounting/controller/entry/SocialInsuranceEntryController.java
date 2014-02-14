@@ -19,7 +19,6 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.SocialInsuranceEntry;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -30,6 +29,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
@@ -71,7 +71,7 @@ public class SocialInsuranceEntryController {
 
 	public Account getSocialInsuranceAccount() throws ManagerBeanException {
 		if (socialInsuranceAccount == null) {
-			socialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.SOCIAL_INSURANCE_ACCOUNT);
+			socialInsuranceAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_SOCIAL_INSURANCE_ACC);
 		}
 		return socialInsuranceAccount;
 	}
@@ -202,7 +202,7 @@ public class SocialInsuranceEntryController {
 		AccountEntry adjustEntry = null;
 		if (dif != 0) {
 			adjustEntry = new AccountEntry();
-			Account companySocialInsuranceAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.COMPANY_SOCIAL_INSURANCE_ACCOUNT);
+			Account companySocialInsuranceAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_COMPANY_SOC_INS_ACC);
 			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 			IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 

@@ -6,10 +6,11 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
@@ -17,8 +18,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
@@ -27,31 +29,22 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountingUtil {
 
-	public Account obtainDefaultAccount(String defaultAccountName) throws ManagerBeanException {
-		IManagerBean accAppParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accAppParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), defaultAccountName);
-		Iterator<ITransferObject> iter = accAppParamBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			ApplicationParameter param = (ApplicationParameter) iter.next();
+	public static Account obtainDefaultAccount(AppParam param) throws ManagerBeanException {
+		Integer id = AppParamUtil.getValueAsInteger(param);
+		if ( id != null ) {
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			Criteria crit = new Criteria();
-			try {
-				Integer accountId = Integer.parseInt(param.getValue());
-				crit.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), accountId);
-				Iterator<ITransferObject> iterAcc = accountBean.getList(crit).iterator();
-				if (iterAcc.hasNext()) {
-					return (Account) iterAcc.next();
-				}
-			} catch (NumberFormatException e ) {
-				throw new ManagerBeanException("No existe la cuenta contable número: " + param.getValue()); 
-			}
+			return (Account) accountBean.get(id);
+		} else {
+			String value = AppParamUtil.getValue(param);
+			if (! StringUtils.isEmpty(value) ) {
+				throw new ManagerBeanException("No existe la cuenta contable número: " + value);
+			}	
 		}
 		return null;
 	}
 	
 	public Account obtainCashAccount() throws ManagerBeanException {
-		return obtainDefaultAccount(IDefaultAccounts.CASH_ACCOUNT);
+		return obtainDefaultAccount(AppParam.ACC_DEFAULT_CASH_ACC);
 	}
 
 	public Date getFirstPeriodInitialDate() throws ManagerBeanException {

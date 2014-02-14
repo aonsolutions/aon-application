@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
-import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
@@ -19,15 +19,6 @@ import com.code.aon.product.strategy.TaxBreakDown;
 public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AccountInvoicePriceStrategy.class.getName());
-	
-	private AccountingUtil accountingUtil;
-
-	private AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
-		}
-		return accountingUtil;
-	}
 
 	protected void setTaxBreakDownAddInfo(TaxBreakDown breakDown, InvoiceDetail invoiceDetail) {
 		InvoiceType invoiceType = invoiceDetail.getInvoice().getType();
@@ -56,14 +47,14 @@ public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 		try {
 			if (taxType.equals(TaxType.RETENTION)) {
 				if (invoiceType.equals(InvoiceType.SALES)) {
-					return getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PAID_RETENTION_ACCOUNT);
+					return AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PAID_RET_ACC);
 				} 
-				return getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.CHARGED_RETENTION_ACCOUNT);
+				return AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_CHARGED_RET_ACC);
 			} 
 			if (invoiceType.equals(InvoiceType.SALES)) {
-				return getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.CHARGE_VAT_ACCOUNT);
+				return AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_CHARGED_VAT_ACC);
 			} 
-			return getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PAID_VAT_ACCOUNT);
+			return AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PAID_VAT_ACC);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error obtaining Tax Account", e);
 		}

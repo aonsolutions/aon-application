@@ -14,7 +14,6 @@ import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -22,6 +21,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.PayMethodTypeDetail;
@@ -159,10 +159,10 @@ public class AccountEntryFinanceWriter {
 						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(fbatchDetail.getFinance().getRegistry());
 					}
 				} else {
-					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PENDING_SALARY_ACCOUNT);
+					registryAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PENDING_SALARY_ACC);
 				}
 			} else {
-				registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
+				registryAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PREPAYMENT_ACC);
 				if (registryAccount == null) {
 					registryAccount = getAccountBridgeUtil().obtainCreditorAccount(fbatchDetail.getFinance().getRegistry());
 				}
@@ -297,10 +297,10 @@ public class AccountEntryFinanceWriter {
 							registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
 						}
 					} else {
-						registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PENDING_SALARY_ACCOUNT);
+						registryAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PENDING_SALARY_ACC);
 					}
 				} else {
-					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
+					registryAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PREPAYMENT_ACC);
 					if (registryAccount == null) {
 						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
 					}
@@ -403,10 +403,10 @@ public class AccountEntryFinanceWriter {
 							registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
 						}
 					} else {
-						registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PENDING_SALARY_ACCOUNT);
+						registryAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PENDING_SALARY_ACC);
 					}
 				} else {
-					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
+					registryAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PREPAYMENT_ACC);
 					if (registryAccount == null) {
 						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(finance.getRegistry());
 					}
@@ -526,10 +526,10 @@ public class AccountEntryFinanceWriter {
 							registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
 						}
 					} else {
-						registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PENDING_SALARY_ACCOUNT);
+						registryAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PENDING_SALARY_ACC);
 					}
 				} else {
-					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
+					registryAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PREPAYMENT_ACC);
 					if (registryAccount == null) {
 						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
 					}
@@ -608,10 +608,10 @@ public class AccountEntryFinanceWriter {
 							registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
 						}
 					} else {
-						registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PENDING_SALARY_ACCOUNT);
+						registryAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PENDING_SALARY_ACC);
 					}
 				} else {
-					registryAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PREPAYMENT_ACCOUNT);
+					registryAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PREPAYMENT_ACC);
 					if (registryAccount == null) {
 						registryAccount = getAccountBridgeUtil().obtainCreditorAccount(tracking.getFinance().getRegistry());
 					}

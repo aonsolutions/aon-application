@@ -31,7 +31,6 @@ import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AccountHelper;
-import com.code.aon.accounting.IDefaultAccounts;
 import com.code.aon.accounting.InvoiceEntryDetail;
 import com.code.aon.accounting.InvoiceEntryHeader;
 import com.code.aon.accounting.Period;
@@ -43,6 +42,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
@@ -360,9 +360,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		WithholdingType withholdingType = (header != null && getHeader().getWithholdingType() != null) ? getHeader().getWithholdingType() : WithholdingType.PROFESSIONAL;
 		SecurityLevel securityLevel = (header != null && getHeader().getSecurityLevel() != null) ? getHeader().getSecurityLevel() : SecurityLevel.OFFICIAL;
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_APP_PARAM_CONTROLLER_NAME);
-		ApplicationParameter param = c.getParameter(IDefaultAccounts.DEFAULT_INVOICE_SERIES);
+		ApplicationParameter param = c.getParameter(AppParam.ACC_DEFAULT_INVOICE_SERIES);
 		String series = (header != null && !StringUtils.isEmpty(getHeader().getSeries())) ? getHeader().getSeries() : (param != null) ? param.getValue() : null;
-		ApplicationParameter taxParam = c.getParameter(IDefaultAccounts.DEFAULT_VAT_PERCENT);
+		ApplicationParameter taxParam = c.getParameter(AppParam.ACC_DEFAULT_VAT_PERCENT);
 		Double taxPercent = null;
 		Double surPercent = null;
 		if (header != null) {
@@ -383,7 +383,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				}
 			}
 		}
-		ApplicationParameter retParam = c.getParameter(IDefaultAccounts.DEFAULT_RETENTION_PERCENT);
+		ApplicationParameter retParam = c.getParameter(AppParam.ACC_DEFAULT_RETENTION_PERCENT);
 		Double retPercent = null;
 		if (header != null) {
 			retPercent = getHeader().getRetPercent();
@@ -584,7 +584,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil
 				.getRegisteredBean(IAccountingConstants.ACCOUNT_APP_PARAM_CONTROLLER_NAME);
 		try {
-			ApplicationParameter param = c.getParameter(IDefaultAccounts.DEFAULT_VAT_PERCENT);
+			ApplicationParameter param = c.getParameter(AppParam.ACC_DEFAULT_VAT_PERCENT);
 			if (param != null) {
 				String value = param.getValue();
 				Integer id = Integer.parseInt(value);
@@ -605,8 +605,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 		if (getHeader().isWithholding()) {
 			try {
-				ApplicationParameter param = c
-						.getParameter(IDefaultAccounts.DEFAULT_RETENTION_PERCENT);
+				ApplicationParameter param = c.getParameter(AppParam.ACC_DEFAULT_RETENTION_PERCENT);
 				if (param != null) {
 					String value = param.getValue();
 					Integer id = Integer.parseInt(value);
@@ -989,11 +988,11 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		Account account;
 		Account balancingAccount = null;
 		if (invoice.getType().equals(InvoiceType.SALES)) {
-			account = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.CHARGE_VAT_ACCOUNT);
+			account = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_CHARGED_VAT_ACC);
 		} else {
-			account = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PAID_VAT_ACCOUNT);
+			account = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PAID_VAT_ACC);
 			if (ignoreTaxFree) {
-				balancingAccount = getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.CHARGE_VAT_ACCOUNT);		
+				balancingAccount = AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_CHARGED_VAT_ACC);		
 			}
 		}
 
@@ -1412,9 +1411,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				}
 				if (getHeader().isWithholding()) {
 					if (isSales()) {
-						getHeader().setRetentionAccount( getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.PAID_RETENTION_ACCOUNT) );
+						getHeader().setRetentionAccount( AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_PAID_RET_ACC) );
 					} else {
-						getHeader().setRetentionAccount( getAccountingUtil().obtainDefaultAccount(IDefaultAccounts.CHARGED_RETENTION_ACCOUNT) );
+						getHeader().setRetentionAccount( AccountingUtil.obtainDefaultAccount(AppParam.ACC_DEFAULT_CHARGED_RET_ACC) );
 					}
 				} else {
 					getHeader().setRetentionAccount( null );
