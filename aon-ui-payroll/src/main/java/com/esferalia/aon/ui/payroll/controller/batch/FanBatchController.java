@@ -146,7 +146,7 @@ public class FanBatchController extends BasicController {
 		super.onReset(event);
 		FanBatch b = (FanBatch) getTo();
 		b.setStatus(FileStatus.PENDING);
-		b.setDate(new Date());
+//		b.setDate(new Date());
 		b.setLiquidationType(LiquidationType.L00);
 	}
 
@@ -249,8 +249,6 @@ public class FanBatchController extends BasicController {
 			FanBatchController batchController = (FanBatchController) FormUtil.getController(IPayrollConstants.FAN_BATCH_CONTROLLER_NAME);
 			FanBatch batch = (FanBatch) batchController.getTo();
 			
-			batch.setDate(new Date());
-			batch.setStatus(FileStatus.PENDING);
 			batchController.accept(null);
 			
 			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();

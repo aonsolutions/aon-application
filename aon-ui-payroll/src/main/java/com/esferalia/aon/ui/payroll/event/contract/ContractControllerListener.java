@@ -128,7 +128,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		contract.setStartDate(new Date());
 		contract.setSeniorityDate(contract.getStartDate());
 		try {
-			ApplicationParameter defaultContractCode = params.getParameter(PayrollAppParamsController.DEFAULT_CONTRACT_CODE);
+			ApplicationParameter defaultContractCode = params.getParameter(PayrollAppParamsController.DEFAULT_CONTRACT_CODE_KEY);
 			if(defaultContractCode!=null && defaultContractCode.getValue()!=null){
 				controller.getParams().setContractModelCode(ContractModelCode.valueOf(defaultContractCode.getValue()));
 			}

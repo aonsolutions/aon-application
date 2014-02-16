@@ -20,7 +20,10 @@ public class FanBatch extends FanBatchDB {
 	@Transient
 	public Integer getYear() {
 		if(getDate()==null){
-			setDate( new Date() );
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.MONTH, -1);
+			setDate(cal.getTime());
 		}
 		return CommonUtil.getYear(getDate());
 	}
@@ -34,7 +37,10 @@ public class FanBatch extends FanBatchDB {
 	@Transient
 	public Month getMonth() {
 		if(getDate()==null){
-			setDate( new Date() );
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.MONTH, -1);
+			setDate(cal.getTime());
 		}
 		return Month.getMonthByValue(CommonUtil.getMonth(getDate()));
 	}
