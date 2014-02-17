@@ -87,12 +87,12 @@ public class FANWriter {
 	
 	private Date getStartDate(){
 		Calendar cal = Calendar.getInstance();
-		cal.set(year, startMonth.ordinal(), 1);
+		cal.set(year, startMonth.ordinal(), 1, 0, 0, 0);
 		return cal.getTime(); 
 	}
 	private Date getEndDate(){
 		Calendar cal = Calendar.getInstance();
-		cal.set(year, endMonth.ordinal(), 1);
+		cal.set(year, endMonth.ordinal(), 1, 23, 59, 59);
 		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
 		return cal.getTime();
 	}
@@ -104,15 +104,9 @@ public class FANWriter {
 		this.eti = eti;
 	}
 
-	public FileOutput createFAN(List<EnterpriseCCC> list, LiquidationType liquidationType, Integer year, Month startMonth, Month endMonth ) throws ManagerBeanException {
-		this.year = year;
-		this.startMonth = startMonth; 
-		this.endMonth= endMonth ; 
-		this.liquidationType = liquidationType;
-		this.totalContractSum = 0;
-		
+	public FileOutput createFAN(boolean testFile, List<EnterpriseCCC> list, LiquidationType liquidationType, Integer year, Month startMonth, Month endMonth ) throws ManagerBeanException {
 		try {
-			ETI eti = createETIRecord( list );
+			ETI eti = createETIRecord( true, list, liquidationType, year, startMonth, endMonth );
 			File file = File.createTempFile("temp", ".FAN");
 			FileFiller fan = new FAN(eti, file.getAbsolutePath());
 			FileOutput output = new FileOutput();
@@ -124,12 +118,17 @@ public class FANWriter {
 		}
 	}
 	
-	private ETI createETIRecord( List<EnterpriseCCC> list ) throws ManagerBeanException {
+	public ETI createETIRecord(boolean testFile, List<EnterpriseCCC> list, LiquidationType liquidationType, Integer year, Month startMonth, Month endMonth ) throws ManagerBeanException {
 		ETI eti = new ETI();
+		this.year = year;
+		this.startMonth = startMonth; 
+		this.endMonth= endMonth ; 
+		this.liquidationType = liquidationType;
+		this.totalContractSum = 0;
 		// TODO Clave proporcionada por la seguridad social
 		Integer clave = 12345678;
 		eti.setClave(clave);
-		eti.setPrueba("P");
+		eti.setPrueba(testFile?"P":" ");
 		for (EnterpriseCCC ccc: list) {
 			EMP emp = createEMPrecord(ccc);
 			if(emp!=null){
@@ -318,7 +317,14 @@ public class FANWriter {
 			datList.add(createDATRecord(contract, autoComplete("P", 2, " ", true), getContractDaysOrHours(contract)));
 		}
 		if(StringUtils.isNotBlank(getJournalReduction(contract))){
-			datList.add(createDATRecord(contract, autoComplete(getJournalReduction(contract), 3, " ", true), getItDays(contract)));
+			Integer itDays = getItDays(contract);
+			String code = getContractCode(contract).getValue();
+			if(code.startsWith("2") || code.startsWith("5")){
+				String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
+				Double dayHours = CommonUtil.round( (Double.parseDouble(weekHours)/5), 0);
+				itDays = itDays * dayHours.intValue();
+			}
+			datList.add(createDATRecord(contract, autoComplete(getJournalReduction(contract), 3, " ", true), itDays));
 		}
 		if(isMonthSalary(contract)){
 			datList.add(createDATRecord(contract, autoComplete("M", 4, " ", true), getContractDaysOrHours(contract)));
@@ -452,8 +458,23 @@ public class FANWriter {
 			ps = conn.prepareStatement(select);
 			ResultSet rs = ps.executeQuery();
 			if(rs.next()){
-				startDate = rs.getDate(1);
-				endDate = rs.getDate(2);
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(rs.getDate(1));
+				startDate = cal.getTime();
+				cal.setTime(rs.getDate(2));
+				endDate = cal.getTime();
+				if(startIncrease!=null && startIncrease>0){
+					Calendar start = Calendar.getInstance();
+					start.setTime(startDate);
+					start.add(Calendar.DAY_OF_MONTH, startIncrease);
+					startDate = start.getTime();
+				}
+				
+				if(startDate.before(getStartDate())) startDate = getStartDate();
+				if(endDate == null || endDate.after(getEndDate())) endDate = getEndDate();
+				
+				int days = Integer.parseInt(String.valueOf(CommonUtil.getDaysBetweenDates(startDate, endDate, false)));
+				return days>=0?days+1:0;
 			}
 		} catch (AonConnectionException e) {
 			// return null
@@ -463,17 +484,7 @@ public class FANWriter {
 			DatabaseUtil.closeQuietly(ps);
 			DatabaseUtil.closeQuietly(conn);
 		}
-		
-		if(startIncrease!=null && startIncrease>0){
-			Calendar start = Calendar.getInstance();
-			start.setTime(startDate);
-			start.add(Calendar.DAY_OF_MONTH, startIncrease);
-			startDate = start.getTime();
-		}
-		
-		if(startDate.before(getStartDate())) startDate = getStartDate();
-		if(endDate == null || endDate.after(getEndDate())) endDate = getEndDate();
-		return differenceBetweenDates(startDate, endDate); 
+		return null;
 	}
 	
 	private Integer getIt1MoreDays(Contract contract) {
@@ -499,17 +510,8 @@ public class FANWriter {
 					createEDLBa01Segment(salary.getCommonBase(), dat);
 					createEDLBa02Segment(salary.getProfessionalBase(), dat);
 				} else {
-					Double itBase = null;
-					ContractLeave it = null;
-					for(ITransferObject to: leaveList){
-						it = (ContractLeave) to;
-						if(it.getType()==LeaveType.COMMON_DISEASE || it.getType()==LeaveType.NON_OCCUPATIONAL_DISEASE){
-							itBase = getItDailyBase(salary.getContract()) * getIt16To20MoreDays(salary.getContract());
-							itBase += getItDailyBase(salary.getContract()) * getIt21MoreDays(salary.getContract());
-						} else if(it.getType()==LeaveType.OCCUPATIONAL_DISEASE){
-							itBase = getItDailyBase(contract) * getIt1MoreDays(contract);
-						}
-					}
+					Double itBase = getItDailyBase(salary.getContract()) * getItDays(salary.getContract());
+					
 					createEDLBa01Segment(salary.getCommonBase() - itBase, dat);
 					createEDLBa02Segment(salary.getProfessionalBase() - itBase, dat);
 				}
@@ -582,7 +584,6 @@ public class FANWriter {
 						}
 					}
 				}
-				
 					
 			} else {				
 				if (leaveList!=null && !leaveList.isEmpty()) {
@@ -591,14 +592,24 @@ public class FANWriter {
 						Double itBase = null;
 						it = (ContractLeave) to;
 						if(it.getType()==LeaveType.COMMON_DISEASE || it.getType()==LeaveType.NON_OCCUPATIONAL_DISEASE){
-							itBase = getItDailyBase(salary.getContract()) * getIt4To15MoreDays(salary.getContract());
-							itBase += getItDailyBase(salary.getContract()) * getIt16To20MoreDays(salary.getContract());
-							itBase += getItDailyBase(salary.getContract()) * getIt21MoreDays(salary.getContract());
+							Integer itDays = getItDays(salary.getContract());
+							// itDays = 30 - dias sano
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(getStartDate());
+							itDays = 30 - (cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays);
+							
+							itBase = getItDailyBase(salary.getContract()) * itDays;
 							createEDLBa01Segment(itBase, dat);
 							createEDLBa02Segment(itBase, dat);
 							createEDLCd01Segment(salary, dat);
 						} else if(it.getType()==LeaveType.OCCUPATIONAL_DISEASE){
-							itBase = getItDailyBase(contract) * getIt1MoreDays(contract);
+							Integer itDays = getItDays(salary.getContract());
+							// itDays = 30 - dias sano
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(getStartDate());
+							itDays = 30 - (cal.getActualMaximum(Calendar.DAY_OF_MONTH)-itDays);
+						
+							itBase = getItDailyBase(salary.getContract()) * itDays;
 							createEDLBa01Segment(itBase, dat);
 							createEDLBa02Segment(itBase, dat);
 							createEDLCd03Segment(salary, dat);
@@ -799,8 +810,9 @@ public class FANWriter {
 	 */
 	private void createEDLCd01Segment(Salary salary, DAT dat) {
 		// TODO 
-		Double amount = getItDailyBase(salary.getContract()) * 0.6 * getIt16To20MoreDays(salary.getContract());
-		amount += getItDailyBase(salary.getContract()) * 0.75 * getIt21MoreDays(salary.getContract());
+		Double dailyBase = getItDailyBase(salary.getContract());
+		Double amount = dailyBase * 0.6 * getIt16To20MoreDays(salary.getContract());
+		amount += dailyBase * 0.75 * getIt21MoreDays(salary.getContract());
 		if (salary.getContract().getRegimeType() != SSRegimeType.ARTIST
 				&& salary.getContract().getRegimeType() != SSRegimeType.AGRICULTURAL
 				&& Double.compare(amount,0.0d)>0) {
@@ -1024,10 +1036,6 @@ public class FANWriter {
 //		0409 Deportistas profesionales
 //		0900 Abogados en despachos de abogados
 //		9909 Personal becario de investigación
-		String tc2 = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.TC2.getName());
-		if(tc2!=null && (tc2.equals("100") || tc2.equals("409") || tc2.equals("900"))){
-			return Integer.parseInt(tc2);
-		}
 		return null;
 	}
 	private String getHandicapIndicator(Contract contract) {
@@ -1060,7 +1068,6 @@ public class FANWriter {
 	private ContractCode getContractCode(Contract contract) {
 		String tc2 = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.TC2.getName());
 		return ContractCode.getContractCodeByValue(tc2);
-//		return tc2!=null && !tc2.isEmpty()?Integer.parseInt(tc2):null;
 	}
 	private String getSourceContractType(Contract contract) {
 		if(getContractCode(contract)==ContractCode.C540){
@@ -1148,9 +1155,9 @@ public class FANWriter {
 	 */
 	private Integer getContractDaysOrHours(Contract contract) {
 		// TODO 
+		Integer itDays = getItDays(contract);
 		String code = getContractCode(contract).getValue();
 		if(code.startsWith("1") || code.startsWith("4")){
-			Integer itDays = getItDays(contract);
 			if(itDays!=null && itDays>0){
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(getStartDate());
@@ -1173,6 +1180,9 @@ public class FANWriter {
 					totalDays++; 
 				}
 				startCal.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			if(itDays!=null && itDays>0){
+				return (totalDays - itDays) * dayHours.intValue();
 			}
 			return totalDays * dayHours.intValue();
 		}

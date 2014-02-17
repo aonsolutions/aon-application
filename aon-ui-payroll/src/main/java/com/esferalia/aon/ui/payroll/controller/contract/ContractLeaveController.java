@@ -185,7 +185,14 @@ public class ContractLeaveController extends BasicController {
 	}
 	
 	public void onContractChange(LookupChangeEvent event){
-		calculateBases( (ContractLeave) this.getTo(), (Contract)event.getNewValue() );
+		if(event.getNewValue()!=null){
+			calculateBases( (ContractLeave) this.getTo(), (Contract)event.getNewValue() );
+		} else {
+			ContractLeave leave = (ContractLeave) this.getTo();
+			leave.setDailyCgcBase( null );
+			leave.setDailyCgpBase( null );
+			leave.setDailyRegBase( null );
+		}
 	}
 	public void onStartDateChange(ActionEvent event){
 		ContractLeave leave = (ContractLeave) this.getTo();
@@ -205,12 +212,13 @@ public class ContractLeaveController extends BasicController {
 //		las de la nomina del mes anterior dividido por 30, si el trabajador tiene salario mensual; 30, 31 ó 28, 29 si tiene salario diario)
 //		el problema viene cuando no existe nomina anterior (cae de baja el primer mes)
 		
-//		leave.setDailyCgcBase( 0.0 );
-//		leave.setDailyCgpBase( 0.0 );
-//		leave.setDailyRegBase( 0.0 );
-		
-		if(leave.getStartDate()!=null && contract!=null && contract.getId()!=null){
+		if(contract!=null && contract.getId()!=null){
 			ISalary salary = PayrollUtils.getInstance().getBeforeDateSalary(contract, leave.getStartDate());
+			if(leave.getStartDate()!=null){
+				salary = PayrollUtils.getInstance().getBeforeDateSalary(contract, leave.getStartDate());
+			} else {
+				salary = PayrollUtils.getInstance().getBeforeDateSalary(contract, new Date());
+			}
 			if(salary==null){
 				try{
 //					salary = PayrollUtils.getInstance().calculateSalary(contract, leave.getStartDate());

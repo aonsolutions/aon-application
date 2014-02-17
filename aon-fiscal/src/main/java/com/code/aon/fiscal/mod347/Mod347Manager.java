@@ -68,7 +68,14 @@ public class Mod347Manager {
 				}
 				int registry = rs.getInt( REGISTRY_ALIAS );
 				detail.setRegistry(registry);
-				detail.setName(rs.getString(NAME_ALIAS));
+				String name = rs.getString(NAME_ALIAS);
+				if (StringUtils.length(name) > 64) {
+					throw new ManagerBeanException( "No se pudo generar la declaracion. El nombre del "
+							+ ("A".equals(type)?"proveedor/acreedor":"cliente")
+							+ " \"" + name + "\" ocupa más de 64 caracteres.");		
+				}
+				detail.setName(name);
+				
 				String countryStr = rs.getString(COUNTRY_ALIAS);
 				Country country = null;
 				if (StringUtils.isNotBlank(countryStr)) {

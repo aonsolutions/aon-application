@@ -54,7 +54,7 @@ public class Mod347ControllerListener extends ControllerAdapter {
 				manager.generateDetails(params);
 			}
 		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException("Imposible generar la declaración",e);
+			throw new ControllerListenerException("Imposible generar la declaración: " + e.getMessage(),e);
 		}
 	}
 

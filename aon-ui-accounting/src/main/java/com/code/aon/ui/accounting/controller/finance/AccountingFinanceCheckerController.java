@@ -379,7 +379,7 @@ public class AccountingFinanceCheckerController {
 			}
 			
 		} catch (ManagerBeanException e) {
-			String msg = "No se pudo realizar el acceso a vencimientos.";
+			String msg = "No se pudo realizar el acceso a apuntes contables.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		}
@@ -395,7 +395,8 @@ public class AccountingFinanceCheckerController {
 			String series = null;
 			Criteria c = new Criteria();
 			if (StringUtils.isEmpty(number)) {
-				number = StringUtils.substringAfter(numDoc, "-");	
+				number = StringUtils.substringAfter(numDoc, "-");
+				c.addNullExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES));
 			} else {
 				series = StringUtils.substringBefore(numDoc, "/");
 				series = StringUtils.substringAfter(series, "-");
@@ -434,8 +435,11 @@ public class AccountingFinanceCheckerController {
 				invoiceController.onLoad(null, invoice.getId()
 						, "accountingFinanceChecker_stripped"
 						, "accountingFinanceChecker.onStrippedBack");
+				return invoiceViewer;
 			}
-			return invoiceViewer;
+			String msg = "No se pudo realizar el acceso a facturas.";
+			AonUtil.addErrorMessage(msg);
+			return null;
 		} catch (NumberFormatException e) {
 			String msg = "No se pudo realizar el acceso a facturas.";
 			AonUtil.addErrorMessage(msg);

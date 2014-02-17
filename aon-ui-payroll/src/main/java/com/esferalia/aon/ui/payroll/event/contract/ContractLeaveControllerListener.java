@@ -36,7 +36,6 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 			throws ControllerListenerException {
 		ContractLeaveController controller = (ContractLeaveController) event.getController();
 		ContractLeave leave = (ContractLeave) controller.getTo();
-		controller.calculateBases(leave, leave.getContract());
 		checkDates(leave);
 	}
 	
@@ -57,11 +56,6 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
-		ContractLeaveController controller = (ContractLeaveController) event.getController();
-		ContractLeave leave = (ContractLeave) controller.getTo();
-		if(leave.getDailyRegBase()==null){
-			controller.calculateBases(leave, leave.getContract());
-		}
 		loadContractLeave(event);
 	}
 	

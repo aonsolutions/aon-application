@@ -93,6 +93,7 @@ public class InvoiceReportParams {
 		setToTaxDate(c.getTime());
 		setToInvoiceDate(c.getTime());
 	    setTaxType(null);
+	    details = null;
 	}
 	
 	public Criteria getCriteria() throws ManagerBeanException {

@@ -49,8 +49,7 @@
 					
 					<aon:outputText 
 						value="#{bundle.payroll_contractLeave_bases}" />
-					<aon:outputText value="&#160;" rendered="#{contractLeave.new}" />
-					<aon:div id="ContractLeave_bases_div" rendered="#{!contractLeave.new}">
+					<aon:div id="ContractLeave_bases_div">
 						<aon:outputLabel for="ContractLeave_dailyCgcBase"
 							title="#{bundle.payroll_contractLeave_dailyCgc_description}" 
 							value="#{bundle.payroll_contractLeave_dailyCgc}:" 
@@ -125,6 +124,8 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" >
 							<a4j:support event="onchanged" reRender="ContractLeave_bases_div" ajaxSingle="#{true}"
+								actionListener="#{contractLeave.onStartDateChange}" />
+							<a4j:support event="oninputblur" reRender="ContractLeave_bases_div" ajaxSingle="#{true}"
 								actionListener="#{contractLeave.onStartDateChange}" />
 						</aon:selectInputDate>
 						

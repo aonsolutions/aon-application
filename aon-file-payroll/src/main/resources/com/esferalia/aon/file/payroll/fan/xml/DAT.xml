@@ -19,7 +19,7 @@
 	<field name="clave_contrato" value="bean" bean="DAT" property="claveContrato" format="AlphaNumeric" pattern="9(3)" />
 	<field name="epigrafe_at_ep" value="bean" bean="DAT" property="epigrafeAtEp" format="Numeric" pattern="9(3)" />
 	<field name="epigrafe_secundario" value="bean" bean="DAT" property="epigrafeSecundario" format="Numeric" pattern="9(3)" />
-	<field name="ocupacion" value="bean" bean="DAT" property="ocupacion" format="AlphaNumeric" pattern="X(2)" />
+	<field name="ocupacion" value="bean" bean="DAT" property="ocupacion" format="AlphabeticLowercase" pattern="X(2)" />
 	<field name="modalidad_cotizacion" value="bean" bean="DAT" property="modalidadCotizacion" format="AlphaNumeric" pattern="X(1)" />
 	<field name="ind_discapacidad" value="bean" bean="DAT" property="indDiscapacidad" format="AlphaNumeric" pattern="X(1)" />
 	<field name="ind_relacion" value="bean" bean="DAT" property="indRelacion" format="Numeric" pattern="9(4)" />
