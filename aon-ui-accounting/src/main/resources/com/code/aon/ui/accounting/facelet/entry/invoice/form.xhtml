@@ -337,7 +337,7 @@
 								<f:selectItems
 									value="#{configCollections.vatDeductionTypes}" />
 							</aon:selectOneMenu>
-							<aon:panelGroup	rendered="#{invoiceEntry.sales or invoiceEntry.purchase}">
+							<aon:panelGroup	rendered="#{invoiceEntry.sales or invoiceEntry.purchase}" styleClass="aon-nowrap">
 								<aon:selectBooleanCheckbox id="Header_surcharge"
 									reRender="invoiceDetails,aonToolbar,InvoiceWizard,retentionTable"
 									styleClass="aon-margin-left"
@@ -345,12 +345,21 @@
 								<aon:outputLabel for="Header_surcharge" styleClass="aon-italic"
 									value="#{bundle.aon_surcharge}" />
 							</aon:panelGroup>
-							<aon:selectBooleanCheckbox id="Header_withholding"
-								styleClass="aon-margin-left"
-								reRender="invoiceDetails,aonToolbar,InvoiceWizard,retentionTable"
-								value="#{invoiceEntry.header.withholding}" />
-							<aon:outputLabel for="Header_withholding"
-								styleClass="aon-italic" value="#{bundle.aon_retention}" />
+							<aon:panelGroup	styleClass="aon-nowrap">
+								<aon:selectBooleanCheckbox id="Header_withholding"
+									styleClass="aon-margin-left"
+									reRender="invoiceDetails,aonToolbar,InvoiceWizard,retentionTable"
+									value="#{invoiceEntry.header.withholding}" />
+								<aon:outputLabel for="Header_withholding"
+									styleClass="aon-italic" value="#{bundle.aon_retention}" />
+							</aon:panelGroup>
+							<aon:panelGroup	styleClass="aon-nowrap">
+								<aon:selectBooleanCheckbox id="Header_vatAccrualPayment"
+									styleClass="aon-margin-left"
+									value="#{invoiceEntry.header.vatAccrualPayment}" />
+								<aon:outputLabel for="Header_vatAccrualPayment"
+									styleClass="aon-italic" value="#{bundle.aon_vat_accrual_payment}" />
+							</aon:panelGroup>
 						</aon:panelGroup>
 					</aon:panelGrid>
 
