@@ -67,7 +67,7 @@ public class Mod390Print extends HttpServlet {
 				}
 			}
 
-			String fileName = "Mod190" + "_" + mod390.getYear() + "_"
+			String fileName = "Mod390" + "_" + mod390.getYear() + "_"
 					+ sb.toString();
 
 			downloadPDF(req, resp, fileName, content.getBytes());
