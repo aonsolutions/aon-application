@@ -19,7 +19,7 @@
 				value="#{bundle.aon_scope}" />
 			<c:if test="#{!(domainSwitcher.parentDomainUserInChildDomain or aonRole.sysAdmin)}">
 				<aon:inputText id="Domain_scope" size="60" disabled="true"
-					value="#{company.scope}" />
+					value="#{company.scope.description}" />
 			</c:if>
 			<c:if test="#{domainSwitcher.parentDomainUserInChildDomain or aonRole.sysAdmin}">						
 				<aon:selectOneMenu id="Domain_scope" 
