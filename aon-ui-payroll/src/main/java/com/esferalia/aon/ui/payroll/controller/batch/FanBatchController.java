@@ -24,7 +24,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -147,7 +146,7 @@ public class FanBatchController extends BasicController {
 		super.onReset(event);
 		FanBatch b = (FanBatch) getTo();
 		b.setStatus(FileStatus.PENDING);
-		b.setDate(new Date());
+//		b.setDate(new Date());
 		b.setLiquidationType(LiquidationType.L00);
 	}
 
@@ -163,8 +162,8 @@ public class FanBatchController extends BasicController {
 				FanBatchAttachment attach;
 				attach = new FanBatchAttachment();
 				attach.setFanBatch( (FanBatch) getTo());
-				attach.setMimeType(MimeType.MIME_TXT);
-				attach.setDescription(getFANWriter().getEti().getFichero());
+				attach.setMimeType(null);
+				attach.setDescription(getFANWriter().getEti().getFichero()+".FAN");
 				attach.setSize(null);
 				attach.setAttachmentType(PayrollBatchAttachmentType.GENERATED_DOCUMENT);
 				attach.setScope(null);
@@ -250,8 +249,6 @@ public class FanBatchController extends BasicController {
 			FanBatchController batchController = (FanBatchController) FormUtil.getController(IPayrollConstants.FAN_BATCH_CONTROLLER_NAME);
 			FanBatch batch = (FanBatch) batchController.getTo();
 			
-			batch.setDate(new Date());
-			batch.setStatus(FileStatus.PENDING);
 			batchController.accept(null);
 			
 			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();

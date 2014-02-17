@@ -92,9 +92,9 @@ public class SQLContractLeaveLoader  {
 		leaves = new TreeSet<Leave>();
 	}
 	
-	
-	
-	
+	public boolean isEmpty() {
+		return leaves.isEmpty();
+	}
 	
 	public boolean isLeaveDay(Calendar day) {
 		Date date = day.getTime();

@@ -205,9 +205,9 @@ public class ContractLeaveController extends BasicController {
 //		las de la nomina del mes anterior dividido por 30, si el trabajador tiene salario mensual; 30, 31 ó 28, 29 si tiene salario diario)
 //		el problema viene cuando no existe nomina anterior (cae de baja el primer mes)
 		
-		leave.setDailyCgcBase( 0.0 );
-		leave.setDailyCgpBase( 0.0 );
-		leave.setDailyRegBase( 0.0 );
+//		leave.setDailyCgcBase( 0.0 );
+//		leave.setDailyCgpBase( 0.0 );
+//		leave.setDailyRegBase( 0.0 );
 		
 		if(leave.getStartDate()!=null && contract!=null && contract.getId()!=null){
 			ISalary salary = PayrollUtils.getInstance().getBeforeDateSalary(contract, leave.getStartDate());

@@ -7,27 +7,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core">
-
-	<c:if test="#{!payrollAppParams.skipPayrollData}" >
-		<aon:div styleClass="aon-group">
-			<aon:div styleClass="aon-group-title">
-				<aon:outputText value="#{bundle.aon_salaries}"/>
-			</aon:div>
-			<aon:div styleClass="aon-group-body"> 
-				<aon:div styleClass="aon-group-body-internal">
-					<aon:panelGrid columns="2">
-						<aon:outputLabel for="salary_model"
-							value="#{bundle.company_enterprise_params_salary_model}" />
-						<aon:selectOneMenu id="salary_model"
-							value="#{payrollAppParams.parameters['PAY_REPORT_salary_PAY'].value}">
-							<f:selectItems value="#{companyCollections.salaryTemplates}" />
-						</aon:selectOneMenu>
-					</aon:panelGrid>
-				</aon:div>
-			</aon:div>
-		</aon:div>
-	</c:if>
 	
+	<!--  
 	<aon:div styleClass="aon-group">
 		<aon:div styleClass="aon-group-title">
 			<aon:outputText value="#{bundle.payroll_contract_newContractData}"/>
@@ -50,8 +31,36 @@
 			</aon:div>
 		</aon:div>
 	</aon:div>
-	
-	<ui:include src="/com/esferalia/aon/ui/sepe/facelet/params/form_content.xhtml" />
+	-->
 
+	<aon:div styleClass="aon-group" style="width: 700px;">
+		<aon:div styleClass="aon-group-title">
+			<aon:outputText value="#{bundle.payroll_ss_menu_group}"/>
+		</aon:div>
+		<aon:div styleClass="aon-group-body"> 
+			<aon:div styleClass="aon-group-body-internal">
+				<aon:panelGrid columns="2">
+
+					<aon:outputLabel for="mutual" 
+						value="#{bundle.payroll_mutual_at_ep}" />
+					<aon:selectOneMenu id="mutual"
+						value="#{payrollAppParams.parameters['PAY_ss_mutual_PAY'].value}" >
+						<f:selectItem itemValue="#{null}" itemLabel="-" />
+						<f:selectItems value="#{payrollCollections.mutualList}" />
+					</aon:selectOneMenu>
+						
+					<aon:outputLabel for="ss_payment_bankAccount" 
+						value="#{bundle.aon_bank_account}(Pago de cuotas)" />
+					<aon:selectOneMenu id="ss_payment_bankAccount" 
+						value="#{payrollAppParams.ssPaymentBankAccount}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{companyCollections.allCompanyBanks}" />
+					</aon:selectOneMenu>
+
+				</aon:panelGrid>	
+			</aon:div>
+		</aon:div>
+	</aon:div>
+	
 </ui:composition>
 

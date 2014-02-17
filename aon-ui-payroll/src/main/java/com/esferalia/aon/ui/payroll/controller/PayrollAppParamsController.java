@@ -20,6 +20,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -28,12 +29,16 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 
 public class PayrollAppParamsController{
 
-	public final static String DEFAULT_CONTRACT_CODE = "PAY_default_contractCode_PAY";
-	public final static String DEFAULT_TRAINING_CENTER = "PAY_default_trainingCenter_PAY";
+	public final static String DEFAULT_CONTRACT_CODE_KEY 	= "PAY_default_contractCode_PAY";
+	public final static String DEFAULT_TRAINING_CENTER_KEY 	= "PAY_default_trainingCenter_PAY";
+	public final static String SS_PAYMENT_BANK_ACCOUNT_KEY 	= "PAY_ss_payment_bankAccount_PAY";
+	public final static String SS_MUTUAL_KEY				= "PAY_ss_mutual_PAY";
 
 	public final static String AVAILABLE_NEW_CONTRACT_CODES = "PAY_available_contract_codes_PAY";
 
 	private TrainingCenter defaultTrainingCenter;
+
+	private RegistryBank ssPaymentBankAccount;
 	
 	private List<ContractCode> availableNewContracts;
 	
@@ -107,12 +112,38 @@ public class PayrollAppParamsController{
 	private void initDefaultTrainingCenter() {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(TrainingCenter.class);
-			if(getParameter(DEFAULT_TRAINING_CENTER).getValue()!=null){
+			if(getParameter(DEFAULT_TRAINING_CENTER_KEY).getValue()!=null){
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_CENTER_ID), Integer.parseInt(getParameter(DEFAULT_TRAINING_CENTER).getValue()));
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TRAINING_CENTER_ID), Integer.parseInt(getParameter(DEFAULT_TRAINING_CENTER_KEY).getValue()));
 				setDefaultTrainingCenter((TrainingCenter) bean.getList(criteria).get(0));
 			} else {
 				setDefaultTrainingCenter((TrainingCenter) bean.createNewTo());
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+	
+	public RegistryBank getSsPaymentBankAccount() {
+		if(ssPaymentBankAccount==null){
+			initSsPaymentBankAccount();
+		}
+		return ssPaymentBankAccount;
+	}
+	
+	public void setSsPaymentBankAccount(RegistryBank ssPaymentBankAccount) {
+		this.ssPaymentBankAccount = ssPaymentBankAccount;
+	}
+
+	private void initSsPaymentBankAccount() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
+			if(getParameter(SS_PAYMENT_BANK_ACCOUNT_KEY).getValue()!=null){
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_ID), Integer.parseInt(getParameter(SS_PAYMENT_BANK_ACCOUNT_KEY).getValue()));
+				setSsPaymentBankAccount((RegistryBank) bean.getList(criteria).get(0));
+			} else {
+				setSsPaymentBankAccount((RegistryBank) bean.createNewTo());
 			}
 		} catch (ManagerBeanException e) {
 			// NADA
@@ -143,10 +174,14 @@ public class PayrollAppParamsController{
 		}
 	}
 
-	public void onAccept(ActionEvent event) throws ManagerBeanException{
-		accept();
-		loadParameters();
-		AonUtil.addInfoMessage("Los parámetros se guardaron correctamente.");		
+	public void onAccept(ActionEvent event) {
+		try {
+			accept();
+		} catch (ManagerBeanException e) {
+			String msg = "Unable to save parameters";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
 	}
 	
 	public void accept() throws ManagerBeanException{
@@ -154,7 +189,7 @@ public class PayrollAppParamsController{
 		Collection<ApplicationParameter>params = parameters.values();
 		beforeBeanUpdate();
 		for(ApplicationParameter param : params){
-			managerBean.update(param);
+			managerBean.insertOrUpdate(param);
 		}
 	}
 
@@ -171,9 +206,16 @@ public class PayrollAppParamsController{
 	public void loadParameters() throws ManagerBeanException{
 		setDefaultTrainingCenter(null);
 		
+		List<String> keyList = new LinkedList<String>();
+		for(String key: defaultParameters.keySet()){
+			keyList.add(key);
+		}
+		
 		parameters = new TreeMap<String, ApplicationParameter>();
 		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
-		List<ITransferObject> list = managerBean.getList(null);
+		Criteria criteria = new Criteria();
+		criteria.addInExpression(managerBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), keyList);
+		List<ITransferObject> list = managerBean.getList(criteria);
 		Iterator<ITransferObject> iter = list.iterator();
 		while (iter.hasNext()) {
 			ApplicationParameter appParam = (ApplicationParameter) iter.next();
@@ -206,15 +248,30 @@ public class PayrollAppParamsController{
 
 		// CONTRACT PARAMS
 		if(getDefaultTrainingCenter()!=null && getDefaultTrainingCenter().getId()!=null){
-			getParameter(DEFAULT_TRAINING_CENTER).setValue(getDefaultTrainingCenter().getId().toString());
+			getParameter(DEFAULT_TRAINING_CENTER_KEY).setValue(getDefaultTrainingCenter().getId().toString());
 		} else {
-			getParameter(DEFAULT_TRAINING_CENTER).setValue(null);
+			getParameter(DEFAULT_TRAINING_CENTER_KEY).setValue(null);
 		}
+		
+		// SS PAYMENT BANK ACCOUNT
+		if(getSsPaymentBankAccount()!=null && getSsPaymentBankAccount().getId()!=null){
+			getParameter(SS_PAYMENT_BANK_ACCOUNT_KEY).setValue(getSsPaymentBankAccount().getId().toString());
+		}
+		if( StringUtils.isNotBlank(getParameter(SS_MUTUAL_KEY).getValue()) ){
+			getParameter(SS_MUTUAL_KEY).setValue(getSSMutual());
+		}
+		
 	}
 
 	private String getDraftTemplateName() throws ManagerBeanException {
 		if( StringUtils.isNotBlank(getParameter(ICompanyConstants.REPORT_SALARY_PARAM).getValue()) ){
 			return getParameter(ICompanyConstants.REPORT_SALARY_PARAM).getValue().replaceFirst(ICompanyConstants.SALARY, ICompanyConstants.SALARY_DRAFT);
+		}
+		return null;
+	}
+	private String getSSMutual() throws ManagerBeanException {
+		if( StringUtils.isNotBlank(getParameter(SS_MUTUAL_KEY).getValue()) ){
+			return getParameter(SS_MUTUAL_KEY).getValue();
 		}
 		return null;
 	}

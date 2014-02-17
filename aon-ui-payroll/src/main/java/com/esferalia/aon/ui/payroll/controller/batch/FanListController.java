@@ -1,7 +1,5 @@
 package com.esferalia.aon.ui.payroll.controller.batch;
 
-import java.util.List;
-
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -10,18 +8,14 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Enterprise;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.payroll.FanBatchDetail;
-import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class FanListController extends BasicController {
@@ -111,11 +105,11 @@ public class FanListController extends BasicController {
 			
 			// ******************************
 			// FIXME: this code is temporary, while the contract fan detail ccc status is not defined
-			LinesController controller = (LinesController) AonUtil.getRegisteredBean(IPayrollConstants.FAN_BATCH_DETAIL_CONTROLLER_NAME);
-			for(ITransferObject to: (List<ITransferObject>)controller.getWrappedList()){
-				FanBatchDetail d = (FanBatchDetail) to;
-				getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.ENTERPRISE_CCC_ID), d.getCcc().getId());
-			}
+//			LinesController controller = (LinesController) AonUtil.getRegisteredBean(IPayrollConstants.FAN_BATCH_DETAIL_CONTROLLER_NAME);
+//			for(ITransferObject to: (List<ITransferObject>)controller.getWrappedList()){
+//				FanBatchDetail d = (FanBatchDetail) to;
+//				getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.ENTERPRISE_CCC_ID), d.getCcc().getId());
+//			}
 			
 			getCriteria().addOrder("EnterpriseCCC.activity.enterprise.registry.name");
 			

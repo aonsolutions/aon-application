@@ -22,6 +22,43 @@
 
 			<aon:div styleClass="aon-scroll-area">
 			
+				<aon:panelGrid id="dataTable" columns="4" style="width: 30%;">
+	
+					<aon:outputLabel value="#{bundle.fanBatch_liquidation_period}" />
+					<aon:div>
+						<h:panelGrid columns="2" rendered="#{!fanBatch.recorded}">
+							<aon:selectOneMenu id="FanBatch_month" value="#{fanBatch.to.month}" >
+								<f:selectItems value="#{commonCollections.months}"  />
+							</aon:selectOneMenu>
+							<rich:inputNumberSpinner id="FanBatch_year" value="#{fanBatch.to.year}"
+				   				inputSize="4" minValue="2009" maxValue="2020">
+				   			</rich:inputNumberSpinner>
+						</h:panelGrid>
+						<aon:outputText value="#{fanBatch.to.date}" rendered="#{fanBatch.recorded}" >
+							<f:convertDateTime pattern="MMMMM yyyy"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:div>	
+					
+					<aon:outputLabel value="#{bundle.fanBatch_liquidation_type}" />
+					<aon:div>
+						<aon:selectOneMenu id="FanBatch_liquidationType" value="#{fanBatch.to.liquidationType}"
+							disabled="#{true}" 
+							rendered="#{!fanBatch.recorded}" >
+							<f:selectItems value="#{payrollCollections.liquidationTypes}"  />
+						</aon:selectOneMenu>
+						<aon:outputText value="#{fanBatch.to.liquidationType}"
+							rendered="#{fanBatch.recorded}" />
+					</aon:div>
+					
+					<aon:outputLabel value="#{bundle.aon_status}" />
+					<aon:outputText value="#{fanBatch.to.status}" />
+					
+					<aon:outputText value="&#160;" />
+					<aon:outputText value="&#160;" />
+					
+				</aon:panelGrid>
+			
 				<aon:panelTabSet id="batchPanelTabSet" rendered="#{!controller.new}">
 					<c:if test="#{fanBatch.newBatchWizard.selectedModel.rowCount > 0}" >
 						<aon:panelTab id="batchedTab" label="#{bundle.finance_checked}">

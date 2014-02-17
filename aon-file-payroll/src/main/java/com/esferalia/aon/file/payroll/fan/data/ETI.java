@@ -12,6 +12,7 @@ public class ETI {
 	private Integer hora;
 	private String fichero;
 	private Integer identificacion;
+	private String prueba;
 	private List<EMP> empresas;
 	private EXC exc;
 	private ETF etf;
@@ -69,6 +70,14 @@ public class ETI {
 		this.identificacion = identificacion;
 	}
 	
+	public String getPrueba() {
+		return prueba;
+	}
+
+	public void setPrueba(String prueba) {
+		this.prueba = prueba;
+	}
+
 	public List<EMP> getEmpresas() {
 		if (empresas == null) {
 			empresas = new LinkedList<EMP>();

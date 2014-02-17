@@ -59,7 +59,9 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 			throws ControllerListenerException {
 		ContractLeaveController controller = (ContractLeaveController) event.getController();
 		ContractLeave leave = (ContractLeave) controller.getTo();
-		controller.calculateBases(leave, leave.getContract());
+		if(leave.getDailyRegBase()==null){
+			controller.calculateBases(leave, leave.getContract());
+		}
 		loadContractLeave(event);
 	}
 	

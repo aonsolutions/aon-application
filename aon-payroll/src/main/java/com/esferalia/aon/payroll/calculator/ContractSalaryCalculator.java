@@ -282,6 +282,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				try {
 					resolvePayment(undefPayment, start, end, chargeDate,
 							expressionContext, taxCalculator, quoteCalculator);
+				} catch (UndefinedTotalPaymentException e) {
+					undefTotalPayments.add(undefPayment);
 				} catch (UndefinedVariablesException e) {
 					if (undefPayment.willBeDefined(paymentsVars))
 						undefPayments.add(undefPayment);
@@ -353,6 +355,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 			salaryBuilder.setProExtBase(quoteCalculator.getProExtBase());
 
 			return taxCalculator.getTotalPayment();
+		} catch (SalaryExpressionException e) {
+			throw e.getSalaryException();
 		} catch (ExpressionException e) {
 			throw new SalaryException(e.getMessage(), e);
 		} catch (AonException e) {

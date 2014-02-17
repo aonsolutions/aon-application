@@ -19,12 +19,8 @@
 			<ui:param name="controllerAttach" value="#{fanBatchAttach}" />
 			
 			<ui:define name="batchContent" >
-				<aon:panelGrid id="dataTable" columns="2" style="width: 30%;"
-					columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
+				<aon:panelGrid id="dataTable" columns="4" style="width: 30%;">
 	
-					<aon:outputLabel value="#{bundle.aon_id}" />
-					<aon:outputText value="#{fanBatch.to.id}" />
-					
 					<aon:outputLabel value="#{bundle.fanBatch_liquidation_period}" />
 					<aon:div>
 						<h:panelGrid columns="2" rendered="#{!fanBatch.recorded}">
@@ -54,6 +50,9 @@
 					
 					<aon:outputLabel value="#{bundle.aon_status}" />
 					<aon:outputText value="#{fanBatch.to.status}" />
+
+					<aon:outputText value="&#160;" />
+					<aon:outputText value="&#160;" />
 					
 				</aon:panelGrid>
 			</ui:define>

@@ -146,8 +146,12 @@ public class CompanyCollectionsController {
     		criteria.addOrder(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS));
     		List<ITransferObject> list = registryAddressBean.getList(criteria);
     		for (ITransferObject to : list) {
-    			RegistryAddress rAddress = (RegistryAddress)to;
-    			addresses.add(new SelectItem(rAddress, rAddress.getShortAddress()));
+    			RegistryAddress address = (RegistryAddress)to;
+				String addressLabel = address.getFullAddress();
+				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getGeozone().getName();
+				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
+				SelectItem item = new SelectItem(address, addressLabel);
+				addresses.add(item);
     		}
     	}
     	return addresses;

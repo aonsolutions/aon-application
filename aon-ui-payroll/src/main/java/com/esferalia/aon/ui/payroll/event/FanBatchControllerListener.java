@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.event;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import com.code.aon.common.ManagerBeanException;
@@ -27,11 +28,14 @@ public class FanBatchControllerListener extends ControllerAdapter {
 		controller.setRecorded(false);
 		FanBatch batch = (FanBatch) controller.getTo();
 		batch.setStatus(FileStatus.PENDING);
-		batch.setDate(new Date());
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.add(Calendar.MONTH, -1);
+		batch.setDate(cal.getTime());
 		controller.setNewBatchWizard( null );
 		controller.getNewBatchWizard().init();
 		FanListController list = (FanListController) FormUtil.getController(IPayrollConstants.FAN_LIST_CONTROLLER_NAME);
-		list.setSearchPanelExpanded(true);
+		list.setSearchPanelExpanded(false);
 		try {
 			controller.onSearchCCCs(null);
 		} catch (ManagerBeanException e) {

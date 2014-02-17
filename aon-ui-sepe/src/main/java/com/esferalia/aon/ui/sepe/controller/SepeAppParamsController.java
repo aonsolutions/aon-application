@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.sepe.controller;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +16,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.sepe.utils.SEPEConnectionProvider;
 
 public class SepeAppParamsController{
@@ -308,7 +311,7 @@ public class SepeAppParamsController{
 
 	public void onAccept(ActionEvent event) throws ManagerBeanException{
 		accept();
-		loadParameters();
+//		loadParameters();
 		AonUtil.addInfoMessage("Los parámetros se guardaron correctamente.");		
 	}
 	
@@ -345,9 +348,15 @@ public class SepeAppParamsController{
 		setValidCertifica2Login(null);
 		setCertifica2TestEnviroment(null);
 		
+		List<String> keyList = new LinkedList<String>();
+		for(String key: defaultParameters.keySet()){
+			keyList.add(key);
+		}
 		parameters = new TreeMap<String, ApplicationParameter>();
 		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
-		List<ITransferObject> list = managerBean.getList(null);
+		Criteria criteria = new Criteria();
+		criteria.addInExpression(managerBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), keyList);
+		List<ITransferObject> list = managerBean.getList(criteria);
 		Iterator<ITransferObject> iter = list.iterator();
 		while (iter.hasNext()) {
 			ApplicationParameter appParam = (ApplicationParameter) iter.next();

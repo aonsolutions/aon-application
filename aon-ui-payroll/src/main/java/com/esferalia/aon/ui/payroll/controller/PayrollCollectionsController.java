@@ -44,6 +44,7 @@ import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
+import com.esferalia.aon.payroll.enumeration.Mutual;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
@@ -107,6 +108,7 @@ public class PayrollCollectionsController {
 	
 	
 	private List<SelectItem> liquidationTypes;
+	private List<SelectItem> mutualList;
 	
 	
 	private String getAbbreviatedSelectItemLabel(String name, int lenght) {
@@ -754,6 +756,18 @@ public class PayrollCollectionsController {
 			}
 		}
 		return liquidationTypes;
+	}
+
+	public List<SelectItem> getMutualList() {
+		if (mutualList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			mutualList = new LinkedList<SelectItem>();
+			for( Mutual mutual : Mutual.values() ) {
+				SelectItem item = new SelectItem(mutual.getValue(), mutual.getName(locale));
+				mutualList.add(item);			
+			}
+		}
+		return mutualList;
 	}
 	
 	public Long getTrainingCenterTotalCount(){

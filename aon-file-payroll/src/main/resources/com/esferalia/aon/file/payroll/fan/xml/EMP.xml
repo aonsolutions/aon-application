@@ -13,6 +13,6 @@
 	<field name="hasta_mes" value="bean" bean="EMP" property="hastaMes" format="Numeric" pattern="9(2)" />
 	<field name="calificador_liquidacion" value="bean" bean="EMP" property="calificadorLiquidacion" format="AlphaNumeric" pattern="X(3)" />
 	<field name="clase_liquidacion" value="bean" bean="EMP" property="claseLiquidacion" format="Numeric" pattern="9(2)" />
-	<field name="free1" value=" " format="AlphaNumeric" pattern="X(3)" />
-	<field name="free2" value=" " format="AlphaNumeric" pattern="X(1)" />
+	<field name="reservado_afiliacion" value=" " format="AlphaNumeric" pattern="X(3)" />
+	<field name="reservado" value=" " format="AlphaNumeric" pattern="X(1)" />
 </register>
