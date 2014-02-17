@@ -196,8 +196,7 @@ public class CheckIntegrity implements Constants {
 					if ( TableUtil.isInternalReference(t) ) {
 						AonInternalReference air = TableUtil.getInternalReference(t);
 						if (air.getColumnName().equals(ci.getName())) {
-							Object discriminator = rs.getObject( air.getDiscriminatorColumnName() );
-							TableInfo fkTable = air.getReferencedTable(discriminator);
+							TableInfo fkTable = air.getReferencedTable(rs);
 							if (fkTable != null) {
 								Integer fkId = getInteger(value);
 								checkId( fkTable, fkId, domainId );

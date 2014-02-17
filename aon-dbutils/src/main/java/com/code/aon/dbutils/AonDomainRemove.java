@@ -71,6 +71,7 @@ public class AonDomainRemove implements Constants {
 
 	public void execute(Integer domain) throws AonSQLException {
 		try {
+			LOGGER.info("Database {}, domain {}", connection.getMetaData().getURL(), domain);
             connection.setAutoCommit(false);
             
             executeStatement(SET_FOREIGN_KEY_CHECKS_0);

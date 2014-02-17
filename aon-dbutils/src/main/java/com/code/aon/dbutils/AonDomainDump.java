@@ -88,6 +88,8 @@ public class AonDomainDump implements Constants {
 	
 	public void execute(Integer[] domains, Writer writer) throws AonSQLException {
 		try {
+			LOGGER.info("Database {}, domains {}", connection.getMetaData().getURL(), ArrayUtils.toString(domains) );
+			
 			this.domains = domains;
 			this.writer = new BufferedWriter(writer);
 
@@ -198,6 +200,7 @@ public class AonDomainDump implements Constants {
 			select = connection.prepareStatement(sentence,t.getColumnNames());
 			rs = select.executeQuery();
 			if ( rs.next() ) {
+				writeLine(t.getLockTables());
 				if ( dumpInfo.isFirstInsert() ) {
 					if ( t.isRecursive() ) {
 						writeLine( t.getSetVariableStatement() );	
@@ -221,7 +224,8 @@ public class AonDomainDump implements Constants {
 					if ( this.listener != null ) {
 						this.listener.dumpTable(t.getName(), dumpInfo.getRows());
 					}											
-				} while (moreRows);				
+				} while (moreRows);
+				writeLine(t.getUnlockTables());
 			}
 			if ( dumpInfo.isEnd() ) {
 				if ( dumpInfo.getRows() > 0 ) {
@@ -303,8 +307,7 @@ public class AonDomainDump implements Constants {
 					if ( TableUtil.isInternalReference(t) ) {
 						AonInternalReference air = TableUtil.getInternalReference(t);
 						if (air.getColumnName().equals(ci.getName())) {
-							Object discriminator = rs.getObject( air.getDiscriminatorColumnName() );
-							TableInfo fkTable = air.getReferencedTable(discriminator);
+							TableInfo fkTable = air.getReferencedTable(rs);
 							if (fkTable != null) {
 								Integer valueInteger = getInteger(value);
 								String newValue = getReferenceValue(t, valueInteger, ci, fkTable.getName());

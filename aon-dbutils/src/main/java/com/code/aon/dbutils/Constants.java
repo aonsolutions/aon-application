@@ -22,9 +22,11 @@ public interface Constants {
 	String CNAE2009_TABLE_NAME = "cnae2009";
 	String CNO_TABLE_NAME = "cno";
 	String COMMERCIAL_TRACKING_TABLE_NAME = "commercial_tracking";
+	String COMPANY_TABLE_NAME = "company";
 	String DOMAIN_TABLE_NAME = "domain";
 	String DELIVERY_DETAIL_TABLE_NAME = "delivery_detail";
 	String FBATCH_TABLE_NAME = "fbatch";
+	String FINANCE_TABLE_NAME = "finance";
 	String FINANCE_TRACKING_TABLE_NAME = "finance_tracking";
 	String GEOZONE_IRPF_HANDICAP_TABLE_NAME = "geozone_irpf_handicap";
 	String GEOZONE_IRPF_DESCENDANT_TABLE_NAME = "geozone_irpf_descendant";
@@ -37,11 +39,13 @@ public interface Constants {
 	String PROFILE_TABLE_NAME = "profile";
 	String PURCHASE_DETAIL_TABLE_NAME = "purchase_detail";
 	String ROLE_TABLE_NAME = "role";
+	String SALARY_TABLE_NAME = "salary";
 	String SALES_DETAIL_TABLE_NAME = "sales_detail";
 	String SERIES_TABLE_NAME = "series";
 	String SESSION_TABLE_NAME = "session";
 	String TASK_TABLE_NAME = "task";	
 	String TAX_TABLE_NAME = "tax";
+	String WEB_INFO_PAGE_TABLE_NAME = "web_info_page";
 	
 	String DOMAIN_COLUMN_NAME = "domain";
 	String NAME_COLUMN_NAME = "name";

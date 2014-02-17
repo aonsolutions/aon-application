@@ -21,6 +21,8 @@ public class TableInfo implements Constants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(TableInfo.class);
 	
+	private final static char TABLE_BOUNDARY = '`';
+	
 	private String name;
 	private ColumnInfo[] columns;
 	private int insertColumnsNumber;
@@ -115,6 +117,10 @@ public class TableInfo implements Constants {
 	public String getName() {
 		return name;
 	}
+
+	public String getStrictName() {
+		return TABLE_BOUNDARY + name + TABLE_BOUNDARY;
+	}
 	
 	public ColumnInfo[] getColumns() {
 		return columns;
@@ -203,7 +209,7 @@ public class TableInfo implements Constants {
 	public String getInsertStatementBegin(boolean allColumns) {
 		StringBuffer buf = new StringBuffer();
 		buf.append("INSERT INTO ");
-		buf.append(getName());
+		buf.append(getStrictName());
 		buf.append(" (");
 		if ( allColumns ) {
 			buf.append(StringUtils.join(getColumnNames(), ","));	
@@ -244,7 +250,7 @@ public class TableInfo implements Constants {
 			buf.append("*");	
 		}
 		buf.append(" FROM ");
-		buf.append(getName());
+		buf.append(getStrictName());
 		buf.append(" WHERE ");
 		if ( DOMAIN_TABLE_NAME.equals(getName()) ) {
 			buf.append( getPkColumn().getName() );	
@@ -291,7 +297,7 @@ public class TableInfo implements Constants {
 		StringBuffer sb = new StringBuffer();
 		sb.append( "SET ").append( getVariableId() ).append(" = ");
 		sb.append("(SELECT (IFNULL(MAX(").append(getPkColumn().getName());
-		sb.append("),0)+1) FROM ").append(getName()).append(");");			
+		sb.append("),0)+1) FROM ").append(getStrictName()).append(");");			
 		return sb.toString();
 	}
 
@@ -309,7 +315,7 @@ public class TableInfo implements Constants {
 	
 	public String getUpdateAutoIncrementStatement() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("ALTER TABLE ").append(getName()).append(" AUTO_INCREMENT = 1;");
+		sb.append("ALTER TABLE ").append(getStrictName()).append(" AUTO_INCREMENT = 1;");
 		return sb.toString();		
 	}
 	
@@ -359,6 +365,14 @@ public class TableInfo implements Constants {
 
 	public void setCyclicColumn(ColumnInfo cyclicColumn) {
 		this.cyclicColumn = cyclicColumn;
+	}
+
+	public String getLockTables() {
+		return "LOCK TABLES " + getStrictName() + " WRITE;";
+	}
+
+	public String getUnlockTables() {
+		return "UNLOCK TABLES;";
 	}
 	
 }

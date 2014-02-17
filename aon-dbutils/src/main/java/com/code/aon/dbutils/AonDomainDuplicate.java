@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -78,10 +79,6 @@ public class AonDomainDuplicate implements Constants {
             	LOGGER.info( "{}-Merging table {}",++i,table.getName() );
             	merge(table);
             }
-
-            // Para resolver el problema de identificadores cruzados.
-            // entre las tablas bank_statement_link y finance_tracking y fbatch 
-            updateBankStatementLink();
             
             connection.commit();
 
@@ -100,38 +97,6 @@ public class AonDomainDuplicate implements Constants {
 			LOGGER.debug("Claves refereciales habilitadas");
 		}
 		return this.newDomain;
-	}
-
-	private void updateBankStatementLink() throws SQLException {
-		TableInfo t = tables.get(BANK_STATEMENT_LINK_TABLE_NAME); 
-        String updateStatement = "UPDATE bank_statement_link SET source_id=? where id = ?";
-		String selectStatement = "SELECT id,source,source_id from bank_statement_link WHERE source IN (0,1) AND source_id IS NOT NULL AND domain = " + newDomain;
-        PreparedStatement update = null; 
-		PreparedStatement select = null;
-		ResultSet rs = null;
-		try {			
-			update = connection.prepareStatement(updateStatement);
-			select = connection.prepareStatement(selectStatement);
-			rs = select.executeQuery();
-			while (rs.next()) {
-				Integer id = rs.getInt(1);
-				Integer source = rs.getInt(2);
-				String fkTable = (source==0)?FINANCE_TRACKING_TABLE_NAME:FBATCH_TABLE_NAME;	
-				Integer sourceId = rs.getInt(3);
-				sourceId = getReferenceValue(t, sourceId, SOURCE_ID_COLUMN_NAME, fkTable);
-				if (sourceId == null) {
-					update.setInt(1, -1);	
-				} else {
-					update.setInt(1, sourceId);	
-				}
-				update.setInt(2, id);
-				update.execute();
-			}
-		} finally {
-			DbUtils.closeQuietly(rs);
-			DbUtils.closeQuietly(select);
-			DbUtils.closeQuietly(update);
-		}					
 	}
 
 	private void mergeDomain( String domainName) throws AonSQLException {
@@ -220,6 +185,16 @@ public class AonDomainDuplicate implements Constants {
 			DbUtils.closeQuietly(rs);
 		}
 	}
+	
+	private Object getObject( ResultSet rs, ColumnInfo ci ) throws SQLException {
+		Object value = null;
+		if ( ci.getType() == Types.LONGVARBINARY) {
+			value = rs.getBlob(ci.getName());
+		} else {
+			value = rs.getObject(ci.getName());
+		}
+		return value;
+	}
 
 	private Integer insert(PreparedStatement insert,ResultSet rs, TableInfo t) throws SQLException {
 		int id = rs.getInt( t.getPkColumn().getName() );
@@ -229,7 +204,7 @@ public class AonDomainDuplicate implements Constants {
 			ColumnInfo[] insertColumns = t.getInsertColumns();
 			for (int i = 0; i < insertColumns.length; i++) {
 				ColumnInfo ci = insertColumns[i];
-				Object value = rs.getObject(ci.getName());
+				Object value = getObject(rs, ci);
 				if (value != null) {
 					if ( ci.isFkColummn() ) {
 						Integer valueInteger = getInteger(value);
@@ -237,9 +212,7 @@ public class AonDomainDuplicate implements Constants {
 					} else if ( TableUtil.isInternalReference(t) ) {
 						AonInternalReference air = TableUtil.getInternalReference(t);
 						if ( air.getColumn().equals(ci) ) {
-							ColumnInfo column = air.getDiscriminatorColumn();
-							Object discriminator = rs.getObject( column.getName() );
-							TableInfo fkTable = air.getReferencedTable( discriminator );
+							TableInfo fkTable = air.getReferencedTable(rs);
 							if (fkTable != null) {
 								Integer valueInteger = getInteger(value);
 								value = getReferenceValue(t, valueInteger, ci.getName(), fkTable.getName());
@@ -249,7 +222,6 @@ public class AonDomainDuplicate implements Constants {
 							}
 						}
 					}
-					
 				}
 				insert.setObject((i + 1),value);
 			}

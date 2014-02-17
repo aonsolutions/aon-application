@@ -43,10 +43,10 @@ public class TableUtil implements Constants {
 		PROFILE_MODULE_DENIED_TABLE_NAME, PROFILE_ACTION_DENIED_TABLE_NAME
 	};
 	
-	private static final AonInternalReference BANK_STATEMENT_LINK_REFERENCE = new AonInternalReference(
+	private static final AonInternalReference BANK_STATEMENT_LINK_REFERENCES = new AonInternalReference(
 			BANK_STATEMENT_LINK_TABLE_NAME, SOURCE_COLUMN_NAME, SOURCE_ID_COLUMN_NAME
-			, new Integer[] {2,3}
-			, new String[] {BANK_CONCEPT_TABLE_NAME,ACCOUNT_TABLE_NAME});
+			, new Integer[] {0,1,2,3}
+			, new String[] {FINANCE_TRACKING_TABLE_NAME, FBATCH_TABLE_NAME, BANK_CONCEPT_TABLE_NAME,ACCOUNT_TABLE_NAME});
 
 	private static final AonInternalReference APP_PARAM_REFERENCES = new AonInternalReference( 
 			APP_PARAM_TABLE_NAME, NAME_COLUMN_NAME, VALUE_COLUMN_NAME
@@ -57,7 +57,6 @@ public class TableUtil implements Constants {
 				,"ACC_DEFAULT_CHARGED_VAT_ACC"
 				,"ACC_DEFAULT_COMPANY_SOC_INS_ACC"
 				,"ACC_DEFAULT_COMPENSATION_ACC"
-				,"ACC_DEFAULT_DEBT_INTEREST_ACC"
 				,"ACC_DEFAULT_FINAN_EXPENSES_ACC"
 				,"ACC_DEFAULT_PAID_RET_ACC"
 				,"ACC_DEFAULT_PAID_VAT_ACC"
@@ -69,7 +68,13 @@ public class TableUtil implements Constants {
 				,"ACC_SALARY_CHARGED_RET_ACC"
 				,"ACC_DEFAULT_PERIOD"
 				,"ACC_DEFAULT_RETENTION_PERCENT"
-				,"ACC_DEFAULT_VAT_PERCENT"}
+				,"ACC_DEFAULT_VAT_PERCENT"
+				,"ACC_DEFAULT_PREPAYMENT_ACC"
+				,"ACC_DEFAULT_ASSET_LOST_ACC"
+				,"ACC_DEFAULT_ASSET_PROFIT_ACC"
+				,"AON_CUSTOMIZE_HERITABLE_ID"
+				,"AON_CUSTOMIZE_ID"
+				,"WEBINFO_HOMEPAGE_ID"}
 			, new String[] {
 				 ACCOUNT_TABLE_NAME
 				,ACCOUNT_TABLE_NAME
@@ -86,10 +91,15 @@ public class TableUtil implements Constants {
 				,ACCOUNT_TABLE_NAME
 				,ACCOUNT_TABLE_NAME
 				,ACCOUNT_TABLE_NAME
-				,ACCOUNT_TABLE_NAME
 				,ACCOUNT_PERIOD_TABLE_NAME
 				,TAX_TABLE_NAME
-				,TAX_TABLE_NAME});
+				,TAX_TABLE_NAME
+				,ACCOUNT_TABLE_NAME
+				,ACCOUNT_TABLE_NAME
+				,ACCOUNT_TABLE_NAME
+				,COMPANY_TABLE_NAME
+				,COMPANY_TABLE_NAME
+				,WEB_INFO_PAGE_TABLE_NAME});
 	
 	private static final AonInternalReference INVOICE_DETAIL_REFERENCES = new AonInternalReference(
 			INVOICE_DETAIL_TABLE_NAME, SOURCE_COLUMN_NAME, SOURCE_ID_COLUMN_NAME
@@ -100,14 +110,20 @@ public class TableUtil implements Constants {
 			ALARM_TABLE_NAME, SOURCE_COLUMN_NAME, SOURCE_ID_COLUMN_NAME
 			, new Integer[] {0,1,3,4}
 			, new String[] {NOTICE_TABLE_NAME,TASK_TABLE_NAME,COMMERCIAL_TRACKING_TABLE_NAME,MK_ACTION_TARGET_TABLE_NAME});
+
+	private static final AonInternalReference FINANCE_REFERENCES = new AonInternalReference(
+			FINANCE_TABLE_NAME, null, SOURCE_ID_COLUMN_NAME
+			, new Object[0]
+			, new String[] {SALARY_TABLE_NAME});
 	
 	private static final Map<String,AonInternalReference> INTERNAL_REFERENCES_TABLES = new HashMap<String, AonInternalReference>();
 
 	static {
-		INTERNAL_REFERENCES_TABLES.put(BANK_STATEMENT_LINK_TABLE_NAME,BANK_STATEMENT_LINK_REFERENCE);
-		INTERNAL_REFERENCES_TABLES.put(INVOICE_DETAIL_TABLE_NAME,INVOICE_DETAIL_REFERENCES);
-		INTERNAL_REFERENCES_TABLES.put(ALARM_TABLE_NAME,ALARM_REFERENCES);
-		INTERNAL_REFERENCES_TABLES.put(APP_PARAM_TABLE_NAME,APP_PARAM_REFERENCES);
+		INTERNAL_REFERENCES_TABLES.put(BANK_STATEMENT_LINK_REFERENCES.getTableName(),BANK_STATEMENT_LINK_REFERENCES);
+		INTERNAL_REFERENCES_TABLES.put(INVOICE_DETAIL_REFERENCES.getTableName(),INVOICE_DETAIL_REFERENCES);
+		INTERNAL_REFERENCES_TABLES.put(ALARM_REFERENCES.getTableName(),ALARM_REFERENCES);
+		INTERNAL_REFERENCES_TABLES.put(APP_PARAM_REFERENCES.getTableName(),APP_PARAM_REFERENCES);
+		INTERNAL_REFERENCES_TABLES.put(FINANCE_REFERENCES.getTableName(),FINANCE_REFERENCES);
 	}
 	
 	private Map<String,TableInfo> tables;
@@ -207,7 +223,9 @@ public class TableUtil implements Constants {
 			TableInfo table = tables.get(air.getTableName());
 			air.setTable(table);
 			air.setColumn(table.getColumn(air.getColumnName()));
-			air.setDiscriminatorColumn(table.getColumn(air.getDiscriminatorColumnName()));
+			if ( air.getDiscriminatorColumnName() != null ) {
+				air.setDiscriminatorColumn(table.getColumn(air.getDiscriminatorColumnName()));	
+			}
 			TableInfo[] fkTables = new TableInfo[air.getFkTableNames().length];
 			for( int i = 0; i < air.getFkTableNames().length; i++ ) {
 				fkTables[i] = tables.get(air.getFkTableNames()[i]);

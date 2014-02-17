@@ -1,5 +1,8 @@
 package com.code.aon.dbutils;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.apache.commons.lang.ArrayUtils;
 
 public class AonInternalReference {
@@ -22,7 +25,7 @@ public class AonInternalReference {
 		this.fkTableNames = fkTables;
 	}
 	
-	public TableInfo getReferencedTable(Object discriminator) {
+	private TableInfo getReferencedTable(Object discriminator) {
 		int i = ArrayUtils.indexOf(discriminators, discriminator); 
 		if ( i != -1) {
 			return fkTables[i];
@@ -77,5 +80,16 @@ public class AonInternalReference {
 	public void setFkTables(TableInfo[] fkTables) {
 		this.fkTables = fkTables;
 	}
+
+	public TableInfo getReferencedTable( ResultSet rs ) throws SQLException {
+		TableInfo fkTable = null;
+		if ( getDiscriminatorColumnName() != null ) {
+			Object discriminator = rs.getObject( getDiscriminatorColumnName() );
+			fkTable = getReferencedTable(discriminator);				
+		} else {
+			fkTable = this.fkTables[0];
+		}
+		return fkTable;
+	}	
 	
 }

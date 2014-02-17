@@ -54,7 +54,6 @@ public class AonDomainDatabaseSwitcher {
 				,"ACC_DEFAULT_CHARGED_VAT_ACC"
 				,"ACC_DEFAULT_COMPANY_SOC_INS_ACC"
 				,"ACC_DEFAULT_COMPENSATION_ACC"
-				,"ACC_DEFAULT_DEBT_INTEREST_ACC"
 				,"ACC_DEFAULT_FINAN_EXPENSES_ACC"
 				,"ACC_DEFAULT_PAID_RET_ACC"
 				,"ACC_DEFAULT_PAID_VAT_ACC"
@@ -70,7 +69,6 @@ public class AonDomainDatabaseSwitcher {
 				,"ACC_DEFAULT_VAT_PERCENT"}
 			, new String[] {
 				 ACCOUNT
-				,ACCOUNT
 				,ACCOUNT
 				,ACCOUNT
 				,ACCOUNT
@@ -465,7 +463,7 @@ public class AonDomainDatabaseSwitcher {
 							AonInternalReference air = INTERNAL_REFERENCES_TABLES.get(t.getName());
 							if (air.getColumnName().equals(column)) {
 								Object discriminator = rs.getObject(air.getDiscriminatorColumnName());
-								TableInfo fkTable = air.getReferencedTable( discriminator );
+								TableInfo fkTable = air.getReferencedTable(rs);
 								if (fkTable != null) {
 									if ("ACC_DEFAULT_INVOICE_SERIES".equals(discriminator)) {
 										value = ensureAccountSeries( value );
