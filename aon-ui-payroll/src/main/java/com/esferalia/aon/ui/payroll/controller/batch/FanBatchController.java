@@ -153,7 +153,7 @@ public class FanBatchController extends BasicController {
 	public void onCreateDisk(ActionEvent event) {
 		try {
 			FanBatch batch = (FanBatch) getTo();
-			File file = getFANWriter().createFAN(getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
+			File file = getFANWriter().createFAN(true, getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
 //			File file = null;
 			IManagerBean bean = BeanManager.getManagerBean(FanBatchAttachment.class);
 			if (file != null) {

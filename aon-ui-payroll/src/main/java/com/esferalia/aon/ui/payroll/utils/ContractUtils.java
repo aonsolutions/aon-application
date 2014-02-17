@@ -184,20 +184,6 @@ public class ContractUtils {
 			throw new AbortProcessingException(msg,e);
 		}
 		try {
-			if(params.getIrpf()!=null){
-				data = new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.IRPF_PERCENT.getName() );
-				data.setExpression(params.getIrpf().toString());
-				bean.insert(data);
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el porcentaje IRPF. (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
-		}
-		try {
 			if(params.getQuoteGroup()!=null){
 				data = new ContractData();
 				data.setContract(contract);
@@ -404,25 +390,6 @@ public class ContractUtils {
 			String msg = "Imposible actualizar los datos de contrato. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 			throw new ControllerListenerException(msg,e);
-		}
-		try {
-			ContractData irpfData = obtainContractData(contract, ContextVariable.IRPF_PERCENT.getName());
-			if(params.getIrpf()!=null){
-				data = irpfData!=null?irpfData:new ContractData();
-				data.setContract(contract);
-				data.setStartDate(contract.getStartDate());
-				data.setEndDate(contract.getEndDate());
-				data.setName( ContextVariable.IRPF_PERCENT.getName() );
-				data.setExpression(params.getIrpf().toString());
-				bean.insertOrUpdate(data);
-			} else {
-				if(irpfData != null){
-					bean.remove(irpfData);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar el porcentaje IRPF. (" +e.getMessage() + ")";
-			AonUtil.addErrorMessage(msg);
 		}
 		try {
 			ContractData quoteGroupData = obtainContractData(contract, ContextVariable.QUOTE_GROUP.getName());
@@ -651,9 +618,6 @@ public class ContractUtils {
 	
 	public void loadContractData(Contract contract, ContractParams params) throws ManagerBeanException {
 		Map<String, String> map = getContractDataMap(contract);
-		if(map.get(ContextVariable.IRPF_PERCENT.getName())!=null){
-			params.setIrpf(Double.parseDouble(map.get(ContextVariable.IRPF_PERCENT.getName())));
-		}
 		if(map.get(ContextVariable.QUOTE_GROUP.getName())!=null){
 			params.setQuoteGroup(QuoteGroup.getQuoteGroupByValue(map.get(ContextVariable.QUOTE_GROUP.getName())));
 		}
