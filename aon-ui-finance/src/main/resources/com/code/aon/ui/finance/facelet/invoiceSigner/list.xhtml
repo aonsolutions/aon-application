@@ -26,7 +26,7 @@
 						<ui:param name="signController" value="#{saleInvoiceSigner}" />
 						<ui:param name="skipSignButton" value="#{invoiceSigner.selectionEmpty}" />
 						<ui:param name="skipCancelSignButton" value="#{invoiceSigner.selectionEmpty}" />
-						<ui:param name="signButtonReRender" value="invoiceSignerDataDiv,aonToolbar" />
+						<ui:param name="signButtonReRender" value="invoiceSignerDataDiv,invoiceSignerToolbar" />
 					</ui:include>
 				</ui:define>				
 				
@@ -39,14 +39,14 @@
 					<aon:commandButton title="#{bundle.aon_check_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 						value="#{bundle.aon_check_all}"
-						ajaxSingle="true" reRender="invoiceSignerDataDiv, aonToolbar"
+						ajaxSingle="true" reRender="invoiceSignerDataDiv,invoiceSignerToolbar"
 						actionListener="#{invoiceSigner.checkAll}"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 					<aon:commandButton title="#{bundle.aon_uncheck_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 						value="#{bundle.aon_uncheck_all}"
-						ajaxSingle="true" reRender="invoiceSignerDataDiv, aonToolbar"
+						ajaxSingle="true" reRender="invoiceSignerDataDiv,invoiceSignerToolbar"
 						actionListener="#{invoiceSigner.checkNone}"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
@@ -65,7 +65,7 @@
 								</f:facet>
 								<aon:selectBooleanCheckbox id="Included_Row_checked"
 									value="#{invoiceSigner.rowChecked}"
-									ajaxSingle="true" reRender="aonToolbar" />	
+									ajaxSingle="true" reRender="invoiceSignerToolbar" />	
 							</aon:column>
 		
 							<aon:column alias="Invoice.referenceCode"
@@ -121,7 +121,7 @@
 			</aon:div>
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
-			<ui:param name="signButtonreRender" value="invoiceSignerDataDiv,aonToolbar" />
+			<ui:param name="signButtonreRender" value="invoiceSignerDataDiv,invoiceSignerToolbar" />
 			<ui:param name="skipSmartCardTab" value="#{true}" />
 			<aon:methodParam name="signActionListener" value="#{invoiceSigner.onSignSelected}" type="actionListener" />
 		</ui:include>
