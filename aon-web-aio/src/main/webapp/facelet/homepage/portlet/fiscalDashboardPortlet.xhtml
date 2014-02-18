@@ -8,6 +8,7 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 		<aon:div styleClass="aon-portlet">
+			<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 			<aon:div styleClass="aon-portlet-title">								
 				<aon:div styleClass="aon-portlet-title-buttons">
 				</aon:div>
@@ -148,7 +149,9 @@
 							</aon:selectOneMenu>
 						</aon:div>
 						<aon:div id="bar_chart_div" style="width: 100%; height: 180px;"/>
+<<!-- 						
 						<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+ -->						
 						<script type="text/javascript"> 
 							google.load("visualization", "1", {'callback' : 'drawCharts' ,'packages':["corechart"], 'language': 'en'});
 							function drawCharts(){
