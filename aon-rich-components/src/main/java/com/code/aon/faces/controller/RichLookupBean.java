@@ -494,7 +494,7 @@ public class RichLookupBean {
 	 * @return the criteria
 	 * @throws ManagerBeanException
 	 */
-	private void updateCriteria(List<JoinProperty> joinProperties) throws ManagerBeanException {
+	protected void updateCriteria(List<JoinProperty> joinProperties) throws ManagerBeanException {
 		Criteria criteria = getController().getCriteria();
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		for (JoinProperty jp : joinProperties) {
