@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -75,7 +76,21 @@ public class EmployeesServiceAsyncDecorator implements EmployeesServiceAsync {
 		employeesServiceAsync.getEnterpriseCosts(enterpriseId,
 				new AsyncCallbackWrapper<List<Cost>>(callback));
 	}
-
+	
+	@Override
+	public void getWorkplaceStats(int workplaceId,
+			AsyncCallback<Statistics> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getWorkplaceStats(workplaceId, new AsyncCallbackWrapper<Statistics>(callback));
+	}
+	
+	@Override
+	public void getEnterpriseStats(int enterpriseId,
+			AsyncCallback<Statistics> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getEnterpriseStats(enterpriseId, new AsyncCallbackWrapper<Statistics>(callback));
+	}
+	
 	public void getSalaries(Employee employee,
 			AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException {

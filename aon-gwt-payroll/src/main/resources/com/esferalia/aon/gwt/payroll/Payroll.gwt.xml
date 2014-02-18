@@ -6,6 +6,9 @@
 
 	<inherits name="com.google.gwt.i18n.I18N" />
 	
+	<!-- Chart Tools -->
+	<inherits name='com.google.gwt.visualization.Visualization'/>
+	
 	<!-- Spanish language, independent of country -->
 	<extend-property name="locale" values="es" />
 	<!-- English language, independent of country -->

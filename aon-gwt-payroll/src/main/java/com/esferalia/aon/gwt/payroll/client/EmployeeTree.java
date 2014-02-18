@@ -50,7 +50,8 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Listener {
+public class EmployeeTree implements EntryPoint, Employees.Listener,
+		MetaData.Listener {
 
 	static String CALC_URL = URL.encode(GWT.getModuleBaseURL() + "calculate");
 
@@ -110,7 +111,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 
 	}
-
 
 	class ShowResultsCommand implements ScheduledCommand {
 
@@ -237,7 +237,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
 			requestDataBuffer.append("&" + ISSUE_DATE + "="
 					+ DATE_FORMAT.format(DateUtils.getLastDayOfMonth(month)));
-			
+
 			for (Employee employee : calcDialog.getSelectedData())
 				requestDataBuffer.append("&" + EMPLOYEES + "="
 						+ employee.getId());
@@ -583,9 +583,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					ctrlReportCmd = new CTRLReportEnterpriseCommand(
 							"Informe Control Festivos, Libres y Vacaciones..."),
 					AON.AON_ICON_EXCEL, AON.AON_ICON_CMD_BUTTON);
-			addItem("Informe A3",
-					a3ReportCmd = new A3ReportEnterpriseCommand(
-							"Informe A3..."), AON.AON_ICON_EXCEL,
+			addItem("Informe A3", a3ReportCmd = new A3ReportEnterpriseCommand(
+					"Informe A3..."), AON.AON_ICON_EXCEL,
 					AON.AON_ICON_CMD_BUTTON);
 		}
 
@@ -687,6 +686,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private Cost cost;
 	private Irpf irpf;
 	private Salary salary;
+	private Statistics stats;
 	private SalaryDraft salaryDraft;
 	private SalaryPreview salaryPreview;
 	private EventsDraft eventsDraft;
@@ -696,13 +696,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private DeductionEditor deductionEditor;
 
 	private ResultsPanel resultsPanel;
-	
+
 	private EmployeeContextMenu employeeContextMenu;
 	private WorkplaceContextMenu workplaceContextMenu;
 	private EnterpriseContextMenu enterpriseContextMenu;
 
 	private Enterprise enterprise;
-
 
 	/**
 	 * This method constructs the application user interface by instantiating
@@ -734,6 +733,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		cost = new Cost();
 		irpf = new Irpf();
 		salary = new Salary();
+		stats = new Statistics();
 		documents = new Documents();
 		eventsDraft = new EventsDraft();
 		salaryDraft = new SalaryDraft();
@@ -790,19 +790,27 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(salary);
 		salary.setSalaryDocuments(docs);
 	}
-	
+
 	@Override
 	public void onIrpfsSelected(IrpfDocuments docs) {
 		employeeDetail.setWidget(irpf);
 		irpf.setIrpfDocuments(docs);
 	}
-	
+
 	@Override
 	public void onCostsSelected(CostDocuments docs) {
 		cost.setTitle("Costes");
 		employeeDetail.setWidget(cost);
 		cost.setCostDocuments(docs);
+
+	}
+
+	@Override
+	public void onStatisticsSelected(
+			com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
 		
+		employeeDetail.setWidget(stats);
+		stats.setStatistics(statistics);
 	}
 
 	@Override
@@ -811,7 +819,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(cost);
 		cost.setCostDocuments(docs);
 	}
-	
+
 	@Override
 	public void onDocumentsSelected(ISpinnable<IDocument> docs) {
 		employeeDetail.setWidget(documents);
@@ -874,14 +882,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		eventsDraft.setEventsDraftObject(eventsDraftObject);
 
 	}
+
 	// ---------------------------------------------- MetaData.Listener methods
-	
+
 	@Override
 	public void onBonusConceptSelected(Bonus bonus) {
 		bonusEditor.setBonus(bonus);
 		employeeDetail.setWidget(bonusEditor);
 	}
-	
+
 	@Override
 	public void onPaymentConceptSelected(Payment payment) {
 		paymentEditor.setPayment(payment);
@@ -893,7 +902,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		deductionEditor.setDeduction(deduction);
 		employeeDetail.setWidget(deductionEditor);
 	}
-	
 
 	// ------------------------------------------------------- UiHandler methods
 

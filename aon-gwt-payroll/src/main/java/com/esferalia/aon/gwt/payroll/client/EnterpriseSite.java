@@ -90,6 +90,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	private JSF jsf;
 	private Cost cost;
 	private Salary salary;
+	private Statistics stats;
 	private Documents documents;
 	
 	
@@ -103,6 +104,8 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	public void onModuleLoad() {
 		// Inject rich styles.
 		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
+		GWT.<MainEntryPoint.AonResources> create(
+				MainEntryPoint.AonResources.class).css().ensureInjected();
 
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
@@ -115,6 +118,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		jsf = new JSF();
 		cost = new Cost();
 		salary = new Salary();
+		stats = new Statistics();
 		salary.hideDeleteButton();
 		documents = new Documents();
 		employees.addListener(this);
@@ -149,6 +153,12 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		cost.setTitle("Costes");
 		detailPanel.setWidget(cost);
 		cost.setCostDocuments(docs);
+	}
+	
+	@Override
+	public void onStatisticsSelected(com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
+		detailPanel.setWidget(stats);
+		stats.setStatistics(statistics);
 	}
 	
 	@Override

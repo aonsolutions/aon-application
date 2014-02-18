@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
+import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.core.client.GWT;
@@ -72,6 +73,8 @@ public class Employees extends ResizeComposite implements
 
 		void onIrpfsSelected(IrpfDocuments docs);
 
+		void onStatisticsSelected(Statistics stats);
+
 		void onSalariesSelected(SalaryDocuments docs);
 
 		void onSalariesSelected(SalariesDocuments docs);
@@ -102,8 +105,10 @@ public class Employees extends ResizeComposite implements
 	private static final int EMPLOYEE_SCROLL_GAP = 5;
 	private static final int ENTERPRISE_COSTS_INDEX = 0;
 	private static final int ENTERPRISE_SALARIES_INDEX = 1;
+	private static final int ENTERPRISE_STATISTICS_INDEX = 2;
 	private static final int WORKPLACE_COSTS_INDEX = 0;
 	private static final int WORKPLACE_SALARIES_INDEX = 1;
+	private static final int WORKPLACE_STATISTICS_INDEX = 2;
 	private static final int EMPLOYEE_SALARIES_INDEX = 0;
 	private static final int EMPLOYEE_IRPFOUTCOMES_INDEX = 3; // TODO : It's not
 																// statci ???
@@ -218,6 +223,7 @@ public class Employees extends ResizeComposite implements
 
 		addImageItem(enterpriseItem, "Costes", images.costs());
 		addImageItem(enterpriseItem, "N\u00F3minas", images.salaries());
+		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
 
 		if (extended) {
 			List<Activity> activities = enterprise.getActivities();
@@ -241,6 +247,8 @@ public class Employees extends ResizeComposite implements
 
 			addImageItem(workplaceItem, "Costes", images.costs());
 			addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
+			//addImageItem(workplaceItem, "Estad\u00EDsticas",
+			//		images.statistics());
 
 			if (extended) {
 				final TreeItem eventsItem = addImageItem(workplaceItem,
@@ -411,6 +419,8 @@ public class Employees extends ResizeComposite implements
 			onSalariesSelected((SalariesDocuments) userObject);
 		} else if (userObject instanceof CostDocuments) {
 			onCostsSelected((CostDocuments) userObject);
+		} else if (userObject instanceof Statistics) {
+			onStatisticsSelected((Statistics) userObject);
 		} else if (userObject instanceof SalaryDocuments) {
 			onSalariesSelected(item);
 		} else if (userObject instanceof ISpinnable<?>) {
@@ -524,39 +534,63 @@ public class Employees extends ResizeComposite implements
 
 	private void onEnterpriseOpen(TreeItem enterpriseItem) {
 
-		final TreeItem costsItem = enterpriseItem
-				.getChild(ENTERPRISE_COSTS_INDEX);
-		if (null != costsItem.getUserObject()) {
-			return;
-		} // end-if: Cost of enterprise have been already loaded.
-
-		final TreeItem salariesItem = enterpriseItem
-				.getChild(ENTERPRISE_SALARIES_INDEX);
-
 		Enterprise enterprise = (Enterprise) enterpriseItem.getUserObject();
 
-		employeesService.getEnterpriseCosts(enterprise.getId(),
-				new AsyncCallback<List<Cost>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-						Window.alert(caught.getLocalizedMessage());
+		final TreeItem costsItem = enterpriseItem
+				.getChild(ENTERPRISE_COSTS_INDEX);
 
-					}
+		if (null == costsItem.getUserObject()) {
+			final TreeItem salariesItem = enterpriseItem
+					.getChild(ENTERPRISE_SALARIES_INDEX);
 
-					@Override
-					public void onSuccess(List<Cost> costs) {
-						CostDocuments documents = new CostDocuments(costs,
-								employeesService);
-						costsItem.setUserObject(documents);
+			employeesService.getEnterpriseCosts(enterprise.getId(),
+					new AsyncCallback<List<Cost>>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Auto-generated method stub
+							Window.alert(caught.getLocalizedMessage());
 
-						SalariesDocuments salariesDocuments = new SalariesDocuments(
-								costs, employeesService);
-						salariesItem.setUserObject(salariesDocuments);
-					}
-				});
+						}
+
+						@Override
+						public void onSuccess(List<Cost> costs) {
+							CostDocuments documents = new CostDocuments(costs,
+									employeesService);
+							costsItem.setUserObject(documents);
+
+							SalariesDocuments salariesDocuments = new SalariesDocuments(
+									costs, employeesService);
+							salariesItem.setUserObject(salariesDocuments);
+						}
+					});
+		} // end-if: Cost of enterprise have been already loaded.
+
+		final TreeItem statisticsItem = enterpriseItem
+				.getChild(ENTERPRISE_STATISTICS_INDEX);
+
+		if (null == statisticsItem.getUserObject()) {
+
+			employeesService.getEnterpriseStats(enterprise.getId(),
+					new AsyncCallback<Statistics>() {
+
+						@Override
+						public void onSuccess(Statistics stats) {
+							statisticsItem.setUserObject(stats);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Apéndice de método generado automáticamente
+							Window.alert(caught.getLocalizedMessage());
+						}
+					});
+		}
+
 	}
 
+	/*
+	 * Workplace Item has been expanded +.
+	 */
 	private void onWorkplaceOpen(final TreeItem workplaceItem) {
 
 		Workplace workplace = (Workplace) workplaceItem.getUserObject();
@@ -589,6 +623,27 @@ public class Employees extends ResizeComposite implements
 						}
 					});
 		} // end-if: Costs of this workplace haven't been loaded yet.
+		/*
+		final TreeItem statisticsItem = workplaceItem
+				.getChild(ENTERPRISE_STATISTICS_INDEX);
+
+		if (null == statisticsItem.getUserObject()) {
+
+			employeesService.getWorkplaceStats(workplace.getId(),
+					new AsyncCallback<Statistics>() {
+
+						@Override
+						public void onSuccess(Statistics stats) {
+							statisticsItem.setUserObject(stats);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Apéndice de método generado automáticamente
+							Window.alert(caught.getLocalizedMessage());
+						}
+					});
+		}*/
 
 		if (workplaceItem.getChildCount() > getEmployeesOffset()) {
 			return;
@@ -610,6 +665,7 @@ public class Employees extends ResizeComposite implements
 						loadEmployess(workplaceItem, employees, limit);
 					}
 				});
+
 
 	}
 
@@ -688,6 +744,12 @@ public class Employees extends ResizeComposite implements
 	private void onSalariesSelected(SalariesDocuments docs) {
 		for (Listener listener : listeners) {
 			listener.onSalariesSelected(docs);
+		}
+	}
+
+	private void onStatisticsSelected(Statistics stats) {
+		for (Listener listener : listeners) {
+			listener.onStatisticsSelected(stats);
 		}
 	}
 
@@ -1063,7 +1125,11 @@ public class Employees extends ResizeComposite implements
 	}
 
 	private int getWorkplacesOffset() {
-		return extended ? 2 : 1;
+		return extended ? 3 : 2;
+	}
+
+	private int getEmployeesOffset() {
+		return extended ? 4 : 2;
 	}
 
 	/**
@@ -1078,10 +1144,6 @@ public class Employees extends ResizeComposite implements
 		for (int i = childCount - 1; i >= employeesOffset; i--) {
 			workplaceItem.getChild(i).remove();
 		}
-	}
-
-	private int getEmployeesOffset() {
-		return extended ? 4 : 2;
 	}
 
 	private void showEndDate(boolean endDate) {

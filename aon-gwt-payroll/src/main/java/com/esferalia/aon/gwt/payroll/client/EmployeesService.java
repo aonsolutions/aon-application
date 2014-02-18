@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
+import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -40,7 +42,12 @@ public interface EmployeesService extends RemoteService {
 
 	List<Cost> getEnterpriseCosts(int enterpriseId)
 			throws IllegalArgumentException;
+	
+	Statistics getWorkplaceStats(int workplaceId)
+			throws IllegalArgumentException;
 
+	Statistics getEnterpriseStats(int enterpriseId)
+			throws IllegalArgumentException;
 	List<Salary> getSalaries(Employee employee) throws IllegalArgumentException;
 
 	List<Irpf> getIrpfs(Employee employee) throws IllegalArgumentException;

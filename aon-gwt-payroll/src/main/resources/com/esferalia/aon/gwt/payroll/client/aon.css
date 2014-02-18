@@ -46,6 +46,18 @@
 	gwt-image: "draft" ; 
 }
 
+@sprite .aon-icon-linechart {
+	width: auto;
+	height: auto;
+	gwt-image: "linechart" ;
+}
+
+@sprite .aon-icon-columnchart {
+	width: auto;
+	height: auto;
+	gwt-image: "columnchart" ;
+}
+
 @sprite .aon-icon-salaries {
 	gwt-image: "salaries" ; 
 }
