@@ -157,7 +157,7 @@ public class CompanyCustomizeController extends RegistryAttachController {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		list.add( new SelectItem(FAVICON_NAME, FAVICON_NAME + " (16x16)") );
 		list.add( new SelectItem(LOGIN_LOGO_NAME, LOGIN_LOGO_NAME + " (130x44)") );
-		list.add( new SelectItem(HEADER_LOGO_NAME, HEADER_LOGO_NAME + " (80x27)") );
+		list.add( new SelectItem(HEADER_LOGO_NAME, HEADER_LOGO_NAME + " (97x32)") );
 		list.add( new SelectItem(TOOLBAR_LOGO_NAME, TOOLBAR_LOGO_NAME + " (16x16)") );
 		list.add( new SelectItem(STATUS_START_NAME, STATUS_START_NAME + " (114x37)") );
 		list.add( new SelectItem(STATUS_STOP_NAME, STATUS_STOP_NAME + " (114x37)") );

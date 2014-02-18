@@ -8,9 +8,9 @@
 
 	<aon:div id="aonHeader" styleClass="aon-header">
 		<aon:panelGrid columns="3" width="100%" 
-			columnClasses="aon-header-name,aon-header-options aon-width-300">
+			columnClasses="aon-header-name aon-vertical-align-bottom,aon-header-options aon-width-300">
 			
-			<aon:div style="margin-top: 6px">
+			<aon:panelGroup>
 				<aon:outputConnectionStatus id="aonStatus" layout="block"
 					startStyle="#{customize.statusStartStyle}"
 					startStyleClass="aon-outputConnectionStatus-start"
@@ -20,18 +20,20 @@
 				<aon:div id="status_error"
 					style="#{customize.statusFailedStyle} display: none;"
 					styleClass="aon-outputConnectionStatus-failed" />
-				<aon:graphicImage style="margin-left: 150px;"
-					value="#{customize.headerLogo}" />
-				<c:if test="#{customize.separator != null}">					
-					<aon:outputText value="#{customize.separator}"
+				<aon:div style="margin-bottom:2px;">
+					<aon:graphicImage style="margin-left: 150px;"
+						value="#{customize.headerLogo}" />
+					<c:if test="#{customize.separator != null}">					
+						<aon:outputText value="#{customize.separator}"
+							style="#{customize.fontStyle}"
+							styleClass="aon-nowrap aon-header-domain-title"/>
+					</c:if>
+					<aon:outputText value="#{domainSwitcher.domainName}"
 						style="#{customize.fontStyle}"
 						styleClass="aon-nowrap aon-header-domain-title"/>
-				</c:if>
-				<aon:outputText value="#{domainSwitcher.domainName}"
-					style="#{customize.fontStyle}"
-					styleClass="aon-nowrap aon-header-domain-title"/>
-			</aon:div>
-
+				</aon:div>
+			</aon:panelGroup>
+			
 			<aon:div styleClass="aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
 				style="color:#999;">
 				<aon:form id="headerOptionsForm">
