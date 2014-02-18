@@ -30,7 +30,8 @@
 	<aon:div>
 		<aon:selectOneMenu id="Company_streetType" required="true"
 			label="#{bundle.registry_street_type}"
-			value="#{controller.mainAddress.streetType}">
+			value="#{controller.mainAddress.streetType}"
+			valueChangeListener="#{controller.addressChanged}">
 			<f:selectItems value="#{registryCollections.streetTypes}" />
 		</aon:selectOneMenu>
 		<aon:inputText id="Company_address" required="true"

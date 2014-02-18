@@ -49,14 +49,14 @@
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="ContractLeave_endDate-From"
 							disabled="#{contractLeaveSearch.active}"
-							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+							value="#{contractLeaveSearch.endDateFrom}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 						<aon:outputLabel for="ContractLeave_endDate-To" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="ContractLeave_endDate-To"
 							disabled="#{contractLeaveSearch.active}"
-							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+							value="#{contractLeaveSearch.endDateTo}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
