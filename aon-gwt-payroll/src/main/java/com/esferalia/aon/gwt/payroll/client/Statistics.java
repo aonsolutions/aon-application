@@ -88,8 +88,9 @@ public class Statistics extends ResizeComposite {
 	 *            Instancia de la clase Statistics
 	 */
 	public void setStatistics(
-			final com.esferalia.aon.gwt.payroll.shared.Statistics pStats) {
+			final com.esferalia.aon.gwt.payroll.shared.Statistics pStats, boolean pInizialite) {
 		this.statistics = pStats;
+		inicilizated = pInizialite;
 
 		// Create a callback to be called when the visualization API
 		// has been loaded.		
@@ -154,7 +155,7 @@ public class Statistics extends ResizeComposite {
 	void onYearChanged(ChangeEvent event) {
 		selectedYear = Integer.valueOf(dateListBox.getValue(dateListBox
 				.getSelectedIndex()));
-		setStatistics(statistics);
+		setStatistics(statistics, true);
 		
 		/*if (estado == 0) {
 			setStatistics(statistics);
@@ -167,9 +168,9 @@ public class Statistics extends ResizeComposite {
 	private void initDateListBox() {
 		dateListBox.clear();
 
-		for (int x = 0; x < statistics.getEnterpriseStatisticYears().size(); x++) {
+		for (int x = 0; x < statistics.getStatisticYears().size(); x++) {
 			dateListBox.addItem(String.valueOf(statistics
-					.getEnterpriseStatisticYears().get(x).getYear()));
+					.getStatisticYears().get(x).getYear()));
 		}
 
 		dateListBox.setSelectedIndex(dateListBox.getItemCount() - 1);
@@ -233,43 +234,43 @@ public class Statistics extends ResizeComposite {
 
 		int yearIndex = 0;
 
-		for (int x = 0; x < pStat.getEnterpriseStatisticYears().size(); x++) {
+		for (int x = 0; x < pStat.getStatisticYears().size(); x++) {
 
-			if (pStat.getEnterpriseStatisticYears().get(x).getYear() == selectedYear) {
+			if (pStat.getStatisticYears().get(x).getYear() == selectedYear) {
 				yearIndex = x;
 			}
 		}
 
-		for (int x = 0; x < pStat.getEnterpriseStatisticYears().get(yearIndex)
+		for (int x = 0; x < pStat.getStatisticYears().get(yearIndex)
 				.getStatsDataLength(); x++) {
 
 			data.addRow();
 			int w = 0;
-			data.setValue(x, w, pStat.getEnterpriseStatisticYears()
+			data.setValue(x, w, pStat.getStatisticYears()
 					.get(yearIndex).getStatsData(x).getMonthName());
 			w++;		
 			data.setValue(x, w,
-					pStat.getEnterpriseStatisticYears().get(yearIndex)
+					pStat.getStatisticYears().get(yearIndex)
 					.getStatsData(x).getLiquid());
 			data.setFormattedValue(x, w, f.format(data.getValueDouble(x, w)));			 
 			w++;
 			data.setValue(x, w,
-					pStat.getEnterpriseStatisticYears().get(yearIndex)
+					pStat.getStatisticYears().get(yearIndex)
 							.getStatsData(x).getIrpf());
 			data.setFormattedValue(x, w, f.format(data.getValueDouble(x, w)));
 			w++;
 			data.setValue(x, w,
-					pStat.getEnterpriseStatisticYears().get(yearIndex)
+					pStat.getStatisticYears().get(yearIndex)
 							.getStatsData(x).getSSEmployee());
 			data.setFormattedValue(x, w, f.format(data.getValueDouble(x, w)));
 			w++;
 			data.setValue(x, w,
-					pStat.getEnterpriseStatisticYears().get(yearIndex)
+					pStat.getStatisticYears().get(yearIndex)
 							.getStatsData(x).getOtros());		
 			data.setFormattedValue(x, w, f.format(data.getValueDouble(x, w)));
 			w++;
 			data.setValue(x, w,
-					pStat.getEnterpriseStatisticYears().get(yearIndex)
+					pStat.getStatisticYears().get(yearIndex)
 							.getStatsData(x).getSSEnterprise());
 			data.setFormattedValue(x, w, f.format(data.getValueDouble(x, w)));		
 			
@@ -320,35 +321,35 @@ public class Statistics extends ResizeComposite {
 		
 		NumberFormat f = NumberFormat.getCurrencyFormat();
 
-		for (int x = 0; x < pStat.getEnterpriseStatisticYears().size(); x++) {
+		for (int x = 0; x < pStat.getStatisticYears().size(); x++) {
 			
-			if (pStat.getEnterpriseStatisticYears().get(x).getYear() == selectedYear) {
+			if (pStat.getStatisticYears().get(x).getYear() == selectedYear) {
 				yearIndex = x;
 			}
 		}
 
-		for (int x = 0; x < pStat.getEnterpriseStatisticYears().get(yearIndex)
+		for (int x = 0; x < pStat.getStatisticYears().get(yearIndex)
 				.getStatsDataLength(); x++) {
 
 			data.addRow();
 			int w = 0;
 			data.setValue(x, w,
-					pStat.getEnterpriseStatisticYears().get(yearIndex)
+					pStat.getStatisticYears().get(yearIndex)
 							.getStatsData(x).getMonthName());
 			w++;
 			data.setValue(x, w,
-					pStat.getEnterpriseStatisticYears().get(yearIndex)
+					pStat.getStatisticYears().get(yearIndex)
 							.getStatsData(x).getSSEnterprise());
 			data.setFormattedValue(x, w, f.format(data.getValueDouble(x, w)));
 			
 			w++;
 			data.setValue(x, w,
-					pStat.getEnterpriseStatisticYears().get(yearIndex)
+					pStat.getStatisticYears().get(yearIndex)
 							.getStatsData(x).getTotalPayment());
 			data.setFormattedValue(x, w, f.format(data.getValueDouble(x, w)));
 			w++;			
 			data.setValue(x, w,
-					pStat.getEnterpriseStatisticYears().get(yearIndex)
+					pStat.getStatisticYears().get(yearIndex)
 							.getStatsData(x).getGastoTotal());
 			data.setFormattedValue(x, w, f.format(data.getValueDouble(x, w)));
 

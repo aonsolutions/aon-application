@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 
-public class EnterpriseStatisticYears implements Serializable {
+public class StatisticYears implements Serializable {
 
 	/**
 	 * 
@@ -12,7 +12,7 @@ public class EnterpriseStatisticYears implements Serializable {
 	private int year;	
 	private StaticalData[] statsData = new StaticalData[12];
 	
-	public EnterpriseStatisticYears() {
+	public StatisticYears() {
 		
 		year = 0;
 		

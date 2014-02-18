@@ -247,8 +247,8 @@ public class Employees extends ResizeComposite implements
 
 			addImageItem(workplaceItem, "Costes", images.costs());
 			addImageItem(workplaceItem, "N\u00F3minas", images.salaries());
-			//addImageItem(workplaceItem, "Estad\u00EDsticas",
-			//		images.statistics());
+			addImageItem(workplaceItem, "Estad\u00EDsticas",
+					images.statistics());
 
 			if (extended) {
 				final TreeItem eventsItem = addImageItem(workplaceItem,
@@ -623,7 +623,7 @@ public class Employees extends ResizeComposite implements
 						}
 					});
 		} // end-if: Costs of this workplace haven't been loaded yet.
-		/*
+		
 		final TreeItem statisticsItem = workplaceItem
 				.getChild(ENTERPRISE_STATISTICS_INDEX);
 
@@ -643,7 +643,7 @@ public class Employees extends ResizeComposite implements
 							Window.alert(caught.getLocalizedMessage());
 						}
 					});
-		}*/
+		}
 
 		if (workplaceItem.getChildCount() > getEmployeesOffset()) {
 			return;
@@ -1129,7 +1129,7 @@ public class Employees extends ResizeComposite implements
 	}
 
 	private int getEmployeesOffset() {
-		return extended ? 4 : 2;
+		return extended ? 5 : 3;
 	}
 
 	/**

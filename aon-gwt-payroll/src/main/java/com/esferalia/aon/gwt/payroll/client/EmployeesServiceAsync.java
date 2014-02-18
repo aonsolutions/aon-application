@@ -50,7 +50,6 @@ public interface EmployeesServiceAsync {
 
 	void getEnterpriseStats(int enterpriseId, AsyncCallback<Statistics> callback)
 			throws IllegalArgumentException;
-
 	//***********************************************************
 	
 	void getSalaries(Employee employee, AsyncCallback<List<Salary>> callback)

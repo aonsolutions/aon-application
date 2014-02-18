@@ -810,7 +810,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
 		
 		employeeDetail.setWidget(stats);
-		stats.setStatistics(statistics);
+		stats.setStatistics(statistics, false);
 	}
 
 	@Override
