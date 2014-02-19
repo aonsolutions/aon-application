@@ -4,15 +4,34 @@ package com.code.aon.ui.fiscal.controller;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_BATCH_DISK_ERROR;
 
 import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,7 +53,6 @@ import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.fiscal.controller.model.Mipf;
 import com.code.aon.ui.fiscal.file.MOD303Writer;
@@ -247,10 +265,11 @@ public class VatTaxDeclarationController extends LinesController {
 	
 	public boolean isAeatValidable() {
 		VatTaxDeclaration to = (VatTaxDeclaration) getTo();
-		return ( !isNew() && to.isFromCommonTerritory() && isScriptPresent() );
+		return ( !isNew() && to.isFromCommonTerritory() && isScriptPresent() && to.getVatTax().getYear() < 2014);
 	}
 	private String validateAeatFile() {
-		getMipf().validateAeatFile(fileOutput);
+		VatTaxDeclaration to = (VatTaxDeclaration) getTo();
+		getMipf().validateAeatFile(to.getVatTax().getYear(),fileOutput);
 		return null;
 	}
 	
@@ -311,7 +330,130 @@ public class VatTaxDeclarationController extends LinesController {
 	}
 	
 	public boolean isScriptPresent() {
-		return getMipf().isScriptPresent();
+		VatTaxDeclaration to = (VatTaxDeclaration) getTo();
+		return to != null && to.getVatTax() != null && getMipf().isScriptPresent(to.getVatTax().getYear());
 	}
 	
+	public String onAEATPrint() {
+		try {
+			InputStream input = getFileOutput().getFile() != null
+					?new FileInputStream(getFileOutput().getFile())
+					:new ByteArrayInputStream(getFileOutput().getContent());
+			InputStreamReader fis = new InputStreamReader(input,"ISO-8859-1");
+			byte[] o = IOUtils.toByteArray(fis, "ISO-8859-1");
+			String fileString = new String(o);
+			fileString = fileString.replace("\n", "");
+			fileString = fileString.replace("\r", "");
+			
+			String type = "D";
+			String nif = "44971071E";
+			String urlParameters =
+					"HID=IE43030B" 
+					+ "&TIA="+URLEncoder.encode(type, "ISO-8859-1")
+					+ "&TIA="						
+					+ "&NDC="+URLEncoder.encode(nif, "ISO-8859-1")
+					+ "&NRC="
+					+ "&ING="
+					+ "&NRR="
+					+ "&ICO="
+					+ "&NR1="
+					+ "&IN1="
+					+ "&NR2="
+					+ "&IN2="
+					+ "&NR3="
+					+ "&IN3="
+					+ "&NR4="
+					+ "&IN4="
+					+ "&NR5="
+					+ "&IN5="
+					+ "&NR6="
+					+ "&IN6="
+					+ "&NR7="
+					+ "&IN7="
+					+ "&IDI=ES"
+					+ "&F01="+URLEncoder.encode(fileString, "ISO-8859-1")
+					+ "&TXT="
+					+ "&FIR="
+					+ "&FIN=F" 
+					+ "&EJF=2014"
+					+ "&MOD=303"
+					+ "&PRG=EWLINKZU";
+			
+			//String location= "https://www2.agenciatributaria.gob.es/es13/l/zi21zilk0021";
+			String location= "https://www6.aeat.es/es13/l/zi21zilk0021";
+			
+    		FacesContext faces = FacesContext.getCurrentInstance();
+            HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+			
+			URL url = new URL(location);
+
+			SSLContext ctx = SSLContext.getInstance("TLS");
+			ctx.init(new KeyManager[0],
+					new TrustManager[] { new DefaultTrustManager() },
+					new SecureRandom());
+			SSLContext.setDefault(ctx);
+
+			HttpsURLConnection connection = (HttpsURLConnection) url
+					.openConnection();
+			connection.setHostnameVerifier(new HostnameVerifier() {
+
+				@Override
+				public boolean verify(String arg0, SSLSession arg1) {
+					return true;
+				}
+			});
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+			connection.setRequestProperty("charset", "ISO-8859-1");
+			connection.setRequestProperty("Content-Length","" + Integer.toString(urlParameters.getBytes().length));
+			connection.setUseCaches(false);
+
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.flush();
+			wr.close();
+
+			DataInputStream in = new DataInputStream(connection.getInputStream());
+
+			// resp.setContentType(MimeType.MIME_PDF.getName()); //
+//			response.setHeader("Content-disposition", "attachment; filename=\""
+//					+ "Mod303" + ".pdf\";");
+			IOUtils.copy(in, response.getOutputStream());
+			response.flushBuffer();
+			connection.disconnect();
+	        response.flushBuffer();
+	        faces.responseComplete();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (KeyManagementException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	private static class DefaultTrustManager implements X509TrustManager {
+
+		@Override
+		public void checkClientTrusted(X509Certificate[] arg0, String arg1)
+				throws CertificateException {
+		}
+
+		@Override
+		public void checkServerTrusted(X509Certificate[] arg0, String arg1)
+				throws CertificateException {
+		}
+
+		@Override
+		public X509Certificate[] getAcceptedIssuers() {
+			return null;
+		}
+	}
 }

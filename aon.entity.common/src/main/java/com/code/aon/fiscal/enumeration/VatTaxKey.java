@@ -16,44 +16,50 @@ public enum VatTaxKey implements IResourceable, IStringEnum   {
 	// ---------------------------------------------------------------------
 	// A1=REGIMEN GENERAL
 	A1	("A1"	,true	,true	,true	,true	,false	,false	,false	,null,null),
-	// A2=RECARGO EQUIVALENCIA
-	A2	("A2"	,true	,true	,true	,true	,false	,false	,false	,null,null),
-	// A3=ADQUISIONES INTRACOMUNITARIAS
+	// A3=ADQUISIONES INTRACOMUNITARIAS DE BIENES
 	A3	("A3"	,true	,true	,true	,false	,false	,false	,false	,null,null),
+	// A31=ADQUISIONES INTRACOMUNITARIAS DE SERVICIOS
+	A31	("A31"	,true	,true	,true	,false	,false	,false	,false	,null,null),
 	// A4=INVERSION DE SUJETO PASIVO
 	A4	("A4"	,true	,true	,true	,false	,false	,false	,false	,null,null),
 	// A5=MODIFICACION BASES Y CUOTAS
-	A5	("A5"	,false	,false	,true	,false	,false	,false	,false	,null,null),
+	A5	("A5"	,true	,false	,true	,false	,false	,false	,false	,null,null),
+	// A2=RECARGO EQUIVALENCIA
+	A2	("A2"	,true	,true	,true	,true	,false	,false	,false	,null,null),
+	// A21=MODIFICACION BASES Y CUOTAS RECARGO EQUIVALENCIA 
+	A21	("A21"	,true	,false	,true	,false	,false	,false	,false	,null,null),
 	// AT=TOTAL DEVENGADO
-	AT	("AT"	,false	,false	,true	,false	,true	,true	,false	,new VatTaxKey[]{VatTaxKey.A1,VatTaxKey.A2,VatTaxKey.A3,VatTaxKey.A4,VatTaxKey.A5},null),
+	AT	("AT"	,false	,false	,true	,false	,true	,true	,false	,new VatTaxKey[]{VatTaxKey.A1,VatTaxKey.A2,VatTaxKey.A21,VatTaxKey.A3,VatTaxKey.A31,VatTaxKey.A4,VatTaxKey.A5},null),
 	// B1=OP. INTERIORES DE BIENES CORRIENTES
-	B1	("B1"	,false	,false	,true	,false	,false	,false	,true	,null,null),
+	B1	("B1"	,true	,false	,true	,false	,false	,false	,true	,null,null),
 	// B2=OP. INTERIORES DE BIENES DE INVERSION
-	B2	("B2"	,false	,false	,true	,false	,false	,false	,true	,null,null),
+	B2	("B2"	,true	,false	,true	,false	,false	,false	,true	,null,null),
 	// B3=OP. INTERIORES DE GASTOS
-	B3	("B3"	,false	,false	,true	,false	,false	,false	,true	,null,null),
+	B3	("B3"	,true	,false	,true	,false	,false	,false	,true	,null,null),
 	// BT=TOTAL OP. INTERIORES
-	BT	("BT"	,false	,false	,true	,false	,true	,false	,false	,new VatTaxKey[]{VatTaxKey.B1,VatTaxKey.B2,VatTaxKey.B3},null),
+	BT	("BT"	,true	,false	,true	,false	,true	,false	,false	,new VatTaxKey[]{VatTaxKey.B1,VatTaxKey.B2,VatTaxKey.B3},null),
 	// C1=IMPORTACIONES DE BIENES CORRIENTES
-	C1	("C1"	,false	,false	,true	,false	,false	,false	,false	,null,null),
+	C1	("C1"	,true	,false	,true	,false	,false	,false	,false	,null,null),
 	// C2=IMPORTACIONES DE BIENES DE INVERSION
-	C2	("C2"	,false	,false	,true	,false	,false	,false	,false	,null,null),
+	C2	("C2"	,true	,false	,true	,false	,false	,false	,false	,null,null),
 	// CT=TOTAL IMPORTACIONES
-	CT	("CT"	,false	,false	,true	,false	,true	,false	,false	,new VatTaxKey[]{VatTaxKey.C1,VatTaxKey.C2},null),
+	CT	("CT"	,true	,false	,true	,false	,true	,false	,false	,new VatTaxKey[]{VatTaxKey.C1,VatTaxKey.C2},null),
 	// D1=ADQ. INTRACOM. DE BIENES CORRIENTES
-	D1	("D1"	,false	,false	,true	,false	,false	,false	,true	,null,null),
+	D1	("D1"	,true	,false	,true	,false	,false	,false	,true	,null,null),
 	// D2=ADQ. INTRACOM. DE BIENES DE INVERSION
-	D2	("D2"	,false	,false	,true	,false	,false	,false	,true	,null,null),
+	D2	("D2"	,true	,false	,true	,false	,false	,false	,true	,null,null),
 	// D3=TOTAL ADQ. INTRACOM. DE GASTOS
-	D3	("D3"	,false	,false	,true	,false	,false	,false	,true	,null,null),
+	D3	("D3"	,true	,false	,true	,false	,false	,false	,true	,null,null),
 	// DT=TOTAL ADQ. INTRACOM.
-	DT	("DT"	,false	,false	,true	,false	,true	,false	,false	,new VatTaxKey[]{VatTaxKey.D1,VatTaxKey.D2,VatTaxKey.D3},null),
+	DT	("DT"	,true	,false	,true	,false	,true	,false	,false	,new VatTaxKey[]{VatTaxKey.D1,VatTaxKey.D2,VatTaxKey.D3},null),
+	// RD=RECTIFICACION DE DEDUCCIONES
+	RD	("RD"	,true	,false	,true	,true	,false	,false	,false	,null,null),
 	// ET=COMPENSACION REGIMEN ESPECIAL A,G Y P.
 	ET	("ET"	,false	,false	,true	,false	,false	,false	,false	,null,null),
 	// RI=REGULARIZACION DE INVERSIONES
 	RI	("RI"	,false	,false	,true	,false	,false	,false	,false	,null,null),
 	// FT=TOTAL A DEDUCIR
-	FT	("FT"	,false	,false	,true	,false	,true	,true	,false	,new VatTaxKey[]{VatTaxKey.BT,VatTaxKey.CT,VatTaxKey.DT,VatTaxKey.ET,VatTaxKey.RI},null),
+	FT	("FT"	,false	,false	,true	,false	,true	,true	,false	,new VatTaxKey[]{VatTaxKey.BT,VatTaxKey.CT,VatTaxKey.DT,VatTaxKey.ET,VatTaxKey.RD,VatTaxKey.RI},null),
 	// DF=DIFERENCIA
 	DF	("DF"	,false	,false	,true	,false	,true	,true	,false	,new VatTaxKey[]{VatTaxKey.AT},new VatTaxKey[]{VatTaxKey.FT}),
 	// SP=LINEA EN BLANCO
@@ -81,7 +87,15 @@ public enum VatTaxKey implements IResourceable, IStringEnum   {
 	// Operaciones por inversión de sujet pasivo no incluídas.
 	OI	("OI"	,true	,false	,false	,false	,false	,false	,false	,null,null),
 	// Prestaciones intracomunitarias de servicios localizadas fuera del territorio de aplicación del impuesto
-	PS	("PS"	,true	,false	,false	,false	,false	,false	,false	,null,null);
+	PS	("PS"	,true	,false	,false	,false	,false	,false	,false	,null,null),
+	// Importe de entregas de bienes y servicios Rég. Caja
+	XO	("XO"	,true	,false	,true	,true	,false	,false	,false	,null,null),
+	// Importe de adquisiciones de bienes y servicios Rég. Caja
+	XI	("XI"	,true	,false	,true	,true	,false	,false	,false	,null,null),
+	;
+	// ---------------------------------------------------------------------
+	// key		,T.B.	,Prct.	,Quota	,Ded.Q.	,SubT	,Total	,Prorrat
+	// ---------------------------------------------------------------------
 
 	private String key;
 	private boolean taxableBaseVisible;

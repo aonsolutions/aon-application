@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -246,7 +247,8 @@ public class VatReportController implements ICollectionProvider {
 
 	private VatCollectionParameters getParameters() {
 		String domain = AonUtil.getAuthPrincipal().getDomain();
-		VatCollectionParameters vcp = new VatCollectionParameters(domain);
+		int domainId = DomainManager.getCurrentDomain();
+		VatCollectionParameters vcp = new VatCollectionParameters(domainId,domain);
 		vcp.setDate(getDate());
 		vcp.setFromDate(getFromDate());
 		vcp.setToDate(getToDate());
@@ -474,9 +476,49 @@ public class VatReportController implements ICollectionProvider {
 		}
 		return CommonUtil.round(q1 + q2);
 	}
+	private double getExtracommunitaryInputQuota() {
+		double q1 = 0;
+		double q2 = 0;
+		VatTypeBreakdown vb = summary.get(VatType.INPUT);
+		if (vb != null) {
+			VatReportTypeBreakdown vrb = vb.getMap().get(VatReportType.EXTRACOMMUNITY);
+			if (vrb != null) {
+				q1 = vrb.getQuota();
+			}
+		}
+		vb = summary.get(VatType.INVESTMENT);
+		VatReportTypeBreakdown vrb2 = vb.getMap().get(VatReportType.EXTRACOMMUNITY);
+		if (vrb2 != null) {
+			q2 = vrb2.getQuota();
+		}
+		return CommonUtil.round(q1 + q2);
+	}
+	private double getCanCeuMelInputQuota() {
+		double q1 = 0;
+		double q2 = 0;
+		VatTypeBreakdown vb = summary.get(VatType.INPUT);
+		if (vb != null) {
+			VatReportTypeBreakdown vrb = vb.getMap().get(VatReportType.CAN_CEU_MEL);
+			if (vrb != null) {
+				q1 = vrb.getQuota();
+			}
+		}
+		vb = summary.get(VatType.INVESTMENT);
+		VatReportTypeBreakdown vrb2 = vb.getMap().get(VatReportType.CAN_CEU_MEL);
+		if (vrb2 != null) {
+			q2 = vrb2.getQuota();
+		}
+		return CommonUtil.round(q1 + q2);
+	}
 
 	public double getResult() {
-		return CommonUtil.round(getInputGeneralTotalQuota() + getInvestmentGeneralTotalQuota() - getOutputGeneralTotalQuota());
+		return CommonUtil.round(
+				getOutputGeneralTotalQuota() 
+				- getInputGeneralTotalQuota()
+				- getInvestmentGeneralTotalQuota() 
+				- getExtracommunitaryInputQuota()
+				- getCanCeuMelInputQuota()
+				);
 	}
 
 	public void onDetail(ActionEvent event) {

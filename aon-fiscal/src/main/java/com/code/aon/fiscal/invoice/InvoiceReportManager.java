@@ -12,7 +12,6 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
@@ -52,13 +51,16 @@ public class InvoiceReportManager {
 	private static final String DEDUCTIBLE_QUOTA = "deductible_quota";
 	private static final String TAXABLE_BASE = "taxable_base";
 	private static final String TAX = "tax";
-	private static final String RE = "re";
+	private static final String SURCHARGE_QUOTA = "surcharge_quota";
 	private static final String FINANCE_DATE = "finance_date";
 	private static final String FINANCE_TOTAL = "finance_amount";
 	private static final String FINANCE_BASE = "finance_base";
 	private static final String FINANCE_PERCENTAGE = "finance_percentage";
 	private static final String FINANCE_QUOTA = "finance_quota";
 	private static final String INVOICE_TOTAL = "invoice_total";
+	private static final String INVOICE_VAT = "invoice_vat";
+	private static final String INVOICE_BASE = "invoice_base";
+	private static final String INVOICE_RETENTION = "invoice_retention";
 	
 	
 	
@@ -123,6 +125,9 @@ public class InvoiceReportManager {
 		stmt.append(" ,i.rectification_invoice " + RECTIFICATION_INVOICE);
 		stmt.append(" ,i.vat_accrual_payment " + VAT_ACCRUAL_PAYMENT);
 		stmt.append(" ,i.total " + INVOICE_TOTAL);
+		stmt.append(" ,i.taxable_base " + INVOICE_BASE);
+		stmt.append(" ,i.vat_quota " + INVOICE_VAT);
+		stmt.append(" ,i.retention_quota " + INVOICE_RETENTION);
 		stmt.append(" ,it.tax_type " + TAX_TYPE);
 		stmt.append(" ,it.percentage " + PERCENTAGE);
 		stmt.append(" ,it.surcharge " + SURCHARGE);
@@ -131,13 +136,13 @@ public class InvoiceReportManager {
 		stmt.append("  ,SUM( IF(it.deductible_quota!=0,it.deductible_quota,IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ))) " + DEDUCTIBLE_QUOTA);
 	    stmt.append("  ,SUM(it.base) " + TAXABLE_BASE);
 		stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ) ) " + TAX);
-		stmt.append("  ,SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(it.base * it.surcharge / 100, 2) ) ) " + RE);
+		stmt.append("  ,SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(it.base * it.surcharge / 100, 2) ) ) " + SURCHARGE_QUOTA);
 		if (!vatAccrualPayment) {
-			stmt.append("  FROM invoice_tax it ");
-			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
-			stmt.append("  INNER JOIN invoice i ON (id.invoice = i.id AND vat_accrual_payment = 0) ");
-			stmt.append("  WHERE ");
-			stmt.append( DomainManager.getSQLWhereClause("it.domain"));
+			stmt.append(" FROM invoice_tax it ");
+			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
+			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id) ");
+			stmt.append(" WHERE it.domain = ?");
+			stmt.append(" AND (i.vat_accrual_payment = 0 OR (vat_accrual_payment = 1 AND it.tax_type != 1)) " );  
 			if (params.getFromTaxDate() != null) {
 				stmt.append(" AND i.tax_date >= ?");
 			}
@@ -155,12 +160,12 @@ public class InvoiceReportManager {
 			stmt.append(",ft.tracking_date " + FINANCE_DATE);
 			stmt.append("  FROM finance_tracking ft ");
 			stmt.append("  INNER JOIN finance f ON (ft.finance = f.id) ");
-			stmt.append("  INNER JOIN invoice i ON (f.invoice = i.id AND vat_accrual_payment = 1) ");
+			stmt.append("  INNER JOIN invoice i ON (f.invoice = i.id) ");
 			stmt.append("  INNER JOIN invoice_detail id ON (id.invoice = i.id) ");
 			stmt.append("  INNER JOIN invoice_tax it ON (it.invoice_detail = id.id) ");
-			stmt.append("  WHERE ");
-			stmt.append( DomainManager.getSQLWhereClause("ft.domain"));
+			stmt.append(" WHERE ft.domain = ?");
 			stmt.append("  AND ft.type IN (1,2) ");
+			stmt.append(" AND (vat_accrual_payment = 1 AND it.tax_type = 1) " );
 			if (params.getFromTaxDate() != null) {
 				stmt.append(" AND ft.tracking_date >= ?");
 			}
@@ -225,9 +230,10 @@ public class InvoiceReportManager {
 			stmt.append("," + FINANCE_TOTAL);
 			stmt.append("," + FINANCE_DATE);
 		}
-
+		System.out.println(stmt.toString());
 		ps = conn.prepareStatement(stmt.toString(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 		int i = 0;
+		ps.setInt(++i, params.getDomain());
 		if (params.getFromTaxDate() != null) {
 			ps.setDate(++i, new java.sql.Date( params.getFromTaxDate().getTime()));
 		}
@@ -265,24 +271,35 @@ public class InvoiceReportManager {
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				exporter.startLine();
-				int i = fillInvoiceCells(rs,exporter,metadata,locale);
+				int i = fillInvoiceCells(rs,exporter,metadata,locale,false);
 				if (isVatAccrualPayment) {
 					boolean vatAccrualPayment = rs.getInt(VAT_ACCRUAL_PAYMENT) == 1;				
 					TaxType taxType = TaxType.values()[rs.getInt(TAX_TYPE)];
 					params.setAccrualVatVisible(true);
 					if ( vatAccrualPayment && params.isAccrualVatVisible() && taxType == TaxType.VAT ) {
-						double invoiceBase= rs.getDouble(TAXABLE_BASE);
+						
 						double invoicePercent = rs.getDouble(PERCENTAGE);
 						double invoiceTotal = rs.getDouble(INVOICE_TOTAL);
+						double invoiceBase = rs.getDouble(INVOICE_BASE);
+						double invoiceVAT = rs.getDouble(INVOICE_VAT);
+						double invoiceRetention = rs.getDouble(INVOICE_RETENTION);
+						invoiceTotal = CommonUtil.round(invoiceBase + invoiceVAT - invoiceRetention);
+						double taxableBase= rs.getDouble(TAXABLE_BASE);
 						exporter.exportColumn(metadata.getColumns().get((i++)), rs.getDate(FINANCE_DATE));
 						double financeTotal = rs.getDouble(FINANCE_TOTAL);
 						exporter.exportColumn(metadata.getColumns().get((i++)), financeTotal);
-						double financeBase = CommonUtil.round(financeTotal * invoiceBase / invoiceTotal,4);
+						double financeBase = CommonUtil.round(financeTotal * taxableBase / invoiceTotal,4);
 						exporter.exportColumn(metadata.getColumns().get((i++)), CommonUtil.round(financeBase));
 						exporter.exportColumn(metadata.getColumns().get((i++)), invoicePercent);
 						double financeQuota = CommonUtil.round(financeBase * invoicePercent / 100);
 						exporter.exportColumn(metadata.getColumns().get((i++)), financeQuota);
 					}
+				}
+				double surchargePercent = rs.getDouble(SURCHARGE);
+				if (surchargePercent > 0) {
+					exporter.endLine();		
+					exporter.startLine();
+					i = fillInvoiceCells(rs,exporter,metadata,locale, true);
 				}
 				exporter.endLine();
 			}
@@ -305,7 +322,7 @@ public class InvoiceReportManager {
 	}
 
 
-	private int fillInvoiceCells(ResultSet rs, ExcelReportExporter exporter, ReportMetadata metadata, Locale locale) throws SQLException, ReportException {
+	private int fillInvoiceCells(ResultSet rs, ExcelReportExporter exporter, ReportMetadata metadata, Locale locale, boolean surcharge) throws SQLException, ReportException {
 		int i = 0;
 		int id = rs.getInt(ID);
 		exporter.exportColumn(metadata.getColumns().get((i++)), id );
@@ -358,7 +375,7 @@ public class InvoiceReportManager {
 		exporter.exportColumn(metadata.getColumns().get((i++)), rs.getString(RNAME));
 
 		TaxType taxType = TaxType.values()[rs.getInt(TAX_TYPE)];
-		exporter.exportColumn(metadata.getColumns().get((i++)), taxType.getName(locale));
+		exporter.exportColumn(metadata.getColumns().get((i++)), surcharge?"R.E.":taxType.getName(locale));
 		
 		if (taxType == TaxType.VAT) {
 			VatDeductionType vatDeductionType = VatDeductionType.values()[rs.getInt(VAT_DEDUCTION_TYPE)];
@@ -373,13 +390,15 @@ public class InvoiceReportManager {
 		} else {
 			exporter.exportColumn(metadata.getColumns().get((i++)), "");
 		}
+		
 		double invoiceBase= rs.getDouble(TAXABLE_BASE);
 		exporter.exportColumn(metadata.getColumns().get((i++)), invoiceBase);
-		double invoicePercent = rs.getDouble(PERCENTAGE);
+		
+		double invoicePercent = rs.getDouble(surcharge?SURCHARGE:PERCENTAGE);
 		exporter.exportColumn(metadata.getColumns().get((i++)), invoicePercent);
-		exporter.exportColumn(metadata.getColumns().get((i++)), rs.getDouble(TAX));
-		exporter.exportColumn(metadata.getColumns().get((i++)), rs.getDouble(DEDUCTIBLE_QUOTA));
-
+		exporter.exportColumn(metadata.getColumns().get((i++)), rs.getDouble(surcharge?SURCHARGE_QUOTA:TAX));
+		exporter.exportColumn(metadata.getColumns().get((i++)), rs.getDouble(surcharge?SURCHARGE_QUOTA:DEDUCTIBLE_QUOTA));
+		
 		boolean farmer = rs.getInt(WITHHOLDING_FARMER) == 1;
 		exporter.exportColumn(metadata.getColumns().get((i++)), farmer?"X":"");
 

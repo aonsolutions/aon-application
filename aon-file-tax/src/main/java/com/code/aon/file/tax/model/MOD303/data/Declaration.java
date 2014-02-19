@@ -1,9 +1,12 @@
 package com.code.aon.file.tax.model.MOD303.data;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.common.util.CommonUtil;
 
 
 public class Declaration {
@@ -13,6 +16,16 @@ public class Declaration {
 	private boolean replacement;
 	private boolean complementary;
 	private boolean taxRefundRegistry;
+	private boolean simplRegimeOnly;
+	private boolean mergedDeclaration;
+	private boolean concurso;
+	private Date concursoDate;
+	private boolean concursoAuto;
+	private boolean vatAccrualRegime;
+	private boolean vatAccrualRegimeReceiver;
+	private boolean prorataOption;
+	private boolean prorataRevoke;
+	
 	private String bankName;
 	private String ccc;
 	
@@ -51,13 +64,21 @@ public class Declaration {
 	
 	private double baseIntracommunitary;
 	private double quotaIntracommunitary;
+
+	private double baseIntracommunitaryCT;
+	private double quotaIntracommunitaryCT;
+	private double baseISPCT;
+	private double quotaISPCT;
 	
 	private double baseInvPasive;
 	private double quotaInvPasive;
 
 	private double baseModifications;
 	private double quotaModifications;
-	
+
+	private double baseSurchrageModifications;
+	private double quotaSurchrageModifications;
+
 	private double outputTotal;
 	
 	private double innerCommonOperationsBase;
@@ -76,12 +97,17 @@ public class Declaration {
 	private double intracommunitaryInvestmentOperationsQuota;
 	private double intracommunitaryExpensesOperationsBase;
 	private double intracommunitaryExpensesOperationsQuota;
+	
+	private double deductionRestificationBase;
+	private double deductionRestificationQuota;
+
 	private double agriculturalRegimeCompensation;
 	private double investmentNormalization;
 	private double prorataNormalization;
 	private double deductTotal;
 	private double difference;
 	private double intracommunitaryDeliveries;
+	private double intracommunitaryServiceDeliveries;
 	private double exportationTotal;
 	private double nonTaxableTotal;
 	private double invSujPasNotIncluded;
@@ -93,6 +119,7 @@ public class Declaration {
 	private double navarraPercent; 
 	private double commonTerritoryPercent;
 	private double regularizationResult;
+	private double toDeduct;
 	private double quota;
 	private double previousYearCompensateQuota;
 	private double extraCharge;
@@ -104,8 +131,15 @@ public class Declaration {
 	private double previousDeposit;
 	private double totalDebt;
 	private boolean withoutActivity;
+	private String bankAccount;
 	private String depositBankAccount;
 	private String payBackBankAccount;
+	
+	private double vatAccrualInputBase;
+	private double vatAccrualInputQuota;
+	private double vatAccrualOutputBase;
+	private double vatAccrualOutputQuota;
+	
 	
 	private Map<String,Breakdown> innerAssetPurchases = new TreeMap<String, Breakdown>();
 	private double baseInnerAssetPurchases;
@@ -181,11 +215,93 @@ public class Declaration {
 	public void setTaxRefundRegistry(boolean taxRefundRegistry) {
 		this.taxRefundRegistry = taxRefundRegistry;
 	}
-	
 	public int getTaxRefundRegistryNumber() {
 		return isTaxRefundRegistry()?1:2;
 	}
 	
+	public boolean isSimplRegimeOnly() {
+		return simplRegimeOnly;
+	}
+	public void setSimplRegimeOnly(boolean simplRegimeOnly) {
+		this.simplRegimeOnly = simplRegimeOnly;
+	}
+	public int getSimplRegimeOnlyNumber() {
+		return isSimplRegimeOnly()?1:2;
+	}
+	public boolean isMergedDeclaration() {
+		return mergedDeclaration;
+	}
+	public void setMergedDeclaration(boolean mergedDeclaration) {
+		this.mergedDeclaration = mergedDeclaration;
+	}
+	public int getMergedDeclarationNumber() {
+		return isMergedDeclaration()?1:2;
+	}
+	public boolean isConcurso() {
+		return concurso;
+	}
+	public void setConcurso(boolean concurso) {
+		this.concurso = concurso;
+	}
+	public int getConcursoNumber() {
+		return isConcurso()?1:2;
+	}
+	public Date getConcursoDate() {
+		return concursoDate;
+	}
+	public void setConcursoDate(Date concursoDate) {
+		this.concursoDate = concursoDate;
+	}
+	public String getConcursoDateString() {
+		return "";
+	}
+	public boolean isConcursoAuto() {
+		return concursoAuto;
+	}
+	public void setConcursoAuto(boolean concursoAuto) {
+		this.concursoAuto = concursoAuto;
+	}
+	public int getConcursoAutoNumber() {
+		return isConcursoAuto()?1:2;
+	}
+	public boolean isVatAccrualRegime() {
+		return vatAccrualRegime;
+	}
+	public void setVatAccrualRegime(boolean vatAccrualRegime) {
+		this.vatAccrualRegime = vatAccrualRegime;
+		System.out.println("vatAccrualRegime ..: " + vatAccrualRegime);
+	}
+	public int getVatAccrualRegimeNumber() {
+		return isVatAccrualRegime()?1:2;
+	}
+	public boolean isVatAccrualRegimeReceiver() {
+		return vatAccrualRegimeReceiver;
+	}
+	public void setVatAccrualRegimeReceiver(boolean vatAccrualRegimeReceiver) {
+		this.vatAccrualRegimeReceiver = vatAccrualRegimeReceiver;
+		System.out.println("vatAccrualRegimeReceiver ..: " + vatAccrualRegimeReceiver);
+	}
+	public int getVatAccrualRegimeReceiverNumber() {
+		return isVatAccrualRegimeReceiver()?1:2;
+	}
+	public boolean isProrataOption() {
+		return prorataOption;
+	}
+	public void setProrataOption(boolean prorataOption) {
+		this.prorataOption = prorataOption;
+	}
+	public int getProrataOptionNumber() {
+		return isProrataOption()?1:2;
+	}
+	public boolean isProrataRevoke() {
+		return prorataRevoke;
+	}
+	public void setProrataRevoke(boolean prorataRevoke) {
+		this.prorataRevoke = prorataRevoke;
+	}
+	public int getProrataRevokeNumber() {
+		return isProrataRevoke()?1:2;
+	}
 	public boolean isPerson() {
 		return person;
 	}
@@ -405,6 +521,30 @@ public class Declaration {
 	public void setQuotaIntracommunitary(double quotaIntracommunitary) {
 		this.quotaIntracommunitary = quotaIntracommunitary;
 	}
+	public double getBaseIntracommunitaryCT() {
+		return baseIntracommunitaryCT;
+	}
+	public void setBaseIntracommunitaryCT(double baseIntracommunitaryCT) {
+		this.baseIntracommunitaryCT = baseIntracommunitaryCT;
+	}
+	public double getQuotaIntracommunitaryCT() {
+		return quotaIntracommunitaryCT;
+	}
+	public void setQuotaIntracommunitaryCT(double quotaIntracommunitaryCT) {
+		this.quotaIntracommunitaryCT = quotaIntracommunitaryCT;
+	}
+	public double getBaseISPCT() {
+		return baseISPCT;
+	}
+	public void setBaseISPCT(double baseISPCT) {
+		this.baseISPCT = baseISPCT;
+	}
+	public double getQuotaISPCT() {
+		return quotaISPCT;
+	}
+	public void setQuotaISPCT(double quotaISPCT) {
+		this.quotaISPCT = quotaISPCT;
+	}
 	public double getBaseInvPasive() {
 		return baseInvPasive;
 	}
@@ -428,6 +568,18 @@ public class Declaration {
 	}
 	public void setQuotaModifications(double quotaModifications) {
 		this.quotaModifications = quotaModifications;
+	}
+	public double getBaseSurchrageModifications() {
+		return baseSurchrageModifications;
+	}
+	public void setBaseSurchrageModifications(double baseSurchrageModifications) {
+		this.baseSurchrageModifications = baseSurchrageModifications;
+	}
+	public double getQuotaSurchrageModifications() {
+		return quotaSurchrageModifications;
+	}
+	public void setQuotaSurchrageModifications(double quotaSurchrageModifications) {
+		this.quotaSurchrageModifications = quotaSurchrageModifications;
 	}
 	public double getOutputTotal() {
 		return outputTotal;
@@ -522,10 +674,17 @@ public class Declaration {
 	}
 
 	public double getIntracommunitaryOperationsTotalBase() {
-		return intracommunitaryCommonOperationsBase + + intracommunitaryExpensesOperationsBase + intracommunitaryInvestmentOperationsBase;
+		return intracommunitaryCommonOperationsBase + intracommunitaryExpensesOperationsBase + intracommunitaryInvestmentOperationsBase;
 	}
 	public double getIntracommunitaryOperationsTotalQuota() {
 		return intracommunitaryCommonOperationsQuota + intracommunitaryExpensesOperationsQuota + intracommunitaryInvestmentOperationsQuota;
+	}
+
+	public double getIntracommunitaryOperationsCTBase() {
+		return intracommunitaryCommonOperationsBase + intracommunitaryExpensesOperationsBase;
+	}
+	public double getIntracommunitaryOperationsCTQuota() {
+		return intracommunitaryCommonOperationsQuota + intracommunitaryExpensesOperationsQuota;
 	}
 
 	public double getIntracommunitaryCommonOperationsBase() {
@@ -564,6 +723,18 @@ public class Declaration {
 	public void setIntracommunitaryExpensesOperationsQuota(double intracommunitaryExpensesOperationsQuota) {
 		this.intracommunitaryExpensesOperationsQuota = intracommunitaryExpensesOperationsQuota;
 	}
+	public double getDeductionRestificationBase() {
+		return deductionRestificationBase;
+	}
+	public void setDeductionRestificationBase(double deductionRestificationBase) {
+		this.deductionRestificationBase = deductionRestificationBase;
+	}
+	public double getDeductionRestificationQuota() {
+		return deductionRestificationQuota;
+	}
+	public void setDeductionRestificationQuota(double deductionRestificationQuota) {
+		this.deductionRestificationQuota = deductionRestificationQuota;
+	}
 	public double getAgriculturalRegimeCompensation() {
 		return agriculturalRegimeCompensation;
 	}
@@ -600,6 +771,16 @@ public class Declaration {
 	public void setIntracommunitaryDeliveries(double intracommunitaryDeliveries) {
 		this.intracommunitaryDeliveries = intracommunitaryDeliveries;
 	}
+	public double getIntracommunitaryServiceDeliveries() {
+		return intracommunitaryServiceDeliveries;
+	}
+	public void setIntracommunitaryServiceDeliveries(
+			double intracommunitaryServiceDeliveries) {
+		this.intracommunitaryServiceDeliveries = intracommunitaryServiceDeliveries;
+	}
+	public double getIntracommunitaryDeliveriesCT() {
+		return CommonUtil.round( getIntracommunitaryDeliveries() + getIntracommunitaryServiceDeliveries() );
+	}
 	public double getExportationTotal() {
 		return exportationTotal;
 	}
@@ -623,6 +804,31 @@ public class Declaration {
 	}
 	public void setPresIntraServices(double presIntraServices) {
 		this.presIntraServices = presIntraServices;
+	}
+	
+	public double getVatAccrualInputBase() {
+		return vatAccrualInputBase;
+	}
+	public void setVatAccrualInputBase(double vatAccrualInputBase) {
+		this.vatAccrualInputBase = vatAccrualInputBase;
+	}
+	public double getVatAccrualInputQuota() {
+		return vatAccrualInputQuota;
+	}
+	public void setVatAccrualInputQuota(double vatAccrualInputQuota) {
+		this.vatAccrualInputQuota = vatAccrualInputQuota;
+	}
+	public double getVatAccrualOutputBase() {
+		return vatAccrualOutputBase;
+	}
+	public void setVatAccrualOutputBase(double vatAccrualOutputBase) {
+		this.vatAccrualOutputBase = vatAccrualOutputBase;
+	}
+	public double getVatAccrualOutputQuota() {
+		return vatAccrualOutputQuota;
+	}
+	public void setVatAccrualOutputQuota(double vatAccrualOutputQuota) {
+		this.vatAccrualOutputQuota = vatAccrualOutputQuota;
 	}
 	public double getAlavaPercent() {
 		return alavaPercent;
@@ -659,6 +865,12 @@ public class Declaration {
 	}
 	public void setRegularizationResult(double regularizationResult) {
 		this.regularizationResult = regularizationResult;
+	}
+	public double getToDeduct() {
+		return toDeduct;
+	}
+	public void setToDeduct(double toDeduct) {
+		this.toDeduct = toDeduct;
 	}
 	public double getQuota() {
 		return quota;
@@ -732,13 +944,19 @@ public class Declaration {
 	public String getWithoutActivityString() {
 		return isWithoutActivity()?"1":" ";
 	}
-	
+	public String getBankAccount() {
+		return bankAccount;
+	}
+	public void setBankAccount(String bankAccount) {
+		this.bankAccount = bankAccount;
+	}
 	public String getDepositBankAccount() {
 		return depositBankAccount;
 	}
 	public void setDepositBankAccount(String depositBankAccount) {
 		this.depositBankAccount = depositBankAccount;
 	}
+	
 
 	public String getPayBackBankAccount() {
 		return payBackBankAccount;
@@ -858,6 +1076,7 @@ public class Declaration {
 		setFax(changeInvalidCharacters(getFax()));
 		setEmail(changeInvalidCharacters(getEmail()));
 		setTodayMonth(changeInvalidCharacters(getTodayMonth()));
+		setBankAccount(changeInvalidCharacters(getBankAccount()));
 		setDepositBankAccount(changeInvalidCharacters(getDepositBankAccount()));
 		setPayBackBankAccount(changeInvalidCharacters(getPayBackBankAccount()));
 	}

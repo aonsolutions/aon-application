@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,21 +28,32 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod111Manager extends FiscalModelManager {
+	private static final String DOCUMENT = "document";
+	private static final String TAXABLE_BASE = "taxable_base";
+	private static final String QUOTA = "quota";
 	
+	//  Se deben tener en cuenta las retenciones PROFESSIONAL, que van a una casilla
+	//	y luego las de FARMER y TRANSPORT_OPERATOR, que van a otra juntas.
+	//  Se usa ELT para agrupar correctamente.
+	//			0 --> PROFESSIONAL 
+	//			1 --> RENTING
+	//			2 --> MOVABLE_CAPITAL
+	//			3 --> FARMER
+	//			4 --> TRANSPORT_OPERATOR
 	private static String SELECT = "SELECT " 
-		+"i.type,it.percentage,i.rdocument,i.rname,"
-		+" SUM( id.taxable_base),"
-		+" SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) RET "
+		+" i.rdocument " + DOCUMENT
+		+" ,SUM( it.base )" + TAXABLE_BASE
+		+" ,SUM( IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) ) ) " + QUOTA
 		+" FROM invoice_tax it "
 		+" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)" 
 		+" INNER JOIN invoice i ON (id.invoice = i.id)"
 		+" WHERE " + DomainManager.getStaticSQLWhereClause("i.domain")
 		+" AND i.type != 1 " 			// No Ventas
 		+" AND it.tax_type = 2" 		// IRPF
-		+" AND it.withholding_type = 0" // IRPF de profesionales
+		+" AND it.withholding_type IN (0,3,4)" // IRPF de profesionales,agricultura y transporte.  
 		+" AND i.tax_date >= ?"
 		+" AND i.tax_date <= ?"
-		+" GROUP BY i.type,it.percentage,i.rdocument,i.rname";
+		+" GROUP BY " + DOCUMENT;
 	
 	private static String SELECT_ACCOUNT = "SELECT " 
 			+" aed.account,aed.debit,aed.credit "
@@ -109,7 +119,6 @@ public class Mod111Manager extends FiscalModelManager {
 		Date dateTo = getDueDate(fiscalModel);
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		List<String> receiverDocuments = new ArrayList<String>();
 		try {
 			ps = conn.prepareStatement(SELECT,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
@@ -119,15 +128,9 @@ public class Mod111Manager extends FiscalModelManager {
 			ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				
-				double rentingAmount = rs.getDouble(5);
-				double retention = rs.getDouble(6);
-				String document = rs.getString(3);
-				if (!receiverDocuments.contains(document) ) {
-					receiverDocuments.add(document);
-					mod111.ensureDetail(calculator.getKeyForInvoiceReceivers()).addAccumulatedAmount(1);
-				}
-				
+				double rentingAmount = rs.getDouble( TAXABLE_BASE );
+				double retention = rs.getDouble( QUOTA );
+				mod111.ensureDetail(calculator.getKeyForInvoiceReceivers()).addAccumulatedAmount(1);
 				mod111.ensureDetail(calculator.getKeyForInvoicePerception()).addAccumulatedAmount(rentingAmount);
 				mod111.ensureDetail(calculator.getKeyForInvoiceWitholding()).addAccumulatedAmount(retention);
 			}
@@ -236,7 +239,6 @@ public class Mod111Manager extends FiscalModelManager {
 			+" AND s.issue_date>=?"
 			+" AND s.issue_date<=?"
 			+" GROUP BY s.employee_document";
-	
 
 		try {
 			Integer enterpriseId = null;

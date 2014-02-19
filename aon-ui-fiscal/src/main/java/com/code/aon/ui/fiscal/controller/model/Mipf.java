@@ -28,11 +28,26 @@ import com.code.aon.ui.util.AonUtil;
 public class Mipf  {
 
 	private static String AEAT_PRINT_MODULE_SCRIPT_FOLDER = "/usr/share/java/aon.mipf";
-	private static String AEAT_PRINT_MODULE_SCRIPT_PATH = AEAT_PRINT_MODULE_SCRIPT_FOLDER + "/mipf13pdf.sh";
-	
+	private static String AEAT_PRINT_MODULE_SCRIPT_PATH_2013 = AEAT_PRINT_MODULE_SCRIPT_FOLDER + "/mipf13pdf.sh";
+	private static String AEAT_PRINT_MODULE_SCRIPT_PATH_2014 = AEAT_PRINT_MODULE_SCRIPT_FOLDER + "/mipf14pdf.sh";
+
+	@Deprecated
 	public boolean isScriptPresent() {
-		File file = new File(AEAT_PRINT_MODULE_SCRIPT_PATH);
+		File file = new File(AEAT_PRINT_MODULE_SCRIPT_PATH_2013);
 		return file.canRead(); 
+	}
+	
+	public boolean isScriptPresent(int year) {
+		String script = getScript(year);
+		File file = new File(script);
+		return file.canRead(); 
+	}
+	
+	private String getScript(int year) {
+		if (year < 2014) {
+			return AEAT_PRINT_MODULE_SCRIPT_PATH_2013;
+		} 
+		return AEAT_PRINT_MODULE_SCRIPT_PATH_2014;
 	}
 
 	public String getAeatWebPage(FiscalModelType type ) {
@@ -100,7 +115,7 @@ public class Mipf  {
 			System.out.println( draftPath );
 			
 			tempDataFile = saveDiskFile(fileOutput);
-			String[] options = { AEAT_PRINT_MODULE_SCRIPT_PATH
+			String[] options = { getScript(fiscalModel.getYear())
 					, "/E:" + tempDataFile.getAbsolutePath()
 					, "/R:" + errorFile.getAbsolutePath()
 					, "/P:" + pdfPath
@@ -172,7 +187,7 @@ public class Mipf  {
 		}
 	}
 
-	public void validateAeatFile(FileOutput fileOutput) {
+	public void validateAeatFile(int year, FileOutput fileOutput) {
 		/*
 		 * mipf13pdf.sh 
 		 * 	/E:nombrearchivodatos 			indica el fichero que contiene los datos de entrada que se 
@@ -214,7 +229,7 @@ public class Mipf  {
 			errorFile = File.createTempFile("fs_", ".err");
 			resultFile = new File(errorFile.getAbsolutePath() + ".rst"); 
 			tempDataFile = saveDiskFile(fileOutput);
-			String[] options = { AEAT_PRINT_MODULE_SCRIPT_PATH
+			String[] options = { getScript(year)
 					, "/E:" + tempDataFile.getAbsolutePath()
 					, "/R:" + errorFile.getAbsolutePath()
 					, "/F:" + "/tmp/fs_flag"
@@ -259,9 +274,9 @@ public class Mipf  {
 			String msg = "No se pudo realizar la impresión del módulo." + e.getMessage();
 			AonUtil.addErrorMessage(msg);
 		} finally {
-			FileUtils.deleteQuietly(errorFile);
-			FileUtils.deleteQuietly(resultFile);
-			FileUtils.deleteQuietly(tempDataFile);
+//			FileUtils.deleteQuietly(errorFile);
+//			FileUtils.deleteQuietly(resultFile);
+//			FileUtils.deleteQuietly(tempDataFile);
 			IOUtils.closeQuietly(fisError);
 			IOUtils.closeQuietly(fisPDF);
 		}

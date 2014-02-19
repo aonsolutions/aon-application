@@ -26,14 +26,14 @@ public class InvoiceReportParams {
     private TaxType taxType;
     private boolean accrualVatVisible;
 
-	
+    public InvoiceReportParams(int domain) {
+		this.domain = domain;
+    }
+    
 	private List<InvoiceReportParamsDetail> details;
 	
 	public int getDomain() {
 		return domain;
-	}
-	public void setDomain(int domain) {
-		this.domain = domain;
 	}
 	
 	public Date getDate() {

@@ -17,7 +17,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.VatDeductionType;
@@ -36,6 +35,26 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class VatTaxManager {
+	
+	private static String TYPE = "type";
+	private static String RECTIFICATION_TYPE = "rectification_type";
+	private static String SERVICE = "service";
+	private static String PERCENTAGE = "percentage";
+	private static String SURCHARGE_PERCENT = "surcharge";
+	private static String VAT_DEDUCTION_TYPE = "vat_deduction_type";
+	private static String TRANSACTION = "transaction";
+	private static String INVESTMENT = "investment";
+	private static String BASE = "base";
+	private static String QUOTA = "quota";
+	private static String SURCHARGE_QUOTA = "surcharge_quota"; 
+	private static String DEDUCTIBLE_QUOTA = "deductible_quota";
+//	private static String WITHHOLDING_FARMER = "withholding_farmer";
+//	private static String VAT_ACCRUAL_PAYMENT = "vat_accrual_payment";
+	private static String FINANCE_AMOUNT = "finance_amount";
+	private static String INVOICE_TOTAL = "invoice_total";
+	private static String INVOICE_BASE = "invoice_base";
+	private static String INVOICE_VAT = "invoice_vat";
+	private static String INVOICE_RETENTION = "invoice_retention";
 	
 	private String domainName;
 	
@@ -58,7 +77,7 @@ public class VatTaxManager {
 			initializeListForOnlyDeclaration(list);
 		} else {
 			initializeList(list);
-			getVatTax(list, dateFrom, dateTo, params.getVatTax(), params.getInvoiceStatus());
+			getVatTax(list, params.getDomain(),dateFrom, dateTo, params.getVatTax(), params.getInvoiceStatus());
 			VatTaxDetailComparator comparator = new VatTaxDetailComparator();
 			Collections.sort(list, comparator);
 			calculate(list);
@@ -73,7 +92,7 @@ public class VatTaxManager {
 
 	private void initializeListForOnlyDeclaration(List<VatTaxDetail> list) {
 		initializeList(list);
-		VatTaxKey[] keys = new VatTaxKey[] {VatTaxKey.A1,VatTaxKey.A3,VatTaxKey.A4,VatTaxKey.CP,VatTaxKey.GT,VatTaxKey.BI};
+		VatTaxKey[] keys = new VatTaxKey[] {VatTaxKey.A1,VatTaxKey.A3,VatTaxKey.A31,VatTaxKey.A4,VatTaxKey.CP,VatTaxKey.GT,VatTaxKey.BI};
 		double[] percents = new double[] {4,8,21};
 		VatTaxDetail detail;
 		for (VatTaxKey key : keys) {
@@ -99,58 +118,62 @@ public class VatTaxManager {
 		list.add(detail);
 	}
 	
-	public List<VatTaxDetail> getVatTax(Date dateFrom,Date dateTo) throws ManagerBeanException {
+	public List<VatTaxDetail> getVatTax(int domain,Date dateFrom,Date dateTo) throws ManagerBeanException {
 		List<VatTaxDetail> list = new LinkedList<VatTaxDetail>();
 		initializeList(list);
-		return getVatTax(list,dateFrom, dateTo, null, null); 
+		return getVatTax(list,domain,dateFrom, dateTo, null, null); 
 	}
 		
-	public List<VatTaxDetail> getVatTax(
+	public List<VatTaxDetail> getVatTax(List<VatTaxDetail> list,int domain,Date dateFrom,Date dateTo,VatTax vatTax,InvoiceStatus status) throws ManagerBeanException {
+		getVatTaxINNER(list,domain,dateFrom,dateTo,vatTax,status,false);
+		getVatTaxINNER(list,domain,dateFrom,dateTo,vatTax,status,true);
+		return list;
+	}
+
+	private List<VatTaxDetail> getVatTaxINNER(
 			List<VatTaxDetail> list,
+			int domain,
 			Date dateFrom,
 			Date dateTo,
 			VatTax vatTax,
-			InvoiceStatus status) throws ManagerBeanException {
+			InvoiceStatus status,
+			boolean vatAccrualPayment) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		TaxColumn column = TaxColumn.ACUMULADO; 
 		Connection conn = null;
 		try {
 			conn = DatabaseUtil.getConnection(getDomainName());
-
-			StringWriter stmt = new StringWriter();
-			String quotaStmt = "IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) )";
-			stmt.append("SELECT i.type,i.rectification_type,i.service,it.percentage,it.surcharge,it.vat_deduction_type,i.transaction,i.investment,");
-			stmt.append(" SUM( id.taxable_base),");
-			stmt.append(" SUM( ");
-			stmt.append(quotaStmt);
-			stmt.append(" ) IVA,");
-			stmt.append(" SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(id.taxable_base * it.surcharge / 100, 2) ) ) RE,");
-			stmt.append(" SUM( IF(it.deductible_quota != 0,it.deductible_quota,");
-			stmt.append(quotaStmt);
-			stmt.append(")) ");
-			stmt.append(" FROM invoice_tax it ");
-			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
-			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
-			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("it.domain"));
-			stmt.append(" AND it.tax_type = 1");
-			stmt.append(" AND i.tax_date >= ?");
-			stmt.append(" AND i.tax_date <= ?");
-			if (status == InvoiceStatus.SCORED) {
-				stmt.append(" AND i.status = 1 ");
-			}
-			stmt.append(" GROUP BY i.type,i.rectification_type,i.service,it.percentage,it.surcharge,it.vat_deduction_type,i.transaction,i.investment");
-			ps = conn.prepareStatement(stmt.toString(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			String select = vatAccrualPayment?getVatAccrualSelect():getSelect();
+			ps = conn.prepareStatement(select,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
+			ps.setInt(++i, domain);
 			ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
 			ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
+			ps.setInt(++i, (status == InvoiceStatus.SCORED?InvoiceStatus.SCORED.ordinal():InvoiceStatus.PENDING.ordinal()));
 			rs = ps.executeQuery();
+			boolean hasVatAccrualPayment = false;
 			while (rs.next()) {
-				double surchargePercent = rs.getDouble(5);
-				double taxableBase = rs.getDouble(9);
-				double quota = rs.getDouble(10);
-				double surchargeQuota = rs.getDouble(11);
-				double deductibleQuota = rs.getDouble(12);
+				double surchargePercent = rs.getDouble(SURCHARGE_PERCENT);
+				double taxableBase = rs.getDouble(BASE);
+				double percent = rs.getDouble(PERCENTAGE);
+				double quota = rs.getDouble(QUOTA);
+				double surchargeQuota = rs.getDouble(SURCHARGE_QUOTA);
+				double deductibleQuota = rs.getDouble(DEDUCTIBLE_QUOTA);
+
+				if (vatAccrualPayment ){
+					double invoiceBase = rs.getDouble(INVOICE_BASE);
+					double invoiceVat  = rs.getDouble(INVOICE_VAT);
+					double invoiceRetention = rs.getDouble(INVOICE_RETENTION);
+					double invoiceTotal = rs.getDouble(INVOICE_TOTAL);
+					double financeAmount = rs.getDouble(FINANCE_AMOUNT);
+					
+					invoiceTotal = CommonUtil.round(invoiceBase + invoiceVat - invoiceRetention);
+					taxableBase = CommonUtil.round(financeAmount * taxableBase / invoiceTotal,4);
+					quota = CommonUtil.round(taxableBase * percent / 100);
+					deductibleQuota = quota; // TODO soporte a cuota deducible.
+					hasVatAccrualPayment = true;
+				}
 				
 				VatTaxKeyEx[] keyExs = obtainModelAffectedKeys(rs);
 				VatTaxAmount amount = new VatTaxAmount();
@@ -171,12 +194,17 @@ public class VatTaxManager {
 						} else {
 							manageKey(column,list,keyEx,amount);	
 						}
-						if (keyEx.getKey() == VatTaxKey.A1) {
+						if (keyEx.getKey() == VatTaxKey.A1 || keyEx.getKey() == VatTaxKey.A5) {
 							// En el caso especial del regimen general, se chequea si la linea 
-							// tiene R.E. para añadirlo en la casilla A2
+							// tiene R.E. para añadirlo en la casilla A2 (o A21 rectificativas)
 							// Se ignora la prorrata, puesto que solo afecta al IVA soportado.
 							if (surchargePercent > 0) {
-								VatTaxKeyEx sKeyEx = new VatTaxKeyEx(VatTaxKey.A2,surchargePercent);
+								VatTaxKeyEx sKeyEx = null;
+								if (keyEx.getKey() != VatTaxKey.A1) {
+									sKeyEx = new VatTaxKeyEx(VatTaxKey.A21);	
+								} else {
+									sKeyEx = new VatTaxKeyEx(VatTaxKey.A2,surchargePercent);
+								}
 								VatTaxAmount surchargeAmount = new VatTaxAmount();
 								surchargeAmount.setTaxableBase(taxableBase);
 								surchargeAmount.setQuota(surchargeQuota);
@@ -186,6 +214,41 @@ public class VatTaxManager {
 						}
 					}
 				}
+			}
+			rs.close();
+			ps.close();
+			
+			if (hasVatAccrualPayment) {
+				String sel ="SELECT i.type " + TYPE
+						+ ",SUM( i.taxable_base)" + INVOICE_BASE
+						+ ",SUM( i.vat_quota)" + INVOICE_VAT
+						+ " FROM invoice i"
+						+ " WHERE i.domain = ?"
+						+ " AND i.vat_accrual_payment = 1"
+						+ " AND i.tax_date >= ?"
+						+ " AND i.tax_date <= ?"
+						+ " AND i.status >= ? "
+						+ " GROUP BY i.type"
+						+ " HAVING " + INVOICE_VAT +" > 0";
+				ps = conn.prepareStatement(sel,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+				i = 0;
+				ps.setInt(++i, domain);
+				ps.setDate(++i, new java.sql.Date( dateFrom.getTime() ));
+				ps.setDate(++i, new java.sql.Date( dateTo.getTime()));
+				ps.setInt(++i, (status == InvoiceStatus.SCORED?InvoiceStatus.SCORED.ordinal():InvoiceStatus.PENDING.ordinal()));
+				rs = ps.executeQuery();
+				while (rs.next()) {
+					InvoiceType type = InvoiceType.values()[rs.getInt(TYPE)];
+					VatTaxKeyEx keyEx = new VatTaxKeyEx(type==InvoiceType.SALES?VatTaxKey.XO:VatTaxKey.XI);
+					VatTaxAmount amount = new VatTaxAmount();
+					amount.setTaxableBase(CommonUtil.round( rs.getDouble(INVOICE_BASE)));
+					amount.setQuota(CommonUtil.round( rs.getDouble(INVOICE_VAT) ));
+					amount.setDeductibleQuota(CommonUtil.round( rs.getDouble(INVOICE_VAT)));
+					keyEx.getKey();
+					manageKey(column,list,keyEx,amount);
+				}
+				rs.close();
+				ps.close();
 			}
 			return list;
 		} catch (SQLException e) {
@@ -253,18 +316,18 @@ public class VatTaxManager {
 	}
 
 	private VatTaxKeyEx[] obtainModelAffectedKeys(ResultSet rs) throws SQLException {
-		InvoiceType invoiceType = InvoiceType.values()[rs.getInt(1)];
-		boolean rectification = rs.getInt(2) == RectificationType.SPECIAL_RECTIFIER.ordinal();
-		boolean service = rs.getInt(3) == 1;
-		double percent = rs.getDouble(4);
-		VatDeductionType vatDeductionType = VatDeductionType.values()[rs.getInt(6)];
-		InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt(7)];
-		boolean investment = rs.getBoolean(8);
+		InvoiceType invoiceType = InvoiceType.values()[rs.getInt(TYPE)];
+		boolean rectification = rs.getInt(RECTIFICATION_TYPE) == RectificationType.SPECIAL_RECTIFIER.ordinal();
+		boolean service = rs.getInt(SERVICE) == 1;
+		double percent = rs.getDouble(PERCENTAGE);
+		VatDeductionType vatDeductionType = VatDeductionType.values()[rs.getInt(VAT_DEDUCTION_TYPE)];
+		InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt(TRANSACTION)];
+		boolean investment = rs.getBoolean(INVESTMENT);
 
 		if (invoiceType == InvoiceType.SALES) {
 			if (transaction == InvoiceTransactionType.NATIONAL) {
 				if (rectification) {
-					return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A5,percent)};	
+					return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A5)};	
 				} else {
 					return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A1,percent)};	
 				}
@@ -313,7 +376,9 @@ public class VatTaxManager {
 			if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
 				return investment?
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A3,percent),new VatTaxKeyEx(VatTaxKey.D2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A3,percent),new VatTaxKeyEx(VatTaxKey.D1),new VatTaxKeyEx(VatTaxKey.CP,percent)};
+					service?
+						new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A31,percent),new VatTaxKeyEx(VatTaxKey.D3),new VatTaxKeyEx(VatTaxKey.CP,percent)}:
+						new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A3,percent),new VatTaxKeyEx(VatTaxKey.D1),new VatTaxKeyEx(VatTaxKey.CP,percent)};
 			}
 		} else if (invoiceType == InvoiceType.EXPENSES) {
 			if (transaction == InvoiceTransactionType.NATIONAL) {
@@ -331,7 +396,7 @@ public class VatTaxManager {
 			}
 			
 			if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
-				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent),new VatTaxKeyEx(VatTaxKey.A4,percent)};
+				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.D3),new VatTaxKeyEx(VatTaxKey.GT,percent),new VatTaxKeyEx(VatTaxKey.A31,percent)};
 			}
 			
 		}
@@ -458,6 +523,86 @@ public class VatTaxManager {
 		}
 		List<?> list = bean.getList(criteria);
 		return (List<VatTaxDetail>) list;
+	}
+	
+	private String getSelect() {
+		String quotaStmt = "IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 2) )";
+		StringWriter stmt = new StringWriter();
+		stmt.append("SELECT i.type " + TYPE);
+		stmt.append(	",i.rectification_type " + RECTIFICATION_TYPE);
+		stmt.append(	",i.service " + SERVICE);
+		stmt.append(	",it.percentage " + PERCENTAGE);
+		stmt.append(	",it.surcharge " + SURCHARGE_PERCENT);
+		stmt.append(	",it.vat_deduction_type " + VAT_DEDUCTION_TYPE);
+		stmt.append(	",i.transaction "+ TRANSACTION);
+		stmt.append(	",i.investment " + INVESTMENT);
+		stmt.append(	",SUM( i.taxable_base)" + INVOICE_BASE);
+		stmt.append(	",SUM( i.vat_quota)" + INVOICE_VAT);
+		stmt.append(	",SUM( i.retention_quota)" + INVOICE_RETENTION);
+		stmt.append(	",SUM( i.total) " + INVOICE_TOTAL);
+		stmt.append(	",SUM( it.base) " + BASE);
+		stmt.append(	",SUM( " + quotaStmt + " ) " + QUOTA);
+		stmt.append(	",SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(it.base * it.surcharge / 100, 2) ) ) " + SURCHARGE_QUOTA);
+		stmt.append(	",SUM( IF(it.deductible_quota != 0,it.deductible_quota," + quotaStmt + ")) " + DEDUCTIBLE_QUOTA);
+		stmt.append(" FROM invoice_tax it ");
+		stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
+		stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
+		stmt.append(" WHERE it.domain = ?");
+		stmt.append(	" AND it.tax_type = 1");
+		stmt.append(	" AND i.vat_accrual_payment = 0");	// No Criterio de Caja.
+		stmt.append(	" AND i.tax_date >= ?");
+		stmt.append(	" AND i.tax_date <= ?");
+		stmt.append(	" AND i.status >= ? ");
+		stmt.append(" GROUP BY ");
+		stmt.append(	TYPE);
+		stmt.append(	"," + RECTIFICATION_TYPE);
+		stmt.append(	"," + SERVICE);
+		stmt.append(	"," + PERCENTAGE);
+		stmt.append(	"," + SURCHARGE_PERCENT);
+		stmt.append(	"," + VAT_DEDUCTION_TYPE);
+		stmt.append(	"," + TRANSACTION);
+		stmt.append(	"," + INVESTMENT);
+		return stmt.toString();
+	}
+	
+	private String getVatAccrualSelect() {
+		String quotaStmt = "IF(it.quota != 0,it.quota,ROUND(it.base * it.percentage / 100, 4) )";
+		StringWriter stmt = new StringWriter();
+		stmt.append("SELECT i.id");
+		stmt.append(	",i.type " + TYPE);
+		stmt.append(	",i.rectification_type " + RECTIFICATION_TYPE);
+		stmt.append(	",i.service " + SERVICE);
+		stmt.append(	",it.percentage " + PERCENTAGE);
+		stmt.append(	",it.surcharge " + SURCHARGE_PERCENT);
+		stmt.append(	",it.vat_deduction_type " + VAT_DEDUCTION_TYPE);
+		stmt.append(	",i.transaction "+ TRANSACTION);
+		stmt.append(	",i.investment " + INVESTMENT);
+		stmt.append(	",i.taxable_base " + INVOICE_BASE);
+		stmt.append(	",i.vat_quota " + INVOICE_VAT);
+		stmt.append(	",i.retention_quota " + INVOICE_RETENTION);
+		stmt.append(	",i.total " + INVOICE_TOTAL);
+		stmt.append(	",it.base " + BASE);
+		stmt.append(	"," + quotaStmt + " " + QUOTA);
+		stmt.append(	",SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(it.base * it.surcharge / 100, 2) ) ) " + SURCHARGE_QUOTA);
+		stmt.append(	",SUM( IF(it.deductible_quota != 0,it.deductible_quota," + quotaStmt + ")) " + DEDUCTIBLE_QUOTA);
+		stmt.append(	",SUM( IF(ft.type=1, ft.amount,  -ft.amount )) " + FINANCE_AMOUNT);
+		stmt.append("  FROM finance_tracking ft ");
+		stmt.append("  INNER JOIN finance f ON (ft.finance = f.id) ");
+		stmt.append("  INNER JOIN invoice i ON (f.invoice = i.id AND vat_accrual_payment = 1) ");
+		stmt.append("  INNER JOIN invoice_detail id ON (id.invoice = i.id) ");
+		stmt.append("  INNER JOIN invoice_tax it ON (it.invoice_detail = id.id) ");
+		stmt.append(" WHERE ft.domain = ?");
+		stmt.append(	" AND ft.tracking_date >= ?");
+		stmt.append(	" AND ft.tracking_date <= ?");
+		stmt.append(	" AND ft.type IN (1,2) ");
+		stmt.append(	" AND it.tax_type = 1");
+		stmt.append(	" AND i.tax_date >= '2014-01-01'");
+		stmt.append(	" AND i.vat_accrual_payment = 1");	// Criterio de Caja.
+		stmt.append(	" AND i.status >= ? ");
+		stmt.append(" GROUP BY i.id,"+PERCENTAGE +","+ SURCHARGE_PERCENT+","+VAT_DEDUCTION_TYPE);
+		
+		System.out.println( stmt.toString() );
+		return stmt.toString();
 	}
 	
 }

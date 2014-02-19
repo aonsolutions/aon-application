@@ -64,14 +64,14 @@
 						<f:facet name="header">
 							<aon:outputText value="&#160;" />
 						</f:facet>
-						<aon:outputText value="#{to.nature}" />
+						<aon:outputText value="#{to.nature}" style="#{to.vatAccrualPayment?'color:blue;':''}"/>
 					</aon:column>
 					
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.finance_tax_date}" />
 						</f:facet>
-						<aon:outputText value="#{to.date}">
+						<aon:outputText value="#{to.date}" style="#{to.vatAccrualPayment?'color:blue;':''}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
@@ -81,14 +81,15 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_document_number}" />
 						</f:facet>
-						<aon:outputText value="#{to.documentNumber}" />
+						<aon:outputText value="#{to.documentNumber}" style="#{to.vatAccrualPayment?'color:blue;':''}"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_invoice_number}" />
 						</f:facet>
-						<aon:commandLink id="vatReport-invoice" 
+						<aon:commandLink id="vatReport-invoice"
+							style="#{to.vatAccrualPayment?'color:blue;':''}" 
 							immediate="#{true}"
 							styleClass="aon-dataTable-link"
 							actionListener="#{vatReport.onShowInvoice}"
@@ -102,7 +103,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_date}" />
 						</f:facet>
-						<aon:outputText value="#{to.invoiceDate}">
+						<aon:outputText value="#{to.invoiceDate}" style="#{to.vatAccrualPayment?'color:blue;':''}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
@@ -112,21 +113,22 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_company_document}" />
 						</f:facet>
-						<aon:outputText value="#{to.document}" />
+						<aon:outputText value="#{to.document}" style="#{to.vatAccrualPayment?'color:blue;':''}"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_company_name}" />
 						</f:facet>
-						<aon:outputText value="#{to.name}" />
+						<aon:outputText value="#{to.name}" style="#{to.vatAccrualPayment?'color:blue;':''}"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_taxable_base}" />
 						</f:facet>
-						<aon:outputText value="#{to.base}">
+						
+						<aon:outputText value="#{to.base}" style="#{to.vatAccrualPayment?'color:blue;':''}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:column>
@@ -135,7 +137,7 @@
 						<f:facet name="header">
 							<aon:outputText value="%" />
 						</f:facet>
-						<aon:outputText value="#{to.percent}">
+						<aon:outputText value="#{to.percent}" style="#{to.vatAccrualPayment?'color:blue;':''}">
 							<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 						</aon:outputText>
 					</aon:column>
@@ -144,7 +146,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_vat_quota}" />
 						</f:facet>
-						<aon:outputText value="#{to.vatQuota}">
+						<aon:outputText value="#{to.vatQuota}" style="#{to.vatAccrualPayment?'color:blue;':''}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:column>
@@ -153,7 +155,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_surcharge}" />
 						</f:facet>
-						<aon:outputText value="#{to.surcharge}">
+						<aon:outputText value="#{to.surcharge}" style="#{to.vatAccrualPayment?'color:blue;':''}">
 							<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 						</aon:outputText>
 					</aon:column>
@@ -162,7 +164,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_surcharge_quota}" />
 						</f:facet>
-						<aon:outputText value="#{to.surchargeQuota}">
+						<aon:outputText value="#{to.surchargeQuota}" style="#{to.vatAccrualPayment?'color:blue;':''}">
 							<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 						</aon:outputText>
 					</aon:column>
@@ -171,7 +173,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_total}" />
 						</f:facet>
-						<aon:outputText value="#{to.total}">
+						<aon:outputText value="#{to.total}" style="#{to.vatAccrualPayment?'color:blue;':''}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:column>

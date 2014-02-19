@@ -32,6 +32,7 @@ public class Vat {
 	private VatType vatType;
 	private boolean investment;
 	private Integer invoiceId;
+	private boolean vatAccrualPayment;
 
 	Calendar calendar;
 
@@ -252,4 +253,11 @@ public class Vat {
 		}
 		return "B";
 	}
+	public boolean isVatAccrualPayment() {
+		return vatAccrualPayment;
+	}
+	public void setVatAccrualPayment(boolean vatAccrualPayment) {
+		this.vatAccrualPayment = vatAccrualPayment;
+	}
+	
 }
