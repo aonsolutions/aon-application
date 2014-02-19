@@ -18,6 +18,14 @@
 			<ui:param name="controllerDetail" value="#{fanBatchDetail}" />
 			<ui:param name="controllerAttach" value="#{fanBatchAttach}" />
 			
+			<ui:define name="moreToolbarContent" >
+				<aon:htmlCommandLink id="fan-excel-report"
+					value="#{bundle.aon_listing}"
+					target="_blank" action="#{fanBatch.onExcelReport}"
+					styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+				</aon:htmlCommandLink>
+			</ui:define>
+			
 			<ui:define name="batchContent" >
 				<aon:panelGrid id="dataTable" columns="4" style="width: 30%;">
 	

@@ -537,6 +537,11 @@ public abstract class FiscalModelController extends BasicController {
 		return ( !isNew() 
 			&& to.isFinished() 
 			&& to.getAdministration() == Administration.COMMON_TERRITORY
+			&& (to.getModel() == FiscalModelType.M111 
+				|| to.getModel() == FiscalModelType.M115
+				|| to.getModel() == FiscalModelType.M123
+				|| to.getModel() == FiscalModelType.M130
+				|| to.getModel() == FiscalModelType.M131)
 			&& isScriptPresent());
 	}
 
@@ -567,7 +572,8 @@ public abstract class FiscalModelController extends BasicController {
 	}
 	
 	public boolean isScriptPresent() {
-		return getMipf().isScriptPresent();
+		FiscalModel fiscalModel = (FiscalModel) getTo();
+		return fiscalModel != null && getMipf().isScriptPresent(fiscalModel.getYear());
 	}
 
 	public String getAeatWebPage() {
@@ -588,7 +594,8 @@ public abstract class FiscalModelController extends BasicController {
 	}
 
 	protected String validateAeatFile() {
-		getMipf().validateAeatFile(fileOutput);
+		FiscalModel fiscalModel = (FiscalModel) getTo();
+		getMipf().validateAeatFile(fiscalModel.getYear(),fileOutput);
 		return null;
 	}
 	

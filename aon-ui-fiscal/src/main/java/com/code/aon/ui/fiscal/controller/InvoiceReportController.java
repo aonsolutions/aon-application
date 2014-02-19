@@ -63,7 +63,7 @@ public class InvoiceReportController {
 	
 	public InvoiceReportParams getParams() {
 		if (params == null) {
-			params = new InvoiceReportParams();
+			params = new InvoiceReportParams( DomainManager.getCurrentDomain() );
 		}
 		return params;
 	}
@@ -73,7 +73,6 @@ public class InvoiceReportController {
 	
 	public void onReset(ActionEvent event) {
 		getParams().reset();
-		getParams().setDomain(DomainManager.getCurrentDomain());
 		getParams().setSecurityLevel(
 				AonUtil.getRoleManager().isConfidentiality()
 					?null

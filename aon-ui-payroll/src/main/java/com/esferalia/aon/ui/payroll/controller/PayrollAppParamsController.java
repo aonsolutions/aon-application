@@ -125,9 +125,6 @@ public class PayrollAppParamsController{
 	}
 	
 	public RegistryBank getSsPaymentBankAccount() {
-		if(ssPaymentBankAccount==null){
-			initSsPaymentBankAccount();
-		}
 		return ssPaymentBankAccount;
 	}
 	
@@ -256,9 +253,13 @@ public class PayrollAppParamsController{
 		// SS PAYMENT BANK ACCOUNT
 		if(getSsPaymentBankAccount()!=null && getSsPaymentBankAccount().getId()!=null){
 			getParameter(SS_PAYMENT_BANK_ACCOUNT_KEY).setValue(getSsPaymentBankAccount().getId().toString());
+		} else {
+			getParameter(SS_PAYMENT_BANK_ACCOUNT_KEY).setValue(null);
 		}
 		if( StringUtils.isNotBlank(getParameter(SS_MUTUAL_KEY).getValue()) ){
 			getParameter(SS_MUTUAL_KEY).setValue(getSSMutual());
+		} else {
+			getParameter(SS_MUTUAL_KEY).setValue(null);
 		}
 		
 	}

@@ -9,6 +9,8 @@ import com.code.aon.fiscal.enumeration.Period;
 
 public class VatTaxParameters {
 
+	private String domainName;
+	private int domain;
 	private Date date;
 	private Integer year;
 	private Date fromDate;
@@ -21,18 +23,15 @@ public class VatTaxParameters {
 	// No hay que realizar calculos, ni de facturas, ni de lo declarado anteriormente.
 	private boolean mod303AvailableByDifferenceDisabled;
 
-	private String domainName;
-	
-	public VatTaxParameters(String domainName) {
-//		this();
+	public VatTaxParameters(String domainName, int domain) {
 		this.domainName = domainName;
+		this.domain = domain;
 		setDate(new Date());
 	}
 
-//	public VatTaxParameters() {
-//		setDate(new Date());
-//	}
-
+	public int getDomain() {
+		return domain;
+	}
 	public String getDomainName() {
 		return domainName;
 	}
@@ -104,5 +103,5 @@ public class VatTaxParameters {
 			boolean mod303AvailableByDifferenceDisabled) {
 		this.mod303AvailableByDifferenceDisabled = mod303AvailableByDifferenceDisabled;
 	}
-
+	
 }

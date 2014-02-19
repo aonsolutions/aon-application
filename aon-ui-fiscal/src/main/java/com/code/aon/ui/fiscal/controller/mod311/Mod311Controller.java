@@ -175,7 +175,7 @@ public class Mod311Controller extends FiscalModelController {
 					Date fromDate = getDeclaration().getHeader().getPeriod().getStartDate( year );
 					Date toDate = getDeclaration().getHeader().getPeriod().getDueDate( year );
 					VatTaxManager taxManager = new VatTaxManager(AonUtil.getDomainName());
-					List<VatTaxDetail> vatDetails = taxManager.getVatTax(fromDate, toDate );
+					List<VatTaxDetail> vatDetails = taxManager.getVatTax(detail.getDomain(),fromDate, toDate );
 					double x02 = 0;
 					for (VatTaxDetail vatDetail : vatDetails) {
 						if (vatDetail.getKey() == VatTaxKey.CP || vatDetail.getKey() == VatTaxKey.GT ) {
@@ -217,7 +217,7 @@ public class Mod311Controller extends FiscalModelController {
 					}
 					if (y04Value == 0) {
 						VatTaxManager taxManager = new VatTaxManager(AonUtil.getDomainName());
-						List<VatTaxDetail> vatDetails = taxManager.getVatTax(fromDate, toDate );
+						List<VatTaxDetail> vatDetails = taxManager.getVatTax(detail.getDomain(),fromDate, toDate );
 						double y04 = 0;
 						for (VatTaxDetail vatDetail : vatDetails) {
 							if (vatDetail.getKey() == VatTaxKey.CP || vatDetail.getKey() == VatTaxKey.GT ) {

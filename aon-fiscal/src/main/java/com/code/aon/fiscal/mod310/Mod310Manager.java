@@ -52,7 +52,7 @@ public class Mod310Manager extends FiscalModelManager {
 		Date fromDate = fiscalModel.getPeriod().getStartDate(  fiscalModel.getYear() );
 		Date toDate = fiscalModel.getPeriod().getDueDate(  fiscalModel.getYear() );
 		VatTaxManager taxManager = new VatTaxManager(getDomainName());
-		List<VatTaxDetail> vatDetails = taxManager.getVatTax(fromDate, toDate );
+		List<VatTaxDetail> vatDetails = taxManager.getVatTax(fiscalModel.getDomain(),fromDate, toDate );
 		double c02 = 0.0;
 		double c04 = 0.0;
 		double c06 = 0.0;

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -25,6 +27,7 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
+import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -77,54 +80,63 @@ public class MOD349Writer implements IFinanceConstants{
 		return f;
 	}
 	
-	private Deponent getDeponent(Mod349 mod349,MOD349Format format) throws ManagerBeanException {
-			Deponent deponent = new  Deponent();
-			deponent.setDocument(getCompany().getDocument());
-			deponent.setComplementary(mod349.isComplementary());
-			deponent.setReplacement(mod349.isReplacement());
-			String p = mod349.getPeriod().getName();
-			if ("T1".equals(p)) {
-				deponent.setPeriod("1T");	
-			} else if ("T2".equals(p)) {
-				deponent.setPeriod("2T");	
-			} else if ("T3".equals(p)) {
-				deponent.setPeriod("3T");	
-			} else if ("T4".equals(p)) {
-				deponent.setPeriod("4T");	
-			} else if ("An".equals(p)) {
-				deponent.setPeriod("0A");	
-			} else {
-				deponent.setPeriod(p);	
+	private Deponent getDeponent(Mod349 mod349, MOD349Format format)
+			throws ManagerBeanException {
+		FiscalParametersController fiscalParams = (FiscalParametersController) AonUtil
+				.getRegisteredBean(FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
+
+		Deponent deponent = new Deponent();
+		deponent.setDocument(getCompany().getDocument());
+		deponent.setComplementary(mod349.isComplementary());
+		deponent.setReplacement(mod349.isReplacement());
+		String p = mod349.getPeriod().getName();
+		if ("T1".equals(p)) {
+			deponent.setPeriod("1T");
+		} else if ("T2".equals(p)) {
+			deponent.setPeriod("2T");
+		} else if ("T3".equals(p)) {
+			deponent.setPeriod("3T");
+		} else if ("T4".equals(p)) {
+			deponent.setPeriod("4T");
+		} else if ("An".equals(p)) {
+			deponent.setPeriod("0A");
+		} else {
+			deponent.setPeriod(p);
+		}
+		long a = 3490000000000L + mod349.getNumber();
+		deponent.setNumber(a);
+		deponent.setName(getCompany().getName());
+		RegistryAddress address = getCompany().getDefaultAddress();
+		if (address != null) {
+			GeoZone geozone = address.getGeozone();
+			if (geozone != null) {
+				deponent.setProvince(geozone.getCode());
 			}
-			long a = 3490000000000L + mod349.getNumber();
-			deponent.setNumber(a); 
-			deponent.setName(getCompany().getName());
-			RegistryAddress address = getCompany().getDefaultAddress();
-			if (address != null) {
-				GeoZone geozone = address.getGeozone();
-				if (geozone != null) {
-					deponent.setProvince(geozone.getCode());		
-				}
+		}
+		String relName = fiscalParams.getContactPerson();
+		String relPhone = fiscalParams.getContactPhone();
+		
+		deponent.setRelName(StringUtils.isEmpty(relName)?getCompany().getName():relName);
+		if (StringUtils.isEmpty(relPhone)) {
+			RegistryMedia phone = getCompany().getPhone();
+			relPhone = phone.getValue();
+		}
+		if (relPhone != null) {
+			try {
+				deponent.setRelPhone(Integer.parseInt( relPhone ));
+			} catch (NumberFormatException e) {
+				// Nothing
 			}
-			deponent.setRelName(getCompany().getName());
-			RegistryMedia  phone = getCompany().getPhone();
-			deponent.setRelPhone(null);
-			if (phone != null){
-				try {
-					deponent.setRelPhone(Integer.parseInt( phone.getValue() ));
-				} catch (NumberFormatException e) {
-					// Nothing
-				}
-			}
-			
-			if (mod349.getReplacedNumber() != null) {
-				long b = 3490000000000L + mod349.getReplacedNumber();
-				deponent.setReplacedNumber(b);
-			} 
-			deponent.setType("T");
-			deponent.setYear(mod349.getYear());
-			fillOperator(deponent,mod349,format);
-			return deponent;
+		}
+		
+		if (mod349.getReplacedNumber() != null) {
+			long b = 3490000000000L + mod349.getReplacedNumber();
+			deponent.setReplacedNumber(b);
+		}
+		deponent.setType("T");
+		deponent.setYear(mod349.getYear());
+		fillOperator(deponent, mod349, format);
+		return deponent;
 	}
 	
 	private void fillOperator(Deponent deponent, Mod349 mod349, MOD349Format format)  throws ManagerBeanException {

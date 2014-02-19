@@ -22,6 +22,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
@@ -117,7 +118,7 @@ public class VatTaxController extends BasicController {
 
 	public VatTaxParameters getParams() {
 		if (params == null) {
-			setParams(new VatTaxParameters(AonUtil.getDomainName()));
+			setParams(new VatTaxParameters(AonUtil.getDomainName(),DomainManager.getCurrentDomain()));
 		}
 		params.setMod303AvailableByDifferenceDisabled( getFiscalParams().isMod303AvailableByDifferenceDisabled());
 		return params;
@@ -333,8 +334,8 @@ public class VatTaxController extends BasicController {
 			}
 		}
 		if (td != tcd) {
-			AonUtil.addErrorMessage("\"Total a Deducir\" y \"Total cuota deducible\" deben tener el mismo valor.");
-			return false;
+			AonUtil.addErrorMessage("La declaración se ha grabado pero \"Total a Deducir\" y \"Total cuota deducible\" no tienen el mismo valor.");
+//			return false;
 		}
 		return true;
 	}
@@ -498,7 +499,7 @@ public class VatTaxController extends BasicController {
 	}
 	
 	private InvoiceReportParams getInvoiceReportParams(VatTaxDetail detail) {
-		InvoiceReportParams params = new InvoiceReportParams();
+		InvoiceReportParams params = new InvoiceReportParams(DomainManager.getCurrentDomain());
 		params.reset();
 		int year = detail.getVatTax().getYear();
 		params.setFromTaxDate(CommonUtil.getYearFirstDay(year));

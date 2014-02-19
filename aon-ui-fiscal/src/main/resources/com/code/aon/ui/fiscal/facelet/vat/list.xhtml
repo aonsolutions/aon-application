@@ -55,30 +55,6 @@
 					<ui:param name="showBlockHeader" value="#{false}"/>
 					<ui:param name="showBlockTotal" value="#{true}"/>
 				</ui:include>
-
-				<aon:div styleClass="aon-panelGrid2-total-text"  
-					style="text-align:center;border:solid #c4c4c4 1px; margin-top: 1em;width: 1050px;">
-					<aon:outputText value="#{bundle.finance_vat_result}"/>
-					<aon:panelGroup
-						rendered="#{!(vatReport.result lt 0)}" 
-						style="color:green;">
-						<aon:outputText  value="#{vatReport.result}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-						<aon:outputText value="&#160;"/>
-						<aon:outputText value="#{bundle.finance_vat_result_compensate}"/>
-					</aon:panelGroup>
-					
-					<aon:panelGroup
-						rendered="#{vatReport.result lt 0}" 
-						style="color:red;">
-						<aon:outputText value="#{vatReport.result * (-1)}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-						<aon:outputText value="&#160;"/>
-						<aon:outputText value="(#{bundle.fiscal_deposit})"/>
-					</aon:panelGroup>
-				</aon:div>
 					
 				<ui:include src="listBlock.xhtml">
 					<ui:param name="blockType" value="#{vatReport.intracommunity}"/>
@@ -134,6 +110,32 @@
 						<aon:outputText value="#{vatReport.summary[vatReport.investment].quota}"><f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" /></aon:outputText>
 					</aon:panelGrid>
 				</aon:panelGrid>
+				
+				<aon:div styleClass="aon-panelGrid2-total-text"  
+					style="text-align:center;border:solid #c4c4c4 1px; margin-top: 1em;width: 1050px;">
+					<aon:outputText value="#{bundle.finance_vat_result}"/>
+					<aon:panelGroup
+						rendered="#{!(vatReport.result lt 0)}" 
+						style="color:red;">
+						<aon:outputText  value="#{vatReport.result}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputText value="&#160;"/>
+						<aon:outputText value="(#{bundle.fiscal_deposit})"/>
+					</aon:panelGroup>
+					
+					<aon:panelGroup
+						rendered="#{vatReport.result lt 0}" 
+						style="color:green;">
+						<aon:outputText value="#{vatReport.result * (-1)}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputText value="&#160;"/>
+						<aon:outputText value="#{bundle.finance_vat_result_compensate}"/>
+						
+					</aon:panelGroup>
+				</aon:div>
+				
 			</aon:div>
 
 			

@@ -300,7 +300,13 @@ public class FANWriter {
 		ayn.setPrimerApellido(ap1!=null?ap1:BLANK_20);
 		ayn.setSegundoApellido(ap2!=null?ap2:BLANK_20);
 		ayn.setNombre(n!=null?n:BLANK_15);
-		ayn.setAbreviado((ap1!=null?ap1.substring(0, 2):BLANK_2)+(ap2!=null?ap2.substring(0, 2):BLANK_2)+(n!=null?n.substring(0, 1):BLANK_1));
+		String abbrv = "";
+		abbrv += (ap1!=null&&ap1.length()>0)?ap1.charAt(0):" ";
+		abbrv += (ap1!=null&&ap1.length()>1)?ap1.charAt(1):" ";
+		abbrv += (ap2!=null&&ap2.length()>0)?ap2.charAt(0):" ";
+		abbrv += (ap2!=null&&ap2.length()>1)?ap2.charAt(1):" ";
+		abbrv += (n!=null&&n.length()>0)?n.charAt(0):" ";
+		ayn.setAbreviado(abbrv);
 		return ayn;
 	}
 	
@@ -321,8 +327,8 @@ public class FANWriter {
 			String code = getContractCode(contract).getValue();
 			if(code.startsWith("2") || code.startsWith("5")){
 				String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
-				Double dayHours = CommonUtil.round( (Double.parseDouble(weekHours)/5), 0);
-				itDays = itDays * dayHours.intValue();
+				Double dayHours = (Double.parseDouble(weekHours)/5);
+				itDays = Double.valueOf(CommonUtil.round(itDays * dayHours, 0)).intValue();
 			}
 			datList.add(createDATRecord(contract, autoComplete(getJournalReduction(contract), 3, " ", true), itDays));
 		}
@@ -459,11 +465,15 @@ public class FANWriter {
 			ResultSet rs = ps.executeQuery();
 			if(rs.next()){
 				Calendar cal = Calendar.getInstance();
-				cal.setTime(rs.getDate(1));
-				startDate = cal.getTime();
-				cal.setTime(rs.getDate(2));
-				endDate = cal.getTime();
-				if(startIncrease!=null && startIncrease>0){
+				if(rs.getDate(1)!=null){
+					cal.setTime(rs.getDate(1));
+					startDate = cal.getTime();
+				}
+				if(rs.getDate(2)!=null){
+					cal.setTime(rs.getDate(2));
+					endDate = cal.getTime();
+				}
+				if(startDate!=null && startIncrease!=null && startIncrease>0){
 					Calendar start = Calendar.getInstance();
 					start.setTime(startDate);
 					start.add(Calendar.DAY_OF_MONTH, startIncrease);
@@ -1166,7 +1176,7 @@ public class FANWriter {
 			return 30;
 		} else if(code.startsWith("2") || code.startsWith("5")){
 			String weekHours = SEPEUtils.getInstance().getContractDataMap(contract, false, true).get(ContextVariable.WEEK_HOURS.getName());
-			Double dayHours = CommonUtil.round( (Double.parseDouble(weekHours)/5), 0);
+			Double dayHours = (Double.parseDouble(weekHours)/5);
 			
 			Calendar startCal = Calendar.getInstance();
 			startCal.setTime(getStartDate());
@@ -1182,9 +1192,9 @@ public class FANWriter {
 				startCal.add(Calendar.DAY_OF_MONTH, 1);
 			}
 			if(itDays!=null && itDays>0){
-				return (totalDays - itDays) * dayHours.intValue();
+				return Double.valueOf(CommonUtil.round((totalDays - itDays) * dayHours, 0)).intValue();
 			}
-			return totalDays * dayHours.intValue();
+			return Double.valueOf(CommonUtil.round(totalDays * dayHours, 0)).intValue();
 		}
 		return null;
 		
@@ -2518,36 +2528,37 @@ public class FANWriter {
 	 * @return
 	 */
 	private MPG createMPGRecord(EnterpriseCCC ccc) {
-		RegistryBank bank = obtainBank(ccc);
-		if(bank==null){
-			return null;
-		}
 		MPG mpg = new MPG();
 		// TODO: how obtain "modalidad de pago"
 //		~ Saldo Acreedor
 //		C Cargo en Cuenta
 //		V Pago electrónico
-		mpg.setSolicitudModalidadPago("C");
-		mpg.setCondigoCuentaCliente(bank.getBankAccount().getBban());
-		
-		DocumentType docType = ccc.getActivity().getEnterprise().getRegistry().getDocumentType();
-    	if(docType==DocumentType.NIF){
-    		mpg.setTipoIdentificadorTitular("1");
-    	} else if(docType==DocumentType.PASSPORT){
-    		mpg.setTipoIdentificadorTitular("2");
-    	} else if(docType==DocumentType.NIE){
-    		mpg.setTipoIdentificadorTitular("6");
-    	} else if(docType==DocumentType.CIF){
-    		mpg.setTipoIdentificadorTitular("9");
-    	} else {
-    		mpg.setTipoIdentificadorTitular("9");
-    	}
-		
-		// Obligatorio para Cargo en Cuenta y Saldos Acreedores. Ajustado a la
-		// derecha, relleno a ceros por la izquierda
-		mpg.setIdentificadorTitular(autoComplete(ccc.getActivity().getEnterprise().getRegistry().getDocument(), 14, "0", true));
-		// Obligatorio para Saldos Acreedores
-		mpg.setNombreTitular("");
+		RegistryBank bank = obtainBank(ccc);
+		if(bank==null || bank.getId()==null){
+			mpg.setSolicitudModalidadPago("V");
+		} else {
+			mpg.setSolicitudModalidadPago("C");
+			mpg.setCondigoCuentaCliente(bank.getBankAccount().getBban());
+			
+//			Obligatorio para Cargo en Cuenta y Saldos Acreedores
+			DocumentType docType = ccc.getActivity().getEnterprise().getRegistry().getDocumentType();
+			if(docType==DocumentType.NIF){
+				mpg.setTipoIdentificadorTitular("1");
+			} else if(docType==DocumentType.PASSPORT){
+				mpg.setTipoIdentificadorTitular("2");
+			} else if(docType==DocumentType.NIE){
+				mpg.setTipoIdentificadorTitular("6");
+			} else if(docType==DocumentType.CIF){
+				mpg.setTipoIdentificadorTitular("9");
+			} else {
+				mpg.setTipoIdentificadorTitular("9");
+			}
+			
+			// Obligatorio para Cargo en Cuenta y Saldos Acreedores. Ajustado a la derecha, relleno a ceros por la izquierda
+			mpg.setIdentificadorTitular(autoComplete(ccc.getActivity().getEnterprise().getRegistry().getDocument(), 14, "0", true));
+			// Obligatorio para Saldos Acreedores
+			mpg.setNombreTitular("");
+		}
 		
 		return mpg;
 	}
@@ -2565,18 +2576,20 @@ public class FANWriter {
 			ResultSet rs = ps.executeQuery();
 			if(rs.next()){
 				String id = rs.getString(1);
-				try {
-					IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
-					Criteria criteria = new Criteria();
-					criteria.setSkipDomainFilter(true);
-					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_DOMAIN), ccc.getDomain() );
-					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_ID), Integer.parseInt(id) );
-					List<ITransferObject> bankList = bean.getList(criteria);
-					if(bankList.size()>0){
-						return (RegistryBank) bankList.get(0);
+				if(id!=null){
+					try {
+						IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
+						Criteria criteria = new Criteria();
+						criteria.setSkipDomainFilter(true);
+						criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_DOMAIN), ccc.getDomain() );
+						criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_ID), Integer.parseInt(id) );
+						List<ITransferObject> bankList = bean.getList(criteria);
+						if(bankList.size()>0){
+							return (RegistryBank) bankList.get(0);
+						}
+					} catch (ManagerBeanException e) {
+						// nothing to do
 					}
-				} catch (ManagerBeanException e) {
-					// nothing to do
 				}
 			}
 		} catch (AonConnectionException e) {

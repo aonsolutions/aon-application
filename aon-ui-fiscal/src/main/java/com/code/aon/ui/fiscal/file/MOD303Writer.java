@@ -83,6 +83,7 @@ public class MOD303Writer {
 			if (vatTaxDeclaration.getRegistryBank() != null && vatTaxDeclaration.getRegistryBank().getBankAccount() != null) {
 				BankAccount ba = vatTaxDeclaration.getRegistryBank().getBankAccount();
 				declaration.setCcc(ba.getBban());
+				declaration.setBankAccount(ba.getIban());
 				declaration.setBankName(vatTaxDeclaration.getRegistryBank().getBankAlias());
 			}
 			Company company = getCompany(vatTaxDeclaration.getDomain());
@@ -161,6 +162,8 @@ public class MOD303Writer {
 			populateDeclarationDetail(vatTax,declaration);
 			
 			populateDeclaration(vatTaxDeclaration,declaration);
+			declaration.setVatAccrualRegimeReceiver( declaration.getVatAccrualInputBase() != 0 || declaration.getVatAccrualInputQuota() != 0 );
+			declaration.setVatAccrualRegime( company.isVatAccrualPayment() );
 			declaration.changeInvalidCharacters();
 			return declaration;
 	}
@@ -188,6 +191,7 @@ public class MOD303Writer {
 		Breakdown bd = new Breakdown(percent,taxableBase,quota,deductiblequota);
 		if (key == VatTaxKey.A1 ) {
 			declaration.getOutputVat().put(mapKey, bd);
+			
 			if (declaration.getOutputVatInvPasive().containsKey((mapKey))) {
 				Breakdown old = declaration.getOutputVatInvPasive().get(mapKey);
 				bd.setTaxableBase( CommonUtil.round(bd.getTaxableBase() + old.getTaxableBase()) ); 
@@ -197,11 +201,22 @@ public class MOD303Writer {
 			declaration.getOutputVatInvPasive().put(mapKey, bd);
 		} else if (key == VatTaxKey.A2 ) {
 			declaration.getSurcharge().put(mapKey, bd);
+		} else if (key == VatTaxKey.A21) {
+			declaration.setBaseSurchrageModifications( taxableBase );
+			declaration.setQuotaSurchrageModifications( quota );
 		} else if (key == VatTaxKey.A3 ) {
 			declaration.getIntracommunitary().put(mapKey, bd);
 			declaration.setBaseIntracommunitary( CommonUtil.round(declaration.getBaseIntracommunitary() +taxableBase,2));
 			declaration.setQuotaIntracommunitary( CommonUtil.round(declaration.getQuotaIntracommunitary() +quota,2));
+			declaration.setBaseIntracommunitaryCT( CommonUtil.round(declaration.getBaseIntracommunitaryCT() +taxableBase,2));
+			declaration.setQuotaIntracommunitaryCT( CommonUtil.round(declaration.getQuotaIntracommunitaryCT() +quota,2));
+		} else if (key == VatTaxKey.A31 ) {
+			declaration.setBaseIntracommunitaryCT( CommonUtil.round(declaration.getBaseIntracommunitaryCT() +taxableBase,2));
+			declaration.setQuotaIntracommunitaryCT( CommonUtil.round(declaration.getQuotaIntracommunitaryCT() +quota,2));
 		} else if (key == VatTaxKey.A4) {
+			declaration.setBaseISPCT( CommonUtil.round(declaration.getBaseISPCT() +taxableBase,2));
+			declaration.setQuotaISPCT( CommonUtil.round(declaration.getQuotaISPCT() +quota,2));
+
 			declaration.getInvPasive().put(mapKey, bd);
 			declaration.setBaseInvPasive( CommonUtil.round(declaration.getBaseInvPasive() +taxableBase,2) );
 			declaration.setQuotaInvPasive( CommonUtil.round(declaration.getQuotaInvPasive() +quota,2) );
@@ -235,8 +250,8 @@ public class MOD303Writer {
 			declaration.setImportedInvestmentOperationsQuota( quota );
 			declaration.setImportedInvestmentOperationsBase( taxableBase );
 		} else if (key == VatTaxKey.D1) {
-			declaration.setIntracommunitaryCommonOperationsQuota( quota );
-			declaration.setIntracommunitaryCommonOperationsBase( taxableBase );
+			declaration.setIntracommunitaryCommonOperationsQuota( CommonUtil.round(declaration.getIntracommunitaryCommonOperationsQuota() + quota ,2));
+			declaration.setIntracommunitaryCommonOperationsBase( CommonUtil.round(declaration.getIntracommunitaryCommonOperationsBase() + taxableBase  ,2));
 		} else if (key == VatTaxKey.D2) {
 			declaration.setIntracommunitaryInvestmentOperationsQuota( quota );
 			declaration.setIntracommunitaryInvestmentOperationsBase( taxableBase );
@@ -245,14 +260,25 @@ public class MOD303Writer {
 			declaration.setIntracommunitaryExpensesOperationsBase( taxableBase );
 		} else if (key == VatTaxKey.ET) {
 			declaration.setAgriculturalRegimeCompensation( quota );
+		} else if (key == VatTaxKey.RD) {
+			declaration.setDeductionRestificationBase( taxableBase );
+			declaration.setDeductionRestificationQuota( quota );
 		} else if (key == VatTaxKey.RI) {
 			declaration.setInvestmentNormalization( quota );
 		} else if (key == VatTaxKey.FT) {
 			declaration.setDeductTotal( quota );
 		} else if (key == VatTaxKey.DF) {
 			declaration.setDifference( quota );
+		} else if (key == VatTaxKey.XI) {
+			declaration.setVatAccrualInputBase( taxableBase );
+			declaration.setVatAccrualInputQuota( quota );
+		} else if (key == VatTaxKey.XO) {
+			declaration.setVatAccrualOutputBase( taxableBase );
+			declaration.setVatAccrualOutputQuota( quota );
 		}else if (key == VatTaxKey.EI) {
 			declaration.setIntracommunitaryDeliveries( taxableBase );
+		}else if (key == VatTaxKey.PS) {
+			declaration.setIntracommunitaryServiceDeliveries( taxableBase );
 		}else if (key == VatTaxKey.EX1) {
 			double d = declaration.getExportationTotal();
 			declaration.setExportationTotal( d + taxableBase );

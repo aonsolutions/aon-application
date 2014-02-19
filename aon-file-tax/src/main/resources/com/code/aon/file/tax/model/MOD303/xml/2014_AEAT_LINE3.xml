@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="Line3">
+	<field name="init" value="&lt;T30303>" format="AlphaNumeric" pattern="X(8)" />
+	<field name="intracommunitaryDeliveries" value="bean" bean="Line3" property="intracommunitaryDeliveriesCT" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="exportationTotal" value="bean" bean="Line3" property="exportationTotal" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="nonTaxableTotal" value="bean" bean="Line3" property="nonTaxableTotal" format="DefNumeric" pattern="S9(14)V99" />
+	
+	<field name="resultSum" value="bean" bean="Line3" property="difference" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="commonTerritoryPercent" value="bean" bean="Line3" property="commonTerritoryPercent" format="DefNumeric" pattern="9(3)V99" />
+	<field name="quota" value="bean" bean="Line3" property="quota" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="previousYearCompensateQuota" value="bean" bean="Line3" property="previousYearCompensateQuota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="regularizationResult" value="bean" bean="Line3" property="regularizationResult" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="afterCompensateQuotaResult" value="bean" bean="Line3" property="result" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="toDeduct" value="bean" bean="Line3" property="toDeduct" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="result" value="bean" bean="Line3" property="result" format="DefNumeric" pattern="S9(14)V99" />
+
+	<field name="vatAccrualOutputBase" value="bean" bean="Line1" property="vatAccrualOutputBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="vatAccrualOutputQuota" value="bean" bean="Line1" property="vatAccrualOutputQuota" format="DefNumeric" pattern="9(15)V99" />
+	<field name="vatAccrualInputBase" value="bean" bean="Line1" property="vatAccrualInputBase" format="DefNumeric" pattern="9(15)V99" />
+	<field name="vatAccrualInputQuota" value="bean" bean="Line1" property="vatAccrualInputQuota" format="DefNumeric" pattern="9(15)V99" />
+	
+	<field name="complementary" value="bean" bean="Line3" property="complementaryNumber" format="Numeric" pattern="9(1)" />
+	<field name="free5" value=" " format="Alphabetic" pattern="X(13)" />
+	<field name="withoutActivity" value="bean" bean="Line3" property="withoutActivityNumber" format="Numeric" pattern="9(1)" />
+	
+	<field name="bankAccount" value="bean" bean="Line3" property="bankAccount" format="AlphaNumeric" pattern="X(34)" />
+	<field name="free6" value=" " format="Alphabetic" pattern="X(289)" />
+	<field name="free7" value="&lt;/T30303>" format="Alphabetic" pattern="X(9)" />
+</register>

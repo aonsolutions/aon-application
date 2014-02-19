@@ -4,17 +4,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
@@ -24,7 +30,13 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.pool.AonConnectionException;
+import com.code.aon.report.ReportException;
+import com.code.aon.report.poi.ExcelReportExporter;
+import com.code.aon.report.poi.ReportMetadata;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -37,6 +49,7 @@ import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.payroll.enumeration.PayrollBatchAttachmentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.file.FANReportWriter;
 import com.esferalia.aon.ui.payroll.file.FANWriter;
 
 
@@ -209,6 +222,49 @@ public class FanBatchController extends BasicController {
 			list.add(detail.getCcc());
 		}
 		return list;
+	}
+	
+	public String onExcelReport() {
+		Connection conn = null; 
+		try {
+			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
+			Locale locale = AonUtil.getCurrentLocale();
+//			InvoiceReportManager manager = new InvoiceReportManager();
+			FANReportWriter writer = new FANReportWriter();
+			
+			
+			FanBatch batch = (FanBatch) getTo();
+			batch.setStatus(FileStatus.PENDING);
+			batch.setLiquidationType(LiquidationType.L00);
+			
+
+			FacesContext faces = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+			String fileName = batch.getLiquidationType().getValue()+batch.getYear()+batch.getMonth().getName(locale);
+			response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
+			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xls\";");
+			ServletOutputStream output = response.getOutputStream();
+			
+			writer.buildFANReport(getEnterpriseCCCList(), batch.getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth());
+			writer.excelReport(conn, locale, output);
+				
+//			manager.excelReport(conn, getParams(), locale, output);
+			
+			response.flushBuffer();
+			faces.responseComplete();
+			return null;
+		} catch (ReportException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (AonConnectionException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (ManagerBeanException e) {
+			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			DatabaseUtil.closeQuietly(conn);
+		}
+		
 	}
 	
 	/*
