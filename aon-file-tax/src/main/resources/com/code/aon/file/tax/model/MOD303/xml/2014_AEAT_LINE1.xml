@@ -33,7 +33,7 @@
 	<field name="mergedDeclaration" value="bean" bean="Line1" property="mergedDeclarationNumber" format="Numeric" pattern="9(1)" />
 	<field name="concurso" value="bean" bean="Line1" property="concursoNumber" format="Numeric" pattern="9(1)" />
 	<field name="concursoDateString" value="bean" bean="Line1" property="concursoDateString" format="AlphaNumeric" pattern="X(8)" />
-	<field name="concursoAuto" value="bean" bean="Line1" property="concursoAutoNumber" format="Numeric" pattern="9(1)" />
+	<field name="concursoAuto" value="bean" bean="Line1" property="concursoAuto" format="AlphaNumeric" pattern="X(1)" />
 	<field name="vatAccrualRegime" value="bean" bean="Line1" property="vatAccrualRegimeNumber" format="Numeric" pattern="9(1)" />
 	<field name="vatAccrualRegimeReceiver" value="bean" bean="Line1" property="vatAccrualRegimeReceiverNumber" format="Numeric" pattern="9(1)" />
 	<field name="prorataOption" value="bean" bean="Line1" property="prorataOptionNumber" format="Numeric" pattern="9(1)" />
