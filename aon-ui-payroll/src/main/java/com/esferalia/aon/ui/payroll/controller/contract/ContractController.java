@@ -433,9 +433,16 @@ public class ContractController extends BasicController {
 		}
 	}
 	
+	public void onSelectBonus(ActionEvent event){
+		if(getParams().getBonusModel().isRowAvailable()){
+			getParams().setBonus((ContractBonus) getParams().getBonusModel().getRowData());
+			setShowContractBonusWindow(true);
+		}
+	}
+	
 	public void onSaveBonus(ActionEvent event){
 		try {
-			if(getParams().getBonus()==null || getParams().getBonus().getId()==null){
+			if(getParams().getBonus()!=null){
 				IManagerBean bean = BeanManager.getManagerBean(ContractBonus.class);
 				bean.restoreNullSubPOJOs(getParams().getBonus());
 				bean.insertOrUpdate(getParams().getBonus());
@@ -450,8 +457,8 @@ public class ContractController extends BasicController {
 	}
 
 	public void onRemoveBonus(ActionEvent event){
-		if(getParams().getBonusModel().isRowAvailable()){
-			ContractBonus bonus = (ContractBonus) getParams().getBonusModel().getRowData(); 
+		ContractBonus bonus = getParams().getBonus();
+		if(bonus!=null && bonus.getId()!=null){
 			getContractUtils().removeContractBonus(bonus);
 			try {
 				getContractUtils().loadContractBonuses((Contract) this.getTo(), this.getParams());
