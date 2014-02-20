@@ -275,6 +275,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 				// clean undefined ...
 				listIterator.remove();
 				undefPayment.onUndefinedData(this);
+				paymentsVars.remove(undefPayment.getName());
 			}
 
 			while (undefPayments.size() > 0) {
