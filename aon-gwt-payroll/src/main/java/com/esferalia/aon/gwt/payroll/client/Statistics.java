@@ -80,6 +80,8 @@ public class Statistics extends ResizeComposite {
 			final com.esferalia.aon.gwt.payroll.shared.Statistics pStats) {
 		
 		this.statistics = pStats;
+		gridColumnChart.clear();
+		gridLinePieChart.clear();
 		initDateListBox();
 		implColumnSetStatistics(pStats);
 		
@@ -87,7 +89,7 @@ public class Statistics extends ResizeComposite {
 	
 	private void implColumnSetStatistics(final com.esferalia.aon.gwt.payroll.shared.Statistics pStats) {
 		
-		this.statistics = pStats;
+		this.statistics = pStats;		
 
 		// Create a callback to be called when the visualization API
 		// has been loaded.		
@@ -100,6 +102,7 @@ public class Statistics extends ResizeComposite {
 				ColumnChart column = new ColumnChart(
 						createTable(pStats),
 						 createOptions());
+			
 				gridColumnChart.setWidget(0, 0, column);
 				}
 		};
@@ -134,12 +137,11 @@ public class Statistics extends ResizeComposite {
 	}
 	
 	private void implPieSetStatistics(final com.esferalia.aon.gwt.payroll.shared.Statistics pStats) {	
-		
 		Runnable onLoadCallback = new Runnable() {
 			public void run() {
 				PieChart line = new PieChart(createPieTable(pStats),
 						createPieOptions());				
-				gridLinePieChart.setWidget(0, 1, line);				
+				gridLinePieChart.setWidget(0, 1, line);	
 			}
 		};
 		// Load the visualization api, passing the onLoadCallback to be called
@@ -201,18 +203,15 @@ public class Statistics extends ResizeComposite {
 		
 		options.setWidth((8*this.getOffsetWidth())/9);
 		options.setHeight(3*this.getOffsetHeight()/8);
-
+		
+		
 		AxisOptions vAxisOption = AxisOptions.create();
 		vAxisOption.setMinValue(0);		
-		
-		options.setColors("#3366CC","#109618", "#FF9900","#DD4477","#990099");
-		
-		options.setVAxisOptions(vAxisOption);
-		
+		options.setColors("#3366CC","#109618", "#FF9900","#DD4477","#990099");				
 		
 		options.setTitle("Acumulaci\u00F3n de Costes Mensuales");
-		options.setIsStacked(true);
-
+		options.setIsStacked(true);		
+		
 		return options;
 	}
 
@@ -225,9 +224,8 @@ public class Statistics extends ResizeComposite {
 		data.addColumn(ColumnType.NUMBER, "IRPF");
 		data.addColumn(ColumnType.NUMBER, "SS Empleado");
 		data.addColumn(ColumnType.NUMBER, "Otros");
-		data.addColumn(ColumnType.NUMBER, "SS Empresa");
-		
-		
+		data.addColumn(ColumnType.NUMBER, "SS Empresa");		
+
 		com.google.gwt.visualization.client.formatters.NumberFormat.Options options =
 				com.google.gwt.visualization.client.formatters.NumberFormat.Options.create();
 		options.setSuffix("\u20AC");
@@ -362,7 +360,6 @@ public class Statistics extends ResizeComposite {
 			AxisOptions vAxisOption = AxisOptions.create();
 			vAxisOption.setMinValue(0);
 			options.setVAxisOptions(vAxisOption);			
-			
 			
 			options.setColors("#3366CC","#109618", "#FF9900", "#990099");
 			
