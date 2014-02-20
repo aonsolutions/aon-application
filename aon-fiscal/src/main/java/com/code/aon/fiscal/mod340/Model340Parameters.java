@@ -4,10 +4,11 @@ package com.code.aon.fiscal.mod340;
 import java.util.Date;
 
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.fiscal.enumeration.Period;
 
 public class Model340Parameters {
-
+	
 	private Integer year;
 	private Period period;
 	private Date date;
@@ -22,6 +23,7 @@ public class Model340Parameters {
 	private String previousNumber;
 	private String vatDeclarationNumber;
 	private String domain;
+	private Administration administration;
 	
 
 	public Model340Parameters() {
@@ -29,8 +31,15 @@ public class Model340Parameters {
 		setFromDate(null);
 		setToDate(null);
 		setTaxDateEnabled(false);
+		administration = Administration.COMMON_TERRITORY;
 	}
-	
+	public Administration getAdministration() {
+		return administration;
+	}
+	public void setAdministration(Administration administration) {
+		this.administration = administration;
+	}
+
 	public String getDomain() {
 		return domain;
 	}

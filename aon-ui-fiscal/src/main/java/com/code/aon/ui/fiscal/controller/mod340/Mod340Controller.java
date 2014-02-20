@@ -23,7 +23,6 @@ import com.code.aon.ui.util.AonUtil;
 public class Mod340Controller {
 
 	private Model340Parameters params;
-	private MOD340Format format;
 	
 	public Model340Parameters getParams() {
 		if (params == null) {
@@ -34,11 +33,14 @@ public class Mod340Controller {
 	public void setParams(Model340Parameters params) {
 		this.params = params;
 	}
+	
 	public MOD340Format getFormat() {
-		return format;
-	}
-	public void setFormat(MOD340Format format) {
-		this.format = format;
+		for (MOD340Format format : MOD340Format.values() ) {
+			if ( format.getAdministration() == params.getAdministration() && params.getYear() >= format.getYear() ) {
+				return format; 
+			}
+		}
+		throw new IllegalArgumentException("No existe formato para " + params.getAdministration() + " - " + params.getYear());
 	}
 
 	public void onReset(ActionEvent event) {
@@ -76,6 +78,9 @@ public class Mod340Controller {
 			writer.flush();
 			res.flushBuffer();
 			ctx.responseComplete();
+		} catch (	IllegalArgumentException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException( e.getMessage() , e );
 		} catch (IOException e) {
 			AonUtil.addErrorMessage("El fichero no es correcto");
 			throw new AbortProcessingException( e );

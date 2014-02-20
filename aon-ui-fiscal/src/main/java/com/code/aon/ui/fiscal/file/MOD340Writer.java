@@ -74,7 +74,10 @@ public class MOD340Writer implements IFinanceConstants{
 		ResultSet sumRs = null;
 		PreparedStatement rectifiedInvoicePs= null;
 		ResultSet rectifiedInvoiceRs= null;
+		PreparedStatement financePs= null;
+		ResultSet financeRs= null;
 		Connection conn = null;
+		
 		try {
 			conn = DatabaseUtil.getConnection( params.getDomain() );
 			String rectifiedSelect = "SELECT i.type,i.series,i.number FROM invoice i WHERE id = ?";
@@ -82,7 +85,7 @@ public class MOD340Writer implements IFinanceConstants{
 			
 			Deponent deponent = getDeponent();
 			StringWriter stmt = new StringWriter();
-			stmt.append(" SELECT i.id invoice_id");
+			stmt.append("( SELECT i.id invoice_id");
 			stmt.append(", i.type type");
 			stmt.append(",i.transaction transaction");
 			stmt.append(",i.investment investment");
@@ -96,11 +99,47 @@ public class MOD340Writer implements IFinanceConstants{
 			stmt.append(",i.rname rname");
 			stmt.append(",i.rectification_type rectification_type");
 			stmt.append(",i.rectification_invoice rectification_invoice");
+			stmt.append(",i.vat_accrual_payment vat_accrual_payment");
+			stmt.append(",i.taxable_base taxable_base");
+			stmt.append(",i.vat_quota vat_quota");
+			stmt.append(",i.retention_quota retention_quota");
+			stmt.append(",i.total total");
 			stmt.append("  FROM invoice i ");
 			stmt.append(" WHERE ");
 			stmt.append( DomainManager.getSQLWhereClause("i.domain") );
-			appendParams(stmt);
-			stmt.append(" ORDER BY i.series,i.number");
+			stmt.append(" AND " + (params.isTaxDateEnabled()?"i.tax_date":"i.issue_date") + " >= ?");
+			stmt.append(" AND " + (params.isTaxDateEnabled()?"i.tax_date":"i.issue_date") + " <= ?");
+			stmt.append(" )");
+			stmt.append(" UNION ");
+			stmt.append("( SELECT i.id invoice_id");
+			stmt.append(", i.type type");
+			stmt.append(",i.transaction transaction");
+			stmt.append(",i.investment investment");
+			stmt.append(",i.tax_date tax_date");
+			stmt.append(",i.issue_date issue_date");
+			stmt.append(",i.reference_code reference_code");
+			stmt.append(",i.series series");
+			stmt.append(",i.number number");
+			stmt.append(",i.rdocument rdocument");
+			stmt.append(",i.rdocument_country rdocument_country");
+			stmt.append(",i.rname rname");
+			stmt.append(",i.rectification_type rectification_type");
+			stmt.append(",i.rectification_invoice rectification_invoice");
+			stmt.append(",i.vat_accrual_payment vat_accrual_payment");
+			stmt.append(",i.taxable_base taxable_base");
+			stmt.append(",i.vat_quota vat_quota");
+			stmt.append(",i.retention_quota retention_quota");
+			stmt.append(",i.total total");
+			stmt.append("  FROM finance_tracking ft ");
+			stmt.append("  INNER JOIN finance f ON ft.finance = f.id"); 
+			stmt.append("  INNER JOIN invoice i ON f.invoice = i.id");
+			stmt.append(" WHERE ");
+			stmt.append( DomainManager.getSQLWhereClause("i.domain") );
+			stmt.append(" AND i.vat_accrual_payment = 1");
+			stmt.append(" AND " + (params.isTaxDateEnabled()?"i.tax_date":"i.issue_date") + " < ?");
+			stmt.append(" AND ft.tracking_date >= ?");
+			stmt.append(" AND ft.tracking_date <= ?");
+			stmt.append(") ORDER BY type,series,number");
 			invoicesPs  = conn.prepareStatement( stmt.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			
 			stmt = new StringWriter();
@@ -111,12 +150,24 @@ public class MOD340Writer implements IFinanceConstants{
 			stmt.append("  AND it.tax_type = 1"); // Solo IVA
 			sumPs  = conn.prepareStatement( stmt.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);			
 
+			String vatAccrualSelect = "SELECT "
+				+ " ft.tracking_date tracking_date"
+				+ ",IF(ft.type=1, ft.amount,  -ft.amount ) amount"
+				+ ",ft.rbank rbank"
+				+ ",rbank.bank_account bank_account" 
+				+" FROM finance_tracking ft"
+				+" INNER JOIN finance f ON ft.finance = f.id"
+				+" LEFT OUTER JOIN rbank ON ft.rbank = rbank.id"
+				+" WHERE ft.domain = ?"
+				+" AND f.invoice = ?"
+				+" AND ft.tracking_date BETWEEN ? AND ?"
+				+" AND ft.type IN (1,2)";
+			financePs  = conn.prepareStatement( vatAccrualSelect, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			
 			stmt = new StringWriter();
 			stmt.append(" SELECT it.tax_type tax_type");
 			stmt.append(",it.percentage percentage");
 			stmt.append(",it.surcharge surcharge");
-			stmt.append(",it.vat_deduction_type vat_deduction_type");
-			stmt.append(",it.withholding_type withholding_type");
 			stmt.append(",it.deductible_quota deductible_quota");
 			stmt.append(",SUM(id.taxable_base) taxable_base");
 			stmt.append(",SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) quota");
@@ -127,7 +178,12 @@ public class MOD340Writer implements IFinanceConstants{
 			stmt.append("  AND it.tax_type = 1"); // Solo IVA
 			stmt.append("  GROUP BY id.invoice,it.percentage,it.surcharge");
 			taxPs  = conn.prepareStatement( stmt.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);			
-			appendParams(invoicesPs);
+			int i = 0;
+			invoicesPs.setDate(++i, new java.sql.Date(params.getFromDate().getTime()));
+			invoicesPs.setDate(++i, new java.sql.Date(params.getToDate().getTime()));
+			invoicesPs.setDate(++i, new java.sql.Date(params.getFromDate().getTime()));
+			invoicesPs.setDate(++i, new java.sql.Date(params.getFromDate().getTime()));
+			invoicesPs.setDate(++i, new java.sql.Date(params.getToDate().getTime()));
 			invoicesRs = invoicesPs.executeQuery();
 			List<Invoice> invoices = new LinkedList<Invoice>();
 			while (invoicesRs.next()) {
@@ -142,7 +198,83 @@ public class MOD340Writer implements IFinanceConstants{
 				taxPs.setInt(1, id);
 				taxRs = taxPs.executeQuery();
 				while (taxRs.next()) {
-					Invoice inv = fillInvoice(rectifiedInvoicePs,rectifiedInvoiceRs, invoicesRs );
+//					Invoice inv = fillInvoice(rectifiedInvoicePs,rectifiedInvoiceRs, invoicesRs );
+					
+					Invoice inv = new Invoice();
+					boolean vatAccrualPayment = (invoicesRs.getInt("vat_accrual_payment") == 1); 
+					InvoiceType type = InvoiceType.values()[invoicesRs.getInt("type")];
+					InvoiceTransactionType transaction = InvoiceTransactionType.values()[invoicesRs.getInt("transaction")];
+					if (transaction == InvoiceTransactionType.OTHER_ISP) {
+						inv.setOperation("I");
+					}
+					boolean investment = invoicesRs.getInt("investment") == 1;
+					if ( type == InvoiceType.SALES) {
+						inv.setType(MOD340.ISSUED);
+						inv.setInvoiceCount(1); 
+						inv.setFirstInvoiceNumber("");
+						inv.setLastInvoiceNumber("");
+						inv.setRectifiedInvoiceNumber("");
+						RectificationType rt = RectificationType.values()[invoicesRs.getInt("rectification_type")];
+						if ( rt == RectificationType.NORMAL_RECTIFIER || rt == RectificationType.SPECIAL_RECTIFIER ) {
+							int rectifiedInvoice = invoicesRs.getInt("rectification_invoice");	
+							rectifiedInvoicePs.setInt(1, rectifiedInvoice);
+							rectifiedInvoiceRs = rectifiedInvoicePs.executeQuery();
+							if (rectifiedInvoiceRs.next()) {
+								InvoiceType rType = InvoiceType.values()[rectifiedInvoiceRs.getInt(1)];
+								String rSeries = rectifiedInvoiceRs.getString(2);
+								int rNumber = rectifiedInvoiceRs.getInt(3);
+								String documentNumber = FinanceUtil.getDocumentNumber(rType, rSeries, rNumber);
+								inv.setOperation("D");
+								inv.setRectifiedInvoiceNumber(documentNumber);
+							}
+							rectifiedInvoiceRs.close();
+						}
+					} else if (investment && params.isInvestmentBookEnabled()) {
+							inv.setType(MOD340.INVESTMENT);
+							inv.setYearProrate(0); 
+							inv.setYearRegularization(0);
+							inv.setDeliveryInvoice("");
+							inv.setDoneRegularization(0);
+							inv.setInvestementDate("00000000");
+							inv.setInvestementName("");
+					} else {
+						inv.setType(MOD340.RECEIVED);
+						inv.setInvoiceCount(1); 
+						inv.setFirstInvoiceNumber("");
+						inv.setLastInvoiceNumber("");
+					}
+					
+					inv.setYear( params.getYear());
+					inv.setPeriod(params.getPeriodString());
+					inv.setCode(getCompany().getDocument());
+					String document = invoicesRs.getString("rdocument");
+					inv.setName(invoicesRs.getString("rname"));
+					inv.setCountry(invoicesRs.getString("rdocument_country"));
+					Country c = Country.valueOf(inv.getCountry());
+					if (c == Country.ES) {
+						inv.setCountryKey("1");
+						inv.setCountryCode("");
+						inv.setDocument(document);
+					} else {
+						if (c.isEuropeanUnionMember()) {
+							inv.setCountryKey("2");
+							inv.setCountryCode(c == Country.GR ? "EL" : c.getValue());
+							inv.setCountryNif(document);
+						} else {
+							// No se si esto está bien.
+							inv.setCountryKey("4");
+							inv.setCountryCode(c.getValue());
+							inv.setCountryNif(document);
+						}
+					}
+					inv.setIssueDate(getFormatter().format(invoicesRs.getDate("issue_date")));
+					inv.setOperationDate(getFormatter().format(invoicesRs.getDate("tax_date")));
+					inv.setInvoiceNumber(invoicesRs.getString("reference_code"));
+					String series = invoicesRs.getString("series");
+					int number = invoicesRs.getInt("number");
+					String documentNumber = FinanceUtil.getDocumentNumber(type, series, number);
+					inv.setDocumentNumber(documentNumber);
+
 					inv.setRegisterCount(numTaxes);
 					if (StringUtils.isEmpty(inv.getOperation())) {
 						inv.setOperation(numTaxes > 1?"C":"");
@@ -165,6 +297,59 @@ public class MOD340Writer implements IFinanceConstants{
 					deponent.setTotalInvoice( CommonUtil.round(deponent.getTotalInvoice() + total));
 					deponent.setTotalQuota( CommonUtil.round(deponent.getTotalQuota() + quota));
 					deponent.setTotalRegister( CommonUtil.round(deponent.getTotalRegister() + 1 ));
+					
+					if (vatAccrualPayment 
+						&& (inv.getType() == MOD340.ISSUED || inv.getType() == MOD340.RECEIVED)
+						&& (!StringUtils.equals("I", inv.getOperation()))) {
+						
+						financePs.setInt(1, DomainManager.getCurrentDomain());
+						financePs.setInt(2, id);
+						financePs.setDate(3, new java.sql.Date(params.getFromDate().getTime()));
+						financePs.setDate(4, new java.sql.Date(params.getToDate().getTime()));
+						financeRs = financePs.executeQuery();
+						boolean first = true;
+						while (financeRs.next()) {
+							if (!first) {
+								String operation = "Z";
+								if (StringUtils.equals("C",inv.getOperation())) {
+									operation = "2";	
+								} else if (StringUtils.equals("D",inv.getOperation())) {
+									operation = "3";
+								}
+								inv.setOperation(operation);
+								invoices.add(inv);
+								inv = inv.cloneInvoice();
+							}
+							double amount = financeRs.getDouble("amount");
+							double invoiceBase = invoicesRs.getDouble("taxable_base");
+							double invoiceVat  = invoicesRs.getDouble("vat_quota");
+							double invoiceRetention = invoicesRs.getDouble("retention_quota");
+							double invoiceTotal = invoicesRs.getDouble("total");
+							invoiceTotal = CommonUtil.round(invoiceBase + invoiceVat - invoiceRetention);
+							amount = CommonUtil.round(amount * taxableBase / invoiceTotal,4);
+							
+							inv.setFinanceAmount(amount);
+							inv.setFinanceDate(getFormatter().format(financeRs.getDate("tracking_date")));
+							String iban = financeRs.getString("bank_account");
+							if (StringUtils.isEmpty(iban)) {
+								inv.setFinanceType("O");
+								inv.setFinanceBank("");
+							} else {
+								inv.setFinanceType("C");
+								inv.setFinanceBank(iban);
+							}
+							inv.setFinanceDate(getFormatter().format(financeRs.getDate("tracking_date")));
+							first = false;
+						}
+						financeRs.close();
+					}
+					String operation = "Z";
+					if (StringUtils.equals("C",inv.getOperation())) {
+						operation = "2";	
+					} else if (StringUtils.equals("D",inv.getOperation())) {
+						operation = "3";
+					}
+					inv.setOperation(operation);
 					invoices.add(inv);
 				}
 				taxRs.close();
@@ -192,6 +377,8 @@ public class MOD340Writer implements IFinanceConstants{
 			DatabaseUtil.closeQuietly(invoicesPs);
 			DatabaseUtil.closeQuietly(rectifiedInvoiceRs);
 			DatabaseUtil.closeQuietly(rectifiedInvoicePs);
+			DatabaseUtil.closeQuietly(financeRs);
+			DatabaseUtil.closeQuietly(financePs);
 			DatabaseUtil.closeQuietly(conn);
 		}
 	}
@@ -214,7 +401,7 @@ public class MOD340Writer implements IFinanceConstants{
 			// Nothing
 		}
 		deponent.setRelName(fiscalParams.getContactPerson() );
-		deponent.setNumber("340" + deponent.getYear() + deponent.getPeriod() + "0000"); 
+		deponent.setNumber("340" + deponent.getYear() + deponent.getPeriod() + "000" + (params.isReplacement()?"1":"0")); 
 		deponent.setComplementary(null);
 		deponent.setReplacement(params.isReplacement()?"S":null);
 		deponent.setPreviousNumber(params.isReplacement()?params.getPreviousNumber():"0000000000000");
@@ -226,25 +413,7 @@ public class MOD340Writer implements IFinanceConstants{
 		return deponent;
 	}
 
-	private void appendParams(StringWriter stmt) {
-		if (params.getFromDate() != null) {
-			stmt.append(" AND " + (params.isTaxDateEnabled()?"i.tax_date":"i.issue_date") + " >= ?");
-		}
-		if (params.getToDate() != null) {
-			stmt.append(" AND " + (params.isTaxDateEnabled()?"i.tax_date":"i.issue_date") + " <= ?");
-		}
-	}
 	
-	private void appendParams(PreparedStatement ps) throws SQLException {
-		int i = 0;
-		if (params.getFromDate() != null) {
-			ps.setDate(++i, new java.sql.Date(params.getFromDate().getTime()));
-		}
-		if (params.getToDate() != null) {
-			ps.setDate(++i, new java.sql.Date(params.getToDate().getTime()));
-		}
-	}
-
 	private Invoice fillInvoice(PreparedStatement rectifiedInvoicePs, ResultSet  rectifiedInvoiceRs
 			, ResultSet rs) throws SQLException {
 		Invoice inv = new Invoice();
