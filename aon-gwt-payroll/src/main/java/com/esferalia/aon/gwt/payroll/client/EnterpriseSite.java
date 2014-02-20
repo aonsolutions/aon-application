@@ -158,7 +158,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	@Override
 	public void onStatisticsSelected(com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
 		detailPanel.setWidget(stats);
-		stats.setStatistics(statistics, false);
+		stats.setStatistics(statistics);
 	}
 	
 	@Override

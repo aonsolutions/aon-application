@@ -1,21 +1,16 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.io.FileOutputStream;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.AbstractDataTable;
@@ -25,9 +20,9 @@ import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
 import com.google.gwt.visualization.client.visualizations.corechart.ColumnChart;
 import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
-import com.google.gwt.visualization.client.visualizations.corechart.HorizontalAxisOptions;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
+import com.google.gwt.visualization.client.visualizations.corechart.PieChart;
 
 public class Statistics extends ResizeComposite {
 
@@ -47,10 +42,14 @@ public class Statistics extends ResizeComposite {
 
 	private static final String STYLENAME_CHECKED_ITEM = "aon-MenuItemCheckYes";
 
-	private int selectedYear;
+	private int selectedYear; //Año seleccionado
+	private int yearIndex;	//Index del año en el dateListBox
 
 	@UiField
-	Grid grid;
+	Grid gridColumnChart;
+	
+	@UiField
+	Grid gridLinePieChart;
 
 	@UiField
 	ListBox dateListBox;
@@ -59,16 +58,6 @@ public class Statistics extends ResizeComposite {
 	Label titleLabel;
 
 	private int zoom = DEFAULT_ZOOM;
-	
-
-
-	// Variable que guarda que grafica se esta mostrando
-	/*
-	 * 0 --> ColumnChart 1 --> LineChart
-	 */
-	//private int estado = 0;
-	private boolean inicilizated = false;
-
 	private com.esferalia.aon.gwt.payroll.shared.Statistics statistics;
 
 	public Statistics() {
@@ -87,61 +76,78 @@ public class Statistics extends ResizeComposite {
 	 * @param pStats
 	 *            Instancia de la clase Statistics
 	 */
-	public void setStatistics(
-			final com.esferalia.aon.gwt.payroll.shared.Statistics pStats, boolean pInizialite) {
+	public final void setStatistics(
+			final com.esferalia.aon.gwt.payroll.shared.Statistics pStats) {
+		
 		this.statistics = pStats;
-		inicilizated = pInizialite;
+		initDateListBox();
+		implColumnSetStatistics(pStats);
+		
+	}
+	
+	private void implColumnSetStatistics(final com.esferalia.aon.gwt.payroll.shared.Statistics pStats) {
+		
+		this.statistics = pStats;
 
 		// Create a callback to be called when the visualization API
 		// has been loaded.		
-		grid.clear();
+		gridColumnChart.clear();
+		gridColumnChart.setCellPadding(0);
+		gridColumnChart.setCellSpacing(0);
+		
 		Runnable onLoadCallback = new Runnable() {
 			public void run() {
 				ColumnChart column = new ColumnChart(
 						createTable(pStats),
-						 createOptions(pStats));
-				grid.setWidget(0, 0, column);
+						 createOptions());
+				gridColumnChart.setWidget(0, 0, column);
 				}
 		};
 		// Load the visualization api, passing the onLoadCallback to be called
 		// when loading is done.
 		VisualizationUtils.loadVisualizationApi(onLoadCallback,
-			CoreChart.PACKAGE);
-
-		if (!inicilizated) {
-			initDateListBox();
-			inicilizated = true;
-		}
+			CoreChart.PACKAGE);		
+		implLineSetStatistics(pStats);
 		
-		loadLineStatistics(pStats);
 	}
-
-	/**
-	 * Pinta el LineChart
-	 * 
-	 * @param pStats
-	 *            Instancia de la clase Statistics
-	 */
-	public void loadLineStatistics(
-			final com.esferalia.aon.gwt.payroll.shared.Statistics pStats) {
-
-		this.statistics = pStats;
+	
+	private void implLineSetStatistics(final com.esferalia.aon.gwt.payroll.shared.Statistics pStats) {	
+		
+		gridLinePieChart.clear();
+		gridLinePieChart.setCellPadding(0);
+		gridLinePieChart.setCellSpacing(0);
+		
 		Runnable onLoadCallback = new Runnable() {
 			public void run() {
 				LineChart line = new LineChart(createLineTable(pStats),
 						createLineOptions(pStats));				
-				grid.setWidget(1, 0, line);				
+				gridLinePieChart.setWidget(0, 0, line);				
 			}
 		};
 		// Load the visualization api, passing the onLoadCallback to be called
 		// when loading is done.
+		
 		VisualizationUtils.loadVisualizationApi(onLoadCallback,
 				ColumnChart.PACKAGE);
-
-		if (!inicilizated) {
-			initDateListBox();
-			inicilizated = true;
-		}
+		
+		implPieSetStatistics(pStats);
+	}
+	
+	private void implPieSetStatistics(final com.esferalia.aon.gwt.payroll.shared.Statistics pStats) {	
+		
+		Runnable onLoadCallback = new Runnable() {
+			public void run() {
+				PieChart line = new PieChart(createPieTable(pStats),
+						createPieOptions());				
+				gridLinePieChart.setWidget(0, 1, line);				
+			}
+		};
+		// Load the visualization api, passing the onLoadCallback to be called
+		// when loading is done.		
+		VisualizationUtils.loadVisualizationApi(onLoadCallback,
+				ColumnChart.PACKAGE);
+		
+		
 	}
 
 	// ------------------------------------------------------------- UiHandlers
@@ -155,13 +161,8 @@ public class Statistics extends ResizeComposite {
 	void onYearChanged(ChangeEvent event) {
 		selectedYear = Integer.valueOf(dateListBox.getValue(dateListBox
 				.getSelectedIndex()));
-		setStatistics(statistics, true);
-		
-		/*if (estado == 0) {
-			setStatistics(statistics);
-		} else if (estado == 1) {
-			loadLineStatistics(statistics);
-		}*/
+		yearIndex = dateListBox.getSelectedIndex();
+		implColumnSetStatistics(statistics);
 
 	}
 
@@ -176,6 +177,7 @@ public class Statistics extends ResizeComposite {
 		dateListBox.setSelectedIndex(dateListBox.getItemCount() - 1);
 		selectedYear = Integer.parseInt(dateListBox.getItemText(dateListBox
 				.getSelectedIndex()));
+		yearIndex = dateListBox.getSelectedIndex();
 	}
 
 	/*private void setCheckedStyle(MenuItem menuItem, boolean checked) {
@@ -190,16 +192,16 @@ public class Statistics extends ResizeComposite {
 	// ***********************COLUMN CHART********************
 	// *****************************************************
 	
-	private Options createOptions(
-			com.esferalia.aon.gwt.payroll.shared.Statistics pStat) {
+	private Options createOptions() {
 		Options options = Options.create();
 		// 400 y 240
 		options.setFontSize(11);
-		options.setWidth(3*this.getOffsetWidth()/4);
-		options.setHeight(3*this.getOffsetHeight()/8);		
-		HorizontalAxisOptions hAxisOption = HorizontalAxisOptions.create();		
-		hAxisOption.setMinValue(0);
-		options.setHAxisOptions(hAxisOption);
+		//options.setWidth(3*this.getOffsetWidth()/4);
+		//options.setHeight(3*this.getOffsetHeight()/8);
+		
+		options.setWidth((8*this.getOffsetWidth())/9);
+		options.setHeight(3*this.getOffsetHeight()/8);
+
 		AxisOptions vAxisOption = AxisOptions.create();
 		vAxisOption.setMinValue(0);		
 		
@@ -230,16 +232,7 @@ public class Statistics extends ResizeComposite {
 				com.google.gwt.visualization.client.formatters.NumberFormat.Options.create();
 		options.setSuffix("\u20AC");
 		
-		NumberFormat f = NumberFormat.getCurrencyFormat();
-
-		int yearIndex = 0;
-
-		for (int x = 0; x < pStat.getStatisticYears().size(); x++) {
-
-			if (pStat.getStatisticYears().get(x).getYear() == selectedYear) {
-				yearIndex = x;
-			}
-		}
+		NumberFormat f = NumberFormat.getCurrencyFormat();		
 
 		for (int x = 0; x < pStat.getStatisticYears().get(yearIndex)
 				.getStatsDataLength(); x++) {
@@ -272,10 +265,7 @@ public class Statistics extends ResizeComposite {
 			data.setValue(x, w,
 					pStat.getStatisticYears().get(yearIndex)
 							.getStatsData(x).getSSEnterprise());
-			data.setFormattedValue(x, w, f.format(data.getValueDouble(x, w)));		
-			
-			
-			
+			data.setFormattedValue(x, w, f.format(data.getValueDouble(x, w)));				
 		}
 		
 		return data;
@@ -289,9 +279,11 @@ public class Statistics extends ResizeComposite {
 			com.esferalia.aon.gwt.payroll.shared.Statistics pStat) {
 		Options options = Options.create();
 		options.setFontSize(11);
-		options.setWidth(3*this.getOffsetWidth()/4);
-		options.setHeight(3*this.getOffsetHeight()/8);		
+		//options.setWidth(3*this.getOffsetWidth()/4);
+		//options.setHeight(3*this.getOffsetHeight()/8);
 	
+		options.setWidth(this.getOffsetWidth()/2);
+		options.setHeight(3*this.getOffsetHeight()/8);
 		
 		options.setLineWidth(4);
 		options.setTitle("Progresi\u00F3n de Gastos Mensuales");
@@ -313,20 +305,13 @@ public class Statistics extends ResizeComposite {
 		data.addColumn(ColumnType.NUMBER, "Devengos");		
 		data.addColumn(ColumnType.NUMBER, "Totales");
 
-		int yearIndex = 0;
+
 		
 		com.google.gwt.visualization.client.formatters.NumberFormat.Options options =
 				com.google.gwt.visualization.client.formatters.NumberFormat.Options.create();
 		options.setSuffix("\u20AC");
 		
-		NumberFormat f = NumberFormat.getCurrencyFormat();
-
-		for (int x = 0; x < pStat.getStatisticYears().size(); x++) {
-			
-			if (pStat.getStatisticYears().get(x).getYear() == selectedYear) {
-				yearIndex = x;
-			}
-		}
+		NumberFormat f = NumberFormat.getCurrencyFormat();		
 
 		for (int x = 0; x < pStat.getStatisticYears().get(yearIndex)
 				.getStatsDataLength(); x++) {
@@ -352,9 +337,6 @@ public class Statistics extends ResizeComposite {
 					pStat.getStatisticYears().get(yearIndex)
 							.getStatsData(x).getGastoTotal());
 			data.setFormattedValue(x, w, f.format(data.getValueDouble(x, w)));
-
-
-
 		}
 		
 		return data;
@@ -364,6 +346,73 @@ public class Statistics extends ResizeComposite {
 	//*****************************************************
 	//*****************************************************
 	
+	// *****************************************************
+	// ***********************PIE CHART********************
+	// *****************************************************
+
+		private Options createPieOptions() {
+			Options options = Options.create();
+			options.setFontSize(11);
+		
+			options.setWidth(this.getOffsetWidth()/2);
+			options.setHeight(3*this.getOffsetHeight()/8);
+			
+			options.setTitle("Total Gastos Anual " + selectedYear);
+			
+			AxisOptions vAxisOption = AxisOptions.create();
+			vAxisOption.setMinValue(0);
+			options.setVAxisOptions(vAxisOption);			
+			
+			
+			options.setColors("#3366CC","#109618", "#FF9900", "#990099");
+			
+			return options;
+		}
+
+		private AbstractDataTable createPieTable(
+				com.esferalia.aon.gwt.payroll.shared.Statistics pStat) {
+			DataTable data = DataTable.create();
+			data.addColumn(ColumnType.STRING, "Task");
+			data.addColumn(ColumnType.NUMBER, "Valor");			
+			
+			com.google.gwt.visualization.client.formatters.NumberFormat.Options options =
+					com.google.gwt.visualization.client.formatters.NumberFormat.Options.create();
+			options.setSuffix("\u20AC");
+			
+			NumberFormat f = NumberFormat.getCurrencyFormat();		
+			
+			//4 filas. NETO-IRPF-SSEMPLEADO-SSEMPRESA			
+			data.addRows(4);
+			
+			data.setValue(0, 0, "Neto");
+			data.setValue(0, 1, pStat.getStatisticYears().get(yearIndex)
+					.getTotalLiquid());
+			data.setFormattedValue(0, 1, f.format(data.getValueDouble(0, 1)));
+			
+			data.setValue(1, 0, "IRPF");
+			data.setValue(1, 1, pStat.getStatisticYears().get(yearIndex)
+					.getTotalIRPF());
+			data.setFormattedValue(1, 1, f.format(data.getValueDouble(1, 1)));
+			
+			data.setValue(2, 0, "SS Empleado");
+			data.setValue(2, 1, pStat.getStatisticYears().get(yearIndex)
+					.getTotalSSEmployee());
+			data.setFormattedValue(2, 1, f.format(data.getValueDouble(2, 1)));
+			
+			//Valor muy despreciable. 			
+			/*data.setValue(3, 0, "Otros");
+			data.setValue(3, 1, pStat.getStatisticYears().get(yearIndex)
+					.getTotalConcepts());
+			data.setFormattedValue(3, 1, f.format(data.getValueDouble(3, 1)));*/
+			
+			data.setValue(3, 0, "SS Empresa");
+			data.setValue(3, 1, pStat.getStatisticYears().get(yearIndex)
+					.getTotalSSEnterprise());
+			data.setFormattedValue(3, 1, f.format(data.getValueDouble(3, 1)));		
+			
+			
+			return data;
+		}
 } 
 	
 

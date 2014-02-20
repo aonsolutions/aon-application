@@ -124,16 +124,21 @@ public class SQLStatistics {
 						.setMonthName(months[month]);
 				pStatistics.getStatisticYears().get(pIndex).getStatsData(month)
 						.setLiquid(liquid);
+				pStatistics.getStatisticYears().get(pIndex).setTotalLiquid(liquid);
 				pStatistics.getStatisticYears().get(pIndex).getStatsData(month)
 						.setIrpf(irpf);
+				pStatistics.getStatisticYears().get(pIndex).setTotalIRPF(irpf);
 				pStatistics.getStatisticYears().get(pIndex).getStatsData(month)
 						.setSSEmployee(ssEmployee);
+				pStatistics.getStatisticYears().get(pIndex).setTotalSSEmployee(ssEmployee);
 				pStatistics.getStatisticYears().get(pIndex).getStatsData(month)
 						.setTotalPayment(totalPayment);
 				pStatistics.getStatisticYears().get(pIndex).getStatsData(month)
 						.setSSEnterprise(ssEnterprise);
+				pStatistics.getStatisticYears().get(pIndex).setTotalSSEnterprise(ssEnterprise);
 				pStatistics.getStatisticYears().get(pIndex).getStatsData(month)
 						.setOtros(concepts);
+				pStatistics.getStatisticYears().get(pIndex).setTotalConcepts(concepts);
 
 			}
 
@@ -402,17 +407,21 @@ public class SQLStatistics {
 						.setMonthName(months[month]);
 				pStatistics.getStatisticYears().get(pIndex).getStatsData(month)
 						.setLiquid(liquid);
+				pStatistics.getStatisticYears().get(pIndex).setTotalLiquid(liquid);
 				pStatistics.getStatisticYears().get(pIndex).getStatsData(month)
 						.setIrpf(irpf);
+				pStatistics.getStatisticYears().get(pIndex).setTotalIRPF(irpf);
 				pStatistics.getStatisticYears().get(pIndex).getStatsData(month)
 						.setSSEmployee(ssEmployee);
+				pStatistics.getStatisticYears().get(pIndex).setTotalSSEmployee(ssEmployee);
 				pStatistics.getStatisticYears().get(pIndex).getStatsData(month)
 						.setTotalPayment(totalPayment);
 				pStatistics.getStatisticYears().get(pIndex).getStatsData(month)
 						.setSSEnterprise(ssEnterprise);
+				pStatistics.getStatisticYears().get(pIndex).setTotalSSEnterprise(ssEnterprise);
 				pStatistics.getStatisticYears().get(pIndex).getStatsData(month)
 						.setOtros(concepts);
-
+				pStatistics.getStatisticYears().get(pIndex).setTotalConcepts(concepts);
 			}
 
 		} catch (SQLException e) {

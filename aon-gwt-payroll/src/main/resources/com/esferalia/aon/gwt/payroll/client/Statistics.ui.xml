@@ -4,7 +4,10 @@
 
 	<ui:style>
 		.editor {
-
+		}
+		.pos {
+		align: center;
+		text-align: center;
 		}
 
 		.document {
@@ -25,21 +28,13 @@
 			<g:FlowPanel>
 
 				<g:MenuBar>
-					<!--  <g:MenuItem text="Archivo">
-						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="downloadMenuItem" text="Descargar" />
-							<g:MenuItem styleName="gwt-MenuItemSeparator">
-								<div class="menuSeparatorInner"></div>
-							</g:MenuItem>
-							<g:MenuItem ui:field="printMenuItem" text="Imprimir..." />
-						</g:MenuBar>
-					</g:MenuItem>
-					<g:MenuItem ui:field="viewMenuItem" text="Ver">
-						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="reduceMenuItem" text="Reducir" />
-							<g:MenuItem ui:field="enlargeMenuItem" text="Ampliar" />
-						</g:MenuBar>
-					</g:MenuItem> -->
+					<!-- <g:MenuItem text="Archivo"> <g:MenuBar vertical="true"> <g:MenuItem 
+						ui:field="downloadMenuItem" text="Descargar" /> <g:MenuItem styleName="gwt-MenuItemSeparator"> 
+						<div class="menuSeparatorInner"></div> </g:MenuItem> <g:MenuItem ui:field="printMenuItem" 
+						text="Imprimir..." /> </g:MenuBar> </g:MenuItem> <g:MenuItem ui:field="viewMenuItem" 
+						text="Ver"> <g:MenuBar vertical="true"> <g:MenuItem ui:field="reduceMenuItem" 
+						text="Reducir" /> <g:MenuItem ui:field="enlargeMenuItem" text="Ampliar" /> 
+						</g:MenuBar> </g:MenuItem> -->
 				</g:MenuBar>
 
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
@@ -54,24 +49,24 @@
 								<g:Label styleName="aon-outputText" text=" " />
 							</g:HTMLPanel>
 						</g:HTMLPanel>
-						
-						
+
+
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								
-							
-								<!-- <g:Button ui:field='printButton'
-									styleName='aon-finding-toolbar-item aon-icon-pdf' text="Exportar" /> -->
-						
-								<g:ListBox ui:field='dateListBox' styleName='' />								
+
+
+								<!-- <g:Button ui:field='printButton' styleName='aon-finding-toolbar-item 
+									aon-icon-pdf' text="Exportar" /> -->
+
+								<g:ListBox ui:field='dateListBox' styleName='' />
 
 								<!-- <g:ListBox ui:field='chartListBox' styleName='' /> -->
-																
-								
+
+
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
-					
-					
+
+
 					</g:HorizontalPanel>
 				</g:FlowPanel>
 
@@ -80,21 +75,24 @@
 		</g:north>
 		<g:center>
 			<g:ScrollPanel styleName="{style.editor}">
-				<g:VerticalPanel styleName="{style.document}">				    					
-					<!--<g:SimplePanel styleName="reset" ui:field='panel'>					    
-					</g:SimplePanel>-->	
-					
-						<g:Grid ui:field='grid'>
-					    <g:row>
-					        <g:cell>					            
-					        </g:cell>				    
-					    </g:row>
-					    <g:row>
-					        <g:cell>					            
-					        </g:cell>					    
-					    </g:row>				        
-					</g:Grid>    		
-					
+				<g:VerticalPanel styleName="{style.document}">
+
+					<g:Grid ui:field='gridColumnChart' styleName="{style.pos}">
+						<g:row>
+							<g:cell>
+							</g:cell>
+						</g:row>
+					</g:Grid >
+					<g:Grid ui:field='gridLinePieChart' styleName="{style.pos}">
+						<g:row>
+							<g:cell>
+							</g:cell>
+							<g:cell>
+							</g:cell>
+						</g:row>
+
+					</g:Grid>
+
 				</g:VerticalPanel>
 			</g:ScrollPanel>
 		</g:center>

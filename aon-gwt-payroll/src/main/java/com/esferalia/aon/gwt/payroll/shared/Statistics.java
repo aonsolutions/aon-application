@@ -33,5 +33,12 @@ public class Statistics implements Serializable {
 	public LinkedList<StatisticYears> getStatisticYears() {
 		return years;
 	}
+	
+	public int getMultiplicador(){
+		return 4;
+	}
+	public int getDividendo(){
+		return 5;
+	}
 
 }
