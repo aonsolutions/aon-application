@@ -20,7 +20,7 @@ public class Declaration {
 	private boolean mergedDeclaration;
 	private boolean concurso;
 	private Date concursoDate;
-	private boolean concursoAuto;
+	private String concursoAuto;
 	private boolean vatAccrualRegime;
 	private boolean vatAccrualRegimeReceiver;
 	private boolean prorataOption;
@@ -255,14 +255,11 @@ public class Declaration {
 	public String getConcursoDateString() {
 		return "";
 	}
-	public boolean isConcursoAuto() {
+	public String getConcursoAuto() {
 		return concursoAuto;
 	}
-	public void setConcursoAuto(boolean concursoAuto) {
+	public void setConcursoAuto(String concursoAuto) {
 		this.concursoAuto = concursoAuto;
-	}
-	public int getConcursoAutoNumber() {
-		return isConcursoAuto()?1:2;
 	}
 	public boolean isVatAccrualRegime() {
 		return vatAccrualRegime;

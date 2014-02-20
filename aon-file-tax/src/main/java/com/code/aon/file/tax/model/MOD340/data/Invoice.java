@@ -2,7 +2,7 @@ package com.code.aon.file.tax.model.MOD340.data;
 
 
 
-public class Invoice {
+public class Invoice implements Cloneable {
 
 	private String type;
 	private Integer year;
@@ -46,6 +46,12 @@ public class Invoice {
 	private double doneRegularization;
 	private String investementDate;
 	private String investementName;
+	
+	private String financeDate = "00000000";
+	private double financeAmount;
+	private String financeType;
+	private String financeBank;
+	
 	
 
 	public String getType() {
@@ -300,6 +306,42 @@ public class Invoice {
 	public void setInvestementName(String investementName) {
 		this.investementName = investementName;
 	}
+	public String getFinanceDate() {
+		return financeDate;
+	}
+	public void setFinanceDate(String financeDate) {
+		this.financeDate = financeDate;
+	}
+	public double getFinanceAmount() {
+		return financeAmount;
+	}
+	public void setFinanceAmount(double financeAmount) {
+		this.financeAmount = financeAmount;
+	}
+	public String getFinanceType() {
+		return financeType;
+	}
+	public void setFinanceType(String financeType) {
+		this.financeType = financeType;
+	}
+	public String getFinanceBank() {
+		return financeBank;
+	}
+	public void setFinanceBank(String financeBank) {
+		this.financeBank = financeBank;
+	}
 
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
+	}
 	
+	public Invoice cloneInvoice() {
+		try {
+			return (Invoice) clone();
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
+	}
 }

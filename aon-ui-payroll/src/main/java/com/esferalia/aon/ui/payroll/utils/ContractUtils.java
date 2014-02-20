@@ -676,7 +676,7 @@ public class ContractUtils {
 			IManagerBean bean = BeanManager.getManagerBean(ContractBonus.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_CONTRACT_ID), contract.getId());
-			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_CONTRACT_ID));
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_START_DATE));
 			List<ITransferObject> list = bean.getList(criteria);
 			params.setBonuses( list ); 
 			params.setBonusModel(null);

@@ -35,10 +35,19 @@
 								<aon:div style="width:99%">
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="bonusSave"
-											value="#{bundle.aon_accept}"
+											value="#{contract.params.bonus.id==null?bundle.aon_accept:bundle.aon_save}"
 											reRender="showContractBonusWindow, #{reRender}"
 											actionListener="#{contract.onSaveBonus}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept">
+											<f:setPropertyActionListener
+												target="#{contract.showContractBonusWindow}" value="#{false}" />
+										</aon:commandButton>
+										<aon:commandButton id="removeContractBonus" 
+											value="#{bundle.aon_remove}" 
+											rendered="#{contract.params.bonus.id!=null}"
+											reRender="showContractBonusWindow, #{reRender}"
+											actionListener="#{contract.onRemoveBonus}" 
+											styleClass="aon-finding-toolbar-item aon-icon-delete">
 											<f:setPropertyActionListener
 												target="#{contract.showContractBonusWindow}" value="#{false}" />
 										</aon:commandButton>

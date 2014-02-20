@@ -2004,7 +2004,9 @@ public class FANWriter {
 	private void createEDTCd28Segment(EMP emp) {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			amount += tra.getDat().get(0).getEdl().containsKey("CD28")?tra.getDat().get(0).getEdlSegment("CD28").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				amount += dat.getEdl().containsKey("CD28")?tra.getDat().get(0).getEdlSegment("CD28").getImporte():0;
+			}
 		}
 		if(amount != 0){
 			EDT edt = emp.getEdtSegment("EDTCD28");
@@ -2028,7 +2030,9 @@ public class FANWriter {
 		if(ccc.getActivity().getType() == SSRegimeType.SELF_EMPLOYED){
 			Integer amount = 0;
 			for(TRA tra: emp.getTrabajadores()){
-				amount += tra.getDat().get(0).getEdl().containsKey("CD25")?tra.getDat().get(0).getEdlSegment("CD25").getImporte():0;
+				for(DAT dat: tra.getDat()){
+					amount += dat.getEdl().containsKey("CD25")?tra.getDat().get(0).getEdlSegment("CD25").getImporte():0;
+				}
 			}
 			if(amount != 0){
 				EDT edt = emp.getEdtSegment("EDTCD25");
@@ -2047,7 +2051,9 @@ public class FANWriter {
 		if(ccc.getActivity().getType() == SSRegimeType.GENERAL){
 			Integer amount = 0;
 			for(TRA tra: emp.getTrabajadores()){
-				amount += tra.getDat().get(0).getEdl().containsKey("CD24")?tra.getDat().get(0).getEdlSegment("CD24").getImporte():0;
+				for(DAT dat: tra.getDat()){
+					amount += dat.getEdl().containsKey("CD24")?tra.getDat().get(0).getEdlSegment("CD24").getImporte():0;
+				}
 			}
 			if(amount != 0){
 				EDT edt = emp.getEdtSegment("EDTCD24");
@@ -2065,7 +2071,9 @@ public class FANWriter {
 	private void createEDTCd23Segment(EMP emp) {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			amount += tra.getDat().get(0).getEdl().containsKey("CD23")?tra.getDat().get(0).getEdlSegment("CD23").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				amount += dat.getEdl().containsKey("CD23")?tra.getDat().get(0).getEdlSegment("CD23").getImporte():0;
+			}
 		}
 		if(amount != 0){
 			EDT edt = emp.getEdtSegment("EDTCD23");
@@ -2081,7 +2089,9 @@ public class FANWriter {
 		if(ccc.getActivity().getType() != SSRegimeType.ARTIST){
 			Integer amount = 0;
 			for(TRA tra: emp.getTrabajadores()){
-				amount += tra.getDat().get(0).getEdl().containsKey("CD22")?tra.getDat().get(0).getEdlSegment("CD22").getImporte():0;
+				for(DAT dat: tra.getDat()){
+					amount += dat.getEdl().containsKey("CD22")?tra.getDat().get(0).getEdlSegment("CD22").getImporte():0;
+				}
 			}
 			if(amount != 0){
 				EDT edt = emp.getEdtSegment("EDTCD22");
@@ -2099,7 +2109,9 @@ public class FANWriter {
 	private void createEDTCd21Segment(EMP emp) {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			amount += tra.getDat().get(0).getEdl().containsKey("CD21")?tra.getDat().get(0).getEdlSegment("CD21").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				amount += dat.getEdl().containsKey("CD21")?tra.getDat().get(0).getEdlSegment("CD21").getImporte():0;
+			}
 		}
 		if(amount != 0){
 			EDT edt = emp.getEdtSegment("EDTCD21");
@@ -2116,7 +2128,9 @@ public class FANWriter {
 	private void createEDTCd20Segment(EMP emp) {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			amount += tra.getDat().get(0).getEdl().containsKey("CD20")?tra.getDat().get(0).getEdlSegment("CD20").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				amount += dat.getEdl().containsKey("CD20")?tra.getDat().get(0).getEdlSegment("CD20").getImporte():0;
+			}
 		}
 		if(amount != 0){
 			EDT edt = emp.getEdtSegment("EDTCD20");
@@ -2138,7 +2152,9 @@ public class FANWriter {
 		if(ccc.getActivity().getType() != SSRegimeType.AGRICULTURAL){
 			Integer amount = 0;
 			for(TRA tra: emp.getTrabajadores()){
-				amount += tra.getDat().get(0).getEdl().containsKey("CD17")?tra.getDat().get(0).getEdlSegment("CD17").getImporte():0;
+				for(DAT dat: tra.getDat()){
+					amount += dat.getEdl().containsKey("CD17")?tra.getDat().get(0).getEdlSegment("CD17").getImporte():0;
+				}
 			}
 			if(amount != 0){
 				EDT edt = emp.getEdtSegment("EDTCD17");
@@ -2156,7 +2172,9 @@ public class FANWriter {
 	private void createEDTCd16Segment(EMP emp) {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			amount += tra.getDat().get(0).getEdl().containsKey("CD16")?tra.getDat().get(0).getEdlSegment("CD16").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				amount += dat.getEdl().containsKey("CD16")?tra.getDat().get(0).getEdlSegment("CD16").getImporte():0;
+			}
 		}
 		if(amount != 0){
 			EDT edt = emp.getEdtSegment("EDTCD16");
@@ -2173,7 +2191,9 @@ public class FANWriter {
 	private void createEDTCd13Segment(EMP emp) {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			amount += tra.getDat().get(0).getEdl().containsKey("CD13")?tra.getDat().get(0).getEdlSegment("CD13").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				amount += dat.getEdl().containsKey("CD13")?tra.getDat().get(0).getEdlSegment("CD13").getImporte():0;
+			}
 		}
 		if(amount != 0){
 			EDT edt = emp.getEdtSegment("EDTCD13");
@@ -2193,7 +2213,9 @@ public class FANWriter {
 	private void createEDTCd11Segment(EMP emp) {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			amount += tra.getDat().get(0).getEdl().containsKey("CD11")?tra.getDat().get(0).getEdlSegment("CD11").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				amount += dat.getEdl().containsKey("CD11")?tra.getDat().get(0).getEdlSegment("CD11").getImporte():0;
+			}
 		}
 		if(amount != 0){
 			EDT edt = emp.getEdtSegment("EDTCD11");
@@ -2210,7 +2232,9 @@ public class FANWriter {
 	private void createEDTCd10Segment(EMP emp) {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			amount += tra.getDat().get(0).getEdl().containsKey("CD10")?tra.getDat().get(0).getEdlSegment("CD10").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				amount += dat.getEdl().containsKey("CD10")?tra.getDat().get(0).getEdlSegment("CD10").getImporte():0;
+			}
 		}
 		if(amount != 0){
 			EDT edt = emp.getEdtSegment("EDTCD10");
@@ -2227,7 +2251,9 @@ public class FANWriter {
 	private void createEDTCd07Segment(EMP emp) {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			amount += tra.getDat().get(0).getEdl().containsKey("CD07")?tra.getDat().get(0).getEdlSegment("CD07").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				amount += dat.getEdl().containsKey("CD07")?tra.getDat().get(0).getEdlSegment("CD07").getImporte():0;
+			}
 		}
 		if(amount != 0){
 			EDT edt = emp.getEdtSegment("EDTCD07");
@@ -2245,7 +2271,9 @@ public class FANWriter {
 	private void createEDTCd06Segment(EMP emp) {
 		Integer amount = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			amount += tra.getDat().get(0).getEdl().containsKey("CD06")?tra.getDat().get(0).getEdlSegment("CD06").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				amount += dat.getEdl().containsKey("CD06")?tra.getDat().get(0).getEdlSegment("CD06").getImporte():0;
+			}
 		}	
 		if(amount != 0){
 			EDT edt = emp.getEdtSegment("EDTCD06");
@@ -2267,7 +2295,9 @@ public class FANWriter {
 		if(ccc.getActivity().getType() != SSRegimeType.ARTIST && ccc.getActivity().getType() != SSRegimeType.COAL_MINING){
 			Integer amount = 0;
 			for(TRA tra: emp.getTrabajadores()){
-				amount += tra.getDat().get(0).getEdl().containsKey("CD03")?tra.getDat().get(0).getEdlSegment("CD03").getImporte():0;
+				for(DAT dat: tra.getDat()){
+					amount += dat.getEdl().containsKey("CD03")?tra.getDat().get(0).getEdlSegment("CD03").getImporte():0;
+				}
 			}	
 			if(amount != 0){
 				EDT edt = emp.getEdtSegment("EDTCD03");
@@ -2287,7 +2317,9 @@ public class FANWriter {
 		if(ccc.getActivity().getType() != SSRegimeType.ARTIST && ccc.getActivity().getType() != SSRegimeType.COAL_MINING){
 			Integer amount = 0;
 			for(TRA tra: emp.getTrabajadores()){
-				amount += tra.getDat().get(0).getEdl().containsKey("CD01")?tra.getDat().get(0).getEdlSegment("CD01").getImporte():0;
+				for(DAT dat: tra.getDat()){
+					amount += dat.getEdl().containsKey("CD01")?tra.getDat().get(0).getEdlSegment("CD01").getImporte():0;
+				}
 			}	
 			if(amount != 0){
 				EDT edt = emp.getEdtSegment("EDTCD01");
@@ -2309,7 +2341,9 @@ public class FANWriter {
 	private void createEDTBa42Segment(EMP emp) {
 		Integer base = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			base += tra.getDat().get(0).getEdl().containsKey("BA42")?tra.getDat().get(0).getEdlSegment("BA42").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				base += dat.getEdl().containsKey("BA42")?tra.getDat().get(0).getEdlSegment("BA42").getImporte():0;
+			}
 		}	
 		if(base != 0){
 			EDT edt = emp.getEdtSegment("EDTBA42");
@@ -2365,8 +2399,10 @@ public class FANWriter {
 	private void createEDTBa22Segment(EMP emp) {
 		Integer base = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			base += tra.getDat().get(0).getEdl().containsKey("BA20")?tra.getDat().get(0).getEdlSegment("BA20").getImporte():0;
-			base += tra.getDat().get(0).getEdl().containsKey("BA22")?tra.getDat().get(0).getEdlSegment("BA22").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				base += dat.getEdl().containsKey("BA20")?tra.getDat().get(0).getEdlSegment("BA20").getImporte():0;
+				base += dat.getEdl().containsKey("BA22")?tra.getDat().get(0).getEdlSegment("BA22").getImporte():0;
+			}
 		}	
 		if(base != 0){
 			EDT edt = emp.getEdtSegment("EDTBA22");
@@ -2385,8 +2421,10 @@ public class FANWriter {
 		if(ccc.getActivity().getType() != SSRegimeType.AGRICULTURAL && CommonUtil.getYear(getStartDate()) < 2012) {
 			Integer base = 0;
 			for(TRA tra: emp.getTrabajadores()){
-				base += tra.getDat().get(0).getEdl().containsKey("BA20")?tra.getDat().get(0).getEdlSegment("BA20").getImporte():0;
-				base += tra.getDat().get(0).getEdl().containsKey("BA21")?tra.getDat().get(0).getEdlSegment("BA21").getImporte():0;
+				for(DAT dat: tra.getDat()){
+					base += dat.getEdl().containsKey("BA20")?tra.getDat().get(0).getEdlSegment("BA20").getImporte():0;
+					base += dat.getEdl().containsKey("BA21")?tra.getDat().get(0).getEdlSegment("BA21").getImporte():0;
+				}
 			}	
 			if(base != 0){
 				EDT edt = emp.getEdtSegment("EDTBA21");
@@ -2405,7 +2443,9 @@ public class FANWriter {
 			Double employeeNonStructural = 4.70;
 			Integer base = 0;
 			for(TRA tra: emp.getTrabajadores()){
-				base += tra.getDat().get(0).getEdl().containsKey("BA11")?tra.getDat().get(0).getEdlSegment("BA11").getImporte():0;
+				for(DAT dat: tra.getDat()){
+					base += dat.getEdl().containsKey("BA11")?tra.getDat().get(0).getEdlSegment("BA11").getImporte():0;
+				}
 			}	
 			if(base != 0){
 				Integer amount = (int)(CommonUtil.round(((new Double(base))/100)*((enterpriseNonStructural + employeeNonStructural)/100))*100);
@@ -2429,7 +2469,9 @@ public class FANWriter {
 			Double employeeNonStructural = 2.00;
 			Integer base = 0;
 			for(TRA tra: emp.getTrabajadores()){
-				base += tra.getDat().get(0).getEdl().containsKey("BA10")?tra.getDat().get(0).getEdlSegment("BA10").getImporte():0;
+				for(DAT dat: tra.getDat()){
+					base += dat.getEdl().containsKey("BA10")?tra.getDat().get(0).getEdlSegment("BA10").getImporte():0;
+				}
 			}	
 			if(base != 0){
 				Integer amount = (int)(CommonUtil.round(((new Double(base))/100)*((enterpriseNonStructural + employeeNonStructural)/100))*100);
@@ -2449,7 +2491,9 @@ public class FANWriter {
 		if(ccc.getActivity().getType() != SSRegimeType.ARTIST){
 			Integer base = 0;
 			for(TRA tra: emp.getTrabajadores()){
-				base += tra.getDat().get(0).getEdl().containsKey("BA09")?tra.getDat().get(0).getEdlSegment("BA09").getImporte():0;
+				for(DAT dat: tra.getDat()){
+					base += dat.getEdl().containsKey("BA09")?tra.getDat().get(0).getEdlSegment("BA09").getImporte():0;
+				}
 			}	
 			if(base != 0){
 				EDT edt = emp.getEdtSegment("EDTBA09");
@@ -2479,8 +2523,10 @@ public class FANWriter {
 	private void createEDTBa02Segment(EMP emp) {
 		Integer base = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			base += tra.getDat().get(0).getEdl().containsKey("BA00")?tra.getDat().get(0).getEdlSegment("BA00").getImporte():0;
-			base += tra.getDat().get(0).getEdl().containsKey("BA02")?tra.getDat().get(0).getEdlSegment("BA02").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				base += dat.getEdl().containsKey("BA00")?tra.getDat().get(0).getEdlSegment("BA00").getImporte():0;
+				base += dat.getEdl().containsKey("BA02")?tra.getDat().get(0).getEdlSegment("BA02").getImporte():0;
+			}
 		}
 		if(base != 0){
 			EDT edt = emp.getEdtSegment("EDTBA02");
@@ -2503,8 +2549,10 @@ public class FANWriter {
 	private void createEDTBa01Segment(EMP emp) {
 		Integer base = 0;
 		for(TRA tra: emp.getTrabajadores()){
-			base += tra.getDat().get(0).getEdl().containsKey("BA00")?tra.getDat().get(0).getEdlSegment("BA00").getImporte():0;
-			base += tra.getDat().get(0).getEdl().containsKey("BA01")?tra.getDat().get(0).getEdlSegment("BA01").getImporte():0;
+			for(DAT dat: tra.getDat()){
+				base += dat.getEdl().containsKey("BA00")?tra.getDat().get(0).getEdlSegment("BA00").getImporte():0;
+				base += dat.getEdl().containsKey("BA01")?tra.getDat().get(0).getEdlSegment("BA01").getImporte():0;
+			}
 		}
 		if(base != 0){
 			EDT edt = emp.getEdtSegment("EDTBA01");

@@ -65,10 +65,10 @@
 					<aon:inputText id="Vat_declaration" value="#{mod340.params.vatDeclarationNumber}" 
 						maxlength="16"/>
 
-					<aon:outputLabel for="Model_340_format" value="#{bundle.aon_output_format}" />
-					<aon:selectOneMenu id="Model_340_format" style="margin-left: 5px;"
-						value="#{mod340.format}">
-						<f:selectItems value="#{fiscalCollections.mod340Formats}" />
+					<aon:outputLabel for="Model_340_administration" value="#{bundle.aon_output_format}" />
+					<aon:selectOneMenu id="Model_340_administration" style="margin-left: 5px;"
+						value="#{mod340.params.administration}">
+						<f:selectItems value="#{configCollections.administrations}" />
 					</aon:selectOneMenu>
 
 					<aon:outputText value="&#160;" />

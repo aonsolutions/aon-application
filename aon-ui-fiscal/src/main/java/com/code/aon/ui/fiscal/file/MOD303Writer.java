@@ -164,6 +164,7 @@ public class MOD303Writer {
 			populateDeclaration(vatTaxDeclaration,declaration);
 			declaration.setVatAccrualRegimeReceiver( declaration.getVatAccrualInputBase() != 0 || declaration.getVatAccrualInputQuota() != 0 );
 			declaration.setVatAccrualRegime( company.isVatAccrualPayment() );
+			declaration.setConcursoAuto(" ");
 			declaration.changeInvalidCharacters();
 			return declaration;
 	}

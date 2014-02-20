@@ -8,10 +8,30 @@
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
 	<aon:dataTable id="contractBonusList"
-		value="#{contract.params.bonusModel}" var="bonus" 
-		columnClasses="aon-table-portlet-column, aon-icon-column"
-		styleClass="aon-width-auto aon-table-portlet">
-	
+		value="#{contract.params.bonusModel}" var="bonus" >
+		
+		<aon:rowSelector id="contractCodelList-select" actionListener="#{contract.onSelectBonus}" />
+		
+		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputLabel value="#{bundle.aon_start_date}" />
+			</f:facet>
+			<aon:outputText value="#{bonus.startDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputLabel value="#{bundle.aon_end_date}" />
+			</f:facet>
+			<aon:outputText value="#{bonus.endDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:column>
+		
 		<aon:column>
 			<aon:div>
 				<aon:outputText value="#{bonus.fullDescription}" />
@@ -45,13 +65,6 @@
 					</aon:panelGrid>
 				</rich:toolTip>
 			</aon:div>
-		</aon:column>			
-		<aon:column>
-			<aon:commandButton id="removeContractBonus" 
-				value="&#160;" title="#{bundle.aon_remove}" 
-				reRender="contract-panelTab"
-				actionListener="#{contract.onRemoveBonus}" 
-				styleClass="aon-icon-commandButton aon-icon-delete aon-margin-left" />
 		</aon:column>			
 	
 	</aon:dataTable>	
