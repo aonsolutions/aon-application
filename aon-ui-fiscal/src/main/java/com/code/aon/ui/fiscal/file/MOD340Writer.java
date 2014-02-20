@@ -342,14 +342,14 @@ public class MOD340Writer implements IFinanceConstants{
 							first = false;
 						}
 						financeRs.close();
+						String operation = "Z";
+						if (StringUtils.equals("C",inv.getOperation())) {
+							operation = "2";	
+						} else if (StringUtils.equals("D",inv.getOperation())) {
+							operation = "3";
+						}
+						inv.setOperation(operation);
 					}
-					String operation = "Z";
-					if (StringUtils.equals("C",inv.getOperation())) {
-						operation = "2";	
-					} else if (StringUtils.equals("D",inv.getOperation())) {
-						operation = "3";
-					}
-					inv.setOperation(operation);
 					invoices.add(inv);
 				}
 				taxRs.close();
