@@ -88,7 +88,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 		if (project != null && project.isTas()) {
 			IManagerBean projectTasBean = BeanManager.getManagerBean(ProjectTas.class);
 			ProjectTas projectTas = (ProjectTas)projectTasBean.get(project.getId());
-			if (projectTas.getStatus() != status) {
+			if (projectTas != null && projectTas.getStatus() != status) {
 				projectTas.setStatus(status);
 				projectTasBean.update(projectTas);
 			}
