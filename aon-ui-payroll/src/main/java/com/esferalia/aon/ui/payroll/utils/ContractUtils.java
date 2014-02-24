@@ -48,6 +48,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
+import com.esferalia.aon.payroll.enumeration.ss.T54;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractParams;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
@@ -379,6 +380,20 @@ public class ContractUtils {
 			String msg = "Error al grabar el modelo del contrato. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+		try {
+			if(params.getCollectivePeculiarityQuote()!=null){
+				info = new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.COLLECTIVE_PECULIARITY_QUOTE.getValue() );
+				info.setExpression("\"" + params.getCollectivePeculiarityQuote().getCode() + "\"");
+				bean.insert(info);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el colectivo de peculiar cotizacion. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
 	}
 	
 	public void updateContractData(Contract contract, ContractParams params) throws ControllerListenerException {
@@ -614,6 +629,25 @@ public class ContractUtils {
 			String msg = "Error al grabar el modelo del contrato. (" +e.getMessage() + ")";
 			AonUtil.addErrorMessage(msg);
 		}
+		try {
+			ContractInfo collectivePeculiarityQuote = obtainContractInfo(contract, ContractVariable.COLLECTIVE_PECULIARITY_QUOTE.getValue());
+			if(params.getCollectivePeculiarityQuote()!=null){
+				info = collectivePeculiarityQuote!=null?collectivePeculiarityQuote:new ContractInfo();
+				info.setContract(contract);
+				info.setStartDate(contract.getStartDate());
+				info.setEndDate(contract.getEndDate());
+				info.setName( ContractVariable.COLLECTIVE_PECULIARITY_QUOTE.getValue() );
+				info.setExpression("\"" + params.getCollectivePeculiarityQuote().getCode() + "\"");
+				bean.insertOrUpdate(info);
+			} else {
+				if(collectivePeculiarityQuote != null){
+					bean.remove(collectivePeculiarityQuote);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el colectivo de peculiar cotizacion. (" +e.getMessage() + ")";
+			AonUtil.addErrorMessage(msg);
+		}
 	}
 	
 	public void loadContractData(Contract contract, ContractParams params) throws ManagerBeanException {
@@ -653,6 +687,9 @@ public class ContractUtils {
 		if(map.get(ContractVariable.CONTRACT_MODEL_OPTION.getValue())!=null){
 			String ordinal = (map.get(ContractVariable.CONTRACT_MODEL_OPTION.getValue()));
 			params.setContractModelOption(ModelOption.valueOf(ordinal));
+		}
+		if(map.get(ContractVariable.COLLECTIVE_PECULIARITY_QUOTE.getValue())!=null){
+			params.setCollectivePeculiarityQuote(T54.getEnumByValue(map.get(ContractVariable.COLLECTIVE_PECULIARITY_QUOTE.getValue())));
 		}
 		if(isTrainingContract(contract, params)){
 			if(map.get(ContractVariable.TRAINING_CENTER.getValue())!=null){

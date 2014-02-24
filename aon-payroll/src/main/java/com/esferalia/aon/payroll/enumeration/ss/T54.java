@@ -1,0 +1,327 @@
+package com.esferalia.aon.payroll.enumeration.ss;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import org.apache.commons.lang.time.DateUtils;
+
+/** 
+ * Enumeration for represent SOCIAL SECURITY T54 table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.SSCodeTablesWriter
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * T54.txt
+ *  ------------------------------------------------------------------------
+ */ 
+public enum T54 implements ISSEnum {
+
+	T54_0001( "0001", "Plan Extr. Reducc. Temporalidad -C.Temporal", "0", "20120801" ),
+	T54_0002( "0002", "Plan Extr. Reducc. Temporalidad -C.Formativo", "0", "20120801" ),
+	T54_0003( "0003", "Conversión indef.-C. Format. Relev. Sust. Jub.", "0", "20120801" ),
+	T54_0004( "0004", "Mujeres", "0", "20120801" ),
+	T54_0005( "0005", "Mujer reincorporada - 5 años inactividad -", "0", "20120801" ),
+	T54_0006( "0006", "Mujer parto 24 meses", "0", "20120801" ),
+	T54_0007( "0007", "Mayores 45 años", "0", "20120801" ),
+	T54_0008( "0008", "Jóvenes entre 16 y 30 años", "0", "20120801" ),
+	T54_0009( "0009", "Desempleados mas de 6 meses", "0", "20120801" ),
+	T54_0010( "0010", "Excluidos sociales -indefinidos-", null, null ),
+	T54_0011( "0011", "Víctima violencia de genero -Indefinidos-", null, null ),
+	T54_0014( "0014", "Discapacitado - Indefinido-", null, null ),
+	T54_0015( "0015", "Discapacitado - Enclave Laboral-", null, null ),
+	T54_0016( "0016", "Mujer reincorporada -Maternidad-", "0", "20120801" ),
+	T54_0017( "0017", "Excluidos sociales -Temporales-", null, null ),
+	T54_0018( "0018", "Víctima violencia de genero - Temporales-", null, null ),
+	T54_0019( "0019", "Discapacitado - Temporal", null, null ),
+	T54_0701( "0701", "Sector juguete - Mujer igual o menor de 30 años", "0", "20120801" ),
+	T54_0702( "0702", "Sector juguete - Mujer 30/45 años cargas familaires", "0", "20120801" ),
+	T54_0703( "0703", "Sector juguete - Hombre igual a 30 años", "0", "20120801" ),
+	T54_0704( "0704", "Sector juguete - Hombre igual a 30 años cargas familiares", "0", "20120801" ),
+	T54_0705( "0705", "Sector juguete - Hombre 31/44 años", "0", "20120801" ),
+	T54_0706( "0706", "Sector juguete - Hombre 31/44 años carga familiar", "0", "20120801" ),
+	T54_0707( "0707", "Sector juguete - Hombre 45 a 55 años", "0", "20120801" ),
+	T54_0708( "0708", "Sector juguete - Mujer 45 a 55 años", "0", "20120801" ),
+	T54_0709( "0709", "Sector juguete - Hombre +55 años", "0", "20120801" ),
+	T54_0710( "0710", "Sector juguete - Mujer +55 años", "0", "20120801" ),
+	T54_0711( "0711", "Sector juguete - +55 años falta 1 año percepción prestación", "0", "20120801" ),
+	T54_0712( "0712", "Sector juguete - Mujer parto 24 meses", "0", "20120801" ),
+	T54_0713( "0713", "Sector juguete - Mujer parto carga familiar", "0", "20120801" ),
+	T54_0714( "0714", "Sector juguete - Hombre +6 meses desempleado", "0", "20120801" ),
+	T54_0715( "0715", "Sector juguete - Hombre +6 meses desempleado carga familiar", "0", "20120801" ),
+	T54_0716( "0716", "Sector juguete - Hombre excluido social", null, null ),
+	T54_0717( "0717", "Sector juguete - Hombre excluido social carga familiar", null, null ),
+	T54_0718( "0718", "Sector juguete - Mujer excluido social", null, null ),
+	T54_0719( "0719", "Sector juguete - Mujer excluido social carga familiar", null, null ),
+	T54_0720( "0720", "Sector juguete - Hombre victima violencia doméstica", null, null ),
+	T54_0721( "0721", "Sector juguete - Hombre victima violencia doméstica carga familiar", null, null ),
+	T54_0722( "0722", "Sector juguete - Mujer victima violencia doméstica", null, null ),
+	T54_0723( "0723", "Sector juguete - Mujer victima violencia doméstica carga familiar", null, null ),
+	T54_0724( "0724", "Sector juguete - Inserción", null, null ),
+	T54_0725( "0725", "Sector juguete - Inserción carga familiar", null, null ),
+	T54_0726( "0726", "Sector juguete - Victima violencia género", null, null ),
+	T54_0727( "0727", "Sector juguete - Mayor 55 años + 3 años de antigúedad", "0", "20120801" ),
+	T54_0728( "0728", "Sector juguete - Discapacitado Hombre < 45 años", null, null ),
+	T54_0729( "0729", "Sector juguete - Discapacitado > 45", null, null ),
+	T54_0730( "0730", "Sector juguete - Discapacitado Mujer < 45", null, null ),
+	T54_0731( "0731", "Sector juguete - Discapacitado Hombre < 45 grupo especial", null, null ),
+	T54_0732( "0732", "Sector juguete - Discapacitado > 45 grupo especial", null, null ),
+	T54_0733( "0733", "Sector juguete - Discapacitado Mujer < 45 grupo especial", null, null ),
+	T54_0734( "0734", "Sector juguete - Discapacitado Mujer > 45", null, null ),
+	T54_0735( "0735", "Sector juguete - Discapacitado Mujer > 45 grupo especial", null, null ),
+	T54_0736( "0736", "Sector juguete - >59 años + 4 años de antigüedad", "0", "20120801" ),
+	T54_0737( "0737", "Sector juguete - Mujer 30/45 años", "0", "20120801" ),
+	T54_0801( "0801", "Sector mueble - Mujer igual o menor de 30 años", "0", "20120801" ),
+	T54_0802( "0802", "Sector mueble - Mujer 30/45 años cargas familiares", "0", "20120801" ),
+	T54_0803( "0803", "Sector mueble - Hombre igual a 30 años", "0", "20120801" ),
+	T54_0804( "0804", "Sector mueble - Hombre igual a 30 años cargas familiares", "0", "20120801" ),
+	T54_0805( "0805", "Sector mueble - Hombre 31/44 años", "0", "20120801" ),
+	T54_0806( "0806", "Sector mueble - Hombre 31/44 años carga familiar", "0", "20120801" ),
+	T54_0807( "0807", "Sector mueble - Hombre 45 a 55 años", "0", "20120801" ),
+	T54_0808( "0808", "Sector mueble - Mujer 45 a 55 años", "0", "20120801" ),
+	T54_0809( "0809", "Sector mueble - Hombre +55 años", "0", "20120801" ),
+	T54_0810( "0810", "Sector mueble - Mujer +55 años", "0", "20120801" ),
+	T54_0811( "0811", "Sector mueble - +55 años falta 1 año percepción prestación", "0", "20120801" ),
+	T54_0812( "0812", "Sector mueble - Mujer parto 24 meses", "0", "20120801" ),
+	T54_0813( "0813", "Sector mueble - Mujer parto carga familiar", "0", "20120801" ),
+	T54_0814( "0814", "Sector mueble - Hombre +6 meses desempleado", "0", "20120801" ),
+	T54_0815( "0815", "Sector mueble - Hombre +6 meses desempleado carga familiar", "0", "20120801" ),
+	T54_0816( "0816", "Sector mueble - Hombre excluido social", null, null ),
+	T54_0817( "0817", "Sector mueble - Hombre excluido social carga familiar", null, null ),
+	T54_0818( "0818", "Sector mueble - Mujer excluido social", null, null ),
+	T54_0819( "0819", "Sector mueble - Mujer excluido social carga familiar", null, null ),
+	T54_0820( "0820", "Sector mueble - Hombre victima violencia doméstica", null, null ),
+	T54_0821( "0821", "Sector mueble - Hombre victima violencia doméstica carga familiar", null, null ),
+	T54_0822( "0822", "Sector mueble - Mujer victima violencia doméstica", null, null ),
+	T54_0823( "0823", "Sector mueble - Mujer victima violencia doméstica carga familiar", null, null ),
+	T54_0824( "0824", "Sector mueble - Inserción", null, null ),
+	T54_0825( "0825", "Sector mueble - Inserción carga familiar", null, null ),
+	T54_0826( "0826", "Sector mueble - Victima violencia género", null, null ),
+	T54_0827( "0827", "Sector mueble - Mayor 55 años + 3 años de antigüedad", "0", "20120801" ),
+	T54_0828( "0828", "Sector mueble - Discapacitado hombre < 45 años", null, null ),
+	T54_0829( "0829", "Sector mueble - Discapacitado > 45", null, null ),
+	T54_0830( "0830", "Sector mueble - Discapacitado Mujer < 45", null, null ),
+	T54_0831( "0831", "Sector mueble - Discapacitado Hombre < 45 grupo especial", null, null ),
+	T54_0832( "0832", "Sector mueble - Discapacitado > 45 grupo especial", null, null ),
+	T54_0833( "0833", "Sector mueble - Discapacitado Mujer < 45 grupo especial", null, null ),
+	T54_0834( "0834", "Sector mueble - Discapacitado Mujer > 45", null, null ),
+	T54_0835( "0835", "Sector mueble - Discapacitado Mujer > 45 grupo especial", null, null ),
+	T54_0836( "0836", "Sector mueble - >59 años + 4 años de antigüedad", "0", "20120801" ),
+	T54_0837( "0837", "Sector mueble - Mujer 30/45 años", "0", "20120801" ),
+	T54_0901( "0901", "Sector calzado - Mujer igual o menor de 30 años", "0", "20120801" ),
+	T54_0902( "0902", "Sector calzado - Mujer 30/45 años cargas familiares", "0", "20120801" ),
+	T54_0903( "0903", "Sector calzado - Hombre igual a 30 años", "0", "20120801" ),
+	T54_0904( "0904", "Sector calzado - Hombre igual a 30 años cargas familiares", "0", "20120801" ),
+	T54_0905( "0905", "Sector calzado - Hombre 31/44 años", "0", "20120801" ),
+	T54_0906( "0906", "Sector calzado - Hombre 31/44 años carga familiar", "0", "20120801" ),
+	T54_0907( "0907", "Sector calzado - Hombre 45 a 55 años", "0", "20120801" ),
+	T54_0908( "0908", "Sector calzado - Mujer 45 a 55 años", "0", "20120801" ),
+	T54_0909( "0909", "Sector calzado - Hombre +55 años", "0", "20120801" ),
+	T54_0910( "0910", "Sector calzado - Mujer +55 años", "0", "20120801" ),
+	T54_0911( "0911", "Sector calzado - +55 años falta 1 año percepción prestación", "0", "20120801" ),
+	T54_0912( "0912", "Sector calzado - Mujer parto 24 meses", "0", "20120801" ),
+	T54_0913( "0913", "Sector calzado - Mujer parto carga familiar", "0", "20120801" ),
+	T54_0914( "0914", "Sector calzado - Hombre +6 meses desempleado", "0", "20120801" ),
+	T54_0915( "0915", "Sector calzado - Hombre +6 meses desempleado carga familiar", "0", "20120801" ),
+	T54_0916( "0916", "Sector calzado - Hombre excluido social", null, null ),
+	T54_0917( "0917", "Sector calzado - Hombre excluido social carga familiar", null, null ),
+	T54_0918( "0918", "Sector calzado - Mujer excluido social", null, null ),
+	T54_0919( "0919", "Sector calzado - Mujer excluido social carga familiar", null, null ),
+	T54_0920( "0920", "Sector calzado - Hombre victima violencia doméstica", null, null ),
+	T54_0921( "0921", "Sector calzado - Hombre victima violencia doméstica carga familiar", null, null ),
+	T54_0922( "0922", "Sector calzado - Mujer victima violencia doméstica", null, null ),
+	T54_0923( "0923", "Sector calzado - Mujer victima violencia doméstica carga familiar", null, null ),
+	T54_0924( "0924", "Sector calzado - Inserción", null, null ),
+	T54_0925( "0925", "Sector calzado - Inserción carga familiar", null, null ),
+	T54_0926( "0926", "Sector calzado - Victima violencia género", null, null ),
+	T54_0927( "0927", "Sector calzado - Mayor 55 años + 3 años de antigüedad", "0", "20120801" ),
+	T54_0928( "0928", "Sector calzado - Discapacitado hombre < 45 años", null, null ),
+	T54_0929( "0929", "Sector calzado - Discapacitado > 45 años", null, null ),
+	T54_0930( "0930", "Sector calzado - Discapacitado Mujer < 45 años", null, null ),
+	T54_0931( "0931", "Sector calzado - Discapacitado hombre< 45 grupo especial", null, null ),
+	T54_0932( "0932", "Sector calzado - Discapacitado >45 grupo especial", null, null ),
+	T54_0933( "0933", "Sector calzado - Discapacitado Mujer < 45 grupo especial", null, null ),
+	T54_0934( "0934", "Sector calzado - Discapacitado Mujer > 45 años", null, null ),
+	T54_0935( "0935", "Sector calzado - Discapacitado Mujer > 45 grupo especial", null, null ),
+	T54_0936( "0936", "Sector calzado - >59 años y 3 años de antigüedad", "0", "20120801" ),
+	T54_1001( "1001", "Sector textil-mayor 55 años + 5 años antigüedad", "0", "20120801" ),
+	T54_1002( "1002", "Sector textil-mujeres", "0", "20120801" ),
+	T54_1003( "1003", "Sector textil-entre 30 a 45 años", "0", "20120801" ),
+	T54_1004( "1004", "Sector textil-hombre de 46 a 54 años", "0", "20120801" ),
+	T54_1005( "1005", "Sector textil-mujer de 46 a 54 años", "0", "20120801" ),
+	T54_1006( "1006", "Sector textil-hombre + 55", "0", "20120801" ),
+	T54_1007( "1007", "Sector textil-mujer + 55", "0", "20120801" ),
+	T54_1008( "1008", "Sector textil-desempleado + de 1 año", "0", "20120801" ),
+	T54_1009( "1009", "Sector textil-entre 30 a 45 años.Desempleado 6 meses", "0", "20120801" ),
+	T54_1010( "1010", "Sector textil-entre 30 a 45 años.Exclusión social.", null, null ),
+	T54_1011( "1011", "Sector textil. Discapacitado.", null, null ),
+	T54_1013( "1013", "Sector textil. Discapacitado. Enclave laboral.", null, null ),
+	T54_1014( "1014", "Sector textil. Discapacitado hombre < 45 años", null, null ),
+	T54_1015( "1015", "Sector textil. Discapacitado > 45 años", null, null ),
+	T54_1016( "1016", "Sector textil. Discapacitado mujer < 45 años", null, null ),
+	T54_1017( "1017", "Sector textil. Discapacitado hombre < 45 años grupo esp.", null, null ),
+	T54_1018( "1018", "Sector textil. Discapacitado > 45 años grupo esp.", null, null ),
+	T54_1019( "1019", "Sector textil. Discapacitado mujer < 45 años grupo especif.", null, null ),
+	T54_1020( "1020", "Sector textil. Discapacitado Mujer > 45 años", null, null ),
+	T54_1021( "1021", "Sector textil. Discapacitado Mujer > 45 grupo especial", null, null ),
+	T54_1031( "1031", "Sector textil. - Mujer igual o menor 30 años", "0", "20120801" ),
+	T54_1032( "1032", "Sector textil. - Mujer 30/45 carga familiar", "0", "20120801" ),
+	T54_1033( "1033", "Sector textil. - Hombre igual a 30 años", "0", "20120801" ),
+	T54_1034( "1034", "Sector textil. - Hombre 30 años carga familiar", "0", "20120801" ),
+	T54_1035( "1035", "Sector textil. - Hombre 31/44 años", "0", "20120801" ),
+	T54_1036( "1036", "Sector textil. - Hombre 31/44 años carga familiar", "0", "20120801" ),
+	T54_1037( "1037", "Sector textil. - Hombre 45 a 55 años", "0", "20120801" ),
+	T54_1038( "1038", "Sector textil. - Mujer 45 a 55 años", "0", "20120801" ),
+	T54_1039( "1039", "Sector textil. - Hombre + 55 años", "0", "20120801" ),
+	T54_1040( "1040", "Sector textil. - Mujer + 55 años", "0", "20120801" ),
+	T54_1041( "1041", "Sector textil. - + 55 años falta 1 año", "0", "20120801" ),
+	T54_1042( "1042", "Sector textil. - Mujer parto 24", "0", "20120801" ),
+	T54_1043( "1043", "Sector textil. - Mujer parto 24 carga familiar", "0", "20120801" ),
+	T54_1044( "1044", "Sector textil. - Hombre + 6 meses desempleado", "0", "20120801" ),
+	T54_1045( "1045", "Sector textil. - Hombre + 6 meses desemp. carga familiar", "0", "20120801" ),
+	T54_1046( "1046", "Sector textil. - Hombre excluido social", null, null ),
+	T54_1047( "1047", "Sector textil. - Hombre excluido social carga familiar", null, null ),
+	T54_1048( "1048", "Sector textil. - Mujer excluido social", null, null ),
+	T54_1049( "1049", "Sector textil. - Mujer excluido social carga familiar", null, null ),
+	T54_1050( "1050", "Sector textil. - Hombre víctima de violencia doméstica", null, null ),
+	T54_1051( "1051", "Sector textil. - Hombre víctima de violencia doméstica carga familiar", null, null ),
+	T54_1052( "1052", "Sector textil. - Mujer víctima de violencia doméstica", null, null ),
+	T54_1053( "1053", "Sector textil. - Mujer víctima de violencia doméstica carga familiar", null, null ),
+	T54_1054( "1054", "Sector textil. - Inserción", null, null ),
+	T54_1055( "1055", "Sector textil. - Inserción carga familiar", null, null ),
+	T54_1056( "1056", "Sector textil. - Victima violencia género", null, null ),
+	T54_1057( "1057", "Sector textil. - Mujer menor de 30 años carga familiar", "0", "20120801" ),
+	T54_1058( "1058", "Sector textil. - Hombre 45/55 carga familiar", "0", "20120801" ),
+	T54_1059( "1059", "Sector textil. - Mujer 45/55 carga familiar", "0", "20120801" ),
+	T54_1060( "1060", "Sector textil. - Hombre > 55 carga familiar", "0", "20120801" ),
+	T54_1061( "1061", "Sector textil. - Mujer > 55 carga familiar", "0", "20120801" ),
+	T54_1062( "1062", "Sector textil. - > 59 años", "0", "20120801" ),
+	T54_1222( "1222", "Discapacitado indef. Hombre < 45 años", null, null ),
+	T54_1223( "1223", "Discapacitado indef. > 45 años", null, null ),
+	T54_1224( "1224", "Discapacitado indef. mujer < 45 años", null, null ),
+	T54_1225( "1225", "Discapacitado indef. Hombre < 45 años grupo esp.", null, null ),
+	T54_1226( "1226", "Discapacitado indef. > 45 años grupo esp.", null, null ),
+	T54_1227( "1227", "Discapacitado indef. mujer < 45 años grupo especif.", null, null ),
+	T54_1228( "1228", "Discapacitado Temp. Hombre < 45 años", null, null ),
+	T54_1229( "1229", "Discapacitado Temp. Hombre > 45 años", null, null ),
+	T54_1230( "1230", "Discapacitado Temp. mujer < 45 años", null, null ),
+	T54_1231( "1231", "Discapacitado Temp. mujer > 45 años", null, null ),
+	T54_1232( "1232", "Discapacitado Temp. Hombre < 45 años grupo esp", null, null ),
+	T54_1233( "1233", "Discapacitado Temp. Hombre > 45 años grupo esp", null, null ),
+	T54_1234( "1234", "Discapacitado Temp. mujer < 45 años grupo esp", null, null ),
+	T54_1235( "1235", "Discapacitado Temp. mujer > 45 años grupo esp", null, null ),
+	T54_1236( "1236", "Discapacitado indefinido mujer > 45 años", null, null ),
+	T54_1237( "1237", "Discapacitado indefinido mujer > 45 añós Grupo esp", null, null ),
+	T54_1304( "1304", "Exclusión Social/Itinerario de Inserción", null, null ),
+	T54_1323( "1323", "Excluido Social Inserción < 30 años", null, null ),
+	T54_1324( "1324", "Excluido Social Inserción<35 años discapacitado", null, null ),
+	T54_1409( "1409", "Victima Violencia de genero Mujer", null, null ),
+	T54_1412( "1412", "Víctima Violencia Doméstica RDL 1/2011. Ind.", null, null ),
+	T54_1434( "1434", "Víctimas terrorismo indef.", null, null ),
+	T54_1435( "1435", "Víctimas terrorismo temp.", null, null ),
+	T54_1607( "1607", "Desempleado + 6 meses - carga familiar", "0", "20120801" ),
+	T54_1610( "1610", "Desempleado - carga familiar", "0", "20120801" ),
+	T54_1805( "1805", "Conversión indefinido cont.format. relevo sust. Jub. Hombre", null, null ),
+	T54_1806( "1806", "Conversión indefinido cont.format. relevo sust. Jub. Mujer", null, null ),
+	T54_1813( "1813", "Conversión indefinidos contrato formación aprendizaje - Hombre", null, null ),
+	T54_1814( "1814", "Conversión indefinidos contrato formación aprendizaje - Mujer", null, null ),
+	T54_1815( "1815", "Conversión indefinido empleo joven - Hombre", null, null ),
+	T54_1816( "1816", "Conversión indefinido empleo joven - Mujer", null, null ),
+	T54_1817( "1817", "Conversión indefinido empleo joven hombre discapacitado", null, null ),
+	T54_1818( "1818", "Conversión indefinido empleo joven mujer discapacitada", null, null ),
+	T54_2037( "2037", "Entre 16/30 años problemas empleabilidad Hombre", "0", "20120801" ),
+	T54_2038( "2038", "Entre 16/30 años problemas empleabilidad Mujer", "0", "20120801" ),
+	T54_2039( "2039", "Mayor 45 años desempleado 12 meses Hombre", "0", "20120801" ),
+	T54_2040( "2040", "Mayor 45 años desempleado 12 meses Mujer", "0", "20120801" ),
+	T54_2061( "2061", "Entre 16 y 30 años. < 50 trabajadores. Primer año.", null, null ),
+	T54_2062( "2062", "Entre 16 y 30 años. < 50 trabajadores. Segundo año.", null, null ),
+	T54_2063( "2063", "Entre 16 y 30 años. < 50 trabajadores. Tercer año.", null, null ),
+	T54_2064( "2064", "Entre 16 y 30 años. < 50 trabajadores. Primer año. Mujer Subrepresentada.", null, null ),
+	T54_2065( "2065", "Entre 16 y 30 años. < 50 trabajadores. Segundo año. Mujer Subrepresentada.", null, null ),
+	T54_2066( "2066", "Entre 16 y 30 años. < 50 trabajadores. Tercer año. Mujer Subrepresentada.", null, null ),
+	T54_2067( "2067", "Mayores 45 años. < 50 trabajadores. Desempleados 12/18 meses.", null, null ),
+	T54_2068( "2068", "Mayores 45 años. < 50 trabajadores. Desempleados 12/18 meses. Mujer subrepresentada.", null, null ),
+	T54_2069( "2069", "Mayores de 45 < 50 trab. Desemp.", null, null ),
+	T54_2070( "2070", "Mayores de 45 < 50 trab. Desem. Mujer subrepresentada", null, null ),
+	T54_2077( "2077", "Socio cooperativa <30 años", null, null ),
+	T54_2078( "2078", "Socio sociedad laboral < 30 años", null, null ),
+	T54_2085( "2085", "Indefinido empleo joven hombre empresa usuaria", null, null ),
+	T54_2086( "2086", "Indefinido empleo joven mujer empresa usuaria", null, null ),
+	T54_2087( "2087", "Indefinido empleo joven hombre discapacitado empresa usuaria", null, null ),
+	T54_2088( "2088", "Indefinido empleo joven mujer discapacitada empresa usuaria", null, null ),
+	T54_2089( "2089", "<35 años socio cooperativa discapacitado", null, null ),
+	T54_2090( "2090", "<35 años socio sociedadad laboral discapacitado", null, null ),
+	T54_2091( "2091", "Indefinido empresa usuaria formación hombre", null, null ),
+	T54_2092( "2092", "Indefinido empresa usuaria formación mujer", null, null ),
+	T54_3141( "3141", "Mayores de 59 años y 4 años de antigüedad", null, null ),
+	T54_3191( "3191", "Fijo Discontinuo. Turismo-Hostelería", null, null ),
+	T54_3220( "3220", "Cambio puesto de trabajo Riesgo Embarazo/Enfermedad Profesional", null, null ),
+	T54_4203( "4203", "Trabajador contrato formación sin desempleo", null, null ),
+	T54_4204( "4204", "Trabajador contrato formación con desempleo", null, null ),
+	T54_4208( "4208", "Contrato para la formación y aprendizaje", null, null ),
+	T54_9901( "9901", "Reducción Real Decreto-Ley 1/2011", null, null ),
+	;
+	public static final String TABLE_NAME = "T54";
+	public static final String TABLE_DESCRIPTION = "T54.txt";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
+	private String startDate;
+	private String endDate;
+
+	T54( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return DateUtils.ceiling(sdf.parse(startDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return DateUtils.ceiling(sdf.parse(endDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public boolean isActive(){
+		Date now = new Date();
+		now = DateUtils.ceiling(now, Calendar.DAY_OF_MONTH);
+		if( (getStartDate()!=null && getStartDate().after(now)) || (getEndDate()!=null && getEndDate().before(now)) ){
+			return false;
+		}
+		return true;
+	}
+
+	public static T54 getEnumByValue(String expression) {
+		for( T54 o : T54.values() ) {
+			if ( o.getCode().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
+}

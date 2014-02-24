@@ -32,9 +32,9 @@ public class PrintableMonth {
 	}
 	
 	private void calculateHours(){
-		setHours(0.0);
+		hours = 0.0;
 		for(PrintableDay day: getDayList()){
-			if(day.getHours()!=null){
+			if(!day.isHoliday() && !day.isVacation() && !day.isNotWorkingDay() && day.getHours()!=null){
 				setHours(hours+day.getHours());
 			}
 		}

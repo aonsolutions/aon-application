@@ -146,10 +146,10 @@ public class ContractControllerListener extends ControllerAdapter{
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
+		ContractUtils utils = ContractUtils.getInstance();
+		utils.insertContractInfo((Contract) controller.getTo(), controller.getParams());
 		if(!controller.getParams().isRetaQuote()){
-			ContractUtils utils = ContractUtils.getInstance();
 			utils.insertContractData((Contract) controller.getTo(), controller.getParams());
-			utils.insertContractInfo((Contract) controller.getTo(), controller.getParams());
 			ContrataController contrataController = (ContrataController) AonUtil.getRegisteredBean(ISepeConstants.CONTRACT_CONTRATA_CONTROLLER_NAME);
 			contrataController.initialize((Contract) controller.getTo());
 			contrataController.onContrataDataShow(null);

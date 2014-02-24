@@ -8,8 +8,11 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.controller.RichLookupBean;
 import com.code.aon.registry.IRegistry;
+import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.ui.registry.controller.event.RegistryFormListener;
+import com.code.aon.ui.util.AonUtil;
 
 public class RegistryRichLookupBean extends RichLookupBean {
     
@@ -30,6 +33,14 @@ public class RegistryRichLookupBean extends RichLookupBean {
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.warn("unable to check Document.",e);
+		}
+	}
+	
+	public void onLoadGeozone(ActionEvent event){ 
+		RegistryFormListener registryForm = (RegistryFormListener) AonUtil.getRegisteredBean(this.getPojoShortName().toLowerCase()+"Form"); 
+		RegistryAddress address = registryForm.getMainAddress();
+		if(address!=null && address.getZip()!=null) {
+			address.loadGeoZoneByZip();
 		}
 	}
 

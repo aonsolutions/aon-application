@@ -1,0 +1,2 @@
+00;Solicitud cuota total
+01;Solucitud cuota aportación del trabajador

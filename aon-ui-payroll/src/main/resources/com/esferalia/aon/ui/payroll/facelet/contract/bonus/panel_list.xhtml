@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+	
+	<aon:panelGrid columns="2" id="peculiar_quote_collective_panel" style="width:920px;"
+		columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
+		
+		<aon:outputLabel for="collectivePeculiarityQuote" value="#{bundle.payroll_collective_peculiarity_quote}" />
+		<aon:selectOneMenu id="collectivePeculiarityQuote"
+			value="#{contract.params.collectivePeculiarityQuote}" >
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{ssCollections.t54CodeList}" />
+		</aon:selectOneMenu>
+		
+		
+		<!--  
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{contract.params.cno}" />
+			<ui:param name="lookupSuffix" value="peculiarQuote" />
+			<ui:param name="skipLabel" value="#{true}" />
+			<ui:param name="skipNewButton" value="#{true}" />
+			<ui:param name="lookupDisabled" value="#{false}" />
+			<ui:param name="lookupReRender" value="Contract_categoryDescription, trainingCenter, trainingCourse" />
+		</ui:include>
+		-->
+	</aon:panelGrid>
+	
+	<aon:panel style="width:920px;">
+		<f:facet name ="header">
+			<aon:outputText value="#{bundle.payroll_salary_bonus_tab}" />
+		</f:facet>
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/bonus/list.xhtml" />
+	</aon:panel>
+	
+</ui:composition>

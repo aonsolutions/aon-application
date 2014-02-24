@@ -84,6 +84,7 @@ import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
+import com.esferalia.aon.payroll.enumeration.ss.T54;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
 import com.esferalia.aon.ui.payroll.controller.TrainingCenterController;
@@ -1365,6 +1366,7 @@ public class ContractController extends BasicController {
 		private ContractBonus bonus;
 		private List<ITransferObject> bonuses;
 		private DataModel bonusModel;
+		private T54 collectivePeculiarityQuote;
 		
 		private boolean agreementSalaryCheck;
 		private boolean agreementSalary;
@@ -1538,6 +1540,12 @@ public class ContractController extends BasicController {
 		}
 		public void setWeekHours(Double weekHours) {
 			this.weekHours = weekHours;
+		}
+		public T54 getCollectivePeculiarityQuote() {
+			return collectivePeculiarityQuote;
+		}
+		public void setCollectivePeculiarityQuote(T54 collectivePeculiarityQuote) {
+			this.collectivePeculiarityQuote = collectivePeculiarityQuote;
 		}
 		
 		

@@ -7,66 +7,92 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<aon:dataTable id="contractBonusList"
-		value="#{contract.params.bonusModel}" var="bonus" >
-		
-		<aon:rowSelector id="contractCodelList-select" actionListener="#{contract.onSelectBonus}" />
-		
-		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-70">
-			<f:facet name="header">
-				<aon:outputLabel value="#{bundle.aon_start_date}" />
-			</f:facet>
-			<aon:outputText value="#{bonus.startDate}">
-				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-					timeZone="#{timeZoneController.timeZoneId}" />
-			</aon:outputText>
-		</aon:column>
-		
-		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-70">
-			<f:facet name="header">
-				<aon:outputLabel value="#{bundle.aon_end_date}" />
-			</f:facet>
-			<aon:outputText value="#{bonus.endDate}">
-				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-					timeZone="#{timeZoneController.timeZoneId}" />
-			</aon:outputText>
-		</aon:column>
-		
-		<aon:column>
-			<aon:div>
-				<aon:outputText value="#{bonus.fullDescription}" />
-				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.sepe_contrata_contract_bonus}" />
-					</f:facet>
-					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
-						<aon:outputText value="#{bundle.aon_type}" styleClass="aon-margin-right" />
-						<aon:outputText value="#{bonus.bonusConcept.type}" />
-
-						<aon:outputText value="#{bundle.aon_description}" styleClass="aon-margin-right" />
-						<aon:outputText value="#{bonus.fullDescription}" />
-
-						<aon:outputText value="#{bundle.aon_value}" styleClass="aon-margin-right" />
-						<aon:outputText value="#{bonus.expression}" />
-						
-						<aon:outputText value="#{bundle.aon_period}" styleClass="aon-margin-right" />
-						<aon:div>
-							<aon:outputText value="#{bundle.aon_start_date}:" styleClass="aon-italic" />
-							<aon:outputText value="#{bonus.startDate}" styleClass="aon-margin-left">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-							<aon:outputText value="#{bundle.aon_end_date}:" styleClass="aon-margin-left aon-italic" />
-							<aon:outputText value="#{bonus.endDate}" styleClass="aon-margin-left">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:div>
-					</aon:panelGrid>
-				</rich:toolTip>
-			</aon:div>
-		</aon:column>			
 	
-	</aon:dataTable>	
+	<aon:panelGrid columns="2" id="peculiar_quote_collective_panel" styleClass="aon-width-all"
+		columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{contract.params.cno}" />
+			<ui:param name="lookupSuffix" value="peculiarQuote" />
+			<ui:param name="skipNewButton" value="#{true}" />
+			<ui:param name="lookupDisabled" value="#{false}" />
+			<ui:param name="lookupReRender" value="Contract_categoryDescription, trainingCenter, trainingCourse" />
+		</ui:include>
+		
+	</aon:panelGrid>
+	
+	
+	
+	<aon:panel style="width:920px;">
+		<f:facet name ="header">
+			<aon:outputText value="#{bundle.payroll_salary_bonus_tab}" />
+		</f:facet>
+		<aon:dataTable id="contractBonusList"
+			value="#{contract.params.bonusModel}" var="bonus" >
+			
+			<aon:rowSelector id="contractCodelList-select" actionListener="#{contract.onSelectBonus}" />
+			
+			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-70">
+				<f:facet name="header">
+					<aon:outputLabel value="#{bundle.aon_start_date}" />
+				</f:facet>
+				<aon:outputText value="#{bonus.startDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-70">
+				<f:facet name="header">
+					<aon:outputLabel value="#{bundle.aon_end_date}" />
+				</f:facet>
+				<aon:outputText value="#{bonus.endDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:div>
+					<aon:outputText value="#{bonus.fullDescription}" />
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.sepe_contrata_contract_bonus}" />
+						</f:facet>
+						<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
+							<aon:outputText value="#{bundle.aon_type}" styleClass="aon-margin-right" />
+							<aon:outputText value="#{bonus.bonusConcept.type}" />
+	
+							<aon:outputText value="#{bundle.aon_description}" styleClass="aon-margin-right" />
+							<aon:outputText value="#{bonus.fullDescription}" />
+	
+							<aon:outputText value="#{bundle.payroll_irpfData_validity}" styleClass="aon-margin-right" />
+							<aon:div>
+								<aon:outputText value="#{bundle.aon_date_from}:" styleClass="aon-italic" />
+								<aon:outputText value="#{bonus.startDate}" styleClass="aon-margin-left">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+								<aon:outputText value="#{bundle.aon_date_to}:" styleClass="aon-margin-left aon-italic" />
+								<aon:outputText value="#{bonus.endDate}" styleClass="aon-margin-left">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+							</aon:div>
+							
+							<aon:outputText value="#{bundle.aon_value}" styleClass="aon-margin-right" />
+							<aon:outputText value="#{bonus.expression}" />
+						</aon:panelGrid>
+					</rich:toolTip>
+				</aon:div>
+			</aon:column>			
+		
+		</aon:dataTable>	
+	</aon:panel>
+	
+	
 	
 </ui:composition>

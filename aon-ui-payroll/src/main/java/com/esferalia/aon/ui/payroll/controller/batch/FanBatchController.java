@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,8 +34,6 @@ import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.pool.AonConnectionException;
 import com.code.aon.report.ReportException;
-import com.code.aon.report.poi.ExcelReportExporter;
-import com.code.aon.report.poi.ReportMetadata;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
@@ -159,7 +156,6 @@ public class FanBatchController extends BasicController {
 		super.onReset(event);
 		FanBatch b = (FanBatch) getTo();
 		b.setStatus(FileStatus.PENDING);
-//		b.setDate(new Date());
 		b.setLiquidationType(LiquidationType.L00);
 	}
 
@@ -167,7 +163,6 @@ public class FanBatchController extends BasicController {
 		try {
 			FanBatch batch = (FanBatch) getTo();
 			File file = getFANWriter().createFAN(true, getEnterpriseCCCList(),((FanBatch)getTo()).getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth()).getFile();
-//			File file = null;
 			IManagerBean bean = BeanManager.getManagerBean(FanBatchAttachment.class);
 			if (file != null) {
 				FileInputStream in = new FileInputStream(file);
@@ -229,15 +224,12 @@ public class FanBatchController extends BasicController {
 		try {
 			conn = DatabaseUtil.getConnection(AonUtil.getDomainName());
 			Locale locale = AonUtil.getCurrentLocale();
-//			InvoiceReportManager manager = new InvoiceReportManager();
 			FANReportWriter writer = new FANReportWriter();
-			
 			
 			FanBatch batch = (FanBatch) getTo();
 			batch.setStatus(FileStatus.PENDING);
 			batch.setLiquidationType(LiquidationType.L00);
 			
-
 			FacesContext faces = FacesContext.getCurrentInstance();
 			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
 			String fileName = batch.getLiquidationType().getValue()+batch.getYear()+batch.getMonth().getName(locale);
@@ -247,8 +239,6 @@ public class FanBatchController extends BasicController {
 			
 			writer.buildFANReport(getEnterpriseCCCList(), batch.getLiquidationType(), batch.getYear(), batch.getMonth(), batch.getMonth());
 			writer.excelReport(conn, locale, output);
-				
-//			manager.excelReport(conn, getParams(), locale, output);
 			
 			response.flushBuffer();
 			faces.responseComplete();
@@ -264,7 +254,6 @@ public class FanBatchController extends BasicController {
 		} finally {
 			DatabaseUtil.closeQuietly(conn);
 		}
-		
 	}
 	
 	/*

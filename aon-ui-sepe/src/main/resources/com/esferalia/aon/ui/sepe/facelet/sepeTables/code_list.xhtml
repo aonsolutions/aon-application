@@ -11,100 +11,14 @@
 	<ui:define name="content">
 
 		<aon:form id="sepeCodesList">
+		
+			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/sepeTables/code_list_content.xhtml" >
+				<ui:param name="toolbarTitle" value="#{bundle.sepe_sepeTables_module}" />
+				<ui:param name="toolbarDescription" value="#{sepeTables.selectedTableLabel}" />
+				<ui:param name="controller" value="#{sepeTables}" />
+				<aon:methodParam name="listAction" value="sepeTables_list" />
+			</ui:include>
 
-			<aon:div ajaxRendered="true" layout="none">
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-					<ui:param name="toolbarTitle" value="#{bundle.sepe_sepeTables_module}" />
-					<ui:param name="toolbarDescription" value="#{sepeTables.selectedTableLabel}" />
-					
-					<ui:define name="toolbarContent">
-						<aon:commandButton id="back" immediate="true"
-							value="#{bundle.aon_back}"
-							action="sepeTables_list"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel" />
-					</ui:define>
-				
-				</ui:decorate>			
-
-				<!--  aon-region-body -->
-				<aon:div styleClass="aon-scroll-area">
-				
-					<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
-						<aon:div styleClass="aon-panelGrid-search-info">
-							<aon:outputText value="#{bundle.aon_filter}" styleClass="aon-panelGrid-search-info-internal"/>
-						</aon:div>
-						<aon:panelGrid columns="3">
-							<aon:inputText id="sepeTablesFilter" size="100" value="#{sepeTables.codesFilter}">
-								<a4j:support 
-									event="onkeyup"
-									actionListener="#{sepeTables.onInitCodesModels}"
-									reRender="contractCodelList"
-									eventsQueue="contractCodelListKeyUp"
-									requestDelay="500"
-									ajaxSingle="true"
-									ignoreDupResponses="true"
-									limitToList="true"/>
-							</aon:inputText>
-							<aon:outputText value="#{bundle.aon_active}:" styleClass="aon-margin-left"/>
-							<aon:selectBooleanCheckbox value="#{sepeTables.activeCodes}" >
-								<a4j:support 
-									event="onclick"
-									actionListener="#{sepeTables.onInitCodesModels}"
-									reRender="contractCodelList"
-									eventsQueue="contractCodelListKeyUp"
-									requestDelay="500"
-									ajaxSingle="true"
-									ignoreDupResponses="true"
-									limitToList="true"/>
-							</aon:selectBooleanCheckbox>
-						</aon:panelGrid>	
-					</aon:div>
-				
-					<aon:dataTable id="contractCodelList" value="#{sepeTables.codesModel}" var="to">
-	
-						<aon:rowSelector id="contractCodelList-select" toggleOnClick="#{false}" />
-						
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
-							<f:facet name="header">
-								<aon:outputLabel value="#{bundle.aon_id}" />
-							</f:facet>
-							<aon:outputText value="#{to.code}"  />
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-							<f:facet name="header">
-								<aon:outputLabel 
-									value="#{bundle.aon_description}" />
-							</f:facet>
-							<aon:outputText value="#{to.description}"/>
-						</aon:column>
-						
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-							<f:facet name="header">
-								<aon:outputLabel 
-									value="#{bundle.aon_start_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.startDate}" >
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-							<f:facet name="header">
-								<aon:outputLabel 
-									value="#{bundle.aon_end_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.endDate}" >
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>	
-						</aon:column>
-						
-					</aon:dataTable>
-
-				</aon:div>
-			</aon:div>
 		</aon:form>
 	</ui:define>
 

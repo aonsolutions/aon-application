@@ -68,7 +68,7 @@
 	</c:if>
 		
 	<c:if test="#{!showMunicipality}">
-		<aon:outputLabel for="#{pojoName}_address_city" styleClass="aon-margin-left aon-italic" 
+		<aon:outputLabel for="#{pojoName}_address_city" 
 			value="#{bundle.registry_city}" />
 		<aon:inputText id="#{pojoName}_address_city" 
 			value="#{registryAddress.city}" size="64" maxlength="64"/>
