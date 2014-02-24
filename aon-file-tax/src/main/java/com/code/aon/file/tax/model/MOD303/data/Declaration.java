@@ -205,8 +205,8 @@ public class Declaration {
 	public void setComplementary(boolean complementary) {
 		this.complementary = complementary;
 	}
-	public int getComplementaryNumber() {
-		return isComplementary()?1:0;
+	public String getComplementaryLetter() {
+		return isComplementary()?"X":" ";
 	}
 
 	public boolean isTaxRefundRegistry() {
@@ -935,8 +935,8 @@ public class Declaration {
 	public void setWithoutActivity(boolean withoutActivity) {
 		this.withoutActivity = withoutActivity;
 	}
-	public int getWithoutActivityNumber() {
-		return isWithoutActivity()?1:0;
+	public String getWithoutActivityLetter() {
+		return isWithoutActivity()?"X":" ";
 	}
 	public String getWithoutActivityString() {
 		return isWithoutActivity()?"1":" ";
