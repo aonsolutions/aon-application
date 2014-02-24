@@ -20,6 +20,10 @@
 			com.code.aon.ui.marketing.controller.CommunicationCenterController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>communicationCenter</value>
+		</managed-property>		
 	</managed-bean>
 
 	<managed-bean>

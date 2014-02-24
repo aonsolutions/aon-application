@@ -30,7 +30,7 @@
 						</aon:outputFormat>		    	
 			    	</c:if>
 			    	<c:if test="#{rowCount > pageSize}" >
-						<aon:dataPaginator for="#{dataTable}" id="#{dataTable}PaginatorInfo"
+						<aon:dataPaginator for="#{dataTable}" id="#{dataTable}PaginatorInfo" page="#{page}"
 							rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex" lastRowIndexVar="lastRowIndex"
 							styleClass="aon-dataScroller-text">
 							<f:facet name="pages">

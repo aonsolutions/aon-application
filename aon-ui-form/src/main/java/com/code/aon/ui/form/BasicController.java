@@ -114,7 +114,8 @@ public class BasicController extends AbstractPojoController implements IControll
 		this.controllerListenerSupport = new ControllerListenerSupport();
 		this.selectedIndex = -1;
 		this.saveState = true;
-		this.checkList = new HashSet<Serializable>();		
+		this.checkList = new HashSet<Serializable>();
+		setPage(1);
 	}
 
 	/**
@@ -860,7 +861,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			}
 			((ExtendedPageDataModel) model).update( 0, getPageLimit() ); 
 			selectedIndex = -1;
-			setPage(0);
+			setPage(1);
 			LOGGER.debug("initializeModel RowCount {}",model.getRowCount());
 			controllerListenerSupport.fireAfterModelInitialized(evt);
 		} catch (ControllerListenerException e) {
