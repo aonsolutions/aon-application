@@ -10,13 +10,13 @@
 
 	<ui:define name="content">
 
-		<aon:form id="sepeCodesList">
-		
+		<aon:form id="payrollCodesList">
+	
 			<ui:include src="/com/esferalia/aon/ui/sepe/facelet/sepeTables/code_list_content.xhtml" >
-				<ui:param name="toolbarTitle" value="#{bundle.sepe_sepeTables_module}" />
-				<ui:param name="toolbarDescription" value="#{sepeTables.selectedTableLabel}" />
-				<ui:param name="controller" value="#{sepeTables}" />
-				<aon:methodParam name="listAction" value="sepeTables_list" />
+				<ui:param name="toolbarTitle" value="#{bundle.payroll_codeTables_module}" />
+				<ui:param name="toolbarDescription" value="#{payrollCodeTables.selectedTableLabel}" />
+				<ui:param name="controller" value="#{payrollCodeTables}" />
+				<aon:methodParam name="listAction" value="payrollCodeTables_list" />
 			</ui:include>
 
 		</aon:form>

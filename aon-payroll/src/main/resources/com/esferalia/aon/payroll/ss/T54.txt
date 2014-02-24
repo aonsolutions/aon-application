@@ -1,0 +1,243 @@
+0001 ;Plan Extr. Reducc. Temporalidad -C.Temporal;0;20120801 
+0002 ;Plan Extr. Reducc. Temporalidad -C.Formativo;0;20120801
+0003 ;Conversión indef.-C. Format. Relev. Sust. Jub.;0;20120801
+0004 ;Mujeres;0;20120801
+0005 ;Mujer reincorporada - 5 años inactividad -;0;20120801
+0006 ;Mujer parto 24 meses;0;20120801
+0007 ;Mayores 45 años;0;20120801
+0008 ;Jóvenes entre 16 y 30 años;0;20120801
+0009 ;Desempleados mas de 6 meses;0;20120801
+0010 ;Excluidos sociales -indefinidos-
+0011 ;Víctima violencia de genero -Indefinidos-
+0014 ;Discapacitado - Indefinido-
+0015 ;Discapacitado - Enclave Laboral-
+0016 ;Mujer reincorporada -Maternidad-;0;20120801
+0017 ;Excluidos sociales -Temporales-
+0018 ;Víctima violencia de genero - Temporales-
+0019 ;Discapacitado - Temporal
+0701 ;Sector juguete - Mujer igual o menor de 30 años;0;20120801
+0702 ;Sector juguete - Mujer 30/45 años cargas familaires;0;20120801
+0703 ;Sector juguete - Hombre igual a 30 años;0;20120801
+0704 ;Sector juguete - Hombre igual a 30 años cargas familiares;0;20120801
+0705 ;Sector juguete - Hombre 31/44 años;0;20120801
+0706 ;Sector juguete - Hombre 31/44 años carga familiar;0;20120801
+0707 ;Sector juguete - Hombre 45 a 55 años;0;20120801
+0708 ;Sector juguete - Mujer 45 a 55 años;0;20120801
+0709 ;Sector juguete - Hombre +55 años;0;20120801
+0710 ;Sector juguete - Mujer +55 años;0;20120801
+0711 ;Sector juguete - +55 años falta 1 año percepción prestación;0;20120801
+0712 ;Sector juguete - Mujer parto 24 meses;0;20120801
+0713 ;Sector juguete - Mujer parto carga familiar;0;20120801
+0714 ;Sector juguete - Hombre +6 meses desempleado;0;20120801
+0715 ;Sector juguete - Hombre +6 meses desempleado carga familiar;0;20120801
+0716 ;Sector juguete - Hombre excluido social
+0717 ;Sector juguete - Hombre excluido social carga familiar
+0718 ;Sector juguete - Mujer excluido social
+0719 ;Sector juguete - Mujer excluido social carga familiar
+0720 ;Sector juguete - Hombre victima violencia doméstica
+0721 ;Sector juguete - Hombre victima violencia doméstica carga familiar
+0722 ;Sector juguete - Mujer victima violencia doméstica
+0723 ;Sector juguete - Mujer victima violencia doméstica carga familiar
+0724 ;Sector juguete - Inserción
+0725 ;Sector juguete - Inserción carga familiar
+0726 ;Sector juguete - Victima violencia género
+0727 ;Sector juguete - Mayor 55 años + 3 años de antigúedad;0;20120801
+0728 ;Sector juguete - Discapacitado Hombre < 45 años
+0729 ;Sector juguete - Discapacitado > 45
+0730 ;Sector juguete - Discapacitado Mujer < 45
+0731 ;Sector juguete - Discapacitado Hombre < 45 grupo especial
+0732 ;Sector juguete - Discapacitado > 45 grupo especial
+0733 ;Sector juguete - Discapacitado Mujer < 45 grupo especial
+0734 ;Sector juguete - Discapacitado Mujer > 45
+0735 ;Sector juguete - Discapacitado Mujer > 45 grupo especial
+0736 ;Sector juguete - >59 años + 4 años de antigüedad;0;20120801
+0737 ;Sector juguete - Mujer 30/45 años;0;20120801
+0801 ;Sector mueble - Mujer igual o menor de 30 años;0;20120801
+0802 ;Sector mueble - Mujer 30/45 años cargas familiares;0;20120801
+0803 ;Sector mueble - Hombre igual a 30 años;0;20120801
+0804 ;Sector mueble - Hombre igual a 30 años cargas familiares;0;20120801
+0805 ;Sector mueble - Hombre 31/44 años;0;20120801
+0806 ;Sector mueble - Hombre 31/44 años carga familiar;0;20120801
+0807 ;Sector mueble - Hombre 45 a 55 años;0;20120801
+0808 ;Sector mueble - Mujer 45 a 55 años;0;20120801
+0809 ;Sector mueble - Hombre +55 años;0;20120801
+0810 ;Sector mueble - Mujer +55 años;0;20120801
+0811 ;Sector mueble - +55 años falta 1 año percepción prestación;0;20120801
+0812 ;Sector mueble - Mujer parto 24 meses;0;20120801
+0813 ;Sector mueble - Mujer parto carga familiar;0;20120801
+0814 ;Sector mueble - Hombre +6 meses desempleado;0;20120801
+0815 ;Sector mueble - Hombre +6 meses desempleado carga familiar;0;20120801
+0816 ;Sector mueble - Hombre excluido social
+0817 ;Sector mueble - Hombre excluido social carga familiar
+0818 ;Sector mueble - Mujer excluido social
+0819 ;Sector mueble - Mujer excluido social carga familiar
+0820 ;Sector mueble - Hombre victima violencia doméstica
+0821 ;Sector mueble - Hombre victima violencia doméstica carga familiar
+0822 ;Sector mueble - Mujer victima violencia doméstica
+0823 ;Sector mueble - Mujer victima violencia doméstica carga familiar
+0824 ;Sector mueble - Inserción
+0825 ;Sector mueble - Inserción carga familiar
+0826 ;Sector mueble - Victima violencia género
+0827 ;Sector mueble - Mayor 55 años + 3 años de antigüedad;0;20120801
+0828 ;Sector mueble - Discapacitado hombre < 45 años
+0829 ;Sector mueble - Discapacitado > 45
+0830 ;Sector mueble - Discapacitado Mujer < 45
+0831 ;Sector mueble - Discapacitado Hombre < 45 grupo especial
+0832 ;Sector mueble - Discapacitado > 45 grupo especial
+0833 ;Sector mueble - Discapacitado Mujer < 45 grupo especial
+0834 ;Sector mueble - Discapacitado Mujer > 45
+0835 ;Sector mueble - Discapacitado Mujer > 45 grupo especial
+0836 ;Sector mueble - >59 años + 4 años de antigüedad;0;20120801
+0837 ;Sector mueble - Mujer 30/45 años;0;20120801
+0901 ;Sector calzado - Mujer igual o menor de 30 años;0;20120801
+0902 ;Sector calzado - Mujer 30/45 años cargas familiares;0;20120801
+0903 ;Sector calzado - Hombre igual a 30 años;0;20120801
+0904 ;Sector calzado - Hombre igual a 30 años cargas familiares;0;20120801
+0905 ;Sector calzado - Hombre 31/44 años;0;20120801
+0906 ;Sector calzado - Hombre 31/44 años carga familiar;0;20120801
+0907 ;Sector calzado - Hombre 45 a 55 años;0;20120801
+0908 ;Sector calzado - Mujer 45 a 55 años;0;20120801
+0909 ;Sector calzado - Hombre +55 años;0;20120801
+0910 ;Sector calzado - Mujer +55 años;0;20120801
+0911 ;Sector calzado - +55 años falta 1 año percepción prestación;0;20120801
+0912 ;Sector calzado - Mujer parto 24 meses;0;20120801
+0913 ;Sector calzado - Mujer parto carga familiar;0;20120801
+0914 ;Sector calzado - Hombre +6 meses desempleado;0;20120801
+0915 ;Sector calzado - Hombre +6 meses desempleado carga familiar;0;20120801
+0916 ;Sector calzado - Hombre excluido social
+0917 ;Sector calzado - Hombre excluido social carga familiar
+0918 ;Sector calzado - Mujer excluido social
+0919 ;Sector calzado - Mujer excluido social carga familiar
+0920 ;Sector calzado - Hombre victima violencia doméstica
+0921 ;Sector calzado - Hombre victima violencia doméstica carga familiar
+0922 ;Sector calzado - Mujer victima violencia doméstica
+0923 ;Sector calzado - Mujer victima violencia doméstica carga familiar
+0924 ;Sector calzado - Inserción
+0925 ;Sector calzado - Inserción carga familiar
+0926 ;Sector calzado - Victima violencia género
+0927 ;Sector calzado - Mayor 55 años + 3 años de antigüedad;0;20120801
+0928 ;Sector calzado - Discapacitado hombre < 45 años
+0929 ;Sector calzado - Discapacitado > 45 años
+0930 ;Sector calzado - Discapacitado Mujer < 45 años
+0931 ;Sector calzado - Discapacitado hombre< 45 grupo especial
+0932 ;Sector calzado - Discapacitado >45 grupo especial
+0933 ;Sector calzado - Discapacitado Mujer < 45 grupo especial
+0934 ;Sector calzado - Discapacitado Mujer > 45 años
+0935 ;Sector calzado - Discapacitado Mujer > 45 grupo especial
+0936 ;Sector calzado - >59 años y 3 años de antigüedad;0;20120801
+1001 ;Sector textil-mayor 55 años + 5 años antigüedad;0;20120801
+1002 ;Sector textil-mujeres;0;20120801
+1003 ;Sector textil-entre 30 a 45 años;0;20120801
+1004 ;Sector textil-hombre de 46 a 54 años;0;20120801
+1005 ;Sector textil-mujer de 46 a 54 años;0;20120801
+1006 ;Sector textil-hombre + 55;0;20120801
+1007 ;Sector textil-mujer + 55;0;20120801
+1008 ;Sector textil-desempleado + de 1 año;0;20120801
+1009 ;Sector textil-entre 30 a 45 años.Desempleado 6 meses;0;20120801
+1010 ;Sector textil-entre 30 a 45 años.Exclusión social.
+1011 ;Sector textil. Discapacitado.
+1013 ;Sector textil. Discapacitado. Enclave laboral.
+1014 ;Sector textil. Discapacitado hombre < 45 años
+1015 ;Sector textil. Discapacitado > 45 años
+1016 ;Sector textil. Discapacitado mujer < 45 años
+1017 ;Sector textil. Discapacitado hombre < 45 años grupo esp.
+1018 ;Sector textil. Discapacitado > 45 años grupo esp.
+1019 ;Sector textil. Discapacitado mujer < 45 años grupo especif.
+1020 ;Sector textil. Discapacitado Mujer > 45 años
+1021 ;Sector textil. Discapacitado Mujer > 45 grupo especial
+1031 ;Sector textil. - Mujer igual o menor 30 años;0;20120801
+1032 ;Sector textil. - Mujer 30/45 carga familiar;0;20120801
+1033 ;Sector textil. - Hombre igual a 30 años;0;20120801
+1034 ;Sector textil. - Hombre 30 años carga familiar;0;20120801
+1035 ;Sector textil. - Hombre 31/44 años;0;20120801
+1036 ;Sector textil. - Hombre 31/44 años carga familiar;0;20120801
+1037 ;Sector textil. - Hombre 45 a 55 años;0;20120801
+1038 ;Sector textil. - Mujer 45 a 55 años;0;20120801
+1039 ;Sector textil. - Hombre + 55 años;0;20120801
+1040 ;Sector textil. - Mujer + 55 años;0;20120801
+1041 ;Sector textil. - + 55 años falta 1 año;0;20120801
+1042 ;Sector textil. - Mujer parto 24;0;20120801
+1043 ;Sector textil. - Mujer parto 24 carga familiar;0;20120801
+1044 ;Sector textil. - Hombre + 6 meses desempleado;0;20120801
+1045 ;Sector textil. - Hombre + 6 meses desemp. carga familiar;0;20120801
+1046 ;Sector textil. - Hombre excluido social
+1047 ;Sector textil. - Hombre excluido social carga familiar
+1048 ;Sector textil. - Mujer excluido social
+1049 ;Sector textil. - Mujer excluido social carga familiar
+1050 ;Sector textil. - Hombre víctima de violencia doméstica
+1051 ;Sector textil. - Hombre víctima de violencia doméstica carga familiar
+1052 ;Sector textil. - Mujer víctima de violencia doméstica
+1053 ;Sector textil. - Mujer víctima de violencia doméstica carga familiar
+1054 ;Sector textil. - Inserción
+1055 ;Sector textil. - Inserción carga familiar
+1056 ;Sector textil. - Victima violencia género
+1057 ;Sector textil. - Mujer menor de 30 años carga familiar;0;20120801
+1058 ;Sector textil. - Hombre 45/55 carga familiar;0;20120801
+1059 ;Sector textil. - Mujer 45/55 carga familiar;0;20120801
+1060 ;Sector textil. - Hombre > 55 carga familiar;0;20120801
+1061 ;Sector textil. - Mujer > 55 carga familiar;0;20120801
+1062 ;Sector textil. - > 59 años;0;20120801
+1222 ;Discapacitado indef. Hombre < 45 años
+1223 ;Discapacitado indef. > 45 años
+1224 ;Discapacitado indef. mujer < 45 años
+1225 ;Discapacitado indef. Hombre < 45 años grupo esp.
+1226 ;Discapacitado indef. > 45 años grupo esp.
+1227 ;Discapacitado indef. mujer < 45 años grupo especif.
+1228 ;Discapacitado Temp. Hombre < 45 años
+1229 ;Discapacitado Temp. Hombre > 45 años
+1230 ;Discapacitado Temp. mujer < 45 años
+1231 ;Discapacitado Temp. mujer > 45 años
+1232 ;Discapacitado Temp. Hombre < 45 años grupo esp
+1233 ;Discapacitado Temp. Hombre > 45 años grupo esp
+1234 ;Discapacitado Temp. mujer < 45 años grupo esp
+1235 ;Discapacitado Temp. mujer > 45 años grupo esp
+1236 ;Discapacitado indefinido mujer > 45 años
+1237 ;Discapacitado indefinido mujer > 45 añós Grupo esp
+1304 ;Exclusión Social/Itinerario de Inserción
+1323 ;Excluido Social Inserción < 30 años
+1324 ;Excluido Social Inserción<35 años discapacitado
+1409 ;Victima Violencia de genero Mujer
+1412 ;Víctima Violencia Doméstica RDL 1/2011. Ind.
+1434 ;Víctimas terrorismo indef.
+1435 ;Víctimas terrorismo temp.
+1607 ;Desempleado + 6 meses - carga familiar;0;20120801
+1610 ;Desempleado - carga familiar;0;20120801
+1805 ;Conversión indefinido cont.format. relevo sust. Jub. Hombre 
+1806 ;Conversión indefinido cont.format. relevo sust. Jub. Mujer
+1813 ;Conversión indefinidos contrato formación aprendizaje - Hombre
+1814 ;Conversión indefinidos contrato formación aprendizaje - Mujer
+1815 ;Conversión indefinido empleo joven - Hombre
+1816 ;Conversión indefinido empleo joven - Mujer
+1817 ;Conversión indefinido empleo joven hombre discapacitado
+1818 ;Conversión indefinido empleo joven mujer discapacitada
+2037 ;Entre 16/30 años problemas empleabilidad Hombre;0;20120801
+2038 ;Entre 16/30 años problemas empleabilidad Mujer;0;20120801
+2039 ;Mayor 45 años desempleado 12 meses Hombre;0;20120801
+2040 ;Mayor 45 años desempleado 12 meses Mujer;0;20120801
+2061 ;Entre 16 y 30 años. < 50 trabajadores. Primer año.
+2062 ;Entre 16 y 30 años. < 50 trabajadores. Segundo año.
+2063 ;Entre 16 y 30 años. < 50 trabajadores. Tercer año.
+2064 ;Entre 16 y 30 años. < 50 trabajadores. Primer año. Mujer Subrepresentada.
+2065 ;Entre 16 y 30 años. < 50 trabajadores. Segundo año. Mujer Subrepresentada.
+2066 ;Entre 16 y 30 años. < 50 trabajadores. Tercer año. Mujer Subrepresentada.
+2067 ;Mayores 45 años. < 50 trabajadores. Desempleados 12/18 meses.
+2068 ;Mayores 45 años. < 50 trabajadores. Desempleados 12/18 meses. Mujer subrepresentada.
+2069 ;Mayores de 45 < 50 trab. Desemp.
+2070 ;Mayores de 45 < 50 trab. Desem. Mujer subrepresentada
+2077 ;Socio cooperativa <30 años
+2078 ;Socio sociedad laboral < 30 años
+2085 ;Indefinido empleo joven hombre empresa usuaria
+2086 ;Indefinido empleo joven mujer empresa usuaria
+2087 ;Indefinido empleo joven hombre discapacitado empresa usuaria
+2088 ;Indefinido empleo joven mujer discapacitada empresa usuaria
+2089 ;<35 años socio cooperativa discapacitado
+2090 ;<35 años socio sociedadad laboral discapacitado
+2091 ;Indefinido empresa usuaria formación hombre
+2092 ;Indefinido empresa usuaria formación mujer
+3141 ;Mayores de 59 años y 4 años de antigüedad
+3191 ;Fijo Discontinuo. Turismo-Hostelería
+3220 ;Cambio puesto de trabajo Riesgo Embarazo/Enfermedad Profesional
+4203 ;Trabajador contrato formación sin desempleo
+4204 ;Trabajador contrato formación con desempleo
+4208 ;Contrato para la formación y aprendizaje
+9901 ;Reducción Real Decreto-Ley 1/2011

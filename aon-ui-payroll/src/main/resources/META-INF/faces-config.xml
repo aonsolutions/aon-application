@@ -9,6 +9,13 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.PayrollCollectionsController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	
+	<!-- ************** SS COLLECTIONS ****************** -->
+	<managed-bean>
+		<managed-bean-name>ssCollections</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.SSCollectionsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- **** ENTERPRISE PAYROLL **** -->
 	<managed-bean>
@@ -2244,6 +2251,13 @@
 			<value>geozoneIrpf</value>
 		</managed-property>
 	</managed-bean>
+	
+	<!--  **** SS TABLES VIEWER **** -->
+	<managed-bean>
+		<managed-bean-name>payrollCodeTables</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.PayrollCodeTablesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>bullShit</managed-bean-name>
@@ -2546,6 +2560,17 @@
 		<navigation-case>
 			<from-outcome>geozoneIrpf_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/geozoneIrpf/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- ************* SS TABLES VIEWER ************* -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>payrollCodeTables_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/codeTables/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>payrollCodes_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/codeTables/code_list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

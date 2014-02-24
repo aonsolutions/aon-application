@@ -57,24 +57,14 @@
 						<aon:panelTab id="mainData" label="#{bundle.payroll_contract_general_data}" >
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
 							<c:if test="#{contract.params.bonusModel.rowCount>0}" >
-								<aon:panel style="width:920px;">
-									<f:facet name ="header">
-										<aon:outputText value="#{bundle.payroll_salary_bonus_tab}" />
-									</f:facet>
-									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/bonus/list-potlet.xhtml" >
-										<ui:param name="removeButtonReRender" value="contract-panelTab" />
-									</ui:include>
-								</aon:panel>
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/bonus/panel_list.xhtml" >
+									<ui:param name="removeButtonReRender" value="contract-panelTab" />
+								</ui:include>
 							</c:if>
 							<c:if test="#{contractEmbargo.model.rowCount>0}">
-								<aon:panel style="width:920px;">
-									<f:facet name ="header">
-										<aon:outputText value="#{bundle.payroll_salary_embargos_tab}" />
-									</f:facet>
-									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/grid.xhtml" >
-										<ui:param name="removeButtonReRender" value="contract-panelTab" />
-									</ui:include>
-								</aon:panel>
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/panel_grid.xhtml" >
+									<ui:param name="removeButtonReRender" value="contract-panelTab" />
+								</ui:include>
 							</c:if>
 						</aon:panelTab>
 						

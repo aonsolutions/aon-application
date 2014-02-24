@@ -16,6 +16,7 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.common.i18n.messages" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 		</params>
 		<nested-report report="month"/>
 	</report>

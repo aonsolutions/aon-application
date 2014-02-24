@@ -1,0 +1,107 @@
+package com.esferalia.aon.payroll.enumeration.ss;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import org.apache.commons.lang.time.DateUtils;
+
+/** 
+ * Enumeration for represent SOCIAL SECURITY T10 table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.SSCodeTablesWriter
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * T10.txt
+ *  ------------------------------------------------------------------------
+ */ 
+public enum T10 implements ISSEnum {
+
+	T10_001( "001", "M MIDAT CYCLOPS", null, null ),
+	T10_002( "002", "MUTUALIA", null, null ),
+	T10_003( "003", "ACTIVA MUTUA 2008", null, null ),
+	T10_007( "007", "MUTUA MONTAÑESA", null, null ),
+	T10_010( "010", "MUTUA UNIVERSAL MUGENAT", null, null ),
+	T10_011( "011", "M.A.Z.", null, null ),
+	T10_015( "015", "UMIVALE", null, null ),
+	T10_021( "021", "MUTUA NAVARRA", null, null ),
+	T10_039( "039", "MUTUA INTERCOMARCAL", null, null ),
+	T10_061( "061", "F.R.E.M.A.P.", null, null ),
+	T10_072( "072", "SOLIMAT", null, null ),
+	T10_115( "115", "MUTUA DE CEUTA-SMAT", null, null ),
+	T10_151( "151", "A.S.E.P.E.Y.O", null, null ),
+	T10_183( "183", "MUTUA BALEAR", null, null ),
+	T10_201( "201", "MUTUA GALLEGA DE A.T.", null, null ),
+	T10_267( "267", "UNIÓN DE MUTUAS UNIMAT", null, null ),
+	T10_272( "272", "M.A.C. MUTUA DE ACCIDENTES CANARIA", null, null ),
+	T10_274( "274", "IBERMUTUAMUR", null, null ),
+	T10_275( "275", "FRATERNIDAD-MUPRESPA", null, null ),
+	T10_276( "276", "EGARSAT", null, null ),
+	T10_666( "666", "USO EXCLUSIVO INEM", null, null ),
+	T10_777( "777", "I.N.S.S", null, null ),
+	T10_888( "888", "INSTITUTO SOCIAL DE LA MARINA", null, null ),
+	;
+	public static final String TABLE_NAME = "T10";
+	public static final String TABLE_DESCRIPTION = "T10.txt";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
+	private String startDate;
+	private String endDate;
+
+	T10( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return DateUtils.ceiling(sdf.parse(startDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return DateUtils.ceiling(sdf.parse(endDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public boolean isActive(){
+		Date now = new Date();
+		now = DateUtils.ceiling(now, Calendar.DAY_OF_MONTH);
+		if( (getStartDate()!=null && getStartDate().after(now)) || (getEndDate()!=null && getEndDate().before(now)) ){
+			return false;
+		}
+		return true;
+	}
+
+	public static T10 getEnumByValue(String expression) {
+		for( T10 o : T10.values() ) {
+			if ( o.getCode().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
+}

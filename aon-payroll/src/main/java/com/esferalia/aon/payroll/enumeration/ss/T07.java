@@ -1,0 +1,139 @@
+package com.esferalia.aon.payroll.enumeration.ss;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import com.esferalia.aon.payroll.sepe.SSCodeTablesWriter.ISSEnum;
+import org.apache.commons.lang.time.DateUtils;
+
+/** 
+ * Enumeration for represent SOCIAL SECURITY T07 table codes.
+ * Generation main class: com.esferalia.aon.payroll.sepe.SSCodeTablesWriter
+ *  ------------------------------------------------------------------------
+ *  TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN.
+ * T07.txt
+ *  ------------------------------------------------------------------------
+ */ 
+public enum T07 implements ISSEnum {
+
+	T07___1( "__1", "Acciones a nivel de Empresa - Se cumplimentan en el segmento EMP", null, null ),
+	T07_CU( "CU", "Consulta de trabajadores con movimientos previos en un CCC", null, null ),
+	T07_CS( "CS", "Situación de la empresa", null, null ),
+	T07_CT( "CT", "Relación de trabajadores en alta en un CCC", null, null ),
+	T07_CTA( "CTA", "Informe de Trabajadores en alta por Autorización", null, null ),
+	T07_CTP( "CTP", "Informe de Trabajadores en alta por CCC Principal", null, null ),
+	T07_CL( "CL", "Vida laboral de un CCC", null, null ),
+	T07_CC( "CC", "Certificado de Cotización normal sin detalle de deuda - Futuro uso.", "99990101", null ),
+	T07_CC1( "CC1", "Certificado de Cotización normal con detalle de deuda - Futuro uso.", "99990101", null ),
+	T07_CC2( "CC2", "Certificado de Cotización Contrato del Estado - Futuro uso.", "99990101", null ),
+	T07_CC3( "CC3", "Certificado de Cotización. Artículo 42 - Futuro uso.", "99990101", null ),
+	T07_NMT( "NMT", "Número Medio de Trabajadores", null, null ),
+	T07_PMT( "PMT", "Plantilla Media de Trabajadores en alta", null, null ),
+	T07_AAC( "AAC", "Alta Autorización Certificado artículo 42 Estatuto de los Trabajadores", null, null ),
+	T07_MAC( "MAC", "Modificación Autorización Certificado artículo 42 Estatuto de los Trabajadores", null, null ),
+	T07_PLC( "PLC", "Informe de datos para la cotización por Período de Liquidación - CCC", null, null ),
+	T07___2( "__2", "Acciones a nivel de Trabajador - Se cumplimentan en el segmento FAB", null, null ),
+	T07_MA( "MA", "Alta sucesiva", null, null ),
+	T07_MB( "MB", "Baja", null, null ),
+	T07_MG( "MG", "Cambio de grupo de cotización", null, null ),
+	T07_ME( "ME", "Eliminación de movimientos previos", null, null ),
+	T07_MC( "MC", "Cambio de contrato (tipo/coeficiente)", null, null ),
+	T07_MT( "MT", "Cambio de ocupación", null, null ),
+	T07_MD( "MD", "Eliminación de altas consolidadas.", null, null ),
+	T07_MR( "MR", "Eliminación de bajas consolidadas", null, null ),
+	T07_CP( "CP", "Consulta de movimientos previos de un afiliado", null, null ),
+	T07_CH( "CH", "Consulta de situación del afiliado en la empresa", null, null ),
+	T07_CE( "CE", "Informe de Situación I.T. por Contingencias Comunes", null, null ),
+	T07_CD( "CD", "Duplicados de TA2.", null, null ),
+	T07_CA( "CA", "Corrección del alta, régimen 0132", null, null ),
+	T07_CB( "CB", "Corrección de la baja, régimen 0132", null, null ),
+	T07_CCP( "CCP", "Cambio de Categoría Profesional", null, null ),
+	T07_CCJ( "CCJ", "Cambio de Coeficiente Reductor de la Edad Jubilación", null, null ),
+	T07_MJR( "MJR", "Mecanización de Jornadas Reales (régimen 0163)", null, null ),
+	T07_MFR( "MFR", "Modificación Fecha Real del Alta (régimen 0163)", null, null ),
+	T07_ASA( "ASA", "Anotación de periodos de situaciones adicionales de afiliación", null, null ),
+	T07_MSA( "MSA", "Modificación de periodos de situaciones adicionales de afiliación", null, null ),
+	T07_ESA( "ESA", "Eliminación de periodos de situaciones adicionales de afiliación", null, null ),
+	T07_CJR( "CJR", "Informe de Jornadas Reales", null, null ),
+	T07_ASC( "ASC", "Alta de Subcontratación o Cesión", null, null ),
+	T07_MSC( "MSC", "Modificación de Subcontratación o Cesión", null, null ),
+	T07_ESC( "ESC", "Eliminación de Subcontratación o Cesión", null, null ),
+	T07_ACT( "ACT", "Anotación Convenio Colectivo de trabajador", null, null ),
+	T07_ADT( "ADT", "Anotación de Días Trabajados", null, null ),
+	T07_EDT( "EDT", "Eliminación de Días Trabajados", null, null ),
+	T07_AMC( "AMC", "Anotación Modalidad de cotización", null, null ),
+	T07_AIT( "AIT", "Anotación de Períodos de Incapacidad Temporal", null, null ),
+	T07_CIT( "CIT", "Cierre de Períodos de Incapacidad Temporal", null, null ),
+	T07_EIT( "EIT", "Eliminación de Períodos de Incapacidad Temporal", null, null ),
+	T07_IDC( "IDC", "Informe de Datos para la Cotización", null, null ),
+	T07_CTO( "CTO", "Consulta de alta de Trabajadores en Otra empresa", null, null ),
+	T07_MTE( "MTE", "Modificación del indicativo numero Trabajadores Empresa", null, null ),
+	T07_MHU( "MHU", "Mecanización de HUelga", null, null ),
+	T07_PLT( "PLT", "Informe de datos para la cotización por Periodo de Liquidación - Trabajador", null, null ),
+	T07_RLT( "RLT", "Informe de datos para la cotización por Relación Laboral - Trabajador", null, null ),
+	;
+	public static final String TABLE_NAME = "T07";
+	public static final String TABLE_DESCRIPTION = "T07.txt";
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private String code;
+	private String description;
+	private String startDate;
+	private String endDate;
+
+	T07( String code, String description, String startDate, String endDate ) {
+		this.code = code;
+		this.description = description;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public Date getStartDate(){
+		try {
+			if(startDate!=null){
+				return DateUtils.ceiling(sdf.parse(startDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public Date getEndDate(){
+		try {
+			if(endDate!=null){
+				return DateUtils.ceiling(sdf.parse(endDate), Calendar.DAY_OF_MONTH);
+			}
+		} catch (ParseException e) {
+			// nothing to do
+		}
+		return null;
+	}
+
+	public boolean isActive(){
+		Date now = new Date();
+		now = DateUtils.ceiling(now, Calendar.DAY_OF_MONTH);
+		if( (getStartDate()!=null && getStartDate().after(now)) || (getEndDate()!=null && getEndDate().before(now)) ){
+			return false;
+		}
+		return true;
+	}
+
+	public static T07 getEnumByValue(String expression) {
+		for( T07 o : T07.values() ) {
+			if ( o.getCode().equals(expression) ) {
+				return o;
+			}
+		}
+		return null;
+	}
+
+}

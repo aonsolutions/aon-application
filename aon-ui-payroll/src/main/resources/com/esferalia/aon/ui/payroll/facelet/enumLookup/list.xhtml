@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="payrollEnumList">
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
+					<aon:div styleClass="aon-panelGrid-search-info">
+						<aon:outputText value="#{bundle.aon_filter}" styleClass="aon-panelGrid-search-info-internal"/>
+					</aon:div>
+					<aon:panelGrid columns="1">
+						<aon:inputText id="payrollCodeTablesFilter" size="150" value="#{payrollCodeTables.tablesFilter}">
+							<a4j:support 
+								event="onkeyup"
+								actionListener="#{payrollCodeTables.onInitTablesModels}"
+								reRender="payrollCodeTablesTab"
+								eventsQueue="payrollCodeTablesFilterKeyUp"
+								requestDelay="500"
+								ajaxSingle="true"
+								ignoreDupResponses="true"
+								limitToList="true"/>
+						</aon:inputText>
+					</aon:panelGrid>	
+				</aon:div>
+			
+				<aon:dataTable id="ssCodelList" value="#{payrollCodeTables.ssTablesModel}" var="to">
+
+					<aon:rowSelector id="ssCodelList-select" 
+						action="payrollCodes_list"
+						actionListener="#{payrollCodeTables.onSelectSS}" />
+					
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+						<f:facet name="header">
+							<aon:outputLabel value="#{bundle.aon_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.code}"  />
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+						<f:facet name="header">
+							<aon:outputLabel 
+								value="#{bundle.aon_description}" />
+						</f:facet>
+						<aon:outputText value="#{to.description}"/>
+					</aon:column>
+					
+				</aon:dataTable>
+					
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
