@@ -39,7 +39,7 @@ public class ProjectReservationServiceDetail extends ProjectReservationServiceDe
 		double vatPercent = reservationUtils.getTaxPercentage(getItem().getProduct().getVat(), getProjectReservationService().getProjectReservation().getStartDate());
 
 		ItemPricesManager pricesManager = new ItemPricesManager();
-		return pricesManager.getSalesPrice(getItem(), vatPercent, 0, getPrice());
+		return pricesManager.getSalesPrice(vatPercent, 0, getPrice());
 	}
 
     @Transient
@@ -48,7 +48,7 @@ public class ProjectReservationServiceDetail extends ProjectReservationServiceDe
 		double vatPercent = reservationUtils.getTaxPercentage(getItem().getProduct().getVat(), getProjectReservationService().getProjectReservation().getStartDate());
 
 		ItemPricesManager pricesManager = new ItemPricesManager();
-		return pricesManager.getSalesPrice(getItem(), vatPercent, 0, getTaxableBase());
+		return pricesManager.getSalesPrice(vatPercent, 0, getTaxableBase());
 	}
 
 }

@@ -220,7 +220,7 @@ public class ProjectReservationServiceController extends LinesController {
 			double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), reservationService.getProjectReservation().getDate());
 			Tariff tariff = (getServiceReservationRoom() != null) ? getServiceReservationRoom().getTariff() : null;
 			double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff);
-			setServicePrice(getPricesManager().getSalesPrice(item, vatPercent, 0, price));
+			setServicePrice(getPricesManager().getSalesPrice(vatPercent, 0, price));
 		}
 	}	
 
@@ -239,7 +239,7 @@ public class ProjectReservationServiceController extends LinesController {
 				double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), reservationService.getProjectReservation().getDate());
 				Tariff tariff = (getServiceReservationRoom() != null) ? getServiceReservationRoom().getTariff() : null;
 				double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff);
-				setServicePrice(getPricesManager().getSalesPrice(item, vatPercent, 0, price));
+				setServicePrice(getPricesManager().getSalesPrice(vatPercent, 0, price));
 			} else {
 				setServiceQuantity(1);
 			}
@@ -267,7 +267,7 @@ public class ProjectReservationServiceController extends LinesController {
 		Date toDate = getServiceToDate();
 		double quantity = getServiceQuantity();
 		double vatPercent = reservationUtils.getTaxPercentage(reservationService.getItem().getProduct().getVat(), reservationService.getProjectReservation().getDate());
-		double price = getPricesManager().getPrice(reservationService.getItem(), vatPercent, 0, getServicePrice(), 4);
+		double price = getPricesManager().getPrice(vatPercent, 0, getServicePrice(), 4);
 		ProjectReservationRoom reservationRoom = getServiceReservationRoom();
 
 		onAccept(event);
