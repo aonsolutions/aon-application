@@ -135,9 +135,8 @@ public class VatTaxDeclarationController extends LinesController {
 		calculate(dec);
 	}
 
-	public void tryAutomaticCreation() throws ManagerBeanException {
+	public void tryAutomaticCreation(VatTax vatTax) throws ManagerBeanException {
 		VatTaxController master = (VatTaxController) getMasterController();
-		VatTax vatTax = (VatTax) master.getTo();
 		VatTax previousVatTax = getPreviousVatTax(vatTax);
 		if (previousVatTax == null) {
 			Administration adm = master.getFiscalParams().getDefaultAdministration();
@@ -148,7 +147,7 @@ public class VatTaxDeclarationController extends LinesController {
 		} else {
 			duplicateDeclaration(vatTax,previousVatTax);
 		}
-		onCancel(null);	
+		onCancel(null);
 	}
 
 	private void duplicateDeclaration(VatTax vatTax,VatTax previousVatTax) throws ManagerBeanException {

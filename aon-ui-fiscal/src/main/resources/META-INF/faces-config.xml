@@ -325,6 +325,22 @@
 					<key>period</key>
 					<value>vatTax.period</value>
 				</map-entry>
+				<map-entry>
+					<key>taxRefundRegistry</key>
+					<value>vatTax.taxRefundRegistry</value>
+				</map-entry>
+				<map-entry>
+					<key>replacement</key>
+					<value>vatTax.replacement</value>
+				</map-entry>
+				<map-entry>
+					<key>number</key>
+					<value>vatTax.number</value>
+				</map-entry>
+				<map-entry>
+					<key>prorata</key>
+					<value>vatTax.prorata</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 		<managed-property>

@@ -266,7 +266,6 @@ public class Declaration {
 	}
 	public void setVatAccrualRegime(boolean vatAccrualRegime) {
 		this.vatAccrualRegime = vatAccrualRegime;
-		System.out.println("vatAccrualRegime ..: " + vatAccrualRegime);
 	}
 	public int getVatAccrualRegimeNumber() {
 		return isVatAccrualRegime()?1:2;
@@ -276,7 +275,6 @@ public class Declaration {
 	}
 	public void setVatAccrualRegimeReceiver(boolean vatAccrualRegimeReceiver) {
 		this.vatAccrualRegimeReceiver = vatAccrualRegimeReceiver;
-		System.out.println("vatAccrualRegimeReceiver ..: " + vatAccrualRegimeReceiver);
 	}
 	public int getVatAccrualRegimeReceiverNumber() {
 		return isVatAccrualRegimeReceiver()?1:2;

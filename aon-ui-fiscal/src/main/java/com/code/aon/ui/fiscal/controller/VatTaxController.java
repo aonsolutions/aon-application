@@ -241,7 +241,7 @@ public class VatTaxController extends BasicController {
 			accept(event);
 			vatTax = (VatTax) HibernateUtil.getSession(sessionName).merge(vatTax);
 			VatTaxDeclarationController vtdc = (VatTaxDeclarationController) FormUtil.getController(VatTaxDeclarationController.BEAN_NAME);
-			vtdc.tryAutomaticCreation();
+			vtdc.tryAutomaticCreation(vatTax);
 
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
