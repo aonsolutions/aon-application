@@ -401,16 +401,16 @@
 		</handler-class>
 	</tag>
 	<tag>
-		<tag-name>suggestionBox</tag-name>
+		<tag-name>lookupSuggestionBox</tag-name>
 		<component>
 			<component-type>
-				com.code.aon.faces.suggestionBox
+				com.code.aon.faces.lookupSuggestionBox
 			</component-type>
 			<renderer-type>
 				org.richfaces.SuggestionBox
 			</renderer-type>
 			<handler-class>
-				com.code.aon.faces.component.richfaces.suggestionBox.SuggestionBoxHandler
+				com.code.aon.faces.component.richfaces.lookup.suggestionBox.LookupSuggestionBoxHandler
 			</handler-class>
 		</component>
 	</tag>

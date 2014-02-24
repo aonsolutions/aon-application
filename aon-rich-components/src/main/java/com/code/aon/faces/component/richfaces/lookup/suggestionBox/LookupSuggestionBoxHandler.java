@@ -1,11 +1,11 @@
-package com.code.aon.faces.component.richfaces.suggestionBox;
+package com.code.aon.faces.component.richfaces.lookup.suggestionBox;
 
 import javax.el.MethodExpression;
-import javax.faces.component.UIComponent;
 
 import org.richfaces.component.html.HtmlSuggestionBox;
 import org.richfaces.taglib.SuggestionBoxTagHandler;
 
+import com.code.aon.faces.component.richfaces.lookup.ILookupConstants;
 import com.code.aon.faces.component.util.MethodExpressionAdapter;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.TagAttribute;
@@ -16,18 +16,18 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
  * 
  * @author atellitu
  */
-public class SuggestionBoxHandler extends SuggestionBoxTagHandler {
+public class LookupSuggestionBoxHandler extends SuggestionBoxTagHandler {
 	
 	private static final String SUGGESTION_ACTION = "suggestionAction";
 	
-	private final static Class[] SIGNATURE = new Class[]{Object.class, UIComponent.class};
+	private final static Class[] SIGNATURE = new Class[]{Object.class, Object[].class};
 	
    	/**
 	 * The Constructor.
 	 * 
 	 * @param config the config
 	 */
-	public SuggestionBoxHandler(ComponentConfig config) {
+	public LookupSuggestionBoxHandler(ComponentConfig config) {
 		super( config );
 	}
 
@@ -39,7 +39,18 @@ public class SuggestionBoxHandler extends SuggestionBoxTagHandler {
 		if ( me != null ) {
 			TagAttribute ta = getAttribute(SUGGESTION_ACTION);
 			MethodExpression newME = ta.getMethodExpression(ctx, null, SIGNATURE);
-			MethodExpressionAdapter mea = new MethodExpressionAdapter(me, newME, sb);
+			Object[] properties = new Object[2];
+			TagAttribute suggestAlias = getAttribute(ILookupConstants.SUGGEST_ALIAS);
+			if (suggestAlias != null) {
+				properties[0] =  suggestAlias.getObject(ctx, String.class);
+			}
+			Boolean matchBeginOnly = Boolean.FALSE;
+			TagAttribute matchBeginOnlyTag = getAttribute(ILookupConstants.MATCH_BEGIN_ONLY);
+			if (matchBeginOnlyTag != null) {
+				matchBeginOnly =  (Boolean) matchBeginOnlyTag.getObject(ctx, Boolean.class);
+			}			
+			properties[1] = matchBeginOnly != null ? matchBeginOnly : Boolean.FALSE;
+			MethodExpressionAdapter mea = new MethodExpressionAdapter(me, newME, properties);
 			sb.setSuggestionAction(mea);
 		}
 	}

@@ -3,7 +3,6 @@ package com.code.aon.faces.component.util;
 import javax.el.ELContext;
 import javax.el.MethodExpression;
 import javax.el.MethodInfo;
-import javax.faces.component.UIComponent;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -13,17 +12,17 @@ public class MethodExpressionAdapter extends MethodExpression {
 	
 	private MethodExpression source;
 	private MethodExpression adapted;
-	private UIComponent component;
+	private Object[] properties;
 	
 	public MethodExpressionAdapter() {
 		super();
 	}	
 	
 	public MethodExpressionAdapter(MethodExpression source,
-			MethodExpression adapted, UIComponent component) {
+			MethodExpression adapted, Object[] properties) {
 		this.source = source;
 		this.adapted = adapted;
-		this.component = component;
+		this.properties = properties;
 	}
 
 	@Override
@@ -33,7 +32,7 @@ public class MethodExpressionAdapter extends MethodExpression {
 
 	@Override
 	public Object invoke(ELContext context, Object[] params) {
-		Object[] newParams = ArrayUtils.add(params, component);
+		Object[] newParams = ArrayUtils.add(params, properties);
 		return adapted.invoke(context, newParams);
 	}
 

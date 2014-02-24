@@ -115,7 +115,8 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 		super.setAttributes(ctx, instance);
 		UICommand button = (UICommand) instance;
 		BasicController controller = getController(ctx);	
-		GoToActionListener gtal = new GoToActionListener(controller);
+		ValueExpression controllerVE = controllerTag.getValueExpression(ctx, BasicController.class);
+		GoToActionListener gtal = new GoToActionListener(controllerVE);
 		button.addActionListener(gtal);
 		TagAttribute actionTag = getAttribute(ACTION);
 		if ( actionTag == null ) {

@@ -71,6 +71,14 @@ public class LookupSuggestTextHandler extends LookupBasicInputHandler {
 		if (columns != null) {
 			mapper.setVariable(PREFFIX + COLUMN_EXPRESSION, columns.getValueExpression(ctx, Object.class));
 		}
+		TagAttribute suggestAlias = getAttribute(SUGGEST_ALIAS);
+		if (suggestAlias != null) {
+			mapper.setVariable(PREFFIX + SUGGEST_ALIAS, suggestAlias.getValueExpression(ctx, Object.class));
+		}
+		TagAttribute matchBeginOnly = getAttribute(MATCH_BEGIN_ONLY);
+		if (matchBeginOnly != null) {
+			mapper.setVariable(PREFFIX + MATCH_BEGIN_ONLY, matchBeginOnly.getValueExpression(ctx, Object.class));
+		}
 		addAttribue(ctx, mapper, WIDTH, WIDTH_DEFAULT, String.class);		
 		addAttribue(ctx, mapper, HEIGHT, HEIGHT_DEFAULT, String.class);
 		addAttribue(ctx, mapper, FREQUENCY, FRECUENCY_DEFAULT, Double.class);

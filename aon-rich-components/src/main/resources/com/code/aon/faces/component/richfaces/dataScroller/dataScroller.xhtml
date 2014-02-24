@@ -1,67 +1,70 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-<body>
 
-<ui:composition>
-
-	<aon:div styleClass="aon-note"
-		rendered="#{rowCount == 0 and showNote}">
-		<aon:div styleClass="aon-note-internal">
-			<aon:panelGroup>
-				<aon:outputText value="#{bundle.aon_search_no_results}" />
-			</aon:panelGroup>
+	<c:if test="#{rowCount == 0 and showNote}">
+		<aon:div styleClass="aon-note">
+			<aon:div styleClass="aon-note-internal">
+				<aon:panelGroup>
+					<aon:outputText value="#{bundle.aon_search_no_results}" />
+				</aon:panelGroup>
+			</aon:div>
 		</aon:div>
-	</aon:div>
+	</c:if>		
 
-	<aon:div styleClass="aon-dataScroller" rendered="#{rowCount>0}">					
-	    <aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting" style="width:auto;">
-			<c:if test="#{page != null}">
-				<aon:dataPaginator for="#{dataTable}" id="#{dataTable}PaginatorInfo"
-					rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex" lastRowIndexVar="lastRowIndex"
-					styleClass="aon-dataScroller-text" page="#{page}">
-					<f:facet name="pages">
-						<h:outputFormat value="#{bundle.aon_scroll}">
-							<f:param value="#{firstRowIndex}" />
-							<f:param value="#{lastRowIndex}" />
-							<f:param value="#{rowsCount}" />
-						</h:outputFormat>
-					</f:facet>
-				</aon:dataPaginator>
-				<aon:div>
-					<aon:dataPaginator for="#{dataTable}" fastStep="5" paginator="true" action="#{action}"
-						paginatorMaxPages="5" rendered="#{pageSize != 0 and (rowCount > pageSize)}"
-						styleClass="aon-dataScroller-buttons" reRender="#{dataTable}PaginatorInfo" 
-						page="#{page}"/>
-				</aon:div>
-			</c:if>		
-			<c:if test="#{page == null}">
-				<aon:dataPaginator for="#{dataTable}" id="#{dataTable}PaginatorInfo"
-					rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex" lastRowIndexVar="lastRowIndex"
-					styleClass="aon-dataScroller-text">
-					<f:facet name="pages">
-						<h:outputFormat value="#{bundle.aon_scroll}">
-							<f:param value="#{firstRowIndex}" />
-							<f:param value="#{lastRowIndex}" />
-							<f:param value="#{rowsCount}" />
-						</h:outputFormat>
-					</f:facet>
-				</aon:dataPaginator>
-				<aon:div>
-					<aon:dataPaginator for="#{dataTable}" fastStep="5" paginator="true" action="#{action}"
-						paginatorMaxPages="5" rendered="#{pageSize != 0 and (rowCount > pageSize)}"
-						styleClass="aon-dataScroller-buttons" reRender="#{dataTable}PaginatorInfo"/>
-				</aon:div>
-			</c:if>		
-		</aon:panelGrid>	
-	</aon:div>
+	<c:if test="#{rowCount>0}">
+		<aon:div styleClass="aon-dataScroller">					
+		    <aon:panelGrid id="#{dataTable}MessageDataScroller" 
+		    	columns="3" columnClasses="aon-dataScroller2-text aon-nowrap,aon-width-all,aon-dataScroller2-text aon-nowrap aon-float-right">
+				<aon:panelGroup>
+			    	<c:if test="#{rowCount &lt;= pageSize}" >
+						<aon:outputFormat value="#{bundle.aon_scroll}">
+							<f:param value="#{1}" />
+							<f:param value="#{rowCount}" />
+							<f:param value="#{rowCount}" />
+						</aon:outputFormat>		    	
+			    	</c:if>
+			    	<c:if test="#{rowCount > pageSize}" >
+						<aon:dataPaginator for="#{dataTable}" id="#{dataTable}PaginatorInfo"
+							rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex" lastRowIndexVar="lastRowIndex"
+							styleClass="aon-dataScroller-text">
+							<f:facet name="pages">
+								<h:outputFormat value="#{bundle.aon_scroll}">
+									<f:param value="#{firstRowIndex}" />
+									<f:param value="#{lastRowIndex}" />
+									<f:param value="#{rowsCount}" />
+								</h:outputFormat>
+							</f:facet>
+						</aon:dataPaginator>
+			    	</c:if>
+				</aon:panelGroup>
+		    	<aon:panelGroup styleClass="aon-width-all">
+			    	<c:if test="#{rowCount > pageSize}" >
+						<aon:dataPaginator for="#{dataTable}" fastStep="5" paginator="true" action="#{action}"
+							paginatorMaxPages="5" rendered="#{pageSize != 0 and (rowCount > pageSize)}"
+							ajaxSingle="true" oncomplete="#{oncomplete}" page="#{page}"
+							fastControls="#{((rowCount > 0) and ((rowCount/pageSize) >= 10))?'show':'hide'}"
+							styleClass="aon-dataScroller-buttons" reRender="#{dataTable}PaginatorInfo"/>
+			    	</c:if>
+				</aon:panelGroup>			    	
+				<aon:panelGroup>
+					<c:if test="#{!hidePageSizeSelector}">
+						<aon:outputText styleClass="aon-margin-right"
+							value="#{bundle.aon_row_number}"/>
+						<aon:selectOneMenu value="#{pageSize}" >
+							<f:selectItems value="#{commonCollections.pageLimits}" />
+							<a4j:support event="onchange" ajaxSingle="true" 
+								reRender="#{dataTable},#{dataTable}MessageDataScroller"/>				
+						</aon:selectOneMenu>
+					</c:if>			
+				</aon:panelGroup>		    	
+			</aon:panelGrid>	
+		</aon:div>
+	</c:if>
 
 </ui:composition>
-
-</body>
-</html>
-

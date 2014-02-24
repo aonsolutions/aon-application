@@ -33,9 +33,10 @@ import com.code.aon.config.Domain;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ui.form.ITemplateController;
 import com.code.aon.ui.util.AonUtil;
 
-public class DomainSwitcher extends AbstractDomainSwitcher {
+public class DomainSwitcher extends AbstractDomainSwitcher implements ITemplateController {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainSwitcher.class);
 	private List<IDomainChangeListener> listenerClasses;
@@ -46,8 +47,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	private String filter;
 	private String modelFilter;
 	private String domainURL;
-	private Integer pageLimit;
+	private int page;
+	private int pageLimit;
 	private boolean showInactive;
+	private String beanName;
 	
 	public DomainSwitcher() {
 		try {
@@ -89,9 +92,14 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		}
 	}
 
+	@Override
 	public String getBeanName() {
-		return ConfigConstants.DOMAIN_SWITCHER;
+		return beanName;
 	}
+
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
+	}	
 	
 	public String getDomainName() {
 		if (domainName == null) {
@@ -99,6 +107,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		}
 		return domainName;
 	}
+	
 	public void setDomainName(String domainName) {
 		this.domainName = domainName;
 	}
@@ -307,11 +316,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		return (DomainType) query.uniqueResult();
 	}
 
-	public Integer getPageLimit() {
+	public int getPageLimit() {
 		return pageLimit;
 	}
 
-	public void setPageLimit(Integer pageLimit) {
+	public void setPageLimit(int pageLimit) {
 		this.pageLimit = pageLimit;
 	}
 
@@ -334,6 +343,16 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 
 	public void onChangeShowInactive( ActionEvent event ) {
 		setModel(null);
+	}
+
+	@Override
+	public int getPage() {
+		return page;
+	}
+
+	@Override
+	public void setPage(int page) {
+		this.page = page;
 	}
 	
 }

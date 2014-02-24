@@ -4,10 +4,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
-	<lifecycle>
-		<phase-listener>com.code.aon.faces.component.AonPhaseListener</phase-listener>
-	</lifecycle>
-
     <component>
         <component-type>com.code.aon.faces.Div</component-type>
         <component-class>org.ajax4jsf.component.html.HtmlAjaxOutputPanel</component-class>
@@ -156,7 +152,7 @@
     </component>
     <component>
         <component-type>com.code.aon.faces.HtmlLookupSuggestText</component-type>
-        <component-class>com.code.aon.faces.component.richfaces.lookup.suggestText.HtmlLookupSuggestText</component-class>
+        <component-class>com.code.aon.faces.component.richfaces.lookup.HtmlLookupBasicInput</component-class>
     </component>
     <component>
         <component-type>com.code.aon.faces.MenuBar</component-type>
@@ -207,7 +203,7 @@
         <component-class>org.richfaces.component.html.HtmlPickList</component-class>
     </component>
 	<component>
-		<component-type>com.code.aon.faces.suggestionBox</component-type>
+		<component-type>com.code.aon.faces.lookupSuggestionBox</component-type>
 		<component-class>org.richfaces.component.html.HtmlSuggestionBox</component-class>
 		<component-extension>
 			<component-family>org.richfaces.SuggestionBox</component-family>

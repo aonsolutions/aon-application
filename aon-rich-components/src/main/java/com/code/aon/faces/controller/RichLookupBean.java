@@ -31,13 +31,13 @@ import com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton;
 import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonType;
 import com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText;
 import com.code.aon.faces.component.richfaces.lookup.inputText.JoinProperty;
-import com.code.aon.faces.component.richfaces.lookup.suggestText.HtmlLookupSuggestText;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.ITemplateController;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
@@ -46,7 +46,7 @@ import com.code.aon.ui.util.AonUtil;
  * LookupBean is the class used to implement a Lookup creating an SQL sentence
  * which will be executed to retrive the required data.
  */
-public class RichLookupBean {
+public class RichLookupBean implements ITemplateController {
 
 	private static final String LIST_ID = LookupButtonType.LIST.getName();
 
@@ -466,6 +466,16 @@ public class RichLookupBean {
 		return getController().getTo();
 	}
 	
+	@Override
+	public int getPage() {
+		return getController().getPage();
+	}
+
+	@Override
+	public void setPage(int page) {
+		getController().setPage(page);
+	}	
+	
 	/**
 	 * Checks if is show window.
 	 * 
@@ -840,9 +850,9 @@ public class RichLookupBean {
 		}
 	}
 	
-	private String[] getSuggestAliases( HtmlLookupSuggestText st ) {
-		if (! StringUtils.isEmpty(st.getSuggestAlias()) ) {
-			String[] list = StringUtils.split(st.getSuggestAlias(), ",");
+	private String[] getSuggestAliases( String value ) {
+		if (! StringUtils.isEmpty(value) ) {
+			String[] list = StringUtils.split(value, ",");
 			String[] aliases = new String[list.length];
 			for( int i = 0; i < list.length; i++ ) {
 				aliases[i] = getController().resolveAlias(list[i]);	
@@ -853,18 +863,17 @@ public class RichLookupBean {
 	}	
 
 	@SuppressWarnings("unchecked")
-	public List<ITransferObject> autocomplete( Object value, UIComponent component ) {
+	public List<ITransferObject> autocomplete( Object value, Object[] properties ) {
 		if ( value != null ) {
 			String text = value.toString();
 			if (! StringUtils.isBlank(text) ) {
 				try {
-					HtmlLookupSuggestText st = (HtmlLookupSuggestText) component.getParent();					
-					setBindings( st );
 					getController().onEditSearch(null);
-					String[] aliases = getSuggestAliases(st);
+					String[] aliases = getSuggestAliases((String) properties[0]);
 					if (! ArrayUtils.isEmpty(aliases) ) {
 						Expression expr = null;
-						String search = (st.getMatchBeginOnly() ? "" : "%") + text + "%";
+						boolean matchBeginOnly = (Boolean) properties[1];
+						String search = (matchBeginOnly ? "" : "%") + text + "%";
 						for( String alias : aliases ) {
 							if ( expr == null ) {
 								expr = ExpressionUtilities.getLikeExpression(alias, search);	

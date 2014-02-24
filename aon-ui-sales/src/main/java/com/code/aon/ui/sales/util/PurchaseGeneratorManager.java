@@ -41,6 +41,7 @@ import com.code.aon.sales.SalesDetail;
 import com.code.aon.seller.Seller;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.BasicTemplateController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -50,7 +51,7 @@ import com.esferalia.aon.entity.IEntityAlias;
  * @author Esferalia
  *
  */
-public class PurchaseGeneratorManager {
+public class PurchaseGeneratorManager extends BasicTemplateController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseGeneratorManager.class.getName());
 	
@@ -61,7 +62,11 @@ public class PurchaseGeneratorManager {
 	private TempPurchaseDetail to;
 	private String massiveDiscountExpr;
 	
-	
+	public PurchaseGeneratorManager() {
+		setBeanName("salesDetails");
+		setPageLimit(-1);
+	}
+
 	public boolean isNew() {
 		return false;
 	}

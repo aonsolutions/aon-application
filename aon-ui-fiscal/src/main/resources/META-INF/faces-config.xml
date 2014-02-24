@@ -365,17 +365,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- **************** WITHHOLDING REPORT  *************** -->
-	<managed-bean>
-		<managed-bean-name>withholdingReport</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.fiscal.controller.WithholdingReportController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>withholdingReport</value>
-		</managed-property>		
-	</managed-bean>
-
 	<!-- **************** FISCAL BATCH  *************** -->
 	<managed-bean>
 		<managed-bean-name>fiscalBatch</managed-bean-name>

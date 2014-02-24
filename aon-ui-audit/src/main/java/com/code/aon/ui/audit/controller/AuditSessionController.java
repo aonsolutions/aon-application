@@ -3,14 +3,11 @@ package com.code.aon.ui.audit.controller;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +26,6 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
@@ -48,16 +43,11 @@ public class AuditSessionController extends BasicController {
 	
 	private IControllerListener listener;
 	
-	private Integer moreUsedPageLimit;
-	
-	private DataModel moreUsedModel;
-	
 	public void onInit( ActionEvent event ) {
 		ActionDeniedController denied = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		User user = UserUtils.getInstance().getLoggedUser();		
 		denied.initEdit(user);
 		denied.updateActionList();		
-		this.moreUsedPageLimit = AonUtil.getConfigurationController().getPageLimit();
 	}
 	
 	private DomainApplication getDomainApplication() {
@@ -141,80 +131,5 @@ public class AuditSessionController extends BasicController {
 		}
 		return listener;
 	}	
-
-	@SuppressWarnings("unchecked")
-	public void onInitMoreUsed( ActionEvent event ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ActionEntry.class);			
-		Criteria criteria = new Criteria();
-		String sessionIdAlias = getFieldName(IEntityAlias.SESSION_ID);
-		ProjectionList sessionPL = new ProjectionList( Projection.property(sessionIdAlias) );
-		Expression exp = ExpressionUtilities.getSubQueryExpression(Session.class, getCriteria(), sessionPL);
-		criteria.addInExpression(bean.getFieldName(IEntityAlias.ACTION_ENTRY_SESSION_ID), exp);
-		ProjectionList pl = new ProjectionList( Projection.rowCount(), Projection.group("ActionEntry.action.name") );
-		List<Object[]> values = bean.getList(pl, criteria);
-		List<ActionMoreUsed> list = new ArrayList<ActionMoreUsed>();
-		if (! values.isEmpty() ) {
-			for( Object[] value : values ) {
-	        	Integer count = (Integer) value[0];
-	        	String action = (String) value[1];				
-	        	boolean added = false;
-	        	ActionMoreUsed amu = new ActionMoreUsed(count, action); 
-	        	for( int i=0; i < list.size(); i++) {
-	        		ActionMoreUsed entry = (ActionMoreUsed) list.get(i);
-	        		if ( entry.getCount() < count ) {
-	        			list.add(i, amu);
-	        			added = true;
-	        			break;
-	        		}
-	        	}
-	        	if (! added ) {
-					list.add( amu );	
-	        	}
-			}
-		}
-		this.moreUsedModel = new ListDataModel( list );
-	}
-	
-	public DataModel getMoreUsedModel() {
-		return moreUsedModel;
-	}
-	
-	public String getCurrentDescription() throws ManagerBeanException {
-		String description = null;
-		if ( getMoreUsedModel().isRowAvailable() ) {
-			ActionMoreUsed entry = (ActionMoreUsed) getMoreUsedModel().getRowData();
-			description = ActionEntryController.getOptionDescription(entry.getAction());
-		}
-		return description;
-	}		
-	
-	public Integer getMoreUsedPageLimit() {
-		return moreUsedPageLimit;
-	}
-
-	public void setMoreUsedPageLimit(Integer moreUsedPageLimit) {
-		this.moreUsedPageLimit = moreUsedPageLimit;
-	}
-
-	public class ActionMoreUsed {
-		
-		private Integer count;
-		
-		private String action;
-
-		public ActionMoreUsed(Integer count, String action) {
-			this.count = count;
-			this.action = action;
-		}
-
-		public Integer getCount() {
-			return count;
-		}
-
-		public String getAction() {
-			return action;
-		}
-		
-	}
 
 }
