@@ -11,7 +11,6 @@
 	<name>AON DB DBUTILS</name>
 
     <scm>
-            <url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.30.x/aon-dbutils</url>
             <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.30.x/aon-dbutils</connection>
             <developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/7.30.x/aon-dbutils</developerConnection>
     </scm>
