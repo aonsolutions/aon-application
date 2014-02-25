@@ -23,7 +23,7 @@
 	<field name="modalidad_cotizacion" value="bean" bean="DAT" property="modalidadCotizacion" format="AlphaNumeric" pattern="X(1)" />
 	<field name="ind_discapacidad" value="bean" bean="DAT" property="indDiscapacidad" format="AlphaNumeric" pattern="X(1)" />
 	<field name="ind_relacion" value="bean" bean="DAT" property="indRelacion" format="Numeric" pattern="9(4)" />
-	<field name="colectivo_peculiar" value="bean" bean="DAT" property="colectivoPeculiar" format="Numeric" pattern="9(4)" />
+	<field name="colectivo_peculiar" value="bean" bean="DAT" property="colectivoPeculiar" format="AlphaNumeric" pattern="X(4)" />
 	<field name="info_complementaria" value="bean" bean="DAT" property="infoComplementaria" format="AlphaNumeric" pattern="X(4)" />
 	<field name="cotizacion_desempleo" value="bean" bean="DAT" property="cotizacionDesempleo" format="AlphaNumeric" pattern="X(1)" />
 	<field name="free3" value="          " format="AlphaNumeric" pattern="X(9)" />		

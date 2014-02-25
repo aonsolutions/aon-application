@@ -10,24 +10,21 @@
 	<aon:panelGrid columns="2" id="peculiar_quote_collective_panel" style="width:920px;"
 		columnClasses="aon-panelGrid-odd aon-width-180, aon-panelGrid-even aon-width-auto" >
 		
+		<!--  
 		<aon:outputLabel for="collectivePeculiarityQuote" value="#{bundle.payroll_collective_peculiarity_quote}" />
 		<aon:selectOneMenu id="collectivePeculiarityQuote"
 			value="#{contract.params.collectivePeculiarityQuote}" >
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{ssCollections.t54CodeList}" />
 		</aon:selectOneMenu>
-		
-		
-		<!--  
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
-			<ui:param name="lookupTo" value="#{contract.params.cno}" />
-			<ui:param name="lookupSuffix" value="peculiarQuote" />
-			<ui:param name="skipLabel" value="#{true}" />
-			<ui:param name="skipNewButton" value="#{true}" />
-			<ui:param name="lookupDisabled" value="#{false}" />
-			<ui:param name="lookupReRender" value="Contract_categoryDescription, trainingCenter, trainingCourse" />
-		</ui:include>
 		-->
+		
+		<aon:outputText value="#{bundle.payroll_collective_peculiarity_quote}" />
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enumLookup/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{contract.params.collectivePeculiarityQuote}" />
+			<ui:param name="enumName" value="T54" />
+		</ui:include>
+		
 	</aon:panelGrid>
 	
 	<aon:panel style="width:920px;">
