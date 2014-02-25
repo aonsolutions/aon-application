@@ -106,8 +106,10 @@ public class DataScrollerHandler extends TagHandler {
 			newMapper.setVariable(PAGE_SIZE, pageSizeVE);
 		} else {
 			ValueExpression rowsVE = getPageSize(ctx, component);
-			forceHide = rowsVE.isReadOnly(ctx); 
-			newMapper.setVariable(PAGE_SIZE, rowsVE);
+			if ( rowsVE != null ) {
+				forceHide = rowsVE.isReadOnly(ctx); 
+				newMapper.setVariable(PAGE_SIZE, rowsVE);				
+			}
 		}
 		ValueExpression action = getMethodExpression(ctx, ACTION, String.class, FaceletUtil.ACTION_SIG);
 		if (action == null) {

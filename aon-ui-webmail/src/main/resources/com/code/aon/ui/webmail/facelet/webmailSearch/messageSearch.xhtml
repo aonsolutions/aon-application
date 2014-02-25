@@ -81,42 +81,39 @@
 					</aon:div>
 					<aon:div rendered="#{webmailSearch.messagesFound}">
 					
-						<aon:dataTable id="messageDataTable" 
-							value="#{webmailSearch.model}" var="to" rows="10" 
-							cellpadding="0" cellspacing="0" >
-									
-							<aon:rowSelector action="message"
-								actionListener="#{webmailSearch.changeSelectedMessage}" />							
+						<aon:methodParam name="rowSelectorAction" value="message" />
+						<aon:methodParam name="rowSelectorActionListener" value="#{webmailSearch.changeSelectedMessage}" type="actionListener" />				
+						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+							<ui:param name="controller" value="#{webmailSearch}" />
+							<ui:define name="columns">
 																			
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-250"
-								sortBy="#{to.sender}" sortOrder="#{webmailSearch.sortOrders[0]}">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_of}"/>
-								</f:facet>
-								<aon:outputText title="#{to.senderEmail}"
-									value="#{to.senderSummary}" />
-							</aon:column>
-							
-							<aon:column styleClass="aon-editDataTable-textColumn"
-								sortBy="#{to.subject}" sortOrder="#{webmailSearch.sortOrders[1]}">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_subject}"/>
-								</f:facet>
-								<aon:outputText value="#{to.subject}" />
-							</aon:column>
-									  
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
-								sortBy="#{to.sentDate}" sortOrder="#{webmailSearch.sortOrders[2]}">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_date}"/>
-								</f:facet>
-								<aon:outputText value="#{to.sentDateString}"
-									title="#{to.sentDateFullString}" />								
-							</aon:column>		  
-						</aon:dataTable>
-						
-						<aon:dataScroller2 for="messageDataTable" />
-
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-250"
+									sortBy="#{to.sender}" sortOrder="#{webmailSearch.sortOrders[0]}">
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_of}"/>
+									</f:facet>
+									<aon:outputText title="#{to.senderEmail}"
+										value="#{to.senderSummary}" />
+								</aon:column>
+								
+								<aon:column styleClass="aon-editDataTable-textColumn"
+									sortBy="#{to.subject}" sortOrder="#{webmailSearch.sortOrders[1]}">
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_subject}"/>
+									</f:facet>
+									<aon:outputText value="#{to.subject}" />
+								</aon:column>
+										  
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
+									sortBy="#{to.sentDate}" sortOrder="#{webmailSearch.sortOrders[2]}">
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_date}"/>
+									</f:facet>
+									<aon:outputText value="#{to.sentDateString}"
+										title="#{to.sentDateFullString}" />								
+								</aon:column>		  
+							</ui:define>
+						</ui:decorate>
 					</aon:div>
 				</aon:div>		
 			</aon:div>		    

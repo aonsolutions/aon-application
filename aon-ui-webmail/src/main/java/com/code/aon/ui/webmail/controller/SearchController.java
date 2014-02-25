@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.richfaces.model.ModifiableModel;
 import org.richfaces.model.Ordering;
 
+import com.code.aon.ui.form.BasicTemplateController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.MessageDataModel;
 import com.code.aon.webmail.WebmailException;
@@ -17,7 +18,7 @@ import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonSearcher;
 
-public class SearchController implements IMessageContainer, IWebMailConstants {
+public class SearchController extends BasicTemplateController implements IMessageContainer, IWebMailConstants {
 
 	private ModifiableModel model;
 	

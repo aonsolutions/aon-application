@@ -39,6 +39,10 @@
             com.code.aon.ui.webmail.controller.FolderController
         </managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>webmailFolder</value>
+		</managed-property>        
     </managed-bean>
 	
 	<managed-bean>
@@ -63,6 +67,10 @@
             com.code.aon.ui.webmail.controller.SearchController
         </managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>webmailSearch</value>
+		</managed-property>
     </managed-bean>
 	
 
@@ -113,6 +121,10 @@
 				com.code.aon.ui.webmail.controller.MultiSelectionEmailBean
 			</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>multiSelectionEmailBean</value>
+		</managed-property>		
 	</managed-bean>
 	
 

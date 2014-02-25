@@ -37,45 +37,48 @@
 					">
 				
 					<aon:div styleClass="aon-padding-right">
-						<aon:dataTable id="proposalDetailDataList" value="#{purchaseOrder.model}" 
-							rendered="#{purchaseOrder.model.rowCount > 0}" rows="20" var="to">
-							
-							<aon:rowSelector actionListener="#{purchaseOrder.onSelectGroup}" />
-							
-							<aon:column styleClass="aon-editDataTable-iconColumn">
-								<aon:outputText value="&#160;" />
-							</aon:column>
-							
-							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_quantity}" />
-								</f:facet>
-								<aon:outputText value="#{to.totalQuantity}"
-									styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}">
-									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-								</aon:outputText>
-							</aon:column>
-							
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_product}" />
-								</f:facet>
-								<aon:outputText value="#{to.item.product.name}" 
-									styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
-							</aon:column>
-							
-							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.purchase_request_count}" />
-								</f:facet>
-								<aon:outputText value="#{to.totalItem}" 
-									styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
-							</aon:column>
 					
-							<ui:include src="/com/code/aon/ui/purchase/facelet/purchaseOrder/grid_detail.xhtml" />
+						<aon:methodParam name="rowSelectorAction" value="" />
+						<aon:methodParam name="rowSelectorActionListener" value="#{purchaseOrder.onSelectGroup}" type="actionListener" />
+						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+							<ui:param name="controller" value="#{purchaseOrder}" />
+							<ui:param name="skipSelectButton" value="true" />
+							<ui:define name="columns">
+							
+								<aon:column styleClass="aon-editDataTable-iconColumn">
+									<aon:outputText value="&#160;" />
+								</aon:column>
 								
-						</aon:dataTable>
-						<aon:dataScroller2 for="proposalDetailDataList" showNote="true" />
+								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_quantity}" />
+									</f:facet>
+									<aon:outputText value="#{to.totalQuantity}"
+										styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}">
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+								</aon:column>
+								
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_product}" />
+									</f:facet>
+									<aon:outputText value="#{to.item.product.name}" 
+										styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
+								</aon:column>
+								
+								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.purchase_request_count}" />
+									</f:facet>
+									<aon:outputText value="#{to.totalItem}" 
+										styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
+								</aon:column>
+						
+								<ui:include src="/com/code/aon/ui/purchase/facelet/purchaseOrder/grid_detail.xhtml" />
+							</ui:define>
+						</ui:decorate>
+
 					</aon:div>
 					
 					<aon:div styleClass="aon-panelGrid-search">

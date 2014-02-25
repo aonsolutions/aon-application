@@ -144,8 +144,8 @@
 										</aon:column>
 									</aon:dataTable>
 					
-									<aon:dataScroller2 for="salesData" showNote="true" />
-
+									<aon:dataScroller for="salesData" showNote="true" pageSize="10"
+										rowCount="#{delivery.salesTransferManager.salesModel.rowCount}" />
 
 									<aon:div id="detailDataContainer">
 										<aon:dataTable id="detailData" value="#{delivery.salesTransferManager.detailModel}"

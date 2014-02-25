@@ -8,37 +8,22 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
+import com.code.aon.ui.form.BasicTemplateController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.IContact;
 
-public class MultiSelectionEmailBean {
+public class MultiSelectionEmailBean extends BasicTemplateController {
 
 	private ListDataModel model;
 	
 	private List<SelectionEmail> emails; 
 
-	private int pageSize = 10;
-	
-	private int currentPage;
-	
-	public int getPageSize() {
-		return pageSize;
-	}
-
-	public void setPageSize(int pageSize) {
-		this.pageSize = pageSize;
-	}
-
-	public int getCurrentPage() {
-		return currentPage;
-	}
-
-	public void setCurrentPage(int currentPage) {
-		this.currentPage = currentPage;
+	public MultiSelectionEmailBean() {
+		setPageLimit(10);
 	}
 
 	public void init( boolean loadContacts ) {
-		this.currentPage = 1;
+		setPage(1);
 		if ( loadContacts ) {
 	        emails = new ArrayList<SelectionEmail>();
     		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
@@ -63,7 +48,7 @@ public class MultiSelectionEmailBean {
 		return model;
 	}
 	
-	public void onToggleSelected(ActionEvent event) {
+	public void onSelect(ActionEvent event) {
 		if ( model.isRowAvailable() ) {
 			SelectionEmail selectionEmail = (SelectionEmail) model.getRowData();
 			selectionEmail.setSelected(! selectionEmail.isSelected() );
@@ -71,8 +56,9 @@ public class MultiSelectionEmailBean {
 	}	
 
 	private void setSelectAllPageContacts( boolean value ) {
-		int start = (this.currentPage - 1) * this.pageSize;
-		for( int i = 0; i < this.pageSize; i++ ) {
+		int start = (getPage() - 1) * getPageLimit();
+		int last = Math.min(model.getRowCount(), getPageLimit());
+		for( int i = 0; i < last; i++ ) {
 			this.emails.get(i+start).setSelected(value);
 		}
 	}	

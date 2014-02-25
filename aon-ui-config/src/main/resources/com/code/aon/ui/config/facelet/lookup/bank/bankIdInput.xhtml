@@ -154,7 +154,8 @@
 						</h:column>
 					</aon:editDataTable>
 
-					<aon:dataScroller2 for="#{id}table" showNote="true" />
+					<aon:dataScroller for="#{id}table" showNote="true"
+						rowCount="#{wizard.model.rowCount}" page="#{wizard.page}" />
 				</aon:div>
 			</rich:modalPanel>
 		</c:if>

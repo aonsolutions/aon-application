@@ -22,6 +22,7 @@ import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.ui.form.BasicTemplateController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.MessageDataModel;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
@@ -32,11 +33,9 @@ import com.code.aon.webmail.bean.AonMessageSortableList;
 import com.code.aon.webmail.bean.AonServer;
 import com.sun.mail.imap.IMAPFolder;
 
-public class FolderController implements IMessageContainer, IWebMailConstants {
+public class FolderController extends BasicTemplateController implements IMessageContainer, IWebMailConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(FolderController.class);
-	
-	private static final int PAGE_SIZE = 20;
 	
 	private AonFolder folder;
 	
@@ -48,8 +47,6 @@ public class FolderController implements IMessageContainer, IWebMailConstants {
 	
 	private boolean createAsSubfolder;
 	
-	private int currentPage = 1;
-	
 	private int currentIndex;
 	
 	private Ordering dateOrder = Ordering.DESCENDING;
@@ -58,25 +55,13 @@ public class FolderController implements IMessageContainer, IWebMailConstants {
 	
 	public FolderController() {
 	}
-
-	public int getCurrentPage() {
-		return currentPage;
-	}
-	
-	public int getPageSize() {
-		return PAGE_SIZE;
-	}
 	
 	public DataModel getModel() {
 		return this.model;
 	}
-
-	public void setCurrentPage(int currentPage) {
-		this.currentPage = currentPage;
-	}
 	
 	public void resetCurrentPage() {
-		setCurrentPage( 1 );
+		setPage(1);
 		updateModel();		
 	}
 
@@ -408,7 +393,7 @@ public class FolderController implements IMessageContainer, IWebMailConstants {
 		return NAVIGATION_MESSAGE;
 	}
 
-    public void changeSelectedMessage(ActionEvent event) throws MessagingException {
+    public void onSelect(ActionEvent event) throws MessagingException {
     	AonMessage aonMessage = getSelectedMessage();
     	this.currentIndex = getModel().getRowIndex();
     	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);

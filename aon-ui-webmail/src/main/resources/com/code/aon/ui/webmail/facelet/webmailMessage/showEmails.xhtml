@@ -56,54 +56,49 @@
 						</aon:commandButton>
 					</aon:div>
 					<aon:div>
+					
+						<aon:methodParam name="rowSelectorAction" value="" />
+						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+							<ui:param name="controller" value="#{multiSelectionEmailBean}" />
+							<ui:param name="rowSelectorReRender" value="messageSelected#{messageSuffix}" />
+							<ui:param name="skipSelectButton" value="true" />
+							<ui:define name="columns">
 	
-						<aon:dataTable id="emailData#{messageSuffix}" style="width:100%"
-							rows="#{multiSelectionEmailBean.pageSize}"
-							value="#{multiSelectionEmailBean.model}" var="to"
-							rendered="#{multiSelectionEmailBean.model.rowCount > 0}"
-							columnClasses="aon-editDataTable-iconColumn aon-width-50,
-								aon-editDataTable-textColumn, aon-editDataTable-textColumn">
-	
-							<aon:rowSelector reRender="messageSelected#{messageSuffix}"
-								actionListener="#{multiSelectionEmailBean.onToggleSelected}" />
-	
-							<aon:column>
-								<f:facet name="header">
-									<aon:div>
-										<aon:commandButton id="selectButton#{messageSuffix}" style="margin-right:10px;"
-											actionListener="#{multiSelectionEmailBean.onSelectAllPageContacts}"
-											reRender="messageSelected#{messageSuffix}"
-											styleClass="aon-icon-commandButton-disabled aon-icon-checkAll">
-										</aon:commandButton>
-						
-										<aon:commandButton id="deselectButton#{messageSuffix}"
-											actionListener="#{multiSelectionEmailBean.onDeselectAllPageContacts}"
-											reRender="messageSelected#{messageSuffix}"
-											styleClass="aon-icon-commandButton-disabled aon-icon-checkNone">
-										</aon:commandButton>
-									</aon:div>
-								</f:facet>
-								<aon:selectBooleanCheckbox id="messageSelected#{messageSuffix}"
-									styleClass="aon-float-left" value="#{to.readOnlySelected}">
-								</aon:selectBooleanCheckbox>
-							</aon:column>
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_displayName}" />
-								</f:facet>
-								<aon:outputText value="#{to.email.displayName}"
-									styleClass="aon-list-icon #{to.email.contactGroup?'aon-icon-contactGroup':'aon-icon-contact'}" />
-							</aon:column>
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_email_abrv}" />
-								</f:facet>
-								<aon:outputText value="#{to.email.emails}" />
-							</aon:column>
-						</aon:dataTable>
-	
-						<aon:dataScroller2 for="emailData#{messageSuffix}" showNote="true" />
-	
+								<aon:column styleClass="aon-editDataTable-iconColumn aon-width-50">
+									<f:facet name="header">
+										<aon:div>
+											<aon:commandButton id="selectButton#{messageSuffix}" style="margin-right:10px;"
+												actionListener="#{multiSelectionEmailBean.onSelectAllPageContacts}"
+												reRender="messageSelected#{messageSuffix}" ajaxSingle="true"
+												styleClass="aon-icon-commandButton-disabled aon-icon-checkAll">
+											</aon:commandButton>
+							
+											<aon:commandButton id="deselectButton#{messageSuffix}"
+												actionListener="#{multiSelectionEmailBean.onDeselectAllPageContacts}"
+												reRender="messageSelected#{messageSuffix}" ajaxSingle="true"
+												styleClass="aon-icon-commandButton-disabled aon-icon-checkNone">
+											</aon:commandButton>
+										</aon:div>
+									</f:facet>
+									<aon:selectBooleanCheckbox id="messageSelected#{messageSuffix}"
+										styleClass="aon-float-left" value="#{to.readOnlySelected}">
+									</aon:selectBooleanCheckbox>
+								</aon:column>
+								<aon:column styleClass="aon-editDataTable-textColumn">
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_displayName}" />
+									</f:facet>
+									<aon:outputText value="#{to.email.displayName}"
+										styleClass="aon-list-icon #{to.email.contactGroup?'aon-icon-contactGroup':'aon-icon-contact'}" />
+								</aon:column>
+								<aon:column styleClass="aon-editDataTable-textColumn">
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_email_abrv}" />
+									</f:facet>
+									<aon:outputText value="#{to.email.emails}" />
+								</aon:column>
+							</ui:define>
+						</ui:decorate>	
 					</aon:div>
 				</rich:modalPanel>
 			</c:if>

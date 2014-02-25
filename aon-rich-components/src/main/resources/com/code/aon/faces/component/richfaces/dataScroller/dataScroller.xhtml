@@ -59,7 +59,9 @@
 						<aon:selectOneMenu value="#{pageSize}" >
 							<f:selectItems value="#{commonCollections.pageLimits}" />
 							<a4j:support event="onchange" ajaxSingle="true" 
-								reRender="#{dataTable},#{dataTable}MessageDataScroller"/>				
+								reRender="#{dataTable},#{dataTable}MessageDataScroller">
+								<f:setPropertyActionListener target="#{page}" value="#{1}" />
+							</a4j:support>				
 						</aon:selectOneMenu>
 					</c:if>			
 				</aon:panelGroup>		    	
