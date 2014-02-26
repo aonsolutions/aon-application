@@ -22,7 +22,7 @@
 		    <aon:panelGrid id="#{dataTable}MessageDataScroller" 
 		    	columns="3" columnClasses="aon-dataScroller2-text aon-nowrap,aon-width-all,aon-dataScroller2-text aon-nowrap aon-float-right">
 				<aon:panelGroup>
-			    	<c:if test="#{rowCount &lt;= pageSize}" >
+			    	<c:if test="#{(rowCount &lt;= pageSize) or (pageSize==0)}" >
 						<aon:outputFormat value="#{bundle.aon_scroll}">
 							<f:param value="#{1}" />
 							<f:param value="#{rowCount}" />

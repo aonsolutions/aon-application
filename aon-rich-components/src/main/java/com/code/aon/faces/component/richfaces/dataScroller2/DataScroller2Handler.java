@@ -11,7 +11,7 @@ import javax.faces.model.DataModel;
 
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
-import com.code.aon.faces.component.richfaces.form.FormHandler;
+import com.code.aon.faces.component.richfaces.dataScroller.DataScrollerHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
@@ -52,16 +52,6 @@ public class DataScroller2Handler extends TagHandler implements IRichFacesTags {
 	public DataScroller2Handler(TagConfig config) {
 		super(config);
 		forTag = getRequiredAttribute(FOR);
-	}
-	
-	private UIData getDataTable( FaceletContext ctx, UIComponent parent ) {
-		String id = forTag.getValue(ctx);
-		UIData table = (UIData) ComponentSupport.findChild( parent, id );
-		if ( table == null ) {
-			UIViewRoot root = ComponentSupport.getViewRoot(ctx, parent);
-			table = FormHandler.getDataTableMap(root).get( id );
-		}
-		return table;
 	}
 	
 	private String getScrollerModelId( FaceletContext ctx ) {
@@ -139,7 +129,7 @@ public class DataScroller2Handler extends TagHandler implements IRichFacesTags {
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) {
 		if ( FaceletUtil.isRendered(ctx, tag) && parent.isRendered() ) {
-			UIData table = getDataTable(ctx, parent);
+			UIData table = DataScrollerHandler.getDataTable(ctx, parent, forTag);
 			ScrollerDataModel scrollerModel = getScrollerDataModel( ctx, table );
 			updatePage(ctx, scrollerModel);
 			insertTemplate( ctx, parent, table );

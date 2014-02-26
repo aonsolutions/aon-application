@@ -53,16 +53,14 @@
 			<!-- TOOLBAR END -->
 	
 	<aon:div id="activityDataDiv" styleClass="aon-scroll-area">
-		<aon:dataTable id="assetList" var="to" rows="20" width="auto"
-			value="#{activityBasic.model}"
-			columnClasses="
-				aon-dataTable-iconColumn, aon-dataTable-textColumn,
-				aon-dataTable-dateColumn, 
-				aon-dataTable-dateColumn, aon-dataTable-dateColumn, 
-				aon-dataTable-textColumn, aon-dataTable-textColumn,
-				aon-dataTable-textColumn">
-
-				<aon:column>
+	
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			<ui:param name="controller" value="#{activityBasic}" />
+			<ui:param name="skipSelectButton" value="true" />
+			<ui:param name="rowSelectorToggleOnClick" value="false" />
+			<ui:define name="columns">
+	
+				<aon:column styleClass="aon-dataTable-iconColumn">
 					<f:facet name="header">
 						<aon:div layout="none">
 							<aon:outputText value="&#160;" 
@@ -74,14 +72,14 @@
 					<h:selectBooleanCheckbox value="#{to.check}" />
 				</aon:column>
 					
-				<aon:column>
+				<aon:column styleClass="aon-dataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.asset_asset}" />
 					</f:facet>
 					<aon:outputText value="#{to.asset.name}" />
 				</aon:column>
 				
-				<aon:column>
+				<aon:column styleClass="aon-dataTable-dateColumn">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_holder}" />
 					</f:facet>
@@ -89,7 +87,7 @@
 						size="15" />
 				</aon:column>
 				
-				<aon:column>
+				<aon:column styleClass="aon-dataTable-dateColumn">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_date}" />
 					</f:facet>
@@ -100,7 +98,7 @@
 					</aon:outputText>
 				</aon:column>
 				
-				<aon:column>
+				<aon:column styleClass="aon-dataTable-dateColumn">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.asset_fromTime}" />
 					</f:facet>
@@ -111,7 +109,7 @@
 					</aon:outputText>
 				</aon:column>
 				
-				<aon:column>
+				<aon:column styleClass="aon-dataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.asset_toTime}" />
 					</f:facet>
@@ -122,7 +120,7 @@
 					</aon:outputText>
 				</aon:column>
 				 					
-				<aon:column>
+				<aon:column styleClass="aon-dataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_remark}" />
 					</f:facet>
@@ -130,15 +128,15 @@
 						size="25" />
 				</aon:column>
 				
-				<aon:column>
+				<aon:column styleClass="aon-dataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_status}" />
 					</f:facet>
 					<aon:outputText value="#{to.status}" 
 						size="10" />
 				</aon:column>
-			</aon:dataTable>
-			<aon:dataScroller2 for="assetList" showNote="true" />
+			</ui:define>
+		</ui:decorate>
 		</aon:div>
 	</aon:form>
 	</ui:define>

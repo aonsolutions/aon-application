@@ -68,75 +68,79 @@
 				</aon:panelGrid>
 				<br />
 
-				<aon:editDataTable id="offers" value="#{commercialStat.offersModel}"
-					rows="20"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,aon-editDataTable-numberColumn"
-					var="to">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="dataTableId" value="offers" />
+					<ui:param name="dataModel" value="#{commercialStat.offersModel}" />
+					<ui:param name="rows" value="20" />
+					<ui:param name="skipSelectButton" value="true" />
+					<ui:param name="rowSelectorToggleOnClick" value="false" />
+			
+					<ui:define name="columns">
 
-					<aon:column styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
-						</f:facet>
-						<aon:outputText value="#{to.referenceCode}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_date}" />
-						</f:facet>
-						<aon:outputText value="#{to.issueDate}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<h:outputText value="#{bundle.aon_target}" />
-						</f:facet>
-						<aon:outputText value="#{to.target.registry.fullName}">
-							<aon:abbreviateConverter maxWidth="50" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<h:outputText value="#{bundle.aon_company_document}" />
-						</f:facet>
-						<aon:outputText value="#{to.target.registry.document}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_status}" />
-						</f:facet>
-						<aon:outputText value="#{to.status}" />
-					</aon:column>
-
-					<aon:column styleClass="aon-editDataTable-numberColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_total}" />
-						</f:facet>
-						<aon:outputText value="#{commercialStat.offerTotalPrice}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column
-						styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
-						<f:facet name="header">
-							<aon:outputText value="&#160;" />
-						</f:facet>
-						<aon:htmlCommandLink id="invoiceList-report"
-							value="&#160;&#160;&#160;&#160;&#160;&#160;" title="Pdf"
-							actionListener="#{commercialStat.onOfferPdf}"
-							styleClass="aon-icon-pdf" action="#{report.onExecute}"
-							target="_blank">
-							<f:param name="reportKey" value="offer" />
-						</aon:htmlCommandLink>
-					</aon:column>
-				</aon:editDataTable>
-				<aon:dataScroller2 for="offers" showNote="true" />
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+							</f:facet>
+							<aon:outputText value="#{to.referenceCode}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.issueDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.aon_target}" />
+							</f:facet>
+							<aon:outputText value="#{to.target.registry.fullName}">
+								<aon:abbreviateConverter maxWidth="50" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<h:outputText value="#{bundle.aon_company_document}" />
+							</f:facet>
+							<aon:outputText value="#{to.target.registry.document}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" />
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_total}" />
+							</f:facet>
+							<aon:outputText value="#{commercialStat.offerTotalPrice}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:htmlCommandLink id="invoiceList-report"
+								value="&#160;&#160;&#160;&#160;&#160;&#160;" title="Pdf"
+								actionListener="#{commercialStat.onOfferPdf}"
+								styleClass="aon-icon-pdf" action="#{report.onExecute}"
+								target="_blank">
+								<f:param name="reportKey" value="offer" />
+							</aon:htmlCommandLink>
+						</aon:column>
+						
+					</ui:define>
+				</ui:decorate>
 
 			</aon:div>
 		</aon:form>

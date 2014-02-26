@@ -93,90 +93,98 @@
 				</aon:panelGrid>
 				
 				<aon:div rendered="#{ledgerReport.model.rowCount > 0}" styleClass="aon-margin-top">
-					<aon:dataTable id="ledgerReportList" value="#{ledgerReport.model}" rows="20" var="to">
-						<f:facet name="header">
-							<rich:columnGroup>
-								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{bundle.account_account_entry}" />
-								</aon:column>
-								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{bundle.aon_date}" />
-								</aon:column>
-								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{bundle.aon_concept}" />
-								</aon:column>
-								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{bundle.account_debit}" />
-								</aon:column>
-								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText value="#{bundle.account_credit}" />
-								</aon:column>
-								<aon:column styleClass="aon-dataTable-header">
-									<aon:outputText
-										value="#{bundle.finance_balancing_account}" />
-								</aon:column>
-							</rich:columnGroup>
-						</f:facet>
+				
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+						<ui:param name="controller" value="#{ledgerReport}" />
+						<ui:param name="skipSelectButton" value="true" />
+						<ui:param name="rowSelectorToggleOnClick" value="false" />
+				
+						<ui:define name="columns">
 
-						<aon:column colspan="6" rendered="#{ledgerReport.firstEntry}" 
-							style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
-								<aon:div styleClass="aon-text-center">
-									<aon:outputText styleClass="aon-bold" value="#{to.account.fullDescription}" />
+							<f:facet name="header">
+								<rich:columnGroup>
+									<aon:column styleClass="aon-dataTable-header">
+										<aon:outputText value="#{bundle.account_account_entry}" />
+									</aon:column>
+									<aon:column styleClass="aon-dataTable-header">
+										<aon:outputText value="#{bundle.aon_date}" />
+									</aon:column>
+									<aon:column styleClass="aon-dataTable-header">
+										<aon:outputText value="#{bundle.aon_concept}" />
+									</aon:column>
+									<aon:column styleClass="aon-dataTable-header">
+										<aon:outputText value="#{bundle.account_debit}" />
+									</aon:column>
+									<aon:column styleClass="aon-dataTable-header">
+										<aon:outputText value="#{bundle.account_credit}" />
+									</aon:column>
+									<aon:column styleClass="aon-dataTable-header">
+										<aon:outputText
+											value="#{bundle.finance_balancing_account}" />
+									</aon:column>
+								</rich:columnGroup>
+							</f:facet>
+	
+							<aon:column colspan="6" rendered="#{ledgerReport.firstEntry}" 
+								style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
+									<aon:div styleClass="aon-text-center">
+										<aon:outputText styleClass="aon-bold" value="#{to.account.fullDescription}" />
+									</aon:div>
+							</aon:column>
+							
+							<aon:column breakBefore="#{ledgerReport.firstEntry}" styleClass="aon-editDataTable-textColumn aon-width-100"
+								style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
+										<aon:commandLink id="accountEntry-search" 
+											immediate="#{true}" 
+											styleClass="aon-dataTable-link"
+											title="#{bundle.accounting_lookup_account_entry}"
+											actionListener="#{ledgerReport.onAccountEntry}"
+											action="accountEntry_form">
+											<aon:outputText value="#{to.accountEntry.id}" rendered="#{!ledgerReport.journalOrdered}"/>
+											<aon:outputText value="#{to.accountEntry.journal}" rendered="#{ledgerReport.journalOrdered}"/>
+										</aon:commandLink>
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
+								style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
+								<aon:outputText value="#{to.accountEntry.entryDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto"
+								style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
+								<aon:outputText value="#{to.concept}" />
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50"
+								style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
+								<aon:outputText value="#{to.debit}" rendered="#{to.debit != 0}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:column>
+	
+							<aon:column	styleClass="aon-editDataTable-numberColumn aon-width-50"
+								style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
+								<aon:outputText value="#{to.credit}" rendered="#{to.credit != 0}">
+									<f:convertNumber pattern="#,##0.00" />
+								</aon:outputText>
+							</aon:column>
+	
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
+								style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
+								<aon:div style="width: 90%;" ajaxRendered="true">
+									<aon:outputText value="#{to.balancingAccount.code}" />
+									<rich:toolTip value="#{to.balancingAccount.description}"
+										hideEvent="onmouseout" showDelay="200">
+									</rich:toolTip>
 								</aon:div>
-						</aon:column>
-						
-						<aon:column breakBefore="#{ledgerReport.firstEntry}" styleClass="aon-editDataTable-textColumn aon-width-100"
-							style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
-									<aon:commandLink id="accountEntry-search" 
-										immediate="#{true}" 
-										styleClass="aon-dataTable-link"
-										title="#{bundle.accounting_lookup_account_entry}"
-										actionListener="#{ledgerReport.onAccountEntry}"
-										action="accountEntry_form">
-										<aon:outputText value="#{to.accountEntry.id}" rendered="#{!ledgerReport.journalOrdered}"/>
-										<aon:outputText value="#{to.accountEntry.journal}" rendered="#{ledgerReport.journalOrdered}"/>
-									</aon:commandLink>
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
-							style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
-							<aon:outputText value="#{to.accountEntry.entryDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto"
-							style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
-							<aon:outputText value="#{to.concept}" />
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50"
-							style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
-							<aon:outputText value="#{to.debit}" rendered="#{to.debit != 0}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column	styleClass="aon-editDataTable-numberColumn aon-width-50"
-							style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
-							<aon:outputText value="#{to.credit}" rendered="#{to.credit != 0}">
-								<f:convertNumber pattern="#,##0.00" />
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
-							style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
-							<aon:div style="width: 90%;" ajaxRendered="true">
-								<aon:outputText value="#{to.balancingAccount.code}" />
-								<rich:toolTip value="#{to.balancingAccount.description}"
-									hideEvent="onmouseout" showDelay="200">
-								</rich:toolTip>
-							</aon:div>
-						</aon:column>
-					</aon:dataTable>
+							</aon:column>
+							
+						</ui:define>
+					</ui:decorate>
 				</aon:div>
-				<aon:dataScroller2 for="ledgerReportList" showNote="true" />
 			</aon:div>
 		</aon:form>
 	</ui:define>

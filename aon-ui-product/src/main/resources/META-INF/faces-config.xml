@@ -764,6 +764,10 @@
 		<managed-bean-name>itemCatalogueReport</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.product.controller.ItemCatalogueReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>itemCatalogueReport</value>
+		</managed-property>		
 	</managed-bean>
 	
 	<!-- ************ ITEM INFO ************* -->

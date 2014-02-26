@@ -408,103 +408,97 @@
 								<aon:outputLabel for="financeTrackingData" value="#{bundle.aon_tracking}" />
 							</f:facet>
 
-							<aon:dataTable id="financeTrackingData" value="#{financeTracking.model}"
-								var="to" rows="20" rendered="#{financeTracking.model.rowCount > 0}">
+							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+								<ui:param name="controller" value="#{financeTracking}" />
+								<ui:param name="skipSelectButton" value="true" />
+								<ui:param name="rowSelectorToggleOnClick" value="false" />
 
-								<aon:column styleClass="aon-editDataTable-textColumn">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_date}" />
-									</f:facet>
-									<aon:outputText value="#{to.trackingDate}">
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-									</aon:outputText>	
-								</aon:column>
-
-								<aon:column styleClass="aon-editDataTable-textColumn">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_action}" />
-									</f:facet>
-									<aon:outputText value="#{to.type}" />
-								</aon:column>
-
-								<aon:column styleClass="aon-editDataTable-textColumn">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_description}" />
-									</f:facet>
-									<aon:outputText value="#{financeTracking.trackingDescription}" />
-								</aon:column>
-
-								<aon:column styleClass="aon-editDataTable-textColumn">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.finance_recorded}" />
-									</f:facet>
-									<aon:outputText value="#{(to.recordable)?((aonRole.accountingOperator)?(to.description):((to.recorded)?(bundle.aon_yes):(bundle.aon_no))):('---------')}" />
-<!-- 									
-									<aon:commandLink immediate="true"
-											rendered="#{aonRole.accountingOperator and financeTracking.recorded}"
-											styleClass="aon-button-goto"
-											style="margin-left: 5px; padding-left: 17px;" 
-											actionListener="#{financeTracking.onViewAccountEntry}" 
-											action="accountEntry_form"/>
- -->
-								</aon:column>
-
-								<aon:column styleClass="aon-editDataTable-numberColumn">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_amount}" />
-									</f:facet>
-									<aon:outputText value="#{to.amount}">
-										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-									</aon:outputText>	
-								</aon:column>
-
-								<aon:column styleClass="aon-editDataTable-textColumn aon-width-40 aon-nowrap">
-									<f:facet name="header">
-										<aon:outputText value="&#160;" />
-									</f:facet>
-									<aon:div styleClass="aon-nowrap">
-										<c:if test="#{aonRole.accountingOperator}">
-											<aon:commandButton id="record"
-												title="#{bundle.finance_record}"
-												immediate="true" rendered="#{to.recordable and !to.recorded and to.bankStatementLink == null}"
-												actionListener="#{financeTracking.recordTracking}"
-												styleClass="aon-editDataTable-button aon-icon-task-assume aon-nowrap"
-												reRender="financeTrackingData" 
-												onclick="Richfaces.showModalPanel('waitProccess')" 
-									     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-										</c:if>
-										<aon:confirmButton id="undo"
-											title="#{bundle.aon_undo}"
-											immediate="true" rendered="#{financeTracking.undoable}"
-											confirmTitle="#{bundle.aon_confirm_title}"
-											confirmMessage="#{bundle.aon_remove_confirm}"
-											confirmActionListener="#{financeTracking.undoTracking}"
-											styleClass="aon-editDataTable-button aon-icon-delete aon-nowrap"
-											accesskey="#{bundle.aon_key_remove_line}" />
-										<aon:commandLink id="financeBatch_link" immediate="true"
-											styleClass="aon-button-goto aon-nowrap" style="padding-right: 20px;"
-											value="&#160;" title="#{bundle.aon_finance_batch}"
-											rendered="#{to.batched}"
-											actionListener="#{financeTracking.onLoadFinanceBatch}"
-											action="fbatch_form" />
-										<aon:commandLink id="bankStatement_link" immediate="true"
-											styleClass="aon-button-goto aon-nowrap" style="padding-right: 20px;"
-											value="&#160;" title="#{bundle.finance_bank_statement_report}"
-											rendered="#{to.bankStatementLink != null}"
-											actionListener="#{financeTracking.onLoadBankStatement}"
-											action="bankStatement_list" />
-										<aon:commandLink id="financeGroup_link" 
-											styleClass="aon-button-goto aon-nowrap" style="padding-right: 20px;"
-											value="&#160;" title="#{bundle.finance_agrupation_finance}"
-											rendered="#{to.finance.financeGroup != null}"
-											actionListener="#{financeTracking.onLoadFinanceGroup}"
-											action="finance_form" />
-									</aon:div>
-								</aon:column>
-
-							</aon:dataTable>
-							<aon:dataScroller2 for="financeTrackingData" showNote="true" />
+								<ui:define name="columns">
+									<aon:column styleClass="aon-editDataTable-textColumn">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_date}" />
+										</f:facet>
+										<aon:outputText value="#{to.trackingDate}">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+												timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:outputText>	
+									</aon:column>
+	
+									<aon:column styleClass="aon-editDataTable-textColumn">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_action}" />
+										</f:facet>
+										<aon:outputText value="#{to.type}" />
+									</aon:column>
+	
+									<aon:column styleClass="aon-editDataTable-textColumn">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_description}" />
+										</f:facet>
+										<aon:outputText value="#{financeTracking.trackingDescription}" />
+									</aon:column>
+	
+									<aon:column styleClass="aon-editDataTable-textColumn">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.finance_recorded}" />
+										</f:facet>
+										<aon:outputText value="#{(to.recordable)?((aonRole.accountingOperator)?(to.description):((to.recorded)?(bundle.aon_yes):(bundle.aon_no))):('---------')}" />
+									</aon:column>
+	
+									<aon:column styleClass="aon-editDataTable-numberColumn">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_amount}" />
+										</f:facet>
+										<aon:outputText value="#{to.amount}">
+											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+										</aon:outputText>	
+									</aon:column>
+	
+									<aon:column styleClass="aon-editDataTable-textColumn aon-width-40 aon-nowrap">
+										<f:facet name="header">
+											<aon:outputText value="&#160;" />
+										</f:facet>
+										<aon:div styleClass="aon-nowrap">
+											<c:if test="#{aonRole.accountingOperator}">
+												<aon:commandButton id="record"
+													title="#{bundle.finance_record}"
+													immediate="true" rendered="#{to.recordable and !to.recorded and to.bankStatementLink == null}"
+													actionListener="#{financeTracking.recordTracking}"
+													styleClass="aon-editDataTable-button aon-icon-task-assume aon-nowrap"
+													reRender="financeTrackingData" 
+													onclick="Richfaces.showModalPanel('waitProccess')" 
+										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+											</c:if>
+											<aon:confirmButton id="undo"
+												title="#{bundle.aon_undo}"
+												immediate="true" rendered="#{financeTracking.undoable}"
+												confirmTitle="#{bundle.aon_confirm_title}"
+												confirmMessage="#{bundle.aon_remove_confirm}"
+												confirmActionListener="#{financeTracking.undoTracking}"
+												styleClass="aon-editDataTable-button aon-icon-delete aon-nowrap"
+												accesskey="#{bundle.aon_key_remove_line}" />
+											<aon:commandLink id="financeBatch_link" immediate="true"
+												styleClass="aon-button-goto aon-nowrap" style="padding-right: 20px;"
+												value="&#160;" title="#{bundle.aon_finance_batch}"
+												rendered="#{to.batched}"
+												actionListener="#{financeTracking.onLoadFinanceBatch}"
+												action="fbatch_form" />
+											<aon:commandLink id="bankStatement_link" immediate="true"
+												styleClass="aon-button-goto aon-nowrap" style="padding-right: 20px;"
+												value="&#160;" title="#{bundle.finance_bank_statement_report}"
+												rendered="#{to.bankStatementLink != null}"
+												actionListener="#{financeTracking.onLoadBankStatement}"
+												action="bankStatement_list" />
+											<aon:commandLink id="financeGroup_link" 
+												styleClass="aon-button-goto aon-nowrap" style="padding-right: 20px;"
+												value="&#160;" title="#{bundle.finance_agrupation_finance}"
+												rendered="#{to.finance.financeGroup != null}"
+												actionListener="#{financeTracking.onLoadFinanceGroup}"
+												action="finance_form" />
+										</aon:div>
+									</aon:column>
+								</ui:define>
+							</ui:decorate>
 						</aon:panel>
 					</aon:div>
 				</c:if>

@@ -35,95 +35,93 @@
 	</aon:div>
 
 	<aon:div id="fBatchDetailDataDiv">
-		<aon:dataTable id="fBatchDetailData" value="#{fBatchDetail.model}"
-			var="to" rows="20" rendered="#{fBatchDetail.model.rowCount > 0}"
-			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
-				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn,
-				aon-editDataTable-textColumn aon-width-40">				
-			
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{!fbatch.readOnly ? fBatchDetail.checkedCount : ''}" />
-				</f:facet>
-				<aon:selectBooleanCheckbox id="Included_Row_checked"
-					value="#{fBatchDetail.rowChecked}"
-					rendered="#{!fbatch.readOnly}"
-					valueChangeListener="#{fBatchDetail.rowSelected}"
-					reRender="aonContent" />	
-			</aon:column>
 	
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.finance_finance_date}" />
-				</f:facet>
-				<aon:outputText value="#{to.finance.dueDate}">
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-						timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>
-			</aon:column>
-			
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_document_number}" />
-				</f:facet>
-				<aon:outputText styleClass="aon-nowrap" 
-					value="#{to.finance.documentNumber}" />
-			</aon:column>
-			
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.finance_debtor}" />
-				</f:facet>
-				<aon:outputText value="#{to.finance.registryName}" />
-			</aon:column>
-	
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.finance_payMethod}" />
-				</f:facet>
-				<aon:outputText value="#{to.finance.payMethod.name}"/>
-			</aon:column>
-	
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_bank_account}" />
-				</f:facet>
-				<aon:outputText value="#{to.finance.bankAccount}"/>
-			</aon:column>
-	
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_status}" />
-				</f:facet>
-				<aon:outputText value="#{to.status}"/>
-			</aon:column>
-	
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_amount}" />
-				</f:facet>
-				<aon:outputText value="#{to.amount}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:column>
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			<ui:param name="controller" value="#{fBatchDetail}" />
+			<ui:param name="skipSelectButton" value="true" />
+			<ui:param name="rowSelectorToggleOnClick" value="false" />
 
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="&#160;" />
-				</f:facet>
-				<aon:div>
-					<aon:commandLink id="finance_link" immediate="true"
-						styleClass="aon-button-goto" style="padding-right: 20px;"
-						value="&#160;" title="#{bundle.aon_go}"
-						actionListener="#{fBatchDetail.onLoadFinance}"
-						action="finance_form" />
-				</aon:div>
-			</aon:column>
-
-		</aon:dataTable>					
+			<ui:define name="columns">			
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{!fbatch.readOnly ? fBatchDetail.checkedCount : ''}" />
+					</f:facet>
+					<aon:selectBooleanCheckbox id="Included_Row_checked"
+						value="#{fBatchDetail.rowChecked}"
+						rendered="#{!fbatch.readOnly}"
+						valueChangeListener="#{fBatchDetail.rowSelected}"
+						reRender="aonContent" />	
+				</aon:column>
+		
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.finance_finance_date}" />
+					</f:facet>
+					<aon:outputText value="#{to.finance.dueDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:column>
+				
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_document_number}" />
+					</f:facet>
+					<aon:outputText styleClass="aon-nowrap" 
+						value="#{to.finance.documentNumber}" />
+				</aon:column>
+				
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.finance_debtor}" />
+					</f:facet>
+					<aon:outputText value="#{to.finance.registryName}" />
+				</aon:column>
+		
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.finance_payMethod}" />
+					</f:facet>
+					<aon:outputText value="#{to.finance.payMethod.name}"/>
+				</aon:column>
+		
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_bank_account}" />
+					</f:facet>
+					<aon:outputText value="#{to.finance.bankAccount}"/>
+				</aon:column>
+		
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_status}" />
+					</f:facet>
+					<aon:outputText value="#{to.status}"/>
+				</aon:column>
+		
+				<aon:column styleClass="aon-editDataTable-numberColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_amount}" />
+					</f:facet>
+					<aon:outputText value="#{to.amount}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:column>
 	
-		<aon:dataScroller2 for="fBatchDetailData" showNote="true" />
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:div>
+						<aon:commandLink id="finance_link" immediate="true"
+							styleClass="aon-button-goto" style="padding-right: 20px;"
+							value="&#160;" title="#{bundle.aon_go}"
+							actionListener="#{fBatchDetail.onLoadFinance}"
+							action="finance_form" />
+					</aon:div>
+				</aon:column>
+			</ui:define>
+		</ui:decorate>
 	</aon:div>
 	
 </ui:composition>
