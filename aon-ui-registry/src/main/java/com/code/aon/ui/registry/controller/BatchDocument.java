@@ -31,21 +31,18 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.ui.form.BasicTemplateController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 
-public class BatchDocument {
+public class BatchDocument extends BasicTemplateController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BatchDocument.class);
 	
 	private Set<IAttachment> documents;
-	
-	private int pageLimit = AonUtil.getConfigurationController().getPageLimit();
-	
-	private String beanName;
 	
 	private DataModel model;
 	
@@ -56,22 +53,6 @@ public class BatchDocument {
 		this.documents = new HashSet<IAttachment>();
 		this.model = new ListDataModel();
 		this.checkList = new HashSet<IAttachment>();
-	}
-
-	public int getPageLimit() {
-		return pageLimit;
-	}
-
-	public void setPageLimit(int pageLimit) {
-		this.pageLimit = pageLimit;
-	}
-
-	public String getBeanName() {
-		return beanName;
-	}
-
-	public void setBeanName(String beanName) {
-		this.beanName = beanName;
 	}
 
 	public DataModel getModel() {

@@ -38,12 +38,13 @@ import com.code.aon.report.dynamic.DynaReport;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.BasicTemplateController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.report.controller.DynaReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CashFlowForecastReport {
+public class CashFlowForecastReport extends BasicTemplateController {
 	
 	private static final String NO_BANK = "SIN BANCO ASIGNADO";
 	private Date fromDate;
@@ -62,12 +63,9 @@ public class CashFlowForecastReport {
 	public Integer getBankToEnable() {
 		return bankToEnable;
 	}
+
 	public void setBankToEnable(Integer bankToEnable) {
 		this.bankToEnable = bankToEnable;
-	}
-
-	public String getBeanName() {
-		return "cashFlowForecastReport";
 	}
 	
 	public Date getFromDate() {

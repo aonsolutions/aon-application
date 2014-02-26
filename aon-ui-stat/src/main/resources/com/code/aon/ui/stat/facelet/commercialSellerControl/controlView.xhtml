@@ -87,216 +87,223 @@
 			<br />
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:editDataTable id="sellerView"
-					value="#{commercialStat.summaryModel}" rows="20"
-					columnClasses="aon-editDataTable-textColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,  aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-textColumn"
-					var="to">
-					<f:facet name="header">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="dataTableId" value="sellerView" />
+					<ui:param name="dataModel" value="#{commercialStat.summaryModel}" />
+					<ui:param name="rows" value="20" />
+					<ui:param name="skipSelectButton" value="true" />
+					<ui:param name="rowSelectorToggleOnClick" value="false" />
+	
+					<ui:define name="columns">
 
-						<rich:columnGroup>
-
-							<rich:column colspan="8">
-								<h:panelGrid columns="3">
-									<aon:div>
-										<c:if test="#{commercialStat.controlType==0}">
-											<aon:outputText
-												value="#{bundle.seller_stat_control_seller}" />
-										</c:if>
-										<c:if test="#{commercialStat.controlType==1}">
-											<aon:outputText
-												value="#{bundle.seller_stat_control_target}" />
-										</c:if>
-										<c:if test="#{commercialStat.controlType==2}">
-											<aon:outputText
-												value="#{bundle.seller_stat_control_product}" />
-										</c:if>
-										<c:if test="#{commercialStat.controlType==3}">
-											<aon:outputText
-												value="#{bundle.seller_stat_control_category}" />
-										</c:if>
-									</aon:div>
-									<aon:div>
-										<aon:outputText value="(" />
-										<aon:outputText value="#{commercialStat.params.fromDate}">
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-										</aon:outputText>
-										<aon:outputText value="-" />
-										<aon:outputText value="#{commercialStat.params.toDate}">
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-										</aon:outputText>
-										<aon:outputText value=")" />
-									</aon:div>
-									<ui:insert name="extendedHeader" />
-								</h:panelGrid>
-
-
-							</rich:column>
-
-
-							<rich:column breakBefore="true" colspan="1">
-								<rich:spacer />
-							</rich:column>
-
-							<rich:column
-								rendered="#{commercialStat.showCommercialActivities}"
-								colspan="2">
-								<aon:outputText value="#{bundle.seller_stat_control_vis}" />
-							</rich:column>
-							<rich:column colspan="4">
-								<aon:outputText value="#{bundle.aon_invoice_offers}" />
-							</rich:column>
-
-							<rich:column colspan="1">
-
-							</rich:column>
-
-
-						</rich:columnGroup>
-					</f:facet>
-					<aon:column>
 						<f:facet name="header">
+	
+							<rich:columnGroup>
+	
+								<rich:column colspan="8">
+									<h:panelGrid columns="3">
+										<aon:div>
+											<c:if test="#{commercialStat.controlType==0}">
+												<aon:outputText
+													value="#{bundle.seller_stat_control_seller}" />
+											</c:if>
+											<c:if test="#{commercialStat.controlType==1}">
+												<aon:outputText
+													value="#{bundle.seller_stat_control_target}" />
+											</c:if>
+											<c:if test="#{commercialStat.controlType==2}">
+												<aon:outputText
+													value="#{bundle.seller_stat_control_product}" />
+											</c:if>
+											<c:if test="#{commercialStat.controlType==3}">
+												<aon:outputText
+													value="#{bundle.seller_stat_control_category}" />
+											</c:if>
+										</aon:div>
+										<aon:div>
+											<aon:outputText value="(" />
+											<aon:outputText value="#{commercialStat.params.fromDate}">
+												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+											</aon:outputText>
+											<aon:outputText value="-" />
+											<aon:outputText value="#{commercialStat.params.toDate}">
+												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+											</aon:outputText>
+											<aon:outputText value=")" />
+										</aon:div>
+										<ui:insert name="extendedHeader" />
+									</h:panelGrid>
+	
+	
+								</rich:column>
+	
+	
+								<rich:column breakBefore="true" colspan="1">
+									<rich:spacer />
+								</rich:column>
+	
+								<rich:column
+									rendered="#{commercialStat.showCommercialActivities}"
+									colspan="2">
+									<aon:outputText value="#{bundle.seller_stat_control_vis}" />
+								</rich:column>
+								<rich:column colspan="4">
+									<aon:outputText value="#{bundle.aon_invoice_offers}" />
+								</rich:column>
+	
+								<rich:column colspan="1">
+	
+								</rich:column>
+	
+	
+							</rich:columnGroup>
+						</f:facet>
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<c:if test="#{commercialStat.controlType==0}">
+									<aon:outputText value="#{bundle.seller_stat_name}" />
+								</c:if>
+								<c:if test="#{commercialStat.controlType==1}">
+									<aon:outputText value="#{bundle.aon_target}" />
+								</c:if>
+								<c:if test="#{commercialStat.controlType==2}">
+									<aon:outputText value="#{bundle.aon_product}" />
+								</c:if>
+								<c:if test="#{commercialStat.controlType==3}">
+									<aon:outputText value="#{bundle.aon_category}" />
+								</c:if>
+							</f:facet>
+							<aon:outputText value="#{to.name}" />
+							<f:facet name="footer">
+								<aon:outputText value="#{bundle.report_totals}">
+								</aon:outputText>
+							</f:facet>
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn"
+							rendered="#{commercialStat.showCommercialActivities}">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.seller_stat_control_donef}" />
+							</f:facet>
+	
 							<c:if test="#{commercialStat.controlType==0}">
-								<aon:outputText value="#{bundle.seller_stat_name}" />
+								<aon:commandLink styleClass="aon-dataTable-link"
+									actionListener="#{commercialStat.onSellerActivities}"
+									action="commercial_activity_view" value="#{to.numVisits}"
+									reRender="aonContent" />
 							</c:if>
 							<c:if test="#{commercialStat.controlType==1}">
-								<aon:outputText value="#{bundle.aon_target}" />
+								<aon:commandLink styleClass="aon-dataTable-link"
+									actionListener="#{commercialStat.onTargetActivities}"
+									action="commercial_activity_view" value="#{to.numVisits}"
+									reRender="aonContent" />
+							</c:if>
+	
+							<f:facet name="footer">
+								<aon:outputText value="#{commercialStat.numVisitsTot}"
+									style="float:right" />
+							</f:facet>
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn"
+							rendered="#{commercialStat.showCommercialActivities}">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.seller_stat_control_pending}" />
+							</f:facet>
+							<c:if test="#{commercialStat.controlType==0}">
+								<aon:commandLink styleClass="aon-dataTable-link"
+									actionListener="#{commercialStat.onPendingSellerActivities}"
+									action="commercial_activity_view" value="#{to.numPendingVisits}"
+									reRender="aonContent" />
+							</c:if>
+							<c:if test="#{commercialStat.controlType==1}">
+								<aon:commandLink styleClass="aon-dataTable-link"
+									actionListener="#{commercialStat.onPendingTargetActivities}"
+									action="commercial_activity_view" value="#{to.numPendingVisits}"
+									reRender="aonContent" />
+							</c:if>
+	
+							<f:facet name="footer">
+								<aon:outputText value="#{commercialStat.numPendingVisitsTot}"
+									style="float:right" />
+							</f:facet>
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.seller_stat_control_done}" />
+							</f:facet>
+							<aon:outputText value="#{to.numOffers}" />
+							<f:facet name="footer">
+								<aon:outputText value="#{commercialStat.numOffersTot}"
+									style="float:right" />
+							</f:facet>
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.seller_stat_control_pending}" />
+							</f:facet>
+							<aon:outputText value="#{to.numPendingOffers}" />
+							<f:facet name="footer">
+								<aon:outputText value="#{commercialStat.numPendingOffersTot}"
+									style="float:right" />
+							</f:facet>
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.seller_stat_control_closed}" />
+							</f:facet>
+							<aon:outputText value="#{to.numAprovedOffers}" />
+							<f:facet name="footer">
+								<aon:outputText value="#{commercialStat.numAprovedOffersTot}"
+									style="float:right" />
+							</f:facet>
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.seller_stat_control_lost}" />
+							</f:facet>
+							<aon:outputText value="#{to.numLostOffers}" />
+							<f:facet name="footer">
+								<aon:outputText value="#{commercialStat.numLostOffersTot}"
+									style="float:right" />
+							</f:facet>
+						</aon:column>
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+	
+							</f:facet>
+	
+							<c:if test="#{commercialStat.controlType==0}">
+								<aon:commandLink styleClass="aon-dataTable-link"
+									actionListener="#{commercialStat.onSellerDetail}"
+									action="commercial_seller_stat"
+									value="#{bundle.stat_show_detail}"
+									reRender="aonContent" />
+							</c:if>
+							<c:if test="#{commercialStat.controlType==1}">
+								<aon:commandLink styleClass="aon-dataTable-link"
+									actionListener="#{commercialStat.onTargetDetail}"
+									action="commercial_seller_stat"
+									value="#{bundle.stat_show_detail}"
+									reRender="aonContent" />
 							</c:if>
 							<c:if test="#{commercialStat.controlType==2}">
-								<aon:outputText value="#{bundle.aon_product}" />
+								<aon:commandLink styleClass="aon-dataTable-link"
+									actionListener="#{commercialStat.onProductDetail}"
+									action="commercial_seller_stat"
+									value="#{bundle.stat_show_detail}"
+									reRender="aonContent" />
 							</c:if>
 							<c:if test="#{commercialStat.controlType==3}">
-								<aon:outputText value="#{bundle.aon_category}" />
+								<aon:commandLink styleClass="aon-dataTable-link"
+									actionListener="#{commercialStat.onCategoryDetail}"
+									action="commercial_seller_stat"
+									value="#{bundle.stat_show_detail}"
+									reRender="aonContent" />
 							</c:if>
-						</f:facet>
-						<aon:outputText value="#{to.name}" />
-						<f:facet name="footer">
-							<aon:outputText value="#{bundle.report_totals}">
-							</aon:outputText>
-						</f:facet>
-					</aon:column>
-					<aon:column rendered="#{commercialStat.showCommercialActivities}">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.seller_stat_control_donef}" />
-						</f:facet>
-
-						<c:if test="#{commercialStat.controlType==0}">
-							<aon:commandLink styleClass="aon-dataTable-link"
-								actionListener="#{commercialStat.onSellerActivities}"
-								action="commercial_activity_view" value="#{to.numVisits}"
-								reRender="aonContent" />
-						</c:if>
-						<c:if test="#{commercialStat.controlType==1}">
-							<aon:commandLink styleClass="aon-dataTable-link"
-								actionListener="#{commercialStat.onTargetActivities}"
-								action="commercial_activity_view" value="#{to.numVisits}"
-								reRender="aonContent" />
-						</c:if>
-
-						<f:facet name="footer">
-							<aon:outputText value="#{commercialStat.numVisitsTot}"
-								style="float:right" />
-						</f:facet>
-					</aon:column>
-					<aon:column rendered="#{commercialStat.showCommercialActivities}">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.seller_stat_control_pending}" />
-						</f:facet>
-						<c:if test="#{commercialStat.controlType==0}">
-							<aon:commandLink styleClass="aon-dataTable-link"
-								actionListener="#{commercialStat.onPendingSellerActivities}"
-								action="commercial_activity_view" value="#{to.numPendingVisits}"
-								reRender="aonContent" />
-						</c:if>
-						<c:if test="#{commercialStat.controlType==1}">
-							<aon:commandLink styleClass="aon-dataTable-link"
-								actionListener="#{commercialStat.onPendingTargetActivities}"
-								action="commercial_activity_view" value="#{to.numPendingVisits}"
-								reRender="aonContent" />
-						</c:if>
-
-						<f:facet name="footer">
-							<aon:outputText value="#{commercialStat.numPendingVisitsTot}"
-								style="float:right" />
-						</f:facet>
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.seller_stat_control_done}" />
-						</f:facet>
-						<aon:outputText value="#{to.numOffers}" />
-						<f:facet name="footer">
-							<aon:outputText value="#{commercialStat.numOffersTot}"
-								style="float:right" />
-						</f:facet>
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.seller_stat_control_pending}" />
-						</f:facet>
-						<aon:outputText value="#{to.numPendingOffers}" />
-						<f:facet name="footer">
-							<aon:outputText value="#{commercialStat.numPendingOffersTot}"
-								style="float:right" />
-						</f:facet>
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.seller_stat_control_closed}" />
-						</f:facet>
-						<aon:outputText value="#{to.numAprovedOffers}" />
-						<f:facet name="footer">
-							<aon:outputText value="#{commercialStat.numAprovedOffersTot}"
-								style="float:right" />
-						</f:facet>
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.seller_stat_control_lost}" />
-						</f:facet>
-						<aon:outputText value="#{to.numLostOffers}" />
-						<f:facet name="footer">
-							<aon:outputText value="#{commercialStat.numLostOffersTot}"
-								style="float:right" />
-						</f:facet>
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-
-						</f:facet>
-
-						<c:if test="#{commercialStat.controlType==0}">
-							<aon:commandLink styleClass="aon-dataTable-link"
-								actionListener="#{commercialStat.onSellerDetail}"
-								action="commercial_seller_stat"
-								value="#{bundle.stat_show_detail}"
-								reRender="aonContent" />
-						</c:if>
-						<c:if test="#{commercialStat.controlType==1}">
-							<aon:commandLink styleClass="aon-dataTable-link"
-								actionListener="#{commercialStat.onTargetDetail}"
-								action="commercial_seller_stat"
-								value="#{bundle.stat_show_detail}"
-								reRender="aonContent" />
-						</c:if>
-						<c:if test="#{commercialStat.controlType==2}">
-							<aon:commandLink styleClass="aon-dataTable-link"
-								actionListener="#{commercialStat.onProductDetail}"
-								action="commercial_seller_stat"
-								value="#{bundle.stat_show_detail}"
-								reRender="aonContent" />
-						</c:if>
-						<c:if test="#{commercialStat.controlType==3}">
-							<aon:commandLink styleClass="aon-dataTable-link"
-								actionListener="#{commercialStat.onCategoryDetail}"
-								action="commercial_seller_stat"
-								value="#{bundle.stat_show_detail}"
-								reRender="aonContent" />
-						</c:if>
-					</aon:column>
-				</aon:editDataTable>
-				<aon:dataScroller2 for="sellerView" showNote="true" />
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
 		</aon:form>
 	</ui:define>

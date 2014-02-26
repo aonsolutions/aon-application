@@ -13,47 +13,49 @@
 		<ui:param name="resetButtonReRender" value="recordDataContent" />		
 	</ui:include>
 	
-	<aon:div id="recordDataDiv" styleClass="aon-scroll-area">
-		<aon:dataTable id="recordDataDataList" value="#{controller.model}"
-			rows="20" var="to" rendered="#{controller.model.rowCount > 0}">
-
-			<aon:rowSelector actionListener="#{controller.onSelect}" reRender="recordDataContent" />
-			<aon:column width="85">
-				<f:facet name="header">
-					<aon:outputText
-						value="#{bundle.registry_rd_creation_date}" />
-				</f:facet>
-				<aon:outputText value="#{to.creationDate}"
-					rendered="#{to.id!=recordData.to.id}">
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-						timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.description}"
-					rendered="#{to.id!=recordData.to.id}" />
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.registry_rd_notary}" />
-				</f:facet>
-				<aon:outputText value="#{to.notary}"
-					rendered="#{to.id!=recordData.to.id}" />
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.registry_rd_number}" />
-				</f:facet>
-				<aon:outputText value="#{to.number}"
-					rendered="#{to.id!=recordData.to.id}" />
-			</aon:column>
-		</aon:dataTable>
-		<aon:dataScroller2 for="recordDataDataList" showNote="true" />
+	<aon:div styleClass="aon-scroll-area">
+	
+		<aon:methodParam name="rowSelectorAction" value="" />
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			<ui:param name="rowSelectorReRender" value="recordDataContent" />
+			<ui:define name="columns">
+	
+				<aon:column styleClass="aon-width-100">
+					<f:facet name="header">
+						<aon:outputText
+							value="#{bundle.registry_rd_creation_date}" />
+					</f:facet>
+					<aon:outputText value="#{to.creationDate}"
+						rendered="#{to.id!=recordData.to.id}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:column>
+	
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_description}" />
+					</f:facet>
+					<aon:outputText value="#{to.description}"
+						rendered="#{to.id!=recordData.to.id}" />
+				</aon:column>
+	
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.registry_rd_notary}" />
+					</f:facet>
+					<aon:outputText value="#{to.notary}"
+						rendered="#{to.id!=recordData.to.id}" />
+				</aon:column>
+	
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.registry_rd_number}" />
+					</f:facet>
+					<aon:outputText value="#{to.number}"
+						rendered="#{to.id!=recordData.to.id}" />
+				</aon:column>
+			</ui:define>
+		</ui:decorate>
 	</aon:div>
 </ui:composition>

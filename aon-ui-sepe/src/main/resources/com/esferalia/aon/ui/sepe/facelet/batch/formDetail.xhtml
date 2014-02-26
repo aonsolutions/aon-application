@@ -36,7 +36,7 @@
 		<aon:dataTable id="batchDetailData" value="#{controllerDetail.model}"
 			var="to" rows="20" rendered="#{controllerDetail.model.rowCount > 0}" >
 			
-			<aon:rowSelector id="batchDetail-select" toggleOnClick="#{false}"/>
+			<aon:rowSelector toggleOnClick="#{false}"/>
 			
 			<ui:param name="showEnterpriseColumn" value="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}" />
 			

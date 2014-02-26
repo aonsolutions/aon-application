@@ -24,9 +24,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.academy.model.AlumnMarkHeader;
 import com.code.aon.ui.academy.model.AlumnMarks;
+import com.code.aon.ui.form.BasicTemplateController;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CourseMarkController {
+public class CourseMarkController extends BasicTemplateController {
 
 	private Course course;
 	
@@ -38,11 +39,7 @@ public class CourseMarkController {
 	
 	private DataModel model;
 	
-	private String beanName;
-	
 	private boolean isNew;
-	
-	private int pageLimit = 20;
 	
 	private AlumnMarks to;
 
@@ -50,42 +47,6 @@ public class CourseMarkController {
     	this.evaluation = 1;
     }
 
-	/**
-	 * Return name of the bean associated to controller.
-	 * 
-	 * @return String
-	 */
-	public String getBeanName() {
-		return beanName;
-	}
-
-	/**
-	 * Set the name of the bean associated to controller.
-	 * 
-	 * @param beanName
-	 */
-	public void setBeanName(String beanName) {
-		this.beanName = beanName;
-	}
-	
-	/**
-	 * Return the limit of page in the model associated to controller.
-	 * 
-	 * @return int
-	 */
-	public int getPageLimit() {
-		return pageLimit;
-	}
-
-	/**
-	 * Set the limit of page in the model associated to controller.
-	 * 
-	 * @param pageLimit
-	 */
-	public void setPageLimit(int pageLimit) {
-		this.pageLimit = pageLimit;
-	}
-	
 	public boolean isNew() {
 		return isNew;
 	}

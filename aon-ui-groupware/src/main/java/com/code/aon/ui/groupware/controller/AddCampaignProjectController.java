@@ -30,11 +30,12 @@ import com.code.aon.project.ProjectType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.form.BasicTemplateController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class AddCampaignProjectController {
+public class AddCampaignProjectController extends BasicTemplateController {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AddCampaignProjectController.class);
 	
@@ -57,12 +58,7 @@ public class AddCampaignProjectController {
 		}
 		return taskManager;
 	}
-	public String getBeanName() {
-		return "addCampaignProject";
-	}
-	public int getPageLimit() {
-		return 20;
-	}
+
 	public List<CampaignProject> getChecked() {
 		if (checked == null) {
 			setChecked( new LinkedList<CampaignProject>());

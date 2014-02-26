@@ -22,12 +22,13 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.form.BasicTemplateController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class FinanceFractionController implements IFinanceConstants {
+public class FinanceFractionController extends BasicTemplateController implements IFinanceConstants {
 
 	private DataModel model;
 	
@@ -68,14 +69,6 @@ public class FinanceFractionController implements IFinanceConstants {
 
 	public void setTargetFinance(Finance originalFinance) {
 		this.targetFinance = originalFinance;
-	}
-
-	public String getBeanName() {
-		return beanName;
-	}
-
-	public void setBeanName(String beanName) {
-		this.beanName = beanName;
 	}
 	
 	public boolean isNew() {
