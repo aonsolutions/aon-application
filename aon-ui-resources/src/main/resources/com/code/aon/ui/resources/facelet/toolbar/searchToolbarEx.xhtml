@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
@@ -16,20 +17,22 @@
 				<aon:commandButton id="#{toolbarID}-reset"
 					title="#{bundle.aon_key_new_accelerator}"
 					value="#{resetLabel}"
-					action="#{resetAction}" actionListener="#{backActionListener}"
+					action="#{resetAction}" actionListener="#{resetActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-reset"
 					accesskey="#{bundle.aon_key_new}">
-					<aon:actionListener method="#{resetActionListener}" />
+					<f:setPropertyActionListener target="#{controller.backAction}"
+						value="#{controller.beanName}_search" />
 				</aon:commandButton>
 			</c:if>
 			<c:if test="#{!skipBackButton}">
 				<aon:commandButton id="#{toolbarID}-back" 
 					title="#{bundle.aon_key_cancel_accelerator}"
 					value="#{bundle.aon_list}"
-					action="#{backAction}" actionListener="#{backActionListener}"
+					action="#{backAction}" actionListener="#{controller.restoreBackupCriteria}"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-					accesskey="#{bundle.aon_key_cancel}" />
-								
+					accesskey="#{bundle.aon_key_cancel}">
+					<aon:actionListener method="#{backActionListener}" />
+				</aon:commandButton>
 			</c:if>
 		</ui:define>
 	</ui:decorate>

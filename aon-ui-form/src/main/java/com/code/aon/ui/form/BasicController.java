@@ -66,6 +66,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicController.class);
 	
 	private Criteria criteria = new Criteria();
+	private Criteria backupCriteria = null;
 
 	private ITransferObject to;
 
@@ -98,10 +99,13 @@ public class BasicController extends AbstractPojoController implements IControll
 
 	private List<Expression> initExpressions;
 	
+	private String afterSearchAction;
+
+	private boolean onlySearchNewValues;
+	private Serializable searchNewValuesIndex;
+	
 	private String backAction;
 	private String backActionListener;
-	
-	private String afterSearchAction;
 	
 	/** A list that contains the selected objects of the model. */
 	private Set<Serializable> checkList;	
@@ -411,8 +415,20 @@ public class BasicController extends AbstractPojoController implements IControll
 			boolean updateModel = isNew();
 			accept();
 			if (updateModel) {
-				initializeModel();
-				synchronizeAddedPojo();
+				resetBackProccess();
+				if (isQueryOnStartUP() || this instanceof LinesController) {
+					setModel(null);
+				} else {
+					if (!onlySearchNewValues) {
+						searchNewValuesIndex = getManagerBean().getId(getTo());
+						onlySearchNewValues = true;
+					}
+					clearCriteria();
+					Criteria criteria = getCriteria();
+					criteria.addGreaterThanOrEqualExpression(getIdAlias(), searchNewValuesIndex);
+					initializeModel();
+					synchronizeAddedPojo();
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onAccept",e);
@@ -427,7 +443,6 @@ public class BasicController extends AbstractPojoController implements IControll
 				throw new AbortProcessingException(e.getMessage(), e);
 			}
 		}
-
 	}
 
 	/**
@@ -445,6 +460,10 @@ public class BasicController extends AbstractPojoController implements IControll
 				}
 			}
 		}
+	}
+
+	private void resetSearchNewValues() {
+		onlySearchNewValues = false;
 	}
 
 	/**
@@ -494,6 +513,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	@Override
 	public void onSearch(ActionEvent event) {
 		try {
+			resetSearchNewValues();
 			resetBackProccess();
 			ControllerEvent evt = new ControllerEvent(this);
 			controllerListenerSupport.fireBeforeModelSearched(evt);
@@ -848,6 +868,24 @@ public class BasicController extends AbstractPojoController implements IControll
 		this.criteria = criteria;
 	}
 
+	public Criteria getBackupCriteria() throws ManagerBeanException {
+		return backupCriteria;
+	}
+
+	public void setBackupCriteria(Criteria backupCriteria) throws ManagerBeanException {
+		this.backupCriteria = backupCriteria;
+	}
+
+	public void saveBackupCriteria(ActionEvent event) throws ManagerBeanException {
+		setBackupCriteria(getCriteria());
+	}
+
+	public void restoreBackupCriteria(ActionEvent event) throws ManagerBeanException {
+		if (getBackupCriteria() != null) {
+			setCriteria(getBackupCriteria());
+		}
+	}
+
 	@Override
 	public void initializeModel() {
 		try {
@@ -951,6 +989,7 @@ public class BasicController extends AbstractPojoController implements IControll
 
 	@Override
 	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
+		saveBackupCriteria(null);
 		Criteria criteria = getCriteria();
 		LOGGER.info("search:[{},{},start={},count={}]", new Object[]{getBeanName(), ((criteria != null) ? criteria.toString() : null), start, count} );
 		List<ITransferObject> list = getManagerBean().getList(criteria, start, count);
