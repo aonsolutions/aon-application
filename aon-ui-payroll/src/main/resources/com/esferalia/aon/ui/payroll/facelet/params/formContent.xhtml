@@ -56,7 +56,16 @@
 						<f:selectItem itemLabel="Pago electrónico" value="#{null}" />
 						<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 					</aon:selectOneMenu>
-
+					
+					<aon:outputText value="Presentación cotizaciones (FAN)" />
+					<aon:div>
+						<aon:selectOneMenu id="fan-test-environment" 
+							value="#{payrollAppParams.fanTestEnvironment}">
+							<f:selectItem itemLabel="Estado de pruebas" itemValue="#{true}" />
+							<f:selectItem itemLabel="Entorno de producción REAL" itemValue="#{false}" />
+						</aon:selectOneMenu>
+					</aon:div>
+					
 				</aon:panelGrid>	
 			</aon:div>
 		</aon:div>
