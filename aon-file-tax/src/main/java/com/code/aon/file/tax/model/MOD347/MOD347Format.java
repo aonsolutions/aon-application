@@ -27,7 +27,7 @@ public enum MOD347Format {
 	GIPUZKOA_2011(2011,Administration.GIPUZKOA
 			,"/com/code/aon/file/tax/model/MOD347/xml/2011_GIPUZKOA_Deponent.xml"
 			,"/com/code/aon/file/tax/model/MOD347/xml/2011_GIPUZKOA_Declared.xml"
-			,""),
+			,"/com/code/aon/file/tax/model/MOD347/xml/2011_GIPUZKOA_Asset.xml"),
 	NAVARRA_2010(2010,Administration.NAVARRA
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_NAVARRA_Deponent.xml"
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_NAVARRA_Declared.xml"

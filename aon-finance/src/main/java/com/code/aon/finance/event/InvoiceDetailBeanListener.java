@@ -188,7 +188,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				if (invoice.isSurcharge()) {
 					surcharge = tax.getSurcharge();
 				} else {
-					if (tax.isVat() && percentage == 4 && base % 0.125 == 0 && base / 0.250 != 0) {
+					if (tax.isVat() && percentage == 4 && base % 0.125 == 0 && base % 0.250 != 0) {
 						base = CommonUtil.round(base + 0.005);
 						quota = CommonUtil.round(base * percentage / 100 - 0.005);
 

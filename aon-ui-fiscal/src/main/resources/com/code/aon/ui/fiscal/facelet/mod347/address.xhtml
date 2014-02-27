@@ -10,14 +10,18 @@
 	<aon:div id="extraInfoContainer#{suffix}">
 		<aon:panelGrid columns="2" dir="true" width="100%">
 
-			<aon:outputLabel for="mod347_assetStreetType" value="#{bundle.fiscal_streetInitial}" />
-			<aon:inputText id="mod347_assetStreetType#{suffix}" value="#{mod347DetailAsset.to.assetStreetType}" size="4"/>
+			<aon:outputLabel for="mod347_assetStreetType" value="#{bundle.registry_street_type}" />
+			<aon:selectOneMenu id="mod347_assetStreetType#{suffix}" 
+				value="#{mod347DetailAsset.to.assetStreetType}">
+				<f:selectItem value="#{null}" itemLabel="-"/>
+				<f:selectItems value="#{fiscalCollections.streetTypes}" />
+			 </aon:selectOneMenu>
 			
 			<aon:outputLabel for="mod347_assetStreet" value="#{bundle.fiscal_streetName}" />
 			<aon:inputText id="mod347_assetStreet#{suffix}" value="#{mod347DetailAsset.to.assetStreet}" size="20" maxLength="50"/>
 			
 			
-			<aon:outputText value="#{bundle.fiscal_streetNumber}" />
+			<aon:outputText value="#{bundle.aon_number}" />
 			<aon:div>
 				<aon:inputText id="mod347_assetStreetNumberType#{suffix}" value="#{mod347DetailAsset.to.assetStreetNumberType}" size="3"/> 
 				<aon:inputText id="mod347_assetStreetNumber#{suffix}" value="#{mod347DetailAsset.to.assetStreetNumber}" size="5"/>
@@ -48,7 +52,15 @@
 			<aon:outputLabel for="mod347_assetStreetTown" value="#{bundle.registry_municipality}" />
 			<aon:inputText id="mod347_assetStreetTown#{suffix}" value="#{mod347DetailAsset.to.assetStreetTown}" size="20" maxLength="30"/>
 			
-			<aon:outputLabel for="mod347_assetStreetTownCode" value="#{bundle.registry_municipality_code}" />
+			<aon:div>
+				<aon:outputLabel for="mod347_assetStreetTownCode" value="#{bundle.registry_municipality_code}" />
+				<h:outputLink target="_blank"
+					value="http://www.ine.es/daco/daco42/codmun/codmunmapa.htm"
+					style="padding-left: 18px;"
+					styleClass="aon-button-goto">
+					<aon:outputText value="&#160;"/>
+				</h:outputLink>
+			</aon:div>
 			<aon:inputText id="mod347_assetStreetTownCode#{suffix}" value="#{mod347DetailAsset.to.assetStreetTownCode}" size="5"/>
 			
 			<aon:outputLabel for="mod347_assetStreetProvince" value="#{bundle.aon_state}" />

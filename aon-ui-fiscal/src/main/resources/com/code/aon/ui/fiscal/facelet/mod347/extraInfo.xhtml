@@ -5,6 +5,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
 	<aon:div id="extraInfoContainer">
@@ -21,7 +22,7 @@
 					<aon:form id="finalizePanelCloseForm">
 						<aon:commandButton type="button"
 							styleClass="aon-popupWindow-close"
-							actionListener="#{mod347Detail.onHideExtraInfoPanel}"
+							actionListener="#{mod347Detail.onCancelExtraInfoPanel}"
 							immediate="true">
 							<aon:actionHotKey key="esc" />
 						</aon:commandButton>
@@ -65,50 +66,74 @@
 									value="#{bundle.fiscal_model_347_business_premise_rental}" />
 							</aon:div>
 
+							<aon:outputText value="&#160;"/>
+							<aon:outputText value="&#160;"/>
 							
-							
-							
-							<aon:div style="text-align: right;">
-								<aon:outputText value="#{bundle.fiscal_model_347_asset_amount}."/>
-								<aon:outputText value="&#160;"/>	
-								<aon:outputLabel for="mod347_asset_first_quarter"
-									value="#{bundle.fiscal_model_347_asset_first_quarter}" />
-							</aon:div>
-							<aon:inputText id="mod347_asset_first_quarter" 
-								value="#{mod347Detail.to.assetFirstQuarterAmount}"
-								size="12" required="true"/>
+							<aon:outputText value="#{bundle.fiscal_model_347_asset_amount}."
+								style="margin-right: 20px;"/>
+								
+								
+							<h:panelGrid columns="2" dir="true" width="100%">
+								<aon:div style="text-align: right;">
+									<aon:outputLabel for="mod347_asset_first_quarter"
+										value="#{bundle.fiscal_model_347_asset_first_quarter}" />
+								</aon:div>
+								<aon:inputText id="mod347_asset_first_quarter" 
+									value="#{mod347Detail.to.assetFirstQuarterAmount}"
+									size="12" required="true">
+									<a4j:support event="onchange" actionListener="#{mod347Detail.onChangeAssetAmount}"
+									 	reRender="mod347_asset_amount" ajaxSingle="true"
+									 	focus="mod347_asset_second_quarter"/>
+								</aon:inputText>
+	
+								<aon:div style="text-align: right;">
+									<aon:outputLabel for="mod347_asset_second_quarter"
+										value="#{bundle.fiscal_model_347_asset_second_quarter}" />
+								</aon:div>
+	 							<aon:inputText id="mod347_asset_second_quarter" 
+									value="#{mod347Detail.to.assetSecondQuarterAmount}"
+									size="12" required="true">
+									<a4j:support event="onchange" actionListener="#{mod347Detail.onChangeAssetAmount}"
+									 	reRender="mod347_asset_amount" ajaxSingle="true"
+									 	focus="mod347_asset_third_quarter"/>
+								</aon:inputText>
+	
+								<aon:div style="text-align: right;">
+									<aon:outputLabel for="mod347_asset_third_quarter"
+										value="#{bundle.fiscal_model_347_asset_third_quarter}" />
+								</aon:div>
+	 							<aon:inputText id="mod347_asset_third_quarter" 
+									value="#{mod347Detail.to.assetThirdQuarterAmount}"
+									size="12" required="true">
+									<a4j:support event="onchange" actionListener="#{mod347Detail.onChangeAssetAmount}"
+									 	reRender="mod347_asset_amount" ajaxSingle="true"
+									 	focus="mod347_asset_fourth_quarter"/>
+								</aon:inputText>
 
-							<aon:div style="text-align: right;">
-								<aon:outputLabel for="mod347_asset_second_quarter"
-									value="#{bundle.fiscal_model_347_asset_second_quarter}" />
-							</aon:div>
- 							<aon:inputText id="mod347_asset_second_quarter" 
-								value="#{mod347Detail.to.assetSecondQuarterAmount}"
-								size="12" required="true"/>
+								<aon:div style="text-align: right;">
+									<aon:outputLabel for="mod347_asset_fourth_quarter"
+										value="#{bundle.fiscal_model_347_asset_fourth_quarter}" />
+								</aon:div>
+	 							<aon:inputText id="mod347_asset_fourth_quarter" 
+									value="#{mod347Detail.to.assetFourthQuarterAmount}"
+									size="12" required="true">
+									<a4j:support event="onchange" actionListener="#{mod347Detail.onChangeAssetAmount}"
+									 	reRender="mod347_asset_amount" ajaxSingle="true"
+									 	focus="mod347_cash_amount"/>
+								</aon:inputText>
 
-							<aon:div style="text-align: right;">
-								<aon:outputLabel for="mod347_asset_third_quarter"
-									value="#{bundle.fiscal_model_347_asset_third_quarter}" />
-							</aon:div>
- 							<aon:inputText id="mod347_asset_third_quarter" 
-								value="#{mod347Detail.to.assetThirdQuarterAmount}"
-								size="12" required="true"/>
+								<aon:div style="text-align: right;">
+									<aon:outputLabel for="mod347_asset_amount"
+										value="#{bundle.fiscal_model_347_asset_year}" />
+								</aon:div>
+								<aon:inputText id="mod347_asset_amount"
+									readonly="true" 
+									value="#{mod347Detail.to.assetAmount}"
+									size="12" required="true"/>
+							</h:panelGrid>
 
-							<aon:div style="text-align: right;">
-								<aon:outputLabel for="mod347_asset_fourth_quarter"
-									value="#{bundle.fiscal_model_347_asset_fourth_quarter}" />
-							</aon:div>
- 							<aon:inputText id="mod347_asset_fourth_quarter" 
-								value="#{mod347Detail.to.assetFourthQuarterAmount}"
-								size="12" required="true"/>
-
-							<aon:div style="text-align: right;">
-								<aon:outputLabel for="mod347_asset_amount"
-									value="#{bundle.fiscal_model_347_asset_year}" />
-							</aon:div>
-							<aon:inputText id="mod347_asset_amount" 
-								value="#{mod347Detail.to.assetAmount}"
-								size="12" required="true"/>
+							<aon:outputText value="&#160;"/>
+							<aon:outputText value="&#160;"/>
 
 							<aon:outputLabel for="mod347_cash_amount"
 								value="#{bundle.fiscal_model_347_cash_amount}" />
