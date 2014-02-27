@@ -154,10 +154,10 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax, InvoiceTax detailVat) throws ManagerBeanException {
 		InvoiceTax invoiceTax = new InvoiceTax();
 		invoiceTax.setInvoiceDetail(invoiceDetail);
-		invoiceTax.setBase(invoiceDetail.getTaxableBase());
 		invoiceTax.setTaxType(tax.getType());
 		invoiceTax.setVatDeductionType(tax.getVatDeductionType());
 		invoiceTax.setWithholdingType(tax.getWithholdingType());
+		double base = invoiceDetail.getTaxableBase();
 		double percentage = 0.0;
 		double quota = 0.0;
 		double surcharge = 0.0;
@@ -172,7 +172,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				} else {
 					detailVatBase = CommonUtil.round(detailVat.getBase() * (detailVat.getPercentage() + detailVat.getSurcharge()) / 100);
 				}
-				invoiceTax.setBase(CommonUtil.round(invoiceTax.getBase() + detailVatBase));
+				base = CommonUtil.round(base + detailVatBase, 4);
 			}
 
 			if (invoiceDetail.isTaxDataInDetail()) {
@@ -187,9 +187,24 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				percentage = tax.getPercentage();
 				if (invoice.isSurcharge()) {
 					surcharge = tax.getSurcharge();
+				} else {
+					if (tax.isVat() && percentage == 4 && base % 0.125 == 0 && base / 0.250 != 0) {
+						base = CommonUtil.round(base + 0.005);
+						quota = CommonUtil.round(base * percentage / 100 - 0.005);
+
+						boolean detailUpdate = invoiceDetail.isUpdateEnabled();
+						boolean invoiceUpdate = invoiceDetail.getInvoice().isUpdateEnabled();
+						invoiceDetail.setTaxableBase(base);
+						invoiceDetail.setUpdateEnabled(false);
+						invoiceDetail.getInvoice().setUpdateEnabled(false);
+						BeanManager.getManagerBean(InvoiceDetail.class).update(invoiceDetail);
+						invoiceDetail.setUpdateEnabled(detailUpdate);
+						invoiceDetail.getInvoice().setUpdateEnabled(invoiceUpdate);
+					}
 				}
 			}
 		}
+		invoiceTax.setBase(base);
 		invoiceTax.setPercentage(percentage);
 		invoiceTax.setQuota(quota);
 		invoiceTax.setSurcharge(surcharge);
