@@ -68,14 +68,28 @@
 						<f:facet name="header">
 							<aon:outputText value="&#160;" />
 						</f:facet>
-						<aon:commandButton id="#{dataTableId}-extraInfo" 
-							title="#{bundle.fiscal_model_347_extra_info}"
-							actionListener="#{mod347Detail.onShowExtraInfoPanel}"
-							limitToList="true"
-							reRender="extraInfoContainer"
-							rendered="#{!mod347.to.finished}"
-							styleClass="aon-editDataTable-button aon-icon-info"
-							accesskey="#{bundle.aon_key_save_line}" />
+							<aon:commandButton id="#{dataTableId}-extraInfo" 
+								title="#{bundle.fiscal_model_347_extra_info}"
+								actionListener="#{mod347Detail.onShowExtraInfoPanel}"
+								limitToList="true"
+								reRender="extraInfoContainer"
+								rendered="#{!mod347.to.finished}"
+								styleClass="aon-editDataTable-button aon-icon-info"
+								accesskey="#{bundle.aon_key_save_line}" />
+						<f:facet name="footer">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:outputText value="&#160;" rendered="#{to.businessPremiseRental}" 
+							style="padding-left: 15px;"
+							alt="#{bundle.fiscal_model_347_business_premise_rental}"
+							title="#{bundle.fiscal_model_347_business_premise_rental}"
+							styleClass="aon-editDataTable-button aon-icon-home"/>
 						<f:facet name="footer">
 							<aon:outputText value="&#160;" />
 						</f:facet>

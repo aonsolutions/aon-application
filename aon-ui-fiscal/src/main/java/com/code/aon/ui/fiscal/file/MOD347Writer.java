@@ -33,6 +33,7 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
+import com.code.aon.ui.fiscal.controller.FiscalParametersController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -108,15 +109,32 @@ public class MOD347Writer implements IFinanceConstants{
 					deponent.setProvince(geozone.getCode());		
 				}
 			}
-			deponent.setRelName(getCompany().getName());
-			RegistryMedia  phone = getCompany().getPhone();
-			deponent.setRelPhone(null);
-			if (phone != null){
+			FiscalParametersController fiscalParams = (FiscalParametersController) AonUtil
+					.getRegisteredBean(FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
+			if (StringUtils.isNotBlank(fiscalParams.getContactPhone())) {
 				try {
-					deponent.setRelPhone(Integer.parseInt( phone.getValue() ));
+					String phone = fiscalParams.getContactPhone();
+					phone = StringUtils.remove(phone," ");
+					deponent.setRelPhone(Integer.parseInt( phone ));
 				} catch (NumberFormatException e) {
 					// Nothing
 				}
+			} else {
+				RegistryMedia  phone = getCompany().getPhone();
+				deponent.setRelPhone(null);
+				if (phone != null){
+					try {
+						deponent.setRelPhone(Integer.parseInt( phone.getValue() ));
+					} catch (NumberFormatException e) {
+						// Nothing
+					}
+				}
+			}
+			
+			if (StringUtils.isNotBlank(fiscalParams.getContactPerson())) {
+				deponent.setRelName(fiscalParams.getContactPerson() );	
+			} else {
+				deponent.setRelName(getCompany().getName());	
 			}
 			
 			if (mod347.getReplacedNumber() != null) {
@@ -147,7 +165,7 @@ public class MOD347Writer implements IFinanceConstants{
 				asset.setAssetLocation(detail.getAssetLocation());
 				asset.setCadasdralReference(detail.getCadasdralReference());
 				asset.setAssetStreetType(detail.getAssetStreetType());
-				asset.setAssetStreet(detail.getAssetStreet());
+				asset.setAssetStreet(FileTaxUtil.changeInvalidCharacters(detail.getAssetStreet()));
 				asset.setAssetStreetNumberType(detail.getAssetStreetNumberType());
 				int i = 0;
 				if (StringUtils.isNotBlank(detail.getAssetStreetNumber()) 
@@ -161,9 +179,9 @@ public class MOD347Writer implements IFinanceConstants{
 				asset.setAssetStreetStair(detail.getAssetStreetStair());
 				asset.setAssetStreetFloor(detail.getAssetStreetFloor());
 				asset.setAssetStreetDoor(detail.getAssetStreetDoor());
-				asset.setAssetStreetComplement(detail.getAssetStreetComplement());
-				asset.setAssetStreetCity(detail.getAssetStreetCity());
-				asset.setAssetStreetTown(detail.getAssetStreetTown());
+				asset.setAssetStreetComplement(FileTaxUtil.changeInvalidCharacters(detail.getAssetStreetComplement()));
+				asset.setAssetStreetCity(FileTaxUtil.changeInvalidCharacters(detail.getAssetStreetCity()));
+				asset.setAssetStreetTown(FileTaxUtil.changeInvalidCharacters(detail.getAssetStreetTown()));
 				
 				if (StringUtils.isNotBlank(detail.getAssetStreetTownCode()) 
 				 && StringUtils.isNumeric(detail.getAssetStreetTownCode())) {
@@ -198,7 +216,6 @@ public class MOD347Writer implements IFinanceConstants{
 				name = FileTaxUtil.changeInvalidCharacters(name);
 				dec.setName(name);
 				dec.setKey(detail.getType().getValue());
-				dec.setInsurance(false);
 				if (detail.getProvince() == null) {
 					throw new ManagerBeanException("El registro " + dec.getCode() + " - " + dec.getName() + " no tiene una provincia válida");
 				} 

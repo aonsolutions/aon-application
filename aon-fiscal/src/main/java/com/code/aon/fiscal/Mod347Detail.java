@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.esferalia.aon.entity.master.Mod347DetailDB;
 
 @Entity
@@ -15,35 +17,35 @@ public class Mod347Detail extends Mod347DetailDB {
 	@Transient
 	public String getAddress() {
     	StringBuffer buf = new StringBuffer();
-    	buf.append(getAssetStreetType());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetType())?getAssetStreetType():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreet());
+    	buf.append(StringUtils.isNotBlank(getAssetStreet())?getAssetStreet():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreetNumberType());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetNumberType())?getAssetStreetNumberType():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreetNumber());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetNumber())?getAssetStreetNumber():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreetNumberSuffix());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetNumberSuffix())?getAssetStreetNumberSuffix():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreetBlock());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetBlock())?getAssetStreetBlock():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreetHall());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetHall())?getAssetStreetHall():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreetStair());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetStair())?getAssetStreetStair():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreetFloor());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetFloor())?getAssetStreetFloor():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreetDoor());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetDoor())?getAssetStreetDoor():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreetComplement());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetComplement())?getAssetStreetComplement():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreetCity());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetCity())?getAssetStreetCity():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreetTown());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetTown())?getAssetStreetTown():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreetProvince());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetProvince())?getAssetStreetProvince():"");
     	buf.append(buf.length() > 0 ? " " : "");
-    	buf.append(getAssetStreetZip());
+    	buf.append(StringUtils.isNotBlank(getAssetStreetZip())?getAssetStreetZip():"");
     	return buf.toString();
 	}
 	

@@ -18,9 +18,9 @@ ALTER TABLE `fs_mod347_detail` ADD COLUMN `insurance_operation` TINYINT(1) NULL 
 ALTER TABLE `fs_mod347_detail` ADD COLUMN `business_premise_rental` TINYINT(1) NULL DEFAULT 0 COMMENT 'Se marcara este campo para operaciones de arrendamiento de locales de negocio,'  AFTER `insurance_operation`; 
 ALTER TABLE `fs_mod347_detail` ADD COLUMN `asset_location` VARCHAR(1) CHARACTER SET 'latin1' COLLATE 'latin1_spanish_ci' NULL COMMENT 'Situacion del inmueble'  AFTER `business_premise_rental`;
 ALTER TABLE `fs_mod347_detail` ADD COLUMN `cadasdral_reference` VARCHAR(45) CHARACTER SET 'latin1' COLLATE 'latin1_spanish_ci' NULL COMMENT 'Refercia catastral'  AFTER `asset_location`;
-ALTER TABLE `fs_mod347_detail` ADD COLUMN `asset_street_type` VARCHAR(4) CHARACTER SET 'latin1' COLLATE 'latin1_spanish_ci' NULL COMMENT 'Tipo de via'  AFTER `cadasdral_reference`;
+ALTER TABLE `fs_mod347_detail` ADD COLUMN `asset_street_type` VARCHAR(5) CHARACTER SET 'latin1' COLLATE 'latin1_spanish_ci' NULL COMMENT 'Tipo de via'  AFTER `cadasdral_reference`;
 ALTER TABLE `fs_mod347_detail` ADD COLUMN `asset_street` VARCHAR(50) CHARACTER SET 'latin1' COLLATE 'latin1_spanish_ci' NULL COMMENT 'Nombre de la via'  AFTER `asset_street_type`;
-ALTER TABLE `fs_mod347_detail` ADD COLUMN `asset_street_number_type` VARCHAR(3) CHARACTER SET 'latin1' COLLATE 'latin1_spanish_ci' NULL COMMENT 'Tipo de numero de via'  AFTER `asset_street_type`; 
+ALTER TABLE `fs_mod347_detail` ADD COLUMN `asset_street_number_type` VARCHAR(3) CHARACTER SET 'latin1' COLLATE 'latin1_spanish_ci' NULL COMMENT 'Tipo de numero de via'  AFTER `asset_street`; 
 ALTER TABLE `fs_mod347_detail` ADD COLUMN `asset_street_number` VARCHAR(5) CHARACTER SET 'latin1' COLLATE 'latin1_spanish_ci' NULL COMMENT 'Numero de via'  AFTER `asset_street_number_type`;
 ALTER TABLE `fs_mod347_detail` ADD COLUMN `asset_street_number_suffix` VARCHAR(3) CHARACTER SET 'latin1' COLLATE 'latin1_spanish_ci' NULL COMMENT 'Calificador del numero de via'  AFTER `asset_street_number`; 
 ALTER TABLE `fs_mod347_detail` ADD COLUMN `asset_street_block` VARCHAR(3) CHARACTER SET 'latin1' COLLATE 'latin1_spanish_ci' NULL COMMENT 'Direccion. Bloque.'  AFTER `asset_street_number_suffix`;
