@@ -12,7 +12,6 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.mail.Address;
@@ -67,7 +66,6 @@ import com.code.aon.ui.commercial.event.ProjectCommercialSearchListener;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.form.BasicTemplateController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -84,7 +82,7 @@ import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CommunicationCenterController extends BasicTemplateController implements IMarketingConstants {
+public class CommunicationCenterController implements IMarketingConstants {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommunicationCenterController.class.getName());
 	
@@ -140,7 +138,7 @@ public class CommunicationCenterController extends BasicTemplateController imple
 	
 	private int pendingTargets;
 	
-	private ListDataModel model;
+	private ListDataModel mailingModel;
 	
 	private User user;
 	
@@ -154,6 +152,14 @@ public class CommunicationCenterController extends BasicTemplateController imple
 		this.date = new Date();
 		this.questionValues = new LinkedList<SelectItem>();
 		this.user = UserUtils.getInstance().getLoggedUser();
+	}
+
+	public ListDataModel getMailingModel() {
+		return mailingModel;
+	}
+
+	public void setMailingModel(ListDataModel mailingModel) {
+		this.mailingModel = mailingModel;
 	}
 
 	public Date getDate() {
@@ -335,7 +341,7 @@ public class CommunicationCenterController extends BasicTemplateController imple
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}
-		setModel(null);
+		setMailingModel(null);
 		this.surveyResponse = null;
 		setActionTarget(null);
 		setPendingTargets(0);
@@ -713,14 +719,14 @@ public class CommunicationCenterController extends BasicTemplateController imple
 	public void onGenerateTargetMailing(ActionEvent event) throws ManagerBeanException {
         List<Integer> targets = getActionTargets(true);
         List<MailData> data = MailingManager.generateMailingList(targets);
-        setModel( new ListDataModel(data) );
+        this.mailingModel = new ListDataModel(data);
         List<Integer> actionTargets = getActionTargets(false);
         CampaignActionTargetController.resetStatuses(actionTargets, ActionTargetStatus.FINISHED);
 	}		
 
 	@SuppressWarnings("unchecked")
 	public void onDownloadMailing(ActionEvent event) throws IOException {
-        List<MailData> data = (List<MailData>) this.model.getWrappedData();
+        List<MailData> data = (List<MailData>) this.mailingModel.getWrappedData();
         MailingManager.generateMailing(data);
 	}		
 	
@@ -954,15 +960,6 @@ public class CommunicationCenterController extends BasicTemplateController imple
 			};			
 		}
 		return this.projectCommercialListener;
-	}
-
-	@Override
-	public DataModel getModel() throws ManagerBeanException {
-		return model;
-	}
-
-	public void setModel(ListDataModel model) {
-		this.model = model;
 	}
 	
 }

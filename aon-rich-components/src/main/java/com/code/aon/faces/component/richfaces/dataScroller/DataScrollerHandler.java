@@ -8,14 +8,12 @@ import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIData;
-import javax.faces.component.UIViewRoot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.faces.component.param.ParamHandler;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
-import com.code.aon.faces.component.richfaces.form.FormHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
@@ -50,6 +48,8 @@ public class DataScrollerHandler extends TagHandler {
    	private static final String ACTION = "action";
    	
 	private TagAttribute forTag;
+	
+   	private TagAttribute rowCount;	
 
 	/**
 	 * The Constructor.
@@ -60,48 +60,19 @@ public class DataScrollerHandler extends TagHandler {
 	public DataScrollerHandler(TagConfig config) {
 		super(config);
 		forTag = getRequiredAttribute(FOR);
+		rowCount = getRequiredAttribute(ROW_COUNT);
 	}
 
-	public static UIData getDataTable( FaceletContext ctx, UIComponent parent, TagAttribute forTag ) {
-		String id = forTag.getValue(ctx);
-		UIData table = (UIData) ComponentSupport.findChild( parent, id );
-		if ( table == null ) {
-			UIViewRoot root = ComponentSupport.getViewRoot(ctx, parent);
-			table = FormHandler.getDataTableMap(root).get( id );
-		}
-		return table;
+	private UIData getDataTable( FaceletContext ctx, UIComponent parent ) {
+		return (UIData) ComponentSupport.findChild( parent, forTag.getValue(ctx) );
 	}
-		
+	
 	private ValueExpression getPageSize( FaceletContext ctx, UIComponent parent ) {
-		ValueExpression rowsVE = null;
-		UIData table = getDataTable(ctx, parent, forTag);
+		UIData table = getDataTable(ctx, parent);
 		if ( table != null ) {
-			rowsVE = table.getValueExpression(IRichFacesTags.ROWS);
-			if ( rowsVE == null ) {
-				rowsVE = FaceletUtil.getValueExpression(ctx, "#{0}", Integer.class);	
-			}
+			return table.getValueExpression(IRichFacesTags.ROWS);
 		}
-		return rowsVE;
-	}
-
-	private ValueExpression getRowCount( FaceletContext ctx, UIComponent parent ) {
-		ValueExpression rowsCountVE = null;
-		TagAttribute rowCountTag = getAttribute(ROW_COUNT);
-		if ( rowCountTag != null ) {
-			rowsCountVE = rowCountTag.getValueExpression(ctx, Integer.class);	
-		}
-		if ( rowsCountVE == null ) {
-			UIData table = getDataTable(ctx, parent, forTag);
-			if ( table != null ) {
-				ValueExpression modelVE = table.getValueExpression(IRichFacesTags.VALUE);
-				if ( modelVE != null ) {
-					String modelExpression = modelVE.getExpressionString();
-					String rowCountExpression = FaceletUtil.appendExpression( modelExpression, IRichFacesTags.ROW_COUNT);
-					rowsCountVE = FaceletUtil.getValueExpression(ctx, rowCountExpression, Integer.class);
-				}
-			}			
-		}
-		return rowsCountVE;
+		return null;
 	}
 	
 	private ValueExpression getMethodExpression(FaceletContext ctx, String name,
@@ -113,7 +84,7 @@ public class DataScrollerHandler extends TagHandler {
 	private void insertTemplate(FaceletContext ctx, UIComponent component) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
 		newMapper.setVariable(DATA_TABLE, forTag.getValueExpression(ctx, String.class));		
-		newMapper.setVariable(ROW_COUNT, getRowCount(ctx, component));
+		newMapper.setVariable(ROW_COUNT, rowCount.getValueExpression(ctx, Integer.class));
 		ValueExpression showNote = FaceletUtil.getBooleanValueExpression(ctx, getAttribute(SHOW_NOTE));
 		newMapper.setVariable(SHOW_NOTE, showNote);
 		TagAttribute pageTag = getAttribute(PAGE);
@@ -135,10 +106,8 @@ public class DataScrollerHandler extends TagHandler {
 			newMapper.setVariable(PAGE_SIZE, pageSizeVE);
 		} else {
 			ValueExpression rowsVE = getPageSize(ctx, component);
-			if ( rowsVE != null ) {
-				forceHide = rowsVE.isReadOnly(ctx); 
-				newMapper.setVariable(PAGE_SIZE, rowsVE);				
-			}
+			forceHide = rowsVE.isReadOnly(ctx); 
+			newMapper.setVariable(PAGE_SIZE, rowsVE);
 		}
 		ValueExpression action = getMethodExpression(ctx, ACTION, String.class, FaceletUtil.ACTION_SIG);
 		if (action == null) {

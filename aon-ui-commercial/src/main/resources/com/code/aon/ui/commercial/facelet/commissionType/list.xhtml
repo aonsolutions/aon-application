@@ -16,22 +16,22 @@
 				<ui:param name="controller" value="#{commissionType}" />
 			</ui:include>
 
-			<aon:div styleClass="aon-scroll-area">
-			
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{commissionType}" />
-					<ui:define name="columns">
+			<aon:div id="commissionTypeData" styleClass="aon-scroll-area">
+				<aon:dataTable id="commissionTypeDataList" value="#{commissionType.model}"
+					rows="20" var="to" rendered="#{commissionType.model.rowCount > 0}">
 
-						<aon:column alias="CommissionType.name"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.config_commission_type}" />
-							</f:facet>
-							<aon:outputText value="#{to.name}" />
-						</aon:column>
-						
-					</ui:define>
-				</ui:decorate>
+					<aon:rowSelector action="commissionType_form" 
+						actionListener="#{commissionType.onSelect}" />
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.config_commission_type}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}" />
+					</aon:column>
+				</aon:dataTable>
+				<aon:dataScroller2 for="commissionTypeDataList"
+					showNote="true" />
 			</aon:div>
 		</aon:form>
 

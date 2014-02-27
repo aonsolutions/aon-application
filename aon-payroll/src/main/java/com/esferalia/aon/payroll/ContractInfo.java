@@ -54,7 +54,7 @@ public class ContractInfo extends ContractInfoDB implements IExpression, IAudita
 		
 		CONTRACT_MODEL("MODELO_CONTRATO"),
 		CONTRACT_MODEL_OPTION("OPCION_CONTRATO"),
-		
+		COLLECTIVE_PECULIARITY_QUOTE("COLECT_PECULIAR_COTIZACION"),
 		;
 			
 		private final String value;

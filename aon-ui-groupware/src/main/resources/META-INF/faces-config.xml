@@ -779,10 +779,6 @@
 			com.code.aon.ui.groupware.controller.AddCampaignProjectController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>addCampaignProject</value>
-		</managed-property>		
 	</managed-bean>
 
 	<!-- ************* PROCESS LAUNCHER ***************** -->

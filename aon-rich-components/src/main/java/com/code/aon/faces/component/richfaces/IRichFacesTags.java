@@ -76,8 +76,6 @@ public interface IRichFacesTags {
    	
 	String ROWS = "rows";
 	
-	String ROW_COUNT = "rowCount";
-	
    	String PAGE = "page";
 	
 }

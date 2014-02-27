@@ -30,6 +30,10 @@ public class TasStatEngineController extends BasicTemplateController {
 	public TasStatParams getParams() {
 		return params;
 	}
+
+	public String getBeanName() {
+		return IStatConstants.TAS_STAT_CONTROLLER_NAME;
+	}
 	
 	public void setParams(TasStatParams params) {
 		this.params = params;

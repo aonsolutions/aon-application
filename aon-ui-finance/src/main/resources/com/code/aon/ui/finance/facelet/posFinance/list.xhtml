@@ -70,143 +70,141 @@
 				</aon:panel>
 
 				<aon:div id="financeDataDiv">
-					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-						<ui:param name="controller" value="#{posFinance}" />
-						<ui:param name="skipSelectButton" value="true" />
-						<ui:param name="rowSelectorToggleOnClick" value="false" />
+					<aon:dataTable id="financeData" 
+						value="#{posFinance.model}"	var="to" rows="#{posFinance.pageLimit}" 
+						rendered="#{posFinance.model.rowCount > 0}">
 
-						<ui:define name="columns">
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{posFinance.checkedCount}" />
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Included_Row_checked"
+								value="#{posFinance.rowChecked}"
+								valueChangeListener="#{posFinance.rowSelected}"	
+								reRender="posFinanceList" />
+						</aon:column>
 
-							<aon:column styleClass="aon-editDataTable-iconColumn">
-								<f:facet name="header">
-									<aon:outputText value="#{posFinance.checkedCount}" />
-								</f:facet>
-								<aon:selectBooleanCheckbox id="Included_Row_checked"
-									value="#{posFinance.rowChecked}"
-									valueChangeListener="#{posFinance.rowSelected}"	
-									reRender="posFinanceList" />
-							</aon:column>
-	
-							<aon:column alias="Finance.dueDate"
+						<aon:column alias="Finance.dueDate"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.finance_charge_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.dueDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+				
+						<c:if test="#{posFinanceSearch.pos.id == null}">
+							<aon:column alias="Finance.invoice&lt;posShift.pos.name" 
 								styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.finance_charge_date}" />
+									<aon:outputText value="#{bundle.aon_module_pos}" />
 								</f:facet>
-								<aon:outputText value="#{to.dueDate}">
-									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:outputText>
+								<aon:outputText value="#{to.invoice.posShift.pos.name}"/>
 							</aon:column>
-					
-							<c:if test="#{posFinanceSearch.pos.id == null}">
-								<aon:column alias="Finance.invoice&lt;posShift.pos.name" 
-									styleClass="aon-editDataTable-textColumn">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_module_pos}" />
-									</f:facet>
-									<aon:outputText value="#{to.invoice.posShift.pos.name}"/>
-								</aon:column>
-							</c:if>
-					
-							<c:if test="#{posFinanceSearch.shift == null}">
-								<aon:column alias="Finance.invoice&lt;posShift.shift"
-									styleClass="aon-editDataTable-textColumn">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.report_shift}" />
-									</f:facet>
-									<aon:outputText value="#{to.invoice.posShift.shift}"/>
-								</aon:column>
-							</c:if>
-					
-							<aon:column alias="Finance.invoice&lt;referenceCode"
+						</c:if>
+				
+						<c:if test="#{posFinanceSearch.shift == null}">
+							<aon:column alias="Finance.invoice&lt;posShift.shift"
 								styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_invoice_number}" />
+									<aon:outputText value="#{bundle.report_shift}" />
 								</f:facet>
-								<aon:outputText styleClass="aon-nowrap" 
-									value="#{to.invoice.referenceCode}" />
+								<aon:outputText value="#{to.invoice.posShift.shift}"/>
 							</aon:column>
-	
+						</c:if>
+				
+						<aon:column alias="Finance.invoice&lt;referenceCode"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_invoice_number}" />
+							</f:facet>
+							<aon:outputText styleClass="aon-nowrap" 
+								value="#{to.invoice.referenceCode}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_customer}" />
+							</f:facet>
+							<aon:outputText value="#{to.invoice.registryName}" />
+						</aon:column>
+				
+						<c:if test="#{domainSwitcher.type == 'HOTEL'}">
 							<aon:column styleClass="aon-editDataTable-textColumn">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_customer}" />
+									<aon:outputText value="#{bundle.aon_source}" />
 								</f:facet>
-								<aon:outputText value="#{to.invoice.registryName}" />
-							</aon:column>
-					
-							<c:if test="#{domainSwitcher.type == 'HOTEL'}">
-								<aon:column styleClass="aon-editDataTable-textColumn">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_source}" />
-									</f:facet>
-									<aon:outputText value="#{bundle.finance_direct}" 
-										rendered="#{to.invoice.project.id == null and !to.invoice.service and !to.invoice.advance}" />
-									<aon:outputText value="#{bundle.aon_reservation}" 
-										rendered="#{to.invoice.project.id != null and !to.invoice.service and !to.invoice.advance}" />
-									<aon:outputText value="#{bundle.finance_service}" 
-										rendered="#{to.invoice.service}" />
-									<aon:outputText value="#{bundle.finance_money_advance}" 
-										rendered="#{to.invoice.advance}" />
-									<aon:commandLink id="reservationLink" immediate="true"
-										styleClass="aon-button-goto" style="padding-right: 20px;" 
-										value="&#160;" title="#{bundle.aon_go}"
-										rendered="#{to.invoice.project.id != null}" 
-										action="reservation_form"
-										actionListener="#{posFinance.onLoadReservation}"
-										reRender="aonContent">
-									</aon:commandLink>
-								</aon:column>
-							</c:if>
-	
-							<aon:column styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_type}" />
-								</f:facet>
-								<aon:outputText value="#{bundle.finance_invoice}"
-									rendered="#{!to.invoice.rectifier and !to.invoice.rectified}" />
-								<aon:div rendered="#{to.invoice.rectifier}">
-									<aon:outputText value="#{to.invoice.rectificationType}" />
-									<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
-										<aon:outputFormat value="#{bundle.finance_invoice_rectifier_message2}" styleClass="aon-bold aon-label-error">
-											<f:param value="#{to.invoice.rectificationInvoice.referenceCode}" />
-										</aon:outputFormat>
-									</rich:toolTip>
-								</aon:div>
-								<aon:div rendered="#{to.invoice.rectified}">
-									<aon:outputText value="#{to.invoice.rectificationType}" />
-									<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
-										<aon:outputFormat value="#{bundle.finance_invoice_rectified_message2}" styleClass="aon-bold">
-											<f:param value="#{to.invoice.rectificationInvoicesString}" />
-										</aon:outputFormat>
-									</rich:toolTip>
-								</aon:div>
-							</aon:column>
-	
-							<aon:column alias="Finance.amount"
-								styleClass="aon-editDataTable-numberColumn">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_amount}" />
-								</f:facet>
-								<aon:outputText value="#{to.totalAmount}" >
-									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-								</aon:outputText>
-							</aon:column>
-							
-							<aon:column	styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputText value="&#160;" />
-								</f:facet>
-								<aon:commandLink id="invoiceLink" immediate="true"
+								<aon:outputText value="#{bundle.finance_direct}" 
+									rendered="#{to.invoice.project.id == null and !to.invoice.service and !to.invoice.advance}" />
+								<aon:outputText value="#{bundle.aon_reservation}" 
+									rendered="#{to.invoice.project.id != null and !to.invoice.service and !to.invoice.advance}" />
+								<aon:outputText value="#{bundle.finance_service}" 
+									rendered="#{to.invoice.service}" />
+								<aon:outputText value="#{bundle.finance_money_advance}" 
+									rendered="#{to.invoice.advance}" />
+								<aon:commandLink id="reservationLink" immediate="true"
 									styleClass="aon-button-goto" style="padding-right: 20px;" 
 									value="&#160;" title="#{bundle.aon_go}"
-									action="saleInvoice_form"
-									actionListener="#{posFinance.onLoadInvoice}"
+									rendered="#{to.invoice.project.id != null}" 
+									action="reservation_form"
+									actionListener="#{posFinance.onLoadReservation}"
 									reRender="aonContent">
 								</aon:commandLink>
 							</aon:column>
-	
-						</ui:define>
-					</ui:decorate>					
+						</c:if>
+
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_type}" />
+							</f:facet>
+							<aon:outputText value="#{bundle.finance_invoice}"
+								rendered="#{!to.invoice.rectifier and !to.invoice.rectified}" />
+							<aon:div rendered="#{to.invoice.rectifier}">
+								<aon:outputText value="#{to.invoice.rectificationType}" />
+								<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
+									<aon:outputFormat value="#{bundle.finance_invoice_rectifier_message2}" styleClass="aon-bold aon-label-error">
+										<f:param value="#{to.invoice.rectificationInvoice.referenceCode}" />
+									</aon:outputFormat>
+								</rich:toolTip>
+							</aon:div>
+							<aon:div rendered="#{to.invoice.rectified}">
+								<aon:outputText value="#{to.invoice.rectificationType}" />
+								<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
+									<aon:outputFormat value="#{bundle.finance_invoice_rectified_message2}" styleClass="aon-bold">
+										<f:param value="#{to.invoice.rectificationInvoicesString}" />
+									</aon:outputFormat>
+								</rich:toolTip>
+							</aon:div>
+						</aon:column>
+
+						<aon:column alias="Finance.amount"
+							styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_amount}" />
+							</f:facet>
+							<aon:outputText value="#{to.totalAmount}" >
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column	styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:commandLink id="invoiceLink" immediate="true"
+								styleClass="aon-button-goto" style="padding-right: 20px;" 
+								value="&#160;" title="#{bundle.aon_go}"
+								action="saleInvoice_form"
+								actionListener="#{posFinance.onLoadInvoice}"
+								reRender="aonContent">
+							</aon:commandLink>
+						</aon:column>
+
+					</aon:dataTable>
+					
+					<aon:dataScroller2 for="financeData" showNote="true" />
 				</aon:div>
 				
 			</aon:div>

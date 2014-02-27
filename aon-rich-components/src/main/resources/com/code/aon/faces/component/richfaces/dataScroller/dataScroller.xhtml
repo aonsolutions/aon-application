@@ -22,7 +22,7 @@
 		    <aon:panelGrid id="#{dataTable}MessageDataScroller" 
 		    	columns="3" columnClasses="aon-dataScroller2-text aon-nowrap,aon-width-all,aon-dataScroller2-text aon-nowrap aon-float-right">
 				<aon:panelGroup>
-			    	<c:if test="#{(rowCount &lt;= pageSize) or (pageSize==0)}" >
+			    	<c:if test="#{rowCount &lt;= pageSize}" >
 						<aon:outputFormat value="#{bundle.aon_scroll}">
 							<f:param value="#{1}" />
 							<f:param value="#{rowCount}" />
@@ -30,7 +30,7 @@
 						</aon:outputFormat>		    	
 			    	</c:if>
 			    	<c:if test="#{rowCount > pageSize}" >
-						<aon:dataPaginator for="#{dataTable}" id="#{dataTable}PaginatorInfo" page="#{page}"
+						<aon:dataPaginator for="#{dataTable}" id="#{dataTable}PaginatorInfo"
 							rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex" lastRowIndexVar="lastRowIndex"
 							styleClass="aon-dataScroller-text">
 							<f:facet name="pages">
@@ -59,9 +59,7 @@
 						<aon:selectOneMenu value="#{pageSize}" >
 							<f:selectItems value="#{commonCollections.pageLimits}" />
 							<a4j:support event="onchange" ajaxSingle="true" 
-								reRender="#{dataTable},#{dataTable}MessageDataScroller">
-								<f:setPropertyActionListener target="#{page}" value="#{1}" />
-							</a4j:support>				
+								reRender="#{dataTable},#{dataTable}MessageDataScroller"/>				
 						</aon:selectOneMenu>
 					</c:if>			
 				</aon:panelGroup>		    	

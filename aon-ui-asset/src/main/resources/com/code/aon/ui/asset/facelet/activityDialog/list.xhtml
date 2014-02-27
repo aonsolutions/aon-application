@@ -6,10 +6,17 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 		<aon:div id="assetListData" styleClass="aon-scroll-area">
-		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-				<ui:param name="controller" value="#{activityBasic}" />
-				<ui:define name="columns">
+			<aon:dataTable id="assetDataList" value="#{activityBasic.model}" rows="20"
+				var="to" rendered="#{activityBasic.model.rowCount > 0}"
+				styleClasses=" aon-editDataTable-dateColumn,
+				aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+				aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn 
+				">
+
+
+				<aon:rowSelector action="activity_form"
+					actionListener="#{asset.onSelect}" />
 <!--  
 				<aon:column>
 					<f:facet name="header">
@@ -18,8 +25,9 @@
 					<aon:outputText value="#{to.id}" />
 				</aon:column>
 -->
+				
  			
-					<aon:column styleClass="aon-editDataTable-dateColumn">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_date}" />
 						</f:facet>
@@ -31,7 +39,7 @@
 						
 					</aon:column>
  				
-					<aon:column styleClass="aon-editDataTable-numberColumn">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.asset_fromTime}" />
 						</f:facet>
@@ -43,7 +51,7 @@
 						
 					</aon:column>
 					
-					<aon:column styleClass="aon-editDataTable-numberColumn">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.asset_toTime}" />
 						</f:facet>
@@ -55,7 +63,7 @@
 						
 					</aon:column>
 					
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_holder}" />
 						</f:facet>
@@ -64,7 +72,7 @@
 						
 					</aon:column>
  					
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_remark}" />
 						</f:facet>
@@ -73,7 +81,7 @@
 						
 					</aon:column>		
 				
-					<aon:column styleClass="aon-editDataTable-textColumn">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_status}" />
 						</f:facet>
@@ -82,10 +90,11 @@
 						
 					</aon:column>
 				
-					<aon:column styleClass="aon-editDataTable-buttonsColumn">
+					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="&#160;" />
 						</f:facet>
+						
 						<aon:commandButton
 								id="activity-accept" title="#{bundle.aon_accept}"
 								actionListener="#{activityBasic.acceptPendingAsset}"
@@ -100,8 +109,16 @@
 								styleClass="aon-editDataTable-button aon-icon-cancel"
 								rendered="#{to==activityBasic.to}"
 								/>
+								
+								
 					</aon:column>
-				</ui:define>
-			</ui:decorate>
+				
+
+
+			</aon:dataTable>
+
+			<aon:dataScroller2 for="assetDataList" showNote="true" />
+<!-- 
+-->
 		</aon:div>
 </ui:composition>

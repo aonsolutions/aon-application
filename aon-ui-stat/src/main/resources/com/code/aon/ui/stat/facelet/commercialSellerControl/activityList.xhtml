@@ -81,89 +81,88 @@
 					</aon:div>
 				</aon:panelGrid>
 				<aon:div styleClass="aon-scroll-area">
-				
-					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-						<ui:param name="dataTableId" value="commercialTrackingData" />
-						<ui:param name="dataModel" value="#{commercialStat.visitsModel}" />
-						<ui:param name="showDataTable" value="#{commercialTracking.model.rowCount > 0}" />
-						<ui:param name="rows" value="20" />
-						<ui:param name="skipSelectButton" value="true" />
-						<ui:param name="rowSelectorToggleOnClick" value="false" />
-				
-						<ui:define name="columns">
+					<aon:dataTable id="commercialTrackingData"
+						value="#{commercialStat.visitsModel}" var="to" rows="20"
+						rendered="#{commercialTracking.model.rowCount > 0}"
+						columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-							<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
-								<f:facet name="header">
-									<aon:outputText value="&#160;" />
-								</f:facet>
-								<aon:commandButton id="go" action="commercialTracking_form"
-									actionListener="#{commercialStat.onActivitySelect}"
-									styleClass="aon-table-row-link" />
-							</aon:column>
-	
-							<aon:column	styleClass="aon-editDataTable-dateColumn">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_date}" />
-								</f:facet>
-								<aon:outputText value="#{to.date}">
-									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:outputText>
-							</aon:column>
-	
-							<c:if test="#{commercialStat.controlType==1}">
-								<aon:column	styleClass="aon-editDataTable-textColumn">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_module_commercial}" />
-									</f:facet>
-									<aon:outputText value="#{to.seller.registry.fullName}" />
-								</aon:column>
-							</c:if>
-							<c:if test="#{commercialStat.controlType==0}">
-								<aon:column	styleClass="aon-editDataTable-textColumn">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_target}" />
-									</f:facet>
-									<aon:outputText value="#{to.project.target.registry.fullName}" />
-								</aon:column>
-							</c:if>
-	
-							<aon:column	styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputText
-										value="#{bundle.aon_activity}" />
-								</f:facet>
-								<aon:outputText value="#{to.activity.name}" />
-							</aon:column>
-	
-							<aon:column	styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.commercial_tracking_comment}" />
-								</f:facet>
-								
-								<aon:div>
-								<aon:outputText value="#{to.comments}"  >
-								<aon:abbreviateConverter maxWidth="25" />
-								</aon:outputText>
-									<rich:toolTip followMouse="true" direction="top-right"
-										styleClass="tooltip">
-										<span style="white-space: nowrap"> 
-										  <h:outputText value="#{to.comments}" styleClass="tooltipData" />
-										</span>
-									</rich:toolTip>
-								</aon:div>
-							</aon:column>
-	
-							<aon:column	styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_status}" />
-								</f:facet>
-								<aon:outputText value="#{to.status}" />
-							</aon:column>
+						<!--<aon:rowSelector action="commercialTracking_form"
+							actionListener="#{commercialTracking.onSelect}" />  -->
 
-						</ui:define>
-					</ui:decorate>
+						<aon:column
+							styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:commandButton id="go" action="commercialTracking_form"
+								actionListener="#{commercialStat.onActivitySelect}"
+								styleClass="aon-table-row-link" />
+						</aon:column>
 
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.date}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+
+						<c:if test="#{commercialStat.controlType==1}">
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_module_commercial}" />
+								</f:facet>
+								<aon:outputText value="#{to.seller.registry.fullName}" />
+							</aon:column>
+						</c:if>
+						<c:if test="#{commercialStat.controlType==0}">
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_target}" />
+								</f:facet>
+								<aon:outputText value="#{to.project.target.registry.fullName}" />
+							</aon:column>
+						</c:if>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{bundle.aon_activity}" />
+							</f:facet>
+							<aon:outputText value="#{to.activity.name}" />
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.commercial_tracking_comment}" />
+							</f:facet>
+							
+							<aon:div>
+							<aon:outputText value="#{to.comments}"  >
+							<aon:abbreviateConverter maxWidth="25" />
+							</aon:outputText>
+								<rich:toolTip followMouse="true" direction="top-right"
+									styleClass="tooltip">
+									<span style="white-space: nowrap"> 
+									  <h:outputText value="#{to.comments}" styleClass="tooltipData" />
+									</span>
+								</rich:toolTip>
+							</aon:div>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" />
+						</aon:column>
+
+					</aon:dataTable>
+
+					<aon:dataScroller2 for="commercialTrackingData" showNote="true" />
 				</aon:div>
 			</aon:div>
 		</aon:form>

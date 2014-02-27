@@ -73,17 +73,9 @@ public class PayrollCodeTablesController extends SepeTablesController {
 			super.onInitCodesModels(event);
 		}
 	}
-
-	public void onInitSSCodesModels(ActionEvent event){
-		initSSCodesModel();
-	}
 	
 	public void onSelectSS(ActionEvent event){
-		selectSSTable( ((SSCodeTables)getSsTablesModel().getRowData()) );
-	}
-
-	public void selectSSTable(SSCodeTables table){
-		setSSTable( table );
+		setSSTable( ((SSCodeTables)getSsTablesModel().getRowData()) );
 		setCodesFilter(null);
 		setActiveCodes(true);
 		initSSCodesModel();

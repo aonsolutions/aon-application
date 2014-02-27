@@ -83,9 +83,7 @@ import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
-import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
-import com.esferalia.aon.payroll.enumeration.certificados.TLDCAUSS;
 import com.esferalia.aon.payroll.enumeration.ss.T54;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController;
@@ -1380,9 +1378,6 @@ public class ContractController extends BasicController {
 		private Date trainingEndDate;
 		private ModelOption contractModelOption;
 		private Double weekHours;
-		private TLDCAUSS suspensionCause;
-		private String contractEndCode;
-		private String contractEndDescription;
 		
 		public boolean isAgreementSalaryCheck() {
 			return agreementSalaryCheck;
@@ -1551,12 +1546,6 @@ public class ContractController extends BasicController {
 		}
 		public void setCollectivePeculiarityQuote(T54 collectivePeculiarityQuote) {
 			this.collectivePeculiarityQuote = collectivePeculiarityQuote;
-		}
-		public TLDCAUSS getSuspensionCause() {
-			return suspensionCause;
-		}
-		public void setSuspensionCause(TLDCAUSS suspensionCause) {
-			this.suspensionCause = suspensionCause;
 		}
 		
 		

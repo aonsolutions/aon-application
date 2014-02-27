@@ -76,40 +76,38 @@
 					</aon:panelGrid>
 				</rich:panel>
 	
-				<aon:div id="contactDataListDiv">
+				<aon:div id="contactDataListDiv" >
 					<c:if test="#{smsContact.model.rowCount > 0}" >
-						<aon:methodParam name="rowSelectorAction" value="" />
-						<aon:methodParam name="rowSelectorActionListener" value="#{smsContact.onToggleSelected}" type="actionListener" />
-						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-							<ui:param name="controller" value="#{smsContact}" />
-							<ui:param name="rowSelectorReRender" value="contactSelected" />
-							<ui:param name="skipSelectButton" value="true" />
-							<ui:define name="columns">
+						<aon:dataTable id="contactDataList" style="width:100%" rows="10"
+							value="#{smsContact.model}" var="to" >
+
+							<aon:rowSelector reRender="contactSelected" actionListener="#{smsContact.onToggleSelected}" />
 			
-								<aon:column styleClass="aon-editDataTable-iconColumn">
-									<f:facet name="header">
-										<aon:outputText value="&#160;" />
-									</f:facet>
-									<aon:selectBooleanCheckbox id="contactSelected"
-										styleClass="aon-float-left" value="#{to.readOnlySelected}">
-									</aon:selectBooleanCheckbox>
-								</aon:column>
-				
-								<aon:column styleClass="aon-editDataTable-textColumn">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_displayName}" />
-									</f:facet>
-									<aon:outputText value="#{to.contact.displayName}"/>
-								</aon:column>
-				
-								<aon:column styleClass="aon-editDataTable-textColumn">
-									<f:facet name="header">
-										<aon:outputText value="#{bundle.aon_cellular}" />
-									</f:facet>
-									<aon:outputText value="#{to.contact.cellularPhone}"/>
-								</aon:column>
-							</ui:define>
-						</ui:decorate>							
+							<aon:column styleClass="aon-editDataTable-iconColumn">
+								<f:facet name="header">
+									<aon:outputText value="&#160;" />
+								</f:facet>
+								<aon:selectBooleanCheckbox id="contactSelected"
+									styleClass="aon-float-left" value="#{to.readOnlySelected}">
+								</aon:selectBooleanCheckbox>
+							</aon:column>
+			
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_displayName}" />
+								</f:facet>
+								<aon:outputText value="#{to.contact.displayName}"/>
+							</aon:column>
+			
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_cellular}" />
+								</f:facet>
+								<aon:outputText value="#{to.contact.cellularPhone}"/>
+							</aon:column>							
+						</aon:dataTable>
+		
+						<aon:dataScroller2 for="contactDataList" />
 					</c:if>
 				</aon:div>	
 			</rich:modalPanel>

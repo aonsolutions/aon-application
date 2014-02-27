@@ -351,10 +351,6 @@
 		<managed-bean-name>purchaseOrder</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.purchase.controller.PurchaseOrderController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>purchaseOrder</value>
-		</managed-property>				
 	</managed-bean>
 
    	<!-- ************************************************ -->

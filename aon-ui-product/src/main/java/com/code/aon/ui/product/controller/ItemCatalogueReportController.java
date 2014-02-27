@@ -32,12 +32,11 @@ import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.form.BasicTemplateController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class ItemCatalogueReportController extends BasicTemplateController implements ICollectionProvider {
+public class ItemCatalogueReportController implements ICollectionProvider {
 	
 	private WorkPlace workPlace;
 	
@@ -81,6 +80,10 @@ public class ItemCatalogueReportController extends BasicTemplateController imple
 
 	public void setDepartment(Department department) {
 		this.department = department;
+	}
+	
+	public String getBeanName(){
+		return "itemCatalogueReport";
 	}
 
 	public List<SelectItem> getDepartments() throws ManagerBeanException {

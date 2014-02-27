@@ -72,49 +72,48 @@
 				</aon:panelGrid>
 
 				<aon:div styleClass="aon-scroll-area">
-					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-						<ui:param name="dataTableId" value="activityView" />
-						<ui:param name="dataModel" value="#{commercialStat.activityModel}" />
-						<ui:param name="rows" value="20" />
-						<ui:param name="skipSelectButton" value="true" />
-						<ui:param name="rowSelectorToggleOnClick" value="false" />
-				
-						<ui:define name="columns">
+					<aon:editDataTable id="activityView"
+						value="#{commercialStat.activityModel}" rows="20"
+						columnClasses="aon-editDataTable-textColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,  aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-textColumn"
+						var="to">
 
-							<aon:column	styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputText value="actividad" />
-								</f:facet>
-								<aon:outputText value="#{to.name}" />
-							</aon:column>
-							
-							<aon:column	styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<c:if test="#{commercialStat.commercialActivityStatus}">
-										<aon:outputText value="#{bundle.seller_stat_control_donef}" />
-									</c:if>
-									<c:if test="#{!commercialStat.commercialActivityStatus}">
-										<aon:outputText
-											value="#{bundle.seller_stat_control_pending}" />
-									</c:if>
-	
-								</f:facet>
-								<c:if test="#{commercialStat.controlType==0}">
-									<aon:commandLink styleClass="aon-dataTable-link"
-										actionListener="#{commercialStat.onActivityList}"
-										action="commercial_activity_list" value="#{to.numVisits}"
-										reRender="aonContent" />
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="actividad" />
+							</f:facet>
+							<aon:outputText value="#{to.name}" />
+
+						</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<c:if test="#{commercialStat.commercialActivityStatus}">
+									<aon:outputText value="#{bundle.seller_stat_control_donef}" />
 								</c:if>
-								<c:if test="#{commercialStat.controlType==1}">
-									<aon:commandLink styleClass="aon-dataTable-link"
-										actionListener="#{commercialStat.onTargetActivityList}"
-										action="commercial_activity_list" value="#{to.numVisits}"
-										reRender="aonContent" />
+								<c:if test="#{!commercialStat.commercialActivityStatus}">
+									<aon:outputText
+										value="#{bundle.seller_stat_control_pending}" />
 								</c:if>
-							</aon:column>
-							
-						</ui:define>
-					</ui:decorate>
+
+							</f:facet>
+							<c:if test="#{commercialStat.controlType==0}">
+							<aon:commandLink styleClass="aon-dataTable-link"
+								actionListener="#{commercialStat.onActivityList}"
+								action="commercial_activity_list" value="#{to.numVisits}"
+								reRender="aonContent" />
+						</c:if>
+						<c:if test="#{commercialStat.controlType==1}">
+							<aon:commandLink styleClass="aon-dataTable-link"
+								actionListener="#{commercialStat.onTargetActivityList}"
+								action="commercial_activity_list" value="#{to.numVisits}"
+								reRender="aonContent" />
+						</c:if>
+						
+
+						</aon:column>
+
+					</aon:editDataTable>
+
+					<aon:dataScroller2 for="activityView" showNote="true" />
 
 				</aon:div>
 			</aon:div>

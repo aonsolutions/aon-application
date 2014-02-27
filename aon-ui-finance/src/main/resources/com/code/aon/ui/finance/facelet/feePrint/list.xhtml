@@ -58,86 +58,90 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{feePrint}" />
-					<ui:param name="skipSelectButton" value="true" />
-					<ui:param name="rowSelectorToggleOnClick" value="false" />
+				<aon:dataTable id="feePrintData" value="#{feePrint.model}"
+					var="to" rows="20" rendered="#{feePrint.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, 
+						aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn, 
+						aon-editDataTable-textColumn, 
+						aon-editDataTable-numberColumn, 
+						aon-editDataTable-numberColumn,
+						aon-editDataTable-numberColumn, 
+						aon-editDataTable-textColumn">
 
-					<ui:define name="columns">
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_customer}" />
+						</f:facet>
+						<aon:outputText value="#{to.customer.registry.fullName}" />
+					</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_customer}" />
-							</f:facet>
-							<aon:outputText value="#{to.customer.registry.fullName}" />
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_status}" />
-							</f:facet>
-							<aon:outputText value="#{to.customer.status}" />
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_concept}" />
-							</f:facet>
-							<aon:outputText value="#{to.description}" />
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_period}" />
-							</f:facet>
-							<aon:outputText value="#{to.period}" />
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-numberColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_quantity}" />
-							</f:facet>
-							<aon:outputText value="#{to.quantity}"> 
-								<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
-							</aon:outputText>
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-numberColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_price}" />
-							</f:facet>
-							<aon:outputText value="#{to.price}"> 
-								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-							</aon:outputText>
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-numberColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_discount}" />
-							</f:facet>
-							<aon:outputText value="#{to.discountExpression.discountExpr}" />
-						</aon:column>
-						
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.finance_fee_billing_date2}" />
-							</f:facet>
-							<aon:outputText value="#{to.billingDateMonth}" />
-							<aon:outputText value=" / #{to.billingDateYear}" />
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date_to}" />
-							</f:facet>
-							<aon:outputText value="#{to.finalDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
-					</ui:define>
-				</ui:decorate>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.customer.status}" />
+					</aon:column>
 
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_concept}" />
+						</f:facet>
+						<aon:outputText value="#{to.description}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_period}" />
+						</f:facet>
+						<aon:outputText value="#{to.period}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_quantity}" />
+						</f:facet>
+						<aon:outputText value="#{to.quantity}"> 
+							<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_price}" />
+						</f:facet>
+						<aon:outputText value="#{to.price}"> 
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_discount}" />
+						</f:facet>
+						<aon:outputText value="#{to.discountExpression.discountExpr}" />
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.finance_fee_billing_date2}" />
+						</f:facet>
+						<aon:outputText value="#{to.billingDateMonth}" />
+						<aon:outputText value=" / #{to.billingDateYear}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_date_to}" />
+						</f:facet>
+						<aon:outputText value="#{to.finalDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="feePrintData" showNote="true" />
 			</aon:div>
 			
 		</aon:form>

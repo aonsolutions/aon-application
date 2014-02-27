@@ -26,7 +26,7 @@ public class DAT {
 	private String modalidadCotizacion;
 	private String indDiscapacidad;
 	private Integer indRelacion;
-	private String colectivoPeculiar;
+	private Integer colectivoPeculiar;
 	private String infoComplementaria;
 	private String cotizacionDesempleo;
 	
@@ -176,11 +176,11 @@ public class DAT {
 		this.indRelacion = indRelacion;
 	}
 
-	public String getColectivoPeculiar() {
+	public Integer getColectivoPeculiar() {
 		return colectivoPeculiar;
 	}
 
-	public void setColectivoPeculiar(String colectivoPeculiar) {
+	public void setColectivoPeculiar(Integer colectivoPeculiar) {
 		this.colectivoPeculiar = colectivoPeculiar;
 	}
 

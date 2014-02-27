@@ -22,7 +22,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.pricing.IPriceable;
-import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ItemDB;
@@ -86,8 +85,9 @@ public class Item extends ItemDB implements IPriceable {
 		return getSalesPrice(this.getPrice());
 	}
 	public double getSalesPrice(double price) {
-		ItemPricesManager pricesManager = new ItemPricesManager();
-		return pricesManager.getSalesPrice(this, getPrice());
+		double vatQuota = (getVat() != null) ? CommonUtil.round(price * getVat().getPercentage() / 100) : 0;
+		double retentionQuota = (getProduct().isWithholding()) ? CommonUtil.round(price * getRetention().getPercentage() / 100) : 0;
+		return CommonUtil.round(CommonUtil.round(price) + vatQuota - retentionQuota);
 	}
 	public void setSalesPrice(double salesPrice) {
 	}

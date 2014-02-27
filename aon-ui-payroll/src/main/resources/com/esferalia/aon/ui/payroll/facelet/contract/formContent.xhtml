@@ -145,22 +145,7 @@
 				inputSize="10" renderAsPopup="true" enableManualInput="true"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}">
-				<a4j:support event="oninputchange" reRender="suspensionCauseContainer" ajaxSingle="true" />
-				<a4j:support event="onchanged" reRender="suspensionCauseContainer" ajaxSingle="true" />
 			</aon:selectInputDate>
-			<aon:panelGroup id="suspensionCauseContainer">
-				<aon:div style="display:inline;"
-					rendered="#{contract.to.endDate!=null}">
-					<aon:outputLabel for="contract_suspensionCause" 
-						value="#{bundle.certifica2Batch_suspension_cause}"
-						styleClass="aon-italic aon-margin-right" style="font-size: 0.9em" />
-					<aon:selectOneMenu id="contract_suspensionCause"
-						value="#{contract.params.suspensionCause}" >
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{certificadosCollections.TLDCAUSSCodeList}" />
-					</aon:selectOneMenu>
-				</aon:div>
-			</aon:panelGroup>
 		</aon:div>
 		
 		<c:if test="#{actionDenied.moduleEnabled['payroll']}">

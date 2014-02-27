@@ -24,49 +24,47 @@
 				</ui:define>
 			</ui:decorate>
 
-			<aon:div styleClass="aon-scroll-area">
-			
-				<aon:methodParam name="rowSelectorAction" value="#{accountEntry.onNavigate}" />
-				<aon:methodParam name="rowSelectorActionListener" value="#{accountEntry.onSelectEntry}" type="actionListener" />
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{accountEntry}" />
-			
-					<ui:define name="columns">
+			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
+				<aon:dataTable id="accountEntryDataList"
+					value="#{accountEntry.model}" rows="20" var="to"
+					rendered="#{accountEntry.model.rowCount > 0}">
 
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_id}" />
-							</f:facet>
-							<aon:outputText value="#{to.id}" />
-						</aon:column>
-	
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_financial_year}" />
-							</f:facet>
-							<aon:outputText value="#{to.accountPeriod.name}" />
-						</aon:column>
-	
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.entryDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
-	
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_type}" />
-							</f:facet>
-							<aon:outputText value="#{to.type}" />
-						</aon:column>
-						
-					</ui:define>
-				</ui:decorate>
+					<aon:rowSelector action="#{accountEntry.onNavigate}" 
+						actionListener="#{accountEntry.onSelectEntry}" />
 
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_id}" />
+						</f:facet>
+						<aon:outputText value="#{to.id}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_financial_year}" />
+						</f:facet>
+						<aon:outputText value="#{to.accountPeriod.name}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.entryDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_type}" />
+						</f:facet>
+						<aon:outputText value="#{to.type}" />
+					</aon:column>
+
+				</aon:dataTable>
+				<aon:dataScroller2 for="accountEntryDataList" showNote="true" />
 			</aon:div>
 		</aon:form>
 	</ui:define>

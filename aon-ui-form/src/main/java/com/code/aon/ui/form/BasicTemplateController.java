@@ -10,10 +10,6 @@ public abstract class BasicTemplateController implements ITemplateController {
 	
 	private int page;
 	
-	public BasicTemplateController() {
-		setPage(1);
-	}
-
 	@Override
 	public String getBeanName() {
 		return beanName;

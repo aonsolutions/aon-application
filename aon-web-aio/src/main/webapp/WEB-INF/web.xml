@@ -351,7 +351,7 @@
 			a running application. 
 		</description> 
 		<param-name>facelets.REFRESH_PERIOD</param-name> 
-		<param-value>-1</param-value>
+		<param-value>0</param-value>
 	</context-param>
 
 	<context-param>

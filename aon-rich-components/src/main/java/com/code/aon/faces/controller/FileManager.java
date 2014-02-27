@@ -38,13 +38,16 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.ZipUtil;
-import com.code.aon.ui.form.BasicTemplateController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
-public class FileManager extends BasicTemplateController implements IRichConstants {
+public class FileManager implements IRichConstants {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileManager.class);
+	
+	private String beanName;
+	
+	private int pageLimit;
 	
 	private DataModel model;
 	
@@ -78,6 +81,26 @@ public class FileManager extends BasicTemplateController implements IRichConstan
 	
 	private String searchContent;
 	
+	public FileManager() {
+		this.pageLimit = 20;
+	}
+	
+	public String getBeanName() {
+		return beanName;
+	}
+
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
+	}
+
+	public int getPageLimit() {
+		return pageLimit;
+	}
+
+	public void setPageLimit(int pageLimit) {
+		this.pageLimit = pageLimit;
+	}
+
 	public DataModel getModel() {
 		return model;
 	}

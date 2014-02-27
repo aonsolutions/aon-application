@@ -53,102 +53,106 @@
 
 			<aon:div styleClass="aon-scroll-area">
 			
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{finance}" />
-					<ui:param name="skipSelectButton" value="true" />
-					<ui:param name="rowSelectorToggleOnClick" value="false" />
-
-					<ui:define name="columns">
+				<aon:dataTable id="fPaymentPrintData" value="#{finance.model}"
+					var="to" rows="20" rendered="#{finance.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+						aon-editDataTable-numberColumn">	
+						
+					<aon:rowSelector id="fPaymentList-select" toggleOnClick="#{false}" />			
 					
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{fPaymentPrint.checkedCount}" />
-							</f:facet>
-							<aon:selectBooleanCheckbox id="Included_Row_checked"
-								value="#{fPaymentPrint.rowChecked}"
-								valueChangeListener="#{fPaymentPrint.rowSelected}"
-								reRender="fPaymentPrintList" />	
-						</aon:column>
-				
-						<aon:column alias="Finance.dueDate"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.dueDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{fPaymentPrint.checkedCount}" />
+						</f:facet>
+						<aon:selectBooleanCheckbox id="Included_Row_checked"
+							value="#{fPaymentPrint.rowChecked}"
+							valueChangeListener="#{fPaymentPrint.rowSelected}"
+							reRender="fPaymentPrintList" />	
+					</aon:column>
+			
+					<aon:column alias="Finance.dueDate"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.dueDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+	
+					<aon:column alias="Finance.invoice&lt;referenceCode"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.finance_invoice}" />
+						</f:facet>
+						<aon:outputText value="#{to.referenceCode}" />
+					</aon:column>
+
+					<aon:column alias="Finance.concept"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_document_number}" />
+						</f:facet>
+						<aon:outputText value="#{to.concept}" />
+					</aon:column>
+
+					<aon:column alias="Finance.registryName"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText	value="#{(finance.payment) ? (bundle.aon_creditor) : (bundle.finance_debtor)}" />
+						</f:facet>
+						<aon:outputText value="#{to.registryName}" />
+					</aon:column>
+
+					<aon:column alias="Finance.registryDocument"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_company_document}" />
+						</f:facet>
+						<aon:outputText value="#{to.registryDocument}" />
+					</aon:column>
+
+					<aon:column alias="Finance.financeStatus"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.financeStatus}" />
+						<f:facet name="footer">
+							<aon:outputText value="#{bundle.stat_total}" />
+						</f:facet>
+					</aon:column>
+
+					<aon:column alias="Finance.payMethod.name"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.finance_payMethod}" />
+						</f:facet>
+						<aon:outputText value="#{to.payMethod.name}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-numberColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_total}" />
+						</f:facet>
+						<aon:outputText value="#{to.totalAmount}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<f:facet name="footer">
+							<aon:div style="float:right">
+								<aon:outputText style="text-align:right" value="#{finance.totalFinanceAmount}" >
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+							</aon:div>
+						</f:facet>
+					</aon:column>
 		
-						<aon:column alias="Finance.invoice&lt;referenceCode"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.finance_invoice}" />
-							</f:facet>
-							<aon:outputText value="#{to.referenceCode}" />
-						</aon:column>
-	
-						<aon:column alias="Finance.concept"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_document_number}" />
-							</f:facet>
-							<aon:outputText value="#{to.concept}" />
-						</aon:column>
-	
-						<aon:column alias="Finance.registryName"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText	value="#{(finance.payment) ? (bundle.aon_creditor) : (bundle.finance_debtor)}" />
-							</f:facet>
-							<aon:outputText value="#{to.registryName}" />
-						</aon:column>
-	
-						<aon:column alias="Finance.registryDocument"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_company_document}" />
-							</f:facet>
-							<aon:outputText value="#{to.registryDocument}" />
-						</aon:column>
-	
-						<aon:column alias="Finance.financeStatus"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_status}" />
-							</f:facet>
-							<aon:outputText value="#{to.financeStatus}" />
-							<f:facet name="footer">
-								<aon:outputText value="#{bundle.stat_total}" />
-							</f:facet>
-						</aon:column>
-	
-						<aon:column alias="Finance.payMethod.name"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.finance_payMethod}" />
-							</f:facet>
-							<aon:outputText value="#{to.payMethod.name}" />
-						</aon:column>
-	
-						<aon:column styleClass="aon-editDataTable-numberColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_total}" />
-							</f:facet>
-							<aon:outputText value="#{to.totalAmount}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-							<f:facet name="footer">
-								<aon:div style="float:right">
-									<aon:outputText style="text-align:right" value="#{finance.totalFinanceAmount}" >
-										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-									</aon:outputText>
-								</aon:div>
-							</f:facet>
-						</aon:column>
-					</ui:define>
-				</ui:decorate>		
+				</aon:dataTable>	
+				
+				<aon:dataScroller2 for="fPaymentPrintData" showNote="true" />
 			
 			</aon:div>
 			

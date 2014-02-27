@@ -285,7 +285,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator {
 							expressionContext, taxCalculator, quoteCalculator);
 				} catch (UndefinedTotalPaymentException e) {
 					undefTotalPayments.add(undefPayment);
-				} catch (UndefinedContextVariablesException e) {
 				} catch (UndefinedVariablesException e) {
 					if (undefPayment.willBeDefined(paymentsVars))
 						undefPayments.add(undefPayment);

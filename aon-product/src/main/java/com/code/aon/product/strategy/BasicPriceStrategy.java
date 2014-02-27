@@ -127,7 +127,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 			ICalculable calc = (ICalculable)obj;
 			taxableBase = CommonUtil.round(taxableBase + getBasePrice(calc), 4);
 		}
-		if (icc.getDiscountExpression() != null && icc.getDiscountExpression().getDiscounts() != null) {
+		if (icc.getDiscountExpression().getDiscounts() != null) {
 			for (int i = 0;i<icc.getDiscountExpression().getDiscounts().length;i++) {
 				taxableBase = taxableBase * ( 1 - icc.getDiscountExpression().getDiscounts()[i] /100);
 			}

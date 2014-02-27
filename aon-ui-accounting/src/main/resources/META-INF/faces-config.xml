@@ -462,10 +462,6 @@
 		<managed-bean-class>com.code.aon.ui.accounting.controller.report.LedgerReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>ledgerReport</value>
-		</managed-property>		
-		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>false</value>
 		</managed-property>

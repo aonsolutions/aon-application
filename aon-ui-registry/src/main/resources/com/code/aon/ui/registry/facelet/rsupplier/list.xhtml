@@ -14,21 +14,20 @@
 	</ui:include>
 	
 	<aon:div styleClass="aon-scroll-area">
-	
-		<aon:methodParam name="rowSelectorAction" value="" />
-		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-			<ui:param name="rowSelectorReRender" value="registrySupplierContent" />
-			<ui:define name="columns">
+		<aon:dataTable id="registrySupplierDataList" value="#{controller.model}"
+			rows="20" var="to" rendered="#{controller.model.rowCount > 0}">
 
-				<aon:column styleClass="aon-editDataTable-textColumn">
-					<f:facet name="header">
-						<aon:outputText
-							value="#{bundle.aon_supplier}" />
-					</f:facet>
-					<aon:outputText value="#{to.supplier.registry.fullName}" />
-				</aon:column>
+			<aon:rowSelector actionListener="#{controller.onSelect}" reRender="registrySupplierContent" />
+			<aon:column width="85">
+				<f:facet name="header">
+					<aon:outputText
+						value="#{bundle.aon_supplier}" />
+				</f:facet>
+				<aon:outputText value="#{to.supplier.registry.fullName}"
+					rendered="#{true}" />
+			</aon:column>
 
-			</ui:define>
-		</ui:decorate>
+		</aon:dataTable>
+		<aon:dataScroller2 for="registrySupplierDataList" showNote="true" />
 	</aon:div>
 </ui:composition>

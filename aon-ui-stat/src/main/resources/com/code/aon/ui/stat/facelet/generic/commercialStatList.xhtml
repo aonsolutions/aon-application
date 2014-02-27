@@ -53,125 +53,118 @@
 		</ui:decorate>
 		<rich:spacer />
 		<aon:div id="statContainer" styleClass="aon-scroll-area">
-		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-				<ui:param name="dataTableId" value="yearsStats" />
-				<ui:param name="dataModel" value="#{statModel}" />
-				<ui:param name="rows" value="20" />
-				<ui:param name="skipSelectButton" value="true" />
-				<ui:param name="rowSelectorToggleOnClick" value="false" />
-		
-				<ui:define name="columns">
+			<aon:editDataTable id="yearsStats" value="#{statModel}" rows="20"
+				columnClasses="aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,aon-editDataTable-numberColumn"
+				var="to">
 
-					<f:facet name="header">
-						<aon:div>
-							<h:panelGrid columns="3" style="align:center">
-								<aon:div>
-									<aon:outputText value="#{windowTitle}" />
-								</aon:div>
-								<aon:div>
-									<aon:outputText value="("/>
-									<aon:outputText value="#{commercialStat.params.fromDate}">
+				<f:facet name="header">
+					<aon:div>
+						<h:panelGrid columns="3" style="align:center">
+							<aon:div>
+								<aon:outputText value="#{windowTitle}" />
+							</aon:div>
+							<aon:div>
+								<aon:outputText value="("/>
+								<aon:outputText value="#{commercialStat.params.fromDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+								<aon:outputText value="-"/>
+								<aon:outputText value="#{commercialStat.params.toDate}">
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-									</aon:outputText>
-									<aon:outputText value="-"/>
-									<aon:outputText value="#{commercialStat.params.toDate}">
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-									</aon:outputText>
-									<aon:outputText value=")"/>
-								</aon:div>
-								<ui:insert name="extendedHeader" />
-							</h:panelGrid>
-						</aon:div>
+											timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+								<aon:outputText value=")"/>
+							</aon:div>
+							<ui:insert name="extendedHeader" />
+						</h:panelGrid>
+					</aon:div>
+				</f:facet>
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{categoryLabel}" />
 					</f:facet>
-					<aon:column styleClass="aon-editDataTable-textColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{categoryLabel}" />
-						</f:facet>
-	
-						<c:if test="#{clickable}">
-							<aon:commandLink styleClass="aon-dataTable-link"
-								value="#{to.name}" action="#{goAction}"
-								actionListener="#{goMethod}"
-								reRender="aonContent">
-								<f:param name="#{paramName}" value="#{to.key}" />
-							</aon:commandLink>
-						</c:if>
-	
-						<c:if test="#{!clickable}">
-							<aon:outputText value="#{to.name}">
-								<f:param name="#{paramName}" value="#{to.key}" />
-							</aon:outputText>
-						</c:if>
-	
-						<f:facet name="footer">
-						 	<aon:outputText value="#{bundle.report_totals}"> 
-							</aon:outputText>
-						</f:facet>
-					</aon:column>
-	
-					<aon:column styleClass="aon-editDataTable-numberColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.stat_offer_amount2}" />
-						</f:facet>
-						<aon:outputText value="#{to.amount}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-	
-						<f:facet name="footer">
-							<aon:outputText value="#{commercialStat.totalAmount}" style="float:right">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-						</f:facet>
-					</aon:column>
-	
-					<aon:column styleClass="aon-editDataTable-numberColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.stat_offers}" />
-						</f:facet>
-						<aon:outputText value="#{to.numInvoice}">
-							<f:convertNumber maxFractionDigits="0" />
-						</aon:outputText>
-	
-						<f:facet name="footer">
-							<aon:outputText value="#{commercialStat.numInvoices}" style="float:right">
-								<f:convertNumber type="number" maxFractionDigits="0"></f:convertNumber>
-							</aon:outputText>
-						</f:facet>
-					</aon:column>
-	
-					<aon:column styleClass="aon-editDataTable-numberColumn">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.stat_average}" />
-						</f:facet>
-						<aon:outputText value="#{to.averageAmount}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-	
-						<f:facet name="footer">
-							<aon:outputText value="#{commercialStat.promAmount}" style="float:right">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-						</f:facet>
-					</aon:column>
-	
-					<aon:column styleClass="aon-editDataTable-textColumn"
-						rendered="#{showLastColumn}">
-						<f:facet name="header">
-							<aon:outputText value="#{lastColumnName}" />
-						</f:facet>
+
+					<c:if test="#{clickable}">
 						<aon:commandLink styleClass="aon-dataTable-link"
-							value="#{lastColumnName}" action="#{offerFacelet}"
-							actionListener="#{lastColumnAction}"
+							value="#{to.name}" action="#{goAction}"
+							actionListener="#{goMethod}"
 							reRender="aonContent">
 							<f:param name="#{paramName}" value="#{to.key}" />
 						</aon:commandLink>
-					</aon:column>
-				
-				</ui:define>
-			</ui:decorate>
+					</c:if>
+
+					<c:if test="#{!clickable}">
+						<aon:outputText value="#{to.name}">
+							<f:param name="#{paramName}" value="#{to.key}" />
+						</aon:outputText>
+					</c:if>
+
+					<f:facet name="footer">
+					 	<aon:outputText value="#{bundle.report_totals}"> 
+						</aon:outputText>
+					</f:facet>
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.stat_offer_amount2}" />
+					</f:facet>
+					<aon:outputText value="#{to.amount}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+
+					<f:facet name="footer">
+						<aon:outputText value="#{commercialStat.totalAmount}" style="float:right">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</f:facet>
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.stat_offers}" />
+					</f:facet>
+					<aon:outputText value="#{to.numInvoice}">
+						<f:convertNumber maxFractionDigits="0" />
+					</aon:outputText>
+
+					<f:facet name="footer">
+						<aon:outputText value="#{commercialStat.numInvoices}" style="float:right">
+							<f:convertNumber type="number" maxFractionDigits="0"></f:convertNumber>
+						</aon:outputText>
+					</f:facet>
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.stat_average}" />
+					</f:facet>
+					<aon:outputText value="#{to.averageAmount}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+
+					<f:facet name="footer">
+						<aon:outputText value="#{commercialStat.promAmount}" style="float:right">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</f:facet>
+				</aon:column>
+
+				<aon:column rendered="#{showLastColumn}">
+					<f:facet name="header">
+						<aon:outputText value="#{lastColumnName}" />
+					</f:facet>
+					<aon:commandLink styleClass="aon-dataTable-link"
+						value="#{lastColumnName}" action="#{offerFacelet}"
+						actionListener="#{lastColumnAction}"
+						reRender="aonContent">
+						<f:param name="#{paramName}" value="#{to.key}" />
+					</aon:commandLink>
+				</aon:column>
+
+			</aon:editDataTable>
+			<aon:dataScroller2 for="yearsStats" showNote="true" />
 		</aon:div>
 	</aon:form>
 	</ui:define>

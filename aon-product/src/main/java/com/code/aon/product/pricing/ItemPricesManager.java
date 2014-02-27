@@ -83,7 +83,7 @@ public class ItemPricesManager {
 				priceable.setPrice(0);
 				priceable.setProfitPercent(0);
 			} else {
-				priceable.setPrice(getPrice(priceable, salesPrice, 2));
+				priceable.setPrice(getPrice(priceable, salesPrice, 4));
 				if (calculateProfit) {
 					priceable.setProfitPercent(getProfit(priceable.getProfitablePrice(), priceable.getPrice()));
 				}
@@ -97,26 +97,26 @@ public class ItemPricesManager {
 	public double getPrice(IPriceable priceable, double salesPrice, int precision) {
 		double vatPercent = (priceable.getVat() != null) ? priceable.getVat().getPercentage() : 0;
 		double retentionPercent = (priceable.getRetention() != null) ? priceable.getRetention().getPercentage()	: 0;
-		return getPrice(vatPercent, retentionPercent, salesPrice, precision);
+		return getPrice(priceable, vatPercent, retentionPercent, salesPrice, precision);
 	}
 
-	public double getPrice(double vatPercent, double retentionPercent, double salesPrice, int precision) {
+	public double getPrice(IPriceable priceable, double vatPercent, double retentionPercent, double salesPrice, int precision) {
 		double price = 0;
 		for (int i=precision; i<=4; i++) {
 			price = CommonUtil.round(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100), i);
-			if (salesPrice == getSalesPrice(vatPercent, retentionPercent, price)) {
+			if (salesPrice == priceable.getSalesPrice(price)) {
 				break;
 			} else {
 				price = CommonUtil.ceil(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100), i);
-				if (salesPrice == getSalesPrice(vatPercent, retentionPercent, price)) {
+				if (salesPrice == priceable.getSalesPrice(price)) {
 					break;
 				} else {
 					price = CommonUtil.floor(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100), i);
-					if (salesPrice == getSalesPrice(vatPercent, retentionPercent, price)) {
+					if (salesPrice == priceable.getSalesPrice(price)) {
 						break;
 					} else if (i < 4) {
 						price = CommonUtil.round(price + 5 / Math.pow(10, i+1), i+1);
-						if (salesPrice == getSalesPrice(vatPercent, retentionPercent, price)) {
+						if (salesPrice == priceable.getSalesPrice(price)) {
 							break;
 						}
 					}
@@ -130,10 +130,10 @@ public class ItemPricesManager {
 	public double getSalesPrice(IPriceable priceable, double price) {
 		double vatPercent = (priceable.getVat() != null) ? priceable.getVat().getPercentage() : 0;
 		double retentionPercent = (priceable.getRetention() != null) ? priceable.getRetention().getPercentage()	: 0;
-		return getSalesPrice(vatPercent, retentionPercent, price);
+		return getSalesPrice(priceable, vatPercent, retentionPercent, price);
 	}
 
-	public double getSalesPrice(double vatPercent, double retentionPercent, double price) {
+	public double getSalesPrice(IPriceable priceable, double vatPercent, double retentionPercent, double price) {
 		return CommonUtil.round(price * (1 + vatPercent / 100 - retentionPercent / 100));
 	}
 
