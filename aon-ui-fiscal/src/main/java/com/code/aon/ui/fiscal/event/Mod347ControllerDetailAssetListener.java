@@ -11,7 +11,7 @@ import com.code.aon.ui.util.AonUtil;
 public class Mod347ControllerDetailAssetListener  extends ControllerAdapter {
 	
 	@Override
-	public void beforeBeanCreated(ControllerEvent event)
+	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		IController c = event.getController();
 		Mod347Detail  detail = (Mod347Detail) c.getTo();
