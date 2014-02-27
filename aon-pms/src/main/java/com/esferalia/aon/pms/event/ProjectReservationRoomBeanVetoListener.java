@@ -17,6 +17,7 @@ import com.code.aon.dbutils.DatabaseUtil;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.sql.SQLBooking;
+import com.esferalia.aon.pms.sql.SQLStopSales;
 import com.esferalia.aon.pms.sql.SQLUtils;
 
 public class ProjectReservationRoomBeanVetoListener extends ManagerBeanVetoListenerAdapter {
@@ -24,13 +25,17 @@ public class ProjectReservationRoomBeanVetoListener extends ManagerBeanVetoListe
     @Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	ProjectReservationRoom to = (ProjectReservationRoom)evt.getTo();
+    	if (mustStopSale(to)) {
+			throw new ManagerBeanVetoListenerException("Hay un Paro de Ventas definido para el Hotel en ese periodo y condiciones.");
+    	}
+
     	try {
     		if (to.getRoomIndex() == 0) {
         		to.setRoomIndex(calculateNextIndex(to.getProjectReservation()));
     		}
-    	} catch (ManagerBeanException ex) {
-    		throw new ManagerBeanVetoListenerException(ex);
-    	}
+		} catch (ManagerBeanException e) {
+			throw new ManagerBeanVetoListenerException(e.getMessage());
+		}
     }
 
 	@Override
@@ -53,10 +58,28 @@ public class ProjectReservationRoomBeanVetoListener extends ManagerBeanVetoListe
 				connection.rollback();
 			} catch (SQLException ex) {
 			}
-			throw new ManagerBeanVetoListenerException(e);
+			throw new ManagerBeanVetoListenerException(e.getMessage());
 		} finally {
 			SQLUtils.closeQuietly(connection);
 		}
+	}
+
+	private boolean mustStopSale(ProjectReservationRoom reservationRoom) {
+   		Connection connection = null;
+		try {
+			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(reservationRoom.getProjectReservation().getDomain()));
+			if (SQLStopSales.mustStopSale(connection, reservationRoom)) {
+				return true;
+	    	}
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+		} finally {
+			SQLUtils.closeQuietly(connection);
+		}
+		return false;
 	}
 
     private	Integer calculateNextIndex(ProjectReservation reservation) throws ManagerBeanException {

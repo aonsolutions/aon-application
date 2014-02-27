@@ -30,7 +30,7 @@ public class ProjectReservationBeanListener extends ManagerBeanListenerAdapter {
 					connection.rollback();
 				} catch (SQLException ex) {
 				}
-				throw new ManagerBeanException(e.getMessage(), e);
+				throw new ManagerBeanException(e.getMessage());
 			} finally {
 				SQLUtils.closeQuietly(connection);
 			}

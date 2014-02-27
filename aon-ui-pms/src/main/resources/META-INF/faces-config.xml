@@ -386,8 +386,24 @@
 					<value>reservationRequest.id</value>
 				</map-entry>
 				<map-entry>
+					<key>domain</key>
+					<value>reservationRequest.domain</value>
+				</map-entry>
+				<map-entry>
 					<key>startDate</key>
 					<value>reservationRequest.startDate</value>
+				</map-entry>
+				<map-entry>
+					<key>endDate</key>
+					<value>reservationRequest.endDate</value>
+				</map-entry>
+				<map-entry>
+					<key>hotel</key>
+					<value>reservationRequest.hotel</value>
+				</map-entry>
+				<map-entry>
+					<key>agency</key>
+					<value>reservationRequest.agency</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -598,12 +614,24 @@
 					<value>projectReservation.id</value>
 				</map-entry>
 				<map-entry>
+					<key>domain</key>
+					<value>projectReservation.domain</value>
+				</map-entry>
+				<map-entry>
 					<key>startDate</key>
 					<value>projectReservation.startDate</value>
 				</map-entry>
 				<map-entry>
 					<key>endDate</key>
 					<value>projectReservation.endDate</value>
+				</map-entry>
+				<map-entry>
+					<key>hotel</key>
+					<value>projectReservation.hotel</value>
+				</map-entry>
+				<map-entry>
+					<key>agency</key>
+					<value>projectReservation.agency</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -910,14 +938,14 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
-	<!-- ************* EARLY CHECK-OUT INVOICE *************** -->
+	<!-- ************* EARLY CHECK-OUT INVOICE ************** -->
 	<managed-bean>
 		<managed-bean-name>earlyCheckOut</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.EarlyCheckOutController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************* ALLOTMENT ***************************** -->
+	<!-- ************* ALLOTMENT **************************** -->
 	<managed-bean>
 		<managed-bean-name>allotment</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.AllotmentController</managed-bean-class>
@@ -967,6 +995,56 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************* STOP SALES *************************** -->
+	<managed-bean>
+		<managed-bean-name>stopSales</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.StopSalesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.pms.StopSales</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>stopSales</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>StopSales_startDate desc,StopSales_endDate desc</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{stopSalesSearch}</value>
+				<value>#{stopSalesScopeListener}</value>
+				<value>#{stopSalesControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>stopSalesSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.StopSalesSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>stopSalesScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>StopSales_hotel_scope_id</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>stopSalesControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.StopSalesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* PMS INVOICE PRINTER ****************** -->
 	<managed-bean>
 		<managed-bean-name>pmsInvoicePrinter</managed-bean-name>
@@ -1009,7 +1087,7 @@
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
 	
-	<!-- ************* ALLOTMENT CONTROL ******************** -->
+	<!-- ************* ALLOTMENT BOOKING ******************** -->
 	<managed-bean>
 		<managed-bean-name>allotmentBooking</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.AllotmentBookingController</managed-bean-class>
@@ -1316,6 +1394,22 @@
 		<navigation-case>
 			<from-outcome>allotment_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/allotment/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>  
+
+  	<!-- ============= Stop Sales =========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>stopSales_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/stopSales/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>stopSales_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/stopSales/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>stopSales_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/stopSales/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>  
 

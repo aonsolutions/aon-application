@@ -301,6 +301,7 @@
 		<mapping class="com.esferalia.aon.pms.Room"/>
 		<mapping class="com.esferalia.aon.pms.StopSales"/>
 		<mapping class="com.esferalia.aon.pms.StopSalesItem"/>
+		<mapping class="com.esferalia.aon.pms.StopSalesTariff"/>
 
 		<!-- AON-PROJECT Mapping files -->  
 		<mapping class="com.code.aon.project.ActivityType"/>

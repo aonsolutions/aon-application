@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
+import com.code.aon.dbutils.DatabaseUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
@@ -24,6 +28,8 @@ import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.ReservationRequestRoom;
 import com.esferalia.aon.pms.reservation.AvailableRoomStay;
 import com.esferalia.aon.pms.reservation.ReservationRequestManager;
+import com.esferalia.aon.pms.sql.SQLStopSales;
+import com.esferalia.aon.pms.sql.SQLUtils;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ReservationRequestRoomController extends LinesController implements IPmsConstants {
@@ -48,19 +54,41 @@ public class ReservationRequestRoomController extends LinesController implements
 		return PmsUtils.getHotelRoomItems(((ReservationRequest)getMasterController().getTo()).getHotel());
 	}
 
+	private boolean mustStopSale(ReservationRequestRoom requestRoom) {
+   		Connection connection = null;
+		try {
+			connection = DatabaseUtil.getConnection(CommonUtil.getDomainName(requestRoom.getReservationRequest().getDomain()));
+			if (SQLStopSales.mustStopSale(connection, requestRoom)) {
+				return true;
+	    	}
+		} catch (Throwable e) {
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+			}
+		} finally {
+			SQLUtils.closeQuietly(connection);
+		}
+		return false;
+	}
+
 	public void sendAvailabilityQuery(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			ReservationRequestController requestController = (ReservationRequestController)getMasterController();
 			ReservationRequest request = (ReservationRequest)requestController.getTo();
-			request.setRequestCounter(request.getRequestCounter() + 1);
-			requestController.setSkipResetAvailabilityMap(true);
-			requestController.accept(event);
-			requestController.setSkipResetAvailabilityMap(false);
-
 			ReservationRequestRoom requestRoom = (ReservationRequestRoom)getModel().getRowData();
 			requestRoom.setReservationRequest(request);
-			ReservationRequestManager manager = new ReservationRequestManager();
-			getAvailableRoomStayMap().put(requestRoom.getId(), manager.processAvailabilityQuery(requestRoom));
+			if (!mustStopSale(requestRoom)) {
+				request.setRequestCounter(request.getRequestCounter() + 1);
+				requestController.setSkipResetAvailabilityMap(true);
+				requestController.accept(event);
+				requestController.setSkipResetAvailabilityMap(false);
+
+				ReservationRequestManager manager = new ReservationRequestManager();
+				getAvailableRoomStayMap().put(requestRoom.getId(), manager.processAvailabilityQuery(requestRoom));
+			} else {
+				AonUtil.addErrorMessage("Hay un Paro de Ventas definido para el Hotel en ese periodo y condiciones.");
+			}
 		}
 	}
 
@@ -84,38 +112,43 @@ public class ReservationRequestRoomController extends LinesController implements
 		if (getModel().isRowAvailable()) {
 			ReservationRequestController requestController = (ReservationRequestController)getMasterController();
 			ReservationRequest request = (ReservationRequest)requestController.getTo();
-			request.setRequestCounter(request.getRequestCounter() + 1);
-			requestController.setSkipResetAvailabilityMap(true);
-			requestController.accept(event);
-			requestController.setSkipResetAvailabilityMap(false);
-
 			ReservationRequestRoom requestRoom = (ReservationRequestRoom)getModel().getRowData();
-			requestRoom.setReservationRequest(request);
 			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 			AvailableRoomStay availableRoomStay = getAvailableRoomStayList().get(Integer.parseInt(ec.getRequestParameterMap().get("availableRoomStayIndex")));
-			ReservationRequestManager manager = new ReservationRequestManager();
-			availableRoomStay = manager.processBookingRequest(requestRoom, requestController.getRequestGuest(), availableRoomStay);
-			if (!availableRoomStay.isError()) {
-				requestRoom.setCrsCode(availableRoomStay.getReservationId());
-				requestRoom.setTariffCode(availableRoomStay.getTariffCode());
-				requestRoom.setTariffDescription(availableRoomStay.getTariffDescription());
-				requestRoom.setInventoryCode(availableRoomStay.getInventoryCode());
-				requestRoom.setRoomCode(availableRoomStay.getRoomCode());
-				requestRoom.setRoomDescription(availableRoomStay.getRoomDescription());
-				requestRoom.setMealPlan(availableRoomStay.getMealPlan());
-				requestRoom.setDailyPrice(availableRoomStay.getDailyPrice());
-				requestRoom.setTotalPrice(availableRoomStay.getTotalPrice());
-				requestRoom.setCancelPenalty(availableRoomStay.getCancelPenalty());
-				getManagerBean().update(requestRoom);
-
-				request.setActive(false);
+			requestRoom.setReservationRequest(request);
+			requestRoom.setTariffCode(availableRoomStay.getTariffCode());
+			if (!mustStopSale(requestRoom)) {
+				request.setRequestCounter(request.getRequestCounter() + 1);
 				requestController.setSkipResetAvailabilityMap(true);
 				requestController.accept(event);
 				requestController.setSkipResetAvailabilityMap(false);
 
-				getAvailableRoomStayMap().remove(requestRoom.getId());
+				ReservationRequestManager manager = new ReservationRequestManager();
+				availableRoomStay = manager.processBookingRequest(requestRoom, requestController.getRequestGuest(), availableRoomStay);
+				if (!availableRoomStay.isError()) {
+					requestRoom.setCrsCode(availableRoomStay.getReservationId());
+					requestRoom.setTariffCode(availableRoomStay.getTariffCode());
+					requestRoom.setTariffDescription(availableRoomStay.getTariffDescription());
+					requestRoom.setInventoryCode(availableRoomStay.getInventoryCode());
+					requestRoom.setRoomCode(availableRoomStay.getRoomCode());
+					requestRoom.setRoomDescription(availableRoomStay.getRoomDescription());
+					requestRoom.setMealPlan(availableRoomStay.getMealPlan());
+					requestRoom.setDailyPrice(availableRoomStay.getDailyPrice());
+					requestRoom.setTotalPrice(availableRoomStay.getTotalPrice());
+					requestRoom.setCancelPenalty(availableRoomStay.getCancelPenalty());
+					getManagerBean().update(requestRoom);
 
-				//manager.processNewReservation(requestRoom);
+					request.setActive(false);
+					requestController.setSkipResetAvailabilityMap(true);
+					requestController.accept(event);
+					requestController.setSkipResetAvailabilityMap(false);
+
+					getAvailableRoomStayMap().remove(requestRoom.getId());
+
+					//manager.processNewReservation(requestRoom);
+				}
+			} else {
+				AonUtil.addErrorMessage("Hay un Paro de Ventas definido para el Hotel en ese periodo y condiciones.");
 			}
 		}
 	}

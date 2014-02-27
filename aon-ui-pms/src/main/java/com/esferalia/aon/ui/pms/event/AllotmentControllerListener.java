@@ -157,7 +157,7 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 		Connection connection = null;
 		try {
 			connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
-			if (SQLAllotment.isAllotmentOverlap(connection, allotment, items, tariffs)) {
+			if (SQLAllotment.isAllotmentDefined(connection, allotment, items, tariffs)) {
 				throw new ControllerListenerException("Ya existen Cupos definidos para la Agencia con esas condiciones.");
 			}
 		} catch (Throwable e) {
@@ -165,7 +165,7 @@ public class AllotmentControllerListener extends ControllerAdapter implements IP
 				connection.rollback();
 			} catch (SQLException ex) {
 			}
-			throw new ControllerListenerException(e.getMessage(), e);
+			throw new ControllerListenerException(e.getMessage());
 		} finally {
 			SQLUtils.closeQuietly(connection);
 		}

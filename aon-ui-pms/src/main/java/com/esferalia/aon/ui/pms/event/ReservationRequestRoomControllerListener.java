@@ -23,6 +23,13 @@ public class ReservationRequestRoomControllerListener extends ControllerAdapter 
 	}
 
 	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		ReservationRequestRoomController controller = (ReservationRequestRoomController)event.getController();
+		ReservationRequestRoom to = (ReservationRequestRoom)controller.getTo();
+		to.setReservationRequest((ReservationRequest)controller.getMasterController().getTo());
+	}
+
+	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ReservationRequestRoomController controller = (ReservationRequestRoomController)event.getController();
 		ReservationRequestRoom to = (ReservationRequestRoom)controller.getTo();

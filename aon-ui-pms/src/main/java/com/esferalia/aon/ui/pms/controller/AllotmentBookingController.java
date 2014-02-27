@@ -250,13 +250,13 @@ public class AllotmentBookingController implements ISQLConstants {
 				connection.rollback();
 			} catch (SQLException ex) {
 			}
-			throw new AonSQLException(e);
+			throw new AonSQLException(e.getMessage());
 		} catch (Throwable e) {
 			try {
 				connection.rollback();
 			} catch (SQLException ex) {
 			}
-			throw new AonSQLException(e);
+			throw new AonSQLException(e.getMessage());
 		} finally {
 			SQLUtils.closeQuietly(agencyBookingRs);
 			SQLUtils.closeQuietly(agencyBookingStmt);

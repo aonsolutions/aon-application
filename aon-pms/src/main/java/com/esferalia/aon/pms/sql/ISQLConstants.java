@@ -2,10 +2,12 @@ package com.esferalia.aon.pms.sql;
 
 public interface ISQLConstants {
 
+	String ID = "id";
 	String DOMAIN = "domain";
 	String PROJECT_RESERVATION_ROOM = "project_reservation_room";
 	String HOTEL = "hotel";
 	String AGENCY = "agency";
+	String AGENCY_GROUP = "agency_group";
 	String ITEM = "item";
 	String TARIFF = "tariff";
 	String STAY_DATE = "stay_date";

@@ -26,7 +26,7 @@ public class ProjectReservationRoomBeanListener extends ManagerBeanListenerAdapt
 				connection.rollback();
 			} catch (SQLException ex) {
 			}
-			throw new ManagerBeanException(e);
+			throw new ManagerBeanException(e.getMessage());
 		} finally {
 			SQLUtils.closeQuietly(connection);
 		}
@@ -46,7 +46,7 @@ public class ProjectReservationRoomBeanListener extends ManagerBeanListenerAdapt
 					connection.rollback();
 				} catch (SQLException ex) {
 				}
-				throw new ManagerBeanException(e);
+				throw new ManagerBeanException(e.getMessage());
 			} finally {
 				SQLUtils.closeQuietly(connection);
 			}

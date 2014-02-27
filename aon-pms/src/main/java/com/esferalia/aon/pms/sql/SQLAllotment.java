@@ -3,36 +3,69 @@ package com.esferalia.aon.pms.sql;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.config.Tariff;
+import com.code.aon.customer.Customer;
+import com.code.aon.customer.InvoicingGroup;
 import com.code.aon.dbutils.AonSQLException;
+import com.code.aon.product.Item;
 import com.esferalia.aon.pms.Allotment;
+import com.esferalia.aon.pms.Hotel;
 
 public class SQLAllotment implements ISQLConstants {
 
 	public static String SELECT_BASIC_ALLOTMENT =
-			"SELECT A.start_date AS " + START_DATE + ", A.end_date AS " + END_DATE + ", A.quantity AS " + QUANTITY +
+			"SELECT DISTINCT(A.id) AS " + ID + ", A.agency AS " + AGENCY + ", A.agency_group AS " + AGENCY_GROUP + 
+			", A.start_date AS " + START_DATE + ", A.end_date AS " + END_DATE + ", A.quantity AS " + QUANTITY +
 			" FROM allotment AS A" +
 			" LEFT JOIN allotment_item AS AI ON AI.allotment = A.id" +
 			" LEFT JOIN allotment_tariff AS AT ON AT.allotment = A.id" +
 			" WHERE A.domain = ?" +
 			" AND A.hotel = ?" + 
-			" AND A.start_date <= ?" + 
 			" AND A.end_date >= ?" + 
+			" AND A.start_date <= ?" + 
 			" AND A.active = 1";
 
+	public static String SELECT_ALLOTMENT_BOOKING =
+			"SELECT B.stay_date AS " + STAY_DATE + ", COUNT(DISTINCT B.id) AS " + ROOMS +
+			" FROM allotment AS A, booking AS B" +
+			" WHERE A.domain = ?" +
+			" AND A.hotel = ?" + 
+			" AND (A.agency = ? OR A.agency_group = ?)" +
+			" AND A.end_date >= ?" + 
+			" AND A.start_date <= ?" + 
+			" AND A.active = 1" +
+			" AND B.hotel = A.hotel" +
+			" AND B.stay_date BETWEEN A.start_date AND A.end_date" +
+			" AND B.stay_date BETWEEN ? AND ?" +
+			" AND B.stay_type IN (0,2)" +
+			" AND ((A.agency IS NOT NULL AND B.agency = A.agency)" +
+			"   OR (A.agency IS NULL AND B.agency IN (SELECT registry FROM customer WHERE invoicing_group = A.agency_group)))" +
+			" AND (0 = (SELECT COUNT(*) FROM allotment_item WHERE allotment = A.id)" +
+			"   OR B.item IN (SELECT item FROM allotment_item WHERE allotment = A.id))" +
+			" AND (0 = (SELECT COUNT(*) FROM allotment_tariff WHERE allotment = A.id)" +
+			"   OR B.tariff IN (SELECT tariff FROM allotment_tariff WHERE allotment = A.id))" +
+			" GROUP BY B.stay_date" +
+			" ORDER BY " + STAY_DATE;
 
-	public static boolean isAllotmentOverlap(Connection connection, Allotment allotment, String items, String tariffs) throws AonSQLException {
+	public static boolean isAllotmentDefined(Connection connection, Allotment allotment, String items, String tariffs) throws AonSQLException {
 		PreparedStatement allotmentStmt = null;
 		ResultSet allotmentRs = null;
 		try {
-			allotmentStmt = connection.prepareStatement(SELECT_BASIC_ALLOTMENT + obtainWhereClause(allotment, items, tariffs));
+			String selectAllotment = SELECT_BASIC_ALLOTMENT + obtainWhereClause(allotment.getId(), allotment.getAgency(), allotment.getAgencyGroup(), items, tariffs);
+			allotmentStmt = connection.prepareStatement(selectAllotment);
 			SQLUtils.setInt(allotmentStmt, 1, DomainManager.getCurrentDomain());
 			SQLUtils.setInt(allotmentStmt, 2, allotment.getHotel().getId());
-			SQLUtils.setDate(allotmentStmt, 3, allotment.getEndDate());
-			SQLUtils.setDate(allotmentStmt, 4, allotment.getStartDate());
+			SQLUtils.setDate(allotmentStmt, 3, allotment.getStartDate());
+			SQLUtils.setDate(allotmentStmt, 4, allotment.getEndDate());
 			allotmentRs = allotmentStmt.executeQuery();
 			return allotmentRs.next();
 		} catch (Throwable e) {
@@ -43,40 +76,78 @@ public class SQLAllotment implements ISQLConstants {
 		}
 	}
 
-	/*public static Map<Date, Integer> getAllotmentsByDate(Connection connection, Allotment allotment, String items, String tariffs) throws AonSQLException {
+	public static Map<Date, int[]> getAllotmentBookingMap(Connection connection, Hotel hotel, Date fromDate, Date toDate, Customer agency, Item item, Tariff tariff)
+			throws AonSQLException {
+		Map<Date, int[]> allotmentBookingMap = new HashMap<Date, int[]>();
 		PreparedStatement allotmentStmt = null;
+		ResultSet allotmentRs = null;
+		PreparedStatement allotmentBookingStmt = null;
+		ResultSet allotmentBookingRs = null;
 		try {
-			allotmentStmt = connection.prepareStatement(SELECT_ALLOTMENT);
+			String selectAllotment = SELECT_BASIC_ALLOTMENT + obtainWhereClause(null, agency, null, item.getId().toString(), tariff.getId().toString());
+			allotmentStmt = connection.prepareStatement(selectAllotment);
 			SQLUtils.setInt(allotmentStmt, 1, DomainManager.getCurrentDomain());
-			SQLUtils.setInt(allotmentStmt, 2, hotel);
-			//SQLUtils.setInt(allotmentStmt, 3, agency); Agencia o Grupo!!
-			SQLUtils.setDate(allotmentStmt, 4, fromDate);
-			SQLUtils.setDate(allotmentStmt, 5, toDate);
-			//Devolver el resultset o una lista de allotments, lo que se prefiera.
-			//allotmentStmt.execute();
+			SQLUtils.setInt(allotmentStmt, 2, hotel.getId());
+			SQLUtils.setDate(allotmentStmt, 3, fromDate);
+			SQLUtils.setDate(allotmentStmt, 4, toDate);
+			allotmentRs = allotmentStmt.executeQuery();
+			while (allotmentRs.next()) {
+				Date startDate = allotmentRs.getDate(START_DATE);
+				Date endDate = allotmentRs.getDate(END_DATE);
+				int quantity = allotmentRs.getInt(QUANTITY);
+				for (Date date = DateUtils.truncate(startDate, Calendar.DATE); !date.after(endDate); date = DateUtils.addDays(date, 1)) {
+					if (!date.before(fromDate) && !date.after(toDate)) {
+						allotmentBookingMap.put(date, new int[]{quantity, 0});
+					}
+				}
+			}
+
+			if (allotmentBookingMap.size() > 0) {
+				int agencyGroup = (agency.getInvoicingGroup() != null && agency.getInvoicingGroup().getId() != null) ? agency.getInvoicingGroup().getId() : 0;
+				allotmentBookingStmt = connection.prepareStatement(SELECT_ALLOTMENT_BOOKING);
+				SQLUtils.setInt(allotmentBookingStmt, 1, DomainManager.getCurrentDomain());
+				SQLUtils.setInt(allotmentBookingStmt, 2, hotel.getId());
+				SQLUtils.setInt(allotmentBookingStmt, 3, agency.getId());
+				SQLUtils.setInt(allotmentBookingStmt, 4, agencyGroup);
+				SQLUtils.setDate(allotmentBookingStmt, 5, fromDate);
+				SQLUtils.setDate(allotmentBookingStmt, 6, toDate);
+				SQLUtils.setDate(allotmentBookingStmt, 7, fromDate);
+				SQLUtils.setDate(allotmentBookingStmt, 8, toDate);
+				allotmentBookingRs = allotmentBookingStmt.executeQuery();
+				while (allotmentBookingRs.next()) {
+					Date stayDate = allotmentBookingRs.getDate(STAY_DATE);
+					int rooms = allotmentBookingRs.getInt(ROOMS);
+					int[] allotmentBooking = allotmentBookingMap.get(stayDate);
+					allotmentBooking[1] = rooms;
+				}
+			}
+
+			return allotmentBookingMap;
 		} catch (Throwable e) {
 			throw new AonSQLException(e.getMessage());
 		} finally {
+			SQLUtils.closeQuietly(allotmentBookingStmt);
+			SQLUtils.closeQuietly(allotmentBookingRs);
 			SQLUtils.closeQuietly(allotmentStmt);
+			SQLUtils.closeQuietly(allotmentRs);
 		}
-		return null;
-	}*/
+	}
 
-	private static String obtainWhereClause(Allotment allotment, String items, String tariffs) {
+	private static String obtainWhereClause(Integer id, Customer agency, InvoicingGroup agencyGroup, String items, String tariffs) {
 		StringBuffer where = new StringBuffer();
-		if (allotment.getId() != null) {
-			where.append(" AND A.id != " + allotment.getId());
+		if (id != null) {
+			where.append(" AND A.id != " + id);
 		}
-		if (allotment.getAgency() != null && allotment.getAgency().getId() != null) {
-			where.append(" AND (A.agency = " + allotment.getAgency().getId());
-			if (allotment.getAgency().getInvoicingGroup() != null && allotment.getAgency().getInvoicingGroup().getId() != null) {
-				where.append(" OR A.agency_group = " + allotment.getAgency().getInvoicingGroup().getId());
+		if (agency != null && agency.getId() != null) {
+			where.append(" AND (A.agency = " + agency.getId());
+			if (agency.getInvoicingGroup() != null && agency.getInvoicingGroup().getId() != null) {
+				where.append(" OR A.agency_group = " + agency.getInvoicingGroup().getId());
 			}
 			where.append(")");
 		}
-		if (allotment.getAgencyGroup() != null && allotment.getAgencyGroup().getId() != null) {
-			where.append(" AND (A.agency_group = " + allotment.getAgencyGroup().getId());
-			where.append(" OR A.agency IN (SELECT registry FROM customer WHERE invoicing_group = " + allotment.getAgencyGroup().getId() + ")");
+		if (agencyGroup != null && agencyGroup.getId() != null) {
+			where.append(" AND (A.agency_group = " + agencyGroup.getId());
+			where.append(" OR A.agency IN (SELECT registry FROM customer WHERE invoicing_group = " + agencyGroup.getId() + ")");
 			where.append(")");
 		}
 		if (StringUtils.isNotBlank(items)) {

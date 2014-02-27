@@ -762,39 +762,35 @@ public class ReservationUtils implements IReservationConstants {
 	}
 
 	public Tariff obtainRoomTariff(ProjectReservation reservation, RatePlanType ratePlan) throws ManagerBeanException, ReservationException {
-		TariffAddInfo tariffAddInfo = obtainTariffAddInfo(null, TARIFF_ALIAS, ratePlan.getRatePlanCode());
-		if (tariffAddInfo != null) {
-			return tariffAddInfo.getTariff();
+		Tariff tariff = obtainTariff(ratePlan.getRatePlanCode());
+		if (tariff != null) {
+			return tariff;
 		} else {
-			Tariff tariff = obtainTariff(ratePlan.getRatePlanCode());
+			tariff = obtainDefaultTariff();
 			if (tariff != null) {
+				reservation.setRemarks("TARIFA DESCONOCIDA [" + ratePlan.getRatePlanCode() + "]\n" + reservation.getRemarks());
+				reservation.setStatus(ReservationStatus.BLOCKED);
+
 				return tariff;
-			} else {
-				IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_TARIFF);
-				for (ITransferObject ito : appParamBean.getList(criteria)) {
-					tariff = obtainTariff(((ApplicationParameter)ito).getValue());
-					if (tariff != null) {
-						reservation.setRemarks("TARIFA DESCONOCIDA [" + ratePlan.getRatePlanCode() + "]\n" + reservation.getRemarks());
-						reservation.setStatus(ReservationStatus.BLOCKED);
-	
-						return tariff;
-					}
-				}
 			}
 		}
 		throw new ReservationException("Invalid Rate Code: " + ratePlan.getRatePlanCode(), 249);
 	}
 
 	public Tariff obtainTariff(String tariffCode) throws ManagerBeanException {
-		IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(tariffBean.getFieldName(IEntityAlias.TARIFF_CODE), tariffCode);
-		for (ITransferObject ito : tariffBean.getList(criteria)) {
-			return (Tariff)ito;
+		if (StringUtils.isNotBlank(tariffCode)) {
+			TariffAddInfo tariffAddInfo = obtainTariffAddInfo(null, TARIFF_ALIAS, tariffCode);
+			if (tariffAddInfo != null) {
+				return tariffAddInfo.getTariff();
+			} else {
+				IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(tariffBean.getFieldName(IEntityAlias.TARIFF_CODE), tariffCode);
+				for (ITransferObject ito : tariffBean.getList(criteria)) {
+					return (Tariff)ito;
+				}
+			}
 		}
-
 		return null;
 	}
 
@@ -810,6 +806,16 @@ public class ReservationUtils implements IReservationConstants {
 		criteria.addEqualExpression(tariffAddInfoBean.getFieldName(IEntityAlias.TARIFF_ADD_INFO_ATTRIBUTE), attribute);
 		for (ITransferObject ito : tariffAddInfoBean.getList(criteria)) {
 			return (TariffAddInfo)ito;
+		}
+		return null;
+	}
+
+	public Tariff obtainDefaultTariff() throws ManagerBeanException {
+		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_TARIFF);
+		for (ITransferObject ito : appParamBean.getList(criteria)) {
+			return obtainTariff(((ApplicationParameter)ito).getValue());
 		}
 		return null;
 	}
