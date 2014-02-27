@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.30.0
-# Created by: ecastellano
-# Creation Date: 26/02/2014 18:00
+# Version: 7.31.0
+# Created by: girazu
+# Creation Date: 27/02/2014 16:00
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -7161,6 +7161,24 @@ CREATE TABLE `stop_sales_item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Habitacion por Paro';
 
 #
+# Structure for the `stop_sales_tariff` table : 
+#
+
+CREATE TABLE `stop_sales_tariff` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `stop_sales` int(4) NOT NULL COMMENT 'Identificador del Paro de ventas',
+  `tariff` int(4) NOT NULL COMMENT 'Identificador de la Tarifa',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_STOP_SALES_TARIFF_DOMAIN` (`domain`),
+  KEY `IDX_STOP_SALES_TARIFF_STOP_SALES` (`stop_sales`),
+  KEY `IDX_STOP_SALES_TARIFF_TARIFF` (`tariff`),
+  CONSTRAINT `FK_STOP_SALES_TARIFF_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_STOP_SALES_TARIFF_STOP_SALES` FOREIGN KEY (`stop_sales`) REFERENCES `stop_sales` (`id`),
+  CONSTRAINT `FK_STOP_SALES_TARIFF_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas por Paro';
+
+#
 # Structure for the `survey_question` table : 
 #
 
@@ -7609,7 +7627,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.30.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.31.0');
 
 COMMIT;
 
